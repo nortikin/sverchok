@@ -1,0 +1,314 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -686.4109497070312,
+        -164.92626953125
+      ],
+      "params": {
+        "float_": 0.5,
+        "float_draft_": 0.0,
+        "int_": 0,
+        "int_draft_": 0
+      },
+      "width": 140.0
+    },
+    "A Number.001": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -694.1799926757812,
+        -254.07264709472656
+      ],
+      "params": {
+        "float_": 2.0,
+        "float_draft_": 0.0,
+        "int_": 0,
+        "int_draft_": 0
+      },
+      "width": 140.0
+    },
+    "A Number.002": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -695.9728393554688,
+        -349.80029296875
+      ],
+      "params": {
+        "float_": 2.0,
+        "float_draft_": 0.0,
+        "int_": 6,
+        "int_draft_": 0,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "Circle (Curve)": {
+      "bl_idname": "SvExCircleNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -85.13182830810547,
+        -210.66497802734375
+      ],
+      "params": {
+        "radius": 1.1799999475479126
+      },
+      "width": 140.0
+    },
+    "Curve Formula": {
+      "bl_idname": "SvExCurveFormulaNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -438.8460388183594,
+        -69.36710357666016
+      ],
+      "params": {
+        "formula1": "R0 + Dr*cos(k*t)",
+        "formula2": "t",
+        "formula3": "0",
+        "output_mode": "CYL"
+      },
+      "width": 140.0
+    },
+    "Evaluate Surface": {
+      "bl_idname": "SvExEvalSurfaceNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        754.2543334960938,
+        -78.19368743896484
+      ],
+      "params": {
+        "samples_u": 31,
+        "samples_v": 68
+      },
+      "width": 140.0
+    },
+    "Fillet Polyline": {
+      "bl_idname": "SvExFilletPolylineNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        161.8326873779297,
+        -274.4193420410156
+      ],
+      "params": {
+        "cyclic": 1,
+        "scale_to_unit": 0
+      },
+      "width": 140.0
+    },
+    "List Join": {
+      "bl_idname": "ListJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        381.9143371582031,
+        -91.71227264404297
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Move": {
+      "bl_idname": "SvMoveNodeMk3",
+      "custom_socket_props": {
+        "1": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -51.37197494506836,
+        -378.1675109863281
+      ],
+      "params": {
+        "movement_vectors": [
+          0.0,
+          0.0,
+          6.0
+        ]
+      },
+      "width": 140.0
+    },
+    "NGon": {
+      "bl_idname": "SvNGonNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -228.0882568359375,
+        -382.244873046875
+      ],
+      "params": {
+        "rad_": 1.8399999141693115,
+        "sides_": 3
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Surface from Curves": {
+      "bl_idname": "SvInterpolatingSurfaceNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        570.9548950195312,
+        -83.62797546386719
+      ],
+      "params": {
+        "interp_mode": "CUBIC"
+      },
+      "width": 140.0
+    },
+    "Vector in": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -226.06790161132812,
+        -212.81639099121094
+      ],
+      "params": {
+        "z_": 2.0399999618530273
+      },
+      "width": 100.0
+    },
+    "Viewer Draw Mk3.003": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        957.3001708984375,
+        -72.92074584960938
+      ],
+      "params": {
+        "activate": 1,
+        "display_edges": 0,
+        "display_verts": 0,
+        "draw_gl_polygonoffset": 1,
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Vector in",
+      0,
+      "Circle (Curve)",
+      0
+    ],
+    [
+      "NGon",
+      0,
+      "Move",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Curve Formula",
+      2
+    ],
+    [
+      "A Number.001",
+      0,
+      "Curve Formula",
+      3
+    ],
+    [
+      "A Number.002",
+      0,
+      "Curve Formula",
+      4
+    ],
+    [
+      "Move",
+      0,
+      "Fillet Polyline",
+      0
+    ],
+    [
+      "Curve Formula",
+      0,
+      "List Join",
+      0
+    ],
+    [
+      "Circle (Curve)",
+      0,
+      "List Join",
+      1
+    ],
+    [
+      "Fillet Polyline",
+      0,
+      "List Join",
+      2
+    ],
+    [
+      "List Join",
+      0,
+      "Surface from Curves",
+      0
+    ],
+    [
+      "Surface from Curves",
+      0,
+      "Evaluate Surface",
+      0
+    ],
+    [
+      "Evaluate Surface",
+      0,
+      "Viewer Draw Mk3.003",
+      0
+    ],
+    [
+      "Evaluate Surface",
+      1,
+      "Viewer Draw Mk3.003",
+      1
+    ],
+    [
+      "Evaluate Surface",
+      2,
+      "Viewer Draw Mk3.003",
+      2
+    ]
+  ]
+}
