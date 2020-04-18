@@ -24,6 +24,13 @@ from sverchok.utils.curve import SvExCurveLengthSolver
 ##################
 
 class SvExVectorField(object):
+    def __repr__(self):
+        if hasattr(self, '__description__'):
+            description = self.__description__
+        else:
+            description = self.__class__.__name__
+        return "<{} vector field>".format(description)
+
     def evaluate(self, point):
         raise Exception("not implemented")
 
@@ -31,8 +38,10 @@ class SvExVectorField(object):
         raise Exception("not implemented")
 
 class SvExMatrixVectorField(SvExVectorField):
+
     def __init__(self, matrix):
         self.matrix = matrix
+        self.__description__ = "Matrix"
 
     def evaluate(self, x, y, z):
         v = Vector((x, y, z))
@@ -47,8 +56,10 @@ class SvExMatrixVectorField(SvExVectorField):
         return R[0], R[1], R[2]
 
 class SvExConstantVectorField(SvExVectorField):
+
     def __init__(self, vector):
         self.vector = vector
+        self.__description__ = "Constant = {}".format(vector)
 
     def evaluate(self, x, y, z):
         return self.vector
@@ -66,6 +77,7 @@ class SvExComposedVectorField(SvExVectorField):
         self.sfield1 = sfield1
         self.sfield2 = sfield2
         self.sfield3 = sfield3
+        self.__description__ = "{}({}, {}, {})".format(coords, sfield1, sfield2, sfield3)
 
     def evaluate(self, x, y, z):
         v1 = self.sfield1.evaluate(x, y, z)
@@ -96,6 +108,7 @@ class SvExComposedVectorField(SvExVectorField):
 class SvExAbsoluteVectorField(SvExVectorField):
     def __init__(self, field):
         self.field = field
+        self.__description__ = "Absolute({})".format(field)
 
     def evaluate(self, x, y, z):
         r = self.field.evaluate(x, y, z)
@@ -108,6 +121,7 @@ class SvExAbsoluteVectorField(SvExVectorField):
 class SvExRelativeVectorField(SvExVectorField):
     def __init__(self, field):
         self.field = field
+        self.__description__ = "Relative({})".format(field)
 
     def evaluate(self, x, y, z):
         r = self.field.evaluate(x, y, z)
@@ -118,6 +132,9 @@ class SvExRelativeVectorField(SvExVectorField):
         return rxs - xs, rys - ys, rzs - zs
 
 class SvExVectorFieldLambda(SvExVectorField):
+
+    __description__ = "Formula"
+
     def __init__(self, function, variables, in_field):
         self.function = function
         self.variables = variables
@@ -157,8 +174,10 @@ class SvExVectorFieldBinOp(SvExVectorField):
         return np.vectorize(func, signature="(m),(m),(m)->(m),(m),(m)")(xs, ys, zs)
 
 class SvExAverageVectorField(SvExVectorField):
+
     def __init__(self, fields):
         self.fields = fields
+        self.__description__ = "Average"
 
     def evaluate(self, x, y, z):
         vectors = np.array([field.evaluate(x, y, z) for field in self.fields])
@@ -180,6 +199,7 @@ class SvExVectorFieldCrossProduct(SvExVectorField):
     def __init__(self, field1, field2):
         self.field1 = field1
         self.field2 = field2
+        self.__description__ = "{} x {}".format(field1, field2)
 
     def evaluate(self, x, y, z):
         v1 = self.field1.evaluate(x, y, z)
@@ -198,6 +218,7 @@ class SvExVectorFieldMultipliedByScalar(SvExVectorField):
     def __init__(self, vector_field, scalar_field):
         self.vector_field = vector_field
         self.scalar_field = scalar_field
+        self.__description__ = "{} * {}".format(scalar_field, vector_field)
 
     def evaluate(self, x, y, z):
         scalar = self.scalar_field.evaluate(x, y, z)
@@ -214,10 +235,12 @@ class SvExVectorFieldMultipliedByScalar(SvExVectorField):
         return np.vectorize(product, signature="(m),(m),(m)->(m),(m),(m)")(xs, ys, zs)
 
 class SvExVectorFieldsLerp(SvExVectorField):
+
     def __init__(self, vfield1, vfield2, scalar_field):
         self.vfield1 = vfield1
         self.vfield2 = vfield2
         self.scalar_field = scalar_field
+        self.__description__ = "Lerp"
 
     def evaluate(self, x, y, z):
         scalar = self.scalar_field.evaluate(x, y, z)
@@ -238,6 +261,7 @@ class SvExNoiseVectorField(SvExVectorField):
     def __init__(self, noise_type, seed):
         self.noise_type = noise_type
         self.seed = seed
+        self.__description__ = "{} noise".format(noise_type)
 
     def evaluate(self, x, y, z):
         noise.seed_set(self.seed)
@@ -252,6 +276,7 @@ class SvExNoiseVectorField(SvExVectorField):
         return np.vectorize(mk_noise, signature="(3)->(),(),()")(vectors)
 
 class SvExKdtVectorField(SvExVectorField):
+
     def __init__(self, vertices=None, kdt=None, falloff=None, negate=False):
         self.falloff = falloff
         self.negate = negate
@@ -264,6 +289,7 @@ class SvExKdtVectorField(SvExVectorField):
             self.kdt.balance()
         else:
             raise Exception("Either kdt or vertices must be provided")
+        self.__description__ = "KDT Attractor"
 
     def evaluate(self, x, y, z):
         nearest, i, distance = self.kdt.find((x, y, z))
@@ -304,6 +330,7 @@ class SvExVectorFieldPointDistance(SvExVectorField):
         self.center = center
         self.falloff = falloff
         self.metric = metric
+        self.__description__ = "Distance from {}".format(tuple(center))
 
     def evaluate_grid(self, xs, ys, zs):
         x0, y0, z0 = tuple(self.center)
@@ -343,10 +370,12 @@ class SvExVectorFieldPointDistance(SvExVectorField):
             return point
 
 class SvExLineAttractorVectorField(SvExVectorField):
+
     def __init__(self, center, direction, falloff=None):
         self.center = center
         self.direction = direction
         self.falloff = falloff
+        self.__description__ = "Line Attractor"
 
     def evaluate(self, x, y, z):
         vertex = np.array([x,y,z])
@@ -378,10 +407,12 @@ class SvExLineAttractorVectorField(SvExVectorField):
             return R[0], R[1], R[2]
 
 class SvExPlaneAttractorVectorField(SvExVectorField):
+    
     def __init__(self, center, direction, falloff=None):
         self.center = center
         self.direction = direction
         self.falloff = falloff
+        self.__description__ = "Plane Attractor"
 
     def evaluate(self, x, y, z):
         vertex = np.array([x,y,z])
@@ -411,6 +442,7 @@ class SvExPlaneAttractorVectorField(SvExVectorField):
             return R[0], R[1], R[2]
 
 class SvExBvhAttractorVectorField(SvExVectorField):
+
     def __init__(self, bvh=None, verts=None, faces=None, falloff=None, use_normal=False, signed_normal=False):
         self.falloff = falloff
         self.use_normal = use_normal
@@ -421,6 +453,7 @@ class SvExBvhAttractorVectorField(SvExVectorField):
             self.bvh = bvhtree.BVHTree.FromPolygons(verts, faces)
         else:
             raise Exception("Either bvh or verts and faces must be provided!")
+        self.__description__ = "BVH Attractor"
 
     def evaluate(self, x, y, z):
         vertex = Vector((x,y,z))
@@ -462,9 +495,11 @@ class SvExBvhAttractorVectorField(SvExVectorField):
             return R[0], R[1], R[2]
 
 class SvExVectorFieldTangent(SvExVectorField):
+
     def __init__(self, field1, field2):
         self.field1 = field1
         self.field2 = field2
+        self.__description__ = "Tangent"
 
     def evaluate(self, x, y, z):
         v1 = self.field1.evaluate(x,y,z)
@@ -486,9 +521,11 @@ class SvExVectorFieldTangent(SvExVectorField):
         return np.vectorize(project, signature="(3),(3)->(),(),()")(vectors1, vectors2)
 
 class SvExVectorFieldCotangent(SvExVectorField):
+
     def __init__(self, field1, field2):
         self.field1 = field1
         self.field2 = field2
+        self.__description__ = "Cotangent"
 
     def evaluate(self, x, y, z):
         v1 = self.field1.evaluate(x,y,z)
@@ -511,9 +548,11 @@ class SvExVectorFieldCotangent(SvExVectorField):
         return np.vectorize(project, signature="(3),(3)->(),(),()")(vectors1, vectors2)
 
 class SvExVectorFieldComposition(SvExVectorField):
+
     def __init__(self, field1, field2):
         self.field1 = field1
         self.field2 = field2
+        self.__description__ = "Composition"
 
     def evaluate(self, x, y, z):
         x1, y1, z1 = self.field1.evaluate(x,y,z)
@@ -529,6 +568,7 @@ class SvExScalarFieldGradient(SvExVectorField):
     def __init__(self, field, step):
         self.field = field
         self.step = step
+        self.__description__ = "Grad({})".format(field)
 
     def evaluate(self, x, y, z):
         step = self.step
@@ -564,6 +604,7 @@ class SvExVectorFieldRotor(SvExVectorField):
     def __init__(self, field, step):
         self.field = field
         self.step = step
+        self.__description__ = "Rot({})".format(field)
 
     def evaluate(self, x, y, z):
         step = self.step
@@ -624,6 +665,7 @@ class SvExBendAlongCurveField(SvExVectorField):
         if length_mode == 'L':
             self.length_solver = SvExCurveLengthSolver(curve)
             self.length_solver.prepare('SPL', resolution)
+        self.__description__ = "Bend along {}".format(curve)
 
     def get_matrix(self, tangent, scale):
         x = Vector((1.0, 0.0, 0.0))
@@ -757,6 +799,7 @@ class SvExBendAlongSurfaceField(SvExVectorField):
         self.flip = flip
         self.u_bounds = (0, 1)
         self.v_bounds = (0, 1)
+        self.__description__ = "Bend along {}".format(surface)
 
     def get_other_axes(self):
         # Select U and V to be two axes except orient_axis
@@ -828,11 +871,13 @@ class SvExBendAlongSurfaceField(SvExVectorField):
         return np.array([xs, ys, zs])
 
 class SvExVoronoiVectorField(SvExVectorField):
+
     def __init__(self, vertices):
         self.kdt = kdtree.KDTree(len(vertices))
         for i, v in enumerate(vertices):
             self.kdt.insert(v, i)
         self.kdt.balance()
+        self.__description__ = "Voronoi"
 
     def evaluate(self, x, y, z):
         v = Vector((x,y,z))

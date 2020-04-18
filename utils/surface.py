@@ -44,6 +44,13 @@ def rotate_vector_around_vector_np(v, k, theta):
     return s1 + s2 + s3
 
 class SvExSurface(object):
+    def __repr__(self):
+        if hasattr(self, '__description__'):
+            description = self.__description__
+        else:
+            description = self.__class__.__name__
+        return "<{} surface>".format(description)
+
     def evaluate(self, u, v):
         raise Exception("not implemented!")
 
@@ -121,6 +128,7 @@ class SvExSurfaceSubdomain(SvExSurface):
             self.normal_delta = surface.normal_delta
         else:
             self.normal_delta = 0.001
+        self.__description__ = "{}[{} .. {}][{} .. {}]".format(surface, u_bounds[0], u_bounds[1], v_bounds[0], v_bounds[1])
 
     def evaluate(self, u, v):
         return self.surface.evaluate(u, v)
@@ -147,6 +155,8 @@ class SvExSurfaceSubdomain(SvExSurface):
         return self.v_bounds[1]
 
 class SvExPlane(SvExSurface):
+    __description__ = "Plane"
+    
     def __init__(self, point, vector1, vector2):
         self.point = point
         self.vector1 = vector1
@@ -195,6 +205,8 @@ class SvExPlane(SvExSurface):
         return np.tile(normal, len(us))
 
 class SvExEquirectSphere(SvExSurface):
+    __description__ = "Equirectangular Sphere"
+
     def __init__(self, center, radius, theta1):
         self.center = center
         self.radius = radius
@@ -255,6 +267,8 @@ class SvExEquirectSphere(SvExSurface):
         return np.stack((xs, ys, zs)).T
 
 class SvExLambertSphere(SvExSurface):
+    __description__ = "Lambert Sphere"
+
     def __init__(self, center, radius):
         self.center = center
         self.radius = radius
@@ -314,6 +328,8 @@ class SvExLambertSphere(SvExSurface):
         return np.stack((xs, ys, zs)).T
 
 class SvExGallSphere(SvExSurface):
+    __description__ = "Gall Sphere"
+
     def __init__(self, center, radius):
         self.center = center
         self.radius = radius
@@ -373,6 +389,8 @@ class SvExGallSphere(SvExSurface):
         return np.stack((xs, ys, zs)).T
 
 class SvExDefaultSphere(SvExSurface):
+    __description__ = "Default Sphere"
+
     def __init__(self, center, radius):
         self.center = center
         self.radius = radius
@@ -424,6 +442,8 @@ class SvExDefaultSphere(SvExSurface):
         return np.stack((xs, ys, zs)).T
 
 class SvExLambdaSurface(SvExSurface):
+    __description__ = "Formula"
+
     def __init__(self, function):
         self.function = function
         self.u_bounds = (0.0, 1.0)
@@ -475,6 +495,8 @@ class SvExLambdaSurface(SvExSurface):
         return normal
 
 class SvExInterpolatingSurface(SvExSurface):
+    __description__ = "Interpolating"
+
     def __init__(self, u_bounds, v_bounds, u_spline_constructor, v_splines):
         self.v_splines = v_splines
         self.u_spline_constructor = u_spline_constructor
@@ -586,6 +608,7 @@ class SvExDeformedByFieldSurface(SvExSurface):
         self.field = field
         self.coefficient = coefficient
         self.normal_delta = 0.001
+        self.__description__ = "{}({})".format(field, surface)
 
     def get_coord_mode(self):
         return self.surface.get_coord_mode()
@@ -657,6 +680,8 @@ class SvExDeformedByFieldSurface(SvExSurface):
         return normal
 
 class SvExRevolutionSurface(SvExSurface):
+    __description__ = "Revolution"
+
     def __init__(self, curve, point, direction):
         self.curve = curve
         self.point = point
@@ -691,6 +716,7 @@ class SvExExtrudeCurveVectorSurface(SvExSurface):
         self.curve = curve
         self.vector = vector
         self.normal_delta = 0.001
+        self.__description__ = "Extrusion of {}".format(curve)
 
     def evaluate(self, u, v):
         point_on_curve = self.curve.evaluate(u)
@@ -726,6 +752,7 @@ class SvExExtrudeCurvePointSurface(SvExSurface):
         self.curve = curve
         self.point = point
         self.normal_delta = 0.001
+        self.__description__ = "Extrusion of {}".format(curve)
 
     def evaluate(self, u, v):
         point_on_curve = self.curve.evaluate(u)
@@ -762,6 +789,7 @@ class SvExExtrudeCurveCurveSurface(SvExSurface):
         self.u_curve = u_curve
         self.v_curve = v_curve
         self.normal_delta = 0.001
+        self.__description__ = "Extrusion of {}".format(u_curve)
 
     def evaluate(self, u, v):
         u_point = self.u_curve.evaluate(u)
@@ -804,6 +832,7 @@ class SvExExtrudeCurveFrenetSurface(SvExSurface):
         self.profile = profile
         self.extrusion = extrusion
         self.normal_delta = 0.001
+        self.__description__ = "Extrusion of {}".format(profile)
 
     def evaluate(self, u, v):
         return self.evaluate_array(np.array([u]), np.array([v]))[0]
@@ -850,6 +879,7 @@ class SvExExtrudeCurveZeroTwistSurface(SvExSurface):
         self.extrusion = extrusion
         self.normal_delta = 0.001
         self.extrusion.pre_calc_torsion_integral(resolution)
+        self.__description__ = "Extrusion of {}".format(profile)
 
     def evaluate(self, u, v):
         return self.evaluate_array(np.array([u]), np.array([v]))[0]
@@ -892,6 +922,8 @@ class SvExExtrudeCurveZeroTwistSurface(SvExSurface):
         return self.extrusion.get_u_bounds()[1]
 
 class SvExCurveLerpSurface(SvExSurface):
+    __description__ = "Lerp"
+
     def __init__(self, curve1, curve2):
         self.curve1 = curve1
         self.curve2 = curve2
@@ -934,6 +966,8 @@ class SvExCurveLerpSurface(SvExSurface):
         return self.v_bounds[1] - self.v_bounds[0]
 
 class SvExSurfaceLerpSurface(SvExSurface):
+    __description__ = "Lerp"
+
     def __init__(self, surface1, surface2, coefficient):
         self.surface1 = surface1
         self.surface2 = surface2
@@ -981,6 +1015,8 @@ class SvExSurfaceLerpSurface(SvExSurface):
         return points
 
 class SvExTaperSweepSurface(SvExSurface):
+    __description__ = "Taper & Sweep"
+
     def __init__(self, profile, taper, point, direction):
         self.profile = profile
         self.taper = taper

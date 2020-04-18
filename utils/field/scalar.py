@@ -21,6 +21,14 @@ from sverchok.utils.math import from_cylindrical, from_spherical, to_cylindrical
 ##################
 
 class SvExScalarField(object):
+
+    def __repr__(self):
+        if hasattr(self, '__description__'):
+            description = self.__description__
+        else:
+            description = self.__class__.__name__
+        return "<{} scalar field>".format(description)
+
     def evaluate(self, point):
         raise Exception("not implemented")
 
@@ -28,7 +36,9 @@ class SvExScalarField(object):
         raise Exception("not implemented")
 
 class SvExConstantScalarField(SvExScalarField):
-    def __init__(self, value): self.value = value
+    def __init__(self, value):
+        self.value = value
+        self.__description__ = "Constant = {}".format(value)
 
     def evaluate(self, x, y, z):
         return self.value
@@ -42,6 +52,7 @@ class SvExVectorFieldDecomposed(SvExScalarField):
         self.vfield = vfield
         self.coords = coords
         self.axis = axis
+        self.__description__ = "{}.{}[{}]".format(vfield, coords, axis)
 
     def evaluate(self, x, y, z):
         result = self.vfield.evaluate(x, y, z)
@@ -68,6 +79,8 @@ class SvExVectorFieldDecomposed(SvExScalarField):
             return vectors[:, self.axis]
 
 class SvExScalarFieldLambda(SvExScalarField):
+    __description__ = "Formula"
+
     def __init__(self, function, variables, in_field):
         self.function = function
         self.variables = variables
@@ -92,6 +105,7 @@ class SvExScalarFieldPointDistance(SvExScalarField):
         self.center = center
         self.falloff = falloff
         self.metric = metric
+        self.__description__ = "Distance from {}".format(tuple(center))
 
     def evaluate_grid(self, xs, ys, zs):
         x0, y0, z0 = tuple(self.center)
@@ -144,6 +158,7 @@ class SvExScalarFieldBinOp(SvExScalarField):
 class SvExNegatedScalarField(SvExScalarField):
     def __init__(self, field):
         self.field = field
+        self.__description__ = "Negate({})".format(field)
 
     def evaluate(self, x, y, z):
         v = self.field.evaluate(x, y, z)
@@ -156,6 +171,7 @@ class SvExVectorFieldsScalarProduct(SvExScalarField):
     def __init__(self, field1, field2):
         self.field1 = field1
         self.field2 = field2
+        self.__description__ = "{} . {}".format(field1, field2)
 
     def evaluate(self, x, y, z):
         v1 = self.field1.evaluate(x, y, z)
@@ -173,6 +189,7 @@ class SvExVectorFieldsScalarProduct(SvExScalarField):
 class SvExVectorFieldNorm(SvExScalarField):
     def __init__(self, field):
         self.field = field
+        self.__description__ = "Norm({})".format(field)
 
     def evaluate(self, x, y, z):
         v = self.field.evaluate(x, y, z)
@@ -188,6 +205,7 @@ class SvExMergedScalarField(SvExScalarField):
     def __init__(self, mode, fields):
         self.mode = mode
         self.fields = fields
+        self.__description__ = "{}{}".format(mode, fields)
 
     def _minimal_diff(self, array, **kwargs):
         v1,v2 = np.partition(array, 1, **kwargs)[0:2]
@@ -226,6 +244,8 @@ class SvExMergedScalarField(SvExScalarField):
         return value
 
 class SvExKdtScalarField(SvExScalarField):
+    __description__ = "KDT"
+
     def __init__(self, vertices=None, kdt=None, falloff=None):
         self.falloff = falloff
         if kdt is not None:
@@ -260,6 +280,8 @@ class SvExKdtScalarField(SvExScalarField):
             return norms
 
 class SvExLineAttractorScalarField(SvExScalarField):
+    __description__ = "Line Attractor"
+
     def __init__(self, center, direction, falloff=None):
         self.center = center
         self.direction = direction
@@ -292,6 +314,8 @@ class SvExLineAttractorScalarField(SvExScalarField):
             return norms
 
 class SvExPlaneAttractorScalarField(SvExScalarField):
+    __description__ = "Plane Attractor"
+
     def __init__(self, center, direction, falloff=None):
         self.center = center
         self.direction = direction
@@ -322,6 +346,8 @@ class SvExPlaneAttractorScalarField(SvExScalarField):
             return norms
 
 class SvExBvhAttractorScalarField(SvExScalarField):
+    __description__ = "BVH Attractor"
+
     def __init__(self, bvh=None, verts=None, faces=None, falloff=None, signed=False):
         self.falloff = falloff
         self.signed = signed
@@ -362,6 +388,8 @@ class SvExBvhAttractorScalarField(SvExScalarField):
             return norms
 
 class SvExVectorScalarFieldComposition(SvExScalarField):
+    __description__ = "Composition"
+
     def __init__(self, vfield, sfield):
         self.sfield = sfield
         self.vfield = vfield
@@ -379,6 +407,7 @@ class SvExVectorFieldDivergence(SvExScalarField):
     def __init__(self, field, step):
         self.field = field
         self.step = step
+        self.__description__ = "Div({})".format(field)
 
     def evaluate(self, x, y, z):
         step = self.step
@@ -414,6 +443,7 @@ class SvExScalarFieldLaplacian(SvExScalarField):
     def __init__(self, field, step):
         self.field = field
         self.step = step
+        self.__description__ = "Laplace({})".format(field)
 
     def evaluate(self, x, y, z):
         step = self.step
@@ -444,6 +474,8 @@ class SvExScalarFieldLaplacian(SvExScalarField):
         return result
 
 class SvExVoronoiScalarField(SvExScalarField):
+    __description__ = "Voronoi"
+
     def __init__(self, vertices):
         self.kdt = kdtree.KDTree(len(vertices))
         for i, v in enumerate(vertices):

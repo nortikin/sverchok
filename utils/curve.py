@@ -26,6 +26,13 @@ def make_euclidian_ts(pts):
     return tknots
 
 class SvExCurve(object):
+    def __repr__(self):
+        if hasattr(self, '__description__'):
+            description = self.__description__
+        else:
+            description = self.__class__.__name__
+        return "<{} curve>".format(description)
+
     def evaluate(self, t):
         raise Exception("not implemented!")
 
@@ -262,6 +269,7 @@ class SvExConcatCurve(SvExCurve):
             self.u_max = self.ranges.sum()
             self.min_bounds = np.insert(np.cumsum(self.ranges), 0, 0)
         self.tangent_delta = 0.001
+        self.__description__ = "Concat{}".format(curves)
 
     def get_u_bounds(self):
         return (0.0, self.u_max)
@@ -346,6 +354,7 @@ class SvExFlipCurve(SvExCurve):
             self.tangent_delta = curve.tangent_delta
         else:
             self.tangent_delta = 0.001
+        self.__description__ = "Flip({})".format(curve)
 
     def get_u_bounds(self):
         return self.curve.get_u_bounds()
@@ -399,6 +408,7 @@ class SvExCurveSegment(SvExCurve):
         else:
             self.u_bounds = (u_min, u_max)
             self.target_u_bounds = (u_min, u_max)
+        self.__description__ = "{}[{} .. {}]".format(curve, u_min, u_max)
 
     def get_u_bounds(self):
         return self.u_bounds
@@ -446,6 +456,8 @@ class SvExCurveSegment(SvExCurve):
         return self.curve.derivatives_array(ts)
 
 class SvExLine(SvExCurve):
+    __description__ = "Line"
+
     def __init__(self, point, direction):
         self.point = np.array(point)
         self.direction = np.array(direction)
@@ -479,6 +491,8 @@ class SvExLine(SvExCurve):
         return result
 
 class SvExCircle(SvExCurve):
+    __description__ = "Circle"
+
     def __init__(self, matrix, radius):
         self.matrix = np.array(matrix.to_3x3())
         self.center = np.array(matrix.translation)
@@ -524,6 +538,8 @@ class SvExCircle(SvExCurve):
 #         return np.apply_along_axis(lambda v: self.matrix @ v, 1, vectors)
 
 class SvExLambdaCurve(SvExCurve):
+    __description__ = "Formula"
+
     def __init__(self, function):
         self.function = function
         self.u_bounds = (0.0, 1.0)
@@ -549,6 +565,8 @@ class SvExLambdaCurve(SvExCurve):
         return (points_h - points) / self.tangent_delta
 
 class SvExSplineCurve(SvExCurve):
+    __description__ = "Spline"
+
     def __init__(self, spline):
         self.spline = spline
 
@@ -576,6 +594,7 @@ class SvExDeformedByFieldCurve(SvExCurve):
         self.field = field
         self.coefficient = coefficient
         self.tangent_delta = 0.001
+        self.__description__ = "{}({})".format(field, curve)
 
     def get_u_bounds(self):
         return self.curve.get_u_bounds()
@@ -600,6 +619,7 @@ class SvExCastCurveToPlane(SvExCurve):
         self.coefficient = coefficient
         self.plane = PlaneEquation.from_normal_and_point(normal, point)
         self.tangent_delta = 0.001
+        self.__description__ = "{} casted to Plane".format(curve)
 
     def evaluate(self, t):
         point = self.curve.evaluate(t)
@@ -623,6 +643,7 @@ class SvExCastCurveToSphere(SvExCurve):
         self.radius = radius
         self.coefficient = coefficient
         self.tangent_delta = 0.001
+        self.__description__ = "{} casted to Sphere".format(curve)
 
     def evaluate(self, t):
         return self.evaluate_array(np.array([t]))[0]
@@ -648,6 +669,7 @@ class SvExCastCurveToCylinder(SvExCurve):
         self.coefficient = coefficient
         self.line = LineEquation.from_direction_and_point(direction, center)
         self.tangent_delta = 0.001
+        self.__description__ = "{} casted to Cylinder".format(curve)
 
     def evaluate(self, t):
         point = self.curve.evaluate(t)
@@ -672,6 +694,8 @@ class SvExCastCurveToCylinder(SvExCurve):
         return self.curve.get_u_bounds()
 
 class SvExCurveLerpCurve(SvExCurve):
+    __description__ = "Lerp"
+
     def __init__(self, curve1, curve2, coefficient):
         self.curve1 = curve1
         self.curve2 = curve2
@@ -701,6 +725,7 @@ class SvExCurveOnSurface(SvExCurve):
         self.surface = surface
         self.axis = axis
         self.tangent_delta = 0.001
+        self.__description__ = "{} on {}".format(curve, surface)
 
     def get_u_bounds(self):
         return self.curve.get_u_bounds()
@@ -733,6 +758,7 @@ class SvExIsoUvCurve(SvExCurve):
         self.value = value
         self.flip = flip
         self.tangent_delta = 0.001
+        self.__description__ = "{} at {} = {}".format(surface, fixed_axis, value)
 
     def get_u_bounds(self):
         if self.fixed_axis == 'U':
