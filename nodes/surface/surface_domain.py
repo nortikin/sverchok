@@ -39,19 +39,30 @@ class SvExSurfaceDomainNode(bpy.types.Node, SverchCustomTreeNode):
         v_max_out = []
         v_range_out = []
         for surfaces in surface_s:
+            new_u_min, new_u_max = [], []
+            new_v_min, new_v_max = [], []
+            new_u_range, new_v_range = [], []
             for surface in surfaces:
                 u_min, u_max = surface.get_u_min(), surface.get_u_max()
                 v_min, v_max = surface.get_v_min(), surface.get_v_max()
                 u_range = u_max - u_min
                 v_range = v_max - v_min
 
-                u_min_out.append(u_min)
-                u_max_out.append(u_max)
-                u_range_out.append(u_range)
+                new_u_min.append(u_min)
+                new_u_max.append(u_max)
+                new_u_range.append(u_range)
 
-                v_min_out.append(v_min)
-                v_max_out.append(v_max)
-                v_range_out.append(v_range)
+                new_v_min.append(v_min)
+                new_v_max.append(v_max)
+                new_v_range.append(v_range)
+
+            u_min_out.append(new_u_min)
+            u_max_out.append(new_u_max)
+            u_range_out.append(new_u_range)
+
+            v_min_out.append(new_v_min)
+            v_max_out.append(new_v_max)
+            v_range_out.append(new_v_range)
 
         self.outputs['UMin'].sv_set(u_min_out)
         self.outputs['UMax'].sv_set(u_max_out)
