@@ -760,18 +760,17 @@ def updateNode(self, context):
 
 @contextmanager
 def context_sensitive_throttle(node_tree):
-    if node_tree.skip_tree_update:
-        try:
-            yield node_tree
-        finally:
-            pass
+    """
+    the aim here is to allow "skip_tree_update" to be the same at the
+    end of the function, no matter how nested calls are to this function.
+    """
 
-    else:
-        try:
-            node_tree.skip_tree_update = True
-            yield node_tree
-        finally:
-            node_tree.skip_tree_update = False
+    try:
+        prev_skip_state = node_tree.skip_tree_update
+        node_tree.skip_tree_update = True
+        yield node_tree
+    finally:
+        node_tree.skip_tree_update = prev_skip_state
 
 
 def changable_sockets(node, inputsocketname, outputsocketname):
