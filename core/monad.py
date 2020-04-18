@@ -210,7 +210,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
             prop_name = other.prop_name
             prop_func, prop_dict = other.node.__annotations__.get(prop_name, ("", {}))
-            prop_func_name = prop_func.__name__
+            bl_prop_type = prop_func.__name__
 
             if 'attr' in prop_dict:
                 prop_dict.pop('attr')  # this we store in prop_name anyway
@@ -232,17 +232,17 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                 prop_dict['name'] = regex.sub('', prop_name)
                 # print(f"monad: generated name for property function: {prop_name} -> {prop_dict['name']}")
 
-            if prop_func_name == "FloatProperty":
+            if bl_prop_type == "FloatProperty":
                 self.get_current_as_default(prop_dict, other.node, prop_name)
                 prop_settings = self.float_props.add()
                 prop_name_prefix = f"floats_{len(self.float_props)}_"
             
-            elif prop_func_name == "IntProperty":
+            elif bl_prop_type == "IntProperty":
                 self.get_current_as_default(prop_dict, other.node, prop_name)
                 prop_settings = self.int_props.add()
                 prop_name_prefix = f"ints_{len(self.int_props)}_"
 
-            elif prop_func_name == "FloatVectorProperty":
+            elif bl_prop_type == "FloatVectorProperty":
                 info("FloatVectorProperty ignored (normal behaviour since day one). prop_func: %s, prop_dict: %s.", prop_func, prop_dict)
                 return None
             else: # no way to handle it
@@ -269,8 +269,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             
             # if you are seeing errors with this and the other.node.bl_idname is not scriptnodelite
             # the fix will be here somewhere.
-            print(f'{other.node} = other.node')
-            print(f'{other.prop_type} = other.prop_type')
+            #   print(f'{other.node} = other.node')
+            #   print(f'{other.prop_type} = other.prop_type')
             
             if not any(substring in other.prop_type for substring in ["float", "int"]): 
                 return None    
