@@ -75,20 +75,31 @@ class SvSocketAquisition:
                 prop_data = {}
                 new_name, new_type = cls.output_template[-1]
 
-            # transform socket type from dummy to new type
             new_socket = socket.replace_socket(new_type, new_name=new_name)
+
             if prop_name:
                 new_socket.prop_name = prop_name
 
             # update all monad nodes (front facing)
             for instance in monad.instances:
                 sockets = getattr(instance, reverse_lookup[kind])
-                new_socket = sockets.new(new_type, new_name)
-                for name, value in prop_data.items():
-                    if not name == 'prop_name':
-                        setattr(new_socket, name, value)
+                print(prop_data)
+                if prop_name:
+                    print('prop_name!', prop_name)
+
+                with self.sv_throttle_tree_update():
+                    new_socket = sockets.new(new_type, new_name)
+
+                    if (not prop_data) and prop_name:
+                        new_socket.prop_name = prop_name
+
                     else:
-                        new_socket.prop_name = prop_name or ''
+
+                        for name, value in prop_data.items():
+                            if name == 'prop_name':
+                                new_socket.prop_name = prop_name or ''
+                            else:
+                                setattr(new_socket, name, value)
 
             # print('------')
             # print(prop_data)
