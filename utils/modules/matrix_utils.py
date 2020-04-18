@@ -7,7 +7,7 @@
 
 from mathutils import Vector, Matrix
 from sverchok.data_structure import match_long_repeat
-
+import numpy as np
 def vectors_to_matrix(centrs, normals, p0_xdirs):
     mat_collect = []
 
@@ -45,3 +45,13 @@ def matrix_normal(params, T, U):
         m = Matrix.Translation(V) @ n.to_matrix().to_4x4()
         out.append(m)
     return out
+
+def matrix_apply_np(verts, matrix):
+    '''
+    taken from https://blender.stackexchange.com/a/139517
+    verts should be a numpy array with shape (n,3)
+    matrix can be a regular mathultis matrix'''
+
+    verts_co_4d = np.ones(shape=(verts.shape[0], 4), dtype=np.float)
+    verts_co_4d[:, :-1] = verts  # cos v (x,y,z,1) - point,   v(x,y,z,0)- vector
+    return np.einsum('ij,aj->ai', matrix, verts_co_4d)[:, :-1]

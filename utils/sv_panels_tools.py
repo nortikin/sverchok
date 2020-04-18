@@ -58,15 +58,14 @@ class SverchokBakeAll(bpy.types.Operator):
     def poll(cls, context):
         if bpy.data.node_groups.__len__():
             return True
-        else:
-            return False
 
     def execute(self, context):
         ng = bpy.data.node_groups[self.node_tree_name]
-        nodes = filter(lambda n: hasattr(n, "bake"), ng.nodes)
+        
+        nodes = filter(lambda n: n.bl_idname == 'SvVDExperimental', ng.nodes)
         for node in nodes:
-            if node.bakebuttonshow:
-                node.bake()
+            if node.activate:
+                node.bake() 
 
         return {'FINISHED'}
 

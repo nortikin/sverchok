@@ -15,6 +15,9 @@ Contents:
 
    installation
    geometry
+   curves
+   surfaces
+   fields
    induction
    panels
    nodes

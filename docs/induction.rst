@@ -6,6 +6,9 @@ Introduction to Sverchok
 
 You have installed the addon, if not then read the installation notes. If you've ever used Nodes for anything in Blender, Cycles / Compositor Nodes feel free to continue straight to Unit 01 if you see the RNA icon in the list of NodeView types.
 
+This section will introduce you to a selection of nodes that can be combined
+to create renderable geometry. Starting with the simple Plane generator
+
 Unit 00 - Introduction to NodeView and 3DView
 ---------------------------------------------
 

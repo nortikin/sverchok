@@ -37,7 +37,7 @@ __new_verts = []
 __new_faces = []
 for k, v in locators.items():
 
-    working_geom = bmesh_from_pydata(obj_verts_in, None, obj_faces_in, normal_update=True)
+    working_geom = bmesh_from_pydata(obj_verts_in, [], obj_faces_in, normal_update=True)
     for pt, normal in v:
         geom_in = working_geom.verts[:] + working_geom.edges[:] + working_geom.faces[:]
 

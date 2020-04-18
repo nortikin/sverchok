@@ -16,8 +16,24 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import numpy as np
 import math
 from math import sin, cos, radians, degrees, sqrt, asin, acos, atan2
+
+coordinate_modes = [
+    ('XYZ', "Carthesian", "Carthesian coordinates - x, y, z", 0),
+    ('CYL', "Cylindrical", "Cylindrical coordinates - rho, phi, z", 1),
+    ('SPH', "Spherical", "Spherical coordinates - rho, phi, theta", 2)
+]
+
+falloff_types = [
+        ('NONE', "None - R", "Output distance", 0),
+        ("inverse", "Inverse - 1/R", "", 1),
+        ("inverse_square", "Inverse square - 1/R^2", "Similar to gravitation or electromagnetizm", 2),
+        ("inverse_cubic", "Inverse cubic - 1/R^3", "", 3),
+        ("inverse_exp", "Inverse exponent - Exp(-R)", "", 4),
+        ("gauss", "Gauss - Exp(-R^2/2)", "", 5)
+    ]
 
 def smooth(x):
     return 3*x*x - 2*x*x*x
@@ -55,6 +71,12 @@ def inverse_exp(c, x):
 def gauss(c, x):
     return math.exp(-c*x*x/2.0)
 
+def inverse_exp_np(c, x):
+    return np.exp(-c*x)
+
+def gauss_np(c, x):
+    return np.exp(-c*x*x/2.0)
+
 def falloff(type, radius, rho):
     if rho <= 0:
         return 1.0
@@ -62,6 +84,31 @@ def falloff(type, radius, rho):
         return 0.0
     func = globals()[type]
     return 1.0 - func(rho / radius)
+
+def falloff_array(falloff_type, amplitude, coefficient, clamp=False):
+    types = {
+            'inverse': inverse,
+            'inverse_square': inverse_square,
+            'inverse_cubic': inverse_cubic,
+            'inverse_exp': inverse_exp_np,
+            'gauss': gauss_np
+        }
+    falloff_func = types[falloff_type]
+
+    def function(rho_array):
+        zero_idxs = (rho_array == 0)
+        nonzero = (rho_array != 0)
+        result = np.empty_like(rho_array)
+        result[zero_idxs] = amplitude
+        result[nonzero] = amplitude * falloff_func(coefficient, rho_array[nonzero])
+        negative = result <= 0
+        result[negative] = 0.0
+
+        if clamp:
+            high = result >= rho_array
+            result[high] = rho_array[high]
+        return result
+    return function
 
 # Standard functions which for some reasons are not in the math module
 def sign(x):

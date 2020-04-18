@@ -31,7 +31,7 @@ from sverchok.utils.logging import info, error
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import get_other_socket, updateNode, match_long_repeat
 from sverchok.core.update_system import make_tree_from_nodes, do_update
-from sverchok.core.monad_properties import SvIntPropertySettingsGroup, SvFloatPropertySettingsGroup
+from sverchok.core.monad_properties import SvIntPropertySettingsGroup, SvFloatPropertySettingsGroup, ensure_unique
 
 
 MONAD_COLOR = (0.830819, 0.911391, 0.754562)
@@ -46,6 +46,10 @@ socket_types = [
 reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
 
+def nice_ui_name(input_str):
+    a = input_str.replace('_', ' ')
+    b = a.title()
+    return b
 
 def make_valid_identifier(name):
     """Create a valid python identifier from name for use a a part of class name"""
@@ -146,8 +150,6 @@ def generate_name(prop_name, cls_dict):
         return prop_name
 
 
-
-
 class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     ''' Sverchok - groups '''
     bl_idname = 'SverchGroupTreeType'
@@ -174,6 +176,14 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         # if not prop_dict['name']:
         #     prop_dict['name'] = node.name + '|' + prop_name
 
+    def get_stored_prop_names(self):
+        """
+        - this will list all currently stored props for this monad / tree
+        - it reflects the state prior to acquisition of a new socket with prop.
+        """
+        props = self.get_all_props()
+        return list(props['float_props'].keys()) + list(props['int_props'].keys())
+
 
     def add_prop_from(self, socket):
         """
@@ -183,63 +193,123 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         cls = get_node_class_reference(self.cls_bl_idname)
         cls_dict = cls.__dict__ if cls else {}
 
-        if other.prop_name:
-            prop_name = other.prop_name
+        local_debug = False
+        # reference_obj_id = cls.instances[0]
+        # print(reference_obj_id.__annotations__)
 
-            # prop_func, prop_dict = getattr(other.node.rna_type, prop_name, ("", {}))  # <-- in 2.79
+        try:
+            monad_prop_names = self.get_stored_prop_names()
+            has_monad_prop_names = True
+            print(monad_prop_names)
+        except:
+            print('no prop names yet in : add_prop_from call')
+            has_monad_prop_names = False
+
+
+        if other.prop_name:
+
+            prop_name = other.prop_name
             prop_func, prop_dict = other.node.__annotations__.get(prop_name, ("", {}))
+
+            if 'attr' in prop_dict:
+                prop_dict.pop('attr')  # this we store in prop_name anyway
+
+            if 'update' in prop_dict:
+                """
+                the node may be doing a tonne of stuff in a wrapped update,
+                but because this property will be on a shell node (the monad outside) we can
+                replace it with a reference to updateNode. i think this is a sane thing to ensure.
+                """
+                prop_dict['update'] = updateNode
+
+            if not 'name' in prop_dict:
+                """
+                name is used exclusively for displaying name on the slider or label
+                most properties will have this defined anyway, but just in case.
+                """
+                regex = re.compile('[^a-z A-Z0-9]')
+                prop_dict['name'] = regex.sub('', prop_name)
+                print(f"monad: generated name for property function: {prop_name} -> {prop_dict['name']}")
+
+            if local_debug:
+                print("prop_func:", prop_func)   # tells us the kind of property to make
+                print("prop_dict:", prop_dict)   # tells us the attributes of the property
+                print("prop_name:", prop_name)   # tells the socket / slider ui which prop to display
+                #                                # and its associated 'name' attribute from the prop_dict
 
             if prop_func.__name__ == "FloatProperty":
                 self.get_current_as_default(prop_dict, other.node, prop_name)
                 prop_settings = self.float_props.add()
+                prop_name_prefix = f"floats_{len(self.float_props)}_"
             elif prop_func.__name__ == "IntProperty":
                 self.get_current_as_default(prop_dict, other.node, prop_name)
                 prop_settings = self.int_props.add()
+                prop_name_prefix = f"ints_{len(self.int_props)}_"
             elif prop_func.__name__ == "FloatVectorProperty":
                 info("FloatVectorProperty ignored (normal behaviour since day one). prop_func: %s, prop_dict: %s.", prop_func, prop_dict)
-                return None # for now etc
+                return None
             else: # no way to handle it
                 return None
 
-            # print('dict')
-            # pprint.pprint(prop_dict)
-            new_name = generate_name(prop_name, cls_dict)
+            if other.node.bl_idname == "SvNumberNode":
+                if "float" in prop_name:
+                    prop_dict['min'] = other.node.float_min
+                    prop_dict['max'] = other.node.float_max
+                elif "int" in prop_name:
+                    prop_dict['min'] = other.node.int_min
+                    prop_dict['max'] = other.node.int_max
+
+            new_name = prop_name_prefix + prop_name
+            if has_monad_prop_names:
+                new_name = ensure_unique(monad_prop_names, new_name)
+
             prop_settings.prop_name = new_name
             prop_settings.set_settings(prop_dict)
             socket.prop_name = new_name
             return new_name
 
         elif hasattr(other, "prop_type"):
-            if "float" in other.prop_type:
-                prop_settings = self.float_props.add()
-            elif "int" in other.prop_type:
-                prop_settings = self.int_props.add()
-            else:
+
+            # if you are seeing errors with this and the other.node.bl_idname is not scriptnodelite
+            # the fix will be here somewhere.
+            print(f'{other.node} = other.node')
+            print(f'{other.prop_type} = other.prop_type')
+
+            if not any(substring in other.prop_type for substring in ["float", "int"]):
                 return None
 
-            new_name = generate_name(make_valid_identifier(other.name), cls_dict)
+            if "float" in other.prop_type:
+                prop_settings = self.float_props.add()
+                prop_name_prefix = f"floats_{len(self.float_props)}_"
+            elif "int" in other.prop_type:
+                prop_settings = self.int_props.add()
+                prop_name_prefix = f"ints_{len(self.int_props)}_"
+
+            new_name = prop_name_prefix + other.name
+            if has_monad_prop_names:
+                new_name = ensure_unique(monad_prop_names, new_name)
+
+            # this name will be used as the attr name of the newly generated property for the shellnode
+            # essentially this is
+            #       __annotations__[prop_name] = new property function
             prop_settings.prop_name = new_name
-            prop_settings.set_settings({"name": other.name})
+
+            custom_prop_dict = {
+                "name": nice_ui_name(other.name),
+                "update": updateNode
+            }
+
+            # there are other nodes that use this technique,
+            if other.node.bl_idname == "SvScriptNodeLite":
+                prop_list = other.node.float_list if "float" in other.prop_type else other.node.int_list
+                default = prop_list[other.prop_index]
+                custom_prop_dict["default"] = default
+
+            prop_settings.set_settings(custom_prop_dict)
             socket.prop_name = new_name
             return new_name
 
         return None
-
-    # def add_prop_from_dict(self, prop_dict, new_prop_type):
-    #     cls = get_node_class_reference(self.cls_bl_idname)
-    #     cls_dict = cls.__dict__ if cls else {}
-
-    #     if new_prop_type == "Float":
-    #         prop_settings = self.float_props.add()
-    #     elif new_prop_type == "Int":
-    #         prop_settings = self.int_props.add()
-    #     else:
-    #         return None
-
-    #     new_name = generate_name(prop_dict['name'], cls_dict)
-    #     prop_settings.prop_name = new_name
-    #     prop_settings.set_settings(prop_dict)
-    #     return new_name
 
     def get_all_props(self):
         """
@@ -249,8 +319,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         float_props = {}
         for prop in self.float_props:
             float_props[prop.prop_name] = prop.get_settings()
-        monad_data["float_props"] = float_props
 
+        monad_data["float_props"] = float_props
         monad_data["int_props"] = {prop.prop_name: prop.get_settings() for prop in self.int_props}
 
         return monad_data

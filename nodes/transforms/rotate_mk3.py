@@ -25,13 +25,7 @@ import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, numpy_list_match_func
 from sverchok.utils.sv_itertools import recurse_f_level_control
-
-def matrix_apply_np(verts, matrix):
-    '''taken from https://blender.stackexchange.com/a/139517'''
-
-    verts_co_4d = np.ones(shape=(verts.shape[0], 4), dtype=np.float)
-    verts_co_4d[:, :-1] = verts  # cos v (x,y,z,1) - point,   v(x,y,z,0)- vector
-    return np.einsum('ij,aj->ai', matrix, verts_co_4d)[:, :-1]
+from sverchok.utils.modules.matrix_utils import matrix_apply_np
 
 def np_rotate_many_centers(props, mat, np_local_match):
     verts, centers = np_local_match([np.array(p) for p in props[:2]])

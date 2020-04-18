@@ -26,6 +26,7 @@ from sverchok.utils import get_node_class_reference, register_node_class, unregi
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import updateNode, get_other_socket, enum_item_4
 from sverchok.core.monad import monad_make_unique
+from sverchok.core.update_system import process_from_node
 
 
 socket_types = [
@@ -656,6 +657,9 @@ class SvMonadCreateFromSelected(Operator):
         path.append(monad, node=parent_node)
 
         bpy.ops.node.view_all()
+
+        # requires (todo) a final ntree update here
+        process_from_node(parent_node)
         return {'FINISHED'}
 
 

@@ -510,8 +510,16 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
             else:
                 # if the origin node for this socket is a snlite node, we read the node.script_str instead of the data
-                if self.inputs[0].other.node.bl_idname == "SvScriptNodeLite":
+                connected_bl_idname = self.inputs[0].other.node.bl_idname
+                
+                if connected_bl_idname == "SvScriptNodeLite":
                     socket_data = list(self.inputs[0].other.node.script_str.splitlines())
+                    self.set_node_props(socket_data)
+
+                elif connected_bl_idname == "SvExecNodeMod":
+                    node = self.inputs[0].other.node
+                    socket_data = [j.line for j in node.dynamic_strings]
+                    # socket_data =  '\n'.join([j.line for j in self.dynamic_strings]
                     self.set_node_props(socket_data)
 
         if update:

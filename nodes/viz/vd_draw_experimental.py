@@ -423,6 +423,12 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, "u_gap_size")
             layout.row().prop(self, "u_resolution")
 
+    def bake(self):
+        with self.sv_throttle_tree_update():
+            bpy.ops.node.sverchok_mesh_baker_mk3(
+                idname=self.name, idtree=self.id_data.name
+            )
+
     def rclick_menu(self, context, layout):
         self.draw_additional_props(context, layout)
 

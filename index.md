@@ -49,6 +49,73 @@
     SvConicSectionNode
     SvTriangleNode
     SvPentagonTilerNode
+    SvSpiralNodeMK2
+
+## Curves
+     SvExLineCurveNode
+     SvExCircleNode
+     SvExCurveFormulaNode
+     SvExPolylineNode
+     SvExFilletPolylineNode
+     SvExCubicSplineNode
+     SvExApplyFieldToCurveNode
+     SvExCastCurveNode
+     SvExIsoUvCurveNode
+     SvExSurfaceBoundaryNode
+     SvExCurveOnSurfaceNode
+     SvExCurveLerpCurveNode
+     SvExConcatCurvesNode
+     SvExFlipCurveNode
+     SvExCurveSegmentNode
+     SvExCurveRangeNode
+     SvExCurveEndpointsNode
+     SvExCurveLengthNode
+     SvExCurveFrameNode
+     SvExCurveCurvatureNode
+     SvExCurveTorsionNode
+     SvExCurveZeroTwistFrameNode
+     SvExCurveLengthParameterNode
+     SvExEvalCurveNode
+
+## Surfaces
+     SvExPlaneSurfaceNode
+     SvExSphereNode
+     SvExSurfaceFormulaNode
+     SvInterpolatingSurfaceNode
+     SvExRevolutionSurfaceNode
+     SvExTaperSweepSurfaceNode
+     SvExExtrudeCurveVectorNode
+     SvExExtrudeCurveCurveSurfaceNode
+     SvExExtrudeCurvePointNode
+     SvExCurveLerpNode
+     SvExSurfaceLerpNode
+     SvExSurfaceDomainNode
+     SvExSurfaceSubdomainNode
+     SvExApplyFieldToSurfaceNode
+     SvExTessellateTrimSurfaceNode
+     SvExEvalSurfaceNode
+
+## Fields
+     SvExScalarFieldFormulaNode
+     SvExVectorFieldFormulaNode
+     SvExComposeVectorFieldNode
+     SvExDecomposeVectorFieldNode
+     SvExScalarFieldPointNode
+     SvExAttractorFieldNode
+     SvExImageFieldNode
+     SvExScalarFieldMathNode
+     SvExMergeScalarFieldsNode
+     SvExScalarFieldEvaluateNode
+     SvExVectorFieldEvaluateNode
+     SvExVectorFieldApplyNode
+     SvExVectorFieldMathNode
+     SvExNoiseVectorFieldNode
+     SvExVoronoiFieldNode
+     SvExBendAlongCurveFieldNode
+     SvExBendAlongSurfaceFieldNode
+     SvExFieldDiffOpsNode
+     SvExVectorFieldGraphNode
+     SvExVectorFieldLinesNode
 
 ## Analyzers
     SvBBoxNodeMk2
@@ -293,8 +360,8 @@
     MatrixInterpolationNode
 
 ## Quaternion
-    SvQuaternionInNode
-    SvQuaternionOutNode
+    SvQuaternionInNodeMK2
+    SvQuaternionOutNodeMK2
     SvQuaternionMathNode
     SvRotationDifference
 
@@ -407,7 +474,6 @@
     SvSelectMeshVerts
     SvSetCustomMeshNormals
     ---
-    SvSpiralNode
     SvCombinatoricsNode
 
 ## Alpha Nodes
