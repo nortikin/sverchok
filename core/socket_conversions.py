@@ -17,8 +17,10 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from sverchok.data_structure import get_other_socket, get_data_nesting_level
-from sverchok.utils.field.vector import SvMatrixVectorField, SvConstantVectorField
-from sverchok.utils.field.scalar import SvConstantScalarField
+from sverchok.utils.field.vector import SvVectorField, SvMatrixVectorField, SvConstantVectorField
+from sverchok.utils.field.scalar import SvScalarField, SvConstantScalarField
+from sverchok.utils.curve import SvCurve
+from sverchok.utils.surface import SvSurface
 
 from mathutils import Matrix, Quaternion
 from numpy import ndarray
@@ -58,6 +60,11 @@ def is_vertex_to_vfield(socket):
 def is_string_to_sfield(socket):
     other = get_other_socket(socket)
     return other.bl_idname == 'SvStringsSocket' and socket.bl_idname == 'SvScalarFieldSocket'
+
+def is_ultimately(data, data_type):
+    if isinstance(data, (list, tuple)):
+        return is_ultimately(data[0], data_type)
+    return isinstance(data, data_type)
 
 # ---
 
@@ -207,6 +214,8 @@ class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
             return cls.matrices_to_quaternions(socket, source_data)
         elif socket.bl_idname in cls.get_lenient_socket_types():
             return source_data
+        elif cls.data_type_check(socket, source_data):
+            return source_data
         else:
             super().convert(socket, source_data)
 
@@ -217,6 +226,27 @@ class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
         that are allowed to consume arbitrary data type.
         """
         return ['SvStringsSocket', 'SvObjectSocket', 'SvColorSocket', 'SvVerticesSocket']
+
+    @classmethod
+    def get_data_type_checking_socket_types(cls):
+        return {'SvScalarFieldSocket': SvScalarField,
+                'SvVectorFieldSocket': SvVectorField,
+                'SvSurfaceSocket': SvSurface,
+                'SvCurveSocket': SvCurve}
+
+    @classmethod
+    def get_arbitrary_type_socket_types(cls):
+        return ['SvStringsSocket']
+
+    @classmethod
+    def data_type_check(cls, socket, source_data):
+        checking_sockets = cls.get_data_type_checking_socket_types()
+        expected_type = checking_sockets.get(socket.bl_idname)
+        if expected_type is None:
+            return False
+        if not get_other_socket(socket).bl_idname in cls.get_arbitrary_type_socket_types():
+            return False
+        return is_ultimately(source_data, expected_type)
 
     @classmethod
     def vectors_to_matrices(cls, socket, source_data):
