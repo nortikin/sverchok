@@ -63,31 +63,31 @@ class SvSocketAquisition:
 
         if socket_list[-1].is_linked:
 
-            with self.sv_throttle_tree_update():
-                # gather socket data
-                socket = socket_list[-1]
-                if kind == "outputs":
-                    prop_name = monad.add_prop_from(socket)
-                    cls = monad.update_cls()
-                    new_name, new_type, prop_data = cls.input_template[-1]
-                else:
-                    prop_name = ""
-                    cls = monad.update_cls()
-                    prop_data = {}
-                    new_name, new_type = cls.output_template[-1]
+            # gather socket data
+            socket = socket_list[-1]
+            if kind == "outputs":
+                prop_name = monad.add_prop_from(socket)
+                cls = monad.update_cls()
+                new_name, new_type, prop_data = cls.input_template[-1]
+            else:
+                prop_name = ""
+                cls = monad.update_cls()
+                prop_data = {}
+                new_name, new_type = cls.output_template[-1]
 
-                new_socket = socket.replace_socket(new_type, new_name=new_name)
+            new_socket = socket.replace_socket(new_type, new_name=new_name)
 
+            if prop_name:
+                new_socket.prop_name = prop_name
+
+            # update all monad nodes (front facing)
+            for instance in monad.instances:
+                sockets = getattr(instance, reverse_lookup[kind])
+                print(prop_data)
                 if prop_name:
-                    new_socket.prop_name = prop_name
+                    print('prop_name!', prop_name)
 
-                # update all monad nodes (front facing)
-                for instance in monad.instances:
-                    sockets = getattr(instance, reverse_lookup[kind])
-                    print(prop_data)
-                    if prop_name:
-                        print('prop_name!', prop_name)
-
+                with self.sv_throttle_tree_update():
                     new_socket = sockets.new(new_type, new_name)
 
                     if (not prop_data) and prop_name:
@@ -101,12 +101,12 @@ class SvSocketAquisition:
                             else:
                                 setattr(new_socket, name, value)
 
-                # print('------')
-                # print(prop_data)
-                # pprint.pprint(self.get_outputs_info)
+            # print('------')
+            # print(prop_data)
+            # pprint.pprint(self.get_outputs_info)
 
-                # add new dangling dummy
-                socket_list.new('SvDummySocket', 'connect me')
+            # add new dangling dummy
+            socket_list.new('SvDummySocket', 'connect me')
 
     # stashing and repopulate are used for iojson
 
