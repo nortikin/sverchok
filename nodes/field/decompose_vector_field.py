@@ -9,9 +9,9 @@ from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repe
 from sverchok.utils.logging import info, exception
 
 from sverchok.utils.math import coordinate_modes
-from sverchok.utils.field.scalar import SvExVectorFieldDecomposed
+from sverchok.utils.field.scalar import SvVectorFieldDecomposed
 
-class SvExDecomposeVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvDecomposeVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Decompose Vector Field
     Tooltip: Decompose vector field into three scalar fields
@@ -43,10 +43,10 @@ class SvExDecomposeVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
         update = update_sockets)
 
     def sv_init(self, context):
-        self.inputs.new('SvExVectorFieldSocket', "Field")
-        self.outputs.new('SvExScalarFieldSocket', "Field1")
-        self.outputs.new('SvExScalarFieldSocket', "Field2")
-        self.outputs.new('SvExScalarFieldSocket', "Field3")
+        self.inputs.new('SvVectorFieldSocket', "Field")
+        self.outputs.new('SvScalarFieldSocket', "Field1")
+        self.outputs.new('SvScalarFieldSocket', "Field2")
+        self.outputs.new('SvScalarFieldSocket', "Field3")
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
@@ -65,9 +65,9 @@ class SvExDecomposeVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
             if not isinstance(fields, (list, tuple)):
                 fields = [fields]
             for field in fields:
-                field1 = SvExVectorFieldDecomposed(field, self.output_mode, 0)
-                field2 = SvExVectorFieldDecomposed(field, self.output_mode, 1)
-                field3 = SvExVectorFieldDecomposed(field, self.output_mode, 2)
+                field1 = SvVectorFieldDecomposed(field, self.output_mode, 0)
+                field2 = SvVectorFieldDecomposed(field, self.output_mode, 1)
+                field3 = SvVectorFieldDecomposed(field, self.output_mode, 2)
                 fields_1_out.append(field1)
                 fields_2_out.append(field2)
                 fields_3_out.append(field3)
@@ -76,8 +76,8 @@ class SvExDecomposeVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs[2].sv_set(fields_3_out)
 
 def register():
-    bpy.utils.register_class(SvExDecomposeVectorFieldNode)
+    bpy.utils.register_class(SvDecomposeVectorFieldNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExDecomposeVectorFieldNode)
+    bpy.utils.unregister_class(SvDecomposeVectorFieldNode)
 

@@ -7,10 +7,10 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, repeat_last_for_length, ensure_nesting_level
 from sverchok.utils.logging import info, exception
-from sverchok.utils.curve import SvExLine, SvExConcatCurve
+from sverchok.utils.curve import SvLine, SvConcatCurve
 from sverchok.utils.fillet import calc_fillet
 
-class SvExFilletPolylineNode(bpy.types.Node, SverchCustomTreeNode):
+class SvFilletPolylineNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Arc Fillet Polyline
     Tooltip: Generate a polyline with arc fillets
@@ -51,7 +51,7 @@ class SvExFilletPolylineNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "Radius").prop_name = 'radius'
-        self.outputs.new('SvExCurveSocket', "Curve")
+        self.outputs.new('SvCurveSocket', "Curve")
         self.outputs.new('SvMatrixSocket', "Centers")
 
     def make_curve(self, vertices, radiuses):
@@ -72,7 +72,7 @@ class SvExFilletPolylineNode(bpy.types.Node, SverchCustomTreeNode):
             fillet = calc_fillet(v1, v2, v3, radius)
             edge_direction = np.array(fillet.p1) - np.array(prev_edge_start)
             edge_len = np.linalg.norm(edge_direction)
-            edge = SvExLine(prev_edge_start, edge_direction / edge_len)
+            edge = SvLine(prev_edge_start, edge_direction / edge_len)
             edge.u_bounds = (0.0, edge_len)
             arc = fillet.get_curve()
             prev_edge_start = fillet.p2
@@ -83,12 +83,12 @@ class SvExFilletPolylineNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.cyclic:
             edge_direction = np.array(vertices[-1]) - np.array(prev_edge_start)
             edge_len = np.linalg.norm(edge_direction)
-            edge = SvExLine(prev_edge_start, edge_direction / edge_len)
+            edge = SvLine(prev_edge_start, edge_direction / edge_len)
             edge.u_bounds = (0.0, edge_len)
             curves.append(edge)
 
         if self.concat:
-            concat = SvExConcatCurve(curves, scale_to_unit = self.scale_to_unit)
+            concat = SvConcatCurve(curves, scale_to_unit = self.scale_to_unit)
             return concat, centers
         else:
             return curves, centers
@@ -117,8 +117,8 @@ class SvExFilletPolylineNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Centers'].sv_set(centers_out)
 
 def register():
-    bpy.utils.register_class(SvExFilletPolylineNode)
+    bpy.utils.register_class(SvFilletPolylineNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExFilletPolylineNode)
+    bpy.utils.unregister_class(SvFilletPolylineNode)
 

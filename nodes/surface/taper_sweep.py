@@ -7,10 +7,10 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.logging import info, exception
-from sverchok.utils.curve import SvExCurve
-from sverchok.utils.surface import SvExTaperSweepSurface
+from sverchok.utils.curve import SvCurve
+from sverchok.utils.surface import SvTaperSweepSurface
 
-class SvExTaperSweepSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvTaperSweepSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Taper Sweep Curve
     Tooltip: Generate a taper surface along a line
@@ -21,15 +21,15 @@ class SvExTaperSweepSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_TAPER_SWEEP'
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', "Profile")
-        self.inputs.new('SvExCurveSocket', "Taper")
+        self.inputs.new('SvCurveSocket', "Profile")
+        self.inputs.new('SvCurveSocket', "Taper")
         p = self.inputs.new('SvVerticesSocket', "Point")
         p.use_prop = True
         p.prop = (0.0, 0.0, 0.0)
         p = self.inputs.new('SvVerticesSocket', "Direction")
         p.use_prop = True
         p.prop = (0.0, 0.0, 1.0)
-        self.outputs.new('SvExSurfaceSocket', "Surface")
+        self.outputs.new('SvSurfaceSocket', "Surface")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -40,9 +40,9 @@ class SvExTaperSweepSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         point_s = self.inputs['Point'].sv_get()
         direction_s = self.inputs['Direction'].sv_get()
 
-        if isinstance(profile_s[0], SvExCurve):
+        if isinstance(profile_s[0], SvCurve):
             profile_s = [profile_s]
-        if isinstance(taper_s[0], SvExCurve):
+        if isinstance(taper_s[0], SvCurve):
             taper_s = [taper_s]
 
         point_s = ensure_nesting_level(point_s, 3)
@@ -51,14 +51,14 @@ class SvExTaperSweepSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         surface_out = []
         for profiles, tapers, points, directions in zip_long_repeat(profile_s, taper_s, point_s, direction_s):
             for profile, taper, point, direction in zip_long_repeat(profiles, tapers, points, directions):
-                surface = SvExTaperSweepSurface(profile, taper, np.array(point), np.array(direction))
+                surface = SvTaperSweepSurface(profile, taper, np.array(point), np.array(direction))
                 surface_out.append(surface)
 
         self.outputs['Surface'].sv_set(surface_out)
 
 def register():
-    bpy.utils.register_class(SvExTaperSweepSurfaceNode)
+    bpy.utils.register_class(SvTaperSweepSurfaceNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExTaperSweepSurfaceNode)
+    bpy.utils.unregister_class(SvTaperSweepSurfaceNode)
 

@@ -7,9 +7,9 @@ from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nesting_level, ensure_nesting_level
-from sverchok.utils.surface import SvExPlane
+from sverchok.utils.surface import SvPlane
 
-class SvExPlaneSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPlaneSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Plane
     Tooltip: Generate planar surface
@@ -74,7 +74,7 @@ class SvExPlaneSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "UMax").prop_name = 'u_max'
         self.inputs.new('SvStringsSocket', "VMin").prop_name = 'v_min'
         self.inputs.new('SvStringsSocket', "VMax").prop_name = 'v_max'
-        self.outputs.new('SvExSurfaceSocket', "Surface")
+        self.outputs.new('SvSurfaceSocket', "Surface")
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
@@ -121,7 +121,7 @@ class SvExPlaneSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                     v2n = np.linalg.norm(vec2)
                     vec1, vec2 = vec1 / v1n, vec2 / v2n
 
-                plane = SvExPlane(point1, vec1, vec2)
+                plane = SvPlane(point1, vec1, vec2)
                 plane.u_bounds = (u_min, u_max)
                 plane.v_bounds = (v_min, v_max)
                 surfaces_out.append(plane)
@@ -129,8 +129,8 @@ class SvExPlaneSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Surface'].sv_set(surfaces_out)
 
 def register():
-    bpy.utils.register_class(SvExPlaneSurfaceNode)
+    bpy.utils.register_class(SvPlaneSurfaceNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExPlaneSurfaceNode)
+    bpy.utils.unregister_class(SvPlaneSurfaceNode)
 

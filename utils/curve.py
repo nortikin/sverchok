@@ -25,7 +25,7 @@ def make_euclidian_ts(pts):
     tknots = tknots / tknots[-1]
     return tknots
 
-class SvExCurve(object):
+class SvCurve(object):
     def __repr__(self):
         if hasattr(self, '__description__'):
             description = self.__description__
@@ -215,7 +215,7 @@ class SvExCurve(object):
     def get_u_bounds(self):
         raise Exception("not implemented!")
 
-class SvExCurveLengthSolver(object):
+class SvCurveLengthSolver(object):
     def __init__(self, curve):
         self.curve = curve
         self._spline = None
@@ -255,7 +255,7 @@ class SvExCurveLengthSolver(object):
         spline_verts = self._spline.eval(input_lengths)
         return spline_verts[:,1]
 
-class SvExConcatCurve(SvExCurve):
+class SvConcatCurve(SvCurve):
     def __init__(self, curves, scale_to_unit = False):
         self.curves = curves
         self.scale_to_unit = scale_to_unit
@@ -347,7 +347,7 @@ class SvExConcatCurve(SvExCurve):
             result.append(ith_derivs)
         return result
 
-class SvExFlipCurve(SvExCurve):
+class SvFlipCurve(SvCurve):
     def __init__(self, curve):
         self.curve = curve
         if hasattr(curve, 'tangent_delta'):
@@ -394,7 +394,7 @@ class SvExFlipCurve(SvExCurve):
         ts = M - ts + m
         return self.curve.derivatives_array(ts)
 
-class SvExCurveSegment(SvExCurve):
+class SvCurveSegment(SvCurve):
     def __init__(self, curve, u_min, u_max, rescale=False):
         self.curve = curve
         if hasattr(curve, 'tangent_delta'):
@@ -455,7 +455,7 @@ class SvExCurveSegment(SvExCurve):
             ts = (M - m)*ts + m
         return self.curve.derivatives_array(ts)
 
-class SvExLine(SvExCurve):
+class SvLine(SvCurve):
     __description__ = "Line"
 
     def __init__(self, point, direction):
@@ -466,7 +466,7 @@ class SvExLine(SvExCurve):
     @classmethod
     def from_two_points(cls, point1, point2):
         direction = np.array(point2) - np.array(point1)
-        return SvExLine(point1, direction)
+        return SvLine(point1, direction)
 
     def get_u_bounds(self):
         return self.u_bounds
@@ -490,7 +490,7 @@ class SvExLine(SvExCurve):
         result = np.tile(tangent[np.newaxis].T, len(ts)).T
         return result
 
-class SvExCircle(SvExCurve):
+class SvCircle(SvCurve):
     __description__ = "Circle"
 
     def __init__(self, matrix, radius):
@@ -537,7 +537,7 @@ class SvExCircle(SvExCurve):
 #         vectors = np.stack((xs, ys, zs)).T
 #         return np.apply_along_axis(lambda v: self.matrix @ v, 1, vectors)
 
-class SvExLambdaCurve(SvExCurve):
+class SvLambdaCurve(SvCurve):
     __description__ = "Formula"
 
     def __init__(self, function):
@@ -564,7 +564,7 @@ class SvExLambdaCurve(SvExCurve):
         points_h = np.vectorize(self.function, signature='()->(3)')(ts+self.tangent_delta)
         return (points_h - points) / self.tangent_delta
 
-class SvExSplineCurve(SvExCurve):
+class SvSplineCurve(SvCurve):
     __description__ = "Spline"
 
     def __init__(self, spline):
@@ -588,7 +588,7 @@ class SvExSplineCurve(SvExCurve):
     def get_u_bounds(self):
         return (0.0, 1.0)
 
-class SvExDeformedByFieldCurve(SvExCurve):
+class SvDeformedByFieldCurve(SvCurve):
     def __init__(self, curve, field, coefficient=1.0):
         self.curve = curve
         self.field = field
@@ -611,7 +611,7 @@ class SvExDeformedByFieldCurve(SvExCurve):
         vecs = np.stack((vxs, vys, vzs)).T
         return vs + self.coefficient * vecs
 
-class SvExCastCurveToPlane(SvExCurve):
+class SvCastCurveToPlane(SvCurve):
     def __init__(self, curve, point, normal, coefficient):
         self.curve = curve
         self.point = point
@@ -636,7 +636,7 @@ class SvExCastCurveToPlane(SvExCurve):
     def get_u_bounds(self):
         return self.curve.get_u_bounds()
 
-class SvExCastCurveToSphere(SvExCurve):
+class SvCastCurveToSphere(SvCurve):
     def __init__(self, curve, center, radius, coefficient):
         self.curve = curve
         self.center = center
@@ -660,7 +660,7 @@ class SvExCastCurveToSphere(SvExCurve):
     def get_u_bounds(self):
         return self.curve.get_u_bounds()
 
-class SvExCastCurveToCylinder(SvExCurve):
+class SvCastCurveToCylinder(SvCurve):
     def __init__(self, curve, center, direction, radius, coefficient):
         self.curve = curve
         self.center = center
@@ -693,7 +693,7 @@ class SvExCastCurveToCylinder(SvExCurve):
     def get_u_bounds(self):
         return self.curve.get_u_bounds()
 
-class SvExCurveLerpCurve(SvExCurve):
+class SvCurveLerpCurve(SvCurve):
     __description__ = "Lerp"
 
     def __init__(self, curve1, curve2, coefficient):
@@ -719,7 +719,7 @@ class SvExCurveLerpCurve(SvExCurve):
         k = self.coefficient
         return (1.0 - k) * c1_points + k * c2_points
 
-class SvExCurveOnSurface(SvExCurve):
+class SvCurveOnSurface(SvCurve):
     def __init__(self, curve, surface, axis=0):
         self.curve = curve
         self.surface = surface
@@ -751,7 +751,7 @@ class SvExCurveOnSurface(SvExCurve):
             raise Exception("Unsupported orientation axis")
         return self.surface.evaluate_array(us, vs)
 
-class SvExIsoUvCurve(SvExCurve):
+class SvIsoUvCurve(SvCurve):
     def __init__(self, surface, fixed_axis, value, flip=False):
         self.surface = surface
         self.fixed_axis = fixed_axis

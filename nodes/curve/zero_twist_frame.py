@@ -7,7 +7,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat
 
-class SvExCurveZeroTwistFrameNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveZeroTwistFrameNode(bpy.types.Node, SverchCustomTreeNode):
         """
         Triggers: Curve Zero-Twist Frame
         Tooltip: Calculate Zero-Twist Perpendicular frame for curve
@@ -37,7 +37,7 @@ class SvExCurveZeroTwistFrameNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, 'join', toggle=True)
 
         def sv_init(self, context):
-            self.inputs.new('SvExCurveSocket', "Curve")
+            self.inputs.new('SvCurveSocket', "Curve")
             self.inputs.new('SvStringsSocket', "Resolution").prop_name = 'resolution'
             self.inputs.new('SvStringsSocket', "T").prop_name = 't_value'
             self.outputs.new('SvStringsSocket', "CumulativeTorsion")
@@ -84,8 +84,8 @@ class SvExCurveZeroTwistFrameNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs['Matrix'].sv_set(matrix_out)
 
 def register():
-    bpy.utils.register_class(SvExCurveZeroTwistFrameNode)
+    bpy.utils.register_class(SvCurveZeroTwistFrameNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExCurveZeroTwistFrameNode)
+    bpy.utils.unregister_class(SvCurveZeroTwistFrameNode)
 

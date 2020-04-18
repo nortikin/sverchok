@@ -8,22 +8,22 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat
 from sverchok.utils.logging import info, exception
 
-from sverchok.utils.field.scalar import (SvExScalarField,
-                SvExVectorFieldDivergence, SvExScalarFieldLaplacian)
-from sverchok.utils.field.vector import ( SvExVectorField,
-                SvExScalarFieldGradient, SvExVectorFieldRotor)
-from sverchok.utils.modules.sockets import SvExDynamicSocketsHandler, SocketInfo
+from sverchok.utils.field.scalar import (SvScalarField,
+                SvVectorFieldDivergence, SvScalarFieldLaplacian)
+from sverchok.utils.field.vector import ( SvVectorField,
+                SvScalarFieldGradient, SvVectorFieldRotor)
+from sverchok.utils.modules.sockets import SvDynamicSocketsHandler, SocketInfo
 
-sockets_handler = SvExDynamicSocketsHandler()
+sockets_handler = SvDynamicSocketsHandler()
 
 S_FIELD_A, V_FIELD_A = sockets_handler.register_inputs(
-        SocketInfo("SvExScalarFieldSocket", "SFieldA", "CIRCLE_DOT"),
-        SocketInfo("SvExVectorFieldSocket", "VFieldA", "CIRCLE_DOT")
+        SocketInfo("SvScalarFieldSocket", "SFieldA", "CIRCLE_DOT"),
+        SocketInfo("SvVectorFieldSocket", "VFieldA", "CIRCLE_DOT")
     )
 
 S_FIELD_B, V_FIELD_B = sockets_handler.register_outputs(
-        SocketInfo("SvExScalarFieldSocket", "SFieldB", "CIRCLE_DOT"),
-        SocketInfo("SvExVectorFieldSocket", "VFieldB", "CIRCLE_DOT")
+        SocketInfo("SvScalarFieldSocket", "SFieldB", "CIRCLE_DOT"),
+        SocketInfo("SvVectorFieldSocket", "VFieldB", "CIRCLE_DOT")
     )
 
 operations = [
@@ -43,7 +43,7 @@ def get_sockets(op_id):
             return inputs, outputs
     raise Exception("unsupported operation")
 
-class SvExFieldDiffOpsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvFieldDiffOpsNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Field Differential Operations
     Tooltip: Field differential operations
@@ -110,16 +110,16 @@ class SvExFieldDiffOpsNode(bpy.types.Node, SverchCustomTreeNode):
                 vfields = [vfields]
             for sfield, vfield in zip_long_repeat(sfields, vfields):
                 if self.operation == 'GRAD':
-                    vfield = SvExScalarFieldGradient(sfield, self.step)
+                    vfield = SvScalarFieldGradient(sfield, self.step)
                     vfields_out.append(vfield)
                 elif self.operation == 'DIV':
-                    sfield = SvExVectorFieldDivergence(vfield, self.step)
+                    sfield = SvVectorFieldDivergence(vfield, self.step)
                     sfields_out.append(sfield)
                 elif self.operation == 'LAPLACE':
-                    sfield = SvExScalarFieldLaplacian(sfield, self.step)
+                    sfield = SvScalarFieldLaplacian(sfield, self.step)
                     sfields_out.append(sfield)
                 elif self.operation == 'ROTOR':
-                    vfield = SvExVectorFieldRotor(vfield, self.step)
+                    vfield = SvVectorFieldRotor(vfield, self.step)
                     vfields_out.append(vfield)
                 else:
                     raise Exception("Unsupported operation")
@@ -128,8 +128,8 @@ class SvExFieldDiffOpsNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs[S_FIELD_B.idx].sv_set(sfields_out)
 
 def register():
-    bpy.utils.register_class(SvExFieldDiffOpsNode)
+    bpy.utils.register_class(SvFieldDiffOpsNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExFieldDiffOpsNode)
+    bpy.utils.unregister_class(SvFieldDiffOpsNode)
 

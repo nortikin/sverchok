@@ -3,9 +3,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvExCurve
+from sverchok.utils.curve import SvCurve
 
-class SvExCurveEndpointsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveEndpointsNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Curve End Points
     Tooltip: Output two endpoints of the curve
@@ -16,7 +16,7 @@ class SvExCurveEndpointsNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_CURVE_ENDPOINTS'
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', "Curve")
+        self.inputs.new('SvCurveSocket', "Curve")
         self.outputs.new('SvVerticesSocket', "Start")
         self.outputs.new('SvVerticesSocket', "End")
 
@@ -25,7 +25,7 @@ class SvExCurveEndpointsNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         curve_s = self.inputs['Curve'].sv_get()
-        if isinstance(curve_s[0], SvExCurve):
+        if isinstance(curve_s[0], SvCurve):
             curve_s = [curve_s]
 
         start_out = []
@@ -46,8 +46,8 @@ class SvExCurveEndpointsNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['End'].sv_set(end_out)
 
 def register():
-    bpy.utils.register_class(SvExCurveEndpointsNode)
+    bpy.utils.register_class(SvCurveEndpointsNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExCurveEndpointsNode)
+    bpy.utils.unregister_class(SvCurveEndpointsNode)
 

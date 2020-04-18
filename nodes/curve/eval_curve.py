@@ -6,9 +6,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvExCurve
+from sverchok.utils.curve import SvCurve
 
-class SvExEvalCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvEvalCurveNode(bpy.types.Node, SverchCustomTreeNode):
         """
         Triggers: Evaluate Curve
         Tooltip: Evaluate Curve
@@ -48,7 +48,7 @@ class SvExEvalCurveNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, 'eval_mode', expand=True)
 
         def sv_init(self, context):
-            self.inputs.new('SvExCurveSocket', "Curve")
+            self.inputs.new('SvCurveSocket', "Curve")
             self.inputs.new('SvStringsSocket', "T").prop_name = 't_value'
             self.inputs.new('SvStringsSocket', "Samples").prop_name = 'sample_size'
             self.outputs.new('SvVerticesSocket', "Vertices")
@@ -66,7 +66,7 @@ class SvExEvalCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
             need_tangent = self.outputs['Tangents'].is_linked
 
-            if isinstance(curve_s[0], SvExCurve):
+            if isinstance(curve_s[0], SvCurve):
                 curve_s = [curve_s]
 
             ts_s = ensure_nesting_level(ts_s, 3)
@@ -105,8 +105,8 @@ class SvExEvalCurveNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs['Tangents'].sv_set(tangents_out)
 
 def register():
-    bpy.utils.register_class(SvExEvalCurveNode)
+    bpy.utils.register_class(SvEvalCurveNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExEvalCurveNode)
+    bpy.utils.unregister_class(SvEvalCurveNode)
 

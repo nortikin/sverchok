@@ -9,10 +9,10 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat
 from sverchok.utils.logging import info, exception
 
-from sverchok.utils.field.scalar import SvExVoronoiScalarField
-from sverchok.utils.field.vector import SvExVoronoiVectorField
+from sverchok.utils.field.scalar import SvVoronoiScalarField
+from sverchok.utils.field.vector import SvVoronoiVectorField
 
-class SvExVoronoiFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVoronoiFieldNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Voronoi Field
     Tooltip: Generate Voronoi field
@@ -24,8 +24,8 @@ class SvExVoronoiFieldNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
-        self.outputs.new('SvExScalarFieldSocket', "SField")
-        self.outputs.new('SvExVectorFieldSocket', "VField")
+        self.outputs.new('SvScalarFieldSocket', "SField")
+        self.outputs.new('SvVectorFieldSocket', "VField")
 
     def process(self):
 
@@ -37,8 +37,8 @@ class SvExVoronoiFieldNode(bpy.types.Node, SverchCustomTreeNode):
         sfields_out = []
         vfields_out = []
         for vertices in vertices_s:
-            sfield = SvExVoronoiScalarField(vertices)
-            vfield = SvExVoronoiVectorField(vertices)
+            sfield = SvVoronoiScalarField(vertices)
+            vfield = SvVoronoiVectorField(vertices)
             sfields_out.append(sfield)
             vfields_out.append(vfield)
 
@@ -46,8 +46,8 @@ class SvExVoronoiFieldNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['VField'].sv_set(vfields_out)
 
 def register():
-    bpy.utils.register_class(SvExVoronoiFieldNode)
+    bpy.utils.register_class(SvVoronoiFieldNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExVoronoiFieldNode)
+    bpy.utils.unregister_class(SvVoronoiFieldNode)
 

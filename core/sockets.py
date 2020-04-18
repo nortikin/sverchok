@@ -39,8 +39,8 @@ from sverchok.data_structure import (
     socket_id,
     replace_socket)
 
-from sverchok.utils.field.scalar import SvExConstantScalarField
-from sverchok.utils.field.vector import SvExMatrixVectorField, SvExConstantVectorField
+from sverchok.utils.field.scalar import SvConstantScalarField
+from sverchok.utils.field.vector import SvMatrixVectorField, SvConstantVectorField
 
 socket_colors = {
     "SvStringsSocket": (0.6, 1.0, 0.6, 1.0),
@@ -598,8 +598,8 @@ class SvChameleonSocket(NodeSocket, SvSocketCommon):
     def draw_color(self, context, node):
         return self.dynamic_color
 
-class SvExSurfaceSocket(NodeSocket, SvSocketCommon):
-    bl_idname = "SvExSurfaceSocket"
+class SvSurfaceSocket(NodeSocket, SvSocketCommon):
+    bl_idname = "SvSurfaceSocket"
     bl_label = "Surface Socket"
 
     def get_prop_data(self):
@@ -620,8 +620,8 @@ class SvExSurfaceSocket(NodeSocket, SvSocketCommon):
         else:
             return default
 
-class SvExCurveSocket(NodeSocket, SvSocketCommon):
-    bl_idname = "SvExCurveSocket"
+class SvCurveSocket(NodeSocket, SvSocketCommon):
+    bl_idname = "SvCurveSocket"
     bl_label = "Curve Socket"
 
     def get_prop_data(self):
@@ -642,8 +642,8 @@ class SvExCurveSocket(NodeSocket, SvSocketCommon):
         else:
             return default
 
-class SvExScalarFieldSocket(NodeSocket, SvSocketCommon):
-    bl_idname = "SvExScalarFieldSocket"
+class SvScalarFieldSocket(NodeSocket, SvSocketCommon):
+    bl_idname = "SvScalarFieldSocket"
     bl_label = "Scalar Field Socket"
 
     def get_prop_data(self):
@@ -666,8 +666,8 @@ class SvExScalarFieldSocket(NodeSocket, SvSocketCommon):
         else:
             return default
 
-class SvExVectorFieldSocket(NodeSocket, SvSocketCommon):
-    bl_idname = "SvExVectorFieldSocket"
+class SvVectorFieldSocket(NodeSocket, SvSocketCommon):
+    bl_idname = "SvVectorFieldSocket"
     bl_label = "Vector Field Socket"
 
     def get_prop_data(self):
@@ -720,7 +720,7 @@ classes = [
     SvVerticesSocket, SvMatrixSocket, SvStringsSocket,
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
     SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket,
-    SvExSurfaceSocket, SvExCurveSocket, SvExScalarFieldSocket, SvExVectorFieldSocket
+    SvSurfaceSocket, SvCurveSocket, SvScalarFieldSocket, SvVectorFieldSocket
 ]
 
 register, unregister = bpy.utils.register_classes_factory(classes)

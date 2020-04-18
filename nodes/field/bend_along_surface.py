@@ -11,9 +11,9 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.geom import diameter
 
-from sverchok.utils.field.vector import SvExBendAlongSurfaceField
+from sverchok.utils.field.vector import SvBendAlongSurfaceField
 
-class SvExBendAlongSurfaceFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBendAlongSurfaceFieldNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Bend surface
     Tooltip: Generate a vector field which bends the space along the given surface.
@@ -71,12 +71,12 @@ class SvExBendAlongSurfaceFieldNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvExSurfaceSocket', "Surface")
+        self.inputs.new('SvSurfaceSocket', "Surface")
         self.inputs.new('SvStringsSocket', 'UMin').prop_name = 'u_min'
         self.inputs.new('SvStringsSocket', 'UMax').prop_name = 'u_max'
         self.inputs.new('SvStringsSocket', 'VMin').prop_name = 'v_min'
         self.inputs.new('SvStringsSocket', 'VMax').prop_name = 'v_max'
-        self.outputs.new('SvExVectorFieldSocket', 'Field')
+        self.outputs.new('SvVectorFieldSocket', 'Field')
 
     def draw_buttons(self, context, layout):
         layout.label(text="Object vertical axis:")
@@ -108,7 +108,7 @@ class SvExBendAlongSurfaceFieldNode(bpy.types.Node, SverchCustomTreeNode):
             if isinstance(v_max, (list, int)):
                 v_max = v_max[0]
 
-            field = SvExBendAlongSurfaceField(surface, self.orient_axis,
+            field = SvBendAlongSurfaceField(surface, self.orient_axis,
                         self.autoscale, self.flip)
             field.u_bounds = (u_min, u_max)
             field.v_bounds = (v_min, v_max)
@@ -117,8 +117,8 @@ class SvExBendAlongSurfaceFieldNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Field'].sv_set(fields_out)
 
 def register():
-    bpy.utils.register_class(SvExBendAlongSurfaceFieldNode)
+    bpy.utils.register_class(SvBendAlongSurfaceFieldNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExBendAlongSurfaceFieldNode)
+    bpy.utils.unregister_class(SvBendAlongSurfaceFieldNode)
 

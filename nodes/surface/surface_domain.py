@@ -3,9 +3,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.surface import SvExSurface
+from sverchok.utils.surface import SvSurface
 
-class SvExSurfaceDomainNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSurfaceDomainNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Surface Domain / Range
     Tooltip: Output minimum and maximum values of U / V parameters allowed by the surface
@@ -16,7 +16,7 @@ class SvExSurfaceDomainNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_SURFACE_DOMAIN'
 
     def sv_init(self, context):
-        self.inputs.new('SvExSurfaceSocket', "Surface")
+        self.inputs.new('SvSurfaceSocket', "Surface")
         self.outputs.new('SvStringsSocket', "UMin")
         self.outputs.new('SvStringsSocket', "UMax")
         self.outputs.new('SvStringsSocket', "URange")
@@ -29,7 +29,7 @@ class SvExSurfaceDomainNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         surface_s = self.inputs['Surface'].sv_get()
-        if isinstance(surface_s[0], SvExSurface):
+        if isinstance(surface_s[0], SvSurface):
             surface_s = [surface_s]
 
         u_min_out = []
@@ -72,8 +72,8 @@ class SvExSurfaceDomainNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['VRange'].sv_set(v_range_out)
 
 def register():
-    bpy.utils.register_class(SvExSurfaceDomainNode)
+    bpy.utils.register_class(SvSurfaceDomainNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExSurfaceDomainNode)
+    bpy.utils.unregister_class(SvSurfaceDomainNode)
 

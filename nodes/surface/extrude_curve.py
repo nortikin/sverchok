@@ -8,10 +8,10 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.logging import info, exception
 
-from sverchok.utils.curve import SvExCurve
-from sverchok.utils.surface import SvExExtrudeCurveCurveSurface, SvExExtrudeCurveFrenetSurface, SvExExtrudeCurveZeroTwistSurface
+from sverchok.utils.curve import SvCurve
+from sverchok.utils.surface import SvExtrudeCurveCurveSurface, SvExtrudeCurveFrenetSurface, SvExtrudeCurveZeroTwistSurface
 
-class SvExExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Extrude Curve along Curve
     Tooltip: Generate a surface by extruding a curve along another curve
@@ -45,10 +45,10 @@ class SvExExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "algorithm")
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', "Profile")
-        self.inputs.new('SvExCurveSocket', "Extrusion")
+        self.inputs.new('SvCurveSocket', "Profile")
+        self.inputs.new('SvCurveSocket', "Extrusion")
         self.inputs.new('SvStringsSocket', "Resolution").prop_name = 'resolution'
-        self.outputs.new('SvExSurfaceSocket', "Surface")
+        self.outputs.new('SvSurfaceSocket', "Surface")
         self.update_sockets(context)
 
     def process(self):
@@ -59,9 +59,9 @@ class SvExExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         extrusion_s = self.inputs['Extrusion'].sv_get()
         resolution_s = self.inputs['Resolution'].sv_get()
 
-        if isinstance(profile_s[0], SvExCurve):
+        if isinstance(profile_s[0], SvCurve):
             profile_s = [profile_s]
-        if isinstance(extrusion_s[0], SvExCurve):
+        if isinstance(extrusion_s[0], SvCurve):
             extrusion_s = [extrusion_s]
 
         surface_out = []
@@ -71,11 +71,11 @@ class SvExExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
             for profile, extrusion in zip_long_repeat(profiles, extrusions):
                 if self.algorithm == 'NONE':
-                    surface = SvExExtrudeCurveCurveSurface(profile, extrusion)
+                    surface = SvExtrudeCurveCurveSurface(profile, extrusion)
                 elif self.algorithm == 'FRENET':
-                    surface = SvExExtrudeCurveFrenetSurface(profile, extrusion)
+                    surface = SvExtrudeCurveFrenetSurface(profile, extrusion)
                 elif self.algorithm == 'ZERO':
-                    surface = SvExExtrudeCurveZeroTwistSurface(profile, extrusion, resolution)
+                    surface = SvExtrudeCurveZeroTwistSurface(profile, extrusion, resolution)
                 else:
                     raise Exception("Unsupported algorithm")
                 surface_out.append(surface)
@@ -83,8 +83,8 @@ class SvExExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Surface'].sv_set(surface_out)
 
 def register():
-    bpy.utils.register_class(SvExExtrudeCurveCurveSurfaceNode)
+    bpy.utils.register_class(SvExtrudeCurveCurveSurfaceNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExExtrudeCurveCurveSurfaceNode)
+    bpy.utils.unregister_class(SvExtrudeCurveCurveSurfaceNode)
 

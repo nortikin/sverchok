@@ -10,17 +10,17 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match_long_repeat
 from sverchok.utils.logging import info, exception
 
-from sverchok.utils.field.scalar import (SvExScalarFieldPointDistance,
-            SvExMergedScalarField, SvExKdtScalarField,
-            SvExLineAttractorScalarField, SvExPlaneAttractorScalarField, 
-            SvExBvhAttractorScalarField)
-from sverchok.utils.field.vector import (SvExVectorFieldPointDistance,
-            SvExAverageVectorField, SvExKdtVectorField, 
-            SvExLineAttractorVectorField, SvExPlaneAttractorVectorField,
-            SvExBvhAttractorVectorField)
+from sverchok.utils.field.scalar import (SvScalarFieldPointDistance,
+            SvMergedScalarField, SvKdtScalarField,
+            SvLineAttractorScalarField, SvPlaneAttractorScalarField, 
+            SvBvhAttractorScalarField)
+from sverchok.utils.field.vector import (SvVectorFieldPointDistance,
+            SvAverageVectorField, SvKdtVectorField, 
+            SvLineAttractorVectorField, SvPlaneAttractorVectorField,
+            SvBvhAttractorVectorField)
 from sverchok.utils.math import falloff_types, falloff_array
 
-class SvExAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Attractor Field
     Tooltip: Generate scalar and vector attraction fields
@@ -89,8 +89,8 @@ class SvExAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', 'Amplitude').prop_name = 'amplitude'
         self.inputs.new('SvStringsSocket', 'Coefficient').prop_name = 'coefficient'
 
-        self.outputs.new('SvExVectorFieldSocket', "VField")
-        self.outputs.new('SvExScalarFieldSocket', "SField")
+        self.outputs.new('SvVectorFieldSocket', "VField")
+        self.outputs.new('SvScalarFieldSocket', "SField")
         self.update_type(context)
 
     def draw_buttons(self, context, layout):
@@ -105,36 +105,36 @@ class SvExAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
     def to_point(self, centers, falloff):
         n = len(centers)
         if n == 1:
-            sfield = SvExScalarFieldPointDistance(centers[0], falloff=falloff)
-            vfield = SvExVectorFieldPointDistance(centers[0], falloff=falloff)
+            sfield = SvScalarFieldPointDistance(centers[0], falloff=falloff)
+            vfield = SvVectorFieldPointDistance(centers[0], falloff=falloff)
         elif self.point_mode == 'AVG':
-            sfields = [SvExScalarFieldPointDistance(center, falloff=falloff) for center in centers]
-            sfield = SvExMergedScalarField('AVG', sfields)
-            vfields = [SvExVectorFieldPointDistance(center, falloff=falloff) for center in centers]
-            vfield = SvExAverageVectorField(vfields)
+            sfields = [SvScalarFieldPointDistance(center, falloff=falloff) for center in centers]
+            sfield = SvMergedScalarField('AVG', sfields)
+            vfields = [SvVectorFieldPointDistance(center, falloff=falloff) for center in centers]
+            vfield = SvAverageVectorField(vfields)
         else: # MIN
             kdt = kdtree.KDTree(len(centers))
             for i, v in enumerate(centers):
                 kdt.insert(v, i)
             kdt.balance()
-            vfield = SvExKdtVectorField(kdt=kdt, falloff=falloff)
-            sfield = SvExKdtScalarField(kdt=kdt, falloff=falloff)
+            vfield = SvKdtVectorField(kdt=kdt, falloff=falloff)
+            sfield = SvKdtScalarField(kdt=kdt, falloff=falloff)
         return vfield, sfield
 
     def to_line(self, center, direction, falloff):
-        sfield = SvExLineAttractorScalarField(np.array(center), np.array(direction), falloff=falloff)
-        vfield = SvExLineAttractorVectorField(np.array(center), np.array(direction), falloff=falloff)
+        sfield = SvLineAttractorScalarField(np.array(center), np.array(direction), falloff=falloff)
+        vfield = SvLineAttractorVectorField(np.array(center), np.array(direction), falloff=falloff)
         return vfield, sfield
 
     def to_plane(self, center, direction, falloff):
-        sfield = SvExPlaneAttractorScalarField(np.array(center), np.array(direction), falloff=falloff)
-        vfield = SvExPlaneAttractorVectorField(np.array(center), np.array(direction), falloff=falloff)
+        sfield = SvPlaneAttractorScalarField(np.array(center), np.array(direction), falloff=falloff)
+        vfield = SvPlaneAttractorVectorField(np.array(center), np.array(direction), falloff=falloff)
         return vfield, sfield
 
     def to_mesh(self, verts, faces, falloff):
         bvh = bvhtree.BVHTree.FromPolygons(verts, faces)
-        sfield = SvExBvhAttractorScalarField(bvh=bvh, falloff=falloff, signed=self.signed)
-        vfield = SvExBvhAttractorVectorField(bvh=bvh, falloff=falloff)
+        sfield = SvBvhAttractorScalarField(bvh=bvh, falloff=falloff, signed=self.signed)
+        vfield = SvBvhAttractorVectorField(bvh=bvh, falloff=falloff)
         return vfield, sfield
 
     def process(self):
@@ -180,8 +180,8 @@ class SvExAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['VField'].sv_set(vfields_out)
 
 def register():
-    bpy.utils.register_class(SvExAttractorFieldNode)
+    bpy.utils.register_class(SvAttractorFieldNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExAttractorFieldNode)
+    bpy.utils.unregister_class(SvAttractorFieldNode)
 

@@ -7,7 +7,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat
 
-class SvExCurveFrameNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveFrameNode(bpy.types.Node, SverchCustomTreeNode):
         """
         Triggers: Curve Frame
         Tooltip: Calculate (Frenet) frame matrix at any point of the curve
@@ -32,7 +32,7 @@ class SvExCurveFrameNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, 'join', toggle=True)
 
         def sv_init(self, context):
-            self.inputs.new('SvExCurveSocket', "Curve")
+            self.inputs.new('SvCurveSocket', "Curve")
             self.inputs.new('SvStringsSocket', "T").prop_name = 't_value'
             self.outputs.new('SvMatrixSocket', 'Matrix')
             self.outputs.new('SvVerticesSocket', 'Normal')
@@ -71,8 +71,8 @@ class SvExCurveFrameNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs['Binormal'].sv_set(binormals_out)
 
 def register():
-    bpy.utils.register_class(SvExCurveFrameNode)
+    bpy.utils.register_class(SvCurveFrameNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExCurveFrameNode)
+    bpy.utils.unregister_class(SvCurveFrameNode)
 

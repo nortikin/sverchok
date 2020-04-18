@@ -7,9 +7,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 
-from sverchok.utils.curve import SvExCurve, SvExCastCurveToPlane, SvExCastCurveToSphere, SvExCastCurveToCylinder
+from sverchok.utils.curve import SvCurve, SvCastCurveToPlane, SvCastCurveToSphere, SvCastCurveToCylinder
 
-class SvExCastCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCastCurveNode(bpy.types.Node, SverchCustomTreeNode):
         """
         Triggers: Cast Curve to Shape
         Tooltip: Cast (project) a curve to the plane, sphere or cylindrical surface
@@ -47,7 +47,7 @@ class SvExCastCurveNode(bpy.types.Node, SverchCustomTreeNode):
             update = update_sockets)
 
         def sv_init(self, context):
-            self.inputs.new('SvExCurveSocket', "Curve")
+            self.inputs.new('SvCurveSocket', "Curve")
             
             p = self.inputs.new('SvVerticesSocket', "Center")
             p.use_prop = True
@@ -59,7 +59,7 @@ class SvExCastCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
             self.inputs.new('SvStringsSocket', "Radius").prop_name = 'radius'
             self.inputs.new('SvStringsSocket', "Coefficient").prop_name = 'coefficient'
-            self.outputs.new('SvExCurveSocket', "Curve")
+            self.outputs.new('SvCurveSocket', "Curve")
             self.update_sockets(context)
 
         def draw_buttons(self, context, layout):
@@ -76,7 +76,7 @@ class SvExCastCurveNode(bpy.types.Node, SverchCustomTreeNode):
             radius_s = self.inputs['Radius'].sv_get()
             coeff_s = self.inputs['Coefficient'].sv_get()
 
-            if isinstance(curve_s[0], SvExCurve):
+            if isinstance(curve_s[0], SvCurve):
                 curve_s = [curve_s]
             center_s = ensure_nesting_level(center_s, 3)
             direction_s = ensure_nesting_level(direction_s, 3)
@@ -87,13 +87,13 @@ class SvExCastCurveNode(bpy.types.Node, SverchCustomTreeNode):
             for curves, centers, directions, radiuses, coeffs in zip_long_repeat(curve_s, center_s, direction_s, radius_s, coeff_s):
                 for curve, center, direction, radius, coeff in zip_long_repeat(curves, centers, directions, radiuses, coeffs):
                     if self.form == 'PLANE':
-                        new_curve = SvExCastCurveToPlane(curve, np.array(center),
+                        new_curve = SvCastCurveToPlane(curve, np.array(center),
                                         np.array(direction), coeff)
                     elif self.form == 'SPHERE':
-                        new_curve = SvExCastCurveToSphere(curve, np.array(center),
+                        new_curve = SvCastCurveToSphere(curve, np.array(center),
                                         radius, coeff)
                     elif self.form == 'CYLINDER':
-                        new_curve = SvExCastCurveToCylinder(curve, np.array(center),
+                        new_curve = SvCastCurveToCylinder(curve, np.array(center),
                                         np.array(direction), radius, coeff)
                     else:
                         raise Exception("Unsupported target form")
@@ -102,8 +102,8 @@ class SvExCastCurveNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs['Curve'].sv_set(curves_out)
 
 def register():
-    bpy.utils.register_class(SvExCastCurveNode)
+    bpy.utils.register_class(SvCastCurveNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExCastCurveNode)
+    bpy.utils.unregister_class(SvCastCurveNode)
 

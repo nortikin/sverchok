@@ -11,9 +11,9 @@ from sverchok.utils.logging import info, exception
 from sverchok.utils.math import from_cylindrical, from_spherical, to_cylindrical, to_spherical
 
 from sverchok.utils.math import coordinate_modes
-from sverchok.utils.field.scalar import SvExScalarFieldLambda
+from sverchok.utils.field.scalar import SvScalarFieldLambda
 
-class SvExScalarFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
+class SvScalarFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Scalar Field Formula
     Tooltip: Generate scalar field by formula
@@ -39,8 +39,8 @@ class SvExScalarFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvExScalarFieldSocket', "Field")
-        self.outputs.new('SvExScalarFieldSocket', "Field")
+        self.inputs.new('SvScalarFieldSocket', "Field")
+        self.outputs.new('SvScalarFieldSocket', "Field")
 
     def draw_buttons(self, context, layout):
         layout.label(text="Input:")
@@ -134,14 +134,14 @@ class SvExScalarFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
             for var_values in var_values_s:
                 variables = dict(zip(var_names, var_values))
                 function = self.make_function(variables.copy())
-                new_field = SvExScalarFieldLambda(function, variables, field_in)
+                new_field = SvScalarFieldLambda(function, variables, field_in)
                 fields_out.append(new_field)
 
         self.outputs['Field'].sv_set(fields_out)
 
 def register():
-    bpy.utils.register_class(SvExScalarFieldFormulaNode)
+    bpy.utils.register_class(SvScalarFieldFormulaNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExScalarFieldFormulaNode)
+    bpy.utils.unregister_class(SvScalarFieldFormulaNode)
 

@@ -10,11 +10,11 @@ from sverchok.utils.modules.eval_formula import get_variables, safe_eval
 from sverchok.utils.logging import info, exception
 from sverchok.utils.sv_noise_utils import noise_options, PERLIN_ORIGINAL
 
-from sverchok.utils.field.vector import SvExNoiseVectorField
+from sverchok.utils.field.vector import SvNoiseVectorField
 
 avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_options]
 
-class SvExNoiseVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvNoiseVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Noise Vector Field
     Tooltip: Noise Vector Field
@@ -33,7 +33,7 @@ class SvExNoiseVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'Seed').prop_name = 'seed'
-        self.outputs.new('SvExVectorFieldSocket', 'Noise')
+        self.outputs.new('SvVectorFieldSocket', 'Noise')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'noise_type', text="Type")
@@ -51,14 +51,14 @@ class SvExNoiseVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
 
             if seed == 0:
                 seed = 12345
-            field = SvExNoiseVectorField(self.noise_type, seed)
+            field = SvNoiseVectorField(self.noise_type, seed)
             fields_out.append(field)
 
         self.outputs['Noise'].sv_set(fields_out)
 
 def register():
-    bpy.utils.register_class(SvExNoiseVectorFieldNode)
+    bpy.utils.register_class(SvNoiseVectorFieldNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExNoiseVectorFieldNode)
+    bpy.utils.unregister_class(SvNoiseVectorFieldNode)
 

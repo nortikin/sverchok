@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match
 from sverchok.utils.modules.eval_formula import get_variables, safe_eval
 from sverchok.utils.logging import info, exception
 
-from sverchok.utils.field.scalar import SvExScalarFieldBinOp, SvExScalarField, SvExNegatedScalarField
+from sverchok.utils.field.scalar import SvScalarFieldBinOp, SvScalarField, SvNegatedScalarField
 
 operations = [
     ('ADD', "Add", lambda x, y : x+y),
@@ -29,7 +29,7 @@ def get_operation(op_id):
             return function
     raise Exception("Unsupported operation: " + op_id)
 
-class SvExScalarFieldMathNode(bpy.types.Node, SverchCustomTreeNode):
+class SvScalarFieldMathNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Scalar Field Math
     Tooltip: Scalar Field Math
@@ -50,9 +50,9 @@ class SvExScalarFieldMathNode(bpy.types.Node, SverchCustomTreeNode):
         update = update_sockets)
 
     def sv_init(self, context):
-        self.inputs.new('SvExScalarFieldSocket', "FieldA")
-        self.inputs.new('SvExScalarFieldSocket', "FieldB")
-        self.outputs.new('SvExScalarFieldSocket', "FieldC")
+        self.inputs.new('SvScalarFieldSocket', "FieldA")
+        self.inputs.new('SvScalarFieldSocket', "FieldB")
+        self.outputs.new('SvScalarFieldSocket', "FieldC")
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
@@ -67,23 +67,23 @@ class SvExScalarFieldMathNode(bpy.types.Node, SverchCustomTreeNode):
 
         fields_out = []
         for fields_a, fields_b in zip_long_repeat(field_a_s, field_b_s):
-            if isinstance(fields_a, SvExScalarField):
+            if isinstance(fields_a, SvScalarField):
                 fields_a = [fields_a]
-            if isinstance(fields_b, SvExScalarField):
+            if isinstance(fields_b, SvScalarField):
                 fields_b = [fields_b]
             for field_a, field_b in zip_long_repeat(fields_a, fields_b):
                 operation = get_operation(self.operation)
                 if self.operation == 'NEG':
-                    field_c = SvExNegatedScalarField(field_a)
+                    field_c = SvNegatedScalarField(field_a)
                 else:
-                    field_c = SvExScalarFieldBinOp(field_a, field_b, operation)
+                    field_c = SvScalarFieldBinOp(field_a, field_b, operation)
                 fields_out.append(field_c)
 
         self.outputs['FieldC'].sv_set(fields_out)
 
 def register():
-    bpy.utils.register_class(SvExScalarFieldMathNode)
+    bpy.utils.register_class(SvScalarFieldMathNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExScalarFieldMathNode)
+    bpy.utils.unregister_class(SvScalarFieldMathNode)
 

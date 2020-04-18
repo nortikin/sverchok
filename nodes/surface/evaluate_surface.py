@@ -8,12 +8,12 @@ import sverchok
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.logging import info, exception
-from sverchok.utils.surface import SvExSurface
+from sverchok.utils.surface import SvSurface
 
 U_SOCKET = 1
 V_SOCKET = 2
 
-class SvExEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Evaluate Surface
     Tooltip: Evaluate Surface
@@ -117,7 +117,7 @@ class SvExEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, 'clamp_mode', expand=True)
 
     def sv_init(self, context):
-        self.inputs.new('SvExSurfaceSocket', "Surface")
+        self.inputs.new('SvSurfaceSocket', "Surface")
         self.inputs.new('SvStringsSocket', "U").prop_name = 'u_value' # 1 — U_SOCKET
         self.inputs.new('SvStringsSocket', "V").prop_name = 'v_value' # 2 — V_SOCKET
         self.inputs.new('SvVerticesSocket', "Vertices") # 3
@@ -217,7 +217,7 @@ class SvExEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         samples_u_s = self.inputs['SamplesU'].sv_get()
         samples_v_s = self.inputs['SamplesV'].sv_get()
 
-        if isinstance(surfaces_s[0], SvExSurface):
+        if isinstance(surfaces_s[0], SvSurface):
             surfaces_s = [surfaces_s]
 
         samples_u_s = ensure_nesting_level(samples_u_s, 2)
@@ -264,8 +264,8 @@ class SvExEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Faces'].sv_set(faces_out)
 
 def register():
-    bpy.utils.register_class(SvExEvalSurfaceNode)
+    bpy.utils.register_class(SvEvalSurfaceNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExEvalSurfaceNode)
+    bpy.utils.unregister_class(SvEvalSurfaceNode)
 

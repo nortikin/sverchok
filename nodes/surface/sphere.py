@@ -7,9 +7,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nesting_level
-from sverchok.utils.surface import SvExLambertSphere, SvExEquirectSphere, SvExGallSphere, SvExDefaultSphere
+from sverchok.utils.surface import SvLambertSphere, SvEquirectSphere, SvGallSphere, SvDefaultSphere
 
-class SvExSphereNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSphereNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Sphere
     Tooltip: Generate spherical surface (different projections are available)
@@ -53,7 +53,7 @@ class SvExSphereNode(bpy.types.Node, SverchCustomTreeNode):
         p.prop = (0.0, 0.0, 0.0)
         self.inputs.new('SvStringsSocket', "Radius").prop_name = 'radius'
         self.inputs.new('SvStringsSocket', "Theta1").prop_name = 'theta1'
-        self.outputs.new('SvExSurfaceSocket', "Surface")
+        self.outputs.new('SvSurfaceSocket', "Surface")
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
@@ -75,19 +75,19 @@ class SvExSphereNode(bpy.types.Node, SverchCustomTreeNode):
                 theta1 = theta1[0]
 
             if self.projection == 'DEFAULT':
-                surface = SvExDefaultSphere(np.array(center), radius)
+                surface = SvDefaultSphere(np.array(center), radius)
             elif self.projection == 'EQUIRECT':
-                surface = SvExEquirectSphere(np.array(center), radius, theta1)
+                surface = SvEquirectSphere(np.array(center), radius, theta1)
             elif self.projection == 'LAMBERT':
-                surface = SvExLambertSphere(np.array(center), radius)
+                surface = SvLambertSphere(np.array(center), radius)
             else:
-                surface = SvExGallSphere(np.array(center), radius)
+                surface = SvGallSphere(np.array(center), radius)
             surfaces_out.append(surface)
         self.outputs['Surface'].sv_set(surfaces_out)
 
 def register():
-    bpy.utils.register_class(SvExSphereNode)
+    bpy.utils.register_class(SvSphereNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExSphereNode)
+    bpy.utils.unregister_class(SvSphereNode)
 

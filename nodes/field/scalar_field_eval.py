@@ -11,9 +11,9 @@ from sverchok.utils.logging import info, exception
 from sverchok.utils.math import from_cylindrical, from_spherical, to_cylindrical, to_spherical
 
 from sverchok.utils.math import coordinate_modes
-from sverchok.utils.field.scalar import SvExScalarFieldLambda
+from sverchok.utils.field.scalar import SvScalarFieldLambda
 
-class SvExScalarFieldEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
+class SvScalarFieldEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Scalar Field Evaluate
     Tooltip: Evaluate Scalar Field at specific point(s)
@@ -24,7 +24,7 @@ class SvExScalarFieldEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_EVAL_SCALAR_FIELD'
 
     def sv_init(self, context):
-        self.inputs.new('SvExScalarFieldSocket', "Field")
+        self.inputs.new('SvScalarFieldSocket', "Field")
         d = self.inputs.new('SvVerticesSocket', "Vertices")
         d.use_prop = True
         d.prop = (0.0, 0.0, 0.0)
@@ -56,8 +56,8 @@ class SvExScalarFieldEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Value'].sv_set(values_out)
 
 def register():
-    bpy.utils.register_class(SvExScalarFieldEvaluateNode)
+    bpy.utils.register_class(SvScalarFieldEvaluateNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExScalarFieldEvaluateNode)
+    bpy.utils.unregister_class(SvScalarFieldEvaluateNode)
 

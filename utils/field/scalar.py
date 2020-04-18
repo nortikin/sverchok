@@ -20,7 +20,7 @@ from sverchok.utils.math import from_cylindrical, from_spherical, to_cylindrical
 #                #
 ##################
 
-class SvExScalarField(object):
+class SvScalarField(object):
 
     def __repr__(self):
         if hasattr(self, '__description__'):
@@ -35,7 +35,7 @@ class SvExScalarField(object):
     def evaluate_grid(self, xs, ys, zs):
         raise Exception("not implemented")
 
-class SvExConstantScalarField(SvExScalarField):
+class SvConstantScalarField(SvScalarField):
     def __init__(self, value):
         self.value = value
         self.__description__ = "Constant = {}".format(value)
@@ -47,7 +47,7 @@ class SvExConstantScalarField(SvExScalarField):
         result = np.full_like(xs, self.value, dtype=np.float64)
         return result
 
-class SvExVectorFieldDecomposed(SvExScalarField):
+class SvVectorFieldDecomposed(SvScalarField):
     def __init__(self, vfield, coords, axis):
         self.vfield = vfield
         self.coords = coords
@@ -78,7 +78,7 @@ class SvExVectorFieldDecomposed(SvExScalarField):
             vectors = np.apply_along_axis(lambda v: np.array(to_spherical(tuple(v), mode='radians')), 1, vectors)
             return vectors[:, self.axis]
 
-class SvExScalarFieldLambda(SvExScalarField):
+class SvScalarFieldLambda(SvScalarField):
     __description__ = "Formula"
 
     def __init__(self, function, variables, in_field):
@@ -100,7 +100,7 @@ class SvExScalarFieldLambda(SvExScalarField):
             V = self.in_field.evaluate(x, y, z)
         return self.function(x, y, z, V)
 
-class SvExScalarFieldPointDistance(SvExScalarField):
+class SvScalarFieldPointDistance(SvScalarField):
     def __init__(self, center, metric='EUCLIDEAN', falloff=None):
         self.center = center
         self.falloff = falloff
@@ -142,7 +142,7 @@ class SvExScalarFieldPointDistance(SvExScalarField):
         else:
             return norm
 
-class SvExScalarFieldBinOp(SvExScalarField):
+class SvScalarFieldBinOp(SvScalarField):
     def __init__(self, field1, field2, function):
         self.function = function
         self.field1 = field1
@@ -155,7 +155,7 @@ class SvExScalarFieldBinOp(SvExScalarField):
         func = lambda xs, ys, zs : self.function(self.field1.evaluate_grid(xs, ys, zs), self.field2.evaluate_grid(xs, ys, zs))
         return np.vectorize(func, signature="(m),(m),(m)->(m)")(xs, ys, zs)
 
-class SvExNegatedScalarField(SvExScalarField):
+class SvNegatedScalarField(SvScalarField):
     def __init__(self, field):
         self.field = field
         self.__description__ = "Negate({})".format(field)
@@ -167,7 +167,7 @@ class SvExNegatedScalarField(SvExScalarField):
     def evaluate_grid(self, xs, ys, zs):
         return (- self.field.evaluate_grid(xs, ys, zs))
 
-class SvExVectorFieldsScalarProduct(SvExScalarField):
+class SvVectorFieldsScalarProduct(SvScalarField):
     def __init__(self, field1, field2):
         self.field1 = field1
         self.field2 = field2
@@ -186,7 +186,7 @@ class SvExVectorFieldsScalarProduct(SvExScalarField):
         result = np.vectorize(np.dot, signature="(3),(3)->()")(vectors1, vectors2)
         return result
 
-class SvExVectorFieldNorm(SvExScalarField):
+class SvVectorFieldNorm(SvScalarField):
     def __init__(self, field):
         self.field = field
         self.__description__ = "Norm({})".format(field)
@@ -201,7 +201,7 @@ class SvExVectorFieldNorm(SvExScalarField):
         result = np.linalg.norm(vectors, axis=1)
         return result
 
-class SvExMergedScalarField(SvExScalarField):
+class SvMergedScalarField(SvScalarField):
     def __init__(self, mode, fields):
         self.mode = mode
         self.fields = fields
@@ -243,7 +243,7 @@ class SvExMergedScalarField(SvExScalarField):
             raise Exception("unsupported operation")
         return value
 
-class SvExKdtScalarField(SvExScalarField):
+class SvKdtScalarField(SvScalarField):
     __description__ = "KDT"
 
     def __init__(self, vertices=None, kdt=None, falloff=None):
@@ -279,7 +279,7 @@ class SvExKdtScalarField(SvExScalarField):
         else:
             return norms
 
-class SvExLineAttractorScalarField(SvExScalarField):
+class SvLineAttractorScalarField(SvScalarField):
     __description__ = "Line Attractor"
 
     def __init__(self, center, direction, falloff=None):
@@ -313,7 +313,7 @@ class SvExLineAttractorScalarField(SvExScalarField):
         else:
             return norms
 
-class SvExPlaneAttractorScalarField(SvExScalarField):
+class SvPlaneAttractorScalarField(SvScalarField):
     __description__ = "Plane Attractor"
 
     def __init__(self, center, direction, falloff=None):
@@ -345,7 +345,7 @@ class SvExPlaneAttractorScalarField(SvExScalarField):
         else:
             return norms
 
-class SvExBvhAttractorScalarField(SvExScalarField):
+class SvBvhAttractorScalarField(SvScalarField):
     __description__ = "BVH Attractor"
 
     def __init__(self, bvh=None, verts=None, faces=None, falloff=None, signed=False):
@@ -387,7 +387,7 @@ class SvExBvhAttractorScalarField(SvExScalarField):
         else:
             return norms
 
-class SvExVectorScalarFieldComposition(SvExScalarField):
+class SvVectorScalarFieldComposition(SvScalarField):
     __description__ = "Composition"
 
     def __init__(self, vfield, sfield):
@@ -403,7 +403,7 @@ class SvExVectorScalarFieldComposition(SvExScalarField):
         vx1, vy1, vz1 = self.vfield.evaluate_grid(xs, ys, zs)
         return self.sfield.evaluate_grid(vx1, vy1, vz1)
 
-class SvExVectorFieldDivergence(SvExScalarField):
+class SvVectorFieldDivergence(SvScalarField):
     def __init__(self, field, step):
         self.field = field
         self.step = step
@@ -439,7 +439,7 @@ class SvExVectorFieldDivergence(SvExScalarField):
 
         return dx_dx + dy_dy + dz_dz
 
-class SvExScalarFieldLaplacian(SvExScalarField):
+class SvScalarFieldLaplacian(SvScalarField):
     def __init__(self, field, step):
         self.field = field
         self.step = step
@@ -473,7 +473,7 @@ class SvExScalarFieldLaplacian(SvExScalarField):
         result = (sides - 6*v0) / (8 * step * step * step)
         return result
 
-class SvExVoronoiScalarField(SvExScalarField):
+class SvVoronoiScalarField(SvScalarField):
     __description__ = "Voronoi"
 
     def __init__(self, vertices):

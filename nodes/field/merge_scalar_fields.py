@@ -8,9 +8,9 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match_long_repeat, ensure_nesting_level
 from sverchok.utils.logging import info, exception
 
-from sverchok.utils.field.scalar import SvExMergedScalarField, SvExScalarField
+from sverchok.utils.field.scalar import SvMergedScalarField, SvScalarField
 
-class SvExMergeScalarFieldsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMergeScalarFieldsNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Merge / Join Scalar Fields
     Tooltip: Merge a list of scalar fields into one
@@ -35,8 +35,8 @@ class SvExMergeScalarFieldsNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvExScalarFieldSocket', "Fields")
-        self.outputs.new('SvExScalarFieldSocket', "Field")
+        self.inputs.new('SvScalarFieldSocket', "Fields")
+        self.outputs.new('SvScalarFieldSocket', "Field")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", text="")
@@ -46,18 +46,18 @@ class SvExMergeScalarFieldsNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         fields_s = self.inputs['Fields'].sv_get()
-        if isinstance(fields_s[0], SvExScalarField):
+        if isinstance(fields_s[0], SvScalarField):
             fields_s = [fields_s]
 
         fields_out = []
         for fields in fields_s:
-            field = SvExMergedScalarField(self.mode, fields)
+            field = SvMergedScalarField(self.mode, fields)
             fields_out.append(field)
         self.outputs['Field'].sv_set(fields_out)
 
 def register():
-    bpy.utils.register_class(SvExMergeScalarFieldsNode)
+    bpy.utils.register_class(SvMergeScalarFieldsNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExMergeScalarFieldsNode)
+    bpy.utils.unregister_class(SvMergeScalarFieldsNode)
 

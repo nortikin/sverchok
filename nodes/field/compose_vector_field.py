@@ -9,9 +9,9 @@ from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repe
 from sverchok.utils.logging import info, exception
 
 from sverchok.utils.math import coordinate_modes
-from sverchok.utils.field.vector import SvExComposedVectorField
+from sverchok.utils.field.vector import SvComposedVectorField
 
-class SvExComposeVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvComposeVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Compose Vector Field
     Tooltip: Generate vector field from three scalar fields
@@ -43,10 +43,10 @@ class SvExComposeVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
         update = update_sockets)
 
     def sv_init(self, context):
-        self.inputs.new('SvExScalarFieldSocket', "Field1")
-        self.inputs.new('SvExScalarFieldSocket', "Field2")
-        self.inputs.new('SvExScalarFieldSocket', "Field3")
-        self.outputs.new('SvExVectorFieldSocket', "Field")
+        self.inputs.new('SvScalarFieldSocket', "Field1")
+        self.inputs.new('SvScalarFieldSocket', "Field2")
+        self.inputs.new('SvScalarFieldSocket', "Field3")
+        self.outputs.new('SvVectorFieldSocket', "Field")
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
@@ -70,13 +70,13 @@ class SvExComposeVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
             if not isinstance(field3s, (list, tuple)):
                 field3s = [field3s]
             for field1, field2, field3 in zip_long_repeat(field1s, field2s, field3s):
-                field = SvExComposedVectorField(self.input_mode, field1, field2, field3)
+                field = SvComposedVectorField(self.input_mode, field1, field2, field3)
                 fields_out.append(field)
         self.outputs['Field'].sv_set(fields_out)
 
 def register():
-    bpy.utils.register_class(SvExComposeVectorFieldNode)
+    bpy.utils.register_class(SvComposeVectorFieldNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExComposeVectorFieldNode)
+    bpy.utils.unregister_class(SvComposeVectorFieldNode)
 

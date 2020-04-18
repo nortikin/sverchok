@@ -9,12 +9,12 @@ import sverchok
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 
-from sverchok.utils.field.vector import SvExBendAlongCurveField
+from sverchok.utils.field.vector import SvBendAlongCurveField
 
 T_MIN_SOCKET = 1
 T_MAX_SOCKET = 2
 
-class SvExBendAlongCurveFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBendAlongCurveFieldNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Bend Along Curve
     Tooltip: Generate a vector field which bends the space along the given curve.
@@ -102,11 +102,11 @@ class SvExBendAlongCurveFieldNode(bpy.types.Node, SverchCustomTreeNode):
         update = update_sockets)
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', 'Curve')                    #0
+        self.inputs.new('SvCurveSocket', 'Curve')                    #0
         self.inputs.new('SvStringsSocket', 'TMin').prop_name = 't_min' #1
         self.inputs.new('SvStringsSocket', 'TMax').prop_name = 't_max' #2
         self.inputs.new('SvStringsSocket', "Resolution").prop_name = 'resolution'
-        self.outputs.new('SvExVectorFieldSocket', 'Field')
+        self.outputs.new('SvVectorFieldSocket', 'Field')
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
@@ -141,7 +141,7 @@ class SvExBendAlongCurveFieldNode(bpy.types.Node, SverchCustomTreeNode):
             if isinstance(resolution, (list, int)):
                 resolution = resolution[0]
 
-            field = SvExBendAlongCurveField(curve, self.algorithm, self.scale_all,
+            field = SvBendAlongCurveField(curve, self.algorithm, self.scale_all,
                         self.orient_axis, t_min, t_max,
                         up_axis = self.up_axis,
                         resolution = resolution,
@@ -151,8 +151,8 @@ class SvExBendAlongCurveFieldNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Field'].sv_set(fields_out)
 
 def register():
-    bpy.utils.register_class(SvExBendAlongCurveFieldNode)
+    bpy.utils.register_class(SvBendAlongCurveFieldNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExBendAlongCurveFieldNode)
+    bpy.utils.unregister_class(SvBendAlongCurveFieldNode)
 

@@ -7,7 +7,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat
 
-class SvExCurveTorsionNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveTorsionNode(bpy.types.Node, SverchCustomTreeNode):
         """
         Triggers: Curve Torsion / Twist
         Tooltip: Calculate torsion of the curve at given parameter value
@@ -22,7 +22,7 @@ class SvExCurveTorsionNode(bpy.types.Node, SverchCustomTreeNode):
                 update = updateNode)
 
         def sv_init(self, context):
-            self.inputs.new('SvExCurveSocket', "Curve")
+            self.inputs.new('SvCurveSocket', "Curve")
             self.inputs.new('SvStringsSocket', "T").prop_name = 't_value'
             self.outputs.new('SvStringsSocket', "Torsion")
 
@@ -42,8 +42,8 @@ class SvExCurveTorsionNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs['Torsion'].sv_set(torsion_out)
 
 def register():
-    bpy.utils.register_class(SvExCurveTorsionNode)
+    bpy.utils.register_class(SvCurveTorsionNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExCurveTorsionNode)
+    bpy.utils.unregister_class(SvCurveTorsionNode)
 

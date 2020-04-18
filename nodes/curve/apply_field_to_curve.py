@@ -7,9 +7,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, fullList
 
-from sverchok.utils.curve import SvExDeformedByFieldCurve
+from sverchok.utils.curve import SvDeformedByFieldCurve
 
-class SvExApplyFieldToCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvApplyFieldToCurveNode(bpy.types.Node, SverchCustomTreeNode):
         """
         Triggers: Apply field to curve
         Tooltip: Apply vector field to curve
@@ -26,10 +26,10 @@ class SvExApplyFieldToCurveNode(bpy.types.Node, SverchCustomTreeNode):
                 update=updateNode)
 
         def sv_init(self, context):
-            self.inputs.new('SvExVectorFieldSocket', "Field")
-            self.inputs.new('SvExCurveSocket', "Curve")
+            self.inputs.new('SvVectorFieldSocket', "Field")
+            self.inputs.new('SvCurveSocket', "Curve")
             self.inputs.new('SvStringsSocket', "Coefficient").prop_name = 'coefficient'
-            self.outputs.new('SvExCurveSocket', "Curve")
+            self.outputs.new('SvCurveSocket', "Curve")
 
         def process(self):
             if not any(socket.is_linked for socket in self.outputs):
@@ -44,14 +44,14 @@ class SvExApplyFieldToCurveNode(bpy.types.Node, SverchCustomTreeNode):
                 if isinstance(coeff, (list, tuple)):
                     coeff = coeff[0]
 
-                new_curve = SvExDeformedByFieldCurve(curve, field, coeff)
+                new_curve = SvDeformedByFieldCurve(curve, field, coeff)
                 curve_out.append(new_curve)
 
             self.outputs['Curve'].sv_set(curve_out)
 
 def register():
-    bpy.utils.register_class(SvExApplyFieldToCurveNode)
+    bpy.utils.register_class(SvApplyFieldToCurveNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExApplyFieldToCurveNode)
+    bpy.utils.unregister_class(SvApplyFieldToCurveNode)
 

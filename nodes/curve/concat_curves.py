@@ -6,9 +6,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvExCurve, SvExConcatCurve
+from sverchok.utils.curve import SvCurve, SvConcatCurve
 
-class SvExConcatCurvesNode(bpy.types.Node, SverchCustomTreeNode):
+class SvConcatCurvesNode(bpy.types.Node, SverchCustomTreeNode):
         """
         Triggers: Concatenate Curves
         Tooltip: Concatenate several curves into one
@@ -36,8 +36,8 @@ class SvExConcatCurvesNode(bpy.types.Node, SverchCustomTreeNode):
                 layout.prop(self, 'max_rho')
 
         def sv_init(self, context):
-            self.inputs.new('SvExCurveSocket', "Curves")
-            self.outputs.new('SvExCurveSocket', "Curve")
+            self.inputs.new('SvCurveSocket', "Curves")
+            self.outputs.new('SvCurveSocket', "Curve")
 
         def run_check(self, curves):
             for idx, (curve1, curve2) in enumerate(zip(curves, curves[1:])):
@@ -54,21 +54,21 @@ class SvExConcatCurvesNode(bpy.types.Node, SverchCustomTreeNode):
                 return
 
             curve_s = self.inputs['Curves'].sv_get()
-            if isinstance(curve_s[0], SvExCurve):
+            if isinstance(curve_s[0], SvCurve):
                 curve_s = [curve_s]
 
             curves_out = []
             for curves in curve_s:
                 if self.check:
                     self.run_check(curves)
-                new_curve = SvExConcatCurve(curves)
+                new_curve = SvConcatCurve(curves)
                 curves_out.append(new_curve)
 
             self.outputs['Curve'].sv_set(curves_out)
 
 def register():
-    bpy.utils.register_class(SvExConcatCurvesNode)
+    bpy.utils.register_class(SvConcatCurvesNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExConcatCurvesNode)
+    bpy.utils.unregister_class(SvConcatCurvesNode)
 

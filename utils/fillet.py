@@ -4,7 +4,7 @@ from math import tan, sin, pi
 
 from mathutils import Vector, Matrix
 
-from sverchok.utils.curve import SvExCircle
+from sverchok.utils.curve import SvCircle
 
 class ArcFilletData(object):
     def __init__(self, center, matrix, normal, radius, p1, p2, angle):
@@ -17,7 +17,7 @@ class ArcFilletData(object):
         self.matrix = matrix
 
     def get_curve(self):
-        circle = SvExCircle(self.matrix, self.radius)
+        circle = SvCircle(self.matrix, self.radius)
         circle.u_bounds = (0.0, self.angle)
         #circle.u_bounds = (-self.angle, 0.0)
         return circle

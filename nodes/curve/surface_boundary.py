@@ -6,10 +6,10 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvExCurve, SvExIsoUvCurve, SvExConcatCurve
-from sverchok.utils.surface import SvExSurface
+from sverchok.utils.curve import SvCurve, SvIsoUvCurve, SvConcatCurve
+from sverchok.utils.surface import SvSurface
 
-class SvExSurfaceBoundaryNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSurfaceBoundaryNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Surface Boundary
     Tooltip: Generate a curve from curve's boundary
@@ -32,8 +32,8 @@ class SvExSurfaceBoundaryNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvExSurfaceSocket', "Surface")
-        self.outputs.new('SvExCurveSocket', "Boundary")
+        self.inputs.new('SvSurfaceSocket', "Surface")
+        self.outputs.new('SvCurveSocket', "Boundary")
 
     def draw_buttons(self, context, layout):
         layout.label(text="Cyclic:")
@@ -44,7 +44,7 @@ class SvExSurfaceBoundaryNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         surface_s = self.inputs['Surface'].sv_get()
-        if isinstance(surface_s[0], SvExSurface):
+        if isinstance(surface_s[0], SvSurface):
             surface_s = [surface_s]
 
         curves_out = []
@@ -53,18 +53,18 @@ class SvExSurfaceBoundaryNode(bpy.types.Node, SverchCustomTreeNode):
                 u_min, u_max = surface.get_u_min(), surface.get_u_max()
                 v_min, v_max = surface.get_v_min(), surface.get_v_max()
                 if self.cyclic_mode == 'NO':
-                    curve1 = SvExIsoUvCurve(surface, 'V', v_min, flip=False)
-                    curve2 = SvExIsoUvCurve(surface, 'U', u_max, flip=False)
-                    curve3 = SvExIsoUvCurve(surface, 'V', v_max, flip=True)
-                    curve4 = SvExIsoUvCurve(surface, 'U', u_min, flip=True)
-                    new_curves = [SvExConcatCurve([curve1, curve2, curve3, curve4])]
+                    curve1 = SvIsoUvCurve(surface, 'V', v_min, flip=False)
+                    curve2 = SvIsoUvCurve(surface, 'U', u_max, flip=False)
+                    curve3 = SvIsoUvCurve(surface, 'V', v_max, flip=True)
+                    curve4 = SvIsoUvCurve(surface, 'U', u_min, flip=True)
+                    new_curves = [SvConcatCurve([curve1, curve2, curve3, curve4])]
                 elif self.cyclic_mode == 'U':
-                    curve1 = SvExIsoUvCurve(surface, 'V', v_max, flip=False)
-                    curve2 = SvExIsoUvCurve(surface, 'V', v_min, flip=False)
+                    curve1 = SvIsoUvCurve(surface, 'V', v_max, flip=False)
+                    curve2 = SvIsoUvCurve(surface, 'V', v_min, flip=False)
                     new_curves = [curve1, curve2]
                 elif self.cyclic_mode == 'V':
-                    curve1 = SvExIsoUvCurve(surface, 'U', u_max, flip=False)
-                    curve2 = SvExIsoUvCurve(surface, 'U', u_min, flip=False)
+                    curve1 = SvIsoUvCurve(surface, 'U', u_max, flip=False)
+                    curve2 = SvIsoUvCurve(surface, 'U', u_min, flip=False)
                     new_curves = [curve1, curve2]
                 else:
                     raise Exception("Unsupported mode")
@@ -73,8 +73,8 @@ class SvExSurfaceBoundaryNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Boundary'].sv_set(curves_out)
 
 def register():
-    bpy.utils.register_class(SvExSurfaceBoundaryNode)
+    bpy.utils.register_class(SvSurfaceBoundaryNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExSurfaceBoundaryNode)
+    bpy.utils.unregister_class(SvSurfaceBoundaryNode)
 

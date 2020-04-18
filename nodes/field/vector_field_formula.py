@@ -11,9 +11,9 @@ from sverchok.utils.logging import info, exception
 from sverchok.utils.math import from_cylindrical, from_spherical, to_cylindrical, to_spherical
 
 from sverchok.utils.math import coordinate_modes
-from sverchok.utils.field.vector import SvExVectorFieldLambda
+from sverchok.utils.field.vector import SvVectorFieldLambda
 
-class SvExVectorFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVectorFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Vector Field Formula
     Tooltip: Generate vector field by formula
@@ -55,8 +55,8 @@ class SvExVectorFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvExVectorFieldSocket', "Field")
-        self.outputs.new('SvExVectorFieldSocket', "Field")
+        self.inputs.new('SvVectorFieldSocket', "Field")
+        self.outputs.new('SvVectorFieldSocket', "Field")
 
     def draw_buttons(self, context, layout):
         layout.label(text="Input:")
@@ -178,14 +178,14 @@ class SvExVectorFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
             for var_values in var_values_s:
                 variables = dict(zip(var_names, var_values))
                 function = self.make_function(variables.copy())
-                new_field = SvExVectorFieldLambda(function, variables, field_in)
+                new_field = SvVectorFieldLambda(function, variables, field_in)
                 fields_out.append(new_field)
 
         self.outputs['Field'].sv_set(fields_out)
 
 def register():
-    bpy.utils.register_class(SvExVectorFieldFormulaNode)
+    bpy.utils.register_class(SvVectorFieldFormulaNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExVectorFieldFormulaNode)
+    bpy.utils.unregister_class(SvVectorFieldFormulaNode)
 

@@ -11,9 +11,9 @@ from sverchok.utils.modules.eval_formula import get_variables, sv_compile, safe_
 from sverchok.utils.logging import info, exception
 from sverchok.utils.math import from_cylindrical, from_spherical, to_cylindrical, to_spherical
 from sverchok.utils.math import coordinate_modes
-from sverchok.utils.curve import SvExLambdaCurve
+from sverchok.utils.curve import SvLambdaCurve
 
-class SvExCurveFormulaNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveFormulaNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Curve Formula
     Tooltip: Generate curve by formula
@@ -61,7 +61,7 @@ class SvExCurveFormulaNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'TMin').prop_name = 't_min'
         self.inputs.new('SvStringsSocket', 'TMax').prop_name = 't_max'
-        self.outputs.new('SvExCurveSocket', 'Curve')
+        self.outputs.new('SvCurveSocket', 'Curve')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "formula1", text="")
@@ -156,15 +156,15 @@ class SvExCurveFormulaNode(bpy.types.Node, SverchCustomTreeNode):
             for t_min, t_max, *var_values in var_values_s:
                 variables = dict(zip(var_names, var_values))
                 function = self.make_function(variables.copy())
-                new_curve = SvExLambdaCurve(function)
+                new_curve = SvLambdaCurve(function)
                 new_curve.u_bounds = (t_min, t_max)
                 curves_out.append(new_curve)
         
         self.outputs['Curve'].sv_set(curves_out)
 
 def register():
-    bpy.utils.register_class(SvExCurveFormulaNode)
+    bpy.utils.register_class(SvCurveFormulaNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExCurveFormulaNode)
+    bpy.utils.unregister_class(SvCurveFormulaNode)
 

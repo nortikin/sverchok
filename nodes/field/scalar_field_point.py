@@ -8,10 +8,10 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match_long_repeat
 from sverchok.utils.logging import info, exception
 
-from sverchok.utils.field.scalar import SvExScalarFieldPointDistance
+from sverchok.utils.field.scalar import SvScalarFieldPointDistance
 from sverchok.utils.math import falloff_types, falloff_array
 
-class SvExScalarFieldPointNode(bpy.types.Node, SverchCustomTreeNode):
+class SvScalarFieldPointNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Scalar Field Point
     Tooltip: Generate scalar field by distance from a point
@@ -58,7 +58,7 @@ class SvExScalarFieldPointNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', 'Amplitude').prop_name = 'amplitude'
         self.inputs.new('SvStringsSocket', 'Coefficient').prop_name = 'coefficient'
 
-        self.outputs.new('SvExScalarFieldSocket', "Field")
+        self.outputs.new('SvScalarFieldSocket', "Field")
         self.update_type(context)
 
     def draw_buttons(self, context, layout):
@@ -81,14 +81,14 @@ class SvExScalarFieldPointNode(bpy.types.Node, SverchCustomTreeNode):
                     falloff_func = None
                 else:
                     falloff_func = falloff_array(self.falloff_type, amplitude, coefficient, self.clamp)
-                field = SvExScalarFieldPointDistance(np.array(center), metric=self.metric, falloff=falloff_func)
+                field = SvScalarFieldPointDistance(np.array(center), metric=self.metric, falloff=falloff_func)
                 fields_out.append(field)
 
         self.outputs['Field'].sv_set(fields_out)
 
 def register():
-    bpy.utils.register_class(SvExScalarFieldPointNode)
+    bpy.utils.register_class(SvScalarFieldPointNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExScalarFieldPointNode)
+    bpy.utils.unregister_class(SvScalarFieldPointNode)
 

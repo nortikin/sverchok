@@ -7,7 +7,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, fullList
 
-class SvExCurveCurvatureNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveCurvatureNode(bpy.types.Node, SverchCustomTreeNode):
         """
         Triggers: Curve Curvature
         Tooltip: Calculate curvature of the curve
@@ -22,7 +22,7 @@ class SvExCurveCurvatureNode(bpy.types.Node, SverchCustomTreeNode):
                 update = updateNode)
 
         def sv_init(self, context):
-            self.inputs.new('SvExCurveSocket', "Curve")
+            self.inputs.new('SvCurveSocket', "Curve")
             self.inputs.new('SvStringsSocket', "T").prop_name = 't_value'
             self.outputs.new('SvStringsSocket', "Curvature")
             self.outputs.new('SvStringsSocket', "Radius")
@@ -79,8 +79,8 @@ class SvExCurveCurvatureNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs['Radius'].sv_set(radius_out)
 
 def register():
-    bpy.utils.register_class(SvExCurveCurvatureNode)
+    bpy.utils.register_class(SvCurveCurvatureNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExCurveCurvatureNode)
+    bpy.utils.unregister_class(SvCurveCurvatureNode)
 

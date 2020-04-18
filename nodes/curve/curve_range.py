@@ -3,9 +3,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvExCurve
+from sverchok.utils.curve import SvCurve
 
-class SvExCurveRangeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveRangeNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Curve Domain / Range
     Tooltip: Output minimum and maximum values of T parameter allowed by the curve
@@ -16,7 +16,7 @@ class SvExCurveRangeNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_CURVE_DOMAIN'
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', "Curve")
+        self.inputs.new('SvCurveSocket', "Curve")
         self.outputs.new('SvStringsSocket', "TMin")
         self.outputs.new('SvStringsSocket', "TMax")
         self.outputs.new('SvStringsSocket', "Range")
@@ -30,7 +30,7 @@ class SvExCurveRangeNode(bpy.types.Node, SverchCustomTreeNode):
         t_max_out = []
         range_out = []
 
-        if isinstance(curve_s[0], SvExCurve):
+        if isinstance(curve_s[0], SvCurve):
             curve_s = [curve_s]
 
         for curves in curve_s:
@@ -52,8 +52,8 @@ class SvExCurveRangeNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Range'].sv_set(range_out)
 
 def register():
-    bpy.utils.register_class(SvExCurveRangeNode)
+    bpy.utils.register_class(SvCurveRangeNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExCurveRangeNode)
+    bpy.utils.unregister_class(SvCurveRangeNode)
 

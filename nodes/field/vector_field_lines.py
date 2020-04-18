@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, repeat_last_for
 from sverchok.utils.logging import info, exception
 from sverchok.utils.sv_mesh_utils import mesh_join
 
-class SvExVectorFieldLinesNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVectorFieldLinesNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Vector Field Lines
     Tooltip: Generate vector field lines
@@ -46,7 +46,7 @@ class SvExVectorFieldLinesNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'join', toggle=True)
 
     def sv_init(self, context):
-        self.inputs.new('SvExVectorFieldSocket', "Field")
+        self.inputs.new('SvVectorFieldSocket', "Field")
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "Step").prop_name = 'step'
         self.inputs.new('SvStringsSocket', "Iterations").prop_name = 'iterations'
@@ -119,8 +119,8 @@ class SvExVectorFieldLinesNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Edges'].sv_set(edges_out)
 
 def register():
-    bpy.utils.register_class(SvExVectorFieldLinesNode)
+    bpy.utils.register_class(SvVectorFieldLinesNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExVectorFieldLinesNode)
+    bpy.utils.unregister_class(SvVectorFieldLinesNode)
 

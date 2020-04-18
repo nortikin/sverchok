@@ -10,9 +10,9 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.logging import info, exception
 
-from sverchok.utils.field.image import load_image, SvExImageScalarField, SvExImageVectorField
+from sverchok.utils.field.image import load_image, SvImageScalarField, SvImageVectorField
 
-class SvExImageFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvImageFieldNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Image Field
     Tooltip: Generate vector or scalar field from an Image data block
@@ -44,17 +44,17 @@ class SvExImageFieldNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop_search(self, 'image_name', bpy.data, 'images', text='', icon='IMAGE')
 
     def sv_init(self, context):
-        self.outputs.new('SvExVectorFieldSocket', "RGB")
-        self.outputs.new('SvExVectorFieldSocket', "HSV")
-        self.outputs.new('SvExScalarFieldSocket', "Red")
-        self.outputs.new('SvExScalarFieldSocket', "Green")
-        self.outputs.new('SvExScalarFieldSocket', "Blue")
-        self.outputs.new('SvExScalarFieldSocket', "Hue")
-        self.outputs.new('SvExScalarFieldSocket', "Saturation")
-        self.outputs.new('SvExScalarFieldSocket', "Value")
-        self.outputs.new('SvExScalarFieldSocket', "Alpha")
-        self.outputs.new('SvExScalarFieldSocket', "RGB Average")
-        self.outputs.new('SvExScalarFieldSocket', "Luminosity")
+        self.outputs.new('SvVectorFieldSocket', "RGB")
+        self.outputs.new('SvVectorFieldSocket', "HSV")
+        self.outputs.new('SvScalarFieldSocket', "Red")
+        self.outputs.new('SvScalarFieldSocket', "Green")
+        self.outputs.new('SvScalarFieldSocket', "Blue")
+        self.outputs.new('SvScalarFieldSocket', "Hue")
+        self.outputs.new('SvScalarFieldSocket', "Saturation")
+        self.outputs.new('SvScalarFieldSocket', "Value")
+        self.outputs.new('SvScalarFieldSocket', "Alpha")
+        self.outputs.new('SvScalarFieldSocket', "RGB Average")
+        self.outputs.new('SvScalarFieldSocket', "Luminosity")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -64,16 +64,16 @@ class SvExImageFieldNode(bpy.types.Node, SverchCustomTreeNode):
 
         vfields_out = dict()
         if self.outputs['RGB'].is_linked:
-            rgb = SvExImageVectorField(pixels, 'RGB', plane=self.plane)
+            rgb = SvImageVectorField(pixels, 'RGB', plane=self.plane)
             vfields_out['RGB'] = [rgb]
         if self.outputs['HSV'].is_linked:
-            hsv = SvExImageVectorField(pixels, 'HSV', plane=self.plane)
+            hsv = SvImageVectorField(pixels, 'HSV', plane=self.plane)
             vfields_out['HSV'] = [hsv]
 
         sfields_out = dict()
         for channel in ['Red', 'Green', 'Blue', 'Hue', 'Saturation', 'Value', 'Alpha', 'RGB Average', 'Luminosity']:
             if self.outputs[channel].is_linked:
-                field = SvExImageScalarField(pixels, channel, plane=self.plane)
+                field = SvImageScalarField(pixels, channel, plane=self.plane)
                 sfields_out[channel] = [field]
 
         for space in vfields_out:
@@ -83,8 +83,8 @@ class SvExImageFieldNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs[channel].sv_set(sfields_out[channel])
 
 def register():
-    bpy.utils.register_class(SvExImageFieldNode)
+    bpy.utils.register_class(SvImageFieldNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExImageFieldNode)
+    bpy.utils.unregister_class(SvImageFieldNode)
 

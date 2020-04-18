@@ -12,8 +12,8 @@ from mathutils import Color
 
 from sverchok.utils.modules.color_utils import color_channels
 
-from sverchok.utils.field.scalar import SvExScalarField
-from sverchok.utils.field.vector import SvExVectorField
+from sverchok.utils.field.scalar import SvScalarField
+from sverchok.utils.field.vector import SvVectorField
 
 def get_scalar(channel, x):
     return color_channels[channel][1](x)
@@ -30,7 +30,7 @@ def load_image(image_name):
     pixels = np.array(image.pixels).reshape((height, width, 4))
     return pixels
 
-class SvExImageScalarField(SvExScalarField):
+class SvImageScalarField(SvScalarField):
     def __init__(self, pixels, channel, plane='XY', fallback=0.0):
         self.plane = plane
         self.channel = channel
@@ -63,7 +63,7 @@ class SvExImageScalarField(SvExScalarField):
             us, vs = xs, zs
         return np.vectorize(self._evaluate)(us, vs)
 
-class SvExImageVectorField(SvExVectorField):
+class SvImageVectorField(SvVectorField):
     def __init__(self, pixels, space, plane='XY', fallback=None):
         if fallback is None:
             fallback = np.array([0, 0, 0])

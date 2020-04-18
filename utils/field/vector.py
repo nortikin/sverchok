@@ -15,7 +15,7 @@ from mathutils import bvhtree
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter
 from sverchok.utils.math import from_cylindrical, from_spherical
 
-from sverchok.utils.curve import SvExCurveLengthSolver
+from sverchok.utils.curve import SvCurveLengthSolver
 
 ##################
 #                #
@@ -23,7 +23,7 @@ from sverchok.utils.curve import SvExCurveLengthSolver
 #                #
 ##################
 
-class SvExVectorField(object):
+class SvVectorField(object):
     def __repr__(self):
         if hasattr(self, '__description__'):
             description = self.__description__
@@ -37,7 +37,7 @@ class SvExVectorField(object):
     def evaluate_grid(self, xs, ys, zs):
         raise Exception("not implemented")
 
-class SvExMatrixVectorField(SvExVectorField):
+class SvMatrixVectorField(SvVectorField):
 
     def __init__(self, matrix):
         self.matrix = matrix
@@ -55,7 +55,7 @@ class SvExMatrixVectorField(SvExVectorField):
         R = np.apply_along_axis(lambda v : matrix @ v + translation - v, 1, points).T
         return R[0], R[1], R[2]
 
-class SvExConstantVectorField(SvExVectorField):
+class SvConstantVectorField(SvVectorField):
 
     def __init__(self, vector):
         self.vector = vector
@@ -71,7 +71,7 @@ class SvExConstantVectorField(SvExVectorField):
         rz = np.full_like(zs, z)
         return rx, ry, rz
 
-class SvExComposedVectorField(SvExVectorField):
+class SvComposedVectorField(SvVectorField):
     def __init__(self, coords, sfield1, sfield2, sfield3):
         self.coords = coords
         self.sfield1 = sfield1
@@ -105,7 +105,7 @@ class SvExComposedVectorField(SvExVectorField):
             vectors = np.apply_along_axis(lambda v: np.array(from_spherical(*tuple(v), mode='radians')), 1, vectors).T
             return vectors[0], vectors[1], vectors[2]
 
-class SvExAbsoluteVectorField(SvExVectorField):
+class SvAbsoluteVectorField(SvVectorField):
     def __init__(self, field):
         self.field = field
         self.__description__ = "Absolute({})".format(field)
@@ -118,7 +118,7 @@ class SvExAbsoluteVectorField(SvExVectorField):
         rxs, rys, rzs = self.field.evaluate_grid(xs, ys, zs)
         return rxs + xs, rys + ys, rzs + zs
 
-class SvExRelativeVectorField(SvExVectorField):
+class SvRelativeVectorField(SvVectorField):
     def __init__(self, field):
         self.field = field
         self.__description__ = "Relative({})".format(field)
@@ -131,7 +131,7 @@ class SvExRelativeVectorField(SvExVectorField):
         rxs, rys, rzs = self.field.evaluate_grid(xs, ys, zs)
         return rxs - xs, rys - ys, rzs - zs
 
-class SvExVectorFieldLambda(SvExVectorField):
+class SvVectorFieldLambda(SvVectorField):
 
     __description__ = "Formula"
 
@@ -156,7 +156,7 @@ class SvExVectorFieldLambda(SvExVectorField):
             V = self.in_field.evaluate(x, y, z)
         return self.function(x, y, z, V)
 
-class SvExVectorFieldBinOp(SvExVectorField):
+class SvVectorFieldBinOp(SvVectorField):
     def __init__(self, field1, field2, function):
         self.function = function
         self.field1 = field1
@@ -173,7 +173,7 @@ class SvExVectorFieldBinOp(SvExVectorField):
             return R[0], R[1], R[2]
         return np.vectorize(func, signature="(m),(m),(m)->(m),(m),(m)")(xs, ys, zs)
 
-class SvExAverageVectorField(SvExVectorField):
+class SvAverageVectorField(SvVectorField):
 
     def __init__(self, fields):
         self.fields = fields
@@ -195,7 +195,7 @@ class SvExAverageVectorField(SvExVectorField):
             return mean[0], mean[1], mean[2]
         return np.vectorize(func, signature="(m),(m),(m)->(m),(m),(m)")(xs, ys, zs)
 
-class SvExVectorFieldCrossProduct(SvExVectorField):
+class SvVectorFieldCrossProduct(SvVectorField):
     def __init__(self, field1, field2):
         self.field1 = field1
         self.field2 = field2
@@ -214,7 +214,7 @@ class SvExVectorFieldCrossProduct(SvExVectorField):
         R = np.cross(vectors1, vectors2).T
         return R[0], R[1], R[2]
 
-class SvExVectorFieldMultipliedByScalar(SvExVectorField):
+class SvVectorFieldMultipliedByScalar(SvVectorField):
     def __init__(self, vector_field, scalar_field):
         self.vector_field = vector_field
         self.scalar_field = scalar_field
@@ -234,7 +234,7 @@ class SvExVectorFieldMultipliedByScalar(SvExVectorField):
             return R[0], R[1], R[2]
         return np.vectorize(product, signature="(m),(m),(m)->(m),(m),(m)")(xs, ys, zs)
 
-class SvExVectorFieldsLerp(SvExVectorField):
+class SvVectorFieldsLerp(SvVectorField):
 
     def __init__(self, vfield1, vfield2, scalar_field):
         self.vfield1 = vfield1
@@ -257,7 +257,7 @@ class SvExVectorFieldsLerp(SvExVectorField):
             R = (1 - scalars) * vectors1 + scalars * vectors2
             return R[0], R[1], R[2]
 
-class SvExNoiseVectorField(SvExVectorField):
+class SvNoiseVectorField(SvVectorField):
     def __init__(self, noise_type, seed):
         self.noise_type = noise_type
         self.seed = seed
@@ -275,7 +275,7 @@ class SvExNoiseVectorField(SvExVectorField):
         vectors = np.stack((xs,ys,zs)).T
         return np.vectorize(mk_noise, signature="(3)->(),(),()")(vectors)
 
-class SvExKdtVectorField(SvExVectorField):
+class SvKdtVectorField(SvVectorField):
 
     def __init__(self, vertices=None, kdt=None, falloff=None, negate=False):
         self.falloff = falloff
@@ -325,7 +325,7 @@ class SvExKdtVectorField(SvExVectorField):
         else:
             return vectors
 
-class SvExVectorFieldPointDistance(SvExVectorField):
+class SvVectorFieldPointDistance(SvVectorField):
     def __init__(self, center, metric='EUCLIDEAN', falloff=None):
         self.center = center
         self.falloff = falloff
@@ -369,7 +369,7 @@ class SvExVectorFieldPointDistance(SvExVectorField):
         else:
             return point
 
-class SvExLineAttractorVectorField(SvExVectorField):
+class SvLineAttractorVectorField(SvVectorField):
 
     def __init__(self, center, direction, falloff=None):
         self.center = center
@@ -406,7 +406,7 @@ class SvExLineAttractorVectorField(SvExVectorField):
             R = vectors.T
             return R[0], R[1], R[2]
 
-class SvExPlaneAttractorVectorField(SvExVectorField):
+class SvPlaneAttractorVectorField(SvVectorField):
     
     def __init__(self, center, direction, falloff=None):
         self.center = center
@@ -441,7 +441,7 @@ class SvExPlaneAttractorVectorField(SvExVectorField):
             R = vectors.T
             return R[0], R[1], R[2]
 
-class SvExBvhAttractorVectorField(SvExVectorField):
+class SvBvhAttractorVectorField(SvVectorField):
 
     def __init__(self, bvh=None, verts=None, faces=None, falloff=None, use_normal=False, signed_normal=False):
         self.falloff = falloff
@@ -494,7 +494,7 @@ class SvExBvhAttractorVectorField(SvExVectorField):
             R = vectors.T
             return R[0], R[1], R[2]
 
-class SvExVectorFieldTangent(SvExVectorField):
+class SvVectorFieldTangent(SvVectorField):
 
     def __init__(self, field1, field2):
         self.field1 = field1
@@ -520,7 +520,7 @@ class SvExVectorFieldTangent(SvExVectorField):
 
         return np.vectorize(project, signature="(3),(3)->(),(),()")(vectors1, vectors2)
 
-class SvExVectorFieldCotangent(SvExVectorField):
+class SvVectorFieldCotangent(SvVectorField):
 
     def __init__(self, field1, field2):
         self.field1 = field1
@@ -547,7 +547,7 @@ class SvExVectorFieldCotangent(SvExVectorField):
 
         return np.vectorize(project, signature="(3),(3)->(),(),()")(vectors1, vectors2)
 
-class SvExVectorFieldComposition(SvExVectorField):
+class SvVectorFieldComposition(SvVectorField):
 
     def __init__(self, field1, field2):
         self.field1 = field1
@@ -564,7 +564,7 @@ class SvExVectorFieldComposition(SvExVectorField):
         vx1, vy1, vz1 = r
         return self.field2.evaluate_grid(vx1, vy1, vz1)
 
-class SvExScalarFieldGradient(SvExVectorField):
+class SvScalarFieldGradient(SvVectorField):
     def __init__(self, field, step):
         self.field = field
         self.step = step
@@ -600,7 +600,7 @@ class SvExScalarFieldGradient(SvExVectorField):
         R = np.stack((dv_dx, dv_dy, dv_dz))
         return R[0], R[1], R[2]
 
-class SvExVectorFieldRotor(SvExVectorField):
+class SvVectorFieldRotor(SvVectorField):
     def __init__(self, field, step):
         self.field = field
         self.step = step
@@ -650,7 +650,7 @@ class SvExVectorFieldRotor(SvExVectorField):
         R = np.stack((rx, ry, rz))
         return R[0], R[1], R[2]
 
-class SvExBendAlongCurveField(SvExVectorField):
+class SvBendAlongCurveField(SvVectorField):
     def __init__(self, curve, algorithm, scale_all, axis, t_min, t_max, up_axis=None, resolution=50, length_mode='T'):
         self.curve = curve
         self.axis = axis
@@ -663,7 +663,7 @@ class SvExBendAlongCurveField(SvExVectorField):
         if algorithm == 'ZERO':
             self.curve.pre_calc_torsion_integral(resolution)
         if length_mode == 'L':
-            self.length_solver = SvExCurveLengthSolver(curve)
+            self.length_solver = SvCurveLengthSolver(curve)
             self.length_solver.prepare('SPL', resolution)
         self.__description__ = "Bend along {}".format(curve)
 
@@ -791,7 +791,7 @@ class SvExBendAlongCurveField(SvExVectorField):
         R = (new_vertices - src_vectors).T
         return R[0], R[1], R[2]
 
-class SvExBendAlongSurfaceField(SvExVectorField):
+class SvBendAlongSurfaceField(SvVectorField):
     def __init__(self, surface, axis, autoscale=False, flip=False):
         self.surface = surface
         self.orient_axis = axis
@@ -870,7 +870,7 @@ class SvExBendAlongSurfaceField(SvExVectorField):
         xs, ys, zs = self.evaluate_grid(np.array([[[x]]]), np.array([[[y]]]), np.array([[[z]]]))
         return np.array([xs, ys, zs])
 
-class SvExVoronoiVectorField(SvExVectorField):
+class SvVoronoiVectorField(SvVectorField):
 
     def __init__(self, vertices):
         self.kdt = kdtree.KDTree(len(vertices))

@@ -11,9 +11,9 @@ from sverchok.utils.modules.eval_formula import get_variables, sv_compile, safe_
 from sverchok.utils.logging import info, exception
 from sverchok.utils.math import from_cylindrical, from_spherical, to_cylindrical, to_spherical
 from sverchok.utils.math import coordinate_modes
-from sverchok.utils.surface import SvExLambdaSurface
+from sverchok.utils.surface import SvLambdaSurface
 
-class SvExSurfaceFormulaNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSurfaceFormulaNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Surface Formula
     Tooltip: Generate surface by formula
@@ -73,7 +73,7 @@ class SvExSurfaceFormulaNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', 'UMax').prop_name = 'u_max'
         self.inputs.new('SvStringsSocket', 'VMin').prop_name = 'v_min'
         self.inputs.new('SvStringsSocket', 'VMax').prop_name = 'v_max'
-        self.outputs.new('SvExSurfaceSocket', 'Surface')
+        self.outputs.new('SvSurfaceSocket', 'Surface')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "formula1", text="")
@@ -173,7 +173,7 @@ class SvExSurfaceFormulaNode(bpy.types.Node, SverchCustomTreeNode):
             for u_min, u_max, v_min, v_max, *var_values in var_values_s:
                 variables = dict(zip(var_names, var_values))
                 function = self.make_function(variables.copy())
-                new_surface = SvExLambdaSurface(function)
+                new_surface = SvLambdaSurface(function)
                 new_surface.u_bounds = (u_min, u_max)
                 new_surface.v_bounds = (v_min, v_max)
                 surfaces_out.append(new_surface)
@@ -181,8 +181,8 @@ class SvExSurfaceFormulaNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Surface'].sv_set(surfaces_out)
 
 def register():
-    bpy.utils.register_class(SvExSurfaceFormulaNode)
+    bpy.utils.register_class(SvSurfaceFormulaNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExSurfaceFormulaNode)
+    bpy.utils.unregister_class(SvSurfaceFormulaNode)
 

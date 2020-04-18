@@ -8,30 +8,30 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat
 from sverchok.utils.logging import info, exception
 
-from sverchok.utils.field.scalar import (SvExScalarField,
-            SvExVectorFieldsScalarProduct,
-            SvExVectorFieldNorm,
-            SvExVectorScalarFieldComposition)
-from sverchok.utils.field.vector import (SvExVectorField,
-            SvExVectorFieldBinOp, SvExVectorFieldMultipliedByScalar,
-            SvExVectorFieldsLerp, SvExVectorFieldCrossProduct, 
-            SvExVectorFieldTangent, SvExVectorFieldCotangent,
-            SvExAbsoluteVectorField, SvExRelativeVectorField,
-            SvExVectorFieldComposition)
-from sverchok.utils.modules.sockets import SvExDynamicSocketsHandler, SocketInfo
+from sverchok.utils.field.scalar import (SvScalarField,
+            SvVectorFieldsScalarProduct,
+            SvVectorFieldNorm,
+            SvVectorScalarFieldComposition)
+from sverchok.utils.field.vector import (SvVectorField,
+            SvVectorFieldBinOp, SvVectorFieldMultipliedByScalar,
+            SvVectorFieldsLerp, SvVectorFieldCrossProduct, 
+            SvVectorFieldTangent, SvVectorFieldCotangent,
+            SvAbsoluteVectorField, SvRelativeVectorField,
+            SvVectorFieldComposition)
+from sverchok.utils.modules.sockets import SvDynamicSocketsHandler, SocketInfo
 
-sockets_handler = SvExDynamicSocketsHandler()
+sockets_handler = SvDynamicSocketsHandler()
 
 V_FIELD_A, V_FIELD_B, S_FIELD_B = sockets_handler.register_inputs(
-        SocketInfo("SvExVectorFieldSocket", "VFieldA", "CIRCLE_DOT"),
-        SocketInfo("SvExVectorFieldSocket", "VFieldB", "CIRCLE_DOT"),
-        SocketInfo("SvExScalarFieldSocket", "SFieldB", "CIRCLE_DOT")
+        SocketInfo("SvVectorFieldSocket", "VFieldA", "CIRCLE_DOT"),
+        SocketInfo("SvVectorFieldSocket", "VFieldB", "CIRCLE_DOT"),
+        SocketInfo("SvScalarFieldSocket", "SFieldB", "CIRCLE_DOT")
     )
 
 V_FIELD_C, S_FIELD_C, V_FIELD_D = sockets_handler.register_outputs(
-        SocketInfo("SvExVectorFieldSocket", "VFieldC", "CIRCLE_DOT"),
-        SocketInfo("SvExScalarFieldSocket", "SFieldC", "CIRCLE_DOT"),
-        SocketInfo("SvExVectorFieldSocket", "VFieldD", "CIRCLE_DOT")
+        SocketInfo("SvVectorFieldSocket", "VFieldC", "CIRCLE_DOT"),
+        SocketInfo("SvScalarFieldSocket", "SFieldC", "CIRCLE_DOT"),
+        SocketInfo("SvVectorFieldSocket", "VFieldD", "CIRCLE_DOT")
     )
 
 operations = [
@@ -66,7 +66,7 @@ def get_sockets(op_id):
             return inputs, outputs
     raise Exception("unsupported operation")
 
-class SvExVectorFieldMathNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVectorFieldMathNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Vector Field Math
     Tooltip: Vector Field Math
@@ -131,40 +131,40 @@ class SvExVectorFieldMathNode(bpy.types.Node, SverchCustomTreeNode):
                 inputs = dict(VFieldA = vfield_a, VFieldB = vfield_b, SFieldB = sfield_b)
 
                 if self.operation == 'MUL':
-                    field_c = SvExVectorFieldMultipliedByScalar(vfield_a, sfield_b)
+                    field_c = SvVectorFieldMultipliedByScalar(vfield_a, sfield_b)
                     vfields_c_out.append(field_c)
                 elif self.operation == 'DOT':
-                    field_c = SvExVectorFieldsScalarProduct(vfield_a, vfield_b)
+                    field_c = SvVectorFieldsScalarProduct(vfield_a, vfield_b)
                     sfields_out.append(field_c)
                 elif self.operation == 'CROSS':
-                    field_c = SvExVectorFieldCrossProduct(vfield_a, vfield_b)
+                    field_c = SvVectorFieldCrossProduct(vfield_a, vfield_b)
                     vfields_c_out.append(field_c)
                 elif self.operation == 'NORM':
-                    field_c = SvExVectorFieldNorm(vfield_a)
+                    field_c = SvVectorFieldNorm(vfield_a)
                     sfields_out.append(field_c)
                 elif self.operation == 'TANG':
-                    field_c = SvExVectorFieldTangent(vfield_a, vfield_b)
-                    field_d = SvExVectorFieldCotangent(vfield_a, vfield_b)
+                    field_c = SvVectorFieldTangent(vfield_a, vfield_b)
+                    field_d = SvVectorFieldCotangent(vfield_a, vfield_b)
                     vfields_c_out.append(field_c)
                     vfields_d_out.append(field_d)
                 elif self.operation == 'COMPOSE':
-                    field_c = SvExVectorFieldComposition(vfield_a, vfield_b)
+                    field_c = SvVectorFieldComposition(vfield_a, vfield_b)
                     vfields_c_out.append(field_c)
                 elif self.operation == 'COMPOSES':
-                    field_c = SvExVectorScalarFieldComposition(vfield_a, sfield_b)
+                    field_c = SvVectorScalarFieldComposition(vfield_a, sfield_b)
                     sfields_out.append(field_c)
                 elif self.operation == 'LERP':
-                    field_c = SvExVectorFieldsLerp(vfield_a, vfield_b, sfield_b)
+                    field_c = SvVectorFieldsLerp(vfield_a, vfield_b, sfield_b)
                     vfields_c_out.append(field_c)
                 elif self.operation == 'ABS':
-                    field_c = SvExAbsoluteVectorField(vfield_a)
+                    field_c = SvAbsoluteVectorField(vfield_a)
                     vfields_c_out.append(field_c)
                 elif self.operation == 'REL':
-                    field_c = SvExRelativeVectorField(vfield_a)
+                    field_c = SvRelativeVectorField(vfield_a)
                     vfields_c_out.append(field_c)
                 else:
                     operation = get_operation(self.operation)
-                    field_c = SvExVectorFieldBinOp(vfield_a, vfield_b, operation)
+                    field_c = SvVectorFieldBinOp(vfield_a, vfield_b, operation)
                     vfields_c_out.append(field_c)
 
         self.outputs[V_FIELD_C.idx].sv_set(vfields_c_out)
@@ -172,8 +172,8 @@ class SvExVectorFieldMathNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs[S_FIELD_C.idx].sv_set(sfields_out)
 
 def register():
-    bpy.utils.register_class(SvExVectorFieldMathNode)
+    bpy.utils.register_class(SvVectorFieldMathNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExVectorFieldMathNode)
+    bpy.utils.unregister_class(SvVectorFieldMathNode)
 

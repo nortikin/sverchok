@@ -7,10 +7,10 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.logging import info, exception
-from sverchok.utils.curve import SvExCurve
-from sverchok.utils.surface import SvExCurveLerpSurface
+from sverchok.utils.curve import SvCurve
+from sverchok.utils.surface import SvCurveLerpSurface
 
-class SvExCurveLerpNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveLerpNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Curve Lerp Linear Surface
     Tooltip: Generate a linear surface between two curves (curves linear interpolation)
@@ -30,11 +30,11 @@ class SvExCurveLerpNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', "Curve1")
-        self.inputs.new('SvExCurveSocket', "Curve2")
+        self.inputs.new('SvCurveSocket', "Curve1")
+        self.inputs.new('SvCurveSocket', "Curve2")
         self.inputs.new('SvStringsSocket', "VMin").prop_name = 'v_min'
         self.inputs.new('SvStringsSocket', "VMax").prop_name = 'v_max'
-        self.outputs.new('SvExSurfaceSocket', "Surface")
+        self.outputs.new('SvSurfaceSocket', "Surface")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -48,22 +48,22 @@ class SvExCurveLerpNode(bpy.types.Node, SverchCustomTreeNode):
         vmin_s = ensure_nesting_level(vmin_s, 2)
         vmax_s = ensure_nesting_level(vmax_s, 2)
 
-        if isinstance(curve1_s[0], SvExCurve):
+        if isinstance(curve1_s[0], SvCurve):
             curve1_s = [curve1_s]
-        if isinstance(curve2_s[0], SvExCurve):
+        if isinstance(curve2_s[0], SvCurve):
             curve2_s = [curve2_s]
 
         surface_out = []
         for curve1s, curve2s, vmins, vmaxs in zip_long_repeat(curve1_s, curve2_s, vmin_s, vmax_s):
             for curve1, curve2, vmin, vmax in zip_long_repeat(curve1s, curve2s, vmins, vmaxs):
-                surface = SvExCurveLerpSurface(curve1, curve2)
+                surface = SvCurveLerpSurface(curve1, curve2)
                 surface.v_bounds = (vmin, vmax)
                 surface_out.append(surface)
         self.outputs['Surface'].sv_set(surface_out)
 
 def register():
-    bpy.utils.register_class(SvExCurveLerpNode)
+    bpy.utils.register_class(SvCurveLerpNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExCurveLerpNode)
+    bpy.utils.unregister_class(SvCurveLerpNode)
 

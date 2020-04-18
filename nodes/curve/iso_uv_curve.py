@@ -6,10 +6,10 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvExCurve, SvExIsoUvCurve
-from sverchok.utils.surface import SvExSurface
+from sverchok.utils.curve import SvCurve, SvIsoUvCurve
+from sverchok.utils.surface import SvSurface
 
-class SvExIsoUvCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvIsoUvCurveNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Iso UV Curve
     Tooltip: Generate a curve which is characterized by constant value of U or V parameter in surface's UV space
@@ -25,10 +25,10 @@ class SvExIsoUvCurveNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvExSurfaceSocket', "Surface")
+        self.inputs.new('SvSurfaceSocket', "Surface")
         self.inputs.new('SvStringsSocket', "Value").prop_name = 'value'
-        self.outputs.new('SvExCurveSocket', "UCurve")
-        self.outputs.new('SvExCurveSocket', "VCurve")
+        self.outputs.new('SvCurveSocket', "UCurve")
+        self.outputs.new('SvCurveSocket', "VCurve")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -37,7 +37,7 @@ class SvExIsoUvCurveNode(bpy.types.Node, SverchCustomTreeNode):
         surface_s = self.inputs['Surface'].sv_get()
         value_s = self.inputs['Value'].sv_get()
 
-        if isinstance(surface_s[0], SvExSurface):
+        if isinstance(surface_s[0], SvSurface):
             surface_s = [surface_s]
         value_s = ensure_nesting_level(value_s, 2)
 
@@ -45,8 +45,8 @@ class SvExIsoUvCurveNode(bpy.types.Node, SverchCustomTreeNode):
         v_curves_out = []
         for surfaces, values in zip_long_repeat(surface_s, value_s):
             for surface, value in zip_long_repeat(surfaces, values):
-                u_curve = SvExIsoUvCurve(surface, 'V', value)
-                v_curve = SvExIsoUvCurve(surface, 'U', value)
+                u_curve = SvIsoUvCurve(surface, 'V', value)
+                v_curve = SvIsoUvCurve(surface, 'U', value)
                 u_curves_out.append(u_curve)
                 v_curves_out.append(v_curve)
 
@@ -54,8 +54,8 @@ class SvExIsoUvCurveNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['VCurve'].sv_set(v_curves_out)
 
 def register():
-    bpy.utils.register_class(SvExIsoUvCurveNode)
+    bpy.utils.register_class(SvIsoUvCurveNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExIsoUvCurveNode)
+    bpy.utils.unregister_class(SvIsoUvCurveNode)
 

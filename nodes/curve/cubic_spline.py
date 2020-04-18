@@ -5,9 +5,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.geom import LinearSpline, CubicSpline
-from sverchok.utils.curve import SvExSplineCurve
+from sverchok.utils.curve import SvSplineCurve
 
-class SvExCubicSplineNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCubicSplineNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Cubic Spline
     Tooltip: Generate cubic interpolation curve
@@ -41,7 +41,7 @@ class SvExCubicSplineNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
-        self.outputs.new('SvExCurveSocket', "Curve")
+        self.outputs.new('SvCurveSocket', "Curve")
 
     def build_spline(self, path):
         spline = CubicSpline(path, metric = self.metric, is_cyclic = self.is_cyclic)
@@ -56,14 +56,14 @@ class SvExCubicSplineNode(bpy.types.Node, SverchCustomTreeNode):
         out_curves = []
         for vertices in vertices_s:
             spline = self.build_spline(vertices)
-            curve = SvExSplineCurve(spline)
+            curve = SvSplineCurve(spline)
             out_curves.append(curve)
 
         self.outputs['Curve'].sv_set(out_curves)
 
 def register():
-    bpy.utils.register_class(SvExCubicSplineNode)
+    bpy.utils.register_class(SvCubicSplineNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExCubicSplineNode)
+    bpy.utils.unregister_class(SvCubicSplineNode)
 

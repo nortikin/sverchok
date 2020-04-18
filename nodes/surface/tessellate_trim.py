@@ -10,14 +10,14 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.logging import info, exception
 from sverchok.utils.geom_2d.merge_mesh import crop_mesh_delaunay
 
-from sverchok.utils.curve import SvExCurve
-from sverchok.utils.surface import SvExSurface
+from sverchok.utils.curve import SvCurve
+from sverchok.utils.surface import SvSurface
 
 # This node requires delaunay_cdt function, which is available
 # since Blender 2.81 only. So the node will not be available in
 # Blender 2.80.
 
-class SvExTessellateTrimSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvTessellateTrimSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Tessellate Trim Surface
     Tooltip: Tessellate a surface with trimming curve
@@ -81,8 +81,8 @@ class SvExTessellateTrimSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'accuracy')
 
     def sv_init(self, context):
-        self.inputs.new('SvExSurfaceSocket', "Surface")
-        self.inputs.new('SvExCurveSocket', "TrimCurve")
+        self.inputs.new('SvSurfaceSocket', "Surface")
+        self.inputs.new('SvCurveSocket', "TrimCurve")
         self.inputs.new('SvStringsSocket', "SamplesU").prop_name = 'samples_u'
         self.inputs.new('SvStringsSocket', "SamplesV").prop_name = 'samples_v'
         self.inputs.new('SvStringsSocket', "CurveSamples").prop_name = 'samples_t'
@@ -143,9 +143,9 @@ class SvExTessellateTrimSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         samples_v_s = self.inputs['SamplesV'].sv_get()
         samples_t_s = self.inputs['CurveSamples'].sv_get()
 
-        if isinstance(surfaces_s[0], SvExSurface):
+        if isinstance(surfaces_s[0], SvSurface):
             surfaces_s = [surfaces_s]
-        if isinstance(curves_s[0], SvExCurve):
+        if isinstance(curves_s[0], SvCurve):
             curves_s = [curves_s]
 
         samples_u_s = ensure_nesting_level(samples_u_s, 2)
@@ -178,8 +178,8 @@ class SvExTessellateTrimSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Faces'].sv_set(faces_out)
 
 def register():
-    bpy.utils.register_class(SvExTessellateTrimSurfaceNode)
+    bpy.utils.register_class(SvTessellateTrimSurfaceNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExTessellateTrimSurfaceNode)
+    bpy.utils.unregister_class(SvTessellateTrimSurfaceNode)
 

@@ -43,7 +43,7 @@ def rotate_vector_around_vector_np(v, k, theta):
     s3 = p1 * p2 * k
     return s1 + s2 + s3
 
-class SvExSurface(object):
+class SvSurface(object):
     def __repr__(self):
         if hasattr(self, '__description__'):
             description = self.__description__
@@ -119,7 +119,7 @@ class SvExSurface(object):
         m,M = self.get_v_min(), self.get_v_max()
         return M - m
 
-class SvExSurfaceSubdomain(SvExSurface):
+class SvSurfaceSubdomain(SvSurface):
     def __init__(self, surface, u_bounds, v_bounds):
         self.surface = surface
         self.u_bounds = u_bounds
@@ -154,7 +154,7 @@ class SvExSurfaceSubdomain(SvExSurface):
     def get_v_max(self):
         return self.v_bounds[1]
 
-class SvExPlane(SvExSurface):
+class SvPlane(SvSurface):
     __description__ = "Plane"
     
     def __init__(self, point, vector1, vector2):
@@ -204,7 +204,7 @@ class SvExPlane(SvExSurface):
         normal = normal / n
         return np.tile(normal, len(us))
 
-class SvExEquirectSphere(SvExSurface):
+class SvEquirectSphere(SvSurface):
     __description__ = "Equirectangular Sphere"
 
     def __init__(self, center, radius, theta1):
@@ -266,7 +266,7 @@ class SvExEquirectSphere(SvExSurface):
         zs = rho * np.cos(thetas)
         return np.stack((xs, ys, zs)).T
 
-class SvExLambertSphere(SvExSurface):
+class SvLambertSphere(SvSurface):
     __description__ = "Lambert Sphere"
 
     def __init__(self, center, radius):
@@ -327,7 +327,7 @@ class SvExLambertSphere(SvExSurface):
         zs = rho * np.cos(thetas)
         return np.stack((xs, ys, zs)).T
 
-class SvExGallSphere(SvExSurface):
+class SvGallSphere(SvSurface):
     __description__ = "Gall Sphere"
 
     def __init__(self, center, radius):
@@ -388,7 +388,7 @@ class SvExGallSphere(SvExSurface):
         zs = rho * np.cos(thetas)
         return np.stack((xs, ys, zs)).T
 
-class SvExDefaultSphere(SvExSurface):
+class SvDefaultSphere(SvSurface):
     __description__ = "Default Sphere"
 
     def __init__(self, center, radius):
@@ -441,7 +441,7 @@ class SvExDefaultSphere(SvExSurface):
         zs = rho * np.cos(thetas)
         return np.stack((xs, ys, zs)).T
 
-class SvExLambdaSurface(SvExSurface):
+class SvLambdaSurface(SvSurface):
     __description__ = "Formula"
 
     def __init__(self, function):
@@ -494,7 +494,7 @@ class SvExLambdaSurface(SvExSurface):
         #self.info("Normals: %s", normal)
         return normal
 
-class SvExInterpolatingSurface(SvExSurface):
+class SvInterpolatingSurface(SvSurface):
     __description__ = "Interpolating"
 
     def __init__(self, u_bounds, v_bounds, u_spline_constructor, v_splines):
@@ -602,7 +602,7 @@ class SvExInterpolatingSurface(SvExSurface):
         normals = [self._normal(u, v) for u,v in zip(us, vs)]
         return np.array(normals)
 
-class SvExDeformedByFieldSurface(SvExSurface):
+class SvDeformedByFieldSurface(SvSurface):
     def __init__(self, surface, field, coefficient=1.0):
         self.surface = surface
         self.field = field
@@ -679,7 +679,7 @@ class SvExDeformedByFieldSurface(SvExSurface):
         #self.info("Normals: %s", normal)
         return normal
 
-class SvExRevolutionSurface(SvExSurface):
+class SvRevolutionSurface(SvSurface):
     __description__ = "Revolution"
 
     def __init__(self, curve, point, direction):
@@ -711,7 +711,7 @@ class SvExRevolutionSurface(SvExSurface):
     def get_v_max(self):
         return self.v_bounds[1]
 
-class SvExExtrudeCurveVectorSurface(SvExSurface):
+class SvExtrudeCurveVectorSurface(SvSurface):
     def __init__(self, curve, vector):
         self.curve = curve
         self.vector = vector
@@ -747,7 +747,7 @@ class SvExExtrudeCurveVectorSurface(SvExSurface):
     def v_size(self):
         return 1.0
 
-class SvExExtrudeCurvePointSurface(SvExSurface):
+class SvExtrudeCurvePointSurface(SvSurface):
     def __init__(self, curve, point):
         self.curve = curve
         self.point = point
@@ -784,7 +784,7 @@ class SvExExtrudeCurvePointSurface(SvExSurface):
     def v_size(self):
         return 1.0
 
-class SvExExtrudeCurveCurveSurface(SvExSurface):
+class SvExtrudeCurveCurveSurface(SvSurface):
     def __init__(self, u_curve, v_curve):
         self.u_curve = u_curve
         self.v_curve = v_curve
@@ -827,7 +827,7 @@ class SvExExtrudeCurveCurveSurface(SvExSurface):
         m,M = self.v_curve.get_u_bounds()
         return M - m
 
-class SvExExtrudeCurveFrenetSurface(SvExSurface):
+class SvExtrudeCurveFrenetSurface(SvSurface):
     def __init__(self, profile, extrusion):
         self.profile = profile
         self.extrusion = extrusion
@@ -873,7 +873,7 @@ class SvExExtrudeCurveFrenetSurface(SvExSurface):
         m,M = self.extrusion.get_u_bounds()
         return M - m
 
-class SvExExtrudeCurveZeroTwistSurface(SvExSurface):
+class SvExtrudeCurveZeroTwistSurface(SvSurface):
     def __init__(self, profile, extrusion, resolution):
         self.profile = profile
         self.extrusion = extrusion
@@ -921,7 +921,7 @@ class SvExExtrudeCurveZeroTwistSurface(SvExSurface):
     def get_v_max(self):
         return self.extrusion.get_u_bounds()[1]
 
-class SvExCurveLerpSurface(SvExSurface):
+class SvCurveLerpSurface(SvSurface):
     __description__ = "Lerp"
 
     def __init__(self, curve1, curve2):
@@ -965,7 +965,7 @@ class SvExCurveLerpSurface(SvExSurface):
     def v_size(self):
         return self.v_bounds[1] - self.v_bounds[0]
 
-class SvExSurfaceLerpSurface(SvExSurface):
+class SvSurfaceLerpSurface(SvSurface):
     __description__ = "Lerp"
 
     def __init__(self, surface1, surface2, coefficient):
@@ -1014,7 +1014,7 @@ class SvExSurfaceLerpSurface(SvExSurface):
         points = (1.0 - k) * s1_points + k * s2_points
         return points
 
-class SvExTaperSweepSurface(SvExSurface):
+class SvTaperSweepSurface(SvSurface):
     __description__ = "Taper & Sweep"
 
     def __init__(self, profile, taper, point, direction):

@@ -8,7 +8,7 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, repeat_last_for_length, match_long_repeat, ensure_nesting_level
 from sverchok.utils.logging import info, exception
 
-class SvExVectorFieldApplyNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVectorFieldApplyNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Vector Field Apply
     Tooltip: Apply Vector Field to vertices
@@ -30,7 +30,7 @@ class SvExVectorFieldApplyNode(bpy.types.Node, SverchCustomTreeNode):
             update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvExVectorFieldSocket', "Field")
+        self.inputs.new('SvVectorFieldSocket', "Field")
         d = self.inputs.new('SvVerticesSocket', "Vertices")
         d.use_prop = True
         d.prop = (0.0, 0.0, 0.0)
@@ -86,8 +86,8 @@ class SvExVectorFieldApplyNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Vertices'].sv_set(verts_out)
 
 def register():
-    bpy.utils.register_class(SvExVectorFieldApplyNode)
+    bpy.utils.register_class(SvVectorFieldApplyNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExVectorFieldApplyNode)
+    bpy.utils.unregister_class(SvVectorFieldApplyNode)
 

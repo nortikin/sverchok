@@ -6,10 +6,10 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvExCurve, SvExCurveOnSurface
-from sverchok.utils.surface import SvExSurface
+from sverchok.utils.curve import SvCurve, SvCurveOnSurface
+from sverchok.utils.surface import SvSurface
 
-class SvExCurveOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Curve on Surface
     Tooltip: Generate a curve in UV space of the surface
@@ -40,9 +40,9 @@ class SvExCurveOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             return 1
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', 'Curve')
-        self.inputs.new('SvExSurfaceSocket', "Surface")
-        self.outputs.new('SvExCurveSocket', "Curve")
+        self.inputs.new('SvCurveSocket', 'Curve')
+        self.inputs.new('SvSurfaceSocket', "Surface")
+        self.outputs.new('SvCurveSocket', "Curve")
 
     def draw_buttons(self, context, layout):
         layout.label(text="Curve plane:")
@@ -55,22 +55,22 @@ class SvExCurveOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         curve_s = self.inputs['Curve'].sv_get()
         surface_s = self.inputs['Surface'].sv_get()
 
-        if isinstance(curve_s[0], SvExCurve):
+        if isinstance(curve_s[0], SvCurve):
             curve_s = [curve_s]
-        if isinstance(surface_s[0], SvExSurface):
+        if isinstance(surface_s[0], SvSurface):
             surface_s = [surface_s]
 
         curves_out = []
         for curves, surfaces in zip_long_repeat(curve_s, surface_s):
             for curve, surface in zip_long_repeat(curves, surfaces):
-                new_curve = SvExCurveOnSurface(curve, surface, self.curve_axis)
+                new_curve = SvCurveOnSurface(curve, surface, self.curve_axis)
                 curves_out.append(new_curve)
 
         self.outputs['Curve'].sv_set(curves_out)
 
 def register():
-    bpy.utils.register_class(SvExCurveOnSurfaceNode)
+    bpy.utils.register_class(SvCurveOnSurfaceNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExCurveOnSurfaceNode)
+    bpy.utils.unregister_class(SvCurveOnSurfaceNode)
 

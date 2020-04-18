@@ -8,7 +8,7 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match_long_repeat
 from sverchok.utils.logging import info, exception
 
-class SvExVectorFieldEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVectorFieldEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Vector Field Evaluate
     Tooltip: Evaluate Vector Field at specific point(s)
@@ -19,7 +19,7 @@ class SvExVectorFieldEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_EVAL_VECTOR_FIELD'
 
     def sv_init(self, context):
-        self.inputs.new('SvExVectorFieldSocket', "Field")
+        self.inputs.new('SvVectorFieldSocket', "Field")
         d = self.inputs.new('SvVerticesSocket', "Vertices")
         d.use_prop = True
         d.prop = (0.0, 0.0, 0.0)
@@ -54,8 +54,8 @@ class SvExVectorFieldEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Vectors'].sv_set(values_out)
 
 def register():
-    bpy.utils.register_class(SvExVectorFieldEvaluateNode)
+    bpy.utils.register_class(SvVectorFieldEvaluateNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExVectorFieldEvaluateNode)
+    bpy.utils.unregister_class(SvVectorFieldEvaluateNode)
 

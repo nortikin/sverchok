@@ -6,9 +6,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvExCurve, SvExCurveSegment
+from sverchok.utils.curve import SvCurve, SvCurveSegment
 
-class SvExCurveSegmentNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveSegmentNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Curve Segment
     Tooltip: Generate a curve as a segment of another curve
@@ -34,10 +34,10 @@ class SvExCurveSegmentNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', "Curve")
+        self.inputs.new('SvCurveSocket', "Curve")
         self.inputs.new('SvStringsSocket', "TMin").prop_name = 't_min'
         self.inputs.new('SvStringsSocket', "TMax").prop_name = 't_max'
-        self.outputs.new('SvExCurveSocket', "Segment")
+        self.outputs.new('SvCurveSocket', "Segment")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "rescale", toggle=True)
@@ -52,20 +52,20 @@ class SvExCurveSegmentNode(bpy.types.Node, SverchCustomTreeNode):
 
         tmin_s = ensure_nesting_level(tmin_s, 2)
         tmax_s = ensure_nesting_level(tmax_s, 2)
-        if isinstance(curve_s[0], SvExCurve):
+        if isinstance(curve_s[0], SvCurve):
             curve_s = [curve_s]
 
         curve_out = []
         for curves, tmins, tmaxs in zip_long_repeat(curve_s, tmin_s, tmax_s):
             for curve, t_min, t_max in zip_long_repeat(curves, tmins, tmaxs):
-                new_curve = SvExCurveSegment(curve, t_min, t_max, self.rescale)
+                new_curve = SvCurveSegment(curve, t_min, t_max, self.rescale)
                 curve_out.append(new_curve)
 
         self.outputs['Segment'].sv_set(curve_out)
 
 def register():
-    bpy.utils.register_class(SvExCurveSegmentNode)
+    bpy.utils.register_class(SvCurveSegmentNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExCurveSegmentNode)
+    bpy.utils.unregister_class(SvCurveSegmentNode)
 

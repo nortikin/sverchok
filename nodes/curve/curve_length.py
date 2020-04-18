@@ -7,7 +7,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 
-class SvExCurveLengthNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveLengthNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Curve Length
     Tooltip: Calculate length of the curve or it's segment
@@ -45,7 +45,7 @@ class SvExCurveLengthNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', "Curve")
+        self.inputs.new('SvCurveSocket', "Curve")
         self.inputs.new('SvStringsSocket', "TMin").prop_name = 't_min'
         self.inputs.new('SvStringsSocket', "TMax").prop_name = 't_max'
         self.inputs.new('SvStringsSocket', "Resolution").prop_name = 'resolution'
@@ -93,8 +93,8 @@ class SvExCurveLengthNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Length'].sv_set(length_out)
 
 def register():
-    bpy.utils.register_class(SvExCurveLengthNode)
+    bpy.utils.register_class(SvCurveLengthNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExCurveLengthNode)
+    bpy.utils.unregister_class(SvCurveLengthNode)
 

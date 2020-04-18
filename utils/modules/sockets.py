@@ -6,7 +6,7 @@ class SocketInfo(object):
         self.idx = idx
         self.display_shape = display_shape
 
-class SvExDynamicSocketsHandler(object):
+class SvDynamicSocketsHandler(object):
     def __init__(self):
         self.inputs_registry = dict()
         self.outputs_registry = dict()

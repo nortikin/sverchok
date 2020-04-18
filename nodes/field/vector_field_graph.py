@@ -11,7 +11,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.logging import info, exception
 from sverchok.utils.sv_mesh_utils import mesh_join
 
-class SvExVectorFieldGraphNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVectorFieldGraphNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Vector Field Graph
     Tooltip: Generate a graphical representation of vector field
@@ -65,7 +65,7 @@ class SvExVectorFieldGraphNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'join', toggle=True)
 
     def sv_init(self, context):
-        self.inputs.new('SvExVectorFieldSocket', "Field")
+        self.inputs.new('SvVectorFieldSocket', "Field")
         self.inputs.new('SvVerticesSocket', "Bounds")
         self.inputs.new('SvStringsSocket', "Scale").prop_name = 'scale'
         self.inputs.new('SvStringsSocket', "SamplesX").prop_name = 'samples_x'
@@ -162,8 +162,8 @@ class SvExVectorFieldGraphNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Edges'].sv_set(edges_out)
 
 def register():
-    bpy.utils.register_class(SvExVectorFieldGraphNode)
+    bpy.utils.register_class(SvVectorFieldGraphNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExVectorFieldGraphNode)
+    bpy.utils.unregister_class(SvVectorFieldGraphNode)
 

@@ -6,9 +6,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvExCurveLengthSolver
+from sverchok.utils.curve import SvCurveLengthSolver
 
-class SvExCurveLengthParameterNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveLengthParameterNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Curve Length Parameter
     Tooltip: Solve curve length (natural) parameter
@@ -58,7 +58,7 @@ class SvExCurveLengthParameterNode(bpy.types.Node, SverchCustomTreeNode):
             update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', "Curve")
+        self.inputs.new('SvCurveSocket', "Curve")
         self.inputs.new('SvStringsSocket', "Resolution").prop_name = 'resolution'
         self.inputs.new('SvStringsSocket', "Length").prop_name = 'length'
         self.inputs.new('SvStringsSocket', "Samples").prop_name = 'sample_size'
@@ -97,7 +97,7 @@ class SvExCurveLengthParameterNode(bpy.types.Node, SverchCustomTreeNode):
             if isinstance(resolution, (list, tuple)):
                 resolution = resolution[0]
 
-            solver = SvExCurveLengthSolver(curve)
+            solver = SvCurveLengthSolver(curve)
             solver.prepare(self.mode, resolution)
 
             if self.eval_mode == 'AUTO':
@@ -117,8 +117,8 @@ class SvExCurveLengthParameterNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Vertices'].sv_set(verts_out)
 
 def register():
-    bpy.utils.register_class(SvExCurveLengthParameterNode)
+    bpy.utils.register_class(SvCurveLengthParameterNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExCurveLengthParameterNode)
+    bpy.utils.unregister_class(SvCurveLengthParameterNode)
 

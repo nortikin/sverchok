@@ -17,8 +17,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from sverchok.data_structure import get_other_socket, get_data_nesting_level
-from sverchok.utils.field.vector import SvExMatrixVectorField, SvExConstantVectorField
-from sverchok.utils.field.scalar import SvExConstantScalarField
+from sverchok.utils.field.vector import SvMatrixVectorField, SvConstantVectorField
+from sverchok.utils.field.scalar import SvConstantScalarField
 
 from mathutils import Matrix, Quaternion
 from numpy import ndarray
@@ -49,15 +49,15 @@ def is_quaternion_to_matrix(self):
 
 def is_matrix_to_vfield(socket):
     other = get_other_socket(socket)
-    return other.bl_idname == 'SvMatrixSocket' and socket.bl_idname == 'SvExVectorFieldSocket'
+    return other.bl_idname == 'SvMatrixSocket' and socket.bl_idname == 'SvVectorFieldSocket'
 
 def is_vertex_to_vfield(socket):
     other = get_other_socket(socket)
-    return other.bl_idname == 'SvVerticesSocket' and socket.bl_idname == 'SvExVectorFieldSocket'
+    return other.bl_idname == 'SvVerticesSocket' and socket.bl_idname == 'SvVectorFieldSocket'
 
 def is_string_to_sfield(socket):
     other = get_other_socket(socket)
-    return other.bl_idname == 'SvStringsSocket' and socket.bl_idname == 'SvExScalarFieldSocket'
+    return other.bl_idname == 'SvStringsSocket' and socket.bl_idname == 'SvScalarFieldSocket'
 
 # ---
 
@@ -135,7 +135,7 @@ def get_locs_from_matrices(data):
 
 def matrices_to_vfield(data):
     if isinstance(data, Matrix):
-        return SvExMatrixVectorField(data)
+        return SvMatrixVectorField(data)
     elif isinstance(data, (list, tuple)):
         return [matrices_to_vfield(item) for item in data]
     else:
@@ -143,7 +143,7 @@ def matrices_to_vfield(data):
 
 def vertices_to_vfield(data):
     if isinstance(data, (tuple, list)) and len(data) == 3 and isinstance(data[0], (float, int)):
-        return SvExConstantVectorField(data)
+        return SvConstantVectorField(data)
     elif isinstance(data, (list, tuple)):
         return [vertices_to_vfield(item) for item in data]
     else:
@@ -151,7 +151,7 @@ def vertices_to_vfield(data):
 
 def numbers_to_sfield(data):
     if isinstance(data, (int, float)):
-        return SvExConstantScalarField(data)
+        return SvConstantScalarField(data)
     elif isinstance(data, (list, tuple)):
         return [numbers_to_sfield(item) for item in data]
     else:

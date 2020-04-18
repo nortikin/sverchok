@@ -6,9 +6,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvExLine
+from sverchok.utils.curve import SvLine
 
-class SvExLineCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvLineCurveNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Line Segment
     Tooltip: Generate straight line curve object
@@ -57,7 +57,7 @@ class SvExLineCurveNode(bpy.types.Node, SverchCustomTreeNode):
         p.prop = (1.0, 0.0, 0.0)
         self.inputs.new('SvStringsSocket', "UMin").prop_name = 'u_min'
         self.inputs.new('SvStringsSocket', "UMax").prop_name = 'u_max'
-        self.outputs.new('SvExCurveSocket', "Curve")
+        self.outputs.new('SvCurveSocket', "Curve")
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
@@ -86,15 +86,15 @@ class SvExLineCurveNode(bpy.types.Node, SverchCustomTreeNode):
                 if self.mode == 'AB':
                     direction = np.array(point2) - point1
 
-                line = SvExLine(point1, direction)
+                line = SvLine(point1, direction)
                 line.u_bounds = (u_min, u_max)
                 curves_out.append(line)
 
         self.outputs['Curve'].sv_set(curves_out)
 
 def register():
-    bpy.utils.register_class(SvExLineCurveNode)
+    bpy.utils.register_class(SvLineCurveNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExLineCurveNode)
+    bpy.utils.unregister_class(SvLineCurveNode)
 
