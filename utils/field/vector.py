@@ -383,6 +383,9 @@ class SvLineAttractorVectorField(SvVectorField):
         to_center = self.center - vertex
         projection = np.dot(to_center, direction) * direction / np.dot(direction, direction)
         dv = to_center - projection
+        if self.falloff is not None:
+            norm = np.linalg.norm(dv)
+            dv = self.falloff(norm) * dv / norm
         return dv
 
     def evaluate_grid(self, xs, ys, zs):
@@ -398,8 +401,10 @@ class SvLineAttractorVectorField(SvVectorField):
         points = np.stack((xs, ys, zs)).T
         vectors = np.vectorize(func, signature='(3)->(3)')(points)
         if self.falloff is not None:
-            norms = np.linalg.norm(vectors, axis=0)
+            norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+            nonzero = (norms > 0)[:,0]
             lens = self.falloff(norms)
+            vectors[nonzero] = vectors[nonzero] / norms[nonzero][:,0][np.newaxis].T
             R = (lens * vectors).T
             return R[0], R[1], R[2]
         else:
@@ -418,8 +423,11 @@ class SvPlaneAttractorVectorField(SvVectorField):
         vertex = np.array([x,y,z])
         direction = self.direction
         to_center = self.center - vertex
-        projection = np.dot(to_center, direction) * direction / np.dot(direction, direction)
-        return projection
+        dv = np.dot(to_center, direction) * direction / np.dot(direction, direction)
+        if self.falloff is not None:
+            norm = np.linalg.norm(dv)
+            dv = self.falloff(norm) * dv / norm
+        return dv
 
     def evaluate_grid(self, xs, ys, zs):
         direction = self.direction
@@ -433,8 +441,10 @@ class SvPlaneAttractorVectorField(SvVectorField):
         points = np.stack((xs, ys, zs)).T
         vectors = np.vectorize(func, signature='(3)->(3)')(points)
         if self.falloff is not None:
-            norms = np.linalg.norm(vectors, axis=0)
+            norms = np.linalg.norm(vectors, axis=1, keepdims=True)
             lens = self.falloff(norms)
+            nonzero = (norms > 0)[:,0]
+            vectors[nonzero] = vectors[nonzero] / norms[nonzero][:,0][np.newaxis].T
             R = (lens * vectors).T
             return R[0], R[1], R[2]
         else:
