@@ -16,7 +16,9 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from sverchok.data_structure import get_other_socket
+from sverchok.data_structure import get_other_socket, get_data_nesting_level
+from sverchok.utils.field.vector import SvMatrixVectorField, SvConstantVectorField
+from sverchok.utils.field.scalar import SvConstantScalarField
 
 from mathutils import Matrix, Quaternion
 from numpy import ndarray
@@ -44,6 +46,18 @@ def is_matrix_to_quaternion(self):
 
 def is_quaternion_to_matrix(self):
     return cross_test_socket(self, 'q', 'm')
+
+def is_matrix_to_vfield(socket):
+    other = get_other_socket(socket)
+    return other.bl_idname == 'SvMatrixSocket' and socket.bl_idname == 'SvVectorFieldSocket'
+
+def is_vertex_to_vfield(socket):
+    other = get_other_socket(socket)
+    return other.bl_idname == 'SvVerticesSocket' and socket.bl_idname == 'SvVectorFieldSocket'
+
+def is_string_to_sfield(socket):
+    other = get_other_socket(socket)
+    return other.bl_idname == 'SvStringsSocket' and socket.bl_idname == 'SvScalarFieldSocket'
 
 # ---
 
@@ -118,6 +132,30 @@ def get_locs_from_matrices(data):
 
     get_all(data)
     return [locations]
+
+def matrices_to_vfield(data):
+    if isinstance(data, Matrix):
+        return SvMatrixVectorField(data)
+    elif isinstance(data, (list, tuple)):
+        return [matrices_to_vfield(item) for item in data]
+    else:
+        raise TypeError("Unexpected data type from Matrix socket: %s" % type(data))
+
+def vertices_to_vfield(data):
+    if isinstance(data, (tuple, list)) and len(data) == 3 and isinstance(data[0], (float, int)):
+        return SvConstantVectorField(data)
+    elif isinstance(data, (list, tuple)):
+        return [vertices_to_vfield(item) for item in data]
+    else:
+        raise TypeError("Unexpected data type from Vertex socket: %s" % type(data))
+
+def numbers_to_sfield(data):
+    if isinstance(data, (int, float)):
+        return SvConstantScalarField(data)
+    elif isinstance(data, (list, tuple)):
+        return [numbers_to_sfield(item) for item in data]
+    else:
+        raise TypeError("Unexpected data type from String socket: %s" % type(data))
 
 class ImplicitConversionProhibited(Exception):
     def __init__(self, socket):
@@ -201,3 +239,19 @@ class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
     @classmethod
     def matrices_to_quaternions(cls, socket, source_data):
         return get_quaternions_from_matrices(source_data)
+
+class FieldImplicitConversionPolicy(DefaultImplicitConversionPolicy):
+    @classmethod
+    def convert(cls, socket, source_data):
+        if is_matrix_to_vfield(socket):
+            return matrices_to_vfield(source_data) 
+        elif is_vertex_to_vfield(socket):
+            return vertices_to_vfield(source_data)
+        elif is_string_to_sfield(socket):
+            level = get_data_nesting_level(source_data)
+            if level > 2:
+                raise TypeError("Too high data nesting level for Number -> Scalar Field conversion: %s" % level)
+            return numbers_to_sfield(source_data)
+        else:
+            super().convert(socket, source_data)
+
