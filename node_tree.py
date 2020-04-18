@@ -28,7 +28,7 @@ from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
 from mathutils import Matrix
 
 from sverchok import data_structure
-from sverchok.data_structure import get_other_socket
+from sverchok.data_structure import get_other_socket, context_sensitive_throttle
 
 from sverchok.core.update_system import (
     build_update_list,
@@ -510,6 +510,16 @@ class SverchCustomTreeNode:
         if hasattr(self, "output_descriptors"):
             for descriptor in self.output_descriptors:
                 descriptor.create(self)
+
+    def eventless_new_socket(self, sockets, *new_sock_props):
+        """
+        sockets =   node.inputs  or node.outputs
+        this function can make output or input socket, and avoid triggering process
+        """
+        with context_sensitive_throttle(sockets.id_data):
+            return sockets.new(*new_sock_props)
+
+
 
     @classmethod
     def get_docstring(cls):

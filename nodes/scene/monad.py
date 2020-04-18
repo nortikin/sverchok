@@ -101,12 +101,9 @@ class SvSocketAquisition:
                             else:
                                 setattr(new_socket, name, value)
 
-            # print('------')
-            # print(prop_data)
-            # pprint.pprint(self.get_outputs_info)
-
             # add new dangling dummy
-            socket_list.new('SvDummySocket', 'connect me')
+            self.eventless_new_socket(socket_list, 'SvDummySocket', 'connect me')
+            # socket_list.new('SvDummySocket', 'connect me')
 
     # stashing and repopulate are used for iojson
 
