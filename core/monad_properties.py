@@ -188,26 +188,26 @@ class SvIntPropertySettingsGroup(PropertyGroup, PropsBase):
 
 
 
-def find_hightest_num_in_matching_params(obj_id, kind):
+def find_hightest_num_in_matching_params(monad_prop_names, kind):
     regex = "^(?P<kind>ints|floats)_(?P<number>\d+)_(?P<variable>\S+)$"
     nums = [1]
-    for name in obj_id.__annotations__:
+    for name in monad_prop_names:
         matches = re.search(regex, name)
         if matches and matches.group('kind') == kind:
             nums.append(int(matches.group('number')))
     return max(nums)
 
 
-def ensure_unique(annotations, new_prop_name):
+def ensure_unique(monad_prop_names, new_prop_name):
 
     # can be used unchanged
-    if not (new_prop_name in annotations):
+    if not (new_prop_name in monad_prop_names):
         return new_prop_name
    
     print(f"{new_prop_name} (prop_name) is used.. making a new one")
     # find the highest token and return it plus one
     kind, num, variable = new_prop_name.split('_', 2)
-    num = find_hightest_num_in_matching_params(obj_id, kind)
+    num = find_hightest_num_in_matching_params(monad_prop_names, kind)
     proposed_new_name = f"{kind}_{int(num) + 1}_{variable}"
     print(f"new prop_name {proposed_new_name}")
     return proposed_new_name

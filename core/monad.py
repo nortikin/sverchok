@@ -176,6 +176,14 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         # if not prop_dict['name']:
         #     prop_dict['name'] = node.name + '|' + prop_name
 
+    def get_stored_prop_names(self):
+        """ 
+        - this will list all currently stored props for this monad / tree 
+        - it reflects the state prior to acquisition of a new socket with prop.
+        """
+        props = self.get_all_props()
+        return list(props['float_props'].keys()) + list(props['int_props'].keys())        
+
 
     def add_prop_from(self, socket):
         """
@@ -188,20 +196,20 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         local_debug = False
         # reference_obj_id = cls.instances[0]
         # print(reference_obj_id.__annotations__)
-        has_annotations = False
 
-        if not cls_dict:
-            print('no dict yet')
-        else:
-            print('found dict!')
-            if '__annotations' in cls_dict:
-                has_annotations = True
-                annotations = cls_dict['__annotations__']
+        try:
+            monad_prop_names = self.get_stored_prop_names()
+            has_monad_prop_names = True
+        except:
+            print('no prop names yet in : add_prop_from call')
+            has_monad_prop_names = False
+
 
         if other.prop_name:
-            prop_name = other.prop_name
 
+            prop_name = other.prop_name
             prop_func, prop_dict = other.node.__annotations__.get(prop_name, ("", {}))
+
             if 'attr' in prop_dict:
                 prop_dict.pop('attr')  # this we store in prop_name anyway
             
@@ -251,8 +259,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                     prop_dict['max'] = other.node.int_max
 
             new_name = prop_name_prefix + prop_name
-            if has_annotations:
-                new_name = ensure_unique(annotations, new_name)
+            if has_monad_prop_names:
+                new_name = ensure_unique(monad_prop_names, new_name)
             
             prop_settings.prop_name = new_name
             prop_settings.set_settings(prop_dict)
@@ -277,8 +285,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                 prop_name_prefix = f"ints_{len(self.int_props)}_"
 
             new_name = prop_name_prefix + other.name
-            if has_annotations:
-                new_name = ensure_unique(annotations, new_name)
+            if has_monad_prop_names:
+                new_name = ensure_unique(monad_prop_names, new_name)
             
             # this name will be used as the attr name of the newly generated property for the shellnode
             # essentially this is 
