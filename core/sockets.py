@@ -521,10 +521,10 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
             return [[getattr(self.node, self.get_prop_name())]]
         elif self.prop_type:
             return [[getattr(self.node, self.prop_type)[self.prop_index]]]
-        elif default is not sentinel:
-            return default
-        else:
+        elif default is sentinel:
             raise SvNoDataError(self)
+        else:
+            return default
 
 
 class SvDictionarySocket(NodeSocket, SvSocketCommon):

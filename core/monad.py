@@ -193,7 +193,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         cls = get_node_class_reference(self.cls_bl_idname)
         cls_dict = cls.__dict__ if cls else {}
 
-        local_debug = False
+        # local_debug = False
         # reference_obj_id = cls.instances[0]
         # print(reference_obj_id.__annotations__)
 
@@ -210,6 +210,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
             prop_name = other.prop_name
             prop_func, prop_dict = other.node.__annotations__.get(prop_name, ("", {}))
+            prop_func_name = prop_func.__name__
 
             if 'attr' in prop_dict:
                 prop_dict.pop('attr')  # this we store in prop_name anyway
@@ -229,23 +230,19 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                 """ 
                 regex = re.compile('[^a-z A-Z0-9]')
                 prop_dict['name'] = regex.sub('', prop_name)
-                print(f"monad: generated name for property function: {prop_name} -> {prop_dict['name']}")
+                # print(f"monad: generated name for property function: {prop_name} -> {prop_dict['name']}")
 
-            if local_debug:
-                print("prop_func:", prop_func)   # tells us the kind of property to make
-                print("prop_dict:", prop_dict)   # tells us the attributes of the property
-                print("prop_name:", prop_name)   # tells the socket / slider ui which prop to display
-                #                                # and its associated 'name' attribute from the prop_dict
-            
-            if prop_func.__name__ == "FloatProperty":
+            if prop_func_name == "FloatProperty":
                 self.get_current_as_default(prop_dict, other.node, prop_name)
                 prop_settings = self.float_props.add()
                 prop_name_prefix = f"floats_{len(self.float_props)}_"
-            elif prop_func.__name__ == "IntProperty":
+            
+            elif prop_func_name == "IntProperty":
                 self.get_current_as_default(prop_dict, other.node, prop_name)
                 prop_settings = self.int_props.add()
                 prop_name_prefix = f"ints_{len(self.int_props)}_"
-            elif prop_func.__name__ == "FloatVectorProperty":
+
+            elif prop_func_name == "FloatVectorProperty":
                 info("FloatVectorProperty ignored (normal behaviour since day one). prop_func: %s, prop_dict: %s.", prop_func, prop_dict)
                 return None
             else: # no way to handle it
