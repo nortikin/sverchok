@@ -75,6 +75,7 @@
      SvExCurveTorsionNode
      SvExCurveZeroTwistFrameNode
      SvExCurveLengthParameterNode
+     SvLengthRebuildCurveNode
      SvExEvalCurveNode
 
 ## Surfaces

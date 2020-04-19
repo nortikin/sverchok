@@ -30,6 +30,12 @@ class SvCurveLengthParameterNode(bpy.types.Node, SverchCustomTreeNode):
         default = 0.5,
         update = updateNode)
 
+    length_draft : FloatProperty(
+        name = "[D] Length",
+        min = 0.0,
+        default = 0.5,
+        update = updateNode)
+
     modes = [('SPL', 'Cubic', "Cubic Spline", 0),
              ('LIN', 'Linear', "Linear Interpolation", 1)]
 
@@ -57,6 +63,8 @@ class SvCurveLengthParameterNode(bpy.types.Node, SverchCustomTreeNode):
             min = 4,
             update = updateNode)
 
+    draft_properties_mapping = dict(length = 'length_draft')
+
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
         self.inputs.new('SvStringsSocket', "Resolution").prop_name = 'resolution'
@@ -67,11 +75,20 @@ class SvCurveLengthParameterNode(bpy.types.Node, SverchCustomTreeNode):
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'mode', expand=True)
+        layout.prop(self, 'eval_mode', expand=True)
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
-        layout.prop(self, 'eval_mode', expand=True)
+        layout.prop(self, 'mode', expand=True)
+
+    def does_support_draft_mode(self):
+        return True
+
+    def draw_label(self):
+        label = self.label or self.name
+        if self.id_data.sv_draft:
+            label = "[D] " + label
+        return label
 
     def process(self):
 
@@ -97,8 +114,11 @@ class SvCurveLengthParameterNode(bpy.types.Node, SverchCustomTreeNode):
             if isinstance(resolution, (list, tuple)):
                 resolution = resolution[0]
 
+            mode = self.mode
+            if self.id_data.sv_draft:
+                mode = 'LIN'
             solver = SvCurveLengthSolver(curve)
-            solver.prepare(self.mode, resolution)
+            solver.prepare(mode, resolution)
 
             if self.eval_mode == 'AUTO':
                 total_length = solver.get_total_length()

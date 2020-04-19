@@ -15,6 +15,7 @@ Curves
    concat_curves
    curve_length
    length_parameter
+   length_rebuild
    curvature
    torsion
    curve_frame
