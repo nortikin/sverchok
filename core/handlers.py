@@ -8,6 +8,9 @@ from sverchok import data_structure
 from sverchok.core import upgrade_nodes, undo_handler_node_count
 from sverchok.core.update_system import sv_first_run, set_first_run
 import sverchok.core.update_system as us
+from sverchok.core.links import sv_links_cache, bl_links_to_sv_links, empty_links_cache
+from sverchok.core.node_id_dict import load_nodes_in_node_dict
+
 from sverchok.ui import color_def, bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
 from sverchok.utils.logging import debug
@@ -75,20 +78,17 @@ def sv_handler_undo_post(scene):
     for ng in sverchok_trees():
         num_to_test_against += len(ng.nodes)
         tree_id = ng.tree_id
-        if tree_id in ng.sv_links.keys():
-            links_changed = links_changed  or  ng.sv_links[tree_id] != ng.bl_links_to_sv_links()
-
+        if tree_id in sv_links_cache:
+            links_changed = sv_links_cache[tree_id] != bl_links_to_sv_links(ng)
+            if links_changed:
+                break
     # only perform clean if the undo event triggered
-    # a difference in total node count among trees.
+    # a difference in total node count among trees or if links have changed.
     if links_changed or not (undo_handler_node_count['sv_groups'] == num_to_test_against):
         print('looks like a node was removed, cleaning')
         sv_clean(scene)
         for ng in sverchok_trees():
-            tree_id = ng.tree_id
-            if tree_id in ng.sv_node_dict:
-                ng.sv_node_dict[tree_id]={}
-                for node in ng.nodes:
-                    ng.sv_node_dict[tree_id][node.node_id] = node
+            load_nodes_in_node_dict(ng)
             ng.has_changed = True
         sv_main_handler(scene)
     undo_handler_node_count['sv_groups'] = 0
@@ -225,10 +225,10 @@ def sv_post_load(scene):
         if pref.apply_theme_on_open:
             color_def.apply_theme()
 
+    empty_links_cache()
     for ng in sv_trees:
 
         if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
-            ng.sv_links = {}
             ng.update()
 
 

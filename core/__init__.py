@@ -10,7 +10,8 @@ root_modules = [
 ]
 
 core_modules = [
-    "monad_properties", "sv_custom_exceptions", "sockets",
+    "monad_properties", "sv_custom_exceptions",
+    "node_id_dict", "links", "sockets",
     "handlers", "update_system", "upgrade_nodes",
     "monad", "node_defaults"
 ]
@@ -33,7 +34,7 @@ def sv_registration_utils():
     pass
 
 
-sv_registration_utils.register_all = sv_register_modules 
+sv_registration_utils.register_all = sv_register_modules
 sv_registration_utils.unregister_all = sv_unregister_modules
 
 
@@ -110,7 +111,7 @@ def init_bookkeeping(sv_name):
     sverchok.data_structure.SVERCHOK_NAME = sv_name
     ascii_print.show_welcome()
     node_defaults.register_defaults()
-    auto_gather_node_classes()    
+    auto_gather_node_classes()
 
 
 
