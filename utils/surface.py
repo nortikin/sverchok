@@ -554,25 +554,31 @@ class SvInterpolatingSurface(SvSurface):
             self._eval_cache[(u,v)] = result
             return result
 
-    def evaluate_array(self, us, vs):
-        # FIXME: To be optimized!
-        normals = [self._evaluate(u, v) for u,v in zip(us, vs)]
-        return np.array(normals)
-
 #     def evaluate_array(self, us, vs):
-#         result = np.empty((len(us), 3))
-#         v_to_u = defaultdict(list)
-#         v_to_i = defaultdict(list)
-#         for i, (u, v) in enumerate(zip(us, vs)):
-#             v_to_u[v].append(u)
-#             v_to_i[v].append(i)
-#         for v, us_by_v in v_to_u.items():
-#             is_by_v = v_to_i[v]
-#             spline_vertices = [spline.evaluate(v) for spline in self.v_splines]
-#             u_spline = self.get_u_spline(v, spline_vertices)
-#             points = u_spline.evaluate_array(np.array(us_by_v))
-#             np.put(result, is_by_v, points)
-#         return result
+#         # FIXME: To be optimized!
+#         normals = [self._evaluate(u, v) for u,v in zip(us, vs)]
+#         return np.array(normals)
+
+    def evaluate_array(self, us, vs):
+        result = np.empty((len(us), 3))
+        v_to_u = defaultdict(list)
+        v_to_i = defaultdict(list)
+        for i, (u, v) in enumerate(zip(us, vs)):
+            v_to_u[v].append(u)
+            v_to_i[v].append(i)
+        for v, us_by_v in v_to_u.items():
+            is_by_v = v_to_i[v]
+            spline_vertices = []
+            for spline in self.v_splines:
+                v_min, v_max = spline.get_u_bounds()
+                vx = (v_max - v_min) * v + v_min
+                point = spline.evaluate(vx)
+                spline_vertices.append(point)
+            u_spline = self.get_u_spline(v, spline_vertices)
+            points = u_spline.evaluate_array(np.array(us_by_v))
+            idxs = np.array(is_by_v)[np.newaxis].T
+            np.put_along_axis(result, idxs, points, axis=0)
+        return result
 
     def _normal(self, u, v):
         h = 0.001
@@ -597,10 +603,46 @@ class SvInterpolatingSurface(SvSurface):
             self._normal_cache[(u,v)] = result
             return result
 
+#     def normal_array(self, us, vs):
+#         # FIXME: To be optimized!
+#         normals = [self._normal(u, v) for u,v in zip(us, vs)]
+#         return np.array(normals)
+
     def normal_array(self, us, vs):
-        # FIXME: To be optimized!
-        normals = [self._normal(u, v) for u,v in zip(us, vs)]
-        return np.array(normals)
+        h = 0.001
+        result = np.empty((len(us), 3))
+        v_to_u = defaultdict(list)
+        v_to_i = defaultdict(list)
+        for i, (u, v) in enumerate(zip(us, vs)):
+            v_to_u[v].append(u)
+            v_to_i[v].append(i)
+        for v, us_by_v in v_to_u.items():
+            us_by_v = np.array(us_by_v)
+            is_by_v = v_to_i[v]
+            spline_vertices = []
+            spline_vertices_h = []
+            for v_spline in self.v_splines:
+                v_min, v_max = v_spline.get_u_bounds()
+                vx = (v_max - v_min) * v + v_min
+                point = v_spline.evaluate(vx)
+                point_h = v_spline.evaluate(vx + h)
+                spline_vertices.append(point)
+                spline_vertices_h.append(point_h)
+            u_spline = self.get_u_spline(v, spline_vertices)
+            u_spline_h = self.get_u_spline(v+h, spline_vertices_h)
+            points = u_spline.evaluate_array(us_by_v)
+            points_v_h = u_spline_h.evaluate_array(us_by_v)
+            points_u_h = u_spline.evaluate_array(us_by_v + h)
+            dvs = (points_v_h - points) / h
+            dus = (points_u_h - points) / h
+            normals = np.cross(dus, dvs)
+            norms = np.linalg.norm(normals, axis=1, keepdims=True)
+            normals = normals / norms
+
+            idxs = np.array(is_by_v)[np.newaxis].T
+            np.put_along_axis(result, idxs, normals, axis=0)
+        return result
+
 
 class SvDeformedByFieldSurface(SvSurface):
     def __init__(self, surface, field, coefficient=1.0):
