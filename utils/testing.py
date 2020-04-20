@@ -53,7 +53,7 @@ def generate_node_definition(node):
 tree = get_or_create_node_tree()
 node = create_node("{}", tree.name)
 """.format(node.bl_idname)
-    
+
     for k, v in node.items():
         result += "node.{} = {}\n".format(k, v)
 
@@ -187,7 +187,7 @@ def run_all_tests(pattern=None):
     Run all existing test cases.
     Test cases are looked up under tests/ directory.
     """
-    
+
     if pattern is None:
         pattern = "*_tests.py"
 
@@ -357,7 +357,7 @@ class SverchokTestCase(unittest.TestCase):
         for k, v in actual.items():
             if k not in reference:
                 raise AssertionError("Property `{}' is present is actual node {}, but is not present in reference".format(k, actual))
-            if v != reference[k]:
+            if v != reference[k] and k !='n_id':
                 raise AssertionError("Property `{}' has value `{}' in actual node {}, but in reference it has value `{}'".format(k, v, actual, reference[k]))
 
         for k in reference.keys():
@@ -389,7 +389,7 @@ class SverchokTestCase(unittest.TestCase):
         shape = list(arr1.shape)
 
         def compare(prev_indicies):
-            step = len(prev_indicies) 
+            step = len(prev_indicies)
             if step == arr1.ndim:
                 ind = tuple(prev_indicies)
                 if precision is None:
@@ -418,7 +418,7 @@ class SverchokTestCase(unittest.TestCase):
         level2 = get_data_nesting_level(data2)
         if level1 != level2:
             raise AssertionError("Nesting level of 1st data {} != nesting level of 2nd data {}".format(level1, level2))
-        
+
         def do_assert(d1, d2, idxs):
             if precision is not None:
                 d1 = round(d1, precision)
@@ -456,7 +456,7 @@ class SverchokTestCase(unittest.TestCase):
         #info("Expected data: %s", expected_data)
         self.assert_sverchok_data_equal(data, expected_data, precision=precision)
         #self.assertEquals(data, expected_data)
-    
+
     @contextmanager
     def assert_prints_stdout(self, regexp):
         """
@@ -579,7 +579,7 @@ class ReferenceTreeTestCase(SverchokTestCase):
             raise Exception("ReferenceTreeTestCase subclass must have `reference_file_name' set")
         if self.reference_tree_name is None:
             self.reference_tree_name = "TestingTree"
-        
+
         with self.assert_logs_no_errors():
             self.tree = self.link_node_tree()
 
@@ -619,7 +619,7 @@ class NodeProcessTestCase(EmptyTreeTestCase):
             return get_output_socket_data(self.node, output_name)
         except SvNoDataError:
             return None
-    
+
     def assert_output_data_equals(self, output_name, expected_data, message=None):
         """
         Assert that tested node has written expected_data to
@@ -690,7 +690,7 @@ def make_skip_decorator(condition, message):
 
 # Here go decorators used to mark test to be executed only in certain conditions.
 # Example usage:
-#       
+#
 #       @manual_only
 #       def test_something(self):
 #           # This test will not be running on Travis CI, only in manual mode.
@@ -856,4 +856,3 @@ if __name__ == "__main__":
     except Exception as e:
         print(e)
         sys.exit(1)
-

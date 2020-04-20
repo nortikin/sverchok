@@ -40,7 +40,7 @@ from sverchok.core.update_system import (
     get_update_lists, update_error_nodes,
     get_original_node_color,
     sv_first_run,
-    get_first_run,
+    is_first_run,
     reset_error_nodes)
 from sverchok.core.links import (
     fill_links_memory,
@@ -356,7 +356,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
         # this is a no-op if there's no drawing
         clear_exception_drawing_with_bgl(self.nodes)
-        if get_first_run():
+        if is_first_run():
             return
         if self.skip_tree_update:
             # print('throttled update from context manager')

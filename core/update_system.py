@@ -40,7 +40,7 @@ sv_first_run = True
 def set_first_run(value):
     global sv_first_run
     sv_first_run = value
-def get_first_run():
+def is_first_run():
     global sv_first_run
     return sv_first_run
 def update_error_colors(self, context):
