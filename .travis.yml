@@ -14,12 +14,15 @@ install:
     then BLENDER_VERSION=2.82
          BLENDER_URL=https://ftp.nluug.nl/pub/graphics/blender/release/Blender2.82/blender-2.82a-linux64.tar.xz
          SVERCHOK_DIR=scripts/addons/sverchok
+         BLENDER_TAR=$(basename $BLENDER_URL)
+         BLENDER_DIR=$(basename $BLENDER_URL .tar.xz)
     else BLENDER_VERSION=2.79
          BLENDER_URL=https://download.blender.org/release/Blender2.79/blender-2.79b-linux-glibc219-x86_64.tar.bz2
          SVERCHOK_DIR=scripts/addons/sverchok
+         BLENDER_TAR=$(basename $BLENDER_URL)
+         BLENDER_DIR=$(basename $BLENDER_URL .tar.bz2)
     fi
-    BLENDER_TAR=$(basename $BLENDER_URL)
-    BLENDER_DIR=$(basename $BLENDER_URL .tar.bz2)
+
     if [ ! -f installation/blender/blender ]
     then
         mkdir -p installation
