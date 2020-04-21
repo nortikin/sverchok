@@ -45,7 +45,8 @@ from sverchok.core.update_system import (
 from sverchok.core.links import (
     fill_links_memory,
     use_link_memory,
-    link_cache_is_ready)
+    link_cache_is_ready,
+    SvLinks)
 from sverchok.core.node_id_dict import load_in_node_dict, delete_from_node_dict
 
 
@@ -194,6 +195,7 @@ class SvNodeTreeCommon(object):
     skip_tree_update: BoolProperty(default=False)
     configuring_new_node: BoolProperty(name="indicate node initialization", default=False)
     tree_id_memory: StringProperty(default="")
+    sv_links = SvLinks()
     @property
     def tree_id(self):
         if not self.tree_id_memory:
@@ -248,6 +250,34 @@ class SvNodeTreeCommon(object):
             if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
                 res.append(ng)
         return res
+    def update_sv_links(self):
+        self.sv_links.create_new_links(self)
+    def links_have_changed(self):
+        return self.sv_links.links_have_changed(self)
+    def store_links_cache(self):
+        self.sv_links.store_links_cache(self)
+    def get_nodes(self):
+        return self.sv_links.get_nodes(self)
+    def get_groups(self):
+        affected_groups =[]
+        for node in self.nodes:
+            if 'SvGroupNode' in node.bl_idname:
+                sub_tree = node.monad
+                sub_tree.sv_update()
+                if sub_tree.has_changed:
+                    affected_groups.append(node)
+                    sub_tree.has_changed = False
+        return affected_groups
+
+    def sv_update(self):
+        self.update_sv_links()
+        if self.links_have_changed():
+            self.has_changed = True
+            build_update_list(self)
+            process_from_nodes(self.get_nodes())
+            self.store_links_cache()
+        else:
+            process_from_nodes(self.get_groups())
 
 class SvGenericUITooltipOperator(bpy.types.Operator):
     arg: StringProperty()
@@ -348,6 +378,8 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             self.tree_link_count = link_count
             return True
 
+
+
     def update(self):
         '''
         Tags tree for update for handle
@@ -361,14 +393,28 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         if self.skip_tree_update:
             # print('throttled update from context manager')
             return
+        if self.configuring_new_node or self.is_frozen() or not self.sv_process:
+            return 
 
-        if link_cache_is_ready(self):
-            use_link_memory(self)
-        else:
-            if self.sv_process:
-                fill_links_memory(self)
-            self.has_changed = True
-            self.process()
+        self.sv_update()
+        self.has_changed = False
+        # self.update_sv_links()
+        # print(self.links_have_changed())
+        # # self.store_links_cache()
+        # if self.links_have_changed():
+        #     build_update_list(self)
+        #     print(00)
+        #     process_from_nodes(self.get_nodes())
+        #     self.store_links_cache()
+        # elif
+
+        # if link_cache_is_ready(self):
+        #     use_link_memory(self)
+        # else:
+        #     if self.sv_process:
+        #         fill_links_memory(self)
+        #     self.has_changed = True
+        #     self.process()
 
     def process_ani(self):
         """

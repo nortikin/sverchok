@@ -448,6 +448,10 @@ def process_to_node(node):
 
 
 def process_from_nodes(nodes):
+
+    if not nodes:
+        return
+
     node_names = [node.name for node in nodes]
     ng = nodes[0].id_data
     update_list = make_tree_from_nodes(node_names, ng)

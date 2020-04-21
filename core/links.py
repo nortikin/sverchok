@@ -19,21 +19,116 @@
 
 # Declaring namedtuple()
 import collections
+from typing import NamedTuple
 from sverchok.core.update_system import (
     build_update_list,
     process_from_nodes,
     )
 from sverchok.core.node_id_dict import dict_of_node_tree, translate_node_id_to_node_name
 SvLink = collections.namedtuple('SvLink', ['from_node_id', 'to_node_id', 'from_socket_id', 'to_socket_id'])
+class SvLink(NamedTuple):
+    from_node_id: str
+    to_node_id: str
+    from_socket_id: str
+    to_socket_id: str
+    @classmethod
+    def init_from_link(cls, link):
+        output_socket, output_node = get_output_socket_id(link.from_socket)
+        sv_link = cls(
+            from_node_id=output_node,
+            to_node_id=link.to_socket.node.node_id,
+            from_socket_id=output_socket,
+            to_socket_id=link.to_socket.socket_id )
+        return sv_link
 
-sv_links_cache = {}
-sv_linked_output_sockets_cache = {}
-sv_linked_input_sockets_cache = {}
-sv_linked_inputted_nodes_cache = {}
-
-def empty_links_cache():
-    global sv_links_cache
+# sv_links_new = {}
+# sv_links_cache = {}
+# output_sockets_cache = {}
+# input_sockets_cache = {}
+# inputted_nodes_cache = {}
+# output_sockets_new = dict()
+# input_sockets_new = dict()
+# sv_linked_inputted_nodes_new = dict()
+class SvLinks:
+    sv_links_new = {}
     sv_links_cache = {}
+    output_sockets_cache = {}
+    input_sockets_cache = {}
+    inputted_nodes_cache = {}
+    output_sockets_new = dict()
+    input_sockets_new = dict()
+    inputted_nodes_new = dict()
+
+    @classmethod
+    def get(cls, node_tree):
+        return cls.sv_links[node_tree]
+
+    def start_dictionaries(self, tree_id):
+        self.sv_links_new[tree_id] = dict()
+        self.sv_links_cache[tree_id] = dict()
+        self.output_sockets_new[tree_id] = dict()
+        self.input_sockets_new[tree_id] = dict()
+        self.inputted_nodes_new[tree_id] = dict()
+        self.output_sockets_cache[tree_id] = dict()
+        self.input_sockets_cache[tree_id] = dict()
+        self.inputted_nodes_cache[tree_id] = dict()
+
+
+    def create_new_links(self, node_tree):
+        tree_id = node_tree.tree_id
+        if not node_tree.tree_id in self.sv_links_new:
+            self.start_dictionaries(node_tree.tree_id)
+        new_sv_links = bl_links_to_sv_links(node_tree)
+        self.sv_links_new[tree_id] = new_sv_links
+        new_inputted_nodes, new_input_sockets, new_output_sockets = split_new_links_data(new_sv_links)
+        self.output_sockets_new[tree_id] = new_output_sockets
+        self.input_sockets_new[tree_id] = new_input_sockets
+        self.inputted_nodes_new[tree_id] = new_inputted_nodes
+
+
+    def links_have_changed(self, node_tree):
+        return self.sv_links_new[node_tree.tree_id] != self.sv_links_cache[node_tree.tree_id]
+
+    def store_links_cache(self, node_tree):
+        tree_id = node_tree.tree_id
+        self.sv_links_cache[node_tree.tree_id] = self.sv_links_new[node_tree.tree_id]
+        self.output_sockets_cache[tree_id] = self.output_sockets_new[tree_id]
+        self.input_sockets_cache[tree_id] = self.input_sockets_new[tree_id]
+        self.inputted_nodes_cache[tree_id] = self.inputted_nodes_new[tree_id]
+
+    # @classmethod
+    # def get_new_linked_nodes(cls, tree_id):
+
+    def get_nodes(self, node_tree):
+        tree_id = node_tree.tree_id
+        new_sv_links = self.sv_links_new[tree_id]
+        before_sv_links = self.sv_links_cache[tree_id]
+        # print(self.sv_links_cache[tree_id])
+        if (self.sv_links_cache[tree_id]):
+            return node_tree.nodes
+
+        affected_nodes = []
+
+        new_linked_nodes = get_new_linked_nodes(
+            new_sv_links,
+            before_sv_links,
+            self.output_sockets_cache[tree_id])
+
+        new_unlinked_linked_nodes = get_new_unlinked_nodes(
+            self.inputted_nodes_cache[tree_id],
+            self.input_sockets_cache[tree_id],
+            self.input_sockets_new[tree_id],
+            dict_of_node_tree(node_tree)
+            )
+        affected_nodes = new_linked_nodes + new_unlinked_linked_nodes
+        node_list = translate_node_id_to_node_name(node_tree, affected_nodes)
+        print(node_list)
+        return node_list
+        # return get_nodes(node_tree)
+
+# def empty_links_cache():
+#     global sv_links_cache
+#     sv_links_cache = {}
 
 
 def link_cache_is_ready(node_tree):
@@ -111,9 +206,9 @@ def fill_links_memory(node_tree):
     inputted_nodes, input_sockets, output_sockets = split_new_links_data(new_sv_links)
 
     sv_links_cache[tree_id] = new_sv_links
-    sv_linked_output_sockets_cache[tree_id] = output_sockets
-    sv_linked_input_sockets_cache[tree_id] = input_sockets
-    sv_linked_inputted_nodes_cache[tree_id] = inputted_nodes
+    output_sockets_cache[tree_id] = output_sockets
+    input_sockets_cache[tree_id] = input_sockets
+    inputted_nodes_cache[tree_id] = inputted_nodes
 
 
 def get_affected_groups(node_tree):
@@ -150,9 +245,9 @@ def use_link_memory(node_tree):
         affected_nodes = []
 
         new_inputted_nodes, new_input_sockets, new_output_sockets = split_new_links_data(new_sv_links)
-        before_input_sockets = sv_linked_input_sockets_cache[tree_id]
-        before_inputted_nodes = sv_linked_inputted_nodes_cache[tree_id]
-        before_output_sockets = sv_linked_output_sockets_cache[tree_id]
+        before_input_sockets = input_sockets_cache[tree_id]
+        before_inputted_nodes = inputted_nodes_cache[tree_id]
+        before_output_sockets = output_sockets_cache[tree_id]
 
         new_linked_nodes = get_new_linked_nodes(
             new_sv_links,
@@ -168,9 +263,9 @@ def use_link_memory(node_tree):
         affected_nodes = new_linked_nodes + new_unlinked_linked_nodes
 
         sv_links_cache[tree_id] = new_sv_links
-        sv_linked_inputted_nodes_cache[tree_id] = new_inputted_nodes
-        sv_linked_output_sockets_cache[tree_id] = new_output_sockets
-        sv_linked_input_sockets_cache[tree_id] = new_input_sockets
+        inputted_nodes_cache[tree_id] = new_inputted_nodes
+        output_sockets_cache[tree_id] = new_output_sockets
+        input_sockets_cache[tree_id] = new_input_sockets
 
         build_update_list(node_tree)
 

@@ -39,11 +39,22 @@ def delete_from_node_dict(node):
     del sv_node_dict_cache[tree_id][n_id]
 
 def load_nodes_in_node_dict(node_tree):
+    print('loading_nodes_in_nodetree', node_tree.tree_id)
     tree_id = node_tree.tree_id
-    if tree_id in sv_node_dict_cache:
-        sv_node_dict_cache[tree_id] = {}
-        for node in node_tree.nodes:
+    # if tree_id in sv_node_dict_cache:
+    sv_node_dict_cache[tree_id] = {}
+    for node in node_tree.nodes:
+        try:
+
+        # if node.bl_idname != 'NodeReroute':
             sv_node_dict_cache[tree_id][node.node_id] = node
+        except AttributeError:
+            pass
+            # print(node.bl_idname)
+    # print(sv_node_dict_cache[tree_id])
 
 def dict_of_node_tree(node_tree):
+    print(node_tree.tree_id in sv_node_dict_cache)
+    if not node_tree.tree_id in sv_node_dict_cache:
+        load_nodes_in_node_dict(node_tree)
     return sv_node_dict_cache[node_tree.tree_id]

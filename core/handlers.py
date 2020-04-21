@@ -8,7 +8,7 @@ from sverchok import data_structure
 from sverchok.core import upgrade_nodes, undo_handler_node_count
 from sverchok.core.update_system import sv_first_run, set_first_run
 import sverchok.core.update_system as us
-from sverchok.core.links import sv_links_cache, bl_links_to_sv_links, empty_links_cache
+# from sverchok.core.links import empty_links_cache
 from sverchok.core.node_id_dict import load_nodes_in_node_dict
 
 from sverchok.ui import color_def, bgl_callback_nodeview, bgl_callback_3dview
@@ -77,11 +77,15 @@ def sv_handler_undo_post(scene):
     links_changed = False
     for ng in sverchok_trees():
         num_to_test_against += len(ng.nodes)
-        tree_id = ng.tree_id
-        if tree_id in sv_links_cache:
-            links_changed = sv_links_cache[tree_id] != bl_links_to_sv_links(ng)
-            if links_changed:
-                break
+        # tree_id = ng.tree_id
+        ng.update_sv_links()
+        links_changed = ng.links_have_changed()
+        if links_changed:
+            break
+        # if tree_id in sv_links_cache:
+        #     links_changed = sv_links_cache[tree_id] != bl_links_to_sv_links(ng)
+            # if self.links_have_changed():
+            #     break
     # only perform clean if the undo event triggered
     # a difference in total node count among trees or if links have changed.
     if links_changed or not (undo_handler_node_count['sv_groups'] == num_to_test_against):
@@ -198,6 +202,7 @@ def sv_post_load(scene):
 
     for monad in (ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchGroupTreeType'):
         if monad.input_node and monad.output_node:
+            load_nodes_in_node_dict(monad)
             monad.update_cls()
 
     sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
@@ -216,7 +221,7 @@ def sv_post_load(scene):
         except:
             traceback.print_exc()
         ng.unfreeze(True)
-
+        # load_nodes_in_node_dict(ng)
         ng.sv_process = True
     addon_name = data_structure.SVERCHOK_NAME
     addon = bpy.context.preferences.addons.get(addon_name)
@@ -225,7 +230,7 @@ def sv_post_load(scene):
         if pref.apply_theme_on_open:
             color_def.apply_theme()
 
-    empty_links_cache()
+    # empty_links_cache()
     for ng in sv_trees:
 
         if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
