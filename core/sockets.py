@@ -18,7 +18,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import math
-import time
+
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, FloatProperty
 from bpy.types import NodeTree, NodeSocket
@@ -59,6 +59,7 @@ def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
     self.node.process_node(context)
 
+
 class SvSocketCommon:
     """ Base class for all Sockets """
     use_prop: BoolProperty(default=False)
@@ -70,8 +71,7 @@ class SvSocketCommon:
     prop_name: StringProperty(default='', description="For displaying node property in socket UI")
 
     quicklink_func_name: StringProperty(default="", name="quicklink_func_name")
-    # socket_id_m: StringProperty(default="")
-    socket_id_m: StringProperty(default="")
+
     def get_prop_name(self):
         if self.node and self.node.does_support_draft_mode() and hasattr(self.node.id_data, 'sv_draft') and self.node.id_data.sv_draft:
             prop_name_draft = self.node.draft_properties_mapping.get(self.prop_name, None)
@@ -728,3 +728,4 @@ classes = [
 ]
 
 register, unregister = bpy.utils.register_classes_factory(classes)
+
