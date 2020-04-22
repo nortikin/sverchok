@@ -94,7 +94,6 @@ def make_dep_dict(node_tree, down=False):
         key, value = (link.from_node.name, link.to_node.name) if down else (link.to_node.name, link.from_node.name)
         deps[key].add(value)
 
-
     for name, var_name in wifi_out_nodes:
         other = wifi_dict.get(var_name)
         if not other:
@@ -199,7 +198,7 @@ def separate_nodes(ng, links=None):
             node_set_list[-1].add(n)
 
     found_node_sets = [ns for ns in node_set_list if len(ns) > 1]
-
+  
     if hasattr(ng, "sv_subtree_evaluation_order"):
         sorting_type = ng.sv_subtree_evaluation_order
         if sorting_type in {'X', 'Y'}:
@@ -227,7 +226,6 @@ def make_tree_from_nodes(node_names, tree, down=True):
 
     # build downwards links, this should be cached perhaps
     node_links = make_dep_dict(ng, down)
-
     while current_node:
         for node in node_links[current_node]:
             if node not in out_set:

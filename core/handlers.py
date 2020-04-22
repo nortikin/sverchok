@@ -54,7 +54,7 @@ def has_frame_changed(scene):
 
 @persistent
 def sv_handler_undo_pre(scene):
-
+    print('called undo pre')
     from sverchok.core import undo_handler_node_count
 
     for ng in sverchok_trees():
@@ -63,7 +63,7 @@ def sv_handler_undo_pre(scene):
 
 @persistent
 def sv_handler_undo_post(scene):
-
+    print('called undo post')
     # this function appears to be hoisted into an environment that does not have the same locals()
     # hence this dict must be imported. (jan 2019)
 
@@ -73,7 +73,6 @@ def sv_handler_undo_post(scene):
     links_changed = False
     for ng in sverchok_trees():
         num_to_test_against += len(ng.nodes)
-        # tree_id = ng.tree_id
         ng.update_sv_links()
         links_changed = ng.links_have_changed()
         if links_changed:
@@ -86,6 +85,7 @@ def sv_handler_undo_post(scene):
             ng.nodes_dict.load_nodes(ng)
             ng.has_changed = True
         sv_main_handler(scene)
+
     undo_handler_node_count['sv_groups'] = 0
 
 
@@ -99,7 +99,7 @@ def sv_update_handler(scene):
 
     for ng in sverchok_trees():
         try:
-
+            # print('sv_update_handler')
             ng.process_ani()
         except Exception as e:
             print('Failed to update:', str(e)) #name,

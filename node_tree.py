@@ -36,7 +36,6 @@ from sverchok.core.update_system import (
     process_tree,
     get_update_lists, update_error_nodes,
     get_original_node_color,
-    sv_first_run,
     is_first_run,
     reset_error_nodes)
 from sverchok.core.links import (
@@ -337,8 +336,6 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             # print('update event: link count changed', self.timestamp)
             self.tree_link_count = link_count
             return True
-
-
 
     def update(self):
         '''
