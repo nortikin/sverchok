@@ -38,8 +38,8 @@ from sverchok.core.update_system import (
     get_original_node_color)
 
 from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
-
 from sverchok.core.node_defaults import set_defaults_if_defined
+from sverchok.core.events import CurrentEvents
 
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
@@ -297,6 +297,8 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         get update list for debug info, tuple (fulllist, dictofpartiallists)
         '''
 
+        CurrentEvents.node_tree_update(self)
+
         # this is a no-op if there's no drawing
         clear_exception_drawing_with_bgl(self.nodes)
 
@@ -359,6 +361,10 @@ class SverchCustomTreeNode:
     # mode property names to draft mode property names.
     # E.g., draft_properties_mapping = dict(count = 'count_draft').
     draft_properties_mapping = dict()
+
+    def update(self):
+        # todo this should be called in override methods as well
+        CurrentEvents.node_update(self)
 
     @classmethod
     def poll(cls, ntree):
