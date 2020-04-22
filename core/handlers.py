@@ -6,11 +6,7 @@ from bpy.app.handlers import persistent
 from sverchok import old_nodes
 from sverchok import data_structure
 from sverchok.core import upgrade_nodes, undo_handler_node_count
-from sverchok.core.update_system import sv_first_run, set_first_run
-import sverchok.core.update_system as us
-# from sverchok.core.links import empty_links_cache
-from sverchok.core.node_id_dict import load_nodes_in_node_dict
-
+from sverchok.core.update_system import set_first_run
 from sverchok.ui import color_def, bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
 from sverchok.utils.logging import debug
@@ -82,12 +78,12 @@ def sv_handler_undo_post(scene):
         links_changed = ng.links_have_changed()
         if links_changed:
             break
-    
+
     if links_changed or not (undo_handler_node_count['sv_groups'] == num_to_test_against):
         print('looks like a node was removed, cleaning')
         sv_clean(scene)
         for ng in sverchok_trees():
-            load_nodes_in_node_dict(ng)
+            ng.nodes_dict.load_nodes(ng)
             ng.has_changed = True
         sv_main_handler(scene)
     undo_handler_node_count['sv_groups'] = 0
@@ -175,10 +171,8 @@ def sv_clean(scene):
 def sv_pre_load(scene):
 
     sv_clean(scene)
-
-
     set_first_run(True)
-    global sv_first_run
+
 
 
 @persistent

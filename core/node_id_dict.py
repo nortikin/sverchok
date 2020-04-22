@@ -17,42 +17,38 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-sv_node_dict_cache = {}
+class SvNodesDict:
+    sv_node_dict_cache = {}
 
-def translate_node_id_to_node_name(node_tree, affected_nodes):
-    tree_id = node_tree.tree_id
-    return [sv_node_dict_cache[tree_id][node_id] for node_id in affected_nodes if node_id in sv_node_dict_cache[tree_id]]
+    def to_node_name(self, node_tree, affected_nodes):
+        tree_id = node_tree.tree_id
+        return [self.sv_node_dict_cache[tree_id][node_id] for node_id in affected_nodes if node_id in self.sv_node_dict_cache[tree_id]]
 
-def load_in_node_dict(node):
+    def load_node(self, node):
 
-    n_id = node.node_id
-    tree = node.id_data
-    tree_id = node.id_data.tree_id
+        n_id = node.node_id
+        tree_id = node.id_data.tree_id
 
-    if tree_id not in sv_node_dict_cache:
-        sv_node_dict_cache[tree_id] = {}
-    sv_node_dict_cache[tree_id][n_id] = node
+        if tree_id not in self.sv_node_dict_cache:
+            self.sv_node_dict_cache[tree_id] = {}
+        self.sv_node_dict_cache[tree_id][n_id] = node
 
-def delete_from_node_dict(node):
-    n_id = node.node_id
-    tree_id = node.id_data.tree_id
-    del sv_node_dict_cache[tree_id][n_id]
+    def forget_node(self, node):
+        n_id = node.node_id
+        tree_id = node.id_data.tree_id
+        del self.sv_node_dict_cache[tree_id][n_id]
 
-def load_nodes_in_node_dict(node_tree):
-    print('loading_nodes_in_nodetree', node_tree.tree_id)
-    tree_id = node_tree.tree_id
-    # if tree_id in sv_node_dict_cache:
-    sv_node_dict_cache[tree_id] = {}
-    for node in node_tree.nodes:
-        try:
-            sv_node_dict_cache[tree_id][node.node_id] = node
-        except AttributeError:
-            # it is a NodeReroute
-            pass
+    def load_nodes(self, node_tree):
+        tree_id = node_tree.tree_id
+        self.sv_node_dict_cache[tree_id] = {}
+        for node in node_tree.nodes:
+            try:
+                self.sv_node_dict_cache[tree_id][node.node_id] = node
+            except AttributeError:
+                # it is a NodeReroute
+                pass
 
-
-def dict_of_node_tree(node_tree):
-    print(node_tree.tree_id in sv_node_dict_cache)
-    if not node_tree.tree_id in sv_node_dict_cache:
-        load_nodes_in_node_dict(node_tree)
-    return sv_node_dict_cache[node_tree.tree_id]
+    def get(self, node_tree):
+        if not node_tree.tree_id in self.sv_node_dict_cache:
+            self.load_nodes(node_tree)
+        return self.sv_node_dict_cache[node_tree.tree_id]

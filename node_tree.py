@@ -44,8 +44,7 @@ from sverchok.core.update_system import (
     reset_error_nodes)
 from sverchok.core.links import (
     SvLinks)
-from sverchok.core.node_id_dict import load_in_node_dict, delete_from_node_dict
-
+from sverchok.core.node_id_dict import SvNodesDict
 
 from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
 from sverchok.core.socket_data import socket_data_cache
@@ -141,46 +140,7 @@ def throttled(func):
 
     return wrapper_update
 
-# Declaring namedtuple()
-Sv_Link = collections.namedtuple('sv_link',['from_node_id', 'to_node_id', 'from_socket_id', 'to_socket_id'])
 
-def get_output_socket_id(socket):
-    if socket.node.bl_idname == 'NodeReroute':
-        if socket.node.inputs[0].is_linked:
-            return get_output_socket_id(socket.node.inputs[0].links[0].from_socket)
-        else:
-            return None, None
-    else:
-        return socket.socket_id, socket.node.node_id
-
-def get_new_linked_nodes(new_sv_links, before_sv_links, before_output_sockets):
-    affected_nodes = []
-    for link in new_sv_links:
-        if not link in before_sv_links:
-            if not link.from_socket_id in before_output_sockets:
-                if not link.from_node_id in affected_nodes:
-                    affected_nodes.append(link.from_node_id)
-            if not link.to_node_id in affected_nodes:
-                affected_nodes.append(link.to_node_id)
-    return affected_nodes
-
-def append_unlinked_nodes(before_inputted_nodes, before_input_sockets, input_sockets, affected_nodes, nodes_dict):
-    for node_id, socket in zip(before_inputted_nodes, before_input_sockets):
-        if not socket in input_sockets:
-            #if the node has been deleted it is not affected
-            if node_id in nodes_dict:
-                affected_nodes.append(node_id)
-
-def split_new_links_data(new_sv_links):
-    inputted_nodes = []
-    input_sockets = []
-    output_sockets = []
-    for link in new_sv_links:
-        inputted_nodes.append(link.to_node_id)
-        input_sockets.append(link.to_socket_id)
-        output_sockets.append(link.from_socket_id)
-
-    return  inputted_nodes, input_sockets, output_sockets
 
 class SvNodeTreeCommon(object):
     '''
@@ -193,6 +153,8 @@ class SvNodeTreeCommon(object):
     configuring_new_node: BoolProperty(name="indicate node initialization", default=False)
     tree_id_memory: StringProperty(default="")
     sv_links = SvLinks()
+    nodes_dict = SvNodesDict()
+
     @property
     def tree_id(self):
         if not self.tree_id_memory:
@@ -247,14 +209,19 @@ class SvNodeTreeCommon(object):
             if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
                 res.append(ng)
         return res
+
     def update_sv_links(self):
         self.sv_links.create_new_links(self)
+
     def links_have_changed(self):
         return self.sv_links.links_have_changed(self)
+
     def store_links_cache(self):
         self.sv_links.store_links_cache(self)
+
     def get_nodes(self):
         return self.sv_links.get_nodes(self)
+
     def get_groups(self):
         affected_groups =[]
         for node in self.nodes:
@@ -739,7 +706,7 @@ class SverchCustomTreeNode:
         ng = self.id_data
 
         ng.freeze()
-        load_in_node_dict(self)
+        ng.nodes_dict.load_node(self)
         if hasattr(self, "sv_init"):
 
             try:
@@ -809,9 +776,12 @@ class SverchCustomTreeNode:
         Override sv_free() instead
         """
         self.sv_free()
+
         for s in self.outputs:
             s.sv_forget()
-        delete_from_node_dict(self)
+
+        node_tree = self.id_data
+        node_tree.nodes_dict.forget_node(self)
 
         if hasattr(self, "has_3dview_props"):
             print("about to remove this node's props from Sv3DProps")
