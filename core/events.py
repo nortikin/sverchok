@@ -17,6 +17,8 @@ Details: https://github.com/nortikin/sverchok/issues/3077
 
 from enum import Enum
 
+from sverchok.utils.context_managers import sv_preferences
+
 
 class BlenderEvents(Enum):
     node_tree_update = 1
@@ -32,4 +34,10 @@ class CurrentEvents:
     @classmethod
     def new_event(cls, event: BlenderEvents, updated_element):
         cls.events_stack.append(event)
-        event.print(updated_element)
+        if cls.is_in_debug_mode():
+            event.print(updated_element)
+
+    @staticmethod
+    def is_in_debug_mode():
+        with sv_preferences() as prefs:
+            return prefs.log_level == "DEBUG"
