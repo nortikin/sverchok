@@ -144,13 +144,12 @@ def sv_main_handler(scene):
     if depsgraph_need:
         sv_depsgraph = bpy.context.evaluated_depsgraph_get()
     for ng in sverchok_trees():
-
         # if P (sv_process is False, we can skip this node tree.
         if not ng.sv_process:
             continue
 
         if ng.has_changed:
-
+            print('depsgraph_update_pre called - ng.has_changed -> ')
 
             ng.process()
     pre_running = False
@@ -174,13 +173,11 @@ def sv_pre_load(scene):
     set_first_run(True)
 
 
-
 @persistent
 def sv_post_load(scene):
     """
     Upgrade nodes, apply preferences and do an update.
     """
-
 
     set_first_run(False)
 
@@ -191,7 +188,6 @@ def sv_post_load(scene):
 
     for monad in (ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchGroupTreeType'):
         if monad.input_node and monad.output_node:
-            load_nodes_in_node_dict(monad)
             monad.update_cls()
 
     sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
@@ -219,9 +215,7 @@ def sv_post_load(scene):
         if pref.apply_theme_on_open:
             color_def.apply_theme()
 
-    # empty_links_cache()
     for ng in sv_trees:
-
         if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
             ng.update()
 
@@ -245,20 +239,14 @@ def set_frame_change(mode):
     elif mode == "PRE":
         pre.append(sv_update_handler)
 
-# def sv_depsgraph_update_post(scene):
-#     print('sv_depsgraph_update_post')
-#     depsgraph = bpy.context.evaluated_depsgraph_get()
-#     print("nodetree", depsgraph.id_type_updated('NODETREE'))
-#     print("material",depsgraph.id_type_updated('MATERIAL'))
-#     print("items",depsgraph.ids.items())
+
 
 handler_dict = {
     'undo_pre': sv_handler_undo_pre,
     'undo_post': sv_handler_undo_post,
     'load_pre': sv_pre_load,
     'load_post': sv_post_load,
-    'depsgraph_update_pre': sv_main_handler,
-    # 'depsgraph_update_post': sv_depsgraph_update_post
+    'depsgraph_update_pre': sv_main_handler
 }
 
 
