@@ -315,9 +315,9 @@ class SvObjHelper():
         tracked_operator(self, row, fn_name='add_material', text='+Material', icon="ZOOM_IN")
 
     def set_corresponding_materials(self):
-        if bpy.data.materials.get(self.material):
+        if bpy.data.materials.get(self.material.strip()):
             for obj in self.get_children():
-                obj.active_material = bpy.data.materials[self.material]
+                obj.active_material = bpy.data.materials[self.material.strip()]
 
     def remove_non_updated_objects(self, obj_index):
         objs = self.get_children()
