@@ -39,7 +39,7 @@ from sverchok.core.update_system import (
 
 from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
 from sverchok.core.node_defaults import set_defaults_if_defined
-from sverchok.core.events import CurrentEvents
+from sverchok.core.events import CurrentEvents, BlenderEvents
 
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
@@ -297,7 +297,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         get update list for debug info, tuple (fulllist, dictofpartiallists)
         '''
 
-        CurrentEvents.node_tree_update(self)
+        CurrentEvents.new_event(BlenderEvents.node_tree_update, self)
 
         # this is a no-op if there's no drawing
         clear_exception_drawing_with_bgl(self.nodes)
@@ -364,7 +364,7 @@ class SverchCustomTreeNode:
 
     def update(self):
         # todo this should be called in override methods as well
-        CurrentEvents.node_update(self)
+        CurrentEvents.new_event(BlenderEvents.node_update, self)
 
     @classmethod
     def poll(cls, ntree):

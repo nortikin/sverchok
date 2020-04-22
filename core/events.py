@@ -30,11 +30,6 @@ class CurrentEvents:
     events_stack = []  # todo should be freed somehow
 
     @classmethod
-    def node_tree_update(cls, node_tree):
-        cls.events_stack.append(BlenderEvents.node_tree_update)
-        BlenderEvents.node_tree_update.print(node_tree)
-
-    @classmethod
-    def node_update(cls, node):
-        cls.events_stack.append(BlenderEvents.node_update)
-        BlenderEvents.node_update.print(node)
+    def new_event(cls, event: BlenderEvents, updated_element):
+        cls.events_stack.append(event)
+        event.print(updated_element)
