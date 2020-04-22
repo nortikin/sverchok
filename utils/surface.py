@@ -203,6 +203,39 @@ class SvFlipSurface(SvSurface):
         us, vs = self.flip(us, vs)
         return self.surface.normal_array(us, vs)
 
+class SvSwapSurface(SvSurface):
+    def __init__(self, surface):
+        self.surface = surface
+        if hasattr(surface, "normal_delta"):
+            self.normal_delta = surface.normal_delta
+        else:
+            self.normal_delta = 0.001
+        self.__description__ = "Swapped {}".format(surface)
+
+    def get_u_min(self):
+        return self.surface.get_v_min()
+
+    def get_v_min(self):
+        return self.surface.get_u_min()
+
+    def get_u_max(self):
+        return self.surface.get_v_max()
+
+    def get_v_max(self):
+        return self.surface.get_u_max()
+
+    def evaluate(self, u, v):
+        return self.surface.evaluate(v, u)
+    
+    def evaluate_array(self, us, vs):
+        return self.surface.evaluate_array(vs, us)
+
+    def normal(self, u, v):
+        return self.surface.normal(v, u)
+
+    def normal_array(self, us, vs):
+        return self.surface.normal_array(vs, us)
+
 class SvPlane(SvSurface):
     __description__ = "Plane"
     
