@@ -150,7 +150,7 @@ class SvLinks:
         new_sv_links = self.sv_links_new[tree_id]
         before_sv_links = self.sv_links_cache[tree_id]
 
-        if self.sv_links_cache[tree_id]:
+        if not self.sv_links_cache[tree_id]:
             return node_tree.nodes
 
         affected_nodes = []
