@@ -92,6 +92,7 @@
      SvExSurfaceLerpNode
      SvExSurfaceDomainNode
      SvExSurfaceSubdomainNode
+     SvFlipSurfaceNode
      SvExApplyFieldToSurfaceNode
      SvExTessellateTrimSurfaceNode
      SvExEvalSurfaceNode
