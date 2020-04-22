@@ -20,6 +20,7 @@ Surface
    surface_domain
    subdomain
    flip
+   swap
    tessellate_trim
    evaluate_surface
 
