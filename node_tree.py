@@ -21,8 +21,6 @@ import sys
 import time
 from contextlib import contextmanager
 import textwrap
-import collections
-
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, EnumProperty
@@ -33,7 +31,6 @@ from sverchok import data_structure
 from sverchok.data_structure import get_other_socket
 
 from sverchok.core.update_system import (
-    partial_update_cache,
     build_update_list,
     process_from_node, process_from_nodes,
     process_tree,
@@ -47,7 +44,7 @@ from sverchok.core.links import (
 from sverchok.core.node_id_dict import SvNodesDict
 
 from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
-from sverchok.core.socket_data import socket_data_cache
+
 from sverchok.core.node_defaults import set_defaults_if_defined
 
 from sverchok.utils import get_node_class_reference
@@ -103,7 +100,7 @@ def throttle_tree_update(node):
             self.inputs.new(...)
             self.outputs.new(...)
 
-    that's it.
+    that's it. 
 
     """
     try:
@@ -127,7 +124,7 @@ def throttled(func):
 
     When a node has changed, like a mode-change leading to a socket change (remove, new)
     Blender will trigger nodetree.update. We want to ignore this trigger-event, and we do so by
-    - first throttling the update system.
+    - first throttling the update system. 
     - then We execute the code that makes changes to the node/nodetree
     - then we end the throttle-state
     - we are then ready to process
@@ -267,7 +264,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         #   node.disable()
 
     def sv_process_tree_callback(self, context):
-        process_tree(self)
+        process_tree(self)    
 
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
@@ -290,7 +287,6 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     )
 
     sv_toggle_nodetree_props: BoolProperty(name="Toggle visibility of props", description="Show more properties for this node tree")
-
 
     def on_draft_mode_changed(self, context):
         """
@@ -337,7 +333,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     @property
     def has_link_count_changed(self):
         link_count = len(self.links)
-        if not link_count == self.tree_link_count:
+        if not link_count == self.tree_link_count: 
             # print('update event: link count changed', self.timestamp)
             self.tree_link_count = link_count
             return True
@@ -388,9 +384,8 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             self.build_update_list()
             self.has_changed = False
         if self.is_frozen():
-            # print('not processing: because self/tree.is_frozen')
+            # print('not processing: because self/tree.is_frozen') 
             return
-
         if self.sv_process:
             process_tree(self)
 
@@ -438,18 +433,18 @@ class SverchCustomTreeNode:
 
     def ensure_enums_have_no_space(self, enums=None):
         """
-        enums: a list of property names to check. like  self.current_op
+        enums: a list of property names to check. like  self.current_op  
 
             self.ensure_enums_have_no_space(enums=[current_op])
 
         due to changes in EnumProperty defintion "laws" individual enum identifiers must not
-        contain spaces. This function takes a list of enums that the node currently holds, and
+        contain spaces. This function takes a list of enums that the node currently holds, and 
         makes sure the stored enum has no spaces.
         """
         for enum_property in enums:
             current_value = getattr(self, enum_property)
             if " " in current_value:
-                with self.sv_throttle_tree_update():
+                with self.sv_throttle_tree_update():        
                     setattr(self, enum_property, data_structure.no_space(current_value))
 
 
@@ -755,7 +750,6 @@ class SverchCustomTreeNode:
         This method is not supposed to be overriden in specific nodes.
         Override sv_copy() instead.
         """
-        # self.n_id = str(hash(self) ^ hash(time.monotonic()))
         settings = get_original_node_color(self.id_data, original.name)
         if settings is not None:
             self.use_custom_color, self.color = settings
@@ -769,7 +763,7 @@ class SverchCustomTreeNode:
         at the moment of node being copied.
         """
         pass
-
+        
     def free(self):
         """
         This method is not supposed to be overriden in specific nodes.
@@ -816,7 +810,7 @@ class SverchCustomTreeNode:
 
     def get_and_set_gl_scale_info(self, origin=None):
         """
-        This function is called in sv_init in nodes that draw GL instructions to the nodeview,
+        This function is called in sv_init in nodes that draw GL instructions to the nodeview, 
         the nodeview scale and dpi differs between users and must be queried to get correct nodeview
         x,y and dpi scale info.
         """
@@ -832,7 +826,7 @@ class SverchCustomTreeNode:
 
 
 classes = [
-    SverchCustomTree,
+    SverchCustomTree, 
     SvLinkNewNodeInput,
     SvGenericUITooltipOperator
 ]
