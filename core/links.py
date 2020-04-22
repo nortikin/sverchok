@@ -17,7 +17,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# Declaring namedtuple()
+
 import collections
 from typing import NamedTuple
 from sverchok.core.update_system import (
@@ -25,12 +25,13 @@ from sverchok.core.update_system import (
     process_from_nodes,
     )
 from sverchok.core.node_id_dict import dict_of_node_tree, translate_node_id_to_node_name
-SvLink = collections.namedtuple('SvLink', ['from_node_id', 'to_node_id', 'from_socket_id', 'to_socket_id'])
+
 class SvLink(NamedTuple):
     from_node_id: str
     to_node_id: str
     from_socket_id: str
     to_socket_id: str
+
     @classmethod
     def init_from_link(cls, link):
         output_socket, output_node = get_output_socket_id(link.from_socket)
@@ -41,14 +42,23 @@ class SvLink(NamedTuple):
             to_socket_id=link.to_socket.socket_id )
         return sv_link
 
-# sv_links_new = {}
-# sv_links_cache = {}
-# output_sockets_cache = {}
-# input_sockets_cache = {}
-# inputted_nodes_cache = {}
-# output_sockets_new = dict()
-# input_sockets_new = dict()
-# sv_linked_inputted_nodes_new = dict()
+    @classmethod
+    def init_from_links(cls, links):
+        new_sv_links = []
+        for link in links:
+            if not link.to_socket.node.bl_idname == 'NodeReroute':
+                #recursive function to override reroutes
+                output_socket, output_node = get_output_socket_id(link.from_socket)
+                if output_socket:
+                    sv_link = cls(
+                        from_node_id=output_node,
+                        to_node_id=link.to_socket.node.node_id,
+                        from_socket_id=output_socket,
+                        to_socket_id=link.to_socket.socket_id )
+                    new_sv_links.append(sv_link)
+
+        return new_sv_links
+
 class SvLinks:
     sv_links_new = {}
     sv_links_cache = {}
@@ -58,10 +68,6 @@ class SvLinks:
     output_sockets_new = dict()
     input_sockets_new = dict()
     inputted_nodes_new = dict()
-
-    @classmethod
-    def get(cls, node_tree):
-        return cls.sv_links[node_tree]
 
     def start_dictionaries(self, tree_id):
         self.sv_links_new[tree_id] = dict()
@@ -78,7 +84,8 @@ class SvLinks:
         tree_id = node_tree.tree_id
         if not node_tree.tree_id in self.sv_links_new:
             self.start_dictionaries(node_tree.tree_id)
-        new_sv_links = bl_links_to_sv_links(node_tree)
+
+        new_sv_links = SvLink.init_from_links(node_tree.links)
         self.sv_links_new[tree_id] = new_sv_links
         new_inputted_nodes, new_input_sockets, new_output_sockets = split_new_links_data(new_sv_links)
         self.output_sockets_new[tree_id] = new_output_sockets
@@ -122,18 +129,8 @@ class SvLinks:
             )
         affected_nodes = new_linked_nodes + new_unlinked_linked_nodes
         node_list = translate_node_id_to_node_name(node_tree, affected_nodes)
-        print(node_list)
         return node_list
         # return get_nodes(node_tree)
-
-# def empty_links_cache():
-#     global sv_links_cache
-#     sv_links_cache = {}
-
-
-def link_cache_is_ready(node_tree):
-    return node_tree.tree_id in sv_links_cache
-
 
 def get_output_socket_id(socket):
     if socket.node.bl_idname == 'NodeReroute':
@@ -189,97 +186,12 @@ def bl_links_to_sv_links(node_tree):
             #recursive function to override reroutes
             output_socket, output_node = get_output_socket_id(link.from_socket)
             if output_socket:
-                sv_link = SvLink(
-                    from_node_id=output_node,
-                    to_node_id=link.to_socket.node.node_id,
-                    from_socket_id=output_socket,
-                    to_socket_id=link.to_socket.socket_id )
-                new_sv_links.append(sv_link)
-
+                # sv_link = SvLink(
+                #     from_node_id=output_node,
+                #     to_node_id=link.to_socket.node.node_id,
+                #     from_socket_id=output_socket,
+                #     to_socket_id=link.to_socket.socket_id )
+                # new_sv_links.append(sv_link)
+                new_sv_links.append(SvLink.init_from_link(link))
+    print(new_sv_links)
     return new_sv_links
-
-
-def fill_links_memory(node_tree):
-    tree_id = node_tree.tree_id
-    new_sv_links = bl_links_to_sv_links(node_tree)
-
-    inputted_nodes, input_sockets, output_sockets = split_new_links_data(new_sv_links)
-
-    sv_links_cache[tree_id] = new_sv_links
-    output_sockets_cache[tree_id] = output_sockets
-    input_sockets_cache[tree_id] = input_sockets
-    inputted_nodes_cache[tree_id] = inputted_nodes
-
-
-def get_affected_groups(node_tree):
-    affected_groups = []
-    for node in node_tree.nodes:
-        if 'SvGroupNode' in node.bl_idname:
-            subtree = node.monad
-            tree_id = subtree.tree_id
-            fill_memory_is_ready = tree_id in sv_links_cache
-            if fill_memory_is_ready:
-                has_been_updated = use_link_memory(subtree)
-            else:
-                fill_links_memory(subtree)
-                subtree.has_changed = True
-                node.process()
-                has_been_updated = True
-
-            if has_been_updated:
-                affected_groups.append(node)
-    return affected_groups
-
-
-def use_link_memory(node_tree):
-    if node_tree.configuring_new_node or node_tree.is_frozen() or not node_tree.sv_process:
-        return False
-
-    tree_id = node_tree.tree_id
-    new_sv_links = bl_links_to_sv_links(node_tree)
-    before_sv_links = sv_links_cache[tree_id]
-    links_has_changed = before_sv_links != new_sv_links
-
-    if links_has_changed:
-
-        affected_nodes = []
-
-        new_inputted_nodes, new_input_sockets, new_output_sockets = split_new_links_data(new_sv_links)
-        before_input_sockets = input_sockets_cache[tree_id]
-        before_inputted_nodes = inputted_nodes_cache[tree_id]
-        before_output_sockets = output_sockets_cache[tree_id]
-
-        new_linked_nodes = get_new_linked_nodes(
-            new_sv_links,
-            before_sv_links,
-            before_output_sockets)
-
-        new_unlinked_linked_nodes = get_new_unlinked_nodes(
-            before_inputted_nodes,
-            before_input_sockets,
-            new_input_sockets,
-            dict_of_node_tree(node_tree)
-            )
-        affected_nodes = new_linked_nodes + new_unlinked_linked_nodes
-
-        sv_links_cache[tree_id] = new_sv_links
-        inputted_nodes_cache[tree_id] = new_inputted_nodes
-        output_sockets_cache[tree_id] = new_output_sockets
-        input_sockets_cache[tree_id] = new_input_sockets
-
-        build_update_list(node_tree)
-
-        if affected_nodes:
-            node_list = translate_node_id_to_node_name(node_tree, affected_nodes)
-            process_from_nodes(node_list)
-            return True
-        else:
-            return False
-    else:
-
-        affected_groups = get_affected_groups(node_tree)
-        if affected_groups:
-            process_from_nodes(affected_groups)
-            return True
-        else:
-            return False

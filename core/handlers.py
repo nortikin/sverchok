@@ -82,12 +82,7 @@ def sv_handler_undo_post(scene):
         links_changed = ng.links_have_changed()
         if links_changed:
             break
-        # if tree_id in sv_links_cache:
-        #     links_changed = sv_links_cache[tree_id] != bl_links_to_sv_links(ng)
-            # if self.links_have_changed():
-            #     break
-    # only perform clean if the undo event triggered
-    # a difference in total node count among trees or if links have changed.
+    
     if links_changed or not (undo_handler_node_count['sv_groups'] == num_to_test_against):
         print('looks like a node was removed, cleaning')
         sv_clean(scene)

@@ -43,9 +43,6 @@ from sverchok.core.update_system import (
     is_first_run,
     reset_error_nodes)
 from sverchok.core.links import (
-    fill_links_memory,
-    use_link_memory,
-    link_cache_is_ready,
     SvLinks)
 from sverchok.core.node_id_dict import load_in_node_dict, delete_from_node_dict
 
@@ -394,27 +391,13 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             # print('throttled update from context manager')
             return
         if self.configuring_new_node or self.is_frozen() or not self.sv_process:
-            return 
+            return
 
         self.sv_update()
         self.has_changed = False
-        # self.update_sv_links()
-        # print(self.links_have_changed())
-        # # self.store_links_cache()
-        # if self.links_have_changed():
-        #     build_update_list(self)
-        #     print(00)
-        #     process_from_nodes(self.get_nodes())
-        #     self.store_links_cache()
-        # elif
 
-        # if link_cache_is_ready(self):
-        #     use_link_memory(self)
-        # else:
-        #     if self.sv_process:
-        #         fill_links_memory(self)
-        #     self.has_changed = True
-        #     self.process()
+        # self.has_changed = True
+        # self.process()
 
     def process_ani(self):
         """

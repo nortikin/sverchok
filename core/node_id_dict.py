@@ -45,13 +45,11 @@ def load_nodes_in_node_dict(node_tree):
     sv_node_dict_cache[tree_id] = {}
     for node in node_tree.nodes:
         try:
-
-        # if node.bl_idname != 'NodeReroute':
             sv_node_dict_cache[tree_id][node.node_id] = node
         except AttributeError:
+            # it is a NodeReroute
             pass
-            # print(node.bl_idname)
-    # print(sv_node_dict_cache[tree_id])
+
 
 def dict_of_node_tree(node_tree):
     print(node_tree.tree_id in sv_node_dict_cache)
