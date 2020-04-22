@@ -47,6 +47,8 @@ def live_curve(obj_index, node, verts, radii, twist):
     cu.bevel_depth = node.depth
     cu.bevel_resolution = node.resolution
     cu.dimensions = node.curve_dimensions
+    cu.resolution_u = node.preview_resolution_u
+
     if cu.dimensions == '2D':
         cu.fill_mode = 'FRONT'
     else:
@@ -134,6 +136,10 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
     data_kind: StringProperty(default='CURVE')
     grouping: BoolProperty(default=False, update=SvObjHelper.group_state_update_handler)
 
+    preview_resolution_u: IntProperty(
+        name="Resolution Preview U",
+        default=2, min=1, max=5, update=updateNode)
+
     def sv_init(self, context):
         self.sv_init_helper_basedata_name()
 
@@ -173,8 +179,10 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
         self.draw_buttons(context, layout)
         self.draw_ext_object_buttons(context, layout)
         row = layout.row()
-        row.prop(self, "use_auto_uv", text="Use UV for mapping")
+        row.prop(self, "use_auto_uv", text="Use UV for mapping") # soon to be deprecated
         row.prop(self, "grouping", text="Group")
+        row = layout.row()
+        row.prop(self, "preview_resolution_u")
 
 
     def get_geometry_from_sockets(self, has_matrices):
