@@ -154,6 +154,88 @@ class SvSurfaceSubdomain(SvSurface):
     def get_v_max(self):
         return self.v_bounds[1]
 
+class SvFlipSurface(SvSurface):
+    def __init__(self, surface, flip_u, flip_v):
+        self.surface = surface
+        self.flip_u = flip_u
+        self.flip_v = flip_v
+        if hasattr(surface, "normal_delta"):
+            self.normal_delta = surface.normal_delta
+        else:
+            self.normal_delta = 0.001
+        self.__description__ = "Flipped {}".format(surface)
+
+    def get_u_min(self):
+        return self.surface.get_u_min()
+
+    def get_v_min(self):
+        return self.surface.get_v_min()
+
+    def get_u_max(self):
+        return self.surface.get_u_max()
+
+    def get_v_max(self):
+        return self.surface.get_v_max()
+
+    def flip(self, u, v):
+        min_u, max_u = self.get_u_min(), self.get_u_max()
+        min_v, max_v = self.get_v_min(), self.get_v_max()
+
+        if self.flip_u:
+            u = max_u - u + min_u
+        if self.flip_v:
+            v = max_v - v + max_v
+        return u, v
+
+    def evaluate(self, u, v):
+        u, v = self.flip(u, v)
+        return self.surface.evaluate(u, v)
+    
+    def evaluate_array(self, us, vs):
+        us, vs = self.flip(us, vs)
+        return self.surface.evaluate_array(us, vs)
+
+    def normal(self, u, v):
+        u, v = self.flip(u, v)
+        return self.surface.normal(u, v)
+
+    def normal_array(self, us, vs):
+        us, vs = self.flip(us, vs)
+        return self.surface.normal_array(us, vs)
+
+class SvSwapSurface(SvSurface):
+    def __init__(self, surface):
+        self.surface = surface
+        if hasattr(surface, "normal_delta"):
+            self.normal_delta = surface.normal_delta
+        else:
+            self.normal_delta = 0.001
+        self.__description__ = "Swapped {}".format(surface)
+
+    def get_u_min(self):
+        return self.surface.get_v_min()
+
+    def get_v_min(self):
+        return self.surface.get_u_min()
+
+    def get_u_max(self):
+        return self.surface.get_v_max()
+
+    def get_v_max(self):
+        return self.surface.get_u_max()
+
+    def evaluate(self, u, v):
+        return self.surface.evaluate(v, u)
+    
+    def evaluate_array(self, us, vs):
+        return self.surface.evaluate_array(vs, us)
+
+    def normal(self, u, v):
+        return self.surface.normal(v, u)
+
+    def normal_array(self, us, vs):
+        return self.surface.normal_array(vs, us)
+
 class SvPlane(SvSurface):
     __description__ = "Plane"
     
