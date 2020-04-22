@@ -206,7 +206,7 @@ def sv_post_load(scene):
         except:
             traceback.print_exc()
         ng.unfreeze(True)
-        # load_nodes_in_node_dict(ng)
+
         ng.sv_process = True
     addon_name = data_structure.SVERCHOK_NAME
     addon = bpy.context.preferences.addons.get(addon_name)
@@ -238,7 +238,6 @@ def set_frame_change(mode):
         post.append(sv_update_handler)
     elif mode == "PRE":
         pre.append(sv_update_handler)
-
 
 
 handler_dict = {
