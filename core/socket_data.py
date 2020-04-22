@@ -76,8 +76,6 @@ def SvForgetSocket(socket):
             warning(f"{socket.node.name} forgetting unconncted socket: {socket.name}")
     s_id = socket.socket_id
     s_ng = socket.id_data.tree_id
-    print("forgetting", socket)
-    # if s_ng in socket_data_cache.keys():
     try:
         socket_data_cache[s_ng].pop(s_id, None)
     except KeyError:

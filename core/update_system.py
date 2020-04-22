@@ -36,13 +36,17 @@ graphs = []
 
 no_data_color = (1, 0.3, 0)
 exception_color = (0.8, 0.0, 0)
+
 sv_first_run = True
+
 def set_first_run(value):
     global sv_first_run
     sv_first_run = value
+
 def is_first_run():
     global sv_first_run
     return sv_first_run
+
 def update_error_colors(self, context):
     global no_data_color
     global exception_color
@@ -355,7 +359,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
     timings = []
     graph = []
     gather = graph.append
-
+    
     total_time = 0
     done_nodes = set(procesed_nodes)
 
@@ -385,19 +389,19 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             update_error_nodes(ng, node_name, err)
             #traceback.print_tb(err.__traceback__)
             exception("Node %s had exception: %s", node_name, err)
-
+            
             if hasattr(ng, "sv_show_error_in_tree"):
                 # not yet supported in monad trees..
                 if ng.sv_show_error_in_tree:
                     error_text = traceback.format_exc()
                     start_exception_drawing_with_bgl(ng, node_name, error_text, err)
-
+            
             return None
 
     graphs.append(graph)
     if data_structure.DEBUG_MODE:
         debug("Node set updated in: %.4f seconds", total_time)
-
+    
     return timings
 
 
@@ -455,7 +459,6 @@ def process_from_nodes(nodes):
     node_names = [node.name for node in nodes]
     ng = nodes[0].id_data
     update_list = make_tree_from_nodes(node_names, ng)
-    # print("process_from_nodes", update_list)
     reset_error_some_nodes(ng, update_list)
     do_update(update_list, ng.nodes)
 
@@ -485,7 +488,6 @@ def process_from_node(node):
         nodes = ng.nodes
         if not ng.sv_process:
             return
-        # print(update_list)
         do_update(update_list, nodes)
     else:
         process_tree(ng)
