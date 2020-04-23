@@ -21,8 +21,12 @@ from sverchok.utils.context_managers import sv_preferences
 
 
 class BlenderEvents(Enum):
-    node_tree_update = 1
-    node_update = 2
+    node_tree_update = 1  # this updates is calling last with exception of creating new node
+    node_update = 2  # it can be called last during creation new node event
+    add_link_to_node = 3  # it can detects only manually created links
+    add_node = 4   # it is called first in update wave
+    copy_node = 5  # it is called first in update wave
+    free_node = 6  # it is called first in update wave
 
     def print(self, updated_element):
         print(f"EVENT: {self.name: <25} IN: {updated_element.bl_idname: <25} INSTANCE: {updated_element.name: <25}")

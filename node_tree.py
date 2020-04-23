@@ -366,6 +366,9 @@ class SverchCustomTreeNode:
         # todo this should be called in override methods as well
         CurrentEvents.new_event(BlenderEvents.node_update, self)
 
+    def insert_link(self, link):
+        CurrentEvents.new_event(BlenderEvents.add_link_to_node, self)
+
     @classmethod
     def poll(cls, ntree):
         return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType']
@@ -649,6 +652,7 @@ class SverchCustomTreeNode:
         - sets custom defaults (nodes, and sockets)
 
         """
+        CurrentEvents.new_event(BlenderEvents.add_node, self)
         ng = self.id_data
 
         ng.freeze()
@@ -701,6 +705,7 @@ class SverchCustomTreeNode:
         This method is not supposed to be overriden in specific nodes.
         Override sv_copy() instead.
         """
+        CurrentEvents.new_event(BlenderEvents.copy_node, self)
         settings = get_original_node_color(self.id_data, original.name)
         if settings is not None:
             self.use_custom_color, self.color = settings
@@ -717,7 +722,7 @@ class SverchCustomTreeNode:
         """
         some nodes require additional operations upon node removal
         """
-
+        CurrentEvents.new_event(BlenderEvents.free_node, self)
         if hasattr(self, "has_3dview_props"):
             print("about to remove this node's props from Sv3DProps")
             try:
