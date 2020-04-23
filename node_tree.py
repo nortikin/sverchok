@@ -297,7 +297,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         get update list for debug info, tuple (fulllist, dictofpartiallists)
         '''
 
-        CurrentEvents.new_event(BlenderEvents.node_tree_update, self)
+        CurrentEvents.new_event(BlenderEvents.tree_update, self)
 
         # this is a no-op if there's no drawing
         clear_exception_drawing_with_bgl(self.nodes)
