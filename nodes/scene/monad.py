@@ -125,9 +125,7 @@ class SvSocketAquisition:
             sockets.new(stype, s)
 
 
-
-
-class SvGroupInputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
+class SvGroupInputsNodeExp(Node, SvSocketAquisition, SverchCustomTreeNode):
     bl_idname = 'SvGroupInputsNodeExp'
     bl_label = 'Group Inputs Exp'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -140,7 +138,8 @@ class SvGroupInputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
         self.use_custom_color = True
         self.color = monad_def.MONAD_COLOR
 
-class SvGroupOutputsNodeExp(Node, SverchCustomTreeNode, SvSocketAquisition):
+
+class SvGroupOutputsNodeExp(Node, SvSocketAquisition, SverchCustomTreeNode):
     bl_idname = 'SvGroupOutputsNodeExp'
     bl_label = 'Group Outputs Exp'
     bl_icon = 'OUTLINER_OB_EMPTY'

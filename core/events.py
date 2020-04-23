@@ -15,19 +15,20 @@ Details: https://github.com/nortikin/sverchok/issues/3077
 """
 
 
-from enum import Enum
+from enum import Enum, auto
 
 from sverchok.utils.context_managers import sv_preferences
 
 
 class BlenderEvents(Enum):
-    tree_update = 1  # this updates is calling last with exception of creating new node
-    node_update = 2  # it can be called last during creation new node event
-    add_link_to_node = 3  # it can detects only manually created links
-    add_node = 4   # it is called first in update wave
-    copy_node = 5  # it is called first in update wave
-    free_node = 6  # it is called first in update wave
-    node_property_update = 7  # can be in correct in current implementation
+    tree_update = auto()  # this updates is calling last with exception of creating new node
+    monad_tree_update = auto()
+    node_update = auto()  # it can be called last during creation new node event
+    add_link_to_node = auto()  # it can detects only manually created links
+    add_node = auto()   # it is called first in update wave
+    copy_node = auto()  # it is called first in update wave
+    free_node = auto()  # it is called first in update wave
+    node_property_update = auto()  # can be in correct in current implementation
 
     def print(self, updated_element):
         print(f"EVENT: {self.name: <25} IN: {updated_element.bl_idname: <25} INSTANCE: {updated_element.name: <25}")
