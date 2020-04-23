@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from sverchok import data_structure
-from sverchok.utils.logging import warning, info
+from sverchok.utils.logging import warning, info, debug
 
 #####################################
 # socket data cache                 #
