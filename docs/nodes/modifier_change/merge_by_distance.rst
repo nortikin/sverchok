@@ -1,10 +1,10 @@
-Remove Doubles mk2
-==================
+Merge by Distance
+=================
 
 Functionality
 -------------
 
-This removes double vertices/edges/polygons, as do same-named command in blender
+This merges vertices that are closer that a defined threshold, as do same-named command in blender
 
 Inputs
 ------
@@ -15,7 +15,7 @@ Inputs
 - **FaceData**. List containing an arbitrary data item for each face of input
   mesh. For example, this may be used to provide material indexes of input
   mesh faces. Optional input.
-- **Mask**. Vector mask to select the affected vertices
+  - **Mask**. Vector mask to select the affected vertices
 
 
 Parameters
