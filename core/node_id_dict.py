@@ -18,11 +18,21 @@
 # ##### END GPL LICENSE BLOCK #####
 
 class SvNodesDict:
+    '''
+    Class to store a dictionary to find nodes by node_id
+    '''
     sv_node_dict_cache = {}
 
-    def to_node_name(self, node_tree, affected_nodes):
+    def to_node_name(self, node_tree, nodes_id):
         tree_id = node_tree.tree_id
-        return [self.sv_node_dict_cache[tree_id][node_id] for node_id in affected_nodes if node_id in self.sv_node_dict_cache[tree_id]]
+        if not node_tree.tree_id in self.sv_node_dict_cache:
+            self.load_nodes(node_tree)
+        node_dict = self.sv_node_dict_cache[tree_id]
+        nodes_name = []
+        for node_id in nodes_id:
+            if node_id in node_dict:
+                nodes_name.append(node_dict[node_id])
+        return nodes_name
 
     def load_node(self, node):
 
