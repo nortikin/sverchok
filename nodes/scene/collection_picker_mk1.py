@@ -28,6 +28,8 @@ class SvCollectionPicker(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Collection Picker'
     bl_icon = 'GROUP'
 
+    properties_to_skip_iojson = ['collection']
+
     def find_collections(self, object):
         return True
 
@@ -52,8 +54,9 @@ class SvCollectionPicker(bpy.types.Node, SverchCustomTreeNode):
             found = bpy.data.collections.get(self.named_collection.strip())
             found_objects = found.objects[:] if found else []
 
-        
         self.outputs['Objects'].sv_set(found_objects)
+
+
 
 # SvCollectionPickerSettings
 classes = [SvCollectionPicker]
