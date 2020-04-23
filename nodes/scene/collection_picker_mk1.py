@@ -14,6 +14,7 @@ from sverchok.data_structure import updateNode
 # pylint: disable=c0111
 # pylint: disable=c0103
 
+
 class SvCollectionPicker(bpy.types.Node, SverchCustomTreeNode):
     
     """
@@ -27,7 +28,15 @@ class SvCollectionPicker(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Collection Picker'
     bl_icon = 'GROUP'
 
+    def find_collections(self, object):
+        return True
+
+    def on_updateNode(self, context):
+        self.named_collection = self.collection.name
+
     named_collection: bpy.props.StringProperty(name="collection name", update=updateNode)
+    collection: bpy.props.PointerProperty(
+        name="collection name", poll=find_collections, type=bpy.types.PropertyGroup, update=on_updateNode)
 
     def sv_init(self, context):
         self.outputs.new("SvObjectSocket", "Objects")
@@ -39,12 +48,13 @@ class SvCollectionPicker(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
 
         found_objects = []
-        if self.named_collection:
-            found = bpy.data.collections.get(self.named_collection)
+        if self.collection:
+            found = bpy.data.collections.get(self.named_collection.strip())
             found_objects = found.objects[:] if found else []
+
         
         self.outputs['Objects'].sv_set(found_objects)
 
-
+# SvCollectionPickerSettings
 classes = [SvCollectionPicker]
 register, unregister = bpy.utils.register_classes_factory(classes)
