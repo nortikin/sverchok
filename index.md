@@ -182,7 +182,7 @@
 ## Modifier Change
     SvDeleteLooseNode
     SvRemoveDoublesNode
-    SvRemoveDoublesNodeMk2
+    SvMergeByDistanceNode
     SvSeparateMeshNode
     SvSeparatePartsToIndexes
     SvLimitedDissolve

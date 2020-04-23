@@ -19,6 +19,7 @@ Modifier Change
    extrude_region
    holes_fill
    flip_normals
+   merge_by_distance
    mesh_join
    mesh_separate
    objects_along_edge
