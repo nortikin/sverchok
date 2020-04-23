@@ -752,7 +752,7 @@ class SverchCustomTreeNode:
             self.use_custom_color, self.color = settings
         self.sv_copy(original)
         self.n_id = ""
-        load_in_node_dict(self)
+        self.id_data.nodes_dict.load_node(self)
 
     def sv_copy(self, original):
         """
