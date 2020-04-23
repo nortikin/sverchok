@@ -14,7 +14,6 @@ from sverchok.data_structure import updateNode
 # pylint: disable=c0111
 # pylint: disable=c0103
 
-
 class SvCollectionPicker(bpy.types.Node, SverchCustomTreeNode):
     
     """
