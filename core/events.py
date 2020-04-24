@@ -29,16 +29,22 @@ class BlenderEvents(Enum):
     copy_node = auto()  # it is called first in update wave
     free_node = auto()  # it is called first in update wave
     node_property_update = auto()  # can be in correct in current implementation
+    undo = auto()  # changes in tree does not call any other update events
 
-    def print(self, updated_element):
-        print(f"EVENT: {self.name: <25} IN: {updated_element.bl_idname: <25} INSTANCE: {updated_element.name: <25}")
+    def print(self, updated_element=None):
+        event_name = f"EVENT: {self.name: <25}"
+        if updated_element is not None:
+            element_data = f"IN: {updated_element.bl_idname: <25} INSTANCE: {updated_element.name: <25}"
+        else:
+            element_data = ""
+        print(event_name + element_data)
 
 
 class CurrentEvents:
     events_stack = []  # todo should be freed somehow
 
     @classmethod
-    def new_event(cls, event: BlenderEvents, updated_element):
+    def new_event(cls, event: BlenderEvents, updated_element=None):
         cls.events_stack.append(event)
         if cls.is_in_debug_mode():
             event.print(updated_element)
