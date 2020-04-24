@@ -80,7 +80,7 @@ def offset_node_location(existing_node, new_node, offset):
     new_node.location = existing_node.location.x + offset[0] + existing_node.width, existing_node.location.y  + offset[1]
 
 def add_connection(tree, bl_idname_new_node, offset):
-    
+
     nodes = tree.nodes
     links = tree.links
 

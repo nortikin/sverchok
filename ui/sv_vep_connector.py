@@ -20,6 +20,7 @@
 import bpy
 from sverchok.ui.nodeview_rclick_menu import get_verts_edge_poly_output_sockets
 from sverchok.utils.sv_node_utils import frame_adjust
+
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 
 def similar_sockets(node_out, node_in, term):
