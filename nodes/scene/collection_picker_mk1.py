@@ -37,14 +37,14 @@ class SvCollectionPicker(bpy.types.Node, SverchCustomTreeNode):
 
     named_collection: bpy.props.StringProperty(name="collection name", update=updateNode)
     collection: bpy.props.PointerProperty(
-        name="collection name", poll=find_collections, type=bpy.types.PropertyGroup, update=on_updateNode)
+        name="collection name", poll=find_collections, type=bpy.types.Collection, update=on_updateNode)
 
     def sv_init(self, context):
         self.outputs.new("SvObjectSocket", "Objects")
 
     def draw_buttons(self, context, layout):
         col = layout.column()
-        col.prop_search(self, 'named_collection', bpy.data, 'collections', text='', icon='GROUP')
+        col.prop_search(self, 'collection', bpy.data, 'collections', text='', icon='GROUP')
 
     def process(self):
 
