@@ -154,7 +154,7 @@ class SvVectorFieldLambda(SvVectorField):
             V = None
         else:
             V = self.in_field.evaluate(x, y, z)
-        return self.function(x, y, z, V)
+        return np.array(self.function(x, y, z, V))
 
 class SvVectorFieldBinOp(SvVectorField):
     def __init__(self, field1, field2, function):

@@ -766,7 +766,7 @@ class SvDeformedByFieldSurface(SvSurface):
 
     def evaluate(self, u, v):
         p = self.surface.evaluate(u, v)
-        vec = self.field.evaluate(p)
+        vec = self.field.evaluate(p[0], p[1], p[2])
         return p + self.coefficient * vec
 
     def evaluate_array(self, us, vs):
