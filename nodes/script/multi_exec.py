@@ -167,7 +167,7 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
 
     def copy_from_text(self, context):
         """ make sure self.dynamic_strings has enough strings to do this """
-        slines = bpy.data.texts[self.text].lines
+        slines = bpy.data.texts[self.text.strip()].lines
         self.dynamic_strings.clear()
         for line in slines:
             self.dynamic_strings.add().line = line.body
