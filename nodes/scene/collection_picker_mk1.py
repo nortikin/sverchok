@@ -32,12 +32,9 @@ class SvCollectionPicker(bpy.types.Node, SverchCustomTreeNode):
     def find_collections(self, object):
         return True
 
-    def on_updateNode(self, context):
-        self.named_collection = self.collection.name
-
-    named_collection: bpy.props.StringProperty(name="collection name", update=updateNode)
+    # named_collection: bpy.props.StringProperty(name="collection name", update=updateNode)
     collection: bpy.props.PointerProperty(
-        name="collection name", poll=find_collections, type=bpy.types.Collection, update=on_updateNode)
+        name="collection name", poll=find_collections, type=bpy.types.Collection, update=updateNode)
 
     def sv_init(self, context):
         self.outputs.new("SvObjectSocket", "Objects")
@@ -50,8 +47,7 @@ class SvCollectionPicker(bpy.types.Node, SverchCustomTreeNode):
 
         found_objects = []
         if self.collection:
-            found = bpy.data.collections.get(self.named_collection.strip())
-            found_objects = found.objects[:] if found else []
+            found_objects = self.collection.objects[:] or []
 
         self.outputs['Objects'].sv_set(found_objects)
 
