@@ -640,13 +640,13 @@ def add_nodes(ng, nodes_to_import, nodes, create_texts):
     '''
     name_remap = {}
     ng.limited_init = True
-    ng.skip_tree_update = True
+    # ng.skip_tree_update = True
     try:
         for n in sorted(nodes_to_import):
             add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts)
     except Exception as err:
         exception(err)
-    ng.skip_tree_update = False
+    # ng.skip_tree_update = False
     ng.limited_init = False
     return name_remap
 
