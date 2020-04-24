@@ -29,6 +29,9 @@ def offset_node_location(existing_node, new_node, offset):
 
 
 def add_temporal_viewer_draw(tree, nodes, links, existing_node, cut_links):
+    tree = nodes[0].id_data
+    previous_state = tree.sv_process
+    tree.sv_process = False
     bl_idname_new_node = 'SvVDExperimental'
     output_map = get_verts_edge_poly_output_sockets(existing_node)
     try:
@@ -63,6 +66,7 @@ def add_temporal_viewer_draw(tree, nodes, links, existing_node, cut_links):
             if socket.bl_idname == "SvMatrixSocket":
                 links.new(socket, inputs[3])
                 break
+    tree.sv_process = previous_state
     tree.update()
 
 def add_temporal_stethoscope(tree, nodes, links, existing_node):

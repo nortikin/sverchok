@@ -20,7 +20,6 @@
 import bpy
 from sverchok.ui.nodeview_rclick_menu import get_verts_edge_poly_output_sockets
 from sverchok.utils.sv_node_utils import frame_adjust
-
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 
 def similar_sockets(node_out, node_in, term):
@@ -46,7 +45,9 @@ def verts_edges_faces_connector(operator, context):
     if not selected_nodes:
         operator.report({"ERROR_INVALID_INPUT"}, 'No selected nodes to join')
         return  {'CANCELLED'}
-
+        
+    previous_state = node_tree.sv_process
+    node_tree.sv_process = False
     # find out which sockets to connect
     sorted_nodes = sorted(selected_nodes, key=lambda n: n.location.x, reverse=False)
 
@@ -73,6 +74,9 @@ def verts_edges_faces_connector(operator, context):
         socket_out, socket_in = similar_sockets(node_out, node_in, 'facedata')
         if socket_out != -1 and socket_in != -1:
             links.new(node_out.outputs[socket_out], node_in.inputs[socket_in])
+        
+        node_tree.sv_process = previous_state
+        node_tree.update()
 
 
 class SvNodeConnectorOperator(bpy.types.Operator):

@@ -194,16 +194,12 @@ class DefaultMacros():
             monad_info.location = x, y
 
         elif "join" in term:
-            if join_macros(context, operator, term, nodes, links):
-                return {'FINISHED'}
-            else:
-                return  {'CANCELLED'}
-
+            join_macros(context, operator, term, nodes, links)
+            
         elif "math" in term:
-            if math_macros(context, operator, term, nodes, links):
-                return {'FINISHED'}
-            else:
-                return  {'CANCELLED'}
+            math_macros(context, operator, term, nodes, links)
+            return {'FINISHED'}
+            
 
         elif "switch" in term:
             switch_macros(context, operator, term, nodes, links)

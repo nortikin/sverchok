@@ -25,13 +25,15 @@ def math_macros(context, operator, term, nodes, links):
     selected_nodes = context.selected_nodes
     if not selected_nodes:
         operator.report({"ERROR_INVALID_INPUT"}, 'No selected nodes to use')
-        return  False
+        return
 
     selected_nodes = selected_nodes[:2]
     if any(len(node.outputs) < 1 for node in selected_nodes):
         operator.report({"ERROR_INVALID_INPUT"}, 'No valid nodes to use')
-        return  False
-
+        return
+    tree = nodes[0].id_data
+    previous_state = tree.sv_process
+    tree.sv_process = False
     # get bounding box of all selected nodes
     minx, maxx, miny, maxy = nodes_bounding_box(selected_nodes)
     # find out which sockets to connect
@@ -78,4 +80,5 @@ def math_macros(context, operator, term, nodes, links):
         # link the output math node to the ViewerDraw node
         links.new(math_node.outputs[0], viewer_node.inputs[0])
 
-    return True
+    tree.sv_process = previous_state
+    tree.update()
