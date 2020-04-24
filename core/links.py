@@ -168,4 +168,5 @@ class SvLinks:
             )
         affected_nodes = new_linked_nodes + new_unlinked_linked_nodes
         node_list = node_tree.nodes_dict.to_node_name(node_tree, affected_nodes)
+        print(node_list)
         return node_list
