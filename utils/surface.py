@@ -13,7 +13,7 @@ from mathutils import Matrix, Vector
 
 from sverchok.utils.logging import info, exception
 from sverchok.utils.math import from_spherical
-from sverchok.utils.geom import LineEquation
+from sverchok.utils.geom import LineEquation, rotate_vector_around_vector
 
 def rotate_vector_around_vector_np(v, k, theta):
     """
@@ -39,7 +39,7 @@ def rotate_vector_around_vector_np(v, k, theta):
     s1 = ct * v
     s2 = st * np.cross(k, v)
     p1 = 1.0 - ct
-    p2 = np.apply_along_axis(lambda v : k.dot(v), 1, v)
+    p2 = np.apply_along_axis(lambda vi : k.dot(vi), 1, v)
     s3 = p1 * p2 * k
     return s1 + s2 + s3
 
@@ -816,7 +816,7 @@ class SvRevolutionSurface(SvSurface):
     def evaluate(self, u, v):
         point_on_curve = self.curve.evaluate(u)
         dv = point_on_curve - self.point
-        return rotate_vector_around_vector_np(dv, self.direction, v)
+        return np.array(rotate_vector_around_vector(dv, self.direction, v))
 
     def evaluate_array(self, us, vs):
         points_on_curve = self.curve.evaluate_array(us)
