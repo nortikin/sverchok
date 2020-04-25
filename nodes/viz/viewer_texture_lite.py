@@ -125,7 +125,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
         else:
 
-            Im = bpy.data.images[self.image]
+            Im = bpy.data.images[self.image.strip()]
             Im.pixels = np.resize(self.inputs[0].sv_get(), len(Im.pixels))
 
     def generate_batch_shader(self, args):
