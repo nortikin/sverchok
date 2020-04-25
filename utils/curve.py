@@ -569,6 +569,7 @@ class SvSplineCurve(SvCurve):
 
     def __init__(self, spline):
         self.spline = spline
+        self.u_bounds = (0.0, 1.0)
 
     def evaluate(self, t):
         v = self.spline.eval_at_point(t)
@@ -586,7 +587,7 @@ class SvSplineCurve(SvCurve):
         return self.spline.tangent(ts)
 
     def get_u_bounds(self):
-        return (0.0, 1.0)
+        return self.u_bounds
 
 class SvDeformedByFieldCurve(SvCurve):
     def __init__(self, curve, field, coefficient=1.0):

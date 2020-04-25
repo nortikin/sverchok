@@ -318,6 +318,7 @@
     SvMixNumbersNode
     SvMixInputsNode
     SvFormulaNodeMk3
+    SvFormulaInterpolateNode
     ---
     SvGenFibonacci
     SvGenExponential
