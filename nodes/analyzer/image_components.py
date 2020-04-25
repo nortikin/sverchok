@@ -75,13 +75,13 @@ class svImageImporterOp(bpy.types.Operator):
 
     filepath: StringProperty(
         name="File Path",
-        description="Filepath used for importing the font file",
+        description="Filepath used for importing the image file",
         maxlen=1024, default="", subtype='FILE_PATH')
 
     origin: StringProperty("")
 
     def execute(self, context):
-        a = bpy.data.images.load(self.filepath)
+        a = bpy.data.images.load(self.filepath.strip())
         node_tree, node_name = self.origin.split('|><|')
         node = bpy.data.node_groups[node_tree].nodes[node_name]
         node.image_name = a.name
@@ -108,7 +108,7 @@ class ImageComponentsOps(bpy.types.Operator):
 
         node_dict = n.node_dict[hash(n)]['node_image'] = {}
 
-        img = bpy.data.images[n.image_name]
+        img = bpy.data.images[n.image_name.strip()]
         img.use_fake_user = True  # maybe not?
 
         w = img_width = img.size[0]
