@@ -86,7 +86,7 @@ class HilbertImageNode(bpy.types.Node, SverchCustomTreeNode):
             Sensitivity = sensitivity_socket.sv_get()[0][0]
 
             # outputs
-            img = bpy.data.images.get(self.name_image)
+            img = bpy.data.images.get(self.name_image.strip())
             if not img:
                 print('image not in images, for some reason!..')
                 return
