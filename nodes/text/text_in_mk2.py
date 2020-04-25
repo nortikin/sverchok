@@ -56,7 +56,7 @@ class SvTextInFileImporterOp(bpy.types.Operator):
 
     def execute(self, context):
         n = self.node
-        t = bpy.data.texts.load(self.filepath)
+        t = bpy.data.texts.load(self.filepath.strip())
         n.text = t.name
         return {'FINISHED'}
 
@@ -326,7 +326,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
         if n_id in self.csv_data:
             del self.csv_data[n_id]
 
-        f = io.StringIO(bpy.data.texts[self.text].as_string())
+        f = io.StringIO(bpy.data.texts[self.text.strip()].as_string())
 
         # setup CSV options
 
@@ -428,7 +428,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
         if n_id in self.list_data:
             del self.list_data[n_id]
 
-        f = bpy.data.texts[self.text].as_string()
+        f = bpy.data.texts[self.text.strip()].as_string()
 
         try:
             data = ast.literal_eval(f)
@@ -517,7 +517,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
         if n_id in self.json_data:
             del self.json_data[n_id]
 
-        f = io.StringIO(bpy.data.texts[self.text].as_string())
+        f = io.StringIO(bpy.data.texts[self.text.strip()].as_string())
         try:
             json_data = json.load(f)
         except:
