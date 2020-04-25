@@ -195,8 +195,8 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             return False
 
         if not self.append:
-            bpy.data.texts[self.text].clear()
-        bpy.data.texts[self.text].write(out)
+            bpy.data.texts[self.text.strip()].clear()
+        bpy.data.texts[self.text.strip()].write(out)
         self.color = READY_COLOR
 
         return True
