@@ -331,8 +331,8 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
         """
         read xml from  bpy.data.texts
         """
-        if self.filename and (self.filename in bpy.data.texts):
-            internal_file = bpy.data.texts[self.filename]
+        if self.filename and (self.filename.strip() in bpy.data.texts):
+            internal_file = bpy.data.texts[self.filename.strip()]
             self.xml_text = internal_file.as_string()
             self.xml_tree = fromstring(self.xml_text)
 
