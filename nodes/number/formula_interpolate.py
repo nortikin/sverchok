@@ -34,7 +34,7 @@ class SvPointEntry(bpy.types.PropertyGroup):
         if hasattr(context, 'node') and hasattr(context.node, 'on_update'):
             context.node.on_update(context)
         else:
-            info("Node is not defined in this context, so will not update the node.")
+            debug("Node is not defined in this context, so will not update the node.")
 
     x : StringProperty(name = "X", update=update_point)
     y : StringProperty(name = "Y", update=update_point)
@@ -79,7 +79,9 @@ class SvAddPoint(bpy.types.Operator):
 
     def execute(self, context):
         node = bpy.data.node_groups[self.treename].nodes[self.nodename]
-        node.control_points.add()
+        entry = node.control_points.add()
+        entry.x = "0"
+        entry.y = "0"
         updateNode(node, context)
         return {'FINISHED'}
 
@@ -195,8 +197,9 @@ class SvFormulaInterpolateNode(bpy.types.Node, SverchCustomTreeNode):
 
         return list(sorted(list(variables)))
 
-    def adjust_sockets(self):
-        variables = self.get_variables()
+    def adjust_sockets(self, variables=None):
+        if variables is None:
+            variables = self.get_variables()
         #self.debug("adjust_sockets:" + str(variables))
         #self.debug("inputs:" + str(self.inputs.keys()))
         for key in self.inputs.keys():
@@ -292,6 +295,19 @@ class SvFormulaInterpolateNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Result'].sv_set(y_out)
         self.outputs['Curve'].sv_set(curve_out)
         self.outputs['ControlPoints'].sv_set(ct_points_out)
+
+    def storage_get_data(self, storage):
+        points = [(entry.x, entry.y) for entry in self.control_points]
+        storage['control_points'] = points
+        storage['variables'] = self.get_variables()
+
+    def storage_set_data(self, storage):
+        self.control_points.clear()
+        for x, y in storage.get('control_points', []):
+            entry = self.control_points.add()
+            entry.x = x
+            entry.y = y
+        self.adjust_sockets(variables = storage.get('variables', []))
 
 classes = [
             SvPointEntry,
