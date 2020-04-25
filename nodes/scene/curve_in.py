@@ -139,7 +139,6 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Curve Input'
     bl_icon = 'ROOTCURVE'
 
-    object_names: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
     mode_options = [(k, k, '', i) for i, k in enumerate(["LINEAR", "CATMUL"])]
 
     selected_mode: bpy.props.EnumProperty(
@@ -153,7 +152,7 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
         new_i_put("SvObjectSocket", "objects")
         new_o_put("SvVerticesSocket", "verts")
         new_o_put("SvStringsSocket", "edges")
-        new_o_put("SvStringsSocket", "faces").hide_safe = True
+        # new_o_put("SvStringsSocket", "faces").hide_safe = True
         new_o_put("SvStringsSocket", "radii")
         new_o_put("SvMatrixSocket", "matrices")
 
@@ -164,10 +163,6 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
         _in = self.inputs[0]
 
         objects = _in.sv_get()
-        if _in.is_linked or objects:
-            pass
-        else:
-            objects = [bpy.data.objects[obj.name] for obj in self.object_names]
 
         filtered_objects = [obj for obj in objects if obj.type == 'CURVE']
         if len(filtered_objects) < len(objects):
@@ -182,14 +177,14 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
         objects = self.get_objects()
 
         calc_radii = _out['radii'].is_linked
-        edges_out, verts_out, faces_out, radii_out, mtrx_out = [], [], [], [], []
+        edges_out, verts_out, radii_out, mtrx_out = [], [], [], []
 
         for obj in objects:
 
             ## collect all data we can get from the subcurve(s)
 
             mtrx_out.append(obj.matrix_world)
-            verts, edges, faces, radii = [], [], [], []
+            verts, edges, radii = [], [], []
             curve = obj.data
             resolution = curve.render_resolution_u or curve.resolution_u
             # ('POLY', 'BEZIER', 'BSPLINE', 'CARDINAL', 'NURBS')
@@ -206,16 +201,13 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
                 # empty means we don't offset the index
                 edges.extend(offset(edges_part, len(verts)) if verts else edges_part)
                 verts.extend(verts_part)
-                # faces.extend(faces_part)
                 if _out['radii'].is_linked:
                     radii_part = interpolate_radii(spline, resolution, interpolation_type=self.selected_mode)
                     radii.extend(radii_part)
 
             ## pass all resulting subcurve data
-
             verts_out.append(verts)
             edges_out.append(edges)
-            # faces_out.append(faces)
             radii_out.append(radii)
 
 
