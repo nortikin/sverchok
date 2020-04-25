@@ -97,7 +97,7 @@ class HilbertImageNode(bpy.types.Node, SverchCustomTreeNode):
                 for ip, _ in enumerate(v):
                     verts[iv][ip] *= Step
 
-            verts_socket.sv_set(verts)
+            verts_socket.sv_set([verts])
 
             if edges_socket.is_linked:
                 listEdg = []
