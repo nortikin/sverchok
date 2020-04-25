@@ -217,8 +217,8 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
         gist_filename = ng.name
 
         app_version = bpy.app.version_string.replace(" ","")
-        time_stamp = strftime("%Y_%m_%d_%H_%M", localtime())
-        gist_description = f"Sverchok_{version_and_sha}_{ng.name}_B{app_version}{time_stamp}"
+        time_stamp = strftime("%Y.%m.%d | %H:%M", localtime())
+        gist_description = f"Sverchok.{version_and_sha} | Blender.{app_version} | {ng.name} | {time_stamp}"
 
         layout_dict = create_dict_of_tree(ng, skip_set={}, selected=self.selected_only)
 
