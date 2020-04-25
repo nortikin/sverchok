@@ -496,7 +496,8 @@ class SvDefaultSphere(SvSurface):
         phi = u
         theta = v
         x,y,z = from_spherical(rho, phi, theta, mode="radians")
-        return np.array([x,y,z]) + self.center
+        point = np.array([x,y,z]) + self.center
+        return point
 
     def evaluate_array(self, us, vs):
         rho = self.radius
