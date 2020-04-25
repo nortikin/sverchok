@@ -152,7 +152,7 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
         new_i_put("SvObjectSocket", "objects")
         new_o_put("SvVerticesSocket", "verts")
         new_o_put("SvStringsSocket", "edges")
-        # new_o_put("SvStringsSocket", "faces").hide_safe = True
+        new_o_put("SvStringsSocket", "faces").hide_safe = True
         new_o_put("SvStringsSocket", "radii")
         new_o_put("SvMatrixSocket", "matrices")
 
