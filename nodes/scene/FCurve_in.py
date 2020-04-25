@@ -37,7 +37,7 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             # avoid recursion
             return
         else:
-            obj = bpy.data.objects[self.object_name]
+            obj = bpy.data.objects[self.object_name.strip()]
             obj[self.new_prop_name] = 1.0
             obj.keyframe_insert(data_path='["{}"]'.format(self.new_prop_name))
 
@@ -71,7 +71,7 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         if not self.object_name:
             return
 
-        animation_data = bpy.data.objects[self.object_name].animation_data
+        animation_data = bpy.data.objects[self.object_name.strip()].animation_data
         if not animation_data:
             layout.label(text="no animation data, add a named prop")
             layout.prop(self, "new_prop_name", text="custom prop")
@@ -87,7 +87,7 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
 
     def get_object_reference(self):
-        return bpy.data.objects.get(self.object_name, None)
+        return bpy.data.objects.get(self.object_name.strip(), None)
 
     def evaluate(self, frames):
         """
