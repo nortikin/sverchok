@@ -64,11 +64,6 @@
     },
     "Adaptive Polygons Mk2": {
       "bl_idname": "SvAdaptivePolygonsNodeMk2",
-      "color": [
-        0.800000011920929,
-        0.0,
-        0.0
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -82,7 +77,6 @@
         "remove_doubles": 1,
         "z_coef": 0.4000000059604645
       },
-      "use_custom_color": true,
       "width": 140.0
     },
     "Assign Materials List": {
@@ -432,7 +426,7 @@
         441.09014892578125
       ],
       "params": {
-        "direction": "-X+X"
+        "direction": "+X-X"
       },
       "width": 140.0
     },
@@ -446,7 +440,7 @@
         487.6750183105469
       ],
       "params": {
-        "direction": "-Y+Y"
+        "direction": "+Y-Y"
       },
       "width": 140.0
     },
