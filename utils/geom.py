@@ -2039,6 +2039,8 @@ class CircleApproximationData(object):
         self.radius = 0
         self.center = None
         self.normal = None
+        self.point1 = None
+        self.arc_angle = None
 
     def get_matrix(self):
         """
@@ -2046,7 +2048,10 @@ class CircleApproximationData(object):
         parallel to the plane's normal.
         """
         normal = Vector(self.normal)
-        e1 = normal.orthogonal()
+        if self.point1 is None:
+            e1 = normal.orthogonal()
+        else:
+            e1 = Vector(self.point1) - Vector(self.center)
         e2 = normal.cross(e1)
         e1, e2 = e1.normalized(), e2.normalized()
         m = Matrix([e1, e2, normal]).inverted().to_4x4()
@@ -2150,6 +2155,39 @@ def circle_approximation(data):
     result.center = np.matmul(matrix_inv, center) + linear_center
     result.normal = plane.normal
     return result
+
+def circle_by_three_points(p1, p2, p3):
+    v1, v2, v3 = Vector(p1), Vector(p2), Vector(p3)
+    edge1_mid = v1.lerp(v2, 0.5)
+    edge2_mid = v2.lerp(v3, 0.5)
+    axis = mathutils.geometry.normal(v1, v2, v3)
+    mat_rot = Matrix.Rotation(math.radians(90.0), 4, axis)
+
+    mid1 = ((v1 - edge1_mid) @ mat_rot) + edge1_mid
+    mid2 = ((v2 - edge1_mid) @ mat_rot) + edge1_mid
+    mid3 = ((v2 - edge2_mid) @ mat_rot) + edge2_mid
+    mid4 = ((v3 - edge2_mid) @ mat_rot) + edge2_mid
+
+    r = mathutils.geometry.intersect_line_line(mid1, mid2, mid3, mid4)
+    if not r:
+        return None
+    center, _ = r
+
+    # find arc angle.
+    alpha = (v1 - center).angle((v3 - center), 0)
+    beta = 2 * math.pi - alpha
+
+    interior_angle = (v1 - v2).angle(v3 - v2, 0)
+    if interior_angle > 0.5 * math.pi:
+        beta = 2*math.pi - 2*interior_angle
+
+    circle = CircleApproximationData()
+    circle.radius = (v1 - center).length
+    circle.center = center
+    circle.normal = axis
+    circle.point1 = np.array(v1)
+    circle.arc_angle = beta
+    return circle
 
 def multiply_vectors(M, vlist):
     # (4*4 matrix)  X   (3*1 vector)
