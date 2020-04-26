@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.logging import info, exception
 
 from sverchok.utils.curve import SvCurve
-from sverchok.utils.surface import SvExtrudeCurveCurveSurface, SvExtrudeCurveFrenetSurface, SvExtrudeCurveZeroTwistSurface
+from sverchok.utils.surface import SvExtrudeCurveCurveSurface, SvExtrudeCurveFrenetSurface, SvExtrudeCurveZeroTwistSurface, SvExtrudeCurveMathutilsSurface, PROFILE, EXTRUSION
 
 class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -23,7 +23,10 @@ class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     modes = [
         ('NONE', "None", "No rotation", 0),
         ('FRENET', "Frenet", "Frenet / native rotation", 1),
-        ('ZERO', "Zero-twist", "Zero-twist rotation", 2)
+        ('ZERO', "Zero-twist", "Zero-twist rotation", 2),
+        ("householder", "Householder", "Use Householder reflection matrix", 3),
+        ("track", "Tracking", "Use quaternion-based tracking", 4),
+        ("diff", "Rotation difference", "Use rotational difference calculation", 5)
     ]
 
     @throttled
@@ -41,8 +44,20 @@ class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         min = 10, default = 50,
         update = updateNode)
 
+    origins = [
+        (PROFILE, "Global origin", "Global origin", 0),
+        (EXTRUSION, "Extrusion origin", "Extrusion origin", 1)
+    ]
+
+    origin : EnumProperty(
+            name = "Origin",
+            items = origins,
+            default = PROFILE,
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "algorithm")
+        layout.prop(self, "origin")
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Profile")
@@ -71,13 +86,15 @@ class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
             for profile, extrusion in zip_long_repeat(profiles, extrusions):
                 if self.algorithm == 'NONE':
-                    surface = SvExtrudeCurveCurveSurface(profile, extrusion)
+                    surface = SvExtrudeCurveCurveSurface(profile, extrusion, origin=self.origin)
                 elif self.algorithm == 'FRENET':
-                    surface = SvExtrudeCurveFrenetSurface(profile, extrusion)
+                    surface = SvExtrudeCurveFrenetSurface(profile, extrusion, origin=self.origin)
                 elif self.algorithm == 'ZERO':
-                    surface = SvExtrudeCurveZeroTwistSurface(profile, extrusion, resolution)
+                    surface = SvExtrudeCurveZeroTwistSurface(profile, extrusion, resolution, origin=self.origin)
                 else:
-                    raise Exception("Unsupported algorithm")
+                    surface = SvExtrudeCurveMathutilsSurface(profile, extrusion, self.algorithm,
+                                orient_axis = 'Z', up_axis = 'X',
+                                origin = self.origin)
                 surface_out.append(surface)
 
         self.outputs['Surface'].sv_set(surface_out)

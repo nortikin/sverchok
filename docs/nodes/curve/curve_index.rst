@@ -7,6 +7,7 @@ Curves
 
    line
    circle
+   arc_3pt
    polyline
    cubic_spline
    fillet_polyline
@@ -15,6 +16,7 @@ Curves
    concat_curves
    curve_length
    length_parameter
+   length_rebuild
    curvature
    torsion
    curve_frame

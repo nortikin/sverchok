@@ -569,6 +569,7 @@ class SvSplineCurve(SvCurve):
 
     def __init__(self, spline):
         self.spline = spline
+        self.u_bounds = (0.0, 1.0)
 
     def evaluate(self, t):
         v = self.spline.eval_at_point(t)
@@ -586,7 +587,7 @@ class SvSplineCurve(SvCurve):
         return self.spline.tangent(ts)
 
     def get_u_bounds(self):
-        return (0.0, 1.0)
+        return self.u_bounds
 
 class SvDeformedByFieldCurve(SvCurve):
     def __init__(self, curve, field, coefficient=1.0):
@@ -785,4 +786,29 @@ class SvIsoUvCurve(SvCurve):
             if self.flip:
                 ts = self.surface.get_u_max() - ts + self.surface.get_u_min()
             return self.surface.evaluate_array(ts, np.repeat(self.value, len(ts)))
+
+class SvLengthRebuiltCurve(SvCurve):
+    def __init__(self, curve, resolution, mode='SPL'):
+        self.curve = curve
+        self.resolution = resolution
+        if hasattr(curve, 'tangent_delta'):
+            self.tangent_delta = curve.tangent_delta
+        else:
+            self.tangent_delta = 0.001
+        self.mode = mode
+        self.solver = SvCurveLengthSolver(curve)
+        self.solver.prepare(self.mode, resolution)
+        self.u_bounds = (0.0, self.solver.get_total_length())
+        self.__description__ = "{} rebuilt".format(curve)
+
+    def get_u_bounds(self):
+        return self.u_bounds
+    
+    def evaluate(self, t):
+        c_ts = self.solver.solve(np.array([t]))
+        return self.curve.evaluate(c_ts[0])
+
+    def evaluate_array(self, ts):
+        c_ts = self.solver.solve(ts)
+        return self.curve.evaluate_array(c_ts)
 

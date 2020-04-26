@@ -27,24 +27,32 @@ class SvCollectionPicker(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Collection Picker'
     bl_icon = 'GROUP'
 
-    named_collection: bpy.props.StringProperty(name="collection name", update=updateNode)
+    properties_to_skip_iojson = ['collection']
+
+    def find_collections(self, object):
+        return True
+
+    # named_collection: bpy.props.StringProperty(name="collection name", update=updateNode)
+    collection: bpy.props.PointerProperty(
+        name="collection name", poll=find_collections, type=bpy.types.Collection, update=updateNode)
 
     def sv_init(self, context):
         self.outputs.new("SvObjectSocket", "Objects")
 
     def draw_buttons(self, context, layout):
         col = layout.column()
-        col.prop_search(self, 'named_collection', bpy.data, 'collections', text='', icon='GROUP')
+        col.prop_search(self, 'collection', bpy.data, 'collections', text='', icon='GROUP')
 
     def process(self):
 
         found_objects = []
-        if self.named_collection:
-            found = bpy.data.collections.get(self.named_collection)
-            found_objects = found.objects[:] if found else []
-        
+        if self.collection:
+            found_objects = self.collection.objects[:] or []
+
         self.outputs['Objects'].sv_set(found_objects)
 
 
+
+# SvCollectionPickerSettings
 classes = [SvCollectionPicker]
 register, unregister = bpy.utils.register_classes_factory(classes)

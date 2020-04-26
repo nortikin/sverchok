@@ -54,6 +54,7 @@
 ## Curves
      SvExLineCurveNode
      SvExCircleNode
+     SvArc3ptCurveNode
      SvExCurveFormulaNode
      SvExPolylineNode
      SvExFilletPolylineNode
@@ -75,6 +76,7 @@
      SvExCurveTorsionNode
      SvExCurveZeroTwistFrameNode
      SvExCurveLengthParameterNode
+     SvLengthRebuildCurveNode
      SvExEvalCurveNode
 
 ## Surfaces
@@ -91,6 +93,8 @@
      SvExSurfaceLerpNode
      SvExSurfaceDomainNode
      SvExSurfaceSubdomainNode
+     SvFlipSurfaceNode
+     SvSwapSurfaceNode
      SvExApplyFieldToSurfaceNode
      SvExTessellateTrimSurfaceNode
      SvExEvalSurfaceNode
@@ -315,6 +319,7 @@
     SvMixNumbersNode
     SvMixInputsNode
     SvFormulaNodeMk3
+    SvFormulaInterpolateNode
     ---
     SvGenFibonacci
     SvGenExponential

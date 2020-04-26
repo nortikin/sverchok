@@ -117,7 +117,8 @@ def add_connection(tree, bl_idname_new_node, offset):
             # existing_node.process_node(None)
 
         elif bl_idname_new_node == 'SvVDExperimental':
-
+            previous_state = tree.sv_process
+            tree.sv_process = False
             if 'verts' in output_map:
                 links.new(outputs[output_map['verts']], inputs[0])
                 if 'faces' in output_map:
@@ -125,6 +126,7 @@ def add_connection(tree, bl_idname_new_node, offset):
                 if 'edges' in output_map:
                     links.new(outputs[output_map['edges']], inputs[1])
 
+            tree.sv_process = previous_state
             tree.update()
             # existing_node.process_node(None)
 

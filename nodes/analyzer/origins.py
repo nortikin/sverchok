@@ -15,6 +15,7 @@ from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh
 
 
 MeshMode = namedtuple('MeshMode', ['verts', 'edges', 'faces'])
@@ -31,35 +32,29 @@ def get_origin(verts, edges=None, faces=None, mode=MODE.faces):
     :param mode: 'Verts', 'Edges' or 'Faces'
     :return: list of centers, normals, tangents and matrixes of vertexes or edges or faces according selected mode
     """
-    bm = bmesh.new(use_operators=False)
-    bm_verts = [bm.verts.new(co) for co in verts]
-    [bm.edges.new([bm_verts[i] for i in edge]) for edge in edges or []]
-    [bm.faces.new([bm_verts[i] for i in face]) for face in faces or []]
-    bm.edges.ensure_lookup_table()
-    bm.faces.ensure_lookup_table()
-    bm.normal_update()
+    with empty_bmesh(False) as bm:
+        add_mesh_to_bmesh(bm, verts, edges, faces, update_normals=True)
 
-    if mode == MODE.verts:
-        origins = [vert.co for vert in bm_verts]
-        normals = [vert.normal for vert in bm_verts]
-        tangents = [get_vert_tang(v) for v in bm_verts]
-    elif mode == MODE.edges:
-        if edges is None and faces is None:
-            raise ValueError("Edges or Faces should be connected")
-        origins =[e.verts[0].co.lerp(e.verts[1].co, 0.5) for e in bm.edges]
-        normals, tangents = zip(*[get_edge_normal_tang(e) for e in bm.edges])
-    elif mode == MODE.faces:
-        if faces is None:
-            raise ValueError("Faces should be connected")
-        origins = [f.calc_center_median() for f in bm.faces]
-        normals = [f.normal for f in bm.faces]
-        tangents = [get_face_tangent(f) for f in bm.faces]
-    else:
-        raise ValueError(f"Unknown mode: {mode}")
+        if mode == MODE.verts:
+            origins = [vert.co for vert in bm.verts]
+            normals = [vert.normal for vert in bm.verts]
+            tangents = [get_vert_tang(v) for v in bm.verts]
+        elif mode == MODE.edges:
+            if edges is None and faces is None:
+                raise ValueError("Edges or Faces should be connected")
+            origins =[e.verts[0].co.lerp(e.verts[1].co, 0.5) for e in bm.edges]
+            normals, tangents = zip(*[get_edge_normal_tang(e) for e in bm.edges])
+        elif mode == MODE.faces:
+            if faces is None:
+                raise ValueError("Faces should be connected")
+            origins = [f.calc_center_median() for f in bm.faces]
+            normals = [f.normal for f in bm.faces]
+            tangents = [get_face_tangent(f) for f in bm.faces]
+        else:
+            raise ValueError(f"Unknown mode: {mode}")
 
-    bm.free()
-    matrixes = [build_matrix(orig, norm, tang) for orig, norm, tang in zip(origins, normals, tangents)]
-    return [[v[:] for v in origins], [v[:] for v in normals], [v[:] for v in tangents], matrixes]
+        matrixes = [build_matrix(orig, norm, tang) for orig, norm, tang in zip(origins, normals, tangents)]
+        return [[v[:] for v in origins], [v[:] for v in normals], [v[:] for v in tangents], matrixes]
 
 
 def get_vert_tang(vert):

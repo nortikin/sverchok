@@ -26,8 +26,10 @@ def join_macros(context, operator, term, nodes, links):
 
     if not selected_nodes:
         operator.report({"ERROR_INVALID_INPUT"}, 'No selected nodes to join')
-        return  {'CANCELLED'}
-
+        return
+    tree = nodes[0].id_data
+    previous_state = tree.sv_process
+    tree.sv_process = False
     # get bounding box of all selected nodes
     _, maxx, _, maxy = nodes_bounding_box(selected_nodes)
 
@@ -63,4 +65,6 @@ def join_macros(context, operator, term, nodes, links):
         if len(socket_indices) > 2:
             links.new(join_nodes[2].outputs[0], viewer_node.inputs[socket_indices[2]])
 
-    return True
+    tree.sv_process = previous_state
+    tree.update()
+    operator.report({'INFO'}, 'Nodes Joined')

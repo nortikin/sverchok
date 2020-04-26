@@ -233,7 +233,7 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
         col1 = layout.column()
         socket_row = col1.row()
         socket_row.prop(self, 'socket_type', text='Socket Type', expand=True)
-        col1.prop(self, 'new_prop_name')
+        col1.prop(self, 'new_prop_name', text="Name")
 
         if self.kind == "outputs":
             # there are no other properties to configure for the <output node>
@@ -328,7 +328,10 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
 
         # [x] -- add socket to node (add both in the template)
         io_sockets = getattr(property_node, self.kind)
-        io_sockets.new(self.socket_type, prop_dict['name']).prop_name = prop_dict['name'] 
+        if self.kind == 'outputs':
+            io_sockets.new(self.socket_type, self.new_prop_name)
+        else:
+            io_sockets.new(self.socket_type, prop_dict['name']).prop_name = prop_dict['name'] 
 
         # [x] link node
         io_node = tree.input_node if self.kind == 'inputs' else tree.output_node

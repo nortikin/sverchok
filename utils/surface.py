@@ -13,7 +13,7 @@ from mathutils import Matrix, Vector
 
 from sverchok.utils.logging import info, exception
 from sverchok.utils.math import from_spherical
-from sverchok.utils.geom import LineEquation
+from sverchok.utils.geom import LineEquation, rotate_vector_around_vector, autorotate_householder, autorotate_track, autorotate_diff
 
 def rotate_vector_around_vector_np(v, k, theta):
     """
@@ -39,7 +39,7 @@ def rotate_vector_around_vector_np(v, k, theta):
     s1 = ct * v
     s2 = st * np.cross(k, v)
     p1 = 1.0 - ct
-    p2 = np.apply_along_axis(lambda v : k.dot(v), 1, v)
+    p2 = np.apply_along_axis(lambda vi : k.dot(vi), 1, v)
     s3 = p1 * p2 * k
     return s1 + s2 + s3
 
@@ -153,6 +153,88 @@ class SvSurfaceSubdomain(SvSurface):
 
     def get_v_max(self):
         return self.v_bounds[1]
+
+class SvFlipSurface(SvSurface):
+    def __init__(self, surface, flip_u, flip_v):
+        self.surface = surface
+        self.flip_u = flip_u
+        self.flip_v = flip_v
+        if hasattr(surface, "normal_delta"):
+            self.normal_delta = surface.normal_delta
+        else:
+            self.normal_delta = 0.001
+        self.__description__ = "Flipped {}".format(surface)
+
+    def get_u_min(self):
+        return self.surface.get_u_min()
+
+    def get_v_min(self):
+        return self.surface.get_v_min()
+
+    def get_u_max(self):
+        return self.surface.get_u_max()
+
+    def get_v_max(self):
+        return self.surface.get_v_max()
+
+    def flip(self, u, v):
+        min_u, max_u = self.get_u_min(), self.get_u_max()
+        min_v, max_v = self.get_v_min(), self.get_v_max()
+
+        if self.flip_u:
+            u = max_u - u + min_u
+        if self.flip_v:
+            v = max_v - v + max_v
+        return u, v
+
+    def evaluate(self, u, v):
+        u, v = self.flip(u, v)
+        return self.surface.evaluate(u, v)
+    
+    def evaluate_array(self, us, vs):
+        us, vs = self.flip(us, vs)
+        return self.surface.evaluate_array(us, vs)
+
+    def normal(self, u, v):
+        u, v = self.flip(u, v)
+        return self.surface.normal(u, v)
+
+    def normal_array(self, us, vs):
+        us, vs = self.flip(us, vs)
+        return self.surface.normal_array(us, vs)
+
+class SvSwapSurface(SvSurface):
+    def __init__(self, surface):
+        self.surface = surface
+        if hasattr(surface, "normal_delta"):
+            self.normal_delta = surface.normal_delta
+        else:
+            self.normal_delta = 0.001
+        self.__description__ = "Swapped {}".format(surface)
+
+    def get_u_min(self):
+        return self.surface.get_v_min()
+
+    def get_v_min(self):
+        return self.surface.get_u_min()
+
+    def get_u_max(self):
+        return self.surface.get_v_max()
+
+    def get_v_max(self):
+        return self.surface.get_u_max()
+
+    def evaluate(self, u, v):
+        return self.surface.evaluate(v, u)
+    
+    def evaluate_array(self, us, vs):
+        return self.surface.evaluate_array(vs, us)
+
+    def normal(self, u, v):
+        return self.surface.normal(v, u)
+
+    def normal_array(self, us, vs):
+        return self.surface.normal_array(vs, us)
 
 class SvPlane(SvSurface):
     __description__ = "Plane"
@@ -414,7 +496,8 @@ class SvDefaultSphere(SvSurface):
         phi = u
         theta = v
         x,y,z = from_spherical(rho, phi, theta, mode="radians")
-        return np.array([x,y,z]) + self.center
+        point = np.array([x,y,z]) + self.center
+        return point
 
     def evaluate_array(self, us, vs):
         rho = self.radius
@@ -554,25 +637,31 @@ class SvInterpolatingSurface(SvSurface):
             self._eval_cache[(u,v)] = result
             return result
 
-    def evaluate_array(self, us, vs):
-        # FIXME: To be optimized!
-        normals = [self._evaluate(u, v) for u,v in zip(us, vs)]
-        return np.array(normals)
-
 #     def evaluate_array(self, us, vs):
-#         result = np.empty((len(us), 3))
-#         v_to_u = defaultdict(list)
-#         v_to_i = defaultdict(list)
-#         for i, (u, v) in enumerate(zip(us, vs)):
-#             v_to_u[v].append(u)
-#             v_to_i[v].append(i)
-#         for v, us_by_v in v_to_u.items():
-#             is_by_v = v_to_i[v]
-#             spline_vertices = [spline.evaluate(v) for spline in self.v_splines]
-#             u_spline = self.get_u_spline(v, spline_vertices)
-#             points = u_spline.evaluate_array(np.array(us_by_v))
-#             np.put(result, is_by_v, points)
-#         return result
+#         # FIXME: To be optimized!
+#         normals = [self._evaluate(u, v) for u,v in zip(us, vs)]
+#         return np.array(normals)
+
+    def evaluate_array(self, us, vs):
+        result = np.empty((len(us), 3))
+        v_to_u = defaultdict(list)
+        v_to_i = defaultdict(list)
+        for i, (u, v) in enumerate(zip(us, vs)):
+            v_to_u[v].append(u)
+            v_to_i[v].append(i)
+        for v, us_by_v in v_to_u.items():
+            is_by_v = v_to_i[v]
+            spline_vertices = []
+            for spline in self.v_splines:
+                v_min, v_max = spline.get_u_bounds()
+                vx = (v_max - v_min) * v + v_min
+                point = spline.evaluate(vx)
+                spline_vertices.append(point)
+            u_spline = self.get_u_spline(v, spline_vertices)
+            points = u_spline.evaluate_array(np.array(us_by_v))
+            idxs = np.array(is_by_v)[np.newaxis].T
+            np.put_along_axis(result, idxs, points, axis=0)
+        return result
 
     def _normal(self, u, v):
         h = 0.001
@@ -597,10 +686,46 @@ class SvInterpolatingSurface(SvSurface):
             self._normal_cache[(u,v)] = result
             return result
 
+#     def normal_array(self, us, vs):
+#         # FIXME: To be optimized!
+#         normals = [self._normal(u, v) for u,v in zip(us, vs)]
+#         return np.array(normals)
+
     def normal_array(self, us, vs):
-        # FIXME: To be optimized!
-        normals = [self._normal(u, v) for u,v in zip(us, vs)]
-        return np.array(normals)
+        h = 0.001
+        result = np.empty((len(us), 3))
+        v_to_u = defaultdict(list)
+        v_to_i = defaultdict(list)
+        for i, (u, v) in enumerate(zip(us, vs)):
+            v_to_u[v].append(u)
+            v_to_i[v].append(i)
+        for v, us_by_v in v_to_u.items():
+            us_by_v = np.array(us_by_v)
+            is_by_v = v_to_i[v]
+            spline_vertices = []
+            spline_vertices_h = []
+            for v_spline in self.v_splines:
+                v_min, v_max = v_spline.get_u_bounds()
+                vx = (v_max - v_min) * v + v_min
+                point = v_spline.evaluate(vx)
+                point_h = v_spline.evaluate(vx + h)
+                spline_vertices.append(point)
+                spline_vertices_h.append(point_h)
+            u_spline = self.get_u_spline(v, spline_vertices)
+            u_spline_h = self.get_u_spline(v+h, spline_vertices_h)
+            points = u_spline.evaluate_array(us_by_v)
+            points_v_h = u_spline_h.evaluate_array(us_by_v)
+            points_u_h = u_spline.evaluate_array(us_by_v + h)
+            dvs = (points_v_h - points) / h
+            dus = (points_u_h - points) / h
+            normals = np.cross(dus, dvs)
+            norms = np.linalg.norm(normals, axis=1, keepdims=True)
+            normals = normals / norms
+
+            idxs = np.array(is_by_v)[np.newaxis].T
+            np.put_along_axis(result, idxs, normals, axis=0)
+        return result
+
 
 class SvDeformedByFieldSurface(SvSurface):
     def __init__(self, surface, field, coefficient=1.0):
@@ -642,7 +767,7 @@ class SvDeformedByFieldSurface(SvSurface):
 
     def evaluate(self, u, v):
         p = self.surface.evaluate(u, v)
-        vec = self.field.evaluate(p)
+        vec = self.field.evaluate(p[0], p[1], p[2])
         return p + self.coefficient * vec
 
     def evaluate_array(self, us, vs):
@@ -692,7 +817,7 @@ class SvRevolutionSurface(SvSurface):
     def evaluate(self, u, v):
         point_on_curve = self.curve.evaluate(u)
         dv = point_on_curve - self.point
-        return rotate_vector_around_vector_np(dv, self.direction, v)
+        return np.array(rotate_vector_around_vector(dv, self.direction, v))
 
     def evaluate_array(self, us, vs):
         points_on_curve = self.curve.evaluate_array(us)
@@ -784,26 +909,40 @@ class SvExtrudeCurvePointSurface(SvSurface):
     def v_size(self):
         return 1.0
 
+PROFILE = 'profile'
+EXTRUSION = 'extrusion'
+
 class SvExtrudeCurveCurveSurface(SvSurface):
-    def __init__(self, u_curve, v_curve):
+    def __init__(self, u_curve, v_curve, origin = PROFILE):
         self.u_curve = u_curve
         self.v_curve = v_curve
+        self.origin = origin
         self.normal_delta = 0.001
         self.__description__ = "Extrusion of {}".format(u_curve)
 
     def evaluate(self, u, v):
         u_point = self.u_curve.evaluate(u)
+        u_min, u_max = self.u_curve.get_u_bounds()
         v_min, v_max = self.v_curve.get_u_bounds()
         v0 = self.v_curve.evaluate(v_min)
         v_point = self.v_curve.evaluate(v)
-        return u_point + (v_point - v0)
+        if self.origin == EXTRUSION:
+            result = u_point + v_point
+        else:
+            result = u_point + (v_point - v0)
+        return result
 
     def evaluate_array(self, us, vs):
         u_points = self.u_curve.evaluate_array(us)
+        u_min, u_max = self.u_curve.get_u_bounds()
         v_min, v_max = self.v_curve.get_u_bounds()
         v0 = self.v_curve.evaluate(v_min)
         v_points = self.v_curve.evaluate_array(vs)
-        return u_points + (v_points - v0)
+        if self.origin == EXTRUSION:
+            result = u_points + v_points
+        else:
+            result = u_points + (v_points - v0)
+        return result
 
     def get_u_min(self):
         return self.u_curve.get_u_bounds()[0]
@@ -828,9 +967,10 @@ class SvExtrudeCurveCurveSurface(SvSurface):
         return M - m
 
 class SvExtrudeCurveFrenetSurface(SvSurface):
-    def __init__(self, profile, extrusion):
+    def __init__(self, profile, extrusion, origin = PROFILE):
         self.profile = profile
         self.extrusion = extrusion
+        self.origin = origin
         self.normal_delta = 0.001
         self.__description__ = "Extrusion of {}".format(profile)
 
@@ -841,15 +981,17 @@ class SvExtrudeCurveFrenetSurface(SvSurface):
         profile_points = self.profile.evaluate_array(us)
         u_min, u_max = self.profile.get_u_bounds()
         v_min, v_max = self.extrusion.get_u_bounds()
-        profile_start = self.extrusion.evaluate(u_min)
-        profile_vectors = profile_points # - profile_start
+        profile_vectors = profile_points
         profile_vectors = np.transpose(profile_vectors[np.newaxis], axes=(1, 2, 0))
         extrusion_start = self.extrusion.evaluate(v_min)
         extrusion_points = self.extrusion.evaluate_array(vs)
         extrusion_vectors = extrusion_points - extrusion_start
         frenet, _ , _ = self.extrusion.frame_array(vs)
         profile_vectors = (frenet @ profile_vectors)[:,:,0]
-        return extrusion_vectors + profile_vectors
+        result = extrusion_vectors + profile_vectors
+        if self.origin == EXTRUSION:
+            result = result + self.extrusion.evaluate(v_min)
+        return result
 
     def get_u_min(self):
         return self.profile.get_u_bounds()[0]
@@ -874,9 +1016,10 @@ class SvExtrudeCurveFrenetSurface(SvSurface):
         return M - m
 
 class SvExtrudeCurveZeroTwistSurface(SvSurface):
-    def __init__(self, profile, extrusion, resolution):
+    def __init__(self, profile, extrusion, resolution, origin = PROFILE):
         self.profile = profile
         self.extrusion = extrusion
+        self.origin = origin
         self.normal_delta = 0.001
         self.extrusion.pre_calc_torsion_integral(resolution)
         self.__description__ = "Extrusion of {}".format(profile)
@@ -888,8 +1031,7 @@ class SvExtrudeCurveZeroTwistSurface(SvSurface):
         profile_points = self.profile.evaluate_array(us)
         u_min, u_max = self.profile.get_u_bounds()
         v_min, v_max = self.extrusion.get_u_bounds()
-        profile_start = self.extrusion.evaluate(u_min)
-        profile_vectors = profile_points # - profile_start
+        profile_vectors = profile_points
         profile_vectors = np.transpose(profile_vectors[np.newaxis], axes=(1, 2, 0))
         extrusion_start = self.extrusion.evaluate(v_min)
         extrusion_points = self.extrusion.evaluate_array(vs)
@@ -907,7 +1049,85 @@ class SvExtrudeCurveZeroTwistSurface(SvSurface):
         rotation_matrices = np.dstack((row1, row2, row3))
 
         profile_vectors = (frenet @ rotation_matrices @ profile_vectors)[:,:,0]
-        return extrusion_vectors + profile_vectors
+        result = extrusion_vectors + profile_vectors
+        if self.origin == EXTRUSION:
+            result = result + self.extrusion.evaluate(v_min)
+        return result
+
+    def get_u_min(self):
+        return self.profile.get_u_bounds()[0]
+
+    def get_u_max(self):
+        return self.profile.get_u_bounds()[1]
+
+    def get_v_min(self):
+        return self.extrusion.get_u_bounds()[0]
+
+    def get_v_max(self):
+        return self.extrusion.get_u_bounds()[1]
+
+class SvExtrudeCurveMathutilsSurface(SvSurface):
+    def __init__(self, profile, extrusion, algorithm, orient_axis='Z', up_axis='X', origin = PROFILE):
+        self.profile = profile
+        self.extrusion = extrusion
+        self.algorithm = algorithm
+        self.orient_axis = orient_axis
+        self.up_axis = up_axis
+        self.origin = origin
+        self.normal_delta = 0.001
+        self.__description__ = "Extrusion of {}".format(profile)
+
+    def evaluate(self, u, v):
+        return self.evaluate_array(np.array([u]), np.array([v]))[0]
+
+    def get_matrix(self, tangent):
+        x = Vector((1.0, 0.0, 0.0))
+        y = Vector((0.0, 1.0, 0.0))
+        z = Vector((0.0, 0.0, 1.0))
+
+        if self.orient_axis == 'X':
+            ax1, ax2, ax3 = x, y, z
+        elif self.orient_axis == 'Y':
+            ax1, ax2, ax3 = y, x, z
+        else:
+            ax1, ax2, ax3 = z, x, y
+
+        if self.algorithm == 'householder':
+            rot = autorotate_householder(ax1, tangent).inverted()
+        elif self.algorithm == 'track':
+            rot = autorotate_track(self.orient_axis, tangent, self.up_axis)
+        elif self.algorithm == 'diff':
+            rot = autorotate_diff(tangent, ax1)
+        else:
+            raise Exception("Unsupported algorithm")
+
+        return rot
+
+    def get_matrices(self, vs):
+        tangents = self.extrusion.tangent_array(vs)
+        matrices = []
+        for tangent in tangents:
+            matrix = self.get_matrix(Vector(tangent)).to_3x3()
+            matrices.append(matrix)
+        return np.array(matrices)
+
+    def evaluate_array(self, us, vs):
+        profile_points = self.profile.evaluate_array(us)
+        u_min, u_max = self.profile.get_u_bounds()
+        v_min, v_max = self.extrusion.get_u_bounds()
+        profile_vectors = profile_points
+        profile_vectors = np.transpose(profile_vectors[np.newaxis], axes=(1, 2, 0))
+        extrusion_start = self.extrusion.evaluate(v_min)
+        extrusion_points = self.extrusion.evaluate_array(vs)
+        extrusion_vectors = extrusion_points - extrusion_start
+
+        matrices = self.get_matrices(vs)
+
+        profile_vectors = (matrices @ profile_vectors)[:,:,0]
+        result = extrusion_vectors + profile_vectors
+        if self.origin == EXTRUSION:
+            result = result + self.extrusion.evaluate(v_min)
+        return result
 
     def get_u_min(self):
         return self.profile.get_u_bounds()[0]

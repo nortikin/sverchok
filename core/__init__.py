@@ -34,7 +34,7 @@ def sv_registration_utils():
     pass
 
 
-sv_registration_utils.register_all = sv_register_modules 
+sv_registration_utils.register_all = sv_register_modules
 sv_registration_utils.unregister_all = sv_unregister_modules
 
 
@@ -111,7 +111,7 @@ def init_bookkeeping(sv_name):
     sverchok.data_structure.SVERCHOK_NAME = sv_name
     ascii_print.show_welcome()
     node_defaults.register_defaults()
-    auto_gather_node_classes()    
+    auto_gather_node_classes()
 
 
 

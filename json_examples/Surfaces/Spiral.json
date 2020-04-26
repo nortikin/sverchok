@@ -1,0 +1,243 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -415.2505187988281,
+        -107.18712615966797
+      ],
+      "params": {
+        "float_": 0.10000000149011612,
+        "float_draft_": 0.0,
+        "int_": 0,
+        "int_draft_": 0
+      },
+      "width": 140.0
+    },
+    "Cast Curve": {
+      "bl_idname": "SvExCastCurveNode",
+      "custom_socket_props": {
+        "1": {
+          "expanded": true,
+          "prop": [
+            0.0,
+            0.0,
+            -1.649999976158142
+          ],
+          "use_prop": true
+        },
+        "2": {
+          "prop": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "use_prop": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        147.22653198242188,
+        236.28758239746094
+      ],
+      "params": {
+        "form": "SPHERE",
+        "radius": 3.129999876022339
+      },
+      "width": 140.0
+    },
+    "Cast Curve.001": {
+      "bl_idname": "SvExCastCurveNode",
+      "custom_socket_props": {
+        "1": {
+          "expanded": true,
+          "prop": [
+            0.0,
+            0.0,
+            6.0
+          ],
+          "use_prop": true
+        },
+        "2": {
+          "prop": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "use_prop": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        107.62609100341797,
+        -224.20816040039062
+      ],
+      "params": {
+        "form": "SPHERE",
+        "radius": 8.0
+      },
+      "width": 140.0
+    },
+    "Curve Formula": {
+      "bl_idname": "SvExCurveFormulaNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -214.7774658203125,
+        21.373029708862305
+      ],
+      "params": {
+        "formula1": "K*t",
+        "formula2": "t",
+        "formula3": "0",
+        "output_mode": "CYL",
+        "t_max": 18.84955596923828
+      },
+      "width": 140.0
+    },
+    "Evaluate Surface": {
+      "bl_idname": "SvExEvalSurfaceNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        817.0589599609375,
+        11.1818265914917
+      ],
+      "params": {
+        "samples_u": 152,
+        "samples_v": 184
+      },
+      "width": 140.0
+    },
+    "List Join": {
+      "bl_idname": "ListJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        377.0589294433594,
+        24.857637405395508
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Surface from Curves": {
+      "bl_idname": "SvInterpolatingSurfaceNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        597.0589599609375,
+        -4.459142208099365
+      ],
+      "params": {
+        "interp_mode": "CUBIC"
+      },
+      "width": 140.0
+    },
+    "Viewer Draw Mk3.001": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1056.085693359375,
+        75.9279556274414
+      ],
+      "params": {
+        "activate": 1,
+        "display_edges": 0,
+        "display_faces": 1,
+        "display_verts": 0,
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "A Number",
+      0,
+      "Curve Formula",
+      2
+    ],
+    [
+      "Curve Formula",
+      0,
+      "Cast Curve",
+      0
+    ],
+    [
+      "Curve Formula",
+      0,
+      "Cast Curve.001",
+      0
+    ],
+    [
+      "Cast Curve",
+      0,
+      "List Join",
+      0
+    ],
+    [
+      "Curve Formula",
+      0,
+      "List Join",
+      1
+    ],
+    [
+      "Cast Curve.001",
+      0,
+      "List Join",
+      2
+    ],
+    [
+      "List Join",
+      0,
+      "Surface from Curves",
+      0
+    ],
+    [
+      "Surface from Curves",
+      0,
+      "Evaluate Surface",
+      0
+    ],
+    [
+      "Evaluate Surface",
+      0,
+      "Viewer Draw Mk3.001",
+      0
+    ],
+    [
+      "Evaluate Surface",
+      1,
+      "Viewer Draw Mk3.001",
+      1
+    ],
+    [
+      "Evaluate Surface",
+      2,
+      "Viewer Draw Mk3.001",
+      2
+    ]
+  ]
+}

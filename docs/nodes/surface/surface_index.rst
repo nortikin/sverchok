@@ -19,6 +19,8 @@ Surface
    apply_field_to_surface
    surface_domain
    subdomain
+   flip
+   swap
    tessellate_trim
    evaluate_surface
 

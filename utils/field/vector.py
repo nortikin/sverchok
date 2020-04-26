@@ -154,7 +154,7 @@ class SvVectorFieldLambda(SvVectorField):
             V = None
         else:
             V = self.in_field.evaluate(x, y, z)
-        return self.function(x, y, z, V)
+        return np.array(self.function(x, y, z, V))
 
 class SvVectorFieldBinOp(SvVectorField):
     def __init__(self, field1, field2, function):
@@ -309,21 +309,25 @@ class SvKdtVectorField(SvVectorField):
     def evaluate_grid(self, xs, ys, zs):
         def find(v):
             nearest, i, distance = self.kdt.find(v)
-            dx, dy, dz = np.array(nearest) - np.array(v)
+            dv = np.array(nearest) - np.array(v)
             if self.negate:
-                return (-dx, -dy, -dz)
+                return - dv
             else:
-                return (dx, dy, dz)
+                return dv
 
         points = np.stack((xs, ys, zs)).T
-        vectors = np.vectorize(find, signature='(3)->(),(),()')(points)
+        vectors = np.vectorize(find, signature='(3)->(3)')(points)
         if self.falloff is not None:
-            norms = np.linalg.norm(vectors, axis=0)
+            norms = np.linalg.norm(vectors, axis=1, keepdims=True)
             lens = self.falloff(norms)
+            nonzero = (norms > 0)[:,0]
+            lens = self.falloff(norms)
+            vectors[nonzero] = vectors[nonzero] / norms[nonzero]
             R = (lens * vectors).T
             return R[0], R[1], R[2]
         else:
-            return vectors
+            R = vectors.T
+            return R[0], R[1], R[2]
 
 class SvVectorFieldPointDistance(SvVectorField):
     def __init__(self, center, metric='EUCLIDEAN', falloff=None):

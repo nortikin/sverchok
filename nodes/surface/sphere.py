@@ -6,7 +6,7 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nesting_level, ensure_nesting_level
 from sverchok.utils.surface import SvLambertSphere, SvEquirectSphere, SvGallSphere, SvDefaultSphere
 
 class SvSphereNode(bpy.types.Node, SverchCustomTreeNode):
@@ -64,25 +64,24 @@ class SvSphereNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         center_s = self.inputs['Center'].sv_get()
+        center_s = ensure_nesting_level(center_s, 3)
         radius_s = self.inputs['Radius'].sv_get()
+        radius_s = ensure_nesting_level(radius_s, 2)
         theta1_s = self.inputs['Theta1'].sv_get()
+        theta1_s = ensure_nesting_level(theta1_s, 2)
 
         surfaces_out = []
-        for center, radius, theta1 in zip_long_repeat(center_s, radius_s, theta1_s):
-            if isinstance(radius, (list, tuple)):
-                radius = radius[0]
-            if isinstance(theta1, (list, tuple)):
-                theta1 = theta1[0]
-
-            if self.projection == 'DEFAULT':
-                surface = SvDefaultSphere(np.array(center), radius)
-            elif self.projection == 'EQUIRECT':
-                surface = SvEquirectSphere(np.array(center), radius, theta1)
-            elif self.projection == 'LAMBERT':
-                surface = SvLambertSphere(np.array(center), radius)
-            else:
-                surface = SvGallSphere(np.array(center), radius)
-            surfaces_out.append(surface)
+        for centers, radiuses, theta1s in zip_long_repeat(center_s, radius_s, theta1_s):
+            for center, radius, theta1 in zip_long_repeat(centers, radiuses, theta1s):
+                if self.projection == 'DEFAULT':
+                    surface = SvDefaultSphere(np.array(center), radius)
+                elif self.projection == 'EQUIRECT':
+                    surface = SvEquirectSphere(np.array(center), radius, theta1)
+                elif self.projection == 'LAMBERT':
+                    surface = SvLambertSphere(np.array(center), radius)
+                else:
+                    surface = SvGallSphere(np.array(center), radius)
+                surfaces_out.append(surface)
         self.outputs['Surface'].sv_set(surfaces_out)
 
 def register():

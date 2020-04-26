@@ -16,15 +16,43 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from contextlib import contextmanager
+import math
+from operator import setitem
+from itertools import count
+
+import numpy as np
+
 import bmesh
 from bmesh.types import BMVert, BMEdge, BMFace
 import mathutils
-import numpy as np
-import math
 
-from sverchok.utils.logging import info, debug
+from sverchok.utils.logging import debug
 
-def bmesh_from_pydata(verts=None, edges=[], faces=[], markup_face_data=False, markup_edge_data=False, markup_vert_data=False, normal_update=False):
+
+@contextmanager
+def empty_bmesh(use_operators=True):
+    """
+    Usage:
+    with empty_bmesh() as bm:
+        generate_mesh(bm)
+        bm.do_something
+        ...
+    """
+    error = None
+    bm = bmesh.new(use_operators=use_operators)
+    try:
+        yield bm
+    except Exception as Ex:
+        error = Ex
+    finally:
+        bm.free()
+    if error:
+        raise error
+
+
+def bmesh_from_pydata(verts=None, edges=[], faces=[], markup_face_data=False, markup_edge_data=False,
+                      markup_vert_data=False, normal_update=False):
     ''' verts is necessary, edges/faces are optional
         normal_update, will update verts/edges/faces normals at the end
     '''
@@ -81,6 +109,33 @@ def bmesh_from_pydata(verts=None, edges=[], faces=[], markup_face_data=False, ma
     if normal_update:
         bm.normal_update()
     return bm
+
+
+def add_mesh_to_bmesh(bm, verts, edges=None, faces=None, sv_index_name=None, update_indexes=True, update_normals=True):
+    bm_verts = [bm.verts.new(co) for co in verts]
+    [bm.edges.new((bm_verts[i1], bm_verts[i2])) for i1, i2 in edges or []]
+    [bm.faces.new([bm_verts[i] for i in face]) for face in faces or []]
+
+    if update_normals:
+        bm.normal_update()
+
+    if sv_index_name:
+        for sequence in [bm.verts, bm.edges, bm.faces]:
+            lay = sequence.layers.int.get(sv_index_name, sequence.layers.int.new(sv_index_name))
+            [setitem(el, lay, el.index) for el in sequence]
+        loop_lay = bm.loops.layers.int.get(sv_index_name, bm.loops.layers.int.new(sv_index_name))
+        loop_indexes = count()
+        [setitem(l, loop_lay, next(loop_indexes)) for face in bm.faces for l in face.loops]
+
+    # update mesh
+    bm.verts.ensure_lookup_table()
+    bm.edges.ensure_lookup_table()
+    bm.faces.ensure_lookup_table()
+    if update_indexes:
+        bm.verts.index_update()
+        bm.edges.index_update()
+        bm.faces.index_update()
+
 
 def numpy_data_from_bmesh(bm, out_np, face_data=None):
     if out_np[0]:

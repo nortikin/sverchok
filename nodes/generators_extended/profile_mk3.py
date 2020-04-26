@@ -482,7 +482,9 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     def load_profile(self):
         if not self.filename:
             return None
-        internal_file = bpy.data.texts[self.filename]
+
+        # we do not store stripped self.filename, else prop_search will shows it as read
+        internal_file = bpy.data.texts[self.filename.strip()]
         f = internal_file.as_string()
         profile = parse_profile(f)
         return profile
@@ -532,7 +534,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         '''
 
         # keeping the file internal for now.
-        if not (self.filename in bpy.data.texts):
+        if not (self.filename.strip() in bpy.data.texts):
             return
 
         self.adjust_sockets()
@@ -617,8 +619,8 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         bpy.data.texts[filename].write(profile)
 
     def storage_get_data(self, storage):
-        if self.filename and self.filename in bpy.data.texts:
-            text = bpy.data.texts[self.filename].as_string()
+        if self.filename and self.filename.strip() in bpy.data.texts:
+            text = bpy.data.texts[self.filename.strip()].as_string()
             storage['profile'] = text
         else:
             self.warning("Unknown filename: {}".format(self.filename))
