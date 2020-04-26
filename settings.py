@@ -280,6 +280,11 @@ class SverchokPreferences(AddonPreferences):
             update = update_log_level,
             default = "INFO")
 
+    log_update_events: BoolProperty(
+        name="Log update events",
+        description="Print name of methods which are triggered upon changes in BLender",
+        default=False)
+
     log_to_buffer: BoolProperty(name = "Log to text buffer",
             description = "Enable log output to internal Blender's text buffer",
             default = True)
@@ -350,6 +355,9 @@ class SverchokPreferences(AddonPreferences):
             log_box = col2.box()
             log_box.label(text="Logging:")
             log_box.prop(self, "log_level")
+
+            if self.log_level == "DEBUG":
+                log_box.prop(self, "log_update_events")
 
             buff_row = log_box.row()
             buff_row.prop(self, "log_to_buffer")

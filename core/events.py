@@ -129,4 +129,4 @@ class CurrentEvents:
     @staticmethod
     def is_in_debug_mode():
         with sv_preferences() as prefs:
-            return prefs.log_level == "DEBUG"
+            return prefs.log_level == "DEBUG" and prefs.log_update_events
