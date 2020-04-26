@@ -909,26 +909,40 @@ class SvExtrudeCurvePointSurface(SvSurface):
     def v_size(self):
         return 1.0
 
+PROFILE = 'profile'
+EXTRUSION = 'extrusion'
+
 class SvExtrudeCurveCurveSurface(SvSurface):
-    def __init__(self, u_curve, v_curve):
+    def __init__(self, u_curve, v_curve, origin = PROFILE):
         self.u_curve = u_curve
         self.v_curve = v_curve
+        self.origin = origin
         self.normal_delta = 0.001
         self.__description__ = "Extrusion of {}".format(u_curve)
 
     def evaluate(self, u, v):
         u_point = self.u_curve.evaluate(u)
+        u_min, u_max = self.u_curve.get_u_bounds()
         v_min, v_max = self.v_curve.get_u_bounds()
         v0 = self.v_curve.evaluate(v_min)
         v_point = self.v_curve.evaluate(v)
-        return u_point + (v_point - v0)
+        if self.origin == EXTRUSION:
+            result = u_point + v_point
+        else:
+            result = u_point + (v_point - v0)
+        return result
 
     def evaluate_array(self, us, vs):
         u_points = self.u_curve.evaluate_array(us)
+        u_min, u_max = self.u_curve.get_u_bounds()
         v_min, v_max = self.v_curve.get_u_bounds()
         v0 = self.v_curve.evaluate(v_min)
         v_points = self.v_curve.evaluate_array(vs)
-        return u_points + (v_points - v0)
+        if self.origin == EXTRUSION:
+            result = u_points + v_points
+        else:
+            result = u_points + (v_points - v0)
+        return result
 
     def get_u_min(self):
         return self.u_curve.get_u_bounds()[0]
@@ -953,9 +967,10 @@ class SvExtrudeCurveCurveSurface(SvSurface):
         return M - m
 
 class SvExtrudeCurveFrenetSurface(SvSurface):
-    def __init__(self, profile, extrusion):
+    def __init__(self, profile, extrusion, origin = PROFILE):
         self.profile = profile
         self.extrusion = extrusion
+        self.origin = origin
         self.normal_delta = 0.001
         self.__description__ = "Extrusion of {}".format(profile)
 
@@ -966,15 +981,17 @@ class SvExtrudeCurveFrenetSurface(SvSurface):
         profile_points = self.profile.evaluate_array(us)
         u_min, u_max = self.profile.get_u_bounds()
         v_min, v_max = self.extrusion.get_u_bounds()
-        profile_start = self.extrusion.evaluate(u_min)
-        profile_vectors = profile_points # - profile_start
+        profile_vectors = profile_points
         profile_vectors = np.transpose(profile_vectors[np.newaxis], axes=(1, 2, 0))
         extrusion_start = self.extrusion.evaluate(v_min)
         extrusion_points = self.extrusion.evaluate_array(vs)
         extrusion_vectors = extrusion_points - extrusion_start
         frenet, _ , _ = self.extrusion.frame_array(vs)
         profile_vectors = (frenet @ profile_vectors)[:,:,0]
-        return extrusion_vectors + profile_vectors
+        result = extrusion_vectors + profile_vectors
+        if self.origin == EXTRUSION:
+            result = result + self.extrusion.evaluate(v_min)
+        return result
 
     def get_u_min(self):
         return self.profile.get_u_bounds()[0]
@@ -999,9 +1016,10 @@ class SvExtrudeCurveFrenetSurface(SvSurface):
         return M - m
 
 class SvExtrudeCurveZeroTwistSurface(SvSurface):
-    def __init__(self, profile, extrusion, resolution):
+    def __init__(self, profile, extrusion, resolution, origin = PROFILE):
         self.profile = profile
         self.extrusion = extrusion
+        self.origin = origin
         self.normal_delta = 0.001
         self.extrusion.pre_calc_torsion_integral(resolution)
         self.__description__ = "Extrusion of {}".format(profile)
@@ -1013,8 +1031,7 @@ class SvExtrudeCurveZeroTwistSurface(SvSurface):
         profile_points = self.profile.evaluate_array(us)
         u_min, u_max = self.profile.get_u_bounds()
         v_min, v_max = self.extrusion.get_u_bounds()
-        profile_start = self.extrusion.evaluate(u_min)
-        profile_vectors = profile_points # - profile_start
+        profile_vectors = profile_points
         profile_vectors = np.transpose(profile_vectors[np.newaxis], axes=(1, 2, 0))
         extrusion_start = self.extrusion.evaluate(v_min)
         extrusion_points = self.extrusion.evaluate_array(vs)
@@ -1032,7 +1049,10 @@ class SvExtrudeCurveZeroTwistSurface(SvSurface):
         rotation_matrices = np.dstack((row1, row2, row3))
 
         profile_vectors = (frenet @ rotation_matrices @ profile_vectors)[:,:,0]
-        return extrusion_vectors + profile_vectors
+        result = extrusion_vectors + profile_vectors
+        if self.origin == EXTRUSION:
+            result = result + self.extrusion.evaluate(v_min)
+        return result
 
     def get_u_min(self):
         return self.profile.get_u_bounds()[0]
@@ -1047,12 +1067,13 @@ class SvExtrudeCurveZeroTwistSurface(SvSurface):
         return self.extrusion.get_u_bounds()[1]
 
 class SvExtrudeCurveMathutilsSurface(SvSurface):
-    def __init__(self, profile, extrusion, algorithm, orient_axis='Z', up_axis='X'):
+    def __init__(self, profile, extrusion, algorithm, orient_axis='Z', up_axis='X', origin = PROFILE):
         self.profile = profile
         self.extrusion = extrusion
         self.algorithm = algorithm
         self.orient_axis = orient_axis
         self.up_axis = up_axis
+        self.origin = origin
         self.normal_delta = 0.001
         self.__description__ = "Extrusion of {}".format(profile)
 
@@ -1094,8 +1115,7 @@ class SvExtrudeCurveMathutilsSurface(SvSurface):
         profile_points = self.profile.evaluate_array(us)
         u_min, u_max = self.profile.get_u_bounds()
         v_min, v_max = self.extrusion.get_u_bounds()
-        profile_start = self.extrusion.evaluate(u_min)
-        profile_vectors = profile_points # - profile_start
+        profile_vectors = profile_points
         profile_vectors = np.transpose(profile_vectors[np.newaxis], axes=(1, 2, 0))
         extrusion_start = self.extrusion.evaluate(v_min)
         extrusion_points = self.extrusion.evaluate_array(vs)
@@ -1104,7 +1124,10 @@ class SvExtrudeCurveMathutilsSurface(SvSurface):
         matrices = self.get_matrices(vs)
 
         profile_vectors = (matrices @ profile_vectors)[:,:,0]
-        return extrusion_vectors + profile_vectors
+        result = extrusion_vectors + profile_vectors
+        if self.origin == EXTRUSION:
+            result = result + self.extrusion.evaluate(v_min)
+        return result
 
     def get_u_min(self):
         return self.profile.get_u_bounds()[0]
