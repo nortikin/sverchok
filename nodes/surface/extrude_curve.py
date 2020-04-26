@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.logging import info, exception
 
 from sverchok.utils.curve import SvCurve
-from sverchok.utils.surface import SvExtrudeCurveCurveSurface, SvExtrudeCurveFrenetSurface, SvExtrudeCurveZeroTwistSurface
+from sverchok.utils.surface import SvExtrudeCurveCurveSurface, SvExtrudeCurveFrenetSurface, SvExtrudeCurveZeroTwistSurface, SvExtrudeCurveMathutilsSurface
 
 class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -23,7 +23,10 @@ class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     modes = [
         ('NONE', "None", "No rotation", 0),
         ('FRENET', "Frenet", "Frenet / native rotation", 1),
-        ('ZERO', "Zero-twist", "Zero-twist rotation", 2)
+        ('ZERO', "Zero-twist", "Zero-twist rotation", 2),
+        ("householder", "Householder", "Use Householder reflection matrix", 3),
+        ("track", "Tracking", "Use quaternion-based tracking", 4),
+        ("diff", "Rotation difference", "Use rotational difference calculation", 5)
     ]
 
     @throttled
@@ -77,7 +80,8 @@ class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 elif self.algorithm == 'ZERO':
                     surface = SvExtrudeCurveZeroTwistSurface(profile, extrusion, resolution)
                 else:
-                    raise Exception("Unsupported algorithm")
+                    surface = SvExtrudeCurveMathutilsSurface(profile, extrusion, self.algorithm,
+                                orient_axis = 'Z', up_axis = 'X')
                 surface_out.append(surface)
 
         self.outputs['Surface'].sv_set(surface_out)

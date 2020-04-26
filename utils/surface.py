@@ -13,7 +13,7 @@ from mathutils import Matrix, Vector
 
 from sverchok.utils.logging import info, exception
 from sverchok.utils.math import from_spherical
-from sverchok.utils.geom import LineEquation, rotate_vector_around_vector
+from sverchok.utils.geom import LineEquation, rotate_vector_around_vector, autorotate_householder, autorotate_track, autorotate_diff
 
 def rotate_vector_around_vector_np(v, k, theta):
     """
@@ -1032,6 +1032,78 @@ class SvExtrudeCurveZeroTwistSurface(SvSurface):
         rotation_matrices = np.dstack((row1, row2, row3))
 
         profile_vectors = (frenet @ rotation_matrices @ profile_vectors)[:,:,0]
+        return extrusion_vectors + profile_vectors
+
+    def get_u_min(self):
+        return self.profile.get_u_bounds()[0]
+
+    def get_u_max(self):
+        return self.profile.get_u_bounds()[1]
+
+    def get_v_min(self):
+        return self.extrusion.get_u_bounds()[0]
+
+    def get_v_max(self):
+        return self.extrusion.get_u_bounds()[1]
+
+class SvExtrudeCurveMathutilsSurface(SvSurface):
+    def __init__(self, profile, extrusion, algorithm, orient_axis='Z', up_axis='X'):
+        self.profile = profile
+        self.extrusion = extrusion
+        self.algorithm = algorithm
+        self.orient_axis = orient_axis
+        self.up_axis = up_axis
+        self.normal_delta = 0.001
+        self.__description__ = "Extrusion of {}".format(profile)
+
+    def evaluate(self, u, v):
+        return self.evaluate_array(np.array([u]), np.array([v]))[0]
+
+    def get_matrix(self, tangent):
+        x = Vector((1.0, 0.0, 0.0))
+        y = Vector((0.0, 1.0, 0.0))
+        z = Vector((0.0, 0.0, 1.0))
+
+        if self.orient_axis == 'X':
+            ax1, ax2, ax3 = x, y, z
+        elif self.orient_axis == 'Y':
+            ax1, ax2, ax3 = y, x, z
+        else:
+            ax1, ax2, ax3 = z, x, y
+
+        if self.algorithm == 'householder':
+            rot = autorotate_householder(ax1, tangent).inverted()
+        elif self.algorithm == 'track':
+            rot = autorotate_track(self.orient_axis, tangent, self.up_axis)
+        elif self.algorithm == 'diff':
+            rot = autorotate_diff(tangent, ax1)
+        else:
+            raise Exception("Unsupported algorithm")
+
+        return rot
+
+    def get_matrices(self, vs):
+        tangents = self.extrusion.tangent_array(vs)
+        matrices = []
+        for tangent in tangents:
+            matrix = self.get_matrix(Vector(tangent)).to_3x3()
+            matrices.append(matrix)
+        return np.array(matrices)
+
+    def evaluate_array(self, us, vs):
+        profile_points = self.profile.evaluate_array(us)
+        u_min, u_max = self.profile.get_u_bounds()
+        v_min, v_max = self.extrusion.get_u_bounds()
+        profile_start = self.extrusion.evaluate(u_min)
+        profile_vectors = profile_points # - profile_start
+        profile_vectors = np.transpose(profile_vectors[np.newaxis], axes=(1, 2, 0))
+        extrusion_start = self.extrusion.evaluate(v_min)
+        extrusion_points = self.extrusion.evaluate_array(vs)
+        extrusion_vectors = extrusion_points - extrusion_start
+
+        matrices = self.get_matrices(vs)
+
+        profile_vectors = (matrices @ profile_vectors)[:,:,0]
         return extrusion_vectors + profile_vectors
 
     def get_u_min(self):
