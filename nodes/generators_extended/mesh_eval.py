@@ -252,16 +252,18 @@ class SvJsonFromMesh(bpy.types.Operator):
         vector = [round(x, precision) for x in vector.co[:]]
         return vector
 
-    def write_values(self, text_name, data):
-        """
-        text_name :  a string, used to name the bpy.data.texts datablock
-        data      :  the string to write to the text datablock
-        """
-        if text_name not in bpy.data.texts:
-            bpy.data.texts.new(text_name)
+    def write_values(self,text,values):
+        texts = bpy.data.texts.items()
+        exists = False
+        for t in texts:
+            if bpy.data.texts[t[0]].name == text:
+                exists = True
+                break
 
-        bpy.data.texts[text_name].clear()
-        bpy.data.texts[text_name].write(data)
+        if not exists:
+            bpy.data.texts.new(text)
+        bpy.data.texts[text].clear()
+        bpy.data.texts[text].write(values)
 
 class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -312,7 +314,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "FaceData")
 
     def load_json(self):
-        internal_file = bpy.data.texts[self.filename.strip()]
+        internal_file = bpy.data.texts[self.filename]
         f = io.StringIO(internal_file.as_string())
         json_data = json.load(f)
         self.validate_json(json_data)
@@ -438,7 +440,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
         '''
 
         # keeping the file internal for now.
-        if self.filename.strip() not in bpy.data.texts:
+        if not (self.filename in bpy.data.texts):
             return
 
         self.adjust_sockets()
@@ -527,15 +529,15 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
 
     def storage_set_data(self, storage):
         geom = storage['geom']
-        filename = storage['params']['filename'].strip()
+        filename = storage['params']['filename']
 
         bpy.data.texts.new(filename)
         bpy.data.texts[filename].clear()
         bpy.data.texts[filename].write(geom)
 
     def storage_get_data(self, storage):
-        if self.filename and self.filename.strip() in bpy.data.texts:
-            text = bpy.data.texts[self.filename.strip()].as_string()
+        if self.filename and self.filename in bpy.data.texts:
+            text = bpy.data.texts[self.filename].as_string()
             storage['geom'] = text
         else:
             self.warning("Unknown filename: {}".format(self.filename))
