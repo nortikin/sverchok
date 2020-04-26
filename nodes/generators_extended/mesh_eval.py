@@ -257,7 +257,7 @@ class SvJsonFromMesh(bpy.types.Operator):
         text_name :  a string, used to name the bpy.data.texts datablock
         data      :  the string to write to the text datablock
         """
-        if not (text_name in bpy.data.texts):
+        if text_name not in bpy.data.texts:
             bpy.data.texts.new(text_name)
 
         bpy.data.texts[text_name].clear()
