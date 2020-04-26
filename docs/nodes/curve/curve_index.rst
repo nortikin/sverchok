@@ -7,6 +7,7 @@ Curves
 
    line
    circle
+   arc_3pt
    polyline
    cubic_spline
    fillet_polyline
