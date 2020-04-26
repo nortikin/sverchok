@@ -607,7 +607,6 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                     # from it's bounding square to
                     # [-1/2; 1/2] square.
                     # Leave Z coordinate as it was.
-                    print(donor.min_x, donor.max_x)
                     x = self.map_bounds(donor.min_x, donor.max_x, v[X])
                     y = self.map_bounds(donor.min_y, donor.max_y, v[Y])
                     z = v[Z]
