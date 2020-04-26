@@ -252,18 +252,16 @@ class SvJsonFromMesh(bpy.types.Operator):
         vector = [round(x, precision) for x in vector.co[:]]
         return vector
 
-    def write_values(self,text,values):
-        texts = bpy.data.texts.items()
-        exists = False
-        for t in texts:
-            if bpy.data.texts[t[0]].name == text:
-                exists = True
-                break
+    def write_values(self, text_name, data):
+        """
+        text_name :  a string, used to name the bpy.data.texts datablock
+        data      :  the string to write to the text datablock
+        """
+        if not (text_name in bpy.data.texts):
+            bpy.data.texts.new(text_name)
 
-        if not exists:
-            bpy.data.texts.new(text)
-        bpy.data.texts[text].clear()
-        bpy.data.texts[text].write(values)
+        bpy.data.texts[text_name].clear()
+        bpy.data.texts[text_name].write(data)
 
 class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
     """
