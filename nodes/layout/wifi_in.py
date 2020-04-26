@@ -101,7 +101,7 @@ class WifiInNode(bpy.types.Node, SverchCustomTreeNode):
                     self.var_name = name
                     return
 
-    def update(self):
+    def sv_update(self):
         # ugly hack to get var name sometimes with old layouts
         if not self.var_name:
             self.gen_var_name()

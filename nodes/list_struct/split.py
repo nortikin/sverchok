@@ -63,7 +63,7 @@ class SvListSplitNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Split").prop_name = 'split'
         self.outputs.new('SvStringsSocket', "Split")
 
-    def update(self):
+    def sv_update(self):
         inputsocketname = 'Data'
         outputsocketname = ['Split']
         changable_sockets(self, inputsocketname, outputsocketname)

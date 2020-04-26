@@ -161,7 +161,7 @@ class SvSwitchNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'socket_number', text="in/out number")
 
-    def update(self):
+    def sv_update(self):
         if not self.id_data.skip_tree_update:
             self.rebuild_out_sockets()
 

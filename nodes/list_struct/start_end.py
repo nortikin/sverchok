@@ -47,7 +47,7 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "First")
         self.outputs.new('SvStringsSocket', "Last")
 
-    def update(self):
+    def sv_update(self):
         if self.inputs['Data'].links:
             inputsocketname = 'Data'
             outputsocketname = ["Middl", 'First', 'Last']

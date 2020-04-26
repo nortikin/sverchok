@@ -363,8 +363,16 @@ class SverchCustomTreeNode:
     draft_properties_mapping = dict()
 
     def update(self):
-        # todo this should be called in override methods as well
         CurrentEvents.new_event(BlenderEventsTypes.node_update, self)
+        self.sv_update()
+
+    def sv_update(self):
+        """
+        This method can be overridden in inherited classes.
+        It will be triggered upon any `node tree` editor changes (new/copy/delete links/nodes).
+        Calling of this method is unordered among other calls of the method of other nodes in a tree.
+        """
+        pass
 
     def insert_link(self, link):
         CurrentEvents.new_event(BlenderEventsTypes.add_link_to_node, self)

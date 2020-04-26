@@ -113,7 +113,7 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "Level", text="Level lists")
 
-    def update(self):
+    def sv_update(self):
         inputsocketname = 'data'
         outputsocketname = ['dataTrue', 'dataFalse']
         changable_sockets(self, inputsocketname, outputsocketname)

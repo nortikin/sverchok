@@ -53,7 +53,7 @@ class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Slice")
         self.outputs.new('SvStringsSocket', "Other")
 
-    def update(self):
+    def sv_update(self):
         if 'Data' in self.inputs and self.inputs['Data'].links:
             inputsocketname = 'Data'
             outputsocketname = ['Slice', 'Other']

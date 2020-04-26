@@ -115,7 +115,7 @@ class SvQuaternionMathNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.update_operation(context)
 
-    def update(self):
+    def sv_update(self):
         ''' Add/remove sockets as A-Z sockets are connected/disconnected '''
 
         # not a multiple quaternion operation ? => no need to update sockets

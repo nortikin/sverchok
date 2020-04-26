@@ -820,7 +820,7 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             inputs.remove(inputs[-1])
 
 
-    def update(self):
+    def sv_update(self):
         '''
         update analyzes the state of the node and returns if the criteria to start processing
         are not met.

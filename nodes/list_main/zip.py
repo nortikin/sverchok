@@ -53,7 +53,7 @@ class ZipNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', 'data')
         self.outputs.new('SvStringsSocket', 'data')
 
-    def update(self):
+    def sv_update(self):
         # inputs
         multi_socket(self, min=1)
 
