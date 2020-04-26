@@ -18,7 +18,7 @@ class SvArc3ptCurveNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvArc3ptCurveNode'
     bl_label = 'Arc 3pt (Curve)'
-    bl_icon = 'MESH_CIRCLE'
+    bl_icon = 'SPHERECURVE'
 
     join : BoolProperty(
             name = "Join",

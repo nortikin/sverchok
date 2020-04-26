@@ -2157,6 +2157,15 @@ def circle_approximation(data):
     return result
 
 def circle_by_three_points(p1, p2, p3):
+    """
+    Calculate parameters of the circle (or circular angle)
+    by three points on this circle.
+
+    input: p1, p2, p3 - 3-tuples or mathutils.Vectors
+    output: an CircleApproximationData instance.
+
+    factored out from basic_3pt_arc.py.
+    """
     v1, v2, v3 = Vector(p1), Vector(p2), Vector(p3)
     edge1_mid = v1.lerp(v2, 0.5)
     edge2_mid = v2.lerp(v3, 0.5)
