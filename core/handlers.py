@@ -6,7 +6,7 @@ from bpy.app.handlers import persistent
 from sverchok import old_nodes
 from sverchok import data_structure
 from sverchok.core import upgrade_nodes, undo_handler_node_count
-from sverchok.core.events import CurrentEvents, BlenderEvents
+from sverchok.core.events import CurrentEvents, BlenderEventsTypes
 
 from sverchok.ui import color_def, bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
@@ -64,7 +64,7 @@ def sv_handler_undo_pre(scene):
 
 @persistent
 def sv_handler_undo_post(scene):
-    CurrentEvents.new_event(BlenderEvents.undo)
+    CurrentEvents.new_event(BlenderEventsTypes.undo)
     # this function appears to be hoisted into an environment that does not have the same locals()
     # hence this dict must be imported. (jan 2019)
 
@@ -92,18 +92,13 @@ def sv_update_handler(scene):
     if not has_frame_changed(scene):
         return
 
+    CurrentEvents.new_event(BlenderEventsTypes.frame_change)
     for ng in sverchok_trees():
         try:
             # print('sv_update_handler')
             ng.process_ani()
         except Exception as e:
-            print('Failed to update:', str(e)) #name,
-
-    if scene.render:
-        debug(f'is rendering frame {scene.frame_current}, updates missed?')
-        # ---- raise Exception("asserting error")
-
-    # scene.update()  <-- does not exist in 2.80 recent builds
+            print('Failed to update:', str(e))  # name,
 
 
 @persistent

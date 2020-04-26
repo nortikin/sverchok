@@ -33,7 +33,7 @@ from numpy import (
     float64,
     int32)
 from sverchok.utils.logging import info
-from sverchok.core.events import CurrentEvents, BlenderEvents
+from sverchok.core.events import CurrentEvents, BlenderEventsTypes
 
 DEBUG_MODE = False
 HEAT_MAP = False
@@ -868,7 +868,7 @@ def updateNode(self, context):
     When a node has changed state and need to call a partial update.
     For example a user exposed bpy.prop
     """
-    CurrentEvents.new_event(BlenderEvents.node_property_update, self)
+    CurrentEvents.new_event(BlenderEventsTypes.node_property_update, self)
     self.process_node(context)
 
 

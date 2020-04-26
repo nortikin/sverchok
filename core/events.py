@@ -24,7 +24,7 @@ from bpy.types import Node, NodeTree
 from sverchok.utils.context_managers import sv_preferences
 
 
-class BlenderEvents(Enum):
+class BlenderEventsTypes(Enum):
     tree_update = auto()  # this updates is calling last with exception of creating new node
     monad_tree_update = auto()
     node_update = auto()  # it can be called last during creation new node event
@@ -34,6 +34,7 @@ class BlenderEvents(Enum):
     add_link_to_node = auto()  # it can detects only manually created links
     node_property_update = auto()  # can be in correct in current implementation
     undo = auto()  # changes in tree does not call any other update events
+    frame_change = auto()
 
     def print(self, updated_element=None):
         event_name = f"EVENT: {self.name: <30}"
@@ -44,7 +45,7 @@ class BlenderEvents(Enum):
         print(event_name + element_data)
 
 
-class SverchokEvents(Enum):
+class SverchokEventsTypes(Enum):
     add_node = auto()
     copy_nodes = auto()
     free_nodes = auto()
@@ -52,6 +53,7 @@ class SverchokEvents(Enum):
     node_link_update = auto()
     undo = auto()
     undefined = auto()  # most likely this event will responsible for checking links changes
+    frame_change = auto()
 
     def print(self, updated_elements: list = None):
         event_name = f"SVERCHOK EVENT: {self.name: <21}"
@@ -63,20 +65,21 @@ class SverchokEvents(Enum):
 
 
 EVENT_CONVERSION = {
-    BlenderEvents.tree_update: SverchokEvents.undefined,
-    BlenderEvents.monad_tree_update: SverchokEvents.undefined,
-    BlenderEvents.node_update: SverchokEvents.undefined,
-    BlenderEvents.add_node: SverchokEvents.add_node,
-    BlenderEvents.copy_node: SverchokEvents.copy_nodes,
-    BlenderEvents.free_node: SverchokEvents.free_nodes,
-    BlenderEvents.add_link_to_node: SverchokEvents.node_link_update,
-    BlenderEvents.node_property_update: SverchokEvents.node_property_update,
-    BlenderEvents.undo: SverchokEvents.undo
+    BlenderEventsTypes.tree_update: SverchokEventsTypes.undefined,
+    BlenderEventsTypes.monad_tree_update: SverchokEventsTypes.undefined,
+    BlenderEventsTypes.node_update: SverchokEventsTypes.undefined,
+    BlenderEventsTypes.add_node: SverchokEventsTypes.add_node,
+    BlenderEventsTypes.copy_node: SverchokEventsTypes.copy_nodes,
+    BlenderEventsTypes.free_node: SverchokEventsTypes.free_nodes,
+    BlenderEventsTypes.add_link_to_node: SverchokEventsTypes.node_link_update,
+    BlenderEventsTypes.node_property_update: SverchokEventsTypes.node_property_update,
+    BlenderEventsTypes.undo: SverchokEventsTypes.undo,
+    BlenderEventsTypes.frame_change: SverchokEventsTypes.frame_change
 }
 
 
 class Event(NamedTuple):
-    type: BlenderEvents
+    type: BlenderEventsTypes
     updated_element: Union[Node, NodeTree, None]
 
     def get_sverchok_type_event(self):
@@ -93,13 +96,14 @@ class CurrentEvents:
     events_wave: List[Event] = []
 
     @classmethod
-    def new_event(cls, event_type: BlenderEvents, updated_element=None):
-        if event_type == BlenderEvents.node_update:
-            # such updates are not informative
-            return
-        cls.events_wave.append(Event(event_type, updated_element))
+    def new_event(cls, event_type: BlenderEventsTypes, updated_element=None):
         if cls.is_in_debug_mode():
             event_type.print(updated_element)
+        if event_type == BlenderEventsTypes.node_update:
+            # such updates are not informative
+            return
+
+        cls.events_wave.append(Event(event_type, updated_element))
         if cls.is_wave_end():
             cls.convert_wave_to_sverchok_event()
             cls.events_wave.clear()
@@ -107,15 +111,16 @@ class CurrentEvents:
     @classmethod
     def is_wave_end(cls):
         # it is not correct now but should be when this module will get control over the update events
-        sign_of_wave_end = [BlenderEvents.tree_update, BlenderEvents.node_property_update,
-                            BlenderEvents.monad_tree_update]
+        sign_of_wave_end = [BlenderEventsTypes.tree_update, BlenderEventsTypes.node_property_update,
+                            BlenderEventsTypes.monad_tree_update, BlenderEventsTypes.undo,
+                            BlenderEventsTypes.frame_change]
         return True if cls.events_wave[-1] in sign_of_wave_end else False
 
     @classmethod
     def convert_wave_to_sverchok_event(cls):
         sverchok_event_type = cls.events_wave[0].get_sverchok_type_event()
         if cls.is_in_debug_mode():
-            if sverchok_event_type == SverchokEvents.undefined:
+            if cls.events_wave[0].updated_element is None:
                 sverchok_event_type.print()
             else:
                 all_events_of_such_type = takewhile(lambda ev: ev == cls.events_wave[0], cls.events_wave)
