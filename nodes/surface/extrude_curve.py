@@ -45,7 +45,7 @@ class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     origins = [
-        (PROFILE, "Profile origin", "Profile origin", 0),
+        (PROFILE, "Global origin", "Global origin", 0),
         (EXTRUSION, "Extrusion origin", "Extrusion origin", 1)
     ]
 
