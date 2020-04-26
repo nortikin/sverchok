@@ -32,6 +32,14 @@ This node has the following parameter:
   * **None**. Do not rotate the profile curve, just extrude it as it is. This mode is the default one.
   * **Frenet**. Rotate the profile curve according to Frenet frame of the extrusion curve.
   * **Zero-Twist**. Rotate the profile curve according to "zero-twist" frame of the extrusion curve.
+  * Householder: calculate rotation by using Householder's reflection matrix
+    (see Wikipedia_ article).                   
+  * Tracking: use the same algorithm as in Blender's "TrackTo" kinematic
+    constraint. This node currently always uses X as the Up axis.
+  * Rotation difference: calculate rotation as rotation difference between two
+    vectors.                                         
+
+.. _Wikipedia: https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections
 
 Outputs
 -------
