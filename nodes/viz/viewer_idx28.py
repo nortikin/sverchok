@@ -158,10 +158,11 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
                 colx.prop(self, colprop, text="")
 
     def sv_update(self):
-        # used because this node should disable itself if no inputs.
+        # this node should resist updates until fully populated with sockets.
         if 'text' not in self.inputs:
             return
 
+        # this node should disable itself if the vertex socket is not linked
         try:
             socket_one_has_upstream_links = self.inputs[0].other
             if not socket_one_has_upstream_links:
