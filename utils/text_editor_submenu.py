@@ -32,23 +32,10 @@ def get_template_path():
 
 def get_templates():
     path = get_template_path()
-    return [(t, t, "") for t in next(os.walk(path))[2]]
+    return [(t, t, "") for t in next(os.walk(path))[1]]
 
 
-class SvScriptLoader(bpy.types.Operator):
-    """ Load Scripts into TextEditor """
-    bl_idname = "node.script_template"
-    bl_label = "Sverchok script template"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    script_path: StringProperty(name='script path')
-
-    def execute(self, context):
-        path = get_template_path()
-        file_to_load = os.path.join(path, self.script_path)
-        bpy.ops.text.open(filepath=file_to_load, internal=True)
-        return {'FINISHED'}
-
+snlite_template_path =  get_template_path()
 
 class SvTextSubMenu(bpy.types.Menu):
     bl_idname = "TEXT_MT_templates_submenu"
@@ -58,10 +45,11 @@ class SvTextSubMenu(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
 
+        args = dict(operator='text.open', props_default={'internal': True})
         m = get_templates()
-        t = "node.script_template"
         for name, p, _ in m:
-            layout.operator(t, text=name).script_path = p
+            final_path = os.path.join(snlite_template_path, name)
+            self.path_menu(searchpaths=[final_path], **args)
 
 
 def menu_draw(self, context):
@@ -69,12 +57,10 @@ def menu_draw(self, context):
 
 
 def register():
-    bpy.utils.register_class(SvScriptLoader)
     bpy.utils.register_class(SvTextSubMenu)
     bpy.types.TEXT_MT_templates.append(menu_draw)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvScriptLoader)
     bpy.utils.unregister_class(SvTextSubMenu)
     bpy.types.TEXT_MT_templates.remove(menu_draw)
