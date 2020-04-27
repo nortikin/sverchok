@@ -26,7 +26,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, face_data_from_bmes
 from sverchok.utils.logging import info, debug
 
 
-def remove_doubles(vertices, faces, d, face_data=None, find_doubles=False, mask=[], output_mask=False):
+def remove_doubles(vertices, faces, distance, face_data=None, find_doubles=False, mask=[], output_mask=False):
 
     if faces:
         EdgeMode = (len(faces[0]) == 2)
@@ -48,12 +48,12 @@ def remove_doubles(vertices, faces, d, face_data=None, find_doubles=False, mask=
         bm_verts = [v for v, m in zip(bm_verts, mask_full) if m]
 
     if find_doubles:
-        res = bmesh.ops.find_doubles(bm, verts=bm_verts, dist=d)
+        res = bmesh.ops.find_doubles(bm, verts=bm_verts, dist=distance)
         doubles = [vert.co[:] for vert in res['targetmap'].keys()]
     else:
         doubles = []
 
-    bmesh.ops.remove_doubles(bm, verts=bm_verts, dist=d)
+    bmesh.ops.remove_doubles(bm, verts=bm_verts, dist=distance)
     edges = []
     faces = []
     face_data_out = []
@@ -123,7 +123,7 @@ class SvMergeByDistanceNode(bpy.types.Node, SverchCustomTreeNode):
         distance = self.inputs['Distance'].sv_get(default=[self.distance])[0]
         has_double_out = self.outputs['Doubles'].is_linked
         mask_s = self.inputs['Mask'].sv_get(default=[[]], deepcopy=False)
-        has_mask_out = self.outputs['Mask'].is_linked
+        has_mask_out = self.inputs['Mask'].is_linked, self.outputs['Mask'].is_linked
         verts_out = []
         edges_out = []
         polys_out = []
