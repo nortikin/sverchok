@@ -15,7 +15,8 @@ in  threshold s d=0.9 n=2
 in  mutator s d=0.1 n=2
 in  selector s d=0.2 n=2
 in  all_apart s d=0 n=2
-out combination  v
+out vers_final  v
+out vers_descr  v
 """
 
 
@@ -61,6 +62,7 @@ def compare_two_lists(agent_list,pattern):
 def ga():
 
     agents = init_agents(population, in_str_len)
+    stepper = 0.1
 
     for generation in range(generations):
 
@@ -71,6 +73,9 @@ def ga():
         agents = crossover(agents)
         agents = mutation(agents)
 
+        if any(agent.fitness >= stepper for agent in agents):
+            combo.append(sorted(agents, key=lambda agent: agent.fitness, reverse=True)[0].string)
+            stepper += 0.1
         if any(agent.fitness >= threshold for agent in agents):
 
             print (f'Last generation #{str(generation)}')
@@ -157,4 +162,6 @@ if data and pattern:
     print(f'GA initialised with {type(in_str)} {len(in_str)} \
             \n{in_str[:3]}...')
     in_str_len = len(in_str)
-    combination = [ga()]
+    combo = []
+    vers_final = [ga()]
+    vers_descr = combo
