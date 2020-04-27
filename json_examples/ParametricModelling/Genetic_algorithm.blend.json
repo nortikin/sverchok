@@ -1,43 +1,174 @@
 {
   "export_version": "0.079",
   "framed_nodes": {
-    "Combinatorics": "Frame.002",
+    "A Number": "Frame",
+    "A Number.001": "Frame",
+    "A Number.002": "Frame",
+    "A Number.003": "Frame",
+    "A Number.004": "Frame",
+    "A Number.005": "Frame",
     "Convex Hull": "Frame.002",
+    "Frame.003": "Frame.002",
+    "Frame.004": "Frame.001",
     "IcoSphere": "Frame",
-    "List Join": "Frame.002",
-    "List Length": "Frame.002",
+    "List Join": "Frame.003",
     "Move": "Frame",
     "Move.001": "Frame",
-    "Number Range": "Frame.002",
     "Random Vector MK2": "Frame",
-    "Scripted Node Lite.001": "Frame.001",
-    "Socket Converter": "Frame.001",
-    "Stethoscope MK2": "Frame.001",
-    "Stethoscope MK2.001": "Frame.002",
-    "Stethoscope MK2.002": "Frame.002",
+    "Scripted Node Lite": "Frame.001",
+    "Stethoscope MK2.002": "Frame.003",
+    "UV Connection": "Frame.004",
     "Vector in": "Frame",
     "Viewer Draw Mk3": "Frame.002",
-    "Viewer Draw Mk3.001": "Frame.001",
+    "Viewer Draw Mk3.001": "Frame",
     "Viewer Draw Mk3.002": "Frame.001",
-    "Viewer Draw Mk3.003": "Frame.002",
-    "Volume": "Frame.002",
-    "Volume.001": "Frame.002"
+    "Viewer Draw Mk3.004": "Frame.004",
+    "Volume": "Frame.003",
+    "Volume.001": "Frame.003"
   },
   "groups": {},
   "nodes": {
-    "Combinatorics": {
-      "bl_idname": "SvCombinatoricsNode",
+    "A Number": {
+      "bl_idname": "SvNumberNode",
       "height": 100.0,
       "hide": false,
-      "label": "Combinations",
+      "label": "population",
       "location": [
-        677.5,
-        601.3173828125
+        -1095.7342262268066,
+        567.4873657226562
       ],
       "params": {
-        "length": 2,
-        "operation": "COMBINATIONS",
-        "repeat": 1
+        "float_": 0.0,
+        "float_draft_": 5.0,
+        "float_max": 50.0,
+        "float_min": 5.0,
+        "int_": 0,
+        "int_draft_": 20,
+        "int_max": 50,
+        "int_min": 5,
+        "selected_mode": "int",
+        "show_limits": 0,
+        "to3d": 1
+      },
+      "width": 140.0
+    },
+    "A Number.001": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "generations",
+      "location": [
+        -1095.7342262268066,
+        485.1723937988281
+      ],
+      "params": {
+        "float_": 0.0,
+        "float_draft_": 5.0,
+        "float_max": 50.0,
+        "float_min": 5.0,
+        "int_": 0,
+        "int_draft_": 1000,
+        "int_max": 10000,
+        "int_min": 200,
+        "selected_mode": "int",
+        "show_limits": 0,
+        "to3d": 1
+      },
+      "width": 140.0
+    },
+    "A Number.002": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "mutator",
+      "location": [
+        -1095.7342262268066,
+        320.5424499511719
+      ],
+      "params": {
+        "float_": 0.0,
+        "float_draft_": 0.05000000074505806,
+        "float_max": 0.5,
+        "float_min": 0.009999999776482582,
+        "int_": 0,
+        "int_draft_": 1000,
+        "int_max": 10000,
+        "int_min": 200,
+        "selected_mode": "float",
+        "show_limits": 0,
+        "to3d": 1
+      },
+      "width": 140.0
+    },
+    "A Number.003": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "threshold",
+      "location": [
+        -1095.7342262268066,
+        402.857421875
+      ],
+      "params": {
+        "float_": 0.0,
+        "float_draft_": 0.699999988079071,
+        "float_max": 0.9950000047683716,
+        "float_min": 0.5,
+        "int_": 0,
+        "int_draft_": 20,
+        "int_max": 50,
+        "int_min": 5,
+        "selected_mode": "float",
+        "show_limits": 0,
+        "to3d": 1
+      },
+      "width": 140.0
+    },
+    "A Number.004": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "case",
+      "location": [
+        -1095.7342262268066,
+        151.3394317626953
+      ],
+      "params": {
+        "float_": 0.0,
+        "float_draft_": 5.0,
+        "float_max": 0.5,
+        "float_min": 0.009999999776482582,
+        "int_": 0,
+        "int_draft_": 1,
+        "int_max": 1,
+        "int_min": 0,
+        "selected_mode": "int",
+        "show_limits": 0,
+        "to3d": 1
+      },
+      "width": 140.0
+    },
+    "A Number.005": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "selector",
+      "location": [
+        -1095.7342262268066,
+        233.65440368652344
+      ],
+      "params": {
+        "float_": 0.0,
+        "float_draft_": 0.07999999821186066,
+        "float_max": 0.5,
+        "float_min": 0.07999999821186066,
+        "int_": 0,
+        "int_draft_": 20,
+        "int_max": 50,
+        "int_min": 5,
+        "selected_mode": "float",
+        "show_limits": 0,
+        "to3d": 1
       },
       "width": 140.0
     },
@@ -47,8 +178,8 @@
       "hide": false,
       "label": "",
       "location": [
-        79.5,
-        820.736328125
+        123.68951416015625,
+        779.032543182373
       ],
       "params": {},
       "width": 140.0
@@ -60,12 +191,12 @@
         0.6079999804496765,
         0.1858440488576889
       ],
-      "height": 490.5946044921875,
+      "height": 1023.554931640625,
       "hide": false,
       "label": "INPUTS",
       "location": [
-        -30.0,
-        71.85829162597656
+        -20.88473892211914,
+        228.81857299804688
       ],
       "params": {},
       "use_custom_color": true,
@@ -78,16 +209,16 @@
         0.29834824800491333,
         0.17616866528987885
       ],
-      "height": 856.9512939453125,
+      "height": 635.719482421875,
       "hide": false,
       "label": "GENETIC ALGORYTHM PROCESS",
       "location": [
-        -30.0,
-        10.0
+        -40.918941497802734,
+        8.438382148742676
       ],
       "params": {},
       "use_custom_color": true,
-      "width": 503.49774169921875
+      "width": 641.4055786132812
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
@@ -96,16 +227,52 @@
         0.4163794219493866,
         0.6079999804496765
       ],
-      "height": 1001.230224609375,
+      "height": 600.9264526367188,
       "hide": false,
       "label": "OUTPUT",
       "location": [
-        -30.0,
-        10.0
+        -22.27130126953125,
+        -44.47954177856445
       ],
       "params": {},
       "use_custom_color": true,
-      "width": 1105.0301513671875
+      "width": 853.5438842773438
+    },
+    "Frame.003": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 295.25677490234375,
+      "hide": false,
+      "label": "check Volume",
+      "location": [
+        -22.27130126953125,
+        -44.47954177856445
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 561.0046997070312
+    },
+    "Frame.004": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6079999804496765,
+        0.5722179412841797,
+        0.5722179412841797
+      ],
+      "height": 340.719482421875,
+      "hide": false,
+      "label": "Path of honor",
+      "location": [
+        -42.478782653808594,
+        -29.040255546569824
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 392.009521484375
     },
     "IcoSphere": {
       "bl_idname": "SvIcosphereNode",
@@ -118,8 +285,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1116.5,
-        882.5946197509766
+        -1107.3847389221191,
+        1039.5549011230469
       ],
       "params": {
         "radius": 2.0,
@@ -134,20 +301,8 @@
       "hide": false,
       "label": "",
       "location": [
-        677.5,
-        820.736328125
-      ],
-      "params": {},
-      "width": 140.0
-    },
-    "List Length": {
-      "bl_idname": "ListLengthNode",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        79.5,
-        607.3173828125
+        575.8462524414062,
+        762.6065788269043
       ],
       "params": {},
       "width": 140.0
@@ -163,8 +318,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -817.5,
-        743.1756744384766
+        -808.3847389221191,
+        900.1359558105469
       ],
       "params": {},
       "width": 133.2548828125
@@ -180,8 +335,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -817.5,
-        882.5946197509766
+        -808.3847389221191,
+        1039.5549011230469
       ],
       "params": {},
       "width": 140.0
@@ -189,39 +344,22 @@
     "Note": {
       "bl_idname": "NoteNode",
       "color": [
-        0.0203790795058012,
-        0.018774831667542458,
-        0.019970668479800224
+        1.0,
+        0.8993440270423889,
+        0.9742509722709656
       ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1149.3834228515625,
-        1071.297119140625
+        -1147.5604248046875,
+        1210.0062255859375
       ],
       "params": {
         "text": "Nikitron 2020 - genetic algorythm attempt. Moving data set points to fit pattern. turn off processing and use ctrl+F5 to run once."
       },
       "use_custom_color": true,
       "width": 509.6258544921875
-    },
-    "Number Range": {
-      "bl_idname": "SvGenNumberRange",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        378.5,
-        565.4130859375
-      ],
-      "params": {
-        "count_": 5,
-        "number_mode": "int",
-        "range_mode": "RANGE_STEP",
-        "stop_float": 4.0
-      },
-      "width": 140.0
     },
     "Random Vector MK2": {
       "bl_idname": "RandomVectorNodeMK2",
@@ -234,8 +372,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1116.5,
-        571.2714080810547
+        -1107.3847389221191,
+        728.231689453125
       ],
       "params": {
         "count_inner": 12,
@@ -245,7 +383,7 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Scripted Node Lite.001": {
+    "Scripted Node Lite": {
       "bl_idname": "SvScriptNodeLite",
       "color": [
         0.0,
@@ -256,8 +394,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -518.5,
-        820.736328125
+        -551.2872276306152,
+        750.9560213088989
       ],
       "params": {
         "float_list": [
@@ -265,11 +403,11 @@
           0.0,
           0.0,
           0.0,
-          0.9950000047683716,
-          0.10000000149011612,
+          0.699999988079071,
+          0.05000000074505806,
           0.07999999821186066,
           0.0,
-          0.0,
+          0.10000000149011612,
           0.0,
           0.0,
           0.0,
@@ -301,7 +439,7 @@
           0,
           0,
           20,
-          2000,
+          1000,
           0,
           0,
           0,
@@ -332,83 +470,9 @@
           0
         ],
         "script_name": "GA_lists_match.py",
-        "script_str": "# taken from https://github.com/nortikin/simple-ga\n# making comparement between vertices and choose best match\n\nimport random\nfrom functools import reduce\nfrom statistics import mean, variance\n\n\n\"\"\"\nin  pattern s   d=[] n=0\nin  data    s   d=[] n=0\nin  population s d=20 n=2\nin  generations s d=10000 n=2\nin  threshold s d=0.9 n=2\nin  mutator s d=0.1 n=2\nin  selector s d=0.2 n=2\nin  all_apart s d=0 n=2\nout combination  s\n\"\"\"\n\n\nclass Agent:\n\n    def __init__(self, length):\n\n        self.string = [random.choice(data[0]) for _ in range(length)]\n        # self.string = ''.join(random.choice(data[0]) for _ in xrange(length))\n        self.fitness = -1\n\n    def __str__(self):\n\n        return 'String: ' + str(self.string) + ' Fitness: ' + str(self.fitness)\n\n\n\ndef compare_two_lists(agent_list,pattern):\n    \"\"\" fitness descision module \"\"\"\n    lenpat = len(pattern)\n    Ratio = []\n    for i in range(len(agent_list)):\n        j = i%lenpat\n        subpat = pattern[j]           \n        subagl = agent_list[i]\n        # main descision part here, so we assign \n        # coef to all or to separate and summ\n        if all_apart == 0:\n            # full match\n            coef = [1 if x in subpat else 0 for x in subagl]\n        elif all_apart == 1:\n            # closest\n            mainfunc = lambda y, x: (all_dif-abs(y-x))/all_dif\n            #mainfunc = lambda y, x: abs((y-x)/all_dif) if y>x else abs((x-y)/all_dif)\n            coef = list(map(mainfunc, subagl, subpat))\n        else:\n            coef = [1 if x in subpat else 0 for x in subagl]\n        Ratio.append(mean(coef))\n    Ratio = mean(Ratio)\n    print (Ratio)\n    return Ratio\n\n\ndef ga():\n\n    agents = init_agents(population, in_str_len)\n\n    for generation in range(generations):\n\n        #print ('Generation: ' + str(generation))\n\n        agents = fitness(agents)\n        agents = selection(agents)\n        agents = crossover(agents)\n        agents = mutation(agents)\n\n        if any(agent.fitness >= threshold for agent in agents):\n\n            print (f'Last generation #{str(generation)}')\n            agent = sorted(agents, key=lambda agent: agent.fitness, reverse=True)[0]\n            print (f'GA ended with {type(agent.string)} {len(agent.string)}, \\\n                     \\n{agent.string[:3]}... \\\n                     \\nFitness: {agent.fitness}')\n            return agent.string\n    return [None]\n    \n\n\ndef init_agents(population, length):\n\n    return [Agent(length) for _ in range(population)]\n\n\ndef fitness(agents):\n\n    for agent in agents:\n        agent.fitness = compare_two_lists(agent.string, in_str)\n\n    return agents\n\n\ndef selection(agents):\n\n    agents = sorted(agents, key=lambda agent: agent.fitness, reverse=True)\n    #print ('\\n'.join(map(str, agents)))\n    agents = agents[:int(selector * len(agents))]\n\n    return agents\n\n\ndef crossover(agents):\n\n    offspring = []\n\n    for _ in range((population - len(agents)) // 2):\n\n        parent1 = random.choice(agents)\n        parent2 = random.choice(agents)\n        child1 = Agent(in_str_len)\n        child2 = Agent(in_str_len)\n        split = random.randint(0, in_str_len)\n        child1.string = parent1.string[0:split] + parent2.string[split:in_str_len]\n        child2.string = parent2.string[0:split] + parent1.string[split:in_str_len]\n\n        offspring.append(child1)\n        offspring.append(child2)\n\n    agents.extend(offspring)\n\n    return agents\n\n\ndef mutation(agents):\n\n    for agent in agents:\n        for idx, param in enumerate(agent.string):\n            if random.uniform(0.0, 1.0) <= mutator:\n                if all_apart == 0:\n                    agent.string = agent.string[0:idx] + \\\n                                [(random.choice(data[0]))] + \\\n                                agent.string[idx+1:in_str_len]\n                elif all_apart == 1:\n                    agent.string = agent.string[0:idx] + \\\n                                [[random.uniform(-mutator,mutator)+d for d in param]] + \\\n                                agent.string[idx+1:in_str_len]\n                else:\n                    agent.string = agent.string[0:idx] + \\\n                                [(random.choice(data[0]))] + \\\n                                agent.string[idx+1:in_str_len]\n\n    return agents\n\nif data and pattern:\n    in_str = pattern[0]\n    emax = lambda a,b: a if (a > b) else b\n    emin = lambda a,b: a if (a < b) else b\n    all_max = reduce(emax,[reduce(emax, x) for x in in_str])\n    all_min = reduce(emin,[reduce(emin, x) for x in in_str])\n    all_dif = all_max-all_min\n    print(f'GA initialised with {type(in_str)} {len(in_str)} \\\n            \\n{in_str[:3]}...')\n    in_str_len = len(in_str)\n    combination = [ga()]\n"
+        "script_str": "# taken from https://github.com/nortikin/simple-ga\n# making comparement between vertices and choose best match\n\nimport random\nfrom functools import reduce\nfrom statistics import mean, variance\n\n\n\"\"\"\nin  pattern v   d=[] n=0\nin  data    v   d=[] n=0\nin  population s d=20 n=2\nin  generations s d=10000 n=2\nin  threshold s d=0.9 n=2\nin  mutator s d=0.1 n=2\nin  selector s d=0.2 n=2\nin  all_apart s d=0 n=2\nout vers_final  v\nout vers_descr  v\n\"\"\"\n\n\nclass Agent:\n\n    def __init__(self, length):\n\n        self.string = [random.choice(data[0]) for _ in range(length)]\n        # self.string = ''.join(random.choice(data[0]) for _ in xrange(length))\n        self.fitness = -1\n\n    def __str__(self):\n\n        return 'String: ' + str(self.string) + ' Fitness: ' + str(self.fitness)\n\n\n\ndef compare_two_lists(agent_list,pattern):\n    \"\"\" fitness descision module \"\"\"\n    lenpat = len(pattern)\n    Ratio = []\n    for i in range(len(agent_list)):\n        j = i%lenpat\n        subpat = pattern[j]           \n        subagl = agent_list[i]\n        # main descision part here, so we assign \n        # coef to all or to separate and summ\n        if all_apart == 0:\n            # full match\n            coef = [1 if x in subpat else 0 for x in subagl]\n        elif all_apart == 1:\n            # closest\n            mainfunc = lambda y, x: (all_dif-abs(y-x))/all_dif\n            coef = list(map(mainfunc, subagl, subpat))\n        else:\n            coef = [1 if x in subpat else 0 for x in subagl]\n        Ratio.append(mean(coef))\n    Ratio = mean(Ratio)\n    #print (Ratio)\n    return Ratio\n\n\ndef ga():\n\n    agents = init_agents(population, in_str_len)\n    stepper = 0.1\n\n    for generation in range(generations):\n\n        #print ('Generation: ' + str(generation))\n\n        agents = fitness(agents)\n        agents = selection(agents)\n        agents = crossover(agents)\n        agents = mutation(agents)\n\n        if any(agent.fitness >= stepper for agent in agents):\n            combo.append(sorted(agents, key=lambda agent: agent.fitness, reverse=True)[0].string)\n            stepper += 0.1\n        if any(agent.fitness >= threshold for agent in agents):\n\n            print (f'Last generation #{str(generation)}')\n            agent = sorted(agents, key=lambda agent: agent.fitness, reverse=True)[0]\n            print (f'GA ended with {type(agent.string)} {len(agent.string)}, \\\n                     \\n{agent.string[:3]}... \\\n                     \\nFitness: {agent.fitness}')\n            return agent.string\n    return [None]\n    \n\n\ndef init_agents(population, length):\n\n    return [Agent(length) for _ in range(population)]\n\n\ndef fitness(agents):\n\n    for agent in agents:\n        agent.fitness = compare_two_lists(agent.string, in_str)\n\n    return agents\n\n\ndef selection(agents):\n\n    agents = sorted(agents, key=lambda agent: agent.fitness, reverse=True)\n    #print ('\\n'.join(map(str, agents)))\n    agents = agents[:int(selector * len(agents))]\n\n    return agents\n\n\ndef crossover(agents):\n\n    offspring = []\n\n    for _ in range((population - len(agents)) // 2):\n\n        parent1 = random.choice(agents)\n        parent2 = random.choice(agents)\n        child1 = Agent(in_str_len)\n        child2 = Agent(in_str_len)\n        split = random.randint(0, in_str_len)\n        child1.string = parent1.string[0:split] + parent2.string[split:in_str_len]\n        child2.string = parent2.string[0:split] + parent1.string[split:in_str_len]\n\n        offspring.append(child1)\n        offspring.append(child2)\n\n    agents.extend(offspring)\n\n    return agents\n\n\ndef mutation(agents):\n\n    for agent in agents:\n        for idx, param in enumerate(agent.string):\n            if random.uniform(0.0, 1.0) <= mutator:\n                if all_apart == 0:\n                    agent.string = agent.string[0:idx] + \\\n                                [(random.choice(data[0]))] + \\\n                                agent.string[idx+1:in_str_len]\n                elif all_apart == 1:\n                    agent.string = agent.string[0:idx] + \\\n                                [[random.uniform(-mutator,mutator)+d for d in param]] + \\\n                                agent.string[idx+1:in_str_len]\n                else:\n                    agent.string = agent.string[0:idx] + \\\n                                [(random.choice(data[0]))] + \\\n                                agent.string[idx+1:in_str_len]\n\n    return agents\n\nif data and pattern:\n    in_str = pattern[0]\n    emax = lambda a,b: a if (a > b) else b\n    emin = lambda a,b: a if (a < b) else b\n    all_max = reduce(emax,[reduce(emax, x) for x in in_str])\n    all_min = reduce(emin,[reduce(emin, x) for x in in_str])\n    all_dif = all_max-all_min\n    print(f'GA initialised with {type(in_str)} {len(in_str)} \\\n            \\n{in_str[:3]}...')\n    in_str_len = len(in_str)\n    combo = []\n    vers_final = [ga()]\n    vers_descr = combo\n"
       },
       "snlite_ui": [],
-      "use_custom_color": true,
-      "width": 140.0
-    },
-    "Socket Converter": {
-      "bl_idname": "ConverterNode",
-      "color": [
-        0.602957010269165,
-        0.6740000247955322,
-        0.5642769932746887
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -219.5,
-        820.736328125
-      ],
-      "params": {},
-      "use_custom_color": true,
-      "width": 140.0
-    },
-    "Stethoscope MK2": {
-      "bl_idname": "SvStethoscopeNodeMK2",
-      "color": [
-        1.0,
-        0.8993440270423889,
-        0.9742509722709656
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -220.91015625,
-        657.909423828125
-      ],
-      "params": {
-        "activate": 1,
-        "compact": 1,
-        "line_width": 106,
-        "num_elements": 1,
-        "text_color": [
-          0.949999988079071,
-          0.949999988079071,
-          0.949999988079071
-        ]
-      },
-      "use_custom_color": true,
-      "width": 140.0
-    },
-    "Stethoscope MK2.001": {
-      "bl_idname": "SvStethoscopeNodeMK2",
-      "color": [
-        1.0,
-        0.8993440270423889,
-        0.9742509722709656
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        984.5301513671875,
-        599.4218139648438
-      ],
-      "params": {
-        "compact": 1,
-        "line_width": 62,
-        "num_elements": 1,
-        "selected_mode": "text-based",
-        "text_color": [
-          0.949999988079071,
-          0.949999988079071,
-          0.949999988079071
-        ]
-      },
       "use_custom_color": true,
       "width": 140.0
     },
@@ -423,8 +487,8 @@
       "hide": false,
       "label": "\u0431\u044b\u043b\u043e/\u0441\u0442\u0430\u043b\u043e",
       "location": [
-        976.5,
-        820.736328125
+        747.2333984375,
+        758.956371307373
       ],
       "params": {
         "num_elements": 2,
@@ -437,14 +501,32 @@
       "use_custom_color": true,
       "width": 140.0
     },
+    "UV Connection": {
+      "bl_idname": "LineConnectNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -331.89119720458984,
+        1013.7838411331177
+      ],
+      "params": {
+        "cicl_check_U": 0,
+        "cicl_check_V": 0,
+        "dir_check": "V_dir",
+        "polygons": "Edges",
+        "slice_check": 0
+      },
+      "width": 140.0
+    },
     "Vector in": {
       "bl_idname": "GenVectorsNode",
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1116.5,
-        721.1756744384766
+        -1107.3847389221191,
+        878.1359558105469
       ],
       "params": {
         "x_": 3.0,
@@ -464,15 +546,21 @@
       "hide": false,
       "label": "",
       "location": [
-        375.55975341796875,
-        1083.6302490234375
+        363.2350158691406,
+        1041.9264640808105
       ],
       "params": {
         "activate": 1,
         "display_edges": 1,
         "display_faces": 0,
         "point_size": 8.0,
-        "selected_draw_mode": "facet"
+        "selected_draw_mode": "facet",
+        "vert_color": [
+          0.5,
+          1.0,
+          0.5,
+          1.0
+        ]
       },
       "use_custom_color": true,
       "width": 140.0
@@ -488,10 +576,11 @@
       "hide": false,
       "label": "",
       "location": [
-        -522.9977416992188,
-        1087.351318359375
+        -809.4932594299316,
+        759.5796813964844
       ],
       "params": {
+        "activate": 1,
         "display_faces": 0,
         "edge_color": [
           1.0,
@@ -521,29 +610,25 @@
       "hide": false,
       "label": "",
       "location": [
-        -520.6944580078125,
-        523.3268432617188
+        -549.4794273376465,
+        1017.5534334182739
       ],
       "params": {
+        "activate": 1,
+        "display_edges": 0,
         "display_faces": 0,
-        "edge_color": [
-          0.22871442139148712,
-          0.06509549915790558,
-          1.0,
-          1.0
-        ],
-        "use_dashed": 1,
+        "point_size": 6.0,
         "vert_color": [
-          0.22871442139148712,
-          0.06509549915790558,
-          1.0,
+          0.5324395298957825,
+          0.5324395298957825,
+          0.5324395298957825,
           1.0
         ]
       },
       "use_custom_color": true,
       "width": 140.0
     },
-    "Viewer Draw Mk3.003": {
+    "Viewer Draw Mk3.004": {
       "bl_idname": "SvVDExperimental",
       "color": [
         0.6284880042076111,
@@ -554,23 +639,26 @@
       "hide": false,
       "label": "",
       "location": [
-        980.475341796875,
-        375.14166259765625
+        -139.88166046142578,
+        1014.7195100784302
       ],
       "params": {
         "activate": 1,
-        "display_edges": 1,
         "display_faces": 0,
-        "display_verts": 0,
+        "display_verts": 1,
         "edge_color": [
-          0.4913524389266968,
-          1.0,
-          0.8621053695678711,
+          0.4749784767627716,
+          0.4749784767627716,
+          0.4749784767627716,
           1.0
         ],
-        "point_size": 8.0,
-        "selected_draw_mode": "facet",
-        "use_dashed": 1
+        "point_size": 3.0,
+        "vert_color": [
+          0.6358873844146729,
+          0.6358873844146729,
+          0.6358873844146729,
+          1.0
+        ]
       },
       "use_custom_color": true,
       "width": 140.0
@@ -581,8 +669,8 @@
       "hide": false,
       "label": "\u043e\u0431\u044a\u0451\u043c \u0431\u044b\u043b",
       "location": [
-        378.5,
-        820.736328125
+        386.22869873046875,
+        766.2567863464355
       ],
       "params": {},
       "width": 140.0
@@ -593,14 +681,26 @@
       "hide": false,
       "label": "\u043e\u0431\u044a\u0451\u043c \u0441\u0442\u0430\u043b",
       "location": [
-        378.5,
-        693.3173828125
+        386.22869873046875,
+        638.8378410339355
       ],
       "params": {},
       "width": 140.0
     }
   },
   "update_lists": [
+    [
+      "Random Vector MK2",
+      0,
+      "Move",
+      0
+    ],
+    [
+      "Vector in",
+      0,
+      "Move",
+      1
+    ],
     [
       "IcoSphere",
       0,
@@ -611,6 +711,84 @@
       "Vector in",
       0,
       "Move.001",
+      1
+    ],
+    [
+      "Move.001",
+      0,
+      "Scripted Node Lite",
+      0
+    ],
+    [
+      "Move",
+      0,
+      "Scripted Node Lite",
+      1
+    ],
+    [
+      "A Number",
+      0,
+      "Scripted Node Lite",
+      2
+    ],
+    [
+      "A Number.001",
+      0,
+      "Scripted Node Lite",
+      3
+    ],
+    [
+      "A Number.003",
+      0,
+      "Scripted Node Lite",
+      4
+    ],
+    [
+      "A Number.002",
+      0,
+      "Scripted Node Lite",
+      5
+    ],
+    [
+      "A Number.005",
+      0,
+      "Scripted Node Lite",
+      6
+    ],
+    [
+      "A Number.004",
+      0,
+      "Scripted Node Lite",
+      7
+    ],
+    [
+      "Move",
+      0,
+      "UV Connection",
+      0
+    ],
+    [
+      "Scripted Node Lite",
+      1,
+      "UV Connection",
+      1
+    ],
+    [
+      "Scripted Node Lite",
+      0,
+      "UV Connection",
+      2
+    ],
+    [
+      "UV Connection",
+      0,
+      "Viewer Draw Mk3.004",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "Viewer Draw Mk3.004",
       1
     ],
     [
@@ -626,37 +804,7 @@
       1
     ],
     [
-      "Random Vector MK2",
-      0,
-      "Move",
-      0
-    ],
-    [
-      "Vector in",
-      0,
-      "Move",
-      1
-    ],
-    [
-      "Move.001",
-      0,
-      "Scripted Node Lite.001",
-      0
-    ],
-    [
-      "Move",
-      0,
-      "Scripted Node Lite.001",
-      1
-    ],
-    [
-      "Scripted Node Lite.001",
-      0,
-      "Socket Converter",
-      0
-    ],
-    [
-      "Socket Converter",
+      "Scripted Node Lite",
       0,
       "Convex Hull",
       0
@@ -686,9 +834,9 @@
       1
     ],
     [
-      "Socket Converter",
+      "List Join",
       0,
-      "List Length",
+      "Stethoscope MK2.002",
       0
     ],
     [
@@ -710,24 +858,6 @@
       0
     ],
     [
-      "List Length",
-      0,
-      "Number Range",
-      2
-    ],
-    [
-      "Number Range",
-      0,
-      "Combinatorics",
-      2
-    ],
-    [
-      "Combinatorics",
-      0,
-      "Stethoscope MK2.001",
-      0
-    ],
-    [
       "Move.001",
       0,
       "Viewer Draw Mk3.001",
@@ -738,30 +868,6 @@
       1,
       "Viewer Draw Mk3.001",
       1
-    ],
-    [
-      "Socket Converter",
-      0,
-      "Viewer Draw Mk3.003",
-      0
-    ],
-    [
-      "Combinatorics",
-      0,
-      "Viewer Draw Mk3.003",
-      1
-    ],
-    [
-      "List Join",
-      0,
-      "Stethoscope MK2.002",
-      0
-    ],
-    [
-      "Scripted Node Lite.001",
-      0,
-      "Stethoscope MK2",
-      0
     ]
   ]
 }
