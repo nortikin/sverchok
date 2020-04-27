@@ -7,6 +7,7 @@ from sverchok import old_nodes
 from sverchok import data_structure
 from sverchok.core import upgrade_nodes, undo_handler_node_count
 from sverchok.core.update_system import set_first_run
+from sverchok.core.events import CurrentEvents, BlenderEventsTypes
 from sverchok.ui import color_def, bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
 from sverchok.utils.logging import debug
