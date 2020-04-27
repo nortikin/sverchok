@@ -118,6 +118,7 @@ class CurrentEvents:
 
     @classmethod
     def convert_wave_to_sverchok_event(cls):
+        return  # should be used in next stages
         sverchok_event_type = cls.events_wave[0].get_sverchok_type_event()
         if cls.is_in_debug_mode():
             if cls.events_wave[0].updated_element is None:
