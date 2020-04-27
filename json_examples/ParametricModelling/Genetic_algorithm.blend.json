@@ -42,7 +42,7 @@
         "float_draft_": 5.0,
         "float_max": 50.0,
         "float_min": 5.0,
-        "int_": 0,
+        "int_": 20,
         "int_draft_": 20,
         "int_max": 50,
         "int_min": 5,
@@ -66,7 +66,7 @@
         "float_draft_": 5.0,
         "float_max": 50.0,
         "float_min": 5.0,
-        "int_": 0,
+        "int_": 1000,
         "int_draft_": 1000,
         "int_max": 10000,
         "int_min": 200,
@@ -86,7 +86,7 @@
         320.5424499511719
       ],
       "params": {
-        "float_": 0.0,
+        "float_": 0.05000000074505806,
         "float_draft_": 0.05000000074505806,
         "float_max": 0.5,
         "float_min": 0.009999999776482582,
@@ -110,8 +110,8 @@
         402.857421875
       ],
       "params": {
-        "float_": 0.0,
-        "float_draft_": 0.699999988079071,
+        "float_": 0.699999988079071,
+        "float_draft_": 0.800000011920929,
         "float_max": 0.9950000047683716,
         "float_min": 0.5,
         "int_": 0,
@@ -138,7 +138,7 @@
         "float_draft_": 5.0,
         "float_max": 0.5,
         "float_min": 0.009999999776482582,
-        "int_": 0,
+        "int_": 1,
         "int_draft_": 1,
         "int_max": 1,
         "int_min": 0,
@@ -158,7 +158,7 @@
         233.65440368652344
       ],
       "params": {
-        "float_": 0.0,
+        "float_": 0.20000000298023224,
         "float_draft_": 0.07999999821186066,
         "float_max": 0.5,
         "float_min": 0.07999999821186066,
@@ -356,7 +356,7 @@
         1210.0062255859375
       ],
       "params": {
-        "text": "Nikitron 2020 - genetic algorythm attempt. Moving data set points to fit pattern. turn off processing and use ctrl+F5 to run once."
+        "text": "Nikitron 2020 - genetic algorythm attempt. Moving data set points to fit pattern. turn off processing and use ctrl+F5 to run once. Threshod inside SNL till 0.995, not more"
       },
       "use_custom_color": true,
       "width": 509.6258544921875
