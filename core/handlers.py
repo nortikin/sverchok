@@ -9,7 +9,7 @@ from sverchok.core import upgrade_nodes, undo_handler_node_count
 from sverchok.core.update_system import set_first_run
 from sverchok.ui import color_def, bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
-from sverchok.utils.logging import debug
+import sverchok.core.events as ev
 
 _state = {'frame': None}
 
@@ -62,7 +62,7 @@ def sv_handler_undo_pre(scene):
 
 @persistent
 def sv_handler_undo_post(scene):
-    CurrentEvents.new_event(BlenderEventsTypes.undo)
+    ev.CurrentEvents.add_new_event(ev.BlenderEventsTypes.undo)
     # this function appears to be hoisted into an environment that does not have the same locals()
     # hence this dict must be imported. (jan 2019)
 
@@ -96,7 +96,7 @@ def sv_update_handler(scene):
     if not has_frame_changed(scene):
         return
 
-    CurrentEvents.new_event(BlenderEventsTypes.frame_change)
+    ev.CurrentEvents.add_new_event(ev.BlenderEventsTypes.frame_change)
     for ng in sverchok_trees():
         try:
             # print('sv_update_handler')

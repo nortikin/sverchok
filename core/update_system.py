@@ -450,7 +450,7 @@ def process_to_node(node):
 
 
 def process_from_nodes(nodes):
-
+    print(f"Process from nodes: {', '.join([node.name for node in nodes])}")  # todo delete this
     if not nodes:
         return
 

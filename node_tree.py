@@ -44,7 +44,7 @@ from sverchok.core.node_id_dict import SvNodesDict
 
 from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
 from sverchok.core.node_defaults import set_defaults_if_defined
-from sverchok.core.events import CurrentEvents, BlenderEventsTypes
+import sverchok.core.events as ev
 
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
@@ -343,23 +343,24 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         get update list for debug info, tuple (fulllist, dictofpartiallists)
         '''
 
-        CurrentEvents.new_event(BlenderEventsTypes.tree_update, self)
+        ev.CurrentEvents.add_new_event(ev.BlenderEventsTypes.tree_update, self)
 
-        # this is a no-op if there's no drawing
-        clear_exception_drawing_with_bgl(self.nodes)
-        if is_first_run():
-            return
-        if self.skip_tree_update:
-            # print('throttled update from context manager')
-            return
-        if self.configuring_new_node or self.is_frozen() or not self.sv_process:
-            return
+        if False:  # get from preference
+            # this is a no-op if there's no drawing
+            clear_exception_drawing_with_bgl(self.nodes)
+            if is_first_run():
+                return
+            if self.skip_tree_update:
+                # print('throttled update from context manager')
+                return
+            if self.configuring_new_node or self.is_frozen() or not self.sv_process:
+                return
 
-        self.sv_update()
-        self.has_changed = False
+            self.sv_update()
+            self.has_changed = False
 
-        # self.has_changed = True
-        # self.process()
+            # self.has_changed = True
+            # self.process()
 
     def process_ani(self):
         """
@@ -415,8 +416,9 @@ class SverchCustomTreeNode:
     n_id : StringProperty(default="")
     
     def update(self):
-        CurrentEvents.new_event(BlenderEventsTypes.node_update, self)
-        self.sv_update()
+        ev.CurrentEvents.add_new_event(ev.BlenderEventsTypes.node_update, self)
+        if False:  # todo get this from preference
+            self.sv_update()
 
     def sv_update(self):
         """
@@ -427,7 +429,7 @@ class SverchCustomTreeNode:
         pass
 
     def insert_link(self, link):
-        CurrentEvents.new_event(BlenderEventsTypes.add_link_to_node, self)
+        ev.CurrentEvents.add_new_event(ev.BlenderEventsTypes.add_link_to_node, self)
 
     @classmethod
     def poll(cls, ntree):
@@ -712,27 +714,28 @@ class SverchCustomTreeNode:
         - sets custom defaults (nodes, and sockets)
 
         """
-        CurrentEvents.new_event(BlenderEventsTypes.add_node, self)
-        ng = self.id_data
+        ev.CurrentEvents.add_new_event(ev.BlenderEventsTypes.add_node, self)
+        if False:  # todo take from preference
+            ng = self.id_data
 
-        ng.freeze()
-        ng.nodes_dict.load_node(self)
-        if hasattr(self, "sv_init"):
+            ng.freeze()
+            ng.nodes_dict.load_node(self)
+            if hasattr(self, "sv_init"):
 
-            try:
-                ng.configuring_new_node = True
-                self.sv_init(context)
-            except Exception as err:
-                print('nodetree.node.sv_init failure - stare at the error message below')
-                sys.stderr.write('ERROR: %s\n' % str(err))
+                try:
+                    ng.configuring_new_node = True
+                    self.sv_init(context)
+                except Exception as err:
+                    print('nodetree.node.sv_init failure - stare at the error message below')
+                    sys.stderr.write('ERROR: %s\n' % str(err))
 
-        ng.configuring_new_node = False
-        self.set_color()
-        ng.unfreeze()
+            ng.configuring_new_node = False
+            self.set_color()
+            ng.unfreeze()
 
-        if not ng.limited_init:
-            # print('applying default for', self.name)
-            set_defaults_if_defined(self)
+            if not ng.limited_init:
+                # print('applying default for', self.name)
+                set_defaults_if_defined(self)
 
     def process_node(self, context):
         '''
@@ -765,13 +768,14 @@ class SverchCustomTreeNode:
         This method is not supposed to be overriden in specific nodes.
         Override sv_copy() instead.
         """
-        CurrentEvents.new_event(BlenderEventsTypes.copy_node, self)
-        settings = get_original_node_color(self.id_data, original.name)
-        if settings is not None:
-            self.use_custom_color, self.color = settings
-        self.sv_copy(original)
-        self.n_id = ""
-        self.id_data.nodes_dict.load_node(self)
+        ev.CurrentEvents.add_new_event(ev.BlenderEventsTypes.copy_node, self)
+        if False:  # todo get this from preference
+            settings = get_original_node_color(self.id_data, original.name)
+            if settings is not None:
+                self.use_custom_color, self.color = settings
+            self.sv_copy(original)
+            self.n_id = ""
+            self.id_data.nodes_dict.load_node(self)
 
     def sv_copy(self, original):
         """
@@ -785,21 +789,22 @@ class SverchCustomTreeNode:
         This method is not supposed to be overriden in specific nodes.
         Override sv_free() instead
         """
-        self.sv_free()
+        ev.CurrentEvents.add_new_event(ev.BlenderEventsTypes.free_node, self)
+        if False:  # todo get this from preference
+            self.sv_free()
 
-        for s in self.outputs:
-            s.sv_forget()
+            for s in self.outputs:
+                s.sv_forget()
 
-        node_tree = self.id_data
-        node_tree.nodes_dict.forget_node(self)
+            node_tree = self.id_data
+            node_tree.nodes_dict.forget_node(self)
 
-        CurrentEvents.new_event(BlenderEventsTypes.free_node, self)
-        if hasattr(self, "has_3dview_props"):
-            print("about to remove this node's props from Sv3DProps")
-            try:
-                bpy.ops.node.sv_remove_3dviewpropitem(node_name=self.name, tree_name=self.id_data.name)
-            except:
-                print(f'failed to remove {self.name} from tree={self.id_data.name}')
+            if hasattr(self, "has_3dview_props"):
+                print("about to remove this node's props from Sv3DProps")
+                try:
+                    bpy.ops.node.sv_remove_3dviewpropitem(node_name=self.name, tree_name=self.id_data.name)
+                except:
+                    print(f'failed to remove {self.name} from tree={self.id_data.name}')
 
     def sv_free(self):
         """
