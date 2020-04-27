@@ -22,6 +22,7 @@ import bmesh
 
 import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
@@ -52,7 +53,7 @@ class SvOB3Callback(bpy.types.Operator):
 
 
 
-class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
+class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """
     Triggers: Input Scene Objects
     Tooltip: Get Scene Objects into Sverchok Tree
@@ -95,7 +96,10 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         default=True, update=updateNode)
 
     object_names: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
-    to3d: BoolProperty(default=False, update=updateNode)
+    to3d: BoolProperty(
+        default=False, 
+        description="Show in Sverchok control panel",
+        update=updateNode)
 
 
     def sv_init(self, context):
@@ -190,7 +194,8 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         self.draw_obj_names(layout)
 
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, 'to3d')
+        layout.prop(self, 'to3d', text="To Control panel")
+        layout.prop(self, 'is_animatable')
 
     @property
     def draw_3dpanel(self):

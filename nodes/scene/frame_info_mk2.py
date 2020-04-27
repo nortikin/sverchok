@@ -19,9 +19,10 @@
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 
 
-class SvFrameInfoNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvFrameInfoNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     ''' Frame Info '''
     bl_idname = 'SvFrameInfoNodeMK2'
     bl_label = 'Frame info'
@@ -60,6 +61,10 @@ class SvFrameInfoNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         # row.operator("screen.keyframe_jump", text="", icon='NEXT_KEYFRAME').next = True
         row.operator("screen.frame_jump", text="", icon='FF').end = True
         row.prop(scene, "frame_current", text="")
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'is_animatable')
 
     def process(self):
         scene = bpy.context.scene
