@@ -167,7 +167,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             if not socket_one_has_upstream_links:
                 callback_disable(node_id(self))
         except:
-            print('vd idx update holdout', self.n_id)
+            self.debug('vd idx update holdout', self.n_id)
 
 
     def get_face_extras(self, geom):
