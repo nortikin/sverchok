@@ -341,13 +341,13 @@ class SvSubdivideNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             result_face_data.append(new_face_data)
 
             if show_new:
-                inner_verts, inner_edges, inner_faces = self.get_result_pydata(geom['geom_inner'])
+                inner_verts, inner_edges, inner_faces = get_partial_result_pydata(geom['geom_inner'])
                 r_inner_vertices.append(inner_verts)
                 r_inner_edges.append(inner_edges)
                 r_inner_faces.append(inner_faces)
 
             if show_old:
-                split_verts, split_edges, split_faces = self.get_result_pydata(geom['geom_split'])
+                split_verts, split_edges, split_faces = get_partial_result_pydata(geom['geom_split'])
                 r_split_vertices.append(split_verts)
                 r_split_edges.append(split_edges)
                 r_split_faces.append(split_faces)
