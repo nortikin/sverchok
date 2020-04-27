@@ -97,7 +97,7 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvDictionarySocket', 'Dict')
         self['update_event'] = False  # if True the node does not update upon properties changes
 
-    def update(self):
+    def sv_update(self):
         # Remove unused sockets
         [self.inputs.remove(sock) for sock in list(self.inputs)[:-1] if not sock.is_linked]
         [sock.catch_props() for sock in self.inputs if sock.links]

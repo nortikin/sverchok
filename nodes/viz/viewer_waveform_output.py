@@ -525,7 +525,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     def sv_copy(self, node):
         self.n_id = ''
 
-    def update(self):
+    def sv_update(self):
         # handle disconnecting sockets, also disconnect drawing to view?
         if not ("channel 1" in self.inputs):
             return

@@ -77,7 +77,7 @@ class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "data[0]")
 
 
-    def update(self):
+    def sv_update(self):
         other = get_other_socket(self.inputs[0])
         if not other:
             return

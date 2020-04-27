@@ -54,16 +54,15 @@ def has_frame_changed(scene):
 
 @persistent
 def sv_handler_undo_pre(scene):
-    print('called undo pre')
     from sverchok.core import undo_handler_node_count
 
     for ng in sverchok_trees():
         undo_handler_node_count['sv_groups'] += len(ng.nodes)
-    print('collected num nodes:', undo_handler_node_count)
+
 
 @persistent
 def sv_handler_undo_post(scene):
-    print('called undo post')
+    CurrentEvents.new_event(BlenderEventsTypes.undo)
     # this function appears to be hoisted into an environment that does not have the same locals()
     # hence this dict must be imported. (jan 2019)
 
@@ -97,18 +96,13 @@ def sv_update_handler(scene):
     if not has_frame_changed(scene):
         return
 
+    CurrentEvents.new_event(BlenderEventsTypes.frame_change)
     for ng in sverchok_trees():
         try:
             # print('sv_update_handler')
             ng.process_ani()
         except Exception as e:
-            print('Failed to update:', str(e)) #name,
-
-    if scene.render:
-        debug(f'is rendering frame {scene.frame_current}, updates missed?')
-        # ---- raise Exception("asserting error")
-
-    # scene.update()  <-- does not exist in 2.80 recent builds
+            print('Failed to update:', str(e))  # name,
 
 
 @persistent

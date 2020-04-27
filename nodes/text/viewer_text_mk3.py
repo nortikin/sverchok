@@ -196,7 +196,7 @@ class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
         col.prop(self, "frame", text="frame")
 
 
-    def update(self):
+    def sv_update(self):
         # this function auto extends the number of input sockets once a socket is linked.
         multi_socket(self, min=1)
 

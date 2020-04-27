@@ -45,7 +45,7 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'level')
         layout.prop(self, 'choice')
 
-    def update(self):
+    def sv_update(self):
         inputsocketname = 'Data True'
         outputsocketname = ['Data']
         changable_sockets(self, inputsocketname, outputsocketname)

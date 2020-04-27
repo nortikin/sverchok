@@ -628,7 +628,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     def fully_enabled(self):
         return "attrs" in self.inputs
 
-    def update(self):
+    def sv_update(self):
         if not self.fully_enabled:
             return
 
@@ -639,7 +639,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             if not socket_one_has_upstream_links:
                 callback_disable(node_id(self))
         except:
-            print('vd basic lines update holdout', self.n_id)
+            self.debug('vd draw update holdout', self.n_id)
 
     def sv_free(self):
         callback_disable(node_id(self))

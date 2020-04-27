@@ -81,8 +81,6 @@ class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(prefs.inputs, 'view_rotate_method', text='orbit', expand=True)
 
-    def update(self):
-        pass
 
 def register():
     bpy.utils.register_class(Sv3DviewPropsNode)

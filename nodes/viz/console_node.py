@@ -597,7 +597,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         if not self.inputs[0].is_linked or not self.inputs[0].sv_get():
             return True
 
-    def update(self):
+    def sv_update(self):
         if not ("text" in self.inputs):
             return
         try:

@@ -74,7 +74,7 @@ class SvCombinatoricsNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.update_operation(context)
 
-    def update(self):
+    def sv_update(self):
         ''' Add/remove sockets as A-Z sockets are connected/disconnected '''
         if not 'Result' in self.outputs:
             return

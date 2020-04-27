@@ -13,7 +13,7 @@ core_modules = [
     "monad_properties", "sv_custom_exceptions",
     "node_id_dict", "links", "sockets",
     "handlers", "update_system", "upgrade_nodes",
-    "monad", "node_defaults"
+    "monad", "node_defaults", "events"
 ]
 
 def sv_register_modules(modules):

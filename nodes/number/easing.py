@@ -251,7 +251,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         # reset n_id on copy
         self.n_id = ''
 
-    def update(self):
+    def sv_update(self):
         # handle disconnecting sockets, also disconnect drawing to view?
         if not ("Float" in self.inputs):
             return

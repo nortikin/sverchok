@@ -527,7 +527,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                 self.debug("Variable {} not in inputs {}, add it".format(v, str(self.inputs.keys())))
                 self.inputs.new('SvStringsSocket', v)
 
-    def update(self):
+    def sv_update(self):
         '''
         update analyzes the state of the node and returns if the criteria to start processing
         are not met.

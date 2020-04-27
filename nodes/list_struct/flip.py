@@ -75,7 +75,7 @@ class ListFlipNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
 
-    def update(self):
+    def sv_update(self):
         inputsocketname = 'data'
         outputsocketname = ['data']
         changable_sockets(self, inputsocketname, outputsocketname)

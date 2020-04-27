@@ -87,7 +87,7 @@ class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
             n = self.outputs[0].name.rstrip("[0]")
             self.var_name = n
 
-    def update(self):
+    def sv_update(self):
         if not self.var_name and self.outputs:
             self.gen_var_name()
         ng = self.id_data

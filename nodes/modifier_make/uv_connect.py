@@ -224,7 +224,7 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             vers_ = [joinvers]
         return vers_, edges
 
-    def update(self):
+    def sv_update(self):
         # inputs
         multi_socket(self, min=1)
 

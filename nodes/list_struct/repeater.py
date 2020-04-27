@@ -45,7 +45,7 @@ class ListRepeaterNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Number").prop_name = 'number'
         self.outputs.new('SvStringsSocket', "Data")
 
-    def update(self):
+    def sv_update(self):
         if 'Data' in self.inputs and self.inputs['Data'].links:
             inputsocketname = 'Data'
             outputsocketname = ['Data', ]

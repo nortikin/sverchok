@@ -168,7 +168,7 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
         elif self.operation == "BASIS":
             return self.operation_basis
 
-    def update(self):
+    def sv_update(self):
         # sigle input operation ? => no need to update sockets
         if self.operation not in {"MULTIPLY"}:
             return
