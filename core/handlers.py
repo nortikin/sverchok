@@ -18,18 +18,55 @@ pre_running = False
 sv_depsgraph = []
 depsgraph_need = False
 
+subscription_owner = object()
+
+"""
+The nodes that need to subscribe to object/attribute changes should call this
+convenience function from within their setup_subscription method (typically
+invoked by the sv_setup_subscriptions below, after loading a blender file).
+"""
+def subscribe_to_changes(subscribe_to, message, callback):
+    debug("* handlers: subscribe_to_changes: %s", message)
+    bpy.msgbus.subscribe_rna(
+        key=subscribe_to,
+        owner=subscription_owner,
+        args=(message,),
+        notify=callback,
+        options={"PERSISTENT", }
+    )
+
+
+"""
+This is called automatically after loading a blender file (load_post) to give
+all the nodes the opportunity to (re)subscribe to object/attribute changes.
+
+A node that needs to subscribe to object/attribute changes should implement a
+setup_subscriptions method and within that method use the subscribe_to_changes
+convenience function above to setup all its necesssary subscriptions.
+"""
+def sv_setup_subscriptions():
+    debug("* handlers: sv_setup_subscriptions")
+
+    for node_tree in sverchok_trees():
+        for node in node_tree.nodes:
+            setup_subscriptions = getattr(node, "setup_subscriptions", None)
+            if callable(setup_subscriptions):
+                node.setup_subscriptions()
+
+
 def get_sv_depsgraph():
     global sv_depsgraph
     global depsgraph_need
     if not depsgraph_need:
-
         sv_depsgraph = bpy.context.evaluated_depsgraph_get()
         depsgraph_need = True
     return sv_depsgraph
 
+
 def set_sv_depsgraph_need(val):
     global depsgraph_need
     depsgraph_need = val
+
 
 def sverchok_trees():
     for ng in bpy.data.node_groups:
@@ -53,12 +90,14 @@ def has_frame_changed(scene):
 #  If at any time the undo system is fixed and does call "node.free()" when a node is removed
 #  after ctrl+z. then these two functions and handlers are no longer needed.
 
+
 @persistent
 def sv_handler_undo_pre(scene):
     from sverchok.core import undo_handler_node_count
 
     for ng in sverchok_trees():
         undo_handler_node_count['sv_groups'] += len(ng.nodes)
+
 
 
 @persistent
@@ -150,7 +189,6 @@ def sv_main_handler(scene):
     pre_running = False
 
 
-@persistent
 def sv_clean(scene):
     """
     Cleanup callbacks, clean dicts.
@@ -161,15 +199,14 @@ def sv_clean(scene):
     data_structure.sv_Vars = {}
     data_structure.temp_handle = {}
 
-@persistent
-def sv_pre_load(scene):
 
+@persistent
+def sv_handler_load_pre(scene):
+    """ Various things to do before (re)loading a blend file """
     sv_clean(scene)
-    set_first_run(True)
 
 
-@persistent
-def sv_post_load(scene):
+def sv_ensure_nodetree_data_after_blender_load():
     """
     Upgrade nodes, apply preferences and do an update.
     """
@@ -178,8 +215,7 @@ def sv_post_load(scene):
 
     # ensure current nodeview view scale / location parameters reflect users' system settings
     from sverchok import node_tree
-    node_tree.SverchCustomTreeNode.get_and_set_gl_scale_info(None, "sv_post_load")
-
+    node_tree.SverchCustomTreeNode.get_and_set_gl_scale_info(None, "sv_ensure_nodetree_data_after_blender_load")
 
     for monad in (ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchGroupTreeType'):
         if monad.input_node and monad.output_node:
@@ -215,6 +251,17 @@ def sv_post_load(scene):
             ng.update()
 
 
+@persistent
+def sv_handler_load_post(scene):
+    """ Various things to do after (re)loading a blend file """
+
+    # update node tree data
+    sv_ensure_nodetree_data_after_blender_load()
+
+    # update setup subscriptions
+    sv_setup_subscriptions()
+
+
 def set_frame_change(mode):
     post = bpy.app.handlers.frame_change_post
     pre = bpy.app.handlers.frame_change_pre
@@ -225,7 +272,7 @@ def set_frame_change(mode):
         post.remove(sv_update_handler)
     if sv_update_handler in pre:
         pre.remove(sv_update_handler)
-    #if sv_scene_handler in scene:
+    # if sv_scene_handler in scene:
     #    scene.remove(sv_scene_handler)
 
     # apply the right one
@@ -238,14 +285,13 @@ def set_frame_change(mode):
 handler_dict = {
     'undo_pre': sv_handler_undo_pre,
     'undo_post': sv_handler_undo_post,
-    'load_pre': sv_pre_load,
-    'load_post': sv_post_load,
-    'depsgraph_update_pre': sv_main_handler
+    'load_pre': sv_handler_load_pre,
+    'load_post': sv_handler_load_post,
+    'depsgraph_update_pre': sv_main_handler,
 }
 
 
 def register():
-
     app_handler_ops(append=handler_dict)
 
     data_structure.setup_init()
