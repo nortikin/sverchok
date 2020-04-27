@@ -159,8 +159,16 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_update(self):
         # used because this node should disable itself if no inputs.
-        n_id = node_id(self)
-        callback_disable(n_id)
+        if 'text' not in self.inputs:
+            return
+
+        try:
+            socket_one_has_upstream_links = self.inputs[0].other
+            if not socket_one_has_upstream_links:
+                callback_disable(node_id(self))
+        except:
+            print('vd idx update holdout', self.n_id)
+
 
     def get_face_extras(self, geom):
         face_medians = []
