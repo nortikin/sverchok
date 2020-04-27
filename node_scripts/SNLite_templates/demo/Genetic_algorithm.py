@@ -15,7 +15,7 @@ in  threshold s d=0.9 n=2
 in  mutator s d=0.1 n=2
 in  selector s d=0.2 n=2
 in  all_apart s d=0 n=2
-out combination  s
+out combination  v
 """
 
 
@@ -54,7 +54,7 @@ def compare_two_lists(agent_list,pattern):
             coef = [1 if x in subpat else 0 for x in subagl]
         Ratio.append(mean(coef))
     Ratio = mean(Ratio)
-    print (Ratio)
+    #print (Ratio)
     return Ratio
 
 
