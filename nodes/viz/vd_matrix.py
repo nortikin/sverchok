@@ -155,7 +155,7 @@ class SvMatrixViewer28(bpy.types.Node, SverchCustomTreeNode):
             callback_enable(self.n_id, draw_data, overlay='POST_VIEW')
             callback_enable(self.n_id+'__2D', draw_data_2d, overlay='POST_PIXEL')
 
-    def free(self):
+    def sv_free(self):
         callback_disable(node_id(self))
         callback_disable(node_id(self) + '__2D')
 

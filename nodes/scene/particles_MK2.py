@@ -81,7 +81,7 @@ class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode):
             if outV.is_linked:
                 outV.sv_set([[i.velocity[:] for i in Plist] for Plist in listobj])
 
-    def free(self):
+    def sv_free(self):
         set_sv_depsgraph_need(False)
 
 def register():

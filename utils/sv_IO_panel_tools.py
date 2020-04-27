@@ -640,12 +640,13 @@ def add_nodes(ng, nodes_to_import, nodes, create_texts):
     '''
     name_remap = {}
     ng.limited_init = True
+    # ng.skip_tree_update = True
     try:
         for n in sorted(nodes_to_import):
             add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts)
     except Exception as err:
         exception(err)
-
+    # ng.skip_tree_update = False
     ng.limited_init = False
     return name_remap
 
@@ -706,7 +707,6 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
 
     def make_links(update_lists, name_remap):
         print_update_lists(update_lists)
-
         failed_connections = []
         for link in update_lists:
             try:
@@ -737,12 +737,15 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
         if center is not None:
             center_nodes(nodes_to_import, center)
         groups_to_import = nodes_json.get('groups', {})
+        previous_state = ng.sv_process
 
+        ng.sv_process = False
         add_groups(groups_to_import)  # this return is not used yet
         name_remap = add_nodes(ng, nodes_to_import, nodes, create_texts)
 
-        # now connect them / prevent unnecessary updates
         ng.freeze(hard=True)
+
+        # now connect them / prevent unnecessary updates
         make_links(update_lists, name_remap)
 
         # set frame parents '''
@@ -750,10 +753,15 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
 
         # clean up
         old_nodes.scan_for_old(ng)
+
         ng.unfreeze(hard=True)
+
+        ng.sv_process = True
 
         ng.update()
         ng.update_tag()
+        ng.sv_process = previous_state
+
 
     # ---- read files (.json or .zip) or straight json data -----
 

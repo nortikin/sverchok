@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from sverchok import data_structure
-from sverchok.utils.logging import warning, info
+from sverchok.utils.logging import warning, info, debug
 
 #####################################
 # socket data cache                 #
@@ -47,7 +47,7 @@ def sv_deep_copy(lst):
 def SvGetSocketInfo(socket):
     """returns string to show in socket label"""
     global socket_data_cache
-    ng = socket.id_data.name
+    ng = socket.id_data.tree_id
 
     if socket.is_output:
         s_id = socket.socket_id
@@ -66,6 +66,20 @@ def SvGetSocketInfo(socket):
                 return str(len(data))
     return ''
 
+def SvForgetSocket(socket):
+    """deletes socket data from cache"""
+    global socket_data_cache
+    if data_structure.DEBUG_MODE:
+        if not socket.is_output:
+            warning(f"{socket.node.name} forgetting input socket: {socket.name}")
+        if not socket.is_linked:
+            warning(f"{socket.node.name} forgetting unconncted socket: {socket.name}")
+    s_id = socket.socket_id
+    s_ng = socket.id_data.tree_id
+    try:
+        socket_data_cache[s_ng].pop(s_id, None)
+    except KeyError:
+        print("it was never there")
 
 def SvSetSocket(socket, out):
     """sets socket data for socket"""
@@ -76,7 +90,7 @@ def SvSetSocket(socket, out):
         if not socket.is_linked:
             warning(f"{socket.node.name} setting unconncted socket: {socket.name}")
     s_id = socket.socket_id
-    s_ng = socket.id_data.name
+    s_ng = socket.id_data.tree_id
     if s_ng not in socket_data_cache:
         socket_data_cache[s_ng] = {}
     socket_data_cache[s_ng][s_id] = out
@@ -92,7 +106,7 @@ def SvGetSocket(socket, deepcopy=True):
     if socket.is_linked:
         other = socket.other
         s_id = other.socket_id
-        s_ng = other.id_data.name
+        s_ng = other.id_data.tree_id
         if s_ng not in socket_data_cache:
             raise LookupError
         if s_id in socket_data_cache[s_ng]:
@@ -149,7 +163,7 @@ def get_output_socket_data(node, output_socket_name):
 
     global socket_data_cache
 
-    tree_name = node.id_data.name
+    tree_name = node.id_data.tree_id
     socket = node.outputs[output_socket_name]
     socket_id = socket.socket_id
     if tree_name not in socket_data_cache:
@@ -164,4 +178,4 @@ def reset_socket_cache(ng):
     Reset socket cache either for node group.
     """
     global socket_data_cache
-    socket_data_cache[ng.name] = {}
+    socket_data_cache[ng.tree_id] = {}

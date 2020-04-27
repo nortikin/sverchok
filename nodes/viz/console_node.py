@@ -574,7 +574,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         height = self.num_rows * 32
         return (x, y, width, height)
 
-    def free(self):
+    def sv_free(self):
         nvBGL2.callback_disable(node_id(self))
         # self.delete_texture()
 

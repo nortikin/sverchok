@@ -37,6 +37,16 @@ graphs = []
 no_data_color = (1, 0.3, 0)
 exception_color = (0.8, 0.0, 0)
 
+sv_first_run = True
+
+def set_first_run(value):
+    global sv_first_run
+    sv_first_run = value
+
+def is_first_run():
+    global sv_first_run
+    return sv_first_run
+
 def update_error_colors(self, context):
     global no_data_color
     global exception_color
@@ -72,11 +82,13 @@ def make_dep_dict(node_tree, down=False):
         #  a link is considered valid without a to_socket
         #  or a from_socket. proctects against a blender crash
         #  see https://github.com/nortikin/sverchok/issues/493
+
         if not (link.to_socket and link.from_socket):
             ng.links.remove(link)
             raise ValueError("Invalid link found!, please report this file")
-        if not link.is_valid:
-            return collections.defaultdict(set)  # this happens more often than one might think
+        # it seems to work even with invalid links, maybe beacuse sverchok update is indepentent from blender update
+        # if not link.is_valid:
+            # return collections.defaultdict(set)  # this happens more often than one might think
         if link.is_hidden:
             continue
         key, value = (link.from_node.name, link.to_node.name) if down else (link.to_node.name, link.from_node.name)
@@ -188,7 +200,7 @@ def separate_nodes(ng, links=None):
     found_node_sets = [ns for ns in node_set_list if len(ns) > 1]
   
     if hasattr(ng, "sv_subtree_evaluation_order"):
-        sorting_type = ng.sv_subtree_evaluation_order  
+        sorting_type = ng.sv_subtree_evaluation_order
         if sorting_type in {'X', 'Y'}:
             sort_index = 0 if sorting_type == "X" else 1
             find_lowest = lambda ns: min(ng.nodes[n].absolute_location[sort_index] for n in ns)
@@ -314,6 +326,17 @@ def reset_error_node(ng, name):
                 del error_nodes[name]
             ng["error nodes"] = str(error_nodes)
 
+def reset_error_some_nodes(ng, names):
+    if "error nodes" in ng:
+        error_nodes = ast.literal_eval(ng["error nodes"])
+        for name in names:
+            node = ng.nodes.get(name)
+            if node:
+                if name in error_nodes:
+                    node.use_custom_color, node.color = error_nodes[name]
+                    del error_nodes[name]
+        ng["error nodes"] = str(error_nodes)
+
 def reset_error_nodes(ng):
     if "error nodes" in ng:
         error_nodes = ast.literal_eval(ng["error nodes"])
@@ -405,7 +428,7 @@ def build_update_list(ng=None):
         out = [make_update_list(ng, s, deps) for s in node_sets]
         update_cache[ng.name] = out
         partial_update_cache[ng.name] = {}
-        reset_socket_cache(ng)
+        # reset_socket_cache(ng)
 
 
 def process_to_node(node):
@@ -427,9 +450,14 @@ def process_to_node(node):
 
 
 def process_from_nodes(nodes):
+
+    if not nodes:
+        return
+
     node_names = [node.name for node in nodes]
     ng = nodes[0].id_data
     update_list = make_tree_from_nodes(node_names, ng)
+    reset_error_some_nodes(ng, update_list)
     do_update(update_list, ng.nodes)
 
 

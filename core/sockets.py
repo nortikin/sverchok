@@ -30,7 +30,7 @@ from sverchok.core.socket_conversions import (
     )
 
 from sverchok.core.socket_data import (
-    SvGetSocketInfo, SvGetSocket, SvSetSocket,
+    SvGetSocketInfo, SvGetSocket, SvSetSocket, SvForgetSocket,
     SvNoDataError, sentinel)
 
 from sverchok.data_structure import (
@@ -93,7 +93,7 @@ class SvSocketCommon:
     @property
     def socket_id(self):
         """Id of socket used by data_cache"""
-        return str(hash(self.id_data.name + self.node.name + self.identifier))
+        return str(hash(self.node.node_id + self.identifier))
 
     @property
     def index(self):
@@ -120,6 +120,10 @@ class SvSocketCommon:
     def sv_set(self, data):
         """Set output data"""
         SvSetSocket(self, data)
+
+    def sv_forget(self):
+        """Delete socket memory"""
+        SvForgetSocket(self)
 
     def replace_socket(self, new_type, new_name=None):
         """Replace a socket with a socket of new_type and keep links,

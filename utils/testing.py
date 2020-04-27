@@ -357,7 +357,7 @@ class SverchokTestCase(unittest.TestCase):
         for k, v in actual.items():
             if k not in reference:
                 raise AssertionError("Property `{}' is present is actual node {}, but is not present in reference".format(k, actual))
-            if v != reference[k]:
+            if v != reference[k] and k != 'n_id':
                 raise AssertionError("Property `{}' has value `{}' in actual node {}, but in reference it has value `{}'".format(k, v, actual, reference[k]))
 
         for k in reference.keys():

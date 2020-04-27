@@ -35,7 +35,12 @@ from sverchok.core.update_system import (
     process_from_node, process_from_nodes,
     process_tree,
     get_update_lists, update_error_nodes,
-    get_original_node_color)
+    get_original_node_color,
+    is_first_run,
+    reset_error_nodes)
+from sverchok.core.links import (
+    SvLinks)
+from sverchok.core.node_id_dict import SvNodesDict
 
 from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
 from sverchok.core.node_defaults import set_defaults_if_defined
@@ -137,11 +142,20 @@ class SvNodeTreeCommon(object):
     '''
     Common methods shared between Sverchok node trees
     '''
-
+    sv_process: BoolProperty(name="Process", default=True, description='Process layout')
     has_changed: BoolProperty(default=False)
     limited_init: BoolProperty(default=False)
     skip_tree_update: BoolProperty(default=False)
+    configuring_new_node: BoolProperty(name="indicate node initialization", default=False)
+    tree_id_memory: StringProperty(default="")
+    sv_links = SvLinks()
+    nodes_dict = SvNodesDict()
 
+    @property
+    def tree_id(self):
+        if not self.tree_id_memory:
+            self.tree_id_memory = str(hash(self) ^ hash(time.monotonic()))
+        return self.tree_id_memory
 
     def build_update_list(self):
         build_update_list(self)
@@ -192,6 +206,38 @@ class SvNodeTreeCommon(object):
                 res.append(ng)
         return res
 
+    def update_sv_links(self):
+        self.sv_links.create_new_links(self)
+
+    def links_have_changed(self):
+        return self.sv_links.links_have_changed(self)
+
+    def store_links_cache(self):
+        self.sv_links.store_links_cache(self)
+
+    def get_nodes(self):
+        return self.sv_links.get_nodes(self)
+
+    def get_groups(self):
+        affected_groups =[]
+        for node in self.nodes:
+            if 'SvGroupNode' in node.bl_idname:
+                sub_tree = node.monad
+                sub_tree.sv_update()
+                if sub_tree.has_changed:
+                    affected_groups.append(node)
+                    sub_tree.has_changed = False
+        return affected_groups
+
+    def sv_update(self):
+        self.update_sv_links()
+        if self.links_have_changed():
+            self.has_changed = True
+            build_update_list(self)
+            process_from_nodes(self.get_nodes())
+            self.store_links_cache()
+        else:
+            process_from_nodes(self.get_groups())
 
 class SvGenericUITooltipOperator(bpy.types.Operator):
     arg: StringProperty()
@@ -222,7 +268,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
     sv_bake: BoolProperty(name="Bake", default=True, description='Bake this layout')
-    sv_process: BoolProperty(name="Process", default=True, description='Process layout')
+
     sv_user_colors: StringProperty(default="")
 
     sv_show_error_in_tree: BoolProperty(
@@ -277,7 +323,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
                 update=on_draft_mode_changed)
 
     tree_link_count: IntProperty(name='keep track of current link count', default=0)
-    configuring_new_node: BoolProperty(name="indicate node initialization", default=False)
+
 
     @property
     def timestamp(self):
@@ -301,15 +347,19 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
         # this is a no-op if there's no drawing
         clear_exception_drawing_with_bgl(self.nodes)
-
+        if is_first_run():
+            return
         if self.skip_tree_update:
             # print('throttled update from context manager')
             return
+        if self.configuring_new_node or self.is_frozen() or not self.sv_process:
+            return
 
-        # print('svtree update', self.timestamp)
-        self.has_changed = True
-        # self.has_link_count_changed
-        self.process()
+        self.sv_update()
+        self.has_changed = False
+
+        # self.has_changed = True
+        # self.process()
 
     def process_ani(self):
         """
@@ -362,6 +412,8 @@ class SverchCustomTreeNode:
     # E.g., draft_properties_mapping = dict(count = 'count_draft').
     draft_properties_mapping = dict()
 
+    n_id : StringProperty(default="")
+    
     def update(self):
         CurrentEvents.new_event(BlenderEventsTypes.node_update, self)
         self.sv_update()
@@ -664,7 +716,7 @@ class SverchCustomTreeNode:
         ng = self.id_data
 
         ng.freeze()
-        
+        ng.nodes_dict.load_node(self)
         if hasattr(self, "sv_init"):
 
             try:
@@ -718,6 +770,8 @@ class SverchCustomTreeNode:
         if settings is not None:
             self.use_custom_color, self.color = settings
         self.sv_copy(original)
+        self.n_id = ""
+        self.id_data.nodes_dict.load_node(self)
 
     def sv_copy(self, original):
         """
@@ -728,8 +782,17 @@ class SverchCustomTreeNode:
         
     def free(self):
         """
-        some nodes require additional operations upon node removal
+        This method is not supposed to be overriden in specific nodes.
+        Override sv_free() instead
         """
+        self.sv_free()
+
+        for s in self.outputs:
+            s.sv_forget()
+
+        node_tree = self.id_data
+        node_tree.nodes_dict.forget_node(self)
+
         CurrentEvents.new_event(BlenderEventsTypes.free_node, self)
         if hasattr(self, "has_3dview_props"):
             print("about to remove this node's props from Sv3DProps")
@@ -738,6 +801,12 @@ class SverchCustomTreeNode:
             except:
                 print(f'failed to remove {self.name} from tree={self.id_data.name}')
 
+    def sv_free(self):
+        """
+        Override this method to do anything node-specific upon node removal
+
+        """
+        pass
 
     def wrapper_tracked_ui_draw_op(self, layout_element, operator_idname, **keywords):
         """

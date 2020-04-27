@@ -206,7 +206,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
                 self.outputs['Edges'].sv_set([e])
                 self.outputs['Faces'].sv_set([f])
 
-    def free(self):
+    def sv_free(self):
         set_sv_depsgraph_need(False)        
 
 

@@ -6,8 +6,7 @@ from bpy.app.handlers import persistent
 from sverchok import old_nodes
 from sverchok import data_structure
 from sverchok.core import upgrade_nodes, undo_handler_node_count
-from sverchok.core.events import CurrentEvents, BlenderEventsTypes
-
+from sverchok.core.update_system import set_first_run
 from sverchok.ui import color_def, bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
 from sverchok.utils.logging import debug
@@ -55,7 +54,6 @@ def has_frame_changed(scene):
 
 @persistent
 def sv_handler_undo_pre(scene):
-
     from sverchok.core import undo_handler_node_count
 
     for ng in sverchok_trees():
@@ -71,14 +69,20 @@ def sv_handler_undo_post(scene):
     from sverchok.core import undo_handler_node_count
 
     num_to_test_against = 0
+    links_changed = False
     for ng in sverchok_trees():
         num_to_test_against += len(ng.nodes)
+        ng.update_sv_links()
+        links_changed = ng.links_have_changed()
+        if links_changed:
+            break
 
-    # only perform clean if the undo event triggered
-    # a difference in total node count among trees.
-    if not (undo_handler_node_count['sv_groups'] == num_to_test_against):
+    if links_changed or not (undo_handler_node_count['sv_groups'] == num_to_test_against):
         print('looks like a node was removed, cleaning')
         sv_clean(scene)
+        for ng in sverchok_trees():
+            ng.nodes_dict.load_nodes(ng)
+            ng.has_changed = True
         sv_main_handler(scene)
 
     undo_handler_node_count['sv_groups'] = 0
@@ -157,10 +161,19 @@ def sv_clean(scene):
     data_structure.temp_handle = {}
 
 @persistent
+def sv_pre_load(scene):
+
+    sv_clean(scene)
+    set_first_run(True)
+
+
+@persistent
 def sv_post_load(scene):
     """
     Upgrade nodes, apply preferences and do an update.
     """
+
+    set_first_run(False)
 
     # ensure current nodeview view scale / location parameters reflect users' system settings
     from sverchok import node_tree
@@ -173,8 +186,10 @@ def sv_post_load(scene):
 
     sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
     sv_trees = list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
+
     for ng in sv_trees:
         ng.freeze(True)
+        ng.sv_process = False
         try:
             old_nodes.load_old(ng)
         except:
@@ -186,6 +201,7 @@ def sv_post_load(scene):
             traceback.print_exc()
         ng.unfreeze(True)
 
+        ng.sv_process = True
     addon_name = data_structure.SVERCHOK_NAME
     addon = bpy.context.preferences.addons.get(addon_name)
     if addon and hasattr(addon, "preferences"):
@@ -221,7 +237,7 @@ def set_frame_change(mode):
 handler_dict = {
     'undo_pre': sv_handler_undo_pre,
     'undo_post': sv_handler_undo_post,
-    'load_pre': sv_clean,
+    'load_pre': sv_pre_load,
     'load_post': sv_post_load,
     'depsgraph_update_pre': sv_main_handler
 }
