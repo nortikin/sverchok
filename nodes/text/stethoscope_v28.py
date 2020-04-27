@@ -226,8 +226,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def free(self):
         nvBGL.callback_disable(node_id(self))
 
-
-    def update(self):
+    def sv_update(self):
         if not ("Data" in self.inputs):
             return
         try:

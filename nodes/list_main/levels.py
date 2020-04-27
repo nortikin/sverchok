@@ -47,7 +47,7 @@ class ListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "Sverch_LisLev", text="List levels")
 
-    def update(self):
+    def sv_update(self):
         if 'data' in self.inputs and len(self.inputs['data'].links) > 0:
             inputsocketname = 'data'
             outputsocketname = ['data', ]

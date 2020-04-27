@@ -162,7 +162,7 @@ class SvInputSwitchNodeMOD(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "num_sockets_per_set")
 
-    def update(self):
+    def sv_update(self):
         if not self.interface_fully_initialized:
             return
         self.interface_unhide_inputs_to_handle_new_set_if_needed()

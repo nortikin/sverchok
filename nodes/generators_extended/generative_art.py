@@ -323,7 +323,7 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Faces")
         self.outputs.new('SvMatrixSocket', "Matrices")
 
-    def update(self):
+    def sv_update(self):
         self.read_xml()
         self.make_sockets()
 

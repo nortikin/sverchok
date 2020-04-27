@@ -27,7 +27,6 @@ class UiTests(SverchokTestCase):
                     'SvGroupOutputsNodeExp',
                     'SvMonadGenericNode',
                     'SvMonadInfoNode',
-                    'SvBVHtreeNode'
                 ]
         
         sv_init = sverchok.__file__

@@ -74,7 +74,7 @@ class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new("SvStringsSocket", "F 0")
         self.outputs.new("SvStringsSocket", "Out 0")
 
-    def update(self):
+    def sv_update(self):
         if not len(self.inputs) == self.switch_count*2+1:
             return
         if not len(self.outputs) == self.switch_count:

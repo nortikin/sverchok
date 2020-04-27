@@ -157,7 +157,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
                 colx.scale_x = little_width
                 colx.prop(self, colprop, text="")
 
-    def update(self):
+    def sv_update(self):
         # used because this node should disable itself if no inputs.
         n_id = node_id(self)
         callback_disable(n_id)

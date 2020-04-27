@@ -61,7 +61,7 @@ class SvDictionaryOut(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvDictionarySocket', 'Dict')
         self['order'] = []  # keeps keys of given dictionary since last update event
 
-    def update(self):
+    def sv_update(self):
         if not self.inputs['Dict'].links:  # if link is unconnected from the socket, `is_linked` is steal True
             self.outputs.clear()
             self['order'] = []

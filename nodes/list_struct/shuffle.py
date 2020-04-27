@@ -51,7 +51,7 @@ class ListShuffleNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs.new('SvStringsSocket', 'data')
 
-    def update(self):
+    def sv_update(self):
         if 'data' in self.inputs and self.inputs['data'].links:
             inputsocketname = 'data'
             outputsocketname = ['data']

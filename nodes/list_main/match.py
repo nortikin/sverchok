@@ -82,7 +82,7 @@ class ListMatchNode(bpy.types.Node, SverchCustomTreeNode):
             return tuple(f2(list(lsts)))
         return None
 
-    def update(self):
+    def sv_update(self):
         # inputs
         # these functions are in util.py
 

@@ -59,10 +59,6 @@ class SvUVtextureNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'uv', text='uv')
 
-
-    def update(self):
-        pass
-
     def UV(self, object, uv):
         # makes UV from layout texture area to sverchok vertices and polygons.
         mesh = object.data

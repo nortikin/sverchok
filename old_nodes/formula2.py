@@ -59,7 +59,7 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "n[0]")
         self.outputs.new('SvStringsSocket', "Result")
 
-    def update(self):
+    def sv_update(self):
         # inputs
         multi_socket(self, min=2, start=-1, breck=True)
 

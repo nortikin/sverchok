@@ -433,7 +433,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
                 self.outputs.new('SvStringsSocket', name)
 
 
-    def update(self):
+    def sv_update(self):
         '''
         update analyzes the state of the node and returns if the criteria to start processing
         are not met.

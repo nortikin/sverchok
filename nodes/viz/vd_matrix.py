@@ -163,7 +163,7 @@ class SvMatrixViewer28(bpy.types.Node, SverchCustomTreeNode):
         # reset n_id on copy
         self.n_id = ''
 
-    def update(self):
+    def sv_update(self):
         if not ("Matrix" in self.inputs):
             return
         if not self.inputs[0].other:

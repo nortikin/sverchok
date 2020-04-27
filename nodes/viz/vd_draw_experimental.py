@@ -628,7 +628,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     def fully_enabled(self):
         return "attrs" in self.inputs
 
-    def update(self):
+    def sv_update(self):
         if not self.fully_enabled:
             return
 

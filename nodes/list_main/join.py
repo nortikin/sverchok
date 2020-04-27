@@ -115,7 +115,7 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "numpy_mode", toggle=True, text='NumPy mode')
 
 
-    def update(self):
+    def sv_update(self):
 
         if len(self.outputs) > 0:
             multi_socket(self, min=1)

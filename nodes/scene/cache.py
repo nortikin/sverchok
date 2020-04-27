@@ -46,7 +46,7 @@ class SvCacheNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "cache_offset")
 
-    def update(self):
+    def sv_update(self):
         changable_sockets(self, "Data", ["Data"])
         
     def process(self):

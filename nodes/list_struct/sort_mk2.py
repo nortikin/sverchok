@@ -42,7 +42,7 @@ class ListSortNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "keys")
         self.outputs.new('SvStringsSocket', "data")
 
-    def update(self):
+    def sv_update(self):
         if 'data' in self.outputs and self.inputs['data'].links:
             # адаптивный сокет
             inputsocketname = 'data'

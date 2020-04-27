@@ -55,7 +55,7 @@ class ShiftNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "shift").prop_name = 'shift_c'
         self.outputs.new('SvStringsSocket', 'data')
 
-    def update(self):
+    def sv_update(self):
         if 'data' in self.inputs and self.inputs['data'].is_linked:
             inputsocketname = 'data'
             outputsocketname = ['data']

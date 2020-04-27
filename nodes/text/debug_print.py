@@ -55,7 +55,7 @@ class SvDebugPrintNode(bpy.types.Node, SverchCustomTreeNode):
         for i, socket in enumerate(self.inputs):
             layout.prop(self, "print_socket", index=i, text=socket.name)
 
-    def update(self):
+    def sv_update(self):
         multi_socket(self, min=1)
 
     def process(self):

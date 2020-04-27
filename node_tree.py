@@ -38,8 +38,8 @@ from sverchok.core.update_system import (
     get_original_node_color)
 
 from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
-
 from sverchok.core.node_defaults import set_defaults_if_defined
+from sverchok.core.events import CurrentEvents, BlenderEventsTypes
 
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
@@ -297,6 +297,8 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         get update list for debug info, tuple (fulllist, dictofpartiallists)
         '''
 
+        CurrentEvents.new_event(BlenderEventsTypes.tree_update, self)
+
         # this is a no-op if there's no drawing
         clear_exception_drawing_with_bgl(self.nodes)
 
@@ -359,6 +361,21 @@ class SverchCustomTreeNode:
     # mode property names to draft mode property names.
     # E.g., draft_properties_mapping = dict(count = 'count_draft').
     draft_properties_mapping = dict()
+
+    def update(self):
+        CurrentEvents.new_event(BlenderEventsTypes.node_update, self)
+        self.sv_update()
+
+    def sv_update(self):
+        """
+        This method can be overridden in inherited classes.
+        It will be triggered upon any `node tree` editor changes (new/copy/delete links/nodes).
+        Calling of this method is unordered among other calls of the method of other nodes in a tree.
+        """
+        pass
+
+    def insert_link(self, link):
+        CurrentEvents.new_event(BlenderEventsTypes.add_link_to_node, self)
 
     @classmethod
     def poll(cls, ntree):
@@ -643,6 +660,7 @@ class SverchCustomTreeNode:
         - sets custom defaults (nodes, and sockets)
 
         """
+        CurrentEvents.new_event(BlenderEventsTypes.add_node, self)
         ng = self.id_data
 
         ng.freeze()
@@ -695,6 +713,7 @@ class SverchCustomTreeNode:
         This method is not supposed to be overriden in specific nodes.
         Override sv_copy() instead.
         """
+        CurrentEvents.new_event(BlenderEventsTypes.copy_node, self)
         settings = get_original_node_color(self.id_data, original.name)
         if settings is not None:
             self.use_custom_color, self.color = settings
@@ -711,7 +730,7 @@ class SverchCustomTreeNode:
         """
         some nodes require additional operations upon node removal
         """
-
+        CurrentEvents.new_event(BlenderEventsTypes.free_node, self)
         if hasattr(self, "has_3dview_props"):
             print("about to remove this node's props from Sv3DProps")
             try:

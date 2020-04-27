@@ -97,7 +97,7 @@ class SvScalarFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
                 self.debug("Variable {} not in inputs {}, add it".format(v, str(self.inputs.keys())))
                 self.inputs.new('SvStringsSocket', v)
 
-    def update(self):
+    def sv_update(self):
         if not self.formula:
             return
         self.adjust_sockets()
