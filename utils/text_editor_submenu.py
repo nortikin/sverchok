@@ -21,6 +21,7 @@ import os
 import bpy
 from bpy.props import StringProperty
 
+from sverchok.utils import register_multiple_classes, unregister_multiple_classes
 from sverchok.utils.sv_update_utils import sv_get_local_path
 
 sv_path = os.path.dirname(sv_get_local_path()[0])
@@ -33,63 +34,53 @@ def get_templates():
     path = get_template_path()
     return [(t, t, "") for t in next(os.walk(path))[1]]
 
+
+def make_menu(name, path):
+    """
+    this generates a menu class at runtime, preferably when sverchok is starting up.
+    """
+    def draw(self, context):
+        layout = self.layout
+        self.path_menu(searchpaths=[path], operator="text.open", props_default={"internal": True})
+    
+    folder_name = 'TEXT_MT_SvSNliteTemplates_' + name
+    attributes = dict(bl_idname=folder_name, bl_label=name, draw=draw)
+    return type(name, (bpy.types.Menu,), attributes)
+
+
 snlite_template_path =  get_template_path()
+submenus = []
 
-# def make_menu(name, path):
-#     def draw(self, context):
-#         layout = self.layout
-#         self.path_menu(searchpaths=[path], operator="text.open", props_default={"internal": True})
+for name, _, _ in get_templates():
+    final_path = os.path.join(snlite_template_path, name)
+    submenus.append(make_menu(name, final_path))
 
-#     folder_name = 'TEXT_MT_SvSNliteTemplates_' + name
-#     attributes = dict(bl_idname=folder_name, bl_label=name, draw=draw)
-#     return type(name, (bpy.types.Menu,), attributes)
-
-# submenus = []
-# menu_names = []
-
-# m = get_templates()
-# for name, p, _ in m:
-#     final_path = os.path.join(snlite_template_path, name)
-
-# for subdir in get_subdirs(current_dir):
-#     submenu_name = os.path.basename(subdir)
-#     menu_names.append(submenu_name)
-#     dynamic_class = make_menu(submenu_name, subdir)
-#     submenus.append(dynamic_class)
-
-
-# def get_submenu_names():
-#     for k in sorted(menu_names):
-#         yield k, 'TEXT_MT_xtemplates_' + k
+def get_submenu_names():
+    for k in submenus:
+        yield k.bl_label, k.bl_idname
 
 
 class SvTextSubMenu(bpy.types.Menu):
-    bl_idname = "TEXT_MT_templates_submenu"
+    bl_idname = "TEXT_MT_SvSNLiteTemplates_menu"
     bl_label = "Sv NodeScripts"
     bl_options = {'REGISTER', 'UNDO'}
 
     def draw(self, context):
-        layout = self.layout
-
-        args = dict(operator='text.open', props_default={'internal': True})
-        m = get_templates()
-        for name, p, _ in m:
-            final_path = os.path.join(snlite_template_path, name)
-            self.path_menu(searchpaths=[final_path], **args)
-
+        for menu_bl_label, menu_bl_idname in get_submenu_names():
+            self.layout.menu(menu_bl_idname, text=menu_bl_label)
 
 
 def menu_draw(self, context):
-    self.layout.menu("TEXT_MT_templates_submenu")
+    self.layout.menu("TEXT_MT_SvSNLiteTemplates_menu")
 
-classes = [SvTextSubMenu]
+classes = submenus + [SvTextSubMenu]
 
 
 def register():
-    sverchok.utils.register_multiple_classes(classes)
+    register_multiple_classes(classes)
     bpy.types.TEXT_MT_templates.append(menu_draw)
 
 
 def unregister():
     bpy.types.TEXT_MT_templates.remove(menu_draw)
-    sverchok.utils.unregister_multiple_classes(classes)
+    unregister_multiple_classes(classes)
