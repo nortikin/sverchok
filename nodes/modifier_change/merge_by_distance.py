@@ -29,7 +29,9 @@ from sverchok.utils.logging import info, debug
 def remove_doubles(vertices, faces, distance, face_data=None, find_doubles=False, mask=[], output_mask=False):
 
     if faces:
-        EdgeMode = (len(faces[0]) == 2)
+        edge_mode = (len(faces[0]) == 2)
+    else:
+        edge_mode = False
     if face_data:
         mark_face_data = True
     else:
@@ -37,8 +39,8 @@ def remove_doubles(vertices, faces, distance, face_data=None, find_doubles=False
 
     bm = bmesh_from_pydata(
         vertices,
-        faces if EdgeMode else [],
-        [] if EdgeMode else faces,
+        faces if edge_mode else [],
+        [] if edge_mode else faces,
         markup_face_data=mark_face_data,
         markup_vert_data=output_mask)
     bm_verts = bm.verts

@@ -38,8 +38,15 @@ This node has the following outputs:
 - **Doubles**. Vertices, that were deleted.
 - **FaceData**. List containing data items from the **FaceData** input, which
   contains one item for each output mesh face.
+- **Mask** The mask after the merge
 
 Examples of usage
 -----------------
 
-.. image:: https://cloud.githubusercontent.com/assets/5783432/18614934/f39a34ce-7da9-11e6-8d2d-88c934f14946.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/modifier_change/merge_by_distance/sverchok_blender_merge_by_distance_example_01.png
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/modifier_change/merge_by_distance/sverchok_blender_merge_by_distance_example_02.png
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/modifier_change/merge_by_distance/sverchok_blender_merge_by_distance_example_03.png
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/modifier_change/merge_by_distance/sverchok_blender_merge_by_distance_example_04.png
