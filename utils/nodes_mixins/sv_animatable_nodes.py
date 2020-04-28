@@ -16,7 +16,12 @@ class SvAnimatableNode():
     '''
     This mixin is used to add is_animatable property to the node.
     This property is used on frame change to determine which nodes should be updated
+    The node file will need to have this code line:
 
+    from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
+
+    And the node class will need to inherit this class.
+    
     To allow the user to control it just add in draw buttons function:
         self.animatable_buttons(layout, icon_only=True)
     or/and in the draw_buttons_ext function
@@ -28,6 +33,7 @@ class SvAnimatableNode():
         description="Update Node on frame change",
         default=True
     )
+    
     def refresh_node(self, context):
         if self.refresh:
             self.refresh = False
