@@ -22,6 +22,7 @@ from bpy.props import EnumProperty, FloatProperty, FloatVectorProperty, StringPr
 from mathutils import Vector, Matrix, Color
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.core.socket_data import SvGetSocketInfo
 from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, iter_list_match_func, no_space
 from sverchok.utils.sv_itertools import recurse_f_level_control
@@ -73,7 +74,7 @@ mapper_funcs = {
     'Object': lambda v: Vector(v),
 }
 
-class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
+class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """
     Triggers: Scence Texture In
     Tooltip: Evaluate Scene texture at input coordinates
@@ -150,6 +151,7 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
     def draw_buttons(self, context, layout):
+        self.animatable_buttons(layout, icon_only=True)
         b = layout.split(factor=0.33, align=True)
         b.label(text='Mapping:')
         b.prop(self, 'tex_coord_type', expand=False, text='')
@@ -161,6 +163,7 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
+        self.animatable_buttons(layout)
         self.draw_buttons(context, layout)
         layout.prop(self, 'list_match', expand=False)
 

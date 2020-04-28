@@ -17,6 +17,7 @@ from mathutils import Matrix, Vector
 from bpy.props import FloatProperty, IntProperty, StringProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode, node_id
 from sverchok.utils.sv_operator_mixins import SvGenericCallbackWithParams
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
@@ -52,7 +53,7 @@ class SvSNPropsFunctor:
         self.inputs.clear()
         self.outputs.clear()
 
-class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
+class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAnimatableNode):
     """
     Triggers:  functorB
     Tooltip:  use a simpler nodescript style
@@ -105,12 +106,12 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
             print('code:', exec_info.tb_frame.f_code)
 
     def draw_buttons(self, context, layout):
-
+        self.animatable_buttons(layout, icon_only=True)
         if not self.loaded:
             row = layout.row()
             row.prop_search(self, 'script_name', bpy.data, 'texts', text='')
             row.operator(sn_callback, text='', icon='PLUGIN').fn_name = 'load'
-
+        
         row = layout.row()
         row.operator(sn_callback, text='Load').fn_name='load'
         row.operator(sn_callback, text='Reset').fn_name='reset'
