@@ -16,17 +16,26 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import json
 import bpy
 from bpy.props import BoolProperty, FloatProperty, EnumProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, numpy_list_match_func
 from sverchok.utils.sv_itertools import recurse_f_level_control
-from sverchok.utils.sv_manual_curves_utils import get_valid_evaluate_function_legacy, get_valid_evaluate_function, get_valid_node, CURVE_NODE_TYPE
+from sverchok.utils.sv_manual_curves_utils import (
+    get_valid_evaluate_function_legacy,
+    get_valid_evaluate_function,
+    get_valid_node,
+    CURVE_NODE_TYPE,
+    set_rgb_curve,
+    get_rgb_curve)
+
 from sverchok.utils.curve import SvScalarFunctionCurve
 
 import numpy as np
 node_group_name = 'sverchok_helper_group'
+
 if (2, 82, 0) > bpy.app.version:
     get_evaluator = get_valid_evaluate_function_legacy
 else:
@@ -50,29 +59,6 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Curve Mapper'
     bl_icon = 'NORMALIZE_FCURVES'
 
-    def update_sockets(self, context):
-        if not self.inputs["Old Min"].is_linked:
-            self.inputs["Old Min"].hide_safe = self.auto_limits
-        if not self.inputs["Old Max"].is_linked:
-            self.inputs["Old Max"].hide_safe = self.auto_limits
-        updateNode(self, context)
-
-    old_min: FloatProperty(
-        name='Old Min', description='Old Min',
-        default=0, update=updateNode)
-
-    old_max: FloatProperty(
-        name='Old Max', description='Old Max',
-        default=1, update=updateNode)
-
-    new_min: FloatProperty(
-        name='New Min', description='New Min',
-        default=0, update=updateNode)
-
-    new_max: FloatProperty(
-        name='New Max', description='New Max',
-        default=10, update=updateNode)
-
     value: FloatProperty(
         name='Value', description='New Max',
         default=.5, update=updateNode)
@@ -86,20 +72,6 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode):
         name='Update', description='Update Node with updated curve',
         default=False, update=update_mapper)
 
-    auto_limits: BoolProperty(
-        name='List limits', description='Use old min and old max from list',
-        default=False, update=update_sockets)
-
-    list_match: EnumProperty(
-        name="List Match",
-        description="Behavior on different list lengths",
-        items=numpy_list_match_modes, default="REPEAT",
-        update=updateNode)
-
-    output_numpy: BoolProperty(
-        name='Output NumPy',
-        description='Output NumPy arrays',
-        default=False, update=updateNode)
     n_id: StringProperty(default='')
 
     def sv_init(self, context):
@@ -162,6 +134,21 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode):
         result = recurse_f_level_control([floats_in], evaluate, curve_mapper, None, desired_levels)
 
         self.outputs[0].sv_set(result)
+
+    def storage_set_data(self, node_ref):
+        '''function to get data when importing from json'''
+        data_list = node_ref.get('curve_data')
+        data_dict = json.loads(data_list)
+        curve_node_name = self._get_curve_node_name()
+        set_rgb_curve(data_dict, curve_node_name)
+
+    def storage_get_data(self, node_dict):
+        '''function to set data for exporting json'''
+        curve_node_name = self._get_curve_node_name()
+        data = get_rgb_curve(node_group_name, curve_node_name)
+        data_json_str = json.dumps(data)
+        node_dict['curve_data'] = data_json_str
+
 
 
 def register():
