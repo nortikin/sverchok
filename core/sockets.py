@@ -306,7 +306,7 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
         if self.is_linked and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.object_ref:
-            obj_ref = bpy.data.objects.get(self.object_ref.strip())
+            obj_ref = self.node.get_bpy_data_from_name(self.object_ref, bpy.data.objects)
             if not obj_ref:
                 raise SvNoDataError(self)
             return [obj_ref]

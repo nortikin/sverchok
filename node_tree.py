@@ -841,6 +841,16 @@ class SverchCustomTreeNode:
         except Exception as err:
             print('failed to get gl scale info', err)
 
+    def get_bpy_data_from_name(self, stored_name, bpy_data_kind):
+        if isinstance(stored_name, str):
+            if stored_name in bpy_data_kind:
+                return bpy_data_kind.get(stored_name)
+            elif stored_name[3:] in bpy_data_kind:
+                return bpy_data_kind.get(stored_name[3:])
+
+        self.error(f"stored_name (string) '{stored_name}' not found in {bpy_data_kind}")
+        return None
+
 
 classes = [
     SverchCustomTree, 
