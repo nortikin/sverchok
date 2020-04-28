@@ -842,6 +842,24 @@ class SverchCustomTreeNode:
             print('failed to get gl scale info', err)
 
     def get_bpy_data_from_name(self, stored_name, bpy_data_kind):
+        """
+        this function acknowledges that the stored_name being passed can be a string or an object proper.
+        for a long time Sverchok stored the result of a prop_search as a StringProperty, and many nodes will
+        be stored with that data in .blends, here we try to permit older blends from having data stored as
+        a string, but newly used prop_search results will be stored as a pointerproperty of type bpy.types.Object
+
+        regarding the need to trim the first 3 chars of a stored StringProperty, best let Blender devs enlighten you
+        https://developer.blender.org/T58641
+
+        example usage inside a node:
+
+            text = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
+
+        if the text exit    
+
+
+        """
+
         if isinstance(stored_name, str):
             if stored_name in bpy_data_kind:
                 return bpy_data_kind.get(stored_name)
