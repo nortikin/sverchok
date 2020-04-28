@@ -175,12 +175,13 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode):
 
         data_list = node_ref.get('curve_data')
         data_dict = json.loads(data_list)
-        set_rgb_curve(data_dict, self.node_id)
+        curve_node_name = self._get_curve_node_name()
+        set_rgb_curve(data_dict, curve_node_name)
 
     def storage_get_data(self, node_dict):
 
-        node_name = 'RGB Curves'+ self.node_id
-        data = get_rgb_curve(node_group_name, node_name)
+        curve_node_name = self._get_curve_node_name()
+        data = get_rgb_curve(node_group_name, curve_node_name)
         data_json_str = json.dumps(data)
         node_dict['curve_data'] = data_json_str
 

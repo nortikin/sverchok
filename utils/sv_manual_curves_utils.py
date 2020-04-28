@@ -104,11 +104,10 @@ def get_rgb_curve(group_name, node_name):
         points = curve.points
         out_list.append([(p.handle_type, p.location[:]) for p in points])
 
-    x = 'ShaderNodeRGBCurve'
-    return dict(group_name=group_name, bl_idname=x, data=out_list)
+    return dict(group_name=group_name, bl_idname=CURVE_NODE_TYPE, data=out_list)
 
 
-def set_rgb_curve(data_dict, node_id):
+def set_rgb_curve(data_dict, curve_node_name):
     '''
     stores RGB Curves data into json 
     '''
@@ -116,7 +115,7 @@ def set_rgb_curve(data_dict, node_id):
     group_name = data_dict['group_name']
     bl_id = data_dict['bl_idname']
 
-    node = get_valid_node(group_name, 'RGB Curves'+ node_id, bl_id)
+    node = get_valid_node(group_name, curve_node_name, bl_id)
 
     node.mapping.initialize()
     data = data_dict['data']
