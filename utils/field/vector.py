@@ -480,7 +480,14 @@ class SvBvhAttractorVectorField(SvVectorField):
                 sign = 1
             return sign * np.array(normal)
         else:
-            return np.array(nearest - vertex)
+            dv = np.array(nearest - vertex)
+            if self.falloff is not None:
+                norm = np.linalg.norm(dv)
+                len = self.falloff(norm)
+                dv = len * dv
+                return dv
+            else:
+                return dv
 
     def evaluate_grid(self, xs, ys, zs):
         def find(v):
@@ -500,8 +507,10 @@ class SvBvhAttractorVectorField(SvVectorField):
         points = np.stack((xs, ys, zs)).T
         vectors = np.vectorize(find, signature='(3)->(3)')(points)
         if self.falloff is not None:
-            norms = np.linalg.norm(vectors, axis=0)
+            norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+            nonzero = (norms > 0)[:,0]
             lens = self.falloff(norms)
+            vectors[nonzero] = vectors[nonzero] / norms[nonzero]
             R = (lens * vectors).T
             return R[0], R[1], R[2]
         else:
