@@ -56,12 +56,14 @@ class SvTextSubMenu(bpy.types.Menu):
 def menu_draw(self, context):
     self.layout.menu("TEXT_MT_templates_submenu")
 
+classes = [SvTextSubMenu]
+
 
 def register():
-    bpy.utils.register_class(SvTextSubMenu)
+    sverchok.utils.register_multiple_classes(classes)
     bpy.types.TEXT_MT_templates.append(menu_draw)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvTextSubMenu)
     bpy.types.TEXT_MT_templates.remove(menu_draw)
+    sverchok.utils.unregister_multiple_classes(classes)
