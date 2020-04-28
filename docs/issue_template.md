@@ -1,6 +1,9 @@
 ## Problem statement
 
-Please describe your problem here.
+Please describe your problem here, and please include the version of Blender being used
+
+    # do this in the python console
+    bpy.app.version_string
 
 ## Steps to reproduce
 
