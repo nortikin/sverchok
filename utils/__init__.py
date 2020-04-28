@@ -97,6 +97,12 @@ def clear_node_classes():
     node_classes.clear()
 
 
+def register_multiple_classes(classes):
+    _ = [bpy.utils.register_class(cls) for cls in classes]
+
+def unregister_multiple_classes(classes):
+    _ = [bpy.utils.unregister_class(cls) for cls in reversed(classes)]
+
 def app_handler_ops(append=None, remove=None):
     """ append or remove multiple items to specific bpy.app.handlers """
 
