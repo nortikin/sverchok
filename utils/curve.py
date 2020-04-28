@@ -255,6 +255,24 @@ class SvCurveLengthSolver(object):
         spline_verts = self._spline.eval(input_lengths)
         return spline_verts[:,1]
 
+class SvScalarFunctionCurve(SvCurve):
+    __description__ = "Function"
+
+    def __init__(self, function):
+        self.function = function
+        self.u_bounds = (0.0, 1.0)
+        self.tangent_delta = 0.001
+
+    def get_u_bounds(self):
+        return self.u_bounds
+
+    def evaluate(self, t):
+        y = self.function(t)
+        return np.array([t, y, 0.0])
+
+    def evaluate_array(self, ts):
+        return np.vectorize(self.evaluate, signature='()->(3)')(ts)
+
 class SvConcatCurve(SvCurve):
     def __init__(self, curves, scale_to_unit = False):
         self.curves = curves

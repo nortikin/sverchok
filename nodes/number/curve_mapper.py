@@ -26,9 +26,12 @@ from sverchok.utils.sv_itertools import recurse_f_level_control
 from sverchok.utils.sv_manual_curves_utils import (
     get_valid_evaluate_function_legacy,
     get_valid_evaluate_function,
-    get_valid_curve,
+    get_valid_node,
+    CURVE_NODE_TYPE,
     set_rgb_curve,
     get_rgb_curve)
+
+from sverchok.utils.curve import SvScalarFunctionCurve
 
 import numpy as np
 node_group_name = 'sverchok_helper_group'
@@ -112,8 +115,8 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Value").prop_name = 'value'
 
         self.outputs.new('SvStringsSocket', "Value")
-        n_id = self.node_id
-        _ = get_evaluator(node_group_name, 'RGB Curves' + n_id)
+        self.outputs.new('SvCurveSocket', "Curve")
+        _ = get_evaluator(node_group_name, self._get_curve_node_name())
 
 
     def draw_buttons(self, context, layout):
@@ -122,8 +125,7 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode):
             layout.label(text="Connect input to activate")
             return
         try:
-            n_id = self.node_id
-            tnode = m.nodes['RGB Curves' + n_id]
+            tnode = m.nodes[self._get_curve_node_name()]
             if not tnode:
                 layout.label(text="Connect input to activate")
                 return
@@ -138,15 +140,25 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode):
 
     def free(self):
         m = bpy.data.node_groups.get(node_group_name)
-        n_id = self.node_id
-        node = m.nodes['RGB Curves'+n_id]
+        node = m.nodes[self._get_curve_node_name()]
         m.nodes.remove(node)
+
+    def _get_curve_node_name(self):
+        n_id = self.node_id
+        return 'RGB Curves'+n_id
 
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
-        n_id = self.node_id
-        evaluate = get_evaluator(node_group_name, 'RGB Curves'+ n_id)
+        curve_node_name = self._get_curve_node_name()
+        evaluate = get_evaluator(node_group_name, curve_node_name)
+        curve_node = get_valid_node(node_group_name, curve_node_name, CURVE_NODE_TYPE)
+
+        if 'Curve' in self.outputs:
+            curve = SvScalarFunctionCurve(evaluate)
+            curve.u_bounds = (curve_node.mapping.clip_min_x, curve_node.mapping.clip_max_x)
+            self.outputs['Curve'].sv_set([curve])
+
         # no outputs, end early.
         if not outputs['Value'].is_linked:
             return
