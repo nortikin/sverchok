@@ -280,6 +280,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
         if self.script_name in bpy.data.texts:
             self.script_str = bpy.data.texts.get(self.script_name).as_string()
+        elif self.script_name[3:] in bpy.data.texts:
+            self.script_str = bpy.data.texts.get(self.script_name[3:]).as_string()
         else:
             print('bpy.data.texts not read yet')
             if self.script_str:
