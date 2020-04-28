@@ -25,7 +25,7 @@ from sverchok.utils import register_multiple_classes, unregister_multiple_classe
 from sverchok.utils.sv_update_utils import sv_get_local_path
 
 sv_path = os.path.dirname(sv_get_local_path()[0])
-
+menu_prefix = "TEXT_MT_SvSNLiteTemplates"
 
 def get_template_path():
     return os.path.join(sv_path, "node_scripts", "SNLite_templates")
@@ -43,7 +43,7 @@ def make_menu(name, path):
         layout = self.layout
         self.path_menu(searchpaths=[path], operator="text.open", props_default={"internal": True})
     
-    folder_name = 'TEXT_MT_SvSNliteTemplates_' + name
+    folder_name = f'{menu_prefix}_{name}'
     attributes = dict(bl_idname=folder_name, bl_label=name, draw=draw)
     return type(name, (bpy.types.Menu,), attributes)
 
@@ -61,7 +61,7 @@ def get_submenu_names():
 
 
 class SvTextSubMenu(bpy.types.Menu):
-    bl_idname = "TEXT_MT_SvSNLiteTemplates_menu"
+    bl_idname = f'{menu_prefix}_menu'
     bl_label = "Sv NodeScripts"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -71,7 +71,7 @@ class SvTextSubMenu(bpy.types.Menu):
 
 
 def menu_draw(self, context):
-    self.layout.menu("TEXT_MT_SvSNLiteTemplates_menu")
+    self.layout.menu(f'{menu_prefix}_menu')
 
 classes = submenus + [SvTextSubMenu]
 
