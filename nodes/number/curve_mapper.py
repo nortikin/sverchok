@@ -16,13 +16,19 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import json
 import bpy
 from bpy.props import BoolProperty, FloatProperty, EnumProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, numpy_list_match_func
 from sverchok.utils.sv_itertools import recurse_f_level_control
-from sverchok.utils.sv_manual_curves_utils import get_valid_evaluate_function_legacy, get_valid_evaluate_function, get_valid_curve
+from sverchok.utils.sv_manual_curves_utils import (
+    get_valid_evaluate_function_legacy,
+    get_valid_evaluate_function,
+    get_valid_curve,
+    set_rgb_curve,
+    get_rgb_curve)
 
 import numpy as np
 node_group_name = 'sverchok_helper_group'
@@ -140,7 +146,7 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         outputs = self.outputs
         n_id = self.node_id
-        evaluate = get_evaluator(node_group_name, 'RGB Curves'+n_id)
+        evaluate = get_evaluator(node_group_name, 'RGB Curves'+ n_id)
         # no outputs, end early.
         if not outputs['Value'].is_linked:
             return
@@ -152,6 +158,20 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode):
         result = recurse_f_level_control([floats_in], evaluate, curve_mapper, None, desired_levels)
 
         self.outputs[0].sv_set(result)
+
+    def storage_set_data(self, node_ref):
+
+        data_list = node_ref.get('curve_data')
+        data_dict = json.loads(data_list)
+        set_rgb_curve(data_dict, self.node_id)
+
+    def storage_get_data(self, node_dict):
+
+        node_name = 'RGB Curves'+ self.node_id
+        data = get_rgb_curve(node_group_name, node_name)
+        data_json_str = json.dumps(data)
+        node_dict['curve_data'] = data_json_str
+
 
 
 def register():
