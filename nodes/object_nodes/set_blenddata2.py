@@ -21,6 +21,8 @@ import bpy
 from mathutils import Matrix
 from bpy.props import StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
+
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
 # pylint: disable=w0122
@@ -28,7 +30,7 @@ from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 # pylint: disable=w0613
 
 
-class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     ''' Set Object Props '''
     bl_idname = 'SvSetDataObjectNodeMK2'
     bl_label = 'Object ID Set MK2'
@@ -38,6 +40,7 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     formula: StringProperty(name='formula', default='delta_location', update=updateNode)
 
     def draw_buttons(self, context, layout):
+        self.animatable_buttons(layout, icon_only=True)
         layout.prop(self, "formula", text="")
 
     def sv_init(self, context):

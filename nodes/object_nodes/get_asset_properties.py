@@ -19,6 +19,7 @@
 import bpy
 from bpy.props import EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import (updateNode, no_space, enum_item as e)
 
 # class SvGenericCallbackWithParams() mixin  <- refresh
@@ -61,7 +62,7 @@ def frame_from_available2(current_frame, layer):
     return inp_to_index.get(tval, 0)
 
 
-class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
+class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     ''' Get Asset Props '''
     bl_idname = 'SvGetAssetProperties'
     bl_label = 'Object ID Selector'
@@ -159,7 +160,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         # layout.operator('node.'   ,text='refresh from scene')
-
+        self.animatable_buttons(layout, icon_only=True)
         layout.row().prop(self, "Mode", text="data")
 
         if self.Mode == 'objects':

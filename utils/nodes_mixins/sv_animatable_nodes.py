@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 from bpy.props import BoolProperty
-
+from sverchok.data_structure import updateNode
 
 # pylint: disable=c0111
 # pylint: disable=c0103
@@ -25,3 +25,19 @@ class SvAnimatableNode():
         description="Update Node on frame change",
         default=True
     )
+    def refresh_node(self, context):
+        if self.refresh:
+            self.refresh = False
+            updateNode(self, context)
+
+    refresh = BoolProperty(
+        name="Update Node",
+        description="Update Node",
+        default=False,
+        update=refresh_node
+    )
+    
+    def animatable_buttons(self, layout, icon_only=False):
+        row = layout.row(align=True)
+        row.prop(self, 'is_animatable', icon='ANIM', icon_only=icon_only)
+        row.prop(self, 'refresh', icon='FILE_REFRESH', icon_only=icon_only)

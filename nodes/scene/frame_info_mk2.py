@@ -64,7 +64,7 @@ class SvFrameInfoNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
-        layout.prop(self, 'is_animatable')
+        self.animatable_buttons(layout)
 
     def process(self):
         scene = bpy.context.scene

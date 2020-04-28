@@ -21,10 +21,11 @@ import bpy
 import numpy as np
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
 
-class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode):
+class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     ''' Select vertices of mesh objects '''
     bl_idname = 'SvSelectMeshVerts'
     bl_label = 'Select Object Vertices'
@@ -41,6 +42,7 @@ class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode):
     mode: EnumProperty(items=modes, default='vertices', update=updateNode)
 
     def draw_buttons(self, context, layout):
+        self.animatable_buttons(layout, icon_only=True)
         layout.prop(self, "deselect_all", text="clear selection")
         layout.prop(self, "mode", expand=True)
         if self.inputs[4].is_linked:
