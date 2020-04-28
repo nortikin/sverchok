@@ -16,9 +16,12 @@ class SvAnimatableNode():
     '''
     This mixin is used to add is_animatable property to the node.
     This property is used on frame change to determine which nodes should be updated
-    
-    To allow the user to control it just add layout.prop(self, 'is_animatable')
-    probably in the draw_buttons_ext function
+
+    To allow the user to control it just add in draw buttons function:
+        self.animatable_buttons(layout, icon_only=True)
+    or/and in the draw_buttons_ext function
+        self.animatable_buttons(layout)
+
     '''
     is_animatable = BoolProperty(
         name="Animate Node",
