@@ -29,13 +29,39 @@ sv_path = os.path.dirname(sv_get_local_path()[0])
 def get_template_path():
     return os.path.join(sv_path, "node_scripts", "SNLite_templates")
 
-
 def get_templates():
     path = get_template_path()
     return [(t, t, "") for t in next(os.walk(path))[1]]
 
-
 snlite_template_path =  get_template_path()
+
+# def make_menu(name, path):
+#     def draw(self, context):
+#         layout = self.layout
+#         self.path_menu(searchpaths=[path], operator="text.open", props_default={"internal": True})
+
+#     folder_name = 'TEXT_MT_SvSNliteTemplates_' + name
+#     attributes = dict(bl_idname=folder_name, bl_label=name, draw=draw)
+#     return type(name, (bpy.types.Menu,), attributes)
+
+# submenus = []
+# menu_names = []
+
+# m = get_templates()
+# for name, p, _ in m:
+#     final_path = os.path.join(snlite_template_path, name)
+
+# for subdir in get_subdirs(current_dir):
+#     submenu_name = os.path.basename(subdir)
+#     menu_names.append(submenu_name)
+#     dynamic_class = make_menu(submenu_name, subdir)
+#     submenus.append(dynamic_class)
+
+
+# def get_submenu_names():
+#     for k in sorted(menu_names):
+#         yield k, 'TEXT_MT_xtemplates_' + k
+
 
 class SvTextSubMenu(bpy.types.Menu):
     bl_idname = "TEXT_MT_templates_submenu"
