@@ -25,6 +25,7 @@ from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty, Fl
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.core.events import property_update
 
 
 Directions = namedtuple('Directions', ['x', 'y', 'z', 'op', 'od'])
@@ -251,18 +252,18 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
 
         updateNode(self, context)
 
-    direction: EnumProperty(name="Direction", items=direction_items, default="X", update=update_sockets)
-    num: IntProperty(name='Num Verts', description='Number of Vertices', default=2, min=2, update=updateNode)
-    step: FloatProperty(name='Step', description='Step length', default=1.0, update=updateNode)
-    center: BoolProperty(name='Center', description='Center the line', default=False, update=updateNode)
-    size: FloatProperty(name='Size', description='Size of line', default=10.0, update=updateNode)
+    direction: EnumProperty(name="Direction", items=direction_items, default="X", update=property_update('direction', update_sockets))
+    num: IntProperty(name='Num Verts', description='Number of Vertices', default=2, min=2, update=property_update('num'))
+    step: FloatProperty(name='Step', description='Step length', default=1.0, update=property_update('step'))
+    center: BoolProperty(name='Center', description='Center the line', default=False, update=property_update('center'))
+    size: FloatProperty(name='Size', description='Size of line', default=10.0, update=property_update('size'))
     split: BoolProperty(name="Split to objects", description="Each object in separate object", default=True, 
-                        update=updateNode)
-    as_numpy: BoolProperty(name="Numpy output", description="Format of output data", update=updateNode)
-    length_mode: EnumProperty(items=length_items, update=update_sockets)
-    v3_dir: FloatVectorProperty(name='Direction', description='Direction', size=3, default=(1, 1, 1), update=updateNode)
+                        update=property_update('split'))
+    as_numpy: BoolProperty(name="Numpy output", description="Format of output data", update=property_update('as_numpy'))
+    length_mode: EnumProperty(items=length_items, update=property_update('length_mode', update_sockets))
+    v3_dir: FloatVectorProperty(name='Direction', description='Direction', size=3, default=(1, 1, 1), update=property_update('v3_dir'))
     v3_origin: FloatVectorProperty(name='Origin', description='Origin of line', size=3, default=(0, 0, 0),
-                                   update=updateNode)
+                                   update=property_update('v3_origin'))
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Num").prop_name = 'num'

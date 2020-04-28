@@ -21,6 +21,7 @@ from bpy.props import FloatProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode
+from sverchok.core.events import property_update
 
 
 def uget(self, origin):
@@ -56,12 +57,12 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs[0].replace_socket('SvStringsSocket', kind.title()).custom_draw = 'mode_custom_draw'
 
     int_: IntProperty(
-        default=0, name="an int", update=updateNode,
+        default=0, name="an int", update=property_update('int_'),
         description = "Integer value",
         get=lambda s: uget(s, 'int_'),
         set=lambda s, val: uset(s, val, 'int_', 'int_min', 'int_max'))
     int_draft_ : IntProperty(
-        default=0, name="[D] an int", update=updateNode,
+        default=0, name="[D] an int", update=property_update('int_draft_'),
         description = "Integer value (draft mode)",
         get=lambda s: uget(s, 'int_draft_'),
         set=lambda s, val: uset(s, val, 'int_draft_', 'int_min', 'int_max'))
@@ -69,14 +70,14 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
     int_max: IntProperty(default=1024, description='maximum')
 
     float_: FloatProperty(
-        default=0.0, name="a float", update=updateNode,
+        default=0.0, name="a float", update=property_update('float_'),
         description = "Floating-point value",
         get=lambda s: uget(s, 'float_'),
         set=lambda s, val: uset(s, val, 'float_', 'float_min', 'float_max'))
     float_draft_: FloatProperty(
         default=0.0, name="[D] a float",
         description = "Floating-point value (draft mode)",
-        update=updateNode,
+        update=property_update('float_draft_'),
         get=lambda s: uget(s, 'float_draft_'),
         set=lambda s, val: uset(s, val, 'float_draft_', 'float_min', 'float_max'))
     float_min: FloatProperty(default=-500.0, description='minimum')
@@ -85,10 +86,10 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
     mode_options = [(k, k, '', i) for i, k in enumerate(["float", "int"])]
 
     selected_mode: bpy.props.EnumProperty(
-        items=mode_options, default="float", update=wrapped_update)
+        items=mode_options, default="float", update=property_update('selected_mode', wrapped_update))
 
     show_limits: BoolProperty(default=False)
-    to3d: BoolProperty(default=False, update=updateNode)
+    to3d: BoolProperty(default=False, update=property_update('to3d'))
 
     draft_properties_mapping = dict(float_ = 'float_draft_', int_ = 'int_draft_')
 
