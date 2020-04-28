@@ -18,7 +18,7 @@ from sverchok.utils.field.vector import (SvVectorFieldPointDistance,
             SvAverageVectorField, SvKdtVectorField, 
             SvLineAttractorVectorField, SvPlaneAttractorVectorField,
             SvBvhAttractorVectorField)
-from sverchok.utils.math import falloff_types, falloff_array
+from sverchok.utils.math import all_falloff_types, falloff_array
 
 class SvAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -34,11 +34,12 @@ class SvAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
     def update_type(self, context):
         self.inputs['Direction'].hide_safe = (self.attractor_type in ['Point', 'Mesh'])
         self.inputs['Amplitude'].hide_safe = (self.falloff_type == 'NONE')
-        self.inputs['Coefficient'].hide_safe = (self.falloff_type not in ['inverse_exp', 'gauss'])
+        coeff_types = ['inverse_exp', 'gauss', 'smooth', 'sphere', 'root', 'invsquare', 'sharp', 'linear', 'const']
+        self.inputs['Coefficient'].hide_safe = (self.falloff_type not in coeff_types)
         self.inputs['Faces'].hide_safe = (self.attractor_type != 'Mesh')
 
     falloff_type: EnumProperty(
-        name="Falloff type", items=falloff_types, default='NONE', update=update_type)
+        name="Falloff type", items=all_falloff_types, default='NONE', update=update_type)
 
     amplitude: FloatProperty(
         name="Amplitude", default=0.5, min=0.0, update=updateNode)

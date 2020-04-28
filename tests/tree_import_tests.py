@@ -60,6 +60,7 @@ UNITTEST_BLACKLIST = [
     "GreacePencil_injection.json",
     "pointsONface_gather_lines.json",
     "Generative_Art_Lsystem.json",
+    "Genetic_algorithm.blend.json",
     "Elfnor_topology_nodes.json",
     "l-systems.json",
     "waffle.json"

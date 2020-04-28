@@ -5,6 +5,7 @@ Number
 .. toctree::
    :maxdepth: 2
 
+   curve_mapper
    exponential
    fibonacci
    float_to_int
