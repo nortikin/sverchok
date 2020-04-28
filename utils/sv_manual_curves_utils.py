@@ -19,6 +19,8 @@
 
 import bpy
 
+CURVE_NODE_TYPE =  'ShaderNodeRGBCurve'
+
 def get_valid_node(group_name, node_name, bl_idname):
 
     node_groups = bpy.data.node_groups
@@ -51,7 +53,7 @@ def get_valid_evaluate_function_legacy(group_name, node_name):
     component of RGBA - allowing us to use this as a float modifier.
     '''
 
-    node = get_valid_node(group_name, node_name, 'ShaderNodeRGBCurve')
+    node = get_valid_node(group_name, node_name, CURVE_NODE_TYPE)
 
     curve = node.mapping.curves[3]
     try: curve.evaluate(0.0)
@@ -67,7 +69,7 @@ def get_valid_curve(group_name, node_name):
     component of RGBA - allowing us to use this as a float modifier.
     '''
 
-    node = get_valid_node(group_name, node_name, 'ShaderNodeRGBCurve')
+    node = get_valid_node(group_name, node_name, CURVE_NODE_TYPE)
 
     curve = node.mapping.curves[3]
     return curve
@@ -80,7 +82,7 @@ def get_valid_evaluate_function(group_name, node_name):
     component of RGBA - allowing us to use this as a float modifier.
     '''
 
-    node = get_valid_node(group_name, node_name, 'ShaderNodeRGBCurve')
+    node = get_valid_node(group_name, node_name, CURVE_NODE_TYPE)
 
     curve = node.mapping.curves[3]
     try:  node.mapping.evaluate(curve, 0.0)
