@@ -23,9 +23,10 @@ from sverchok.utils.sv_bmesh_utils import *
 import numpy as np
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode
 
-class SvUVtextureNode(bpy.types.Node, SverchCustomTreeNode):
+class SvUVtextureNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     ''' UV texture node '''
     bl_idname = 'SvUVtextureNode'
     bl_label = 'UVtextures'
@@ -57,6 +58,7 @@ class SvUVtextureNode(bpy.types.Node, SverchCustomTreeNode):
         description="Choose UV to load", update=updateNode)
 
     def draw_buttons(self, context, layout):
+        self.animatable_buttons(layout, icon_only=True)
         layout.prop(self, 'uv', text='uv')
 
     def UV(self, object, uv):
