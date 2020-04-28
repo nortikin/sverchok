@@ -639,7 +639,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             if not socket_one_has_upstream_links:
                 callback_disable(node_id(self))
         except:
-            self.debug('vd draw update holdout', self.n_id)
+            self.debug(f'vd draw update holdout {self.n_id}')
 
     def free(self):
         callback_disable(node_id(self))

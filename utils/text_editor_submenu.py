@@ -52,6 +52,7 @@ class SvTextSubMenu(bpy.types.Menu):
             self.path_menu(searchpaths=[final_path], **args)
 
 
+
 def menu_draw(self, context):
     self.layout.menu("TEXT_MT_templates_submenu")
 
