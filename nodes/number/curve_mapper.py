@@ -146,9 +146,9 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode):
         evaluate = get_evaluator(node_group_name, curve_node_name)
         curve_node = get_valid_node(node_group_name, curve_node_name, CURVE_NODE_TYPE)
 
-        curve = SvScalarFunctionCurve(evaluate)
-        curve.u_bounds = (curve_node.mapping.clip_min_x, curve_node.mapping.clip_max_x)
         if 'Curve' in self.outputs:
+            curve = SvScalarFunctionCurve(evaluate)
+            curve.u_bounds = (curve_node.mapping.clip_min_x, curve_node.mapping.clip_max_x)
             self.outputs['Curve'].sv_set([curve])
 
         # no outputs, end early.
