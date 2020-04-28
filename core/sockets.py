@@ -290,7 +290,12 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvObjectSocket"
     bl_label = "Object Socket"
 
-    object_ref: StringProperty(update=process_from_socket)
+    # object_ref: StringProperty(update=process_from_socket)
+    object_ref: bpy.props.PointerProperty(
+        name="Object Reference", 
+        poll=lambda s, o: True,   # optionally filter items out of the list of Collections presented to user
+        type=bpy.types.Object, # what kind of objects are we showing
+        update=process_from_socket)
 
     def draw(self, context, layout, node, text):
         if self.custom_draw:

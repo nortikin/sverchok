@@ -847,6 +847,8 @@ class SverchCustomTreeNode:
                 return bpy_data_kind.get(stored_name)
             elif stored_name[3:] in bpy_data_kind:
                 return bpy_data_kind.get(stored_name[3:])
+        elif isinstance(stored_name, bpy.types.Object) and stored_name.name in bpy_data_kind:
+            return stored_name
 
         self.error(f"stored_name (string) '{stored_name}' not found in {bpy_data_kind}")
         return None
