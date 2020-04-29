@@ -72,6 +72,14 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
             'SvProfileNode', 'SvTextInNode', 'SvGenerativeArtNode', 'SvSNFunctorB',
             'SvRxNodeScript', 'SvProfileNodeMK2', 'SvVDExperimental', 'SvProfileNodeMK3'])
 
+        def compare_permutations_of_name(named_seeker, named_current):
+            """ try to find the stored datablock name, if these things fail then there is no compare anyway """
+            try:
+                if named_seeker == named_current: return True
+                elif named_seeker[3:] == named_current: return True
+            except Exception as err:
+                print(f"Refesh Current Script called but encountered error {errr}")
+
         for ng in ngs:
 
             # make sure this tree has nodes that demand updating.
@@ -81,21 +89,22 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
 
             for n in nodes:
 
-                if hasattr(n, "script_name") and n.script_name == text_file_name:
+                if hasattr(n, "script_name") and compare_permutations_of_name(n.script_name, text_file_name):
                     try:
                         n.load()
+                        n.process_node(context)
                     except SyntaxError as err:
                         msg = "SyntaxError : {0}".format(err)
                         self.report({"WARNING"}, msg)
                         return {'CANCELLED'}
-                    except:
-                        self.report({"WARNING"}, 'unspecified error in load()')
+                    except Exception as err:
+                        self.report({"WARNING"}, f'unspecified error in load()\n{err}^^^^')
                         return {'CANCELLED'}
 
-                elif hasattr(n, "text_file_name") and n.text_file_name == text_file_name:
+                elif hasattr(n, "text_file_name") and compare_permutations_of_name(n.text_file_name, text_file_name):
                     pass  # no nothing for profile node, just update ng, could use break...
 
-                elif hasattr(n, "current_text") and n.current_text == text_file_name:
+                elif hasattr(n, "current_text") and compare_permutations_of_name(n.current_text, text_file_name):
                     n.reload()
 
                 elif n.bl_idname == 'SvVDExperimental' and n.selected_draw_mode == "fragment":
@@ -104,13 +113,13 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                             n.custom_shader_location = n.custom_shader_location
 
                 elif n.bl_idname == 'SvSNFunctorB':
-                    if n.script_name.strip() == text_file_name.strip():
+                    if compare_permutations_of_name(n.script_name, text_file_name):
                         with n.sv_throttle_tree_update():
                             print('handle the shortcut')
                             n.handle_reload(context)
 
             # update node group with affected nodes
-            ng.update()
+            ng.sv_update()
 
 
         return {'FINISHED'}
