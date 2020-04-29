@@ -16,7 +16,7 @@ Details: https://github.com/nortikin/sverchok/issues/3077
 
 
 from enum import Enum, auto
-from typing import NamedTuple, Union, List, Callable
+from typing import NamedTuple, Union, List, Callable, Set
 from itertools import takewhile
 
 from bpy.types import Node, NodeTree
@@ -104,6 +104,20 @@ IS_WAVE_END = {
 }
 
 
+LINKS_CAN_BE_CHANGED = {
+    BlenderEventsTypes.tree_update: True,
+    BlenderEventsTypes.monad_tree_update: True,
+    BlenderEventsTypes.node_update: False,
+    BlenderEventsTypes.add_node: False,
+    BlenderEventsTypes.copy_node: True,
+    BlenderEventsTypes.free_node: True,
+    BlenderEventsTypes.add_link_to_node: False,  # because added links are known
+    BlenderEventsTypes.node_property_update: False,
+    BlenderEventsTypes.undo: False,  # something like reload event will be appropriate to call
+    BlenderEventsTypes.frame_change: False
+}
+
+
 DRAW_METHODS = {
     SverchokEventsTypes.add_node: 'sv_init',
     SverchokEventsTypes.copy_node: 'sv_copy',
@@ -144,6 +158,10 @@ class BlenderEvent(NamedTuple):
     def is_wave_end(self):
         return IS_WAVE_END.get(self.type, False)
 
+    @property
+    def could_links_be_changed(self):
+        return LINKS_CAN_BE_CHANGED[self.type]
+
     def convert_to_sverchok_event(self) -> SverchokEvent:
         try:
             sverchok_event_type = EVENT_CONVERSION[self.type]
@@ -176,9 +194,11 @@ class CurrentEvents:
 
         cls._to_listen_new_events = False
 
-        sverchok_events = cls.convert_wave_to_sverchok_events()
-        cls.redraw_nodes(sverchok_events)
-        cls.update_nodes(sverchok_events)
+        link_change_events = cls.detect_new_links_events()
+        node_change_events = cls.convert_wave_to_sverchok_events()
+        # update reconstruction here
+        cls.redraw_nodes(node_change_events + link_change_events)
+        cls.update_nodes(node_change_events + link_change_events)
 
         cls._to_listen_new_events = True
         cls.events_wave.clear()
@@ -188,9 +208,17 @@ class CurrentEvents:
         return cls.events_wave[-1].is_wave_end
 
     @classmethod
+    def detect_new_links_events(cls):
+        if cls.events_wave[0].could_links_be_changed:
+            # todo some simple changes test first
+            return []
+        else:
+            return []
+
+    @classmethod
     def convert_wave_to_sverchok_events(cls):
         if cls.events_wave[0].type == BlenderEventsTypes.undo:
-            return []  # todo should be implemented some changes test
+            return []  # todo reload every thing probably
         elif cls.events_wave[0].type == BlenderEventsTypes.frame_change:
             return []  # todo should be implemented some changes test
         elif cls.events_wave[0].type in [BlenderEventsTypes.tree_update, BlenderEventsTypes.monad_tree_update]:
@@ -214,3 +242,65 @@ class CurrentEvents:
     def is_in_debug_mode():
         with sv_preferences() as prefs:
             return prefs.log_level == "DEBUG" and prefs.log_update_events
+
+
+# -------------------------------------------------------------------------
+# ---------This part should be moved to separate module later--------------
+
+
+class NodeTreesReconstruction:
+    node_trees = dict()
+
+    @classmethod
+    def update_reconstruction(cls, sv_event: SverchokEvent): ...
+
+    @classmethod
+    def get_node_tree_reconstruction(cls, node_tree) -> 'SvTree': ...
+
+
+class SvTree:
+    def __init__(self, tree_id: str):
+        self.id: str = tree_id
+        self.nodes: Set[SvNode] = set()
+        self.links: Set[SvLink] = set()
+
+    def update_reconstruction(self, sv_event: SverchokEvent): ...
+
+    def total_reconstruction(self): ...
+
+    def need_total_reconstruction(self) -> bool: ...
+
+    def check_reconstruction_correctness(self): ...
+
+    @staticmethod
+    def is_in_debug_mode():
+        with sv_preferences() as prefs:
+            return prefs.log_level == "DEBUG" and prefs.log_update_events
+
+
+class SvNode(NamedTuple):
+    id: str
+
+    @classmethod
+    def init_from_node(cls, node) -> 'SvNode': ...
+
+    def __hash__(self):
+        return hash(id)
+
+    def __eq__(self, other):
+        return self.id == other
+
+
+class SvLink(NamedTuple):
+    id: str  # from_link.id + to_link.id
+    from_node: SvNode
+    to_node: SvNode
+
+    @classmethod
+    def init_from_link(cls, link) -> 'SvLink': ...
+
+    def __hash__(self):
+        return hash(id)
+
+    def __eq__(self, other):
+        return self.id == other
