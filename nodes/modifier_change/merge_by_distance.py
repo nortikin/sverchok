@@ -86,7 +86,7 @@ class SvMergeByDistanceNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Merge Vertices that are closer than a distance.
     """
     bl_idname = 'SvMergeByDistanceNode'
-    bl_label = 'Merge by distance'
+    bl_label = 'Merge by Distance'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_REMOVE_DOUBLES'
 
