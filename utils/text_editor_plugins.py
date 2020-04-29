@@ -93,6 +93,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                     try:
                         n.load()
                         n.process_node(context)
+                        return {'FINISHED'}
                     except SyntaxError as err:
                         msg = "SyntaxError : {0}".format(err)
                         self.report({"WARNING"}, msg)
