@@ -41,7 +41,7 @@ class SvArmaturePropsNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
         self.outputs.new('SvObjectSocket', "Armature Object")
         
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
 
     def process(self):
         armobj, selm = self.inputs

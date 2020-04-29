@@ -41,7 +41,7 @@ class SvSCNRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
         so("SvMatrixSocket", "hited object matrix")
 
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
 
     def process(self):
         P,N,S,I,O,M = self.outputs

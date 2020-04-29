@@ -79,7 +79,7 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     dynamic_strings: bpy.props.CollectionProperty(type=SvExecNodeDynaStringItem)
 
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         row = layout.row(align=True)
         # add() remove() clear() move()
         row.operator(callback_id, text='', icon='ZOOM_IN').cmd = 'add_new_line'
@@ -116,7 +116,7 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
 
     def draw_buttons_ext(self, context, layout):
-        self.animatable_buttons(layout)
+        self.draw_animatable_buttons(layout)
         col = layout.column(align=True)
         col.operator(callback_id, text='copy to node').cmd = 'copy_from_text'
         col.prop_search(self, 'text', bpy.data, "texts", text="")

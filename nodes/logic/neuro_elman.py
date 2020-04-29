@@ -195,7 +195,7 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
         self.outputs.new('SvStringsSocket', "result")
 
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         handle_name = self.name + self.id_data.name
         layout.prop(self, "k_learning", text="koeff learning")
         layout.prop(self, "gisterezis", text="gisterezis")

@@ -220,7 +220,7 @@ class SvGetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin, Sv
             outputs.new(s_type, "Data")
     
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.alert = self.bad_prop
         layout.prop(self, "prop_name", text="")
 

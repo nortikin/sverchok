@@ -41,7 +41,7 @@ class SvCollectionPicker(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
         self.outputs.new("SvObjectSocket", "Objects")
 
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         col = layout.column()
         col.prop_search(self, 'collection', bpy.data, 'collections', text='', icon='GROUP')
 

@@ -41,7 +41,7 @@ class SvMeshUVColorNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         size=4, min=0.0, max=1.0, subtype='COLOR', update=updateNode)
 
     def draw_buttons(self, context,   layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop_search(self, 'object_ref', bpy.data, 'objects')
         ob = bpy.data.objects.get(self.object_ref)
         if ob and ob.type == 'MESH':

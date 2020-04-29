@@ -159,7 +159,7 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         new_o_put("SvMatrixSocket", "matrices")
 
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, 'selected_mode', expand=True)
 
     def get_objects(self):

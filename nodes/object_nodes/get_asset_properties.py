@@ -160,7 +160,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNod
 
     def draw_buttons(self, context, layout):
         # layout.operator('node.'   ,text='refresh from scene')
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.row().prop(self, "Mode", text="data")
 
         if self.Mode == 'objects':

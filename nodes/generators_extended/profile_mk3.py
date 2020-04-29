@@ -445,7 +445,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         description="If distance between first and last point is less than this, X command will remove the last point")
 
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, 'selected_axis', expand=True)
         layout.prop_search(self, 'filename', bpy.data, 'texts', text='', icon='TEXT')
 

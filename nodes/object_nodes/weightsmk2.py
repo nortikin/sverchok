@@ -36,7 +36,7 @@ class SvVertexGroupNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNod
     group_name: StringProperty(default='Sv_VGroup', update=updateNode)
 
     def draw_buttons(self, context,   layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, "group_name", text="")
 
     def draw_buttons_ext(self, context, layout):

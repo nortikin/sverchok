@@ -106,7 +106,7 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
             print('code:', exec_info.tb_frame.f_code)
 
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         if not self.loaded:
             row = layout.row()
             row.prop_search(self, 'script_name', bpy.data, 'texts', text='')

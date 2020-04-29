@@ -151,7 +151,7 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
         else:
             layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         b = layout.split(factor=0.33, align=True)
         b.label(text='Mapping:')
         b.prop(self, 'tex_coord_type', expand=False, text='')
@@ -163,7 +163,7 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
-        self.animatable_buttons(layout)
+        self.draw_animatable_buttons(layout)
         self.draw_buttons(context, layout)
         layout.prop(self, 'list_match', expand=False)
 

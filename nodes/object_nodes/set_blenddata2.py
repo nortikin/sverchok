@@ -40,7 +40,7 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableN
     formula: StringProperty(name='formula', default='delta_location', update=updateNode)
 
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, "formula", text="")
 
     def sv_init(self, context):

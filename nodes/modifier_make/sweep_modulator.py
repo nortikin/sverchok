@@ -50,7 +50,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         onew("SvStringsSocket", "Faces")
 
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         row = layout.row(align=True)
         row.prop(self, "active", text="ACTIVATE")
         row = layout.row(align=True)

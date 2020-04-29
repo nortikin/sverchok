@@ -69,7 +69,7 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
             update = updateNode)
 
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, "all_faces", toggle=True)
         if self.all_faces:
             layout.prop(self, "matching_mode", text='')

@@ -141,7 +141,7 @@ class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatabl
         self.outputs.new('SvObjectSocket', 'Object')
 
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.template_list("UI_UL_SvMaterialUiList", "materials", self, "materials", self, "selected")
         row = layout.row(align=True)
 

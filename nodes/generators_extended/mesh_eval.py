@@ -292,7 +292,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                     update=updateNode)
 
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         row = layout.row()
         row.prop_search(self, 'filename', bpy.data, 'texts', text='', icon='TEXT')
         row = layout.row()

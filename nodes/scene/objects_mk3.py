@@ -162,7 +162,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             layout.label(text='--None--')
 
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         col = layout.column(align=True)
         row = col.row(align=True)
         # row.prop_search(self, 'groupname', bpy.data, 'groups', text='', icon='HAND')
@@ -195,7 +195,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'to3d', text="To Control panel")
-        self.animatable_buttons(layout)
+        self.draw_animatable_buttons(layout)
 
     @property
     def draw_3dpanel(self):

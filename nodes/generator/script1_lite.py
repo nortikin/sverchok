@@ -466,7 +466,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             row.prop_search(self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
             row.operator(sn_callback, text='', icon='PLUGIN').fn_name = 'load'
         else:
-            self.animatable_buttons(layout, icon_only=True)
+            self.draw_animatable_buttons(layout, icon_only=True)
             col = layout.column(align=True)
             row = col.row()
             row.operator(sn_callback, text='Reload').fn_name = 'load'

@@ -49,7 +49,7 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
         self.outputs.new('SvMatrixSocket', "Matrices")
 
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         row = layout.row()
         row.prop(self, "modifiers", text="Post modifiers")
 

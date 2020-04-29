@@ -64,7 +64,7 @@ class UdpClientNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     active: BoolProperty(default=False, name='Active')
 
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, 'active', text='Active')
         layout.prop(self, 'ip', text='IP')
         layout.prop(self, 'port', text='Port')

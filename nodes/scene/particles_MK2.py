@@ -34,10 +34,10 @@ class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
     Filt_D: BoolProperty(default=True, update=updateNode)
     
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         
     def draw_buttons_ext(self, context, layout):
-        self.animatable_buttons(layout)
+        self.draw_animatable_buttons(layout)
         layout.prop(self, "Filt_D", text="filter death")
 
     def sv_init(self, context):

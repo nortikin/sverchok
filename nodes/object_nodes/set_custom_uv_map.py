@@ -58,7 +58,7 @@ class SvSetCustomUVMap(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                                       update=updateNode)
 
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, 'uv_name', text='', icon='GROUP_UVS')
 
     def sv_init(self, context):

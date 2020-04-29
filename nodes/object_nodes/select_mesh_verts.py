@@ -42,7 +42,7 @@ class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     mode: EnumProperty(items=modes, default='vertices', update=updateNode)
 
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, "deselect_all", text="clear selection")
         layout.prop(self, "mode", expand=True)
         if self.inputs[4].is_linked:

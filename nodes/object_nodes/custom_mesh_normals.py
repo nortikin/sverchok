@@ -40,7 +40,7 @@ class SvSetCustomMeshNormals(bpy.types.Node, SverchCustomTreeNode, SvAnimatableN
     mode: EnumProperty(items=modes, default='per_Vert', update=updateNode)
 
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, "mode", expand=True)
 
     def sv_init(self, context):

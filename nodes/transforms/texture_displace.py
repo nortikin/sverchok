@@ -313,7 +313,7 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
     def draw_buttons(self, context, layout):
         is_vector = self.out_mode in ['RGB to XYZ', 'HSV to XYZ', 'HLS to XYZ']
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
         c = layout.split(factor=0.5, align=False)
         r = c.column(align=False)
         r.label(text='Direction'+ ':')

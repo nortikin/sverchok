@@ -82,7 +82,7 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             layout.label(text="Connect input to activate")
             return
         try:
-            self.animatable_buttons(layout, icon_only=True)
+            self.draw_animatable_buttons(layout, icon_only=True)
             tnode = m.nodes[self._get_curve_node_name()]
             if not tnode:
                 layout.label(text="Connect input to activate")

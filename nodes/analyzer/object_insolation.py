@@ -82,10 +82,10 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
         # self.inputs[2].prop[2] = -1  # z down   # <--- mayybe?
 
     def draw_buttons(self, context, layout):
-        self.animatable_buttons(layout, icon_only=True)
+        self.draw_animatable_buttons(layout, icon_only=True)
 
     def draw_buttons_ext(self, context, layout):
-        self.animatable_buttons(layout)
+        self.draw_animatable_buttons(layout)
         row = layout.row(align=True)
         row.prop(self,    "mode",   text="In Mode")
         row.prop(self,    "sort_critical",text="Limit")
