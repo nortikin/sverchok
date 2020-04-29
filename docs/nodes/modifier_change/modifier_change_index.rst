@@ -19,6 +19,7 @@ Modifier Change
    extrude_region
    holes_fill
    flip_normals
+   merge_by_distance
    mesh_join
    mesh_separate
    objects_along_edge
@@ -27,7 +28,6 @@ Modifier Change
    edge_boom
    polygons_to_edges
    recalc_normals
-   remove_doubles
    triangulate
    triangulate_heavy
    planar_faces
