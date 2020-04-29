@@ -8,7 +8,7 @@ Nodes
    Generators <nodes/generator/generator_index>
    Generators Extended<nodes/generators_extended/generators_extended_index>
    Curves<nodes/curve/curve_index>
-   Surfaces<nopdes/surface/surface_index>
+   Surfaces<nodes/surface/surface_index>
    Fields<nodes/field/field_index>
    Transforms <nodes/transforms/transforms_index>
    Analyzers <nodes/analyzer/analyzer_index>
@@ -25,6 +25,7 @@ Nodes
    List Structure <nodes/list_struct/list_struct_index>
    List Masks <nodes/list_masks/list_masks_index>
    List Mutators <nodes/list_mutators/list_mutators_index>
+   Dictionary <nodes/dictionary/dictionary_index>
 
    Viz <nodes/viz/viz_index>
    Text <nodes/text/text_index>

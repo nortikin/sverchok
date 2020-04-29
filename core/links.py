@@ -51,7 +51,8 @@ def get_new_unlinked_nodes(before_inputted_nodes, before_input_sockets, input_so
         if not socket in input_sockets:
             #if the node has been deleted it is not affected
             if node_id in nodes_dict:
-                affected_nodes.append(node_id)
+                if not node_id in affected_nodes: 
+                    affected_nodes.append(node_id)
 
     return affected_nodes
 

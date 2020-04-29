@@ -7,6 +7,8 @@ Functionality
 This node generates a Vector Field and a Scalar Field, which are calculated as
 force attracting points towards some objects. Several types of attractor
 objects are supported. Several physics-like falloff laws are supported.
+Falloffs similar to standard proportional editing mode are supported too (they
+are marked with `(P)` in the name).
 
 The scalar field generated equals to the norm of the vector field - i.e., the amplitude of the attracting force.
 
@@ -75,6 +77,12 @@ This node has the following parameters:
    * **Inverse cubic - 1/R^3**. Calculate the force value as `1/R^3`.
    * **Inverse exponent - Exp(-R)**. Calculate the force value as `Exp(- K*R)`.
    * **Gauss - Exp(-R^2/2)**. Calculate the force value as `Exp(- K * R^2/2)`.
+   * **(P) Smooth**. Equivalent of "Smooth" proportional editing falloff.
+   * **(P) Sphere**. Equivalent of "Sphere" proportional editing falloff.
+   * **(P) Root**. Equivalent of "Root" proportional editing falloff.
+   * **(P) Inverse Square**. Equivalent of "Inverse Square" proportional editing falloff.
+   * **(P) Linear**. Equivalent of "Linear" proportional editing falloff.
+   * **(P) Constant**. Equivalent of "Constant" proportional editing falloff.
 
    The default option is **None**.
 * **Clamp**. If checked, then the amplitude of attracting force vector will be
@@ -102,4 +110,8 @@ The attraction field of Z axis visualized:
 The attraction field of a point applied to several planes:
 
 .. image:: https://user-images.githubusercontent.com/284644/79471194-b9543f80-801b-11ea-89dc-3b631659f1b2.png
+
+Use the attraction field of cylinder to move points of the plane up:
+
+.. image:: https://user-images.githubusercontent.com/284644/80508641-bcdbb500-8991-11ea-9ed0-030ca6d0bc44.png
 

@@ -316,6 +316,7 @@
     SvExecNodeMod
     SvMapRangeNode
     SvEasingNode
+    SvCurveMapperNode
     SvMixNumbersNode
     SvMixInputsNode
     SvFormulaNodeMk3
