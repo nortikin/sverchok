@@ -62,7 +62,9 @@ def sv_handler_undo_pre(scene):
 
 @persistent
 def sv_handler_undo_post(scene):
-    ev.CurrentEvents.add_new_event(ev.BlenderEventsTypes.undo)
+    bl_event = ev.BlenderEvent(type=ev.BlenderEventsTypes.undo)
+    ev.CurrentEvents.add_new_event(bl_event)
+    # todo what is going on below
     # this function appears to be hoisted into an environment that does not have the same locals()
     # hence this dict must be imported. (jan 2019)
 
@@ -96,13 +98,16 @@ def sv_update_handler(scene):
     if not has_frame_changed(scene):
         return
 
-    ev.CurrentEvents.add_new_event(ev.BlenderEventsTypes.frame_change)
-    for ng in sverchok_trees():
-        try:
-            # print('sv_update_handler')
-            ng.process_ani()
-        except Exception as e:
-            print('Failed to update:', str(e))  # name,
+    bl_event = ev.BlenderEvent(type=ev.BlenderEventsTypes.frame_change)
+    ev.CurrentEvents.add_new_event(bl_event)
+
+    if False:  # todo take from preference
+        for ng in sverchok_trees():
+            try:
+                # print('sv_update_handler')
+                ng.process_ani()
+            except Exception as e:
+                print('Failed to update:', str(e))  # name,
 
 
 @persistent

@@ -19,7 +19,7 @@ from enum import Enum, auto
 from typing import NamedTuple, Union, List, Callable, Set
 from itertools import takewhile
 
-from bpy.types import Node, NodeTree
+from bpy.types import Node, NodeTree, NodeLink
 
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.core.update_system import process_from_nodes
@@ -29,10 +29,14 @@ def property_update(prop_name: str, call_function=None):
 
     # https://docs.python.org/3/library/functools.html#functools.partial
     def handel_update_call(node, context):
-        CurrentEvents.add_new_event(BlenderEventsTypes.node_property_update,
-                                    updated_element=node,
-                                    redraw_function=handel_update_call.call_function,
-                                    redraw_function_argument=(node, context))
+        bl_event = BlenderEvent(
+            type=BlenderEventsTypes.node_property_update,
+            tree=node.id_data,
+            node=node,
+            update_function=handel_update_call.call_function,
+            function_arguments=(node, context)
+        )
+        CurrentEvents.add_new_event(bl_event)
     handel_update_call.prop_name = prop_name
     handel_update_call.call_function = call_function
     return handel_update_call
@@ -74,12 +78,6 @@ class SverchokEventsTypes(Enum):
         element_data = f"NODE: {updated_element.name}" if updated_element else ""
         print(event_name + element_data)
 
-    def get_draw_method_name(self):
-        try:
-            return DRAW_METHODS[self]
-        except KeyError:
-            raise KeyError(f"Event={self.name} does not have related draw method")
-
 
 EVENT_CONVERSION = {
     BlenderEventsTypes.tree_update: SverchokEventsTypes.undefined,
@@ -118,31 +116,17 @@ LINKS_CAN_BE_CHANGED = {
 }
 
 
-DRAW_METHODS = {
-    SverchokEventsTypes.add_node: 'sv_init',
-    SverchokEventsTypes.copy_node: 'sv_copy',
-    SverchokEventsTypes.free_node: 'sv_free',
-    SverchokEventsTypes.node_link_update: 'sv_update'
-}
-
-
 class SverchokEvent(NamedTuple):
     type: SverchokEventsTypes
-    node: Node
-    redraw_function: Callable = None  # for properties updates
-    redraw_function_arguments: tuple = None
+    tree: NodeTree = None
+    node: Node = None
+    link: NodeLink = None
+    update_function: Callable = None  # for properties updates
+    function_arguments: tuple = tuple()
 
     def redraw_node(self):
-        # todo some refactoring needed
-        if self.type == SverchokEventsTypes.node_property_update:
-            if self.redraw_function:
-                self.redraw_function(*self.redraw_function_arguments)
-            else:
-                return
-        elif self.type in [SverchokEventsTypes.add_node, SverchokEventsTypes.copy_node]:
-            getattr(self.node, self.type.get_draw_method_name())(None)  # todo not None
-        else:
-            getattr(self.node, self.type.get_draw_method_name())()
+        if self.update_function:
+            self.update_function(*self.function_arguments)
 
     def print(self):
         self.type.print(self.node)
@@ -150,9 +134,11 @@ class SverchokEvent(NamedTuple):
 
 class BlenderEvent(NamedTuple):
     type: BlenderEventsTypes
-    updated_element: Union[Node, NodeTree, None]
-    redraw_function: Callable = None  # for properties updates
-    redraw_function_arguments: tuple = None
+    tree: NodeTree = None
+    node: Node = None
+    link: NodeLink = None
+    update_function: Callable = None  # for properties updates
+    function_arguments: tuple = tuple()
 
     @property
     def is_wave_end(self):
@@ -163,11 +149,18 @@ class BlenderEvent(NamedTuple):
         return LINKS_CAN_BE_CHANGED[self.type]
 
     def convert_to_sverchok_event(self) -> SverchokEvent:
-        try:
-            sverchok_event_type = EVENT_CONVERSION[self.type]
-            return SverchokEvent(sverchok_event_type, self.updated_element, self.redraw_function, self.redraw_function_arguments)
-        except KeyError:
-            raise KeyError(f"For Blender event type={self.type} Sverchek event is undefined")
+        sverchok_event_type = EVENT_CONVERSION[self.type]
+        return SverchokEvent(
+            type=sverchok_event_type,
+            tree=self.tree,
+            node=self.node,
+            link=self.link,
+            update_function=self.update_function,
+            function_arguments=self.function_arguments
+        )
+
+    def print(self):
+        self.type.print(self.node or self.tree)
 
 
 class CurrentEvents:
@@ -175,16 +168,17 @@ class CurrentEvents:
     _to_listen_new_events = True  # todo should be something more safe
 
     @classmethod
-    def add_new_event(cls, event_type: BlenderEventsTypes, updated_element=None, redraw_function=None, redraw_function_argument=None):
+    def add_new_event(cls, bl_event: BlenderEvent):
         if not cls._to_listen_new_events:
             return
-        if event_type == BlenderEventsTypes.node_update:
+        if bl_event.type == BlenderEventsTypes.node_update:
             # such updates are not informative
             return
 
         if cls.is_in_debug_mode():
-            event_type.print(updated_element)
-        cls.events_wave.append(BlenderEvent(event_type, updated_element, redraw_function, redraw_function_argument))
+            bl_event.print()
+
+        cls.events_wave.append(bl_event)
         cls.handle_new_event()
 
     @classmethod
