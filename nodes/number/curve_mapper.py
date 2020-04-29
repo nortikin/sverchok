@@ -16,6 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import json
 import bpy
 from bpy.props import BoolProperty, FloatProperty, EnumProperty, StringProperty
 
@@ -24,10 +25,19 @@ from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 
 from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, numpy_list_match_func
 from sverchok.utils.sv_itertools import recurse_f_level_control
-from sverchok.utils.sv_manual_curves_utils import get_valid_evaluate_function_legacy, get_valid_evaluate_function, get_valid_curve
+from sverchok.utils.sv_manual_curves_utils import (
+    get_valid_evaluate_function_legacy,
+    get_valid_evaluate_function,
+    get_valid_node,
+    CURVE_NODE_TYPE,
+    set_rgb_curve,
+    get_rgb_curve)
+
+from sverchok.utils.curve import SvScalarFunctionCurve
 
 import numpy as np
 node_group_name = 'sverchok_helper_group'
+
 if (2, 82, 0) > bpy.app.version:
     get_evaluator = get_valid_evaluate_function_legacy
 else:
@@ -62,8 +72,8 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.inputs.new('SvStringsSocket', "Value").prop_name = 'value'
 
         self.outputs.new('SvStringsSocket', "Value")
-        n_id = self.node_id
-        _ = get_evaluator(node_group_name, 'RGB Curves' + n_id)
+        self.outputs.new('SvCurveSocket', "Curve")
+        _ = get_evaluator(node_group_name, self._get_curve_node_name())
 
 
     def draw_buttons(self, context, layout):
@@ -73,8 +83,7 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             return
         try:
             self.animatable_buttons(layout, icon_only=True)
-            n_id = self.node_id
-            tnode = m.nodes['RGB Curves' + n_id]
+            tnode = m.nodes[self._get_curve_node_name()]
             if not tnode:
                 layout.label(text="Connect input to activate")
                 return
@@ -89,16 +98,26 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     def free(self):
         m = bpy.data.node_groups.get(node_group_name)
-        n_id = self.node_id
-        node = m.nodes['RGB Curves'+n_id]
+        node = m.nodes[self._get_curve_node_name()]
         m.nodes.remove(node)
+
+    def _get_curve_node_name(self):
+        n_id = self.node_id
+        return 'RGB Curves'+n_id
 
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
-        n_id = self.node_id
-        evaluate = get_evaluator(node_group_name, 'RGB Curves'+n_id)
+        curve_node_name = self._get_curve_node_name()
+        evaluate = get_evaluator(node_group_name, curve_node_name)
+        curve_node = get_valid_node(node_group_name, curve_node_name, CURVE_NODE_TYPE)
 
+        if 'Curve' in self.outputs:
+            curve = SvScalarFunctionCurve(evaluate)
+            curve.u_bounds = (curve_node.mapping.clip_min_x, curve_node.mapping.clip_max_x)
+            self.outputs['Curve'].sv_set([curve])
+
+        # no outputs, end early.
         if not outputs['Value'].is_linked:
             return
         result = []
@@ -108,6 +127,21 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         result = recurse_f_level_control([floats_in], evaluate, curve_mapper, None, desired_levels)
 
         self.outputs[0].sv_set(result)
+
+    def storage_set_data(self, node_ref):
+        '''function to get data when importing from json'''
+        data_list = node_ref.get('curve_data')
+        data_dict = json.loads(data_list)
+        curve_node_name = self._get_curve_node_name()
+        set_rgb_curve(data_dict, curve_node_name)
+
+    def storage_get_data(self, node_dict):
+        '''function to set data for exporting json'''
+        curve_node_name = self._get_curve_node_name()
+        data = get_rgb_curve(node_group_name, curve_node_name)
+        data_json_str = json.dumps(data)
+        node_dict['curve_data'] = data_json_str
+
 
 
 def register():
