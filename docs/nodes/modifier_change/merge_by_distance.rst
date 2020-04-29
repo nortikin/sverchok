@@ -15,7 +15,7 @@ Inputs
 - **FaceData**. List containing an arbitrary data item for each face of input
   mesh. For example, this may be used to provide material indexes of input
   mesh faces. Optional input.
-  - **Mask**. Vector mask to select the affected vertices
+- **Mask**. Vector mask to select the affected vertices
 
 
 Parameters

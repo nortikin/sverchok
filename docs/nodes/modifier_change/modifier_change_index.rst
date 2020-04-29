@@ -28,7 +28,6 @@ Modifier Change
    edge_boom
    polygons_to_edges
    recalc_normals
-   remove_doubles
    triangulate
    triangulate_heavy
    planar_faces
