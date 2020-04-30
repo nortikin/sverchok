@@ -290,7 +290,12 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvObjectSocket"
     bl_label = "Object Socket"
 
-    object_ref: StringProperty(update=process_from_socket)
+    # object_ref: StringProperty(update=process_from_socket)
+    object_ref: bpy.props.PointerProperty(
+        name="Object Reference", 
+        poll=lambda s, o: True,   # optionally filter items out of the list of Collections presented to user
+        type=bpy.types.Object, # what kind of objects are we showing
+        update=process_from_socket)
 
     def draw(self, context, layout, node, text):
         if self.custom_draw:
@@ -306,7 +311,8 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
         if self.is_linked and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.object_ref:
-            obj_ref = bpy.data.objects.get(self.object_ref.strip())
+            # obj_ref = bpy.data.objects.get(self.object_ref.strip())
+            obj_ref = self.node.get_bpy_data_from_name(self.object_ref, bpy.data.objects)
             if not obj_ref:
                 raise SvNoDataError(self)
             return [obj_ref]
