@@ -13,7 +13,9 @@ in  population s d=20 n=2
 in  generations s d=10000 n=2
 in  threshold s d=0.9 n=2
 in  mutator s d=0.1 n=2
+in  mutofactor s d=0.1 n=2
 in  selector s d=0.2 n=2
+in  random_seed s d=0 n=2
 in  all_apart s d=0 n=2
 out vers_final  v
 out vers_descr  v
@@ -62,7 +64,7 @@ def compare_two_lists(agent_list,pattern):
 def ga():
 
     agents = init_agents(population, in_str_len)
-    stepper = 0.1
+    stepper = 0.76
 
     for generation in range(generations):
 
@@ -75,14 +77,14 @@ def ga():
 
         if any(agent.fitness >= stepper for agent in agents):
             combo.append(sorted(agents, key=lambda agent: agent.fitness, reverse=True)[0].string)
-            stepper += 0.1
+            print(f"GA fitness >= {round(stepper,2)}, in #{generation} generation")
+            stepper += 0.02
         if any(agent.fitness >= threshold for agent in agents):
 
-            print (f'Last generation #{str(generation)}')
             agent = sorted(agents, key=lambda agent: agent.fitness, reverse=True)[0]
-            print (f'GA ended with {type(agent.string)} {len(agent.string)}, \
-                     \n{agent.string[:3]}... \
-                     \nFitness: {agent.fitness}')
+            print (f'GA ended \
+                     \nGA fitness: {round(agent.fitness,4)}, in #{str(generation)} generation \
+                     \nGA values: {[[round(i,2) for i in x] for x in agent.string[:2]]} ... ')
             return agent.string
     return [None]
     
@@ -136,7 +138,7 @@ def mutation(agents):
 
     for agent in agents:
         for idx, param in enumerate(agent.string):
-            if random.uniform(0.0, 1.0) <= mutator:
+            if random.uniform(0.0, 1.0) <= mutofactor:
                 if all_apart == 0:
                     agent.string = agent.string[0:idx] + \
                                 [(random.choice(data[0]))] + \
@@ -153,14 +155,16 @@ def mutation(agents):
     return agents
 
 if data and pattern:
+    random.seed(random_seed)
     in_str = pattern[0]
     emax = lambda a,b: a if (a > b) else b
     emin = lambda a,b: a if (a < b) else b
     all_max = reduce(emax,[reduce(emax, x) for x in in_str])
     all_min = reduce(emin,[reduce(emin, x) for x in in_str])
     all_dif = all_max-all_min
-    print(f'GA initialised with {type(in_str)} {len(in_str)} \
-            \n{in_str[:3]}...')
+    print(f'------------------------------------ \
+          \nGA started \
+          \nGA values: {[[round(i,2) for i in x] for x in in_str[:2]]} ...')
     in_str_len = len(in_str)
     combo = []
     vers_final = [ga()]

@@ -91,6 +91,8 @@ class SvRemoveDoublesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_REMOVE_DOUBLES'
 
+    replacement_nodes = [('SvMergeByDistanceNode', None, None)]
+    
     distance: FloatProperty(
         name='Distance', description='Remove distance',
         default=0.001, precision=3, min=0, update=updateNode)

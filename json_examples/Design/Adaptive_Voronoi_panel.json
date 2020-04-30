@@ -9,13 +9,13 @@
     "List Math.001": "Frame.001",
     "Map Range": "Frame.001",
     "Map Range.001": "Frame",
+    "Merge by Distance": "Frame.002",
     "Mesh Expression": "Frame",
     "Move.001": "Frame.003",
     "Note": "Frame.002",
     "Note.001": "Frame.002",
     "Origins": "Frame.001",
     "Plane": "Frame.003",
-    "Remove Doubles": "Frame.002",
     "Vector Math": "Frame.003",
     "Vector Math.001": "Frame.003",
     "Vector Noise": "Frame.001",
@@ -216,6 +216,20 @@
       },
       "width": 140.0
     },
+    "Merge by Distance": {
+      "bl_idname": "SvMergeByDistanceNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        184.88937377929688,
+        143.97623443603516
+      ],
+      "params": {
+        "distance": 0.10000000149011612
+      },
+      "width": 140.0
+    },
     "Mesh Expression": {
       "bl_idname": "SvMeshEvalNode",
       "geom": "{\n  \"defaults\": {\n    \"Close\": 0.0\n  },\n  \"vertices\": [\n    [\n      0.0,\n      0.0,\n      0.0\n    ],\n    [\n      2.0,\n      0.0,\n      0.0\n    ],\n    [\n      0.0,\n      2.0,\n      0.0\n    ],\n    [\n      2.0,\n      2.0,\n      0.0\n    ],\n    [\n      0.0,\n      0.2,\n      0.0\n    ],\n    [\n      2.0,\n      0.2,\n      0.0\n    ],\n    [\n      2.0,\n      1.0,\n      0.0\n    ],\n    [\n      0.0,\n      1.0,\n      0.0\n    ],\n    [\n      0.0,\n      \"0.2 + Close\",\n      0.7,\n      [\n        \"Selected\"\n      ]\n    ],\n    [\n      2.0,\n      \"0.2 + Close\",\n      0.7,\n      [\n        \"Selected\"\n      ]\n    ],\n    [\n      2.0,\n      \"1.0 + Close\",\n      0.7,\n      [\n        \"Selected\"\n      ]\n    ],\n    [\n      0.0,\n      \"1.0 + Close\",\n      0.7,\n      [\n        \"Selected\"\n      ]\n    ]\n  ],\n  \"edges\": [\n    [\n      0,\n      4\n    ],\n    [\n      0,\n      1\n    ],\n    [\n      3,\n      6\n    ],\n    [\n      2,\n      3\n    ],\n    [\n      1,\n      5\n    ],\n    [\n      4,\n      5\n    ],\n    [\n      2,\n      7\n    ],\n    [\n      6,\n      7\n    ],\n    [\n      8,\n      11\n    ],\n    [\n      8,\n      9\n    ],\n    [\n      9,\n      10\n    ],\n    [\n      10,\n      11\n    ],\n    [\n      5,\n      9\n    ],\n    [\n      4,\n      8\n    ],\n    [\n      7,\n      11\n    ],\n    [\n      6,\n      10\n    ]\n  ],\n  \"faces\": [\n    [\n      7,\n      6,\n      3,\n      2\n    ],\n    [\n      0,\n      1,\n      5,\n      4\n    ],\n    [\n      4,\n      5,\n      9,\n      8\n    ],\n    [\n      8,\n      9,\n      10,\n      11\n    ],\n    [\n      6,\n      7,\n      11,\n      10\n    ]\n  ],\n  \"vertexdata\": [],\n  \"facedata\": [\n    0,\n    0,\n    0,\n    0,\n    0\n  ]\n}",
@@ -320,20 +334,6 @@
         "numy": 20
       },
       "use_custom_color": true,
-      "width": 140.0
-    },
-    "Remove Doubles": {
-      "bl_idname": "SvRemoveDoublesNode",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        177.19818115234375,
-        128.98429107666016
-      ],
-      "params": {
-        "distance": 0.10000000149011612
-      },
       "width": 140.0
     },
     "Reroute": {
@@ -575,23 +575,23 @@
     [
       "Voronoi 2D",
       0,
-      "Remove Doubles",
-      1
+      "Merge by Distance",
+      0
     ],
     [
       "Voronoi 2D",
       1,
-      "Remove Doubles",
-      2
+      "Merge by Distance",
+      1
     ],
     [
-      "Remove Doubles",
+      "Merge by Distance",
       0,
       "Fill Holes",
       0
     ],
     [
-      "Remove Doubles",
+      "Merge by Distance",
       1,
       "Fill Holes",
       1
@@ -610,14 +610,14 @@
     ],
     [
       "Flip normals",
-      "Vertices",
-      "Reroute.001",
+      "Polygons",
+      "Reroute",
       "Input"
     ],
     [
       "Flip normals",
-      "Polygons",
-      "Reroute",
+      "Vertices",
+      "Reroute.001",
       "Input"
     ],
     [
@@ -641,32 +641,14 @@
     [
       "Vector Noise",
       0,
-      "List Math",
-      0
-    ],
-    [
-      "Vector Noise",
-      0,
       "List Math.001",
       0
     ],
     [
       "Vector Noise",
       0,
-      "Map Range",
-      0
-    ],
-    [
       "List Math",
-      0,
-      "Map Range",
-      1
-    ],
-    [
-      "List Math.001",
-      0,
-      "Map Range",
-      2
+      0
     ],
     [
       "Vector Noise",
@@ -691,6 +673,24 @@
       0,
       "Mesh Expression",
       0
+    ],
+    [
+      "Vector Noise",
+      0,
+      "Map Range",
+      0
+    ],
+    [
+      "List Math",
+      0,
+      "Map Range",
+      1
+    ],
+    [
+      "List Math.001",
+      0,
+      "Map Range",
+      2
     ],
     [
       "Reroute.001",
@@ -735,6 +735,18 @@
       2
     ],
     [
+      "Voronoi 2D",
+      0,
+      "Viewer Draw Mk3.001",
+      0
+    ],
+    [
+      "Voronoi 2D",
+      1,
+      "Viewer Draw Mk3.001",
+      1
+    ],
+    [
       "Move.001",
       0,
       "Viewer Draw Mk3.002",
@@ -744,18 +756,6 @@
       "Plane",
       1,
       "Viewer Draw Mk3.002",
-      1
-    ],
-    [
-      "Voronoi 2D",
-      0,
-      "Viewer Draw Mk3.001",
-      0
-    ],
-    [
-      "Voronoi 2D",
-      1,
-      "Viewer Draw Mk3.001",
       1
     ]
   ]

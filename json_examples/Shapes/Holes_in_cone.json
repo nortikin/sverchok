@@ -4,9 +4,9 @@
     "Circle": "Frame.001",
     "Crop mesh 2D": "Frame.001",
     "Matrix Apply.001": "Frame.002",
+    "Merge by Distance": "Frame.002",
     "Origins": "Frame",
     "Polygon Boom": "Frame",
-    "Remove Doubles": "Frame.002",
     "Vector Drop": "Frame"
   },
   "groups": {},
@@ -73,7 +73,7 @@
     },
     "Frame": {
       "bl_idname": "NodeFrame",
-      "height": 273.26617431640625,
+      "height": 274.2661437988281,
       "hide": false,
       "label": "Take each face and put it into XOY plane",
       "location": [
@@ -93,11 +93,11 @@
         10.079999923706055
       ],
       "params": {},
-      "width": 442.39654541015625
+      "width": 442.3966064453125
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "height": 293.3472900390625,
+      "height": 335.32904052734375,
       "hide": false,
       "label": "Put faces back in their places",
       "location": [
@@ -105,7 +105,7 @@
         10.079999923706055
       ],
       "params": {},
-      "width": 466.843505859375
+      "width": 419.053955078125
     },
     "Matrix Apply.001": {
       "bl_idname": "SvMatrixApplyJoinNode",
@@ -120,6 +120,18 @@
         "do_join": 1
       },
       "width": 141.03147888183594
+    },
+    "Merge by Distance": {
+      "bl_idname": "SvMergeByDistanceNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1569.7108039855957,
+        63.329030990600586
+      ],
+      "params": {},
+      "width": 140.0
     },
     "Origins": {
       "bl_idname": "SvOrigins",
@@ -148,18 +160,6 @@
       "params": {},
       "width": 140.0
     },
-    "Remove Doubles": {
-      "bl_idname": "SvRemoveDoublesNode",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        1617.5003547668457,
-        54.68060874938965
-      ],
-      "params": {},
-      "width": 140.0
-    },
     "Solidify": {
       "bl_idname": "SvSolidifyNode",
       "height": 100.0,
@@ -169,7 +169,9 @@
         1814.6839599609375,
         116.75218963623047
       ],
-      "params": {},
+      "params": {
+        "thickness": 0.09999999403953552
+      },
       "width": 140.0
     },
     "Vector Drop": {
@@ -290,23 +292,23 @@
     [
       "Matrix Apply.001",
       0,
-      "Remove Doubles",
-      1
+      "Merge by Distance",
+      0
     ],
     [
       "Matrix Apply.001",
       2,
-      "Remove Doubles",
-      2
+      "Merge by Distance",
+      1
     ],
     [
-      "Remove Doubles",
+      "Merge by Distance",
       0,
       "Solidify",
       1
     ],
     [
-      "Remove Doubles",
+      "Merge by Distance",
       2,
       "Solidify",
       2
