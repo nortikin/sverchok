@@ -160,9 +160,6 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
 
         col = layout.column(align=True)
-        row = col.row(align=True)
-        # row.prop_search(self, 'groupname', bpy.data, 'groups', text='', icon='HAND')
-
         row = col.row()
         op_text = "Get selection"  # fallback
 
