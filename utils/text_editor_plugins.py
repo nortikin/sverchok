@@ -136,3 +136,4 @@ def register():
 def unregister():
     remove_keymap()
     bpy.utils.unregister_class(SvNodeRefreshFromTextEditor)
+
