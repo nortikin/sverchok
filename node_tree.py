@@ -871,8 +871,8 @@ class SverchCustomTreeNode:
                     return bpy_data_kind.get(identifier[3:])
                 return identifier
 
-        except:
-             self.error(f"identifier '{identifier}' not found in {bpy_data_kind}")
+        except Exception as err:
+             self.error(f"identifier '{identifier}' not found in {bpy_data_kind} - with error {err}")
 
         return None
 
