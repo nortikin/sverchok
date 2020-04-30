@@ -17,28 +17,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import re
-
 import bpy
-
 from sverchok.utils.logging import debug, info, error
-
-sv_error_message = '''\
-______________Sverchok Script Generator Node rules_______________
-
-For this operation to work the current line must contain the text:
-:   'def sv_main(**variables**):'
-
-Where '**variables**' is something like:
-:   'verts=[], petal_size=2.3, num_petals=1'
-
-There are three types of input streams that this node can interpret:
-- 'v' (vertices, 3-tuple coordinates)
-- 's' (data: float, integer),
-- 'm' (matrices: nested lists 4*4)
-
-        For more information see the wiki
-        see also the bundled templates for clarification
-'''
 
 
 def has_selection(self, text):
@@ -64,12 +44,11 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
         ngs = list(filter(is_sv_tree, ngs))
 
         if not ngs:
-            self.report({'INFO'}, "No Sverchok / svrx NodeGroups")
+            self.report({'INFO'}, "No Sverchok NodeGroups")
             return {'FINISHED'}
 
         node_types = set([
-            'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite',
-            'SvProfileNode', 'SvTextInNode', 'SvGenerativeArtNode', 'SvSNFunctorB',
+            'SvScriptNodeLite', 'SvProfileNode', 'SvTextInNode', 'SvGenerativeArtNode', 'SvSNFunctorB',
             'SvRxNodeScript', 'SvProfileNodeMK2', 'SvVDExperimental', 'SvProfileNodeMK3'])
 
         def compare_permutations_of_name(named_seeker, named_current):
@@ -78,7 +57,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                 if named_seeker == named_current: return True
                 elif named_seeker[3:] == named_current: return True
             except Exception as err:
-                print(f"Refesh Current Script called but encountered error {errr}")
+                print(f"Refesh Current Script called but encountered error {err}")
 
         for ng in ngs:
 
@@ -155,7 +134,6 @@ def add_keymap():
 
 
 def remove_keymap():
-
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()
