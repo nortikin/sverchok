@@ -1,3 +1,15 @@
+#logo {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    padding: 10px;
+    font-family: sans-serif;
+    display: inline-block;
+    text-align: center;
+}
+
 #vh {
     margin: auto;
     position: absolute;
@@ -6,16 +18,35 @@
     bottom: 0;
     right: 0;
 }
+#social{
+  text-align: center;
+  padding: 10px;
+}
 .box{
+    text-align: center;
     border-radius: 11px;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
     padding: 25px;
     width: 40em;
-    height: 7em;
+    height: 8em;
     background: white;
-    font-family: sans-serif;
+    
 }
 
 body {
     background: #8acdff;
+    font-family: sans-serif;
+}
+
+#footer{
+  margin: 20px 20px;
+  text-align: right;
+  bottom: 20px;
+}
+
+.footer_link{
+  display: inline-block;
+  font-size: 12px;
+  line-height: 10px;
+  
 }

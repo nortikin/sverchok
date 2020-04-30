@@ -31,6 +31,8 @@ from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.development import get_branch
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
+from sverchok.nodes.__init__ import nodes_dict
+
 
 def displaying_sverchok_nodes(context):
     return context.space_data.tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}
@@ -55,6 +57,15 @@ class SvCopyIDName(bpy.types.Operator):
         context.window_manager.clipboard = self.name
         return {'FINISHED'}
 
+def get_docs_filepath(string_dir, filename):
+    filepath = os.path.join(
+        os.path.dirname(sverchok.__file__),
+        'docs',
+        'nodes',
+        string_dir.replace(' ', '_'),
+        filename + '.rst'
+        )
+    return filepath
 
 class SvViewHelpForNode(bpy.types.Operator):
     """ Open docs on site, on local PC or on github """
@@ -79,9 +90,17 @@ class SvViewHelpForNode(bpy.types.Operator):
         # first let's find if this is a valid doc file, by inspecting locally for the rst file.
         VALID = False
         try:
-            tk = os.path.join(os.path.dirname(sverchok.__file__), 'docs', 'nodes', string_dir.replace(' ', '_'), filename + '.rst')
+            tk = get_docs_filepath(string_dir, filename)
             print(tk)
             VALID = exists(tk) and isfile(tk)
+            # if is not valid we check if it is another folder (for nodes in Alpha, Beta, CAD...)
+            if not VALID:
+                for folder in nodes_dict.keys():
+                    tk = get_docs_filepath(folder, filename)
+                    VALID = exists(tk) and isfile(tk)
+                    if VALID:
+                        help_url = folder + '/' + filename
+                        break
         except:
             pass
 
