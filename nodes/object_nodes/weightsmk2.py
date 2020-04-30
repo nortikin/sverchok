@@ -19,10 +19,12 @@
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatProperty
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
+
 from sverchok.data_structure import (updateNode, second_as_first_cycle)
 
 
-class SvVertexGroupNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvVertexGroupNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     ''' Vertex Group mk2'''
     bl_idname = 'SvVertexGroupNodeMK2'
     bl_label = 'Vertex group weights'
@@ -34,6 +36,7 @@ class SvVertexGroupNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     group_name: StringProperty(default='Sv_VGroup', update=updateNode)
 
     def draw_buttons(self, context,   layout):
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, "group_name", text="")
 
     def draw_buttons_ext(self, context, layout):

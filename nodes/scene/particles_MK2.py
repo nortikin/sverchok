@@ -20,29 +20,33 @@ import bpy
 import numpy as np
 from bpy.props import BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode, second_as_first_cycle as safc
 from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 
 
-class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode):
+class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     ''' Particles input node new '''
     bl_idname = 'SvParticlesMK2Node'
     bl_label = 'ParticlesMK2'
     bl_icon = 'PARTICLES'
 
     Filt_D: BoolProperty(default=True, update=updateNode)
-
-    def draw_buttons_ext(self, context,   layout):
+    
+    def draw_buttons(self, context, layout):
+        self.draw_animatable_buttons(layout, icon_only=True)
+        
+    def draw_buttons_ext(self, context, layout):
+        self.draw_animatable_buttons(layout)
         layout.prop(self, "Filt_D", text="filter death")
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', "Object")
         self.inputs.new('SvVerticesSocket', "Velocity")
         self.inputs.new('SvVerticesSocket', "Location")
-        self.inputs.new('SvStringsSocket',  "Size")
+        self.inputs.new('SvStringsSocket', "Size")
         self.outputs.new('SvVerticesSocket', "outLocation")
         self.outputs.new('SvVerticesSocket', "outVelocity")
-        set_sv_depsgraph_need()
 
     def process(self):
         O, V, L, S = self.inputs

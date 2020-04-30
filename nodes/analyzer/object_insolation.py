@@ -24,6 +24,7 @@ from mathutils.bvhtree import BVHTree
 
 from bpy.props import BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import (updateNode, match_long_repeat, match_cross)
 from sverchok.utils.logging import debug, info, error
 
@@ -56,7 +57,7 @@ class FakeObj(object):
 
 
 
-class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode):
+class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     ''' Insolation by RayCast Object '''
     bl_idname = 'SvOBJInsolationNode'
     bl_label = 'Object ID Insolation'
@@ -80,7 +81,11 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode):
         so('SvStringsSocket',  "Hours")
         # self.inputs[2].prop[2] = -1  # z down   # <--- mayybe?
 
+    def draw_buttons(self, context, layout):
+        self.draw_animatable_buttons(layout, icon_only=True)
+
     def draw_buttons_ext(self, context, layout):
+        self.draw_animatable_buttons(layout)
         row = layout.row(align=True)
         row.prop(self,    "mode",   text="In Mode")
         row.prop(self,    "sort_critical",text="Limit")

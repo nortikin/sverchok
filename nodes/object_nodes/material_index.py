@@ -22,9 +22,11 @@ import bpy
 from bpy.props import IntProperty, BoolProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
+
 from sverchok.data_structure import updateNode, match_long_repeat, fullList, get_data_nesting_level, describe_data_shape
 
-class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     '''
     Triggers: material index
     Tooltip: Set material index per object face
@@ -67,6 +69,7 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode):
             update = updateNode)
 
     def draw_buttons(self, context, layout):
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, "all_faces", toggle=True)
         if self.all_faces:
             layout.prop(self, "matching_mode", text='')

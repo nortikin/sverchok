@@ -22,6 +22,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode
 from sverchok.data_structure import handle_read, handle_write
 
@@ -167,7 +168,7 @@ class SvNeuro_Elman:
 
 
 
-class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
+class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     ''' Neuro Elman 1 Layer '''
     bl_idname = 'SvNeuroElman1LNode'
     bl_label = '*Neuro Elman 1 Layer'
@@ -194,6 +195,7 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "result")
 
     def draw_buttons(self, context, layout):
+        self.draw_animatable_buttons(layout, icon_only=True)
         handle_name = self.name + self.id_data.name
         layout.prop(self, "k_learning", text="koeff learning")
         layout.prop(self, "gisterezis", text="gisterezis")

@@ -26,6 +26,8 @@ import mathutils
 from mathutils import Matrix, Vector, Euler, Quaternion, Color
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
+
 from sverchok.data_structure import Matrix_generate, updateNode, node_id
 
 def parse_to_path(p):
@@ -156,7 +158,7 @@ def secondary_type_assesment(item):
             return "SvColorSocket"
     return None
 
-class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode):
+class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     ''' Get property '''
     bl_idname = 'SvGetPropNode'
     bl_label = 'Get property'
@@ -199,6 +201,8 @@ class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode):
     
     def draw_buttons(self, context, layout):
         layout.alert = self.bad_prop
+        if len(self.outputs) > 0:
+            self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, "prop_name", text="")
 
     def process(self):

@@ -28,6 +28,7 @@ import json
 import io
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import fullList, updateNode, dataCorrect, match_long_repeat
 from sverchok.utils.script_importhelper import safe_names
 from sverchok.utils.logging import exception, info
@@ -265,7 +266,7 @@ class SvJsonFromMesh(bpy.types.Operator):
         bpy.data.texts[text].clear()
         bpy.data.texts[text].write(values)
 
-class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """
     Triggers: mesh JSON eval expression
     Tooltip: Generate mesh from parametric JSON expression
@@ -291,6 +292,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
                     update=updateNode)
 
     def draw_buttons(self, context, layout):
+        self.draw_animatable_buttons(layout, icon_only=True)
         row = layout.row()
         row.prop_search(self, 'filename', bpy.data, 'texts', text='', icon='TEXT')
         row = layout.row()

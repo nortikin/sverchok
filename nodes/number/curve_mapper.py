@@ -21,6 +21,8 @@ import bpy
 from bpy.props import BoolProperty, FloatProperty, EnumProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
+
 from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, numpy_list_match_func
 from sverchok.utils.sv_itertools import recurse_f_level_control
 from sverchok.utils.sv_manual_curves_utils import (
@@ -49,7 +51,7 @@ def curve_mapper(params, constant, matching_f):
 
     return result
 
-class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """
     Triggers: Manual Curve remap
     Tooltip:  Map input list using a manually defined curve
@@ -62,15 +64,6 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode):
     value: FloatProperty(
         name='Value', description='New Max',
         default=.5, update=updateNode)
-
-    def update_mapper(self, context):
-        if self.update_curve:
-            self.update_curve = False
-            updateNode(self,context)
-
-    update_curve: BoolProperty(
-        name='Update', description='Update Node with updated curve',
-        default=False, update=update_mapper)
 
     n_id: StringProperty(default='')
 
@@ -89,12 +82,13 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode):
             layout.label(text="Connect input to activate")
             return
         try:
+            self.draw_animatable_buttons(layout, icon_only=True)
             tnode = m.nodes[self._get_curve_node_name()]
             if not tnode:
                 layout.label(text="Connect input to activate")
                 return
             layout.template_curve_mapping(tnode, "mapping", type="NONE")
-            layout.prop(self, "update_curve", toggle=True)
+
         except AttributeError:
             layout.label(text="Connect input to activate")
             return
@@ -127,7 +121,6 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode):
         if not outputs['Value'].is_linked:
             return
         result = []
-
         floats_in = inputs[0].sv_get(default=[[]], deepcopy=False)
 
         desired_levels = [2]

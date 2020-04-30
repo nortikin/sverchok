@@ -239,6 +239,14 @@ class SvNodeTreeCommon(object):
         else:
             process_from_nodes(self.get_groups())
 
+    def animation_update(self):
+        animated_nodes = []
+        for node in self.nodes:
+            if hasattr(node, 'is_animatable'):
+                if node.is_animatable:
+                    animated_nodes.append(node)
+        process_from_nodes(animated_nodes)
+
 class SvGenericUITooltipOperator(bpy.types.Operator):
     arg: StringProperty()
     bl_idname = "node.sv_generic_ui_tooltip"
@@ -367,7 +375,8 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         For animation callback/handler
         """
         if self.sv_animate:
-            process_tree(self)
+            self.animation_update()
+            # process_tree(self)
 
     def process(self):
         """
