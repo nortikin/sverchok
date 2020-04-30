@@ -72,8 +72,10 @@ class SvViewHelpForNode(bpy.types.Operator):
             string_dir = 'list_masks'
         elif filename in ('modifier'):
             string_dir = 'list_mutators'
-        help_url = string_dir + '/' + filename
+        elif string_dir == 'analyzers':
+            string_dir = 'analyzer'
 
+        help_url = string_dir + '/' + filename
         # first let's find if this is a valid doc file, by inspecting locally for the rst file.
         VALID = False
         try:
