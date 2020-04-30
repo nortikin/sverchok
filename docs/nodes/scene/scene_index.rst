@@ -21,4 +21,3 @@ Scene
    particles_MK2
    node_remote
    selection_grabber_lite
-   viewer_layer

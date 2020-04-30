@@ -26,7 +26,7 @@ from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.ui.sv_icons import custom_icon
 from sverchok.utils.geom import circle
 from sverchok.utils.sv_mesh_utils import mesh_join
-from sverchok.utils.sv_bmesh_utils import remove_doubles
+from sverchok.nodes.modifier_change.remove_doubles import remove_doubles
 
 grid_layout_items = [
     ("RECTANGLE", "Rectangle", "", custom_icon("SV_HEXA_GRID_RECTANGLE"), 0),
@@ -216,7 +216,7 @@ def generate_tiles(tile_settings):
         if not separate:
             vert_list, edge_list, poly_list = mesh_join(vert_list, edge_list, poly_list)
             if scale == 1.0:
-                vert_list, edge_list, poly_list = remove_doubles(vert_list, [], poly_list, 0.001)
+                vert_list, edge_list, poly_list, _, _ = remove_doubles(vert_list, poly_list, 0.01, False)
 
         vert_grid_list.append(vert_list)
         edge_grid_list.append(edge_list)

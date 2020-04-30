@@ -49,9 +49,9 @@ class SvNodesDict:
         tree_id = node_tree.tree_id
         if not tree_id in self.sv_node_dict_cache:
             self.load_nodes(node_tree)
-
-        if n_id in self.sv_node_dict_cache[tree_id]:
-            del self.sv_node_dict_cache[tree_id][n_id]
+        else:
+            if n_id in self.sv_node_dict_cache[tree_id]:
+                del self.sv_node_dict_cache[tree_id][n_id]
 
     def load_nodes(self, node_tree):
         tree_id = node_tree.tree_id

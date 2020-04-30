@@ -22,6 +22,24 @@ import bpy
 
 from sverchok.utils.logging import debug, info, error
 
+sv_error_message = '''\
+______________Sverchok Script Generator Node rules_______________
+
+For this operation to work the current line must contain the text:
+:   'def sv_main(**variables**):'
+
+Where '**variables**' is something like:
+:   'verts=[], petal_size=2.3, num_petals=1'
+
+There are three types of input streams that this node can interpret:
+- 'v' (vertices, 3-tuple coordinates)
+- 's' (data: float, integer),
+- 'm' (matrices: nested lists 4*4)
+
+        For more information see the wiki
+        see also the bundled templates for clarification
+'''
+
 
 def has_selection(self, text):
     return not (text.select_end_line == text.current_line and
@@ -60,7 +78,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                 if named_seeker == named_current: return True
                 elif named_seeker[3:] == named_current: return True
             except Exception as err:
-                print(f"Refesh Current Script called but encountered error {err}")
+                print(f"Refesh Current Script called but encountered error {errr}")
 
         for ng in ngs:
 

@@ -6,12 +6,11 @@ in random_factor s d=0. n=1
 in seed s d=1 n=1
 
 out verts v
-out edges s
 out faces s
 """
 
 from sverchok.utils.modules.geom_utils import interp_v3_v3v3 as lerp
-from sverchok.utils.sv_bmesh_utils import remove_doubles
+from sverchok.nodes.modifier_change.remove_doubles import remove_doubles
 from sverchok.data_structure import match_long_repeat as mlr
 import  random
 
@@ -71,7 +70,6 @@ def subdiv_mesh_to_quads(verts_mesh, pols_m, it, random_f):
 
 if verts_in and faces_in:
     verts = []
-    edges = []
     faces = []
     seed_l = enusure_list(seed)
     iterations_l = enusure_list(iterations)
@@ -79,8 +77,7 @@ if verts_in and faces_in:
 
     for v, f, s, it, r in zip(*mlr([verts_in, faces_in, seed_l, iterations_l, random_fac])):
         random.seed(s)
-        verts_out, faces_out = subdiv_mesh_to_quads(v, f, min(it, 5), r)
-        verts_out, edges_out, faces_out = remove_doubles(verts_out, [], faces_out, 1e-5)
+        verts_out, faces_out = subdiv_mesh_to_quads(v, f, min(it,5), r)
+        verts_out, _, faces_out, _, _ = remove_doubles(verts_out, faces_out, 1e-5, False)
         verts.append(verts_out)
-        edges.append(edges_out)
         faces.append(faces_out)
