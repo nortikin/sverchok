@@ -438,6 +438,8 @@
     SvFCurveInNodeMK1
     SvCollectionPicker
     SvSelectionGrabberLite
+    ---
+    SvViewerLayerNode
 
 ## Objects
     SvVertexGroupNodeMK2
@@ -482,6 +484,7 @@
     ---
     SvCombinatoricsNode
 
+
 ## Alpha Nodes
     SvBManalyzinNode
     SvBMObjinputNode
@@ -505,3 +508,4 @@
     ---
     SvGetPropNodeMK2
     SvSetPropNodeMK2
+
