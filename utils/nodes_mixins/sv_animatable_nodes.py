@@ -28,7 +28,7 @@ class SvAnimatableNode():
         self.draw_animatable_buttons(layout)
 
     '''
-    is_animatable = BoolProperty(
+    is_animatable: BoolProperty(
         name="Animate Node",
         description="Update Node on frame change",
         default=True
@@ -39,7 +39,7 @@ class SvAnimatableNode():
             self.refresh = False
             updateNode(self, context)
 
-    refresh = BoolProperty(
+    refresh: BoolProperty(
         name="Update Node",
         description="Update Node",
         default=False,
