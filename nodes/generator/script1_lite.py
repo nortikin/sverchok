@@ -275,14 +275,14 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
 
     def load(self):
-        ''' ----- '''
         if not self.script_name:
             return
 
-        if self.script_name in bpy.data.texts:
-            self.script_str = bpy.data.texts.get(self.script_name).as_string()
+        text = self.get_bpy_data_from_name(self.script_name, bpy.data.texts)
+        if text:
+            self.script_str = text.as_string()
         else:
-            print('bpy.data.texts not read yet')
+            print(f'bpy.data.texts not read yet, self.script_name="{self.script_name}"')
             if self.script_str:
                 print('but script loaded locally anyway.')
 
