@@ -6,7 +6,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat
-from sverchok.utils.surface import SvDeformedByFieldSurface
+from sverchok.utils.surface import SvDeformedByFieldSurface, PROJECT, COPROJECT
 
 class SvApplyFieldToSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -21,6 +21,21 @@ class SvApplyFieldToSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 name = "Coefficient",
                 default = 1.0,
                 update=updateNode)
+
+        modes = [
+            ('NONE', "As Is", "Do not consider surface normal", 0),
+            (PROJECT, "Along normal", "Displace surface along it's normal", 1),
+            (COPROJECT, "Along tangent", "Displace surface along it's tangent plane", 2)
+        ]
+
+        by_normal : EnumProperty(
+                name = "By normal",
+                items = modes,
+                default = 'NONE',
+                update = updateNode)
+
+        def draw_buttons(self, context, layout):
+            layout.prop(self, 'by_normal', text='')
 
         def sv_init(self, context):
             self.inputs.new('SvVectorFieldSocket', "Field")
@@ -41,7 +56,7 @@ class SvApplyFieldToSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 if isinstance(coeff, (list, tuple)):
                     coeff = coeff[0]
 
-                new_surface = SvDeformedByFieldSurface(surface, field, coeff)
+                new_surface = SvDeformedByFieldSurface(surface, field, coeff, by_normal = self.by_normal)
                 surface_out.append(new_surface)
 
             self.outputs['Surface'].sv_set(surface_out)

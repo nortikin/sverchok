@@ -92,3 +92,46 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
 
 
         return {'FINISHED'}
+  
+# store keymaps here to access after registration
+addon_keymaps = []
+
+
+def add_keymap():
+
+    # handle the keymap
+    wm = bpy.context.window_manager
+    kc = wm.keyconfigs.addon
+
+    if not kc:
+        debug('no keyconfig path found. that\'s ok')
+        return
+
+    km = kc.keymaps.new(name='Text', space_type='TEXT_EDITOR')
+    keymaps = km.keymap_items
+
+    if 'noderefresh_from_texteditor' in dir(bpy.ops.text):
+        ''' SHORTCUT 1 Node Refresh: Ctrl + Return '''
+        ident_str = 'text.noderefresh_from_texteditor'
+        if not (ident_str in keymaps):
+            new_shortcut = keymaps.new(ident_str, 'RET', 'PRESS', ctrl=1, head=0)
+            addon_keymaps.append((km, new_shortcut))
+
+        debug('Sverchok added keyboard items to Text Editor.')
+
+
+def remove_keymap():
+
+    for km, kmi in addon_keymaps:
+        km.keymap_items.remove(kmi)
+    addon_keymaps.clear()
+
+
+def register():
+    bpy.utils.register_class(SvNodeRefreshFromTextEditor)
+    add_keymap()
+
+
+def unregister():
+    remove_keymap()
+    bpy.utils.unregister_class(SvNodeRefreshFromTextEditor)
