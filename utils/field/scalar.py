@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 import numpy as np
-from math import copysign
+from math import copysign, sqrt, sin, cos, atan2, acos
 
 from mathutils import Matrix, Vector
 from mathutils import kdtree
@@ -152,8 +152,64 @@ class SvScalarFieldBinOp(SvScalarField):
         return self.function(self.field1.evaluate(x, y, z), self.field2.evaluate(x, y, z))
 
     def evaluate_grid(self, xs, ys, zs):
-        func = lambda xs, ys, zs : self.function(self.field1.evaluate_grid(xs, ys, zs), self.field2.evaluate_grid(xs, ys, zs))
-        return np.vectorize(func, signature="(m),(m),(m)->(m)")(xs, ys, zs)
+        return self.function(self.field1.evaluate_grid(xs, ys, zs), self.field2.evaluate_grid(xs, ys, zs))
+        #func = lambda xs, ys, zs : self.function(self.field1.evaluate_grid(xs, ys, zs), self.field2.evaluate_grid(xs, ys, zs))
+        #return np.vectorize(func, signature="(m),(m),(m)->(m)")(xs, ys, zs)
+
+class SvScalarFieldVectorizedFunction(SvScalarField):
+    def __init__(self, field, function):
+        self.function = function
+        self.field = field
+        self.__description__ = function.__name__
+
+    def evaluate(self, x, y, z):
+        return self.function(self.field.evaluate(x,y,z))
+
+    def evaluate_grid(self, xs, ys, zs):
+        return self.function(self.field.evaluate_grid(xs,ys,zs))
+
+class SvCoordinateScalarField(SvScalarField):
+    def __init__(self, coordinate):
+        self.coordinate = coordinate
+        self.__description__ = coordinate
+
+    def evaluate(self, x, y, z):
+        if self.coordinate == 'X':
+            return x
+        elif self.coordinate == 'Y':
+            return y
+        elif self.coordinate == 'Z':
+            return z
+        elif self.coordinate == 'CYL_RHO':
+            return sqrt(x*x + y*y)
+        elif self.coordinate == 'PHI':
+            return atan2(y, x)
+        elif self.coordinate == 'SPH_RHO':
+            return sqrt(x*x + y*y + z*z)
+        elif self.coordinate == 'SPH_THETA':
+            rho = sqrt(x*x + y*y + z*z)
+            return acos(z/rho)
+        else:
+            raise Exception("Unknown variable: " + self.coordinate)
+
+    def evaluate_grid(self, xs, ys, zs):
+        if self.coordinate == 'X':
+            return xs
+        elif self.coordinate == 'Y':
+            return ys
+        elif self.coordinate == 'Z':
+            return zs
+        elif self.coordinate == 'CYL_RHO':
+            return np.sqrt(xs*xs + ys*ys)
+        elif self.coordinate == 'PHI':
+            return np.arctan2(ys, xs)
+        elif self.coordinate == 'SPH_RHO':
+            return np.sqrt(xs*xs + ys*ys + zs*zs)
+        elif self.coordinate == 'SPH_THETA':
+            rho = np.sqrt(xs*xs + ys*ys + zs*zs)
+            return np.arccos(zs/rho)
+        else:
+            raise Exception("Unknown variable: " + self.coordinate)
 
 class SvNegatedScalarField(SvScalarField):
     def __init__(self, field):

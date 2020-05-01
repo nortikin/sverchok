@@ -454,7 +454,13 @@ def process_from_nodes(nodes):
     if not nodes:
         return
 
-    node_names = [node.name for node in nodes]
+    node_names = []
+    for node in nodes:
+        if hasattr(node, "name"):
+            node_names.append(node.name)
+        else:
+            print("Something not very important happend in Blender memory", node, type(node))
+
     ng = nodes[0].id_data
     update_list = make_tree_from_nodes(node_names, ng)
     reset_error_some_nodes(ng, update_list)
