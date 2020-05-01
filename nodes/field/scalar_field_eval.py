@@ -5,13 +5,13 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match_long_repeat
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, match_long_repeat
 from sverchok.utils.modules.eval_formula import get_variables, sv_compile, safe_eval_compiled
 from sverchok.utils.logging import info, exception
 from sverchok.utils.math import from_cylindrical, from_spherical, to_cylindrical, to_spherical
 
 from sverchok.utils.math import coordinate_modes
-from sverchok.utils.field.scalar import SvScalarFieldLambda
+from sverchok.utils.field.scalar import SvScalarField
 
 class SvScalarFieldEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -35,23 +35,26 @@ class SvScalarFieldEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         vertices_s = self.inputs['Vertices'].sv_get()
+        vertices_s = ensure_nesting_level(vertices_s, 4)
         fields_s = self.inputs['Field'].sv_get()
+        fields_s = ensure_nesting_level(fields_s, 2, data_types=(SvScalarField,))
 
         values_out = []
-        for field, vertices in zip_long_repeat(fields_s, vertices_s):
-            if len(vertices) == 0:
-                new_values = []
-            elif len(vertices) == 1:
-                vertex = vertices[0]
-                value = field.evaluate(*vertex)
-                new_values = [value]
-            else:
-                XYZ = np.array(vertices)
-                xs = XYZ[:,0]
-                ys = XYZ[:,1]
-                zs = XYZ[:,2]
-                new_values = field.evaluate_grid(xs, ys, zs).tolist()
-            values_out.append(new_values)
+        for fields, vertices_i in zip_long_repeat(fields_s, vertices_s):
+            for field, vertices in zip_long_repeat(fields, vertices_i):
+                if len(vertices) == 0:
+                    new_values = []
+                elif len(vertices) == 1:
+                    vertex = vertices[0]
+                    value = field.evaluate(*vertex)
+                    new_values = [value]
+                else:
+                    XYZ = np.array(vertices)
+                    xs = XYZ[:,0]
+                    ys = XYZ[:,1]
+                    zs = XYZ[:,2]
+                    new_values = field.evaluate_grid(xs, ys, zs).tolist()
+                values_out.append(new_values)
 
         self.outputs['Value'].sv_set(values_out)
 
