@@ -22,6 +22,8 @@ import bpy
 from bpy.props import StringProperty, IntProperty, CollectionProperty, PointerProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
+
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
 from sverchok.utils.logging import info, debug
 
@@ -118,7 +120,7 @@ class SvMoveMaterial(bpy.types.Operator):
             updateNode(node, context)
         return {'FINISHED'}
 
-class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode):
+class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """
     Triggers: material list
     Tooltip: Assign the list of materials to the object
@@ -139,6 +141,7 @@ class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvObjectSocket', 'Object')
 
     def draw_buttons(self, context, layout):
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.template_list("UI_UL_SvMaterialUiList", "materials", self, "materials", self, "selected")
         row = layout.row(align=True)
 

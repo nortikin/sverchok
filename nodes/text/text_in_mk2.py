@@ -32,6 +32,7 @@ import bpy
 from bpy.props import BoolProperty, EnumProperty, StringProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import node_id, multi_socket, updateNode
 
 from sverchok.utils.sv_text_io_common import (
@@ -84,7 +85,7 @@ def pop_all_data(node, n_id):
     node.json_data.pop(n_id, None)
 
 
-class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
+class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO, SvAnimatableNode):
     """
     Triggers: Text in from datablock
     Tooltip: Quickly load text from datablock into NodeView
@@ -155,13 +156,17 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
     # Sverchok list options
     # choose which socket to interpret data as
     socket_type: EnumProperty(items=socket_types, default='s')
-
+    
+    def set_animatable(self, context):
+        self.is_animatable = self.autoreload
     #interesting but dangerous, TODO
-    autoreload: BoolProperty(default=False, description="Reload text file on every update", name='auto reload')
+    autoreload: BoolProperty(default=False, description="Reload text file on every update", name='auto reload', update=set_animatable)
 
     # to have one socket output
     one_sock: BoolProperty(name='one socket', default=False)
-
+    def sv_init(self, context):
+        self.is_animatable = False
+        
     def draw_buttons_ext(self, context, layout):
         if self.textmode == 'CSV':
             layout.prop(self, 'force_input')

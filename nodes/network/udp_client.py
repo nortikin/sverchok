@@ -21,11 +21,12 @@ import socket
 import bpy
 from bpy.props import IntProperty, FloatProperty, EnumProperty, StringProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.utils.profile import profile
 from sverchok.data_structure import updateNode
 
 
-class UdpClientNode(bpy.types.Node, SverchCustomTreeNode):
+class UdpClientNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     bl_idname = 'UdpClientNode'
     bl_label = 'UDP Client'
@@ -63,6 +64,7 @@ class UdpClientNode(bpy.types.Node, SverchCustomTreeNode):
     active: BoolProperty(default=False, name='Active')
 
     def draw_buttons(self, context, layout):
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, 'active', text='Active')
         layout.prop(self, 'ip', text='IP')
         layout.prop(self, 'port', text='Port')
