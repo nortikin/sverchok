@@ -62,7 +62,8 @@ class SvAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
 
     point_modes = [
         ('AVG', "Average", "Use average distance to all attraction centers", 0),
-        ('MIN', "Nearest", "Use minimum distance to any of attraction centers", 1)
+        ('MIN', "Nearest", "Use minimum distance to any of attraction centers", 1),
+        ('SEP', "Separate", "Generate a separate field for each attraction center", 2)
     ]
 
     point_mode : EnumProperty(
@@ -113,13 +114,16 @@ class SvAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
             sfield = SvMergedScalarField('AVG', sfields)
             vfields = [SvVectorFieldPointDistance(center, falloff=falloff) for center in centers]
             vfield = SvAverageVectorField(vfields)
-        else: # MIN
+        elif self.point_mode == 'MIN':
             kdt = kdtree.KDTree(len(centers))
             for i, v in enumerate(centers):
                 kdt.insert(v, i)
             kdt.balance()
             vfield = SvKdtVectorField(kdt=kdt, falloff=falloff)
             sfield = SvKdtScalarField(kdt=kdt, falloff=falloff)
+        else: # SEP
+            sfield = [SvScalarFieldPointDistance(center, falloff=falloff) for center in centers]
+            vfield = [SvVectorFieldPointDistance(center, falloff=falloff) for center in centers]
         return vfield, sfield
 
     def to_line(self, center, direction, falloff):
