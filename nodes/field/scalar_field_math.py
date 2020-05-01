@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match
 from sverchok.utils.modules.eval_formula import get_variables, safe_eval
 from sverchok.utils.logging import info, exception
 
-from sverchok.utils.field.scalar import SvScalarFieldBinOp, SvScalarField, SvNegatedScalarField
+from sverchok.utils.field.scalar import SvScalarFieldBinOp, SvScalarField, SvNegatedScalarField, SvAbsScalarField
 
 operations = [
     ('ADD', "Add", lambda x, y : x+y),
@@ -18,7 +18,8 @@ operations = [
     ('MIN', "Minimum", lambda x, y : np.min([x,y],axis=0)),
     ('MAX', "Maximum", lambda x, y : np.max([x,y],axis=0)),
     ('AVG', "Average", lambda x, y : (x+y)/2),
-    ('NEG', "Negate", lambda x : -x)
+    ('NEG', "Negate", lambda x : -x),
+    ('ABS', "Absolute value", lambda x : abs(x))
 ]
 
 operation_modes = [ (id, name, name, i) for i, (id, name, fn) in enumerate(operations) ]
@@ -41,7 +42,7 @@ class SvScalarFieldMathNode(bpy.types.Node, SverchCustomTreeNode):
 
     @throttled
     def update_sockets(self, context):
-        self.inputs['FieldB'].hide_safe = self.operation == 'NEG'
+        self.inputs['FieldB'].hide_safe = self.operation in {'NEG', 'ABS'}
 
     operation : EnumProperty(
         name = "Operation",
@@ -75,6 +76,8 @@ class SvScalarFieldMathNode(bpy.types.Node, SverchCustomTreeNode):
                 operation = get_operation(self.operation)
                 if self.operation == 'NEG':
                     field_c = SvNegatedScalarField(field_a)
+                elif self.operation == 'ABS':
+                    field_c = SvAbsScalarField(field_a)
                 else:
                     field_c = SvScalarFieldBinOp(field_a, field_b, operation)
                 fields_out.append(field_c)
