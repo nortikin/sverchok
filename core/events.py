@@ -103,20 +103,6 @@ IS_WAVE_END = {
 }
 
 
-LINKS_COULD_BE_CHANGED = {
-    BlenderEventsTypes.tree_update: True,
-    BlenderEventsTypes.monad_tree_update: True,
-    BlenderEventsTypes.node_update: False,
-    BlenderEventsTypes.add_node: False,
-    BlenderEventsTypes.copy_node: True,  # here can be used more fast test for only copied nodes
-    BlenderEventsTypes.free_node: False,  # because we exactly know which links should be deleted with node
-    BlenderEventsTypes.add_link_to_node: False,  # because added links are known
-    BlenderEventsTypes.node_property_update: False,
-    BlenderEventsTypes.undo: False,  # something like reload event will be appropriate to call
-    BlenderEventsTypes.frame_change: False
-}
-
-
 class SverchokEvent(NamedTuple):
     type: SverchokEventsTypes
     tree: NodeTree = None
@@ -145,10 +131,6 @@ class BlenderEvent(NamedTuple):
     def is_wave_end(self):
         return IS_WAVE_END.get(self.type, False)
 
-    @property
-    def could_links_be_changed(self):
-        return LINKS_COULD_BE_CHANGED[self.type]
-
     def convert_to_sverchok_event(self) -> SverchokEvent:
         sverchok_event_type = EVENT_CONVERSION[self.type]
         return SverchokEvent(
@@ -164,51 +146,136 @@ class BlenderEvent(NamedTuple):
         self.type.print(self.node or self.tree)
 
 
+class EventsWave:
+    # It is stack of Blender events (signals) for handling them together as one event
+    def __init__(self):
+        self.events_wave: List[BlenderEvent] = []
+
+        self.links_was_added = False
+        self.links_was_removed = False
+        self.reroutes_was_added = False
+        self.reroutes_was_removed = False
+
+    def add_event(self, bl_event: BlenderEvent):
+        if bl_event.type == BlenderEventsTypes.node_update:
+            # such updates are not informative
+            return
+        self.events_wave.append(bl_event)
+
+    def convert_to_sverchok_events(self):
+        if not self.is_end():
+            raise RuntimeError("You should waite wave end before calling this method")
+        tree_was_changed = (self.events_wave[-1].type == BlenderEventsTypes.tree_update or
+                            self.events_wave[-1].type == BlenderEventsTypes.monad_tree_update)
+        if tree_was_changed:
+            self.analyze_changes()
+            known_sv_events = self.convert_known_events()
+            # found_sv_events = self.search_extra_events()
+            return known_sv_events  # + found_sv_events
+        else:
+            return [ev.convert_to_sverchok_event() for ev in self.events_wave]
+
+    def is_end(self) -> bool:
+        return self.events_wave and self.events_wave[-1].is_wave_end
+
+    def analyze_changes(self):
+        if (self.events_wave[0].type == BlenderEventsTypes.tree_update or
+              self.events_wave[0].type == BlenderEventsTypes.monad_tree_update):
+            # New: Nodes = 0; Links = 0-inf; Reroutes = 0-inf
+            # Remove: Nodes=0, Links = 0-n, Reroutes = 0-n
+            # Tools: F, Ctrl + RMB, Shift + RMB, manual unlink, python (un)link
+            links_was_added = (len(self.current_tree.links) - len(self.previous_tree.links)) > 0
+            links_was_removed = (len(self.current_tree.links) - len(self.previous_tree.links)) < 0
+            reroutes_was_added = (len(self.current_tree.nodes) - len(self.previous_tree.nodes)) > 0
+            reroutes_was_removed = (len(self.current_tree.nodes) - len(self.previous_tree.nodes)) < 0
+            # todo continue
+        elif self.events_wave[0].type == BlenderEventsTypes.add_node:
+            # New: Nodes = 1; Links = 0; Reroutes = 0
+            # Tools: manual adding, via python adding
+            pass
+        elif self.events_wave[0].type == BlenderEventsTypes.copy_node:
+            # New: Nodes = 1-n; Links = 0-n; Reroutes = 0-n
+            # Tools: manual copy
+            links_was_added: bool
+            reroutes_was_added: bool
+        elif self.events_wave[0].type == BlenderEventsTypes.free_node:
+            # Remove: Nodes = 1-n; Links = 0-n; Reroutes = 0-n
+            # Tools: manual delete selected, python delete one node (reroutes are node included)
+            links_was_removed: bool
+            reroutes_was_removed: bool
+        elif self.events_wave[0].type == BlenderEventsTypes.add_link_to_node:
+            # New: Nodes = 0; Links = 0-n; Reroutes = 0
+            # Tools: manual link or relink, with relink bunch of links could be changed
+            pass
+        else:
+            pass
+
+    def convert_known_events(self) -> List[SverchokEvent]: ...
+
+    def search_extra_events(self) -> List[SverchokEvent]: ...
+
+    def search_new_links(self):
+        # should be called if user pressed F, Shift+RMB, copied linked reroutes, added via Python API
+        pass
+
+    def search_new_links_from_new_nodes(self, copied_blender_nodes):
+        # should be called if user copied linked nodes
+        pass
+
+    def search_free_links(self):
+        # should be called if user unconnected link(s), Ctrl+RMB, delete reroutes, deleted via Python API
+        pass
+
+    def search_free_links_from_deleted_nodes(self, deleted_sverchok_nodes):
+        # should be called if user deleted node
+        pass
+
+    def search_new_reroutes(self):
+        # should be called if user created/copied new reroute(s), Shift+RMB, added via Python API
+        pass
+
+    def search_free_reroutes(self):
+        # should be called if user deleted selected, deleted via Python API
+        pass
+
+    @property
+    def previous_tree(self) -> 'SvTree':
+        return NodeTreesReconstruction.get_node_tree_reconstruction(self.events_wave[0].tree)
+
+    @property
+    def current_tree(self) -> NodeTree:
+        return self.events_wave[0].tree
+
+
 class CurrentEvents:
-    events_wave: List[BlenderEvent] = []
+    events_wave = EventsWave()
     _to_listen_new_events = True  # todo should be something more safe
 
     @classmethod
     def add_new_event(cls, bl_event: BlenderEvent):
         if not cls._to_listen_new_events:
             return
-        if bl_event.type == BlenderEventsTypes.node_update:
-            # such updates are not informative
-            return
 
         if cls.is_in_debug_mode():
             bl_event.print()
 
-        cls.events_wave.append(bl_event)
+        cls.events_wave.add_event(bl_event)
         cls.handle_new_event()
 
     @classmethod
     def handle_new_event(cls):
-        if not cls.is_wave_end():
+        if not cls.events_wave.is_end():
             return
 
         cls._to_listen_new_events = False
 
-        link_change_events = cls.detect_new_links_events()
-        node_change_events = cls.convert_wave_to_sverchok_events()
-        # update reconstruction here
-        cls.redraw_nodes(node_change_events + link_change_events)
-        cls.update_nodes(node_change_events + link_change_events)
+        sv_events = cls.events_wave.convert_to_sverchok_events()
+        cls.tree_reconstruction().update_reconstruction(sv_events)
+        cls.redraw_nodes(sv_events)
+        cls.update_nodes(sv_events)
 
         cls._to_listen_new_events = True
-        cls.events_wave.clear()
-
-    @classmethod
-    def is_wave_end(cls):
-        return cls.events_wave[-1].is_wave_end
-
-    @classmethod
-    def detect_new_links_events(cls):
-        if cls.events_wave[0].could_links_be_changed:
-            # todo some simple changes test first
-            return []
-        else:
-            return []
+        cls.events_wave = EventsWave()  # event wave recreation
 
     @classmethod
     def convert_wave_to_sverchok_events(cls):
@@ -237,6 +304,10 @@ class CurrentEvents:
     def is_in_debug_mode():
         with sv_preferences() as prefs:
             return prefs.log_level == "DEBUG" and prefs.log_update_events
+
+    @classmethod
+    def tree_reconstruction(cls) -> 'SvTree':
+        return cls.events_wave.previous_tree
 
 
 # -------------------------------------------------------------------------
