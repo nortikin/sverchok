@@ -33,7 +33,6 @@ class SvCollectionPicker(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
     def find_collections(self, object):
         return True
 
-    # named_collection: bpy.props.StringProperty(name="collection name", update=updateNode)
     collection: bpy.props.PointerProperty(
         name="collection name", poll=find_collections, type=bpy.types.Collection, update=updateNode)
 
