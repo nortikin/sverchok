@@ -53,7 +53,5 @@ class SvCollectionPicker(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
         self.outputs['Objects'].sv_set(found_objects)
 
 
-
-# SvCollectionPickerSettings
 classes = [SvCollectionPicker]
 register, unregister = bpy.utils.register_classes_factory(classes)
