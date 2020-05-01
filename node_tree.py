@@ -854,7 +854,6 @@ class SverchCustomTreeNode:
     def get_bpy_data_from_name(self, identifier, bpy_data_kind):
         """
         fail gracefuly?
-
         This function acknowledges that the identifier being passed can be a string or an object proper.
         for a long time Sverchok stored the result of a prop_search as a StringProperty, and many nodes will
         be stored with that data in .blends, here we try to permit older blends having data stored as a string,
