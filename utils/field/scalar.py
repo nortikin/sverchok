@@ -202,7 +202,7 @@ class SvCoordinateScalarField(SvScalarField):
         elif self.coordinate == 'CYL_RHO':
             return np.sqrt(xs*xs + ys*ys)
         elif self.coordinate == 'PHI':
-            return np.atan2(ys, xs)
+            return np.arctan2(ys, xs)
         elif self.coordinate == 'SPH_RHO':
             return np.sqrt(xs*xs + ys*ys + zs*zs)
         elif self.coordinate == 'SPH_THETA':
