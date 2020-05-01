@@ -5,6 +5,7 @@ Field
 .. toctree::
    :maxdepth: 2
 
+   coordinate_scalar_field
    attractor_field
    scalar_field_formula
    vector_field_formula
