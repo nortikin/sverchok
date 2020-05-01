@@ -59,6 +59,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
 
                 if hasattr(n, "script_name") and compare_permutations_of_name(n.script_name, text_file_name):
                     try:
+                        print("try n.load()")
                         n.load()
                         n.process_node(context)
                         return {'FINISHED'}
