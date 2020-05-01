@@ -348,9 +348,9 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if not inputs[2].is_linked:
             if not self.name_texture:
                 params[2] = [[EmptyTexture()]]
-                # return
+
             else:
-                params[2] = [[bpy.data.textures[self.name_texture]]]
+                params[2] = [[self.get_bpy_data_from_name(self.name_texture, bpy.data.textures)]]
         if not self.tex_coord_type == 'UV':
             params.append(inputs[4].sv_get(default=[Matrix()], deepcopy=False))
             mat_level = 2
