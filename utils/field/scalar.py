@@ -167,6 +167,18 @@ class SvNegatedScalarField(SvScalarField):
     def evaluate_grid(self, xs, ys, zs):
         return (- self.field.evaluate_grid(xs, ys, zs))
 
+class SvAbsScalarField(SvScalarField):
+    def __init__(self, field):
+        self.field = field
+        self.__description__ = "Abs({})".format(field)
+
+    def evaluate(self, x, y, z):
+        v = self.field.evaluate(x, y, z)
+        return abs(v) 
+
+    def evaluate_grid(self, xs, ys, zs):
+        return np.abs(self.field.evaluate_grid(xs, ys, zs))
+
 class SvVectorFieldsScalarProduct(SvScalarField):
     def __init__(self, field1, field2):
         self.field1 = field1
