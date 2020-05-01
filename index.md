@@ -100,6 +100,7 @@
      SvExEvalSurfaceNode
 
 ## Fields
+     SvCoordScalarFieldNode
      SvExScalarFieldFormulaNode
      SvExVectorFieldFormulaNode
      SvExComposeVectorFieldNode
