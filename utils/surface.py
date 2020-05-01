@@ -726,12 +726,18 @@ class SvInterpolatingSurface(SvSurface):
             np.put_along_axis(result, idxs, normals, axis=0)
         return result
 
+PROJECT = 'project'
+COPROJECT = 'coproject'
+
+def _dot(vs1, vs2):
+    return (vs1 * vs2).sum(axis=1)[np.newaxis].T
 
 class SvDeformedByFieldSurface(SvSurface):
-    def __init__(self, surface, field, coefficient=1.0):
+    def __init__(self, surface, field, coefficient=1.0, by_normal=None):
         self.surface = surface
         self.field = field
         self.coefficient = coefficient
+        self.by_normal = by_normal
         self.normal_delta = 0.001
         self.__description__ = "{}({})".format(field, surface)
 
@@ -768,6 +774,13 @@ class SvDeformedByFieldSurface(SvSurface):
     def evaluate(self, u, v):
         p = self.surface.evaluate(u, v)
         vec = self.field.evaluate(p[0], p[1], p[2])
+        if self.by_normal == PROJECT:
+            normal = self.surface.normal(u, v)
+            vec = np.dot(vec, normal) * normal / np.dot(normal, normal)
+        elif self.by_normal == COPROJECT:
+            normal = self.surface.normal(u, v)
+            projection = np.dot(vec, normal) * normal / np.dot(normal, normal)
+            vec = vec - projection
         return p + self.coefficient * vec
 
     def evaluate_array(self, us, vs):
@@ -775,6 +788,13 @@ class SvDeformedByFieldSurface(SvSurface):
         xs, ys, zs = ps[:,0], ps[:,1], ps[:,2]
         vxs, vys, vzs = self.field.evaluate_grid(xs, ys, zs)
         vecs = np.stack((vxs, vys, vzs)).T
+        if self.by_normal == PROJECT:
+            normals = self.surface.normal_array(us, vs)
+            vecs = _dot(vecs, normals) * normals / _dot(normals, normals)
+        elif self.by_normal == COPROJECT:
+            normals = self.surface.normal_array(us, vs)
+            projections = _dot(vecs, normals) * normals / _dot(normals, normals)
+            vecs = vecs - projections
         return ps + self.coefficient * vecs
 
     def normal(self, u, v):
