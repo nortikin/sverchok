@@ -42,14 +42,14 @@ mapper_funcs = {
     'Texture Matrix': lambda v, m: m @ v
 }
 
-class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """
     Triggers: Add texture to verts
     Tooltip: Affect input verts/mesh with a scene texture. Mimics Blender Displace modifier
 
     """
 
-    bl_idname = 'SvDisplaceNode'
+    bl_idname = 'SvDisplaceNodeMk2'
     bl_label = 'Texture Displace'
     bl_icon = 'MOD_DISPLACE'
 
@@ -104,11 +104,11 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         description='Texture(s) to evaluate',
         default='',
         update=updateNode)
-    # name_texture: bpy.props.PointerProperty(
-    #     type=bpy.types.Texture,
-    #     name='Texture',
-    #     description='Texture(s) to evaluate',
-    #     update=updateNode)
+    texture: bpy.props.PointerProperty(
+        type=bpy.types.Texture,
+        name='Texture',
+        description='Texture(s) to evaluate',
+        update=updateNode)
     out_mode: EnumProperty(
         name='Direction',
         items=out_modes,
@@ -174,7 +174,7 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             c = layout.split(factor=0.3, align=False)
 
             c.label(text=socket.name+ ':')
-            c.prop_search(self, "name_texture", bpy.data, 'textures', text="")
+            c.prop_search(self, "texture", bpy.data, 'textures', text="")
         else:
             layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
     def draw_buttons(self, context, layout):
@@ -212,13 +212,13 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         params = [si.sv_get(default=[[]], deepcopy=False) for si in inputs[:4]]
         if not inputs[2].is_linked:
-            if not self.name_texture:
+            if not self.texture:
                 params[2] = [[EmptyTexture()]]
 
             else:
-                params[2] = [[self.get_bpy_data_from_name(self.name_texture, bpy.data.textures)]]
-                # params[2] =[[self.name_texture]]
-                print(params[2], self.name_texture)
+                # params[2] = [[self.get_bpy_data_from_name(self.name_texture, bpy.data.textures)]]
+                params[2] = [[self.texture]]
+                # print(params[2], self.name_texture)
         if not self.tex_coord_type == 'UV':
             params.append(inputs[4].sv_get(default=[Matrix()], deepcopy=False))
             mat_level = 2
@@ -246,12 +246,12 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def draw_label(self):
         if self.hide:
             if not self.inputs['Texture'].is_linked:
-                texture = ' ' + self.name_texture
+                texture = ' ' + self.texture
             else:
                 texture = ' + texture(s)'
             return 'Displace' + texture +' ' + self.color_channel.title() + ' channel'
         else:
             return self.label or self.name
 
-classes = [SvDisplaceNode]
+classes = [SvDisplaceNodeMk2]
 register, unregister = bpy.utils.register_classes_factory(classes)
