@@ -95,6 +95,7 @@
      SvExSurfaceSubdomainNode
      SvFlipSurfaceNode
      SvSwapSurfaceNode
+     SvSurfaceGaussCurvatureNode
      SvExApplyFieldToSurfaceNode
      SvExTessellateTrimSurfaceNode
      SvExEvalSurfaceNode

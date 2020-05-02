@@ -241,7 +241,6 @@ class SvEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                     new_faces = self.make_faces_xy(samples_u, samples_v)
                 else:
                     if self.input_mode == 'VERTICES':
-                        print(target_verts)
                         target_us, target_vs = self.parse_input(target_verts)
                     else:
                         target_us, target_vs = np.array(target_us), np.array(target_vs)
