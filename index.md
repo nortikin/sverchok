@@ -95,11 +95,13 @@
      SvExSurfaceSubdomainNode
      SvFlipSurfaceNode
      SvSwapSurfaceNode
+     SvSurfaceGaussCurvatureNode
      SvExApplyFieldToSurfaceNode
      SvExTessellateTrimSurfaceNode
      SvExEvalSurfaceNode
 
 ## Fields
+     SvCoordScalarFieldNode
      SvExScalarFieldFormulaNode
      SvExVectorFieldFormulaNode
      SvExComposeVectorFieldNode
@@ -377,6 +379,7 @@
     SvInputSwitchNodeMOD
     SvNeuroElman1LNode
     SvCustomSwitcher
+    SvRangeSwitchNode
 
 ## Viz
     Sv3DviewPropsNode
