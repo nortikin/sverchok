@@ -148,7 +148,11 @@ class SvLinks:
         self.input_sockets_new[tree_id] = new_input_sockets
         self.inputted_nodes_new[tree_id] = new_inputted_nodes
 
-
+    def remove(self, node_tree, link):
+        sv_link = SvLink.init_from_link(link)
+        if sv_link in self.sv_links_cache[node_tree.tree_id]:
+            self.sv_links_cache[node_tree.tree_id].remove(sv_link)
+            
     def links_have_changed(self, node_tree):
         return self.sv_links_new[node_tree.tree_id] != self.sv_links_cache[node_tree.tree_id]
 
@@ -185,5 +189,5 @@ class SvLinks:
             )
         affected_nodes = new_linked_nodes + new_unlinked_linked_nodes
         node_list = node_tree.nodes_dict.to_node_name(node_tree, affected_nodes)
-
+        print(node_list)
         return node_list
