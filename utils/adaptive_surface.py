@@ -19,7 +19,7 @@ def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, by_are
     v_min, v_max = surface.get_v_min(), surface.get_v_max()
     us_range = np.linspace(u_min, u_max, num=samples_u)
     vs_range = np.linspace(v_min, v_max, num=samples_v)
-    us, vs = np.meshgrid(us_range, vs_range)
+    us, vs = np.meshgrid(us_range, vs_range, indexing='ij')
     us = us.flatten()
     vs = vs.flatten()
 
@@ -77,9 +77,9 @@ def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, by_are
     max_factor = factors.max()
     if max_factor != 0:
         factors = factors / max_factor
-    info("Factors: %s - %s (%s)", factors.min(), factors.max(), factor_range)
-    info("Areas: %s - %s", areas.min(), areas.max())
-    info("Curvatures: %s - %s", max_curvatures.min(), max_curvatures.max())
+    #info("Factors: %s - %s (%s)", factors.min(), factors.max(), factor_range)
+    #info("Areas: %s - %s", areas.min(), areas.max())
+    #info("Curvatures: %s - %s", max_curvatures.min(), max_curvatures.max())
 
     ppf_range = max_ppf - min_ppf
 
