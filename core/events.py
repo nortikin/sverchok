@@ -16,7 +16,7 @@ Details: https://github.com/nortikin/sverchok/issues/3077
 
 
 from enum import Enum, auto
-from typing import NamedTuple, Union, List, Callable, Set, Dict
+from typing import TYPE_CHECKING, NamedTuple, Union, List, Callable, Set, Dict
 from itertools import takewhile, count
 
 from bpy.types import Node, NodeTree, NodeLink
@@ -24,6 +24,10 @@ import bpy
 
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.core.update_system import process_from_nodes
+
+if TYPE_CHECKING:
+    # https://stackoverflow.com/questions/39740632/python-type-hinting-without-cyclic-imports
+    from sverchok.node_tree import SverchCustomTree, SverchCustomTreeNode
 
 
 def property_update(prop_name: str, call_function=None):
@@ -105,7 +109,7 @@ IS_WAVE_END = {
 
 class SverchokEvent(NamedTuple):
     type: SverchokEventsTypes
-    tree: NodeTree = None
+    tree: SverchCustomTree = None
     node: Node = None
     link: NodeLink = None
     update_function: Callable = None  # for properties updates
@@ -121,7 +125,7 @@ class SverchokEvent(NamedTuple):
 
 class BlenderEvent(NamedTuple):
     type: BlenderEventsTypes
-    tree: NodeTree = None
+    tree: SverchCustomTree = None
     node: Node = None
     link: NodeLink = None
     update_function: Callable = None  # for properties updates
@@ -252,7 +256,7 @@ class EventsWave:
         return NodeTreesReconstruction.get_node_tree_reconstruction(self.events_wave[0].tree)
 
     @property
-    def current_tree(self) -> NodeTree:
+    def current_tree(self) -> SverchCustomTree:
         return self.events_wave[0].tree
 
 
@@ -380,9 +384,10 @@ class SvTree:
         else:
             print("!!! Reconstruction does not correct !!!")
 
-    def get_blender_tree(self) -> NodeTree:
+    def get_blender_tree(self) -> SverchCustomTree:
         for ng in bpy.data.node_groups:
             if ng.bl_idname == 'SverchCustomTreeType':
+                ng: SverchCustomTree
                 if ng.tree_id == self.id:
                     return ng
         raise LookupError(f"Looks like some node tree has disappeared, or its ID has changed")
@@ -425,7 +430,7 @@ class NodesCollection:
         self._tree: SvTree = tree
         self._nodes: Dict[str, SvNode] = dict()
 
-    def add(self, node: Node):
+    def add(self, node: Union[SverchCustomTreeNode, Node]):
         sv_node = SvNode(node.node_id, node.name)
         self._nodes[node.node_id] = sv_node
 
@@ -482,24 +487,3 @@ class HashedBlenderData:
 
     @classmethod
     def get_tree_data(cls, node_tree: NodeTree, update_wave_id: int) -> 'HashedTreeData': ...
-
-
-
-# todo find appropriate place
-import time
-
-
-def node_id(self):
-    if not self.n_id:
-        self.n_id = str(hash(self) ^ hash(time.monotonic()))
-    return self.n_id
-
-
-def socket_id(self):
-    """Id of socket used by data_cache"""
-    return str(hash(self.node.node_id + self.identifier))
-
-
-bpy.types.NodeReroute.n_id = bpy.props.StringProperty(default="")
-bpy.types.NodeReroute.node_id = property(node_id)
-bpy.types.NodeSocketColor.socket_id = property(socket_id)
