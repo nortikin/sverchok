@@ -402,6 +402,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         res = []
         for ng in self.sv_trees:
             for node in ng.nodes:
+                # why doubled?
                 if node.bl_idname == self.cls_bl_idname:
                     res.append(node)
                 if hasattr(node, "cls_bl_idname") and node.cls_bl_idname == self.cls_bl_idname:
@@ -544,6 +545,15 @@ class SvGroupNodeExp:
         name="Split", description="Split inputs into lenght 1",
         default=False, update=updateNode)
 
+    genetic_algo_me: BoolProperty(default=False, update=updateNode)
+    GApopulation: IntProperty(default=20, description='population')
+    GAgenerations: IntProperty(default=5000, description='generations')
+    GAthreshold: FloatProperty(default=0.9, description='threshold')
+    GAmutator: FloatProperty(default=0.1, description='mutator')
+    GAmutofactor: FloatProperty(default=0.1, description='mutofactor')
+    GAselector: FloatProperty(default=0.2, description='selector')
+    GArandom_seed: IntProperty(default=0, description='random seed')
+
     loop_me: BoolProperty(default=False, update=updateNode)
     loops_max: IntProperty(default=5, description='maximum')
     loops: IntProperty(
@@ -583,6 +593,7 @@ class SvGroupNodeExp:
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
+        # doubled?
         layout.prop(self, 'loops_max')
 
     def draw_buttons(self, context, layout):
@@ -590,10 +601,13 @@ class SvGroupNodeExp:
         split = layout.column().split()
         cA = split.column()
         cB = split.column()
-        cA.active = not self.loop_me
+        cD = split.column()
+        cA.active = all(not self.loop_me and not self.genetic_algo_me)
         cA.prop(self, "vectorize", toggle=True)
-        cB.active = self.vectorize
+        cB.active = all(self.vectorize and not self.genetic_algo_me)
         cB.prop(self, "split", toggle=True)
+        cD.active = all(not self.loop_me and not self.vectorize)
+        row.prop(self, "genetic_algo_me", text="GA", toggle=True)
         
         c2 = layout.column()
         row = c2.row(align=True)
@@ -612,6 +626,15 @@ class SvGroupNodeExp:
                 f.group_name = monad.name
             else:
                 layout.prop(self, 'loops_max')
+        if self.genetic_algo_me:
+            c4 = layout.column()
+            c4.prop(self, "GApopulation", text="Populations")
+            c4.prop(self, "GAgenerations", text="Generations")
+            c4.prop(self, "GAthreshold", text="Threshold")
+            c4.prop(self, "GAmutator", text="Mutator")
+            c4.prop(self, "GAmutofactor", text="Mutofactor")
+            c4.prop(self, "GAselector", text="Selector")
+            c4.prop(self, "GArandom_seed", text="Random seed")
 
     def get_nodes_to_process(self, out_node_name):
         """
@@ -639,6 +662,8 @@ class SvGroupNodeExp:
         elif self.loop_me:
             self.process_looped(self.loops)
             return
+        elif self.genetic_algo_me:
+            self.process_genetic_algorithm()
 
         monad = self.monad
         in_node = monad.input_node
@@ -743,6 +768,15 @@ class SvGroupNodeExp:
             sockets_in = self.do_process(sockets_in)
         self.apply_output(sockets_in)
 
+    def process_genetic_algorithm():
+        # here i will call the GA processor from utils.
+        # Get "velues" + "criterias 0...1" from monad. It could be two lists
+        # Out mutated next generation "values" to monad for loop process
+        # Question is - resulting data (mesh/NURBS) will be processed inside tree somehow.
+        # Also should be instructions for user (grasshopper users allready know)
+        # for now it i preparations only
+        # PR here https://github.com/nortikin/sverchok/issues/3160
+        pass
 
     def load(self):
         pass
