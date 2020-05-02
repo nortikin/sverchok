@@ -1,9 +1,7 @@
 import importlib
 import sverchok
 from sverchok.utils.logging import debug, exception
-from sverchok.core.socket_data import clear_all_socket_cache
-from sverchok.core.node_id_dict import clear_nodes_id_dict
-from sverchok.core.links import clear_link_memory
+from sverchok.core.update_system import clear_system_cache
 
 reload_event = False
 
@@ -27,9 +25,7 @@ def sv_register_modules(modules):
                 m.register()
 
 def sv_unregister_modules(modules):
-    clear_all_socket_cache()
-    clear_nodes_id_dict()
-    clear_link_memory()
+    clear_system_cache()
     for m in reversed(modules):
         if hasattr(m, "unregister"):
             # print("Unregistering module: {}".format(m.__name__))
