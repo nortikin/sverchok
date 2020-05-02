@@ -460,6 +460,7 @@
     SvFCurveInNodeMK1
     SvCollectionPicker
     SvSelectionGrabberLite
+    SvTimerNode
 
 ## Objects
     SvVertexGroupNodeMK2
