@@ -26,7 +26,9 @@
       ],
       "params": {
         "float_": 2.180000066757202,
+        "float_draft_": 0.0,
         "int_": 0,
+        "int_draft_": 0,
         "selected_mode": "float"
       },
       "width": 140.0
@@ -42,7 +44,9 @@
       ],
       "params": {
         "float_": 0.30000001192092896,
+        "float_draft_": 0.0,
         "int_": 0,
+        "int_draft_": 0,
         "selected_mode": "float"
       },
       "width": 140.0
@@ -106,7 +110,7 @@
     },
     "Frame": {
       "bl_idname": "NodeFrame",
-      "height": 823.0158081054688,
+      "height": 824.355712890625,
       "hide": false,
       "label": "Base Ring with holes",
       "location": [
@@ -114,11 +118,11 @@
         10.079999923706055
       ],
       "params": {},
-      "width": 862.4633178710938
+      "width": 861.9832763671875
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
-      "height": 559.2898559570312,
+      "height": 559.3897705078125,
       "hide": false,
       "label": "Select outer rim",
       "location": [
@@ -126,11 +130,11 @@
         -123.00218963623047
       ],
       "params": {},
-      "width": 756.7841186523438
+      "width": 756.3040161132812
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "height": 400.10150146484375,
+      "height": 402.1214904785156,
       "hide": false,
       "label": "Extrude outer rim",
       "location": [
@@ -138,7 +142,7 @@
         10.079999923706055
       ],
       "params": {},
-      "width": 413.444091796875
+      "width": 412.9639892578125
     },
     "Inset faces": {
       "bl_idname": "SvInsetFaces",
@@ -188,7 +192,11 @@
         -246.79991149902344
       ],
       "params": {
-        "items_": "NOT"
+        "items_": "NOT",
+        "prop_types": [
+          false,
+          false
+        ]
       },
       "width": 140.0
     },
@@ -217,7 +225,7 @@
       "width": 16.0
     },
     "Ring": {
-      "bl_idname": "SvRingNode",
+      "bl_idname": "SvRingNodeMK2",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -226,13 +234,19 @@
         106.8557186126709
       ],
       "params": {
+        "angle_units": "RAD",
+        "inhibit_updates": 0,
+        "last_angle_units": "RAD",
         "mode": "MAJOR_MINOR",
-        "ring_R": 1.9900000095367432,
-        "ring_eR": 2.5399999618530273,
-        "ring_iR": 1.440000057220459,
+        "ring_a1": 0.0,
+        "ring_a2": 6.2831854820251465,
+        "ring_er": 2.5399999618530273,
+        "ring_ir": 1.440000057220459,
         "ring_n1": 48,
         "ring_n2": 6,
-        "ring_r": 0.550000011920929
+        "ring_p": 0.0,
+        "ring_r1": 1.9900000095367432,
+        "ring_r2": 0.550000011920929
       },
       "width": 170.0
     },
@@ -307,7 +321,7 @@
       "label": "",
       "location": [
         1002.6408462524414,
-        -103.11018943786621
+        -103.11019134521484
       ],
       "params": {
         "include_partial": 1,
@@ -368,14 +382,20 @@
     [
       "Reroute",
       "Output",
-      "Ring",
-      "R"
+      "Scalar Math.001",
+      "x"
     ],
     [
       "Scalar Math.002",
       0,
-      "Ring",
+      "Scalar Math.001",
       1
+    ],
+    [
+      "Scalar Math.001",
+      0,
+      "Scalar Math",
+      0
     ],
     [
       "Reroute",
@@ -400,6 +420,18 @@
       0,
       "Matrix Apply",
       3
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Ring",
+      "R"
+    ],
+    [
+      "Scalar Math.002",
+      0,
+      "Ring",
+      1
     ],
     [
       "Ring",
@@ -436,24 +468,6 @@
       1,
       "Solidify",
       2
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Scalar Math.001",
-      "x"
-    ],
-    [
-      "Scalar Math.002",
-      0,
-      "Scalar Math.001",
-      1
-    ],
-    [
-      "Scalar Math.001",
-      0,
-      "Scalar Math",
-      0
     ],
     [
       "Solidify",
