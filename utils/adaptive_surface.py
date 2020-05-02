@@ -57,6 +57,9 @@ def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, by_are
         areas_1 = np.linalg.norm(np.cross(points_du_dv - points_0, points_du - points_0), axis=2)/6.0
         areas_2 = np.linalg.norm(np.cross(points_dv - points_0, points_du_dv - points_0), axis=2)/6.0
         areas = areas_1 + areas_2
+        h_u = us_range[1] - us_range[0]
+        h_v = vs_range[1] - vs_range[0]
+        areas = areas / (h_u * h_v)
         min_area = areas.min()
         max_area = areas.max()
         areas_range = max_area - min_area
