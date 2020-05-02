@@ -125,22 +125,24 @@ class SvSurfaceGaussCurvatureNode(bpy.types.Node, SverchCustomTreeNode):
 
         surfaces_s = self.inputs['Surface'].sv_get()
         surfaces_s = ensure_nesting_level(surfaces_s, 2, data_types=(SvSurface,))
-        src_point_s = self.inputs['UVPoints'].sv_get()
+        src_point_s = self.inputs['UVPoints'].sv_get(default=[[]])
         src_point_s = ensure_nesting_level(src_point_s, 4)
         src_u_s = self.inputs['U'].sv_get()
-        src_u_s = ensure_nesting_level(src_u_s, 2)
+        src_u_s = ensure_nesting_level(src_u_s, 3)
         src_v_s = self.inputs['V'].sv_get()
-        src_v_s = ensure_nesting_level(src_v_s, 2)
+        src_v_s = ensure_nesting_level(src_v_s, 3)
 
         curvature_out = []
         for surfaces, src_points_i, src_u_i, src_v_i in zip_long_repeat(surfaces_s, src_point_s, src_u_s, src_v_s):
+            new_curvatures = []
             for surface, src_points, src_us, src_vs in zip_long_repeat(surfaces, src_points_i, src_u_i, src_v_i):
                 if self.input_mode == 'VERTICES':
                     us, vs = self.parse_input(src_points)
                 else:
                     us, vs = np.array(src_us), np.array(src_vs)
                 curvatures = surface.gauss_curvature_array(us, vs).tolist()
-                curvature_out.append(curvatures)
+                new_curvatures.append(curvatures)
+            curvature_out.extend(new_curvatures)
 
         self.outputs['Curvature'].sv_set(curvature_out)
 
