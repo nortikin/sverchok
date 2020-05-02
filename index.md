@@ -377,6 +377,7 @@
     SvInputSwitchNodeMOD
     SvNeuroElman1LNode
     SvCustomSwitcher
+    SvRangeSwitchNode
 
 ## Viz
     Sv3DviewPropsNode
