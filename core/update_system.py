@@ -27,6 +27,9 @@ from sverchok.core.socket_data import SvNoDataError, reset_socket_cache
 from sverchok.utils.logging import debug, info, warning, error, exception
 from sverchok.utils.profile import profile
 from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_with_bgl, start_exception_drawing_with_bgl
+from sverchok.core.socket_data import clear_all_socket_cache
+from sverchok.core.node_id_dict import clear_nodes_id_dict
+from sverchok.core.links import clear_link_memory
 import sverchok
 
 import traceback
@@ -46,6 +49,12 @@ def set_first_run(value):
 def is_first_run():
     global sv_first_run
     return sv_first_run
+
+def clear_system_cache():
+    print("cleaning Sverchok cache")
+    clear_all_socket_cache()
+    clear_nodes_id_dict()
+    clear_link_memory()
 
 def update_error_colors(self, context):
     global no_data_color
