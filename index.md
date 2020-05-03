@@ -404,6 +404,7 @@
     SvTextureViewerNodeLite
     SvWaveformViewer
     SvConsoleNode
+    SvViewer2D
 
 ## Text
     ViewerNodeTextMK3
