@@ -85,19 +85,13 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
     bl_label = 'Texture Evaluate'
     bl_icon = 'FORCE_TEXTURE'
 
-
-    out_modes = [
-        ('NORMAL', 'Single Channel', 'Texture displacement along Vertex Normal', '', 1),
-        ('RGB to XYZ', 'RGB', 'Texture displacement with RGB as vector', '', 2),
-        ('HSV to XYZ', 'HSV', 'Texture displacement with HSV as vector', '', 3),
-        ('HLS to XYZ', 'HLS', 'Texture displacement with HSV as vector', '', 4)]
-
     texture_coord_modes = [
         ('UV', 'UV coordinates', 'Input UV coordinates to evaluate texture. (0 to 1 as domain)', '', 1),
         ('Object', 'Object', 'Input Object coordinates to evaluate texture. (-1 to 1 as domain)', '', 2),
 
     ]
 
+    replacement_nodes = [('SvTextureEvaluateNodeMk2', None, None)]
     @throttled
     def change_mode(self, context):
         outputs = self.outputs
@@ -168,6 +162,7 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
         layout.prop(self, 'list_match', expand=False)
 
     def rclick_menu(self, context, layout):
+        self.node_replacement_menu(context, layout)
         layout.prop_menu_enum(self, "list_match", text="List Match")
 
     def process(self):
@@ -184,7 +179,7 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
             if not self.name_texture:
                 params.append([[EmptyTexture()]])
             else:
-                params.append([[bpy.data.textures[self.name_texture]]])
+                params.append([[self.get_bpy_data_from_name(self.name_texture, bpy.data.textures)]])
         else:
             params.append(inputs[1].sv_get(default=[[]], deepcopy=False))
 

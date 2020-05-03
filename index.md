@@ -477,7 +477,7 @@
     SvColorsInNodeMK1
     SvColorInputNode
     SvColorsOutNodeMK1
-    SvTextureEvaluateNode
+    SvTextureEvaluateNodeMk2
     ---
     SvSculptMaskNode
     SvSelectMeshVerts
