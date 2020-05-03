@@ -70,7 +70,8 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
             self.info(f'set self.script_name to:|{self.script_pointer.name}|')
 
     # depreciated
-    script_name: StringProperty(update=wrapped_update)
+    script_name: StringProperty(name="script name")
+
 
     script_pointer: PointerProperty(
         name="Script", poll=lambda self, object: True,
@@ -79,6 +80,8 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
     script_str: StringProperty()
     loaded: BoolProperty()
     node_dict = {}
+
+    properties_to_skip_iojson = ["script_pointer"]
 
     def handle_execution_nid(self, func_name, msg, args):
         ND = self.node_dict.get(hash(self))
@@ -157,8 +160,10 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
             self.loaded = True
         self.process_script()
 
-    def get_functions(self):
-
+    def get_text_datablock(self):
+        """
+        store the datablock as a script_str for local introspection.
+        """
         try:
             if self.script_pointer:
                 self.script_str = self.script_pointer.as_string
@@ -170,8 +175,19 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
                     self.script_str = text_datablock.as_string()
                     self.sv_setattr_with_throttle("script_pointer", text_datablock)
                 else:
-                    raise
-            
+                    return None
+
+        except Exception as err:
+            self.error(f"attempting fuzzy search failed: {err}")
+
+        return text_datablock
+
+
+    def get_functions(self):
+
+        text_datablock = self.get_text_datablock()
+        
+        try:
             module = types.ModuleType(text_datablock.name)
             exec(self.script_str, module.__dict__)
 
@@ -182,19 +198,18 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
         dict_functions['all_members'] = module.__dict__
         return dict_functions
 
-    # todo below this mark
-
     def load(self, context):
 
-        print('time to load', self.script_name)
+        print('time to load', self.script_pointer)
         self.clear_sockets()
-        self.script_str = bpy.data.texts[self.script_name.strip()].as_string()
+        self.get_text_datablock()
+
         self.node_dict[hash(self)] = self.get_functions()
         self.init_socket(context)
         self.loaded = True
 
     def reset(self, context):
-        print('reset')
+        self.info('reset')
         self.loaded = False
         self.script_name = ""
         self.script_str = ""
@@ -206,10 +221,9 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
         self.load(bpy.context)
 
     def draw_label(self):
-        if self.script_name:
-            return 'SNF: ' + self.script_name
-        else:
-            return self.bl_label
+        if self.script_pointer:
+            return 'SNF: ' + self.script_pointer.name
+        return self.bl_label
 
     def handle_reload(self, context):
         """
@@ -218,7 +232,7 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
           - perform reload / refresh
           - try to set the connections
         """
-        print('handling reload')
+        self.info('handling reload')
         node = self
         nodes = self.id_data.nodes
 
@@ -246,8 +260,8 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
             except Exception as err:
                 str_from = f'nodes[{link.from_node}].outputs[{link.from_socket}]'
                 str_to = f'nodes[{link.to_node}].inputs[{link.to_socket}]'
-                print(f'failed: {str_from} -> {str_to}')
-                print(err)
+                self.exception(f'failed: {str_from} -> {str_to}')
+                self.exception(err)
 
 
 
