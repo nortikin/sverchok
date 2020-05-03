@@ -28,9 +28,15 @@ def socket_id(self):
     return str(hash(self.node.node_id + self.identifier))
 
 
+def link_id(self):
+    # this attribute for all links
+    return self.from_socket.socket_id + self.to_socket.socket_id
+
+
 # todo add link attribute
 
 
 bpy.types.NodeReroute.n_id = bpy.props.StringProperty(default="")
 bpy.types.NodeReroute.node_id = property(node_id)
 bpy.types.NodeSocketColor.socket_id = property(socket_id)
+bpy.types.NodeLink.link_id = property(link_id)

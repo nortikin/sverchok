@@ -15,8 +15,10 @@ Details: https://github.com/nortikin/sverchok/issues/3077
 """
 
 
+from __future__ import annotations
+
 from enum import Enum, auto
-from typing import TYPE_CHECKING, NamedTuple, Union, List, Callable, Set, Dict
+from typing import TYPE_CHECKING, NamedTuple, Union, List, Callable, Set, Dict, Iterable
 from itertools import takewhile, count
 
 from bpy.types import Node, NodeTree, NodeLink
@@ -170,21 +172,23 @@ class EventsWave:
         self.events_wave.append(bl_event)
 
     @property
-    def type(self) -> BlenderEvent: ...
+    def main_event(self) -> BlenderEvent:
+        if not self.is_end():
+            raise RuntimeError("You should waite wave end before calling this property")
+        return self.events_wave[-1]
 
-    def convert_to_sverchok_events(self):
+    def convert_to_sverchok_events(self) -> List[SverchokEvent]:
         if not self.is_end():
             raise RuntimeError("You should waite wave end before calling this method")
         tree_was_changed = (self.events_wave[-1].type == BlenderEventsTypes.tree_update or
                             self.events_wave[-1].type == BlenderEventsTypes.monad_tree_update)
+        known_sv_events = self.convert_known_events()
         if tree_was_changed:
             self.analyze_changes()
-            known_sv_events = self.convert_known_events()
             # found_sv_events = self.search_extra_events()
             return known_sv_events  # + found_sv_events
         else:
-            # todo control duplications events
-            return [ev.convert_to_sverchok_event() for ev in self.events_wave]
+            return known_sv_events
 
     def is_end(self) -> bool:
         return self.events_wave and self.events_wave[-1].is_wave_end
@@ -223,7 +227,11 @@ class EventsWave:
 
     def convert_known_events(self) -> List[SverchokEvent]:
         all_events_of_first_type = takewhile(lambda ev: ev.type == self.events_wave[0].type, self.events_wave)
-        return [ev.convert_to_sverchok_event() for ev in all_events_of_first_type]
+        sv_events = dict()
+        for bl_event in all_events_of_first_type:
+            sv_event = bl_event.convert_to_sverchok_event()
+            sv_events[sv_event] = sv_event
+        return list(sv_events.values())
 
     def search_extra_events(self) -> List[SverchokEvent]: ...
 
@@ -253,7 +261,7 @@ class EventsWave:
 
     @property
     def previous_tree(self) -> 'SvTree':
-        return NodeTreesReconstruction.get_node_tree_reconstruction(self.events_wave[0].tree)
+        return NodeTreesReconstruction.get_node_tree_reconstruction(self.main_event.tree)
 
     @property
     def current_tree(self) -> SverchCustomTree:
@@ -270,7 +278,8 @@ class CurrentEvents:
             return
 
         if cls.is_in_debug_mode():
-            bl_event.print()
+            if bl_event.type != BlenderEventsTypes.node_update:
+                bl_event.print()
 
         cls.events_wave.add_event(bl_event)
         cls.handle_new_event()
@@ -282,16 +291,16 @@ class CurrentEvents:
 
         cls._to_listen_new_events = False
 
-        if cls.events_wave.type == BlenderEventsTypes.tree_update:
+        if cls.events_wave.main_event.type == BlenderEventsTypes.tree_update:
             cls.handle_tree_update_event()
-        elif cls.events_wave.type == BlenderEventsTypes.node_property_update:
+        elif cls.events_wave.main_event.type == BlenderEventsTypes.node_property_update:
             cls.handle_property_change_event()
-        elif cls.events_wave.type == BlenderEventsTypes.frame_change:
+        elif cls.events_wave.main_event.type == BlenderEventsTypes.frame_change:
             cls.handle_frame_change_event()
-        elif cls.events_wave.type == BlenderEventsTypes.undo:
+        elif cls.events_wave.main_event.type == BlenderEventsTypes.undo:
             cls.handle_undo_event()
         else:
-            raise TypeError(f"Such event type={cls.events_wave.type} can't be handle")
+            raise TypeError(f"Such event type={cls.events_wave.main_event.type} can't be handle")
 
         cls._to_listen_new_events = True
         cls.events_wave = EventsWave()  # event wave recreation
@@ -299,9 +308,13 @@ class CurrentEvents:
     @classmethod
     def handle_tree_update_event(cls):
         sv_events = cls.events_wave.convert_to_sverchok_events()
+        cls.reset_nodes_id(sv_events)  # or copied nodes will have the same ides
         cls.redraw_nodes(sv_events)
-        cls.tree_reconstruction().update_reconstruction(sv_events)
-        sv_nodes = cls.tree_reconstruction().get_sverchok_nodes_to_calculate()
+
+        tree_reconstruction = cls.events_wave.previous_tree
+        tree_reconstruction.update_reconstruction(sv_events)
+
+        sv_nodes = tree_reconstruction.get_sverchok_nodes_to_calculate()
         hashed_tree_data = HashedBlenderData.get_tree_data(cls.events_wave.current_tree, cls.events_wave.id)
         bl_nodes = [hashed_tree_data.get_node_by_id(node.id) for node in sv_nodes]
         cls.update_nodes(bl_nodes)
@@ -316,7 +329,11 @@ class CurrentEvents:
     def handle_undo_event(cls): ...
 
     @classmethod
-    def redraw_nodes(cls, sverchok_events: List[SverchokEvent]):
+    def reset_nodes_id(cls, sv_events: Iterable[SverchokEvent]):
+        [setattr(event.node, 'n_id', '') for event in sv_events if event.type == SverchokEventsTypes.copy_node]
+
+    @classmethod
+    def redraw_nodes(cls, sverchok_events: Iterable[SverchokEvent]):
         for sv_event in sverchok_events:
             if cls.is_in_debug_mode():
                 sv_event.print()
@@ -331,10 +348,6 @@ class CurrentEvents:
         with sv_preferences() as prefs:
             return prefs.log_level == "DEBUG" and prefs.log_update_events
 
-    @classmethod
-    def tree_reconstruction(cls) -> 'SvTree':
-        return cls.events_wave.previous_tree
-
 
 # -------------------------------------------------------------------------
 # ---------This part should be moved to separate module later--------------
@@ -344,8 +357,10 @@ class NodeTreesReconstruction:
     node_trees: Dict[str, 'SvTree'] = dict()
 
     @classmethod
-    def get_node_tree_reconstruction(cls, node_tree) -> 'SvTree':
-        return cls.node_trees.get(node_tree.tree_id, SvTree(node_tree.tree_id))
+    def get_node_tree_reconstruction(cls, node_tree: SverchCustomTree) -> 'SvTree':
+        if node_tree.tree_id not in cls.node_trees:
+            cls.node_trees[node_tree.tree_id] = SvTree(node_tree.tree_id)
+        return cls.node_trees[node_tree.tree_id]
 
 
 class SvTree:
@@ -354,17 +369,44 @@ class SvTree:
         self.nodes: NodesCollection = NodesCollection(self)
         self.links: LinksCollection = LinksCollection(self)
 
-    def update_reconstruction(self, sv_event: List[SverchokEvent]):
+    def update_reconstruction(self, sv_events: Iterable[SverchokEvent]):
         if self.need_total_reconstruction():
             self.total_reconstruction()
         else:
-            pass
+
+            for sv_event in sv_events:
+                if sv_event.node and not sv_event.link:
+                    # nodes should be first
+                    if sv_event.type in [SverchokEventsTypes.add_node, SverchokEventsTypes.copy_node]:
+                        self.nodes.add(sv_event.node)
+                    elif sv_event.type == SverchokEventsTypes.free_node:
+                        breakpoint()
+                        self.nodes.free(sv_event.node)
+                    elif sv_event.type == SverchokEventsTypes.node_property_update:
+                        self.nodes.set_is_outdated(sv_event.node)
+                    else:
+                        raise TypeError(f"Can't handle event={sv_event.type}")
+                elif sv_event.link:
+                    if sv_event.type == SverchokEventsTypes.node_link_update:
+                        self.links.add(sv_event.link)
+                    else:
+                        pass
+                        # todo how to handle remove link
+                else:
+                    pass
+                    # raise TypeError(f"Can't handle event={sv_event.type}")
+
         if self.is_in_debug_mode():
             self.check_reconstruction_correctness()
 
-    @classmethod
-    def get_sverchok_nodes_to_calculate(cls) -> List['SvNode']:
-        ...
+    def get_sverchok_nodes_to_calculate(self) -> List['SvNode']:
+        # todo here "to update" property should be checked
+        out = []
+        for sv_node in self.nodes:
+            if sv_node.is_outdated:
+                sv_node.is_outdated = False
+                out.append(sv_node)
+        return out
 
     def total_reconstruction(self):
         bl_tree = self.get_blender_tree()
@@ -373,7 +415,7 @@ class SvTree:
 
     def need_total_reconstruction(self) -> bool:
         # usually node tree should not be empty
-        return bool(len(self.nodes))
+        return len(self.nodes) == 0
 
     def check_reconstruction_correctness(self):
         bl_tree = self.get_blender_tree()
@@ -415,6 +457,12 @@ class LinksCollection:
         to_node.inputs[link_id] = sv_link
         self._links[link_id] = sv_link
 
+    def free(self, link: NodeLink):
+        sv_link = self._links[link.link_id]
+        sv_link.from_node.free_link(sv_link)
+        sv_link.to_node.free_link(sv_link)
+        del self._links[link.link_id]
+
     def __eq__(self, other):
         return self._links.keys() == other
 
@@ -434,6 +482,18 @@ class NodesCollection:
         sv_node = SvNode(node.node_id, node.name)
         self._nodes[node.node_id] = sv_node
 
+    def free(self, node: Union[SverchCustomTreeNode, Node]):
+        # links should be deleted separately
+        # event if node is deleted from node collection its steal exist in its links
+        sv_node = self._nodes[node.node_id]
+        sv_node.inputs.clear()
+        sv_node.outputs.clear()
+        del self._nodes[node.node_id]
+
+    def set_is_outdated(self, node: Union[SverchCustomTreeNode, Node]):
+        sv_node = self._nodes[node.node_id]
+        sv_node.is_outdated = True
+
     def __eq__(self, other):
         return self._nodes.keys() == other
 
@@ -449,13 +509,24 @@ class NodesCollection:
     def __len__(self):
         return len(self._nodes)
 
+    def __iter__(self):
+        return iter(self._nodes.values())
+
 
 class SvNode:
     def __init__(self, node_id: str, name: str):
         self.id: str = node_id
         self.name: str = name  # todo take in account renaming
+        self.is_outdated = True
+
         self.inputs: Dict[str, SvLink] = dict()
         self.outputs: Dict[str, SvLink] = dict()
+
+    def free_link(self, sv_link: SvLink):
+        if sv_link.id in self.inputs:
+            del self.inputs[sv_link.id]
+        if sv_link.id in self.outputs:
+            del self.outputs[sv_link.id]
 
     def __repr__(self):
         return f'<SvNode="{self.name}">'
@@ -475,15 +546,32 @@ class SvLink(NamedTuple):
 
 
 class HashedTreeData:
-    def __init__(self, update_wave_id: int):
+    def __init__(self, tree_id: str, update_wave_id: int):
+        self.tree_id = tree_id
         self.update_wave_id = update_wave_id
         self.hashed_nodes_by_id: Dict[str, Node] = dict()
 
-    def get_node_by_id(self, node_id: str) -> Node: ...
+    def get_node_by_id(self, node_id: str) -> Node:
+        if not self.hashed_nodes_by_id:
+            self.hashed_nodes_by_id.update({node.node_id: node for node in self.get_tree().nodes})
+        return self.hashed_nodes_by_id[node_id]
+
+    def get_tree(self) -> Union[SverchCustomTree, NodeTree]:
+        for ng in bpy.data.node_groups:
+            if ng.bl_idname == 'SverchCustomTreeType':
+                ng: SverchCustomTree
+                if ng.tree_id == self.tree_id:
+                    return ng
+        raise LookupError(f"Looks like some node tree has disappeared, or its ID has changed")
 
 
 class HashedBlenderData:
-    tree_data: HashedTreeData = HashedTreeData(0)
+    tree_data: Dict[str, HashedTreeData] = dict()
 
     @classmethod
-    def get_tree_data(cls, node_tree: NodeTree, update_wave_id: int) -> 'HashedTreeData': ...
+    def get_tree_data(cls, node_tree: SverchCustomTree, update_wave_id: int) -> 'HashedTreeData':
+        if node_tree not in cls.tree_data:
+            cls.tree_data[node_tree.tree_id] = HashedTreeData(node_tree.tree_id, update_wave_id)
+        elif cls.tree_data[node_tree.tree_id].update_wave_id != update_wave_id:
+            cls.tree_data[node_tree.tree_id] = HashedTreeData(node_tree.tree_id, update_wave_id)
+        return cls.tree_data[node_tree.tree_id]
