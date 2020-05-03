@@ -166,7 +166,7 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
         """
         try:
             if self.script_pointer:
-                self.script_str = self.script_pointer.as_string
+                self.script_str = self.script_pointer.as_string()
                 text_datablock = self.self.script_pointer
             else:
                 # recover from old .blend file in new Blender
