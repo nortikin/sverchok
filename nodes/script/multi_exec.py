@@ -21,7 +21,7 @@ import bpy
 import mathutils
 import bmesh as bm
 import numpy as np
-from bpy.props import StringProperty
+from bpy.props import StringProperty, PointerProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode
@@ -75,8 +75,16 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     bl_label = 'Exec Node Mod'
     bl_icon = 'CONSOLE'
 
+    # depreciated
     text: StringProperty(default='', update=updateNode)
+
+    text_pointer: PointerProperty(
+        name="Text", poll=lambda self, object: True,
+        type=bpy.types.Text, update=updateNode)
+
     dynamic_strings: bpy.props.CollectionProperty(type=SvExecNodeDynaStringItem)
+
+    properties_to_skip_iojson = ['text_pointer']
 
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
@@ -119,7 +127,7 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.draw_animatable_buttons(layout)
         col = layout.column(align=True)
         col.operator(callback_id, text='copy to node').cmd = 'copy_from_text'
-        col.prop_search(self, 'text', bpy.data, "texts", text="")
+        col.prop_search(self, 'text_pointer', bpy.data, "texts", text="")
 
         col.label(text='Code')
         col.operator(callback_id, text='cc to clipboard').cmd = 'copy_node_text_to_clipboard'
@@ -170,10 +178,19 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     def copy_from_text(self, context):
         """ make sure self.dynamic_strings has enough strings to do this """
-        slines = bpy.data.texts[self.text.strip()].lines
-        self.dynamic_strings.clear()
-        for line in slines:
-            self.dynamic_strings.add().line = line.body
+        
+        try:
+            text = self.text_pointer
+            if not text:
+                self.info("no text selected")
+                raise
+            slines = text.lines
+            
+            self.dynamic_strings.clear()
+            for line in slines:
+                self.dynamic_strings.add().line = line.body
+        except Exception as err:
+            self.info(f"copy_from_text: encountered error {err}")
 
     def copy_node_text_to_clipboard(self, context):
         lines = [d.line for d in self.dynamic_strings]
@@ -213,10 +230,11 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.outputs.new('SvStringsSocket', 'out')
 
         # add default strings
-        self.dynamic_strings.add().line = lines[0]
-        self.dynamic_strings.add().line = lines[1]
-        self.dynamic_strings.add().line = ""
-        self.width = 289
+        with self.sv_throttle_tree_update():
+            self.dynamic_strings.add().line = lines[0]
+            self.dynamic_strings.add().line = lines[1]
+            self.dynamic_strings.add().line = ""
+            self.width = 289
 
     def process(self):
         v1, v2, v3 = self.inputs
