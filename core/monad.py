@@ -387,11 +387,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                         socket.prop_name = socket.other.prop_name
 
     def update(self):
-        bl_event = ev.BlenderEvent(
-            type=ev.BlenderEventsTypes.monad_tree_update,
-            tree=self
-        )
-        ev.CurrentEvents.add_new_event(bl_event)
+        ev.CurrentEvents.add_new_event(event_type=ev.BlenderEventsTypes.monad_tree_update,
+                                       node_tree=self)
         if False:  # todo should be take from preference
             affected_trees = {instance.id_data for instance in self.instances}
             for tree in affected_trees:

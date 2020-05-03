@@ -30,7 +30,10 @@ def socket_id(self):
 
 def link_id(self):
     # this attribute for all links
-    return self.from_socket.socket_id + self.to_socket.socket_id
+    # if get id from sockets it will crash during node.insert_link event
+    from_id = str(hash(self.from_node.node_id + self.from_socket.identifier))
+    to_id = str(hash(self.to_node.node_id + self.to_socket.identifier))
+    return from_id + to_id
 
 
 # todo add link attribute

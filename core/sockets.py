@@ -93,6 +93,7 @@ class SvSocketCommon:
     @property
     def socket_id(self):
         """Id of socket used by data_cache"""
+        # it leads to crash to calling from node.insert_link (link.from_socket.socket_id)
         return str(hash(self.node.node_id + self.identifier))
 
     @property
