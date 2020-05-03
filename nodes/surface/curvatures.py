@@ -168,7 +168,12 @@ class SvSurfaceCurvaturesNode(bpy.types.Node, SverchCustomTreeNode):
                     src_us = repeat_last_for_length(src_us, maxlen)
                     src_vs = repeat_last_for_length(src_vs, maxlen)
                     us, vs = np.array(src_us), np.array(src_vs)
-                data = surface.curvature_calculator(us, vs, order=self.order).calc(need_values, need_directions, need_gauss, need_mean, need_matrix)
+                calculator = surface.curvature_calculator(us, vs, order=self.order)
+                data = calculator.calc(need_values = need_values,
+                                    need_directions = need_directions,
+                                    need_gauss = need_gauss,
+                                    need_mean = need_mean,
+                                    need_matrix = need_matrix)
                 if need_values:
                     c1_out.append(data.principal_value_1.tolist())
                     c2_out.append(data.principal_value_2.tolist())
