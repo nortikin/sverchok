@@ -1,0 +1,773 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {
+    "A Number": "Frame.001",
+    "A Number.001": "Frame.001",
+    "Delete Loose": "Frame.005",
+    "Exec Node Mod": "Frame.003",
+    "Exec Node Mod.001": "Frame.004",
+    "Frame.001": "Frame",
+    "Frame.002": "Frame",
+    "Frame.003": "Frame",
+    "Frame.004": "Frame",
+    "Frame.005": "Frame",
+    "Frame.006": "Frame",
+    "Frame.007": "Frame",
+    "Frame.009": "Frame.003",
+    "Frame.010": "Frame.002",
+    "List Match": "Frame.004",
+    "Matrix Apply (verts)": "Frame.006",
+    "Matrix Math.001": "Frame.007",
+    "Matrix normal": "Frame.006",
+    "Merge by Distance": "Frame.005",
+    "Mesh Join": "Frame.005",
+    "Note": "Frame",
+    "Random points on mesh": "Frame.002",
+    "Reroute.001": "Frame",
+    "Reroute.002": "Frame",
+    "Reroute.003": "Frame",
+    "Socket Converter": "Frame.004",
+    "Suzanne": "Frame.001",
+    "Triangulate mesh": "Frame.010",
+    "UV Connection": "Frame",
+    "Vector in": "Frame.001",
+    "Vector polar output": "Frame.009",
+    "Viewer Draw Mk3": "Frame.006",
+    "Viewer Draw Mk3.001": "Frame.005"
+  },
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0422\u041e\u0427\u041d\u041e\u0421\u0422\u042c",
+      "location": [
+        -1183.9365234375,
+        -32.343231201171875
+      ],
+      "params": {
+        "float_": 0.0,
+        "float_draft_": 0.0,
+        "int_": 5,
+        "int_draft_": 0,
+        "selected_mode": "int",
+        "show_limits": 0,
+        "to3d": 1
+      },
+      "width": 214.7891845703125
+    },
+    "A Number.001": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0427\u0418\u0421\u041b\u041e \u0422\u041e\u0427\u0415\u041a",
+      "location": [
+        -1183.9365234375,
+        -109.59457397460938
+      ],
+      "params": {
+        "float_": 0.0,
+        "float_draft_": 0.0,
+        "int_": 5000,
+        "int_draft_": 0,
+        "int_max": 5000,
+        "int_min": 1,
+        "selected_mode": "int",
+        "show_limits": 0,
+        "to3d": 1
+      },
+      "width": 214.7891845703125
+    },
+    "Delete Loose": {
+      "bl_idname": "SvDeleteLooseNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2151.395751953125,
+        303.8606872558594
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Exec Node Mod": {
+      "bl_idname": "SvExecNodeMod",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        637.322021484375,
+        275.2369689941406
+      ],
+      "params": {},
+      "string_storage": "{\"lines\": [\"k={}\", \"for i1, i2 in zip(V1[0], V2[0]):\", \"    if not round(i2*V3[0][0]) in k:\", \"        k[round(i2*V3[0][0])] = []\", \"    k[round(i2*V3[0][0])].append(i1)\", \"# print(k)\", \"for j in k.values():\", \"    j.sort(key=lambda x:x[2])\", \"    out.append(j)\"]}",
+      "width": 289.0
+    },
+    "Exec Node Mod.001": {
+      "bl_idname": "SvExecNodeMod",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1112.902099609375,
+        77.5428466796875
+      ],
+      "params": {},
+      "string_storage": "{\"lines\": [\"from sverchok.data_structure import match_long_repeat as mlr\", \"out_ = mlr(V1)\", \"extend(out_)\", \"\", \"\", \"\"]}",
+      "width": 516.3656005859375
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6161344647407532,
+        0.3135945796966553,
+        0.4822174906730652
+      ],
+      "height": 716.8154296875,
+      "hide": false,
+      "label": "Sverchok_viewer",
+      "location": [
+        -2230.035400390625,
+        497.5374755859375
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 3966.765380859375
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.3741852939128876,
+        0.6080000996589661,
+        0.37504634261131287
+      ],
+      "height": 476.3712158203125,
+      "hide": false,
+      "label": "\u0432\u0432\u043e\u0434",
+      "location": [
+        254.78759765625,
+        323.3024597167969
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 274.7891845703125
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6080000996589661,
+        0.5022671818733215,
+        0.28525370359420776
+      ],
+      "height": 444.4069519042969,
+      "hide": false,
+      "label": "\u0441\u043e\u0437\u0434\u0430\u043d\u0438\u0435 \u0441\u043b\u0443\u0447\u0430\u0439\u043d\u044b\u0445 \u0442\u043e\u0447\u0435\u043a \u043d\u0430 \u043f\u043e\u043b\u0438\u0433",
+      "location": [
+        528.564697265625,
+        -97.795166015625
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 434.736572265625
+    },
+    "Frame.003": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6080000996589661,
+        0.4377041757106781,
+        0.2951887249946594
+      ],
+      "height": 427.2369689941406,
+      "hide": false,
+      "label": "\u0441\u043e\u0440\u0442\u0438\u0440\u043e\u0432\u043a\u0430 \u043f\u043e \u0433\u0440\u0430\u0434\u0443\u0441\u0443 \u0438 \u0432\u044b\u0441\u043e\u0442\u0435",
+      "location": [
+        839.638427734375,
+        210.746337890625
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 598.279296875
+    },
+    "Frame.004": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6080001592636108,
+        0.49698448181152344,
+        0.48075783252716064
+      ],
+      "height": 604.9473876953125,
+      "hide": false,
+      "label": "\u0432\u044b\u0440\u0430\u0432\u043d\u044f\u0442\u044c \u0441\u043f\u0438\u0441\u043a\u0438 \u043f\u043e \u043d\u0430\u0438\u0431\u043e\u043b\u044c\u0448\u0435\u043c\u0443",
+      "location": [
+        -427.8707275390625,
+        77.13943481445312
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 582.6617431640625
+    },
+    "Frame.005": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6080000996589661,
+        0.3966374695301056,
+        0.4414104223251343
+      ],
+      "height": 343.6339416503906,
+      "hide": false,
+      "label": "\u0412\u042b\u0412\u041e\u0414",
+      "location": [
+        715.35791015625,
+        82.270263671875
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 765.55322265625
+    },
+    "Frame.006": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.5075298547744751,
+        0.6080000996589661,
+        0.4174765944480896
+      ],
+      "height": 292.843017578125,
+      "hide": false,
+      "label": "\u0432\u0440\u0430\u0449\u044f\u0435\u043c \u0434\u043b\u044f \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0435\u043d\u0438\u044f \u043d\u0430\u043f\u0440\u0430\u0432\u043b\u0435\u043d",
+      "location": [
+        190.96142578125,
+        242.0341339111328
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 593.970458984375
+    },
+    "Frame.007": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6080000996589661,
+        0.4784124195575714,
+        0.5489460229873657
+      ],
+      "height": 164.3023681640625,
+      "hide": false,
+      "label": "\u0432\u0440\u0430\u0449\u0430\u0435\u043c \u043e\u0431\u0440\u0430\u0442\u043d\u043e",
+      "location": [
+        384.49658203125,
+        269.3879699707031
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 200.000244140625
+    },
+    "Frame.009": {
+      "bl_idname": "NodeFrame",
+      "height": 234.91159057617188,
+      "hide": false,
+      "label": "\u0438\u0437\u0432\u043b\u0435\u0447\u0435\u043d\u0438\u0435 \u0433\u0440\u0430\u0434\u0443\u0441\u0430 \u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u044f",
+      "location": [
+        288.798828125,
+        197.08859252929688
+      ],
+      "params": {},
+      "width": 160.0
+    },
+    "Frame.010": {
+      "bl_idname": "NodeFrame",
+      "height": 384.4069519042969,
+      "hide": false,
+      "label": "\u041f\u041e\u041d\u0418\u041c\u0410\u0415\u0422 \u0422\u0420\u0415\u0423\u0413\u041e\u041b\u042c\u041d\u0418\u041a\u0418",
+      "location": [
+        -84.44921875,
+        250.223388671875
+      ],
+      "params": {},
+      "width": 200.0
+    },
+    "List Match": {
+      "bl_idname": "ListMatchNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1106.606201171875,
+        314.9474182128906
+      ],
+      "params": {
+        "level": 3
+      },
+      "width": 140.0
+    },
+    "Matrix Apply (verts)": {
+      "bl_idname": "MatrixApplyNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -537.9342041015625,
+        146.843017578125
+      ],
+      "params": {
+        "output_numpy": 0
+      },
+      "width": 125.66911315917969
+    },
+    "Matrix Math.001": {
+      "bl_idname": "SvMatrixMathNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "Matrix Invert",
+      "location": [
+        1787.77001953125,
+        -72.6976318359375
+      ],
+      "params": {
+        "operation": "INVERT"
+      },
+      "width": 140.0
+    },
+    "Matrix normal": {
+      "bl_idname": "SvMatrixNormalNode",
+      "custom_socket_props": {
+        "0": {
+          "prop": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "use_prop": true
+        },
+        "1": {
+          "prop": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "use_prop": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -746.235595703125,
+        65.619873046875
+      ],
+      "params": {
+        "track": "Z",
+        "up": "Y"
+      },
+      "width": 140.0
+    },
+    "Merge by Distance": {
+      "bl_idname": "SvMergeByDistanceNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1957.275634765625,
+        342.6339416503906
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Mesh Join": {
+      "bl_idname": "SvMeshJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2322.828857421875,
+        304.6231994628906
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Note": {
+      "bl_idname": "NoteNode",
+      "color": [
+        1.0,
+        0.8993440270423889,
+        0.9742509722709656
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -769.02978515625,
+        396.8154296875
+      ],
+      "params": {
+        "show_text": 0,
+        "text": "\u041d\u0418\u041a\u0418\u0422\u0420\u041e\u041d 2018 - \u0421\u041e\u0417\u0414\u0410\u041d\u0418\u0415 \u0418 \u0421\u041e\u0415\u0414\u0418\u041d\u0415\u041d\u0418\u0415 \u0422\u041e\u0427\u0415\u041a \u041d\u0410 \u041f\u041e\u0412\u0415\u0420\u0425\u041d\u041e\u0421\u0422\u0418, \u041e\u0411\u041d\u041e\u0412\u041b\u0415\u041d\u0418\u0415 2020 "
+      },
+      "use_custom_color": true,
+      "width": 400.0
+    },
+    "Random points on mesh": {
+      "bl_idname": "SvRandomPointsOnMesh",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        120.430419921875,
+        90.1514892578125
+      ],
+      "params": {
+        "points_number": 20,
+        "proportional": 1
+      },
+      "width": 140.0
+    },
+    "Reroute.001": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0422\u041e\u0427\u041d\u041e\u0421\u0422\u042c",
+      "location": [
+        379.38037109375,
+        -218.08642578125
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Reroute.002": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u041f\u041e\u041b\u0418\u0413\u041e\u041d\u042b",
+      "location": [
+        -853.885986328125,
+        -165.798583984375
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Reroute.003": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0422\u041e\u0427\u041a\u0418 \u0425\u0410\u041e\u0421",
+      "location": [
+        360.89599609375,
+        -57.1551513671875
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Socket Converter": {
+      "bl_idname": "ConverterNode",
+      "color": [
+        0.602957010269165,
+        0.6740000247955322,
+        0.5642769932746887
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1477.625244140625,
+        241.49856567382812
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Suzanne": {
+      "bl_idname": "SvSuzanneNode",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1145.82958984375,
+        78.15896606445312
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Triangulate mesh": {
+      "bl_idname": "SvTriangulateNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -84.30615234375,
+        153.40695190429688
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "UV Connection": {
+      "bl_idname": "LineConnectNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1776.873779296875,
+        279.4111328125
+      ],
+      "params": {
+        "dir_check": "U_dir",
+        "polygons": "Edges",
+        "slice_check": 0
+      },
+      "width": 140.0
+    },
+    "Vector in": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1125.4586181640625,
+        232.37118530273438
+      ],
+      "params": {
+        "y_": 0.41999998688697815,
+        "z_": 0.9899999499320984
+      },
+      "width": 100.0
+    },
+    "Vector polar output": {
+      "bl_idname": "VectorPolarOutNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        418.042724609375,
+        175.91159057617188
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Viewer Draw Mk3": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -352.26513671875,
+        146.84304809570312
+      ],
+      "params": {
+        "activate": 0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw Mk3.001": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2522.828857421875,
+        304.6231994628906
+      ],
+      "params": {
+        "display_verts": 0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Vector in",
+      0,
+      "Matrix normal",
+      1
+    ],
+    [
+      "Suzanne",
+      0,
+      "Matrix Apply (verts)",
+      0
+    ],
+    [
+      "Matrix normal",
+      0,
+      "Matrix Apply (verts)",
+      1
+    ],
+    [
+      "Suzanne",
+      "Faces",
+      "Reroute.002",
+      "Input"
+    ],
+    [
+      "Matrix Apply (verts)",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "Reroute.002",
+      "Output",
+      "Viewer Draw Mk3",
+      "faces"
+    ],
+    [
+      "Matrix normal",
+      0,
+      "Matrix Math.001",
+      0
+    ],
+    [
+      "A Number",
+      "Int",
+      "Reroute.001",
+      "Input"
+    ],
+    [
+      "Matrix Apply (verts)",
+      0,
+      "Triangulate mesh",
+      0
+    ],
+    [
+      "Reroute.002",
+      "Output",
+      "Triangulate mesh",
+      "Polygons"
+    ],
+    [
+      "Triangulate mesh",
+      0,
+      "Random points on mesh",
+      0
+    ],
+    [
+      "Triangulate mesh",
+      2,
+      "Random points on mesh",
+      1
+    ],
+    [
+      "A Number.001",
+      0,
+      "Random points on mesh",
+      3
+    ],
+    [
+      "Random points on mesh",
+      "Verts",
+      "Reroute.003",
+      "Input"
+    ],
+    [
+      "Reroute.003",
+      "Output",
+      "Vector polar output",
+      "Vectors"
+    ],
+    [
+      "Reroute.003",
+      "Output",
+      "Exec Node Mod",
+      "V1"
+    ],
+    [
+      "Vector polar output",
+      1,
+      "Exec Node Mod",
+      1
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Exec Node Mod",
+      "V3"
+    ],
+    [
+      "Exec Node Mod",
+      0,
+      "Exec Node Mod.001",
+      0
+    ],
+    [
+      "Exec Node Mod.001",
+      0,
+      "Socket Converter",
+      0
+    ],
+    [
+      "Socket Converter",
+      0,
+      "UV Connection",
+      0
+    ],
+    [
+      "UV Connection",
+      0,
+      "Merge by Distance",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "Merge by Distance",
+      1
+    ],
+    [
+      "Merge by Distance",
+      0,
+      "Delete Loose",
+      0
+    ],
+    [
+      "Merge by Distance",
+      1,
+      "Delete Loose",
+      1
+    ],
+    [
+      "Delete Loose",
+      0,
+      "Mesh Join",
+      0
+    ],
+    [
+      "Delete Loose",
+      1,
+      "Mesh Join",
+      1
+    ],
+    [
+      "Mesh Join",
+      0,
+      "Viewer Draw Mk3.001",
+      0
+    ],
+    [
+      "Mesh Join",
+      1,
+      "Viewer Draw Mk3.001",
+      1
+    ],
+    [
+      "Matrix Math.001",
+      0,
+      "Viewer Draw Mk3.001",
+      3
+    ]
+  ]
+}

@@ -84,6 +84,43 @@ class SvSurface(object):
         #self.info("Normals: %s", normal)
         return normal
 
+    def gauss_curvature_array(self, us, vs):
+        if hasattr(self, 'normal_delta'):
+            h = self.normal_delta
+        else:
+            h = 0.0001
+        h2 = h*h
+
+        surf_vertices = self.evaluate_array(us, vs)
+        u_plus = self.evaluate_array(us + h, vs)
+        v_plus = self.evaluate_array(us, vs + h)
+        u_minus = self.evaluate_array(us - h, vs)
+        v_minus = self.evaluate_array(us, vs - h)
+        uv_plus = self.evaluate_array(us + h, vs + h)
+        uv_minus = self.evaluate_array(us - h, vs - h)
+
+        fu = (u_plus - surf_vertices)/h
+        fv = (v_plus - surf_vertices)/h
+        normal = np.cross(fu, fv)
+        norm = np.linalg.norm(normal, axis=1)[np.newaxis].T
+        normal = normal / norm
+
+        fuu = (u_plus - 2*surf_vertices + u_minus) / h2
+        fvv = (v_plus - 2*surf_vertices + v_minus) / h2
+        fuv = (uv_plus - u_plus - v_plus + surf_vertices) / h2
+
+        nuu = (fuu * normal).sum(axis=1)
+        nvv = (fvv * normal).sum(axis=1)
+        nuv = (fuv * normal).sum(axis=1)
+
+        duu = np.linalg.norm(fu, axis=1) **2
+        dvv = np.linalg.norm(fv, axis=1) **2
+        duv = (fu * fv).sum(axis=1)
+
+        numerator = nuu * nvv - nuv*nuv
+        denominator = duu * dvv - duv*duv
+        return numerator / denominator
+
     def get_coord_mode(self):
         return 'UV'
 
@@ -277,6 +314,9 @@ class SvPlane(SvSurface):
         vs = vs[np.newaxis].T
         return self.point + us*self.vector1 + vs*self.vector2
 
+    def gauss_curvature_array(self, us, vs):
+        return np.zeros_like(us, dtype=np.float64)
+
     def normal(self, u, v):
         return self._normal
 
@@ -331,6 +371,11 @@ class SvEquirectSphere(SvSurface):
         ys = rho * np.sin(thetas) * np.sin(phis)
         zs = rho * np.cos(thetas)
         return np.stack((xs, ys, zs)).T + self.center
+
+    def gauss_curvature_array(self, us, vs):
+        rho = self.radius
+        c = 1.0 / (rho*rho)
+        return np.full_like(us, c)
 
     def normal(self, u, v):
         rho = self.radius
@@ -393,6 +438,11 @@ class SvLambertSphere(SvSurface):
         zs = rho * np.cos(thetas)
         return np.stack((xs, ys, zs)).T + self.center
 
+    def gauss_curvature_array(self, us, vs):
+        rho = self.radius
+        c = 1.0 / (rho*rho)
+        return np.full_like(us, c)
+
     def normal(self, u, v):
         rho = self.radius
         phi = u
@@ -454,6 +504,11 @@ class SvGallSphere(SvSurface):
         zs = rho * np.cos(thetas)
         return np.stack((xs, ys, zs)).T + self.center
 
+    def gauss_curvature_array(self, us, vs):
+        rho = self.radius
+        c = 1.0 / (rho*rho)
+        return np.full_like(us, c)
+
     def normal(self, u, v):
         rho = self.radius
         phi = u * sqrt(2) / rho
@@ -507,6 +562,11 @@ class SvDefaultSphere(SvSurface):
         ys = rho * np.sin(thetas) * np.sin(phis)
         zs = rho * np.cos(thetas)
         return np.stack((xs, ys, zs)).T + self.center
+
+    def gauss_curvature_array(self, us, vs):
+        rho = self.radius
+        c = 1.0 / (rho*rho)
+        return np.full_like(us, c)
 
     def normal(self, u, v):
         rho = self.radius

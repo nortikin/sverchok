@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match
 from sverchok.utils.modules.eval_formula import get_variables, safe_eval
 from sverchok.utils.logging import info, exception
 
-from sverchok.utils.field.scalar import SvScalarFieldBinOp, SvScalarField, SvNegatedScalarField
+from sverchok.utils.field.scalar import SvScalarFieldBinOp, SvScalarField, SvNegatedScalarField, SvAbsScalarField, SvScalarFieldVectorizedFunction
 
 operations = [
     ('ADD', "Add", lambda x, y : x+y),
@@ -18,8 +18,35 @@ operations = [
     ('MIN', "Minimum", lambda x, y : np.min([x,y],axis=0)),
     ('MAX', "Maximum", lambda x, y : np.max([x,y],axis=0)),
     ('AVG', "Average", lambda x, y : (x+y)/2),
-    ('NEG', "Negate", lambda x : -x)
+    ('DIV', "Divide", lambda x, y: x / y),
+    ('POW', "Power - x**y", np.power),
+    ('NEG', "Negate", lambda x : -x),
+    ('ABS', "Absolute value", np.abs),
+    ('SQR', "Square - x*x", lambda x: x*x),
+    ('SQRT', "Square Root", np.sqrt),
+    ('INV', "Inverse - 1/x", np.reciprocal),
+    ('SIN', "Sine", np.sin),
+    ('COS', "Cosine", np.cos),
+    ('TAN', "Tangent", np.tan),
+    ('ASIN', "ArcSine", np.arcsin),
+    ('ACOS', "ArcCosine", np.arccos),
+    ('ATAN', "ArcTangent", np.arctan),
+    ('EXP', "Exp(x)", np.exp),
+    ('LOG', "Log(x)", np.log),
+    ('SINH', "Hyperbolic Sine", np.sinh),
+    ('COSH', "Hyperbolic Cosine", np.cosh),
+    ('TANH', "Hyperbolic Tangent", np.tanh),
+    ('ASINH', "Hyperbolic ArcSine", np.arcsinh),
+    ('ACOSH', "Hyperbolic ArcCosine", np.arccosh),
+    ('ATANH', "Hyperbolic ArcTangent", np.arctanh),
+    ('GAUSS', "Gauss - Exp(-x*x/2)", lambda x: np.exp(-x*x/2.0))
 ]
+
+binary_ops = {'ADD', 'SUB', 'MUL', 'MIN', 'MAX', 'AVG', 'DIV', 'POW'}
+
+vectorized_ops = {'SIN', 'COS', 'TAN', 'ASIN', 'ACOS', 'ATAN', 'EXP', 'LOG',
+                    'SINH', 'COSH', 'TANH', 'ASINH', 'ACOSH', 'ATANH', 'INV',
+                    'GAUSS', 'SQR', 'SQRT'}
 
 operation_modes = [ (id, name, name, i) for i, (id, name, fn) in enumerate(operations) ]
 
@@ -41,7 +68,7 @@ class SvScalarFieldMathNode(bpy.types.Node, SverchCustomTreeNode):
 
     @throttled
     def update_sockets(self, context):
-        self.inputs['FieldB'].hide_safe = self.operation == 'NEG'
+        self.inputs['FieldB'].hide_safe = self.operation not in binary_ops
 
     operation : EnumProperty(
         name = "Operation",
@@ -75,8 +102,14 @@ class SvScalarFieldMathNode(bpy.types.Node, SverchCustomTreeNode):
                 operation = get_operation(self.operation)
                 if self.operation == 'NEG':
                     field_c = SvNegatedScalarField(field_a)
-                else:
+                elif self.operation == 'ABS':
+                    field_c = SvAbsScalarField(field_a)
+                elif self.operation in vectorized_ops:
+                    field_c = SvScalarFieldVectorizedFunction(field_a, operation)
+                elif self.operation in binary_ops:
                     field_c = SvScalarFieldBinOp(field_a, field_b, operation)
+                else:
+                    raise Exception("Unsupported operation: " + self.operation)
                 fields_out.append(field_c)
 
         self.outputs['FieldC'].sv_set(fields_out)
