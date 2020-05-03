@@ -150,7 +150,7 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
     def process(self):
 
         # one of these must be set, script_name is legacy
-        if not any([self.script_pointer, self.script_name])
+        if not any([self.script_pointer, self.script_name]):
             return
         if not self.script_str:
             return
