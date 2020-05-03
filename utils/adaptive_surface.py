@@ -7,7 +7,7 @@
 
 import numpy as np
 import random
-from math import ceil
+from math import ceil, isnan
 
 from sverchok.utils.logging import info, exception
 from sverchok.utils.surface import SvSurface
@@ -98,7 +98,7 @@ def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, by_are
             v1 = vs_range[j]
             v2 = vs_range[j+1]
             factor = factors[i,j]
-            if factor_range == 0:
+            if factor_range == 0 or isnan(factor):
                 ppf = (min_ppf + max_ppf)/2
             else:
                 ppf = min_ppf + ppf_range * factor
