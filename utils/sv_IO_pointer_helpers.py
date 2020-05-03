@@ -35,7 +35,7 @@ def unpack_pointer_property_name(data_kind, node_ref, key_name):
     key = node_ref.get(key_name)
     if key in data_kind:
         return data_kind.get(key)
-    return ''
+    return None
 
 """
 usage
