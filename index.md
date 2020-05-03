@@ -96,6 +96,7 @@
      SvFlipSurfaceNode
      SvSwapSurfaceNode
      SvSurfaceGaussCurvatureNode
+     SvSurfaceCurvaturesNode
      SvExApplyFieldToSurfaceNode
      SvExTessellateTrimSurfaceNode
      SvExEvalSurfaceNode

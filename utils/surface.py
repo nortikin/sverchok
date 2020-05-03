@@ -43,6 +43,203 @@ def rotate_vector_around_vector_np(v, k, theta):
     s3 = p1 * p2 * k
     return s1 + s2 + s3
 
+class SurfaceCurvatureData(object):
+    """Container class for calculated curvature values"""
+    def __init__(self):
+        self.principal_value_1 = self.principal_value_2 = None
+        self.principal_direction_1 = self.principal_direction_2 = None
+        self.mean = self.gauss = None
+        self.matrix = None
+
+class SurfaceCurvatureCalculator(object):
+    """
+    This class contains pre-calculated first and second surface derivatives,
+    and calculates any curvature information from them.
+    """
+    def __init__(self, us, vs, order=True):
+        self.us = us
+        self.vs = vs
+        self.order = order
+        self.fu = self.fv = None
+        self.duu = self.dvv = self.duv = None
+        self.nuu = self.nvv = self.nuv = None
+        self.points = None
+        self.normals = None
+
+    def set(self, points, normals, fu, fv, duu, dvv, duv, nuu, nvv, nuv):
+        """Set derivatives information"""
+        self.points = points
+        self.normals = normals
+        self.fu = fu   # df/du
+        self.fv = fv   # df/dv
+        self.duu = duu # (fu, fv), a.k.a. E
+        self.dvv = dvv # (fv, fv), a.k.a. G
+        self.duv = duv # (fu, fv), a.k.a F
+        self.nuu = nuu # (fuu, normal), a.k.a l
+        self.nvv = nvv # (fvv, normal), a.k.a n
+        self.nuv = nuv # (fuv, normal), a.k.a m
+
+    def mean(self):
+        """Calculate mean curvature"""
+        duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
+        A = duu*dvv - duv*duv
+        B = duu*nvv - 2*duv*nuv + dvv*nuu
+        return -B / (2*A)
+
+    def gauss(self):
+        """Calculate Gaussian curvature"""
+        duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
+        numerator = nuu * nvv - nuv*nuv
+        denominator = duu * dvv - duv*duv
+        return numerator / denominator
+
+    def values(self):
+        """
+        Calculate two principal curvature values.
+        If "order" parameter is set to True, then it will be guaranteed,
+        that C1 value is always less than C2.
+        """
+        # It is possible to calculate principal curvature values
+        # as solutions of quadratic equation, without calculating
+        # corresponding principal curvature directions.
+
+        # lambda^2 (E G - F^2) - lambda (E N - 2 F M + G L) + (L N - M^2) = 0
+
+        duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
+        A = duu*dvv - duv*duv
+        B = duu*nvv - 2*duv*nuv + dvv*nuu
+        C = nuu*nvv - nuv*nuv
+        D = B*B - 4*A*C
+        c1 = (-B - np.sqrt(D))/(2*A)
+        c2 = (-B + np.sqrt(D))/(2*A)
+
+        c1mask = (c1 < c2)
+        c2mask = np.logical_not(c1mask)
+
+        c1_r = np.where(c1mask, c1, c2)
+        c2_r = np.where(c2mask, c1, c2)
+
+        return c1_r, c2_r
+
+    def values_and_directions(self):
+        """
+        Calculate principal curvature values together with principal curvature directions.
+        If "order" parameter is set to True, then it will be guaranteed, that C1 value
+        is always less than C2. Curvature directions are always output correspondingly,
+        i.e. principal_direction_1 corresponds to principal_value_1 and principal_direction_2
+        corresponds to principal_value_2.
+        """
+        # If we need not only curvature values, but principal curvature directions as well,
+        # we have to solve an eigenvalue problem to find values and directions at once.
+
+        # L p = lambda G p
+
+        fu, fv = self.fu, self.fv
+        duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
+        n = len(self.us)
+
+        L = np.empty((n,2,2))
+        L[:,0,0] = nuu
+        L[:,0,1] = nuv
+        L[:,1,0] = nuv
+        L[:,1,1] = nvv
+
+        G = np.empty((n,2,2))
+        G[:,0,0] = duu
+        G[:,0,1] = duv
+        G[:,1,0] = duv
+        G[:,1,1] = dvv
+
+        M = np.matmul(np.linalg.inv(G), L)
+        eigvals, eigvecs = np.linalg.eig(M)
+        # Values of first and second principal curvatures
+        c1 = eigvals[:,0]
+        c2 = eigvals[:,1]
+
+        if self.order:
+            c1mask = (c1 < c2)
+            c2mask = np.logical_not(c1mask)
+            c1_r = np.where(c1mask, c1, c2)
+            c2_r = np.where(c2mask, c1, c2)
+        else:
+            c1_r = c1
+            c2_r = c2
+
+        # dir_1 corresponds to c1, dir_2 corresponds to c2
+        dir_1_x = eigvecs[:,0,0][np.newaxis].T
+        dir_2_x = eigvecs[:,0,1][np.newaxis].T
+        dir_1_y = eigvecs[:,1,0][np.newaxis].T
+        dir_2_y = eigvecs[:,1,1][np.newaxis].T
+
+        # another possible approach
+#         A = duv * nvv - dvv*nuv 
+#         B = duu * nvv - dvv*nuu
+#         C = duu*nuv - duv*nuu
+#         D = B*B - 4*A*C
+#         t1 = (-B - np.sqrt(D)) / (2*A)
+#         t2 = (-B + np.sqrt(D)) / (2*A)
+
+        dir_1 = dir_1_x * fu + dir_1_y * fv
+        dir_2 = dir_2_x * fu + dir_2_y * fv
+
+        dir_1 = dir_1 / np.linalg.norm(dir_1, axis=1, keepdims=True)
+        dir_2 = dir_2 / np.linalg.norm(dir_2, axis=1, keepdims=True)
+
+        if self.order:
+            c1mask = c1mask[np.newaxis].T
+            c2mask = c2mask[np.newaxis].T
+            dir_1_r = np.where(c1mask, dir_1, -dir_2)
+            dir_2_r = np.where(c2mask, dir_1, dir_2)
+        else:
+            dir_1_r = dir_1
+            dir_2_r = dir_2
+        #r = (np.cross(dir_1_r, dir_2_r) * self.normals).sum(axis=1)
+        #print(r)
+
+        return c1_r, c2_r, dir_1_r, dir_2_r
+
+    def calc(self, need_values=True, need_directions=True, need_gauss=True, need_mean=True, need_matrix = True):
+        """
+        Calculate curvature information.
+        Return value: SurfaceCurvatureData instance.
+        """
+        # We try to do as less calculations as possible,
+        # by not doing complex computations if not required
+        # and reusing results of other computations if possible.
+        data = SurfaceCurvatureData()
+        if need_matrix:
+            need_directions = True
+        if need_directions:
+            # If we need principal curvature directions, then the method
+            # being used will calculate us curvature values for free.
+            c1, c2, dir1, dir2 = self.values_and_directions()
+            data.principal_value_1, data.principal_value_2 = c1, c2
+            data.principal_direction_1, data.principal_direction_2 = dir1, dir2
+            if need_gauss:
+                data.gauss = c1 * c2
+            if need_mean:
+                data.mean = (c1 + c2)/2.0
+        if need_matrix:
+            matrices_np = np.dstack((data.principal_direction_2, data.principal_direction_1, self.normals))
+            matrices_np = np.transpose(matrices_np, axes=(0,2,1))
+            matrices_np = np.linalg.inv(matrices_np)
+            matrices = [Matrix(m.tolist()).to_4x4() for m in matrices_np]
+            for matrix, point in zip(matrices, self.points):
+                matrix.translation = Vector(point)
+            data.matrix = matrices
+        if need_values and not need_directions:
+            c1, c2 = self.values()
+            data.principal_value_1, data.principal_value_2 = c1, c2
+            if need_gauss:
+                data.gauss = c1 * c2
+            if need_mean:
+                data.mean = (c1 + c2)/2.0
+        if need_gauss and not need_directions and not need_values:
+            data.gauss = self.gauss()
+        if need_mean and not need_directions and not need_values:
+            data.mean = self.mean()
+        return data
+
 class SvSurface(object):
     def __repr__(self):
         if hasattr(self, '__description__'):
@@ -84,7 +281,7 @@ class SvSurface(object):
         #self.info("Normals: %s", normal)
         return normal
 
-    def gauss_curvature_array(self, us, vs):
+    def curvature_calculator(self, us, vs, order=True):
         if hasattr(self, 'normal_delta'):
             h = self.normal_delta
         else:
@@ -117,9 +314,25 @@ class SvSurface(object):
         dvv = np.linalg.norm(fv, axis=1) **2
         duv = (fu * fv).sum(axis=1)
 
-        numerator = nuu * nvv - nuv*nuv
-        denominator = duu * dvv - duv*duv
-        return numerator / denominator
+        calc = SurfaceCurvatureCalculator(us, vs, order=order)
+        calc.set(surf_vertices, normal, fu, fv, duu, dvv, duv, nuu, nvv, nuv)
+        return calc
+
+    def gauss_curvature_array(self, us, vs):
+        calc = self.curvature_calculator(us, vs)
+        return calc.gauss()
+
+    def mean_curvature_array(self, us, vs):
+        calc = self.curvature_calculator(us, vs)
+        return calc.mean()
+
+    def principal_curvature_values_array(self, us, vs):
+        calc = self.curvature_calculator(us, vs)
+        return calc.values()
+
+    def principal_curvatures_array(self, us, vs):
+        calc = self.curvature_calculator(us, vs)
+        return calc.values_and_directions()
 
     def get_coord_mode(self):
         return 'UV'
