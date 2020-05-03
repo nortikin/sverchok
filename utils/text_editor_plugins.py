@@ -22,6 +22,8 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
 
     def execute(self, context):
 
+        self.report({'INFO'}, "Triggered: text.noderefresh_from_texteditor")
+
         ngs = bpy.data.node_groups
         if not ngs:
             self.report({'INFO'}, "No NodeGroups")
