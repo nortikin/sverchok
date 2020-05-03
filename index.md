@@ -180,7 +180,6 @@
     SvSimpleDeformNode
     SvBendAlongPathNode
     SvBendAlongSurfaceNode
-    SvDisplaceNode
     SvDisplaceNodeMk2
     SvNoiseDisplaceNode
     SvRandomizeVerticesNode

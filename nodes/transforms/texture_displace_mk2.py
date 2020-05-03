@@ -91,16 +91,10 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     @throttled
     def change_direction_sockets(self, context):
-        inputs = self.inputs
-        if self.out_mode == 'Custom Axis':
-            if inputs['Custom Axis'].hide_safe:
-                inputs['Custom Axis'].hide_safe = False
-        else:
-            inputs['Custom Axis'].hide_safe = True
-
+        self.inputs['Custom Axis'].hide_safe = self.out_mode != 'Custom_Axis'
 
     properties_to_skip_iojson = ['texture_pointer']
-    
+
     texture_pointer: bpy.props.PointerProperty(
         type=bpy.types.Texture,
         name='Texture',
