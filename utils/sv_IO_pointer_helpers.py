@@ -16,6 +16,8 @@ def pack_pointer_property_name(datablock, node_ref, key_name):
                      will use to keep track of datablock.name . This should be 
                      a unique name and not be identical to any attribute or 
                      annotation of the node
+    return:
+        False (no useful return yet)
 
     """
     node_ref[key_name] = datablock.name if datablock else ""
@@ -24,12 +26,14 @@ def unpack_pointer_property_name(data_kind, node_ref, key_name):
     """
     attempt to unpack the pointerproperty data found in the json, 
     if the datablock is found inside the .blend being imported into, then the 
-    pointer will be set to that datablock
+    function returns that datablock or None
 
     input:
         data_kind  : this can be any bpy.data.*  <images, texts, materials...>
         node_ref   : the reference obtained in `storage_set_data` function
         key_name   : the datablock.name that was stored in json. 
+    return:
+        datablcok or None
 
     """
     key = node_ref.get(key_name)
@@ -49,7 +53,7 @@ class node
         pack_pointer_property_name(self.texture_pointer, node_ref, "texture_name")
 
     def storage_set_data(self, node_ref):
-        unpack_pointer_property_name(self.texture_pointer, bpy.data.textures, node_ref, "texture_name")
+        self.texture_point = unpack_pointer_property_name(bpy.data.textures, node_ref, "texture_name")
 
 """
 
