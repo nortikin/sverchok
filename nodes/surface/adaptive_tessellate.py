@@ -12,7 +12,7 @@ from sverchok.utils.geom_2d.merge_mesh import crop_mesh_delaunay
 
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface import SvSurface
-from sverchok.utils.adaptive_surface import adaptive_subdivide
+from sverchok.utils.adaptive_surface import adaptive_subdivide, MAXIMUM, GAUSS, MEAN
 
 class SvAdaptiveTessellateNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -62,10 +62,25 @@ class SvAdaptiveTessellateNode(bpy.types.Node, SverchCustomTreeNode):
             default = False,
             update = updateNode)
 
+    curvature_types = [
+        (MAXIMUM, "Maximum", "Maximum principal curvature", 0),
+        (GAUSS, "Gauss", "Gaussian curvature value", 1),
+        (MEAN, "Mean", "Mean curvature value", 2)
+    ]
+
+    curvature_type : EnumProperty(
+            name = "Curvature type",
+            description = "Curvature value type to use",
+            items = curvature_types,
+            default = MAXIMUM,
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, 'by_curvature', toggle=True)
         row.prop(self, 'by_area', toggle=True)
+        if self.by_curvature:
+            layout.prop(self, 'curvature_type')
 
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "Surface")
@@ -106,9 +121,11 @@ class SvAdaptiveTessellateNode(bpy.types.Node, SverchCustomTreeNode):
             for surface, samples_u, samples_v, min_ppf, max_ppf, seed, add_points in objects:
                 us, vs, new_faces = adaptive_subdivide(surface,
                                         samples_u, samples_v,
-                                        self.by_curvature, self.by_area,
-                                        add_points,
-                                        min_ppf, max_ppf, seed)
+                                        by_curvature = self.by_curvature,
+                                        curvature_type = self.curvature_type,
+                                        by_area = self.by_area,
+                                        add_points = add_points,
+                                        min_ppf = min_ppf, max_ppf = max_ppf, seed = seed)
                 new_verts = surface.evaluate_array(us, vs).tolist()
                 verts_out.append(new_verts)
                 faces_out.append(new_faces)

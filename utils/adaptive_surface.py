@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 import numpy as np
-import random
+import numpy.random
 from math import ceil, isnan
 
 from sverchok.utils.logging import info, exception
@@ -14,7 +14,11 @@ from sverchok.utils.surface import SvSurface
 from sverchok.utils.geom_2d.merge_mesh import crop_mesh_delaunay
 from sverchok.utils.voronoi import computeDelaunayTriangulation, Site
 
-def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, by_area=True, min_ppf=1, max_ppf=5, seed=1):
+GAUSS = 'gauss'
+MAXIMUM = 'max'
+MEAN = 'mean'
+
+def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, curvature_type = MAXIMUM, by_area=True, min_ppf=1, max_ppf=5, seed=1):
     u_min, u_max = surface.get_u_min(), surface.get_u_max()
     v_min, v_max = surface.get_v_min(), surface.get_v_max()
     us_range = np.linspace(u_min, u_max, num=samples_u)
@@ -24,7 +28,14 @@ def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, by_are
     vs = vs.flatten()
 
     if by_curvature:
-        curvatures = abs(surface.gauss_curvature_array(us, vs)).clip(0, 100)
+        if curvature_type == GAUSS:
+            curvatures = abs(surface.gauss_curvature_array(us, vs)).clip(0, 100)
+        elif curvature_type == MAXIMUM:
+            curvatures = abs(surface.principal_curvature_values_array(us, vs)[1])
+        elif curvature_type == MEAN:
+            curvatures = abs(surface.mean_curvature_array(us, vs))
+        else:
+            raise Exception("Unsupported curvature type:" + curvature_type)
         curvatures = curvatures.reshape((samples_u, samples_v))
 
         curvatures_0 = curvatures[:-1, :-1]
@@ -88,7 +99,7 @@ def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, by_are
 
     if not seed:
         seed = 12345
-    random.seed(seed)
+    numpy.random.seed(seed)
     new_u = []
     new_v = []
     for i in range(samples_u-1):
@@ -107,16 +118,19 @@ def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, by_are
 #             if ppf > 1:
 #                 info("I %s, J %s, factor %s, PPF %s", i, j, factor, ppf)
 #                 info("U %s - %s, V %s - %s", u1, u2, v1, v2)
-            for k in range(ppf):
-                u = random.uniform(u1, u2)
-                v = random.uniform(v1, v2)
-                new_u.append(u)
-                new_v.append(v)
+            u_r = numpy.random.uniform(u1, u2, size=ppf).tolist()
+            v_r = numpy.random.uniform(v1, v2, size=ppf).tolist()
+            new_u.extend(u_r)
+            new_v.extend(v_r)
 
     return us, vs, new_u, new_v
 
-def adaptive_subdivide(surface, samples_u, samples_v, by_curvature=True, by_area=True, add_points=None, min_ppf=1, max_ppf=5, seed=1):
-    us, vs, new_u, new_v = populate_surface_uv(surface, samples_u, samples_v, by_curvature, by_area, min_ppf, max_ppf, seed)
+def adaptive_subdivide(surface, samples_u, samples_v, by_curvature=True, curvature_type = MAXIMUM, by_area=True, add_points=None, min_ppf=1, max_ppf=5, seed=1):
+    us, vs, new_u, new_v = populate_surface_uv(surface, samples_u, samples_v,
+                            by_curvature = by_curvature,
+                            curvature_type = curvature_type,
+                            by_area = by_area,
+                            min_ppf = min_ppf, max_ppf = max_ppf, seed =seed)
     us_list = list(us) + new_u
     vs_list = list(vs) + new_v
     if add_points and len(add_points[0]) > 0:
