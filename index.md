@@ -180,7 +180,7 @@
     SvSimpleDeformNode
     SvBendAlongPathNode
     SvBendAlongSurfaceNode
-    SvDisplaceNode
+    SvDisplaceNodeMk2
     SvNoiseDisplaceNode
     SvRandomizeVerticesNode
     SvCastNode
@@ -477,7 +477,7 @@
     SvColorsInNodeMK1
     SvColorInputNode
     SvColorsOutNodeMK1
-    SvTextureEvaluateNode
+    SvTextureEvaluateNodeMk2
     ---
     SvSculptMaskNode
     SvSelectMeshVerts
