@@ -21,6 +21,7 @@ from enum import Enum, auto
 from typing import TYPE_CHECKING, NamedTuple, Union, List, Callable, Set, Dict, Iterable
 from itertools import takewhile, count
 from contextlib import contextmanager
+import traceback
 
 from bpy.types import Node, NodeTree, NodeLink
 import bpy
@@ -312,6 +313,8 @@ class CurrentEvents:
             else:
                 raise TypeError(f"Such event type={cls.events_wave.main_event.type} can't be handle")
 
+        cls.events_wave = EventsWave()
+
     @classmethod
     def handle_tree_update_event(cls):
         sv_events = cls.events_wave.convert_to_sverchok_events()
@@ -357,16 +360,15 @@ class CurrentEvents:
 
     @classmethod
     @contextmanager
-    def deaf_mode(cls, recreate_wave=True):
+    def deaf_mode(cls):
         cls._to_listen_new_events = False
         try:
             yield
-        except Exception as e:
-            raise e
+        except Exception:
+            # todo using logger
+            traceback.print_exc()
         finally:
             cls._to_listen_new_events = True
-            if recreate_wave:
-                cls.events_wave = EventsWave()
 
 
 # -------------------------------------------------------------------------
