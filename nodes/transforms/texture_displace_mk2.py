@@ -201,7 +201,8 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         layout.prop_menu_enum(self, "list_match", text="List Match")
 
     def migrate_from(self, old_node):
-        self.texture_pointer = self.get_bpy_data_from_name(old_node.name_texture, bpy.data.textures)
+        if old_node.name_texture:
+            self.texture_pointer = self.get_bpy_data_from_name(old_node.name_texture, bpy.data.textures)
 
     def process(self):
         inputs, outputs = self.inputs, self.outputs
@@ -234,7 +235,7 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         matching_f = list_match_func[self.list_match]
         desired_levels = [3, 3, 2, 3, mat_level, 2, 2, 3]
         out_mode = self.out_mode.replace("_", " ")
-        
+
         ops = [out_mode, displace_funcs[out_mode], self.color_channel.replace("_", " "), self.list_match, self.tex_coord_type.replace("_", " ")]
 
         result = recurse_f_level_control(params, ops, meshes_texture_diplace, matching_f, desired_levels)
@@ -262,6 +263,6 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def storage_set_data(self, node_ref):
         self.texture_pointer = unpack_pointer_property_name(bpy.data.textures, node_ref, "texture_name")
 
-        
+
 classes = [SvDisplaceNodeMk2]
 register, unregister = bpy.utils.register_classes_factory(classes)
