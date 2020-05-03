@@ -19,14 +19,14 @@ from colorsys import rgb_to_hls
 from itertools import repeat
 import bpy
 from bpy.props import EnumProperty, FloatProperty, FloatVectorProperty, StringProperty
-from mathutils import Vector, Matrix, Color
+from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.core.socket_data import SvGetSocketInfo
-from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, iter_list_match_func
+from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes
+from sverchok.utils.sv_IO_pointer_helpers import pack_pointer_property_name, unpack_pointer_property_name
 from sverchok.utils.sv_itertools import recurse_f_level_control
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.modules.color_utils import color_channels
 from sverchok.utils.modules.texture_displace_utils import displace_funcs, meshes_texture_diplace
 
@@ -67,8 +67,8 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         ('UV', 'UV', 'Input UV coordinates to evaluate texture', '', 1),
         ('Mesh_Matrix', 'Mesh Matrix', 'Matrix to apply to verts before evaluating texture', '', 2),
         ('Texture_Matrix', 'Texture Matrix', 'Matrix of texture (External Object matrix)', '', 3),
+        ]
 
-    ]
     @throttled
     def change_mode(self, context):
         inputs = self.inputs
@@ -99,16 +99,14 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             inputs['Custom Axis'].hide_safe = True
 
 
-    name_texture: StringProperty(
-        name='Texture',
-        description='Texture(s) to evaluate',
-        default='',
-        update=updateNode)
-    texture: bpy.props.PointerProperty(
+    properties_to_skip_iojson = ['texture_pointer']
+    
+    texture_pointer: bpy.props.PointerProperty(
         type=bpy.types.Texture,
         name='Texture',
         description='Texture(s) to evaluate',
         update=updateNode)
+
     out_mode: EnumProperty(
         name='Direction',
         items=out_modes,
@@ -172,11 +170,11 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def draw_texture_socket(self, socket, context, layout):
         if not socket.is_linked:
             c = layout.split(factor=0.3, align=False)
-
             c.label(text=socket.name+ ':')
-            c.prop_search(self, "texture", bpy.data, 'textures', text="")
+            c.prop_search(self, "texture_pointer", bpy.data, 'textures', text="")
         else:
             layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
+            
     def draw_buttons(self, context, layout):
         is_vector = self.out_mode in ['RGB to XYZ', 'HSV to XYZ', 'HLS to XYZ']
         self.draw_animatable_buttons(layout, icon_only=True)
@@ -192,7 +190,7 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             r = layout.split(factor=0.3, align=False)
             r.label(text='Channel'+ ':')
             r.prop(self, 'color_channel', expand=False, text='')
-        # layout.prop(self, 'tex_coord_type', text="Tex. Coord")
+
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
@@ -201,6 +199,9 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     def rclick_menu(self, context, layout):
         layout.prop_menu_enum(self, "list_match", text="List Match")
+
+    def migrate_from(self, old_node):
+        self.texture_pointer = self.get_bpy_data_from_name(old_node.name_texture, bpy.data.textures)
 
     def process(self):
         inputs, outputs = self.inputs, self.outputs
@@ -212,13 +213,11 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         params = [si.sv_get(default=[[]], deepcopy=False) for si in inputs[:4]]
         if not inputs[2].is_linked:
-            if not self.texture:
+            if not self.texture_pointer:
                 params[2] = [[EmptyTexture()]]
-
             else:
-                # params[2] = [[self.get_bpy_data_from_name(self.name_texture, bpy.data.textures)]]
-                params[2] = [[self.texture]]
-                # print(params[2], self.name_texture)
+                params[2] = [[self.texture_pointer]]
+
         if not self.tex_coord_type == 'UV':
             params.append(inputs[4].sv_get(default=[Matrix()], deepcopy=False))
             mat_level = 2
@@ -235,6 +234,7 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         matching_f = list_match_func[self.list_match]
         desired_levels = [3, 3, 2, 3, mat_level, 2, 2, 3]
         out_mode = self.out_mode.replace("_", " ")
+        
         ops = [out_mode, displace_funcs[out_mode], self.color_channel.replace("_", " "), self.list_match, self.tex_coord_type.replace("_", " ")]
 
         result = recurse_f_level_control(params, ops, meshes_texture_diplace, matching_f, desired_levels)
@@ -246,12 +246,22 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def draw_label(self):
         if self.hide:
             if not self.inputs['Texture'].is_linked:
-                texture = ' ' + self.texture
+                if hasattr(self.texture_pointer, 'name'):
+                    texture = ' ' + self.texture_pointer.name
+                else:
+                    texture = ' Empty Texture'
             else:
                 texture = ' + texture(s)'
             return 'Displace' + texture +' ' + self.color_channel.title() + ' channel'
         else:
             return self.label or self.name
 
+    def storage_get_data(self, node_ref):
+        pack_pointer_property_name(self.texture_pointer, node_ref, "texture_name")
+
+    def storage_set_data(self, node_ref):
+        self.texture_pointer = unpack_pointer_property_name(bpy.data.textures, node_ref, "texture_name")
+
+        
 classes = [SvDisplaceNodeMk2]
 register, unregister = bpy.utils.register_classes_factory(classes)

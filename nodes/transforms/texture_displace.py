@@ -53,6 +53,8 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     bl_label = 'Texture Displace'
     bl_icon = 'MOD_DISPLACE'
 
+    replacement_nodes = [('SvDisplaceNodeMk2', None, None)]
+
     out_modes = [
         ('NORMAL', 'Normal', 'Texture displacement along Vertex Normal', '', 1),
         ('X', 'X', 'Texture displacement along X axis', '', 2),
@@ -104,11 +106,7 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         description='Texture(s) to evaluate',
         default='',
         update=updateNode)
-    # name_texture: bpy.props.PointerProperty(
-    #     type=bpy.types.Texture,
-    #     name='Texture',
-    #     description='Texture(s) to evaluate',
-    #     update=updateNode)
+
     out_mode: EnumProperty(
         name='Direction',
         items=out_modes,
@@ -200,6 +198,7 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         layout.prop(self, 'list_match', expand=False)
 
     def rclick_menu(self, context, layout):
+        self.node_replacement_menu(context, layout)
         layout.prop_menu_enum(self, "list_match", text="List Match")
 
     def process(self):
@@ -217,8 +216,7 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
             else:
                 params[2] = [[self.get_bpy_data_from_name(self.name_texture, bpy.data.textures)]]
-                # params[2] =[[self.name_texture]]
-                print(params[2], self.name_texture)
+
         if not self.tex_coord_type == 'UV':
             params.append(inputs[4].sv_get(default=[Matrix()], deepcopy=False))
             mat_level = 2
