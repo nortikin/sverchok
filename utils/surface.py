@@ -51,9 +51,10 @@ class SurfaceCurvatureData(object):
         self.matrix = None
 
 class SurfaceCurvatureCalculator(object):
-    def __init__(self, us, vs):
+    def __init__(self, us, vs, order=True):
         self.us = us
         self.vs = vs
+        self.order = order
         self.fu = self.fv = None
         self.duu = self.dvv = self.duv = None
         self.nuu = self.nvv = self.nuv = None
@@ -124,11 +125,14 @@ class SurfaceCurvatureCalculator(object):
         c1 = eigvals[:,0]
         c2 = eigvals[:,1]
 
-        c1mask = (c1 < c2)
-        c2mask = np.logical_not(c1mask)
-
-        c1_r = np.where(c1mask, c1, c2)
-        c2_r = np.where(c2mask, c1, c2)
+        if self.order:
+            c1mask = (c1 < c2)
+            c2mask = np.logical_not(c1mask)
+            c1_r = np.where(c1mask, c1, c2)
+            c2_r = np.where(c2mask, c1, c2)
+        else:
+            c1_r = c1
+            c2_r = c2
 
         # dir_1 corresponds to c1, dir_2 corresponds to c2
         dir_1_x = eigvecs[:,0,0][np.newaxis].T
@@ -150,8 +154,16 @@ class SurfaceCurvatureCalculator(object):
         dir_1 = dir_1 / np.linalg.norm(dir_1, axis=1, keepdims=True)
         dir_2 = dir_2 / np.linalg.norm(dir_2, axis=1, keepdims=True)
 
-        dir_1_r = np.where(c1mask, dir_1, dir_2)
-        dir_2_r = np.where(c2mask, dir_1, dir_2)
+        if self.order:
+            c1mask = c1mask[np.newaxis].T
+            c2mask = c2mask[np.newaxis].T
+            dir_1_r = np.where(c1mask, dir_1, -dir_2)
+            dir_2_r = np.where(c2mask, dir_1, dir_2)
+        else:
+            dir_1_r = dir_1
+            dir_2_r = dir_2
+        #r = (np.cross(dir_1_r, dir_2_r) * self.normals).sum(axis=1)
+        #print(r)
 
         return c1_r, c2_r, dir_1_r, dir_2_r
 
@@ -166,7 +178,7 @@ class SurfaceCurvatureCalculator(object):
             data.gauss = c1 * c2
             data.mean = (c1 + c2)/2.0
         if need_matrix:
-            matrices_np = np.dstack((data.principal_direction_1, data.principal_direction_2, self.normals))
+            matrices_np = np.dstack((data.principal_direction_2, data.principal_direction_1, self.normals))
             matrices_np = np.transpose(matrices_np, axes=(0,2,1))
             matrices_np = np.linalg.inv(matrices_np)
             matrices = [Matrix(m.tolist()).to_4x4() for m in matrices_np]
@@ -225,7 +237,7 @@ class SvSurface(object):
         #self.info("Normals: %s", normal)
         return normal
 
-    def curvature_calculator(self, us, vs):
+    def curvature_calculator(self, us, vs, order=True):
         if hasattr(self, 'normal_delta'):
             h = self.normal_delta
         else:
@@ -258,7 +270,7 @@ class SvSurface(object):
         dvv = np.linalg.norm(fv, axis=1) **2
         duv = (fu * fv).sum(axis=1)
 
-        calc = SurfaceCurvatureCalculator(us, vs)
+        calc = SurfaceCurvatureCalculator(us, vs, order=order)
         calc.set(surf_vertices, normal, fu, fv, duu, dvv, duv, nuu, nvv, nuv)
         return calc
 

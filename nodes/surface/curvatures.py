@@ -6,7 +6,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 import sverchok
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level, repeat_last_for_length
 from sverchok.utils.logging import info, exception
 from sverchok.utils.surface import SvSurface
 
@@ -73,6 +73,12 @@ class SvSurfaceCurvaturesNode(bpy.types.Node, SverchCustomTreeNode):
             default = 0.5,
             update = updateNode)
 
+    order : BoolProperty(
+            name = "Sort curvatures",
+            description = "If enabled, make sure that Curvature1 is always less than Curvature2",
+            default = True,
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.label(text="Input mode:")
         layout.prop(self, "input_mode", expand=True)
@@ -80,6 +86,7 @@ class SvSurfaceCurvaturesNode(bpy.types.Node, SverchCustomTreeNode):
             layout.label(text="Input orientation:")
             layout.prop(self, "orientation", expand=True)
         layout.prop(self, 'clamp_mode', expand=True)
+        layout.prop(self, 'order')
 
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "Surface")
@@ -157,20 +164,23 @@ class SvSurfaceCurvaturesNode(bpy.types.Node, SverchCustomTreeNode):
                 if self.input_mode == 'VERTICES':
                     us, vs = self.parse_input(src_points)
                 else:
+                    maxlen = max(len(src_us), len(src_vs))
+                    src_us = repeat_last_for_length(src_us, maxlen)
+                    src_vs = repeat_last_for_length(src_vs, maxlen)
                     us, vs = np.array(src_us), np.array(src_vs)
-                    data = surface.curvature_calculator(us, vs).calc(need_values, need_directions, need_gauss, need_mean, need_matrix)
-                    if need_values:
-                        c1_out.append(data.principal_value_1.tolist())
-                        c2_out.append(data.principal_value_2.tolist())
-                    if need_directions:
-                        dir1_out.append(data.principal_direction_1.tolist())
-                        dir2_out.append(data.principal_direction_2.tolist())
-                    if need_mean:
-                        mean_out.append(data.mean.tolist())
-                    if need_gauss:
-                        gauss_out.append(data.gauss.tolist())
-                    if need_matrix:
-                        matrix_out.append(data.matrix)
+                data = surface.curvature_calculator(us, vs, order=self.order).calc(need_values, need_directions, need_gauss, need_mean, need_matrix)
+                if need_values:
+                    c1_out.append(data.principal_value_1.tolist())
+                    c2_out.append(data.principal_value_2.tolist())
+                if need_directions:
+                    dir1_out.append(data.principal_direction_1.tolist())
+                    dir2_out.append(data.principal_direction_2.tolist())
+                if need_mean:
+                    mean_out.append(data.mean.tolist())
+                if need_gauss:
+                    gauss_out.append(data.gauss.tolist())
+                if need_matrix:
+                    matrix_out.extend(data.matrix)
 
         self.outputs['Curvature1'].sv_set(c1_out)
         self.outputs['Curvature2'].sv_set(c2_out)
