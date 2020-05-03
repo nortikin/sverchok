@@ -178,7 +178,7 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
                     return None
 
         except Exception as err:
-            self.error(f"attempting fuzzy search failed: {err}")
+            self.error(f"get_text_datablock failed: attempting fuzzy search: {err}")
 
         return text_datablock
 
