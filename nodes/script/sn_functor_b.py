@@ -14,7 +14,7 @@ from importlib import reload
 
 import bpy
 from mathutils import Matrix, Vector
-from bpy.props import FloatProperty, IntProperty, StringProperty, BoolProperty
+from bpy.props import FloatProperty, IntProperty, StringProperty, BoolProperty, PointerProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
@@ -66,10 +66,16 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
     bl_icon = 'SYSTEM'
 
     def wrapped_update(self, context):
-        # self.script_name = self.script_name.strip()
-        print(f'set self.script_name to:|{self.script_name}|')
+        if self.script_pointer:
+            self.info(f'set self.script_name to:|{self.script_pointer.name}|')
 
+    # depreciated
     script_name: StringProperty(update=wrapped_update)
+
+    script_pointer: PointerProperty(
+        name="Script", poll=lambda self, object: True,
+        type=bpy.types.Text, update=updateNode)
+
     script_str: StringProperty()
     loaded: BoolProperty()
     node_dict = {}
@@ -109,7 +115,7 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
         self.draw_animatable_buttons(layout, icon_only=True)
         if not self.loaded:
             row = layout.row()
-            row.prop_search(self, 'script_name', bpy.data, 'texts', text='')
+            row.prop_search(self, 'script_pointer', bpy.data, 'texts', text='')
             row.operator(sn_callback, text='', icon='PLUGIN').fn_name = 'load'
         
         row = layout.row()
@@ -139,28 +145,44 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
     ###  processors :)
 
     def process(self):
-        if not all([self.script_name, self.script_str]):
+
+        # one of these must be set, script_name is legacy
+        if not any([self.script_pointer, self.script_name])
             return
+        if not self.script_str:
+            return
+
         if self.loaded and not self.node_dict.get(hash(self)):
             self.node_dict[hash(self)] = self.get_functions()
             self.loaded = True
         self.process_script()
 
     def get_functions(self):
-        # exec(f'import {script}')
 
-        name = self.script_name.strip()  # strip is needed because propsearch.
         try:
-            self.script_str = bpy.data.texts[name].as_string()
-            module = types.ModuleType(name)   # might work!)
-            # module = imp.new_module(name)
+            if self.script_pointer:
+                self.script_str = self.script_pointer.as_string
+                text_datablock = self.self.script_pointer
+            else:
+                # recover from old .blend file in new Blender
+                text_datablock = self.get_bpy_data_from_name(self.script_name, bpy.data.texts)
+                if text_datablock:
+                    self.script_str = text_datablock.as_string()
+                    self.sv_setattr_with_throttle("script_pointer", text_datablock)
+                else:
+                    raise
+            
+            module = types.ModuleType(text_datablock.name)
             exec(self.script_str, module.__dict__)
+
         except Exception as err:
-            print('wtf man', err)
+            self.error('wtf man', err)
 
         dict_functions = {named: getattr(module, named) for named in functions if hasattr(module, named)}
         dict_functions['all_members'] = module.__dict__
         return dict_functions
+
+    # todo below this mark
 
     def load(self, context):
 
