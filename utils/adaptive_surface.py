@@ -18,6 +18,21 @@ GAUSS = 'gauss'
 MAXIMUM = 'max'
 MEAN = 'mean'
 
+class PopulationData(object):
+    def __init__(self):
+        self.surface = None
+        self.u_min = self.u_max = None
+        self.v_min = self.v_max = None
+        self.new_us = self.new_vs = None
+        self._points = None
+        self.samples_u = self.samples_v = None
+
+    @property
+    def points(self):
+        if self._points is None:
+            self._points = self.surface.evaluate_array(self.us, self.vs).reshape((self.samples_u, self.samples_v, 3))
+        return self._points
+
 def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, curvature_type = MAXIMUM, by_area=True, min_ppf=1, max_ppf=5, seed=1):
     u_min, u_max = surface.get_u_min(), surface.get_u_max()
     v_min, v_max = surface.get_v_min(), surface.get_v_max()
@@ -26,6 +41,17 @@ def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, curvat
     us, vs = np.meshgrid(us_range, vs_range, indexing='ij')
     us = us.flatten()
     vs = vs.flatten()
+
+    data = PopulationData()
+    data.surface = surface
+    data.us = us
+    data.vs = vs
+    data.u_min = u_min
+    data.v_min = v_min
+    data.u_max = u_max
+    data.v_max = v_max
+    data.samples_u = samples_u
+    data.samples_v = samples_v
 
     if by_curvature:
         if curvature_type == GAUSS:
@@ -59,6 +85,7 @@ def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, curvat
     if by_area:
         surface_points = surface.evaluate_array(us, vs)
         surface_points = surface_points.reshape((samples_u, samples_v, 3))
+        data._points = surface_points
 
         points_0 = surface_points[:-1, :-1,:]
         points_du = surface_points[1:, :-1,:]
@@ -123,20 +150,46 @@ def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, curvat
             new_u.extend(u_r)
             new_v.extend(v_r)
 
-    return us, vs, new_u, new_v
+    data.new_us = new_u
+    data.new_vs = new_v
+    return data
 
 def adaptive_subdivide(surface, samples_u, samples_v, by_curvature=True, curvature_type = MAXIMUM, by_area=True, add_points=None, min_ppf=1, max_ppf=5, seed=1):
-    us, vs, new_u, new_v = populate_surface_uv(surface, samples_u, samples_v,
+    data = populate_surface_uv(surface, samples_u, samples_v,
                             by_curvature = by_curvature,
                             curvature_type = curvature_type,
                             by_area = by_area,
                             min_ppf = min_ppf, max_ppf = max_ppf, seed =seed)
+    us, vs, new_u, new_v = data.us, data.vs, data.new_us, data.new_vs
     us_list = list(us) + new_u
     vs_list = list(vs) + new_v
     if add_points and len(add_points[0]) > 0:
         us_list.extend([p[0] for p in add_points])
         vs_list.extend([p[1] for p in add_points])
-    points_uv = [Site(u, v) for u, v in zip(us_list, vs_list)]
+
+    surface_points = data.points
+    # Calculate lengths of:
+    #   1) target_v_length = length of f(0, v) for v in v_range,
+    #   2) target_v_length = length of f(u, 0) for u in u_range.
+    # Obviously length of f(u1, v) for v in v_range for some other u1
+    # can be very different from target_v_length; and the same goes for
+    # target_u_length.
+    # TODO: we could check all U/V iso-parametric lines length and select maximums.
+    dvs = surface_points[0,1:] - surface_points[0,:-1]
+    v_lengths = np.linalg.norm(dvs, axis=1)
+    target_v_length = np.sum(v_lengths)
+    dus = surface_points[1:,0] - surface_points[:-1,0]
+    u_lengths = np.linalg.norm(dus, axis=1)
+    target_u_length = np.sum(u_lengths)
+
+    src_u_length = data.u_max - data.u_min
+    src_v_length = data.v_max - data.v_min
+
+    u_coeff = target_u_length / src_u_length
+    v_coeff = target_v_length / src_v_length
+    print(u_coeff, v_coeff)
+
+    points_uv = [Site(u * u_coeff, v * v_coeff) for u, v in zip(us_list, vs_list)]
     faces = computeDelaunayTriangulation(points_uv)
     return np.array(us_list), np.array(vs_list), faces
 
