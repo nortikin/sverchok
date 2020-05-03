@@ -20,6 +20,7 @@ from __future__ import annotations
 from enum import Enum, auto
 from typing import TYPE_CHECKING, NamedTuple, Union, List, Callable, Set, Dict, Iterable
 from itertools import takewhile, count
+from contextlib import contextmanager
 
 from bpy.types import Node, NodeTree, NodeLink
 import bpy
@@ -56,7 +57,10 @@ class BlenderEventsTypes(Enum):
     add_node = auto()   # it is called first in update wave
     copy_node = auto()  # it is called first in update wave
     free_node = auto()  # it is called first in update wave
+    # all properties of free node are set to default and can't be change, so it loos its ID
+    # never the less it keeps its actual name even if the node was renamed
     add_link_to_node = auto()  # it can detects only manually created links
+    # link leeds to wrong memory address out of the signal method
     node_property_update = auto()  # can be in correct in current implementation
     undo = auto()  # changes in tree does not call any other update events
     frame_change = auto()
@@ -158,7 +162,7 @@ class EventsWave:
 
     def __init__(self):
         self.events_wave: List[BlenderEvent] = []
-        self.id = next(EventsWave.id_counter)
+        self._id = next(EventsWave.id_counter)
 
         self.links_was_added = False
         self.links_was_removed = False
@@ -176,6 +180,13 @@ class EventsWave:
         if not self.is_end():
             raise RuntimeError("You should waite wave end before calling this property")
         return self.events_wave[-1]
+
+    @property
+    def id(self):
+        if not self.is_end():
+            # even during sub events of update tree event the objects can change their memory address
+            raise RuntimeError("You should waite wave end before calling this property")
+        return self._id
 
     def convert_to_sverchok_events(self) -> List[SverchokEvent]:
         if not self.is_end():
@@ -289,21 +300,17 @@ class CurrentEvents:
         if not cls.events_wave.is_end():
             return
 
-        cls._to_listen_new_events = False
-
-        if cls.events_wave.main_event.type == BlenderEventsTypes.tree_update:
-            cls.handle_tree_update_event()
-        elif cls.events_wave.main_event.type == BlenderEventsTypes.node_property_update:
-            cls.handle_property_change_event()
-        elif cls.events_wave.main_event.type == BlenderEventsTypes.frame_change:
-            cls.handle_frame_change_event()
-        elif cls.events_wave.main_event.type == BlenderEventsTypes.undo:
-            cls.handle_undo_event()
-        else:
-            raise TypeError(f"Such event type={cls.events_wave.main_event.type} can't be handle")
-
-        cls._to_listen_new_events = True
-        cls.events_wave = EventsWave()  # event wave recreation
+        with cls.deaf_mode():
+            if cls.events_wave.main_event.type == BlenderEventsTypes.tree_update:
+                cls.handle_tree_update_event()
+            elif cls.events_wave.main_event.type == BlenderEventsTypes.node_property_update:
+                cls.handle_property_change_event()
+            elif cls.events_wave.main_event.type == BlenderEventsTypes.frame_change:
+                cls.handle_frame_change_event()
+            elif cls.events_wave.main_event.type == BlenderEventsTypes.undo:
+                cls.handle_undo_event()
+            else:
+                raise TypeError(f"Such event type={cls.events_wave.main_event.type} can't be handle")
 
     @classmethod
     def handle_tree_update_event(cls):
@@ -348,6 +355,19 @@ class CurrentEvents:
         with sv_preferences() as prefs:
             return prefs.log_level == "DEBUG" and prefs.log_update_events
 
+    @classmethod
+    @contextmanager
+    def deaf_mode(cls, recreate_wave=True):
+        cls._to_listen_new_events = False
+        try:
+            yield
+        except Exception as e:
+            raise e
+        finally:
+            cls._to_listen_new_events = True
+            if recreate_wave:
+                cls.events_wave = EventsWave()
+
 
 # -------------------------------------------------------------------------
 # ---------This part should be moved to separate module later--------------
@@ -380,7 +400,6 @@ class SvTree:
                     if sv_event.type in [SverchokEventsTypes.add_node, SverchokEventsTypes.copy_node]:
                         self.nodes.add(sv_event.node)
                     elif sv_event.type == SverchokEventsTypes.free_node:
-                        breakpoint()
                         self.nodes.free(sv_event.node)
                     elif sv_event.type == SverchokEventsTypes.node_property_update:
                         self.nodes.set_is_outdated(sv_event.node)
