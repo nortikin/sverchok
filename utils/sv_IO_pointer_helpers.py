@@ -44,6 +44,8 @@ def unpack_pointer_property_name(data_kind, node_ref, key_name):
 """
 usage
 
+from sverchok.utils.sv_IO_pointer_helpers import pack_pointer_property_name, unpack_pointer_property_name
+
 class node
 
     properties_to_skip_iojson = ['texture_pointer']
