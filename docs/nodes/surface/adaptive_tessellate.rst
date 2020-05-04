@@ -46,6 +46,36 @@ the surface's U/V coordinates frame.
 Since the node uses Delaunay triangulation, it is enough to just apply "Dual
 Mesh" node after it to have a Voronoi subdivision.
 
+**Assumptions and Limitations**:
+
+This node uses a relatively simple algorithm without any "AI" or too complex
+computations involved. Thus, the node can not handle all cases. Especially,
+
+* The node can not generate very good subdivision if the surface has places
+  where it is much more stretched along one direction compared to another. For
+  example, if at some place a `[0; 1] x [0; 1]` square of U/V space is mapped
+  onto a rectangular part of the surface with side lengths of 10 and 100 - the
+  generated faces will appear stretched in one direction. However,
+
+   * It will be okay if the rectangle will have sides of 100 and 130.
+   * It will be okay if not only one part of the surface, but the whole surface
+     is much more stretched in one direction than in another.
+
+* The node may not generate too good subdivision near the edges of the surface.
+  Especially this is noticeable when the surface is supposed to be closed.
+* The node can not automatically detect where the surface is supposed to have
+  "shar edges" (if any). If you happen to know where such edges should be (in
+  terms of surface's U/V coordinates), use the "AddUVPoints" input.
+* When surface curvature values are used, the node may not handle very well
+  so-called "signular points" of the surface (if it happens to have any) -
+  places where different values of U/V coordinates are mapped into one point in
+  space. For example, a sphere with usual polar parametrisation has such points
+  at the poles.
+* Surface curvature values are calculated numerically, so they can be not very
+  precise, especially with very "noisy" surfaces.
+* With high number of points to be generated, the node may be slow, especially
+  when surface curvature values are considered.
+
 Inputs
 ------
 
