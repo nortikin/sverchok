@@ -20,6 +20,22 @@ This node has the following inputs:
 * **Surface**. The surface to apply the vector field to. This input is mandatory.
 * **Coefficient**. The "strength" coefficient. Value of 0 will output the surface as it was. The default value is 1.0.
 
+Parameters
+----------
+
+This node has the following parameter:
+
+* **By Normal**. This defines whether the field application will be affected by
+  surface's normals. The available options are:
+
+  * **As Is**. Do not consider surface's normals, just apply the field as it
+    is. This is the default option.
+  * **Along Normal**. Move surface points only along surface's normal vectors;
+    i.e., apply only the projection of the field to surface's normals to the
+    surface.
+  * **Along tangent**. Move surface points only along surface's tangent planes,
+    i.e. only perpendicular to the normals.
+
 Outputs
 -------
 

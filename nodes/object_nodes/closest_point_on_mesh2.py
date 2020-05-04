@@ -21,10 +21,12 @@ import mathutils
 from mathutils import Vector
 from bpy.props import FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
+
 from sverchok.data_structure import (updateNode, second_as_first_cycle)
 
 
-class SvPointOnMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvPointOnMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     ''' Point on Mesh '''
     bl_idname = 'SvPointOnMeshNodeMK2'
     bl_label = 'Object ID Point on Mesh MK2' #new is pointless name
@@ -46,7 +48,10 @@ class SvPointOnMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         so('SvVerticesSocket', "Normal_on_mesh")
         so('SvStringsSocket', "FaceINDEX")
 
+    def draw_buttons(self, context, layout):
+        self.draw_animatable_buttons(layout, icon_only=True)
     def draw_buttons_ext(self, context, layout):
+        self.draw_animatable_buttons(layout)
         row = layout.row(align=True)
         row.prop(self, "mode", text="In Mode")
         row.prop(self, "mode2", text="Out Mode")

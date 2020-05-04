@@ -9,6 +9,7 @@ import numpy as np
 
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode
 from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 
@@ -20,7 +21,7 @@ def interp_v3l_v3v3(a, b, t):
     else: return ((1.0 - t) * a) + (t * b)
 
 
-class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
+class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     """
     Triggers: SvSweepModulator
@@ -49,8 +50,9 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         onew("SvStringsSocket", "Faces")
 
     def draw_buttons(self, context, layout):
+        self.draw_animatable_buttons(layout, icon_only=True)
         row = layout.row(align=True)
-        row.prop(self, "active", text="UPDATE")
+        row.prop(self, "active", text="ACTIVATE")
         row = layout.row(align=True)
         row.prop(self, "construct_name", text="", icon="EXPERIMENTAL")
         row = layout.row(align=True)

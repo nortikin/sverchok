@@ -33,6 +33,7 @@ from sverchok.utils.snlite_importhelper import (
 from sverchok.utils.snlite_utils import vectorize, ddir
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode
 
 
@@ -105,7 +106,7 @@ class SvScriptNodeLiteTextImport(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
+class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     ''' snl SN Lite /// a lite version of SN '''
 
     bl_idname = 'SvScriptNodeLite'
@@ -274,14 +275,14 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
 
     def load(self):
-        ''' ----- '''
         if not self.script_name:
             return
 
-        if self.script_name in bpy.data.texts:
-            self.script_str = bpy.data.texts.get(self.script_name).as_string()
+        text = self.get_bpy_data_from_name(self.script_name, bpy.data.texts)
+        if text:
+            self.script_str = text.as_string()
         else:
-            print('bpy.data.texts not read yet')
+            print(f'bpy.data.texts not read yet, self.script_name="{self.script_name}"')
             if self.script_str:
                 print('but script loaded locally anyway.')
 
@@ -459,13 +460,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         sn_callback = 'node.scriptlite_ui_callback'
 
-        col = layout.column(align=True)
-        row = col.row()
-
         if not self.script_str:
+            col = layout.column(align=True)
+            row = col.row()
             row.prop_search(self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
             row.operator(sn_callback, text='', icon='PLUGIN').fn_name = 'load'
         else:
+            self.draw_animatable_buttons(layout, icon_only=True)
+            col = layout.column(align=True)
+            row = col.row()
             row.operator(sn_callback, text='Reload').fn_name = 'load'
             row.operator(sn_callback, text='Clear').fn_name = 'nuke_me'
 

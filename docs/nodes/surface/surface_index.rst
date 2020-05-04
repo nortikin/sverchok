@@ -21,6 +21,8 @@ Surface
    subdomain
    flip
    swap
+   curvatures
+   gauss_curvature
    tessellate_trim
    evaluate_surface
 

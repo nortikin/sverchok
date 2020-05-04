@@ -23,6 +23,7 @@ import bmesh as bm
 import numpy as np
 from bpy.props import StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode
 
 callback_id = 'node.callback_execnodemod'
@@ -68,7 +69,7 @@ class SvExecNodeModCallback(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
+class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     '''Execute small script'''
     bl_idname = 'SvExecNodeMod'
     bl_label = 'Exec Node Mod'
@@ -78,6 +79,7 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
     dynamic_strings: bpy.props.CollectionProperty(type=SvExecNodeDynaStringItem)
 
     def draw_buttons(self, context, layout):
+        self.draw_animatable_buttons(layout, icon_only=True)
         row = layout.row(align=True)
         # add() remove() clear() move()
         row.operator(callback_id, text='', icon='ZOOM_IN').cmd = 'add_new_line'
@@ -114,6 +116,7 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_buttons_ext(self, context, layout):
+        self.draw_animatable_buttons(layout)
         col = layout.column(align=True)
         col.operator(callback_id, text='copy to node').cmd = 'copy_from_text'
         col.prop_search(self, 'text', bpy.data, "texts", text="")

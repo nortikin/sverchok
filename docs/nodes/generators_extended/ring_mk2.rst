@@ -17,11 +17,14 @@ All inputs are vectorized and they will accept single or multiple values.
 - **Interior Radius** [2]
 - **Radial Sections**
 - **Circular Sections**
-- **Phase**
+- **Start Angle**     [3]
+- **End Angle**       [3]
+- **Phase**           [3]
 
 Notes:
 [1] : Major/Minor radii are available when Major/Minor mode is elected.
 [2] : Exterior/Interior radii are available when Exterior/Interior mode is elected.
+[3] : The angles are in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.
 
 Parameters
 ----------
@@ -47,7 +50,11 @@ All parameters except **Mode** and **Separate** can be given by the node or an e
 +------------------------+-----------+-----------+---------------------------------------------+
 | **Circular Sections**  |  Int      |  3        |  Number of sections accross the ring band   |
 +------------------------+-----------+-----------+---------------------------------------------+
-| **Phase**              |  Float    |  0.00     |  Phase of the radial sections (in radians)  |
+| **Start Angle**        |  Float    |  0        |  Start angle of the ring [3][4]             |
++------------------------+-----------+-----------+---------------------------------------------+
+| **End Angle**          |  Float    |  360      |  End angle of the ring [3][4]               |
++------------------------+-----------+-----------+---------------------------------------------+
+| **Phase**              |  Float    |  0.00     |  Phase of the radial sections [3]           |
 +------------------------+-----------+-----------+---------------------------------------------+
 | **Separate**           |  Bolean   |  False    |  Grouping vertices by V direction           |
 +------------------------+-----------+-----------+---------------------------------------------+
@@ -55,6 +62,15 @@ All parameters except **Mode** and **Separate** can be given by the node or an e
 Notes:
 [1] : Major/Minor radii are available when Major/Minor mode is elected.
 [2] : Exterior/Interior radii are available when Exterior/Interior mode is elected.
+[3] : Angles are given by default in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.
+[4] : When start and end angle (modulo 2pi) are equal, the ring is closed (no duplicate verts are created)
+
+Extra Parameters
+----------------
+Property panel has extra parameters to tweak the ring.
+
+**Subdivide Circular**
+With this parameter the circular sections can be subdivided to give smoother circles while the circular sections may be low.
 
 Outputs
 -------

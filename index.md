@@ -42,7 +42,7 @@
     SvGenerativeArtNode
     SvImageComponentsNode
     SvTorusKnotNodeMK2
-    SvRingNode
+    SvRingNodeMK2
     SvEllipseNodeMK2
     SvSuperEllipsoidNode
     SvRegularSolid
@@ -95,11 +95,14 @@
      SvExSurfaceSubdomainNode
      SvFlipSurfaceNode
      SvSwapSurfaceNode
+     SvSurfaceGaussCurvatureNode
+     SvSurfaceCurvaturesNode
      SvExApplyFieldToSurfaceNode
      SvExTessellateTrimSurfaceNode
      SvExEvalSurfaceNode
 
 ## Fields
+     SvCoordScalarFieldNode
      SvExScalarFieldFormulaNode
      SvExVectorFieldFormulaNode
      SvExComposeVectorFieldNode
@@ -377,6 +380,7 @@
     SvInputSwitchNodeMOD
     SvNeuroElman1LNode
     SvCustomSwitcher
+    SvRangeSwitchNode
 
 ## Viz
     Sv3DviewPropsNode

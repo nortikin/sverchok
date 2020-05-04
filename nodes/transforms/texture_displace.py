@@ -22,6 +22,7 @@ from bpy.props import EnumProperty, FloatProperty, FloatVectorProperty, StringPr
 from mathutils import Vector, Matrix, Color
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.core.socket_data import SvGetSocketInfo
 from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, iter_list_match_func
 from sverchok.utils.sv_itertools import recurse_f_level_control
@@ -179,7 +180,7 @@ mapper_funcs = {
     'Texture Matrix': lambda v, m: m @ v
 }
 
-class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """
     Triggers: Add texture to verts
     Tooltip: Affect input verts/mesh with a scene texture. Mimics Blender Displace modifier
@@ -312,7 +313,7 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
             layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
     def draw_buttons(self, context, layout):
         is_vector = self.out_mode in ['RGB to XYZ', 'HSV to XYZ', 'HLS to XYZ']
-
+        self.draw_animatable_buttons(layout, icon_only=True)
         c = layout.split(factor=0.5, align=False)
         r = c.column(align=False)
         r.label(text='Direction'+ ':')

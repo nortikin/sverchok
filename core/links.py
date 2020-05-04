@@ -17,10 +17,14 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-
+import bpy
 import collections
 from typing import NamedTuple
 
+def clear_link_memory():
+    for ng in bpy.data.node_groups:
+        if hasattr(ng, "sv_links"):
+            ng.sv_links.clear_all_dictionaries()
 
 def get_output_socket_id(socket):
     if socket.node.bl_idname == 'NodeReroute':
@@ -122,7 +126,16 @@ class SvLinks:
         self.input_sockets_cache[tree_id] = dict()
         self.inputted_nodes_cache[tree_id] = dict()
 
-
+    def clear_all_dictionaries(self):
+        self.sv_links_new.clear()
+        self.sv_links_cache.clear()
+        self.output_sockets_new.clear()
+        self.input_sockets_new.clear()
+        self.inputted_nodes_new.clear()
+        self.output_sockets_cache.clear()
+        self.input_sockets_cache.clear()
+        self.inputted_nodes_cache.clear()
+        
     def create_new_links(self, node_tree):
         tree_id = node_tree.tree_id
         if not node_tree.tree_id in self.sv_links_new:
@@ -135,7 +148,11 @@ class SvLinks:
         self.input_sockets_new[tree_id] = new_input_sockets
         self.inputted_nodes_new[tree_id] = new_inputted_nodes
 
-
+    def remove(self, node_tree, link):
+        sv_link = SvLink.init_from_link(link)
+        if sv_link in self.sv_links_cache[node_tree.tree_id]:
+            self.sv_links_cache[node_tree.tree_id].remove(sv_link)
+            
     def links_have_changed(self, node_tree):
         return self.sv_links_new[node_tree.tree_id] != self.sv_links_cache[node_tree.tree_id]
 
@@ -152,6 +169,9 @@ class SvLinks:
         before_sv_links = self.sv_links_cache[tree_id]
 
         if not self.sv_links_cache[tree_id]:
+            print('there was no links memory, creating it')
+            self.create_new_links(node_tree)
+            node_tree.nodes_dict.load_nodes(node_tree)
             return node_tree.nodes
 
         affected_nodes = []

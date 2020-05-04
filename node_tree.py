@@ -239,6 +239,14 @@ class SvNodeTreeCommon(object):
         else:
             process_from_nodes(self.get_groups())
 
+    def animation_update(self):
+        animated_nodes = []
+        for node in self.nodes:
+            if hasattr(node, 'is_animatable'):
+                if node.is_animatable:
+                    animated_nodes.append(node)
+        process_from_nodes(animated_nodes)
+
 class SvGenericUITooltipOperator(bpy.types.Operator):
     arg: StringProperty()
     bl_idname = "node.sv_generic_ui_tooltip"
@@ -367,7 +375,8 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         For animation callback/handler
         """
         if self.sv_animate:
-            process_tree(self)
+            self.animation_update()
+            # process_tree(self)
 
     def process(self):
         """
@@ -840,6 +849,40 @@ class SverchCustomTreeNode:
                 getattr(prefs, 'set_nodeview_render_params')(None)
         except Exception as err:
             print('failed to get gl scale info', err)
+
+
+    def get_bpy_data_from_name(self, identifier, bpy_data_kind):
+        """
+        fail gracefuly?
+        This function acknowledges that the identifier being passed can be a string or an object proper.
+        for a long time Sverchok stored the result of a prop_search as a StringProperty, and many nodes will
+        be stored with that data in .blends, here we try to permit older blends having data stored as a string,
+        but newly used prop_search results will be stored as a pointerproperty of type bpy.types.Object
+        regarding the need to trim the first 3 chars of a stored StringProperty, best let Blender devs enlighten you
+        https://developer.blender.org/T58641
+        
+        example usage inside a node:
+        
+            text = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
+        
+        if the text does not exist you get None
+        """
+
+        try:
+            if isinstance(identifier, bpy.types.Object) and identifier.name in bpy_data_kind:
+                return bpy_data_kind.get(identifier.name)
+            
+            elif isinstance(identifier, str):
+                if identifier in bpy_data_kind:
+                    return bpy_data_kind.get(identifier)
+                elif identifier[3:] in bpy_data_kind:
+                    return bpy_data_kind.get(identifier[3:])
+                return identifier
+
+        except Exception as err:
+             self.error(f"identifier '{identifier}' not found in {bpy_data_kind} - with error {err}")
+
+        return None
 
 
 classes = [

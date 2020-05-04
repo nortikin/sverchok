@@ -61,6 +61,7 @@ This node has the following parameters:
     provided centers. This mode is used in physics. This option is the default
     one.
   * **Nearest**. Use only the force of the attraction towards the nearest attraction center.
+  * **Separate**. Generate a separate field of attraction force for each attraction center.
 
 * **Signed**. This parameter is available only when **Attractor type**
   parameter is set to **Mesh**. If checked, then the resulting scalar field

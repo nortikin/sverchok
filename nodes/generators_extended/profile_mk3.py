@@ -23,6 +23,7 @@ from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatProperty,
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.core.socket_data import SvNoDataError
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.logging import info, debug, warning
@@ -395,7 +396,7 @@ class SvProfileImportOperator(bpy.types.Operator):
 # Node class
 #################################
 
-class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
+class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     '''
     Triggers: svg-like 2d profiles
     Tooltip: Generate multiple parameteric 2d profiles using SVG like syntax
@@ -444,6 +445,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         description="If distance between first and last point is less than this, X command will remove the last point")
 
     def draw_buttons(self, context, layout):
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, 'selected_axis', expand=True)
         layout.prop_search(self, 'filename', bpy.data, 'texts', text='', icon='TEXT')
 

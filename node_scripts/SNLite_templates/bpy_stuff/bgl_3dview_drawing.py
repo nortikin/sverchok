@@ -6,7 +6,8 @@ out  float_out  s
 
 import bgl
 import bpy
-
+from gpu_extras.batch import batch_for_shader
+import gpu
 
 from sverchok.data_structure import node_id
 from sverchok.ui import bgl_callback_3dview as v3dBGL
@@ -16,36 +17,13 @@ v3dBGL.callback_disable(self.n_id)
 
 
 def screen_v3dBGL(context, args):
-    region = context.region
-    region3d = context.space_data.region_3d
-    
-    points = args[0]
-    colors = args[1]
-    size= 5.0
-    
-    bgl.glEnable(bgl.GL_POINT_SMOOTH) # for round vertex
-    bgl.glPointSize(size)
-    bgl.glBlendFunc(bgl.GL_SRC_ALPHA, bgl.GL_ONE_MINUS_SRC_ALPHA)
-    
-    if colors:
-        bgl.glBegin(bgl.GL_POINTS)
-        for coord, color in zip(points, colors):
-            bgl.glColor4f(*color)    
-            bgl.glVertex3f(*coord)
-        bgl.glEnd()
 
-    else:
-        gl_col = (0.9, 0.9, 0.8, 1.0)
-        bgl.glColor4f(*gl_col)    
-        bgl.glBegin(bgl.GL_POINTS)
-        for coord in points:
-            bgl.glVertex3f(*coord)
-        bgl.glEnd()        
-    
-    bgl.glDisable(bgl.GL_POINT_SMOOTH)
-    bgl.glDisable(bgl.GL_POINTS)
-        
-    
+    points = args[0]
+    colors = args[1]  # expects 4-tuple r g b a
+    shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
+    batch = batch_for_shader(shader, 'POINTS', {"pos": points, "color": colors})
+    batch.draw(shader)
+
 
 if self.inputs['in_data'].links:
 
