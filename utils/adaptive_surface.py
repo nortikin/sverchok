@@ -9,6 +9,11 @@ import numpy as np
 import numpy.random
 from math import ceil, isnan
 
+try:
+    from mathutils.geometry import delaunay_2d_cdt
+except ImportError:
+    delaunay_2d_cdt = None
+
 from sverchok.utils.logging import info, exception
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.geom_2d.merge_mesh import crop_mesh_delaunay
@@ -96,8 +101,8 @@ def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, curvat
         points_dv = surface_points[:-1, 1:,:]
         points_du_dv = surface_points[1:, 1:,:]
 
-        areas_1 = np.linalg.norm(np.cross(points_du_dv - points_0, points_du - points_0), axis=2)/6.0
-        areas_2 = np.linalg.norm(np.cross(points_dv - points_0, points_du_dv - points_0), axis=2)/6.0
+        areas_1 = np.linalg.norm(np.cross(points_du_dv - points_0, points_du - points_0), axis=2)/2.0
+        areas_2 = np.linalg.norm(np.cross(points_dv - points_0, points_du_dv - points_0), axis=2)/2.0
         areas = areas_1 + areas_2
         h_u = us_range[1] - us_range[0]
         h_v = vs_range[1] - vs_range[0]
@@ -194,6 +199,31 @@ def calc_sizes(surface_points, samples_u, samples_v):
 
     return target_u_length, target_v_length
 
+def make_outer_edges(samples_u, samples_v):
+    edges_1 = [(i, i+1) for i in range(samples_u-1)]
+    edges_2 = [(samples_u*(i+1) - 1, samples_u*(i+2) - 1) for i in range(samples_v-1)]
+    edges_3 = [(samples_u*(samples_v - 1) + i, samples_u*(samples_v - 1) + i + 1) for i in range(samples_u-1)]
+    edges_4 = [(samples_u*i, samples_u*(i+1)) for i in range(samples_v-1)]
+    edges = edges_1 + edges_2 + edges_3 + edges_4
+    return edges
+
+def delaunay_triangulatrion(samples_u, samples_v, us_list, vs_list, u_coeff, v_coeff, epsilon):
+    if delaunay_2d_cdt is None:
+        # Pure-python implementation
+        points_uv = [Site(u * u_coeff, v * v_coeff) for u, v in zip(us_list, vs_list)]
+        faces = computeDelaunayTriangulation(points_uv)
+        return faces
+    else:
+        points_scaled = [(u*u_coeff, v*v_coeff) for u,v in zip(us_list, vs_list)]
+        INNER = 1
+        # delaunay_2d_cdt function wont' work if we do not provide neither edges nor faces.
+        # So let's just construct the outer faces of the rectangular grid
+        # (indices in `edges' depend on the fact that in `adaptive_subdivide` we
+        # add randomly generated points to the end of us_list/vs_list).
+        edges = make_outer_edges(samples_u, samples_v)
+        vert_coords, edges, faces, orig_verts, orig_edges, orig_faces = delaunay_2d_cdt(points_scaled, edges, [], INNER, epsilon)
+        return faces
+
 def adaptive_subdivide(surface, samples_u, samples_v, by_curvature=True, curvature_type = MAXIMUM, curvature_clip = 100, by_area=True, add_points=None, min_ppf=1, max_ppf=5, trim_curve = None, samples_t = 100, trim_mode = 'inner', epsilon = 1e-4, seed=1):
     data = populate_surface_uv(surface, samples_u, samples_v,
                             by_curvature = by_curvature,
@@ -218,8 +248,9 @@ def adaptive_subdivide(surface, samples_u, samples_v, by_curvature=True, curvatu
     u_coeff = target_u_length / src_u_length
     v_coeff = target_v_length / src_v_length
 
-    points_uv = [Site(u * u_coeff, v * v_coeff) for u, v in zip(us_list, vs_list)]
-    faces = computeDelaunayTriangulation(points_uv)
+    faces = delaunay_triangulatrion(samples_u, samples_v, us_list, vs_list, u_coeff, v_coeff, epsilon)
+    #points_uv = [Site(u * u_coeff, v * v_coeff) for u, v in zip(us_list, vs_list)]
+    #faces = computeDelaunayTriangulation(points_uv)
 
     if trim_curve is not None:
         curve_verts, curve_edges, curve_faces = tessellate_curve(trim_curve, samples_t)
