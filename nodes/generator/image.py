@@ -170,6 +170,7 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def storage_get_data(self, node_ref):
+        # it is technically possible to store images inside json as base64     o_0   just a thought.
         pack_pointer_property_name(self.image_pointer, node_ref, "image_name")
         self.info(f"You are storing this layout {self.id_data.name} as a json, it will not include images")
 
