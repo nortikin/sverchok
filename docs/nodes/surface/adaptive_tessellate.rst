@@ -65,7 +65,7 @@ computations involved. Thus, the node can not handle all cases. Especially,
 * The node may not generate too good subdivision near the edges of the surface.
   Especially this is noticeable when the surface is supposed to be closed.
 * The node can not automatically detect where the surface is supposed to have
-  "shar edges" (if any). If you happen to know where such edges should be (in
+  "sharp edges" (if any). If you happen to know where such edges should be (in
   terms of surface's U/V coordinates), use the "AddUVPoints" input.
 * When surface curvature values are used, the node may not handle very well
   so-called "signular points" of the surface (if it happens to have any) -
@@ -124,7 +124,7 @@ This node has the following parameters:
    * **Gauss**. Use the absolute value of Gaussian curvature.
    * **Mean**. Use the absolute value of mean curvature.
 
-   Please refer to Wikipedia_ for more information about these terms.
+  Please refer to Wikipedia_ for more information about these terms.
 
 * **Trimming mode**. This defines which part of the surface will be generated,
   when the trimming curve is used. The available options are **Inner** and
@@ -141,7 +141,7 @@ This node has the following parameters:
   This defines the precision of the trimming operation. The default value is 5.
   Usually you do not have to change this value.
 
-.. _Wkikpedia: https://en.wikipedia.org/wiki/Differential_geometry_of_surfaces
+.. _Wikipedia: https://en.wikipedia.org/wiki/Differential_geometry_of_surfaces
 
 Outputs
 -------
