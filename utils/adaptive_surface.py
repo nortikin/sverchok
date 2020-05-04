@@ -194,10 +194,11 @@ def calc_sizes(surface_points, samples_u, samples_v):
 
     return target_u_length, target_v_length
 
-def adaptive_subdivide(surface, samples_u, samples_v, by_curvature=True, curvature_type = MAXIMUM, by_area=True, add_points=None, min_ppf=1, max_ppf=5, trim_curve = None, samples_t = 100, trim_mode = 'inner', epsilon = 1e-4, seed=1):
+def adaptive_subdivide(surface, samples_u, samples_v, by_curvature=True, curvature_type = MAXIMUM, curvature_clip = 100, by_area=True, add_points=None, min_ppf=1, max_ppf=5, trim_curve = None, samples_t = 100, trim_mode = 'inner', epsilon = 1e-4, seed=1):
     data = populate_surface_uv(surface, samples_u, samples_v,
                             by_curvature = by_curvature,
                             curvature_type = curvature_type,
+                            curvature_clip = curvature_clip,
                             by_area = by_area,
                             min_ppf = min_ppf, max_ppf = max_ppf, seed =seed)
     us, vs, new_u, new_v = data.us, data.vs, data.new_us, data.new_vs

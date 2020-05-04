@@ -2,7 +2,7 @@
 import numpy as np
 
 import bpy
-from bpy.props import EnumProperty, IntProperty, BoolProperty
+from bpy.props import EnumProperty, IntProperty, BoolProperty, FloatProperty
 
 import sverchok
 from sverchok.node_tree import SverchCustomTreeNode, throttled
@@ -74,6 +74,13 @@ class SvAdaptiveTessellateNode(bpy.types.Node, SverchCustomTreeNode):
             items = curvature_types,
             default = MAXIMUM,
             update = updateNode)
+    
+    curvature_clip : FloatProperty(
+            name = "Clip Curvature",
+            description = "Do not consider curvature values bigger than specified one; set to 0 to consider all curvature values",
+            default = 100,
+            min = 0,
+            update = updateNode)
 
     samples_t : IntProperty(
             name = "Curve Samples",
@@ -91,7 +98,7 @@ class SvAdaptiveTessellateNode(bpy.types.Node, SverchCustomTreeNode):
         description='Switch between creating holes and fitting mesh into another mesh')
 
     accuracy: bpy.props.IntProperty(
-        name='Accuracy', update=updateNode, default=5, min=3, max=12,
+        name='Trim Accuracy', update=updateNode, default=5, min=3, max=12,
         description='Some errors of the node can be fixed by changing this value')
 
     def draw_buttons(self, context, layout):
@@ -101,6 +108,12 @@ class SvAdaptiveTessellateNode(bpy.types.Node, SverchCustomTreeNode):
         if self.by_curvature:
             layout.prop(self, 'curvature_type')
         layout.prop(self, 'crop_mode', expand=True)
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        if self.by_curvature:
+            layout.prop(self, 'curvature_clip')
+        layout.prop(self, 'accuracy')
 
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "Surface")
@@ -115,10 +128,6 @@ class SvAdaptiveTessellateNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Faces")
         self.outputs.new('SvVerticesSocket', "UVPoints")
-
-    def draw_buttons_ext(self, context, layout):
-        self.draw_buttons(context, layout)
-        layout.prop(self, 'accuracy')
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -160,6 +169,7 @@ class SvAdaptiveTessellateNode(bpy.types.Node, SverchCustomTreeNode):
                                         trim_mode = self.crop_mode,
                                         epsilon = epsilon,
                                         by_curvature = self.by_curvature,
+                                        curvature_clip = self.curvature_clip,
                                         curvature_type = self.curvature_type,
                                         by_area = self.by_area,
                                         add_points = add_points,
