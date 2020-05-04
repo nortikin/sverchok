@@ -186,6 +186,7 @@
     SvNoiseDisplaceNode
     SvRandomizeVerticesNode
     SvCastNode
+    SvFormulaDeformMK2Node
 
 ## Modifier Change
     SvDeleteLooseNode
@@ -463,8 +464,6 @@
 ## Beta Nodes
     SvFormulaShapeNode
     SvHeavyTriangulateNode
-    SvFormulaDeformMK2Node
-    SvFormulaColorNode
     SvMeshUVColorNode
     SvUVPointonMeshNode
     SvSampleUVColorNode
@@ -479,6 +478,7 @@
     SvColorsInNodeMK1
     SvColorInputNode
     SvColorsOutNodeMK1
+    SvFormulaColorNode
     SvTextureEvaluateNode
     ---
     SvSculptMaskNode
