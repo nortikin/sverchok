@@ -114,6 +114,7 @@ class SvAdaptiveTessellateNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', "AddUVPoints")
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Faces")
+        self.outputs.new('SvVerticesSocket', "UVPoints")
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -147,6 +148,7 @@ class SvAdaptiveTessellateNode(bpy.types.Node, SverchCustomTreeNode):
 
         verts_out = []
         faces_out = []
+        uv_out = []
         inputs = zip_long_repeat(surfaces_s, curves_s, samples_u_s, samples_v_s, samples_t_s, min_ppf_s, max_ppf_s, seed_s, add_points_s)
         for surfaces, curves, samples_u_i, samples_v_i, samples_t_i, min_ppf_i, max_ppf_i, seed_i, add_points_i in inputs:
             objects = zip_long_repeat(surfaces, curves, samples_u_i, samples_v_i, samples_t_i, min_ppf_i, max_ppf_i, seed_i, add_points_i)
@@ -163,11 +165,14 @@ class SvAdaptiveTessellateNode(bpy.types.Node, SverchCustomTreeNode):
                                         add_points = add_points,
                                         min_ppf = min_ppf, max_ppf = max_ppf, seed = seed)
                 new_verts = surface.evaluate_array(us, vs).tolist()
+                new_uv = [(u,v,0) for u, v in zip(us, vs)]
+                uv_out.append(new_uv)
                 verts_out.append(new_verts)
                 faces_out.append(new_faces)
 
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Faces'].sv_set(faces_out)
+        self.outputs['UVPoints'].sv_set(uv_out)
 
 def register():
     bpy.utils.register_class(SvAdaptiveTessellateNode)
