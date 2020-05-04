@@ -82,7 +82,7 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
     loaded: BoolProperty()
     node_dict = {}
 
-    properties_to_skip_iojson = ["script_pointer"]
+    properties_to_skip_iojson = ["script_pointer", "script_str", "script_name"]
 
     def handle_execution_nid(self, func_name, msg, args):
         ND = self.node_dict.get(hash(self))
@@ -266,15 +266,26 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
 
 
     def storage_get_data(self, node_ref):
-        # pack_pointer_property_name(self.script_pointer, node_ref, "textfile_name")
+        pack_pointer_property_name(self.script_pointer, node_ref, "textfile_name")
         local_storage = {'lines': []}
-        for line in self.script_pointer:
-            ...
+        for line in self.script_pointer.lines:
+            local_storage['lines'].append(line.body)
+        node_ref['string_storage'] = json.dumps(local_storage)
 
     def storage_set_data(self, node_ref):
-        # "script_str": is used in the IO code to already add this textfile..
-        # self.script_pointer = unpack_pointer_property_name(bpy.data.texts, node_ref, "textfile_name")
-        ...
+
+        # maybe this file/blend already has this textblock, we could end early
+        self.script_pointer = unpack_pointer_property_name(bpy.data.texts, node_ref, "textfile_name")
+        if self.script_pointer:
+            return
+        
+        # seems we need to create this text block from scratch
+        with self.sv_throttle_tree_update():
+            self.script_pointer = bpy.data.texts.new()
+            self.script_pointer.name = node_ref.get("textfile_name")
+            strings_json = node_ref['string_storage']
+            lines_list = json.loads(strings_json)['lines']            
+
 
 classes = [SvSNCallbackFunctorB, SvSNFunctorB]
 register, unregister = bpy.utils.register_classes_factory(classes)
