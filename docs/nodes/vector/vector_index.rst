@@ -28,5 +28,5 @@ Vector
    color_input
    color_in_mk1
    color_out_mk1
-   color_by_formula
+   formula_color
    texture_evaluate
