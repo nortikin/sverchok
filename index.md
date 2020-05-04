@@ -42,7 +42,7 @@
     SvGenerativeArtNode
     SvImageComponentsNode
     SvTorusKnotNodeMK2
-    SvRingNode
+    SvRingNodeMK2
     SvEllipseNodeMK2
     SvSuperEllipsoidNode
     SvRegularSolid
