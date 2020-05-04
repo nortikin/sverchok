@@ -7,18 +7,14 @@ from statistics import mean, variance
 
 
 """
-in  pattern v   d=[] n=0
-in  data    v   d=[] n=0
-in  population s d=20 n=2
-in  generations s d=10000 n=2
-in  threshold s d=0.9 n=2
-in  mutator s d=0.1 n=2
-in  mutofactor s d=0.1 n=2
-in  selector s d=0.2 n=2
-in  random_seed s d=0 n=2
-in  all_apart s d=0 n=2
-out vers_final  v
-out vers_descr  v
+Agent
+SvGAmain
+compare_two_lists
+init_agents
+fitness
+selection
+crossover
+mutation
 """
 
 
@@ -26,17 +22,56 @@ class Agent:
 
     def __init__(self, length):
 
-        self.string = [random.choice(data[0]) for _ in range(length)]
-        # self.string = ''.join(random.choice(data[0]) for _ in xrange(length))
+        self.genes = [random.choice(values) for _ in range(length)]
         self.fitness = -1
 
-    def __str__(self):
 
-        return 'String: ' + str(self.string) + ' Fitness: ' + str(self.fitness)
+def SvGAmain(pattern,values,populations=20,generations=1000,\
+            threshold=0.9,mutator=0.1,mutofactor=0.1,selector=0.2,seed=0):
+    """
+    Main function GA
+    """
+    if not pattern or not values:
+        return
+    random.seed(seed)
+    emax = lambda a,b: a if (a > b) else b
+    emin = lambda a,b: a if (a < b) else b
+    all_max = reduce(emax,[reduce(emax, x) for x in pattern])
+    all_min = reduce(emin,[reduce(emin, x) for x in pattern])
+    all_dif = all_max-all_min
+    """
+    print(f'------------------------------------ \
+          \nGA started \
+          \nGA pattern: {[[round(i,2) for i in x] for x in pattern[:2]]} ...')
+    """
+    pattern_len = len(pattern)
+    agents = init_agents(population, pattern_len)
+    stepper = 0.76
+    condition = False
+
+    # for generation in range(generations):
+
+    #print ('Generation: ' + str(generation))
+    agents = fitness(agents)
+    agents = selection(agents)
+    agents = crossover(agents)
+    agents = mutation(agents)
+
+    if any(agent.fitness >= stepper for agent in agents):
+        combo.append(sorted(agents, key=lambda agent: agent.fitness, reverse=True)[0].genes)
+        print(f"GA fitness >= {round(stepper,2)}, in #{generation} generation")
+        stepper += 0.02
+    if any(agent.fitness >= threshold for agent in agents):
+
+        agent = sorted(agents, key=lambda agent: agent.fitness, reverse=True)[0]
+        print (f'GA ended \
+                 \nGA fitness: {round(agent.fitness,4)}, in #{str(generation)} generation \
+                 \nGA pattern: {[[round(i,2) for i in x] for x in agent.genes[:2]]} ... ')
+        condition = True
+    return agent.genes, condition
 
 
-
-def compare_two_lists(agent_list,pattern):
+def compare_two_lists(agent_list, pattern):
     """ fitness descision module """
     lenpat = len(pattern)
     Ratio = []
@@ -44,50 +79,12 @@ def compare_two_lists(agent_list,pattern):
         j = i%lenpat
         subpat = pattern[j]           
         subagl = agent_list[i]
-        # main descision part here, so we assign 
-        # coef to all or to separate and summ
-        if all_apart == 0:
-            # full match
-            coef = [1 if x in subpat else 0 for x in subagl]
-        elif all_apart == 1:
-            # closest
-            mainfunc = lambda y, x: (all_dif-abs(y-x))/all_dif
-            coef = list(map(mainfunc, subagl, subpat))
-        else:
-            coef = [1 if x in subpat else 0 for x in subagl]
+        mainfunc = lambda y, x: (all_dif-abs(y-x))/all_dif
+        coef = list(map(mainfunc, subagl, subpat))
         Ratio.append(mean(coef))
     Ratio = mean(Ratio)
     #print (Ratio)
     return Ratio
-
-
-def ga():
-
-    agents = init_agents(population, in_str_len)
-    stepper = 0.76
-
-    for generation in range(generations):
-
-        #print ('Generation: ' + str(generation))
-
-        agents = fitness(agents)
-        agents = selection(agents)
-        agents = crossover(agents)
-        agents = mutation(agents)
-
-        if any(agent.fitness >= stepper for agent in agents):
-            combo.append(sorted(agents, key=lambda agent: agent.fitness, reverse=True)[0].string)
-            print(f"GA fitness >= {round(stepper,2)}, in #{generation} generation")
-            stepper += 0.02
-        if any(agent.fitness >= threshold for agent in agents):
-
-            agent = sorted(agents, key=lambda agent: agent.fitness, reverse=True)[0]
-            print (f'GA ended \
-                     \nGA fitness: {round(agent.fitness,4)}, in #{str(generation)} generation \
-                     \nGA values: {[[round(i,2) for i in x] for x in agent.string[:2]]} ... ')
-            return agent.string
-    return [None]
-    
 
 
 def init_agents(population, length):
@@ -98,7 +95,7 @@ def init_agents(population, length):
 def fitness(agents):
 
     for agent in agents:
-        agent.fitness = compare_two_lists(agent.string, in_str)
+        agent.fitness = compare_two_lists(agent.genes, pattern)
 
     return agents
 
@@ -120,11 +117,11 @@ def crossover(agents):
 
         parent1 = random.choice(agents)
         parent2 = random.choice(agents)
-        child1 = Agent(in_str_len)
-        child2 = Agent(in_str_len)
-        split = random.randint(0, in_str_len)
-        child1.string = parent1.string[0:split] + parent2.string[split:in_str_len]
-        child2.string = parent2.string[0:split] + parent1.string[split:in_str_len]
+        child1 = Agent(pattern_len)
+        child2 = Agent(pattern_len)
+        split = random.randint(0, pattern_len)
+        child1.genes = parent1.genes[0:split] + parent2.genes[split:pattern_len]
+        child2.genes = parent2.genes[0:split] + parent1.genes[split:pattern_len]
 
         offspring.append(child1)
         offspring.append(child2)
@@ -137,35 +134,10 @@ def crossover(agents):
 def mutation(agents):
 
     for agent in agents:
-        for idx, param in enumerate(agent.string):
+        for idx, param in enumerate(agent.genes):
             if random.uniform(0.0, 1.0) <= mutofactor:
-                if all_apart == 0:
-                    agent.string = agent.string[0:idx] + \
-                                [(random.choice(data[0]))] + \
-                                agent.string[idx+1:in_str_len]
-                elif all_apart == 1:
-                    agent.string = agent.string[0:idx] + \
-                                [[random.uniform(-mutator,mutator)+d for d in param]] + \
-                                agent.string[idx+1:in_str_len]
-                else:
-                    agent.string = agent.string[0:idx] + \
-                                [(random.choice(data[0]))] + \
-                                agent.string[idx+1:in_str_len]
-
+                agent.genes = agent.genes[0:idx] + \
+                    [[random.uniform(-mutator,mutator)+d for d in param]] + \
+                    agent.genes[idx+1:pattern_len]
     return agents
 
-if data and pattern:
-    random.seed(random_seed)
-    in_str = pattern[0]
-    emax = lambda a,b: a if (a > b) else b
-    emin = lambda a,b: a if (a < b) else b
-    all_max = reduce(emax,[reduce(emax, x) for x in in_str])
-    all_min = reduce(emin,[reduce(emin, x) for x in in_str])
-    all_dif = all_max-all_min
-    print(f'------------------------------------ \
-          \nGA started \
-          \nGA values: {[[round(i,2) for i in x] for x in in_str[:2]]} ...')
-    in_str_len = len(in_str)
-    combo = []
-    vers_final = [ga()]
-    vers_descr = combo

@@ -28,6 +28,7 @@ import sverchok
 from sverchok.utils import get_node_class_reference, sv_IO_monad_helpers
 from sverchok.utils.sv_IO_panel_tools import create_dict_of_tree, import_tree
 from sverchok.utils.logging import info, error
+from sverchok.utils.sv_genetic_algorithm import SvGAmain
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import get_other_socket, updateNode, match_long_repeat
 from sverchok.core.update_system import make_tree_from_nodes, do_update
@@ -663,7 +664,7 @@ class SvGroupNodeExp:
             self.process_looped(self.loops)
             return
         elif self.genetic_algo_me:
-            self.process_genetic_algorithm()
+            self.process_genetic_algorithm(self.GAgenerations)
 
         monad = self.monad
         in_node = monad.input_node
@@ -768,7 +769,8 @@ class SvGroupNodeExp:
             sockets_in = self.do_process(sockets_in)
         self.apply_output(sockets_in)
 
-    def process_genetic_algorithm():
+
+    def process_genetic_algorithm(self, iterations_remaining):
         # here i will call the GA processor from utils.
         # Get "velues" + "criterias 0...1" from monad. It could be two lists
         # Out mutated next generation "values" to monad for loop process
@@ -776,7 +778,58 @@ class SvGroupNodeExp:
         # Also should be instructions for user (grasshopper users allready know)
         # for now it i preparations only
         # PR here https://github.com/nortikin/sverchok/issues/3160
-        pass
+        sockets_in = [i.sv_get() for i in self.inputs]
+
+        monad = self.monad
+        monad['current_total'] = iterations_remaining
+        monad['current_index'] = 0
+
+        in_node = monad.input_node
+        out_node = monad.output_node
+
+        for iteration in range(iterations_remaining):
+            # if 'Monad Info' in monad.nodes:
+            #     info_node = monad.nodes['Monad Info']
+            #     info_node.outputs[0].sv_set([[iteration]])
+            monad["current_index"] = iteration
+            sockets_in, condition = self.gen_process(sockets_in, self.GAgenerations)
+            if condition:
+                break
+        self.apply_output(sockets_in)
+        
+        
+    def gen_process(self, sockets_data_in,generations):
+        # main looped GA process_genetic_algorithm
+        # 
+        monad = self.monad
+        in_node = monad.input_node
+        out_node = monad.output_node
+
+        out_data, condition = SvGAmain(sockets_data_in[0],sockets_data_in[1], \
+                    self.GApopulation,generations,\
+                    self.GAthreshold,self.GAmutator,\
+                    self.GAmutofactor,self.GAselector,\
+                    self.GArandom_seed)
+
+        for index, data in enumerate(sockets_data_in):
+            in_node.outputs[index].sv_set(data)
+        node_names = self.get_nodes_to_process(out_node.name)
+        ul = make_tree_from_nodes(node_names, monad, down=False)
+        do_update(ul, monad.nodes)
+
+        # set output sockets correctly
+        # for GA we need no output sockets, 
+        # only input to be assigned and esteblished
+        # as final value of A number nodes,
+        # instead of initial values
+        socket_data_out = []
+        for index, socket in enumerate(self.outputs):
+            if socket.is_linked:
+                data = out_node.inputs[index].sv_get(deepcopy=False)
+                socket_data_out.append(data)
+
+        return socket_data_out, condition
+
 
     def load(self):
         pass
