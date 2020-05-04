@@ -35,7 +35,7 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
     image_pointer: PointerProperty(
         name="image datablock", poll=lambda s, o: True, type=bpy.types.Image, update=updateNode)
 
-    properties_to_skip_iojson = ['image_pointer']
+    properties_to_skip_iojson = ['image_pointer', 'name_image']
 
     R: FloatProperty(
         name='R', description='R', default=0.30, min=0, max=1,
