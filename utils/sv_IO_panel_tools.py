@@ -36,7 +36,7 @@ from sverchok.utils.sv_node_utils import absolute_location_generic
 # pylint: disable=w0621
 
 
-SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
+SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite', 'SvSNFunctorB'}
 PROFILE_NODES = {'SvProfileNode', 'SvProfileNodeMK2'}
 
 _EXPORTER_REVISION_ = '0.079' #'0.080'
@@ -397,6 +397,11 @@ def perform_scripted_node_inject(node, node_ref):
     '''
     texts = bpy.data.texts
     params = node_ref.get('params')
+
+    if node.bl_idname == 'SvSNFunctorB':
+        info("IOJSON is not fully supported for FUNCTOR B node")
+        return
+
     if params:
 
         script_name = params.get('script_name')
