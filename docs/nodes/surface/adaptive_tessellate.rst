@@ -16,22 +16,23 @@ However, in some cases a cartesian grid is not suitable. When the surface has
 some "almost flat" places and others, that are much more "bent" or even
 "sharp", a naive cartesian grid approach:
 
-*   generates too many points on flat areas
-*   and generates too few points in the curvy areas.
+* generates too many points on flat areas
+* and generates too few points in the curvy areas.
 
 This node generates points on the surface by following algorithm:
 
-*   Start with a cartesian grid.
-*   Then add more points into "most interesting" grid cells. "Interesting" cells may be defined as:
+* Start with a cartesian grid.
+* Then add more points into "most interesting" grid cells. "Interesting" cells may be defined as:
 
-   *    Having larger area (more precisely, area stretching factor)
-   *    Having bigger curvature value. Curvature may be defined as Gaussian
-     curvature, mean curvature or as bigger one of the principal curvatures.
+  * Having larger area (more precisely, area stretching factor)
+  * Having bigger curvature value. Curvature may be defined as Gaussian
+    curvature, mean curvature or as bigger one of the principal curvatures.
 
-    Number of vertices, which is to be added into each cell of the grid, is calculated proportionally to this "subdivision factor".
+   Number of vertices, which is to be added into each cell of the grid, is
+   calculated proportionally to this "subdivision factor".
 
-*   Make a Delaunay triangulation of all these points
-    And then map this triangluated thing onto the surface.
+* Make a Delaunay triangulation of all these points.
+* And then map this triangluated thing onto the surface.
 
 This approach can not automatically handle cases where the surface should have
 sharp edges. However, if we just happen to know where these sharp edges are, we
