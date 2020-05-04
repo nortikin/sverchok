@@ -18,7 +18,7 @@
 
 from mathutils import Vector
 import bpy
-from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty, FloatVectorProperty
+from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty, FloatVectorProperty, IntVectorProperty
 
 import blf
 import bgl
@@ -76,6 +76,64 @@ def simple28_grid_xy(x, y, args):
     config.batch.draw(config.shader)
 
 
+def generate_number_geom(config, numbers):
+    geom = lambda: None
+    x, y = config.loc
+    size = 140 * config.scale
+    scale = config.scale
+    # back_color, grid_color, line_color = config.palette
+    cycle = config.cycle
+    sys_scale = config.sys_scale
+    line_color = config.line_color
+    w, h = config.size
+    all_numbers = [n for l in numbers for n in l ]
+    maxmin = [max(all_numbers), min(all_numbers)]
+    # background geom
+    # w = size
+    # h = size
+    # w = (maxmin[0][0]- maxmin[0][1]) * scale
+    # h = (maxmin[1][0]- maxmin[1][1]) * scale
+    margin = 1 * scale
+    margin = 10 * sys_scale
+    geom.background_coords = [
+        (x, y + margin),
+        (x + w + 2*margin, y + margin),
+        (w + x + 2*margin, y - h - margin),
+        (x, y - h - margin)]
+    geom.background_indices = [(0, 1, 2), (0, 2, 3)]
+
+    vertices = []
+    vertex_colors = []
+    indices = []
+    num_height = h/(max(all_numbers)- min(all_numbers))
+    idx_offset = 0
+    if config.continuous:
+        for nums, col in zip(numbers, line_color):
+            num_width = w/(len(nums)-1)
+            for i, n in enumerate(nums):
+                _px = x + (i * num_width) * sys_scale + margin
+                _py = y + ((n -maxmin[1])* num_height) * sys_scale - h 
+                vertices.append([_px, _py])
+                vertex_colors.append(col)
+            for i in range(len(nums)-1):
+                indices.append([i + idx_offset, i + 1 + idx_offset])
+            idx_offset += len(nums)
+    else:
+        for nums, col in zip(numbers, line_color):
+            num_width = w/len(nums)
+            for i, n in enumerate(nums):
+                _px = x + (i * num_width) * sys_scale + margin
+                _py = y + ((n -maxmin[1])* num_height) * sys_scale - h 
+                vertices.extend([[_px, _py], [_px + num_width, _py]])
+                vertex_colors.extend([col, col])
+                indices.append([2*i + idx_offset, 2*i + 1 + idx_offset])
+            idx_offset += 2*len(nums)
+            
+
+    geom.vertices = vertices
+    geom.vertex_colors = vertex_colors
+    geom.indices = indices
+    return geom
 
 class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
     '''Curved interpolation'''
@@ -83,7 +141,21 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Viewer 2D'
     sv_icon = 'SV_EASING'
 
+    modes = [
+        ('Number', 'Number', 'Input UV coordinates to evaluate texture', '', 1),
+        ('Path', 'Path', 'Matrix to apply to verts before evaluating texture', '', 2),
+        ('Edges', 'Edges', 'Matrix of texture (External Object matrix)', '', 3),
+        ('Polygons', 'Polygons', 'Matrix of texture (External Object matrix)', '', 3),
+
+    ]
     n_id: StringProperty(default='')
+
+    mode: EnumProperty(
+        name='Mode',
+        items=modes,
+        default='Path',
+        description="Display Mode",
+        update=updateNode)
 
     activate: BoolProperty(
         name='Show', description='Activate drawing',
@@ -107,12 +179,20 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         min=0.0, default=10.0, name='Scale',
         description='Drawing Scale', update=updateNode
     )
+    drawing_size: IntVectorProperty(
+        update=updateNode, name='Size', default=(150, 150),
+        size=2
+        )
+    continuous: BoolProperty(
+        name='Continuous', description='Continuous Graph',
+        default=True, update=updateNode
+    )
     unit_color: FloatVectorProperty(
         update=updateNode, name='', default=(.9, .9, .8, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR'
         )
     background_color: FloatVectorProperty(
-        update=updateNode, name='', default=(.1, .1, .1, 1.0),
+        update=updateNode, name='', default=(.05, .05, .05, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR'
         )
     selected_theme_mode: EnumProperty(
@@ -133,15 +213,24 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         r0 = layout.row()
         r0.prop(self, "activate", text="", icon="HIDE_" + ("OFF" if self.activate else "ON"))
+        r0.prop(self, "mode")
         c0 = layout.column(align=True)
         c0.prop(self, "background_color")
-        c0.prop(self, "draw_scale")
-        layout.prop(self, "cycle")
+        
+        if self.mode == 'Number':
+            row = c0.row(align=True)
+            for j in range(2):
+                row.prop(self, 'drawing_size', index=j, text='XY'[j])
+            c0.prop(self, 'continuous')
+        elif self.mode == 'Path':
+            c0.prop(self, "draw_scale")
+            layout.prop(self, "cycle")
         
     def draw_buttons_ext(self, context, l):
         l.prop(self, "selected_theme_mode")
 
     def sv_init(self, context):
+        self.inputs.new('SvStringsSocket', "Number")
         self.inputs.new('SvVerticesSocket', "Vecs")
         self.inputs.new('SvColorSocket', "Color").custom_draw = 'draw_color_socket'
         self.get_and_set_gl_scale_info()
@@ -177,19 +266,15 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         return batch, shader
 
     def generate_graph_geom(self, config, paths):
-
         geom = lambda: None
         x, y = config.loc
         size = 140 * config.scale
         scale = config.scale
-        back_color, grid_color, line_color = config.palette
+        # back_color, grid_color, line_color = config.palette
         cycle = config.cycle
         sys_scale = config.sys_scale
-        background_color = config.background_color
         line_color = config.line_color
-        # if len(line_color) > 1:
-            # line_color= [c for color in line_color for c in color]
-        # easing_func = config.easing_func
+
         all_vecs = [v for vecs in paths for v in vecs ]
         maxmin = list(zip(map(max, *all_vecs), map(min, *all_vecs)))
         # background geom
@@ -201,19 +286,15 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         margin = 10 * sys_scale
         geom.background_coords = [
             (x, y + margin), 
-            (x + w+2*margin, y+ margin),
-            (w + x + 2*margin, y - h - margin), 
-            (x, y - h-margin)]
+            (x + w + 2*margin, y + margin),
+            (w + x + 2*margin, y - h - margin),
+            (x, y - h - margin)]
         geom.background_indices = [(0, 1, 2), (0, 2, 3)]
-
-        # grid geom and associated vertex colors
-        num_divs = 8
-        offset = size / num_divs
 
         vertices = []
         vertex_colors = []
         indices = []
-        
+
         idx_offset = 0
         for vecs, col in zip(paths, line_color):
             graphline = []
@@ -227,7 +308,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
             for i in range(len(vecs)-1):
                 indices.append([i + idx_offset, i + 1 + idx_offset])
             if cycle:
-                indices.append([len(graphline)-1 + idx_offset,0 + idx_offset])
+                indices.append([len(graphline)-1 + idx_offset, 0 + idx_offset])
             idx_offset += len(graphline)
 
         geom.vertices = vertices
@@ -236,7 +317,10 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         return geom
 
     def process(self):
-        p = self.inputs['Vecs'].sv_get()
+        if self.mode == 'Number':
+            p = self.inputs['Number'].sv_get()
+        else:
+            p = self.inputs['Vecs'].sv_get()
         path_color = self.inputs['Color'].sv_get(default=[[self.unit_color]])[0]
         fullList(path_color, len(p))
         n_id = node_id(self)
@@ -258,9 +342,15 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
             config.line_color = path_color
             # config.easing_func = easing_func
 
-            geom = self.generate_graph_geom(config, p)
+            if self.mode == 'Number':
+                config.size = self.drawing_size
+                config.continuous = self.continuous
+                geom = generate_number_geom(config, p)
+            else:
+                geom = self.generate_graph_geom(config, p)
+            
             config.batch, config.shader = self.generate_shader(geom)
-
+            
             draw_data = {
                 'mode': 'custom_function',
                 'tree_name': self.id_data.name[:],
