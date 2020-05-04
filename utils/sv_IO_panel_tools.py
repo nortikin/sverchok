@@ -399,7 +399,6 @@ def perform_scripted_node_inject(node, node_ref):
     params = node_ref.get('params')
 
     if node.bl_idname == 'SvSNFunctorB':
-        info("IOJSON is not fully supported for FUNCTOR B node")
         return
 
     if params:

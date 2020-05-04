@@ -6,6 +6,7 @@
 # License-Filename: LICENSE
 
 import sys
+import json
 import inspect
 import imp
 import types
@@ -281,13 +282,14 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
         
         # seems we need to create this text block from scratch
         with self.sv_throttle_tree_update():
-            self.script_pointer = bpy.data.texts.new()
-            self.script_pointer.name = node_ref.get("textfile_name")
+            desired_name = node_ref.get("textfile_name")
+            self.script_pointer = bpy.data.texts.new(desired_name)
             strings_json = node_ref['string_storage']
             lines_list = json.loads(strings_json)['lines']
             lines_str = "\n".join(lines_list)
             self.script_pointer.from_string(lines_str)
             self.script_str = lines_str
+            self.load(bpy.context)
 
 
 classes = [SvSNCallbackFunctorB, SvSNFunctorB]
