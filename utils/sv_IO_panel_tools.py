@@ -425,15 +425,7 @@ def perform_scripted_node_inject(node, node_ref):
         node.script_name = script_name
         node.script_str = script_content
 
-    if node.bl_idname == 'SvScriptNode':
-        node.user_name = "templates"               # best would be in the node.
-        node.files_popup = "sv_lang_template.sn"   # import to reset easy fix
-        node.load()
-    elif node.bl_idname == 'SvScriptNodeLite':
-        node.load()
-        # node.storage_set_data(node_ref)
-    else:
-        node.files_popup = node.avail_templates(None)[0][0]
+    if node.bl_idname == 'SvScriptNodeLite':
         node.load()
 
 
