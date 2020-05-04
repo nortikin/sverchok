@@ -208,21 +208,21 @@ def make_outer_edges(samples_u, samples_v):
     return edges
 
 def delaunay_triangulatrion(samples_u, samples_v, us_list, vs_list, u_coeff, v_coeff, epsilon):
-    if delaunay_2d_cdt is None:
+    #if delaunay_2d_cdt is None:
         # Pure-python implementation
         points_uv = [Site(u * u_coeff, v * v_coeff) for u, v in zip(us_list, vs_list)]
         faces = computeDelaunayTriangulation(points_uv)
         return faces
-    else:
-        points_scaled = [(u*u_coeff, v*v_coeff) for u,v in zip(us_list, vs_list)]
-        INNER = 1
+    #else:
+    #    points_scaled = [(u*u_coeff, v*v_coeff) for u,v in zip(us_list, vs_list)]
+    #    INNER = 1
         # delaunay_2d_cdt function wont' work if we do not provide neither edges nor faces.
         # So let's just construct the outer faces of the rectangular grid
         # (indices in `edges' depend on the fact that in `adaptive_subdivide` we
         # add randomly generated points to the end of us_list/vs_list).
-        edges = make_outer_edges(samples_u, samples_v)
-        vert_coords, edges, faces, orig_verts, orig_edges, orig_faces = delaunay_2d_cdt(points_scaled, edges, [], INNER, epsilon)
-        return faces
+    #    edges = make_outer_edges(samples_u, samples_v)
+    #    vert_coords, edges, faces, orig_verts, orig_edges, orig_faces = delaunay_2d_cdt(points_scaled, edges, [], INNER, epsilon)
+    #    return faces
 
 def adaptive_subdivide(surface, samples_u, samples_v, by_curvature=True, curvature_type = MAXIMUM, curvature_clip = 100, by_area=True, add_points=None, min_ppf=1, max_ppf=5, trim_curve = None, samples_t = 100, trim_mode = 'inner', epsilon = 1e-4, seed=1):
     data = populate_surface_uv(surface, samples_u, samples_v,
