@@ -122,7 +122,11 @@ class SverchokEvent(NamedTuple):
 
     def print(self):
         if self.node_id:
-            node = HashedBlenderData.get_node(self.tree_id, self.node_id)
+            if self.type == SverchokEventsTypes.free_node:
+                reconstruction_tree = NodeTreesReconstruction.get_node_tree_reconstruction(self.tree_id)
+                node = reconstruction_tree.nodes[self.node_id]
+            else:
+                node = HashedBlenderData.get_node(self.tree_id, self.node_id)
             self.type.print(node)
         else:
             self.type.print()
@@ -253,16 +257,21 @@ class EventsWave:
     def search_linking_events(self) -> List[SverchokEvent]:
         if self.links_was_added:
             if self.events_wave[0].type == BlenderEventsTypes.copy_node or self.reroutes_was_added:
+                # the idea was get new links from copied nodes
+                # but API does not let to get links linked to a node efficiently
                 pass
-                # self.search_new_links_from_new_nodes()
-            else:
-                new_links = self.search_new_links()
-                return [SverchokEvent(type=SverchokEventsTypes.add_link,
-                                      tree_id=self.main_event.tree_id,
-                                      link_id=link.link_id) for link in new_links]
+
+            new_links = self.search_new_links()
+            return [SverchokEvent(type=SverchokEventsTypes.add_link,
+                                  tree_id=self.main_event.tree_id,
+                                  link_id=link.link_id) for link in new_links]
         elif self.links_was_removed:
             if self.events_wave[0].type == BlenderEventsTypes.free_node or self.reroutes_was_removed:
-                pass
+                nodes_removed = {self.previous_tree.nodes[ev.node_id] for ev in self.first_type_events()}
+                removed_links = self.search_free_links_from_nodes(nodes_removed)
+                return [SverchokEvent(type=SverchokEventsTypes.free_link,
+                                      tree_id=self.main_event.tree_id,
+                                      link_id=link.id) for link in removed_links]
             else:
                 removed_links = self.search_free_links()
                 return [SverchokEvent(type=SverchokEventsTypes.free_link,
@@ -284,10 +293,6 @@ class EventsWave:
     def search_new_links(self):
         # should be called if user pressed F, Shift+RMB, copied linked reroutes, added via Python API
         return self.current_tree.links - self.previous_tree.links
-
-    def search_new_links_from_new_nodes(self, copied_blender_nodes):
-        # should be called if user copied linked nodes
-        pass
 
     def search_free_links(self):
         # should be called if user unconnected link(s), Ctrl+RMB, delete reroutes, deleted via Python API
@@ -381,10 +386,12 @@ class CurrentEvents:
         # property changes chan lead to node tree changes (remove links)
         sv_events = cls.events_wave.convert_to_sverchok_events()
         if cls.is_in_debug_mode():
-            [sv_event.print() for sv_event in sv_events if sv_event.type != SverchokEventsTypes.undefined]
+            [sv_event.print() for sv_event in sv_events]
         cls.redraw_nodes(sv_events)  # it should be done before reconstruction update
         # previous step can change links and relocate them in memory
-        HashedBlenderData.reset_data(cls.events_wave.main_event.tree_id, reset_nodes=False)
+        if (SverchokEventsTypes.add_link in [ev.type for ev in sv_events] or
+            SverchokEventsTypes.free_link in [ev.type for ev in sv_events]):
+            HashedBlenderData.reset_data(cls.events_wave.main_event.tree_id, reset_nodes=False)
 
         tree_reconstruction = cls.events_wave.previous_tree
         tree_reconstruction.update_reconstruction(sv_events)
@@ -405,6 +412,7 @@ class CurrentEvents:
         # so after this method all memorized Blender links and nodes should be reset
         hashed_tree = HashedBlenderData.get_tree(cls.events_wave.main_event.tree_id)
         previous_tree = NodeTreesReconstruction.get_node_tree_reconstruction(cls.events_wave.main_event.tree_id)
+        deleted_node_ids = {ev.node_id for ev in sverchok_events if ev.type == SverchokEventsTypes.free_node}
         bl_link_update_nodes = set()
         for sv_event in sverchok_events:
             if sv_event.type == SverchokEventsTypes.add_link:
@@ -415,8 +423,10 @@ class CurrentEvents:
             if sv_event.type == SverchokEventsTypes.free_link:
                 # deleted link should be read from reconstruction
                 sv_link = previous_tree.links[sv_event.link_id]
-                bl_link_update_nodes.add(hashed_tree.nodes[sv_link.from_node.id])
-                bl_link_update_nodes.add(hashed_tree.nodes[sv_link.to_node.id])
+                if sv_link.from_node.id not in deleted_node_ids:
+                    bl_link_update_nodes.add(hashed_tree.nodes[sv_link.from_node.id])
+                if sv_link.to_node.id not in deleted_node_ids:
+                    bl_link_update_nodes.add(hashed_tree.nodes[sv_link.to_node.id])
         [node.sv_update() for node in bl_link_update_nodes]
 
     @staticmethod
@@ -477,15 +487,15 @@ class SvTree:
                         self.nodes.set_is_outdated(sv_event.node_id)
                     else:
                         raise TypeError(f"Can't handle event={sv_event.type}")
-                elif sv_event.link_id:
+
+            for sv_event in sv_events:
+                if sv_event.link_id:
                     if sv_event.type == SverchokEventsTypes.add_link:
                         self.links.add(sv_event.link_id)
                     elif sv_event.type == SverchokEventsTypes.free_link:
                         self.links.free(sv_event.link_id)
                     else:
                         raise TypeError(f"Can't handle event={sv_event.type}")
-                else:
-                    raise TypeError(f"Can't handle event={sv_event.type}")
 
         if self.is_in_debug_mode():
             self.check_reconstruction_correctness()
