@@ -88,7 +88,6 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
 
                 elif n.bl_idname == 'SvSNFunctorB':
                     if n.script_pointer == edit_text:
-                        print('handle the shortcut for SvSNFunctorB')
                         n.handle_reload(context)
                         n.process_node(context)
                         return {'FINISHED'}
