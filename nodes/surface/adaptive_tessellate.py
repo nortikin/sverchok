@@ -35,14 +35,14 @@ class SvAdaptiveTessellateNode(bpy.types.Node, SverchCustomTreeNode):
             update = updateNode)
 
     min_ppf : IntProperty(
-            name = "Min per face",
-            description = "Minimum number of new points per rectangular grid face",
+            name = "Min per cell",
+            description = "Minimum number of new points per rectangular grid cell",
             min = 0, default = 0,
             update = updateNode)
 
     max_ppf : IntProperty(
-            name = "Max per face",
-            description = "Minimum number of new points per rectangular grid face",
+            name = "Max per cell",
+            description = "Minimum number of new points per rectangular grid cell",
             min = 1, default = 5,
             update = updateNode)
 
@@ -93,7 +93,7 @@ class SvAdaptiveTessellateNode(bpy.types.Node, SverchCustomTreeNode):
     crop_mode: bpy.props.EnumProperty(
         items=mode_items,
         default = 'inner',
-        name='Mode of cropping mesh',
+        name="Trimming mode",
         update=updateNode,
         description='Switch between creating holes and fitting mesh into another mesh')
 
