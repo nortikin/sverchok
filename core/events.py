@@ -18,7 +18,7 @@ Details: https://github.com/nortikin/sverchok/issues/3077
 from __future__ import annotations
 
 from enum import Enum, auto
-from typing import TYPE_CHECKING, NamedTuple, Union, List, Callable, Set, Dict, Iterable
+from typing import TYPE_CHECKING, NamedTuple, Union, List, Callable, Set, Dict, Iterable, Generator, KeysView
 from itertools import takewhile, count
 from contextlib import contextmanager
 import traceback
@@ -162,6 +162,7 @@ class EventsWave:
         self.links_was_removed = False
         self.reroutes_was_added = False
         self.reroutes_was_removed = False
+        self.relinking = False  # when number of links is unchanged but connections are different
 
     def add_event(self, bl_event: BlenderEvent):
         if bl_event.type == BlenderEventsTypes.node_update:
@@ -191,7 +192,7 @@ class EventsWave:
             self.analyze_changes()
             # todo reset id copied reroutes
             known_sv_events = self.convert_known_events()
-            found_sv_events = self.search_extra_events()
+            found_sv_events = self.search_linking_events()
             known_sv_events.update(found_sv_events)
             return known_sv_events
         else:
@@ -203,7 +204,7 @@ class EventsWave:
 
     def analyze_changes(self):
         if (self.events_wave[0].type == BlenderEventsTypes.tree_update or
-              self.events_wave[0].type == BlenderEventsTypes.monad_tree_update):
+                self.events_wave[0].type == BlenderEventsTypes.monad_tree_update):
             # New: Nodes = 0; Links = 0-inf; Reroutes = 0-inf
             # Remove: Nodes=0, Links = 0-n, Reroutes = 0-n
             # Tools: F, Ctrl + RMB, Shift + RMB, manual unlink, python (un)link
@@ -220,7 +221,7 @@ class EventsWave:
             # Tools: manual copy
             self.links_was_added = (len(self.current_tree.links) - len(self.previous_tree.links)) > 0
 
-            copy_events = list(takewhile(lambda ev: ev == SverchokEventsTypes.copy_node, self.events_wave))
+            copy_events = list(self.first_type_events())
             new_nodes_total = len(self.current_tree.nodes) - len(self.previous_tree.nodes)
             self.reroutes_was_added = (new_nodes_total - len(copy_events)) > 0
         elif self.events_wave[0].type == BlenderEventsTypes.free_node:
@@ -228,19 +229,22 @@ class EventsWave:
             # Tools: manual delete selected, python delete one node (reroutes are node included)
             self.links_was_removed = (len(self.current_tree.nodes) - len(self.previous_tree.nodes)) < 0
 
-            free_events = list(takewhile(lambda ev: ev == SverchokEventsTypes.free_node, self.events_wave))
+            free_events = list(self.first_type_events())
             free_nodes_total = len(self.current_tree.nodes) - len(self.previous_tree.nodes)
             self.reroutes_was_removed = (free_nodes_total - len(free_events)) > 0
         elif self.events_wave[0].type == BlenderEventsTypes.add_link_to_node:
             # New: Nodes = 0; Links = 0-n; Reroutes = 0
             # Tools: manual link or relink, with relink bunch of links could be changed
-            pass
+            number_of_links_was_not_change = len(self.current_tree.links) == len(self.previous_tree.links)
+            self.relinking = True if number_of_links_was_not_change else False
 
     def convert_known_events(self) -> Set[SverchokEvent]:
-        all_events_of_first_type = takewhile(lambda ev: ev.type == self.events_wave[0].type, self.events_wave)
-        return {bl_event.convert_to_sverchok_event() for bl_event in all_events_of_first_type}
+        if self.events_wave[0].type not in [BlenderEventsTypes.tree_update, BlenderEventsTypes.monad_tree_update]:
+            return {bl_event.convert_to_sverchok_event() for bl_event in self.first_type_events()}
+        else:
+            return set()
 
-    def search_extra_events(self) -> List[SverchokEvent]:
+    def search_linking_events(self) -> List[SverchokEvent]:
         if self.links_was_added:
             if self.events_wave[0].type == BlenderEventsTypes.copy_node or self.reroutes_was_added:
                 pass
@@ -250,6 +254,25 @@ class EventsWave:
                 return [SverchokEvent(type=SverchokEventsTypes.add_link,
                                       tree_id=self.main_event.tree_id,
                                       link_id=link.link_id) for link in new_links]
+        elif self.links_was_removed:
+            if self.events_wave[0].type == BlenderEventsTypes.free_node or self.reroutes_was_removed:
+                pass
+            else:
+                removed_links = self.search_free_links()
+                return [SverchokEvent(type=SverchokEventsTypes.free_link,
+                                      tree_id=self.main_event.tree_id,
+                                      link_id=link.id) for link in removed_links]
+        elif self.relinking:
+            relinked_nodes = set()
+            for link_event in self.first_type_events():
+                bl_node_from = self.current_tree.links[link_event.link_id].from_node
+                bl_node_to = self.current_tree.links[link_event.link_id].to_node
+                relinked_nodes.add(self.previous_tree.nodes[bl_node_from.node_id])
+                relinked_nodes.add(self.previous_tree.nodes[bl_node_to.node_id])
+            removed_links = self.search_free_links_from_nodes(relinked_nodes)
+            return [SverchokEvent(type=SverchokEventsTypes.free_link,
+                                  tree_id=self.main_event.tree_id,
+                                  link_id=link.id) for link in removed_links]
         return []
 
     def search_new_links(self):
@@ -262,11 +285,15 @@ class EventsWave:
 
     def search_free_links(self):
         # should be called if user unconnected link(s), Ctrl+RMB, delete reroutes, deleted via Python API
-        pass
+        return self.previous_tree.links - self.current_tree.links
 
-    def search_free_links_from_deleted_nodes(self, deleted_sverchok_nodes):
-        # should be called if user deleted node
-        pass
+    def search_free_links_from_nodes(self, sverchok_nodes: Set[SvNode]) -> List[SvLink]:
+        # should be called if user deleted node, or relinking (add and remove links simultaneously)
+        sv_links_keys = set()
+        [sv_links_keys.update(node.inputs.keys()) for node in sverchok_nodes]
+        [sv_links_keys.update(node.outputs.keys()) for node in sverchok_nodes]
+        deleted_links_keys = sv_links_keys - self.current_tree.links.keys()
+        return [self.previous_tree.links[key] for key in deleted_links_keys]
 
     def search_new_reroutes(self):
         # should be called if user created/copied new reroute(s), Shift+RMB, added via Python API
@@ -275,6 +302,9 @@ class EventsWave:
     def search_free_reroutes(self):
         # should be called if user deleted selected, deleted via Python API
         pass
+
+    def first_type_events(self) -> Generator[BlenderEvent, None, None]:
+        yield from takewhile(lambda ev: ev.type == self.events_wave[0].type, self.events_wave)
 
     @property
     def previous_tree(self) -> 'SvTree':
@@ -309,10 +339,11 @@ class CurrentEvents:
                 call_function(*call_function_arguments)
             if event_type == BlenderEventsTypes.copy_node:
                 # id of copied nodes should be reset, it should be done before event wave end
+                # take in account that ID of copied reroutes also should be rested but later and not too late
                 node.n_id = ''
 
         tree_id = node_tree.tree_id if node_tree else None
-        node_id = node.node_id if node else None
+        node_id = node.node_id if node and event_type != BlenderEventsTypes.add_link_to_node else None
         link_id = link.link_id if link else None
         bl_event = BlenderEvent(event_type, tree_id, node_id, link_id)
 
@@ -364,13 +395,19 @@ class CurrentEvents:
     @classmethod
     def redraw_nodes(cls, sverchok_events: Iterable[SverchokEvent]):
         hashed_tree = HashedBlenderData.get_tree(cls.events_wave.main_event.tree_id)
+        previous_tree = NodeTreesReconstruction.get_node_tree_reconstruction(cls.events_wave.main_event.tree_id)
         bl_link_update_nodes = set()
         for sv_event in sverchok_events:
             if sv_event.type == SverchokEventsTypes.add_link:
-                # todo check condition later
+                # new links should be read from Blender tree
                 link = hashed_tree.links[sv_event.link_id]
                 bl_link_update_nodes.add(link.from_node)
                 bl_link_update_nodes.add(link.to_node)
+            if sv_event.type == SverchokEventsTypes.free_link:
+                # deleted link should be read from reconstruction
+                sv_link = previous_tree.links[sv_event.link_id]
+                bl_link_update_nodes.add(hashed_tree.nodes[sv_link.from_node.id])
+                bl_link_update_nodes.add(hashed_tree.nodes[sv_link.to_node.id])
         [node.sv_update() for node in bl_link_update_nodes]
 
     @staticmethod
@@ -434,12 +471,12 @@ class SvTree:
                 elif sv_event.link_id:
                     if sv_event.type == SverchokEventsTypes.add_link:
                         self.links.add(sv_event.link_id)
+                    elif sv_event.type == SverchokEventsTypes.free_link:
+                        self.links.free(sv_event.link_id)
                     else:
-                        pass
-                        # todo how to handle remove link
+                        raise TypeError(f"Can't handle event={sv_event.type}")
                 else:
-                    pass
-                    # raise TypeError(f"Can't handle event={sv_event.type}")
+                    raise TypeError(f"Can't handle event={sv_event.type}")
 
         if self.is_in_debug_mode():
             self.check_reconstruction_correctness()
@@ -500,6 +537,7 @@ class SvLinksCollection:
         sv_link = self._links[link_id]
         sv_link.from_node.free_link(sv_link)
         sv_link.to_node.free_link(sv_link)
+        sv_link.to_node.is_outdated = True
         del self._links[link_id]
 
     def __eq__(self, other):
@@ -513,10 +551,14 @@ class SvLinksCollection:
 
     def __sub__(self, other) -> List['SvLink']:
         if isinstance(other, HashedLinks):
+            other._memorize_links()
             deleted_links_keys = self._links.keys() - other._links.keys()
             return [getitem(self._links, key) for key in deleted_links_keys]
         else:
             return NotImplemented
+
+    def __getitem__(self, item: str) -> SvLink:
+        return self._links[item]
 
 
 class SvNodesCollection:
@@ -561,6 +603,7 @@ class SvNodesCollection:
 
     def __sub__(self, other) -> List['SvNode']:
         if isinstance(other, HashedNodes):
+            other._memorize_nodes()
             deleted_nodes = self._nodes.keys() - other._nodes.keys()
             return [getitem(self._nodes, key) for key in deleted_nodes]
         else:
@@ -585,6 +628,15 @@ class SvNode:
     def __repr__(self):
         return f'<SvNode="{self.name}">'
 
+    def __eq__(self, other):
+        if isinstance(other, SvNode):
+            return self.id == other.id
+        else:
+            return NotImplemented
+
+    def __hash__(self):
+        return hash(self.id)
+
 
 class SvLink(NamedTuple):
     id: str  # from_socket.id + to_socket.id
@@ -593,6 +645,15 @@ class SvLink(NamedTuple):
 
     def __repr__(self):
         return f'<SvLink(from="{self.from_node.name}", to="{self.to_node.name}")>'
+
+    def __eq__(self, other):
+        if isinstance(other, SvLink):
+            return self.id == other.id
+        else:
+            return NotImplemented
+
+    def __hash__(self):
+        return hash(self.id)
 
 
 # -------------------------------------------------------------------------
@@ -630,6 +691,9 @@ class HashedLinks:
         self._tree: HashedTreeData = tree
         self._links: Dict[str, NodeLink] = dict()
 
+    def keys(self) -> KeysView:
+        return self._links.keys()
+
     def __getitem__(self, item: str) -> NodeLink:
         self._memorize_links()
         return self._links[item]
@@ -638,9 +702,12 @@ class HashedLinks:
         return len(get_blender_tree(self._tree.tree_id).links)
 
     def __sub__(self, other) -> List[NodeLink]:
+        self._memorize_links()
         if isinstance(other, SvLinksCollection):
-            self._memorize_links()
             new_links_keys = self._links.keys() - other._links.keys()
+            return [getitem(self._links, key) for key in new_links_keys]
+        elif isinstance(other, set):
+            new_links_keys = self._links.keys() - other
             return [getitem(self._links, key) for key in new_links_keys]
         else:
             return NotImplemented
