@@ -65,7 +65,7 @@ def edges_from_faces(indices):
     return list(out)
 
 
-def ensure_triangles(node, coords, indices):
+def ensure_triangles(coords, indices, handle_concave_quads):
     """
     this fully tesselates the incoming topology into tris,
     not optimized for meshes that don't contain ngons
@@ -77,7 +77,7 @@ def ensure_triangles(node, coords, indices):
         num_verts = len(idxset)
         if num_verts == 3:
             concat(tuple(idxset))
-        elif num_verts == 4 and not node.handle_concave_quads:
+        elif num_verts == 4 and not handle_concave_quads:
             # a b c d  ->  [a, b, c], [a, c, d]
             concat2([(idxset[0], idxset[1], idxset[2]), (idxset[0], idxset[2], idxset[3])])
         else:
@@ -597,7 +597,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
                 #  expecting mixed bag of tris/quads/ngons
                 if self.display_faces:
-                    geom.faces = ensure_triangles(self, coords, face_indices)
+                    geom.faces = ensure_triangles(coords, face_indices, self.handle_concave_quads)
 
                 if self.display_edges:
                     if self.use_dashed:
