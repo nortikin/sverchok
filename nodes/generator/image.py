@@ -113,7 +113,7 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
         plg = [[[]]]
 
         if outputs['vecs'].is_linked:
-            out = [self.make_vertices(IntegerX-1, IntegerY-1, StepX, StepY, self.image_pointer)]
+            out = [self.make_vertices(IntegerX-1, IntegerY-1, StepX, StepY)]
         outputs['vecs'].sv_set(out)
 
         if outputs['edgs'].is_linked:
@@ -138,8 +138,9 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
         outputs['pols'].sv_set(plg)
         
 
-    def make_vertices(self, delitelx, delitely, stepx, stepy, image):
+    def make_vertices(self, delitelx, delitely, stepx, stepy):
 
+        image = self.image_pointer
         lenx = image.size[0]
         leny = image.size[1]
 
@@ -149,8 +150,8 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
             delitely = leny
 
         R, G, B = self.R, self.G, self.B
-        xcoef = lenx//delitelx
-        ycoef = leny//delitely
+        xcoef = lenx // delitelx
+        ycoef = leny // delitely
 
         # copy images data, pixels is created on every access with [i], extreme speedup.
         # http://blender.stackexchange.com/questions/3673/why-is-accessing-image-data-so-slow
