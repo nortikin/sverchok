@@ -278,6 +278,7 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
         # maybe this file/blend already has this textblock, we could end early
         self.script_pointer = unpack_pointer_property_name(bpy.data.texts, node_ref, "textfile_name")
         if self.script_pointer:
+            self.load(bpy.context)
             return
         
         # seems we need to create this text block from scratch
