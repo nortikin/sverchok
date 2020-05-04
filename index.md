@@ -99,6 +99,7 @@
      SvSurfaceCurvaturesNode
      SvExApplyFieldToSurfaceNode
      SvExTessellateTrimSurfaceNode
+     SvAdaptiveTessellateNode
      SvExEvalSurfaceNode
 
 ## Fields

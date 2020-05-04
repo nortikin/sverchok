@@ -113,6 +113,9 @@ class SurfaceCurvatureCalculator(object):
         c1 = (-B - np.sqrt(D))/(2*A)
         c2 = (-B + np.sqrt(D))/(2*A)
 
+        c1[np.isnan(c1)] = 0
+        c2[np.isnan(c2)] = 0
+
         c1mask = (c1 < c2)
         c2mask = np.logical_not(c1mask)
 
@@ -326,8 +329,8 @@ class SvSurface(object):
         calc = self.curvature_calculator(us, vs)
         return calc.mean()
 
-    def principal_curvature_values_array(self, us, vs):
-        calc = self.curvature_calculator(us, vs)
+    def principal_curvature_values_array(self, us, vs, order=True):
+        calc = self.curvature_calculator(us, vs, order=order)
         return calc.values()
 
     def principal_curvatures_array(self, us, vs):
@@ -534,10 +537,10 @@ class SvPlane(SvSurface):
         return self._normal
 
     def normal_array(self, us, vs):
-        normal = self.normal
+        normal = self._normal[np.newaxis].T
         n = np.linalg.norm(normal)
         normal = normal / n
-        return np.tile(normal, len(us))
+        return np.tile(normal, len(us)).T
 
 class SvEquirectSphere(SvSurface):
     __description__ = "Equirectangular Sphere"
