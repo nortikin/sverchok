@@ -88,10 +88,10 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
 
                 elif n.bl_idname == 'SvSNFunctorB':
                     if n.script_pointer == edit_text:
-                        with n.sv_throttle_tree_update():
-                            print('handle the shortcut for SvSNFunctorB')
-                            n.handle_reload(context)
+                        print('handle the shortcut for SvSNFunctorB')
+                        n.handle_reload(context)
                         n.process_node(context)
+                        return {'FINISHED'}
 
             # update node group with affected nodes
             ng.sv_update()
