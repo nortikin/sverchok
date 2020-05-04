@@ -21,6 +21,7 @@ from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode, node_id
 from sverchok.utils.sv_operator_mixins import SvGenericCallbackWithParams
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.sv_IO_pointer_helpers import pack_pointer_property_name, unpack_pointer_property_name
 
 functions = "draw_buttons", "process", "functor_init"
 sn_callback = "node.svfunctor_callback_b"
@@ -264,6 +265,16 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
                 self.exception(err)
 
 
+    def storage_get_data(self, node_ref):
+        # pack_pointer_property_name(self.script_pointer, node_ref, "textfile_name")
+        local_storage = {'lines': []}
+        for line in self.script_pointer:
+            ...
+
+    def storage_set_data(self, node_ref):
+        # "script_str": is used in the IO code to already add this textfile..
+        # self.script_pointer = unpack_pointer_property_name(bpy.data.texts, node_ref, "textfile_name")
+        ...
 
 classes = [SvSNCallbackFunctorB, SvSNFunctorB]
 register, unregister = bpy.utils.register_classes_factory(classes)
