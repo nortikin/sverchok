@@ -33,7 +33,7 @@ class PopulationData(object):
             self._points = self.surface.evaluate_array(self.us, self.vs).reshape((self.samples_u, self.samples_v, 3))
         return self._points
 
-def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, curvature_type = MAXIMUM, by_area=True, min_ppf=1, max_ppf=5, seed=1):
+def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, curvature_type = MAXIMUM, curvature_clip = 100, by_area=True, min_ppf=1, max_ppf=5, seed=1):
     u_min, u_max = surface.get_u_min(), surface.get_u_max()
     v_min, v_max = surface.get_v_min(), surface.get_v_max()
     us_range = np.linspace(u_min, u_max, num=samples_u)
@@ -55,7 +55,7 @@ def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, curvat
 
     if by_curvature:
         if curvature_type == GAUSS:
-            curvatures = abs(surface.gauss_curvature_array(us, vs)).clip(0, 100)
+            curvatures = abs(surface.gauss_curvature_array(us, vs))
         elif curvature_type == MAXIMUM:
             curvatures_1, curvatures_2 = surface.principal_curvature_values_array(us, vs, order=False)
             curvatures = abs(np.vstack((curvatures_1, curvatures_2))).max(axis=0)
@@ -63,6 +63,8 @@ def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, curvat
             curvatures = abs(surface.mean_curvature_array(us, vs))
         else:
             raise Exception("Unsupported curvature type:" + curvature_type)
+        if curvature_clip:
+            curvatures = curvatures.clip(0, curvature_clip)
         curvatures = curvatures.reshape((samples_u, samples_v))
 
         curvatures_0 = curvatures[:-1, :-1]
@@ -71,6 +73,7 @@ def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, curvat
         curvatures_du_dv = curvatures[1:, 1:]
 
         max_curvatures = np.max([curvatures_0, curvatures_du, curvatures_dv, curvatures_du_dv], axis=0)
+        max_curvatures[np.isnan(max_curvatures)] = 0
         max_curvature = max_curvatures.max()
         min_curvature = max_curvatures.min()
         curvatures_range = max_curvature - min_curvature
@@ -165,6 +168,32 @@ def tessellate_curve(curve, samples_t):
     faces = [list(range(n))]
     return verts, edges, faces
 
+def _calc_u_length(surface_points, v_idx):
+    dus = surface_points[1:, v_idx] - surface_points[:-1, v_idx]
+    u_lengths = np.linalg.norm(dus, axis=1)
+    return np.sum(u_lengths)
+
+def _calc_v_length(surface_points, u_idx):
+    dvs = surface_points[u_idx, 1:] - surface_points[u_idx, :-1]
+    v_lengths = np.linalg.norm(dvs, axis=1)
+    return np.sum(v_lengths)
+
+def calc_sizes(surface_points, samples_u, samples_v):
+    # TODO: we could check all U/V iso-parametric lines length and select maximums.
+
+    length_u_0 = _calc_u_length(surface_points, 0)
+    length_u_1 = _calc_u_length(surface_points, samples_v // 2)
+    length_u_2 = _calc_u_length(surface_points, samples_v -1)
+
+    length_v_0 = _calc_v_length(surface_points, 0)
+    length_v_1 = _calc_v_length(surface_points, samples_u // 2)
+    length_v_2 = _calc_v_length(surface_points, samples_u -1)
+
+    target_u_length = max(length_u_0, length_u_1, length_u_2)
+    target_v_length = max(length_v_0, length_v_1, length_v_2)
+
+    return target_u_length, target_v_length
+
 def adaptive_subdivide(surface, samples_u, samples_v, by_curvature=True, curvature_type = MAXIMUM, by_area=True, add_points=None, min_ppf=1, max_ppf=5, trim_curve = None, samples_t = 100, trim_mode = 'inner', epsilon = 1e-4, seed=1):
     data = populate_surface_uv(surface, samples_u, samples_v,
                             by_curvature = by_curvature,
@@ -179,19 +208,8 @@ def adaptive_subdivide(surface, samples_u, samples_v, by_curvature=True, curvatu
         vs_list.extend([p[1] for p in add_points])
 
     surface_points = data.points
-    # Calculate lengths of:
-    #   1) target_v_length = length of f(0, v) for v in v_range,
-    #   2) target_v_length = length of f(u, 0) for u in u_range.
-    # Obviously length of f(u1, v) for v in v_range for some other u1
-    # can be very different from target_v_length; and the same goes for
-    # target_u_length.
-    # TODO: we could check all U/V iso-parametric lines length and select maximums.
-    dvs = surface_points[0,1:] - surface_points[0,:-1]
-    v_lengths = np.linalg.norm(dvs, axis=1)
-    target_v_length = np.sum(v_lengths)
-    dus = surface_points[1:,0] - surface_points[:-1,0]
-    u_lengths = np.linalg.norm(dus, axis=1)
-    target_u_length = np.sum(u_lengths)
+
+    target_u_length, target_v_length = calc_sizes(surface_points, samples_u, samples_v)
 
     src_u_length = data.u_max - data.u_min
     src_v_length = data.v_max - data.v_min
