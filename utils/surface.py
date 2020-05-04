@@ -326,8 +326,8 @@ class SvSurface(object):
         calc = self.curvature_calculator(us, vs)
         return calc.mean()
 
-    def principal_curvature_values_array(self, us, vs):
-        calc = self.curvature_calculator(us, vs)
+    def principal_curvature_values_array(self, us, vs, order=True):
+        calc = self.curvature_calculator(us, vs, order=order)
         return calc.values()
 
     def principal_curvatures_array(self, us, vs):

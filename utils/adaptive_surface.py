@@ -57,7 +57,8 @@ def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, curvat
         if curvature_type == GAUSS:
             curvatures = abs(surface.gauss_curvature_array(us, vs)).clip(0, 100)
         elif curvature_type == MAXIMUM:
-            curvatures = abs(surface.principal_curvature_values_array(us, vs)[1])
+            curvatures_1, curvatures_2 = surface.principal_curvature_values_array(us, vs, order=False)
+            curvatures = abs(np.vstack((curvatures_1, curvatures_2))).max(axis=0)
         elif curvature_type == MEAN:
             curvatures = abs(surface.mean_curvature_array(us, vs))
         else:
