@@ -154,7 +154,17 @@ def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, curvat
     data.new_vs = new_v
     return data
 
-def adaptive_subdivide(surface, samples_u, samples_v, by_curvature=True, curvature_type = MAXIMUM, by_area=True, add_points=None, min_ppf=1, max_ppf=5, seed=1):
+def tessellate_curve(curve, samples_t):
+    t_min, t_max = curve.get_u_bounds()
+    ts = np.linspace(t_min, t_max, num=samples_t)
+    verts = curve.evaluate_array(ts).tolist()
+    n = len(ts)
+    edges = [[i, i + 1] for i in range(n - 1)]
+    edges.append([n-1, 0])
+    faces = [list(range(n))]
+    return verts, edges, faces
+
+def adaptive_subdivide(surface, samples_u, samples_v, by_curvature=True, curvature_type = MAXIMUM, by_area=True, add_points=None, min_ppf=1, max_ppf=5, trim_curve = None, samples_t = 100, trim_mode = 'inner', epsilon = 1e-4, seed=1):
     data = populate_surface_uv(surface, samples_u, samples_v,
                             by_curvature = by_curvature,
                             curvature_type = curvature_type,
@@ -187,9 +197,17 @@ def adaptive_subdivide(surface, samples_u, samples_v, by_curvature=True, curvatu
 
     u_coeff = target_u_length / src_u_length
     v_coeff = target_v_length / src_v_length
-    print(u_coeff, v_coeff)
 
     points_uv = [Site(u * u_coeff, v * v_coeff) for u, v in zip(us_list, vs_list)]
     faces = computeDelaunayTriangulation(points_uv)
+
+    if trim_curve is not None:
+        curve_verts, curve_edges, curve_faces = tessellate_curve(trim_curve, samples_t)
+        curve_verts_scaled = [(u * u_coeff, v * v_coeff, 0) for u, v, _ in curve_verts]
+        triangulation_verts_scaled = [(u * u_coeff, v * v_coeff, 0) for u, v in zip(us_list, vs_list)]
+        xy_verts, faces, _ = crop_mesh_delaunay(triangulation_verts_scaled, faces, curve_verts_scaled, curve_faces, trim_mode, epsilon)
+        us_list = [p[0] / u_coeff for p in xy_verts]
+        vs_list = [p[1] / v_coeff for p in xy_verts]
+
     return np.array(us_list), np.array(vs_list), faces
 
