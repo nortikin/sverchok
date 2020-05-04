@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import IntProperty, FloatProperty, StringProperty
+from bpy.props import IntProperty, FloatProperty, StringProperty, PointerProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fullList
@@ -29,7 +29,13 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Image'
     bl_icon = 'FILE_IMAGE'
 
-    name_image: StringProperty(name='image_name', description='image name', default='', update=updateNode)
+    # depreciated
+    name_image: StringProperty(name='image_name', description='image name', default='')
+
+    image_pointer: PointerProperty(
+        name="image datablock", poll=lambda s, o: True, type=bpy.types.Image, update=updateNode)
+
+    properties_to_skip_iojson = ['image_pointer']
 
     R: FloatProperty(
         name='R', description='R', default=0.30, min=0, max=1,
@@ -69,7 +75,7 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "pols")
 
     def draw_buttons(self, context, layout):
-        layout.prop_search(self, "name_image", bpy.data, 'images', text="image")
+        layout.prop_search(self, "image_pointer", bpy.data, 'images', text="image")
         row = layout.row(align=True)
         row.scale_x = 10.0
         row.prop(self, "R", text="R")
@@ -77,6 +83,10 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "B", text="B")
 
     def process(self):
+        
+        if not self.image_pointer:
+            return
+
         inputs, outputs = self.inputs, self.outputs
 
         # inputs
@@ -103,7 +113,7 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
         plg = [[[]]]
 
         if outputs['vecs'].is_linked:
-            out = [self.make_vertices(IntegerX-1, IntegerY-1, StepX, StepY, self.name_image)]
+            out = [self.make_vertices(IntegerX-1, IntegerY-1, StepX, StepY, self.image_pointer)]
         outputs['vecs'].sv_set(out)
 
         if outputs['edgs'].is_linked:
@@ -128,19 +138,23 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
         outputs['pols'].sv_set(plg)
         
 
-    def make_vertices(self, delitelx, delitely, stepx, stepy, image_name):
-        lenx = bpy.data.images[image_name].size[0]
-        leny = bpy.data.images[image_name].size[1]
+    def make_vertices(self, delitelx, delitely, stepx, stepy, image):
+
+        lenx = image.size[0]
+        leny = image.size[1]
+
         if delitelx > lenx:
             delitelx = lenx
         if delitely > leny:
             delitely = leny
+
         R, G, B = self.R, self.G, self.B
         xcoef = lenx//delitelx
         ycoef = leny//delitely
+
         # copy images data, pixels is created on every access with [i], extreme speedup.
         # http://blender.stackexchange.com/questions/3673/why-is-accessing-image-data-so-slow
-        imag = bpy.data.images[image_name].pixels[:]
+        imag = image.pixels[:]
         vertices = []
         addition = 0
         for y in range(delitely+1):
@@ -152,6 +166,17 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
                 vertices.append(vertex) 
                 addition += int(xcoef*4)
         return vertices
+
+
+    def storage_get_data(self, node_ref):
+        pack_pointer_property_name(self.image_pointer, node_ref, "image_name")
+        self.info(f"You are storing this layout {self.id_data.name} as a json, it will not include images")
+
+    def storage_set_data(self, node_ref):
+        self.image_pointer = unpack_pointer_property_name(bpy.data.images, node_ref, "image_name")
+        if not self.image_pointer:
+            proposed_name = node_ref.get("image_name")
+            self.info(f"image data not found in current {proposed_name}")
 
 
 def register():
