@@ -19,6 +19,7 @@
 import os
 
 import bpy
+from bpy.utils import register_class, unregister_class
 from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatProperty, IntProperty, PointerProperty
 from mathutils import Vector
 
