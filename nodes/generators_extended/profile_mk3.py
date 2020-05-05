@@ -501,6 +501,9 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             if not internal_file:
                 self.error("error in load_profile..fuzzysearch failed to find {self.filename}")
                 return None
+
+            # load file from old blend / json
+            self.sv_setattr_with_throttle("file_pointer", internal_file)
         
         f = internal_file.as_string()
         profile = parse_profile(f)
