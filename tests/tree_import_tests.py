@@ -59,6 +59,7 @@ class MonadImportTest(SverchokTestCase):
 UNITTEST_BLACKLIST = [
     "GreacePencil_injection.json",
     "pointsONface_gather_lines.json",
+    "ProfileBuilding.json",
     "Generative_Art_Lsystem.json",
     "Genetic_algorithm.blend.json",
     "Elfnor_topology_nodes.json",
