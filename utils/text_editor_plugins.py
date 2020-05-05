@@ -69,18 +69,19 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                         n.process_node(context)
                         return {'FINISHED'}
 
-                elif hasattr(n, "script_name") and fuzzy_compare(n.script_name, text_file_name):
-                    try:
-                        n.load()
-                        n.process_node(context)
-                        return {'FINISHED'}
-                    except SyntaxError as err:
-                        msg = "SyntaxError : {0}".format(err)
-                        self.report({"WARNING"}, msg)
-                        return {'CANCELLED'}
-                    except Exception as err:
-                        self.report({"WARNING"}, f'unspecified error in load()\n{err}^^^^')
-                        return {'CANCELLED'}
+                elif n.bl_idname == 'SvScriptNodeLite':
+                    if fuzzy_compare(n.script_name, text_file_name):
+                        try:
+                            n.load()
+                            n.process_node(context)
+                            return {'FINISHED'}
+                        except SyntaxError as err:
+                            msg = "SyntaxError : {0}".format(err)
+                            self.report({"WARNING"}, msg)
+                            return {'CANCELLED'}
+                        except Exception as err:
+                            self.report({"WARNING"}, f'unspecified error in load()\n{err}^^^^')
+                            return {'CANCELLED'}
 
                 elif hasattr(n, "text_file_name") and fuzzy_compare(n.text_file_name, text_file_name):
                     pass  # do nothing for profile node, just update ng, could use break...
