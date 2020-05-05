@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from mathutils import Vector
+from itertools import cycle
 import bpy
 from bpy.props import FloatProperty, IntProperty, EnumProperty, StringProperty, BoolProperty, FloatVectorProperty, IntVectorProperty
 
@@ -35,12 +36,11 @@ from sverchok.nodes.viz.vd_draw_experimental import ensure_triangles
 # star imports easing_dict and all easing functions.
 from sverchok.utils.sv_easing_functions import *
 
-easing_list = []
-for k in sorted(easing_dict.keys()):
-    fname = easing_dict[k].__name__
-    easing_list.append(tuple([str(k), fname, "", k]))
-
-
+socket_dict = {
+    'vector_color': ('vector_toggle', 'UV_VERTEXSEL', 'color_per_point'),
+    'edge_color': ('edge_toggle', 'UV_EDGESEL', 'color_per_edge'),
+    'polygon_color': ('polygon_toggle', 'UV_FACESEL', 'color_per_polygon'),
+    }
 palette_dict = {
     "default": (
         (0.243299, 0.590403, 0.836084, 1.00),  # back_color
@@ -63,7 +63,7 @@ def background_rect(x, y, w, h, margin):
     background_coords = [
         (x, y + margin), 
         (x + w + 2* margin, y + margin),
-        (w + x + 2* margin, y - h - margin),
+        (w + x + 2 * margin, y - h - margin),
         (x, y - h - margin)]
     background_indices = [(0, 1, 2), (0, 2, 3)]
 
@@ -82,18 +82,17 @@ def simple28_grid_xy(x, y, args):
     shader.uniform_float("color", background_color)
     batch.draw(shader)
 
-    # draw grid and graph
-    
-    
     config.batch.draw(config.shader)
     if config.mode == 'Polygons':
         config.batch2.draw(config.shader2)
 
     if config.draw_verts:
         bgl.glPointSize(config.point_size)
-        batch2 = batch_for_shader(shader, 'POINTS', {"pos": geom.vertices})
-        shader.bind()
-        shader.uniform_float("color", geom.vertex_colors[0])
+        print(geom.points_color)
+        shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
+        batch2 = batch_for_shader(shader, 'POINTS', {"pos": geom.vertices, "color": geom.points_color})
+        # shader.bind()
+        # shader.uniform_float("color", config.vector_color[0])
         batch2.draw(shader)
         bgl.glPointSize(1)
 
@@ -103,7 +102,7 @@ def generate_number_geom(config, numbers):
     size = 140 * config.scale
     scale = config.scale
     # back_color, grid_color, line_color = config.palette
-    cycle = config.cycle
+    cyclic = config.cyclic
     sys_scale = config.sys_scale
     line_color = config.line_color
     w, h = config.size
@@ -137,11 +136,21 @@ def generate_number_geom(config, numbers):
                 vertex_colors.extend([col, col])
                 indices.append([2*i + idx_offset, 2*i + 1 + idx_offset])
             idx_offset += 2*len(nums)
-            
+    points_color =[]
+    if config.color_per_point:
+        for cols, nums in zip(cycle(config.vector_color), numbers):
+
+            for c, n in zip(cycle(cols), nums):
+                points_color.append(c)
+    else:
+        for nums, col in zip(numbers, cycle(config.vector_color[0])):
+            for n in nums:
+                points_color.append(col)
 
     geom.vertices = vertices
     geom.vertex_colors = vertex_colors
     geom.indices = indices
+    geom.points_color = points_color
     return geom
 
 def generate_lines_geom(config, paths, edges):
@@ -281,6 +290,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
     '''Curved interpolation'''
     bl_idname = 'SvViewer2D'
     bl_label = 'Viewer 2D'
+    bl_icon = 'HIDE_OFF'
     sv_icon = 'SV_EASING'
 
     modes = [
@@ -303,7 +313,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         name='Show', description='Activate drawing',
         default=True, update=updateNode
     )
-    cycle: BoolProperty(
+    cyclic: BoolProperty(
         name='Cycle', description='Activate drawing',
         default=True, update=updateNode
     )
@@ -332,13 +342,35 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         name='Continuous', description='Continuous Graph',
         default=True, update=updateNode
     )
-    unit_color: FloatVectorProperty(
+    vector_color: FloatVectorProperty(
+        update=updateNode, name='', default=(.9, .9, .95, 1.0),
+        size=4, min=0.0, max=1.0, subtype='COLOR'
+        )
+    vector_toggle: BoolProperty(
+        update=updateNode, name='', default=True
+        )
+    color_per_point: BoolProperty(
+        update=updateNode, name='Color per point', default=True
+        )
+    color_per_edge: BoolProperty(
+        update=updateNode, name='Color per point', default=True
+        )
+    color_per_polygon: BoolProperty(
+        update=updateNode, name='Color per point', default=True
+        )
+    edge_color: FloatVectorProperty(
         update=updateNode, name='', default=(.9, .9, .8, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR'
         )
-    unit_color2: FloatVectorProperty(
+    edge_toggle: BoolProperty(
+        update=updateNode, name='', default=True
+        )
+    polygon_color: FloatVectorProperty(
         update=updateNode, name='', default=(.9, .9, .8, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR'
+        )
+    polygon_toggle: BoolProperty(
+        update=updateNode, name='', default=True
         )
     background_color: FloatVectorProperty(
         update=updateNode, name='', default=(.05, .05, .05, 1.0),
@@ -378,7 +410,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
             row.prop(self, "draw_verts")
             row.prop(self, "point_size")
             if self.mode == "Path":
-                layout.prop(self, "cycle")
+                layout.prop(self, "cyclic")
         
     def draw_buttons_ext(self, context, l):
         l.prop(self, "selected_theme_mode")
@@ -388,18 +420,23 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', "Vecs")
         self.inputs.new('SvStringsSocket', "Edges")
         self.inputs.new('SvStringsSocket', "Polygons")
+        vc0 = self.inputs.new('SvColorSocket', "Vector Color")
+        vc0.prop_name = 'vector_color'
+        vc0.custom_draw = 'draw_color_socket'
         vc = self.inputs.new('SvColorSocket', "Color")
-        vc.prop_name = 'unit_color'
+        vc.prop_name = 'edge_color'
         vc.custom_draw = 'draw_color_socket'
         vc2 = self.inputs.new('SvColorSocket', "Polygon Color")
-        vc2.prop_name = 'unit_color2'
+        vc2.prop_name = 'polygon_color'
         vc2.custom_draw = 'draw_color_socket'
         self.get_and_set_gl_scale_info()
         
     def draw_color_socket(self, socket, context, layout):
+        socket_info = socket_dict[socket.prop_name]
+        layout.prop(self, socket_info[0], text="", icon=socket_info[1])
+        layout.prop(self, socket_info[2], text="", icon='COLOR')
         if not socket.is_linked:
             layout.prop(self, socket.prop_name, text="")
-
         else:
             layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
 
@@ -427,12 +464,13 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         return batch, shader
 
     def generate_graph_geom(self, config, paths):
+
         geom = lambda: None
         x, y = config.loc
         size = 140 * config.scale
         scale = config.scale
         # back_color, grid_color, line_color = config.palette
-        cycle = config.cycle
+        cyclic = config.cyclic
         sys_scale = config.sys_scale
         line_color = config.line_color
 
@@ -468,7 +506,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
 
             for i in range(len(vecs)-1):
                 indices.append([i + idx_offset, i + 1 + idx_offset])
-            if cycle:
+            if cyclic:
                 indices.append([len(graphline)-1 + idx_offset, 0 + idx_offset])
             idx_offset += len(graphline)
 
@@ -487,10 +525,12 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         if self.mode == 'Polygons':
             edges = self.inputs['Edges'].sv_get()
             polygons_s = self.inputs['Polygons'].sv_get()
-            poly_color = self.inputs['Polygon Color'].sv_get(default=[[self.unit_color]])[0]
+            poly_color = self.inputs['Polygon Color'].sv_get(default=[[self.polygon_color]])[0]
             fullList(poly_color, len(p))
-            
-        path_color = self.inputs['Color'].sv_get(default=[[self.unit_color]])[0]
+
+        vector_color = self.inputs['Vector Color'].sv_get(default=[[self.vector_color]])
+        path_color = self.inputs['Color'].sv_get(default=[[self.edge_color]])[0]
+        fullList(vector_color, len(p))
         fullList(path_color, len(p))
         n_id = node_id(self)
 
@@ -501,16 +541,21 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
 
             config = lambda: None
             x, y, scale, multiplier = self.get_drawing_attributes()
+            margin = 10* scale
             config.mode = self.mode
-            config.loc = (x, y)
+            config.loc = (x, y - margin)
             config.palette = palette_dict.get(self.selected_theme_mode)[:]
             config.sys_scale = scale
             config.scale = scale*self.draw_scale
-            config.cycle = self.cycle
+            config.cyclic = self.cyclic
             config.background_color = self.background_color
+            config.vector_color = vector_color
             config.line_color = path_color
-            config.draw_verts = self.draw_verts
+            config.draw_verts = self.vector_toggle
             config.point_size = self.point_size
+            config.color_per_point = self.color_per_point
+            config.color_per_edge = self.color_per_edge
+            config.color_per_polygon = self.color_per_polygon
             # config.easing_func = easing_func
 
             if self.mode == 'Number':
