@@ -648,7 +648,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     def storage_get_data(self, storage):
 
-        if self.file_pointer in bpy.data.texts:
+        if self.file_pointer:
             storage['profile'] = self.file_pointer.as_string()
         else:
             self.warning("No file selected")
