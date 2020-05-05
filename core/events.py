@@ -610,8 +610,7 @@ class SvNodesCollection:
         # walk is unordered, it means that from one you can get to 3 and then to 2
         # you will never get to 4 moving forward from 1 and to 1 moving from 4
         visited_nodes = set()
-        next_nodes = set()
-        [next_nodes.update(node.next()) for node in from_nodes]
+        next_nodes = set(from_nodes)
         while next_nodes:
             current_node = next_nodes.pop()
             yield current_node
@@ -626,8 +625,7 @@ class SvNodesCollection:
         # walk is unordered, it means that from 3 you can get to 1 and then to 2
         # you will never get to 4 moving forward from 3 and to 3 moving from 4
         visited_nodes = set()
-        next_nodes = set()
-        [next_nodes.update(node.last()) for node in from_nodes]
+        next_nodes = set(from_nodes)
         while next_nodes:
             current_node = next_nodes.pop()
             yield current_node
@@ -863,15 +861,53 @@ class WalkSvTree:
         # the intersection of two sets below gives set of nodes which should be recalculated
         self.nodes_connected_to_output: Set[SvNode] = set()  # all nodes without 6, 7 (in the example)
         self.effected_by_changes_nodes: Set[SvNode] = set()  # all nodes without 1, 8 (in the example)
+        self.worth_recalculating_nodes: Set[SvNode] = set()  # all nodes without 6, 7, 1, 8
 
-    def recalculate_effected_by_changes_nodes(self, changed_nodes: Iterable[SvNode]): ...
+    def recalculate_effected_by_changes_nodes(self, changed_nodes: Iterable[SvNode]):
+        self.effected_by_changes_nodes.clear()
+        [self.effected_by_changes_nodes.add(node) for node in self.tree.nodes.walk_forward(changed_nodes)]
+        self.worth_recalculating_nodes = self.nodes_connected_to_output & self.effected_by_changes_nodes
 
-    def walk_on_worth_recalculating_nodes(self, changed_nodes: Iterable[SvNode]) -> Generator[SvNode, None, None]: ...
+    def walk_on_worth_recalculating_nodes(self, changed_nodes: Iterable[SvNode]) -> Generator[SvNode, None, None]:
+        safe_counter = count()
+        maximum_possible_nodes_in_tree = 1000
+        visited_nodes = set()
+        waiting_nodes = set()
+        next_nodes = set(changed_nodes)
+        while (next_nodes or waiting_nodes) and next(safe_counter) < maximum_possible_nodes_in_tree:
+            if next_nodes:
+                current_node = next_nodes.pop()
+                if not self.node_can_be_recalculated(current_node, visited_nodes):
+                    waiting_nodes.add(current_node)
+                    continue
+                else:
+                    yield current_node
+                    visited_nodes.add(current_node)
+                    worth_recalculating_next = current_node.next() & self.worth_recalculating_nodes
+                    next_nodes.update(worth_recalculating_next - waiting_nodes)
+            else:
+                next_nodes.update(waiting_nodes)
+                waiting_nodes.clear()
+        if next(safe_counter) >= maximum_possible_nodes_in_tree:
+            raise RecursionError("Looks like update tree is broken, cant recalculate nodes")
 
     def prepare_walk_after_tree_topology_changes(self):
         self.search_output_nodes()
         self.recalculate_connected_to_output_nodes()
 
-    def search_output_nodes(self): ...
+    def search_output_nodes(self):
+        self.output_nodes.clear()
+        for sv_node in self.tree.nodes:
+            bl_node = HashedBlenderData.get_node(self.tree.id, sv_node.id)
+            if bl_node.bl_idname in OUTPUT_NODE_BL_IDNAMES:
+                self.output_nodes.add(sv_node)
 
-    def recalculate_connected_to_output_nodes(self): ...
+    def recalculate_connected_to_output_nodes(self):
+        self.nodes_connected_to_output.clear()
+        [self.nodes_connected_to_output.add(node) for node in self.tree.nodes.walk_backward(self.output_nodes)]
+
+    def node_can_be_recalculated(self, node: SvNode, visited_nodes: Set[SvNode]) -> bool:
+        # it test whether all nodes before was already calculated
+        worth_recalculating_nodes = node.last() & self.worth_recalculating_nodes
+        not_calculated_nodes_yet_before = worth_recalculating_nodes - visited_nodes
+        return False if not_calculated_nodes_yet_before else True

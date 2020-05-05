@@ -869,7 +869,8 @@ def updateNode(self, context):
     For example a user exposed bpy.prop
     """
     ev.CurrentEvents.add_new_event(ev.BlenderEventsTypes.node_property_update, self)
-    self.process_node(context)
+    if False:  # todo probably delete below
+        self.process_node(context)
 
 
 ##############################################################
