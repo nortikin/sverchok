@@ -423,12 +423,16 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.adjust_sockets()
         updateNode(self, context)
 
+    def fp_updateNode(self, context):
+        self.filename = self.file_pointer.name if self.file_pointer else ""
+        updateNode(self, context)
+
     properties_to_skip_iojson = ['file_pointer']
     # depreciated, but keep to prevent breakage
     filename : StringProperty(default="")
 
     file_pointer: PointerProperty(
-        name="File", poll=lambda s,o: True, type=bpy.types.Text, update=updateNode)
+        name="File", poll=lambda s,o: True, type=bpy.types.Text, update=fp_updateNode)
 
     x : BoolProperty(default=True)
     y : BoolProperty(default=True)
@@ -548,7 +552,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             return
 
         if self.file_pointer:
-            self.filename = ""
+            self.filename = self.file_pointer.name
 
         self.adjust_sockets()
 
@@ -624,19 +628,27 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.outputs['KnotNames'].sv_set(result_names)
 
     def storage_set_data(self, storage):
+        """
+        some verbosity introduced to minimize breaking exists blends/json with this node.
+        """
         profile = storage['profile']
         filename = storage['params']['filename']
 
-        bpy.data.texts.new(filename)
-        bpy.data.texts[filename].clear()
-        bpy.data.texts[filename].write(profile)
+        if filename in bpy.data.texts:
+            self.warning(f"filename {self.filename} found in bpy.data.texts - not creating it")
+        else:
+            text_datablock = bpy.data.texts.new(filename)
+            text_datablock.clear()
+            text_datablock.write(profile)
+            self.filename = text_datablock.name
+            self.file_pointer = text_datablock
 
     def storage_get_data(self, storage):
-        if self.filename and self.filename.strip() in bpy.data.texts:
-            text = bpy.data.texts[self.filename.strip()].as_string()
-            storage['profile'] = text
+
+        if self.file_pointer in bpy.data.texts:
+            storage['profile'] = self.file_pointer.as_string()
         else:
-            self.warning("Unknown filename: {}".format(self.filename))
+            self.warning("No file selected")
 
 classes = [
         SvProfileImportMenu,
