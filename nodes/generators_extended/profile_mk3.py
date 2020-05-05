@@ -636,16 +636,22 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         """
         profile = storage['profile']
         filename = storage['params']['filename']
-        self.info(f"filename |{filename}| found.")
-        text_datablock = self.get_bpy_data_from_name(filename, bpy.data.texts)
-        
-        if text_datablock:
-            self.info(f"filename {filename} found in bpy.data.texts - not creating it")
+        new = True
+        if new:
+            self.info(f"filename |{filename}| found.")
+            text_datablock = self.get_bpy_data_from_name(filename, bpy.data.texts)
+            
+            if text_datablock:
+                self.info(f"filename {filename} found in bpy.data.texts - not creating it")
+            else:
+                text_datablock = bpy.data.texts.new(filename)
+                text_datablock.write(profile)
+            
+            self.file_pointer = text_datablock
         else:
-            text_datablock = bpy.data.texts.new(filename)
-            text_datablock.write(profile)
-        
-        self.file_pointer = text_datablock
+            bpy.data.texts.new(filename)
+            bpy.data.texts[filename].clear()
+            bpy.data.texts[filename].write(profile)            
 
     def storage_get_data(self, storage):
 
