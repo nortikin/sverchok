@@ -541,12 +541,9 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     def sv_update(self):
         '''
-        update analyzes the state of the node and returns if the criteria to start processing
-        are not met.
+        analyze the state of the node and returns if the criteria to start processing are not met.
         '''
-
-        # keeping the file internal for now.
-        if not (self.filename.strip() in bpy.data.texts):
+        if not self.file_pointer or not self.get_bpy_data_from_name(self.filename, bpy.data.texts):
             return
 
         self.adjust_sockets()
