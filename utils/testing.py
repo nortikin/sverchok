@@ -144,7 +144,7 @@ def link_node_tree(reference_blend_path, tree_name=None):
     if tree_name in bpy.data.node_groups:
         raise Exception("Tree named `{}' already exists in current scene".format(tree_name))
     with bpy.data.libraries.load(reference_blend_path, link=True) as (data_src, data_dst):
-        debug("Linked: %s", reference_blend_path)
+        info("---- Linked: %s", reference_blend_path)
         data_dst.node_groups = [tree_name]
 
 def link_text_block(reference_blend_path, block_name):
