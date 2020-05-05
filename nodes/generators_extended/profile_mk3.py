@@ -148,7 +148,7 @@ class SvPrifilizerMk3(bpy.types.Operator):
             a = f'{{{round(x[0], precision)}{letterx}}},{{{round(x[1], precision)}{lettery}}} '
             self.knotselected = True
         else:
-            a = str(round(x[0], precision)) + ',' + str(round(x[1], precision)) + ' '
+            a = f"{round(x[0], precision)},{round(x[1], precision)} "
         return a
     
     def curve_points_count(self):
