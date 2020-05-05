@@ -557,11 +557,17 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.adjust_sockets()
 
     def set_pointer_from_filename(self):
+        """
+        this function is called on post_load handler to upgrade in-place profile mk3
+        if there is nothing to upgrade, then it's a no-op.
+
+        """
         if self.filename and hasattr(self, "file_pointer") and not self.file_pointer:
-             text_datablock = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
-             if text_datablock:
-                 with self.sv_throttle_tree_update():
-                     self.file_pointer = text_datablock
+            text_datablock = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
+            if text_datablock:
+                print(f"upgrading profile node mk3 {self.name}")
+                with self.sv_throttle_tree_update():
+                    self.file_pointer = text_datablock
 
     def get_input(self):
         variables = self.get_variables()
@@ -653,9 +659,11 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             
             self.file_pointer = text_datablock
         else:
-            bpy.data.texts.new(filename)
-            bpy.data.texts[filename].clear()
-            bpy.data.texts[filename].write(profile)            
+            text_datablock = bpy.data.texts.new(filename)  # are these two different files ?
+            bpy.data.texts[filename].clear()               # are these two different files ?
+            print(text_datablock.name, bpy.data.texts[filename].name) 
+            bpy.data.texts[filename].write(profile)
+            self.file_pointer = text_datablock
 
     def storage_get_data(self, storage):
 
