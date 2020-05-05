@@ -423,7 +423,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.adjust_sockets()
         updateNode(self, context)
 
-    # depreciated
+    # depreciated, but keep to prevent breakage
     filename : StringProperty(default="")
 
     file_pointer: PointerProperty(
@@ -451,7 +451,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, 'selected_axis', expand=True)
-        layout.prop_search(self, 'filename', bpy.data, 'texts', text='', icon='TEXT')
+        layout.prop_search(self, 'file_pointer', bpy.data, 'texts', text='', icon='TEXT')
 
         col = layout.column(align=True)
         row = col.row()
@@ -486,11 +486,17 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.outputs.new('SvStringsSocket', "KnotNames")
 
     def load_profile(self):
-        if not self.filename:
+        if not self.file_pointer or self.filename:
             return None
 
-        # we do not store stripped self.filename, else prop_search will shows it as read
-        internal_file = bpy.data.texts[self.filename.strip()]
+        if self.file_pointer:
+            internal_file = self.file_pointer
+        else:
+            internal_file = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
+            if not internal_file:
+                self.error("error in load_profile..fuzzysearch failed to find {self.filename}")
+                return None
+        
         f = internal_file.as_string()
         profile = parse_profile(f)
         return profile
