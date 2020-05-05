@@ -661,6 +661,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         else:
             text_datablock = bpy.data.texts.new(filename)  # are these two different files ?
             bpy.data.texts[filename].clear()               # are these two different files ?
+            # yes they can be if filename is already present in bpy.data.texts
             print(text_datablock.name, bpy.data.texts[filename].name) 
             bpy.data.texts[filename].write(profile)
             self.file_pointer = text_datablock
