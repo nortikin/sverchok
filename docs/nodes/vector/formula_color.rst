@@ -1,5 +1,5 @@
-Color by formula
-========
+Color by Formula
+================
 
 Functionality
 -------------

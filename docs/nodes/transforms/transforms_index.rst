@@ -14,6 +14,7 @@ Transforms
    bend_along_surface
    cast
    deform
+   formula_deform_mk2
    mirror_mk2
    symmetrize
    transform_select

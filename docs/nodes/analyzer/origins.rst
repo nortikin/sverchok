@@ -43,6 +43,11 @@ Parameters
 Usage
 -----
 
+displaying Face normals, for debugging normal directions.
+
+.. image:: https://user-images.githubusercontent.com/619340/80953696-570d8400-8dfc-11ea-905b-641c8a308af0.png
+
+
 Using of corner case of tangent for vertices connected only with one face:
 
 .. image:: https://user-images.githubusercontent.com/28003269/72985862-5bd79a80-3e00-11ea-9b55-1bf9ff814b6a.png
