@@ -145,8 +145,7 @@ class SvPrifilizerMk3(bpy.types.Operator):
             else: letterx = ''
             if self.y: lettery = '+a'
             else: lettery = ''
-            # a = f'{{{round(x[0], precision)}{letterx}}},{{{round(x[1], precision)}{lettery}}} '
-            a = '{'+str(round(x[0], precision))+letterx+'},{'+str(round(x[1], precision))+lettery+'}' + ' '
+            a = f'{{{round(x[0], precision)}{letterx}}},{{{round(x[1], precision)}{lettery}}} '
             self.knotselected = True
         else:
             a = str(round(x[0], precision)) + ',' + str(round(x[1], precision)) + ' '
