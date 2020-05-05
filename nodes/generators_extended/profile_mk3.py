@@ -503,9 +503,9 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 return None
 
             # load file from old blend / json
-            self.sv_setattr_with_throttle("file_pointer", internal_file)
+            self.file_pointer = internal_file
         
-        f = internal_file.as_string()
+        f = self.file_pointer.as_string()
         profile = parse_profile(f)
         return profile
 
