@@ -14,6 +14,18 @@ def has_selection(self, text):
     return not (text.select_end_line == text.current_line and
                 text.current_character == text.select_end_character)
 
+# maybe fuzzy module?
+def fuzzy_compare(named_seeker, named_current):
+    """ 
+    try to find the stored datablock.name with or without extra chars, 
+    if these things fail then there is no compare anyway 
+    """
+    try:
+        if named_seeker == named_current: return True
+        elif named_seeker[3:] == named_current: return True
+    except Exception as err:
+        print(f"Refesh Current Script called but encountered error {err}")
+
 
 class SvNodeRefreshFromTextEditor(bpy.types.Operator):
 
@@ -39,19 +51,8 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
             return {'FINISHED'}
 
         node_types = set([
-            'SvScriptNodeLite', 'SvProfileNode', 'SvTextInNode', 'SvGenerativeArtNode', 'SvSNFunctorB',
-            'SvRxNodeScript', 'SvProfileNodeMK2', 'SvVDExperimental', 'SvProfileNodeMK3'])
-
-        def fuzzy_compare(named_seeker, named_current):
-            """ 
-            try to find the stored datablock.name with or without extra chars, 
-            if these things fail then there is no compare anyway 
-            """
-            try:
-                if named_seeker == named_current: return True
-                elif named_seeker[3:] == named_current: return True
-            except Exception as err:
-                print(f"Refesh Current Script called but encountered error {err}")
+            'SvScriptNodeLite', 'SvTextInNodeMK2', 'SvGenerativeArtNode', 
+            'SvSNFunctorB', 'SvVDExperimental', 'SvProfileNodeMK3'])
 
         for ng in ngs:
 
@@ -62,7 +63,13 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
 
             for n in nodes:
 
-                if hasattr(n, "script_name") and fuzzy_compare(n.script_name, text_file_name) and not (n.bl_idname == 'SvSNFunctorB'):
+                if n.bl_idname == 'SvSNFunctorB':
+                    if n.script_pointer == edit_text:
+                        n.handle_reload(context)
+                        n.process_node(context)
+                        return {'FINISHED'}
+
+                elif hasattr(n, "script_name") and fuzzy_compare(n.script_name, text_file_name):
                     try:
                         n.load()
                         n.process_node(context)
@@ -76,7 +83,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                         return {'CANCELLED'}
 
                 elif hasattr(n, "text_file_name") and fuzzy_compare(n.text_file_name, text_file_name):
-                    pass  # no nothing for profile node, just update ng, could use break...
+                    pass  # do nothing for profile node, just update ng, could use break...
 
                 elif hasattr(n, "current_text") and fuzzy_compare(n.current_text, text_file_name):
                     n.reload()
@@ -85,12 +92,6 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                     with n.sv_throttle_tree_update():
                         if n.custom_shader_location == text_file_name:
                             n.custom_shader_location = n.custom_shader_location
-
-                elif n.bl_idname == 'SvSNFunctorB':
-                    if n.script_pointer == edit_text:
-                        n.handle_reload(context)
-                        n.process_node(context)
-                        return {'FINISHED'}
 
             # update node group with affected nodes
             ng.sv_update()
