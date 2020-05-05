@@ -19,7 +19,7 @@
 import os
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatProperty, IntProperty
+from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatProperty, IntProperty, PointerProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -145,7 +145,7 @@ class SvPrifilizerMk3(bpy.types.Operator):
             else: letterx = ''
             if self.y: lettery = '+a'
             else: lettery = ''
-            a = '{'+str(round(x[0], precision))+letterx+'}' + ',' + '{'+str(round(x[1], precision))+lettery+'}' + ' '
+            a = '{'+str(round(x[0], precision))+letterx+'},{'+str(round(x[1], precision))+lettery+'}' + ' '
             self.knotselected = True
         else:
             a = str(round(x[0], precision)) + ',' + str(round(x[1], precision)) + ' '
@@ -423,7 +423,11 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.adjust_sockets()
         updateNode(self, context)
 
-    filename : StringProperty(default="", update=on_update)
+    # depreciated
+    filename : StringProperty(default="")
+
+    file_pointer: PointerProperty(
+        name="File", poll=lambda s,o: True, type=bpy.types.Text, update=updateNode)
 
     x : BoolProperty(default=True)
     y : BoolProperty(default=True)
