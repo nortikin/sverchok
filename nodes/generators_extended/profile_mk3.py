@@ -557,7 +557,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.adjust_sockets()
 
     def set_pointer_from_filename(self):
-        if self.filename and not self.file_pointer:
+        if self.filename and hasattr(self, "file_pointer") and not self.file_pointer:
              text_datablock = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
              if text_datablock:
                  with self.sv_throttle_tree_update():
