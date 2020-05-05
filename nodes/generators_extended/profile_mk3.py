@@ -640,7 +640,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         """
         profile = storage['profile']
         filename = storage['params']['filename']
-        new = True
+        new = False
         if new:
             self.info(f"filename |{filename}| found.")
             text_datablock = self.get_bpy_data_from_name(filename, bpy.data.texts)
