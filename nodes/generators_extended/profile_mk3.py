@@ -546,6 +546,9 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if not self.file_pointer or not self.get_bpy_data_from_name(self.filename, bpy.data.texts):
             return
 
+        if self.file_pointer:
+            self.filename = ""
+
         self.adjust_sockets()
 
     def get_input(self):
