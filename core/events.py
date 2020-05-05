@@ -602,6 +602,38 @@ class SvNodesCollection:
         sv_node = self._nodes[node_id]
         sv_node.is_outdated = True
 
+    @staticmethod
+    def walk_forward(from_nodes: Iterable[SvNode]) -> Generator[SvNode, None, None]:
+        #  1----3
+        #  \  /
+        # 4-2
+        # walk is unordered, it means that from one you can get to 3 and then to 2
+        # you will never get to 4 moving forward from 1 and to 1 moving from 4
+        visited_nodes = set()
+        next_nodes = set()
+        [next_nodes.update(node.next()) for node in from_nodes]
+        while next_nodes:
+            current_node = next_nodes.pop()
+            yield current_node
+            visited_nodes.add(current_node)
+            next_nodes.update(current_node.next() - visited_nodes)
+
+    @staticmethod
+    def walk_backward(from_nodes: Iterable[SvNode]) -> Generator[SvNode, None, None]:
+        #  1----3
+        #  \  /
+        #   2--4
+        # walk is unordered, it means that from 3 you can get to 1 and then to 2
+        # you will never get to 4 moving forward from 3 and to 3 moving from 4
+        visited_nodes = set()
+        next_nodes = set()
+        [next_nodes.update(node.last()) for node in from_nodes]
+        while next_nodes:
+            current_node = next_nodes.pop()
+            yield current_node
+            visited_nodes.add(current_node)
+            next_nodes.update(current_node.last() - visited_nodes)
+
     def __eq__(self, other):
         return self._nodes.keys() == other
 
@@ -638,11 +670,23 @@ class SvNode:
         self.inputs: Dict[str, SvLink] = dict()
         self.outputs: Dict[str, SvLink] = dict()
 
+        #statistic
+        self.update_total = 0
+        self.last_update = None
+        self.update_time = None
+        self.error = None
+
     def free_link(self, sv_link: SvLink):
         if sv_link.id in self.inputs:
             del self.inputs[sv_link.id]
         if sv_link.id in self.outputs:
             del self.outputs[sv_link.id]
+
+    def next(self) -> Set[SvNode]:
+        return {output_link.to_node for output_link in self.outputs.values()}
+
+    def last(self) -> Set[SvNode]:
+        return {input_link.from_node for input_link in self.inputs.values()}
 
     def __repr__(self):
         return f'<SvNode="{self.name}">'
@@ -789,3 +833,45 @@ def get_blender_tree(tree_id: str) -> Union[SverchCustomTree, NodeTree]:
             if ng.tree_id == tree_id:
                 return ng
     raise LookupError(f"Looks like some node tree has disappeared, or its ID has changed")
+
+
+# -------------------------------------------------------------------------
+# ---------This part should be moved to separate module later--------------
+
+
+OUTPUT_NODE_BL_IDNAMES = {
+    'SvVDExperimental', 'SvStethoscopeNodeMK2'
+}
+
+
+class WalkSvTree:
+    # https://github.com/nortikin/sverchok/issues/3058
+    def __init__(self, sv_tree: SvTree):
+        self.tree: SvTree = sv_tree
+
+        #  1----2-----3-----4
+        #            / \
+        #  8---9----5   6---7
+        #     /
+        #   10
+        # 4 nod id output node because it is  in OUTPUT_NODE_BL_IDNAMES set
+        # in this case the 6,7 nodes will never be calculated
+        # 2,10 are changed nodes by their parameters
+        # the goal is visit 10-9-5-2-3-4 nodes in this order
+
+        self.output_nodes: Set[SvNode] = set()  # 4 node
+        # the intersection of two sets below gives set of nodes which should be recalculated
+        self.nodes_connected_to_output: Set[SvNode] = set()  # all nodes without 6, 7 (in the example)
+        self.effected_by_changes_nodes: Set[SvNode] = set()  # all nodes without 1, 8 (in the example)
+
+    def recalculate_effected_by_changes_nodes(self, changed_nodes: Iterable[SvNode]): ...
+
+    def walk_on_worth_recalculating_nodes(self, changed_nodes: Iterable[SvNode]) -> Generator[SvNode, None, None]: ...
+
+    def prepare_walk_after_tree_topology_changes(self):
+        self.search_output_nodes()
+        self.recalculate_connected_to_output_nodes()
+
+    def search_output_nodes(self): ...
+
+    def recalculate_connected_to_output_nodes(self): ...
