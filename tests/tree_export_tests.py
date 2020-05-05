@@ -25,7 +25,7 @@ class ProfileExportTest(ReferenceTreeTestCase):
 
     def test_profile_export(self):
         export_result = create_dict_of_tree(self.tree)
-        #self.store_reference_json("profile.json", export_result)
+        # self.store_reference_json("__profile.json", export_result)
         self.assert_json_equals_file(export_result, "profile.json")
 
 class MeshExprExportTest(ReferenceTreeTestCase):

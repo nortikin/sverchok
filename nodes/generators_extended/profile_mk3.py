@@ -681,9 +681,8 @@ classes = [
     ]
 
 def register():
-    for name in classes:
-        bpy.utils.register_class(name)
+    _ = [register_class(cls) for cls in classes]
+
 
 def unregister():
-    for name in reversed(classes):
-        bpy.utils.unregister_class(name)
+    _ = [unregister_class(cls) for cls in reversed(classes)]
