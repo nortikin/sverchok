@@ -19,8 +19,7 @@
 import os
 
 import bpy
-from bpy.utils import register_class, unregister_class
-from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatProperty, IntProperty, PointerProperty
+from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatProperty, IntProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -146,10 +145,10 @@ class SvPrifilizerMk3(bpy.types.Operator):
             else: letterx = ''
             if self.y: lettery = '+a'
             else: lettery = ''
-            a = f'{{{round(x[0], precision)}{letterx}}},{{{round(x[1], precision)}{lettery}}} '
+            a = '{'+str(round(x[0], precision))+letterx+'}' + ',' + '{'+str(round(x[1], precision))+lettery+'}' + ' '
             self.knotselected = True
         else:
-            a = f"{round(x[0], precision)},{round(x[1], precision)} "
+            a = str(round(x[0], precision)) + ',' + str(round(x[1], precision)) + ' '
         return a
     
     def curve_points_count(self):
@@ -424,17 +423,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.adjust_sockets()
         updateNode(self, context)
 
-    def fp_updateNode(self, context):
-        self.filename = self.file_pointer.name if self.file_pointer else ""
-        self.adjust_sockets()
-        updateNode(self, context)
-
-    properties_to_skip_iojson = ['file_pointer']
-    # depreciated, but keep to prevent breakage
-    filename : StringProperty(default="")
-
-    file_pointer: PointerProperty(
-        name="File", poll=lambda s,o: True, type=bpy.types.Text, update=fp_updateNode)
+    filename : StringProperty(default="", update=on_update)
 
     x : BoolProperty(default=True)
     y : BoolProperty(default=True)
@@ -458,7 +447,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, 'selected_axis', expand=True)
-        layout.prop_search(self, 'file_pointer', bpy.data, 'texts', text='', icon='TEXT')
+        layout.prop_search(self, 'filename', bpy.data, 'texts', text='', icon='TEXT')
 
         col = layout.column(align=True)
         row = col.row()
@@ -493,23 +482,12 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.outputs.new('SvStringsSocket', "KnotNames")
 
     def load_profile(self):
-        if not self.file_pointer:
-            # self.info("returning early from load_profile")
+        if not self.filename:
             return None
 
-        if self.file_pointer:
-            # self.info(f'file_pointer.name {self.file_pointer.name}')
-            internal_file = self.file_pointer
-        else:
-            internal_file = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
-            if not internal_file:
-                self.error(f"error in load_profile..fuzzysearch failed to find {self.filename}")
-                return None
-
-            self.file_pointer = internal_file
-        
-        self.info(f'profile node, good to go! {internal_file}')
-        f = self.file_pointer.as_string()
+        # we do not store stripped self.filename, else prop_search will shows it as read
+        internal_file = bpy.data.texts[self.filename.strip()]
+        f = internal_file.as_string()
         profile = parse_profile(f)
         return profile
 
@@ -540,8 +518,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     def adjust_sockets(self):
         variables = self.get_variables()
-
-        self.info("adjust_sockets:" + str(variables))
+        #self.debug("adjust_sockets:" + str(variables))
         #self.debug("inputs:" + str(self.inputs.keys()))
         for key in self.inputs.keys():
             if key not in variables:
@@ -554,30 +531,15 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     def sv_update(self):
         '''
-        analyze the state of the node and returns if the criteria to start processing are not met.
+        update analyzes the state of the node and returns if the criteria to start processing
+        are not met.
         '''
-        if not "KnotNames" in self.outputs:
+
+        # keeping the file internal for now.
+        if not (self.filename.strip() in bpy.data.texts):
             return
 
-        if not self.file_pointer:
-            self.set_pointer_from_filename()
-            if not self.file_pointer:
-                return
-
         self.adjust_sockets()
-
-    def set_pointer_from_filename(self):
-        """
-        this function is called on post_load handler to upgrade in-place profile mk3
-        if there is nothing to upgrade, then it's a no-op.
-
-        """
-        if self.filename and hasattr(self, "file_pointer") and not self.file_pointer:
-            text_datablock = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
-            if text_datablock:
-                print(f"upgrading profile node mk3 {self.name}")
-                with self.sv_throttle_tree_update():
-                    self.file_pointer = text_datablock
 
     def get_input(self):
         variables = self.get_variables()
@@ -651,37 +613,19 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.outputs['KnotNames'].sv_set(result_names)
 
     def storage_set_data(self, storage):
-        """
-        some verbosity introduced to minimize breaking exists blends/json with this node.
-        """
         profile = storage['profile']
         filename = storage['params']['filename']
-        new = False
-        if new:
-            self.info(f"filename |{filename}| found.")
-            text_datablock = self.get_bpy_data_from_name(filename, bpy.data.texts)
-            
-            if text_datablock:
-                self.info(f"filename {filename} found in bpy.data.texts - not creating it")
-            else:
-                text_datablock = bpy.data.texts.new(filename)
-                text_datablock.write(profile)
-            
-            self.file_pointer = text_datablock
-        else:
-            text_datablock = bpy.data.texts.new(filename)  # are these two different files ?
-            bpy.data.texts[filename].clear()               # are these two different files ?
-            # yes they can be if filename is already present in bpy.data.texts
-            print(text_datablock.name, bpy.data.texts[filename].name) 
-            bpy.data.texts[filename].write(profile)
-            self.file_pointer = text_datablock
+
+        bpy.data.texts.new(filename)
+        bpy.data.texts[filename].clear()
+        bpy.data.texts[filename].write(profile)
 
     def storage_get_data(self, storage):
-
-        if self.file_pointer:
-            storage['profile'] = self.file_pointer.as_string()
+        if self.filename and self.filename.strip() in bpy.data.texts:
+            text = bpy.data.texts[self.filename.strip()].as_string()
+            storage['profile'] = text
         else:
-            self.warning("No file selected")
+            self.warning("Unknown filename: {}".format(self.filename))
 
 classes = [
         SvProfileImportMenu,
@@ -691,8 +635,9 @@ classes = [
     ]
 
 def register():
-    _ = [register_class(cls) for cls in classes]
-
+    for name in classes:
+        bpy.utils.register_class(name)
 
 def unregister():
-    _ = [unregister_class(cls) for cls in reversed(classes)]
+    for name in reversed(classes):
+        bpy.utils.unregister_class(name)
