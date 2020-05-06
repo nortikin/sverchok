@@ -197,6 +197,7 @@
     SvExMinimalVectorFieldNode
     SvExNoiseVectorFieldNode
     ---
+    SvScalarFieldCurveMapNode
     SvExScalarFieldMathNode
     SvExMergeScalarFieldsNode
     SvExVectorFieldMathNode

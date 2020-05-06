@@ -1033,3 +1033,17 @@ class SvVoronoiVectorField(SvVectorField):
         points = np.vectorize(self.evaluate, signature='(),(),()->(3)')(xs,ys,zs).T
         return points[0], points[1], points[2]
 
+class SvScalarFieldCurveMap(SvVectorField):
+    def __init__(self, scalar_field, curve):
+        self.scalar_field = scalar_field
+        self.curve = curve
+
+    def evaluate(self, x, y, z):
+        t = self.scalar_field.evaluate(x,y,z)
+        return self.curve.evaluate(t)
+    
+    def evaluate_grid(self, xs, ys, zs):
+        ts = self.scalar_field.evaluate_grid(xs, ys, zs)
+        vectors = self.curve.evaluate_array(ts)
+        return vectors[:,0], vectors[:,1], vectors[:,2]
+
