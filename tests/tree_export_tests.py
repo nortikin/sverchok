@@ -2,6 +2,7 @@
 import unittest
 import json
 
+from sverchok.core import upgrade_nodes
 from sverchok.utils.testing import *
 from sverchok.utils.sv_IO_panel_tools import create_dict_of_tree
 
@@ -20,6 +21,12 @@ class ProfileExportTest(ReferenceTreeTestCase):
     def setUp(self):
         # We have to load text block as well
         self.link_text_block("Profile.txt")
+        
+        try:
+            upgrade_nodes.upgrade_nodes(self.tree)
+        except:
+            traceback.print_exc()
+
         self.maxDiff = None
         super().setUp()
 
