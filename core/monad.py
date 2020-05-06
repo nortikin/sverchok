@@ -603,12 +603,12 @@ class SvGroupNodeExp:
         cA = split.column()
         cB = split.column()
         cD = split.column()
-        cA.active = all(not self.loop_me and not self.genetic_algo_me)
+        cA.active = not self.loop_me and not self.genetic_algo_me
         cA.prop(self, "vectorize", toggle=True)
-        cB.active = all(self.vectorize and not self.genetic_algo_me)
+        cB.active = self.vectorize and not self.genetic_algo_me
         cB.prop(self, "split", toggle=True)
-        cD.active = all(not self.loop_me and not self.vectorize)
-        row.prop(self, "genetic_algo_me", text="GA", toggle=True)
+        cD.active = not self.loop_me and not self.vectorize
+        cD.prop(self, "genetic_algo_me", text="GA", toggle=True)
         
         c2 = layout.column()
         row = c2.row(align=True)
@@ -770,14 +770,19 @@ class SvGroupNodeExp:
         self.apply_output(sockets_in)
 
 
+    # ------------- Genetic Algorithm approach starts here
+
+
     def process_genetic_algorithm(self, iterations_remaining):
-        # here i will call the GA processor from utils.
-        # Get "velues" + "criterias 0...1" from monad. It could be two lists
-        # Out mutated next generation "values" to monad for loop process
-        # Question is - resulting data (mesh/NURBS) will be processed inside tree somehow.
-        # Also should be instructions for user (grasshopper users allready know)
-        # for now it i preparations only
-        # PR here https://github.com/nortikin/sverchok/issues/3160
+        """
+        here i will call the GA processor from utils.
+        Get "velues" + "criterias 0...1" from monad. It could be two lists
+        Out mutated next generation "values" to monad for loop process
+        Question is - resulting data (mesh/NURBS) will be processed inside tree somehow.
+        Also should be instructions for user (grasshopper users allready know)
+        for now it i preparations only
+        PR here https://github.com/nortikin/sverchok/issues/3160
+        """
         sockets_in = [i.sv_get() for i in self.inputs]
 
         monad = self.monad
@@ -837,6 +842,7 @@ class SvGroupNodeExp:
 
 def register():
     bpy.utils.register_class(SverchGroupTree)
+    
 
 def unregister():
     bpy.utils.unregister_class(SverchGroupTree)

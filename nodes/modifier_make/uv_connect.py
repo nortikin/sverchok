@@ -76,6 +76,7 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "cap_V", text="V", toggle=True)
 
         row = col.row(align=True)
+        row.label(text='Connect')
         row.prop(self, "polygons", text="polygons", expand=True)
         
         row = col.row(align=True)
