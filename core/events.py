@@ -23,7 +23,7 @@ from itertools import takewhile, count
 from contextlib import contextmanager
 import traceback
 from operator import getitem
-from time import time
+from time import time, strftime
 
 from bpy.types import Node, NodeTree, NodeLink
 import bpy
@@ -215,6 +215,7 @@ class EventsWave:
             # Remove: Nodes=0, Links = 0-n, Reroutes = 0-n
             # Tools: F, Ctrl + RMB, Shift + RMB, manual unlink, python (un)link
             self.links_was_added = (len(self.current_tree.links) - len(self.previous_tree.links)) > 0
+            # todo it has appeared that relinking also is possible via Blender API and such fast tests can`t detect it.
             self.links_was_removed = (len(self.current_tree.links) - len(self.previous_tree.links)) < 0
             self.reroutes_was_added = (len(self.current_tree.nodes) - len(self.previous_tree.nodes)) > 0
             self.reroutes_was_removed = (len(self.current_tree.nodes) - len(self.previous_tree.nodes)) < 0
@@ -436,7 +437,6 @@ class CurrentEvents:
                                                BlenderEventsTypes.tree_update,
                                                BlenderEventsTypes.node_property_update]:
             walker.prepare_walk_after_tree_topology_changes()
-        walker.recalculate_effected_by_changes_nodes(changed_sv_nodes)
         for recalculation_node in walker.walk_on_worth_recalculating_nodes(changed_sv_nodes):
             bl_node = hashed_tree.nodes[recalculation_node.id]
             with cls.record_node_statistics(bl_node) as node:
@@ -474,6 +474,7 @@ class CurrentEvents:
             traceback.print_exc()
         finally:
             node.updates_total += 1
+            node.last_update = strftime("%H:%M:%S")
             node.update_time = int((time() - start_time) * 1000)
             node.error = repr(exception) if exception else ''
 
@@ -896,17 +897,13 @@ class WalkSvTree:
         self.effected_by_changes_nodes: Set[SvNode] = set()  # all nodes without 1, 8 (in the example)
         self.worth_recalculating_nodes: Set[SvNode] = set()  # all nodes without 6, 7, 1, 8
 
-    def recalculate_effected_by_changes_nodes(self, changed_nodes: Iterable[SvNode]):
-        self.effected_by_changes_nodes.clear()
-        [self.effected_by_changes_nodes.add(node) for node in self.tree.nodes.walk_forward(changed_nodes)]
-        self.worth_recalculating_nodes = self.nodes_connected_to_output & self.effected_by_changes_nodes
-
     def walk_on_worth_recalculating_nodes(self, changed_nodes: Iterable[SvNode]) -> Generator[SvNode, None, None]:
+        self.recalculate_effected_by_changes_nodes(changed_nodes)
         safe_counter = count()
         maximum_possible_nodes_in_tree = 1000
         visited_nodes = set()
         waiting_nodes = set()
-        next_nodes = set(changed_nodes)
+        next_nodes = set(changed_nodes) & self.worth_recalculating_nodes
         while (next_nodes or waiting_nodes) and next(safe_counter) < maximum_possible_nodes_in_tree:
             if next_nodes:
                 current_node = next_nodes.pop()
@@ -938,6 +935,11 @@ class WalkSvTree:
     def recalculate_connected_to_output_nodes(self):
         self.nodes_connected_to_output.clear()
         [self.nodes_connected_to_output.add(node) for node in self.tree.nodes.walk_backward(self.output_nodes)]
+
+    def recalculate_effected_by_changes_nodes(self, changed_nodes: Iterable[SvNode]):
+        self.effected_by_changes_nodes.clear()
+        [self.effected_by_changes_nodes.add(node) for node in self.tree.nodes.walk_forward(changed_nodes)]
+        self.worth_recalculating_nodes = self.nodes_connected_to_output & self.effected_by_changes_nodes
 
     def node_can_be_recalculated(self, node: SvNode, visited_nodes: Set[SvNode]) -> bool:
         # it test whether all nodes before was already calculated

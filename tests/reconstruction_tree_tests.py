@@ -65,3 +65,9 @@ class WalkTreeTest(SverchokTestCase):
         self.assertEqual(visited_nodes, set([self.tree.nodes[str(i)] for i in [9, 5, 2, 3]]))
         visited_nodes.add(next(walker))
         self.assertEqual(visited_nodes, set([self.tree.nodes[str(i)] for i in [9, 5, 2, 3, 4]]))
+
+        walker = self.walk_tree.walk_on_worth_recalculating_nodes([self.tree.nodes['6']])
+        self.assertRaises(StopIteration, next, walker)
+
+        walker = self.walk_tree.walk_on_worth_recalculating_nodes([self.tree.nodes['4']])
+        self.assertEqual(next(walker), self.tree.nodes['4'])

@@ -28,7 +28,7 @@ class NodeSettingsPanel(bpy.types.Panel):
     def draw(self, context):
         node: Union[bpy.types.Node, nt.SverchCustomTreeNode] = context.active_node
         self.layout.label(text=f"Recalculations number: {node.updates_total}")
-        self.layout.label(text=f"Last update:")
+        self.layout.label(text=f"Last update: {node.last_update}")
         self.layout.label(text=f"Updating time: {node.update_time} ms")
         self.layout.label(text=f"Errors: {node.error or ''}")
 
