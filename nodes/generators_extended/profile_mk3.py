@@ -419,10 +419,6 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         items=axis_options, update=updateNode, name="Type of axis",
         description="offers basic axis output vectors X|Y|Z", default="Z")
 
-    def on_update(self, context):
-        self.adjust_sockets()
-        updateNode(self, context)
-
     def pointer_update(self, context):
         if self.file_pointer:
             self.filename = self.file_pointer.name
@@ -640,6 +636,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             self.warning("Unknown filename: {}".format(self.filename))
 
     def set_pointer_from_filename(self):
+        """ this function upgrades older versions of ProfileMK3 to the version that has self.file_pointer """
         if hasattr(self, "file_pointer") and not self.file_pointer:
             text = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
             if text:
