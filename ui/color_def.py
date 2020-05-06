@@ -31,7 +31,7 @@ themes = [("default_theme", "Default", "Default"),
 
 
 default_theme = {
-    "Viz": (1, 0.3, 0),
+    "Viz": (1, 0.589, 0.214),
     "Text": (0.5, 0.5, 1),
     "Scene": (0, 0.5, 0.2),
     "Layout": (0.674, 0.242, 0.363),
