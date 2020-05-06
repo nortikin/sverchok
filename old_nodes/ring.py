@@ -107,6 +107,8 @@ class SvRingNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Ring'
     bl_icon = 'PROP_CON'
 
+    replacement_nodes = [('SvRingNodeMK2', None, dict(rp="p"))]
+
     def update_mode(self, context):
         # switch radii input sockets (R,r) <=> (eR,iR)
         if self.mode == 'EXT_INT':

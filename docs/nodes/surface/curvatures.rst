@@ -1,23 +1,22 @@
-Surface Gauss Curvature
-=======================
+Surface Curvatures
+==================
 
 Functionality
 -------------
 
-This node calculates the Gaussian curvature (see Wikipedia_ article) at the specified point of the surface.
+This node calculates several types of information about surface curvature:
 
-.. _Wikipedia: https://en.wikipedia.org/wiki/Gaussian_curvature
+* Principal curvature values
+* Principal curvature directions
+* Gauss curvature
+* Mean curvature
+* Matrix based on principal curvature directions and surface normal.
 
-Here are the main facts about Gaussian curvature that are usually useful:
+You can refer to Wikipedia_ for more detailed information about these terms.
 
-* For points where the surface is shaped like sphere, Gaussian curvature is positive;
-* For "saddle points" of the surface, Gaussian curvature is negative;
-* If the surface is "flat" at the given point in one or two directions, then Gaussian curvature is zero;
-* The more "bent" the surface is at the given point is, the bigger the absolute value of Gaussian curvature will be.
+.. _Wkikpedia: https://en.wikipedia.org/wiki/Differential_geometry_of_surfaces
 
-Note that the calculation is done by numerical differentiation, so it may be not very precise in some cases.
-
-This node is a simpler version of the "Surface Curvatures" node.
+If you need only Gaussian curvature value, you can as well use simpler "Surface Gauss Curvature" node.
 
 Inputs
 ------
@@ -76,29 +75,53 @@ This node has the following parameters:
 
    The default mode is **As is**.
 
+* **Sort curvatures**. If checked, then the node will always make sure that
+  curvature values are calculated so that **Curvature1** value is less than
+  **Curvature2**. If not checked, this will not be guaranteed. For many simple
+  surfaces, the order of curvature values calculated without this parameter is
+  always the same. Checked by default.
+
 Outputs
 -------
 
-This node has the following output:
+This node has the following outputs:
 
-* **Curvature**. The calculated curvature value.
+* **Curvature1**. The first principal curvature value. If **Sort curvatures**
+  parameter is checked, then this will be always the smaller principal
+  curvature value.
+* **Curvature2**. The second principal curvature value. If **Sort curvatures**
+  parameter is checked, then this will be always the bigger principal curvature
+  value.
+* **Dir1**. The first principal curvature direction - one which corresponds to **Curvature1**.
+* **Dir2**. The second principal curvature direction - one which corresponds to **Curvature2**.
+* **Gauss*. Gauss curvature value.
+* **Mean**. Mean curvature value.
+* **Matrix**. A matrix composed from principal curvature directions. It's X
+  axis is looking along **Dir1**, Y axis is looking along **Dir2** and Z axis
+  is looking along the surface's normal.
 
 Examples of usage
 -----------------
 
-Gaussian curvature of plane is zero at any point:
+Use first principal curvature value for vertex colors:
 
-.. image:: https://user-images.githubusercontent.com/284644/80866465-3e8c5500-8ca8-11ea-88de-01b281f3b608.png
+.. image:: https://user-images.githubusercontent.com/284644/80917635-d9089900-8d79-11ea-982e-ccde3742ffc6.png
 
-Gaussian curvature of sphere of the radius R is `1/R^2` at any point:
+The same with second principal curvature value:
 
-.. image:: https://user-images.githubusercontent.com/284644/80866466-3fbd8200-8ca8-11ea-94ff-627e0215cdd8.png
+.. image:: https://user-images.githubusercontent.com/284644/80917636-d9a12f80-8d79-11ea-9563-a77c3447abf5.png
 
-Use Gaussian curvature to color vertices of toroidal surface (yellowish for positive curvature, black for negative):
+Gaussian curvature:
 
-.. image:: https://user-images.githubusercontent.com/284644/80866468-40561880-8ca8-11ea-8504-752c07f19879.png
+.. image:: https://user-images.githubusercontent.com/284644/80917638-da39c600-8d79-11ea-8243-d74ab1f7b7b5.png
 
-Similar for another formula-defined surface (purple for positive curvature, yellow for negative, cyan for nearly zero):
+Use Matrix output to place Suzannes on the surface:
 
-.. image:: https://user-images.githubusercontent.com/284644/80866603-03d6ec80-8ca9-11ea-8d00-60e48e4a1f85.png
+.. image:: https://user-images.githubusercontent.com/284644/80917634-d8700280-8d79-11ea-99e3-0d4d065d639a.png
+
+Here Suzannes are looking along the second principal curvature direction.
+
+Use Matrix output to place cubes on the surface:
+
+.. image:: https://user-images.githubusercontent.com/284644/80917640-da39c600-8d79-11ea-8e5e-2cfd3e7a0806.png
 

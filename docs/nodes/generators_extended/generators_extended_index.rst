@@ -15,7 +15,7 @@ Generators Extended
    profile_mk3
    regular_solid
    mesh_eval
-   ring
+   ring_mk2
    smooth_lines
    ellipse_mk2
    torus_knot_mk2

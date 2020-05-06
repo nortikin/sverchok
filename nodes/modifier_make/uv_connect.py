@@ -60,10 +60,10 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.label(text='Dir')
+        row.label(text='Direction')
         row.prop(self, "dir_check", expand=True)
 
-        col.separator()
+        #col.separator()
         
         row = col.row(align=True)
         row.label(text='Cycle')
@@ -76,10 +76,13 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "cap_V", text="V", toggle=True)
 
         row = col.row(align=True)
+        row.label(text='Make')
         row.prop(self, "polygons", text="polygons", expand=True)
-        
-        row = col.row(align=True)
-        row.prop(self, "slice_check", text="slice")
+        if self.polygons == "Pols":
+            row = col.row(align=True)
+            row.label(text='Slice')
+            row.prop(self, "slice_check", text="Slice", toggle=True)
+            row.label(text=' ')
 
     def connect(self, vers, dirn, ciclU, ciclV, clev, polygons, slice, capU, capV):
         ''' doing all job to connect '''
