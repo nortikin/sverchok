@@ -33,7 +33,11 @@ def get_output_socket_id(socket):
         else:
             return None, None
     else:
-        return socket.socket_id, socket.node.node_id
+        if hasattr(socket, 'socket_id'):
+            return socket.socket_id, socket.node.node_id
+        else:
+            print(socket, type(socket))
+            return None, None
 
 
 def get_new_linked_nodes(new_sv_links, before_sv_links, before_output_sockets):
