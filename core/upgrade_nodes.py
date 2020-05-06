@@ -188,5 +188,5 @@ def upgrade_nodes(ng):
                     pass
 
     # this dict can call a function on the node, during the execution of postload handler
-    # for node in [node for node in ng.nodes if node.bl_idname in upgrade_pointer_dict]:
-    #    getattr(node, upgrade_pointer_dict[node.bl_idname])()
+    for node in [node for node in ng.nodes if node.bl_idname in upgrade_pointer_dict]:
+        getattr(node, upgrade_pointer_dict[node.bl_idname])()

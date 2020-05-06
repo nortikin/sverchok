@@ -19,7 +19,7 @@
 import os
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatProperty, IntProperty
+from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatProperty, IntProperty, PointerProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -426,6 +426,8 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def pointer_update(self, context):
         if self.file_pointer:
             self.filename = self.file_pointer.name
+        else:
+            self.filename = ""
         self.adjust_sockets()
         updateNode(self, context)
 
@@ -634,6 +636,12 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             storage['profile'] = text
         else:
             self.warning("Unknown filename: {}".format(self.filename))
+
+    def set_pointer_from_filename(self):
+        if hasattr(self, "file_pointer") and not self.file_pointer:
+            text = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
+            if text:
+                self.file_pointer = text
 
 classes = [
         SvProfileImportMenu,
