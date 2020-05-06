@@ -94,6 +94,12 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                         if n.custom_shader_location == text_file_name:
                             n.custom_shader_location = n.custom_shader_location
 
+                elif n.bl_idname == 'SvProfileNodeMK3':
+                    print('should trigger!')
+                    if n.filename and fuzzy_compare(n.filename, text_file_name):
+                        print('should trigger!...did it?')
+                        n.file_pointer = n.file_pointer
+
             # update node group with affected nodes
             ng.sv_update()
 
