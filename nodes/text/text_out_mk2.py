@@ -134,7 +134,15 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         elif self.text_mode == 'SV':
             self.inputs.new('SvStringsSocket', 'Data')
 
+    def pointer_update(self, context):
+        if self.file_pointer:
+            self.text = self.file_pointer.name
+        else:
+            self.text = ""
+        # need to do other stuff?
+
     text: StringProperty()
+    file_pointer: bpy.props.PointerProperty(type=bpy.types.Text, poll=lambda s, o: True, update=pointer_update)
 
     text_mode: EnumProperty(items=text_modes, default='CSV', update=change_mode, name="Text format")
     csv_dialect: EnumProperty(items=csv_dialects, default='excel', name="Dialect")
@@ -158,7 +166,7 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         col.prop(self, 'autodump', toggle=True)
         row = col.row(align=True)
-        row.prop_search(self, 'text', bpy.data, 'texts', text="Write")
+        row.prop_search(self, 'file_pointer', bpy.data, 'texts', text="Write")
         row.operator("text.new", icon="ZOOM_IN", text='')
 
         row = col.row(align=True)
@@ -210,6 +218,13 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         elif self.text_mode == 'SV':
             out = get_sv_data(node=self)
         return out
+
+    def set_pointer_from_filename(self):
+        """ this function upgrades older versions of ProfileMK3 to the version that has self.file_pointer """
+        if hasattr(self, "file_pointer") and not self.file_pointer:
+            text = self.get_bpy_data_from_name(self.text, bpy.data.texts)
+            if text:
+                self.file_pointer = text
 
 
 def register():
