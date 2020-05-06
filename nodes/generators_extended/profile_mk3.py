@@ -423,7 +423,15 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.adjust_sockets()
         updateNode(self, context)
 
-    filename : StringProperty(default="", update=on_update)
+    def pointer_update(self, context):
+        if self.file_pointer:
+            self.filename = self.file_pointer.name
+        self.adjust_sockets()
+        updateNode(self, context)
+
+    filename : StringProperty(default="")
+    file_pointer: PointerProperty(
+        type=bpy.types.Text, poll=lambda s, o: True, update=pointer_update)
 
     x : BoolProperty(default=True)
     y : BoolProperty(default=True)
@@ -447,7 +455,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, 'selected_axis', expand=True)
-        layout.prop_search(self, 'filename', bpy.data, 'texts', text='', icon='TEXT')
+        layout.prop_search(self, 'file_pointer', bpy.data, 'texts', text='', icon='TEXT')
 
         col = layout.column(align=True)
         row = col.row()
