@@ -75,18 +75,18 @@ def populate_curve(curve, samples_t, by_length = False, by_curvature = True, min
         else:
             ppe = min_ppe + ppe_range * factor
         ppe = ceil(ppe)
-        if need_random:
-            t_r = numpy.random.uniform(t1, t2, size=ppe).tolist()
-            if t_r[0] == new_t[-1]:
-                t_r = t_r[1:]
-            if t_r[-1] != t2:
-                t_r.append(t2)
-        else:
-            include_t2 = (i > 0)
-            space = np.linspace(t1, t2, num=ppe+2, endpoint=True)
-            #debug("Space: %s - %s (%s): %s", t1, t2, ppe, space)
-            t_r = space[1:].tolist()
-        new_t.extend(t_r)
+        if ppe > 0:
+            if need_random:
+                t_r = numpy.random.uniform(t1, t2, size=ppe).tolist()
+                if t_r[0] == new_t[-1]:
+                    t_r = t_r[1:]
+                if t_r[-1] != t2:
+                    t_r.append(t2)
+            else:
+                space = np.linspace(t1, t2, num=ppe+2, endpoint=True)
+                #debug("Space: %s - %s (%s): %s", t1, t2, ppe, space)
+                t_r = space[1:].tolist()
+            new_t.extend(t_r)
 
     new_t = np.array(new_t)
     if need_random:
