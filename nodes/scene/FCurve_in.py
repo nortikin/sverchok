@@ -71,7 +71,7 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         if not self.object_name:
             return
 
-        obj = self.get_bpy_data_from_name(self.object_name, bpy.data.objects)
+        obj = self.get_object_reference()
         if not obj or not obj.animation_data:
             layout.label(text="no animation data, add a named prop")
             layout.prop(self, "new_prop_name", text="custom prop")
