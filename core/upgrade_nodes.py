@@ -150,7 +150,8 @@ new_socket_dict = {
 
 upgrade_pointer_dict = {
     'SvProfileNodeMK3': "set_pointer_from_filename",
-    'SvTextOutNodeMK2': "set_pointer_from_filename"
+    'SvTextOutNodeMK2': "set_pointer_from_filename",
+    'SvTextInNodeMK2': "set_pointer_from_filename"
 }
 
 def upgrade_nodes(ng):
