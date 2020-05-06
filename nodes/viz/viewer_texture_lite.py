@@ -78,7 +78,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, 'output_mode', expand=True)
         col = layout.column(align=True)
         if not self.output_mode == 'bgl':
-            col.prop_search(self, 'image', bpy.data, "images", text="")
+            col.prop_search(self, 'image_pointer', bpy.data, "images", text="")
         else:
             row = layout.row(align=True)
             row.prop(self, 'color_mode', expand=True)
