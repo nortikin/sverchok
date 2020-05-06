@@ -114,7 +114,7 @@ This node has the following parameters:
   the surface. Area stretching factor is defined as area of rectangular grid
   cell mapped onto the surface divided by area of that cell in surface's UV
   space. I.e., places where the surface is more stretched, will receive more
-  vertices.
+  vertices. Unchecked by default.
 * **Curvature type**. This parameter is available only when **By Curvature**
   parameter is enabled. This defines which exactly curvature value of the
   surface will be used. The available options are:

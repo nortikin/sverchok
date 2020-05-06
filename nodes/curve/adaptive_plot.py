@@ -25,21 +25,25 @@ class SvAdaptivePlotCurveNode(bpy.types.Node, SverchCustomTreeNode):
             update = updateNode)
 
     min_ppe : IntProperty(
-            name = "Min per edge",
+            name = "Min per segment",
             description = "Minimum number of new points per regular sampling interval",
             min = 0, default = 0,
             update = updateNode)
 
     max_ppe : IntProperty(
-            name = "Max per edge",
+            name = "Max per segment",
             description = "Minimum number of new points per regular sampling interval",
             min = 1, default = 5,
             update = updateNode)
 
+    @throttled
+    def update_sockets(self, context):
+        self.inputs['Seed'].hide_safe = not self.random
+
     random : BoolProperty(
             name = "Random",
             default = False,
-            update = updateNode)
+            update = update_sockets)
 
     seed : IntProperty(
             name = "Seed",
@@ -84,6 +88,7 @@ class SvAdaptivePlotCurveNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "T")
+        self.udpate_sockets(context)
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
