@@ -868,7 +868,9 @@ def updateNode(self, context):
     When a node has changed state and need to call a partial update.
     For example a user exposed bpy.prop
     """
-    ev.CurrentEvents.add_new_event(ev.BlenderEventsTypes.node_property_update, self)
+    ev.CurrentEvents.add_new_event(event_type=ev.BlenderEventsTypes.node_property_update,
+                                   node_tree=self.id_data,
+                                   node=self)
     if False:  # todo probably delete below
         self.process_node(context)
 

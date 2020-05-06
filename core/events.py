@@ -23,12 +23,12 @@ from itertools import takewhile, count
 from contextlib import contextmanager
 import traceback
 from operator import getitem
+from time import time
 
 from bpy.types import Node, NodeTree, NodeLink
 import bpy
 
 from sverchok.utils.context_managers import sv_preferences
-from sverchok.core.update_system import process_from_nodes
 
 if TYPE_CHECKING:
     # https://stackoverflow.com/questions/39740632/python-type-hinting-without-cyclic-imports
@@ -397,8 +397,7 @@ class CurrentEvents:
         tree_reconstruction.update_reconstruction(sv_events)
 
         sv_nodes = tree_reconstruction.get_sverchok_nodes_to_calculate()
-        bl_nodes = [cls.events_wave.current_tree.nodes[node.id] for node in sv_nodes]
-        cls.update_nodes(bl_nodes)
+        cls.update_nodes(sv_nodes)
 
     @classmethod
     def handle_frame_change_event(cls): ...
@@ -429,9 +428,21 @@ class CurrentEvents:
                     bl_link_update_nodes.add(hashed_tree.nodes[sv_link.to_node.id])
         [node.sv_update() for node in bl_link_update_nodes]
 
-    @staticmethod
-    def update_nodes(bl_nodes: List[Node]):
-        process_from_nodes(bl_nodes)
+    @classmethod
+    def update_nodes(cls, changed_sv_nodes: Iterable[SvNode]):
+        hashed_tree = HashedBlenderData.get_tree(cls.events_wave.main_event.tree_id)
+        walker = Walkers.get_walker(cls.events_wave.main_event.tree_id)
+        if cls.events_wave.main_event.type in [BlenderEventsTypes.monad_tree_update,
+                                               BlenderEventsTypes.tree_update,
+                                               BlenderEventsTypes.node_property_update]:
+            walker.prepare_walk_after_tree_topology_changes()
+        walker.recalculate_effected_by_changes_nodes(changed_sv_nodes)
+        for recalculation_node in walker.walk_on_worth_recalculating_nodes(changed_sv_nodes):
+            bl_node = hashed_tree.nodes[recalculation_node.id]
+            with cls.record_node_statistics(bl_node) as node:
+                if hasattr(node, 'process'):
+                    node.process()
+
 
     @staticmethod
     def is_in_debug_mode():
@@ -449,6 +460,22 @@ class CurrentEvents:
             traceback.print_exc()
         finally:
             cls._to_listen_new_events = True
+
+    @staticmethod
+    @contextmanager
+    def record_node_statistics(node: Union[Node, SverchCustomTreeNode]):
+        exception = None
+        start_time = time()
+        try:
+            yield node
+        except Exception as e:
+            # todo using logger
+            exception = e
+            traceback.print_exc()
+        finally:
+            node.updates_total += 1
+            node.update_time = int((time() - start_time) * 1000)
+            node.error = repr(exception) if exception else ''
 
 
 # -------------------------------------------------------------------------
@@ -668,12 +695,6 @@ class SvNode:
         self.inputs: Dict[str, SvLink] = dict()
         self.outputs: Dict[str, SvLink] = dict()
 
-        #statistic
-        self.update_total = 0
-        self.last_update = None
-        self.update_time = None
-        self.error = None
-
     def free_link(self, sv_link: SvLink):
         if sv_link.id in self.inputs:
             del self.inputs[sv_link.id]
@@ -837,8 +858,20 @@ def get_blender_tree(tree_id: str) -> Union[SverchCustomTree, NodeTree]:
 # ---------This part should be moved to separate module later--------------
 
 
+# todo should be implemented in another class
+class Walkers:
+    walkers: Dict[str, WalkSvTree] = dict()
+
+    @classmethod
+    def get_walker(cls, tree_id: str) -> WalkSvTree:
+        if tree_id not in cls.walkers:
+            sv_tree = NodeTreesReconstruction.get_node_tree_reconstruction(tree_id)
+            cls.walkers[tree_id] = WalkSvTree(sv_tree)
+        return cls.walkers[tree_id]
+
+
 OUTPUT_NODE_BL_IDNAMES = {
-    'SvVDExperimental', 'SvStethoscopeNodeMK2'
+    'SvVDExperimental', 'SvStethoscopeNodeMK2', 'SvBmeshViewerNodeV28'
 }
 
 

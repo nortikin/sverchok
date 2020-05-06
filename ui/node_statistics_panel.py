@@ -5,7 +5,10 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+from typing import Union
+
 import bpy
+
 import sverchok.node_tree as nt
 
 
@@ -23,10 +26,11 @@ class NodeSettingsPanel(bpy.types.Panel):
         return isinstance(node, nt.SverchCustomTreeNode)
 
     def draw(self, context):
-        self.layout.label(text="Recalculations number:")
-        self.layout.label(text="Last update:")
-        self.layout.label(text="Updating time:")
-        self.layout.label(text="Errors:")
+        node: Union[bpy.types.Node, nt.SverchCustomTreeNode] = context.active_node
+        self.layout.label(text=f"Recalculations number: {node.updates_total}")
+        self.layout.label(text=f"Last update:")
+        self.layout.label(text=f"Updating time: {node.update_time} ms")
+        self.layout.label(text=f"Errors: {node.error or ''}")
 
 
 def register():

@@ -414,6 +414,12 @@ class SverchCustomTreeNode:
     draft_properties_mapping = dict()
 
     n_id : StringProperty(default="")
+
+    # statistic
+    updates_total: IntProperty(description="Number of node updates")
+    last_update: StringProperty(description="Time of last update")
+    update_time: IntProperty(description="How much time last update have taken in milliseconds")
+    error: StringProperty(description="Error message of last update if exist")
     
     def update(self):
         # this signal method is absolutely useless
