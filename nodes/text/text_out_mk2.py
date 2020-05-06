@@ -141,7 +141,9 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             self.text = ""
         # need to do other stuff?
 
-    text: StringProperty()
+    properties_to_skip_iojson = ['file_pointer']
+
+    text: StringProperty(name='text')
     file_pointer: bpy.props.PointerProperty(type=bpy.types.Text, poll=lambda s, o: True, update=pointer_update)
 
     text_mode: EnumProperty(items=text_modes, default='CSV', update=change_mode, name="Text format")
