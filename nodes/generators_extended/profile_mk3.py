@@ -426,6 +426,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     def fp_updateNode(self, context):
         self.filename = self.file_pointer.name if self.file_pointer else ""
+        self.adjust_sockets()
         updateNode(self, context)
 
     properties_to_skip_iojson = ['file_pointer']
@@ -492,20 +493,22 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.outputs.new('SvStringsSocket', "KnotNames")
 
     def load_profile(self):
-        if not self.file_pointer or self.filename:
+        if not self.file_pointer:
+            # self.info("returning early from load_profile")
             return None
 
         if self.file_pointer:
+            # self.info(f'file_pointer.name {self.file_pointer.name}')
             internal_file = self.file_pointer
         else:
             internal_file = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
             if not internal_file:
-                self.error("error in load_profile..fuzzysearch failed to find {self.filename}")
+                self.error(f"error in load_profile..fuzzysearch failed to find {self.filename}")
                 return None
 
-            # load file from old blend / json
             self.file_pointer = internal_file
         
+        self.info(f'profile node, good to go! {internal_file}')
         f = self.file_pointer.as_string()
         profile = parse_profile(f)
         return profile
@@ -537,7 +540,8 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     def adjust_sockets(self):
         variables = self.get_variables()
-        #self.debug("adjust_sockets:" + str(variables))
+
+        self.info("adjust_sockets:" + str(variables))
         #self.debug("inputs:" + str(self.inputs.keys()))
         for key in self.inputs.keys():
             if key not in variables:
@@ -552,8 +556,13 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         '''
         analyze the state of the node and returns if the criteria to start processing are not met.
         '''
-        if not self.file_pointer or not self.get_bpy_data_from_name(self.filename, bpy.data.texts):
+        if not "KnotNames" in self.outputs:
             return
+
+        if not self.file_pointer:
+            self.set_pointer_from_filename()
+            if not self.file_pointer:
+                return
 
         self.adjust_sockets()
 
