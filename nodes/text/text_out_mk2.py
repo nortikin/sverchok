@@ -202,6 +202,9 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if len(out) == 0:
             return False
 
+        if self.file_pointer:
+            self.text = self.file_pointer.name
+
         if not self.append:
             bpy.data.texts[self.text].clear()
         bpy.data.texts[self.text].write(out)
