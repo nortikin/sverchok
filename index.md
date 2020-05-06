@@ -128,6 +128,7 @@
     SvExCrossCurvePlaneNode
     SvExCrossCurveSurfaceNode
     ---
+    SvAdaptivePlotCurveNode
     SvExEvalCurveNode
 
 ## Surfaces @ NURBS
