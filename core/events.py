@@ -18,7 +18,7 @@ Details: https://github.com/nortikin/sverchok/issues/3077
 from __future__ import annotations
 
 from enum import Enum, auto
-from typing import TYPE_CHECKING, NamedTuple, Union, List, Callable, Set, Dict, Iterable, Generator, KeysView
+from typing import TYPE_CHECKING, NamedTuple, Union, List, Callable, Set, Dict, Iterable, Generator, KeysView, Tuple, TypeVar
 from itertools import takewhile, count
 from contextlib import contextmanager
 import traceback
@@ -399,6 +399,7 @@ class CurrentEvents:
 
         sv_nodes = tree_reconstruction.get_sverchok_nodes_to_calculate()
         cls.update_nodes(sv_nodes)
+        cls.recolorize_nodes()
 
     @classmethod
     def handle_frame_change_event(cls): ...
@@ -443,6 +444,10 @@ class CurrentEvents:
                 if hasattr(node, 'process'):
                     node.process()
 
+    @classmethod
+    def recolorize_nodes(cls):
+        tree = get_blender_tree(cls.events_wave.main_event.tree_id)
+        tree.choose_colorizing_method(None)
 
     @staticmethod
     def is_in_debug_mode():

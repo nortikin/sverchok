@@ -137,6 +137,32 @@ def throttled(func):
     return wrapper_update
 
 
+class ColorizeTree:
+    """
+    Methods of colorizing nodes of a node tree
+    """
+    def choose_colorizing_method(self, context):
+        if self.colorizing_method == 'Slow nodes':
+            self.colorize_slow_nodes()
+
+    use_colorizing_algorithm: BoolProperty(
+        name="Enable", description="To use colorize algorithm", update=choose_colorizing_method)
+    colorizing_method: EnumProperty(items=[(i, i, '') for i in ['Slow nodes']], update=choose_colorizing_method)
+
+    # Slow nodes method properties
+    update_time: IntProperty(
+        name="msec", min=0, max=1000, default=500, description="Time in milliseconds", update=choose_colorizing_method)
+    colorizing_color: FloatVectorProperty(size=3, subtype='COLOR', default=(1, 1, 1), update=choose_colorizing_method)
+
+    def colorize_slow_nodes(self):
+        node: bpy.types.Node
+        for node in self.nodes:
+            if self.use_colorizing_algorithm and node.update_time >= self.update_time:
+                node.use_custom_color = True
+                node.color = self.colorizing_color
+            else:
+                node.use_custom_color = False
+
 
 class SvNodeTreeCommon(object):
     '''
@@ -248,7 +274,8 @@ class SvGenericUITooltipOperator(bpy.types.Operator):
     def description(cls, context, properties):
         return properties.arg
 
-class SverchCustomTree(NodeTree, SvNodeTreeCommon):
+
+class SverchCustomTree(NodeTree, SvNodeTreeCommon, ColorizeTree):
     ''' Sverchok - architectural node programming of geometry in low level '''
     bl_idname = 'SverchCustomTreeType'
     bl_label = 'Sverchok Nodes'
