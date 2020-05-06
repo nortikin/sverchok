@@ -19,7 +19,7 @@
 import os
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatProperty, IntProperty
+from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatProperty, IntProperty, PointerProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -423,7 +423,19 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.adjust_sockets()
         updateNode(self, context)
 
-    filename : StringProperty(default="", update=on_update)
+    def pointer_update(self, context):
+        if self.file_pointer:
+            self.filename = self.file_pointer.name
+        else:
+            self.filename = ""
+        self.adjust_sockets()
+        updateNode(self, context)
+
+    properties_to_skip_iojson = ["file_pointer"]
+
+    filename : StringProperty(default="")
+    file_pointer: PointerProperty(
+        type=bpy.types.Text, poll=lambda s, o: True, update=pointer_update)
 
     x : BoolProperty(default=True)
     y : BoolProperty(default=True)
@@ -447,7 +459,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, 'selected_axis', expand=True)
-        layout.prop_search(self, 'filename', bpy.data, 'texts', text='', icon='TEXT')
+        layout.prop_search(self, 'file_pointer', bpy.data, 'texts', text='', icon='TEXT')
 
         col = layout.column(align=True)
         row = col.row()
@@ -626,6 +638,12 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             storage['profile'] = text
         else:
             self.warning("Unknown filename: {}".format(self.filename))
+
+    def set_pointer_from_filename(self):
+        if hasattr(self, "file_pointer") and not self.file_pointer:
+            text = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
+            if text:
+                self.file_pointer = text
 
 classes = [
         SvProfileImportMenu,
