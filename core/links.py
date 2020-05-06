@@ -36,7 +36,7 @@ def get_output_socket_id(socket):
         if hasattr(socket, 'socket_id'):
             return socket.socket_id, socket.node.node_id
         else:
-            print(socket, type(socket))
+            print("get_output_socket_id said no socket_id: ", socket, socket.node, type(socket))
             return None, None
 
 
