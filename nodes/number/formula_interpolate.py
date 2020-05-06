@@ -215,7 +215,7 @@ class SvFormulaInterpolateNode(bpy.types.Node, SverchCustomTreeNode):
     def on_update(self, context):
         self.adjust_sockets()
 
-    def update(self):
+    def sv_update(self):
         if not any(len(formula) for formula in self.formulas()):
             return
         self.adjust_sockets()
