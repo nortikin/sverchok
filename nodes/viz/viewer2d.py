@@ -69,6 +69,21 @@ def background_rect(x, y, w, h, margin):
 
     return background_coords, background_indices
     
+def fill_points_colors(vectors_color, data, color_per_point):
+    points_color = []
+    if color_per_point:
+        for cols, sub_data in zip(cycle(vectors_color), data):
+
+            for c, n in zip(cycle(cols), sub_data):
+                points_color.append(c)
+    else:
+        for nums, col in zip(data, cycle(vectors_color[0])):
+            for n in nums:
+                points_color.append(col)
+
+    return points_color
+
+
 def simple28_grid_xy(x, y, args):
     """ x and y are passed by default so you could add font content """
 
@@ -88,7 +103,6 @@ def simple28_grid_xy(x, y, args):
 
     if config.draw_verts:
         bgl.glPointSize(config.point_size)
-        print(geom.points_color)
         shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
         batch2 = batch_for_shader(shader, 'POINTS', {"pos": geom.vertices, "color": geom.points_color})
         # shader.bind()
@@ -136,21 +150,13 @@ def generate_number_geom(config, numbers):
                 vertex_colors.extend([col, col])
                 indices.append([2*i + idx_offset, 2*i + 1 + idx_offset])
             idx_offset += 2*len(nums)
-    points_color =[]
-    if config.color_per_point:
-        for cols, nums in zip(cycle(config.vector_color), numbers):
-
-            for c, n in zip(cycle(cols), nums):
-                points_color.append(c)
-    else:
-        for nums, col in zip(numbers, cycle(config.vector_color[0])):
-            for n in nums:
-                points_color.append(col)
-
+    
+    points_color = fill_points_colors(config.vector_color, numbers, config.color_per_point)
+    geom.points_color = points_color
     geom.vertices = vertices
     geom.vertex_colors = vertex_colors
     geom.indices = indices
-    geom.points_color = points_color
+
     return geom
 
 def generate_lines_geom(config, paths, edges):
@@ -236,6 +242,8 @@ def generate_edges_geom(config, paths, edges):
         
         idx_offset += len(vecs)
 
+    points_color = fill_points_colors(config.vector_color, paths, config.color_per_point)
+    geom.points_color = points_color
     geom.vertices = vertices
     geom.vertex_colors = vertex_colors
     geom.indices = indices
@@ -279,7 +287,8 @@ def generate_polygons_geom(config, paths, polygons_s, poly_color):
             indices.append([c + idx_offset for c in p])
         
         idx_offset += len(vecs)
-
+    points_color = fill_points_colors(config.vector_color, paths, config.color_per_point)
+    geom.points_color = points_color
     geom.vertices = vertices
     geom.vertex_colors = vertex_colors
     geom.indices = indices
@@ -556,7 +565,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
             config.color_per_point = self.color_per_point
             config.color_per_edge = self.color_per_edge
             config.color_per_polygon = self.color_per_polygon
-            # config.easing_func = easing_func
+            
 
             if self.mode == 'Number':
                 config.size = self.drawing_size
