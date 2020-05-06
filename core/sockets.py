@@ -93,11 +93,7 @@ class SvSocketCommon:
     @property
     def socket_id(self):
         """Id of socket used by data_cache"""
-        try:
-            return str(hash(self.node.node_id + self.identifier))
-        except Exception as err:
-            print(self.node, err)
-
+        return str(hash(self.node.node_id + self.identifier))
 
     @property
     def index(self):
