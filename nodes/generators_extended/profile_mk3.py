@@ -493,8 +493,11 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if not self.filename:
             return None
 
-        # we do not store stripped self.filename, else prop_search will shows it as read
-        internal_file = bpy.data.texts[self.filename.strip()]
+        # the updatefunction for file_pointer is not called when the datablock is renamed from elsewhere.
+        if not self.filename == self.file_pointer.name:
+            self.filename = self.file_pointer.name
+
+        internal_file = bpy.data.texts[self.filename]
         f = internal_file.as_string()
         profile = parse_profile(f)
         return profile
