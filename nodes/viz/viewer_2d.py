@@ -16,9 +16,9 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from itertools import cycle
 from mathutils import Vector
 from mathutils.geometry import tessellate_polygon as tessellate
-from itertools import cycle
 from numpy import float64 as np_float64, linspace as np_linspace
 import bpy
 from bpy.props import FloatProperty, IntProperty, EnumProperty, BoolProperty, FloatVectorProperty, IntVectorProperty
@@ -38,8 +38,8 @@ from sverchok.utils.sv_mesh_utils import polygons_to_edges
 
 socket_dict = {
     'vector_color': ('vector_toggle', 'UV_VERTEXSEL', 'color_per_point'),
-    'edge_color': ('edge_toggle', 'UV_EDGESEL', 'color_per_edge'),
-    'polygon_color': ('polygon_toggle', 'UV_FACESEL', 'color_per_polygon'),
+    'edge_color': ('edge_toggle', 'UV_EDGESEL', 'color_per_edge', 'edges_use_vertex_color'),
+    'polygon_color': ('polygon_toggle', 'UV_FACESEL', 'color_per_polygon', 'polygon_use_vertex_color'),
     }
 
 def ensure_triangles(coords, indices, handle_concave_quads):
@@ -48,7 +48,7 @@ def ensure_triangles(coords, indices, handle_concave_quads):
     not optimized for meshes that don't contain ngons
     """
     new_indices = []
-    face_index =[]
+    face_index = []
     concat = new_indices.append
     concat2 = new_indices.extend
     for idf, idxset in enumerate(indices):
@@ -93,7 +93,10 @@ def fill_points_colors(vectors_color, data, color_per_point):
 
 
 def view_2d_geom(x, y, args):
-    """ x and y are passed by default so you could add font content """
+    """
+    x and y are passed by default so you could add font content
+    draws the batches
+    """
 
     geom, config = args
     if config.draw_background:
@@ -133,7 +136,7 @@ def generate_number_geom(config, numbers):
     sys_scale = config.sys_scale
     line_color = config.edge_color
     w, h = config.size
-    all_numbers = [n for l in numbers for n in l ]
+    all_numbers = [n for l in numbers for n in l]
     maxmin = [max(all_numbers), min(all_numbers)]
     margin = 10 * sys_scale
     geom.background_coords, geom.background_indices = background_rect(x, y, w, h, margin)
@@ -229,7 +232,7 @@ def generate_graph_geom(config, paths):
     else:
         edge_color = config.edge_color[0]
 
-    all_vecs = [v for vecs in paths for v in vecs ]
+    all_vecs = [v for vecs in paths for v in vecs]
     maxmin = list(zip(map(max, *all_vecs), map(min, *all_vecs)))
     axis1, axis2 = get_axis_index(config.plane)
     # background geom
@@ -276,11 +279,11 @@ def transformed_verts(vecs, x, y, maxmin, scale, axis1, axis2):
 def splitted_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offset):
     total_p_verts = 0
     p_vertices, vertex_colors, indices = [], [], []
-    for p, idx in zip(polygon_indices, original_idx):
-        p_vertices.extend([v_path[c] for c in p])
-        vertex_colors.extend([cols[idx % len(cols)] for c in p])
-        indices.append([c + idx_offset + total_p_verts for c in range(len(p))])
-        total_p_verts += len(p)
+    for pol, idx in zip(polygon_indices, original_idx):
+        p_vertices.extend([v_path[c] for c in pol])
+        vertex_colors.extend([cols[idx % len(cols)] for c in pol])
+        indices.append([c + idx_offset + total_p_verts for c in range(len(pol))])
+        total_p_verts += len(pol)
     return p_vertices, vertex_colors, indices, total_p_verts
 
 
@@ -298,6 +301,7 @@ def get_axis_index(plane):
 
 
 def polygons_geom(config, vecs, polygons, p_vertices, p_vertex_colors, p_indices, v_path, p_cols, idx_p_offset):
+    '''generates polygons geometry'''
     if config.color_per_polygon and not config.polygon_use_vertex_color:
         polygon_indices, original_idx = ensure_triangles(vecs, polygons, True)
         p_v, v_c, idx, total_p_verts = splitted_polygons_geom(polygon_indices, original_idx, v_path, p_cols, idx_p_offset[0])
@@ -314,7 +318,7 @@ def polygons_geom(config, vecs, polygons, p_vertices, p_vertex_colors, p_indices
 
 
 def edges_geom(config, edges, e_col, v_path, e_vertices, e_vertex_colors, e_indices, idx_e_offset):
-
+    '''generates edges geometry'''
     if config.color_per_edge and not config.edges_use_vertex_color:
         for (v, v1), col in zip(edges, cycle(e_col)):
             e_vertices.extend([v_path[v], v_path[v1]])
@@ -329,6 +333,7 @@ def edges_geom(config, edges, e_col, v_path, e_vertices, e_vertex_colors, e_indi
 
 
 def generate_mesh_geom(config, vecs_in):
+    '''generates drawing from mesh data'''
     geom = lambda: None
     x, y = config.loc
     scale = config.scale
@@ -425,6 +430,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Vecs'].hide_safe = self.mode in ['Number', 'Curve']
         self.inputs['Edges'].hide_safe = self.mode in ['Number', 'Path', 'Curve']
         self.inputs['Polygons'].hide_safe = self.mode in ['Number', 'Path', 'Curve']
+
     mode: EnumProperty(
         name='Mode',
         items=modes,
@@ -436,7 +442,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         name='Proyection Plane',
         items=plane,
         default='XY',
-        description="Display Mode",
+        description="2D plane where geometry will be projected",
         update=update_mode)
 
     activate: BoolProperty(
@@ -448,10 +454,6 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         default=True, update=updateNode
     )
 
-    in_float: FloatProperty(
-        min=0.0, max=1.0, default=0.0, name='Float Input',
-        description='input to the easy function', update=updateNode
-    )
     draw_scale: FloatProperty(
         min=0.0, default=10.0, name='Scale',
         description='Drawing Scale', update=updateNode
@@ -472,46 +474,48 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         min=1, default=1, name='Edge Width',
         description='Edge Width', update=updateNode
     )
-    continuous: BoolProperty(
-        name='Continuous', description='Continuous Graph',
-        default=True, update=updateNode
-    )
+
     curve_samples: IntProperty(
         min=2, default=25, name='Samples',
         description='Curve Resolution', update=updateNode
     )
     vector_color: FloatVectorProperty(
-        update=updateNode, name='', default=(.9, .9, .95, 1.0),
+        update=updateNode, name='Vertices Color', default=(.9, .9, .95, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR'
         )
     vector_toggle: BoolProperty(
         update=updateNode, name='Display Vertices', default=True
         )
     color_per_point: BoolProperty(
-        update=updateNode, name='Color per point', default=True
+        update=updateNode, name='Color per point', default=False,
+        description='Toggle between color per point or per object'
         )
     color_per_edge: BoolProperty(
-        update=updateNode, name='Color per point', default=True
+        update=updateNode, name='Color per edge', default=False,
+        description='Toggle between color per edge or per object'
         )
     color_per_polygon: BoolProperty(
-        update=updateNode, name='Color per point', default=True
+        update=updateNode, name='Color per polygon', default=False,
+        description='Toggle between color per polygon or per object'
         )
     polygon_use_vertex_color: BoolProperty(
-        update=update_mode, name='Polys Vertex Color', default=True
+        update=update_mode, name='Polys Vertex Color', default=False,
+        description='Colorize polygons using vertices color'
         )
     edges_use_vertex_color: BoolProperty(
-        update=update_mode, name='Edges Vertex Color', default=True
+        update=update_mode, name='Edges Vertex Color', default=False,
+        description='Colorize edges using vertices color'
         )
 
     edge_color: FloatVectorProperty(
-        update=updateNode, name='', default=(.9, .9, .8, 1.0),
+        update=updateNode, name='Edges Color', default=(.9, .9, .8, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR'
         )
     edge_toggle: BoolProperty(
         update=updateNode, name='Display Edges', default=True
         )
     polygon_color: FloatVectorProperty(
-        update=updateNode, name='', default=(.9, .9, .8, 1.0),
+        update=updateNode, name='Ploygons Color', default=(.9, .9, .8, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR'
         )
     polygon_toggle: BoolProperty(
@@ -543,8 +547,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
             row = c0.row(align=True)
             row.prop(self, "point_size")
             row.prop(self, "edge_width")
-            c0.prop(self, "edges_use_vertex_color")
-        # elif self.mode == 'Path':
+
         else:
             row = c0.row(align=True)
             row.prop(self, "working_plane", expand=True)
@@ -553,9 +556,6 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
             row.prop(self, "point_size")
             row.prop(self, "edge_width")
 
-            c0.prop(self, "edges_use_vertex_color")
-            if self.mode == 'Mesh':
-                c0.prop(self, "polygon_use_vertex_color")
             if self.mode in ["Path", "Curve"]:
                 layout.prop(self, "cyclic")
             if self.mode == "Curve":
@@ -583,7 +583,12 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         socket_info = socket_dict[socket.prop_name]
         layout.prop(self, socket_info[0], text="", icon=socket_info[1])
         layout.prop(self, socket_info[2], text="", icon='COLOR')
-        if not socket.is_linked:
+        display_color = not socket.is_linked
+        if len(socket_info) > 3:
+            layout.prop(self, socket_info[3], text="", icon='VPAINT_HLT')
+            display_color = display_color and not self[socket_info[3]]
+
+        if display_color:
             layout.prop(self, socket.prop_name, text="")
         else:
             layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
@@ -605,9 +610,10 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         x, y = [x * multiplier, y * multiplier]
 
         return x, y, scale, multiplier
+
     def create_config(self):
         config = lambda: None
-        x, y, scale, multiplier = self.get_drawing_attributes()
+        x, y, scale, _ = self.get_drawing_attributes()
         margin = 10* scale
         config.mode = self.mode
         config.loc = (x, y - margin)
@@ -667,7 +673,6 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
 
         if self.mode == 'Number':
             config.size = self.drawing_size
-            config.continuous = self.continuous
             geom = generate_number_geom(config, numbers)
         elif self.mode == 'Path':
             geom = generate_graph_geom(config, vecs)
