@@ -58,7 +58,7 @@ class SvMatrixVectorField(SvVectorField):
 class SvConstantVectorField(SvVectorField):
 
     def __init__(self, vector):
-        self.vector = vector
+        self.vector = np.array(vector)
         self.__description__ = "Constant = {}".format(vector)
 
     def evaluate(self, x, y, z):
