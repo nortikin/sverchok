@@ -33,6 +33,7 @@ from sverchok.data_structure import updateNode, node_id, enum_item_4, fullList, 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL
 from mathutils.geometry import tessellate_polygon as tessellate
+from sverchok.utils.sv_mesh_utils import polygons_to_edges
 # star imports easing_dict and all easing functions.
 from sverchok.utils.sv_easing_functions import *
 
@@ -112,7 +113,6 @@ def simple28_grid_xy(x, y, args):
     """ x and y are passed by default so you could add font content """
 
     geom, config = args
-    back_color, grid_color, line_color = config.palette
     background_color = config.background_color
     # draw background, this could be cached......
     shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
@@ -142,6 +142,7 @@ def path_from_nums(nums, x, y, num_width, num_height, maxmin, sys_scale):
         _py = y + ((n - maxmin[1])* num_height) * sys_scale
         v_path.append([_px, _py])
     return v_path
+
 def generate_number_geom(config, numbers):
     geom = lambda: None
     x, y = config.loc
@@ -210,7 +211,7 @@ def generate_graph_geom(config, paths):
     x, y = config.loc
     size = 140 * config.scale
     scale = config.scale
-    # back_color, grid_color, line_color = config.palette
+
     cyclic = config.cyclic
     sys_scale = config.sys_scale
     if config.color_per_edge:
@@ -284,93 +285,6 @@ def transformed_verts(vecs, x, y, maxmin, scale, axis1, axis2):
         v_path.append([_px, _py])
     return v_path
 
-def generate_lines_geom(config, paths, edges):
-    geom = lambda: None
-    x, y = config.loc
-    size = 140 * config.scale
-    scale = config.scale
-    # back_color, grid_color, line_color = config.palette
-    sys_scale = config.sys_scale
-    line_color = config.edge_color
-
-    all_vecs = [v for vecs in paths for v in vecs ]
-    maxmin = list(zip(map(max, *all_vecs), map(min, *all_vecs)))
-    # background geom
-    w = size
-    h = size
-    w = (maxmin[0][0]- maxmin[0][1]) * scale
-    h = (maxmin[1][0]- maxmin[1][1]) * scale
-    margin = 10 * sys_scale
-    geom.background_coords, geom.background_indices = background_rect(x, y, w, h, margin)
-
-    vertices = []
-    vertex_colors = []
-    indices = []
-
-    idx_offset = 0
-    for vecs, edgs, col in zip(paths, edges, line_color):
-
-        for i, e in enumerate(edgs):
-            v0 = vecs[e[0]]
-            v1 = vecs[e[1]]
-            _px = x + (v0[0] - maxmin[0][1]) * scale + margin
-            _py = y + (v0[1] - maxmin[1][0]) * scale
-            _px2 = x + (v1[0] - maxmin[0][1]) * scale + margin
-            _py2 = y + (v1[1] - maxmin[1][0]) * scale
-            vertices.extend([[_px, _py], [_px2, _py2]])
-            vertex_colors.extend([col, col])
-            indices.append([2*i + idx_offset, 2*i + 1 + idx_offset])
-
-        idx_offset += 2*len(edges)
-
-    geom.vertices = vertices
-    geom.vertex_colors = vertex_colors
-    geom.indices = indices
-    return geom
-
-def generate_edges_geom(config, paths, edges):
-    geom = lambda: None
-    x, y = config.loc
-    size = 140 * config.scale
-    scale = config.scale
-    # back_color, grid_color, line_color = config.palette
-    sys_scale = config.sys_scale
-    line_color = config.edge_color
-
-    all_vecs = [v for vecs in paths for v in vecs ]
-    maxmin = list(zip(map(max, *all_vecs), map(min, *all_vecs)))
-    # background geom
-    w = size
-    h = size
-    w = (maxmin[0][0]- maxmin[0][1]) * scale
-    h = (maxmin[1][0]- maxmin[1][1]) * scale
-    margin = 10 * sys_scale
-    geom.background_coords, geom.background_indices = background_rect(x, y, w, h, margin)
-
-    vertices = []
-    vertex_colors = []
-    indices = []
-
-    idx_offset = 0
-    for vecs, edgs, col in zip(paths, edges, cycle(line_color[0])):
-
-        for i, v in enumerate(vecs):
-            _px = x + (v[0] - maxmin[0][1]) * scale + margin
-            _py = y + (v[1] - maxmin[1][0]) * scale
-            vertices.append([_px, _py])
-            vertex_colors.append(col)
-
-        for e in edgs:
-            indices.append([e[0] + idx_offset, e[1] + idx_offset])
-
-        idx_offset += len(vecs)
-
-    points_color = fill_points_colors(config.vector_color, paths, config.color_per_point)
-    geom.points_color = points_color
-    geom.vertices = vertices
-    geom.vertex_colors = vertex_colors
-    geom.indices = indices
-    return geom
 
 def splitted_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offset):
     total_p_verts = 0
@@ -395,7 +309,7 @@ def get_axis_index(plane):
     return axis1, axis2
 
 
-def generate_polygons_geom(config, paths, polygons_s, poly_color):
+def generate_mesh_geom(config, paths, polygons_s, poly_color):
     geom = lambda: None
     x, y = config.loc
     size = 140 * config.scale
@@ -509,15 +423,16 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
     n_id: StringProperty(default='')
 
     def update_mode(self, context):
+        self.update_sockets()
+        updateNode(self, context)
+
+    def update_sockets(self):
         self.inputs['Polygon Color'].hide_safe = self.mode != 'Mesh'
-        # self.inputs['Edge Color'].hide_safe = self.edges_use_vertex_color
         self.inputs['Number'].hide_safe = not self.mode == 'Number'
         self.inputs['Curve'].hide_safe = not self.mode == 'Curve'
         self.inputs['Vecs'].hide_safe = self.mode in ['Number', 'Curve']
         self.inputs['Edges'].hide_safe = self.mode in ['Number', 'Path', 'Curve']
         self.inputs['Polygons'].hide_safe = self.mode in ['Number', 'Path', 'Curve']
-        updateNode(self, context)
-
     mode: EnumProperty(
         name='Mode',
         items=modes,
@@ -562,7 +477,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         description='Point Size', update=updateNode
     )
     edge_width: IntProperty(
-        min=1, default=4, name='Edge Width',
+        min=1, default=1, name='Edge Width',
         description='Edge Width', update=updateNode
     )
     continuous: BoolProperty(
@@ -656,7 +571,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
             c0.prop(self, "edges_use_vertex_color")
             if self.mode == 'Mesh':
                 c0.prop(self, "polygon_use_vertex_color")
-            if self.mode == "Path":
+            if self.mode in ["Path", "Curve"]:
                 layout.prop(self, "cyclic")
             if self.mode == "Curve":
                 layout.prop(self, "curve_samples")
@@ -680,7 +595,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         vc2.prop_name = 'polygon_color'
         vc2.custom_draw = 'draw_color_socket'
         self.get_and_set_gl_scale_info()
-
+        self.update_sockets()
     def draw_color_socket(self, socket, context, layout):
         socket_info = socket_dict[socket.prop_name]
         layout.prop(self, socket_info[0], text="", icon=socket_info[1])
@@ -782,19 +697,20 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
             elif self.mode == 'Path':
                 geom = generate_graph_geom(config, p)
             elif self.mode == 'Curve':
-
                 paths = []
                 for curve in curves:
                     t_min, t_max = curve.get_u_bounds()
                     ts = np_linspace(t_min, t_max, num=self.curve_samples, dtype=np_float64)
                     paths.append(curve.evaluate_array(ts).tolist())
+
                 geom = generate_graph_geom(config, paths)
 
-            elif self.mode == 'Edges':
-                geom = generate_edges_geom(config, p, edges)
             else:
-                geom = generate_polygons_geom(config, p, polygons_s, poly_color)
-                geom2 = generate_edges_geom(config, p, edges)
+                if not self.inputs['Edges'].is_linked and self.edge_toggle:
+                    config.edges = polygons_to_edges(polygons_s, unique_edges=True)
+
+                geom = generate_mesh_geom(config, p, polygons_s, poly_color)
+
 
 
             draw_data = {
