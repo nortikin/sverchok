@@ -532,7 +532,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode, name='Display Edges', default=True
         )
     polygon_color: FloatVectorProperty(
-        update=updateNode, name='Ploygons Color', default=(.9, .9, .8, 1.0),
+        update=updateNode, name='Ploygons Color', default=(.2, .7, 1.0, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR'
         )
     polygon_toggle: BoolProperty(
