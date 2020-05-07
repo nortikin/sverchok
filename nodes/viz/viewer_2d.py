@@ -229,6 +229,7 @@ def graph_edges(config, v_path, col, e_vertices, e_vertex_colors, e_indices, cyc
             e_indices.append([len(v_path)-1 + offset, 0 + offset])
         idx_offset[0] += len(v_path)
 
+
 def generate_graph_geom(config, paths):
 
     geom = lambda: None
@@ -603,17 +604,15 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         draw_name = True
         if len(socket_info) < 5:
             layout.prop(self, socket_info[3], text="", icon='VPAINT_HLT')
-            # display_color = display_color and ((not socket_info[3] in self) and not self[socket_info[3]] )
+
         else:
             layout.prop(self, socket_info[3], text="", icon='MOD_NOISE')
             if socket_info[3] in self and self[socket_info[3]]:
                 layout.prop(self, socket_info[4], text="Seed")
                 draw_name = False
-            # display_color = display_color and ((not socket_info[3] in self) and not self[socket_info[3]] )
+
         if socket_info[3] in self:
             display_color = display_color and  not self[socket_info[3]]
-
-
 
 
         if display_color:
@@ -721,7 +720,6 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
                 config.edges = polygons_to_edges(polygons, unique_edges=True)
 
             geom = generate_mesh_geom(config, vecs)
-
 
 
         draw_data = {
