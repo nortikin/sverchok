@@ -72,6 +72,10 @@ This node has the following parameters:
   interpolation, all control points are automatically sorted so that values of
   X coordinate are in ascending order. So you can specify the control points in
   any order you see comfortable.
+
+  When the **Interpolation mode** parameter is set to **Cubic**, then there is
+  a button to toggle the control point type between "smooth" and "sharp". By
+  default, all control points are smooth.
 * **Interpolation mode**. This defines the interpolation algorithm. The
   available values are **Linear** and **Cubic**. The default value is
   **Cubic**.
@@ -109,4 +113,8 @@ Use interpolation between five points to scale some objects:
 Similar example with object placed along some curve:
 
 .. image:: https://user-images.githubusercontent.com/284644/80276912-09f72700-8705-11ea-8096-8252291cd448.png
+
+An example of sharp control points usage:
+
+.. image:: https://user-images.githubusercontent.com/284644/81311390-c6a29e00-909e-11ea-926c-7ddefc591ea6.png
 
