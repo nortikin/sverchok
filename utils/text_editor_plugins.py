@@ -96,7 +96,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
 
                 elif n.bl_idname == 'SvProfileNodeMK3':
                     print('should trigger!')
-                    if n.filename and fuzzy_compare(n.filename, text_file_name):
+                    if n.file_pointer and n.file_pointer.name == text_file_name:
                         print('should trigger!...did it?')
                         n.file_pointer = n.file_pointer
 
