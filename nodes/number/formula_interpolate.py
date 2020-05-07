@@ -82,9 +82,9 @@ class UI_UL_SvPointUiList(bpy.types.UIList):
 
         if cubic and index > 0 and index < n-1:
             if item.sharp:
-                sharp_icon = 'SMOOTHCURVE'
-            else:
                 sharp_icon = 'SHARPCURVE'
+            else:
+                sharp_icon = 'SMOOTHCURVE'
             sharp = row.operator(SvPointSharpToggle.bl_idname, text='', icon=sharp_icon)
             sharp.nodename = data.name
             sharp.treename = data.id_data.name
