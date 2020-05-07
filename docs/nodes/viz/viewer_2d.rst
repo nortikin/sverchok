@@ -28,14 +28,15 @@ Scale: Drawing scale
 
 Point Size and Edge width.
 
-Edges Vertex Color: Uses vertex color to colorize edges
-
-Polygons Vertex Color:  Uses vertex color to colorize polygons
-
 Cycle: Close Path (only in path mode)
 
 Vertex Color, Edge Color and Polygon Color: Color of displayed geometry. It can be color per element or color per object
 
+Random Vertex Color: Use random vertex colors
+
+Edges Vertex Color: Uses vertex color to colorize edges
+
+Polygons Vertex Color:  Uses vertex color to colorize polygons
 
 Examples
 --------

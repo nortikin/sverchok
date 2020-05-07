@@ -19,6 +19,7 @@
 from itertools import cycle
 from mathutils import Vector
 from mathutils.geometry import tessellate_polygon as tessellate
+from mathutils.noise import random, seed_set
 from numpy import float64 as np_float64, linspace as np_linspace
 import bpy
 from bpy.props import FloatProperty, IntProperty, EnumProperty, BoolProperty, FloatVectorProperty, IntVectorProperty
@@ -37,7 +38,7 @@ from sverchok.utils.sv_mesh_utils import polygons_to_edges
 
 
 socket_dict = {
-    'vector_color': ('vector_toggle', 'UV_VERTEXSEL', 'color_per_point'),
+    'vector_color': ('vector_toggle', 'UV_VERTEXSEL', 'color_per_point', 'vector_random_colors', 'random_seed'),
     'edge_color': ('edge_toggle', 'UV_EDGESEL', 'color_per_edge', 'edges_use_vertex_color'),
     'polygon_color': ('polygon_toggle', 'UV_FACESEL', 'color_per_polygon', 'polygon_use_vertex_color'),
     }
@@ -77,17 +78,25 @@ def background_rect(x, y, w, h, margin):
 
     return background_coords, background_indices
 
-def fill_points_colors(vectors_color, data, color_per_point):
+def fill_points_colors(vectors_color, data, color_per_point, random_colors):
     points_color = []
     if color_per_point:
         for cols, sub_data in zip(cycle(vectors_color), data):
-
-            for c, n in zip(cycle(cols), sub_data):
-                points_color.append(c)
+            if random_colors:
+                for  n in sub_data:
+                    points_color.append([random(), random(), random(), 1])
+            else:
+                for c, n in zip(cycle(cols), sub_data):
+                    points_color.append(c)
     else:
         for nums, col in zip(data, cycle(vectors_color[0])):
-            for n in nums:
-                points_color.append(col)
+            if random_colors:
+                r_color = [random(),random(),random(),1]
+                for n in nums:
+                    points_color.append(r_color)
+            else:
+                for n in nums:
+                    points_color.append(col)
 
     return points_color
 
@@ -176,7 +185,7 @@ def generate_number_geom(config, numbers):
         v_vertices = e_vertices
 
 
-    points_color = fill_points_colors(config.vector_color, numbers, config.color_per_point)
+    points_color = fill_points_colors(config.vector_color, numbers, config.color_per_point, config.random_colors)
     geom.points_color = points_color
     geom.points_vertices = v_vertices
     geom.vertices = e_vertices
@@ -252,7 +261,7 @@ def generate_graph_geom(config, paths):
             graph_edges(config, v_path, col, e_vertices, e_vertex_colors, e_indices, cyclic, idx_offset)
 
 
-    points_color = fill_points_colors(config.vector_color, paths, config.color_per_point)
+    points_color = fill_points_colors(config.vector_color, paths, config.color_per_point, config.random_colors)
 
     if config.draw_verts:
         config.v_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
@@ -376,7 +385,7 @@ def generate_mesh_geom(config, vecs_in):
         if config.draw_polys:
             polygons_geom(config, vecs, polygons, p_vertices, p_vertex_colors, p_indices, v_path, p_cols, idx_p_offset)
 
-    points_color = fill_points_colors(config.vector_color, vecs_in, config.color_per_point)
+    points_color = fill_points_colors(config.vector_color, vecs_in, config.color_per_point, config.random_colors)
 
     if config.draw_verts:
         config.v_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
@@ -486,6 +495,13 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
     vector_toggle: BoolProperty(
         update=updateNode, name='Display Vertices', default=True
         )
+    vector_random_colors: BoolProperty(
+        update=updateNode, name='Random Vertices Color', default=False
+        )
+    random_seed: IntProperty(
+        min=1, default=1, name='Random Seed',
+        description='Seed of random colors', update=updateNode
+    )
     color_per_point: BoolProperty(
         update=updateNode, name='Color per point', default=False,
         description='Toggle between color per point or per object'
@@ -508,7 +524,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         )
 
     edge_color: FloatVectorProperty(
-        update=updateNode, name='Edges Color', default=(.9, .9, .8, 1.0),
+        update=updateNode, name='Edges Color', default=(.9, .9, .35, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR'
         )
     edge_toggle: BoolProperty(
@@ -584,14 +600,27 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, socket_info[0], text="", icon=socket_info[1])
         layout.prop(self, socket_info[2], text="", icon='COLOR')
         display_color = not socket.is_linked
-        if len(socket_info) > 3:
+        draw_name = True
+        if len(socket_info) < 5:
             layout.prop(self, socket_info[3], text="", icon='VPAINT_HLT')
-            display_color = display_color and not self[socket_info[3]]
+            # display_color = display_color and ((not socket_info[3] in self) and not self[socket_info[3]] )
+        else:
+            layout.prop(self, socket_info[3], text="", icon='MOD_NOISE')
+            if socket_info[3] in self and self[socket_info[3]]:
+                layout.prop(self, socket_info[4], text="Seed")
+                draw_name = False
+            # display_color = display_color and ((not socket_info[3] in self) and not self[socket_info[3]] )
+        if socket_info[3] in self:
+            display_color = display_color and  not self[socket_info[3]]
+
+
+
 
         if display_color:
             layout.prop(self, socket.prop_name, text="")
         else:
-            layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
+            if draw_name:
+                layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
 
     def get_drawing_attributes(self):
         """
@@ -633,6 +662,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         config.color_per_polygon = self.color_per_polygon
         config.polygon_use_vertex_color = self.polygon_use_vertex_color
         config.edges_use_vertex_color = self.edges_use_vertex_color
+        config.random_colors = self.vector_random_colors
 
         return x, y, config
 
@@ -662,7 +692,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         vector_color = inputs['Vector Color'].sv_get(default=[[self.vector_color]])
         edge_color = inputs['Edge Color'].sv_get(default=[[self.edge_color]])
         poly_color = inputs['Polygon Color'].sv_get(default=[[self.polygon_color]])
-
+        seed_set(self.random_seed)
         x, y, config = self.create_config()
 
         config.vector_color = vector_color
