@@ -499,12 +499,12 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if not self.file_pointer:
             return
 
-        # internal_file = bpy.data.texts[self.filename]
-        internal_file = self.file_pointer
+        internal_file = bpy.data.texts[self.filename]
 
         # the updatefunction for file_pointer is not called when the datablock is renamed from elsewhere.
         if not self.filename == self.file_pointer.name:
             self.filename = self.file_pointer.name
+            internal_file = self.file_pointer
 
         f = internal_file.as_string()
         profile = parse_profile(f)
