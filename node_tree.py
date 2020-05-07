@@ -217,6 +217,8 @@ class SvNodeTreeCommon(object):
     sv_links = SvLinks()
     nodes_dict = SvNodesDict()
 
+    last_update_time: IntProperty(description="Last update time in milliseconds")
+
     @property
     def tree_id(self):
         if not self.tree_id_memory:

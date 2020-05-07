@@ -19,7 +19,7 @@ import bpy
 
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.core.tree_reconstruction import NodeTreesReconstruction, SvTree, SvNode, SvLink
-from sverchok.core.hashed_tree_data import HashedBlenderData
+from sverchok.core.hashed_tree_data import HashedBlenderData, HashedTreeData
 import sverchok.core.events_types as evt
 
 if TYPE_CHECKING:
@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from sverchok.node_tree import SverchCustomTree, SverchCustomTreeNode
 
     Node = Union[bpy.types.Node, SverchCustomTreeNode]
-    NodeTree = Union[bpy.types.NodeTree, SverchCustomTreeNode]
+    NodeTree = Union[bpy.types.NodeTree, SverchCustomTree]
 
 
 """
@@ -270,11 +270,11 @@ class EventsWave:
         yield from takewhile(lambda ev: ev.type == self.events_wave[0].type, self.events_wave)
 
     @property
-    def previous_tree(self) -> 'SvTree':
+    def previous_tree(self) -> SvTree:
         return NodeTreesReconstruction.get_node_tree_reconstruction(self.main_event.tree_id)
 
     @property
-    def current_tree(self) -> 'HashedTreeData':
+    def current_tree(self) -> HashedTreeData:
         return HashedBlenderData.get_tree(self.main_event.tree_id)
 
 
@@ -335,21 +335,22 @@ class CurrentEvents:
 
     @classmethod
     def handle_tree_update_event(cls):
-        # property changes chan lead to node tree changes (remove links)
-        sv_events = cls.events_wave.convert_to_sverchok_events()
-        if cls.is_in_debug_mode():
-            [sv_event.print() for sv_event in sv_events]
-        cls.redraw_nodes(sv_events)  # it should be done before reconstruction update
-        # previous step can change links and relocate them in memory
-        if (evt.SverchokEventsTypes.add_link in [ev.type for ev in sv_events] or
-            evt.SverchokEventsTypes.free_link in [ev.type for ev in sv_events]):
-            HashedBlenderData.reset_data(cls.events_wave.main_event.tree_id, reset_nodes=False)
+        with cls.record_tree_statistics(get_blender_tree(cls.events_wave.current_tree.tree_id)):
+            # property changes chan lead to node tree changes (remove links)
+            sv_events = cls.events_wave.convert_to_sverchok_events()
+            if cls.is_in_debug_mode():
+                [sv_event.print() for sv_event in sv_events]
+            cls.redraw_nodes(sv_events)  # it should be done before reconstruction update
+            # previous step can change links and relocate them in memory
+            if (evt.SverchokEventsTypes.add_link in [ev.type for ev in sv_events] or
+                evt.SverchokEventsTypes.free_link in [ev.type for ev in sv_events]):
+                HashedBlenderData.reset_data(cls.events_wave.main_event.tree_id, reset_nodes=False)
 
-        tree_reconstruction = cls.events_wave.previous_tree
-        tree_reconstruction.update_reconstruction(sv_events)
+            tree_reconstruction = cls.events_wave.previous_tree
+            tree_reconstruction.update_reconstruction(sv_events)
 
-        updated_nodes = cls.update_nodes()
-        cls.recolorize_nodes(set(updated_nodes))
+            updated_nodes = cls.update_nodes()
+            cls.recolorize_nodes(set(updated_nodes))
 
     @classmethod
     def handle_frame_change_event(cls): ...
@@ -399,7 +400,7 @@ class CurrentEvents:
         return recalculated_nodes
 
     @classmethod
-    def recolorize_nodes(cls, last_updated_nodes: Set[Union[Node, SverchCustomTreeNode]]):
+    def recolorize_nodes(cls, last_updated_nodes: Set[Node]):
         tree = get_blender_tree(cls.events_wave.main_event.tree_id)
         tree.choose_colorizing_method_with_nodes(last_updated_nodes)
 
@@ -422,7 +423,7 @@ class CurrentEvents:
 
     @staticmethod
     @contextmanager
-    def record_node_statistics(node: Union[Node, SverchCustomTreeNode]):
+    def record_node_statistics(node: Node):
         exception = None
         start_time = time()
         try:
@@ -436,6 +437,20 @@ class CurrentEvents:
             node.last_update = strftime("%H:%M:%S")
             node.update_time = int((time() - start_time) * 1000)
             node.error = repr(exception) if exception else ''
+
+    @staticmethod
+    @contextmanager
+    def record_tree_statistics(tree: NodeTree):
+        exception = None
+        start_time = time()
+        try:
+            yield tree
+        except Exception as e:
+            # todo passing exception?
+            exception = e
+            traceback.print_exc()
+        finally:
+            tree.last_update_time = int((time() - start_time) * 1000)
 
 
 def get_blender_tree(tree_id: str) -> NodeTree:
