@@ -455,7 +455,10 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, 'selected_axis', expand=True)
-        layout.prop_search(self, 'file_pointer', bpy.data, 'texts', text='', icon='TEXT')
+        row = layout.row(align=True)
+        row.prop_search(self, 'file_pointer', bpy.data, 'texts', text='', icon='TEXT')
+        # if self.file_pointer and not (self.filename == self.file_pointer.name):
+        #     row.label(text="", icon="FILE_REFRESH")  
 
         col = layout.column(align=True)
         row = col.row()
@@ -493,11 +496,14 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if not self.filename:
             return None
 
+
+        # internal_file = bpy.data.texts[self.filename]
+        internal_file = self.file_pointer
+
         # the updatefunction for file_pointer is not called when the datablock is renamed from elsewhere.
         if not self.filename == self.file_pointer.name:
             self.filename = self.file_pointer.name
-
-        internal_file = bpy.data.texts[self.filename]
+        
         f = internal_file.as_string()
         profile = parse_profile(f)
         return profile
