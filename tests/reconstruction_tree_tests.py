@@ -29,6 +29,7 @@ class WalkTreeTest(SverchokTestCase):
 
         tree = ev.SvTree(next_id())
         nodes = [ev.SvNode(next_id(), f"{i+1}") for i in range(10)]
+        [setattr(node, 'is_outdated', False) for node in nodes]
         [setitem(tree.nodes._nodes, node.id, node) for node in nodes]
         links_data = [(next_id(), tree.nodes['1'], tree.nodes['2']),
                       (next_id(), tree.nodes['2'], tree.nodes['3']),
@@ -50,12 +51,13 @@ class WalkTreeTest(SverchokTestCase):
         nodes_connected_to_ouput = set([self.tree.nodes[str(i)] for i in [4, 3, 2, 1, 5, 9, 10, 8]])
         self.assertEqual(self.walk_tree.nodes_connected_to_output, nodes_connected_to_ouput)
 
-        changed_nodes = [self.tree.nodes[str(i)] for i in [2, 9]]
-        self.walk_tree.recalculate_effected_by_changes_nodes(changed_nodes)
+        self.tree.nodes['2'].is_outdated = True
+        self.tree.nodes['9'].is_outdated = True
+        self.walk_tree.recalculate_effected_by_changes_nodes()
         effected_nodes = set([self.tree.nodes[str(i)] for i in [2, 3, 4, 9, 5, 6, 7]])
         self.assertEqual(self.walk_tree.effected_by_changes_nodes, effected_nodes)
 
-        walker = self.walk_tree.walk_on_worth_recalculating_nodes(changed_nodes)
+        walker = self.walk_tree.walk_on_worth_recalculating_nodes()
         visited_nodes = set()
         visited_nodes.add(next(walker))
         visited_nodes.add(next(walker))
@@ -66,8 +68,13 @@ class WalkTreeTest(SverchokTestCase):
         visited_nodes.add(next(walker))
         self.assertEqual(visited_nodes, set([self.tree.nodes[str(i)] for i in [9, 5, 2, 3, 4]]))
 
-        walker = self.walk_tree.walk_on_worth_recalculating_nodes([self.tree.nodes['6']])
+        self.tree.nodes['2'].is_outdated = False
+        self.tree.nodes['9'].is_outdated = False
+        self.tree.nodes['6'].is_outdated = True
+        walker = self.walk_tree.walk_on_worth_recalculating_nodes()
         self.assertRaises(StopIteration, next, walker)
 
-        walker = self.walk_tree.walk_on_worth_recalculating_nodes([self.tree.nodes['4']])
+        self.tree.nodes['6'].is_outdated = False
+        self.tree.nodes['4'].is_outdated = True
+        walker = self.walk_tree.walk_on_worth_recalculating_nodes()
         self.assertEqual(next(walker), self.tree.nodes['4'])

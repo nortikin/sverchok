@@ -144,15 +144,28 @@ class ColorizeTree:
     def choose_colorizing_method(self, context):
         if self.colorizing_method == 'Slow nodes':
             self.colorize_slow_nodes()
+        elif self.colorizing_method == 'Last updated nodes':
+            self.colorize_last_updated_nodes()
 
     use_colorizing_algorithm: BoolProperty(
         name="Enable", description="To use colorize algorithm", update=choose_colorizing_method)
-    colorizing_method: EnumProperty(items=[(i, i, '') for i in ['Slow nodes']], update=choose_colorizing_method)
+    colorizing_method: EnumProperty(
+        items=[(i, i, '') for i in ['Slow nodes', 'Last updated nodes']], update=choose_colorizing_method)
 
     # Slow nodes method properties
     update_time: IntProperty(
         name="msec", min=0, max=1000, default=500, description="Time in milliseconds", update=choose_colorizing_method)
     colorizing_color: FloatVectorProperty(size=3, subtype='COLOR', default=(1, 1, 1), update=choose_colorizing_method)
+
+    # Last update nodes method properties
+    last_updated_color = FloatVectorProperty(
+        size=3, subtype='COLOR', default=(1, 1, 1), update=choose_colorizing_method)
+
+    def choose_colorizing_method_with_nodes(self, nodes):
+        if self.colorizing_method == 'Slow nodes':
+            self.colorize_slow_nodes()
+        elif self.colorizing_method == 'Last updated nodes':
+            self.colorize_last_updated_nodes(nodes)
 
     def colorize_slow_nodes(self):
         node: bpy.types.Node
@@ -162,6 +175,19 @@ class ColorizeTree:
                 node.color = self.colorizing_color
             else:
                 node.use_custom_color = False
+
+    def colorize_last_updated_nodes(self, last_updated_nodes: set = None):
+        if last_updated_nodes is not None:
+            for node in self.nodes:
+                if node in last_updated_nodes:
+                    node.use_custom_color = True
+                    node.color = self.last_updated_color
+                else:
+                    node.use_custom_color = False
+        else:
+            for node in self.nodes:
+                if node.use_custom_color:
+                    node.color = self.last_updated_color
 
 
 class SvNodeTreeCommon(object):

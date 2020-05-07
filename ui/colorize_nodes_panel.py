@@ -23,9 +23,12 @@ class NodeColorizePanel(bpy.types.Panel):
     def draw(self, context):
         active_tree = context.space_data.edit_tree
         self.layout.prop(active_tree, 'use_colorizing_algorithm')
-        self.layout.prop(active_tree, 'colorizing_method', text="Method:")
-        self.layout.prop(active_tree, 'update_time', slider=True)
-        self.layout.prop(active_tree, 'colorizing_color', text="Node:")
+        self.layout.prop(active_tree, 'colorizing_method', text="Method")
+        if active_tree.colorizing_method == 'Slow nodes':
+            self.layout.prop(active_tree, 'update_time', slider=True)
+            self.layout.prop(active_tree, 'colorizing_color', text="Node")
+        elif active_tree.colorizing_method == 'Last updated nodes':
+            self.layout.prop(active_tree, 'last_updated_color', text="Node")
 
     @classmethod
     def poll(cls, context):

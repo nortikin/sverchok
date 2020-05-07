@@ -397,9 +397,8 @@ class CurrentEvents:
         tree_reconstruction = cls.events_wave.previous_tree
         tree_reconstruction.update_reconstruction(sv_events)
 
-        sv_nodes = tree_reconstruction.get_sverchok_nodes_to_calculate()
-        cls.update_nodes(sv_nodes)
-        cls.recolorize_nodes()
+        updated_nodes = cls.update_nodes()
+        cls.recolorize_nodes(set(updated_nodes))
 
     @classmethod
     def handle_frame_change_event(cls): ...
@@ -431,23 +430,27 @@ class CurrentEvents:
         [node.sv_update() for node in bl_link_update_nodes]
 
     @classmethod
-    def update_nodes(cls, changed_sv_nodes: Iterable[SvNode]):
+    def update_nodes(cls) -> List[Node]:
         hashed_tree = HashedBlenderData.get_tree(cls.events_wave.main_event.tree_id)
         walker = Walkers.get_walker(cls.events_wave.main_event.tree_id)
         if cls.events_wave.main_event.type in [BlenderEventsTypes.monad_tree_update,
                                                BlenderEventsTypes.tree_update,
                                                BlenderEventsTypes.node_property_update]:
             walker.prepare_walk_after_tree_topology_changes()
-        for recalculation_node in walker.walk_on_worth_recalculating_nodes(changed_sv_nodes):
+        recalculated_nodes = []
+        for recalculation_node in walker.walk_on_worth_recalculating_nodes():
             bl_node = hashed_tree.nodes[recalculation_node.id]
             with cls.record_node_statistics(bl_node) as node:
                 if hasattr(node, 'process'):
                     node.process()
+                recalculation_node.is_outdated = False
+                recalculated_nodes.append(node)
+        return recalculated_nodes
 
     @classmethod
-    def recolorize_nodes(cls):
+    def recolorize_nodes(cls, last_updated_nodes: Set[Node]):
         tree = get_blender_tree(cls.events_wave.main_event.tree_id)
-        tree.choose_colorizing_method(None)
+        tree.choose_colorizing_method_with_nodes(last_updated_nodes)
 
     @staticmethod
     def is_in_debug_mode():
@@ -533,15 +536,6 @@ class SvTree:
         if self.is_in_debug_mode():
             self.check_reconstruction_correctness()
 
-    def get_sverchok_nodes_to_calculate(self) -> List['SvNode']:
-        # todo here "to update" property should be checked
-        out = []
-        for sv_node in self.nodes:
-            if sv_node.is_outdated:
-                sv_node.is_outdated = False
-                out.append(sv_node)
-        return out
-
     def total_reconstruction(self):
         bl_tree = get_blender_tree(self.id)
         [self.nodes.add(node.node_id) for node in bl_tree.nodes]
@@ -580,7 +574,9 @@ class SvLinksCollection:
         to_node = self._tree.nodes[bl_link.to_node.node_id]
         sv_link = SvLink(link_id, from_node, to_node)
         from_node.outputs[link_id] = sv_link
-        from_node.is_outdated = True
+        if not from_node.outputs:
+            # if node already was connected it has actual calculations
+            from_node.is_outdated = True
         to_node.inputs[link_id] = sv_link
         to_node.is_outdated = True
         self._links[link_id] = sv_link
@@ -897,18 +893,20 @@ class WalkSvTree:
         # the goal is visit 10-9-5-2-3-4 nodes in this order
 
         self.output_nodes: Set[SvNode] = set()  # 4 node
+        self.outdated_nodes: Set[SvNode] = set()  # 10,2 nodes
         # the intersection of two sets below gives set of nodes which should be recalculated
         self.nodes_connected_to_output: Set[SvNode] = set()  # all nodes without 6, 7 (in the example)
         self.effected_by_changes_nodes: Set[SvNode] = set()  # all nodes without 1, 8 (in the example)
         self.worth_recalculating_nodes: Set[SvNode] = set()  # all nodes without 6, 7, 1, 8
 
-    def walk_on_worth_recalculating_nodes(self, changed_nodes: Iterable[SvNode]) -> Generator[SvNode, None, None]:
-        self.recalculate_effected_by_changes_nodes(changed_nodes)
+    def walk_on_worth_recalculating_nodes(self) -> Generator[SvNode, None, None]:
+        self.recalculate_effected_by_changes_nodes()
+
         safe_counter = count()
         maximum_possible_nodes_in_tree = 1000
         visited_nodes = set()
         waiting_nodes = set()
-        next_nodes = set(changed_nodes) & self.worth_recalculating_nodes
+        next_nodes = self.outdated_nodes & self.worth_recalculating_nodes
         while (next_nodes or waiting_nodes) and next(safe_counter) < maximum_possible_nodes_in_tree:
             if next_nodes:
                 current_node = next_nodes.pop()
@@ -941,9 +939,10 @@ class WalkSvTree:
         self.nodes_connected_to_output.clear()
         [self.nodes_connected_to_output.add(node) for node in self.tree.nodes.walk_backward(self.output_nodes)]
 
-    def recalculate_effected_by_changes_nodes(self, changed_nodes: Iterable[SvNode]):
+    def recalculate_effected_by_changes_nodes(self):
+        self.outdated_nodes = set([node for node in self.tree.nodes if node.is_outdated])
         self.effected_by_changes_nodes.clear()
-        [self.effected_by_changes_nodes.add(node) for node in self.tree.nodes.walk_forward(changed_nodes)]
+        [self.effected_by_changes_nodes.add(node) for node in self.tree.nodes.walk_forward(self.outdated_nodes)]
         self.worth_recalculating_nodes = self.nodes_connected_to_output & self.effected_by_changes_nodes
 
     def node_can_be_recalculated(self, node: SvNode, visited_nodes: Set[SvNode]) -> bool:
