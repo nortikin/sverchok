@@ -26,7 +26,33 @@ from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repe
 from sverchok.utils.logging import info, debug
 from sverchok.utils.modules.eval_formula import get_variables, safe_eval
 from sverchok.utils.geom import CubicSpline, LinearSpline
-from sverchok.utils.curve import SvSplineCurve
+from sverchok.utils.curve import SvSplineCurve, SvConcatCurve
+
+class ControlPoint(object):
+    def __init__(self, x, y, sharp):
+        self.x = x
+        self.y = y
+        self.sharp = sharp
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y and self.sharp == other.sharp
+
+    def to_tuple(self):
+        return (self.x, self.y, 0)
+
+def split_points(points):
+    if not points:
+        return []
+    result = []
+    current_segment = []
+    n = len(points)
+    for i, point in enumerate(points):
+        current_segment.append(point)
+        if point.sharp and i > 0 and i < n-1:
+            result.append(current_segment)
+            current_segment = [point]
+    result.append(current_segment)
+    return result
 
 class SvPointEntry(bpy.types.PropertyGroup):
 
@@ -38,6 +64,7 @@ class SvPointEntry(bpy.types.PropertyGroup):
 
     x : StringProperty(name = "X", update=update_point)
     y : StringProperty(name = "Y", update=update_point)
+    sharp : BoolProperty(name = "Sharp", update=update_point)
 
 class SvPointsList(bpy.types.PropertyGroup):
     points : CollectionProperty(type=SvPointEntry)
@@ -45,9 +72,23 @@ class SvPointsList(bpy.types.PropertyGroup):
 
 class UI_UL_SvPointUiList(bpy.types.UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index, flt_flag):
+        if hasattr(data, 'mode'):
+            cubic = data.mode == 'SPL'
+            n = len(data.control_points)
+
         row = layout.row(align=True)
         row.prop(item, 'x', text='')
         row.prop(item, 'y', text='')
+
+        if cubic and index > 0 and index < n-1:
+            if item.sharp:
+                sharp_icon = 'SHARPCURVE'
+            else:
+                sharp_icon = 'SMOOTHCURVE'
+            sharp = row.operator(SvPointSharpToggle.bl_idname, text='', icon=sharp_icon)
+            sharp.nodename = data.name
+            sharp.treename = data.id_data.name
+            sharp.item_index = index
 
         up = row.operator(SvMovePoint.bl_idname, text='', icon='TRIA_UP')
         up.nodename = data.name
@@ -123,6 +164,24 @@ class SvMovePoint(bpy.types.Operator):
             node.control_points[selected_index].x, node.control_points[selected_index].y = next_point
             node.control_points[next_index].x, node.control_points[next_index].y = selected_point
             updateNode(node, context)
+        return {'FINISHED'}
+
+class SvPointSharpToggle(bpy.types.Operator):
+    "Make control point sharp / smooth"
+
+    bl_label = "Control point sharp toggle"
+    bl_idname = "sverchok.fi_control_point_sharp"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    nodename : StringProperty(name='nodename')
+    treename : StringProperty(name='treename')
+    item_index : IntProperty(name='item_index')
+
+    def execute(self, context):
+        node = bpy.data.node_groups[self.treename].nodes[self.nodename]
+        idx = self.item_index
+        node.control_points[idx].sharp = not node.control_points[idx].sharp
+        updateNode(node, context)
         return {'FINISHED'}
 
 class SvFormulaInterpolateNode(bpy.types.Node, SverchCustomTreeNode):
@@ -235,29 +294,40 @@ class SvFormulaInterpolateNode(bpy.types.Node, SverchCustomTreeNode):
         for item in self.control_points:
             x = safe_eval(item.x, variables)
             y = safe_eval(item.y, variables)
-            control_points.append((x, y, 0))
+            sharp = item.sharp
+            point = ControlPoint(x, y, sharp)
+            control_points.append(point)
 
-        control_points.sort(key = lambda p: p[0])
-        return control_points
+        control_points.sort(key = lambda p: p.x)
+        return split_points(control_points)
 
-    def make_spline(self, control_points):
-        xs = [p[0] for p in control_points]
-        min_x = xs[0]
-        max_x = xs[-1]
-        control_points = np.array(control_points)
-        xs = np.array(xs)
+    def make_curve(self, control_points):
+        curves = []
+        for series in control_points:
+            xs = [p.x for p in series]
+            min_x = xs[0]
+            max_x = xs[-1]
+            series = np.array([p.to_tuple() for p in series])
+            xs = np.array(xs)
 
-        if self.mode == 'SPL':
-            spline = CubicSpline(control_points, tknots=xs, is_cyclic=False)
+            if self.mode == 'SPL':
+                spline = CubicSpline(series, tknots=xs, is_cyclic=False)
+            else:
+                spline = LinearSpline(series, tknots=xs, is_cyclic=False)
+            curve = SvSplineCurve(spline)
+            curve.u_bounds = (series[0][0], series[-1][0])
+            curves.append(curve)
+
+        if len(curves) == 1:
+            return curves[0]
         else:
-            spline = LinearSpline(control_points, tknots=xs, is_cyclic=False)
-        return spline
+            return SvConcatCurve(curves)
 
-    def eval_spline(self, spline, xs):
+    def eval_spline(self, curve, xs):
         xs = np.array(xs)
         if self.is_cyclic:
             xs = min_x + (xs - min_x) % (max_x - min_x)
-        return spline.eval(xs)[:,1].tolist()
+        return curve.evaluate_array(xs)[:,1].tolist()
         
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -284,10 +354,8 @@ class SvFormulaInterpolateNode(bpy.types.Node, SverchCustomTreeNode):
             for var_values in var_values_s:
                 variables = dict(zip(var_names, var_values))
                 control_points = self.make_points(variables)
-                spline = self.make_spline(control_points)
-                ys = self.eval_spline(spline, xs_in)
-                curve = SvSplineCurve(spline)
-                curve.u_bounds = (control_points[0][0], control_points[-1][0])
+                curve = self.make_curve(control_points)
+                ys = self.eval_spline(curve, xs_in)
                 y_out.append(ys)
                 curve_out.append(curve)
                 ct_points_out.append(control_points)
@@ -316,6 +384,7 @@ classes = [
             SvAddPoint,
             SvRemovePoint,
             SvMovePoint,
+            SvPointSharpToggle,
             SvFormulaInterpolateNode
         ]
 
