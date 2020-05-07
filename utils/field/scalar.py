@@ -541,6 +541,68 @@ class SvScalarFieldLaplacian(SvScalarField):
         result = (sides - 6*v0) / (8 * step * step * step)
         return result
 
+class SvScalarFieldGaussCurvature(SvScalarField):
+    def __init__(self, field, step):
+        self.field = field
+        self.step = step
+        self.__description__ = "Kg({})".format(field)
+
+    def evaluate(self, x, y, z):
+        return self.evaluate_grid(np.array([x]), np.array([y]), np.array([z]))[0]
+
+    def evaluate_grid(self, xs, ys, zs):
+        # Ref.: Curvature formulas for implicit curves and surfaces // Ron Goldman // doi:10.1016/j.cagd.2005.06.005
+        step = self.step
+        step2 = step*step
+        n = len(xs)
+        v_dx_plus = self.field.evaluate_grid(xs+step, ys,zs)
+        v_dx_minus = self.field.evaluate_grid(xs-step,ys,zs)
+        v_dy_plus = self.field.evaluate_grid(xs, ys+step, zs)
+        v_dy_minus = self.field.evaluate_grid(xs, ys-step, zs)
+        v_dz_plus = self.field.evaluate_grid(xs, ys, zs+step)
+        v_dz_minus = self.field.evaluate_grid(xs, ys, zs-step)
+
+        v_dxy_plus = self.field.evaluate_grid(xs+step, ys+step, zs)
+        v_dyz_plus = self.field.evaluate_grid(xs, ys+step, zs+step)
+        v_dxz_plus = self.field.evaluate_grid(xs+step, ys, zs+step)
+
+        v0 = self.field.evaluate_grid(xs, ys, zs)
+
+        dx = (v_dx_plus - v0) / step
+        dy = (v_dy_plus - v0) / step
+        dz = (v_dz_plus - v0) / step
+
+        dxx = (v_dx_plus - 2*v0 + v_dx_minus) / step2
+        dyy = (v_dy_plus - 2*v0 + v_dy_minus) / step2
+        dzz = (v_dz_plus - 2*v0 + v_dz_minus) / step2
+
+        dxy = (v_dxy_plus - v_dx_plus - v_dy_plus + v0) / step2
+        dyz = (v_dyz_plus - v_dy_plus - v_dz_plus + v0) / step2
+        dxz = (v_dxz_plus - v_dx_plus - v_dz_plus + v0) / step2
+
+        M = np.empty((n, 4, 4))
+        M[:, 0, 0] = dxx
+        M[:, 0, 1] = M[:, 1, 0] = dxy
+        M[:, 0, 2] = M[:, 2, 0] = dxz
+        M[:, 1, 1] = dyy
+        M[:, 1, 2] = M[:, 2, 1] = dyz
+        M[:, 2, 2] = dzz
+        M[:, 0, 3] = M[:, 3, 0] = dx
+        M[:, 1, 3] = M[:, 3, 1] = dy
+        M[:, 2, 3] = M[:, 3, 2] = dz
+        M[:, 3, 3] = 0
+
+        numerator = - np.linalg.det(M)
+
+        grad = np.empty((n, 3))
+        grad[:,0] = dx
+        grad[:,1] = dy
+        grad[:,2] = dz
+
+        denominator = np.linalg.norm(grad, axis=1) ** 4
+
+        return numerator / denominator
+
 class SvVoronoiScalarField(SvScalarField):
     __description__ = "Voronoi"
 

@@ -112,6 +112,7 @@
      SvExAttractorFieldNode
      SvExImageFieldNode
      SvExScalarFieldMathNode
+     SvScalarFieldCurvatureNode
      SvExMergeScalarFieldsNode
      SvExScalarFieldEvaluateNode
      SvExVectorFieldEvaluateNode
