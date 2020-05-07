@@ -390,6 +390,7 @@
     SvVDExperimental
     SvMatrixViewer28
     SvIDXViewer28
+    SvViewer2D
     ---
     SvBmeshViewerNodeV28
     SvCurveViewerNodeV28
@@ -407,7 +408,6 @@
     SvTextureViewerNodeLite
     SvWaveformViewer
     SvConsoleNode
-    SvViewer2D
 
 ## Text
     ViewerNodeTextMK3

@@ -9,6 +9,7 @@ Viz
    viewer_metaball
    viewer_waveform_output
    vd_draw_experimental
+   viewer_2d
    empty_out
    viewer_nurbs_curve
    viewer_nurbs_surface
