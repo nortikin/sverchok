@@ -427,9 +427,14 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.adjust_sockets()
         updateNode(self, context)
 
+    def legacy_filename_update(self, context):
+        if self.file_pointer and self.file_pointer.name != self.filename:
+            # this is weird, but caried an implict update if the self.filename does not match self.file_pointer.name
+            self.file_pointer = self.file_pointer
+
     properties_to_skip_iojson = ["file_pointer"]
 
-    filename : StringProperty(default="")
+    filename : StringProperty(default="", update=legacy_filename_update)
     file_pointer: PointerProperty(
         type=bpy.types.Text, poll=lambda s, o: True, update=pointer_update)
 
