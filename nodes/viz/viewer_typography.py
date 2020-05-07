@@ -25,7 +25,8 @@ from bpy.props import (
     StringProperty,
     BoolVectorProperty,
     FloatProperty,
-    IntProperty
+    IntProperty,
+    PointerProperty
 )
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -38,7 +39,11 @@ mode_options_y = enum_from_list('TOP_BASELINE', 'TOP', 'CENTER', 'BOTTOM')
 def get_font(node):
     fonts = bpy.data.fonts
     default = fonts.get('Bfont')
-    return fonts.get(node.fontname, default)
+
+    if node.font_pointer:
+        return node.font_pointer
+    else:
+        return fonts.get(node.fontname, default)
 
 def font_set_props(f, node, txt):
 
@@ -123,11 +128,34 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     bl_icon = 'OUTLINER_OB_FONT'
     sv_icon = 'SV_TYPOGRAPHY_VIEWER'
 
+    def captured_updateNode(self, context):
+        if not self.updating_name_from_pointer:
+            font_datablock = self.get_bpy_data_from_name(self.fontname, bpy.data.fonts)
+            if font_datablock:
+                self.font_pointer = font_datablock
+                updateNode(self, context)    
+
+    def pointer_update(self, context):
+        self.updating_name_from_pointer = True
+
+        try:
+            self.fontname = self.font_pointer.name if self.font_pointer else ""
+        except Exception as err:
+            self.info(err)
+
+        self.updating_name_from_pointer = False
+        updateNode(self, context)
+
+    
     grouping: BoolProperty(default=False, update=SvObjHelper.group_state_update_handler)
     data_kind: StringProperty(name='data kind', default='FONT')
 
     show_options: BoolProperty(default=0)
-    fontname: StringProperty(default='', update=updateNode)
+
+    properties_to_skip_iojson = ["font_pointer"]
+    updating_name_from_pointer: BoolProperty(name="updating name")
+    fontname: StringProperty(default='', update=captured_updateNode)
+    font_pointer: PointerProperty(type=bpy.types.option1, poll=lambda s, o: True, update=pointer_update)
     fsize: FloatProperty(default=1.0, update=updateNode)
 
     # space
@@ -206,7 +234,7 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.prop_search(self, 'fontname', bpy.data, 'fonts', text='', icon='FONT_DATA')
+        row.prop_search(self, 'font_pointer', bpy.data, 'fonts', text='', icon='FONT_DATA')
         row.operator(shf, text='', icon='ZOOM_IN')
 
         box = col.box()
