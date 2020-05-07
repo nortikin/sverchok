@@ -481,6 +481,8 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         layout.menu(SvProfileImportMenu.bl_idname)
         layout.prop(self, "addnodes",text='Auto add nodes')
 
+        layout.label(text=f"||{self.filename}||")
+
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "a")
 
@@ -542,6 +544,8 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         update analyzes the state of the node and returns if the criteria to start processing
         are not met.
         '''
+        if self.file_pointer and self.file_pointer.name != self.filename:
+            self.filename = self.file_pointer.name
 
         # keeping the file internal for now.
         if not (self.filename.strip() in bpy.data.texts):
