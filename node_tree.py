@@ -166,11 +166,12 @@ class ColorizeTree:
             self.colorize_slow_nodes()
         elif self.colorizing_method == 'Last updated nodes':
             self.colorize_last_updated_nodes(nodes)
+        self.colorize_error_nodes(nodes)
 
     def colorize_slow_nodes(self):
-        node: bpy.types.Node
         for node in self.nodes:
-            if self.use_colorizing_algorithm and node.update_time >= self.update_time:
+            is_slow_node = node.update_time >= self.update_time
+            if self.use_colorizing_algorithm and is_slow_node and not node.error:
                 node.use_custom_color = True
                 node.color = self.colorizing_color
             else:
@@ -179,7 +180,7 @@ class ColorizeTree:
     def colorize_last_updated_nodes(self, last_updated_nodes: set = None):
         if last_updated_nodes is not None:
             for node in self.nodes:
-                if node in last_updated_nodes:
+                if node in last_updated_nodes and not node.error:
                     node.use_custom_color = True
                     node.color = self.last_updated_color
                 else:
@@ -188,6 +189,18 @@ class ColorizeTree:
             for node in self.nodes:
                 if node.use_custom_color:
                     node.color = self.last_updated_color
+
+    def colorize_error_nodes(self, last_updated_nodes=None):
+        for node in last_updated_nodes:
+            if node.error:
+                node.color = (1, 0, 0.5)
+                node.use_custom_color = True
+            else:
+                if not self.use_colorizing_algorithm:
+                    node.use_custom_color = False
+                else:
+                    # all nodes was recolored already
+                    pass
 
 
 class SvNodeTreeCommon(object):

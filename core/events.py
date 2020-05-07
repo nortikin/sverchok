@@ -213,7 +213,7 @@ class EventsWave:
                 self.events_wave[0].type == BlenderEventsTypes.monad_tree_update):
             # New: Nodes = 0; Links = 0-inf; Reroutes = 0-inf
             # Remove: Nodes=0, Links = 0-n, Reroutes = 0-n
-            # Tools: F, Ctrl + RMB, Shift + RMB, manual unlink, python (un)link
+            # Tools: F, Ctrl + RMB, Shift + RMB, manual unlink, python (un/re)link, past a node between links
             self.links_was_added = (len(self.current_tree.links) - len(self.previous_tree.links)) > 0
             # todo it has appeared that relinking also is possible via Blender API and such fast tests can`t detect it.
             self.links_was_removed = (len(self.current_tree.links) - len(self.previous_tree.links)) < 0
@@ -260,12 +260,22 @@ class EventsWave:
             if self.events_wave[0].type == BlenderEventsTypes.copy_node or self.reroutes_was_added:
                 # the idea was get new links from copied nodes
                 # but API does not let to get links linked to a node efficiently
-                pass
-
-            new_links = self.search_new_links()
-            return [SverchokEvent(type=SverchokEventsTypes.add_link,
-                                  tree_id=self.main_event.tree_id,
-                                  link_id=link.link_id) for link in new_links]
+                # but if copy node it means that only new links could be created
+                new_links = self.search_new_links()
+                return [SverchokEvent(type=SverchokEventsTypes.add_link,
+                                      tree_id=self.main_event.tree_id,
+                                      link_id=link.link_id) for link in new_links]
+            else:
+                # also links could be deleted if a node was past between links
+                new_links = self.search_new_links()
+                free_links = self.search_free_links()
+                add_links_events = [SverchokEvent(type=SverchokEventsTypes.add_link,
+                                                  tree_id=self.main_event.tree_id,
+                                                  link_id=link.link_id) for link in new_links]
+                remove_links_events = [SverchokEvent(type=SverchokEventsTypes.free_link,
+                                                     tree_id=self.main_event.tree_id,
+                                                     link_id=link.id) for link in free_links]
+                return add_links_events + remove_links_events
         elif self.links_was_removed:
             if self.events_wave[0].type == BlenderEventsTypes.free_node or self.reroutes_was_removed:
                 nodes_removed = {self.previous_tree.nodes[ev.node_id] for ev in self.first_type_events()}
@@ -444,11 +454,11 @@ class CurrentEvents:
                 if hasattr(node, 'process'):
                     node.process()
                 recalculation_node.is_outdated = False
-                recalculated_nodes.append(node)
+            recalculated_nodes.append(bl_node)
         return recalculated_nodes
 
     @classmethod
-    def recolorize_nodes(cls, last_updated_nodes: Set[Node]):
+    def recolorize_nodes(cls, last_updated_nodes: Set[Union[Node, SverchCustomTreeNode]]):
         tree = get_blender_tree(cls.events_wave.main_event.tree_id)
         tree.choose_colorizing_method_with_nodes(last_updated_nodes)
 
