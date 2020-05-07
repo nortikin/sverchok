@@ -392,6 +392,20 @@ class SvProfileImportOperator(bpy.types.Operator):
         updateNode(context.node, context)
         return {'FINISHED'}
 
+class SvPFMK3_callback(bpy.types.Operator):
+
+    bl_idname = "node.sv_pfmk3_callback"
+    bl_label = "Short Name"
+
+    idname: StringProperty(name='nodename')
+    idtree: StringProperty(name='treename')
+
+    def execute(self, context):
+        n = bpy.data.node_groups[self.idtree].nodes[self.idname]
+        n.set_filename_to_match_file_pointer()
+        return {'FINISHED'}
+
+
 #################################
 # Node class
 #################################
@@ -455,7 +469,12 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, 'selected_axis', expand=True)
-        layout.prop_search(self, 'file_pointer', bpy.data, 'texts', text='', icon='TEXT')
+
+        row = layout.row(align=True)
+        row.prop_search(self, 'file_pointer', bpy.data, 'texts', text='', icon='TEXT')
+        if self.filename_mismatch():
+            row.alert = True
+            self.wrapper_tracked_ui_draw_op(row, "node.sv_pfmk3_callback", icon='FILE_REFRESH', text='')
 
         col = layout.column(align=True)
         row = col.row()
@@ -480,6 +499,8 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         layout.label(text="Import Examples")
         layout.menu(SvProfileImportMenu.bl_idname)
         layout.prop(self, "addnodes",text='Auto add nodes')
+
+        layout.label(text=f"||{self.filename}||")
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "a")
@@ -635,6 +656,12 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         else:
             self.warning("Unknown filename: {}".format(self.filename))
 
+    def filename_mismatch(self):
+        return self.filename and self.file_pointer and self.filename != self.file_pointer.name
+
+    def set_filename_to_match_file_pointer(self):
+        self.file_pointer = self.file_pointer
+
     def set_pointer_from_filename(self):
         """ this function upgrades older versions of ProfileMK3 to the version that has self.file_pointer """
         if hasattr(self, "file_pointer") and not self.file_pointer:
@@ -646,6 +673,7 @@ classes = [
         SvProfileImportMenu,
         SvProfileImportOperator,
         SvPrifilizerMk3,
+        SvPFMK3_callback,
         SvProfileNodeMK3
     ]
 
