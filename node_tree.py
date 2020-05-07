@@ -44,7 +44,8 @@ from sverchok.core.node_id_dict import SvNodesDict
 
 from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
 from sverchok.core.node_defaults import set_defaults_if_defined
-import sverchok.core.events as ev
+import sverchok.core.events_types as event_types
+from sverchok.core.events import CurrentEvents
 
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
@@ -408,10 +409,10 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon, ColorizeTree):
         Tags tree for update for handle
         get update list for debug info, tuple (fulllist, dictofpartiallists)
         '''
-        ev.CurrentEvents.add_new_event(event_type=ev.BlenderEventsTypes.tree_update,
-                                       node_tree=self)
+        CurrentEvents.add_new_event(event_type=event_types.BlenderEventsTypes.tree_update,
+                                    node_tree=self)
 
-        if False:  # get from preference
+        if False:  # todo get from preference
             # this is a no-op if there's no drawing
             clear_exception_drawing_with_bgl(self.nodes)
             if is_first_run():
@@ -500,10 +501,10 @@ class SverchCustomTreeNode:
         pass
 
     def insert_link(self, link):
-        ev.CurrentEvents.add_new_event(event_type=ev.BlenderEventsTypes.add_link_to_node,
-                                       node_tree=self.id_data,
-                                       node=self,
-                                       link=link)
+        CurrentEvents.add_new_event(event_type=event_types.BlenderEventsTypes.add_link_to_node,
+                                    node_tree=self.id_data,
+                                    node=self,
+                                    link=link)
 
     @classmethod
     def poll(cls, ntree):
@@ -788,11 +789,11 @@ class SverchCustomTreeNode:
         - sets custom defaults (nodes, and sockets)
 
         """
-        ev.CurrentEvents.add_new_event(event_type=ev.BlenderEventsTypes.add_node,
-                                       node_tree=self.id_data,
-                                       node=self,
-                                       call_function=self.sv_init,
-                                       call_function_arguments=(context, ))
+        CurrentEvents.add_new_event(event_type=event_types.BlenderEventsTypes.add_node,
+                                    node_tree=self.id_data,
+                                    node=self,
+                                    call_function=self.sv_init,
+                                    call_function_arguments=(context, ))
         if False:  # todo take from preference
             ng = self.id_data
 
@@ -846,11 +847,11 @@ class SverchCustomTreeNode:
         This method is not supposed to be overriden in specific nodes.
         Override sv_copy() instead.
         """
-        ev.CurrentEvents.add_new_event(event_type=ev.BlenderEventsTypes.copy_node,
-                                       node_tree=self.id_data,
-                                       node=self,
-                                       call_function=self.sv_copy,
-                                       call_function_arguments=(original, ))
+        CurrentEvents.add_new_event(event_type=event_types.BlenderEventsTypes.copy_node,
+                                    node_tree=self.id_data,
+                                    node=self,
+                                    call_function=self.sv_copy,
+                                    call_function_arguments=(original, ))
         if False:  # todo get this from preference
             settings = get_original_node_color(self.id_data, original.name)
             if settings is not None:
@@ -871,10 +872,10 @@ class SverchCustomTreeNode:
         This method is not supposed to be overriden in specific nodes.
         Override sv_free() instead
         """
-        ev.CurrentEvents.add_new_event(event_type=ev.BlenderEventsTypes.free_node,
-                                       node_tree=self.id_data,
-                                       node=self,
-                                       call_function=self.sv_free)
+        CurrentEvents.add_new_event(event_type=event_types.BlenderEventsTypes.free_node,
+                                    node_tree=self.id_data,
+                                    node=self,
+                                    call_function=self.sv_free)
         if False:  # todo get this from preference
             self.sv_free()
 

@@ -32,7 +32,8 @@ from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import get_other_socket, updateNode, match_long_repeat
 from sverchok.core.update_system import make_tree_from_nodes, do_update
 from sverchok.core.monad_properties import SvIntPropertySettingsGroup, SvFloatPropertySettingsGroup, ensure_unique
-import sverchok.core.events as ev
+from sverchok.core.events import CurrentEvents
+import sverchok.core.events_types as events_types
 
 
 MONAD_COLOR = (0.830819, 0.911391, 0.754562)
@@ -387,8 +388,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                         socket.prop_name = socket.other.prop_name
 
     def update(self):
-        ev.CurrentEvents.add_new_event(event_type=ev.BlenderEventsTypes.monad_tree_update,
-                                       node_tree=self)
+        CurrentEvents.add_new_event(event_type=events_types.BlenderEventsTypes.monad_tree_update,
+                                    node_tree=self)
         if False:  # todo should be take from preference
             affected_trees = {instance.id_data for instance in self.instances}
             for tree in affected_trees:

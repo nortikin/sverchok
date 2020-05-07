@@ -33,7 +33,8 @@ from numpy import (
     float64,
     int32)
 from sverchok.utils.logging import info
-import sverchok.core.events as ev
+from sverchok.core.events import CurrentEvents
+import sverchok.core.events_types as events_types
 
 DEBUG_MODE = False
 HEAT_MAP = False
@@ -868,9 +869,9 @@ def updateNode(self, context):
     When a node has changed state and need to call a partial update.
     For example a user exposed bpy.prop
     """
-    ev.CurrentEvents.add_new_event(event_type=ev.BlenderEventsTypes.node_property_update,
-                                   node_tree=self.id_data,
-                                   node=self)
+    CurrentEvents.add_new_event(event_type=events_types.BlenderEventsTypes.node_property_update,
+                                node_tree=self.id_data,
+                                node=self)
     if False:  # todo probably delete below
         self.process_node(context)
 

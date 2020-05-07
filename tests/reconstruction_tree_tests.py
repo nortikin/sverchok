@@ -3,7 +3,7 @@ from operator import setitem
 
 from sverchok.utils.testing import SverchokTestCase
 
-import sverchok.core.events as ev
+import sverchok.core.tree_reconstruction as rec
 
 
 class WalkTreeTest(SverchokTestCase):
@@ -22,13 +22,13 @@ class WalkTreeTest(SverchokTestCase):
             return str(next(counter))
 
         def add_link(link_id, from_node, to_node):
-            sv_link = ev.SvLink(link_id, from_node, to_node)
+            sv_link = rec.SvLink(link_id, from_node, to_node)
             from_node.outputs[link_id] = sv_link
             to_node.inputs[link_id] = sv_link
             return sv_link
 
-        tree = ev.SvTree(next_id())
-        nodes = [ev.SvNode(next_id(), f"{i+1}") for i in range(10)]
+        tree = rec.SvTree(next_id())
+        nodes = [rec.SvNode(next_id(), f"{i + 1}") for i in range(10)]
         [setattr(node, 'is_outdated', False) for node in nodes]
         [setitem(tree.nodes._nodes, node.id, node) for node in nodes]
         links_data = [(next_id(), tree.nodes['1'], tree.nodes['2']),
@@ -42,22 +42,21 @@ class WalkTreeTest(SverchokTestCase):
                       (next_id(), tree.nodes['10'], tree.nodes['9']),
                       ]
         [setitem(tree.links._links, link.id, link) for link in [add_link(*data) for data in links_data]]
-        self.walk_tree = ev.WalkSvTree(tree)
-        self.walk_tree.output_nodes.add(tree.nodes['4'])
+        tree.walk.output_nodes.add(tree.nodes['4'])
         self.tree = tree
 
     def test_walk_sv_tree(self):
-        self.walk_tree.recalculate_connected_to_output_nodes()
+        self.tree.walk.recalculate_connected_to_output_nodes()
         nodes_connected_to_ouput = set([self.tree.nodes[str(i)] for i in [4, 3, 2, 1, 5, 9, 10, 8]])
-        self.assertEqual(self.walk_tree.nodes_connected_to_output, nodes_connected_to_ouput)
+        self.assertEqual(self.tree.walk.nodes_connected_to_output, nodes_connected_to_ouput)
 
         self.tree.nodes['2'].is_outdated = True
         self.tree.nodes['9'].is_outdated = True
-        self.walk_tree.recalculate_effected_by_changes_nodes()
+        self.tree.walk.recalculate_effected_by_changes_nodes()
         effected_nodes = set([self.tree.nodes[str(i)] for i in [2, 3, 4, 9, 5, 6, 7]])
-        self.assertEqual(self.walk_tree.effected_by_changes_nodes, effected_nodes)
+        self.assertEqual(self.tree.walk.effected_by_changes_nodes, effected_nodes)
 
-        walker = self.walk_tree.walk_on_worth_recalculating_nodes()
+        walker = self.tree.walk.walk_on_worth_recalculating_nodes()
         visited_nodes = set()
         visited_nodes.add(next(walker))
         visited_nodes.add(next(walker))
@@ -71,10 +70,10 @@ class WalkTreeTest(SverchokTestCase):
         self.tree.nodes['2'].is_outdated = False
         self.tree.nodes['9'].is_outdated = False
         self.tree.nodes['6'].is_outdated = True
-        walker = self.walk_tree.walk_on_worth_recalculating_nodes()
+        walker = self.tree.walk.walk_on_worth_recalculating_nodes()
         self.assertRaises(StopIteration, next, walker)
 
         self.tree.nodes['6'].is_outdated = False
         self.tree.nodes['4'].is_outdated = True
-        walker = self.walk_tree.walk_on_worth_recalculating_nodes()
+        walker = self.tree.walk.walk_on_worth_recalculating_nodes()
         self.assertEqual(next(walker), self.tree.nodes['4'])
