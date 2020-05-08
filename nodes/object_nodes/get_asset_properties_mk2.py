@@ -95,6 +95,13 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
 
     Mode: EnumProperty(name="getmodes", default="objects", items=e(M), update=updateNode)
     Type: EnumProperty(name="getmodes", default="MESH", items=e(T), update=pre_updateNode)
+
+    properties_to_skip_iojson: ["object_pointer", "image_pointer", "text_pointer"]
+
+    @property
+    def automated_props(self):
+        ...
+
     text_pointer: PointerProperty(type=bpy.types.Text, poll=lambda s, o: True, update=updateNode)
     object_pointer: PointerProperty(type=bpy.types.Object, poll=lambda s, o: True, update=updateNode)
     image_pointer: PointerProperty(type=bpy.types.Image, poll=lambda s, o: True, update=updateNode)
@@ -158,8 +165,9 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
             layout.prop_search(self, 'text_pointer', bpy.data, 'texts', text='name')
         elif self.Mode == 'images':
             layout.prop_search(self, 'image_pointer', bpy.data, 'images', text='name')
-            if self.image_name:
+            if self.image_pointer and self.image_pointer.name:
                 layout.prop(self, 'pass_pixels', text='pixels')
+                layout.label(text=f"dimensions: {self.image_pointer.size[:]}")
                 # size ?  new socket outputting [w/h]
         elif self.Mode == 'grease_pencils':
             self.draw_gp_options(context, layout)
