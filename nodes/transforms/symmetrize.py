@@ -115,7 +115,7 @@ class SvSymmetrizeNode(bpy.types.Node, SverchCustomTreeNode):
         return verts
 
     def process(self):
-        if not (self.inputs['Vertices'].is_linked and self.inputs['Polygons'].is_linked):
+        if not (self.inputs['Vertices'].is_linked):
             return
         if not (any(output.is_linked for output in self.outputs)):
             return
