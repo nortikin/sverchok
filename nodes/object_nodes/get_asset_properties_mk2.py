@@ -102,7 +102,9 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
 
     # GP props
     gp_pointer: PointerProperty(type=bpy.types.GreasePencil, poll=lambda s, o: True, update=updateNode)
-    gp_layer_pointer: PointerProperty(type=bpy.types.GreasePencilLayers, poll=lambda s, o: True, update=updateNode) # <---- no?
+    # i can't get this to work. so am revering to StringProperty for gp_layer.
+    # gp_layer_pointer: PointerProperty(type=bpy.types.GreasePencilLayers, poll=lambda s, o: True, update=updateNode) # <---- no?
+    gp_layer: bpy.props.StringProperty(update=updateNode)
     gp_frame_current: bpy.props.BoolProperty(default=True, update=updateNode)
     gp_frame_override: bpy.props.IntProperty(default=1, update=updateNode)
     gp_stroke_idx: bpy.props.IntProperty(update=updateNode)
@@ -120,14 +122,15 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
         if not self.gp_pointer:
             return
         
-        layout.prop_search(self, 'gp_layer_pointer', self.gp_pointer, 'layers', text='layer')
-        if not self.gp_layer_pointer:
+        layout.prop_search(self, 'gp_layer', self.gp_pointer, 'layers', text='layer')
+        layer_ref = self.gp_pointer.get(self.gp_layer)
+        if not layer_ref:
             return
 
         layout.prop(self, 'gp_selected_frame_mode', expand=True)
         frame_data = None
         if self.gp_selected_frame_mode == 'active_frame':
-            frame_data = gp_layer_pointer.active_frame
+            frame_data = layer_ref.active_frame
         else:
             # maybe display uilist with frame_index and frame_nmber.
             layout.prop_search(self, 'gp_frame_pick', self, 'frame_collection_name')
@@ -135,17 +138,21 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
 
     def process_mode_grease_pencils(self):
         data_list = bpy.data.grease_pencils
-        if not (self.gp_pointer and self.gp_layer_pointer):
+        if not (self.gp_pointer and self.gp_layer):
+            return data_list[:]
+
+        layer_ref = self.gp_pointer.get(self.gp_layer)
+        if not layer_ref:
             return data_list[:]
 
         if self.gp_selected_frame_mode == 'active_frame':
             if len(self.inputs) > 0 and self.inputs[0].is_linked:
 
                 frame_number = self.inputs[0].sv_get()[0][0]
-                key = frame_from_available2(frame_number, self.gp_layer_pointer)
-                strokes = self.gp_layer_pointer.frames[key].strokes
+                key = frame_from_available2(frame_number, layer_ref)
+                strokes = layer_ref.frames[key].strokes
             else:
-                strokes = self.gp_layer_pointer.active_frame.strokes
+                strokes = layer_ref.active_frame.strokes
 
             if not strokes:
                 return []
