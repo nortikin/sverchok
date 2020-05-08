@@ -62,10 +62,14 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
         ''' must rebuild for each update'''
         self.frame_collection_name.clear()
         
-        if not (self.gp_pointer and self.gp_layer_pointer):
-           return 
+        if not (self.gp_pointer and self.gp_layer):
+           return
 
-        for idx, f in enumerate(gp_layer_pointer.frames):
+        layer_ref = self.gp_pointer.layers.get(self.gp_layer)
+        if not layer_ref:
+            return
+
+        for idx, f in enumerate(layer_ref.frames):
             self.frame_collection_name.add().name = str(idx) + ' | ' + str(f.frame_number)
 
         # updateNode(self, context)
@@ -123,7 +127,7 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
             return
         
         layout.prop_search(self, 'gp_layer', self.gp_pointer, 'layers', text='layer')
-        layer_ref = self.gp_pointer.get(self.gp_layer)
+        layer_ref = self.gp_pointer.layers.get(self.gp_layer)
         if not layer_ref:
             return
 
@@ -141,7 +145,7 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
         if not (self.gp_pointer and self.gp_layer):
             return data_list[:]
 
-        layer_ref = self.gp_pointer.get(self.gp_layer)
+        layer_ref = self.gp_pointer.layers.get(self.gp_layer)
         if not layer_ref:
             return data_list[:]
 
@@ -164,12 +168,12 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
         else:
             if self.gp_frame_pick:
                 idx_from_frame_pick = int(self.gp_frame_pick.split(' | ')[0])
-                frame_data = self.gp_layer_pointer.frames[idx_from_frame_pick]
+                frame_data = layer_ref.frames[idx_from_frame_pick]
                 if frame_data:
                     if self.gp_pass_points:
                         return [[p.co[:] for p in s.points] for s in frame_data.strokes]
                     else:
-                        return strokes
+                        return frame_data.strokes
 
     def process_mode_objects(self):
         data_list = bpy.data.objects
