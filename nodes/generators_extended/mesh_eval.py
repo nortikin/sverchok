@@ -494,6 +494,13 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if not self.outputs[0].is_linked:
             return
 
+        # in the event that the text datablock is renamed elsewhere, this will automatically
+        # resync the stored filename. updates to datablock names do not automatically propagate
+        # with the calling of the pointer updatefunction. hence this nonsense.
+        if self.file_pointer:
+            if self.file_pointer.name != self.filename:
+                self.filename = self.file_pointer.name
+
         var_names = self.get_variables()
         inputs = self.get_input()
 
