@@ -214,7 +214,6 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
     def sv_init(self, context):
         self.outputs.new('SvStringsSocket', "Objects")
         self.width = 210
-        self.Type = 'MESH'  # helps init the custom object prop_search
 
     def process(self):
         output_socket = self.outputs['Objects']
