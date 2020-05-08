@@ -305,7 +305,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
         row = layout.row()
-        row.prop_search(self, 'filename', bpy.data, 'texts', text='', icon='TEXT')
+        row.prop_search(self, 'file_pointer', bpy.data, 'texts', text='', icon='TEXT')
         row = layout.row()
 
         do_text = row.operator('node.sverchok_json_from_mesh', text='from selection')
