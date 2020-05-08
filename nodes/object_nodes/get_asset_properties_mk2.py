@@ -101,8 +101,8 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
     pass_pixels: bpy.props.BoolProperty(update=updateNode)
 
     # GP props
-    gp_pointer: bpy.props.PointerProperty(type=bpy.types.GreasePencil, poll=lambda s, o: True, update=updateNode)
-    gp_layer_pointer: bpy.props.PointerProperty(type=bpy.types.GreasePencilLayers, poll=lambda s, o: True, update=updateNode)
+    gp_pointer: PointerProperty(type=bpy.types.GreasePencil, poll=lambda s, o: True, update=updateNode)
+    gp_layer_pointer: PointerProperty(type=bpy.types.GreasePencilLayers, poll=lambda s, o: True, update=updateNode) # <---- no?
     gp_frame_current: bpy.props.BoolProperty(default=True, update=updateNode)
     gp_frame_override: bpy.props.IntProperty(default=1, update=updateNode)
     gp_stroke_idx: bpy.props.IntProperty(update=updateNode)
