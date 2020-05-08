@@ -641,9 +641,6 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         else:
             self.warning("Unknown filename: {}".format(self.filename))
 
-    # def filename_mismatch(self):
-    #     return self.filename and self.file_pointer and self.filename != self.file_pointer.name
-
     def set_filename_to_match_file_pointer(self):
         self.file_pointer = self.file_pointer
 
