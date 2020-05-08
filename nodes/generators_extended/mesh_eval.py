@@ -20,6 +20,7 @@ import io
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
+from sverchok.utils.sv_node_utils import sync_pointer_and_stored_name
 from sverchok.data_structure import fullList, updateNode, dataCorrect, match_long_repeat
 from sverchok.utils.script_importhelper import safe_names
 from sverchok.utils.logging import exception, info
@@ -494,12 +495,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if not self.outputs[0].is_linked:
             return
 
-        # in the event that the text datablock is renamed elsewhere, this will automatically
-        # resync the stored filename. updates to datablock names do not automatically propagate
-        # calling the pointer updatefunction. hence this nonsense
-        if self.file_pointer:
-            if self.file_pointer.name != self.filename:
-                self.filename = self.file_pointer.name
+        sync_pointer_and_stored_name(self, "file_pointer", "filename")
 
         var_names = self.get_variables()
         inputs = self.get_input()
