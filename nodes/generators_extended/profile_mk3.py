@@ -24,6 +24,7 @@ from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
+from sverchok.utils.sv_node_utils import sync_pointer_and_stored_name
 from sverchok.core.socket_data import SvNoDataError
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.logging import info, debug, warning
@@ -392,20 +393,6 @@ class SvProfileImportOperator(bpy.types.Operator):
         updateNode(context.node, context)
         return {'FINISHED'}
 
-class SvPFMK3_callback(bpy.types.Operator):
-
-    bl_idname = "node.sv_pfmk3_callback"
-    bl_label = "Short Name"
-
-    idname: StringProperty(name='nodename')
-    idtree: StringProperty(name='treename')
-
-    def execute(self, context):
-        n = bpy.data.node_groups[self.idtree].nodes[self.idname]
-        n.set_filename_to_match_file_pointer()
-        return {'FINISHED'}
-
-
 #################################
 # Node class
 #################################
@@ -472,10 +459,6 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         row = layout.row(align=True)
         row.prop_search(self, 'file_pointer', bpy.data, 'texts', text='', icon='TEXT')
-        if self.filename_mismatch():
-            row.alert = True
-            self.wrapper_tracked_ui_draw_op(row, "node.sv_pfmk3_callback", icon='FILE_REFRESH', text='')
-
         col = layout.column(align=True)
         row = col.row()
         do_text = row.operator('node.sverchok_profilizer_mk3', text='from selection')
@@ -592,6 +575,8 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if not any(o.is_linked for o in self.outputs):
             return
 
+        sync_pointer_and_stored_name(self, "file_pointer", "filename")
+
         profile = self.load_profile()
         optional_inputs = self.get_optional_inputs(profile)
 
@@ -656,8 +641,8 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         else:
             self.warning("Unknown filename: {}".format(self.filename))
 
-    def filename_mismatch(self):
-        return self.filename and self.file_pointer and self.filename != self.file_pointer.name
+    # def filename_mismatch(self):
+    #     return self.filename and self.file_pointer and self.filename != self.file_pointer.name
 
     def set_filename_to_match_file_pointer(self):
         self.file_pointer = self.file_pointer
@@ -673,7 +658,6 @@ classes = [
         SvProfileImportMenu,
         SvProfileImportOperator,
         SvPrifilizerMk3,
-        SvPFMK3_callback,
         SvProfileNodeMK3
     ]
 

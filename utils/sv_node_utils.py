@@ -64,7 +64,7 @@ def sync_pointer_and_stored_name(node, pointer_prop_name, prop_name):
     # resync the stored name of the datablock. updates to datablock names do not 
     # automatically call the pointer updatefunction. hence this nonsense
     if hasattr(node, pointer_prop_name):
-        pointer = getattr(node.pointer_prop_name)
+        pointer = getattr(node, pointer_prop_name)
         if not pointer:
             return
         if pointer.name != getattr(node, prop_name):
