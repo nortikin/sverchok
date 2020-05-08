@@ -59,10 +59,10 @@ def frame_from_available2(current_frame, layer):
     return inp_to_index.get(tval, 0)
 
 
-class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     ''' Get Asset Props '''
-    bl_idname = 'SvGetAssetProperties'
-    bl_label = 'Object ID Selector'
+    bl_idname = 'SvGetAssetPropertiesMK2'
+    bl_label = 'Object ID Selector+'
     bl_icon = 'SELECT_SET'
     sv_icon = 'SV_OBJECT_ID_SELECTOR'
 
@@ -246,8 +246,8 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNod
 
 
 def register():
-    bpy.utils.register_class(SvGetAssetProperties)
+    bpy.utils.register_class(SvGetAssetPropertiesMK2)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvGetAssetProperties)
+    bpy.utils.unregister_class(SvGetAssetPropertiesMK2)
