@@ -290,8 +290,19 @@ class SvLink(NamedTuple):
 
 
 OUTPUT_NODE_BL_IDNAMES = {  # todo make mixin instead
+    # main viewers
     'SvVDExperimental', 'SvStethoscopeNodeMK2', 'SvBmeshViewerNodeV28',
-    'Sv3DviewPropsNode'
+    # viewers
+    'Sv3DviewPropsNode', 'SvMatrixViewer28', 'SvIDXViewer28', 'SvCurveViewerNodeV28', 'SvPolylineViewerNodeV28',
+    'SvTypeViewerNodeV28', 'SvSkinViewerNodeV28', 'SvMetaballOutNode', 'SvNurbsCurveOutNode', 'SvNurbsSurfaceOutNode',
+    'SvGreasePencilStrokes', 'SvEmptyOutNode', 'SvTextureViewerNode', 'SvTextureViewerNodeLite', 'SvWaveformViewer',
+    'SvConsoleNode', 'SvLampOutNode', 'SvInstancerNode', 'SvInstancerNodeMK2', 'SvDupliInstancesMK4',
+    # text viewers
+    'ViewerNodeTextMK3', 'SvTextOutNodeMK2', 'SvDataShapeNode', 'SvDebugPrintNode',
+    # other
+    'SvSetPropNode', 'SvObjRemoteNodeMK2', 'SvSetDataObjectNodeMK2', 'SvVertexGroupNodeMK2', 'SvVertexColorNodeMK3',
+    'SvAssignMaterialListNode', 'SvMaterialIndexNode', 'SvSetCustomUVMap', 'SvMeshUVColorNode', 'SvLatticePropsNode',
+    'SvSculptMaskNode', 'SvSetCustomMeshNormals', 'SvParticlesMK2Node', 'SvSetPropNodeMK2', 'SvDictionaryOut'
 }
 
 
