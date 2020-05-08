@@ -179,6 +179,62 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
         self.width = 210
         self.Type = 'MESH'  # helps init the custom object prop_search
 
+    def process_mode_objects(self):
+        data_list = bpy.data.objects
+        if self.object_name:
+            return [data_list[self.object_name]]
+        else:
+            return [i for i in data_list if i.type == self.Type]
+
+    def process_mode_texts(self):
+        data_list = bpy.data.texts
+        if self.text_name:
+            return [[data_list[self.text_name].as_string()]]
+        else:
+            return data_list[:]
+
+    def process_mode_images(self):
+        data_list = bpy.data.images
+        if self.image_name:
+            img = data_list[self.image_name]
+            if self.pass_pixels:
+                return [[img.pixels[:]]]
+            else:
+                return [img]
+        else:
+            return data_list[:]
+
+    def process_mode_grease_pencils(self):
+        data_list = bpy.data.grease_pencils
+        if not (self.gp_name and self.gp_layer):
+            return []
+
+        GP_and_layer = data_list[self.gp_name].layers[self.gp_layer]
+        if self.gp_selected_frame_mode == 'active_frame':
+            if len(self.inputs) > 0 and self.inputs[0].is_linked:
+
+                frame_number = self.inputs[0].sv_get()[0][0]
+                key = frame_from_available2(frame_number, GP_and_layer)
+                strokes = GP_and_layer.frames[key].strokes
+            else:
+                strokes = GP_and_layer.active_frame.strokes
+
+            if not strokes:
+                return []
+
+            if self.gp_pass_points:
+                return [[p.co[:] for p in s.points] for s in strokes]
+            else:
+                return strokes
+        else:
+            if self.gp_frame_pick:
+                idx_from_frame_pick = int(self.gp_frame_pick.split(' | ')[0])
+                frame_data = GP_and_layer.frames[idx_from_frame_pick]
+                if frame_data:
+                    if self.gp_pass_points:
+                        return [[p.co[:] for p in s.points] for s in frame_data.strokes]
+                    else:
+                        return strokes
 
     def process(self):
         output_socket = self.outputs['Objects']
@@ -187,61 +243,12 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
 
         data_list = getattr(bpy.data, self.Mode)
 
-        if self.Mode == 'objects':
-            if self.object_name:
-                output_socket.sv_set([data_list[self.object_name]])
-            else:
-                output_socket.sv_set([i for i in data_list if i.type == self.Type])
-        
-        elif self.Mode == 'texts':
-            if self.text_name:
-                # print(repr(data_list[self.text_name].as_string()))
-                output_socket.sv_set([[data_list[self.text_name].as_string()]])
-            else:
-                output_socket.sv_set(data_list[:])
-
-        elif self.Mode == 'images':
-            if self.image_name:
-                img = data_list[self.image_name]
-                if self.pass_pixels:
-                    output_socket.sv_set([[img.pixels[:]]])
-                else:
-                    output_socket.sv_set([img])
-            else:
-                output_socket.sv_set(data_list[:])
-
-        elif self.Mode == 'grease_pencils':
-            # candidate for refactor
-            if self.gp_name and self.gp_layer:
-                GP_and_layer = data_list[self.gp_name].layers[self.gp_layer]
-                if self.gp_selected_frame_mode == 'active_frame':
-                    if len(self.inputs) > 0 and self.inputs[0].is_linked:
-
-                        frame_number = self.inputs[0].sv_get()[0][0]
-                        key = frame_from_available2(frame_number, GP_and_layer)
-                        strokes = GP_and_layer.frames[key].strokes
-                    else:
-                        strokes = GP_and_layer.active_frame.strokes
-
-                    if not strokes:
-                        return
-
-                    if self.gp_pass_points:
-                        output_socket.sv_set([[p.co[:] for p in s.points] for s in strokes])
-                    else:
-                        output_socket.sv_set(strokes)
-                else:
-                    if self.gp_frame_pick:
-                        idx_from_frame_pick = int(self.gp_frame_pick.split(' | ')[0])
-                        frame_data = GP_and_layer.frames[idx_from_frame_pick]
-                        if frame_data:
-                            if self.gp_pass_points:
-                                output_socket.sv_set([[p.co[:] for p in s.points] for s in frame_data.strokes])
-                            else:
-                                output_socket.sv_set(strokes)
-
+        if self.Mode in {'objects', 'texts', 'images', 'grease_pencils'}:
+            data_output = getattr(self, f"process_mode_{self.Mode}")()
         else:
-            output_socket.sv_set(data_list[:])
+            data_output = data_list[:]
+
+        output_socket.sv_set(data_output)
 
 
 
