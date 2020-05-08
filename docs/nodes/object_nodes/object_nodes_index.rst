@@ -5,7 +5,7 @@ Objects
 .. toctree::
    :maxdepth: 2
 
-   get_asset_properties
+   get_asset_properties_mk2
    lattice_analyzer
    armature_analyzer
    sample_uv_color
