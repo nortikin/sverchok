@@ -541,20 +541,23 @@ class SvScalarFieldLaplacian(SvScalarField):
         result = (sides - 6*v0) / (8 * step * step * step)
         return result
 
-class SvScalarFieldGaussCurvature(SvScalarField):
+class ScalarFieldCurvatureCalculator(object):
+    # Ref.: Curvature formulas for implicit curves and surfaces // Ron Goldman // doi:10.1016/j.cagd.2005.06.005
     def __init__(self, field, step):
         self.field = field
         self.step = step
-        self.__description__ = "Kg({})".format(field)
+        self.prev_xs = self.prev_ys = self.prev_zs = None
 
-    def evaluate(self, x, y, z):
-        return self.evaluate_grid(np.array([x]), np.array([y]), np.array([z]))[0]
+    def prepare(self, xs, ys, zs):
+        #if (xs == self.prev_xs).all() and (ys == self.prev_ys).all() and (zs == self.prev_zs).all():
+        #    return
+        self.prev_xs = xs
+        self.prev_ys = ys
+        self.prev_zs = zs
 
-    def evaluate_grid(self, xs, ys, zs):
-        # Ref.: Curvature formulas for implicit curves and surfaces // Ron Goldman // doi:10.1016/j.cagd.2005.06.005
         step = self.step
         step2 = step*step
-        n = len(xs)
+        n = self.n = len(xs)
         v_dx_plus = self.field.evaluate_grid(xs+step, ys,zs)
         v_dx_minus = self.field.evaluate_grid(xs-step,ys,zs)
         v_dy_plus = self.field.evaluate_grid(xs, ys+step, zs)
@@ -566,42 +569,117 @@ class SvScalarFieldGaussCurvature(SvScalarField):
         v_dyz_plus = self.field.evaluate_grid(xs, ys+step, zs+step)
         v_dxz_plus = self.field.evaluate_grid(xs+step, ys, zs+step)
 
-        v0 = self.field.evaluate_grid(xs, ys, zs)
+        v0 = self.v0 = self.field.evaluate_grid(xs, ys, zs)
 
-        dx = (v_dx_plus - v0) / step
-        dy = (v_dy_plus - v0) / step
-        dz = (v_dz_plus - v0) / step
+        self.dx = (v_dx_plus - v0) / step
+        self.dy = (v_dy_plus - v0) / step
+        self.dz = (v_dz_plus - v0) / step
 
-        dxx = (v_dx_plus - 2*v0 + v_dx_minus) / step2
-        dyy = (v_dy_plus - 2*v0 + v_dy_minus) / step2
-        dzz = (v_dz_plus - 2*v0 + v_dz_minus) / step2
+        self.dxx = (v_dx_plus - 2*v0 + v_dx_minus) / step2
+        self.dyy = (v_dy_plus - 2*v0 + v_dy_minus) / step2
+        self.dzz = (v_dz_plus - 2*v0 + v_dz_minus) / step2
 
-        dxy = (v_dxy_plus - v_dx_plus - v_dy_plus + v0) / step2
-        dyz = (v_dyz_plus - v_dy_plus - v_dz_plus + v0) / step2
-        dxz = (v_dxz_plus - v_dx_plus - v_dz_plus + v0) / step2
+        self.dxy = (v_dxy_plus - v_dx_plus - v_dy_plus + v0) / step2
+        self.dyz = (v_dyz_plus - v_dy_plus - v_dz_plus + v0) / step2
+        self.dxz = (v_dxz_plus - v_dx_plus - v_dz_plus + v0) / step2
 
+    def gauss(self):
+        n = self.n
         M = np.empty((n, 4, 4))
-        M[:, 0, 0] = dxx
-        M[:, 0, 1] = M[:, 1, 0] = dxy
-        M[:, 0, 2] = M[:, 2, 0] = dxz
-        M[:, 1, 1] = dyy
-        M[:, 1, 2] = M[:, 2, 1] = dyz
-        M[:, 2, 2] = dzz
-        M[:, 0, 3] = M[:, 3, 0] = dx
-        M[:, 1, 3] = M[:, 3, 1] = dy
-        M[:, 2, 3] = M[:, 3, 2] = dz
+        M[:, 0, 0] = self.dxx
+        M[:, 0, 1] = M[:, 1, 0] = self.dxy
+        M[:, 0, 2] = M[:, 2, 0] = self.dxz
+        M[:, 1, 1] = self.dyy
+        M[:, 1, 2] = M[:, 2, 1] = self.dyz
+        M[:, 2, 2] = self.dzz
+        M[:, 0, 3] = M[:, 3, 0] = self.dx
+        M[:, 1, 3] = M[:, 3, 1] = self.dy
+        M[:, 2, 3] = M[:, 3, 2] = self.dz
         M[:, 3, 3] = 0
 
         numerator = - np.linalg.det(M)
 
         grad = np.empty((n, 3))
-        grad[:,0] = dx
-        grad[:,1] = dy
-        grad[:,2] = dz
+        grad[:,0] = self.dx
+        grad[:,1] = self.dy
+        grad[:,2] = self.dz
 
         denominator = np.linalg.norm(grad, axis=1) ** 4
 
         return numerator / denominator
+
+    def mean(self):
+        n = self.n
+        grad = np.empty((n, 1, 3))
+        grad[:,0,0] = self.dx
+        grad[:,0,1] = self.dy
+        grad[:,0,2] = self.dz
+
+        gradT = np.transpose(grad, axes=(0,2,1))
+
+        H = np.empty((n, 3, 3))
+        H[:, 0, 0] = self.dxx
+        H[:, 0, 1] = H[:, 1, 0] = self.dxy
+        H[:, 0, 2] = H[:, 2, 0] = self.dxz
+        H[:, 1, 1] = self.dyy
+        H[:, 1, 2] = H[:, 2, 1] = self.dyz
+        H[:, 2, 2] = self.dzz
+
+        A = (grad @ H @ gradT)[:,0,0]
+        grad_norm = np.linalg.norm(grad, axis=2)[:,0]
+        trace_H = self.dxx + self.dyy + self.dzz
+
+        numerator = A - grad_norm**2 * trace_H
+
+        denominator = 2 * grad_norm**3
+
+        return numerator / denominator
+
+    def value(self, i):
+        gauss = self.gauss()
+        mean = self.mean()
+
+        if i == 1:
+            return mean - np.sqrt(abs(mean*mean - gauss))
+        else:
+            return mean + np.sqrt(abs(mean*mean - gauss))
+        
+class SvScalarFieldGaussCurvature(SvScalarField):
+    def __init__(self, field, calculator):
+        self.calculator = calculator
+        self.__description__ = "GaussCurvature({})".format(field)
+
+    def evaluate(self, x, y, z):
+        return self.evaluate_grid(np.array([x]), np.array([y]), np.array([z]))[0]
+
+    def evaluate_grid(self, xs, ys, zs):
+        self.calculator.prepare(xs, ys, zs)
+        return self.calculator.gauss()
+
+class SvScalarFieldMeanCurvature(SvScalarField):
+    def __init__(self, field, calculator):
+        self.calculator = calculator
+        self.__description__ = "MeanCurvature({})".format(field)
+
+    def evaluate(self, x, y, z):
+        return self.evaluate_grid(np.array([x]), np.array([y]), np.array([z]))[0]
+
+    def evaluate_grid(self, xs, ys, zs):
+        self.calculator.prepare(xs, ys, zs)
+        return self.calculator.mean()
+
+class SvScalarFieldPrincipalCurvature(SvScalarField):
+    def __init__(self, field, calculator, i):
+        self.calculator = calculator
+        self.i = i
+        self.__description__ = "PrincipalCurvature[{}]({})".format(i, field)
+
+    def evaluate(self, x, y, z):
+        return self.evaluate_grid(np.array([x]), np.array([y]), np.array([z]))[0]
+
+    def evaluate_grid(self, xs, ys, zs):
+        self.calculator.prepare(xs, ys, zs)
+        return self.calculator.value(self.i)
 
 class SvVoronoiScalarField(SvScalarField):
     __description__ = "Voronoi"
