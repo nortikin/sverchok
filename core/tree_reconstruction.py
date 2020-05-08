@@ -14,7 +14,7 @@ from itertools import count
 import bpy
 
 import sverchok.core.events_types as evt
-from sverchok.core.hashed_tree_data import HashedBlenderData
+import sverchok.core.hashed_tree_data as hash_data
 from sverchok.utils.context_managers import sv_preferences
 
 if TYPE_CHECKING:
@@ -30,9 +30,11 @@ This data structure is coping data structure of existing Sverchok node trees
 It helps to analyze changes which happens in a node tree
 Also it is used for walking on tree for searching nodes which should be recalculated
 It is always consistent to Blender trees
-So it can used for searching connections between nodes
+So it can be used for searching connections between nodes
 The only problem is it has not any information about sockets for simplicity
 They can be added in future
+
+Warning: don't use `from` statement for import the module
 """
 
 
@@ -116,7 +118,7 @@ class SvLinksCollection:
         self._links: Dict[str, SvLink] = dict()
 
     def add(self, link_id: str):
-        bl_link = HashedBlenderData.get_link(self._tree.id, link_id)
+        bl_link = hash_data.HashedBlenderData.get_link(self._tree.id, link_id)
         from_node = self._tree.nodes[bl_link.from_node.node_id]
         to_node = self._tree.nodes[bl_link.to_node.node_id]
         sv_link = SvLink(link_id, from_node, to_node)
@@ -162,7 +164,7 @@ class SvNodesCollection:
         self._nodes: Dict[str, SvNode] = dict()
 
     def add(self, node_id: str):
-        bl_node = HashedBlenderData.get_node(self._tree.id, node_id)
+        bl_node = hash_data.HashedBlenderData.get_node(self._tree.id, node_id)
         sv_node = SvNode(node_id, bl_node.name)
         self._nodes[node_id] = sv_node
 
@@ -288,7 +290,8 @@ class SvLink(NamedTuple):
 
 
 OUTPUT_NODE_BL_IDNAMES = {  # todo make mixin instead
-    'SvVDExperimental', 'SvStethoscopeNodeMK2', 'SvBmeshViewerNodeV28'
+    'SvVDExperimental', 'SvStethoscopeNodeMK2', 'SvBmeshViewerNodeV28',
+    'Sv3DviewPropsNode'
 }
 
 
@@ -346,7 +349,7 @@ class WalkSvTree:
     def search_output_nodes(self):
         self.output_nodes.clear()
         for sv_node in self.tree.nodes:
-            bl_node = HashedBlenderData.get_node(self.tree.id, sv_node.id)
+            bl_node = hash_data.HashedBlenderData.get_node(self.tree.id, sv_node.id)
             if bl_node.bl_idname in OUTPUT_NODE_BL_IDNAMES:
                 self.output_nodes.add(sv_node)
 

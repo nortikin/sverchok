@@ -18,13 +18,14 @@ from bpy.types import Node, NodeTree, NodeLink
 import bpy
 
 from sverchok.utils.context_managers import sv_preferences
-from sverchok.core.tree_reconstruction import NodeTreesReconstruction, SvTree, SvNode, SvLink
-from sverchok.core.hashed_tree_data import HashedBlenderData, HashedTreeData
+import sverchok.core.tree_reconstruction as reconstruction
+import sverchok.core.hashed_tree_data as hash_data
 import sverchok.core.events_types as evt
 
 if TYPE_CHECKING:
     # https://stackoverflow.com/questions/39740632/python-type-hinting-without-cyclic-imports
     from sverchok.node_tree import SverchCustomTree, SverchCustomTreeNode
+    from sverchok.core.tree_reconstruction import SvNode, SvTree, SvLink
 
     Node = Union[bpy.types.Node, SverchCustomTreeNode]
     NodeTree = Union[bpy.types.NodeTree, SverchCustomTree]
@@ -63,10 +64,10 @@ class SverchokEvent(NamedTuple):
     def print(self):
         if self.node_id:
             if self.type == evt.SverchokEventsTypes.free_node:
-                reconstruction_tree = NodeTreesReconstruction.get_node_tree_reconstruction(self.tree_id)
+                reconstruction_tree = reconstruction.NodeTreesReconstruction.get_node_tree_reconstruction(self.tree_id)
                 node = reconstruction_tree.nodes[self.node_id]
             else:
-                node = HashedBlenderData.get_node(self.tree_id, self.node_id)
+                node = hash_data.HashedBlenderData.get_node(self.tree_id, self.node_id)
             self.type.print(node)
         else:
             self.type.print()
@@ -271,11 +272,11 @@ class EventsWave:
 
     @property
     def previous_tree(self) -> SvTree:
-        return NodeTreesReconstruction.get_node_tree_reconstruction(self.main_event.tree_id)
+        return reconstruction.NodeTreesReconstruction.get_node_tree_reconstruction(self.main_event.tree_id)
 
     @property
-    def current_tree(self) -> HashedTreeData:
-        return HashedBlenderData.get_tree(self.main_event.tree_id)
+    def current_tree(self) -> hash_data.HashedTreeData:
+        return hash_data.HashedBlenderData.get_tree(self.main_event.tree_id)
 
 
 class CurrentEvents:
@@ -318,7 +319,7 @@ class CurrentEvents:
         if not cls.events_wave.is_end():
             return
 
-        HashedBlenderData.reset_data(cls.events_wave.main_event.tree_id)
+        hash_data.HashedBlenderData.reset_data(cls.events_wave.main_event.tree_id)
 
         with cls.deaf_mode():
             if cls.events_wave.main_event.type in [evt.BlenderEventsTypes.tree_update,
@@ -344,7 +345,7 @@ class CurrentEvents:
             # previous step can change links and relocate them in memory
             if (evt.SverchokEventsTypes.add_link in [ev.type for ev in sv_events] or
                 evt.SverchokEventsTypes.free_link in [ev.type for ev in sv_events]):
-                HashedBlenderData.reset_data(cls.events_wave.main_event.tree_id, reset_nodes=False)
+                hash_data.HashedBlenderData.reset_data(cls.events_wave.main_event.tree_id, reset_nodes=False)
 
             tree_reconstruction = cls.events_wave.previous_tree
             tree_reconstruction.update_reconstruction(sv_events)
@@ -362,8 +363,9 @@ class CurrentEvents:
     def redraw_nodes(cls, sverchok_events: Iterable[SverchokEvent]):
         # this method is calling nodes method which can make Blender relocate nodes and links in memory
         # so after this method all memorized Blender links and nodes should be reset
-        hashed_tree = HashedBlenderData.get_tree(cls.events_wave.main_event.tree_id)
-        previous_tree = NodeTreesReconstruction.get_node_tree_reconstruction(cls.events_wave.main_event.tree_id)
+        hashed_tree = hash_data.HashedBlenderData.get_tree(cls.events_wave.main_event.tree_id)
+        previous_tree = reconstruction.NodeTreesReconstruction.get_node_tree_reconstruction(
+            cls.events_wave.main_event.tree_id)
         deleted_node_ids = {ev.node_id for ev in sverchok_events if ev.type == evt.SverchokEventsTypes.free_node}
         bl_link_update_nodes = set()
         for sv_event in sverchok_events:
@@ -383,8 +385,9 @@ class CurrentEvents:
 
     @classmethod
     def update_nodes(cls) -> List[Node]:
-        hashed_tree = HashedBlenderData.get_tree(cls.events_wave.main_event.tree_id)
-        reconstruction_tree = NodeTreesReconstruction.get_node_tree_reconstruction(cls.events_wave.main_event.tree_id)
+        hashed_tree = hash_data.HashedBlenderData.get_tree(cls.events_wave.main_event.tree_id)
+        reconstruction_tree = reconstruction.NodeTreesReconstruction.get_node_tree_reconstruction(
+            cls.events_wave.main_event.tree_id)
         if cls.events_wave.main_event.type in [evt.BlenderEventsTypes.monad_tree_update,
                                                evt.BlenderEventsTypes.tree_update,
                                                evt.BlenderEventsTypes.node_property_update]:

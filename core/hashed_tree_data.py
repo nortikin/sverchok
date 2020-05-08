@@ -21,14 +21,16 @@ if TYPE_CHECKING:
     NodeTree = Union[bpy.types.NodeTree, SverchCustomTreeNode]
 
 
-"""
+""" 
 This module keeps node and links instances of bpy.types.NodeTree objects
 They are available by their IDs
-It used for converting nodes of Reconstruction tree not Blender nodes
+It used for converting nodes of Reconstruction tree to Blender nodes
 But also can be used for any other purposes when collection of node_tree.links and node_tree.nodes are unchanged
 It is known that keeping such links can lead to Blender crash
 So all this data is refreshing if collection of nodes or links was changed
 This module can be adopted to getting links of a socket for constant time
+
+Warning: don't use `from` statement for import the module
 """
 
 
@@ -58,7 +60,7 @@ class HashedBlenderData:
             cls.tree_data.clear()
         if tree_id in cls.tree_data:
             if reset_nodes:
-                cls.tree_data[tree_id].reset_node()
+                cls.tree_data[tree_id].reset_nodes()
             if reset_links:
                 cls.tree_data[tree_id].reset_links()
 
@@ -70,11 +72,14 @@ class HashedTreeData:
         self.nodes: HashedNodes = HashedNodes(self)
         self.links: HashedLinks = HashedLinks(self)
 
-    def reset_node(self):
+    def reset_nodes(self):
         self.nodes = HashedNodes(self)
 
     def reset_links(self):
         self.links = HashedLinks(self)
+
+    def __repr__(self):
+        return f"Nodes: {repr(self.nodes)} \n Links: {repr(self.links)}"
 
 
 class HashedNodes:
@@ -96,6 +101,9 @@ class HashedNodes:
             return [getitem(self._nodes, key) for key in new_nodes_keys]
         else:
             return NotImplemented
+
+    def __repr__(self):
+        return repr(self._nodes)
 
     def _memorize_nodes(self):
         if not self._nodes:
@@ -128,6 +136,9 @@ class HashedLinks:
             return [getitem(self._links, key) for key in new_links_keys]
         else:
             return NotImplemented
+
+    def __repr__(self):
+        return repr(self._links)
 
     def _memorize_links(self):
         if not self._links:
