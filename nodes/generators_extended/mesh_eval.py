@@ -289,7 +289,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     properties_to_skip_iojson = ['file_pointer', 'updating_name_from_pointer']
     updating_name_from_pointer: BoolProperty(name="updating name")
-    filename: StringProperty(default="")
+    filename: StringProperty(default="", update=captured_updateNode)
     file_pointer: PointerProperty(type=bpy.types.Text, poll=lambda s, o: True, update=pointer_update)
 
     precision: IntProperty(name = "Precision",
