@@ -13,7 +13,7 @@ from collections import defaultdict
 import numpy as np
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorProperty, IntProperty
+from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorProperty, IntProperty, PointerProperty
 from mathutils import Vector
 import json
 import io
@@ -267,11 +267,31 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MESH_EXPRESSION'
 
-    def on_update(self, context):
+    def captured_updateNode(self, context):
+        if not self.updating_name_from_pointer:
+            text_datablock = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
+            if text_datablock:
+                self.font_pointer = text_datablock
+                self.adjust_sockets()
+                updateNode(self, context)
+
+    def pointer_update(self, context):
+        self.updating_name_from_pointer = True
+
+        try:
+            self.filename = self.file_pointer.name if self.file_pointer else ""
+        except Exception as err:
+            self.info(err)
+
+        self.updating_name_from_pointer = False
         self.adjust_sockets()
         updateNode(self, context)
 
-    filename: StringProperty(default="", update=on_update)
+    properties_to_skip_iojson = ['file_pointer', 'updating_name_from_pointer']
+    updating_name_from_pointer: BoolProperty(name="updating name")
+    filename: StringProperty(default="")
+    file_pointer: PointerProperty(type=bpy.types.Text, poll=lambda s, o: True, update=pointer_update)
+
     precision: IntProperty(name = "Precision",
                     description = "Number of decimal places used for coordinates when generating JSON from selection",
                     min=0, max=10, default=8,
