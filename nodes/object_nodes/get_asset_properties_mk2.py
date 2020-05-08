@@ -167,7 +167,10 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
         elif self.Mode == 'grease_pencils':
             self.draw_gp_options(context, layout)
         else:
-            layout.label(text="This node is not yet programmed to do anything sensible with that bpy.data.<type>")
+            col = layout.column()
+            col.alert = True
+            col.label(text=f"This node is not yet programmed to do")
+            col.label(text=f"anything sensible with bpy.data.{self.Mode}")
 
 
     def sv_init(self, context):
