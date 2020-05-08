@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import EnumProperty
+from bpy.props import EnumProperty, PointerProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import (updateNode, no_space, enum_item as e)
@@ -95,9 +95,9 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
 
     Mode: EnumProperty(name="getmodes", default="objects", items=e(M), update=updateNode)
     Type: EnumProperty(name="getmodes", default="MESH", items=e(T), update=pre_updateNode)
-    text_name: bpy.props.StringProperty(update=updateNode)
-    object_name: bpy.props.StringProperty(update=updateNode)
-    image_name: bpy.props.StringProperty(update=updateNode)
+    text_pointer: PointerProperty(type=bpy.types.Text, poll=lambda s, o: True, update=updateNode)
+    object_pointer: PointerProperty(type=bpy.types.Object, poll=lambda s, o: True, update=updateNode)
+    image_pointer: PointerProperty(type=bpy.types.Image, poll=lambda s, o: True, update=updateNode)
     pass_pixels: bpy.props.BoolProperty(update=updateNode)
 
     # GP props
@@ -116,6 +116,8 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
     gp_pass_points: bpy.props.BoolProperty(default=True, update=updateNode)
 
     def draw_gp_options(self, context, layout):
+        # ------ TO DO --------------- POINTER
+
         # -- points  [p.co for p in points]
         # -- color   
         #     -- color.color (stroke_color)
@@ -151,11 +153,11 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
 
         if self.Mode == 'objects':
             layout.prop(self, "Type", text="type")
-            layout.prop_search(self, 'object_name', self, 'type_collection_name', text='name', icon='OBJECT_DATA')
+            layout.prop_search(self, 'object_pointer', self, 'type_collection_name', text='name', icon='OBJECT_DATA')
         elif self.Mode == 'texts':
-            layout.prop_search(self, 'text_name', bpy.data, 'texts', text='name')
+            layout.prop_search(self, 'text_pointer', bpy.data, 'texts', text='name')
         elif self.Mode == 'images':
-            layout.prop_search(self, 'image_name', bpy.data, 'images', text='name')
+            layout.prop_search(self, 'image_pointer', bpy.data, 'images', text='name')
             if self.image_name:
                 layout.prop(self, 'pass_pixels', text='pixels')
                 # size ?  new socket outputting [w/h]
@@ -172,30 +174,30 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
 
     def process_mode_objects(self):
         data_list = bpy.data.objects
-        if self.object_name:
-            return [data_list[self.object_name]]
+        if self.object_pointer:
+            return [self.object_pointer]
         else:
             return [i for i in data_list if i.type == self.Type]
 
     def process_mode_texts(self):
         data_list = bpy.data.texts
-        if self.text_name:
-            return [[data_list[self.text_name].as_string()]]
+        if self.text_pointer:
+            return [[self.text_pointer.as_string()]]
         else:
             return data_list[:]
 
     def process_mode_images(self):
         data_list = bpy.data.images
-        if self.image_name:
-            img = data_list[self.image_name]
+        if self.image_pointer:
             if self.pass_pixels:
-                return [[img.pixels[:]], img.size[:]]
+                return [[self.image_pointer.pixels[:]], self.image_pointer.size[:]]
             else:
-                return [img]
+                return [self.image_pointer]
         else:
             return data_list[:]
 
     def process_mode_grease_pencils(self):
+        # TODO FIXES POINTER NOT APPLIED YET
         data_list = bpy.data.grease_pencils
         if not (self.gp_name and self.gp_layer):
             return []
