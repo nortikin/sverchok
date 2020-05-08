@@ -55,15 +55,15 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
     bl_icon = 'SELECT_SET'
     sv_icon = 'SV_OBJECT_ID_SELECTOR'
 
-    def pre_updateNode(self, context):
-        ''' must rebuild for each update'''
-        self.type_collection_name.clear()
-        for o in bpy.data.objects:
-            if o.type == self.Type:
-                self.type_collection_name.add().name = o.name
+    # def pre_updateNode(self, context):
+    #     ''' must rebuild for each update'''
+    #     self.type_collection_name.clear()
+    #     for o in bpy.data.objects:
+    #         if o.type == self.Type:
+    #             self.type_collection_name.add().name = o.name
 
-        # updateNode(self, context)
-        self.process()
+    #     # updateNode(self, context)
+    #     self.process()
 
     def frame_updateNode(self, context):
         ''' must rebuild for each update'''
@@ -90,11 +90,15 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
          'images', 'libraries', 'linestyles', 'masks', 'materials',
          'movieclips', 'node_groups', 'particles', 'scenes', 'screens', 'shape_keys',
          'sounds', 'speakers', 'texts', 'textures', 'worlds', 'objects']
+
+    def type_filter(self, object):
+        return object.type == self.Type
+
     T = ['MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'ARMATURE', 'GPENCIL',
          'LATTICE', 'EMPTY', 'CAMERA', 'LIGHT', 'SPEAKER']
 
-    Mode: EnumProperty(name="getmodes", default="objects", items=e(M), update=updateNode)
-    Type: EnumProperty(name="getmodes", default="MESH", items=e(T), update=pre_updateNode)
+    Mode: EnumProperty(name="get modes", default="objects", items=e(M), update=updateNode)
+    Type: EnumProperty(name="get types", default="MESH", items=e(T), update=updateNode)
 
     properties_to_skip_iojson: ["object_pointer", "image_pointer", "text_pointer"]
 
@@ -103,7 +107,7 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
         ...
 
     text_pointer: PointerProperty(type=bpy.types.Text, poll=lambda s, o: True, update=updateNode)
-    object_pointer: PointerProperty(type=bpy.types.Object, poll=lambda s, o: True, update=updateNode)
+    object_pointer: PointerProperty(type=bpy.types.Object, poll=type_filter, update=updateNode)
     image_pointer: PointerProperty(type=bpy.types.Image, poll=lambda s, o: True, update=updateNode)
     pass_pixels: bpy.props.BoolProperty(update=updateNode)
 
@@ -160,7 +164,7 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
 
         if self.Mode == 'objects':
             layout.prop(self, "Type", text="type")
-            layout.prop_search(self, 'object_pointer', self, 'type_collection_name', text='name', icon='OBJECT_DATA')
+            layout.prop_search(self, 'object_pointer', bpy.data, 'objects', text='name', icon='OBJECT_DATA')
         elif self.Mode == 'texts':
             layout.prop_search(self, 'text_pointer', bpy.data, 'texts', text='name')
         elif self.Mode == 'images':
