@@ -69,3 +69,4 @@ def sync_pointer_and_stored_name(node, pointer_prop_name, prop_name):
             return
         if pointer.name != getattr(node, prop_name):
             setattr(node, prop_name, pointer.name)
+            node.info(f"synchronized name of {node} from datablock name change")
