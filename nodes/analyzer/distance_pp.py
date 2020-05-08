@@ -17,14 +17,14 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty
-from mathutils import Vector
+from bpy.props import BoolProperty, EnumProperty
+from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
-    Matrix_generate, Matrix_location, Vector_generate
+    Matrix_location, Vector_generate,
+    updateNode, list_match_func, list_match_modes
 )
-
 
 class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Distance Point to Point '''
@@ -33,7 +33,23 @@ class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_DISTANCE'
 
-    Cross_dist: BoolProperty(name='Cross_dist', description='DANGEROUS! If crossover dimension calculation, be sure', default=False)
+    Cross_dist: BoolProperty(
+        name='Cross_dist',
+        description='Calculate distance beteen each point of the first list with all points of second list DANGEROUS! It can be very heavy',
+        default=False,
+        update=updateNode)
+
+    list_match_global: EnumProperty(
+        name="Match Global",
+        description="Behavior on different list lengths, multiple objects level",
+        items=list_match_modes, default="REPEAT",
+        update=updateNode)
+
+    list_match_local: EnumProperty(
+        name="Match Local",
+        description="Behavior on different list lengths, object level",
+        items=list_match_modes, default="REPEAT",
+        update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'vertices1')
@@ -45,14 +61,38 @@ class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "Cross_dist", text="CrossOver")
 
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "Cross_dist", text="CrossOver")
+        layout.separator()
+        layout.label(text="List Match:")
+        layout.prop(self, "list_match_global", text="Global Match", expand=False)
+        layout.prop(self, "list_match_local", text="Local Match", expand=False)
+
+    def rclick_menu(self, context, layout):
+        '''right click sv_menu items'''
+        layout.prop_menu_enum(self, "list_match_global", text="List Match Global")
+        layout.prop_menu_enum(self, "list_match_local", text="List Match Local")
+
     def process(self):
-        if self.inputs['vertices1'].is_linked and self.inputs['vertices2'].is_linked:
+        if not self.outputs['distances'].is_linked:
+            return
+        inputs = self.inputs
+        if inputs['vertices1'].is_linked and inputs['vertices2'].is_linked:
             prop1_ = self.inputs['vertices1'].sv_get()
             prop1 = Vector_generate(prop1_)
+            if inputs['matrix1'].is_linked:
+                m = inputs['matrix1'].sv_get(deepcopy=False, default=[Matrix()])
+                verts, matrix = list_match_func[self.list_match_global]([prop1, m])
+                prop1 = [[mx @ v for v in vs] for mx, vs in zip(matrix, verts)]
+
             prop2_ = self.inputs['vertices2'].sv_get()
             prop2 = Vector_generate(prop2_)
+            if inputs['matrix2'].is_linked:
+                m = inputs['matrix2'].sv_get(deepcopy=False, default=[Matrix()])
+                verts, matrix = list_match_func[self.list_match_global]([prop2, m])
+                prop2 = [[mx @ v for v in vs] for mx, vs in zip(matrix, verts)]
 
-        elif self.inputs['matrix1'].is_linked and self.inputs['matrix2'].is_linked:
+        elif inputs['matrix1'].is_linked and inputs['matrix2'].is_linked:
             propa = self.inputs['matrix1'].sv_get()
             prop1 = Matrix_location(propa)
             propb = self.inputs['matrix2'].sv_get()
@@ -61,33 +101,24 @@ class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
             prop1, prop2 = [], []
 
         if prop1 and prop2:
-            if self.outputs['distances'].is_linked:
-                # print ('distances input', str(prop1), str(prop2))
-                if self.Cross_dist:
-                    output = self.calcM(prop1, prop2)
-                else:
-                    output = self.calcV(prop1, prop2)
-                self.outputs['distances'].sv_set(output)
-
-                # print ('distances out' , str(output))
+            if self.Cross_dist:
+                output = self.calcM(prop1, prop2)
+            else:
+                output = self.calc_vectors_distance(prop1, prop2)
+            self.outputs['distances'].sv_set(output)
         else:
             self.outputs['distances'].sv_set([])
 
-    def calcV(self, list1, list2):
-        dists = []
-        lenlis = min(len(list1), len(list2)) - 1
-        for i, object1 in enumerate(list1):
-            if i > lenlis:
-                continue
+    def calc_vectors_distance(self, list1, list2):
+        distances = []
+        list_a, list_b = list_match_func[self.list_match_global]([list1, list2])
+        for _l_a, _l_b in zip(list_a, list_b):
             values = []
-            lenlen = min(len(object1), len(list2[i])) - 1
-            for k, vert1 in enumerate(object1):
-                if k > lenlen:
-                    continue
-                values.append(self.distance(vert1, list2[i][k]))
-            dists.append(values)
-        # print(dists)
-        return dists
+            l_a, l_b = list_match_func[self.list_match_local]([_l_a, _l_b])
+            for v, v1 in zip(l_a, l_b):
+                values.append((v-v1).length)
+            distances.append(values)
+        return distances
 
     def calcM(self, list1, list2):
         ll1, ll2 = len(list1[0]), len(list2[0])
@@ -107,7 +138,7 @@ class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
                         oblndis.append(self.distance(vers, verl))
                     obshdis.append(oblndis)
             dists.append(obshdis)
-        # print(dists)
+
         return dists[0]
 
     def distance(self, x, y):
