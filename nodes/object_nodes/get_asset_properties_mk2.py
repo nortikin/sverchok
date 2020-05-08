@@ -55,16 +55,6 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
     bl_icon = 'SELECT_SET'
     sv_icon = 'SV_OBJECT_ID_SELECTOR'
 
-    # def pre_updateNode(self, context):
-    #     ''' must rebuild for each update'''
-    #     self.type_collection_name.clear()
-    #     for o in bpy.data.objects:
-    #         if o.type == self.Type:
-    #             self.type_collection_name.add().name = o.name
-
-    #     # updateNode(self, context)
-    #     self.process()
-
     def frame_updateNode(self, context):
         ''' must rebuild for each update'''
         self.frame_collection_name.clear()
@@ -112,6 +102,8 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
     pass_pixels: bpy.props.BoolProperty(update=updateNode)
 
     # GP props
+    # bpy.types.GreasePencil
+    # bpy.types.GreasePencilLayers
     gp_name: bpy.props.StringProperty(update=updateNode)
     gp_layer: bpy.props.StringProperty(update=updateNode)
     gp_frame_current: bpy.props.BoolProperty(default=True, update=updateNode)
@@ -172,7 +164,6 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
             if self.image_pointer and self.image_pointer.name:
                 layout.prop(self, 'pass_pixels', text='pixels')
                 layout.label(text=f"dimensions: {self.image_pointer.size[:]}")
-                # size ?  new socket outputting [w/h]
         elif self.Mode == 'grease_pencils':
             self.draw_gp_options(context, layout)
         else:
