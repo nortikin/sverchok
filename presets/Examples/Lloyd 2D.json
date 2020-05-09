@@ -1,0 +1,54 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {
+    "Lloyd2D": "{\"nodes\": {\"Group Inputs Exp\": {\"params\": {\"node_kind\": \"outputs\"}, \"bl_idname\": \"SvGroupInputsNodeExp\", \"outputs\": [[\"Vertices\", \"SvVerticesSocket\"]], \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [-155.0909423828125, 286.998291015625], \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true}, \"Group Outputs Exp\": {\"params\": {\"node_kind\": \"inputs\"}, \"bl_idname\": \"SvGroupOutputsNodeExp\", \"inputs\": [[\"Origins\", \"SvVerticesSocket\"]], \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [934.9090576171875, 272.3114013671875], \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true}, \"Voronoi 2D\": {\"params\": {\"clip\": 0.10000000149011612, \"make_faces\": 1, \"max_sides\": 18}, \"bl_idname\": \"Voronoi2DNode\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [54.90906524658203, 263.77294921875]}, \"Origins\": {\"params\": {\"mode\": \"Faces\"}, \"bl_idname\": \"SvOrigins\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [409.5296630859375, 307.3299865722656]}}, \"groups\": {}, \"framed_nodes\": {}, \"update_lists\": [[\"Group Inputs Exp\", 0, \"Voronoi 2D\", 0], [\"Voronoi 2D\", 0, \"Origins\", 0], [\"Voronoi 2D\", 2, \"Origins\", 2], [\"Origins\", 0, \"Group Outputs Exp\", 0]], \"export_version\": \"0.079\", \"bl_idname\": \"SverchGroupTreeType\", \"cls_bl_idname\": \"SvGroupNodeMonad_139992150659903\"}"
+  },
+  "nodes": {
+    "Lloyd2D": {
+      "bl_idname": "SvMonadGenericNode",
+      "color": [
+        0.8308190107345581,
+        0.911391019821167,
+        0.7545620203018188
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "Lloyd 2D",
+      "location": [
+        774.5697631835938,
+        142.70089721679688
+      ],
+      "params": {
+        "all_props": {
+          "cls_bl_idname": "SvGroupNodeMonad_139992150659903",
+          "float_props": {},
+          "int_props": {},
+          "name": "Lloyd2D"
+        },
+        "cls_dict": {
+          "cls_bl_idname": "SvGroupNodeMonad_139992150659903",
+          "input_template": [
+            [
+              "Vertices",
+              "SvVerticesSocket",
+              {}
+            ]
+          ],
+          "output_template": [
+            [
+              "Origins",
+              "SvVerticesSocket"
+            ]
+          ]
+        },
+        "loop_me": 1,
+        "loops": 5,
+        "monad": "Lloyd2D"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": []
+}
