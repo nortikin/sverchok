@@ -24,13 +24,13 @@ import mathutils
 from mathutils import Vector, Matrix
 from math import radians
 from bpy.props import (
-    BoolProperty, FloatVectorProperty, StringProperty, EnumProperty, IntProperty
+    BoolProperty, FloatVectorProperty, StringProperty, EnumProperty, IntProperty, PointerProperty
 )
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode
 from sverchok.nodes.object_nodes.getsetprop import assign_data, types
-
+from sverchok.utils import register_multiple_classes, unregister_multiple_classes
 
 class SvNodePickupMK2(bpy.types.Operator):
 
@@ -48,7 +48,15 @@ class SvNodePickupMK2(bpy.types.Operator):
         return {'FINISHED'}
 
 
+
 class SvNodeRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+    """
+    Triggers: remote rv
+    Tooltip: remote control mk2
+        
+    This node lets you control the nodes of other nodegorups, in theory
+    """
+        
 
     bl_idname = 'SvNodeRemoteNodeMK2'
     bl_label = 'Node Remote (Control)+'
@@ -56,23 +64,22 @@ class SvNodeRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_REMOTE_NODE'
 
     activate: BoolProperty(
-        default=True,
-        name='Show', description='Activate node?',
+        default=True, name='Show', description='Activate node?',
         update=updateNode)
 
-    nodegroup_name: StringProperty(
-        default='',
-        description='stores the name of the nodegroup referenced by this node',
-        update=updateNode)
+    nodegroup_pointer: PointerProperty(
+        type=bpy.types.NodeGroup, poll=lambda s, o: True, update=updateNode,
+        description='stores the name of the nodegroup referenced by this node')
 
-    node_name: StringProperty(
-        default='',
-        description='stores the name of the node referenced by this node',
-        update=updateNode)
+    node_pointer: .PointerProperty(
+        type=bpy.types.Node, poll=lambda s, o: True, update=updateNode,
+        description='stores the name of the node referenced by this node')
+
+    property_types = (('prop_int','int','prop_int'),('prop_float','float','prop_float'),('prop_angle','angle','prop_angle'))
 
     input_idx: StringProperty()
     execstr: StringProperty(default='', update=updateNode)
-    input_Sc: EnumProperty(items=(('prop_int','int','prop_int'),('prop_float','float','prop_float'),('prop_angle','angle','prop_angle')),default='prop_int',name='input_Sc', update=updateNode)
+    input_Sc: EnumProperty(items=property, default='prop_int',name='input_Sc', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'auto_convert')
@@ -80,56 +87,57 @@ class SvNodeRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         col = layout.column()
         col.prop(self, "activate", text="Update")
-        col.prop_search(self, 'nodegroup_name', bpy.data, 'node_groups', text='', icon='NODETREE')
-        node_group = bpy.data.node_groups.get(self.nodegroup_name)
-        if node_group:
+        col.prop_search(self, 'nodegroup_pointer', bpy.data, 'node_groups', text='', icon='NODETREE')
+        
+        if self.node_group_pointer:
 
             row = col.row(align=True)
-            row.prop_search(self, 'node_name', node_group, 'nodes', text='', icon='SETTINGS')
+            row.prop_search(self, 'node_pointer', self.node_group_pointer, 'nodes', text='', icon='SETTINGS')
             row.operator('node.pickup_active_node_MK2', text='', icon='EYEDROPPER')
 
-            if self.node_name:
-                node = node_group.nodes[self.node_name]
+            if self.node_pointer:
                 if node_group.bl_idname == "ScNodeTree":
-                    # [['int',1,1,'prop_int'],['float',2,2,'prop_float'],['angle',3,3,'prop_angle']]
-                    col.prop(self, 'input_Sc',text='') #, text='', icon='DRIVER')
+                    col.prop(self, 'input_Sc',text='')
                 else:
-                    col.prop_search(self, 'input_idx', node, 'inputs', text='', icon='DRIVER')
+                    col.prop_search(self, 'input_idx', self.node_pointer, 'inputs', text='', icon='DRIVER')
 
     def process(self):
-        if not self.activate:
+        if not all(self.activate, self.node_group_pointer):
             return
 
-        node_group = bpy.data.node_groups.get(self.nodegroup_name)
-        if node_group:
-            node = node_group.nodes.get(self.node_name)
-            if node:
-                named_input = node.inputs.get(self.input_idx)
-                if node_group.bl_idname == 'ScNodeTree':
-                    # sorcar node tree
-                    # it needs pure number
-                    data = self.inputs[0].sv_get()[0][0]
-                    if self.input_Sc == 'prop_float':
-                        node_group.set_value(node.name,'prop_float',data)
-                    elif self.input_Sc == 'prop_int':
-                        node_group.set_value(node.name,'prop_int',data)
-                    elif self.input_Sc == 'prop_angle':
-                        node_group.set_value(node.name,'prop_angle',radians(data))
-                elif named_input:
-                    data = self.inputs[0].sv_get()
-                    if 'value' in named_input:
-                        # [ ] switch socket type if needed (AN)
-                        assign_data(named_input.value, data)
-                    elif 'value_prop' in named_input:
-                        # for audio nodes for example
-                        # https://github.com/nomelif/Audionodes
-                        named_input.value_prop = data[0][0]
+        if self.node_pointer:
+            
+            named_input = self.node_pointer.inputs.get(self.input_idx)
+            
+            if self.node_group_pointer.bl_idname == 'ScNodeTree':
+
+                # sorcar node tree, it needs pure number
+                ng = self.node_group_pointer
+                node = self.node_pointer
+                data = self.inputs[0].sv_get()[0][0]
+
+                if self.input_Sc == 'prop_float':
+                    ng.set_value(node.name,'prop_float', data)
+                elif self.input_Sc == 'prop_int':
+                    ng.set_value(node.name,'prop_int', data)
+                elif self.input_Sc == 'prop_angle':
+                    ng.set_value(node.name, 'prop_angle', radians(data))
+
+            elif named_input:
+                data = self.inputs[0].sv_get()
+                if 'value' in named_input:
+                    # [ ] switch socket type if needed (AN)
+                    assign_data(named_input.value, data)
+                elif 'value_prop' in named_input:
+                    # for audio nodes for example
+                    # https://github.com/nomelif/Audionodes
+                    named_input.value_prop = data[0][0]
+
+
+classes = [SvNodePickupMK2, SvNodeRemoteNodeMK2]
 
 def register():
-    bpy.utils.register_class(SvNodePickupMK2)
-    bpy.utils.register_class(SvNodeRemoteNodeMK2)
-
+    register_multiple_classes(classes)
 
 def unregister():
-    bpy.utils.unregister_class(SvNodeRemoteNodeMK2)
-    bpy.utils.unregister_class(SvNodePickupMK2)
+    unregister_multiple_classes(classes)
