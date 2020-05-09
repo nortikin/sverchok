@@ -227,21 +227,6 @@ def idname_draw(self, context):
     colom = row.column(align=True)
     colom.operator('node.copy_bl_idname', text='', icon='COPY_ID').name = bl_idname
 
-    # show these anyway, can fail and let us know..
-    row = col.row(align=True)
-    row.label(text='Help & Docs:')
-    row = col.row(align=True)
-    row.operator('node.view_node_help', text='Online').kind = 'online'
-    row.operator('node.view_node_help', text='Offline').kind = 'offline'
-    row.operator('node.view_node_help', text='Github').kind = 'github' #, icon='GHOST'
-    col.separator()
-    # view the source of the current node ( warning, some nodes rely on more than one file )
-    row = col.row(align=True)
-    row.label(text='Edit Source:')
-    row = col.row(align=True)
-    row.operator('node.sv_view_node_source', text='Externally').kind = 'external'
-    row.operator('node.sv_view_node_source', text='Internally').kind = 'internal'
-
     box = col.box()
     box.label(text="Presets:")
     presets_col = box.column(align=True)
@@ -257,6 +242,21 @@ def idname_draw(self, context):
     save.save_defaults = True
     selected_nodes = [node for node in ntree.nodes if node.select]
     save_row.enabled = len(selected_nodes) == 1
+
+    # show these anyway, can fail and let us know..
+    row = col.row(align=True)
+    row.label(text='Help & Docs:')
+    row = col.row(align=True)
+    row.operator('node.view_node_help', text='Online').kind = 'online'
+    row.operator('node.view_node_help', text='Offline').kind = 'offline'
+    row.operator('node.view_node_help', text='Github').kind = 'github' #, icon='GHOST'
+    col.separator()
+    # view the source of the current node ( warning, some nodes rely on more than one file )
+    row = col.row(align=True)
+    row.label(text='Edit Source:')
+    row = col.row(align=True)
+    row.operator('node.sv_view_node_source', text='Externally').kind = 'external'
+    row.operator('node.sv_view_node_source', text='Internally').kind = 'internal'
 
     if hasattr(node, 'replacement_nodes'):
         box = col.box()
