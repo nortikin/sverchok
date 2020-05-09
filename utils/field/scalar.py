@@ -81,8 +81,9 @@ class SvVectorFieldDecomposed(SvScalarField):
 class SvScalarFieldLambda(SvScalarField):
     __description__ = "Formula"
 
-    def __init__(self, function, variables, in_field):
+    def __init__(self, function, variables, in_field, function_numpy = None):
         self.function = function
+        self.function_numpy = function_numpy
         self.variables = variables
         self.in_field = in_field
 
@@ -91,7 +92,10 @@ class SvScalarFieldLambda(SvScalarField):
             Vs = np.zeros(xs.shape[0])
         else:
             Vs = self.in_field.evaluate_grid(xs, ys, zs)
-        return np.vectorize(self.function)(xs, ys, zs, Vs)
+        if self.function_numpy is not None:
+            return self.function_numpy(xs, ys, zs, Vs)
+        else:
+            return np.vectorize(self.function)(xs, ys, zs, Vs)
 
     def evaluate(self, x, y, z):
         if self.in_field is None:

@@ -7,10 +7,15 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, St
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match_long_repeat
 from sverchok.utils.modules.eval_formula import get_variables, sv_compile, safe_eval_compiled
+from sverchok.utils.script_importhelper import safe_names_np
 from sverchok.utils.logging import info, exception
-from sverchok.utils.math import from_cylindrical, from_spherical, to_cylindrical, to_spherical
-
-from sverchok.utils.math import coordinate_modes
+from sverchok.utils.math import (
+        from_cylindrical, from_spherical,
+        from_cylindrical_np, from_spherical_np,
+        to_cylindrical, to_spherical,
+        to_cylindrical_np, to_spherical_np,
+        coordinate_modes
+    )
 from sverchok.utils.field.scalar import SvScalarFieldLambda
 
 class SvScalarFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
@@ -38,6 +43,12 @@ class SvScalarFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
         default = 'XYZ',
         update = updateNode)
 
+    use_numpy_function : BoolProperty(
+        name = "Vectorize",
+        description = "Vectorize formula computations; disable this if you have troubles with some functions",
+        default = True,
+        update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvScalarFieldSocket', "Field")
         self.outputs.new('SvScalarFieldSocket', "Field")
@@ -46,6 +57,10 @@ class SvScalarFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
         layout.label(text="Input:")
         layout.prop(self, "input_mode", expand=True)
         layout.prop(self, "formula", text="")
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'use_numpy_function')
 
     def make_function(self, variables):
         compiled = sv_compile(self.formula)
@@ -63,6 +78,41 @@ class SvScalarFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
             rho, phi, theta = to_spherical((x, y, z), mode='radians')
             variables.update(dict(rho=rho, phi=phi, theta=theta, V=V))
             return safe_eval_compiled(compiled, variables)
+
+        if self.input_mode == 'XYZ':
+            function = carthesian
+        elif self.input_mode == 'CYL':
+            function = cylindrical
+        else: # SPH
+            function = spherical
+
+        return function
+
+    def make_function_vector(self, variables):
+        compiled = sv_compile(self.formula)
+
+        def carthesian(x, y, z, V):
+            variables.update(dict(x=x, y=y, z=z, V=V))
+            r = safe_eval_compiled(compiled, variables, allowed_names = safe_names_np)
+            if not isinstance(r, np.ndarray):
+                r = np.full_like(x, r)
+            return r
+
+        def cylindrical(x, y, z, V):
+            rho, phi, z = to_cylindrical_np((x, y, z), mode='radians')
+            variables.update(dict(rho=rho, phi=phi, z=z, V=V))
+            r = safe_eval_compiled(compiled, variables, allowed_names = safe_names_np)
+            if not isinstance(r, np.ndarray):
+                r = np.full_like(x, r)
+            return r
+
+        def spherical(x, y, z, V):
+            rho, phi, theta = to_spherical_np((x, y, z), mode='radians')
+            variables.update(dict(rho=rho, phi=phi, theta=theta, V=V))
+            r = safe_eval_compiled(compiled, variables, allowed_names = safe_names_np)
+            if not isinstance(r, np.ndarray):
+                r = np.full_like(x, r)
+            return r
 
         if self.input_mode == 'XYZ':
             function = carthesian
@@ -133,8 +183,12 @@ class SvScalarFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
                 var_values_s = [[]]
             for var_values in var_values_s:
                 variables = dict(zip(var_names, var_values))
-                function = self.make_function(variables.copy())
-                new_field = SvScalarFieldLambda(function, variables, field_in)
+                function = self.make_function(variables)
+                if self.use_numpy_function:
+                    function_vector = self.make_function_vector(variables)
+                else:
+                    function_vector = None
+                new_field = SvScalarFieldLambda(function, variables, field_in, function_vector)
                 fields_out.append(new_field)
 
         self.outputs['Field'].sv_set(fields_out)
