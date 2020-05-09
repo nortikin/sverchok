@@ -135,8 +135,9 @@ class SvVectorFieldLambda(SvVectorField):
 
     __description__ = "Formula"
 
-    def __init__(self, function, variables, in_field):
+    def __init__(self, function, variables, in_field, function_numpy = None):
         self.function = function
+        self.function_numpy = function_numpy
         self.variables = variables
         self.in_field = in_field
 
@@ -146,8 +147,11 @@ class SvVectorFieldLambda(SvVectorField):
         else:
             vx, vy, vz = self.in_field.evaluate_grid(xs, ys, zs)
             Vs = np.stack((vx, vy, vz)).T
-        return np.vectorize(self.function,
-                    signature = "(),(),(),(3)->(),(),()")(xs, ys, zs, Vs)
+        if self.function_numpy is None:
+            return np.vectorize(self.function,
+                        signature = "(),(),(),(3)->(),(),()")(xs, ys, zs, Vs)
+        else:
+            return self.function_numpy(xs, ys, zs, Vs)
 
     def evaluate(self, x, y, z):
         if self.in_field is None:

@@ -76,6 +76,14 @@ This node has the following parameters:
 * **Output**. This defines the coordinate system in which the resulting vectors
   are expressed. The available values are **Carhtesian**, **Cylindrical** and
   **Spherical**. The default value is **Carthesian**.
+* **Vectorize**. This parameter is available in the N panel only. If enabled,
+  then to evaluate formulas for a series of input values, the node will use
+  NumPy functions to perform several computations at a time; otherwise, the
+  formulas will be evaluated separately for each input value. The use of
+  vectorization usually makes computations a lot faster (2x to 100x). The
+  parameter is enabled by default. If you experience some kind of troubles with
+  calculating some of functions (errors or not good enough precision), you can
+  disable this parameter.
 
 Outputs
 -------

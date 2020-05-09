@@ -163,6 +163,13 @@ def from_cylindrical(rho, phi, z, mode="degrees"):
     y = rho*sin(phi)
     return x, y, z
 
+def from_cylindrical_np(rho, phi, z, mode='degrees'):
+    if mode == "degrees":
+        phi = np.radians(phi)
+    x = rho*np.cos(phi)
+    y = rho*np.sin(phi)
+    return x, y, z
+
 def from_spherical(rho, phi, theta, mode="degrees"):
     if mode == "degrees":
         phi = radians(phi)
@@ -172,12 +179,29 @@ def from_spherical(rho, phi, theta, mode="degrees"):
     z = rho * cos(theta)
     return x, y, z
 
+def from_spherical_np(rho, phi, theta, mode="degrees"):
+    if mode == "degrees":
+        phi = np.radians(phi)
+        theta = np.radians(theta)
+    x = rho * np.sin(theta) * np.cos(phi)
+    y = rho * np.sin(theta) * np.sin(phi)
+    z = rho * np.cos(theta)
+    return x, y, z
+
 def to_cylindrical(v, mode="degrees"):
     x,y,z = v
     rho = sqrt(x*x + y*y)
     phi = atan2(y,x)
     if mode == "degrees":
         phi = degrees(phi)
+    return rho, phi, z
+
+def to_cylindrical_np(v, mode="degrees"):
+    x,y,z = v
+    rho = np.sqrt(x*x + y*y)
+    phi = np.arctan2(y,x)
+    if mode == "degrees":
+        phi = np.degrees(phi)
     return rho, phi, z
 
 def to_spherical(v, mode="degrees"):
@@ -190,5 +214,24 @@ def to_spherical(v, mode="degrees"):
     if mode == "degrees":
         phi = degrees(phi)
         theta = degrees(theta)
+    return rho, phi, theta
+
+def to_spherical_np(v, mode="degrees"):
+    x,y,z = v
+    rho = np.sqrt(x*x + y*y + z*z)
+    bad = (rho == 0)
+    good = np.logical_not(bad)
+
+    theta = np.empty_like(x)
+    theta[good] = np.arccos(z[good]/rho[good])
+    theta[bad] = 0.0
+
+    phi = np.empty_like(x)
+    phi[good] = np.arctan2(y[good], x[good])
+    phi[bad] = 0.0
+
+    if mode == "degrees":
+        phi = np.degrees(phi)
+        theta = np.degrees(theta)
     return rho, phi, theta
 
