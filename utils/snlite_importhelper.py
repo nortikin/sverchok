@@ -27,7 +27,14 @@ TRIPPLE_QUOTES = '"""'
 UNPARSABLE = None, None, None, None
 
 sock_dict = {
-    'v': 'SvVerticesSocket', 's': 'SvStringsSocket', 'm': 'SvMatrixSocket', 'o': 'SvObjectSocket'
+    'v': 'SvVerticesSocket',
+    's': 'SvStringsSocket',
+    'm': 'SvMatrixSocket',
+    'o': 'SvObjectSocket',
+    'C': 'SvCurveSocket',
+    'S': 'SvSurfaceSocket',
+    'SF': 'SvScalarFieldSocket',
+    'VF': 'SvVectorFieldSocket'
 }
 
 
