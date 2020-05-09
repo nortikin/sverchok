@@ -304,7 +304,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         row = layout.row(align=True)
         # row.alert = warning
         row.prop(self, 'basedata_name', text='')
-        row.prop_search(self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
+        row.prop_search(self, 'material_pointer', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
         #row.operator('node.sv_callback_bmesh_viewer',text='',icon='RESTRICT_SELECT_OFF')
 
     def get_geometry_from_sockets(self):
@@ -388,7 +388,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
                 self.to_collection(objs)
 
             # truthy if self.material is in .materials
-            if bpy.data.materials.get(self.material):
+            if self.material_pointer:
                 self.set_corresponding_materials()
 
             self.set_autosmooth(objs)
@@ -421,7 +421,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         mat.use_fake_user = True
 
         nodes = mat.node_tree.nodes
-        self.material = mat.name
+        self.material_pointer = mat
 
         if bpy.context.scene.render.engine == 'CYCLES':
             # add attr node to the left of diffuse BSDF + connect it
