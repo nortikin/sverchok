@@ -71,7 +71,7 @@ class SvNodeRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         type=bpy.types.NodeGroup, poll=lambda s, o: True, update=updateNode,
         description='stores the name of the nodegroup referenced by this node')
 
-    node_pointer: .PointerProperty(
+    node_pointer: PointerProperty(
         type=bpy.types.Node, poll=lambda s, o: True, update=updateNode,
         description='stores the name of the node referenced by this node')
 
