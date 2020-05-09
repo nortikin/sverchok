@@ -31,6 +31,7 @@ from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.development import get_branch
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
+from sverchok.ui.presets import get_presets, SverchPresetReplaceOperator, SvSaveSelected
 from sverchok.nodes.__init__ import nodes_dict
 
 
@@ -207,12 +208,12 @@ class SvViewSourceForNode(bpy.types.Operator):
         path_structure[-1] += '.py'
         return os.path.join(sv_path, *path_structure)
 
-
 def idname_draw(self, context):
     if not displaying_sverchok_nodes(context):
         return
     layout = self.layout
     node = context.active_node
+    ntree = node.id_data
     if not node:
         return
     bl_idname = node.bl_idname
@@ -240,6 +241,22 @@ def idname_draw(self, context):
     row = col.row(align=True)
     row.operator('node.sv_view_node_source', text='Externally').kind = 'external'
     row.operator('node.sv_view_node_source', text='Internally').kind = 'internal'
+
+    box = col.box()
+    box.label(text="Presets:")
+    presets_col = box.column(align=True)
+    for preset in get_presets(category = node.bl_idname, mkdir=False):
+        op = presets_col.operator(SverchPresetReplaceOperator.bl_idname, text=preset.name)
+        op.preset_path = preset.path
+        op.preset_name = preset.name
+        op.node_name = node.name
+    save_row = box.row()
+    save = save_row.operator(SvSaveSelected.bl_idname, text="Save Preset", icon='SOLO_ON')
+    save.id_tree = ntree.name
+    save.category = node.bl_idname
+    save.save_defaults = True
+    selected_nodes = [node for node in ntree.nodes if node.select]
+    save_row.enabled = len(selected_nodes) == 1
 
     if hasattr(node, 'replacement_nodes'):
         box = col.box()
