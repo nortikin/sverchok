@@ -16,7 +16,7 @@ import bpy
 
 
 def node_id(self):
-    # this attribute is for reroutes nodes
+    # this attribute is for reroutes and frame nodes
     if not self.n_id:
         self.n_id = str(hash(self) ^ hash(time.monotonic()))
     return self.n_id
@@ -36,10 +36,11 @@ def link_id(self):
     return from_id + to_id
 
 
-# todo add link attribute
-
-
 bpy.types.NodeReroute.n_id = bpy.props.StringProperty(default="")
 bpy.types.NodeReroute.node_id = property(node_id)
+
+bpy.types.NodeFrame.n_id = bpy.props.StringProperty(default="")
+bpy.types.NodeFrame.node_id = property(node_id)
+
 bpy.types.NodeSocketColor.socket_id = property(socket_id)
 bpy.types.NodeLink.link_id = property(link_id)

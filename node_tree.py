@@ -171,37 +171,48 @@ class ColorizeTree:
 
     def colorize_slow_nodes(self):
         for node in self.nodes:
-            is_slow_node = node.update_time >= self.update_time
-            if self.use_colorizing_algorithm and is_slow_node and not node.error:
-                node.use_custom_color = True
-                node.color = self.colorizing_color
-            else:
-                node.use_custom_color = False
+            with self.skip_reroutes_frame_nodes(node) as normal_node:
+                is_slow_node = normal_node.update_time >= self.update_time
+                if self.use_colorizing_algorithm and is_slow_node and not normal_node.error:
+                    normal_node.use_custom_color = True
+                    normal_node.color = self.colorizing_color
+                else:
+                    normal_node.use_custom_color = False
 
     def colorize_last_updated_nodes(self, last_updated_nodes: set = None):
         if last_updated_nodes is not None:
             for node in self.nodes:
-                if node in last_updated_nodes and not node.error:
-                    node.use_custom_color = True
-                    node.color = self.last_updated_color
-                else:
-                    node.use_custom_color = False
+                with self.skip_reroutes_frame_nodes(node) as normal_node:
+                    if normal_node in last_updated_nodes and not normal_node.error:
+                        normal_node.use_custom_color = True
+                        normal_node.color = self.last_updated_color
+                    else:
+                        normal_node.use_custom_color = False
         else:
             for node in self.nodes:
-                if node.use_custom_color:
-                    node.color = self.last_updated_color
+                with self.skip_reroutes_frame_nodes(node) as normal_node:
+                    if normal_node.use_custom_color:
+                        normal_node.color = self.last_updated_color
 
     def colorize_error_nodes(self, last_updated_nodes=None):
         for node in last_updated_nodes:
-            if node.error:
-                node.color = (1, 0, 0.5)
-                node.use_custom_color = True
-            else:
-                if not self.use_colorizing_algorithm:
-                    node.use_custom_color = False
+            with self.skip_reroutes_frame_nodes(node) as normal_node:
+                if normal_node.error:
+                    normal_node.color = (1, 0, 0.5)
+                    normal_node.use_custom_color = True
                 else:
-                    # all nodes was recolored already
-                    pass
+                    if not self.use_colorizing_algorithm:
+                        normal_node.use_custom_color = False
+                    else:
+                        # all nodes was recolored already
+                        pass
+
+    @contextmanager
+    def skip_reroutes_frame_nodes(self, node):
+        try:
+            yield node
+        except AttributeError:
+            pass
 
 
 class SvNodeTreeCommon(object):

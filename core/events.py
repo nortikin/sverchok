@@ -13,6 +13,7 @@ from itertools import takewhile, count
 from contextlib import contextmanager
 import traceback
 from time import time, strftime
+from operator import setitem
 
 from bpy.types import Node, NodeTree, NodeLink
 import bpy
@@ -137,8 +138,9 @@ class EventsWave:
             evt.BlenderEventsTypes.node_property_update])
         if tree_was_changed:
             self.analyze_changes()
-            # todo reset id copied reroutes
             known_sv_events = self.convert_known_events()
+            found_reroute_frame_events = self.search_reroute_frame_node_events()
+            known_sv_events.update(found_reroute_frame_events)
             found_sv_events = self.search_linking_events()
             known_sv_events.update(found_sv_events)
             return known_sv_events
@@ -178,7 +180,7 @@ class EventsWave:
             self.links_was_removed = (len(self.current_tree.nodes) - len(self.previous_tree.nodes)) < 0
 
             free_events = list(self.first_type_events())
-            free_nodes_total = len(self.current_tree.nodes) - len(self.previous_tree.nodes)
+            free_nodes_total = len(self.previous_tree.nodes) - len(self.current_tree.nodes)
             self.reroutes_was_removed = (free_nodes_total - len(free_events)) > 0
         elif self.events_wave[0].type == evt.BlenderEventsTypes.add_link_to_node:
             # New: Nodes = 0; Links = 0-n; Reroutes = 0
@@ -197,9 +199,51 @@ class EventsWave:
         else:
             return set()
 
+    def search_reroute_frame_node_events(self) -> List[SverchokEvent]:
+        if self.reroutes_was_added:
+            new_nodes = self.search_new_reroutes_frames()
+            if not new_nodes:
+                # it is possible that new reroutes or frame nodes was copied with ID of another one
+                # and their IDs are similar to their copies
+                new_nodes = self.search_copied_reroutes_frames()
+                # ID of copied should be fixed
+                [setattr(node, 'n_id', '') for node in new_nodes]
+                # also this new IDs should be fixed in hashed Blender data
+                [setitem(self.current_tree.nodes, node.node_id, node) for node in new_nodes]
+            return [SverchokEvent(type=evt.SverchokEventsTypes.add_node,
+                                  tree_id=self.current_tree.tree_id,
+                                  node_id=node.node_id) for node in new_nodes]
+
+        elif self.reroutes_was_removed:
+            removed_nodes = self.search_free_reroutes_frames()
+            return [SverchokEvent(type=evt.SverchokEventsTypes.free_node,
+                                  tree_id=self.current_tree.tree_id,
+                                  node_id=sv_node.id) for sv_node in removed_nodes]
+        return []
+
+    def search_new_reroutes_frames(self) -> List[Node]:
+        # should be called if user created/copied new reroute(s) or frames, Shift+RMB, added via Python API
+        return self.current_tree.nodes - self.previous_tree.nodes
+
+    def search_copied_reroutes_frames(self) -> List[Node]:
+        # ahshed tree data can't be used here because it combine nodes with a same IDs
+        tree = get_blender_tree(self.main_event.tree_id)
+        visited_node_ids = set()
+        new_reroute_frame_nodes = []
+        for node in tree.nodes:
+            if node.node_id in visited_node_ids:
+                new_reroute_frame_nodes.append(node)
+            else:
+                visited_node_ids.add(node.node_id)
+        return new_reroute_frame_nodes
+
+    def search_free_reroutes_frames(self) -> List[SvNode]:
+        # should be called if user deleted selected, deleted via Python API
+        return self.previous_tree.nodes - self.current_tree.nodes
+
     def search_linking_events(self) -> List[SverchokEvent]:
         if self.links_was_added:
-            if self.events_wave[0].type == evt.BlenderEventsTypes.copy_node or self.reroutes_was_added:
+            if self.events_wave[0].type == evt.BlenderEventsTypes.copy_node:
                 # the idea was get new links from copied nodes
                 # but API does not let to get links linked to a node efficiently
                 # but if copy node it means that only new links could be created
@@ -219,7 +263,7 @@ class EventsWave:
                                                      link_id=link.id) for link in free_links]
                 return add_links_events + remove_links_events
         elif self.links_was_removed:
-            if self.events_wave[0].type == evt.BlenderEventsTypes.free_node or self.reroutes_was_removed:
+            if self.events_wave[0].type == evt.BlenderEventsTypes.free_node:
                 nodes_removed = {self.previous_tree.nodes[ev.node_id] for ev in self.first_type_events()}
                 removed_links = self.search_free_links_from_nodes(nodes_removed)
                 return [SverchokEvent(type=evt.SverchokEventsTypes.free_link,
@@ -258,14 +302,6 @@ class EventsWave:
         [sv_links_keys.update(node.outputs.keys()) for node in sverchok_nodes]
         deleted_links_keys = sv_links_keys - self.current_tree.links.keys()
         return [self.previous_tree.links[key] for key in deleted_links_keys]
-
-    def search_new_reroutes(self):
-        # should be called if user created/copied new reroute(s), Shift+RMB, added via Python API
-        pass
-
-    def search_free_reroutes(self):
-        # should be called if user deleted selected, deleted via Python API
-        pass
 
     def first_type_events(self) -> Generator[BlenderEvent, None, None]:
         yield from takewhile(lambda ev: ev.type == self.events_wave[0].type, self.events_wave)
@@ -362,7 +398,7 @@ class CurrentEvents:
     @classmethod
     def redraw_nodes(cls, sverchok_events: Iterable[SverchokEvent]):
         # this method is calling nodes method which can make Blender relocate nodes and links in memory
-        # so after this method all memorized Blender links and nodes should be reset
+        # so after this method all memorized Blender links (and nodes?) should be reset
         hashed_tree = hash_data.HashedBlenderData.get_tree(cls.events_wave.main_event.tree_id)
         previous_tree = reconstruction.NodeTreesReconstruction.get_node_tree_reconstruction(
             cls.events_wave.main_event.tree_id)
@@ -381,7 +417,13 @@ class CurrentEvents:
                     bl_link_update_nodes.add(hashed_tree.nodes[sv_link.from_node.id])
                 if sv_link.to_node.id not in deleted_node_ids:
                     bl_link_update_nodes.add(hashed_tree.nodes[sv_link.to_node.id])
-        [node.sv_update() for node in bl_link_update_nodes]
+
+        for link_update_node in bl_link_update_nodes:
+            try:
+                link_update_node.sv_update()
+            except AttributeError:
+                # most likely it's reroute node - do nothing
+                pass
 
     @classmethod
     def update_nodes(cls) -> List[Node]:
@@ -436,10 +478,14 @@ class CurrentEvents:
             exception = e
             traceback.print_exc()
         finally:
-            node.updates_total += 1
-            node.last_update = strftime("%H:%M:%S")
-            node.update_time = int((time() - start_time) * 1000)
-            node.error = repr(exception) if exception else ''
+            if hasattr(node, 'updates_total'):
+                node.updates_total += 1
+                node.last_update = strftime("%H:%M:%S")
+                node.update_time = int((time() - start_time) * 1000)
+                node.error = repr(exception) if exception else ''
+            else:
+                # most likely this is reroute node, no statistics
+                pass
 
     @staticmethod
     @contextmanager

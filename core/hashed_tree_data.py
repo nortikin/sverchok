@@ -7,7 +7,7 @@
 
 from __future__ import annotations
 
-from typing import Dict, TYPE_CHECKING, Union, List, KeysView
+from typing import Dict, TYPE_CHECKING, Union, List, KeysView, Iterable
 from operator import getitem
 
 import bpy
@@ -91,6 +91,9 @@ class HashedNodes:
         self._memorize_nodes()
         return self._nodes[item]
 
+    def __setitem__(self, key, value):
+        self._nodes[key] = value
+
     def __len__(self):
         return len(get_blender_tree(self._tree.tree_id).nodes)
 
@@ -101,6 +104,9 @@ class HashedNodes:
             return [getitem(self._nodes, key) for key in new_nodes_keys]
         else:
             return NotImplemented
+
+    def __iter__(self) -> Iterable[Node]:
+        return iter(self._nodes.values())
 
     def __repr__(self):
         return repr(self._nodes)
