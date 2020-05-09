@@ -48,6 +48,7 @@ class SvNodePickupMK2(bpy.types.Operator):
         return {'FINISHED'}
 
 
+property_types = (('prop_int','int','prop_int'),('prop_float','float','prop_float'),('prop_angle','angle','prop_angle'))
 
 class SvNodeRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -56,26 +57,28 @@ class SvNodeRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         
     This node lets you control the nodes of other nodegorups, in theory
     """
-    properties_to_skip_iojson = ['nodegroup_pointer', 'node_pointer']
 
     bl_idname = 'SvNodeRemoteNodeMK2'
     bl_label = 'Node Remote (Control)+'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_REMOTE_NODE'
+    properties_to_skip_iojson = ['nodegroup_pointer', 'node_pointer']
 
     activate: BoolProperty(
         default=True, name='Show', description='Activate node?',
         update=updateNode)
 
+    # TypeError: PointerProperty(...) expected an RNA type derived from ID or ID Property Group
     nodegroup_pointer: PointerProperty(
-        type=bpy.types.NodeGroup, poll=lambda s, o: True, update=updateNode,
+        type=bpy.types.NodeGroup, 
+        poll=lambda s, o: True, update=updateNode,
         description='stores the name of the nodegroup referenced by this node')
 
     node_pointer: PointerProperty(
-        type=bpy.types.Node, poll=lambda s, o: True, update=updateNode,
+        type=bpy.types.Node,
+        poll=lambda s, o: True, update=updateNode,
         description='stores the name of the node referenced by this node')
 
-    property_types = (('prop_int','int','prop_int'),('prop_float','float','prop_float'),('prop_angle','angle','prop_angle'))
 
     input_idx: StringProperty()
     execstr: StringProperty(default='', update=updateNode)
