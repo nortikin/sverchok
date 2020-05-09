@@ -254,6 +254,13 @@ def handle_enum_property(node, k, v, node_items, node_enums):
         v = getattr(node, k)
         node_items[k] = v
 
+def get_node_annotations(node, include_pointer_props = False):
+    result = []
+    for key, ann in node.bl_rna.__annotations__.items():
+        prop_type = ann[0]
+        if include_pointer_props or prop_type != bpy.props.PointerProperty:
+            result.append((key, getattr(node, key)))
+    return result
 
 def create_dict_of_tree(ng, skip_set={}, selected=False, identified_node=None, save_defaults = False):
     nodes = ng.nodes
@@ -284,7 +291,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False, identified_node=None, s
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
 
         if save_defaults:
-            node_props = ((k, getattr(node, k)) for k in node.bl_rna.__annotations__.keys())
+            node_props = get_node_annotations(node)
         else:
             node_props = node.items()
         for k, v in node_props:
