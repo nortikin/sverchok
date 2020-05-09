@@ -421,7 +421,7 @@
     SvGetPropNode
     SvSetPropNode
     SvObjRemoteNodeMK2
-    SvNodeRemoteNode
+    SvNodeRemoteNodeMK2
     SvGetAssetPropertiesMK2
     SvSetDataObjectNodeMK2
     SvSortObjsNode
