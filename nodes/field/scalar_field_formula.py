@@ -11,7 +11,6 @@ from sverchok.utils.script_importhelper import safe_names_np
 from sverchok.utils.logging import info, exception
 from sverchok.utils.math import (
         from_cylindrical, from_spherical,
-        from_cylindrical_np, from_spherical_np,
         to_cylindrical, to_spherical,
         to_cylindrical_np, to_spherical_np,
         coordinate_modes
@@ -67,17 +66,26 @@ class SvScalarFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
 
         def carthesian(x, y, z, V):
             variables.update(dict(x=x, y=y, z=z, V=V))
-            return safe_eval_compiled(compiled, variables)
+            r = safe_eval_compiled(compiled, variables)
+            if not isinstance(r, np.ndarray):
+                r = np.full_like(x, r)
+            return r
 
         def cylindrical(x, y, z, V):
             rho, phi, z = to_cylindrical((x, y, z), mode='radians')
             variables.update(dict(rho=rho, phi=phi, z=z, V=V))
-            return safe_eval_compiled(compiled, variables)
+            r = safe_eval_compiled(compiled, variables)
+            if not isinstance(r, np.ndarray):
+                r = np.full_like(x, r)
+            return r
 
         def spherical(x, y, z, V):
             rho, phi, theta = to_spherical((x, y, z), mode='radians')
             variables.update(dict(rho=rho, phi=phi, theta=theta, V=V))
-            return safe_eval_compiled(compiled, variables)
+            r = safe_eval_compiled(compiled, variables)
+            if not isinstance(r, np.ndarray):
+                r = np.full_like(x, r)
+            return r
 
         if self.input_mode == 'XYZ':
             function = carthesian
