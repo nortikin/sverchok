@@ -34,7 +34,7 @@ from sverchok.utils import register_multiple_classes, unregister_multiple_classe
 
 class SvNodePickupMK2(bpy.types.Operator):
 
-    bl_idname = "node.pickup_active_node_MK2"
+    bl_idname = "node.pickup_active_node_mk2"
     bl_label = "Node Pickup"
     
     # bl_options = {'REGISTER', 'UNDO'}
@@ -93,7 +93,7 @@ class SvNodeRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
             row = col.row(align=True)
             row.prop_search(self, 'node_pointer', self.node_group_pointer, 'nodes', text='', icon='SETTINGS')
-            row.operator('node.pickup_active_node_MK2', text='', icon='EYEDROPPER')
+            row.operator('node.pickup_active_node_mk2', text='', icon='EYEDROPPER')
 
             if self.node_pointer:
                 if self.node_group_pointer.bl_idname == "ScNodeTree":
