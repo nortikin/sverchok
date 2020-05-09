@@ -246,7 +246,8 @@ class SvObjHelper():
     data_kind: StringProperty(name='data kind', default='MESH')
 
     # to be used if the node has no material input.
-    material: StringProperty(name='material', default='', update=updateNode)
+    material: StringProperty(name='material', default='')
+    material_pointer: bpy.props.PointerProperty(type=bpy.types.Material, poll=lambda s, o: True, update=updateNode)
 
     # to be used as standard toggles for object attributes of same name
     object_hide_viewport: BoolProperty(name='object hide viewport', default=True)
