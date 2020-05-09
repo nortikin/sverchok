@@ -56,7 +56,7 @@ class SvNodeRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         
     This node lets you control the nodes of other nodegorups, in theory
     """
-        
+    properties_to_skip_iojson = ['nodegroup_pointer', 'node_pointer']
 
     bl_idname = 'SvNodeRemoteNodeMK2'
     bl_label = 'Node Remote (Control)+'
@@ -96,7 +96,7 @@ class SvNodeRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             row.operator('node.pickup_active_node_MK2', text='', icon='EYEDROPPER')
 
             if self.node_pointer:
-                if node_group.bl_idname == "ScNodeTree":
+                if self.node_group_pointer.bl_idname == "ScNodeTree":
                     col.prop(self, 'input_Sc',text='')
                 else:
                     col.prop_search(self, 'input_idx', self.node_pointer, 'inputs', text='', icon='DRIVER')
