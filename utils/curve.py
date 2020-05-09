@@ -558,8 +558,9 @@ class SvCircle(SvCurve):
 class SvLambdaCurve(SvCurve):
     __description__ = "Formula"
 
-    def __init__(self, function):
+    def __init__(self, function, function_numpy = None):
         self.function = function
+        self.function_numpy = function_numpy
         self.u_bounds = (0.0, 1.0)
         self.tangent_delta = 0.001
 
@@ -570,7 +571,10 @@ class SvLambdaCurve(SvCurve):
         return self.function(t)
 
     def evaluate_array(self, ts):
-        return np.vectorize(self.function, signature='()->(3)')(ts)
+        if self.function_numpy is not None:
+            return self.function_numpy(ts)
+        else:
+            return np.vectorize(self.function, signature='()->(3)')(ts)
 
     def tangent(self, t):
         point = self.function(t)

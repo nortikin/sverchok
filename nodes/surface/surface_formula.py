@@ -13,7 +13,6 @@ from sverchok.utils.logging import info, exception
 from sverchok.utils.math import (
             from_cylindrical, from_spherical,
             from_cylindrical_np, from_spherical_np,
-            to_cylindrical, to_spherical,
             coordinate_modes
         )
 from sverchok.utils.surface import SvLambdaSurface
@@ -141,6 +140,14 @@ class SvSurfaceFormulaNode(bpy.types.Node, SverchCustomTreeNode):
             v1 = safe_eval_compiled(compiled1, variables, allowed_names = safe_names_np)
             v2 = safe_eval_compiled(compiled2, variables, allowed_names = safe_names_np)
             v3 = safe_eval_compiled(compiled3, variables, allowed_names = safe_names_np)
+
+            if not isinstance(v1, np.ndarray):
+                v1 = np.full_like(u, v1)
+            if not isinstance(v2, np.ndarray):
+                v2 = np.full_like(u, v2)
+            if not isinstance(v3, np.ndarray):
+                v3 = np.full_like(u, v3)
+
             return np.array(out_coordinates(v1, v2, v3)).T
 
         return function
