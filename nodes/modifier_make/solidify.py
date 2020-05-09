@@ -81,9 +81,6 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
-        if not any((s.is_linked for s in self.outputs)):
-            return
-
         if not (self.inputs['vertices'].is_linked and self.inputs['polygons'].is_linked):
             return
 

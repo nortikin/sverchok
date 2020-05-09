@@ -24,6 +24,7 @@ import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, list_match_func, list_match_modes
 from sverchok.utils.modules.matrix_utils import matrix_apply_np
+from sverchok.core.events import property_update
 
 
 directionItems = [("XY", "XY", ""), ("YZ", "YZ", ""), ("ZX", "ZX", "")]
@@ -275,14 +276,12 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
             hide('Num X', False)
             hide('Num Y', False)
 
-        updateNode(self, context)
-
     direction: EnumProperty(
         name="Direction", items=directionItems,
         default="XY", update=updateNode)
     dimension_mode: EnumProperty(
         name="Mode", items=dimensionsItems,
-        default="SIZE", update=update_sockets)
+        default="SIZE", update=property_update('dimension_mode', update_sockets))
 
     numx: IntProperty(
         name='N Verts X', description='Number of vertices along X',
@@ -475,7 +474,7 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         data_in = self.get_data()
 
         verts_out, edges_out, pols_out = [], [], []
-        flags = [s.is_linked for s in outputs]
+        flags = [True for s in outputs]  # update system node ready for detection changes on socket level
         output_numpy = [b for b in self.out_np]
         ops = [self.center, self.list_match_local, self.direction]
 

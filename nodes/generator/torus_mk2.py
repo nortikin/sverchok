@@ -296,10 +296,6 @@ class SvTorusNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         self.draw_angle_units_buttons(context, layout)
 
     def process(self):
-        # return if no outputs are connected
-        if not any(s.is_linked for s in self.outputs):
-            return
-
         # input values lists (single or multi value)
         input_RR = self.inputs["R"].sv_get()[0]   # list of MAJOR or EXTERIOR radii
         input_rr = self.inputs["r"].sv_get()[0]   # list of MINOR or INTERIOR radii
@@ -339,29 +335,27 @@ class SvTorusNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         # conversion factor from the current angle units to radians
         au = self.radians_conversion_factor()
 
-        if self.outputs['Vertices'].is_linked or self.outputs['Normals'].is_linked:
-            verts_list = []
-            norms_list = []
-            for R, r, n1, n2, rP, sP, rE, sE, sT in zip(*parameters):
-                verts, norms = torus_verts(R, r, n1, n2, rP * au, sP * au, rE, sE, sT, self.Separate)
-                verts_list.append(verts)
-                norms_list.append(norms)
-            self.outputs['Vertices'].sv_set(verts_list)
-            self.outputs['Normals'].sv_set(norms_list)
+        # Node should calculated all its data for all output sockets at this stage
+        verts_list = []
+        norms_list = []
+        for R, r, n1, n2, rP, sP, rE, sE, sT in zip(*parameters):
+            verts, norms = torus_verts(R, r, n1, n2, rP * au, sP * au, rE, sE, sT, self.Separate)
+            verts_list.append(verts)
+            norms_list.append(norms)
+        self.outputs['Vertices'].sv_set(verts_list)
+        self.outputs['Normals'].sv_set(norms_list)
 
-        if self.outputs['Edges'].is_linked:
-            edges_list = []
-            for _, _, n1, n2, _, _, _, _, sT in zip(*parameters):
-                edges = torus_edges(n1, n2, sT)
-                edges_list.append(edges)
-            self.outputs['Edges'].sv_set(edges_list)
+        edges_list = []
+        for _, _, n1, n2, _, _, _, _, sT in zip(*parameters):
+            edges = torus_edges(n1, n2, sT)
+            edges_list.append(edges)
+        self.outputs['Edges'].sv_set(edges_list)
 
-        if self.outputs['Polygons'].is_linked:
-            polys_list = []
-            for _, _, n1, n2, _, _, _, _, sT in zip(*parameters):
-                polys = torus_polygons(n1, n2, sT)
-                polys_list.append(polys)
-            self.outputs['Polygons'].sv_set(polys_list)
+        polys_list = []
+        for _, _, n1, n2, _, _, _, _, sT in zip(*parameters):
+            polys = torus_polygons(n1, n2, sT)
+            polys_list.append(polys)
+        self.outputs['Polygons'].sv_set(polys_list)
 
 
 def register():

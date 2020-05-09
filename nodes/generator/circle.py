@@ -112,17 +112,15 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
         output_socket_names = ['Vertices', 'Edges', 'Polygons']
         verts_output, edges_output, faces_output = [self.outputs[n] for n in output_socket_names]
 
-        if verts_output.is_linked:
-            points = [self.make_verts(a, v, r) for a, v, r in zip(*parameters)]
-            verts_output.sv_set(points)
+        # Node should calculated all its data for all output sockets at this stage
+        points = [self.make_verts(a, v, r) for a, v, r in zip(*parameters)]
+        verts_output.sv_set(points)
 
-        if edges_output.is_linked:
-            edg = [self.make_edges(a, v) for a, v, r in zip(*parameters)]
-            edges_output.sv_set(edg)
+        edg = [self.make_edges(a, v) for a, v, r in zip(*parameters)]
+        edges_output.sv_set(edg)
 
-        if faces_output.is_linked:
-            plg = [self.make_faces(a, v) for a, v, r in zip(*parameters)]
-            faces_output.sv_set(plg)
+        plg = [self.make_faces(a, v) for a, v, r in zip(*parameters)]
+        faces_output.sv_set(plg)
 
 
 def register():

@@ -245,10 +245,8 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             else:
                 return
 
-            if self.outputs['vertices'].is_linked:
-                self.outputs['vertices'].sv_set(one)
-            if self.outputs['data'].is_linked:
-                self.outputs['data'].sv_set(two)
+            self.outputs['vertices'].sv_set(one)
+            self.outputs['data'].sv_set(two)
 
 
 def register():

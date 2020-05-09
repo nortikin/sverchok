@@ -440,7 +440,8 @@ class CurrentEvents:
             with cls.record_node_statistics(bl_node) as node:
                 if hasattr(node, 'process'):
                     node.process()
-                recalculation_node.is_outdated = False
+            # Did process fail or not without tree changes there is no sense to recalculate its again
+            recalculation_node.is_outdated = False
             recalculated_nodes.append(bl_node)
         return recalculated_nodes
 

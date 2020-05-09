@@ -23,6 +23,7 @@ from bpy.props import IntProperty, StringProperty, BoolProperty, FloatProperty, 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, node_id, match_long_repeat
 from sverchok.utils.pulga_physics_core import pulga_system_init
+from sverchok.core.events import property_update
 
 FILE_NAME = 'pulga_Memory '
 
@@ -324,56 +325,54 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             so["Pins Reactions"].hide_safe = True
 
-        updateNode(self, context)
-
     self_react_M : BoolProperty(name="Collision",
         description="Self Collision: collision between input vertices as spheres",
         default=False,
-        update=update_sockets)
+        update=property_update('self_react_M', update_sockets))
     self_attract_M : BoolProperty(name="Attraction",
         description="Self Attraction: attract between input vertices as spheres",
         default=False,
-        update=update_sockets)
+        update=property_update('self_attract_M', update_sockets))
     fit_M : BoolProperty(name="Fit",
         description="Fit: shrink if collide with others, grow if not",
         default=False,
-        update=update_sockets)
+        update=property_update('fit_M', update_sockets))
     springs_M : BoolProperty(name="Springs",
         description="Use springs forces",
         default=False,
-        update=update_sockets)
+        update=property_update('springs_M', update_sockets))
     pins_M : BoolProperty(name="Pin",
         description="Pin (turn to static) mask",
         default=False,
-        update=update_sockets)
+        update=property_update('pins_M', update_sockets))
     inflate_M : BoolProperty(name="Inflate",
         description="Inflate (push geometry along the polygons normals proportional to polygon area",
         default=False,
-        update=update_sockets)
+        update=property_update('inflate_M', update_sockets))
     drag_M : BoolProperty(name="Drag",
         description="Drag force",
         default=False,
-        update=update_sockets)
+        update=property_update('drag_M', update_sockets))
     attract_M : BoolProperty(name="Attractors",
         description="Use external attractors",
         default=False,
-        update=update_sockets)
+        update=property_update('attract_M', update_sockets))
     random_M : BoolProperty(name="Random",
         description="Random force",
         default=False,
-        update=update_sockets)
+        update=property_update('random_M', update_sockets))
     bounding_box_M : BoolProperty(name="Boundaries",
         description="System bounding box",
         default=False,
-        update=update_sockets)
+        update=property_update('bounding_box_M', update_sockets))
     world_F_M : BoolProperty(name="World",
         description="Constant Forces",
         default=False,
-        update=update_sockets)
+        update=property_update('world_F_M', update_sockets))
     obstacles_M : BoolProperty(name="Obstacles",
         description="Collision obstacles",
         default=False,
-        update=update_sockets)
+        update=property_update('obstacles_M', update_sockets))
 
     output_numpy : BoolProperty(name="as NumPy",
         description="Output NumPy arrays ",
@@ -503,12 +502,9 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         '''main node function called every update'''
 
         si = self.inputs
-        so = self.outputs
-        if not any(socket.is_linked for socket in so):
-            return
-
         if not si['Initial_Pos'].is_linked:
             return
+
         verts_out = []
         rads_out = []
         velocity_out = []
@@ -534,14 +530,12 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
 
                 temp_id += 1
 
-        if so['Vertices'].is_linked:
-            so['Vertices'].sv_set(verts_out)
-        if so['Rads'].is_linked:
-            so['Rads'].sv_set(rads_out)
-        if so['Velocity'].is_linked:
-            so['Velocity'].sv_set(velocity_out)
-        if so['Pins Reactions'].is_linked:
-            so['Pins Reactions'].sv_set(reactions_out)
+        # Node should calculated all its data for all output sockets at this stage
+        so = self.outputs
+        so['Vertices'].sv_set(verts_out)
+        so['Rads'].sv_set(rads_out)
+        so['Velocity'].sv_set(velocity_out)
+        so['Pins Reactions'].sv_set(reactions_out)
 
 
 

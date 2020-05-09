@@ -204,10 +204,6 @@ class SvRingNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'mode', expand=True)
 
     def process(self):
-        # return if no outputs are connected
-        if not any(s.is_linked for s in self.outputs):
-            return
-
         # input values lists (single or multi value)
         # list of MAJOR or EXTERIOR radii
         input_RR = self.inputs["R"].sv_get()[0]

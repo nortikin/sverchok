@@ -508,17 +508,10 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
             result_centers.append(centers)
 
         # outputs
-        if self.outputs['Vertices'].is_linked:
-            self.outputs['Vertices'].sv_set(result_vertices)
-
-        if self.outputs['Edges'].is_linked:
-            self.outputs['Edges'].sv_set(result_edges)
-
-        if self.outputs['Polygons'].is_linked:
-            self.outputs['Polygons'].sv_set(result_faces)
-
-        if self.outputs['Centers'].is_linked:
-            self.outputs['Centers'].sv_set(result_centers)
+        self.outputs['Vertices'].sv_set(result_vertices)
+        self.outputs['Edges'].sv_set(result_edges)
+        self.outputs['Polygons'].sv_set(result_faces)
+        self.outputs['Centers'].sv_set(result_centers)
 
 
 def register():
