@@ -387,10 +387,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             if self.grouping:
                 self.to_collection(objs)
 
-            # truthy if self.material is in .materials
-            if self.material_pointer:
-                self.set_corresponding_materials()
-
+            self.set_corresponding_materials()
             self.set_autosmooth(objs)
             self.set_wireframe_visibility(objs)
 
