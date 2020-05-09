@@ -31,6 +31,9 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode
 from sverchok.nodes.object_nodes.getsetprop import assign_data, types
 
+# can't use a PointerProperty for type=bpy.data.node_group
+# https://blender.stackexchange.com/questions/2075/assign-datablock-to-custom-property
+
 
 class SvNodePickupMK2(bpy.types.Operator):
 
@@ -105,13 +108,14 @@ class SvNodeRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
+
+        # end early?
+
         if not self.activate:
             return
-
         ng = self.get_bpy_data_from_name(self.nodegroup_name, bpy.data.node_groups)
         if not ng:
             return
-
         node = self.get_bpy_data_from_name(self.node_name, ng.nodes)
         if not node:
             return
