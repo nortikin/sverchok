@@ -111,10 +111,8 @@ A few things to notice:
 
 - **inputs**::
 
-    ```
     direction    socketname     sockettype     default     nestedness
     in           radius         s              .=1.2       .=2
-    ```
 
 - `direction` ``in`` means "make an input".
 - `socketname` means "give this socket a name / identifier"
@@ -182,6 +180,7 @@ Parameters
 This node has two states:
 
 1. When no script is loaded, it shows:
+
    * a drop-down box, where you have to select a Blender's text block with script text;
    * and a "Plug" button.
 
