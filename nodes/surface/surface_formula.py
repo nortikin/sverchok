@@ -8,9 +8,14 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, St
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat, ensure_nesting_level
 from sverchok.utils.modules.eval_formula import get_variables, sv_compile, safe_eval_compiled
+from sverchok.utils.script_importhelper import safe_names_np
 from sverchok.utils.logging import info, exception
-from sverchok.utils.math import from_cylindrical, from_spherical, to_cylindrical, to_spherical
-from sverchok.utils.math import coordinate_modes
+from sverchok.utils.math import (
+            from_cylindrical, from_spherical,
+            from_cylindrical_np, from_spherical_np,
+            to_cylindrical, to_spherical,
+            coordinate_modes
+        )
 from sverchok.utils.surface import SvLambdaSurface
 
 class SvSurfaceFormulaNode(bpy.types.Node, SverchCustomTreeNode):
@@ -68,6 +73,12 @@ class SvSurfaceFormulaNode(bpy.types.Node, SverchCustomTreeNode):
         default = 2*math.pi,
         update = updateNode)
 
+    use_numpy_function : BoolProperty(
+        name = "Vectorize",
+        description = "Vectorize formula computations; disable this if you have troubles with some functions",
+        default = True,
+        update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'UMin').prop_name = 'u_min'
         self.inputs.new('SvStringsSocket', 'UMax').prop_name = 'u_max'
@@ -81,6 +92,10 @@ class SvSurfaceFormulaNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "formula3", text="")
         layout.label(text="Output:")
         layout.prop(self, "output_mode", expand=True)
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'use_numpy_function')
 
     def make_function(self, variables):
         compiled1 = sv_compile(self.formula1)
@@ -103,6 +118,30 @@ class SvSurfaceFormulaNode(bpy.types.Node, SverchCustomTreeNode):
             v2 = safe_eval_compiled(compiled2, variables)
             v3 = safe_eval_compiled(compiled3, variables)
             return np.array(out_coordinates(v1, v2, v3))
+
+        return function
+
+    def make_function_vector(self, variables):
+        compiled1 = sv_compile(self.formula1)
+        compiled2 = sv_compile(self.formula2)
+        compiled3 = sv_compile(self.formula3)
+
+        if self.output_mode == 'XYZ':
+            def out_coordinates(x, y, z):
+                return x, y, z
+        elif self.output_mode == 'CYL':
+            def out_coordinates(rho, phi, z):
+                return from_cylindrical_np(rho, phi, z, mode='radians')
+        else: # SPH
+            def out_coordinates(rho, phi, theta):
+                return from_spherical_np(rho, phi, theta, mode='radians')
+
+        def function(u, v):
+            variables.update(dict(u=u, v=v))
+            v1 = safe_eval_compiled(compiled1, variables, allowed_names = safe_names_np)
+            v2 = safe_eval_compiled(compiled2, variables, allowed_names = safe_names_np)
+            v3 = safe_eval_compiled(compiled3, variables, allowed_names = safe_names_np)
+            return np.array(out_coordinates(v1, v2, v3)).T
 
         return function
 
@@ -172,8 +211,12 @@ class SvSurfaceFormulaNode(bpy.types.Node, SverchCustomTreeNode):
                 var_values_s = zip_long_repeat(u_mins, u_maxs, v_mins, v_maxs)
             for u_min, u_max, v_min, v_max, *var_values in var_values_s:
                 variables = dict(zip(var_names, var_values))
-                function = self.make_function(variables.copy())
-                new_surface = SvLambdaSurface(function)
+                function = self.make_function(variables)
+                if self.use_numpy_function:
+                    function_vector = self.make_function_vector(variables)
+                else:
+                    function_vector = None
+                new_surface = SvLambdaSurface(function, function_vector)
                 new_surface.u_bounds = (u_min, u_max)
                 new_surface.v_bounds = (v_min, v_max)
                 surfaces_out.append(new_surface)

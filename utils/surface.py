@@ -803,8 +803,9 @@ class SvDefaultSphere(SvSurface):
 class SvLambdaSurface(SvSurface):
     __description__ = "Formula"
 
-    def __init__(self, function):
+    def __init__(self, function, function_numpy = None):
         self.function = function
+        self.function_numpy = function_numpy
         self.u_bounds = (0.0, 1.0)
         self.v_bounds = (0.0, 1.0)
         self.normal_delta = 0.001
@@ -833,7 +834,10 @@ class SvLambdaSurface(SvSurface):
         return self.function(u, v)
 
     def evaluate_array(self, us, vs):
-        return np.vectorize(self.function, signature='(),()->(3)')(us, vs)
+        if self.function_numpy is None:
+            return np.vectorize(self.function, signature='(),()->(3)')(us, vs)
+        else:
+            return self.function_numpy(us, vs)
 
     def normal(self, u, v):
         return self.normal_array(np.array([u]), np.array([v]))[0]

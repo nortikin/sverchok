@@ -163,6 +163,13 @@ def from_cylindrical(rho, phi, z, mode="degrees"):
     y = rho*sin(phi)
     return x, y, z
 
+def from_cylindrical_np(rho, phi, z, mode='degrees'):
+    if mode == "degrees":
+        phi = np.radians(phi)
+    x = rho*np.cos(phi)
+    y = rho*np.sin(phi)
+    return x, y, z
+
 def from_spherical(rho, phi, theta, mode="degrees"):
     if mode == "degrees":
         phi = radians(phi)
@@ -170,6 +177,15 @@ def from_spherical(rho, phi, theta, mode="degrees"):
     x = rho * sin(theta) * cos(phi)
     y = rho * sin(theta) * sin(phi)
     z = rho * cos(theta)
+    return x, y, z
+
+def from_spherical_np(rho, phi, theta, mode="degrees"):
+    if mode == "degrees":
+        phi = np.radians(phi)
+        theta = np.radians(theta)
+    x = rho * np.sin(theta) * np.cos(phi)
+    y = rho * np.sin(theta) * np.sin(phi)
+    z = rho * np.cos(theta)
     return x, y, z
 
 def to_cylindrical(v, mode="degrees"):
