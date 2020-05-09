@@ -73,7 +73,6 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "mode", expand=True)
         col = layout.column(align=True)
         col.prop(self, 'name_node_generated_parent', text='', icon='EDITMODE_HLT')
-        #col.prop_search(self, 'name_child', bpy.data, 'objects', text='')
         col.prop(self, 'scale', text='Scale children', toggle=True)
         col.prop(self, 'auto_release', text='One Object only', toggle=True)
 

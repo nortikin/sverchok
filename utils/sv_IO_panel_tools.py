@@ -36,7 +36,7 @@ from sverchok.utils.sv_node_utils import absolute_location_generic
 # pylint: disable=w0621
 
 
-SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
+SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite', 'SvSNFunctorB'}
 PROFILE_NODES = {'SvProfileNode', 'SvProfileNodeMK2'}
 
 _EXPORTER_REVISION_ = '0.079' #'0.080'
@@ -397,6 +397,10 @@ def perform_scripted_node_inject(node, node_ref):
     '''
     texts = bpy.data.texts
     params = node_ref.get('params')
+
+    if node.bl_idname == 'SvSNFunctorB':
+        return
+
     if params:
 
         script_name = params.get('script_name')
@@ -421,15 +425,7 @@ def perform_scripted_node_inject(node, node_ref):
         node.script_name = script_name
         node.script_str = script_content
 
-    if node.bl_idname == 'SvScriptNode':
-        node.user_name = "templates"               # best would be in the node.
-        node.files_popup = "sv_lang_template.sn"   # import to reset easy fix
-        node.load()
-    elif node.bl_idname == 'SvScriptNodeLite':
-        node.load()
-        # node.storage_set_data(node_ref)
-    else:
-        node.files_popup = node.avail_templates(None)[0][0]
+    if node.bl_idname == 'SvScriptNodeLite':
         node.load()
 
 

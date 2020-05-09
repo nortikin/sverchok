@@ -60,7 +60,7 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         self.object_name = empty.name
 
     def sv_init(self, context):
-        self.inputs.new("SvStringsSocket", "Frame")  # intentionally no propname, ask zeffii why.
+        self.inputs.new("SvStringsSocket", "Frame")
         self.outputs.new("SvStringsSocket", "Evaluated")
 
     def draw_buttons(self, context, layout):
@@ -71,13 +71,13 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         if not self.object_name:
             return
 
-        animation_data = bpy.data.objects[self.object_name].animation_data
-        if not animation_data:
+        obj = self.get_object_reference()
+        if not obj or not obj.animation_data:
             layout.label(text="no animation data, add a named prop")
             layout.prop(self, "new_prop_name", text="custom prop")
             return
 
-        action = animation_data.action
+        action = obj.animation_data.action
         if not action:
             layout.label(text="{} has no action".format(self.object_name))
             return
@@ -87,7 +87,7 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
 
     def get_object_reference(self):
-        return bpy.data.objects.get(self.object_name, None)
+        return self.get_bpy_data_from_name(self.object_name, bpy.data.objects)
 
     def evaluate(self, frames):
         """

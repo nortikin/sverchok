@@ -515,6 +515,10 @@ class SverchCustomTreeNode:
     def sv_throttle_tree_update(self):
         return throttle_tree_update(self)
 
+    def sv_setattr_with_throttle(self, prop_name, prop_data):
+        with self.sv_throttle_tree_update():
+            setattr(self, prop_name, prop_data)
+
     def mark_error(self, err):
         """
         marks the with system error color

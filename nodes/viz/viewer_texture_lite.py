@@ -12,7 +12,7 @@ import bgl
 import gpu
 import bpy
 from gpu_extras.batch import batch_for_shader
-from bpy.props import EnumProperty, StringProperty, IntProperty
+from bpy.props import EnumProperty, StringProperty, IntProperty, PointerProperty
 
 from sverchok.settings import get_params
 from sverchok.data_structure import updateNode, node_id
@@ -38,7 +38,16 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
     texture = {}
 
     n_id: StringProperty(default='')
-    image: StringProperty(default='', update=updateNode)
+
+    def pointer_update(self, context):
+        if self.image_pointer:
+            self.image = self.image_pointer.name
+        else:
+            self.image = ""
+
+    # image = direct use depreciated, retained only to allow loading old blenders
+    image: StringProperty(default='') #, update=updateNode)
+    image_pointer: PointerProperty(type=bpy.types.Image, poll=lambda s, o: True, update=pointer_update)
 
     width_custom_tex: IntProperty(
         min=1, max=2024, default=206, name='Width',
@@ -56,6 +65,8 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
         items=out_modes, description="how to output values",
         default="bgl", update=updateNode)
 
+    properties_to_skip_iojson = ["image_pointer"]
+
     @property
     def xy_offset(self):
         a = self.absolute_location
@@ -67,7 +78,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, 'output_mode', expand=True)
         col = layout.column(align=True)
         if not self.output_mode == 'bgl':
-            col.prop_search(self, 'image', bpy.data, "images", text="")
+            col.prop_search(self, 'image_pointer', bpy.data, "images", text="")
         else:
             row = layout.row(align=True)
             row.prop(self, 'color_mode', expand=True)
@@ -159,6 +170,13 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
     def sv_copy(self, node):
         # reset n_id on copy
         self.n_id = ''
+
+    def set_pointer_from_filename(self):
+        """ this function upgrades older versions of ProfileMK3 to the version that has self.file_pointer """
+        if hasattr(self, "image_pointer") and not self.image_pointer:
+            image = self.get_bpy_data_from_name(self.image, bpy.data.images)
+            if image:
+                self.image_pointer = image
 
 classes = [SvTextureViewerNodeLite,]
 register, unregister = bpy.utils.register_classes_factory(classes)

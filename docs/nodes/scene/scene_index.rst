@@ -19,5 +19,5 @@ Scene
    monad
    collection_picker_mk1
    particles_MK2
-   node_remote
+   node_remote_mk2
    selection_grabber_lite

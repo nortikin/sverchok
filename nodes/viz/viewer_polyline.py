@@ -147,7 +147,7 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
         self.inputs.new('SvMatrixSocket', 'matrix')
         self.inputs.new('SvStringsSocket', 'radii').prop_name = 'radii'
         self.inputs.new('SvStringsSocket', 'twist').prop_name = 'twist'
-        self.inputs.new('SvObjectSocket', 'bevel object')
+        self.inputs.new('SvObjectSocket', 'bevel object').object_kinds = "CURVE"
         self.outputs.new('SvObjectSocket', "object")
 
 

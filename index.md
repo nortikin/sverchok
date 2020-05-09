@@ -183,7 +183,7 @@
     SvSimpleDeformNode
     SvBendAlongPathNode
     SvBendAlongSurfaceNode
-    SvDisplaceNode
+    SvDisplaceNodeMk2
     SvNoiseDisplaceNode
     SvRandomizeVerticesNode
     SvCastNode
@@ -423,8 +423,8 @@
     SvGetPropNode
     SvSetPropNode
     SvObjRemoteNodeMK2
-    SvNodeRemoteNode
-    SvGetAssetProperties
+    SvNodeRemoteNodeMK2
+    SvGetAssetPropertiesMK2
     SvSetDataObjectNodeMK2
     SvSortObjsNode
     SvFilterObjsNode
@@ -481,7 +481,7 @@
     SvColorInputNode
     SvColorsOutNodeMK1
     SvFormulaColorNode
-    SvTextureEvaluateNode
+    SvTextureEvaluateNodeMk2
     ---
     SvSculptMaskNode
     SvSelectMeshVerts
