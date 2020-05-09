@@ -219,10 +219,17 @@ def to_spherical(v, mode="degrees"):
 def to_spherical_np(v, mode="degrees"):
     x,y,z = v
     rho = np.sqrt(x*x + y*y + z*z)
-    if rho == 0.0:
-        return 0.0, 0.0, 0.0
-    theta = np.arccos(z/rho)
-    phi = np.arctan2(y,x)
+    bad = (rho == 0)
+    good = np.logical_not(bad)
+
+    theta = np.empty_like(x)
+    theta[good] = np.arccos(z[good]/rho[good])
+    theta[bad] = 0.0
+
+    phi = np.empty_like(x)
+    phi[good] = np.arctan2(y[good], x[good])
+    phi[bad] = 0.0
+
     if mode == "degrees":
         phi = np.degrees(phi)
         theta = np.degrees(theta)
