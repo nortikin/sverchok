@@ -30,6 +30,7 @@ from bpy.props import (
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode
 from sverchok.nodes.object_nodes.getsetprop import assign_data, types
+from sverchok.utils import register_multiple_classes, unregister_multiple_classes
 
 # can't use a PointerProperty for type=bpy.data.node_group
 # https://blender.stackexchange.com/questions/2075/assign-datablock-to-custom-property
