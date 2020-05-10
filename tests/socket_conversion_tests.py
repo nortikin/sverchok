@@ -97,7 +97,7 @@ class SocketConversionTests(EmptyTreeTestCase):
                 node = create_node(bl_idname)
 
                 if bl_idname == "SvSetDataObjectNodeMK2":
-                    node.formula = ""
+                    node.formula = "__str__()"
 
                 for input_name in tested_nodes[bl_idname]:
                     info(f"Linking {ngon.name}'s vertex output ----> ({bl_idname}).inputs[{input_name}]")
