@@ -732,7 +732,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
             debug('==== loading monad ====')
 
         passed_fullpath = '' if not fullpath else basename(fullpath)
-        hash_separator = '#' * 12
+        hash_separator = ('#' * 12)
         info(f"{hash_separator} {nodes_json['export_version']} {passed_fullpath}")
 
         # create all nodes and groups '''
