@@ -64,8 +64,8 @@ def get_presets_directory(category=None, mkdir=True, standard=False):
 def get_category_names(mkdir=True):
     standard = get_presets_directory(standard=True)
     user = get_presets_directory(standard=False, mkdir=mkdir)
+    categories = []
     for base in [standard, user]:
-        categories = []
         for path in sorted(glob(join(base, "*"))):
             if isdir(path):
                 name = basename(path)
@@ -85,7 +85,8 @@ def get_category_items(self, context):
         else:
             title = category
             category_items.append((category, title, category, idx+1))
-    if node_category_items:
+    include_node_categories = not hasattr(self, 'include_node_categories') or self.include_node_categories
+    if node_category_items and include_node_categories:
         category_items = category_items + [None] + node_category_items
     return category_items
 
@@ -425,6 +426,7 @@ class SvPresetProps(bpy.types.Operator):
     old_category: StringProperty(name="Old category", description="Preset category")
     new_category: EnumProperty(name="Category", description="New preset category", items = get_category_items)
     allow_change_category : BoolProperty(default = True)
+    include_node_categories : BoolProperty(default = False)
 
     old_name: StringProperty(name="Old name", description="Preset name")
     new_name: StringProperty(name="Name", description="New preset name")
@@ -467,7 +469,8 @@ class SvPresetProps(bpy.types.Operator):
         preset.meta['license'] = self.license
         preset.save()
 
-        if self.new_name != self.old_name or self.new_category != self.old_category:
+        category_changed = self.allow_change_category and (self.new_category != self.old_category)
+        if self.new_name != self.old_name or category_changed:
             old_path = get_preset_path(self.old_name, category=self.old_category)
             new_path = get_preset_path(self.new_name, category=self.new_category)
 
@@ -907,8 +910,9 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
                         rename = row.operator('node.sv_preset_props', text="", icon="GREASEPENCIL")
                         rename.old_name = name
                         rename.old_category = panel_props.category
-                        rename.new_category = rename.old_category
                         rename.allow_change_category = (category_node_class is None)
+                        if rename.allow_change_category:
+                            rename.new_category = rename.old_category
 
                         delete = row.operator('node.sv_preset_delete', text="", icon='CANCEL')
                         delete.preset_name = name
