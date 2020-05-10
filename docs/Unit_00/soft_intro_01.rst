@@ -83,6 +83,6 @@ NodeView and 3DView
 .. |image5| image:: https://user-images.githubusercontent.com/619340/81508498-b0961700-9304-11ea-824b-f9da0118ec4b.png
 .. |image6| image:: https://user-images.githubusercontent.com/619340/81508610-59447680-9305-11ea-8d1a-a909a575c42f.png
 .. |image7| image:: https://user-images.githubusercontent.com/619340/81508556-079bec00-9305-11ea-8641-286eb27e0963.png
-.. |image8| image:: https://user-images.githubusercontent.com/284644/34564128-499d91b2-f177-11e7-9259-d042ce8b9de6.png
+.. |image8| image:: https://user-images.githubusercontent.com/619340/81509102-9eb67300-9308-11ea-9e35-cb4fbc4abff5.png
 .. |image9| image:: https://user-images.githubusercontent.com/619340/81508967-a7f31000-9307-11ea-89a1-715832a5ef83.png
 .. |image10| image:: https://user-images.githubusercontent.com/284644/34564322-08f15328-f178-11e7-8b0d-76f49c7e3afe.png
