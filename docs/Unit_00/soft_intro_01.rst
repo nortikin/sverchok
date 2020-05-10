@@ -67,13 +67,6 @@ NodeView and 3DView
 
      |image9|
 
-   * You can as well open the Tools panel by pressing *T* in node view. There
-     is a special panel for each category of nodes. By pressing a button you
-     add specific node to the tree:
-
-     |image10|
-
-
 .. |image1| image:: https://user-images.githubusercontent.com/619340/81501387-61d28800-92d8-11ea-90cc-fcde07bf5625.png
 .. |splittingawindow| image:: https://user-images.githubusercontent.com/619340/81510180-34093580-9310-11ea-93fc-bd06c27f7422.gif
 .. |switchview| image:: https://user-images.githubusercontent.com/619340/81510233-982bf980-9310-11ea-935a-37bcc7a3bd8a.gif
@@ -85,4 +78,3 @@ NodeView and 3DView
 .. |image7| image:: https://user-images.githubusercontent.com/619340/81508556-079bec00-9305-11ea-8641-286eb27e0963.png
 .. |image8| image:: https://user-images.githubusercontent.com/619340/81509102-9eb67300-9308-11ea-9e35-cb4fbc4abff5.png
 .. |image9| image:: https://user-images.githubusercontent.com/619340/81508967-a7f31000-9307-11ea-89a1-715832a5ef83.png
-.. |image10| image:: https://user-images.githubusercontent.com/284644/34564322-08f15328-f178-11e7-8b0d-76f49c7e3afe.png
