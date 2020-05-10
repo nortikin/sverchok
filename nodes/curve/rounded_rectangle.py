@@ -17,7 +17,8 @@ class SvRoundedRectangleNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvRoundedRectangleNode'
     bl_label = 'Rounded Rectangle'
-    bl_icon = 'SPHERECURVE'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_ROUNDED_RECTANGLE'
 
     sizex: FloatProperty(
         name='Size X', description='Rectangle size along X',
