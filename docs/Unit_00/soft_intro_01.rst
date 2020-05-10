@@ -24,17 +24,12 @@ NodeView and 3DView
 
 2. **Switch a View**:
 
-   Now you have two windows, switch one of them in the Editor Type dropdown to Sverchok Nodes
+   Now you have two windows, switch one of them in the Editor Type dropdown. If Sverchok is installed correctly it will be listed here as Sverchok Nodes
 
    |switchview|
 
 
-3. **Sverchok Node Tree**:
-
-   This icon |image2| shows that Sverchok Nodes can be loaded, you’ll see it among the other Node Tree types. |image3|
-
-
-4. **Make a new Tree**:
+3. **Make a new Tree**:
 
    When you start out you will have to press the New button to make a new node tree called (by default) NodeTree
 
@@ -45,15 +40,15 @@ NodeView and 3DView
    |image5|
 
 
-5. **Adding Nodes to the View**:
+4. **Adding Nodes to the View**:
 
    From the NodeView, you can use the following ways to add nodes to tree:
 
-   * Use the **Add** menu from menu bar:
+   * Use the **Add** menu from menu bar (sverchok has little control over how this menu is layed out, protip: use the next method instead)
 
      |image6|
 
-   * Hit *Shift-A* (standard Blender's shortcut for adding things):
+   * Hit *Shift-A* (standard Blender's shortcut for adding things, we inject our own menu into it, with icons!):
 
      |image7|
 
@@ -77,10 +72,10 @@ NodeView and 3DView
 .. |switchview| image:: https://cloud.githubusercontent.com/assets/619340/18806724/75f30fd8-8235-11e6-9319-40888ca49337.gif
 .. |image2| image:: https://cloud.githubusercontent.com/assets/619340/18806728/98b24bb0-8235-11e6-8455-c382fb0686c9.png
 .. |image3| image:: https://cloud.githubusercontent.com/assets/619340/18806345/41d59726-822a-11e6-96c6-2ed9a986923e.png
-.. |image4| image:: https://cloud.githubusercontent.com/assets/619340/18806350/773e948a-822a-11e6-9235-3911978b80ca.png
-.. |image5| image:: https://cloud.githubusercontent.com/assets/619340/18806355/8cf163ac-822a-11e6-96a0-064c3310752b.png
-.. |image6| image:: https://cloud.githubusercontent.com/assets/619340/18806364/c25f9928-822a-11e6-9d15-89ad5587d78d.png
-.. |image7| image:: https://user-images.githubusercontent.com/284644/34564022-f8eee716-f176-11e7-9619-23c1afb66e50.png
+.. |image4| image:: https://user-images.githubusercontent.com/619340/81508456-88a6b380-9304-11ea-9cf6-f7e22400a5a6.png
+.. |image5| image:: https://user-images.githubusercontent.com/619340/81508498-b0961700-9304-11ea-824b-f9da0118ec4b.png
+.. |image6| image:: https://user-images.githubusercontent.com/619340/81508610-59447680-9305-11ea-8d1a-a909a575c42f.png
+.. |image7| image:: https://user-images.githubusercontent.com/619340/81508556-079bec00-9305-11ea-8641-286eb27e0963.png
 .. |image8| image:: https://user-images.githubusercontent.com/284644/34564128-499d91b2-f177-11e7-9259-d042ce8b9de6.png
 .. |image9| image:: https://user-images.githubusercontent.com/284644/34564221-9fb3acee-f177-11e7-9b0a-d64103d0ba0e.png
 .. |image10| image:: https://user-images.githubusercontent.com/284644/34564322-08f15328-f178-11e7-8b0d-76f49c7e3afe.png
