@@ -18,7 +18,7 @@ class SvScalarFieldCurvatureNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvScalarFieldCurvatureNode'
     bl_label = 'Scalar Field Curvature'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_SCALAR_FIELD_MATH'
+    sv_icon = 'SV_SCALAR_FIELD_CURVATURE'
 
     def sv_init(self, context):
         self.inputs.new('SvScalarFieldSocket', "Field")
