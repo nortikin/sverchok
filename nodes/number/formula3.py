@@ -18,6 +18,7 @@
 
 from math import *
 from collections import defaultdict
+import ast
 
 import bpy
 from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorProperty, IntProperty
@@ -63,6 +64,7 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
 
     separate : BoolProperty(name="Separate", default=False, update=updateNode)
     wrap : BoolProperty(name="Wrap", default=False, update=updateNode)
+    literal: BoolProperty(name="evaluate literally", default=False, update=updateNode)
 
     def formulas(self):
         return [self.formula1, self.formula2, self.formula3, self.formula4]
@@ -79,8 +81,9 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         if self.dimensions > 3:
             layout.prop(self, "formula4", text="")
         row = layout.row()
-        row.prop(self, "separate")
-        row.prop(self, "wrap")
+        row.prop(self, "separate", toggle=True)
+        row.prop(self, "wrap", toggle=True)
+        row.prop(self, "literal", text='literal', toggle=True)
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "dimensions")
@@ -88,7 +91,6 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "x")
-
         self.outputs.new('SvStringsSocket', "Result")
 
     def get_variables(self):
@@ -118,10 +120,8 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         update analyzes the state of the node and returns if the criteria to start processing
         are not met.
         '''
-
         if not any(len(formula) for formula in self.formulas()):
             return
-
         self.adjust_sockets()
 
     def get_input(self):
@@ -131,18 +131,6 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         for var in variables:
             if var in self.inputs and self.inputs[var].is_linked:
                 inputs[var] = self.inputs[var].sv_get()
-
-#         n_max = max(len(inputs[var]) for var in inputs)
-#         result = []
-#         for i in range(n_max):
-#             item = defaultdict(list)
-#             for var in inputs:
-#                 value = inputs[var]
-#                 if i < len(value):
-#                     item[var].append(value[i])
-#                 else:
-#                     item[var].append(value[-1])
-#             result.append(item)
 
         return inputs
 
@@ -175,9 +163,16 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         if not self.outputs[0].is_linked:
             return
 
+        # this permits the simplest usecase
+        if self.dimensions == 1 and hasattr(self, "literal") and self.literal:
+            result = ast.literal_eval(self.formula1)
+            if self.wrap:
+                result = list(result)
+            self.outputs['Result'].sv_set(result)
+            return        
+
         var_names = self.get_variables()
         inputs = self.get_input()
-
         results = []
 
         if var_names:
@@ -185,6 +180,7 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
             parameters = match_long_repeat(input_values)
         else:
             parameters = [[[None]]]
+
         for objects in zip(*parameters):
             object_results = []
             for values in zip_long_repeat(*objects):
