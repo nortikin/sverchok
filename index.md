@@ -59,17 +59,20 @@
      SvExPolylineNode
      SvExFilletPolylineNode
      SvExCubicSplineNode
+     ---
      SvExApplyFieldToCurveNode
      SvExCastCurveNode
      SvExIsoUvCurveNode
-     SvExSurfaceBoundaryNode
      SvExCurveOnSurfaceNode
+     ---
      SvExCurveLerpCurveNode
      SvExConcatCurvesNode
      SvExFlipCurveNode
+     SvExSurfaceBoundaryNode
+     ---
+     SvExCurveEndpointsNode
      SvExCurveSegmentNode
      SvExCurveRangeNode
-     SvExCurveEndpointsNode
      SvExCurveLengthNode
      SvExCurveFrameNode
      SvExCurveCurvatureNode
@@ -77,6 +80,7 @@
      SvExCurveZeroTwistFrameNode
      SvExCurveLengthParameterNode
      SvLengthRebuildCurveNode
+     ---
      SvExEvalCurveNode
 
 ## Surfaces
@@ -84,6 +88,7 @@
      SvExSphereNode
      SvExSurfaceFormulaNode
      SvInterpolatingSurfaceNode
+     ---
      SvExRevolutionSurfaceNode
      SvExTaperSweepSurfaceNode
      SvExExtrudeCurveVectorNode
@@ -91,13 +96,15 @@
      SvExExtrudeCurvePointNode
      SvExCurveLerpNode
      SvExSurfaceLerpNode
+     SvExApplyFieldToSurfaceNode
+     ---
      SvExSurfaceDomainNode
      SvExSurfaceSubdomainNode
      SvFlipSurfaceNode
      SvSwapSurfaceNode
      SvSurfaceGaussCurvatureNode
      SvSurfaceCurvaturesNode
-     SvExApplyFieldToSurfaceNode
+     ---
      SvExTessellateTrimSurfaceNode
      SvAdaptiveTessellateNode
      SvExEvalSurfaceNode
@@ -111,18 +118,22 @@
      SvExScalarFieldPointNode
      SvExAttractorFieldNode
      SvExImageFieldNode
+     SvExVoronoiFieldNode
+     SvExNoiseVectorFieldNode
+     ---
      SvExScalarFieldMathNode
-     SvScalarFieldCurvatureNode
      SvExMergeScalarFieldsNode
+     SvExVectorFieldMathNode
+     SvExFieldDiffOpsNode
+     SvScalarFieldCurvatureNode
+     ---
+     SvExBendAlongCurveFieldNode
+     SvExBendAlongSurfaceFieldNode
+     ---
      SvExScalarFieldEvaluateNode
      SvExVectorFieldEvaluateNode
      SvExVectorFieldApplyNode
-     SvExVectorFieldMathNode
-     SvExNoiseVectorFieldNode
-     SvExVoronoiFieldNode
-     SvExBendAlongCurveFieldNode
-     SvExBendAlongSurfaceFieldNode
-     SvExFieldDiffOpsNode
+     ---
      SvExVectorFieldGraphNode
      SvExVectorFieldLinesNode
 
