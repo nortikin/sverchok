@@ -24,8 +24,7 @@ NodeView and 3DView
 
 2. **Switch a View**:
 
-   Then you switch the resulting second 3DView to a NodeView (Node
-   Editor)
+   Now you have two windows, switch one of them in the Editor Type dropdown to Sverchok Nodes
 
    |switchview|
 
