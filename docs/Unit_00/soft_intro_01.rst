@@ -1,14 +1,12 @@
-*********************************************************
-Unit 00. Introduction to Blender, the NodeView and 3DView
-*********************************************************
+**************************************************************
+Unit 00. Introduction to Blender 2.8+, the NodeView and 3DView
+**************************************************************
 
 Sverchok Installed, what now?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you have a tickbox beside the Sverchok add-on in the Add-ons list in
-User Preferences, then it’s safe to assume the add-on is enabled. To
-show the basics you need to have a NodeView open, and it’s useful to
-have a 3DView open at the same time.
+If you have a tickbox beside the Sverchok add-on in the Add-ons list in User Preferences, then it’s safe to assume the add-on is enabled. To
+show the basics you need to have a NodeView open, and it’s useful to have a 3DView open at the same time.
 
 NodeView and 3DView
 -------------------
@@ -75,7 +73,7 @@ NodeView and 3DView
      |image10|
 
 
-.. |image1| image:: https://cloud.githubusercontent.com/assets/619340/18806338/172b3e68-822a-11e6-8231-545a0a484a8a.png
+.. |image1| image:: https://user-images.githubusercontent.com/619340/81501387-61d28800-92d8-11ea-90cc-fcde07bf5625.png
 .. |splittingawindow| image:: https://cloud.githubusercontent.com/assets/619340/18806709/f7659ea6-8234-11e6-9ac8-b566bf8b2eca.gif
 .. |switchview| image:: https://cloud.githubusercontent.com/assets/619340/18806724/75f30fd8-8235-11e6-9319-40888ca49337.gif
 .. |image2| image:: https://cloud.githubusercontent.com/assets/619340/18806728/98b24bb0-8235-11e6-8455-c382fb0686c9.png
