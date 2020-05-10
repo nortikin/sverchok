@@ -7,7 +7,7 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, repeat_last_for_length
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, repeat_last_for_length, get_data_nesting_level
 from sverchok.utils.curve import SvCircle, SvConcatCurve, SvLine
 
 class SvRoundedRectangleNode(bpy.types.Node, SverchCustomTreeNode):
@@ -44,9 +44,16 @@ class SvRoundedRectangleNode(bpy.types.Node, SverchCustomTreeNode):
         name='Center', description='Center the rectangle around origin',
         default=False, update=updateNode)
 
+    radius_per_corner : BoolProperty(
+        name = "Radius per corner",
+        description = "Expect Radius input of nesting level 3: one value for each corner of each rectangle",
+        default = False,
+        update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "center", toggle=True)
         layout.prop(self, "scale_to_unit", toggle=True)
+        #layout.prop(self, "radius_per_corner", toggle=True)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Size X").prop_name = 'sizex'
@@ -124,7 +131,13 @@ class SvRoundedRectangleNode(bpy.types.Node, SverchCustomTreeNode):
 
         size_x_s = ensure_nesting_level(size_x_s, 2)
         size_y_s = ensure_nesting_level(size_y_s, 2)
-        radius_s = ensure_nesting_level(radius_s, 3)
+        radius_nesting = get_data_nesting_level(radius_s)
+        if radius_nesting < 2 or radius_nesting > 3:
+            raise TypeError(f"Radius input can only handle nesting level 2 or 3, got {radius_nesting}")
+        radius_per_corner = (radius_nesting == 3)
+        #if radius_nesting == 2:
+            #radius_s = [[radiuses] for radiuses in radius_s]
+            #radius_s = [[[r] for r in radiuses] for radiuses in radius_s]
 
         curves_out = []
         centers_out = []
@@ -133,6 +146,8 @@ class SvRoundedRectangleNode(bpy.types.Node, SverchCustomTreeNode):
             new_curves = []
             new_centers = []
             for size_x, size_y, radiuses in zip_long_repeat(size_x_i, size_y_i, radius_i):
+                if not radius_per_corner:
+                    radiuses = [radiuses]
                 radiuses = repeat_last_for_length(radiuses, 4)
                 centers, curve = self.make_curve(size_x, size_y, radiuses)
                 new_curves.append(curve)
