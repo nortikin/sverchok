@@ -82,7 +82,7 @@ class SocketConversionTests(EmptyTreeTestCase):
                 'ListSliceNode': ["Data"],
                 'ShiftNodeMK2': ["data"],
                 'ListShuffleNode': ['data'],
-                'ListSortNodeMK2': ['data'],
+                'SvListSortNode': ['data'],
                 'SvListSplitNode': ['Data'],
                 'ListFLNode': ['Data'],
                 'SvFormulaNodeMk3': ["x", "y"],
