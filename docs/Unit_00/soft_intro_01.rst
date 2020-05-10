@@ -61,7 +61,9 @@ NodeView and 3DView
 
      |image8|
 
-   * Use Blender's standard search box, which appears when you hit *Space* in node view:
+   * Use Blender's standard search box, which appears when you hit *F3* in node view:
+
+     - the downside to this is that this is not just for finding nodes, you'll encounter a lot of Operators and things that have little to do with Sverchok here. Sverchok does register quite a few Operators too, this is therefore one way to execute them if you know what you're looking for.
 
      |image9|
 
@@ -82,5 +84,5 @@ NodeView and 3DView
 .. |image6| image:: https://user-images.githubusercontent.com/619340/81508610-59447680-9305-11ea-8d1a-a909a575c42f.png
 .. |image7| image:: https://user-images.githubusercontent.com/619340/81508556-079bec00-9305-11ea-8641-286eb27e0963.png
 .. |image8| image:: https://user-images.githubusercontent.com/284644/34564128-499d91b2-f177-11e7-9259-d042ce8b9de6.png
-.. |image9| image:: https://user-images.githubusercontent.com/284644/34564221-9fb3acee-f177-11e7-9b0a-d64103d0ba0e.png
+.. |image9| image:: https://user-images.githubusercontent.com/619340/81508967-a7f31000-9307-11ea-89a1-715832a5ef83.png
 .. |image10| image:: https://user-images.githubusercontent.com/284644/34564322-08f15328-f178-11e7-8b0d-76f49c7e3afe.png
