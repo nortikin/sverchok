@@ -44,7 +44,7 @@ NodeView and 3DView
 
    From the NodeView, you can use the following ways to add nodes to tree:
 
-   * Use the **Add** menu from menu bar (sverchok has little control over how this menu is layed out, protip: use the next method instead)
+   * Use the **Add** menu from menu bar (Sverchok has little control over how this menu is layed out, protip: use the next method instead)
 
      |image6|
 
@@ -55,6 +55,9 @@ NodeView and 3DView
      |image7|
 
    * Hit *Alt-Space*. This shortcut calls for a special search menu, which allows you to search for nodes and macros:
+
+     - once you get to know Sverchok you can type in "trigger" words associated with a node, to quickly narrow down the search list.
+     - trigger macros using `> some word`. More about macros later. If you stick with Sverchok they will be your secret weapon.
 
      |image8|
 
