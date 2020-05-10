@@ -242,16 +242,16 @@ The "Item" tab of the N panel contains the following parts:
     * **Save Preset** button. Save current settings of the node as a new
       preset. You will be asked for a name for the new preset.
 
-   You can edit and remove your presets in the **Presets** section of the node
-   editor's T panel, if you enable the **Manage Presets** mode (see description
-   above).
+  You can edit and remove your presets in the **Presets** section of the node
+  editor's T panel, if you enable the **Manage Presets** mode (see description
+  above).
 
-   * **Help & Docs** section. This contains buttons for accessing the
-     documentation of currently active node.
-   * **Edit Source** section allows you to edit the source code of the node:
+  * **Help & Docs** section. This contains buttons for accessing the
+    documentation of currently active node.
+  * **Edit Source** section allows you to edit the source code of the node:
 
-     * **Externally**. Open an external text editor application to edit the file.
-     * **Internally**. Load the source code of the node into Blender's text block.
+    * **Externally**. Open an external text editor application to edit the file.
+    * **Internally**. Load the source code of the node into Blender's text block.
 
   * **Re-Create Node** button. This removes the node and replaces it with a new
     instance of the same node, trying to save all node's settings and
