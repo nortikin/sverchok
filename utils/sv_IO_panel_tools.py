@@ -726,7 +726,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
             nodes_json = json.loads(nodes_json)
             debug('==== loading monad ====')
         info(('#' * 12) + nodes_json['export_version'])
-        info(f"full path to this test {fullpath}")
+        # info(f"full path: {basename(fullpath)}")
 
         # create all nodes and groups '''
         update_lists = nodes_json['update_lists']
@@ -758,6 +758,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
         ng.update()
         ng.update_tag()
         ng.sv_process = previous_state
+        info("done, exiting generate_layout cleanly")
 
 
     # ---- read files (.json or .zip) or straight json data -----
