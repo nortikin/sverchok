@@ -1,0 +1,24 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "Scalar Field Formula": {
+      "bl_idname": "SvExScalarFieldFormulaNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        14.335123062133789,
+        167.64987182617188
+      ],
+      "params": {
+        "formula": "81*(x**3 + y**3 + z**3) - 189*(x**2*y + x**2*z + y**2*x + y**2*z + z**2*x + z**2*y) + 54*(x*y*z) + 126*(x*y + x*z + y*z) - 9*(x**2 + y**2 + z**2) - 9*(x + y + z) + 1",
+        "input_mode": "XYZ",
+        "use_numpy_function": true
+      },
+      "width": 395.4254150390625
+    }
+  },
+  "update_lists": []
+}
