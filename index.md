@@ -284,7 +284,7 @@
     SvListItemInsertNode
     ListReverseNode
     ListShuffleNode
-    ListSortNodeMK2
+    SvListSortNode
     ListFlipNode
 
 ## Dictionary
