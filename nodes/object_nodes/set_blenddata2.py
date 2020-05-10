@@ -60,8 +60,6 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableN
         Prop = self.formula
         objs = O.sv_get()
 
-        self.info(f'objs: {objs}')
-
         if isinstance(objs[0], list):
             if V.is_linked:
                 v = V.sv_get()
@@ -81,8 +79,6 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableN
             elif Ov.is_linked:
                 Ov.sv_set(eval("[[i."+Prop+" for i in OBL] for OBL in objs]"))
             else:
-                if not objs:
-                    return
                 exec("for OL in objs:\n    for i in OL:\n        i."+Prop)
         else:
             if V.is_linked:
@@ -98,8 +94,6 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableN
             elif Ov.is_linked:
                 Ov.sv_set(eval("[i."+Prop+" for i in objs]"))
             else:
-                if not objs:
-                    return
                 exec("for i in objs:\n    i."+Prop)
         if Oo.is_linked:
             Oo.sv_set(objs)
