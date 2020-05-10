@@ -23,7 +23,7 @@ from glob import glob
 import json
 from urllib.parse import quote_plus
 import inspect
-import traceback
+import hashlib
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
@@ -58,7 +58,6 @@ def get_presets_directory(category=None, mkdir=True, standard=False):
     else:
         presets = join(bpy.utils.user_resource('DATAFILES', path=path_partial, create=mkdir))
     if not os.path.exists(presets) and mkdir and not standard:
-        print("Create: {}\n{}".format(presets, traceback.format_stack()))
         os.makedirs(presets)
     return presets
 
@@ -112,7 +111,7 @@ def get_preset_idname_for_operator(name, category=None):
         category = replace_bad_chars(category)
         name = category + "__" + name
     if len(name) > 45:
-        name = name[:45]
+        name = name[:38] + "_" + hashlib.sha1(name.encode('utf-8')).hexdigest()[:5]
     return name
 
 # We are creating and registering preset adding operators dynamically.
