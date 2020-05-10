@@ -34,7 +34,7 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_LIST_FIRST_LAST'
 
-    level: IntProperty(name='level_to_count', default=2, min=0, update=updateNode)
+    level: IntProperty(name='level_to_count', default=2, min=1, update=updateNode)
     typ: StringProperty(name='typ', default='')
     newsock: BoolProperty(name='newsock', default=False)
 
@@ -59,11 +59,12 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
 
             # blocking too height values of levels, reduce
             levels = levels_of_list_or_np(data)-1
+
             if levels >= self.level:
                 levels = self.level-1
             elif levels < 1:
-                levels = 1
-            # assign out
+                levels = 0
+
             if self.outputs['First'].is_linked:
                 out = self.count(data, levels, 0)
                 self.outputs['First'].sv_set(out)
