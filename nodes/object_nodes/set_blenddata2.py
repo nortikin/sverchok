@@ -31,7 +31,12 @@ from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
 
 class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
-    ''' Set Object Props '''
+    """
+    Triggers: obj id set data
+    Tooltip: Set Object Properties
+    
+    """
+    
     bl_idname = 'SvSetDataObjectNodeMK2'
     bl_label = 'Object ID Set MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -54,6 +59,7 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableN
         Ov, Oo = self.outputs
         Prop = self.formula
         objs = O.sv_get()
+
         if isinstance(objs[0], list):
             if V.is_linked:
                 v = V.sv_get()
