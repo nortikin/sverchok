@@ -5,9 +5,10 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, fullList
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 
-from sverchok.utils.curve import SvDeformedByFieldCurve
+from sverchok.utils.field.vector import SvVectorField
+from sverchok.utils.curve import SvDeformedByFieldCurve, SvCurve
 
 class SvApplyFieldToCurveNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -39,13 +40,15 @@ class SvApplyFieldToCurveNode(bpy.types.Node, SverchCustomTreeNode):
             field_s = self.inputs['Field'].sv_get()
             coeff_s = self.inputs['Coefficient'].sv_get()
 
-            curve_out = []
-            for curve, field, coeff in zip_long_repeat(curve_s, field_s, coeff_s):
-                if isinstance(coeff, (list, tuple)):
-                    coeff = coeff[0]
+            curve_s = ensure_nesting_level(curve_s, 2, data_types=(SvCurve,))
+            field_s = ensure_nesting_level(field_s, 2, data_types=(SvVectorField,))
+            coeff_s = ensure_nesting_level(coeff_s, 2)
 
-                new_curve = SvDeformedByFieldCurve(curve, field, coeff)
-                curve_out.append(new_curve)
+            curve_out = []
+            for curve_i, field_i, coeff_i in zip_long_repeat(curve_s, field_s, coeff_s):
+                for curve, field, coeff in zip_long_repeat(curve_i, field_i, coeff_i):
+                    new_curve = SvDeformedByFieldCurve(curve, field, coeff)
+                    curve_out.append(new_curve)
 
             self.outputs['Curve'].sv_set(curve_out)
 
