@@ -55,7 +55,7 @@ class SvVertexGroupNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNod
         Owe = self.outputs[0]
         outobs = []
         for obj in self.inputs['Object'].sv_get():
-            if not obj.vertex_groups or not self.group_name in obj.vertex_groups.keys():
+            if not obj.vertex_groups or not self.group_name in obj.vertex_groups:
                 obj.vertex_groups.new(name=self.group_name)
             if self.group_name not in obj.vertex_groups:
                 return
