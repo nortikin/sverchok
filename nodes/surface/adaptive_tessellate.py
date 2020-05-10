@@ -22,7 +22,7 @@ class SvAdaptiveTessellateNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvAdaptiveTessellateNode'
     bl_label = 'Adaptive Tessellate Surface'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_TRIM_TESSELLATE'
+    sv_icon = 'SV_ADAPTIVE_TESSELLATE'
 
     samples_u : IntProperty(
             name = "Samples U",
