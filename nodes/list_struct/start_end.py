@@ -59,13 +59,12 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
 
             # blocking too height values of levels, reduce
             levels = levels_of_list_or_np(data)-1
-            print("a", levels)
+
             if levels >= self.level:
                 levels = self.level-1
             elif levels < 1:
                 levels = 0
-            # assign out
-            print(levels)
+
             if self.outputs['First'].is_linked:
                 out = self.count(data, levels, 0)
                 self.outputs['First'].sv_set(out)
