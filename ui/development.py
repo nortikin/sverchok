@@ -31,6 +31,7 @@ from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.development import get_branch
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
+from sverchok.ui.presets import get_presets, SverchPresetReplaceOperator, SvSaveSelected
 from sverchok.nodes.__init__ import nodes_dict
 
 
@@ -207,12 +208,41 @@ class SvViewSourceForNode(bpy.types.Operator):
         path_structure[-1] += '.py'
         return os.path.join(sv_path, *path_structure)
 
+class SV_MT_LoadPresetMenu(bpy.types.Menu):
+    bl_label = "Load Preset"
+
+    @classmethod
+    def poll(cls, context):
+        if not displaying_sverchok_nodes(context):
+            return False
+        if not hasattr(context, 'active_node'):
+            return False
+        node = context.active_node
+        return (node is not None)
+
+    def draw(self, context):
+        node = context.active_node
+        if not node:
+            return
+        layout = self.layout
+        ntree = node.id_data
+        has_presets = False
+        for preset in get_presets(category = node.bl_idname, mkdir=False):
+            has_presets = True
+            op = layout.operator(SverchPresetReplaceOperator.bl_idname, text=preset.name)
+            op.preset_path = preset.path
+            op.preset_name = preset.name
+            op.node_name = node.name
+
+        if not has_presets:
+            layout.label(text="There are no presets for this node")
 
 def idname_draw(self, context):
     if not displaying_sverchok_nodes(context):
         return
     layout = self.layout
     node = context.active_node
+    ntree = node.id_data
     if not node:
         return
     bl_idname = node.bl_idname
@@ -225,6 +255,19 @@ def idname_draw(self, context):
     colom.label(text=bl_idname+':')
     colom = row.column(align=True)
     colom.operator('node.copy_bl_idname', text='', icon='COPY_ID').name = bl_idname
+
+    is_monad = (bl_idname.startswith('SvGroupNodeMonad'))
+    if not is_monad:
+        box = col.box()
+        box.label(text="Presets:")
+        box.menu("SV_MT_LoadPresetMenu")
+        save_row = box.row()
+        save = save_row.operator(SvSaveSelected.bl_idname, text="Save Preset", icon='SOLO_ON')
+        save.id_tree = ntree.name
+        save.category = node.bl_idname
+        save.save_defaults = True
+        selected_nodes = [node for node in ntree.nodes if node.select]
+        save_row.enabled = len(selected_nodes) == 1
 
     # show these anyway, can fail and let us know..
     row = col.row(align=True)
@@ -267,6 +310,7 @@ def register():
     bpy.utils.register_class(SvCopyIDName)
     bpy.utils.register_class(SvViewHelpForNode)
     bpy.utils.register_class(SvViewSourceForNode)
+    bpy.utils.register_class(SV_MT_LoadPresetMenu)
     bpy.types.NODE_PT_active_node_generic.append(idname_draw)
 
 
@@ -274,6 +318,7 @@ def unregister():
     branch = get_branch()
     if branch:
         bpy.types.NODE_HT_header.remove(node_show_branch)
+    bpy.utils.unregister_class(SV_MT_LoadPresetMenu)
     bpy.types.NODE_PT_active_node_generic.remove(idname_draw)
     bpy.utils.unregister_class(SvCopyIDName)
     bpy.utils.unregister_class(SvViewHelpForNode)

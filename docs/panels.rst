@@ -115,6 +115,12 @@ Preset is a named set of stored settings of one of several nodes. You can:
 Each preset belongs to some preset category. By default, all presets are in
 special category named "General".
 
+There are special categories for presets of settings of nodes of specific
+types; such categories can store only settings of nodes of this type. Such
+categories are distinguished with a prefix "/Node/" in their titles. For
+example, a category with name "/Node/ Box" can contain only settings of the
+"Box" node. Such categories are created automatically.
+
 Presets are saved as `.json` files under Blender configuration directory, in
 `datafiles/sverchok/presets`. Preset categories are represented as directories
 under that one.
@@ -132,6 +138,10 @@ It can be good idea to store as a preset (and maybe share) the following things:
   combination often", so that later you can start with this preset and add some
   nodes to it or tweak it somehow.
 
+There are some presets distributed with Sverchok itself. You can not edit or
+remove such presets from Blender's UI. Such presets are marked with a word
+``[standard]`` in tooltips of corresponding buttons in the Presets panel.
+
 Panel Buttons
 -------------
 
@@ -147,6 +157,11 @@ The Presets panel has the following buttons:
   this preset should be known. You need to enter some descriptive name and
   press Ok. After that, the preset will become available in the lower part of
   the panel.
+
+   When there is a presets category of specific node type selected, the "Save
+   Preset" button is only available when a single node of corresponding type is
+   selected.
+
 * **Manage Presets**. This is a toggle button. It switches you between "presets
   usage mode" (which is the default, when button is not pressed) and "presets
   management mode" (when the button is pressed).
@@ -190,6 +205,64 @@ The following buttons (in this order) are shown for each preset you have:
   .. image:: https://user-images.githubusercontent.com/284644/34521620-7ca698dc-f0b0-11e7-94a9-757975ec1ec7.png
 
 * **Delete preset**. You will be asked for confirmation.
+
+It is not possible to edit or remove presets that are distributed with Sverchok.
+
+Node's N panel
+==============
+
+The panel in the right part of node editor window is toggled by the `N`
+keyboard shortcut, so it is called the N panel. Here we will consider the first
+tab of this panel, named "Item". This tab contains some information and
+parameters concerning the currently active node. It is not shown if there is no
+active node in the tree.
+
+.. image:: https://user-images.githubusercontent.com/284644/81494064-31322480-92bf-11ea-82eb-910a71ccc78a.png
+
+The "Item" tab of the N panel contains the following parts:
+
+* **Node** rolldown:
+
+  * **Name**: node name. This is an identifier of the node within the tree. If you
+    try to give the node a name, which is already taken by another node,
+    Blender will automatically add something like ``.001`` to the name.
+  * **Label**: node label to be displayed in the node editor. If not specified,
+    then the node name will be used.
+  * Below that, there is a text box displaying the identifier of the type of
+    active node (so-called ``bl_idname``). It may be useful for scripting or
+    for searching information about the node. The button next to the text box
+    copies that identifier into the clipboard.
+  * Following is the **Presets** section. It contains:
+
+    * **Load Preset** menu. This dropdown menu contains all presets that were
+      created for this type of node. Select a preset from the menu to apply it.
+      Settings loaded from the preset will overwrite current settings of the
+      node. **Note**: the same menu is available in the node editor, when a
+      node is active, by **Shift-P** shortcut.
+    * **Save Preset** button. Save current settings of the node as a new
+      preset. You will be asked for a name for the new preset.
+
+  You can edit and remove your presets in the **Presets** section of the node
+  editor's T panel, if you enable the **Manage Presets** mode (see description
+  above).
+
+  * **Help & Docs** section. This contains buttons for accessing the
+    documentation of currently active node.
+  * **Edit Source** section allows you to edit the source code of the node:
+
+    * **Externally**. Open an external text editor application to edit the file.
+    * **Internally**. Load the source code of the node into Blender's text block.
+
+  * **Re-Create Node** button. This removes the node and replaces it with a new
+    instance of the same node, trying to save all node's settings and
+    connections. This button is mostly useful in the development stage of the
+    node, if you for some reason have to re-initialize the node.
+
+* **Properties** rolldown. This contains all specific settings of the active
+  node type. For most types of nodes, this contains all the same parameters
+  that can be found in the node interface itself. Some types of nodes have
+  additional parameters here - usually ones you do not have to change in most
+  cases, or some kind of "advanced parameters".
 
 3D Panel
 ========

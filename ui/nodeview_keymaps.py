@@ -76,6 +76,10 @@ def add_keymap():
         kmi.properties.name = "NODEVIEW_MT_sv_rclick_menu"
         nodeview_keymaps.append((km, kmi))
 
+        kmi = km.keymap_items.new('wm.call_menu', 'P', 'PRESS', shift=True)
+        kmi.properties.name = "SV_MT_LoadPresetMenu"
+        nodeview_keymaps.append((km, kmi))
+
         # Ctrl + Left Click   | Connect Temporal Viewer
         kmi = km.keymap_items.new('node.sv_temporal_viewer', 'LEFTMOUSE', 'RELEASE', ctrl=True)
         kmi.properties.force_stethoscope = False

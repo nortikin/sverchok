@@ -254,8 +254,15 @@ def handle_enum_property(node, k, v, node_items, node_enums):
         v = getattr(node, k)
         node_items[k] = v
 
+def get_node_annotations(node, include_pointer_props = False):
+    result = []
+    for key, ann in node.bl_rna.__annotations__.items():
+        prop_type = ann[0]
+        if include_pointer_props or prop_type != bpy.props.PointerProperty:
+            result.append((key, getattr(node, key)))
+    return result
 
-def create_dict_of_tree(ng, skip_set={}, selected=False, identified_node=None):
+def create_dict_of_tree(ng, skip_set={}, selected=False, identified_node=None, save_defaults = False):
     nodes = ng.nodes
     layout_dict = {}
     nodes_dict = {}
@@ -283,7 +290,11 @@ def create_dict_of_tree(ng, skip_set={}, selected=False, identified_node=None):
 
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
 
-        for k, v in node.items():
+        if save_defaults:
+            node_props = get_node_annotations(node)
+        else:
+            node_props = node.items()
+        for k, v in node_props:
 
             display_introspection_info(node, k, v)
 
@@ -589,6 +600,12 @@ def fix_enum_identifier_spaces_if_needed(node, node_ref):
             if " " in stored_value:
                 params[prop_name] = stored_value.replace(" ", "_")
 
+def import_node_settings(node, node_ref, overwrite_presentation_props=True):
+    apply_core_props(node, node_ref)
+    if overwrite_presentation_props:
+        apply_superficial_props(node, node_ref)
+    apply_post_processing(node, node_ref)
+    apply_custom_socket_props(node, node_ref)
 
 def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     node_ref = nodes_to_import[n]
@@ -623,10 +640,7 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
             node.object_names.add().name = named_object
 
     gather_remapped_names(node, n, name_remap)
-    apply_core_props(node, node_ref)
-    apply_superficial_props(node, node_ref)
-    apply_post_processing(node, node_ref)
-    apply_custom_socket_props(node, node_ref)
+    import_node_settings(node, node_ref)
 
 
 def add_nodes(ng, nodes_to_import, nodes, create_texts):

@@ -1,0 +1,30 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "Surface Formula": {
+      "bl_idname": "SvExSurfaceFormulaNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -125.68179321289062,
+        127.20514678955078
+      ],
+      "params": {
+        "formula1": "A * (1 + v/2 * cos(u/2))*cos(u)",
+        "formula2": "A * (1 + v/2 * cos(u/2)) * sin(u)",
+        "formula3": "A * v/2 * sin(u/2)",
+        "output_mode": "XYZ",
+        "u_max": 6.2831854820251465,
+        "u_min": 0.0,
+        "use_numpy_function": true,
+        "v_max": 1.0,
+        "v_min": -1.0
+      },
+      "width": 217.093505859375
+    }
+  },
+  "update_lists": []
+}
