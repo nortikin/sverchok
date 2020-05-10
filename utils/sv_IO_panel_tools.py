@@ -726,6 +726,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
             nodes_json = json.loads(nodes_json)
             debug('==== loading monad ====')
         info(('#' * 12) + nodes_json['export_version'])
+        info(f"full path to this test {fullpath}")
 
         # create all nodes and groups '''
         update_lists = nodes_json['update_lists']
