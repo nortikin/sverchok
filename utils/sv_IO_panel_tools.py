@@ -765,7 +765,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
         ng.update()
         ng.update_tag()
         ng.sv_process = previous_state
-        info("done, exiting generate_layout cleanly")
+        # info("done, exiting generate_layout cleanly")
 
 
     # ---- read files (.json or .zip) or straight json data -----
