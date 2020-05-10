@@ -256,16 +256,18 @@ def idname_draw(self, context):
     colom = row.column(align=True)
     colom.operator('node.copy_bl_idname', text='', icon='COPY_ID').name = bl_idname
 
-    box = col.box()
-    box.label(text="Presets:")
-    box.menu("SV_MT_LoadPresetMenu")
-    save_row = box.row()
-    save = save_row.operator(SvSaveSelected.bl_idname, text="Save Preset", icon='SOLO_ON')
-    save.id_tree = ntree.name
-    save.category = node.bl_idname
-    save.save_defaults = True
-    selected_nodes = [node for node in ntree.nodes if node.select]
-    save_row.enabled = len(selected_nodes) == 1
+    is_monad = (bl_idname.startswith('SvGroupNodeMonad'))
+    if not is_monad:
+        box = col.box()
+        box.label(text="Presets:")
+        box.menu("SV_MT_LoadPresetMenu")
+        save_row = box.row()
+        save = save_row.operator(SvSaveSelected.bl_idname, text="Save Preset", icon='SOLO_ON')
+        save.id_tree = ntree.name
+        save.category = node.bl_idname
+        save.save_defaults = True
+        selected_nodes = [node for node in ntree.nodes if node.select]
+        save_row.enabled = len(selected_nodes) == 1
 
     # show these anyway, can fail and let us know..
     row = col.row(align=True)
