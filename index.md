@@ -54,6 +54,7 @@
 ## Curves
      SvExLineCurveNode
      SvExCircleNode
+     SvRoundedRectangleNode
      SvArc3ptCurveNode
      SvExCurveFormulaNode
      SvExPolylineNode
