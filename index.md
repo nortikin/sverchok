@@ -363,6 +363,7 @@
     SvInterpolationNodeMK2
     ---
     SvHomogenousVectorField
+    SvFieldRandomProbeNode
     SvNoiseNodeMK2
     SvTurbulenceNode
     SvLacunarityNode
