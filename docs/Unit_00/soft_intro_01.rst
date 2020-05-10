@@ -63,7 +63,7 @@ NodeView and 3DView
 
    * Use Blender's standard search box, which appears when you hit *F3* in node view:
 
-     - the downside to this is that this is not just for finding nodes, you'll encounter a lot of Operators and things that have little to do with Sverchok here. Sverchok does register quite a few Operators too, this is therefore one way to execute them if you know what you're looking for.
+     - this search box contains Operators for adding any sverchok node to the view, but you'll also find that it contains all other relevant Operators for that view. Sverchok also registers a few general Application Operators, and this is one way to execute them if you know what you're looking for.
 
      |image9|
 
