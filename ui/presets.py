@@ -255,9 +255,11 @@ class SvPreset(object):
 
         if (self.category, self.name) not in preset_add_operators:
 
+            preset_name = self.name if not self.description else self.description
+
             class SverchPresetAddOperator(bpy.types.Operator):
                 bl_idname = "node.sv_preset_" + get_preset_idname_for_operator(self.name, self.category)
-                bl_label = "Add {} preset ({} category)".format(self.name, self.category)
+                bl_label = "Add {} preset ({} category)".format(preset_name, self.category)
                 bl_options = {'REGISTER', 'UNDO'}
 
                 cursor_x: bpy.props.IntProperty()
