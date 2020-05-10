@@ -50,6 +50,8 @@ NodeView and 3DView
 
    * Hit *Shift-A* (standard Blender's shortcut for adding things, we inject our own menu into it, with icons!):
 
+     - don't be alarmed if what you see in your menu is not 100% identical to this image, new features are continously added/changed.
+
      |image7|
 
    * Hit *Alt-Space*. This shortcut calls for a special search menu, which allows you to search for nodes and macros:
