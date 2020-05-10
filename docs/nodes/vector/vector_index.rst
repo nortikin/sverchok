@@ -16,6 +16,7 @@ Vector
    fractal
    lerp
    homogenous_vector_field
+   field_random_probe
    vector_rewire
    vector_in
    vector_out
