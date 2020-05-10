@@ -96,8 +96,8 @@ class SocketConversionTests(EmptyTreeTestCase):
                 ngon = create_node("SvNGonNode")
                 node = create_node(bl_idname)
 
-                info(f"Linking {ngon.name}'s vertex output ----> ({bl_idname}).inputs[{input_name}]")
                 for input_name in tested_nodes[bl_idname]:
+                    info(f"Linking {ngon.name}'s vertex output ----> ({bl_idname}).inputs[{input_name}]")
                     self.tree.links.new(ngon.outputs["Vertices"], node.inputs[input_name])
 
                 # Trigger processing of the NGon node,
