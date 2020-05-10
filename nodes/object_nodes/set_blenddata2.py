@@ -60,7 +60,7 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableN
         Prop = self.formula
         objs = O.sv_get()
 
-        print('objs:', objs)
+        self.info(f'objs: {objs}')
 
         if isinstance(objs[0], list):
             if V.is_linked:
