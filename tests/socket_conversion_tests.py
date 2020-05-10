@@ -88,14 +88,18 @@ class SocketConversionTests(EmptyTreeTestCase):
                 'SvFormulaNodeMk3': ["x", "y"],
                 'SvSetDataObjectNodeMK2': ["Objects"]
             }
+        info("starting socket conversion tests")
         for bl_idname in tested_nodes.keys():
             with self.subTest(bl_idname = bl_idname):
-                # Create NGon node and tested node
+
+                info(f"creating SvNGonNode and {bl_idname}")
                 ngon = create_node("SvNGonNode")
                 node = create_node(bl_idname)
-                # Link NGon node to tested inputs
+
+                info(f"Linking {ngon.name}'s vertex output ----> ({bl_idname}).inputs[{input_name}]")
                 for input_name in tested_nodes[bl_idname]:
                     self.tree.links.new(ngon.outputs["Vertices"], node.inputs[input_name])
+
                 # Trigger processing of the NGon node,
                 # so that there will be some data at input
                 # of tested node.
