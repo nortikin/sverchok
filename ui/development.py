@@ -208,6 +208,35 @@ class SvViewSourceForNode(bpy.types.Operator):
         path_structure[-1] += '.py'
         return os.path.join(sv_path, *path_structure)
 
+class SV_MT_LoadPresetMenu(bpy.types.Menu):
+    bl_label = "Load Preset"
+
+    @classmethod
+    def poll(cls, context):
+        if not displaying_sverchok_nodes(context):
+            return False
+        if not hasattr(context, 'active_node'):
+            return False
+        node = context.active_node
+        return (node is not None)
+
+    def draw(self, context):
+        node = context.active_node
+        if not node:
+            return
+        layout = self.layout
+        ntree = node.id_data
+        has_presets = False
+        for preset in get_presets(category = node.bl_idname, mkdir=False):
+            has_presets = True
+            op = layout.operator(SverchPresetReplaceOperator.bl_idname, text=preset.name)
+            op.preset_path = preset.path
+            op.preset_name = preset.name
+            op.node_name = node.name
+
+        if not has_presets:
+            layout.label(text="There are no presets for this node")
+
 def idname_draw(self, context):
     if not displaying_sverchok_nodes(context):
         return
@@ -229,12 +258,7 @@ def idname_draw(self, context):
 
     box = col.box()
     box.label(text="Presets:")
-    presets_col = box.column(align=True)
-    for preset in get_presets(category = node.bl_idname, mkdir=False):
-        op = presets_col.operator(SverchPresetReplaceOperator.bl_idname, text=preset.name)
-        op.preset_path = preset.path
-        op.preset_name = preset.name
-        op.node_name = node.name
+    box.menu("SV_MT_LoadPresetMenu")
     save_row = box.row()
     save = save_row.operator(SvSaveSelected.bl_idname, text="Save Preset", icon='SOLO_ON')
     save.id_tree = ntree.name
@@ -284,6 +308,7 @@ def register():
     bpy.utils.register_class(SvCopyIDName)
     bpy.utils.register_class(SvViewHelpForNode)
     bpy.utils.register_class(SvViewSourceForNode)
+    bpy.utils.register_class(SV_MT_LoadPresetMenu)
     bpy.types.NODE_PT_active_node_generic.append(idname_draw)
 
 
@@ -291,6 +316,7 @@ def unregister():
     branch = get_branch()
     if branch:
         bpy.types.NODE_HT_header.remove(node_show_branch)
+    bpy.utils.unregister_class(SV_MT_LoadPresetMenu)
     bpy.types.NODE_PT_active_node_generic.remove(idname_draw)
     bpy.utils.unregister_class(SvCopyIDName)
     bpy.utils.unregister_class(SvViewHelpForNode)
