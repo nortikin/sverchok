@@ -424,6 +424,7 @@ class SvPresetProps(bpy.types.Operator):
 
     old_category: StringProperty(name="Old category", description="Preset category")
     new_category: EnumProperty(name="Category", description="New preset category", items = get_category_items)
+    allow_change_category : BoolProperty(default = True)
 
     old_name: StringProperty(name="Old name", description="Preset name")
     new_name: StringProperty(name="Name", description="New preset name")
@@ -436,7 +437,10 @@ class SvPresetProps(bpy.types.Operator):
 
     def draw(self, context):
         layout = self.layout
-        layout.prop(self, "new_category")
+        if self.allow_change_category:
+            layout.prop(self, "new_category")
+        else:
+            layout.label(text="Category: " + self.old_category)
         layout.prop(self, "new_name")
         layout.prop(self, "description")
         layout.prop(self, "keywords")
@@ -903,6 +907,8 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
                         rename = row.operator('node.sv_preset_props', text="", icon="GREASEPENCIL")
                         rename.old_name = name
                         rename.old_category = panel_props.category
+                        rename.new_category = rename.old_category
+                        rename.allow_change_category = (category_node_class is None)
 
                         delete = row.operator('node.sv_preset_delete', text="", icon='CANCEL')
                         delete.preset_name = name
