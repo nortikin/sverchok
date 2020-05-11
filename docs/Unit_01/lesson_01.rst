@@ -31,11 +31,11 @@ By default this node will generate a standard range: ``[0.0, 1.0, 2.0, 3.0.....9
 
 Hook up the `Stethoscope` input into the `Number Range` output, you'll see numbers printed onto the NodeView. You can change the color of the Stethoscope output using the color property if the background color is too similar to the text color.
 
-   *note*: With any node selected there's a faster way to add a Stethoschope: `Ctrl+Right Click` , it even automatically connects the stethoscope.
+   *Note*: With any node selected there's a faster way to add a Stethoschope: `Ctrl+Right Click` , it even automatically connects the stethoscope.
 
 |num_range_and_stethoscope_default|
 
-   *note*: The stethoscope will draw 1.00 as 1 when there is no significant information behind the decimal point.
+   *Note*: The stethoscope will draw 1.00 as 1 when there is no significant information behind the decimal point.
 
 **Setting up the input values of Number Range to generate the 4 multipliers**
 
@@ -76,6 +76,8 @@ The `Scalar Math` node will do the Trigonometry for us. From the dropdown you ca
 |sincos_img1|
 
 See the outputs of the ``SinCos``, each element of these new ranges represent a component (x or y) of the set of Vectors we want to make. **Sine** will represent ``Y`` and **Cosine** will be ``X``. 
+
+   *Note*: I minimized the stethoschope node for visual readability (click the little triangle), stethoschope has many features that are not not useful to us right now.
 
 **Making Vectors from a range of numbers**
 
