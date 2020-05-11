@@ -137,11 +137,22 @@ We're going to add a simple topology node. Instead of using the menu to add a no
 
 navigate down to the node named "Simple Topology" and hit enter to add it to the nodeview.
 
-There are numerous ways to generate the index list for `edges`. For our basic example the simplest approach is to write them out manually. Eventually you will be making hundreds of Vertices and at that point it won't be viable to write them out manually. For this lesson we'll not touch that subject.
+There are numerous ways to generate the *index list* for ``edges``. For our basic example we'll input them manually. Eventually you will be making hundreds of Vertices and at that point it won't be viable to write them out manually. For this lesson we'll not touch that subject.
 
-The formula node evaluates what you write into the `function` field, and then outputs the result to its out socket. Type into that field the following sequence ``[[0,1],[1,2],[2,3],[3,0]]``. Now hook the output of Formula node into the ``EdgPol`` input of ViewerDraw. You should see the following:
+The *Simple Topology Node* evaluates what you write into the two topology fields, and then outputs the results. Type into the ``Edges`` field (top one) the following sequence ``0 1, 1 2, 2 3, 3 0``. Internally the Simple Topology node converts this shorthand to a python list of indices::
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5428298/e89ce388-83bd-11e4-949e-2f416b90c5d0.png
+    #input
+    0 1, 1 2, 2 3, 3 0          <--- easy to input as a human
+
+    #produces
+    [[0,1],[1,2],[2,3],[3,0]]   <--- let python worry about the list syntax
+
+
+Now hook the ``Edges`` output socket of *Simple Topology* node into the ``Edges`` input of *Viewer Draw*. You should see the following:
+
+|edges_first|
+
+  *Note*: I adjusted the Edge Width, if you're on a Mac this may not work. sorry. 
 
 **Make a first Polygon**
 
@@ -192,3 +203,4 @@ We'll stop here for lesson 01, if you've followed most of this you'll be making 
 .. |vdmk3_npanel| image:: https://user-images.githubusercontent.com/619340/81578234-ccec8f00-93aa-11ea-986a-b42949019e79.png
 .. |closeup| image:: https://user-images.githubusercontent.com/619340/81578680-6ddb4a00-93ab-11ea-99b4-2512585adb35.png
 .. |alt_search| image:: https://user-images.githubusercontent.com/619340/81579054-f1953680-93ab-11ea-86b3-a1ca585d511d.png
+.. |edges_first| image:: https://user-images.githubusercontent.com/619340/81580514-d5929480-93ad-11ea-9ecf-9a7d5abf4be3.png
