@@ -39,7 +39,7 @@ Hook up the `Stethoscope` input into the `Number Range` output, you'll see numbe
 
 Type these numbers into the number fields instead of adjusting the slider, it's fast and accurate. Especially useful for entering *Floats*.
 
-Set the Number Range mode to ``Step`` and 
+  - Set the Number Range mode to ``Step`` and 
   - make sure the *Start* value is ``0.25`` and 
   - *Step* value is ``0.50``
   - Set the *Count* slider to ``4``
@@ -52,14 +52,10 @@ Set the Number Range mode to ``Step`` and
 
 We know the output of the *Number Range* now, what we will do is multiply the range by a constant PI. This is like doing ``[0.25, 0.75, 1.25, 1.75] * pi``, which is what we wanted from the beginning, namely; ``[0.25 * pi, 0.75 * pi, 1.25 * pi, 1.75 * pi]``. 
 
-1) Set one of the *Scalar Math* nodes to the constant ``PI`` 
-
-2) Switch the other Math node to a Multiplier node by selecting ``Multiplication (*)`` from its dropdowns.
-
-3) Connect the output of PI to one of the input sockets of the Multiply Node
-
-4) Connect the output of the Float Series into the other input of the Multiply Node. 
-
+  - Set one of the *Scalar Math* nodes to the constant ``PI`` 
+  - Switch the other Math node to a Multiplier node by selecting ``Multiplication (*)`` from its dropdowns.
+  - Connect the output of PI to one of the input sockets of the Multiply Node
+  - Connect the output of the Float Series into the other input of the Multiply Node. 
 
 The result should look something like this, hook up the Stethoscope to see the outputs.
 
