@@ -152,7 +152,8 @@ Now hook the ``Edges`` output socket of *Simple Topology* node into the ``Edges`
 
 |edges_first|
 
-  *Note*: I adjusted the Edge Width, if you're on a Mac this may not work. sorry. 
+  *Note 1*: I adjusted the Edge Width, if you're on a Mac this may not work. sorry. 
+  *Note 2*: The ``Wrap`` button on Simple Topology node will enclose the output in an extra set of square brackets. This is appropriate see the documentation on ``Geometry``. 
 
 **Make a first Polygon**
 
