@@ -23,8 +23,7 @@ We carefully pick points on the unit-circle so that when we connect them via edg
 
 |number_range|
 
-To get the ratios of Pi We first generate the multipliers ``[0.25, 0.75, 1.25, 1.75]`` and later multiply each item in that list with the constant PI.  We set this Node to ``step`` mode, and set the ``start`` parameter to 0.25, the step is 0.50, and the count is 4 (we want four points).
-
+By default this node will generate a standard sequence: ``[0.0, 1.0, 2.0, 3.0.....9.0]``,
 
 **Seeing the output of the Range Float node**
 
@@ -32,18 +31,22 @@ To get the ratios of Pi We first generate the multipliers ``[0.25, 0.75, 1.25, 1
 
 Hook up the `Stethoscope` input into the `Number Range` output, you'll see numbers printed onto the NodeView. You can change the color of the Stethoscope output using the color property if the background color is too similar to the text color.
 
+|num_range_and_stethoscope_default|
+
+**Setting up the input values of Number Range to generate the 4 multipliers**
+
+Type these numbers into the number fields instead of adjusting the slider, it's fast and accurate. Especially useful for entering *Floats*.
+
+Set the Number Range mode to ``Step`` and 
+  - make sure the *Start* value is ``0.25`` and 
+  - *Step* value is ``0.50``
+  - Set the *Count* slider to ``4``
+
 |num_range_and_stethoscope|
-
-**Setting up the input values of Range Float to generate the right output**
-
-Set the Float Series mode to `Step` and make sure the `Start` value is 0.25 and `Step` value is 0.50. You should type these numbers in instead of adjusting the slider, it's fast and instantly accurate. Set the `Count` slider to 4, whichever way is fastest for you.
-
-.. image:: https://cloud.githubusercontent.com/assets/619340/5425218/8dbcdc26-830d-11e4-8ef1-a38b8723a00f.png
-
 
 **Multiplying the series by PI**
 
--  ``Add -> numbers -> Math``  ( add two math nodes)
+-  ``Add -> Number -> Scalar Math``  ( add two of these, they can be duplicated)
 
 We know the output of the Float series now, what we will do is multiply the series by a constant PI. This is like doing ``[0.25, 0.75, 1.25, 1.75] * pi``, which is what we wanted from the beginning, namely; ``[0.25 * pi, 0.75 * pi, 1.25 * pi, 1.75 * pi]``. 
 
@@ -162,4 +165,5 @@ We'll stop here for lesson 01, if you've followed most of this you'll be making 
 
 
 .. |number_range| image:: https://user-images.githubusercontent.com/619340/81538799-8594dd00-936f-11ea-9c53-cf97e6b73d17.png
+.. |num_range_and_stethoscope_default| image:: https://user-images.githubusercontent.com/619340/81541066-dc4fe600-9372-11ea-85c1-47b6e06e1520.png
 .. |num_range_and_stethoscope| image:: https://user-images.githubusercontent.com/619340/81540264-abbb7c80-9371-11ea-99b6-8e483a92f043.png
