@@ -154,7 +154,7 @@ Change the `Vector Math` node's `mode` to `Multiply Scalar`. This will let you f
 
 You should have something like this. 
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5428874/fac67fd4-83d5-11e4-9601-1399248dddd6.png
+|final_image|
 
 Now if you change the slider on the `Float` node, you'll notice 2 things: 
 
@@ -171,3 +171,4 @@ We'll stop here for lesson 01, if you've followed most of this you'll be making 
 .. |number_range| image:: https://user-images.githubusercontent.com/619340/81541992-40bf7500-9374-11ea-82ce-4e5b1bbffb7a.png
 .. |num_range_and_stethoscope_default| image:: https://user-images.githubusercontent.com/619340/81544402-c5f85900-9377-11ea-8a88-d13b3a9d00ce.png
 .. |num_range_and_stethoscope| image:: https://user-images.githubusercontent.com/619340/81544544-f93ae800-9377-11ea-8789-fda3e2fb2500.png
+.. |final_image| image:: https://user-images.githubusercontent.com/619340/81544902-62226000-9378-11ea-814e-c04a6ff473ef.png
