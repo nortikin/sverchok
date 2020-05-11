@@ -60,26 +60,24 @@ which is what we wanted from the beginning, namely;::
 
    [0.25 * pi, 0.75 * pi, 1.25 * pi, 1.75 * pi]
 
-- Set one of the *Scalar Math* nodes to the constant ``PI`` 
-- Switch the other Math node to a Multiplier node by selecting ``Multiplication (*)`` from its dropdowns.
-- Connect the output of PI to one of the input sockets of the Multiply Node
-- Connect the output of the Float Series into the other input of the Multiply Node. 
+- Set the *Scalar Math* node to the function ``PI * X`` 
+- Connect the output of the *Number Range* into the input of the ``PI * X`` node.
 
 The result should look something like this, hook up the Stethoscope to see the outputs.
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5425420/5ecb5ba0-8316-11e4-9edc-ec7e111d9cd4.png
+|pi_times_xrange|
 
-**Getting the Sine and Cosine of this series**
+**Getting the Sine and Cosine of this range**
 
--  ``Add -> numbers -> Math``  ( add two math nodes)
+-  ``Add -> Number -> Scalar Math``
 
-These new `Math` nodes will do the Trigonometry for us. Set one of them to a `Cosine` and the other to a `Sine`. These two nodes will now output the *cos* or *sin* of whatever is routed into them, in this case the series of Floats.
+The `Scalar Math` node will do the Trigonometry for us. From the dropdown you can pick the ``SinCos`` function. This node will now output the *cos* and *sin* of whatever is routed into it, in this case the range of Floats.
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5428010/8f82f340-83b4-11e4-9080-ce5ac8e43b71.png
+|sincos_img1|
 
-See the outputs of the Sine and Cosine node, each element represents a component of the set of Vectors we want to make. Sine will represent `Y` and Cosine will be `X`. 
+See the outputs of the ``SinCos``, each element of these new ranges represent a component (x or y) of the set of Vectors we want to make. **Sine** will represent ``Y`` and **Cosine** will be ``X``. 
 
-**Making Vectors from a series of numbers**
+**Making Vectors from a range of numbers**
 
 - ``Add -> Vector -> Vector In``  
 
@@ -174,3 +172,5 @@ We'll stop here for lesson 01, if you've followed most of this you'll be making 
 .. |num_range_and_stethoscope_default| image:: https://user-images.githubusercontent.com/619340/81544402-c5f85900-9377-11ea-8a88-d13b3a9d00ce.png
 .. |num_range_and_stethoscope| image:: https://user-images.githubusercontent.com/619340/81544544-f93ae800-9377-11ea-8789-fda3e2fb2500.png
 .. |final_image| image:: https://user-images.githubusercontent.com/619340/81545437-2b007e80-9379-11ea-8af0-08a16f35060a.png
+.. |pi_times_xrange| image:: https://user-images.githubusercontent.com/619340/81560341-850d3e00-9391-11ea-87f9-6f3b551ebeb9.png
+.. |sincos_img1| image:: https://user-images.githubusercontent.com/619340/81560667-2a281680-9392-11ea-8223-29b9e09d01f7.png
