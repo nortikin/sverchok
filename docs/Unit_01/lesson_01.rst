@@ -33,16 +33,16 @@ Hook up the `Stethoscope` input into the `Number Range` output, you'll see numbe
 
 |num_range_and_stethoscope_default|
 
-   - *note*: The stethoscope will draw 1.00 as 1 when there is no significant information behind the decimal point.
+   *note*: The stethoscope will draw 1.00 as 1 when there is no significant information behind the decimal point.
 
 **Setting up the input values of Number Range to generate the 4 multipliers**
 
 Type these numbers into the number fields instead of adjusting the slider, it's fast and accurate. Especially useful for entering *Floats*.
 
-  - Set the Number Range mode to ``Step`` and 
-  - make sure the *Start* value is ``0.25`` and 
-  - *Step* value is ``0.50``
-  - Set the *Count* slider to ``4``
+- Set the Number Range mode to ``Step`` and 
+- make sure the *Start* value is ``0.25`` and 
+- *Step* value is ``0.50``
+- Set the *Count* slider to ``4``
 
 |num_range_and_stethoscope|
 
@@ -52,10 +52,10 @@ Type these numbers into the number fields instead of adjusting the slider, it's 
 
 We know the output of the *Number Range* now, what we will do is multiply the range by a constant PI. This is like doing ``[0.25, 0.75, 1.25, 1.75] * pi``, which is what we wanted from the beginning, namely; ``[0.25 * pi, 0.75 * pi, 1.25 * pi, 1.75 * pi]``. 
 
-  - Set one of the *Scalar Math* nodes to the constant ``PI`` 
-  - Switch the other Math node to a Multiplier node by selecting ``Multiplication (*)`` from its dropdowns.
-  - Connect the output of PI to one of the input sockets of the Multiply Node
-  - Connect the output of the Float Series into the other input of the Multiply Node. 
+- Set one of the *Scalar Math* nodes to the constant ``PI`` 
+- Switch the other Math node to a Multiplier node by selecting ``Multiplication (*)`` from its dropdowns.
+- Connect the output of PI to one of the input sockets of the Multiply Node
+- Connect the output of the Float Series into the other input of the Multiply Node. 
 
 The result should look something like this, hook up the Stethoscope to see the outputs.
 
