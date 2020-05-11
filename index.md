@@ -103,6 +103,7 @@
      SvExSurfaceSubdomainNode
      SvFlipSurfaceNode
      SvSwapSurfaceNode
+     SvSurfaceNormalsNode
      SvSurfaceGaussCurvatureNode
      SvSurfaceCurvaturesNode
      ---
