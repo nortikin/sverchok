@@ -21,7 +21,7 @@ We carefully pick points on the unit-circle so that when we connect them via edg
 
 -  ``Add -> Numbers -> Number Range``
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5425016/91b2bd2a-8306-11e4-8c96-a2d2b4de6094.png
+|number_range|
 
 This node has a set of defaults which output ``[0.000, 1.000..... 9.000]``. We will tell the  node to make ``[0.25, 0.75, 1.25, 1.75]`` and multiply them later with the constant PI.  
 
@@ -160,3 +160,5 @@ Save this .blend you've been working in now, somewhere where you will find it ea
 
 We'll stop here for lesson 01, if you've followed most of this you'll be making crazy shapes in a matter of hours. Please continue on to `Lesson 02 - A Circle`, but take a break first. Look outside, stare at a tree -- do something else for 10 minutes.
 
+
+.. |number_range| image:: https://user-images.githubusercontent.com/619340/81538799-8594dd00-936f-11ea-9c53-cf97e6b73d17.png
