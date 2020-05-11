@@ -166,6 +166,6 @@ Save this .blend you've been working in now, somewhere where you will find it ea
 We'll stop here for lesson 01, if you've followed most of this you'll be making crazy shapes in a matter of hours. Please continue on to `Lesson 02 - A Circle`, but take a break first. Look outside, stare at a tree -- do something else for 10 minutes.
 
 
-.. |number_range| image:: https://user-images.githubusercontent.com/619340/81538799-8594dd00-936f-11ea-9c53-cf97e6b73d17.png
+.. |number_range| image:: https://user-images.githubusercontent.com/619340/81541992-40bf7500-9374-11ea-82ce-4e5b1bbffb7a.png
 .. |num_range_and_stethoscope_default| image:: https://user-images.githubusercontent.com/619340/81541066-dc4fe600-9372-11ea-85c1-47b6e06e1520.png
 .. |num_range_and_stethoscope| image:: https://user-images.githubusercontent.com/619340/81540264-abbb7c80-9371-11ea-99b6-8e483a92f043.png
