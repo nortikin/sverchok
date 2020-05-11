@@ -71,11 +71,11 @@ The result should look something like this, hook up the Stethoscope to see the o
 
 -  ``Add -> Number -> Scalar Math``
 
-The `Scalar Math` node will do the Trigonometry for us. From the dropdown you can pick the ``SinCos`` function. This node will now output the *cos* and *sin* of whatever is routed into it, in this case the range of Floats.
+The `Scalar Math` node will do the Trigonometry for us. From the dropdown you can pick the ``Sin & Cos`` function. This node will now output the *cos* and *sin* of whatever is routed into it, in this case the range of Floats.
 
 |sincos_img1|
 
-See the outputs of the ``SinCos``, each element of these new ranges represent a component (x or y) of the set of Vectors we want to make. **Sine** will represent ``Y`` and **Cosine** will be ``X``. 
+See the outputs of the ``SINCOS, X ``, each element of these new ranges represent a component (x or y) of the set of Vectors we want to make. **Sine** will represent ``Y`` and **Cosine** will be ``X``. 
 
    *Note*: I minimized the stethoschope node for visual readability (click the little triangle), stethoschope has many features that are not not useful to us right now.
 
