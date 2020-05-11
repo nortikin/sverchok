@@ -33,6 +33,8 @@ Hook up the `Stethoscope` input into the `Number Range` output, you'll see numbe
 
 |num_range_and_stethoscope_default|
 
+   - *note*: The stethoscope will draw 1.00 as 1 when there is no significant information behind the decimal point.
+
 **Setting up the input values of Number Range to generate the 4 multipliers**
 
 Type these numbers into the number fields instead of adjusting the slider, it's fast and accurate. Especially useful for entering *Floats*.
