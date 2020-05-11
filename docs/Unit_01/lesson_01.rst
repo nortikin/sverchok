@@ -109,13 +109,13 @@ Notice the 3 color fields on the Viewer Draw node, they represent the color that
 
 **Increasing the Size of the Vertex**
 
-Sometimes, especially while introducing Sverchok, it's preferred to display Vertices a little bigger than the default values of 3 pixels. If you had difficulty spotting the vertices initially you will understand why. The N-panel (`side panel`, or `properties panel`) for the Node View will have extra panels when viewing a [Sverchok Node Tree]. Some nodes have a dedicated properties area in this panel to hold features that might otherwise complicate the node's UI.
+Sometimes, especially while introducing Sverchok, it's preferred to display Vertices a little bigger than the default values of ``4 pixels``. If you had difficulty spotting the vertices initially you will understand why. The N-panel (`side panel`, or `properties panel`) for the Node View will have extra panels when viewing a ``Sverchok NodeTree``. Some nodes have a dedicated properties area in this panel to hold features that might otherwise complicate the node's UI.
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5428036/647ff2c8-83b5-11e4-9344-31c85d24357f.png
+|vdmk3_npanel|
 
-In the case of the `Viewer Draw`, there's quite a bit of extra functionality hidden away in the properties area. For now we are interested only in the Vertex Size property. In the image below it's marked with a (red) dot. This slider has a range between 0 and 10, set it to whatever is most comfortable to view. Here a close up:
+In the case of the `Viewer Draw`, there's quite a bit of extra functionality hidden away in the properties area. For now we are interested only in the ``Point Size`` property. This slider has a range between 1 and 15, set it to whatever is most comfortable to view. Here a close up:
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5427696/06cd4b46-83a9-11e4-8d10-11d488d83755.png
+|closeup|
 
 I think you'll agree that the Vertices are much easier to see now:
 
@@ -183,3 +183,5 @@ We'll stop here for lesson 01, if you've followed most of this you'll be making 
 .. |sincos_img2| image:: https://user-images.githubusercontent.com/619340/81565850-4def5a80-939a-11ea-9bc9-62c59414027c.png
 .. |first_vdmk3| image:: https://user-images.githubusercontent.com/619340/81577343-95c9ae00-93a9-11ea-98a4-565d18cddb73.png
 .. |second_vdmk3| image:: https://user-images.githubusercontent.com/619340/81568926-c48e5700-939e-11ea-84c0-72a884369054.png
+.. |vdmk3_npanel| image:: https://user-images.githubusercontent.com/619340/81578234-ccec8f00-93aa-11ea-986a-b42949019e79.png
+.. |closeup| image:: https://user-images.githubusercontent.com/619340/81578680-6ddb4a00-93ab-11ea-99b4-2512585adb35.png
