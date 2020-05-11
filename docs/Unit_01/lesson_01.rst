@@ -19,20 +19,20 @@ We carefully pick points on the unit-circle so that when we connect them via edg
 
 **Making a series of numbers**
 
--  ``Add -> Numbers -> Number Range``
+-  ``Add -> Number -> Number Range``
 
 |number_range|
 
-This node has a set of defaults which output ``[0.000, 1.000..... 9.000]``. We will tell the  node to make ``[0.25, 0.75, 1.25, 1.75]`` and multiply them later with the constant PI.  
+To get the ratios of Pi We first generate the multipliers ``[0.25, 0.75, 1.25, 1.75]`` and later multiply each item in that list with the constant PI.  We set this Node to ``step`` mode, and set the ``start`` parameter to 0.25, the step is 0.50, and the count is 4 (we want four points).
 
 
 **Seeing the output of the Range Float node**
 
 -  ``Add -> Text -> Stethoscope``  
 
-Hook up the `Stethoscope` input into the `Float range` output, you'll see text printed onto the node view. You can change the color of the Stethoscope text using the color property if the background color is too similar to the text color.
+Hook up the `Stethoscope` input into the `Number Range` output, you'll see numbers printed onto the NodeView. You can change the color of the Stethoscope output using the color property if the background color is too similar to the text color.
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5424823/fa98153e-8300-11e4-878f-c496afbbbe2f.png
+|num_range_and_stethoscope|
 
 **Setting up the input values of Range Float to generate the right output**
 
@@ -162,3 +162,4 @@ We'll stop here for lesson 01, if you've followed most of this you'll be making 
 
 
 .. |number_range| image:: https://user-images.githubusercontent.com/619340/81538799-8594dd00-936f-11ea-9c53-cf97e6b73d17.png
+.. |num_range_and_stethoscope| image:: https://user-images.githubusercontent.com/619340/81540264-abbb7c80-9371-11ea-99b6-8e483a92f043.png
