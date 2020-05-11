@@ -9,17 +9,17 @@ You should have a general understanding of Vectors and Trigonometry, if not then
 Lesson 01 - A Plane
 -------------------
 
-Nodes covered in this lesson: ``Math, Vector In, Float, Range Float, Viewer Draw, Stethoschope, Formula, Vector Math``. 
+Nodes covered in this lesson: ``Scalar Math, Vector In, Number, Number Range, Viewer Draw, Stethoschope, Simple Topology, Vector Math``. 
 
-Let's make a set of 4 vectors and combine them to represent a plane. I'll use the Trigonometric concept of the `unit-circle` to get coordinates which are `0.5 PI appart`. 
+Let's make a set of 4 vectors and combine them to represent a plane. I'll use the Trigonometric concept of the ``unit-circle`` to get coordinates which are ``0.5 PI`` appart. 
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5426922/20290ef0-837b-11e4-9863-8a0a586aed7d.png
 
-We carefully pick points on the unit-circle so that when we connect them via edges it results in a square. To begin we want to create a series of numbers, to represent those points on the unit-circle. Essentially this sequence is ``[0.25 pi, 0.75 pi, 1.25 pi, 1.75 pi]``. Because these aren't whole numbers, but so called ``Floats``, we use a Node that generates a range of Floats: ``Range Float``. (or 'Float series' as it's called when added to the node view). 
+We carefully pick points on the unit-circle so that when we connect them via edges it results in a square. To begin we want to create a series of numbers, to represent those points on the unit-circle. Essentially this sequence is ``[0.25 pi, 0.75 pi, 1.25 pi, 1.75 pi]``. Because these aren't whole numbers (``Integers``), but so called ``Floats``, we use a ``Number Range`` Node configured to output ``Floats``.
 
 **Making a series of numbers**
 
--  ``Add -> numbers -> Range Float``  
+-  ``Add -> Numbers -> Number Range``
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5425016/91b2bd2a-8306-11e4-8c96-a2d2b4de6094.png
 
