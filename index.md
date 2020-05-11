@@ -495,6 +495,7 @@
     SvColorsOutNodeMK1
     SvFormulaColorNode
     SvTextureEvaluateNodeMk2
+    SvColorRampNode
     ---
     SvSculptMaskNode
     SvSelectMeshVerts

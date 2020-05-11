@@ -103,6 +103,7 @@ class SvColorsInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvColorsInNodeMK1'
     bl_label = 'Color in'
+    bl_icon = 'COLOR'
     sv_icon = 'SV_COLOR_IN'
 
     def psuedo_update(self, context):
@@ -111,7 +112,7 @@ class SvColorsInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             self.inputs[idx].prop_name = socket.lower() + '_'
         updateNode(self, context)
 
-    use_alpha: BoolProperty(name='Use Alpha', default=False, update=updateNode)
+    use_alpha: BoolProperty(name='Use Alpha', default=True, update=updateNode)
 
     r_: fprop_generator(name='R', description='Red (0..1)')
     g_: fprop_generator(name='G', description='Green (0..1)')
