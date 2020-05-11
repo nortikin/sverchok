@@ -129,7 +129,13 @@ Vertices Indexed:
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5428066/f9445494-83b5-11e4-9b3b-6294d732fa00.png
 
-- ``Add -> Numbers -> Formula``
+We're going to add a simple topology node. Instead of using the menu to add a node, this time we'll use ``alt+space`` search field.
+
+- ``alt+space -> type in:  top``  ( you should see something like the following )
+
+|alt_search|
+
+navigate down to the node named "Simple Topology" and hit enter to add it to the nodeview.
 
 There are numerous ways to generate the index list for `edges`. For our basic example the simplest approach is to write them out manually. Eventually you will be making hundreds of Vertices and at that point it won't be viable to write them out manually. For this lesson we'll not touch that subject.
 
@@ -185,3 +191,4 @@ We'll stop here for lesson 01, if you've followed most of this you'll be making 
 .. |second_vdmk3| image:: https://user-images.githubusercontent.com/619340/81568926-c48e5700-939e-11ea-84c0-72a884369054.png
 .. |vdmk3_npanel| image:: https://user-images.githubusercontent.com/619340/81578234-ccec8f00-93aa-11ea-986a-b42949019e79.png
 .. |closeup| image:: https://user-images.githubusercontent.com/619340/81578680-6ddb4a00-93ab-11ea-99b4-2512585adb35.png
+.. |alt_search| image:: https://user-images.githubusercontent.com/619340/81579054-f1953680-93ab-11ea-86b3-a1ca585d511d.png
