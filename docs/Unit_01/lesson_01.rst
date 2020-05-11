@@ -157,33 +157,32 @@ Now hook the ``Edges`` output socket of *Simple Topology* node into the ``Edges`
 
 **Make a first Polygon**
 
-We will reuse the Vertices, you can disconnect the Formula node from Viewer Draw.
-Let's also reuse the Formula node by clearing the `function` field and replacing the content with the following sequence: ``[[0,1,2,3]]``. Connect the output of this Formula node to the EdgPol input on Viewer Draw. You should now see the following:
+Using the same Simple Topology Node we will instead pass a polygon to the Viewer Draw, the Viewer Draw is able to infer how to draw edges from the Polygon information. 
+- Disconnect the ``Edges`` socket from the ``Viewer Draw`` (you don't have to clear the Edges field)
+- In *Simple Topology* node and fill the Faces field with the indices that describe the Face. We'll go for a shorthand: ``[0,1,2,3]``. 
+- Connect the output of the ``Faces`` socket to the ``Faces`` input on Viewer Draw. You should now see the following:
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5428321/ea0e4d64-83be-11e4-96c3-78a93e915012.png
+|first_face|
 
 **Controlling the size of the Polygon**
 
-There are many ways to scale up a set of vectors, we'll use the Vector Math node.
+There are many ways to scale up a set of vectors, we'll use the *Vector Math* node.
 
-- ``Add -> Vector -> Vector Math``
+- ``rightclick nodeview -> Vector Math``
 
-Change the `Vector Math` node's `mode` to `Multiply Scalar`. This will let you feed a number to the Vectors to act as a multiplier. We'll add a ``Float`` node to generate the multiplier. 
+Change the `Vector Math` node's ``mode`` to `Multiply Scalar`. This will let you feed a number to the Vectors to act as a multiplier. We'll add a *Number* node to generate the multiplier. 
 
-- ``Add -> Numbers -> Float``
+- ``rightclick nodeview -> A Number``
 
-1) Hook up the `Float` node to the Scalar (green) input of the `Vector Math (Multiply Scalar)` node
+1) Hook up the *Number* node to the Scalar (green) input of the `Vector Math (Multiply Scalar)` node
 2) Connect the output of the `Vector In` node into the top input of the Vector Math node. 
-3) Now connect the output of the `Vector Math` node into the Vertices socket of the Viewer Draw node.
+3) Now connect the output of the `Vector Math` node into the ``Verts`` socket of the Viewer Draw node.
 
 You should have something like this. 
 
 |final_image|
 
-Now if you change the slider on the `Float` node, you'll notice 2 things: 
-
-1) the header of the Float node gets the value of the slider, and more importantly, 
-2) the Polygon will start to increase and decrease in size because you are multiplying the `x, y, and z` components of the Vectors by that amount.
+Now if you change the slider on the *Number* node, you'll notice that the Polygon will start to increase and decrease in size because you are multiplying the ``x, y, and z`` components of the Vectors by that amount.
 
 **End of lesson 01**
 
@@ -205,3 +204,4 @@ We'll stop here for lesson 01, if you've followed most of this you'll be making 
 .. |closeup| image:: https://user-images.githubusercontent.com/619340/81578680-6ddb4a00-93ab-11ea-99b4-2512585adb35.png
 .. |alt_search| image:: https://user-images.githubusercontent.com/619340/81579054-f1953680-93ab-11ea-86b3-a1ca585d511d.png
 .. |edges_first| image:: https://user-images.githubusercontent.com/619340/81580514-d5929480-93ad-11ea-9ecf-9a7d5abf4be3.png
+.. |first_face| image:: https://user-images.githubusercontent.com/619340/81581935-b3017b00-93af-11ea-850e-55207de956f7.png
