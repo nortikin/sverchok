@@ -11,7 +11,7 @@ Lesson 01 - A Plane
 
 Nodes covered in this lesson: ``Scalar Math, Vector In, Number, Number Range, Viewer Draw, Stethoschope, Simple Topology, Vector Math``. 
 
-Let's make a set of 4 vectors and combine them to represent a plane. I'll use the Trigonometric concept of the ``unit-circle`` to get coordinates which are ``0.5 PI`` appart. 
+Let's make a Plane, we will need 4 vectors and we'll define them using math. I'll use the Trigonometric concept of the ``unit-circle`` to get coordinates which are ``0.5 PI`` appart. 
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5426922/20290ef0-837b-11e4-9863-8a0a586aed7d.png
 
@@ -31,6 +31,8 @@ By default this node will generate a standard range: ``[0.0, 1.0, 2.0, 3.0.....9
 
 Hook up the `Stethoscope` input into the `Number Range` output, you'll see numbers printed onto the NodeView. You can change the color of the Stethoscope output using the color property if the background color is too similar to the text color.
 
+   *note*: With any node selected there's a faster way to add a Stethoschope: `Ctrl+Right Click` , it even automatically connects the stethoscope.
+
 |num_range_and_stethoscope_default|
 
    *note*: The stethoscope will draw 1.00 as 1 when there is no significant information behind the decimal point.
@@ -48,7 +50,7 @@ Type these numbers into the number fields instead of adjusting the slider, it's 
 
 **Multiplying the Range by PI**
 
--  ``Add -> Number -> Scalar Math``  ( add two of these, they can be duplicated)
+-  ``Add -> Number -> Scalar Math`` 
 
 We know the output of the *Number Range* now, what we will do is multiply the range by a constant PI. This is like doing::
 
