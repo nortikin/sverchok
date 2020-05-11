@@ -169,5 +169,5 @@ We'll stop here for lesson 01, if you've followed most of this you'll be making 
 
 
 .. |number_range| image:: https://user-images.githubusercontent.com/619340/81541992-40bf7500-9374-11ea-82ce-4e5b1bbffb7a.png
-.. |num_range_and_stethoscope_default| image:: https://user-images.githubusercontent.com/619340/81541066-dc4fe600-9372-11ea-85c1-47b6e06e1520.png
-.. |num_range_and_stethoscope| image:: https://user-images.githubusercontent.com/619340/81540264-abbb7c80-9371-11ea-99b6-8e483a92f043.png
+.. |num_range_and_stethoscope_default| image:: https://user-images.githubusercontent.com/619340/81544402-c5f85900-9377-11ea-8a88-d13b3a9d00ce.png
+.. |num_range_and_stethoscope| image:: https://user-images.githubusercontent.com/619340/81544544-f93ae800-9377-11ea-8789-fda3e2fb2500.png
