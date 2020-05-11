@@ -99,13 +99,15 @@ The `Vector In` node takes as input 1 or more numbers per component. Sockets whi
 
 - ``Add -> Viz -> Viewer Draw``
 
-Sverchok draws geometry using the Viewer Nodes, there are two types of viewer nodes but we'll focus on Viewer Draw for the moment. Stethoscope is useful for showing the values of any socket, but when we're dealing with final geometric constructs like Vectors often we want to see them in 3D to get a better understanding.
+Sverchok draws geometry using the Viewer Nodes, there are two types of viewer nodes. You might have noticed that the list of ``Viz`` nodes is extensive. For now We'll focus on Viewer Draw. Stethoscope is useful for showing the values of any socket, but when we're dealing with final geometric constructs like Vectors often we want to see them in 3D to get a better understanding.
 
-Connect the output of `Vectors In` into the `Vertices` on the Viewer Draw node. You should see 4 vertices appear on your 3d view (but don't worry if you don't immediately spot them):
+Connect the output of ``Vectors In`` into the ``Verts`` on the Viewer Draw node. You should see 4 vertices appear on your ``3d view`` (but don't worry if you don't immediately spot them, by default they will be drawn in white):
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5428049/9cfaed4c-83b5-11e4-93d8-5d26b6f30826.png
+|first_vdmk3|
 
 Notice the 3 color fields on the Viewer Draw node, they represent the color that this node gives to its Vertices, Edges, and Faces. If (after connecting Vector In to ViewerDraw) you don't see the Vertices in 3dview, it is probably because your background 3dview color is similar to the Vertex color. Adjust the color field to make them visible.
+
+  *Note*: i've increased the size of the Vertices for the screenshot, you'll see them a few pixels smaller.
 
 **Increasing the Size of the Vertex**
 
@@ -181,3 +183,4 @@ We'll stop here for lesson 01, if you've followed most of this you'll be making 
 .. |pi_times_xrange| image:: https://user-images.githubusercontent.com/619340/81560341-850d3e00-9391-11ea-87f9-6f3b551ebeb9.png
 .. |sincos_img1| image:: https://user-images.githubusercontent.com/619340/81560667-2a281680-9392-11ea-8223-29b9e09d01f7.png
 .. |sincos_img2| image:: https://user-images.githubusercontent.com/619340/81565850-4def5a80-939a-11ea-9bc9-62c59414027c.png
+.. |first_vdmk3| image:: https://user-images.githubusercontent.com/619340/81568926-c48e5700-939e-11ea-84c0-72a884369054.png
