@@ -23,7 +23,7 @@ We carefully pick points on the unit-circle so that when we connect them via edg
 
 |number_range|
 
-By default this node will generate a standard sequence: ``[0.0, 1.0, 2.0, 3.0.....9.0]``,
+By default this node will generate a standard range: ``[0.0, 1.0, 2.0, 3.0.....9.0]``,
 
 **Seeing the output of the Range Float node**
 
@@ -46,13 +46,13 @@ Set the Number Range mode to ``Step`` and
 
 |num_range_and_stethoscope|
 
-**Multiplying the series by PI**
+**Multiplying the Range by PI**
 
 -  ``Add -> Number -> Scalar Math``  ( add two of these, they can be duplicated)
 
-We know the output of the Float series now, what we will do is multiply the series by a constant PI. This is like doing ``[0.25, 0.75, 1.25, 1.75] * pi``, which is what we wanted from the beginning, namely; ``[0.25 * pi, 0.75 * pi, 1.25 * pi, 1.75 * pi]``. 
+We know the output of the *Number Range* now, what we will do is multiply the range by a constant PI. This is like doing ``[0.25, 0.75, 1.25, 1.75] * pi``, which is what we wanted from the beginning, namely; ``[0.25 * pi, 0.75 * pi, 1.25 * pi, 1.75 * pi]``. 
 
-1) Set one of the Math nodes to the constant ``PI`` 
+1) Set one of the *Scalar Math* nodes to the constant ``PI`` 
 
 2) Switch the other Math node to a Multiplier node by selecting ``Multiplication (*)`` from its dropdowns.
 
