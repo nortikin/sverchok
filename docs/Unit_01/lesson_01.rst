@@ -50,7 +50,13 @@ Type these numbers into the number fields instead of adjusting the slider, it's 
 
 -  ``Add -> Number -> Scalar Math``  ( add two of these, they can be duplicated)
 
-We know the output of the *Number Range* now, what we will do is multiply the range by a constant PI. This is like doing ``[0.25, 0.75, 1.25, 1.75] * pi``, which is what we wanted from the beginning, namely; ``[0.25 * pi, 0.75 * pi, 1.25 * pi, 1.75 * pi]``. 
+We know the output of the *Number Range* now, what we will do is multiply the range by a constant PI. This is like doing::
+
+   [0.25, 0.75, 1.25, 1.75] * pi
+
+which is what we wanted from the beginning, namely;::
+
+   [0.25 * pi, 0.75 * pi, 1.25 * pi, 1.75 * pi]
 
 - Set one of the *Scalar Math* nodes to the constant ``PI`` 
 - Switch the other Math node to a Multiplier node by selecting ``Multiplication (*)`` from its dropdowns.
