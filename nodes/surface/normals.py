@@ -18,7 +18,7 @@ class SvSurfaceNormalsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSurfaceNormalsNode'
     bl_label = 'Surface Frame'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_SURFACE_CURVATURE'
+    sv_icon = 'SV_SURFACE_FRAME'
 
     @throttled
     def update_sockets(self, context):
