@@ -99,7 +99,7 @@ The `Vector In` node takes as input 1 or more numbers per component. Sockets whi
 
 - ``Add -> Viz -> Viewer Draw``
 
-Sverchok draws geometry using the Viewer Nodes. You might have noticed that the list of ``Viz`` nodes is extensive, this is because there are a variety of different ways to represent geometry; either just drawing to the view using openGL or making Blender's ``Object.Meshes`` directly. For now We'll focus on ``Viewer Draw``. Stethoscope is useful for showing the values of any socket, but when we're dealing with final geometric constructs like Vectors often we want to see them in 3D to get a better understanding, ``Viewer Draw`` is our lightweight drawing function.
+Sverchok draws geometry using the Viewer Nodes. You might have noticed that the list of ``Viz`` nodes is extensive, this is because there are a variety of different ways to represent geometry; either just drawing to the view using openGL or making Blender's ``Objects`` directly. For now We'll focus on ``Viewer Draw``. Stethoscope is useful for showing the values of any socket, but when we're dealing with final geometric constructs like Vectors often we want to see them in 3D to get a better understanding, ``Viewer Draw`` is our lightweight drawing function.
 
 Connect the output of ``Vectors In`` into the ``Verts`` on the Viewer Draw node. You should see 4 vertices appear on your ``3d view`` (but don't worry if you don't immediately spot them, by default they will be drawn in white):
 
