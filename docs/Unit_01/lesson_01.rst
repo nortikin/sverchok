@@ -75,7 +75,7 @@ The ``Scalar Math`` node will do the Trigonometry for us. From the dropdown you 
 
 |sincos_img1|
 
-See the outputs of the ``SINCOS, X ``, each element of these new ranges represent a component (x or y) of the set of Vectors we want to make. **Sine** will represent ``Y`` and **Cosine** will be ``X``. 
+See the outputs of the ``SINCOS X``, each element of these new ranges represent a component (x or y) of the set of Vectors we want to make. **Sine** will represent ``Y`` and **Cosine** will be ``X``. 
 
    *Note*: I minimized the stethoschope node for visual readability (click the little triangle), stethoschope has many features that are not not useful to us right now.
 
