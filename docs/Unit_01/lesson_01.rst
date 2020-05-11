@@ -158,6 +158,7 @@ Now hook the ``Edges`` output socket of *Simple Topology* node into the ``Edges`
 **Make a first Polygon**
 
 Using the same Simple Topology Node we will instead pass a polygon to the Viewer Draw, the Viewer Draw is able to infer how to draw edges from the Polygon information. 
+
 - Disconnect the ``Edges`` socket from the ``Viewer Draw`` (you don't have to clear the Edges field)
 - In *Simple Topology* node and fill the Faces field with the indices that describe the Face. We'll go for a shorthand: ``[0,1,2,3]``. 
 - Connect the output of the ``Faces`` socket to the ``Faces`` input on Viewer Draw. You should now see the following:
