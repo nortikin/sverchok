@@ -71,7 +71,7 @@ The result should look something like this, hook up the Stethoscope to see the o
 
 -  ``Add -> Number -> Scalar Math``
 
-The `Scalar Math` node will do the Trigonometry for us. From the dropdown you can pick the ``Sin & Cos`` function. This node will now output the *cos* and *sin* of whatever is routed into it, in this case the range of Floats.
+The ``Scalar Math`` node will do the Trigonometry for us. From the dropdown you can pick the ``Sin & Cos`` function. This node will now output the *cos* and *sin* of whatever is routed into it, in this case the range of Floats.
 
 |sincos_img1|
 
