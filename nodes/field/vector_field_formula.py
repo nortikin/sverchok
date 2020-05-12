@@ -158,7 +158,7 @@ class SvVectorFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
             return out_coordinates(v1, v2, v3)
 
         def cylindrical_in(x, y, z, V):
-            rho, phi, z = to_cylindrical((x, y, z), mode='radians')
+            rho, phi, z = to_cylindrical_np((x, y, z), mode='radians')
             variables.update(dict(rho=rho, phi=phi, z=z, V=V))
             v1 = safe_eval_compiled(compiled1, variables, allowed_names = safe_names_np)
             v2 = safe_eval_compiled(compiled2, variables, allowed_names = safe_names_np)
@@ -172,7 +172,7 @@ class SvVectorFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
             return out_coordinates(v1, v2, v3)
 
         def spherical_in(x, y, z, V):
-            rho, phi, theta = to_spherical((x, y, z), mode='radians')
+            rho, phi, theta = to_spherical_np((x, y, z), mode='radians')
             variables.update(dict(rho=rho, phi=phi, theta=theta, V=V))
             v1 = safe_eval_compiled(compiled1, variables, allowed_names = safe_names_np)
             v2 = safe_eval_compiled(compiled2, variables, allowed_names = safe_names_np)
