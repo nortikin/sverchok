@@ -9,6 +9,11 @@
 import bpy
 from bpy.types import Operator, Macro
 
+node_view_drawing_nodes = {
+    "SvStethoscopeNodeMK2", "SvConsoleNode", "SvWaveformViewer",
+    "SvTextureViewerNodeLite", "SvTextureViewerNode", "SvViewer2D",
+    "SvEasingNode"
+}
 
 class SvNodeTransformFinalize(Operator):
     bl_idname = "node.sv_transform_translate_finalize"
@@ -22,12 +27,17 @@ class SvNodeTransformFinalize(Operator):
         return space.tree_type in sv_tree_types
 
     def execute(self, context):
-        # selected_nodes = [n for n in ...nodes if n.select]
-        if context.active_node and context.active_node.bl_idname == "SvStethoscopeNodeMK2":
-            context.active_node.process_node(context)
-            print("did something!?")
+        nodes = context.space_data.edit_tree.nodes
+        selected_nodes = [n for n in nodes if n.select]
 
-        print("DONE!")
+        count = 0       
+        for node in selected_nodes:
+            node.bl_idname in node_view_drawing_nodes
+            node.process_node(context)
+            count += 1
+
+        node_string = "" if count == 1 else "s"
+        print(f"Done, updated {count} node{node_string}!")
         return {'FINISHED'}
 
 class SvTransformTranslateMacro(Macro):
