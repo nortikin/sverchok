@@ -190,10 +190,6 @@ class SvRangeSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         input_b1 = self.inputs["b1"].sv_get()[0]
         input_b2 = self.inputs["b2"].sv_get()[0]
 
-        input_val = list(map(lambda n: abs(n), input_val))
-        input_b1 = list(map(lambda n: abs(n), input_b1))
-        input_b2 = list(map(lambda n: abs(n), input_b2))
-
         parameters = match_long_repeat([input_val, input_b1, input_b2])
 
         # update the numberr of switches based on number of inputs
