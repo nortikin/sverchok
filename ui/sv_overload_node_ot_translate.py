@@ -32,9 +32,9 @@ class SvNodeTransformFinalize(Operator):
 
         count = 0       
         for node in selected_nodes:
-            node.bl_idname in node_view_drawing_nodes
-            node.process_node(context)
-            count += 1
+            if node.bl_idname in node_view_drawing_nodes:
+                node.process_node(context)
+                count += 1
 
         node_string = "" if count == 1 else "s"
         print(f"Done, updated {count} node{node_string}!")
