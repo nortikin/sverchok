@@ -135,10 +135,10 @@ class SvTemporalViewerOperator(Operator):
 
     @classmethod
     def poll(cls, context):
-
         space = context.space_data
-        tree_type = space.tree_type
-        return space.type == 'NODE_EDITOR' and tree_type in sv_tree_types
+        if not space.type == "NODE_EDITOR":
+            return
+        return space.tree_type in sv_tree_types
 
     def execute(self, context):
 
