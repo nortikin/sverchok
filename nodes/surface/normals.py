@@ -130,9 +130,11 @@ class SvSurfaceNormalsNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         surfaces_s = self.inputs['Surface'].sv_get()
+        surface_level = get_data_nesting_level(surfaces_s, data_types=(SvSurface,))
         surfaces_s = ensure_nesting_level(surfaces_s, 2, data_types=(SvSurface,))
         src_point_s = self.inputs['UVPoints'].sv_get(default=[[]])
         src_point_s = ensure_nesting_level(src_point_s, 4)
+
         src_u_s = self.inputs['U'].sv_get()
         src_u_s = ensure_nesting_level(src_u_s, 3)
         src_v_s = self.inputs['V'].sv_get()
@@ -184,8 +186,12 @@ class SvSurfaceNormalsNode(bpy.types.Node, SverchCustomTreeNode):
             tangent_u_out.append(new_tangent_u)
             tangent_v_out.append(new_tangent_v)
             area_out.append(new_area)
-            du_out.append(new_du)
-            dv_out.append(new_dv)
+            if surface_level == 2:
+                du_out.append(new_du)
+                dv_out.append(new_dv)
+            else:
+                du_out.extend(new_du)
+                dv_out.extend(new_dv)
 
         self.outputs['Normal'].sv_set(normal_out)
         self.outputs['TangentU'].sv_set(tangent_u_out)
