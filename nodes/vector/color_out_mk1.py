@@ -125,7 +125,7 @@ class SvColorsOutNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         elif self.selected_mode == 'HSL':
             transform_func = rgb_to_hsl
 
-        out = [[] for s in self.inputs]
+        out = [[] for s in self.outputs]
         for obj in data:
             if not self.selected_mode == 'RGB':
                 cols = transform_func(array(obj))
