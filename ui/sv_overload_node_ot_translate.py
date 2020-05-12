@@ -22,6 +22,7 @@ class SvNodeTransformFinalize(Operator):
         return space.tree_type in sv_tree_types
 
     def execute(self, context):
+        # selected_nodes = [n for n in ...nodes if n.select]
         if context.active_node and context.active_node.bl_idname == "SvStethoscopeNodeMK2":
             context.active_node.process_node(context)
             print("did something!?")
