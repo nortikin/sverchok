@@ -9,6 +9,9 @@
 import bpy
 from bpy.types import Operator, Macro
 
+from sverchok.utils.sv_node_utils import sv_tree_types
+
+
 node_view_drawing_nodes = {
     "SvStethoscopeNodeMK2", "SvConsoleNode", "SvWaveformViewer",
     "SvTextureViewerNodeLite", "SvTextureViewerNode", "SvViewer2D",
