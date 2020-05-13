@@ -394,8 +394,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             self.set_autosmooth(objs)
             self.set_wireframe_visibility(objs)
 
-            if self.outputs[0].is_linked:
-                self.outputs[0].sv_set(objs)
+            self.outputs[0].sv_set(objs)
 
 
     def set_autosmooth(self, objs):
