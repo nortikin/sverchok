@@ -14,7 +14,7 @@ import sverchok.node_tree as nt
 
 
 class NodeColorizePanel(bpy.types.Panel):
-    bl_idname = "SV_node_colorize_panel"
+    bl_idname = "SV_PT_node_colorize_panel"
     bl_label = "Colorize nodes"
     bl_space_type = "NODE_EDITOR"
     bl_region_type = "UI"

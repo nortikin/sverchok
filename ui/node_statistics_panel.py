@@ -11,7 +11,7 @@ import sverchok.node_tree as nt
 
 
 class NodeSettingsPanel(bpy.types.Panel):
-    bl_idname = "SV_node_statistics_panel"
+    bl_idname = "SV_PT_node_statistics_panel"
     bl_label = "Node statistics"
     bl_space_type = "NODE_EDITOR"
     bl_region_type = "UI"

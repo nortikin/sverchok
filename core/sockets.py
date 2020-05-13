@@ -265,7 +265,6 @@ class SvSocketCommon:
             return source_data
         else:
             policy = self.node.get_implicit_conversions(self.name, implicit_conversions)
-            self.node.debug(f"Trying to convert data for input socket {self.name} by {policy}")
             return policy.convert(self, source_data)
 
 

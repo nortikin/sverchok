@@ -490,7 +490,147 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon, ColorizeTree):
         return draft_nodes
 
 
-class SverchCustomTreeNode:
+class NodeEvents:
+    # Properties and methods related with detection and handling node tree change events
+
+    n_id: StringProperty(default="")
+
+    # statistic
+    updates_total: IntProperty(description="Number of node updates")
+    last_update: StringProperty(description="Time of last update")
+    update_time: IntProperty(description="How much time last update have taken in milliseconds")
+    error: StringProperty(description="Error message of last update if exist")
+
+    @property
+    def node_id(self):
+        if not self.n_id:
+            self.n_id = str(hash(self) ^ hash(time.monotonic()))
+        return self.n_id
+
+    @property
+    def is_active_output(self):
+        # this property should be override by such nodes as viewer, info, manipulation with Blender data nodes
+        # it is need for understanding is it worth to evaluate a node tree
+        # should return False if it is switched off even if a node is output
+        return False
+
+    def update(self):
+        # this signal method is absolutely useless
+        pass
+
+    def sv_update(self):
+        """
+        This method can be overridden in inherited classes.
+        It will be triggered upon any `node tree` editor changes (new/copy/delete links/nodes).
+        Calling of this method is unordered among other calls of the method of other nodes in a tree.
+        """
+        pass
+
+    def init(self, context):
+        """
+        this function is triggered upon node creation,
+        - freezes the node
+        - delegates further initialization information to sv_init
+        - sets node color
+        - unfreezes the node
+        - sets custom defaults (nodes, and sockets)
+
+        """
+        CurrentEvents.add_new_event(event_type=event_types.BlenderEventsTypes.add_node,
+                                    node_tree=self.id_data,
+                                    node=self,
+                                    call_function=self.sv_init,
+                                    call_function_arguments=(context,))
+        if False:  # todo take from preference
+            ng = self.id_data
+
+            ng.freeze()
+            ng.nodes_dict.load_node(self)
+            if hasattr(self, "sv_init"):
+
+                try:
+                    ng.configuring_new_node = True
+                    self.sv_init(context)
+                except Exception as err:
+                    print('nodetree.node.sv_init failure - stare at the error message below')
+                    sys.stderr.write('ERROR: %s\n' % str(err))
+
+            ng.configuring_new_node = False
+            self.set_color()
+            ng.unfreeze()
+
+            if not ng.limited_init:
+                # print('applying default for', self.name)
+                set_defaults_if_defined(self)
+
+    def sv_init(self, context):
+        self.create_sockets()
+
+    def copy(self, original):
+        """
+        This method is not supposed to be overriden in specific nodes.
+        Override sv_copy() instead.
+        """
+        CurrentEvents.add_new_event(event_type=event_types.BlenderEventsTypes.copy_node,
+                                    node_tree=self.id_data,
+                                    node=self,
+                                    call_function=self.sv_copy,
+                                    call_function_arguments=(original,))
+        if False:  # todo get this from preference
+            settings = get_original_node_color(self.id_data, original.name)
+            if settings is not None:
+                self.use_custom_color, self.color = settings
+            self.sv_copy(original)
+            self.n_id = ""
+            self.id_data.nodes_dict.load_node(self)
+
+    def sv_copy(self, original):
+        """
+        Override this method to do anything node-specific
+        at the moment of node being copied.
+        """
+        pass
+
+    def free(self):
+        """
+        This method is not supposed to be overriden in specific nodes.
+        Override sv_free() instead
+        """
+        CurrentEvents.add_new_event(event_type=event_types.BlenderEventsTypes.free_node,
+                                    node_tree=self.id_data,
+                                    node=self,
+                                    call_function=self.sv_free)
+        if False:  # todo get this from preference
+            self.sv_free()
+
+            for s in self.outputs:
+                s.sv_forget()
+
+            node_tree = self.id_data
+            node_tree.nodes_dict.forget_node(self)
+
+            if hasattr(self, "has_3dview_props"):
+                print("about to remove this node's props from Sv3DProps")
+                try:
+                    bpy.ops.node.sv_remove_3dviewpropitem(node_name=self.name, tree_name=self.id_data.name)
+                except:
+                    print(f'failed to remove {self.name} from tree={self.id_data.name}')
+
+    def sv_free(self):
+        """
+        Override this method to do anything node-specific upon node removal
+
+        """
+        pass
+
+    def insert_link(self, link):
+        CurrentEvents.add_new_event(event_type=event_types.BlenderEventsTypes.add_link_to_node,
+                                    node_tree=self.id_data,
+                                    node=self,
+                                    link=link)
+
+
+class SverchCustomTreeNode(NodeEvents):
 
     # A cache for get_docstring() method
     _docstring = None
@@ -504,47 +644,14 @@ class SverchCustomTreeNode:
     # E.g., draft_properties_mapping = dict(count = 'count_draft').
     draft_properties_mapping = dict()
 
-    n_id : StringProperty(default="")
-
-    # statistic
-    updates_total: IntProperty(description="Number of node updates")
-    last_update: StringProperty(description="Time of last update")
-    update_time: IntProperty(description="How much time last update have taken in milliseconds")
-    error: StringProperty(description="Error message of last update if exist")
-    
-    def update(self):
-        # this signal method is absolutely useless
-        pass
-
-    def sv_update(self):
-        """
-        This method can be overridden in inherited classes.
-        It will be triggered upon any `node tree` editor changes (new/copy/delete links/nodes).
-        Calling of this method is unordered among other calls of the method of other nodes in a tree.
-        """
-        pass
-
-    def insert_link(self, link):
-        CurrentEvents.add_new_event(event_type=event_types.BlenderEventsTypes.add_link_to_node,
-                                    node_tree=self.id_data,
-                                    node=self,
-                                    link=link)
-
     @classmethod
     def poll(cls, ntree):
         return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType']
 
     @property
-    def node_id(self):
-        if not self.n_id:
-            self.n_id = str(hash(self) ^ hash(time.monotonic()))
-        return self.n_id
-
-    @property
     def absolute_location(self):
         """ does not return a vactor, it returns a:  tuple(x, y) """
         return recursive_framed_location_finder(self, self.location[:])
-
 
     def ensure_enums_have_no_space(self, enums=None):
         """
@@ -804,46 +911,6 @@ class SverchCustomTreeNode:
         """
         pass
 
-    def sv_init(self, context):
-        self.create_sockets()
-
-    def init(self, context):
-        """
-        this function is triggered upon node creation,
-        - freezes the node
-        - delegates further initialization information to sv_init
-        - sets node color
-        - unfreezes the node
-        - sets custom defaults (nodes, and sockets)
-
-        """
-        CurrentEvents.add_new_event(event_type=event_types.BlenderEventsTypes.add_node,
-                                    node_tree=self.id_data,
-                                    node=self,
-                                    call_function=self.sv_init,
-                                    call_function_arguments=(context, ))
-        if False:  # todo take from preference
-            ng = self.id_data
-
-            ng.freeze()
-            ng.nodes_dict.load_node(self)
-            if hasattr(self, "sv_init"):
-
-                try:
-                    ng.configuring_new_node = True
-                    self.sv_init(context)
-                except Exception as err:
-                    print('nodetree.node.sv_init failure - stare at the error message below')
-                    sys.stderr.write('ERROR: %s\n' % str(err))
-
-            ng.configuring_new_node = False
-            self.set_color()
-            ng.unfreeze()
-
-            if not ng.limited_init:
-                # print('applying default for', self.name)
-                set_defaults_if_defined(self)
-
     def process_node(self, context):
         '''
         Doesn't work as intended, inherited functions can't be used for bpy.props
@@ -869,63 +936,6 @@ class SverchCustomTreeNode:
                 instance.process_node(context)
         else:
             pass
-
-    def copy(self, original):
-        """
-        This method is not supposed to be overriden in specific nodes.
-        Override sv_copy() instead.
-        """
-        CurrentEvents.add_new_event(event_type=event_types.BlenderEventsTypes.copy_node,
-                                    node_tree=self.id_data,
-                                    node=self,
-                                    call_function=self.sv_copy,
-                                    call_function_arguments=(original, ))
-        if False:  # todo get this from preference
-            settings = get_original_node_color(self.id_data, original.name)
-            if settings is not None:
-                self.use_custom_color, self.color = settings
-            self.sv_copy(original)
-            self.n_id = ""
-            self.id_data.nodes_dict.load_node(self)
-
-    def sv_copy(self, original):
-        """
-        Override this method to do anything node-specific
-        at the moment of node being copied.
-        """
-        pass
-        
-    def free(self):
-        """
-        This method is not supposed to be overriden in specific nodes.
-        Override sv_free() instead
-        """
-        CurrentEvents.add_new_event(event_type=event_types.BlenderEventsTypes.free_node,
-                                    node_tree=self.id_data,
-                                    node=self,
-                                    call_function=self.sv_free)
-        if False:  # todo get this from preference
-            self.sv_free()
-
-            for s in self.outputs:
-                s.sv_forget()
-
-            node_tree = self.id_data
-            node_tree.nodes_dict.forget_node(self)
-
-            if hasattr(self, "has_3dview_props"):
-                print("about to remove this node's props from Sv3DProps")
-                try:
-                    bpy.ops.node.sv_remove_3dviewpropitem(node_name=self.name, tree_name=self.id_data.name)
-                except:
-                    print(f'failed to remove {self.name} from tree={self.id_data.name}')
-
-    def sv_free(self):
-        """
-        Override this method to do anything node-specific upon node removal
-
-        """
-        pass
 
     def wrapper_tracked_ui_draw_op(self, layout_element, operator_idname, **keywords):
         """
