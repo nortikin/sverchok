@@ -99,7 +99,7 @@ def load_old(ng):
                     mark_old(node)
                 not_reged_nodes = list(n for n in ng.nodes if not n.is_registered_node_type())
                 node_count = len(not_reged_nodes)
-                print("Loaded {}. {} nodes are left unregisted.".format(bl_id, node_count))
+                print(f"Loaded {bl_id}. {node_count} nodes are left unregistered.")
                 if node_count == 0:
                     return
             else: # didn't help remove

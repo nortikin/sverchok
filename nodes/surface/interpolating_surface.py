@@ -61,7 +61,6 @@ class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curves")
         self.outputs.new('SvSurfaceSocket', "Surface")
-        self.update_sockets(context)
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):

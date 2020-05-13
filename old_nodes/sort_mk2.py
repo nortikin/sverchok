@@ -30,6 +30,8 @@ class ListSortNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_LIST_SORT'
 
+    replacement_nodes = [('SvListSortNode', None, None)]
+
     level: IntProperty(name='level_to_count', default=2, min=0, update=updateNode)
     typ: StringProperty(name='typ', default='')
     newsock: BoolProperty(name='newsock', default=False)

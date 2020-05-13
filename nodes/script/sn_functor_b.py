@@ -6,6 +6,7 @@
 # License-Filename: LICENSE
 
 import sys
+import json
 import inspect
 import imp
 import types
@@ -14,13 +15,14 @@ from importlib import reload
 
 import bpy
 from mathutils import Matrix, Vector
-from bpy.props import FloatProperty, IntProperty, StringProperty, BoolProperty
+from bpy.props import FloatProperty, IntProperty, StringProperty, BoolProperty, PointerProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode, node_id
 from sverchok.utils.sv_operator_mixins import SvGenericCallbackWithParams
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.sv_IO_pointer_helpers import pack_pointer_property_name, unpack_pointer_property_name
 
 functions = "draw_buttons", "process", "functor_init"
 sn_callback = "node.svfunctor_callback_b"
@@ -66,13 +68,22 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
     bl_icon = 'SYSTEM'
 
     def wrapped_update(self, context):
-        # self.script_name = self.script_name.strip()
-        print(f'set self.script_name to:|{self.script_name}|')
+        if self.script_pointer:
+            self.info(f'set self.script_name to:|{self.script_pointer.name}|')
 
-    script_name: StringProperty(update=wrapped_update)
+    # depreciated
+    script_name: StringProperty(name="script name")
+
+
+    script_pointer: PointerProperty(
+        name="Script", poll=lambda self, object: True,
+        type=bpy.types.Text, update=updateNode)
+
     script_str: StringProperty()
     loaded: BoolProperty()
     node_dict = {}
+
+    properties_to_skip_iojson = ["script_pointer", "script_str", "script_name"]
 
     def handle_execution_nid(self, func_name, msg, args):
         ND = self.node_dict.get(hash(self))
@@ -109,7 +120,7 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
         self.draw_animatable_buttons(layout, icon_only=True)
         if not self.loaded:
             row = layout.row()
-            row.prop_search(self, 'script_name', bpy.data, 'texts', text='')
+            row.prop_search(self, 'script_pointer', bpy.data, 'texts', text='')
             row.operator(sn_callback, text='', icon='PLUGIN').fn_name = 'load'
         
         row = layout.row()
@@ -139,24 +150,51 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
     ###  processors :)
 
     def process(self):
-        if not all([self.script_name, self.script_str]):
+
+        # one of these must be set, script_name is legacy
+        if not any([self.script_pointer, self.script_name]):
             return
+        if not self.script_str:
+            return
+
         if self.loaded and not self.node_dict.get(hash(self)):
             self.node_dict[hash(self)] = self.get_functions()
             self.loaded = True
         self.process_script()
 
-    def get_functions(self):
-        # exec(f'import {script}')
-
-        name = self.script_name.strip()  # strip is needed because propsearch.
+    def get_text_datablock(self):
+        """
+        store the datablock as a script_str for local introspection.
+        """
         try:
-            self.script_str = bpy.data.texts[name].as_string()
-            module = types.ModuleType(name)   # might work!)
-            # module = imp.new_module(name)
-            exec(self.script_str, module.__dict__)
+            if self.script_pointer:
+                self.script_str = self.script_pointer.as_string()
+                text_datablock = self.script_pointer
+            else:
+                # recover from old .blend file in new Blender
+                text_datablock = self.get_bpy_data_from_name(self.script_name, bpy.data.texts)
+                if text_datablock:
+                    self.script_str = text_datablock.as_string()
+                    self.sv_setattr_with_throttle("script_pointer", text_datablock)
+                else:
+                    return None
+
         except Exception as err:
-            print('wtf man', err)
+            self.error(f"get_text_datablock failed: attempting fuzzy search: {err}")
+
+        return text_datablock
+
+
+    def get_functions(self):
+
+        text_datablock = self.get_text_datablock()
+        
+        try:
+            module = types.ModuleType(text_datablock.name)
+            exec(self.script_str, module.__dict__)
+
+        except Exception as err:
+            self.error('wtf man', err)
 
         dict_functions = {named: getattr(module, named) for named in functions if hasattr(module, named)}
         dict_functions['all_members'] = module.__dict__
@@ -164,15 +202,16 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
 
     def load(self, context):
 
-        print('time to load', self.script_name)
+        print('time to load', self.script_pointer)
         self.clear_sockets()
-        self.script_str = bpy.data.texts[self.script_name.strip()].as_string()
+        self.get_text_datablock()
+
         self.node_dict[hash(self)] = self.get_functions()
         self.init_socket(context)
         self.loaded = True
 
     def reset(self, context):
-        print('reset')
+        self.info('reset')
         self.loaded = False
         self.script_name = ""
         self.script_str = ""
@@ -184,10 +223,9 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
         self.load(bpy.context)
 
     def draw_label(self):
-        if self.script_name:
-            return 'SNF: ' + self.script_name
-        else:
-            return self.bl_label
+        if self.script_pointer:
+            return 'SNF: ' + self.script_pointer.name
+        return self.bl_label
 
     def handle_reload(self, context):
         """
@@ -196,7 +234,7 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
           - perform reload / refresh
           - try to set the connections
         """
-        print('handling reload')
+        self.info('handling reload')
         node = self
         nodes = self.id_data.nodes
 
@@ -224,9 +262,35 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
             except Exception as err:
                 str_from = f'nodes[{link.from_node}].outputs[{link.from_socket}]'
                 str_to = f'nodes[{link.to_node}].inputs[{link.to_socket}]'
-                print(f'failed: {str_from} -> {str_to}')
-                print(err)
+                self.exception(f'failed: {str_from} -> {str_to}')
+                self.exception(err)
 
+
+    def storage_get_data(self, node_ref):
+        pack_pointer_property_name(self.script_pointer, node_ref, "textfile_name")
+        local_storage = {'lines': []}
+        for line in self.script_pointer.lines:
+            local_storage['lines'].append(line.body)
+        node_ref['string_storage'] = json.dumps(local_storage)
+
+    def storage_set_data(self, node_ref):
+
+        # maybe this file/blend already has this textblock, we could end early
+        self.script_pointer = unpack_pointer_property_name(bpy.data.texts, node_ref, "textfile_name")
+        if self.script_pointer:
+            self.load(bpy.context)
+            return
+        
+        # seems we need to create this text block from scratch
+        with self.sv_throttle_tree_update():
+            desired_name = node_ref.get("textfile_name")
+            self.script_pointer = bpy.data.texts.new(desired_name)
+            strings_json = node_ref['string_storage']
+            lines_list = json.loads(strings_json)['lines']
+            lines_str = "\n".join(lines_list)
+            self.script_pointer.from_string(lines_str)
+            self.script_str = lines_str
+            self.load(bpy.context)
 
 
 classes = [SvSNCallbackFunctorB, SvSNFunctorB]

@@ -1,0 +1,25 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "Curve Formula": {
+      "bl_idname": "SvExCurveFormulaNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        142.0477752685547,
+        116.76781463623047
+      ],
+      "params": {
+        "formula1": "A*t*cos(t)",
+        "formula2": "A*t*sin(t)",
+        "formula3": "0",
+        "t_max": 18.84955596923828
+      },
+      "width": 140.0
+    }
+  },
+  "update_lists": []
+}

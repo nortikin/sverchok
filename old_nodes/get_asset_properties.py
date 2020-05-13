@@ -22,9 +22,6 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import (updateNode, no_space, enum_item as e)
 
-# class SvGenericCallbackWithParams() mixin  <- refresh
-
-
 def frame_from_available(idx, layer):
     keys = {}
     for frame in layer.frames:

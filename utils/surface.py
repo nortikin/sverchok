@@ -113,6 +113,9 @@ class SurfaceCurvatureCalculator(object):
         c1 = (-B - np.sqrt(D))/(2*A)
         c2 = (-B + np.sqrt(D))/(2*A)
 
+        c1[np.isnan(c1)] = 0
+        c2[np.isnan(c2)] = 0
+
         c1mask = (c1 < c2)
         c2mask = np.logical_not(c1mask)
 
@@ -240,6 +243,63 @@ class SurfaceCurvatureCalculator(object):
             data.mean = self.mean()
         return data
 
+class SurfaceDerivativesData(object):
+    def __init__(self, points, du, dv):
+        self.points = points
+        self.du = du
+        self.dv = dv
+        self._normals = None
+        self._normals_len = None
+        self._unit_normals = None
+        self._unit_du = None
+        self._unit_dv = None
+        self._du_len = self._dv_len = None
+
+    def normals(self):
+        if self._normals is None:
+            self._normals = np.cross(self.du, self.dv)
+        return self._normals
+
+    def normals_len(self):
+        if self._normals_len is None:
+            normals = self.normals()
+            self._normals_len = np.linalg.norm(normals, axis=1)[np.newaxis].T
+        return self._normals_len
+
+    def unit_normals(self):
+        if self._unit_normals is None:
+            normals = self.normals()
+            norm = self.normals_len()
+            self._unit_normals = normals / norm
+        return self._unit_normals
+
+    def tangent_lens(self):
+        if self._du_len is None:
+            self._du_len = np.linalg.norm(self.du, axis=1, keepdims=True)
+            self._dv_len = np.linalg.norm(self.dv, axis=1, keepdims=True)
+        return self._du_len, self._dv_len
+
+    def unit_tangents(self):
+        if self._unit_du is None:
+            du_norm, dv_norm = self.tangent_lens()
+            self._unit_du = self.du / du_norm
+            self._unit_dv = self.dv / dv_norm
+        return self._unit_du, self._unit_dv
+
+    def matrices(self, as_mathutils = False):
+        normals = self.unit_normals()
+        du, dv = self.unit_tangents()
+        matrices_np = np.dstack((du, dv, normals))
+        matrices_np = np.transpose(matrices_np, axes=(0,2,1))
+        matrices_np = np.linalg.inv(matrices_np)
+        if as_mathutils:
+            matrices = [Matrix(m.tolist()).to_4x4() for m in matrices_np]
+            for m, p in zip(matrices, self.points):
+                m.translation = Vector(p)
+            return matrices
+        else:
+            return matrices_np
+
 class SvSurface(object):
     def __repr__(self):
         if hasattr(self, '__description__'):
@@ -280,6 +340,18 @@ class SvSurface(object):
         normal = normal / norm
         #self.info("Normals: %s", normal)
         return normal
+
+    def derivatives_data_array(self, us, vs):
+        if hasattr(self, 'normal_delta'):
+            h = self.normal_delta
+        else:
+            h = 0.0001
+        surf_vertices = self.evaluate_array(us, vs)
+        u_plus = self.evaluate_array(us + h, vs)
+        v_plus = self.evaluate_array(us, vs + h)
+        du = (u_plus - surf_vertices) / h
+        dv = (v_plus - surf_vertices) / h
+        return SurfaceDerivativesData(surf_vertices, du, dv)
 
     def curvature_calculator(self, us, vs, order=True):
         if hasattr(self, 'normal_delta'):
@@ -326,8 +398,8 @@ class SvSurface(object):
         calc = self.curvature_calculator(us, vs)
         return calc.mean()
 
-    def principal_curvature_values_array(self, us, vs):
-        calc = self.curvature_calculator(us, vs)
+    def principal_curvature_values_array(self, us, vs, order=True):
+        calc = self.curvature_calculator(us, vs, order=order)
         return calc.values()
 
     def principal_curvatures_array(self, us, vs):
@@ -534,10 +606,10 @@ class SvPlane(SvSurface):
         return self._normal
 
     def normal_array(self, us, vs):
-        normal = self.normal
+        normal = self._normal[np.newaxis].T
         n = np.linalg.norm(normal)
         normal = normal / n
-        return np.tile(normal, len(us))
+        return np.tile(normal, len(us)).T
 
 class SvEquirectSphere(SvSurface):
     __description__ = "Equirectangular Sphere"
@@ -800,8 +872,9 @@ class SvDefaultSphere(SvSurface):
 class SvLambdaSurface(SvSurface):
     __description__ = "Formula"
 
-    def __init__(self, function):
+    def __init__(self, function, function_numpy = None):
         self.function = function
+        self.function_numpy = function_numpy
         self.u_bounds = (0.0, 1.0)
         self.v_bounds = (0.0, 1.0)
         self.normal_delta = 0.001
@@ -830,7 +903,10 @@ class SvLambdaSurface(SvSurface):
         return self.function(u, v)
 
     def evaluate_array(self, us, vs):
-        return np.vectorize(self.function, signature='(),()->(3)')(us, vs)
+        if self.function_numpy is None:
+            return np.vectorize(self.function, signature='(),()->(3)')(us, vs)
+        else:
+            return self.function_numpy(us, vs)
 
     def normal(self, u, v):
         return self.normal_array(np.array([u]), np.array([v]))[0]

@@ -29,7 +29,7 @@ import ast
 import sverchok
 
 import bpy
-from bpy.props import BoolProperty, EnumProperty, StringProperty, IntProperty
+from bpy.props import BoolProperty, EnumProperty, StringProperty, IntProperty, PointerProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
@@ -58,7 +58,7 @@ class SvTextInFileImporterOp(bpy.types.Operator):
     def execute(self, context):
         n = self.node
         t = bpy.data.texts.load(self.filepath)
-        n.text = t.name
+        n.file_pointer = t
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -99,6 +99,15 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO, S
     list_data = {}
     json_data = {}
 
+    def pointer_update(self, context):
+        if self.file_pointer:
+            self.text = self.file_pointer.name
+        else:
+            self.text = ""
+        # need to do other stuff?
+
+    properties_to_skip_iojson = ['file_pointer']    
+
     # general settings
     n_id: StringProperty(default='')
     force_input: BoolProperty()
@@ -107,7 +116,8 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO, S
 
     # name of loaded text, to support reloading
     text: StringProperty(default="")
-    current_text: StringProperty(default="")
+    current_text: StringProperty(default="") # <----- what does this do again?
+    file_pointer: bpy.props.PointerProperty(type=bpy.types.Text, poll=lambda s, o: True, update=pointer_update)
 
     # external file
     file: StringProperty(subtype='FILE_PATH')
@@ -192,7 +202,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO, S
 
         else:
             row = col.row(align=True)
-            row.prop_search(self, 'text', bpy.data, 'texts', text="Read")
+            row.prop_search(self, 'file_pointer', bpy.data, 'texts', text="Read")
             row.operator("node.sv_textin_file_importer", text='', icon='EMPTY_SINGLE_ARROW')
 
             row = col.row(align=True)
@@ -558,6 +568,12 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO, S
                 out = json_data[item][1]
                 self.outputs[item].sv_set(out)
 
+    def set_pointer_from_filename(self):
+        """ this function upgrades older versions of ProfileMK3 to the version that has self.file_pointer """
+        if hasattr(self, "file_pointer") and not self.file_pointer:
+            text = self.get_bpy_data_from_name(self.text, bpy.data.texts)
+            if text:
+                self.file_pointer = text
 
 
 def register():

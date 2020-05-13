@@ -7,10 +7,15 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, St
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match_long_repeat
 from sverchok.utils.modules.eval_formula import get_variables, sv_compile, safe_eval_compiled
+from sverchok.utils.script_importhelper import safe_names_np
 from sverchok.utils.logging import info, exception
-from sverchok.utils.math import from_cylindrical, from_spherical, to_cylindrical, to_spherical
-
-from sverchok.utils.math import coordinate_modes
+from sverchok.utils.math import (
+        from_cylindrical, from_spherical,
+        from_cylindrical_np, from_spherical_np,
+        to_cylindrical, to_spherical,
+        to_cylindrical_np, to_spherical_np,
+        coordinate_modes
+    )
 from sverchok.utils.field.vector import SvVectorFieldLambda
 
 class SvVectorFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
@@ -54,6 +59,12 @@ class SvVectorFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
         default = 'XYZ',
         update = updateNode)
 
+    use_numpy_function : BoolProperty(
+        name = "Vectorize",
+        description = "Vectorize formula computations; disable this if you have troubles with some functions",
+        default = True,
+        update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvVectorFieldSocket', "Field")
         self.outputs.new('SvVectorFieldSocket', "Field")
@@ -66,6 +77,10 @@ class SvVectorFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "formula3", text="")
         layout.label(text="Output:")
         layout.prop(self, "output_mode", expand=True)
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'use_numpy_function')
 
     def make_function(self, variables):
         compiled1 = sv_compile(self.formula1)
@@ -103,6 +118,71 @@ class SvVectorFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
             v1 = safe_eval_compiled(compiled1, variables)
             v2 = safe_eval_compiled(compiled2, variables)
             v3 = safe_eval_compiled(compiled3, variables)
+            return out_coordinates(v1, v2, v3)
+
+        if self.input_mode == 'XYZ':
+            function = carthesian_in
+        elif self.input_mode == 'CYL':
+            function = cylindrical_in
+        else: # SPH
+            function = spherical_in
+
+        return function
+
+    def make_function_vector(self, variables):
+        compiled1 = sv_compile(self.formula1)
+        compiled2 = sv_compile(self.formula2)
+        compiled3 = sv_compile(self.formula3)
+
+        if self.output_mode == 'XYZ':
+            def out_coordinates(x, y, z):
+                return x, y, z
+        elif self.output_mode == 'CYL':
+            def out_coordinates(rho, phi, z):
+                return from_cylindrical_np(rho, phi, z, mode='radians')
+        else: # SPH
+            def out_coordinates(rho, phi, theta):
+                return from_spherical_np(rho, phi, theta, mode='radians')
+
+        def carthesian_in(x, y, z, V):
+            variables.update(dict(x=x, y=y, z=z, V=V))
+            v1 = safe_eval_compiled(compiled1, variables, allowed_names = safe_names_np)
+            v2 = safe_eval_compiled(compiled2, variables, allowed_names = safe_names_np)
+            v3 = safe_eval_compiled(compiled3, variables, allowed_names = safe_names_np)
+            if not isinstance(v1, np.ndarray):
+                v1 = np.full_like(x, v1)
+            if not isinstance(v2, np.ndarray):
+                v2 = np.full_like(x, v2)
+            if not isinstance(v3, np.ndarray):
+                v3 = np.full_like(x, v3)
+            return out_coordinates(v1, v2, v3)
+
+        def cylindrical_in(x, y, z, V):
+            rho, phi, z = to_cylindrical_np((x, y, z), mode='radians')
+            variables.update(dict(rho=rho, phi=phi, z=z, V=V))
+            v1 = safe_eval_compiled(compiled1, variables, allowed_names = safe_names_np)
+            v2 = safe_eval_compiled(compiled2, variables, allowed_names = safe_names_np)
+            v3 = safe_eval_compiled(compiled3, variables, allowed_names = safe_names_np)
+            if not isinstance(v1, np.ndarray):
+                v1 = np.full_like(x, v1)
+            if not isinstance(v2, np.ndarray):
+                v2 = np.full_like(x, v2)
+            if not isinstance(v3, np.ndarray):
+                v3 = np.full_like(x, v3)
+            return out_coordinates(v1, v2, v3)
+
+        def spherical_in(x, y, z, V):
+            rho, phi, theta = to_spherical_np((x, y, z), mode='radians')
+            variables.update(dict(rho=rho, phi=phi, theta=theta, V=V))
+            v1 = safe_eval_compiled(compiled1, variables, allowed_names = safe_names_np)
+            v2 = safe_eval_compiled(compiled2, variables, allowed_names = safe_names_np)
+            v3 = safe_eval_compiled(compiled3, variables, allowed_names = safe_names_np)
+            if not isinstance(v1, np.ndarray):
+                v1 = np.full_like(x, v1)
+            if not isinstance(v2, np.ndarray):
+                v2 = np.full_like(x, v2)
+            if not isinstance(v3, np.ndarray):
+                v3 = np.full_like(x, v3)
             return out_coordinates(v1, v2, v3)
 
         if self.input_mode == 'XYZ':
@@ -177,8 +257,12 @@ class SvVectorFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
                 var_values_s = [[]]
             for var_values in var_values_s:
                 variables = dict(zip(var_names, var_values))
-                function = self.make_function(variables.copy())
-                new_field = SvVectorFieldLambda(function, variables, field_in)
+                function = self.make_function(variables)
+                if self.use_numpy_function:
+                    function_vector = self.make_function_vector(variables)
+                else:
+                    function_vector = None
+                new_field = SvVectorFieldLambda(function, variables, field_in, function_vector)
                 fields_out.append(new_field)
 
         self.outputs['Field'].sv_set(fields_out)

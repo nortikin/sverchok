@@ -18,6 +18,7 @@
 
 import inspect
 from math import *
+import numpy as np
 
 from mathutils import Vector, Matrix
 
@@ -87,4 +88,35 @@ safe_names['pi'] = pi
 # Blender modules
 # Consider this not safe for now
 # safe_names["bpy"] = bpy
+
+def _add_numpy_exact(r, names):
+    for name in names:
+        r[name] = getattr(np, name)
+
+safe_names_np = safe_names.copy()
+_add_numpy_exact(safe_names_np, [
+        'ceil', 'copysign', 'cos', 'sin',
+        'cosh', 'sinh', 'degrees', 'radians',
+        'exp', 'expm1', 'fabs', 'floor', 'fmod',
+        'frexp', 'hypot', 'isfinite', 'isinf',
+        'isnan', 'ldexp', 'log', 'log10', 'log1p', 'log2',
+        'modf', 'sqrt', 'tan', 'tanh', 'trunc'
+    ])
+
+def _numpy_wrapper(f):
+    return lambda a: np.array([f(x) for x in a])
+
+safe_names_np.update({
+        'acos': np.arccos,
+        'acosh': np.arccosh,
+        'asin': np.arcsin,
+        'asinh': np.arcsinh,
+        'atan2': np.arctan2,
+        'atanh': np.arctanh,
+        'erf': _numpy_wrapper(erf),
+        'erfc': _numpy_wrapper(erfc),
+        'gamma': _numpy_wrapper(gamma),
+        'lgamma': _numpy_wrapper(lgamma),
+        'factorial': _numpy_wrapper(factorial)
+    })
 

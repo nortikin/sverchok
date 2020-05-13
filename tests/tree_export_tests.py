@@ -1,7 +1,9 @@
 
 import unittest
 import json
+import traceback
 
+from sverchok.core import upgrade_nodes
 from sverchok.utils.testing import *
 from sverchok.utils.sv_IO_panel_tools import create_dict_of_tree
 
@@ -20,12 +22,20 @@ class ProfileExportTest(ReferenceTreeTestCase):
     def setUp(self):
         # We have to load text block as well
         self.link_text_block("Profile.txt")
+        
+
         self.maxDiff = None
         super().setUp()
 
     def test_profile_export(self):
+
+        try:
+            upgrade_nodes.upgrade_nodes(self.tree)
+        except:
+            traceback.print_exc()
+
         export_result = create_dict_of_tree(self.tree)
-        #self.store_reference_json("profile.json", export_result)
+        # self.store_reference_json("profile.json", export_result)
         self.assert_json_equals_file(export_result, "profile.json")
 
 class MeshExprExportTest(ReferenceTreeTestCase):

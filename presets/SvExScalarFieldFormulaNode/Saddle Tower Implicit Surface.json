@@ -1,0 +1,24 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "Scalar Field Formula": {
+      "bl_idname": "SvExScalarFieldFormulaNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -123.76757049560547,
+        -22.59556770324707
+      ],
+      "params": {
+        "formula": "sin(z) - sinh(x)*sinh(y)",
+        "input_mode": "XYZ",
+        "use_numpy_function": true
+      },
+      "width": 394.4968566894531
+    }
+  },
+  "update_lists": []
+}

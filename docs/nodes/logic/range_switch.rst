@@ -10,7 +10,7 @@ This node set a switch state to ON/OFF based on a driving value relative to a gi
 Inputs
 ------
 
-All inputs will accept single values.
+All inputs will accept single or multiple values.
 
 - **Value**
 - **Boundary1** [1]
@@ -27,22 +27,22 @@ The **Mode** parameter allows to select one of the three switch modes: **Inside 
 
 - For **Inside ON** mode the switch is ON when the value is inside the boundary range and OFF otherwise.
 - For **Inside OFF** mode the switch is OFF when the value is inside the boundary range and ON otherwise.
-- For **Pass Through** mode the switch will toggle betwen OFF/ON (or ON/OFF) when the value crossess the range from one side to the other.
+- For **Pass Through** mode the switch will toggle betwen OFF/ON (or ON/OFF) when the value crosses the range from one side to the other.
 
-    (-) ----[0]---outside---[b1]---inside---[b2]---outside ---> (+)
+    [0]-- outside -->[b1]<-- inside -->[b2]<-- outside --> (+)
 
     INSIDE ON mode:
 
-    OFF      |b1|    ON     |b2|    OFF     # inside ON,  outside OFF
+    OFF ---> |b1| <-- ON --> |b2| <--- OFF   # inside ON,  outside OFF
 
     INSIDE OFF mode:
 
-    ON       |b1|    OFF    |b2|    ON      # inside OFF, outside ON
+    ON  ---> |b1| <-- OFF --> |b2| <--- ON   # inside OFF, outside ON
 
     PASS THROUGH mode:
 
-    ON  ->   |b1|  - ON ->  |b2| -> OFF     # pass through switches state
-    ON  <-   |b1| <- OFF -  |b2| <- OFF     #
+    ON  ---> |b1| -- ON --> |b2| ---> OFF    # passing through range switches state
+    ON  <--- |b1| <- OFF -- |b2| <--- OFF    #
 
 +------------------+---------------+--------------+----------------------------------+
 | Param            | Type          | Default      | Description                      |
@@ -73,9 +73,9 @@ This output is the current state of the switch. (ON = True, OFF = False)
 **Zone**
 This output is the number of the zone (1,2,3) the driving value is in relative to the boundary values.
 
-Zone 1 = value < min(b1,b2)
-Zone 2 = min(b1,b2) < value < max(b1, b2)
-Zone 3 = max(b1,b2) < value
+Zone 1 (BELOW)  for value < min(b1,b2)
+Zone 2 (INSIDE) for min(b1,b2) <= value <= max(b1,b2)
+Zone 3 (ABOVE)  for max(b1,b2) < value
 
 
 Example of usage

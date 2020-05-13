@@ -35,7 +35,6 @@ def get_output_socket_id(socket):
     else:
         return socket.socket_id, socket.node.node_id
 
-
 def get_new_linked_nodes(new_sv_links, before_sv_links, before_output_sockets):
     affected_nodes = []
     for link in new_sv_links:

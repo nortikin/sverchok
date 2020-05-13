@@ -164,9 +164,6 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
         col = layout.column(align=True)
-        row = col.row(align=True)
-        # row.prop_search(self, 'groupname', bpy.data, 'groups', text='', icon='HAND')
-
         row = col.row()
         op_text = "Get selection"  # fallback
 

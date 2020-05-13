@@ -14,6 +14,6 @@ List Struct
    shuffle
    slice
    slice_lite
-   sort_mk2
+   sort
    split
    start_end

@@ -1,20 +1,11 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+# upgraded to pointerproperty
 
 import ast
 from math import *
@@ -22,13 +13,14 @@ from collections import defaultdict
 import numpy as np
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorProperty, IntProperty
+from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorProperty, IntProperty, PointerProperty
 from mathutils import Vector
 import json
 import io
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
+from sverchok.utils.sv_node_utils import sync_pointer_and_stored_name
 from sverchok.data_structure import fullList, updateNode, dataCorrect, match_long_repeat
 from sverchok.utils.script_importhelper import safe_names
 from sverchok.utils.logging import exception, info
@@ -276,11 +268,31 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MESH_EXPRESSION'
 
-    def on_update(self, context):
+    def captured_updateNode(self, context):
+        if not self.updating_name_from_pointer:
+            text_datablock = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
+            if text_datablock:
+                self.font_pointer = text_datablock
+                self.adjust_sockets()
+                updateNode(self, context)
+
+    def pointer_update(self, context):
+        self.updating_name_from_pointer = True
+
+        try:
+            self.filename = self.file_pointer.name if self.file_pointer else ""
+        except Exception as err:
+            self.info(err)
+
+        self.updating_name_from_pointer = False
         self.adjust_sockets()
         updateNode(self, context)
 
-    filename: StringProperty(default="", update=on_update)
+    properties_to_skip_iojson = ['file_pointer', 'updating_name_from_pointer']
+    updating_name_from_pointer: BoolProperty(name="updating name")
+    filename: StringProperty(default="", update=captured_updateNode)
+    file_pointer: PointerProperty(type=bpy.types.Text, poll=lambda s, o: True, update=pointer_update)
+
     precision: IntProperty(name = "Precision",
                     description = "Number of decimal places used for coordinates when generating JSON from selection",
                     min=0, max=10, default=8,
@@ -294,7 +306,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
         row = layout.row()
-        row.prop_search(self, 'filename', bpy.data, 'texts', text='', icon='TEXT')
+        row.prop_search(self, 'file_pointer', bpy.data, 'texts', text='', icon='TEXT')
         row = layout.row()
 
         do_text = row.operator('node.sverchok_json_from_mesh', text='from selection')
@@ -482,6 +494,8 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         if not self.outputs[0].is_linked:
             return
+
+        sync_pointer_and_stored_name(self, "file_pointer", "filename")
 
         var_names = self.get_variables()
         inputs = self.get_input()

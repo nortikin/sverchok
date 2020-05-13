@@ -18,7 +18,7 @@ class SvSurfaceCurvaturesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSurfaceCurvaturesNode'
     bl_label = 'Surface Curvature'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_EVAL_SURFACE'
+    sv_icon = 'SV_SURFACE_CURVATURE'
 
     @throttled
     def update_sockets(self, context):
