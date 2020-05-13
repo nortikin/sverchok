@@ -112,8 +112,9 @@ class SvSocketCommon:
     @hide_safe.setter
     def hide_safe(self, value):
         # handles both input and output.
-        if self.is_linked:
+        if self.is_linked and value:
             for link in self.links:
+                self.id_data.sv_links.remove(self.id_data, link)
                 self.id_data.links.remove(link)
 
         self.hide = value
@@ -286,18 +287,47 @@ class SvSocketStandard(SvSocketCommon):
         else:
             layout.prop(self, "default_value", text=text)
 
+def filter_kinds(self, object):
+    if self.object_kinds in {'ALL', ''}:
+        return True
+
+    if not self.object_kinds:
+        return True
+    kind = self.object_kinds
+    if "," in kind:
+        kinds = kind.split(',')
+        if object.type in set(kinds):
+            return True
+    if object.type == kind:
+        return True
 
 class SvObjectSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvObjectSocket"
     bl_label = "Object Socket"
 
+    """
+    object_kinds could be any of these:
+     [‘MESH’, ‘CURVE’, ‘SURFACE’, ‘META’, ‘FONT’, ‘VOLUME’, ‘ARMATURE’, ‘LATTICE’, 
+     ‘EMPTY’, ‘GPENCIL’, ‘CAMERA’, ‘LIGHT’, ‘SPEAKER’, ‘LIGHT_PROBE’, ‘EMPTY’
+
+    for example   
+        socket.object_kinds = "MESH"
+    or if you want various kinds
+        socket.object_kinds = "MESH,CURVE"
+    """ 
+    object_kinds: StringProperty(default='ALL')
     object_ref: StringProperty(update=process_from_socket)
+    object_ref_pointer: bpy.props.PointerProperty(
+        name="Object Reference", 
+        poll=filter_kinds,  # seld.object_kinds can be "MESH" or "MESH,CURVE,.."
+        type=bpy.types.Object, # what kind of objects are we showing
+        update=process_from_socket)
 
     def draw(self, context, layout, node, text):
         if self.custom_draw:
             super().draw(context, layout, node, text)
         elif not self.is_output and not self.is_linked:
-            layout.prop_search(self, 'object_ref', bpy.data, 'objects', text=self.name)
+            layout.prop_search(self, 'object_ref_pointer', bpy.data, 'objects', text=self.name)
         elif self.is_linked:
             layout.label(text=text + '. ' + SvGetSocketInfo(self))
         else:
@@ -306,8 +336,9 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
-        elif self.object_ref:
-            obj_ref = bpy.data.objects.get(self.object_ref.strip())
+        elif self.object_ref or self.object_ref_pointer:
+            # this can be more granular and even attempt to set object_ref_points from object_ref, and then wipe object_ref
+            obj_ref = self.node.get_bpy_data_from_name(self.object_ref or self.object_ref_pointer, bpy.data.objects)
             if not obj_ref:
                 raise SvNoDataError(self)
             return [obj_ref]

@@ -21,6 +21,7 @@ from numpy import array
 import bpy
 from bpy.props import IntProperty, StringProperty, BoolProperty, FloatProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode, node_id, match_long_repeat
 from sverchok.utils.pulga_physics_core import pulga_system_init
 from sverchok.core.events import property_update
@@ -46,7 +47,7 @@ def fill_past_file(p, location):
     text.clear()
     text.write(''.join(str(p)))
 
-class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     '''
     Triggers: Springs, Cloth
     Tooltip: Physics Engine
@@ -152,6 +153,9 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
             for i in range(len(data)):
                 self.accumulativity_set_data([], i)
             self.accumulative_parse = False
+            self.is_animatable =False
+        else:
+            self.is_animatable =True
 
         if not data:
             self.node_cache[0] = {}
@@ -398,6 +402,7 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         so(vs, 'Pins Reactions')
 
         self.update_sockets(context)
+        self.is_animatable = False
 
     def draw_buttons(self, context, layout):
         '''draw buttons on the node'''

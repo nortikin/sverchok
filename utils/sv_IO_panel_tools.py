@@ -36,7 +36,7 @@ from sverchok.utils.sv_node_utils import absolute_location_generic
 # pylint: disable=w0621
 
 
-SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
+SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite', 'SvSNFunctorB'}
 PROFILE_NODES = {'SvProfileNode', 'SvProfileNodeMK2'}
 
 _EXPORTER_REVISION_ = '0.079' #'0.080'
@@ -254,8 +254,15 @@ def handle_enum_property(node, k, v, node_items, node_enums):
         v = getattr(node, k)
         node_items[k] = v
 
+def get_node_annotations(node, include_pointer_props = False):
+    result = []
+    for key, ann in node.bl_rna.__annotations__.items():
+        prop_type = ann[0]
+        if include_pointer_props or prop_type != bpy.props.PointerProperty:
+            result.append((key, getattr(node, key)))
+    return result
 
-def create_dict_of_tree(ng, skip_set={}, selected=False, identified_node=None):
+def create_dict_of_tree(ng, skip_set={}, selected=False, identified_node=None, save_defaults = False):
     nodes = ng.nodes
     layout_dict = {}
     nodes_dict = {}
@@ -283,7 +290,11 @@ def create_dict_of_tree(ng, skip_set={}, selected=False, identified_node=None):
 
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
 
-        for k, v in node.items():
+        if save_defaults:
+            node_props = get_node_annotations(node)
+        else:
+            node_props = node.items()
+        for k, v in node_props:
 
             display_introspection_info(node, k, v)
 
@@ -397,6 +408,10 @@ def perform_scripted_node_inject(node, node_ref):
     '''
     texts = bpy.data.texts
     params = node_ref.get('params')
+
+    if node.bl_idname == 'SvSNFunctorB':
+        return
+
     if params:
 
         script_name = params.get('script_name')
@@ -421,15 +436,7 @@ def perform_scripted_node_inject(node, node_ref):
         node.script_name = script_name
         node.script_str = script_content
 
-    if node.bl_idname == 'SvScriptNode':
-        node.user_name = "templates"               # best would be in the node.
-        node.files_popup = "sv_lang_template.sn"   # import to reset easy fix
-        node.load()
-    elif node.bl_idname == 'SvScriptNodeLite':
-        node.load()
-        # node.storage_set_data(node_ref)
-    else:
-        node.files_popup = node.avail_templates(None)[0][0]
+    if node.bl_idname == 'SvScriptNodeLite':
         node.load()
 
 
@@ -593,6 +600,12 @@ def fix_enum_identifier_spaces_if_needed(node, node_ref):
             if " " in stored_value:
                 params[prop_name] = stored_value.replace(" ", "_")
 
+def import_node_settings(node, node_ref, overwrite_presentation_props=True):
+    apply_core_props(node, node_ref)
+    if overwrite_presentation_props:
+        apply_superficial_props(node, node_ref)
+    apply_post_processing(node, node_ref)
+    apply_custom_socket_props(node, node_ref)
 
 def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     node_ref = nodes_to_import[n]
@@ -627,10 +640,7 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
             node.object_names.add().name = named_object
 
     gather_remapped_names(node, n, name_remap)
-    apply_core_props(node, node_ref)
-    apply_superficial_props(node, node_ref)
-    apply_post_processing(node, node_ref)
-    apply_custom_socket_props(node, node_ref)
+    import_node_settings(node, node_ref)
 
 
 def add_nodes(ng, nodes_to_import, nodes, create_texts):
@@ -723,13 +733,21 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
             debug('no failed connections! awesome.')
 
     def generate_layout(fullpath, nodes_json):
+        """
+        fullpath can be 
+        - a path on disk, or 
+        - an empty string when the nodes_json is passed
+        """
 
         # it may be necessary to store monads as dicts instead of string/json
         # this will handle both scenarios
         if isinstance(nodes_json, str):
             nodes_json = json.loads(nodes_json)
             debug('==== loading monad ====')
-        info(('#' * 12) + nodes_json['export_version'])
+
+        passed_fullpath = '' if not fullpath else basename(fullpath)
+        hash_separator = ('#' * 12)
+        info(f"{hash_separator} {nodes_json['export_version']} {passed_fullpath}")
 
         # create all nodes and groups '''
         update_lists = nodes_json['update_lists']
@@ -761,6 +779,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
         ng.update()
         ng.update_tag()
         ng.sv_process = previous_state
+        # info("done, exiting generate_layout cleanly")
 
 
     # ---- read files (.json or .zip) or straight json data -----

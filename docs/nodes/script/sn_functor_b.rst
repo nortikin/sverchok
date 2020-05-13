@@ -14,14 +14,14 @@ here's an example snippet::
 
     def functor_init(self, context):
         inew = self.inputs.new
-        inew("StringsSocket", "outer radius").prop_name = "float_01"
-        inew("StringsSocket", "inner radius").prop_name = "float_02"
-        inew("StringsSocket", "angle").prop_name = "float_03"
-        inew("StringsSocket", "phase").prop_name = "float_04"
+        inew("SvStringsSocket", "outer radius").prop_name = "float_01"
+        inew("SvStringsSocket", "inner radius").prop_name = "float_02"
+        inew("SvStringsSocket", "angle").prop_name = "float_03"
+        inew("SvStringsSocket", "phase").prop_name = "float_04"
 
-        self.outputs.new("VerticesSocket", "verts")
-        self.outputs.new("StringsSocket", "edges")
-        self.outputs.new("StringsSocket", "faces")
+        self.outputs.new("SvVerticesSocket", "verts")
+        self.outputs.new("SvStringsSocket", "edges")
+        self.outputs.new("SvStringsSocket", "faces")
 
     def draw_buttons(self, context, layout):
         pass

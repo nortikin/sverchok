@@ -148,11 +148,18 @@ new_socket_dict = {
         [['outputs', 'SvObjectSocket', 'Objects', 0]],
     }
 
+upgrade_pointer_dict = {
+    'SvProfileNodeMK3': "set_pointer_from_filename",
+    'SvTextOutNodeMK2': "set_pointer_from_filename",
+    'SvTextInNodeMK2': "set_pointer_from_filename",
+    'SvTextureViewerNodeLite': "set_pointer_from_filename"
+}
 
 def upgrade_nodes(ng):
-    ''' Apply prop_name for nodes in the node group ng for
-        upgrade to compact ui and create nodes that we add to
-        '''
+    '''
+    Apply prop_name for nodes in the node group ng for
+    upgrade to compact ui and create nodes that we add to
+    '''
     old_nodes.load_old(ng)
 
     for node in [n for n in ng.nodes if n.bl_idname in new_socket_dict]:
@@ -182,3 +189,7 @@ def upgrade_nodes(ng):
                     socket.prop_name = ""
                 else:
                     pass
+
+    # this dict can call a function on the node, during the execution of postload handler
+    for node in [node for node in ng.nodes if node.bl_idname in upgrade_pointer_dict]:
+        getattr(node, upgrade_pointer_dict[node.bl_idname])()

@@ -8,7 +8,7 @@ directory = dirname(__file__)
 # you may supply a list of `directory/node_name.py` to ignore
 # this is about the only manual thing in this file.
 ignore_list = {}
-ignore_list['scene'] = ['create_bvh_tree']
+# ignore_list['scene'] = ['create_bvh_tree']
 
 nodes_dict = defaultdict(list)
 

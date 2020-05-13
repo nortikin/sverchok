@@ -60,6 +60,7 @@ UNITTEST_BLACKLIST = [
     "GreacePencil_injection.json",
     "pointsONface_gather_lines.json",
     "Generative_Art_Lsystem.json",
+    "Genetic_algorithm.blend.json",
     "Elfnor_topology_nodes.json",
     "l-systems.json",
     "waffle.json"
@@ -91,7 +92,7 @@ class ExamplesImportTest(SverchokTestCase):
                     continue
 
                 with self.subTest(file=name):
-                    info("Importing: %s", name)
+                    # info("Importing: %s", name)
                     with self.temporary_node_tree("ImportedTree") as new_tree:
                         with self.assert_logs_no_errors():
                             # Do not try to process imported tree,

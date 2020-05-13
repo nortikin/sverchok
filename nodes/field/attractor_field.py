@@ -18,7 +18,7 @@ from sverchok.utils.field.vector import (SvVectorFieldPointDistance,
             SvAverageVectorField, SvKdtVectorField, 
             SvLineAttractorVectorField, SvPlaneAttractorVectorField,
             SvBvhAttractorVectorField)
-from sverchok.utils.math import falloff_types, falloff_array
+from sverchok.utils.math import all_falloff_types, falloff_array
 
 class SvAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -34,11 +34,12 @@ class SvAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
     def update_type(self, context):
         self.inputs['Direction'].hide_safe = (self.attractor_type in ['Point', 'Mesh'])
         self.inputs['Amplitude'].hide_safe = (self.falloff_type == 'NONE')
-        self.inputs['Coefficient'].hide_safe = (self.falloff_type not in ['inverse_exp', 'gauss'])
+        coeff_types = ['inverse_exp', 'gauss', 'smooth', 'sphere', 'root', 'invsquare', 'sharp', 'linear', 'const']
+        self.inputs['Coefficient'].hide_safe = (self.falloff_type not in coeff_types)
         self.inputs['Faces'].hide_safe = (self.attractor_type != 'Mesh')
 
     falloff_type: EnumProperty(
-        name="Falloff type", items=falloff_types, default='NONE', update=update_type)
+        name="Falloff type", items=all_falloff_types, default='NONE', update=update_type)
 
     amplitude: FloatProperty(
         name="Amplitude", default=0.5, min=0.0, update=updateNode)
@@ -61,7 +62,8 @@ class SvAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
 
     point_modes = [
         ('AVG', "Average", "Use average distance to all attraction centers", 0),
-        ('MIN', "Nearest", "Use minimum distance to any of attraction centers", 1)
+        ('MIN', "Nearest", "Use minimum distance to any of attraction centers", 1),
+        ('SEP', "Separate", "Generate a separate field for each attraction center", 2)
     ]
 
     point_mode : EnumProperty(
@@ -112,13 +114,16 @@ class SvAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
             sfield = SvMergedScalarField('AVG', sfields)
             vfields = [SvVectorFieldPointDistance(center, falloff=falloff) for center in centers]
             vfield = SvAverageVectorField(vfields)
-        else: # MIN
+        elif self.point_mode == 'MIN':
             kdt = kdtree.KDTree(len(centers))
             for i, v in enumerate(centers):
                 kdt.insert(v, i)
             kdt.balance()
             vfield = SvKdtVectorField(kdt=kdt, falloff=falloff)
             sfield = SvKdtScalarField(kdt=kdt, falloff=falloff)
+        else: # SEP
+            sfield = [SvScalarFieldPointDistance(center, falloff=falloff) for center in centers]
+            vfield = [SvVectorFieldPointDistance(center, falloff=falloff) for center in centers]
         return vfield, sfield
 
     def to_line(self, center, direction, falloff):

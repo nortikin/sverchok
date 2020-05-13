@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 
 
 def recursive_framed_location_finder(node, loc_xy):
@@ -58,3 +59,15 @@ def nodes_bounding_box(selected_nodes):
         maxy = max(maxy, node.location.y)
 
     return minx, maxx, miny, maxy
+
+def sync_pointer_and_stored_name(node, pointer_prop_name, prop_name):
+    # in the event that the text datablock is renamed elsewhere, this will automatically
+    # resync the stored name of the datablock. updates to datablock names do not 
+    # automatically call the pointer updatefunction. hence this nonsense
+    if hasattr(node, pointer_prop_name):
+        pointer = getattr(node, pointer_prop_name)
+        if not pointer:
+            return
+        if pointer.name != getattr(node, prop_name):
+            setattr(node, prop_name, pointer.name)
+            node.info(f"synchronized name of {node} from datablock name change")

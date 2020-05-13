@@ -29,9 +29,10 @@ import ast
 import sverchok
 
 import bpy
-from bpy.props import BoolProperty, EnumProperty, StringProperty, IntProperty
+from bpy.props import BoolProperty, EnumProperty, StringProperty, IntProperty, PointerProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import node_id, multi_socket, updateNode
 
 from sverchok.utils.sv_text_io_common import (
@@ -57,7 +58,7 @@ class SvTextInFileImporterOp(bpy.types.Operator):
     def execute(self, context):
         n = self.node
         t = bpy.data.texts.load(self.filepath)
-        n.text = t.name
+        n.file_pointer = t
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -84,7 +85,7 @@ def pop_all_data(node, n_id):
     node.json_data.pop(n_id, None)
 
 
-class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
+class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO, SvAnimatableNode):
     """
     Triggers: Text in from datablock
     Tooltip: Quickly load text from datablock into NodeView
@@ -98,6 +99,15 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
     list_data = {}
     json_data = {}
 
+    def pointer_update(self, context):
+        if self.file_pointer:
+            self.text = self.file_pointer.name
+        else:
+            self.text = ""
+        # need to do other stuff?
+
+    properties_to_skip_iojson = ['file_pointer']    
+
     # general settings
     n_id: StringProperty(default='')
     force_input: BoolProperty()
@@ -106,7 +116,8 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
 
     # name of loaded text, to support reloading
     text: StringProperty(default="")
-    current_text: StringProperty(default="")
+    current_text: StringProperty(default="") # <----- what does this do again?
+    file_pointer: bpy.props.PointerProperty(type=bpy.types.Text, poll=lambda s, o: True, update=pointer_update)
 
     # external file
     file: StringProperty(subtype='FILE_PATH')
@@ -155,13 +166,17 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
     # Sverchok list options
     # choose which socket to interpret data as
     socket_type: EnumProperty(items=socket_types, default='s')
-
+    
+    def set_animatable(self, context):
+        self.is_animatable = self.autoreload
     #interesting but dangerous, TODO
-    autoreload: BoolProperty(default=False, description="Reload text file on every update", name='auto reload')
+    autoreload: BoolProperty(default=False, description="Reload text file on every update", name='auto reload', update=set_animatable)
 
     # to have one socket output
     one_sock: BoolProperty(name='one socket', default=False)
-
+    def sv_init(self, context):
+        self.is_animatable = False
+        
     def draw_buttons_ext(self, context, layout):
         if self.textmode == 'CSV':
             layout.prop(self, 'force_input')
@@ -187,7 +202,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
 
         else:
             row = col.row(align=True)
-            row.prop_search(self, 'text', bpy.data, 'texts', text="Read")
+            row.prop_search(self, 'file_pointer', bpy.data, 'texts', text="Read")
             row.operator("node.sv_textin_file_importer", text='', icon='EMPTY_SINGLE_ARROW')
 
             row = col.row(align=True)
@@ -553,6 +568,12 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
                 out = json_data[item][1]
                 self.outputs[item].sv_set(out)
 
+    def set_pointer_from_filename(self):
+        """ this function upgrades older versions of ProfileMK3 to the version that has self.file_pointer """
+        if hasattr(self, "file_pointer") and not self.file_pointer:
+            text = self.get_bpy_data_from_name(self.text, bpy.data.texts)
+            if text:
+                self.file_pointer = text
 
 
 def register():

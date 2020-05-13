@@ -47,6 +47,7 @@ using the backticks and the diff (language type) it will display the proposed ch
 This way you show what code you're talking about, what you propose to change, and why. Great. We love clear issues.
 
 
+
 Non one-liners
 ==============
 

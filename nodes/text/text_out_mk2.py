@@ -134,7 +134,17 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         elif self.text_mode == 'SV':
             self.inputs.new('SvStringsSocket', 'Data')
 
-    text: StringProperty()
+    def pointer_update(self, context):
+        if self.file_pointer:
+            self.text = self.file_pointer.name
+        else:
+            self.text = ""
+        # need to do other stuff?
+
+    properties_to_skip_iojson = ['file_pointer']
+
+    text: StringProperty(name='text')
+    file_pointer: bpy.props.PointerProperty(type=bpy.types.Text, poll=lambda s, o: True, update=pointer_update)
 
     text_mode: EnumProperty(items=text_modes, default='CSV', update=change_mode, name="Text format")
     csv_dialect: EnumProperty(items=csv_dialects, default='excel', name="Dialect")
@@ -158,7 +168,7 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         col.prop(self, 'autodump', toggle=True)
         row = col.row(align=True)
-        row.prop_search(self, 'text', bpy.data, 'texts', text="Write")
+        row.prop_search(self, 'file_pointer', bpy.data, 'texts', text="Write")
         row.operator("text.new", icon="ZOOM_IN", text='')
 
         row = col.row(align=True)
@@ -194,6 +204,9 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if len(out) == 0:
             return False
 
+        if self.file_pointer:
+            self.text = self.file_pointer.name
+
         if not self.append:
             bpy.data.texts[self.text].clear()
         bpy.data.texts[self.text].write(out)
@@ -210,6 +223,13 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         elif self.text_mode == 'SV':
             out = get_sv_data(node=self)
         return out
+
+    def set_pointer_from_filename(self):
+        """ this function upgrades older versions of ProfileMK3 to the version that has self.file_pointer """
+        if hasattr(self, "file_pointer") and not self.file_pointer:
+            text = self.get_bpy_data_from_name(self.text, bpy.data.texts)
+            if text:
+                self.file_pointer = text
 
 
 def register():

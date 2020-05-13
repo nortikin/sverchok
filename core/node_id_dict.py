@@ -16,6 +16,12 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+import bpy
+
+def clear_nodes_id_dict():
+    for ng in bpy.data.node_groups:
+        if hasattr(ng, "nodes_dict"):
+            ng.nodes_dict.sv_node_dict_cache.clear()
 
 class SvNodesDict:
     '''
@@ -37,16 +43,22 @@ class SvNodesDict:
     def load_node(self, node):
 
         n_id = node.node_id
-        tree_id = node.id_data.tree_id
+        node_tree = node.id_data
+        tree_id = node_tree.tree_id
 
         if tree_id not in self.sv_node_dict_cache:
-            self.sv_node_dict_cache[tree_id] = {}
+            self.load_nodes(node_tree)
         self.sv_node_dict_cache[tree_id][n_id] = node
 
     def forget_node(self, node):
         n_id = node.node_id
-        tree_id = node.id_data.tree_id
-        del self.sv_node_dict_cache[tree_id][n_id]
+        node_tree = node.id_data
+        tree_id = node_tree.tree_id
+        if not tree_id in self.sv_node_dict_cache:
+            self.load_nodes(node_tree)
+
+        if n_id in self.sv_node_dict_cache[tree_id]:
+            del self.sv_node_dict_cache[tree_id][n_id]
 
     def load_nodes(self, node_tree):
         tree_id = node_tree.tree_id

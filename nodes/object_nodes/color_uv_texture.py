@@ -22,10 +22,12 @@ from mathutils.geometry import barycentric_transform
 import numpy as np
 from bpy.props import BoolProperty, StringProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
+
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
 
-class SvMeshUVColorNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMeshUVColorNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     ''' Find pixel on UV texture from surface'''
     bl_idname = 'SvMeshUVColorNode'
     bl_label = 'Set UV Color'
@@ -39,6 +41,7 @@ class SvMeshUVColorNode(bpy.types.Node, SverchCustomTreeNode):
         size=4, min=0.0, max=1.0, subtype='COLOR', update=updateNode)
 
     def draw_buttons(self, context,   layout):
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop_search(self, 'object_ref', bpy.data, 'objects')
         ob = bpy.data.objects.get(self.object_ref)
         if ob and ob.type == 'MESH':

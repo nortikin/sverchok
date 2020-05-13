@@ -119,14 +119,16 @@ def sv_compile(string):
         logging.exception(e)
         raise Exception("Invalid expression syntax: " + str(e))
 
-def safe_eval_compiled(compiled, variables):
+def safe_eval_compiled(compiled, variables, allowed_names = None):
     """
     Evaluate expression, allowing only functions known to be "safe"
     to be used.
     """
+    if allowed_names is None:
+        allowed_names = safe_names
     try:
         env = dict()
-        env.update(safe_names)
+        env.update(allowed_names)
         env.update(variables)
         env["__builtins__"] = {}
         return eval(compiled, env)

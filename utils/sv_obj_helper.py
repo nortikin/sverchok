@@ -245,8 +245,11 @@ class SvObjHelper():
     # most importantly, what kind of base data are we making?
     data_kind: StringProperty(name='data kind', default='MESH')
 
+    properties_to_skip_iojson = ['material_pointer']
     # to be used if the node has no material input.
-    material: StringProperty(name='material', default='', update=updateNode)
+    material: StringProperty(name='material', default='')
+    material_pointer: bpy.props.PointerProperty(
+        type=bpy.types.Material, poll=lambda s, o: True, update=updateNode)
 
     # to be used as standard toggles for object attributes of same name
     object_hide_viewport: BoolProperty(name='object hide viewport', default=True)
@@ -305,7 +308,7 @@ class SvObjHelper():
 
             row = col.row(align=True)
             row.scale_y = 1
-            row.prop_search(self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
+            row.prop_search(self, 'material_pointer', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
             tracked_operator(self, row, fn_name='add_material', icon="ZOOM_IN")
 
     def draw_ext_object_buttons(self, context, layout):
@@ -315,9 +318,9 @@ class SvObjHelper():
         tracked_operator(self, row, fn_name='add_material', text='+Material', icon="ZOOM_IN")
 
     def set_corresponding_materials(self):
-        if bpy.data.materials.get(self.material.strip()):
+        if self.material_pointer:
             for obj in self.get_children():
-                obj.active_material = bpy.data.materials[self.material.strip()]
+                obj.active_material = self.material_pointer
 
     def remove_non_updated_objects(self, obj_index):
         objs = self.get_children()

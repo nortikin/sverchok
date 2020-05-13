@@ -1,0 +1,31 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "Box": {
+      "bl_idname": "SvBoxNodeMk2",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -482.1806945800781,
+        -171.5638885498047
+      ],
+      "params": {
+        "Divx": 3,
+        "Divy": 3,
+        "Divz": 3,
+        "Size": 3.0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": []
+}

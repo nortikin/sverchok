@@ -35,6 +35,18 @@ falloff_types = [
         ("gauss", "Gauss - Exp(-R^2/2)", "", 5)
     ]
 
+proportional_falloff_types = [
+        ('smooth', "(P) Smooth", "Smooth falloff", 0),
+        ('sphere', '(P) Sphere', "Spherical falloff", 1),
+        ('root', '(P) Root', "Root falloff", 2),
+        ('invsquare', '(P) Inverse square', "Root falloff", 3),
+        ('sharp', "(P) Sharp", "Sharp falloff", 4),
+        ('linear', "(P) Linear", "Linear falloff", 5),
+        ('const', "(P) Constant", "Constant falloff", 6)
+    ]
+
+all_falloff_types = falloff_types + [(id, title, desc, i + len(falloff_types)) for id, title, desc, i in proportional_falloff_types]
+
 def smooth(x):
     return 3*x*x - 2*x*x*x
 
@@ -44,6 +56,9 @@ def sharp(x):
 def root(x):
     return 1.0 - math.sqrt(1.0 - x)
 
+def root_np(x):
+    return 1.0 - np.sqrt(1.0 - x)
+
 def linear(x):
     return x
 
@@ -52,6 +67,9 @@ def const(x):
 
 def sphere(x):
     return 1.0 - math.sqrt(1.0 - x*x)
+
+def sphere_np(x):
+    return 1.0 - np.sqrt(1.0 - x*x)
 
 def invsquare(x):
     return x*x
@@ -85,13 +103,32 @@ def falloff(type, radius, rho):
     func = globals()[type]
     return 1.0 - func(rho / radius)
 
+def wrap_falloff(func):
+    def falloff(c, xs):
+        result = np.empty_like(xs)
+        negative = (xs <= 0)
+        result[negative] = 1.0
+        outer = (xs > c)
+        result[outer] = 0.0
+        good = np.logical_not(negative) & np.logical_not(outer)
+        result[good] = 1.0 - func(xs[good] / c)
+        return result
+    return falloff
+
 def falloff_array(falloff_type, amplitude, coefficient, clamp=False):
     types = {
             'inverse': inverse,
             'inverse_square': inverse_square,
             'inverse_cubic': inverse_cubic,
             'inverse_exp': inverse_exp_np,
-            'gauss': gauss_np
+            'gauss': gauss_np,
+            'smooth': wrap_falloff(smooth),
+            'sphere': wrap_falloff(sphere_np),
+            'root': wrap_falloff(root_np),
+            'invsquare': wrap_falloff(invsquare),
+            'sharp': wrap_falloff(sharp),
+            'linear': wrap_falloff(linear),
+            'const': wrap_falloff(const)
         }
     falloff_func = types[falloff_type]
 
@@ -126,6 +163,13 @@ def from_cylindrical(rho, phi, z, mode="degrees"):
     y = rho*sin(phi)
     return x, y, z
 
+def from_cylindrical_np(rho, phi, z, mode='degrees'):
+    if mode == "degrees":
+        phi = np.radians(phi)
+    x = rho*np.cos(phi)
+    y = rho*np.sin(phi)
+    return x, y, z
+
 def from_spherical(rho, phi, theta, mode="degrees"):
     if mode == "degrees":
         phi = radians(phi)
@@ -135,12 +179,29 @@ def from_spherical(rho, phi, theta, mode="degrees"):
     z = rho * cos(theta)
     return x, y, z
 
+def from_spherical_np(rho, phi, theta, mode="degrees"):
+    if mode == "degrees":
+        phi = np.radians(phi)
+        theta = np.radians(theta)
+    x = rho * np.sin(theta) * np.cos(phi)
+    y = rho * np.sin(theta) * np.sin(phi)
+    z = rho * np.cos(theta)
+    return x, y, z
+
 def to_cylindrical(v, mode="degrees"):
     x,y,z = v
     rho = sqrt(x*x + y*y)
     phi = atan2(y,x)
     if mode == "degrees":
         phi = degrees(phi)
+    return rho, phi, z
+
+def to_cylindrical_np(v, mode="degrees"):
+    x,y,z = v
+    rho = np.sqrt(x*x + y*y)
+    phi = np.arctan2(y,x)
+    if mode == "degrees":
+        phi = np.degrees(phi)
     return rho, phi, z
 
 def to_spherical(v, mode="degrees"):
@@ -153,5 +214,24 @@ def to_spherical(v, mode="degrees"):
     if mode == "degrees":
         phi = degrees(phi)
         theta = degrees(theta)
+    return rho, phi, theta
+
+def to_spherical_np(v, mode="degrees"):
+    x,y,z = v
+    rho = np.sqrt(x*x + y*y + z*z)
+    bad = (rho == 0)
+    good = np.logical_not(bad)
+
+    theta = np.empty_like(x)
+    theta[good] = np.arccos(z[good]/rho[good])
+    theta[bad] = 0.0
+
+    phi = np.empty_like(x)
+    phi[good] = np.arctan2(y[good], x[good])
+    phi[bad] = 0.0
+
+    if mode == "degrees":
+        phi = np.degrees(phi)
+        theta = np.degrees(theta)
     return rho, phi, theta
 

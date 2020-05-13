@@ -172,7 +172,7 @@ def pydata_from_bmesh(bm, face_data=None):
         face_data_out = face_data_from_bmesh_faces(bm, face_data)
         return verts, edges, faces, face_data_out
 
-def get_partial_result_pydata(self, geom):
+def get_partial_result_pydata(geom):
     '''used by the subdivide node to get new and old verts/edges/pols'''
 
     new_verts = [v for v in geom if isinstance(v, BMVert)]

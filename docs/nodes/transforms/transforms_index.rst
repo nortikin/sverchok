@@ -14,11 +14,12 @@ Transforms
    bend_along_surface
    cast
    deform
+   formula_deform_mk2
    mirror_mk2
    symmetrize
    transform_select
    noise_displace
-   texture_displace
+   texture_displace_mk2
    randomize
    align_mesh_by_mesh
    transform_mesh

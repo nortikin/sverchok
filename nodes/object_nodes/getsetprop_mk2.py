@@ -26,6 +26,7 @@ import mathutils
 from mathutils import Matrix, Vector, Euler, Quaternion, Color
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import Matrix_generate, updateNode, node_id
 
 
@@ -202,7 +203,7 @@ class SvPropNodeMixin():
     prop_name: StringProperty(name='', update=verify_prop)
 
 
-class SvGetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
+class SvGetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin, SvAnimatableNode):
     ''' Get property '''
     bl_idname = 'SvGetPropNodeMK2'
     bl_label = 'Get property MK2'
@@ -219,6 +220,7 @@ class SvGetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
             outputs.new(s_type, "Data")
     
     def draw_buttons(self, context, layout):
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.alert = self.bad_prop
         layout.prop(self, "prop_name", text="")
 

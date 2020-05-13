@@ -19,10 +19,12 @@
 import os
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatProperty, IntProperty
+from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatProperty, IntProperty, PointerProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
+from sverchok.utils.sv_node_utils import sync_pointer_and_stored_name
 from sverchok.core.socket_data import SvNoDataError
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.logging import info, debug, warning
@@ -395,7 +397,7 @@ class SvProfileImportOperator(bpy.types.Operator):
 # Node class
 #################################
 
-class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
+class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     '''
     Triggers: svg-like 2d profiles
     Tooltip: Generate multiple parameteric 2d profiles using SVG like syntax
@@ -418,11 +420,19 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         items=axis_options, update=updateNode, name="Type of axis",
         description="offers basic axis output vectors X|Y|Z", default="Z")
 
-    def on_update(self, context):
+    def pointer_update(self, context):
+        if self.file_pointer:
+            self.filename = self.file_pointer.name
+        else:
+            self.filename = ""
         self.adjust_sockets()
         updateNode(self, context)
 
-    filename : StringProperty(default="", update=on_update)
+    properties_to_skip_iojson = ["file_pointer"]
+
+    filename : StringProperty(default="")
+    file_pointer: PointerProperty(
+        type=bpy.types.Text, poll=lambda s, o: True, update=pointer_update)
 
     x : BoolProperty(default=True)
     y : BoolProperty(default=True)
@@ -444,9 +454,11 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         description="If distance between first and last point is less than this, X command will remove the last point")
 
     def draw_buttons(self, context, layout):
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, 'selected_axis', expand=True)
-        layout.prop_search(self, 'filename', bpy.data, 'texts', text='', icon='TEXT')
 
+        row = layout.row(align=True)
+        row.prop_search(self, 'file_pointer', bpy.data, 'texts', text='', icon='TEXT')
         col = layout.column(align=True)
         row = col.row()
         do_text = row.operator('node.sverchok_profilizer_mk3', text='from selection')
@@ -470,6 +482,8 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         layout.label(text="Import Examples")
         layout.menu(SvProfileImportMenu.bl_idname)
         layout.prop(self, "addnodes",text='Auto add nodes')
+
+        layout.label(text=f"||{self.filename}||")
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "a")
@@ -561,6 +575,8 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         if not any(o.is_linked for o in self.outputs):
             return
 
+        sync_pointer_and_stored_name(self, "file_pointer", "filename")
+
         profile = self.load_profile()
         optional_inputs = self.get_optional_inputs(profile)
 
@@ -624,6 +640,16 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             storage['profile'] = text
         else:
             self.warning("Unknown filename: {}".format(self.filename))
+
+    def set_filename_to_match_file_pointer(self):
+        self.file_pointer = self.file_pointer
+
+    def set_pointer_from_filename(self):
+        """ this function upgrades older versions of ProfileMK3 to the version that has self.file_pointer """
+        if hasattr(self, "file_pointer") and not self.file_pointer:
+            text = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
+            if text:
+                self.file_pointer = text
 
 classes = [
         SvProfileImportMenu,

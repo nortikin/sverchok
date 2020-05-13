@@ -1,6 +1,7 @@
 import importlib
 import sverchok
 from sverchok.utils.logging import debug, exception
+from sverchok.core.update_system import clear_system_cache
 
 reload_event = False
 
@@ -26,6 +27,7 @@ def sv_register_modules(modules):
                 m.register()
 
 def sv_unregister_modules(modules):
+    clear_system_cache()
     for m in reversed(modules):
         if hasattr(m, "unregister"):
             # print("Unregistering module: {}".format(m.__name__))

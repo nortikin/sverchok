@@ -179,3 +179,10 @@ def reset_socket_cache(ng):
     """
     global socket_data_cache
     socket_data_cache[ng.tree_id] = {}
+
+def clear_all_socket_cache():
+    """
+    Reset socket cache for all node-trees.
+    """
+    global socket_data_cache
+    socket_data_cache.clear()

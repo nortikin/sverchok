@@ -145,7 +145,7 @@ class SverchokPreferences(AddonPreferences):
     color_viz: FloatVectorProperty(
         name="Visualization", description='',
         size=3, min=0.0, max=1.0,
-        default=(1, 0.3, 0), subtype='COLOR',
+        default=(1, 0.589, 0.214), subtype='COLOR',
         update=update_theme)
 
     color_tex: FloatVectorProperty(

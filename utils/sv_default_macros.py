@@ -186,6 +186,7 @@ class DefaultMacros():
         elif 'snl' in term:
             file = term.split(' ')[1]
             snlite = nodes.new('SvScriptNodeLite')
+            snlite.location = context.space_data.cursor_location
             sn_loader(snlite, script_name=file)
 
         elif term == 'monad info':
