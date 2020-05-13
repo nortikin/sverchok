@@ -70,7 +70,10 @@ def start_exception_drawing_with_bgl(ng, node_name, error_text, err):
     config.loc = x, y
     config.scale = scale
     config.mode = "ORIGINAL"
-    config.alt_location = node.absolute_location() # .. + y.30
+    
+    if config.mode == "MOD 1":
+        config.alt_location = node.absolute_location() # .. + y.30  up / down? 
+        config.final_error_dimensions = blf.dimensions(fontid, text.final_error_message)
 
     ng_id = exception_nodetree_id(ng)
     draw_data = {
