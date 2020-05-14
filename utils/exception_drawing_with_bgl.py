@@ -151,5 +151,5 @@ def simple_exception_display(context, args):
         config.batch.draw(config.shader)
         ex, ey = config.text_error_only_location
         blf.color(font_id, *RED)
-        blf.position(0, ex, ey, 0)
+        blf.position(0, ex+9, ey+8, 0)
         blf.draw(font_id, text.final_error_message)        
