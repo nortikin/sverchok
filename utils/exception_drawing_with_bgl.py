@@ -9,8 +9,11 @@
 # pylint: disable=w0612
 # pylint: disable=w0613
 
-import blf
 import time
+
+import blf
+import gpu
+from gpu_extras.batch import batch_for_shader
 
 import sverchok
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
@@ -69,11 +72,29 @@ def start_exception_drawing_with_bgl(ng, node_name, error_text, err):
     x, y, scale = adjust_position_and_dimensions(node, xyoffset(node))
     config.loc = x, y
     config.scale = scale
-    config.mode = "ORIGINAL"
-    
+    config.mode = "MOD 1" # "ORIGINAL"
+    config.font_id = 0
+
     if config.mode == "MOD 1":
-        config.alt_location = node.absolute_location() # .. + y.30  up / down? 
-        config.final_error_dimensions = blf.dimensions(fontid, text.final_error_message)
+
+        final_error_dimensions = blf.dimensions(config.font_id, text.final_error_message)
+        w, h = final_error_dimensions[0] * scale, final_error_dimensions[1] * scale * 2
+
+        abs_x, abs_y = node.absolute_location
+        ex, ey = abs_x + 0, abs_y + h
+        """
+        0        1          0 = (ex,     ey    )  
+                            1 = (ex + w, ey    )
+        2        3          2 = (ex,     ey - h)
+                            3 = (ex + w, ey - h)
+        """
+        vertices = ((ex, ey), (ex + w, ey), (ex, ey - h), (ex + w, ey - h))
+        indices = ((0, 1, 2), (2, 1, 3))
+
+        config.text_error_only_location = abs_x, abs_y
+        config.shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+        config.batch = batch_for_shader(config.shader, 'TRIS', {"pos": vertices}, indices=indices)
+
 
     ng_id = exception_nodetree_id(ng)
     draw_data = {
@@ -89,6 +110,7 @@ def simple_exception_display(context, args):
     a simple bgl/blf exception showing tool for nodeview
     """
     text, config = args
+    font_id = config.font_id
 
     RED = 0.911393, 0.090249, 0.257536, 1.0
     x, y = config.loc
@@ -105,6 +127,7 @@ def simple_exception_display(context, args):
     ypos = y
 
     if config.mode == "ORIGINAL":
+
         if isinstance(text.body, list):
             for line in text.body:
                 blf.position(0, x, ypos, 0)
@@ -122,6 +145,10 @@ def simple_exception_display(context, args):
     
     elif config.mode == "MOD 1":
 
+        config.shader.bind()
+        config.shader.uniform_float("color", (0, 0.1, 0.1, 1.0))
+        config.batch.draw(config.shader)
+        ex, ey = config.text_error_only_location
         blf.color(font_id, *RED)
-        blf.position(0, x, ypos, 0)
+        blf.position(0, ex, ey, 0)
         blf.draw(font_id, text.final_error_message)        
