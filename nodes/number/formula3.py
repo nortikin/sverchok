@@ -209,15 +209,17 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         '''function to get data when importing from json'''
         data = node_ref.get('socket_order_data')
         if data:
-            data_dict = json.loads(data)
-            self.inputs.clear()
-            for socket_index in sorted(data_dict.keys()):
-                self.inputs.new("SvStringsSocket", data_dict[socket_index])
+            print(f"variables currently: {self.get_variables()}")
+            with self.sv_throttle_tree_update():
+                self.inputs.clear()
+                for socket_name in data:
+                    self.inputs.new("SvStringsSocket", socket_name)
+                self.adjust_sockets()
 
     def storage_get_data(self, node_ref):
         '''function to set data for exporting json'''
-        data_json_str = json.dumps({socket.index: socket.name for socket in self.inputs})
-        node_ref['socket_order_data'] = data_json_str
+        data_list = [socket.name for socket in self.inputs]
+        node_ref['socket_order_data'] = data_list
 
 
 def register():
