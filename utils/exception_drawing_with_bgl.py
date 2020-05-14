@@ -76,10 +76,11 @@ def start_exception_drawing_with_bgl(ng, node_name, error_text, err):
     config.font_id = 0
 
     if config.mode == "MOD 1":
+        text.final_error_message = f"{node_name} - Error : {text.final_error_message}"
 
         blf.size(config.font_id, int(15 * config.scale), 72)
         final_error_dimensions = blf.dimensions(config.font_id, text.final_error_message)
-        w, h = final_error_dimensions[0] * config.scale, final_error_dimensions[1] * config.scale
+        w, h = final_error_dimensions[0] * config.scale * 3/4, final_error_dimensions[1] * config.scale
 
         abs_x, abs_y = node.absolute_location
         ex, ey = abs_x + 0, abs_y + h
