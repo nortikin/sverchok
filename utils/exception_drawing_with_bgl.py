@@ -71,14 +71,15 @@ def start_exception_drawing_with_bgl(ng, node_name, error_text, err):
 
     x, y, scale = adjust_position_and_dimensions(node, xyoffset(node))
     config.loc = x, y
-    config.scale = scale
+    config.scale = scale * 1.5
     config.mode = "MOD 1" # "ORIGINAL"
     config.font_id = 0
 
     if config.mode == "MOD 1":
 
+        blf.size(config.font_id, int(15 * config.scale), 72)
         final_error_dimensions = blf.dimensions(config.font_id, text.final_error_message)
-        w, h = final_error_dimensions[0] * scale, final_error_dimensions[1] * scale * 2
+        w, h = final_error_dimensions[0] * config.scale, final_error_dimensions[1] * config.scale
 
         abs_x, abs_y = node.absolute_location
         ex, ey = abs_x + 0, abs_y + h
@@ -117,7 +118,7 @@ def simple_exception_display(context, args):
     x, y = int(x), int(y)
     r, g, b = (1.0, 1.0, 1.0)
     font_id = 0
-    scale = config.scale * 1.5
+    scale = config.scale
     
     text_height = 15 * scale
     line_height = 14 * scale
