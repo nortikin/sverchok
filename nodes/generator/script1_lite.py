@@ -483,6 +483,14 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         row.prop(self, 'selected_mode', expand=True)
         col = layout.column()
         col.menu(SV_MT_ScriptNodeLitePyMenu.bl_idname)
+        
+        box = layout.box()
+        r = box.row()
+        r.label(text="extra snlite features")
+        if hasattr(self, "snlite_raise_exception"):
+            r = box.row()
+            r.prop(self, "snlite_raise_exception", toggle=True, text="raise errors to tree level")
+
 
 
     # ---- IO Json storage is handled in this node locally ----
