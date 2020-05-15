@@ -102,8 +102,16 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
 
     def adjust_sockets(self):
         variables = self.get_variables()
-        #self.debug("adjust_sockets:" + str(variables))
-        #self.debug("inputs:" + str(self.inputs.keys()))
+
+        # [ ] if current node sockets match the variables sequence, do nothing skip
+        #     - this is the logic path that will be encountered most often.
+        # [ ] else to avoid making things complicated we rebuild the UI inputs, even when it is 
+        #     - technically sub optimal
+        #     [ ] store current input socket links by name/origin
+        #     [ ] wipe all inputs
+        #     [ ] recreate new sockets from variables
+        #     [ ] relink former links by name
+
         for key in self.inputs.keys():
             if (key not in variables) and (key in self.inputs):
                 self.debug("Input {} not in variables {}, remove it".format(key, str(variables)))
