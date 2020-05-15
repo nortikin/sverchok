@@ -223,7 +223,10 @@ class EventsWave:
 
     def search_new_reroutes_frames(self) -> List[Node]:
         # should be called if user created/copied new reroute(s) or frames, Shift+RMB, added via Python API
-        return self.current_tree.nodes - self.previous_tree.nodes
+        # also know copied nodes should be removed from the search
+        all_nodes = self.current_tree.nodes - self.previous_tree.nodes
+        known_copied_nodes = {event.node_id for event in self.first_type_events()}
+        return [node for node in all_nodes if node.node_id not in known_copied_nodes]
 
     def search_copied_reroutes_frames(self) -> List[Node]:
         # ahshed tree data can't be used here because it combine nodes with a same IDs
