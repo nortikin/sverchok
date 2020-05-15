@@ -87,7 +87,7 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
             vs = get_variables(formula)
             variables.update(vs)
 
-        return list(sorted(list(variables)))
+        return list(sorted(variables))
 
     def adjust_sockets(self):
         variables = self.get_variables()
