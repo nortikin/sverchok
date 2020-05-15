@@ -70,7 +70,7 @@ def remove_doubles(vertices, faces, distance, face_data=None, find_doubles=False
         faces.append([v.index for v in face.verts[:]])
     if face_data:
         face_data_out = face_data_from_bmesh_faces(bm, face_data)
-    if output_mask:
+    if mask and output_mask:
         mask_out = vert_data_from_bmesh_verts(bm, mask)
     else:
         mask_out = []
