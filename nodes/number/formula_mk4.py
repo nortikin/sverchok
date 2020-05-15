@@ -29,13 +29,13 @@ from sverchok.data_structure import updateNode, match_long_repeat, zip_long_repe
 from sverchok.utils import logging
 from sverchok.utils.modules.eval_formula import get_variables, safe_eval
 
-class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
+class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Formula
     Tooltip: Calculate by custom formula.
     """
-    bl_idname = 'SvFormulaNodeMk3'
-    bl_label = 'Formula'
+    bl_idname = 'SvFormulaNodeMk4'
+    bl_label = 'Formula+'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_FORMULA'
 
@@ -195,8 +195,8 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvFormulaNodeMk3)
+    bpy.utils.register_class(SvFormulaNodeMk4)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvFormulaNodeMk3)
+    bpy.utils.unregister_class(SvFormulaNodeMk4)

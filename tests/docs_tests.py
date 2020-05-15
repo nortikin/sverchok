@@ -135,6 +135,7 @@ object_raycast2.py
 closest_point_on_mesh2.py
 scene_raycast2.py
 sculpt_mask.py
+formula_mk4.py
 set_blenddata2.py
 points_from_uv_to_mesh.py
 custom_mesh_normals.py
