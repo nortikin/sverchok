@@ -105,21 +105,63 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
 
         # [ ] if current node sockets match the variables sequence, do nothing skip
         #     - this is the logic path that will be encountered most often.
+        if len(self.inputs) == variables:
+            if list(sorted(variables)) == [socket.name for socket in self.inputs]:
+                self.info("no UI change: socket inputs same")
+                return
+
         # [ ] else to avoid making things complicated we rebuild the UI inputs, even when it is 
         #     - technically sub optimal
         #     [ ] store current input socket links by name/origin
         #     [ ] wipe all inputs
         #     [ ] recreate new sockets from variables
-        #     [ ] relink former links by name
+        #     [ ] relink former links by name on this socket, but by index from their origin.
+        self.hot_reload_sockets(context)
 
-        for key in self.inputs.keys():
-            if (key not in variables) and (key in self.inputs):
-                self.debug("Input {} not in variables {}, remove it".format(key, str(variables)))
-                self.inputs.remove(self.inputs[key])
-        for v in variables:
-            if v not in self.inputs:
-                self.debug("Variable {} not in inputs {}, add it".format(v, str(self.inputs.keys())))
+    def clear_and_repopulate_sockets_from_variables(self, context):
+        with self.sv_throttle_tree_update():
+            self.inputs.clear()
+            variables = self.get_variables()
+            for v in variables:
                 self.inputs.new('SvStringsSocket', v)
+
+    def hot_reload_sockets(self, context):
+        """
+        function hoisted from functorb, with deletions and edits
+        Handles the reload event.
+          - gather existing connections
+          - perform clear and repopulate sockets
+          - (try) to set the connections
+        """
+        self.info('handling input wipe and relink')
+        node = self
+        nodes = self.id_data.nodes
+
+        # if any current connections... gather them 
+        reconnections = []
+        for i in (i for i in node.inputs if i.is_linked):
+            for L in i.links:
+                link = lambda: None
+                link.from_node = L.from_socket.node.name
+                link.from_socket = L.from_socket.index   # index used here because these can come from reroute
+                link.to_node = L.to_socket.node.name
+                link.to_socket = L.to_socket.name        # this node will always have unique socket names
+                reconnections.append(link)
+
+        self.clear_and_repopulate_sockets_from_variables(context)
+
+        # restore connections where applicable (by socket name), if no links.. this is a no op.
+        node_tree = self.id_data
+        for link in reconnections:
+            try:
+                from_part = nodes[link.from_node].outputs[link.from_socket]
+                to_part = nodes[link.to_node].inputs[link.to_socket]
+                node_tree.links.new(from_part, to_part)
+            except Exception as err:
+                str_from = f'nodes[{link.from_node}].outputs[{link.from_socket}]'
+                str_to = f'nodes[{link.to_node}].inputs[{link.to_socket}]'
+                self.exception(f'failed: {str_from} -> {str_to}')
+                self.exception(err)        
 
     def sv_update(self):
         '''
