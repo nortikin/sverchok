@@ -171,18 +171,23 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
     def migrate_from(self, old_node):
         if old_node.bl_idname == 'Formula2Node':
             formula = old_node.formula
-            # Older formula node allowed only fixed set of
-            # variables, with names "x", "n[0]" .. "n[100]".
-            # Other names could not be considered valid.
+            """
+            Older formula node allowed only fixed set of
+            variables, with names "x", "n[0]" .. "n[100]".
+            Other names could not be considered valid.
+            """
             k = -1
             for socket in old_node.inputs:
                 name = socket.name
-                if k == -1: # First socket name was "x"
+                if k == -1:
                     new_name = name
-                else: # Other names was "n[k]", which is syntactically not
-                      # a valid python variable name.
-                      # So we replace all occurences of "n[0]" in formula
-                      # with "n0", and so on.
+                else: 
+                    """
+                    Other names was "n[k]", which is syntactically not
+                    a valid python variable name.
+                    So we replace all occurences of "n[0]" in formula
+                    with "n0", and so on.
+                    """
                     new_name = "n" + str(k)
 
                 logging.info("Replacing %s with %s", name, new_name)
@@ -203,6 +208,11 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
         results = []
 
         if var_names:
+            """
+            the problem here is assuming that `[[0]]` is a desirable default for unconnected sockets.
+            some crazy cat might be using formula nodes to compose a string, then `[['']]` might be more appropriate.
+            but how to do that without writing absolutely horrific code.
+            """
             input_values = [inputs.get(name, [[0]]) for name in var_names]
             parameters = match_long_repeat(input_values)
         else:
