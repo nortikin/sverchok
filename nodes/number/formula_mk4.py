@@ -95,7 +95,7 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
         # if current node sockets match the variables sequence, do nothing skip
         # this is the logic path that will be encountered most often.
         if len(self.inputs) == variables:
-            if list(sorted(variables)) == [socket.name for socket in self.inputs]:
+            if variables == [socket.name for socket in self.inputs]:
                 self.info("no UI change: socket inputs same")
                 return
 
