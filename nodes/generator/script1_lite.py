@@ -438,7 +438,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             print('on line: ', lineno)
             show = traceback.print_exception
             show(exc_type, exc_value, exc_traceback, limit=2, file=sys.stdout)
-            if self.snlite_raise_exception:
+            if hasattr(self, "snlite_raise_exception") and self.snlite_raise_exception:
                 raise #   SNLITE_EXCEPTION(sys.exc_info()[2]) from err
 
     def custom_draw(self, context, layout):
