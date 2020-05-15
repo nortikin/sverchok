@@ -102,6 +102,22 @@ class SvTree:
             print("Reconstruction is correct")
         else:
             print("!!! Reconstruction does not correct !!!")
+            missed_nodes = bl_nodes - self.nodes._nodes.keys()
+            excess_nodes = self.nodes._nodes.keys() - bl_nodes
+            missed_links = bl_links - self.links._links.keys()
+            excess_links = self.links._links.keys() - bl_links
+            bl_node_ids = {node.node_id: node for node in bl_tree.nodes}
+            bl_links_ids = {link.link_id: link for link in bl_tree.links}
+            if missed_nodes:
+                print("Missed nodes:\n" + '\n'.join([bl_node_ids[key].name for key in missed_nodes]))
+            if excess_nodes:
+                print("Excess nodes:\n" + '\n'.join([repr(self.nodes[key]) for key in excess_nodes]))
+            if missed_links:
+                print("Missed links:")
+                for key in missed_links:
+                    print(f'<BlLink: from:{bl_links_ids[key].from_node.name} to:{bl_links_ids[key].to_node.name}>')
+            if excess_links:
+                print("Excess links:\n" + '\n'.join([repr(self.links[key]) for key in excess_links]))
 
     @staticmethod
     def is_in_debug_mode():
