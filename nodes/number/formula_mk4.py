@@ -100,16 +100,16 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
                 return
 
         # else to avoid making things complicated we rebuild the UI inputs, even when it is technically sub optimal
-        self.hot_reload_sockets(context)
+        self.hot_reload_sockets()
 
-    def clear_and_repopulate_sockets_from_variables(self, context):
+    def clear_and_repopulate_sockets_from_variables(self):
         with self.sv_throttle_tree_update():
             self.inputs.clear()
             variables = self.get_variables()
             for v in variables:
                 self.inputs.new('SvStringsSocket', v)
 
-    def hot_reload_sockets(self, context):
+    def hot_reload_sockets(self):
         """
         function hoisted from functorb, with deletions and edits
         
@@ -135,7 +135,7 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
                 link.to_socket = L.to_socket.name        # this node will always have unique socket names
                 reconnections.append(link)
 
-        self.clear_and_repopulate_sockets_from_variables(context)
+        self.clear_and_repopulate_sockets_from_variables()
 
         # restore connections where applicable (by socket name), if no links.. this is a no op.
         node_tree = self.id_data
