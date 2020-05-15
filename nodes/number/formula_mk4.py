@@ -1,20 +1,9 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
 
 from math import *
 from collections import defaultdict
@@ -103,19 +92,14 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
     def adjust_sockets(self):
         variables = self.get_variables()
 
-        # [ ] if current node sockets match the variables sequence, do nothing skip
-        #     - this is the logic path that will be encountered most often.
+        # if current node sockets match the variables sequence, do nothing skip
+        # this is the logic path that will be encountered most often.
         if len(self.inputs) == variables:
             if list(sorted(variables)) == [socket.name for socket in self.inputs]:
                 self.info("no UI change: socket inputs same")
                 return
 
-        # [ ] else to avoid making things complicated we rebuild the UI inputs, even when it is 
-        #     - technically sub optimal
-        #     [ ] store current input socket links by name/origin
-        #     [ ] wipe all inputs
-        #     [ ] recreate new sockets from variables
-        #     [ ] relink former links by name on this socket, but by index from their origin.
+        # else to avoid making things complicated we rebuild the UI inputs, even when it is technically sub optimal
         self.hot_reload_sockets(context)
 
     def clear_and_repopulate_sockets_from_variables(self, context):
@@ -128,11 +112,14 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
     def hot_reload_sockets(self, context):
         """
         function hoisted from functorb, with deletions and edits
-        Handles the reload event.
-          - gather existing connections
-          - perform clear and repopulate sockets
-          - (try) to set the connections
+        
+         - store current input socket links by name/origin
+         - wipe all inputs
+         - recreate new sockets from variables
+         - relink former links by name on this socket, but by index from their origin.
+        
         """
+        
         self.info('handling input wipe and relink')
         node = self
         nodes = self.id_data.nodes
@@ -168,7 +155,6 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
         update analyzes the state of the node and returns if the criteria to start processing
         are not met.
         '''
-
         if not any(len(formula) for formula in self.formulas()):
             return
 
@@ -243,10 +229,5 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs['Result'].sv_set(results)
 
-
-def register():
-    bpy.utils.register_class(SvFormulaNodeMk4)
-
-
-def unregister():
-    bpy.utils.unregister_class(SvFormulaNodeMk4)
+classes = [SvFormulaNodeMk4]
+register, unregister = bpy.utils.register_classes_factory(classes)
