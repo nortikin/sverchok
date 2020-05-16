@@ -46,16 +46,19 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
 
     dimensions : IntProperty(name="Dimensions", default=1, min=1, max=4, update=on_update_dims)
 
-    formula1 : StringProperty(default="x+y", update=on_update)
-    formula2 : StringProperty(update=on_update)
-    formula3 : StringProperty(update=on_update)
-    formula4 : StringProperty(update=on_update)
+    formula1: StringProperty(default="x+y", update=on_update)
+    formula2: StringProperty(update=on_update)
+    formula3: StringProperty(update=on_update)
+    formula4: StringProperty(update=on_update)
 
-    separate : BoolProperty(name="Separate", default=False, update=updateNode)
-    wrap : BoolProperty(name="Wrap", default=False, update=updateNode)
+    separate: BoolProperty(name="Separate", default=False, update=updateNode)
+    wrapping: bpy.props.EnumProperty(
+        items=[(k, k, '', i) for i, k in enumerate(["-1", "0", "+1"])],
+        description="+1: adds a set of square brackets around the output\n 0: Keeps result unchanged\n-1: Removes a set of outer square brackets",
+        default="0", update=updateNode
+    )
 
     ui_message: StringProperty(name="ui message")
-    # escape_nesting: BoolProperty(name="de nest", description="isntead out of outputting [[[..]]] it will decrease nesting by one [[..]]", update=updateNode)
 
     def formulas(self):
         return [self.formula1, self.formula2, self.formula3, self.formula4]
@@ -77,9 +80,8 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, "formula4", text="")
         row = layout.row()
         if self.inputs:
-            row.prop(self, "separate", toggle=True)
-        row.prop(self, "wrap", toggle=True)
-        # row.prop(self, "escape_nesting", text='', icon="EVENT_ESC")
+            row.prop(self, "separate", text="Split", toggle=True)
+        row.prop(self, "wrapping", expand=True)
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "dimensions")
@@ -178,34 +180,6 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
 
         return inputs
 
-    def migrate_from(self, old_node):
-        if old_node.bl_idname == 'Formula2Node':
-            formula = old_node.formula
-            """
-            Older formula node allowed only fixed set of
-            variables, with names "x", "n[0]" .. "n[100]".
-            Other names could not be considered valid.
-            """
-            k = -1
-            for socket in old_node.inputs:
-                name = socket.name
-                if k == -1:
-                    new_name = name
-                else: 
-                    """
-                    Other names was "n[k]", which is syntactically not
-                    a valid python variable name.
-                    So we replace all occurences of "n[0]" in formula
-                    with "n0", and so on.
-                    """
-                    new_name = "n" + str(k)
-
-                logging.info("Replacing %s with %s", name, new_name)
-                formula = formula.replace(name, new_name)
-                k += 1
-
-            self.formula1 = formula
-            self.wrap = True
 
     def all_inputs_connected(self):
         if self.inputs:
@@ -259,8 +233,11 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
 
             results = joined_formulas(*self.formulas())
 
-        if self.wrap:
+        if self.wrapping == "+1":
             results = [results]
+        elif self.wrapping == "-1":
+            results = results[0] if len(results) else results
+
 
         self.outputs['Result'].sv_set(results)
 
