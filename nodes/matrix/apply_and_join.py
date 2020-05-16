@@ -162,7 +162,7 @@ def apply_nested_matrices_py(
 
     if do_join:
         mesh = mesh_join(*list(zip(*meshes)))
-        return mesh
+        return [[mesh_element] for mesh_element in mesh]
     else:
         return list(zip(*meshes))
 
@@ -247,13 +247,13 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
                 layout.prop(self, "out_np", index=i, text=socket_names[i], toggle=True)
 
     def process(self):
-        if not (self.inputs['Matrices'].is_linked and any(s.is_linked for s in self.outputs)):
+        if not (self.inputs['Vertices'].is_linked and any(s.is_linked for s in self.outputs)):
             return
 
         vertices = self.inputs['Vertices'].sv_get(deepcopy=False)
         edges = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)
         faces = self.inputs['Faces'].sv_get(default=[[]], deepcopy=False)
-        matrices = self.inputs['Matrices'].sv_get(deepcopy=False)
+        matrices = self.inputs['Matrices'].sv_get(default=None, deepcopy=False)
 
         if not matrices:
             out_verts = vertices
