@@ -227,6 +227,7 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
         var_names = self.get_variables()
         inputs = self.get_input()
         results = []
+
         if var_names:
             input_values = [inputs.get(name) for name in var_names]
             parameters = match_long_repeat(input_values)
