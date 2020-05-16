@@ -49,7 +49,7 @@ Inputs
 ------
 
 - Set of inputs for this node depends on used formulas. Each variable used in formula becomes one input. If there are no variables used in formula, then this node will have no inputs.
-- if you specify variables, and the node creates a socket for it, then you must connect a link into that socket, otherwise the node will return early and not output anything.
+- If you specify variables, and the node creates a socket for it, then you must connect a link into that socket, otherwise the node will return early and not process anything. (but it might still output from the previously cached result.
     - the node will warn you using a message to say that the UI is not fully connected.
     |ui_message|
 
