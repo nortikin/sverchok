@@ -60,8 +60,11 @@ This node has the following parameters:
 
 - **Dimensions**. This parameter is available in the N panel only. It defines how many formulas the node will allow to specify and evaluate. Default value is 1. Maximum value is 4.
 - **Formula 1** to **Formula 4** input boxes. Formulas theirselve. If no formula is specified, then nothing will be calculated for this dimension. Number of formula input boxes is defined by **Dimensions** parameter.
-- **Separate**. If the flag is set, then for each combination of input values, list of values calculated by formula is enclosed in separate list. Usually you will want to uncheck this if you are using only one formula. Usually you will want to check this if you are using more than one formula. Other combinations can be of use in specific cases. Unchecked by default.
-- **Wrap**. If checked, then the whole output of the node will be enclosed in additional brackets. Checked by default.
+- **Split**. If the flag is set, then for each combination of input values, list of values calculated by formula is enclosed in separate list. Usually you will want to uncheck this if you are using only one formula. Usually you will want to check this if you are using more than one formula. Other combinations can be of use in specific cases. Unchecked by default.
+- **Wrapping**. 
+   -  ``-1``: removes an outer layer of square brackets
+   -  ``.0``: does nothing to the output
+   -  ``+1``: will wrap the output one more time.
 
 For example, let's consider the following setup:
 
@@ -69,17 +72,6 @@ For example, let's consider the following setup:
 
 Then the following combinations of flags are possible:
 
-+-----------+-----------+--------------------+
-| Separate  | Wrap      | Result             |
-+===========+===========+====================+
-| Checked   | Checked   | [[[1, 3], [2, 4]]] |
-+-----------+-----------+--------------------+
-| Checked   | Unchecked | [[1, 3], [2, 4]]   |
-+-----------+-----------+--------------------+
-| Unchecked | Checked   | [[1, 3, 2, 4]]     |
-+-----------+-----------+--------------------+
-| Unchecked | Unchecked | [1, 3, 2, 4]       |
-+-----------+-----------+--------------------+
 
 Outputs
 -------
@@ -89,8 +81,4 @@ Outputs
 Usage examples
 --------------
 
-.. image:: https://user-images.githubusercontent.com/284644/53965898-dbd71200-4113-11e9-83c7-cb3c7ced8c1e.png
-
-.. image:: https://user-images.githubusercontent.com/284644/53967764-9f0d1a00-4117-11e9-92e3-a047dbd2981b.png
-
-.. |ui_message| image:: https://user-images.githubusercontent.com/619340/82114987-5cee5800-9760-11ea-8671-e6de82ad9524.png
+see previous versions of formula node
