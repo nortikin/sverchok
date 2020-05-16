@@ -159,28 +159,33 @@ class SvPopulateSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                     batch_xs = batch_verts[:,0]
                     batch_ys = batch_verts[:,1]
                     batch_zs = batch_verts[:,2]
-                    values = field.evaluate_grid(batch_xs, batch_ys, batch_zs)
 
-                    good_idxs = values >= threshold
-                    if not self.proportional:
-                        candidates = batch_verts[good_idxs]
-                        candidate_uvs = batch_uvs[good_idxs]
+                    if field is not None:
+                        values = field.evaluate_grid(batch_xs, batch_ys, batch_zs)
+
+                        good_idxs = values >= threshold
+                        if not self.proportional:
+                            candidates = batch_verts[good_idxs]
+                            candidate_uvs = batch_uvs[good_idxs]
+                        else:
+                            candidates = []
+                            candidate_uvs = []
+                            for uv, vert, value in zip(batch_uvs[good_idxs].tolist(), batch_verts[good_idxs].tolist(), values[good_idxs].tolist()):
+                                probe = random.uniform(field_min, field_max)
+                                if probe <= value:
+                                    candidates.append(vert)
+                                    candidate_uvs.append(uv)
+                            candidates = np.array(candidates)
+                            candidate_uvs = np.array(candidate_uvs)
                     else:
-                        candidates = []
-                        candidate_uvs = []
-                        for uv, vert, value in zip(batch_uvs[good_idxs].tolist(), batch_verts[good_idxs].tolist(), values[good_idxs].tolist()):
-                            probe = random.uniform(field_min, field_max)
-                            if probe <= value:
-                                candidates.append(vert)
-                                candidate_uvs.append(uv)
-                        candidates = np.array(candidates)
-                        candidate_uvs = np.array(candidate_uvs)
+                        candidates = batch_verts
+                        candidate_uvs = batch_uvs
 
                     if len(candidates) > 0:
                         good_verts = []
                         good_uvs = []
                         for candidate_uv, candidate in zip(candidate_uvs, candidates):
-                            if check_all(candidate, new_verts + good_verts, min_r):
+                            if min_r == 0 or check_all(candidate, new_verts + good_verts, min_r):
                                 good_verts.append(candidate)
                                 good_uvs.append(candidate_uv)
                                 done += 1
