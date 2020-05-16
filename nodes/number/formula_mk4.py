@@ -197,7 +197,7 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
             self.formula1 = formula
             self.wrap = True
 
-    def all_inputs_connected():
+    def all_inputs_connected(self):
         if self.inputs:
             if not all(socket.is_linked for socket in self.inputs):
                 return False
@@ -210,7 +210,7 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
             return
 
         # if the user specifies a variable, they must also link a value into that socket, this will prevent Exception
-        if not all_inputs_connected():
+        if not self.all_inputs_connected():
             return
 
         var_names = self.get_variables()
