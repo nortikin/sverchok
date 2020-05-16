@@ -113,9 +113,6 @@ class SvMergeByDistanceNode(bpy.types.Node, SverchCustomTreeNode):
         pass
 
     def process(self):
-        if not any(s.is_linked for s in self.outputs):
-            return
-
         if not self.inputs['Vertices'].is_linked:
             return
 
@@ -147,9 +144,8 @@ class SvMergeByDistanceNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Vertices'].sv_set(verts_out)
 
         # restrict setting this output when there is no such input
-        if self.inputs['PolyEdge'].is_linked:
-            self.outputs['Edges'].sv_set(edges_out)
-            self.outputs['Polygons'].sv_set(polys_out)
+        self.outputs['Edges'].sv_set(edges_out)
+        self.outputs['Polygons'].sv_set(polys_out)
 
         self.outputs['FaceData'].sv_set(face_data_out)
         self.outputs['Doubles'].sv_set(d_out)

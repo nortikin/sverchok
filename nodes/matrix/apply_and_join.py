@@ -196,7 +196,7 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
                 layout.prop(self, "out_np", index=i, text=socket_names[i], toggle=True)
 
     def process(self):
-        if not (self.inputs['Matrices'].is_linked and any(s.is_linked for s in self.outputs)):
+        if not self.inputs['Matrices'].is_linked:
             return
 
         vertices = self.inputs['Vertices'].sv_get(deepcopy=False)
