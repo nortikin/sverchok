@@ -47,6 +47,8 @@ def add_temporal_viewer_draw(tree, nodes, links, existing_node, cut_links):
         new_node.label = 'Temporal Viewer'
         new_node.color = (0.666141, 0.203022, 0)
 
+    print("new node location", new_node.location)
+    new_node.location = (0, 0)
     offset_node_location(existing_node, new_node, [100, 250])
     frame_adjust(existing_node, new_node)
 
