@@ -10,11 +10,11 @@ Same as lesson 01.
 Lesson 02 - A Circle
 --------------------
 
-This lesson will introduce the following nodes: ``List Length, Int Range, List Shift, List Zip``
+This lesson will introduce the following nodes: ``List Length, Number Range, List Shift, List Zip``
 
-This will continue from the previous lesson where we made a plane from 4 vectors. We can reuse some of these nodes in order to make a Circle. If you saved it as suggested load it up, or download from **here**. You can also create it from scratch by cross referencing this image.
+This will continue from the previous lesson where we made a plane from 4 vectors. We can reuse some of these nodes in order to make a Circle. If you saved it as suggested load it up or You can also create it from scratch by cross referencing this image.
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5428874/fac67fd4-83d5-11e4-9601-1399248dddd6.png
+|former_final_image|
 
 **A Circle**
 
@@ -162,5 +162,5 @@ You now know how to create basic shapes programmatically using Sverchok nodes. I
 
 ``Viewer Draw`` automatically generates Edges when you pass one or more Vertices and Polygons. This means in practice when you already have the Polygons for an object then you don't need to also pass in the Edges, they are inferred purely from the indices of the incoming Polygons.
 
-
+.. |former_final_image| image:: https://user-images.githubusercontent.com/619340/81545437-2b007e80-9379-11ea-8af0-08a16f35060a.png
 
