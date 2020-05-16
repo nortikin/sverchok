@@ -23,7 +23,7 @@ Parameters
 
 +-----------+-----------+-----------+-------------------------------------------+
 | Param     | Type      | Default   | Description                               |
-+===========+===========+===========+===========================================+    
++===========+===========+===========+===========================================+
 | Distance  | Float     | 0.001     | Maximum distance to weld vertices         |
 +-----------+-----------+-----------+-------------------------------------------+
 
@@ -38,7 +38,7 @@ This node has the following outputs:
 - **Doubles**. Vertices, that were deleted.
 - **FaceData**. List containing data items from the **FaceData** input, which
   contains one item for each output mesh face.
-- **Mask** The mask after the merge
+- **Mask** The inputted mask after the merge. (Removed the mask indexes of the deleted vertices)
 
 Examples of usage
 -----------------
