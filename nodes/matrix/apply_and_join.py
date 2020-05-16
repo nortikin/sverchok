@@ -148,6 +148,8 @@ def apply_nested_matrices_py(
         faces: List[PyFaces],
         matrices: List[List[Matrix]],
         do_join: bool) -> Tuple[List[PyVertices], List[PyEdges], List[PyFaces]]:
+    # Get list of Sverchok meshes and list of list of matrices
+    # List of matrices applies to a mesh, each matrices copy the mesh inside an object
 
     max_objects = max([len(func_input) for func_input in [vertices, edges, faces, matrices]])
     vertices = repeat_last(vertices)
@@ -172,6 +174,8 @@ def copy_object_and_transform_py(
         edges: PyEdges,
         faces: PyFaces,
         matrices: List[Matrix]) -> Tuple[PyVertices, PyEdges, PyFaces]:
+    # Get mesh and list of matrices
+    # Each matrices create copy of given mesh and transform it
 
     meshes: List[Tuple[PyVertices, PyEdges, PyFaces]] = []
     for matrix in matrices:
@@ -187,6 +191,8 @@ def apply_nested_matrices_np(
         faces: List[PyFaces],
         matrices: List[List[Matrix]],
         do_join: bool) -> Tuple[List[np.ndarray], List[np.ndarray], List[PyFaces]]:
+    # Get list of Sverchok meshes and list of list of matrices
+    # List of matrices applies to a mesh, each matrices copy the mesh inside an object
 
     max_objects = max([len(func_input) for func_input in [vertices, edges, faces, matrices]])
     vertices = repeat_last(vertices)
@@ -211,6 +217,8 @@ def copy_object_and_transform_np(
         edges: np.ndarray,
         faces: PyFaces,
         matrices: List[Matrix]) -> Tuple[np.ndarray, np.ndarray, PyFaces]:
+    # Get mesh and list of matrices
+    # Each matrices create copy of given mesh and transform it
 
     meshes: List[Tuple[np.ndarray, np.ndarray, PyFaces]] = []
     for matrix in matrices:
