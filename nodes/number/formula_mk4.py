@@ -58,6 +58,7 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
         default="0", update=updateNode
     )
 
+    use_ast: BoolProperty(name="AST", description="uses the ast.literal_eval module", update=updateNode)
     ui_message: StringProperty(name="ui message")
 
     def formulas(self):
@@ -81,6 +82,8 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row()
         if self.inputs:
             row.prop(self, "separate", text="Split", toggle=True)
+        else:
+            row.prop(self, "use_ast", text="", icon="SCRIPTPLUGINS")
         row.prop(self, "wrapping", expand=True)
 
     def draw_buttons_ext(self, context, layout):
@@ -231,7 +234,15 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
                 if f4: built_string += f",{f4}"
                 return list(ast.literal_eval(built_string))
 
-            results = joined_formulas(*self.formulas())
+            if self.use_ast:
+                results = joined_formulas(*self.formulas())
+            else:
+                vector = []
+                for formula in self.formulas():
+                    if formula:
+                        value = safe_eval(formula, dict())
+                        vector.append(value)
+                results.extend(vector)
 
         if self.wrapping == "+1":
             results = [results]
