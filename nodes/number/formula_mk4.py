@@ -235,7 +235,6 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
 
             for objects in zip(*parameters):
                 object_results = []
-                self.info(f'...{objects}')
                 for values in zip_long_repeat(*objects):
                     variables = dict(zip(var_names, values))
                     vector = []
@@ -258,7 +257,7 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
                 if f4: built_string += f",{f4}"
                 return list(ast.literal_eval(built_string))
 
-            results = joined_formulas(self.formula1, self.formula2, self.formula3, self.formula4)
+            results = joined_formulas(*self.formulas())
 
         if self.wrap:
             results = [results]
