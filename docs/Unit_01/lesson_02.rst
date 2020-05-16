@@ -18,11 +18,11 @@ This will continue from the previous lesson where we made a plane from 4 vectors
 
 **A Circle**
 
-Just like Blender has a Circle primitive, Sverchok also has a built in Circle primitive called the `Circle Generator`. We will avoid using the primtives until we've covered more of the fundamental nodes and how they interact.
+Blender has a Circle primitive, Sverchok also has its own Circle primitive called the `Circle Generator`. We will avoid using the primitives until we've covered more of the fundamental nodes and how they interact.
 
 **Dynamic Polygons**
 
-In the collection of nodes we have in the Node View at the moment, the sequence used for linking up vertices to form a `polygon` is input manually. As mentioned earlier, as soon as you need to link many vertices instead of the current 4, you will want to make this `list creation` automatic. You will probably also want to make it dynamic to add new segments automatically if the vertex count is changeable. 
+In the collection of nodes we have in the Node View at the moment, we have manually entered the polygon indiexes. As mentioned earlier, as soon as you need to link many vertices instead of the current 4, you will want to make this *list creation* generative/automatic. You will probably also want to make it respond dynamically by adding new segments automatically if the vertex count is changed. 
 
 Because this is a common task, there's a dedicated node for it called ``UV Connect`` (link) , but just like the `Circle` generator nodes we will avoid using that for the same reason. Learning how to build these things yourself is the best way to learn Visual Programming with nodes.
 
