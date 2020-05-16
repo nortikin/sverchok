@@ -54,6 +54,7 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
     wrap : BoolProperty(name="Wrap", default=False, update=updateNode)
 
     ui_message: StringProperty(name="ui message")
+    # escape_nesting: BoolProperty(name="de nest", description="isntead out of outputting [[[..]]] it will decrease nesting by one [[..]]", update=updateNode)
 
     def formulas(self):
         return [self.formula1, self.formula2, self.formula3, self.formula4]
@@ -74,8 +75,9 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
         if self.dimensions > 3:
             layout.prop(self, "formula4", text="")
         row = layout.row()
-        row.prop(self, "separate")
-        row.prop(self, "wrap")
+        row.prop(self, "separate", toggle=True)
+        row.prop(self, "wrap", toggle=True)
+        # row.prop(self, "escape_nesting", text='', icon="EVENT_ESC")
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "dimensions")
@@ -229,6 +231,7 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
             parameters = match_long_repeat(input_values)
         else:
             parameters = [[[None]]]
+
         for objects in zip(*parameters):
             object_results = []
             for values in zip_long_repeat(*objects):
