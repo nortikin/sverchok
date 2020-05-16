@@ -61,7 +61,7 @@ def mesh_join_np(verts, edges, pols, out_np_pols):
     if are_some_edges:
         e_out = np.concatenate([edg + l for edg, l in zip(edges, accum_vert_lens)])
     else:
-        e_out = np.array([])
+        e_out = np.array([], dtype=np.int)
 
     if are_some_pols:
         if out_np_pols:
@@ -158,7 +158,7 @@ def apply_nested_matrices_py(
     meshes: List[Tuple[PyVertices, PyEdges, PyFaces]] = []
     for i, obj_vertices, obj_edges, obj_faces, obj_matrices in zip(
             range(max_objects), vertices, edges, faces, matrices):
-        meshes.append(copy_object_and_transform(obj_vertices, obj_edges, obj_faces, obj_matrices))
+        meshes.append(copy_object_and_transform_py(obj_vertices, obj_edges, obj_faces, obj_matrices))
 
     if do_join:
         mesh = mesh_join(*list(zip(*meshes)))
@@ -167,7 +167,7 @@ def apply_nested_matrices_py(
         return list(zip(*meshes))
 
 
-def copy_object_and_transform(
+def copy_object_and_transform_py(
         vertices: PyVertices,
         edges: PyEdges,
         faces: PyFaces,
@@ -179,6 +179,45 @@ def copy_object_and_transform(
         meshes.append((new_verts, edges, faces))
 
     return mesh_join(*list(zip(*meshes)))
+
+
+def apply_nested_matrices_np(
+        vertices: np.ndarray,
+        edges: np.ndarray,
+        faces: List[PyFaces],
+        matrices: List[List[Matrix]],
+        do_join: bool) -> Tuple[List[np.ndarray], List[np.ndarray], List[PyFaces]]:
+
+    max_objects = max([len(func_input) for func_input in [vertices, edges, faces, matrices]])
+    vertices = repeat_last(vertices)
+    edges = repeat_last(edges)
+    faces = repeat_last(faces)
+    matrices = repeat_last(matrices)
+
+    meshes: List[Tuple[PyVertices, PyEdges, PyFaces]] = []
+    for i, obj_vertices, obj_edges, obj_faces, obj_matrices in zip(
+            range(max_objects), vertices, edges, faces, matrices):
+        meshes.append(copy_object_and_transform_np(obj_vertices, obj_edges, obj_faces, obj_matrices))
+
+    if do_join:
+        mesh = mesh_join_np(*list(zip(*meshes)), False)
+        return [[mesh_element] for mesh_element in mesh]
+    else:
+        return list(zip(*meshes))
+
+
+def copy_object_and_transform_np(
+        vertices: np.ndarray,
+        edges: np.ndarray,
+        faces: PyFaces,
+        matrices: List[Matrix]) -> Tuple[np.ndarray, np.ndarray, PyFaces]:
+
+    meshes: List[Tuple[np.ndarray, np.ndarray, PyFaces]] = []
+    for matrix in matrices:
+        new_verts = matrix_apply_np(vertices, matrix)
+        meshes.append((new_verts, edges, faces))
+
+    return mesh_join_np(*list(zip(*meshes)), False)
 
 
 class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
@@ -272,7 +311,12 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
         elif not isinstance(matrices[0][0], (list, tuple)):
             # most likely it is List[List[Matrix]] or List[List[np.ndarray]]
             if self.implementation == 'NumPy':
-                pass
+                vertices = [np.array(verts, dtype=np.float32) for verts in vertices]  # float 32 is faster
+                edges = [np.array(es, dtype=np.int) for es in edges]
+
+                out_verts, out_edges, out_faces = apply_nested_matrices_np(
+                    vertices, edges, faces, matrices, self.do_join
+                )
             else:
                 out_verts, out_edges, out_faces = apply_nested_matrices_py(
                     vertices, edges, faces, matrices, self.do_join)
