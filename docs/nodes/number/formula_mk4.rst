@@ -65,6 +65,9 @@ This node has the following parameters:
    -  ``-1``: removes an outer layer of square brackets
    -  ``.0``: does nothing to the output
    -  ``+1``: will wrap the output one more time.
+- **Use AST**: (Default is off) 
+   - this mode is only available in socket-less mode. You may want to look at the implementation source if it's doing things you aren't expecting. 
+   - With AST off the original ``safe_eval`` is used.
 
 For example, let's consider the following setup:
 
