@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+import ast
 from math import *
 from collections import defaultdict
 
@@ -229,23 +230,33 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
         if var_names:
             input_values = [inputs.get(name) for name in var_names]
             parameters = match_long_repeat(input_values)
-        else:
-            parameters = [[[None]]]
 
-        for objects in zip(*parameters):
-            object_results = []
-            for values in zip_long_repeat(*objects):
-                variables = dict(zip(var_names, values))
-                vector = []
-                for formula in self.formulas():
-                    if formula:
-                        value = safe_eval(formula, variables)
-                        vector.append(value)
-                if self.separate:
-                    object_results.append(vector)
-                else:
-                    object_results.extend(vector)
-            results.append(object_results)
+            for objects in zip(*parameters):
+                object_results = []
+                self.info(f'...{objects}')
+                for values in zip_long_repeat(*objects):
+                    variables = dict(zip(var_names, values))
+                    vector = []
+                    for formula in self.formulas():
+                        if formula:
+                            value = safe_eval(formula, variables)
+                            vector.append(value)
+                    if self.separate:
+                        object_results.append(vector)
+                    else:
+                        object_results.extend(vector)
+                results.append(object_results)
+
+        else:
+            def joined_formulas(f1, f2, f3, f4):
+                built_string = ""
+                if f1: built_string += f1
+                if f2: built_string += f",{f2}"
+                if f3: built_string += f",{f3}"
+                if f4: built_string += f",{f4}"
+                return list(ast.literal_eval(built_string))
+
+            results = joined_formulas(self.formula1, self.formula2, self.formula3, self.formula4)
 
         if self.wrap:
             results = [results]
