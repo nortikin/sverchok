@@ -197,23 +197,27 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
             self.formula1 = formula
             self.wrap = True
 
+    def all_inputs_connected():
+        if self.inputs:
+            if not all(socket.is_linked for socket in self.inputs):
+                return False
+        return True
+
+
     def process(self):
 
         if not self.outputs[0].is_linked:
             return
 
+        # if the user specifies a variable, they must also link a value into that socket, this will prevent Exception
+        if not all_inputs_connected():
+            return
+
         var_names = self.get_variables()
         inputs = self.get_input()
-
         results = []
-
         if var_names:
-            """
-            the problem here is assuming that `[[0]]` is a desirable default for unconnected sockets.
-            some crazy cat might be using formula nodes to compose a string, then `[['']]` might be more appropriate.
-            but how to do that without writing absolutely horrific code.
-            """
-            input_values = [inputs.get(name, [[0]]) for name in var_names]
+            input_values = [inputs.get(name) for name in var_names]
             parameters = match_long_repeat(input_values)
         else:
             parameters = [[[None]]]
