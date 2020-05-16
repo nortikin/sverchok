@@ -53,6 +53,8 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
     separate : BoolProperty(name="Separate", default=False, update=updateNode)
     wrap : BoolProperty(name="Wrap", default=False, update=updateNode)
 
+    ui_message: StringProperty(name="ui message")
+
     def formulas(self):
         return [self.formula1, self.formula2, self.formula3, self.formula4]
 
@@ -60,6 +62,10 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
         return self.formulas()[k]
 
     def draw_buttons(self, context, layout):
+        if self.ui_message:
+            r = layout.row()
+            r.alert = True
+            r.label(text=self.ui_message, icon='INFO')
         layout.prop(self, "formula1", text="")
         if self.dimensions > 1:
             layout.prop(self, "formula2", text="")
@@ -210,7 +216,9 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
             return
 
         # if the user specifies a variable, they must also link a value into that socket, this will prevent Exception
+        self.ui_message = ""
         if not self.all_inputs_connected():
+            self.ui_message = "node not fully connected"
             return
 
         var_names = self.get_variables()
