@@ -76,7 +76,8 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
         if self.dimensions > 3:
             layout.prop(self, "formula4", text="")
         row = layout.row()
-        row.prop(self, "separate", toggle=True)
+        if self.inputs:
+            row.prop(self, "separate", toggle=True)
         row.prop(self, "wrap", toggle=True)
         # row.prop(self, "escape_nesting", text='', icon="EVENT_ESC")
 
