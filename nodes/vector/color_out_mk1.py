@@ -47,6 +47,7 @@ class SvColorsOutNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvColorsOutNodeMK1'
     bl_label = 'Color Out'
+    bl_icon = 'COLOR'
     sv_icon = 'SV_COLOR_OUT'
 
     def psuedo_update(self, context):
@@ -124,7 +125,7 @@ class SvColorsOutNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         elif self.selected_mode == 'HSL':
             transform_func = rgb_to_hsl
 
-        out = [[] for s in self.inputs]
+        out = [[] for s in self.outputs]
         for obj in data:
             if not self.selected_mode == 'RGB':
                 cols = transform_func(array(obj))
@@ -133,7 +134,7 @@ class SvColorsOutNodeMK1(bpy.types.Node, SverchCustomTreeNode):
                 obj_cols = unpack_func(obj)
             for i, col in enumerate(obj_cols):
                 out[i].append(col)
-                
+
         for i, socket in enumerate(self.outputs[:len(data[0][0])]):
             self.outputs[socket.name].sv_set(out[i])
 

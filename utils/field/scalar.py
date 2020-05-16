@@ -35,6 +35,35 @@ class SvScalarField(object):
     def evaluate_grid(self, xs, ys, zs):
         raise Exception("not implemented")
 
+    def gradient(self, point, step=0.001):
+        x, y, z = point
+        v_dx_plus = self.evaluate(x+step,y,z)
+        v_dx_minus = self.evaluate(x-step,y,z)
+        v_dy_plus = self.evaluate(x, y+step, z)
+        v_dy_minus = self.evaluate(x, y-step, z)
+        v_dz_plus = self.evaluate(x, y, z+step)
+        v_dz_minus = self.evaluate(x, y, z-step)
+
+        dv_dx = (v_dx_plus - v_dx_minus) / (2*step)
+        dv_dy = (v_dy_plus - v_dy_minus) / (2*step)
+        dv_dz = (v_dz_plus - v_dz_minus) / (2*step)
+        return np.array([dv_dx, dv_dy, dv_dz])
+
+    def gradient_grid(self, xs, ys, zs, step=0.001):
+        v_dx_plus = self.evaluate_grid(xs+step, ys,zs)
+        v_dx_minus = self.evaluate_grid(xs-step,ys,zs)
+        v_dy_plus = self.evaluate_grid(xs, ys+step, zs)
+        v_dy_minus = self.evaluate_grid(xs, ys-step, zs)
+        v_dz_plus = self.evaluate_grid(xs, ys, zs+step)
+        v_dz_minus = self.evaluate_grid(xs, ys, zs-step)
+
+        dv_dx = (v_dx_plus - v_dx_minus) / (2*step)
+        dv_dy = (v_dy_plus - v_dy_minus) / (2*step)
+        dv_dz = (v_dz_plus - v_dz_minus) / (2*step)
+
+        R = np.stack((dv_dx, dv_dy, dv_dz))
+        return R[0], R[1], R[2]
+
 class SvConstantScalarField(SvScalarField):
     def __init__(self, value):
         self.value = value

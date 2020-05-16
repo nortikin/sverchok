@@ -44,8 +44,15 @@ class SvEvalCurveNode(bpy.types.Node, SverchCustomTreeNode):
             default = 0.5,
             update = updateNode)
 
+        join : BoolProperty(
+                name = "Join",
+                description = "Output single list of vertices / edges for all input curves",
+                default = True,
+                update = updateNode)
+
         def draw_buttons(self, context, layout):
             layout.prop(self, 'eval_mode', expand=True)
+            layout.prop(self, 'join', toggle=True)
 
         def sv_init(self, context):
             self.inputs.new('SvCurveSocket', "Curve")
@@ -80,25 +87,35 @@ class SvEvalCurveNode(bpy.types.Node, SverchCustomTreeNode):
                     ts_i = [None]
                 else:
                     samples_i = [None]
+
+                new_verts = []
+                new_edges = []
+                new_tangents = []
                 for curve, ts, samples in zip_long_repeat(curves, ts_i, samples_i):
                     if self.eval_mode == 'AUTO':
                         t_min, t_max = curve.get_u_bounds()
                         ts = np.linspace(t_min, t_max, num=samples, dtype=np.float64)
                     else:
                         ts = np.array(ts)
-                        #ts = np.array(ts)[np.newaxis].T
-                        #print(ts.shape)
 
-                    new_verts = curve.evaluate_array(ts)
-                    new_verts = new_verts.tolist()
+                    curve_verts = curve.evaluate_array(ts)
+                    curve_verts = curve_verts.tolist()
                     n = len(ts)
-                    new_edges = [(i,i+1) for i in range(n-1)]
+                    curve_edges = [(i,i+1) for i in range(n-1)]
                     
+                    new_verts.append(curve_verts)
+                    new_edges.append(curve_edges)
+                    if need_tangent:
+                        curve_tangents = curve.tangent_array(ts).tolist()
+                        new_tangents.append(curve_tangents)
+                if self.join:
+                    verts_out.extend(new_verts)
+                    edges_out.extend(new_edges)
+                    tangents_out.extend(new_tangents)
+                else:
                     verts_out.append(new_verts)
                     edges_out.append(new_edges)
-                    if need_tangent:
-                        new_tangents = curve.tangent_array(ts).tolist()
-                        tangents_out.append(new_tangents)
+                    tangents_out.append(new_tangents)
 
             self.outputs['Vertices'].sv_set(verts_out)
             self.outputs['Edges'].sv_set(edges_out)

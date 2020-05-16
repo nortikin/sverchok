@@ -16,9 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import numpy as np
-
 from math import isclose
+import numpy as np
 
 import bpy
 from bpy.props import BoolProperty, FloatProperty, IntProperty, EnumProperty
@@ -41,46 +40,46 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         name='Float Low', description='Minimum float value',
         default=0.0, update=updateNode)
 
-    high_f : FloatProperty(
+    high_f: FloatProperty(
         name='Float High', description='Maximum float value',
         default=1.0, update=updateNode)
 
-    low_i : IntProperty(
+    low_i: IntProperty(
         name='Int Low', description='Minimum integer value',
         default=0, update=updateNode)
 
-    high_i : IntProperty(
+    high_i: IntProperty(
         name='Int High', description='Maximum integer value',
         default=10, update=updateNode)
 
-    size : IntProperty(
+    size: IntProperty(
         name='Size', description='number of values to output (count.. or size)',
         default=10, min=1, update=updateNode)
 
-    seed : IntProperty(
+    seed: IntProperty(
         name='Seed', description='seed, grow',
         default=0, min=0, update=updateNode)
 
-    alpha : FloatProperty(
+    alpha: FloatProperty(
         name='Alpha', description='Distribution parameter',
         default=2.0, min=(1e-06), update=updateNode)
 
-    beta : FloatProperty(
+    beta: FloatProperty(
         name='Beta', description='Distribution parameter',
         default=2.0, min=(1e-06), update=updateNode)
 
-    t_in : FloatProperty(
-         name="t", description='Distribution parameter',
-         default=.5, min=1e-06, max=1.0-1e-06, precision=6, update=updateNode)
+    t_in: FloatProperty(
+        name="t", description='Distribution parameter',
+        default=.5, min=1e-06, max=1.0-1e-06, precision=6, update=updateNode)
 
-
-    as_list : BoolProperty(
+    as_list: BoolProperty(
         name='As List', description='on means output list, off means output np.array 1d',
         default=True, update=updateNode)
 
     def numpy_bridge(self, context):
         self.as_list = not self.output_numpy
-    output_numpy : BoolProperty(
+
+    output_numpy: BoolProperty(
         name='Output Numpy', description='Output numpy arrays',
         default=False, update=numpy_bridge)
 
@@ -124,26 +123,26 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         ('t', 't_in', 3)]
 
     def adjust_inputs(self, context):
-        m = self.type_selected_mode
-        si = self.inputs
-        ssk = self.soket_opt
-        if m == 'Int':
-            if si[2].prop_name[-1] == 'f':
-                si[2].prop_name = 'low_i'
-                si[3].prop_name = 'high_i'
-            si['Weights'].hide_safe = not self.weighted
+        mode = self.type_selected_mode
+        inputs = self.inputs
+        socket_ops = self.soket_opt
+        if mode == 'Int':
+            if inputs[2].prop_name[-1] == 'f':
+                inputs[2].prop_name = 'low_i'
+                inputs[3].prop_name = 'high_i'
+            inputs['Weights'].hide_safe = not self.weighted
             for i in range(0, 3):
-                si[ssk[i][0]].hide_safe = True
+                inputs[socket_ops[i][0]].hide_safe = True
 
-        elif m == 'Float':
+        elif mode == 'Float':
             dsm = self.distribute_mode
             func = self.func_dict[dsm]
-            if si[2].prop_name[-1] == 'i':
-                si[2].prop_name = 'low_f'
-                si[3].prop_name = 'high_f'
-            si['Weights'].hide_safe = True
+            if inputs[2].prop_name[-1] == 'i':
+                inputs[2].prop_name = 'low_f'
+                inputs[3].prop_name = 'high_f'
+            inputs['Weights'].hide_safe = True
             for i in range(1, 4):
-                si[ssk[i-1][0]].hide_safe = i not in func[2]
+                inputs[socket_ops[i-1][0]].hide_safe = i not in func[2]
 
         updateNode(self, context)
 
@@ -152,42 +151,42 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         ("Float", "Float", "", 1)
     ]
 
-    type_selected_mode : EnumProperty(
+    type_selected_mode: EnumProperty(
         items=type_mode_options, description="offers....",
         default="Int", update=adjust_inputs
     )
 
-    weighted : BoolProperty(
+    weighted: BoolProperty(
         name='Weighted', description='Input probability for each number',
         default=False, update=adjust_inputs)
 
-    unique : BoolProperty(
+    unique: BoolProperty(
         name='Unique', description='Output non-repeated numbers',
         default=False, update=updateNode)
 
-    distribute_mode : EnumProperty(
+    distribute_mode: EnumProperty(
         name="Distribution", description="Distribution method",
         items=distribute_options,
         default="UNIFORM", update=adjust_inputs
     )
 
     def sv_init(self, context):
-        si = self.inputs
-        si.new('SvStringsSocket', "Size").prop_name = 'size'
-        si.new('SvStringsSocket', "Seed").prop_name = 'seed'
-        si.new('SvStringsSocket', "Low").prop_name = 'low_i'
-        si.new('SvStringsSocket', "High").prop_name = 'high_i'
-        si.new('SvStringsSocket', 'Weights').hide_safe = not self.weighted
+        inputs = self.inputs
+        inputs.new('SvStringsSocket', "Size").prop_name = 'size'
+        inputs.new('SvStringsSocket', "Seed").prop_name = 'seed'
+        inputs.new('SvStringsSocket', "Low").prop_name = 'low_i'
+        inputs.new('SvStringsSocket', "High").prop_name = 'high_i'
+        inputs.new('SvStringsSocket', 'Weights').hide_safe = not self.weighted
 
-        ssk = self.soket_opt
+        socket_ops = self.soket_opt
         func = self.func_dict[self.distribute_mode]
-        m = self.type_selected_mode
+        mode = self.type_selected_mode
         for i in range(1, 4):
-            si.new('SvStringsSocket', ssk[i-1][0]).prop_name = ssk[i-1][1]
-            si[ssk[i-1][0]].hide_safe = ((m == "Int") or i not in func[2])
+            inputs.new('SvStringsSocket', socket_ops[i-1][0]).prop_name = socket_ops[i-1][1]
+            inputs[socket_ops[i-1][0]].hide_safe = ((mode == "Int") or i not in func[2])
 
-        so = self.outputs
-        so.new('SvStringsSocket', "Value")
+        outputs = self.outputs
+        outputs.new('SvStringsSocket', "Value")
 
     def buttons(self, layout):
         row = layout.row()
@@ -224,20 +223,21 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
             size, seed, low, high, weights = params
         size = max(size, 1)
         if self.unique:
-           size = min(size,high + 1 - low)
+            size = min(size, high + 1 - low)
         seed = max(seed, 0)
         np.random.seed(seed)
         low, high = sorted([low, high])
         population = range(low, high + 1)
 
         if self.weighted and len(weights) > 0:
-            fullList(weights, size)
-            weights = weights[:size]
+            population_len = len(population)
+            fullList(weights, population_len)
+            weights = weights[:population_len]
             total_weight = sum(weights)
             weights = [w / total_weight for w in weights]
             result = np.random.choice(population, size, replace=(not self.unique), p=weights)
         else:
-           result = np.random.choice(population, size, replace=(not self.unique))
+            result = np.random.choice(population, size, replace=(not self.unique))
 
         return result
 
@@ -300,14 +300,17 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
-        m = self.type_selected_mode
+        mode = self.type_selected_mode
         if outputs['Value'].is_linked:
-            if m == 'Int':
+
+            if mode == 'Int':
                 params = [inputs[i].sv_get()[0] for i in range(4)]
                 if self.weighted and inputs[4].is_linked:
                     params.append(inputs[4].sv_get())
-            elif m == 'Float':
+
+            elif mode == 'Float':
                 params = [inputs[i].sv_get()[0] for i in range(len(inputs)) if not inputs[i].hide]
+
             out = [self.produce_range(*args) for args in zip(*match_long_repeat(params))]
             outputs['Value'].sv_set(out)
 

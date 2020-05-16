@@ -16,18 +16,29 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+
 from itertools import chain
+from typing import List, Union, Tuple
+
+import numpy as np
+
 import bpy
 from bpy.props import BoolProperty, EnumProperty, BoolVectorProperty
-from mathutils import Vector
-import numpy as np
+from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.modules.matrix_utils import matrix_apply_np
+from sverchok.data_structure import repeat_last
+
 
 socket_names = ['Vertices', 'Edges', 'Polygons']
+
+PyVertices = List[Union[List[float], Tuple[float, float, float]]]
+PyEdges = List[Union[List[int], Tuple[int, int]]]
+PyFaces = List[Union[List[int], Tuple[int]]]
+
 
 def mesh_join_np(verts, edges, pols, out_np_pols):
     '''
@@ -50,7 +61,7 @@ def mesh_join_np(verts, edges, pols, out_np_pols):
     if are_some_edges:
         e_out = np.concatenate([edg + l for edg, l in zip(edges, accum_vert_lens)])
     else:
-        e_out = np.array([])
+        e_out = np.array([], dtype=np.int)
 
     if are_some_pols:
         if out_np_pols:
@@ -130,6 +141,93 @@ def apply_and_join_python(vertices, edges, faces, matrices, do_join):
         out_faces = (faces * n)[:n]
     return out_verts, out_edges, out_faces
 
+
+def apply_nested_matrices_py(
+        vertices: List[PyVertices],
+        edges: List[PyEdges],
+        faces: List[PyFaces],
+        matrices: List[List[Matrix]],
+        do_join: bool) -> Tuple[List[PyVertices], List[PyEdges], List[PyFaces]]:
+    # Get list of Sverchok meshes and list of list of matrices
+    # List of matrices applies to a mesh, each matrices copy the mesh inside an object
+
+    max_objects = max([len(func_input) for func_input in [vertices, edges, faces, matrices]])
+    vertices = repeat_last(vertices)
+    edges = repeat_last(edges)
+    faces = repeat_last(faces)
+    matrices = repeat_last(matrices)
+
+    meshes: List[Tuple[PyVertices, PyEdges, PyFaces]] = []
+    for i, obj_vertices, obj_edges, obj_faces, obj_matrices in zip(
+            range(max_objects), vertices, edges, faces, matrices):
+        meshes.append(copy_object_and_transform_py(obj_vertices, obj_edges, obj_faces, obj_matrices))
+
+    if do_join:
+        mesh = mesh_join(*list(zip(*meshes)))
+        return [[mesh_element] for mesh_element in mesh]
+    else:
+        return list(zip(*meshes))
+
+
+def copy_object_and_transform_py(
+        vertices: PyVertices,
+        edges: PyEdges,
+        faces: PyFaces,
+        matrices: List[Matrix]) -> Tuple[PyVertices, PyEdges, PyFaces]:
+    # Get mesh and list of matrices
+    # Each matrices create copy of given mesh and transform it
+
+    meshes: List[Tuple[PyVertices, PyEdges, PyFaces]] = []
+    for matrix in matrices:
+        new_verts = [(matrix @ Vector(v))[:] for v in vertices]
+        meshes.append((new_verts, edges, faces))
+
+    return mesh_join(*list(zip(*meshes)))
+
+
+def apply_nested_matrices_np(
+        vertices: np.ndarray,
+        edges: np.ndarray,
+        faces: List[PyFaces],
+        matrices: List[List[Matrix]],
+        do_join: bool) -> Tuple[List[np.ndarray], List[np.ndarray], List[PyFaces]]:
+    # Get list of Sverchok meshes and list of list of matrices
+    # List of matrices applies to a mesh, each matrices copy the mesh inside an object
+
+    max_objects = max([len(func_input) for func_input in [vertices, edges, faces, matrices]])
+    vertices = repeat_last(vertices)
+    edges = repeat_last(edges)
+    faces = repeat_last(faces)
+    matrices = repeat_last(matrices)
+
+    meshes: List[Tuple[PyVertices, PyEdges, PyFaces]] = []
+    for i, obj_vertices, obj_edges, obj_faces, obj_matrices in zip(
+            range(max_objects), vertices, edges, faces, matrices):
+        meshes.append(copy_object_and_transform_np(obj_vertices, obj_edges, obj_faces, obj_matrices))
+
+    if do_join:
+        mesh = mesh_join_np(*list(zip(*meshes)), False)
+        return [[mesh_element] for mesh_element in mesh]
+    else:
+        return list(zip(*meshes))
+
+
+def copy_object_and_transform_np(
+        vertices: np.ndarray,
+        edges: np.ndarray,
+        faces: PyFaces,
+        matrices: List[Matrix]) -> Tuple[np.ndarray, np.ndarray, PyFaces]:
+    # Get mesh and list of matrices
+    # Each matrices create copy of given mesh and transform it
+
+    meshes: List[Tuple[np.ndarray, np.ndarray, PyFaces]] = []
+    for matrix in matrices:
+        new_verts = matrix_apply_np(vertices, matrix)
+        meshes.append((new_verts, edges, faces))
+
+    return mesh_join_np(*list(zip(*meshes)), False)
+
+
 class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Mat * Mesh (& Join)
@@ -196,19 +294,44 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
                 layout.prop(self, "out_np", index=i, text=socket_names[i], toggle=True)
 
     def process(self):
-        if not (self.inputs['Matrices'].is_linked and any(s.is_linked for s in self.outputs)):
+        if not (self.inputs['Vertices'].is_linked and any(s.is_linked for s in self.outputs)):
             return
 
         vertices = self.inputs['Vertices'].sv_get(deepcopy=False)
         edges = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)
         faces = self.inputs['Faces'].sv_get(default=[[]], deepcopy=False)
-        matrices = self.inputs['Matrices'].sv_get(deepcopy=False)
+        matrices = self.inputs['Matrices'].sv_get(default=None, deepcopy=False)
 
-        if self.implementation == 'NumPy':
-            out_verts, out_edges, out_faces = apply_and_join_numpy(vertices, edges, faces, matrices, self.do_join, self.out_np)
+        if not matrices:
+            out_verts = vertices
+            out_edges = edges
+            out_faces = faces
+
+        elif not isinstance(matrices[0], (list, tuple)):
+            # most likely it is List[Matrix] or List[np.ndarray]
+            if self.implementation == 'NumPy':
+                out_verts, out_edges, out_faces = apply_and_join_numpy(
+                    vertices, edges, faces, matrices, self.do_join, self.out_np)
+
+            else:
+                out_verts, out_edges, out_faces = apply_and_join_python(vertices, edges, faces, matrices, self.do_join)
+
+        elif not isinstance(matrices[0][0], (list, tuple)):
+            # most likely it is List[List[Matrix]] or List[List[np.ndarray]]
+            if self.implementation == 'NumPy':
+                vertices = [np.array(verts, dtype=np.float32) for verts in vertices]  # float 32 is faster
+                edges = [np.array(es, dtype=np.int) for es in edges]
+
+                out_verts, out_edges, out_faces = apply_nested_matrices_np(
+                    vertices, edges, faces, matrices, self.do_join
+                )
+            else:
+                out_verts, out_edges, out_faces = apply_nested_matrices_py(
+                    vertices, edges, faces, matrices, self.do_join)
 
         else:
-            out_verts, out_edges, out_faces = apply_and_join_python(vertices, edges, faces, matrices, self.do_join)
+            # it looks inputs matrices are too nested in lists
+            raise TypeError("Unsupported matrix format")  # will make our errors more clear
 
         self.outputs['Edges'].sv_set(out_edges)
         self.outputs['Faces'].sv_set(out_faces)

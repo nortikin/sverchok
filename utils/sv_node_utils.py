@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 
 
 def recursive_framed_location_finder(node, loc_xy):

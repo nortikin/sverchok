@@ -27,12 +27,19 @@ This node has the following inputs:
 Parameters
 ----------
 
-This node has the following parameter:
+This node has the following parameters:
 
 * **Mode**:
 
   * **Automatic**. Calculate curve points for the set of curve parameter values which are evenly distributed within curve domain.
    * **Manual**. Calculate curve point for the provided value of curve parameter.
+
+* **Join**. If checked, then the node will output one single list of objects
+  for all provided curves - for example, data in **Verties** output will have
+  nesting level 3 even if data in **Curve** input had nesting level 2.
+  Otherwise, the node will output separate list of object for each list of
+  curves in the input - i.e., **Verties** output will have nesting level 4 if
+  **Curve** input had nesting level 2. Checked by default.
 
 Outputs
 -------

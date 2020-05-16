@@ -17,14 +17,19 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import IntProperty, FloatProperty, BoolProperty, StringProperty, EnumProperty
+from bpy.props import IntProperty, FloatProperty, BoolProperty, StringProperty, EnumProperty, CollectionProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.utils.logging import debug
 
 MODE_INSIDE_ON = "INSIDE ON"
 MODE_INSIDE_OFF = "INSIDE OFF"
 MODE_PASS_THROUGH = "PASS THROUGH"
+
+ZONE_BELOW = 1
+ZONE_INSIDE = 2
+ZONE_ABOVE = 3
 
 switch_mode_items = [(MODE_INSIDE_ON, "Inside ON", "", 1),
                      (MODE_INSIDE_OFF, "Inside OFF", "", 2),
@@ -33,8 +38,8 @@ switch_mode_items = [(MODE_INSIDE_ON, "Inside ON", "", 1),
 
 class SvSwitchOperatorCallback(bpy.types.Operator):
     ''' Callbacks to the main node '''
-    bl_idname = "nodes.sv_switcher_callback"
-    bl_label = "Sv Ops Switcher callback"
+    bl_idname = "nodes.sv_switch_callback"
+    bl_label = "Sv Ops Switch callback"
 
     function_name: StringProperty()  # what function to call
 
@@ -44,30 +49,92 @@ class SvSwitchOperatorCallback(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class SvSwitchPropertyGroup(bpy.types.PropertyGroup):
+    ''' Switch class used by the node to keep track of multiple switches '''
+
+    switch_state: BoolProperty(
+        name="State", description="Current state of the switch",
+        default=False)
+
+    switch_zone: IntProperty(
+        name="Zone", description="Zone number the value is in relative to the range (1,2,3)",
+        default=ZONE_BELOW)
+
+    switch_last_zone: IntProperty(
+        name="Last Zone", description="Last zone number (1,2,3)",
+        default=ZONE_BELOW)
+
+    @property
+    def state(self):
+        return self.switch_state
+
+    @property
+    def zone(self):
+        return self.switch_zone
+
+    def toggle_state(self):
+        self.switch_state = not self.switch_state
+
+    def update_switch(self, mode, val, minB, maxB):
+        if val < minB:
+            self.switch_zone = ZONE_BELOW
+        elif val <= maxB:
+            self.switch_zone = ZONE_INSIDE
+        else:  # val > maxB
+            self.switch_zone = ZONE_ABOVE
+
+        if mode == MODE_INSIDE_ON:
+            if self.switch_zone == ZONE_INSIDE:
+                self.switch_state = True
+            else:
+                self.switch_state = False
+
+        elif mode == MODE_INSIDE_OFF:
+            if self.switch_zone == ZONE_INSIDE:
+                self.switch_state = False
+            else:
+                self.switch_state = True
+
+        elif mode == MODE_PASS_THROUGH:
+            if self.switch_last_zone == ZONE_BELOW:
+                if self.switch_zone == ZONE_ABOVE:
+                    self.switch_last_zone = self.switch_zone
+                    self.switch_state = not self.switch_state
+
+            elif self.switch_last_zone == ZONE_ABOVE:
+                if self.switch_zone == ZONE_BELOW:
+                    self.switch_last_zone = self.switch_zone
+                    self.switch_state = not self.switch_state
+        else:
+            raise Exception("Unknown mode: {}".format(mode))
+
+
 class SvRangeSwitchNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Switch, Range
-    Tooltip: Switches state for a value relative to a value range.
+    Tooltip: Switches state based on a value relative to a value range.
     """
     bl_idname = 'SvRangeSwitchNode'
     bl_label = 'Range Switch'
     bl_icon = "SNAP_INCREMENT"
 
+    switches: CollectionProperty(name="Switches", type=SvSwitchPropertyGroup)
+
     """
-    (-) ----[0]---outside---[b1]---inside---[b2]---outside ---> (+)
+    [0]-- outside -->[b1]<-- inside -->[b2]<-- outside --> (+)
 
     INSIDE ON mode:
 
-    OFF      |b1|    ON     |b2|    OFF     # inside ON,  outside OFF
+    OFF ---> |b1| <-- ON --> |b2| <--- OFF   # inside ON,  outside OFF
 
     INSIDE OFF mode:
 
-    ON       |b1|    OFF    |b2|    ON      # inside OFF, outside ON
+    ON  ---> |b1| <-- OFF --> |b2| <--- ON   # inside OFF, outside ON
 
     PASS THROUGH mode:
 
-    ON  ->   |b1|  - ON ->  |b2| -> OFF     # pass through switches state
-    ON  <-   |b1| <- OFF -  |b2| <- OFF     #
+    ON  ---> |b1| -- ON --> |b2| ---> OFF    # pass through range switches state
+    ON  <--- |b1| <- OFF -- |b2| <--- OFF    #
     """
     mode: EnumProperty(
         name="Mode", description="Select a switch behavior",
@@ -90,14 +157,6 @@ class SvRangeSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         default=2.0,
         update=updateNode)
 
-    state: BoolProperty(
-        name="State", description="Current state of the switch",
-        default=False)
-
-    last_zone: IntProperty(
-        name="Last Zone", description="Last zone number (1,2,3)",
-        default=1)
-
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", text="")
 
@@ -107,16 +166,10 @@ class SvRangeSwitchNode(bpy.types.Node, SverchCustomTreeNode):
             button.function_name = "toggle_state"
 
     def toggle_state(self, context):
-        self.state = not self.state
-        updateNode(self, context)
+        for switch in self.switches:
+            switch.toggle_state()
 
-    def get_zone(self, val, minB, maxB):
-        if val < minB:
-            return 1
-        elif val < maxB:
-            return 2
-        else:  # val > maxB
-            return 3
+        updateNode(self, context)
 
     def sv_init(self, context):
         self.width = 150
@@ -124,8 +177,8 @@ class SvRangeSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "b1").prop_name = 'range_b1'
         self.inputs.new('SvStringsSocket', "b2").prop_name = 'range_b2'
 
-        self.outputs.new('SvStringsSocket',  "State")
-        self.outputs.new('SvStringsSocket',  "Zone")
+        self.outputs.new('SvStringsSocket', "State")
+        self.outputs.new('SvStringsSocket', "Zone")
 
     def process(self):
         # return if no outputs are connected
@@ -133,52 +186,52 @@ class SvRangeSwitchNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         # input values lists (single or multi value)
-        input_val = self.inputs["val"].sv_get()[0][0]
-        input_b1 = self.inputs["b1"].sv_get()[0][0]
-        input_b2 = self.inputs["b2"].sv_get()[0][0]
+        input_val = self.inputs["val"].sv_get()[0]
+        input_b1 = self.inputs["b1"].sv_get()[0]
+        input_b2 = self.inputs["b2"].sv_get()[0]
 
-        input_val = abs(input_val)
-        input_b1 = abs(input_b1)
-        input_b2 = abs(input_b2)
+        parameters = match_long_repeat([input_val, input_b1, input_b2])
 
-        val = input_val
-        minB = min(input_b1, input_b2)
-        maxB = max(input_b1, input_b2)
+        # update the numberr of switches based on number of inputs
+        old_switch_count = len(self.switches)
+        new_switch_count = len(parameters[0])
 
-        zone = self.get_zone(val, minB, maxB)
+        # did the number of switches change ? => add or remove switches
+        if old_switch_count != new_switch_count:
+            if new_switch_count > old_switch_count:  # add new switches
+                for n in range(old_switch_count, new_switch_count):
+                    debug("creating new switch")
+                    switch = self.switches.add()
+            else:  # remove old switches
+                while len(self.switches) > new_switch_count:
+                    n = len(self.switches) - 1
+                    debug("removing old switch")
+                    self.switches.remove(n)
 
-        if self.mode == MODE_INSIDE_ON:
-            if zone == 2:
-                self.state = True
-            else:
-                self.state = False
+        # update switches
+        state_list = []
+        zone_list = []
+        for i, params in enumerate(zip(*parameters)):
+            val, b1, b2 = params
+            minB = min(b1, b2)
+            maxB = max(b1, b2)
 
-        elif self.mode == MODE_INSIDE_OFF:
-            if zone == 2:
-                self.state = False
-            else:
-                self.state = True
+            switch = self.switches[i]
+            switch.update_switch(self.mode, val, minB, maxB)
 
-        else:  # PASS through switch ON->OFF, OFF->ON
-            if self.last_zone == 1:
-                if zone == 3:
-                    self.last_zone = zone
-                    self.state = not self.state
+            state_list.append(switch.state)
+            zone_list.append(switch.zone)
 
-            elif self.last_zone == 3:
-                if zone == 1:
-                    self.last_zone = zone
-                    self.state = not self.state
+        self.outputs["State"].sv_set([state_list])
+        self.outputs["Zone"].sv_set([zone_list])
 
-        self.outputs["State"].sv_set([[self.state]])
-        self.outputs["Zone"].sv_set([[zone]])
+
+classes = [SvSwitchPropertyGroup, SvSwitchOperatorCallback, SvRangeSwitchNode]
 
 
 def register():
-    bpy.utils.register_class(SvSwitchOperatorCallback)
-    bpy.utils.register_class(SvRangeSwitchNode)
+    _ = [bpy.utils.register_class(cls) for cls in classes]
 
 
 def unregister():
-    bpy.utils.unregister_class(SvRangeSwitchNode)
-    bpy.utils.unregister_class(SvSwitchOperatorCallback)
+    _ = [bpy.utils.unregister_class(cls) for cls in reversed(classes)]

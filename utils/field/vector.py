@@ -598,34 +598,10 @@ class SvScalarFieldGradient(SvVectorField):
         self.__description__ = "Grad({})".format(field)
 
     def evaluate(self, x, y, z):
-        step = self.step
-        v_dx_plus = self.field.evaluate(x+step,y,z)
-        v_dx_minus = self.field.evaluate(x-step,y,z)
-        v_dy_plus = self.field.evaluate(x, y+step, z)
-        v_dy_minus = self.field.evaluate(x, y-step, z)
-        v_dz_plus = self.field.evaluate(x, y, z+step)
-        v_dz_minus = self.field.evaluate(x, y, z-step)
-
-        dv_dx = (v_dx_plus - v_dx_minus) / (2*step)
-        dv_dy = (v_dy_plus - v_dy_minus) / (2*step)
-        dv_dz = (v_dz_plus - v_dz_minus) / (2*step)
-        return np.array([dv_dx, dv_dy, dv_dz])
+        return self.field.gradient([x, y, z], step=self.step)
     
     def evaluate_grid(self, xs, ys, zs):
-        step = self.step
-        v_dx_plus = self.field.evaluate_grid(xs+step, ys,zs)
-        v_dx_minus = self.field.evaluate_grid(xs-step,ys,zs)
-        v_dy_plus = self.field.evaluate_grid(xs, ys+step, zs)
-        v_dy_minus = self.field.evaluate_grid(xs, ys-step, zs)
-        v_dz_plus = self.field.evaluate_grid(xs, ys, zs+step)
-        v_dz_minus = self.field.evaluate_grid(xs, ys, zs-step)
-
-        dv_dx = (v_dx_plus - v_dx_minus) / (2*step)
-        dv_dy = (v_dy_plus - v_dy_minus) / (2*step)
-        dv_dz = (v_dz_plus - v_dz_minus) / (2*step)
-
-        R = np.stack((dv_dx, dv_dy, dv_dz))
-        return R[0], R[1], R[2]
+        return self.field.gradient_grid(xs, ys, zs, step=self.step)
 
 class SvVectorFieldRotor(SvVectorField):
     def __init__(self, field, step):

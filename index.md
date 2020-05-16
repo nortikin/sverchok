@@ -52,90 +52,92 @@
     SvSpiralNodeMK2
 
 ## Curves
-     SvExLineCurveNode
-     SvExCircleNode
-     SvArc3ptCurveNode
-     SvExCurveFormulaNode
-     SvExPolylineNode
-     SvExFilletPolylineNode
-     SvExCubicSplineNode
-     ---
-     SvExApplyFieldToCurveNode
-     SvExCastCurveNode
-     SvExIsoUvCurveNode
-     SvExCurveOnSurfaceNode
-     ---
-     SvExCurveLerpCurveNode
-     SvExConcatCurvesNode
-     SvExFlipCurveNode
-     SvExSurfaceBoundaryNode
-     ---
-     SvExCurveEndpointsNode
-     SvExCurveSegmentNode
-     SvExCurveRangeNode
-     SvExCurveLengthNode
-     SvExCurveFrameNode
-     SvExCurveCurvatureNode
-     SvExCurveTorsionNode
-     SvExCurveZeroTwistFrameNode
-     SvExCurveLengthParameterNode
-     SvLengthRebuildCurveNode
-     ---
-     SvExEvalCurveNode
+    SvExLineCurveNode
+    SvExCircleNode
+    SvRoundedRectangleNode
+    SvArc3ptCurveNode
+    SvExCurveFormulaNode
+    SvExPolylineNode
+    SvExFilletPolylineNode
+    SvExCubicSplineNode
+    ---
+    SvExApplyFieldToCurveNode
+    SvExCastCurveNode
+    SvExIsoUvCurveNode
+    SvExCurveOnSurfaceNode
+    ---
+    SvExCurveLerpCurveNode
+    SvExConcatCurvesNode
+    SvExFlipCurveNode
+    SvExSurfaceBoundaryNode
+    ---
+    SvExCurveEndpointsNode
+    SvExCurveSegmentNode
+    SvExCurveRangeNode
+    SvExCurveLengthNode
+    SvExCurveFrameNode
+    SvExCurveCurvatureNode
+    SvExCurveTorsionNode
+    SvExCurveZeroTwistFrameNode
+    SvExCurveLengthParameterNode
+    SvLengthRebuildCurveNode
+    ---
+    SvExEvalCurveNode
 
 ## Surfaces
-     SvExPlaneSurfaceNode
-     SvExSphereNode
-     SvExSurfaceFormulaNode
-     SvInterpolatingSurfaceNode
-     ---
-     SvExRevolutionSurfaceNode
-     SvExTaperSweepSurfaceNode
-     SvExExtrudeCurveVectorNode
-     SvExExtrudeCurveCurveSurfaceNode
-     SvExExtrudeCurvePointNode
-     SvExCurveLerpNode
-     SvExSurfaceLerpNode
-     SvExApplyFieldToSurfaceNode
-     ---
-     SvExSurfaceDomainNode
-     SvExSurfaceSubdomainNode
-     SvFlipSurfaceNode
-     SvSwapSurfaceNode
-     SvSurfaceGaussCurvatureNode
-     SvSurfaceCurvaturesNode
-     ---
-     SvExTessellateTrimSurfaceNode
-     SvAdaptiveTessellateNode
-     SvExEvalSurfaceNode
+    SvExPlaneSurfaceNode
+    SvExSphereNode
+    SvExSurfaceFormulaNode
+    SvInterpolatingSurfaceNode
+    ---
+    SvExRevolutionSurfaceNode
+    SvExTaperSweepSurfaceNode
+    SvExExtrudeCurveVectorNode
+    SvExExtrudeCurveCurveSurfaceNode
+    SvExExtrudeCurvePointNode
+    SvExCurveLerpNode
+    SvExSurfaceLerpNode
+    SvExApplyFieldToSurfaceNode
+    ---
+    SvExSurfaceDomainNode
+    SvExSurfaceSubdomainNode
+    SvFlipSurfaceNode
+    SvSwapSurfaceNode
+    SvSurfaceNormalsNode
+    SvSurfaceGaussCurvatureNode
+    SvSurfaceCurvaturesNode
+    ---
+    SvExTessellateTrimSurfaceNode
+    SvAdaptiveTessellateNode
+    SvExEvalSurfaceNode
 
 ## Fields
-     SvCoordScalarFieldNode
-     SvExScalarFieldFormulaNode
-     SvExVectorFieldFormulaNode
-     SvExComposeVectorFieldNode
-     SvExDecomposeVectorFieldNode
-     SvExScalarFieldPointNode
-     SvExAttractorFieldNode
-     SvExImageFieldNode
-     SvExVoronoiFieldNode
-     SvExNoiseVectorFieldNode
-     ---
-     SvExScalarFieldMathNode
-     SvExMergeScalarFieldsNode
-     SvExVectorFieldMathNode
-     SvExFieldDiffOpsNode
-     SvScalarFieldCurvatureNode
-     ---
-     SvExBendAlongCurveFieldNode
-     SvExBendAlongSurfaceFieldNode
-     ---
-     SvExScalarFieldEvaluateNode
-     SvExVectorFieldEvaluateNode
-     SvExVectorFieldApplyNode
-     ---
-     SvExVectorFieldGraphNode
-     SvExVectorFieldLinesNode
+    SvCoordScalarFieldNode
+    SvExScalarFieldFormulaNode
+    SvExVectorFieldFormulaNode
+    SvExComposeVectorFieldNode
+    SvExDecomposeVectorFieldNode
+    SvExScalarFieldPointNode
+    SvExAttractorFieldNode
+    SvExImageFieldNode
+    SvExVoronoiFieldNode
+    SvExNoiseVectorFieldNode
+    ---
+    SvExScalarFieldMathNode
+    SvExMergeScalarFieldsNode
+    SvExVectorFieldMathNode
+    SvExFieldDiffOpsNode
+    SvScalarFieldCurvatureNode
+    ---
+    SvExBendAlongCurveFieldNode
+    SvExBendAlongSurfaceFieldNode
+    ---
+    SvExScalarFieldEvaluateNode
+    SvExVectorFieldEvaluateNode
+    SvExVectorFieldApplyNode
+    ---
+    SvExVectorFieldGraphNode
+    SvExVectorFieldLinesNode
 
 ## Analyzers
     SvBBoxNodeMk2
@@ -363,6 +365,7 @@
     SvInterpolationNodeMK2
     ---
     SvHomogenousVectorField
+    SvFieldRandomProbeNode
     SvNoiseNodeMK2
     SvTurbulenceNode
     SvLacunarityNode
@@ -493,12 +496,14 @@
     SvColorsOutNodeMK1
     SvFormulaColorNode
     SvTextureEvaluateNodeMk2
+    SvColorRampNode
     ---
     SvSculptMaskNode
     SvSelectMeshVerts
     SvSetCustomMeshNormals
     ---
     SvCombinatoricsNode
+    SvFormulaNodeMk4    
 
 ## Alpha Nodes
     SvBManalyzinNode
