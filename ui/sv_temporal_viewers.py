@@ -47,6 +47,10 @@ def add_temporal_viewer_draw(tree, nodes, links, existing_node, cut_links):
         new_node.label = 'Temporal Viewer'
         new_node.color = (0.666141, 0.203022, 0)
 
+    # else the location is compounded, iterately
+    new_node.parent = None
+    new_node.location = (0, 0)
+
     offset_node_location(existing_node, new_node, [100, 250])
     frame_adjust(existing_node, new_node)
 
@@ -80,6 +84,10 @@ def add_temporal_stethoscope(tree, nodes, links, existing_node):
         new_node.name = 'Temporal Stethoscope'
         new_node.label = 'Temporal Stethoscope'
         new_node.color = (0.336045, 0.336045, 0.666654)
+
+    # else the location is compounded, iterately
+    new_node.parent = None
+    new_node.location = (0, 0)
 
     offset_node_location(existing_node, new_node, [30, -200])
     frame_adjust(existing_node, new_node)
