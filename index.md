@@ -97,7 +97,6 @@
     SvExEvalCurveNode
 
 ## Surfaces
-<<<<<<< HEAD
     SvExPlaneSurfaceNode
     SvExSphereNode
     SvExSurfaceFormulaNode
