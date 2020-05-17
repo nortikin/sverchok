@@ -13,6 +13,7 @@ Transforms
    bend_along_path
    bend_along_surface
    cast
+   center
    deform
    formula_deform_mk2
    mirror_mk2

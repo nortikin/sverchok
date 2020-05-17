@@ -190,6 +190,7 @@
     MatrixApplyNode
     SvBarycentricTransformNode
     SvAlignMeshByMesh
+    SvCenterNode
     ---
     SvTransformSelectNode
     SvTransformMesh
