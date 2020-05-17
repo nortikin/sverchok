@@ -64,6 +64,25 @@ class SvSurfaceCurvatureLinesNode(bpy.types.Node, SverchCustomTreeNode):
         step_s = self.inputs['Step'].sv_get()
         iterations_s = self.inputs['Iterations'].sv_get()
 
+        def get_direction(surface, u, v):
+            calculator = surface.curvature_calculator(np.array([u]), np.array([v]), order=True)
+            data = calculator.calc(need_uv_directions = True, need_matrix=False)
+            if self.direction == 'MAX':
+                return data.principal_direction_2_uv[0]
+            else:
+                return data.principal_direction_1_uv[0]
+
+        def runge_kutta(surface, u, v, step):
+            u_k1, v_k1 = get_direction(surface, u, v) * step
+            #u_k1 *= step
+            #v_k1 *= step
+            u_k2, v_k2 = get_direction(surface, u + u_k1/2.0, v + v_k1/2.0) * step
+            u_k3, v_k3 = get_direction(surface, u + u_k2/2.0, v + v_k2/2.0) * step
+            u_k4, v_k4 = get_direction(surface, u + u_k3, v + v_k3) * step
+            du = (u_k1 + 2*u_k2 + 2*u_k3 + k4)/6.0
+            dv = (v_k1 + 2*v_k2 + 2*v_k3 + k4)/6.0
+            return np.array([du, dv])
+
         verts_out = []
         inputs = zip_long_repeat(surfaces_s, src_point_s, step_s, iterations_s)
         for surfaces, src_point_i, step_i, iterations_i in inputs:
@@ -74,13 +93,7 @@ class SvSurfaceCurvatureLinesNode(bpy.types.Node, SverchCustomTreeNode):
                     for i in range(iterations):
                         vertex = surface.evaluate(u, v).tolist()
                         new_verts.append(vertex)
-
-                        calculator = surface.curvature_calculator(np.array([u]), np.array([v]), order=True)
-                        data = calculator.calc(need_uv_directions = True, need_matrix=False)
-                        if self.direction == 'MAX':
-                            direction = data.principal_direction_2_uv[0]
-                        else:
-                            direction = data.principal_direction_1_uv[0]
+                        direction = runge_kutta(surface, u, v, step)
                         direction = direction / np.linalg.norm(direction)
                         direction = direction * step
                         #print(direction)
