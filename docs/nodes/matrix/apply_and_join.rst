@@ -45,9 +45,23 @@ This node has the following outputs:
 - **Edges**. Input edges list, repeated the number of incoming matrices. Empty if corresponding input is empty.
 - **Faces**. Input faces list, repeated the number of incoming matrices. Empty if corresponding input is empty.
 
+Usage of nested lists of matrices
+---------------------------------
+
+The node can handle with list of lists of matrices.
+It means that each object mesh has it's own list of matrices to apply.
+Applying list of matrices to a mesh creates its copies inside an object and transform its.
+Usage case is when there are bunch of seperate meshes which should be copied inside their objects.
+In this mode and with numpy implementation mode you will get numpy output for vertices and edges anyway.
+
+
 Examples
 --------
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/6096652/ac13659e-afbf-11e4-83c9-e13b75c0e346.png
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/6096654/b300fbfa-afbf-11e4-901b-1361a44238c2.png
+
+**Example of usage of nested list of matrices (list of lists of matrices):**
+
+.. image:: https://user-images.githubusercontent.com/28003269/82114656-2bc95400-976f-11ea-8b6a-b539060b03e6.png

@@ -56,7 +56,7 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
 
     dimensions : IntProperty(name="Dimensions", default=1, min=1, max=4, update=on_update_dims)
 
-    formula1 : StringProperty(default = "x+y", update=on_update)
+    formula1 : StringProperty(default="x+y", update=on_update)
     formula2 : StringProperty(update=on_update)
     formula3 : StringProperty(update=on_update)
     formula4 : StringProperty(update=on_update)
@@ -131,18 +131,6 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         for var in variables:
             if var in self.inputs and self.inputs[var].is_linked:
                 inputs[var] = self.inputs[var].sv_get()
-
-#         n_max = max(len(inputs[var]) for var in inputs)
-#         result = []
-#         for i in range(n_max):
-#             item = defaultdict(list)
-#             for var in inputs:
-#                 value = inputs[var]
-#                 if i < len(value):
-#                     item[var].append(value[i])
-#                 else:
-#                     item[var].append(value[-1])
-#             result.append(item)
 
         return inputs
 

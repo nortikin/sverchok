@@ -1462,7 +1462,7 @@ class LineEquation(object):
         output: np.array of shape (n,)
         """
         # TODO: there should be more effective way to do this
-        projection = self.projection_of_points(point)
+        projection = self.projection_of_points(points)
         return np.linalg.norm(points - projection, axis=1)
 
     def projection_of_point(self, point):
