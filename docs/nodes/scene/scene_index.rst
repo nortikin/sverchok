@@ -21,3 +21,4 @@ Scene
    particles_MK2
    node_remote_mk2
    selection_grabber_lite
+   timer
