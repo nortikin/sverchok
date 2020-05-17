@@ -6,13 +6,13 @@
 # License-Filename: LICENSE
 
 import numpy as np
-from math import sqrt, copysign
+from math import sqrt, copysign, pi
 from mathutils import Matrix, Vector
 from mathutils import noise
 from mathutils import kdtree
 from mathutils import bvhtree
 
-from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter
+from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter, LineEquation
 from sverchok.utils.math import from_cylindrical, from_spherical
 
 from sverchok.utils.curve import SvCurveLengthSolver
@@ -459,6 +459,86 @@ class SvPlaneAttractorVectorField(SvVectorField):
             R = vectors.T
             return R[0], R[1], R[2]
 
+class SvEdgeAttractorVectorField(SvVectorField):
+    __description__ = "Edge attractor"
+
+    def __init__(self, v1, v2, falloff=None):
+        self.falloff = falloff
+        self.v1 = Vector(v1)
+        self.v2 = Vector(v2)
+    
+    def evaluate(self, x, y, z):
+        v = Vector([x,y,z])
+        dv1 = (v - self.v1).length
+        dv2 = (v - self.v2).length
+        if dv1 > dv2:
+            distance_to_nearest = dv2
+            nearest_vert = self.v2
+            another_vert = self.v1
+        else:
+            distance_to_nearest = dv1
+            nearest_vert = self.v1
+            another_vert = self.v2
+        edge = another_vert - nearest_vert
+        to_nearest = v - nearest_vert
+        if to_nearest.length == 0:
+            return 0
+        angle = edge.angle(to_nearest)
+        if angle > pi/2:
+            distance = distance_to_nearest
+            vector = - to_nearest
+        else:
+            vector = LineEquation.from_two_points(self.v1, self.v2).projection_of_points(v)
+            distance = vector.length
+            vector = np.array(vector)
+        if self.falloff is not None:
+            return self.falloff(distance) * vector / distance
+        else:
+            return vector
+    
+    def evaluate_grid(self, xs, ys, zs):
+        n = len(xs)
+        vs = np.stack((xs, ys, zs)).T
+        v1 = np.array(self.v1)
+        v2 = np.array(self.v2)    
+        dv1s = np.linalg.norm(vs - v1, axis=1)
+        dv2s = np.linalg.norm(vs - v2, axis=1)
+        v1_is_nearest = (dv1s < dv2s)
+        v2_is_nearest = np.logical_not(v1_is_nearest)
+        nearest_verts = np.empty_like(vs)
+        other_verts = np.empty_like(vs)
+        nearest_verts[v1_is_nearest] = v1
+        nearest_verts[v2_is_nearest] = v2
+        other_verts[v1_is_nearest] = v2
+        other_verts[v2_is_nearest] = v1
+        
+        to_nearest = vs - nearest_verts
+        
+        edges = other_verts - nearest_verts
+        dot = (to_nearest * edges).sum(axis=1)
+        at_edge = (dot > 0)
+        at_vertex = np.logical_not(at_edge)
+        at_v1 = np.logical_and(at_vertex, v1_is_nearest)
+        at_v2 = np.logical_and(at_vertex, v2_is_nearest)
+
+        line = LineEquation.from_two_points(self.v1, self.v2)
+        
+        vectors = np.empty((n,3))
+        vectors[at_edge] = line.projection_of_points(vs[at_edge]) - vs[at_edge]
+        vectors[at_v1] = v1 - vs[at_v1]
+        vectors[at_v2] = v2 - vs[at_v2]
+
+        if self.falloff is not None:
+            norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+            lens = self.falloff(norms)
+            nonzero = (norms > 0)[:,0]
+            vectors[nonzero] = vectors[nonzero] / norms[nonzero][:,0][np.newaxis].T
+            R = (lens * vectors).T
+            return R[0], R[1], R[2]
+        else:
+            R = vectors.T
+            return R[0], R[1], R[2]
+        
 class SvBvhAttractorVectorField(SvVectorField):
 
     def __init__(self, bvh=None, verts=None, faces=None, falloff=None, use_normal=False, signed_normal=False):
@@ -520,6 +600,36 @@ class SvBvhAttractorVectorField(SvVectorField):
         else:
             R = vectors.T
             return R[0], R[1], R[2]
+
+class SvSelectVectorField(SvVectorField):
+    def __init__(self, fields, mode):
+        self.fields = fields
+        self.mode = mode
+        self.__description__ = "{}({})".format(mode, fields)
+
+    def evaluate(self, x, y, z):
+        vectors = [field.evaluate(x, y, z) for field in self.fields]
+        vectors = np.array(vectors)
+        norms = np.linalg.norm(vectors, axis=1)
+        if self.mode == 'MIN':
+            selected = np.argmin(norms)
+        else: # MAX
+            selected = np.argmax(norms)
+        return vectors[selected]
+
+    def evaluate_grid(self, xs, ys, zs):
+        n = len(xs)
+        vectors = [field.evaluate_grid(xs, ys, zs) for field in self.fields]
+        vectors = np.stack(vectors)
+        vectors = np.transpose(vectors, axes=(2,0,1))
+        norms = np.linalg.norm(vectors, axis=2)
+        if self.mode == 'MIN':
+            selected = np.argmin(norms, axis=1)
+        else: # MAX
+            selected = np.argmax(norms, axis=1)
+        all_points = list(range(n))
+        vectors = vectors[all_points, selected, :]
+        return vectors
 
 class SvVectorFieldTangent(SvVectorField):
 
