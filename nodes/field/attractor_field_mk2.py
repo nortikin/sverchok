@@ -75,7 +75,7 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     ]
 
     merge_mode : EnumProperty(
-        name = "Points mode",
+        name = "Join mode",
         description = "How to define the distance when multiple attraction centers are used",
         items = point_modes,
         default = 'AVG',
