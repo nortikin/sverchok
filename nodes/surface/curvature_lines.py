@@ -41,8 +41,15 @@ class SvSurfaceCurvatureLinesNode(bpy.types.Node, SverchCustomTreeNode):
             min = 1, default = 10,
             update = updateNode)
 
+    negate : BoolProperty(
+            name = "Negate",
+            description = "Go to the opposite direction",
+            default = False,
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'direction', expand=True)
+        layout.prop(self, 'negate', toggle=True)
 
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "Surface")
@@ -68,9 +75,12 @@ class SvSurfaceCurvatureLinesNode(bpy.types.Node, SverchCustomTreeNode):
             calculator = surface.curvature_calculator(np.array([u]), np.array([v]), order=True)
             data = calculator.calc(need_uv_directions = True, need_matrix=False)
             if self.direction == 'MAX':
-                return data.principal_direction_2_uv[0]
+                direction = data.principal_direction_2_uv[0]
             else:
-                return data.principal_direction_1_uv[0]
+                direction = data.principal_direction_1_uv[0]
+            if self.negate:
+                direction = - direction
+            return direction
 
         def runge_kutta(surface, u, v, step):
             u_k1, v_k1 = get_direction(surface, u, v) * step
@@ -79,8 +89,8 @@ class SvSurfaceCurvatureLinesNode(bpy.types.Node, SverchCustomTreeNode):
             u_k2, v_k2 = get_direction(surface, u + u_k1/2.0, v + v_k1/2.0) * step
             u_k3, v_k3 = get_direction(surface, u + u_k2/2.0, v + v_k2/2.0) * step
             u_k4, v_k4 = get_direction(surface, u + u_k3, v + v_k3) * step
-            du = (u_k1 + 2*u_k2 + 2*u_k3 + k4)/6.0
-            dv = (v_k1 + 2*v_k2 + 2*v_k3 + k4)/6.0
+            du = (u_k1 + 2*u_k2 + 2*u_k3 + u_k4)/6.0
+            dv = (v_k1 + 2*v_k2 + 2*v_k3 + v_k4)/6.0
             return np.array([du, dv])
 
         verts_out = []
