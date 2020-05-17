@@ -400,15 +400,13 @@ class SvLineAttractorScalarField(SvScalarField):
     def evaluate_grid(self, xs, ys, zs):
         direction = self.direction
         direction2 = np.dot(direction, direction)
-
-        def func(vertex):
-            to_center = self.center - vertex
-            projection = np.dot(to_center, direction) * direction / direction2
-            dv = to_center - projection
-            return np.linalg.norm(dv)
-
         points = np.stack((xs, ys, zs)).T
-        norms = np.vectorize(func, signature='(3)->()')(points)
+        to_center = self.center - points
+        dot = (to_center * direction).sum(axis=1)
+        projections = (dot * direction[np.newaxis].T / direction2).T
+        vectors = to_center - projections
+        norms = np.linalg.norm(vectors, axis=1)
+
         if self.falloff is not None:
             result = self.falloff(norms)
             return result
