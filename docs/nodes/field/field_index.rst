@@ -6,7 +6,7 @@ Field
    :maxdepth: 2
 
    coordinate_scalar_field
-   attractor_field
+   attractor_field_mk2
    scalar_field_formula
    vector_field_formula
    noise_vfield

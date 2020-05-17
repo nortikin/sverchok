@@ -118,7 +118,7 @@
     SvExComposeVectorFieldNode
     SvExDecomposeVectorFieldNode
     SvExScalarFieldPointNode
-    SvExAttractorFieldNode
+    SvAttractorFieldNodeMk2
     SvExImageFieldNode
     SvExVoronoiFieldNode
     SvExNoiseVectorFieldNode

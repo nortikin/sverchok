@@ -28,11 +28,10 @@
       },
       "width": 140.0
     },
-    "Attractor Field.001": {
-      "bl_idname": "SvExAttractorFieldNode",
+    "Attractor Field": {
+      "bl_idname": "SvAttractorFieldNodeMk2",
       "custom_socket_props": {
         "0": {
-          "expanded": true,
           "prop": [
             0.0,
             0.0,
@@ -41,7 +40,6 @@
           "use_prop": true
         },
         "1": {
-          "expanded": true,
           "prop": [
             0.0,
             0.0,
@@ -171,6 +169,18 @@
   },
   "update_lists": [
     [
+      "Noise Vector Field",
+      0,
+      "Vector Field Math.001",
+      0
+    ],
+    [
+      "Attractor Field",
+      1,
+      "Vector Field Math.001",
+      2
+    ],
+    [
       "Box.001",
       0,
       "Matrix Apply",
@@ -187,18 +197,6 @@
       0,
       "Matrix Apply",
       3
-    ],
-    [
-      "Noise Vector Field",
-      0,
-      "Vector Field Math.001",
-      0
-    ],
-    [
-      "Attractor Field.001",
-      1,
-      "Vector Field Math.001",
-      2
     ],
     [
       "Vector Field Math.001",

@@ -20,7 +20,7 @@ from sverchok.utils.field.vector import (SvVectorFieldPointDistance,
             SvBvhAttractorVectorField)
 from sverchok.utils.math import all_falloff_types, falloff_array
 
-class SvAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvExAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Attractor Field
     Tooltip: Generate scalar and vector attraction fields
@@ -29,6 +29,8 @@ class SvAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Attractor Field'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_EX_ATTRACT'
+
+    replacement_nodes = [('SvAttractorFieldNodeMk2', None, None)]
 
     @throttled
     def update_type(self, context):
@@ -185,8 +187,8 @@ class SvAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['VField'].sv_set(vfields_out)
 
 def register():
-    bpy.utils.register_class(SvAttractorFieldNode)
+    bpy.utils.register_class(SvExAttractorFieldNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvAttractorFieldNode)
+    bpy.utils.unregister_class(SvExAttractorFieldNode)
 
