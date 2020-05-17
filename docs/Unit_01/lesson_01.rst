@@ -195,7 +195,7 @@ We'll stop here for lesson 01, if you've followed most of this you'll be making 
 .. |number_range| image:: https://user-images.githubusercontent.com/619340/81541992-40bf7500-9374-11ea-82ce-4e5b1bbffb7a.png
 .. |num_range_and_stethoscope_default| image:: https://user-images.githubusercontent.com/619340/81544402-c5f85900-9377-11ea-8a88-d13b3a9d00ce.png
 .. |num_range_and_stethoscope| image:: https://user-images.githubusercontent.com/619340/81544544-f93ae800-9377-11ea-8789-fda3e2fb2500.png
-.. |final_image| image:: https://user-images.githubusercontent.com/619340/81545437-2b007e80-9379-11ea-8af0-08a16f35060a.png
+.. |final_image| image:: https://user-images.githubusercontent.com/619340/82145036-31df3380-9848-11ea-84a7-1ed761c00e84.png
 .. |pi_times_xrange| image:: https://user-images.githubusercontent.com/619340/81560341-850d3e00-9391-11ea-87f9-6f3b551ebeb9.png
 .. |sincos_img1| image:: https://user-images.githubusercontent.com/619340/81560667-2a281680-9392-11ea-8223-29b9e09d01f7.png
 .. |sincos_img2| image:: https://user-images.githubusercontent.com/619340/81565850-4def5a80-939a-11ea-9bc9-62c59414027c.png

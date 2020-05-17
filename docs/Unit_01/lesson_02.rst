@@ -22,10 +22,9 @@ Blender has a Circle primitive, Sverchok also has its own Circle primitive calle
 
 **Dynamic Polygons**
 
-In the collection of nodes we have in the Node View at the moment, we have manually entered the polygon indiexes. As mentioned earlier, as soon as you need to link many vertices instead of the current 4, you will want to make this *list creation* generative/automatic. You will probably also want to make it respond dynamically by adding new segments automatically if the vertex count is changed. 
+In the collection of nodes we have in the Node View at the moment, we have manually entered the polygon indices. As mentioned earlier, as soon as you need to link many vertices instead of the current 4, you will want to make this *list creation* generative/automatic. You will probably also want to make it respond dynamically by adding new segments automatically if the vertex count changes. 
 
-Because this is a common task, there's a dedicated node for it called ``UV Connect`` (link) , but just like the `Circle` generator nodes we will avoid using that for the same reason. Learning how to build these things yourself is the best way to learn Visual Programming with nodes.
-
+Because this is a common task, there's a dedicated node for it called ``UV Connect``, but just like the `Circle` generator node we will avoid using the ``UV Connect`` node until the basics are covered. Learning how to build these things yourself will teach you how to use the fundamental nodes and their place in **Visual Programming**. This is about the journey.
 
 **Generating an index list for the polygon**
 
@@ -33,7 +32,7 @@ In order to make the list automatically, we should know how many vertices there 
 
 - ``Add -> List Main -> List Length``
 
-The `List Length` node lets you output the length of incoming data, it also lets you pick what level of the data you want to inspect. It's worth reading the **reference** of this node for a comprehensive tour of its capabilities.
+The `List Length` node lets you output the length of incoming data. Because data is passed through Sverchok as lists and lists of lists, it also lets you pick what ``nested-level`` of the data you want to inspect. It's worth reading the **reference** of this node for a comprehensive tour of its capabilities.
 
 1) hook the `Vector In` output into the `Data` input of `List Length`
 2) hook a new `Stethoscope` up to the output of the `List Length` node.
@@ -162,5 +161,5 @@ You now know how to create basic shapes programmatically using Sverchok nodes. I
 
 ``Viewer Draw`` automatically generates Edges when you pass one or more Vertices and Polygons. This means in practice when you already have the Polygons for an object then you don't need to also pass in the Edges, they are inferred purely from the indices of the incoming Polygons.
 
-.. |former_final_image| image:: https://user-images.githubusercontent.com/619340/81545437-2b007e80-9379-11ea-8af0-08a16f35060a.png
+.. |former_final_image| image:: https://user-images.githubusercontent.com/619340/82145036-31df3380-9848-11ea-84a7-1ed761c00e84.png
 
