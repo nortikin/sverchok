@@ -10,7 +10,7 @@ Same as lesson 01.
 Lesson 02 - A Circle
 --------------------
 
-This lesson will introduce the following nodes: ``List Length, List Shift, List Zip``, and use nodes seen in Lesson 01.
+This lesson will introduce the following nodes: ``List Length, List Shift, List Zip, Formula+``, and use nodes seen in Lesson 01.
 
 This will continue from the previous lesson where we made a plane from 4 vectors. We can reuse some of these nodes in order to make a Circle. If you saved it as suggested load it up or You can also create it from scratch by cross referencing this image.
 
@@ -38,26 +38,36 @@ The `List Length` node lets you output the length of incoming data. Because data
 2) hook a new `Stethoscope` up to the output of the `List Length` node.
 3) notice the `Level` slider is set to 1 by default, you should see Stethoscope shows output.
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5436323/15ea171e-8465-11e4-8356-ec18ae8ea19d.png
+|show_stethoscope_with_listlength|
 
 Notice that, besides all the square brackets, you see the length of the incoming data is `4`, as expected. We want to generate a sequence (list) that goes something like ``[0,1,2,...n]`` where n is the index of that last vertex. In Python you might write something like this this::
 
   n = 4
   range(start=0, end=n, step=1)
-  >> [0,1,2,...n]
+  >> [0, 1, 2, 3]
 
-To generate the index list for the polygon we need a node that outputs a sequential list of integers, Sverchok has exactly such a node and it accepts values for `start`, `step` and `count` as parameters. This is what the `Range Integer (count mode)` node does.
+To generate the index list for the polygon we need a node that outputs a sequential list of integers, Sverchok has exactly such a node and it accepts values for `start`, `step` and `count` as parameters. This is what the ``Number Range`` node does (in **Step** mode).
 
-- ``Add -> Numbers -> Range Int``
+- ``Add -> Numbers -> Number Range``
 
-1) Set the mode of List Range int to `Count`
-2) Make sure `start` is 0 and `step` is 1
-3) Hook the output of `List Length` into the `count` socket of Range Int
-4) Disconnect the Formula node from the EdgPol socket
-5) Connect the output of Range Int into EdgPol instead
-6) Optionally you can connect a Stethoscope also to the output of Range Int in order to see the generated list for yourself
+1) Set the mode of ``Number Range`` to *Int* and submode to *Step*.
+2) Make sure ``start`` is ``0`` and ``step`` is ``1``
+3) Hook the output of `List Length` into the ``count`` socket of *Number Range*
+4) Disconnect the ``Simple Topology`` node from the ``Faces`` socket of ``Viewer Draw``
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5436483/10651094-8467-11e4-9dc3-e4ade958531a.png
+View the output of the ``Number Range`` socket using stethoscope. you'll see ``[[0,1,2,3]]``, and here we need to start explaining things :)
+
+
+5) Connect the output of ``Number Range`` into a ``Formula+`` Node to add Brackets, 
+   - type in `x` into the formula field
+   - the node will make one socket available
+   - press the `+` sign to 
+6) Hook the output of Formula+ to the ``Faces`` socket of ``Viewer Draw`` instead.
+7) Optionally you can connect a Stethoscope also to the output of ``Number Range`` in order to see the generated list for yourself
+
+
+
+|using_range_node_one|
 
 **Generating the set of circular verts**
 
@@ -79,14 +89,13 @@ Above we have the step set to 0.2, this manually sets the distance but calculati
 
 I would want to have something like ``1 / number_vertices``, this calls for a Math node and an `Int` to represent the whole number of vertices. 
 
-- ``Add -> Numbers -> Math``
-- ``Add -> Numbers -> Int``
+- ``Add -> Numbers -> Scalar Math``
+- ``Add -> Numbers -> A Number``
 
-1) Set the Math node `mode` to ``/ (division)`` , and put 1.0 in the numerator
-2) Connect the Int node into the bottom socket of the division Math node
-3) Adjust the integer value on the Int node to 18 for example
-4) In the image below I've connected a Stethoscope to the output of the Math Node to see the value of this computation
-5) Finally, hook up the output of the division Math node into the `step` socket of Float series
+1) Set the ``Scalar Math`` node *mode* to ``/ (division)`` , and put 1.0 in the numerator (top number).
+2) Set the ``Number`` to *Int* mode slide the number to ``18``, and connect the output into the bottom socket of the division ``Scalar Math`` node.
+3) In the image below I've connected a Stethoscope to the output of the Math Node to see the value of this computation
+4) Finally, hook up the output of the division Math node into the `step` socket of Float series
 
 You should see something like this, if not you can by now probably figure out what to do.
 
@@ -162,4 +171,6 @@ You now know how to create basic shapes programmatically using Sverchok nodes. I
 ``Viewer Draw`` automatically generates Edges when you pass one or more Vertices and Polygons. This means in practice when you already have the Polygons for an object then you don't need to also pass in the Edges, they are inferred purely from the indices of the incoming Polygons.
 
 .. |former_final_image| image:: https://user-images.githubusercontent.com/619340/82145036-31df3380-9848-11ea-84a7-1ed761c00e84.png
+.. |show_stethoscope_with_listlength| image:: https://user-images.githubusercontent.com/619340/82145112-cd70a400-9848-11ea-9905-3824f7e92e8c.png
+.. |using_range_node_one| image:: https:
 
