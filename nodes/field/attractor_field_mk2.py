@@ -187,7 +187,7 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             sfield = SvCircleAttractorScalarField(center, radius, direction, falloff)
             vfield = SvCircleAttractorVectorField(center, radius, direction, falloff)
             sfields.append(sfield)
-            vfields.append(sfield)
+            vfields.append(vfield)
         return self.merge_fields(vfields, sfields)
 
     def to_mesh(self, verts, faces, falloff):

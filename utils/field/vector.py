@@ -478,7 +478,7 @@ class SvCircleAttractorVectorField(SvVectorField):
             return vector
 
     def evaluate_grid(self, xs, ys, zs):
-        vs = np.stack((xs, ys, zs))
+        vs = np.stack((xs, ys, zs)).T
         projections = self.circle.get_projections(vs)
         vectors = projections - vs
         if self.falloff is not None:
