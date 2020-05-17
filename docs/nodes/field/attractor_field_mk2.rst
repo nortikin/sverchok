@@ -133,3 +133,15 @@ Use the attraction field of cylinder to move points of the plane up:
 
 .. image:: https://user-images.githubusercontent.com/284644/80508641-bcdbb500-8991-11ea-9ed0-030ca6d0bc44.png
 
+Field lines of field attracting to a circle:
+
+.. image:: https://user-images.githubusercontent.com/284644/82155610-9d98bf00-988f-11ea-92db-6e7d2dfb6db0.png
+
+Field lines of field attracting to edges of a cube:
+
+.. image:: https://user-images.githubusercontent.com/284644/82155611-9ec9ec00-988f-11ea-881b-54d90b71940c.png
+
+Use of "Mesh - Edges" mode together with Marching Cubes node (from Sverchok-Extra addon):
+
+.. image:: https://user-images.githubusercontent.com/284644/82155613-9ffb1900-988f-11ea-8cc1-b3ffe2768b90.png
+
