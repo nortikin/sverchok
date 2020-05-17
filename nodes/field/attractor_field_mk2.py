@@ -7,17 +7,18 @@ from mathutils import kdtree
 from mathutils import bvhtree
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match_long_repeat
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode, zip_long_repeat
 
 from sverchok.utils.field.scalar import (SvScalarFieldPointDistance,
             SvMergedScalarField, SvKdtScalarField,
             SvLineAttractorScalarField, SvPlaneAttractorScalarField, 
+            SvCircleAttractorScalarField,
             SvEdgeAttractorScalarField,
             SvBvhAttractorScalarField)
 from sverchok.utils.field.vector import (SvVectorFieldPointDistance,
             SvAverageVectorField, SvKdtVectorField, 
             SvLineAttractorVectorField, SvPlaneAttractorVectorField,
+            SvCircleAttractorVectorField,
             SvEdgeAttractorVectorField,
             SvBvhAttractorVectorField,
             SvSelectVectorField)
@@ -41,6 +42,7 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Coefficient'].hide_safe = (self.falloff_type not in coeff_types)
         self.inputs['Faces'].hide_safe = (self.attractor_type != 'Mesh')
         self.inputs['Edges'].hide_safe = (self.attractor_type != 'Edge')
+        self.inputs['Radius'].hide_safe = (self.attractor_type != 'Circle')
 
     falloff_type: EnumProperty(
         name="Falloff type", items=all_falloff_types, default='NONE', update=update_type)
@@ -59,7 +61,8 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             ("Line", "Line", "Attraction to straight line", 1),
             ("Plane", "Plane", "Attraction to plane", 2),
             ("Mesh", "Mesh - Faces", "Attraction to mesh faces", 3),
-            ("Edge", "Mesh - Edges", "Attraction to mesh edges", 4)
+            ("Edge", "Mesh - Edges", "Attraction to mesh edges", 4),
+            ("Circle", "Circle", "Attraction to circle", 5)
         ]
 
     attractor_type: EnumProperty(
@@ -71,7 +74,7 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         ('SEP', "Separate", "Generate a separate field for each attraction center", 2)
     ]
 
-    point_mode : EnumProperty(
+    merge_mode : EnumProperty(
         name = "Points mode",
         description = "How to define the distance when multiple attraction centers are used",
         items = point_modes,
@@ -83,6 +86,13 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             default = False,
             update = updateNode)
 
+    radius : FloatProperty(
+            name = "Radius",
+            description = "Circle radius",
+            default = 1.0,
+            min = 0,
+            update = updateNode)
+
     def sv_init(self, context):
         d = self.inputs.new('SvVerticesSocket', "Center")
         d.use_prop = True
@@ -92,6 +102,7 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         d.use_prop = True
         d.prop = (0.0, 0.0, 1.0)
 
+        self.inputs.new('SvStringsSocket', 'Radius').prop_name = 'radius'
         self.inputs.new('SvStringsSocket', 'Edges')
         self.inputs.new('SvStringsSocket', 'Faces')
         self.inputs.new('SvStringsSocket', 'Amplitude').prop_name = 'amplitude'
@@ -103,8 +114,8 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'attractor_type')
-        if self.attractor_type in {'Point', 'Edge'}:
-            layout.prop(self, 'point_mode')
+        if self.attractor_type in {'Point', 'Edge', 'Circle'}:
+            layout.prop(self, 'merge_mode')
         elif self.attractor_type == 'Mesh':
             layout.prop(self, 'signed', toggle=True)
         layout.prop(self, 'falloff_type')
@@ -115,12 +126,12 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         if n == 1:
             sfield = SvScalarFieldPointDistance(centers[0], falloff=falloff)
             vfield = SvVectorFieldPointDistance(centers[0], falloff=falloff)
-        elif self.point_mode == 'AVG':
+        elif self.merge_mode == 'AVG':
             sfields = [SvScalarFieldPointDistance(center, falloff=falloff) for center in centers]
             sfield = SvMergedScalarField('AVG', sfields)
             vfields = [SvVectorFieldPointDistance(center, falloff=falloff) for center in centers]
             vfield = SvAverageVectorField(vfields)
-        elif self.point_mode == 'MIN':
+        elif self.merge_mode == 'MIN':
             kdt = kdtree.KDTree(len(centers))
             for i, v in enumerate(centers):
                 kdt.insert(v, i)
@@ -142,6 +153,30 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         vfield = SvPlaneAttractorVectorField(np.array(center), np.array(direction), falloff=falloff)
         return vfield, sfield
 
+    def to_circle(self, centers, directions, radiuses, falloff):
+        sfields = []
+        vfields = []
+        for center, direction, radius in zip_long_repeat(centers, directions, radiuses):
+            sfield = SvCircleAttractorScalarField(center, radius, direction, falloff)
+            vfield = SvCircleAttractorVectorField(center, radius, direction, falloff)
+            sfields.append(sfield)
+            vfields.append(sfield)
+        if len(sfields) == 1:
+            return vfields[0], sfields[0]
+        elif self.merge_mode == 'AVG':
+            sfield = SvMergedScalarField('AVG', sfields)
+            vfield = SvAverageVectorField(vfields)
+            return vfield, sfield
+        elif self.merge_mode == 'MIN':
+            sfield = SvMergedScalarField('MIN', sfields)
+            if self.falloff_type == 'NONE':
+                vfield = SvSelectVectorField(vfields, 'MIN')
+            else:
+                vfield = SvSelectVectorField(vfields, 'MAX')
+            return vfield, sfield
+        else: # SEP:
+            return vfields, sfields
+
     def to_mesh(self, verts, faces, falloff):
         bvh = bvhtree.BVHTree.FromPolygons(verts, faces)
         sfield = SvBvhAttractorScalarField(bvh=bvh, falloff=falloff, signed=self.signed)
@@ -161,13 +196,13 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             vfields.append(vfield)
         if n == 1:
             return vfields[0], sfields[0]
-        if self.point_mode == 'SEP':
+        if self.merge_mode == 'SEP':
             return vfields, sfields
-        elif self.point_mode == 'AVG':
+        elif self.merge_mode == 'AVG':
             sfield = SvMergedScalarField('AVG', sfields)
             vfield = SvAverageVectorField(vfields)
             return vfield, sfield
-        elif self.point_mode == 'MIN':
+        elif self.merge_mode == 'MIN':
             sfield = SvMergedScalarField('MIN', sfields)
             if self.falloff_type == 'NONE':
                 vfield = SvSelectVectorField(vfields, 'MIN')
@@ -183,18 +218,21 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         edges_s = self.inputs['Edges'].sv_get(default=[[]])
         faces_s = self.inputs['Faces'].sv_get(default=[[]])
         directions_s = self.inputs['Direction'].sv_get()
+        radius_s = self.inputs['Radius'].sv_get()
         amplitudes_s = self.inputs['Amplitude'].sv_get()
         coefficients_s = self.inputs['Coefficient'].sv_get()
 
         vfields_out = []
         sfields_out = []
 
-        objects = zip_long_repeat(center_s, edges_s, faces_s, directions_s, amplitudes_s, coefficients_s)
-        for centers, edges, faces, direction, amplitude, coefficient in objects:
+        objects = zip_long_repeat(center_s, edges_s, faces_s, directions_s, radius_s, amplitudes_s, coefficients_s)
+        for centers, edges, faces, direction, radius, amplitude, coefficient in objects:
             if isinstance(amplitude, (list, tuple)):
                 amplitude = amplitude[0]
             if isinstance(coefficient, (list, tuple)):
                 coefficient = coefficient[0]
+            if not isinstance(radius, (list, tuple)):
+                radius = [radius]
 
             if self.falloff_type == 'NONE':
                 falloff_func = None
@@ -211,6 +249,8 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                 vfield, sfield = self.to_mesh(centers, faces, falloff_func)
             elif self.attractor_type == 'Edge':
                 vfield, sfield = self.to_edges(centers, edges, falloff_func)
+            elif self.attractor_type == 'Circle':
+                vfield, sfield = self.to_circle(centers, direction, radius, falloff_func)
             else:
                 raise Exception("not implemented yet")
 

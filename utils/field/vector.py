@@ -12,7 +12,7 @@ from mathutils import noise
 from mathutils import kdtree
 from mathutils import bvhtree
 
-from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter, LineEquation
+from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter, LineEquation, CircleEquation3D
 from sverchok.utils.math import from_cylindrical, from_spherical
 
 from sverchok.utils.curve import SvCurveLengthSolver
@@ -448,6 +448,39 @@ class SvPlaneAttractorVectorField(SvVectorField):
 
         points = np.stack((xs, ys, zs)).T
         vectors = np.vectorize(func, signature='(3)->(3)')(points)
+        if self.falloff is not None:
+            norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+            lens = self.falloff(norms)
+            nonzero = (norms > 0)[:,0]
+            vectors[nonzero] = vectors[nonzero] / norms[nonzero][:,0][np.newaxis].T
+            R = (lens * vectors).T
+            return R[0], R[1], R[2]
+        else:
+            R = vectors.T
+            return R[0], R[1], R[2]
+
+class SvCircleAttractorVectorField(SvVectorField):
+    __description__ = "Circle Attractor"
+
+    def __init__(self, center, radius, normal, falloff=None):
+        self.circle = CircleEquation3D.from_center_radius_normal(center, radius, normal)
+        self.falloff = falloff
+
+    def evaluate(self, x, y, z):
+        v = np.array([x,y,z])
+        projection = self.circle.get_projections([v])[0]
+        vector = projection - v
+        if self.fallof is not None:
+            new_len = self.falloff(np.array([distance]))[0]
+            norm = np.linalg.norm(vector)
+            return new_len * vector / norm
+        else:
+            return vector
+
+    def evaluate_grid(self, xs, ys, zs):
+        vs = np.stack((xs, ys, zs))
+        projections = self.circle.get_projections(vs)
+        vectors = projections - vs
         if self.falloff is not None:
             norms = np.linalg.norm(vectors, axis=1, keepdims=True)
             lens = self.falloff(norms)

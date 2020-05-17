@@ -1818,9 +1818,9 @@ class Triangle(object):
     def inscribed_circle(self):
         """
         Inscribed circle.
-        Returns: an instance of CircleApproximationData.
+        Returns: an instance of CircleEquation3D.
         """
-        circle = CircleApproximationData()
+        circle = CircleEquation3D()
         side_1 = (self.v2 - self.v3).length
         side_2 = (self.v1 - self.v3).length
         side_3 = (self.v1 - self.v2).length
@@ -2027,7 +2027,7 @@ def spherical_approximation(data):
     result.residues = residues
     return result
 
-class CircleApproximationData(object):
+class CircleEquation3D(object):
     """
     This class contains results of approximation of set of vertices
     by a circle (lying in 2D or 3D).
@@ -2041,6 +2041,14 @@ class CircleApproximationData(object):
         self.normal = None
         self.point1 = None
         self.arc_angle = None
+
+    @classmethod
+    def from_center_radius_normal(cls, center, radius, normal):
+        circle = CircleEquation3D()
+        circle.center = np.array(center)
+        circle.radius = radius
+        circle.normal = np.array(normal)
+        return circle
 
     def get_matrix(self):
         """
@@ -2063,6 +2071,9 @@ class CircleApproximationData(object):
         Calculate projections of vertices to the
         circle. This method works with 3D circles only
         (i.e., requires `normal` to be specified).
+
+        input: list of 3-tuples, or list of Vectors, or np.ndarray of shape (n,3).
+        returns: np.ndarray of shape (n,3).
         """
         vertices = np.array(vertices)
         plane = PlaneEquation.from_normal_and_point(self.normal, self.center)
@@ -2078,7 +2089,7 @@ def circle_approximation_2d(data, mean_is_zero=False):
     by a 2D circle.
 
     input: list of 2-tuples or np.array of shape (n, 2). 
-    output: an instance of CircleApproximationData class.
+    output: an instance of CircleEquation3D class.
     """
     data = np.array(data)
     data_x = data[:,0]
@@ -2118,10 +2129,12 @@ def circle_approximation_2d(data, mean_is_zero=False):
     C = np.linalg.solve(A, B)
     r2 = (C[0]*C[0]) + (C[1]*C[1]) + (su2 + sv2)/n
 
-    result = CircleApproximationData()
+    result = CircleEquation3D()
     result.radius = sqrt(r2)
     result.center = C[:2].T[0] + np.array([mean_x, mean_y])
     return result
+
+CircleApproximationData = CircleEquation3D
 
 def circle_approximation(data):
     """
@@ -2129,7 +2142,7 @@ def circle_approximation(data):
     by a circle lying in 3D space.
 
     input: list of 3-tuples
-    output: an instance of CircleApproximationData class.
+    output: an instance of CircleEquation3D class.
     """
     # Approximate vertices with a plane
     linear = linear_approximation(data)
@@ -2149,7 +2162,7 @@ def circle_approximation(data):
     # Map the center back into 3D space
     matrix_inv = np.linalg.inv(matrix)
 
-    result = CircleApproximationData()
+    result = CircleEquation3D()
     result.radius = circle_2d.radius
     center = np.array((circle_2d.center[0], circle_2d.center[1], 0))
     result.center = np.matmul(matrix_inv, center) + linear_center
@@ -2158,11 +2171,11 @@ def circle_approximation(data):
 
 def circle_by_three_points(p1, p2, p3):
     """
-    Calculate parameters of the circle (or circular angle)
+    Calculate parameters of the circle (or circular arc)
     by three points on this circle.
 
     input: p1, p2, p3 - 3-tuples or mathutils.Vectors
-    output: an CircleApproximationData instance.
+    output: an CircleEquation3D instance.
 
     factored out from basic_3pt_arc.py.
     """
@@ -2190,7 +2203,7 @@ def circle_by_three_points(p1, p2, p3):
     if interior_angle > 0.5 * math.pi:
         beta = 2*math.pi - 2*interior_angle
 
-    circle = CircleApproximationData()
+    circle = CircleEquation3D()
     circle.radius = (v1 - center).length
     circle.center = center
     circle.normal = axis

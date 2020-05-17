@@ -13,7 +13,7 @@ from mathutils import kdtree
 from mathutils import bvhtree
 
 from sverchok.utils.math import from_cylindrical, from_spherical, to_cylindrical, to_spherical
-from sverchok.utils.geom import LineEquation
+from sverchok.utils.geom import LineEquation, CircleEquation3D
 
 ##################
 #                #
@@ -446,6 +446,31 @@ class SvPlaneAttractorScalarField(SvScalarField):
             return result
         else:
             return norms
+
+class SvCircleAttractorScalarField(SvScalarField):
+    __description__ = "Circle Attractor"
+
+    def __init__(self, center, radius, normal, falloff=None):
+        self.circle = CircleEquation3D.from_center_radius_normal(center, radius, normal)
+        self.falloff = falloff
+
+    def evaluate(self, x, y, z):
+        v = np.array([x,y,z])
+        projection = self.circle.get_projections([v])[0]
+        distance = np.linalg.norm(v - projection)
+        if self.fallof is not None:
+            return self.falloff(np.array([distance]))[0]
+        else:
+            return distance
+
+    def evaluate_grid(self, xs, ys, zs):
+        vs = np.stack((xs, ys, zs)).T
+        projections = self.circle.get_projections(vs)
+        distances = np.linalg.norm(vs - projections, axis=1)
+        if self.falloff is not None:
+            return self.falloff(distances)
+        else:
+            return distances
 
 class SvBvhAttractorScalarField(SvScalarField):
     __description__ = "BVH Attractor"
