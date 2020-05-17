@@ -23,6 +23,7 @@ class BlenderEventsTypes(Enum):
     # link leeds to wrong memory address out of the signal method
     # using sverchok defined properties (link_id) leads to crash during the event
     node_property_update = auto()  # can be in correct in current implementation
+    tree_property_update = auto()
     undo = auto()  # changes in tree does not call any other update events
     frame_change = auto()
 
@@ -41,6 +42,7 @@ class SverchokEventsTypes(Enum):
     copy_node = auto()
     free_node = auto()
     node_property_update = auto()
+    tree_property_update = auto()
     add_link = auto()
     free_link = auto()
     undo = auto()
@@ -62,6 +64,7 @@ EVENT_CONVERSION = {
     BlenderEventsTypes.free_node: SverchokEventsTypes.free_node,
     BlenderEventsTypes.add_link_to_node: SverchokEventsTypes.add_link,
     BlenderEventsTypes.node_property_update: SverchokEventsTypes.node_property_update,
+    BlenderEventsTypes.tree_property_update: SverchokEventsTypes.tree_property_update,
     BlenderEventsTypes.undo: SverchokEventsTypes.undo,
     BlenderEventsTypes.frame_change: SverchokEventsTypes.frame_change
 }
@@ -70,6 +73,7 @@ EVENT_CONVERSION = {
 IS_WAVE_END = {
     BlenderEventsTypes.tree_update: True,
     BlenderEventsTypes.node_property_update: True,
+    BlenderEventsTypes.tree_property_update: True,
     BlenderEventsTypes.monad_tree_update: True,
     BlenderEventsTypes.undo: True,
     BlenderEventsTypes.frame_change: True

@@ -90,7 +90,16 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Stethoscope MK2'
     bl_icon = 'LONGDISPLAY'
 
-    n_id: StringProperty(default='')
+    @property
+    def is_active_output(self):
+        return self.activate
+
+    def activate_node(self, context):
+        if not self.activate:
+            nvBGL.callback_disable(self.node_id)
+        else:
+            updateNode(self, context)
+
     font_id: IntProperty(default=0, update=updateNode)
 
     text_color: FloatVectorProperty(
@@ -102,7 +111,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     activate: BoolProperty(
         name='Show', description='Activate node?',
         default=True,
-        update=updateNode)
+        update=activate_node)
 
     mode_options = [(i, i, '', idx) for idx, i in enumerate(["text-based", "graphical"])]
     selected_mode: bpy.props.EnumProperty(

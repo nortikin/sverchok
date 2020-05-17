@@ -20,9 +20,9 @@ from sverchok.utils.context_managers import sv_preferences
 if TYPE_CHECKING:
     # https://stackoverflow.com/questions/39740632/python-type-hinting-without-cyclic-imports
     from sverchok.core.events import SverchokEvent
-    from sverchok.node_tree import SverchCustomTree, SverchCustomTreeNode
+    from sverchok.node_tree import SverchCustomTree
 
-    NodeTree = Union[bpy.types.NodeTree, SverchCustomTreeNode]
+    NodeTree = Union[bpy.types.NodeTree, SverchCustomTree]
 
 
 """
@@ -307,7 +307,7 @@ class SvLink(NamedTuple):
 
 OUTPUT_NODE_BL_IDNAMES = {  # todo make mixin instead
     # main viewers
-    'SvVDExperimental', 'SvStethoscopeNodeMK2', 'SvBmeshViewerNodeV28',
+    'SvBmeshViewerNodeV28',
     # viewers
     'Sv3DviewPropsNode', 'SvMatrixViewer28', 'SvIDXViewer28', 'SvCurveViewerNodeV28', 'SvPolylineViewerNodeV28',
     'SvTypeViewerNodeV28', 'SvSkinViewerNodeV28', 'SvMetaballOutNode', 'SvNurbsCurveOutNode', 'SvNurbsSurfaceOutNode',
@@ -337,7 +337,7 @@ class WalkSvTree:
         # 2,10 are changed nodes by their parameters
         # the goal is visit 10-9-5-2-3-4 nodes in this order
 
-        self.output_nodes: Set[SvNode] = set()  # 4 node
+        self.active_output_nodes: Set[SvNode] = set()  # 4 node
         self.outdated_nodes: Set[SvNode] = set()  # 10,2 nodes
         # the intersection of two sets below gives set of nodes which should be recalculated
         self.nodes_connected_to_output: Set[SvNode] = set()  # all nodes without 6, 7 (in the example)
@@ -370,19 +370,26 @@ class WalkSvTree:
             raise RecursionError("Looks like update tree is broken, cant recalculate nodes")
 
     def prepare_walk_after_tree_topology_changes(self):
-        self.search_output_nodes()
+        self.search_active_output_nodes()
         self.recalculate_connected_to_output_nodes()
 
-    def search_output_nodes(self):
-        self.output_nodes.clear()
+    def search_active_output_nodes(self):
+        hashed_tree = hash_data.HashedBlenderData.get_tree(self.tree.id)
+        is_tree_draw_into_viewport = get_blender_tree(hashed_tree.tree_id).sv_show
+        self.active_output_nodes.clear()
         for sv_node in self.tree.nodes:
-            bl_node = hash_data.HashedBlenderData.get_node(self.tree.id, sv_node.id)
-            if bl_node.bl_idname in OUTPUT_NODE_BL_IDNAMES:
-                self.output_nodes.add(sv_node)
+            bl_node = hashed_tree.nodes[sv_node.id]
+            if bl_node.is_active_output:
+
+                is_draw_into_viewport_node = hasattr(bl_node, 'hide_viewport')
+                if is_draw_into_viewport_node and not is_tree_draw_into_viewport:
+                    continue
+
+                self.active_output_nodes.add(sv_node)
 
     def recalculate_connected_to_output_nodes(self):
         self.nodes_connected_to_output.clear()
-        [self.nodes_connected_to_output.add(node) for node in self.tree.nodes.walk_backward(self.output_nodes)]
+        [self.nodes_connected_to_output.add(node) for node in self.tree.nodes.walk_backward(self.active_output_nodes)]
 
     def recalculate_effected_by_changes_nodes(self):
         self.outdated_nodes = set([node for node in self.tree.nodes if node.is_outdated])

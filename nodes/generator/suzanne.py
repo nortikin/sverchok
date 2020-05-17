@@ -39,10 +39,6 @@ class SvSuzanneNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket',  "Faces")
 
     def process(self):
-        # return if no outputs are connected
-        if not any(s.is_linked for s in self.outputs):
-            return
-
         out_verts = []
         out_edges = []
         out_faces = []

@@ -42,7 +42,7 @@ class WalkTreeTest(SverchokTestCase):
                       (next_id(), tree.nodes['10'], tree.nodes['9']),
                       ]
         [setitem(tree.links._links, link.id, link) for link in [add_link(*data) for data in links_data]]
-        tree.walk.output_nodes.add(tree.nodes['4'])
+        tree.walk.active_output_nodes.add(tree.nodes['4'])
         self.tree = tree
 
     def test_walk_sv_tree(self):

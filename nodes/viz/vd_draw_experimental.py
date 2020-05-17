@@ -304,9 +304,28 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         if context:
             self.process_node(context)
 
+    def draw_property_update(self, context):
+        self.hide_viewport = not self.activate  # it would be better if update system toggle this after tree evaluation
+        if self.activate:
+            updateNode(self, context)
 
-    n_id: StringProperty(default='')
-    activate: BoolProperty(name='Show', description='Activate', default=True, update=updateNode)
+    @property
+    def is_active_output(self):
+        return self.activate
+
+    @property
+    def hide_viewport(self):
+        return not self.activate
+
+    @hide_viewport.setter
+    def hide_viewport(self, to_hide):
+        if to_hide:
+            callback_disable(self.node_id)
+        else:
+            # for performance should be separate method
+            self.process()
+
+    activate: BoolProperty(name='Show', description='Activate', default=True, update=draw_property_update)
 
     vert_color: FloatVectorProperty(
         subtype='COLOR', min=0, max=1, default=(0.8, 0.8, 0.8, 1.0),
@@ -551,10 +570,6 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
 
         self.handle_attr_socket()
-
-        if not (self.id_data.sv_show and self.activate):
-            callback_disable(node_id(self))
-            return
 
         n_id = node_id(self)
         callback_disable(n_id)

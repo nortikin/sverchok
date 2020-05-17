@@ -370,13 +370,10 @@ class SvBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
         outputs = self.outputs
 
-        if not any(s.is_linked for s in outputs):
-            return
-
         data_in = self.get_data()
 
         verts_out, edges_out, pols_out = [], [], []
-        flags = [s.is_linked for s in outputs]
+        flags = [True for s in outputs]
         output_numpy = [b for b in self.out_np]
 
         for params in zip(*data_in):

@@ -45,7 +45,7 @@ from sverchok.core.node_id_dict import SvNodesDict
 from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
 from sverchok.core.node_defaults import set_defaults_if_defined
 import sverchok.core.events_types as event_types
-from sverchok.core.events import CurrentEvents
+from sverchok.core.events import CurrentEvents, tree_property_update
 
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
@@ -356,7 +356,8 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon, ColorizeTree):
         process_tree(self)    
 
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
-    sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
+    sv_show: BoolProperty(
+        name="Show", default=True, description='Show this layout', update=tree_property_update('sv_show'))
     sv_bake: BoolProperty(name="Bake", default=True, description='Bake this layout')
 
     sv_user_colors: StringProperty(default="")

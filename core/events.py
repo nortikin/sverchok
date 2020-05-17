@@ -56,11 +56,25 @@ def property_update(prop_name: str, call_function=None):
     return handel_update_call
 
 
+def tree_property_update(prop_name: str, call_function=None):
+    def handel_update_call(tree, context):
+        CurrentEvents.add_new_event(event_type=evt.BlenderEventsTypes.tree_property_update,
+                                    node_tree=tree,
+                                    node=None,
+                                    call_function=handel_update_call.call_function,
+                                    call_function_arguments=(tree, context),
+                                    property_name=handel_update_call.prop_name)
+    handel_update_call.prop_name = prop_name
+    handel_update_call.call_function = call_function
+    return handel_update_call
+
+
 class SverchokEvent(NamedTuple):
     type: evt.SverchokEventsTypes
     tree_id: str = None
     node_id: str = None
     link_id: str = None
+    property_name: str = None
 
     def print(self):
         if self.node_id:
@@ -80,6 +94,7 @@ class BlenderEvent(NamedTuple):
     tree_id: str = None
     node_id: str = None
     link_id: str = None
+    property_name: str = None
 
     @property
     def is_wave_end(self):
@@ -91,7 +106,8 @@ class BlenderEvent(NamedTuple):
             type=sverchok_event_type,
             tree_id=self.tree_id,
             node_id=self.node_id,
-            link_id=self.link_id
+            link_id=self.link_id,
+            property_name=self.property_name
         )
 
 
@@ -328,7 +344,8 @@ class CurrentEvents:
                       node: Union[Node, SverchCustomTreeNode] = None,
                       link: NodeLink = None,
                       call_function: Callable = None,
-                      call_function_arguments: tuple = tuple()):
+                      call_function_arguments: tuple = tuple(),
+                      property_name: str = None):
         if not cls._to_listen_new_events:
             return
 
@@ -348,7 +365,7 @@ class CurrentEvents:
         tree_id = node_tree.tree_id if node_tree else None
         node_id = node.node_id if node and event_type != evt.BlenderEventsTypes.add_link_to_node else None
         link_id = link.link_id if link else None
-        bl_event = BlenderEvent(event_type, tree_id, node_id, link_id)
+        bl_event = BlenderEvent(event_type, tree_id, node_id, link_id, property_name)
 
         cls.events_wave.add_event(bl_event)
         cls.handle_new_event()
@@ -368,8 +385,19 @@ class CurrentEvents:
                 cls.handle_frame_change_event()
             elif cls.events_wave.main_event.type == evt.BlenderEventsTypes.undo:
                 cls.handle_undo_event()
+            elif cls.events_wave.main_event.type == evt.BlenderEventsTypes.tree_property_update:
+
+                bl_tree = get_blender_tree(cls.events_wave.current_tree.tree_id)
+                if cls.events_wave.main_event.property_name == 'sv_show':
+                    # show in viewport property was toggled
+                    cls.handle_show_all_in_viewport()
+                    is_tree_to_show = getattr(bl_tree, cls.events_wave.main_event.property_name)
+                    if is_tree_to_show:
+                        cls.handle_tree_update_event()
+                else:
+                    raise TypeError(f"Such property={cls.events_wave.main_event.property_name} can't be handled")
             else:
-                raise TypeError(f"Such event type={cls.events_wave.main_event.type} can't be handle")
+                raise TypeError(f"Such event type={cls.events_wave.main_event.type} can't be handled")
 
         cls.events_wave = EventsWave()
 
@@ -391,6 +419,16 @@ class CurrentEvents:
 
             updated_nodes = cls.update_nodes()
             cls.recolorize_nodes(set(updated_nodes))
+
+    @classmethod
+    def handle_show_all_in_viewport(cls):
+        # switch on/off all viewer nodes (in view port) in current node tree
+        bl_tree = get_blender_tree(cls.events_wave.current_tree.tree_id)
+        tree_hide_viewport = not getattr(bl_tree, cls.events_wave.main_event.property_name)
+        for node in bl_tree.nodes:
+            is_draw_viewport_node = hasattr(node, 'hide_viewport')
+            if is_draw_viewport_node:
+                node.hide_viewport = tree_hide_viewport
 
     @classmethod
     def handle_frame_change_event(cls): ...
