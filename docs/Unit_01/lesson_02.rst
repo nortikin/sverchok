@@ -10,7 +10,7 @@ Same as lesson 01.
 Lesson 02 - A Circle
 --------------------
 
-This lesson will introduce the following nodes: ``List Length, List Shift, List Zip, Formula+``, and use nodes seen in Lesson 01.
+This lesson will introduce the following nodes: ``List Length, List Shift, List Zip, Formula``, and use nodes seen in Lesson 01.
 
 This will continue from the previous lesson where we made a plane from 4 vectors. We can reuse some of these nodes in order to make a Circle. If you saved it as suggested load it up or You can also create it from scratch by cross referencing this image.
 
@@ -53,19 +53,25 @@ To generate the index list for the polygon we need a node that outputs a sequent
 1) Set the mode of ``Number Range`` to *Int* and submode to *Step*.
 2) Make sure ``start`` is ``0`` and ``step`` is ``1``
 3) Hook the output of `List Length` into the ``count`` socket of *Number Range*
-4) Disconnect the ``Simple Topology`` node from the ``Faces`` socket of ``Viewer Draw``
+4) Remove the ``Simple Topology`` node.
 
-View the output of the ``Number Range`` socket using stethoscope. you'll see ``[[0,1,2,3]]``, and here we need to start explaining things :)
+  - *Note*: View the output of the ``Number Range`` socket using stethoscope. you'll see ``[[0,1,2,3]]``, and here we need to start explaining things :)
+  - This may seem complicated, but it really isn't. 
+     - imagine each socket can pass a stream of faces associated with multiple objects,
+     - imagine the socket is passing the faces of 3 triangle objects.
+     - that stream looks something like this for 3``[faces, faces, faces]``
+     - if faces are stored by the indices, then a face is stored as `[0, 1, 2]`, because a triangle only has one face, we would store that object as ``[[0, 1, 2]]``
+     - this will need a graphic.
 
+|not_nested_enough|
 
-5) Connect the output of ``Number Range`` into a ``Formula+`` Node to add Brackets, 
+5) Connect the output of ``Number Range`` into a ``Formula`` Node to add Brackets (an extra level of nesting), 
    - type in `x` into the formula field
    - the node will make one socket available
-   - press the `+` sign to 
-6) Hook the output of Formula+ to the ``Faces`` socket of ``Viewer Draw`` instead.
-7) Optionally you can connect a Stethoscope also to the output of ``Number Range`` in order to see the generated list for yourself
+   - press the ``Wrap`` toggle
+6) Hook the output of ``Formula`` to the ``Faces`` socket of ``Viewer Draw``.
 
-
+  *Note*: connect a Stethoscope also to the output of ``Number Range`` in order to see the generated list for yourself
 
 |using_range_node_one|
 
@@ -172,5 +178,5 @@ You now know how to create basic shapes programmatically using Sverchok nodes. I
 
 .. |former_final_image| image:: https://user-images.githubusercontent.com/619340/82145036-31df3380-9848-11ea-84a7-1ed761c00e84.png
 .. |show_stethoscope_with_listlength| image:: https://user-images.githubusercontent.com/619340/82145112-cd70a400-9848-11ea-9905-3824f7e92e8c.png
-.. |using_range_node_one| image:: https:
-
+.. |not_nested_enough| imagge:: https://user-images.githubusercontent.com/619340/82150794-63142f80-9859-11ea-9630-50630e26a505.PNG
+.. |using_range_node_one| image:: https://user-images.githubusercontent.com/619340/82150782-4f68c900-9859-11ea-9caf-7dec0e35a54e.png
