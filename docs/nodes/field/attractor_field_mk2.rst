@@ -78,6 +78,8 @@ This node has the following parameters:
   * **Nearest**. Use only the force of the attraction towards the nearest attraction center.
   * **Separate**. Generate a separate field of attraction force for each attraction center.
 
+   This parameter is not available when the **Attractor type** is set to **Mesh - Faces**.
+
 * **Signed**. This parameter is available only when **Attractor type**
   parameter is set to **Mesh - faces**. If checked, then the resulting scalar field
   will be signed: it will have positive values at the one side of the mesh

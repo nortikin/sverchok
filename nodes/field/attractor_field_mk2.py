@@ -114,7 +114,7 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'attractor_type')
-        if self.attractor_type in {'Point', 'Edge', 'Circle'}:
+        if self.attractor_type != 'Mesh':
             layout.prop(self, 'merge_mode')
         elif self.attractor_type == 'Mesh':
             layout.prop(self, 'signed', toggle=True)
@@ -143,24 +143,7 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             vfield = [SvVectorFieldPointDistance(center, falloff=falloff) for center in centers]
         return vfield, sfield
 
-    def to_line(self, center, direction, falloff):
-        sfield = SvLineAttractorScalarField(np.array(center), np.array(direction), falloff=falloff)
-        vfield = SvLineAttractorVectorField(np.array(center), np.array(direction), falloff=falloff)
-        return vfield, sfield
-
-    def to_plane(self, center, direction, falloff):
-        sfield = SvPlaneAttractorScalarField(np.array(center), np.array(direction), falloff=falloff)
-        vfield = SvPlaneAttractorVectorField(np.array(center), np.array(direction), falloff=falloff)
-        return vfield, sfield
-
-    def to_circle(self, centers, directions, radiuses, falloff):
-        sfields = []
-        vfields = []
-        for center, direction, radius in zip_long_repeat(centers, directions, radiuses):
-            sfield = SvCircleAttractorScalarField(center, radius, direction, falloff)
-            vfield = SvCircleAttractorVectorField(center, radius, direction, falloff)
-            sfields.append(sfield)
-            vfields.append(sfield)
+    def merge_fields(self, vfields, sfields):
         if len(sfields) == 1:
             return vfields[0], sfields[0]
         elif self.merge_mode == 'AVG':
@@ -177,6 +160,36 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         else: # SEP:
             return vfields, sfields
 
+    def to_line(self, centers, directions, falloff):
+        vfields = []
+        sfields = []
+        for center, direction in zip_long_repeat(centers, directions):
+            sfield = SvLineAttractorScalarField(np.array(center), np.array(direction), falloff=falloff)
+            vfield = SvLineAttractorVectorField(np.array(center), np.array(direction), falloff=falloff)
+            vfields.append(vfield)
+            sfields.append(sfield)
+        return self.merge_fields(vfields, sfields)
+
+    def to_plane(self, centers, directions, falloff):
+        vfields = []
+        sfields = []
+        for center, direction in zip_long_repeat(centers, directions):
+            sfield = SvPlaneAttractorScalarField(np.array(center), np.array(direction), falloff=falloff)
+            vfield = SvPlaneAttractorVectorField(np.array(center), np.array(direction), falloff=falloff)
+            vfields.append(vfield)
+            sfields.append(sfield)
+        return self.merge_fields(vfields, sfields)
+
+    def to_circle(self, centers, directions, radiuses, falloff):
+        sfields = []
+        vfields = []
+        for center, direction, radius in zip_long_repeat(centers, directions, radiuses):
+            sfield = SvCircleAttractorScalarField(center, radius, direction, falloff)
+            vfield = SvCircleAttractorVectorField(center, radius, direction, falloff)
+            sfields.append(sfield)
+            vfields.append(sfield)
+        return self.merge_fields(vfields, sfields)
+
     def to_mesh(self, verts, faces, falloff):
         bvh = bvhtree.BVHTree.FromPolygons(verts, faces)
         sfield = SvBvhAttractorScalarField(bvh=bvh, falloff=falloff, signed=self.signed)
@@ -186,7 +199,6 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     def to_edges(self, verts, edges, falloff):
         sfields = []
         vfields = []
-        n = len(edges)
         for i1, i2 in edges:
             v1 = verts[i1]
             v2 = verts[i2]
@@ -194,21 +206,7 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             vfield = SvEdgeAttractorVectorField(v1, v2, falloff)
             sfields.append(sfield)
             vfields.append(vfield)
-        if n == 1:
-            return vfields[0], sfields[0]
-        if self.merge_mode == 'SEP':
-            return vfields, sfields
-        elif self.merge_mode == 'AVG':
-            sfield = SvMergedScalarField('AVG', sfields)
-            vfield = SvAverageVectorField(vfields)
-            return vfield, sfield
-        elif self.merge_mode == 'MIN':
-            sfield = SvMergedScalarField('MIN', sfields)
-            if self.falloff_type == 'NONE':
-                vfield = SvSelectVectorField(vfields, 'MIN')
-            else:
-                vfield = SvSelectVectorField(vfields, 'MAX')
-            return vfield, sfield
+        return self.merge_fields(vfields, sfields)
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -242,9 +240,9 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             if self.attractor_type == 'Point':
                 vfield, sfield = self.to_point(centers, falloff_func)
             elif self.attractor_type == 'Line':
-                vfield, sfield = self.to_line(centers[0], direction[0], falloff_func)
+                vfield, sfield = self.to_line(centers, direction, falloff_func)
             elif self.attractor_type == 'Plane':
-                vfield, sfield = self.to_plane(centers[0], direction[0], falloff_func)
+                vfield, sfield = self.to_plane(centers, direction, falloff_func)
             elif self.attractor_type == 'Mesh':
                 vfield, sfield = self.to_mesh(centers, faces, falloff_func)
             elif self.attractor_type == 'Edge':
