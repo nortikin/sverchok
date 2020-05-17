@@ -6,13 +6,14 @@
 # License-Filename: LICENSE
 
 import numpy as np
-from math import copysign, sqrt, sin, cos, atan2, acos
+from math import copysign, sqrt, sin, cos, atan2, acos, pi
 
 from mathutils import Matrix, Vector
 from mathutils import kdtree
 from mathutils import bvhtree
 
 from sverchok.utils.math import from_cylindrical, from_spherical, to_cylindrical, to_spherical
+from sverchok.utils.geom import LineEquation, CircleEquation3D
 
 ##################
 #                #
@@ -399,15 +400,13 @@ class SvLineAttractorScalarField(SvScalarField):
     def evaluate_grid(self, xs, ys, zs):
         direction = self.direction
         direction2 = np.dot(direction, direction)
-
-        def func(vertex):
-            to_center = self.center - vertex
-            projection = np.dot(to_center, direction) * direction / direction2
-            dv = to_center - projection
-            return np.linalg.norm(dv)
-
         points = np.stack((xs, ys, zs)).T
-        norms = np.vectorize(func, signature='(3)->()')(points)
+        to_center = self.center - points
+        dot = (to_center * direction).sum(axis=1)
+        projections = (dot * direction[np.newaxis].T / direction2).T
+        vectors = to_center - projections
+        norms = np.linalg.norm(vectors, axis=1)
+
         if self.falloff is not None:
             result = self.falloff(norms)
             return result
@@ -445,6 +444,31 @@ class SvPlaneAttractorScalarField(SvScalarField):
             return result
         else:
             return norms
+
+class SvCircleAttractorScalarField(SvScalarField):
+    __description__ = "Circle Attractor"
+
+    def __init__(self, center, radius, normal, falloff=None):
+        self.circle = CircleEquation3D.from_center_radius_normal(center, radius, normal)
+        self.falloff = falloff
+
+    def evaluate(self, x, y, z):
+        v = np.array([x,y,z])
+        projection = self.circle.get_projections([v])[0]
+        distance = np.linalg.norm(v - projection)
+        if self.fallof is not None:
+            return self.falloff(np.array([distance]))[0]
+        else:
+            return distance
+
+    def evaluate_grid(self, xs, ys, zs):
+        vs = np.stack((xs, ys, zs)).T
+        projections = self.circle.get_projections(vs)
+        distances = np.linalg.norm(vs - projections, axis=1)
+        if self.falloff is not None:
+            return self.falloff(distances)
+        else:
+            return distances
 
 class SvBvhAttractorScalarField(SvScalarField):
     __description__ = "BVH Attractor"
@@ -487,6 +511,77 @@ class SvBvhAttractorScalarField(SvScalarField):
             return result
         else:
             return norms
+
+class SvEdgeAttractorScalarField(SvScalarField):
+    __description__ = "Edge attractor"
+
+    def __init__(self, v1, v2, falloff=None):
+        self.falloff = falloff
+        self.v1 = Vector(v1)
+        self.v2 = Vector(v2)
+    
+    def evaluate(self, x, y, z):
+        v = Vector([x,y,z])
+        dv1 = (v - self.v1).length
+        dv2 = (v - self.v2).length
+        if dv1 > dv2:
+            distance_to_nearest = dv2
+            nearest_vert = self.v2
+            another_vert = self.v1
+        else:
+            distance_to_nearest = dv1
+            nearest_vert = self.v1
+            another_vert = self.v2
+        edge = another_vert - nearest_vert
+        to_nearest = v - nearest_vert
+        if to_nearest.length == 0:
+            return 0
+        angle = edge.angle(to_nearest)
+        if angle > pi/2:
+            distance = distance_to_nearest
+        else:
+            distance = LineEquation.from_two_points(self.v1, self.v2).distance_to_point(v)
+        if self.falloff is not None:
+            value = self.falloff(np.array([distance]))[0]
+            return value
+        else:
+            return distance
+    
+    def evaluate_grid(self, xs, ys, zs):
+        n = len(xs)
+        vs = np.stack((xs, ys, zs)).T
+        v1 = np.array(self.v1)
+        v2 = np.array(self.v2)    
+        dv1s = np.linalg.norm(vs - v1, axis=1)
+        dv2s = np.linalg.norm(vs - v2, axis=1)
+        v1_is_nearest = (dv1s < dv2s)
+        v2_is_nearest = np.logical_not(v1_is_nearest)
+        nearest_verts = np.empty_like(vs)
+        other_verts = np.empty_like(vs)
+        nearest_verts[v1_is_nearest] = v1
+        nearest_verts[v2_is_nearest] = v2
+        other_verts[v1_is_nearest] = v2
+        other_verts[v2_is_nearest] = v1
+        
+        to_nearest = vs - nearest_verts
+        
+        edges = other_verts - nearest_verts
+        dot = (to_nearest * edges).sum(axis=1)
+        at_edge = (dot > 0)
+        at_vertex = np.logical_not(at_edge)
+        at_v1 = np.logical_and(at_vertex, v1_is_nearest)
+        at_v2 = np.logical_and(at_vertex, v2_is_nearest)
+        
+        distances = np.empty((n,))
+        distances[at_edge] = LineEquation.from_two_points(self.v1, self.v2).distance_to_points(vs[at_edge])
+        distances[at_v1] = dv1s[at_v1]
+        distances[at_v2] = dv2s[at_v2]
+        
+        if self.falloff is not None:
+            distances = self.falloff(distances)
+            return distances
+        else:
+            return distances
 
 class SvVectorScalarFieldComposition(SvScalarField):
     __description__ = "Composition"

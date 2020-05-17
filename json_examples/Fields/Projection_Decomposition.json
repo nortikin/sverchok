@@ -53,11 +53,10 @@
       },
       "width": 140.0
     },
-    "Attractor Field.001": {
-      "bl_idname": "SvExAttractorFieldNode",
+    "Attractor Field": {
+      "bl_idname": "SvAttractorFieldNodeMk2",
       "custom_socket_props": {
         "0": {
-          "expanded": true,
           "prop": [
             0.0,
             0.0,
@@ -66,7 +65,6 @@
           "use_prop": true
         },
         "1": {
-          "expanded": true,
           "prop": [
             0.0,
             0.0,
@@ -253,7 +251,7 @@
       0
     ],
     [
-      "Attractor Field.001",
+      "Attractor Field",
       0,
       "Vector Field Math.001",
       1
@@ -278,56 +276,56 @@
     ],
     [
       "Vector Field Math.001",
-      2,
-      "Apply Vector Field.001",
+      0,
+      "Apply Vector Field",
       0
     ],
     [
       "Matrix Apply",
       0,
-      "Apply Vector Field.001",
+      "Apply Vector Field",
       1
     ],
     [
-      "Apply Vector Field.001",
+      "Apply Vector Field",
       0,
-      "Move",
-      0
-    ],
-    [
-      "Move",
-      0,
-      "Viewer Draw Mk3.001",
+      "Viewer Draw Mk3",
       0
     ],
     [
       "Matrix Apply",
       2,
-      "Viewer Draw Mk3.001",
+      "Viewer Draw Mk3",
       2
     ],
     [
       "Vector Field Math.001",
-      0,
-      "Apply Vector Field",
+      2,
+      "Apply Vector Field.001",
       0
     ],
     [
       "Matrix Apply",
       0,
-      "Apply Vector Field",
+      "Apply Vector Field.001",
       1
     ],
     [
-      "Apply Vector Field",
+      "Apply Vector Field.001",
       0,
-      "Viewer Draw Mk3",
+      "Move",
+      0
+    ],
+    [
+      "Move",
+      0,
+      "Viewer Draw Mk3.001",
       0
     ],
     [
       "Matrix Apply",
       2,
-      "Viewer Draw Mk3",
+      "Viewer Draw Mk3.001",
       2
     ]
   ]
