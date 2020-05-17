@@ -40,8 +40,7 @@ Examples
 --------
 
 Centering a random polygon:
-
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/center/center_sverchok_blender_example_1.png
 
-Difference between enabling "Center of many"
-.. image:: https://cloud.githubusercontent.com/assets/619340/4186411/a3e1c14a-3760-11e4-84fe-2acaf1858ad7.PNG
+Difference between enabling "Center of many":
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/center/center_sverchok_blender_example_2.png
