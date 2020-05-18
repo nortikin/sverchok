@@ -139,6 +139,13 @@ def path_from_nums(nums, x, y, num_width, num_height, maxmin, sys_scale):
         v_path.append([_px, _py])
     return v_path
 
+def get_num_width(width, num_list):
+    try:
+        num_width = width/(len(num_list)-1)
+    except ZeroDivisionError:
+        num_width = 1
+    return num_width
+
 def generate_number_geom(config, numbers):
     geom = lambda: None
     x, y = config.loc
@@ -163,7 +170,8 @@ def generate_number_geom(config, numbers):
     _y = y - h
     if config.color_per_edge and not config.edges_use_vertex_color:
         for nums, cols in zip(numbers, cycle(line_color)):
-            num_width = w/(len(nums)-1)
+            # num_width = w/(len(nums)-1)
+            num_width = get_num_width(w, nums)
             v_path = path_from_nums(nums, _x, _y, num_width, num_height, maxmin, sys_scale)
             v_vertices.extend(v_path)
 
@@ -176,7 +184,7 @@ def generate_number_geom(config, numbers):
             idx_offset += 2*len(nums)
     else:
         for nums, col in zip(numbers, cycle(line_color[0])):
-            num_width = w/(len(nums)-1)
+            num_width = get_num_width(w, nums)
             v_path = path_from_nums(nums, _x, _y, num_width, num_height, maxmin, sys_scale)
             e_vertices.extend(v_path)
             vertex_colors.extend([col for v in v_path])
