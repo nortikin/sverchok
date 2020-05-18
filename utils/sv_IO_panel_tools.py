@@ -518,9 +518,9 @@ def apply_core_props(node, node_ref):
     params = node_ref['params']
     if 'cls_dict' in params:
         return
-    print(f"node name: {node.name}")
+    print(f"  node name: {node.name}")
     for p in params:
-        print(f"param {p}")
+        print(f"    param {p}")
         val = params[p]
         try:
             setattr(node, p, val)
