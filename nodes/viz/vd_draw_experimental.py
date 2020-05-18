@@ -29,6 +29,7 @@ from sverchok.utils.geom import multiply_vectors_deep
 from sverchok.utils.modules.geom_utils import obtain_normal3 as normal
 from sverchok.utils.context_managers import hard_freeze
 from sverchok.utils.sv_mesh_utils import mesh_join
+import sverchok.core.base_nodes as base_nodes
 
 
 default_vertex_shader = '''
@@ -266,7 +267,8 @@ def get_shader_data(named_shader=None):
     names = ['vertex_shader', 'fragment_shader', 'draw_fragment']
     return [local_vars.get(name) for name in names]
 
-class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
+
+class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode, base_nodes.ViewportViewerNode):
     """
     Triggers: exp vd mk3
     Tooltip: drawing, with experimental features
@@ -305,25 +307,21 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             self.process_node(context)
 
     def draw_property_update(self, context):
-        self.hide_viewport = not self.activate  # it would be better if update system toggle this after tree evaluation
+        self.show_view_port = self.activate  # it would be better if update system toggle this after tree evaluation
         if self.activate:
             updateNode(self, context)
 
     @property
-    def is_active_output(self):
+    def show_view_port(self) -> bool:
         return self.activate
 
-    @property
-    def hide_viewport(self):
-        return not self.activate
-
-    @hide_viewport.setter
-    def hide_viewport(self, to_hide):
-        if to_hide:
-            callback_disable(self.node_id)
-        else:
+    @show_view_port.setter
+    def show_view_port(self, to_show):
+        if to_show:
             # for performance should be separate method
             self.process()
+        else:
+            callback_disable(self.node_id)
 
     activate: BoolProperty(name='Show', description='Activate', default=True, update=draw_property_update)
 

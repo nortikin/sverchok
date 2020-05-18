@@ -28,6 +28,7 @@ from sverchok.settings import get_params
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, updateNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL
+import sverchok.core.base_nodes as base_nodes
 
 
 # status colors
@@ -85,7 +86,7 @@ def adjust_location(_x, _y, location_theta):
     return _x * location_theta, _y * location_theta
 
 
-class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode, base_nodes.OutputNode):
     bl_idname = 'SvStethoscopeNodeMK2'
     bl_label = 'Stethoscope MK2'
     bl_icon = 'LONGDISPLAY'

@@ -15,6 +15,7 @@ import bpy
 
 import sverchok.core.events_types as evt
 import sverchok.core.hashed_tree_data as hash_data
+import sverchok.core.base_nodes as base_nodes
 from sverchok.utils.context_managers import sv_preferences
 
 if TYPE_CHECKING:
@@ -374,18 +375,18 @@ class WalkSvTree:
         self.recalculate_connected_to_output_nodes()
 
     def search_active_output_nodes(self):
+        self.active_output_nodes.clear()
+
         hashed_tree = hash_data.HashedBlenderData.get_tree(self.tree.id)
         is_tree_draw_into_viewport = get_blender_tree(hashed_tree.tree_id).sv_show
-        self.active_output_nodes.clear()
         for sv_node in self.tree.nodes:
             bl_node = hashed_tree.nodes[sv_node.id]
-            if bl_node.is_active_output:
-
-                is_draw_into_viewport_node = hasattr(bl_node, 'hide_viewport')
-                if is_draw_into_viewport_node and not is_tree_draw_into_viewport:
-                    continue
-
-                self.active_output_nodes.add(sv_node)
+            if isinstance(bl_node, base_nodes.OutputNode):
+                if bl_node.is_active_output:
+                    self.active_output_nodes.add(sv_node)
+            elif isinstance(bl_node, base_nodes.ViewportViewerNode):
+                if is_tree_draw_into_viewport and bl_node.show_view_port:
+                    self.active_output_nodes.add(sv_node)
 
     def recalculate_connected_to_output_nodes(self):
         self.nodes_connected_to_output.clear()

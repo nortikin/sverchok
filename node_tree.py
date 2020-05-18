@@ -508,13 +508,6 @@ class NodeEvents:
             self.n_id = str(hash(self) ^ hash(time.monotonic()))
         return self.n_id
 
-    @property
-    def is_active_output(self):
-        # this property should be override by such nodes as viewer, info, manipulation with Blender data nodes
-        # it is need for understanding is it worth to evaluate a node tree
-        # should return False if it is switched off even if a node is output
-        return False
-
     def update(self):
         # this signal method is absolutely useless
         pass

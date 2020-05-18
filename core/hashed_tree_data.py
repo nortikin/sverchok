@@ -16,8 +16,9 @@ from bpy.types import NodeLink
 if TYPE_CHECKING:
     # https://stackoverflow.com/questions/39740632/python-type-hinting-without-cyclic-imports
     from sverchok.node_tree import SverchCustomTree, SverchCustomTreeNode
+    from sverchok.core.base_nodes import ViewportViewerNode, OutputNode
 
-    Node = Union[bpy.types.Node, SverchCustomTreeNode]
+    Node = Union[bpy.types.Node, SverchCustomTreeNode, OutputNode, ViewportViewerNode]
     NodeTree = Union[bpy.types.NodeTree, SverchCustomTreeNode]
 
 

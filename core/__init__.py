@@ -16,7 +16,8 @@ core_modules = [
     "handlers", "update_system", "upgrade_nodes",
     "monad", "node_defaults", "events",
     "extend_bpy_types", "events_types",
-    "hashed_tree_data", "tree_reconstruction"
+    "hashed_tree_data", "tree_reconstruction",
+    "base_nodes"
 ]
 
 def sv_register_modules(modules):

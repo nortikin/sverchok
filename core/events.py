@@ -22,6 +22,7 @@ from sverchok.utils.context_managers import sv_preferences
 import sverchok.core.tree_reconstruction as reconstruction
 import sverchok.core.hashed_tree_data as hash_data
 import sverchok.core.events_types as evt
+import sverchok.core.base_nodes as base_nodes
 
 if TYPE_CHECKING:
     # https://stackoverflow.com/questions/39740632/python-type-hinting-without-cyclic-imports
@@ -381,19 +382,19 @@ class CurrentEvents:
             if cls.events_wave.main_event.type in [evt.BlenderEventsTypes.tree_update,
                                                    evt.BlenderEventsTypes.node_property_update]:
                 cls.handle_tree_update_event()
+
             elif cls.events_wave.main_event.type == evt.BlenderEventsTypes.frame_change:
                 cls.handle_frame_change_event()
+
             elif cls.events_wave.main_event.type == evt.BlenderEventsTypes.undo:
                 cls.handle_undo_event()
+
             elif cls.events_wave.main_event.type == evt.BlenderEventsTypes.tree_property_update:
 
-                bl_tree = get_blender_tree(cls.events_wave.current_tree.tree_id)
-                if cls.events_wave.main_event.property_name == 'sv_show':
+                if cls.events_wave.main_event.property_name == 'sv_show':  # todo change str to ENUM?
                     # show in viewport property was toggled
                     cls.handle_show_all_in_viewport()
-                    is_tree_to_show = getattr(bl_tree, cls.events_wave.main_event.property_name)
-                    if is_tree_to_show:
-                        cls.handle_tree_update_event()
+
                 else:
                     raise TypeError(f"Such property={cls.events_wave.main_event.property_name} can't be handled")
             else:
@@ -424,11 +425,19 @@ class CurrentEvents:
     def handle_show_all_in_viewport(cls):
         # switch on/off all viewer nodes (in view port) in current node tree
         bl_tree = get_blender_tree(cls.events_wave.current_tree.tree_id)
-        tree_hide_viewport = not getattr(bl_tree, cls.events_wave.main_event.property_name)
+        tree_show_viewport = getattr(bl_tree, cls.events_wave.main_event.property_name)
+
+        if tree_show_viewport:
+            with cls.record_tree_statistics(bl_tree):
+                updated_nodes = cls.update_nodes()
+                cls.recolorize_nodes(set(updated_nodes))
+
         for node in bl_tree.nodes:
-            is_draw_viewport_node = hasattr(node, 'hide_viewport')
-            if is_draw_viewport_node:
-                node.hide_viewport = tree_hide_viewport
+            if isinstance(node, base_nodes.ViewportViewerNode):
+                if not node.show_view_port:
+                    # do'not draw into viewport if a node is switched off
+                    continue
+                node.show_view_port = tree_show_viewport
 
     @classmethod
     def handle_frame_change_event(cls): ...
@@ -473,7 +482,8 @@ class CurrentEvents:
             cls.events_wave.main_event.tree_id)
         if cls.events_wave.main_event.type in [evt.BlenderEventsTypes.monad_tree_update,
                                                evt.BlenderEventsTypes.tree_update,
-                                               evt.BlenderEventsTypes.node_property_update]:
+                                               evt.BlenderEventsTypes.node_property_update,
+                                               evt.BlenderEventsTypes.tree_property_update]:
             reconstruction_tree.walk.prepare_walk_after_tree_topology_changes()
         recalculated_nodes = []
         for recalculation_node in reconstruction_tree.walk.walk_on_worth_recalculating_nodes():
