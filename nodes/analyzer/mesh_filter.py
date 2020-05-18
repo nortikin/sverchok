@@ -225,7 +225,7 @@ class SvMeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
             ("Faces", "Faces", "Filter faces", 2)
         ]
 
-    def update_mode(self, context):
+    def set_mode(self, context):
         cls = globals()[self.mode]
         while len(self.outputs) > 0:
             self.outputs.remove(self.outputs[0])
@@ -235,12 +235,20 @@ class SvMeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
             self.submode = cls.default_submode
         else:
             self.submode = None
-        updateNode(self, context)
 
-    def update_submode(self, context):
+    def set_submode(self, context):
         cls = globals()[self.mode]
         if hasattr(cls, "on_update_submode"):
             cls.on_update_submode(self)
+
+    def update_mode(self, context):
+        self.set_mode(context)
+        updateNode(self, context)
+
+    def update_submode(self, context):
+        print(f'before: {self.submode}')
+        self.set_submode(context)
+        print(f'after: {self.submode}')
         updateNode(self, context)
 
     mode: EnumProperty(name="Mode",
@@ -270,8 +278,8 @@ class SvMeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Edges")
         self.inputs.new('SvStringsSocket', "Polygons")
 
-        self.update_mode(context)
-        self.update_submode(context)
+        self.set_mode(context)
+        self.set_submode(context)
 
     def process(self):
 
