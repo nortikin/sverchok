@@ -12,6 +12,7 @@ import bpy
 from mathutils import Matrix, Quaternion
 
 from sverchok.node_tree import SverchCustomTreeNode
+import sverchok.core.base_nodes as base_nodes
 
 
 def get_socket_type(data, sub_cls=None, size=None):
@@ -46,7 +47,7 @@ def get_socket_type(data, sub_cls=None, size=None):
         raise TypeError(f"Which type of socket this type ({type(data)}) of data should be?")
 
 
-class SvDictionaryOut(bpy.types.Node, SverchCustomTreeNode):
+class SvDictionaryOut(bpy.types.Node, SverchCustomTreeNode, base_nodes.OutputNode):
     """
     Triggers: Unwrap given dictionary
 

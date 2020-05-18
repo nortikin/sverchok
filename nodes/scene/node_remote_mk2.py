@@ -30,6 +30,8 @@ from bpy.props import (
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode
 from sverchok.nodes.object_nodes.getsetprop import assign_data, types
+import sverchok.core.base_nodes as base_nodes
+
 
 # can't use a PointerProperty for type=bpy.data.node_group
 # https://blender.stackexchange.com/questions/2075/assign-datablock-to-custom-property
@@ -49,12 +51,16 @@ class SvNodePickupMK2(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvNodeRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvNodeRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode, base_nodes.OutputNode):
 
     bl_idname = 'SvNodeRemoteNodeMK2'
     bl_label = 'Node Remote (Control)+'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_REMOTE_NODE'
+
+    @property
+    def is_active_output(self) -> bool:
+        return self.activate
 
     activate: BoolProperty(
         default=True,

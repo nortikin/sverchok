@@ -25,6 +25,8 @@ from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.utils.sv_update_utils import sv_get_local_path
 from sverchok.utils.sv_font_xml_parser import get_lookup_dict, letters_to_uv
 from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_console_grid
+import sverchok.core.base_nodes as base_nodes
+
 
 def make_color(name, default):
     return bpy.props.FloatVectorProperty(name=name, default=default, size=4, min=0, max=1, update=updateNode, subtype="COLOR")
@@ -364,7 +366,7 @@ def generate_batch_shader(node, data):
     
     return batch, shader
 
-class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
+class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin, base_nodes.OutputNode):
     
     """
     Triggers: Console 
@@ -385,6 +387,10 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     def local_updateNode(self, context):
         # self.process()
         ...
+
+    @property
+    def is_active_output(self) -> bool:
+        return self.show_me
 
     snlite_mode: bpy.props.BoolProperty(name="Snlite mode", description="read script str from snlite node", update=updateNode)
     num_rows: bpy.props.IntProperty(name="num rows", default=3, min=1) #, update=updateNode)

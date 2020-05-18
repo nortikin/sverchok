@@ -21,6 +21,7 @@ from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.nodes.viz.viewer_texture import (
     vertex_shader, fragment_shader, init_texture, simple_screen,
     gl_color_list, gl_color_dict, factor_buffer_dict)
+import sverchok.core.base_nodes as base_nodes
 
 
 out_modes = [
@@ -29,7 +30,7 @@ out_modes = [
 ]
 
 
-class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
+class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode, base_nodes.OutputNode):
     '''Texture Viewer node Lite'''
     bl_idname = 'SvTextureViewerNodeLite'
     bl_label = 'Texture viewer lite'
@@ -37,7 +38,8 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_TEXTURE_VIEWER_LITE'
     texture = {}
 
-    n_id: StringProperty(default='')
+    def is_active_output(self) -> bool:
+        return True
 
     def pointer_update(self, context):
         if self.image_pointer:

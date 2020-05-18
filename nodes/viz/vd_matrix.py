@@ -29,6 +29,8 @@ from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.data_structure import node_id, updateNode
 from sverchok.node_tree import SverchCustomTreeNode
+import sverchok.core.base_nodes as base_nodes
+
 
 if not bpy.app.background:
     smooth_2d_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
@@ -98,13 +100,23 @@ def match_color_to_matrix(node):
     return [element_iterated(*values) for values in data_out]
 
 
-class SvMatrixViewer28(bpy.types.Node, SverchCustomTreeNode):
+class SvMatrixViewer28(bpy.types.Node, SverchCustomTreeNode, base_nodes.ViewportViewerNode):
     ''' mv - View Matrices '''
     bl_idname = 'SvMatrixViewer28'
     bl_label = 'Matrix View'
     bl_icon = 'EMPTY_AXIS'
     sv_icon = 'SV_MATRIX_VIEWER'
 
+    @property
+    def show_viewport(self) -> bool:
+        return True
+
+    @show_viewport.setter
+    def show_viewport(self, sv_show: bool):
+        if sv_show:
+            self.process()
+        else:
+            self.sv_free()
 
     color_start: FloatVectorProperty(subtype='COLOR', default=(1, 1, 1), min=0, max=1, size=3, update=updateNode)
     color_end: FloatVectorProperty(subtype='COLOR', default=(1, 0.02, 0.02), min=0, max=1, size=3, update=updateNode)

@@ -31,6 +31,7 @@ from bpy.props import BoolProperty, EnumProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, multi_socket, updateNode
+import sverchok.core.base_nodes as base_nodes
 
 from sverchok.utils.sv_text_io_common import (
     FAIL_COLOR, READY_COLOR, TEXT_IO_CALLBACK,
@@ -100,7 +101,7 @@ def get_sv_data(node):
     return out
 
 
-class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode, base_nodes.OutputNode):
     """
     Triggers: Text Out to datablock
     Tooltip: Quickly write data from NodeView to text datablock
@@ -140,6 +141,10 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         else:
             self.text = ""
         # need to do other stuff?
+
+    @property
+    def is_active_output(self) -> bool:
+        return True
 
     properties_to_skip_iojson = ['file_pointer']
 

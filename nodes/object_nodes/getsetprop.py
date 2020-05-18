@@ -29,6 +29,8 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 
 from sverchok.data_structure import Matrix_generate, updateNode, node_id
+import sverchok.core.base_nodes as base_nodes
+
 
 def parse_to_path(p):
     '''
@@ -210,12 +212,15 @@ class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.outputs[0].sv_set(wrap_output_data(self.obj))
 
 
-class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode, base_nodes.OutputNode):
     ''' Set property '''
     bl_idname = 'SvSetPropNode'
     bl_label = 'Set property'
     bl_icon = 'FORCE_VORTEX'
     sv_icon = 'SV_PROP_SET'
+
+    def is_active_output(self) -> bool:
+        return True
 
     ok_prop: BoolProperty(default=False)
     bad_prop: BoolProperty(default=False)

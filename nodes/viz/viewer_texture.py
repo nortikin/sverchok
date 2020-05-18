@@ -26,6 +26,7 @@ from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.ui import sv_image as svIMG
+import sverchok.core.base_nodes as base_nodes
 
 from sverchok.utils.sv_operator_mixins import (
     SvGenericDirectorySelector, SvGenericCallbackWithParams
@@ -186,7 +187,7 @@ def simple_screen(x, y, args):
     draw_texture(x=x, y=y, w=width, h=height, texname=texname, c=cMod)
 
 
-class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
+class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode, base_nodes.OutputNode):
     """
     Triggers: Texture Viewer node
     Tooltip: Generate textures and images from inside Sverchok
@@ -208,7 +209,10 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.activate = False
         updateNode(self, context)
 
-    n_id: StringProperty(default='')
+    @property
+    def is_active_output(self) -> bool:
+        return self.activate
+
     to_image_viewer: BoolProperty(
         name='Pass', description='Transfer pixels to image viewer',
         default=False, update=wrapped_updateNode_)

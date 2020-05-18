@@ -28,6 +28,7 @@ from mathutils import Matrix, Vector, Euler, Quaternion, Color
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import Matrix_generate, updateNode, node_id
+import sverchok.core.base_nodes as base_nodes
 
 
 def is_probably_color(item):
@@ -234,7 +235,7 @@ class SvGetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin, Sv
         self.outputs[0].sv_set(wrap_output_data(self.obj))
 
 
-class SvSetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
+class SvSetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin, base_nodes.OutputNode):
     ''' Set property '''
     bl_idname = 'SvSetPropNodeMK2'
     bl_label = 'Set property MK2'

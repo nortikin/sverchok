@@ -306,23 +306,6 @@ class SvLink(NamedTuple):
         return hash(self.id)
 
 
-OUTPUT_NODE_BL_IDNAMES = {  # todo make mixin instead
-    # main viewers
-    'SvBmeshViewerNodeV28',
-    # viewers
-    'Sv3DviewPropsNode', 'SvMatrixViewer28', 'SvIDXViewer28', 'SvCurveViewerNodeV28', 'SvPolylineViewerNodeV28',
-    'SvTypeViewerNodeV28', 'SvSkinViewerNodeV28', 'SvMetaballOutNode', 'SvNurbsCurveOutNode', 'SvNurbsSurfaceOutNode',
-    'SvGreasePencilStrokes', 'SvEmptyOutNode', 'SvTextureViewerNode', 'SvTextureViewerNodeLite', 'SvWaveformViewer',
-    'SvConsoleNode', 'SvLampOutNode', 'SvInstancerNode', 'SvInstancerNodeMK2', 'SvDupliInstancesMK4',
-    # text viewers
-    'ViewerNodeTextMK3', 'SvTextOutNodeMK2', 'SvDataShapeNode', 'SvDebugPrintNode',
-    # other
-    'SvSetPropNode', 'SvObjRemoteNodeMK2', 'SvSetDataObjectNodeMK2', 'SvVertexGroupNodeMK2', 'SvVertexColorNodeMK3',
-    'SvAssignMaterialListNode', 'SvMaterialIndexNode', 'SvSetCustomUVMap', 'SvMeshUVColorNode', 'SvLatticePropsNode',
-    'SvSculptMaskNode', 'SvSetCustomMeshNormals', 'SvParticlesMK2Node', 'SvSetPropNodeMK2', 'SvDictionaryOut'
-}
-
-
 class WalkSvTree:
     # https://github.com/nortikin/sverchok/issues/3058
     def __init__(self, sv_tree: SvTree):
@@ -385,7 +368,7 @@ class WalkSvTree:
                 if bl_node.is_active_output:
                     self.active_output_nodes.add(sv_node)
             elif isinstance(bl_node, base_nodes.ViewportViewerNode):
-                if is_tree_draw_into_viewport and bl_node.show_view_port:
+                if is_tree_draw_into_viewport and bl_node.show_viewport:
                     self.active_output_nodes.add(sv_node)
 
     def recalculate_connected_to_output_nodes(self):

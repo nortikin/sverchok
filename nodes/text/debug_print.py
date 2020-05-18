@@ -21,15 +21,21 @@ from bpy.props import BoolProperty, BoolVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import multi_socket, updateNode
+import sverchok.core.base_nodes as base_nodes
+
 
 defaults = [True for i in range(32)]
 
-class SvDebugPrintNode(bpy.types.Node, SverchCustomTreeNode):
+class SvDebugPrintNode(bpy.types.Node, SverchCustomTreeNode, base_nodes.OutputNode):
     ''' print socket data to terminal '''
     bl_idname = 'SvDebugPrintNode'
     bl_label = 'Debug print'
     bl_icon = 'CONSOLE'
     sv_icon = 'SV_DEBUG_PRINT'
+
+    @property
+    def is_active_output(self) -> bool:
+        return self.print_data
 
     base_name = 'Data '
     multi_socket_type = 'SvStringsSocket'

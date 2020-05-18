@@ -24,13 +24,15 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
+import sverchok.core.base_nodes as base_nodes
+
 
 # pylint: disable=w0122
 # pylint: disable=w0123
 # pylint: disable=w0613
 
 
-class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode, base_nodes.OutputNode):
     """
     Triggers: obj id set data
     Tooltip: Set Object Properties
@@ -41,6 +43,10 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableN
     bl_label = 'Object ID Set MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECT_ID_SET'
+
+    @property
+    def is_active_output(self) -> bool:
+        return True
 
     formula: StringProperty(name='formula', default='delta_location', update=updateNode)
 

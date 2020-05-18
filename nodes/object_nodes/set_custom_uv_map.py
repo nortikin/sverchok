@@ -15,6 +15,7 @@ from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode
+import sverchok.core.base_nodes as base_nodes
 
 
 def set_custom_map(obj, verts=None, faces=None, uv_name='SVMap', matrix=None):
@@ -43,7 +44,7 @@ def set_uv(verts, faces, obj, uv_name, matrix=None):
     obj.data.uv_layers[uv_name].data.foreach_set("uv", unpack_uv)
 
 
-class SvSetCustomUVMap(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvSetCustomUVMap(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode, base_nodes.OutputNode):
     """
     Triggers: Set custom UV map to Blender mesh
 

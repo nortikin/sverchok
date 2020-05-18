@@ -23,9 +23,10 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode, second_as_first_cycle as safc
 from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
+import sverchok.core.base_nodes as base_nodes
 
 
-class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode, base_nodes.OutputNode):
     ''' Particles input node new '''
     bl_idname = 'SvParticlesMK2Node'
     bl_label = 'ParticlesMK2'

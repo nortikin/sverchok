@@ -24,6 +24,7 @@ from bpy.props import StringProperty, EnumProperty, BoolProperty, FloatVectorPro
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, repeat_last, fullList)
+import sverchok.core.base_nodes as base_nodes
 
 # pylint: disable=E1101
 # pylint: disable=W0613
@@ -82,7 +83,7 @@ def set_loops(loop_count, obj, index_socket, indices, input_colors, colors):
 
 
 
-class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
+class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode, base_nodes.OutputNode):
     '''
     Triggers: vcol vertex colors
     Tooltip: Set the vertex colors of the named Layer

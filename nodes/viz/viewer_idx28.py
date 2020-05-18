@@ -18,6 +18,8 @@ from sverchok.data_structure import (
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.sv_idx_viewer28_draw import draw_indices_2D
+import sverchok.core.base_nodes as base_nodes
+
 
 # status colors
 FAIL_COLOR = (0.1, 0.05, 0)
@@ -31,7 +33,7 @@ def calc_median(vlist):
     return a / len(vlist)
 
 
-class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
+class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode, base_nodes.ViewportViewerNode):
 
     ''' IDX ViewerNode '''
     bl_idname = 'SvIDXViewer28'
@@ -52,7 +54,16 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             name=name, description='', size=4, min=0.0, max=1.0,
             default=col, subtype='COLOR', update=updateNode)
 
-    n_id: StringProperty(default='', options={'SKIP_SAVE'})
+    @property
+    def show_viewport(self) -> bool:
+        return self.activate
+
+    @show_viewport.setter
+    def show_viewport(self, to_show: bool):
+        if to_show:
+            self.process()
+        else:
+            self.sv_free()
 
     activate: BoolProperty(
         name='Show', description='Activate node?',

@@ -22,9 +22,10 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 
 from sverchok.data_structure import (updateNode, second_as_first_cycle)
+import sverchok.core.base_nodes as base_nodes
 
 
-class SvVertexGroupNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvVertexGroupNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode, base_nodes.OutputNode):
     ''' Vertex Group mk2'''
     bl_idname = 'SvVertexGroupNodeMK2'
     bl_label = 'Vertex group weights'

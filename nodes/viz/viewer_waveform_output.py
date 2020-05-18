@@ -23,6 +23,7 @@ from sverchok.utils.context_managers import sv_preferences
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, node_id
 from sverchok.ui import bgl_callback_nodeview as nvBGL
+import sverchok.core.base_nodes as base_nodes
 
 
 DATA_SOCKET = 'SvStringsSocket'
@@ -171,7 +172,7 @@ signed_digital_voltage_max = {
     32: 256**4
 }
 
-class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
+class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode, base_nodes.OutputNode):
     
     """
     Triggers: SvWaveformViewer
@@ -209,7 +210,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'SvWaveformViewer'
     bl_icon = 'FORCE_HARMONIC'
 
-    n_id: bpy.props.StringProperty(default='')
+    def is_active_output(self) -> bool:
+        return self.activate
 
     def update_socket_count(self, context):
         ... # if self.num_channels < MAX_SOCKETS 

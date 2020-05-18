@@ -11,10 +11,11 @@ from mathutils import Matrix
 from bpy.props import StringProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import node_id, Matrix_generate
+from sverchok.data_structure import node_id
+import sverchok.core.base_nodes as base_nodes
 
 
-class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
+class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode, base_nodes.OutputNode):
 
     """
     Triggers: empty
@@ -32,8 +33,10 @@ class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
             empty.name = self.empty_name
             self.label = empty.name
 
-    n_id: StringProperty(default='')
-    
+    @property
+    def is_active_output(self) -> bool:
+        return True
+
     empty_name: StringProperty(
         default='Sv empty', name="Base name",
         description="Base name of empty",

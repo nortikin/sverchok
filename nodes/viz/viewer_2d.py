@@ -34,7 +34,7 @@ from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL
 from sverchok.utils.sv_mesh_utils import polygons_to_edges
-
+import sverchok.core.base_nodes as base_nodes
 
 
 socket_dict = {
@@ -407,7 +407,7 @@ def generate_mesh_geom(config, vecs_in):
     return geom
 
 
-class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
+class SvViewer2D(bpy.types.Node, SverchCustomTreeNode, base_nodes.OutputNode):
     '''Curved interpolation'''
     bl_idname = 'SvViewer2D'
     bl_label = 'Viewer 2D'
@@ -440,6 +440,10 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Vecs'].hide_safe = self.mode in ['Number', 'Curve']
         self.inputs['Edges'].hide_safe = self.mode in ['Number', 'Path', 'Curve']
         self.inputs['Polygons'].hide_safe = self.mode in ['Number', 'Path', 'Curve']
+
+    @property
+    def is_active_output(self) -> bool:
+        return self.activate
 
     mode: EnumProperty(
         name='Mode',

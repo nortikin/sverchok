@@ -25,8 +25,9 @@ from bpy.props import (BoolProperty, StringProperty, FloatProperty, IntProperty,
 from mathutils import Matrix
 
 from sverchok.data_structure import updateNode
-from sverchok.utils.sv_viewer_utils import (
-    matrix_sanitizer, natural_plus_one, greek_alphabet)
+from sverchok.utils.sv_viewer_utils import greek_alphabet
+import sverchok.core.base_nodes as base_nodes
+
 
 sv_caps = set(string.ascii_uppercase)
 
@@ -131,7 +132,7 @@ class SvObjectsHelperCallback(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvObjHelper():
+class SvObjHelper(base_nodes.ViewportViewerNode):
 
     # hints found at ba.org/forum/showthread.php?290106
     # - this will not allow objects on multiple layers, yet.
@@ -221,7 +222,17 @@ class SvObjHelper():
             if self.parent_to_empty:
                 obj.parent = bpy.data.objects[self.parent_name]
             elif obj.parent:
-                obj.parent = None        
+                obj.parent = None
+
+    @property
+    def show_viewport(self) -> bool:
+        return self.object_hide_viewport
+
+    @show_viewport.setter
+    def show_viewport(self, to_show: bool):
+        objects = self.get_children()
+        for obj in objects:
+            obj.hide_viewport = not to_show
 
     layer_choice: BoolVectorProperty(
         subtype='LAYER', size=20, name="Layer Choice",

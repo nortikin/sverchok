@@ -15,6 +15,7 @@ from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumPro
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import dataCorrect, updateNode
+import sverchok.core.base_nodes as base_nodes
 
 
 def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
@@ -54,7 +55,7 @@ def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
     return sv_object
 
 
-class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode, base_nodes.OutputNode):
     ''' Copy by mesh data from object input '''
     bl_idname = 'SvInstancerNodeMK2'
     bl_label = 'Obj instancer MK2'
@@ -68,6 +69,9 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         for obj in objects:
             bpy.data.objects.remove(obj)
 
+    @property
+    def is_active_output(self) -> bool:
+        return self.activate
 
     activate: BoolProperty(
         default=True,

@@ -17,6 +17,7 @@ from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_viewer_utils import matrix_sanitizer
+import sverchok.core.base_nodes as base_nodes
 
 
 def wipe_object(ob):
@@ -27,7 +28,7 @@ def wipe_object(ob):
     bm.free()
 
 
-class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
+class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode, base_nodes.OutputNode):
     '''Copy by Dupli Faces'''
     bl_idname = 'SvDupliInstancesMK4'
     bl_label = 'Dupli instancer mk4'
@@ -45,6 +46,10 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
                 for obj in bpy.data.objects[parent].children:
                     if not obj.name == self.name_child:
                         obj.parent = None
+
+    @property
+    def is_active_output(self) -> bool:
+        return True
 
     name_node_generated_parent: StringProperty(
         description="name of the parent that this node generates",

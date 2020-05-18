@@ -22,9 +22,10 @@ from mathutils import Matrix
 from bpy.props import StringProperty, BoolProperty, EnumProperty, FloatProperty, IntProperty, FloatVectorProperty
 from sverchok.data_structure import node_id, Matrix_generate, updateNode, match_long_repeat, get_data_nesting_level, ensure_nesting_level
 from sverchok.node_tree import SverchCustomTreeNode
+import sverchok.core.base_nodes as base_nodes
 
 
-class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
+class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode, base_nodes.ViewportViewerNode):
     """
     Triggers: Lamp
     Tooltip: Generate Lamp objects
@@ -33,6 +34,15 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = "SvLampOutNode"
     bl_label = "Lamp"
     bl_icon = 'LIGHT' #"OUTLINER_OB_LAMP"
+
+    @property
+    def show_viewport(self) -> bool:
+        return True
+
+    @show_viewport.setter
+    def show_viewport(self, to_show: bool):
+        # The node does not have interface of switching off/on lamps
+        return
 
     activate: BoolProperty(
         name="Activate", default=True,

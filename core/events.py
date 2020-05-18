@@ -434,10 +434,10 @@ class CurrentEvents:
 
         for node in bl_tree.nodes:
             if isinstance(node, base_nodes.ViewportViewerNode):
-                if not node.show_view_port:
+                if not node.show_viewport:
                     # do'not draw into viewport if a node is switched off
                     continue
-                node.show_view_port = tree_show_viewport
+                node.show_viewport = tree_show_viewport
 
     @classmethod
     def handle_frame_change_event(cls): ...

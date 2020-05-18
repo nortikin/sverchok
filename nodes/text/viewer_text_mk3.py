@@ -21,6 +21,7 @@ from bpy.props import StringProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttle_tree_update
 from sverchok.data_structure import levelsOflist, changable_sockets, multi_socket, updateNode
+import sverchok.core.base_nodes as base_nodes
 
 socket_types = {
     "SvVerticesSocket": "VERTICES",
@@ -156,7 +157,7 @@ class SverchokViewerMK1(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
+class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode, base_nodes.OutputNode):
     """
     Triggers: Viewer Node text MK3
     Tooltip: Inspecting data from sockets in terms
@@ -166,6 +167,10 @@ class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'ViewerNodeTextMK3'
     bl_label = 'Viewer text mk3'
     bl_icon = 'FILE_TEXT'
+
+    @property
+    def is_active_output(self) -> bool:
+        return True
 
     autoupdate: BoolProperty(name='update', default=False)
     frame: BoolProperty(name='frame', default=True)

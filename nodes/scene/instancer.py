@@ -16,6 +16,7 @@ from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumPro
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode
+import sverchok.core.base_nodes as base_node
 
 def make_or_update_instance(node, obj_name, matrix):
     context = bpy.context
@@ -64,7 +65,7 @@ class SvInstancerOp(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
+class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode, base_node.OutputNode):
     '''Copy by mesh data'''
     bl_idname = 'SvInstancerNode'
     bl_label = 'Mesh instancer'
@@ -79,6 +80,9 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         display = lambda i: (not i.name.startswith(self.basedata_name)) and i.type == "MESH"
         sorted_named_objects = sorted([i.name for i in objs if display(i)])
         return [(name, name, "") for name in sorted_named_objects]
+
+    def is_active_output(self) -> bool:
+        return self.activate
 
     objects_to_choose: EnumProperty(
         items=obj_available,

@@ -25,9 +25,10 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
+import sverchok.core.base_nodes as base_nodes
 
 
-class SvMeshUVColorNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvMeshUVColorNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode, base_nodes.OutputNode):
     ''' Find pixel on UV texture from surface'''
     bl_idname = 'SvMeshUVColorNode'
     bl_label = 'Set UV Color'

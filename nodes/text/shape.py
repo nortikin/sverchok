@@ -21,8 +21,10 @@ from bpy.props import StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, describe_data_shape
+import sverchok.core.base_nodes as base_nodes
 
-class SvDataShapeNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvDataShapeNode(bpy.types.Node, SverchCustomTreeNode, base_nodes.OutputNode):
     """
     Triggers: Shape
     Tooltip: Inspect shape of input data
@@ -31,6 +33,10 @@ class SvDataShapeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = "Data shape"
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_DATA_SHAPE'
+
+    @property
+    def is_active_output(self) -> bool:
+        return True
 
     text: StringProperty(name='Text')
 

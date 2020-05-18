@@ -21,14 +21,19 @@ from mathutils import Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode, match_long_repeat
+import sverchok.core.base_nodes as base_nodes
 
 
-class SvObjRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvObjRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode, base_nodes.OutputNode):
 
     bl_idname = 'SvObjRemoteNodeMK2'
     bl_label = 'Object Remote (Control) mk2'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_REMOTE_OBJECT'
+
+    @property
+    def is_active_output(self) -> bool:
+        return True
 
     def sv_init(self, context):
         self.inputs.new('SvMatrixSocket', 'matrices')

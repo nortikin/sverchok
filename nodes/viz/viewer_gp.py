@@ -14,6 +14,7 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fullList
 from sverchok.utils.context_managers import new_input
+import sverchok.core.base_nodes as base_nodes
 
 
 def msg_box(message="", title="Message Box", icon='INFO'):
@@ -114,7 +115,7 @@ def ensure_frame_availability(layer, frame_number):
     return frame
 
 
-class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
+class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode, base_nodes.OutputNode):
     ''' Make GreasePencil Strokes '''
     bl_idname = 'SvGreasePencilStrokes'
     bl_label = 'Grease Pencil (BETA)'

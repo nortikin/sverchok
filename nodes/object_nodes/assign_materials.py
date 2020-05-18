@@ -26,6 +26,8 @@ from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
 from sverchok.utils.logging import info, debug
+import sverchok.core.base_nodes as base_nodes
+
 
 class SvMaterialEntry(bpy.types.PropertyGroup):
 
@@ -120,7 +122,7 @@ class SvMoveMaterial(bpy.types.Operator):
             updateNode(node, context)
         return {'FINISHED'}
 
-class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode, base_nodes.OutputNode):
     """
     Triggers: material list
     Tooltip: Assign the list of materials to the object

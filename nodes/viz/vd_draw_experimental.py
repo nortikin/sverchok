@@ -307,7 +307,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode, base_nodes.Viewport
             self.process_node(context)
 
     def draw_property_update(self, context):
-        self.show_view_port = self.activate  # it would be better if update system toggle this after tree evaluation
+        self.show_viewport = self.activate  # it would be better if update system toggle this after tree evaluation
         if self.activate:
             updateNode(self, context)
 
@@ -316,7 +316,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode, base_nodes.Viewport
         return self.activate
 
     @show_view_port.setter
-    def show_view_port(self, to_show):
+    def show_viewport(self, to_show):
         if to_show:
             # for performance should be separate method
             self.process()

@@ -20,18 +20,18 @@ class OutputNode:
     def is_active_output(self) -> bool:
         # it is need for understanding is it worth to evaluate a node tree
         # should return False if it is switched off
-        raise NotImplementedError
+        return True
 
 
 class ViewportViewerNode:
     # It should be used for all nodes which are drawing something into 3D viewport
 
     @property
-    def show_view_port(self) -> bool:
+    def show_viewport(self) -> bool:
         # is a node drawing in viewport
         raise NotImplementedError
 
-    @show_view_port.setter
-    def show_view_port(self, to_show: bool):
+    @show_viewport.setter
+    def show_viewport(self, to_show: bool):
         # the property should be abel to switch on/off drawing in viewport
         raise NotImplementedError
