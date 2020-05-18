@@ -518,8 +518,14 @@ def apply_core_props(node, node_ref):
     params = node_ref['params']
     if 'cls_dict' in params:
         return
+
     print(f"  node name: {node.name}")
-    for p in params:
+
+    param_names = params.keys()
+    if hasattr(node, "force_param_order"):
+        param_names = node.force_param_order
+            
+    for p in param_names:
         print(f"    param {p}")
         val = params[p]
         try:

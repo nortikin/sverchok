@@ -269,6 +269,9 @@ class SvMeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
                 items = get_submodes,
                 update = update_submode)
 
+    force_param_order = ['mode', 'submode']
+    properties_skip_iojson = ['force_param_order']
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'mode', expand=True)
         cls = globals()[self.mode]
