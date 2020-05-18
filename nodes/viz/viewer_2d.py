@@ -172,7 +172,7 @@ def generate_number_geom(config, numbers):
                 indices.append([2*i + idx_offset, 2*i + 1 + idx_offset])
             idx_offset += 2*len(nums)
     else:
-        for nums, col in zip(numbers, line_color[0]):
+        for nums, col in zip(numbers, cycle(line_color[0])):
             num_width = w/(len(nums)-1)
             v_path = path_from_nums(nums, _x, _y, num_width, num_height, maxmin, sys_scale)
             e_vertices.extend(v_path)
