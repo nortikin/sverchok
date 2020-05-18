@@ -279,11 +279,12 @@ class SvMeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "Edges")
         self.inputs.new('SvStringsSocket', "Polygons")
-
+        print('from sv_init')
         self.set_mode(context)
         self.set_submode(context)
 
     def process(self):
+        print('from process')
 
         if not any(output.is_linked for output in self.outputs):
             return
