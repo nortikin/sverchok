@@ -153,7 +153,10 @@ def generate_number_geom(config, numbers):
     e_vertices = []
     vertex_colors = []
     indices = []
-    num_height = h/(max(all_numbers)- min(all_numbers))
+    try:
+        num_height = h/(max(all_numbers)- min(all_numbers))
+    except ZeroDivisionError:
+        num_height = 1
     idx_offset = 0
 
     _x = x + margin
