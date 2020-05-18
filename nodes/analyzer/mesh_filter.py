@@ -49,8 +49,9 @@ class Vertices(object):
 
     @staticmethod
     def on_update_submode(node):
-        node.outputs['YesFaces'].hide = node.submode == "Wire"
-        node.outputs['NoFaces'].hide = node.submode == "Wire"
+        with node.sv_throttle_tree_update():
+            node.outputs['YesFaces'].hide = node.submode == "Wire"
+            node.outputs['NoFaces'].hide = node.submode == "Wire"
 
     @staticmethod
     def process(bm, submode, orig_edges):
@@ -225,28 +226,34 @@ class SvMeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
             ("Faces", "Faces", "Filter faces", 2)
         ]
 
-    def update_mode(self, context):
+    def set_mode(self, context):
         cls = globals()[self.mode]
-        while len(self.outputs) > 0:
-            self.outputs.remove(self.outputs[0])
-        for ocls, oname in cls.outputs:
-            self.outputs.new(ocls, oname)
-        if hasattr(cls, "default_submode"):
-            self.submode = cls.default_submode
-        else:
-            self.submode = None
-        updateNode(self, context)
+        with self.sv_throttle_tree_update():
+        
+            while len(self.outputs) > 0:
+                self.outputs.remove(self.outputs[0])
+            for ocls, oname in cls.outputs:
+                self.outputs.new(ocls, oname)
+            if hasattr(cls, "default_submode"):
+                self.submode = cls.default_submode
+            else:
+                self.submode = None
 
-    def update_submode(self, context):
+    def set_submode(self, context):
         cls = globals()[self.mode]
         if hasattr(cls, "on_update_submode"):
             cls.on_update_submode(self)
+
+    def update_mode(self, context):
+        self.set_mode(context)
         updateNode(self, context)
 
-    mode: EnumProperty(name="Mode",
-            items=modes,
-            default='Vertices',
-            update=update_mode)
+    def update_submode(self, context):
+        self.set_submode(context)
+        updateNode(self, context)
+
+    mode: EnumProperty(
+        name="Mode", items=modes, default='Vertices', update=update_mode)
 
     def get_submodes(self, context):
         cls = globals()[self.mode]
@@ -255,9 +262,10 @@ class SvMeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             return []
 
-    submode: EnumProperty(name="Filter",
-                items = get_submodes,
-                update = update_submode)
+    submode: EnumProperty(
+        name="Filter", items=get_submodes, update=update_submode)
+
+    force_param_order_iojson = ['mode', 'submode']
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'mode', expand=True)
@@ -269,9 +277,8 @@ class SvMeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "Edges")
         self.inputs.new('SvStringsSocket', "Polygons")
-
-        self.update_mode(context)
-        self.update_submode(context)
+        self.set_mode(context)
+        self.set_submode(context)
 
     def process(self):
 
