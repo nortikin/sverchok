@@ -182,7 +182,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         items=custom_enum_func, description="custom enum", update=updateNode
     )
 
-    snlite_raise_exception = BoolProperty(name="raise exception")
+    snlite_raise_exception: BoolProperty(name="raise exception")
 
     def draw_label(self):
         if self.script_name:

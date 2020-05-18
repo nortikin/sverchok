@@ -297,6 +297,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False, identified_node=None, s
             node_props = get_node_annotations(node)
         else:
             node_props = node.items()
+
         for k, v in node_props:
 
             display_introspection_info(node, k, v)
@@ -314,6 +315,17 @@ def create_dict_of_tree(ng, skip_set={}, selected=False, identified_node=None, s
                 node_items[k] = getattr(node, k)[:]
                 continue
             else:
+                ann = node.bl_rna.__annotations__
+
+                # this will only ever encounter pointerproperties that are interactive with
+                # by the user, or they happen to be visible in the UI by defailt. arguably
+                # we should be iterating over `node_props from get_node_annotations(node)`
+                if k in ann:
+                    prop_type, prop_details = ann[k]
+                    if prop_type == bpy.props.PointerProperty:
+                        info(f"skipping {node.name}.{k} (a PointerProperty)")
+                        continue
+
                 node_items[k] = v[:]
 
             handle_enum_property(node, k, v, node_items, node_enums)
