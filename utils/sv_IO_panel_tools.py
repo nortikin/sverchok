@@ -202,7 +202,10 @@ def can_skip_property(node, k):
         if k in node.properties_to_skip_iojson:
             return True
 
-    if k in {'n_id', 'typ', 'newsock', 'dynamic_strings', 'frame_collection_name', 'type_collection_name'}:
+    if k in {
+        'n_id', 'typ', 'newsock', 'dynamic_strings', 
+        'frame_collection_name', 'type_collection_name',
+        'force_param_order_iojson'}:
         return True
 
     elif node.bl_idname == 'SvProfileNodeMK2' and k in {'SvLists', 'SvSubLists'}:
@@ -519,14 +522,13 @@ def apply_core_props(node, node_ref):
     if 'cls_dict' in params:
         return
 
-    print(f"  node name: {node.name}")
-
     param_names = params.keys()
-    if hasattr(node, "force_param_order"):
-        param_names = node.force_param_order
+    if hasattr(node, "force_param_order_iojson"):
+        param_names = node.force_param_order_iojson
+        info(f"iojson - Forcing param order, {param_names}")
             
     for p in param_names:
-        print(f"    param {p}")
+        # print(f"    param {p}")
         val = params[p]
         try:
             setattr(node, p, val)
