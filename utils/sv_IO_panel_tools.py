@@ -314,6 +314,12 @@ def create_dict_of_tree(ng, skip_set={}, selected=False, identified_node=None, s
                 node_items[k] = getattr(node, k)[:]
                 continue
             else:
+                ann = node.bl_rna.__annotations__
+                print(ann)
+                prop_type = ann[k][0]
+                if isinstance(prop_type, bpy.props.PointerProperty):
+                    info(f"skipping {node}.{k} (a PointerProperty)")
+                    continue
                 node_items[k] = v[:]
 
             handle_enum_property(node, k, v, node_items, node_enums)
