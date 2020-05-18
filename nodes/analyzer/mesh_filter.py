@@ -282,6 +282,7 @@ class SvMeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
         print('from sv_init')
         self.set_mode(context)
         self.set_submode(context)
+        print('ending sv_init')
 
     def process(self):
         print('from process')
