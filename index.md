@@ -74,6 +74,7 @@
     SvExCurveEndpointsNode
     SvExCurveSegmentNode
     SvExCurveRangeNode
+    SvSplitCurveNode
     SvExCurveLengthNode
     SvExCurveFrameNode
     SvExCurveCurvatureNode
