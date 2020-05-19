@@ -11,8 +11,8 @@ Let's look at some examples, (not necessarily outputting just one thing):
 
 Here the number ``2`` means that the ``Vertices`` socket contains two lists (*the vertex lists of two objects*). You'll see the ``Edges`` also has a 2 beside it, it also contains the ``edge_index`` lists of two objects.
  
-  - the ``Vertices`` socket contains 2 collections, or 4 vertices each.
-  - the ``Edges`` socket contains 2 collections of 3 edges each.
+  - the ``Vertices`` socket contains 2 collections (of 4 vertices each.)
+  - the ``Edges`` socket contains 2 collections (of 3 edges each.)
 
 Two Perpendicular Lines
 -----------------------
