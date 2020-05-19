@@ -60,6 +60,10 @@ class ListLengthNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             return len(data)
 
+    def draw_label(self):
+        if self.hide:
+            return f"{self.name} Lv={self.level}" 
+        return self.label or self.name
 
 def register():
     bpy.utils.register_class(ListLengthNode)
