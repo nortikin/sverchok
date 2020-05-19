@@ -5,7 +5,7 @@ This may seem complicated, but it really isn't. However, if you don't understand
 
 Sverchok sockets can contain the elements of any number of objects. The number of objects is shown by the number beside the socket name. If you look at all the previous images, you'll notice most sockets have been outputting ``socketname. 1`` (one "thing")
 
-Let's look at some examples:
+Let's look at some examples, (not necessarily outputting just one thing):
 
 |image_two_lines|
 
