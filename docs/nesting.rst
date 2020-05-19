@@ -77,7 +77,7 @@ Let's say we have two mesh objects
 let's describe them formally in code::
 
   verts = [vertex_list_circle, vertex_list_cube]           # two vertex lists
-  faces =  [face_index_list_circle, face_index_list_cube]  # two face_index lists
+  faces = [face_index_list_circle, face_index_list_cube]  # two face_index lists
   
   # or ..zoomed in again
   verts = [
