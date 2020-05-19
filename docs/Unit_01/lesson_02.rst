@@ -69,7 +69,11 @@ Let's look at some examples:
 
 |image_two_lines|
 
-- A Vertex socket can pass multiple collections of vertices, say the socket is outputting ``vertices. 2`` then the socket contains the ``vertex-lists`` of two "entities". Imagine two perpendicular lines being outputted by a node, each has 4 vertices. then the data in that **vertex-socket** looks like::
+Here the number ``2`` means two ``vertex-lists``, and two ``edges-lists``. Each echt vertex-list can contain many vertices. In the above example, 
+  - the ``vertices`` socket contains 2 collections, or 4 vertices each.
+  - the ``edges`` socket contains 2 collections of 3 edges each.
+
+Imagine two perpendicular lines being outputted by a node, each has 4 vertices. then the data in that **vertex-socket** looks like::
 
   # abstract, top level, "vertex-objects"
   [verts_1, verts_2]
