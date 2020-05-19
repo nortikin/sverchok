@@ -32,6 +32,7 @@ The following Units will introduce no more than 10 node types per lesson. Take y
    :maxdepth: 1
 
    Lesson 01 - A Plane <Unit_01/lesson_01>
+   "Notes on Nesting" for Lesson 02 <nesting>
    Lesson 02 - A Circle <Unit_01/lesson_02>
    Lesson 03 - A Grid <Unit_01/lesson_03>
    
