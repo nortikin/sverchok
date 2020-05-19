@@ -59,5 +59,35 @@ Then here is the data associated with the ``Edges`` socket in the example::
     [[0, 1], [1, 2], [2, 3]]       # the edge indices of object 2
   ]
 
+And that's structurally the same as what the stethoschope will show us
+
+|showing_stethoscope_2obj|
+
+A Circle and a Cube
+-------------------
+
+Let's say we have two mesh objects
+  - a crude circle with 6 verts and 1 face, and
+  - a Cube (with 8 verts and 6 faces)
+
+let's describe them formally in code::
+
+  verts = [vertex_list_circle, vertex_list_cube]           # two vertex lists
+  faces =  [face_index_list_circle, face_index_list_cube]  # two face_index lists
+  
+  # or ..zoomed in again
+  verts = [
+    [v1, v2, v3, v4, v5, v6],          # the circle
+    [v1, v2, v3, v4, v5, v6, v7, v8]   # the cube
+  ]
+  faces = [
+    [face_1],                                          # the circle's face, only one face!
+    [face_1, face_2, face_3, face_4, face_5, face_6]   # a cube has 6 faces
+  ]
+
+  # viewing all data
+
+
 
 .. |image_two_lines| image:: https://user-images.githubusercontent.com/619340/82310757-1188b380-99c5-11ea-99e6-af9b61120934.png
+.. |showing_stethoscope_2obj| image:: https://user-images.githubusercontent.com/619340/82338934-bfa85380-99ed-11ea-8463-89394bd931c9.png
