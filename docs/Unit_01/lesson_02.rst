@@ -55,7 +55,7 @@ To generate the index list for the polygon we need a node that outputs a sequent
 3) Hook the output of ``List Length`` into the ``count`` socket of ``Number Range``
 4) Remove the ``Simple Topology`` node.
 
-before we go to point ``5``, you need to understand a thing called *Nesting*. we'll have to explain a few things. Read the :ref:`Nesting<nesting>`, page if you haven't already.
+before we go to point ``5``, you need to understand a thing called *Nesting*. we'll have to explain a few things. Read the :doc:`Nesting <../nesting>`, page if you haven't already.
 
  *Note* View the output of the ``Number Range`` socket using stethoscope. you'll see ``[[0,1,2,3]]``
 
