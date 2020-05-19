@@ -31,7 +31,7 @@ Let's entertain the scenario above where a Node outputs two perpendicular "PolyL
   [[v1, v2, v3, v4], [v1, v2, v3, v4, v5, v6]]
 
   # D -- literal data (either using parenthesis () or square brackets [] ) , you can see the coordinates.
-  [ [(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0)], [(0, -1, 0), (0.6, -1, 0), (1.2, -1, 0), (1.8, -1, 0), (2.4, -1, 0), (3, -1, 0)] ]
+  [ [(0,0,0),(1,0,0),(2,0,0),(3,0,0)], [(0,-1,0),(0.6,-1,0),(1.2,-1,0),(1.8,-1,0),(2.4,-1,0),(3,-1,0)] ]
 
 `A, B, C and D` are all different ways of thinking about the same data in the socket::
 
