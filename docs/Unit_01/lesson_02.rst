@@ -61,15 +61,15 @@ To generate the index list for the polygon we need a node that outputs a sequent
 detour start
 ============
 
-This may seem complicated, but it really isn't. However, if you don't understand the following detour then I've failed to explain a very important feature of Sverchok. Without understanding the following you will have a bad time.
+This may seem complicated, but it really isn't. However, if you don't understand the following detour then I've failed to explain a very important feature of Sverchok. Without understanding the following you will have a bad time. There's going to be some repetition here, and that's entirely intentional for you to understand the pattern.
 
-Sverchok sockets can contain the vertices of any number of objects. The number of objects is shown by the number beside the socket name. If you look at all the previous images, you'll notice most sockets have been outputting ``socketname 1.`` (one "thing", the vertices associated with one "object").
+Sverchok sockets can contain the vertices of any number of objects. The number of objects is shown by the number beside the socket name. If you look at all the previous images, you'll notice most sockets have been outputting ``socketname. 1`` (one "thing", the vertices associated with one "object").
 
 Let's look at some examples:
 
 |image_two_lines|
 
-- A Vertex socket can pass multiple collections of vertices, say the socket is outputting ``verts 2.`` then the socket contains the ``vertex-lists`` of two "entities". Imagine two perpendicular lines being outputted by a node, each has 4 vertices. then the data in that **vertex-socket** looks like::
+- A Vertex socket can pass multiple collections of vertices, say the socket is outputting ``vertices. 2`` then the socket contains the ``vertex-lists`` of two "entities". Imagine two perpendicular lines being outputted by a node, each has 4 vertices. then the data in that **vertex-socket** looks like::
 
   # abstract, top level, "vertex-objects"
   [verts_1, verts_2]
