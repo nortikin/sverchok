@@ -31,7 +31,7 @@ Let's entertain the scenario where a Node outputs two perpendicular lines, each 
   # D -- literal data (either using parenthesis () or square brackets [] ) , you can see the coordinates.
   [[(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0)], [(0, 0, 1), (1, 0, 1), (2, 0, 1), (3, 0, 1)]]
 
-`A, B, C and D` are all different ways of thinking about the data in the socket::
+`A, B, C and D` are all different ways of thinking about the same data in the socket::
 
   # here's the same as D, with different formatting, and comment
   [
