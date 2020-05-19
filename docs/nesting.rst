@@ -35,7 +35,8 @@ Let's entertain the scenario above where a Node outputs two perpendicular "PolyL
 
 `A, B, C and D` are all different ways of thinking about the same data in the socket::
 
-  # this is the same as D, with different formatting, and a comment. The ``comma`` is what syntactically separates the objects.
+  # 1. this is the same as D, with different formatting, and a comment.
+  # 2. The ``comma`` is what syntactically separates the objects.
   [
     [(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0)],                                         # the vertices for object 1
     [(0, -1, 0), (0.6, -1, 0), (1.2, -1, 0), (1.8, -1, 0), (2.4, -1, 0), (3, -1, 0)]      # the vertices for object 2
