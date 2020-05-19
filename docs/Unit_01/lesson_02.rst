@@ -61,12 +61,12 @@ To generate the index list for the polygon we need a node that outputs a sequent
 detour start
 ============
 
-This may seem complicated, but it really isn't. However, if you don't understand the following detour then i've failed to explain a very important feature of Sverchok. Without understanding the following you will have a bad time.
+This may seem complicated, but it really isn't. However, if you don't understand the following detour then I've failed to explain a very important feature of Sverchok. Without understanding the following you will have a bad time.
 
-Sverchok sockets can pass multiple items, per socket. They can contain the vertices of any number of objects. The number of objects is marked with a number beside the socket name. If you look at all the previous images, you'll notice most sockets have been outputting `socketname 1.` (one thing).
+Sverchok sockets can pass multiple items, per socket. They can contain the vertices of any number of objects. The number of objects is marked with a number beside the socket name. If you look at all the previous images, you'll notice most sockets have been outputting ``socketname 1.`` (one thing).
 
 Let's look at real examples:
-- A Vertex socket can pass multiple collections of vertices, say the socket is outputting `verts 2.`. Imagine two perpendicular lines being outputted by a node, each has 4 vertices. then the data in that **vertex-socket** looks like::
+- A Vertex socket can pass multiple collections of vertices, say the socket is outputting ``verts 2.``. Imagine two perpendicular lines being outputted by a node, each has 4 vertices. then the data in that **vertex-socket** looks like::
 
 # abstract, top level, "vertex-objects"
 [verts_1, verts_2]
@@ -195,5 +195,5 @@ You now know how to create basic shapes programmatically using Sverchok nodes. I
 
 .. |former_final_image| image:: https://user-images.githubusercontent.com/619340/82145036-31df3380-9848-11ea-84a7-1ed761c00e84.png
 .. |show_stethoscope_with_listlength| image:: https://user-images.githubusercontent.com/619340/82145112-cd70a400-9848-11ea-9905-3824f7e92e8c.png
-.. |not_nested_enough| imagge:: https://user-images.githubusercontent.com/619340/82303630-7dfeb500-99bb-11ea-9ea3-bf695d2537a6.png
+.. |not_nested_enough| image:: https://user-images.githubusercontent.com/619340/82303630-7dfeb500-99bb-11ea-9ea3-bf695d2537a6.png
 .. |using_range_node_one| image:: https://user-images.githubusercontent.com/619340/82150782-4f68c900-9859-11ea-9caf-7dec0e35a54e.png
