@@ -36,6 +36,7 @@ Let's entertain the scenario above where a Node outputs two perpendicular "PolyL
 `A, B, C and D` are all different ways of thinking about the same data in the socket
 
 this is the same as D, with different formatting, and a comment. 
+
 - The ``comma`` is what syntactically separates the objects.
 - The inner ``Brackets`` are what encapsulate the vertices associated with one object.
 - The outer most brackets are what collect all sublists into something that we can pass through a socket::
