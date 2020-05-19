@@ -56,26 +56,31 @@ To generate the index list for the polygon we need a node that outputs a sequent
 4) Remove the ``Simple Topology`` node.
 5) before i can show you 5, we'll have to explain a few things. View the output of the ``Number Range`` socket using stethoscope. you'll see ``[[0,1,2,3]]``
 
-  This may seem complicated, but it really isn't. However, if you don't understand the following detour then i've failed to explain a very important feature of Sverchok. Without understanding the following you will have a bad time.
-
-  Sverchok sockets can pass multiple items, per socket. They can contain the vertices of any number of objects. The number of objects is marked with a number beside the socket name. If you look at all the previous images, you'll notice most sockets have been outputting `socketname 1.` (one thing).
-
-  Let's look at real examples:
-  - A Vertex socket can pass multiple collections of vertices, say the socket is outputting `verts 2.`. Imagine two perpendicular lines being outputted by a node, each has 4 vertices. then the data in that **vertex-socket** looks like::
-
-  # abstract, top level, "vertex-objects"
-  [verts_1, verts_2]
-
-  # abstract, one level down, "vertex-lists"
-  [[v1, v2, v3, v4], [v1, v2, v3, v4]]
-
-  # literal data (either using parenthesis () or square brackets [] )
-  [[(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0)], [(0, 0, 1), (1, 0, 1), (2, 0, 1), (3, 0, 1)]]
-
-Ok?
-===
-
 |not_nested_enough|
+
+detour start
+============
+
+This may seem complicated, but it really isn't. However, if you don't understand the following detour then i've failed to explain a very important feature of Sverchok. Without understanding the following you will have a bad time.
+
+Sverchok sockets can pass multiple items, per socket. They can contain the vertices of any number of objects. The number of objects is marked with a number beside the socket name. If you look at all the previous images, you'll notice most sockets have been outputting `socketname 1.` (one thing).
+
+Let's look at real examples:
+- A Vertex socket can pass multiple collections of vertices, say the socket is outputting `verts 2.`. Imagine two perpendicular lines being outputted by a node, each has 4 vertices. then the data in that **vertex-socket** looks like::
+
+# abstract, top level, "vertex-objects"
+[verts_1, verts_2]
+
+# abstract, one level down, "vertex-lists"
+[[v1, v2, v3, v4], [v1, v2, v3, v4]]
+
+# literal data (either using parenthesis () or square brackets [] )
+[[(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0)], [(0, 0, 1), (1, 0, 1), (2, 0, 1), (3, 0, 1)]]
+
+detour end
+==========
+
+OK? :)
 
 5) Connect the output of ``Number Range`` into a ``Formula`` Node to add Brackets (an extra level of nesting), 
    - type in `x` into the formula field
