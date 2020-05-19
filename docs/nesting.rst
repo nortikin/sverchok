@@ -1,5 +1,5 @@
 Nesting
-=======
+*******
 
 This may seem complicated, but it really isn't. However, if you don't understand the following detour then I've failed to explain a very important feature of Sverchok. Without understanding the following you will have a bad time. There's going to be some repetition here, and that's entirely intentional for you to understand the pattern.
 
