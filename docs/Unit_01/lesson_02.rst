@@ -68,14 +68,14 @@ Sverchok sockets can pass multiple items, per socket. They can contain the verti
 Let's look at real examples:
 - A Vertex socket can pass multiple collections of vertices, say the socket is outputting ``verts 2.`` then the socket contains the ``vertex-lists`` of two "entities". Imagine two perpendicular lines being outputted by a node, each has 4 vertices. then the data in that **vertex-socket** looks like::
 
-# abstract, top level, "vertex-objects"
-[verts_1, verts_2]
+  # abstract, top level, "vertex-objects"
+  [verts_1, verts_2]
 
-# abstract, one level down, "vertex-lists"
-[[v1, v2, v3, v4], [v1, v2, v3, v4]]
+  # abstract, one level down, "vertex-lists"
+  [[v1, v2, v3, v4], [v1, v2, v3, v4]]
 
-# literal data (either using parenthesis () or square brackets [] )
-[[(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0)], [(0, 0, 1), (1, 0, 1), (2, 0, 1), (3, 0, 1)]]
+  # literal data (either using parenthesis () or square brackets [] )
+  [[(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0)], [(0, 0, 1), (1, 0, 1), (2, 0, 1), (3, 0, 1)]]
 
 detour end
 ==========
