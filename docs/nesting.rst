@@ -90,8 +90,11 @@ let's describe them formally in code::
     [face_1, face_2, face_3, face_4, face_5, face_6]   # a cube has 6 faces
   ]
 
-  # viewing all data
-
+viewing all data::
+  [
+    [(0.0, 1.0, 0), (0.866, 0.5, 0), (0.866, -0.5, 0), (0.0, -1.0, 0), (-0.866, -0.5, 0), (-0.8660, 0.5, 0)],  # circle verts
+    [..cube..] # cube verts
+  ]
 
 
 .. |image_two_lines| image:: https://user-images.githubusercontent.com/619340/82352501-61d03780-99fe-11ea-9051-cb120d753668.png
