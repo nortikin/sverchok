@@ -74,6 +74,9 @@ Here the number ``2`` means that the ``Vertices`` socket contains two lists (*th
   - the ``Vertices`` socket contains 2 collections, or 4 vertices each.
   - the ``Edges`` socket contains 2 collections of 3 edges each.
 
+- Two Perpendicular Lines
+-----------------------
+
 Imagine two perpendicular lines being outputted by a node, each has 4 vertices. then the data in that **vertex-socket** looks like::
 
   # A -- "vertices. 2" (abstract top level)
@@ -115,6 +118,7 @@ Then here is the data associated with the ``Edges`` socket in the example::
     [[0, 1], [1, 2], [2, 3]],      # the edge indices of object 1
     [[0, 1], [1, 2], [2, 3]]       # the edge indices of object 2
   ]
+
 
 
 detour end
