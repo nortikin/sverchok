@@ -76,17 +76,46 @@ Here the number ``2`` means that the ``Vertices`` socket contains two lists (*th
 
 Imagine two perpendicular lines being outputted by a node, each has 4 vertices. then the data in that **vertex-socket** looks like::
 
-  # "vertices. 2" (abstract top level)
+  # A -- "vertices. 2" (abstract top level)
   vertex_lists
 
-  # zoom in, what's inside the "vertex_lists" data?
+  # B -- zoom in, what's inside the "vertex_lists" data?
   [vertex_list_1, vertex_list_2]
 
-  # one level down, you can count the number of verts per object
+  # C -- one level down, you can count the number of verts per object
   [[v1, v2, v3, v4], [v1, v2, v3, v4]]
 
-  # literal data (either using parenthesis () or square brackets [] ) , you can see the coordinates.
+  # D -- literal data (either using parenthesis () or square brackets [] ) , you can see the coordinates.
   [[(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0)], [(0, 0, 1), (1, 0, 1), (2, 0, 1), (3, 0, 1)]]
+
+`A, B, C and D` are all different ways of thinking about the data in the socket::
+
+  # here's the same as D, with different formatting, and comment
+  [
+    [(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0)],    # the vertices for object 1
+    [(0, 0, 1), (1, 0, 1), (2, 0, 1), (3, 0, 1)]     # the vertices for object 2
+  ]
+
+Then here is the data associated with the ``Edges`` socket in the example::
+
+  # A -- the "edges. 2" (abstract top level)
+  edge_index_lists
+
+  # B -- zoom in, what's inside the "edge_index_lists" ?
+  [edge_indices_1, edge_indices_2]
+
+  # C -- one level down
+  [[edge_1, edge_2, edge_3], [edge_1, edge_2, edge_3]]
+
+  # D -- literal data, yes..there's a lot of brackets..
+  [[[0, 1], [1, 2], [2, 3]], [[0, 1], [1, 2], [2, 3]]]
+
+  # or with some formatting and a comment
+  [
+    [[0, 1], [1, 2], [2, 3]],      # the edge indices of object 1
+    [[0, 1], [1, 2], [2, 3]]       # the edge indices of object 2
+  ]
+
 
 detour end
 ==========
