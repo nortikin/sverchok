@@ -39,8 +39,9 @@ this is the same as D, with different formatting, and a comment.
 
 - The ``comma`` is what syntactically separates the objects.
 - The inner ``Brackets`` are what encapsulate the vertices associated with one object.
-- The outer most brackets are what collect all sublists into something that we can pass through a socket::
+- The outer most brackets are what collect all sublists into something that we can pass through a socket
 
+reformatted::
   [
     [(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0)],                                         # the vertices for object 1
     [(0, -1, 0), (0.6, -1, 0), (1.2, -1, 0), (1.8, -1, 0), (2.4, -1, 0), (3, -1, 0)]      # the vertices for object 2
