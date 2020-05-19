@@ -54,30 +54,26 @@ To generate the index list for the polygon we need a node that outputs a sequent
 2) Make sure ``start`` is ``0`` and ``step`` is ``1``
 3) Hook the output of `List Length` into the ``count`` socket of *Number Range*
 4) Remove the ``Simple Topology`` node.
+5) before i can show you 5, we'll have to explain a few things. View the output of the ``Number Range`` socket using stethoscope. you'll see ``[[0,1,2,3]]``
 
-  - *Note*: View the output of the ``Number Range`` socket using stethoscope. you'll see ``[[0,1,2,3]]``, and here we need to start explaining things :)
-  - This may seem complicated, but it really isn't. However, if you don't understand the following detour then i've failed to explain a very important feature of Sverchok. Without understanding the following you will have a bad time.
+  This may seem complicated, but it really isn't. However, if you don't understand the following detour then i've failed to explain a very important feature of Sverchok. Without understanding the following you will have a bad time.
 
-    This is a detour, but I recommend you read it unless you understand Sverchok's nesting. Else your going to have a bad time.
+  Sverchok sockets can pass multiple items, per socket. They can contain the vertices of any number of objects. The number of objects is marked with a number beside the socket name. 
 
-    Sverchok sockets can pass multiple items, per socket. They can contain the vertices of any number of objects. The number of objects
-    is marked with a number beside the socket name. 
+  Let's look at real examples:
+  - A Vertex socket can pass multiple collections of vertices, say the socket is outputting `verts 2.`. Imagine two perpendicular lines being outputted by a node, each has 4 vertices. then the data in that **vertex-socket** looks like::
 
-    Let's look at real examples:
-    - A Vertex socket can pass multiple collections of vertices, say the socket is outputting `verts 2.`. Imagine two perpendicular lines being outputted by a node, each has 4 vertices.
+    # abstract, top level, "vertex-objects"
+    [verts_1, verts_2]
 
-        then the data in that **vertex-socket** looks like::
+    # abstract, one level down, "vertex-lists"
+    [[v1, v2, v3, v4], [v1, v2, v3, v4]]
 
-        # abstract, top level, "vertex-objects"
-        [verts_1, verts_2]
+    # literal data (either using parenthesis () or square brackets [] )
+    [[(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0)], [(0, 0, 1), (1, 0, 1), (2, 0, 1), (3, 0, 1)]]
 
-        # abstract, one level down, "vertex-lists"
-        [[v1, v2, v3, v4], [v1, v2, v3, v4]]
+ok?
 
-        # literal data (either using parenthesis () or square brackets [] )
-        [[(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0)], [(0, 0, 1), (1, 0, 1), (2, 0, 1), (3, 0, 1)]]
-
-      
 |not_nested_enough|
 
 5) Connect the output of ``Number Range`` into a ``Formula`` Node to add Brackets (an extra level of nesting), 
