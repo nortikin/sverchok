@@ -14,7 +14,7 @@ Here the number ``2`` means that the ``Vertices`` socket contains two lists (*th
   - the ``Vertices`` socket contains 2 collections (The first line has 4 vertices, the next line has 6)
   - the ``Edges`` socket contains 2 collections (The first line has 3 edges, the next line has 5 edges)
 
-To know how many elements are in each socket's sublist, we can attach a ``List Length`` node. 
+To know how many elements are in each socket's sublist, we can attach a ``List Length`` node. The default ``Level`` param of 1 will be sufficient for now.
 
 Two Perpendicular Lines
 -----------------------
