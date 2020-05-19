@@ -33,7 +33,7 @@ Let's entertain the scenario where a Node outputs two perpendicular lines, each 
 
 `A, B, C and D` are all different ways of thinking about the same data in the socket::
 
-  # here's the same as D, with different formatting, and comment
+  # this is the same as D, with different formatting, and a comment. The ``comma`` is what syntactically separates the objects.
   [
     [(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0)],    # the vertices for object 1
     [(0, 0, 1), (1, 0, 1), (2, 0, 1), (3, 0, 1)]     # the vertices for object 2
