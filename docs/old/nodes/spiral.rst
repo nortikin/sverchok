@@ -1,5 +1,7 @@
+:orphan:
+
 Spiral
-========
+======
 
 Functionality
 -------------

@@ -1,3 +1,5 @@
+:orphan:
+
 Range Float
 ===========
 
@@ -8,43 +10,43 @@ Functionality
 
 Useful for generating sequences of Float values. The code perhaps describes best what the three modes do::
 
-def frange(start, stop, step):
-    '''Behaves like range but for floats'''
-    if start == stop:
-        stop += 1
-    step = max(1e-5, abs(step))
-    if start < stop:
-        while start < stop:
+    def frange(start, stop, step):
+        '''Behaves like range but for floats'''
+        if start == stop:
+            stop += 1
+        step = max(1e-5, abs(step))
+        if start < stop:
+            while start < stop:
+                yield start
+                start += step
+        else:
+            step = -abs(step)
+            while start > stop:
+                yield start
+                start += step
+
+
+    def frange_count(start, stop, count):
+        ''' Gives count total values in [start,stop] '''
+        if count < 2:
+            yield start
+        else:
+            count = int(count)
+            step = (stop - start) / (count - 1)
+            yield start
+            for i in range(count - 2):
+                start += step
+                yield start
+            yield stop
+
+
+    def frange_step(start, step, count):
+        ''' Gives count values with step from start'''
+        if abs(step) < 1e-5:
+            step = 1
+        for i in range(int(count)):
             yield start
             start += step
-    else:
-        step = -abs(step)
-        while start > stop:
-            yield start
-            start += step
-
-
-def frange_count(start, stop, count):
-    ''' Gives count total values in [start,stop] '''
-    if count < 2:
-        yield start
-    else:
-        count = int(count)
-        step = (stop - start) / (count - 1)
-        yield start
-        for i in range(count - 2):
-            start += step
-            yield start
-        yield stop
-
-
-def frange_step(start, step, count):
-    ''' Gives count values with step from start'''
-    if abs(step) < 1e-5:
-        step = 1
-    for i in range(int(count)):
-        yield start
-        start += step
 
 
 

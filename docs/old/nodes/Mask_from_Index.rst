@@ -1,5 +1,7 @@
+:orphan:
+
 Mask from Index
-==============
+===============
 
 *destination after Beta:*
 
