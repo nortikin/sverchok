@@ -202,5 +202,5 @@ You now know how to create basic shapes programmatically using Sverchok nodes. I
 .. |show_stethoscope_with_listlength| image:: https://user-images.githubusercontent.com/619340/82145112-cd70a400-9848-11ea-9905-3824f7e92e8c.png
 .. |not_nested_enough| image:: https://user-images.githubusercontent.com/619340/82303630-7dfeb500-99bb-11ea-9ea3-bf695d2537a6.png
 .. |using_range_node_one| image:: https://user-images.githubusercontent.com/619340/82150782-4f68c900-9859-11ea-9caf-7dec0e35a54e.png
-.. |image_two_ilnes| image:: https://user-images.githubusercontent.com/619340/82310757-1188b380-99c5-11ea-99e6-af9b61120934.png
+.. |image_two_lines| image:: https://user-images.githubusercontent.com/619340/82310757-1188b380-99c5-11ea-99e6-af9b61120934.png
 
