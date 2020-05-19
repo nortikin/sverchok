@@ -69,19 +69,22 @@ Let's look at some examples:
 
 |image_two_lines|
 
-Here the number ``2`` means two ``vertex-lists``, and two ``edges-lists``. Each echt vertex-list can contain many vertices. In the above example, 
+Here the number ``2`` means two ``vertex-lists``, and two ``edges-lists``. Each vertex-list can contain many vertices. In the above example, 
   - the ``vertices`` socket contains 2 collections, or 4 vertices each.
   - the ``edges`` socket contains 2 collections of 3 edges each.
 
 Imagine two perpendicular lines being outputted by a node, each has 4 vertices. then the data in that **vertex-socket** looks like::
 
-  # abstract, top level, "vertex-objects"
-  [verts_1, verts_2]
+  # "vertices. 2" (abstract top level)
+  vertex_lists
 
-  # abstract, one level down, "vertex-lists"
+  # zoom in, what's inside the "vertex_lists" data?
+  [vertex_list_1, vertex_list_2]
+
+  # one level down, you can count the number of verts per object
   [[v1, v2, v3, v4], [v1, v2, v3, v4]]
 
-  # literal data (either using parenthesis () or square brackets [] )
+  # literal data (either using parenthesis () or square brackets [] ) , you can see the coordinates.
   [[(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0)], [(0, 0, 1), (1, 0, 1), (2, 0, 1), (3, 0, 1)]]
 
 detour end
