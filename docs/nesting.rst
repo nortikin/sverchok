@@ -17,7 +17,7 @@ Here the number ``2`` means that the ``Vertices`` socket contains two lists (*th
 Two Perpendicular Lines
 -----------------------
 
-Let's entertain the scenario where a Node outputs two perpendicular lines, each has 4 vertices. then the data in that **vertex-socket** looks like::
+Let's entertain the scenario where a Node outputs two perpendicular lines, each has 4 vertices. The data in that **vertex-socket** looks like::
 
   # A -- "vertices. 2" (abstract top level)
   vertex_lists
