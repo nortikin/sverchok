@@ -44,7 +44,7 @@ Let's entertain the scenario above where a Node outputs two perpendicular "PolyL
     [(0, -1, 0), (0.6, -1, 0), (1.2, -1, 0), (1.8, -1, 0), (2.4, -1, 0), (3, -1, 0)]      # the vertices for object 2
   ]
 
-Then here is the data associated with the ``Edges`` socket in the example::
+Then here are the data associated with the ``Edges`` socket in the example::
 
   # A -- the "edges. 2" (abstract top level)
   edge_index_lists
