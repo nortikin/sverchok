@@ -67,7 +67,7 @@ Sverchok sockets can contain the vertices of any number of objects. The number o
 
 Let's look at some examples:
 
-|image_2lines|
+|image_two_lines|
 
 - A Vertex socket can pass multiple collections of vertices, say the socket is outputting ``verts 2.`` then the socket contains the ``vertex-lists`` of two "entities". Imagine two perpendicular lines being outputted by a node, each has 4 vertices. then the data in that **vertex-socket** looks like::
 
