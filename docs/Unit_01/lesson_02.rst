@@ -69,9 +69,10 @@ Let's look at some examples:
 
 |image_two_lines|
 
-Here the number ``2`` means two ``vertex-lists``, and two ``edges-lists``. Each vertex-list can contain many vertices. In the above example, 
-  - the ``vertices`` socket contains 2 collections, or 4 vertices each.
-  - the ``edges`` socket contains 2 collections of 3 edges each.
+Here the number ``2`` means the that ``Vertices`` socket contains two lists the vertex lists of two objects. You'll see the ``Edges`` also has a 2 beside it, it also contains the ``edge_index`` lists of two objects.
+ 
+  - the ``Vertices`` socket contains 2 collections, or 4 vertices each.
+  - the ``Edges`` socket contains 2 collections of 3 edges each.
 
 Imagine two perpendicular lines being outputted by a node, each has 4 vertices. then the data in that **vertex-socket** looks like::
 
