@@ -63,7 +63,7 @@ detour start
 
 This may seem complicated, but it really isn't. However, if you don't understand the following detour then I've failed to explain a very important feature of Sverchok. Without understanding the following you will have a bad time. There's going to be some repetition here, and that's entirely intentional for you to understand the pattern.
 
-Sverchok sockets can contain the vertices of any number of objects. The number of objects is shown by the number beside the socket name. If you look at all the previous images, you'll notice most sockets have been outputting ``socketname. 1`` (one "thing", the vertices associated with one "object").
+Sverchok sockets can contain the elements of any number of objects. The number of objects is shown by the number beside the socket name. If you look at all the previous images, you'll notice most sockets have been outputting ``socketname. 1`` (one "thing")
 
 Let's look at some examples:
 
@@ -83,9 +83,7 @@ Let's look at some examples:
 detour end
 ==========
 
-
-
-OK? :)
+OK? i hope so :)
 
 5) Connect the output of ``Number Range`` into a ``Formula`` Node to add Brackets (an extra level of nesting), 
    - type in `x` into the formula field
