@@ -68,14 +68,14 @@ To generate the index list for the polygon we need a node that outputs a sequent
 
         then the data in that **vertex-socket** looks like::
 
-            # abstract, top level, "vertex-objects"
-            [verts_1, verts_2]
+        # abstract, top level, "vertex-objects"
+        [verts_1, verts_2]
 
-            # abstract, one level down, "vertex-lists"
-            [[v1, v2, v3, v4], [v1, v2, v3, v4]]
+        # abstract, one level down, "vertex-lists"
+        [[v1, v2, v3, v4], [v1, v2, v3, v4]]
 
-            # literal data (either using parenthesis () or square brackets [] )
-            [[(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0)], [(0, 0, 1), (1, 0, 1), (2, 0, 1), (3, 0, 1)]]
+        # literal data (either using parenthesis () or square brackets [] )
+        [[(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0)], [(0, 0, 1), (1, 0, 1), (2, 0, 1), (3, 0, 1)]]
 
       
 |not_nested_enough|
@@ -193,5 +193,5 @@ You now know how to create basic shapes programmatically using Sverchok nodes. I
 
 .. |former_final_image| image:: https://user-images.githubusercontent.com/619340/82145036-31df3380-9848-11ea-84a7-1ed761c00e84.png
 .. |show_stethoscope_with_listlength| image:: https://user-images.githubusercontent.com/619340/82145112-cd70a400-9848-11ea-9905-3824f7e92e8c.png
-.. |not_nested_enough| imagge:: https://user-images.githubusercontent.com/619340/82150794-63142f80-9859-11ea-9630-50630e26a505.PNG
+.. |not_nested_enough| imagge:: https://user-images.githubusercontent.com/619340/82150794-63142f80-9859-11ea-9630-50630e26a505.png
 .. |using_range_node_one| image:: https://user-images.githubusercontent.com/619340/82150782-4f68c900-9859-11ea-9caf-7dec0e35a54e.png
