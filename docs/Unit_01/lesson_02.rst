@@ -93,7 +93,11 @@ You can see the beginnings of a circle.
 
 **Forcing an even spread of Vertices**
 
-Above we have the step set to 0.2, this manually sets the distance but calculation of this step value soon gets cumbersome. We will add nodes to do the calculation for us. Think about how you might do that.
+Above we manually set the step to ``0.2``, if you are as lazy as we are, then you'll want to automate that. We will add nodes to do the calculation for us. Think about how you might do that. The formula is::
+
+  step = 2.0 / n
+
+where ``n`` is how many vertices you want, and the 2 here is `2 PI`
 
 I would want to have something like ``1 / number_vertices``, this calls for a Math node and an `Int` to represent the whole number of vertices. 
 
