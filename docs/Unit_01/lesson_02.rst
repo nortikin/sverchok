@@ -57,13 +57,15 @@ To generate the index list for the polygon we need a node that outputs a sequent
 
 before we go to point ``5``, you need to understand a thing called *Nesting*. we'll have to explain a few things. Read the :doc:`Nesting <../nesting>`, page if you haven't already.
 
- *Note* View the output of the ``Number Range`` socket using stethoscope. you'll see ``[[0,1,2,3]]``
+ *Note* View the output of the ``Number Range`` socket using stethoscope. you'll see::
+
+  [[0,1,2,3]]
 
 |not_nested_enough|
 
 5) Connect the output of ``Number Range`` into a ``Formula`` Node to add Brackets (an extra level of nesting), 
 
-- type in `x` into the formula field
+- type in ``x`` into the formula field
 - the node will make one socket available
 - press the ``Wrap`` toggle
 
