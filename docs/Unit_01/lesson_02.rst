@@ -142,24 +142,27 @@ For the Circle of a variable number of vertices that list will look like::
 
 Notice I'm just showing the start of the list and the end, to indicate that there is a formula for it based purely on how many verts you want to chain together. As usual ``n`` represents the number of vertices in question.
 
-In python that formula can be expressed using a ``for-loop`` or a ``list comprehension``::
+In python that formula can be expressed using a ``for-loop`` or a ``list comprehension``.
 
-  ```for-loop```
+- the `for-loop`::
+
   n = 5
   for i in range(n):
       print(i, (i+1) % n)
+  
+  >>> 0 1
+  >>> 1 2
+  >>> 2 3
+  >>> 3 4
+  >>> 4 0
 
-  # >>> 0 1
-  # >>> 1 2
-  # >>> 2 3
-  # >>> 3 4
-  # >>> 4 0
+- the `list comprehension`::
 
-  ```list comprehension```
   n = 5
   edges = [[i, (i+1) % n] for i in range(n)]
   print(edges)
-  # >>> [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]]
+  
+  >>> [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]]
 
 In Sverchok the end result will be the same, but we'll arrive at the result in a different way.
 
