@@ -163,7 +163,7 @@ This is going to look weird (and arguably redundant) in the scenario where the s
 
 -----------
 
-.. HINT::
+.. NOTE::
    It's possible that none of this makes sense to you. In that case I encourage you to hook a stethoscope into any node that isn't outputting what you expect. More about debugging in a later Note.
 
 
