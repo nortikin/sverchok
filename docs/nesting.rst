@@ -130,7 +130,7 @@ This is what the literal data would look like::
     [[-.5, -.5, -.5], [-.5, .5, -.5], [.5, .5, -.5], [.5, -.5, -.5], [-.5, -.5, .5], [-.5, .5, .5], [.5, .5, .5], [.5, -.5, .5]]
   ]
 
-  edges = [
+  faces = [
     # the face index list for a circle of 6 vertices
     [[0, 1, 2, 3, 4, 5]], 
     
@@ -141,7 +141,7 @@ This is what the literal data would look like::
 The final nail
 ==============
 
-It's possible that none of this makes sense to you. In that cause I encourage you to hook a stethoscope into any node that isn't outputting what you expect.
+It's possible that none of this makes sense to you. In that case I encourage you to hook a stethoscope into any node that isn't outputting what you expect. More about debugging in a later Note.
 
 .. |image_two_lines| image:: https://user-images.githubusercontent.com/619340/82352501-61d03780-99fe-11ea-9051-cb120d753668.png
 .. |socket_template_HL| image:: https://user-images.githubusercontent.com/619340/82430084-2761ab80-9a8d-11ea-9ce1-a315b3b46af4.png
