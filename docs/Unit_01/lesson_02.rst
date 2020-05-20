@@ -63,7 +63,7 @@ before we go to point ``5``, you need to understand a thing called *Nesting*. we
 
 |not_nested_enough|
 
-If you have gone through the notes on nesting, then you'll understand why we need another set of Square brackets to produce a structure that the ``Viewer Draw`` node will understand ``as one object with one face``, it needs to be ``[[[0,1,2,3]]]``. 
+If you have gone through the notes on nesting, then you'll understand why we need another set of *Square Brackets* to produce a structure that the ``Viewer Draw`` node will understand ``as one object with one face``, it needs to be ``[[[0,1,2,3]]]``. 
 
 5) Connect the output of ``Number Range`` into a ``Formula`` node to add Brackets (an extra level of nesting), 
 
@@ -81,9 +81,9 @@ If you have gone through the notes on nesting, then you'll understand why we nee
 
 The 4 verts we've had from the very beginning are already points on a circular path, we can make a simple change to finally see this Circle emerge.
 
-1) Set the `mode` of the Float series node to `Range`
-2) Set the `stop` parameter to 2.0
-3) Set the `step` to 0.2 for example.
+- Set the ``mode`` of the Float series node to ``Range``
+- Set the ``stop`` parameter to ``2.0``
+- Set the ``step`` to ``0.2`` for example.
 
 ``2.0 / 0.2 = 10``, this means the Float Series node will now output ``[0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8]``. Notice that it does not output 2.0 at the end, because this mode excludes the terminating value. (called non inclusive)
 
