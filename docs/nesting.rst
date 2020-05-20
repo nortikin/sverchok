@@ -19,7 +19,7 @@ To know how many elements are in each socket's sublist, we can attach a ``List L
 Two Perpendicular Lines
 -----------------------
 
-Let's entertain the scenario above where a Node outputs two perpendicular "PolyLines", each with a different vertex and edge count. The data in that **vertex-socket** looks like::
+Let's entertain the scenario above where a Node outputs two perpendicular "PolyLines", each with a different vertex and edge count. The data in that **vertex-socket** looks like.
 
 - ``A``. (abstract top level) ``vertices. 2``::
 
