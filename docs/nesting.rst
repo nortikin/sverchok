@@ -82,8 +82,8 @@ Then here are the data associated with the ``Edges`` socket in the example
 same as D but with some formatting and a comment::
 
   [
-    [ [0, 1], [1, 2], [2, 3] ],                       # the edge indices of object 1
-    [ [0, 1], [1, 2], [2, 3], [3, 4], [4, 5] ]        # the edge indices of object 2
+    [ [0, 1], [1, 2], [2, 3] ],                            # the edge indices of object 1
+    [ [0, 1], [1, 2], [2, 3], [3, 4], [4, 5] ]             # the edge indices of object 2
   ]
 
 And that's structurally the same as what the stethoschope will show us
@@ -99,22 +99,27 @@ Let's say we have two mesh objects
   - a crude circle with 6 verts and 1 face, and
   - a Cube (with 8 verts and 6 faces)
 
-let's describe them formally in code::
+|image_of_circle_and_cube|
+
+let's describe them formally in psuedo-code::
 
   verts = [vertex_list_circle, vertex_list_cube]           # two vertex lists
   faces = [face_index_list_circle, face_index_list_cube]   # two face_index lists
-  
-  # or ..zoomed in again
+
+zoomed in a level::
+
   verts = [
-    [v1, v2, v3, v4, v5, v6],          # the circle
-    [v1, v2, v3, v4, v5, v6, v7, v8]   # the cube
-  ]
-  faces = [
-    [face_1],                                          # the circle's face, only one face!
-    [face_1, face_2, face_3, face_4, face_5, face_6]   # a cube has 6 faces
+    [v1, v2, v3, v4, v5, v6],                              # the circle
+    [v1, v2, v3, v4, v5, v6, v7, v8]                       # the cube
   ]
 
-viewing all data::
+  faces = [
+    [face_1],                                              # object 1: the circle's face, only one face!
+    [face_1, face_2, face_3, face_4, face_5, face_6]       # object 2: a cube has 6 faces
+  ]
+
+This is what the literal data would look like::
+
   [
     [(0.0, 1.0, 0), (0.866, 0.5, 0), (0.866, -0.5, 0), (0.0, -1.0, 0), (-0.866, -0.5, 0), (-0.8660, 0.5, 0)],  # circle verts
     [..cube..] # cube verts
@@ -125,3 +130,4 @@ you can probably work the rest out from here.
 .. |image_two_lines| image:: https://user-images.githubusercontent.com/619340/82352501-61d03780-99fe-11ea-9051-cb120d753668.png
 .. |socket_template_HL| image:: https://user-images.githubusercontent.com/619340/82430084-2761ab80-9a8d-11ea-9ce1-a315b3b46af4.png
 .. |stethoscope_show_topo| image:: https://user-images.githubusercontent.com/619340/82446982-e5922e80-9aa7-11ea-9520-7ac0523828c2.png
+.. |image_of_circle_and_cube| image:: https://user-images.githubusercontent.com/619340/82449311-525af800-9aab-11ea-9ee8-e5e5cb3db7fa.png
