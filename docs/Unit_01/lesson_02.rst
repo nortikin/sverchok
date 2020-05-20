@@ -79,15 +79,15 @@ If you have gone through the notes on nesting, then you'll understand why we nee
 
 **Generating the set of circular verts**
 
-The 4 verts we've had from the very beginning are already points on a circular path, we can make a simple change to finally see this Circle emerge.
+The above takes care of automatically generating the face indices for any number of incoming vertices. Now we want to add more than 4 vertices. The 4 verts we've had from the very beginning are already points on a circular path, we can make a simple change to finally see this Circle emerge.
 
-- Set the ``mode`` of the Float series node to ``Range``
+- Set the ``mode`` of the ``Number Range`` node to ``Range``
 - Set the ``stop`` parameter to ``2.0``
 - Set the ``step`` to ``0.2`` for example.
 
-``2.0 / 0.2 = 10``, this means the Float Series node will now output ``[0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8]``. Notice that it does not output 2.0 at the end, because this mode excludes the terminating value. (called non inclusive)
+``2.0 / 0.2 = 10``, this means the Float Series node will now output ten values ``[0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8]``. Notice that it does not output 2.0 at the end, because this mode excludes the terminating value. (called non inclusive)
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5436796/a37a7092-846a-11e4-8f81-512e910b3a0b.png
+|automatic_circle_from_plane|
 
 You can see the beginnings of a circle.
 
@@ -182,3 +182,4 @@ You now know how to create basic shapes programmatically using Sverchok nodes. I
 .. |show_stethoscope_with_listlength| image:: https://user-images.githubusercontent.com/619340/82145112-cd70a400-9848-11ea-9905-3824f7e92e8c.png
 .. |not_nested_enough| image:: https://user-images.githubusercontent.com/619340/82303630-7dfeb500-99bb-11ea-9ea3-bf695d2537a6.png
 .. |using_range_node_one| image:: https://user-images.githubusercontent.com/619340/82150782-4f68c900-9859-11ea-9caf-7dec0e35a54e.png
+.. |automatic_circle_from_plane| image:: https://user-images.githubusercontent.com/619340/82462057-64dd2d80-9abb-11ea-9b6b-4f3663a32451.png
