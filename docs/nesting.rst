@@ -21,10 +21,7 @@ Two Perpendicular Lines
 
 Let's entertain the scenario above where a Node outputs two perpendicular "PolyLines", each with a different vertex and edge count. The data in that **vertex-socket** looks like.
 
-- ``A``. (abstract top level) ``vertices. 2``::
-
-  vertex_lists = ...
-
+- ``A``. (abstract top level) ``vertices. 2`` is a ``list`` with 2 items
 - ``B``. zoom in, what's inside the "vertex_lists" data?::
 
   [vertex_list_1, vertex_list_2]
