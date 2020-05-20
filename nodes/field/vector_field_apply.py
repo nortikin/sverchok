@@ -7,6 +7,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, St
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, repeat_last_for_length, match_long_repeat, ensure_nesting_level
 from sverchok.utils.logging import info, exception
+from sverchok.utils.field.vector import SvVectorField
 
 class SvVectorFieldApplyNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -49,6 +50,8 @@ class SvVectorFieldApplyNode(bpy.types.Node, SverchCustomTreeNode):
 
         vertices_s = ensure_nesting_level(vertices_s, 4)
         coeffs_s = ensure_nesting_level(coeffs_s, 3)
+        fields_s = ensure_nesting_level(fields_s, 2, data_types=(SvVectorField,))
+        print("Src:", fields_s)
 
         verts_out = []
         for fields, vertices_l, coeffs_l, iterations_l in zip_long_repeat(fields_s, vertices_s, coeffs_s, iterations_s):
@@ -56,6 +59,8 @@ class SvVectorFieldApplyNode(bpy.types.Node, SverchCustomTreeNode):
                 iterations_l = [iterations_l]
             if not isinstance(fields, (list, tuple)):
                 fields = [fields]
+            print("L1:", fields)
+            print("Vs:", len(vertices_l))
 
             for field, vertices, coeffs, iterations in zip_long_repeat(fields, vertices_l, coeffs_l, iterations_l):
 
