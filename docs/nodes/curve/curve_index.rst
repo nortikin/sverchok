@@ -31,5 +31,6 @@ Curves
    curve_range
    flip_curve
    curve_segment
+   split_curve
    eval_curve
 

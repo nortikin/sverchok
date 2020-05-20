@@ -426,7 +426,11 @@ class SvCurveSegment(SvCurve):
         else:
             self.u_bounds = (u_min, u_max)
             self.target_u_bounds = (u_min, u_max)
-        self.__description__ = "{}[{} .. {}]".format(curve, u_min, u_max)
+        if hasattr(curve, '__description__'):
+            curve_description = curve.__description__
+        else:
+            curve_description = repr(curve)
+        self.__description__ = "{}[{} .. {}]".format(curve_description, u_min, u_max)
 
     def get_u_bounds(self):
         return self.u_bounds
