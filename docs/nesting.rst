@@ -58,12 +58,12 @@ here with some highlighting of the syntax
   vertex_1 = [x, y ,z]
   vertex_2 = (x, y, z)
 
-  - *Note*: We will use parenthesis ``()`` and brackets ``[]`` interchangably in these lessons. There are real differences between ``[]`` and ``()``, and we'll ignore those for now.
+  *Note*: We will use parenthesis ``()`` and brackets ``[]`` interchangably in these lessons. There are real differences between ``[]`` and ``()``, and we'll ignore those for now.
 
 edges
 -----
 
-Then here are the data associated with the ``Edges`` socket in the example::
+Then here are the data associated with the ``Edges`` socket in the example
 
 - ``A``. (abstract top level) ``edges. 2`` is a ``list`` with 2 items
 - ``B`` zoom in, what's inside the "edge_index_lists" ?::
