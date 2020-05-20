@@ -127,7 +127,8 @@ In Sverchok we added special functionality to certain nodes to draw information 
 
 In future lessons you will often see minimized/hidden nodes
 
-**Polygon is easy, what about Edges?**
+Polygon was easy, what about Edges?
+-----------------------------------
 
 Remember, there are nodes that can take an incoming set of vertices and generate the required Edges index lists. But we're trying to explore the modular features of Sverchok -- we'll build our own Edges generator this time.
 
