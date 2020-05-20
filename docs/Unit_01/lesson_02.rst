@@ -12,7 +12,7 @@ Lesson 02 - A Circle
 
 This lesson will introduce the following nodes: ``List Length, List Shift, List Zip, Formula``, and use nodes seen in Lesson 01.
 
-This will continue from the previous lesson where we made a plane from 4 vectors. We can reuse some of these nodes in order to make a Circle. If you saved it as suggested load it up or You can also create it from scratch by cross referencing this image.
+This will continue from the previous lesson where we made a plane from 4 vectors. We can reuse some of these nodes in order to make a Circle. If you saved it as suggested load it up or recreate it from scratch by cross referencing this image.
 
 |former_final_image|
 
