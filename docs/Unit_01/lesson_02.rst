@@ -107,8 +107,8 @@ where ``n`` is how many vertices you want, and the 2 here is `2 PI`. This calls 
 
    |right_click_menu|
 
-1) Set the ``Scalar Math`` node *mode* to *Reciprocal* which is ``1 / x``
-2) Set the ``Number`` node to *Int* mode and slide the number to ``18``, and connect the output into the *reciprocal* ``Scalar Math`` node.
+1) Set the ``Scalar Math`` node mode to *Reciprocal* which is ``1 / x``
+2) Set the ``Number`` node to *Int* mode and slide the number to ``10``, and connect the output into the *reciprocal* ``Scalar Math`` node.
 3) In the image below I've connected a Stethoscope to the output of the ``Number Range`` node to see the value of this computation
 4) Finally, ``2 PI`` is the same as ``1 Tau``, set the ``Pi * x`` *Scalar Math* node to ``Tau * x`` and hook up the output of the Reciprocal *Scalar Math* node into the *step* socket of Number Range
 
@@ -119,11 +119,11 @@ where ``n`` is how many vertices you want, and the 2 here is `2 PI`. This calls 
 .. Caution::
    This is starting to get crowded, let's minimize nodes.
 
-Before going any further I would like to draw attention to the fact that you can make nodes smaller. This minimizing feature is called ``hide``, we can argue about how good or badly that option is named. With Any node selected press ``H``, to *minimize/hide*.
+Before going any further it's time to draw attention to the fact that you can make nodes smaller. This minimizing feature is called ``hide``, we can argue about how good or badly that option is named. With Any node selected press ``H``, to *minimize/hide*.
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5438258/29b11056-8477-11e4-877d-499553dcfe0c.png
+|minimized|
 
-In Sverchok we added special functionality to certain nodes to draw information about themselves into their header area. This allows you to see what the node is supposed to be doing even when the UI is minimized. Currently the `Int, Float, Math, Vector Math` nodes have this behaviour because they are essential nodes and used very often.
+In Sverchok we added special functionality to certain nodes to draw information about themselves into their header area. This allows you to see what the node is supposed to be doing even when the UI is minimized. Currently the ``A number``, ``Scalar and Vector Math``, and ``List Length`` nodes have this behaviour because they are essential nodes and are used very often. Other nodes have been added to that list over time.
 
 In future lessons you will often see minimized/hidden nodes
 
@@ -193,3 +193,4 @@ You now know how to create basic shapes programmatically using Sverchok nodes. I
 .. |automatic_circle_from_plane| image:: https://user-images.githubusercontent.com/619340/82462057-64dd2d80-9abb-11ea-9b6b-4f3663a32451.png
 .. |use_reciprocal| image:: https://user-images.githubusercontent.com/619340/82474432-57c83a80-9acb-11ea-983f-6960822ee2aa.png
 .. |right_click_menu| image:: https://user-images.githubusercontent.com/619340/82489407-e1830280-9ae1-11ea-97ef-e43d1d9914f8.png
+.. |minimized| image:: https://user-images.githubusercontent.com/619340/82501213-2fedcc80-9af5-11ea-94ca-39ef089b7756.png
