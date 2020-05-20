@@ -141,7 +141,31 @@ This is what the literal data would look like::
 The final nail
 ==============
 
+Let's say we have a node, and it outputs the Face of a single object (a polygon, a quad). so the socket will read something like:
+
+- ``Faces. 1``.
+
+What do you expect the output to look like if the only face is described by 4 vertex indices ``0, 1, 2, 3``, and why?::
+
+  # the face
+  face_1 = [0, 1, 2, 3]
+
+  # the object has no more faces, but we wrap the face anyway
+  faces_of_obj_1 = [face_1]
+
+  # and we wrap all the object, one object.
+  faces = [faces_of_obj_1]
+
+  # so 0, 1, 2 ,3 becomes
+  [[[0, 1, 2, 3]]]
+
+This is going to look weird (and arguably redundant) in the scenario where the socket only describes one object. You'll almost never see sockets outputting a single face, except for the most primitive of geometry nodes.
+
+-----------
+
 It's possible that none of this makes sense to you. In that case I encourage you to hook a stethoscope into any node that isn't outputting what you expect. More about debugging in a later Note.
+
+
 
 .. |image_two_lines| image:: https://user-images.githubusercontent.com/619340/82352501-61d03780-99fe-11ea-9051-cb120d753668.png
 .. |socket_template_HL| image:: https://user-images.githubusercontent.com/619340/82430084-2761ab80-9a8d-11ea-9ce1-a315b3b46af4.png
