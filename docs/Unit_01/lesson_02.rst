@@ -123,7 +123,7 @@ Before going any further it's time to draw attention to the fact that you can ma
 
 |minimized|
 
-In Sverchok we added special functionality to certain nodes to draw information about themselves into their header area. This allows you to see what the node is supposed to be doing even when the UI is minimized. Currently the ``A number``, ``Scalar and Vector Math``, and ``List Length`` nodes have this behaviour because they are essential nodes and are used very often. Other nodes have been added to that list over time.
+In Sverchok we added special functionality to certain nodes to draw information about themselves into their header area. This allows you to see what the node is supposed to be doing even when the UI is minimized. Currently the ``A number``, ``Scalar and Vector Math``, and ``List Length`` nodes have this behaviour because they are common and will compete for screen real-estate. Other nodes have been added to that list over time.
 
 In future lessons you will often see minimized/hidden nodes
 
