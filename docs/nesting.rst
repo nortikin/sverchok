@@ -153,7 +153,7 @@ What do you expect the output to look like if the only face is described by 4 ve
   # the object has no more faces, but we wrap the face anyway
   faces_of_obj_1 = [face_1]
 
-  # and we wrap all the object, one object.
+  # and we wrap all the objects, here it's just one object
   faces = [faces_of_obj_1]
 
   # so 0, 1, 2 ,3 becomes
