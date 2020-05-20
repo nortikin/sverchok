@@ -132,26 +132,34 @@ Polygon was easy, what about Edges?
 
 Remember, there are nodes that can take an incoming set of vertices and generate the required Edges ``index lists``. Because we're exploring the modular features of Sverchok we'll build our own ``Edges`` generator.
 
-The edge index list of the square looked like ``[[0,1],[1,2],[2,3],[3,0]]``. For the Circle of a variable number of vertices that list will look like ``[[0,1],[1,2],...,[n-1,n],[n,0]]``. Notice i'm just showing the start of the list and the end, to indicate that there might be a formula for it based purely on how many verts you want to link.
+The edge index list of the square looked like::
 
-In python you might express this using a for loop or a list comprehension::
+  [[0,1],[1,2],[2,3],[3,0]].
 
-    # for loop
-    n = 5
-    for i in range(n):
-       print(i, (i+1) % n)
+For the Circle of a variable number of vertices that list will look like::
 
-    >> 0 1
-    >> 1 2
-    >> 2 3
-    >> 3 4
-    >> 4 0
+  [[0,1],[1,2],...,[n-1,n],[n,0]]
 
-    # list comprehension
-    n = 5
-    edges = [[i, (i+1) % n] for i in range(n)]
-    print(edges)
-    >> [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]]
+Notice I'm just showing the start of the list and the end, to indicate that there is a formula for it based purely on how many verts you want to chain together. As usual ``n`` represents the number of vertices in question.
+
+In python that formula can be expressed using a ``for-loop`` or a ``list comprehension``::
+
+  # for loop
+  n = 5
+  for i in range(n):
+      print(i, (i+1) % n)
+
+  >> 0 1
+  >> 1 2
+  >> 2 3
+  >> 3 4
+  >> 4 0
+
+  # list comprehension
+  n = 5
+  edges = [[i, (i+1) % n] for i in range(n)]
+  print(edges)
+  >> [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]]
 
 In Sverchok the end result will be the same, but we'll arrive at the result in a different way.
 
