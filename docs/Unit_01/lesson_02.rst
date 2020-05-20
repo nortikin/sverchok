@@ -107,7 +107,7 @@ where ``n`` is how many vertices you want, and the 2 here is `2 PI`. This calls 
 3) In the image below I've connected a Stethoscope to the output of the ``Number Range`` Node to see the value of this computation
 4) Finally, ``2 PI`` is the same as ``1 Tau``, set the ``Pi * x`` *Scalar Math* node to `Tau * x` and hook up the output of the ``Reciprocal`` *Scalar Math* node into the ``step`` socket of ``Number Range``
 
-.. INFO::
+.. caution::
    You should see something like this, if not you can by now probably figure out what to do.
    |use_reciprocal|
 
