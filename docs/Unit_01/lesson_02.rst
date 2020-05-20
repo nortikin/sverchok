@@ -107,12 +107,12 @@ where ``n`` is how many vertices you want, and the 2 here is `2 PI`. This calls 
 3) In the image below I've connected a Stethoscope to the output of the ``Number Range`` Node to see the value of this computation
 4) Finally, ``2 PI`` is the same as ``1 Tau``, set the ``Pi * x`` *Scalar Math* node to `Tau * x` and hook up the output of the ``Reciprocal`` *Scalar Math* node into the ``step`` socket of ``Number Range``
 
-.. caution::
+.. Note::
    You should see something like this, if not you can by now probably figure out what to do.
    |use_reciprocal|
 
-.. NOTE::
-   Notice this is starting to get crowded, let's minimize nodes.
+.. Caution::
+   This is starting to get crowded, let's minimize nodes.
 
 Before going any further I would like to draw attention to the fact that you can make nodes smaller. This minimizing feature is called `hide`, we can argue about how good or badly that option is named. With Any node selected press H, to 'minimize/hide'.
 
