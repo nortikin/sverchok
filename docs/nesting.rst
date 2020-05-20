@@ -45,6 +45,11 @@ this is the same as D, with different formatting, and a comment::
     [(0, -1, 0), (0.6, -1, 0), (1.2, -1, 0), (1.8, -1, 0), (2.4, -1, 0), (3, -1, 0)]      # the vertices for object 2
   ]
 
+here with some highlighting of the syntax
+
+|socket_template_HL|
+
+
 Then here are the data associated with the ``Edges`` socket in the example::
 
   # A -- the "edges. 2" (abstract top level)
@@ -98,3 +103,4 @@ viewing all data::
 
 
 .. |image_two_lines| image:: https://user-images.githubusercontent.com/619340/82352501-61d03780-99fe-11ea-9051-cb120d753668.png
+.. |socket_template_HL| image:: https://user-images.githubusercontent.com/619340/82423578-3b54df80-9a84-11ea-9af7-8c3f6824d0fd.png
