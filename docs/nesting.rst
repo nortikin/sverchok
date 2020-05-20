@@ -120,12 +120,26 @@ zoomed in a level::
 
 This is what the literal data would look like::
 
-  [
-    [(0.0, 1.0, 0), (0.866, 0.5, 0), (0.866, -0.5, 0), (0.0, -1.0, 0), (-0.866, -0.5, 0), (-0.8660, 0.5, 0)],  # circle verts
-    [..cube..] # cube verts
+  verts = [
+    # circle verts
+    [(0, 1, 0), (0.866, 0.5, 0), (0.866, -0.5, 0), (0, -1, 0), (-0.866, -0.5, 0), (-0.8660, 0.5, 0)],
+    
+    # cube verts, there are all  0.5, but because the zero is not considered significant we can ommit it.
+    [[-.5, -.5, -.5], [-.5, .5, -.5], [.5, .5, -.5], [.5, -.5, -.5], [-.5, -.5, .5], [-.5, .5, .5], [.5, .5, .5], [.5, -.5, .5]]
   ]
 
-you can probably work the rest out from here.
+  edges = [
+    # the face index list for a circle of 6 vertices
+    [[0, 1, 2, 3, 4, 5]], 
+    
+    # cube of 8 verts has 6 quad faces.
+    [[4, 5, 1, 0], [5, 6, 2, 1], [6, 7, 3, 2], [7, 4, 0, 3], [7, 6, 5, 4], [0, 1, 2, 3]]
+  ]
+
+The final nail
+==============
+
+It's possible that none of this makes sense to you. In that cause I encourage you to hook a stethoscope into any node that isn't outputting what you expect.
 
 .. |image_two_lines| image:: https://user-images.githubusercontent.com/619340/82352501-61d03780-99fe-11ea-9051-cb120d753668.png
 .. |socket_template_HL| image:: https://user-images.githubusercontent.com/619340/82430084-2761ab80-9a8d-11ea-9ce1-a315b3b46af4.png
