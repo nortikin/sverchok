@@ -103,7 +103,9 @@ where ``n`` is how many vertices you want, and the 2 here is `2 PI`. This calls 
 - ``Add -> Numbers -> A Number``
 
 .. Note::
-   Get in the habbit of adding the core nodes via ``Right Click`` menu, it is a quick route to most of these nodes.
+   Get in the habbit of adding the core nodes via the Node View's ``Right Click`` menu, it is a quick route to most of these nodes.
+
+   |right_click_menu|
 
 1) Set the ``Scalar Math`` node *mode* to *Reciprocal* which is ``1 / x``
 2) Set the ``Number`` to *Int* mode slide the number to ``18``, and connect the output into *reciprocal* ``Scalar Math`` node.
@@ -190,3 +192,4 @@ You now know how to create basic shapes programmatically using Sverchok nodes. I
 .. |using_range_node_one| image:: https://user-images.githubusercontent.com/619340/82150782-4f68c900-9859-11ea-9caf-7dec0e35a54e.png
 .. |automatic_circle_from_plane| image:: https://user-images.githubusercontent.com/619340/82462057-64dd2d80-9abb-11ea-9b6b-4f3663a32451.png
 .. |use_reciprocal| image:: https://user-images.githubusercontent.com/619340/82474432-57c83a80-9acb-11ea-983f-6960822ee2aa.png
+.. |right_click_menu| image:: https://user-images.githubusercontent.com/619340/82489407-e1830280-9ae1-11ea-97ef-e43d1d9914f8.png
