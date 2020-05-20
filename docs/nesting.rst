@@ -23,7 +23,7 @@ Let's entertain the scenario above where a Node outputs two perpendicular "PolyL
 
 - ``A``. (abstract top level) ``vertices. 2``::
 
-  vertex_lists
+  vertex_lists = ...
 
 - ``B``. zoom in, what's inside the "vertex_lists" data?::
 
