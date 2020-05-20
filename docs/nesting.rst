@@ -58,29 +58,31 @@ here with some highlighting of the syntax
   vertex_1 = [x, y ,z]
   vertex_2 = (x, y, z)
 
-- *Note*: We will use parenthesis ``()`` and brackets ``[]`` interchangably in these lessons. There's a different in Python between ``[]`` and ``()``, but that goes beyond the scope of these notes.
+- *Note*: We will use parenthesis ``()`` and brackets ``[]`` interchangably in these lessons. There are real differences between ``[]`` and ``()``, and we'll ignore those for now.
 
 edges
 -----
 
 Then here are the data associated with the ``Edges`` socket in the example::
 
-  # A -- the "edges. 2" (abstract top level)
-  edge_index_lists
+- ``A`` the "edges. 2" (abstract top level) ``edge_index_lists``
+- ``B`` zoom in, what's inside the "edge_index_lists" ?::
 
-  # B -- zoom in, what's inside the "edge_index_lists" ?
   [edge_indices_1, edge_indices_2]
 
-  # C -- one level down
+- ``C`` one level down::
+
   [[edge_1, edge_2, edge_3], [edge_1, edge_2, edge_3, edge_4, edge_5]]
 
-  # D -- literal data, there are a lot of brackets, i'll space them out a bit.
+- ``D`` literal data, there are a lot of brackets, i'll space them out a bit::
+
   [ [[0, 1], [1, 2], [2, 3]],  [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]] ]
 
-  # or with some formatting and a comment
+- same as D but with some formatting and a comment::
+
   [
-    [[0, 1], [1, 2], [2, 3]],                      # the edge indices of object 1
-    [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]]       # the edge indices of object 2
+      [ [0, 1], [1, 2], [2, 3] ] ,                      # the edge indices of object 1
+      [ [0, 1], [1, 2], [2, 3], [3, 4], [4, 5] ]        # the edge indices of object 2
   ]
 
 And that's structurally the same as what the stethoschope will show us
@@ -96,7 +98,7 @@ Let's say we have two mesh objects
 let's describe them formally in code::
 
   verts = [vertex_list_circle, vertex_list_cube]           # two vertex lists
-  faces = [face_index_list_circle, face_index_list_cube]  # two face_index lists
+  faces = [face_index_list_circle, face_index_list_cube]   # two face_index lists
   
   # or ..zoomed in again
   verts = [
