@@ -144,7 +144,7 @@ Notice I'm just showing the start of the list and the end, to indicate that ther
 
 In python that formula can be expressed using a ``for-loop`` or a ``list comprehension``.
 
-- the `for-loop`::
+the `for-loop`::
 
   n = 5
   for i in range(n):
@@ -156,7 +156,7 @@ In python that formula can be expressed using a ``for-loop`` or a ``list compreh
   >>> 3 4
   >>> 4 0
 
-- the `list comprehension`::
+the `list comprehension`::
 
   n = 5
   edges = [[i, (i+1) % n] for i in range(n)]
