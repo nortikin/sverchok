@@ -90,6 +90,8 @@ And that's structurally the same as what the stethoschope will show us
 
 |stethoscope_show_topo|
 
+Notice above that the edges are wrapped by outer *parentheses*, this isn't common, but it's not incorrect.
+
 A Circle and a Cube
 ===================
 
