@@ -5,7 +5,7 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.curve import SvCurve, SvCurveSegment
 
 class SvSplitCurveNode(bpy.types.Node, SverchCustomTreeNode):
@@ -82,12 +82,14 @@ class SvSplitCurveNode(bpy.types.Node, SverchCustomTreeNode):
         segments_s = self.inputs['Segments'].sv_get()
         split_s = self.inputs['Split'].sv_get()
         
+        curves_level = get_data_nesting_level(curve_s, data_types=(SvCurve,))
         curve_s = ensure_nesting_level(curve_s, 2, data_types=(SvCurve,))
         segments_s = ensure_nesting_level(segments_s, 2)
         split_s = ensure_nesting_level(split_s, 3)
 
         curves_out = []
         for curves, segments_i, split_i in zip_long_repeat(curve_s, segments_s, split_s):
+            curves_list = []
             for curve, segments, splits in zip_long_repeat(curves, segments_i, split_i):
                 new_curves = []
                 t_min, t_max = curve.get_u_bounds()
@@ -99,9 +101,13 @@ class SvSplitCurveNode(bpy.types.Node, SverchCustomTreeNode):
                     new_curve = SvCurveSegment(curve, start, end, self.rescale)
                     new_curves.append(new_curve)
                 if self.join:
-                    curves_out.extend(new_curves)
+                    curves_list.extend(new_curves)
                 else:
-                    curves_out.append(new_curves)
+                    curves_list.append(new_curves)
+            if curves_level == 2:
+                curves_out.append(curves_list)
+            else:
+                curves_out.extend(curves_list)
         self.outputs['Curves'].sv_set(curves_out)
 
 def register():
