@@ -17,7 +17,10 @@ Here the number ``2`` means that the ``Vertices`` socket contains two lists (*th
 To know how many elements are in each socket's sublist, we can attach a ``List Length`` node. The default ``Level`` param of 1 will be sufficient for now.
 
 Two Perpendicular Lines
------------------------
+=======================
+
+verts
+-----
 
 Let's entertain the scenario above where a Node outputs two perpendicular "PolyLines", each with a different vertex and edge count. The data in that **vertex-socket** looks like.
 
@@ -35,9 +38,6 @@ Let's entertain the scenario above where a Node outputs two perpendicular "PolyL
   [ [(0,0,0),(1,0,0),(2,0,0),(3,0,0)], [(0,-1,0),(0.6,-1,0),(1.2,-1,0),(1.8,-1,0),(2.4,-1,0),(3,-1,0)] ]
 
 - ``A, B, C and D`` are all different ways of thinking about the same data in the socket
-- The ``comma`` is what syntactically separates the objects.
-- The inner ``Brackets`` are what encapsulate the vertices associated with one object.
-- The outer most brackets are what collect all sublists into something that we can pass through a socket  
 
 this is the same as D, with different formatting, and a comment::
 
@@ -50,6 +50,12 @@ here with some highlighting of the syntax
 
 |socket_template_HL|
 
+- The ``comma`` is what syntactically separates the objects.
+- The inner ``Brackets`` are what encapsulate the vertices associated with one object.
+- The outer most brackets are what collect all sublists into something that we can pass through a socket  
+
+edges
+-----
 
 Then here are the data associated with the ``Edges`` socket in the example::
 
@@ -75,7 +81,7 @@ And that's structurally the same as what the stethoschope will show us
 
 
 A Circle and a Cube
--------------------
+===================
 
 Let's say we have two mesh objects
   - a crude circle with 6 verts and 1 face, and
