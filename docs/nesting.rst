@@ -81,8 +81,8 @@ Then here are the data associated with the ``Edges`` socket in the example
 - same as D but with some formatting and a comment::
 
   [
-    [ [0, 1], [1, 2], [2, 3] ] ,                      # the edge indices of object 1
-    [ [0, 1], [1, 2], [2, 3], [3, 4], [4, 5] ]        # the edge indices of object 2
+    [[0, 1], [1, 2], [2, 3]] ,                      # the edge indices of object 1
+    [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]]        # the edge indices of object 2
   ]
 
 And that's structurally the same as what the stethoschope will show us
