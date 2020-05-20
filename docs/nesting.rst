@@ -58,7 +58,7 @@ here with some highlighting of the syntax
   vertex_1 = [x, y ,z]
   vertex_2 = (x, y, z)
 
-- *Note*: There's a different in Python between ``[]`` and ``()`` , but that goes beyond the scope of these notes.
+- *Note*: We will use parenthesis ``()`` and brackets ``[]`` interchangably in these lessons. There's a different in Python between ``[]`` and ``()``, but that goes beyond the scope of these notes.
 
 edges
 -----
