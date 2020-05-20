@@ -66,7 +66,7 @@ edges
 Then here are the data associated with the ``Edges`` socket in the example
 
 - ``A``. (abstract top level) ``edges. 2`` is a ``list`` with 2 items
-- ``B`` zoom in, what's inside the "edge_index_lists" ?::
+- ``B`` zoom in, what's inside the "edge_index_lists"?::
 
   [edge_indices_1, edge_indices_2]
 
