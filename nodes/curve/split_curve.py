@@ -18,11 +18,11 @@ class SvSplitCurveNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_CURVE_DOMAIN'
 
-    cuts : IntProperty(
-            name = "Cuts",
-            description = "Numer of cut points (number of generated segments will be greater by 1)",
+    segments : IntProperty(
+            name = "Segments",
+            description = "Numer of parts the curve should be split into",
             default = 10,
-            min = 1,
+            min = 2,
             update = updateNode)
 
     split : FloatProperty(
@@ -33,7 +33,7 @@ class SvSplitCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
     @throttled
     def update_sockets(self, context):
-        self.inputs['Cuts'].hide_safe = self.mode != 'EVEN'
+        self.inputs['Segments'].hide_safe = self.mode != 'EVEN'
         self.inputs['Split'].hide_safe = self.mode != 'MANUAL'
 
     modes = [
@@ -66,33 +66,33 @@ class SvSplitCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
-        self.inputs.new('SvStringsSocket', "Cuts").prop_name = 'cuts'
+        self.inputs.new('SvStringsSocket', "Segments").prop_name = 'segments'
         self.inputs.new('SvStringsSocket', "Split").prop_name = 'split'
         self.outputs.new('SvCurveSocket', "Curves")
         self.update_sockets(context)
 
-    def _cut(self, t_min, t_max, cuts):
-        return np.linspace(t_min, t_max, num=cuts+1, endpoint=False)[1:].tolist()
+    def _cut(self, t_min, t_max, segments):
+        return np.linspace(t_min, t_max, num=segments, endpoint=False)[1:].tolist()
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
 
         curve_s = self.inputs['Curve'].sv_get()
-        cuts_s = self.inputs['Cuts'].sv_get()
+        segments_s = self.inputs['Segments'].sv_get()
         split_s = self.inputs['Split'].sv_get()
         
         curve_s = ensure_nesting_level(curve_s, 2, data_types=(SvCurve,))
-        cuts_s = ensure_nesting_level(cuts_s, 2)
+        segments_s = ensure_nesting_level(segments_s, 2)
         split_s = ensure_nesting_level(split_s, 3)
 
         curves_out = []
-        for curves, cuts_i, split_i in zip_long_repeat(curve_s, cuts_s, split_s):
-            for curve, cuts, splits in zip_long_repeat(curves, cuts_i, split_i):
+        for curves, segments_i, split_i in zip_long_repeat(curve_s, segments_s, split_s):
+            for curve, segments, splits in zip_long_repeat(curves, segments_i, split_i):
                 new_curves = []
                 t_min, t_max = curve.get_u_bounds()
                 if self.mode == 'EVEN':
-                    splits = self._cut(t_min, t_max, cuts)
+                    splits = self._cut(t_min, t_max, segments)
                 splits = [t_min] + splits + [t_max]
                 pairs = zip(splits, splits[1:])
                 for start, end in pairs:
