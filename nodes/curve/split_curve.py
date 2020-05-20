@@ -16,7 +16,7 @@ class SvSplitCurveNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSplitCurveNode'
     bl_label = 'Split Curve'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_CURVE_DOMAIN'
+    sv_icon = 'SV_SPLIT_CURVE'
 
     segments : IntProperty(
             name = "Segments",
