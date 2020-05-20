@@ -108,7 +108,7 @@ where ``n`` is how many vertices you want, and the 2 here is `2 PI`. This calls 
    |right_click_menu|
 
 1) Set the ``Scalar Math`` node *mode* to *Reciprocal* which is ``1 / x``
-2) Set the ``Number`` to *Int* mode slide the number to ``18``, and connect the output into *reciprocal* ``Scalar Math`` node.
+2) Set the ``Number`` node to *Int* mode and slide the number to ``18``, and connect the output into the *reciprocal* ``Scalar Math`` node.
 3) In the image below I've connected a Stethoscope to the output of the ``Number Range`` Node to see the value of this computation
 4) Finally, ``2 PI`` is the same as ``1 Tau``, set the ``Pi * x`` *Scalar Math* node to ``Tau * x`` and hook up the output of the Reciprocal *Scalar Math* node into the *step* socket of Number Range
 
