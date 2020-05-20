@@ -62,9 +62,11 @@ before we go to point ``5``, you need to understand a thing called *Nesting*. we
 |not_nested_enough|
 
 5) Connect the output of ``Number Range`` into a ``Formula`` Node to add Brackets (an extra level of nesting), 
-   - type in `x` into the formula field
-   - the node will make one socket available
-   - press the ``Wrap`` toggle
+
+- type in `x` into the formula field
+- the node will make one socket available
+- press the ``Wrap`` toggle
+
 6) Hook the output of ``Formula`` to the ``Faces`` socket of ``Viewer Draw``.
 
   *Note*: connect a Stethoscope also to the output of ``Number Range`` in order to see the generated list for yourself
