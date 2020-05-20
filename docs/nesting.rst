@@ -3,7 +3,7 @@ Nesting
 
     Come back to this document when you get confused about how data is stored in sockets.
 
-Sverchok sockets can contain the elements of any number of objects. The number of objects is shown by the number beside the socket name. If you look at all the previous images, you'll notice most sockets have been outputting ``socketname. 1`` (one "thing")
+Sverchok sockets can contain the elements of any number of objects. The number of objects is shown by the number beside the socket name. If you look at all the previous images, you'll notice most sockets have been outputting ``socketname. 1`` (a collection, containing one thing)
 
 Let's look at some examples, (not necessarily outputting just one thing):
 
