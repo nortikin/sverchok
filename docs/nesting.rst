@@ -59,7 +59,7 @@ here with some highlighting of the syntax
   vertex_2 = (x, y, z)
 
 
-    *Note*: We will use parenthesis ``()`` and brackets ``[]`` interchangably in these lessons. There are real differences between ``[]`` and ``()``, and we'll ignore those for now.
+    *Note*: We will use parentheses ``()`` and brackets ``[]`` interchangably in these lessons. There are real differences between ``[]`` and ``()``, and we'll ignore those for now.
 
 edges
 -----
