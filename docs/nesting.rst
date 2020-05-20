@@ -21,19 +21,19 @@ Two Perpendicular Lines
 
 Let's entertain the scenario above where a Node outputs two perpendicular "PolyLines", each with a different vertex and edge count. The data in that **vertex-socket** looks like::
 
-  # A -- "vertices. 2" (abstract top level)
+- ``A``. (abstract top level) ``vertices. 2``::
   vertex_lists
 
-  # B -- zoom in, what's inside the "vertex_lists" data?
+- ``B``. zoom in, what's inside the "vertex_lists" data?::
   [vertex_list_1, vertex_list_2]
 
-  # C -- one level down, you can count the number of verts per object
+- ``C``. one level down, you can count the number of verts per object::
   [[v1, v2, v3, v4], [v1, v2, v3, v4, v5, v6]]
 
-  # D -- literal data, you can see the coordinates.
+- ``D`` the literal data, you can see the coordinates::
   [ [(0,0,0),(1,0,0),(2,0,0),(3,0,0)], [(0,-1,0),(0.6,-1,0),(1.2,-1,0),(1.8,-1,0),(2.4,-1,0),(3,-1,0)] ]
 
-- `A, B, C and D` are all different ways of thinking about the same data in the socket
+- ``A, B, C and D`` are all different ways of thinking about the same data in the socket
 - The ``comma`` is what syntactically separates the objects.
 - The inner ``Brackets`` are what encapsulate the vertices associated with one object.
 - The outer most brackets are what collect all sublists into something that we can pass through a socket  
