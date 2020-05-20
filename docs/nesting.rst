@@ -95,11 +95,13 @@ Notice above that the edges are wrapped by outer *parentheses*, this isn't commo
 A Circle and a Cube
 ===================
 
-Let's say we have two mesh objects
+Let's say we have two mesh objects that we'll be receiving from a node with ``Vertices`` and ``Edges`` sockets.
   - a crude circle with 6 verts and 1 face, and
   - a Cube (with 8 verts and 6 faces)
 
 |image_of_circle_and_cube|
+
+- Notice that each object is visually transformed away from the world origin, I will be using the untransformed coordinates.
 
 let's describe them formally in psuedo-code::
 
