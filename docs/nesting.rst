@@ -118,4 +118,4 @@ viewing all data::
 
 
 .. |image_two_lines| image:: https://user-images.githubusercontent.com/619340/82352501-61d03780-99fe-11ea-9051-cb120d753668.png
-.. |socket_template_HL| image:: https://user-images.githubusercontent.com/619340/82423578-3b54df80-9a84-11ea-9af7-8c3f6824d0fd.png
+.. |socket_template_HL| image:: https://user-images.githubusercontent.com/619340/82430084-2761ab80-9a8d-11ea-9ce1-a315b3b46af4.png
