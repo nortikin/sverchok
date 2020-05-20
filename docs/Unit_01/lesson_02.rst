@@ -63,9 +63,9 @@ before we go to point ``5``, you need to understand a thing called *Nesting*. we
 
 |not_nested_enough|
 
-If you have gone through the notes on nesting, then you'll understand why we need another set of Square brackets to produce a structure that the ViewerDraw node will understand ``as one object with one face``, it needs to be ``[[[0,1,2,3]]]``. 
+If you have gone through the notes on nesting, then you'll understand why we need another set of Square brackets to produce a structure that the ``Viewer Draw`` node will understand ``as one object with one face``, it needs to be ``[[[0,1,2,3]]]``. 
 
-5) Connect the output of ``Number Range`` into a ``Formula`` Node to add Brackets (an extra level of nesting), 
+5) Connect the output of ``Number Range`` into a ``Formula`` node to add Brackets (an extra level of nesting), 
 
 - type in ``x`` into the formula field
 - the node will make one socket available
