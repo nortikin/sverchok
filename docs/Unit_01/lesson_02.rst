@@ -79,7 +79,7 @@ If you have gone through the notes on nesting, then you'll understand why we nee
 
 **Generating the set of circular verts**
 
-The above takes care of automatically generating the face indices for any number of incoming vertices. Now we want to add more than 4 vertices. The 4 verts we've had from the very beginning are already points on a circular path, we can make a simple change to finally see this Circle emerge.
+The above takes care of automatically generating the face indices for any number of incoming vertices. Now we want to automate the creation of Vertices. The 4 verts we've had from the very beginning are already points on a circular path, we can make a change to ``Number Range`` node to finally see this Circle emerge.
 
 - Set the ``mode`` of the ``Number Range`` node to ``Range``
 - Set the ``stop`` parameter to ``2.0``
@@ -95,16 +95,14 @@ You can see the beginnings of a circle.
 
 Above we manually set the step to ``0.2``, if you are as lazy as we are, then you'll want to automate that. We will add nodes to do the calculation for us. Think about how you might do that. The formula is::
 
-  step = 2.0 / n
+  2.0 / n = step_distance
 
-where ``n`` is how many vertices you want, and the 2 here is `2 PI`
-
-I would want to have something like ``1 / number_vertices``, this calls for a Math node and an `Int` to represent the whole number of vertices. 
+where ``n`` is how many vertices you want, and the 2 here is `2 PI`. This calls for a ``Scalar Math`` node and an ``Number``.
 
 - ``Add -> Numbers -> Scalar Math``
 - ``Add -> Numbers -> A Number``
 
-1) Set the ``Scalar Math`` node *mode* to ``/ (division)`` , and put 1.0 in the numerator (top number).
+1) Set the ``Scalar Math`` node *mode* to ``/ (division)`` , and put 2.0 in the numerator (top number).
 2) Set the ``Number`` to *Int* mode slide the number to ``18``, and connect the output into the bottom socket of the division ``Scalar Math`` node.
 3) In the image below I've connected a Stethoscope to the output of the Math Node to see the value of this computation
 4) Finally, hook up the output of the division Math node into the `step` socket of Float series
