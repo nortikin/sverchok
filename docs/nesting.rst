@@ -50,9 +50,9 @@ here with some highlighting of the syntax
 
 |socket_template_HL|
 
-- The ``comma`` is what syntactically separates the objects.
-- The inner ``Square Brackets`` are what encapsulate the vertices associated with one object.
-- The outer most ``Square Brackets`` are what collect all sublists into something that we can pass through a socket  
+- The (orange) ``comma`` is what syntactically separates the objects.
+- The inner (green)``Square Brackets`` are what encapsulate the vertices associated with one object.
+- The outer most (blue) ``Square Brackets`` are what collect all sublists into something that we can pass through a socket  
 - The parentheses enclose coordinates of each Vertex. In sverchok can also use square brackets to enclose a Vertex. The following are functionally equivalent in sverchok::
 
   vertex_1 = [x, y ,z]
