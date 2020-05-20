@@ -177,7 +177,7 @@ Sverchok has a node for this called `List Shift`. We'll zip the two lists togeth
 - ``add -> List Main -> List Zip``
 
 .. HINT::
-   Seriously; Instead of trawling through menus and submenus, use the ``alt+space`` search. type in Shift and Zip and hit Enter to add the node to the tree.
+   Seriously; Instead of trawling through menus and submenus, use the ``alt+space`` search. type in Shift and Zip and navigate down with the cursor keys, then hit Enter to add the node to the tree.
 
 1) Hook the output of `List Range Int` into the first Data socket of the `List Zip` node.
 2) Hook the output of `List Range Int` also into the `List Shift` node.
