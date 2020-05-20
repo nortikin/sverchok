@@ -109,10 +109,10 @@ where ``n`` is how many vertices you want, and the 2 here is `2 PI`. This calls 
 
 .. INFO::
    You should see something like this, if not you can by now probably figure out what to do.
-
    |use_reciprocal|
 
-**Notice this is starting to get crowded, let's minimize nodes**
+.. NOTE::
+   Notice this is starting to get crowded, let's minimize nodes.
 
 Before going any further I would like to draw attention to the fact that you can make nodes smaller. This minimizing feature is called `hide`, we can argue about how good or badly that option is named. With Any node selected press H, to 'minimize/hide'.
 
