@@ -34,9 +34,9 @@ In order to make the list automatically, we should know how many vertices there 
 
 The `List Length` node lets you output the length of incoming data. Because data is passed through Sverchok as lists and lists of lists, it also lets you pick what ``nested-level`` of the data you want to inspect. It's worth reading the **reference** of this node for a comprehensive tour of its capabilities.
 
-1) hook the `Vector In` output into the `Data` input of `List Length`
-2) hook a new `Stethoscope` up to the output of the `List Length` node.
-3) notice the `Level` slider is set to 1 by default, you should see Stethoscope shows output.
+1) hook the ``Vector In`` output into the ``Data`` input of ``List Length`` node
+2) hook a new ``Stethoscope`` up to the output of the ``List Length`` node.
+3) notice the *Level( slider is set to ``1`` by default, you should see Stethoscope shows output.
 
 |show_stethoscope_with_listlength|
 
@@ -46,7 +46,7 @@ Notice that, besides all the square brackets, you see the length of the incoming
   range(start=0, end=n, step=1)
   >> [0, 1, 2, 3]
 
-To generate the index list for the polygon we need a node that outputs a sequential list of integers, Sverchok has exactly such a node and it accepts values for `start`, `step` and `count` as parameters. This is what the ``Number Range`` node does (in **Step** mode).
+To generate the index list for the polygon we need a node that outputs a sequential list of integers, Sverchok has exactly such a node and it accepts values for `start`, `step` and `count` as parameters. This is what the ``Number Range`` node does (in *Step* mode).
 
 - ``Add -> Numbers -> Number Range``
 
