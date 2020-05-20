@@ -168,8 +168,8 @@ In Sverchok the end result will be the same, but we'll arrive at the result in a
 
 The second index of each edge is one higher than the first index, except for the last edge. The last edge closes the ring of edges and meets back up with the first vertex. In essenence this is a wrap-around. Or, you can think of it as two lists, one of which is shifted by one with respect the other list::
 
-  [0, 1, 2, 3, 4   ]
-  [   1, 2, 3, 4, 0]
+  indices                = [0, 1, 2, 3, 4]
+  indices_shifted_by_one = [1, 2, 3, 4, 0]
 
 Sverchok has a node for this called `List Shift`. We'll zip the two lists together using `List Zip` node.
 
