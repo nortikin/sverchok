@@ -102,14 +102,15 @@ where ``n`` is how many vertices you want, and the 2 here is `2 PI`. This calls 
 - ``Add -> Numbers -> Scalar Math``
 - ``Add -> Numbers -> A Number``
 
-1) Set the ``Scalar Math`` node *mode* to ``/ (division)`` , and put 2.0 in the numerator (top number).
+1) Set the ``Scalar Math`` node *mode* to *Reciprocal* which is ``1 / x``
 2) Set the ``Number`` to *Int* mode slide the number to ``18``, and connect the output into the bottom socket of the division ``Scalar Math`` node.
-3) In the image below I've connected a Stethoscope to the output of the Math Node to see the value of this computation
-4) Finally, hook up the output of the division Math node into the `step` socket of Float series
+3) In the image below I've connected a Stethoscope to the output of the ``Number Range`` Node to see the value of this computation
+4) Finally, ``2 PI`` is the same as ``1 Tau``, set the ``Pi * x`` *Scalar Math* node to `Tau * x` and hook up the output of the ``Reciprocal`` *Scalar Math* node into the ``step`` socket of ``Number Range``
 
-You should see something like this, if not you can by now probably figure out what to do.
+.. INFO::
+   You should see something like this, if not you can by now probably figure out what to do.
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5437240/f7f80fa4-846e-11e4-8229-97a4c62c6368.png
+   |use_reciprocal|
 
 **Notice this is starting to get crowded, let's minimize nodes**
 
@@ -185,3 +186,4 @@ You now know how to create basic shapes programmatically using Sverchok nodes. I
 .. |not_nested_enough| image:: https://user-images.githubusercontent.com/619340/82303630-7dfeb500-99bb-11ea-9ea3-bf695d2537a6.png
 .. |using_range_node_one| image:: https://user-images.githubusercontent.com/619340/82150782-4f68c900-9859-11ea-9caf-7dec0e35a54e.png
 .. |automatic_circle_from_plane| image:: https://user-images.githubusercontent.com/619340/82462057-64dd2d80-9abb-11ea-9b6b-4f3663a32451.png
+.. |use_reciprocal| image:: https://user-images.githubusercontent.com/619340/82474432-57c83a80-9acb-11ea-983f-6960822ee2aa.png
