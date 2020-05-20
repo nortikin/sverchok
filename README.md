@@ -91,7 +91,8 @@ Authors:
 -  Walter Perdan,    
 -  Marius Giurgi,      
 -  Durman,     
--  Ivan Prytov     
+-  Ivan Prytov,
+-  Victor Doval
 
 Email: sverchok-b3d@yandex.ru  
 
