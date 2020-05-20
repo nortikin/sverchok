@@ -36,7 +36,7 @@ The `List Length` node lets you output the length of incoming data. Because data
 
 1) hook the ``Vector In`` output into the ``Data`` input of ``List Length`` node
 2) hook a new ``Stethoscope`` up to the output of the ``List Length`` node.
-3) notice the *Level( slider is set to ``1`` by default, you should see Stethoscope shows output.
+3) notice the *Level* slider is set to ``1`` by default, you should see Stethoscope shows output.
 
 |show_stethoscope_with_listlength|
 
