@@ -1,13 +1,12 @@
 easing
 ======
 
-This node offers a finite list of interpolation functions.
-
-We've collected the easing functions in a visual document here
+This node offers a finite list of interpolation functions. We've collected the easing functions in a visual document here
 
 https://zeffii.github.io/docs_easing_node/
 
 - (screenshot, open in new tab to show all)
+
 |visual_easing|
 
 the original development thread is here:
