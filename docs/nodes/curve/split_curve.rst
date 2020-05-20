@@ -9,6 +9,10 @@ values of curve's T parameter. The values of T parameter, at which the split
 should be made, can be either specified manually or calculated automatically by
 the provided number of cuts.
 
+Note that equal ranges of T parameter do not necessarily mean equal parts of
+curve length. To split a curve into parts of equal length, you can use "Curve
+Length Parameter" node to calculate corresponding values of the T parameter.
+
 Inputs
 ------
 
@@ -52,3 +56,15 @@ Outputs
 This node has the following output:
 
 * **Curves**. The generated Curve objects.
+
+Examples of usage
+-----------------
+
+Split a Circle (which has domain ``[0; 2*pi]``) at point T = 0.5:
+
+.. image:: https://user-images.githubusercontent.com/284644/82467377-09bb3300-9adb-11ea-9590-64b332443621.png
+
+Split a Circle into 5 pieces:
+
+.. image:: https://user-images.githubusercontent.com/284644/82467383-0aec6000-9adb-11ea-9024-2f2b749198d7.png
+
