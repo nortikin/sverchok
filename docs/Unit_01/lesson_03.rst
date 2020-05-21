@@ -2,17 +2,10 @@
 Introduction to modular components
 **********************************
 
-**prerequisites**
-
-Same as lesson 01.
-
-Status: **WIP**
----------------
-
 Lesson 03 - A Grid
 ------------------
 
-Grids are another common geometric primitive. A Grid can be thought of as a Plane subdivided over its *x* and *y* axes. Sverchok's `Plane` generator makes grids (including edges and polygons), but we will combine the elementary nodes to build one from scratch. Doing this will cover several important concepts of parametric design, and practical tips for the construction of dynamic  topology.
+Grids are another common geometric primitive. A Grid can be thought of as a Plane subdivided over its *x* and *y* axes. Sverchok's ``Plane`` generator makes grids, and includes the associated edges and polygons. Instead of using the ``Plane`` node we're going to build a node tree to make a grid procedurally from scratch. Once you grasp how this works then you have understood the essentials, and they will hold true even in much more complex projects. We will cover several important concepts of parametric design, and dynamic topology.
 
 **What do we know about Grids?**
 
