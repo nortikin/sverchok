@@ -170,6 +170,15 @@ The second index of each edge is one higher than the first index, except for the
 
   indices                = [0, 1, 2, 3, 4]
   indices_shifted_by_one = [1, 2, 3, 4, 0]
+  
+  for a, b in zip(indices, indices_shifted_by_one):
+      print([a, b])
+  
+  >>> [0, 1]
+  >>> [1, 2]
+  >>> [2, 3]
+  >>> [3, 4]
+  >>> [4, 0]
 
 Sverchok has a node for this called `List Shift`. We'll zip the two lists together using `List Zip` node.
 
