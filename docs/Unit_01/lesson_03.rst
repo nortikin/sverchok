@@ -9,15 +9,22 @@ Grids are another common geometric primitive. A Grid can be thought of as a Plan
 
 **What do we know about Grids?**
 
-For simplicity let's take a subdivided `Plane` as our template. We know it's flat and therefore the 3rd dimension (z) will be constant. We can either have a uniformly subdivided Plane or allow for x and y to be divided separately. A separate XY division is a little bit more interesting, let's go with that. 
+For simplicity let's take a subdivided ``Plane`` as our template. We know it's flat and therefore the 3rd dimension (z) will be constant. We will allow for ``x`` and ``y`` to be divided separately, this is a little bit more interesting.
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5506680/c59524c6-879c-11e4-8f64-53e4b83b05a8.png
 
 **Where to start?**
 
-For non trivial objects we often use a notepad (yes, actual paper -- or blender Greasepencil etc) to draw a simplified version of what we want to accomplish. On a drawing we can easily name and point to properties, see relationships, and even solve problems in advance.
+Starting out we often use a notepad (yes, actual paper -- or blender Greasepencil etc) to draw a simplified version of what we want to accomplish. On a drawing we can easily name and point to properties, see relationships, and even solve problems in advance.
 
-I chose a Grid because it has only a few properties: `X Side Length, Y Side Length, X num subdivs, Y num subdivs`. These properies can be exposed in several ways. You could expose the number of divisions (edges) per side, or the amount of vertices per side. 1 geometric property, but two ways of looking at it.
+I chose a Grid because it has only a few properties:
+
+- X Side Length
+- Y Side Length
+- X num subdivs
+- Y num subdivs
+
+These properies can be exposed in several ways. You could expose the number of divisions (edges) per side, or the amount of vertices per side. 1 geometric property, but two ways of looking at it.
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5514705/5b6766a8-8847-11e4-8812-76916faece52.png
 
@@ -30,15 +37,23 @@ The upside of building generators from scratch is that you can make decisions ba
 - Number Vertices on side X
 - Number Vertices on side Y
 
-**Think in Whole numbers (ints) if you can**
+**Think in Whole numbers (integers, ints) if you can**
 
-What I mean by this is, reduce the problem to something that is mathematically uncomplicated. Here's a grid drawn on an xy graph to illustrate the coordinates. The z-dimension could be ignored but it's included for completeness.
+Reduce the problem to something that is mathematically uncomplicated. Here's a grid drawn on an ``xy`` graph to illustrate the coordinates. The ``z-dimension`` could be ignored but it's included for completeness.
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5505509/ef999dd4-8791-11e4-8892-b46ab9688ad2.png
 
-The reason I pick 4 verts for the X axis and 3 for Y, is because that's the smallest useful set of vertices we can use as a reference. The reason i'm not picking 3*3 or 4*4 is because using different vertex counts makes it clear what that `X` axis might have some relation to 4 and to `Y` to 3.
+The reason I pick ``4 * 3`` verts, is because that's the smallest useful set of vertices we can use as a reference. The reason i'm not picking ``3 * 3`` or ``4 * 4`` is because using different vertex counts makes it clear what that ``X`` axis might have some relation to 4 and to ``Y`` to 3.
 
-If you consider the sequence just by looking at the first index of each vertex, it goes ``[0,1,2,3,0,1,2,3,0,1,2,3]``. We can generate sequences like that easily. When we look at the second index of these vertices that sequence is ``[0,0,0,0,1,1,1,1,2,2,2,2]``, this also is easy to generate. 
+If you consider the sequence just by looking at the first *component* of each vertex, it goes::
+
+  [0,1,2,3,0,1,2,3,0,1,2,3]
+
+We can generate sequences like that easily. When we look at the second *component* of these vertices that sequence is:
+
+  [0,0,0,0,1,1,1,1,2,2,2,2]
+
+this also is easy to generate. 
 
 **Using `modulo` and `integer division` to get grid coordinates**
 
