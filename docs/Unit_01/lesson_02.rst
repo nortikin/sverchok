@@ -182,7 +182,7 @@ Sverchok has a node for this called `List Shift`. We'll zip the two lists togeth
 1) Hook the output of ``Number Range`` into the first *Data* socket of the ``List Zip`` node.
 2) Hook the output of ``Number Range`` also into the *Data* socket of the ``List Shift`` node.
 3) To make the wrap-around, simply set the *Shift slider* to ``-1``.
-4) connect the output of ``List Shift`` to the second *Data* input of ``List Zip`` (you'll notice this node creates new sockets on the fly).
+4) connect the output of ``List Shift`` to the second *Data* input of ``List Zip`` (this node creates new sockets on the fly).
 5) Make sure the level parameter on ``List Zip`` is set to ``1``.
 6) Hook up a Stethoscope to the output of ``List Zip`` to verify
 
