@@ -181,28 +181,28 @@ Sverchok has a node for this called `List Shift`. We'll zip the two lists togeth
 
 1) Hook the output of ``Number Range`` into the first *Data* socket of the ``List Zip`` node.
 2) Hook the output of ``Number Range`` also into the *Data* socket of the ``List Shift`` node.
-3) To make the wrap-around, simply set the *Shift slider* to ``1``.
-4) connect the output of ``List Shift`` to the second *Data* input of ``List Zip``.
+3) To make the wrap-around, simply set the *Shift slider* to ``-1``.
+4) connect the output of ``List Shift`` to the second *Data* input of ``List Zip`` (you'll notice this node creates new sockets on the fly).
 5) Make sure the level parameter on ``List Zip`` is set to ``1``.
 6) Hook up a Stethoscope to the output of ``List Zip`` to verify
 
 Notice in this image I have minimized/hidden (shortcut H) a few nodes to keep the node view from getting claustrophobic. 
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5440504/6f4ddf60-8489-11e4-81f4-ead627fe710c.png
+|current_pre_final| 
 
-7) Or hook up the output of `List Zip` straight into the EdgPol socket of`Viewer Draw`.
+7) hook up the output of ``List Zip`` straight into the *Edges* socket of``Viewer Draw``.
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5440916/bee96a1e-848c-11e4-8799-060c7f458c3e.png
+|current_final|
 
 **End of lesson 02**
 
-Save this .blend you’ve been working on as Sverchok_Unit_01_Lesson_02 for future tutorials or as reference if you want to look something up later if you like.
+Save this .blend you’ve been working on as Sverchok_Unit_01_Lesson_02 for future tutorials or as reference if you want to look something up later.
 
 You now know how to create basic shapes programmatically using Sverchok nodes. In Lesson 03 a dynamic grid will be generated, but first relax and reiterate what has been learned so far.
 
-**Addendum**
-
-``Viewer Draw`` automatically generates Edges when you pass one or more Vertices and Polygons. This means in practice when you already have the Polygons for an object then you don't need to also pass in the Edges, they are inferred purely from the indices of the incoming Polygons.
+.. NOTE::
+   **Addendum**
+   ``Viewer Draw`` automatically generates Edges when you pass one or more Vertices and Polygons. This means in practice when you already have the Polygons for an object then you don't need to also pass in the Edges, they are inferred purely from the indices of the incoming Polygons.
 
 .. |former_final_image| image:: https://user-images.githubusercontent.com/619340/82145036-31df3380-9848-11ea-84a7-1ed761c00e84.png
 .. |show_stethoscope_with_listlength| image:: https://user-images.githubusercontent.com/619340/82145112-cd70a400-9848-11ea-9905-3824f7e92e8c.png
@@ -212,3 +212,5 @@ You now know how to create basic shapes programmatically using Sverchok nodes. I
 .. |use_reciprocal| image:: https://user-images.githubusercontent.com/619340/82474432-57c83a80-9acb-11ea-983f-6960822ee2aa.png
 .. |right_click_menu| image:: https://user-images.githubusercontent.com/619340/82489407-e1830280-9ae1-11ea-97ef-e43d1d9914f8.png
 .. |minimized| image:: https://user-images.githubusercontent.com/619340/82501213-2fedcc80-9af5-11ea-94ca-39ef089b7756.png
+.. |current_final| image:: https://user-images.githubusercontent.com/619340/82545240-b090e500-9b56-11ea-9655-3647f59ce854.png
+.. |current_pre_final| image:: https://user-images.githubusercontent.com/619340/82545480-09f91400-9b57-11ea-8fcb-88392597d7cb.png
