@@ -64,6 +64,21 @@ The next part will cover two mathematical concepts (operations), which tend to a
 - modulo, or the symbol ``%``
 - integer division, or the symbol ``//``
 
+Here's a table that shows the effect of the module and int.division on a range of numbers.
+
++------------------+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+
+| number range (n) | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 |
++==================+===+===+===+===+===+===+===+===+===+===+====+====+====+====+====+
+| n % 4            | 0 | 1 | 2 | 3 | 0 | 1 | 2 | 3 | 0 | 1 | 2  | 3  | 0  | 1  | 2  | 
++------------------+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+
+| n // 4           | 0 | 0 | 0 | 0 | 1 | 1 | 1 | 1 | 2 | 2 | 2  | 2  | 3  | 3  | 3  |
++------------------+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+
+| n % 6            | 0 | 1 | 2 | 3 | 4 | 5 | 0 | 1 | 2 | 3 | 4  | 5  | 0  | 1  | 2  |
++------------------+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+
+| n // 6           | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1 | 1 | 1 | 1  | 1  | 2  | 2  | 2  |
++------------------+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+
+
+
 here's a bit of python that shows these operations. This code generates the sequences shown above, based on two variables ``x`` and ``y``. Which is exactly what we want to do in the node tree shortly
 
 the for-loop version::
