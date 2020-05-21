@@ -30,10 +30,10 @@ These properies can be exposed in several ways. You could expose the number of d
 
 **Decide which variables you want to expose**
 
-The upside of building generators from scratch is that you can make decisions based on what is most convenient for you. Here I'll pick what I think is the most convenient, it can always be changed later.
+The upside of building generators from scratch is that you can make decisions based on what is most convenient for you. Here I'll pick what I think is the most convenient, it can always be changed later. Think of names that mean exactly what they're attempting to describe.
 
-- Division distance side X
-- Division distance side Y
+- Side X total length
+- Side Y total length
 - Number Vertices on side X
 - Number Vertices on side Y
 
@@ -43,7 +43,7 @@ Reduce the problem to something that is mathematically uncomplicated. Here's a g
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5505509/ef999dd4-8791-11e4-8892-b46ab9688ad2.png
 
-The reason I pick ``4 * 3`` verts, is because that's the smallest useful set of vertices we can use as a reference. The reason i'm not picking ``3 * 3`` or ``4 * 4`` is because using different vertex counts makes it clear what that ``X`` axis might have some relation to 4 and to ``Y`` to 3.
+The reason I pick ``4 * 3`` verts, is because that's one of the smallest forms of this problem, and only minor tweaks will be needed to turn it into grids of arbitrary dimensions. The reason i'm not picking ``3 * 3`` or ``4 * 4`` is because using different vertex counts for ``x`` and ``y`` makes it clearer that the ``X`` axis might have some relation to 4 and ``Y`` to 3.
 
 If you consider the sequence just by looking at the first *component* of each vertex, it goes::
 
@@ -55,32 +55,41 @@ We can generate sequences like that easily. When we look at the second *componen
 
 this also is easy to generate. 
 
-**Using `modulo` and `integer division` to get grid coordinates**
 
-I hope you know Python, or at the very least what `% (modulo)` and `// (int div)` are. The sequences above can be generated using code this way -- If this code doesn't make sense keep reading, it's explained further down::
+Using `modulo` and `integer division` to get grid coordinates
+-------------------------------------------------------------
 
-    # variables
+The next part will cover two mathematical concepts (operations), which tend to always join the party when we talk about periodic functions and stepwise increases.
+
+- modulo, or the symbol ``%``
+- integer division, or the symbol ``//``
+
+here's a bit of python that shows these operations. This code generates the sequences shown above, based on two variables ``x`` and ``y``. Which is exactly what we want to do in the node tree shortly
+
+the for-loop version::
+
     x = 4
     y = 3
-    j = x * y          # 12
-
-    # using for loop
+    j = x * y          # the * symbol means multiplication
+    
     final_list = []
-    for i in range(j):
+    for i in range(j): # makes: 0 1 2 3 4 5 6 7 8 9 10 11
        x = i % 4       # makes: 0 1 2 3 0 1 2 3 0 1 2 3
        y = i // 4      # makes: 0 0 0 0 1 1 1 1 2 2 2 2
-       z = 0
-       final_list.append((x, y, z))
+       final_list.append((x, y, 0))
 
-    print(final_list)
-    '''
-    >> [(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0), 
-    >>  (0, 1, 0), (1, 1, 0), (2, 1, 0), (3, 1, 0), 
-    >>  (0, 2, 0), (1, 2, 0), (2, 2, 0), (3, 2, 0)]
-    '''
+using list comprehension::
 
-    # using list comprehension
-    final_list = [(i%4, i//4, 0) for i in range(j)]
+    x = 4
+    y = 3
+    j = x * y
+    final_list = [(i % 4, i // 4, 0) for i in range(j)]
+
+Both bits of code calculate the some end result::
+
+    [(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0), 
+     (0, 1, 0), (1, 1, 0), (2, 1, 0), (3, 1, 0), 
+     (0, 2, 0), (1, 2, 0), (2, 2, 0), (3, 2, 0)]
 
 With any luck you aren't lost by all this code, visual programming is very similar except with less typing. The plumbing of an algorithm is still the same whether you are clicking and dragging nodes to create a flow of information or writing code in a text editor.
 
