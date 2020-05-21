@@ -201,7 +201,6 @@ Save this .blend you’ve been working on as Sverchok_Unit_01_Lesson_02 for futu
 You now know how to create basic shapes programmatically using Sverchok nodes. In Lesson 03 a dynamic grid will be generated, but first relax and reiterate what has been learned so far.
 
 .. NOTE::
-   **Addendum**
    ``Viewer Draw`` automatically generates Edges when you pass one or more Vertices and Polygons. This means in practice when you already have the Polygons for an object then you don't need to also pass in the Edges, they are inferred purely from the indices of the incoming Polygons.
 
 .. |former_final_image| image:: https://user-images.githubusercontent.com/619340/82145036-31df3380-9848-11ea-84a7-1ed761c00e84.png
