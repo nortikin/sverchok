@@ -179,12 +179,12 @@ Sverchok has a node for this called `List Shift`. We'll zip the two lists togeth
 .. HINT::
    Seriously; Instead of trawling through menus and submenus, use the ``alt+space`` search. type in Shift and Zip and navigate down with the cursor keys, then hit Enter to add the node to the tree.
 
-1) Hook the output of `List Range Int` into the first Data socket of the `List Zip` node.
-2) Hook the output of `List Range Int` also into the `List Shift` node.
-3) To make the wrap-around, simply set the `Shift slider` to 1.
-4) connect the output of `List Shift` to the second Data input of `List Zip`.
-5) Make sure the level parameter on `List Zip` is set to 1.
-6) Hook up a Stethoscope to the output of `List Zip` to verify
+1) Hook the output of ``Number Range`` into the first *Data* socket of the ``List Zip`` node.
+2) Hook the output of ``Number Range`` also into the *Data* socket of the ``List Shift`` node.
+3) To make the wrap-around, simply set the *Shift slider* to ``1``.
+4) connect the output of ``List Shift`` to the second *Data* input of ``List Zip``.
+5) Make sure the level parameter on ``List Zip`` is set to ``1``.
+6) Hook up a Stethoscope to the output of ``List Zip`` to verify
 
 Notice in this image I have minimized/hidden (shortcut H) a few nodes to keep the node view from getting claustrophobic. 
 
