@@ -78,6 +78,9 @@ Here's a table that shows the effect of the module and int.division on a range o
 | n // 6           | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1 | 1 | 1 | 1  | 1  | 2  | 2  | 2  |
 +------------------+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+
 
+a table of numbers isn't going to give you a sense of repitions and progression, i've add a few colours intended to make the patterns that emerge from the operations visible.
+
+|color_coded|
 
 here's a bit of python that shows these operations. This code generates the sequences shown above, based on two variables ``x`` and ``y``. Which is exactly what we want to do in the node tree shortly
 
@@ -185,8 +188,9 @@ This is that same algorithm using the elementary nodes, can you see the similari
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5515808/31552e1a-887c-11e4-9c74-0f3af2f193e6.png
 
-
 // -- TODO
+
+.. |color_coded| image:: https://user-images.githubusercontent.com/619340/82607743-a7852f80-9bb9-11ea-8ec8-fee0246af9ba.png
 
 
 
