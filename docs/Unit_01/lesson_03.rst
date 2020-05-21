@@ -9,13 +9,13 @@ Grids are another common geometric primitive. A Grid can be thought of as a Plan
 
 **What do we know about Grids?**
 
-For simplicity let's take a subdivided ``Plane`` as our template. We know it's flat and therefore the 3rd dimension (z) will be constant. We will allow for ``x`` and ``y`` to be divided separately, this is a little bit more interesting.
+For simplicity let's take a subdivided ``Plane`` as our template. We know it's flat and therefore the 3rd dimension (``z``) will be constant. We will allow for ``x`` and ``y`` to be divided separately, this is a little bit more interesting.
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5506680/c59524c6-879c-11e4-8f64-53e4b83b05a8.png
 
 **Where to start?**
 
-Starting out we often use a notepad (yes, actual paper -- or blender Greasepencil etc) to draw a simplified version of what we want to accomplish. On a drawing we can easily name and point to properties, see relationships, and even solve problems in advance.
+Starting out we often use a notepad (yes, actual paper -- or blender Greasepencil etc) to draw a simplified version of what we want to accomplish. On a drawing we can easily name and point to properties, see relationships, and even solve problems in advance of writing code or adding nodes to the node tree.
 
 I chose a Grid because it has only a few properties:
 
@@ -49,7 +49,7 @@ If you consider the sequence just by looking at the first *component* of each ve
 
   [0,1,2,3,0,1,2,3,0,1,2,3]
 
-We can generate sequences like that easily. When we look at the second *component* of these vertices that sequence is:
+We can generate sequences like that easily. When we look at the second *component* of these vertices that sequence is::
 
   [0,0,0,0,1,1,1,1,2,2,2,2]
 
