@@ -78,7 +78,7 @@ Here's a table that shows the effect of the module and int.division on a range o
 | n // 6           | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1 | 1 | 1 | 1  | 1  | 2  | 2  | 2  |
 +------------------+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+
 
-a table of numbers isn't going to give you a sense of repitions and progression, i've added a few colours intended to make the patterns that emerge from the operations visible.
+A table of numbers isn't going to give you a sense of repetions or progression. I've added a few colours intended to make the emerging patterns visible.
 
 |color_coded|
 
