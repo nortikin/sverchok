@@ -205,8 +205,8 @@ The pattern is::
 We know there are interuptions in the polygon pattern, between polygon index 2 and 3.  it is useful to think of an algorithm that produces these index sequences based on a range from ``0 thru j-1`` or ``[0,1,2,3,4,5]``. We can first ignore the fact that we need to remove every n-th polygon, or avoid creating it in the first place. Whatever you decide will be a choice between convenience and efficiency - I will choose convenience here.
 
 .. Note::
-
-  You could already think ahead and consider that if we made a 4*4 grid (so one more row, the y becomes 4 also), and that there will be another jump in the pattern between polygon index 5 and 6::
+  
+  You could already think ahead and consider that if we made ``a 4*4 grid`` (so one more row, y becomes also ``4``), and that there will be another jump in the pattern between polygon index 5 and 6::
 
     #    |A   B   C   D|
     #    ---------------
