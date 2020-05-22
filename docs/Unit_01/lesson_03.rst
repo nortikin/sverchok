@@ -158,7 +158,7 @@ With all nodes hooked up correctly you can hook ``Vector In``'s output to the `v
 
 **Making Polygons**
 
-This might be obvious to some, so this is directed at those who've never done this kind of thing before. This is where we use a notepad to write out the indexlist for the 6 polygons (two rows of 3 polygons, is the result of a x=4, y=3 grid). Viewing the vertices from above, go clockwise. The order in which you populate the the list of polygons is determined by what you find more convenient.
+This might be obvious to some, so this is directed at those who've never done this kind of thing before. Polygons are described using the indices of the vertices that they use. This is where we use a notepad to write out the indexlist for the 6 polygons (two rows of 3 polygons, the result of a ``x=4 * y=3`` grid). The order in which you populate the list of polygon is determined by what you find more convenient.
 
 For my example, I think of the X axis as the Columns, and I go from left to right and upwards
 
@@ -170,7 +170,7 @@ There are a few patterns to notice here.
 
   .. image:: https://cloud.githubusercontent.com/assets/619340/5515010/d58119fc-8856-11e4-837a-44beb57c3fb4.png
 
-- There's a relationship in these sequences::
+There's a relationship in these sequences::
 
   #    |A   B   C   D|
   #    ---------------
