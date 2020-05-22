@@ -18,7 +18,8 @@ class SvCoonsPatchNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvCoonsPatchNode'
     bl_label = 'Surface from Four Curves'
-    bl_icon = 'MOD_SCREW'
+    bl_icon = 'SURFACE_DATA'
+    sv_icon = 'SV_COONS_PATCH'
 
     check : BoolProperty(
         name = "Check coincidence",
