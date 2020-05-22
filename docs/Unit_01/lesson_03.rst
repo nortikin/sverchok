@@ -160,7 +160,7 @@ With all nodes hooked up correctly you can hook ``Vector In``'s output to the `v
 
 This might be obvious to some, so this is directed at those who've never done this kind of thing before. Polygons are described using the indices of the vertices that they use. This is where we use a notepad to write out the indexlist for the 6 polygons (two rows of 3 polygons, the result of a ``x=4 * y=3`` grid). The order in which you populate the list of polygon is determined by what you find more convenient.
 
-For my example, I think of the X axis as the Columns, and I go from left to right and upwards
+For my example, I think of the X axis as the Columns, and I go from left to right and then upwards.
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5514961/5ef77828-8854-11e4-81b4-4bd30a75d177.png
 
@@ -177,7 +177,7 @@ There's a relationship in these sequences::
   0  = [0,  4,  5,  1]
   1  = [1,  5,  6,  2]
   2  = [2,  6,  7,  3]
-  #  = [3,  7,  8,  4] .. not a valid polygon
+  #  = [3,  7,  8,  4] .. not a valid polygon for x=4, y=3
   3  = [4,  8,  9,  5]
   4  = [5,  9,  10, 6]
   5  = [6,  10, 11, 7]
@@ -195,13 +195,33 @@ the magical ``offset`` number here is ``4``, and this is because we set the ``x-
   B = (A + offset)
   C = (A + offset + 1)
   D = (A + 1)
-  ...
+
+The pattern is::
+
   [A, (A + offset), (A + offset + 1), (A + 1)]
 
 - We know how many polygons we need (let's call this number ``j``)
-- We know there are interuptions in the polygons, between polygon index 2 and 3. You could already think ahead and consider that if we made a 4*4 grid, that we could encounter another row of polygons, and that there will be another jump in the pattern between polygon index 5 and 6.
 
-it is useful to think of an algorithm that produces these index sequences based on a range from ``0 thru j-1`` or ``[0,1,2,3,4,5]``. We can first ignore the fact that we need to remove every n-th polygon, or avoid creating it in the first place. Whatever you decide will be a choice between convenience and efficiency - I will choose convenience here.
+We know there are interuptions in the polygon pattern, between polygon index 2 and 3.  it is useful to think of an algorithm that produces these index sequences based on a range from ``0 thru j-1`` or ``[0,1,2,3,4,5]``. We can first ignore the fact that we need to remove every n-th polygon, or avoid creating it in the first place. Whatever you decide will be a choice between convenience and efficiency - I will choose convenience here.
+
+.. Note::
+
+  You could already think ahead and consider that if we made a 4*4 grid (so one more row, the y becomes 4 also), and that there will be another jump in the pattern between polygon index 5 and 6::
+
+    #    |A   B   C   D|
+    #    ---------------
+    0  = [0,  4,  5,  1]   # row 1  column 1
+    1  = [1,  5,  6,  2]   # row 1  column 2
+    2  = [2,  6,  7,  3]   # row 1  column 3
+    #  = [3,  7,  8,  4] .. not a valid polygon for x=4, y=4
+    3  = [4,  8,  9,  5]   # row 2  column 1
+    4  = [5,  9,  10, 6]   # row 2  column 2
+    5  = [6,  10, 11, 7]   # row 2  column 3
+    #  = [7,  11, 12, 8] .. not a valid polygon for x=4, y=4  
+    6  = [8,  12, 13, 9]   # row 3  column 1
+    7  = [9,  13, 14, 10]  # row 3  column 2
+    8  = [10, 14, 15, 11]  # row 3  column 3
+
 
 **A polygon Algorithm**
 
