@@ -145,7 +145,7 @@ A recipe which you should be able to hook up yourself by seeing the example imag
 
 We multiply ``y=3`` by ``x=4`` to get ``12`` this is the number of vertices. This parameter determines the length of the range ``[0,1..11]`` (12 vertices, remember we start counting indices at 0).
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5477351/e15771f0-862a-11e4-8085-289b88d4cb6a.png
+|first_plane_image|
 
 With all nodes hooked up correctly you can hook ``Vector In``'s output to the `vertices` socket of a ViewerDraw node to display the vertices. To test if it works you can use the sliders on the two Integer nodes to see the grid of vertices respond to the two parameters. Remember to put these sliders back to 3 and 4 (as displayed in the image), to continue to the next step.
 
@@ -194,6 +194,7 @@ This is that same algorithm using the elementary nodes, can you see the similari
 // -- TODO
 
 .. |color_coded| image:: https://user-images.githubusercontent.com/619340/82607743-a7852f80-9bb9-11ea-8ec8-fee0246af9ba.png
+.. |first_plane_image| image:: https://user-images.githubusercontent.com/619340/82651212-257a2280-9c1c-11ea-85f4-f33477fcff3f.png
 
 
 
