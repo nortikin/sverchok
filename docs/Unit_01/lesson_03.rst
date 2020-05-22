@@ -226,34 +226,20 @@ We know there are interuptions in the polygon pattern, between polygon index 2 a
 A polygon Algorithm
 -------------------
 
-Sverchok lets you create complex geometry without writing a single line of code, but you will not get the most out of the system by avidly avoiding code. Imagine living a lifetime without ever taking a left turn at a corner, you would miss out on faster more convenient ways to reach your destination.
+Sverchok lets you create complex geometry without writing a single line of code. Sverchok's power comes from being able to mix code and nodes where it makes sense. You will get the most out of Sverchok when you embracing the occasional snippet of code. Imagine living a lifetime without ever taking a left turn at a corner, you would miss out on faster more convenient ways to reach your destination. Future lessons will cover the multitude of ways that we provide to mix code in your node tree.
 
-It's easier for me to explain how an algorithm works, and give you something to test it with, by showing the algorithm as a program, a bit of Python. Programming languages allow you to see without ambiguity how something works by running the code.
+The simplest way to approach this is probably the formula node, using the pattern we found earlier.
 
-**WIP - NOT ELEGANT**
+|using_formula_node|
 
-this generates faces from a vertex count for x,y::
-
-  ny = 3
-  nx = 4
-
-  faces = []
-  add_face = faces.append
-
-  total_range = ((ny-1) * (nx))
-  for i in range(total_range):
-      if not ((i+1) % nx == 0):  # +1 is the shift
-          add_face([i, i+nx, i+nx+1, i+1])  # clockwise
-
-  print(faces)
-
-This is that same algorithm using the elementary nodes, can you see the similarity?
+tes test
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5515808/31552e1a-887c-11e4-9c74-0f3af2f193e6.png
 
 .. |color_coded| image:: https://user-images.githubusercontent.com/619340/82607743-a7852f80-9bb9-11ea-8ec8-fee0246af9ba.png
 .. |first_plane_image| image:: https://user-images.githubusercontent.com/619340/82651212-257a2280-9c1c-11ea-85f4-f33477fcff3f.png
 .. |grid_only_test| image:: https://user-images.githubusercontent.com/619340/82651867-0760f200-9c1d-11ea-967c-cf297559561b.png
+.. |using_formula_node| image:: https://user-images.githubusercontent.com/619340/82671086-8adf0b00-9c3e-11ea-920f-b11546046817.png
 
 
 
