@@ -191,12 +191,12 @@ Given A we can calculate ``B``, ``C``, and ``D``. The relationship is namely:
   - the magical ``offset`` number here is ``4``, and this is because we set the ``x-dimension`` to **4** for the time being.
   - the formula pattern for valid polygons can all be calculated from A if you know what the offset is::
 
-   A = A
-   B = (A + offset)
-   C = (A + offset + 1)
-   D = (A + 1)
-   ...
-   [A, (A + offset), (A + offset + 1), (A + 1)]
+A = A
+B = (A + offset)
+C = (A + offset + 1)
+D = (A + 1)
+...
+[A, (A + offset), (A + offset + 1), (A + 1)]
 
   - We know how many polygons we need (let's call this number ``j``)
   - We know there are interuptions in the polygons, between polygon index 2 and 3.
