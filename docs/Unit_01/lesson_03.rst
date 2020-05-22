@@ -164,11 +164,44 @@ For my example, I think of the X axis as the Columns, and I go from left to righ
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5514961/5ef77828-8854-11e4-81b4-4bd30a75d177.png
 
-Notice that between polygon index 2 and 3 there is a break in the pattern. The polygon with vertex indices ``[3,7,8,4]`` doesn't exist (for a grid of x=4, y=3), if we did make that polygon it would connect one Row to the next like so:
+There are a few patterns to notice here.
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5515010/d58119fc-8856-11e4-837a-44beb57c3fb4.png
+- between polygon with index ``2`` and ``3`` there is a break in the pattern. For a grid of ``x=4, y=3`` like ours, the polygon with vertex indices ``[3,7,8,4]`` doesn't exist, if we did make that polygon it would connect one Row to the next like so:
 
-We know how many polygons we need (let's call this number ``j``), it is useful to think of an algorithm that produces these index sequences based on a range from ``0 thru j-1`` or ``[0,1,2,3,4,5]``. We can first ignore the fact that we need to remove every n-th polygon, or avoid creating it in the first place. Whatever you decide will be a choice between convenience and efficiency - I will choose convenience here.
+  .. image:: https://cloud.githubusercontent.com/assets/619340/5515010/d58119fc-8856-11e4-837a-44beb57c3fb4.png
+
+- There's a relationship in these sequences::
+
+  #    |A   B   C   D|
+  #    ---------------
+  0  = [0,  4,  5,  1]
+  1  = [1,  5,  6,  2]
+  2  = [2,  6,  7,  3]
+  #  = [3,  7,  8,  4] .. not a valid polygon
+  3  = [4,  8,  9,  5]
+  4  = [5,  9,  10, 6]
+  5  = [6,  10, 11, 7]
+
+Given A we can calculate ``B``, ``C``, and ``D``. The relationship is namely:
+
+.. Note::
+   - B is 4 more than A, why 4? what's special about 4
+   - C is 1 more than B
+   - D is 1 more than A
+   - the magical ``offset`` number here is ``4``, and this is because we set the ``x-dimension`` to **4** for the time being.
+   - the formula pattern for valid polygons can all be calculated from A if you know the is::
+
+    A = A
+    B = (A + offset)
+    C = (A + offset + 1)
+    D = (A + 1)
+    ...
+    [A, (A + offset), (A + offset + 1), (A + 1)]
+
+   - We know how many polygons we need (let's call this number ``j``)
+   - We know there are interuptions in the polygons, between polygon index 2 and 3.
+
+it is useful to think of an algorithm that produces these index sequences based on a range from ``0 thru j-1`` or ``[0,1,2,3,4,5]``. We can first ignore the fact that we need to remove every n-th polygon, or avoid creating it in the first place. Whatever you decide will be a choice between convenience and efficiency - I will choose convenience here.
 
 **A polygon Algorithm**
 
