@@ -185,7 +185,7 @@ There's a relationship in these sequences::
 Given A we can calculate ``B``, ``C``, and ``D``. The relationship is namely:
 
 .. Note::
-   - B is 4 more than A, why 4? what's special about 4
+   - B is 4 more than A, why 4? what's special about 4?
    - C is 1 more than B
    - D is 1 more than A
    - the magical ``offset`` number here is ``4``, and this is because we set the ``x-dimension`` to **4** for the time being.
