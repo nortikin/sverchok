@@ -66,7 +66,7 @@ The next section will cover two mathematical concepts (operations), which tend t
 
 **Operands**
 
-We introduced the ``Scalar Math`` node in lesson 01 and 02, the Math node (from the Number menu) has many operations called operands. We'll focus on these to get the vertex components.
+We introduced the ``Scalar Math`` node in lesson 01 and 02, the ``Scalar Math`` node (from the Number menu) has many operations called operands. We'll focus on these to get the vertex components.
 
 +----------------------+---------+--------------------------------------------------------+
 | Operand              |  Symbol | Behaviour                                              |  
@@ -83,7 +83,7 @@ We can use:
 - ``i % 4`` to turn ``[0,1,2,3,4,5,6,7,8,9,10,11]`` into ``[0,1,2,3,0,1,2,3,0,1,2,3]``
 - ``i // 4`` to turn ``[0,1,2,3,4,5,6,7,8,9,10,11]`` into ``[0,0,0,0,1,1,1,1,2,2,2,2]``
 
-Here's a table that shows the effect of the module and int.division on a range of numbers.
+Here's a table that shows the effect of ``modulo`` and ``int.division`` on a range of numbers.
 
 +------------------+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+
 | number range (n) | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 |
@@ -102,7 +102,7 @@ A table of numbers isn't going to give you a sense of repetions or progression. 
 |color_coded|
 
 
-You come here to learn visual programming in Sverchok. You will internalize the underlying math and algorithms more thoroughly by looking at the concept of programmings from many angles. I want to show a few lines of code (python) that use ``%`` and ``//`` to calculate the Vertices of the grid. This code generates the x and y components of the vertices based purely on how many vertices are needed (``12 = 4 * 3``); Which is exactly what we want to do in the node tree shortly.
+You come here to learn visual programming in Sverchok. You will internalize the underlying math and algorithms more thoroughly by looking at the concept of programming from several angles. I want to show a few lines of code (python) that use ``%`` and ``//`` to calculate the Vertices of the grid. This code generates the x and y components of the vertices based purely on how many vertices are needed (``12 = 4 * 3``); Which is exactly what we want to do in the node tree shortly.
 
 Below are two snippets of Python that calculate the same list of vertices. I'm showing both because it's an analogy to what you'll experience in any node tree. There is generally more than one way to achieve a result, there is almost never a "best" way. Some ways are faster in terms of processing speed, but they may be more difficult to understand by looking at the tree / code.
 
