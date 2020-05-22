@@ -1,3 +1,5 @@
+:orphan:
+
 .. _scripted-tutorial:
 
 An introduction and tutorial for the Scripted Nodes

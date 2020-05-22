@@ -1,3 +1,5 @@
+:orphan:
+
 Scripted Node 2(Generator)
 ==========================
 
@@ -94,8 +96,7 @@ Default can be a float or integer value, not other types are usable yet::
 
 There are a series of names that have special meaning that scripts should 
 avoid as class attributes or only used for the intended meaning. To be described:
- ``node`` ``draw_buttons`` ``update`` ``process`` ``enum_func`` ``inputs``
-``outputs``
+``node``, ``draw_buttons``, ``update``, ``process``, ``enum_func``, ``inputs``, ``outputs``
 
 
 Templates

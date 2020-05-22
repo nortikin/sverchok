@@ -1,3 +1,5 @@
+:orphan:
+
 ## Problem statement
 
 Please describe your problem here.
@@ -19,4 +21,3 @@ What did you actually get?
 ## Sverchok version
 
 This is especially important for installation-related issues. Please specify how do you install Sverchok: from sverchok-master.zip from github, or from release zip file, or from cloned git repo.
-

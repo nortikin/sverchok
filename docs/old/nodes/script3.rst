@@ -1,5 +1,7 @@
+:orphan:
+
 Scripted Node 2(Generator)
-=========================
+==========================
 
 aka Script Node MK2
 
@@ -94,8 +96,7 @@ Default can be a float or integer value, not other types are usable yet::
 
 There are a series of names that have special meaning that scripts should 
 avoid as class attributes or only used for the intended meaning. To be described:
- ``node`` ``draw_buttons`` ``update`` ``process`` ``enum_func`` ``inputs``
-``outputs``
+``node``, ``draw_buttons``, ``update``, ``process``, ``enum_func``, ``inputs``, ``outputs``
 
 
 Templates
@@ -169,12 +170,11 @@ the third argument for outputs is specific to this template::
 
 Note that here the name of the method that should be called for producing data 
 for each socket in the final last arguments to ``outputs`` but we are not forced 
-to have all code inside the class, we can also do
-::
+to have all code inside the class, we can also do::
 
     def lorenz(N, verts, h, a, b, c):
         add_vert = verts.append
-
+    
         x0 = 0.1
         y0 = 0
         z0 = 0
@@ -183,11 +183,11 @@ to have all code inside the class, we can also do
             y1 = y0 + h * (x0 * (b - z0) - y0)
             z1 = z0 + h * (x0 * y0 - c * z0)
             x0, y0, z0 = x1, y1, z1
-
+            
             add_vert((x1,y1,z1))
             
     class LorenzAttractor(SvScriptSimpleGenerator):
-
+        
         inputs = [
             ['s', 'N', 1000],
             ['s', 'h', 0.01],
@@ -195,32 +195,30 @@ to have all code inside the class, we can also do
             ['s', 'b', 28.0],
             ['s', 'c', 8.0/3.0]
         ]
-
+         
         @staticmethod
         def make_verts(N, h, a, b, c):
             verts = []
             lorenz(N, verts, h, a, b, c)
             return verts
-
+        
         @staticmethod
         def make_edges(N, h a, b, c:
             edges = [(i, i+1) for i in range(N-1)]
             return edges
-
+         
         outputs = [
             ['v','verts', "make_verts"],
             ['s','edges', "make_edges"]
         ]
 
-
 Here is a simple script for deleting loose vertices from mesh data, it also serves as an 
 illustration for a type of script that uses the ```SvScriptSimpleFunction``` template that
 has one main function that decomposes into separate sockets. The methods don't have be static
-but in general it is good practice to keep them free from side effects.
-::
+but in general it is good practice to keep them free from side effects.::
 
     from itertools import chain
-
+    
     class DeleteLooseVerts(SvScriptSimpleFunction):
         inputs = [
             ('v', 'verts'),
@@ -245,12 +243,10 @@ but in general it is good practice to keep them free from side effects.
             p_out = [tuple(map(mapping.get, p)) for p in pe]
             return v_out, p_out
 
-
 Breakout Scripts
 ----------------
 Scripts that needs to access the node can do so via the ```self.node``` variable
-that is automatically set.
-::
+that is automatically set.::
 
     class Breakout(SvScript):
         def process(self):
