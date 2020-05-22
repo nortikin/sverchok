@@ -93,6 +93,8 @@ func_dict = {
     "THETA_TAU":   (140, lambda x: pi * 2 * ((x-1) / x),   ('s s'), "tau * (x-1 / x)")
 }
 
+reversed_draw_labels = {"+1", "-1", "*2", "/2"}
+
 def func_from_mode(mode):
     return func_dict[mode][1]
 
@@ -185,6 +187,9 @@ class SvScalarMathNodeMK4(bpy.types.Node, SverchCustomTreeNode):
             y = self.y_ if self.input_mode_two == 'Float' else self.yi_
             y_label = 'Y' if self.inputs[1].is_linked else str(round(y, 3))
             label.extend([', ', y_label])
+
+        if self.current_op in reversed_draw_labels:
+            label = reversed(label)
 
         return " ".join(label)
 
