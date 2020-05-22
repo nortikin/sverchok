@@ -147,6 +147,9 @@ We multiply ``y=3`` by ``x=4`` to get ``12`` this is the number of vertices. Thi
 
 |first_plane_image|
 
+.. Note::
+   i've added an Index Viewer node ( use alt+space to search for it) to display the indices of the vertices.
+
 With all nodes hooked up correctly you can hook ``Vector In``'s output to the `vertices` socket of a ViewerDraw node to display the vertices. To test if it works you can use the sliders on the two Integer nodes to see the grid of vertices respond to the two parameters. Remember to put these sliders back to 3 and 4 (as displayed in the image), to continue to the next step.
 
 **Making Polygons**
