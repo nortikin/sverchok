@@ -185,21 +185,21 @@ There's a relationship in these sequences::
 Given A we can calculate ``B``, ``C``, and ``D``. The relationship is namely:
 
 .. Note::
-   - B is 4 more than A, why 4? what's special about 4?
-   - C is 1 more than B
-   - D is 1 more than A
-   - the magical ``offset`` number here is ``4``, and this is because we set the ``x-dimension`` to **4** for the time being.
-   - the formula pattern for valid polygons can all be calculated from A if you know what the offset is::
+  - B is 4 more than A, why 4? what's special about 4?
+  - C is 1 more than B
+  - D is 1 more than A
+  - the magical ``offset`` number here is ``4``, and this is because we set the ``x-dimension`` to **4** for the time being.
+  - the formula pattern for valid polygons can all be calculated from A if you know what the offset is::
 
-  A = A
-  B = (A + offset)
-  C = (A + offset + 1)
-  D = (A + 1)
-  ...
-  [A, (A + offset), (A + offset + 1), (A + 1)]
+   A = A
+   B = (A + offset)
+   C = (A + offset + 1)
+   D = (A + 1)
+   ...
+   [A, (A + offset), (A + offset + 1), (A + 1)]
 
-   - We know how many polygons we need (let's call this number ``j``)
-   - We know there are interuptions in the polygons, between polygon index 2 and 3.
+  - We know how many polygons we need (let's call this number ``j``)
+  - We know there are interuptions in the polygons, between polygon index 2 and 3.
 
 it is useful to think of an algorithm that produces these index sequences based on a range from ``0 thru j-1`` or ``[0,1,2,3,4,5]``. We can first ignore the fact that we need to remove every n-th polygon, or avoid creating it in the first place. Whatever you decide will be a choice between convenience and efficiency - I will choose convenience here.
 
