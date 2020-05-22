@@ -132,6 +132,10 @@ Both bits of code calculate the same end result::
      (0, 1, 0), (1, 1, 0), (2, 1, 0), (3, 1, 0), 
      (0, 2, 0), (1, 2, 0), (2, 2, 0), (3, 2, 0)]
 
+and those vertices are going to produce this eventually
+
+|grid_only_test|
+
 With any luck you are still smiling through this code detour, visual programming is very similar except with less typing. The plumbing of an algorithm is still the same whether you are clicking and dragging nodes to create a flow of information or writing code in a text editor.
 
 **Making vertices**
@@ -194,10 +198,9 @@ This is that same algorithm using the elementary nodes, can you see the similari
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5515808/31552e1a-887c-11e4-9c74-0f3af2f193e6.png
 
-// -- TODO
-
 .. |color_coded| image:: https://user-images.githubusercontent.com/619340/82607743-a7852f80-9bb9-11ea-8ec8-fee0246af9ba.png
 .. |first_plane_image| image:: https://user-images.githubusercontent.com/619340/82651212-257a2280-9c1c-11ea-85f4-f33477fcff3f.png
+.. |grid_only_test| image:: https://user-images.githubusercontent.com/619340/82651867-0760f200-9c1d-11ea-967c-cf297559561b.png
 
 
 
