@@ -59,7 +59,7 @@ this also is easy to generate.
 Using `modulo` and `integer division` to get grid coordinates
 -------------------------------------------------------------
 
-The next part will cover two mathematical concepts (operations), which tend to always join the party when we talk about periodic functions and stepwise increases.
+The next section will cover two mathematical concepts (operations), which tend to always join the party when we talk about periodic functions and stepwise increases.
 
 - modulo, or the symbol ``%``
 - integer division, or the symbol ``//``
@@ -138,10 +138,10 @@ With any luck you are still smiling through this code detour, visual programming
 
 A recipe which you should be able to hook up yourself by seeing the example image.
 
-- ``Add -> Vector -> Vector In``
-- ``Add -> Number -> Sclar Math`` (3x) notice I minimized the Multiplication Node.
-- ``Add -> Number -> A Number`` (2x)
-- ``Add -> Number -> Number Range`` (int)
+- ``Vector In``
+- ``Sclar Math`` (3x) notice I minimized the Multiplication Node.
+- ``A Number`` (2x)
+- ``Number Range`` (int)
 
 We multiply ``y=3`` by ``x=4`` to get ``12`` this is the number of vertices. This parameter determines the length of the range ``[0,1..11]`` (12 vertices, remember we start counting indices at 0).
 
