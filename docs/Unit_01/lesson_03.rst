@@ -64,6 +64,25 @@ The next part will cover two mathematical concepts (operations), which tend to a
 - modulo, or the symbol ``%``
 - integer division, or the symbol ``//``
 
+**Operands**
+
+We introduced the ``Scalar Math`` node in lesson 01 and 02, the Math node (from the Number menu) has many operations called operands. We'll focus on these to get the vertex components.
+
++----------------------+---------+--------------------------------------------------------+
+| Operand              |  Symbol | Behaviour                                              |  
++======================+=========+========================================================+
+| Modulo (mod)         | %       | ``i % 4`` returns the division remainder of ``i / 4``, | 
+|                      |         | rounded down to the nearest whole number               |
++----------------------+---------+--------------------------------------------------------+
+| Integer Division     | //      | ``i // 4`` returns the result of ``i / 4``,            |
+|                      |         | rounded down to the nearest whole number.              |
++----------------------+---------+--------------------------------------------------------+
+
+We can use: 
+
+- ``i % 4`` to turn ``[0,1,2,3,4,5,6,7,8,9,10,11]`` into ``[0,1,2,3,0,1,2,3,0,1,2,3]``
+- ``i // 4`` to turn ``[0,1,2,3,4,5,6,7,8,9,10,11]`` into ``[0,0,0,0,1,1,1,1,2,2,2,2]``
+
 Here's a table that shows the effect of the module and int.division on a range of numbers.
 
 +------------------+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+
@@ -82,63 +101,47 @@ A table of numbers isn't going to give you a sense of repetions or progression. 
 
 |color_coded|
 
-here's a bit of python that shows these operations. This code generates the sequences shown above, based on two variables ``x`` and ``y``. Which is exactly what we want to do in the node tree shortly
 
-the for-loop version::
+You come here to learn visual programming in Sverchok. You will internalize the underlying math and algorithms more thoroughly by looking at the concept of programmings from many angles. I want to show a few lines of code (python) that use ``%`` and ``//`` to calculate the Vertices of the grid. This code generates the x and y components of the vertices based purely on how many vertices are needed (``12 = 4 * 3``); Which is exactly what we want to do in the node tree shortly.
 
-    x = 4
-    y = 3
-    j = x * y          # the * symbol means multiplication
+Below are two snippets of Python that calculate the same list of vertices. I'm showing both because it's an analogy to what you'll experience in any node tree. There is generally more than one way to achieve a result, there is almost never a "best" way. Some ways are faster in terms of processing speed, but they may be more difficult to understand by looking at the tree / code.
+
+the ``for-loop`` version::
+
+    num_verts_x = 4
+    num_verts_y = 3
+    j = num_verts_x * num_verts_y      # the * symbol means multiplication
     
     final_list = []
-    for i in range(j): # makes: 0 1 2 3 4 5 6 7 8 9 10 11
-       x = i % 4       # makes: 0 1 2 3 0 1 2 3 0 1 2 3
-       y = i // 4      # makes: 0 0 0 0 1 1 1 1 2 2 2 2
+    for i in range(j):                 # passes: 0 1 2 3 4 5 6 7 8 9 10 11
+       x = i % 4                       #  makes: 0 1 2 3 0 1 2 3 0 1 2 3
+       y = i // 4                      #  makes: 0 0 0 0 1 1 1 1 2 2 2 2
        final_list.append((x, y, 0))
 
-using list comprehension::
+the ``list comprehension`` version::
 
-    x = 4
-    y = 3
-    j = x * y
+    num_verts_x = 4
+    num_verts_y = 3
+    j = num_verts_x * num_verts_y      # the * symbol means multiplication
+
     final_list = [(i % 4, i // 4, 0) for i in range(j)]
 
-Both bits of code calculate the some end result::
+Both bits of code calculate the same end result::
 
     [(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0), 
      (0, 1, 0), (1, 1, 0), (2, 1, 0), (3, 1, 0), 
      (0, 2, 0), (1, 2, 0), (2, 2, 0), (3, 2, 0)]
 
-With any luck you aren't lost by all this code, visual programming is very similar except with less typing. The plumbing of an algorithm is still the same whether you are clicking and dragging nodes to create a flow of information or writing code in a text editor.
-
-**Operands**
-
-We introduced the Math node in lesson 01 and 02, the Math node (from the Number menu) has many operations called operands. We'll focus on these to get the vertex components.
-
-+----------------------+---------+--------------------------------------------------------+
-| Operand              |  Symbol | Behaviour                                              |  
-+======================+=========+========================================================+
-| Modulo (mod)         | %       | ``i % 4`` returns the division remainder of ``i / 4``, | 
-|                      |         | rounded down to the nearest whole number               |
-+----------------------+---------+--------------------------------------------------------+
-| Integer Division     | //      | ``i // 4`` returns the result of ``i / 4``,            |
-|                      |         | rounded down to the nearest whole number.              |
-+----------------------+---------+--------------------------------------------------------+
-
-We can use: 
-
-- ``i % 4`` to turn ``[0,1,2,3,4,5,6,7,8,9,10,11]`` into ``[0,1,2,3,0,1,2,3,0,1,2,3]``
-- ``i // 4`` to turn ``[0,1,2,3,4,5,6,7,8,9,10,11]`` into ``[0,0,0,0,1,1,1,1,2,2,2,2]``
-
+With any luck you are still smiling through this code detour, visual programming is very similar except with less typing. The plumbing of an algorithm is still the same whether you are clicking and dragging nodes to create a flow of information or writing code in a text editor.
 
 **Making vertices**
 
 A recipe which you should be able to hook up yourself by seeing the example image.
 
 - ``Add -> Vector -> Vector In``
-- ``Add -> Number -> Math`` (3x) notice I minimized the Multiplication Node.
-- ``Add -> Number -> Integer`` (2x)
-- ``Add -> Number -> Range Int``
+- ``Add -> Number -> Sclar Math`` (3x) notice I minimized the Multiplication Node.
+- ``Add -> Number -> A Number`` (2x)
+- ``Add -> Number -> Number Range`` (int)
 
 We multiply ``y=3`` by ``x=4`` to get ``12`` this is the number of vertices. This parameter determines the length of the range ``[0,1..11]`` (12 vertices, remember we start counting indices at 0).
 
