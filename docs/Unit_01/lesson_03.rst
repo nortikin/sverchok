@@ -232,14 +232,15 @@ The simplest way to approach this is probably the formula node, using the patter
 
 |using_formula_node|
 
-tes test
+Here's the full node tree, which lets you set the X and Y arbitrarily.
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/5515808/31552e1a-887c-11e4-9c74-0f3af2f193e6.png
+|fully_automatic|
 
 .. |color_coded| image:: https://user-images.githubusercontent.com/619340/82607743-a7852f80-9bb9-11ea-8ec8-fee0246af9ba.png
 .. |first_plane_image| image:: https://user-images.githubusercontent.com/619340/82651212-257a2280-9c1c-11ea-85f4-f33477fcff3f.png
 .. |grid_only_test| image:: https://user-images.githubusercontent.com/619340/82651867-0760f200-9c1d-11ea-967c-cf297559561b.png
 .. |using_formula_node| image:: https://user-images.githubusercontent.com/619340/82671086-8adf0b00-9c3e-11ea-920f-b11546046817.png
+.. |fully_automatic| image:: https://user-images.githubusercontent.com/619340/82674818-2a52cc80-9c44-11ea-9e33-eea2e3857b6e.png
 
 
 
