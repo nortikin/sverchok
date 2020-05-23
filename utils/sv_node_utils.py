@@ -83,9 +83,15 @@ def framed_nodes_bounding_box(selected_nodes):
 
 def are_nodes_in_same_frame(nodes):
     """
-    not yet full implementation
+    input: a list of nodes (expects no Reroute or Frame nodes)
+    returns: 
+       - < False > if the set is not length one.
+       - < None > if no nodes are frames
+       - < FrameNode > if all nodes have the same parent
     """
-    return len(set([node.parent for node in nodes])) == 1
+    parents = set([node.parent for node in nodes])
+    if len(parents) == 1:
+        return list(parents)[0]
 
 
 def sync_pointer_and_stored_name(node, pointer_prop_name, prop_name):
