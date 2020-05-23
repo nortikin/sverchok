@@ -60,6 +60,27 @@ def nodes_bounding_box(selected_nodes):
 
     return minx, maxx, miny, maxy
 
+def framed_nodes_bounding_box(selected_nodes):
+    """
+    usage:
+    minx, maxx, miny, maxy = nodes_bounding_box(selected_nodes)
+    warning: don't call this on ReRoute or Frame nodes.
+    """
+    minx = +1e10
+    maxx = -1e10
+    miny = +1e10
+    maxy = -1e10
+    for node in selected_nodes:
+        
+        node_loc_x, node_loc_y = node.absolute_location
+
+        minx = min(minx, node_loc_x)
+        maxx = max(maxx, node_loc_x + node.width)
+        miny = min(miny, node_loc_y - node.height)
+        maxy = max(maxy, node_loc_y)
+
+    return minx, maxx, miny, maxy
+
 def sync_pointer_and_stored_name(node, pointer_prop_name, prop_name):
     # in the event that the text datablock is renamed elsewhere, this will automatically
     # resync the stored name of the datablock. updates to datablock names do not 
