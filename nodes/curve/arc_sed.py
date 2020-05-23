@@ -17,8 +17,9 @@ class SvArcSedCurveNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Generate an arc from Start point, End point and Tangent vector
     """
     bl_idname = 'SvArcSedCurveNode'
-    bl_label = 'Arc SED'
+    bl_label = 'Arc Start / End / Tangent'
     bl_icon = 'SPHERECURVE'
+    sv_icon = 'SV_ARC_SED'
 
     join : BoolProperty(
             name = "Join",
