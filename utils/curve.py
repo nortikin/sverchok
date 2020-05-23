@@ -178,8 +178,9 @@ class SvCurve(object):
             return matrices_np, normals, binormals
         except np.linalg.LinAlgError as e:
             error("Some of matrices are singular:")
-            for m in matrices_np:
-                error("M:\n%s", m)
+            for i, m in enumerate(matrices_np):
+                if abs(np.linalg.det(m) < 1e-5):
+                    error("M[%s] (t = %s):\n%s", i, ts[i], m)
             raise e
 
     def curvature_array(self, ts):
@@ -837,4 +838,76 @@ class SvLengthRebuiltCurve(SvCurve):
     def evaluate_array(self, ts):
         c_ts = self.solver.solve(ts)
         return self.curve.evaluate_array(c_ts)
+
+class SvBezierCurve(SvCurve):
+    __description__ = "Bezier"
+    def __init__(self, p0, p1, p2, p3):
+        self.p0 = np.array(p0)
+        self.p1 = np.array(p1)
+        self.p2 = np.array(p2)
+        self.p3 = np.array(p3)
+        self.tangent_delta = 0.001
+
+    def get_u_bounds(self):
+        return (0.0, 1.0)
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def evaluate_array(self, ts):
+        c0 = (1 - ts)**3
+        c1 = 3*ts*(1-ts)**2
+        c2 = 3*ts**2*(1-ts)
+        c3 = ts**3
+        c0, c1, c2, c3 = c0[:,np.newaxis], c1[:,np.newaxis], c2[:,np.newaxis], c3[:,np.newaxis]
+        p0, p1, p2, p3 = self.p0, self.p1, self.p2, self.p3
+
+        return c0*p0 + c1*p1 + c2*p2 + c3*p3
+
+    def tangent(self, t):
+        return self.tangent_array(np.array([t]))[0]
+
+    def tangent_array(self, ts):
+        c0 = -3*(1 - ts)**2
+        c1 = 3*(1-ts)**2 - 6*(1-ts)*ts
+        c2 = 6*(1-ts)*ts - 3*ts**2
+        c3 = 3*ts**2
+        c0, c1, c2, c3 = c0[:,np.newaxis], c1[:,np.newaxis], c2[:,np.newaxis], c3[:,np.newaxis]
+        p0, p1, p2, p3 = self.p0, self.p1, self.p2, self.p3
+
+        return c0*p0 + c1*p1 + c2*p2 + c3*p3
+
+    def second_derivative(self, t):
+        return self.second_derivative_array(np.array([t]))[0]
+
+    def second_derivative_array(self, ts):
+        c0 = 6*(1-ts)
+        c1 = 6*ts - 12*(1-ts)
+        c2 = 6*(1-ts) - 12*ts
+        c3 = 6*ts
+        c0, c1, c2, c3 = c0[:,np.newaxis], c1[:,np.newaxis], c2[:,np.newaxis], c3[:,np.newaxis]
+        p0, p1, p2, p3 = self.p0, self.p1, self.p2, self.p3
+
+        return c0*p0 + c1*p1 + c2*p2 + c3*p3
+
+    def third_derivative_array(self, ts):
+        c0 = -6
+        c1 = 18
+        c2 = -18
+        c3 = 6
+        p0, p1, p2, p3 = self.p0, self.p1, self.p2, self.p3
+        return c0*p0 + c1*p1 + c2*p2 + c3*p3
+
+    def derivatives_array(self, n, ts):
+        result = []
+        if n >= 1:
+            first = self.tangent_array(ts)
+            result.append(first)
+        if n >= 2:
+            second = self.second_derivative_array(ts)
+            result.append(second)
+        if n >= 3:
+            third = self.third_derivative_array(ts)
+            result.append(third)
+        return result
 
