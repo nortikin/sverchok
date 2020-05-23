@@ -2211,6 +2211,27 @@ def circle_by_three_points(p1, p2, p3):
     circle.arc_angle = beta
     return circle
 
+def circle_by_start_end_tangent(start, end, tangent):
+    start = Vector(start)
+    end = Vector(end)
+    tangent = Vector(tangent)
+    middle = 0.5*(start + end)
+    diff = end - start
+    middle_plane = PlaneEquation.from_normal_and_point(diff, middle)
+    tangent_plane = PlaneEquation.from_point_and_two_vectors(start, tangent, diff)
+    start_plane = PlaneEquation.from_normal_and_point(tangent, start)
+    normal_line = start_plane.intersect_with_plane(tangent_plane)
+    circle = CircleEquation3D()
+    center = middle_plane.intersect_with_line(normal_line)
+    circle.center = np.array(center)
+    circle.radius = (center - start).length
+    circle.normal = np.array(tangent_plane.normal)
+    circle.point1 = np.array(start)
+    circle.arc_angle = (start - center).angle(end - center, 0)
+    if tangent.dot(diff) < 0:
+        circle.arc_angle = 2*pi - circle.arc_angle
+    return circle
+
 def multiply_vectors(M, vlist):
     # (4*4 matrix)  X   (3*1 vector)
 
