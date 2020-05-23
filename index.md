@@ -69,6 +69,7 @@
     ---
     SvExCurveLerpCurveNode
     SvExConcatCurvesNode
+    SvExBlendCurvesNode
     SvExFlipCurveNode
     SvExSurfaceBoundaryNode
     ---
