@@ -67,7 +67,7 @@ def join_macros(context, operator, term, nodes, links):
         if all(node.outputs[0].bl_idname == "SvVerticesSocket" for node in sorted_nodes):
             viewer_node = nodes.new("SvVDExperimental")
 
-            viewer_node.location = join_nodes[0].location.x + join_nodes[0].width + 100, maxy
+            viewer_node.location = join_nodes[0].absolute_location[0] + join_nodes[0].width + 100, maxy
             if framed:
                 viewer_node.parent = framed
 
