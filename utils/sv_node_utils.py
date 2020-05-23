@@ -81,6 +81,13 @@ def framed_nodes_bounding_box(selected_nodes):
 
     return minx, maxx, miny, maxy
 
+def are_nodes_in_same_frame(nodes):
+    """
+    not yet full implementation
+    """
+    return len(set([node.parent for node in nodes])) == 1
+
+
 def sync_pointer_and_stored_name(node, pointer_prop_name, prop_name):
     # in the event that the text datablock is renamed elsewhere, this will automatically
     # resync the stored name of the datablock. updates to datablock names do not 

@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from sverchok.utils.sv_node_utils import framed_nodes_bounding_box as bounding_box
+from sverchok.utils.sv_node_utils import are_nodes_in_same_frame
 
 
 def join_macros(context, operator, term, nodes, links):
@@ -64,6 +65,7 @@ def join_macros(context, operator, term, nodes, links):
 
         if all(node.outputs[0].bl_idname == "SvVerticesSocket" for node in sorted_nodes):
             viewer_node = nodes.new("SvVDExperimental")
+
             # if framed:
             # ........ something else            
             viewer_node.location = join_nodes[0].location.x + join_nodes[0].width + 100, maxy
