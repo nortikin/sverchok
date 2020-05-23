@@ -16,6 +16,7 @@ Surface
    extrude_vector
    extrude_point
    extrude_curve
+   coons_patch
    apply_field_to_surface
    surface_domain
    subdomain
