@@ -25,8 +25,7 @@ class SvBezierSplineNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvBezierSplineNode'
     bl_label = 'Bezier Spline (Curve)'
-    bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_POLYLINE'
+    bl_icon = 'IPO_BEZIER'
 
     @throttled
     def update_sockets(self, context):
@@ -113,7 +112,7 @@ class SvBezierSplineNode(bpy.types.Node, SverchCustomTreeNode):
                     if not controls:
                         raise SvNoDataError(socket=self.inputs['ControlPoints'], node=self)
                     if len(controls) < 2:
-                        raise Exception("At least three control points are required to build a Bezier spline!")
+                        raise Exception("At least two control points are required to build a Bezier spline!")
                     if self.is_cyclic:
                         controls = controls + [controls[0]]
                     curve = SvBezierCurve(controls)

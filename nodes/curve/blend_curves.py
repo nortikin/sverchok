@@ -16,6 +16,7 @@ class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvExBlendCurvesNode'
     bl_label = 'Blend Curves'
     bl_icon = 'CURVE_NCURVE'
+    sv_icon = 'SV_BLEND_CURVE'
 
     factor1 : FloatProperty(
         name = "Factor 1",
