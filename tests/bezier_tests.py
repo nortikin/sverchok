@@ -59,3 +59,63 @@ class BezierTests(SverchokTestCase):
         generic_points = generic.third_derivative_array(ts)
         self.assert_numpy_arrays_equal(cubic_points, generic_points, precision=6)
 
+    def test_blend_tangent(self):
+        p0 = np.array([0, 0, 0])
+        p1 = np.array([3, 0, 0])
+        v0 = np.array([3, 3, 0])
+        v1 = np.array([3, 3, 0])
+        curve = SvBezierCurve.from_points_and_tangents(p0, v0, v1, p1)
+
+        v0r = curve.tangent(0)
+        v1r = curve.tangent(1)
+
+        self.assert_numpy_arrays_equal(v0r, v0)
+        self.assert_numpy_arrays_equal(v1r, v1)
+
+    def test_blend_second(self):
+        p0 = np.array([0, 0, 0])
+        p1 = np.array([3, 0, 0])
+        v0 = np.array([3, 3, 0])
+        v1 = np.array([3, 3, 0])
+        a0 = np.array([0, 0, 1])
+        a1 = np.array([0, 0, 1])
+        curve = SvBezierCurve.blend_second_derivatives(p0, v0, a0, p1, v1, a1)
+
+        v0r = curve.tangent(0)
+        v1r = curve.tangent(1)
+
+        a0r = curve.second_derivative(0)
+        a1r = curve.second_derivative(1)
+
+        self.assert_numpy_arrays_equal(v0r, v0)
+        self.assert_numpy_arrays_equal(v1r, v1)
+        self.assert_numpy_arrays_equal(a0r, a0)
+        self.assert_numpy_arrays_equal(a1r, a1)
+
+    def test_blend_third(self):
+        p0 = np.array([0, 0, 0])
+        p1 = np.array([3, 0, 0])
+        v0 = np.array([3, 3, 0])
+        v1 = np.array([3, 3, 0])
+        a0 = np.array([0, 0, 1])
+        a1 = np.array([0, 0, 1])
+        k0 = np.array([1, 1, 0])
+        k1 = np.array([1, 1, 0])
+        curve = SvBezierCurve.blend_third_derivatives(p0, v0, a0, k0, p1, v1, a1, k1)
+
+        v0r = curve.tangent(0)
+        v1r = curve.tangent(1)
+
+        a0r = curve.second_derivative(0)
+        a1r = curve.second_derivative(1)
+
+        k0r = curve.third_derivative_array(np.array([0]))[0]
+        k1r = curve.third_derivative_array(np.array([1]))[0]
+
+        self.assert_numpy_arrays_equal(v0r, v0)
+        self.assert_numpy_arrays_equal(v1r, v1)
+        self.assert_numpy_arrays_equal(a0r, a0, precision=6)
+        self.assert_numpy_arrays_equal(a1r, a1, precision=6)
+        self.assert_numpy_arrays_equal(k0r, k0, precision=6)
+        self.assert_numpy_arrays_equal(k1r, k1, precision=6)
+
