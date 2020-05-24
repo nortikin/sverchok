@@ -123,7 +123,7 @@ class SvBezierSplineNode(bpy.types.Node, SverchCustomTreeNode):
                     if self.is_cyclic:
                         controls = controls + [controls[0]]
                     curve = SvBezierCurve(controls)
-                    curve_controls = [p.tolist() for p in controls]
+                    curve_controls = controls
                 new_curves.append(curve)
                 new_controls.extend(curve_controls)
             curves_out.append(new_curves)
