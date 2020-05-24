@@ -71,13 +71,21 @@ class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
         default = True,
         update = updateNode)
 
+    concat : BoolProperty(
+        name = "Concatenate",
+        description = "Concatenate source curves and blending curves into one curve",
+        default = True,
+        update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.label(text="Continuity:")
         layout.prop(self, 'smooth_mode', text='')
         layout.prop(self, "mode", text='')
+        layout.prop(self, 'concat', toggle=True)
         if self.mode == 'N':
             layout.prop(self, 'cyclic', toggle=True)
-            layout.prop(self, 'output_src', toggle=True)
+            if not self.concat:
+                layout.prop(self, 'output_src', toggle=True)
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', 'Curve1')
@@ -120,6 +128,8 @@ class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+
+        output_src = self.output_src or self.concat
 
         curves_out = []
         is_first = True
@@ -170,13 +180,16 @@ class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 raise Exception("Unsupported smooth level")
 
-            if self.mode == 'N' and not self.cyclic and self.output_src and is_first:
+            if self.mode == 'N' and not self.cyclic and output_src and is_first:
                 curves_out.append(curve1)
             curves_out.append(new_curve)
-            if self.mode == 'N' and self.output_src:
+            if self.mode == 'N' and output_src:
                 curves_out.append(curve2)
 
             is_first = False
+
+        if self.concat:
+            curves_out = [SvConcatCurve(curves_out)]
 
         self.outputs['Curve'].sv_set(curves_out)
 
