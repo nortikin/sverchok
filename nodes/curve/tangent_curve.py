@@ -16,6 +16,7 @@ class SvTangentsCurveNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvTangentsCurveNode'
     bl_label = 'Tangents Curve'
     bl_icon = 'CURVE_NCURVE'
+    sv_icon = 'SV_TANGENT_CURVE'
 
     concat : BoolProperty(
         name = "Concatenate",
