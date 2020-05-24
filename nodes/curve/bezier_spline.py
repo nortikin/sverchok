@@ -39,8 +39,8 @@ class SvBezierSplineNode(bpy.types.Node, SverchCustomTreeNode):
 
     modes = [
         (CUBIC, "Cubic 2pts + 2 controls", "Cubic spline by two end points and two additional control points", 0),
-        (CUBIC_TANGENT, "Cubic 2pts + 2 Tangents", "Cubic spline by two end points and two tangent vectors - Hermite spline", 1),
-        (CUBIC_4PT, "Cubic 4pts", "Cubic spline through four points", 2),
+        (CUBIC_TANGENT, "Cubic 2pts + 2 tangents", "Cubic spline by two end points and two tangent vectors - Hermite spline", 1),
+        (CUBIC_4PT, "Cubic 4pts", "Cubic spline through four points (interpolation)", 2),
         (QUADRATIC, "Quadratic", "Quadratic spline by two end points and one additional control point", 3),
         (GENERIC, "Generic", "Generic Bezier spline with any number of control points", 5)
     ]
@@ -77,6 +77,7 @@ class SvBezierSplineNode(bpy.types.Node, SverchCustomTreeNode):
         p.prop = (3.0, 0.0, 0.0)
         self.inputs.new('SvVerticesSocket', "ControlPoints") # 4
         self.outputs.new('SvCurveSocket', "Curve")
+        self.outputs.new('SvVerticesSocket', "ControlPoints")
         self.update_sockets(context)
 
     def process(self):
@@ -95,19 +96,25 @@ class SvBezierSplineNode(bpy.types.Node, SverchCustomTreeNode):
         controls_s = ensure_nesting_level(controls_s, 4)
 
         curves_out = []
+        controls_out = []
         for starts, ends, knot1s, knot2s, controls_i in zip_long_repeat(start_s, end_s, knot1_s, knot2_s, controls_s):
             new_curves = []
+            new_controls = []
             for start, end, knot1, knot2, controls in zip_long_repeat(starts, ends, knot1s, knot2s, controls_i):
                 start, end = np.array(start), np.array(end)
                 knot1, knot2 = np.array(knot1), np.array(knot2)
                 if self.mode == CUBIC:
                     curve = SvCubicBezierCurve(start, knot1, knot2, end)
+                    curve_controls = [start.tolist(), knot1.tolist(), knot2.tolist(), end.tolist()]
                 elif self.mode == CUBIC_TANGENT:
                     curve = SvBezierCurve.from_points_and_tangents(start, knot1, knot2, end)
+                    curve_controls = [curve.p0.tolist(), curve.p1.tolist(), curve.p2.tolist(), curve.p3.tolist()]
                 elif self.mode == CUBIC_4PT:
                     curve = SvCubicBezierCurve.from_four_points(start, knot1, knot2, end)
+                    curve_controls = [curve.p0.tolist(), curve.p1.tolist(), curve.p2.tolist(), curve.p3.tolist()]
                 elif self.mode == QUADRATIC:
                     curve = SvBezierCurve([start, knot1, end])
+                    curve_controls = [p.tolist() for p in curve.points]
                 else: # GENERIC
                     if not controls:
                         raise SvNoDataError(socket=self.inputs['ControlPoints'], node=self)
@@ -116,10 +123,14 @@ class SvBezierSplineNode(bpy.types.Node, SverchCustomTreeNode):
                     if self.is_cyclic:
                         controls = controls + [controls[0]]
                     curve = SvBezierCurve(controls)
+                    curve_controls = [p.tolist() for p in controls]
                 new_curves.append(curve)
+                new_controls.extend(curve_controls)
             curves_out.append(new_curves)
+            controls_out.append(new_controls)
 
         self.outputs['Curve'].sv_set(curves_out)
+        self.outputs['ControlPoints'].sv_set(controls_out)
 
 def register():
     bpy.utils.register_class(SvBezierSplineNode)
