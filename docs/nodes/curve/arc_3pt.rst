@@ -8,7 +8,7 @@ This node generates a Curve object, which represent a circular arc, going
 through the three specified points. The node also outputs key properties of
 such an arc: center, radius and angle.
 
-See also the Circle node.
+See also the Circle node, "Arc Start / End / Tangent" node.
 
 Inputs
 ------

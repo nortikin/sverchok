@@ -56,6 +56,7 @@
     SvExCircleNode
     SvRoundedRectangleNode
     SvArc3ptCurveNode
+    SvArcSedCurveNode
     SvExCurveFormulaNode
     SvExPolylineNode
     SvExFilletPolylineNode
