@@ -9,8 +9,9 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvBezierCurve, SvCubicBezierCurve
 
-CUBIC = '3_4pt'
+CUBIC = '3_2pt_2cp'
 CUBIC_TANGENT = '3_2pt_tan'
+CUBIC_4PT = '3_4pt'
 QUADRATIC = '2'
 GENERIC = 'GEN'
 
@@ -40,8 +41,9 @@ class SvBezierSplineNode(bpy.types.Node, SverchCustomTreeNode):
     modes = [
         (CUBIC, "Cubic 2pts + 2 controls", "Cubic spline by two end points and two additional control points", 0),
         (CUBIC_TANGENT, "Cubic 2pts + 2 Tangents", "Cubic spline by two end points and two tangent vectors", 1),
-        (QUADRATIC, "Quadratic", "Quadratic spline by two end points and one additional control point", 2),
-        (GENERIC, "Generic", "Generic Bezier spline with any number of control points", 4)
+        (CUBIC_4PT, "Cubic 4pts", "Cubic spline through four points", 2),
+        (QUADRATIC, "Quadratic", "Quadratic spline by two end points and one additional control point", 3),
+        (GENERIC, "Generic", "Generic Bezier spline with any number of control points", 5)
     ]
 
     mode : EnumProperty(
@@ -67,10 +69,10 @@ class SvBezierSplineNode(bpy.types.Node, SverchCustomTreeNode):
         p.prop = (0.0, 0.0, 0.0)
         p = self.inputs.new('SvVerticesSocket', "Control1") # 1
         p.use_prop = True
-        p.prop = (1.0, 0.0, 0.0)
+        p.prop = (1.0, 1.0, 0.0)
         p = self.inputs.new('SvVerticesSocket', "Control2") # 2
         p.use_prop = True
-        p.prop = (2.0, 0.0, 0.0)
+        p.prop = (2.0, -1.0, 0.0)
         p = self.inputs.new('SvVerticesSocket', "End")      # 3
         p.use_prop = True
         p.prop = (3.0, 0.0, 0.0)
@@ -108,6 +110,8 @@ class SvBezierSplineNode(bpy.types.Node, SverchCustomTreeNode):
                                 start + knot1,
                                 end + knot2,
                                 end)
+                elif self.mode == CUBIC_4PT:
+                    curve = SvCubicBezierCurve.from_four_points(start, knot1, knot2, end)
                 elif self.mode == QUADRATIC:
                     curve = SvBezierCurve([start, knot1, end])
                 else: # GENERIC

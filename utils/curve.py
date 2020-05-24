@@ -973,6 +973,18 @@ class SvCubicBezierCurve(SvCurve):
         self.p3 = np.array(p3)
         self.tangent_delta = 0.001
 
+    @classmethod
+    def from_four_points(cls, v0, v1, v2, v3):
+        v0 = np.array(v0)
+        v1 = np.array(v1)
+        v2 = np.array(v2)
+        v3 = np.array(v3)
+
+        p1 = (-5*v0 + 18*v1 - 9*v2 + 2*v3)/6.0
+        p2 = (2*v0 - 9*v1 + 18*v2 - 5*v3)/6.0
+
+        return SvCubicBezierCurve(v0, p1, p2, v3)
+
     def get_u_bounds(self):
         return (0.0, 1.0)
 
