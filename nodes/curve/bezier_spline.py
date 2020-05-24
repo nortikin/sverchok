@@ -20,7 +20,7 @@ CONTROL2_SOCKET = 2
 
 class SvBezierSplineNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Bezier Spline
+    Triggers: Bezier Hermite Spline
     Tooltip: Generate Bezier curve spline
     """
     bl_idname = 'SvBezierSplineNode'
@@ -40,7 +40,7 @@ class SvBezierSplineNode(bpy.types.Node, SverchCustomTreeNode):
 
     modes = [
         (CUBIC, "Cubic 2pts + 2 controls", "Cubic spline by two end points and two additional control points", 0),
-        (CUBIC_TANGENT, "Cubic 2pts + 2 Tangents", "Cubic spline by two end points and two tangent vectors", 1),
+        (CUBIC_TANGENT, "Cubic 2pts + 2 Tangents", "Cubic spline by two end points and two tangent vectors - Hermite spline", 1),
         (CUBIC_4PT, "Cubic 4pts", "Cubic spline through four points", 2),
         (QUADRATIC, "Quadratic", "Quadratic spline by two end points and one additional control point", 3),
         (GENERIC, "Generic", "Generic Bezier spline with any number of control points", 5)
@@ -82,8 +82,7 @@ class SvBezierSplineNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
-            return
-
+            return 
         start_s = self.inputs['Start'].sv_get()
         end_s = self.inputs['End'].sv_get()
         knot1_s = self.inputs[CONTROL1_SOCKET].sv_get()
@@ -107,8 +106,8 @@ class SvBezierSplineNode(bpy.types.Node, SverchCustomTreeNode):
                 elif self.mode == CUBIC_TANGENT:
                     curve = SvCubicBezierCurve(
                                 start,
-                                start + knot1,
-                                end + knot2,
+                                start + knot1 / 3.0,
+                                end - knot2 / 3.0,
                                 end)
                 elif self.mode == CUBIC_4PT:
                     curve = SvCubicBezierCurve.from_four_points(start, knot1, knot2, end)
