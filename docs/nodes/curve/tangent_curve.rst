@@ -61,5 +61,5 @@ Simple example, with points and curves defined manually:
 
 More complex example: draw a smooth curve so that it would touch three circles in specific points:
 
-.. image:: https://user-images.githubusercontent.com/284644/82763274-e74d5080-9e1f-11ea-8c7b-d5f020abc04f.png
+.. image:: https://user-images.githubusercontent.com/284644/82763926-8411ed00-9e24-11ea-9a5b-171c580155b0.png
 
