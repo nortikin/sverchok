@@ -6,7 +6,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, repeat_last_for_length
-from sverchok.utils.curve import SvCurve, SvCubicBezierCurve
+from sverchok.utils.curve import SvCurve, SvCubicBezierCurve, SvBezierCurve, SvLine
 
 class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -19,29 +19,45 @@ class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
 
     factor1 : FloatProperty(
         name = "Factor 1",
-        default = 0.1,
+        default = 1.0,
         update = updateNode)
 
     factor2 : FloatProperty(
         name = "Factor 2",
-        default = 0.1,
+        default = 1.0,
         update = updateNode)
-
-    modes = [
-        ('TWO', "Two curves", "Blend two curves", 0),
-        ('N', "List of curves", "Blend several curves", 1)
-    ]
 
     @throttled
     def update_sockets(self, context):
         self.inputs['Curve1'].hide_safe = self.mode != 'TWO'
         self.inputs['Curve2'].hide_safe = self.mode != 'TWO'
         self.inputs['Curves'].hide_safe = self.mode != 'N'
+        self.inputs['Factor1'].hide_safe = self.smooth_mode != '1'
+        self.inputs['Factor2'].hide_safe = self.smooth_mode != '1'
+
+    modes = [
+        ('TWO', "Two curves", "Blend two curves", 0),
+        ('N', "List of curves", "Blend several curves", 1)
+    ]
 
     mode : EnumProperty(
         name = "Blend",
         items = modes,
         default = 'TWO',
+        update = update_sockets)
+
+    smooth_modes = [
+            ('0', "0 - Position", "Connect ends of curves with straight line segment", 0),
+            ('1', "1 - Tangency", "Connect curves such that their tangents are smoothly joined", 1),
+            ('2', "2 - Normals", "Connect curves such that their normals (second derivatives) are smoothly joined", 2),
+            ('3', "3 - Curvature", "Connect curves such that their curvatures (third derivatives) are smoothly joined", 3)
+        ]
+
+    smooth_mode : EnumProperty(
+        name = "Continuity",
+        description = "How smooth should be the blending; bigger value give more smooth curves",
+        items = smooth_modes,
+        default = '1',
         update = update_sockets)
 
     cyclic : BoolProperty(
@@ -55,6 +71,8 @@ class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     def draw_buttons(self, context, layout):
+        layout.label(text="Continuity:")
+        layout.prop(self, 'smooth_mode', text='')
         layout.prop(self, "mode", text='')
         if self.mode == 'N':
             layout.prop(self, 'cyclic', toggle=True)
@@ -110,18 +128,47 @@ class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
 
             curve1_end = curve1.evaluate(t_max_1)
             curve2_begin = curve2.evaluate(t_min_2)
-            tangent_1_end = curve1.tangent(t_max_1)
-            tangent_2_begin = curve2.tangent(t_min_2)
 
-            tangent1 = factor1 * tangent_1_end / np.linalg.norm(tangent_1_end)
-            tangent2 = factor2 * tangent_2_begin / np.linalg.norm(tangent_2_begin)
+            smooth = int(self.smooth_mode)
 
-            new_curve = SvCubicBezierCurve(
-                    curve1_end,
-                    curve1_end + tangent1,
-                    curve2_begin - tangent2,
-                    curve2_begin
-                )
+            if smooth == 0:
+                new_curve = SvLine.from_two_points(curve1_end, curve2_begin)
+            elif smooth == 1:
+                tangent_1_end = curve1.tangent(t_max_1)
+                tangent_2_begin = curve2.tangent(t_min_2)
+
+                tangent1 = factor1 * tangent_1_end
+                tangent2 = factor2 * tangent_2_begin
+
+                new_curve = SvCubicBezierCurve(
+                        curve1_end,
+                        curve1_end + tangent1 / 3.0,
+                        curve2_begin - tangent2 / 3.0,
+                        curve2_begin
+                    )
+            elif smooth == 2:
+                tangent_1_end = curve1.tangent(t_max_1)
+                tangent_2_begin = curve2.tangent(t_min_2)
+                second_1_end = curve1.second_derivative(t_max_1)
+                second_2_begin = curve2.second_derivative(t_min_2)
+
+                new_curve = SvBezierCurve.blend_second_derivatives(
+                                curve1_end, tangent_1_end, second_1_end,
+                                curve2_begin, tangent_2_begin, second_2_begin)
+            elif smooth == 3:
+                tangent_1_end = curve1.tangent(t_max_1)
+                tangent_2_begin = curve2.tangent(t_min_2)
+                second_1_end = curve1.second_derivative(t_max_1)
+                second_2_begin = curve2.second_derivative(t_min_2)
+                third_1_end = curve1.third_derivative_array(np.array([t_max_1]))[0]
+                third_2_begin = curve2.third_derivative_array(np.array([t_min_2]))[0]
+
+                new_curve = SvBezierCurve.blend_third_derivatives(
+                                curve1_end, tangent_1_end, second_1_end, third_1_end,
+                                curve2_begin, tangent_2_begin, second_2_begin, third_2_begin)
+            else:
+                raise Exception("Unsupported smooth level")
+
             if self.mode == 'N' and not self.cyclic and self.output_src and is_first:
                 curves_out.append(curve1)
             curves_out.append(new_curve)

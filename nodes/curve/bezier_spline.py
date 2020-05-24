@@ -104,11 +104,7 @@ class SvBezierSplineNode(bpy.types.Node, SverchCustomTreeNode):
                 if self.mode == CUBIC:
                     curve = SvCubicBezierCurve(start, knot1, knot2, end)
                 elif self.mode == CUBIC_TANGENT:
-                    curve = SvCubicBezierCurve(
-                                start,
-                                start + knot1 / 3.0,
-                                end - knot2 / 3.0,
-                                end)
+                    curve = SvBezierCurve.from_points_and_tangents(start, knot1, knot2, end)
                 elif self.mode == CUBIC_4PT:
                     curve = SvCubicBezierCurve.from_four_points(start, knot1, knot2, end)
                 elif self.mode == QUADRATIC:

@@ -841,11 +841,61 @@ class SvLengthRebuiltCurve(SvCurve):
         return self.curve.evaluate_array(c_ts)
 
 class SvBezierCurve(SvCurve):
+    """
+    Bezier curve of arbitrary degree.
+    """
     def __init__(self, points):
         self.points = points
         self.tangent_delta = 0.001
         n = self.degree = len(points) - 1
         self.__description__ = "Bezier[{}]".format(n)
+
+    @classmethod
+    def from_points_and_tangents(cls, p0, t0, t1, p1):
+        """
+        Build cubic Bezier curve, which goes from p0 to p1,
+        and has tangent at 0 equal to t0 and tangent at 1 equal to t1.
+        This is also called Hermite spline.
+
+        inputs: p0, t0, t1, p1 - numpy arrays of shape (3,).
+        """
+        return SvCubicBezierCurve(
+                p0,
+                p0 + t0 / 3.0,
+                p1 - t1 / 3.0,
+                p1)
+
+    @classmethod
+    def blend_second_derivatives(cls, p0, v0, a0, p5, v5, a5):
+        """
+        Build Bezier curve of 5th order, which goes from p0 to p5, and has:
+        * first derivative at 0 = v0, second derivative at 0 = a0;
+        * first derivative at 1 = v5, second derivative at 1 = a1.
+
+        inputs: numpy arrays of shape (3,).
+        """
+        p1 = p0 + v0 / 5.0
+        p4 = p5 - v5 / 5.0
+        p2 = a0/20.0 + 2*p1 - p0
+        p3 = a5/20.0 + 2*p4 - p5
+        return SvBezierCurve([p0, p1, p2, p3, p4, p5])
+
+    @classmethod
+    def blend_third_derivatives(cls, p0, v0, a0, k0, p7, v7, a7, k7):
+        """
+        Build Bezier curve of 7th order, which goes from p0 to p7, and has:
+        * first derivative at 0 = v0, second derivative at 0 = a0, third derivative at 0 = k0;
+        * first derivative at 1 = v7, second derivative at 1 = a7, third derivative at 1 = k7.
+
+        inputs: numpy arrays of shape (3,).
+        """
+        p1 = p0 + v0 / 7.0
+        p6 = p7 - v7 / 7.0
+        p2 = a0/42.0 + 2*p1 - p0
+        p5 = a7/42.0 + 2*p6 - p7
+        p3 = k0/210.0 + 3*p2 - 3*p1 + p0
+        p4 = -k7/210.0 + 3*p5 - 3*p6 + p7
+        return SvBezierCurve([p0, p1, p2, p3, p4, p5, p6, p7])
 
     def coeff(self, k, ts):
         n = self.degree
