@@ -88,14 +88,16 @@ This node has the following parameters:
 Outputs
 -------
 
-This node has the following output:
+This node has the following outputs:
 
 * **Curve**. The generated curve (or list of curves).
+* **ControlPoints**. Control points of all generated blending curves.
 
 Example of usage
 ----------------
 
-Generate two cubic curves from mesh objects (one of them is white - selected, another is black - unselected); and blend them together with a smooth curve:
+Generate two cubic curves from mesh objects (one of them is white - selected,
+another is black - unselected); and blend them together with a smooth curve:
 
-.. image:: https://user-images.githubusercontent.com/284644/82756587-7cd2eb00-9df4-11ea-8bfc-bb704eef33e0.png
+.. image:: https://user-images.githubusercontent.com/284644/82763139-eb2ca300-9e1e-11ea-9e21-a11232adc29c.png
 

@@ -6,7 +6,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, repeat_last_for_length
-from sverchok.utils.curve import SvCurve, SvCubicBezierCurve, SvBezierCurve, SvLine
+from sverchok.utils.curve import SvCurve, SvCubicBezierCurve, SvBezierCurve, SvLine, SvConcatCurve
 
 class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -94,6 +94,7 @@ class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Factor1").prop_name = 'factor1'
         self.inputs.new('SvStringsSocket', "Factor2").prop_name = 'factor2'
         self.outputs.new('SvCurveSocket', 'Curve')
+        self.outputs.new('SvVerticesSocket', "ControlPoints")
         self.update_sockets(context)
 
     def get_inputs(self):
@@ -132,6 +133,7 @@ class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
         output_src = self.output_src or self.concat
 
         curves_out = []
+        controls_out = []
         is_first = True
         for curve1, curve2, factor1, factor2 in self.get_inputs():
             _, t_max_1 = curve1.get_u_bounds()
@@ -144,6 +146,7 @@ class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
 
             if smooth == 0:
                 new_curve = SvLine.from_two_points(curve1_end, curve2_begin)
+                new_controls = [curve1_end, curve2_begin]
             elif smooth == 1:
                 tangent_1_end = curve1.tangent(t_max_1)
                 tangent_2_begin = curve2.tangent(t_min_2)
@@ -157,6 +160,8 @@ class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
                         curve2_begin - tangent2 / 3.0,
                         curve2_begin
                     )
+                new_controls = [new_curve.p0.tolist(), new_curve.p1.tolist(),
+                                new_curve.p2.tolist(), new_curve.p3.tolist()]
             elif smooth == 2:
                 tangent_1_end = curve1.tangent(t_max_1)
                 tangent_2_begin = curve2.tangent(t_min_2)
@@ -166,6 +171,7 @@ class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
                 new_curve = SvBezierCurve.blend_second_derivatives(
                                 curve1_end, tangent_1_end, second_1_end,
                                 curve2_begin, tangent_2_begin, second_2_begin)
+                new_controls = [p.tolist() for p in new_curve.points]
             elif smooth == 3:
                 tangent_1_end = curve1.tangent(t_max_1)
                 tangent_2_begin = curve2.tangent(t_min_2)
@@ -177,6 +183,7 @@ class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
                 new_curve = SvBezierCurve.blend_third_derivatives(
                                 curve1_end, tangent_1_end, second_1_end, third_1_end,
                                 curve2_begin, tangent_2_begin, second_2_begin, third_2_begin)
+                new_controls = [p.tolist() for p in new_curve.points]
             else:
                 raise Exception("Unsupported smooth level")
 
@@ -185,6 +192,7 @@ class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
             curves_out.append(new_curve)
             if self.mode == 'N' and output_src:
                 curves_out.append(curve2)
+            controls_out.append(new_controls)
 
             is_first = False
 
@@ -192,6 +200,7 @@ class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
             curves_out = [SvConcatCurve(curves_out)]
 
         self.outputs['Curve'].sv_set(curves_out)
+        self.outputs['ControlPoints'].sv_set(controls_out)
 
 def register():
     bpy.utils.register_class(SvBlendCurvesNode)
