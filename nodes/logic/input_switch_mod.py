@@ -174,7 +174,8 @@ class SvInputSwitchNodeMOD(bpy.types.Node, SverchCustomTreeNode):
         self.set_hidestate_output_sockets_to_cope_with_switchnum()
 
     def process(self):
-        remap_indices = get_indices_for_groupnum(self.node_state, self.selected)
+        active_index = self.inputs["Selected"].sv_get()[0][0]
+        remap_indices = get_indices_for_groupnum(self.node_state, active_index)
         self.adjust_input_socket_bl_idname_to_match_linked_input()
         self.adjust_output_sockets_bl_idname_to_match_selected_set(remap_indices)
 
