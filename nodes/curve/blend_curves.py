@@ -6,7 +6,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, repeat_last_for_length
-from sverchok.utils.curve import SvCurve, SvBezierCurve
+from sverchok.utils.curve import SvCurve, SvCubicBezierCurve
 
 class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -116,7 +116,7 @@ class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
             tangent1 = factor1 * tangent_1_end / np.linalg.norm(tangent_1_end)
             tangent2 = factor2 * tangent_2_begin / np.linalg.norm(tangent_2_begin)
 
-            new_curve = SvBezierCurve(
+            new_curve = SvCubicBezierCurve(
                     curve1_end,
                     curve1_end + tangent1,
                     curve2_begin - tangent2,

@@ -12,6 +12,7 @@ from math import sin, cos, pi
 from sverchok.utils.geom import PlaneEquation, LineEquation, LinearSpline, CubicSpline
 from sverchok.utils.integrate import TrapezoidIntegral
 from sverchok.utils.logging import error, exception
+from sverchok.utils.math import binomial
 
 ##################
 #                #
@@ -840,7 +841,131 @@ class SvLengthRebuiltCurve(SvCurve):
         return self.curve.evaluate_array(c_ts)
 
 class SvBezierCurve(SvCurve):
-    __description__ = "Bezier"
+    def __init__(self, points):
+        self.points = points
+        self.tangent_delta = 0.001
+        n = self.degree = len(points) - 1
+        self.__description__ = "Bezier[{}]".format(n)
+
+    def coeff(self, k, ts):
+        n = self.degree
+        C = binomial(n, k)
+        return C * ts**k * (1 - ts)**(n-k)
+
+    def coeff_deriv1(self, k, t):
+        n = self.degree
+        C = binomial(n, k)
+        if k >= 1:
+            s1 = k*(1-t)**(n-k)*t**(k-1) 
+        else:
+            s1 = np.zeros_like(t)
+        if n-k-1 > 0:
+            s2 = - (n-k)*(1-t)**(n-k-1)*t**k
+        elif n-k == 1:
+            s2 = - t**k
+        else:
+            s2 = np.zeros_like(t)
+        coeff = s1 + s2
+        return C*coeff
+
+    def coeff_deriv2(self, k, t):
+        n = self.degree
+        C = binomial(n, k)
+        if n-k-2 > 0:
+            s1 = (n-k-1)*(n-k)*(1-t)**(n-k-2)*t**k
+        elif n-k == 2:
+            s1 = 2*t**k
+        else:
+            s1 = np.zeros_like(t)
+        if k >= 1 and n-k-1 > 0:
+            s2 = - 2*k*(n-k)*(1-t)**(n-k-1)*t**(k-1)
+        elif k >= 1 and n-k == 1:
+            s2 = - 2*k*t**(k-1)
+        else:
+            s2 = np.zeros_like(t)
+        if k >= 2:
+            s3 = (k-1)*k*(1-t)**(n-k)*t**(k-2)
+        else:
+            s3 = np.zeros_like(t)
+        coeff = s1 + s2 + s3
+        return C*coeff
+
+    def coeff_deriv3(self, k, t):
+        n = self.degree
+        C = binomial(n, k)
+        if n-k-2 > 0:
+            s1 = -(n-k-2)*(n-k-1)*(n-k)*(1-t)**(n-k-3)*t**k
+        else:
+            s1 = np.zeros_like(t)
+        if k >= 1 and n-k-2 > 0:
+            s2 = 3*k*(n-k-1)*(n-k)*(1-t)**(n-k-2)*t**(k-1)
+        elif k >= 1 and n-k == 2:
+            s2 = 6*k*t**(k-1)
+        else:
+            s2 = np.zeros_like(t)
+        if k >= 2 and n-k-1 > 0:
+            s3 = - 3*(k-1)*k*(n-k)*(1-t)**(n-k-1)*t**(k-2)
+        elif k >= 2 and n-k == 1:
+            s3 = -3*(k-1)*k*t**(k-2)
+        else:
+            s3 = np.zeros_like(t)
+        if k >= 3:
+            s4 = (k-2)*(k-1)*k*(1-t)**(n-k)*t**(k-3)
+        else:
+            s4 = np.zeros_like(t)
+        coeff = s1 + s2 + s3 + s4
+        return C*coeff
+
+    def get_u_bounds(self):
+        return (0.0, 1.0)
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def evaluate_array(self, ts):
+        coeffs = [self.coeff(k, ts) for k in range(len(self.points))]
+        coeffs = np.array(coeffs)
+        return np.dot(coeffs.T, self.points)
+
+    def tangent(self, t):
+        return self.tangent_array(np.array([t]))[0]
+
+    def tangent_array(self, ts):
+        coeffs = [self.coeff_deriv1(k, ts) for k in range(len(self.points))]
+        coeffs = np.array(coeffs)
+        #print("C1", coeffs)
+        return np.dot(coeffs.T, self.points)
+
+    def second_derivative(self, t):
+        return self.second_derivative_array(np.array([t]))[0]
+
+    def second_derivative_array(self, ts):
+        coeffs = [self.coeff_deriv2(k, ts) for k in range(len(self.points))]
+        coeffs = np.array(coeffs)
+        #print("C2", coeffs)
+        return np.dot(coeffs.T, self.points)
+
+    def third_derivative_array(self, ts):
+        coeffs = [self.coeff_deriv3(k, ts) for k in range(len(self.points))]
+        coeffs = np.array(coeffs)
+        #print("C3", coeffs)
+        return np.dot(coeffs.T, self.points)
+
+    def derivatives_array(self, n, ts):
+        result = []
+        if n >= 1:
+            first = self.tangent_array(ts)
+            result.append(first)
+        if n >= 2:
+            second = self.second_derivative_array(ts)
+            result.append(second)
+        if n >= 3:
+            third = self.third_derivative_array(ts)
+            result.append(third)
+        return result
+
+class SvCubicBezierCurve(SvCurve):
+    __description__ = "Bezier[3*]"
     def __init__(self, p0, p1, p2, p3):
         self.p0 = np.array(p0)
         self.p1 = np.array(p1)
@@ -872,6 +997,7 @@ class SvBezierCurve(SvCurve):
         c1 = 3*(1-ts)**2 - 6*(1-ts)*ts
         c2 = 6*(1-ts)*ts - 3*ts**2
         c3 = 3*ts**2
+        #print("C/C1", np.array([c0, c1, c2, c3]))
         c0, c1, c2, c3 = c0[:,np.newaxis], c1[:,np.newaxis], c2[:,np.newaxis], c3[:,np.newaxis]
         p0, p1, p2, p3 = self.p0, self.p1, self.p2, self.p3
 
@@ -891,10 +1017,10 @@ class SvBezierCurve(SvCurve):
         return c0*p0 + c1*p1 + c2*p2 + c3*p3
 
     def third_derivative_array(self, ts):
-        c0 = -6
-        c1 = 18
-        c2 = -18
-        c3 = 6
+        c0 = np.full_like(ts, -6)[:,np.newaxis]
+        c1 = np.full_like(ts, 18)[:,np.newaxis]
+        c2 = np.full_like(ts, -18)[:,np.newaxis]
+        c3 = np.full_like(ts, 6)[:,np.newaxis]
         p0, p1, p2, p3 = self.p0, self.p1, self.p2, self.p3
         return c0*p0 + c1*p1 + c2*p2 + c3*p3
 
