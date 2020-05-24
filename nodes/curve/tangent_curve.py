@@ -37,6 +37,7 @@ class SvTangentsCurveNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', "Points")
         self.inputs.new('SvVerticesSocket', "Tangents")
         self.outputs.new('SvCurveSocket', 'Curve')
+        self.outputs.new('SvVerticesSocket', "ControlPoints")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -49,8 +50,10 @@ class SvTangentsCurveNode(bpy.types.Node, SverchCustomTreeNode):
         tangents_s = ensure_nesting_level(tangents_s, 3)
 
         curve_out = []
+        controls_out = []
         for points, tangents in zip_long_repeat(points_s, tangents_s):
             new_curves = []
+            new_controls = []
             control_points = []
             pairs = list(zip_long_repeat(points, tangents))
             segments = list(zip(pairs, pairs[1:]))
@@ -67,12 +70,17 @@ class SvTangentsCurveNode(bpy.types.Node, SverchCustomTreeNode):
                             point1 + tangent1,
                             point2 - tangent2,
                             point2)
+                curve_controls = [curve.p0.tolist(), curve.p1.tolist(),
+                                  curve.p2.tolist(), curve.p3.tolist()]
                 new_curves.append(curve)
+                new_controls.append(curve_controls)
             if self.concat:
                 new_curves = [SvConcatCurve(new_curves)]
             curve_out.append(new_curves)
+            controls_out.append(new_controls)
 
         self.outputs['Curve'].sv_set(curve_out)
+        self.outputs['ControlPoints'].sv_set(controls_out)
 
 def register():
     bpy.utils.register_class(SvTangentsCurveNode)

@@ -13,6 +13,7 @@ Curves
    cubic_spline
    fillet_polyline
    bezier_spline
+   tangent_curve
    curve_formula
    apply_field_to_curve
    concat_curves
