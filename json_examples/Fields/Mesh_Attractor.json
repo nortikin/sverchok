@@ -4,7 +4,7 @@
   "groups": {},
   "nodes": {
     "Apply Field to Surface": {
-      "bl_idname": "SvExApplyFieldToSurfaceNode",
+      "bl_idname": "SvApplyFieldToSurfaceNode",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -18,7 +18,7 @@
       "width": 140.0
     },
     "Attractor Field": {
-      "bl_idname": "SvExAttractorFieldNode",
+      "bl_idname": "SvAttractorFieldNode",
       "custom_socket_props": {
         "0": {
           "prop": [
@@ -77,7 +77,7 @@
       "width": 140.0
     },
     "Evaluate Surface": {
-      "bl_idname": "SvExEvalSurfaceNode",
+      "bl_idname": "SvEvalSurfaceNode",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -92,7 +92,7 @@
       "width": 140.0
     },
     "Plane (Surface)": {
-      "bl_idname": "SvExPlaneSurfaceNode",
+      "bl_idname": "SvPlaneSurfaceNode",
       "custom_socket_props": {
         "0": {
           "prop": [
@@ -160,7 +160,7 @@
       "width": 140.0
     },
     "Vector Field Math": {
-      "bl_idname": "SvExVectorFieldMathNode",
+      "bl_idname": "SvVectorFieldMathNode",
       "height": 100.0,
       "hide": false,
       "label": "",
