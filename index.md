@@ -39,6 +39,7 @@
     HilbertImageNode
     SvProfileNodeMK3
     SvMeshEvalNode
+    SvReceiveFromSorcarNode
     SvGenerativeArtNode
     SvImageComponentsNode
     SvTorusKnotNodeMK2
