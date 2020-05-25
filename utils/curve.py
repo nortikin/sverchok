@@ -392,7 +392,7 @@ class SvFlipCurve(SvCurve):
     def tangent(self, t):
         m, M = self.curve.get_u_bounds()
         t = M - t + m
-        return self.curve.tangent(t)
+        return -self.curve.tangent(t)
         
     def tangent_array(self, ts):
         m, M = self.curve.get_u_bounds()
