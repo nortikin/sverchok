@@ -6,7 +6,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvCurveLengthSolver
+from sverchok.utils.curve import SvCurveLengthSolver, SvCurve
 
 class SvCurveLengthParameterNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -97,41 +97,39 @@ class SvCurveLengthParameterNode(bpy.types.Node, SverchCustomTreeNode):
 
         need_eval = self.outputs['Vertices'].is_linked
 
-        curves = self.inputs['Curve'].sv_get()
+        curves_s = self.inputs['Curve'].sv_get()
         resolution_s = self.inputs['Resolution'].sv_get()
         length_s = self.inputs['Length'].sv_get()
         samples_s = self.inputs['Samples'].sv_get(default=[[]])
 
-        length_s = ensure_nesting_level(length_s, 2)
+        length_s = ensure_nesting_level(length_s, 3)
+        resolution_s = ensure_nesting_level(resolution_s, 2)
+        samples_s = ensure_nesting_level(samples_s, 2)
+        curves_s = ensure_nesting_level(curves_s, 2, data_types=(SvCurve,))
 
         ts_out = []
         verts_out = []
-        for curve, resolution, input_lengths, samples, in zip_long_repeat(curves, resolution_s, length_s, samples_s):
-            if self.eval_mode == 'AUTO':
-                if isinstance(samples, (list, tuple)):
-                    samples = samples[0]
+        for curves, resolutions, input_lengths_i, samples_i in zip_long_repeat(curves_s, resolution_s, length_s, samples_s):
+            for curve, resolution, input_lengths, samples in zip_long_repeat(curves, resolutions, input_lengths_i, samples_i):
 
-            if isinstance(resolution, (list, tuple)):
-                resolution = resolution[0]
+                mode = self.mode
+                if self.id_data.sv_draft:
+                    mode = 'LIN'
+                solver = SvCurveLengthSolver(curve)
+                solver.prepare(mode, resolution)
 
-            mode = self.mode
-            if self.id_data.sv_draft:
-                mode = 'LIN'
-            solver = SvCurveLengthSolver(curve)
-            solver.prepare(mode, resolution)
+                if self.eval_mode == 'AUTO':
+                    total_length = solver.get_total_length()
+                    input_lengths = np.linspace(0.0, total_length, num = samples)
+                else:
+                    input_lengths = np.array(input_lengths)
 
-            if self.eval_mode == 'AUTO':
-                total_length = solver.get_total_length()
-                input_lengths = np.linspace(0.0, total_length, num = samples)
-            else:
-                input_lengths = np.array(input_lengths)
+                ts = solver.solve(input_lengths)
 
-            ts = solver.solve(input_lengths)
-
-            ts_out.append(ts.tolist())
-            if need_eval:
-                verts = curve.evaluate_array(ts).tolist()
-                verts_out.append(verts)
+                ts_out.append(ts.tolist())
+                if need_eval:
+                    verts = curve.evaluate_array(ts).tolist()
+                    verts_out.append(verts)
 
         self.outputs['T'].sv_set(ts_out)
         self.outputs['Vertices'].sv_set(verts_out)

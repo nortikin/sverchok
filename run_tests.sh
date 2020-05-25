@@ -10,5 +10,5 @@ set -e
 
 BLENDER=${BLENDER:-blender}
 
-$BLENDER -b --addons sverchok --python utils/testing.py --python-exit-code 1
+$BLENDER -b --addons sverchok --python utils/testing.py --python-exit-code 1 -- $@
 

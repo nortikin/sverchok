@@ -849,7 +849,13 @@ if __name__ == "__main__":
     import sys
     try:
         #register()
-        result = run_all_tests()
+        argv = sys.argv
+        argv = argv[argv.index("--")+1:]
+        if argv:
+            pattern = argv[0]
+        else:
+            pattern = None
+        result = run_all_tests(pattern=pattern)
         if not result.wasSuccessful():
             # We have to raise an exception for Blender to exit with specified exit code.
             raise Exception("Some tests failed")

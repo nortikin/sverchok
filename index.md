@@ -61,6 +61,8 @@
     SvExPolylineNode
     SvExFilletPolylineNode
     SvExCubicSplineNode
+    SvBezierSplineNode
+    SvTangentsCurveNode
     ---
     SvExApplyFieldToCurveNode
     SvExCastCurveNode
@@ -69,6 +71,7 @@
     ---
     SvExCurveLerpCurveNode
     SvExConcatCurvesNode
+    SvExBlendCurvesNode
     SvExFlipCurveNode
     SvExSurfaceBoundaryNode
     ---

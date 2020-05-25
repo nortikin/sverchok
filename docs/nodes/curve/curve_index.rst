@@ -13,9 +13,12 @@ Curves
    polyline
    cubic_spline
    fillet_polyline
+   bezier_spline
+   tangent_curve
    curve_formula
    apply_field_to_curve
    concat_curves
+   blend_curves
    curve_length
    length_parameter
    length_rebuild
