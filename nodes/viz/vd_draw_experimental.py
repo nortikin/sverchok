@@ -340,7 +340,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     display_edges: BoolProperty(default=True, update=updateNode, name="display edges")
     display_faces: BoolProperty(default=True, update=updateNode, name="display faces")
     draw_gl_wireframe: BoolProperty(default=False, update=updateNode, name="draw gl wireframe")
-    draw_gl_polygonoffset: BoolProperty(default=False, update=updateNode, name="draw gl polygon offset")
+    draw_gl_polygonoffset: BoolProperty(default=True, update=updateNode, name="draw gl polygon offset")
 
     custom_vertex_shader: StringProperty(default=default_vertex_shader, name='vertex shader')
     custom_fragment_shader: StringProperty(default=default_fragment_shader, name='fragment shader')
