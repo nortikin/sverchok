@@ -8,6 +8,7 @@ class SvReceiveFromSorcarNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Receive Mesh Data From Sorcar '''
     bl_idname = 'SvReceiveFromSorcarNode'
     bl_label = 'Receive From Sorcar'
+    sv_icon = 'SV_RECEIVE_FROM_SORCAR'
 
     sc_v = '''[[
         [-0.3333333134651184, -1.0, 0.05000000074505806],
