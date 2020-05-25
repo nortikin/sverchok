@@ -237,7 +237,7 @@ class DefaultMacros():
 
         elif term == 'gp +':
             needed_nodes = [
-                ['SvGetAssetProperties', (0.00, 0.00)],
+                ['SvGetAssetPropertiesMK2', (0.00, 0.00)],
                 ['SvPathLengthMk2Node', (250, 55)],
                 ['SvScalarMathNodeMK4', (430, 115)],
                 ['Float2IntNode', (600, 50)],
