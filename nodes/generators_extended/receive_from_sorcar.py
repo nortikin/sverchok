@@ -1,4 +1,5 @@
 import bpy
+import ast
 from bpy.props import StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -592,13 +593,13 @@ class SvReceiveFromSorcarNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         if self.outputs['Vertices'].is_linked:
-            self.outputs['Vertices'].sv_set(eval(self.verts))
+            self.outputs['Vertices'].sv_set(ast.literal_eval(self.verts))
 
         if self.outputs['Edges'].is_linked:
-            self.outputs['Edges'].sv_set(eval(self.edges))
+            self.outputs['Edges'].sv_set(ast.literal_eval(self.edges))
 
         if self.outputs['Polygons'].is_linked:
-            self.outputs['Polygons'].sv_set(eval(self.faces))
+            self.outputs['Polygons'].sv_set(ast.literal_eval(self.faces))
 
 
 def register():
