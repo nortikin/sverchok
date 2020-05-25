@@ -5,6 +5,15 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+class sv_sock(object):
+    def __init__(self, socket):
+        self.socket = socket
+        self.links = socket.id_data.links
+
+    def __gt__(self, other):
+        self.links.new(self.socket, other.socket)
+
+
 def gp_macro_one(context, operator, term, nodes, links):
     needed_nodes = [
         ['SvGetAssetPropertiesMK2', (0.00, 0.00)],
@@ -35,18 +44,18 @@ def gp_macro_one(context, operator, term, nodes, links):
     uv_con.dir_check = 'U_dir'
 
     # ID Selector -> pathlen and vector interpolate
-    links.new(obj_id.outputs[0], path_len.inputs[0])
-    links.new(obj_id.outputs[0], vec_int.inputs[0])
+    sv_sock(obj_id.outputs[0]) > sv_sock(path_len.inputs[0])
+    sv_sock(obj_id.outputs[0]) > sv_sock(vec_int.inputs[0])
 
     # pathlen -> Vec int.
-    links.new(path_len.outputs[1], scalar_math.inputs[0])
+    sv_sock(path_len.outputs[1]) > sv_sock(scalar_math.inputs[0])
     
     # Scalar Math node -> vec int
-    links.new(scalar_math.outputs[0], vec_int.inputs[1])
+    sv_sock(scalar_math.outputs[0]) > sv_sock(vec_int.inputs[1])
 
     # Vector Interpolate -> uv
-    links.new(vec_int.outputs[0], uv_con.inputs[0])
+    sv_sock(vec_int.outputs[0]) > sv_sock(uv_con.inputs[0])
 
     # uvcon -> Viewer Draw
-    links.new(uv_con.outputs[0], drawnode.inputs[0])
-    links.new(uv_con.outputs[1], drawnode.inputs[1])
+    sv_sock(uv_con.outputs[0]) > sv_sock(drawnode.inputs[0])
+    sv_sock(uv_con.outputs[1]) > sv_sock(drawnode.inputs[1])
