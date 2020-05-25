@@ -43,19 +43,10 @@ def gp_macro_one(context, operator, term, nodes, links):
     uv_con.slice_check = False
     uv_con.dir_check = 'U_dir'
 
-    # ID Selector -> pathlen and vector interpolate
     sv_sock(obj_id.outputs[0]) > sv_sock(path_len.inputs[0])
     sv_sock(obj_id.outputs[0]) > sv_sock(vec_int.inputs[0])
-
-    # pathlen -> Vec int.
     sv_sock(path_len.outputs[1]) > sv_sock(scalar_math.inputs[0])
-    
-    # Scalar Math node -> vec int
     sv_sock(scalar_math.outputs[0]) > sv_sock(vec_int.inputs[1])
-
-    # Vector Interpolate -> uv
     sv_sock(vec_int.outputs[0]) > sv_sock(uv_con.inputs[0])
-
-    # uvcon -> Viewer Draw
     sv_sock(uv_con.outputs[0]) > sv_sock(drawnode.inputs[0])
     sv_sock(uv_con.outputs[1]) > sv_sock(drawnode.inputs[1])
