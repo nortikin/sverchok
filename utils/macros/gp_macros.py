@@ -72,6 +72,7 @@ def gp_macro_two(context, operator, term, nodes, links):
         ['SvGetAssetPropertiesMK2', (0.00, 0.00)],
         ['SvPathLengthMk2Node', (250, 55)],
         ['SvScalarMathNodeMK4', (430, 115)],
+        # needs a list join lev2 from MULX to VECINTRANGE
         ['SvInterpolationNodeMK3', (680, 40)],
         ['LineConnectNodeMK2', (860, -40)],
         ['SvVDExperimental', (1045, 50)],
@@ -91,7 +92,7 @@ def gp_macro_two(context, operator, term, nodes, links):
     obj_id.Mode = 'grease_pencils' 
     vec_int.infer_from_integer_input = True
     scalar_math.current_op = 'MUL'
-    scalar_math.y_ = 2.5
+    scalar_math.y_ = 25
     uv_con.polygons = 'Edges'
     uv_con.slice_check = False
     uv_con.dir_check = 'U_dir'

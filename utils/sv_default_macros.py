@@ -26,7 +26,7 @@ from sverchok.utils.sv_node_utils import nodes_bounding_box
 from sverchok.utils.macros.math_macros import math_macros
 from sverchok.utils.macros.join_macros import join_macros
 from sverchok.utils.macros.switch_macros import switch_macros
-from sverchok.utils.macros.gp_macros import gp_macro_one
+from sverchok.utils.macros.gp_macros import gp_macro_one, gp_macro_two
 
 # pylint: disable=c0301
 
