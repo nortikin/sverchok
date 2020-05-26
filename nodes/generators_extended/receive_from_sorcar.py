@@ -576,13 +576,20 @@ class SvReceiveFromSorcarNode(bpy.types.Node, SverchCustomTreeNode):
 
     verts: StringProperty(name='Vertices',
                          default=sc_v,
-                         options={'ANIMATABLE'}, update=updateNode)
+                         options={'ANIMATABLE'})
     edges: StringProperty(name='Edges',
                          default=sc_e,
-                         options={'ANIMATABLE'}, update=updateNode)
+                         options={'ANIMATABLE'})
     faces: StringProperty(name='Faces',
                         default=sc_f,
-                        options={'ANIMATABLE'}, update=updateNode)
+                        options={'ANIMATABLE'})
+    
+
+    def set_mesh(self, verts, edges, faces):
+        self.verts = verts,
+        self.edges = edges
+        self.faces = faces
+        updateNode(self, None)
     
 
     def sv_init(self, context):
