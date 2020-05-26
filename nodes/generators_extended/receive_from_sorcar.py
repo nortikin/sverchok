@@ -586,7 +586,7 @@ class SvReceiveFromSorcarNode(bpy.types.Node, SverchCustomTreeNode):
     
 
     def set_mesh(self, verts, edges, faces):
-        self.verts = verts,
+        self.verts = verts
         self.edges = edges
         self.faces = faces
         updateNode(self, None)
