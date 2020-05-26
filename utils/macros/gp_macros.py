@@ -76,17 +76,24 @@ def gp_macro_two(context, operator, term, nodes, links):
         ['SvInterpolationNodeMK3', (680, 40)],
         ['LineConnectNodeMK2', (860, -40)],
         ['SvVDExperimental', (1045, 50)],
+        ['ListJoinNode', (430, -20)]
     ]
 
     made_nodes = []
     x, y = context.space_data.cursor_location[:]
     for node_bl_idname, node_location in needed_nodes:
-        n = nodes.new(node_bl_idname)
+        asset_node = "SvGetAssetPropertiesMK2"
+        if node_bl_idname == asset_node and context.active_node and context.active_node.bl_idname == asset_node:
+            # in this case pick up the active object id selector node.
+            n = context.active_node
+        else:
+            n = nodes.new(node_bl_idname)
+
         n.location = node_location[0] + x, node_location[1] + y
         made_nodes.append(n)
 
     # nodes!
-    obj_id, path_len, scalar_math, vec_int, uv_con, drawnode = made_nodes
+    obj_id, path_len, scalar_math, vec_int, uv_con, drawnode, listjoin = made_nodes
 
     # -- node settings --
     obj_id.Mode = 'grease_pencils' 
@@ -96,11 +103,17 @@ def gp_macro_two(context, operator, term, nodes, links):
     uv_con.polygons = 'Edges'
     uv_con.slice_check = False
     uv_con.dir_check = 'U_dir'
+    listjoin.JoinLevel = 2
+    listjoin.hide = True
+
 
     sv_sock(obj_id.outputs[0]) > sv_sock(path_len.inputs[0])
     sv_sock(obj_id.outputs[0]) > sv_sock(vec_int.inputs[0])
     sv_sock(path_len.outputs[1]) > sv_sock(scalar_math.inputs[0])
-    sv_sock(scalar_math.outputs[0]) > sv_sock(vec_int.inputs[1])
+
+    sv_sock(scalar_math.outputs[0]) > sv_sock(listjoin.inputs[0])
+    sv_sock(listjoin.outputs[0]) > sv_sock(vec_int.inputs[1])
+
     sv_sock(vec_int.outputs[0]) > sv_sock(uv_con.inputs[0])
     sv_sock(uv_con.outputs[0]) > sv_sock(drawnode.inputs[0])
     sv_sock(uv_con.outputs[1]) > sv_sock(drawnode.inputs[1])
