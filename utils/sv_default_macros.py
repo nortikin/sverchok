@@ -104,6 +104,10 @@ macros = {
         'display_name': "grease pencil setup",
         'file': 'macro',
         'ident': ['verbose_macro_handler', 'gp +']},
+    "> gp + 2": {
+        'display_name': "grease pencil setup",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'gp + 2']},
     "> all numpy True": {
         'display_name': "existing nodes to numpy",
         'file': 'macro',
@@ -238,3 +242,6 @@ class DefaultMacros():
 
         elif term == 'gp +':
             gp_macro_one(context, operator, term, nodes, links)
+
+        elif term == 'gp + 2':
+            gp_macro_two(context, operator, term, nodes, links)
