@@ -178,11 +178,8 @@ class SvEvolverRun(bpy.types.Operator):
                 info = "Max. time reached in %s iterations" % i
                 break
         fitness_s = evaluate_fitness(population_s, genes, tree, update_list, node)
-        # population_sorted = sorted(list(zip(fitness_s, population_s)), reverse=node.mode == "MAX")
-        # fitness_s, population_s = list(zip(*population_sorted))
         fitness_s, population_s = get_sorted_population(fitness_s, population_s, node.mode)
-        # fitness_s = [l for l, a in population_sorted]
-        # population_s = [a for l, a in population_sorted]
+
         population_all.append(population_s)
         fitness_all.append(fitness_s)
         evolver_mem[node.node_id]["population_all"] = population_all
@@ -244,7 +241,6 @@ class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvEvolverNode'
     bl_label = 'Evolver'
     bl_icon = 'RNA'
-    # sv_icon = 'RNA'
 
     def props_changed(self,context):
         if self.node_id in evolver_mem:
