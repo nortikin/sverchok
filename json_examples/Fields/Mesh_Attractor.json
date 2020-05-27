@@ -17,8 +17,8 @@
       },
       "width": 140.0
     },
-    "Attractor Field": {
-      "bl_idname": "SvExAttractorFieldNode",
+    "Attractor Field.001": {
+      "bl_idname": "SvAttractorFieldNodeMk2",
       "custom_socket_props": {
         "0": {
           "prop": [
@@ -256,14 +256,14 @@
     [
       "Rotate",
       0,
-      "Attractor Field",
+      "Attractor Field.001",
       0
     ],
     [
       "Cylinder",
       2,
-      "Attractor Field",
-      2
+      "Attractor Field.001",
+      4
     ],
     [
       "Vector in",
@@ -272,7 +272,7 @@
       0
     ],
     [
-      "Attractor Field",
+      "Attractor Field.001",
       1,
       "Vector Field Math",
       2
