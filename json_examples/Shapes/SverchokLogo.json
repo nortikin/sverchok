@@ -1,0 +1,320 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "Bezier Spline (Curve)": {
+      "bl_idname": "SvBezierSplineNode",
+      "custom_socket_props": {
+        "0": {
+          "expanded": true,
+          "prop": [
+            -2.0,
+            0.0,
+            0.0
+          ],
+          "use_prop": true
+        },
+        "1": {
+          "expanded": true,
+          "prop": [
+            5.0,
+            0.0,
+            0.0
+          ],
+          "use_prop": true
+        },
+        "2": {
+          "expanded": true,
+          "prop": [
+            5.0,
+            0.0,
+            0.0
+          ],
+          "use_prop": true
+        },
+        "3": {
+          "expanded": true,
+          "prop": [
+            2.0,
+            1.0,
+            0.0
+          ],
+          "use_prop": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -280.6067810058594,
+        117.17616271972656
+      ],
+      "params": {
+        "mode": "3_2pt_tan"
+      },
+      "width": 140.0
+    },
+    "Circle": {
+      "bl_idname": "SvCircleNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        303.83038330078125,
+        336.7546081542969
+      ],
+      "params": {
+        "rad_": 2.0,
+        "vert_": 48
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Crop mesh 2D": {
+      "bl_idname": "SvCropMesh2D",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        526.4841918945312,
+        365.8992004394531
+      ],
+      "params": {
+        "alg_mode": "Blender",
+        "mode": "outer"
+      },
+      "width": 140.0
+    },
+    "Evaluate Curve": {
+      "bl_idname": "SvExEvalCurveNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -101.39099884033203,
+        132.51739501953125
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Input": {
+      "bl_idname": "SvListInputNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -470.58099365234375,
+        -31.22298812866211
+      ],
+      "params": {
+        "mode": "vector",
+        "v_int": 2,
+        "vector_list": [
+          2.0,
+          1.0,
+          0.0,
+          2.0,
+          -1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "width": 140.0
+    },
+    "Mesh Join": {
+      "bl_idname": "SvMeshJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        118.60899353027344,
+        111.95136260986328
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Offset line": {
+      "bl_idname": "SvOffsetLineNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        338.6090087890625,
+        123.41402435302734
+      ],
+      "params": {
+        "offset": 0.10000000149011612
+      },
+      "width": 140.0
+    },
+    "Viewer Draw Mk3": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.5889999866485596,
+        0.21400000154972076
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        725.7998657226562,
+        396.0020751953125
+      ],
+      "params": {
+        "activate": 1,
+        "custom_fragment_shader": "\n    uniform float brightness;\n\n    in vec3 pos;\n\n    void main()\n    {\n        gl_FragColor = vec4(pos * brightness, 1.0);\n    }\n",
+        "custom_shader_location": "",
+        "custom_vertex_shader": "\n    uniform mat4 viewProjectionMatrix;\n\n    in vec3 position;\n    out vec3 pos;\n\n    void main()\n    {\n        pos = position;\n        gl_Position = viewProjectionMatrix * vec4(position, 1.0f);\n    }\n",
+        "display_edges": 1,
+        "display_faces": 1,
+        "display_verts": 0,
+        "draw_gl_polygonoffset": 1,
+        "draw_gl_wireframe": 0,
+        "edge_color": [
+          0.0,
+          0.0011443882249295712,
+          0.14550375938415527,
+          1.0
+        ],
+        "extended_matrix": 0,
+        "face_color": [
+          0.14000000059604645,
+          0.5400000214576721,
+          0.8100000023841858,
+          1.0
+        ],
+        "handle_concave_quads": 0,
+        "line_width": 1,
+        "node_ui_show_attrs_socket": 0,
+        "point_size": 4.0,
+        "selected_draw_mode": "facet",
+        "u_dash_size": 0.11999999731779099,
+        "u_gap_size": 0.1899999976158142,
+        "u_resolution": [
+          25.0,
+          18.0
+        ],
+        "use_dashed": 0,
+        "vector_light": [
+          0.20000000298023224,
+          0.6000000238418579,
+          0.4000000059604645
+        ],
+        "vert_color": [
+          0.800000011920929,
+          0.800000011920929,
+          0.800000011920929,
+          1.0
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "List Input",
+      0,
+      "Bezier Spline (Curve)",
+      3
+    ],
+    [
+      "Bezier Spline (Curve)",
+      0,
+      "Evaluate Curve",
+      0
+    ],
+    [
+      "Evaluate Curve",
+      0,
+      "Mesh Join",
+      0
+    ],
+    [
+      "Evaluate Curve",
+      1,
+      "Mesh Join",
+      1
+    ],
+    [
+      "Mesh Join",
+      0,
+      "Offset line",
+      0
+    ],
+    [
+      "Mesh Join",
+      1,
+      "Offset line",
+      1
+    ],
+    [
+      "Circle",
+      0,
+      "Crop mesh 2D",
+      0
+    ],
+    [
+      "Circle",
+      2,
+      "Crop mesh 2D",
+      1
+    ],
+    [
+      "Offset line",
+      0,
+      "Crop mesh 2D",
+      2
+    ],
+    [
+      "Offset line",
+      1,
+      "Crop mesh 2D",
+      3
+    ],
+    [
+      "Crop mesh 2D",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "Crop mesh 2D",
+      1,
+      "Viewer Draw Mk3",
+      2
+    ]
+  ]
+}
