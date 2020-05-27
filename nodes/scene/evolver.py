@@ -75,12 +75,16 @@ def initial_population(genes, init_pop_num):
 
 
 def evaluate_fitness(population, genes, tree, update_list, node):
-    fitness = []
 
+    fitness = []
     for agent in population:
         tree.sv_process = False
         for g, s in zip(genes, agent):
-            tree.nodes[g[0]].float_= s
+            if g.g_type == 'float':
+                tree.nodes[g.name].float_= s
+            else:
+                tree.nodes[g.name].int_= s
+
         tree.sv_process = True
         do_update(update_list, tree.nodes)
         a = node.inputs[0].sv_get(deepcopy=False)[0]
@@ -96,8 +100,9 @@ def get_new_population(population, fitness, genes, mutation, fitness_booster, mo
     else:
         weights = 1/np.power(np.array(fitness), fitness_booster)
     weights = weights/np.sum(weights)
-    parents = np.random.choice(len(population), [len(population),2], replace=True, p=weights)
-    new_population = []
+    parents = np.random.choice(len(population), [len(population)-1, 2], replace=True, p=weights)
+    # we keep the fittest for the next generation
+    new_population = [population[0]]
     for ancestors in  parents:
         p0 = population[ancestors[0]]
         p1 = population[ancestors[1]]
@@ -117,7 +122,6 @@ def get_new_population(population, fitness, genes, mutation, fitness_booster, mo
             else:
                 fp1 = random()
                 new_gene = (g * fp1 + g1 * (1 - fp1))
-                # new_gene = (g* weight0 + g1 * weight1)
 
             if o_gene.g_type == 'int':
                 new_gene = int(new_gene)
@@ -126,6 +130,10 @@ def get_new_population(population, fitness, genes, mutation, fitness_booster, mo
         new_population.append(new_agent)
 
     return new_population
+
+def get_sorted_population(fitness, population, mode):
+    population_sorted = sorted(list(zip(fitness, population)), reverse=(mode == "MAX"))
+    return list(zip(*population_sorted))
 
 class SvEvolverRun(bpy.types.Operator):
 
@@ -138,10 +146,17 @@ class SvEvolverRun(bpy.types.Operator):
     def execute(self, context):
         tree = bpy.data.node_groups[self.idtree]
         node = bpy.data.node_groups[self.idtree].nodes[self.idname]
+
+        if not node.inputs[0].is_linked:
+            node.info_label = "Stopped - Fitness not linked"
+            return {'FINISHED'}
+
         genotype_frame = node.genotype
         evolver_mem[node.node_id] = {}
+
         seed_set(node.r_seed)
         np.random.seed(node.r_seed)
+
         genes = get_genes(tree, genotype_frame)
         update_list = make_tree_from_nodes([g.name for g in genes], tree)
         time_start = time.time()
@@ -151,21 +166,23 @@ class SvEvolverRun(bpy.types.Operator):
         population_all = []
         fitness_all = []
         for i in range(node.iterations-1):
-            fitness = evaluate_fitness(population_s, genes, tree, update_list, node)
+            fitness_s = evaluate_fitness(population_s, genes, tree, update_list, node)
+            fitness_s, population_s = get_sorted_population(fitness_s, population_s, node.mode)
             population_all.append(population_s)
-            fitness_all.append(fitness)
-            population_s = get_new_population(population_s, fitness, genes, node.mutation, node.fitness_booster, node.mode)
-            node.info_label="evolver in %s iteration" % i
+            fitness_all.append(fitness_s)
+            population_s = get_new_population(population_s, fitness_s, genes, node.mutation, node.fitness_booster, node.mode)
+
             print("evolver in %s iteration" % i)
             if (time.time() - time_start) > node.max_time:
                 print("maximum time reached in %s iterations" % i)
                 info = "Max. time reached in %s iterations" % i
                 break
-        fitness = evaluate_fitness(population_s, genes, tree, update_list, node)
-        population_sorted = sorted(list(zip(fitness, population_s)), reverse=node.mode == "MAX")
-        # set_fittest(target_tree, genes, population_sorted[0], update_list)
-        fitness_s = [l for l, a in population_sorted]
-        population_s = [a for l, a in population_sorted]
+        fitness_s = evaluate_fitness(population_s, genes, tree, update_list, node)
+        # population_sorted = sorted(list(zip(fitness_s, population_s)), reverse=node.mode == "MAX")
+        # fitness_s, population_s = list(zip(*population_sorted))
+        fitness_s, population_s = get_sorted_population(fitness_s, population_s, node.mode)
+        # fitness_s = [l for l, a in population_sorted]
+        # population_s = [a for l, a in population_sorted]
         population_all.append(population_s)
         fitness_all.append(fitness_s)
         evolver_mem[node.node_id]["population_all"] = population_all
@@ -173,9 +190,7 @@ class SvEvolverRun(bpy.types.Operator):
         evolver_mem[node.node_id]["genes"] = genes
         evolver_mem[node.node_id]["population"] = population_s
         evolver_mem[node.node_id]["fitness"] = fitness_s
-        # node.outputs[0].sv_set([genes])
-        # node.outputs[1].sv_set([population_s])
-        # node.outputs[2].sv_set([fitness_s])
+
         node.info_label = info
         update_list = make_tree_from_nodes([node.name], tree)
         do_update(update_list, tree.nodes)
@@ -213,10 +228,10 @@ class SvEvolverSetFittest(bpy.types.Operator):
 def get_framenodes(base_node, b):
 
     items = [
-        ('All', "All", "Use all 'A number' nodes. Create Frame around Number nodes the define genotype", 0),
+        ('All', "All", "Use all 'A number' nodes. Create Frame around 'A Number' nodes the restrict genotype", 0),
 
     ]
-    # items =[]
+
     tree = base_node.id_data
 
     for node in tree.nodes:
@@ -248,8 +263,8 @@ class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
         update=props_changed
         )
     mode_items=[
-        ('MAX','Maximum', '', 0),
-        ('MIN','Minimum', '', 1),
+        ('MAX', 'Maximum', '', 0),
+        ('MIN', 'Minimum', '', 1),
         ]
     mode: EnumProperty(
         name="Mode",
@@ -280,6 +295,7 @@ class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
         min=0,
         update=props_changed
     )
+
     fitness_booster: IntProperty(
         name="Fitness boost",
         description="Fittest population will be more probable to be choosen (power)",
@@ -287,6 +303,7 @@ class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
         min=1,
         update=props_changed
     )
+
     max_time: IntProperty(
         default=10,
         min=1,
@@ -296,7 +313,7 @@ class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
     info_label: StringProperty(default="Not Executed")
 
     def sv_init(self, context):
-        self.inputs.new('SvVerticesSocket', 'fitness')
+        self.inputs.new('SvVerticesSocket', 'Fitness')
         self.outputs.new('SvStringsSocket', 'Genes')
         self.outputs.new('SvStringsSocket', 'Population')
         self.outputs.new('SvStringsSocket', 'Fitness')
@@ -319,7 +336,7 @@ class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
-        # end early?
+
 
         if self.node_id in evolver_mem and 'genes' in evolver_mem[self.node_id]:
             outputs = self.outputs
