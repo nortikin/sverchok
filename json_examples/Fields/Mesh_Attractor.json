@@ -1,0 +1,335 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "Apply Field to Surface": {
+      "bl_idname": "SvExApplyFieldToSurfaceNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        172.9166717529297,
+        366.0107421875
+      ],
+      "params": {
+        "coefficient": 1.0
+      },
+      "width": 140.0
+    },
+    "Attractor Field.001": {
+      "bl_idname": "SvAttractorFieldNodeMk2",
+      "custom_socket_props": {
+        "0": {
+          "prop": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "use_prop": true
+        },
+        "1": {
+          "prop": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "use_prop": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -318.75,
+        214.9488067626953
+      ],
+      "params": {
+        "amplitude": 0.5,
+        "attractor_type": "Mesh",
+        "clamp": 0,
+        "coefficient": 0.5,
+        "falloff_type": "smooth",
+        "signed": 0
+      },
+      "width": 140.0
+    },
+    "Cylinder": {
+      "bl_idname": "SvCylinderNodeMK2",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 3.8600001335144043,
+      "hide": false,
+      "label": "",
+      "location": [
+        -810.4166870117188,
+        366.0107421875
+      ],
+      "params": {
+        "height": 3.8600001335144043,
+        "radius_b": 2.0,
+        "radius_t": 2.990000009536743
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Evaluate Surface": {
+      "bl_idname": "SvExEvalSurfaceNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        418.75,
+        366.0107421875
+      ],
+      "params": {
+        "samples_u": 100,
+        "samples_v": 100
+      },
+      "width": 140.0
+    },
+    "Plane (Surface)": {
+      "bl_idname": "SvExPlaneSurfaceNode",
+      "custom_socket_props": {
+        "0": {
+          "prop": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "use_prop": true
+        },
+        "1": {
+          "prop": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "use_prop": true
+        },
+        "2": {
+          "prop": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "use_prop": true
+        },
+        "3": {
+          "prop": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "use_prop": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -72.91667175292969,
+        214.13009643554688
+      ],
+      "params": {
+        "u_max": 5.0,
+        "u_min": -5.0,
+        "v_max": 5.0,
+        "v_min": -5.0
+      },
+      "width": 140.0
+    },
+    "Rotate": {
+      "bl_idname": "SvRotationNodeMk3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -564.5833129882812,
+        366.0107421875
+      ],
+      "params": {
+        "mode": "EULER",
+        "x_": 44.909996032714844,
+        "y_": 31.559999465942383,
+        "z_": 4.8299994468688965
+      },
+      "width": 140.0
+    },
+    "Vector Field Math": {
+      "bl_idname": "SvExVectorFieldMathNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -72.91667175292969,
+        366.0107421875
+      ],
+      "params": {
+        "operation": "MUL"
+      },
+      "width": 140.0
+    },
+    "Vector in": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -318.75,
+        366.0107421875
+      ],
+      "params": {
+        "z_": 1.0
+      },
+      "width": 100.0
+    },
+    "Viewer Draw Mk3": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        664.5833129882812,
+        366.0107421875
+      ],
+      "params": {
+        "activate": 1,
+        "display_edges": 1,
+        "display_verts": 0,
+        "draw_gl_polygonoffset": 1,
+        "edge_color": [
+          0.027096865698695183,
+          0.048660680651664734,
+          0.2568495571613312,
+          1.0
+        ],
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw Mk3.001": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -339.4540710449219,
+        428.6216125488281
+      ],
+      "params": {
+        "activate": 1,
+        "display_faces": 0,
+        "face_color": [
+          0.4342634677886963,
+          0.8100003600120544,
+          0.7149121165275574,
+          1.0
+        ],
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Cylinder",
+      0,
+      "Rotate",
+      0
+    ],
+    [
+      "Rotate",
+      0,
+      "Attractor Field.001",
+      0
+    ],
+    [
+      "Cylinder",
+      2,
+      "Attractor Field.001",
+      4
+    ],
+    [
+      "Vector in",
+      0,
+      "Vector Field Math",
+      0
+    ],
+    [
+      "Attractor Field.001",
+      1,
+      "Vector Field Math",
+      2
+    ],
+    [
+      "Vector Field Math",
+      0,
+      "Apply Field to Surface",
+      0
+    ],
+    [
+      "Plane (Surface)",
+      0,
+      "Apply Field to Surface",
+      1
+    ],
+    [
+      "Rotate",
+      0,
+      "Viewer Draw Mk3.001",
+      0
+    ],
+    [
+      "Cylinder",
+      1,
+      "Viewer Draw Mk3.001",
+      1
+    ],
+    [
+      "Cylinder",
+      2,
+      "Viewer Draw Mk3.001",
+      2
+    ],
+    [
+      "Apply Field to Surface",
+      0,
+      "Evaluate Surface",
+      0
+    ],
+    [
+      "Evaluate Surface",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "Evaluate Surface",
+      1,
+      "Viewer Draw Mk3",
+      1
+    ],
+    [
+      "Evaluate Surface",
+      2,
+      "Viewer Draw Mk3",
+      2
+    ]
+  ]
+}

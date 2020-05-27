@@ -1,0 +1,359 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -434.47662353515625,
+        -215.14053344726562
+      ],
+      "params": {
+        "float_": 0.0,
+        "float_draft_": 0.0,
+        "int_": 15,
+        "int_draft_": 0,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "A Number.001": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -907.1671142578125,
+        -48.4946403503418
+      ],
+      "params": {
+        "float_": 0.75,
+        "float_draft_": 0.0,
+        "int_": 0,
+        "int_draft_": 0
+      },
+      "width": 140.0
+    },
+    "Apply Vector Field": {
+      "bl_idname": "SvExVectorFieldApplyNode",
+      "custom_socket_props": {
+        "1": {
+          "prop": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "use_prop": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        35.74256134033203,
+        66.97238159179688
+      ],
+      "params": {
+        "coefficient": -0.4700000286102295
+      },
+      "width": 140.0
+    },
+    "Cubic Spline": {
+      "bl_idname": "SvExCubicSplineNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        412.6316833496094,
+        22.382421493530273
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Evaluate Curve": {
+      "bl_idname": "SvExEvalCurveNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        603.443603515625,
+        37.664676666259766
+      ],
+      "params": {
+        "sample_size": 50
+      },
+      "width": 140.0
+    },
+    "List Split": {
+      "bl_idname": "SvListSplitNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        221.4541473388672,
+        51.82527542114258
+      ],
+      "params": {
+        "split": 20
+      },
+      "width": 140.0
+    },
+    "Matrix In": {
+      "bl_idname": "SvMatrixInNodeMK4",
+      "custom_socket_props": {
+        "1": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -959.1124877929688,
+        293.1858825683594
+      ],
+      "params": {
+        "scale": [
+          3.0,
+          3.0,
+          3.0
+        ]
+      },
+      "width": 140.0
+    },
+    "Noise Vector Field": {
+      "bl_idname": "SvExNoiseVectorFieldNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -946.8075561523438,
+        58.02244186401367
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Polyline Viewer": {
+      "bl_idname": "SvPolylineViewerNodeV28",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        804.1566772460938,
+        194.48263549804688
+      ],
+      "params": {
+        "basedata_name": "RV_Alpha"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Random Vector MK2": {
+      "bl_idname": "RandomVectorNodeMK2",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -608.846923828125,
+        269.90643310546875
+      ],
+      "params": {
+        "count_inner": 5,
+        "scale": 3.0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Vector Field Math": {
+      "bl_idname": "SvExVectorFieldMathNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -397.4988098144531,
+        89.25181579589844
+      ],
+      "params": {
+        "operation": "MUL"
+      },
+      "width": 140.0
+    },
+    "Vector Field Math.001": {
+      "bl_idname": "SvExVectorFieldMathNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -200.76620483398438,
+        117.0380859375
+      ],
+      "params": {
+        "operation": "ADD"
+      },
+      "width": 140.0
+    },
+    "Vector Field Math.002": {
+      "bl_idname": "SvExVectorFieldMathNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -704.4346923828125,
+        131.74850463867188
+      ],
+      "params": {
+        "operation": "COMPOSE"
+      },
+      "width": 140.0
+    },
+    "Vector P Field": {
+      "bl_idname": "SvHomogenousVectorField",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -205.94155883789062,
+        -64.5413818359375
+      ],
+      "params": {
+        "sizex__": 10.0,
+        "sizey__": 10.0,
+        "sizez__": 10.0,
+        "xdim__": 20,
+        "ydim__": 20,
+        "zdim__": 20
+      },
+      "width": 140.0
+    },
+    "Voronoi Field": {
+      "bl_idname": "SvExVoronoiFieldNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -391.8202819824219,
+        209.67538452148438
+      ],
+      "params": {},
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "A Number",
+      0,
+      "Vector P Field",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Vector P Field",
+      1
+    ],
+    [
+      "A Number",
+      0,
+      "Vector P Field",
+      2
+    ],
+    [
+      "Random Vector MK2",
+      0,
+      "Voronoi Field",
+      0
+    ],
+    [
+      "Matrix In",
+      0,
+      "Vector Field Math.002",
+      0
+    ],
+    [
+      "Noise Vector Field",
+      0,
+      "Vector Field Math.002",
+      1
+    ],
+    [
+      "Vector Field Math.002",
+      0,
+      "Vector Field Math",
+      0
+    ],
+    [
+      "A Number.001",
+      0,
+      "Vector Field Math",
+      2
+    ],
+    [
+      "Voronoi Field",
+      1,
+      "Vector Field Math.001",
+      0
+    ],
+    [
+      "Vector Field Math",
+      0,
+      "Vector Field Math.001",
+      1
+    ],
+    [
+      "Vector Field Math.001",
+      0,
+      "Apply Vector Field",
+      0
+    ],
+    [
+      "Vector P Field",
+      0,
+      "Apply Vector Field",
+      1
+    ],
+    [
+      "Apply Vector Field",
+      0,
+      "List Split",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "List Split",
+      1
+    ],
+    [
+      "List Split",
+      0,
+      "Cubic Spline",
+      0
+    ],
+    [
+      "Cubic Spline",
+      0,
+      "Evaluate Curve",
+      0
+    ],
+    [
+      "Evaluate Curve",
+      0,
+      "Polyline Viewer",
+      0
+    ]
+  ]
+}
