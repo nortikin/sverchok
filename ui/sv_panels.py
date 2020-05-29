@@ -103,7 +103,7 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
     bl_label = "start n stop obj updating"
 
     _timer = None
-    mode: StringProperty(default='')
+    mode: StringProperty(default='toggle')
     node_name: StringProperty(default='')
     node_group: StringProperty(default='')
     speed: FloatProperty(default=1 / 13)
@@ -135,19 +135,33 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
 
         return {'PASS_THROUGH'}
 
+    def start(self, context):
+        context.scene.SvShowIn3D_active = True
+
+        # rate can only be set in event_timer_add (I think...)
+        # self.speed = 1 / context.node.updateRate
+
+        wm = context.window_manager
+        self._timer = wm.event_timer_add(self.speed, window=context.window)
+        wm.modal_handler_add(self)
+        self.report({'INFO'}, "Live Update mode enabled")
+
+    def stop(self, context):
+        context.scene.SvShowIn3D_active = False
+
+    def toggle(self, context):
+        if context.scene.SvShowIn3D_active:
+            self.stop(context)
+        else:
+            self.start(context)
+
     def event_dispatcher(self, context, type_op):
         if type_op == 'start':
-            context.scene.SvShowIn3D_active = True
-
-            # rate can only be set in event_timer_add (I think...)
-            # self.speed = 1 / context.node.updateRate
-
-            wm = context.window_manager
-            self._timer = wm.event_timer_add(self.speed, window=context.window)
-            wm.modal_handler_add(self)
-
-        if type_op == 'end':
-            context.scene.SvShowIn3D_active = False
+            self.start(context)
+        elif type_op == 'end':
+            self.stop(context)
+        else:
+            self.toggle(context)
 
     def execute(self, context):
         # n  = context.node
@@ -160,7 +174,7 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
     def cancel(self, context):
         wm = context.window_manager
         wm.event_timer_remove(self._timer)
-
+        self.report({'INFO'}, "Live Update mode disabled")
 
 class SV_PT_3DPanel(bpy.types.Panel):
     ''' Panel to manipuplate parameters in Sverchok layouts '''
@@ -482,6 +496,12 @@ def node_show_tree_mode(self, context):
             icon = 'CHECKMARK'
         layout.label(text=message, icon=icon)
 
+def view3d_show_live_mode(self, context):
+    if context.scene.SvShowIn3D_active:
+        layout = self.layout
+        OP = 'wm.sv_obj_modal_update'
+        layout.operator(OP, text='Stop Live Update', icon='CANCEL').mode = 'end'
+        
 sv_tools_classes = [
     Sv3DViewObjInUpdater,
     SV_PT_ToolsMenu,
@@ -507,6 +527,7 @@ def register():
         bpy.utils.register_class(class_name)
 
     bpy.types.NODE_HT_header.append(node_show_tree_mode)
+    bpy.types.VIEW3D_HT_header.append(view3d_show_live_mode)
 
 def unregister():
     for class_name in reversed(sv_tools_classes):
@@ -515,4 +536,5 @@ def unregister():
     del bpy.types.NodeTree.SvShowIn3D
     del bpy.types.Scene.SvShowIn3D_active
     bpy.types.NODE_HT_header.remove(node_show_tree_mode)
+    bpy.types.VIEW3D_HT_header.remove(view3d_show_live_mode)
 
