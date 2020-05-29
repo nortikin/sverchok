@@ -92,6 +92,7 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
         #row.prop(self,    "mode2",   text="Out Mode")
 
     def process(self):
+
         o,r,e = self.inputs
         #dd,o,r,e = self.inputs
         N,H = self.outputs
@@ -106,9 +107,9 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
             st.append(i.center[:])
             #(np.array(st_).sum(axis=1)/len(i.vertices)).tolist())
             #(np.array([[rec.data.vertices[k].co[:] for k in i.vertices]/len(i.vertices) for i in rec.data.polygons]).sum(axis=1)).tolist()
-        if N.is_linked:
-            N.sv_set([st])
+
         lenor = len(st)
+        st_ = st
         st, en = match_cross([st, e.sv_get()[0]]) # 1,1,1,2,2,2 + 4,5,6,4,5,6
 
         for OB in obj:
@@ -128,6 +129,7 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
         self.debug(outfin)
 
         OutS_ = np.array([[i[0] for i in i2] for i2 in outfin]).reshape([leno,lenor,lendir])
+
         def colset(rec,OutS_):
             OutS_ = 1-OutS_.sum(axis=2)/lendir
             OutS = np.array([[[i,i,i,1] for i in k] for k in OutS_.tolist()]).reshape([leno,lenor,4]).tolist()
@@ -138,7 +140,9 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
                 self.debug(pol.loop_indices,OutS[0][i])
                 for co in pol.loop_indices:
                     colors[co].color = OutS[0][i]
+
         colset(rec,OutS_)
+
         def matset(rec):
             # add new material with nodes
             ms = rec.material_slots
@@ -170,20 +174,27 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
             att.attribute_name = 'SvInsol'
             trem.links.new(dif.inputs[0],att.outputs[0])
             trem.links.new(out.inputs[0],dif.outputs[0])
+
         matset(rec)
-        if H.is_linked:
-            OutH = []
+
+        if N.is_linked:
+            OutH, OutN = [], []
             for k in OutS_.sum(axis=2).tolist():
-                OutH_ = []
-                for i in k:
+                OutH_, OutN_ = [], []
+                for i,j in zip(k,st_):
                     li = lendir-i
                     if li < sc+1:
                         OutH_.append([str(li)])
-                    else:
-                        OutH_.append([''])
+                        OutN_.append(j)
+                    #else:
+                        #OutH_.append([''])
                 OutH.append(OutH_)
+                OutN.append(OutN_)
             #OutH = [[[str(lendir-i)] for i in k] for k in OutS_.sum(axis=2).tolist()]
             H.sv_set(OutH)
+            N.sv_set(OutN)
+
+
         '''if S.is_linked:
             OutS = np.array([[[i,i,0,1.0] for i in k] for k in OutS_.tolist()]).reshape([leno,lenor,4]).tolist()
             #OutS = 1-OutS_.sum(axis=2)/lendir
