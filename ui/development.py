@@ -237,6 +237,15 @@ class SV_MT_LoadPresetMenu(bpy.types.Menu):
         if not has_presets:
             layout.label(text="There are no presets for this node")
 
+        # In the N panel, we are showing Save button separately
+        if hasattr(context, 'region') and context.region.type == 'WINDOW':
+            layout.separator()
+            layout.operator_context = 'INVOKE_DEFAULT' # otherwise Blender will not call invoke()
+            save = layout.operator(SvSaveSelected.bl_idname, text="Save current settings as preset", icon='SOLO_ON')
+            save.id_tree = ntree.name
+            save.category = node.bl_idname
+            save.save_defaults = True
+
 def idname_draw(self, context):
     if not displaying_sverchok_nodes(context):
         return

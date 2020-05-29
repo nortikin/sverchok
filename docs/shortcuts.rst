@@ -64,3 +64,6 @@ This is a collection of shortcuts useful in the Sverchok node tree, some are Ble
 **Ctrl + Right Click** - Cut Links
 
 **Right Click** - Access to Sverchok Right Click Menu
+
+**Shift + P** on a node in Node Editor - open Load / Save Preset menu for this node.
+

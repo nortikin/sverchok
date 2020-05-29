@@ -196,6 +196,9 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
 
             layout.separator()
 
+        if node:
+            layout.menu('SV_MT_LoadPresetMenu', text="Presets")
+
         if node and node.bl_idname == 'NodeFrame':
             # give options for Frame nodes..
             col = layout.column(align=True)
