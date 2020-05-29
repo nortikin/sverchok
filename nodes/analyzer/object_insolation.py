@@ -145,6 +145,8 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
             if not 'svmat' in bpy.data.materials:
                 manew = bpy.data.materials.new('svmat')
                 manew.use_nodes = True
+            else:
+                manew = bpy.data.materials['svmat']
             if not len(ms):
                 # append if no slots
                 rec.data.materials.append(manew)
@@ -161,8 +163,13 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
                 dif = matnodes.new('ShaderNodeBsdfDiffuse')
             else:
                 dif = matnodes['Diffuse BSDF']
+            if not 'Material Output' in matnodes:
+                out = matnodes.new('ShaderNodeOutputMaterial')
+            else:
+                out = matnodes['Material Output']
             att.attribute_name = 'SvInsol'
             trem.links.new(dif.inputs[0],att.outputs[0])
+            trem.links.new(out.inputs[0],dif.outputs[0])
         matset(rec)
         if H.is_linked:
             OutH = []
