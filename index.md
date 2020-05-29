@@ -401,6 +401,8 @@
     SvNeuroElman1LNode
     SvCustomSwitcher
     SvRangeSwitchNode
+    ---
+    SvEvolverNode
 
 ## Viz
     Sv3DviewPropsNode
@@ -532,5 +534,3 @@
     ---
     SvGetPropNodeMK2
     SvSetPropNodeMK2
-    ---
-    SvEvolverNode

@@ -5,6 +5,10 @@ This node implements a Genetics Algorithm system inspired in Galapagos (the Gras
 
 The system creates a starting population, evaluates the fitness of each "agent" and creates a new population bases on the crossover of the fitter agents and a mutation chance. The new population is evaluated and mixed every iteration rising the global fitness of the population by generating fitter agents.
 
+The starting value of the Genotype nodes will be the first agent of the population.
+
+The fittest agent of each generation will survive cloning himself to the next iteration.
+
 Every agent is composed by a set of genes that can oscillate among determined values, the fitter agents have more chances to spread their genetic information.
 
 In Sverchok every gen is defined by a "A Number" node. This node type has a minimum and a maximum that will control the variation possibilities of this gen. The node can use all the "A number" nodes of the node-tree or only some of them if they are inside a "Frame Node" that can be selected from the "Genotype" dropdown menu.
@@ -29,6 +33,10 @@ Parameters
 **Mutation**: 0 the gene will never mutate, 1 will always mutate. The mutation has a 50% of being totally new and other 50% of being inherited from its ancestors and changed by a random amount (small mutation)
 
 **Max Seconds**: Maximum time to run the system, when achieved the system will stop providing the last valid generation of members
+
+**Use Fitness Goal**: When active the process will stop if fitness goal is achieved or improved
+
+**Fitness Goal**: Value that will stop the process if achieved or improved.
 
 Operators
 ---------
