@@ -897,10 +897,14 @@ class SvBezierCurve(SvCurve):
         p4 = -k7/210.0 + 3*p5 - 3*p6 + p7
         return SvBezierCurve([p0, p1, p2, p3, p4, p5, p6, p7])
 
-    def coeff(self, k, ts):
-        n = self.degree
+    @classmethod
+    def coefficient(cls, n, k, ts):
         C = binomial(n, k)
         return C * ts**k * (1 - ts)**(n-k)
+
+    def coeff(self, k, ts):
+        n = self.degree
+        return SvBezierCurve.coefficient(n, k, ts)
 
     def coeff_deriv1(self, k, t):
         n = self.degree
@@ -973,7 +977,7 @@ class SvBezierCurve(SvCurve):
         return self.evaluate_array(np.array([t]))[0]
 
     def evaluate_array(self, ts):
-        coeffs = [self.coeff(k, ts) for k in range(len(self.points))]
+        coeffs = [SvBezierCurve.coefficient(self.degree, k, ts) for k in range(len(self.points))]
         coeffs = np.array(coeffs)
         return np.dot(coeffs.T, self.points)
 
