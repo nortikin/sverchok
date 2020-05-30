@@ -63,6 +63,7 @@
     SvExFilletPolylineNode
     SvExCubicSplineNode
     SvBezierSplineNode
+    SvKinkyCurveNode
     SvTangentsCurveNode
     ---
     SvExApplyFieldToCurveNode
