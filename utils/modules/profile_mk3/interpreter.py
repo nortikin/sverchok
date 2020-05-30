@@ -1072,7 +1072,10 @@ class Interpreter(object):
     def new_line_segment(self, v1, v2):
         if isinstance(v1, int):
             v1, v2 = self.vertices[v1], self.vertices[v2]
-        curve = SvLine.from_two_points(self.to3d(v1), self.to3d(v2))
+        v1, v2 = self.to3d(v1), self.to3d(v2)
+        if (v1 - v2).length < self.close_threshold:
+            return
+        curve = SvLine.from_two_points(v1, v2)
         self.curves.append(curve)
 
     def start_new_segment(self):
