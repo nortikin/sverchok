@@ -10,6 +10,7 @@ Curves
    rounded_rectangle
    arc_3pt
    arc_sed
+   polyarc
    polyline
    cubic_spline
    fillet_polyline

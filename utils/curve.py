@@ -538,7 +538,7 @@ class SvCircle(SvCurve):
                 circle.u_bounds = (0, eq.arc_angle)
             return circle
         else:
-            raise TypeError("Unsupported argument type")
+            raise TypeError("Unsupported argument type:" + str(eq))
 
     def get_u_bounds(self):
         return self.u_bounds

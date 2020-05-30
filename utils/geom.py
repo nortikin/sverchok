@@ -1209,6 +1209,7 @@ class PlaneEquation(object):
 
         det = linalg.det(matrix)
         if abs(det) < min_det:
+            print(f"No intersection: det = {det}")
             return None
             #raise Exception("Plane: {}, line: {}, det: {}".format(self, line, det))
 
@@ -1310,8 +1311,8 @@ class PlaneEquation(object):
                 p0 = p0 + v1
             else:
                 p0 = p0 + v2
-        line1 = LineEquation.from_direction_and_point(v1, p0)
-        line2 = LineEquation.from_direction_and_point(v2, p0)
+        line1 = LineEquation.from_direction_and_point(v1, p0).normalized()
+        line2 = LineEquation.from_direction_and_point(v2, p0).normalized()
 
         # it might be that one of vectors we chose is parallel to plane2
         # (since we are choosing them arbitrarily); but from the way
@@ -1327,6 +1328,10 @@ class PlaneEquation(object):
 
         p1 = plane2.intersect_with_line(line1)
         p2 = plane2.intersect_with_line(line2)
+        if p1 is None:
+            raise Exception(f"Plane {plane2} does not intersect with line {line1}")
+        if p2 is None:
+            raise Exception(f"Plane {plane2} does not intersect with line {line2}")
         return LineEquation.from_two_points(p1, p2)
 
     def is_parallel(self, other):
@@ -1363,8 +1368,15 @@ class LineEquation(object):
         self.c = c
         self.point = point
 
+    def normalized(self):
+        a1, b1, c1 = tuple(self.direction.normalized())
+        eq = LineEquation(a1, b1, c1, self.point)
+        return eq
+
     @classmethod
     def from_two_points(cls, p1, p2):
+        if p1 is None or p2 is None:
+            raise TypeError("None was passed instead of one of points")
         if (mathutils.Vector(p1) - mathutils.Vector(p2)).length < 1e-8:
             raise Exception("Two points are (almost) the same: {}, {}".format(p1, p2))
         x1, y1, z1 = p1[0], p1[1], p1[2]
