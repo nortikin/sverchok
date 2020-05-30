@@ -64,3 +64,14 @@ Outputs
 **Population**: Outputs the population. It can be only the last generation or all generations.
 
 **Fitness**: Outputs the fitness of the population. It can be only the last generation or all generations.
+
+Examples
+--------
+
+Solved problem: Which is the smallest box (as the sum of faces area) in which I can fit Suzanne mesh?
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_01.png
+
+Solved problem: Where is the point where the minimum distance to a set of points is closest to the maximum distance?
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_02.png

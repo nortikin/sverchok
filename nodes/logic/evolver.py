@@ -113,7 +113,7 @@ class DNA:
                 else:
                     #small gene mutation
                     mixing_factor = random()
-                    new_gene = ancestor1_gene*mixing_factor + ancestor2_gene*(1-mixing_factor)
+                    new_gene = ancestor1_gene * mixing_factor + ancestor2_gene * (1-mixing_factor)
                     small_mutation = (random() - 0.5) * o_gene.range * mutation_threshold
                     new_gene += small_mutation
                     new_gene = max(min(new_gene, o_gene.max_n), o_gene.min_n)
