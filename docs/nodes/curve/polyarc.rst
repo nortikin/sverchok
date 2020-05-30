@@ -42,7 +42,7 @@ This node has the following outputs:
 * **Angle**. Angles of generated circular arcs, in radians.
 
 Examples of usage
-=================
+-----------------
 
 A simple example with specified starting tangent vector:
 
