@@ -2212,6 +2212,13 @@ def circle_by_three_points(p1, p2, p3):
     return circle
 
 def circle_by_start_end_tangent(start, end, tangent):
+    """
+    Build a circular arc from starting point, end point
+    and the tangent vector at the start point.
+
+    input: mathutils.Vectors or 3-tuples or np.arrays of shape (3,).
+    output: instance of CircleEquation3D.
+    """
     start = Vector(start)
     end = Vector(end)
     tangent = Vector(tangent)

@@ -9,7 +9,7 @@ import numpy as np
 
 from math import sin, cos, pi
 
-from sverchok.utils.geom import PlaneEquation, LineEquation, LinearSpline, CubicSpline
+from sverchok.utils.geom import PlaneEquation, LineEquation, LinearSpline, CubicSpline, CircleEquation2D, CircleEquation3D
 from sverchok.utils.integrate import TrapezoidIntegral
 from sverchok.utils.logging import error, exception
 from sverchok.utils.math import binomial
@@ -522,6 +522,23 @@ class SvCircle(SvCurve):
         self.center = np.array(matrix.translation)
         self.radius = radius
         self.u_bounds = (0.0, 2*pi)
+
+    @classmethod
+    def from_equation(cls, eq):
+        """
+        Make an instance of SvCircle from an instance of CircleEquation2D/3D.
+        """
+        if isinstance(eq, CircleEquation2D):
+            matrix = Matrix.Translation(eq.center)
+            circle = SvCircle(matrix, eq.radius)
+            return circle
+        elif isinstance(eq, CircleEquation3D):
+            circle = SvCircle(eq.get_matrix(), eq.radius)
+            if eq.arc_angle:
+                circle.u_bounds = (0, eq.arc_angle)
+            return circle
+        else:
+            raise TypeError("Unsupported argument type")
 
     def get_u_bounds(self):
         return self.u_bounds
