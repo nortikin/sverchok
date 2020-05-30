@@ -25,6 +25,7 @@ from mathutils import Vector, Matrix
 from sverchok.utils.logging import info, debug, warning
 from sverchok.utils.geom import interpolate_quadratic_bezier
 from sverchok.utils.sv_curve_utils import Arc
+from sverchok.utils.curve import SvCircle, SvLine, SvBezierCurve, SvCubicBezierCurve
 
 def make_functions_dict(*functions):
     return dict([(function.__name__, function) for function in functions])
@@ -277,6 +278,7 @@ class LineTo(Statement):
                 v_index = interpreter.new_vertex(*vertex)
                 interpreter.new_edge(prev_index, v_index)
                 prev_index = v_index
+            interpreter.new_line_segment(v0, v1)
             v0 = v1
             interpreter.new_knot("L#.{}".format(i), *v1)
 
@@ -336,6 +338,7 @@ class HorizontalLineTo(Statement):
                 v_index = interpreter.new_vertex(*vertex)
                 interpreter.new_edge(prev_index, v_index)
                 prev_index = v_index
+            interpreter.new_line_segment(v0, v1)
             v0 = v1
             interpreter.new_knot("H#.{}".format(i), *v1)
 
@@ -390,6 +393,7 @@ class VerticalLineTo(Statement):
                 v_index = interpreter.new_vertex(*vertex)
                 interpreter.new_edge(prev_index, v_index)
                 prev_index = v_index
+            interpreter.new_line_segment(v0, v1)
             v0 = v1
             interpreter.new_knot("V#.{}".format(i), *v1)
 
@@ -483,6 +487,9 @@ class CurveTo(Statement):
                 r = interpreter.eval_(self.num_segments, variables)
             else:
                 r = interpreter.dflt_num_verts
+
+            curve = SvCubicBezierCurve(vec(knot1), vec(handle1), vec(handle2), vec(knot2))
+            interpreter.curves.append(curve)
 
             points = interpolate_bezier(vec(knot1), vec(handle1), vec(handle2), vec(knot2), r)
 
@@ -591,6 +598,9 @@ class SmoothCurveTo(Statement):
             else:
                 r = interpreter.dflt_num_verts
 
+            curve = SvCubicBezierCurve(vec(knot1), vec(handle1), vec(handle2), vec(knot2))
+            interpreter.curves.append(curve)
+
             points = interpolate_bezier(vec(knot1), vec(handle1), vec(handle2), vec(knot2), r)
 
             interpreter.new_knot("S#.{}.h1".format(i), *handle1)
@@ -680,6 +690,9 @@ class QuadraticCurveTo(Statement):
                 r = interpreter.eval_(self.num_segments, variables)
             else:
                 r = interpreter.dflt_num_verts
+
+            curve = SvBezierCurve([vec(knot1), vec(handle), vec(knot2)])
+            interpreter.curves.append(curve)
 
             points = interpolate_quadratic_bezier(vec(knot1), vec(handle), vec(knot2), r)
 
@@ -779,6 +792,9 @@ class SmoothQuadraticCurveTo(Statement):
             else:
                 r = interpreter.dflt_num_verts
 
+            curve = SvBezierCurve([vec(knot1), vec(handle), vec(knot2)])
+            interpreter.curves.append(curve)
+
             points = interpolate_quadratic_bezier(vec(knot1), vec(handle), vec(knot2), r)
 
             interpreter.new_knot("T#.{}.h".format(i), *handle)
@@ -873,6 +889,9 @@ class ArcTo(Statement):
             interpreter.new_edge(v0_index, v1_index)
             v0_index = v1_index
 
+        curve = SvCircle.from_arc(arc)
+        interpreter.curves.append(curve)
+
         interpreter.position = v1
         interpreter.new_knot("A.#", *v1)
         if self.close:
@@ -909,6 +928,9 @@ class CloseAll(Statement):
 
         v1_index = interpreter.get_last_vertex()
         interpreter.new_edge(v1_index, 0)
+
+        interpreter.new_line_segment(v1, v0)
+
         interpreter.closed = True
 
 class ClosePath(Statement):
@@ -940,6 +962,7 @@ class ClosePath(Statement):
 
         v1_index = interpreter.get_last_vertex()
         interpreter.new_edge(v1_index, interpreter.close_first_index)
+        interpreter.new_line_segment(v1_index, interpreter.close_first_index)
         interpreter.close_first_index = interpreter.next_vertex_index
 
 class Default(Statement):
@@ -1002,6 +1025,7 @@ class Interpreter(object):
         self.close_first_index = 0
         self.prev_bezier_knot = None
         self.prev_quad_bezier_knot = None
+        self.curves = []
         self.vertices = []
         self.edges = []
         self.knots = []
@@ -1010,6 +1034,9 @@ class Interpreter(object):
         self.close_threshold = node.close_threshold
         self.defaults = dict()
         self.input_names = input_names
+
+    def to3d(self, vertex):
+        return Vector((vertex[0], vertex[1], 0))
 
     def assert_not_closed(self):
         if self.closed:
@@ -1041,6 +1068,12 @@ class Interpreter(object):
         self.knots.append((x, y))
         name = name.replace("#", str(self.segment_number))
         self.knotnames.append(name)
+
+    def new_line_segment(self, v1, v2):
+        if isinstance(v1, int):
+            v1, v2 = self.vertices[v1], self.vertices[v2]
+        curve = SvLine.from_two_points(self.to3d(v1), self.to3d(v2))
+        self.curves.append(curve)
 
     def start_new_segment(self):
         self.segment_start_index = self.next_vertex_index

@@ -389,7 +389,8 @@ class SvProfileImportOperator(bpy.types.Operator):
 
     def execute(self, context):
         txt = bpy.data.texts.load(self.filepath)
-        context.node.filename = os.path.basename(txt.name)
+        #context.node.filename = os.path.basename(txt.name)
+        context.node.file_pointer = txt
         updateNode(context.node, context)
         return {'FINISHED'}
 
@@ -492,6 +493,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvVerticesSocket', "Knots")
         self.outputs.new('SvStringsSocket', "KnotNames")
+        self.outputs.new('SvCurveSocket', "Curve")
 
     def load_profile(self):
         if not self.filename:
@@ -588,6 +590,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         result_edges = []
         result_knots = []
         result_names = []
+        result_curves = []
 
         if var_names:
             input_values = []
@@ -620,11 +623,14 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             knots = self.extend_out_verts(interpreter.knots)
             result_knots.append(knots)
             result_names.append([[name] for name in interpreter.knotnames])
+            result_curves.append(interpreter.curves)
 
         self.outputs['Vertices'].sv_set(result_vertices)
         self.outputs['Edges'].sv_set(result_edges)
         self.outputs['Knots'].sv_set(result_knots)
         self.outputs['KnotNames'].sv_set(result_names)
+        if 'Curve' in self.outputs:
+            self.outputs['Curve'].sv_set(result_curves)
 
     def storage_set_data(self, storage):
         profile = storage['profile']
