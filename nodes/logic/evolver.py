@@ -60,58 +60,67 @@ def get_genes(target_tree, genotype_frame):
     return genes
 
 class DNA:
-    genes_def = []
-    genes = []
-    fitness = 0
+
     def __init__(self, genes_def, random_val=True, empty=False):
         self.genes_def = genes_def
         self.genes = []
         self.fitness = 0
         if empty:
             return
+        self.fill_genes(random_val=random_val)
+
+    def fill_genes(self, random_val=True):
         if random_val:
-            for gene in genes_def:
+            for gene in self.genes_def:
                 agent_gene = gene.min_n + random() * gene.range
                 if gene.g_type == 'int':
                     agent_gene = int(agent_gene)
                 self.genes.append(agent_gene)
         else:
-            for gene in genes_def:
+            for gene in self.genes_def:
                 agent_gene = gene.init_val
                 self.genes.append(agent_gene)
 
     def evaluate_fitness(self, tree, update_list, node):
-        tree.sv_process = False
-        for gen_data, agent_gene in zip(self.genes_def, self.genes):
-            if gen_data.g_type == 'float':
-                tree.nodes[gen_data.name].float_ = agent_gene
-            else:
-                tree.nodes[gen_data.name].int_ = agent_gene
+        try:
+            tree.sv_process = False
+            for gen_data, agent_gene in zip(self.genes_def, self.genes):
+                if gen_data.g_type == 'float':
+                    tree.nodes[gen_data.name].float_ = agent_gene
+                else:
+                    tree.nodes[gen_data.name].int_ = agent_gene
 
-        tree.sv_process = True
-        do_update(update_list, tree.nodes)
-        agent_fitness = node.inputs[0].sv_get(deepcopy=False)[0]
-        if isinstance(agent_fitness, list):
-            agent_fitness = agent_fitness[0]
-        self.fitness = agent_fitness
-        # return agent_fitness
-    def cross_over(self, other_ancestor, mutation):
-        # new_agent = []
+            tree.sv_process = True
+            do_update(update_list, tree.nodes)
+            agent_fitness = node.inputs[0].sv_get(deepcopy=False)[0]
+            if isinstance(agent_fitness, list):
+                agent_fitness = agent_fitness[0]
+            self.fitness = agent_fitness
+        finally:
+            tree.sv_process = True
+
+    def cross_over(self, other_ancestor, mutation_threshold):
+
         new_agent = DNA(self.genes_def, empty=True)
-        for g, g1, o_gene in zip(self.genes, other_ancestor.genes, self.genes_def):
-            if random() < mutation:
-                if random() < 0.5:
+        for ancestor1_gene, ancestor2_gene, o_gene in zip(self.genes, other_ancestor.genes, self.genes_def):
+            mutation_succes = random()
+            if mutation_succes < mutation_threshold:
+                total_reset_chance = random()
+                total_reset_barrier = 0.5
+                if total_reset_chance < total_reset_barrier:
                     #total gene reset
                     new_gene = o_gene.min_n + random() * o_gene.range
                 else:
                     #small gene mutation
-                    fp1 = random()
-                    mut = (random() - 0.5) * o_gene.range * mutation
-                    new_gene = max(min((g*fp1 + g1*(1-fp1)) + mut, o_gene.max_n), o_gene.min_n)
+                    mixing_factor = random()
+                    new_gene = ancestor1_gene*mixing_factor + ancestor2_gene*(1-mixing_factor)
+                    small_mutation = (random() - 0.5) * o_gene.range * mutation_threshold
+                    new_gene += small_mutation
+                    new_gene = max(min(new_gene, o_gene.max_n), o_gene.min_n)
 
             else:
-                fp1 = random()
-                new_gene = (g * fp1 + g1 * (1 - fp1))
+                mixing_factor = random()
+                new_gene = ancestor1_gene * mixing_factor + ancestor2_gene * (1 - mixing_factor)
 
             if o_gene.g_type == 'int':
                 new_gene = int(new_gene)
@@ -120,31 +129,28 @@ class DNA:
         return new_agent
 
 class Population:
-    population_g = []
 
-    def __init__(self, genes_def, node, tree):
+    def __init__(self, genotype_frame, node, tree):
         self.node = node
-        self.node_id = node.node_id
         self.tree = tree
-        self.iterations = node.iterations
-        self.mode = node.mode
-        self.mutation = node.mutation
-        self.fitness_booster = node.fitness_booster
         self.time_start = time.time()
-        self.max_time = node.max_time
-        self.genes = genes_def
-        self.use_fitness_goal = node.use_fitness_goal
-        self.fitness_goal = node.fitness_goal
-        self.fitness_v = []
+        self.genes = get_genes(tree, genotype_frame)
+        self.update_list = make_tree_from_nodes([g.name for g in self.genes], tree)
         self.population_g = []
-        self.population_g.append(DNA(genes_def, random_val=False))
-        for i in range(node.population_n-1):
-            self.population_g.append(DNA(genes_def))
+        self.init_population(node.population_n)
 
-    def  evaluate_fitness_g(self, update_list):
+
+    def init_population(self, population_n):
+        self.population_g.append(DNA(self.genes, random_val=False))
+        for i in range(population_n-1):
+            self.population_g.append(DNA(self.genes))
+
+
+
+    def  evaluate_fitness_g(self):
         try:
             for agent in self.population_g:
-                agent.evaluate_fitness(self.tree, update_list, self.node)
+                agent.evaluate_fitness(self.tree, self.update_list, self.node)
         finally:
             self.tree.sv_process = True
     def population_genes(self):
@@ -153,21 +159,22 @@ class Population:
     def population_fitness(self):
         return [agent.fitness for agent in self.population_g]
 
-    def get_new_population(self, fitness):
+    def get_new_population(self, fitness, mode):
         '''Crossover and mutation of previous population to create the new population'''
-        if self.mode == 'MAX':
-            weights = np.power(np.array(fitness), self.fitness_booster)
+        if mode == 'MAX':
+            weights = np.power(np.array(fitness), self.node.fitness_booster)
         else:
-            weights = 1/np.power(np.array(fitness), self.fitness_booster)
+            weights = 1/np.power(np.array(fitness), self.node.fitness_booster)
         weights = weights/np.sum(weights)
 
         parents_id = np.random.choice(len(self.population_g), [len(self.population_g)-1, 2], replace=True, p=weights)
         # we keep the fittest for the next generation
         new_population = [self.population_g[0]]
+        mutation = self.node.mutation
         for ancestors in  parents_id:
             p0 = self.population_g[ancestors[0]]
             p1 = self.population_g[ancestors[1]]
-            new_agent = p0.cross_over(p1, self.mutation)
+            new_agent = p0.cross_over(p1, mutation)
             new_population.append(new_agent)
 
         return new_population
@@ -176,49 +183,56 @@ class Population:
         print("evolver in %s iteration" % (iteration + 1))
         print("evolver was %s seconds processing" % (time.time() - self.time_start))
 
-    def goal_achieved(self, fittest):
-        if self.mode == "MAX":
-            return fittest > self.fitness_goal
-        if self.mode == "MIN":
-            return fittest < self.fitness_goal
+    def goal_achieved(self, fittest, mode, goal):
+        if mode == "MAX":
+            return fittest > goal
+        if mode == "MIN":
+            return fittest < goal
 
     def store_data(self, population_all, fitness_all):
-        evolver_mem[self.node_id]["population_all"] = population_all
-        evolver_mem[self.node_id]["fitness_all"] = fitness_all
-        evolver_mem[self.node_id]["genes"] = self.genes
-        evolver_mem[self.node_id]["population"] = population_all[-1]
-        evolver_mem[self.node_id]["fitness"] = fitness_all[-1]
+        node_id = self.node.node_id
+        evolver_mem[node_id]["population_all"] = population_all
+        evolver_mem[node_id]["fitness_all"] = fitness_all
+        evolver_mem[node_id]["genes"] = self.genes
+        evolver_mem[node_id]["population"] = population_all[-1]
+        evolver_mem[node_id]["fitness"] = fitness_all[-1]
 
-    def evolve(self, update_list):
+    def evolve(self):
         population_all = []
         fitness_all = []
         info = "Evolver Runned"
         goal_achieved = False
-        for i in range(self.iterations - 1):
-            self.evaluate_fitness_g(update_list)
-            self.population_g.sort(key=lambda x: x.fitness, reverse=(self.mode == "MAX"))
+        iterations = self.node.iterations
+        mode = self.node.mode
+        max_time = self.node.max_time
+        use_fitness_goal = self.node.use_fitness_goal
+        goal = self.node.fitness_goal
+
+        for iteration in range(iterations - 1):
+            self.evaluate_fitness_g()
+            self.population_g.sort(key=lambda x: x.fitness, reverse=(mode == "MAX"))
             population_all.append(self.population_genes())
             actual_population_fitenss = self.population_fitness()
             fitness_all.append(actual_population_fitenss)
 
-            if self.use_fitness_goal and self.goal_achieved(actual_population_fitenss[0]):
+            if use_fitness_goal and self.goal_achieved(actual_population_fitenss[0], mode, goal):
                 goal_achieved = True
-                info = "goal achieved in %s iterations" % (i + 1)
+                info = "goal achieved in %s iterations" % (iteration + 1)
                 print(info)
                 break
 
-            self.print_time_info(i)
-            if (time.time() - self.time_start) > self.max_time:
-                info = "Max. time reached in %s iterations" % (i + 1)
+            self.print_time_info(iteration)
+            if (time.time() - self.time_start) > max_time:
+                info = "Max. time reached in %s iterations" % (iteration + 1)
                 print(info)
                 break
 
-            self.population_g = self.get_new_population(actual_population_fitenss)
+            self.population_g = self.get_new_population(actual_population_fitenss, mode)
 
 
         if not goal_achieved:
-            self.evaluate_fitness_g(update_list)
-            self.population_g.sort(key=lambda x: x.fitness, reverse=(self.mode == "MAX"))
+            self.evaluate_fitness_g()
+            self.population_g.sort(key=lambda x: x.fitness, reverse=(mode == "MAX"))
             population_all.append(self.population_genes())
             fitness_all.append(self.population_fitness())
 
@@ -248,10 +262,8 @@ class SvEvolverRun(bpy.types.Operator):
         seed_set(node.r_seed)
         np.random.seed(node.r_seed)
 
-        genes = get_genes(tree, genotype_frame)
-        update_list = make_tree_from_nodes([g.name for g in genes], tree)
-        population = Population(genes, node, tree)
-        population.evolve(update_list)
+        population = Population(genotype_frame, node, tree)
+        population.evolve()
         update_list = make_tree_from_nodes([node.name], tree)
         do_update(update_list, tree.nodes)
         return {'FINISHED'}
