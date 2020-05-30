@@ -185,6 +185,7 @@ This node has the following outputs:
 * **KnotNames**. Names of all knot points. This output in junction with
   **Knots** may be used to display all knots in the 3D view by use of **Viewer
   Index** node - this is very useful for debugging of your profile.
+* **Curve**. Curve objects generated. This output contains a separate Curve object for each segment (each instruction).
 
 Operators
 ---------

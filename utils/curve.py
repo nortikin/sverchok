@@ -552,10 +552,14 @@ class SvCircle(SvCurve):
         matrix = Matrix.Translation(Vector((arc.center.real, arc.center.imag, 0)))
         scale_x = Matrix.Scale(radius_dx, 4, (1,0,0))
         scale_y = Matrix.Scale(radius_dy, 4, (0,1,0))
-        rot_z = Matrix.Rotation(radians(arc.theta), 4, 'Z')
+        rotation = radians(arc.theta)
+        angle = radians(abs(arc.delta))
+        rot_z = Matrix.Rotation(rotation, 4, 'Z')
         matrix = matrix @ scale_x @ scale_y @ rot_z
+        if arc.delta < 0:
+            matrix = matrix @ Matrix.Rotation(radians(180), 4, 'X')
         circle = SvCircle(matrix, radius)
-        circle.u_bounds = (0, radians(arc.delta))
+        circle.u_bounds = (0, angle)
         return circle
 
     def get_u_bounds(self):
