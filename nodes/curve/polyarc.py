@@ -16,7 +16,7 @@ class SvPolyArcNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvPolyArcNode'
     bl_label = 'Poly Arc'
     bl_icon = 'SPHERECURVE'
-    sv_icon = 'SV_ARC_SED'
+    sv_icon = 'SV_POLYARC'
 
     concat : BoolProperty(
             name = "Concatenate",
