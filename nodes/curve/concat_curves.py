@@ -47,6 +47,7 @@ class SvConcatCurvesNode(bpy.types.Node, SverchCustomTreeNode):
                 begin2 = curve2.evaluate(t_min_2)
                 distance = np.linalg.norm(begin2 - end1)
                 if distance > self.max_rho:
+                    self.error("%s - %s", end1, begin2)
                     raise Exception("Distance between the end of {}'th curve and the start of {}'th curve is {} - too much".format(idx, idx+1, distance))
 
         def process(self):

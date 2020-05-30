@@ -6,8 +6,9 @@
 # License-Filename: LICENSE
 
 import numpy as np
+from math import sin, cos, pi, radians
 
-from math import sin, cos, pi
+from mathutils import Vector, Matrix
 
 from sverchok.utils.geom import PlaneEquation, LineEquation, LinearSpline, CubicSpline, CircleEquation2D, CircleEquation3D
 from sverchok.utils.integrate import TrapezoidIntegral
@@ -539,6 +540,27 @@ class SvCircle(SvCurve):
             return circle
         else:
             raise TypeError("Unsupported argument type:" + str(eq))
+
+    @classmethod
+    def from_arc(cls, arc):
+        """
+        Make an instance of SvCircle from an instance of sverchok.utils.sv_curve_utils.Arc
+        """
+        radius = abs(arc.radius)
+        radius_dx = arc.radius.real / radius
+        radius_dy = arc.radius.imag / radius
+        matrix = Matrix.Translation(Vector((arc.center.real, arc.center.imag, 0)))
+        scale_x = Matrix.Scale(radius_dx, 4, (1,0,0))
+        scale_y = Matrix.Scale(radius_dy, 4, (0,1,0))
+        rotation = radians(arc.theta)
+        angle = radians(abs(arc.delta))
+        rot_z = Matrix.Rotation(rotation, 4, 'Z')
+        matrix = matrix @ scale_x @ scale_y @ rot_z
+        if arc.delta < 0:
+            matrix = matrix @ Matrix.Rotation(radians(180), 4, 'X')
+        circle = SvCircle(matrix, radius)
+        circle.u_bounds = (0, angle)
+        return circle
 
     def get_u_bounds(self):
         return self.u_bounds
