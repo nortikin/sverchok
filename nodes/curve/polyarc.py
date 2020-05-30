@@ -10,8 +10,8 @@ from sverchok.utils.curve import SvCircle, SvLine, SvConcatCurve
 
 class SvPolyArcNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Arc Start, End, Tangent
-    Tooltip: Generate an arc from Start point, End point and Tangent vector
+    Triggers: Poly Arc
+    Tooltip: Generate a curve made of series of circular arcs
     """
     bl_idname = 'SvPolyArcNode'
     bl_label = 'Poly Arc'
@@ -42,6 +42,18 @@ class SvPolyArcNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "concat", toggle=True)
         layout.prop(self, "is_cyclic", toggle=True)
 
+    def calc_tangent(self, verts):
+        S = -Vector(verts[0])
+        sign = 1
+        for vert in verts[1:-1]:
+            S = S + 2*sign*Vector(vert)
+            sign = -sign
+        S = S + sign*Vector(verts[-1])
+        if S.length < 1e-6:
+            return Vector(verts[1]) - Vector(verts[0])
+        #print(S)
+        return -0.5*S
+
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
@@ -65,12 +77,7 @@ class SvPolyArcNode(bpy.types.Node, SverchCustomTreeNode):
             new_angles = []
 
             if not have_tangent:
-                start_tangent = Vector(verts[1]) - Vector(verts[0])
-                if self.is_cyclic:
-                    end_tangent = Vector(verts[-1]) - Vector(verts[-2])
-                    tangent = 0.5*(start_tangent + end_tangent)
-                else:
-                    tangent = start_tangent
+                tangent = self.calc_tangent(verts)
             elif not isinstance(tangent, Vector):
                 tangent = Vector(tangent)
 
