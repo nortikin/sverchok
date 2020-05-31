@@ -126,8 +126,14 @@ def draw_indices_2D(context, args):
         # ---- draw text ----
         index_str = str(index)
         txt_width, txt_height = blf.dimensions(0, index_str)
+
+        level = 5 # 5 or 0
+        # blf.enable(0, blf.SHADOW)
+        # blf.shadow(0, level, 0, 0, 0, 1)
+        # blf.shadow_offset(0, 1, -1)
         blf.position(0, x - (txt_width / 2), y - (txt_height / 2), 0)
         blf.draw(0, index_str)
+        # blf.disable(0, blf.SHADOW)
 
     if draw_bface:
 
