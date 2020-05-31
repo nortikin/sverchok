@@ -283,7 +283,7 @@ class LineTo(Statement):
             interpreter.new_knot("L#.{}".format(i), *v1)
 
         if self.close:
-            interpreter.new_edge(v_index, interpreter.segment_start_index)
+            interpreter.close_segment(v_index)
 
         interpreter.has_last_vertex = True
 
@@ -505,7 +505,7 @@ class CurveTo(Statement):
                 v0_index = v1_index
 
         if self.close:
-            interpreter.new_edge(v1_index, interpreter.segment_start_index)
+            interpreter.close_segment(v1_index)
 
         interpreter.has_last_vertex = True
 
@@ -615,7 +615,7 @@ class SmoothCurveTo(Statement):
                 v0_index = v1_index
 
         if self.close:
-            interpreter.new_edge(v1_index, interpreter.segment_start_index)
+            interpreter.close_segment(v1_index)
 
         interpreter.has_last_vertex = True
 
@@ -707,7 +707,7 @@ class QuadraticCurveTo(Statement):
                 v0_index = v1_index
 
         if self.close:
-            interpreter.new_edge(v1_index, interpreter.segment_start_index)
+            interpreter.close_segment(v1_index)
 
         interpreter.has_last_vertex = True
 
@@ -808,7 +808,7 @@ class SmoothQuadraticCurveTo(Statement):
                 v0_index = v1_index
 
         if self.close:
-            interpreter.new_edge(v1_index, interpreter.segment_start_index)
+            interpreter.close_segment(v1_index)
 
         interpreter.has_last_vertex = True
 
@@ -883,7 +883,7 @@ class ArcTo(Statement):
         arc = Arc(start, radius, xaxis_rot, flag1, flag2, end)
 
         theta = 1/num_verts
-        for i in range(num_verts+1):
+        for i in range(1, num_verts+1):
             v1 = x, y = arc.point(theta * i)
             v1_index = interpreter.new_vertex(x, y)
             interpreter.new_edge(v0_index, v1_index)
@@ -895,7 +895,7 @@ class ArcTo(Statement):
         interpreter.position = v1
         interpreter.new_knot("A.#", *v1)
         if self.close:
-            interpreter.new_edge(v1_index, interpreter.segment_start_index)
+            interpreter.close_segment(v1_index)
 
         interpreter.has_last_vertex = True
 
@@ -1019,6 +1019,7 @@ class Interpreter(object):
         self.position = (0, 0)
         self.next_vertex_index = 0
         self.segment_start_index = 0
+        self.segment_continues_line = False
         self.segment_number = 0
         self.has_last_vertex = False
         self.closed = False
@@ -1080,7 +1081,15 @@ class Interpreter(object):
 
     def start_new_segment(self):
         self.segment_start_index = self.next_vertex_index
+        self.segment_continues_line = self.has_last_vertex
         self.segment_number += 1
+
+    def close_segment(self, v_index):
+        if self.segment_continues_line:
+            start_index = self.segment_start_index-1
+        else:
+            start_index = self.segment_start_index
+        self.new_edge(v_index, start_index)
 
     def get_last_vertex(self):
         return self.next_vertex_index - 1
