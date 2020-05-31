@@ -1177,22 +1177,29 @@ class SvDeformedByFieldSurface(SvSurface):
 class SvRevolutionSurface(SvSurface):
     __description__ = "Revolution"
 
-    def __init__(self, curve, point, direction):
+    def __init__(self, curve, point, direction, global_origin=True):
         self.curve = curve
         self.point = point
         self.direction = direction
+        self.global_origin = global_origin
         self.normal_delta = 0.001
         self.v_bounds = (0.0, 2*pi)
 
     def evaluate(self, u, v):
         point_on_curve = self.curve.evaluate(u)
         dv = point_on_curve - self.point
-        return np.array(rotate_vector_around_vector(dv, self.direction, v))
+        result = np.array(rotate_vector_around_vector(dv, self.direction, v))
+        if not self.global_origin:
+            result = result + self.point
+        return result
 
     def evaluate_array(self, us, vs):
         points_on_curve = self.curve.evaluate_array(us)
         dvs = points_on_curve - self.point
-        return rotate_vector_around_vector_np(dvs, self.direction, vs)
+        result = rotate_vector_around_vector_np(dvs, self.direction, vs)
+        if not self.global_origin:
+            result = result + self.point
+        return result
 
     def get_u_min(self):
         return self.curve.get_u_bounds()[0]

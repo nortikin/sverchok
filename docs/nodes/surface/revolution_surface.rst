@@ -28,6 +28,26 @@ This node has the following inputs:
   the surface's V parameter maximum value. The default value is 2*pi (full
   circle).
 
+Parameters
+----------
+
+This node has the following parameter:
+
+* **Origin**. This defines where the origin of the generated surface will be,
+  i.e. how the surface will be located in space. This does not affect the shape
+  of the surface, only it's location. The following options are available:
+
+  * **Global origin**. Origin of the surface will be placed at global origin
+    `(0,0,0)`, so the surface will look like it was revolved around an axis
+    which goes through the global origin (but actually revolution will be done
+    around the specified axis, only the whole surface will be moved to global
+    origin).
+  * **Revolution axis**. Origin of the surface will be at the origin of
+    revolution axis, i.e. at the point which is provided in the **Point**
+    input.
+
+  The default value is **Revolution axis**.
+
 Outputs
 -------
 

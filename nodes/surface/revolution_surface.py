@@ -32,6 +32,17 @@ class SvRevolutionSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         default = 2*pi,
         update = updateNode)
 
+    origins = [
+        ('GLOBAL', "Global origin", "Global origin", 0),
+        ('POINT', "Revolution axis", "Rotation axis", 1)
+    ]
+
+    origin : EnumProperty(
+            name = "Origin",
+            items = origins,
+            default = 'GLOBAL', # default for pre-existing nodes
+            update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Profile")
         p = self.inputs.new('SvVerticesSocket', "Point")
@@ -43,6 +54,11 @@ class SvRevolutionSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', 'AngleFrom').prop_name = 'v_min'
         self.inputs.new('SvStringsSocket', 'AngleTo').prop_name = 'v_max'
         self.outputs.new('SvSurfaceSocket', "Surface")
+        # default for newly created nodes
+        self.origin = 'POINT'
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "origin")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -64,7 +80,8 @@ class SvRevolutionSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         surface_out = []
         for curves, points, directions, v_mins, v_maxs in zip_long_repeat(curve_s, point_s, direction_s, v_min_s, v_max_s):
             for curve, point, direction, v_min, v_max in zip_long_repeat(curves, points, directions, v_mins, v_maxs):
-                surface = SvRevolutionSurface(curve, np.array(point), np.array(direction))
+                origin = self.origin == 'GLOBAL'
+                surface = SvRevolutionSurface(curve, np.array(point), np.array(direction), global_origin=origin)
                 surface.v_bounds = (v_min, v_max)
                 surface_out.append(surface)
 
