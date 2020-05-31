@@ -11,12 +11,13 @@ from sverchok.utils.curve import SvSplineCurve, SvConcatCurve
 
 class SvKinkyCurveNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Kinky Curve
+    Triggers: Kinked Curve
     Tooltip: Construct an interpolated curve through a set of points with a kink angle threshold
     """
     bl_idname = 'SvKinkyCurveNode'
-    bl_label = 'Kinky Curve'
+    bl_label = 'Kinked Curve'
     bl_icon = 'CON_SPLINEIK'
+    sv_icon = 'SV_KINKY_CURVE'
 
     is_cyclic : BoolProperty(name = "Cyclic",
         description = "Whether the curve is cyclic",

@@ -1,5 +1,5 @@
-Kinky Curve
-===========
+Kinked Curve
+============
 
 Functionality
 -------------
