@@ -53,7 +53,7 @@ Options
 Inputs
 ------
 
-**Fitness**: Input to get the fitness of each member (has to be a single number)
+**Fitness**: Input to get the fitness of each member (has to be a single positive number)
 
 
 Outputs
