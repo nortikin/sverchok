@@ -638,6 +638,15 @@ class SvSplineCurve(SvCurve):
         self.spline = spline
         self.u_bounds = (0.0, 1.0)
 
+    @classmethod
+    def from_points(cls, points, metric=None, is_cyclic=False):
+        if not points or len(points) < 2:
+            raise Exception("At least two points are required")
+        if len(points) < 3:
+            return SvLine.from_two_points(points[0], points[1])
+        spline = CubicSpline(points, metric=metric, is_cyclic=is_cyclic)
+        return SvSplineCurve(spline)
+
     def evaluate(self, t):
         v = self.spline.eval_at_point(t)
         return np.array(v)
