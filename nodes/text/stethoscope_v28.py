@@ -22,6 +22,7 @@ import re
 import bpy
 import blf
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, IntProperty
+from bpy.props import FloatProperty
 from mathutils import Vector
 
 from sverchok.settings import get_params
@@ -46,8 +47,7 @@ def get_xy_for_bgl_drawing(node):
         _x, _y = Vector((_x, _y)) + Vector((node_width + 20, 0))
 
         # this alters location based on DPI/Scale settings.
-        _, location_theta = node.get_preferences()
-        draw_location = adjust_location(_x, _y, location_theta)
+        draw_location = adjust_location(_x, _y, node.location_theta)
         return draw_location
 
 def parse_socket(socket, rounding, element_index, view_by_element, props):
@@ -132,6 +132,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     line_width: IntProperty(default=60, min=20, update=updateNode, name='Line Width (chars)')
     compact: BoolProperty(default=False, update=updateNode)
     depth: IntProperty(default=5, min=0, update=updateNode)
+    location_theta: FloatProperty(name='location_theta')
 
 
     def get_theme_colors_for_contrast(self):
@@ -194,7 +195,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         nvBGL.callback_disable(n_id)
 
         if self.activate and inputs[0].is_linked:
-            scale, location_theta = self.get_preferences()
+            scale, self.location_theta = self.get_preferences()
 
             # gather vertices from input
             data = inputs[0].sv_get(deepcopy=False)
