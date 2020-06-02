@@ -6,17 +6,22 @@
 # License-Filename: LICENSE
 
 from collections import defaultdict
-import blf
 
+import blf
+import bpy
 
 def get_sane_xy(data):
     return_value = (120, 120)
     location_function = data.get('location')
+    print('hhhheeere')
     if location_function:
+        print('here 1')
         ng = bpy.data.node_groups.get(data['tree_name'])
         if ng:
-            node = ng.get(data['node_name'])
+            print('here 2')
+            node = ng.nodes.get(data['node_name'])
             if node:
+                print('here 3')
                 return_value = location_function(node)
 
     return return_value

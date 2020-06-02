@@ -46,6 +46,7 @@ def get_xy_for_bgl_drawing(node):
         _x, _y = Vector((_x, _y)) + Vector((node_width + 20, 0))
 
         # this alters location based on DPI/Scale settings.
+        _, location_theta = node.get_preferences()
         draw_location = adjust_location(_x, _y, location_theta)
         return draw_location
 
