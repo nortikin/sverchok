@@ -57,6 +57,12 @@ palette_dict = {
     )
 }
 
+def get_drawing_location(node):
+    x, y = node.get_offset()
+    return x * node.location_theta, y * node.location_theta
+
+def add_offset(offset, coords):
+    return [(x + offset[0], y + offset[1]) for x, y in coords]
 
 def simple28_grid_xy(x, y, args):
     """ x and y are passed by default so you could add font content """
@@ -66,14 +72,15 @@ def simple28_grid_xy(x, y, args):
 
     # draw background, this could be cached......
     shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
-    batch = batch_for_shader(shader, 'TRIS', {"pos": geom.background_coords}, indices=geom.background_indices)
+    batch = batch_for_shader(shader, 'TRIS', {"pos": add_offset((x, y), geom.background_coords)}, indices=geom.background_indices)
     shader.bind()
     shader.uniform_float("color", back_color)
     batch.draw(shader)
 
     # draw grid and graph
-    config.batch.draw(config.shader)
-
+    shader2 = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
+    batch2 = batch_for_shader(shader2, 'LINES', {"pos": add_offset((x, y), geom.vertices), "color": geom.vertex_colors}, indices=geom.indices)
+    batch2.draw(shader2)
 
 
 class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
@@ -103,6 +110,8 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         items=enum_item_4(["default", "scope", "sniper"]), default="default", update=updateNode
     )
 
+    location_theta: FloatProperty(name="location theta")
+
     def custom_draw_socket(self, socket, context, l):
         info = socket.get_socket_info()
 
@@ -123,12 +132,13 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Float").custom_draw = 'custom_draw_socket'
         self.get_and_set_gl_scale_info()
 
+    def get_offset(self):
+        return [int(j) for j in (Vector(self.absolute_location) + Vector((self.width + 20, 0)))[:]]
+
     def get_drawing_attributes(self):
         """
         adjust render location based on preference multiplier setting
         """
-        x, y = [int(j) for j in (Vector(self.absolute_location) + Vector((self.width + 20, 0)))[:]]
-
         try:
             with sv_preferences() as prefs:
                 multiplier = prefs.render_location_xy_multiplier
@@ -137,14 +147,10 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
             # print('did not find preferences - you need to save user preferences')
             multiplier = 1.0
             scale = 1.0
-        x, y = [x * multiplier, y * multiplier]
-
-        return x, y, scale, multiplier
-
-    def generate_shader(self, geom):
-        shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
-        batch = batch_for_shader(shader, 'LINES', {"pos": geom.vertices, "color": geom.vertex_colors}, indices=geom.indices)
-        return batch, shader
+        
+        # cache this.
+        self.location_theta = multiplier
+        return scale
 
     def generate_graph_geom(self, config):
 
@@ -225,20 +231,21 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         if self.activate:
 
             config = lambda: None
-            x, y, scale, multiplier = self.get_drawing_attributes()
+            scale = self.get_drawing_attributes() #..not really used..
 
-            config.loc = (x, y)
+            config.loc = (0, 0)
             config.palette = palette_dict.get(self.selected_theme_mode)[:]
             config.scale = scale
             config.easing_func = easing_func
 
             geom = self.generate_graph_geom(config)
-            config.batch, config.shader = self.generate_shader(geom)
+            # config.batch, config.shader = self.generate_shader(geom)
 
             draw_data = {
                 'mode': 'custom_function',
                 'tree_name': self.id_data.name[:],
-                'loc': (x, y),
+                'node_name': self.name[:],
+                'loc': get_drawing_location,
                 'custom_function': simple28_grid_xy,
                 'args': (geom, config)
             }

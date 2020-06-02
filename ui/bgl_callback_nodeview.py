@@ -18,6 +18,8 @@
 
 # <pep8 compliant>
 
+from inspect import isfunction
+
 import bpy
 import blf
 import bgl
@@ -78,6 +80,19 @@ def restore_opengl_defaults():
     # bgl.glColor4f(0.0, 0.0, 0.0, 1.0)     # doesn't exist anymore ..    
 
 
+def get_sane_xy(data):
+    return_value = (120, 120)
+    location_function = data.get('loc')
+    if location_function:
+        ng = bpy.data.node_groups.get(data['tree_name'])
+        if ng:
+            node = ng.nodes.get(data['node_name'])
+            if node:
+                return_value = location_function(node)
+
+    return return_value    
+
+
 def draw_callback_px(n_id, data):
 
     space = bpy.context.space_data
@@ -102,8 +117,17 @@ def draw_callback_px(n_id, data):
         restore_opengl_defaults()
     elif data.get('mode') == 'custom_function':
         drawing_func = data.get('custom_function')
-        x, y = data.get('loc', (20, 20))
+
+        location = data.get('loc')
+        if isfunction(location):
+            x, y = get_sane_xy(data)
+        elif isinstance(location, (tuple, list)):
+            x, y = location
+        else:
+            x, y = 20, 20
+
         args = data.get('args', (None,))
+        
         drawing_func(x, y, args)
         restore_opengl_defaults()
     elif data.get('mode') == 'custom_function_context':
