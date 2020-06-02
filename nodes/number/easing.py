@@ -107,7 +107,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
     )
 
     selected_theme_mode: EnumProperty(
-        items=enum_item_4(["default", "scope", "sniper"]), default="default", update=updateNode
+        items=enum_item_4(["default", "scope", "sniper"]), default="sniper", update=updateNode
     )
 
     location_theta: FloatProperty(name="location theta")
