@@ -73,9 +73,7 @@ class SvEvalCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
             need_tangent = self.outputs['Tangents'].is_linked
 
-            if isinstance(curve_s[0], SvCurve):
-                curve_s = [curve_s]
-
+            curve_s = ensure_nesting_level(curve_s, 2, data_types=(SvCurve,))
             ts_s = ensure_nesting_level(ts_s, 3)
             samples_s = ensure_nesting_level(samples_s, 2)
 

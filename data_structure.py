@@ -468,7 +468,9 @@ def levels_of_list_or_np(lst):
         return level
     return 0
 
-def get_data_nesting_level(data, data_types=(float, int, float64, int32, str)):
+SIMPLE_DATA_TYPES = (float, int, float64, int32, str)
+
+def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
     """
     data: number, or list of numbers, or list of lists, etc.
     data_types: list or tuple of types.
@@ -504,7 +506,7 @@ def get_data_nesting_level(data, data_types=(float, int, float64, int32, str)):
 
     return helper(data, 0)
 
-def ensure_nesting_level(data, target_level, data_types=(float, int, int32, float64, str)):
+def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES):
     """
     data: number, or list of numbers, or list of lists, etc.
     target_level: data nesting level required for further processing.
@@ -528,6 +530,46 @@ def ensure_nesting_level(data, target_level, data_types=(float, int, int32, floa
     for i in range(target_level - current_level):
         result = [result]
     return result
+
+def flattern_data(data, target_level=1, data_types=SIMPLE_DATA_TYPES):
+    current_level = get_data_nesting_level(data, data_types)
+    if current_level < target_level:
+        raise TypeError(f"Can't flattern data to level {target_level}: data already have level {current_level}")
+    elif current_level == target_level:
+        return data
+    else:
+        result = []
+        for item in data:
+            result.extend(flattern_data(item, target_level=target_level, data_types=data_types))
+        return result
+
+def graft_data(data, item_level=1, wrap_level=1, data_types=SIMPLE_DATA_TYPES):
+    def wrap(item):
+        for i in range(wrap_level):
+            item = [item]
+        return item
+
+    def helper(data):
+        current_level = get_data_nesting_level(data, data_types)
+        if current_level == item_level:
+            return wrap(data)
+        else:
+            result = [helper(item) for item in data]
+            return result
+
+    return helper(data)
+
+def wrap_data(data, wrap_level=1):
+    for i in range(wrap_level):
+        data = [data]
+    return data
+
+def map_at_level(function, data, item_level=0, data_types=SIMPLE_DATA_TYPES):
+    current_level = get_data_nesting_level(data, data_types)
+    if current_level == item_level:
+        return function(data)
+    else:
+        return [map_at_level(function, item, item_level, data_types) for item in data]
 
 def transpose_list(lst):
     """

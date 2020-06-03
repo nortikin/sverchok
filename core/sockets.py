@@ -20,7 +20,7 @@
 import math
 
 import bpy
-from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, FloatProperty
+from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, FloatProperty, EnumProperty
 from bpy.types import NodeTree, NodeSocket
 
 from sverchok.core.socket_conversions import (
@@ -37,10 +37,14 @@ from sverchok.data_structure import (
     updateNode,
     get_other_socket,
     socket_id,
-    replace_socket)
+    replace_socket,
+    SIMPLE_DATA_TYPES,
+    flattern_data, graft_data, map_at_level, wrap_data)
 
 from sverchok.utils.field.scalar import SvConstantScalarField
 from sverchok.utils.field.vector import SvMatrixVectorField, SvConstantVectorField
+from sverchok.utils.curve import SvCurve, SvReparametrizeCurve
+from sverchok.utils.surface import SvSurface
 
 socket_colors = {
     "SvStringsSocket": (0.6, 1.0, 0.6, 1.0),
@@ -61,6 +65,22 @@ def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
     self.node.process_node(context)
 
+class SV_MT_SocketOptionsMenu(bpy.types.Menu):
+    bl_label = "Socket Options"
+
+    test : BoolProperty(name="Test")
+
+    @classmethod
+    def poll(cls, context):
+        return hasattr(context, 'node') and hasattr(context, 'socket')
+
+    def draw(self, context):
+        node = context.node
+        if not node:
+            return
+        layout = self.layout
+        if hasattr(context.socket, 'draw_menu_items'):
+            context.socket.draw_menu_items(context, layout)
 
 class SvSocketCommon:
     """ Base class for all Sockets """
@@ -73,6 +93,34 @@ class SvSocketCommon:
     prop_name: StringProperty(default='', description="For displaying node property in socket UI")
 
     quicklink_func_name: StringProperty(default="", name="quicklink_func_name")
+
+    allow_flattern : BoolProperty(default = False)
+    allow_simplify : BoolProperty(default = False)
+
+    use_graft : BoolProperty(
+            name = "Graft",
+            default = False,
+            update = process_from_socket)
+
+    use_wrap : BoolProperty(
+            name = "Wrap",
+            default = False,
+            update = process_from_socket)
+
+    def get_nesting_modes(self, context):
+        can_flattern = hasattr(self, 'do_flattern') and (self.allow_flattern or self.is_output)
+        can_simplify = hasattr(self, 'do_simplify') and (self.allow_simplify or self.is_output)
+        items = [('ASIS', "As is", "As is", 0)]
+        if can_flattern:
+            items.append(('FLAT', "Flattern", "Flattern", 1))
+        if can_simplify:
+            items.append(('SIMPLIFY', "Simplify", "Simplify", 3))
+        return items
+
+    nesting_mode : EnumProperty(name = "Nesting",
+            items = get_nesting_modes,
+            update = process_from_socket
+        )
 
     def get_prop_name(self):
         if hasattr(self.node, 'missing_dependecy'):
@@ -124,7 +172,34 @@ class SvSocketCommon:
 
     def sv_set(self, data):
         """Set output data"""
+        data = self.postprocess_output(data)
         SvSetSocket(self, data)
+
+    def preprocess_input(self, data):
+        if self.nesting_mode == 'ASIS':
+            result = data
+        elif self.nesting_mode == 'FLAT':
+            result = self.do_flattern(data)
+        elif self.nesting_mode == 'SIMPLIFY':
+            result = self.do_simplify(data)
+        if self.use_graft:
+            result = self.do_graft(result)
+        if self.use_wrap:
+            result = wrap_data(result)
+        return result
+
+    def postprocess_output(self, data):
+        if self.nesting_mode == 'ASIS':
+            result = data
+        elif self.nesting_mode == 'FLAT':
+            result = self.do_flattern(data)
+        elif self.nesting_mode == 'SIMPLIFY':
+            result = self.do_simplify(data)
+        if self.use_graft:
+            result = self.do_graft(result)
+        if self.use_wrap:
+            result = wrap_data(result)
+        return result
 
     def sv_forget(self):
         """Delete socket memory"""
@@ -255,6 +330,24 @@ class SvSocketCommon:
                 self.draw_quick_link(context, layout, node)
                 layout.label(text=text)
 
+        if self.has_menu(context):
+            self.draw_menu_button(context, layout, node, text)
+
+    def has_nesting_modes(self, context):
+        return len(self.get_nesting_modes(context)) > 1
+
+    def does_support_graft(self):
+        return self.is_output or (hasattr(self.node, 'does_support_graft_input') and self.node.does_support_graft_input(self))
+
+    def does_support_wrap(self):
+        return self.is_output or (hasattr(self.node, 'does_support_wrap_input') and self.node.does_support_wrap_input(self))
+
+    def has_menu(self, context):
+        return self.has_nesting_modes(context) or self.does_support_graft() or self.does_support_wrap()
+
+    def draw_menu_button(self, context, layout, node, text):
+        pass
+
     def draw_color(self, context, node):
         return socket_colors[self.bl_idname]
 
@@ -278,9 +371,10 @@ class SvSocketStandard(SvSocketCommon):
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
-            return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
+            result = self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         else:
-            return [[self.default_value]]
+            result = [[self.default_value]]
+        return self.preprocess_input(result)
 
     def draw(self, context, layout, node, text):
         if self.is_linked:
@@ -338,17 +432,18 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
-            return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
+            result = self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.object_ref or self.object_ref_pointer:
             # this can be more granular and even attempt to set object_ref_points from object_ref, and then wipe object_ref
             obj_ref = self.node.get_bpy_data_from_name(self.object_ref or self.object_ref_pointer, bpy.data.objects)
             if not obj_ref:
                 raise SvNoDataError(self)
-            return [obj_ref]
+            result = [obj_ref]
         elif default is sentinel:
             raise SvNoDataError(self)
         else:
-            return default
+            result = default
+        return self.preprocess_input(result)
 
 class SvTextSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvTextSocket"
@@ -367,13 +462,14 @@ class SvTextSocket(NodeSocket, SvSocketCommon):
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
-            return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
+            result = self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.text:
-            return [self.text]
+            result = [self.text]
         elif default is sentinel:
             raise SvNoDataError(self)
         else:
-            return default
+            result = default
+        return self.preprocess_input(result)
 
 class SvMatrixSocket(NodeSocket, SvSocketCommon):
     '''4x4 matrix Socket type'''
@@ -399,13 +495,13 @@ class SvMatrixSocket(NodeSocket, SvSocketCommon):
         self.num_matrices = 0
         if self.is_linked and not self.is_output:
             source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
-            return self.convert_data(source_data, implicit_conversions)
+            result = self.convert_data(source_data, implicit_conversions)
 
         elif default is sentinel:
             raise SvNoDataError(self)
         else:
-            return default
-
+            result = default
+        return self.preprocess_input(result)
 
 class SvVerticesSocket(NodeSocket, SvSocketCommon):
     '''For vertex data'''
@@ -427,17 +523,35 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
             source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
-            return self.convert_data(source_data, implicit_conversions)
+            result = self.convert_data(source_data, implicit_conversions)
 
-        if self.get_prop_name():
-            return [[getattr(self.node, self.get_prop_name())[:]]]
+        elif self.get_prop_name():
+            result = [[getattr(self.node, self.get_prop_name())[:]]]
         elif self.use_prop:
-            return [[self.prop[:]]]
+            result = [[self.prop[:]]]
         elif default is sentinel:
             raise SvNoDataError(self)
         else:
-            return default
+            result = default
+        return self.preprocess_input(result)
 
+    def draw_menu_button(self, context, layout, node, text):
+        if (self.is_output or self.is_linked or not self.use_prop):
+            layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
+
+    def draw_menu_items(self, context, layout):
+        if self.has_nesting_modes(context):
+            layout.props_enum(self, 'nesting_mode')
+        if self.does_support_graft():
+            layout.prop(self, 'use_graft')
+        if self.does_support_wrap():
+            layout.prop(self, 'use_wrap')
+
+    def do_simplify(self, data):
+        return flattern_data(data, 2)
+
+    def do_graft(self, data):
+        return graft_data(data, item_level=1)
 
 class SvQuaternionSocket(NodeSocket, SvSocketCommon):
     '''For quaternion data'''
@@ -459,17 +573,17 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
             source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
-            return self.convert_data(source_data, implicit_conversions)
+            result = self.convert_data(source_data, implicit_conversions)
 
-        if self.get_prop_name():
-            return [[getattr(self.node, self.get_prop_name())[:]]]
+        elif self.get_prop_name():
+            result = [[getattr(self.node, self.get_prop_name())[:]]]
         elif self.use_prop:
-            return [[self.prop[:]]]
+            result = [[self.prop[:]]]
         elif default is sentinel:
             raise SvNoDataError(self)
         else:
-            return default
-
+            result = default
+        return self.preprocess_input(result)
 
 class SvColorSocket(NodeSocket, SvSocketCommon):
     '''For color data'''
@@ -490,17 +604,16 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
-            return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
-
-        if self.get_prop_name():
-            return [[getattr(self.node, self.get_prop_name())[:]]]
+            result = self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
+        elif self.get_prop_name():
+            result = [[getattr(self.node, self.get_prop_name())[:]]]
         elif self.use_prop:
-            return [[self.prop[:]]]
+            result = [[self.prop[:]]]
         elif default is sentinel:
             raise SvNoDataError(self)
         else:
-            return default
-
+            result = default
+        return self.preprocess_input(result)
 
 class SvDummySocket(NodeSocket, SvSocketCommon):
     '''Dummy Socket for sockets awaiting assignment of type'''
@@ -557,20 +670,43 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
         #         self.node.name, self.name, self.is_linked, self.is_output)
 
         if self.is_linked and not self.is_output:
-            return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
+            result = self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.get_prop_name():
             # to deal with subtype ANGLE, this solution should be considered temporary...
             _, prop_dict = getattr(self.node.rna_type, self.get_prop_name(), (None, {}))
             subtype = prop_dict.get("subtype", "")
             if subtype == "ANGLE":
-                return [[math.degrees(getattr(self.node, self.get_prop_name()))]]
-            return [[getattr(self.node, self.get_prop_name())]]
+                result = [[math.degrees(getattr(self.node, self.get_prop_name()))]]
+            else:
+                result = [[getattr(self.node, self.get_prop_name())]]
         elif self.prop_type:
-            return [[getattr(self.node, self.prop_type)[self.prop_index]]]
+            result = [[getattr(self.node, self.prop_type)[self.prop_index]]]
         elif default is not sentinel:
-            return default
+            result = default
         else:
             raise SvNoDataError(self)
+        return self.preprocess_input(result)
+
+    def draw_menu_button(self, context, layout, node, text):
+        if (self.is_output or self.is_linked or not self.prop_name):
+            layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
+
+    def draw_menu_items(self, context, layout):
+        if self.has_nesting_modes(context):
+            layout.props_enum(self, 'nesting_mode')
+        if self.does_support_graft():
+            layout.prop(self, 'use_graft')
+        if self.does_support_wrap():
+            layout.prop(self, 'use_wrap')
+
+    def do_flattern(self, data):
+        return flattern_data(data, 1)
+
+    def do_simplify(self, data):
+        return flattern_data(data, 2)
+
+    def do_graft(self, data):
+        return graft_data(data, item_level=0, data_types = SIMPLE_DATA_TYPES + (SvCurve, SvSurface))
 
 class SvFilePathSocket(NodeSocket, SvSocketCommon):
     '''For file path data'''
@@ -582,6 +718,15 @@ class SvFilePathSocket(NodeSocket, SvSocketCommon):
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         else:
             return [[self.default_value]]
+
+    def do_flattern(self, data):
+        return flattern_data(data, 1)
+
+    def do_simplify(self, data):
+        return flattern_data(data, 2)
+
+    def do_graft(self, data):
+        return graft_data(data, item_level=0, data_types = SIMPLE_DATA_TYPES + (SvCurve, SvSurface))
 
 class SvDictionarySocket(NodeSocket, SvSocketCommon):
     '''For dictionary data'''
@@ -597,15 +742,14 @@ class SvDictionarySocket(NodeSocket, SvSocketCommon):
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
             source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
-            return self.convert_data(source_data, implicit_conversions)
-
-        if self.get_prop_name():
-            return [[getattr(self.node, self.get_prop_name())[:]]]
+            result = self.convert_data(source_data, implicit_conversions)
+        elif self.get_prop_name():
+            result = [[getattr(self.node, self.get_prop_name())[:]]]
         elif default is sentinel:
             raise SvNoDataError(self)
         else:
-            return default
-
+            result = default
+        return self.preprocess_input(result)
 
 class SvChameleonSocket(NodeSocket, SvSocketCommon):
     '''Using as input socket with color of other connected socket'''
@@ -635,14 +779,14 @@ class SvChameleonSocket(NodeSocket, SvSocketCommon):
 
     def sv_get(self, default=sentinel, deepcopy=True):
         if self.is_linked and not self.is_output:
-            return SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
-
-        if self.get_prop_name():
-            return [[getattr(self.node, self.get_prop_name())[:]]]
+            result = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
+        elif self.get_prop_name():
+            result = [[getattr(self.node, self.get_prop_name())[:]]]
         elif default is sentinel:
             raise SvNoDataError(self)
         else:
-            return default
+            result = default
+        return self.preprocess_input(result)
 
     def draw_color(self, context, node):
         return self.dynamic_color
@@ -660,18 +804,40 @@ class SvSurfaceSocket(NodeSocket, SvSocketCommon):
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
             source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
-            return self.convert_data(source_data, implicit_conversions)
-
-        if self.prop_name:
-            return [[getattr(self.node, self.prop_name)[:]]]
+            result = self.convert_data(source_data, implicit_conversions)
+        elif self.prop_name:
+            result = [[getattr(self.node, self.prop_name)[:]]]
         elif default is sentinel:
             raise SvNoDataError(self)
         else:
-            return default
+            result = default
+        return self.preprocess_input(result)
+
+    def draw_menu_button(self, context, layout, node, text):
+        layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
+
+    def draw_menu_items(self, context, layout):
+        if self.has_nesting_modes(context):
+            layout.props_enum(self, 'nesting_mode')
+        if self.does_support_graft():
+            layout.prop(self, 'use_graft')
+        if self.does_support_wrap():
+            layout.prop(self, 'use_wrap')
+
+    def do_flattern(self, data):
+        return flattern_data(data, 1, data_types=(SvSurface,))
+
+    def do_graft(self, data):
+        return graft_data(data, item_level=0, data_types=(SvSurface,))
 
 class SvCurveSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvCurveSocket"
     bl_label = "Curve Socket"
+
+    reparametrize: BoolProperty(
+            name = "Reparametrize",
+            default = False,
+            update = process_from_socket)
 
     def get_prop_data(self):
         return {}
@@ -682,14 +848,44 @@ class SvCurveSocket(NodeSocket, SvSocketCommon):
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
             source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
-            return self.convert_data(source_data, implicit_conversions)
-
-        if self.prop_name:
-            return [[getattr(self.node, self.prop_name)[:]]]
+            result = self.convert_data(source_data, implicit_conversions)
+        elif self.prop_name:
+            result = [[getattr(self.node, self.prop_name)[:]]]
         elif default is sentinel:
             raise SvNoDataError(self)
         else:
-            return default
+            result = default
+        return self.preprocess_input(result)
+
+    def draw_menu_button(self, context, layout, node, text):
+        layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
+
+    def draw_menu_items(self, context, layout):
+        if self.has_nesting_modes(context):
+            layout.props_enum(self, 'nesting_mode')
+        if self.does_support_graft():
+            layout.prop(self, 'use_graft')
+        if self.does_support_wrap():
+            layout.prop(self, 'use_wrap')
+        layout.prop(self, 'reparametrize')
+
+    def do_flattern(self, data):
+        return flattern_data(data, 1, data_types=(SvCurve,))
+
+    def do_graft(self, data):
+        return graft_data(data, item_level=0, data_types=(SvCurve,))
+
+    def preprocess_input(self, data):
+        data = SvSocketCommon.preprocess_input(self, data)
+        if self.reparametrize:
+            data = map_at_level(SvReparametrizeCurve, data, data_types=(SvCurve,))
+        return data
+
+    def postprocess_output(self, data):
+        data = SvSocketCommon.postprocess_output(self, data)
+        if self.reparametrize:
+            data = map_at_level(SvReparametrizeCurve, data, data_types=(SvCurve,))
+        return data
 
 class SvScalarFieldSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvScalarFieldSocket"
@@ -706,14 +902,14 @@ class SvScalarFieldSocket(NodeSocket, SvSocketCommon):
             implicit_conversions = FieldImplicitConversionPolicy
         if self.is_linked and not self.is_output:
             source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
-            return self.convert_data(source_data, implicit_conversions)
-
-        if self.prop_name:
-            return [[getattr(self.node, self.prop_name)[:]]]
+            result = self.convert_data(source_data, implicit_conversions)
+        elif self.prop_name:
+            result = [[getattr(self.node, self.prop_name)[:]]]
         elif default is sentinel:
             raise SvNoDataError(self)
         else:
-            return default
+            result = default
+        return self.preprocess_input(result)
 
 class SvVectorFieldSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvVectorFieldSocket"
@@ -730,14 +926,14 @@ class SvVectorFieldSocket(NodeSocket, SvSocketCommon):
             implicit_conversions = FieldImplicitConversionPolicy
         if self.is_linked and not self.is_output:
             source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
-            return self.convert_data(source_data, implicit_conversions)
-
+            result = self.convert_data(source_data, implicit_conversions)
         if self.prop_name:
-            return [[getattr(self.node, self.prop_name)[:]]]
+            result = [[getattr(self.node, self.prop_name)[:]]]
         elif default is sentinel:
             raise SvNoDataError(self)
         else:
-            return default
+            result = default
+        return self.preprocess_input(result)
 
 class SvSolidSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvSolidSocket"
@@ -785,6 +981,7 @@ type_map_from = {bl_idname: shortname for shortname, bl_idname in type_map_to.it
 
 
 classes = [
+    SV_MT_SocketOptionsMenu,
     SvVerticesSocket, SvMatrixSocket, SvStringsSocket, SvFilePathSocket,
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
     SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket,
