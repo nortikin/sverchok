@@ -21,6 +21,24 @@ from bpy.props import BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
 
+
+def walk_face(face, from_edge=None, return_sorted=True):
+    # yields all edges in a face
+    # face direction has matter
+    # from_edge should be not sorted
+    first_indexes = list(range(len(face)))
+    second_indexes = list(range(1, len(face))) + [0]
+    if from_edge:
+        start_index = face.index(from_edge[0])
+        first_indexes = first_indexes[start_index:] + first_indexes[:start_index]
+        second_indexes = second_indexes[start_index:] + second_indexes[:start_index]
+    for i1, i2 in zip(first_indexes, second_indexes):
+        if return_sorted:
+            yield tuple(sorted([face[i1], face[i2]]))
+        else:
+            yield face[i1], face[i2]
+
+
 class SvMaskConvertNode(bpy.types.Node, SverchCustomTreeNode):
     '''vertex -> edges and so on'''
     bl_idname = 'SvMaskConvertNode'
@@ -107,12 +125,17 @@ class SvMaskConvertNode(bpy.types.Node, SverchCustomTreeNode):
         for m, face in zip(faces_mask, faces):
             if m:
                 indicies.update(set(face))
-
         verts_mask = [i in indicies for i in range(len(verts))]
+
         if self.include_partial:
             edges_mask = [any(v in indicies for v in edge) for edge in edges]
         else:
-            edges_mask = [all(v in indicies for v in edge) for edge in edges]
+            selected_edges = set()
+            for is_selected_face, face in zip(faces_mask, faces):
+                if is_selected_face:
+                    for face_edge in walk_face(face):
+                        selected_edges.add(face_edge)
+            edges_mask = [tuple(sorted(edge)) in selected_edges for edge in edges]
 
         return verts_mask, edges_mask
 

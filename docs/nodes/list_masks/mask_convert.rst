@@ -54,3 +54,7 @@ Select faces of sphere with small area, and move corresponding vertices:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/25284914/5843a476-26da-11e7-908a-5eb9ed694ccb.png
 
+Select edges of randomly selected faces:
+
+.. image:: https://user-images.githubusercontent.com/28003269/83627743-7a1c8680-a5a8-11ea-99d1-ff9f01762216.png
+
