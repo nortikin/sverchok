@@ -39,6 +39,36 @@ bitmap_font_location = os.path.join(sv_path, 'utils', 'modules', 'bitmap_font')
 
 lookup_dict_data = {}
 
+no_vertex_shader = '''
+    uniform mat4 ModelViewProjectionMatrix;
+
+    in vec2 texCoord;
+    in vec2 pos;
+    uniform float x_offset;
+    uniform float y_offset;    
+
+    out vec2 texCoord_interp;
+
+    void main()
+    {
+       gl_Position = ModelViewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
+       gl_Position.z = 1.0;
+       texCoord_interp = texCoord;
+    }
+'''
+no_fragment_shader = '''
+    in vec2 texCoord_interp;
+
+    out vec4 fragColor;
+    
+    uniform sampler2D image;
+    
+    void main()
+    {
+        fragColor = texture(image, texCoord_interp);
+    }
+'''
+
 vertex_shader = '''
     uniform mat4 ModelViewProjectionMatrix;
 
@@ -360,7 +390,7 @@ def generate_batch_shader(node, data):
     # print("len(verts)", len(verts), "len(uv_indices)", len(uv_indices))
 
     if node.syntax_mode == "None":
-        shader = gpu.shader.from_builtin('2D_IMAGE')   # not fixed yet!
+        shader = gpu.types.GPUShader(no_vertex_shader, no_fragment_shader)
         batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices})
     elif node.syntax_mode == "Code":
         shader = gpu.types.GPUShader(vertex_shader, lexed_fragment_shader)
