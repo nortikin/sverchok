@@ -91,7 +91,6 @@ def simple28_grid_xy(x, y, args):
     }
     '''
 
-    # shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
     shader = gpu.types.GPUShader(bg_vertex_shader, bg_fragment_shader)
     batch = batch_for_shader(shader, 'TRIS', {"pos": geom.background_coords}, indices=geom.background_indices)
     shader.bind()
@@ -131,9 +130,7 @@ def simple28_grid_xy(x, y, args):
 
     shader2 = gpu.types.GPUShader(line_vertex_shader, line_fragment_shader)
     batch2 = batch_for_shader(shader2, 'LINES', {"pos": geom.vertices, "color": geom.vertex_colors}, indices=geom.indices)
-    # batch2 = batch_for_shader(shader2, 'LINES', {"pos": geom.vertices}, indices=geom.indices)
     shader2.bind()
-    # shader2.uniform_float("color", line_color)
     shader2.uniform_float("x_offset", x)
     shader2.uniform_float("y_offset", y)
     shader2.uniform_float("viewProjectionMatrix", matrix)
