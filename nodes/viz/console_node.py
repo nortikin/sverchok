@@ -26,6 +26,10 @@ from sverchok.utils.sv_update_utils import sv_get_local_path
 from sverchok.utils.sv_font_xml_parser import get_lookup_dict, letters_to_uv
 from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_console_grid
 
+def get_desired_xy(node):
+    x, y = xy_offset(node)
+    return x * node.location_theta, y * node.location_theta
+
 def make_color(name, default):
     return bpy.props.FloatVectorProperty(name=name, default=default, size=4, min=0, max=1, update=updateNode, subtype="COLOR")
 
@@ -41,6 +45,8 @@ vertex_shader = '''
     in vec2 texCoord;
     in vec2 pos;
     in float lexer;
+    uniform float x_offset;
+    uniform float y_offset;    
 
     out float v_lexer;
     out vec2 texCoord_interp;
@@ -48,7 +54,7 @@ vertex_shader = '''
     void main()
     {
        v_lexer = lexer;
-       gl_Position = ModelViewProjectionMatrix * vec4(pos.xy, 0.0f, 1.0f);
+       gl_Position = ModelViewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
        gl_Position.z = 1.0;
        texCoord_interp = texCoord;
     }
@@ -312,7 +318,7 @@ def terminal_text_to_uv(lines):
         uvs.extend(letters_to_uv(line, fnt))
     return uvs
 
-def simple_console_xy(context, args):
+def simple_console_xy(context, args, loc):
     texture, config = args
     act_tex = bgl.Buffer(bgl.GL_INT, 1)
     bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture.texture_dict['texture'])
@@ -327,17 +333,18 @@ def simple_console_xy(context, args):
         for color_name, color_value in config.colors.items():
             config.shader.uniform_float(color_name, color_value)
 
+    x, y = loc 
+    config.shader.uniform_float("x_offset", x)
+    config.shader.uniform_float("y_offset", y)
     config.shader.uniform_int("image", act_tex)
     config.batch.draw(config.shader)
 
-def process_grid_for_shader(grid, loc):
-    x, y = loc
+def process_grid_for_shader(grid):
     positions, poly_indices = grid
-    translated_positions = [(p[0] + x, p[1] + y) for p in positions]
     verts = []
     for poly in poly_indices:
         for v_idx in poly:
-            verts.append(translated_positions[v_idx])
+            verts.append(positions[v_idx])
     return verts
 
 def process_uvs_for_shader(node):
@@ -544,12 +551,11 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         lexer = self.get_lexer()
         grid = self.prepare_for_grid()
 
-        x, y, width, height = self.adjust_position_and_dimensions(*self.dims)
-        verts = process_grid_for_shader(grid, loc=(x, y))
+        self.adjust_position_and_dimensions(*self.dims)
+        verts = process_grid_for_shader(grid)
         uvs = process_uvs_for_shader(self)
 
         batch, shader = generate_batch_shader(self, (verts, uvs, lexer))
-        config.loc = (x, y)
         config.batch = batch
         config.shader = shader
         config.syntax_mode = self.syntax_mode
@@ -561,6 +567,8 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
         draw_data = {
             'tree_name': self.id_data.name[:],
+            'node_name': self.node.name[:],
+            'loc': get_desired_xy,
             'mode': 'custom_function_context', 
             'custom_function': simple_console_xy,
             'args': (texture, config)
@@ -596,16 +604,6 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
         if not self.inputs[0].is_linked or not self.inputs[0].sv_get():
             return True
-
-    def sv_update(self):
-        if not ("text" in self.inputs):
-            return
-        try:
-            if not self.inputs[0].other:
-                self.free()
-        except:
-            # print('ConsoleNode was disconnected, holdout (not a problem)')
-            pass
 
 classes = [SvConsoleNode]
 register, unregister = bpy.utils.register_classes_factory(classes)

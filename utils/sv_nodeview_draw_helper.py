@@ -5,6 +5,8 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+import bpy
+
 import numpy as np
 from mathutils import Matrix
 
@@ -15,6 +17,8 @@ from sverchok.settings import get_params
 
 
 class SvNodeViewDrawMixin():
+
+    location_theta: bpy.props.FloatProperty(name="location theta")
 
     @property
     def xy_offset(self):
@@ -32,10 +36,7 @@ class SvNodeViewDrawMixin():
 
     def adjust_position_and_dimensions(self, x, y, width, height):
         scale, multiplier = self.get_preferences()
-        x, y = [x * multiplier, y * multiplier]
-        width, height = [width * scale, height * scale]
-        return x, y, width, height
-
+        self.location_theta = multiplier
 
 
 def faces_from_xy(ncx, ncy):
