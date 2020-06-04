@@ -27,7 +27,7 @@ from sverchok.utils.sv_font_xml_parser import get_lookup_dict, letters_to_uv
 from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_console_grid
 
 def get_desired_xy(node):
-    x, y = xy_offset(node)
+    x, y = node.xy_offset
     return x * node.location_theta, y * node.location_theta
 
 def make_color(name, default):
@@ -344,7 +344,7 @@ def process_grid_for_shader(grid):
     verts = []
     for poly in poly_indices:
         for v_idx in poly:
-            verts.append(positions[v_idx])
+            verts.append(positions[v_idx][:2])
     return verts
 
 def process_uvs_for_shader(node):
@@ -567,7 +567,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
         draw_data = {
             'tree_name': self.id_data.name[:],
-            'node_name': self.node.name[:],
+            'node_name': self.name[:],
             'loc': get_desired_xy,
             'mode': 'custom_function_context', 
             'custom_function': simple_console_xy,

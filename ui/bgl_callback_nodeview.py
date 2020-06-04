@@ -88,6 +88,7 @@ def get_xy_from_data(data):
         x, y = location
     else:
         x, y = 20, 20
+    return x, y
 
 
 def get_sane_xy(data):
