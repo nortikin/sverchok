@@ -282,10 +282,10 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             float_out.sv_set([[None]])
 
-        if self.activate:
+        if self.activate and self.inputs[0].is_linked:
 
             config = lambda: None
-            scale = self.get_drawing_attributes() #..not really used..
+            scale = self.get_drawing_attributes()
 
             config.loc = (0, 0)
             config.palette = palette_dict.get(self.selected_theme_mode)[:]
@@ -309,18 +309,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         nvBGL.callback_disable(node_id(self))
 
     def sv_copy(self, node):
-        # reset n_id on copy
         self.n_id = ''
-
-    def sv_update(self):
-        # handle disconnecting sockets, also disconnect drawing to view?
-        if not ("Float" in self.inputs):
-            return
-        try:
-            if not self.inputs[0].other:
-                nvBGL.callback_disable(node_id(self))
-        except:
-            print('Easing node update holdout (not a problem)')
 
 
 classes = [SvEasingNode,]
