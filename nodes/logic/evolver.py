@@ -31,33 +31,91 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.core.update_system import make_tree_from_nodes, do_update
 
-Gene = namedtuple('Gene', 'name g_type, min_n, max_n, range, init_val')
+Gene = namedtuple('Gene', 'name, g_type, min_n, max_n, range, init_val')
+GeneList = namedtuple('GeneList', 'name, g_type, num_length, init_val')
 
 evolver_mem = {}
 
 def is_valid_node(node, genotype_frame):
-    if genotype_frame == 'All' and node.bl_idname == "SvNumberNode":
+    if genotype_frame == 'All' and node.bl_idname in ["SvNumberNode", "SvListInputNode"]:
         return True
-    if node.parent and node.parent.name == genotype_frame and node.bl_idname == "SvNumberNode":
+    if node.parent and node.parent.name == genotype_frame and node.bl_idname in ["SvNumberNode", "SvListInputNode"]:
         return True
     return False
+
+def number_gene(node):
+    num_type = node.selected_mode
+    if node.selected_mode == "float":
+        min_n = node.float_min
+        max_n = node.float_max
+        initial_value = node.float_
+    else:
+        min_n = node.int_min
+        max_n = node.int_max
+        initial_value = node.int_
+    gene = Gene(name=node.name, g_type=num_type, min_n=min_n, max_n=max_n, range=max_n-min_n, init_val=initial_value)
+    return gene
+
+def list_gene(node):
+    num_type = node.mode
+    if num_type == 'int_list':
+        num_length = node.int_
+        init_val = [node.int_list[i] for i in range(num_length)]
+    elif num_type == 'float_list':
+        num_length = node.int_
+        init_val = [node.float_list[i] for i in range(num_length)]
+    else:
+        num_length = node.v_int
+        mem_list = node.vector_list
+        init_val = [[mem_list[3*i], mem_list[3*i + 1], mem_list[3*i + 2]] for i in range(num_length)]
+    gene = GeneList(name=node.name, g_type=num_type, num_length=num_length, init_val=init_val)
+    return gene
 
 def get_genes(target_tree, genotype_frame):
     genes = []
     for node in target_tree.nodes:
         if is_valid_node(node, genotype_frame):
-            num_type = node.selected_mode
-            if node.selected_mode == "float":
-                min_n = node.float_min
-                max_n = node.float_max
-                initial_value = node.float_
+            if node.bl_idname == "SvNumberNode":
+                gene = number_gene(node)
             else:
-                min_n = node.int_min
-                max_n = node.int_max
-                initial_value = node.int_
-            gene = Gene(name=node.name, g_type=num_type, min_n=min_n, max_n=max_n, range=max_n-min_n, init_val=initial_value)
+                gene = list_gene(node)
+
             genes.append(gene)
     return genes
+
+def list_cross(ancestor1_gene, ancestor2_gene, o_gene):
+    mixing_factor = int(random()* o_gene.num_length)
+    new_gene = [ancestor1_gene[i] for i in range(mixing_factor)]
+    for g in ancestor2_gene:
+        if not g in new_gene:
+            new_gene.append(g)
+    return new_gene
+
+def set_list_node(gen_data, agent_gene, tree):
+    if gen_data.g_type == 'int_list':
+        for i in range(gen_data.num_length):
+            tree.nodes[gen_data.name].int_list[i] = gen_data.init_val[agent_gene[i]]
+    elif gen_data.g_type == 'float_list':
+        for i in range(gen_data.num_length):
+            tree.nodes[gen_data.name].float_list[i] = gen_data.init_val[agent_gene[i]]
+    else:
+        for i in range(gen_data.num_length):
+            tree.nodes[gen_data.name].vector_list[3*i] = gen_data.init_val[agent_gene[i][0]]
+            tree.nodes[gen_data.name].vector_list[3*i + 1] = gen_data.init_val[agent_gene[i][1]]
+            tree.nodes[gen_data.name].vector_list[3*i + 2] = gen_data.init_val[agent_gene[i][2]]
+
+def random_ancestor_mix(ancestor1_gene, ancestor2_gene):
+    mixing_factor = random()
+    new_gene = ancestor1_gene * mixing_factor + ancestor2_gene * (1 - mixing_factor)
+    return new_gene
+
+def random_element_swap(new_gene):
+
+    item_a = int(random() * len(new_gene))
+    item_b = int(random() * len(new_gene))
+    temp_g = new_gene[item_a]
+    new_gene[item_a] = new_gene[item_b]
+    new_gene[item_b] = temp_g
 
 class DNA:
 
@@ -72,23 +130,35 @@ class DNA:
     def fill_genes(self, random_val=True):
         if random_val:
             for gene in self.genes_def:
-                agent_gene = gene.min_n + random() * gene.range
-                if gene.g_type == 'int':
-                    agent_gene = int(agent_gene)
+                if isinstance(gene, GeneList):
+                    agent_gene = list(range(gene.num_length))
+                    np.random.shuffle(agent_gene)
+
+                else:
+                    agent_gene = gene.min_n + random() * gene.range
+                    if gene.g_type == 'int':
+                        agent_gene = int(agent_gene)
                 self.genes.append(agent_gene)
         else:
             for gene in self.genes_def:
-                agent_gene = gene.init_val
+                if isinstance(gene, GeneList):
+                    agent_gene = list(range(gene.num_length))
+                else:
+                    agent_gene = gene.init_val
                 self.genes.append(agent_gene)
 
     def evaluate_fitness(self, tree, update_list, node):
         try:
             tree.sv_process = False
             for gen_data, agent_gene in zip(self.genes_def, self.genes):
-                if gen_data.g_type == 'float':
-                    tree.nodes[gen_data.name].float_ = agent_gene
+                if isinstance(gen_data, GeneList):
+                    set_list_node(gen_data, agent_gene, tree)
+
                 else:
-                    tree.nodes[gen_data.name].int_ = agent_gene
+                    if gen_data.g_type == 'float':
+                        tree.nodes[gen_data.name].float_ = agent_gene
+                    else:
+                        tree.nodes[gen_data.name].int_ = agent_gene
 
             tree.sv_process = True
             do_update(update_list, tree.nodes)
@@ -109,18 +179,29 @@ class DNA:
                 total_reset_barrier = 0.5
                 if total_reset_chance < total_reset_barrier:
                     #total gene reset
-                    new_gene = o_gene.min_n + random() * o_gene.range
+                    if isinstance(o_gene, GeneList):
+                        new_gene = np.array(ancestor1_gene)
+                        np.random.shuffle(new_gene)
+                    else:
+                        new_gene = o_gene.min_n + random() * o_gene.range
                 else:
                     #small gene mutation
-                    mixing_factor = random()
-                    new_gene = ancestor1_gene * mixing_factor + ancestor2_gene * (1-mixing_factor)
-                    small_mutation = (random() - 0.5) * o_gene.range * mutation_threshold
-                    new_gene += small_mutation
-                    new_gene = max(min(new_gene, o_gene.max_n), o_gene.min_n)
+                    if isinstance(o_gene, GeneList):
+                        new_gene = list_cross(ancestor1_gene, ancestor2_gene, o_gene)
+                        random_element_swap(new_gene)
+
+                    else:
+                        new_gene = random_ancestor_mix(ancestor1_gene, ancestor2_gene)
+                        small_mutation = (random() - 0.5) * o_gene.range * mutation_threshold
+                        new_gene += small_mutation
+                        new_gene = max(min(new_gene, o_gene.max_n), o_gene.min_n)
 
             else:
-                mixing_factor = random()
-                new_gene = ancestor1_gene * mixing_factor + ancestor2_gene * (1 - mixing_factor)
+                if isinstance(o_gene, GeneList):
+                    new_gene = list_cross(ancestor1_gene, ancestor2_gene, o_gene)
+                else:
+                    new_gene = random_ancestor_mix(ancestor1_gene, ancestor2_gene)
+
 
             if o_gene.g_type == 'int':
                 new_gene = int(new_gene)
@@ -273,10 +354,13 @@ def set_fittest(tree, genes, agent, update_list):
     try:
         tree.sv_process = False
         for gene_o, gene_agent in zip(genes, agent):
-            if gene_o.g_type == 'int':
-                tree.nodes[gene_o.name].int_ = gene_agent
+            if isinstance(gene_o, GeneList):
+                set_list_node(gene_o, gene_agent, tree)
             else:
-                tree.nodes[gene_o.name].float_ = gene_agent
+                if gene_o.g_type == 'int':
+                    tree.nodes[gene_o.name].int_ = gene_agent
+                else:
+                    tree.nodes[gene_o.name].float_ = gene_agent
         tree.sv_process = True
         do_update(update_list, tree.nodes)
     finally:

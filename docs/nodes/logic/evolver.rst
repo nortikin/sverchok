@@ -11,14 +11,16 @@ The fittest agent of each generation will survive cloning himself to the next it
 
 Every agent is composed by a set of genes that can oscillate among determined values, the fitter agents have more chances to spread their genetic information.
 
-In Sverchok every gen is defined by a "A Number" node. This node type has a minimum and a maximum that will control the variation possibilities of this gen. The node can use all the "A number" nodes of the node-tree or only some of them if they are inside a "Frame Node" that can be selected from the "Genotype" dropdown menu.
+In Sverchok every gen is defined by a "A Number"  node or a "List Input" node. The "A Number" node type has a minimum and a maximum that will control the variation possibilities of this gen. The "List input" node will be variated by changing the order of the elements in the list.
+
+The Evolver node can use all the "A number" and "List Input" nodes of the node-tree or only some of them if they are inside a "Frame Node" that can be selected from the "Genotype" dropdown menu.
 
 The fitness of every member of the population will be evaluated by running the node-tree with the genes of that member and recording the value that is inputted in the "Fitness" socket.
 
 Parameters
 ----------
 
-**Genotype**: dropdown menu to chose to use as genes either all 'A Number' nodes or only the ones inside a 'Frame' Node
+**Genotype**: dropdown menu to chose to use as genes either all 'A Number' and "List Input" nodes or only the ones inside a 'Frame' Node
 
 **Mode**:  "Maximum" and "Minimum" with the maximum selected a higher fitness value is considered better with the minimum a lower fitness will be considered as more fit.
 
@@ -75,3 +77,7 @@ Solved problem: Which is the smallest box (as the sum of faces area) in which I 
 Solved problem: Where is the point where the minimum distance to a set of points is closest to the maximum distance?
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_02.png
+
+Solved problem: Which is the shortest path that cycles through all the points?
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_03.png
