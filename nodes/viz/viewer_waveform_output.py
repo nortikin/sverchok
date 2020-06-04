@@ -27,6 +27,10 @@ from sverchok.ui import bgl_callback_nodeview as nvBGL
 
 DATA_SOCKET = 'SvStringsSocket'
 
+def get_offset_xy(node):
+    x, y = [int(j) for j in (Vector(node.absolute_location) + Vector((node.width + 20, 0)))[:]]
+    return x, y
+
 
 class gridshader():
     def __init__(self, dims, loc, palette, channels):
@@ -210,6 +214,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'FORCE_HARMONIC'
 
     n_id: bpy.props.StringProperty(default='')
+    location_theta: bpy.props.FloatProperty(name="location theta")
 
     def update_socket_count(self, context):
         ... # if self.num_channels < MAX_SOCKETS 
@@ -218,8 +223,6 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         """
         adjust render location based on preference multiplier setting
         """
-        x, y = [int(j) for j in (Vector(self.absolute_location) + Vector((self.width + 20, 0)))[:]]
-
         try:
             with sv_preferences() as prefs:
                 multiplier = prefs.render_location_xy_multiplier
@@ -228,9 +231,10 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             # print('did not find preferences - you need to save user preferences')
             multiplier = 1.0
             scale = 1.0
-        x, y = [x * multiplier, y * multiplier]
+        self.location_theta = multiplier
+        # x, y = [x * multiplier, y * multiplier]
 
-        return x, y, scale, multiplier
+        return scale
 
 
     activate: bpy.props.BoolProperty(name="show graph", update=updateNode)
@@ -467,14 +471,13 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             palette.high_colour = (0.13, 0.13, 0.13, 1.0)
             palette.low_colour = (0.1, 0.1, 0.1, 1.0)
 
-            x, y, scale, multiplier = self.get_drawing_attributes()
+            scale = self.get_drawing_attributes()
 
             # some aliases
             w = self.graph_width
             h = self.graph_height
             dims = (w, h)
-            loc = (x, y)
-            config.loc = loc
+            loc = (0, 0)
             config.scale = scale
 
             grid_data = gridshader(dims, loc, palette, self.num_channels)
@@ -512,6 +515,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             draw_data = {
                 'mode': 'custom_function_context',
                 'tree_name': self.id_data.name[:],
+                'node_name': self.name[:],
+                'loc': get_offset_xy,
                 'custom_function': advanced_grid_xy,
                 'args': (geom, config)
             }
