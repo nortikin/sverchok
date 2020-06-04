@@ -360,7 +360,7 @@ def generate_batch_shader(node, data):
     # print("len(verts)", len(verts), "len(uv_indices)", len(uv_indices))
 
     if node.syntax_mode == "None":
-        shader = gpu.shader.from_builtin('2D_IMAGE')
+        shader = gpu.shader.from_builtin('2D_IMAGE')   # not fixed yet!
         batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices})
     elif node.syntax_mode == "Code":
         shader = gpu.types.GPUShader(vertex_shader, lexed_fragment_shader)
