@@ -67,14 +67,40 @@ def add_offset(offset, coords):
 def simple28_grid_xy(x, y, args):
     """ x and y are passed by default so you could add font content """
 
+
+    bg_vertex_shader = '''
+    in vec2 pos;
+    uniform mat4 viewProjectionMatrix;
+    uniform float x_offset;
+    uniform float y_offset;
+
+    void main()
+    {
+       gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
+    }
+    '''
+
+    bg_fragment_shader = '''
+    uniform vec4 color;
+    void main()
+    {
+       gl_FragColor = color;
+    }
+    '''
+
     geom, config = args
     back_color, grid_color, line_color = config.palette
 
     # draw background, this could be cached......
-    shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
-    batch = batch_for_shader(shader, 'TRIS', {"pos": add_offset((x, y), geom.background_coords)}, indices=geom.background_indices)
+    matrix = gpu.matrix.get_projection_matrix()
+    # shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+    shader = gpu.types.GPUShader(bg_vertex_shader, bg_fragment_shader)
+    batch = batch_for_shader(shader, 'TRIS', {"pos": geom.background_coords}, indices=geom.background_indices)
     shader.bind()
     shader.uniform_float("color", back_color)
+    shader.uniform_float("x_offset", x)
+    shader.uniform_float("y_offset", y)
+    shader.uniform_float("viewProjectionMatrix", matrix)    
     batch.draw(shader)
 
     # draw grid and graph
