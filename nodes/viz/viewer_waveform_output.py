@@ -34,7 +34,7 @@ def get_offset_xy(node):
 
 class gridshader():
     def __init__(self, dims, loc, palette, channels):
-        x, y = loc
+        x, y = (0, 0)
         w, h = dims
         
         if channels == 2:
@@ -105,21 +105,33 @@ class gridshader():
             
             self.background_colors = [lc, lc, hc, hc, lc, lc, hc, hc, lc, lc]
 
-def advanced_grid_xy(context, args):
+def advanced_grid_xy(context, args, xy):
+    x, y = xy
     geom, config = args
-    
-    ## background    
+    matrix = gpu.matrix.get_projection_matrix()
+
+    ## background
+    config.background_shader.bind()
+    config.background_shader.uniform_float("viewProjectionMatrix", matrix)
+    config.background_shader.uniform_float("x_offset", x)
+    config.background_shader.uniform_float("y_offset", y)    
     config.background_batch.draw(config.background_shader)
     
     ## background grid / ticks
     if hasattr(config, 'tick_shader'):
         config.tick_shader.bind()
+        config.tick_shader.uniform_float("viewProjectionMatrix", matrix)
         config.tick_shader.uniform_float("color", (0.4, 0.4, 0.9, 1))
+        config.tick_shader.uniform_float("x_offset", x)
+        config.tick_shader.uniform_float("y_offset", y)
         config.tick_batch.draw(config.tick_shader)
 
     ## line graph
     config.line_shader.bind()
+    config.line_shader.uniform_float("viewProjectionMatrix", matrix)
     config.line_shader.uniform_float("color", (1, 0, 0, 1))
+    config.line_shader.uniform_float("x_offset", x)
+    config.line_shader.uniform_float("y_offset", y)    
     config.line_batch.draw(config.line_shader)
 
 class NodeTreeGetter():
@@ -163,10 +175,56 @@ class SvWaveformViewerOperatorDP(bpy.types.Operator, NodeTreeGetter):
 
 # place here (out of node) to supress warnings during headless testing. i think.
 def get_2d_uniform_color_shader():
-    return gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+    # return gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+    uniform_2d_vertex_shader = '''
+    in vec2 pos;
+    uniform mat4 viewProjectionMatrix;
+    uniform float x_offset;
+    uniform float y_offset;
+
+    void main()
+    {
+       gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
+    }
+    '''
+
+    uniform_2d_fragment_shader = '''
+    uniform vec4 color;
+    void main()
+    {
+       gl_FragColor = color;
+    }
+    '''
+    return gpu.types.GPUShader(uniform_2d_vertex_shader, uniform_2d_fragment_shader)
 
 def get_2d_smooth_color_shader():
-    return gpu.shader.from_builtin('2D_SMOOTH_COLOR')
+    # return gpu.shader.from_builtin('2D_SMOOTH_COLOR')
+    smooth_2d_vertex_shader = '''
+    in vec2 pos;
+    layout(location=1) in vec4 color;
+
+    uniform mat4 viewProjectionMatrix;
+    uniform float x_offset;
+    uniform float y_offset;
+
+    out vec4 a_color;
+   
+    void main()
+    {
+        gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
+        a_color = color;
+    }
+    '''
+
+    smooth_2d_fragment_shader = '''
+    in vec4 a_color;
+
+    void main()
+    {
+        gl_FragColor = a_color;
+    }
+    '''
+    return gpu.types.GPUShader(smooth_2d_vertex_shader, smooth_2d_fragment_shader)    
 
 signed_digital_voltage_max = {
     8: 127,
@@ -339,7 +397,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         tick_data.verts = []
         tick_data.indices = []
         w, h = dims
-        x, y = loc
+        x, y = (0, 0)
 
         if self.num_channels == 2:
             h *= 2
@@ -463,6 +521,9 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
         if self.activate:
 
+            if not self.inputs[0].other or self.inputs[1].other:
+                return
+
             # parameter containers
             config = lambda: None
             geom = lambda: None
@@ -530,15 +591,15 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     def sv_copy(self, node):
         self.n_id = ''
 
-    def sv_update(self):
-        # handle disconnecting sockets, also disconnect drawing to view?
-        if not ("channel 1" in self.inputs):
-            return
-        try:
-            if not self.inputs[0].other or self.inputs[1].other:
-                nvBGL.callback_disable(node_id(self))
-        except:
-            print('Waveform Viewer node update holdout (not a problem)')
+    # def sv_update(self):
+    #     # handle disconnecting sockets, also disconnect drawing to view?
+    #     if not ("channel 1" in self.inputs):
+    #         return
+    #     try:
+    #         if not self.inputs[0].other or self.inputs[1].other:
+    #             nvBGL.callback_disable(node_id(self))
+    #     except:
+    #         print('Waveform Viewer node update holdout (not a problem)')
 
     def process_wave(self):
         print('process wave pressed')
