@@ -591,16 +591,6 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     def sv_copy(self, node):
         self.n_id = ''
 
-    # def sv_update(self):
-    #     # handle disconnecting sockets, also disconnect drawing to view?
-    #     if not ("channel 1" in self.inputs):
-    #         return
-    #     try:
-    #         if not self.inputs[0].other or self.inputs[1].other:
-    #             nvBGL.callback_disable(node_id(self))
-    #     except:
-    #         print('Waveform Viewer node update holdout (not a problem)')
-
     def process_wave(self):
         print('process wave pressed')
         if not self.dirname and self.filename:
