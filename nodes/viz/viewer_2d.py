@@ -91,7 +91,7 @@ def fill_points_colors(vectors_color, data, color_per_point, random_colors):
     else:
         for nums, col in zip(data, cycle(vectors_color[0])):
             if random_colors:
-                r_color = [random(),random(),random(),1]
+                r_color = [random(), random(), random(),1]
                 for n in nums:
                     points_color.append(r_color)
             else:
@@ -100,6 +100,62 @@ def fill_points_colors(vectors_color, data, color_per_point, random_colors):
 
     return points_color
 
+def get_drawing_location(node):
+    x, y = node.get_offset()
+    return x * node.location_theta, y * node.location_theta
+
+def add_offset(offset, coords):
+    return [(x + offset[0], y + offset[1]) for x, y in coords]
+
+def get_2d_uniform_color_shader():
+    uniform_2d_vertex_shader = '''
+    in vec2 pos;
+    uniform mat4 viewProjectionMatrix;
+    uniform float x_offset;
+    uniform float y_offset;
+
+    void main()
+    {
+       gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
+    }
+    '''
+
+    uniform_2d_fragment_shader = '''
+    uniform vec4 color;
+    void main()
+    {
+       gl_FragColor = color;
+    }
+    '''
+    return gpu.types.GPUShader(uniform_2d_vertex_shader, uniform_2d_fragment_shader)
+def get_2d_smooth_color_shader():
+
+    smooth_2d_vertex_shader = '''
+    in vec2 pos;
+    layout(location=1) in vec4 color;
+
+    uniform mat4 viewProjectionMatrix;
+    uniform float x_offset;
+    uniform float y_offset;
+
+    out vec4 a_color;
+
+    void main()
+    {
+        gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
+        a_color = color;
+    }
+    '''
+
+    smooth_2d_fragment_shader = '''
+    in vec4 a_color;
+
+    void main()
+    {
+        gl_FragColor = a_color;
+    }
+    '''
+    return gpu.types.GPUShader(smooth_2d_vertex_shader, smooth_2d_fragment_shader)
 
 def view_2d_geom(x, y, args):
     """
@@ -108,13 +164,21 @@ def view_2d_geom(x, y, args):
     """
 
     geom, config = args
+    matrix = gpu.matrix.get_projection_matrix()
     if config.draw_background:
         background_color = config.background_color
         # draw background, this could be cached......
+
         shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+
+        shader = get_2d_uniform_color_shader()
         batch = batch_for_shader(shader, 'TRIS', {"pos": geom.background_coords}, indices=geom.background_indices)
         shader.bind()
         shader.uniform_float("color", background_color)
+        print("BB", x, y)
+        shader.uniform_float("x_offset", x)
+        shader.uniform_float("y_offset", y)
+        shader.uniform_float("viewProjectionMatrix", matrix)
         batch.draw(shader)
 
     if config.draw_polys and config.mode == 'Mesh':
@@ -122,11 +186,18 @@ def view_2d_geom(x, y, args):
 
     if config.draw_edges:
         bgl.glLineWidth(config.edge_width)
+        config.e_shader.uniform_float("x_offset", x)
+        config.e_shader.uniform_float("y_offset", y)
+        config.e_shader.uniform_float("viewProjectionMatrix", matrix)
         config.e_batch.draw(config.e_shader)
         bgl.glLineWidth(1)
 
     if config.draw_verts:
         bgl.glPointSize(config.point_size)
+
+        config.v_shader.uniform_float("x_offset", x)
+        config.v_shader.uniform_float("y_offset", y)
+        config.v_shader.uniform_float("viewProjectionMatrix", matrix)
         config.v_batch.draw(config.v_shader)
         bgl.glPointSize(1)
 
@@ -205,11 +276,18 @@ def generate_number_geom(config, numbers):
 
     if config.draw_verts:
         config.v_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
+        config.v_shader = get_2d_smooth_color_shader()
+        # matrix = gpu.matrix.get_projection_matrix()
+        # config.v_shader.uniform_float("viewProjectionMatrix", matrix)
+        # print("PP", x, y)
+        # config.v_shader.uniform_float("x_offset", x)
+        # config.v_shader.uniform_float("y_offset", y)
         config.v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": v_vertices, "color": points_color})
     if config.draw_edges:
         if config.edges_use_vertex_color:
             vertex_colors = points_color
         config.e_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
+        config.e_shader = get_2d_smooth_color_shader()
         config.e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": e_vertices, "color": vertex_colors}, indices=indices)
 
     return geom
@@ -556,6 +634,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
     draw_background: BoolProperty(
         update=updateNode, name='Display Background', default=True
         )
+    location_theta: FloatProperty(name="location theta")
 
     def draw_buttons(self, context, layout):
         r0 = layout.row()
@@ -636,8 +715,6 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         """
         adjust render location based on preference multiplier setting
         """
-        x, y = [int(j) for j in (Vector(self.absolute_location) + Vector((self.width + 20, 0)))[:]]
-
         try:
             with sv_preferences() as prefs:
                 multiplier = prefs.render_location_xy_multiplier
@@ -646,16 +723,19 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
             # print('did not find preferences - you need to save user preferences')
             multiplier = 1.0
             scale = 1.0
-        x, y = [x * multiplier, y * multiplier]
 
-        return x, y, scale, multiplier
+        # cache this.
+        self.location_theta = multiplier
+        return scale
 
+    def get_offset(self):
+        return [int(j) for j in (Vector(self.absolute_location) + Vector((self.width + 20, 0)))[:]]
     def create_config(self):
         config = lambda: None
-        x, y, scale, _ = self.get_drawing_attributes()
+        scale = self.get_drawing_attributes()
         margin = 10* scale
         config.mode = self.mode
-        config.loc = (x, y - margin)
+        config.loc = (0, 0 - margin)
         config.sys_scale = scale
         config.scale = scale * self.draw_scale
         config.cyclic = self.cyclic
@@ -674,7 +754,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         config.edges_use_vertex_color = self.edges_use_vertex_color
         config.random_colors = self.vector_random_colors
 
-        return x, y, config
+        return config
 
     def process(self):
         n_id = node_id(self)
@@ -703,7 +783,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         edge_color = inputs['Edge Color'].sv_get(default=[[self.edge_color]])
         poly_color = inputs['Polygon Color'].sv_get(default=[[self.polygon_color]])
         seed_set(self.random_seed)
-        x, y, config = self.create_config()
+        config = self.create_config()
 
         config.vector_color = vector_color
         config.edge_color = edge_color
@@ -736,7 +816,9 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         draw_data = {
             'mode': 'custom_function',
             'tree_name': self.id_data.name[:],
-            'loc': (x, y),
+            # 'loc': (x, y),
+            'node_name': self.name[:],
+            'loc': get_drawing_location,
             'custom_function': view_2d_geom,
             'args': (geom, config)
         }
