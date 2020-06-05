@@ -34,6 +34,10 @@ def calc_fillet(v1, v2, v3, radius):
     dv2 = v3 - v2
     dv1n, dv2n = dv1.normalized(), dv2.normalized()
     angle = dv1.angle(dv2)
+    if abs(angle) < 1e-6 or abs(angle-pi) < 1e-6:
+        # The two edges are parallel
+        return None
+
     angle2 = angle / 2.0
     big_angle = pi - angle
 

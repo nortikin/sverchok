@@ -70,15 +70,20 @@ class SvFilletPolylineNode(bpy.types.Node, SverchCustomTreeNode):
         centers = []
         for v1, v2, v3, radius in corners:
             fillet = calc_fillet(v1, v2, v3, radius)
-            edge_direction = np.array(fillet.p1) - np.array(prev_edge_start)
-            edge_len = np.linalg.norm(edge_direction)
-            edge = SvLine(prev_edge_start, edge_direction / edge_len)
-            edge.u_bounds = (0.0, edge_len)
-            arc = fillet.get_curve()
-            prev_edge_start = fillet.p2
-            curves.append(edge)
-            curves.append(arc)
-            centers.append(fillet.matrix)
+            if fillet is not None:
+                edge_direction = np.array(fillet.p1) - np.array(prev_edge_start)
+                edge_len = np.linalg.norm(edge_direction)
+                edge = SvLine(prev_edge_start, edge_direction / edge_len)
+                edge.u_bounds = (0.0, edge_len)
+                arc = fillet.get_curve()
+                prev_edge_start = fillet.p2
+                curves.append(edge)
+                curves.append(arc)
+                centers.append(fillet.matrix)
+            else:
+                edge = SvLine.from_two_points(prev_edge_start, v2)
+                prev_edge_start = v2
+                curves.append(edge)
 
         if not self.cyclic:
             edge_direction = np.array(vertices[-1]) - np.array(prev_edge_start)
