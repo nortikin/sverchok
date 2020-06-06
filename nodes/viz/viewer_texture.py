@@ -26,6 +26,7 @@ from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.ui import sv_image as svIMG
+from sverchok.utils.sv_texture_utils import tx_vertex_shader, tx_fragment_shader
 
 from sverchok.utils.sv_operator_mixins import (
     SvGenericDirectorySelector, SvGenericCallbackWithParams
