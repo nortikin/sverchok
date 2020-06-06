@@ -700,6 +700,11 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
     prop_type: StringProperty(default='')
     prop_index: IntProperty()
 
+    use_graft_2 : BoolProperty(
+            name = "Graft Topology",
+            default = False,
+            update = process_from_socket)
+
     def get_prop_data(self):
         if self.get_prop_name():
             return {"prop_name": self.get_prop_name()}
@@ -739,6 +744,8 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
         self.draw_simplify_modes(layout)
         if self.can_graft():
             layout.prop(self, 'use_graft')
+            if not self.use_flatten:
+                layout.prop(self, 'use_graft_2')
         if self.can_wrap():
             layout.prop(self, 'use_wrap')
 
@@ -770,6 +777,43 @@ class SvFilePathSocket(NodeSocket, SvSocketCommon):
 
     def do_graft(self, data):
         return graft_data(data, item_level=0, data_types = SIMPLE_DATA_TYPES + (SvCurve, SvSurface))
+
+    def do_graft_2(self, data):
+        def to_zero_base(lst):
+            m = min(lst)
+            return [x - m for x in lst]
+
+        result = map_at_level(to_zero_base, data, item_level=1, data_types = SIMPLE_DATA_TYPES + (SvCurve, SvSurface))
+        result = graft_data(result, item_level=1, data_types = SIMPLE_DATA_TYPES + (SvCurve, SvSurface))
+        return result
+
+    def preprocess_input(self, data):
+        result = data
+        if self.use_flatten:
+            result = self.do_flatten(data)
+        elif self.use_simplify:
+            result = self.do_simplify(data)
+        if self.use_graft:
+            result = self.do_graft(result)
+        elif not self.use_flatten and self.use_graft_2:
+            result = self.do_graft_2(result)
+        if self.use_wrap:
+            result = wrap_data(result)
+        return result
+
+    def postprocess_output(self, data):
+        result = data
+        if self.use_flatten:
+            result = self.do_flatten(data)
+        elif self.use_simplify:
+            result = self.do_simplify(data)
+        if self.use_graft:
+            result = self.do_graft(result)
+        elif self.use_graft_2:
+            result = self.do_graft_2(result)
+        if self.use_wrap:
+            result = wrap_data(result)
+        return result
 
 class SvDictionarySocket(NodeSocket, SvSocketCommon):
     '''For dictionary data'''
