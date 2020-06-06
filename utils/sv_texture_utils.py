@@ -110,3 +110,13 @@ factor_buffer_dict = {
 def get_drawing_location(node):
     x, y = node.xy_offset
     return x * node.location_theta, y * node.location_theta
+
+
+# def generate_batch_shader(args):
+#     w, h = args
+#     x, y = 0, 0
+#     positions = ((x, y), (x + w, y), (x + w, y - h), (x, y - h))
+#     indices = ((0, 1), (1, 1), (1, 0), (0, 0))
+#     shader = gpu.types.GPUShader(tx_vertex_shader, tx_fragment_shader)
+#     batch = batch_for_shader(shader, 'TRI_FAN', {"pos": positions, "texCoord": indices})
+#     return batch, shader
