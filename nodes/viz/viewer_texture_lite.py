@@ -19,7 +19,7 @@ from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
 
-from sverchok.utils.sv_texture_utils import tx_vertex_shader, tx_fragment_shader
+from sverchok.utils.sv_texture_utils import generate_batch_shader
 from sverchok.utils.sv_texture_utils import simple_screen, init_texture, get_drawing_location
 from sverchok.utils.sv_texture_utils import gl_color_list, gl_color_dict, factor_buffer_dict
 
@@ -123,7 +123,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
             init_texture(width, height, name[0], texture, gl_color_constant)
 
             width, height = self.get_dimensions(width, height)
-            batch, shader = self.generate_batch_shader((width, height))
+            batch, shader = generate_batch_shader((width, height))
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
@@ -140,16 +140,6 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
             Im = bpy.data.images[self.image]
             Im.pixels = np.resize(self.inputs[0].sv_get(), len(Im.pixels))
-
-    def generate_batch_shader(self, args):
-        w, h = args
-        x = 0
-        y = 0
-        positions = ((x, y), (x + w, y), (x + w, y - h), (x, y - h))
-        indices = ((0, 1), (1, 1), (1, 0), (0, 0))
-        shader = gpu.types.GPUShader(tx_vertex_shader, tx_fragment_shader)
-        batch = batch_for_shader(shader, 'TRI_FAN', {"pos": positions, "texCoord": indices})
-        return batch, shader
 
     def get_preferences(self):
         # supplied with default, forces at least one value :)
