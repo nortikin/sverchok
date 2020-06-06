@@ -91,7 +91,7 @@ def fill_points_colors(vectors_color, data, color_per_point, random_colors):
     else:
         for nums, col in zip(data, cycle(vectors_color[0])):
             if random_colors:
-                r_color = [random(), random(), random(),1]
+                r_color = [random(), random(), random(), 1]
                 for n in nums:
                     points_color.append(r_color)
             else:
@@ -175,17 +175,23 @@ def view_2d_geom(x, y, args):
         batch = batch_for_shader(shader, 'TRIS', {"pos": geom.background_coords}, indices=geom.background_indices)
         shader.bind()
         shader.uniform_float("color", background_color)
-        print("BB", x, y)
         shader.uniform_float("x_offset", x)
         shader.uniform_float("y_offset", y)
         shader.uniform_float("viewProjectionMatrix", matrix)
         batch.draw(shader)
 
     if config.draw_polys and config.mode == 'Mesh':
+        config.p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices, "color": geom.p_vertex_colors}, indices=geom.p_indices)
+        config.p_shader.bind()
+        config.p_shader.uniform_float("x_offset", x)
+        config.p_shader.uniform_float("y_offset", y)
+        config.p_shader.uniform_float("viewProjectionMatrix", matrix)
         config.p_batch.draw(config.p_shader)
 
     if config.draw_edges:
         bgl.glLineWidth(config.edge_width)
+        config.e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices, "color": geom.e_vertex_colors}, indices=geom.e_indices)
+        config.e_shader.bind()
         config.e_shader.uniform_float("x_offset", x)
         config.e_shader.uniform_float("y_offset", y)
         config.e_shader.uniform_float("viewProjectionMatrix", matrix)
@@ -194,7 +200,8 @@ def view_2d_geom(x, y, args):
 
     if config.draw_verts:
         bgl.glPointSize(config.point_size)
-
+        config.v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices, "color": geom.points_color})
+        config.v_shader.bind()
         config.v_shader.uniform_float("x_offset", x)
         config.v_shader.uniform_float("y_offset", y)
         config.v_shader.uniform_float("viewProjectionMatrix", matrix)
@@ -268,27 +275,19 @@ def generate_number_geom(config, numbers):
 
 
     points_color = fill_points_colors(config.vector_color, numbers, config.color_per_point, config.random_colors)
-    geom.points_color = points_color
-    geom.points_vertices = v_vertices
-    geom.vertices = e_vertices
-    geom.vertex_colors = vertex_colors
-    geom.indices = indices
+
 
     if config.draw_verts:
-        config.v_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
         config.v_shader = get_2d_smooth_color_shader()
-        # matrix = gpu.matrix.get_projection_matrix()
-        # config.v_shader.uniform_float("viewProjectionMatrix", matrix)
-        # print("PP", x, y)
-        # config.v_shader.uniform_float("x_offset", x)
-        # config.v_shader.uniform_float("y_offset", y)
-        config.v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": v_vertices, "color": points_color})
+        geom.v_vertices, geom.points_color = v_vertices, points_color
+
     if config.draw_edges:
         if config.edges_use_vertex_color:
             vertex_colors = points_color
-        config.e_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
+
         config.e_shader = get_2d_smooth_color_shader()
-        config.e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": e_vertices, "color": vertex_colors}, indices=indices)
+        geom.e_vertices, geom.e_vertex_colors, geom.e_indices = e_vertices, vertex_colors, indices
+
 
     return geom
 
@@ -354,14 +353,15 @@ def generate_graph_geom(config, paths):
     points_color = fill_points_colors(config.vector_color, paths, config.color_per_point, config.random_colors)
 
     if config.draw_verts:
-        config.v_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
-        config.v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": v_vertices, "color": points_color})
+        config.v_shader = get_2d_smooth_color_shader()
+        geom.v_vertices, geom.points_color = v_vertices, points_color
 
     if config.draw_edges:
         if config.edges_use_vertex_color:
             e_vertex_colors = points_color
-        config.e_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
-        config.e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": e_vertices, "color": e_vertex_colors}, indices=e_indices)
+
+        config.e_shader = get_2d_smooth_color_shader()
+        geom.e_vertices, geom.e_vertex_colors, geom.e_indices = e_vertices, e_vertex_colors, e_indices
 
     return geom
 
@@ -478,20 +478,23 @@ def generate_mesh_geom(config, vecs_in):
     points_color = fill_points_colors(config.vector_color, vecs_in, config.color_per_point, config.random_colors)
 
     if config.draw_verts:
-        config.v_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
-        config.v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": v_vertices, "color": points_color})
+
+        config.v_shader = get_2d_smooth_color_shader()
+        geom.v_vertices, geom.points_color = v_vertices, points_color
 
     if config.draw_edges:
         if config.edges_use_vertex_color and e_vertices:
             e_vertex_colors = points_color
-        config.e_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
-        config.e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": e_vertices, "color": e_vertex_colors}, indices=e_indices)
+
+        config.e_shader = get_2d_smooth_color_shader()
+        geom.e_vertices, geom.e_vertex_colors, geom.e_indices = e_vertices, e_vertex_colors, e_indices
+
 
     if config.draw_polys:
         if config.polygon_use_vertex_color:
             p_vertex_colors = points_color
-        config.p_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
-        config.p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": p_vertices, "color": p_vertex_colors}, indices=p_indices)
+        config.p_shader = get_2d_smooth_color_shader()
+        geom.p_vertices, geom.p_vertex_colors, geom.p_indices = p_vertices, p_vertex_colors, p_indices
 
     return geom
 
@@ -504,16 +507,16 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_EASING'
 
     modes = [
-        ('Number', 'Number', 'Input UV coordinates to evaluate texture', '', 1),
-        ('Path', 'Path', 'Matrix to apply to verts before evaluating texture', '', 2),
-        ('Curve', 'Curve', 'Matrix of texture (External Object matrix)', '', 3),
-        ('Mesh', 'Mesh', 'Matrix of texture (External Object matrix)', '', 4),
+        ('Number', 'Number', 'Visualize number list', '', 1),
+        ('Path', 'Path', 'Visualize vertices sequence', '', 2),
+        ('Curve', 'Curve', 'Visualize curve', '', 3),
+        ('Mesh', 'Mesh', 'Visualize mesh data', '', 4),
 
     ]
     plane = [
-        ('XY', 'XY', 'Input UV coordinates to evaluate texture', '', 1),
-        ('XZ', 'XZ', 'Matrix to apply to verts before evaluating texture', '', 2),
-        ('YZ', 'YZ', 'Matrix of texture (External Object matrix)', '', 3),
+        ('XY', 'XY', 'Project on XY plane', '', 1),
+        ('XZ', 'XZ', 'Project on XZ plane', '', 2),
+        ('YZ', 'YZ', 'Project on YZ plane', '', 3),
 
 
     ]
@@ -549,7 +552,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         default=True, update=updateNode
     )
     cyclic: BoolProperty(
-        name='Cycle', description='Activate drawing',
+        name='Cycle', description='Join first and last vertices',
         default=True, update=updateNode
     )
 
@@ -826,10 +829,6 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_free(self):
         nvBGL.callback_disable(node_id(self))
-
-    def sv_copy(self, node):
-        # reset n_id on copy
-        self.n_id = ''
 
 
 
