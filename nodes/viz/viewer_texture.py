@@ -12,11 +12,10 @@
 import os
 import numpy as np
 
-
 import bpy
 import gpu
 import bgl
-from gpu_extras.batch import batch_for_shader
+
 from bpy.props import (
     FloatProperty, EnumProperty, StringProperty, BoolProperty, IntProperty
 )

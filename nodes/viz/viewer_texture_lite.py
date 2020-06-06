@@ -11,7 +11,6 @@ import numpy as np
 import bgl
 import gpu
 import bpy
-from gpu_extras.batch import batch_for_shader
 from bpy.props import EnumProperty, StringProperty, IntProperty, PointerProperty, FloatProperty
 
 from sverchok.settings import get_params
