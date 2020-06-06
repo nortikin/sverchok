@@ -20,18 +20,14 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
 
 from sverchok.utils.sv_texture_utils import tx_vertex_shader, tx_fragment_shader
-from sverchok.nodes.viz.viewer_texture import (
-    init_texture, simple_screen, gl_color_list, gl_color_dict, factor_buffer_dict)
+from sverchok.utils.sv_texture_utils import simple_screen, init_texture, get_drawing_location
+from sverchok.utils.sv_texture_utils import gl_color_list, gl_color_dict, factor_buffer_dict
 
 
 out_modes = [
     ('image_editor', 'UV\image editor', 'insert values into image editor (only RGBA mode!)', '', 0),
     ('bgl', 'bgl', 'create texture inside nodetree', '', 1),
 ]
-
-def get_draw_location(node):
-    x, y = node.xy_offset
-    return x * self.location_theta, y * self.location_theta
 
 class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
     '''Texture Viewer node Lite'''
@@ -70,7 +66,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
         default="bgl", update=updateNode)
 
     properties_to_skip_iojson = ["image_pointer", "location_theta"]
-    location_theta = FloatProperty(name="location theta")
+    location_theta: FloatProperty(name="location theta")
 
     @property
     def xy_offset(self):
@@ -131,9 +127,10 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
+                'node_name': self.name[:],
                 'mode': 'custom_function',
                 'custom_function': simple_screen,
-                'loc': get_draw_location,
+                'loc': get_drawing_location,
                 'args': (texture, self.texture[n_id], width, height, batch, shader, cMode)
             }
 
@@ -150,7 +147,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
         y = 0
         positions = ((x, y), (x + w, y), (x + w, y - h), (x, y - h))
         indices = ((0, 1), (1, 1), (1, 0), (0, 0))
-        shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
+        shader = gpu.types.GPUShader(tx_vertex_shader, tx_fragment_shader)
         batch = batch_for_shader(shader, 'TRI_FAN', {"pos": positions, "texCoord": indices})
         return batch, shader
 
