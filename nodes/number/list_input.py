@@ -36,13 +36,19 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
     to3d: BoolProperty(name='to3d', description='show in 3d panel', default=True)
 
     int_: IntProperty(
-        name='int_', description='integer number', default=1, min=1, max=32, update=updateNode)
+        name='int_', description='integer number', default=1, min=1, max=128, update=updateNode)
 
     v_int: IntProperty(
         name='int_', description='integer number', default=1, min=1, max=10, update=updateNode)
 
     int_list: IntVectorProperty(
         name='int_list', description="Integer list", default=defaults, size=32,update=updateNode)
+    int_list1: IntVectorProperty(
+        name='int_list1', description="Integer list", default=defaults, size=32,update=updateNode)
+    int_list2: IntVectorProperty(
+        name='int_list2', description="Integer list", default=defaults, size=32,update=updateNode)
+    int_list3: IntVectorProperty(
+        name='int_list3', description="Integer list", default=defaults, size=32,update=updateNode)
 
     float_list: FloatVectorProperty(
         name='float_list', description="Float list", default=defaults, size=32, update=updateNode)
@@ -86,6 +92,17 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
                 row = col.row(align=True)
                 for j in range(3):
                     row.prop(self, 'vector_list', index=i*3+j, text='XYZ'[j])
+        elif self.mode == 'int_list':
+            col = layout.column(align=True)
+            k = 0
+            lists = 'int_list', 'int_list1', 'int_list2', 'int_list3'
+            for i in range(self.int_//32):
+                for t in range(32):
+                    col.prop(self, lists[i], index=t, text=str(k))
+                    k += 1
+            for t in range(self.int_%32):
+                col.prop(self, lists[self.int_//32], index=t, text=str(k))
+                k += 1
         else:
             col = layout.column(align=True)
             for i in range(self.int_):
@@ -118,7 +135,11 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if self.outputs[0].is_linked:
             if self.mode == 'int_list':
-                data = [list(self.int_list[:self.int_])]
+                data = []
+                lists = self.int_list, self.int_list1, self.int_list2, self.int_list3
+                for i in range(self.int_//32):
+                    data.extend([list(lists[i][:32])])
+                data.extend([list(lists[self.int_//32][:self.int_%32])])
             elif self.mode == 'float_list':
                 data = [list(self.float_list[:self.int_])]
             elif self.mode == 'vector':
