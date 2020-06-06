@@ -95,40 +95,6 @@ factor_buffer_dict = {
     'RGBA': 4  # GL_RGBA
 }
 
-vertex_shader = '''
-    uniform mat4 ModelViewProjectionMatrix;
-
-    /* Keep in sync with intern/opencolorio/gpu_shader_display_transform_vertex.glsl */
-
-    in vec2 texCoord;
-    in vec2 pos;
-
-    out vec2 texCoord_interp;
-
-    void main()
-    {
-       gl_Position = ModelViewProjectionMatrix * vec4(pos.xy, 0.0f, 1.0f);
-       gl_Position.z = 1.0;
-       texCoord_interp = texCoord;
-    }
-'''
-
-fragment_shader = '''
-    in vec2 texCoord_interp;
-    out vec4 fragColor;
-
-    uniform sampler2D image;
-    uniform bool ColorMode;
-
-    void main()
-    {
-        if (ColorMode) {
-           fragColor = texture(image, texCoord_interp);
-        } else {
-           fragColor = texture(image, texCoord_interp).rrrr;
-        }
-    }
-'''
 
 def transfer_to_image(pixels, name, width, height, mode):
     # transfer pixels(data) from Node tree to image viewer
@@ -413,7 +379,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         x, y, w, h = args
         positions = ((x, y), (x + w, y), (x + w, y - h), (x, y - h))
         indices = ((0, 1), (1, 1), (1, 0), (0, 0))
-        shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
+        shader = gpu.types.GPUShader(tx_vertex_shader, tx_fragment_shader)
         batch = batch_for_shader(shader, 'TRI_FAN', {"pos": positions, "texCoord": indices})
         return batch, shader
 

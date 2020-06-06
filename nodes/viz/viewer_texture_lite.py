@@ -18,9 +18,10 @@ from sverchok.settings import get_params
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
+
+from sverchok.utils.sv_texture_utils import tx_vertex_shader, tx_fragment_shader
 from sverchok.nodes.viz.viewer_texture import (
-    vertex_shader, fragment_shader, init_texture, simple_screen,
-    gl_color_list, gl_color_dict, factor_buffer_dict)
+    init_texture, simple_screen, gl_color_list, gl_color_dict, factor_buffer_dict)
 
 
 out_modes = [
