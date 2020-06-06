@@ -138,8 +138,9 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
                 data = []
                 lists = self.int_list, self.int_list1, self.int_list2, self.int_list3
                 for i in range(self.int_//32):
-                    data.extend([list(lists[i][:32])])
-                data.extend([list(lists[self.int_//32][:self.int_%32])])
+                    data.extend(list(lists[i][:32]))
+                data.extend(list(lists[self.int_//32][:self.int_%32]))
+                data = [data]
             elif self.mode == 'float_list':
                 data = [list(self.float_list[:self.int_])]
             elif self.mode == 'vector':
