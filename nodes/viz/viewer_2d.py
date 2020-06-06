@@ -104,9 +104,6 @@ def get_drawing_location(node):
     x, y = node.get_offset()
     return x * node.location_theta, y * node.location_theta
 
-def add_offset(offset, coords):
-    return [(x + offset[0], y + offset[1]) for x, y in coords]
-
 def get_2d_uniform_color_shader():
     uniform_2d_vertex_shader = '''
     in vec2 pos;
@@ -128,6 +125,7 @@ def get_2d_uniform_color_shader():
     }
     '''
     return gpu.types.GPUShader(uniform_2d_vertex_shader, uniform_2d_fragment_shader)
+
 def get_2d_smooth_color_shader():
 
     smooth_2d_vertex_shader = '''
@@ -168,8 +166,6 @@ def view_2d_geom(x, y, args):
     if config.draw_background:
         background_color = config.background_color
         # draw background, this could be cached......
-
-        shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
 
         shader = get_2d_uniform_color_shader()
         batch = batch_for_shader(shader, 'TRIS', {"pos": geom.background_coords}, indices=geom.background_indices)
@@ -637,6 +633,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
     draw_background: BoolProperty(
         update=updateNode, name='Display Background', default=True
         )
+
     location_theta: FloatProperty(name="location theta")
 
     def draw_buttons(self, context, layout):
@@ -819,7 +816,6 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         draw_data = {
             'mode': 'custom_function',
             'tree_name': self.id_data.name[:],
-            # 'loc': (x, y),
             'node_name': self.name[:],
             'loc': get_drawing_location,
             'custom_function': view_2d_geom,
