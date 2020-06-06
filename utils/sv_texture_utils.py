@@ -11,7 +11,7 @@ from gpu_extras.batch import batch_for_shader
 
 
 tx_vertex_shader = '''
-    uniform mat4 ModelViewProjectionMatrix;
+    uniform mat4 viewProjectionMatrix;
 
     /* Keep in sync with intern/opencolorio/gpu_shader_display_transform_vertex.glsl */
 
@@ -25,7 +25,7 @@ tx_vertex_shader = '''
 
     void main()
     {
-       gl_Position = ModelViewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
+       gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
        gl_Position.z = 1.0;
        texCoord_interp = texCoord;
     }
@@ -76,6 +76,8 @@ def simple_screen(x, y, args):
 
     def draw_texture(x=0, y=0, w=30, h=10, texname=texname, c=cMod):
         # function to draw a texture
+        matrix = gpu.matrix.get_projection_matrix()
+
         bgl.glDisable(bgl.GL_DEPTH_TEST)
 
         act_tex = bgl.Buffer(bgl.GL_INT, 1)
@@ -83,6 +85,7 @@ def simple_screen(x, y, args):
 
         shader.bind()
         shader.uniform_int("image", act_tex)
+        shader.uniform_float("viewProjectionMatrix", matrix)
         shader.uniform_bool("ColorMode", c)
         shader.uniform_float("x_offset", x)
         shader.uniform_float("y_offset", y)        
