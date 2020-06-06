@@ -506,11 +506,13 @@ def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
 
     return helper(data, 0)
 
-def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES):
+def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES, input_name=None):
     """
     data: number, or list of numbers, or list of lists, etc.
     target_level: data nesting level required for further processing.
     data_types: list or tuple of types.
+    input_name: name of input socket data was taken from. Optional. If specified,
+        used for error reporting.
 
     Wraps data in so many [] as required to achieve target nesting level.
     Raises an exception, if data already has too high nesting level.
@@ -525,22 +527,25 @@ def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES):
 
     current_level = get_data_nesting_level(data, data_types)
     if current_level > target_level:
-        raise TypeError("ensure_nesting_level: input data already has nesting level of {}. Required level was {}.".format(current_level, target_level))
+        if input_name is None:
+            raise TypeError("ensure_nesting_level: input data already has nesting level of {}. Required level was {}.".format(current_level, target_level))
+        else:
+            raise TypeError("Input data in socket {} already has nesting level of {}. Required level was {}.".format(input_name, current_level, target_level))
     result = data
     for i in range(target_level - current_level):
         result = [result]
     return result
 
-def flattern_data(data, target_level=1, data_types=SIMPLE_DATA_TYPES):
+def flatten_data(data, target_level=1, data_types=SIMPLE_DATA_TYPES):
     current_level = get_data_nesting_level(data, data_types)
     if current_level < target_level:
-        raise TypeError(f"Can't flattern data to level {target_level}: data already have level {current_level}")
+        raise TypeError(f"Can't flatten data to level {target_level}: data already have level {current_level}")
     elif current_level == target_level:
         return data
     else:
         result = []
         for item in data:
-            result.extend(flattern_data(item, target_level=target_level, data_types=data_types))
+            result.extend(flatten_data(item, target_level=target_level, data_types=data_types))
         return result
 
 def graft_data(data, item_level=1, wrap_level=1, data_types=SIMPLE_DATA_TYPES):

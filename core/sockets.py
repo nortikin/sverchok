@@ -39,7 +39,9 @@ from sverchok.data_structure import (
     socket_id,
     replace_socket,
     SIMPLE_DATA_TYPES,
-    flattern_data, graft_data, map_at_level, wrap_data)
+    flatten_data, graft_data, map_at_level, wrap_data)
+
+from sverchok.node_tree import throttle_tree_update
 
 from sverchok.utils.field.scalar import SvConstantScalarField
 from sverchok.utils.field.vector import SvMatrixVectorField, SvConstantVectorField
@@ -82,20 +84,17 @@ class SV_MT_SocketOptionsMenu(bpy.types.Menu):
         if hasattr(context.socket, 'draw_menu_items'):
             context.socket.draw_menu_items(context, layout)
 
-class SvSocketCommon:
-    """ Base class for all Sockets """
-    use_prop: BoolProperty(default=False)
-
-    use_expander: BoolProperty(default=True)
-    use_quicklink: BoolProperty(default=True)
-    expanded: BoolProperty(default=False)
-    custom_draw: StringProperty(description="For name of method which will draw socket UI (optionally)")
-    prop_name: StringProperty(default='', description="For displaying node property in socket UI")
-
-    quicklink_func_name: StringProperty(default="", name="quicklink_func_name")
-
-    allow_flattern : BoolProperty(default = False)
+class SvSocketProcessing(object):
+    # These properties are to be set explicitly by node classes
+    # for input sockets, if the node knows it can handle simplified data.
+    # For outputs, these properties are not used.
+    allow_flatten : BoolProperty(default = False)
     allow_simplify : BoolProperty(default = False)
+    allow_graft : BoolProperty(default = False)
+    allow_wrap : BoolProperty(default = False)
+
+    # technical property
+    skip_simplify_mode_update: BoolProperty(default=False)
 
     use_graft : BoolProperty(
             name = "Graft",
@@ -107,20 +106,107 @@ class SvSocketCommon:
             default = False,
             update = process_from_socket)
 
-    def get_nesting_modes(self, context):
-        can_flattern = hasattr(self, 'do_flattern') and (self.allow_flattern or self.is_output)
-        can_simplify = hasattr(self, 'do_simplify') and (self.allow_simplify or self.is_output)
-        items = [('ASIS', "As is", "As is", 0)]
-        if can_flattern:
-            items.append(('FLAT', "Flattern", "Flattern", 1))
-        if can_simplify:
-            items.append(('SIMPLIFY', "Simplify", "Simplify", 3))
-        return items
+    def update_flatten_flag(self, context):
+        if self.skip_simplify_mode_update:
+            return
 
-    nesting_mode : EnumProperty(name = "Nesting",
-            items = get_nesting_modes,
-            update = process_from_socket
-        )
+        with throttle_tree_update(self.node):
+            try:
+                self.skip_simplify_mode_update = True
+                if self.use_flatten:
+                    self.use_simplify = False
+            finally:
+                self.skip_simplify_mode_update = False
+                
+        process_from_socket(self, context)
+
+    def update_simplify_flag(self, context):
+        if self.skip_simplify_mode_update:
+            return
+
+        with throttle_tree_update(self.node):
+            try:
+                self.skip_simplify_mode_update = True
+                if self.use_simplify:
+                    self.use_flatten = False
+            finally:
+                self.skip_simplify_mode_update = False
+                
+        process_from_socket(self, context)
+
+    # Only one of properties can be set to true: use_flatten or use_simplfy
+    use_flatten : BoolProperty(
+            name = "Flatten",
+            default = False,
+            update = update_flatten_flag)
+
+    use_simplify : BoolProperty(
+            name = "Simplify",
+            default = False,
+            update = update_simplify_flag)
+
+    def can_flatten(self):
+        return hasattr(self, 'do_flatten') and (self.allow_flatten or self.is_output)
+
+    def can_simplify(self):
+        return hasattr(self, 'do_simplify') and (self.allow_simplify or self.is_output)
+
+    def can_graft(self):
+        return self.is_output or self.allow_graft
+
+    def can_wrap(self):
+        return self.is_output or self.allow_wrap
+
+    def draw_simplify_modes(self, layout):
+        if self.can_flatten():
+            layout.prop(self, 'use_flatten')
+        if self.can_simplify():
+            layout.prop(self, 'use_simplify')
+
+    def preprocess_input(self, data):
+        result = data
+        if self.use_flatten:
+            result = self.do_flatten(data)
+        elif self.use_simplify:
+            result = self.do_simplify(data)
+        if self.use_graft:
+            result = self.do_graft(result)
+        if self.use_wrap:
+            result = wrap_data(result)
+        return result
+
+    def postprocess_output(self, data):
+        result = data
+        if self.use_flatten:
+            result = self.do_flatten(data)
+        elif self.use_simplify:
+            result = self.do_simplify(data)
+        if self.use_graft:
+            result = self.do_graft(result)
+        if self.use_wrap:
+            result = wrap_data(result)
+        return result
+
+    def has_simplify_modes(self, context):
+        return self.can_flatten() or self.can_simplify()
+
+    def has_menu(self, context):
+        return self.has_simplify_modes(context) or self.can_graft() or self.can_wrap()
+
+    def draw_menu_button(self, context, layout, node, text):
+        pass
+
+class SvSocketCommon(SvSocketProcessing):
+    """ Base class for all Sockets """
+    use_prop: BoolProperty(default=False)
+
+    use_expander: BoolProperty(default=True)
+    use_quicklink: BoolProperty(default=True)
+    expanded: BoolProperty(default=False)
+    custom_draw: StringProperty(description="For name of method which will draw socket UI (optionally)")
+    prop_name: StringProperty(default='', description="For displaying node property in socket UI")
+
+    quicklink_func_name: StringProperty(default="", name="quicklink_func_name")
 
     def get_prop_name(self):
         if hasattr(self.node, 'missing_dependecy'):
@@ -174,32 +260,6 @@ class SvSocketCommon:
         """Set output data"""
         data = self.postprocess_output(data)
         SvSetSocket(self, data)
-
-    def preprocess_input(self, data):
-        if self.nesting_mode == 'ASIS':
-            result = data
-        elif self.nesting_mode == 'FLAT':
-            result = self.do_flattern(data)
-        elif self.nesting_mode == 'SIMPLIFY':
-            result = self.do_simplify(data)
-        if self.use_graft:
-            result = self.do_graft(result)
-        if self.use_wrap:
-            result = wrap_data(result)
-        return result
-
-    def postprocess_output(self, data):
-        if self.nesting_mode == 'ASIS':
-            result = data
-        elif self.nesting_mode == 'FLAT':
-            result = self.do_flattern(data)
-        elif self.nesting_mode == 'SIMPLIFY':
-            result = self.do_simplify(data)
-        if self.use_graft:
-            result = self.do_graft(result)
-        if self.use_wrap:
-            result = wrap_data(result)
-        return result
 
     def sv_forget(self):
         """Delete socket memory"""
@@ -332,21 +392,6 @@ class SvSocketCommon:
 
         if self.has_menu(context):
             self.draw_menu_button(context, layout, node, text)
-
-    def has_nesting_modes(self, context):
-        return len(self.get_nesting_modes(context)) > 1
-
-    def does_support_graft(self):
-        return self.is_output or (hasattr(self.node, 'does_support_graft_input') and self.node.does_support_graft_input(self))
-
-    def does_support_wrap(self):
-        return self.is_output or (hasattr(self.node, 'does_support_wrap_input') and self.node.does_support_wrap_input(self))
-
-    def has_menu(self, context):
-        return self.has_nesting_modes(context) or self.does_support_graft() or self.does_support_wrap()
-
-    def draw_menu_button(self, context, layout, node, text):
-        pass
 
     def draw_color(self, context, node):
         return socket_colors[self.bl_idname]
@@ -540,15 +585,14 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
             layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
 
     def draw_menu_items(self, context, layout):
-        if self.has_nesting_modes(context):
-            layout.props_enum(self, 'nesting_mode')
-        if self.does_support_graft():
+        self.draw_simplify_modes(layout)
+        if self.can_graft():
             layout.prop(self, 'use_graft')
-        if self.does_support_wrap():
+        if self.can_wrap():
             layout.prop(self, 'use_wrap')
 
     def do_simplify(self, data):
-        return flattern_data(data, 2)
+        return flatten_data(data, 2)
 
     def do_graft(self, data):
         return graft_data(data, item_level=1)
@@ -692,18 +736,17 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
             layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
 
     def draw_menu_items(self, context, layout):
-        if self.has_nesting_modes(context):
-            layout.props_enum(self, 'nesting_mode')
-        if self.does_support_graft():
+        self.draw_simplify_modes(layout)
+        if self.can_graft():
             layout.prop(self, 'use_graft')
-        if self.does_support_wrap():
+        if self.can_wrap():
             layout.prop(self, 'use_wrap')
 
-    def do_flattern(self, data):
-        return flattern_data(data, 1)
+    def do_flatten(self, data):
+        return flatten_data(data, 1)
 
     def do_simplify(self, data):
-        return flattern_data(data, 2)
+        return flatten_data(data, 2)
 
     def do_graft(self, data):
         return graft_data(data, item_level=0, data_types = SIMPLE_DATA_TYPES + (SvCurve, SvSurface))
@@ -817,15 +860,14 @@ class SvSurfaceSocket(NodeSocket, SvSocketCommon):
         layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
 
     def draw_menu_items(self, context, layout):
-        if self.has_nesting_modes(context):
-            layout.props_enum(self, 'nesting_mode')
-        if self.does_support_graft():
+        self.draw_simplify_modes(layout)
+        if self.can_graft():
             layout.prop(self, 'use_graft')
-        if self.does_support_wrap():
+        if self.can_wrap():
             layout.prop(self, 'use_wrap')
 
-    def do_flattern(self, data):
-        return flattern_data(data, 1, data_types=(SvSurface,))
+    def do_flatten(self, data):
+        return flatten_data(data, 1, data_types=(SvSurface,))
 
     def do_graft(self, data):
         return graft_data(data, item_level=0, data_types=(SvSurface,))
@@ -861,16 +903,15 @@ class SvCurveSocket(NodeSocket, SvSocketCommon):
         layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
 
     def draw_menu_items(self, context, layout):
-        if self.has_nesting_modes(context):
-            layout.props_enum(self, 'nesting_mode')
-        if self.does_support_graft():
+        self.draw_simplify_modes(layout)
+        if self.can_graft():
             layout.prop(self, 'use_graft')
-        if self.does_support_wrap():
+        if self.can_wrap():
             layout.prop(self, 'use_wrap')
         layout.prop(self, 'reparametrize')
 
-    def do_flattern(self, data):
-        return flattern_data(data, 1, data_types=(SvCurve,))
+    def do_flatten(self, data):
+        return flatten_data(data, 1, data_types=(SvCurve,))
 
     def do_graft(self, data):
         return graft_data(data, item_level=0, data_types=(SvCurve,))
