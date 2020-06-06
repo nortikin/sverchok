@@ -12,7 +12,7 @@ import bgl
 import gpu
 import bpy
 from gpu_extras.batch import batch_for_shader
-from bpy.props import EnumProperty, StringProperty, IntProperty, PointerProperty
+from bpy.props import EnumProperty, StringProperty, IntProperty, PointerProperty, FloatProperty
 
 from sverchok.settings import get_params
 from sverchok.data_structure import updateNode, node_id
@@ -29,6 +29,9 @@ out_modes = [
     ('bgl', 'bgl', 'create texture inside nodetree', '', 1),
 ]
 
+def get_draw_location(node):
+    x, y = node.xy_offset
+    return x * self.location_theta, y * self.location_theta
 
 class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
     '''Texture Viewer node Lite'''
@@ -66,7 +69,8 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
         items=out_modes, description="how to output values",
         default="bgl", update=updateNode)
 
-    properties_to_skip_iojson = ["image_pointer"]
+    properties_to_skip_iojson = ["image_pointer", "location_theta"]
+    location_theta = FloatProperty(name="location theta")
 
     @property
     def xy_offset(self):
@@ -122,14 +126,14 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
             self.texture[n_id] = name[0]
             init_texture(width, height, name[0], texture, gl_color_constant)
 
-            x, y, width, height = self.adjust_position_and_dimensions(x, y, width, height)
-            batch, shader = self.generate_batch_shader((x, y, width, height))
+            width, height = self.get_dimensions(width, height)
+            batch, shader = self.generate_batch_shader((width, height))
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'mode': 'custom_function',
                 'custom_function': simple_screen,
-                'loc': (x, y),
+                'loc': get_draw_location,
                 'args': (texture, self.texture[n_id], width, height, batch, shader, cMode)
             }
 
@@ -141,7 +145,9 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
             Im.pixels = np.resize(self.inputs[0].sv_get(), len(Im.pixels))
 
     def generate_batch_shader(self, args):
-        x, y, w, h = args
+        w, h = args
+        x = 0
+        y = 0
         positions = ((x, y), (x + w, y), (x + w, y - h), (x, y - h))
         indices = ((0, 1), (1, 1), (1, 0), (0, 0))
         shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
@@ -155,14 +161,14 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
             'render_location_xy_multiplier': 1.0})
         return props.render_scale, props.render_location_xy_multiplier
 
-    def adjust_position_and_dimensions(self, x, y, width, height):
+    def get_dimensions(self, width, height):
         """
         this could also return scale for a blf notation in the vacinity of the texture
         """
         scale, multiplier = self.get_preferences()
-        x, y = [x * multiplier, y * multiplier]
+        self.location_theta = multiplier
         width, height = [width * scale, height * scale]
-        return x, y, width, height
+        return width, height
 
     def sv_free(self):
         nvBGL2.callback_disable(node_id(self))
