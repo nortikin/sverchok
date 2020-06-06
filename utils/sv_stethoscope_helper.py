@@ -6,11 +6,29 @@
 # License-Filename: LICENSE
 
 from collections import defaultdict
+
 import blf
+import bpy
+
+def get_sane_xy(data):
+    return_value = (120, 120)
+    location_function = data.get('location')
+    if location_function:
+        ng = bpy.data.node_groups.get(data['tree_name'])
+        if ng:
+            node = ng.nodes.get(data['node_name'])
+            if node:
+                return_value = location_function(node)
+
+    return return_value
+
+
 
 def draw_text_data(data):
     lines = data.get('content', 'no data')
-    x, y = data.get('location', (120, 120))
+
+    x, y = get_sane_xy(data)
+    
     x, y = int(x), int(y)
     r, g, b = data.get('color', (0.1, 0.1, 0.1))
     font_id = data.get('font_id', 0)
@@ -31,7 +49,7 @@ def draw_text_data(data):
 
 def draw_graphical_data(data):
     lines = data.get('content')
-    x, y = data.get('location', (120, 120))
+    x, y = get_sane_xy(data)
     color = data.get('color', (0.1, 0.1, 0.1))
     font_id = data.get('font_id', 0)
     scale = data.get('scale', 1.0)

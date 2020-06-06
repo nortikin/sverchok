@@ -54,6 +54,8 @@ def clear_exception_drawing_with_bgl(nodes):
     nvBGL2.callback_disable(ng_id)
 
 
+
+
 def start_exception_drawing_with_bgl(ng, node_name, error_text, err):
     """ start drawing the exception data beside the node """
     node = ng.nodes[node_name]
@@ -67,25 +69,30 @@ def start_exception_drawing_with_bgl(ng, node_name, error_text, err):
         text.body = error_text
 
     x, y, scale = adjust_position_and_dimensions(node, xyoffset(node))
-    config.loc = x, y
     config.scale = scale
+
+    def get_desired_xy(node):
+        nx, ny = xyoffset(node)
+        return nx * scale, ny * scale
 
     ng_id = exception_nodetree_id(ng)
     draw_data = {
         'tree_name': ng.name[:],
+        'node_name': node_name,
+        'loc': get_desired_xy,
         'mode': 'custom_function_context', 
         'custom_function': simple_exception_display,
         'args': (text, config)
     }
     nvBGL2.callback_enable(ng_id, draw_data)
 
-def simple_exception_display(context, args):
+def simple_exception_display(context, args, xy):
     """
     a simple bgl/blf exception showing tool for nodeview
     """
     text, config = args
 
-    x, y = config.loc
+    x, y = xy
     x, y = int(x), int(y)
     r, g, b = (1.0, 1.0, 1.0)
     font_id = 0
