@@ -13,11 +13,14 @@ tx_vertex_shader = '''
     in vec2 texCoord;
     in vec2 pos;
 
+    uniform float x_offset;
+    uniform float y_offset;
+
     out vec2 texCoord_interp;
 
     void main()
     {
-       gl_Position = ModelViewProjectionMatrix * vec4(pos.xy, 0.0f, 1.0f);
+       gl_Position = ModelViewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
        gl_Position.z = 1.0;
        texCoord_interp = texCoord;
     }
