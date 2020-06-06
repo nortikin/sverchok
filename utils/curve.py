@@ -754,6 +754,36 @@ class SvCircle(SvCurve):
 #         vectors = np.stack((xs, ys, zs)).T
 #         return np.apply_along_axis(lambda v: self.matrix @ v, 1, vectors)
 
+class SvEllipse(SvCurve):
+    __description__ = "Ellipse"
+     
+    def __init__(self, matrix, a, b):
+        self.matrix = np.array(matrix.to_3x3())
+        self.center = np.array(matrix.translation)
+        self.a = a
+        self.b = b
+        self.u_bounds = (0, 2*pi)
+
+    def get_u_bounds(self):
+        return self.u_bounds
+
+    @classmethod
+    def from_equation(cls, eq):
+        return SvEllipse(eq.get_matrix(), eq.a, eq.b)
+
+    def evaluate(self, t):
+        v = np.array([self.a * cos(t), self.b * sin(t), 0])
+        v = self.center + self.matrix @ v
+        return v
+
+    def evaluate_array(self, ts):
+        xs = self.a * np.cos(ts)
+        ys = self.b * np.sin(ts)
+        zs = np.zeros_like(xs)
+        vs = np.array((xs, ys, zs)).T
+        vs = np.apply_along_axis(lambda v : self.matrix @ v, 1, vs)
+        return self.center + vs
+
 class SvLambdaCurve(SvCurve):
     __description__ = "Formula"
 
