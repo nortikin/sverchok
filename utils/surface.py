@@ -1216,7 +1216,7 @@ class SvRevolutionSurface(SvSurface):
 class SvExtrudeCurveVectorSurface(SvSurface):
     def __init__(self, curve, vector):
         self.curve = curve
-        self.vector = vector
+        self.vector = np.array(vector)
         self.normal_delta = 0.001
         self.__description__ = "Extrusion of {}".format(curve)
 
