@@ -68,11 +68,12 @@ def init_texture(width, height, texname, texture, clr):
     )
 
 
-def simple_screen(x, y, args):
+def simple_screen(context, args, xy):
     """ shader draw function for the texture """
 
     # border_color = (0.390805, 0.754022, 1.000000, 1.00)
     texture, texname, width, height, batch, shader, cMod = args
+    x, y = xy
 
     def draw_texture(x=0, y=0, w=30, h=10, texname=texname, c=cMod):
         # function to draw a texture
