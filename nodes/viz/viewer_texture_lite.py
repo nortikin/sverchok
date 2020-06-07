@@ -111,7 +111,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
         if self.output_mode == 'bgl':
 
-            x, y = self.xy_offset
+            # x, y = self.xy_offset
             width, height, colm = self.width_custom_tex, self.height_custom_tex, self.color_mode
             total_size = width * height * factor_buffer_dict.get(colm)
             texture = bgl.Buffer(bgl.GL_FLOAT, total_size, np.resize(self.inputs[0].sv_get(), total_size).tolist())
@@ -127,7 +127,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'node_name': self.name[:],
-                'mode': 'custom_function',
+                'mode': 'custom_function_context',
                 'custom_function': simple_screen,
                 'loc': get_drawing_location,
                 'args': (texture, self.texture[n_id], width, height, batch, shader, cMode)
