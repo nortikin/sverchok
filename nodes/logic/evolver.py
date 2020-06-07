@@ -267,8 +267,8 @@ class Population:
         return new_population
 
     def print_time_info(self, iteration):
-        print("evolver in %s iteration" % (iteration + 1))
-        print("evolver was %s seconds processing" % (time.time() - self.time_start))
+        print(' '*80,end='\r')
+        print("evolver on %s iteration" % (iteration + 1),"%s sec" % (time.time() - self.time_start), end='\r')
 
     def goal_achieved(self, fittest, mode, goal):
         if mode == "MAX":
