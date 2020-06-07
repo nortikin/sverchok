@@ -23,7 +23,12 @@ from bpy.props import (
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-
+from sverchok.utils.listutils import (
+    listinput_getI_needed, 
+    listinput_getF_needed, 
+    listinput_drawI,
+    listinput_drawF
+    )
 
 class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Creta a float or int List '''
@@ -52,6 +57,12 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
 
     float_list: FloatVectorProperty(
         name='float_list', description="Float list", default=defaults, size=32, update=updateNode)
+    float_list1: FloatVectorProperty(
+        name='float_list1', description="Float list", default=defaults, size=32, update=updateNode)
+    float_list2: FloatVectorProperty(
+        name='float_list2', description="Float list", default=defaults, size=32, update=updateNode)
+    float_list3: FloatVectorProperty(
+        name='float_list3', description="Float list", default=defaults, size=32, update=updateNode)
 
     vector_list: FloatVectorProperty(
         name='vector_list', description="Vector list", default=defaults, size=32, update=updateNode)
@@ -94,19 +105,10 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
                     row.prop(self, 'vector_list', index=i*3+j, text='XYZ'[j])
         elif self.mode == 'int_list':
             col = layout.column(align=True)
-            k = 0
-            lists = 'int_list', 'int_list1', 'int_list2', 'int_list3'
-            for i in range(self.int_//32):
-                for t in range(32):
-                    col.prop(self, lists[i], index=t, text=str(k))
-                    k += 1
-            for t in range(self.int_%32):
-                col.prop(self, lists[self.int_//32], index=t, text=str(k))
-                k += 1
+            listinput_drawI(self,col)
         else:
             col = layout.column(align=True)
-            for i in range(self.int_):
-                col.prop(self, self.mode, index=i, text=str(i))
+            listinput_drawF(self,col)
 
 
     def draw_buttons_ext(self, context, layout):
@@ -135,14 +137,10 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if self.outputs[0].is_linked:
             if self.mode == 'int_list':
-                data = []
-                lists = self.int_list, self.int_list1, self.int_list2, self.int_list3
-                for i in range(self.int_//32):
-                    data.extend(list(lists[i][:32]))
-                data.extend(list(lists[self.int_//32][:self.int_%32]))
-                data = [data]
+                data = listinput_getI_needed(self)
+                
             elif self.mode == 'float_list':
-                data = [list(self.float_list[:self.int_])]
+                data = listinput_getF_needed(self)
             elif self.mode == 'vector':
                 c = self.v_int*3
                 v_l = list(self.vector_list)

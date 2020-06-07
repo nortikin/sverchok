@@ -35,6 +35,7 @@ def create_list(x, y):
 
 
 def preobrazovatel(list_a, levels, level2=1):
+    # level increas or decreas
     list_tmp = []
     level = levels[0]
 
@@ -241,3 +242,90 @@ def lists_flat(lists):
             l_t += item
 
     return list_temp
+
+# here defs for list input node to operate IntVectorProperty
+# wich limited to 32 items
+def listinput_getI(node,num_length):
+    #all slots
+    lists = node.int_list, node.int_list1, node.int_list2, node.int_list3
+    init_val = [[lists[t][i] for i in range(32)] for t in range((num_length//32)+1)]
+    out = []
+    for i in init_val:
+        out.extend(i)
+    return out
+
+def listinput_getF(node,num_length):
+    #all slots
+    lists = node.float_list, node.float_list1, node.float_list2, node.float_list3
+    init_val = [[lists[t][i] for i in range(32)] for t in range((num_length//32)+1)]
+    out = []
+    for i in init_val:
+        out.extend(i)
+    return out
+
+def listinput_getI_needed(node):
+    #only needed slots
+    data = []
+    lists = node.int_list, node.int_list1, node.int_list2, node.int_list3
+    for i in range(node.int_//32):
+        data.extend(list(lists[i][:32]))
+    data.extend(list(lists[node.int_//32][:node.int_%32]))
+    return [data]
+
+def listinput_getF_needed(node):
+    #only needed slots
+    data = []
+    lists = node.float_list, node.float_list1, node.float_list2, node.float_list3
+    for i in range(node.int_//32):
+        data.extend(list(lists[i][:32]))
+    data.extend(list(lists[node.int_//32][:node.int_%32]))
+    return [data]
+
+def listinput_setI(node, agent_gene, gen_data):
+    lists = node.int_list, node.int_list1, node.int_list2, node.int_list3
+    for i in range(gen_data.num_length):
+        t = i//32
+        k = i%32
+        lists[t][k] = gen_data.init_val[agent_gene[i]]
+
+def listinput_setF(node, agent_gene, gen_data):
+    lists = node.float_list, node.float_list1, node.float_list2, node.float_list3
+    for i in range(gen_data.num_length):
+        t = i//32
+        k = i%32
+        lists[t][k] = gen_data.init_val[agent_gene[i]]
+
+def listinput_set_rangeI(node,data):
+    #to set plain list from data length
+    #and esteblish int_ length
+    ln = len(data)
+    lists = node.int_list, node.int_list1, node.int_list2, node.int_list3
+    node.int_ = ln
+    data = []
+    k = 0
+    for i in range(node.int_//32+1):
+        for t in range(32):
+            lists[i][t] = k
+            k += 1
+
+def listinput_drawI(node,col):
+    k = 0
+    lists = 'int_list', 'int_list1', 'int_list2', 'int_list3'
+    for i in range(node.int_//32):
+        for t in range(32):
+            col.prop(node, lists[i], index=t, text=str(k))
+            k += 1
+    for t in range(node.int_%32):
+        col.prop(node, lists[node.int_//32], index=t, text=str(k))
+        k += 1
+
+def listinput_drawF(node,col):
+    k = 0
+    lists = 'float_list', 'float_list1', 'float_list2', 'float_list3'
+    for i in range(node.int_//32):
+        for t in range(32):
+            col.prop(node, lists[i], index=t, text=str(k))
+            k += 1
+    for t in range(node.int_%32):
+        col.prop(node, lists[node.int_//32], index=t, text=str(k))
+        k += 1
