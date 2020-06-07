@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import math
+import random
 
 def interp_v3_v3v3(a, b, t=0.5):
     if t == 0.0: return a
@@ -99,3 +100,36 @@ def pt_in_triangle(p_test, p0, p1, p2):
         return (  (s_p >= 0) and (t_p >= 0) and (s_p + t_p) <= D  )
     else:
         return (  (s_p <= 0) and (t_p <= 0) and (s_p + t_p) >= D  )
+
+
+def random_pt_between(v1, v2, v3):
+    a = random.random()
+    b = random.random()
+    # x = v1 + a(v2 - v1) + b(v3 - v1)
+    A = sub_v3_v3v3(v2, v1)
+    B = sub_v3_v3v3(v3, v1)
+    A = mul_v3_f1v3(a, A)
+    B = mul_v3_f1v3(b, B)
+    return sum_v3_v3l([v1, A, B])
+
+
+def mul_v3_f1v3(a, v):
+    return a*v[0], a*v[1], a*v[2]
+
+def sum_v3_v3l(lvtx):
+    """ sum all input "vectors"
+
+    input  : list of iterables of 3 element
+    output : a new 3-tuple
+
+    usage  :
+
+        new_v = sum_v3_v3l([v1, v2, v3, v4, v5,....]) 
+
+    """
+    vx, vy, vz = 0, 0, 0
+    for v in lvtx:
+        vx += v[0]
+        vy += v[1]
+        vz += v[2]
+    return vx, vy, vz

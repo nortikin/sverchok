@@ -22,6 +22,7 @@ import re
 import bpy
 import blf
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, IntProperty
+from bpy.props import FloatProperty
 from mathutils import Vector
 
 from sverchok.settings import get_params
@@ -33,6 +34,21 @@ from sverchok.ui import bgl_callback_nodeview as nvBGL
 # status colors
 FAIL_COLOR = (0.1, 0.05, 0)
 READY_COLOR = (1, 0.3, 0)
+
+
+def adjust_location(_x, _y, location_theta):
+    return _x * location_theta, _y * location_theta
+
+def get_xy_for_bgl_drawing(node):
+        # adjust proposed text location in case node is framed.
+        # take into consideration the hidden state
+        node_width = node.width
+        _x, _y = node.absolute_location
+        _x, _y = Vector((_x, _y)) + Vector((node_width + 20, 0))
+
+        # this alters location based on DPI/Scale settings.
+        draw_location = adjust_location(_x, _y, node.location_theta)
+        return draw_location
 
 def parse_socket(socket, rounding, element_index, view_by_element, props):
 
@@ -81,8 +97,6 @@ def high_contrast_color(c):
     L = 0.2126 * (c.r**g) + 0.7152 * (c.g**g) + 0.0722 * (c.b**g)
     return [(.1, .1, .1), (.95, .95, .95)][int(L < 0.5)]
 
-def adjust_location(_x, _y, location_theta):
-    return _x * location_theta, _y * location_theta
 
 
 class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -118,6 +132,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     line_width: IntProperty(default=60, min=20, update=updateNode, name='Line Width (chars)')
     compact: BoolProperty(default=False, update=updateNode)
     depth: IntProperty(default=5, min=0, update=updateNode)
+    location_theta: FloatProperty(name='location_theta')
 
 
     def get_theme_colors_for_contrast(self):
@@ -180,7 +195,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         nvBGL.callback_disable(n_id)
 
         if self.activate and inputs[0].is_linked:
-            scale, location_theta = self.get_preferences()
+            scale, self.location_theta = self.get_preferences()
 
             # gather vertices from input
             data = inputs[0].sv_get(deepcopy=False)
@@ -203,19 +218,12 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 #                # implement another nvBGL parses for gfx
                 processed_data = data
 
-            # adjust proposed text location in case node is framed.
-            # take into consideration the hidden state
-            node_width = self.width
-            _x, _y = self.absolute_location
-            _x, _y = Vector((_x, _y)) + Vector((node_width + 20, 0))
-
-            # this alters location based on DPI/Scale settings.
-            draw_location = adjust_location(_x, _y, location_theta)
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
+                'node_name': self.name[:],
                 'content': processed_data,
-                'location': draw_location,
+                'location': get_xy_for_bgl_drawing,
                 'color': self.text_color[:],
                 'scale' : float(scale),
                 'mode': self.selected_mode[:],

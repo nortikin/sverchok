@@ -18,6 +18,8 @@
 
 # <pep8 compliant>
 
+from inspect import isfunction
+
 import bpy
 import blf
 import bgl
@@ -78,6 +80,30 @@ def restore_opengl_defaults():
     # bgl.glColor4f(0.0, 0.0, 0.0, 1.0)     # doesn't exist anymore ..    
 
 
+def get_xy_from_data(data):
+    location = data.get('loc')
+    if isfunction(location):
+        x, y = get_sane_xy(data)
+    elif isinstance(location, (tuple, list)):
+        x, y = location
+    else:
+        x, y = 20, 20
+    return x, y
+
+
+def get_sane_xy(data):
+    return_value = (120, 120)
+    location_function = data.get('loc')
+    if location_function:
+        ng = bpy.data.node_groups.get(data['tree_name'])
+        if ng:
+            node = ng.nodes.get(data['node_name'])
+            if node:
+                return_value = location_function(node)
+
+    return return_value    
+
+
 def draw_callback_px(n_id, data):
 
     space = bpy.context.space_data
@@ -102,8 +128,10 @@ def draw_callback_px(n_id, data):
         restore_opengl_defaults()
     elif data.get('mode') == 'custom_function':
         drawing_func = data.get('custom_function')
-        x, y = data.get('loc', (20, 20))
+
+        x, y = get_xy_from_data(data)
         args = data.get('args', (None,))
+        
         drawing_func(x, y, args)
         restore_opengl_defaults()
     elif data.get('mode') == 'custom_function_context':
@@ -115,14 +143,15 @@ def draw_callback_px(n_id, data):
 
             config = lambda: None
             config.shader_data = ...
-            config.loc = (x, y)  (for node location..)
 
             geom = lambda: None
             geom.stuff = ..
 
             draw_data = {
+                'loc': function_returning_xy,
                 'mode': 'custom_function_context',
                 'tree_name': self.id_data.name[:],
+                'node_name': self.name[:],
                 'custom_function': advanced_grid_xy,
                 'args': (geom, config)
             }
@@ -130,10 +159,12 @@ def draw_callback_px(n_id, data):
             nvBGL.callback_enable(self.n_id, draw_data)
 
         '''
+        x, y = get_xy_from_data(data)
+
         bgl.glEnable(bgl.GL_DEPTH_TEST)
         drawing_func = data.get('custom_function')
         args = data.get('args', (None,))
-        drawing_func(bpy.context, args)
+        drawing_func(bpy.context, args, (x, y))
         restore_opengl_defaults()
         bgl.glDisable(bgl.GL_DEPTH_TEST)
         

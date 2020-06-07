@@ -30,6 +30,12 @@ from mathutils.noise import seed_set, random
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.core.update_system import make_tree_from_nodes, do_update
+from sverchok.utils.listutils import (
+    listinput_getI, 
+    listinput_getF, 
+    listinput_setI, 
+    listinput_setF
+    )
 
 Gene = namedtuple('Gene', 'name, g_type, min_n, max_n, range, init_val')
 # GeneList = namedtuple('GeneList', 'name, g_type, num_length, init_val')
@@ -133,10 +139,10 @@ def list_gene(node):
     num_type = node.mode
     if num_type == 'int_list':
         num_length = node.int_
-        init_val = [node.int_list[i] for i in range(num_length)]
+        init_val = listinput_getI(node,num_length)
     elif num_type == 'float_list':
         num_length = node.int_
-        init_val = [node.float_list[i] for i in range(num_length)]
+        init_val = listinput_getF(node,num_length)
     else:
         num_length = node.v_int
         mem_list = node.vector_list
@@ -171,16 +177,16 @@ def list_cross(ancestor1_gene, ancestor2_gene, o_gene):
 
 def set_list_node(gen_data, agent_gene, tree):
     if gen_data.g_type == 'int_list':
-        for i in range(gen_data.num_length):
-            tree.nodes[gen_data.name].int_list[i] = gen_data.init_val[agent_gene[i]]
+        node = tree.nodes[gen_data.name]
+        listinput_setI(node, agent_gene, gen_data)
     elif gen_data.g_type == 'float_list':
-        for i in range(gen_data.num_length):
-            tree.nodes[gen_data.name].float_list[i] = gen_data.init_val[agent_gene[i]]
+        node = tree.nodes[gen_data.name]
+        listinput_setF(node, agent_gene, gen_data)
     else:
         for i in range(gen_data.num_length):
-            tree.nodes[gen_data.name].vector_list[3*i] = gen_data.init_val[agent_gene[i][0]]
-            tree.nodes[gen_data.name].vector_list[3*i + 1] = gen_data.init_val[agent_gene[i][1]]
-            tree.nodes[gen_data.name].vector_list[3*i + 2] = gen_data.init_val[agent_gene[i][2]]
+            node.vector_list[3*i] = gen_data.init_val[agent_gene[i][0]]
+            node.vector_list[3*i + 1] = gen_data.init_val[agent_gene[i][1]]
+            node.vector_list[3*i + 2] = gen_data.init_val[agent_gene[i][2]]
 
 def random_ancestor_mix(ancestor1_gene, ancestor2_gene):
     mixing_factor = random()
@@ -353,8 +359,8 @@ class Population:
         return new_population
 
     def print_time_info(self, iteration):
-        print("evolver in %s iteration" % (iteration + 1))
-        print("evolver was %s seconds processing" % (time.time() - self.time_start))
+        print(' '*80,end='\r')
+        print("evolver on %s iteration" % (iteration + 1),"%s sec" % (time.time() - self.time_start), end='\r')
 
     def goal_achieved(self, fittest, mode, goal):
         if mode == "MAX":
