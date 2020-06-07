@@ -7,6 +7,7 @@
 
 import random
 import math
+from enum import Enum
 
 import numpy as np
 
@@ -16,11 +17,41 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
-UP = (0, 1)
-LEFT = (-1, 0)
-DOWN = (0, -1)
-RIGHT = (1, 0)
-DIRS = [UP, DOWN, LEFT, RIGHT]
+X, Y = 0, 1
+
+# in [[v1, v2],
+#     [v3, v4]] first index will shift by Y direction second by X
+UP = (1, 0)
+LEFT = (0, -1)
+DOWN = (-1, 0)
+RIGHT = (0, 1)
+
+
+class Directions(Enum):
+    UP = 1
+    RIGHT = 2
+    DOWN = 3
+    LEFT = 4
+
+    def get_other(self, array, current_co):
+        if self == Directions.UP:
+            return array[current_co[Y] - 1][current_co[X]]
+        elif self == Directions.RIGHT:
+            return array[current_co[Y]][current_co[X] + 1]
+        elif self == Directions.DOWN:
+            return array[current_co[Y] + 1][current_co[X]]
+        elif self == Directions.LEFT:
+            return array[current_co[Y]][current_co[X] - 1]
+
+    def get_other_co(self, current_co):
+        if self == Directions.UP:
+            return current_co[X], current_co[Y] - 1
+        elif self == Directions.RIGHT:
+            return current_co[X] + 1, current_co[Y]
+        elif self == Directions.DOWN:
+            return current_co[X], current_co[Y] + 1
+        elif self == Directions.LEFT:
+            return current_co[X] - 1, current_co[Y]
 
 
 class CompatibilityOracle(object):
@@ -35,6 +66,9 @@ class CompatibilityOracle(object):
 
     def check(self, tile1, tile2, direction):
         return (tile1, tile2, direction) in self.data
+
+    def __repr__(self):
+        return f"<Oracle {self.data}>"
 
 
 class Wavefunction(object):
@@ -74,9 +108,9 @@ class Wavefunction(object):
         """
         coefficients = []
 
-        for x in range(size[0]):
+        for y in range(size[0]):
             row = []
-            for y in range(size[1]):
+            for x in range(size[1]):
                 row.append(set(tiles))
             coefficients.append(row)
 
@@ -88,8 +122,7 @@ class Wavefunction(object):
 
     def get(self, co_ords):
         """Returns the set of possible tiles at `co_ords`"""
-        x, y = co_ords
-        return self.coefficients[x][y]
+        return self.coefficients[co_ords[Y]][co_ords[X]]
 
     def get_collapsed(self, co_ords):
         """Returns the only remaining possible tile at `co_ords`.
@@ -106,13 +139,13 @@ class Wavefunction(object):
         does not have exactly 1 remaining possible tile then
         this method raises an exception.
         """
-        width = len(self.coefficients)
-        height = len(self.coefficients[0])
+        y_length = len(self.coefficients)
+        x_length = len(self.coefficients[0])
 
         collapsed = []
-        for x in range(width):
+        for y in range(y_length):
             row = []
-            for y in range(height):
+            for x in range(x_length):
                 row.append(self.get_collapsed((x, y)))
             collapsed.append(row)
 
@@ -126,8 +159,8 @@ class Wavefunction(object):
 
         sum_of_weights = 0
         sum_of_weight_log_weights = 0
-        for opt in self.coefficients[x][y]:
-            weight = self.weights[opt]
+        for tile in self.coefficients[y][x]:
+            weight = self.weights[tile]
             sum_of_weights += weight
             sum_of_weight_log_weights += weight * math.log(weight)
 
@@ -137,9 +170,9 @@ class Wavefunction(object):
         """Returns true if every element in Wavefunction is fully
         collapsed, and false otherwise.
         """
-        for x, row in enumerate(self.coefficients):
-            for y, sq in enumerate(row):
-                if len(sq) > 1:
+        for y, row in enumerate(self.coefficients):
+            for x, tiles in enumerate(row):
+                if len(tiles) > 1:
                     return False
 
         return True
@@ -152,9 +185,8 @@ class Wavefunction(object):
 
         This method mutates the Wavefunction, and does not return anything.
         """
-        x, y = co_ords
-        opts = self.coefficients[x][y]
-        valid_weights = {tile: weight for tile, weight in self.weights.items() if tile in opts}
+        tiles = self.coefficients[co_ords[Y]][co_ords[X]]
+        valid_weights = {tile: weight for tile, weight in self.weights.items() if tile in tiles}
 
         total_weights = sum(valid_weights.values())
         rnd = random.random() * total_weights
@@ -166,7 +198,7 @@ class Wavefunction(object):
                 chosen = tile
                 break
 
-        self.coefficients[x][y] = {chosen}
+        self.coefficients[co_ords[Y]][co_ords[X]] = {chosen}
 
     def constrain(self, co_ords, forbidden_tile):
         """Removes `forbidden_tile` from the list of possible tiles
@@ -174,8 +206,10 @@ class Wavefunction(object):
 
         This method mutates the Wavefunction, and does not return anything.
         """
-        x, y = co_ords
-        self.coefficients[x][y].remove(forbidden_tile)
+        self.coefficients[co_ords[Y]][co_ords[X]].remove(forbidden_tile)
+
+    def __repr__(self):
+        return f"<Wave: {self.coefficients}>"
 
 
 class Model(object):
@@ -223,28 +257,26 @@ class Model(object):
         while len(stack) > 0:
             cur_coords = stack.pop()
             # Get the set of all possible tiles at the current location
-            cur_possible_tiles = self.wavefunction.get(cur_coords)
+            cur_possible_tiles = self.wavefunction.get(cur_coords).copy()
 
             # Iterate through each location immediately adjacent to the
             # current location.
-            for d in valid_dirs(cur_coords, self.output_size):
-                other_coords = (cur_coords[0] + d[0], cur_coords[1] + d[1])
-
-                # Iterate through each possible tile in the adjacent location's
-                # wavefunction.
-                for other_tile in self.wavefunction.get(other_coords).copy():
+            for direction in valid_dirs(cur_coords, self.output_size):
+                other_co = direction.get_other_co(cur_coords)
+                # Iterate through each possible tile in the adjacent location's wavefunction.
+                for other_tile in direction.get_other(self.wavefunction.coefficients, cur_coords).copy():
                     # Check whether the tile is compatible with any tile in
                     # the current location's wavefunction.
                     other_tile_is_possible = any([
-                        self.compatibility_oracle.check(cur_tile, other_tile, d) for cur_tile in cur_possible_tiles
+                        self.compatibility_oracle.check(cur_tile, other_tile, direction) for cur_tile in cur_possible_tiles
                     ])
                     # If the tile is not compatible with any of the tiles in
                     # the current location's wavefunction then it is impossible
                     # for it to ever get chosen. We therefore remove it from
                     # the other location's wavefunction.
                     if not other_tile_is_possible:
-                        self.wavefunction.constrain(other_coords, other_tile)
-                        stack.append(other_coords)
+                        self.wavefunction.constrain(other_co, other_tile)
+                        stack.append(other_co)
 
     def min_entropy_co_ords(self):
         """Returns the co-ords of the location whose wavefunction has
@@ -253,10 +285,9 @@ class Model(object):
         min_entropy = None
         min_entropy_coords = None
 
-        width, height = self.output_size
-        for x in range(width):
-            for y in range(height):
-                if len(self.wavefunction.get((x, y))) == 1:
+        for y, row in enumerate(self.wavefunction.coefficients):
+            for x, tiles in enumerate(row):
+                if len(tiles) == 1:
                     continue
 
                 entropy = self.wavefunction.shannon_entropy((x, y))
@@ -269,28 +300,27 @@ class Model(object):
         return min_entropy_coords
 
 
-def valid_dirs(cur_co_ord, matrix_size):
+def valid_dirs(cur_co, matrix_shape):
     """Returns the valid directions from `cur_co_ord` in a matrix
     of `matrix_size`. Ensures that we don't try to take step to the
     left when we are already on the left edge of the matrix.
     """
-    x, y = cur_co_ord
-    width, height = matrix_size
+    y_length, x_length = matrix_shape[:2]
     dirs = []
 
-    if x > 0:
-        dirs.append(LEFT)
-    if x < width - 1:
-        dirs.append(RIGHT)
-    if y > 0:
-        dirs.append(DOWN)
-    if y < height - 1:
-        dirs.append(UP)
+    if cur_co[X] > 0:
+        dirs.append(Directions.LEFT)
+    if cur_co[X] < x_length - 1:
+        dirs.append(Directions.RIGHT)
+    if cur_co[Y] > 0:
+        dirs.append(Directions.UP)
+    if cur_co[Y] < y_length - 1:
+        dirs.append(Directions.DOWN)
 
     return dirs
 
 
-def parse_example_matrix(matrix):
+def parse_example_matrix(matrix: np.ndarray):
     """Parses an example `matrix`. Extracts:
 
     1. Tile compatibilities - which pairs of tiles can be placed next
@@ -307,23 +337,17 @@ def parse_example_matrix(matrix):
     * A dict of weights of the form tile -> weight
     """
     compatibilities = set()
-    matrix_width = len(matrix)
-    matrix_height = len(matrix[0])
-
-    weights = {}
-
-    for x, row in enumerate(matrix):
-        for y, cur_tile in enumerate(row):
+    weights = dict()
+    for y, row in enumerate(matrix):
+        for x, cur_tile in enumerate(row):
             cur_tile = tuple(cur_tile)
             if cur_tile not in weights:
                 weights[cur_tile] = 0
             weights[cur_tile] += 1
 
-            for d in valid_dirs((x, y), (matrix_width, matrix_height)):
-                other_tile = matrix[x + d[0]][y + d[1]]
-                other_tile = tuple(other_tile)
-                compatibilities.add((cur_tile, other_tile, d))
-
+            for direction in valid_dirs((x, y), matrix.shape):
+                other_tile = tuple(direction.get_other(matrix, (x, y)))
+                compatibilities.add((cur_tile, other_tile, direction))
     return compatibilities, weights
 
 
