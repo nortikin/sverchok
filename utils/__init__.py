@@ -143,5 +143,8 @@ utils_modules = [
     "sv_texture_utils",
     # geom 2d tools
     "geom_2d.lin_alg", "geom_2d.dcel", "geom_2d.dissolve_mesh", "geom_2d.merge_mesh", "geom_2d.intersections",
-    "geom_2d.make_monotone", "geom_2d.sort_mesh", "geom_2d.dcel_debugger"
+    "geom_2d.make_monotone", "geom_2d.sort_mesh", "geom_2d.dcel_debugger",
+    # wfc package
+    "wfc.wfc_adjacency", "wfc.wfc_control", "wfc.wfc_patterns", "wfc.wfc_solver", "wfc.wfc_tiles", "wfc.wfc_utilities",
+    "wfc.wfc_visualize"
 ]

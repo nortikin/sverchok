@@ -15,6 +15,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.utils.wfc.wfc_control import execute_wfc
 
 
 X, Y = 0, 1
@@ -386,10 +387,12 @@ class SvWFCTextureNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         image = load_image(self.image_name)
-        compatibilities, weights = parse_example_matrix(image)
-        compatibility_oracle = CompatibilityOracle(compatibilities)
-        model = Model((self.height, self.width), weights, compatibility_oracle)
-        output = model.run()
+        output = execute_wfc(image, output_size=(self.width, self.height))
+
+        # compatibilities, weights = parse_example_matrix(image)
+        # compatibility_oracle = CompatibilityOracle(compatibilities)
+        # model = Model((self.height, self.width), weights, compatibility_oracle)
+        # output = model.run()
 
         self.outputs['image'].sv_set([output])
 
