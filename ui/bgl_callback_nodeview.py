@@ -151,6 +151,7 @@ def draw_callback_px(n_id, data):
                 'loc': function_returning_xy,
                 'mode': 'custom_function_context',
                 'tree_name': self.id_data.name[:],
+                'node_name': self.name[:],
                 'custom_function': advanced_grid_xy,
                 'args': (geom, config)
             }

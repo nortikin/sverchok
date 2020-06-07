@@ -297,7 +297,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if self.activate:
             texture = self.get_buffer()
             width, height = self.texture_width_height
-            x, y = self.xy_offset
+            # x, y = self.xy_offset
             gl_color_constant = gl_color_dict.get(self.color_mode)
 
 
@@ -312,7 +312,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'node_name': self.name[:],                
-                'mode': 'custom_function',
+                'mode': 'custom_function_context',
                 'custom_function': simple_screen,
                 'loc': get_drawing_location,
                 'args': (texture, self.texture[n_id], width, height, batch, shader, cMode)
