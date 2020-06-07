@@ -99,3 +99,24 @@ def pt_in_triangle(p_test, p0, p1, p2):
         return (  (s_p >= 0) and (t_p >= 0) and (s_p + t_p) <= D  )
     else:
         return (  (s_p <= 0) and (t_p <= 0) and (s_p + t_p) >= D  )
+
+def mul_v3_f1v3(a, v):
+    return a*v[0], a*v[1], a*v[2]
+
+def sum_v3_v3l(lvtx):
+    """ sum all input "vectors"
+    
+    input  : list of iterables of 3 element
+    output : a new 3-tuple
+
+    usage  :
+
+        new_v = sum_v3_v3l([v1, v2, v3, v4, v5,....]) 
+
+    """
+    vx, vy, vz = 0, 0, 0
+    for v in lvtx:
+        vx += v[0]
+        vy += v[1]
+        vz += v[2]
+    return vx, vy, vz
