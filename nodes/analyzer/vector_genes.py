@@ -19,19 +19,38 @@
 from itertools import product
 from mathutils.noise import seed_set, random
 import bpy
-from bpy.props import FloatVectorProperty, IntProperty
-from mathutils import Matrix
+from bpy.props import FloatVectorProperty, IntProperty, BoolProperty
+
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode
 
+class SvVectorGenesReset(bpy.types.Operator):
+
+    bl_idname = "node.vector_genes_reset"
+    bl_label = "Evolver Run"
+
+    idtree: bpy.props.StringProperty(default='')
+    idname: bpy.props.StringProperty(default='')
+
+    def execute(self, context):
+        node = bpy.data.node_groups[self.idtree].nodes[self.idname]
+        if node.inputs["Bounding Box"].is_linked:
+            node.reset_limits_from_bbox()
+        if node.inputs["Vertices"].is_linked:
+            node.fill_from_input()
+        else:
+            seed_set(node.r_seed)
+            node.fill_empty_dict()
+        updateNode(node, context)
+        return {'FINISHED'}
 
 class SvVectorGenesNode(bpy.types.Node, SverchCustomTreeNode):
     '''Bounding box'''
     bl_idname = 'SvVectorGenesNode'
     bl_label = 'Vector Genes'
-    bl_icon = 'NONE'
-    sv_icon = 'SV_BOUNDING_BOX'
+    bl_icon = 'RNA'
+
     def update_sockets(self, context):
         bools = [self.min_list, self.max_list, self.size_list]
         dims = int(self.dimensions[0])
@@ -46,6 +65,7 @@ class SvVectorGenesNode(bpy.types.Node, SverchCustomTreeNode):
                     self.outputs[out_index].hide_safe = True
 
             updateNode(self, context)
+
     def update_dict(self, context):
         self.fill_vect_mem()
         updateNode(self, context)
@@ -58,9 +78,8 @@ class SvVectorGenesNode(bpy.types.Node, SverchCustomTreeNode):
     max_list: FloatVectorProperty(
         name='Max', description="Show Maximun values sockets", size=3, update=updateNode)
 
-    implentation_modes = [
-        ("2D", "2D", "Outputs Rectangle over XY plane", 0),
-        ("3D", "3D", "Outputs standard bounding box", 1)]
+    from_bbox: BoolProperty(default=False)
+    from_input: BoolProperty(default=False)
 
     node_mem = {}
 
@@ -68,20 +87,24 @@ class SvVectorGenesNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
 
         col = layout.column(align=True)
-        col.prop(self, "vector_count")
-        titles = ["Min", "Max", "Size"]
-        prop = ['min_list', 'max_list']
+        if not self.inputs["Vertices"].is_linked:
+            col.prop(self, "vector_count")
+        if not self.inputs["Bounding Box"].is_linked:
+            titles = ["Min", "Max", "Size"]
+            prop = ['min_list', 'max_list']
 
-        for i in range(2):
-            row = col.row(align=True)
-            row.label(text=titles[i])
-            row2 = row.row(align=True)
-            for j in range(3):
-                row2 .prop(self, prop[i], index=j, text='XYZ'[j])
+            for i in range(2):
+                row = col.row(align=True)
+                row.label(text=titles[i])
+                row2 = row.row(align=True)
+                for j in range(3):
+                    row2 .prop(self, prop[i], index=j, text='XYZ'[j])
+        self.wrapper_tracked_ui_draw_op(layout, "node.vector_genes_reset", icon='RNA', text="RESET")
 
     def sv_init(self, context):
         son = self.outputs.new
         self.inputs.new('SvVerticesSocket', 'Vertices')
+        self.inputs.new('SvVerticesSocket', 'Bounding Box')
 
         son('SvVerticesSocket', 'Vertices')
 
@@ -91,7 +114,7 @@ class SvVectorGenesNode(bpy.types.Node, SverchCustomTreeNode):
         for i in range(self.vector_count):
             v = []
             for j in range(3):
-                v_range=self.max_list[j] -self.min_list[j]
+                v_range = self.max_list[j] -self.min_list[j]
                 v.append(self.min_list[j]+ random()*v_range)
             vects.append(v)
         self.node_mem[self.node_id] = vects
@@ -112,23 +135,54 @@ class SvVectorGenesNode(bpy.types.Node, SverchCustomTreeNode):
         elif len(vects) > self.vector_count:
             vects = vects[:self.vector_count]
         self.node_mem[self.node_id] = vects
+
+    def fill_from_data(self,data):
+        self.node_mem[self.node_id] = data
+    def fill_from_input(self):
+        vec = self.inputs["Vertices"].sv_get(deepcopy=False)[0]
+        vec_clip = []
+        for v in vec:
+
+            v_clip = []
+            for j in range(3):
+                v_clip.append(max(min(v[j], self.max_list[j]), self.min_list[j]) )
+            vec_clip.append(v_clip)
+        self.node_mem[self.node_id] = vec_clip
+
+    def reset_limits_from_bbox(self):
+        vec = self.inputs["Bounding Box"].sv_get(deepcopy=False)[0]
+        maxmin = list(zip(map(max, *vec), map(min, *vec)))
+        for j in range(3):
+            self.max_list[j] = maxmin[j][0]
+            self.min_list[j] = maxmin[j][1]
+
+    def sv_update(self):
+        if self.inputs["Bounding Box"].is_linked and not self.from_bbox:
+            self.from_bbox = True
+            self.reset_limits_from_bbox()
+        elif not self.inputs["Bounding Box"].is_linked and self.from_bbox:
+            self.from_bbox = False
+
+        if self.inputs["Vertices"].is_linked and not self.from_input:
+            self.from_input = True
+            self.fill_from_input()
+
+        elif not self.inputs["Vertices"].is_linked and self.from_input:
+            self.from_input = False
+
+
     def process(self):
         # if not self.inputs['Vertices'].is_linked:
             # return
         if self.node_id in self.node_mem:
             verts_out = self.node_mem[self.node_id]
         else:
+            seed_set(self.r_seed)
             self.fill_empty_dict()
             verts_out = self.node_mem[self.node_id]
 
         self.outputs['Vertices'].sv_set([verts_out])
 
 
-
-
-def register():
-    bpy.utils.register_class(SvVectorGenesNode)
-
-
-def unregister():
-    bpy.utils.unregister_class(SvVectorGenesNode)
+classes = [SvVectorGenesNode, SvVectorGenesReset]
+register, unregister = bpy.utils.register_classes_factory(classes)
