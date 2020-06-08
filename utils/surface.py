@@ -14,7 +14,7 @@ from mathutils import Matrix, Vector
 from sverchok.utils.logging import info, exception
 from sverchok.utils.math import from_spherical
 from sverchok.utils.geom import LineEquation, rotate_vector_around_vector, autorotate_householder, autorotate_track, autorotate_diff
-from sverchok.utils.curve import SvFlipCurve
+from sverchok.utils.curve import SvFlipCurve, SvNormalTrack
 
 def rotate_vector_around_vector_np(v, k, theta):
     """
@@ -1442,6 +1442,46 @@ class SvExtrudeCurveZeroTwistSurface(SvSurface):
 
     def get_v_max(self):
         return self.extrusion.get_u_bounds()[1]
+
+class SvExtrudeCurveTrackNormalSurface(SvSurface):
+    def __init__(self, profile, extrusion, resolution, origin = PROFILE):
+        self.profile = profile
+        self.extrusion = extrusion
+        self.origin = origin
+        self.normal_delta = 0.001
+        self.tracker = SvNormalTrack(extrusion, resolution)
+        self.__description__ = "Extrusion of {}".format(profile)
+
+    def get_u_min(self):
+        return self.profile.get_u_bounds()[0]
+
+    def get_u_max(self):
+        return self.profile.get_u_bounds()[1]
+
+    def get_v_min(self):
+        return self.extrusion.get_u_bounds()[0]
+
+    def get_v_max(self):
+        return self.extrusion.get_u_bounds()[1]
+
+    def evaluate(self, u, v):
+        return self.evaluate_array(np.array([u]), np.array([v]))[0]
+
+    def evaluate_array(self, us, vs):
+        profile_vectors = self.profile.evaluate_array(us)
+        u_min, u_max = self.profile.get_u_bounds()
+        v_min, v_max = self.extrusion.get_u_bounds()
+        profile_vectors = np.transpose(profile_vectors[np.newaxis], axes=(1, 2, 0))
+        extrusion_start = self.extrusion.evaluate(v_min)
+        extrusion_points = self.extrusion.evaluate_array(vs)
+        extrusion_vectors = extrusion_points - extrusion_start
+
+        matrices = self.tracker.evaluate_array(vs)
+        profile_vectors = (matrices @ profile_vectors)[:,:,0]
+        result = extrusion_vectors + profile_vectors
+        if self.origin == EXTRUSION:
+            result = result + extrusion_start
+        return result
 
 class SvExtrudeCurveMathutilsSurface(SvSurface):
     def __init__(self, profile, extrusion, algorithm, orient_axis='Z', up_axis='X', origin = PROFILE):

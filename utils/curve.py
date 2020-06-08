@@ -171,6 +171,13 @@ class SvCurve(object):
         return tangents, normals, binormals
 
     def frame_array(self, ts):
+        """
+        input: ts - np.array of shape (n,)
+        output: tuple:
+            * matrices: np.array of shape (n, 3, 3)
+            * normals: np.array of shape (n, 3)
+            * binormals: np.array of shape (n, 3)
+        """
         tangents, normals, binormals = self.tangent_normal_binormal_array(ts)
         tangents = tangents / np.linalg.norm(tangents, axis=1)[np.newaxis].T
         matrices_np = np.dstack((normals, binormals, tangents))
@@ -257,6 +264,76 @@ class SvCurveLengthSolver(object):
             raise Exception("You have to call solver.prepare() first")
         spline_verts = self._spline.eval(input_lengths)
         return spline_verts[:,1]
+
+class SvNormalTrack(object):
+    def __init__(self, curve, resolution):
+        self.curve = curve
+        self.resolution = resolution
+        self._pre_calc()
+
+    def _make_quats(self, points, tangents, normals, binormals):
+        matrices = np.dstack((normals, binormals, tangents))
+        matrices = np.transpose(matrices, axes=(0,2,1))
+        matrices = np.linalg.inv(matrices)
+        return [Matrix(m).to_quaternion() for m in matrices]
+
+    def _pre_calc(self):
+        curve = self.curve
+        t_min, t_max = curve.get_u_bounds()
+        ts = np.linspace(t_min, t_max, num=self.resolution)
+
+        points = curve.evaluate_array(ts)
+        tangents, normals, binormals = curve.tangent_normal_binormal_array(ts)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+
+        normal = normals[0]
+        if np.linalg.norm(normal) > 1e-4:
+            binormal = binormals[0]
+            binormal /= np.linalg.norm(binormal)
+        else:
+            tangent = tangents[0]
+            normal = Vector(tangent).orthogonal()
+            normal = np.array(normal)
+            binormal = np.cross(tangent, normal)
+            binormal /= np.linalg.norm(binormal)
+
+        out_normals = [normal]
+        out_binormals = [binormal]
+
+        for point, tangent in zip(points[1:], tangents[1:]):
+            plane = PlaneEquation.from_normal_and_point(Vector(tangent), Vector(point))
+            normal = plane.projection_of_vector(Vector(point), Vector(point + normal))
+            normal = np.array(normal.normalized())
+            binormal = np.cross(tangent, normal)
+            binormal /= np.linalg.norm(binormal)
+            out_normals.append(normal)
+            out_binormals.append(binormal)
+
+        self.quats = self._make_quats(points, tangents, np.array(out_normals), np.array(out_binormals))
+        self.tknots = ts
+
+    def evaluate_array(self, ts):
+        """
+        input: ts - np.array of snape (n,) or list of floats
+        output: np.array of shape (n, 3, 3)
+        """
+        ts = np.array(ts)
+        tknots, quats = self.tknots, self.quats
+        base_indexes = tknots.searchsorted(ts, side='left')-1
+        t1s, t2s = tknots[base_indexes], tknots[base_indexes+1]
+        dts = (ts - t1s) / (t2s - t1s)
+        matrix_out = []
+        # TODO: ideally this shoulld be vectorized with numpy;
+        # but that would require implementation of quaternion
+        # interpolation in numpy.
+        for dt, base_index in zip(dts, base_indexes):
+            q1, q2 = quats[base_index], quats[base_index+1]
+            # spherical linear interpolation.
+            # TODO: implement `squad`.
+            q = q1.slerp(q2, dt)
+            matrix = np.array(q.to_matrix())
+            matrix_out.append(matrix)
+        return np.array(matrix_out)
 
 class SvScalarFunctionCurve(SvCurve):
     __description__ = "Function"
