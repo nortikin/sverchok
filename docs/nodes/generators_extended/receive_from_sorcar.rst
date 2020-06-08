@@ -9,7 +9,7 @@ A dedicated node to receive mesh data from Sorcar node-tree (one-sided connectio
 Outputs
 -------
 
-**Vertices**, **Edges** and **Polygons**. 
+**Vertices**, **Edges**, **Polygons**, **VerticesMask**, **EdgesMask** and **PolygonsMask**.
 All outputs will be generated. The evaluated mesh from "Send to Sverchok" Sorcar node input (referencing this node) will be generated.
 
 
