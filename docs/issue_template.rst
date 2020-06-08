@@ -1,5 +1,3 @@
-:orphan:
-
 ## Problem statement
 
 Please describe your problem here.
