@@ -81,6 +81,12 @@ def madd_v3_v3v3fl(a, b, f=1.0):
     return a[0]+b[0]*f, a[1]+b[1]*f, a[2]+b[2]*f
 
 def dot_v3v3(a, b):
+    """
+    the sum of the elementwise multiplication of a and b.
+
+    inputs: two 3-element-vector-like-iterables, a and b
+    output: one scalar value
+    """
     return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]
 
 def isect_line_plane(l1, l2, plane_co, plane_no):
@@ -96,7 +102,13 @@ def isect_line_plane(l1, l2, plane_co, plane_no):
         return False
 
 def obtain_normal3(p1, p2, p3):
-    # http://stackoverflow.com/a/8135330/1243487
+    """
+    http://stackoverflow.com/a/8135330/1243487
+    finds the normal of a triangle defined by passing 3 vectors
+
+    input: three 3-element-iterables (tuples or lists)
+    output: one 3-element tuple representing the direction of the face (not normalized)
+    """
     return [
         ((p2[1]-p1[1])*(p3[2]-p1[2]))-((p2[2]-p1[2])*(p3[1]-p1[1])),
         ((p2[2]-p1[2])*(p3[0]-p1[0]))-((p2[0]-p1[0])*(p3[2]-p1[2])),
@@ -104,7 +116,13 @@ def obtain_normal3(p1, p2, p3):
     ]
 
 def mean(verts):
-    # expects a list.. something that has len()
+    """
+    get the average 3d location of all inputs.
+
+    input: expects a list of 3-element-vector like iterables
+    output: a single 3-element-vector like tuple
+    """
+
     vx, vy, vz = 0, 0, 0
     for v in verts:
         vx += v[0]
