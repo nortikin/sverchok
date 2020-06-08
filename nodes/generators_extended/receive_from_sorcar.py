@@ -40,10 +40,15 @@ class SvReceiveFromSorcarNode(bpy.types.Node, SverchCustomTreeNode):
                         options={'ANIMATABLE'})
     
 
-    def set_mesh(self, verts, edges, faces):
+    def set_mesh(self, verts, edges, faces, verts_mask, edges_mask, faces_mask):
         self.verts = verts
         self.edges = edges
         self.faces = faces
+
+        self.verts_mask = verts_mask
+        self.edges_mask = edges_mask
+        self.faces_mask = faces_mask
+
         updateNode(self, None)
     
 
