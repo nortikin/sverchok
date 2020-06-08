@@ -192,6 +192,29 @@ class SvCurve(object):
                     error("M[%s] (t = %s):\n%s", i, ts[i], m)
             raise e
 
+    def zero_torsion_frame_array(self, ts):
+        """
+        input: ts - np.array of shape (n,)
+        output: tuple:
+            * cumulative torsion - np.array of shape (n,) (rotation angles in radians)
+            * matrices - np.array of shape (n, 3, 3)
+        """
+        if not hasattr(self, '_torsion_integral'):
+            raise Exception("pre_calc_torsion_integral() has to be called first")
+
+        vectors = self.evaluate_array(ts)
+        matrices_np, normals, binormals = self.frame_array(ts)
+        integral = self.torsion_integral(ts)
+        new_matrices = []
+        for matrix_np, point, angle in zip(matrices_np, vectors, integral):
+            frenet_matrix = Matrix(matrix_np.tolist()).to_4x4()
+            rotation_matrix = Matrix.Rotation(-angle, 4, 'Z')
+            matrix = frenet_matrix @ rotation_matrix
+            matrix.translation = Vector(point)
+            new_matrices.append(matrix)
+
+        return integral, new_matrices
+
     def curvature_array(self, ts):
         tangents, seconds = self.derivatives_array(2, ts)
         numerator = np.linalg.norm(np.cross(tangents, seconds), axis=1)
