@@ -52,12 +52,32 @@ def normalize(v):
     return [v[0]/l, v[1]/l, v[2]/l]
 
 def sub_v3_v3v3(a, b):
+    """
+    subtract b fom a.
+
+    inputs: two 3-element-vector-like-iterables, a and b
+    output: one 3-element-vector-like tuple
+    """
     return a[0]-b[0], a[1]-b[1], a[2]-b[2]
 
 def add_v3_v3v3(a, b):
+    """
+    add a to b.
+
+    inputs: two 3-element-vector-like-iterables, a and b
+    output: one 3-element-vector-like tuple
+    """
     return a[0]+b[0], a[1]+b[1], a[2]+b[2]
 
 def madd_v3_v3v3fl(a, b, f=1.0):
+    """
+    multiply b by f, and add the result to a
+
+    inputs:
+        - two 3-element-vector-like-iterables, a and b
+        - f : a scalar "amplifier" factor
+    output: one 3-element-vector-like tuple
+    """    
     return a[0]+b[0]*f, a[1]+b[1]*f, a[2]+b[2]*f
 
 def dot_v3v3(a, b):
