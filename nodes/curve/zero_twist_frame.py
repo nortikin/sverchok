@@ -5,7 +5,8 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
+from sverchok.utils.curve import SvCurve, SvNormalTrack
 
 class SvCurveZeroTwistFrameNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -33,7 +34,23 @@ class SvCurveZeroTwistFrameNode(bpy.types.Node, SverchCustomTreeNode):
                 default = True,
                 update = updateNode)
 
+        @throttled
+        def update_sockets(self, context):
+            self.outputs['CumulativeTorsion'].hide_safe = self.algorithm != 'FRENET'
+
+        algorithms = [
+                ('FRENET', "Integrate torsion", "Substract torsion integral from Frenet matrices", 0),
+                ('TRACK', "Track normal", "Try to maintain constant normal direction by tracking it along the curve", 1)
+            ]
+
+        algorithm : EnumProperty(
+                name = "Algorithm",
+                items = algorithms,
+                default = 'FRENET',
+                update = update_sockets)
+
         def draw_buttons(self, context, layout):
+            layout.prop(self, 'algorithm', text='')
             layout.prop(self, 'join', toggle=True)
 
         def sv_init(self, context):
@@ -51,34 +68,36 @@ class SvCurveZeroTwistFrameNode(bpy.types.Node, SverchCustomTreeNode):
             ts_s = self.inputs['T'].sv_get()
             resolution_s = self.inputs['Resolution'].sv_get()
 
+            curve_s = ensure_nesting_level(curve_s, 2, data_types=(SvCurve,))
+            resolution_s = ensure_nesting_level(resolution_s, 2)
+            ts_s = ensure_nesting_level(ts_s, 3)
+
             torsion_out = []
             matrix_out = []
-            for curve, resolution, ts in zip_long_repeat(curve_s, resolution_s, ts_s):
-                if isinstance(resolution, (list, tuple)):
-                    resolution = resolution[0]
-                    
-                ts = np.array(ts)
+            for curves, resolution_i, ts_i in zip_long_repeat(curve_s, resolution_s, ts_s):
+                for curve, resolution, ts in zip_long_repeat(curves, resolution_i, ts_i):
+                    ts = np.array(ts)
 
-                vectors = curve.evaluate_array(ts)
-                matrices_np, normals, binormals = curve.frame_array(ts)
+                    if self.algorithm == 'FRENET':
+                        curve.pre_calc_torsion_integral(resolution)
+                        new_torsion, new_matrices = curve.zero_torsion_frame_array(ts)
+                        new_torsion = new_torsion.tolist()
+                    else: # TRACK
+                        tracker = SvNormalTrack(curve, resolution)
+                        matrices_np = tracker.evaluate_array(ts)
+                        points = curve.evaluate_array(ts)
+                        new_matrices = []
+                        for m, point in zip(matrices_np, points):
+                            matrix = Matrix(m.tolist()).to_4x4()
+                            matrix.translation = Vector(point)
+                            new_matrices.append(matrix)
+                        new_torsion = []
 
-                curve.pre_calc_torsion_integral(resolution)
-                integral = curve.torsion_integral(ts)
-
-                new_matrices = []
-                for matrix_np, point, angle in zip(matrices_np, vectors, integral):
-                    frenet_matrix = Matrix(matrix_np.tolist()).to_4x4()
-                    rotation_matrix = Matrix.Rotation(-angle, 4, 'Z')
-                    #print("Z:", rotation_matrix)
-                    matrix = frenet_matrix @ rotation_matrix
-                    matrix.translation = Vector(point)
-                    new_matrices.append(matrix)
-
-                torsion_out.append(integral.tolist())
-                if self.join:
-                    matrix_out.extend(new_matrices)
-                else:
-                    matrix_out.append(new_matrices)
+                    torsion_out.append(new_torsion)
+                    if self.join:
+                        matrix_out.extend(new_matrices)
+                    else:
+                        matrix_out.append(new_matrices)
 
             self.outputs['CumulativeTorsion'].sv_set(torsion_out)
             self.outputs['Matrix'].sv_set(matrix_out)
