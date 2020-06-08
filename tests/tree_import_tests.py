@@ -56,7 +56,7 @@ class MonadImportTest(SverchokTestCase):
 #  1) require .blend data (greasepencil strokes) or
 #  2) 3rd party python modules (mcubes, conway)
 
-UNITTEST_BLACKLIST = [
+UNITTEST_SKIPLIST = [
     "GreacePencil_injection.json",
     "pointsONface_gather_lines.json",
     "Generative_Art_Lsystem.json",
@@ -87,8 +87,8 @@ class ExamplesImportTest(SverchokTestCase):
                 # assuming these are all jsons for now.
                 name = basename(path)
 
-                if name in UNITTEST_BLACKLIST:
-                    info("Skipping (blacklisted) : %s to permit unit tests to continue", name)
+                if name in UNITTEST_SKIPLIST:
+                    info(f"Skipping test import of: {name} - to permit unit-tests to continue")
                     continue
 
                 with self.subTest(file=name):
