@@ -9,7 +9,12 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.logging import info, exception
 
 from sverchok.utils.curve import SvCurve
-from sverchok.utils.surface import SvExtrudeCurveCurveSurface, SvExtrudeCurveFrenetSurface, SvExtrudeCurveZeroTwistSurface, SvExtrudeCurveMathutilsSurface, PROFILE, EXTRUSION
+from sverchok.utils.surface import (
+        SvExtrudeCurveCurveSurface, SvExtrudeCurveFrenetSurface,
+        SvExtrudeCurveZeroTwistSurface, SvExtrudeCurveMathutilsSurface,
+        SvExtrudeCurveTrackNormalSurface,
+        PROFILE, EXTRUSION
+    )
 
 class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -26,12 +31,13 @@ class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         ('ZERO', "Zero-twist", "Zero-twist rotation", 2),
         ("householder", "Householder", "Use Householder reflection matrix", 3),
         ("track", "Tracking", "Use quaternion-based tracking", 4),
-        ("diff", "Rotation difference", "Use rotational difference calculation", 5)
+        ("diff", "Rotation difference", "Use rotational difference calculation", 5),
+        ('NORMALTRACK', "Track normal", "Try to maintain constant normal direction by tracking along curve", 6)
     ]
 
     @throttled
     def update_sockets(self, context):
-        self.inputs['Resolution'].hide_safe = self.algorithm != 'ZERO'
+        self.inputs['Resolution'].hide_safe = self.algorithm not in {'ZERO', 'NORMALTRACK'}
 
     algorithm : EnumProperty(
             name = "Algorithm",
@@ -52,7 +58,7 @@ class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     origin : EnumProperty(
             name = "Origin",
             items = origins,
-            default = PROFILE,
+            default = PROFILE, # for existing nodes
             update = updateNode)
 
     def draw_buttons(self, context, layout):
@@ -64,6 +70,7 @@ class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvCurveSocket', "Extrusion")
         self.inputs.new('SvStringsSocket', "Resolution").prop_name = 'resolution'
         self.outputs.new('SvSurfaceSocket', "Surface")
+        self.origin = EXTRUSION # default for newly created nodes
         self.update_sockets(context)
 
     def process(self):
@@ -91,6 +98,8 @@ class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                     surface = SvExtrudeCurveFrenetSurface(profile, extrusion, origin=self.origin)
                 elif self.algorithm == 'ZERO':
                     surface = SvExtrudeCurveZeroTwistSurface(profile, extrusion, resolution, origin=self.origin)
+                elif self.algorithm == 'NORMALTRACK':
+                    surface = SvExtrudeCurveTrackNormalSurface(profile, extrusion, resolution, origin=self.origin)
                 else:
                     surface = SvExtrudeCurveMathutilsSurface(profile, extrusion, self.algorithm,
                                 orient_axis = 'Z', up_axis = 'X',
