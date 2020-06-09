@@ -10,7 +10,7 @@ from math import sin, cos, pi, radians
 
 from mathutils import Vector, Matrix
 
-from sverchok.utils.geom import PlaneEquation, LineEquation, LinearSpline, CubicSpline, CircleEquation2D, CircleEquation3D
+from sverchok.utils.geom import PlaneEquation, LineEquation, LinearSpline, CubicSpline, CircleEquation2D, CircleEquation3D, Ellipse3D
 from sverchok.utils.integrate import TrapezoidIntegral
 from sverchok.utils.logging import error, exception
 from sverchok.utils.math import binomial
@@ -763,13 +763,27 @@ class SvEllipse(SvCurve):
         self.a = a
         self.b = b
         self.u_bounds = (0, 2*pi)
+        self.tangent_delta = 0.001
 
     def get_u_bounds(self):
         return self.u_bounds
 
     @classmethod
     def from_equation(cls, eq):
+        """
+        input: an instance of sverchok.utils.geom.Ellipse3D
+        output: an instance of SvEllipse
+        """
         return SvEllipse(eq.get_matrix(), eq.a, eq.b)
+
+    def to_equation(self):
+        """
+        output: an instance of sverchok.utils.geom.Ellipse3D
+        """
+        major_radius = self.matrix @ np.array([self.a, 0, 0])
+        minor_radius = self.matrix @ np.array([0, self.b, 0])
+        eq = Ellipse3D(Vector(self.center), Vector(major_radius), Vector(minor_radius))
+        return eq
 
     def evaluate(self, t):
         v = np.array([self.a * cos(t), self.b * sin(t), 0])
@@ -779,6 +793,28 @@ class SvEllipse(SvCurve):
     def evaluate_array(self, ts):
         xs = self.a * np.cos(ts)
         ys = self.b * np.sin(ts)
+        zs = np.zeros_like(xs)
+        vs = np.array((xs, ys, zs)).T
+        vs = np.apply_along_axis(lambda v : self.matrix @ v, 1, vs)
+        return self.center + vs
+
+    def tangent(self, t):
+        return self.tangent_array(np.array([t]))[0]
+
+    def tangent_array(self, ts):
+        xs = - self.a * np.sin(ts)
+        ys = self.b * np.cos(ts)
+        zs = np.zeros_like(xs)
+        vs = np.array((xs, ys, zs)).T
+        vs = np.apply_along_axis(lambda v : self.matrix @ v, 1, vs)
+        return self.center + vs
+
+    def second_derivative(self, t):
+        return self.second_derivative_array(np.array([t]))[0]
+
+    def second_derivative_array(self, ts):
+        xs = - self.a * np.cos(ts)
+        ys = - self.b * np.sin(ts)
         zs = np.zeros_like(xs)
         vs = np.array((xs, ys, zs)).T
         vs = np.apply_along_axis(lambda v : self.matrix @ v, 1, vs)
