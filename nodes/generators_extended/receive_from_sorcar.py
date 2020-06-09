@@ -7,39 +7,43 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.modules.geom_sorcar import make_sorcar_logo
 
 class SvReceiveFromSorcarNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Receive Mesh Data From Sorcar '''
+    """
+    Triggers: sorcar sc receive
+    Tooltip: Receive Mesh Data From Sorcar
+    
+    A dedicated node to output components (vert/edge/face) and their selection mask, set externally by Sorcar node.
+    """
     bl_idname = 'SvReceiveFromSorcarNode'
     bl_label = 'Receive From Sorcar'
     sv_icon = 'SV_RECEIVE_FROM_SORCAR'
 
 
+    # Get default mesh data (Sorcar logo)
     sc_v, sc_e, sc_f = make_sorcar_logo()
+
+    # Get selection mask for each component (all True by default)
     sv_v_mask = [[True]*len(sc_v)]
     sv_e_mask = [[True]*len(sc_e)]
     sv_f_mask = [[True]*len(sc_f)]
 
 
-    verts: StringProperty(name='Vertices',
-                         default=repr([sc_v]),
-                         options={'ANIMATABLE'})
-    edges: StringProperty(name='Edges',
-                         default=repr([sc_e]),
-                         options={'ANIMATABLE'})
-    faces: StringProperty(name='Faces',
-                        default=repr([sc_f]),
-                        options={'ANIMATABLE'})
+    # Node properties to hold mesh data internally (to prevent fetching data from Sorcar node at every evaluation)
+    verts: StringProperty(name='Vertices', description='list of locations (vector of 3 floats) of each vertex',
+                         default=repr([sc_v]))
+    edges: StringProperty(name='Edges', description='list of pair of vertices (edge-keys) for each edge',
+                         default=repr([sc_e]))
+    faces: StringProperty(name='Faces', description='list of polygons (faces) made by a list of vertex indices',
+                         default=repr([sc_f]))
 
-    verts_mask: StringProperty(name='Vertices Mask',
-                         default=repr(sv_v_mask),
-                         options={'ANIMATABLE'})
-    edges_mask: StringProperty(name='Edges Mask',
-                         default=repr(sv_e_mask),
-                         options={'ANIMATABLE'})
-    faces_mask: StringProperty(name='Faces Mask',
-                        default=repr(sv_f_mask),
-                        options={'ANIMATABLE'})
+    verts_mask: StringProperty(name='Vertices Mask', description='list of bool corresponding to vertex selection',
+                         default=repr(sv_v_mask))
+    edges_mask: StringProperty(name='Edges Mask', description='list of bool corresponding to edge selection',
+                         default=repr(sv_e_mask))
+    faces_mask: StringProperty(name='Faces Mask', description='list of bool corresponding to face selection',
+                         default=repr(sv_f_mask))
     
 
+    # Helper function to set mesh data and update node-tree only once
     def set_mesh(self, verts, edges, faces, verts_mask, edges_mask, faces_mask):
         self.verts = verts
         self.edges = edges
