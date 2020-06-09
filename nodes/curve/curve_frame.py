@@ -10,7 +10,7 @@ from sverchok.utils.curve import SvCurve, ZeroCurvatureException
 
 class SvCurveFrameNode(bpy.types.Node, SverchCustomTreeNode):
         """
-        Triggers: Curve Frame
+        Triggers: Curve Frenet Frame
         Tooltip: Calculate (Frenet) frame matrix at any point of the curve
         """
         bl_idname = 'SvExCurveFrameNode'

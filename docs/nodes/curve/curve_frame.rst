@@ -11,7 +11,7 @@ orientation.
 
 .. _Frenet: https://en.wikipedia.org/wiki/Frenet%E2%80%93Serret_formulas
 
-**Note 1**: Frenet frame of the curve rotates along curve's tangent according to
+**Note 1**: Frenet frame of the curve rotates around curve's tangent according to
 curve's own torsion. Thus, if you place something by this frame, the result can
 be somewhat twisted. If you want to minimize the twist, you may wish to use
 **Zero-Twist Frame** node.
@@ -31,18 +31,31 @@ This node has the following inputs:
 Parameters
 ----------
 
-This node has the following parameter:
+This node has the following parameters:
 
 * **Join**. If checked, the node will output the single list of matrices,
   joined from any number of input curves provided. Otherwise, the node will
   output a separate list of matrices for each input curve. Checked by default.
+* **On zero curvature**. This parameter is only available in the N panel. This
+  defines what the node should do if it is instructed to calculate curve frame
+  at the point where curve has zero curvature. The available options are:
+
+   * **Raise error**. The node will raise an error (become red) and will not
+     process such input.
+   * **Arbitrary frame**. The node will return some arbitrary frame, with only
+     guaranteed property of having Z axis parallel to curve's tangent (two
+     other axes will be chosen arbitrarily).
+   
+  The default option is **Raise error**.
 
 Outputs
 -------
 
 This node has the following outputs:
 
-* **Matrix**. The matrix defining the Frenet frame for the curve at the specified value of T parameter. The location component of the matrix is the point of the curve. Z axis of the matrix points along curve's tangent.
+* **Matrix**. The matrix defining the Frenet frame for the curve at the
+  specified value of T parameter. The location component of the matrix is the
+  point of the curve. Z axis of the matrix points along curve's tangent.
 * **Normal**. The direction of curve's main normal at the specified value of T parameter.
 * **Binormal**. The direction of curve's binormal at the specified value of T parameter.
 
