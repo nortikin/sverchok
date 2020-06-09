@@ -27,6 +27,15 @@ def make_euclidian_ts(pts):
     tknots = tknots / tknots[-1]
     return tknots
 
+class ZeroCurvatureException(Exception):
+    def __init__(self, ts, mask=None):
+        self.ts = ts
+        self.mask = mask
+        super(Exception, self).__init__(self.get_message())
+
+    def get_message(self):
+        return f"Curve has zero curvature at some points: {self.ts}"
+
 class SvCurve(object):
     def __repr__(self):
         if hasattr(self, '__description__'):
@@ -170,15 +179,60 @@ class SvCurve(object):
             normals[nonzero] = normals[nonzero] / norms[nonzero][:,0][np.newaxis].T
         return tangents, normals, binormals
 
-    def frame_array(self, ts):
+    def arbitrary_frame_array(self, ts):
+        normals = []
+        binormals = []
+
+        points = self.evaluate_array(ts)
+        tangents = self.tangent_array(ts)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+
+        for i, t in enumerate(ts):
+            tangent = tangents[i]
+            normal = np.array(Vector(tangent).orthogonal())
+            binormal = np.cross(tangent, normal)
+            binormal /= np.linalg.norm(binormal)
+            normals.append(normal)
+            binormals.append(binormal)
+
+        normals = np.array(normals)
+        binormals = np.array(binormals)
+
+        matrices_np = np.dstack((normals, binormals, tangents))
+        matrices_np = np.transpose(matrices_np, axes=(0,2,1))
+        matrices_np = np.linalg.inv(matrices_np)
+        return matrices_np, normals, binormals
+
+    FAIL = 'fail'
+    ASIS = 'asis'
+    RETURN_NONE = 'none'
+
+    def frame_array(self, ts, on_zero_curvature=ASIS):
         """
-        input: ts - np.array of shape (n,)
+        input:
+            * ts - np.array of shape (n,)
+            * on_zero_curvature - what to do if the curve has zero curvature at one of T values.
+              The supported options are:
+              * SvCurve.FAIL: raise ZeroCurvatureException
+              * SvCurve.RETURN_NONE: return None
+              * SvCurve.ASIS: do not perform special check for this case, the
+                algorithm wil raise a general LinAlgError exception if it can't calculate the matrix.
+
         output: tuple:
             * matrices: np.array of shape (n, 3, 3)
             * normals: np.array of shape (n, 3)
             * binormals: np.array of shape (n, 3)
         """
         tangents, normals, binormals = self.tangent_normal_binormal_array(ts)
+
+        if on_zero_curvature != SvCurve.ASIS:
+            zero_normal = np.linalg.norm(normals, axis=1) < 1e-6
+            if zero_normal.any():
+                if on_zero_curvature == SvCurve.FAIL:
+                    raise ZeroCurvatureException(np.unique(ts[zero_normal]), zero_normal)
+                elif on_zero_curvature == SvCurve.RETURN_NONE:
+                    return None
+
         tangents = tangents / np.linalg.norm(tangents, axis=1)[np.newaxis].T
         matrices_np = np.dstack((normals, binormals, tangents))
         matrices_np = np.transpose(matrices_np, axes=(0,2,1))
