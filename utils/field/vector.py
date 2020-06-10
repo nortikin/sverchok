@@ -920,6 +920,12 @@ class SvBendAlongCurveField(SvVectorField):
         return vector
 
     def evaluate_grid(self, xs, ys, zs):
+        def multiply(matrices, vectors):
+            vectors = vectors[np.newaxis]
+            vectors = np.transpose(vectors, axes=(1,2,0))
+            r = matrices @ vectors
+            return r[:,:,0]
+
         ts = self.get_t_values(xs, ys, zs).flatten()
         spline_tangents = self.curve.tangent_array(ts)
         spline_vertices = self.curve.evaluate_array(ts)
@@ -931,8 +937,7 @@ class SvBendAlongCurveField(SvVectorField):
         src_vectors = np.stack((xs, ys, zs)).T
         src_vector_projections = src_vectors.copy()
         src_vector_projections[:,self.axis] = 0
-        #matrices = matrices[np.newaxis][np.newaxis]
-        multiply = np.vectorize(lambda m, v: m @ v, signature='(3,3),(3)->(3)')
+        #multiply = np.vectorize(lambda m, v: m @ v, signature='(3,3),(3)->(3)')
         new_vertices = multiply(matrices, src_vector_projections) + spline_vertices
         R = (new_vertices - src_vectors).T
         return R[0], R[1], R[2]
