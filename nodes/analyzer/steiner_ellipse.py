@@ -25,6 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.geom import Triangle
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.curve import SvEllipse
 
 class SvSteinerEllipseNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -80,6 +81,7 @@ class SvSteinerEllipseNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Eccentricity")
         self.outputs.new('SvVerticesSocket', "Normal")
         self.outputs.new('SvMatrixSocket', "Matrix")
+        self.outputs.new('SvCurveSocket', "Ellipse")
     
     def process(self):
         if not any(output.is_linked for output in self.outputs):
@@ -97,7 +99,9 @@ class SvSteinerEllipseNode(bpy.types.Node, SverchCustomTreeNode):
         e_out = []
         normal_out = []
         matrix_out = []
+        curve_out = []
         for vertices, faces in zip_long_repeat(vertices_s, faces_s):
+            new_curves = []
             bm = bmesh_from_pydata(vertices, [], faces)
             for face in bm.faces:
                 if len(face.verts) != 3:
@@ -112,6 +116,8 @@ class SvSteinerEllipseNode(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     ellipse = triangle.steiner_circumellipse()
 
+                curve = SvEllipse.from_equation(ellipse)
+
                 centers_out.append(tuple(ellipse.center))
                 f1_out.append(tuple(ellipse.f1))
                 f2_out.append(tuple(ellipse.f2))
@@ -121,6 +127,8 @@ class SvSteinerEllipseNode(bpy.types.Node, SverchCustomTreeNode):
                 e_out.append(ellipse.eccentricity)
                 normal_out.append(ellipse.normal())
                 matrix_out.append(ellipse.get_matrix())
+                new_curves.append(curve)
+            curve_out.append(new_curves)
 
         self.outputs['Center'].sv_set([centers_out])
         self.outputs['F1'].sv_set([f1_out])
@@ -131,6 +139,8 @@ class SvSteinerEllipseNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Eccentricity'].sv_set([e_out])
         self.outputs['Normal'].sv_set([normal_out])
         self.outputs['Matrix'].sv_set(matrix_out)
+        if 'Ellipse' in self.outputs:
+            self.outputs['Ellipse'].sv_set(curve_out)
 
 def register():
     bpy.utils.register_class(SvSteinerEllipseNode)

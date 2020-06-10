@@ -7,6 +7,7 @@ Curves
 
    line
    circle
+   ellipse
    rounded_rectangle
    arc_3pt
    arc_sed

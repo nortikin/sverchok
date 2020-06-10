@@ -6,11 +6,11 @@
 # License-Filename: LICENSE
 
 import numpy as np
-from math import sin, cos, pi, radians
+from math import sin, cos, pi, radians, sqrt
 
 from mathutils import Vector, Matrix
 
-from sverchok.utils.geom import PlaneEquation, LineEquation, LinearSpline, CubicSpline, CircleEquation2D, CircleEquation3D
+from sverchok.utils.geom import PlaneEquation, LineEquation, LinearSpline, CubicSpline, CircleEquation2D, CircleEquation3D, Ellipse3D
 from sverchok.utils.integrate import TrapezoidIntegral
 from sverchok.utils.logging import error, exception
 from sverchok.utils.math import binomial
@@ -753,6 +753,100 @@ class SvCircle(SvCurve):
 #         zs = np.zeros_like(xs)
 #         vectors = np.stack((xs, ys, zs)).T
 #         return np.apply_along_axis(lambda v: self.matrix @ v, 1, vectors)
+
+class SvEllipse(SvCurve):
+    __description__ = "Ellipse"
+     
+    CENTER = 'center'
+    F1 = 'f1'
+    F2 = 'f2'
+
+    def __init__(self, matrix, a, b, center_type=CENTER):
+        self.matrix = np.array(matrix.to_3x3())
+        self.center = np.array(matrix.translation)
+        self.center_type = center_type
+        self.a = a
+        self.b = b
+        self.u_bounds = (0, 2*pi)
+        self.tangent_delta = 0.001
+
+    def get_u_bounds(self):
+        return self.u_bounds
+
+    @classmethod
+    def from_equation(cls, eq):
+        """
+        input: an instance of sverchok.utils.geom.Ellipse3D
+        output: an instance of SvEllipse
+        """
+        return SvEllipse(eq.get_matrix(), eq.a, eq.b)
+
+    def to_equation(self):
+        """
+        output: an instance of sverchok.utils.geom.Ellipse3D
+        """
+        major_radius = self.matrix @ np.array([self.a, 0, 0])
+        minor_radius = self.matrix @ np.array([0, self.b, 0])
+        eq = Ellipse3D(Vector(self.center), Vector(major_radius), Vector(minor_radius))
+        return eq
+
+    @property
+    def c(self):
+        a, b = self.a, self.b
+        return sqrt(a*a - b*b)
+
+    def focal_points(self):
+        df = self.matrix @ np.array([self.c, 0, 0])
+        f1 = self.center + df
+        f2 = self.center - df
+        return [f1, f2]
+
+    def get_center(self):
+        if self.center_type == SvEllipse.CENTER:
+            return self.center
+        elif self.center_type == SvEllipse.F1:
+            df = self.matrix @ np.array([self.c, 0, 0])
+            return self.center + df
+        else: # F2
+            df = self.matrix @ np.array([self.c, 0, 0])
+            return self.center - df
+
+    def evaluate(self, t):
+        v = np.array([self.a * cos(t), self.b * sin(t), 0])
+        center = self.get_center()
+        v = center + self.matrix @ v
+        return v
+
+    def evaluate_array(self, ts):
+        xs = self.a * np.cos(ts)
+        ys = self.b * np.sin(ts)
+        zs = np.zeros_like(xs)
+        vs = np.array((xs, ys, zs)).T
+        vs = np.apply_along_axis(lambda v : self.matrix @ v, 1, vs)
+        center = self.get_center()
+        return center + vs
+
+    def tangent(self, t):
+        return self.tangent_array(np.array([t]))[0]
+
+    def tangent_array(self, ts):
+        xs = - self.a * np.sin(ts)
+        ys = self.b * np.cos(ts)
+        zs = np.zeros_like(xs)
+        vs = np.array((xs, ys, zs)).T
+        vs = np.apply_along_axis(lambda v : self.matrix @ v, 1, vs)
+        return vs
+
+    def second_derivative(self, t):
+        return self.second_derivative_array(np.array([t]))[0]
+
+    def second_derivative_array(self, ts):
+        xs = - self.a * np.cos(ts)
+        ys = - self.b * np.sin(ts)
+        zs = np.zeros_like(xs)
+        vs = np.array((xs, ys, zs)).T
+        vs = np.apply_along_axis(lambda v : self.matrix @ v, 1, vs)
+        return vs
 
 class SvLambdaCurve(SvCurve):
     __description__ = "Formula"
