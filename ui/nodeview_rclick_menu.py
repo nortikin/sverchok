@@ -197,7 +197,7 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
             layout.separator()
 
         if node:
-            layout.menu('SV_MT_LoadPresetMenu', text="Presets")
+            layout.menu('SV_MT_LoadPresetMenu', text="Node Presets")
 
         if node and node.bl_idname == 'NodeFrame':
             # give options for Frame nodes..
