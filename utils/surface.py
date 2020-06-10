@@ -1662,6 +1662,7 @@ class SvCoonsSurface(SvSurface):
         self.linear2 = SvCurveLerpSurface(curve2, SvFlipCurve(curve4))
         self.c1_t_min, self.c1_t_max = curve1.get_u_bounds()
         self.c3_t_min, self.c3_t_max = curve3.get_u_bounds()
+        self.normal_delta = 0.001
     
     def get_u_min(self):
         return 0
