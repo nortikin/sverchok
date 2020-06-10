@@ -209,7 +209,7 @@ class SvViewSourceForNode(bpy.types.Operator):
         return os.path.join(sv_path, *path_structure)
 
 class SV_MT_LoadPresetMenu(bpy.types.Menu):
-    bl_label = "Load Preset"
+    bl_label = "Load Node Preset"
 
     @classmethod
     def poll(cls, context):
@@ -241,7 +241,7 @@ class SV_MT_LoadPresetMenu(bpy.types.Menu):
         if hasattr(context, 'region') and context.region.type == 'WINDOW':
             layout.separator()
             layout.operator_context = 'INVOKE_DEFAULT' # otherwise Blender will not call invoke()
-            save = layout.operator(SvSaveSelected.bl_idname, text="Save current settings as preset", icon='SOLO_ON')
+            save = layout.operator(SvSaveSelected.bl_idname, text="Save current settings as node preset", icon='SOLO_ON')
             save.id_tree = ntree.name
             save.category = node.bl_idname
             save.save_defaults = True
@@ -271,7 +271,7 @@ def idname_draw(self, context):
         box.label(text="Presets:")
         box.menu("SV_MT_LoadPresetMenu")
         save_row = box.row()
-        save = save_row.operator(SvSaveSelected.bl_idname, text="Save Preset", icon='SOLO_ON')
+        save = save_row.operator(SvSaveSelected.bl_idname, text="Save Node Preset", icon='SOLO_ON')
         save.id_tree = ntree.name
         save.category = node.bl_idname
         save.save_defaults = True
