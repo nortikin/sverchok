@@ -24,6 +24,10 @@ class SvEllipseCurveNode(bpy.types.Node, SverchCustomTreeNode):
                   ("AE", "a e", "Major Radius / Eccentricity", 2),
                   ("AC", "a c", "Major Radius / Focal Length", 3)]
 
+    centering_items = [(SvEllipse.F1, "F1", "Ellipse focal point 1", 1),
+                       (SvEllipse.CENTER, "C", "Ellipse center point", 2),
+                       (SvEllipse.F2, "F2", "Ellipse focal point 2", 3)]
+
     @throttled
     def update_mode(self, context):
         ''' Update the ellipse parameters of the new mode based on previous mode ones'''
@@ -93,6 +97,12 @@ class SvEllipseCurveNode(bpy.types.Node, SverchCustomTreeNode):
         description="Ellipse definition last mode",
         default="AB")
 
+    centering: EnumProperty(
+        name="Centering", items=centering_items,
+        description="Center the ellipse around F1, C or F2",
+        default=SvEllipse.CENTER,
+        update=updateNode)
+
     major_radius: FloatProperty(
         name='Major Radius', description='Ellipse major radius',
         default=1.0, min=0.0, update=update_ellipse)
@@ -115,6 +125,8 @@ class SvEllipseCurveNode(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         row = col.row(align=True)
         row.prop(self, "mode", expand=True)
+        row = col.row(align=True)
+        row.prop(self, "centering", expand=True)
 
     def sv_init(self, context):
         self.width = 160
@@ -158,7 +170,7 @@ class SvEllipseCurveNode(bpy.types.Node, SverchCustomTreeNode):
                     a = major_radius
                     minor_radius = sqrt(a*a - c*c)
 
-                ellipse = SvEllipse(matrix, major_radius, minor_radius)
+                ellipse = SvEllipse(matrix, major_radius, minor_radius, center_type = self.centering)
                 f1, f2 = ellipse.to_equation().focal_points()
                 new_f1.append(f1)
                 new_f2.append(f2)
