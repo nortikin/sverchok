@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 import numpy as np
-from math import sin, cos, pi, radians
+from math import sin, cos, pi, radians, sqrt
 
 from mathutils import Vector, Matrix
 
@@ -757,9 +757,14 @@ class SvCircle(SvCurve):
 class SvEllipse(SvCurve):
     __description__ = "Ellipse"
      
-    def __init__(self, matrix, a, b):
+    CENTER = 'center'
+    F1 = 'f1'
+    F2 = 'f2'
+
+    def __init__(self, matrix, a, b, center_type=CENTER):
         self.matrix = np.array(matrix.to_3x3())
         self.center = np.array(matrix.translation)
+        self.center_type = center_type
         self.a = a
         self.b = b
         self.u_bounds = (0, 2*pi)
@@ -785,9 +790,31 @@ class SvEllipse(SvCurve):
         eq = Ellipse3D(Vector(self.center), Vector(major_radius), Vector(minor_radius))
         return eq
 
+    @property
+    def c(self):
+        a, b = self.a, self.b
+        return sqrt(a*a - b*b)
+
+    def focal_points(self):
+        df = self.matrix @ np.array([self.c, 0, 0])
+        f1 = self.center + df
+        f2 = self.center - df
+        return [f1, f2]
+
+    def get_center(self):
+        if self.center_type == SvEllipse.CENTER:
+            return self.center
+        elif self.center_type == SvEllipse.F1:
+            df = self.matrix @ np.array([self.c, 0, 0])
+            return self.center + df
+        else: # F2
+            df = self.matrix @ np.array([self.c, 0, 0])
+            return self.center - df
+
     def evaluate(self, t):
         v = np.array([self.a * cos(t), self.b * sin(t), 0])
-        v = self.center + self.matrix @ v
+        center = self.get_center()
+        v = center + self.matrix @ v
         return v
 
     def evaluate_array(self, ts):
@@ -796,7 +823,8 @@ class SvEllipse(SvCurve):
         zs = np.zeros_like(xs)
         vs = np.array((xs, ys, zs)).T
         vs = np.apply_along_axis(lambda v : self.matrix @ v, 1, vs)
-        return self.center + vs
+        center = self.get_center()
+        return center + vs
 
     def tangent(self, t):
         return self.tangent_array(np.array([t]))[0]
@@ -807,7 +835,7 @@ class SvEllipse(SvCurve):
         zs = np.zeros_like(xs)
         vs = np.array((xs, ys, zs)).T
         vs = np.apply_along_axis(lambda v : self.matrix @ v, 1, vs)
-        return self.center + vs
+        return vs
 
     def second_derivative(self, t):
         return self.second_derivative_array(np.array([t]))[0]
@@ -818,7 +846,7 @@ class SvEllipse(SvCurve):
         zs = np.zeros_like(xs)
         vs = np.array((xs, ys, zs)).T
         vs = np.apply_along_axis(lambda v : self.matrix @ v, 1, vs)
-        return self.center + vs
+        return vs
 
 class SvLambdaCurve(SvCurve):
     __description__ = "Formula"
