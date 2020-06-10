@@ -31,9 +31,8 @@ from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.development import get_branch
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
-from sverchok.ui.presets import get_presets, SverchPresetReplaceOperator, SvSaveSelected
+from sverchok.ui.presets import get_presets, SverchPresetReplaceOperator, SvSaveSelected, node_supports_presets
 from sverchok.nodes.__init__ import nodes_dict
-
 
 def displaying_sverchok_nodes(context):
     return context.space_data.tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}
@@ -218,7 +217,7 @@ class SV_MT_LoadPresetMenu(bpy.types.Menu):
         if not hasattr(context, 'active_node'):
             return False
         node = context.active_node
-        return (node is not None)
+        return node_supports_presets(node)
 
     def draw(self, context):
         node = context.active_node
@@ -265,8 +264,7 @@ def idname_draw(self, context):
     colom = row.column(align=True)
     colom.operator('node.copy_bl_idname', text='', icon='COPY_ID').name = bl_idname
 
-    is_monad = (bl_idname.startswith('SvGroupNodeMonad'))
-    if not is_monad:
+    if node_supports_presets(node):
         box = col.box()
         box.label(text="Presets:")
         box.menu("SV_MT_LoadPresetMenu")

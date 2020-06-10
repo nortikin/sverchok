@@ -9,6 +9,7 @@
 import bpy
 from sverchok.utils.sv_node_utils import frame_adjust
 from sverchok.menu import draw_add_node_operator
+from sverchok.ui.presets import node_supports_presets
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 supported_mesh_viewers = {'SvBmeshViewerNodeMK2', 'ViewerNode2'}
@@ -196,7 +197,7 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
 
             layout.separator()
 
-        if node:
+        if node_supports_presets(node):
             layout.menu('SV_MT_LoadPresetMenu', text="Node Presets")
 
         if node and node.bl_idname == 'NodeFrame':

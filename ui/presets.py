@@ -115,6 +115,14 @@ def get_preset_idname_for_operator(name, category=None):
         name = name[:38] + "_" + hashlib.sha1(name.encode('utf-8')).hexdigest()[:5]
     return name
 
+def node_supports_presets(node):
+    if node is None:
+        return False
+    bl_idname = node.bl_idname
+    is_monad = (bl_idname.startswith('SvGroupNodeMonad'))
+    is_frame = (bl_idname.startswith('NodeFrame'))
+    return not is_monad and not is_frame
+
 # We are creating and registering preset adding operators dynamically.
 # So, we have to remember them in order to unregister them when needed.
 preset_add_operators = {}
