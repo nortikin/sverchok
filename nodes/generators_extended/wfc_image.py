@@ -15,8 +15,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils.wfc.houdini_wfc import solve_wfc
-from sverchok.utils.wfc.wfc_control import execute_wfc
+from sverchok.utils.wfc_algorithm import WaveFunctionCollapse
 
 
 X, Y = 0, 1
@@ -398,21 +397,17 @@ class SvWFCTextureNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         image = load_image(self.image_name)
-        output = solve_wfc(
+        wave = WaveFunctionCollapse(
             image,
-            (self.width, self.height),
-            seed=self.seed,
             patter_size=self.pattern_size,
-            rotate_patterns=self.rotate_patterns,
+            periodic_input=self.periodic_input,
+            rotate_patterns=self.rotate_patterns)
+
+        output = wave.solve(
+            output_size=(self.width, self.height),
+            seed=self.seed,
             tiling_output=self.tiling_output,
-            periodic_input=self.periodic_input)
-
-        # output = execute_wfc(image, output_size=(self.width, self.height))
-
-        # compatibilities, weights = parse_example_matrix(image)
-        # compatibility_oracle = CompatibilityOracle(compatibilities)
-        # model = Model((self.height, self.width), weights, compatibility_oracle)
-        # output = model.run()
+            max_number_contradiction_tries=1)
 
         self.outputs['image'].sv_set(output)
 
