@@ -15,6 +15,19 @@ give exactly the same result. But in more complex setups, or in some corner
 cases, results can be very different. So, just try all algorithms and see which
 one fits you better.
 
+* "Frenet" or "Zero-Twist" algorithms give very good results in case when
+  extrusion curve has non-zero curvature in all points. If the extrusion curve
+  has zero curvature points, or, even worse, it has straight segments, these
+  algorithms will either make "flipping" surface, or give an error.
+* "Householder", "Tracking" and "Rotation difference" algorithms are
+  "curve-agnostic", they work independently of curve by itself, depending only
+  on tangent direction. They give "good enough" result (at least, without
+  errors or sudden flips) for all extrusion curves, but may make twisted
+  surfaces in some special cases.
+* "Track normal" algorithm is supposed to give good results without twisting
+  for all extrusion curves. It will give better results with higher values of
+  "resolution" parameter, but that may be slow.
+
 Inputs
 ------
 
@@ -62,6 +75,7 @@ This node has the following parameters:
     vectors.                                         
   * Frenet: rotate the space according to curve's Frenet frame.
   * Zero-Twist: rotate the space according to curve's "zero-twist" frame.
+  * Track normal: try to maintain constant normal direction by tracking it along the curve.
 
   Default value is Householder.
 

@@ -15,7 +15,7 @@ from mathutils import bvhtree
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter, LineEquation, CircleEquation3D
 from sverchok.utils.math import from_cylindrical, from_spherical
 
-from sverchok.utils.curve import SvCurveLengthSolver
+from sverchok.utils.curve import SvCurveLengthSolver, SvNormalTrack
 
 ##################
 #                #
@@ -797,6 +797,14 @@ class SvVectorFieldRotor(SvVectorField):
         return R[0], R[1], R[2]
 
 class SvBendAlongCurveField(SvVectorField):
+
+    ZERO = 'ZERO'
+    FRENET = 'FRENET'
+    HOUSEHOLDER = 'householder'
+    TRACK = 'track'
+    DIFF = 'diff'
+    TRACK_NORMAL = 'track_normal'
+
     def __init__(self, curve, algorithm, scale_all, axis, t_min, t_max, up_axis=None, resolution=50, length_mode='T'):
         self.curve = curve
         self.axis = axis
@@ -806,8 +814,10 @@ class SvBendAlongCurveField(SvVectorField):
         self.scale_all = scale_all
         self.up_axis = up_axis
         self.length_mode = length_mode
-        if algorithm == 'ZERO':
+        if algorithm == SvBendAlongCurveField.ZERO:
             self.curve.pre_calc_torsion_integral(resolution)
+        elif algorithm == SvBendAlongCurveField.TRACK_NORMAL:
+            self.normal_tracker = SvNormalTrack(curve, resolution)
         if length_mode == 'L':
             self.length_solver = SvCurveLengthSolver(curve)
             self.length_solver.prepare('SPL', resolution)
@@ -832,12 +842,12 @@ class SvBendAlongCurveField(SvVectorField):
         scale_matrix = np.array(scale_matrix.to_3x3())
 
         tangent = Vector(tangent)
-        if self.algorithm == 'householder':
+        if self.algorithm == SvBendAlongCurveField.HOUSEHOLDER:
             rot = autorotate_householder(ax1, tangent).inverted()
-        elif self.algorithm == 'track':
+        elif self.algorithm == SvBendAlongCurveField.TRACK:
             axis = "XYZ"[self.axis]
             rot = autorotate_track(axis, tangent, self.up_axis)
-        elif self.algorithm == 'diff':
+        elif self.algorithm == SvBendAlongCurveField.DIFF:
             rot = autorotate_diff(tangent, ax1)
         else:
             raise Exception("Unsupported algorithm")
@@ -846,7 +856,7 @@ class SvBendAlongCurveField(SvVectorField):
         return np.matmul(rot, scale_matrix)
 
     def get_matrices(self, ts, scale):
-        frenet, _ , _ = self.curve.frame_array(ts)
+        n = len(ts)
         if self.scale_all:
             scale_matrix = np.array([
                 [scale, 0, 0],
@@ -859,10 +869,11 @@ class SvBendAlongCurveField(SvVectorField):
                 [0, 1, 0],
                 [0, 0, 1/scale]
             ])
-        n = len(ts)
-        if self.algorithm == 'FRENET':
+        if self.algorithm == SvBendAlongCurveField.FRENET:
+            frenet, _ , _ = self.curve.frame_array(ts)
             return frenet @ scale_matrix
-        elif self.algorithm == 'ZERO':
+        elif self.algorithm == SvBendAlongCurveField.ZERO:
+            frenet, _ , _ = self.curve.frame_array(ts)
             angles = - self.curve.torsion_integral(ts)
             zeros = np.zeros((n,))
             ones = np.ones((n,))
@@ -871,6 +882,9 @@ class SvBendAlongCurveField(SvVectorField):
             row3 = np.stack((zeros, zeros, ones)).T # (n, 3)
             rotation_matrices = np.dstack((row1, row2, row3))
             return frenet @ rotation_matrices @ scale_matrix
+        elif self.algorithm == SvBendAlongCurveField.TRACK_NORMAL:
+            matrices = self.normal_tracker.evaluate_array(ts)
+            return matrices @ scale_matrix
         else:
             raise Exception("Unsupported algorithm")
 
@@ -909,7 +923,7 @@ class SvBendAlongCurveField(SvVectorField):
         spline_tangent = self.curve.tangent(t)
         spline_vertex = self.curve.evaluate(t)
         scale = self.get_scale()
-        if self.algorithm in {'ZERO', 'FRENET'}:
+        if self.algorithm in {SvBendAlongCurveField.ZERO, SvBendAlongCurveField.FRENET, SvBendAlongCurveField.TRACK_NORMAL}:
             matrix = self.get_matrices(np.array([t]), scale)
         else:
             matrix = self.get_matrix(spline_tangent, scale)
@@ -930,7 +944,7 @@ class SvBendAlongCurveField(SvVectorField):
         spline_tangents = self.curve.tangent_array(ts)
         spline_vertices = self.curve.evaluate_array(ts)
         scale = self.get_scale()
-        if self.algorithm in {'ZERO', 'FRENET'}:
+        if self.algorithm in {SvBendAlongCurveField.ZERO, SvBendAlongCurveField.FRENET, SvBendAlongCurveField.TRACK_NORMAL}:
             matrices = self.get_matrices(ts, scale)
         else:
             matrices = np.vectorize(lambda t : self.get_matrix(t, scale), signature='(3)->(3,3)')(spline_tangents)

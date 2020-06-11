@@ -25,24 +25,26 @@ class SvBendAlongCurveFieldNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_BEND_CURVE_FIELD'
 
     algorithms = [
-            ("householder", "Householder", "Use Householder reflection matrix", 1),
-            ("track", "Tracking", "Use quaternion-based tracking", 2),
-            ("diff", "Rotation difference", "Use rotational difference calculation", 3),
-            ('FRENET', "Frenet", "Use Frenet frames", 4),
-            ('ZERO', "Zero-Twist", "Use zero-twist frames", 5)
+            (SvBendAlongCurveField.HOUSEHOLDER, "Householder", "Use Householder reflection matrix", 1),
+            (SvBendAlongCurveField.TRACK, "Tracking", "Use quaternion-based tracking", 2),
+            (SvBendAlongCurveField.DIFF, "Rotation difference", "Use rotational difference calculation", 3),
+            (SvBendAlongCurveField.FRENET, "Frenet", "Use Frenet frames", 4),
+            (SvBendAlongCurveField.ZERO, "Zero-Twist", "Use zero-twist frames", 5),
+            (SvBendAlongCurveField.TRACK_NORMAL, "Track Normal", "Track normal", 6)
         ]
 
     @throttled
     def update_sockets(self, context):
-        self.inputs['Resolution'].hide_safe = not(self.algorithm == 'ZERO' or self.length_mode == 'L')
-        if self.algorithm in {'ZERO', 'FRENET'}:
+        self.inputs['Resolution'].hide_safe = not(self.algorithm == SvBendAlongCurveField.ZERO or self.algorithm == SvBendAlongCurveField.TRACK_NORMAL or self.length_mode == 'L')
+        if self.algorithm in {SvBendAlongCurveField.ZERO, SvBendAlongCurveField.FRENET, SvBendAlongCurveField.TRACK_NORMAL}:
             self.orient_axis_ = 'Z'
         #self.inputs[T_MIN_SOCKET].name = "Src {} Min".format(self.orient_axis)
         #self.inputs[T_MAX_SOCKET].name = "Src {} Max".format(self.orient_axis)
 
     algorithm: EnumProperty(
         name="Algorithm", description="Rotation calculation algorithm",
-        default="householder", items=algorithms,
+        default = SvBendAlongCurveField.HOUSEHOLDER,
+        items=algorithms,
         update=update_sockets)
 
     axes = [
@@ -113,12 +115,12 @@ class SvBendAlongCurveFieldNode(bpy.types.Node, SverchCustomTreeNode):
         layout.label(text="Orientation:")
         row = layout.row()
         row.prop(self, "orient_axis_", expand=True)
-        row.enabled = self.algorithm not in {'ZERO', 'FRENET'}
+        row.enabled = self.algorithm not in {SvBendAlongCurveField.ZERO, SvBendAlongCurveField.FRENET, SvBendAlongCurveField.TRACK_NORMAL}
 
         col = layout.column(align=True)
         col.prop(self, "scale_all", toggle=True)
         layout.prop(self, "algorithm")
-        if self.algorithm == 'track':
+        if self.algorithm == SvBendAlongCurveField.TRACK:
             layout.prop(self, "up_axis")
         layout.label(text="Scale along curve:")
         layout.prop(self, 'length_mode', text='')
