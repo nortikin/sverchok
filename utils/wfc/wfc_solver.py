@@ -1,14 +1,8 @@
 import numpy
-import sys
 import math
 import itertools
 
 # from hilbertcurve.hilbertcurve import HilbertCurve
-
-
-# By default Python has a very low recursion limit.
-# Might still be better to rewrite te recursion as a loop, of course
-sys.setrecursionlimit(5500)
 
 
 class Contradiction(Exception):
@@ -21,12 +15,15 @@ class TimedOut(Exception):
   pass
 
 
-class StopEarly(Exception):
-  """Aborting solve early."""
-  pass
-
-
 def make_wave(n, w, h, ground=None):
+    """
+    It creates 3d bool array of output image size with all possible tile variants
+    :param n: number of unique patterns
+    :param w: output width
+    :param h: output height
+    :param ground:
+    :return: 3d bool array, first axis keep bool 2d output matrices for each unique pattern
+    """
     wave = numpy.ones((n, w, h), dtype=bool)
     if ground is not None:
         wave[:, :, h-1] = 0
@@ -37,14 +34,20 @@ def make_wave(n, w, h, ground=None):
 
 
 def make_adj(adj_lists):
+    """
+    Convert adjacent list to adjacent matrix
+    :param adj_lists: map of directions and lists of sets of adjacent pattern indexes
+    :return: map of direction and adjacent 2D bool matrices,
+    if matrix[pattern1.index, pattern2.index] == True then pattern 1 is adjacent to pattern 2
+    """
     adj_matrices = {}
     num_patterns = len(list(adj_lists.values())[0])
-    for d in adj_lists:
+    for direction in adj_lists:
         m = numpy.zeros((num_patterns, num_patterns), dtype=bool)
-        for i, js in enumerate(adj_lists[d]):
+        for i, js in enumerate(adj_lists[direction]):
             for j in js:
                 m[i, j] = 1
-        adj_matrices[d] = m
+        adj_matrices[direction] = m
     return adj_matrices
 
 
@@ -93,12 +96,14 @@ def spiral_transforms():
             for i in range(N):
                 yield (0, 1) # right
 
+
 def spiral_coords(x, y):
     yield x,y
     for transform in spiral_transforms():
         x += transform[0]
         y += transform[1]
         yield x,y
+
 
 def fill_with_curve(arr, curve_gen):
     arr_len = numpy.prod(arr.shape)
@@ -116,7 +121,6 @@ def fill_with_curve(arr, curve_gen):
     #print(arr)
     return arr
 
-    
 
 def makeSpiralLocationHeuristic(preferences):
     # https://stackoverflow.com/a/23707273/5562922
@@ -181,6 +185,7 @@ def lexicalLocationHeuristic(wave):
 def lexicalPatternHeuristic(weights):
     return numpy.nonzero(weights)[0][0]
 
+
 def makeWeightedPatternHeuristic(weights):
     num_of_patterns = len(weights)
     def weightedPatternHeuristic(wave, _):
@@ -189,31 +194,6 @@ def makeWeightedPatternHeuristic(weights):
         weighted_wave /= weighted_wave.sum()
         result = numpy.random.choice(num_of_patterns, p=weighted_wave)
         return result
-    return weightedPatternHeuristic
-
-def makeRarestPatternHeuristic(weights):
-    """Return a function that chooses the rarest (currently least-used) pattern."""
-    num_of_patterns = len(weights)
-    def weightedPatternHeuristic(wave, total_wave):
-        print(total_wave.shape)
-        #[print(e) for e in wave]
-        wave_sums = numpy.sum(total_wave, (1,2))
-        #print(wave_sums)
-        selected_pattern = numpy.random.choice(numpy.where(wave_sums == wave_sums.max())[0])
-        return selected_pattern
-    return weightedPatternHeuristic
-
-
-
-def makeMostCommonPatternHeuristic(weights):
-    """Return a function that chooses the most common (currently most-used) pattern."""
-    num_of_patterns = len(weights)
-    def weightedPatternHeuristic(wave, total_wave):
-        print(total_wave.shape)
-        #[print(e) for e in wave]
-        wave_sums = numpy.sum(total_wave, (1,2))
-        selected_pattern = numpy.random.choice(numpy.where(wave_sums == wave_sums.min())[0])
-        return selected_pattern
     return weightedPatternHeuristic
 
 
@@ -238,38 +218,37 @@ def make_global_use_all_patterns():
     return global_use_all_patterns
 
 
-
 #####################################
 # Solver
 
-def propagate(wave, adj, periodic=False, onPropagate=None):
+def propagate(wave, adj, periodic=False):
+    """
+    :param wave: 3 dimensional bool matrix, first axis - tiles, 2-3 axises keep output bool greed
+    :param adj: map of directions and 2D bool adjacency matrices
+    :param periodic: if True the input wraps at the edges
+    :return: None
+    """
     last_count = wave.sum()
 
     while True:
         supports = {}
         if periodic:
-            padded = numpy.pad(wave,((0,0),(1,1),(1,1)), mode='wrap')
+            padded = numpy.pad(wave, ((0, 0), (1, 1), (1, 1)), mode='wrap')
         else:
-            padded = numpy.pad(wave,((0,0),(1,1),(1,1)), mode='constant',constant_values=True)
+            padded = numpy.pad(wave, ((0, 0), (1, 1), (1, 1)), mode='constant', constant_values=True)
 
-        for d in adj:
-            dx,dy = d
-            shifted = padded[:,1+dx:1+wave.shape[1]+dx,1+dy:1+wave.shape[2]+dy]
-            #print(f"shifted: {shifted.shape} | adj[d]: {adj[d].shape} | d: {d}")
-            #raise StopEarly
-            #supports[d] = numpy.einsum('pwh,pq->qwh', shifted, adj[d]) > 0
-            supports[d] = (adj[d] @ shifted.reshape(shifted.shape[0], -1)).reshape(shifted.shape) > 0
+        for direction in adj:
+            dx, dy = direction
+            shifted = padded[:, 1 + dx: 1 + wave.shape[1] + dx, 1 + dy: 1 + wave.shape[2] + dy]
+            supports[direction] = (adj[direction] @ shifted.reshape(shifted.shape[0], -1)).reshape(shifted.shape) > 0
 
-        for d in adj:
-            wave *= supports[d]
+        for direction in adj:
+            wave *= supports[direction]
 
         if wave.sum() == last_count:
             break
         else:
             last_count = wave.sum()
-
-    if onPropagate:
-        onPropagate(wave)
 
     if wave.sum() == 0:
         raise Contradiction
@@ -281,42 +260,40 @@ def observe(wave, location_heuristic, pattern_heuristic):
     return pattern, i, j
 
 
-def run(wave, adj, locationHeuristic, patternHeuristic, periodic=False, backtracking=False, onBacktrack=None, onChoice=None, onObserve=None, onPropagate=None, checkFeasible=None, onFinal=None, depth=0, depth_limit=None):
-    #print("run.")
-    if checkFeasible:
-        if not checkFeasible(wave):
+def run(wave, adj, location_heuristic, pattern_heuristic, periodic=False, backtracking=False, check_feasible=None, depth_limit=5000):
+
+    if check_feasible:
+        if not check_feasible(wave):
             raise Contradiction
-        if depth_limit:
-            if depth > depth_limit:
-              raise TimedOut
-    if depth % 50 == 0:
-        print(depth)
-    original = wave.copy()
-    propagate(wave, adj, periodic=periodic, onPropagate=onPropagate)
-    try:
-        pattern, i, j = observe(wave, locationHeuristic, patternHeuristic)
-        if onChoice:
-            onChoice(pattern, i, j)
-        wave[:, i, j] = False
-        wave[pattern, i, j] = True
-        if onObserve:
-            onObserve(wave)
-        propagate(wave, adj, periodic=periodic, onPropagate=onPropagate)
-        if wave.sum() > wave.shape[1] * wave.shape[2]:
-            #return run(wave, adj, locationHeuristic, patternHeuristic, periodic, backtracking, onBacktrack)
-            return run(wave, adj, locationHeuristic, patternHeuristic, periodic=periodic, backtracking=backtracking, onBacktrack=onBacktrack, onChoice=onChoice, onObserve=onObserve, onPropagate=onPropagate, checkFeasible=checkFeasible, depth=depth+1, depth_limit=depth_limit)
-        else:
-            if onFinal:
-              onFinal(wave)
-            return numpy.argmax(wave, 0)
-    except Contradiction:
-        if backtracking:
-            if onBacktrack:
-                onBacktrack()
-            wave = original
-            wave[pattern, i, j] = False
-            return run(wave, adj, locationHeuristic, patternHeuristic, periodic=periodic, backtracking=backtracking, onBacktrack=onBacktrack, onChoice=onChoice, onObserve=onObserve, onPropagate=onPropagate, checkFeasible=checkFeasible, depth=depth+1, depth_limit=depth_limit)
-        else:
-            if onFinal:
-                onFinal(wave)
-            raise
+    propagate(wave, adj, periodic=periodic)
+
+    depth = 0
+    while wave.sum() > wave.shape[1] * wave.shape[2] and depth <= depth_limit:
+        depth += 1
+
+        if check_feasible:
+            if not check_feasible(wave):
+                raise Contradiction
+
+        if depth % 50 == 0:
+            print(depth)
+
+        original = wave.copy()
+        try:
+            pattern, i, j = observe(wave, location_heuristic, pattern_heuristic)
+            wave[:, i, j] = False
+            wave[pattern, i, j] = True
+
+            propagate(wave, adj, periodic=periodic)
+
+        except Contradiction:
+            if backtracking:
+                wave = original
+                wave[pattern, i, j] = False
+            else:
+                raise
+
+    if depth_limit and depth > depth_limit:
+        raise TimedOut
+    else:
+        return numpy.argmax(wave, 0)
