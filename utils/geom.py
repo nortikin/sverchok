@@ -2251,6 +2251,23 @@ def circle_by_start_end_tangent(start, end, tangent):
         circle.arc_angle = 2*pi - circle.arc_angle
     return circle
 
+def circle_by_two_derivatives(start, tangent, second):
+    start = Vector(start)
+    tangent = Vector(tangent)
+    second = Vector(second)
+
+    radius = tangent.length
+    deriv_diff = (second - second.project(tangent)).normalized()
+    center = start + radius * deriv_diff
+    normal = tangent.cross(deriv_diff).normalized()
+
+    circle = CircleEquation3D()
+    circle.center = np.array(center)
+    circle.radius = radius
+    circle.normal = np.array(normal)
+    circle.point1 = np.array(start)
+    return circle
+
 def multiply_vectors(M, vlist):
     # (4*4 matrix)  X   (3*1 vector)
 

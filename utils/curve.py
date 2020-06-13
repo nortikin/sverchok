@@ -552,7 +552,7 @@ class SvFlipCurve(SvCurve):
     def tangent_array(self, ts):
         m, M = self.curve.get_u_bounds()
         ts = M - ts + m
-        return self.curve.tangent_array(ts)
+        return - self.curve.tangent_array(ts)
 
     def second_derivative_array(self, ts):
         m, M = self.curve.get_u_bounds()
@@ -562,12 +562,18 @@ class SvFlipCurve(SvCurve):
     def third_derivative_array(self, ts):
         m, M = self.curve.get_u_bounds()
         ts = M - ts + m
-        return self.curve.third_derivative_array(ts)
+        return - self.curve.third_derivative_array(ts)
 
-    def derivatives_array(self, ts):
+    def derivatives_array(self, n, ts):
         m, M = self.curve.get_u_bounds()
         ts = M - ts + m
-        return self.curve.derivatives_array(ts)
+        derivs = self.curve.derivatives_array(n, ts)
+        array = []
+        sign = -1
+        for deriv in derivs:
+            array.append(sign * deriv)
+            sign = -sign
+        return array
 
 class SvCurveSegment(SvCurve):
     def __init__(self, curve, u_min, u_max, rescale=False):
@@ -1397,5 +1403,77 @@ class SvCubicBezierCurve(SvCurve):
         if n >= 3:
             third = self.third_derivative_array(ts)
             result.append(third)
+        return result
+
+class SvTaylorCurve(SvCurve):
+    __description__ = "Taylor"
+
+    def __init__(self, start, derivatives):
+        self.start = start
+        self.derivatives = np.array(derivatives)
+        self.u_bounds = (0, 1.0)
+
+    def get_u_bounds(self):
+        return self.u_bounds
+
+    def evaluate(self, t):
+        result = self.start
+        denom = 1
+        for i, vec in enumerate(self.derivatives):
+            result = result + t**(i+1) * vec / denom
+            denom *= (i+1)
+        return result
+    
+    def evaluate_array(self, ts):
+        n = len(ts)
+        result = np.broadcast_to(self.start, (n, 3))
+        denom = 1
+        ts = ts[np.newaxis].T
+        for i, vec in enumerate(self.derivatives):
+            result = result + ts**(i+1) * vec / denom
+            denom *= (i+1)
+        return result
+
+    def tangent(self, t):
+        result = np.array([0, 0, 0])
+        denom = 1
+        for i, vec in enumerate(self.derivatives):
+            result = result + (i+1)*t**i * vec / denom
+            denom *= (i+1)
+        return result
+
+    def tangent_array(self, ts):
+        n = len(ts)
+        result = np.zeros((n, 3))
+        denom = 1
+        ts = ts[np.newaxis].T
+        for i, vec in enumerate(self.derivatives):
+            result = result + (i+1)*ts**i * vec / denom
+            denom *= (i+1)
+        return result
+
+    def second_derivative(self, t):
+        return self.second_derivative_array(np.array([t]))[0]
+
+    def second_derivative_array(self, ts):
+        n = len(ts)
+        result = np.zeros((n, 3))
+        denom = 1
+        ts = ts[np.newaxis].T
+        for k, vec in enumerate(self.derivatives[1:]):
+            i = k+1
+            result = result + (i+1)*i*ts**(i-1) * vec / denom
+            denom *= (i+1)
+        return result
+
+    def third_derivative_array(self, ts):
+        n = len(ts)
+        result = np.zeros((n, 3))
+        denom = 1
+        ts = ts[np.newaxis].T
+        for k, vec in enumerate(self.derivatives[2:]):
+            i = k+2
+            result = result + (i+1)*i*(i-1)*ts**(i-2) * vec / denom
+            denom *= (i+1)
         return result
 
