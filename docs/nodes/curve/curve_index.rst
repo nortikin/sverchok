@@ -22,6 +22,7 @@ Curves
    apply_field_to_curve
    concat_curves
    blend_curves
+   extend_curve
    curve_length
    length_parameter
    length_rebuild

@@ -32,10 +32,10 @@ class SvExtendCurveNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     modes = [
-        ('LINE', "Line", "Straight line segment", 0),
-        ('ARC', "Arc", "Circular arc", 1),
-        ('QUAD', "Smooth - Normal", "Smooth curve", 2),
-        ('CUBIC', "Smooth - Curvature", "Smooth curve", 3)
+        ('LINE', "1 - Line", "Straight line segment", 0),
+        ('ARC', "1 - Arc", "Circular arc", 1),
+        ('QUAD', "2 - Smooth - Normal", "Smooth curve", 2),
+        ('CUBIC', "3 - Smooth - Curvature", "Smooth curve", 3)
     ]
 
     mode : EnumProperty(
