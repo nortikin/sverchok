@@ -132,6 +132,7 @@ utils_modules = [
     "snlite_utils", "snlite_importhelper", "context_managers", "sv_node_utils", "sv_noise_utils",
     "profile", "logging", "testing", "sv_requests", "sv_examples_utils", "sv_shader_sources",
     "avl_tree", "sv_nodeview_draw_helper", "sv_font_xml_parser", "exception_drawing_with_bgl",
+    "wfc_algorithm",
     # UI text editor ui
     "text_editor_submenu", "text_editor_plugins",
     # UI operators and tools
@@ -143,5 +144,5 @@ utils_modules = [
     "sv_texture_utils",
     # geom 2d tools
     "geom_2d.lin_alg", "geom_2d.dcel", "geom_2d.dissolve_mesh", "geom_2d.merge_mesh", "geom_2d.intersections",
-    "geom_2d.make_monotone", "geom_2d.sort_mesh", "geom_2d.dcel_debugger"
+    "geom_2d.make_monotone", "geom_2d.sort_mesh", "geom_2d.dcel_debugger",
 ]
