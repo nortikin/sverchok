@@ -17,7 +17,7 @@ class SvExtendCurveNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvExtendCurveNode'
     bl_label = 'Extend Curve'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_CURVE_SEGMENT'
+    sv_icon = 'SV_EXTEND_CURVE'
 
     t_before : FloatProperty(
         name = "Start extension",
