@@ -23,3 +23,4 @@ Generators Extended
    super_ellipsoid
    spiral_mk2
    triangle
+   wfc_texture
