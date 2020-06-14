@@ -147,9 +147,9 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
 
     def draw_obj_names(self, layout):
-        # display names currently being tracked, stop at the first 5..
+        # display names currently being tracked, stop at the first 5
         if self.object_names:
-            remain = len(self.object_names) - 5
+            remain = len(self.object_names) - 6
 
             for i, obj_ref in enumerate(self.object_names):
                 layout.label(text=obj_ref.name)
