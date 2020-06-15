@@ -48,9 +48,11 @@ class SvOB3BNamesList(bpy.types.UIList):
 
         # This is needed to help disambiguate the origin of this click. The receiver needs
         # to know from which node tree and node it originated.
-        action = layout.operator("node.sv_ob3b_collection_operator", icon='X', text='')
-        action.tree_name = data.id_data.name
-        action.node_name = data.name
+        # action = layout.operator("node.sv_ob3b_collection_operator", icon='X', text='')
+        # action.tree_name = data.id_data.name
+        # action.node_name = data.name
+ 
+        action = data.wrapper_tracked_ui_draw_op(layout, "node.sv_ob3b_collection_operator", icon='X', text='')
         action.fn_name = 'REMOVE'
         action.idx = index #data.active_obj_index
 
@@ -61,13 +63,13 @@ class SvOB3BItemOperator(bpy.types.Operator):
     bl_idname = "node.sv_ob3b_collection_operator"
     bl_label = "bladibla"
 
-    tree_name: bpy.props.StringProperty(default='')
-    node_name: bpy.props.StringProperty(default='')
+    idname: bpy.props.StringProperty(name="node name", default='')
+    idtree: bpy.props.StringProperty(name="tree name", default='')
     fn_name: bpy.props.StringProperty(default='')
     idx: bpy.props.IntProperty()
 
     def execute(self, context):
-        node = bpy.data.node_groups[self.tree_name].nodes[self.node_name]
+        node = bpy.data.node_groups[self.idtree].nodes[self.idname]
 
         if self.fn_name == 'REMOVE':
             node.object_names.remove(self.idx)
@@ -83,17 +85,17 @@ class SvOB3Callback(bpy.types.Operator):
     bl_options = {'INTERNAL'}
 
     fn_name: StringProperty(default='')
-    node_name: StringProperty(default='')
-    tree_name: StringProperty(default='')
+    idname: StringProperty(name="node name", default='')
+    idtree: StringProperty(name="tree name", default='')
 
     def execute(self, context):
         """
         returns the operator's 'self' too to allow the code being called to
         print from self.report.
         """
-        if self.tree_name and self.node_name:
-            ng = bpy.data.node_groups[self.tree_name]
-            node = ng.nodes[self.node_name]
+        if self.idtree and self.idname:
+            ng = bpy.data.node_groups[self.idtree]
+            node = ng.nodes[self.idname]
         else:
             node = context.node
 
@@ -211,7 +213,9 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.draw_animatable_buttons(layout, icon_only=True)
         col = layout.column(align=True)
         row = col.row()
+
         op_text = "Get selection"  # fallback
+        callback = 'node.ob3_callback'
 
         try:
             addon = context.preferences.addons.get(sverchok.__name__)
@@ -221,8 +225,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         except:
             pass
 
-        callback = 'node.ob3_callback'
-        row.operator(callback, text=op_text).fn_name = 'get_objects_from_scene'
+        self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'
 
         col = layout.column(align=True)
         row = col.row(align=True)
@@ -245,10 +248,8 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         row.label(text=self.label if self.label else self.name)
         colo = row.row(align=True)
         colo.scale_x = 1.6
-        op = colo.operator(callback, text="Get")
-        op.fn_name = 'get_objects_from_scene'
-        op.tree_name = self.id_data.name
-        op.node_name = self.name
+
+        self.wrapper_tracked_ui_draw_op(colo, callback, text='Get').fn_name = 'get_objects_from_scene'
 
 
     def get_verts_and_vertgroups(self, obj_data):
