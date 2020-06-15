@@ -45,16 +45,9 @@ class SvOB3BNamesList(bpy.types.UIList):
                 item_icon = ""
 
         layout.label(text=item.name, icon=item_icon)
-
-        # This is needed to help disambiguate the origin of this click. The receiver needs
-        # to know from which node tree and node it originated.
-        # action = layout.operator("node.sv_ob3b_collection_operator", icon='X', text='')
-        # action.tree_name = data.id_data.name
-        # action.node_name = data.name
- 
         action = data.wrapper_tracked_ui_draw_op(layout, "node.sv_ob3b_collection_operator", icon='X', text='')
         action.fn_name = 'REMOVE'
-        action.idx = index #data.active_obj_index
+        action.idx = index
 
 
 
