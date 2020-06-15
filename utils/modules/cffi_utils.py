@@ -13,7 +13,6 @@ def load(name):
     import bpy, imp
     code = bpy.data.texts[name].as_string()
     mdl = imp.new_module(name)
-    # warning, dangerous !
     exec(code, mdl.__dict__)
     return str(getattr(mdl, "cdef")) , str(getattr(mdl, "code"))
 
@@ -40,9 +39,8 @@ def wrap(func, param):
     import imp
     params = ""
     le = len(param.items()) - 1
-    #print(le)
+
     for index, i in enumerate(param.items()):
-        #print(index, i)
         if index < le:
             params += (i[0] + ",")
         else:
@@ -53,7 +51,6 @@ def wrap(func, param):
     
     code = "def "+function+"(lib, " + params +"):\n return lib."+function+"("+params+")"
     mdl = imp.new_module(function)
-    #warning, dangerous !
     exec(code, mdl.__dict__)
     return mdl
 
