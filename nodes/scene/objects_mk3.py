@@ -29,14 +29,22 @@ from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 
 
 class SvOB3BDataCollection(bpy.types.PropertyGroup):
-    name = bpy.props.StringProperty()
-    icon = bpy.props.StringProperty(default="BLANK1")
+    name: bpy.props.StringProperty()
+    icon: bpy.props.StringProperty(default="BLANK1")
 
 
 class SvOB3BNamesList(bpy.types.UIList):
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-        layout.label(text=item.name, icon=item.icon)
+
+        item_icon = item.icon
+        if not item.icon or item.icon == "BLANK1":
+            try:
+                item_icon = 'OUTLINER_OB_' + bpy.data.objects[item.name].type
+            except:
+                item_icon = ""
+
+        layout.label(text=item.name, icon=item_icon)
 
         # This is needed to help disambiguate the origin of this click. The receiver needs
         # to know from which node tree and node it originated.
@@ -53,10 +61,10 @@ class SvOB3BItemOperator(bpy.types.Operator):
     bl_idname = "node.sv_ob3b_collection_operator"
     bl_label = "bladibla"
 
-    tree_name = bpy.props.StringProperty(default='')
-    node_name = bpy.props.StringProperty(default='')
-    fn_name = bpy.props.StringProperty(default='')
-    idx = bpy.props.IntProperty()
+    tree_name: bpy.props.StringProperty(default='')
+    node_name: bpy.props.StringProperty(default='')
+    fn_name: bpy.props.StringProperty(default='')
+    idx: bpy.props.IntProperty()
 
     def execute(self, context):
         node = bpy.data.node_groups[self.tree_name].nodes[self.node_name]
