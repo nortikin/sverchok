@@ -37,7 +37,7 @@ class SvPipeSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     algorithm : EnumProperty(
             name = "Algorithm",
             items = modes,
-            default = FRENET,
+            default = HOUSEHOLDER,
             update = update_sockets)
 
     resolution : IntProperty(
