@@ -10,6 +10,7 @@ import bpy
 from sverchok.utils.sv_node_utils import frame_adjust
 from sverchok.menu import draw_add_node_operator
 from sverchok.ui.presets import node_supports_presets
+from sverchok.core.sockets import SvCurveSocket, SvSurfaceSocket, SvStringsSocket
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 supported_mesh_viewers = {'SvBmeshViewerNodeMK2', 'ViewerNode2'}
@@ -42,7 +43,7 @@ def has_outputs(node):
 def get_verts_edge_poly_output_sockets(node):
     """
     because of inconsistent socket naming, we will use pattern matching (ignoring capitalization)
-    - verts: verts, vers, vertices, vectors, vecs  (ve)
+    - verts: verts, vers, vertices, vectors, vecs  (ver, vec)
     - edges: edges, edgs, edgpol  (edg)
     - faces: faces, poly, pols, edgpol, (pol, fac)
 
@@ -58,12 +59,14 @@ def get_verts_edge_poly_output_sockets(node):
     got_verts = False
     got_edges = False
     got_faces = False
-
+    got_curves = False
+    got_surface = False
     # we can surely use regex for this, but for now this will work.
     for socket in node.outputs:
+
         socket_name = socket.name.lower()
 
-        if not got_verts and 've' in socket_name:
+        if not got_verts and ('ver' in socket_name or 'vec' in socket_name):
             output_map['verts'] = socket.name
             got_verts = True
 
@@ -71,9 +74,17 @@ def get_verts_edge_poly_output_sockets(node):
             output_map['edges'] = socket.name
             got_edges = True
 
-        elif not got_faces and ('face' in socket_name or 'pol' in socket_name):
+        elif not got_faces and ('face' in socket_name or 'pol' in socket_name) and isinstance(socket, SvStringsSocket):
             output_map['faces'] = socket.name
             got_faces = True
+
+        elif not got_curves and isinstance(socket, SvCurveSocket):
+            output_map['curve'] = socket.name
+            got_curves = True
+
+        elif not got_surface and isinstance(socket, SvSurfaceSocket):
+            output_map['surface'] = socket.name
+            got_surface = True
 
     return output_map
 
@@ -126,7 +137,26 @@ def add_connection(tree, bl_idname_new_node, offset):
                     links.new(outputs[output_map['faces']], inputs[2])
                 if 'edges' in output_map:
                     links.new(outputs[output_map['edges']], inputs[1])
+            elif 'curve' in output_map:
 
+                eval_node = nodes.new('SvExEvalCurveNode')
+                offset_node_location(existing_node, eval_node, offset)
+                frame_adjust(existing_node, eval_node)
+                offset_node_location(eval_node, new_node, offset)
+                frame_adjust(eval_node, new_node)
+                links.new(outputs[output_map['curve']], eval_node.inputs[0])
+                links.new(eval_node.outputs[0], inputs[0])
+                links.new(eval_node.outputs[1], inputs[1])
+
+            elif 'surface' in output_map:
+                eval_node = nodes.new('SvExEvalSurfaceNode')
+                offset_node_location(existing_node, eval_node, offset)
+                frame_adjust(existing_node, eval_node)
+                offset_node_location(eval_node, new_node, offset)
+                frame_adjust(eval_node, new_node)
+                links.new(outputs[output_map['surface']], eval_node.inputs[0])
+                links.new(eval_node.outputs[0], inputs[0])
+                links.new(eval_node.outputs[1], inputs[1])
             tree.sv_process = previous_state
             tree.update()
             # existing_node.process_node(None)
