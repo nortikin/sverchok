@@ -269,7 +269,8 @@ class SvNoiseVectorField(SvVectorField):
 
     def evaluate(self, x, y, z):
         noise.seed_set(self.seed)
-        return noise.noise_vector((x, y, z), noise_basis=self.noise_type)
+        v = noise.noise_vector((x, y, z), noise_basis=self.noise_type)
+        return np.array(v)
 
     def evaluate_grid(self, xs, ys, zs):
         noise.seed_set(self.seed)
