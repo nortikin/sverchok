@@ -106,6 +106,7 @@
     SvExExtrudeCurveVectorNode
     SvExExtrudeCurveCurveSurfaceNode
     SvExExtrudeCurvePointNode
+    SvPipeSurfaceNode
     SvExCurveLerpNode
     SvExSurfaceLerpNode
     SvCoonsPatchNode

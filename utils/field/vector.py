@@ -15,7 +15,7 @@ from mathutils import bvhtree
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter, LineEquation, CircleEquation3D
 from sverchok.utils.math import from_cylindrical, from_spherical
 
-from sverchok.utils.curve import SvCurveLengthSolver, SvNormalTrack
+from sverchok.utils.curve import SvCurveLengthSolver, SvNormalTrack, MathutilsRotationCalculator
 
 ##################
 #                #
@@ -825,36 +825,8 @@ class SvBendAlongCurveField(SvVectorField):
         self.__description__ = "Bend along {}".format(curve)
 
     def get_matrix(self, tangent, scale):
-        x = Vector((1.0, 0.0, 0.0))
-        y = Vector((0.0, 1.0, 0.0))
-        z = Vector((0.0, 0.0, 1.0))
-
-        if self.axis == 0:
-            ax1, ax2, ax3 = x, y, z
-        elif self.axis == 1:
-            ax1, ax2, ax3 = y, x, z
-        else:
-            ax1, ax2, ax3 = z, x, y
-
-        if self.scale_all:
-            scale_matrix = Matrix.Scale(1/scale, 4, ax1) @ Matrix.Scale(scale, 4, ax2) @ Matrix.Scale(scale, 4, ax3)
-        else:
-            scale_matrix = Matrix.Scale(1/scale, 4, ax1)
-        scale_matrix = np.array(scale_matrix.to_3x3())
-
-        tangent = Vector(tangent)
-        if self.algorithm == SvBendAlongCurveField.HOUSEHOLDER:
-            rot = autorotate_householder(ax1, tangent).inverted()
-        elif self.algorithm == SvBendAlongCurveField.TRACK:
-            axis = "XYZ"[self.axis]
-            rot = autorotate_track(axis, tangent, self.up_axis)
-        elif self.algorithm == SvBendAlongCurveField.DIFF:
-            rot = autorotate_diff(tangent, ax1)
-        else:
-            raise Exception("Unsupported algorithm")
-        rot = np.array(rot.to_3x3())
-
-        return np.matmul(rot, scale_matrix)
+        return MathutilsRotationCalculator.get_matrix(tangent, scale, self.axis,
+                    self.algorithm, self.scale_all, self.up_axis)
 
     def get_matrices(self, ts, scale):
         n = len(ts)
