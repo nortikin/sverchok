@@ -11,16 +11,18 @@ The fittest agent of each generation will survive cloning himself to the next it
 
 Every agent is composed by a set of genes that can oscillate among determined values, the fitter agents have more chances to spread their genetic information.
 
-In Sverchok every gen is defined by a "A Number"  node or a "List Input" node. The "A Number" node type has a minimum and a maximum that will control the variation possibilities of this gen. The "List input" node will be variated by changing the order of the elements in the list.
+In Sverchok every gen is defined by a "A Number" node, "List Input" node or "Genes Holder" node. The "A Number" node type has a minimum and a maximum that will control the variation possibilities of this gen. The "List input" node will be variated by changing the order of the elements in the list. The "Genes Holder" node can work in "Range" mode, with minimums and maximums or in "Order" mode only by switching the order of the elements
 
-The Evolver node can use all the "A number" and "List Input" nodes of the node-tree or only some of them if they are inside a "Frame Node" that can be selected from the "Genotype" dropdown menu.
+The Evolver node can use all the "A number", "List Input"  or "Genes Holder" nodes of the node-tree or only some of them if they are inside a "Frame Node" that can be selected from the "Genotype" dropdown menu.
 
 The fitness of every member of the population will be evaluated by running the node-tree with the genes of that member and recording the value that is inputted in the "Fitness" socket.
+
+During the process the progress will be outputted to the Blender Console.
 
 Parameters
 ----------
 
-**Genotype**: dropdown menu to chose to use as genes either all 'A Number' and "List Input" nodes or only the ones inside a 'Frame' Node
+**Genotype**: dropdown menu to chose to use as genes either all "A number", "List Input"  and "Genes Holder" nodes or only the ones inside a 'Frame' Node
 
 **Mode**:  "Maximum" and "Minimum" with the maximum selected a higher fitness value is considered better with the minimum a lower fitness will be considered as more fit.
 
@@ -50,6 +52,8 @@ Operators
 Options
 -------
 
+**Re-use population**: When enabled the first generation will be the last generation of the previous analysis.
+
 **Output all generations**: When enabled the node will output all the members of all the generations. When disabled it will only return the last generation of members
 
 Inputs
@@ -66,6 +70,7 @@ Outputs
 **Population**: Outputs the population. It can be only the last generation or all generations.
 
 **Fitness**: Outputs the fitness of the population. It can be only the last generation or all generations.
+
 
 Examples
 --------

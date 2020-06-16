@@ -16,6 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import ast
 import random
 import time
 from collections import namedtuple
@@ -31,167 +32,310 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.core.update_system import make_tree_from_nodes, do_update
 from sverchok.utils.listutils import (
-    listinput_getI, 
-    listinput_getF, 
-    listinput_setI, 
+    listinput_getI,
+    listinput_getF,
+    listinput_setI,
     listinput_setF
     )
 
+def check_memory_prop(tx):
+    if len(tx) > 1:
+        gene_split = tx.find('#')
+        return [tx[:gene_split], ast.literal_eval(tx[gene_split+1:])]
+    else:
+        return []
+
+def write_memory_prop(genes, p, node):
+    '''write values to string property'''
+    full = str(genes) + '#' +''.join(str(p))
+    node.memory = full
+
+
 Gene = namedtuple('Gene', 'name, g_type, min_n, max_n, range, init_val')
-# GeneList = namedtuple('GeneList', 'name, g_type, num_length, init_val')
-class GeneList(NamedTuple):
+# ListInputGene = namedtuple('ListInputGene', 'name, g_type, num_length, init_val')
+
+class NumberGene(NamedTuple):
+    name: str
+    g_type: str
+    min_n: float
+    max_n: float
+    range: float
+    init_val: float
+
+    @classmethod
+    def init_from_node(cls, node):
+        num_type = node.selected_mode
+        if node.selected_mode == "float":
+            min_n = node.float_min
+            max_n = node.float_max
+            initial_value = node.float_
+        else:
+            min_n = node.int_min
+            max_n = node.int_max
+            initial_value = node.int_
+        gene = cls(name=node.name, g_type=num_type, min_n=min_n, max_n=max_n, range=max_n-min_n, init_val=initial_value)
+        return gene
+
+    def set_node_with_gene(self, tree, agent_gene):
+        if self.g_type == 'float':
+            tree.nodes[self.name].float_ = agent_gene
+        else:
+            tree.nodes[self.name].int_ = agent_gene
+
+    def random_variation(self):
+        agent_gene = self.min_n + random() * self.range
+        if self.g_type == 'int':
+            agent_gene = int(agent_gene)
+        return agent_gene
+
+    def cross(self, ancestor1, ancestor2):
+
+        mixing_factor = random()
+        new_gene = ancestor1 * mixing_factor + ancestor2 * (1 - mixing_factor)
+        if self.g_type == 'int':
+            new_gene = int(new_gene)
+        return new_gene
+
+    def small_mutation(self, gene, mutation_factor):
+        small_mutation = (random() - 0.5) * self.range * mutation_factor
+        gene += small_mutation
+        gene = max(min(gene, self.max_n), self.min_n)
+        if self.g_type == 'int':
+            gene = int(gene)
+        return gene
+
+class ListInputGene(NamedTuple):
     name: str
     g_type: str
     num_length: int
     init_val: list
+    values: list
+
     @classmethod
     def init_from_node(cls, node):
         num_type = node.mode
+
         if num_type == 'int_list':
             num_length = node.int_
-            init_val = [node.int_list[i] for i in range(num_length)]
+            init_val = list(range(num_length))
+            values = listinput_getI(node, num_length)[:num_length]
         elif num_type == 'float_list':
             num_length = node.int_
-            init_val = [node.float_list[i] for i in range(num_length)]
+            init_val = list(range(num_length))
+            values = listinput_getF(node, num_length)[:num_length]
         else:
             num_length = node.v_int
+            init_val = list(range(num_length))
             mem_list = node.vector_list
-            init_val = [[mem_list[3*i], mem_list[3*i + 1], mem_list[3*i + 2]] for i in range(num_length)]
-        gene = cls(name=node.name, g_type=num_type, num_length=num_length, init_val=init_val)
+            values = [[mem_list[3*i], mem_list[3*i + 1], mem_list[3*i + 2]] for i in range(num_length)]
+
+        gene = cls(name=node.name, g_type=num_type, num_length=num_length, init_val=init_val, values=values)
+        return gene
+
+    def set_node_with_gene(self, tree, agent_gene):
+        if self.g_type == 'int_list':
+            node = tree.nodes[self.name]
+            listinput_setI(node, agent_gene, self)
+        elif self.g_type == 'float_list':
+            node = tree.nodes[self.name]
+            listinput_setF(node, agent_gene, self)
+        else:
+            for i in range(self.num_length):
+                node.vector_list[3*i] = self.values[agent_gene[i][0]]
+                node.vector_list[3*i + 1] = self.values[agent_gene[i][1]]
+                node.vector_list[3*i + 2] = self.values[agent_gene[i][2]]
+
+    def random_variation(self):
+        agent_gene = list(range(self.num_length))
+        np.random.shuffle(agent_gene)
+        return agent_gene
+
+    def cross(self, ancestor1, ancestor2):
+        mixing_factor = int(random() * self.num_length)
+        new_gene = [ancestor1[i] for i in range(mixing_factor)]
+        for g in ancestor2:
+            if not g in new_gene:
+                new_gene.append(g)
+        return new_gene
+
+    def small_mutation(self, gene, mutation_factor):
+        swap_times = int(max(mutation_factor*100, 1))
+        for i in range(swap_times):
+            random_element_swap(gene)
         return gene
 
 
-
-class VectorMultiGene(NamedTuple):
+class NumberMultiGene(NamedTuple):
     name: str
+    mode: str
+    num_type: int
     mins: list
     maxs: list
     ranges: list
+    num_length: int
     init_val: list
+    values: list
+
 
     @classmethod
     def init_from_node(cls, node):
-        min_n = node.min_list[:]
-        max_n = node.max_list[:]
+
+        list_limits = node.get_list_limits()
+        values = node.node_mem[node.node_id]
+        if node.mode == 'range':
+            init_val = values
+        else:
+            init_val = list(range(len(values)))
+        if node.number_type == 'vector':
+            ranges = [list_limits[1][i]-list_limits[0][i] for i in range(3)]
+        else:
+            ranges = list_limits[1]-list_limits[0]
+
         gene = cls(
             name=node.name,
-            mins=min_n,
-            maxs=max_n,
-            ranges=[max_n[i] - min_n[i] for i in range(3)],
-            init_val=node.node_mem[node.node_id])
+            mode=node.mode,
+            num_type=node.number_type,
+            mins=list_limits[0],
+            maxs=list_limits[1],
+            ranges=ranges,
+            num_length=len(init_val),
+            init_val=init_val,
+            values=values)
         return gene
 
+    def set_node_with_gene(self, tree, agent_gene):
+
+        tree.nodes[self.name].fill_from_data(agent_gene)
+
     def random_variation(self):
-        vects = []
-        for i in range(len(self.init_val)):
-            v = []
-            for j in range(3):
-                v.append(self.mins[j]+random()*self.ranges[j])
-            vects.append(v)
-        return vects
+        agent = []
+        if self.mode == 'range':
+            if self.num_type == 'vector':
+                for i in range(self.num_length):
+                    v = []
+                    for j in range(3):
+                        v.append(self.mins[j]+random()*self.ranges[j])
+                    agent.append(v)
+            else:
+                for i in range(self.num_length):
+                    num = self.mins+random()*self.ranges
+                    if self.num_type == 'int':
+                        num = int(num)
+                    agent.append(num)
+        else:
+            agent = list(range(self.num_length))
+            np.random.shuffle(agent)
+
+
+        return agent
 
     def cross(self, ancestor1, ancestor2):
-        vects=[]
-        for v1, v2 in zip(ancestor1, ancestor2):
-            v =[]
-            for j in range(3):
-                mixing_factor = random()
-                new_gene = v1[j] * mixing_factor + v2[j] * (1 - mixing_factor)
-                v.append(new_gene)
-            vects.append(v)
-        return vects
+        agent = []
+        if self.mode == 'range':
+            if self.num_type == 'vector':
+                for v1, v2 in zip(ancestor1, ancestor2):
+                    v = []
+                    for j in range(3):
+                        mixing_factor = random()
+
+                        new_gene = v1[j] * mixing_factor + v2[j] * (1 - mixing_factor)
+                        v.append(new_gene)
+                    agent.append(v)
+            else:
+                for n1, n2 in zip(ancestor1, ancestor2):
+                    mixing_factor = random()
+                    new_gene = n1 * mixing_factor + n2 * (1 - mixing_factor)
+                    if self.num_type == 'int':
+                        new_gene = int(new_gene)
+                    agent.append(new_gene)
+        else:
+
+            mixing_factor = int(random() * self.num_length)
+
+            agent = [ancestor1[i] for i in range(mixing_factor)]
+            for g in ancestor2:
+                if not g in agent:
+                    agent.append(g)
+
+
+        return agent
 
     def small_mutation(self, gene, mutation_factor):
-        vects = []
-        for vec in gene:
-            v = []
-            for j in range(3):
-                mutation = (random() - 0.5) * self.ranges[j] * mutation_factor
-                new_gene = vec[j] + mutation
-                v.append(new_gene)
-            vects.append(v)
-        return vects
+        agent = []
+
+        if self.mode == 'range':
+            if self.num_type == 'vector':
+                for vec in gene:
+                    v = []
+                    for j in range(3):
+                        mutation = (random() - 0.5) * self.ranges[j] * mutation_factor
+                        new_gene = vec[j] + mutation
+                        v.append(new_gene)
+                    agent.append(v)
+            else:
+                for num in gene:
+
+                    mutation = (random() - 0.5) * self.ranges * mutation_factor
+                    new_gene = num + mutation
+                    if self.num_type == 'int':
+                        new_gene = int(new_gene)
+                    agent.append(new_gene)
+        else:
+            swap_times = int(max(mutation_factor*100, 1))
+            for i in range(swap_times):
+                random_element_swap(gene)
+            agent = gene
+        return agent
+
 
 evolver_mem = {}
-GENE_NODES = ["SvNumberNode", "SvListInputNode", "SvVectorGenesNode"]
+
+GENE_NODES = ["SvNumberNode", "SvListInputNode", "SvGenesHolderNode"]
+
 def is_valid_node(node, genotype_frame):
-    print(node.bl_idname, node.bl_idname in GENE_NODES)
+
     if genotype_frame == 'All' and node.bl_idname in GENE_NODES:
         return True
     if node.parent and node.parent.name == genotype_frame and node.bl_idname in GENE_NODES:
         return True
     return False
 
-def number_gene(node):
-    num_type = node.selected_mode
-    if node.selected_mode == "float":
-        min_n = node.float_min
-        max_n = node.float_max
-        initial_value = node.float_
-    else:
-        min_n = node.int_min
-        max_n = node.int_max
-        initial_value = node.int_
-    gene = Gene(name=node.name, g_type=num_type, min_n=min_n, max_n=max_n, range=max_n-min_n, init_val=initial_value)
-    return gene
-
-def list_gene(node):
-    num_type = node.mode
-    if num_type == 'int_list':
-        num_length = node.int_
-        init_val = listinput_getI(node,num_length)
-    elif num_type == 'float_list':
-        num_length = node.int_
-        init_val = listinput_getF(node,num_length)
-    else:
-        num_length = node.v_int
-        mem_list = node.vector_list
-        init_val = [[mem_list[3*i], mem_list[3*i + 1], mem_list[3*i + 2]] for i in range(num_length)]
-    gene = GeneList(name=node.name, g_type=num_type, num_length=num_length, init_val=init_val)
-    return gene
-
-
 
 def get_genes(target_tree, genotype_frame):
     genes = []
     for node in target_tree.nodes:
         if is_valid_node(node, genotype_frame):
-            print(node.name)
+
             if node.bl_idname == "SvNumberNode":
-                gene = number_gene(node)
+                gene = NumberGene.init_from_node(node)
             elif node.bl_idname == "SvListInputNode":
-                gene = list_gene(node)
+                gene = ListInputGene.init_from_node(node)
             else:
-                gene = VectorMultiGene.init_from_node(node)
+                gene = NumberMultiGene.init_from_node(node)
 
             genes.append(gene)
     return genes
 
-def list_cross(ancestor1_gene, ancestor2_gene, o_gene):
-    mixing_factor = int(random()* o_gene.num_length)
-    new_gene = [ancestor1_gene[i] for i in range(mixing_factor)]
-    for g in ancestor2_gene:
-        if not g in new_gene:
-            new_gene.append(g)
-    return new_gene
+def genes_to_string(genes):
+    text = ''
+    for gene in genes:
+        text += gene.name + ','
+    return text
 
-def set_list_node(gen_data, agent_gene, tree):
-    if gen_data.g_type == 'int_list':
-        node = tree.nodes[gen_data.name]
-        listinput_setI(node, agent_gene, gen_data)
-    elif gen_data.g_type == 'float_list':
-        node = tree.nodes[gen_data.name]
-        listinput_setF(node, agent_gene, gen_data)
-    else:
-        for i in range(gen_data.num_length):
-            node.vector_list[3*i] = gen_data.init_val[agent_gene[i][0]]
-            node.vector_list[3*i + 1] = gen_data.init_val[agent_gene[i][1]]
-            node.vector_list[3*i + 2] = gen_data.init_val[agent_gene[i][2]]
+def build_genes_from_name(genes_names, tree):
+    g_names = genes_names.split(',')[:-1]
 
-def random_ancestor_mix(ancestor1_gene, ancestor2_gene):
-    mixing_factor = random()
-    new_gene = ancestor1_gene * mixing_factor + ancestor2_gene * (1 - mixing_factor)
-    return new_gene
+    genes = []
+    for name in g_names:
+        if name in tree.nodes:
+            node = tree.nodes[name]
+            if node.bl_idname == "SvNumberNode":
+                genes.append(NumberGene.init_from_node(node))
+            elif node.bl_idname == "SvListInputNode":
+                genes.append(ListInputGene.init_from_node(node))
+            else:
+                genes.append(NumberMultiGene.init_from_node(node))
+    return genes
 
 def random_element_swap(new_gene):
 
@@ -214,24 +358,11 @@ class DNA:
     def fill_genes(self, random_val=True):
         if random_val:
             for gene in self.genes_def:
-                if isinstance(gene, GeneList):
-                    agent_gene = list(range(gene.num_length))
-                    np.random.shuffle(agent_gene)
-
-                elif isinstance(gene, Gene):
-                    agent_gene = gene.min_n + random() * gene.range
-                    if gene.g_type == 'int':
-                        agent_gene = int(agent_gene)
-                else:
-                    agent_gene = gene.random_variation()
+                agent_gene = gene.random_variation()
                 self.genes.append(agent_gene)
         else:
             for gene in self.genes_def:
-                if isinstance(gene, GeneList):
-                    agent_gene = list(range(gene.num_length))
-                else:
-                    agent_gene = gene.init_val
-
+                agent_gene = gene.init_val
                 self.genes.append(agent_gene)
 
 
@@ -240,16 +371,7 @@ class DNA:
         try:
             tree.sv_process = False
             for gen_data, agent_gene in zip(self.genes_def, self.genes):
-                if isinstance(gen_data, GeneList):
-                    set_list_node(gen_data, agent_gene, tree)
-                elif isinstance(gen_data, VectorMultiGene):
-                    tree.nodes[gen_data.name].fill_from_data(agent_gene)
-
-                else:
-                    if gen_data.g_type == 'float':
-                        tree.nodes[gen_data.name].float_ = agent_gene
-                    else:
-                        tree.nodes[gen_data.name].int_ = agent_gene
+                gen_data.set_node_with_gene(tree, agent_gene)
 
             tree.sv_process = True
             do_update(update_list, tree.nodes)
@@ -270,39 +392,16 @@ class DNA:
                 total_reset_barrier = 0.5
                 if total_reset_chance < total_reset_barrier:
                     #total gene reset
-                    if isinstance(gen_data, GeneList):
-                        new_gene = np.array(ancestor1_gene)
-                        np.random.shuffle(new_gene)
-
-                    elif isinstance(gen_data, VectorMultiGene):
-                        new_gene = gen_data.random_variation()
-                    else:
-                        new_gene = gen_data.min_n + random() * gen_data.range
+                    new_gene = gen_data.random_variation()
                 else:
                     #small gene mutation
-                    if isinstance(gen_data, GeneList):
-                        new_gene = list_cross(ancestor1_gene, ancestor2_gene, gen_data)
-                        random_element_swap(new_gene)
-                    elif isinstance(gen_data, VectorMultiGene):
-                        new_gene = gen_data.cross(ancestor1_gene, ancestor2_gene)
-                        new_gene = gen_data.small_mutation(new_gene, mutation_threshold)
-                    else:
-                        new_gene = random_ancestor_mix(ancestor1_gene, ancestor2_gene)
-                        small_mutation = (random() - 0.5) * gen_data.range * mutation_threshold
-                        new_gene += small_mutation
-                        new_gene = max(min(new_gene, gen_data.max_n), gen_data.min_n)
 
-            else:
-                if isinstance(gen_data, GeneList):
-                    new_gene = list_cross(ancestor1_gene, ancestor2_gene, gen_data)
-                elif isinstance(gen_data, VectorMultiGene):
                     new_gene = gen_data.cross(ancestor1_gene, ancestor2_gene)
-                else:
-                    new_gene = random_ancestor_mix(ancestor1_gene, ancestor2_gene)
+                    new_gene = gen_data.small_mutation(new_gene, mutation_threshold)
+            else:
 
+                new_gene = gen_data.cross(ancestor1_gene, ancestor2_gene)
 
-            if not isinstance(gen_data, VectorMultiGene) and gen_data.g_type == 'int':
-                new_gene = int(new_gene)
             new_agent.genes.append(new_gene)
 
         return new_agent
@@ -320,11 +419,24 @@ class Population:
 
 
     def init_population(self, population_n):
-        self.population_g.append(DNA(self.genes, random_val=False))
-        for i in range(population_n-1):
-            self.population_g.append(DNA(self.genes))
 
+        if self.node.reuse_population:
+            self.init_population_from_previous(population_n)
 
+        if not self.population_g:
+            self.population_g.append(DNA(self.genes, random_val=False))
+            for i in range(population_n-1):
+                self.population_g.append(DNA(self.genes))
+
+    def init_population_from_previous(self, population_n):
+        if self.node.has_been_runned() and self.genes == evolver_mem[self.node.node_id]["genes"]:
+            previous_population = evolver_mem[self.node.node_id]["population"]
+            for i in range(min(population_n, len(previous_population))):
+                agent = DNA(self.genes, empty=True)
+                agent.genes = previous_population[i]
+                self.population_g.append(agent)
+            for i in range(population_n-len(previous_population)):
+                self.population_g.append(DNA(self.genes))
 
     def  evaluate_fitness_g(self):
         try:
@@ -350,17 +462,20 @@ class Population:
         # we keep the fittest for the next generation
         new_population = [self.population_g[0]]
         mutation = self.node.mutation
+
         for ancestors in  parents_id:
             p0 = self.population_g[ancestors[0]]
             p1 = self.population_g[ancestors[1]]
+
             new_agent = p0.cross_over(p1, mutation)
+
             new_population.append(new_agent)
 
         return new_population
 
     def print_time_info(self, iteration):
         print(' '*80,end='\r')
-        print("evolver on %s iteration" % (iteration + 1),"%s sec" % (time.time() - self.time_start), end='\r')
+        print("Evolver on %s iteration" % (iteration + 1),"%s sec" % (time.time() - self.time_start), end='\r')
 
     def goal_achieved(self, fittest, mode, goal):
         if mode == "MAX":
@@ -369,6 +484,9 @@ class Population:
             return fittest < goal
 
     def store_data(self, population_all, fitness_all):
+
+        write_memory_prop(genes_to_string(self.genes), [population_all, fitness_all], self.node)
+
         node_id = self.node.node_id
         evolver_mem[node_id]["population_all"] = population_all
         evolver_mem[node_id]["fitness_all"] = fitness_all
@@ -396,13 +514,13 @@ class Population:
 
             if use_fitness_goal and self.goal_achieved(actual_population_fitenss[0], mode, goal):
                 goal_achieved = True
-                info = "goal achieved in %s iterations" % (iteration + 1)
+                info = "Goal achieved in %s iterations  " % (iteration + 1)
                 print(info)
                 break
 
             self.print_time_info(iteration)
             if (time.time() - self.time_start) > max_time:
-                info = "Max. time reached in %s iterations" % (iteration + 1)
+                info = "Max. time reached in %s iterations  " % (iteration + 1)
                 print(info)
                 break
 
@@ -451,16 +569,9 @@ def set_fittest(tree, genes, agent, update_list):
     '''sets the nodetree with the best value'''
     try:
         tree.sv_process = False
-        for gene_o, gene_agent in zip(genes, agent):
-            if isinstance(gene_o, GeneList):
-                set_list_node(gene_o, gene_agent, tree)
-            elif isinstance(gene_o, VectorMultiGene):
-                tree.nodes[gene_o.name].fill_from_data(gene_agent)
-            else:
-                if gene_o.g_type == 'int':
-                    tree.nodes[gene_o.name].int_ = gene_agent
-                else:
-                    tree.nodes[gene_o.name].float_ = gene_agent
+        for gen_data, agent_gene in zip(genes, agent):
+            gen_data.set_node_with_gene(tree, agent_gene)
+
         tree.sv_process = True
         do_update(update_list, tree.nodes)
     finally:
@@ -518,6 +629,12 @@ class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
     output_all: BoolProperty(
         name="Output all iterations",
         description="Output all iterations data or just last generation",
+        default=False,
+        update=updateNode
+        )
+    reuse_population: BoolProperty(
+        name="Re-use population",
+        description="Re-use last iteration population on new Run",
         default=False,
         update=updateNode
         )
@@ -588,6 +705,8 @@ class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
 
     info_label: StringProperty(default="Not Executed")
 
+    memory: StringProperty(default="")
+
     def sv_init(self, context):
         self.width = 200
         self.inputs.new('SvStringsSocket', 'Fitness')
@@ -616,16 +735,35 @@ class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
             goal_row.prop(self, "fitness_goal")
         else:
             layout.prop(self, "use_fitness_goal")
+        if self.node_id in evolver_mem:
+            layout.prop(self, "reuse_population")
         self.wrapper_tracked_ui_draw_op(layout, "node.evolver_run", icon='RNA', text="RUN")
         if self.node_id in evolver_mem:
             self.wrapper_tracked_ui_draw_op(layout, "node.evolver_set_fittest", icon='RNA_ADD', text="Set Fittest")
             layout.prop(self, "output_all")
 
+    def has_been_runned(self):
+        if self.node_id in evolver_mem and 'genes' in evolver_mem[self.node_id]:
+            return True
+
+        text_block_memory = check_memory_prop(self.memory)
+        if text_block_memory:
+            evolver_mem[self.node_id] = {}
+            genes = build_genes_from_name(text_block_memory[0], self.id_data)
+            evolver_mem[self.node_id]['genes'] = genes
+            evolver_mem[self.node_id]['population_all'] = text_block_memory[1][0]
+            evolver_mem[self.node_id]['fitness_all'] = text_block_memory[1][1]
+            evolver_mem[self.node_id]['population'] = text_block_memory[1][0][-1]
+            evolver_mem[self.node_id]['fitness'] = text_block_memory[1][1][-1]
+
+            return True
+        return False
+
+
     def process(self):
 
-
-
-        if self.node_id in evolver_mem and 'genes' in evolver_mem[self.node_id]:
+        # if self.node_id in evolver_mem and 'genes' in evolver_mem[self.node_id]:
+        if self.has_been_runned():
             outputs = self.outputs
             outputs['Genes'].sv_set(evolver_mem[self.node_id]['genes'])
             if self.output_all:
