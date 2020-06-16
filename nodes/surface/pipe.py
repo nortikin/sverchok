@@ -20,6 +20,7 @@ class SvPipeSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvPipeSurfaceNode'
     bl_label = 'Pipe (Surface)'
     bl_icon = 'MOD_THICKNESS'
+    sv_icon = 'SV_PIPE_SURFACE'
 
     modes = [
         (FRENET, "Frenet", "Frenet / native rotation", 0),
