@@ -8,6 +8,7 @@ Logic
    logic_node
    neuro_elman
    evolver
+   genes_holder
    switch_MK2
    input_switch_mod
    custom_switcher

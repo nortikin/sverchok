@@ -634,7 +634,7 @@ class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
         )
     reuse_population: BoolProperty(
         name="Re-use population",
-        description="Re-use last iteration population on new Run",
+        description="Re-use last iteration population on new Run (if genotype is identical)",
         default=False,
         update=updateNode
         )
@@ -737,7 +737,9 @@ class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, "use_fitness_goal")
         if self.node_id in evolver_mem:
             layout.prop(self, "reuse_population")
-        self.wrapper_tracked_ui_draw_op(layout, "node.evolver_run", icon='RNA', text="RUN")
+        row = layout.row(align=True)
+        row.scale_y = 2
+        self.wrapper_tracked_ui_draw_op(row, "node.evolver_run", icon='RNA', text="RUN")
         if self.node_id in evolver_mem:
             self.wrapper_tracked_ui_draw_op(layout, "node.evolver_set_fittest", icon='RNA_ADD', text="Set Fittest")
             layout.prop(self, "output_all")
