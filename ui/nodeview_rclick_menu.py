@@ -46,6 +46,7 @@ def get_verts_edge_poly_output_sockets(node):
     - verts: verts, vers, vertices, vectors, vecs  (ver, vec)
     - edges: edges, edgs, edgpol  (edg)
     - faces: faces, poly, pols, edgpol, (pol, fac)
+    For curves and surfaces checks if they belong to the corresponding class
 
     > generally the first 3 outputs of a node will contain these
     > generally if a node outputs polygons, it won't be necessary to connect edges
