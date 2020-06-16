@@ -12,9 +12,12 @@ from collections import defaultdict
 from mathutils import Matrix, Vector
 
 from sverchok.utils.logging import info, exception
-from sverchok.utils.math import from_spherical
+from sverchok.utils.math import (
+        from_spherical,
+        ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL
+    )
 from sverchok.utils.geom import LineEquation, rotate_vector_around_vector, autorotate_householder, autorotate_track, autorotate_diff
-from sverchok.utils.curve import SvFlipCurve, SvNormalTrack
+from sverchok.utils.curve import SvFlipCurve, SvNormalTrack, SvCircle, MathutilsRotationCalculator
 
 def rotate_vector_around_vector_np(v, k, theta):
     """
@@ -1557,6 +1560,83 @@ class SvExtrudeCurveMathutilsSurface(SvSurface):
 
     def get_v_max(self):
         return self.extrusion.get_u_bounds()[1]
+
+class SvConstPipeSurface(SvSurface):
+    __description__ = "Pipe"
+
+    def __init__(self, curve, radius, algorithm = FRENET, resolution=50):
+        self.curve = curve
+        self.radius = radius
+        self.circle = SvCircle(Matrix(), radius)
+        self.algorithm = algorithm
+        self.normal_delta = 0.001
+        self.u_bounds = self.circle.get_u_bounds()
+        if algorithm == TRACK_NORMAL:
+            self.normal_tracker = SvNormalTrack(curve, resolution)
+        elif algorithm == ZERO:
+            self.curve.pre_calc_torsion_integral(resolution)
+
+    def get_u_min(self):
+        return self.u_bounds[0]
+
+    def get_u_max(self):
+        return self.u_bounds[1]
+
+    def get_v_min(self):
+        return self.curve.get_u_bounds()[0]
+
+    def get_v_max(self):
+        return self.curve.get_u_bounds()[1]
+
+    def evaluate(self, u, v):
+        return self.evaluate_array(np.array([u]), np.array([v]))[0]
+
+    def get_matrix(self, tangent):
+        return MathutilsRotationCalculator.get_matrix(tangent, scale=1.0,
+                axis=2,
+                algorithm = self.algorithm,
+                scale_all=False)
+
+    def get_matrices(self, ts):
+        n = len(ts)
+        if self.algorithm == FRENET:
+            frenet, _ , _ = self.curve.frame_array(ts)
+            return frenet
+        elif self.algorithm == ZERO:
+            frenet, _ , _ = self.curve.frame_array(ts)
+            angles = - self.curve.torsion_integral(ts)
+            zeros = np.zeros((n,))
+            ones = np.ones((n,))
+            row1 = np.stack((np.cos(angles), np.sin(angles), zeros)).T # (n, 3)
+            row2 = np.stack((-np.sin(angles), np.cos(angles), zeros)).T # (n, 3)
+            row3 = np.stack((zeros, zeros, ones)).T # (n, 3)
+            rotation_matrices = np.dstack((row1, row2, row3))
+            return frenet @ rotation_matrices
+        elif self.algorithm == TRACK_NORMAL:
+            matrices = self.normal_tracker.evaluate_array(ts)
+            return matrices
+        elif self.algorithm in {HOUSEHOLDER, TRACK, DIFF}:
+            tangents = self.curve.tangent_array(ts)
+            matrices = np.vectorize(lambda t : self.get_matrix(t), signature='(3)->(3,3)')(tangents)
+            return matrices
+        else:
+            raise Exception("Unsupported algorithm")
+
+    def evaluate_array(self, us, vs):
+        profile_vectors = self.circle.evaluate_array(us)
+        u_min, u_max = self.circle.get_u_bounds()
+        v_min, v_max = self.curve.get_u_bounds()
+        profile_vectors = np.transpose(profile_vectors[np.newaxis], axes=(1, 2, 0))
+        extrusion_start = self.curve.evaluate(v_min)
+        extrusion_points = self.curve.evaluate_array(vs)
+        extrusion_vectors = extrusion_points - extrusion_start
+
+        matrices = self.get_matrices(vs)
+
+        profile_vectors = (matrices @ profile_vectors)[:,:,0]
+        result = extrusion_vectors + profile_vectors
+        result = result + extrusion_start
+        return result
 
 class SvCurveLerpSurface(SvSurface):
     __description__ = "Lerp"

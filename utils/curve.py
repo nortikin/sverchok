@@ -13,7 +13,11 @@ from mathutils import Vector, Matrix
 from sverchok.utils.geom import PlaneEquation, LineEquation, LinearSpline, CubicSpline, CircleEquation2D, CircleEquation3D, Ellipse3D
 from sverchok.utils.integrate import TrapezoidIntegral
 from sverchok.utils.logging import error, exception
-from sverchok.utils.math import binomial
+from sverchok.utils.math import (
+        binomial,
+        ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL
+    )
+from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
 
 ##################
 #                #
@@ -411,6 +415,53 @@ class SvNormalTrack(object):
             matrix = np.array(q.to_matrix())
             matrix_out.append(matrix)
         return np.array(matrix_out)
+
+class MathutilsRotationCalculator(object):
+
+    @classmethod
+    def get_matrix(cls, tangent, scale, axis, algorithm, scale_all=True, up_axis='X'):
+        """
+        Calculate matrix required to rotate object according to `tangent` vector.
+        inputs:
+            * tangent - np.array of shape (3,)
+            * scale - float
+            * axis - int, 0 - X, 1 - Y, 2 - Z
+            * algorithm - one of HOUSEHOLDER, TRACK, DIFF
+            * scale_all - True to scale along all axes, False to scale along tangent only
+            * up_axis - string, "X", "Y" or "Z", for algorithm == TRACK only.
+        output:
+            np.array of shape (3,3).
+        """
+        x = Vector((1.0, 0.0, 0.0))
+        y = Vector((0.0, 1.0, 0.0))
+        z = Vector((0.0, 0.0, 1.0))
+
+        if axis == 0:
+            ax1, ax2, ax3 = x, y, z
+        elif axis == 1:
+            ax1, ax2, ax3 = y, x, z
+        else:
+            ax1, ax2, ax3 = z, x, y
+
+        if scale_all:
+            scale_matrix = Matrix.Scale(1/scale, 4, ax1) @ Matrix.Scale(scale, 4, ax2) @ Matrix.Scale(scale, 4, ax3)
+        else:
+            scale_matrix = Matrix.Scale(1/scale, 4, ax1)
+        scale_matrix = np.array(scale_matrix.to_3x3())
+
+        tangent = Vector(tangent)
+        if algorithm == HOUSEHOLDER:
+            rot = autorotate_householder(ax1, tangent).inverted()
+        elif algorithm == TRACK:
+            axis = "XYZ"[axis]
+            rot = autorotate_track(axis, tangent, up_axis)
+        elif algorithm == DIFF:
+            rot = autorotate_diff(tangent, ax1)
+        else:
+            raise Exception("Unsupported algorithm")
+        rot = np.array(rot.to_3x3())
+
+        return np.matmul(rot, scale_matrix)
 
 class SvScalarFunctionCurve(SvCurve):
     __description__ = "Function"
