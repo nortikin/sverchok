@@ -18,7 +18,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from sverchok.ui.nodeview_rclick_menu import get_verts_edge_poly_output_sockets
+from sverchok.ui.nodeview_rclick_menu import get_output_sockets_map
 from sverchok.utils.sv_node_utils import frame_adjust
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}

@@ -19,7 +19,7 @@
 
 import bpy
 from bpy.types import Operator
-from sverchok.ui.nodeview_rclick_menu import get_verts_edge_poly_output_sockets
+from sverchok.ui.nodeview_rclick_menu import get_output_sockets_map
 from sverchok.utils.sv_node_utils import frame_adjust
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
@@ -33,7 +33,7 @@ def add_temporal_viewer_draw(tree, nodes, links, existing_node, cut_links):
     previous_state = tree.sv_process
     tree.sv_process = False
     bl_idname_new_node = 'SvVDExperimental'
-    output_map = get_verts_edge_poly_output_sockets(existing_node)
+    output_map = get_output_sockets_map(existing_node)
     try:
         new_node = nodes['Temporal Viewer']
         if cut_links or ('verts' in output_map and 'faces' in output_map):
