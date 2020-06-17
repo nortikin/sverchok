@@ -286,14 +286,14 @@ def listinput_setI(node, agent_gene, gen_data):
     for i in range(gen_data.num_length):
         t = i//32
         k = i%32
-        lists[t][k] = gen_data.init_val[agent_gene[i]]
+        lists[t][k] = gen_data.values[agent_gene[i]]
 
 def listinput_setF(node, agent_gene, gen_data):
     lists = node.float_list, node.float_list1, node.float_list2, node.float_list3
     for i in range(gen_data.num_length):
         t = i//32
         k = i%32
-        lists[t][k] = gen_data.init_val[agent_gene[i]]
+        lists[t][k] = gen_data.values[agent_gene[i]]
 
 def listinput_set_rangeI(node,data):
     #to set plain list from data length

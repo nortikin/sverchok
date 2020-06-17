@@ -413,6 +413,7 @@
     SvRangeSwitchNode
     ---
     SvEvolverNode
+    SvGenesHolderNode
 
 ## Viz
     Sv3DviewPropsNode
