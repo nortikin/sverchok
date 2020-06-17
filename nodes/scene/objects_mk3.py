@@ -27,6 +27,50 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 
+
+class SvOB3BDataCollection(bpy.types.PropertyGroup):
+    name: bpy.props.StringProperty()
+    icon: bpy.props.StringProperty(default="BLANK1")
+
+
+class SvOB3BNamesList(bpy.types.UIList):
+
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+
+        item_icon = item.icon
+        if not item.icon or item.icon == "BLANK1":
+            try:
+                item_icon = 'OUTLINER_OB_' + bpy.data.objects[item.name].type
+            except:
+                item_icon = ""
+
+        layout.label(text=item.name, icon=item_icon)
+        action = data.wrapper_tracked_ui_draw_op(layout, "node.sv_ob3b_collection_operator", icon='X', text='')
+        action.fn_name = 'REMOVE'
+        action.idx = index
+
+
+
+class SvOB3BItemOperator(bpy.types.Operator):
+
+    bl_idname = "node.sv_ob3b_collection_operator"
+    bl_label = "bladibla"
+
+    idname: bpy.props.StringProperty(name="node name", default='')
+    idtree: bpy.props.StringProperty(name="tree name", default='')
+    fn_name: bpy.props.StringProperty(default='')
+    idx: bpy.props.IntProperty()
+
+    def execute(self, context):
+        node = bpy.data.node_groups[self.idtree].nodes[self.idname]
+
+        if self.fn_name == 'REMOVE':
+            node.object_names.remove(self.idx)
+
+        node.process_node(None)
+        return {'FINISHED'}
+
+
 class SvOB3Callback(bpy.types.Operator):
 
     bl_idname = "node.ob3_callback"
@@ -34,17 +78,17 @@ class SvOB3Callback(bpy.types.Operator):
     bl_options = {'INTERNAL'}
 
     fn_name: StringProperty(default='')
-    node_name: StringProperty(default='')
-    tree_name: StringProperty(default='')
+    idname: StringProperty(name="node name", default='')
+    idtree: StringProperty(name="tree name", default='')
 
     def execute(self, context):
         """
         returns the operator's 'self' too to allow the code being called to
         print from self.report.
         """
-        if self.tree_name and self.node_name:
-            ng = bpy.data.node_groups[self.tree_name]
-            node = ng.nodes[self.node_name]
+        if self.idtree and self.idname:
+            ng = bpy.data.node_groups[self.idtree]
+            node = ng.nodes[self.idname]
         else:
             node = context.node
 
@@ -55,9 +99,10 @@ class SvOB3Callback(bpy.types.Operator):
 
 class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """
-    Triggers: Input Scene Objects
+    Triggers: obj Input Scene Objects pydata
     Tooltip: Get Scene Objects into Sverchok Tree
     """
+
     bl_idname = 'SvObjectsNodeMK3'
     bl_label = 'Objects in'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -95,12 +140,13 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         description='sorting inserted objects by names',
         default=True, update=updateNode)
 
-    object_names: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
+    object_names: bpy.props.CollectionProperty(type=SvOB3BDataCollection)
     to3d: BoolProperty(
         default=False, 
         description="Show in Sverchok control panel",
         update=updateNode)
 
+    active_obj_index: bpy.props.IntProperty()
 
     def sv_init(self, context):
         new = self.outputs.new
@@ -128,7 +174,9 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             names.sort()
 
         for name in names:
-            self.object_names.add().name = name
+            item = self.object_names.add()
+            item.name = name
+            item.icon = 'OUTLINER_OB_' + bpy.data.objects[name].type
 
         if not self.object_names:
             ops.report({'WARNING'}, "Warning, no selected objects in the scene")
@@ -147,25 +195,20 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
 
     def draw_obj_names(self, layout):
-        # display names currently being tracked, stop at the first 5
         if self.object_names:
-            remain = len(self.object_names) - 6
-
-            for i, obj_ref in enumerate(self.object_names):
-                layout.label(text=obj_ref.name)
-                if i > 4 and remain > 0:
-                    postfix = ('' if remain == 1 else 's')
-                    more_items = '... {0} more item' + postfix
-                    layout.label(text=more_items.format(remain))
-                    break
+            layout.template_list("SvOB3BNamesList", "", self, "object_names", self, "active_obj_index")
         else:
             layout.label(text='--None--')
+
+
 
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
         col = layout.column(align=True)
         row = col.row()
+
         op_text = "Get selection"  # fallback
+        callback = 'node.ob3_callback'
 
         try:
             addon = context.preferences.addons.get(sverchok.__name__)
@@ -175,19 +218,13 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         except:
             pass
 
-        callback = 'node.ob3_callback'
-        row.operator(callback, text=op_text).fn_name = 'get_objects_from_scene'
+        self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'
 
         col = layout.column(align=True)
         row = col.row(align=True)
         row.prop(self, 'sort', text='Sort', toggle=True)
         row.prop(self, "modifiers", text="Post", toggle=True)
         row.prop(self, "vergroups", text="VeGr", toggle=True)
-
-        #  i don't even know what this is supposed to do.... not useful enough i think..
-        #  row = col.row(align=True)
-        #  row.operator(callback, text="Select Objects").fn_name = 'select_objs'
-
         self.draw_obj_names(layout)
 
     def draw_buttons_ext(self, context, layout):
@@ -204,10 +241,8 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         row.label(text=self.label if self.label else self.name)
         colo = row.row(align=True)
         colo.scale_x = 1.6
-        op = colo.operator(callback, text="Get")
-        op.fn_name = 'get_objects_from_scene'
-        op.tree_name = self.id_data.name
-        op.node_name = self.name
+
+        self.wrapper_tracked_ui_draw_op(colo, callback, text='Get').fn_name = 'get_objects_from_scene'
 
 
     def get_verts_and_vertgroups(self, obj_data):
@@ -330,12 +365,5 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         node_dict['object_names'] = [o.name for o in self.object_names]
 
 
-classes = [SvOB3Callback, SvObjectsNodeMK3]
-
-
-def register():
-    _ = [bpy.utils.register_class(c) for c in classes]
-
-
-def unregister():
-    _ = [bpy.utils.unregister_class(c) for c in classes]
+classes = [SvOB3BItemOperator, SvOB3BDataCollection, SvOB3BNamesList, SvOB3Callback, SvObjectsNodeMK3]
+register, unregister = bpy.utils.register_classes_factory(classes)
