@@ -128,17 +128,20 @@ class SvCurve(object):
             minus_h = np.empty((N, 3))
             plus_h = np.empty((N, 3))
 
-            minus_h[good] = self.evaluate_array(ts[good]-h)
-            points[good] = self.evaluate_array(ts[good])
-            plus_h[good] = self.evaluate_array(ts[good]+h)
+            if good.any():
+                minus_h[good] = self.evaluate_array(ts[good]-h)
+                points[good] = self.evaluate_array(ts[good])
+                plus_h[good] = self.evaluate_array(ts[good]+h)
 
-            minus_h[low] = self.evaluate_array(ts[low])
-            points[low] = self.evaluate_array(ts[low]+h)
-            plus_h[low] = self.evaluate_array(ts[low]+2*h)
+            if low.any():
+                minus_h[low] = self.evaluate_array(ts[low])
+                points[low] = self.evaluate_array(ts[low]+h)
+                plus_h[low] = self.evaluate_array(ts[low]+2*h)
 
-            minus_h[high] = self.evaluate_array(ts[high]-2*h)
-            points[high] = self.evaluate_array(ts[high]-h)
-            plus_h[high] = self.evaluate_array(ts[high])
+            if high.any():
+                minus_h[high] = self.evaluate_array(ts[high]-2*h)
+                points[high] = self.evaluate_array(ts[high]-h)
+                plus_h[high] = self.evaluate_array(ts[high])
 
             second = (plus_h - 2*points + minus_h) / (h * h)
             result.append(second)
