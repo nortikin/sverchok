@@ -40,7 +40,7 @@ def valid_active_node(nodes):
 def has_outputs(node):
     return node and len(node.outputs)
 
-def get_verts_edge_poly_output_sockets(node):
+def get_output_sockets_map(node):
     """
     because of inconsistent socket naming, we will use pattern matching (ignoring capitalization)
     - verts: verts, vers, vertices, vectors, vecs  (ver, vec)
@@ -97,7 +97,7 @@ def add_connection(tree, bl_idname_new_node, offset):
     nodes = tree.nodes
     links = tree.links
 
-    output_map = get_verts_edge_poly_output_sockets(nodes.active)
+    output_map = get_output_sockets_map(nodes.active)
 
     existing_node = nodes.active
 
