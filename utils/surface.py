@@ -17,7 +17,10 @@ from sverchok.utils.math import (
         ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL
     )
 from sverchok.utils.geom import LineEquation, rotate_vector_around_vector, autorotate_householder, autorotate_track, autorotate_diff
-from sverchok.utils.curve import SvFlipCurve, SvNormalTrack, SvCircle, MathutilsRotationCalculator
+from sverchok.utils.curve import (
+        SvFlipCurve, SvNormalTrack, SvCircle,
+        MathutilsRotationCalculator, DifferentialRotationCalculator
+    )
 
 def rotate_vector_around_vector_np(v, k, theta):
     """
@@ -1571,10 +1574,8 @@ class SvConstPipeSurface(SvSurface):
         self.algorithm = algorithm
         self.normal_delta = 0.001
         self.u_bounds = self.circle.get_u_bounds()
-        if algorithm == TRACK_NORMAL:
-            self.normal_tracker = SvNormalTrack(curve, resolution)
-        elif algorithm == ZERO:
-            self.curve.pre_calc_torsion_integral(resolution)
+        if algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            self.calculator = DifferentialRotationCalculator(curve, algorithm, resolution)
 
     def get_u_min(self):
         return self.u_bounds[0]
@@ -1598,23 +1599,8 @@ class SvConstPipeSurface(SvSurface):
                 scale_all=False)
 
     def get_matrices(self, ts):
-        n = len(ts)
-        if self.algorithm == FRENET:
-            frenet, _ , _ = self.curve.frame_array(ts)
-            return frenet
-        elif self.algorithm == ZERO:
-            frenet, _ , _ = self.curve.frame_array(ts)
-            angles = - self.curve.torsion_integral(ts)
-            zeros = np.zeros((n,))
-            ones = np.ones((n,))
-            row1 = np.stack((np.cos(angles), np.sin(angles), zeros)).T # (n, 3)
-            row2 = np.stack((-np.sin(angles), np.cos(angles), zeros)).T # (n, 3)
-            row3 = np.stack((zeros, zeros, ones)).T # (n, 3)
-            rotation_matrices = np.dstack((row1, row2, row3))
-            return frenet @ rotation_matrices
-        elif self.algorithm == TRACK_NORMAL:
-            matrices = self.normal_tracker.evaluate_array(ts)
-            return matrices
+        if self.algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            return self.calculator.get_matrices(ts)
         elif self.algorithm in {HOUSEHOLDER, TRACK, DIFF}:
             tangents = self.curve.tangent_array(ts)
             matrices = np.vectorize(lambda t : self.get_matrix(t), signature='(3)->(3,3)')(tangents)

@@ -71,6 +71,7 @@
     ---
     SvExApplyFieldToCurveNode
     SvExCastCurveNode
+    SvOffsetCurveNode
     SvExIsoUvCurveNode
     SvExCurveOnSurfaceNode
     ---

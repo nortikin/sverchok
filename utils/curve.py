@@ -112,15 +112,34 @@ class SvCurve(object):
 
     def derivatives_array(self, n, ts):
         result = []
+        N = len(ts)
+        t_min, t_max = self.get_u_bounds()
         if n >= 1:
             first = self.tangent_array(ts)
             result.append(first)
 
         h = 0.001
         if n >= 2:
-            minus_h = self.evaluate_array(ts-h)
-            points = self.evaluate_array(ts)
-            plus_h = self.evaluate_array(ts+h)
+            low = ts < t_min + h
+            high = ts > t_max - h
+            good = np.logical_and(np.logical_not(low), np.logical_not(high))
+
+            points = np.empty((N, 3))
+            minus_h = np.empty((N, 3))
+            plus_h = np.empty((N, 3))
+
+            minus_h[good] = self.evaluate_array(ts[good]-h)
+            points[good] = self.evaluate_array(ts[good])
+            plus_h[good] = self.evaluate_array(ts[good]+h)
+
+            minus_h[low] = self.evaluate_array(ts[low])
+            points[low] = self.evaluate_array(ts[low]+h)
+            plus_h[low] = self.evaluate_array(ts[low]+2*h)
+
+            minus_h[high] = self.evaluate_array(ts[high]-2*h)
+            points[high] = self.evaluate_array(ts[high]-h)
+            plus_h[high] = self.evaluate_array(ts[high])
+
             second = (plus_h - 2*points + minus_h) / (h * h)
             result.append(second)
 
@@ -403,6 +422,7 @@ class SvNormalTrack(object):
         base_indexes = tknots.searchsorted(ts, side='left')-1
         t1s, t2s = tknots[base_indexes], tknots[base_indexes+1]
         dts = (ts - t1s) / (t2s - t1s)
+        #dts = np.clip(dts, 0.0, 1.0) # Just in case...
         matrix_out = []
         # TODO: ideally this shoulld be vectorized with numpy;
         # but that would require implementation of quaternion
@@ -411,7 +431,12 @@ class SvNormalTrack(object):
             q1, q2 = quats[base_index], quats[base_index+1]
             # spherical linear interpolation.
             # TODO: implement `squad`.
-            q = q1.slerp(q2, dt)
+            if dt < 0:
+                q = q1
+            elif dt > 1.0:
+                q = q2
+            else:
+                q = q1.slerp(q2, dt)
             matrix = np.array(q.to_matrix())
             matrix_out.append(matrix)
         return np.array(matrix_out)
@@ -462,6 +487,37 @@ class MathutilsRotationCalculator(object):
         rot = np.array(rot.to_3x3())
 
         return np.matmul(rot, scale_matrix)
+
+class DifferentialRotationCalculator(object):
+
+    def __init__(self, curve, algorithm, resolution=50):
+        self.curve = curve
+        self.algorithm = algorithm
+        if algorithm == TRACK_NORMAL:
+            self.normal_tracker = SvNormalTrack(curve, resolution)
+        elif algorithm == ZERO:
+            self.curve.pre_calc_torsion_integral(resolution)
+
+    def get_matrices(self, ts):
+        n = len(ts)
+        if self.algorithm == FRENET:
+            frenet, _ , _ = self.curve.frame_array(ts)
+            return frenet
+        elif self.algorithm == ZERO:
+            frenet, _ , _ = self.curve.frame_array(ts)
+            angles = - self.curve.torsion_integral(ts)
+            zeros = np.zeros((n,))
+            ones = np.ones((n,))
+            row1 = np.stack((np.cos(angles), np.sin(angles), zeros)).T # (n, 3)
+            row2 = np.stack((-np.sin(angles), np.cos(angles), zeros)).T # (n, 3)
+            row3 = np.stack((zeros, zeros, ones)).T # (n, 3)
+            rotation_matrices = np.dstack((row1, row2, row3))
+            return frenet @ rotation_matrices
+        elif self.algorithm == TRACK_NORMAL:
+            matrices = self.normal_tracker.evaluate_array(ts)
+            return matrices
+        else:
+            raise Exception("Unsupported algorithm")
 
 class SvScalarFunctionCurve(SvCurve):
     __description__ = "Function"
@@ -1100,6 +1156,51 @@ class SvCurveLerpCurve(SvCurve):
         c2_points = self.curve2.evaluate_array(us2)
         k = self.coefficient
         return (1.0 - k) * c1_points + k * c2_points
+
+class SvOffsetCurve(SvCurve):
+    def __init__(self, curve, offset_vector, algorithm, resolution=50):
+        self.curve = curve
+        self.offset_vector = offset_vector
+        self.algorithm = algorithm
+        if algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            self.calculator = DifferentialRotationCalculator(curve, algorithm, resolution)
+        self.tangent_delta = 0.001
+
+    def get_u_bounds(self):
+        return self.curve.get_u_bounds()
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def get_matrix(self, tangent):
+        return MathutilsRotationCalculator.get_matrix(tangent, scale=1.0,
+                axis=2,
+                algorithm = self.algorithm,
+                scale_all=False)
+
+    def get_matrices(self, ts):
+        if self.algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            return self.calculator.get_matrices(ts)
+        elif self.algorithm in {HOUSEHOLDER, TRACK, DIFF}:
+            tangents = self.curve.tangent_array(ts)
+            matrices = np.vectorize(lambda t : self.get_matrix(t), signature='(3)->(3,3)')(tangents)
+            return matrices
+        else:
+            raise Exception("Unsupported algorithm")
+
+    def evaluate_array(self, ts):
+        n = len(ts)
+        t_min, t_max = self.curve.get_u_bounds()
+        profile_vectors = np.tile(self.offset_vector[np.newaxis].T, n)
+        #profile_vectors = np.transpose(profile_vectors[np.newaxis], axes=(1, 2, 0))
+        extrusion_start = self.curve.evaluate(t_min)
+        extrusion_points = self.curve.evaluate_array(ts)
+        extrusion_vectors = extrusion_points - extrusion_start
+        matrices = self.get_matrices(ts)
+        profile_vectors = (matrices @ profile_vectors)[:,:,0]
+        result = extrusion_vectors + profile_vectors
+        result = result + extrusion_start
+        return result
 
 class SvCurveOnSurface(SvCurve):
     def __init__(self, curve, surface, axis=0):
