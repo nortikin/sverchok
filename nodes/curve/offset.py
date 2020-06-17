@@ -20,9 +20,9 @@ class SvOffsetCurveNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_CURVE_DOMAIN'
 
     modes = [
-            ('X', "X - Normal", "Offset along curve frame's X axis - curve normal", 0),
-            ('Y', "Y - Binormal", "Offset along curve frame's Y axis - curve binormal", 1),
-            ('C', "Custom - N/B/T", "Offset along custom vector in curve frame coordinates - normal, binormal, tangent", 2)
+            ('X', "X (Normal)", "Offset along curve frame's X axis - curve normal in case of Frenet frame", 0),
+            ('Y', "Y (Binormal)", "Offset along curve frame's Y axis - curve binormal in case of Frenet frame", 1),
+            ('C', "Custom (N / B / T)", "Offset along custom vector in curve frame coordinates - normal, binormal, tangent", 2)
         ]
 
     algorithms = [
