@@ -52,7 +52,9 @@ socket_colors = {
     "SvSeparatorSocket": (0.0, 0.0, 0.0, 0.0),
     "SvObjectSocket": (0.69, 0.74, 0.73, 1.0),
     "SvTextSocket": (0.68, 0.85, 0.90, 1),
-    "SvDictionarySocket": (1.0, 1.0, 1.0, 1.0)
+    "SvDictionarySocket": (1.0, 1.0, 1.0, 1.0),
+    "SvFilePathSocket": (0.9, 0.9, 0.3, 1.0),
+
 }
 
 def process_from_socket(self, context):
@@ -306,18 +308,18 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
 
     """
     object_kinds could be any of these:
-     [‘MESH’, ‘CURVE’, ‘SURFACE’, ‘META’, ‘FONT’, ‘VOLUME’, ‘ARMATURE’, ‘LATTICE’, 
+     [‘MESH’, ‘CURVE’, ‘SURFACE’, ‘META’, ‘FONT’, ‘VOLUME’, ‘ARMATURE’, ‘LATTICE’,
      ‘EMPTY’, ‘GPENCIL’, ‘CAMERA’, ‘LIGHT’, ‘SPEAKER’, ‘LIGHT_PROBE’, ‘EMPTY’
 
-    for example   
+    for example
         socket.object_kinds = "MESH"
     or if you want various kinds
         socket.object_kinds = "MESH,CURVE"
-    """ 
+    """
     object_kinds: StringProperty(default='ALL')
     object_ref: StringProperty(update=process_from_socket)
     object_ref_pointer: bpy.props.PointerProperty(
-        name="Object Reference", 
+        name="Object Reference",
         poll=filter_kinds,  # seld.object_kinds can be "MESH" or "MESH,CURVE,.."
         type=bpy.types.Object, # what kind of objects are we showing
         update=process_from_socket)
@@ -568,6 +570,16 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
         else:
             raise SvNoDataError(self)
 
+class SvFilePathSocket(NodeSocket, SvSocketCommon):
+    '''For file path data'''
+    bl_idname = "SvFilePathSocket"
+    bl_label = "File Path Socket"
+
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
+        if self.is_linked and not self.is_output:
+            return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
+        else:
+            return [[self.default_value]]
 
 class SvDictionarySocket(NodeSocket, SvSocketCommon):
     '''For dictionary data'''
@@ -744,7 +756,8 @@ type_map_to = {
     "co": SvColorSocket.bl_idname,
     "d": SvDummySocket.bl_idname,
     "q": SvQuaternionSocket.bl_idname,
-    "t": SvTextSocket.bl_idname
+    "t": SvTextSocket.bl_idname,
+    "f": SvFilePathSocket.bl_idname
 }
 
 type_map_from = {bl_idname: shortname for shortname, bl_idname in type_map_to.items()}
@@ -752,11 +765,10 @@ type_map_from = {bl_idname: shortname for shortname, bl_idname in type_map_to.it
 
 
 classes = [
-    SvVerticesSocket, SvMatrixSocket, SvStringsSocket,
+    SvVerticesSocket, SvMatrixSocket, SvStringsSocket, SvFilePathSocket,
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
     SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket,
     SvSurfaceSocket, SvCurveSocket, SvScalarFieldSocket, SvVectorFieldSocket
 ]
 
 register, unregister = bpy.utils.register_classes_factory(classes)
-
