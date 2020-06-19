@@ -120,7 +120,6 @@
     SvSurfaceNormalsNode
     SvSurfaceGaussCurvatureNode
     SvSurfaceCurvaturesNode
-     SvSurfaceCurvatureLinesNode
     ---
     SvExTessellateTrimSurfaceNode
     SvAdaptiveTessellateNode
