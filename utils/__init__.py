@@ -126,7 +126,7 @@ def app_handler_ops(append=None, remove=None):
 
 utils_modules = [
     # non UI tools
-    "cad_module_class", "sv_bmesh_utils", "sv_stethoscope_helper", "sv_viewer_utils",
+    "cad_module_class", "sv_bmesh_utils", "sv_blender_mesh_utils", "sv_stethoscope_helper", "sv_viewer_utils",
     "sv_curve_utils", "voronoi", "sv_script", "sv_itertools", "script_importhelper", "sv_oldnodes_parser",
     "csg_core", "csg_geom", "geom", "sv_easing_functions", "sv_text_io_common", "sv_obj_baker",
     "snlite_utils", "snlite_importhelper", "context_managers", "sv_node_utils", "sv_noise_utils",

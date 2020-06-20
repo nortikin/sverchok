@@ -29,6 +29,7 @@ from mathutils import Matrix, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, fullList, updateNode
+from sverchok.utils.sv_blender_mesh_utils import mesh_from_pydata
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_viewer_utils import natural_plus_one, greek_alphabet
 from sverchok.utils.sv_obj_helper import SvObjHelper, CALLBACK_OP, get_random_init_v3
@@ -130,6 +131,10 @@ def make_bmesh_geometry(node, obj_index, context, verts, *topology):
         f_v = list(itertools.chain.from_iterable(verts))
         mesh.vertices.foreach_set('co', f_v)
         mesh.update()
+
+    elif node.using_mesh_clear:
+        mesh_from_pydata(mesh, verts, edges, faces)
+    
     else:
 
         ''' get bmesh, write bmesh to obj, free bmesh'''
@@ -252,6 +257,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
     to3d: BoolProperty(default=False, update=updateNode)
     show_wireframe: BoolProperty(default=False, update=updateNode, name="Show Edges")
+    using_mesh_clear: BoolProperty(default=False, update=updateNode)
 
     def sv_init(self, context):
         self.sv_init_helper_basedata_name()
