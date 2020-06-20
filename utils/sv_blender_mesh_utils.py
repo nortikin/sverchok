@@ -17,7 +17,7 @@ def mesh_from_pydata(mesh, verts, edges, faces):
     if edges:
         flat_edges = list(itertools.chain.from_iterable(edges))
         mesh.edges.add(len(edges))
-        mesh.edges.foreach_set("vertices", edges)
+        mesh.edges.foreach_set("vertices", flat_edges)
 
     if faces:
         flat_faces = list(itertools.chain.from_iterable(faces))
