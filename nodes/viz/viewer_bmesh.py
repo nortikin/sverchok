@@ -297,6 +297,8 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             box.prop(self, 'layer_choice', text='layer')
             box.prop(self, 'randomize_vcol_islands', text='randomize vcol islands')
             box.prop(self, 'show_wireframe')
+            box.prop(self, 'using_mesh_clear', text='use lower level mesh api')
+
         col.prop(self, 'to3d')
 
     def draw_label(self):
