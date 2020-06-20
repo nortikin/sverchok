@@ -494,6 +494,7 @@
 
 ## Network
     UdpClientNode
+    SvFilePathNode
 
 ## Beta Nodes
     SvFormulaShapeNode

@@ -48,7 +48,7 @@ The include directive ensures the dependency is also stored in the gist when exp
 - added a default enum to make the custom draw a bit more useful. For the time being there is only one custom enum, the default is "A","B" . called `self.custom_enum`. No spaces in the elements, yes spaces between the elements.::
 
     """
-    enum = word1 word2 word3    
+    enum = word1 word2 word3
     """
 
 - add `ddir` (`dunderless dir`) to local namespace.  `ddir(object, filter_str="some_string")` . filter_str is optional.::
@@ -73,7 +73,7 @@ The include directive ensures the dependency is also stored in the gist when exp
        return {'FINISHED'}
 
    self.make_operator('my_operator')
-    
+
    def ui(self, context, layout):
        cb_str = 'node.scriptlite_custom_callback'
        layout.operator(cb_str, text='show me').cb_name='my_operator'
@@ -103,10 +103,10 @@ This tripple quoted area (a "directive comment", or *header*) must be the first 
     < any python code >
     ```
 
-A few things to notice:  
- - i've dropped the words ``default`` and ``nested`` in favour or ``d`` and ``n``, but you'll also see examples where I just write  ``in socketname type .=200 .=2``  , the ``d`` and ``n`` don't mean anything, the only real requirement there is that there's a single character directly to the left of the ``=``. 
+A few things to notice:
+ - i've dropped the words ``default`` and ``nested`` in favour or ``d`` and ``n``, but you'll also see examples where I just write  ``in socketname type .=200 .=2``  , the ``d`` and ``n`` don't mean anything, the only real requirement there is that there's a single character directly to the left of the ``=``.
  - Socket names will be injected into the local scope, for example:
-    - if you have an input socket called 'normals', then there will be a variable called normals available to read from.  
+    - if you have an input socket called 'normals', then there will be a variable called normals available to read from.
     - if you have an output socket called 'edges_out', then that variable is also automatically available for you to insert data into - behind the scene snlite will do `edges_out = []` prior to executing your code. At the end of your code SNLite will read whatever the content of your `edges_out` is and use that as the output values for that socket.
 
 - **inputs**::
@@ -124,8 +124,9 @@ A few things to notice:
         - Surfaces (``S``)
         - Scalar fields (``SF``)
         - Vector fields (``VF``)
-        - Objects (``o``)  
-- `default` is where you give a default initialization value. A list, tuple, float, or int.. 
+        - Objects (``o``)
+        - File Path (``FP``)
+- `default` is where you give a default initialization value. A list, tuple, float, or int..
         - **warning**:  don't include any spaces in the iterables - this will break parsing
 - `nestedness` deserves some explanation. In sverchok every data structure is nested in some way.
 
@@ -142,7 +143,7 @@ Some familiarity with python or the concept of sublists (lists of lists) is need
 - `n=1` means ``named_input.sv_get()[0]``
             -  You would use `n=1` if you only ever plan to work with the first incoming sublist. This will essentially ignore the rest of the incoming data on that socket.
 - `n=0` means ``named_input.sv_get()``
-            - Generally you would use this if you plan to do something with each sublist coming in, for example if the input contains several lists of verts like here: 
+            - Generally you would use this if you plan to do something with each sublist coming in, for example if the input contains several lists of verts like here:
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/20454350/d1c8861e-ae3e-11e6-9de6-501f07a58606.png
 
@@ -158,9 +159,9 @@ Some familiarity with python or the concept of sublists (lists of lists) is need
 
     There's no _default_ or _nested_ value for output sockets, generally speaking the default inputs will suffice to generate a default outputs.
 
-Learn by example, the best way to get a feel for what works and doesn't is to have a look at the existing examples in several places: 
+Learn by example, the best way to get a feel for what works and doesn't is to have a look at the existing examples in several places:
 
- - this thread:  https://github.com/nortikin/sverchok/issues/942 
+ - this thread:  https://github.com/nortikin/sverchok/issues/942
  - in ``node_scripts/SNLite_templates``
  - the ``draw_buttons_ext`` (Right side panel of the NodeView -> Properties)
 
@@ -201,4 +202,3 @@ Please refer to the initial thread: https://github.com/nortikin/sverchok/issues/
 
 In the N panel of the node there is a drop-down menu allowing you to select one
 of example scripts which are distributed with Sverchok.
-
