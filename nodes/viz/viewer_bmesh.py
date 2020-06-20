@@ -134,7 +134,15 @@ def make_bmesh_geometry(node, obj_index, context, verts, *topology):
 
     elif node.using_mesh_clear:
         mesh_from_pydata(mesh, verts, edges, faces)
-    
+
+        # if materials:
+        #    for face, material in zip(mesh.polygons, materials):
+        #        if material is not None:
+        #            face.material_index = material
+        
+        ## if mesh.polygons and materials:
+        ##     mesh.polygons.foreach_set('material_index', materials)
+        
     else:
 
         ''' get bmesh, write bmesh to obj, free bmesh'''
