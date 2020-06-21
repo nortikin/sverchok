@@ -55,6 +55,7 @@ class SurfaceCurvatureData(object):
     def __init__(self):
         self.principal_value_1 = self.principal_value_2 = None
         self.principal_direction_1 = self.principal_direction_2 = None
+        self.principal_direction_1_uv = self.principal_direction_2_uv = None
         self.mean = self.gauss = None
         self.matrix = None
 
@@ -196,19 +197,30 @@ class SurfaceCurvatureCalculator(object):
         dir_2 = dir_2 / np.linalg.norm(dir_2, axis=1, keepdims=True)
 
         if self.order:
-            c1mask = c1mask[np.newaxis].T
-            c2mask = c2mask[np.newaxis].T
-            dir_1_r = np.where(c1mask, dir_1, -dir_2)
-            dir_2_r = np.where(c2mask, dir_1, dir_2)
+            c1maskT = c1mask[np.newaxis].T
+            c2maskT = c2mask[np.newaxis].T
+            dir_1_r = np.where(c1maskT, dir_1, -dir_2)
+            dir_2_r = np.where(c2maskT, dir_1, dir_2)
         else:
             dir_1_r = dir_1
             dir_2_r = dir_2
         #r = (np.cross(dir_1_r, dir_2_r) * self.normals).sum(axis=1)
         #print(r)
 
-        return c1_r, c2_r, dir_1_r, dir_2_r
+        dir1_uv = eigvecs[:,:,0]
+        dir2_uv = eigvecs[:,:,1]
+        if self.order:
+            c1maskT = c1mask[np.newaxis].T
+            c2maskT = c2mask[np.newaxis].T
+            dir1_uv_r = np.where(c1maskT, dir1_uv, -dir2_uv)
+            dir2_uv_r = np.where(c2maskT, dir1_uv, dir2_uv)
+        else:
+            dir1_uv_r = dir1_uv
+            dir2_uv_r = dir2_uv
+            
+        return c1_r, c2_r, dir1_uv_r, dir2_uv_r, dir_1_r, dir_2_r
 
-    def calc(self, need_values=True, need_directions=True, need_gauss=True, need_mean=True, need_matrix = True):
+    def calc(self, need_values=True, need_directions=True, need_uv_directions = False, need_gauss=True, need_mean=True, need_matrix = True):
         """
         Calculate curvature information.
         Return value: SurfaceCurvatureData instance.
@@ -219,12 +231,16 @@ class SurfaceCurvatureCalculator(object):
         data = SurfaceCurvatureData()
         if need_matrix:
             need_directions = True
+        if need_uv_directions:
+            need_directions = True
         if need_directions:
             # If we need principal curvature directions, then the method
             # being used will calculate us curvature values for free.
-            c1, c2, dir1, dir2 = self.values_and_directions()
+            c1, c2, dir1_uv, dir2_uv, dir1, dir2 = self.values_and_directions()
             data.principal_value_1, data.principal_value_2 = c1, c2
             data.principal_direction_1, data.principal_direction_2 = dir1, dir2
+            data.principal_direction_1_uv = dir1_uv
+            data.principal_direction_2_uv = dir2_uv
             if need_gauss:
                 data.gauss = c1 * c2
             if need_mean:
