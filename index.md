@@ -468,16 +468,19 @@
     SvObjectsNodeMK3
     SvObjInLite
     SvCurveInputNode
+    SvFCurveInNodeMK1
+    SvCollectionPicker
+    ---
+    SvSelectionGrabberLite
     SvObjEdit
+    ---
     SvFrameInfoNodeMK2
-    SvLampOutNode
+    SvTimerNode
+    ---
     SvInstancerNode
     SvInstancerNodeMK2
     SvDupliInstancesMK4
-    SvFCurveInNodeMK1
-    SvCollectionPicker
-    SvSelectionGrabberLite
-    SvTimerNode
+    SvLampOutNode
 
 ## Objects
     SvVertexGroupNodeMK2
