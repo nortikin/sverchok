@@ -28,6 +28,7 @@ from sverchok.utils.docstring import SvDocstring
 from sverchok.ui.sv_icons import custom_icon
 from sverchok.utils.sv_default_macros import macros, DefaultMacros
 from nodeitems_utils import _node_categories
+from sverchok.utils.extra_categories import get_extra_categories
 
 # pylint: disable=c0326
 
@@ -96,6 +97,16 @@ def fx_extend(idx, datastorage):
         datastorage.append((func_name, format_macro_item(func_name, func_descriptor), '', idx))
         idx +=1
 
+def gather_extra_nodes(idx, fx):
+    extra_categories = get_extra_categories()
+    for cat in extra_categories:
+        if hasattr(cat, "nodes"):
+            for node in cat.nodes:
+                description = SvDocstring(node.get_node_class().__doc__).get_shorthand()
+                showstring = node.label + ensure_short_description(description)
+                fx.append((str(idx), showstring,'',idx))
+                loop_reverse[node.label] = node.nodetype
+                idx +=1
 
 def gather_items():
     fx = []
@@ -104,14 +115,16 @@ def gather_items():
         for item in node_list:
             if item[0] in {'separator', 'NodeReroute'}:
                 continue
-            
+
             fx.append((str(idx), ensure_valid_show_string(item), '', idx))
             idx += 1
 
     for k, v in macros.items():
         fx.append((k, format_item(k, v), '', idx))
         idx += 1
-    
+
+    gather_extra_nodes(idx, fx)
+
     fx_extend(idx, fx)
 
     return fx
