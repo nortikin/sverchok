@@ -1728,6 +1728,12 @@ class SvCoonsSurface(SvSurface):
         self.linear2 = SvCurveLerpSurface(curve2, SvFlipCurve(curve4))
         self.c1_t_min, self.c1_t_max = curve1.get_u_bounds()
         self.c3_t_min, self.c3_t_max = curve3.get_u_bounds()
+
+        self.corner1 = self.curve1.evaluate(self.c1_t_min)
+        self.corner2 = self.curve1.evaluate(self.c1_t_max)
+        self.corner3 = self.curve3.evaluate(self.c3_t_max)
+        self.corner4 = self.curve3.evaluate(self.c3_t_min)
+
         self.normal_delta = 0.001
     
     def get_u_min(self):
@@ -1743,10 +1749,7 @@ class SvCoonsSurface(SvSurface):
         return 1
 
     def _calc_b(self, u, v, is_array):
-        corner1 = self.curve1.evaluate(self.c1_t_min)
-        corner2 = self.curve1.evaluate(self.c1_t_max)
-        corner3 = self.curve3.evaluate(self.c3_t_max)
-        corner4 = self.curve3.evaluate(self.c3_t_min)
+        corner1, corner2, corner3, corner4 = self.corner1, self.corner2, self.corner3, self.corner4
         if is_array:
             u = u[np.newaxis].T
             v = v[np.newaxis].T
