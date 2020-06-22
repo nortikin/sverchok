@@ -33,7 +33,7 @@ class SvOB3BDataCollection(bpy.types.PropertyGroup):
     icon: bpy.props.StringProperty(default="BLANK1")
 
 
-class SvOB3BNamesList(bpy.types.UIList):
+class SVOB3B_UL_NamesList(bpy.types.UIList):
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
 
@@ -196,7 +196,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     def draw_obj_names(self, layout):
         if self.object_names:
-            layout.template_list("SvOB3BNamesList", "", self, "object_names", self, "active_obj_index")
+            layout.template_list("SVOB3B_UL_NamesList", "", self, "object_names", self, "active_obj_index")
         else:
             layout.label(text='--None--')
 
@@ -365,5 +365,5 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         node_dict['object_names'] = [o.name for o in self.object_names]
 
 
-classes = [SvOB3BItemOperator, SvOB3BDataCollection, SvOB3BNamesList, SvOB3Callback, SvObjectsNodeMK3]
+classes = [SvOB3BItemOperator, SvOB3BDataCollection, SVOB3B_UL_NamesList, SvOB3Callback, SvObjectsNodeMK3]
 register, unregister = bpy.utils.register_classes_factory(classes)
