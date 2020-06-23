@@ -1287,11 +1287,12 @@ class SvCurveOnSurface(SvCurve):
         return self.surface.evaluate_array(us, vs)
 
 class SvCurveOffsetOnSurface(SvCurve):
-    def __init__(self, curve, surface, offset, uv_space=False):
+    def __init__(self, curve, surface, offset, uv_space=False, axis=0):
         self.curve = curve
         self.surface = surface
         self.offset = offset
         self.uv_space = uv_space
+        self.z_axis = axis
         self.tangent_delta = 0.001
 
     def get_u_bounds(self):
@@ -1301,11 +1302,18 @@ class SvCurveOffsetOnSurface(SvCurve):
         return self.evaluate_array(np.array([t]))[0]
 
     def evaluate_array(self, ts):
+        if self.z_axis == 2:
+            U, V = 0, 1
+        elif self.z_axis == 1:
+            U, V = 0, 2
+        else:
+            U, V = 1, 2
+
         uv_points = self.curve.evaluate_array(ts)
-        us, vs = uv_points[:,0], uv_points[:,1]
+        us, vs = uv_points[:,U], uv_points[:,V]
         # Tangents of the curve in surface's UV space
         uv_tangents = self.curve.tangent_array(ts) # (n, 3), with Z == 0 (Z is ignored anyway)
-        tangents_u, tangents_v = uv_tangents[:,0], uv_tangents[:,1] # (n,), (n,)
+        tangents_u, tangents_v = uv_tangents[:,U], uv_tangents[:,V] # (n,), (n,)
         derivs = self.surface.derivatives_data_array(us, vs)
         su, sv = derivs.du, derivs.dv
 
@@ -1345,7 +1353,12 @@ class SvCurveOffsetOnSurface(SvCurve):
 
         if self.uv_space:
             zs = np.zeros_like(us)
-            result = np.stack((res_us, res_vs, zs)).T
+            if self.z_axis == 2:
+                result = np.stack((res_us, res_vs, zs)).T
+            elif self.z_axis == 1:
+                result = np.stack((res_us, zs, res_vs)).T
+            else:
+                result = np.stack((zs, res_us, res_vs)).T
             return result
         else:
             result = self.surface.evaluate_array(res_us, res_vs)

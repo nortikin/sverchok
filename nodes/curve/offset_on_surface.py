@@ -24,6 +24,30 @@ class SvCurveOffsetOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             default = 0.1,
             update = updateNode)
 
+    planes = [
+            ("XY", "XY", "XOY plane", 0),
+            ("YZ", "YZ", "YOZ plane", 1),
+            ("XZ", "XZ", "XOZ plane", 2)
+        ]
+
+    curve_plane: EnumProperty(
+        name="Curve plane", description="Curve plane",
+        default="XY", items=planes, update=updateNode)
+
+    @property
+    def curve_axis(self):
+        plane = self.curve_plane
+        if plane == 'XY':
+            return 2
+        elif plane == 'YZ':
+            return 0
+        else:
+            return 1
+
+    def draw_buttons(self, context, layout):
+        layout.label(text="Curve plane:")
+        layout.prop(self, 'curve_plane', expand=True)
+
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
         self.inputs.new('SvSurfaceSocket', "Surface")
@@ -49,8 +73,8 @@ class SvCurveOffsetOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             new_curves = []
             new_uv_curves = []
             for curve, surface, offset in zip_long_repeat(curves, surfaces, offsets):
-                new_curve = SvCurveOffsetOnSurface(curve, surface, offset, uv_space=False)
-                new_uv_curve = SvCurveOffsetOnSurface(curve, surface, offset, uv_space=True)
+                new_curve = SvCurveOffsetOnSurface(curve, surface, offset, uv_space=False, axis=self.curve_axis)
+                new_uv_curve = SvCurveOffsetOnSurface(curve, surface, offset, uv_space=True, axis=self.curve_axis)
                 new_curves.append(new_curve)
                 new_uv_curves.append(new_uv_curve)
             curves_out.append(new_curves)
