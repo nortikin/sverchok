@@ -18,7 +18,7 @@ class SvCurveOffsetOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvCurveOffsetOnSurfaceNode'
     bl_label = 'Offset Curve on Surface'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_CURVE_OFFSET'
+    sv_icon = 'SV_CURVE_OFFSET_ON_SURFACE'
 
     offset : FloatProperty(
             name = "Offset",
