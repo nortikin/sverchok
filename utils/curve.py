@@ -1286,20 +1286,47 @@ class SvCurveOnSurface(SvCurve):
             raise Exception("Unsupported orientation axis")
         return self.surface.evaluate_array(us, vs)
 
+
 class SvCurveOffsetOnSurface(SvCurve):
-    def __init__(self, curve, surface, offset, uv_space=False, axis=0):
+
+    BY_PARAMETER = 'T'
+    BY_LENGTH = 'L'
+
+    def __init__(self, curve, surface, offset = None, offset_curve = None,
+                    offset_curve_type = BY_PARAMETER, len_resolution = 50,
+                    uv_space=False, axis=0):
         self.curve = curve
         self.surface = surface
         self.offset = offset
+        self.offset_curve = offset_curve
+        self.offset_curve_type = offset_curve_type
+        self.len_resolution = len_resolution
         self.uv_space = uv_space
         self.z_axis = axis
         self.tangent_delta = 0.001
+        if offset_curve_type == SvCurveOffsetOnSurface.BY_LENGTH:
+            self.len_solver = SvCurveLengthSolver(curve)
+            self.len_solver.prepare('SPL', len_resolution)
 
     def get_u_bounds(self):
         return self.curve.get_u_bounds()
 
     def evaluate(self, t):
         return self.evaluate_array(np.array([t]))[0]
+
+    def get_offset(self, ts):
+        u_min, u_max = self.curve.get_u_bounds()
+        if self.offset_curve_type == SvCurveOffsetOnSurface.BY_PARAMETER:
+            off_u_min, off_u_max = self.offset_curve.get_u_bounds()
+            ts = (off_u_max - off_u_min) * (ts - u_min) / (u_max - u_min) + off_u_min
+            ps = self.offset_curve.evaluate_array(ts)
+            return ps[:,1]
+        else:
+            off_u_max = self.len_solver.get_total_length()
+            ts = off_u_max * (ts - u_min) / (u_max - u_min)
+            ts = self.len_solver.solve(ts)
+            ps = self.offset_curve.evaluate_array(ts)
+            return ps[:,1]
 
     def evaluate_array(self, ts):
         if self.z_axis == 2:
@@ -1346,10 +1373,14 @@ class SvCurveOffsetOnSurface(SvCurve):
 
         delta_s = delta_u[np.newaxis].T * su + delta_v[np.newaxis].T * sv
         delta_s = np.linalg.norm(delta_s, axis=1)
-        k = self.offset / delta_s
 
-        res_us = us + delta_u * k
-        res_vs = vs + delta_v * k
+        if self.offset_curve is None:
+            offset = self.offset
+        else:
+            offset = self.get_offset(ts)
+
+        res_us = us + delta_u * offset / delta_s
+        res_vs = vs + delta_v * offset / delta_s
 
         if self.uv_space:
             zs = np.zeros_like(us)
