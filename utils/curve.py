@@ -1281,8 +1281,8 @@ class SvOffsetCurve(SvCurve):
         extrusion_start = self.curve.evaluate(t_min)
         extrusion_points = self.curve.evaluate_array(ts)
         extrusion_vectors = extrusion_points - extrusion_start
+        offset_vector = self.offset_vector / np.linalg.norm(self.offset_vector)
         if self.algorithm == NORMAL_DIR:
-            offset_vector = self.offset_vector / np.linalg.norm(self.offset_vector)
             offset_vectors = np.tile(offset_vector[np.newaxis].T, n).T
             tangents = self.curve.tangent_array(ts)
             offset_vectors = np.cross(tangents, offset_vectors)
@@ -1290,7 +1290,7 @@ class SvOffsetCurve(SvCurve):
             offset_amounts = self.get_offset(ts)
             offset_vectors = offset_amounts * offset_vectors / offset_norm
         else:
-            offset_vectors = np.tile(self.offset_vector[np.newaxis].T, n)
+            offset_vectors = np.tile(offset_vector[np.newaxis].T, n)
             matrices = self.get_matrices(ts)
             offset_amounts = self.get_offset(ts)
             offset_vectors = offset_amounts * (matrices @ offset_vectors)[:,:,0]
