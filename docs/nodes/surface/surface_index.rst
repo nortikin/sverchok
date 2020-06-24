@@ -23,6 +23,7 @@ Surface
    subdomain
    flip
    swap
+   reparametrize
    normals
    curvatures
    gauss_curvature
