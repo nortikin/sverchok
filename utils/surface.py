@@ -620,12 +620,12 @@ class SvReparametrizedSurface(SvSurface):
     def scale_u(self):
         new_u_min, new_u_max = self.new_u_min, self.new_u_max
         u_min, u_max = self.surface.get_u_min(), self.surface.get_u_max()
-        return (new_u_max - new_u_min) / (u_max - u_min)
+        return (u_max - u_min) / (new_u_max - new_u_min)
 
     def scale_v(self):
         new_v_min, new_v_max = self.new_v_min, self.new_v_max
         v_min, v_max = self.surface.get_v_min(), self.surface.get_v_max()
-        return (new_v_max - new_v_min) / (v_max - v_min)
+        return (v_max - v_min) / (new_v_max - new_v_min)
 
     def evaluate(self, u, v):
         u, v = self.map_uv(u, v)

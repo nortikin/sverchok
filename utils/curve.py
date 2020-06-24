@@ -701,7 +701,7 @@ class SvReparametrizedCurve(SvCurve):
     @property
     def scale(self):
         u_min, u_max = self.curve.get_u_bounds()
-        return (self.new_u_max - self.new_u_min) / (u_max - u_min)
+        return (u_max - u_min) / (self.new_u_max - self.new_u_min)
 
     def map_u(self, u):
         u_min, u_max = self.curve.get_u_bounds()
