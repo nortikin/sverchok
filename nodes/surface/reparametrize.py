@@ -16,7 +16,7 @@ class SvReparametrizeSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvReparametrizeSurfaceNode'
     bl_label = 'Reparametrize Surface'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_FLIP_CURVE'
+    sv_icon = 'SV_REPARAM_SURFACE'
 
     new_u_min : FloatProperty(
             name = "New U Min",
