@@ -21,6 +21,7 @@ Curves
    curve_formula
    apply_field_to_curve
    offset
+   offset_on_surface
    concat_curves
    blend_curves
    extend_curve

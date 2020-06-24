@@ -1286,6 +1286,119 @@ class SvCurveOnSurface(SvCurve):
             raise Exception("Unsupported orientation axis")
         return self.surface.evaluate_array(us, vs)
 
+
+class SvCurveOffsetOnSurface(SvCurve):
+
+    BY_PARAMETER = 'T'
+    BY_LENGTH = 'L'
+
+    def __init__(self, curve, surface, offset = None, offset_curve = None,
+                    offset_curve_type = BY_PARAMETER, len_resolution = 50,
+                    uv_space=False, axis=0):
+        self.curve = curve
+        self.surface = surface
+        self.offset = offset
+        self.offset_curve = offset_curve
+        self.offset_curve_type = offset_curve_type
+        self.len_resolution = len_resolution
+        self.uv_space = uv_space
+        self.z_axis = axis
+        self.tangent_delta = 0.001
+        if offset_curve_type == SvCurveOffsetOnSurface.BY_LENGTH:
+            self.len_solver = SvCurveLengthSolver(curve)
+            self.len_solver.prepare('SPL', len_resolution)
+
+    def get_u_bounds(self):
+        return self.curve.get_u_bounds()
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def get_offset(self, ts):
+        u_min, u_max = self.curve.get_u_bounds()
+        if self.offset_curve_type == SvCurveOffsetOnSurface.BY_PARAMETER:
+            off_u_min, off_u_max = self.offset_curve.get_u_bounds()
+            ts = (off_u_max - off_u_min) * (ts - u_min) / (u_max - u_min) + off_u_min
+            ps = self.offset_curve.evaluate_array(ts)
+            return ps[:,1]
+        else:
+            off_u_max = self.len_solver.get_total_length()
+            ts = off_u_max * (ts - u_min) / (u_max - u_min)
+            ts = self.len_solver.solve(ts)
+            ps = self.offset_curve.evaluate_array(ts)
+            return ps[:,1]
+
+    def evaluate_array(self, ts):
+        if self.z_axis == 2:
+            U, V = 0, 1
+        elif self.z_axis == 1:
+            U, V = 0, 2
+        else:
+            U, V = 1, 2
+
+        uv_points = self.curve.evaluate_array(ts)
+        us, vs = uv_points[:,U], uv_points[:,V]
+        # Tangents of the curve in surface's UV space
+        uv_tangents = self.curve.tangent_array(ts) # (n, 3), with Z == 0 (Z is ignored anyway)
+        tangents_u, tangents_v = uv_tangents[:,U], uv_tangents[:,V] # (n,), (n,)
+        derivs = self.surface.derivatives_data_array(us, vs)
+        su, sv = derivs.du, derivs.dv
+
+        # Take surface's normals as N = [su, sv];
+        # Take curve's tangent in 3D space as T = (tangents_u * su + tangents_v * sv);
+        # Take a vector in surface's tangent plane, which is perpendicular to curve's
+        # tangent, as Nc = [N, T] (call it "curve's normal on a surface");
+        # Calculate Nc's decomposition in su, sv vectors as Ncu = (Nc, su) and Ncv = (Nc, sv);
+        # Interpret Ncu and Ncv as coordinates of Nc in surface's UV space.
+
+        # If you write down all above in formulas, you will have
+        #
+        # Nc = (Tu (Su, Sv) + Tv Sv^2) Su - (Tu Su^2 + Tv (Su, Sv)) Sv
+
+        # We could've calculate the offset as (Curve on a surface) + (offset*Nc),
+        # but there is no guarantee that these points will lie on the surface again
+        # (especially with not-so-small values of offset).
+        # So instead we calculate Curve + offset*(Ncu; Ncv) in UV space, and then
+        # map all that into 3D space.
+
+        su2 = (su*su).sum(axis=1) # (n,)
+        sv2 = (sv*sv).sum(axis=1) # (n,)
+        suv = (su*sv).sum(axis=1) # (n,)
+
+        su_norm, sv_norm = derivs.tangent_lens()
+        su_norm, sv_norm = su_norm.flatten(), sv_norm.flatten()
+
+        delta_u =   (tangents_u*suv + tangents_v*sv2) # (n,)
+        delta_v = - (tangents_u*su2 + tangents_v*suv) # (n,)
+
+        delta_s = delta_u[np.newaxis].T * su + delta_v[np.newaxis].T * sv
+        delta_s = np.linalg.norm(delta_s, axis=1)
+
+        if self.offset_curve is None:
+            offset = self.offset
+        else:
+            offset = self.get_offset(ts)
+
+        res_us = us + delta_u * offset / delta_s
+        res_vs = vs + delta_v * offset / delta_s
+
+        if self.uv_space:
+            zs = np.zeros_like(us)
+            if self.z_axis == 2:
+                result = np.stack((res_us, res_vs, zs)).T
+            elif self.z_axis == 1:
+                result = np.stack((res_us, zs, res_vs)).T
+            else:
+                result = np.stack((zs, res_us, res_vs)).T
+            return result
+        else:
+            result = self.surface.evaluate_array(res_us, res_vs)
+            # Just for testing
+            # on_curve = self.surface.evaluate_array(us, vs)
+            # dvs = result - on_curve
+            # print(np.linalg.norm(dvs, axis=1))
+            return result
+
 class SvIsoUvCurve(SvCurve):
     def __init__(self, surface, fixed_axis, value, flip=False):
         self.surface = surface

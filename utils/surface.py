@@ -296,7 +296,7 @@ class SurfaceDerivativesData(object):
             self._unit_normals = normals / norm
         return self._unit_normals
 
-    def tangent_lens(self):
+    def tangent_lens(self, keepdims=True):
         if self._du_len is None:
             self._du_len = np.linalg.norm(self.du, axis=1, keepdims=True)
             self._dv_len = np.linalg.norm(self.dv, axis=1, keepdims=True)
