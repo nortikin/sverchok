@@ -1225,6 +1225,7 @@ class SvOffsetCurve(SvCurve):
         self.offset_amount = offset_amount
         self.offset_vector = offset_vector
         self.offset_curve = offset_curve
+        self.offset_curve_type = offset_curve_type
         self.algorithm = algorithm
         if algorithm in {FRENET, ZERO, TRACK_NORMAL}:
             self.calculator = DifferentialRotationCalculator(curve, algorithm, resolution)
