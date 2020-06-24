@@ -1211,15 +1211,26 @@ class SvCurveLerpCurve(SvCurve):
         return (1.0 - k) * c1_points + k * c2_points
 
 class SvOffsetCurve(SvCurve):
-    def __init__(self, curve, offset_vector, offset_amount=None, algorithm=FRENET, resolution=50):
+
+    BY_PARAMETER = 'T'
+    BY_LENGTH = 'L'
+
+    def __init__(self, curve, offset_vector,
+                    offset_amount=None,
+                    offset_curve = None, offset_curve_type = BY_PARAMETER,
+                    algorithm=FRENET, resolution=50):
         self.curve = curve
         if algorithm == NORMAL_DIR and offset_amount is None:
             raise Exception("offset_amount is mandatory if algorithm is NORMAL_DIR")
         self.offset_amount = offset_amount
         self.offset_vector = offset_vector
+        self.offset_curve = offset_curve
         self.algorithm = algorithm
         if algorithm in {FRENET, ZERO, TRACK_NORMAL}:
             self.calculator = DifferentialRotationCalculator(curve, algorithm, resolution)
+        if offset_curve_type == SvOffsetCurve.BY_LENGTH:
+            self.len_solver = SvCurveLengthSolver(curve)
+            self.len_solver.prepare('SPL', resolution)
         self.tangent_delta = 0.001
 
     def get_u_bounds(self):
@@ -1244,6 +1255,25 @@ class SvOffsetCurve(SvCurve):
         else:
             raise Exception("Unsupported algorithm")
 
+    def get_offset(self, ts):
+        u_min, u_max = self.curve.get_u_bounds()
+        if self.offset_curve is None:
+            if self.offset_amount is not None:
+                return self.offset_amount
+            else:
+                return np.linalg.norm(self.offset_vector)
+        elif self.offset_curve_type == SvOffsetCurve.BY_PARAMETER:
+            off_u_min, off_u_max = self.offset_curve.get_u_bounds()
+            ts = (off_u_max - off_u_min) * (ts - u_min) / (u_max - u_min) + off_u_min
+            ps = self.offset_curve.evaluate_array(ts)
+            return ps[:,1]
+        else:
+            off_u_max = self.len_solver.get_total_length()
+            ts = off_u_max * (ts - u_min) / (u_max - u_min)
+            ts = self.len_solver.solve(ts)
+            ps = self.offset_curve.evaluate_array(ts)
+            return ps[:,1]
+
     def evaluate_array(self, ts):
         n = len(ts)
         t_min, t_max = self.curve.get_u_bounds()
@@ -1256,11 +1286,13 @@ class SvOffsetCurve(SvCurve):
             tangents = self.curve.tangent_array(ts)
             offset_vectors = np.cross(tangents, offset_vectors)
             offset_norm = np.linalg.norm(offset_vectors, axis=1, keepdims=True)
+            offset_amounts = self.get_offset(ts)
             offset_vectors = self.offset_amount * offset_vectors / offset_norm
         else:
             offset_vectors = np.tile(self.offset_vector[np.newaxis].T, n)
             matrices = self.get_matrices(ts)
-            offset_vectors = (matrices @ offset_vectors)[:,:,0]
+            offset_amounts = self.get_offset(ts)
+            offset_vectors = offset_amounts * (matrices @ offset_vectors)[:,:,0]
         result = extrusion_vectors + offset_vectors
         result = result + extrusion_start
         return result
@@ -1310,7 +1342,6 @@ class SvCurveOffsetOnSurface(SvCurve):
         self.offset = offset
         self.offset_curve = offset_curve
         self.offset_curve_type = offset_curve_type
-        self.len_resolution = len_resolution
         self.uv_space = uv_space
         self.z_axis = axis
         self.tangent_delta = 0.001

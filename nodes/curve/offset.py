@@ -35,11 +35,21 @@ class SvOffsetCurveNode(bpy.types.Node, SverchCustomTreeNode):
         (NORMAL_DIR, "Specified plane", "Offset in plane defined by normal vector in Vector input; i.e., offset in direction perpendicular to Vector input", 6)
     ]
 
+    offset_types = [
+            ('CONST', "Constant", "Specify constant offset by single number", 0),
+            ('CURVE', "Variable", "Specify variable offset by providing T -> X curve", 1)
+        ]
+
+    offset_curve_types = [
+            (SvOffsetCurve.BY_PARAMETER, "Curve parameter", "Use offset curve value according to curve's parameter", 0),
+            (SvOffsetCurve.BY_LENGTH, "Curve length", "Use offset curve value according to curve's length", 1)
+        ]
+
     @throttled
     def update_sockets(self, context):
-        self.inputs['Offset'].hide_safe = self.algorithm != NORMAL_DIR and self.mode == 'C'
-        self.inputs['Vector'].hide_safe = self.algorithm != NORMAL_DIR and self.mode != 'C'
-        self.inputs['Resolution'].hide_safe = self.algorithm not in {ZERO, TRACK_NORMAL}
+        self.inputs['Offset'].hide_safe = not (self.offset_type == 'CONST' and (self.algorithm == NORMAL_DIR or self.mode != 'C'))
+        self.inputs['Vector'].hide_safe = not (self.algorithm == NORMAL_DIR or self.mode == 'C')
+        self.inputs['Resolution'].hide_safe = not (self.algorithm in {ZERO, TRACK_NORMAL} or (self.offset_type == 'CURVE' and self.offset_curve_type == SvOffsetCurve.BY_LENGTH))
 
     mode : EnumProperty(
             name = "Direction",
@@ -63,10 +73,28 @@ class SvOffsetCurveNode(bpy.types.Node, SverchCustomTreeNode):
             default = 0.1,
             update = updateNode)
 
+    offset_type : EnumProperty(
+            name = "Offset type",
+            description = "Specify how the offset values are provided",
+            items = offset_types,
+            default = 'CONST',
+            update = update_sockets)
+
+    offset_curve_type : EnumProperty(
+            name = "Offset curve usage",
+            description = "How offset curve is evaluated along the curve being offseted",
+            items = offset_curve_types,
+            default = SvCurveOffsetOnSurface.BY_PARAMETER,
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "algorithm")
         if self.algorithm != NORMAL_DIR:
             layout.prop(self, "mode")
+        layout.prop(self, 'offset_type', expand=True)
+        if self.offset_type == 'CURVE':
+            layout.label(text="Offset curve use:")
+            layout.prop(self, 'offset_curve_type', text='')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
