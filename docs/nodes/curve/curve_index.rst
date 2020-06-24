@@ -20,7 +20,7 @@ Curves
    kinky_curve
    curve_formula
    apply_field_to_curve
-   offset
+   offset_mk2
    offset_on_surface
    concat_curves
    blend_curves
