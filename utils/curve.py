@@ -685,6 +685,55 @@ class SvFlipCurve(SvCurve):
             sign = -sign
         return array
 
+class SvReparametrizedCurve(SvCurve):
+    def __init__(self, curve, new_u_min, new_u_max):
+        self.curve = curve
+        self.new_u_min = new_u_min
+        self.new_u_max = new_u_max
+        if hasattr(curve, 'tangent_delta'):
+            self.tangent_delta = curve.tangent_delta
+        else:
+            self.tangent_delta = 0.001
+
+    def get_u_bounds(self):
+        return self.new_u_min, self.new_u_max
+
+    @property
+    def scale(self):
+        u_min, u_max = self.curve.get_u_bounds()
+        return (self.new_u_max - self.new_u_min) / (u_max - u_min)
+
+    def map_u(self, u):
+        u_min, u_max = self.curve.get_u_bounds()
+        return (u_max - u_min) * (u - self.new_u_min) / (self.new_u_max - self.new_u_min) + u_min
+
+    def evaluate(self, t):
+        return self.curve.evaluate(self.map_u(t))
+
+    def evaluate_array(self, ts):
+        return self.curve.evaluate_array(self.map_u(ts))
+
+    def tangent(self, t):
+        return self.scale * self.curve.tangent(self.map_u(t))
+
+    def tangent_array(self, ts):
+        return self.scale * self.curve.tangent_array(self.map_u(ts))
+
+    def second_derivative_array(self, ts):
+        return self.scale**2 * self.curve.second_derivative_array(self.map_u(ts))
+
+    def third_derivative_array(self, ts):
+        return self.scale**3 * self.curve.third_derivative_array(self.map_u(ts))
+
+    def derivatives_array(self, n, ts):
+        derivs = self.curve.derivatives_array(n, ts)
+        k = self.scale
+        array = []
+        for deriv in derivs:
+            array.append(k * deriv)
+            k = k * self.scale
+        return array
+
 class SvCurveSegment(SvCurve):
     def __init__(self, curve, u_min, u_max, rescale=False):
         self.curve = curve
