@@ -15,7 +15,8 @@ from sverchok.utils.integrate import TrapezoidIntegral
 from sverchok.utils.logging import error, exception
 from sverchok.utils.math import (
         binomial,
-        ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL
+        ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
+        NORMAL_DIR
     )
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
 
@@ -1210,8 +1211,11 @@ class SvCurveLerpCurve(SvCurve):
         return (1.0 - k) * c1_points + k * c2_points
 
 class SvOffsetCurve(SvCurve):
-    def __init__(self, curve, offset_vector, algorithm, resolution=50):
+    def __init__(self, curve, offset_vector, offset_amount=None, algorithm=FRENET, resolution=50):
         self.curve = curve
+        if algorithm == NORMAL_DIR and offset_amount is None:
+            raise Exception("offset_amount is mandatory if algorithm is NORMAL_DIR")
+        self.offset_amount = offset_amount
         self.offset_vector = offset_vector
         self.algorithm = algorithm
         if algorithm in {FRENET, ZERO, TRACK_NORMAL}:
@@ -1243,14 +1247,21 @@ class SvOffsetCurve(SvCurve):
     def evaluate_array(self, ts):
         n = len(ts)
         t_min, t_max = self.curve.get_u_bounds()
-        profile_vectors = np.tile(self.offset_vector[np.newaxis].T, n)
-        #profile_vectors = np.transpose(profile_vectors[np.newaxis], axes=(1, 2, 0))
         extrusion_start = self.curve.evaluate(t_min)
         extrusion_points = self.curve.evaluate_array(ts)
         extrusion_vectors = extrusion_points - extrusion_start
-        matrices = self.get_matrices(ts)
-        profile_vectors = (matrices @ profile_vectors)[:,:,0]
-        result = extrusion_vectors + profile_vectors
+        if self.algorithm == NORMAL_DIR:
+            offset_vector = self.offset_vector / np.linalg.norm(self.offset_vector)
+            offset_vectors = np.tile(offset_vector[np.newaxis].T, n).T
+            tangents = self.curve.tangent_array(ts)
+            offset_vectors = np.cross(tangents, offset_vectors)
+            offset_norm = np.linalg.norm(offset_vectors, axis=1, keepdims=True)
+            offset_vectors = self.offset_amount * offset_vectors / offset_norm
+        else:
+            offset_vectors = np.tile(self.offset_vector[np.newaxis].T, n)
+            matrices = self.get_matrices(ts)
+            offset_vectors = (matrices @ offset_vectors)[:,:,0]
+        result = extrusion_vectors + offset_vectors
         result = result + extrusion_start
         return result
 
@@ -1285,7 +1296,6 @@ class SvCurveOnSurface(SvCurve):
         else:
             raise Exception("Unsupported orientation axis")
         return self.surface.evaluate_array(us, vs)
-
 
 class SvCurveOffsetOnSurface(SvCurve):
 

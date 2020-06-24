@@ -7,7 +7,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve, SvOffsetCurve
-from sverchok.utils.math import ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL
+from sverchok.utils.math import ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL, NORMAL_DIR
 
 class SvOffsetCurveNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -31,13 +31,14 @@ class SvOffsetCurveNode(bpy.types.Node, SverchCustomTreeNode):
         (HOUSEHOLDER, "Householder", "Use Householder reflection matrix", 2),
         (TRACK, "Tracking", "Use quaternion-based tracking", 3),
         (DIFF, "Rotation difference", "Use rotational difference calculation", 4),
-        (TRACK_NORMAL, "Track normal", "Try to maintain constant normal direction by tracking along curve", 5)
+        (TRACK_NORMAL, "Track normal", "Try to maintain constant normal direction by tracking along curve", 5),
+        (NORMAL_DIR, "Specified plane", "Offset in plane defined by normal vector in Vector input; i.e., offset in direction perpendicular to Vector input", 6)
     ]
 
     @throttled
     def update_sockets(self, context):
-        self.inputs['Offset'].hide_safe = self.mode == 'C'
-        self.inputs['Vector'].hide_safe = self.mode != 'C'
+        self.inputs['Offset'].hide_safe = self.algorithm != NORMAL_DIR and self.mode == 'C'
+        self.inputs['Vector'].hide_safe = self.algorithm != NORMAL_DIR and self.mode != 'C'
         self.inputs['Resolution'].hide_safe = self.algorithm not in {ZERO, TRACK_NORMAL}
 
     mode : EnumProperty(
@@ -63,8 +64,9 @@ class SvOffsetCurveNode(bpy.types.Node, SverchCustomTreeNode):
             update = updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "mode")
         layout.prop(self, "algorithm")
+        if self.algorithm != NORMAL_DIR:
+            layout.prop(self, "mode")
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
@@ -94,13 +96,19 @@ class SvOffsetCurveNode(bpy.types.Node, SverchCustomTreeNode):
         for curves, offsets, vectors, resolutions in zip_long_repeat(curve_s, offset_s, vector_s, resolution_s):
             new_curves = []
             for curve, offset, vector, resolution in zip_long_repeat(curves, offsets, vectors, resolutions):
-                if self.mode == 'X':
-                    vector = [offset, 0, 0]
-                elif self.mode == 'Y':
-                    vector = [0, offset, 0]
-                vector = np.array(vector)
+                if self.algorithm != NORMAL_DIR:
+                    if self.mode == 'X':
+                        vector = [offset, 0, 0]
+                    elif self.mode == 'Y':
+                        vector = [0, offset, 0]
+                if vector is not None:
+                    vector = np.array(vector)
 
-                new_curve = SvOffsetCurve(curve, vector, self.algorithm, resolution)
+                new_curve = SvOffsetCurve(curve,
+                                offset_vector = vector,
+                                offset_amount = offset,
+                                algorithm = self.algorithm,
+                                resolution = resolution)
                 new_curves.append(new_curve)
             curve_out.append(new_curves)
 
