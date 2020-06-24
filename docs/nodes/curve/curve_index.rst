@@ -39,6 +39,7 @@ Curves
    cast_curve
    curve_range
    flip_curve
+   reparametrize
    curve_segment
    split_curve
    eval_curve

@@ -581,6 +581,75 @@ class SvSwapSurface(SvSurface):
     def normal_array(self, us, vs):
         return self.surface.normal_array(vs, us)
 
+class SvReparametrizedSurface(SvSurface):
+    def __init__(self, surface, new_u_min, new_u_max, new_v_min, new_v_max):
+        self.surface = surface
+        self.new_u_min = new_u_min
+        self.new_u_max = new_u_max
+        self.new_v_min = new_v_min
+        self.new_v_max = new_v_max
+        if hasattr(surface, "normal_delta"):
+            self.normal_delta = surface.normal_delta
+        else:
+            self.normal_delta = 0.001
+
+    def get_u_min(self):
+        return self.new_u_min
+
+    def get_v_min(self):
+        return self.new_v_min
+
+    def get_u_max(self):
+        return self.new_u_max
+
+    def get_v_max(self):
+        return self.new_v_max
+
+    def map_uv(self, u, v):
+        new_u_min, new_u_max = self.new_u_min, self.new_u_max
+        new_v_min, new_v_max = self.new_v_min, self.new_v_max
+
+        u_min, u_max = self.surface.get_u_min(), self.surface.get_u_max()
+        v_min, v_max = self.surface.get_v_min(), self.surface.get_v_max()
+
+        u = (u_max - u_min) * (u - new_u_min) / (new_u_max - new_u_min) + u_min
+        v = (v_max - v_min) * (v - new_v_min) / (new_v_max - new_v_min) + v_min
+
+        return u, v
+
+    def scale_u(self):
+        new_u_min, new_u_max = self.new_u_min, self.new_u_max
+        u_min, u_max = self.surface.get_u_min(), self.surface.get_u_max()
+        return (u_max - u_min) / (new_u_max - new_u_min)
+
+    def scale_v(self):
+        new_v_min, new_v_max = self.new_v_min, self.new_v_max
+        v_min, v_max = self.surface.get_v_min(), self.surface.get_v_max()
+        return (v_max - v_min) / (new_v_max - new_v_min)
+
+    def evaluate(self, u, v):
+        u, v = self.map_uv(u, v)
+        return self.surface.evaluate(u, v)
+
+    def evaluate_array(self, us, vs):
+        us, vs = self.map_uv(us, vs)
+        return self.surface.evaluate_array(us, vs)
+
+    def normal(self, u, v):
+        u, v = self.map_uv(u, v)
+        return self.surface.normal(u, v)
+
+    def normal_array(self, us, vs):
+        us, vs = self.map_uv(us, vs)
+        return self.surface.normal_array(us, vs)
+
+    def derivatives_data_array(self, us, vs):
+        us, vs = self.map_uv(us, vs)
+        data = self.surface.derivatives_data_array(us, vs)
+        data.du *= self.scale_u()
+        data.dv *= self.scale_v()
+        return data
+
 class SvPlane(SvSurface):
     __description__ = "Plane"
     

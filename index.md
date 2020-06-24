@@ -79,6 +79,7 @@
     SvExConcatCurvesNode
     SvExBlendCurvesNode
     SvExFlipCurveNode
+    SvReparametrizeCurveNode
     SvExSurfaceBoundaryNode
     ---
     SvExCurveEndpointsNode
@@ -117,6 +118,7 @@
     SvExSurfaceSubdomainNode
     SvFlipSurfaceNode
     SvSwapSurfaceNode
+    SvReparametrizeSurfaceNode
     SvSurfaceNormalsNode
     SvSurfaceGaussCurvatureNode
     SvSurfaceCurvaturesNode
