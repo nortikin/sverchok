@@ -1220,8 +1220,8 @@ class SvOffsetCurve(SvCurve):
                     offset_curve = None, offset_curve_type = BY_PARAMETER,
                     algorithm=FRENET, resolution=50):
         self.curve = curve
-        if algorithm == NORMAL_DIR and offset_amount is None:
-            raise Exception("offset_amount is mandatory if algorithm is NORMAL_DIR")
+        if algorithm == NORMAL_DIR and (offset_amount is None and offset_curve is None):
+            raise Exception("offset_amount or offset_curve is mandatory if algorithm is NORMAL_DIR")
         self.offset_amount = offset_amount
         self.offset_vector = offset_vector
         self.offset_curve = offset_curve
@@ -1267,13 +1267,13 @@ class SvOffsetCurve(SvCurve):
             off_u_min, off_u_max = self.offset_curve.get_u_bounds()
             ts = (off_u_max - off_u_min) * (ts - u_min) / (u_max - u_min) + off_u_min
             ps = self.offset_curve.evaluate_array(ts)
-            return ps[:,1]
+            return ps[:,1][np.newaxis].T
         else:
             off_u_max = self.len_solver.get_total_length()
             ts = off_u_max * (ts - u_min) / (u_max - u_min)
             ts = self.len_solver.solve(ts)
             ps = self.offset_curve.evaluate_array(ts)
-            return ps[:,1]
+            return ps[:,1][np.newaxis].T
 
     def evaluate_array(self, ts):
         n = len(ts)
@@ -1288,7 +1288,7 @@ class SvOffsetCurve(SvCurve):
             offset_vectors = np.cross(tangents, offset_vectors)
             offset_norm = np.linalg.norm(offset_vectors, axis=1, keepdims=True)
             offset_amounts = self.get_offset(ts)
-            offset_vectors = self.offset_amount * offset_vectors / offset_norm
+            offset_vectors = offset_amounts * offset_vectors / offset_norm
         else:
             offset_vectors = np.tile(self.offset_vector[np.newaxis].T, n)
             matrices = self.get_matrices(ts)

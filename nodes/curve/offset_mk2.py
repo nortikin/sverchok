@@ -4,6 +4,7 @@ import numpy as np
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
+from sverchok.core.socket_data import SvNoDataError
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve, SvOffsetCurve
@@ -50,6 +51,7 @@ class SvOffsetCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Offset'].hide_safe = not (self.offset_type == 'CONST' and (self.algorithm == NORMAL_DIR or self.mode != 'C'))
         self.inputs['Vector'].hide_safe = not (self.algorithm == NORMAL_DIR or self.mode == 'C')
         self.inputs['Resolution'].hide_safe = not (self.algorithm in {ZERO, TRACK_NORMAL} or (self.offset_type == 'CURVE' and self.offset_curve_type == SvOffsetCurve.BY_LENGTH))
+        self.inputs['OffsetCurve'].hide_safe = not (self.offset_type == 'CURVE')
 
     mode : EnumProperty(
             name = "Direction",
@@ -85,7 +87,7 @@ class SvOffsetCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
             description = "How offset curve is evaluated along the curve being offseted",
             items = offset_curve_types,
             default = SvOffsetCurve.BY_PARAMETER,
-            update = updateNode)
+            update = update_sockets)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "algorithm")
@@ -99,6 +101,7 @@ class SvOffsetCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
         self.inputs.new('SvStringsSocket', "Offset").prop_name = 'offset'
+        self.inputs.new('SvCurveSocket', "OffsetCurve")
         p = self.inputs.new('SvVerticesSocket', "Vector")
         p.use_prop = True
         p.prop = (0.1, 0.0, 0.0)
@@ -112,6 +115,7 @@ class SvOffsetCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
 
         curve_s = self.inputs['Curve'].sv_get()
         offset_s = self.inputs['Offset'].sv_get()
+        offset_curve_s = self.inputs['OffsetCurve'].sv_get(default = [[None]])
         vector_s = self.inputs['Vector'].sv_get()
         resolution_s = self.inputs['Resolution'].sv_get()
 
@@ -119,11 +123,13 @@ class SvOffsetCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
         offset_s = ensure_nesting_level(offset_s, 2)
         vector_s = ensure_nesting_level(vector_s, 3)
         resolution_s = ensure_nesting_level(resolution_s, 2)
+        if self.inputs['OffsetCurve'].is_linked:
+            offset_curve_s = ensure_nesting_level(offset_curve_s, 2, data_types=(SvCurve,))
 
         curve_out = []
-        for curves, offsets, vectors, resolutions in zip_long_repeat(curve_s, offset_s, vector_s, resolution_s):
+        for curves, offsets, offset_curves, vectors, resolutions in zip_long_repeat(curve_s, offset_s, offset_curve_s, vector_s, resolution_s):
             new_curves = []
-            for curve, offset, vector, resolution in zip_long_repeat(curves, offsets, vectors, resolutions):
+            for curve, offset, offset_curve, vector, resolution in zip_long_repeat(curves, offsets, offset_curves, vectors, resolutions):
                 if self.algorithm != NORMAL_DIR:
                     if self.mode == 'X':
                         vector = [offset, 0, 0]
@@ -132,11 +138,22 @@ class SvOffsetCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
                 if vector is not None:
                     vector = np.array(vector)
 
-                new_curve = SvOffsetCurve(curve,
-                                offset_vector = vector,
-                                offset_amount = offset,
-                                algorithm = self.algorithm,
-                                resolution = resolution)
+                if self.offset_type == 'CONST':
+                    new_curve = SvOffsetCurve(curve,
+                                    offset_vector = vector,
+                                    offset_amount = offset,
+                                    algorithm = self.algorithm,
+                                    resolution = resolution)
+                else:
+                    if offset_curve is None:
+                        raise SvNoDataError(socket=self.inputs['OffsetCurve'], node=self)
+
+                    new_curve = SvOffsetCurve(curve,
+                                    offset_vector = vector,
+                                    offset_curve = offset_curve,
+                                    algorithm = self.algorithm,
+                                    resolution = resolution)
+
                 new_curves.append(new_curve)
             curve_out.append(new_curves)
 
