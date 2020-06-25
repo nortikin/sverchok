@@ -239,6 +239,9 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
                     break
 
             last_index = len(mverts) - 1
+            if self.selected_mode == 'Single':
+                last_index = 0
+
             self.remove_non_updated_objects(last_index)
             self.set_corresponding_materials()
 
