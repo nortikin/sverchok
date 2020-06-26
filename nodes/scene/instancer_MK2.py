@@ -29,6 +29,9 @@ def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
 
     if obj_name in objects:
         sv_object = objects[obj_name]
+        
+        if sv_object.data != blueprint_obj.data:
+            sv_object.data = blueprint_obj.data        
     else:
         data = blueprint_obj.data# data_kind.get(data_name)
 
