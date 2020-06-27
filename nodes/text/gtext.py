@@ -95,6 +95,7 @@ def generate_greasepencil(node, text, col, pos, fontdict):
         layer.frames[0].clear()
 
     layer.line_change = 1.0
+    layer.color = col
     for ch in text:
         print(ch)
         if ch == "\n":
@@ -178,7 +179,7 @@ class SvGTextNode(bpy.types.Node, SverchCustomTreeNode):
     text: StringProperty(name='text', default='your text here')
     locator: IntVectorProperty(name="locator", description="stores location", default=(0, 0), size=2)
     text_scale: IntProperty(name="font size", default=25, update=wrapped_update)
-    stroke_color: FloatVectorProperty(subtype='COLOR', size=3, min=0, max=1)
+    stroke_color: FloatVectorProperty(subtype='COLOR', size=3, min=0, max=1, update=wrapped_update)
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
