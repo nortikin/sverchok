@@ -197,9 +197,6 @@ class SvGTextNode(bpy.types.Node, SverchCustomTreeNode):
                 # layout.prop(gp_layer, 'line_width')
                 layout.prop(self, 'text_scale')
 
-    def update(self):
-        pass
-
     def set_gtext(self):
         self.text = bpy.context.window_manager.clipboard
         self.draw_gtext()
