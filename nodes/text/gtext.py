@@ -96,6 +96,7 @@ def generate_greasepencil(node, text, col, pos, fontdict):
 
     layer.line_change = 1.0
     for ch in text:
+        print(ch)
         if ch == "\n":
             yof -= line_height
             xof = 0
@@ -120,7 +121,7 @@ def generate_greasepencil(node, text, col, pos, fontdict):
             s = layer.frames[0].strokes.new() # colorname=node_specific_color)
 
             s.line_width = 1
-            # s.draw_mode = '2DSPACE'
+            s.display_mode = '2DSPACE'
             s.points.add(len(chain))
             for idx, p in enumerate(chain):
                 ap = Vector(p) - Vector((minx, 0, 0))
@@ -212,7 +213,7 @@ class SvGTextNode(bpy.types.Node, SverchCustomTreeNode):
         grease_pencil_name = tree_name + "_grease"
 
         # get grease pencil data
-        gp = nt.grease_pencils
+        gp = nt.grease_pencil
         if (node_name in gp.layers):
             layer = gp.layers[node_name]
             layer.frames[0].clear()
