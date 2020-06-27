@@ -119,7 +119,7 @@ def generate_greasepencil(node, text, col, pos, fontdict):
             s = layer.frames[0].strokes.new() # colorname=node_specific_color)
 
             s.line_width = 1
-            s.draw_mode = '2DSPACE'
+            # s.draw_mode = '2DSPACE'
             s.points.add(len(chain))
             for idx, p in enumerate(chain):
                 ap = Vector(p) - Vector((minx, 0, 0))
@@ -138,7 +138,7 @@ class SverchokGText(bpy.types.Operator):
     bl_label = "Sverchok gtext"
     bl_options = {'REGISTER', 'UNDO'}
 
-    mode = bpy.props.StringProperty(default="")
+    mode: bpy.props.StringProperty(default="")
 
     def execute(self, context):
         node = context.node
