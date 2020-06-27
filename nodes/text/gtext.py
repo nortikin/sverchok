@@ -9,7 +9,9 @@ import ast
 import os
 
 import bpy
-from bpy.props import IntProperty, IntVectorProperty, StringProperty, FloatVectorProperty
+from bpy.props import (
+    IntProperty, IntVectorProperty, StringProperty, 
+    FloatVectorProperty, FloatProperty)
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -53,7 +55,7 @@ fdict_sizes = analyze_glyphs(fdict)
 def generate_greasepencil(node, text, col, pos, fontdict):
 
     scalar = node.text_scale
-    line_height = scalar * 1.56
+    line_height = scalar * node.relative_line_height
     spacing = scalar / 2.5
     char_width = scalar / 1.14
 
@@ -167,6 +169,7 @@ class SvGTextNode(bpy.types.Node, SverchCustomTreeNode):
     locator: IntVectorProperty(name="locator", description="stores location", default=(0, 0), size=2)
     text_scale: IntProperty(name="font size", default=25, update=wrapped_update)
     stroke_color: FloatVectorProperty(subtype='COLOR', size=3, min=0, max=1, update=wrapped_update)
+    relative_line_height: FloatProperty(name="relative line height", default=1.56, min=0.0, update=wrapped_update)
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
@@ -184,6 +187,7 @@ class SvGTextNode(bpy.types.Node, SverchCustomTreeNode):
                 # layout.prop(gp_layer, 'color')
                 # layout.prop(gp_layer, 'line_width')
                 layout.prop(self, 'text_scale')
+                layout.prop(self, 'relative_line_height')
 
     def set_gtext(self):
         self.text = bpy.context.window_manager.clipboard
@@ -208,8 +212,8 @@ class SvGTextNode(bpy.types.Node, SverchCustomTreeNode):
         col = self.stroke_color
         pos = self.location
 
-        x_offset = 0
-        y_offset = -90
+        x_offset = self.width + 20
+        y_offset = 0
         offset = lambda x, y: (x + x_offset, y + y_offset)
         pos = offset(*pos)
         generate_greasepencil(self, text, col, pos, fdict)
