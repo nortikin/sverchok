@@ -78,7 +78,7 @@ def generate_greasepencil(node, text, col, pos, fontdict):
     layer.line_change = 1.0
     layer.color = col
     for ch in text:
-        print(ch)
+
         if ch == "\n":
             yof -= line_height
             xof = 0
@@ -98,7 +98,9 @@ def generate_greasepencil(node, text, col, pos, fontdict):
 
         minx, maxx, xwide = fdict_sizes[str(ord(ch))]
 
-        # node_specific_color = 'gt_col_' + node.name
+        # some chars have multiple vertex sequences, each is a new stroke.
+        # if the vector_font was redesigned it could make all chars into one stroke, but that
+        # too has drawbacks.
         for chain in v:
             s = layer.frames[0].strokes.new() # colorname=node_specific_color)
 
@@ -113,7 +115,6 @@ def generate_greasepencil(node, text, col, pos, fontdict):
                 s.points[idx].co = xyz
                 s.points[idx].pressure = 1.0
 
-        # xof += char_width
         xof += ((xwide * scalar) + spacing)
 
 
@@ -186,8 +187,6 @@ class SvGTextNode(bpy.types.Node, SverchCustomTreeNode):
         self.draw_gtext()
 
     def erase_gtext(self):
-        print("should be erasing")
-
         nt = self.id_data
         node_name = self.name
         tree_name = nt.name
