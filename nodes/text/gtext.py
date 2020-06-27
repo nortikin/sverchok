@@ -43,14 +43,6 @@ def analyze_glyphs(fdict):
 fdict = openjson_asdict('gtext_font.dict')
 fdict_sizes = analyze_glyphs(fdict)
 
-# def get_palette(tree=None, palette_name=None):
-#     palettes = tree.grease_pencil.palettes
-#     if not palette_name in palettes:
-#         palette = palettes.new(palette_name)
-#     else:
-#         palette = palettes.get(palette_name)
-#     return palette
-
 
 def generate_greasepencil(node, text, col, pos, fontdict):
 
