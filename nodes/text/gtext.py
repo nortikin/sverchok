@@ -68,10 +68,11 @@ def generate_greasepencil(node, text, col, pos, fontdict):
 
     # get grease pencil data
     if grease_pencil_name not in bpy.data.grease_pencils:
-        nt.grease_pencils = bpy.data.grease_pencils.new(grease_pencil_name)
+        nt.grease_pencil = bpy.data.grease_pencils.new(grease_pencil_name)
     else:
-        nt.grease_pencils = bpy.data.grease_pencils[grease_pencil_name]
-    gp = nt.grease_pencils
+        nt.grease_pencil = bpy.data.grease_pencils[grease_pencil_name]
+    gp = nt.grease_pencil
+    print(gp)
 
     # palette = get_palette(tree=nt, palette_name='sv_palette')
     # node_specific_color = 'gt_col_' + node.name
