@@ -191,7 +191,7 @@ class SvGTextNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
         if self.id_data.grease_pencil:
-            gp_layer = self.id_data.grease_pencils.layers.get(self.name)
+            gp_layer = self.id_data.grease_pencil.layers.get(self.name)
             if gp_layer:
                 # layout.prop(gp_layer, 'color')
                 # layout.prop(gp_layer, 'line_width')
