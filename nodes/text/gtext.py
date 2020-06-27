@@ -1,20 +1,9 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
 
 import ast
 import os
@@ -177,21 +166,28 @@ class SverchokGText(bpy.types.Operator):
 
 
 
-class GTextNode(bpy.types.Node, SverchCustomTreeNode):
+class SvGTextNode(bpy.types.Node, SverchCustomTreeNode):
 
     def wrapped_update(self, context):
         self.draw_gtext()
 
+    """
+    Triggers: Gtext
+    Tooltip: generate annotations from text
+    
+    This node takes input text and reads each character and then populates a list of lists of the
+    vector characters as vertex sequences.
+    """
 
-    ''' G Notes '''
-    bl_idname = 'GTextNode'
+
+    bl_idname = 'SvGTextNode'
     bl_label = 'GText'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    text = StringProperty(name='text', default='your text here')
-    locator = IntVectorProperty(name="locator", description="stores location", default=(0, 0), size=2)
-    text_scale = IntProperty(name="font size", default=25, update=wrapped_update)
-    stroke_color = FloatVectorProperty(subtype='COLOR', size=3, min=0, max=1)
+    text: StringProperty(name='text', default='your text here')
+    locator: IntVectorProperty(name="locator", description="stores location", default=(0, 0), size=2)
+    text_scale: IntProperty(name="font size", default=25, update=wrapped_update)
+    stroke_color: FloatVectorProperty(subtype='COLOR', size=3, min=0, max=1)
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
@@ -244,13 +240,10 @@ class GTextNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(GTextNode)
+    bpy.utils.register_class(SvGTextNode)
     bpy.utils.register_class(SverchokGText)
 
 
 def unregister():
     bpy.utils.unregister_class(SverchokGText)
-    bpy.utils.unregister_class(GTextNode)
-
-if __name__ == '__main__':
-    register()
+    bpy.utils.unregister_class(SvGTextNode)
