@@ -41,13 +41,13 @@ def analyze_glyphs(fdict):
 fdict = openjson_asdict('gtext_font.dict')
 fdict_sizes = analyze_glyphs(fdict)
 
-def get_palette(tree=None, palette_name=None):
-    palettes = tree.grease_pencil.palettes
-    if not palette_name in palettes:
-        palette = palettes.new(palette_name)
-    else:
-        palette = palettes.get(palette_name)
-    return palette
+# def get_palette(tree=None, palette_name=None):
+#     palettes = tree.grease_pencil.palettes
+#     if not palette_name in palettes:
+#         palette = palettes.new(palette_name)
+#     else:
+#         palette = palettes.get(palette_name)
+#     return palette
 
 
 def generate_greasepencil(node, text, col, pos, fontdict):
@@ -67,21 +67,21 @@ def generate_greasepencil(node, text, col, pos, fontdict):
     grease_pencil_name = tree_name + "_grease"
 
     # get grease pencil data
-    if grease_pencil_name not in bpy.data.grease_pencil:
-        nt.grease_pencil = bpy.data.grease_pencil.new(grease_pencil_name)
+    if grease_pencil_name not in bpy.data.grease_pencils:
+        nt.grease_pencils = bpy.data.grease_pencils.new(grease_pencil_name)
     else:
-        nt.grease_pencil = bpy.data.grease_pencil[grease_pencil_name]
-    gp = nt.grease_pencil
+        nt.grease_pencils = bpy.data.grease_pencils[grease_pencil_name]
+    gp = nt.grease_pencils
 
-    palette = get_palette(tree=nt, palette_name='sv_palette')
-    node_specific_color = 'gt_col_' + node.name
-    if not node_specific_color in palette.colors:
-        named_color = palette.colors.new()
-        named_color.color = node.stroke_color
-        named_color.name = node_specific_color
-    else:
-        if node.stroke_color != palette.colors[node_specific_color].color:
-            palette.colors[node_specific_color].color = node.stroke_color
+    # palette = get_palette(tree=nt, palette_name='sv_palette')
+    # node_specific_color = 'gt_col_' + node.name
+    # if not node_specific_color in palette.colors:
+    #     named_color = palette.colors.new()
+    #     named_color.color = node.stroke_color
+    #     named_color.name = node_specific_color
+    # else:
+    #     if node.stroke_color != palette.colors[node_specific_color].color:
+    #         palette.colors[node_specific_color].color = node.stroke_color
 
 
 
@@ -114,9 +114,9 @@ def generate_greasepencil(node, text, col, pos, fontdict):
 
         minx, maxx, xwide = fdict_sizes[str(ord(ch))]
 
-        node_specific_color = 'gt_col_' + node.name
+        # node_specific_color = 'gt_col_' + node.name
         for chain in v:
-            s = layer.frames[0].strokes.new(colorname=node_specific_color)
+            s = layer.frames[0].strokes.new() # colorname=node_specific_color)
 
             s.line_width = 1
             s.draw_mode = '2DSPACE'
@@ -142,17 +142,6 @@ class SverchokGText(bpy.types.Operator):
 
     def execute(self, context):
         node = context.node
-
-        # check valid greasepencil interface..
-        timestamp = bpy.app.build_commit_timestamp
-        # earliest_allowed_timestamp = 1487894400 # (feb 24, 2017, 2.78c)
-        #                            1487946787
-        earliest_allowed_timestamp = 1492214400 # (april 15, 2017)
-
-        if timestamp and timestamp < earliest_allowed_timestamp:
-            self.report({'ERROR'}, 'Please update to builder.blender.org latest builds, 2.78c will not work')
-            return {'CANCELLED'}
-
 
         if self.mode == 'set':
             node.draw_gtext()
@@ -200,7 +189,7 @@ class SvGTextNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
         if self.id_data.grease_pencil:
-            gp_layer = self.id_data.grease_pencil.layers.get(self.name)
+            gp_layer = self.id_data.grease_pencils.layers.get(self.name)
             if gp_layer:
                 # layout.prop(gp_layer, 'color')
                 # layout.prop(gp_layer, 'line_width')
@@ -222,7 +211,7 @@ class SvGTextNode(bpy.types.Node, SverchCustomTreeNode):
         grease_pencil_name = tree_name + "_grease"
 
         # get grease pencil data
-        gp = nt.grease_pencil
+        gp = nt.grease_pencils
         if (node_name in gp.layers):
             layer = gp.layers[node_name]
             layer.frames[0].clear()
