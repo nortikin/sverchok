@@ -173,7 +173,7 @@ class SvGTextNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvGTextNode'
     bl_label = 'GText'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'GREASEPENCIL'
 
     text: StringProperty(name='text', default='your text here')
     locator: IntVectorProperty(name="locator", description="stores location", default=(0, 0), size=2)
