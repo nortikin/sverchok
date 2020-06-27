@@ -99,8 +99,8 @@ def generate_greasepencil(node, text, col, pos, fontdict):
         minx, maxx, xwide = fdict_sizes[str(ord(ch))]
 
         # some chars have multiple vertex sequences, each is a new stroke.
-        # if the vector_font was redesigned it could make all chars into one stroke, but that
-        # too has drawbacks.
+        # if the vector_font was redesigned it could make each individual char into one stroke, 
+        # but that too has drawbacks. (like how to make an = symbol without spaces? )
         for chain in v:
             s = layer.frames[0].strokes.new() # colorname=node_specific_color)
 
