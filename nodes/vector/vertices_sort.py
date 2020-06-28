@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from operator import itemgetter
+from functools import cmp_to_key
 
 import bpy
 from bpy.props import EnumProperty, BoolProperty
@@ -27,6 +28,8 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (repeat_last, Matrix_generate, Vector_generate,
                                      updateNode)
 from sverchok.utils.sv_mesh_utils import polygons_to_edges
+from sverchok.utils.geom import linear_approximation
+from sverchok.utils.math import to_cylindrical
 from sverchok.utils.decorators import deprecated
 
 # distance between two points without sqrt, for comp only
@@ -151,13 +154,15 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_VECTOR_SORT'
 
     def mode_change(self, context):
-        if self.mode == 'XYZ':
+        if self.mode in ('XYZ', 'AXYZ', 'ADIR', 'ACYL'):
             while len(self.inputs) > 2:
                 self.inputs.remove(self.inputs[-1])
         if self.mode == 'DIST':
             while len(self.inputs) > 2:
                 self.inputs.remove(self.inputs[-1])
-            self.inputs.new('SvVerticesSocket', 'Base Point')
+            p = self.inputs.new('SvVerticesSocket', 'Base Point')
+            p.use_prop = True
+            p.prop = (0.0, 0.0, 0.0)
 
         if self.mode == 'AXIS':
             while len(self.inputs) > 2:
@@ -179,6 +184,9 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
              ("DIST",   "Dist", "Distance",     2),
              ("AXIS",   "Axis", "Axial sort",   3),
              ("CONNEX", "Connect", "Sort by connections",   4),
+             ("AXYZ", "Auto XYZ", "Sort by carthesian coordinates in automatically detected reference frame", 5),
+             ("ADIR", "Auto Direction", "Sort along automatically detected direction", 6),
+             ("ACYL", "Auto Phi / Z", "Sort in circular order on automatically detected plane", 7),
              ("USER",   "User", "User defined", 10)]
 
     mode: EnumProperty(
@@ -186,12 +194,38 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
     limit_mode: BoolProperty(
         default=False, name='Search for limits', description='Find discontinuities first', update=updateNode)
 
+    reverse_x : BoolProperty(
+            name = "Reverse X",
+            default = False,
+            update = updateNode)
+
+    reverse_y : BoolProperty(
+            name = "Reverse Y",
+            default = False,
+            update = updateNode)
+
+    reverse_z : BoolProperty(
+            name = "Reverse Z",
+            default = False,
+            update = updateNode)
+
+    reverse : BoolProperty(
+            name = "Reverse",
+            default = False,
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=False)
-        if self.mode == "XYZ":
-            pass
-        elif self.mode == "CONNEX":
+        if self.mode in ("XYZ", 'AXYZ'):
+            layout.label(text="Reverse:")
+            row = layout.row(align=True)
+            row.prop(self, 'reverse_x', toggle=True, text='X')
+            row.prop(self, 'reverse_y', toggle=True, text='Y')
+            row.prop(self, 'reverse_z', toggle=True, text='Z')
+        elif self.mode in "CONNEX":
             layout.prop(self, "limit_mode")
+        if self.mode in ('ADIR', 'ACYL'):
+            layout.prop(self, 'reverse', toggle=True)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
@@ -224,9 +258,9 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
 
         if self.mode == 'XYZ':
             # should be user settable
-            op_order = [(0, False),
-                        (1, False),
-                        (2, False)]
+            op_order = [(0, self.reverse_x),
+                        (1, self.reverse_y),
+                        (2, self.reverse_z)]
 
             for v, p in zip(verts, poly_edge):
                 s_v = ((e[0], e[1], e[2], i) for i, e in enumerate(v))
@@ -241,14 +275,91 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
                     poly_edge_out.append([list(map(lambda n:v_index[n], pe)) for pe in p])
                 if order_output:
                     item_order.append([i[-1] for i in s_v])
+        
+        elif self.mode == 'AXYZ':
+
+            for v, p in zip(verts, poly_edge):
+                matrix = linear_approximation(v).most_similar_plane().get_matrix().inverted()
+
+                s_v = ((e[0], e[1], e[2], i) for i, e in enumerate(v))
+
+                def key(item):
+                    x,y,z = matrix @ Vector(item[:3])
+                    if self.reverse_x:
+                        x = - x
+                    if self.reverse_y:
+                        y = -y
+                    if self.reverse_z:
+                        z = -z
+                    return x,y,z
+
+#                 def by_axis(i):
+#                     def key(item):
+#                         v = matrix @ Vector(item[:3])
+#                         return v[i]
+#                     return key
+                
+                s_v = sorted(s_v, key=key)
+#                 for i in [2,1,0]:
+#                     s_v = sorted(s_v, key=by_axis(i))
+                verts_out.append([v[:3] for v in s_v])
+
+                if poly_output:
+                    v_index = {item[-1]: j for j, item in enumerate(s_v)}
+                    poly_edge_out.append([list(map(lambda n:v_index[n], pe)) for pe in p])
+                if order_output:
+                    item_order.append([i[-1] for i in s_v])
+
+        elif self.mode == 'ADIR':
+            for v, p in zip(verts, poly_edge):
+                direction = linear_approximation(v).most_similar_line().direction
+
+                s_v = ((e[0], e[1], e[2], i) for i, e in enumerate(v))
+
+                def key(item):
+                    return Vector(item[:3]).dot(direction)
+                
+                s_v = sorted(s_v, key=key)
+                if self.reverse:
+                    s_v = reversed(s_v)
+
+                verts_out.append([v[:3] for v in s_v])
+
+                if poly_output:
+                    v_index = {item[-1]: j for j, item in enumerate(s_v)}
+                    poly_edge_out.append([list(map(lambda n:v_index[n], pe)) for pe in p])
+                if order_output:
+                    item_order.append([i[-1] for i in s_v])
+
+        elif self.mode == 'ACYL':
+
+            for v, p in zip(verts, poly_edge):
+                data = linear_approximation(v)
+                matrix = data.most_similar_plane().get_matrix().inverted()
+                center = Vector(data.center)
+
+                s_v = ((e[0], e[1], e[2], i) for i, e in enumerate(v))
+
+                def key(item):
+                    v = matrix @ (Vector(item[:3]) - center)
+                    rho, phi, z = to_cylindrical(v)
+                    return (phi, z, rho)
+
+                s_v = sorted(s_v, key=key)
+                if self.reverse:
+                    s_v = reversed(s_v)
+
+                verts_out.append([v[:3] for v in s_v])
+
+                if poly_output:
+                    v_index = {item[-1]: j for j, item in enumerate(s_v)}
+                    poly_edge_out.append([list(map(lambda n:v_index[n], pe)) for pe in p])
+                if order_output:
+                    item_order.append([i[-1] for i in s_v])
 
         if self.mode == 'DIST':
-            if self.inputs['Base Point'].is_linked:
-                base_points = self.inputs['Base Point'].sv_get()
-                bp_iter = repeat_last(base_points[0])
-            else:
-                bp = [(0, 0, 0)]
-                bp_iter = repeat_last(bp)
+            base_points = self.inputs['Base Point'].sv_get()
+            bp_iter = repeat_last(base_points[0])
 
             for v, p, v_base in zip(verts, poly_edge, bp_iter):
                 s_v = sorted(((v_c, i) for i, v_c in enumerate(v)), key=lambda v: distK(v[0], v_base))

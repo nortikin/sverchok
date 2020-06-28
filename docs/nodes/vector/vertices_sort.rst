@@ -15,19 +15,61 @@ and optional inputs(Vector, matrix and user data)
 Parameters
 ----------
 
-+----------------+---------------+-------------+----------------------------------------------------+
-| Param          | Type          | Default     | Description                                        |
-+================+===============+=============+====================================================+
-| **Vertices**   | Vector        |             | vertices from nodes generators or lists (in, out)  |
-+----------------+---------------+-------------+----------------------------------------------------+
-| **PolyEdge**   | Int           |             | index of polgons or edges     (in, out)            |
-+----------------+---------------+-------------+----------------------------------------------------+
-| **Sortmode**   | XYZ, Dist,    | XYZ         | will sort the index according to different criteria|
-|                | Axis, Connect,|             |                                                    |
-|                | User          |             |                                                    |
-+----------------+---------------+-------------+----------------------------------------------------+
-| **Item order** | Int           |             | output the index sequence                          |
-+----------------+---------------+-------------+----------------------------------------------------+
++----------------+-----------------+-------------+----------------------------------------------------+
+| Param          | Type            | Default     | Description                                        |
++================+=================+=============+====================================================+
+| **Vertices**   | Vector          |             | vertices from nodes generators or lists (in, out)  |
++----------------+-----------------+-------------+----------------------------------------------------+
+| **PolyEdge**   | Int             |             | index of polgons or edges     (in, out)            |
++----------------+-----------------+-------------+----------------------------------------------------+
+| **Sortmode**   | XYZ, Dist,      | XYZ         | will sort the index according to different criteria|
+|                | Axis, Connect,  |             |                                                    |
+|                | Auto XYZ,       |             |                                                    |
+|                | Auto Direction, |             |                                                    |
+|                | Auto Phi / Z,   |             |                                                    |
+|                | User            |             |                                                    |
++----------------+-----------------+-------------+----------------------------------------------------+
+| **Reverse**    | Boolean         | False       | Reverse the sorting order. Available for           |
+|                |                 |             | **Auto Direction** and **Auto Phi / Z** modes.     |
++----------------+-----------------+-------------+----------------------------------------------------+
+| **Reverse X**, | Boolean         | False       | Reverse the sorting order when sorting by X, Y or  |
+| **Reverse Y**, |                 |             | Z, correspondingly. Available for **XYZ** and      |
+| **Reverse Z**  |                 |             | **Auto XYZ** modes only.                           |
++----------------+-----------------+-------------+----------------------------------------------------+
+| **Item order** | Int             |             | output the index sequence                          |
++----------------+-----------------+-------------+----------------------------------------------------+
+| **Mat**        | Matrix          |             | Matrix for the **Axis** mode.                      |
++----------------+-----------------+-------------+----------------------------------------------------+
+| **Base Point** | Vector          |             | Central point for the **Dist** mode.               |
++----------------+-----------------+-------------+----------------------------------------------------+
+
+The sorting modes work as follows:
+
+* **XYZ**. Sort vertices according to X coordinate value, then sort all the
+  result according to Y value, then sort all the result according to Z value.
+* **Dist**. Sort vertices according to distance from a point specified in the
+  **Base Point** input.
+* **Axis**.
+* **Connect**. Sort vertices according to the order in which they are connected by edges.
+* **Auto XYZ**. Automatically detect a plane where all vertices are lying (or a
+  plane most similar to that). Then sort vertices in the reference frame of
+  that plane: first along X (which is some arbitrary direction along the
+  plane), then, if there are some points with the same X - sort them along Y
+  (which is some another direction in the plane, but perpendicular to X), and
+  then if there are still points with same X and Y - sort them along Z (i.e.
+  along the normal of the plane).
+* **Auto Direction**. Automatically detect a straight line along which all
+  points are lying (or a line most similar to that). Then sort all vertices
+  along that line.
+* **Auto Phi / Z**. Automatically detect a plane where all the vertices are
+  lying (or a plane most similar to that); also calculate a central point in
+  that plane (barycenter of all vertices). Then express all vertices in terms
+  of cylindrical coordinates in reference frame of such a plane: Z axis is
+  pointing along plane's normal, Phi is going counterclockwise around plane's
+  normal. Then sort the vertices: first according to Phi value; then, if there
+  are points with the same Phi, sort them according to Z value; and, if there
+  are points with the same Phi and Z, sort them according to Rho value
+  (distance from central normal).
 
 Outputs
 -------
