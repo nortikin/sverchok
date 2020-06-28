@@ -3,8 +3,8 @@
   "framed_nodes": {},
   "groups": {},
   "nodes": {
-    "Random Vector MK2": {
-      "bl_idname": "RandomVectorNodeMK2",
+    "Random Vector": {
+      "bl_idname": "RandomVectorNodeMK3",
       "color": [
         0.0,
         0.5,
@@ -130,7 +130,7 @@
   },
   "update_lists": [
     [
-      "Random Vector MK2",
+      "Random Vector",
       0,
       "Vector Math",
       0
@@ -160,7 +160,7 @@
       1
     ],
     [
-      "Random Vector MK2",
+      "Random Vector",
       0,
       "Viewer text mk3",
       0

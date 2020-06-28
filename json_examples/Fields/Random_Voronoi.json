@@ -157,8 +157,8 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Random Vector MK2": {
-      "bl_idname": "RandomVectorNodeMK2",
+    "Random Vector": {
+      "bl_idname": "RandomVectorNodeMK3",
       "color": [
         0.0,
         0.5,
@@ -254,25 +254,7 @@
   },
   "update_lists": [
     [
-      "A Number",
-      0,
-      "Vector P Field",
-      0
-    ],
-    [
-      "A Number",
-      0,
-      "Vector P Field",
-      1
-    ],
-    [
-      "A Number",
-      0,
-      "Vector P Field",
-      2
-    ],
-    [
-      "Random Vector MK2",
+      "Random Vector",
       0,
       "Voronoi Field",
       0
@@ -312,6 +294,24 @@
       0,
       "Vector Field Math.001",
       1
+    ],
+    [
+      "A Number",
+      0,
+      "Vector P Field",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Vector P Field",
+      1
+    ],
+    [
+      "A Number",
+      0,
+      "Vector P Field",
+      2
     ],
     [
       "Vector Field Math.001",
