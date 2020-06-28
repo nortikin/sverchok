@@ -42,8 +42,8 @@ if FreeCAD is not None:
         """
         bl_idname = 'SvMeshToSolidNode'
         bl_label = 'Mesh to Solid'
-        bl_icon = 'OUTLINER_OB_EMPTY'
-        sv_icon = 'SV_VORONOI'
+        bl_icon = 'MESH_CUBE'
+        sv_icon = 'SV_MESH_TO_SOLID'
 
 
         precision: FloatProperty(
