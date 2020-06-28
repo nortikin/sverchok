@@ -1067,17 +1067,35 @@ class PlaneEquation(object):
         value = a*x + b*y + c*z + d
         return abs(value) < eps
 
+    def second_vector(self):
+        eps = 1e-6
+        if abs(self.c) > eps:
+            v = Vector((1, 0, -self.a/self.c))
+        elif abs(self.a) > eps:
+            v = Vector((-self.b/self.a, 1, 0))
+        elif abs(self.b) > eps:
+            v = Vector((1, -self.a/self.b, 0))
+        else:
+            raise Exception("plane normal is (almost) zero")
+        return v
+
     def two_vectors(self):
         """
         Return two vectors that are parallel two this plane.
         Note: the two vectors returned are orthogonal.
+        Lengths of the returned vector is arbitrary.
 
         output: (Vector, Vector)
         """
-        v1 = self.normal.orthogonal()
+        v1 = self.second_vector()
         v2 = v1.cross(self.normal)
         return v1, v2
 
+    def get_matrix(self):
+        x = self.second_vector().normalized()
+        z = self.normal.normalized()
+        y = z.cross(x)
+        return Matrix([x, y, z]).transposed()
 
     def evaluate(self, u, v):
         """
