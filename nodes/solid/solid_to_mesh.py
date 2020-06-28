@@ -72,7 +72,7 @@ if FreeCAD is not None:
             name="Angle Deviation",
             default=30,
             min=5,
-            precision=4,
+            precision=3,
             update=updateNode)
         relative_surface_deviation: BoolProperty(
             name='Relative Surface Deviation',

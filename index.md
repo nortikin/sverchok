@@ -166,6 +166,7 @@
    SvSolidBooleanNode
    SvMeshToSolidNode
    SvSolidToMeshNode
+   SvSolidEdgesNode
 
 ## Analyzers
     SvBBoxNodeMk2
