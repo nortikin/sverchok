@@ -18,7 +18,6 @@
 
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty
-from mathutils.noise import seed_set, random_unit_vector
 import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
