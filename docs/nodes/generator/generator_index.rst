@@ -16,7 +16,7 @@ Generators
    line_mk4
    ngon
    plane_mk3
-   random_vector_mk2
+   random_vector_mk3
    script1_lite
    sphere
    icosphere
