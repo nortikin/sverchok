@@ -69,7 +69,7 @@ class PlaneTests(SverchokTestCase):
         plane2 = PlaneEquation.from_coordinate_plane('XZ')
         line = plane1.intersect_with_plane(plane2)
         self.assert_sverchok_data_equal(tuple(line.direction.normalized()), (1, 0, 0))
-        self.assert_sverchok_data_equal(tuple(line.point), (1, 0, 0))
+        self.assert_sverchok_data_equal(tuple(line.point), (-1, 0, 0))
 
 class LineTests(SverchokTestCase):
     def test_from_two_points(self):
