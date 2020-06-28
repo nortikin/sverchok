@@ -100,4 +100,4 @@ def register():
 
 
 def unregister():
-    bpy.utils.unregister_class(RandomVectorNodeMK2)
+    bpy.utils.unregister_class(RandomVectorNodeMK3)
