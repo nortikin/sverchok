@@ -52,7 +52,7 @@ menu_structure = [
     ["NODEVIEW_MT_AddCurves", 'OUTLINER_OB_CURVE'],
     ["NODEVIEW_MT_AddSurfaces", 'SURFACE_DATA'],
     ["NODEVIEW_MT_AddFields", 'OUTLINER_OB_FORCE_FIELD'],
-    ["NODEVIEW_MT_AddSolids", 'OUTLINER_OB_FORCE_FIELD'],
+    ["NODEVIEW_MT_AddSolids", 'MESH_CUBE'],
     ["NODEVIEW_MT_AddTransforms", 'ORIENTATION_LOCAL'],
     ["NODEVIEW_MT_AddAnalyzers", 'VIEWZOOM'],
     ["NODEVIEW_MT_AddModifiers", 'MODIFIER'],

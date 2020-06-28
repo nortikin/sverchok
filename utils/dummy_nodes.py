@@ -18,7 +18,7 @@ from bpy.props import StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_oldnodes_parser import get_old_node_bl_idnames
 from sverchok.utils.logging import error, exception
-from sverchok.utils.nodes_mixins.sv_dummy_nodes import SvDummyNode
+
 
 imported_dummys = {}
 

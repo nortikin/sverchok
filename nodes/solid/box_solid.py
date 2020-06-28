@@ -17,8 +17,8 @@ if FreeCAD is not None:
         """
         bl_idname = 'SvBoxSolidNode'
         bl_label = 'Box (Solid)'
-        bl_icon = 'OUTLINER_OB_EMPTY'
-        sv_icon = 'SV_VORONOI'
+        bl_icon = 'META_CUBE'
+
 
 
         box_length: FloatProperty(
