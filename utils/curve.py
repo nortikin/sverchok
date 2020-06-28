@@ -15,7 +15,8 @@ from sverchok.utils.integrate import TrapezoidIntegral
 from sverchok.utils.logging import error, exception
 from sverchok.utils.math import (
         binomial,
-        ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL
+        ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
+        NORMAL_DIR
     )
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
 
@@ -112,15 +113,37 @@ class SvCurve(object):
 
     def derivatives_array(self, n, ts):
         result = []
+        N = len(ts)
+        t_min, t_max = self.get_u_bounds()
         if n >= 1:
             first = self.tangent_array(ts)
             result.append(first)
 
         h = 0.001
         if n >= 2:
-            minus_h = self.evaluate_array(ts-h)
-            points = self.evaluate_array(ts)
-            plus_h = self.evaluate_array(ts+h)
+            low = ts < t_min + h
+            high = ts > t_max - h
+            good = np.logical_and(np.logical_not(low), np.logical_not(high))
+
+            points = np.empty((N, 3))
+            minus_h = np.empty((N, 3))
+            plus_h = np.empty((N, 3))
+
+            if good.any():
+                minus_h[good] = self.evaluate_array(ts[good]-h)
+                points[good] = self.evaluate_array(ts[good])
+                plus_h[good] = self.evaluate_array(ts[good]+h)
+
+            if low.any():
+                minus_h[low] = self.evaluate_array(ts[low])
+                points[low] = self.evaluate_array(ts[low]+h)
+                plus_h[low] = self.evaluate_array(ts[low]+2*h)
+
+            if high.any():
+                minus_h[high] = self.evaluate_array(ts[high]-2*h)
+                points[high] = self.evaluate_array(ts[high]-h)
+                plus_h[high] = self.evaluate_array(ts[high])
+
             second = (plus_h - 2*points + minus_h) / (h * h)
             result.append(second)
 
@@ -403,6 +426,7 @@ class SvNormalTrack(object):
         base_indexes = tknots.searchsorted(ts, side='left')-1
         t1s, t2s = tknots[base_indexes], tknots[base_indexes+1]
         dts = (ts - t1s) / (t2s - t1s)
+        #dts = np.clip(dts, 0.0, 1.0) # Just in case...
         matrix_out = []
         # TODO: ideally this shoulld be vectorized with numpy;
         # but that would require implementation of quaternion
@@ -411,7 +435,12 @@ class SvNormalTrack(object):
             q1, q2 = quats[base_index], quats[base_index+1]
             # spherical linear interpolation.
             # TODO: implement `squad`.
-            q = q1.slerp(q2, dt)
+            if dt < 0:
+                q = q1
+            elif dt > 1.0:
+                q = q2
+            else:
+                q = q1.slerp(q2, dt)
             matrix = np.array(q.to_matrix())
             matrix_out.append(matrix)
         return np.array(matrix_out)
@@ -462,6 +491,37 @@ class MathutilsRotationCalculator(object):
         rot = np.array(rot.to_3x3())
 
         return np.matmul(rot, scale_matrix)
+
+class DifferentialRotationCalculator(object):
+
+    def __init__(self, curve, algorithm, resolution=50):
+        self.curve = curve
+        self.algorithm = algorithm
+        if algorithm == TRACK_NORMAL:
+            self.normal_tracker = SvNormalTrack(curve, resolution)
+        elif algorithm == ZERO:
+            self.curve.pre_calc_torsion_integral(resolution)
+
+    def get_matrices(self, ts):
+        n = len(ts)
+        if self.algorithm == FRENET:
+            frenet, _ , _ = self.curve.frame_array(ts)
+            return frenet
+        elif self.algorithm == ZERO:
+            frenet, _ , _ = self.curve.frame_array(ts)
+            angles = - self.curve.torsion_integral(ts)
+            zeros = np.zeros((n,))
+            ones = np.ones((n,))
+            row1 = np.stack((np.cos(angles), np.sin(angles), zeros)).T # (n, 3)
+            row2 = np.stack((-np.sin(angles), np.cos(angles), zeros)).T # (n, 3)
+            row3 = np.stack((zeros, zeros, ones)).T # (n, 3)
+            rotation_matrices = np.dstack((row1, row2, row3))
+            return frenet @ rotation_matrices
+        elif self.algorithm == TRACK_NORMAL:
+            matrices = self.normal_tracker.evaluate_array(ts)
+            return matrices
+        else:
+            raise Exception("Unsupported algorithm")
 
 class SvScalarFunctionCurve(SvCurve):
     __description__ = "Function"
@@ -624,6 +684,55 @@ class SvFlipCurve(SvCurve):
         for deriv in derivs:
             array.append(sign * deriv)
             sign = -sign
+        return array
+
+class SvReparametrizedCurve(SvCurve):
+    def __init__(self, curve, new_u_min, new_u_max):
+        self.curve = curve
+        self.new_u_min = new_u_min
+        self.new_u_max = new_u_max
+        if hasattr(curve, 'tangent_delta'):
+            self.tangent_delta = curve.tangent_delta
+        else:
+            self.tangent_delta = 0.001
+
+    def get_u_bounds(self):
+        return self.new_u_min, self.new_u_max
+
+    @property
+    def scale(self):
+        u_min, u_max = self.curve.get_u_bounds()
+        return (u_max - u_min) / (self.new_u_max - self.new_u_min)
+
+    def map_u(self, u):
+        u_min, u_max = self.curve.get_u_bounds()
+        return (u_max - u_min) * (u - self.new_u_min) / (self.new_u_max - self.new_u_min) + u_min
+
+    def evaluate(self, t):
+        return self.curve.evaluate(self.map_u(t))
+
+    def evaluate_array(self, ts):
+        return self.curve.evaluate_array(self.map_u(ts))
+
+    def tangent(self, t):
+        return self.scale * self.curve.tangent(self.map_u(t))
+
+    def tangent_array(self, ts):
+        return self.scale * self.curve.tangent_array(self.map_u(ts))
+
+    def second_derivative_array(self, ts):
+        return self.scale**2 * self.curve.second_derivative_array(self.map_u(ts))
+
+    def third_derivative_array(self, ts):
+        return self.scale**3 * self.curve.third_derivative_array(self.map_u(ts))
+
+    def derivatives_array(self, n, ts):
+        derivs = self.curve.derivatives_array(n, ts)
+        k = self.scale
+        array = []
+        for deriv in derivs:
+            array.append(k * deriv)
+            k = k * self.scale
         return array
 
 class SvCurveSegment(SvCurve):
@@ -1101,6 +1210,94 @@ class SvCurveLerpCurve(SvCurve):
         k = self.coefficient
         return (1.0 - k) * c1_points + k * c2_points
 
+class SvOffsetCurve(SvCurve):
+
+    BY_PARAMETER = 'T'
+    BY_LENGTH = 'L'
+
+    def __init__(self, curve, offset_vector,
+                    offset_amount=None,
+                    offset_curve = None, offset_curve_type = BY_PARAMETER,
+                    algorithm=FRENET, resolution=50):
+        self.curve = curve
+        if algorithm == NORMAL_DIR and (offset_amount is None and offset_curve is None):
+            raise Exception("offset_amount or offset_curve is mandatory if algorithm is NORMAL_DIR")
+        self.offset_amount = offset_amount
+        self.offset_vector = offset_vector
+        self.offset_curve = offset_curve
+        self.offset_curve_type = offset_curve_type
+        self.algorithm = algorithm
+        if algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            self.calculator = DifferentialRotationCalculator(curve, algorithm, resolution)
+        if offset_curve_type == SvOffsetCurve.BY_LENGTH:
+            self.len_solver = SvCurveLengthSolver(curve)
+            self.len_solver.prepare('SPL', resolution)
+        self.tangent_delta = 0.001
+
+    def get_u_bounds(self):
+        return self.curve.get_u_bounds()
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def get_matrix(self, tangent):
+        return MathutilsRotationCalculator.get_matrix(tangent, scale=1.0,
+                axis=2,
+                algorithm = self.algorithm,
+                scale_all=False)
+
+    def get_matrices(self, ts):
+        if self.algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            return self.calculator.get_matrices(ts)
+        elif self.algorithm in {HOUSEHOLDER, TRACK, DIFF}:
+            tangents = self.curve.tangent_array(ts)
+            matrices = np.vectorize(lambda t : self.get_matrix(t), signature='(3)->(3,3)')(tangents)
+            return matrices
+        else:
+            raise Exception("Unsupported algorithm")
+
+    def get_offset(self, ts):
+        u_min, u_max = self.curve.get_u_bounds()
+        if self.offset_curve is None:
+            if self.offset_amount is not None:
+                return self.offset_amount
+            else:
+                return np.linalg.norm(self.offset_vector)
+        elif self.offset_curve_type == SvOffsetCurve.BY_PARAMETER:
+            off_u_min, off_u_max = self.offset_curve.get_u_bounds()
+            ts = (off_u_max - off_u_min) * (ts - u_min) / (u_max - u_min) + off_u_min
+            ps = self.offset_curve.evaluate_array(ts)
+            return ps[:,1][np.newaxis].T
+        else:
+            off_u_max = self.len_solver.get_total_length()
+            ts = off_u_max * (ts - u_min) / (u_max - u_min)
+            ts = self.len_solver.solve(ts)
+            ps = self.offset_curve.evaluate_array(ts)
+            return ps[:,1][np.newaxis].T
+
+    def evaluate_array(self, ts):
+        n = len(ts)
+        t_min, t_max = self.curve.get_u_bounds()
+        extrusion_start = self.curve.evaluate(t_min)
+        extrusion_points = self.curve.evaluate_array(ts)
+        extrusion_vectors = extrusion_points - extrusion_start
+        offset_vector = self.offset_vector / np.linalg.norm(self.offset_vector)
+        if self.algorithm == NORMAL_DIR:
+            offset_vectors = np.tile(offset_vector[np.newaxis].T, n).T
+            tangents = self.curve.tangent_array(ts)
+            offset_vectors = np.cross(tangents, offset_vectors)
+            offset_norm = np.linalg.norm(offset_vectors, axis=1, keepdims=True)
+            offset_amounts = self.get_offset(ts)
+            offset_vectors = offset_amounts * offset_vectors / offset_norm
+        else:
+            offset_vectors = np.tile(offset_vector[np.newaxis].T, n)
+            matrices = self.get_matrices(ts)
+            offset_amounts = self.get_offset(ts)
+            offset_vectors = offset_amounts * (matrices @ offset_vectors)[:,:,0]
+        result = extrusion_vectors + offset_vectors
+        result = result + extrusion_start
+        return result
+
 class SvCurveOnSurface(SvCurve):
     def __init__(self, curve, surface, axis=0):
         self.curve = curve
@@ -1132,6 +1329,117 @@ class SvCurveOnSurface(SvCurve):
         else:
             raise Exception("Unsupported orientation axis")
         return self.surface.evaluate_array(us, vs)
+
+class SvCurveOffsetOnSurface(SvCurve):
+
+    BY_PARAMETER = 'T'
+    BY_LENGTH = 'L'
+
+    def __init__(self, curve, surface, offset = None, offset_curve = None,
+                    offset_curve_type = BY_PARAMETER, len_resolution = 50,
+                    uv_space=False, axis=0):
+        self.curve = curve
+        self.surface = surface
+        self.offset = offset
+        self.offset_curve = offset_curve
+        self.offset_curve_type = offset_curve_type
+        self.uv_space = uv_space
+        self.z_axis = axis
+        self.tangent_delta = 0.001
+        if offset_curve_type == SvCurveOffsetOnSurface.BY_LENGTH:
+            self.len_solver = SvCurveLengthSolver(curve)
+            self.len_solver.prepare('SPL', len_resolution)
+
+    def get_u_bounds(self):
+        return self.curve.get_u_bounds()
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def get_offset(self, ts):
+        u_min, u_max = self.curve.get_u_bounds()
+        if self.offset_curve_type == SvCurveOffsetOnSurface.BY_PARAMETER:
+            off_u_min, off_u_max = self.offset_curve.get_u_bounds()
+            ts = (off_u_max - off_u_min) * (ts - u_min) / (u_max - u_min) + off_u_min
+            ps = self.offset_curve.evaluate_array(ts)
+            return ps[:,1]
+        else:
+            off_u_max = self.len_solver.get_total_length()
+            ts = off_u_max * (ts - u_min) / (u_max - u_min)
+            ts = self.len_solver.solve(ts)
+            ps = self.offset_curve.evaluate_array(ts)
+            return ps[:,1]
+
+    def evaluate_array(self, ts):
+        if self.z_axis == 2:
+            U, V = 0, 1
+        elif self.z_axis == 1:
+            U, V = 0, 2
+        else:
+            U, V = 1, 2
+
+        uv_points = self.curve.evaluate_array(ts)
+        us, vs = uv_points[:,U], uv_points[:,V]
+        # Tangents of the curve in surface's UV space
+        uv_tangents = self.curve.tangent_array(ts) # (n, 3), with Z == 0 (Z is ignored anyway)
+        tangents_u, tangents_v = uv_tangents[:,U], uv_tangents[:,V] # (n,), (n,)
+        derivs = self.surface.derivatives_data_array(us, vs)
+        su, sv = derivs.du, derivs.dv
+
+        # Take surface's normals as N = [su, sv];
+        # Take curve's tangent in 3D space as T = (tangents_u * su + tangents_v * sv);
+        # Take a vector in surface's tangent plane, which is perpendicular to curve's
+        # tangent, as Nc = [N, T] (call it "curve's normal on a surface");
+        # Calculate Nc's decomposition in su, sv vectors as Ncu = (Nc, su) and Ncv = (Nc, sv);
+        # Interpret Ncu and Ncv as coordinates of Nc in surface's UV space.
+
+        # If you write down all above in formulas, you will have
+        #
+        # Nc = (Tu (Su, Sv) + Tv Sv^2) Su - (Tu Su^2 + Tv (Su, Sv)) Sv
+
+        # We could've calculate the offset as (Curve on a surface) + (offset*Nc),
+        # but there is no guarantee that these points will lie on the surface again
+        # (especially with not-so-small values of offset).
+        # So instead we calculate Curve + offset*(Ncu; Ncv) in UV space, and then
+        # map all that into 3D space.
+
+        su2 = (su*su).sum(axis=1) # (n,)
+        sv2 = (sv*sv).sum(axis=1) # (n,)
+        suv = (su*sv).sum(axis=1) # (n,)
+
+        su_norm, sv_norm = derivs.tangent_lens()
+        su_norm, sv_norm = su_norm.flatten(), sv_norm.flatten()
+
+        delta_u =   (tangents_u*suv + tangents_v*sv2) # (n,)
+        delta_v = - (tangents_u*su2 + tangents_v*suv) # (n,)
+
+        delta_s = delta_u[np.newaxis].T * su + delta_v[np.newaxis].T * sv
+        delta_s = np.linalg.norm(delta_s, axis=1)
+
+        if self.offset_curve is None:
+            offset = self.offset
+        else:
+            offset = self.get_offset(ts)
+
+        res_us = us + delta_u * offset / delta_s
+        res_vs = vs + delta_v * offset / delta_s
+
+        if self.uv_space:
+            zs = np.zeros_like(us)
+            if self.z_axis == 2:
+                result = np.stack((res_us, res_vs, zs)).T
+            elif self.z_axis == 1:
+                result = np.stack((res_us, zs, res_vs)).T
+            else:
+                result = np.stack((zs, res_us, res_vs)).T
+            return result
+        else:
+            result = self.surface.evaluate_array(res_us, res_vs)
+            # Just for testing
+            # on_curve = self.surface.evaluate_array(us, vs)
+            # dvs = result - on_curve
+            # print(np.linalg.norm(dvs, axis=1))
+            return result
 
 class SvIsoUvCurve(SvCurve):
     def __init__(self, surface, fixed_axis, value, flip=False):

@@ -17,7 +17,10 @@ from sverchok.utils.math import (
         ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL
     )
 from sverchok.utils.geom import LineEquation, rotate_vector_around_vector, autorotate_householder, autorotate_track, autorotate_diff
-from sverchok.utils.curve import SvFlipCurve, SvNormalTrack, SvCircle, MathutilsRotationCalculator
+from sverchok.utils.curve import (
+        SvFlipCurve, SvNormalTrack, SvCircle,
+        MathutilsRotationCalculator, DifferentialRotationCalculator
+    )
 
 def rotate_vector_around_vector_np(v, k, theta):
     """
@@ -52,6 +55,7 @@ class SurfaceCurvatureData(object):
     def __init__(self):
         self.principal_value_1 = self.principal_value_2 = None
         self.principal_direction_1 = self.principal_direction_2 = None
+        self.principal_direction_1_uv = self.principal_direction_2_uv = None
         self.mean = self.gauss = None
         self.matrix = None
 
@@ -193,19 +197,30 @@ class SurfaceCurvatureCalculator(object):
         dir_2 = dir_2 / np.linalg.norm(dir_2, axis=1, keepdims=True)
 
         if self.order:
-            c1mask = c1mask[np.newaxis].T
-            c2mask = c2mask[np.newaxis].T
-            dir_1_r = np.where(c1mask, dir_1, -dir_2)
-            dir_2_r = np.where(c2mask, dir_1, dir_2)
+            c1maskT = c1mask[np.newaxis].T
+            c2maskT = c2mask[np.newaxis].T
+            dir_1_r = np.where(c1maskT, dir_1, -dir_2)
+            dir_2_r = np.where(c2maskT, dir_1, dir_2)
         else:
             dir_1_r = dir_1
             dir_2_r = dir_2
         #r = (np.cross(dir_1_r, dir_2_r) * self.normals).sum(axis=1)
         #print(r)
 
-        return c1_r, c2_r, dir_1_r, dir_2_r
+        dir1_uv = eigvecs[:,:,0]
+        dir2_uv = eigvecs[:,:,1]
+        if self.order:
+            c1maskT = c1mask[np.newaxis].T
+            c2maskT = c2mask[np.newaxis].T
+            dir1_uv_r = np.where(c1maskT, dir1_uv, -dir2_uv)
+            dir2_uv_r = np.where(c2maskT, dir1_uv, dir2_uv)
+        else:
+            dir1_uv_r = dir1_uv
+            dir2_uv_r = dir2_uv
+            
+        return c1_r, c2_r, dir1_uv_r, dir2_uv_r, dir_1_r, dir_2_r
 
-    def calc(self, need_values=True, need_directions=True, need_gauss=True, need_mean=True, need_matrix = True):
+    def calc(self, need_values=True, need_directions=True, need_uv_directions = False, need_gauss=True, need_mean=True, need_matrix = True):
         """
         Calculate curvature information.
         Return value: SurfaceCurvatureData instance.
@@ -216,12 +231,16 @@ class SurfaceCurvatureCalculator(object):
         data = SurfaceCurvatureData()
         if need_matrix:
             need_directions = True
+        if need_uv_directions:
+            need_directions = True
         if need_directions:
             # If we need principal curvature directions, then the method
             # being used will calculate us curvature values for free.
-            c1, c2, dir1, dir2 = self.values_and_directions()
+            c1, c2, dir1_uv, dir2_uv, dir1, dir2 = self.values_and_directions()
             data.principal_value_1, data.principal_value_2 = c1, c2
             data.principal_direction_1, data.principal_direction_2 = dir1, dir2
+            data.principal_direction_1_uv = dir1_uv
+            data.principal_direction_2_uv = dir2_uv
             if need_gauss:
                 data.gauss = c1 * c2
             if need_mean:
@@ -277,7 +296,7 @@ class SurfaceDerivativesData(object):
             self._unit_normals = normals / norm
         return self._unit_normals
 
-    def tangent_lens(self):
+    def tangent_lens(self, keepdims=True):
         if self._du_len is None:
             self._du_len = np.linalg.norm(self.du, axis=1, keepdims=True)
             self._dv_len = np.linalg.norm(self.dv, axis=1, keepdims=True)
@@ -561,6 +580,75 @@ class SvSwapSurface(SvSurface):
 
     def normal_array(self, us, vs):
         return self.surface.normal_array(vs, us)
+
+class SvReparametrizedSurface(SvSurface):
+    def __init__(self, surface, new_u_min, new_u_max, new_v_min, new_v_max):
+        self.surface = surface
+        self.new_u_min = new_u_min
+        self.new_u_max = new_u_max
+        self.new_v_min = new_v_min
+        self.new_v_max = new_v_max
+        if hasattr(surface, "normal_delta"):
+            self.normal_delta = surface.normal_delta
+        else:
+            self.normal_delta = 0.001
+
+    def get_u_min(self):
+        return self.new_u_min
+
+    def get_v_min(self):
+        return self.new_v_min
+
+    def get_u_max(self):
+        return self.new_u_max
+
+    def get_v_max(self):
+        return self.new_v_max
+
+    def map_uv(self, u, v):
+        new_u_min, new_u_max = self.new_u_min, self.new_u_max
+        new_v_min, new_v_max = self.new_v_min, self.new_v_max
+
+        u_min, u_max = self.surface.get_u_min(), self.surface.get_u_max()
+        v_min, v_max = self.surface.get_v_min(), self.surface.get_v_max()
+
+        u = (u_max - u_min) * (u - new_u_min) / (new_u_max - new_u_min) + u_min
+        v = (v_max - v_min) * (v - new_v_min) / (new_v_max - new_v_min) + v_min
+
+        return u, v
+
+    def scale_u(self):
+        new_u_min, new_u_max = self.new_u_min, self.new_u_max
+        u_min, u_max = self.surface.get_u_min(), self.surface.get_u_max()
+        return (u_max - u_min) / (new_u_max - new_u_min)
+
+    def scale_v(self):
+        new_v_min, new_v_max = self.new_v_min, self.new_v_max
+        v_min, v_max = self.surface.get_v_min(), self.surface.get_v_max()
+        return (v_max - v_min) / (new_v_max - new_v_min)
+
+    def evaluate(self, u, v):
+        u, v = self.map_uv(u, v)
+        return self.surface.evaluate(u, v)
+
+    def evaluate_array(self, us, vs):
+        us, vs = self.map_uv(us, vs)
+        return self.surface.evaluate_array(us, vs)
+
+    def normal(self, u, v):
+        u, v = self.map_uv(u, v)
+        return self.surface.normal(u, v)
+
+    def normal_array(self, us, vs):
+        us, vs = self.map_uv(us, vs)
+        return self.surface.normal_array(us, vs)
+
+    def derivatives_data_array(self, us, vs):
+        us, vs = self.map_uv(us, vs)
+        data = self.surface.derivatives_data_array(us, vs)
+        data.du *= self.scale_u()
+        data.dv *= self.scale_v()
+        return data
 
 class SvPlane(SvSurface):
     __description__ = "Plane"
@@ -1571,10 +1659,8 @@ class SvConstPipeSurface(SvSurface):
         self.algorithm = algorithm
         self.normal_delta = 0.001
         self.u_bounds = self.circle.get_u_bounds()
-        if algorithm == TRACK_NORMAL:
-            self.normal_tracker = SvNormalTrack(curve, resolution)
-        elif algorithm == ZERO:
-            self.curve.pre_calc_torsion_integral(resolution)
+        if algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            self.calculator = DifferentialRotationCalculator(curve, algorithm, resolution)
 
     def get_u_min(self):
         return self.u_bounds[0]
@@ -1598,23 +1684,8 @@ class SvConstPipeSurface(SvSurface):
                 scale_all=False)
 
     def get_matrices(self, ts):
-        n = len(ts)
-        if self.algorithm == FRENET:
-            frenet, _ , _ = self.curve.frame_array(ts)
-            return frenet
-        elif self.algorithm == ZERO:
-            frenet, _ , _ = self.curve.frame_array(ts)
-            angles = - self.curve.torsion_integral(ts)
-            zeros = np.zeros((n,))
-            ones = np.ones((n,))
-            row1 = np.stack((np.cos(angles), np.sin(angles), zeros)).T # (n, 3)
-            row2 = np.stack((-np.sin(angles), np.cos(angles), zeros)).T # (n, 3)
-            row3 = np.stack((zeros, zeros, ones)).T # (n, 3)
-            rotation_matrices = np.dstack((row1, row2, row3))
-            return frenet @ rotation_matrices
-        elif self.algorithm == TRACK_NORMAL:
-            matrices = self.normal_tracker.evaluate_array(ts)
-            return matrices
+        if self.algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            return self.calculator.get_matrices(ts)
         elif self.algorithm in {HOUSEHOLDER, TRACK, DIFF}:
             tangents = self.curve.tangent_array(ts)
             matrices = np.vectorize(lambda t : self.get_matrix(t), signature='(3)->(3,3)')(tangents)
@@ -1742,6 +1813,12 @@ class SvCoonsSurface(SvSurface):
         self.linear2 = SvCurveLerpSurface(curve2, SvFlipCurve(curve4))
         self.c1_t_min, self.c1_t_max = curve1.get_u_bounds()
         self.c3_t_min, self.c3_t_max = curve3.get_u_bounds()
+
+        self.corner1 = self.curve1.evaluate(self.c1_t_min)
+        self.corner2 = self.curve1.evaluate(self.c1_t_max)
+        self.corner3 = self.curve3.evaluate(self.c3_t_max)
+        self.corner4 = self.curve3.evaluate(self.c3_t_min)
+
         self.normal_delta = 0.001
     
     def get_u_min(self):
@@ -1757,10 +1834,7 @@ class SvCoonsSurface(SvSurface):
         return 1
 
     def _calc_b(self, u, v, is_array):
-        corner1 = self.curve1.evaluate(self.c1_t_min)
-        corner2 = self.curve1.evaluate(self.c1_t_max)
-        corner3 = self.curve3.evaluate(self.c3_t_max)
-        corner4 = self.curve3.evaluate(self.c3_t_min)
+        corner1, corner2, corner3, corner4 = self.corner1, self.corner2, self.corner3, self.corner4
         if is_array:
             u = u[np.newaxis].T
             v = v[np.newaxis].T

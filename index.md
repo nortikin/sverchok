@@ -71,6 +71,8 @@
     ---
     SvExApplyFieldToCurveNode
     SvExCastCurveNode
+    SvOffsetCurveMk2Node
+    SvCurveOffsetOnSurfaceNode
     SvExIsoUvCurveNode
     SvExCurveOnSurfaceNode
     ---
@@ -78,6 +80,7 @@
     SvExConcatCurvesNode
     SvExBlendCurvesNode
     SvExFlipCurveNode
+    SvReparametrizeCurveNode
     SvExSurfaceBoundaryNode
     ---
     SvExCurveEndpointsNode
@@ -116,6 +119,7 @@
     SvExSurfaceSubdomainNode
     SvFlipSurfaceNode
     SvSwapSurfaceNode
+    SvReparametrizeSurfaceNode
     SvSurfaceNormalsNode
     SvSurfaceGaussCurvatureNode
     SvSurfaceCurvaturesNode
@@ -478,16 +482,19 @@
     SvObjectsNodeMK3
     SvObjInLite
     SvCurveInputNode
+    SvFCurveInNodeMK1
+    SvCollectionPicker
+    ---
+    SvSelectionGrabberLite
     SvObjEdit
+    ---
     SvFrameInfoNodeMK2
-    SvLampOutNode
+    SvTimerNode
+    ---
     SvInstancerNode
     SvInstancerNodeMK2
     SvDupliInstancesMK4
-    SvFCurveInNodeMK1
-    SvCollectionPicker
-    SvSelectionGrabberLite
-    SvTimerNode
+    SvLampOutNode
 
 ## Objects
     SvVertexGroupNodeMK2
@@ -504,6 +511,7 @@
 
 ## Network
     UdpClientNode
+    SvFilePathNode
 
 ## Beta Nodes
     SvFormulaShapeNode

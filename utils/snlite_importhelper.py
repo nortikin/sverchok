@@ -34,7 +34,8 @@ sock_dict = {
     'C': 'SvCurveSocket',
     'S': 'SvSurfaceSocket',
     'SF': 'SvScalarFieldSocket',
-    'VF': 'SvVectorFieldSocket'
+    'VF': 'SvVectorFieldSocket',
+    'FP': 'SvFilePathSocket',
 }
 
 
@@ -66,7 +67,7 @@ def parse_socket_line(line):
             return socket_type, socket_name, default, nested
 
 def parse_ui_line(L):
-    """ 
+    """
     :    the bl_idname is needed only if it isn't ShaderNodeRGBCurve
     :    expects the following format, comma separated
 
@@ -91,7 +92,7 @@ def parse_sockets(node):
         node.inject_params = False
 
     snlite_info = {
-        'inputs': [], 'outputs': [], 
+        'inputs': [], 'outputs': [],
         'snlite_ui': [], 'includes': {},
         'custom_enum': [], 'callbacks': {}
     }
@@ -152,7 +153,7 @@ def get_rgb_curve(material_name, node_name):
     for curve in node.mapping.curves:
         points = curve.points
         out_list.append([(p.handle_type, p.location[:]) for p in points])
-    
+
     x = 'ShaderNodeRGBCurve'
     return dict(mat_name=material_name, node_name=node_name, bl_idname=x, data=out_list)
 

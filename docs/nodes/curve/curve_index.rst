@@ -20,6 +20,8 @@ Curves
    kinky_curve
    curve_formula
    apply_field_to_curve
+   offset_mk2
+   offset_on_surface
    concat_curves
    blend_curves
    extend_curve
@@ -38,6 +40,7 @@ Curves
    cast_curve
    curve_range
    flip_curve
+   reparametrize
    curve_segment
    split_curve
    eval_curve

@@ -108,6 +108,10 @@ macros = {
         'display_name': "grease pencil setup",
         'file': 'macro',
         'ident': ['verbose_macro_handler', 'gp + 2']},
+    "> url": {
+        'display_name': "download archive from url",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'url']},
     "> all numpy True": {
         'display_name': "existing nodes to numpy",
         'file': 'macro',
@@ -206,7 +210,6 @@ class DefaultMacros():
             math_macros(context, operator, term, nodes, links)
             return {'FINISHED'}
             
-
         elif "switch" in term:
             switch_macros(context, operator, term, nodes, links)
             return {'FINISHED'}
@@ -245,3 +248,9 @@ class DefaultMacros():
 
         elif term == 'gp + 2':
             gp_macro_two(context, operator, term, nodes, links)
+
+        elif term == 'url':
+            bpy.ops.node.sv_load_archived_blend_url()
+
+
+# EOF

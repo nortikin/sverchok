@@ -1032,6 +1032,19 @@ class PlaneEquation(object):
         else:
             raise Exception("Unknown coordinate plane name")
 
+    @classmethod
+    def from_matrix(cls, matrix, normal_axis='Z'):
+        if normal_axis == 'X':
+            normal = Vector((1,0,0))
+        elif normal_axis == 'Y':
+            normal = Vector((0,1,0))
+        elif normal_axis == 'Z':
+            normal = Vector((0,0,1))
+        else:
+            raise Exception(f"Unsupported normal_axis = {normal_axis}; supported are: X,Y,Z")
+        point = matrix.translation
+        return PlaneEquation.from_normal_and_point(normal, point)
+
     def normalized(self):
         """
         Return equation, which defines exactly the same plane, but with coefficients adjusted so that

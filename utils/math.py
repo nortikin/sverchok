@@ -54,6 +54,7 @@ HOUSEHOLDER = 'householder'
 TRACK = 'track'
 DIFF = 'diff'
 TRACK_NORMAL = 'track_normal'
+NORMAL_DIR = 'normal_direction'
 
 def smooth(x):
     return 3*x*x - 2*x*x*x
