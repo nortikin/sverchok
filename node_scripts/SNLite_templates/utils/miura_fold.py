@@ -21,7 +21,6 @@ alpha : angle between DOI (I: point under D)
 beta  : angle between AOI
 """
 
-from mathutils import Vector
 import math
 
 if x_dim < 1: x_dim = 1
@@ -60,18 +59,18 @@ for i in range(y_dim):
         y_offset = -2*math.sin(beta)*i
         if j == 0:
             if i == 0:
-                v1.append(Vector((v_base[0][0], v_base[0][1], v_base[0][2])))
-            v2.append(Vector((v_base[3][0], y_offset + v_base[3][1], v_base[3][2])))
-            v3.append(Vector((v_base[6][0], y_offset + v_base[6][1], v_base[6][2])))
+                v1.append((v_base[0][0], v_base[0][1], v_base[0][2]))
+            v2.append((v_base[3][0], y_offset + v_base[3][1], v_base[3][2]))
+            v3.append((v_base[6][0], y_offset + v_base[6][1], v_base[6][2]))
         if i == 0:
-            v1.append(Vector((x_offset + v_base[1][0], y_offset + v_base[1][1], v_base[1][2])))
-            v1.append(Vector((x_offset + v_base[2][0], y_offset + v_base[2][1], v_base[2][2])))
+            v1.append((x_offset + v_base[1][0], y_offset + v_base[1][1], v_base[1][2]))
+            v1.append((x_offset + v_base[2][0], y_offset + v_base[2][1], v_base[2][2]))
             
-        v2.append(Vector((x_offset + v_base[4][0], y_offset + v_base[4][1], v_base[4][2])))
-        v2.append(Vector((x_offset + v_base[5][0], y_offset + v_base[5][1], v_base[5][2])))
+        v2.append((x_offset + v_base[4][0], y_offset + v_base[4][1], v_base[4][2]))
+        v2.append((x_offset + v_base[5][0], y_offset + v_base[5][1], v_base[5][2]))
             
-        v3.append(Vector((x_offset + v_base[7][0], y_offset + v_base[7][1], v_base[7][2])))
-        v3.append(Vector((x_offset + v_base[8][0], y_offset + v_base[8][1], v_base[8][2])))
+        v3.append((x_offset + v_base[7][0], y_offset + v_base[7][1], v_base[7][2]))
+        v3.append((x_offset + v_base[8][0], y_offset + v_base[8][1], v_base[8][2]))
 
     if i == 0:
         v.extend(v1)
