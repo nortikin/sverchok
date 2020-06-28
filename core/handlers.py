@@ -11,6 +11,7 @@ from sverchok.core.events import CurrentEvents, BlenderEventsTypes
 from sverchok.ui import color_def, bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
 from sverchok.utils.logging import debug
+from sverchok.utils import dummy_nodes
 
 _state = {'frame': None}
 
@@ -193,6 +194,10 @@ def sv_post_load(scene):
         ng.sv_process = False
         try:
             old_nodes.load_old(ng)
+        except:
+            traceback.print_exc()
+        try:
+            dummy_nodes.load_dummy(ng)
         except:
             traceback.print_exc()
         ng.freeze(True)

@@ -3,7 +3,7 @@ import os
 import bpy
 from bpy.types import AddonPreferences
 from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty, IntProperty, FloatProperty, StringProperty
-
+from sverchok.dependencies import sv_dependencies
 from sverchok import data_structure
 from sverchok.core import handlers
 from sverchok.core import update_system
@@ -46,6 +46,26 @@ def get_dpi():
     retinaFactor = getattr(systemPreferences, "pixel_size", 1)
     return systemPreferences.dpi * retinaFactor
 
+class SvSetFreeCadPath(bpy.types.Operator):
+    """Save FreeCAD path in system"""
+    bl_idname = "node.sv_set_freecad_path"
+    bl_label = "Set FreeCAD path"
+    bl_options = {'REGISTER', 'INTERNAL'}
+    FreeCAD_folder: bpy.props.StringProperty(name="FreeCAD python 3.7 folder")
+    def execute(self, context):
+        import sys
+        import os
+        site_packages = ''
+        for p in sys.path:
+            if 'site-packages' in p:
+                site_packages = p
+                break
+
+        file_path= open(os.path.join(site_packages, "freecad_path.pth"), "w+")
+        file_path.write(self.FreeCAD_folder)
+        file_path.close()
+        self.report({'INFO'}, "FreeCad path saved successfully. Please restart Blender to see effect.")
+        return {'FINISHED'}
 
 class SverchokPreferences(AddonPreferences):
 
@@ -65,7 +85,7 @@ class SverchokPreferences(AddonPreferences):
         if self.auto_apply_theme:
             color_def.apply_theme()
 
-    tab_modes = data_structure.enum_item_4(["General", "Node Defaults", "Theme"])
+    tab_modes = data_structure.enum_item_4(["General", "Node Defaults", "Extra Nodes", "Theme"])
 
     selected_tab: bpy.props.EnumProperty(
         items=tab_modes,
@@ -306,6 +326,160 @@ class SverchokPreferences(AddonPreferences):
     dload_archive_name: StringProperty(name="archive name", default="master") # default = "master"
     dload_archive_path: StringProperty(name="archive path", default="https://github.com/nortikin/sverchok/archive/")
 
+    FreeCAD_folder: StringProperty(name="FreeCAD python 3.7 folder")
+
+    def general_tab(self, layout):
+        col = layout.row().column()
+        col_split = col.split(factor=0.5)
+        col1 = col_split.column()
+        col1.label(text="UI:")
+        col1.prop(self, "show_icons")
+
+        toolbar_box = col1.box()
+        toolbar_box.label(text="Node toolbars")
+        toolbar_box.prop(self, "node_panels")
+        if self.node_panels != "X":
+            toolbar_box.prop(self, "node_panels_icons_only")
+            if self.node_panels_icons_only:
+                toolbar_box.prop(self, "node_panels_columns")
+
+        col1.prop(self, "over_sized_buttons")
+        col1.prop(self, "enable_live_objin", text='Enable Live Object-In')
+        col1.prop(self, "external_editor", text="Ext Editor")
+        col1.prop(self, "real_sverchok_path", text="Src Directory")
+
+        box = col1.box()
+        box.label(text="Export to Gist")
+        box.prop(self, "github_token")
+        box.label(text="To export node trees to gists, you have to create a GitHub API access token.")
+        box.label(text="For more information, visit " + TOKEN_HELP_URL)
+        box.operator("node.sv_github_api_token_help", text="Visit documentation page")
+
+        col2 = col_split.split().column()
+        col2.label(text="Frame change handler:")
+        col2.row().prop(self, "frame_change_mode", expand=True)
+        col2.separator()
+
+        col2box = col2.box()
+        col2box.label(text="Debug:")
+        col2box.prop(self, "profile_mode")
+        col2box.prop(self, "show_debug")
+        col2box.prop(self, "heat_map")
+        col2box.prop(self, "developer_mode")
+
+        log_box = col2.box()
+        log_box.label(text="Logging:")
+        log_box.prop(self, "log_level")
+
+        if self.log_level == "DEBUG":
+            log_box.prop(self, "log_update_events")
+
+        buff_row = log_box.row()
+        buff_row.prop(self, "log_to_buffer")
+        if self.log_to_buffer:
+            buff_row.prop(self, "log_buffer_name")
+            log_box.prop(self, "log_to_buffer_clean")
+
+        file_row = log_box.row()
+        file_row.prop(self, "log_to_file")
+        if self.log_to_file:
+            file_row.prop(self, "log_file_name")
+
+        log_box.prop(self, "log_to_console")
+
+    def node_defaults_tab(self, layout):
+        row = layout.row()
+        col = row.column(align=True)
+        row_sub1 = col.row().split(factor=0.5)
+        box_sub1 = row_sub1.box()
+        box_sub1_col = box_sub1.column(align=True)
+
+        box_sub1_col.label(text='Render Scale & Location')
+        # box_sub1_col.prop(self, 'render_location_xy_multiplier', text='xy multiplier')
+        # box_sub1_col.prop(self, 'render_scale', text='scale')
+        box_sub1_col.label(text=f'xy multiplier: {self.render_location_xy_multiplier}')
+        box_sub1_col.label(text=f'render_scale : {self.render_scale}')
+
+        box_sub1_col.label(text='Stethoscope')
+        box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')
+
+        box_sub1_col.label(text='Index Viewer')
+        box_sub1_col.prop(self, 'index_viewer_scale', text='scale')
+
+        box_sub2 = box_sub1.box()
+        box_sub2_col = box_sub2.column(align=True)
+        box_sub2_col.label(text='Angle Units')
+        box_sub2_col.prop(self, 'auto_update_angle_values', text="Auto Update Angle Values")
+
+        col3 = row_sub1.split().column()
+        col3.label(text='Location of custom defaults')
+        col3.prop(self, 'defaults_location', text='')
+
+    def theme_tab(self, layout):
+        row = layout.row()
+        col = row.column(align=True)
+        split = col.row().split(factor=0.66)
+        split2 = col.row().split(factor=0.66)
+        left_split = split.row()
+        right_split = split.row()
+
+        split_viz_colors = left_split.column().split(factor=0.5, align=True)
+
+        if True:
+            col1 = split_viz_colors.column()
+            for name in ['color_viz', 'color_tex', 'color_sce']:
+                r = col1.row()
+                r.prop(self, name)
+
+            col2 = split_viz_colors.column()
+            for name in ['color_lay', 'color_gen']:
+                r = col2.row()
+                r.prop(self, name)
+
+        split_extra_colors = split2.column().split()
+        col_x1 = split_extra_colors.column()
+        col_x1.label(text="Error colors: ( error / no data )")
+        row_x1 = col_x1.row()
+        row_x1.prop(self, "exception_color", text='')
+        row_x1.prop(self, "no_data_color", text='')
+
+        col_x2 = split_extra_colors.split().column()
+        col_x2.label(text="Heat map colors: ( hot / cold )")
+        row_x2 = col_x2.row()
+        row_x2.active = self.heat_map
+        row_x2.prop(self, "heat_map_hot", text='')
+        row_x2.prop(self, "heat_map_cold", text='')
+
+        col3 = right_split.column()
+        col3.label(text='Theme:')
+        col3.prop(self, 'sv_theme', text='')
+        col3.separator()
+        col3.prop(self, 'auto_apply_theme', text="Auto apply theme changes")
+        col3.prop(self, 'apply_theme_on_open', text="Apply theme when opening file")
+        col3.operator('node.sverchok_apply_theme', text="Apply theme to layouts")
+
+    def extra_nodes_tab(self, layout):
+        def get_icon(package):
+            if package is None:
+                return 'CANCEL'
+            else:
+                return 'CHECKMARK'
+
+        def draw_freecad_ops():
+            dependency = sv_dependencies['freecad']
+            col = box.column(align=True)
+            col.label(text=dependency.message, icon=get_icon(dependency.module))
+            row = col.row(align=True)
+            row.operator('wm.url_open', text="Visit package website").url = dependency.url
+            if dependency.module is None:
+                tx = "Set path"
+            else:
+                tx = "Reset path"
+            row.prop(self, 'FreeCAD_folder')
+            row.operator('node.sv_set_freecad_path', text=tx).FreeCAD_folder = self.FreeCAD_folder
+            return row
+        box = layout.box()
+        draw_freecad_ops()
 
     def draw(self, context):
 
@@ -313,139 +487,17 @@ class SverchokPreferences(AddonPreferences):
         layout.row().prop(self, 'selected_tab', expand=True)
 
         if self.selected_tab == "General":
+            self.general_tab(layout)
 
-            col = layout.row().column()
-            col_split = col.split(factor=0.5)
-            col1 = col_split.column()
-            col1.label(text="UI:")
-            col1.prop(self, "show_icons")
-
-            toolbar_box = col1.box()
-            toolbar_box.label(text="Node toolbars")
-            toolbar_box.prop(self, "node_panels")
-            if self.node_panels != "X":
-                toolbar_box.prop(self, "node_panels_icons_only")
-                if self.node_panels_icons_only:
-                    toolbar_box.prop(self, "node_panels_columns")
-
-            col1.prop(self, "over_sized_buttons")
-            col1.prop(self, "enable_live_objin", text='Enable Live Object-In')
-            col1.prop(self, "external_editor", text="Ext Editor")
-            col1.prop(self, "real_sverchok_path", text="Src Directory")
-
-            box = col1.box()
-            box.label(text="Export to Gist")
-            box.prop(self, "github_token")
-            box.label(text="To export node trees to gists, you have to create a GitHub API access token.")
-            box.label(text="For more information, visit " + TOKEN_HELP_URL)
-            box.operator("node.sv_github_api_token_help", text="Visit documentation page")
-
-            col2 = col_split.split().column()
-            col2.label(text="Frame change handler:")
-            col2.row().prop(self, "frame_change_mode", expand=True)
-            col2.separator()
-
-            col2box = col2.box()
-            col2box.label(text="Debug:")
-            col2box.prop(self, "profile_mode")
-            col2box.prop(self, "show_debug")
-            col2box.prop(self, "heat_map")
-            col2box.prop(self, "developer_mode")
-
-            log_box = col2.box()
-            log_box.label(text="Logging:")
-            log_box.prop(self, "log_level")
-
-            if self.log_level == "DEBUG":
-                log_box.prop(self, "log_update_events")
-
-            buff_row = log_box.row()
-            buff_row.prop(self, "log_to_buffer")
-            if self.log_to_buffer:
-                buff_row.prop(self, "log_buffer_name")
-                log_box.prop(self, "log_to_buffer_clean")
-
-            file_row = log_box.row()
-            file_row.prop(self, "log_to_file")
-            if self.log_to_file:
-                file_row.prop(self, "log_file_name")
-
-            log_box.prop(self, "log_to_console")
 
         if self.selected_tab == "Node_Defaults":
+            self.node_defaults_tab(layout)
 
-            row = layout.row()
-            col = row.column(align=True)
-            row_sub1 = col.row().split(factor=0.5)
-            box_sub1 = row_sub1.box()
-            box_sub1_col = box_sub1.column(align=True)
-
-            box_sub1_col.label(text='Render Scale & Location')
-            # box_sub1_col.prop(self, 'render_location_xy_multiplier', text='xy multiplier')
-            # box_sub1_col.prop(self, 'render_scale', text='scale')
-            box_sub1_col.label(text=f'xy multiplier: {self.render_location_xy_multiplier}')
-            box_sub1_col.label(text=f'render_scale : {self.render_scale}')
-
-            box_sub1_col.label(text='Stethoscope')
-            box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')
-
-            box_sub1_col.label(text='Index Viewer')
-            box_sub1_col.prop(self, 'index_viewer_scale', text='scale')
-
-            box_sub2 = box_sub1.box()
-            box_sub2_col = box_sub2.column(align=True)
-            box_sub2_col.label(text='Angle Units')
-            box_sub2_col.prop(self, 'auto_update_angle_values', text="Auto Update Angle Values")
-
-            col3 = row_sub1.split().column()
-            col3.label(text='Location of custom defaults')
-            col3.prop(self, 'defaults_location', text='')
-
+        if self.selected_tab == "Extra_Nodes":
+            self.extra_nodes_tab(layout)
 
         if self.selected_tab == "Theme":
-
-            row = layout.row()
-            col = row.column(align=True)
-            split = col.row().split(factor=0.66)
-            split2 = col.row().split(factor=0.66)
-            left_split = split.row()
-            right_split = split.row()
-
-            split_viz_colors = left_split.column().split(factor=0.5, align=True)
-
-            if True:
-                col1 = split_viz_colors.column()
-                for name in ['color_viz', 'color_tex', 'color_sce']:
-                    r = col1.row()
-                    r.prop(self, name)
-
-                col2 = split_viz_colors.column()
-                for name in ['color_lay', 'color_gen']:
-                    r = col2.row()
-                    r.prop(self, name)
-
-            split_extra_colors = split2.column().split()
-            col_x1 = split_extra_colors.column()
-            col_x1.label(text="Error colors: ( error / no data )")
-            row_x1 = col_x1.row()
-            row_x1.prop(self, "exception_color", text='')
-            row_x1.prop(self, "no_data_color", text='')
-
-            col_x2 = split_extra_colors.split().column()
-            col_x2.label(text="Heat map colors: ( hot / cold )")
-            row_x2 = col_x2.row()
-            row_x2.active = self.heat_map
-            row_x2.prop(self, "heat_map_hot", text='')
-            row_x2.prop(self, "heat_map_cold", text='')
-
-            col3 = right_split.column()
-            col3.label(text='Theme:')
-            col3.prop(self, 'sv_theme', text='')
-            col3.separator()
-            col3.prop(self, 'auto_apply_theme', text="Auto apply theme changes")
-            col3.prop(self, 'apply_theme_on_open', text="Apply theme when opening file")
-            col3.operator('node.sverchok_apply_theme', text="Apply theme to layouts")
-
+            self.theme_tab(layout)
 
         # FOOTER
 
@@ -464,11 +516,13 @@ class SverchokPreferences(AddonPreferences):
 
 
 def register():
+    bpy.utils.register_class(SvSetFreeCadPath)
     bpy.utils.register_class(SverchokPreferences)
 
 
 def unregister():
     bpy.utils.unregister_class(SverchokPreferences)
+    bpy.utils.unregister_class(SvSetFreeCadPath)
 
 if __name__ == '__main__':
     register()
