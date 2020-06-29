@@ -17,17 +17,19 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import IntProperty, FloatProperty
-from mathutils.noise import seed_set, random_unit_vector
-
+from bpy.props import IntProperty, FloatProperty, BoolProperty
+import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 
 
-class RandomVectorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    ''' rv Random unit Vec'''
-    bl_idname = 'RandomVectorNodeMK2'
-    bl_label = 'Random Vector MK2'
+class RandomVectorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
+    """
+    Triggers: rv Random unit Vec
+    Tooltip: Generate Random Vectors of defined magnitude.
+    """
+    bl_idname = 'RandomVectorNodeMK3'
+    bl_label = 'Random Vector'
     bl_icon = 'RNDCURVE'
 
     count_inner: IntProperty(
@@ -42,11 +44,23 @@ class RandomVectorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         name='Seed', description='random seed', default=1,
         options={'ANIMATABLE'}, update=updateNode)
 
+    output_numpy: BoolProperty(
+        name='Output NumPy',
+        description='Output NumPy arrays',
+        default=False, update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Count").prop_name = 'count_inner'
         self.inputs.new('SvStringsSocket', "Seed").prop_name = 'seed'
         self.inputs.new('SvStringsSocket', "Scale").prop_name = 'scale'
         self.outputs.new('SvVerticesSocket', "Random")
+
+    def rclick_menu(self, context, layout):
+        layout.prop(self, "output_numpy", toggle=True)
+
+    def draw_buttons_ext(self, context, layout):
+        '''draw buttons on the N-panel'''
+        layout.prop(self, 'output_numpy')
 
     def process(self):
 
@@ -54,36 +68,36 @@ class RandomVectorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         seed_socket = self.inputs['Seed']
         scale_socket = self.inputs['Scale']
         random_socket = self.outputs['Random']
-
+        if not random_socket.is_linked:
+            return
         # inputs
-        Coun = count_socket.sv_get(deepcopy=False)[0]
-        Seed = seed_socket.sv_get(deepcopy=False)[0]
-        Scale = scale_socket.sv_get(deepcopy=False, default=[])[0]
+        count = count_socket.sv_get(deepcopy=False)[0]
+        seed = seed_socket.sv_get(deepcopy=False)[0]
+        scale = scale_socket.sv_get(deepcopy=False, default=[])[0]
 
         # outputs
-        if random_socket.is_linked:
-            Random = []
-            param = match_long_repeat([Coun, Seed, Scale])
-            # set seed, protect against float input
-            # seed = 0 is special value for blender which unsets the seed value
-            # and starts to use system time making the random values unrepeatable.
-            # So when seed = 0 we use a random value far from 0, generated used random.org
-            for c, s, sc in zip(*param):
-                int_seed = int(round(s))
-                if int_seed:
-                    seed_set(int_seed)
-                else:
-                    seed_set(140230)
 
-                Random.append([(random_unit_vector() * sc).to_tuple() for i in range(int(max(1, c)))])
+        random_out = []
+        params = match_long_repeat([count, seed, scale])
 
-            random_socket.sv_set(Random)
+        for c, s, sc in zip(*params):
+            int_seed = int(round(s))
+
+            np.random.seed(int_seed)
+            rand_v = np.random.uniform(low=-1, high=1, size=[int(max(1, c)), 3])
+            rand_v_mag = np.linalg.norm(rand_v, axis=1)
+            if self.output_numpy:
+                random_out.append(sc * rand_v/rand_v_mag[:, np.newaxis])
+            else:
+                random_out.append((sc * rand_v/rand_v_mag[:, np.newaxis]).tolist())
+
+        random_socket.sv_set(random_out)
 
 
 
 def register():
-    bpy.utils.register_class(RandomVectorNodeMK2)
+    bpy.utils.register_class(RandomVectorNodeMK3)
 
 
 def unregister():
-    bpy.utils.unregister_class(RandomVectorNodeMK2)
+    bpy.utils.unregister_class(RandomVectorNodeMK3)

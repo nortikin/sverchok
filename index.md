@@ -25,7 +25,7 @@
     BasicSplineNode
     SvQuadraticSplineNode
     svBasicArcNode
-    RandomVectorNodeMK2
+    RandomVectorNodeMK3
     SvScriptNodeLite
     SvSNFunctorB
     ImageNode
