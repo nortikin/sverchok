@@ -122,7 +122,6 @@ viewer_skin.py
 viewer_idx28.py
 viewer_curves.py
 viewer_gp.py
-gtext.py
 vd_draw_experimental.py
 viewer_polyline.py
 blenddata_to_svdata2.py
