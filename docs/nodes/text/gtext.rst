@@ -1,7 +1,7 @@
 GText
 =====
 
-This node is designed to allow to to make single or multi-line annotations using a mostly single-stroke monospaced font. This default font is similar to the ISO standard fonts available in CAD packages. Currently the node is limited to only one font family and one weight.
+This node is designed to allow to to make single or multi-line annotations using a mostly single-stroke monospaced font. This default font is similar to the ISO standard fonts available in CAD packages. Currently the node is limited to only one font family and one weight. (This font is traced from ``JuraJura`` it is GPL3 licenced)
 
 
 Functionality
@@ -12,6 +12,7 @@ It has full basic English and Cyrillic Character map and several extended charac
 
     [ ] \ / ( ) ~ ! ? @ # $ % & ^ > < | 1234567890 - + * = _
 
+|jurajura|
 
 
 The workflow
@@ -62,3 +63,5 @@ Outputs
 -------
 
 Outputs only to NodeView
+
+.. |jurajura| image:: https://cloud.githubusercontent.com/assets/619340/3053140/97928f3a-e1a4-11e3-97d7-238d84677bcd.png
