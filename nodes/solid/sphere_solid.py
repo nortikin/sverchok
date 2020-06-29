@@ -17,8 +17,7 @@ if FreeCAD is not None:
         """
         bl_idname = 'SvSphereSolidNode'
         bl_label = 'Sphere (Solid)'
-        bl_icon = 'OUTLINER_OB_EMPTY'
-        sv_icon = 'SV_VORONOI'
+        bl_icon = 'META_BALL'
 
 
         sphere_radius: FloatProperty(

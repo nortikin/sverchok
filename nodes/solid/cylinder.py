@@ -18,8 +18,8 @@ if FreeCAD is not None:
         """
         bl_idname = 'SvCylinderSolidNode'
         bl_label = 'Cylinder (Solid)'
-        bl_icon = 'OUTLINER_OB_EMPTY'
-        sv_icon = 'SV_VORONOI'
+        bl_icon = 'META_CAPSULE'
+
 
 
         cylinder_radius: FloatProperty(
