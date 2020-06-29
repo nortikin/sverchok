@@ -170,7 +170,10 @@ class SvGTextNode(bpy.types.Node, SverchCustomTreeNode):
         row.operator('node.sverchok_gtext_button', text='', icon='PASTEDOWN').mode = 'clipboard'
         row.operator('node.sverchok_gtext_button', text='', icon='X').mode = 'clear'
         row.prop(self, 'stroke_color', text='')
-
+        
+        # move = row.operator('node.sverchok_gtext_transform', text='', icon='CURSOR')
+        # move.idtree = self.id_data.name
+        # move.idname = self.name
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)

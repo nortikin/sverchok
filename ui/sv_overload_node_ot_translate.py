@@ -15,7 +15,7 @@ from sverchok.utils.sv_node_utils import sv_tree_types
 node_view_drawing_nodes = {
     "SvStethoscopeNodeMK2", "SvConsoleNode", "SvWaveformViewer",
     "SvTextureViewerNodeLite", "SvTextureViewerNode", "SvViewer2D",
-    "SvEasingNode" #, "SverchokGText"
+    "SvEasingNode"
 }
 
 class SvNodeTransformFinalize(Operator):
@@ -48,11 +48,15 @@ class SvTransformTranslateMacro(Macro):
     bl_label = "Overloaded G function"
 
 
-classes = [SvNodeTransformFinalize, SvTransformTranslateMacro]
+classes = [
+    # generic G movement
+    SvNodeTransformFinalize, SvTransformTranslateMacro, 
+]
 
 
 def register():
     _ = [bpy.utils.register_class(cls) for cls in classes]
+    
     SvTransformTranslateMacro.define("TRANSFORM_OT_translate")
     SvTransformTranslateMacro.define("node.sv_transform_translate_finalize")
 
