@@ -60,7 +60,7 @@ class SV_MT_ScriptNodeLitePyMenu(bpy.types.Menu):
             if (node.selected_mode == 'To_TextBlok'):
                 args = dict(operator='text.open', props_default={'internal': True})
             else:
-                args = dict(operator='node.scriptlite_import') 
+                args = dict(operator='node.scriptlite_import')
 
             for folder in template_categories:
                 final_path = os.path.join(snlite_template_path, folder)
@@ -130,9 +130,9 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
 
     def make_operator(self, new_func_name, force=False):
-        ND = self.node_dict.get(hash(self))               
-        if ND:                                            
-            callbacks = ND['sockets']['callbacks']        
+        ND = self.node_dict.get(hash(self))
+        if ND:
+            callbacks = ND['sockets']['callbacks']
             if not (new_func_name in callbacks) or force:
                 # here node refers to an ast node (a syntax tree node), not a node tree node
                 ast_node = self.get_node_from_function_name(new_func_name)
@@ -148,7 +148,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     node_dict = {}
 
     halt_updates: BoolProperty(name="snlite halting token")
-    
+
     def updateNode2(self, context):
         if not self.halt_updates:
             updateNode(self, context)
@@ -172,7 +172,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         default="To_Node",
         update=updateNode
     )
-    
+
     inject_params: BoolProperty()
     injected_state: BoolProperty(default=False)
     user_filename: StringProperty(update=updateNode)
@@ -198,7 +198,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         sockets = getattr(self, k)
 
         for idx, (socket_description) in enumerate(v):
-            if socket_description is UNPARSABLE: 
+            if socket_description is UNPARSABLE:
                 print(socket_description, idx, 'was unparsable')
                 return
 
@@ -216,7 +216,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.id_data.freeze(hard=True)
         try:
             self.halt_updates = True
-            
+
             for idx, (socket_description) in enumerate(socket_info['inputs']):
                 dval = socket_description[2]
                 print(idx, socket_description)
@@ -238,7 +238,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.halt_updates = False
         self.id_data.unfreeze(hard=True)
 
-    
+
     def flush_excess_sockets(self, k, v):
         sockets = getattr(self, k)
         if len(sockets) > len(v):
@@ -298,11 +298,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.script_name = ''
         self.node_dict[hash(self)] = {}
         for socket_set in [self.inputs, self.outputs]:
-            socket_set.clear()        
+            socket_set.clear()
 
     def sv_copy(self, node):
         self.node_dict[hash(self)] = {}
         self.load()
+        self.n_id = ""
 
     def process(self):
         if not all([self.script_name, self.script_str]):
@@ -331,7 +332,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         local_dict = {}
         for idx, s in enumerate(self.inputs):
             sock_desc = socket_info['inputs'][idx]
-            
+
             if s.is_linked:
                 val = s.sv_get(default=[[]])
                 if sock_desc[3]:
@@ -401,7 +402,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         locals().update({
             'vectorize': vectorize,
             'bpy': bpy,
-            'ddir': ddir, 
+            'ddir': ddir,
             'bmesh_from_pydata': bmesh_from_pydata,
             'pydata_from_bmesh': pydata_from_bmesh
         })
@@ -412,7 +413,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         try:
             socket_info = self.node_dict[hash(self)]['sockets']
 
-            # inject once! 
+            # inject once!
             if not self.injected_state:
                 self.inject_state(locals())
                 self.inject_draw_buttons(locals())
@@ -483,7 +484,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         row.prop(self, 'selected_mode', expand=True)
         col = layout.column()
         col.menu(SV_MT_ScriptNodeLitePyMenu.bl_idname)
-        
+
         box = layout.box()
         r = box.row()
         r.label(text="extra snlite features")
