@@ -64,4 +64,11 @@ Outputs
 
 Outputs only to NodeView
 
+Extra Info
+----------
+
+The JuraJura font is GPL3. The development thread for this node is here
+https://github.com/nortikin/sverchok/issues/167
+
+
 .. |jurajura| image:: https://cloud.githubusercontent.com/assets/619340/3053140/97928f3a-e1a4-11e3-97d7-238d84677bcd.png
