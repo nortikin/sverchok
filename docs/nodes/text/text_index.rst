@@ -13,3 +13,4 @@ Text
    text_out_mk2
    viewer_text_mk3
    stethoscope_v28
+   gtext

@@ -48,11 +48,15 @@ class SvTransformTranslateMacro(Macro):
     bl_label = "Overloaded G function"
 
 
-classes = [SvNodeTransformFinalize, SvTransformTranslateMacro]
+classes = [
+    # generic G movement
+    SvNodeTransformFinalize, SvTransformTranslateMacro, 
+]
 
 
 def register():
     _ = [bpy.utils.register_class(cls) for cls in classes]
+    
     SvTransformTranslateMacro.define("TRANSFORM_OT_translate")
     SvTransformTranslateMacro.define("node.sv_transform_translate_finalize")
 

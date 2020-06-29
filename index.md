@@ -446,12 +446,15 @@
 
 ## Text
     ViewerNodeTextMK3
-    SvTextInNodeMK2
-    SvTextOutNodeMK2
-    NoteNode
     SvDataShapeNode
     SvStethoscopeNodeMK2
     SvDebugPrintNode
+    ---
+    SvTextInNodeMK2
+    SvTextOutNodeMK2
+    ---
+    NoteNode
+    SvGTextNode
 
 ## BPY Data
     SvGetPropNode
