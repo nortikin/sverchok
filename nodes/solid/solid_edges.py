@@ -49,14 +49,8 @@ if FreeCAD is not None:
                 edges_curves = []
                 for e in solid.Edges:
                     try:
-                        if issubclass(type(e.Curve), Part.Circle):
-                            center = vectors_to_matrix([e.Curve.Center], [e.Curve.Axis], [e.Curve.value(e.FirstParameter)])[0]
-                            curve = SvCircle(center, e.Curve.Radius)
-                            curve.u_bounds = (e.FirstParameter, e.LastParameter)
-                            edges_curves.append(curve)
-                        else:
-                            curve = SvSolidEdgeCurve(e)
-                            edges_curves.append(curve)
+                        curve = SvSolidEdgeCurve(e)
+                        edges_curves.append(curve)
                     except TypeError:
                         pass
 

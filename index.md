@@ -161,6 +161,7 @@
    SvCylinderSolidNode
    SvConeSolidNode
    SvSphereSolidNode
+   SvToursSolidNode
    SvTransformSolidNode
    SvChamferSolidNode
    SvFilletSolidNode

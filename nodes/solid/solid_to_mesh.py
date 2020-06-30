@@ -30,7 +30,11 @@ if FreeCAD is not None:
             ('Mefisto', 'Mefisto', '', 2),
             # ('NetGen', 'NetGen', '', 3),
         ]
-        def update_sockets(self, context):
+        def set_sockets(self,context):
+            self.update_sockets()
+            updateNode(self, context)
+
+        def update_sockets(self):
             if self.mode == 'Basic':
                 self.inputs['Precision'].hide_safe = False
                 self.inputs['Surface Deviation'].hide_safe = True
@@ -50,7 +54,7 @@ if FreeCAD is not None:
                 self.inputs['Max Edge Length'].hide_safe = False
 
 
-            updateNode(self, context)
+
 
         precision: FloatProperty(
             name="Precision",
@@ -61,7 +65,7 @@ if FreeCAD is not None:
             name="Mode",
             description="Algorithm used for conversion",
             items=modes, default="Basic",
-            update=update_sockets)
+            update=set_sockets)
         surface_deviation: FloatProperty(
             name="Surface Deviation",
             default=10,
@@ -96,7 +100,7 @@ if FreeCAD is not None:
             self.inputs.new('SvStringsSocket', "Surface Deviation").prop_name = 'surface_deviation'
             self.inputs.new('SvStringsSocket', "Angle Deviation").prop_name = 'angle_deviation'
             self.inputs.new('SvStringsSocket', "Max Edge Length").prop_name = 'max_edge_length'
-
+            self.update_sockets()
 
             self.outputs.new('SvVerticesSocket', "Verts")
             self.outputs.new('SvStringsSocket', "Faces")
