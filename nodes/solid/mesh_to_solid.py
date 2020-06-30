@@ -73,7 +73,7 @@ if FreeCAD is not None:
                 faces_t = []
                 for f in tri_faces:
                     faces_t.append([verts[c] for c in f])
-                print(faces_t)
+
                 mesh = Mesh.Mesh(faces_t)
                 shape = Part.Shape()
                 shape.makeShapeFromMesh(mesh.Topology, 0.05)

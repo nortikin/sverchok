@@ -62,6 +62,7 @@ class SvSetFreeCadPath(bpy.types.Operator):
                 break
 
         file_path= open(os.path.join(site_packages, "freecad_path.pth"), "w+")
+
         file_path.write(self.FreeCAD_folder)
         file_path.close()
         self.report({'INFO'}, "FreeCad path saved successfully. Please restart Blender to see effect.")

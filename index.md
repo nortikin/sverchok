@@ -159,6 +159,7 @@
 ## Solids
    SvBoxSolidNode
    SvCylinderSolidNode
+   SvConeSolidNode
    SvSphereSolidNode
    SvTransformSolidNode
    SvChamferSolidNode
@@ -167,6 +168,7 @@
    SvMeshToSolidNode
    SvSolidToMeshNode
    SvSolidEdgesNode
+   SvSolidFacesNode
 
 ## Analyzers
     SvBBoxNodeMk2

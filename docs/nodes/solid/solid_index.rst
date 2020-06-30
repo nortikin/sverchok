@@ -1,0 +1,20 @@
+*****
+Solid
+*****
+
+.. toctree::
+   :maxdepth: 2
+
+   box_solid
+   cylinder_solid
+   sphere_solid
+   cone_solid
+   torus_solid
+   transform_solid
+   chamfer_solid
+   fillet_solid
+   solid_boolean
+   mesh_to_solid
+   solid_to_mesh
+   solid_faces
+   solid_edges

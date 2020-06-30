@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -339,7 +339,7 @@ class SvCurveLengthSolver(object):
         dvs = vectors[1:] - vectors[:-1]
         lengths = np.linalg.norm(dvs, axis=1)
         return lengths
-    
+
     def get_total_length(self):
         if self._spline is None:
             raise Exception("You have to call solver.prepare() first")
@@ -659,7 +659,7 @@ class SvFlipCurve(SvCurve):
         m, M = self.curve.get_u_bounds()
         t = M - t + m
         return -self.curve.tangent(t)
-        
+
     def tangent_array(self, ts):
         m, M = self.curve.get_u_bounds()
         ts = M - ts + m
@@ -775,7 +775,7 @@ class SvCurveSegment(SvCurve):
             m,M = self.target_u_bounds
             t = (M - m)*t + m
         return self.curve.tangent(t)
-        
+
     def tangent_array(self, ts):
         if self.rescale:
             m,M = self.target_u_bounds
@@ -922,7 +922,7 @@ class SvCircle(SvCurve):
 
 class SvEllipse(SvCurve):
     __description__ = "Ellipse"
-     
+
     CENTER = 'center'
     F1 = 'f1'
     F2 = 'f2'
@@ -1171,7 +1171,7 @@ class SvCastCurveToCylinder(SvCurve):
         projection = projection_to_line + radius
         k = self.coefficient
         return (1 - k) * point + k * projection
-    
+
     def evaluate_array(self, ts):
         points = self.curve.evaluate_array(ts)
         projection_to_line = self.line.projection_of_points(points)
@@ -1492,7 +1492,7 @@ class SvLengthRebuiltCurve(SvCurve):
 
     def get_u_bounds(self):
         return self.u_bounds
-    
+
     def evaluate(self, t):
         c_ts = self.solver.solve(np.array([t]))
         return self.curve.evaluate(c_ts[0])
@@ -1571,7 +1571,7 @@ class SvBezierCurve(SvCurve):
         n = self.degree
         C = binomial(n, k)
         if k >= 1:
-            s1 = k*(1-t)**(n-k)*t**(k-1) 
+            s1 = k*(1-t)**(n-k)*t**(k-1)
         else:
             s1 = np.zeros_like(t)
         if n-k-1 > 0:
@@ -1782,7 +1782,7 @@ class SvTaylorCurve(SvCurve):
             result = result + t**(i+1) * vec / denom
             denom *= (i+1)
         return result
-    
+
     def evaluate_array(self, ts):
         n = len(ts)
         result = np.broadcast_to(self.start, (n, 3))
@@ -1836,3 +1836,30 @@ class SvTaylorCurve(SvCurve):
             denom *= (i+1)
         return result
 
+class SvSolidEdgeCurve(SvCurve):
+    __description__ = "Solid Edge"
+    def __init__(self, solid_edge):
+        self.edge = solid_edge
+        self.curve = solid_edge.Curve
+        self.u_bounds = (self.edge.FirstParameter, self.edge.LastParameter)
+
+    def evaluate(self, t):
+        return np.array(self.curve.value(t))
+
+    def evaluate_array(self, ts):
+        t_out = []
+        for t in ts:
+            t_out.append(self.curve.value(t))
+        return np.array(t_out)
+
+    def tangent(self, t):
+        return np.array(self.edge.tangentAt(t))
+
+    def tangent_array(self, ts):
+        tangents = []
+        for t in ts:
+            tangents.append(self.edge.tangentAt(t))
+        return np.array(tangents)
+
+    def get_u_bounds(self):
+        return self.u_bounds

@@ -71,7 +71,7 @@ def get_output_sockets_map(node):
             output_map['verts'] = socket.name
             got_verts = True
 
-        elif not got_edges and 'edg' in socket_name:
+        elif not got_edges and 'edg' in socket_name and isinstance(socket, SvStringsSocket):
             output_map['edges'] = socket.name
             got_edges = True
 
