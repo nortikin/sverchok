@@ -60,7 +60,7 @@ if FreeCAD is not None:
             for u,v in zip(us, vs):
                 v_out.append(self.surface.curvature(u, v, "Mean"))
             return np.array(v_out)
-            
+
         def normal(self, u, v):
             return np.array(self.surface.normal(u, v))
 
@@ -89,7 +89,7 @@ if FreeCAD is not None:
 
         def sv_init(self, context):
             self.inputs.new('SvSolidSocket', "Solid")
-            self.outputs.new('SvSurfaceSocket', "Faces")
+            self.outputs.new('SvSurfaceSocket', "Solid Faces")
             self.outputs.new('SvCurveSocket', "Outer Wire")
 
 
@@ -126,7 +126,7 @@ if FreeCAD is not None:
                 wires_add(outer_wires)
 
 
-            self.outputs['Faces'].sv_set(faces)
+            self.outputs['Solid Faces'].sv_set(faces)
             self.outputs['Outer Wire'].sv_set(wires)
 
 

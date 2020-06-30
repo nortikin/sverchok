@@ -170,6 +170,8 @@
    SvSolidToMeshNode
    SvSolidEdgesNode
    SvSolidFacesNode
+   SvImportSolidNode
+   SvExportSolidNode
 
 ## Analyzers
     SvBBoxNodeMk2

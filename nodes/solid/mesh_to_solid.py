@@ -3,7 +3,7 @@ from sverchok.dependencies import FreeCAD
 
 if FreeCAD is not None:
     import bpy
-    from bpy.props import FloatProperty, StringProperty
+    from bpy.props import FloatProperty, BoolProperty
 
     from mathutils import Vector, Matrix
     from mathutils.geometry import tessellate_polygon as tessellate
@@ -51,8 +51,15 @@ if FreeCAD is not None:
             default=0.1,
             precision=4,
             update=updateNode)
+        refine_solid: BoolProperty(
+            name="Refine Solid",
+            description="Removes redundant edges (may slow the process)",
+            default=True,
+            update=updateNode)
+
         def draw_buttons(self, context, layout):
             layout.prop(self, "precision")
+            layout.prop(self, "refine_solid")
 
         def sv_init(self, context):
             self.inputs.new('SvVerticesSocket', "Verts")
@@ -76,8 +83,11 @@ if FreeCAD is not None:
 
                 mesh = Mesh.Mesh(faces_t)
                 shape = Part.Shape()
-                shape.makeShapeFromMesh(mesh.Topology, 0.05)
+                shape.makeShapeFromMesh(mesh.Topology, self.precision)
+                if self.refine_solid:
+                    shape = shape.removeSplitter()
                 solid = Part.makeSolid(shape)
+
                 solids.append(solid)
 
 
