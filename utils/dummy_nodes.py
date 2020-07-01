@@ -35,7 +35,8 @@ dummy_nodes_dict = {
     'SvSolidToMeshNode': ['Solid to Mesh', 'FreeCAD'],
     }
 
-
+def add_dummy(bl_id, name, dependecy):
+    dummy_nodes_dict[bl_id] = [name, dependecy]
 
 class SvDummyNode():
     '''

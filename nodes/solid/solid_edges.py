@@ -1,7 +1,10 @@
 
 from sverchok.dependencies import FreeCAD
+from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is not None:
+if FreeCAD is None:
+    add_dummy('SvSolidEdgesNode', 'Solid Edges', 'FreeCAD')
+else:
     import numpy as np
     import bpy
     from bpy.props import BoolProperty
