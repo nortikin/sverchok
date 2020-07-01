@@ -1,14 +1,13 @@
 
 from sverchok.dependencies import FreeCAD
+from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is not None:
+if FreeCAD is None:
+    add_dummy('SvImportSolidNode', 'Import Solid', 'FreeCAD')
+else:
     import bpy
-    from bpy.props import FloatProperty, StringProperty
-
     from sverchok.node_tree import SverchCustomTreeNode
-    from sverchok.data_structure import updateNode, match_long_repeat as mlr
     import Part
-    from FreeCAD import Base
 
     class SvImportSolidNode(bpy.types.Node, SverchCustomTreeNode):
         """

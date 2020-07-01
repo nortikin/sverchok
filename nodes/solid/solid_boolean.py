@@ -1,7 +1,10 @@
 
 from sverchok.dependencies import FreeCAD
+from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is not None:
+if FreeCAD is None:
+    add_dummy('SvSolidBooleanNode', 'Solid Boolean', 'FreeCAD')
+else:
     import bpy
     from bpy.props import BoolProperty, FloatProperty, StringProperty, EnumProperty
     from sverchok.node_tree import SverchCustomTreeNode
@@ -50,10 +53,17 @@ if FreeCAD is not None:
             description="bool first two solids, then applies rest to result one by one",
             default=False,
             update=update_mode)
+        refine_solid: BoolProperty(
+            name="Refine Solid",
+            description="Removes redundant edges (may slow the process)",
+            default=True,
+            update=updateNode)
 
         def draw_buttons(self, context, layout):
             layout.prop(self, "selected_mode", toggle=True)
             layout.prop(self, "nest_objs", toggle=True)
+            if self.selected_mode == 'UNION':
+                layout.prop(self, "refine_solid")
 
         def sv_init(self, context):
             self.inputs.new('SvSolidSocket', "Solid A")
@@ -71,7 +81,10 @@ if FreeCAD is not None:
             solids_b = self.inputs[1].sv_get()
             solids = []
             for solid_a, solid_b in zip(*mlr([solids_a, solids_b])):
-                solids.append(solid_a.fuse(solid_b))
+                solid_out = solid_a.fuse(solid_b)
+                if self.refine_solid:
+                    solid_out = solid_out.removeSplitter()
+                solids.append(solid_out)
             self.outputs[0].sv_set(solids)
 
         def multi_union(self):

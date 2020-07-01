@@ -172,6 +172,7 @@
    SvSolidFacesNode
    SvImportSolidNode
    SvExportSolidNode
+   SvSolidViewerNode
 
 ## Analyzers
     SvBBoxNodeMk2

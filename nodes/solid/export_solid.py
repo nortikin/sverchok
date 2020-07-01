@@ -1,14 +1,14 @@
 
 from sverchok.dependencies import FreeCAD
+from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is not None:
+if FreeCAD is None:
+    add_dummy('SvExportSolidNode', 'Export Solid', 'FreeCAD')
+else:
     import bpy
     from bpy.props import StringProperty, EnumProperty
-
     from sverchok.node_tree import SverchCustomTreeNode
-    from sverchok.data_structure import updateNode, match_long_repeat as mlr
-    import Part
-    from FreeCAD import Base
+
     class SvExportSolidOperator(bpy.types.Operator):
 
         bl_idname = "node.sv_export_solid"
@@ -60,12 +60,10 @@ if FreeCAD is not None:
             description="Choose file type",
             items=mode_items,
             default="BREP",
-            update=updateNode
             )
         base_name: StringProperty(
             name="Base Name",
             description="Name of file",
-            update=updateNode
             )
 
         def draw_buttons(self, context, layout):

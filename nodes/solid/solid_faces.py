@@ -1,7 +1,10 @@
 
 from sverchok.dependencies import FreeCAD
+from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is not None:
+if FreeCAD is None:
+    add_dummy('SvSolidFacesNode', 'Solid Faces', 'FreeCAD')
+else:
     import numpy as np
     import bpy
     from bpy.props import BoolProperty
@@ -73,8 +76,8 @@ if FreeCAD is not None:
 
     class SvSolidFacesNode(bpy.types.Node, SverchCustomTreeNode):
         """
-        Triggers: Solid Edges
-        Tooltip: Get Edges from Solid
+        Triggers: Solid Faces
+        Tooltip: Get Faces from Solid
         """
         bl_idname = 'SvSolidFacesNode'
         bl_label = 'Solid Faces'
