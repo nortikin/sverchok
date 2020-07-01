@@ -23,19 +23,13 @@ else:
         StringProperty, BoolProperty, FloatVectorProperty, EnumProperty, FloatProperty, IntProperty)
 
     from mathutils import Vector, Matrix
-    from mathutils.geometry import tessellate_polygon as tessellate
-    from numpy import ndarray
 
     from sverchok.node_tree import SverchCustomTreeNode
-    from sverchok.data_structure import node_id, updateNode, enum_item_5, match_long_repeat
+    from sverchok.data_structure import node_id, updateNode, enum_item_5
     from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
     from sverchok.utils.sv_shader_sources import dashed_vertex_shader, dashed_fragment_shader
-    from sverchok.utils.sv_batch_primitives import MatrixDraw28
     from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-    from sverchok.utils.geom import multiply_vectors_deep
     from sverchok.utils.modules.geom_utils import obtain_normal3 as normal
-    from sverchok.utils.context_managers import hard_freeze
-    from sverchok.utils.sv_mesh_utils import mesh_join
 
 
     default_vertex_shader = '''
@@ -61,37 +55,6 @@ else:
             gl_FragColor = vec4(pos * brightness, 1.0);
         }
     '''
-
-    def edges_from_faces(indices):
-        """ we don't want repeat edges, ever.."""
-        out = set()
-        concat = out.add
-        for face in indices:
-            for edge in zip(face, list(face[1:]) + list([face[0]])):
-                concat(tuple(sorted(edge)))
-        return list(out)
-
-
-    def ensure_triangles(coords, indices, handle_concave_quads):
-        """
-        this fully tesselates the incoming topology into tris,
-        not optimized for meshes that don't contain ngons
-        """
-        new_indices = []
-        concat = new_indices.append
-        concat2 = new_indices.extend
-        for idxset in indices:
-            num_verts = len(idxset)
-            if num_verts == 3:
-                concat(tuple(idxset))
-            elif num_verts == 4 and not handle_concave_quads:
-                # a b c d  ->  [a, b, c], [a, c, d]
-                concat2([(idxset[0], idxset[1], idxset[2]), (idxset[0], idxset[2], idxset[3])])
-            else:
-                subcoords = [Vector(coords[idx]) for idx in idxset]
-                for pol in tessellate([subcoords]):
-                    concat([idxset[i] for i in pol])
-        return new_indices
 
 
     def generate_facet_data(verts, faces, face_color, vector_light):
@@ -131,13 +94,6 @@ else:
             concat_vcols(vcol)
 
         return out_vcols
-
-
-    def draw_matrix(context, args):
-        """ this takes one or more matrices packed into an iterable """
-        mdraw = MatrixDraw28()
-        for matrix in args[0]:
-            mdraw.draw_matrix(matrix)
 
 
     def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
@@ -204,14 +160,6 @@ else:
         params = dict(dashed_data=dashed_config) if config.draw_dashed else {}
         draw_uniform('LINES', coords, indices, config.line4f, config.line_width, **params)
 
-    def draw_edges(context, args):
-        geom, config = args
-        coords, indices = geom.verts, geom.edges
-
-        if config.display_edges:
-            draw_lines_uniform(context, config, coords, indices, config.line4f, config.line_width)
-        if config.display_verts:
-            draw_verts(context, args)
 
     def draw_fragment(context, args):
         geom, config = args
@@ -390,10 +338,6 @@ else:
             default=False,
             description='Allows mesh.transform(matrix) operation, quite fast!')
 
-        handle_concave_quads: BoolProperty(
-            name='Handle Concave Quads', default=False, update=updateNode,
-            description='tessellate quads using geometry.tessellate_polygon, expect some speed impact')
-
         # glGet with argument GL_POINT_SIZE_RANGE
         point_size: FloatProperty(description="glPointSize( GLfloat size)", update=updateNode, default=4.0, min=1.0, max=15.0)
         line_width: IntProperty(description="glLineWidth( GLfloat width)", update=updateNode, default=1, min=1, max=5)
@@ -419,22 +363,6 @@ else:
         u_dash_size: FloatProperty(default=0.12, min=0.0001, name="dash size", update=updateNode)
         u_gap_size: FloatProperty(default=0.19, min=0.0001, name="gap size", update=updateNode)
         u_resolution: FloatVectorProperty(default=(25.0, 18.0), size=2, min=0.01, name="resolution", update=updateNode)
-
-
-        @staticmethod
-        def draw_basic_attr_qlink(socket, context, layout, node):
-            visible_socket_index = socket.infer_visible_location_of_socket(node)
-            op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
-            op.socket_index = socket.index
-            op.origin = node.name
-            op.new_node_idname = "SvVDAttrsNode"
-            op.new_node_offsetx = -200 - 40 * visible_socket_index
-            op.new_node_offsety = -30 * visible_socket_index
-
-        def configureAttrSocket(self, context):
-            self.inputs['attrs'].hide_safe = not self.node_ui_show_attrs_socket
-
-        node_ui_show_attrs_socket: BoolProperty(default=False, name='show attrs socket', update=configureAttrSocket)
 
         def sv_init(self, context):
             inew = self.inputs.new
@@ -492,10 +420,8 @@ else:
             layout.prop(self, 'point_size', text='Point Size')
             layout.prop(self, 'line_width', text='Edge Width')
             layout.separator()
-            layout.prop(self, 'handle_concave_quads', toggle=True)
             layout.prop(self, 'draw_gl_wireframe', toggle=True)
             layout.prop(self, 'draw_gl_polygonoffset', toggle=True)
-            layout.prop(self, 'node_ui_show_attrs_socket', toggle=True)
             layout.separator()
 
         def add_gl_stuff_to_config(self, config):
@@ -524,79 +450,6 @@ else:
 
             return config
 
-        def get_data(self):
-            verts_socket, edges_socket, faces_socket, matrix_socket = self.inputs[:4]
-            edge_indices = [[]]
-            face_indices = [[]]
-
-            propv = verts_socket.sv_get(deepcopy=False, default=[[]])
-            coords = propv
-
-            if edges_socket.is_linked:
-                prope = edges_socket.sv_get(deepcopy=False, default=[[]])
-                edge_indices = prope
-
-            if faces_socket.is_linked:
-                propf = faces_socket.sv_get(deepcopy=False, default=[[]])
-                face_indices = propf
-
-            if matrix_socket.is_linked:
-                m = matrix_socket.sv_get(deepcopy=False, default=[Matrix()])
-                verts, matrix = match_long_repeat([propv, m])
-                coords = [multiply_vectors_deep(mx, v) for mx, v in zip(matrix, verts)]
-            else:
-                matrix = [Matrix()]
-                verts = coords
-            return match_long_repeat([coords, edge_indices, face_indices, verts, matrix])
-
-        def faces_diplay(self, geom, config):
-
-            if self.selected_draw_mode == 'facet' and self.display_faces:
-                facet_verts, facet_verts_vcols = generate_facet_data(geom.verts, geom.faces, config.face4f, config.vector_light)
-                geom.facet_verts = facet_verts
-                geom.facet_verts_vcols = facet_verts_vcols
-            elif self.selected_draw_mode == 'smooth' and self.display_faces:
-                geom.smooth_vcols = generate_smooth_data(geom.verts, geom.faces, config.face4f, config.vector_light)
-            elif self.selected_draw_mode == 'fragment' and self.display_faces:
-
-                config.draw_fragment_function = None
-
-                # double reload, for testing.
-                ND = self.node_dict.get(hash(self))
-                if not ND:
-                    if self.custom_shader_location in bpy.data.texts:
-                        self.populate_node_with_custom_shader_from_text()
-                        ND = self.node_dict.get(hash(self))
-
-                if ND and ND.get('draw_fragment'):
-                    config.draw_fragment_function = ND.get('draw_fragment')
-                    config.shader = gpu.types.GPUShader(self.custom_vertex_shader, self.custom_fragment_shader)
-                else:
-                    config.shader = gpu.types.GPUShader(default_vertex_shader, default_fragment_shader)
-
-                config.batch = batch_for_shader(config.shader, 'TRIS', {"position": geom.verts}, indices=geom.faces)
-
-        def handle_attr_socket(self):
-            """
-            this socket expects input dictionary wrapped. once.
-
-                [  {attr: attr_vale, attr2: attr2_value } ]
-
-            """
-
-            if self.node_ui_show_attrs_socket and not self.inputs['attrs'].hide and self.inputs['attrs'].is_linked:
-                socket_acquired_attrs = self.inputs['attrs'].sv_get(default=[{'activate': False}])
-
-                if socket_acquired_attrs:
-                    try:
-                        with hard_freeze(self) as node:
-                            for k, new_value in socket_acquired_attrs[0].items():
-                                print(f"setattr(node, {k}, {new_value})")
-                                setattr(node, k, new_value)
-                    except Exception as err:
-                        print('error inside socket_acquired_attrs: ', err)
-                        self.id_data.unfreeze(hard=True)  # ensure this thing is unfrozen
-
         def format_draw_data(self, func=None, args=None):
             return {
                 'tree_name': self.id_data.name[:],
@@ -616,8 +469,6 @@ else:
             if not any([self.display_verts, self.display_edges, self.display_faces]):
                 return
 
-            # verts_socket, edges_socket, faces_socket, matrix_socket = self.inputs[:4]
-
             if self.inputs[0].is_linked:
 
                 display_faces = self.display_faces
@@ -636,47 +487,17 @@ else:
                     callback_enable(n_id, gl_instructions)
                     return
 
-                # if display_edges:
-                #     if self.use_dashed:
-                #         self.add_gl_stuff_to_config(config)
-                #
-                #     geom.edges = edge_indices
-                #     gl_instructions = self.format_draw_data(func=draw_edges, args=(geom, config))
-                #     callback_enable(n_id, gl_instructions)
-                #     return
-                #
-                # if faces_socket.is_linked:
-
-                    #  expecting mixed bag of tris/quads/ngons
-                    # if self.display_faces:
-                    #     geom.faces = ensure_triangles(coords, face_indices, self.handle_concave_quads)
-                    #
-                    # if self.display_edges:
-                    #     if self.use_dashed:
-                    #         self.add_gl_stuff_to_config(config)
-                    #
-                    #     # we don't want to draw the inner edges of triangulated faces; use original face_indices.
-                    #     # pass edges from socket if we can, else we manually compute them from faces
-                    #     geom.edges = edge_indices if edges_socket.is_linked else edges_from_faces(face_indices)
-                    #
-                    # if self.display_faces:
-                    #     self.faces_diplay(geom, config)
                 if self.display_verts:
                     geom.verts = [v.Point[:] for s in solids for v in s.Vertexes]
                 if self.display_edges:
+                    if self.use_dashed:
+                        self.add_gl_stuff_to_config(config)
                     edges_geom(geom)
                 if self.display_faces:
                     face_geom(geom, config)
                 gl_instructions = self.format_draw_data(func=draw_complex, args=(geom, config))
                 callback_enable(n_id, gl_instructions)
                 return
-
-
-
-            # elif matrix_socket.is_linked:
-            #     matrices = matrix_socket.sv_get(deepcopy=False, default=[Matrix()])
-            #     gl_instructions = self.format_draw_data(func=draw_matrix, args=(matrices, ))
-            #     callback_enable(n_id, gl_instructions)
 
         def sv_copy(self, node):
             self.n_id = ''
