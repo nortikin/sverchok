@@ -1,7 +1,10 @@
 
 from sverchok.dependencies import FreeCAD
+from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is not None:
+if FreeCAD is None:
+    add_dummy('SvMeshToSolidNode', 'Mesh to Solid', 'FreeCAD')
+else:
     import bpy
     from bpy.props import FloatProperty, BoolProperty
 
@@ -44,7 +47,7 @@ if FreeCAD is not None:
         bl_label = 'Mesh to Solid'
         bl_icon = 'MESH_CUBE'
         sv_icon = 'SV_MESH_TO_SOLID'
-
+        solid_catergory = "Inputs"
 
         precision: FloatProperty(
             name="Precision",

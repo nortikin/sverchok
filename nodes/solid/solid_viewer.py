@@ -10,8 +10,6 @@ from sverchok.utils.dummy_nodes import add_dummy
 if FreeCAD is None:
     add_dummy('SvSolidViewerNode', 'Solid Viewer', 'FreeCAD')
 else:
-
-
     from math import pi
 
     import bgl
@@ -174,7 +172,7 @@ else:
 
     def face_geom(geom, config):
         solids = geom.solids
-        precision = 1
+        precision = config.precision
         f_offset = 0
         f_verts=[]
         f_faces=[]
@@ -186,7 +184,7 @@ else:
                 b_verts.append((v.x, v.y, v.z))
             for f in rawdata[1]:
                 b_faces.append([c + f_offset for c in f])
-            # f_offset += len(b_verts)
+            f_offset += len(b_verts)
             f_verts.extend(b_verts)
             f_faces.extend(b_faces)
         geom.f_verts = f_verts
@@ -225,9 +223,9 @@ else:
 
         if config.draw_gl_wireframe:
             bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
-    def edges_geom(geom):
+    def edges_geom(geom, config):
         solids = geom.solids
-        curve_def = 32
+        curve_def = config.edges_steps
         e_offset = 0
         ss_verts=[]
         ss_edges=[]
@@ -288,7 +286,7 @@ else:
         bl_label = 'Solid Viewer'
         bl_icon = 'GREASEPENCIL'
         sv_icon = 'SV_DRAW_VIEWER'
-
+        solid_catergory = "Outputs"
         node_dict = {}
 
         def populate_node_with_custom_shader_from_text(self):
@@ -337,7 +335,47 @@ else:
         extended_matrix: BoolProperty(
             default=False,
             description='Allows mesh.transform(matrix) operation, quite fast!')
-
+        # viewer props
+        precision: FloatProperty(
+            name="Precision",
+            default=0.1,
+            precision=4,
+            update=updateNode)
+        edges_steps: IntProperty(
+            name="Edges Resolution",
+            default=50,
+            update=updateNode)
+        tesselate_modes = [
+            ('Standard', 'Standard', '', 1),
+            ('Mefisto', 'Mefisto', '', 2),
+        ]
+        tesselate_mode: EnumProperty(
+            name="Tesselate mode",
+            description="Algorithm used for conversion",
+            items=tesselate_modes, default="Standard",
+            )
+        surface_deviation: FloatProperty(
+            name="Surface Deviation",
+            default=10,
+            min=1e-2,
+            precision=4,
+            update=updateNode)
+        angle_deviation: FloatProperty(
+            name="Angle Deviation",
+            default=30,
+            min=5,
+            precision=3,
+            update=updateNode)
+        relative_surface_deviation: BoolProperty(
+            name='Relative Surface Deviation',
+            default=False,
+            update=updateNode)
+        max_edge_length: FloatProperty(
+            name="max_edge_length",
+            default=1,
+            soft_min=0.1,
+            precision=4,
+            update=updateNode)
         # glGet with argument GL_POINT_SIZE_RANGE
         point_size: FloatProperty(description="glPointSize( GLfloat size)", update=updateNode, default=4.0, min=1.0, max=15.0)
         line_width: IntProperty(description="glLineWidth( GLfloat width)", update=updateNode, default=1, min=1, max=5)
@@ -392,14 +430,14 @@ else:
                 else:
                     colors_column.prop(self, "custom_shader_location", icon='TEXT', text='')
 
-            # row = layout.row(align=True)
-            # self.wrapper_tracked_ui_draw_op(row, "node.sverchok_mesh_baker_mk3", icon='OUTLINER_OB_MESH', text="B A K E")
+            row = layout.row(align=True)
+            self.wrapper_tracked_ui_draw_op(row, "node.sverchok_solid_baker_mk3", icon='OUTLINER_OB_MESH', text="B A K E")
             # row.separator()
             # self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', text='')
 
         def draw_buttons_ext(self, context, layout):
             self.draw_buttons(context, layout)
-            self.draw_additional_props(context, layout)
+            self.draw_additional_props(context, layout, n_panel=True)
             layout.prop(self, "use_dashed")
             if self.use_dashed:
                 layout.prop(self, "u_dash_size")
@@ -413,15 +451,31 @@ else:
                 )
 
         def rclick_menu(self, context, layout):
-            self.draw_additional_props(context, layout)
+            self.draw_additional_props(context, layout, n_panel=False)
 
-        def draw_additional_props(self, context, layout):
-            layout.prop(self, 'vector_light', text='')
+        def draw_additional_props(self, context, layout, n_panel=True):
+            layout.label(text="Solid Display")
+            layout.prop(self, 'precision')
+            layout.prop(self, 'edges_steps')
+            layout.separator()
+
             layout.prop(self, 'point_size', text='Point Size')
             layout.prop(self, 'line_width', text='Edge Width')
             layout.separator()
             layout.prop(self, 'draw_gl_wireframe', toggle=True)
             layout.prop(self, 'draw_gl_polygonoffset', toggle=True)
+            layout.separator()
+            layout.label(text="Solid Bake")
+            if n_panel:
+                layout.prop(self, 'tesselate_mode')
+            else:
+                layout.prop_menu_enum(self, "tesselate_mode")
+            if self.tesselate_mode == 'Standard':
+                layout.prop(self, "relative_surface_deviation")
+                layout.prop(self, 'surface_deviation')
+                layout.prop(self, 'angle_deviation')
+            else:
+                layout.prop(self, 'max_edge_length')
             layout.separator()
 
         def add_gl_stuff_to_config(self, config):
@@ -447,6 +501,8 @@ else:
             config.u_dash_size = self.u_dash_size
             config.u_gap_size = self.u_gap_size
             config.u_resolution = self.u_resolution[:]
+            config.precision = self.precision
+            config.edges_steps = self.edges_steps
 
             return config
 
@@ -492,7 +548,7 @@ else:
                 if self.display_edges:
                     if self.use_dashed:
                         self.add_gl_stuff_to_config(config)
-                    edges_geom(geom)
+                    edges_geom(geom, config)
                 if self.display_faces:
                     face_geom(geom, config)
                 gl_instructions = self.format_draw_data(func=draw_complex, args=(geom, config))

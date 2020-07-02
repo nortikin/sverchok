@@ -166,8 +166,11 @@
    SvChamferSolidNode
    SvFilletSolidNode
    SvSolidBooleanNode
+   SvMirrorSolidNode
+   SvOffsetSolidNode
    SvMeshToSolidNode
    SvSolidToMeshNode
+   SvSolidVerticesNode
    SvSolidEdgesNode
    SvSolidFacesNode
    SvImportSolidNode

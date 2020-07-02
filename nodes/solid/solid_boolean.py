@@ -22,6 +22,7 @@ else:
         bl_label = 'Solid Boolean'
         bl_icon = 'OUTLINER_OB_EMPTY'
         sv_icon = 'SV_VORONOI'
+        solid_catergory = "Operators"
 
 
         precision: FloatProperty(
@@ -92,7 +93,8 @@ else:
             base = solids[0].copy()
             for s in solids[1:]:
                 base = base.fuse(s)
-
+            if self.refine_solid:
+                base = base.removeSplitter()
             self.outputs[0].sv_set([base])
         def single_intersect(self):
             solids_a = self.inputs[0].sv_get()

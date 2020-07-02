@@ -10,9 +10,8 @@ if FreeCAD is not None:
     from sverchok.node_tree import SverchCustomTreeNode
     from sverchok.data_structure import updateNode, match_long_repeat as mlr
 
-    import Part
     import MeshPart
-    from FreeCAD import Base
+
 
     class SvSolidToMeshNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -23,7 +22,7 @@ if FreeCAD is not None:
         bl_label = 'Solid to Mesh'
         bl_icon = 'MESH_CUBE'
         sv_icon = 'SV_SOLID_TO_MESH'
-
+        solid_catergory = "Outputs"
         modes = [
             ('Basic', 'Basic', '', 0),
             ('Standard', 'Standard', '', 1),
@@ -131,7 +130,7 @@ if FreeCAD is not None:
             verts = []
             faces = []
             for solid, s_dev, ang_dev in zip(*mlr([solids, surface_deviation, angle_deviation])):
-                mesh =  MeshPart.meshFromShape(
+                mesh = MeshPart.meshFromShape(
                     Shape=solid,
                     LinearDeflection=s_dev,
                     AngularDeflection=math.radians(ang_dev),

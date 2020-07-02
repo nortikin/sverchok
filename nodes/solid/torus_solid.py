@@ -1,7 +1,10 @@
 
 from sverchok.dependencies import FreeCAD
+from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is not None:
+if FreeCAD is None:
+    add_dummy('SvToursSolidNode', 'Torus (Solid)', 'FreeCAD')
+else:
 
     import bpy
     from bpy.props import FloatProperty, FloatVectorProperty, StringProperty
@@ -19,7 +22,7 @@ if FreeCAD is not None:
         bl_idname = 'SvToursSolidNode'
         bl_label = 'Torus (Solid)'
         bl_icon = 'MESH_TORUS'
-
+        solid_catergory = "Inputs"
 
         cylinder_radius: FloatProperty(
             name="Radius",

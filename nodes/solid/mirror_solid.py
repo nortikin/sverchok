@@ -3,25 +3,25 @@ from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
 
 if FreeCAD is None:
-    add_dummy('SvTransformSolidNode', 'Transform Solid', 'FreeCAD')
+    add_dummy('SvMirrorSolidNode', 'Mirror Solid', 'FreeCAD')
 else:
     import bpy
     from bpy.props import FloatProperty, StringProperty
-
+    from mathutils import Vector, Matrix
     from sverchok.node_tree import SverchCustomTreeNode
     from sverchok.data_structure import updateNode, match_long_repeat as mlr
     import Part
     from FreeCAD import Base
 
-    class SvTransformSolidNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvMirrorSolidNode(bpy.types.Node, SverchCustomTreeNode):
         """
-        Triggers: Apply Matrix to Solid
+        Triggers: Mirror Solid
         Tooltip: Transform Solid with Matrix
         """
-        bl_idname = 'SvTransformSolidNode'
-        bl_label = 'Transform Solid'
-        bl_icon = 'MESH_CUBE'
-        sv_icon = 'SV_TRANSFORM_SOLID'
+        bl_idname = 'SvMirrorSolidNode'
+        bl_label = 'Mirror Solid'
+        bl_icon = 'OUTLINER_OB_EMPTY'
+        sv_icon = 'SV_VORONOI'
         solid_catergory = "Operators"
 
         precision: FloatProperty(
@@ -45,8 +45,9 @@ else:
             matrixes = self.inputs[1].sv_get()
             solids = []
             for solid, matrix in zip(*mlr([solids_in, matrixes])):
-                myMat = Base.Matrix(*[i for v in matrix for i in v])
-                solid_o = solid.transformGeometry(myMat)
+                loc = Vector((0,0,0)) @ matrix
+                norm = Vector((0,0,1)) @ matrix
+                solid_o = solid.mirror(Base.Vector(loc[:]),Base.Vector(norm[:]))
                 solids.append(solid_o)
 
             self.outputs['Solid'].sv_set(solids)
@@ -55,8 +56,8 @@ else:
 
 def register():
     if FreeCAD is not None:
-        bpy.utils.register_class(SvTransformSolidNode)
+        bpy.utils.register_class(SvMirrorSolidNode)
 
 def unregister():
     if FreeCAD is not None:
-        bpy.utils.unregister_class(SvTransformSolidNode)
+        bpy.utils.unregister_class(SvMirrorSolidNode)

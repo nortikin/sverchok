@@ -1,7 +1,10 @@
 
 from sverchok.dependencies import FreeCAD
+from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is not None:
+if FreeCAD is None:
+    add_dummy('SvConeSolidNode', 'Cone (Solid)', 'FreeCAD')
+else:
 
     import bpy
     from bpy.props import FloatProperty, FloatVectorProperty, StringProperty
@@ -19,15 +22,15 @@ if FreeCAD is not None:
         bl_idname = 'SvConeSolidNode'
         bl_label = 'Cone (Solid)'
         bl_icon = 'MESH_CONE'
-
+        solid_catergory = "Inputs"
 
         cylinder_radius: FloatProperty(
-            name="Radius",
+            name="Radius Bottom",
             default=1,
             precision=4,
             update=updateNode)
         cylinder_radius_top: FloatProperty(
-            name="Radius",
+            name="Radius Top",
             default=0,
             precision=4,
             update=updateNode)
@@ -55,7 +58,7 @@ if FreeCAD is not None:
 
 
         def sv_init(self, context):
-            self.inputs.new('SvStringsSocket', "Radius").prop_name = 'cylinder_radius'
+            self.inputs.new('SvStringsSocket', "Radius Bottom").prop_name = 'cylinder_radius'
             self.inputs.new('SvStringsSocket', "Radius Top").prop_name = 'cylinder_radius_top'
             self.inputs.new('SvStringsSocket', "Height").prop_name = 'cylinder_height'
             self.inputs.new('SvVerticesSocket', "Origin").prop_name = 'origin'

@@ -18,6 +18,7 @@ Contents:
    curves
    surfaces
    fields
+   solids
    induction
    panels
    nodes

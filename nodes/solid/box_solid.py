@@ -1,7 +1,10 @@
 
 from sverchok.dependencies import FreeCAD
+from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is not None:
+if FreeCAD is None:
+    add_dummy('SvBoxSolidNode', 'Box (Solid)', 'FreeCAD')
+else:
     import bpy
     from bpy.props import StringProperty, FloatProperty, FloatVectorProperty
     from sverchok.node_tree import SverchCustomTreeNode
@@ -18,7 +21,7 @@ if FreeCAD is not None:
         bl_idname = 'SvBoxSolidNode'
         bl_label = 'Box (Solid)'
         bl_icon = 'META_CUBE'
-
+        solid_catergory = "Inputs"
         box_length: FloatProperty(
             name="Length",
             default=1,

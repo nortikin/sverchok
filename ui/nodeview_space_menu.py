@@ -169,6 +169,20 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
             for category in extra_categories:
                 layout.menu("NODEVIEW_MT_EX_" + category.identifier)
 
+class NODEVIEW_MT_Solids_Special_Menu(bpy.types.Menu):
+    bl_label = "Solids"
+    @classmethod
+    def poll(cls, context):
+        tree_type = context.space_data.tree_type
+        if tree_type in sv_tree_types:
+            #menu_prefs['show_icons'] = get_icon_switch()
+            # print('showing', menu_prefs['show_icons'])
+            return True
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
+
 
 class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
     bl_label = "Generator"
@@ -287,6 +301,7 @@ classes = [
     make_class('Network', "Network"),
     make_class('Betas', "Beta Nodes"),
     make_class('Alphas', "Alpha Nodes"),
+    # NODEVIEW_MT_Solids_Special_Menu
 ]
 
 def register():

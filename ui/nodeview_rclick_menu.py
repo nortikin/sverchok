@@ -202,6 +202,7 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
         tree = context.space_data.edit_tree
 
         try:

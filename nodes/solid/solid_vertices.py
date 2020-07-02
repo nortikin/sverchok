@@ -3,7 +3,7 @@ from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
 
 if FreeCAD is None:
-    add_dummy('SvSolidEdgesNode', 'Solid Edges', 'FreeCAD')
+    add_dummy('SvSolidVerticesNode', 'Solid Vertices', 'FreeCAD')
 else:
     import numpy as np
     import bpy
@@ -16,14 +16,14 @@ else:
     import Part
     from FreeCAD import Base
 
-    class SvSolidEdgesNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvSolidVerticesNode(bpy.types.Node, SverchCustomTreeNode):
         """
-        Triggers: Solid Edges
-        Tooltip: Get Edges from Solid
+        Triggers: Solid Vertices
+        Tooltip: Get Vertices from Solid
         """
-        bl_idname = 'SvSolidEdgesNode'
-        bl_label = 'Solid Edges (Curves)'
-        bl_icon = 'EDGESEL'
+        bl_idname = 'SvSolidVerticesNode'
+        bl_label = 'Solid Vertices'
+        bl_icon = 'VERTEXSEL'
         solid_catergory = "Outputs"
 
 
@@ -35,7 +35,7 @@ else:
 
         def sv_init(self, context):
             self.inputs.new('SvSolidSocket', "Solid")
-            self.outputs.new('SvCurveSocket', "Edges")
+            self.outputs.new('SvVerticesSocket', "Vertices")
 
 
         def draw_buttons(self, context, layout):
@@ -47,27 +47,23 @@ else:
 
             solids = self.inputs[0].sv_get()
 
-            edges = []
-            edges_add = edges.extend if self.flat_output else edges.append
+            verts_out = []
+            verts_add = verts_out.append
             for solid in solids:
-                edges_curves = []
-                for e in solid.Edges:
-                    try:
-                        curve = SvSolidEdgeCurve(e)
-                        edges_curves.append(curve)
-                    except TypeError:
-                        pass
+                verts = []
+                for v in solid.Vertexes:
+                    verts.append(v.Point[:])
 
 
-                edges_add(edges_curves)
+                verts_add(verts)
 
-            self.outputs['Edges'].sv_set(edges)
+            self.outputs['Vertices'].sv_set(verts_out)
 
 
 def register():
     if FreeCAD is not None:
-        bpy.utils.register_class(SvSolidEdgesNode)
+        bpy.utils.register_class(SvSolidVerticesNode)
 
 def unregister():
     if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSolidEdgesNode)
+        bpy.utils.unregister_class(SvSolidVerticesNode)

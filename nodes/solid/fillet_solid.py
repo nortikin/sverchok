@@ -19,6 +19,7 @@ if FreeCAD is not None:
         bl_label = 'Fillet Solid'
         bl_icon = 'OUTLINER_OB_EMPTY'
         sv_icon = 'SV_VORONOI'
+        solid_catergory = "Operators"
 
 
         radius_start: FloatProperty(

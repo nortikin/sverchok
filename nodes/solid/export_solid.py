@@ -49,6 +49,7 @@ else:
         bl_idname = 'SvExportSolidNode'
         bl_label = 'Export Solid'
         bl_icon = 'EXPORT'
+        solid_catergory = "Outputs"
         # sv_icon = 'SV_VORONOI'
         mode_items = [
         ("BREP", "BREP", "", 0),

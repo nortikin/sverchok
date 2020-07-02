@@ -1,7 +1,10 @@
 
 from sverchok.dependencies import FreeCAD
+from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is  not None:
+if FreeCAD is None:
+    add_dummy('SvChamferSolidNode', 'Chamfer Solid', 'FreeCAD')
+else:
     import bpy
     from sverchok.node_tree import SverchCustomTreeNode
     from bpy.props import FloatProperty, StringProperty
@@ -20,7 +23,7 @@ if FreeCAD is  not None:
         bl_label = 'Chamfer Solid'
         bl_icon = 'OUTLINER_OB_EMPTY'
         sv_icon = 'SV_VORONOI'
-
+        solid_catergory = "Operators"
 
         distance_a: FloatProperty(
             name="Distance A",

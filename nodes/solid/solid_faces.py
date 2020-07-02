@@ -80,8 +80,9 @@ else:
         Tooltip: Get Faces from Solid
         """
         bl_idname = 'SvSolidFacesNode'
-        bl_label = 'Solid Faces'
+        bl_label = 'Solid Faces (Surfaces)'
         bl_icon = 'FACESEL'
+        solid_catergory = "Outputs"
 
 
         flat_output: BoolProperty(
