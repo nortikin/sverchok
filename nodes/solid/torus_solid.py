@@ -25,12 +25,12 @@ else:
         solid_catergory = "Inputs"
 
         cylinder_radius: FloatProperty(
-            name="Radius",
+            name="Radius R",
             default=1,
             precision=4,
             update=updateNode)
         cylinder_radius_top: FloatProperty(
-            name="Radius",
+            name="Radius r",
             default=0.25,
             precision=4,
             update=updateNode)

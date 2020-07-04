@@ -8,25 +8,21 @@ else:
     import bpy
     from bpy.props import FloatProperty, BoolProperty, EnumProperty
 
-    from mathutils import Vector, Matrix
-    from mathutils.geometry import tessellate_polygon as tessellate
     from sverchok.node_tree import SverchCustomTreeNode
-    from sverchok.data_structure import updateNode, match_long_repeat as mlr, enum_item_4
+    from sverchok.data_structure import updateNode, match_long_repeat as mlr
 
     import Part
-    import Mesh
-    from FreeCAD import Base
 
 
     class SvOffsetSolidNode(bpy.types.Node, SverchCustomTreeNode):
         """
-        Triggers: Mesh to Solid
-        Tooltip: Generate solid from closed mesh
+        Triggers: Offset Solid
+        Tooltip: Generate solid by offseting the boundaries of another along its normals. 
         """
         bl_idname = 'SvOffsetSolidNode'
         bl_label = 'Offset Solid'
         bl_icon = 'MESH_CUBE'
-        sv_icon = 'SV_MESH_TO_SOLID'
+        sv_icon = 'SV_OFFSET_SOLID'
         solid_catergory = "Operators"
 
         offset: FloatProperty(

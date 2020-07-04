@@ -1,7 +1,10 @@
 
 from sverchok.dependencies import FreeCAD
+from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is not None:
+if FreeCAD is None:
+    add_dummy('SvFilletSolidNode', 'Fillet Solid', 'FreeCAD')
+else:
     import bpy
     from bpy.props import FloatProperty, StringProperty
 
@@ -18,7 +21,7 @@ if FreeCAD is not None:
         bl_idname = 'SvFilletSolidNode'
         bl_label = 'Fillet Solid'
         bl_icon = 'OUTLINER_OB_EMPTY'
-        sv_icon = 'SV_VORONOI'
+        sv_icon = 'SV_FILLET_SOLID'
         solid_catergory = "Operators"
 
 

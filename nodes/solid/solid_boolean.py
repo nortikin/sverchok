@@ -21,7 +21,7 @@ else:
         bl_idname = 'SvSolidBooleanNode'
         bl_label = 'Solid Boolean'
         bl_icon = 'OUTLINER_OB_EMPTY'
-        sv_icon = 'SV_VORONOI'
+        sv_icon = 'SV_SOLID_BOOLEAN'
         solid_catergory = "Operators"
 
 

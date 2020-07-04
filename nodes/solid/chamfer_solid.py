@@ -10,9 +10,7 @@ else:
     from bpy.props import FloatProperty, StringProperty
     from sverchok.data_structure import updateNode
     from sverchok.data_structure import match_long_repeat as mlr, fullList
-    import FreeCAD as F
-    import Part
-    from FreeCAD import Base
+
 
     class SvChamferSolidNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -22,7 +20,7 @@ else:
         bl_idname = 'SvChamferSolidNode'
         bl_label = 'Chamfer Solid'
         bl_icon = 'OUTLINER_OB_EMPTY'
-        sv_icon = 'SV_VORONOI'
+        sv_icon = 'SV_CHAMFER_SOLID'
         solid_catergory = "Operators"
 
         distance_a: FloatProperty(

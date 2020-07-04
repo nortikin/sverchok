@@ -7,7 +7,7 @@ if FreeCAD is None:
 else:
 
     import bpy
-    from bpy.props import FloatProperty, FloatVectorProperty, StringProperty
+    from bpy.props import FloatProperty, FloatVectorProperty
 
     from sverchok.node_tree import SverchCustomTreeNode
     from sverchok.data_structure import updateNode, match_long_repeat as mlr
@@ -66,10 +66,10 @@ else:
             if not any(socket.is_linked for socket in self.outputs):
                 return
 
-            p = [s.sv_get()[0] for s in self.inputs]
+            params = [s.sv_get()[0] for s in self.inputs]
 
             solids = []
-            for rad, height, origin, direc, angle  in zip(*mlr(p)):
+            for rad, height, origin, direc, angle  in zip(*mlr(params)):
                 cylinder = Part.makeCylinder(rad, height, Base.Vector(origin), Base.Vector(direc), angle)
                 solids.append(cylinder)
 

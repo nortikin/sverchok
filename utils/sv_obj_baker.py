@@ -118,6 +118,8 @@ class SvObjBakeMK3(bpy.types.Operator):
         ob.show_name = False
         ob.hide_select = False
         return ob, me
+
+
 from sverchok.dependencies import FreeCAD
 
 if FreeCAD is not None:

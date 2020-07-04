@@ -21,7 +21,7 @@ else:
         bl_idname = 'SvMirrorSolidNode'
         bl_label = 'Mirror Solid'
         bl_icon = 'OUTLINER_OB_EMPTY'
-        sv_icon = 'SV_VORONOI'
+        sv_icon = 'SV_MIRROR_SOLID'
         solid_catergory = "Operators"
 
         precision: FloatProperty(
