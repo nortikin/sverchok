@@ -216,6 +216,21 @@ def draw_indices_2D(context, args):
         print(err)
         print(traceback.format_exc())
 
+###
+###
+###
+###
+###
+###
+###
+### --------------------------- WARNING ---------------------------
+###
+###
+###
+###
+###
+###
+###
 
 def draw_indices_2D_wbg(context, args):
 
@@ -249,8 +264,17 @@ def draw_indices_2D_wbg(context, args):
     perspective_matrix = region3d.perspective_matrix.copy()
 
     final_draw_data = {}
+    data_index_counter = 0
 
-    def draw_index(index, vec):
+    def draw_all_text_at_once(final_draw_data):
+
+        for counter, (index_str, pos_x, pos_y, txt_width, text_height, type_draw) in final_draw_data.items():
+            text_color = settings[f'numid_{type_draw}_col']
+            blf.color(font_id, *text_color)
+            blf.position(0, pos_x, pos_y, 0)
+            blf.draw(0, index_str)
+
+    def gather_index(index, vec, type_draw):
 
         vec_4d = perspective_matrix @ vec.to_4d()
         if vec_4d.w <= 0.0:
@@ -263,29 +287,34 @@ def draw_indices_2D_wbg(context, args):
         index_str = str(index)
         txt_width, txt_height = blf.dimensions(0, index_str)
 
-        blf.position(0, x - (txt_width / 2), y - (txt_height / 2), 0)
-        blf.draw(0, index_str)
+        # blf.position(0, x - (txt_width / 2), y - (txt_height / 2), 0)
+        pos_x = x - (txt_width / 2)
+        pos_y = y - (txt_height / 2)
+        # blf.draw(0, index_str)
+        final_draw_data[data_index_counter] = (index_str, pos_x, pos_y, txt_width, text_height, type_draw)
+        data_index_counter += 1
 
     # THIS SECTION IS ONLY EXECUTED IF BOTH FORWARD AND BACKFACING ARE DRAWN
 
     if draw_bface:
 
-        blf.color(font_id, *vert_idx_color)
+        # blf.color(font_id, *vert_idx_color)
         if geom.vert_data and geom.text_data:
             for text_item, (idx, location) in zip(geom.text_data, geom.vert_data):
-                draw_index(text_item, location)
+                gather_index(text_item, location, 'vert')
         else:
             for vidx in geom.vert_data:
-                draw_index(*vidx)
+                gather_index(vidx[0], vidx[1], 'vert')
     
-        blf.color(font_id, *edge_idx_color)
+        # blf.color(font_id, *edge_idx_color)
         for eidx in geom.edge_data:
-            draw_index(*eidx)
+            gather_index(eidx[0], eidx[1], 'edge')
 
-        blf.color(font_id, *face_idx_color)
+        # blf.color(font_id, *face_idx_color)
         for fidx in geom.face_data:
-            draw_index(*fidx)
+            gather_index(fidx[0], fidx[1], 'face')
 
+        draw_all_text_at_once(final_draw_data)
         # if drawing all geometry, we end early.
         return
 
@@ -305,7 +334,7 @@ def draw_indices_2D_wbg(context, args):
             cache_vert_indices = set()
             cache_edge_indices = set()
 
-            blf.color(font_id, *face_idx_color)
+            # blf.color(font_id, *face_idx_color)
             for idx, polygon in enumerate(polygons):
 
                 # check the face normal, reject it if it's facing away.
@@ -330,7 +359,7 @@ def draw_indices_2D_wbg(context, args):
                 if hit:
                     if hit[2] == idx:
                         if display_face_index:
-                            draw_index(idx, world_coordinate)
+                            gather_index(idx, world_coordinate, 'face')
                         
                         if display_vert_index:
                             for j in polygon:
@@ -342,18 +371,20 @@ def draw_indices_2D_wbg(context, args):
                                 cache_edge_indices.add(tuple(sorted([polygon[j], polygon[j+1]])))
                             cache_edge_indices.add(tuple(sorted([polygon[-1], polygon[0]])))
 
-            blf.color(font_id, *vert_idx_color)
+            # blf.color(font_id, *vert_idx_color)
             for idx in cache_vert_indices:
-                draw_index(idx, vertices[idx])
+                gather_index(idx, vertices[idx], 'vert')
 
-            blf.color(font_id, *edge_idx_color)
+            # blf.color(font_id, *edge_idx_color)
             for idx, edge in enumerate(edges):
                 sorted_edge = tuple(sorted(edge))
                 if sorted_edge in cache_edge_indices:
                     idx1, idx2 = sorted_edge
                     loc = vertices[idx1].lerp(vertices[idx2], 0.5)
-                    draw_index(idx, loc)
+                    gather_index(idx, loc, 'edge')
                     cache_edge_indices.remove(sorted_edge)
+
+        draw_all_text_at_once(final_draw_data)
 
     except Exception as err:
         print('---- ERROR in sv_idx_viewer28 Occlusion backface drawing ----')
