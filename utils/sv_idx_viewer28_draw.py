@@ -74,7 +74,7 @@ def get_points(index):
     is stored in a dict and used if another polygon is saught with that width.
     '''
     width, height = blf.dimensions(0, str(index))
-    if not (width in point_dict):
+    if not width in point_dict:
         point_dict[width] = generate_points(width, height)
 
     return point_dict[width]
@@ -268,7 +268,7 @@ def draw_indices_2D_wbg(context, args):
 
     def draw_all_text_at_once(final_draw_data):
 
-        for counter, (index_str, pos_x, pos_y, txt_width, text_height, type_draw) in final_draw_data.items():
+        for counter, (index_str, pos_x, pos_y, txt_width, txt_height, type_draw) in final_draw_data.items():
             text_color = settings[f'numid_{type_draw}_col']
             blf.color(font_id, *text_color)
             blf.position(0, pos_x, pos_y, 0)
@@ -291,7 +291,7 @@ def draw_indices_2D_wbg(context, args):
         pos_x = x - (txt_width / 2)
         pos_y = y - (txt_height / 2)
         # blf.draw(0, index_str)
-        final_draw_data[data_index_counter] = (index_str, pos_x, pos_y, txt_width, text_height, type_draw)
+        final_draw_data[data_index_counter] = (index_str, pos_x, pos_y, txt_width, txt_height, type_draw)
         data_index_counter += 1
 
     # THIS SECTION IS ONLY EXECUTED IF BOTH FORWARD AND BACKFACING ARE DRAWN
@@ -301,18 +301,18 @@ def draw_indices_2D_wbg(context, args):
         # blf.color(font_id, *vert_idx_color)
         if geom.vert_data and geom.text_data:
             for text_item, (idx, location) in zip(geom.text_data, geom.vert_data):
-                gather_index(text_item, location, 'vert')
+                gather_index(text_item, location, 'verts')
         else:
             for vidx in geom.vert_data:
-                gather_index(vidx[0], vidx[1], 'vert')
+                gather_index(vidx[0], vidx[1], 'verts')
     
         # blf.color(font_id, *edge_idx_color)
         for eidx in geom.edge_data:
-            gather_index(eidx[0], eidx[1], 'edge')
+            gather_index(eidx[0], eidx[1], 'edges')
 
         # blf.color(font_id, *face_idx_color)
         for fidx in geom.face_data:
-            gather_index(fidx[0], fidx[1], 'face')
+            gather_index(fidx[0], fidx[1], 'faces')
 
         draw_all_text_at_once(final_draw_data)
         # if drawing all geometry, we end early.
@@ -359,7 +359,7 @@ def draw_indices_2D_wbg(context, args):
                 if hit:
                     if hit[2] == idx:
                         if display_face_index:
-                            gather_index(idx, world_coordinate, 'face')
+                            gather_index(idx, world_coordinate, 'faces')
                         
                         if display_vert_index:
                             for j in polygon:
@@ -373,7 +373,7 @@ def draw_indices_2D_wbg(context, args):
 
             # blf.color(font_id, *vert_idx_color)
             for idx in cache_vert_indices:
-                gather_index(idx, vertices[idx], 'vert')
+                gather_index(idx, vertices[idx], 'verts')
 
             # blf.color(font_id, *edge_idx_color)
             for idx, edge in enumerate(edges):
@@ -381,7 +381,7 @@ def draw_indices_2D_wbg(context, args):
                 if sorted_edge in cache_edge_indices:
                     idx1, idx2 = sorted_edge
                     loc = vertices[idx1].lerp(vertices[idx2], 0.5)
-                    gather_index(idx, loc, 'edge')
+                    gather_index(idx, loc, 'edges')
                     cache_edge_indices.remove(sorted_edge)
 
         draw_all_text_at_once(final_draw_data)
