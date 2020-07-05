@@ -10,8 +10,8 @@ In the N-Panel and on the Right-Click menu:
 
 - Solid Display:
 
-Edges Resolution property
-Faces Precision
+- Edges Resolution property
+- Faces Precision property
 
 Solid Bake:
 

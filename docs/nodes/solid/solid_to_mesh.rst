@@ -8,7 +8,7 @@ Transform Solid data to Mesh Data.
 
 Offers three methods:
 
-**Basic**: This method is the fastest offers a Precision options that expects values(and only will be affected)  like 1, 0.1, 0.001. Note that a lower number means more precision. Also when reducing the precision (by giving a greater number) the node may not change until you change the input solid data.
+**Basic**: This method is the fastest offers a Precision option that expects values(and only will be affected)  like 1, 0.1, 0.001. Note that a lower number means more precision. Also when reducing the precision (by giving a greater number) the node may not change until you change the input solid data.
 
 **Standard**: Has the following options
 
@@ -19,7 +19,7 @@ Offers three methods:
 - Relative surface deviation: If checked, the maximal linear deviation of a mesh segment will be the specified Surface deviation multiplied by the length of the current mesh segment (edge).
 
 
-**Mefisto**:The only setting is:
+**Mefisto**: The only setting is:
 
 - Maximum edge length: If this number is smaller the mesh becomes finer. The smallest value is 0.
 
