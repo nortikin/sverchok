@@ -26,7 +26,7 @@ Outputs
 Examples
 --------
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/solid/chamfer_solid/chamfer_solid_blender_sverchok_example.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/solid/fillet_solid/fillet_solid_blender_sverchok_example.png
 
 Notes
 -----
