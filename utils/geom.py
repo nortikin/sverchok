@@ -1042,6 +1042,7 @@ class PlaneEquation(object):
             normal = Vector((0,0,1))
         else:
             raise Exception(f"Unsupported normal_axis = {normal_axis}; supported are: X,Y,Z")
+        normal = (matrix @ normal) - matrix.translation
         point = matrix.translation
         return PlaneEquation.from_normal_and_point(normal, point)
 
