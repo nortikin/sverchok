@@ -27,19 +27,9 @@ else:
         solid_catergory = "Outputs"
 
 
-        flat_output: BoolProperty(
-            name="Flat Output",
-            default=False,
-            update=updateNode)
-
-
         def sv_init(self, context):
             self.inputs.new('SvSolidSocket', "Solid")
             self.outputs.new('SvVerticesSocket', "Vertices")
-
-
-        def draw_buttons(self, context, layout):
-            layout.prop(self, 'flat_output')
 
         def process(self):
             if not any(socket.is_linked for socket in self.outputs):
