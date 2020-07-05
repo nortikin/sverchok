@@ -6,9 +6,9 @@ Solid
    :maxdepth: 2
 
    box_solid
+   cone_solid
    cylinder_solid
    sphere_solid
-   cone_solid
    torus_solid
    transform_solid
    chamfer_solid

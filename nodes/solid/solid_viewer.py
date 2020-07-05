@@ -338,7 +338,7 @@ else:
         # viewer props
         precision: FloatProperty(
             name="Precision",
-            default=0.1,
+            default=1,
             precision=4,
             update=updateNode)
         edges_steps: IntProperty(
