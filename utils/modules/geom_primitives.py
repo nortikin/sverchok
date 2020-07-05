@@ -5,6 +5,20 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+import math
+from math import sin, cos, sqrt, acos, pi, atan
+import numpy as np
+
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
+
+# constants
+PI = math.pi
+HALF_PI = PI / 2
+QUARTER_PI = PI / 4
+TAU = PI * 2
+TWO_PI = TAU
+
 
 def circle(radius=1.0, phase=0, nverts=20, matrix=None, mode='pydata'):
     '''
