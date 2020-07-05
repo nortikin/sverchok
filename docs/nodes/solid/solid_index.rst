@@ -14,7 +14,12 @@ Solid
    chamfer_solid
    fillet_solid
    solid_boolean
+   mirror_solid
+   offset_solid
    mesh_to_solid
    solid_to_mesh
    solid_faces
    solid_edges
+   import_solid
+   export_solid
+   solid_viewer
