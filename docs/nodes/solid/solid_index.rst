@@ -20,6 +20,7 @@ Solid
    solid_to_mesh
    solid_faces
    solid_edges
+   solid_vertices
    import_solid
    export_solid
    solid_viewer
