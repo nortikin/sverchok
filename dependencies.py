@@ -11,6 +11,27 @@ class SvDependency():
 
 sv_dependencies = dict()
 
+def get_icon(package):
+    if package is None:
+        return 'CANCEL'
+    else:
+        return 'CHECKMARK'
+
+def draw_message(box, package, dependencies=None):
+    if dependencies is None:
+        dependencies = sv_dependencies
+
+    dependency = dependencies[package]
+    col = box.column(align=True)
+    col.label(text=dependency.message, icon=get_icon(dependency.module))
+    row = col.row(align=True)
+    row.operator('wm.url_open', text="Visit package website").url = dependency.url
+    if dependency.module is None and dependency.pip_installable and pip is not None:
+        row.operator('node.sv_ex_pip_install', text="Install with PIP").package = dependency.package
+    elif dependency.pip_installable and pip is not None:
+        op = row.operator('node.sv_ex_pip_install', text="Upgrade with PIP").package = dependency.package
+    return row
+
 pip_d = sv_dependencies["pip"] = SvDependency("pip", "https://pypi.org/project/pip/")
 try:
     import pip
