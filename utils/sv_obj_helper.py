@@ -330,7 +330,10 @@ class SvObjHelper():
             row = col.row(align=True)
             row.scale_y = 1
             row.prop(self, "basedata_name", text="", icon=self.bl_icon)
-            tracked_operator(self, row, fn_name='rename_basedata', icon="SYNTAX_OFF")
+            
+            if self.bl_idname in {'SvBmeshViewerNodeV28'}:
+                # this feature is not implemented for all sv_obj viewers yet, only those in this list
+                tracked_operator(self, row, fn_name='rename_basedata', icon="SYNTAX_OFF")
 
             row = col.row(align=True)
             row.scale_y = 2
