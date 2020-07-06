@@ -55,7 +55,7 @@ def generate_points_tris(width, height, x, y):
         [-width+x, +height+y],   # A         D - - - - - E
         [+width+x, -height+y],   # B         A .         |
         [-width+x, -height+y],   # C         |   .    b  |
-        # b                              |     .     |
+        # b                                  |     .     |
         [-width+x, +height+y],   # D         |   a   .   |
         [+width+x, +height+y],   # E         |         . F
         [+width+x, -height+y]    # F         C - - - - - B
