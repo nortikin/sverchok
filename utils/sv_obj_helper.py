@@ -102,7 +102,13 @@ class SvObjectRenameDialog(bpy.types.Operator):
         if self.tree_name and self.node_name:
             n = bpy.data.node_groups[self.tree_name].nodes[self.node_name]
         else:
-            n = context.node
+            return {'CANCELLED'}
+
+        with n.sv_throttle_tree_update():
+            # n.basedata_name = self.basedata_name
+            print('rename not implemented yet')
+            pass
+
 
         return {'FINISHED'}
 
