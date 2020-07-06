@@ -105,10 +105,21 @@ class SvObjectRenameDialog(bpy.types.Operator):
             return {'CANCELLED'}
 
         with n.sv_throttle_tree_update():
-            # n.basedata_name = self.basedata_name
-            print('rename not implemented yet')
-            pass
+            n.activate = False
 
+            objs = n.get_children()
+            for obj in objs:
+                obj.name = obj.name.replace(n.basedata_name, self.basedata_name)
+                obj['basedata_name'] = self.basedata_name
+
+            if n.grouping:
+                collections = bpy.data.collections
+                named = n.custom_collection_name or n.basedata_name
+                collection = collections.get(named)
+                collection.name = self.basedata_name
+
+            n.basedata_name = self.basedata_name
+            n.activate = True
 
         return {'FINISHED'}
 
