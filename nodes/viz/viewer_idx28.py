@@ -161,7 +161,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
                 colx.scale_x = little_width
                 colx.prop(self, colprop, text="")
 
-        layout.row(self, 'draw_obj_idx', text="Draw Object Index", toggle=True)
+        layout.row().prop(self, 'draw_obj_idx', text="Draw Object Index", toggle=True)
 
     def sv_update(self):
         # this node should resist updates until fully populated with sockets.
@@ -236,7 +236,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             concat_face = display_topology.face_data.append
             concat_text = display_topology.text_data.append
 
-            prefix_if_needed = lambda chars: (f'{obj_index}: {chars}') if self.draw_obj_idx else chars
+            prefix_if_needed = lambda obj_index, chars: (f'{obj_index}: {chars}') if self.draw_obj_idx else chars
 
             
             for obj_index, final_verts in enumerate(geom.verts):
