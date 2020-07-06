@@ -12,6 +12,9 @@ import traceback
 import bpy
 import blf
 import bgl
+import gpu
+from gpu_extras.batch import batch_for_shader
+
 import mathutils
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
@@ -36,7 +39,7 @@ def adjust_list(in_list, x, y):
     return [[old_x + x, old_y + y] for (old_x, old_y) in in_list]
 
 
-def generate_points(width, height):
+def generate_points_tris(width, height, x, y):
     amp = 5  # radius fillet
 
     width += 2
@@ -44,40 +47,20 @@ def generate_points(width, height):
     width = ((width/2) - amp) + 2
     height -= (2*amp)
 
-    pos_list, final_list = [], []
+    height += 4
+    width += 3    
 
-    n_points = 12
-    seg_angle = 2 * math.pi / n_points
-    for i in range(n_points + 1):
-        angle = i * seg_angle
-        x = math.cos(angle) * amp
-        y = math.sin(angle) * amp
-        pos_list.append([x, -y])
-
-    w_list, h_list = [1, -1, -1, 1], [-1, -1, 1, 1]
-    slice_list = [[i, i+4] for i in range(0, n_points, 3)]
-
-    for idx, (start, end) in enumerate(slice_list):
-        point_array = pos_list[start:end]
-        w = width * w_list[idx]
-        h = height * h_list[idx]
-        final_list += adjust_list(point_array, w, h)
-
+    final_list = [
+        # a
+        [-width+x, +height+y],   # A         D - - - - - E
+        [+width+x, -height+y],   # B         A .         |
+        [-width+x, -height+y],   # C         |   .    b  |
+        # b                              |     .     |
+        [-width+x, +height+y],   # D         |   a   .   |
+        [+width+x, +height+y],   # E         |         . F
+        [+width+x, -height+y]    # F         C - - - - - B
+    ] 
     return final_list
-
-
-def get_points(index):
-    '''
-    index:   string representation of the index number
-    returns: rounded rect point_list used for background.
-    the neat thing about this is if a width has been calculated once, it
-    is stored in a dict and used if another polygon is saught with that width.
-    '''
-    width, height = blf.dimensions(0, str(index))
-    if not width in point_dict:
-        point_dict[width] = generate_points(width, height)
-
-    return point_dict[width]
 
 
 ## end of util functions
@@ -268,7 +251,23 @@ def draw_indices_2D_wbg(context, args):
 
     def draw_all_text_at_once(final_draw_data):
 
-        for counter, (index_str, pos_x, pos_y, txt_width, txt_height, type_draw) in final_draw_data.items():
+        # build bg mesh and vcol data
+        full_bg_Verts = []
+        add_vert_list = full_bg_Verts.extend
+        
+        full_bg_colors = []
+        add_vcol = full_bg_colors.extend
+        for counter, (_, _, _, _, _, type_draw, pts) in final_draw_data.items():
+            col = settings[f'bg_{type_draw}_col']
+            add_vert_list(pts)
+            add_vcol((col,) * 6)
+
+        # draw background
+        shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
+        batch = batch_for_shader(shader, 'TRIS', {"pos": full_bg_Verts, "color": full_bg_colors})
+
+        # draw text 
+        for counter, (index_str, pos_x, pos_y, txt_width, txt_height, type_draw, pts) in final_draw_data.items():
             text_color = settings[f'numid_{type_draw}_col']
             blf.color(font_id, *text_color)
             blf.position(0, pos_x, pos_y, 0)
@@ -291,7 +290,8 @@ def draw_indices_2D_wbg(context, args):
         pos_x = x - (txt_width / 2)
         pos_y = y - (txt_height / 2)
         # blf.draw(0, index_str)
-        final_draw_data[data_index_counter] = (index_str, pos_x, pos_y, txt_width, txt_height, type_draw)
+        pts = generate_points_tris(width, height, pos_x, pos_y)
+        final_draw_data[data_index_counter] = (index_str, pos_x, pos_y, txt_width, txt_height, type_draw, pts)
         data_index_counter += 1
 
     # THIS SECTION IS ONLY EXECUTED IF BOTH FORWARD AND BACKFACING ARE DRAWN
