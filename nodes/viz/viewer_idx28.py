@@ -17,7 +17,7 @@ from sverchok.data_structure import (
 
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.context_managers import sv_preferences
-from sverchok.utils.sv_idx_viewer28_draw import draw_indices_2D
+from sverchok.utils.sv_idx_viewer28_draw import draw_indices_2D, draw_indices_2D_wbg
 
 # status colors
 FAIL_COLOR = (0.1, 0.05, 0)
@@ -59,9 +59,9 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         update=updateNode)
 
-    # draw_bg: BoolProperty(
-    #     name='draw_bg', description='draw background poly?',
-    #     default=False, update=updateNode)
+    draw_bg: BoolProperty(
+        name='draw_bg', description='draw background poly?',
+        default=False, update=updateNode)
 
     draw_bface: BoolProperty(
         name='draw_bface', description='draw backfacing indices?',
@@ -75,9 +75,9 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
     display_face_index: BoolProperty(
         name="Faces", description="Display face indices", update=updateNode)
 
-    # bg_edges_col: make_color_prop("bg_edges", (.2, .2, .2, 1.0))
-    # bg_faces_col: make_color_prop("bg_faces", (.2, .2, .2, 1.0))
-    # bg_verts_col: make_color_prop("bg_verts", (.2, .2, .2, 1.0))
+    bg_edges_col: make_color_prop("bg_edges", (.2, .2, .2, 1.0))
+    bg_faces_col: make_color_prop("bg_faces", (.2, .2, .2, 1.0))
+    bg_verts_col: make_color_prop("bg_verts", (.2, .2, .2, 1.0))
     numid_edges_col: make_color_prop("numid_edges", (1.0, 1.0, 0.1, 1.0))
     numid_faces_col: make_color_prop("numid_faces", (1.0, .8, .8, 1.0))
     numid_verts_col: make_color_prop("numid_verts", (0.6, 1, 0.3, 1.0))
@@ -100,7 +100,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         split = row.split()
         r = split.column()
         r.prop(self, "activate", text="Show", toggle=True, icon=view_icon)
-        # row.prop(self, "draw_bg", text="BG", toggle=True)
+        row.prop(self, "draw_bg", text="BG", toggle=True)
         row.prop(self, "draw_bface", text="", icon='GHOST_ENABLED', toggle=True)
 
         col = column_all.column(align=True)
@@ -108,17 +108,17 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             row = col.row(align=True)
             row.prop(self, f"display_{item}_index", toggle=True, icon=item_icon, text='')
             row.prop(self, f"numid_{item}s_col", text="")
-            # if self.draw_bg:
-            #     row.prop(self, f"bg_{item}s_col", text="") 
+            if self.draw_bg:
+                row.prop(self, f"bg_{item}s_col", text="") 
 
     def get_settings_dict(self):
         '''Produce a dict of settings for the callback'''
         # A copy is needed, we can't have reference to the
         # node in a callback, it will crash blender on undo
         return {
-            # 'bg_edges_col': self.bg_edges_col[:],
-            # 'bg_faces_col': self.bg_faces_col[:],
-            # 'bg_verts_col': self.bg_verts_col[:],
+            'bg_edges_col': self.bg_edges_col[:],
+            'bg_faces_col': self.bg_faces_col[:],
+            'bg_verts_col': self.bg_verts_col[:],
             'numid_edges_col': self.numid_edges_col[:],
             'numid_faces_col': self.numid_faces_col[:],
             'numid_verts_col': self.numid_verts_col[:],
@@ -126,7 +126,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             'display_edge_index': self.display_edge_index,
             'display_face_index': self.display_face_index,
             'draw_bface': self.draw_bface,
-            # 'draw_bg': self.draw_bg,
+            'draw_bg': self.draw_bg,
             'scale': self.get_scale()
         }.copy()
 
@@ -146,7 +146,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
 
         colprops = [
             ['Numbers :', ['numid_verts_col', 'numid_edges_col', 'numid_faces_col']],
-            # ['Background :', ['bg_verts_col', 'bg_edges_col', 'bg_faces_col']]
+            ['Background :', ['bg_verts_col', 'bg_edges_col', 'bg_faces_col']]
         ]
 
         for label, geometry_types in colprops:
@@ -272,24 +272,22 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
 
         return text_items
 
- 
-    def process(self):
-        n_id = node_id(self)
-        callback_disable(n_id)
-
+    def end_early(self):
         if not self.id_data.sv_show:
-            return
+            return True
 
         self.use_custom_color = True
         if not (self.activate and self.inputs['verts'].is_linked):
-            return
-
-        self.generate_callback(n_id)
-
-    def generate_callback(self, n_id):
+            return True
 
         verts = self.inputs['verts'].sv_get()
         if not verts:
+            return True
+
+    def process(self):
+        n_id = node_id(self)
+        callback_disable(n_id)
+        if self.end_early():
             return
 
         config = self.get_settings_dict()
@@ -297,7 +295,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
 
         draw_data = {
             'tree_name': self.id_data.name[:],
-            'custom_function': draw_indices_2D,
+            'custom_function': draw_indices_2D_wbg if self.draw_bg else draw_indices_2D,
             'args': (geom, config)} 
 
         callback_enable(n_id, draw_data, overlay='POST_PIXEL')
