@@ -51,6 +51,11 @@ def add_keymap():
         kmi.properties.name = "NODEVIEW_MT_Dynamic_Menu"
         nodeview_keymaps.append((km, kmi))
 
+        # Shift + S     | show custom menu
+        kmi = km.keymap_items.new('wm.call_menu', 'S', 'PRESS', shift=True)
+        kmi.properties.name = "NODEVIEW_MT_Solids_Special_Menu"
+        nodeview_keymaps.append((km, kmi))
+
         # alt + Space  | enter extra search operator
         kmi = km.keymap_items.new('node.sv_extra_search', 'SPACE', 'PRESS', alt=True)
         nodeview_keymaps.append((km, kmi))

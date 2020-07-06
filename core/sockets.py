@@ -54,7 +54,7 @@ socket_colors = {
     "SvTextSocket": (0.68, 0.85, 0.90, 1),
     "SvDictionarySocket": (1.0, 1.0, 1.0, 1.0),
     "SvFilePathSocket": (0.9, 0.9, 0.3, 1.0),
-
+    "SvSolidSocket": (0.0, 0.65, 0.3, 1.0)
 }
 
 def process_from_socket(self, context):
@@ -75,6 +75,8 @@ class SvSocketCommon:
     quicklink_func_name: StringProperty(default="", name="quicklink_func_name")
 
     def get_prop_name(self):
+        if hasattr(self.node, 'missing_dependecy'):
+            return []
         if self.node and hasattr(self.node, 'does_support_draft_mode') and self.node.does_support_draft_mode() and hasattr(self.node.id_data, 'sv_draft') and self.node.id_data.sv_draft:
             prop_name_draft = self.node.draft_properties_mapping.get(self.prop_name, None)
             if prop_name_draft:
@@ -737,6 +739,24 @@ class SvVectorFieldSocket(NodeSocket, SvSocketCommon):
         else:
             return default
 
+class SvSolidSocket(NodeSocket, SvSocketCommon):
+    bl_idname = "SvSolidSocket"
+    bl_label = "Solid Socket"
+
+    def get_prop_data(self):
+        return {}
+
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
+        if self.is_linked and not self.is_output:
+            source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
+            return self.convert_data(source_data, implicit_conversions)
+
+        if self.prop_name:
+            return [[getattr(self.node, self.prop_name)[:]]]
+        elif default is sentinel:
+            raise SvNoDataError(self)
+        else:
+            return default
 """
 type_map_to/from are used to get the bl_idname from a single letter
 
@@ -768,7 +788,8 @@ classes = [
     SvVerticesSocket, SvMatrixSocket, SvStringsSocket, SvFilePathSocket,
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
     SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket,
-    SvSurfaceSocket, SvCurveSocket, SvScalarFieldSocket, SvVectorFieldSocket
+    SvSurfaceSocket, SvCurveSocket, SvScalarFieldSocket, SvVectorFieldSocket,
+    SvSolidSocket
 ]
 
 register, unregister = bpy.utils.register_classes_factory(classes)

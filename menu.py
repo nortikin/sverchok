@@ -74,7 +74,7 @@ def make_node_cats():
 
         # final append
         node_cats[category] = temp_list
-    
+
     return node_cats
 
 def juggle_and_join(node_cats):
@@ -167,7 +167,7 @@ class SverchNodeItem(object):
         node_class = self.get_node_class()
         if hasattr(node_class, 'get_shorthand'):
             shorthand = node_class.get_shorthand()
-        else: 
+        else:
             shorthand = ""
 
         if hasattr(node_class, 'get_tooltip'):
@@ -194,12 +194,12 @@ class SverchNodeItem(object):
     def make_add_operator(self):
         """
         Create operator class which adds specific type of node.
-        Tooltip (docstring) for that operator is copied from 
+        Tooltip (docstring) for that operator is copied from
         node class docstring.
         """
 
         global node_add_operators
-        
+
         class SverchNodeAddOperator(bl_operators.node.NodeAddOperator, bpy.types.Operator):
             """Wrapper for node.add_node operator to add specific node"""
 
@@ -280,7 +280,7 @@ class SvOperatorLayout(object):
             return SvIconsLayout(parent, columns)
         else:
             return SvNamedButtonsLayout(parent)
-    
+
 class SvIconsLayout(SvOperatorLayout):
     """
     Layout class that shows operator buttons
@@ -371,7 +371,7 @@ def draw_add_node_operator(layout, nodetype, label=None, icon_name=None, params=
         params.update(**node_icon(node_rna))
 
     add = layout.operator("node.sv_add_" + get_node_idname_for_operator(nodetype), **params)
-                            
+
     add.type = nodetype
     add.use_transform = True
 
@@ -437,12 +437,23 @@ def make_categories():
     node_count = 0
     for category, nodes in node_cats.items():
         name_big = "SVERCHOK_" + category.replace(' ', '_')
-        node_categories.append(
-            SverchNodeCategory(
-                name_big,
-                category,
-                items=[SverchNodeItem.new(props[0]) for props in nodes]))
-        node_count += len(nodes)
+        node_items = []
+        for item in nodes:
+            nodetype = item[0]
+            rna = get_node_class_reference(nodetype)
+            if not rna and not nodetype == 'separator':
+                info("Node `%s' is not available (probably due to missing dependencies).", nodetype)
+            else:
+                node_item = SverchNodeItem.new(nodetype)
+                node_items.append(node_item)
+
+        if node_items:
+            node_categories.append(
+                SverchNodeCategory(
+                    name_big,
+                    category,
+                    items=node_items))
+            node_count += len(nodes)
     node_categories.append(SverchNodeCategory("SVERCHOK_GROUPS", "Groups", items=sv_group_items))
 
     return node_categories, node_count, original_categories
@@ -559,7 +570,7 @@ def reload_menu():
     nodeitems_utils.register_node_categories("SVERCHOK", menu)
     register_node_panels("SVERCHOK", menu)
     register_node_add_operators()
-    
+
     build_help_remap(original_categories)
     set_first_run(False)
     print("Reload complete, press update")
@@ -620,4 +631,3 @@ def unregister():
     bpy.utils.unregister_class(SvResetNodeSearchOperator)
     del bpy.types.Scene.sv_selected_category
     del bpy.types.Scene.sv_node_search
-

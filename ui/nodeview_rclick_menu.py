@@ -71,7 +71,7 @@ def get_output_sockets_map(node):
             output_map['verts'] = socket.name
             got_verts = True
 
-        elif not got_edges and 'edg' in socket_name:
+        elif not got_edges and 'edg' in socket_name and isinstance(socket, SvStringsSocket):
             output_map['edges'] = socket.name
             got_edges = True
 
@@ -202,6 +202,7 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
         tree = context.space_data.edit_tree
 
         try:

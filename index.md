@@ -156,6 +156,27 @@
     SvExVectorFieldGraphNode
     SvExVectorFieldLinesNode
 
+## Solids
+   SvBoxSolidNode
+   SvCylinderSolidNode
+   SvConeSolidNode
+   SvSphereSolidNode
+   SvToursSolidNode
+   SvTransformSolidNode
+   SvChamferSolidNode
+   SvFilletSolidNode
+   SvSolidBooleanNode
+   SvMirrorSolidNode
+   SvOffsetSolidNode
+   SvMeshToSolidNode
+   SvSolidToMeshNode
+   SvSolidVerticesNode
+   SvSolidEdgesNode
+   SvSolidFacesNode
+   SvImportSolidNode
+   SvExportSolidNode
+   SvSolidViewerNode
+
 ## Analyzers
     SvBBoxNodeMk2
     SvComponentAnalyzerNode

@@ -50,6 +50,7 @@ def reload_all(imported_modules, node_list, old_nodes):
     old_nodes.reload_old()
 
 
+
 def make_node_list(nodes):
     node_list = []
     base_name = "sverchok.nodes"
@@ -72,6 +73,11 @@ def handle_reload_event(nodes, imported_modules, old_nodes):
     try:
         from sverchok.old_nodes import old_bl_idnames
         debug('Known old_bl_idnames after reload: %s', len(old_bl_idnames))
+    except Exception as err:
+        exception(err)
+    try:
+        from sverchok.utils import dummy_nodes
+        debug('Known dummy_bl_idnames after reload: %s', len(dummy_nodes.dummy_nodes_dict))
     except Exception as err:
         exception(err)
 

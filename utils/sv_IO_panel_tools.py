@@ -28,6 +28,7 @@ from itertools import chain
 import bpy
 
 from sverchok import old_nodes
+from sverchok.utils import dummy_nodes
 from sverchok.utils.sv_IO_monad_helpers import pack_monad, unpack_monad
 from sverchok.utils.logging import debug, info, warning, error, exception
 from sverchok.utils.sv_requests import urlopen
@@ -203,7 +204,7 @@ def can_skip_property(node, k):
             return True
 
     if k in {
-        'n_id', 'typ', 'newsock', 'dynamic_strings', 
+        'n_id', 'typ', 'newsock', 'dynamic_strings',
         'frame_collection_name', 'type_collection_name',
         'force_param_order_iojson'}:
         return True
@@ -538,7 +539,7 @@ def apply_core_props(node, node_ref):
     if hasattr(node, "force_param_order_iojson"):
         param_names = node.force_param_order_iojson
         info(f"iojson - Forcing param order, {param_names}")
-            
+
     for p in param_names:
         # print(f"    param {p}")
         val = params[p]
@@ -642,7 +643,14 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
             if not node:
                 raise Exception("It seems no valid node was created for this Monad {0}".format(node_ref))
         else:
-            node = nodes.new(bl_idname)
+            if dummy_nodes.is_dependent(bl_idname):
+                try:
+                    node = nodes.new(bl_idname)
+                except RuntimeError:
+                    dummy_nodes.register_dummy(bl_idname)
+                    node = nodes.new(bl_idname)
+            else:
+                node = nodes.new(bl_idname)
 
     except Exception as err:
         exception(err)
@@ -756,8 +764,8 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
 
     def generate_layout(fullpath, nodes_json):
         """
-        fullpath can be 
-        - a path on disk, or 
+        fullpath can be
+        - a path on disk, or
         - an empty string when the nodes_json is passed
         """
 
@@ -793,6 +801,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
 
         # clean up
         old_nodes.scan_for_old(ng)
+        dummy_nodes.scan_for_dummy(ng)
 
         ng.unfreeze(hard=True)
 

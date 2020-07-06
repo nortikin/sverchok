@@ -1,0 +1,17 @@
+Solid Edges (Curves)
+====================
+
+Functionality
+-------------
+
+Gives the edges that define the solid as curves
+
+Options
+-------
+
+**Flat Output**:  If the input has two solids the output will have two groups of curves. If Flat Output is enabled the two groups will be merged in a single group [[curve, curve,..], [curve, curve,...]] to [curve, curve, curve...]
+
+Examples
+--------
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/solid/solid_edges/solid_edges_blender_sverchok_example.png

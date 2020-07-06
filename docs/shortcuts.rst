@@ -8,6 +8,8 @@ This is a collection of shortcuts useful in the Sverchok node tree, some are Ble
 
 **Shift + A** - Add node menu
 
+**Shift + S** - Add solids node menu (needs FreeCad)
+
 **Alt + Space** - Add node search menu
 
 **Shift + D** - Duplicate selected nodes
@@ -66,4 +68,3 @@ This is a collection of shortcuts useful in the Sverchok node tree, some are Ble
 **Right Click** - Access to Sverchok Right Click Menu
 
 **Shift + P** on a node in Node Editor - open Load / Save Preset menu for this node.
-

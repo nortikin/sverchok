@@ -35,10 +35,50 @@ from sverchok.ui import presets
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 node_cats = make_node_cats()
+
+def category_has_nodes(cat_name):
+    cat = node_cats[cat_name]
+    for item in cat:
+        rna = get_node_class_reference(item[0])
+        if rna and not item[0] == 'separator':
+            return True
+    return False
 #menu_prefs = {}
 
 # _items_to_remove = {}
-
+menu_structure = [
+    ["separator"],
+    ["NODEVIEW_MT_AddGenerators", 'OBJECT_DATAMODE'],
+    ["NODEVIEW_MT_AddCurves", 'OUTLINER_OB_CURVE'],
+    ["NODEVIEW_MT_AddSurfaces", 'SURFACE_DATA'],
+    ["NODEVIEW_MT_AddFields", 'OUTLINER_OB_FORCE_FIELD'],
+    ["NODEVIEW_MT_AddSolids", 'MESH_CUBE'],
+    ["NODEVIEW_MT_AddTransforms", 'ORIENTATION_LOCAL'],
+    ["NODEVIEW_MT_AddAnalyzers", 'VIEWZOOM'],
+    ["NODEVIEW_MT_AddModifiers", 'MODIFIER'],
+    ["NODEVIEW_MT_AddCAD", 'TOOL_SETTINGS'],
+    ["separator"],
+    ["NODEVIEW_MT_AddNumber", "SV_NUMBER"],
+    ["NODEVIEW_MT_AddVector", "SV_VECTOR"],
+    ["NODEVIEW_MT_AddMatrix", 'EMPTY_AXIS'],
+    ["NODEVIEW_MT_AddQuaternion", 'SV_QUATERNION'],
+    ["NODEVIEW_MT_AddLogic", "SV_LOGIC"],
+    ["NODEVIEW_MT_AddListOps", 'NLA'],
+    ["NODEVIEW_MT_AddDictionary", 'OUTLINER_OB_FONT'],
+    ["separator"],
+    ["NODEVIEW_MT_AddViz", 'RESTRICT_VIEW_OFF'],
+    ["NODEVIEW_MT_AddText", 'TEXT'],
+    ["NODEVIEW_MT_AddScene", 'SCENE_DATA'],
+    ["NODEVIEW_MT_AddLayout", 'NODETREE'],
+    ["NODE_MT_category_SVERCHOK_BPY_Data", "BLENDER"],
+    ["separator"],
+    ["NODEVIEW_MT_AddNetwork", "SYSTEM"],
+    ["NODEVIEW_MT_AddBetas", "SV_BETA"],
+    ["NODEVIEW_MT_AddAlphas", "SV_ALPHA"],
+    ["separator"],
+    ["NODE_MT_category_SVERCHOK_GROUPS", "RNA"],
+    ["NODEVIEW_MT_AddPresetOps", "SETTINGS"],
+]
 def layout_draw_categories(layout, node_details):
 
     for node_info in node_details:
@@ -107,43 +147,41 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         if self.bl_idname == 'NODEVIEW_MT_Dynamic_Menu':
             layout.operator("node.sv_extra_search", text="Search", icon='OUTLINER_DATA_FONT')
 
+        for item in menu_structure:
+            if item[0] == 'separator':
+                layout.separator()
+            else:
+                if "Add" in item[0]:
+                    name = item[0].split("Add")[1]
+                    if name in node_cats:
+                        if category_has_nodes(name):
+                            layout.menu(item[0], **icon(item[1]))
 
-        layout.separator()
-        layout.menu("NODEVIEW_MT_AddGenerators", **icon('OBJECT_DATAMODE'))
-        layout.menu("NODEVIEW_MT_AddCurves", **icon('OUTLINER_OB_CURVE'))
-        layout.menu("NODEVIEW_MT_AddSurfaces", **icon('SURFACE_DATA'))
-        layout.menu("NODEVIEW_MT_AddFields", **icon('OUTLINER_OB_FORCE_FIELD'))
-        layout.menu("NODEVIEW_MT_AddTransforms", **icon('ORIENTATION_LOCAL'))
-        layout.menu("NODEVIEW_MT_AddAnalyzers", **icon('VIEWZOOM'))
-        layout.menu("NODEVIEW_MT_AddModifiers", **icon('MODIFIER'))
-        layout.menu("NODEVIEW_MT_AddCAD", **icon('TOOL_SETTINGS'))
-        layout.separator()
-        layout.menu("NODEVIEW_MT_AddNumber", **icon("SV_NUMBER"))
-        layout.menu("NODEVIEW_MT_AddVector", **icon("SV_VECTOR"))
-        layout.menu("NODEVIEW_MT_AddMatrix", **icon('EMPTY_AXIS'))
-        layout.menu("NODEVIEW_MT_AddQuaternion", **icon('SV_QUATERNION'))
-        layout.menu("NODEVIEW_MT_AddLogic", **icon("SV_LOGIC"))
-        layout.menu("NODEVIEW_MT_AddListOps", **icon('NLA'))
-        layout.menu("NODEVIEW_MT_AddDictionary", icon='OUTLINER_OB_FONT')
-        layout.separator()
-        layout.menu("NODEVIEW_MT_AddViz", **icon('RESTRICT_VIEW_OFF'))
-        layout.menu("NODEVIEW_MT_AddText", icon='TEXT')
-        layout.menu("NODEVIEW_MT_AddScene", **icon('SCENE_DATA'))
-        layout.menu("NODEVIEW_MT_AddLayout", icon='NODETREE')
-        layout.menu("NODE_MT_category_SVERCHOK_BPY_Data", icon="BLENDER")
-        layout.separator()
-        layout.menu("NODEVIEW_MT_AddNetwork", **icon("SYSTEM"))
-        layout.menu("NODEVIEW_MT_AddBetas", **icon("SV_BETA"))
-        layout.menu("NODEVIEW_MT_AddAlphas", **icon("SV_ALPHA"))
-        layout.separator()
-        layout.menu("NODE_MT_category_SVERCHOK_GROUPS", icon="RNA")
-        layout.menu("NODEVIEW_MT_AddPresetOps", icon="SETTINGS")
+                    else:
+                        layout.menu(item[0], **icon(item[1]))
+                else:
+                # print('AA', globals()[item[0]].bl_label)
+                    layout.menu(item[0], **icon(item[1]))
 
         extra_categories = get_extra_categories()
         if extra_categories:
             layout.separator()
             for category in extra_categories:
                 layout.menu("NODEVIEW_MT_EX_" + category.identifier)
+
+class NODEVIEW_MT_Solids_Special_Menu(bpy.types.Menu):
+    bl_label = "Solids"
+    @classmethod
+    def poll(cls, context):
+        tree_type = context.space_data.tree_type
+        if tree_type in sv_tree_types:
+            #menu_prefs['show_icons'] = get_icon_switch()
+            # print('showing', menu_prefs['show_icons'])
+            return True
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout_draw_categories(self.layout, node_cats[self.bl_label])
 
 
 class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
@@ -219,7 +257,7 @@ def make_extra_category_menus():
                 bl_label = category.name
 
                 def draw(self, context):
-                    nodes = [[item.nodetype] for item in self.category_items] 
+                    nodes = [[item.nodetype] for item in self.category_items]
                     layout_draw_categories(self.layout, nodes)
 
             class_name = "NODEVIEW_MT_EX_" + category.identifier
@@ -242,6 +280,7 @@ classes = [
     make_class('Curves', "Curves"),
     make_class('Surfaces', "Surfaces"),
     make_class('Fields', "Fields"),
+    make_class('Solids', "Solids"),
     make_class('Transforms', "Transforms"),
     make_class('Analyzers', "Analyzers"),
     make_class('Viz', "Viz"),
@@ -262,6 +301,7 @@ classes = [
     make_class('Network', "Network"),
     make_class('Betas', "Beta Nodes"),
     make_class('Alphas', "Alpha Nodes"),
+    # NODEVIEW_MT_Solids_Special_Menu
 ]
 
 def register():
@@ -275,4 +315,3 @@ def unregister():
         bpy.utils.unregister_class(class_name)
     for category in presets.get_category_names():
         bpy.utils.unregister_class(preset_category_menus[category])
-

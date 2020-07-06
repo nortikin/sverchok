@@ -7,6 +7,7 @@ from pathlib import Path
 
 import sverchok
 from sverchok.old_nodes import is_old
+from sverchok.utils.dummy_nodes import is_dummy
 from sverchok.utils.testing import *
 from sverchok.utils.sv_IO_panel_tools import import_tree
 from sverchok.utils.sv_examples_utils import examples_paths
@@ -52,7 +53,7 @@ class MonadImportTest(SverchokTestCase):
 
 
 # to keep automated tests from breaking, i've collected a list of examples that need to be skipped
-# because they 
+# because they
 #  1) require .blend data (greasepencil strokes) or
 #  2) 3rd party python modules (mcubes, conway)
 
@@ -101,6 +102,8 @@ class ExamplesImportTest(SverchokTestCase):
                             import_tree(new_tree, path)
                         for node in new_tree.nodes:
                             if is_old(node):
-                                error_format = "This example contains deprecated node `{}' ({}). Please upgrade the example file." 
+                                error_format = "This example contains deprecated node `{}' ({}). Please upgrade the example file."
                                 self.fail(error_format.format(node.name, node.bl_idname))
-
+                            if is_dummy(node):
+                                error_format = "This example contains dummy node `{}' ({}). Please ensure dependencies before saving file."
+                                self.fail(error_format.format(node.name, node.bl_idname))
