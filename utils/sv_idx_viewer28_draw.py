@@ -291,7 +291,7 @@ def draw_indices_2D_wbg(context, args):
         pos_x = x - (txt_width / 2)
         pos_y = y - (txt_height / 2)
         # blf.draw(0, index_str)
-        pts = generate_points_tris(txt_width, txt_height, pos_x, pos_y)
+        pts = generate_points_tris(txt_width, txt_height, x, y-1)
         data_index_counter = len(final_draw_data)
         final_draw_data[data_index_counter] = (index_str, pos_x, pos_y, txt_width, txt_height, type_draw, pts)
 
