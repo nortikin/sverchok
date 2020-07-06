@@ -78,7 +78,33 @@ def tracked_operator(node, layout_element, fn_name='', text='', icon=None):
     button = layout_element.operator(CALLBACK_OP, **operator_props)
     button.fn_name = fn_name
     button.node_name = node.name
-    button.tree_name = node.id_data.name    
+    button.tree_name = node.id_data.name
+
+
+class SvObjectRenameDialog(bpy.types.Operator):
+
+    bl_idname = "tools.sv_rename_basedata"
+    bl_label = "Sverchok Rename Objects (basedata)"
+
+    basedata_name: bpy.props.StringProperty(name="New Name")
+    tree_name: StringProperty(default='')
+    node_name: StringProperty(default='')
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
+
+    def draw(self, context):
+        layout = self.layout
+        col = layout.column()
+        col.prop(self, 'basedata_name')
+
+    def execute(self, context):
+        if self.tree_name and self.node_name:
+            n = bpy.data.node_groups[self.tree_name].nodes[self.node_name]
+        else:
+            n = context.node
+
+        return {'FINISHED'}
 
 
 class SvObjectsHelperCallback(bpy.types.Operator):
@@ -127,6 +153,9 @@ class SvObjectsHelperCallback(bpy.types.Operator):
                 mat = bpy.data.materials.new('sv_material')
                 mat.use_nodes = True
                 n.material = mat.name
+
+        elif type_op == 'rename_basedata':
+            bpy.ops.tools.sv_rename_basedata("INVOKE_DEFAULT", tree_name=self.tree_name, node_name=self.node_name)
 
         return {'FINISHED'}
 
@@ -301,6 +330,7 @@ class SvObjHelper():
             row = col.row(align=True)
             row.scale_y = 1
             row.prop(self, "basedata_name", text="", icon=self.bl_icon)
+            tracked_operator(self, row, fn_name='rename_basedata', icon="SYNTAX_OFF")
 
             row = col.row(align=True)
             row.scale_y = 2
@@ -415,9 +445,5 @@ class SvObjHelper():
             sv_object.matrix_local = Matrix.Identity(4)    
 
 
-def register():
-    bpy.utils.register_class(SvObjectsHelperCallback)
-
-
-def unregister():
-    bpy.utils.unregister_class(SvObjectsHelperCallback)
+classes = [SvObjectRenameDialog, SvObjectsHelperCallback]
+register, unregister = bpy.utils.register_classes_factory(classes)
