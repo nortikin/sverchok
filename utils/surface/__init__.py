@@ -6,5 +6,6 @@
 # License-Filename: LICENSE
 
 from sverchok.utils.surface.core import *
+from sverchok.utils.surface.data import *
 from sverchok.utils.surface.sphere import *
 from sverchok.utils.surface.algorithms import *
