@@ -163,18 +163,18 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
 
         layout.row().prop(self, 'draw_obj_idx', text="Draw Object Index", toggle=True)
 
-    def sv_update(self):
-        # this node should resist updates until fully populated with sockets.
-        if 'text' not in self.inputs:
-            return
+    # def sv_update(self):
+    #     # this node should resist updates until fully populated with sockets.
+    #     if 'text' not in self.inputs:
+    #         return
 
-        # this node should disable itself if the vertex socket is not linked
-        try:
-            socket_one_has_upstream_links = self.inputs[0].other
-            if not socket_one_has_upstream_links:
-                callback_disable(node_id(self))
-        except:
-            self.debug(f'vd idx update holdout {self.n_id}')
+    #     # this node should disable itself if the vertex socket is not linked
+    #     try:
+    #         socket_one_has_upstream_links = self.inputs[0].other
+    #         if not socket_one_has_upstream_links:
+    #             callback_disable(node_id(self))
+    #     except:
+    #         self.debug(f'vd idx update holdout {self.n_id}')
 
 
     def get_face_extras(self, geom):
