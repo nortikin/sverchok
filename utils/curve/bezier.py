@@ -6,18 +6,12 @@
 # License-Filename: LICENSE
 
 import numpy as np
-from math import sin, cos, pi, radians, sqrt
 
-from mathutils import Vector, Matrix
-
-from sverchok.utils.geom import PlaneEquation, LineEquation, LinearSpline, CubicSpline, CircleEquation2D, CircleEquation3D, Ellipse3D
 from sverchok.utils.integrate import TrapezoidIntegral
-from sverchok.utils.logging import error, exception
 from sverchok.utils.math import (
         binomial,
-        ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
-        NORMAL_DIR
-    )
+        FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL
+)
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
 from sverchok.utils.curve.core import SvCurve
 

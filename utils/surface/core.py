@@ -9,14 +9,8 @@ import numpy as np
 from math import pi, cos, sin, atan, sqrt
 from collections import defaultdict
 
-from mathutils import Matrix, Vector
-
 from sverchok.utils.logging import info, exception
-from sverchok.utils.math import (
-        from_spherical,
-        ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL
-    )
-from sverchok.utils.geom import LineEquation, rotate_vector_around_vector, autorotate_householder, autorotate_track, autorotate_diff
+
 
 class SvSurface(object):
     def __repr__(self):
