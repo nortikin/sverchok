@@ -18,6 +18,7 @@ else:
         bl_label = 'Import Solid'
         bl_icon = 'IMPORT'
         solid_catergory = "Inputs"
+        
         def sv_init(self, context):
             self.inputs.new('SvFilePathSocket', "File Path")
             self.outputs.new('SvSolidSocket', "Solid")

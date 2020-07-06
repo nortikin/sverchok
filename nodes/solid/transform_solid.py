@@ -6,11 +6,10 @@ if FreeCAD is None:
     add_dummy('SvTransformSolidNode', 'Transform Solid', 'FreeCAD')
 else:
     import bpy
-    from bpy.props import FloatProperty, StringProperty
+    from bpy.props import FloatProperty
 
     from sverchok.node_tree import SverchCustomTreeNode
     from sverchok.data_structure import updateNode, match_long_repeat as mlr
-    import Part
     from FreeCAD import Base
 
     class SvTransformSolidNode(bpy.types.Node, SverchCustomTreeNode):
@@ -29,8 +28,6 @@ else:
             default=0.1,
             precision=4,
             update=updateNode)
-        # def draw_buttons(self, context, layout):
-        #     layout.prop(self, "join", toggle=True)
 
         def sv_init(self, context):
             self.inputs.new('SvSolidSocket', "Solid")
@@ -45,8 +42,8 @@ else:
             matrixes = self.inputs[1].sv_get()
             solids = []
             for solid, matrix in zip(*mlr([solids_in, matrixes])):
-                myMat = Base.Matrix(*[i for v in matrix for i in v])
-                solid_o = solid.transformGeometry(myMat)
+                mat = Base.Matrix(*[i for v in matrix for i in v])
+                solid_o = solid.transformGeometry(mat)
                 solids.append(solid_o)
 
             self.outputs['Solid'].sv_set(solids)

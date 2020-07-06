@@ -10,12 +10,8 @@ else:
     from bpy.props import BoolProperty
     from sverchok.node_tree import SverchCustomTreeNode
     from sverchok.data_structure import updateNode
-    from sverchok.data_structure import match_long_repeat as mlr
     from sverchok.utils.surface import SvSurface
     from sverchok.utils.curve import SvSolidEdgeCurve
-    from sverchok.utils.modules.matrix_utils import vectors_to_matrix
-    import Part
-    from FreeCAD import Base
 
     class SvSolidFaceSurface(SvSurface):
         __description__ = "Solid Face"

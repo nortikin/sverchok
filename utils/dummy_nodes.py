@@ -23,18 +23,22 @@ from sverchok.utils.logging import error, exception
 imported_dummys = {}
 
 
-dummy_nodes_dict = {
-    'SvBoxSolidNode': ['Box (Solid)', 'FreeCAD'],
-    'SvSphereSolidNode': ['Sphere (Solid)', 'FreeCAD'],
-    'SvCylinderSolidNode': ['Cylinder (Solid)', 'FreeCAD'],
-    'SvTransformSolidNode': ['Transform Solid', 'FreeCAD'],
-    'SvChamferSolidNode': ['Chamfer Solid', 'FreeCAD'],
-    'SvFilletSolidNode': ['Fillet Solid', 'FreeCAD'],
-    'SvSolidBooleanNode': ['Solid Boolean', 'FreeCAD'],
-    'SvMeshToSolidNode': ['Mesh to Solid', 'FreeCAD'],
-    'SvSolidToMeshNode': ['Solid to Mesh', 'FreeCAD'],
-    }
+dummy_nodes_dict = {}
+'''
+Usage example:
 
+from sverchok.dependencies import FreeCAD
+from sverchok.utils.dummy_nodes import add_dummy
+
+if FreeCAD is None:
+                 bl_idname        bl_label     dependecy
+    add_dummy('SvBoxSolidNode', 'Box (Solid)', 'FreeCAD')
+else:
+    class SvBoxSolidNode(...):
+        ... ....
+
+this will create a dummy node if needed
+'''
 def add_dummy(bl_id, name, dependecy):
     dummy_nodes_dict[bl_id] = [name, dependecy]
 

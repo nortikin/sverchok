@@ -5,16 +5,9 @@ from sverchok.utils.dummy_nodes import add_dummy
 if FreeCAD is None:
     add_dummy('SvSolidVerticesNode', 'Solid Vertices', 'FreeCAD')
 else:
-    import numpy as np
+
     import bpy
-    from bpy.props import BoolProperty
     from sverchok.node_tree import SverchCustomTreeNode
-    from sverchok.data_structure import updateNode
-    from sverchok.data_structure import match_long_repeat as mlr
-    from sverchok.utils.curve import SvSolidEdgeCurve
-    from sverchok.utils.modules.matrix_utils import vectors_to_matrix
-    import Part
-    from FreeCAD import Base
 
     class SvSolidVerticesNode(bpy.types.Node, SverchCustomTreeNode):
         """

@@ -1,8 +1,11 @@
 
 
 from sverchok.dependencies import FreeCAD
+from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is not None:
+if FreeCAD is None:
+    add_dummy('SvSolidToMeshNode', 'Solid to Mesh', 'FreeCAD')
+else:
     import math
     import bpy
     from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty

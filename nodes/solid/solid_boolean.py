@@ -6,12 +6,10 @@ if FreeCAD is None:
     add_dummy('SvSolidBooleanNode', 'Solid Boolean', 'FreeCAD')
 else:
     import bpy
-    from bpy.props import BoolProperty, FloatProperty, StringProperty, EnumProperty
+    from bpy.props import BoolProperty, FloatProperty, EnumProperty
     from sverchok.node_tree import SverchCustomTreeNode
     from sverchok.data_structure import updateNode, match_long_repeat as mlr
-    import FreeCAD as F
-    import Part
-    from FreeCAD import Base
+
 
     class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
         """

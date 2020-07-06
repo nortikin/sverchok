@@ -43,9 +43,6 @@ else:
             self.inputs.new('SvStringsSocket', "Mask")
             self.outputs.new('SvSolidSocket', "Solid")
 
-
-
-
         def process(self):
             if not any(socket.is_linked for socket in self.outputs):
                 return

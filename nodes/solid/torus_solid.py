@@ -7,7 +7,7 @@ if FreeCAD is None:
 else:
 
     import bpy
-    from bpy.props import FloatProperty, FloatVectorProperty, StringProperty
+    from bpy.props import FloatProperty, FloatVectorProperty
 
     from sverchok.node_tree import SverchCustomTreeNode
     from sverchok.data_structure import updateNode, match_long_repeat as mlr
@@ -43,8 +43,6 @@ else:
             precision=4,
             update=updateNode)
 
-
-
         origin: FloatVectorProperty(
             name="Origin",
             default=(0, 0, 0),
@@ -67,16 +65,14 @@ else:
 
             self.outputs.new('SvSolidSocket', "Solid")
 
-
-
         def process(self):
             if not any(socket.is_linked for socket in self.outputs):
                 return
 
-            p = [s.sv_get()[0] for s in self.inputs]
+            params = [s.sv_get()[0] for s in self.inputs]
 
             solids = []
-            for rad, rad_small, origin, direc, angle  in zip(*mlr(p)):
+            for rad, rad_small, origin, direc, angle  in zip(*mlr(params)):
                 solid = Part.makeTorus(rad, rad_small, Base.Vector(origin), Base.Vector(direc), 0, 360, angle)
                 solids.append(solid)
 

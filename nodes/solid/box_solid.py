@@ -6,7 +6,7 @@ if FreeCAD is None:
     add_dummy('SvBoxSolidNode', 'Box (Solid)', 'FreeCAD')
 else:
     import bpy
-    from bpy.props import StringProperty, FloatProperty, FloatVectorProperty
+    from bpy.props import FloatProperty, FloatVectorProperty
     from sverchok.node_tree import SverchCustomTreeNode
     from sverchok.data_structure import updateNode
     from sverchok.data_structure import match_long_repeat as mlr

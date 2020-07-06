@@ -70,7 +70,7 @@ else:
             r = (normal_no * face_color[0]) - 0.1
             g = (normal_no * face_color[1]) - 0.1
             b = (normal_no * face_color[2]) - 0.1
-            vcol = (r+0.2, g+0.2, b+0.2, 1.0)
+            vcol = (r+0.2, g+0.2, b+0.2, 1)
             concat_vcols([vcol, vcol, vcol])
 
         return out_verts, out_vcols
@@ -223,6 +223,8 @@ else:
 
         if config.draw_gl_wireframe:
             bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
+
+
     def edges_geom(geom, config):
         solids = geom.solids
         curve_def = config.edges_steps
@@ -239,7 +241,7 @@ else:
                 for i in range(curve_def):
                     v = edge.valueAt(start+ e_range*i/(curve_def-1))
                     s_verts.append(v[:])
-                e_idx = [(i,j) for i, j in zip(range(e_offset, e_offset+curve_def-1), range(e_offset+1,e_offset+curve_def)) ]
+                e_idx = [(i,j) for i, j in zip(range(e_offset, e_offset + curve_def-1), range(e_offset + 1, e_offset + curve_def)) ]
 
                 e_offset += curve_def
                 s_edges.extend(e_idx)
@@ -250,7 +252,6 @@ else:
 
     def draw_complex(context, args):
         geom, config = args
-        solids = geom.solids
         if config.draw_gl_polygonoffset:
             bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
 
@@ -276,10 +277,10 @@ else:
 
     class SvSolidViewerNode(bpy.types.Node, SverchCustomTreeNode):
         """
-        Triggers: exp vd mk3
-        Tooltip: drawing, with experimental features
+        Triggers: solid viewer
+        Tooltip: drawing solids on 3d view
 
-        not a very exciting node.
+        manily a copy of the viewer draw with modifications to ease solid viewing
         """
 
         bl_idname = 'SvSolidViewerNode'
@@ -558,22 +559,6 @@ else:
         def sv_copy(self, node):
             self.n_id = ''
 
-        @property
-        def fully_enabled(self):
-            return "attrs" in self.inputs
-
-        def sv_update(self):
-            if not self.fully_enabled:
-                return
-
-            try:
-                socket_one_has_upstream_links = self.inputs[0].other
-                socket_two_has_upstream_links = self.inputs[1].other
-
-                if not socket_one_has_upstream_links:
-                    callback_disable(node_id(self))
-            except:
-                self.debug(f'vd draw update holdout {self.n_id}')
 
         def sv_free(self):
             callback_disable(node_id(self))

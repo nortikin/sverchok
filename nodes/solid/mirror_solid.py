@@ -7,16 +7,15 @@ if FreeCAD is None:
 else:
     import bpy
     from bpy.props import FloatProperty, StringProperty
-    from mathutils import Vector, Matrix
+    from mathutils import Vector
     from sverchok.node_tree import SverchCustomTreeNode
     from sverchok.data_structure import updateNode, match_long_repeat as mlr
-    import Part
     from FreeCAD import Base
 
     class SvMirrorSolidNode(bpy.types.Node, SverchCustomTreeNode):
         """
         Triggers: Mirror Solid
-        Tooltip: Transform Solid with Matrix
+        Tooltip: Mirror Solid with Matrix as Plane
         """
         bl_idname = 'SvMirrorSolidNode'
         bl_label = 'Mirror Solid'
@@ -29,8 +28,7 @@ else:
             default=0.1,
             precision=4,
             update=updateNode)
-        # def draw_buttons(self, context, layout):
-        #     layout.prop(self, "join", toggle=True)
+
 
         def sv_init(self, context):
             self.inputs.new('SvSolidSocket', "Solid")

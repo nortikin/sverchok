@@ -17,7 +17,7 @@ else:
     class SvOffsetSolidNode(bpy.types.Node, SverchCustomTreeNode):
         """
         Triggers: Offset Solid
-        Tooltip: Generate solid by offseting the boundaries of another along its normals. 
+        Tooltip: Generate solid by offseting the boundaries of another along its normals.
         """
         bl_idname = 'SvOffsetSolidNode'
         bl_label = 'Offset Solid'

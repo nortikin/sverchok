@@ -1,9 +1,12 @@
 
 from sverchok.dependencies import FreeCAD
+from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is not None:
+if FreeCAD is None:
+    add_dummy('SvSphereSolidNode', 'Sphere (Solid)', 'FreeCAD')
+else:
     import bpy
-    from bpy.props import FloatProperty, FloatVectorProperty, StringProperty
+    from bpy.props import FloatProperty, FloatVectorProperty
     from sverchok.node_tree import SverchCustomTreeNode
     from sverchok.data_structure import updateNode, match_long_repeat as mlr
 

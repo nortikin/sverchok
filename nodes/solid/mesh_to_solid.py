@@ -8,7 +8,7 @@ else:
     import bpy
     from bpy.props import FloatProperty, BoolProperty
 
-    from mathutils import Vector, Matrix
+    from mathutils import Vector
     from mathutils.geometry import tessellate_polygon as tessellate
     from sverchok.node_tree import SverchCustomTreeNode
     from sverchok.data_structure import updateNode, match_long_repeat as mlr
