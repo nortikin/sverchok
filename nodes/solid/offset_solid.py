@@ -42,7 +42,7 @@ else:
         join_type: EnumProperty(
             name="Join Type",
             items=join_type_items,
-            default="Arcs",
+            default="Intersections",
             update=updateNode)
         intersection: BoolProperty(
             name="Intersection",
