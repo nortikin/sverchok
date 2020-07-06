@@ -263,8 +263,9 @@ def draw_indices_2D_wbg(context, args):
             add_vcol((col,) * 6)
 
         # draw background
-        shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
+        shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
         batch = batch_for_shader(shader, 'TRIS', {"pos": full_bg_Verts, "color": full_bg_colors})
+        batch.draw(shader)
 
         # draw text 
         for counter, (index_str, pos_x, pos_y, txt_width, txt_height, type_draw, pts) in final_draw_data.items():
@@ -290,9 +291,9 @@ def draw_indices_2D_wbg(context, args):
         pos_x = x - (txt_width / 2)
         pos_y = y - (txt_height / 2)
         # blf.draw(0, index_str)
-        pts = generate_points_tris(width, height, pos_x, pos_y)
+        pts = generate_points_tris(txt_width, txt_height, pos_x, pos_y)
+        data_index_counter = len(final_draw_data)
         final_draw_data[data_index_counter] = (index_str, pos_x, pos_y, txt_width, txt_height, type_draw, pts)
-        data_index_counter += 1
 
     # THIS SECTION IS ONLY EXECUTED IF BOTH FORWARD AND BACKFACING ARE DRAWN
 
