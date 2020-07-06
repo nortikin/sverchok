@@ -4,8 +4,7 @@ import numpy as np
 from mathutils import Matrix, Vector
 
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
-
-from sverchok_extra.dependencies import geomdl
+from sverchok.dependencies import geomdl
 
 if geomdl is not None:
     from geomdl import operations

@@ -60,14 +60,24 @@
     SvRoundedRectangleNode
     SvArc3ptCurveNode
     SvArcSedCurveNode
+    SvExCatenaryCurveNode
     SvPolyArcNode
     SvExCurveFormulaNode
     SvExPolylineNode
     SvExFilletPolylineNode
     SvExCubicSplineNode
     SvBezierSplineNode
+    SvExNurbsCurveNode
     SvKinkyCurveNode
     SvTangentsCurveNode
+    SvExRbfCurveNode
+    SvExCirclifyNode
+    ---
+    SvExApproxNurbsCurveNode
+    SvExInterpolateNurbsCurveNode
+    SvExBezierCurveFitNode
+    SvExMarchingSquaresNode
+    SvExMSquaresOnSurfaceNode
     ---
     SvExApplyFieldToCurveNode
     SvExCastCurveNode
@@ -83,6 +93,8 @@
     SvReparametrizeCurveNode
     SvExSurfaceBoundaryNode
     ---
+    SvExNearestPointOnCurveNode
+    SvExOrthoProjectCurveNode
     SvExCurveEndpointsNode
     SvExCurveSegmentNode
     SvExCurveRangeNode
@@ -92,9 +104,13 @@
     SvExCurveFrameNode
     SvExCurveCurvatureNode
     SvExCurveTorsionNode
+    SvExCurveExtremesNode
     SvExCurveZeroTwistFrameNode
+    SvExSlerpCurveFrameNode
     SvExCurveLengthParameterNode
     SvLengthRebuildCurveNode
+    SvExCrossCurvePlaneNode
+    SvExCrossCurveSurfaceNode
     ---
     SvExEvalCurveNode
 
@@ -103,6 +119,13 @@
     SvExSphereNode
     SvExSurfaceFormulaNode
     SvInterpolatingSurfaceNode
+    SvExNurbsSurfaceNode
+    SvExMinimalSurfaceNode
+    SvExMinSurfaceFromCurveNode
+    ---
+    SvExApproxNurbsSurfaceNode
+    SvExInterpolateNurbsSurfaceNode
+    SvExQuadsToNurbsNode
     ---
     SvExRevolutionSurfaceNode
     SvExTaperSweepSurfaceNode
@@ -123,6 +146,13 @@
     SvSurfaceNormalsNode
     SvSurfaceGaussCurvatureNode
     SvSurfaceCurvaturesNode
+    SvExSurfaceExtremesNode
+    SvExNearestPointOnSurfaceNode
+    SvExOrthoProjectSurfaceNode
+    SvExRaycastSurfaceNode
+    ---
+    SvExImplSurfaceRaycastNode
+    SvExMarchingCubesNode
     ---
     SvExTessellateTrimSurfaceNode
     SvAdaptiveTessellateNode
@@ -137,7 +167,10 @@
     SvExScalarFieldPointNode
     SvAttractorFieldNodeMk2
     SvExImageFieldNode
+    SvExMeshNormalFieldNode
     SvExVoronoiFieldNode
+    SvExMinimalScalarFieldNode
+    SvExMinimalVectorFieldNode
     SvExNoiseVectorFieldNode
     ---
     SvExScalarFieldMathNode
@@ -153,8 +186,10 @@
     SvExVectorFieldEvaluateNode
     SvExVectorFieldApplyNode
     ---
+    SvExVFieldLinesOnSurfNode
     SvExVectorFieldGraphNode
     SvExVectorFieldLinesNode
+    SvExScalarFieldGraphNode
 
 ## Solids
    SvBoxSolidNode
@@ -173,8 +208,6 @@
    SvSolidVerticesNode
    SvSolidEdgesNode
    SvSolidFacesNode
-   SvImportSolidNode
-   SvExportSolidNode
    SvSolidViewerNode
 
 ## Analyzers
@@ -280,6 +313,9 @@
     SvDelaunay2DCdt
     Voronoi2DNode
     SvOffsetLineNode
+    SvExVoronoi3DNode
+    SvExDelaunay3DNode
+    SvExVoronoiSphereNode
     SvContourNode
     SvRandomPointsOnMesh
     ---
@@ -497,6 +533,7 @@
     SvCurveInputNode
     SvFCurveInNodeMK1
     SvCollectionPicker
+    SvExNurbsInNode
     ---
     SvSelectionGrabberLite
     SvObjEdit
@@ -516,15 +553,25 @@
     SvMaterialIndexNode
     SvSetCustomUVMap
 
+## Ladybug
+    SvExLadyBugLocationNode
+    SvExLadyBugSunPositionNode
+
+## Exchange
+    SvExNurbsToJsonNode
+    SvExJsonToNurbsNode
+    SvImportSolidNode
+    SvExportSolidNode
+
+## Network
+    UdpClientNode
+    SvFilePathNode
+
 ## Layout
     WifiInNode
     WifiOutNode
     NodeReroute
     ConverterNode
-
-## Network
-    UdpClientNode
-    SvFilePathNode
 
 ## Beta Nodes
     SvFormulaShapeNode
