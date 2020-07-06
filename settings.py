@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 import bpy
 from bpy.types import AddonPreferences
@@ -10,6 +11,8 @@ from sverchok.core import update_system
 from sverchok.utils import sv_panels_tools, logging
 from sverchok.utils.sv_gist_tools import TOKEN_HELP_URL
 from sverchok.ui import color_def
+
+PYPATH = bpy.app.binary_path_python
 
 def get_params(settings_and_fallbacks):
     """
@@ -55,7 +58,7 @@ class SvExPipInstall(bpy.types.Operator):
     package : bpy.props.StringProperty(name = "Package names")
 
     def execute(self, context):
-        first_install = self.package in ex_dependencies and ex_dependencies[self.package] is None
+        first_install = self.package in sv_dependencies and sv_dependencies[self.package] is None
         cmd = [PYPATH, '-m', 'pip', 'install', '--upgrade'] + self.package.split(" ")
         ok = subprocess.call(cmd) == 0
         if ok:
