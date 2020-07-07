@@ -63,6 +63,10 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         name='draw_bg', description='draw background poly?',
         default=False, update=updateNode)
 
+    draw_obj_idx: BoolProperty(
+        name='draw_obj_idx', description='draw object index beside part index',
+        default=False, update=updateNode)
+
     draw_bface: BoolProperty(
         name='draw_bface', description='draw backfacing indices?',
         default=True, update=updateNode)
@@ -157,18 +161,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
                 colx.scale_x = little_width
                 colx.prop(self, colprop, text="")
 
-    def sv_update(self):
-        # this node should resist updates until fully populated with sockets.
-        if 'text' not in self.inputs:
-            return
-
-        # this node should disable itself if the vertex socket is not linked
-        try:
-            socket_one_has_upstream_links = self.inputs[0].other
-            if not socket_one_has_upstream_links:
-                callback_disable(node_id(self))
-        except:
-            self.debug(f'vd idx update holdout {self.n_id}')
+        layout.row().prop(self, 'draw_obj_idx', text="Draw Object Index", toggle=True)
 
 
     def get_face_extras(self, geom):
@@ -229,29 +222,36 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             concat_edge = display_topology.edge_data.append
             concat_face = display_topology.face_data.append
             concat_text = display_topology.text_data.append
+
+            prefix_if_needed = lambda obj_index, chars: (f'{obj_index}: {chars}') if self.draw_obj_idx else chars
+
             
             for obj_index, final_verts in enumerate(geom.verts):
 
                 # can't display vert idx and text simultaneously - ...
                 if self.display_vert_index:
                     for idx, vpos in enumerate(final_verts):
-                        concat_vert((idx, vpos))
-                    if geom.text:
-                        
+                        chars = prefix_if_needed(obj_index, idx)
+                        concat_vert((chars, vpos))
+                    
+                    if geom.text:    
                         text_items = self.get_text_of_correct_length(obj_index, geom, len(final_verts))                        
                         for text_item, vpos in zip(text_items, final_verts):
-                            concat_text(text_item)
+                            chars = prefix_if_needed(obj_index, text_item[0])
+                            concat_text((chars, text_item[1]))
 
                 if self.display_edge_index and obj_index < len(geom.edges):
                     for edge_index, (idx1, idx2) in enumerate(geom.edges[obj_index]):
                         loc = final_verts[idx1].lerp(final_verts[idx2], 0.5)
-                        concat_edge((edge_index, loc))
+                        chars = prefix_if_needed(obj_index, edge_index)
+                        concat_edge((chars, loc))
 
                 if self.display_face_index and obj_index < len(geom.faces):
                     for face_index, f in enumerate(geom.faces[obj_index]):
                         poly_verts = [final_verts[idx] for idx in f]
                         median = calc_median(poly_verts)
-                        concat_face((face_index, median))
+                        chars = prefix_if_needed(obj_index, face_index)
+                        concat_face((chars, median))
 
             return display_topology
 
