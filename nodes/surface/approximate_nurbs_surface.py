@@ -5,7 +5,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.logging import info, exception
-from sverchok.utils.surface.nurbs import SvExGeomdlSurface
+from sverchok.utils.surface.nurbs import SvGeomdlSurface
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 
@@ -149,7 +149,7 @@ else:
                 points_out.append(surf.ctrlpts2d)
                 knots_u_out.append(surf.knotvector_u)
                 knots_v_out.append(surf.knotvector_v)
-                surf = SvExGeomdlSurface(surf)
+                surf = SvGeomdlSurface(surf)
                 surfaces_out.append(surf)
 
             self.outputs['Surface'].sv_set(surfaces_out)

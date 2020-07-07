@@ -9,7 +9,7 @@ from sverchok.utils.logging import info, exception
 from sverchok.utils.sv_mesh_utils import polygons_to_edges
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, edge_data_from_bmesh_edges
 from sverchok.utils.geom import PlaneEquation, center
-from sverchok.utils.surface.nurbs import SvExGeomdlSurface
+from sverchok.utils.surface.nurbs import SvGeomdlSurface
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 
@@ -179,7 +179,7 @@ else:
             surface.knotvector_u = knotvector.generate(surface.degree_u, 5)
             surface.knotvector_v = knotvector.generate(surface.degree_v, 5)
 
-            new_surf = SvExGeomdlSurface(surface)
+            new_surf = SvGeomdlSurface(surface)
             return new_surf, control_points, weights
 
         def process(self):

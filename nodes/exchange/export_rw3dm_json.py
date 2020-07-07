@@ -10,7 +10,7 @@ from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.curve.nurbs import SvGeomdlCurve
-from sverchok.utils.surface.nurbs import SvExGeomdlSurface
+from sverchok.utils.surface.nurbs import SvGeomdlSurface
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 
@@ -124,7 +124,7 @@ else:
                     surfaces = sum(surfaces, [])
                 container = multi.SurfaceContainer()
                 for i, surface in enumerate(surfaces):
-                    if not isinstance(surface, SvExGeomdlSurface):
+                    if not isinstance(surface, SvGeomdlSurface):
                         raise TypeError("Provided object #%s is not a NURBS surface, but %s!" % (i, type(surface)))
                     container.append(surface.surface)
                 return container

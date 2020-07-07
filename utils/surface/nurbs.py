@@ -15,7 +15,7 @@ if geomdl is not None:
 #                #
 ##################
 
-class SvExGeomdlSurface(SvSurface):
+class SvGeomdlSurface(SvSurface):
     def __init__(self, surface):
         self.surface = surface
         self.u_bounds = (0, 1)

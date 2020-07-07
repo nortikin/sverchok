@@ -7,7 +7,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, fullList, ensure_nesting_level, split_by_count
 from sverchok.utils.logging import info, exception
-from sverchok.utils.surface.nurbs import SvExGeomdlSurface
+from sverchok.utils.surface.nurbs import SvGeomdlSurface
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 
@@ -234,7 +234,7 @@ else:
                     surf.knotvector_u = knots_u
                     surf.knotvector_v = knots_v
 
-                new_surf = SvExGeomdlSurface(surf)
+                new_surf = SvGeomdlSurface(surf)
                 if self.is_cyclic_u:
                     u_min = surf.knotvector_u[degree_u]
                     u_max = surf.knotvector_u[-degree_u-2]

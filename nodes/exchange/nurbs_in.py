@@ -9,7 +9,7 @@ from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.curve.nurbs import SvGeomdlCurve
-from sverchok.utils.surface.nurbs import SvExGeomdlSurface
+from sverchok.utils.surface.nurbs import SvGeomdlSurface
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 
@@ -164,7 +164,7 @@ else:
             surface.knotvector_u = knots_u
             surface.knotvector_v = knots_v
 
-            new_surf = SvExGeomdlSurface(surface)
+            new_surf = SvGeomdlSurface(surface)
             if spline.use_cyclic_u:
                 u_min = surface.knotvector_u[surface.degree_u]
                 u_max = surface.knotvector_u[-surface.degree_u - 2]

@@ -10,7 +10,7 @@ from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.curve.nurbs import SvGeomdlCurve
-from sverchok.utils.surface.nurbs import SvExGeomdlSurface
+from sverchok.utils.surface.nurbs import SvGeomdlSurface
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 
@@ -67,7 +67,7 @@ else:
                     curve = SvGeomdlCurve(item)
                     curves_out.append(curve)
                 elif isinstance(item, BSpline.Surface):
-                    surface = SvExGeomdlSurface(item)
+                    surface = SvGeomdlSurface(item)
                     surfaces_out.append(surface)
                 else:
                     self.warning("JSON data item #%s contains unsupported data type: %s", i, type(item))
