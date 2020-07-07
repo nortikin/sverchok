@@ -9,7 +9,7 @@ import sverchok
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.logging import info, exception
-from sverchok.utils.field.rbf import SvExRbfVectorField
+from sverchok.utils.field.rbf import SvRbfVectorField
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 from sverchok.utils.math import rbf_functions
@@ -85,7 +85,7 @@ else:
                         smooth = smooth,
                         epsilon = epsilon, mode='N-D')
 
-                field = SvExRbfVectorField(rbf)
+                field = SvRbfVectorField(rbf)
                 fields_out.append(field)
 
             self.outputs['Field'].sv_set(fields_out)

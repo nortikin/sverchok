@@ -28,7 +28,7 @@ class SvRbfScalarField(SvScalarField):
 #                #
 ##################
 
-class SvExRbfVectorField(SvVectorField):
+class SvRbfVectorField(SvVectorField):
     def __init__(self, rbf):
         self.rbf = rbf
 
