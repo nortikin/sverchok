@@ -9,7 +9,7 @@ from sverchok.utils.curve import SvCurve
 #                #
 ##################
 
-class SvExRbfCurve(SvCurve):
+class SvRbfCurve(SvCurve):
     def __init__(self, rbf, u_bounds):
         self.rbf = rbf
         self.u_bounds = u_bounds

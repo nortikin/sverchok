@@ -8,22 +8,22 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import make_euclidian_ts
-from sverchok.utils.curve.rbf import SvExRbfCurve
+from sverchok.utils.curve.rbf import SvRbfCurve
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 from sverchok.utils.math import rbf_functions
 
 if scipy is None:
-    add_dummy('SvExRbfCurveNode', "Minimal Curve", 'scipy')
+    add_dummy('SvRbfCurveNode', "Minimal Curve", 'scipy')
 else:
     from scipy.interpolate import Rbf
 
-    class SvExRbfCurveNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvRbfCurveNode(bpy.types.Node, SverchCustomTreeNode):
         """
         Triggers: Minimal Curve
         Tooltip: Generate minimal curve
         """
-        bl_idname = 'SvExRbfCurveNode'
+        bl_idname = 'SvRbfCurveNode'
         bl_label = 'Minimal Curve'
         bl_icon = 'CURVE_NCURVE'
 
@@ -76,16 +76,16 @@ else:
                             function=self.function,
                             smooth=smooth,
                             epsilon=epsilon, mode='N-D')
-                curve = SvExRbfCurve(rbf, (0.0, 1.0))
+                curve = SvRbfCurve(rbf, (0.0, 1.0))
                 curves_out.append(curve)
 
             self.outputs['Curve'].sv_set(curves_out)
 
 def register():
     if scipy is not None:
-        bpy.utils.register_class(SvExRbfCurveNode)
+        bpy.utils.register_class(SvRbfCurveNode)
 
 def unregister():
     if scipy is not None:
-        bpy.utils.unregister_class(SvExRbfCurveNode)
+        bpy.utils.unregister_class(SvRbfCurveNode)
 
