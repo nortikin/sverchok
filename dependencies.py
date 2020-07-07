@@ -1,5 +1,17 @@
 
-from logging import info, error, debug
+import logging
+
+# Logging setup
+# we have to set up logging here separately, because dependencies.py is loaded before settings.py,
+# so we can't use common settings.
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+logger.addHandler(ch)
+
+info, debug, error = logger.info, logger.debug, logger.error
 
 class SvDependency():
     def __init__(self, package, url, module=None, message=None):
@@ -123,7 +135,7 @@ try:
     freecad_d.module = FreeCAD
 except ImportError:
     freecad_d.message = "FreeCAD package is not available, Solids nodes will not be available"
-    print(freecad_d.message)
+    info(freecad_d.message)
     FreeCAD = None
 
 good_names = [d.package for d in sv_dependencies.values() if d.module is not None and d.package is not None]

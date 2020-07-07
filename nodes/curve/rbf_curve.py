@@ -18,12 +18,12 @@ if scipy is None:
 else:
     from scipy.interpolate import Rbf
 
-    class SvRbfCurveNode(bpy.types.Node, SverchCustomTreeNode):
+    class SvExRbfCurveNode(bpy.types.Node, SverchCustomTreeNode):
         """
         Triggers: Minimal Curve
         Tooltip: Generate minimal curve
         """
-        bl_idname = 'SvRbfCurveNode'
+        bl_idname = 'SvExRbfCurveNode'
         bl_label = 'Minimal Curve'
         bl_icon = 'CURVE_NCURVE'
 
@@ -83,9 +83,9 @@ else:
 
 def register():
     if scipy is not None:
-        bpy.utils.register_class(SvRbfCurveNode)
+        bpy.utils.register_class(SvExRbfCurveNode)
 
 def unregister():
     if scipy is not None:
-        bpy.utils.unregister_class(SvRbfCurveNode)
+        bpy.utils.unregister_class(SvExRbfCurveNode)
 
