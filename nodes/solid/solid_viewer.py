@@ -77,7 +77,7 @@ else:
         bm = bmesh_from_pydata(verts, [], faces, normal_update=True)
         normals = [vert.normal[:] for vert in bm.verts]
         for normal in normals:
-            vcol = (normal[0] / 2) + 1, (normal[1] / 2) + 1, (normal[2] / 2) + 1, 1.0
+            vcol = (normal[0] / 2) + 0.5, (normal[1] / 2) + 0.5, (normal[2] / 2) + 0.5, 1.0
             concat_vcols(vcol)
 
         return out_vcols
