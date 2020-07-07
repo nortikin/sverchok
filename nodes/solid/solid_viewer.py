@@ -52,7 +52,6 @@ else:
 
         return out_verts, out_vcols
 
-
     def generate_smooth_data(verts, faces, face_color, vector_light):
         """ this piggy backs off bmesh's automated normal calculation... """
         out_vcols = []
@@ -81,7 +80,6 @@ else:
         alpha = np.zeros((values.shape[0],1), dtype=np.float32)
         values = np.append(values, alpha, axis=1)
         return values.tolist()
-
 
     def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
         if GL_KIND == 'LINES':
