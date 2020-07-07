@@ -71,16 +71,16 @@ else:
         return out_vcols
 
     def generate_normals_data(verts, faces):
-        out_vcols = []
-        concat_vcols = out_vcols.append
-
         bm = bmesh_from_pydata(verts, [], faces, normal_update=True)
-        normals = [vert.normal[:] for vert in bm.verts]
-        for normal in normals:
-            vcol = (normal[0] / 2) + 0.5, (normal[1] / 2) + 0.5, (normal[2] / 2) + 0.5, 1.0
-            concat_vcols(vcol)
-
-        return out_vcols
+        # normals = [vert.normal[:] for vert in bm.verts]
+        # for normal in normals:
+        #     vcol = (normal[0] / 2) + 0.5, (normal[1] / 2) + 0.5, (normal[2] / 2) + 0.5, 1.0
+        #     concat_vcols(vcol)
+        values = np.array([vert.normal[:] for vert in bm.verts], dtype=np.float32)
+        values = ((values / 2) + 0.5)
+        alpha = np.zeros((values.shape[0],1), dtype=np.float32)
+        values = np.append(values, alpha, axis=1)
+        return values.tolist()
 
 
     def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
