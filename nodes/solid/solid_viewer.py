@@ -11,6 +11,7 @@ if FreeCAD is None:
     add_dummy('SvSolidViewerNode', 'Solid Viewer', 'FreeCAD')
 else:
     from math import pi
+    import numpy as np
 
     import bgl
     import bpy
@@ -65,6 +66,18 @@ else:
             g = (normal_no * face_color[1]) - 0.1
             b = (normal_no * face_color[2]) - 0.1
             vcol = (r+0.2, g+0.2, b+0.2, 1.0)
+            concat_vcols(vcol)
+
+        return out_vcols
+
+    def generate_normals_data(verts, faces):
+        out_vcols = []
+        concat_vcols = out_vcols.append
+
+        bm = bmesh_from_pydata(verts, [], faces, normal_update=True)
+        normals = [vert.normal[:] for vert in bm.verts]
+        for normal in normals:
+            vcol = (normal[0] / 2) + 1, (normal[1] / 2) + 1, (normal[2] / 2) + 1, 1.0
             concat_vcols(vcol)
 
         return out_vcols
@@ -135,17 +148,6 @@ else:
         draw_uniform('LINES', coords, indices, config.line4f, config.line_width, **params)
 
 
-    def draw_normals(context, args):
-        geom, config = args
-        batch = config.batch
-        shader = config.shader
-
-        shader.bind()
-        matrix = context.region_data.perspective_matrix
-        shader.uniform_float("viewProjectionMatrix", matrix)
-        shader.uniform_float("brightness", 0.5)
-        batch.draw(shader)
-
     def face_geom(geom, config):
         solids = geom.solids
         precision = config.precision
@@ -172,6 +174,8 @@ else:
             geom.facet_verts_vcols = facet_verts_vcols
         elif config.shade == 'smooth':
             geom.smooth_vcols = generate_smooth_data(geom.f_verts, f_faces, config.face4f, config.vector_light)
+        elif config.shade == 'normals':
+            geom.smooth_vnorms = generate_normals_data(geom.f_verts, f_faces)
 
     def draw_faces_uniform(context, args):
         geom, config = args
@@ -190,7 +194,7 @@ else:
         elif config.shade == "smooth":
             draw_smooth(geom.f_verts, geom.smooth_vcols, indices=geom.f_faces)
         elif config.shade == 'normals':
-            draw_normals(context, args)
+            draw_smooth(geom.f_verts, geom.smooth_vnorms, indices=geom.f_faces)
 
         if config.draw_gl_wireframe:
             bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
