@@ -7,13 +7,14 @@
 
 import numpy as np
 
+from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.integrate import TrapezoidIntegral
 from sverchok.utils.math import (
         binomial,
         FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL
 )
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
-from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.core import SvCurve, SvConcatCurve
 
 class SvBezierCurve(SvCurve):
     """
@@ -71,6 +72,49 @@ class SvBezierCurve(SvCurve):
         p3 = k0/210.0 + 3*p2 - 3*p1 + p0
         p4 = -k7/210.0 + 3*p5 - 3*p6 + p7
         return SvBezierCurve([p0, p1, p2, p3, p4, p5, p6, p7])
+
+    @classmethod
+    def build_tangent_curve(cls, points, tangents, cyclic=False, concat=False):
+        """
+        Build cubic Bezier curve spline, which goes through specified `points',
+        having specified `tangents' at these points.
+
+        inputs:
+        * points, tangents: lists of 3-tuples
+        * cyclic: whether the curve should be closed (cyclic)
+        * concat: whether to concatenate all curve segments into single Curve object
+
+        outputs: tuple:
+        * list of curve control points - list of lists of 3-tuples
+        * list of generated curves; if concat == True, then this list will contain single curve.
+        """
+        new_curves = []
+        new_controls = []
+
+        pairs = list(zip_long_repeat(points, tangents))
+        segments = list(zip(pairs, pairs[1:]))
+        if cyclic:
+            segments.append((pairs[-1], pairs[0]))
+
+        for pair1, pair2 in segments:
+            point1, tangent1 = pair1
+            point2, tangent2 = pair2
+            point1, tangent1 = np.array(point1), np.array(tangent1)
+            point2, tangent2 = np.array(point2), np.array(tangent2)
+            tangent1, tangent2 = tangent1/2.0, tangent2/2.0
+            curve = SvCubicBezierCurve(
+                        point1,
+                        point1 + tangent1,
+                        point2 - tangent2,
+                        point2)
+            curve_controls = [curve.p0.tolist(), curve.p1.tolist(),
+                              curve.p2.tolist(), curve.p3.tolist()]
+            new_curves.append(curve)
+            new_controls.append(curve_controls)
+        if concat:
+            new_curves = [SvConcatCurve(new_curves)]
+
+        return new_controls, new_curves
 
     @classmethod
     def coefficient(cls, n, k, ts):

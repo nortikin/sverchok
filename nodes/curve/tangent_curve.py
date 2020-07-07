@@ -52,30 +52,8 @@ class SvTangentsCurveNode(bpy.types.Node, SverchCustomTreeNode):
         curve_out = []
         controls_out = []
         for points, tangents in zip_long_repeat(points_s, tangents_s):
-            new_curves = []
-            new_controls = []
-            control_points = []
-            pairs = list(zip_long_repeat(points, tangents))
-            segments = list(zip(pairs, pairs[1:]))
-            if self.cyclic:
-                segments.append((pairs[-1], pairs[0]))
-            for pair1, pair2 in segments:
-                point1, tangent1 = pair1
-                point2, tangent2 = pair2
-                point1, tangent1 = np.array(point1), np.array(tangent1)
-                point2, tangent2 = np.array(point2), np.array(tangent2)
-                tangent1, tangent2 = tangent1/2.0, tangent2/2.0
-                curve = SvCubicBezierCurve(
-                            point1,
-                            point1 + tangent1,
-                            point2 - tangent2,
-                            point2)
-                curve_controls = [curve.p0.tolist(), curve.p1.tolist(),
-                                  curve.p2.tolist(), curve.p3.tolist()]
-                new_curves.append(curve)
-                new_controls.append(curve_controls)
-            if self.concat:
-                new_curves = [SvConcatCurve(new_curves)]
+            new_controls, new_curves = SvBezierCurve.build_tangent_curve(points, tangents,
+                                            cyclic = self.cyclic, concat = self.concat)
             curve_out.append(new_curves)
             controls_out.append(new_controls)
 
