@@ -5,19 +5,15 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, fullList, ensure_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat, fullList, ensure_nesting_level, split_by_count
 from sverchok.utils.logging import info, exception
 from sverchok.utils.surface.nurbs import SvExGeomdlSurface
+from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 
-# from python 3.5 docs https://docs.python.org/3.5/library/itertools.html recipes
-def grouper(iterable, n, fillvalue=None):
-    "Collect data into fixed-length chunks or blocks"
-    # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
-    args = [iter(iterable)] * n
-    return list(map(list, zip_longest(*args, fillvalue=fillvalue)))
-
-if geomdl is not None:
+if geomdl is None:
+    add_dummy('SvExNurbsSurfaceNode', "Build NURBS Surface", 'geomdl')
+else:
     from geomdl import NURBS, BSpline, knotvector
     
     class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
@@ -198,8 +194,8 @@ if geomdl is not None:
                     n_v = u_size
                     n_u = len(vertices) // n_v
 
-                    vertices = grouper(vertices, n_u)
-                    weights = grouper(weights, n_u)
+                    vertices = split_by_count(vertices, n_u)
+                    weights = split_by_count(weights, n_u)
 
                 if self.knot_mode == 'AUTO':
                     if self.is_cyclic_v:

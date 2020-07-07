@@ -237,7 +237,6 @@ def sv_zip(*iterables):
             result.append(elem)
         yield result
 
-
 list_match_modes = [
     ("SHORT",  "Match Short",  "Match shortest List",    1),
     ("CYCLE",  "Cycle",  "Match longest List by cycling",     2),

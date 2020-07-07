@@ -5,13 +5,15 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match_long_repeat
+from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat
 from sverchok.utils.logging import info, exception
 from sverchok.utils.marching_cubes import isosurface_np
 from sverchok.dependencies import mcubes, skimage
 
 if skimage is not None:
     import skimage.measure
+
+# This node can work without dependencies, but slower.
 
 class SvExMarchingCubesNode(bpy.types.Node, SverchCustomTreeNode):
     """

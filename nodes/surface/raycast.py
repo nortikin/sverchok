@@ -11,9 +11,12 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.logging import info, exception
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.manifolds import raycast_surface
+from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 
-if scipy is not None:
+if scipy is None:
+    add_dummy('SvExRaycastSurfaceNode', "Raycast on Surface", 'scipy')
+else:
 
     class SvExRaycastSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         """

@@ -12,10 +12,13 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve, SvCurveOnSurface, SvCircle
 from sverchok.utils.surface.rbf import SvExRbfSurface
+from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 from sverchok.utils.math import rbf_functions
 
-if scipy is not None:
+if scipy is None:
+    add_dummy('SvExMinSurfaceFromCurveNode', "Minimal Surface from Curve", 'scipy')
+else:
     from scipy.interpolate import Rbf
 
     class SvExMinSurfaceFromCurveNode(bpy.types.Node, SverchCustomTreeNode):

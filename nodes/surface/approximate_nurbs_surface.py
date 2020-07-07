@@ -6,9 +6,12 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.logging import info, exception
 from sverchok.utils.surface.nurbs import SvExGeomdlSurface
+from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 
-if geomdl is not None:
+if geomdl is None:
+    add_dummy('SvExApproxNurbsSurfaceNode', "Approximate NURBS Surface", 'geomdl')
+else:
     from geomdl import fitting
     
     class SvExApproxNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):

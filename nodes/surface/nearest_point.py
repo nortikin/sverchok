@@ -10,9 +10,12 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.logging import info, exception
 from sverchok.utils.surface import SvSurface
+from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 
-if scipy is not None:
+if scipy is None:
+    add_dummy('SvExNearestPointOnSurfaceNode', "Nearest Point on Surface", 'scipy')
+else:
     from scipy.optimize import minimize
 
     def init_guess(surface, points_from, samples=50):

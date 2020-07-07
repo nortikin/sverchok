@@ -10,15 +10,18 @@ from sverchok.utils.sv_mesh_utils import polygons_to_edges
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, edge_data_from_bmesh_edges
 from sverchok.utils.geom import PlaneEquation, center
 from sverchok.utils.surface.nurbs import SvExGeomdlSurface
+from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 
-if geomdl is not None:
+if geomdl is None:
+    add_dummy('SvExQuadsToNurbsNode', "Quads to NURBS", 'geomdl')
+else:
     from geomdl import NURBS, BSpline, knotvector
 
     class SvExQuadsToNurbsNode(bpy.types.Node, SverchCustomTreeNode):
         """
         Triggers: Quad to NURBS
-        Tooltip: Make a NURBS patch from each quad face
+        Tooltip: Make a smooth NURBS surface patch from each quad face
         """
         bl_idname = 'SvExQuadsToNurbsNode'
         bl_label = 'Quads to NURBS'
