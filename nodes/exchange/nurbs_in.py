@@ -10,9 +10,12 @@ from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.curve.nurbs import SvExGeomdlCurve
 from sverchok.utils.surface.nurbs import SvExGeomdlSurface
+from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 
-if geomdl is not None:
+if geomdl is None:
+    add_dummy('SvExNurbsInNode', "NURBS In", 'geomdl')
+else:
     from geomdl import NURBS, knotvector
 
     class SvExNurbsInCallbackOp(bpy.types.Operator):
