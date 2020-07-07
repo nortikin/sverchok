@@ -13,7 +13,7 @@ from sverchok.utils.curve import SvCurve
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 
-if scipy is not None:
+if scipy is None:
     add_dummy('SvExNearestPointOnCurveNode', "Nearest Point on Curve", 'scipy')
 else:
     from scipy.optimize import minimize_scalar
