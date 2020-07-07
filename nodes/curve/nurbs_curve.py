@@ -6,9 +6,12 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, fullList
 from sverchok.utils.logging import info, exception
 from sverchok.utils.curve.nurbs import SvExGeomdlCurve
+from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 
-if geomdl is not None:
+if geomdl is None:
+    add_dummy('SvExNurbsCurveNode', "Build NURBS Curve", 'geomdl')
+else:
     from geomdl import NURBS, BSpline, knotvector
     
     class SvExNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):

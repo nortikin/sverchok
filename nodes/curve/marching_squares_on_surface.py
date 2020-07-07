@@ -11,9 +11,12 @@ from sverchok.utils.logging import info, exception
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.marching_squares import make_contours
+from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import skimage
 
-if skimage is not None:
+if skimage is None:
+    add_dummy('SvExMSquaresOnSurfaceNode', "Marching Squares on Surface", 'skimage')
+else:
     from skimage import measure
 
     class SvExMSquaresOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
@@ -22,7 +25,7 @@ if skimage is not None:
         Tooltip: Marching Squares on Surface
         """
         bl_idname = 'SvExMSquaresOnSurfaceNode'
-        bl_label = 'Marching Squares onSurface'
+        bl_label = 'Marching Squares on Surface'
         bl_icon = 'OUTLINER_OB_EMPTY'
         sv_icon = 'SV_EX_MSQUARES'
 

@@ -7,9 +7,12 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.logging import info, exception
+from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 
-if scipy is not None:
+if scipy is None:
+    add_dummy('SvExCatenaryCurveNode', "Catenary Curve", 'scipy')
+else:
     from sverchok.utils.catenary import CatenarySolver
 
     class SvExCatenaryCurveNode(bpy.types.Node, SverchCustomTreeNode):

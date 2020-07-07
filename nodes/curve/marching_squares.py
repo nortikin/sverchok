@@ -9,9 +9,12 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat
 from sverchok.utils.logging import info, exception
 from sverchok.dependencies import skimage
+from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.utils.marching_squares import make_contours
 
-if skimage is not None:
+if skimage is None:
+    add_dummy('SvExMarchingSquaresNode', "Marching Squares", 'skimage')
+else:
     from skimage import measure
 
     class SvExMarchingSquaresNode(bpy.types.Node, SverchCustomTreeNode):

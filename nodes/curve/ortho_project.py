@@ -9,10 +9,13 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve
+from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 from sverchok.utils.manifolds import ortho_project_curve
 
-if scipy is not None:
+if scipy is None:
+    add_dummy('SvExOrthoProjectCurveNode', "Ortho Project on Curve", 'scipy')
+else:
 
     class SvExOrthoProjectCurveNode(bpy.types.Node, SverchCustomTreeNode):
         """

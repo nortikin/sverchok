@@ -7,8 +7,11 @@ from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.logging import info, exception
 from sverchok.utils.curve.nurbs import SvExGeomdlCurve
 from sverchok.dependencies import geomdl
+from sverchok.utils.dummy_nodes import add_dummy
 
-if geomdl is not None:
+if geomdl is None:
+    add_dummy('SvExApproxNurbsCurveNode', "Approximate NURBS Curve", 'geomdl')
+else:
     from geomdl import fitting
     
     class SvExApproxNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):

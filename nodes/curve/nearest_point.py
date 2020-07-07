@@ -10,9 +10,12 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve
+from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 
 if scipy is not None:
+    add_dummy('SvExNearestPointOnCurveNode', "Nearest Point on Curve", 'scipy')
+else:
     from scipy.optimize import minimize_scalar
 
     def init_guess(curve, points_from, samples=50):

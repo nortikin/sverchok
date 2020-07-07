@@ -9,8 +9,11 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvBezierCurve
 from sverchok.utils.geom import linear_approximation, Spline
 from sverchok.dependencies import scipy
+from sverchok.utils.dummy_nodes import add_dummy
 
-if scipy is not None:
+if scipy is None:
+    add_dummy('SvExBezierCurveFitNode', "Approximate Bezier Curve", 'scipy')
+else:
     from scipy.optimize import curve_fit
 
     def init_guess(verts, npoints):

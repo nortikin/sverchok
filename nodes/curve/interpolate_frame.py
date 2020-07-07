@@ -12,9 +12,12 @@ from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.geom import PlaneEquation
 from sverchok.utils.manifolds import intersect_curve_plane
+from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 
-if scipy is not None:
+if scipy is None:
+    add_dummy('SvExSlerpCurveFrameNode', "Interpolate Curve Frame", 'scipy')
+else:
 
     def nearest_solution(point, solutions):
         if len(solutions) == 0:
