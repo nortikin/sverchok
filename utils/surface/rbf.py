@@ -15,7 +15,7 @@ if geomdl is not None:
 #                #
 ##################
 
-class SvExRbfSurface(SvSurface):
+class SvRbfSurface(SvSurface):
     def __init__(self, rbf, coord_mode, input_orientation, input_matrix):
         self.rbf = rbf
         self.coord_mode = coord_mode

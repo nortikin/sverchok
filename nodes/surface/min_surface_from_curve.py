@@ -11,7 +11,7 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve, SvCurveOnSurface, SvCircle
-from sverchok.utils.surface.rbf import SvExRbfSurface
+from sverchok.utils.surface.rbf import SvRbfSurface
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 from sverchok.utils.math import rbf_functions
@@ -92,7 +92,7 @@ else:
             rbf = Rbf(us, vs, curve_points,
                     function = self.function,
                     epsilon = epsilon, smooth = smooth, mode = 'N-D')
-            surface = SvExRbfSurface(rbf, 'UV', 'Z', Matrix())
+            surface = SvRbfSurface(rbf, 'UV', 'Z', Matrix())
             surface.u_bounds = (-1.0, 1.0)
             surface.v_bounds = (-1.0, 1.0)
             return surface

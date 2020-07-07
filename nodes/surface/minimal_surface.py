@@ -11,7 +11,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.logging import info, exception
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
-from sverchok.utils.surface.rbf import SvExRbfSurface
+from sverchok.utils.surface.rbf import SvRbfSurface
 
 if scipy is None:
     add_dummy('SvExMinimalSurfaceNode', "Minimal Surface", 'scipy')
@@ -342,7 +342,7 @@ else:
                 verts_out.append(new_verts)
                 edges_out.append(new_edges)
                 faces_out.append(new_faces)
-                surface = SvExRbfSurface(rbf, self.coord_mode, self.orientation, matrix)
+                surface = SvRbfSurface(rbf, self.coord_mode, self.orientation, matrix)
                 surface.u_bounds = u_bounds
                 surface.v_bounds = v_bounds
                 surfaces_out.append(surface)
