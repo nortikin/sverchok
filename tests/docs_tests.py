@@ -76,8 +76,7 @@ class DocumentationTests(SverchokTestCase):
                             bad_files.append(doc_name)
 
                 if bad_files:
-                    error("The following files, which are referenced from %s, do not exist:\n%s", index_name, "\n".join(bad_files))
-                    self.fail("Not all node documentation referenced from index files exist.")
+                    self.fail("The following files, which are referenced from {}, do not exist:\n{}".format(index_name, "\n".join(bad_files)))
 
         docs_dir = self.get_nodes_docs_directory()
 
@@ -155,7 +154,9 @@ mesh_separate_mk2.py
 symmetrize.py
 vd_attr_node.py
 scalar_field_point.py
-bvh_nearest_new.py""".split("\n")
+bvh_nearest_new.py
+location.py
+sun_position.py""".split("\n")
 
         def check_category(directory):
             dir_name = basename(directory)
