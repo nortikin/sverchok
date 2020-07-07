@@ -391,6 +391,8 @@ else:
                 layout.prop(self, "u_gap_size")
                 layout.row().prop(self, "u_resolution")
 
+            layout.prop(self, 'vector_light', text='')
+
         def bake(self):
             with self.sv_throttle_tree_update():
                 bpy.ops.node.sverchok_mesh_baker_mk3(
