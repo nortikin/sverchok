@@ -8,7 +8,7 @@ from sverchok.utils.curve import SvCurve
 if scipy is not None:
     from scipy.optimize import root_scalar
 
-class SvExCatenaryCurve(SvCurve):
+class SvCatenaryCurve(SvCurve):
     def __init__(self, A, x0, point1, force, x_direction, x_range):
         self.A = A
         self.x0 = x0
@@ -169,5 +169,5 @@ class CatenarySolver(object):
         x3 = self.dx / 2.0
         x0 = x3 - A * atanh(self.dy / self.length)
         
-        return SvExCatenaryCurve(A, x0, self.point1, self.force, self.x_direction, self.dx)
+        return SvCatenaryCurve(A, x0, self.point1, self.force, self.x_direction, self.dx)
 
