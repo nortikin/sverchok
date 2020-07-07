@@ -27,6 +27,7 @@ Surface
    normals
    curvatures
    gauss_curvature
+   nurbs_surface
    adaptive_tessellate
    tessellate_trim
    evaluate_surface

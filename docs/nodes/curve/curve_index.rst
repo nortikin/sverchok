@@ -43,5 +43,12 @@ Curves
    reparametrize
    curve_segment
    split_curve
+   nurbs_curve
+   approximate_nurbs_curve
+   interpolate_nurbs_curve
+   catenary_curve
+   bezier_fit
+   circlify
+   intersect_curve_plane
    eval_curve
 
