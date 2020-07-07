@@ -87,6 +87,7 @@ class SvObjectRenameDialog(bpy.types.Operator):
     bl_label = "Sverchok Rename Objects (basedata)"
 
     basedata_name: bpy.props.StringProperty(name="New Name")
+    change_data_name_too: bpy.props.BoolProperty(default=True, name="Change Data Name")
     tree_name: StringProperty(default='')
     node_name: StringProperty(default='')
 
@@ -111,6 +112,8 @@ class SvObjectRenameDialog(bpy.types.Operator):
             for obj in objs:
                 obj.name = obj.name.replace(n.basedata_name, self.basedata_name)
                 obj['basedata_name'] = self.basedata_name
+                if self.change_data_name_too:
+                    obj.data.name = obj.name
 
             if n.grouping:
                 collections = bpy.data.collections
