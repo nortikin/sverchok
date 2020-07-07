@@ -45,7 +45,7 @@ class SvRbfVectorField(SvVectorField):
         vz = vz - zs
         return vx, vy, vz
 
-class SvExBvhRbfNormalVectorField(SvVectorField):
+class SvBvhRbfNormalVectorField(SvVectorField):
     def __init__(self, bvh, rbf):
         self.bvh = bvh
         self.rbf = rbf

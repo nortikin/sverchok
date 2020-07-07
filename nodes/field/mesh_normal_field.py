@@ -11,7 +11,7 @@ from sverchok.utils.logging import info, exception
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.logging import info, exception
 from sverchok.utils.field.vector import SvBvhAttractorVectorField
-from sverchok.utils.field.rbf import SvExBvhRbfNormalVectorField
+from sverchok.utils.field.rbf import SvBvhRbfNormalVectorField
 from sverchok.dependencies import scipy
 from sverchok.utils.math import rbf_functions
 
@@ -83,7 +83,7 @@ class SvExMeshNormalFieldNode(bpy.types.Node, SverchCustomTreeNode):
                         function = self.function,
                         mode = 'N-D')
 
-                field = SvExBvhRbfNormalVectorField(bvh, rbf)
+                field = SvBvhRbfNormalVectorField(bvh, rbf)
             else:
                 field = SvBvhAttractorVectorField(verts=vertices, faces=faces, use_normal=True, signed_normal=self.signed)
             fields_out.append(field)
