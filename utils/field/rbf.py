@@ -11,7 +11,7 @@ from sverchok.utils.field.vector import SvVectorField
 #                #
 ##################
 
-class SvExRbfScalarField(SvScalarField):
+class SvRbfScalarField(SvScalarField):
     def __init__(self, rbf):
         self.rbf = rbf
 
