@@ -370,6 +370,9 @@ else:
                 colors_column.prop(self, "vert_color", text='')
                 colors_column.prop(self, "edge_color", text='')
 
+                if not self.selected_draw_mode == 'normals':
+                    colors_column.prop(self, "face_color", text='')
+
             row = layout.row(align=True)
             self.wrapper_tracked_ui_draw_op(row, "node.sverchok_solid_baker_mk3", icon='OUTLINER_OB_MESH', text="B A K E")
             # row.separator()
