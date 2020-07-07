@@ -9,9 +9,12 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.field.vector import SvVectorField
 from sverchok.utils.surface import SvSurface
+from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 
-if scipy is not None:
+if scipy is None:
+    add_dummy('SvExVFieldLinesOnSurfNode', "Vector Field Lines on Surface", 'scipy')
+else:
     from scipy.integrate import solve_ivp
 
     def solve_lines(surface, field, p0, tf, method='RK45', rotate=False):

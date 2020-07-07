@@ -10,9 +10,12 @@ from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match
 from sverchok.utils.logging import info, exception
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.marching_squares import make_contours
+from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import skimage
 
-if skimage is not None:
+if skimage is None:
+    add_dummy('SvExScalarFieldGraphNode', "Scalar Field Graph", 'skimage')
+else:
     from skimage import measure
 
     class SvExScalarFieldGraphNode(bpy.types.Node, SverchCustomTreeNode):
