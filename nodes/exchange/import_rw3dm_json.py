@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface import SvSurface
-from sverchok.utils.curve.nurbs import SvExGeomdlCurve
+from sverchok.utils.curve.nurbs import SvGeomdlCurve
 from sverchok.utils.surface.nurbs import SvExGeomdlSurface
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
@@ -64,7 +64,7 @@ else:
             items = self.load_json()
             for i, item in enumerate(items):
                 if isinstance(item, BSpline.Curve):
-                    curve = SvExGeomdlCurve(item)
+                    curve = SvGeomdlCurve(item)
                     curves_out.append(curve)
                 elif isinstance(item, BSpline.Surface):
                     surface = SvExGeomdlSurface(item)

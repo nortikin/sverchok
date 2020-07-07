@@ -5,7 +5,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, fullList
 from sverchok.utils.logging import info, exception
-from sverchok.utils.curve.nurbs import SvExGeomdlCurve
+from sverchok.utils.curve.nurbs import SvGeomdlCurve
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 
@@ -138,7 +138,7 @@ else:
                     #    raise Exception("Explicitly provided knot vector is incorrect!")
                     curve.knotvector = knots
 
-                new_curve = SvExGeomdlCurve(curve)
+                new_curve = SvGeomdlCurve(curve)
                 if self.is_cyclic:
                     u_min = curve.knotvector[degree]
                     u_max = curve.knotvector[-degree-2]

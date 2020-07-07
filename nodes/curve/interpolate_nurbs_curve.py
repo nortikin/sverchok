@@ -5,7 +5,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.logging import info, exception
-from sverchok.utils.curve.nurbs import SvExGeomdlCurve
+from sverchok.utils.curve.nurbs import SvGeomdlCurve
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 
@@ -63,7 +63,7 @@ else:
                 points_out.append(curve.ctrlpts)
                 knots_out.append(curve.knotvector)
 
-                curve = SvExGeomdlCurve(curve)
+                curve = SvGeomdlCurve(curve)
                 curves_out.append(curve)
 
             self.outputs['Curve'].sv_set(curves_out)

@@ -8,7 +8,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
 from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface import SvSurface
-from sverchok.utils.curve.nurbs import SvExGeomdlCurve
+from sverchok.utils.curve.nurbs import SvGeomdlCurve
 from sverchok.utils.surface.nurbs import SvExGeomdlSurface
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
@@ -211,7 +211,7 @@ else:
             self.debug('Auto knots: %s', knots)
             curve.knotvector = knots
 
-            new_curve = SvExGeomdlCurve(curve)
+            new_curve = SvGeomdlCurve(curve)
             if spline.use_cyclic_u:
                 u_min = curve.knotvector[curve.degree]
                 u_max = curve.knotvector[-curve.degree-2]

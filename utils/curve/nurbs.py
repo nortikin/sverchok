@@ -9,7 +9,7 @@ from sverchok.utils.curve import SvCurve
 #                #
 ##################
 
-class SvExGeomdlCurve(SvCurve):
+class SvGeomdlCurve(SvCurve):
     def __init__(self, curve):
         self.curve = curve
         self.u_bounds = (0.0, 1.0)
