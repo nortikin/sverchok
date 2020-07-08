@@ -34,7 +34,7 @@ else:
         ]
 
         surface_mode : EnumProperty(
-                name = "Surface mode",
+                name = "Curve mode",
                 items = surface_modes,
                 default = 'NURBS',
                 update = update_sockets)
