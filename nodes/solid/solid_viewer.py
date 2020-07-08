@@ -11,6 +11,7 @@ if FreeCAD is None:
     add_dummy('SvSolidViewerNode', 'Solid Viewer', 'FreeCAD')
 else:
     from math import pi
+    import numpy as np
 
     import bgl
     import bpy
@@ -29,30 +30,6 @@ else:
     from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
     from sverchok.utils.modules.geom_utils import obtain_normal3 as normal
 
-
-    default_vertex_shader = '''
-        uniform mat4 viewProjectionMatrix;
-
-        in vec3 position;
-        out vec3 pos;
-
-        void main()
-        {
-            pos = position;
-            gl_Position = viewProjectionMatrix * vec4(position, 1.0f);
-        }
-    '''
-
-    default_fragment_shader = '''
-        uniform float brightness;
-
-        in vec3 pos;
-
-        void main()
-        {
-            gl_FragColor = vec4(pos * brightness, 1.0);
-        }
-    '''
 
 
     def generate_facet_data(verts, faces, face_color, vector_light):
@@ -75,7 +52,6 @@ else:
 
         return out_verts, out_vcols
 
-
     def generate_smooth_data(verts, faces, face_color, vector_light):
         """ this piggy backs off bmesh's automated normal calculation... """
         out_vcols = []
@@ -93,6 +69,17 @@ else:
 
         return out_vcols
 
+    def generate_normals_data(verts, faces):
+        bm = bmesh_from_pydata(verts, [], faces, normal_update=True)
+        # normals = [vert.normal[:] for vert in bm.verts]
+        # for normal in normals:
+        #     vcol = (normal[0] / 2) + 0.5, (normal[1] / 2) + 0.5, (normal[2] / 2) + 0.5, 1.0
+        #     concat_vcols(vcol)
+        values = np.array([vert.normal[:] for vert in bm.verts], dtype=np.float32)
+        values = ((values / 2) + 0.5)
+        alpha = np.zeros((values.shape[0],1), dtype=np.float32)
+        values = np.append(values, alpha, axis=1)
+        return values.tolist()
 
     def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
         if GL_KIND == 'LINES':
@@ -159,17 +146,6 @@ else:
         draw_uniform('LINES', coords, indices, config.line4f, config.line_width, **params)
 
 
-    def draw_fragment(context, args):
-        geom, config = args
-        batch = config.batch
-        shader = config.shader
-
-        shader.bind()
-        matrix = context.region_data.perspective_matrix
-        shader.uniform_float("viewProjectionMatrix", matrix)
-        shader.uniform_float("brightness", 0.5)
-        batch.draw(shader)
-
     def face_geom(geom, config):
         solids = geom.solids
         precision = config.precision
@@ -196,6 +172,8 @@ else:
             geom.facet_verts_vcols = facet_verts_vcols
         elif config.shade == 'smooth':
             geom.smooth_vcols = generate_smooth_data(geom.f_verts, f_faces, config.face4f, config.vector_light)
+        elif config.shade == 'normals':
+            geom.smooth_vnorms = generate_normals_data(geom.f_verts, f_faces)
 
     def draw_faces_uniform(context, args):
         geom, config = args
@@ -208,18 +186,13 @@ else:
             bgl.glPolygonOffset(1.0, 1.0)
 
         if config.shade == "flat":
-            # print(geom.f_faces, geom.f_verts,config.shade)
-
             draw_uniform('TRIS', geom.f_verts, geom.f_faces, config.face4f)
         elif config.shade == "facet":
             draw_smooth(geom.facet_verts, geom.facet_verts_vcols)
         elif config.shade == "smooth":
             draw_smooth(geom.f_verts, geom.smooth_vcols, indices=geom.f_faces)
-        elif config.shade == 'fragment':
-            if config.draw_fragment_function:
-                config.draw_fragment_function(context, args)
-            else:
-                draw_fragment(context, args)
+        elif config.shade == 'normals':
+            draw_smooth(geom.f_verts, geom.smooth_vnorms, indices=geom.f_faces)
 
         if config.draw_gl_wireframe:
             bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
@@ -257,7 +230,6 @@ else:
 
 
         if config.display_edges:
-
             draw_lines_uniform(context, config, geom.e_vertices, geom.e_edges, config.line4f, config.line_width)
         if config.display_faces:
             draw_faces_uniform(context, args)
@@ -268,12 +240,6 @@ else:
             # or restore to the state found when entering this function. TODO!
             bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
 
-    def get_shader_data(named_shader=None):
-        source = bpy.data.texts[named_shader].as_string()
-        exec(source)
-        local_vars = vars().copy()
-        names = ['vertex_shader', 'fragment_shader', 'draw_fragment']
-        return [local_vars.get(name) for name in names]
 
     class SvSolidViewerNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -289,24 +255,6 @@ else:
         sv_icon = 'SV_DRAW_VIEWER'
         solid_catergory = "Outputs"
         node_dict = {}
-
-        def populate_node_with_custom_shader_from_text(self):
-            if self.custom_shader_location in bpy.data.texts:
-                try:
-                    vertex_shader, fragment_shader, draw_fragment = get_shader_data(named_shader=self.custom_shader_location)
-
-                    self.custom_vertex_shader = vertex_shader
-                    self.custom_fragment_shader = fragment_shader
-                    self.node_dict[hash(self)] = {'draw_fragment': draw_fragment}
-
-                except Exception as err:
-                    print(err)
-                    print(traceback.format_exc())
-
-                    # reset custom shader
-                    self.custom_vertex_shader = ''
-                    self.custom_fragment_shader = ''
-                    self.node_dict[hash(self)] = {}
 
         def wrapped_update(self, context=None):
             self.populate_node_with_custom_shader_from_text()
@@ -377,6 +325,7 @@ else:
             soft_min=0.1,
             precision=4,
             update=updateNode)
+
         # glGet with argument GL_POINT_SIZE_RANGE
         point_size: FloatProperty(description="glPointSize( GLfloat size)", update=updateNode, default=4.0, min=1.0, max=15.0)
         line_width: IntProperty(description="glLineWidth( GLfloat width)", update=updateNode, default=1, min=1, max=5)
@@ -387,12 +336,8 @@ else:
         draw_gl_wireframe: BoolProperty(default=False, update=updateNode, name="draw gl wireframe")
         draw_gl_polygonoffset: BoolProperty(default=True, update=updateNode, name="draw gl polygon offset")
 
-        custom_vertex_shader: StringProperty(default=default_vertex_shader, name='vertex shader')
-        custom_fragment_shader: StringProperty(default=default_fragment_shader, name='fragment shader')
-        custom_shader_location: StringProperty(update=wrapped_update, name='custom shader location')
-
         selected_draw_mode: EnumProperty(
-            items=enum_item_5(["flat", "facet", "smooth", "fragment"], ['SNAP_VOLUME', 'ALIASED', 'ANTIALIASED', 'SCRIPTPLUGINS']),
+            items=enum_item_5(["flat", "facet", "smooth", "normals"], ['SNAP_VOLUME', 'ALIASED', 'ANTIALIASED', 'ORIENTATION_LOCAL']),
             description="pick how the node will draw faces",
             default="flat", update=updateNode
         )
@@ -426,10 +371,9 @@ else:
                 colors_column = inside_box.column(align=True)
                 colors_column.prop(self, "vert_color", text='')
                 colors_column.prop(self, "edge_color", text='')
-                if not self.selected_draw_mode == 'fragment':
+
+                if not self.selected_draw_mode == 'normals':
                     colors_column.prop(self, "face_color", text='')
-                else:
-                    colors_column.prop(self, "custom_shader_location", icon='TEXT', text='')
 
             row = layout.row(align=True)
             self.wrapper_tracked_ui_draw_op(row, "node.sverchok_solid_baker_mk3", icon='OUTLINER_OB_MESH', text="B A K E")
@@ -444,6 +388,8 @@ else:
                 layout.prop(self, "u_dash_size")
                 layout.prop(self, "u_gap_size")
                 layout.row().prop(self, "u_resolution")
+
+            layout.prop(self, 'vector_light', text='')
 
         def bake(self):
             with self.sv_throttle_tree_update():
