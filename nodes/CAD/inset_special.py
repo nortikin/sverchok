@@ -282,7 +282,7 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
             fullList(make_inners, len(p))
 
             if self.use_numba and numba:
-                zero_mode = self.zero_mode
+                zero_mode = 0 if self.zero_mode == 'SKIP' else 1
                 res = numba_inset_special(
                     np_verts=np.array(v, dtype=float32).ravel(),
                     np_faces=np.array(p, dtype=int32).ravel(),
@@ -291,7 +291,7 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
                     distances=np.array(distances, dtype=float32),
                     make_inners=np.array(make_inners, dtype=int32),
                     ignores=np.array(ignores, dtype=int32),
-                    zero_mode=self.zero_mode) 
+                    zero_mode=zero_mode) 
             else:
                 func_args = {
                     'vertices': v,
