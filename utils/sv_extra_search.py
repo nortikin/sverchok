@@ -59,10 +59,9 @@ def ensure_short_description(description):
         description = ' | ' + description
     return description
 
-def ensure_valid_show_string(item):
-    # nodetype = getattr(bpy.types, item[0])
-    nodetype = get_node_class_reference(item[0])
-    loop_reverse[nodetype.bl_label] = item[0]
+def ensure_valid_show_string(nodetype):
+
+    loop_reverse[nodetype.bl_label] = nodetype.bl_idname
     description = nodetype.bl_rna.get_shorthand()
     return nodetype.bl_label + ensure_short_description(description)
 
@@ -104,14 +103,17 @@ def gather_items():
         for item in node_list:
             if item[0] in {'separator', 'NodeReroute'}:
                 continue
-            
-            fx.append((str(idx), ensure_valid_show_string(item), '', idx))
+
+            nodetype = get_node_class_reference(item[0])
+            if not nodetype:
+                continue
+            fx.append((str(idx), ensure_valid_show_string(nodetype), '', idx))
             idx += 1
 
     for k, v in macros.items():
         fx.append((k, format_item(k, v), '', idx))
         idx += 1
-    
+
     fx_extend(idx, fx)
 
     return fx
