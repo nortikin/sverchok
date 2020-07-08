@@ -60,6 +60,7 @@ def do_ngon(face, lv_idx, make_inner):
 
 
 
+# def inset_special(np_verts, np_faces, np_face_loops, inset_rates, distances, ignores, make_inners, zero_mode=0):
 def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners, zero_mode="SKIP"):
 
     new_faces = []
