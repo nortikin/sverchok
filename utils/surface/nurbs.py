@@ -1,8 +1,6 @@
 
 import numpy as np
 
-from mathutils import Matrix, Vector
-
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
 from sverchok.dependencies import geomdl
 

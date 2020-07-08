@@ -6,8 +6,6 @@
 # License-Filename: LICENSE
 
 import numpy as np
-from math import pi, cos, sin
-from collections import defaultdict
 
 from mathutils import Matrix, Vector
 

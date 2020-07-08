@@ -7,11 +7,6 @@
 
 import numpy as np
 
-from mathutils import Vector, Matrix
-
-from sverchok.utils.integrate import TrapezoidIntegral
-from sverchok.utils.logging import error, exception
-from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
 from sverchok.utils.curve.core import SvCurve
 
 class SvSolidEdgeCurve(SvCurve):

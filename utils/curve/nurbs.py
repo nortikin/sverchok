@@ -10,6 +10,9 @@ from sverchok.utils.curve import SvCurve
 ##################
 
 class SvGeomdlCurve(SvCurve):
+    """
+    geomdl-based implementation of NURBS curves
+    """
     def __init__(self, curve):
         self.curve = curve
         self.u_bounds = (0.0, 1.0)
@@ -60,5 +63,4 @@ class SvGeomdlCurve(SvCurve):
 
     def get_u_bounds(self):
         return self.u_bounds
-
 

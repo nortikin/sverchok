@@ -8,13 +8,12 @@
 import numpy as np
 
 from sverchok.data_structure import zip_long_repeat
-from sverchok.utils.integrate import TrapezoidIntegral
 from sverchok.utils.math import (
-        binomial,
-        FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL
-)
-from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
+        binomial
+    )
 from sverchok.utils.curve.core import SvCurve, SvConcatCurve
+
+# Pure-python (+ numpy) Bezier curves implementation
 
 class SvBezierCurve(SvCurve):
     """

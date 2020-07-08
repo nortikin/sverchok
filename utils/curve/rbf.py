@@ -10,6 +10,9 @@ from sverchok.utils.curve import SvCurve
 ##################
 
 class SvRbfCurve(SvCurve):
+    """
+    RBF-based interpolation curve
+    """
     def __init__(self, rbf, u_bounds):
         self.rbf = rbf
         self.u_bounds = u_bounds

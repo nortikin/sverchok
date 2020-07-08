@@ -5,14 +5,14 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import numpy as np
-from math import pi, cos, sin, atan, sqrt
+from math import pi, cos, atan, sqrt
 
+import numpy as np
 from sverchok.utils.math import (
-    from_spherical,
-    FRENET, TRACK, TRACK_NORMAL
-    )
+    from_spherical
+)
 from sverchok.utils.surface.core import SvSurface
+
 
 class SvEquirectSphere(SvSurface):
     __description__ = "Equirectangular Sphere"

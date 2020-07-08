@@ -1,6 +1,5 @@
 
 import numpy as np
-from math import sqrt, atanh, sinh, cosh
 
 from mathutils import kdtree
 from mathutils.bvhtree import BVHTree
@@ -8,15 +7,10 @@ from mathutils.bvhtree import BVHTree
 from sverchok.utils.curve import SvCurve, SvIsoUvCurve
 from sverchok.utils.logging import debug, info
 from sverchok.utils.geom import PlaneEquation, LineEquation
-
-from sverchok.dependencies import scipy, skimage
-from sverchok.utils.marching_squares import make_contours
+from sverchok.dependencies import scipy
 
 if scipy is not None:
     from scipy.optimize import root_scalar, root
-
-if skimage is not None:
-    from skimage import measure
 
 SKIP = 'skip'
 FAIL = 'fail'
@@ -40,6 +34,20 @@ class CurveProjectionResult(object):
         self.nearest_u = us[i]
 
 def ortho_project_curve(src_point, curve, subdomain = None, init_samples=10, on_fail=FAIL):
+    """
+    Find the orthogonal projection of src_point to curve.
+    inputs:
+    * src_point: np.array of shape (3,)
+    * curve: SvCurve
+    * subdomain: either (u_min, u_max) or None (use whole curve)
+    * init_samples: first subdivide the curve in N segments; search for the
+      orthogonal projection on each segment.
+    * on_fail: what to do if no projection was found:
+        FAIL - raise exception
+        RETURN_NONE - return None
+
+    dependencies: scipy
+    """
     def goal(t):
         point_on_curve = curve.evaluate(t)
         dv = src_point - point_on_curve
@@ -85,6 +93,10 @@ def ortho_project_curve(src_point, curve, subdomain = None, init_samples=10, on_
     return result
 
 def ortho_project_surface(src_point, surface, init_samples=10, maxiter=30, tolerance=1e-4):
+    """
+    Find the orthogonal projection of src_point to surface.
+    dependencies: scipy
+    """
     u_min, u_max = surface.get_u_min(), surface.get_u_max()
     v_min, v_max = surface.get_v_min(), surface.get_v_max()
 
@@ -148,6 +160,8 @@ class SurfaceRaycaster(object):
         raycaster = SurfaceRaycaster(surface)
         raycaster.init_bvh(samples)
         result = raycaster.raycast(src_points, directions, ...)
+
+    dependencies: scipy
     """
     def __init__(self, surface):
         self.surface = surface
@@ -267,6 +281,10 @@ def raycast_surface(surface, src_points, directions, samples=50, precise=True, c
     return raycaster.raycast(src_points, directions, precise=precise, calc_points=calc_points, method=method, on_init_fail=on_init_fail)
 
 def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10, tolerance=1e-3, maxiter=50, raycast_method='hybr'):
+    """
+    Intersect a curve with a surface.
+    dependencies: scipy
+    """
     u_min, u_max = curve.get_u_bounds()
 
     raycaster = SurfaceRaycaster(surface)
@@ -360,6 +378,8 @@ def intersect_curve_plane_ortho(curve, plane, init_samples=10, ortho_samples=10,
         * maxiter: maximum number of iterations
     outputs:
         list of intersection points
+
+    dependencies: scipy
     """
     u_min, u_max = curve.get_u_bounds()
     u_range = np.linspace(u_min, u_max, num=init_samples)
@@ -441,6 +461,8 @@ def intersect_curve_plane_equation(curve, plane, init_samples=10, tolerance=1e-3
         list of 2-tuples:
             * curve T value
             * point at the curve
+
+    dependencies: scipy
     """
     u_min, u_max = curve.get_u_bounds()
     u_range = np.linspace(u_min, u_max, num=init_samples)

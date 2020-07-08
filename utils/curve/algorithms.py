@@ -8,14 +8,14 @@
 import numpy as np
 
 from mathutils import Vector, Matrix
-
+from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.geom import PlaneEquation, LineEquation, LinearSpline, CubicSpline
+from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
 from sverchok.utils.math import (
     ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
-        NORMAL_DIR
-    )
-from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
-from sverchok.utils.curve.core import SvCurve
+    NORMAL_DIR
+)
+
 
 def make_euclidian_ts(pts):
     tmp = np.linalg.norm(pts[:-1] - pts[1:], axis=1)
@@ -647,3 +647,4 @@ class SvLengthRebuiltCurve(SvCurve):
     def evaluate_array(self, ts):
         c_ts = self.solver.solve(ts)
         return self.curve.evaluate_array(c_ts)
+

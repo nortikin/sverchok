@@ -12,7 +12,7 @@ from collections import defaultdict
 from mathutils import Matrix, Vector
 
 from sverchok.utils.math import (
-    ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL
+        ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL
     )
 from sverchok.utils.geom import LineEquation, rotate_vector_around_vector, autorotate_householder, autorotate_track, autorotate_diff
 from sverchok.utils.curve import (
