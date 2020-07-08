@@ -50,5 +50,6 @@ Curves
    bezier_fit
    circlify
    intersect_curve_plane
+   extremes
    eval_curve
 
