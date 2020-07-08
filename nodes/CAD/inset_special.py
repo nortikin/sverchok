@@ -22,13 +22,19 @@ import bpy
 import mathutils
 
 from mathutils import Vector
-from bpy.props import FloatProperty, FloatVectorProperty, IntProperty, EnumProperty
+from bpy.props import FloatProperty, FloatVectorProperty, IntProperty, EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
     updateNode, Vector_generate,
     repeat_last, fullList)
 
+# i will find a nicer way to do this.
+from sverchok.dependencies import numba
+if numba is None:
+    from sverchok.utils.modules.recodes import numba_inset_special_dummy as numba_inset_special
+else:
+    from sverchok.utils.modules.recodes import numba_inset_special
 
 ''' very non optimal routines. beware. I know this '''
 
@@ -173,6 +179,7 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         description='inset amount',
         min = 0.0,
         default=0.1, update=updateNode)
+    
     distance: FloatProperty(
         name='Distance',
         description='Distance',
@@ -182,7 +189,7 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
     make_inner: IntProperty(name='Make Inner', description='Make inner polygon', default=1, update=updateNode)
 
     # unused property.
-    normal_mode : EnumProperty(name = "Normals",
+    normal_mode: EnumProperty(name = "Normals",
             description = "Normals calculation algorithm",
             default = "Exact",
             items = normal_modes,
@@ -193,11 +200,13 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
             ("FAN", "Fan", "Make a fan-like structure from such faces", 1)
         ]
 
-    zero_mode : EnumProperty(name = "Zero inset faces",
+    zero_mode: EnumProperty(name = "Zero inset faces",
             description = "What to do with faces when inset is equal to zero",
             default = "SKIP",
             items = zero_modes,
             update = updateNode)
+
+    use_numba: BoolProperty(name="use numba", update=updateNode)
 
     # axis = FloatVectorProperty(
     #   name='axis', description='axis relative to normal',
@@ -241,7 +250,11 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         if not o['vertices'].is_linked:
             return
 
-        all_verts = Vector_generate(i['vertices'].sv_get())
+        if self.use_numba and numbda:
+            all_verts = i['vertices'].sv_get()
+        else:
+            all_verts = Vector_generate(i['vertices'].sv_get())
+
         all_polys = i['polygons'].sv_get()
 
         all_inset_rates = i['inset'].sv_get()
@@ -268,17 +281,28 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
             fullList(ignores, len(p))
             fullList(make_inners, len(p))
 
-            func_args = {
-                'vertices': v,
-                'faces': p,
-                'inset_rates': inset_rates,
-                'distances': distance_vals,
-                'make_inners': make_inners,
-                'ignores': ignores,
-                'zero_mode': self.zero_mode
-            }
-
-            res = inset_special(**func_args)
+            if self.use_numba and numba:
+                np_verts = np.array(v, dtype=float32).ravel()
+                np_faces = np.array(p, dtype=int32).ravel()
+                np_face_loops = np.array([len(poly) for poly in p], dtype=int32)
+                inset_rates = np.array(inset_rates, dtype=float32)
+                distances = np.array(distances, dtype=float32)
+                make_inners = np.array(make_inners, dtype=int32)
+                ignores = np.array(ignores, dtype=int32)
+                zero_mode = self.zero_mode
+                res = numba_inset_special(
+                    np_verts, np_faces, np_face_loops, inset_rates, distances, make_inners, ignores, zero_mode) 
+            else:
+                func_args = {
+                    'vertices': v,
+                    'faces': p,
+                    'inset_rates': inset_rates,
+                    'distances': distance_vals,
+                    'make_inners': make_inners,
+                    'ignores': ignores,
+                    'zero_mode': self.zero_mode
+                }
+                res = inset_special(**func_args)
 
             if not res:
                 res = v, p, [], []
