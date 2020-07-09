@@ -122,6 +122,7 @@ A few things to notice:
         - Matrices (``m``)
         - Curves (``C``)
         - Surfaces (``S``)
+        - Solids (``So``)
         - Scalar fields (``SF``)
         - Vector fields (``VF``)
         - Objects (``o``)
