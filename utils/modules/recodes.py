@@ -1,11 +1,60 @@
+import numpy as np
 from numba import njit
 
+
 @njit
-def get_average_vector(verts, n):
-    dummy_vec = Vector()
-    for v in verts:
-        dummy_vec = dummy_vec + v
-    return dummy_vec * 1/n
+def obtain_normal3(p1, p2, p3):
+    """
+    http://stackoverflow.com/a/8135330/1243487
+    finds the normal of a triangle defined by passing 3 vectors
+
+    input: three 3-element-iterables (tuples or lists)
+    output: one 3-element tuple representing the direction of the face (not normalized)
+    """
+    return [
+        ((p2[1]-p1[1])*(p3[2]-p1[2]))-((p2[2]-p1[2])*(p3[1]-p1[1])),
+        ((p2[2]-p1[2])*(p3[0]-p1[0]))-((p2[0]-p1[0])*(p3[2]-p1[2])),
+        ((p2[0]-p1[0])*(p3[1]-p1[1]))-((p2[1]-p1[1])*(p3[0]-p1[0]))
+    ]
+
+@njit
+def normalize(v):
+    """
+    rescales the input (3-element-vector), so that the length of the vector "extents" is One.
+    this doesn't change the direction of the vector, only the magnitude.
+    """
+    l = math.sqrt((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]))
+    return [v[0]/l, v[1]/l, v[2]/l]    
+
+
+
+@njit
+def np_normal_of_many_verts(verts):
+    if verts.shape[0] == 3:
+        return obtain_normal3(verts[0], verts[1], verts[2])
+    else:
+        idx = 0
+        normals = np.zeros(verts.shape)
+        for v1_V2_v3 in verts:
+            if not colinear(v1_v2_V3):
+                normals[idx] = normalize(find_normal(*v1_v2_v3))
+            idx += 1
+        
+        # remove not contributing rows
+        normals = np.delete(normals, np.where(~normals.any(axis=1))[0], axis=0)
+        
+        # sum each circumnavigated triangle, get mean
+        return np.mean(normals, axis=0)
+
+
+
+@njit
+def np_lerp_two_verts(verts, range):
+    ...
+
+@njit
+def add_two_verts(verts):
+    return np.array((verts[0]+verts[3], verts[1]+verts[4], verts[2]+verts[5]), dtype=np.float32)
 
 @njit
 def do_tri(face, lv_idx, make_inner):
@@ -59,9 +108,10 @@ def do_ngon(face, lv_idx, make_inner):
     return out_faces
 
 
-
-# def inset_special(np_verts, np_faces, np_face_loops, inset_rates, distances, ignores, make_inners, zero_mode=0):
-def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners, zero_mode="SKIP"):
+def inset_special(np_verts, np_faces, np_face_loops, inset_rates, distances, ignores, make_inners, zero_mode=0):
+    """
+    def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners, zero_mode="SKIP"):
+    """
 
     new_faces = []
     new_ignores = []
@@ -81,15 +131,19 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners,
          - avg vertex location
          - but can't lerp until avg is known. so each input face is looped at least twice.
         '''
+
         current_verts_idx = len(vertices)
-        n = len(face)
-        verts = [vertices[i] for i in face]
-        avg_vec = get_average_vector(verts, n)
+
+        verts_array = np.array([vertices[i] for i in face])
+        avg_vec = verts_array.mean(axis=0)
 
         if abs(inset_by) < 1e-6:
-            normal = mathutils.geometry.normal(*verts)
+
+            normal = np_normal_of_many_verts(verts_array.ravel())
+
             new_vertex = avg_vec.lerp(avg_vec + normal, distance)
             vertices.append(new_vertex)
+            
             new_vertex_idx = current_verts_idx
             new_faces
             for i, j in zip(face, face[1:]):
@@ -115,7 +169,7 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners,
     for idx, face in enumerate(faces):
         inset_by = inset_rates[idx]
 
-        good_inset = (inset_by > 0) or (zero_mode == 'FAN')
+        good_inset = (inset_by > 0) or (zero_mode == 1)
         if good_inset and (not ignores[idx]):
             new_inner_from(face, inset_by, distances[idx], make_inners[idx])
         else:
