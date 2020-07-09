@@ -41,8 +41,7 @@ class DocumentationTests(SverchokTestCase):
                 if not check(index_file_path, fname):
                     bad_files.append(fname)
             if bad_files:
-                error("The following files are not mentioned in %s:\n%s", index_name, "\n".join(bad_files))
-                self.fail("Not all node documentation files are mentioned in their corresponding indexes.")
+                self.fail("Not all node documentation files are mentioned in their corresponding indexes for category `{}'; missing are:\n{}".format(index_name, "\n".join(bad_files)))
 
         docs_dir = self.get_nodes_docs_directory()
 
@@ -180,8 +179,7 @@ sun_position.py""".split("\n")
                 info("Category %s: Tolerating unexistance of the documentation for the following nodes for now:\n%s", dir_name, "\n".join(known))
 
             if bad_files:
-                error("Category %s: The following nodes do not have corresponding documentation files:\n%s", dir_name, "\n".join(bad_files))
-                self.fail("Not all nodes have corresponding documentation; missing are:\n{}".format("\n".join(bad_files)))
+                self.fail("Not all nodes of category `{}' have corresponding documentation; missing are:\n{}".format(dir_name, "\n".join(bad_files)))
 
         for directory, subdirs, fnames in walk(nodes_dir):
             with self.subTest(directory=basename(directory)):

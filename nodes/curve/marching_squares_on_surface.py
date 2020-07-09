@@ -6,11 +6,12 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, St
 from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, describe_data_shape, describe_data_structure
 from sverchok.utils.logging import info, exception
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.marching_squares import make_contours
+from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import skimage
 
@@ -51,6 +52,12 @@ else:
                 default = True,
                 update = updateNode)
 
+        join : BoolProperty(
+                name = "Join by Surface",
+                description = "Output single list of vertices / edges for all input surfaces",
+                default = True,
+                update = updateNode)
+
         def sv_init(self, context):
             self.inputs.new('SvScalarFieldSocket', "Field")
             self.inputs.new('SvSurfaceSocket', "Surface")
@@ -59,8 +66,10 @@ else:
             self.inputs.new('SvStringsSocket', "SamplesV").prop_name = 'samples_v'
             self.outputs.new('SvVerticesSocket', "Vertices")
             self.outputs.new('SvStringsSocket', "Edges")
+            self.outputs.new('SvVerticesSocket', "UVVertices")
 
         def draw_buttons(self, context, layout):
+            layout.prop(self, 'join', toggle=True)
             layout.prop(self, 'connect_bounds', toggle=True)
 
         def process(self):
@@ -81,8 +90,12 @@ else:
 
             verts_out = []
             edges_out = []
+            uv_verts_out = []
             for field_i, surface_i, samples_u_i, samples_v_i, value_i in zip_long_repeat(fields_s, surface_s, samples_u_s, samples_v_s, value_s):
                 for field, surface, samples_u, samples_v, value in zip_long_repeat(field_i, surface_i, samples_u_i, samples_v_i, value_i):
+                    surface_verts = []
+                    surface_uv = []
+                    surface_edges = []
 
                     u_min, u_max = surface.get_u_min(), surface.get_u_max()
                     v_min, v_max = surface.get_v_min(), surface.get_v_max()
@@ -106,20 +119,35 @@ else:
                     u_size = (u_max - u_min)/samples_u
                     v_size = (v_max - v_min)/samples_v
 
-                    uv_contours, new_edges, _ = make_contours(samples_u, samples_v, u_min, u_size, v_min, v_size, 0, contours, make_faces=False, connect_bounds = self.connect_bounds)
+                    uv_contours, new_edges, _ = make_contours(samples_u, samples_v, u_min, u_size, v_min, v_size, 0, contours, make_faces=True, connect_bounds = self.connect_bounds)
 
-#                 new_verts = uv_points
-                    for uv_points in uv_contours:
-                        us = np.array([p[0] for p in uv_points])
-                        vs = np.array([p[1] for p in uv_points])
+                    if uv_contours:
+                        for uv_points in uv_contours:
+                            us = np.array([p[0] for p in uv_points])
+                            vs = np.array([p[1] for p in uv_points])
 
-                        new_verts = surface.evaluate_array(us, vs).tolist()
+                            new_verts = surface.evaluate_array(us, vs).tolist()
 
-                        verts_out.append(new_verts)
-                    edges_out.extend(new_edges)
+                            surface_uv.append(uv_points)
+                            surface_verts.append(new_verts)
+                        surface_edges.extend(new_edges)
+
+                        if self.join:
+                            surface_verts, surface_edges, _ = mesh_join(surface_verts, surface_edges, [[]]*len(surface_edges))
+                            surface_uv = sum(surface_uv, [])
+
+                        verts_out.append(surface_verts)
+                        uv_verts_out.append(surface_uv)
+                        edges_out.append(surface_edges)
+                    else:
+                        verts_out.append([])
+                        uv_verts_out.append([])
+                        edges_out.append([])
 
             self.outputs['Vertices'].sv_set(verts_out)
             self.outputs['Edges'].sv_set(edges_out)
+            if 'UVVertices' in self.outputs:
+                self.outputs['UVVertices'].sv_set(uv_verts_out)
 
 def register():
     if skimage is not None:

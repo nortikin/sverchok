@@ -53,5 +53,6 @@ Curves
    extremes
    interpolate_frame
    marching_squares
+   nearest_point
    eval_curve
 
