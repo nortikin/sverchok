@@ -52,5 +52,6 @@ Curves
    intersect_curve_plane
    extremes
    interpolate_frame
+   marching_squares
    eval_curve
 

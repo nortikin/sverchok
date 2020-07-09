@@ -6,8 +6,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, St
 from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat
+from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat, ensure_nesting_level
 from sverchok.utils.logging import info, exception
+from sverchok.utils.field.scalar import SvScalarField
 from sverchok.dependencies import skimage
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.utils.marching_squares import make_contours
@@ -127,55 +128,44 @@ else:
             samples_s = self.inputs['Samples'].sv_get()
             matrix_s = self.inputs['Matrix'].sv_get(default=[Matrix()])
 
-            if isinstance(value_s[0], (list, tuple)):
-                value_s = value_s[0]
-            if isinstance(z_value_s[0], (list, tuple)):
-                z_value_s = z_value_s[0]
+            value_s = ensure_nesting_level(value_s, 2)
+            z_value_s = ensure_nesting_level(z_value_s, 2)
+            fields_s = ensure_nesting_level(fields_s, 2, data_types=(SvScalarField,))
+            matrix_s = ensure_nesting_level(matrix_s, 2, data_types=(Matrix,))
 
             parameters = zip_long_repeat(fields_s, matrix_s, min_x_s, max_x_s, min_y_s, max_y_s, z_value_s, value_s, samples_s)
 
             verts_out = []
             edges_out = []
             faces_out = []
-            for field, matrix, min_x, max_x, min_y, max_y, z_value, value, samples in parameters:
-                if isinstance(samples, (list, tuple)):
-                    samples = samples[0]
-                if isinstance(value, (list, tuple)):
-                    value = value[0]
-                if isinstance(min_x, (list, tuple)):
-                    min_x = min_x[0]
-                if isinstance(max_x, (list, tuple)):
-                    max_x = max_x[0]
-                if isinstance(min_y, (list, tuple)):
-                    min_y = min_y[0]
-                if isinstance(max_y, (list, tuple)):
-                    max_y = max_y[0]
-                if isinstance(z_value, (list, tuple)):
-                    z_value = z_value[0]
+            for field_i, matrix_i, min_x_i, max_x_i, min_y_i, max_y_i, z_value_i, value_i, samples_i in parameters:
+                objects = zip_long_repeat(field_i, matrix_i, min_x_i, max_x_i,
+                                min_y_i, max_y_i, z_value_i, value_i, samples_i)
+                for field, matrix, min_x, max_x, min_y, max_y, z_value, value, samples in objects:
 
-                has_matrix = matrix != Matrix()
+                    has_matrix = matrix != Matrix()
 
-                x_range = np.linspace(min_x, max_x, num=samples)
-                y_range = np.linspace(min_y, max_y, num=samples)
-                z_range = np.array([z_value])
-                xs, ys, zs = np.meshgrid(x_range, y_range, z_range, indexing='ij')
-                xs, ys, zs = xs.flatten(), ys.flatten(), zs.flatten()
-                if has_matrix:
-                    xs, ys, zs = self.apply_matrix(matrix, xs, ys, zs)
-                field_values = field.evaluate_grid(xs, ys, zs)
-                field_values = field_values.reshape((samples, samples))
+                    x_range = np.linspace(min_x, max_x, num=samples)
+                    y_range = np.linspace(min_y, max_y, num=samples)
+                    z_range = np.array([z_value])
+                    xs, ys, zs = np.meshgrid(x_range, y_range, z_range, indexing='ij')
+                    xs, ys, zs = xs.flatten(), ys.flatten(), zs.flatten()
+                    if has_matrix:
+                        xs, ys, zs = self.apply_matrix(matrix, xs, ys, zs)
+                    field_values = field.evaluate_grid(xs, ys, zs)
+                    field_values = field_values.reshape((samples, samples))
 
-                contours = measure.find_contours(field_values, level=value)
+                    contours = measure.find_contours(field_values, level=value)
 
-                x_size = (max_x - min_x)/samples
-                y_size = (max_y - min_y)/samples
+                    x_size = (max_x - min_x)/samples
+                    y_size = (max_y - min_y)/samples
 
-                new_verts, new_edges, new_faces = make_contours(samples, samples, min_x, x_size, min_y, y_size, z_value, contours, make_faces=self.make_faces, connect_bounds = self.connect_bounds)
-                if has_matrix:
-                    new_verts = self.unapply_matrix(matrix, new_verts)
-                verts_out.extend(new_verts)
-                edges_out.extend(new_edges)
-                faces_out.extend(new_faces)
+                    new_verts, new_edges, new_faces = make_contours(samples, samples, min_x, x_size, min_y, y_size, z_value, contours, make_faces=self.make_faces, connect_bounds = self.connect_bounds)
+                    if has_matrix:
+                        new_verts = self.unapply_matrix(matrix, new_verts)
+                    verts_out.extend(new_verts)
+                    edges_out.extend(new_edges)
+                    faces_out.extend(new_faces)
 
             self.outputs['Vertices'].sv_set(verts_out)
             self.outputs['Edges'].sv_set(edges_out)
