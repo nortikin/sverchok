@@ -20,6 +20,12 @@ import numpy as np
 import math
 from math import sin, cos, radians, degrees, sqrt, asin, acos, atan2
 
+xyz_axes = [
+        ('X', "X", "X axis", 0),
+        ('Y', "Y", "Y axis", 1),
+        ('Z', "Z", "Z axis", 2)
+    ]
+
 coordinate_modes = [
     ('XYZ', "Carthesian", "Carthesian coordinates - x, y, z", 0),
     ('CYL', "Cylindrical", "Cylindrical coordinates - rho, phi, z", 1),

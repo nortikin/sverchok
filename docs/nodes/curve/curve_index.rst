@@ -51,5 +51,6 @@ Curves
    circlify
    intersect_curve_plane
    extremes
+   interpolate_frame
    eval_curve
 

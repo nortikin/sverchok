@@ -11,6 +11,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repe
 from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.geom import PlaneEquation
+from sverchok.utils.math import xyz_axes
 from sverchok.utils.manifolds import intersect_curve_plane
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
@@ -32,8 +33,8 @@ else:
         _, i, _ = kdt.find(point)
         return solutions[i]
 
-    def matrix_to_curve(curve, matrix, init_samples=10, tolerance=1e-3, maxiter=50):
-        plane = PlaneEquation.from_matrix(matrix)
+    def matrix_to_curve(curve, matrix, z_axis, init_samples=10, tolerance=1e-3, maxiter=50):
+        plane = PlaneEquation.from_matrix(matrix, normal_axis=z_axis)
         # Or take nearest point?
         solutions = intersect_curve_plane(curve, plane,
                     init_samples=init_samples,
@@ -69,11 +70,11 @@ else:
             matrix_out.append(matrix)
         return matrix_out
 
-    def interpolate_frames(curve, frames, ts, init_samples=10, tolerance=1e-3, maxiter=50):
+    def interpolate_frames(curve, frames, z_axis, ts, init_samples=10, tolerance=1e-3, maxiter=50):
         quats = []
         tknots = []
         for frame in frames:
-            tk, quat = matrix_to_curve(curve, frame, init_samples, tolerance, maxiter)
+            tk, quat = matrix_to_curve(curve, frame, z_axis, init_samples, tolerance, maxiter)
             quats.append(quat)
             tknots.append(tk)
 
@@ -122,7 +123,15 @@ else:
             default = True,
             update = updateNode)
 
+        z_axis : EnumProperty(
+            name = "Orientation",
+            description = "Which axis of the provided frames points along the curve",
+            items = xyz_axes,
+            default = 'Z',
+            update = updateNode)
+
         def draw_buttons(self, context, layout):
+            layout.prop(self, 'z_axis', expand=True)
             layout.prop(self, 'samples')
             layout.prop(self, 'join', toggle=True)
             
@@ -153,7 +162,7 @@ else:
             frames_out = []
             for curves, frames_i, ts_i in zip_long_repeat(curves_s, frames_s, ts_s):
                 for curve, frames, ts in zip_long_repeat(curves, frames_i, ts_i):
-                    new_frames = interpolate_frames(curve, frames, ts,
+                    new_frames = interpolate_frames(curve, frames, self.z_axis, ts,
                                     init_samples = self.samples+1,
                                     tolerance = tolerance)
                     if self.join:
