@@ -18,7 +18,7 @@ def obtain_normal3(p1, p2, p3):
     ]
 
 @njit
-def normalize(v):
+def normalize_v3(v):
     """
     rescales the input (3-element-vector), so that the length of the vector "extents" is One.
     this doesn't change the direction of the vector, only the magnitude.
@@ -26,10 +26,24 @@ def normalize(v):
     l = math.sqrt((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]))
     return [v[0]/l, v[1]/l, v[2]/l]    
 
-
+@njit
+def colinear(p1, p2, p3, tolerance):
+    """
+    is p2 roughly (within tolerance) on the line p1-p3?
+    """
+    end_existing = normalize_v3(sub_v3_v3v3(p3, p1))
+    end_new = normalize_v3(sub_v3_v3v3(p2, p1))
+    if distance_f_v3v3(end_existing, end_new) <= tolerance:
+        # extra logic may be redundant
+        if distance_f(p3, p1) - (distance_f_v3v3(p1, p2) + distance_f_v3v3(p2, p3)) <= (tolerance*2):
+            return True
+    return False
 
 @njit
 def np_normal_of_many_verts(verts):
+    """
+    this expects convex ngons, but will handle many types of irregular (not all)
+    """
     if verts.shape[0] == 3:
         return obtain_normal3(verts[0], verts[1], verts[2])
     else:
@@ -37,7 +51,7 @@ def np_normal_of_many_verts(verts):
         normals = np.zeros(verts.shape)
         for v1_V2_v3 in verts:
             if not colinear(v1_v2_V3):
-                normals[idx] = normalize(find_normal(*v1_v2_v3))
+                normals[idx] = normalize_v3(find_normal(*v1_v2_v3))
             idx += 1
         
         # remove not contributing rows
@@ -46,15 +60,15 @@ def np_normal_of_many_verts(verts):
         # sum each circumnavigated triangle, get mean
         return np.mean(normals, axis=0)
 
-
-
 @njit
-def np_lerp_two_verts(verts, range):
-    ...
+def np_lerp_v3_v3v3(a, b, t):
+    s = 1.0 - t
+    return [s * a[0] + t * b[0], s * a[1] + t * b[1], s * a[2] + t * b[2]]
 
 @njit
 def add_two_verts(verts):
     return np.array((verts[0]+verts[3], verts[1]+verts[4], verts[2]+verts[5]), dtype=np.float32)
+
 
 @njit
 def do_tri(face, lv_idx, make_inner):
@@ -138,10 +152,8 @@ def inset_special(np_verts, np_faces, np_face_loops, inset_rates, distances, ign
         avg_vec = verts_array.mean(axis=0)
 
         if abs(inset_by) < 1e-6:
-
             normal = np_normal_of_many_verts(verts_array.ravel())
-
-            new_vertex = avg_vec.lerp(avg_vec + normal, distance)
+            new_verts = np_lerp_v3_v3v3(avg_vec, addv3_v3v3(avg_vec, normal), distance)
             vertices.append(new_vertex)
             
             new_vertex_idx = current_verts_idx
