@@ -14,17 +14,17 @@ from sverchok.dependencies import scipy
 from sverchok.utils.math import rbf_functions
 
 if scipy is None:
-    add_dummy('SvRbfCurveNode', "Minimal Curve", 'scipy')
+    add_dummy('SvRbfCurveNode', "RBF Curve", 'scipy')
 else:
     from scipy.interpolate import Rbf
 
     class SvExRbfCurveNode(bpy.types.Node, SverchCustomTreeNode):
         """
-        Triggers: Minimal Curve
-        Tooltip: Generate minimal curve
+        Triggers: Minimal RBF Curve
+        Tooltip: Generate interpolating or approximating curve by RBF method
         """
         bl_idname = 'SvExRbfCurveNode'
-        bl_label = 'Minimal Curve'
+        bl_label = 'RBF Curve'
         bl_icon = 'CURVE_NCURVE'
 
         function : EnumProperty(

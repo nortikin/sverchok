@@ -55,5 +55,6 @@ Curves
    marching_squares
    marching_squares_on_surface
    nearest_point
+   rbf_curve
    eval_curve
 
