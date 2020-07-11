@@ -34,4 +34,5 @@ Nodes
    Object <nodes/object_nodes/object_nodes_index>
    Layout <nodes/layout/layout_index>
    Network <nodes/network/network_index>
+   Exchange <nodes/exchange/exchange_index>
 
