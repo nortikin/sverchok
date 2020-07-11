@@ -17,6 +17,7 @@ Modifier Make
    uv_connect
    voronoi_2d
    delaunay_2d
+   voronoi3d
    wafel
    join_tris
    framework
