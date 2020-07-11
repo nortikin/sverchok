@@ -80,7 +80,12 @@ else:
                 shape = solid_base.makeOffsetShape(offset, self.tolerance, inter=self.intersection, join=self['join_type'])
                 if self.refine_solid:
                     shape = shape.removeSplitter()
-                solid = Part.makeSolid(shape)
+                try:
+                    valid = shape.isValid()
+                    solid = Part.makeSolid(shape)
+                except Exception as e:
+                    self.warning("Shape is not valid: %s: %s", shape, e)
+                    continue
 
                 solids.append(solid)
 
