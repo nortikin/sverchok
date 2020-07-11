@@ -27,7 +27,7 @@ This node has the following inputs:
   generated curve. The default value is 1.0.
 * **Smooth**. Smoothness parameter of used RBF function. If this is zero, then
   the curve will go through all provided points; otherwise, it will be only an
-  approximating curve.
+  approximating curve. The default value is 1.0.
 
 Parameters
 ----------

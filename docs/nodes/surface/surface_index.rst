@@ -18,6 +18,7 @@ Surface
    extrude_curve
    pipe
    coons_patch
+   minimal_surface
    apply_field_to_surface
    surface_domain
    subdomain
