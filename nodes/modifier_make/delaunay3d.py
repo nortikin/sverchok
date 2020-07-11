@@ -61,6 +61,8 @@ else:
             return [verts[i] for i in idxs]
 
         def is_planar(self, verts, idxs, threshold):
+            if threshold == 0:
+                return True
             a, b, c, d = [verts[i] for i in idxs]
             a, b, c, d = np.array(a), np.array(b), np.array(c), np.array(d)
             v1 = b - a
