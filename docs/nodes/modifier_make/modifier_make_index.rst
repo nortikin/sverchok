@@ -18,6 +18,7 @@ Modifier Make
    voronoi_2d
    delaunay_2d
    voronoi3d
+   voronoi_sphere
    wafel
    join_tris
    framework
