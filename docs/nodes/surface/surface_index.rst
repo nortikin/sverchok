@@ -19,6 +19,7 @@ Surface
    pipe
    coons_patch
    minimal_surface
+   min_surface_from_curve
    apply_field_to_surface
    surface_domain
    subdomain
