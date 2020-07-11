@@ -56,5 +56,6 @@ Curves
    marching_squares_on_surface
    nearest_point
    rbf_curve
+   ortho_project
    eval_curve
 
