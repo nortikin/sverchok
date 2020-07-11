@@ -18,9 +18,6 @@ if scipy is None:
 else:
     from scipy.interpolate import Rbf
 
-    TARGET_U_SOCKET = 6
-    TARGET_V_SOCKET = 7
-
     class SvExMinimalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         """
         Triggers: Minimal Surface
@@ -36,14 +33,6 @@ else:
             self.inputs['Matrix'].hide_safe = self.coord_mode == 'UV'
             self.inputs['SrcU'].hide_safe = self.coord_mode != 'UV' or not self.explicit_src_uv
             self.inputs['SrcV'].hide_safe = self.coord_mode != 'UV' or not self.explicit_src_uv
-            self.inputs[TARGET_U_SOCKET].hide_safe = self.generate_mode != 'EXPLICIT'
-            self.inputs[TARGET_V_SOCKET].hide_safe = self.generate_mode != 'EXPLICIT'
-            self.inputs[TARGET_U_SOCKET].name = "TargetU" if self.coord_mode == 'UV' else "TargetX"
-            self.inputs[TARGET_V_SOCKET].name = "TargetV" if self.coord_mode == 'UV' else "TargetY"
-            self.inputs['GridPoints'].hide_safe = self.generate_mode != 'GRID'
-            self.outputs['Vertices'].hide_safe = self.generate_mode == 'NONE'
-            self.outputs['Edges'].hide_safe = self.generate_mode != 'GRID'
-            self.outputs['Faces'].hide_safe = self.generate_mode != 'GRID'
 
         coord_modes = [
             ('XY', "X Y -> Z", "XY -> Z function", 0),
@@ -83,12 +72,6 @@ else:
                 default = 'Z',
                 update = updateNode)
 
-        grid_points : IntProperty(
-                name = "Points",
-                default = 25,
-                min = 3,
-                update = updateNode)
-
         epsilon : FloatProperty(
                 name = "Epsilon",
                 default = 1.0,
@@ -103,66 +86,27 @@ else:
 
         explicit_src_uv : BoolProperty(
                 name = "Explicit source UV",
-                default = False,
-                update = update_sockets)
-
-        generate_modes = [
-            ('NONE', "None", "Do not generate surface vertices / faces", 0),
-            ('GRID', "Grid", "Generate automatic grid", 1),
-            ('EXPLICIT', "Explicit", "Generate vertices at provided U/V coordinates", 2)
-        ]
-
-        generate_mode : EnumProperty(
-                name = "Evaluate",
-                items = generate_modes,
-                default = 'NONE',
+                default = True,
                 update = update_sockets)
 
         def sv_init(self, context):
             self.inputs.new('SvVerticesSocket', "Vertices") # 0
-            self.inputs.new('SvStringsSocket', "GridPoints").prop_name = 'grid_points' #1
             self.inputs.new('SvStringsSocket', "Epsilon").prop_name = 'epsilon' #2
             self.inputs.new('SvStringsSocket', "Smooth").prop_name = 'smooth' #3
             self.inputs.new('SvStringsSocket', "SrcU") #4
             self.inputs.new('SvStringsSocket', "SrcV") #5
-            self.inputs.new('SvStringsSocket', "TargetU") #6 - TARGET_U_SOCKET
-            self.inputs.new('SvStringsSocket', "TargetV") #7 - TARGET_V_SOCKET
             self.inputs.new('SvMatrixSocket', "Matrix") #8
-            self.outputs.new('SvVerticesSocket', "Vertices")
-            self.outputs.new('SvStringsSocket', "Edges")
-            self.outputs.new('SvStringsSocket', "Faces")
             self.outputs.new('SvSurfaceSocket', "Surface")
             self.update_sockets(context)
 
         def draw_buttons(self, context, layout):
             layout.label(text="Surface type:")
             layout.prop(self, "coord_mode", expand=True)
-            layout.prop(self, "function")
             if self.coord_mode == 'XY':
                 layout.prop(self, "orientation", expand=True)
             if self.coord_mode == 'UV':
                 layout.prop(self, "explicit_src_uv")
-            layout.label(text='Generate:')
-            layout.prop(self, 'generate_mode', text='')
-
-        def make_edges_xy(self, n_points):
-            edges = []
-            for row in range(n_points):
-                e_row = [(i + n_points * row, (i+1) + n_points * row) for i in range(n_points-1)]
-                edges.extend(e_row)
-                if row < n_points - 1:
-                    e_col = [(i + n_points * row, i + n_points * (row+1)) for i in range(n_points)]
-                    edges.extend(e_col)
-            return edges
-
-        def make_faces_xy(self, n_points):
-            faces = []
-            for row in range(n_points - 1):
-                for col in range(n_points - 1):
-                    i = row + col * n_points
-                    face = (i, i+n_points, i+n_points+1, i+1)
-                    faces.append(face)
-            return faces
+            layout.prop(self, "function")
 
         def make_uv(self, vertices):
 
@@ -204,27 +148,22 @@ else:
             vertices_s = self.inputs['Vertices'].sv_get()
             if self.coord_mode == 'UV':
                 vertices_s = ensure_nesting_level(vertices_s, 4)
-            points_s = self.inputs['GridPoints'].sv_get()
             epsilon_s = self.inputs['Epsilon'].sv_get()
             smooth_s = self.inputs['Smooth'].sv_get()
             src_us_s = self.inputs['SrcU'].sv_get(default = [[]])
             src_vs_s = self.inputs['SrcV'].sv_get(default = [[]])
-            target_us_s = self.inputs[TARGET_U_SOCKET].sv_get(default = [[]])
-            target_vs_s = self.inputs[TARGET_V_SOCKET].sv_get(default = [[]])
             matrices_s = self.inputs['Matrix'].sv_get(default = [[Matrix()]])
 
             verts_out = []
             edges_out = []
             faces_out = []
             surfaces_out = []
-            inputs = zip_long_repeat(vertices_s, src_us_s, src_vs_s, matrices_s, points_s, target_us_s, target_vs_s, epsilon_s, smooth_s)
-            for vertices, src_us, src_vs, matrix, grid_points, target_us, target_vs, epsilon, smooth in inputs:
+            inputs = zip_long_repeat(vertices_s, src_us_s, src_vs_s, matrices_s, epsilon_s, smooth_s)
+            for vertices, src_us, src_vs, matrix, epsilon, smooth in inputs:
                 if isinstance(epsilon, (list, int)):
                     epsilon = epsilon[0]
                 if isinstance(smooth, (list, int)):
                     smooth = smooth[0]
-                if isinstance(grid_points, (list, int)):
-                    grid_points = grid_points[0]
                 if isinstance(matrix, list):
                     matrix = matrix[0]
                 has_matrix = self.coord_mode == 'XY' and matrix is not None and matrix != Matrix()
@@ -271,27 +210,6 @@ else:
                     u_bounds = (x_min, x_max)
                     v_bounds = (y_min, y_max)
 
-                    if self.generate_mode == 'NONE':
-                        new_verts = np.array([])
-                    else:
-                        if self.generate_mode == 'GRID':
-                            target_x_range = np.linspace(x_min, x_max, grid_points)
-                            target_y_range = np.linspace(y_min, y_max, grid_points)
-                            XI, YI = np.meshgrid(target_x_range, target_y_range)
-                            XI = XI.flatten()
-                            YI = YI.flatten()
-                        else: # EXPLICIT
-                            XI, YI = np.array(target_us), np.array(target_vs)
-                        ZI = rbf(XI, YI)
-
-                        if self.orientation == 'X':
-                            YI, ZI, XI = XI, YI, ZI
-                        elif self.orientation == 'Y':
-                            ZI, XI, YI = XI, YI, ZI
-                        else: # Z
-                            pass
-
-                        new_verts = np.stack((XI,YI,ZI)).T
                 else: # UV
                     if not self.explicit_src_uv:
                         src_us, src_vs = self.make_uv(vertices)
@@ -312,44 +230,11 @@ else:
                     u_bounds = (u_min, u_max)
                     v_bounds = (v_min, v_max)
 
-                    if self.generate_mode == 'NONE':
-                        new_verts = np.array([])
-                    else:
-                        if self.generate_mode == 'GRID':
-                            target_u_range = np.linspace(u_min, u_max, grid_points)
-                            target_v_range = np.linspace(v_min, v_max, grid_points)
-                            target_us, target_vs = np.meshgrid(target_u_range, target_v_range)
-                            target_us = target_us.flatten()
-                            target_vs = target_vs.flatten()
-                        else:
-                            if len(target_us) == 0:
-                                raise Exception("Target U values are not specified")
-                            if len(target_vs) == 0:
-                                raise Exception("Target V values are not specified")
-
-                        new_verts = rbf(target_us, target_vs)
-
-                if has_matrix and self.generate_mode != 'NONE':
-                    new_verts = new_verts - translation
-                    print(new_verts.shape)
-                    new_verts = np.apply_along_axis(lambda v : np_matrix @ v, 1, new_verts)
-                new_verts = new_verts.tolist()
-                #if not (self.coord_mode == 'UV' and self.generate_mode == 'EXPLICIT'):
-                #    new_verts = sum(new_verts, [])
-                new_edges = self.make_edges_xy(grid_points)
-                new_faces = self.make_faces_xy(grid_points)
-
-                verts_out.append(new_verts)
-                edges_out.append(new_edges)
-                faces_out.append(new_faces)
                 surface = SvRbfSurface(rbf, self.coord_mode, self.orientation, matrix)
                 surface.u_bounds = u_bounds
                 surface.v_bounds = v_bounds
                 surfaces_out.append(surface)
 
-            self.outputs['Vertices'].sv_set(verts_out)
-            self.outputs['Edges'].sv_set(edges_out)
-            self.outputs['Faces'].sv_set(faces_out)
             self.outputs['Surface'].sv_set(surfaces_out)
 
 def register():
