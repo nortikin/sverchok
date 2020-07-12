@@ -10,6 +10,7 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.logging import info, exception
 from sverchok.utils.field.rbf import SvRbfScalarField
+from sverchok.utils.math import rbf_functions
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 
@@ -20,25 +21,16 @@ else:
 
     class SvExMinimalScalarFieldNode(bpy.types.Node, SverchCustomTreeNode):
         """
-        Triggers: Minimal Scalar Field
-        Tooltip: Minimal Scalar Field
+        Triggers: RBF Minimal Scalar Field
+        Tooltip: RBF (Minimal) Scalar Field
         """
         bl_idname = 'SvExMinimalScalarFieldNode'
-        bl_label = 'Minimal Scalar Field'
+        bl_label = 'RBF Scalar Field'
         bl_icon = 'OUTLINER_OB_EMPTY'
-
-        functions = [
-            ('multiquadric', "Multi Quadric", "Multi Quadric", 0),
-            ('inverse', "Inverse", "Inverse", 1),
-            ('gaussian', "Gaussian", "Gaussian", 2),
-            ('cubic', "Cubic", "Cubic", 3),
-            ('quintic', "Quintic", "Qunitic", 4),
-            ('thin_plate', "Thin Plate", "Thin Plate", 5)
-        ]
 
         function : EnumProperty(
                 name = "Function",
-                items = functions,
+                items = rbf_functions,
                 default = 'multiquadric',
                 update = updateNode)
 
