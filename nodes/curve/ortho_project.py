@@ -32,8 +32,18 @@ else:
             default = 5,
             min = 3,
             update = updateNode)
+
+        nearest : BoolProperty(
+            name = "Nearest",
+            description = "To find the nearest orthogonal projection or all of them",
+            default = True,
+            update = updateNode)
+
+        def draw_buttons(self, context, layout):
+            layout.prop(self, 'nearest', toggle=True)
         
         def draw_buttons_ext(self, context, layout):
+            self.draw_buttons(context, layout)
             layout.prop(self, 'samples')
 
         def sv_init(self, context):
@@ -62,10 +72,14 @@ else:
                     for src_point in src_points:
                         src_point = np.array(src_point)
                         result = ortho_project_curve(src_point, curve, init_samples = self.samples)
-                        t = result.nearest_u
-                        point = result.nearest.tolist()
-                        new_t.append(t)
-                        new_points.append(point)
+                        if self.nearest:
+                            t = result.nearest_u
+                            point = result.nearest.tolist()
+                            new_t.append(t)
+                            new_points.append(point)
+                        else:
+                            new_t.extend(result.us)
+                            new_points.extend(result.points)
                     points_out.append(new_points)
                     t_out.append(new_t)
 
