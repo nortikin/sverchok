@@ -13,6 +13,8 @@ Field
    voronoi_field
    image_field
    mesh_normal_field
+   minimal_sfield
+   minimal_vfield
    curve_bend_field
    bend_along_surface
    compose_vector_field
