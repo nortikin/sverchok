@@ -21,11 +21,11 @@ else:
 
     class SvExMinimalVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
         """
-        Triggers: Minimal Vector Field
-        Tooltip: Minimal Vector Field
+        Triggers: RBF Minimal Vector Field
+        Tooltip: RBF Vector Field
         """
         bl_idname = 'SvExMinimalVectorFieldNode'
-        bl_label = 'Minimal Vector Field'
+        bl_label = 'RBF Vector Field'
         bl_icon = 'OUTLINER_OB_EMPTY'
 
         function : EnumProperty(
@@ -46,6 +46,18 @@ else:
                 min = 0.0,
                 update = updateNode)
 
+        types = [
+                    ('R', "Relative", "Field value in the point means the vector of force applied to this point", 0),
+                    ('A', "Absolute", "Field value in the point means the new point where this point should be moved to", 1)
+                ]
+
+        field_type : EnumProperty(
+                name = "Type",
+                description = "Field type",
+                items = types,
+                default = 'R',
+                update = updateNode)
+
         def sv_init(self, context):
             self.inputs.new('SvVerticesSocket', "VerticesFrom")
             self.inputs.new('SvVerticesSocket', "VerticesTo")
@@ -54,6 +66,7 @@ else:
             self.outputs.new('SvVectorFieldSocket', "Field")
 
         def draw_buttons(self, context, layout):
+            layout.prop(self, "field_type", text='')
             layout.prop(self, "function")
 
         def process(self):
@@ -79,13 +92,15 @@ else:
                 zs_from = XYZ_from[:,2]
                 
                 XYZ_to = np.array(vertices_to)
+                if self.field_type == 'R':
+                    XYZ_to = XYZ_from + XYZ_to
 
                 rbf = Rbf(xs_from, ys_from, zs_from, XYZ_to,
                         function = self.function,
                         smooth = smooth,
                         epsilon = epsilon, mode='N-D')
 
-                field = SvRbfVectorField(rbf)
+                field = SvRbfVectorField(rbf, relative = self.field_type == 'R')
                 fields_out.append(field)
 
             self.outputs['Field'].sv_set(fields_out)

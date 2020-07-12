@@ -29,20 +29,25 @@ class SvRbfScalarField(SvScalarField):
 ##################
 
 class SvRbfVectorField(SvVectorField):
-    def __init__(self, rbf):
+    def __init__(self, rbf, relative = True):
         self.rbf = rbf
+        self.relative = relative
 
     def evaluate(self, x, y, z):
-        return self.rbf(x, y, z) - np.array([x, y, z])
+        v = self.rbf(x, y, z) 
+        if self.relative:
+            v = v - np.array([x, y, z])
+        return v
 
     def evaluate_grid(self, xs, ys, zs):
         value = self.rbf(xs, ys, zs)
         vx = value[:,0]
         vy = value[:,1]
         vz = value[:,2]
-        vx = vx - xs
-        vy = vy - ys
-        vz = vz - zs
+        if self.relative:
+            vx = vx - xs
+            vy = vy - ys
+            vz = vz - zs
         return vx, vy, vz
 
 class SvBvhRbfNormalVectorField(SvVectorField):
