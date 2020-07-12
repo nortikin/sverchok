@@ -16,7 +16,7 @@ specified (infinite) plane. The plane is specified by providing a normal vector
 and a point on the plane.
 
 To find all intersections, the node splits the curve into several segments and
-then searches for single intersection in the each segment.
+then searches for single intersection in each segment.
 
 Inputs
 ------

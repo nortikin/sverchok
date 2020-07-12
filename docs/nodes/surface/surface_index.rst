@@ -30,6 +30,7 @@ Surface
    curvatures
    gauss_curvature
    nurbs_surface
+   intersect_curve_surface
    adaptive_tessellate
    tessellate_trim
    evaluate_surface

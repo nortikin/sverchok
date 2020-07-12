@@ -39,7 +39,7 @@ else:
         curve_samples : IntProperty(
             name = "Init Curve Samples",
             default = 10,
-            min = 3,
+            min = 1,
             update = updateNode)
 
         methods = [
@@ -53,7 +53,7 @@ else:
         ]
 
         raycast_method : EnumProperty(
-            name = "Raycast Method",
+            name = "Method",
             items = methods,
             default = 'hybr',
             update = updateNode)
