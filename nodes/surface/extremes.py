@@ -118,7 +118,7 @@ else:
                     if self.on_fail == 'FAIL':
                         raise Exception(f"Can't find the extreme point of {surface} at {u_min}-{u_max}, {v_min}-{v_max}: {result.message}")
                 else:
-                    print(f"{init_u},{init_v} ==> {result.x} = {result.fun}")
+                    #print(f"{init_u},{init_v} ==> {result.x} = {result.fun}")
                     uvs.append(result.x)
                     values.append(result.fun)
 

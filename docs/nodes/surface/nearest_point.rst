@@ -49,7 +49,8 @@ This node has the following parameters:
   location of the nearest point. Otherwise, the node will return the initial
   guess. So if this parameter is not checked, the **Init Resolution** parameter
   will define the precision of the node. Checked by default.
-* **Method**. This parameter is available in the N panel only. The algorithm used to find the nearest point. The available algorithms are:
+* **Method**. This parameter is available in the N panel only. The algorithm
+  used to find the nearest point. The available algorithms are:
 
    * L-BFGS-B
    * Conjugate Gradient
