@@ -23,6 +23,7 @@ Field
    scalar_field_curvature
    merge_scalar_fields
    vector_field_graph
+   scalar_field_graph
    vector_field_lines
    scalar_field_eval
    vector_field_eval

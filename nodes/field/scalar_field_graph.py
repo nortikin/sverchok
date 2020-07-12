@@ -140,7 +140,9 @@ else:
                         value = field_stops[j]
                         contours = measure.find_contours(field_values[:,:,i], level=value)
 
-                        value_verts, value_edges, value_faces = make_contours(samples_xy, min_x, x_size, min_y, y_size, z_value, contours, make_faces=self.make_faces, connect_bounds = self.connect_bounds)
+                        value_verts, value_edges, value_faces = make_contours(samples_xy, samples_xy,
+                                        min_x, x_size, min_y, y_size, z_value, contours,
+                                        make_faces=self.make_faces, connect_bounds = self.connect_bounds)
                         if value_verts:
                             z_verts.extend(value_verts)
                             z_edges.extend(value_edges)
