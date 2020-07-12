@@ -12,6 +12,7 @@ Field
    noise_vfield
    voronoi_field
    image_field
+   mesh_normal_field
    curve_bend_field
    bend_along_surface
    compose_vector_field
