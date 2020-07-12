@@ -32,6 +32,7 @@ Surface
    nurbs_surface
    intersect_curve_surface
    nearest_point
+   ortho_project
    adaptive_tessellate
    tessellate_trim
    evaluate_surface
