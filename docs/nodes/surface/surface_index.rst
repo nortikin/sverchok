@@ -34,6 +34,7 @@ Surface
    nearest_point
    ortho_project
    extremes
+   marching_cubes
    adaptive_tessellate
    tessellate_trim
    evaluate_surface
