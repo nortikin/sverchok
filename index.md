@@ -186,7 +186,6 @@
     SvExVectorFieldEvaluateNode
     SvExVectorFieldApplyNode
     ---
-    SvExVFieldLinesOnSurfNode
     SvExVectorFieldGraphNode
     SvExVectorFieldLinesNode
     SvExScalarFieldGraphNode
