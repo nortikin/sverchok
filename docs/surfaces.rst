@@ -51,3 +51,24 @@ It is also possible to "visualize" the surface by use of "Tessellate & Trim"
 node. This node allows one to tessellate the part of surface, trimmed by some
 curve.
 
+Implcit Surfaces
+----------------
+
+Another possible way to define a surface is to say that the surface is a set of
+all points (X, Y, Z), which are solutions of equation: ``F(X, Y, Z) = C``. Here
+F is some function, which maps each point in 3D space to a numeric value, and C
+is some numeric constant. Surfaces that are defined in this way are called
+"implicit surfaces". Implicit surfaces are, in general, a more wide class of
+objects than parametric surfaces, defined in the previous topic.
+
+Note that F function, required to define an implicit surface, is what we call
+"scalar field". So, implicit surfaces are also known as iso-surfaces of scalar
+fields.
+
+Sverchok does not have a separate object or a separate socket type for implicit
+surfaces. Instead, for each node which can work with implicit surface, F
+function is provided as a scalar field, and C constant is provided in a
+separate socket.
+
+Implicit surfaces can be "visualized" by use of "Marching Cubes" node.
+

@@ -36,6 +36,7 @@ Surface
    nearest_point
    ortho_project
    raycast
+   implicit_surface_raycast
    extremes
    marching_cubes
    adaptive_tessellate
