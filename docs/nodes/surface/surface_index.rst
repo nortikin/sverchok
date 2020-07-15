@@ -35,6 +35,7 @@ Surface
    intersect_curve_surface
    nearest_point
    ortho_project
+   raycast
    extremes
    marching_cubes
    adaptive_tessellate
