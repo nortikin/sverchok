@@ -25,12 +25,6 @@ else:
         bl_label = 'Build NURBS Surface'
         bl_icon = 'SURFACE_NSURFACE'
 
-        sample_size : IntProperty(
-                name = "Samples",
-                default = 50,
-                min = 4,
-                update = updateNode)
-
         input_modes = [
                 ('1D', "Single list", "List of all control points (concatenated)", 1),
                 ('2D', "Separated lists", "List of lists of control points", 2)
@@ -40,9 +34,6 @@ else:
         def update_sockets(self, context):
             self.inputs['USize'].hide_safe = self.input_mode == '2D'
             self.inputs['Weights'].hide_safe = self.surface_mode == 'BSPLINE'
-            self.outputs['Vertices'].hide_safe = not self.make_grid
-            self.outputs['Faces'].hide_safe = not self.make_grid
-            self.inputs['Samples'].hide_safe = not self.make_grid
             self.inputs['KnotsU'].hide_safe = self.knot_mode == 'AUTO'
             self.inputs['KnotsV'].hide_safe = self.knot_mode == 'AUTO'
 
@@ -67,11 +58,6 @@ else:
                 name = "Surface mode",
                 items = surface_modes,
                 default = 'NURBS',
-                update = update_sockets)
-
-        make_grid : BoolProperty(
-                name = "Tessellate",
-                default = False,
                 update = update_sockets)
 
         knot_modes = [
@@ -119,10 +105,7 @@ else:
             self.inputs.new('SvStringsSocket', "KnotsV")
             self.inputs.new('SvStringsSocket', "DegreeU").prop_name = 'degree_u'
             self.inputs.new('SvStringsSocket', "DegreeV").prop_name = 'degree_v'
-            self.inputs.new('SvStringsSocket', "Samples").prop_name = 'sample_size'
             self.inputs.new('SvStringsSocket', "USize").prop_name = 'u_size'
-            self.outputs.new('SvVerticesSocket', "Vertices")
-            self.outputs.new('SvStringsSocket', "Faces")
             self.outputs.new('SvSurfaceSocket', "Surface")
             self.update_sockets(context)
 
@@ -138,13 +121,11 @@ else:
                 row = col.row(align=True)
                 row.prop(self, 'is_cyclic_u', toggle=True)
                 row.prop(self, 'is_cyclic_v', toggle=True)
-            layout.prop(self, "make_grid", toggle=True)
 
         def process(self):
             vertices_s = self.inputs['ControlPoints'].sv_get()
             has_weights = self.inputs['Weights'].is_linked
             weights_s = self.inputs['Weights'].sv_get(default = [[1.0]])
-            samples_s = self.inputs['Samples'].sv_get()
             u_size_s = self.inputs['USize'].sv_get()
             knots_u_s = self.inputs['KnotsU'].sv_get(default = [[]])
             knots_v_s = self.inputs['KnotsV'].sv_get(default = [[]])
@@ -159,14 +140,9 @@ else:
             def convert_row(verts_row, weights_row):
                 return [(x, y, z, w) for (x,y,z), w in zip(verts_row, weights_row)]
 
-            verts_out = []
-            edges_out = []
-            faces_out = []
             surfaces_out = []
-            inputs = zip_long_repeat(vertices_s, weights_s, knots_u_s, knots_v_s, degree_u_s, degree_v_s, samples_s, u_size_s)
-            for vertices, weights, knots_u, knots_v, degree_u, degree_v, samples, u_size in inputs:
-                if isinstance(samples, (list, tuple)):
-                    samples = samples[0]
+            inputs = zip_long_repeat(vertices_s, weights_s, knots_u_s, knots_v_s, degree_u_s, degree_v_s, u_size_s)
+            for vertices, weights, knots_u, knots_v, degree_u, degree_v, u_size in inputs:
                 if isinstance(degree_u, (tuple, list)):
                     degree_u = degree_u[0]
                 if isinstance(degree_v, (tuple, list)):
@@ -239,7 +215,7 @@ else:
                     u_min = surf.knotvector_u[degree_u]
                     u_max = surf.knotvector_u[-degree_u-2]
                     new_surf.u_bounds = u_min, u_max
-                    print("U:",new_surf.u_bounds)
+                    #print("U:",new_surf.u_bounds)
                 else:
                     u_min = min(surf.knotvector_u)
                     u_max = max(surf.knotvector_u)
@@ -248,28 +224,13 @@ else:
                     v_min = surf.knotvector_v[degree_v]
                     v_max = surf.knotvector_v[-degree_v-2]
                     new_surf.v_bounds = v_min, v_max
-                    print("V:",new_surf.v_bounds)
+                    #print("V:",new_surf.v_bounds)
                 else:
                     v_min = min(surf.knotvector_v)
                     v_max = max(surf.knotvector_v)
                     new_surf.v_bounds = v_min, v_max
                 surfaces_out.append(new_surf)
 
-                if self.make_grid:
-                    surf.sample_size = samples
-                    surf.tessellate()
-                    new_verts = [vert.data for vert in surf.vertices]
-                    new_faces = [f.data for f in surf.faces]
-                else:
-                    new_verts = []
-                    new_faces = []
-                verts_out.append(new_verts)
-                faces_out.append(new_faces)
-
-
-            if self.make_grid:
-                self.outputs['Vertices'].sv_set(verts_out)
-                self.outputs['Faces'].sv_set(faces_out)
             self.outputs['Surface'].sv_set(surfaces_out)
 
 def register():
