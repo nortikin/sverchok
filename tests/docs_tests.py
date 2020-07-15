@@ -154,6 +154,7 @@ symmetrize.py
 vd_attr_node.py
 scalar_field_point.py
 bvh_nearest_new.py
+quads_to_nurbs.py
 location.py
 sun_position.py""".split("\n")
 
