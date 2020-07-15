@@ -51,6 +51,13 @@ Parameters
 This node has the following parameters:
 
 * **Surface mode**. Values: NURBS, BSpline
+* **Input mode**. The available values are:
+
+   * **Single list**. The node expects a flat list of points for each surface.
+     It will be subdivided into rows according to **USize** input value.
+   * **Separate Lists**. The node expects a list of lists of points for each
+     surface.
+
 * **Knots**. This defines how the knot vectors are specified:
 
   * **Auto**: Knot vectors are generated automatically (the curve will be clamped and periodic).
@@ -62,7 +69,6 @@ This node has the following parameters:
 * **Cyclic U**, **Cyclic V**. Whether the surface should be cyclic (closed) in
   the U and V direction, correspondingly. These parameters are only available
   when **Knots** parameter is set to **Auto**.
-
 
 Outputs
 -------

@@ -30,6 +30,7 @@ Surface
    curvatures
    gauss_curvature
    nurbs_surface
+   approximate_nurbs_surface
    intersect_curve_surface
    nearest_point
    ortho_project
