@@ -52,7 +52,7 @@ else:
         bl_idname = 'SvExNearestPointOnCurveNode'
         bl_label = 'Nearest Point on Curve'
         bl_icon = 'OUTLINER_OB_EMPTY'
-        sv_icon = 'SV_EVAL_SURFACE'
+        sv_icon = 'SV_NEAREST_CURVE'
 
         samples : IntProperty(
             name = "Init Resolution",
