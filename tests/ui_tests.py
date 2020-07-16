@@ -27,6 +27,10 @@ class UiTests(SverchokTestCase):
                     'SvGroupOutputsNodeExp',
                     'SvMonadGenericNode',
                     'SvMonadInfoNode',
+                    'SvExMinimalScalarFieldNode',
+                    'SvExScalarFieldGraphNode',
+                    'SvExMeshNormalFieldNode',
+                    'SvExMinimalVectorFieldNode'
                 ]
         
         sv_init = sverchok.__file__
