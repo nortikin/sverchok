@@ -27,6 +27,7 @@ else:
         bl_idname = 'SvExSurfaceExtremesNode'
         bl_label = 'Surface Extremes'
         bl_icon = 'OUTLINER_OB_EMPTY'
+        sv_icon = 'SV_SURFACE_EXTREMES'
 
         directions = [
                 ('MIN', "Min", "Find the minimum of the field", 0),
