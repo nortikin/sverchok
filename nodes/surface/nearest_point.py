@@ -61,7 +61,7 @@ else:
         bl_idname = 'SvExNearestPointOnSurfaceNode'
         bl_label = 'Nearest Point on Surface'
         bl_icon = 'OUTLINER_OB_EMPTY'
-        sv_icon = 'SV_EVAL_SURFACE'
+        sv_icon = 'SV_NEAREST_SURFACE'
 
         samples : IntProperty(
             name = "Init Resolution",
