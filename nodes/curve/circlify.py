@@ -22,6 +22,7 @@ else:
         bl_idname = 'SvExCirclifyNode'
         bl_label = 'Circlify'
         bl_icon = 'MESH_CIRCLE'
+        sv_icon = 'SV_CIRCLIFY'
 
         major_radius : FloatProperty(
             name = "Major Radius",
