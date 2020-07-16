@@ -23,6 +23,7 @@ else:
         bl_idname = 'SvExCatenaryCurveNode'
         bl_label = 'Catenary Curve'
         bl_icon = 'CURVE_NCURVE'
+        sv_icon = 'SV_CATENARY'
 
         length : FloatProperty(
             name = "Length",
