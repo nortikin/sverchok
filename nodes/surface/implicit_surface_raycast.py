@@ -61,6 +61,7 @@ else:
         bl_idname = 'SvExImplSurfaceRaycastNode'
         bl_label = 'Implicit Surface Raycast'
         bl_icon = 'OUTLINER_OB_EMPTY'
+        sv_icon = 'SV_IMPL_SURF_RAYCAST'
 
         max_distance : FloatProperty(
                 name = "Max Distance",
