@@ -97,6 +97,7 @@ else:
         bl_idname = 'SvExSlerpCurveFrameNode'
         bl_label = 'Interpolate Curve Frame'
         bl_icon = 'OUTLINER_OB_EMPTY'
+        sv_icon = 'SV_INTERP_FRAME'
 
         samples : IntProperty(
             name = "Curve Resolution",

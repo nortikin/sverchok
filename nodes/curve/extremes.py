@@ -33,6 +33,7 @@ else:
         bl_idname = 'SvExCurveExtremesNode'
         bl_label = 'Curve Extremes'
         bl_icon = 'OUTLINER_OB_EMPTY'
+        sv_icon = 'SV_CURVE_EXTREMES'
 
         samples : IntProperty(
             name = "Max Points",
