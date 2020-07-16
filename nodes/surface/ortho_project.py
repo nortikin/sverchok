@@ -25,7 +25,7 @@ else:
         bl_idname = 'SvExOrthoProjectSurfaceNode'
         bl_label = 'Ortho Project on Surface'
         bl_icon = 'OUTLINER_OB_EMPTY'
-        sv_icon = 'SV_EVAL_SURFACE'
+        sv_icon = 'SV_ORTHO_SURFACE'
 
         samples : IntProperty(
             name = "Init Resolution",
