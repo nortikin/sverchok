@@ -26,7 +26,7 @@ else:
         bl_idname = 'SvExCrossCurvePlaneNode'
         bl_label = 'Intersect Curve with Plane'
         bl_icon = 'OUTLINER_OB_EMPTY'
-        sv_icon = 'SV_EX_MSQUARES'
+        sv_icon = 'SV_CROSS_CURVE_PLANE'
 
         samples : IntProperty(
             name = "Init Resolution",

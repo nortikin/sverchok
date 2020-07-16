@@ -28,7 +28,7 @@ else:
         bl_idname = 'SvExCrossCurveSurfaceNode'
         bl_label = 'Intersect Curve with Surface'
         bl_icon = 'OUTLINER_OB_EMPTY'
-        sv_icon = 'SV_EVAL_SURFACE'
+        sv_icon = 'SV_CROSS_CURVE_SURFACE'
 
         raycast_samples : IntProperty(
             name = "Init Surface Samples",
