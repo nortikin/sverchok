@@ -26,7 +26,7 @@ else:
         bl_idname = 'SvExRaycastSurfaceNode'
         bl_label = 'Raycast on Surface'
         bl_icon = 'OUTLINER_OB_EMPTY'
-        sv_icon = 'SV_EVAL_SURFACE'
+        sv_icon = 'SV_SURFACE_RAYCAST'
 
         samples : IntProperty(
             name = "Init Resolution",
