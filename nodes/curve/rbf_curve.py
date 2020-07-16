@@ -26,6 +26,7 @@ else:
         bl_idname = 'SvExRbfCurveNode'
         bl_label = 'RBF Curve'
         bl_icon = 'CURVE_NCURVE'
+        sv_icon = 'SV_INTERP_CURVE'
 
         function : EnumProperty(
                 name = "Function",
