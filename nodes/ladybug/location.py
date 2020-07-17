@@ -27,8 +27,8 @@ else:
         """
         bl_idname = 'SvExLadyBugLocationNode'
         bl_label = 'Location'
-        bl_icon = 'OUTLINER_OB_EMPTY'
-        sv_icon = 'SV_VORONOI'
+        bl_icon = 'WORLD'
+
 
 
         location_name: StringProperty(

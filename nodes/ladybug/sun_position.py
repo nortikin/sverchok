@@ -1,18 +1,12 @@
 
-import numpy as np
 from math import pi
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
-import bmesh
+from bpy.props import FloatProperty, BoolProperty, IntProperty
 from mathutils import Vector, Euler, Matrix
 
-import sverchok
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
-from sverchok.utils.sv_mesh_utils import polygons_to_edges, mesh_join
-from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata
-from sverchok.utils.logging import info, exception
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import ladybug
 
@@ -28,8 +22,8 @@ else:
         """
         bl_idname = 'SvExLadyBugSunPositionNode'
         bl_label = 'Sun Position'
-        bl_icon = 'OUTLINER_OB_EMPTY'
-        sv_icon = 'SV_VORONOI'
+        bl_icon = 'LIGHT_SUN'
+
 
 
         sun_dist: FloatProperty(

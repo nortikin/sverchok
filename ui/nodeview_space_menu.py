@@ -65,7 +65,7 @@ menu_structure = [
     ["NODEVIEW_MT_AddLogic", "SV_LOGIC"],
     ["NODEVIEW_MT_AddListOps", 'NLA'],
     ["NODEVIEW_MT_AddDictionary", 'OUTLINER_OB_FONT'],
-    ["NODEVIEW_MT_AddLadybug", 'OUTLINER_OB_FONT'],
+    ["NODEVIEW_MT_AddLadybug", 'LIGHT_SUN'],
     ["separator"],
     ["NODEVIEW_MT_AddViz", 'RESTRICT_VIEW_OFF'],
     ["NODEVIEW_MT_AddText", 'TEXT'],
