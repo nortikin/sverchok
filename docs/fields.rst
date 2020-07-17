@@ -15,7 +15,7 @@ A vector field is a mathematical object, which is defined as a function from R^3
 
 Note that when we are talking about vector fields, there are two possible ways to interpret their values:
 
-1.  to think that the vector, which is defined by vector field in point P, starts in point P and ends in some point P';
+1. to think that the vector, which is defined by vector field in point P, starts in point P and ends in some point P';
 2. to think that the vector which is defined by vector field in point P, starts in the origin and ends in some point Q.
 
 In physics, the first approach is the most common, and it is mostly used by Sverchok.
@@ -25,6 +25,8 @@ One can note, that both approaches are easily convertible: if you have a field, 
 "Apply vector field" node follows the first approach, i.e. for each provided point P it returns the point to which P would be mapped if we understand that the vector VectorField(P) starts at P. Mathematically, it returns `P + VectorField(P)`. In most cases, you will want to use this node instead of "evaluate vector field".
 
 "Evaluate vector field" node, on the other hand, follows the second approach, i.e. for each point P it returns VectorField(P).
+
+We will call fields that are "designed" to work with "Apply vector field" - "Relative vector fields", or "Bound vector fields". Fields "designed" to work with "Evaluate vector field" we will call "Absolute vector fields", or "Free vector fields".
 
 Technically, vector field is a Python class that can be asked to return a vector for any 3D point. Note that the definition of the field function can be quite complex, but it does not mean that that complex definition will be executed for all points in 3D space — only for points for which it is actually required to know the value.
 

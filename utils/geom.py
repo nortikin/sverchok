@@ -43,7 +43,7 @@ from sverchok.utils.modules.geom_primitives import (
 
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
-from sverchok.data_structure import match_long_repeat
+from sverchok.data_structure import match_long_repeat, describe_data_shape
 from sverchok.utils.logging import debug, info
 
 identity_matrix = Matrix()
@@ -114,6 +114,8 @@ class Spline(object):
     """
     @classmethod
     def create_knots(cls, pts, metric="DISTANCE"):
+        #if not isinstance(pts, np.ndarray):
+        #    raise TypeError(f"Unexpected data: {pts}")
         if metric == "DISTANCE":
             tmp = np.linalg.norm(pts[:-1] - pts[1:], axis=1)
             tknots = np.insert(tmp, 0, 0).cumsum()
@@ -190,6 +192,7 @@ class CubicSpline(Spline):
 
         if is_cyclic:
 
+            #print(describe_data_shape(vertices))
             locs = np.array(vertices[-4:] + vertices + vertices[:4])
             if tknots is None:
                 if metric is None:

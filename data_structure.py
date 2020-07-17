@@ -237,7 +237,6 @@ def sv_zip(*iterables):
             result.append(elem)
         yield result
 
-
 list_match_modes = [
     ("SHORT",  "Match Short",  "Match shortest List",    1),
     ("CYCLE",  "Cycle",  "Match longest List by cycling",     2),
@@ -574,6 +573,22 @@ def describe_data_shape(data):
 
     nesting, result = helper(data)
     return "Level {}: {}".format(nesting, result)
+
+def describe_data_structure(data, data_types=(float, int, int32, float64, str)):
+    if isinstance(data, data_types):
+        return "*"
+    elif isinstance(data, (list, tuple)):
+        if isinstance(data[0], data_types):
+            return str(len(data)) + "*"
+        else:
+            rs = []
+            for item in data:
+                r = describe_data_structure(item, data_types)
+                rs.append(str(r))
+            rs = str(len(data)) + "[" + ", ".join(rs) + "]"
+            return rs
+    else:
+        raise TypeError(f"Unexpected data type: {type(data)}")
 
 def calc_mask(subset_data, set_data, level=0, negate=False, ignore_order=True):
     """

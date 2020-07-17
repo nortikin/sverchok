@@ -12,6 +12,9 @@ Field
    noise_vfield
    voronoi_field
    image_field
+   mesh_normal_field
+   minimal_sfield
+   minimal_vfield
    curve_bend_field
    bend_along_surface
    compose_vector_field
@@ -22,6 +25,7 @@ Field
    scalar_field_curvature
    merge_scalar_fields
    vector_field_graph
+   scalar_field_graph
    vector_field_lines
    scalar_field_eval
    vector_field_eval

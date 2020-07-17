@@ -22,7 +22,7 @@ Inputs
 
 The node has the following inputs:
 
-* **Vertices**. Set of input vertices to build Voronoi diagram for.
+* **Vertices**. Set of input vertices (sites) to build Voronoi diagram for.
 * **MaxSides**. Maximum number of sides of the output polygons. If the Voronoi
   diagram polygon will have more sides, then it will not be created. Default
   value is 10. This input is available only if **Make Faces** parameter is

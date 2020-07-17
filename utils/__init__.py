@@ -123,7 +123,6 @@ def app_handler_ops(append=None, remove=None):
     print(f'sv: {operation} app.handlers')
     # print(f'{listed}')
 
-
 utils_modules = [
     # non UI tools
     "cad_module_class", "sv_bmesh_utils", "sv_stethoscope_helper", "sv_viewer_utils",

@@ -1,15 +1,18 @@
 import os
+import subprocess
 
 import bpy
 from bpy.types import AddonPreferences
 from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty, IntProperty, FloatProperty, StringProperty
-from sverchok.dependencies import sv_dependencies
+from sverchok.dependencies import sv_dependencies, pip, ensurepip, draw_message, get_icon
 from sverchok import data_structure
 from sverchok.core import handlers
 from sverchok.core import update_system
 from sverchok.utils import sv_panels_tools, logging
 from sverchok.utils.sv_gist_tools import TOKEN_HELP_URL
 from sverchok.ui import color_def
+
+PYPATH = bpy.app.binary_path_python
 
 def get_params(settings_and_fallbacks):
     """
@@ -45,6 +48,44 @@ def get_dpi():
     systemPreferences = bpy.context.preferences.system
     retinaFactor = getattr(systemPreferences, "pixel_size", 1)
     return systemPreferences.dpi * retinaFactor
+
+class SvExPipInstall(bpy.types.Operator):
+    """Install the package by calling pip install"""
+    bl_idname = 'node.sv_ex_pip_install'
+    bl_label = "Install the package"
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    package : bpy.props.StringProperty(name = "Package names")
+
+    def execute(self, context):
+        first_install = self.package in sv_dependencies and sv_dependencies[self.package] is None
+        cmd = [PYPATH, '-m', 'pip', 'install', '--upgrade'] + self.package.split(" ")
+        ok = subprocess.call(cmd) == 0
+        if ok:
+            if first_install:
+                self.report({'INFO'}, "%s installed successfully. Please restart Blender to see effect." % self.package)
+            else:
+                self.report({'INFO'}, "%s upgraded successfully. Please restart Blender to see effect." % self.package)
+            return {'FINISHED'}
+        else:
+            self.report({'ERROR'}, "Cannot install %s, see console output for details" % self.package)
+            return {'CANCELLED'}
+
+class SvExEnsurePip(bpy.types.Operator):
+    """Install PIP by using ensurepip module"""
+    bl_idname = "node.sv_ex_ensurepip"
+    bl_label = "Install PIP"
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        cmd = [PYPATH, '-m', 'ensurepip']
+        ok = subprocess.call(cmd) == 0
+        if ok:
+            self.report({'INFO'}, "PIP installed successfully. Please restart Blender to see effect.")
+            return {'FINISHED'}
+        else:
+            self.report({'ERROR'}, "Cannot install PIP, see console output for details")
+            return {'CANCELLED'}
 
 class SvSetFreeCadPath(bpy.types.Operator):
     """Save FreeCAD path in system"""
@@ -460,11 +501,6 @@ class SverchokPreferences(AddonPreferences):
         col3.operator('node.sverchok_apply_theme', text="Apply theme to layouts")
 
     def extra_nodes_tab(self, layout):
-        def get_icon(package):
-            if package is None:
-                return 'CANCEL'
-            else:
-                return 'CHECKMARK'
 
         def draw_freecad_ops():
             dependency = sv_dependencies['freecad']
@@ -479,8 +515,30 @@ class SverchokPreferences(AddonPreferences):
             row.prop(self, 'FreeCAD_folder')
             row.operator('node.sv_set_freecad_path', text=tx).FreeCAD_folder = self.FreeCAD_folder
             return row
+
         box = layout.box()
+        box.label(text="Dependencies:")
+        
+        row = draw_message(box, "pip")
+        if pip is not None:
+            row.operator('node.sv_ex_pip_install', text="Upgrade PIP").package = "pip setuptools wheel"
+        else:
+            if ensurepip is not None:
+                row.operator('node.sv_ex_ensurepip', text="Install PIP")
+            else:
+                row.operator('wm.url_open', text="Installation instructions").url = "https://pip.pypa.io/en/stable/installing/"
+
+        draw_message(box, "scipy")
+        draw_message(box, "geomdl")
+        draw_message(box, "skimage")
+        draw_message(box, "mcubes")
+        draw_message(box, "circlify")
+        draw_message(box, "lbt-ladybug")
+
         draw_freecad_ops()
+
+        if any(package.module is None for package in sv_dependencies.values()):
+            box.operator('wm.url_open', text="Read installation instructions for missing dependencies").url = "https://github.com/portnov/sverchok-extra"
 
     def draw(self, context):
 
@@ -517,6 +575,8 @@ class SverchokPreferences(AddonPreferences):
 
 
 def register():
+    bpy.utils.register_class(SvExPipInstall)
+    bpy.utils.register_class(SvExEnsurePip)
     bpy.utils.register_class(SvSetFreeCadPath)
     bpy.utils.register_class(SverchokPreferences)
 
@@ -524,6 +584,8 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SverchokPreferences)
     bpy.utils.unregister_class(SvSetFreeCadPath)
+    bpy.utils.unregister_class(SvExEnsurePip)
+    bpy.utils.unregister_class(SvExPipInstall)
 
 if __name__ == '__main__':
     register()

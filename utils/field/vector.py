@@ -5,17 +5,17 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import numpy as np
 from math import sqrt, copysign, pi
-from mathutils import Matrix, Vector
-from mathutils import noise
-from mathutils import kdtree
-from mathutils import bvhtree
+import numpy as np
 
-from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter, LineEquation, CircleEquation3D
+from mathutils import Vector
+from mathutils import bvhtree
+from mathutils import kdtree
+from mathutils import noise
+from sverchok.utils.curve import SvCurveLengthSolver, SvNormalTrack, MathutilsRotationCalculator
+from sverchok.utils.geom import LineEquation, CircleEquation3D
 from sverchok.utils.math import from_cylindrical, from_spherical
 
-from sverchok.utils.curve import SvCurveLengthSolver, SvNormalTrack, MathutilsRotationCalculator
 
 ##################
 #                #

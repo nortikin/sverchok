@@ -9,6 +9,7 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.logging import info, exception
 from sverchok.utils.geom_2d.merge_mesh import crop_mesh_delaunay
+from sverchok.utils.sv_mesh_utils import mesh_join
 
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface import SvSurface
@@ -121,14 +122,22 @@ class SvTessellateTrimSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 faces.append(face)
         return faces
 
-    def make_curve(self, curve, samples_t):
-        t_min, t_max = curve.get_u_bounds()
-        ts = np.linspace(t_min, t_max, num=samples_t)
-        verts = curve.evaluate_array(ts).tolist()
-        n = len(ts)
-        edges = [[i, i + 1] for i in range(n - 1)]
-        edges.append([n-1, 0])
-        faces = [list(range(n))]
+    def make_curves(self, curves, samples_t):
+        all_verts = []
+        all_edges = []
+        all_faces = []
+        for curve in curves:
+            t_min, t_max = curve.get_u_bounds()
+            ts = np.linspace(t_min, t_max, num=samples_t)
+            verts = curve.evaluate_array(ts).tolist()
+            n = len(ts)
+            edges = [[i, i + 1] for i in range(n - 1)]
+            edges.append([n-1, 0])
+            faces = [list(range(n))]
+            all_verts.append(verts)
+            all_edges.append(edges)
+            all_faces.append(faces)
+        verts, edges, faces = mesh_join(all_verts, all_edges, all_faces)
         return verts, edges, faces
 
     def process(self):
@@ -143,11 +152,8 @@ class SvTessellateTrimSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         samples_v_s = self.inputs['SamplesV'].sv_get()
         samples_t_s = self.inputs['CurveSamples'].sv_get()
 
-        if isinstance(surfaces_s[0], SvSurface):
-            surfaces_s = [surfaces_s]
-        if isinstance(curves_s[0], SvCurve):
-            curves_s = [curves_s]
-
+        surfaces_s = ensure_nesting_level(surfaces_s, 2, data_types=(SvSurface,))
+        curves_s = ensure_nesting_level(curves_s, 3, data_types=(SvCurve,))
         samples_u_s = ensure_nesting_level(samples_u_s, 2)
         samples_v_s = ensure_nesting_level(samples_v_s, 2)
         samples_t_s = ensure_nesting_level(samples_t_s, 2)
@@ -155,11 +161,11 @@ class SvTessellateTrimSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         verts_out = []
         faces_out = []
         inputs = zip_long_repeat(surfaces_s, curves_s, samples_u_s, samples_v_s, samples_t_s)
-        for surfaces, curves, samples_u_i, samples_v_i, samples_t_i in inputs:
-            objects = zip_long_repeat(surfaces, curves, samples_u_i, samples_v_i, samples_t_i)
-            for surface, curve, samples_u, samples_v, samples_t in objects:
+        for surfaces, curves_i, samples_u_i, samples_v_i, samples_t_i in inputs:
+            objects = zip_long_repeat(surfaces, curves_i, samples_u_i, samples_v_i, samples_t_i)
+            for surface, curves, samples_u, samples_v, samples_t in objects:
 
-                crop_verts, crop_edges, crop_faces = self.make_curve(curve, samples_t)
+                crop_verts, crop_edges, crop_faces = self.make_curves(curves, samples_t)
                 grid_verts = self.make_grid(surface, samples_u, samples_v)
                 #grid_edges = self.make_edges_xy(samples_u, samples_v)
                 grid_faces = self.make_faces_xy(samples_u, samples_v)

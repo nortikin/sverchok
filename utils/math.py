@@ -20,6 +20,12 @@ import numpy as np
 import math
 from math import sin, cos, radians, degrees, sqrt, asin, acos, atan2
 
+xyz_axes = [
+        ('X', "X", "X axis", 0),
+        ('Y', "Y", "Y axis", 1),
+        ('Z', "Z", "Z axis", 2)
+    ]
+
 coordinate_modes = [
     ('XYZ', "Carthesian", "Carthesian coordinates - x, y, z", 0),
     ('CYL', "Cylindrical", "Cylindrical coordinates - rho, phi, z", 1),
@@ -55,6 +61,15 @@ TRACK = 'track'
 DIFF = 'diff'
 TRACK_NORMAL = 'track_normal'
 NORMAL_DIR = 'normal_direction'
+
+rbf_functions = [
+    ('multiquadric', "Multi Quadric", "Multi Quadric", 0),
+    ('inverse', "Inverse", "Inverse", 1),
+    ('gaussian', "Gaussian", "Gaussian", 2),
+    ('cubic', "Cubic", "Cubic", 3),
+    ('quintic', "Quintic", "Qunitic", 4),
+    ('thin_plate', "Thin Plate", "Thin Plate", 5)
+]
 
 def smooth(x):
     return 3*x*x - 2*x*x*x
