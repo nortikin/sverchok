@@ -17,6 +17,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import random
+import numpy as np
+from numba import njit
 
 import bpy
 import mathutils
@@ -29,7 +31,7 @@ from sverchok.data_structure import (
     updateNode, Vector_generate,
     repeat_last, fullList)
 
-from numba import njit
+
 
 @njit
 def get_normal_of_3points(p1, p2, p3):
@@ -41,14 +43,31 @@ def get_normal_of_3points(p1, p2, p3):
 
 
 @njit
-def get_average_vector(verts):
-    n = len(verts)
-    dummy_vec = [0, 0, 0]
-    for v in verts:
-        dummy_vec[0] += v[0]
-        dummy_vec[1] += v[1]
-        dummy_vec[2] += v[2]
-    return dummy_vec[0] / n, dummy_vec[1] / n, dummy_vec[2] / n
+def np_lerp_v3_v3v3(a, b, t):
+    """
+    excepts: 2 arrays (maybe np) of 3 floats
+    returns: returns single array with the linear interpolation between a and b by the ratio of t. 
+    info: t can be between 0 and 1 (float) but can also be outside of that range for extrapolation.
+    """
+    s = 1.0 - t
+    return [s * a[0] + t * b[0], s * a[1] + t * b[1], s * a[2] + t * b[2]]
+
+@njit
+def np_sum_v3_v3v3(a, b):
+    """
+    expects: 2 input arrays of 3 floats each.
+    returns: 1 output np.array of 3 floats that represents the summation of a and b
+    """
+    return np.array((a[0]+b[0], a[1]+b[1], a[2]+b[2]), dtype=np.float32)
+
+
+@njit
+def get_average_vector(verts_array):
+    """
+    expects: flat np.array of float32
+    returns: np.array shape (3, 1)
+    """
+    return verts_array.reshape((3,-1)).mean(axis=0)
 
 @njit
 def do_tri(face, lv_idx, make_inner):
@@ -107,7 +126,7 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners,
     new_ignores = []
     new_insets = []
 
-    # calculate new size of output vertices
+    # calculate new size of output vertices ------------------- TODO
     # value_to_add_shape = 0
     # for ignore, face in zip(ignores, faces): 
     #    if not ignore:
@@ -129,8 +148,8 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners,
         current_verts_idx = len(vertices)
         
         n = len(face)
-        verts = [vertices[i] for i in face]
-        avg_vec = get_average_vector(verts)
+        verts = np.array([vertices[i] for i in face], dtype=np.float32)
+        avg_vec = get_average_vector(verts.ravel())  # --------- TODO
 
         if abs(inset_by) < 1e-6:
             normal = mathutils.geometry.normal(*verts)  # ------------------TODO
