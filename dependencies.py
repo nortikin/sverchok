@@ -138,6 +138,16 @@ except ImportError:
     info(freecad_d.message)
     FreeCAD = None
 
+numba_d = sv_dependencies["numba"] = SvDependency("numba", "https://numba.pydata.org/")
+try:
+    import numba
+    numba_d.message = "numba package is available"
+    numba.module = numba
+except ImportError:
+    numba_d.message = "numba package is not available, nodes that use the numba module will not be available"
+    info(numba_d.message)
+    numba = None
+
 good_names = [d.package for d in sv_dependencies.values() if d.module is not None and d.package is not None]
 if good_names:
     info("Dependencies available: %s.", ", ".join(good_names))

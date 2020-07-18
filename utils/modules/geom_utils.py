@@ -176,7 +176,6 @@ def sum_v3_v3l(lvtx):
     output : a new 3-tuple
 
     usage  :
-
         new_v = sum_v3_v3l([v1, v2, v3, v4, v5,....]) 
 
     """
