@@ -47,7 +47,7 @@ else:
             r = (normal_no * face_color[0]) - 0.1
             g = (normal_no * face_color[1]) - 0.1
             b = (normal_no * face_color[2]) - 0.1
-            vcol = (r+0.2, g+0.2, b+0.2, 1)
+            vcol = (r+0.2, g+0.2, b+0.2, face_color[3])
             concat_vcols([vcol, vcol, vcol])
 
         return out_verts, out_vcols
@@ -64,7 +64,7 @@ else:
             r = (normal_no * face_color[0]) - 0.1
             g = (normal_no * face_color[1]) - 0.1
             b = (normal_no * face_color[2]) - 0.1
-            vcol = (r+0.2, g+0.2, b+0.2, 1.0)
+            vcol = (r+0.2, g+0.2, b+0.2, face_color[3])
             concat_vcols(vcol)
 
         return out_vcols
@@ -109,6 +109,7 @@ else:
             shader.uniform_float("color", color)
 
             batch.draw(shader)
+
 
         if GL_KIND == 'LINES':
             bgl.glLineWidth(1)
@@ -228,6 +229,8 @@ else:
         if config.draw_gl_polygonoffset:
             bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
 
+        if config.shade != 'normals':
+            bgl.glEnable(bgl.GL_BLEND)
 
         if config.display_edges:
             draw_lines_uniform(context, config, geom.e_vertices, geom.e_edges, config.line4f, config.line_width)
@@ -235,7 +238,8 @@ else:
             draw_faces_uniform(context, args)
         if config.display_verts:
             draw_uniform('POINTS', geom.verts, None, config.vcol, config.point_size)
-
+        if config.shade != 'normals':
+            bgl.glDisable(bgl.GL_BLEND)
         if config.draw_gl_polygonoffset:
             # or restore to the state found when entering this function. TODO!
             bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
@@ -274,7 +278,7 @@ else:
             name='edge color', size=4, update=updateNode)
 
         face_color: FloatVectorProperty(
-            subtype='COLOR', min=0, max=1, default=(0.14, 0.54, 0.81, 1.0),
+            subtype='COLOR', min=0, max=1, default=(0.14, 0.54, 0.81, 0.5),
             name='face color', size=4, update=updateNode)
 
         vector_light: FloatVectorProperty(

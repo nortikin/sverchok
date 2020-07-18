@@ -168,6 +168,7 @@
    SvSolidBooleanNode
    SvMirrorSolidNode
    SvOffsetSolidNode
+   SvIsInsideSolidNode
    SvMeshToSolidNode
    SvSolidToMeshNode
    SvSolidVerticesNode

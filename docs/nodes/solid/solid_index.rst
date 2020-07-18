@@ -16,6 +16,7 @@ Solid
    solid_boolean
    mirror_solid
    offset_solid
+   points_inside_solid
    mesh_to_solid
    solid_to_mesh
    solid_faces
