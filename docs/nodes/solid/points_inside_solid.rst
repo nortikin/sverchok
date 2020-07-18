@@ -6,7 +6,7 @@ Dependencies
 
 This node requires FreeCAD_ library to work.
 
-.. _FreeCAD: ../solids.rst
+.. _FreeCAD: ../../solids.rst
 
 Functionality
 -------------
@@ -38,4 +38,4 @@ Examples
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/solid/points_inside_solid/points_inside_solid_blender_sverchok_example.png
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/solid/points_inside_solid/points_inside_solid_blender_sverchok_example_01.png.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/solid/points_inside_solid/points_inside_solid_blender_sverchok_example_01.png
