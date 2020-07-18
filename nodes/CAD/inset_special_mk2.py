@@ -41,6 +41,14 @@ def get_normal_of_3points(p1, p2, p3):
         ((p2[0]-p1[0])*(p3[1]-p1[1]))-((p2[1]-p1[1])*(p3[0]-p1[0]))
     ]        
 
+@njit
+def get_normal_of_polygon(verts):
+    # here we could have logic to do special things
+    # - is verts.shape == (3, 3), then get_normal_of_3points
+    # - else do other clever tests
+    points = verts.reshape((3, -1))
+    return get_normal_of_3points(points[0], points[1], points[2])
+
 
 @njit
 def np_lerp_v3_v3v3(a, b, t):
@@ -149,10 +157,14 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners,
         
         n = len(face)
         verts = np.array([vertices[i] for i in face], dtype=np.float32)
-        avg_vec = get_average_vector(verts.ravel())  # --------- TODO
+        avg_vec = get_average_vector(verts.ravel())
 
         if abs(inset_by) < 1e-6:
-            normal = mathutils.geometry.normal(*verts)  # ------------------TODO
+            
+            # right now this expects only convex shapes, do not expect concave input or colinear quads that look like tris
+            # to handle correctly. See implementation where to fix this.
+            normal = get_normal_of_polygon(verts.ravel())
+            
             new_vertex = avg_vec.lerp(avg_vec + normal, distance)   # ------------------TODO
             vertices.append(new_vertex)
             new_vertex_idx = current_verts_idx
@@ -166,7 +178,7 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners,
         new_verts_prime = [avg_vec.lerp(v, inset_by) for v in verts]    # ------------------TODO
 
         if distance:
-            local_normal = mathutils.geometry.normal(*new_verts_prime)   # ------------------TODO
+            local_normal = get_normal_of_polygon(...*new_verts_prime)   # ------------------TODO
             new_verts_prime = [v.lerp(v+local_normal, distance) for v in new_verts_prime]    # ------------------TODO
 
         vertices.extend(new_verts_prime)
