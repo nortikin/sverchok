@@ -142,7 +142,7 @@ numba_d = sv_dependencies["numba"] = SvDependency("numba", "https://numba.pydata
 try:
     import numba
     numba_d.message = "numba package is available"
-    numba.module = numba
+    numba_d.module = numba
 except ImportError:
     numba_d.message = "numba package is not available, nodes that use the numba module will not be available"
     info(numba_d.message)
