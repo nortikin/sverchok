@@ -53,8 +53,7 @@ def get_normal_of_polygon(verts):
            on how we simplify the quad to a triangle. (0, 1, 3) strategy works
     - with ngons, a convex polygon will return correct normal, but any concave ngon will require tessellation
         note: tessellation is conceptually trivial, but not entirely trivial to implement 
-
-    right now we just pick the first three verts.
+.
     """
     points = verts.reshape((3, -1))
     if points.shape[0] == 4:
