@@ -24,6 +24,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 
 class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
     '''Delete vertices not used in face or edge'''
+    ''' Not vectorised yet? '''
     bl_idname = 'SvDeleteLooseNode'
     bl_label = 'Delete Loose'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -35,12 +36,14 @@ class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'PolyEdge')
+        self.outputs.new('SvStringsSocket', 'VertsMask')
 
     def process(self):
 
         verts = self.inputs['Vertices'].sv_get()
         poly_edge = self.inputs['PolyEdge'].sv_get()
         verts_out = []
+        verts_mask_out = []
         poly_edge_out = []
         for ve, pe in zip(verts, poly_edge):
             """
@@ -72,6 +75,7 @@ class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
             """
             indx = set(chain.from_iterable(pe))
             verts_out.append([v for i, v in enumerate(ve) if i in indx])
+            verts_mask_out.append([True if i in indx else False for i, v in enumerate(ve)])
             v_index = dict([(j, i) for i, j in enumerate(sorted(indx))])
             poly_edge_out.append([list(map(lambda n:v_index[n], p)) for p in pe])
 
@@ -79,6 +83,8 @@ class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs['Vertices'].sv_set(verts_out)
         if poly_edge_out:
             self.outputs['PolyEdge'].sv_set(poly_edge_out)
+        if self.outputs['VertsMask'].is_linked:
+            self.outputs['VertsMask'].sv_set(verts_mask_out)
 
 
 def register():

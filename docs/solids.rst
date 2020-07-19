@@ -12,9 +12,13 @@ In Sverchok solids depend on FreeCAD_ to work (that depends on OpenCascade) beca
 
 **Installation**
 
-A python 3.7 FreeCAD is needed. a windows version can be found here https://github.com/sgrogan/FreeCAD/releases/tag/PY3.7-win
+A python 3.7 FreeCAD is needed. 
+A Windows version can be found here https://github.com/sgrogan/FreeCAD/releases/tag/PY3.7-win
+A Linux version reachable with $sudo apt install libfreecad-python3-0.18
 
 Then the path to the FreeCAD "bin" folder has to be placed in the Sverchok Preferences ->Extra-Nodes ->FreeCad-> TextField and click on Set Path. Then re-start Blender and it should be working.
+For Windows it can be as D:\programs\conda-0.18.3\bin
+For Linux it can be as /usr/lib/freecad-python3/lib/
 
 If you change the folder, copy the new path and click  "Reset Path".
 
