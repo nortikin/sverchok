@@ -43,12 +43,25 @@ def get_normal_of_3points(p1, p2, p3):
 
 @njit
 def get_normal_of_polygon(verts):
-    # here we could have logic to do special things
-    # - is verts.shape == (3, 3), then get_normal_of_3points
-    # - else do other clever tests
-    points = verts.reshape((3, -1))
-    return get_normal_of_3points(points[0], points[1], points[2])
+    """
+    expects: a flat array of verts.
+    returns: the normal of that sequence, via a set of tests that determin how to calculate the normal
+    - the most straight forward algorithm expects the number of verts to be three
+    - with 4 verts, the assumption right now is: 
+        1. the verts are convex
+        2. if there are colinear edges, then a correct result will not be automatic, it will depend on
+           on how we simplify the quad to a triangle. (0, 1, 3) strategy works
+    - with ngons, a convex polygon will return correct normal, but any concave ngon will require tessellation
+        note: tessellation is conceptually trivial, but not entirely trivial to implement 
 
+    right now we just pick the first three verts.
+    """
+    points = verts.reshape((3, -1))
+    if points.shape[0] == 4:
+        return get_normal_of_3points(points[0], points[1], points[3])
+    
+    # standard and fallback
+    return get_normal_of_3points(points[0], points[1], points[2])
 
 @njit
 def np_lerp_v3_v3v3(a, b, t):
@@ -190,6 +203,8 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners,
             new_insets.append(new_faces_prime[-1])
 
         new_faces.extend(new_faces_prime)
+
+    # end
 
     for idx, face in enumerate(faces):
         inset_by = inset_rates[idx]
