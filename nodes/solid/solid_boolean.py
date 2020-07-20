@@ -9,7 +9,7 @@ else:
     from bpy.props import BoolProperty, FloatProperty, EnumProperty
     from sverchok.node_tree import SverchCustomTreeNode
     from sverchok.data_structure import updateNode, match_long_repeat as mlr
-
+    import Part
 
     class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -94,6 +94,7 @@ else:
             if self.refine_solid:
                 base = base.removeSplitter()
             self.outputs[0].sv_set([base])
+
         def single_intersect(self):
             solids_a = self.inputs[0].sv_get()
             solids_b = self.inputs[1].sv_get()
@@ -107,12 +108,16 @@ else:
             base = solids[0].copy()
             for s in solids[1:]:
                 base = base.common(s)
+            self.outputs[0].sv_set([base])
+
         def single_difference(self):
             solids_a = self.inputs[0].sv_get()
             solids_b = self.inputs[1].sv_get()
             solids = []
             for solid_a, solid_b in zip(*mlr([solids_a, solids_b])):
-                solids.append(solid_a.cut(solid_b))
+                shape = solid_a.cut(solid_b)
+
+                solids.append(shape)
             self.outputs[0].sv_set(solids)
 
         def multi_difference(self):

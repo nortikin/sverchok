@@ -203,6 +203,7 @@
    SvMirrorSolidNode
    SvOffsetSolidNode
    SvIsInsideSolidNode
+   SvSolidDistanceNode
    SvMeshToSolidNode
    SvSolidToMeshNode
    SvSolidVerticesNode
