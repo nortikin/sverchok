@@ -12,7 +12,7 @@
 **addon for**: [Blender](http://blender.org) version *2.80* and above. For *2.79* see [special installation instruction](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation).  
 **current sverchok version**: Find version in addon settings or in the node Sverchok panel   
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
-**prerequisites**: Python 3.6, and `numpy`, both included in recent versions of Blender (precompiled binaries are convenient for this)  
+**prerequisites**: Python 3.6, and `numpy`, both included in recent versions of Blender (precompiled binaries are convenient for this). Sverchok can also optionally use several additional libraries; if you have them, a number of additional nodes will be available. Please refer to [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies) for list of such dependencies and instructions for their installation.
 **manual**: [In English](http://nikitron.cc.ua/sverch/html/main.html) - This is an introduction to Sverchok and contains 3 lessons, and documentation on almost all nodes. If anything isn't clear (or missing) in this document please ask about it on the [Issue Tracker](https://github.com/nortikin/sverchok/issues), we want to get these lessons right and you can help us! 
 
   
@@ -103,7 +103,7 @@ Email: sverchok-b3d@yandex.ru
 **дополнение к**: [Blender](http://blender.org)  версия *2.80* и выше. Для версии *2.79*, см. [специальную инструкцию по установке](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation). 
 **текущая версия**: Смотри настройки Сверчка или панель   
 **Лицензия**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
-**требования**: Python 3.6, numpy, они оба присутствуют в Blender  
+**требования**: Python 3.6, numpy, они оба присутствуют в Blender. Сверчок также может опционально использовать несколько дополнительных библиотек; если они у вас есть, то будет доступно большое количество дополнительных узлов. См. [wiki-страницу](https://github.com/nortikin/sverchok/wiki/Dependencies) со списком таких зависимостей и инструкциями по их установке.
 
 
   
