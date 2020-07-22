@@ -3,7 +3,7 @@
 <img src="ui/logo/png/sverchock_icon_t.png" width="150" title="Логотип от Виктора Доваля">
 </a>
 </p>
-<h1 align="center">СВеРЧОК (система векторного рабочего черчения и объемного конструирования)</h1>
+<h1 align="center">СВеРЧОК (Система векторного рабочего черчения и объёмного конструирования)</h1>
 
 [![Статус строительства](https://travis-ci.org/nortikin/sverchok.svg?branch=master)](https://travis-ci.org/nortikin/sverchok)
 
