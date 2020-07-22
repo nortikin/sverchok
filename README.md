@@ -9,6 +9,7 @@
 
 ## English
 
+[RU](https://github.com/nortikin/sverchok/blob/master/README_RU.md)  
 **addon for**: [Blender](http://blender.org) version *2.80* and above. For *2.79* see [special installation instruction](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation).  
 **current sverchok version**: Find version in addon settings or in the node Sverchok panel   
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
