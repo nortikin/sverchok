@@ -32,19 +32,19 @@ Mesh and geometry programming consists of combining basic elements such as:
 ### Possibilities
 Comes with more than 500 nodes to help create and manipulate geometry. Combining these nodes will allow you to:
 
-  - do parametric constructions
+  - do parametric constructions  
   - easily change parameters with sliders and formulas    
-  - power nodes such as: Profile parametric, UVconnect, Generative art, Mesh expression, Proportion edit, Wafel, Adaptive Poligons (tissue vectorized), Adaptive edges, ExecNodeMod, Vector Interpolation series of nodes, List manipulators, CSG Boolean, Bmesh ops, Bmesh props, etc.
-  - do cross sections, extrusions, other modifications with hight level flexible parametrised and vectorised node tools 
-  - calculate areas, volume, and perform other geometric analysis
-  - make or import CSV tables or custom formats
-  - use Vector fields, create them, visualize data
-  - even code your own custom nodes in python with Scripted node
-  - make your own 'addons' on node layouts and utilise them with Sverchok 3dview panel in your everyday pipeline
-  - access to Blender Python API (bpy) with special _Set_ and _Get_ nodes
-  - upgrade Sverchok with pressing one button
-  - make your own neuro network
-  - and much, much more!
+  - power nodes such as: Profile parametric, UVconnect, Generative art, Mesh expression, Proportion edit, Wafel, Adaptive Poligons (tissue vectorized), Adaptive edges, ExecNodeMod, Vector Interpolation series of nodes, List manipulators, CSG Boolean, Bmesh ops, Bmesh props, etc.  
+  - do cross sections, extrusions, other modifications with hight level flexible parametrised and vectorised node tools  
+  - calculate areas, volume, and perform other geometric analysis  
+  - make or import CSV tables or custom formats  
+  - use Vector fields, create them, visualize data  
+  - even code your own custom nodes in python with Scripted node  
+  - make your own 'addons' on node layouts and utilise them with Sverchok 3dview panel in your everyday pipeline  
+  - access to Blender Python API (bpy) with special _Set_ and _Get_ nodes  
+  - upgrade Sverchok with pressing one button  
+  - using genetic algorythm in your workflow  
+  - and much, much more!  
 
 ### Installation
 Install Sverchok as you would any blender addon.  
