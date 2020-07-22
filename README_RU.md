@@ -9,7 +9,7 @@
 
 ## По-русски
 
-[EN](https://github.com/nortikin/sverchok/blob/master/README.md)
+[EN](https://github.com/nortikin/sverchok/blob/master/README.md)   
 **дополнение к**: [Blender](http://blender.org)  версия *2.80* и выше. Для версии *2.79*, см. [специальную инструкцию по установке](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation). 
 
 **текущая версия**: Смотри настройки Сверчка или панель   
