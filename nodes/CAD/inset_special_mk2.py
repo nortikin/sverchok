@@ -82,7 +82,7 @@ def np_sum_v3_v3v3(a, b):
 
 
 @njit
-def get_average_vector(verts_array):
+def np_average_vector(verts_array):
     """
     expects: flat np.array of float32
     returns: np.array shape (3, 1)
@@ -169,7 +169,7 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners,
         
         n = len(face)
         verts = np.array([vertices[i] for i in face], dtype=np.float32)
-        avg_vec = get_average_vector(verts.ravel())
+        avg_vec = np_average_vector(verts.ravel())
 
         if abs(inset_by) < 1e-6:
             
