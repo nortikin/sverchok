@@ -237,8 +237,8 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
                     if geom.text:    
                         text_items = self.get_text_of_correct_length(obj_index, geom, len(final_verts))                        
                         for text_item, vpos in zip(text_items, final_verts):
-                            chars = prefix_if_needed(obj_index, text_item[0])
-                            concat_text((chars)) #, text_item[0]))
+                            chars = prefix_if_needed(obj_index, text_item)
+                            concat_text((chars))
 
                 if self.display_edge_index and obj_index < len(geom.edges):
                     for edge_index, (idx1, idx2) in enumerate(geom.edges[obj_index]):
