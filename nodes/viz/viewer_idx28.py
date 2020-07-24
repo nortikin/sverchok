@@ -244,10 +244,9 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
                                 chars = prefix_if_needed(obj_index, text_item)
                             elif isinstance(text_item, list) and len(text_item) == 1:
                                 chars = prefix_if_needed(obj_index, text_item[0])
-                            elif isinstance(text_item, list) and len(text_item) > 1:
-                                new_item = "".join(text_item)
-                                chars = prefix_if_needed(obj_index, new_item)
+
                             else:
+                                # in case it receives [0, 0, 0] or (0, 0, 0).. etc
                                 chars = prefix_if_needed(obj_index, text_item)
 
                             concat_text((chars))
