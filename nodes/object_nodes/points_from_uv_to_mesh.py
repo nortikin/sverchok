@@ -62,20 +62,19 @@ class SvUVPointonMeshNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
 
     def draw_buttons(self, context,   layout):
         self.draw_animatable_buttons(layout, icon_only=True)
-        layout.prop_search(self, 'object_ref', bpy.data, 'objects')
-        ob = bpy.data.objects.get(self.object_ref)
 
     def sv_init(self, context):
         si, so = self.inputs.new, self.outputs.new
+        si('SvObjectSocket', 'Mesh Object')
         si('SvVerticesSocket', 'Point on UV')
         so('SvVerticesSocket', 'Point on mesh')
         so('SvVerticesSocket', 'UVMapVert')
         so('SvStringsSocket', 'UVMapPoly')
 
     def process(self):
-        PointsUV = self.inputs[0]
+        Object, PointsUV = self.inputs
         Pom, uvV, uvP = self.outputs
-        obj = bpy.data.objects[self.object_ref]  # triangulate faces
+        obj = Object.sv_get()[0]  # triangulate faces
         UVMAPV, UVMAPP = UV(self,obj)
         if Pom.is_linked:
             pointuv = PointsUV.sv_get()[0]

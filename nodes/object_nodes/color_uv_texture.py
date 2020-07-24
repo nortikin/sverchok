@@ -28,35 +28,33 @@ from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
 
 class SvMeshUVColorNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
-    ''' Find pixel on UV texture from surface'''
+    ''' Find pixel on UV texture from mesh object and change its color'''
     bl_idname = 'SvMeshUVColorNode'
     bl_label = 'Set UV Color'
     bl_icon = 'UV_DATA'
 
-    mode1: BoolProperty(name='normal_update', default=True, update=updateNode)
     image: StringProperty(default='', update=updateNode)
-    object_ref: StringProperty(default='', update=updateNode)
-
     unit_color: FloatVectorProperty(name='', default=(1.0, 1.0, 1.0, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR', update=updateNode)
 
     def draw_buttons(self, context,   layout):
         self.draw_animatable_buttons(layout, icon_only=True)
-        layout.prop_search(self, 'object_ref', bpy.data, 'objects')
-        ob = bpy.data.objects.get(self.object_ref)
+        ob = self.inputs[0].sv_get()[0]
         if ob and ob.type == 'MESH':
             layout.prop_search(self, 'image', bpy.data, "images", text="")
 
     def sv_init(self, context):
         si = self.inputs.new
+        si('SvObjectSocket', 'Mesh Object')
         si('SvVerticesSocket', 'Point on mesh')
         color_socket = si('SvColorSocket', 'Color on UV')
         color_socket.prop_name = 'unit_color'
 
     def process(self):
-        Points, Colors = self.inputs
-        obj = bpy.data.objects[self.object_ref]  # triangulate faces
-        bvh = BVHTree.FromObject(obj, bpy.context.scene, deform=True, render=False, cage=False, epsilon=0.0)
+        Object, Points, Colors = self.inputs
+        dps = bpy.context.evaluated_depsgraph_get()
+        obj = Object.sv_get()[0]  # triangulate faces
+        bvh = BVHTree.FromObject(obj, dps)
         point = Points.sv_get()[0]
         color = Colors.sv_get()[0]
         ran = range(3)
