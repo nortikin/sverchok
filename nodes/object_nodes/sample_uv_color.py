@@ -34,25 +34,25 @@ class SvSampleUVColorNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
     bl_icon = 'UV'
 
     image: StringProperty(default='', update=updateNode)
-    object_ref: StringProperty(default='', update=updateNode)
 
     def draw_buttons(self, context,   layout):
         self.draw_animatable_buttons(layout, icon_only=True)
-        layout.prop_search(self, 'object_ref', bpy.data, 'objects')
-        ob = bpy.data.objects.get(self.object_ref)
+        ob = self.inputs[0].sv_get()[0]
         if ob and ob.type == 'MESH':
             layout.prop_search(self, 'image', bpy.data, "images", text="")
 
     def sv_init(self, context):
+        self.inputs.new('SvObjectSocket', 'Object')
         self.inputs.new('SvVerticesSocket', 'Point on mesh')
         self.outputs.new('SvColorSocket', 'Color on UV')
 
     def process(self):
-        Points = self.inputs[0]
+        Points = self.inputs[1]
         Colors = self.outputs[0]
         if Colors.is_linked:
-            obj = bpy.data.objects[self.object_ref]  # triangulate faces
-            bvh = BVHTree.FromObject(obj, bpy.context.scene, deform=True, render=False, cage=False, epsilon=0.0)
+            dps = bpy.context.evaluated_depsgraph_get()
+            obj = self.inputs[0].sv_get()[0]  # triangulate faces
+            bvh = BVHTree.FromObject(obj, dps)
             point = Points.sv_get()[0]
             outc = []
             ran = range(3)
