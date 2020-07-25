@@ -67,6 +67,7 @@ Install Sverchok as you would any blender addon.
    - marching cubes 
    - shapely
    - FreeCAD
+   
    Instructions regarding their installation is found at this [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies)
 
 ### Troubleshooting Installation Errors
