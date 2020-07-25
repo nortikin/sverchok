@@ -14,6 +14,14 @@ from sverchok.utils.geom import LineEquation, CubicSpline, CircleEquation2D, Cir
 from sverchok.utils.integrate import TrapezoidIntegral
 from sverchok.utils.logging import error
 
+class ZeroCurvatureException(Exception):
+    def __init__(self, ts, mask=None):
+        self.ts = ts
+        self.mask = mask
+        super(Exception, self).__init__(self.get_message())
+
+    def get_message(self):
+        return f"Curve has zero curvature at some points: {self.ts}"
 
 ##################
 #                #

@@ -16,21 +16,11 @@ from sverchok.utils.math import (
     NORMAL_DIR
 )
 
-
 def make_euclidian_ts(pts):
     tmp = np.linalg.norm(pts[:-1] - pts[1:], axis=1)
     tknots = np.insert(tmp, 0, 0).cumsum()
     tknots = tknots / tknots[-1]
     return tknots
-
-class ZeroCurvatureException(Exception):
-    def __init__(self, ts, mask=None):
-        self.ts = ts
-        self.mask = mask
-        super(Exception, self).__init__(self.get_message())
-
-    def get_message(self):
-        return f"Curve has zero curvature at some points: {self.ts}"
 
 class SvCurveLengthSolver(object):
     def __init__(self, curve):
