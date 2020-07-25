@@ -142,8 +142,17 @@ def get_faces_prime(face, lv_idx, make_inner):
     
     return out_faces
 
+def np_restructure_indices(faces):
+    flat_faces = list(itertools.chain.from_iterable(faces))
+    return np.array(flat_faces, dtype=np.int32), [len(f) for f in faces]
+    
+
 @njit
-def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners, zero_mode="SKIP"):
+def inset_special(vertices, face_indices, loop_lengths, inset_rates, distances, ignores, make_inners, zero_mode="SKIP"):
+
+    loop_start_indices = np.cumsum([0] + loop_lengths[:-1])
+    loop_start = numpy.array(loop_start_indices, dtype=numpy.int32)
+    loop_total = numpy.array(loop_lengths, dtype=numpy.int32)
 
     new_faces = []
     new_ignores = []
@@ -193,7 +202,7 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners,
         new_verts_prime = np_multi_lerp_v3l_v3v3l(avg_vec, inset_by, verts.ravel()).reshape((3, -1))
 
         if distance:
-            local_normal = get_normal_of_polygon(new_verts_prime.ravel()) # recoded
+            local_normal = get_normal_of_polygon(new_verts_prime.ravel())
             new_verts_prime = np_multi_lerp_mod_v3l_v3v3l(local_normal, new_verts_prime.ravel(), distance).reshape((3, -1)).tolist()
 
         vertices.extend(new_verts_prime)
@@ -334,9 +343,12 @@ class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
             fullList(ignores, len(p))
             fullList(make_inners, len(p))
 
+            face_indices, face_loops = np_restructure_indices(p)
+
             func_args = {
                 'vertices': v,
-                'faces': p,
+                'face_indices': face_indices,
+                'face_loops': face_loops,
                 'inset_rates': inset_rates,
                 'distances': distance_vals,
                 'make_inners': make_inners,
