@@ -19,6 +19,7 @@
 import random
 import numpy as np
 from numba import njit
+import itertools
 
 import bpy
 import mathutils
@@ -151,8 +152,8 @@ def np_restructure_indices(faces):
 def inset_special(vertices, face_indices, loop_lengths, inset_rates, distances, ignores, make_inners, zero_mode="SKIP"):
 
     loop_start_indices = np.cumsum([0] + loop_lengths[:-1])
-    loop_start = numpy.array(loop_start_indices, dtype=numpy.int32)
-    loop_total = numpy.array(loop_lengths, dtype=numpy.int32)
+    loop_start = np.array(loop_start_indices, dtype=np.int32)
+    loop_total = np.array(loop_lengths, dtype=np.int32)
 
     new_faces = []
     new_ignores = []
@@ -343,12 +344,12 @@ class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
             fullList(ignores, len(p))
             fullList(make_inners, len(p))
 
-            face_indices, face_loops = np_restructure_indices(p)
+            face_indices, loop_lengths = np_restructure_indices(p)
 
             func_args = {
                 'vertices': v,
                 'face_indices': face_indices,
-                'face_loops': face_loops,
+                'loop_lengths': loop_lengths,
                 'inset_rates': inset_rates,
                 'distances': distance_vals,
                 'make_inners': make_inners,
