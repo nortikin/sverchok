@@ -65,12 +65,42 @@ def get_normal_of_polygon(verts):
 @njit
 def np_lerp_v3_v3v3(a, b, t):
     """
-    excepts: 2 arrays (maybe np) of 3 floats
+    expects: 2 flat arrays of len=3 (maybe np) of 3 floats
     returns: returns single array with the linear interpolation between a and b by the ratio of t. 
     info: t can be between 0 and 1 (float) but can also be outside of that range for extrapolation.
     """
     s = 1.0 - t
     return [s * a[0] + t * b[0], s * a[1] + t * b[1], s * a[2] + t * b[2]]
+
+@njit
+def np_multi_lerp_v3l_v3v3l(a, verts_array, t):
+    """
+    expects: :a: a vector to lerp towards
+             :verts_array: a flat array of vectors to lerp from
+             :t: a transition factor between a and each 3-unit-array element in verts_array
+    returns: flat array of vectors
+    """
+    np_output = np.zeros(verts_array.shape, dtype=np.float32)
+    for idx, v in enumerate(verts_array.reshape((3, -1))):
+        np_output[idx] = np_lerp_v3_v3v3(a, v, t)
+    return np_output.ravel()
+
+@njit
+def np_multi_lerp_mod_v3l_v3v3l(a, verts_array, t):
+    """
+    expects: :a: a vector to lerp towards
+             :verts_array: a flat array of vectors to lerp from
+             :t: a transition factor between a and each 3-unit-array element in verts_array
+    returns: flat array of vectors
+    
+    [v.lerp(v+local_normal, distance) for v in new_verts_prime]
+    
+    """
+    np_output = np.zeros(verts_array.shape, dtype=np.float32)
+    for idx, v in enumerate(verts_array.reshape((3, -1))):
+        np_output[idx] = np_lerp_v3_v3v3(v, np_sum_v3_v3v3(v, a), t)
+    return np_output.ravel()
+
 
 @njit
 def np_sum_v3_v3v3(a, b):
@@ -90,34 +120,7 @@ def np_average_vector(verts_array):
     return verts_array.reshape((3,-1)).mean(axis=0)
 
 @njit
-def do_tri(face, lv_idx, make_inner):
-    a, b, c = face
-    d, e, f = lv_idx-2, lv_idx-1, lv_idx
-    out_faces = [
-        [a, b, e, d],
-        [b, c, f, e],
-        [c, a, d, f]
-    ]
-    if make_inner:
-        out_faces.append([d, e, f])
-    return out_faces
-
-@njit
-def do_quad(face, lv_idx, make_inner):
-    a, b, c, d = face
-    e, f, g, h = lv_idx-3, lv_idx-2, lv_idx-1, lv_idx
-    out_faces = [
-        [a, b, f, e],
-        [b, c, g, f],
-        [c, d, h, g],
-        [d, a, e, h]
-    ]
-    if make_inner:
-        out_faces.append([e, f, g, h])
-    return out_faces
-
-@njit
-def do_ngon(face, lv_idx, make_inner):
+def get_faces_prime(face, lv_idx, make_inner):
     '''
     setting up the forloop only makes sense for ngons
     '''
@@ -176,9 +179,9 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners,
             # right now this expects only convex shapes, do not expect concave input or colinear quads that look like tris
             # to handle correctly. See implementation where to fix this.
             normal = get_normal_of_polygon(verts.ravel())
+            new_vertex = np_lerp_v3_v3v3(avg_vec, np_sum_v3_v3v3(avg_vec, normal), distance)
             
-            new_vertex = avg_vec.lerp(avg_vec + normal, distance)   # ------------------TODO
-            vertices.append(new_vertex)
+            vertices.append(new_vertex.tolist())
             new_vertex_idx = current_verts_idx
             new_faces
             for i, j in zip(face, face[1:]):
@@ -187,15 +190,14 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners,
             return
 
         # lerp and add to vertices immediately
-        new_verts_prime = [avg_vec.lerp(v, inset_by) for v in verts]    # ------------------TODO
+        new_verts_prime = np_multi_lerp_v3l_v3v3l(avg_vec, inset_by, verts.ravel()).reshape((3, -1))
 
         if distance:
-            local_normal = get_normal_of_polygon(...*new_verts_prime)   # ------------------TODO
-            new_verts_prime = [v.lerp(v+local_normal, distance) for v in new_verts_prime]    # ------------------TODO
+            local_normal = get_normal_of_polygon(new_verts_prime.ravel()) # recoded
+            new_verts_prime = np_multi_lerp_mod_v3l_v3v3l(local_normal, new_verts_prime.ravel(), distance).reshape((3, -1)).tolist()
 
         vertices.extend(new_verts_prime)
         tail_idx = (current_verts_idx + n) - 1
-        get_faces_prime = {3: do_tri, 4: do_quad}.get(n, do_ngon)
         new_faces_prime = get_faces_prime(face, tail_idx, make_inner)
         
         if make_inner:
