@@ -13,7 +13,7 @@
 **addon for**: [Blender](http://blender.org) version *2.80* and above. For *2.79* see [special installation instruction](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation).  
 **current sverchok version**: Find version in addon settings or in the node Sverchok panel   
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
-**prerequisites**: Python 3.6, and `numpy`, both included in recent versions of Blender (precompiled binaries are convenient for this). Sverchok can also optionally use several additional libraries; if you have them, a number of additional nodes will be available. Please refer to [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies) for list of such dependencies and instructions for their installation.
+**prerequisites**: While sverchok is fundamentally self contained, it does require Python 3.6+, and `numpy`. Both of these are included in recent versions of Blender (precompiled binaries are convenient for this), and do not require any additional steps by the user to obtain. We have added optional nodes that that can make use of additional libraries; if you have them, Please refer to [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies) for list of such dependencies and instructions for their installation.
 
 **manual**: [In English](http://nikitron.cc.ua/sverch/html/main.html) - This is an introduction to Sverchok and contains 3 lessons, and documentation on almost all nodes. If anything isn't clear (or missing) in this document please ask about it on the [Issue Tracker](https://github.com/nortikin/sverchok/issues), we want to get these lessons right and you can help us! 
 
@@ -61,7 +61,13 @@ Install Sverchok as you would any blender addon.
    At the end press F8 to reload add-ons. In NodeView the new version number will appear in the N-panel.   
 
 -  _Additionally_  
-   It is recommended to have such python libreries as scipy, marching cubes, shapely. They are used in some scripted nodes.  
+   Sverchok provides a lot of useful features out-of-the-box that don't require you to install anything extra, but we
+   do provide additional nodes and scripts that make use of so called "3rd party" libraries like: 
+   - scipy
+   - marching cubes 
+   - shapely
+   - FreeCAD
+   Instructions regarding their installation is found at this [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies)
 
 ### Troubleshooting Installation Errors
 
