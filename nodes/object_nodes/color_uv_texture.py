@@ -23,7 +23,7 @@ import numpy as np
 from bpy.props import BoolProperty, StringProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
-
+from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
 
@@ -50,9 +50,12 @@ class SvMeshUVColorNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         color_socket = si('SvColorSocket', 'Color on UV')
         color_socket.prop_name = 'unit_color'
 
+    def sv_free(self):
+        set_sv_depsgraph_need(False)
+
     def process(self):
         Object, Points, Colors = self.inputs
-        dps = bpy.context.evaluated_depsgraph_get()
+        dps = get_sv_depsgraph()
         obj = Object.sv_get()[0]  # triangulate faces
         bvh = BVHTree.FromObject(obj, dps)
         point = Points.sv_get()[0]
