@@ -160,10 +160,10 @@ def inset_special(vertices, face_indices, loop_lengths, inset_rates, distances, 
     new_insets = []
 
     # calculate new size of output vertices ------------------- TODO
-    # value_to_add_shape = 0
-    # for ignore, face in zip(ignores, faces): 
-    #    if not ignore:
-    #        value_to_add_shape += len(face)
+    value_to_add_shape = 0
+    for ignore, face_size in zip(ignores, loop_lengths): 
+        if not ignore:
+            value_to_add_shape += face_size
 
     def new_inner_from(face, inset_by, distance, make_inner):
         '''
@@ -217,10 +217,11 @@ def inset_special(vertices, face_indices, loop_lengths, inset_rates, distances, 
 
     # end
 
-    for idx, face in enumerate(faces):
+    for idx, loop_len in enumerate(loop_lengths):
         inset_by = inset_rates[idx]
 
         good_inset = (inset_by > 0) or (zero_mode == 'FAN')
+        face = ...
         if good_inset and (not ignores[idx]):
             new_inner_from(face, inset_by, distances[idx], make_inners[idx])
         else:
