@@ -13,8 +13,10 @@ from sverchok.utils.surface import (
         SvExtrudeCurveCurveSurface, SvExtrudeCurveFrenetSurface,
         SvExtrudeCurveZeroTwistSurface, SvExtrudeCurveMathutilsSurface,
         SvExtrudeCurveTrackNormalSurface,
+        SvExtrudeCurveNormalDirSurface,
         PROFILE, EXTRUSION
     )
+from sverchok.utils.math import ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, NORMAL_DIR
 
 class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -27,17 +29,19 @@ class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
     modes = [
         ('NONE', "None", "No rotation", 0),
-        ('FRENET', "Frenet", "Frenet / native rotation", 1),
-        ('ZERO', "Zero-twist", "Zero-twist rotation", 2),
-        ("householder", "Householder", "Use Householder reflection matrix", 3),
-        ("track", "Tracking", "Use quaternion-based tracking", 4),
-        ("diff", "Rotation difference", "Use rotational difference calculation", 5),
-        ('NORMALTRACK', "Track normal", "Try to maintain constant normal direction by tracking along curve", 6)
+        (FRENET, "Frenet", "Frenet / native rotation", 1),
+        (ZERO, "Zero-twist", "Zero-twist rotation", 2),
+        (HOUSEHOLDER, "Householder", "Use Householder reflection matrix", 3),
+        (TRACK, "Tracking", "Use quaternion-based tracking", 4),
+        (DIFF, "Rotation difference", "Use rotational difference calculation", 5),
+        ('NORMALTRACK', "Track normal", "Try to maintain constant normal direction by tracking along curve", 6),
+        (NORMAL_DIR, "Specified plane", "Use plane defined by normal vector in Normal input; i.e., offset in direction perpendicular to Normal input", 7)
     ]
 
     @throttled
     def update_sockets(self, context):
-        self.inputs['Resolution'].hide_safe = self.algorithm not in {'ZERO', 'NORMALTRACK'}
+        self.inputs['Resolution'].hide_safe = self.algorithm not in {ZERO, 'NORMALTRACK'}
+        self.inputs['Normal'].hide_safe = self.algorithm != NORMAL_DIR
 
     algorithm : EnumProperty(
             name = "Algorithm",
@@ -69,6 +73,9 @@ class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvCurveSocket', "Profile")
         self.inputs.new('SvCurveSocket', "Extrusion")
         self.inputs.new('SvStringsSocket', "Resolution").prop_name = 'resolution'
+        p = self.inputs.new('SvVerticesSocket', "Normal")
+        p.use_prop = True
+        p.prop = (0.0, 0.0, 1.0)
         self.outputs.new('SvSurfaceSocket', "Surface")
         self.origin = EXTRUSION # default for newly created nodes
         self.update_sockets(context)
@@ -80,6 +87,10 @@ class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         profile_s = self.inputs['Profile'].sv_get()
         extrusion_s = self.inputs['Extrusion'].sv_get()
         resolution_s = self.inputs['Resolution'].sv_get()
+        if 'Normal' in self.inputs:
+            normal_s = self.inputs['Normal'].sv_get()
+        else:
+            normal_s = [[(0, 0, 1)]]
 
         if isinstance(profile_s[0], SvCurve):
             profile_s = [profile_s]
@@ -87,19 +98,21 @@ class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             extrusion_s = [extrusion_s]
 
         surface_out = []
-        for profiles, extrusions, resolution in zip_long_repeat(profile_s, extrusion_s, resolution_s):
+        for profiles, extrusions, normals, resolution in zip_long_repeat(profile_s, extrusion_s, normal_s, resolution_s):
             if isinstance(resolution, (list, tuple)):
                 resolution = resolution[0]
 
-            for profile, extrusion in zip_long_repeat(profiles, extrusions):
+            for profile, extrusion, normal in zip_long_repeat(profiles, extrusions, normals):
                 if self.algorithm == 'NONE':
                     surface = SvExtrudeCurveCurveSurface(profile, extrusion, origin=self.origin)
-                elif self.algorithm == 'FRENET':
+                elif self.algorithm == FRENET:
                     surface = SvExtrudeCurveFrenetSurface(profile, extrusion, origin=self.origin)
-                elif self.algorithm == 'ZERO':
+                elif self.algorithm == ZERO:
                     surface = SvExtrudeCurveZeroTwistSurface(profile, extrusion, resolution, origin=self.origin)
                 elif self.algorithm == 'NORMALTRACK':
                     surface = SvExtrudeCurveTrackNormalSurface(profile, extrusion, resolution, origin=self.origin)
+                elif self.algorithm == NORMAL_DIR:
+                    surface = SvExtrudeCurveNormalDirSurface(profile, extrusion, normal, origin=self.origin)
                 else:
                     surface = SvExtrudeCurveMathutilsSurface(profile, extrusion, self.algorithm,
                                 orient_axis = 'Z', up_axis = 'X',

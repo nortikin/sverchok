@@ -218,6 +218,20 @@ class SvCurve(object):
         matrices_np = np.linalg.inv(matrices_np)
         return matrices_np, normals, binormals
 
+    def frame_by_plane_array(self, ts, plane_normal):
+        n = len(ts)
+        tangents = self.tangent_array(ts)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+        plane_normals = np.tile(plane_normal[np.newaxis].T, n).T
+        normals = np.cross(tangents, plane_normals)
+        normals /= np.linalg.norm(normals, axis=1, keepdims=True)
+        binormals = np.cross(tangents, normals)
+
+        matrices_np = np.dstack((normals, binormals, tangents))
+        matrices_np = np.transpose(matrices_np, axes=(0,2,1))
+        matrices_np = np.linalg.inv(matrices_np)
+        return matrices_np, normals, binormals
+
     FAIL = 'fail'
     ASIS = 'asis'
     RETURN_NONE = 'none'
