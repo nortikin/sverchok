@@ -60,7 +60,7 @@ class SvSampleUVColorNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
             outc = []
             ran = range(3)
             image = bpy.data.images[self.image]
-            width, height = image.size
+            width, height = image.size  # Must be exactly the same vertically and horizontally, square image.
             pixels = np.array(image.pixels[:]).reshape(width, height, 4)
             uvMap = obj.data.uv_layers[0].data
             for P in point:
