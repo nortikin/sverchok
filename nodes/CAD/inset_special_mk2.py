@@ -151,9 +151,10 @@ def np_restructure_indices(faces):
 @njit
 def inset_special(vertices, face_indices, loop_lengths, inset_rates, distances, ignores, make_inners, zero_mode="SKIP"):
 
-    loop_start_indices = np.cumsum([0] + loop_lengths[:-1])
-    loop_start = np.array(loop_start_indices, dtype=np.int32)
-    loop_total = np.array(loop_lengths, dtype=np.int32)
+    new_list = np.hstack((np.array([0]), np.array(loop_lengths[:-1])))
+    loop_start_indices = np.cumsum(new_list)
+    loop_start = np.array(loop_start_indices)
+    loop_total = loop_lengths
 
     new_faces = []
     new_ignores = []
@@ -221,7 +222,8 @@ def inset_special(vertices, face_indices, loop_lengths, inset_rates, distances, 
         inset_by = inset_rates[idx]
 
         good_inset = (inset_by > 0) or (zero_mode == 'FAN')
-        face = ...
+        face = face_indices[loop_start[idx]: loop_total[idx]]
+
         if good_inset and (not ignores[idx]):
             new_inner_from(face, inset_by, distances[idx], make_inners[idx])
         else:
