@@ -71,7 +71,7 @@ class SvSampleUVColorNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
                 uvMapIndices = found_poly.loop_indices
                 uv1, uv2, uv3 = [uvMap[uvMapIndices[i]].uv.to_3d() for i in ran]
                 V = barycentric_transform(loc, p1, p2, p3, uv1, uv2, uv3)
-                outc.append(pixels[int(V.x*(width-1)), int(V.y*(height-1))].tolist())
+                outc.append(pixels[int(V.y*(width-1)), int(V.x*(height-1))].tolist())
             Colors.sv_set([outc])
 
 
