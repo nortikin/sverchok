@@ -744,6 +744,9 @@ def interactive_only(func):
     else:
         return unittest.skip("This test is intended for interactive mode only")(func)
 
+def requires(module):
+    return unittest.skipIf(module is None, "This test requires a module which is not currently available")
+
 ######################################################
 # UI operator and panel classes
 ######################################################
