@@ -175,13 +175,15 @@ class SvNativeNurbsCurve(SvCurve):
         return self.evaluate_array(np.array([t]))[0]
 
     def fraction(self, deriv_order, ts):
+        n = len(ts)
         p = self.degree
         k = len(self.control_points)
         ns = np.array([self.basis.derivative(i, p, deriv_order)(ts) for i in range(k)]) # (k, n)
         coeffs = ns * self.weights[np.newaxis].T # (k, n)
-        numerator = (coeffs[np.newaxis].T * self.control_points).sum(axis=1)
-        denominator = coeffs.sum(axis=0) # (n,1)
-        #print(denominator)
+        coeffs_t = coeffs[np.newaxis].T # (n, k, 1)
+        numerator = (coeffs_t * self.control_points) # (n, k, 3)
+        numerator = numerator.sum(axis=1) # (n, 3)
+        denominator = coeffs.sum(axis=0) # (n,)
 
         return numerator, denominator[np.newaxis].T
 

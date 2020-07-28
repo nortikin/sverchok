@@ -380,7 +380,7 @@ class SverchokTestCase(unittest.TestCase):
         finally:
             remove_node_tree(imported_tree_name)
 
-    def assert_numpy_arrays_equal(self, arr1, arr2, precision=None):
+    def assert_numpy_arrays_equal(self, arr1, arr2, precision=None, fail_fast=True):
         """
         Assert that two numpy arrays are equal.
         Floating-point numbers are compared with specified precision.
@@ -388,6 +388,7 @@ class SverchokTestCase(unittest.TestCase):
         if arr1.shape != arr2.shape:
             raise AssertionError("Shape of 1st array {} != shape of 2nd array {}".format(arr1.shape, arr2.shape))
         shape = list(arr1.shape)
+        fails = []
 
         def compare(prev_indicies):
             step = len(prev_indicies) 
@@ -400,7 +401,11 @@ class SverchokTestCase(unittest.TestCase):
                     a1 = round(arr1[ind], precision)
                     a2 = round(arr2[ind], precision)
 
-                self.assertEqual(a1, a2, "Array 1 [{}] != Array 2 [{}]".format(ind, ind))
+                if fail_fast:
+                    self.assertEqual(a1, a2, "Array 1 [{}] != Array 2 [{}]".format(ind, ind))
+                else:
+                    if a1 != a2:
+                        fails.append((a1, a2, ind))
             else:
                 for idx in range(shape[step]):
                     new_indicies = prev_indicies[:]
@@ -408,6 +413,14 @@ class SverchokTestCase(unittest.TestCase):
                     compare(new_indicies)
 
         compare([])
+        if not fail_fast and fails:
+            messages = []
+            for a1, a2, ind in fails:
+                message = f"{a1} != {a2}: Array 1 [{ind}] != Array 2 [{ind}]"
+                messages.append(message)
+            header = f"{len(fails)} fails of {arr1.size} comparasions:\n"
+            message = header + "\n".join(messages)
+            self.fail(message)
 
     def assert_sverchok_data_equal(self, data1, data2, precision=None):
         """
