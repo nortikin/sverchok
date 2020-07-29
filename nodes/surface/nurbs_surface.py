@@ -210,8 +210,8 @@ else:
                     surf.knotvector_u = knots_u
                     surf.knotvector_v = knots_v
 
-                new_surf = SvGeomdlSurface(surf)
-                #new_surf = SvNativeNurbsSurface(surf.degree_u, surf.degree_v, surf.knotvector_u, surf.knotvector_v, vertices, weights)
+                #new_surf = SvGeomdlSurface(surf)
+                new_surf = SvNativeNurbsSurface(surf.degree_u, surf.degree_v, surf.knotvector_u, surf.knotvector_v, vertices, weights)
                 if self.is_cyclic_u:
                     u_min = surf.knotvector_u[degree_u]
                     u_max = surf.knotvector_u[-degree_u-2]

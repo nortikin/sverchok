@@ -91,6 +91,9 @@ class SvCurve(object):
         v2s = self.evaluate_array(ts+h)
         return (v2s - 2*v1s + v0s) / (h * h)
 
+    def third_derivative(self, t):
+        return self.third_derivative_array(np.array([t]))[0]
+
     def third_derivative_array(self, ts):
         h = 0.001
         v0s = self.evaluate_array(ts)
