@@ -2,6 +2,7 @@
 import numpy as np
 
 from sverchok.utils.curve.nurbs import SvNurbsBasisFunctions
+from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
 from sverchok.dependencies import geomdl
 
@@ -15,11 +16,93 @@ if geomdl is not None:
 #                #
 ##################
 
-class SvGeomdlSurface(SvSurface):
+class SvNurbsSurface(SvSurface):
+    """
+    Base abstract class for all supported implementations of NURBS surfaces.
+    """
+    NATIVE = 'NATIVE'
+    GEOMDL = 'GEOMDL'
+
+    @classmethod
+    def build(cls, implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights=None, normalize_knots=False):
+        if implementation == SvNurbsSurface.GEOMDL:
+            return SvGeomdlSurface.build(degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights, normalize_knots)
+        elif implementation == SvNurbsSurface.NATIVE:
+            if normalize_knots:
+                knotvector_u = sv_knotvector.normalize(knotvector_u)
+                knotvector_v = sv_knotvector.normalize(knotvector_v)
+            return SvNativeNurbsSurface(degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights)
+        else:
+            raise Exception(f"Unsupported NURBS Surface implementation: {implementation}")
+
+    def get_degree_u(self):
+        raise Exception("Not implemented!")
+
+    def get_degree_v(self):
+        raise Exception("Not implemented!")
+
+    def get_knotvector_u(self):
+        """
+        returns: np.array of shape (X,)
+        """
+        raise Exception("Not implemented!")
+
+    def get_knotvector_v(self):
+        """
+        returns: np.array of shape (X,)
+        """
+        raise Exception("Not implemented!")
+
+    def get_control_points(self):
+        """
+        returns: np.array of shape (n_u, n_v, 3)
+        """
+        raise Exception("Not implemented!")
+
+    def get_weights(self):
+        """
+        returns: np.array of shape (n_u, n_v)
+        """
+        raise Exception("Not implemented!")
+
+class SvGeomdlSurface(SvNurbsSurface):
     def __init__(self, surface):
         self.surface = surface
         self.u_bounds = (0, 1)
         self.v_bounds = (0, 1)
+
+    def get_degree_u(self):
+        return self.surface.degree_u
+
+    def get_degree_v(self):
+        return self.surface.degree_v
+
+    def get_knotvector_u(self):
+        return self.surface.knotvector_u
+
+    def get_knotvector_v(self):
+        return self.surface.knotvector_v
+
+    def get_control_points(self):
+        pts = []
+        for row in self.surface.ctrlpts2d:
+            new_row = []
+            for point in row:
+                if len(point) == 4:
+                    x,y,z,w = point
+                    new_point = (x/w, y/w, z/w)
+                else:
+                    new_point = point
+                new_row.append(new_point)
+            pts.append(new_row)
+        return np.array(pts)
+
+    def get_weights(self):
+        if isinstance(self.surface, NURBS.Surface):
+            weights = [[pt[3] for pt in row] for row in self.surface.ctrlpts2d]
+        else:
+            weights = [[1.0 for pt in row] for row in self.surface.ctrlpts2d]
+        return np.array(weights)
 
     @classmethod
     def build(cls, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights, normalize_knots=False):
@@ -27,7 +110,10 @@ class SvGeomdlSurface(SvSurface):
         def convert_row(verts_row, weights_row):
             return [(x*w, y*w, z*w, w) for (x,y,z), w in zip(verts_row, weights_row)]
 
-        surf = NURBS.Surface(normalize_kv = normalize_knots)
+        if weights is None:
+            surf = BSpline.Surface(normalize_kv = normalize_knots)
+        else:
+            surf = NURBS.Surface(normalize_kv = normalize_knots)
         surf.degree_u = degree_u
         surf.degree_v = degree_v
         ctrlpts = list(map(convert_row, control_points, weights))
@@ -133,7 +219,7 @@ class SvGeomdlSurface(SvSurface):
         dv = derivatives[:,0,1]
         return SurfaceDerivativesData(surf_vertices, du, dv)
 
-class SvNativeNurbsSurface(SvSurface):
+class SvNativeNurbsSurface(SvNurbsSurface):
     def __init__(self, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights):
         self.degree_u = degree_u
         self.degree_v = degree_v
@@ -146,6 +232,24 @@ class SvNativeNurbsSurface(SvSurface):
         self.u_bounds = (self.knotvector_u.min(), self.knotvector_u.max())
         self.v_bounds = (self.knotvector_v.min(), self.knotvector_v.max())
         self.normal_delta = 0.0001
+
+    def get_degree_u(self):
+        return self.degree_u
+
+    def get_degree_v(self):
+        return self.degree_v
+
+    def get_knotvector_u(self):
+        return self.knotvector_u
+
+    def get_knotvector_v(self):
+        return self.knotvector_v
+
+    def get_control_points(self):
+        return self.control_points
+
+    def get_weights(self):
+        return self.weights
 
     def get_u_min(self):
         return self.u_bounds[0]
