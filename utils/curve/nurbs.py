@@ -8,10 +8,11 @@
 import numpy as np
 
 from sverchok.utils.curve import SvCurve
+from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.dependencies import geomdl
 
 if geomdl is not None:
-    from geomdl import NURBS
+    from geomdl import NURBS, BSpline
 
 ##################
 #                #
@@ -19,7 +20,46 @@ if geomdl is not None:
 #                #
 ##################
 
-class SvGeomdlCurve(SvCurve):
+class SvNurbsCurve(SvCurve):
+    """
+    Base abstract class for all supported implementations of NURBS curves.
+    """
+    NATIVE = 'NATIVE'
+    GEOMDL = 'GEOMDL'
+
+    @classmethod
+    def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
+        if implementation == SvNurbsCurve.NATIVE:
+            if normalize_knots:
+                knotvector = sv_knotvector.normalize(knotvector)
+            return SvNativeNurbsCurve(degree, knotvector, control_points, weights)
+        elif implementation == SvNurbsCurve.GEOMDL and geomdl is not None:
+            return SvGeomdlCurve.build(degree, knotvector, control_points, weights, normalize_knots)
+        else:
+            raise Exception(f"Unsupported NURBS Curve implementation: {implementation}")
+
+    def get_control_points(self):
+        """
+        returns: np.array of shape (k, 3)
+        """
+        raise Exception("Not implemented!")
+
+    def get_weights(self):
+        """
+        returns: np.array of shape (k,)
+        """
+        raise Exception("Not implemented!")
+
+    def get_knotvector(self):
+        """
+        returns: np.array of shape (X,)
+        """
+        raise Exception("Not implemented!")
+
+    def get_degree(self):
+        raise Exception("Not implemented!")
+
+class SvGeomdlCurve(SvNurbsCurve):
     """
     geomdl-based implementation of NURBS curves
     """
@@ -28,13 +68,35 @@ class SvGeomdlCurve(SvCurve):
         self.u_bounds = (0.0, 1.0)
 
     @classmethod
-    def build(cls, degree, knotvector, control_points, weights, normalize_knots=False):
-        curve = NURBS.Curve(normalize_kv = normalize_knots)
+    def build(cls, degree, knotvector, control_points, weights=None, normalize_knots=False):
+        if weights is not None:
+            curve = NURBS.Curve(normalize_kv = normalize_knots)
+        else:
+            curve = BSpline.Curve(normalize_kv = normalize_knots)
         curve.degree = degree
+        if isinstance(control_points, np.ndarray):
+            control_points = control_points.tolist()
         curve.ctrlpts = control_points
-        curve.weights = weights
+        if weights is not None:
+            if isinstance(weights, np.ndarray):
+                weights = weights.tolist()
+            curve.weights = weights
+        if isinstance(knotvector, np.ndarray):
+            knotvector = knotvector.tolist()
         curve.knotvector = knotvector
         return SvGeomdlCurve(curve)
+
+    def get_control_points(self):
+        return np.array(self.curve.ctrlpts)
+
+    def get_weights(self):
+        return np.array(self.curve.weights)
+
+    def get_knotvector(self):
+        return np.array(self.curve.knotvector)
+
+    def get_degree(self):
+        return self.curve.degree
 
     def evaluate(self, t):
         v = self.curve.evaluate_single(t)
@@ -162,14 +224,30 @@ class SvNurbsBasisFunctions(object):
         self._cache[(i,p,k)] = f
         return f
 
-class SvNativeNurbsCurve(SvCurve):
-    def __init__(self, degree, knotvector, control_points, weights):
+class SvNativeNurbsCurve(SvNurbsCurve):
+    def __init__(self, degree, knotvector, control_points, weights=None):
         self.control_points = np.array(control_points) # (k, 3)
-        self.weights = np.array(weights) # (k, )
+        if weights is not None:
+            self.weights = np.array(weights) # (k, )
+        else:
+            k = len(control_points)
+            self.weights = np.ones((k,))
         self.knotvector = np.array(knotvector)
         self.degree = degree
         self.basis = SvNurbsBasisFunctions(knotvector)
         self.tangent_delta = 0.001
+
+    def get_control_points(self):
+        return self.control_points
+
+    def get_weights(self):
+        return self.weights
+
+    def get_knotvector(self):
+        return self.knotvector
+
+    def get_degree(self):
+        return self.degree
 
     def evaluate(self, t):
         return self.evaluate_array(np.array([t]))[0]
