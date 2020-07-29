@@ -122,6 +122,17 @@ class SvGeomdlSurface(SvNurbsSurface):
         surf.knotvector_v = knotvector_v
         return SvGeomdlSurface(surf)
 
+    @classmethod
+    def from_any_nurbs(cls, surface):
+        if not isinstance(surface, SvNurbsSurface):
+            raise TypeError("Invalid surface")
+        if isinstance(surface, SvGeomdlSurface):
+            return surface
+        return SvGeomdlSurface.build(surface.get_degree_u(), surface.get_degree_v(),
+                    surface.get_knotvector_u(), surface.get_knotvector_v(),
+                    surface.get_control_points(),
+                    surface.get_weights())
+
     def get_input_orientation(self):
         return 'Z'
 

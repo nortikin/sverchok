@@ -86,6 +86,16 @@ class SvGeomdlCurve(SvNurbsCurve):
         curve.knotvector = knotvector
         return SvGeomdlCurve(curve)
 
+    @classmethod
+    def from_any_nurbs(cls, curve):
+        if not isinstance(curve, SvNurbsCurve):
+            raise TypeError("Invalid surface type")
+        if isinstance(curve, SvGeomdlCurve):
+            return curve
+        return SvGeomdlCurve.build(curve.get_degree(), curve.get_knotvector(),
+                    curve.get_control_points(), 
+                    curve.get_weights())
+
     def get_control_points(self):
         return np.array(self.curve.ctrlpts)
 
