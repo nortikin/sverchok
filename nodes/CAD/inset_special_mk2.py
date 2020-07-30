@@ -208,6 +208,9 @@ def fast_inset(
     # [ ] add new face lengths to original_face_length_list
     # [ ] add face mask to output inners.
 
+    # output vertes, polygons, inset_mask
+    ...
+
 
 class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
     """
