@@ -223,13 +223,7 @@ class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_INSET'
 
-    # unused property.
-    normal_modes = [
-            ("Fast", "Fast", "Fast algorithm", 0),
-            ("Exact", "Exact", "Slower, but exact algorithm", 1)
-        ]
-
-    inset : FloatProperty(
+    inset: FloatProperty(
         name='Inset',
         description='inset amount',
         min = 0.0,
@@ -242,23 +236,17 @@ class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
     ignore: IntProperty(name='Ignore', description='skip polygons', default=0, update=updateNode)
     make_inner: IntProperty(name='Make Inner', description='Make inner polygon', default=1, update=updateNode)
 
-    # unused property.
-    normal_mode : EnumProperty(name = "Normals",
-            description = "Normals calculation algorithm",
-            default = "Exact",
-            items = normal_modes,
-            update = updateNode)
+    inset_relative_modes = [
+        ("ABSOLUTE", "ABSOLUTE", "Use world distance values to lerp towards the middle", 0)
+        ("RELATIVE", "RELATIVE", "Use ratio between midpolygon and vertices of polygon", 1),
+    ]
 
-    zero_modes = [
-            ("SKIP", "Skip", "Do not process such faces", 0),
-            ("FAN", "Fan", "Make a fan-like structure from such faces", 1)
-        ]
-
-    zero_mode : EnumProperty(name = "Zero inset faces",
-            description = "What to do with faces when inset is equal to zero",
-            default = "SKIP",
-            items = zero_modes,
-            update = updateNode)
+    inset_relative_mode : EnumProperty(
+        name="Inset relative modes",
+        description="What to do with the inset value, relative or absolute world units",
+        default="ABSOLUTE",
+        items=inset_relative_modes,
+        update=updateNode)
 
     replacement_nodes = [
         ('SvExtrudeSeparateNode',
@@ -289,7 +277,7 @@ class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         # layout.prop(self, "normal_mode")
-        layout.prop(self, "zero_mode")
+        layout.prop(self, "inset_relative_mode", expand=True)
 
     def process(self):
         i = self.inputs
@@ -319,19 +307,18 @@ class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
             fullList(ignores, len(p))
             fullList(make_inners, len(p))
 
-            face_indices, loop_lengths = np_restructure_indices(p)
+            original_face_indices_list, original_face_lengths_list = np_restructure_indices(p)
 
-            # func_args = {
-            #     'vertices': v,
-            #     'face_indices': face_indices,
-            #     'loop_lengths': loop_lengths,
-            #     'inset_rates': inset_rates,
-            #     'distances': distance_vals,
-            #     'make_inners': make_inners,
-            #     'ignores': ignores,
-            #     'zero_mode': self.zero_mode
-            # }
-            res = fast_inset(**func_args)
+            res = fast_inset(
+                original_verts_list,            # a flat list or vector coordinates 
+                original_face_indices_list,     # a flat list of all face indices
+                original_face_lengths_list,     # a flat list of the lengths of all incoming polygons
+                skip_list,                      # a list used to determin if we can skip a polygon, keep unchanged
+                inset_by_distance_list,         # each original polygonis is inset by this, and generates a new v-ring
+                push_by_distance_list,          # push each newly generated v-ring away from original polygon normal 
+                generate_inner_face_list,       # decide if the new ring gets a new face.
+                self.inset_relative_mode        # 0 = absolute, 1 = relative
+                )
 
             if not res:
                 res = v, p, [], []
