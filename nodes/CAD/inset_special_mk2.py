@@ -1,21 +1,14 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
 
+# pylint: disable=c0301
+# pylint: disable=c0103
+
+import math
 import random
 import numpy as np
 from numba import njit
@@ -33,16 +26,43 @@ from sverchok.data_structure import (
     repeat_last, fullList)
 
 
+def np_restructure_indices(faces):
+    flat_faces = list(itertools.chain.from_iterable(faces))
+    return np.array(flat_faces, dtype=np.int32), [len(f) for f in faces]
+    
 
-@njit
+def np_length_v3(v):
+    """
+    gives you the length of the 3-element-vector
+    
+    input: vector-like
+    output: scalar length
+    """
+    return math.sqrt((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]))
+
+
+def np_normalize_v3(v):
+    """
+    rescales the input (3-element-vector), so that the length of the vector "extents" is One.
+    this doesn't change the direction of the vector, only the magnitude.
+    """
+    l = math.sqrt((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]))
+    return [v[0]/l, v[1]/l, v[2]/l]
+
+
 def get_normal_of_3points(p1, p2, p3):
+    """
+    accepts: 3 input vectors
+    returns: the direction of a face composed by the input vectors p1,2,3. The order of these vectors is important
+             - the output normal is not automatically normalized to unit length. (maybe it should be)
+    """
     return [
         ((p2[1]-p1[1])*(p3[2]-p1[2]))-((p2[2]-p1[2])*(p3[1]-p1[1])),
         ((p2[2]-p1[2])*(p3[0]-p1[0]))-((p2[0]-p1[0])*(p3[2]-p1[2])),
         ((p2[0]-p1[0])*(p3[1]-p1[1]))-((p2[1]-p1[1])*(p3[0]-p1[0]))
     ]        
 
-@njit
+
 def get_normal_of_polygon(verts):
     """
     expects: a flat array of verts.
@@ -56,14 +76,14 @@ def get_normal_of_polygon(verts):
         note: tessellation is conceptually trivial, but not entirely trivial to implement 
 .
     """
-    points = verts.reshape((3, -1))
+    points = verts.reshape((-1, 3))
     if points.shape[0] == 4:
         return get_normal_of_3points(points[0], points[1], points[3])
     
     # standard and fallback
     return get_normal_of_3points(points[0], points[1], points[2])
 
-@njit
+
 def np_lerp_v3_v3v3(a, b, t):
     """
     expects: 2 flat arrays of len=3 (maybe np) of 3 floats
@@ -73,164 +93,120 @@ def np_lerp_v3_v3v3(a, b, t):
     s = 1.0 - t
     return [s * a[0] + t * b[0], s * a[1] + t * b[1], s * a[2] + t * b[2]]
 
-@njit
-def np_multi_lerp_v3l_v3v3l(a, verts_array, t):
+
+def make_new_indices(offset, flat_face_indices, generate_inner):
     """
-    expects: :a: a vector to lerp towards
-             :verts_array: a flat array of vectors to lerp from
-             :t: a transition factor between a and each 3-unit-array element in verts_array
-    returns: flat array of vectors
+    non dependant on geometry, purely an indexing operation.
+    does depend on current count of new verts, this is matched by passing the offset. 
     """
-    np_output = np.zeros(verts_array.shape, dtype=np.float32)
-    for idx, v in enumerate(verts_array.reshape((3, -1))):
-        np_output[idx] = np_lerp_v3_v3v3(a, v, t)
-    return np_output.ravel()
-
-@njit
-def np_multi_lerp_mod_v3l_v3v3l(a, verts_array, t):
-    """
-    expects: :a: a vector to lerp towards
-             :verts_array: a flat array of vectors to lerp from
-             :t: a transition factor between a and each 3-unit-array element in verts_array
-    returns: flat array of vectors
-    
-    [v.lerp(v+local_normal, distance) for v in new_verts_prime]
-    
-    """
-    np_output = np.zeros(verts_array.shape, dtype=np.float32)
-    for idx, v in enumerate(verts_array.reshape((3, -1))):
-        np_output[idx] = np_lerp_v3_v3v3(v, np_sum_v3_v3v3(v, a), t)
-    return np_output.ravel()
-
-
-@njit
-def np_sum_v3_v3v3(a, b):
-    """
-    expects: 2 input arrays of 3 floats each.
-    returns: 1 output np.array of 3 floats that represents the summation of a and b
-    """
-    return np.array((a[0]+b[0], a[1]+b[1], a[2]+b[2]), dtype=np.float32)
-
-
-@njit
-def np_average_vector(verts_array):
-    """
-    expects: flat np.array of float32
-    returns: np.array shape (3, 1)
-    """
-    return verts_array.reshape((3,-1)).mean(axis=0)
-
-@njit
-def get_faces_prime(face, lv_idx, make_inner):
-    '''
-    setting up the forloop only makes sense for ngons
-    '''
-    num_elements = len(face)
-    face_elements = list(face)
-    inner_elements = [lv_idx-n for n in range(num_elements-1, -1, -1)]
-    # padding, wrap-around
-    face_elements.append(face_elements[0])
-    inner_elements.append(inner_elements[0])
-
-    out_faces = []
-    add_face = out_faces.append
-    for j in range(num_elements):
-        add_face([face_elements[j], face_elements[j+1], inner_elements[j+1], inner_elements[j]])
-
-    if make_inner:
-        temp_face = [idx[-1] for idx in out_faces]
-        add_face(temp_face)
-    
-    return out_faces
-
-def np_restructure_indices(faces):
-    flat_faces = list(itertools.chain.from_iterable(faces))
-    return np.array(flat_faces, dtype=np.int32), [len(f) for f in faces]
-    
-
-@njit
-def inset_special(vertices, face_indices, loop_lengths, inset_rates, distances, ignores, make_inners, zero_mode="SKIP"):
-
-    new_list = np.hstack((np.array([0]), np.array(loop_lengths[:-1])))
-    loop_start_indices = np.cumsum(new_list)
-    loop_start = np.array(loop_start_indices)
-    loop_total = loop_lengths
-
     new_faces = []
-    new_ignores = []
-    new_insets = []
+    for i in range(len(flat_face_indices)-1):
+        new_faces.extend([flat_face_indices[i], flat_face_indices[i+1], offset + 1 + i, offset + i]) 
+    
+    new_faces.extend([flat_face_indices[-1], flat_face_indices[0], offset, offset + len(flat_face_indices) - 1])
 
-    # calculate new size of output vertices ------------------- TODO
-    value_to_add_shape = 0
-    for ignore, face_size in zip(ignores, loop_lengths): 
-        if not ignore:
-            value_to_add_shape += face_size
+    if generate_inner:
+        new_faces.extend(list(range(offset, offset + len(flat_face_indices))))
+    
+    return new_faces
 
-    def new_inner_from(face, inset_by, distance, make_inner):
-        '''
-        face:       (idx list) face to work on
-        inset_by:   (scalar) amount to open the face
-        distance:   (scalar) push new verts on normal by this amount
-        make_inner: create or drop internal face
 
-        # dumb implementation first. should only loop over the verts of face 1 time
-        to get
-         - new faces
-         - avg vertex location
-         - but can't lerp until avg is known. so each input face is looped at least twice.
-        '''
-        current_verts_idx = len(vertices)
-        
-        n = len(face)
-        verts = np.array([vertices[i] for i in face], dtype=np.float32)
-        avg_vec = np_average_vector(verts.ravel())
+def move_verts(avg, flat_verts, i_distance, i_relative):
+    """
+    input is affected differently depending on whether inset should be relative or not.
+    returns the flat new vertex ring
+    """
+    new_flat_verts = np.zeros(flat_verts.shape[0]).reshape((-1, 3))
+    for idx, v in enumerate(flat_verts.reshape((-1, 3))):
 
-        if abs(inset_by) < 1e-6:
-            
-            # right now this expects only convex shapes, do not expect concave input or colinear quads that look like tris
-            # to handle correctly. See implementation where to fix this.
-            normal = get_normal_of_polygon(verts.ravel())
-            new_vertex = np_lerp_v3_v3v3(avg_vec, np_sum_v3_v3v3(avg_vec, normal), distance)
-            
-            vertices.append(new_vertex.tolist())
-            new_vertex_idx = current_verts_idx
-            new_faces
-            for i, j in zip(face, face[1:]):
-                new_faces.append([i, j, new_vertex_idx])
-            new_faces.append([face[-1], face[0], new_vertex_idx])
-            return
-
-        # lerp and add to vertices immediately
-        new_verts_prime = np_multi_lerp_v3l_v3v3l(avg_vec, inset_by, verts.ravel()).reshape((3, -1))
-
-        if distance:
-            local_normal = get_normal_of_polygon(new_verts_prime.ravel())
-            new_verts_prime = np_multi_lerp_mod_v3l_v3v3l(local_normal, new_verts_prime.ravel(), distance).reshape((3, -1)).tolist()
-
-        vertices.extend(new_verts_prime)
-        tail_idx = (current_verts_idx + n) - 1
-        new_faces_prime = get_faces_prime(face, tail_idx, make_inner)
-        
-        if make_inner:
-            new_insets.append(new_faces_prime[-1])
-
-        new_faces.extend(new_faces_prime)
-
-    # end
-
-    for idx, loop_len in enumerate(loop_lengths):
-        inset_by = inset_rates[idx]
-
-        good_inset = (inset_by > 0) or (zero_mode == 'FAN')
-        face = face_indices[loop_start[idx]: loop_total[idx]]
-
-        if good_inset and (not ignores[idx]):
-            new_inner_from(face, inset_by, distances[idx], make_inners[idx])
+        if i_relative == 0:
+            direction = np_normalize_v3(avg - v)
+            offset = direction * i_distance
         else:
-            new_faces.append(face)
-            new_ignores.append(face)
+            offset = np_lerp_v3_v3v3(v, avg, i_distance)
+        
+        new_flat_verts[idx] = offset
 
-    return vertices, new_faces, new_ignores, new_insets
+    return flat_verts + new_flat_verts.ravel()
+
+
+def make_new_verts(flat_verts_for_face, i_distance, p_distance, EPSILON, inset_relative):
+    """
+    get average location
+    get face normal
+    """
+    if abs(i_distance) <= EPSILON:
+        # dont inset, just reuse existing locations
+        new_flat_verts = flat_verts_for_face
+    else:
+        # adjust new verts according to i_distance
+        avg_location = flat_verts_for_face.reshape((-1, 3)).mean(axis=0)
+        new_flat_verts = move_verts(avg_location, flat_verts_for_face, i_distance, inset_relative)
+
+    if abs(p_distance) <= EPSILON:
+        pass
+    else:
+        # get approximate verts normal, resize to make offset, add to new_flat_verts
+        face_normal = get_normal_of_polygon(flat_verts_for_face)
+        face_normal = np_normalize_v3(face_normal)
+        offset_vector = face_normal * p_distance
+        new_flat_verts = (new_flat_verts.reshape((-1, 3)) + np.array(offset_vector)).ravel()
+
+    return new_flat_verts
+    
+def fast_inset(
+    original_verts_list,            # a flat list or vector coordinates 
+    original_face_indices_list,     # a flat list of all face indices
+    original_face_lengths_list,     # a flat list of the lengths of all incoming polygons
+    skip_list,                      # a list used to determin if we can skip a polygon, keep unchanged
+    inset_by_distance_list,         # each original polygonis is inset by this, and generates a new v-ring
+    push_by_distance_list,          # push each newly generated v-ring away from original polygon normal 
+    generate_inner_face_list,       # decide if the new ring gets a new face.
+    inset_relative,                 # 0 = absolute, 1 = relative
+    ):
+
+    """
+    v-ring is a vertex ring.
+    inset_relative, can be 0=absolute or 1=relative.
+        in absolute mode inset_distance will extend in real world units towards the average vector of the original face
+        in relative mode inset of 0.5 is halfway between original face's vector to the average. 1 is exactly in the average   
+    output:
+       flat verts | flat face_indices | flat start_end_loops | flat mask new inners
+    """
+    EPSILON = 1.0E-6
+    original_verts_list = original_verts_list.reshape((-1, 3)) 
+    num_original_verts = original_verts_list.shape[0]
+
+    idx_offset = 0
+    lengths_new_faces = []
+    new_flat_face_indices = []
+    new_verts = []
+    new_inner_masks = []
+
+    for idx, skip in skip_list:
+        if skip:
+            new_inner_masks.append(0)
+            continue    
+
+        len_cur_face = original_face_lengths_list[idx]
+        generate_inner = generate_inner_face_list[idx]
+        if generate_inner:
+            lengths_new_faces.extend(([4,] * len_cur_face) + [len_cur_face])
+            new_inner_masks.extend(([0,] * len_cur_face) + [1])
+        else:
+            lengths_new_faces.extend(([4,] * len_cur_face))
+            new_inner_masks.extend(([0,] * len_cur_face))
+
+        flat_face_indices = original_face_indices_list[idx_offset: idx_offset + len_cur_face]
+        new_flat_face_indices.extend(make_new_indices(num_original_verts + idx_offset, flat_face_indices, generate_inner))
+        flat_verts_for_face = np.take(original_verts_list, flat_face_indices, axis=0).ravel()
+        new_verts.extend(make_new_verts(flat_verts_for_face, inset_by_distance_list[idx], push_by_distance_list[idx], EPSILON, inset_relative))
+        idx_offset += len_cur_face
+
+    # [ ] add new verts to original_vertex_list
+    # [ ] add new face indices to original_face_indices_list
+    # [ ] add new face lengths to original_face_length_list
+    # [ ] add face mask to output inners.
 
 
 class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -283,10 +259,6 @@ class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
             default = "SKIP",
             items = zero_modes,
             update = updateNode)
-
-    # axis = FloatVectorProperty(
-    #   name='axis', description='axis relative to normal',
-    #   default=(0,0,1), update=updateNode)
 
     replacement_nodes = [
         ('SvExtrudeSeparateNode',
@@ -349,18 +321,17 @@ class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
 
             face_indices, loop_lengths = np_restructure_indices(p)
 
-            func_args = {
-                'vertices': v,
-                'face_indices': face_indices,
-                'loop_lengths': loop_lengths,
-                'inset_rates': inset_rates,
-                'distances': distance_vals,
-                'make_inners': make_inners,
-                'ignores': ignores,
-                'zero_mode': self.zero_mode
-            }
-
-            res = inset_special(**func_args)
+            # func_args = {
+            #     'vertices': v,
+            #     'face_indices': face_indices,
+            #     'loop_lengths': loop_lengths,
+            #     'inset_rates': inset_rates,
+            #     'distances': distance_vals,
+            #     'make_inners': make_inners,
+            #     'ignores': ignores,
+            #     'zero_mode': self.zero_mode
+            # }
+            res = fast_inset(**func_args)
 
             if not res:
                 res = v, p, [], []
