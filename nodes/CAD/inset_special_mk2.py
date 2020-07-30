@@ -183,7 +183,7 @@ def fast_inset(
     new_verts = []
     new_inner_masks = []
 
-    for idx, skip in skip_list:
+    for idx, skip in enumerate(skip_list):
         if skip:
             new_inner_masks.append(0)
             continue    
@@ -207,9 +207,11 @@ def fast_inset(
     # [ ] add new face indices to original_face_indices_list
     # [ ] add new face lengths to original_face_length_list
     # [ ] add face mask to output inners.
+    print(new_verts)
+    print(new_inner_masks)
 
     # output vertes, polygons, inset_mask
-    ...
+    return
 
 
 class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -240,8 +242,8 @@ class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
     make_inner: IntProperty(name='Make Inner', description='Make inner polygon', default=1, update=updateNode)
 
     inset_relative_modes = [
-        ("ABSOLUTE", "ABSOLUTE", "Use world distance values to lerp towards the middle", 0)
-        ("RELATIVE", "RELATIVE", "Use ratio between midpolygon and vertices of polygon", 1),
+        ("ABSOLUTE", "ABSOLUTE", "Use world distance values to lerp towards the middle", 0),
+        ("RELATIVE", "RELATIVE", "Use ratio between midpolygon and vertices of polygon", 1)
     ]
 
     inset_relative_mode : EnumProperty(
