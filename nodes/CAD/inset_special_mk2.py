@@ -184,12 +184,17 @@ def fast_inset(
     new_inner_masks = []
 
     for idx, skip in enumerate(skip_list):
-        if skip:
-            new_inner_masks.append(0)
-            continue    
 
         len_cur_face = original_face_lengths_list[idx]
         generate_inner = generate_inner_face_list[idx]
+        flat_face_indices = original_face_indices_list[idx_offset: idx_offset + len_cur_face]
+
+        if skip:
+            new_flat_face_indices.append(flat_face_indices)
+            lengths_new_faces.extend([len_cur_face])
+            new_inner_masks.append(0)
+            continue    
+
         if generate_inner:
             lengths_new_faces.extend(([4,] * len_cur_face) + [len_cur_face])
             new_inner_masks.extend(([0,] * len_cur_face) + [1])
@@ -197,21 +202,20 @@ def fast_inset(
             lengths_new_faces.extend(([4,] * len_cur_face))
             new_inner_masks.extend(([0,] * len_cur_face))
 
-        flat_face_indices = original_face_indices_list[idx_offset: idx_offset + len_cur_face]
         new_flat_face_indices.extend(make_new_indices(num_original_verts + idx_offset, flat_face_indices, generate_inner))
         flat_verts_for_face = np.take(original_verts_list, flat_face_indices, axis=0).ravel()
         new_verts.extend(make_new_verts(flat_verts_for_face, inset_by_distance_list[idx], push_by_distance_list[idx], EPSILON, inset_relative))
         idx_offset += len_cur_face
 
-    # [ ] add new verts to original_vertex_list
-    # [ ] add new face indices to original_face_indices_list
-    # [ ] add new face lengths to original_face_length_list
-    # [ ] add face mask to output inners.
-    print(new_verts)
-    print(new_inner_masks)
+    # [x] add new verts to original_vertex_list
+    #-----   original_verts_list = original_verts_list + new_verts.reshaoe((-1, 3))
+    original_verts_list = np.vstack((original_verts_list, np.array(new_verts).reshape((-1, 3))))
+    # [x] add new face indices to original_face_indices_list
+    # [x] add new face lengths to original_face_length_list
+    # [x] add face mask to output inners.
 
     # output vertes, polygons, inset_mask
-    return
+    return original_verts_list.tolist(), [], []
 
 
 class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -327,7 +331,7 @@ class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
 
             verts_out.append(res[0])
             polys_out.append(res[1])
-            inset_out.append(res[3])
+            inset_out.append(res[2])
 
         # deal  with hooking up the processed data to the outputs
         o['vertices'].sv_set(verts_out)
