@@ -272,7 +272,6 @@ class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
         o = self.outputs
         o.new('SvVerticesSocket', 'vertices')
         o.new('SvStringsSocket', 'polygons')
-        o.new('SvStringsSocket', 'ignored')
         o.new('SvStringsSocket', 'inset')
 
     def draw_buttons_ext(self, context, layout):
@@ -288,7 +287,6 @@ class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
 
         all_verts = i['vertices'].sv_get()
         all_polys = i['polygons'].sv_get()
-
         all_inset_rates = i['inset'].sv_get()
         all_distance_vals = i['distance'].sv_get()
         all_ignores = i['ignore'].sv_get()
@@ -298,7 +296,6 @@ class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
 
         verts_out = []
         polys_out = []
-        ignored_out = []
         inset_out = []
 
         for v, p, inset_rates, distance_vals, ignores, make_inners in zip(*data):
@@ -318,20 +315,18 @@ class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
                 distance_vals,                  # push_by_distance_list    | push each newly generated v-ring away from original polygon normal 
                 make_inners,                    # generate_inner_face_list | decide if the new ring gets a new face.
                 self.inset_relative_mode        #                          | 0 = absolute, 1 = relative
-                )
+            )
 
             if not res:
                 res = v, p, [], []
 
             verts_out.append(res[0])
             polys_out.append(res[1])
-            ignored_out.append(res[2])
             inset_out.append(res[3])
 
         # deal  with hooking up the processed data to the outputs
         o['vertices'].sv_set(verts_out)
         o['polygons'].sv_set(polys_out)
-        o['ignored'].sv_set(ignored_out)
         o['inset'].sv_set(inset_out)
 
 
