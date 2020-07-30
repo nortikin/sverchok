@@ -149,7 +149,7 @@ def make_new_verts(flat_verts_for_face, i_distance, p_distance, EPSILON, inset_r
         # get approximate verts normal, resize to make offset, add to new_flat_verts
         face_normal = get_normal_of_polygon(flat_verts_for_face)
         face_normal = np_normalize_v3(face_normal)
-        offset_vector = face_normal * p_distance
+        offset_vector = np.array(face_normal) * p_distance
         new_flat_verts = (new_flat_verts.reshape((-1, 3)) + np.array(offset_vector)).ravel()
 
     return new_flat_verts
