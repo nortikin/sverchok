@@ -310,14 +310,14 @@ class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
             original_face_indices_list, original_face_lengths_list = np_restructure_indices(p)
 
             res = fast_inset(
-                original_verts_list,            # a flat list or vector coordinates 
-                original_face_indices_list,     # a flat list of all face indices
-                original_face_lengths_list,     # a flat list of the lengths of all incoming polygons
-                skip_list,                      # a list used to determin if we can skip a polygon, keep unchanged
-                inset_by_distance_list,         # each original polygonis is inset by this, and generates a new v-ring
-                push_by_distance_list,          # push each newly generated v-ring away from original polygon normal 
-                generate_inner_face_list,       # decide if the new ring gets a new face.
-                self.inset_relative_mode        # 0 = absolute, 1 = relative
+                np.array(v).ravel(),            # original_verts_list      | a flat list or vector coordinates 
+                original_face_indices_list,     #                  -       | a flat list of all face indices
+                original_face_lengths_list,     #                  -       | a flat list of the lengths of all incoming polygons
+                ignores,                        # skip_list                | a list used to determin if we can skip a polygon, keep unchanged
+                inset_rates,                    # inset_by_distance_list   | each original polygonis is inset by this, and generates a new v-ring
+                distance_vals,                  # push_by_distance_list    | push each newly generated v-ring away from original polygon normal 
+                make_inners,                    # generate_inner_face_list | decide if the new ring gets a new face.
+                self.inset_relative_mode        #                          | 0 = absolute, 1 = relative
                 )
 
             if not res:
