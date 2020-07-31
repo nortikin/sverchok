@@ -204,19 +204,14 @@ class SvGeomdlSurface(SvNurbsSurface):
         fuu = derivatives[:,2,0]
         fvv = derivatives[:,0,2]
         fuv = derivatives[:,1,1]
-        #print("Geomdl/Suu", fuu)
-        #print("Geomdl/Suv:", fuv)
 
         nuu = (fuu * normal).sum(axis=1)
         nvv = (fvv * normal).sum(axis=1)
         nuv = (fuv * normal).sum(axis=1)
-        #print("Geomdl/Nuu", nuu)
-        #print("Geomdl/Nuv", nuv)
 
         duu = np.linalg.norm(fu, axis=1) **2
         dvv = np.linalg.norm(fv, axis=1) **2
         duv = (fu * fv).sum(axis=1)
-        #print("Geomdl/Duv", duv)
 
         calc = SurfaceCurvatureCalculator(us, vs, order=order)
         calc.set(surf_vertices, normal, fu, fv, duu, dvv, duv, nuu, nvv, nuv)
@@ -305,61 +300,56 @@ class SvNativeNurbsSurface(SvNurbsSurface):
         return self.normal_array(np.array([u]), np.array([v]))[0]
 
     def normal_array(self, us, vs):
-        N, D = self.fraction(0, 0, us, vs)
-        S = N / D
-        Nu, Du = self.fraction(1, 0, us, vs)
-        Nv, Dv = self.fraction(0, 1, us, vs)
-        Su = (Nu - S*Du) / D
-        Sv = (Nv - S*Dv) / D
-        normal = np.cross(Su, Sv)
+        numerator, denominator = self.fraction(0, 0, us, vs)
+        surface = numerator / denominator
+        numerator_u, denominator_u = self.fraction(1, 0, us, vs)
+        numerator_v, denominator_v = self.fraction(0, 1, us, vs)
+        surface_u = (numerator_u - surface*denominator_u) / denominator
+        surface_v = (numerator_v - surface*denominator_v) / denominator
+        normal = np.cross(surface_u, surface_v)
         n = np.linalg.norm(normal, axis=1, keepdims=True)
         normal = normal / n
         return normal
 
     def derivatives_data_array(self, us, vs):
-        N, D = self.fraction(0, 0, us, vs)
-        S = N / D
-        Nu, Du = self.fraction(1, 0, us, vs)
-        Nv, Dv = self.fraction(0, 1, us, vs)
-        Su = (Nu - S*Du) / D
-        Sv = (Nv - S*Dv) / D
-        return SurfaceDerivativesData(S, Su, Sv)
+        numerator, denominator = self.fraction(0, 0, us, vs)
+        surface = numerator / denominator
+        numerator_u, denominator_u = self.fraction(1, 0, us, vs)
+        numerator_v, denominator_v = self.fraction(0, 1, us, vs)
+        surface_u = (numerator_u - surface*denominator_u) / denominator
+        surface_v = (numerator_v - surface*denominator_v) / denominator
+        return SurfaceDerivativesData(surface, surface_u, surface_v)
 
     def curvature_calculator(self, us, vs, order=True):
     
-        N, D = self.fraction(0, 0, us, vs)
-        S = N / D
-        Nu, Du = self.fraction(1, 0, us, vs)
-        Nv, Dv = self.fraction(0, 1, us, vs)
-        Su = (Nu - S*Du) / D
-        Sv = (Nv - S*Dv) / D
+        numerator, denominator = self.fraction(0, 0, us, vs)
+        surface = numerator / denominator
+        numerator_u, denominator_u = self.fraction(1, 0, us, vs)
+        numerator_v, denominator_v = self.fraction(0, 1, us, vs)
+        surface_u = (numerator_u - surface*denominator_u) / denominator
+        surface_v = (numerator_v - surface*denominator_v) / denominator
 
-        normal = np.cross(Su, Sv)
+        normal = np.cross(surface_u, surface_v)
         n = np.linalg.norm(normal, axis=1, keepdims=True)
         normal = normal / n
 
-        Nuu, Duu = self.fraction(2, 0, us, vs)
-        Suu = (Nuu - 2*Su*Du - S*Duu) / D
-        Nvv, Dvv = self.fraction(0, 2, us, vs)
-        Svv = (Nvv - 2*Sv*Dv - S*Dvv) / D
-        #print("Native/Suu", Suu)
+        numerator_uu, denominator_uu = self.fraction(2, 0, us, vs)
+        surface_uu = (numerator_uu - 2*surface_u*denominator_u - surface*denominator_uu) / denominator
+        numerator_vv, denominator_vv = self.fraction(0, 2, us, vs)
+        surface_vv = (numerator_vv - 2*surface_v*denominator_v - surface*denominator_vv) / denominator
 
-        Nuv, Duv = self.fraction(1, 1, us, vs)
-        Suv = (Nuv - Sv*Du - Su*Dv - S*Duv) / D
-        #print("Native/Suv:", Suv)
+        numerator_uv, denominator_uv = self.fraction(1, 1, us, vs)
+        surface_uv = (numerator_uv - surface_v*denominator_u - surface_u*denominator_v - surface*denominator_uv) / denominator
 
-        nuu = (Suu * normal).sum(axis=1)
-        nvv = (Svv * normal).sum(axis=1)
-        nuv = (Suv * normal).sum(axis=1)
-        #print("Native/Nuu", nuu)
-        #print("Native/Nuv", nuv)
+        nuu = (surface_uu * normal).sum(axis=1)
+        nvv = (surface_vv * normal).sum(axis=1)
+        nuv = (surface_uv * normal).sum(axis=1)
 
-        duu = np.linalg.norm(Su, axis=1) **2
-        dvv = np.linalg.norm(Sv, axis=1) **2
-        duv = (Su * Sv).sum(axis=1)
-        #print("Native/Duv", duv)
+        duu = np.linalg.norm(surface_u, axis=1) **2
+        dvv = np.linalg.norm(surface_v, axis=1) **2
+        duv = (surface_u * surface_v).sum(axis=1)
 
         calc = SurfaceCurvatureCalculator(us, vs, order=order)
-        calc.set(S, normal, Su, Sv, duu, dvv, duv, nuu, nvv, nuv)
+        calc.set(surface, normal, surface_u, surface_v, duu, dvv, duv, nuu, nvv, nuv)
         return calc
 
