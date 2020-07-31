@@ -153,6 +153,19 @@ def make_new_verts(flat_verts_for_face, i_distance, p_distance, EPSILON, inset_r
         new_flat_verts = (new_flat_verts.reshape((-1, 3)) + np.array(offset_vector)).ravel()
 
     return new_flat_verts
+
+
+def np_unpack_polygondata(indices, lengths):
+    """
+    turns flat representation of indices and lengtghs into nest lists of regular polygon indices.
+    """
+    polygons = []
+    start = 0
+    for item in lengths:
+        polygons.append(indices[start: start+item])
+        start += item
+    return polygons
+
     
 def fast_inset(
     original_verts_list,            # a flat list or vector coordinates 
@@ -213,9 +226,10 @@ def fast_inset(
     # [x] add new face indices to original_face_indices_list
     # [x] add new face lengths to original_face_length_list
     # [x] add face mask to output inners.
+    polygons = np_unpack_polygondata(new_flat_face_indices, lengths_new_faces)
 
     # output vertes, polygons, inset_mask
-    return original_verts_list.tolist(), [], []
+    return original_verts_list.tolist(), polygons, []
 
 
 class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
