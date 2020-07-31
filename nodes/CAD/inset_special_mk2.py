@@ -121,7 +121,7 @@ def move_verts(avg, flat_verts, i_distance, i_relative):
 
         if i_relative == 0:
             direction = np_normalize_v3(avg - v)
-            offset = direction * i_distance
+            offset = direction[0] * i_distance, direction[1] * i_distance, direction[2] * i_distance
         else:
             offset = np_lerp_v3_v3v3(v, avg, i_distance)
         
@@ -306,6 +306,7 @@ class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
         verts_out = []
         polys_out = []
         inset_out = []
+        inset_relative = 0 if self.inset_relative_mode == 'ABSOLUTE' else 1
 
         for v, p, inset_rates, distance_vals, ignores, make_inners in zip(*data):
             fullList(inset_rates, len(p))
@@ -323,7 +324,7 @@ class SvInsetSpecialMK2(bpy.types.Node, SverchCustomTreeNode):
                 inset_rates,                    # inset_by_distance_list   | each original polygonis is inset by this, and generates a new v-ring
                 distance_vals,                  # push_by_distance_list    | push each newly generated v-ring away from original polygon normal 
                 make_inners,                    # generate_inner_face_list | decide if the new ring gets a new face.
-                self.inset_relative_mode        #                          | 0 = absolute, 1 = relative
+                inset_relative                  #                          | 0 = absolute, 1 = relative
             )
 
             if not res:
