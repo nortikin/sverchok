@@ -123,7 +123,7 @@ def move_verts(avg, flat_verts, i_distance, i_relative):
             direction = np_normalize_v3(avg - v)
             offset = direction[0] * i_distance, direction[1] * i_distance, direction[2] * i_distance
         else:
-            offset = np_lerp_v3_v3v3(v, avg, i_distance)
+            offset = np.array(np_lerp_v3_v3v3(v, avg, i_distance)) - np.array(v)
         
         new_flat_verts[idx] = offset
 
