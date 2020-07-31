@@ -16,14 +16,14 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.handling_sockets import SocketProperties, NodeInputs
 
 
-node_inputs = NodeInputs([
-    SocketProperties('Verts', 'SvVerticesSocket', deep_copy=False, vectorize=False),
-    SocketProperties('Edges', 'SvStringsSocket', deep_copy=False, vectorize=False),
-    SocketProperties('Faces', 'SvStringsSocket', deep_copy=False, vectorize=False),
-    SocketProperties('Mask', 'SvStringsSocket', deep_copy=False),
-    SocketProperties('Verts data', 'SvStringsSocket', deep_copy=False),
-    SocketProperties('Edges data', 'SvStringsSocket', deep_copy=False),
-    SocketProperties('Faces data', 'SvStringsSocket', deep_copy=False)])
+node_inputs = NodeInputs()
+node_inputs.verts = SocketProperties('Verts', 'SvVerticesSocket', deep_copy=False, vectorize=False)
+node_inputs.edges = SocketProperties('Edges', 'SvStringsSocket', deep_copy=False, vectorize=False)
+node_inputs.faces = SocketProperties('Faces', 'SvStringsSocket', deep_copy=False, vectorize=False)
+node_inputs.mask = SocketProperties('Mask', 'SvStringsSocket', deep_copy=False)
+node_inputs.verts_data = SocketProperties('Verts data', 'SvStringsSocket', deep_copy=False)
+node_inputs.edges_data = SocketProperties('Edges data', 'SvStringsSocket', deep_copy=False)
+node_inputs.faces_data = SocketProperties('Faces data', 'SvStringsSocket', deep_copy=False)
 
 # def node_process(inputs: InputData, properties: NodeProperties):
 #     me = TriangulatedMesh([Vector(co) for co in inputs.verts], inputs.faces)

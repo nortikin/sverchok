@@ -26,8 +26,14 @@ class SocketProperties(NamedTuple):
 
 
 class NodeInputs:
-    def __init__(self, sockets: List[SocketProperties]):
-        self._sockets = sockets
+    def __init__(self):
+        self._sockets = []
+
+    def __setattr__(self, key, value):
+        if isinstance(value, SocketProperties):
+            self._sockets.append(value)
+
+        object.__setattr__(self, key, value)
 
     def add_sockets(self, node: Node):
         [node.inputs.new(p.socket_type, p.name) for p in self._sockets]
