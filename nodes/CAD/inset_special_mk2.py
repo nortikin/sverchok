@@ -206,7 +206,7 @@ def fast_inset(
         if skip:
             # print(flat_face_indices)
             new_flat_face_indices.extend(flat_face_indices.tolist())
-            lengths_new_faces.extend([len_cur_face])
+            lengths_new_faces.append(len_cur_face)
             new_inner_masks.append(0)
             idx_offset += len_cur_face
             continue    
