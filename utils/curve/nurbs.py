@@ -283,52 +283,63 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         return self.tangent_array(np.array([t]))[0]
 
     def tangent_array(self, ts):
-        N, D = self.fraction(0, ts)
-        C = N / D
-        N1, D1 = self.fraction(1, ts)
-        C1 = (N1 - C*D1) / D
-        return C1
+        # curve = numerator / denominator
+        # ergo:
+        # numerator = curve * denominator
+        # ergo:
+        # numerator' = curve' * denominator + curve * denominator'
+        # ergo:
+        # curve' = (numerator' - curve*denominator') / denominator
+        numerator, denominator = self.fraction(0, ts)
+        curve = numerator / denominator
+        numerator1, denominator1 = self.fraction(1, ts)
+        curve1 = (numerator1 - curve*denominator1) / denominator
+        return curve1
 
     def second_derivative(self, t):
         return self.second_derivative_array(np.array([t]))[0]
 
     def second_derivative_array(self, ts):
-        N, D = self.fraction(0, ts)
-        C = N / D
-        N1, D1 = self.fraction(1, ts)
-        C1 = (N1 - C*D1) / D
-        N2, D2 = self.fraction(2, ts)
-        C2 = (N2 - 2*C1*D1 - C*D2) / D
-        return C2
+        # numerator'' = (curve * denominator)'' =
+        #  = curve'' * denominator + 2 * curve' * denominator' + curve * denominator''
+        numerator, denominator = self.fraction(0, ts)
+        curve = numerator / denominator
+        numerator1, denominator1 = self.fraction(1, ts)
+        curve1 = (numerator1 - curve*denominator1) / denominator
+        numerator2, denominator2 = self.fraction(2, ts)
+        curve2 = (numerator2 - 2*curve1*denominator1 - curve*denominator2) / denominator
+        return curve2
 
     def third_derivative_array(self, ts):
-        N, D = self.fraction(0, ts)
-        C = N / D
-        N1, D1 = self.fraction(1, ts)
-        C1 = (N1 - C*D1) / D
-        N2, D2 = self.fraction(2, ts)
-        C2 = (N2 - 2*C1*D1 - C*D2) / D
-        N3, D3 = self.fraction(3, ts)
+        # numerator''' = (curve * denominator)''' = 
+        #  = curve''' * denominator + 3 * curve'' * denominator' + 3 * curve' * denominator'' + denominator'''
+        numerator, denominator = self.fraction(0, ts)
+        curve = numerator / denominator
+        numerator1, denominator1 = self.fraction(1, ts)
+        curve1 = (numerator1 - curve*denominator1) / denominator
+        numerator2, denominator2 = self.fraction(2, ts)
+        curve2 = (numerator2 - 2*curve1*denominator1 - curve*denominator2) / denominator
+        numerator3, denominator3 = self.fraction(3, ts)
 
-        C3 = (N3 - 3*C2*D1 - 3*C1*D2 - C*D3) / D
-        return C3
+        curve3 = (numerator3 - 3*curve2*denominator1 - 3*curve1*denominator2 - curve*denominator3) / denominator
+        return curve3
 
     def derivatives_array(self, n, ts):
         result = []
         if n >= 1:
-            N, D = self.fraction(0, ts)
-            C = N / D
-            N1, D1 = self.fraction(1, ts)
-            C1 = (N1 - C*D1) / D
-            result.append(C1)
+            numerator, denominator = self.fraction(0, ts)
+            curve = numerator / denominator
+            numerator1, denominator1 = self.fraction(1, ts)
+            curve1 = (numerator1 - curve*denominator1) / denominator
+            result.append(curve1)
         if n >= 2:
-            N2, D2 = self.fraction(2, ts)
-            C2 = (N2 - 2*C1*D1 - C*D2) / D
-            result.append(C2)
+            numerator2, denominator2 = self.fraction(2, ts)
+            curve2 = (numerator2 - 2*curve1*denominator1 - curve*denominator2) / denominator
+            result.append(curve2)
         if n >= 3:
-            N3, D3 = self.fraction(3, ts)
-            C3 = (N3 - 3*C2*D1 - 3*C1*D2 - C*D3) / D
-            result.append(C3)
+            numerator3, denominator3 = self.fraction(3, ts)
+            curve3 = (numerator3 - 3*curve2*denominator1 - 3*curve1*denominator2 - curve*denominator3) / denominator
+            result.append(curve3)
         return result
 
     def get_u_bounds(self):
