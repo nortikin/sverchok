@@ -50,7 +50,12 @@ def join_tris(verts, faces, self):
 
 
 class SvJoinTrianglesNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Join coplanar Triangles'''
+
+    """
+    Triggers: join tris to quads
+    Tooltip: Join coplanar Triangles
+    """
+
     bl_idname = 'SvJoinTrianglesNode'
     bl_label = 'Join Triangles'
     bl_icon = 'OUTLINER_OB_EMPTY'
