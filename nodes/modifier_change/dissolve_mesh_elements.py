@@ -12,18 +12,38 @@ from itertools import chain, repeat
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
-from sverchok.utils.handling_sockets import SocketProperties, NodeInputs
+from sverchok.utils.handling_nodes import SocketProperties, NodeInputs, NodeProperties, NodeOutputs
+
+
+node_props = NodeProperties()
+node_props.mode = bpy.props.EnumProperty(items=[(n, n, '', ic, i) for i, (n, ic) in enumerate(zip(
+        ('Verts', 'Edges', 'Faces'), ('VERTEXSEL', 'EDGESEL', 'FACESEL')))])
+node_props.mask_mode = bpy.props.EnumProperty(items=[(n, n, '', ic, i) for i, (n, ic) in enumerate(zip(
+        ('Verts', 'Edges', 'Faces'), ('VERTEXSEL', 'EDGESEL', 'FACESEL')))])
+node_props.use_face_split = bpy.props.BoolProperty()
+node_props.use_boundary_tear = bpy.props.BoolProperty()
+node_props.use_verts = bpy.props.BoolProperty()
 
 
 node_inputs = NodeInputs()
 node_inputs.verts = SocketProperties('Verts', 'SvVerticesSocket', deep_copy=False, vectorize=False)
 node_inputs.edges = SocketProperties('Edges', 'SvStringsSocket', deep_copy=False, vectorize=False)
 node_inputs.faces = SocketProperties('Faces', 'SvStringsSocket', deep_copy=False, vectorize=False)
-node_inputs.mask = SocketProperties('Mask', 'SvStringsSocket', deep_copy=False)
+node_inputs.mask = SocketProperties('Mask', 'SvStringsSocket', deep_copy=False, prop_name='mask_mode',
+                                    custom_draw='draw_mask_socket_modes')
 node_inputs.verts_data = SocketProperties('Verts data', 'SvStringsSocket', deep_copy=False)
 node_inputs.edges_data = SocketProperties('Edges data', 'SvStringsSocket', deep_copy=False)
 node_inputs.faces_data = SocketProperties('Faces data', 'SvStringsSocket', deep_copy=False)
+
+
+node_outputs = NodeOutputs()
+node_outputs.verts = SocketProperties('Verts', 'SvVerticesSocket')
+node_outputs.edges = SocketProperties('Edges', 'SvStringsSocket')
+node_outputs.faces = SocketProperties('Faces', 'SvStringsSocket')
+node_outputs.mask = SocketProperties('Mask', 'SvStringsSocket')
+node_outputs.verts_data = SocketProperties('Verts data', 'SvStringsSocket')
+node_outputs.edges_data = SocketProperties('Edges data', 'SvStringsSocket')
+node_outputs.faces_data = SocketProperties('Faces_data', 'SvStringsSocket')
 
 # def node_process(inputs: InputData, properties: NodeProperties):
 #     me = TriangulatedMesh([Vector(co) for co in inputs.verts], inputs.faces)
@@ -44,25 +64,24 @@ class SvDissolveMeshElements(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Dissolve mesh elements'
     sv_icon = 'SV_RANDOM_NUM_GEN'
 
-    proportional: bpy.props.BoolProperty(
-        name="Proportional",
-        description="If checked, then number of points at each face is proportional to the area of the face",
-        default=True,
-        update=updateNode)
+    _: bool  # for crating annotation dict
+    node_props.add_properties(vars()['__annotations__'])
 
     def draw_buttons(self, context, layout):
-        pass
+        layout.prop(self, 'mode', expand=True)
+
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'use_face_split', toggle=1)
+        layout.prop(self, 'use_boundary_tear', toggle=1)
+        layout.prop(self, 'use_verts', toggle=1)
+
+    def draw_mask_socket_modes(self, socket, context, layout):
+        layout.label(text='Mask')
+        layout.prop(self, 'mask_mode', expand=True, text='')
 
     def sv_init(self, context):
         node_inputs.add_sockets(self)
-
-        self.outputs.new('SvVerticesSocket', 'Verts')
-        self.outputs.new('SvStringsSocket', 'Edges')
-        self.outputs.new('SvStringsSocket', 'Faces')
-        self.outputs.new('SvStringsSocket', 'Mask')
-        self.outputs.new('SvStringsSocket', 'Verts data')
-        self.outputs.new('SvStringsSocket', 'Edges data')
-        self.outputs.new('SvStringsSocket', 'Face data')
+        node_outputs.add_sockets(self)
 
     def process(self):
         if not all([self.inputs['Verts'].is_linked, self.inputs['Faces'].is_linked]):
