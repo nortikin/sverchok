@@ -18,7 +18,7 @@
 
 import bpy
 import sys
-from bpy.props import EnumProperty, BoolProperty
+from bpy.props import EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_cycle as mlr
 from sverchok.utils.csg_core import CSG
@@ -86,6 +86,8 @@ class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         update=update_mode)
 
+    recursion_limit: IntProperty(min=1000, default=1000, step=50, max=10000, name='recurse limit', update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Verts A')
         self.inputs.new('SvStringsSocket',  'Polys A')
@@ -104,6 +106,9 @@ class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if self.nest_objs:
             col.prop(self, "out_last", toggle=True)
 
+    def draw_buttons_ext(self, context, layout):
+        layout.row().prop(self, "recursion_limit")
+
     def process(self):
         OutV, OutP = self.outputs
         if not OutV.is_linked:
@@ -112,23 +117,29 @@ class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         SMode = self.selected_mode
         out = []
         recursionlimit = sys.getrecursionlimit()
-        sys.setrecursionlimit(10000)
-        if not self.nest_objs:
-            for v1, p1, v2, p2 in zip(*mlr([VertA.sv_get(), PolA.sv_get(), VertB.sv_get(), PolB.sv_get()])):
-                out.append(Boolean(v1, p1, v2, p2, SMode))
-        else:
-            vnest, pnest = VertN.sv_get(), PolN.sv_get()
-            First = Boolean(vnest[0], pnest[0], vnest[1], pnest[1], SMode)
-            if not self.out_last:
-                out.append(First)
-                for i in range(2, len(vnest)):
-                    out.append(Boolean(First[0], First[1], vnest[i], pnest[i], SMode))
-                    First = out[-1]
+        sys.setrecursionlimit(self.recursion_limit)
+
+        try:
+            if not self.nest_objs:
+                for v1, p1, v2, p2 in zip(*mlr([VertA.sv_get(), PolA.sv_get(), VertB.sv_get(), PolB.sv_get()])):
+                    out.append(Boolean(v1, p1, v2, p2, SMode))
             else:
-                for i in range(2, len(vnest)):
-                    First = Boolean(First[0], First[1], vnest[i], pnest[i], SMode)
-                out.append(First)
+                vnest, pnest = VertN.sv_get(), PolN.sv_get()
+                First = Boolean(vnest[0], pnest[0], vnest[1], pnest[1], SMode)
+                if not self.out_last:
+                    out.append(First)
+                    for i in range(2, len(vnest)):
+                        out.append(Boolean(First[0], First[1], vnest[i], pnest[i], SMode))
+                        First = out[-1]
+                else:
+                    for i in range(2, len(vnest)):
+                        First = Boolean(First[0], First[1], vnest[i], pnest[i], SMode)
+                    out.append(First)
+        except Exception as err:
+            print(err)
+
         sys.setrecursionlimit(recursionlimit)
+
         OutV.sv_set([i[0] for i in out])
         if OutP.is_linked:
             OutP.sv_set([i[1] for i in out])
