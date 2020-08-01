@@ -26,11 +26,11 @@ node_props.use_verts = bpy.props.BoolProperty()
 
 
 node_inputs = NodeInputs()
-node_inputs.verts = SocketProperties('Verts', 'SvVerticesSocket', deep_copy=False, vectorize=False)
+node_inputs.verts = SocketProperties('Verts', 'SvVerticesSocket', deep_copy=False, vectorize=False, mandatory=True)
 node_inputs.edges = SocketProperties('Edges', 'SvStringsSocket', deep_copy=False, vectorize=False)
 node_inputs.faces = SocketProperties('Faces', 'SvStringsSocket', deep_copy=False, vectorize=False)
 node_inputs.mask = SocketProperties('Mask', 'SvStringsSocket', deep_copy=False, prop_name='mask_mode',
-                                    custom_draw='draw_mask_socket_modes')
+                                    custom_draw='draw_mask_socket_modes', mandatory=True)
 node_inputs.verts_data = SocketProperties('Verts data', 'SvStringsSocket', deep_copy=False)
 node_inputs.edges_data = SocketProperties('Edges data', 'SvStringsSocket', deep_copy=False)
 node_inputs.faces_data = SocketProperties('Faces data', 'SvStringsSocket', deep_copy=False)
@@ -83,13 +83,13 @@ class SvDissolveMeshElements(bpy.types.Node, SverchCustomTreeNode):
         node_inputs.add_sockets(self)
         node_outputs.add_sockets(self)
 
+    @node_inputs.check_input_data
     def process(self):
-        if not all([self.inputs['Verts'].is_linked, self.inputs['Faces'].is_linked]):
-            return
+        pass
 
-        props = NodeProperties(self.proportional)
-        out = [node_process(inputs, props) for inputs in self.get_input_data_iterator(INPUT_CONFIG)]
-        [s.sv_set(data) for s, data in zip(self.outputs, zip(*out))]
+        # props = NodeProperties(self.proportional)
+        # out = [node_process(inputs, props) for inputs in self.get_input_data_iterator(INPUT_CONFIG)]
+        # [s.sv_set(data) for s, data in zip(self.outputs, zip(*out))]
 
     def get_input_data_iterator(self, input_config: List[SocketProperties]):
         length_max = max([len(s.sv_get(default=p.default, deepcopy=False)) for s, p in zip(self.inputs, input_config)])
