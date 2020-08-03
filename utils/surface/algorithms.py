@@ -681,6 +681,56 @@ class SvExtrudeCurveMathutilsSurface(SvSurface):
     def get_v_max(self):
         return self.extrusion.get_u_bounds()[1]
 
+class SvExtrudeCurveNormalDirSurface(SvSurface):
+    def __init__(self, profile, extrusion, plane_normal, origin = PROFILE):
+        self.profile = profile
+        self.extrusion = extrusion
+        self.origin = origin
+        self.plane_normal = np.array(plane_normal)
+        self.normal_delta = 0.001
+        self.__description__ = "Extrusion of {}".format(profile)
+
+    def evaluate(self, u, v):
+        return self.evaluate_array(np.array([u]), np.array([v]))[0]
+
+    def evaluate_array(self, us, vs):
+        profile_points = self.profile.evaluate_array(us)
+        u_min, u_max = self.profile.get_u_bounds()
+        v_min, v_max = self.extrusion.get_u_bounds()
+        profile_vectors = profile_points
+        profile_vectors = np.transpose(profile_vectors[np.newaxis], axes=(1, 2, 0))
+        extrusion_start = self.extrusion.evaluate(v_min)
+        extrusion_points = self.extrusion.evaluate_array(vs)
+        extrusion_vectors = extrusion_points - extrusion_start
+        matrices, _ , _ = self.extrusion.frame_by_plane_array(vs, self.plane_normal)
+        profile_vectors = (matrices @ profile_vectors)[:,:,0]
+        result = extrusion_vectors + profile_vectors
+        if self.origin == EXTRUSION:
+            result = result + self.extrusion.evaluate(v_min)
+        return result
+
+    def get_u_min(self):
+        return self.profile.get_u_bounds()[0]
+
+    def get_u_max(self):
+        return self.profile.get_u_bounds()[1]
+
+    def get_v_min(self):
+        return self.extrusion.get_u_bounds()[0]
+
+    def get_v_max(self):
+        return self.extrusion.get_u_bounds()[1]
+
+    @property
+    def u_size(self):
+        m,M = self.profile.get_u_bounds()
+        return M - m
+
+    @property
+    def v_size(self):
+        m,M = self.extrusion.get_u_bounds()
+        return M - m
+
 class SvConstPipeSurface(SvSurface):
     __description__ = "Pipe"
 

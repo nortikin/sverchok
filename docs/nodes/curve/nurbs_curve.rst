@@ -4,7 +4,7 @@ Build NURBS Curve
 Dependencies
 ------------
 
-This node requires Geomdl_ library to work.
+This node can optionally use Geomdl_ library.
 
 .. _Geomdl: https://onurraufbingol.com/NURBS-Python/
 
@@ -32,6 +32,14 @@ Parameters
 ----------
 
 This node has the following parameters:
+
+* **Implementation**. This defines the implementation of NURBS mathematics to be used. The available options are:
+
+  * **Geomdl**. Use Geomdl_ library. This option is available only when Geomdl package is installed.
+  * **Sverchok**. Use built-in Sverchok implementation.
+  
+  In general, built-in implementation should be faster; but Geomdl implementation is better tested.
+  The default option is **Geomdl**, when it is available; otherwise, built-in implementation is used.
 
 * **Curve mode**. This defines the type of curve to be built:
 
