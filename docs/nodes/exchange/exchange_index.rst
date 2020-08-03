@@ -7,5 +7,6 @@ Exchange
 
    export_rw3dm_json
    import_rw3dm_json
+   bezier_in
    nurbs_in
 
