@@ -1,0 +1,47 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {
+    "NURBS Circle": "{\"nodes\": {\"Group Inputs Exp\": {\"params\": {\"node_kind\": \"outputs\"}, \"bl_idname\": \"SvGroupInputsNodeExp\", \"outputs\": [], \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [-643.2581176757812, 975.247314453125], \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true}, \"Group Outputs Exp\": {\"params\": {\"node_kind\": \"inputs\"}, \"bl_idname\": \"SvGroupOutputsNodeExp\", \"inputs\": [[\"Curve\", \"SvCurveSocket\"]], \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [294.0106506347656, 975.247314453125], \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true}, \"List Input.002\": {\"params\": {\"mode\": \"float_list\", \"v_int\": 3, \"vector_list\": [1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], \"int_\": 12, \"float_list\": [0.0, 0.0, 0.0, 1.5707963705062866, 1.5707963705062866, 3.1415927410125732, 3.1415927410125732, 4.71238899230957, 4.71238899230957, 6.2831854820251465, 6.2831854820251465, 6.2831854820251465, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}, \"bl_idname\": \"SvListInputNode\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [-194.97479248046875, 781.3618774414062]}, \"Build NURBS Curve\": {\"params\": {\"degree\": 2, \"implementation\": \"GEOMDL\", \"is_cyclic\": 1, \"knot_mode\": \"EXPLICIT\", \"normalize_knots\": 0}, \"bl_idname\": \"SvExNurbsCurveNode\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [114.0106430053711, 1023.3646240234375]}, \"List Input\": {\"params\": {\"mode\": \"vector\", \"v_int\": 9, \"vector_list\": [1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, -1.0, 1.0, 0.0, -1.0, 0.0, 0.0, -1.0, -1.0, 0.0, 0.0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}, \"bl_idname\": \"SvListInputNode\", \"height\": 100.0, \"width\": 209.2644805908203, \"label\": \"\", \"hide\": false, \"location\": [-206.0013885498047, 1169.1326904296875]}, \"List Input.001\": {\"params\": {\"mode\": \"float_list\", \"v_int\": 3, \"vector_list\": [1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], \"int_\": 9, \"float_list\": [1.0, 0.7071067690849304, 1.0, 0.7071067690849304, 1.0, 0.7071070075035095, 1.0, 0.7071070075035095, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}, \"bl_idname\": \"SvListInputNode\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [-433.25811767578125, 901.7835693359375]}}, \"groups\": {}, \"framed_nodes\": {}, \"update_lists\": [[\"List Input\", 0, \"Build NURBS Curve\", 0], [\"List Input.001\", 0, \"Build NURBS Curve\", 1], [\"List Input.002\", 0, \"Build NURBS Curve\", 2], [\"Build NURBS Curve\", 0, \"Group Outputs Exp\", 0]], \"export_version\": \"0.079\", \"bl_idname\": \"SverchGroupTreeType\", \"cls_bl_idname\": \"SvGroupNodeMonad_140464057237159\"}"
+  },
+  "nodes": {
+    "NURBS Circle": {
+      "bl_idname": "SvMonadGenericNode",
+      "color": [
+        0.8308190107345581,
+        0.911391019821167,
+        0.7545620203018188
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -176.92860412597656,
+        687.918212890625
+      ],
+      "params": {
+        "all_props": {
+          "cls_bl_idname": "SvGroupNodeMonad_140464057237159",
+          "float_props": {},
+          "int_props": {},
+          "name": "NURBS Circle"
+        },
+        "cls_dict": {
+          "cls_bl_idname": "SvGroupNodeMonad_140464057237159",
+          "input_template": [],
+          "output_template": [
+            [
+              "Curve",
+              "SvCurveSocket"
+            ]
+          ]
+        },
+        "loops": 0,
+        "monad": "NURBS Circle"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": []
+}
