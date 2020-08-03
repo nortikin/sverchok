@@ -4,7 +4,6 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, fullList
-from sverchok.utils.logging import info, exception
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.dummy_nodes import add_dummy
@@ -143,7 +142,7 @@ class SvExNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):
                 curve_knotvector = knots
 
             new_curve = SvNurbsCurve.build(self.implementation, degree, curve_knotvector, vertices, curve_weights)
-            if self.is_cyclic:
+            if self.knot_mode == 'AUTO' and self.is_cyclic:
                 u_min = curve_knotvector[degree]
                 u_max = curve_knotvector[-degree-2]
                 new_curve.u_bounds = u_min, u_max
