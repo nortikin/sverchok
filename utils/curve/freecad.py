@@ -8,6 +8,7 @@
 import numpy as np
 
 from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.nurbs import SvNurbsCurve
 
 class SvSolidEdgeCurve(SvCurve):
     __description__ = "Solid Edge"
@@ -36,4 +37,16 @@ class SvSolidEdgeCurve(SvCurve):
 
     def get_u_bounds(self):
         return self.u_bounds
+
+    def to_nurbs(self, implementation = SvNurbsCurve.NATIVE):
+        curve = self.curve.toBSpline(*self.u_bounds)
+        curve.transform(self.edge.Matrix)
+        control_points = curve.getPoles()
+        #print(control_points)
+        curve = SvNurbsCurve.build(implementation,
+                    curve.Degree, curve.KnotSequence,
+                    control_points,
+                    curve.getWeights())
+        #curve.u_bounds = self.u_bounds
+        return curve
 

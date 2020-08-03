@@ -49,7 +49,7 @@ else:
                 edges_curves = []
                 for e in solid.Edges:
                     try:
-                        curve = SvSolidEdgeCurve(e)
+                        curve = SvSolidEdgeCurve(e).to_nurbs()
                         edges_curves.append(curve)
                     except TypeError:
                         pass
