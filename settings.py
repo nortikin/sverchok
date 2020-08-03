@@ -278,7 +278,7 @@ class SverchokPreferences(AddonPreferences):
 
     node_panels_columns : IntProperty(
             name = "Columns",
-            description = "Number of icon panels per row",
+            description = "Number of icon panels per row; Set to 0 for automatic selection",
             default = 4,
             min = 0, max = 12
         )
