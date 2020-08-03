@@ -13,9 +13,45 @@ The module includes tools of automatization of creating nodes and get data from 
 from functools import wraps
 from itertools import cycle
 from operator import setitem
-from typing import NamedTuple, Any, List, Generator
+from typing import NamedTuple, Any, List, Generator, Union, Type
 
 from bpy.types import Node
+
+
+class WrapNode:
+    def __init__(self):
+        self.props = NodeProperties()
+        self.inputs = NodeInputs()
+        self.outputs = NodeOutputs()
+
+    def set_sv_init_method(self, node_class: Type[Node]):
+        def sv_init(node, context):
+            self.inputs.add_sockets(node)
+            self.outputs.add_sockets(node)
+        node_class.sv_init = sv_init
+
+    def decorate_process_method(self, node_class: Type[Node]):
+
+        def decorate_process(process):
+            @wraps(node_class.process)
+            def wrapper(node: Node):
+                if self.inputs.has_required_data(node):
+                    return process(node)
+                else:
+                    self.inputs.pass_data(node)
+            return wrapper
+        node_class.process = decorate_process(node_class.process)
+
+
+def initialize_node(wrap_node: WrapNode):
+
+    def wrapper(node_class: Type[Node]):
+        wrap_node.props.add_properties(node_class.__annotations__)
+        wrap_node.set_sv_init_method(node_class)
+        wrap_node.decorate_process_method(node_class)
+        return node_class
+
+    return wrapper
 
 
 class SocketProperties(NamedTuple):
@@ -30,21 +66,21 @@ class SocketProperties(NamedTuple):
 
 
 class NodeInputs:
-    def __init__(self):
-        self._sockets: List[SocketProperties] = []
-
-    def __setattr__(self, key, value):
-        if isinstance(value, SocketProperties):
-            self._sockets.append(value)
-
-        object.__setattr__(self, key, value)
-
+    """
+    It contains properties of input sockets of a node
+    properties should be added in up down order by assigning SocketProperties object to an attribute
+    like this: node_inputs.verts = SocketProperties("Verts", 'SvVerticesSocket')
+    don't add any other attributes neither other then SocketProperties neither outside the class or inside
+    __setattr__ and __getattribute__ method won't let it
+    """
     def add_sockets(self, node: Node):
+        # initialization sockets in a node
         [node.inputs.new(p.socket_type, p.name) for p in self._sockets]
         [setattr(s, 'prop_name', p.prop_name) for s, p in zip(node.inputs, self._sockets)]
         [setattr(s, 'custom_draw', p.custom_draw) for s, p in zip(node.inputs, self._sockets)]
 
     def check_input_data(self, process):
+        # decorator for process function
         @wraps(process)
         def wrapper(node: Node):
             if self.has_required_data(node):
@@ -52,6 +88,36 @@ class NodeInputs:
             else:
                 self.pass_data(node)
         return wrapper
+
+    def __init__(self):
+        object.__setattr__(self, '_sockets', [])
+        object.__setattr__(self, '_socket_attr_names', set())
+
+    @property
+    def sockets(self):
+        return self._sockets
+
+    @property
+    def socket_attr_names(self):
+        return self._socket_attr_names
+
+    def __setattr__(self, key, value):
+        # only used for adding new sockets
+        if isinstance(value, SocketProperties):
+            # socket attribute contains only index to data in the sockets list
+            object.__setattr__(self, key, len(self.sockets))
+            self.sockets.append(value)
+            self.socket_attr_names.add(key)
+        else:
+            raise TypeError("Only SocketProperties type can be assigned to a attribute")
+
+    def __getattribute__(self, name):
+        if name not in object.__getattribute__(self, '_socket_attr_names'):  # Name intersections ???
+            return object.__getattribute__(self, name)
+
+        if object.__getattribute__(self, '_current_layer') is None:
+            raise AttributeError("The values of sockets can't be read outside 'invoke layers' context manager")
+        # todo
 
     def has_required_data(self, node: Node) -> bool:
         return all([sock.is_linked for sock, prop in zip(node.inputs, self._sockets) if prop.mandatory])
@@ -91,6 +157,11 @@ class NodeOutputs:
     def add_sockets(self, node: Node):
         [node.outputs.new(p.socket_type, p.name) for p in self._sockets]
         [setattr(s, 'custom_draw', p.custom_draw) for s, p in zip(node.inputs, self._sockets)]
+
+    @staticmethod
+    def set_data(node: Node, data: list):
+        # data should be joined by layers, each layer should be consistent to output sockets
+        [s.sv_set(d) for s, d in zip(node.outputs, zip(*data))]
 
 
 class NodeProperties:
