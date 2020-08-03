@@ -291,16 +291,11 @@ class SvIconsLayout(SvOperatorLayout):
         super().__init__(parent)
         self.columns = columns
         self._column = 0
-        self._row = None
-
-    def _tick_column(self):
-        self._column = (self._column + 1) % self.columns
-        if self._column == 0:
-            self._row = None
+        self._flow = None
 
     def separator(self):
         if not self._prev_is_separator:
-            self._row = None
+            self._flow = None
             self._column = 0
             self.parent.separator()
         self._prev_is_separator = True
@@ -308,15 +303,15 @@ class SvIconsLayout(SvOperatorLayout):
     def operator(self, operator_name, **params):
         self._prev_is_separator = False
         if 'icon_value' in params or 'icon' in params:
-            if self._row is None:
-                self._row = self.parent.row(align=True)
-                self._row.scale_x = self._row.scale_y = 1.5
+            if self._flow is None:
+                #self._flow = self.parent.column_flow(columns=self.columns, align=True)
+                self._flow = self.parent.grid_flow(row_major=True, align=True, columns=self.columns)
+                self._flow.scale_x = self._flow.scale_y = 1.5
             params['text'] = ""
-            op = self._row.operator(operator_name, **params)
-            self._tick_column()
+            op = self._flow.operator(operator_name, **params)
             return op
         else:
-            self._row = None
+            self._flow = None
             self._column = 0
             return self.parent.operator(operator_name, **params)
 

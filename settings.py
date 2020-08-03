@@ -280,7 +280,7 @@ class SverchokPreferences(AddonPreferences):
             name = "Columns",
             description = "Number of icon panels per row",
             default = 4,
-            min = 2, max = 12
+            min = 0, max = 12
         )
 
     enable_live_objin: BoolProperty(
