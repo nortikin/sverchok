@@ -62,6 +62,7 @@ class SvBezierInNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.outputs.new('SvCurveSocket', 'Curves')
+        self.outputs.new('SvVerticesSocket', 'ControlPoints')
         self.outputs.new('SvMatrixSocket', 'Matrices')
 
     def get_objects_from_scene(self, ops):
@@ -126,16 +127,21 @@ class SvBezierInNode(bpy.types.Node, SverchCustomTreeNode):
         pairs = zip(spline.bezier_points, spline.bezier_points[1:])
         if spline.use_cyclic_u:
             pairs = list(pairs) + [(spline.bezier_points[-1], spline.bezier_points[0])]
+        points = []
+        is_first = True
         for p1, p2 in pairs:
             c0 = p1.co
             c1 = p1.handle_right
             c2 = p2.handle_left
             c3 = p2.co
             if self.apply_matrix:
-                c0, c1, c2, c3 = [matrix @ c for c in [c0, c1, c2, c3]]
+                c0, c1, c2, c3 = [tuple(matrix @ c) for c in [c0, c1, c2, c3]]
+            else:
+                c0, c1, c2, c3 = [tuple(c) for c in [c0, c1, c2, c3]]
+            points.append([c0, c1, c2, c3])
             segment = SvCubicBezierCurve(c0, c1, c2, c3)
             segments.append(segment)
-        return SvConcatCurve(segments)
+        return points, SvConcatCurve(segments)
 
     def process(self):
 
@@ -144,6 +150,7 @@ class SvBezierInNode(bpy.types.Node, SverchCustomTreeNode):
 
         curves_out = []
         matrices_out = []
+        controls_out = []
         for item in self.object_names:
             object_name = item.name
             obj = bpy.data.objects.get(object_name)
@@ -158,11 +165,13 @@ class SvBezierInNode(bpy.types.Node, SverchCustomTreeNode):
                     if spline.type != 'BEZIER':
                         self.warning("%s: not supported spline type: %s", spline, spline.type)
                         continue
-                    curve = self.get_curve(spline, matrix)
+                    controls, curve = self.get_curve(spline, matrix)
                     curves_out.append(curve)
+                    controls_out.append(controls)
                     matrices_out.append(matrix)
 
         self.outputs['Curves'].sv_set(curves_out)
+        self.outputs['ControlPoints'].sv_set(controls_out)
         self.outputs['Matrices'].sv_set(matrices_out)
 
     def storage_get_data(self, node_dict):

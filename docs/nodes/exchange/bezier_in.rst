@@ -40,5 +40,6 @@ Outputs
 This node has the following outputs:
 
 * **Curves**. Generated Curve objects.
+* **ControlPoints**. Control points of Bezier curves. This output contains a list of 4 points for each segments of each Bezier curve.
 * **Matrices**. Transformation matrices of selected objects.
 
