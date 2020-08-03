@@ -9,25 +9,25 @@
 """
 The module includes tools of automatization of creating nodes and get data from their sockets
 """
-
+from enum import Enum
 from functools import wraps
 from itertools import cycle
 from operator import setitem
-from typing import NamedTuple, Any, List, Generator, Union, Type
+from typing import NamedTuple, Any, List, Generator, Type, Set, Dict
 
 from bpy.types import Node
 
 
 class WrapNode:
     def __init__(self):
-        self.props = NodeProperties()
+        self.props = NodeProps()
         self.inputs = NodeInputs()
         self.outputs = NodeOutputs()
 
     def set_sv_init_method(self, node_class: Type[Node]):
         def sv_init(node, context):
-            self.inputs.add_sockets(node)
             self.outputs.add_sockets(node)
+            self.inputs.add_sockets(node)
         node_class.sv_init = sv_init
 
     def decorate_process_method(self, node_class: Type[Node]):
@@ -54,15 +54,43 @@ def initialize_node(wrap_node: WrapNode):
     return wrapper
 
 
+class SockTypes(Enum):
+    STRINGS = "SvStringsSocket"
+    VERTICES = "SvVerticesSocket"
+    QUATERNION = "SvQuaternionSocket"
+    COLOR = "SvColorSocket"
+    MATRIX = "SvMatrixSocket"
+    DUMMY = "SvDummySocket"
+    SEPARATOR = "SvSeparatorSocket"
+    OBJECT = "SvObjectSocket"
+    TEXT = "SvTextSocket"
+    DICTIONARY = "SvDictionarySocket"
+    FILE_PATH = "SvFilePathSocket"
+    SOLID = "SvSolidSocket"
+
+    def get_name(self) -> str:
+        return self.value
+
+
 class SocketProperties(NamedTuple):
     name: str
-    socket_type: str
+    socket_type: SockTypes
     prop_name: str = ''
     custom_draw: str = ''
     deep_copy: bool = True
     vectorize: bool = True
     default: Any = object()
     mandatory: bool = False
+
+
+class NodeProperties(NamedTuple):
+    bpy_props: tuple  # tuple is whet all bpy.props actually returns
+    name: str = ''  # not mandatory, the name will be overridden by attribute name
+
+    def replace_name(self, new_name):
+        props = list(self)
+        props[1] = new_name
+        return type(self)(*props)
 
 
 class NodeInputs:
@@ -75,9 +103,10 @@ class NodeInputs:
     """
     def add_sockets(self, node: Node):
         # initialization sockets in a node
-        [node.inputs.new(p.socket_type, p.name) for p in self._sockets]
-        [setattr(s, 'prop_name', p.prop_name) for s, p in zip(node.inputs, self._sockets)]
-        [setattr(s, 'custom_draw', p.custom_draw) for s, p in zip(node.inputs, self._sockets)]
+        breakpoint()
+        [node.inputs.new(p.socket_type.get_name(), p.name) for p in self.sockets]
+        [setattr(s, 'prop_name', p.prop_name) for s, p in zip(node.inputs, self.sockets)]
+        [setattr(s, 'custom_draw', p.custom_draw) for s, p in zip(node.inputs, self.sockets)]
 
     def check_input_data(self, process):
         # decorator for process function
@@ -94,11 +123,11 @@ class NodeInputs:
         object.__setattr__(self, '_socket_attr_names', set())
 
     @property
-    def sockets(self):
+    def sockets(self) -> List[SocketProperties]:
         return self._sockets
 
     @property
-    def socket_attr_names(self):
+    def socket_attr_names(self) -> Set[str]:
         return self._socket_attr_names
 
     def __setattr__(self, key, value):
@@ -155,7 +184,7 @@ class NodeOutputs:
         object.__setattr__(self, key, value)
 
     def add_sockets(self, node: Node):
-        [node.outputs.new(p.socket_type, p.name) for p in self._sockets]
+        [node.outputs.new(p.socket_type.get_name(), p.name) for p in self._sockets]
         [setattr(s, 'custom_draw', p.custom_draw) for s, p in zip(node.inputs, self._sockets)]
 
     @staticmethod
@@ -164,16 +193,25 @@ class NodeOutputs:
         [s.sv_set(d) for s, d in zip(node.outputs, zip(*data))]
 
 
-class NodeProperties:
+class NodeProps:
     def __init__(self):
-        self._properties = dict()
+        self._properties: Dict[str, NodeProperties] = dict()
 
     def __setattr__(self, key, value):
-        if isinstance(value, tuple):
+        if isinstance(value, NodeProperties):
             # it should detect bpy.props...
+            if not value.name:
+                # get property name from attribute
+                value = value.replace_name(key)
             self._properties[key] = value
 
         object.__setattr__(self, key, value)
 
+    def __getattribute__(self, name):
+        props = object.__getattribute__(self, '_properties')
+        if name in props:
+            return props[name]
+        return object.__getattribute__(self, name)
+
     def add_properties(self, node_annotations: dict):
-        [setitem(node_annotations, name, prop) for name, prop in self._properties.items()]
+        [setitem(node_annotations, prop.name, prop.bpy_props) for prop in self._properties.values()]
