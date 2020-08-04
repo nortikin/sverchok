@@ -23,6 +23,7 @@ else:
         us = np.linspace(u_min, u_max, num=samples)
 
         points = curve.evaluate_array(us).tolist()
+        #print("P:", points)
 
         kdt = KDTree(len(us))
         for i, v in enumerate(points):
@@ -96,12 +97,21 @@ else:
                     new_points = []
 
                     init_ts, init_points = init_guess(curve, src_points,samples=self.samples)
+                    #self.info("I: %s", init_points)
                     for src_point, init_t, init_point in zip(src_points, init_ts, init_points):
                         if self.precise:
+                            delta_t = (t_max - t_min) / self.samples
+                            self.debug("T_min %s, T_max %s, init_t %s, delta_t %s", t_min, t_max, init_t, delta_t)
                             if init_t <= t_min:
-                                bracket = (init_t - 0.1, init_t, t_max)
+                                if init_t - delta_t >= t_min:
+                                    bracket = (init_t - delta_t, init_t, t_max)
+                                else:
+                                    bracket = None # (t_min, t_min + delta_t, t_min + 2*delta_t)
                             elif init_t >= t_max:
-                                bracket = (t_min, init_t, init_t + 0.1)
+                                if init_t + delta_t <= t_max:
+                                    bracket = (t_min, init_t, init_t + delta_t)
+                                else:
+                                    bracket = None # (t_max - 2*delta_t, t_max - delta_t, t_max)
                             else:
                                 bracket = (t_min, init_t, t_max)
                             result = minimize_scalar(goal(curve, src_point),
