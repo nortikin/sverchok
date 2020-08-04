@@ -96,17 +96,6 @@ class SockTypes(Enum):
         return self.value
 
 
-class SocketProperties(NamedTuple):
-    name: str
-    socket_type: SockTypes
-    prop_name: str = ''
-    custom_draw: str = ''
-    deep_copy: bool = True
-    vectorize: bool = True
-    default: Any = object()
-    mandatory: bool = False
-
-
 class NodeProperties(NamedTuple):
     bpy_props: tuple  # tuple is whet all bpy.props actually returns
     name: str = ''  # not mandatory, the name will be overridden by attribute name
@@ -115,6 +104,17 @@ class NodeProperties(NamedTuple):
         props = list(self)
         props[1] = new_name
         return type(self)(*props)
+
+
+class SocketProperties(NamedTuple):
+    name: str
+    socket_type: SockTypes
+    prop: NodeProperties = None
+    custom_draw: str = ''
+    deep_copy: bool = True
+    vectorize: bool = True
+    default: Any = [[]]
+    mandatory: bool = False
 
 
 class NodeInputs:
@@ -128,7 +128,7 @@ class NodeInputs:
     def add_sockets(self, node: Node):
         # initialization sockets in a node
         [node.inputs.new(p.socket_type.get_name(), p.name) for p in self.sockets.values()]
-        [setattr(s, 'prop_name', p.prop_name) for s, p in zip(node.inputs, self.sockets.values())]
+        [setattr(s, 'prop_name', p.prop.name) for s, p in zip(node.inputs, self.sockets.values()) if p.prop]
         [setattr(s, 'custom_draw', p.custom_draw) for s, p in zip(node.inputs, self.sockets.values())]
 
     def check_input_data(self, process):
@@ -164,10 +164,11 @@ class NodeInputs:
         if name not in object.__getattribute__(self, '_sockets'):  # Name intersections ???
             return object.__getattribute__(self, name)
 
-        if self.wrap_node.layer_number is None:
+        if not self.wrap_node.is_in_process:
+            # get normal attribute
             return object.__getattribute__(self, '_sockets')[name]
         else:
-            # inside loop
+            # get socket attribute, inside loop
             socket_props = self.sockets[name]
             bl_socket = self.wrap_node.bl_node.inputs[socket_props.name]
             socket_data = bl_socket.sv_get(deepcopy=False, default=socket_props.default)
