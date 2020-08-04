@@ -102,6 +102,7 @@
     SvSplitCurveNode
     SvExCurveLengthNode
     SvExCurveFrameNode
+    SvCurveFrameOnSurfNode
     SvExCurveCurvatureNode
     SvExCurveTorsionNode
     SvExCurveExtremesNode

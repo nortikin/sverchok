@@ -119,7 +119,7 @@ class NurbsCurveTests(SverchokTestCase):
         self.assert_numpy_arrays_equal(t1s, t2s, precision=8)
 
     #@unittest.skip
-    #@requires(geomdl)
+    @requires(geomdl)
     def test_curve_third_2(self):
         weights = [1.0, 2.0, 3.0, 1.0]
         geomdl_curve = SvGeomdlCurve.build(self.degree, self.knotvector, self.control_points, weights)

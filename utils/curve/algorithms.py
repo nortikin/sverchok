@@ -8,7 +8,7 @@
 import numpy as np
 
 from mathutils import Vector, Matrix
-from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.core import SvCurve, ZeroCurvatureException
 from sverchok.utils.geom import PlaneEquation, LineEquation, LinearSpline, CubicSpline
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
 from sverchok.utils.math import (
@@ -637,4 +637,59 @@ class SvLengthRebuiltCurve(SvCurve):
     def evaluate_array(self, ts):
         c_ts = self.solver.solve(ts)
         return self.curve.evaluate_array(c_ts)
+
+def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, on_zero_curvature=SvCurve.ASIS):
+    """
+    Curve frame which is lying in the surface.
+
+    Frame is oriented as follows:
+        * X is pointing along surface normal
+        * Z is pointing along curve tangent
+        * Y is perpendicular to both X and Z.
+
+    input:
+        * surface
+        * uv_curve - uv_curve in the surface's UV space
+        * us - values of curve's T parameter; type: np.array of shape (n,)
+        * w_axis - defines which axis of the curve is surface's normal (two
+          other axes are surface's U and V). Default of 2 means X is U and Y is V.
+
+    output: tuple:
+        * matrices: np.array of shape (n, 3, 3)
+        * points: np.array of shape (n, 3) - points on the surface
+        * tangents: np.array of shape (n, 3)
+        * normals: np.array of shape (n, 3)
+        * binormals: np.array of shape (n, 3)
+    """
+
+    if w_axis == 2:
+        U, V = 0, 1
+    elif w_axis == 1:
+        U, V = 0, 2
+    else:
+        U, V = 1, 2
+
+    uv_points = uv_curve.evaluate_array(us)
+    curve = SvCurveOnSurface(uv_curve, surface, axis=w_axis)
+    surf_points = curve.evaluate_array(us)
+    tangents = curve.tangent_array(us)
+    tangents = tangents / np.linalg.norm(tangents, axis=1, keepdims=True)
+
+    us, vs = uv_points[:,U], uv_points[:,V]
+    normals = surface.normal_array(us, vs)
+    normals = normals / np.linalg.norm(normals, axis=1, keepdims=True)
+
+    if on_zero_curvature != SvCurve.ASIS:
+        zero_normal = np.linalg.norm(normals, axis=1) < 1e-6
+        if zero_normal.any():
+            if on_zero_curvature == SvCurve.FAIL:
+                raise ZeroCurvatureException(np.unique(ts[zero_normal]), zero_normal)
+            elif on_zero_curvature == SvCurve.RETURN_NONE:
+                return None
+
+    binormals = - np.cross(normals, tangents)
+    matrices_np = np.dstack((normals, binormals, tangents))
+    matrices_np = np.transpose(matrices_np, axes=(0,2,1))
+    matrices_np = np.linalg.inv(matrices_np)
+    return matrices_np, surf_points, tangents, normals, binormals
 
