@@ -29,6 +29,9 @@ class SvNurbsCurve(SvCurve):
 
     @classmethod
     def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
+        kv_error = sv_knotvector.check(degree, knotvector, len(control_points))
+        if kv_error is not None:
+            raise Exception(kv_error)
         if implementation == SvNurbsCurve.NATIVE:
             if normalize_knots:
                 knotvector = sv_knotvector.normalize(knotvector)

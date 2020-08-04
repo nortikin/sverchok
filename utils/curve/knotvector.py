@@ -92,28 +92,26 @@ def check(degree, knot_vector, num_ctrlpts):
     :type knot_vector: np.array of shape (X,)
     :param num_ctrlpts: number of control points
     :type num_ctrlpts: int
-    :return: True if the knot vector is valid, False otherwise
-    :rtype: bool
+    :return: String with error description, if the knotvector is invalid;
+            None, if the knotvector is valid.
     """
-    try:
-        if knot_vector is None or len(knot_vector) == 0:
-            raise ValueError("Input knot vector cannot be empty")
-    except TypeError as e:
-        print("An error occurred: {}".format(e.args[-1]))
-        raise TypeError("Knot vector must be a list or tuple")
-    except Exception:
-        raise
+    if not isinstance(knot_vector, (list, tuple, np.ndarray)):
+        raise TypeError("Knot vector must be a list, tuple, or numpy array")
+    if knot_vector is None or len(knot_vector) == 0:
+        raise ValueError("Input knot vector cannot be empty")
 
     # Check the formula; m = p + n + 1
-    if len(knot_vector) != degree + num_ctrlpts + 1:
-        return False
+    m = len(knot_vector)
+    rhs = degree + num_ctrlpts + 1
+    if m != rhs:
+        return f"Knot vector has invalid length {m}; for degree {degree} and {num_ctrlpts} control points it must have {rhs} items"
 
     # Check ascending order
     prev_knot = knot_vector[0]
     for knot in knot_vector:
         if prev_knot > knot:
-            return False
+            return "Knot vector items are not all non-decreasing"
         prev_knot = knot
 
-    return True
+    return None
 
