@@ -120,7 +120,11 @@ else:
                                         method = 'Brent'
                                     )
                             if not result.success:
-                                raise Exception("Can't find the nearest point for {}: {}".format(src_point, result.message))
+                                if hasattr(result, 'message'):
+                                    message = result.message
+                                else:
+                                    message = repr(result)
+                                raise Exception("Can't find the nearest point for {}: {}".format(src_point, message))
                             t0 = result.x
                         else:
                             t0 = init_t

@@ -158,6 +158,15 @@ class SvGeomdlCurve(SvNurbsCurve):
     def get_u_bounds(self):
         return self.u_bounds
 
+def nurbs_divide(numerator, denominator):
+    if denominator.ndim != 2:
+        denominator = denominator[np.newaxis].T
+    good = (denominator != 0)
+    good_num = good.flatten()
+    result = np.zeros_like(numerator)
+    result[good_num] = numerator[good_num] / denominator[good][np.newaxis].T
+    return result
+
 class SvNurbsBasisFunctions(object):
     def __init__(self, knotvector):
         self.knotvector = np.array(knotvector)
@@ -169,7 +178,7 @@ class SvNurbsBasisFunctions(object):
             return f
 
         u = self.knotvector
-        if p == 0:
+        if p <= 0:
             if i < 0 or i >= len(self.knotvector):
 
                 def n0(us):
@@ -280,7 +289,10 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 
     def evaluate_array(self, ts):
         numerator, denominator = self.fraction(0, ts)
-        return numerator / denominator
+#         if (denominator == 0).any():
+#             print("Num:", numerator)
+#             print("Denom:", denominator)
+        return nurbs_divide(numerator, denominator)
 
     def tangent(self, t):
         return self.tangent_array(np.array([t]))[0]
