@@ -25,10 +25,10 @@ class SvNurbsSurface(SvSurface):
 
     @classmethod
     def build(cls, implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights=None, normalize_knots=False):
-        kv_error = sv_knotvector.check(degree_u, knotvector_u, len(control_points[0]))
+        kv_error = sv_knotvector.check(degree_u, knotvector_u, len(control_points))
         if kv_error is not None:
             raise Exception("U direction: " + kv_error)
-        kv_error = sv_knotvector.check(degree_v, knotvector_v, len(control_points))
+        kv_error = sv_knotvector.check(degree_v, knotvector_v, len(control_points[0]))
         if kv_error is not None:
             raise Exception("V direction: " + kv_error)
 
