@@ -52,7 +52,7 @@ from bpy.types import Node
 
 class WrapNode:
     def __init__(self):
-        self.props = NodeProps()
+        self.props = NodeProps(self)
         self.inputs = NodeInputs(self)
         self.outputs = NodeOutputs(self)
 
@@ -290,23 +290,36 @@ class NodeOutputs:
 
 
 class NodeProps:
-    def __init__(self):
-        self._properties: Dict[str, NodeProperties] = dict()
+    # the node has node property attributes and normal attributes
+    def __init__(self, wrap_node: WrapNode):
+        self.properties: Dict[str, NodeProperties] = dict()  # should be init first
+        self.wrap_node: WrapNode = wrap_node
 
     def __setattr__(self, key, value):
         if isinstance(value, NodeProperties):
+            # node property attribute
             if not value.name:
                 # get property name from attribute
                 value = value.replace_name(key)
-            self._properties[key] = value
-
-        object.__setattr__(self, key, value)
+            self.properties[key] = value
+        elif key != 'properties' and key in self.properties:
+            # assigning to node property something what is node property
+            return AttributeError(f"Attribute={key} is of node property type. "
+                                  f"Only NodeProperty can be assigned or nothing")
+        else:
+            # normal attributes or methods are adding
+            object.__setattr__(self, key, value)
 
     def __getattribute__(self, name):
-        props = object.__getattribute__(self, '_properties')
-        if name in props:
-            return props[name]
-        return object.__getattribute__(self, name)
+        if name not in object.__getattribute__(self, 'properties'):
+            # it is normal attribute
+            return object.__getattribute__(self, name)
+        elif not self.wrap_node.is_in_process:
+            # it is node property attribute and it is outside of process method
+            return object.__getattribute__(self, 'properties')[name]
+        else:
+            # it is node property attribute and it is inside process method
+            return getattr(self.wrap_node.bl_node, name)
 
     def add_properties(self, node_annotations: dict):
-        [setitem(node_annotations, prop.name, prop.bpy_props) for prop in self._properties.values()]
+        [setitem(node_annotations, prop.name, prop.bpy_props) for prop in self.properties.values()]

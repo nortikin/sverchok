@@ -7,9 +7,12 @@
 
 
 import bpy
+import bmesh
 
+from sverchok.data_structure import updateNode
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.handling_nodes import SocketProperties, SockTypes, NodeProperties, WrapNode, initialize_node
+from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh, pydata_from_bmesh
 
 
 modes = [(n, n, '', ic, i) for i, (n, ic) in
@@ -17,11 +20,10 @@ modes = [(n, n, '', ic, i) for i, (n, ic) in
 
 node = WrapNode()
 
-node.props.mode = NodeProperties(bpy_props=bpy.props.EnumProperty(items=modes))
-node.props.mask_mode = NodeProperties(bpy_props=bpy.props.EnumProperty(items=modes))
-node.props.use_face_split = NodeProperties(bpy_props=bpy.props.BoolProperty())
-node.props.use_boundary_tear = NodeProperties(bpy_props=bpy.props.BoolProperty())
-node.props.use_verts = NodeProperties(bpy_props=bpy.props.BoolProperty())
+node.props.mask_mode = NodeProperties(bpy_props=bpy.props.EnumProperty(items=modes, update=updateNode))
+node.props.use_face_split = NodeProperties(bpy_props=bpy.props.BoolProperty(update=updateNode))
+node.props.use_boundary_tear = NodeProperties(bpy_props=bpy.props.BoolProperty(update=updateNode))
+node.props.use_verts = NodeProperties(bpy_props=bpy.props.BoolProperty(update=updateNode))
 
 node.inputs.verts = SocketProperties('Verts', SockTypes.VERTICES, deep_copy=False, vectorize=False, mandatory=True)
 node.inputs.edges = SocketProperties('Edges', SockTypes.STRINGS, deep_copy=False, vectorize=False)
@@ -52,9 +54,6 @@ class SvDissolveMeshElements(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Dissolve mesh elements'
     sv_icon = 'SV_RANDOM_NUM_GEN'
 
-    def draw_buttons(self, context, layout):
-        layout.prop(self, 'mode', expand=True)
-
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'use_face_split', toggle=1)
         layout.prop(self, 'use_boundary_tear', toggle=1)
@@ -65,7 +64,23 @@ class SvDissolveMeshElements(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'mask_mode', expand=True, text='')
 
     def process(self):
-        node.outputs.verts = [(v[0]+1, v[1], v[2]) for v in node.inputs.verts]
+        with empty_bmesh() as bm:
+            add_mesh_to_bmesh(bm, node.inputs.verts, node.inputs.edges, node.inputs.faces, 'sv_index')
+            if node.props.mask_mode == 'Verts':
+                bmesh.ops.dissolve_verts(bm,
+                                         verts=[v for v, m in zip(bm.verts, node.inputs.mask) if m],
+                                         use_face_split=node.props.use_face_split,
+                                         use_boundary_tear=node.props.use_boundary_tear)
+            elif node.props.mask_mode == 'Edges':
+                bmesh.ops.dissolve_edges(bm,
+                                         edges=[e for e, m in zip(bm.edges, node.inputs.mask) if m],
+                                         use_verts=node.props.use_verts,
+                                         use_face_split=node.props.use_face_split)
+            elif node.props.mask_mode == 'Faces':
+                bmesh.ops.dissolve_faces(bm,
+                                         faces=[f for f, m in zip(bm.faces, node.inputs.mask) if m],
+                                         use_verts=node.props.use_verts)
+            node.outputs.verts, node.outputs.edges, node.outputs.faces = pydata_from_bmesh(bm)
 
 
 def register():
