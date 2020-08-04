@@ -31,6 +31,7 @@ Curves
    curvature
    torsion
    curve_frame
+   curve_frame_on_surface
    zero_twist_frame
    endpoints
    iso_uv_curve
