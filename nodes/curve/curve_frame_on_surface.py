@@ -36,19 +36,8 @@ class SvCurveFrameOnSurfNode(bpy.types.Node, SverchCustomTreeNode):
                 ('ANY', "Arbitrary frame", "Calculate any frame that has Z axis along curve's tangent", 1)
             ]
 
-        on_error : EnumProperty(
-                name = "On zero curvature",
-                description = "What the node should do if it encounters a point with zero curvature - it is impossible to calculate correct Frenet frame at such points",
-                items = error_modes,
-                default = 'ERROR',
-                update = updateNode)
-
         def draw_buttons(self, context, layout):
             layout.prop(self, 'join', toggle=True)
-
-        def draw_buttons_ext(self, context, layout):
-            layout.label(text='On zero curvature:')
-            layout.prop(self, 'on_error', text='')
 
         def sv_init(self, context):
             self.inputs.new('SvSurfaceSocket', "Surface")
