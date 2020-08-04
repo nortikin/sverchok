@@ -168,7 +168,7 @@ class SvLinks:
         before_sv_links = self.sv_links_cache[tree_id]
 
         if not self.sv_links_cache[tree_id]:
-            print('there was no links memory, creating it')
+            #print('there was no links memory, creating it')
             self.create_new_links(node_tree)
             node_tree.nodes_dict.load_nodes(node_tree)
             return node_tree.nodes
