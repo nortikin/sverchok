@@ -6,16 +6,46 @@
 # License-Filename: LICENSE
 
 """
-The module includes tools of automatization of creating nodes and get data from their sockets
+The module includes tools of automatization of creating nodes and handling process method
+Example of usage:
+
+
+node = WrapNode()
+
+node.props.x = NodeProperties(bpy.props.FloatProperty(update=updateNode))
+node.props.y = NodeProperties(bpy.props.FloatProperty(update=updateNode))
+
+node.inputs.verts = SocketProperties(name='Vertices', socket_type=SockTypes.VERTICES, mandatory=True)
+node.inputs.faces = SocketProperties(name='Faces', socket_type=SockTypes.STRINGS)
+node.inputs.x_axis = SocketProperties(name='X axis', socket_type=SockTypes.STRINGS, prop=node.props.x)
+node.inputs.y_axis = SocketProperties(name='Y axis', socket_type=SockTypes.STRINGS, prop=node.props.y)
+
+node.outputs.verts = SocketProperties(name='Vertices', socket_type=SockTypes.VERTICES)
+node.outputs.faces = SocketProperties(name='Faces', socket_type=SockTypes.STRINGS)
+
+
+@initialize_node(node)
+class SvTestNode(bpy.types.Node, SverchCustomTreeNode):
+    bl_idname = 'SvTestNode'
+    bl_label = 'Test node'
+
+    def process(self):
+        node.outputs.faces = node.inputs.faces
+        node.outputs.verts = [(v[0] + x, v[1] + y, v[2]) for v, x, y in zip(
+                              node.inputs.verts, cycle(node.inputs.x_axis), cycle(node.inputs.y_axis))]
+
+
+def register(): bpy.utils.register_class(SvTestNode), def untegister(): bpy.utils.unregister_class(SvTestNode)
 """
+
+
 from collections import defaultdict
 from contextlib import contextmanager
 from copy import copy
 from enum import Enum
 from functools import wraps
-from itertools import cycle
 from operator import setitem
-from typing import NamedTuple, Any, List, Generator, Type, Set, Dict, Union, ValuesView
+from typing import NamedTuple, Any, Type, Dict, Union, ValuesView
 
 from bpy.types import Node
 
@@ -32,6 +62,7 @@ class WrapNode:
 
     def set_sv_init_method(self, node_class: Type[Node]):
         def sv_init(node, context):
+            # the problem here is that it looks like Blender can't ketch any error from here if it is
             self.outputs.add_sockets(node)
             self.inputs.add_sockets(node)
         node_class.sv_init = sv_init
@@ -47,7 +78,7 @@ class WrapNode:
                             process(node)
                         self.outputs.set_data_to_bl_sockets()
                 else:
-                    self.inputs.pass_data(node)
+                    self.pass_data(node)
             return wrapper
         node_class.process = decorate_process(node_class.process)
 
@@ -65,6 +96,19 @@ class WrapNode:
         for layer_index in range(max_layers_number):
             self.layer_number = layer_index
             yield layer_index
+
+    def pass_data(self, node: Node):
+        # just pass data unchanged in case if given data is not sufficient for starting process
+        for in_sock, prop in zip(node.inputs, self.inputs.sockets_props):
+            try:
+                out_socket = node.outputs[prop.name]
+                if in_sock.is_linked:
+                    out_socket.sv_set(in_sock.sv_get(deepcopy=False))
+                else:
+                    # current update system want clean socket
+                    out_socket.sv_set([[]])
+            except KeyError:
+                continue
 
 
 def initialize_node(wrap_node: WrapNode):
@@ -121,86 +165,59 @@ class NodeInputs:
     """
     It contains properties of input sockets of a node
     properties should be added in up down order by assigning SocketProperties object to an attribute
-    like this: node_inputs.verts = SocketProperties("Verts", 'SvVerticesSocket')
-    don't add any other attributes neither other then SocketProperties neither outside the class or inside
-    __setattr__ and __getattribute__ method won't let it
+    like this: node_inputs.verts = SocketProperties("Verts", ....)
+    it can contains two different types of attributes, have a look at NodeOutputs class description
     """
+    def __init__(self, wrap_node: WrapNode):
+        self.sockets: Dict[str, SocketProperties] = dict()
+        self.wrap_node: WrapNode = wrap_node
+
+    @property
+    def sockets_props(self) -> ValuesView[SocketProperties]:
+        return self.sockets.values()
+
+    def __setattr__(self, key, value):
+        if isinstance(value, SocketProperties):
+            # new sockets is added
+            self.sockets[key] = value
+        elif key != 'sockets' and key in self.sockets:
+            # handled data is added to socket probably from process method
+            raise AttributeError(f"Attribute={key} is of socket type. Only SocketProperty can be assigned or nothing")
+        else:
+            # normal attributes or methods are adding
+            object.__setattr__(self, key, value)
+
+    def __getattribute__(self, name):
+        if name not in object.__getattribute__(self, 'sockets'):
+            # it is normal attribute
+            return object.__getattribute__(self, name)
+        elif not self.wrap_node.is_in_process:
+            # it is socket attribute and it is outside of process method
+            return object.__getattribute__(self, 'sockets')[name]
+        else:
+            # it is socket attribute and it is inside process method
+            return self._get_socket_data(name)
+
     def add_sockets(self, node: Node):
         # initialization sockets in a node
         [node.inputs.new(p.socket_type.get_name(), p.name) for p in self.sockets.values()]
         [setattr(s, 'prop_name', p.prop.name) for s, p in zip(node.inputs, self.sockets.values()) if p.prop]
         [setattr(s, 'custom_draw', p.custom_draw) for s, p in zip(node.inputs, self.sockets.values())]
 
-    def check_input_data(self, process):
-        # decorator for process function
-        @wraps(process)
-        def wrapper(node: Node):
-            if self.has_required_data(node):
-                return process(node)
-            else:
-                self.pass_data(node)
-        return wrapper
-
-    def __init__(self, wrap_node: WrapNode):
-        object.__setattr__(self, '_wrap_node', wrap_node)
-        object.__setattr__(self, '_sockets', dict())
-
-    @property
-    def wrap_node(self) -> WrapNode:
-        return object.__getattribute__(self, '_wrap_node')
-
-    @property
-    def sockets(self) -> Dict[str, SocketProperties]:
-        return object.__getattribute__(self, '_sockets')
-
-    def __setattr__(self, key, value):
-        # only used for adding new sockets
-        if isinstance(value, SocketProperties):
-            self.sockets[key] = value
-        else:
-            raise TypeError("Only SocketProperties type can be assigned to a attribute")
-
-    def __getattribute__(self, name):
-        if name not in object.__getattribute__(self, '_sockets'):  # Name intersections ???
-            return object.__getattribute__(self, name)
-
-        if not self.wrap_node.is_in_process:
-            # get normal attribute
-            return object.__getattribute__(self, '_sockets')[name]
-        else:
-            # get socket attribute, inside loop
-            socket_props = self.sockets[name]
-            bl_socket = self.wrap_node.bl_node.inputs[socket_props.name]
-            socket_data = bl_socket.sv_get(deepcopy=False, default=socket_props.default)
-            try:
-                layer_data = socket_data[self.wrap_node.layer_number]
-            except IndexError:
-                layer_data = socket_data[-1]
-            return copy(layer_data) if socket_props.deep_copy else layer_data
-
     def has_required_data(self, node: Node) -> bool:
+        # all mandatory are linked, but are there any data??
         return all([sock.is_linked for sock, prop in zip(node.inputs, self.sockets.values()) if prop.mandatory])
 
-    def pass_data(self, node: Node):
-        # just pass data unchanged in case if given data is not sufficient for starting process
-        for in_sock, prop in zip(node.inputs, self.sockets.values()):
-            try:
-                out_socket = node.outputs[prop.name]
-                if in_sock.is_linked:
-                    out_socket.sv_set(in_sock.sv_get(deepcopy=False))
-                else:
-                    # current update system want clean socket
-                    out_socket.sv_set([[]])
-            except KeyError:
-                continue
-
-    def get_data(self, node: Node) -> Generator[list, None, None]:
-        # extract data from sockets
-        data = [s.sv_get(default=p.default, deepcopy=p.deep_copy) for s, p in zip(node.inputs, self._sockets)]
-        max_layers_number = max([len(sd) for sd in data])
-        data = [cycle(sd) if p.vectorize else sd for sd, p in zip(data, self._sockets)]
-        for i, *data_layer in zip(range(max_layers_number, *data)):
-            yield data_layer
+    def _get_socket_data(self, socket_name: str):
+        # get socket attribute, inside loop
+        socket_props = self.sockets[socket_name]
+        bl_socket = self.wrap_node.bl_node.inputs[socket_props.name]
+        socket_data = bl_socket.sv_get(deepcopy=False, default=socket_props.default)
+        try:
+            layer_data = socket_data[self.wrap_node.layer_number]
+        except IndexError:
+            layer_data = socket_data[-1]
+        return copy(layer_data) if socket_props.deep_copy else layer_data
 
 
 class NodeOutputs:
@@ -278,7 +295,6 @@ class NodeProps:
 
     def __setattr__(self, key, value):
         if isinstance(value, NodeProperties):
-            # it should detect bpy.props...
             if not value.name:
                 # get property name from attribute
                 value = value.replace_name(key)
