@@ -79,7 +79,7 @@ def SvForgetSocket(socket):
     try:
         socket_data_cache[s_ng].pop(s_id, None)
     except KeyError:
-        print("it was never there")
+        debug("it was never there")
 
 def SvSetSocket(socket, out):
     """sets socket data for socket"""
