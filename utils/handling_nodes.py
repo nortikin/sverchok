@@ -5,15 +5,17 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-
 """
 The module includes tools of automatization of creating nodes and get data from their sockets
 """
+from collections import defaultdict
+from contextlib import contextmanager
+from copy import copy
 from enum import Enum
 from functools import wraps
 from itertools import cycle
 from operator import setitem
-from typing import NamedTuple, Any, List, Generator, Type, Set, Dict
+from typing import NamedTuple, Any, List, Generator, Type, Set, Dict, Union, ValuesView
 
 from bpy.types import Node
 
@@ -21,8 +23,12 @@ from bpy.types import Node
 class WrapNode:
     def __init__(self):
         self.props = NodeProps()
-        self.inputs = NodeInputs()
-        self.outputs = NodeOutputs()
+        self.inputs = NodeInputs(self)
+        self.outputs = NodeOutputs(self)
+
+        self.bl_node: Union[Node, None] = None
+        self.layer_number: Union[int, None] = None
+        self.is_in_process: bool = False
 
     def set_sv_init_method(self, node_class: Type[Node]):
         def sv_init(node, context):
@@ -36,11 +42,29 @@ class WrapNode:
             @wraps(node_class.process)
             def wrapper(node: Node):
                 if self.inputs.has_required_data(node):
-                    return process(node)
+                    with self.read_socket_data(node):
+                        for _ in self.layers_iterator():
+                            process(node)
+                        self.outputs.set_data_to_bl_sockets()
                 else:
                     self.inputs.pass_data(node)
             return wrapper
         node_class.process = decorate_process(node_class.process)
+
+    @contextmanager
+    def read_socket_data(self, bl_node: Node):
+        self.bl_node = bl_node
+        self.is_in_process = True
+        try:
+            yield
+        finally:
+            self.is_in_process = False
+
+    def layers_iterator(self):
+        max_layers_number = max([len(s.sv_get(default=[[]], deepcopy=False)) for s in self.bl_node.inputs])
+        for layer_index in range(max_layers_number):
+            self.layer_number = layer_index
+            yield layer_index
 
 
 def initialize_node(wrap_node: WrapNode):
@@ -103,10 +127,9 @@ class NodeInputs:
     """
     def add_sockets(self, node: Node):
         # initialization sockets in a node
-        breakpoint()
-        [node.inputs.new(p.socket_type.get_name(), p.name) for p in self.sockets]
-        [setattr(s, 'prop_name', p.prop_name) for s, p in zip(node.inputs, self.sockets)]
-        [setattr(s, 'custom_draw', p.custom_draw) for s, p in zip(node.inputs, self.sockets)]
+        [node.inputs.new(p.socket_type.get_name(), p.name) for p in self.sockets.values()]
+        [setattr(s, 'prop_name', p.prop_name) for s, p in zip(node.inputs, self.sockets.values())]
+        [setattr(s, 'custom_draw', p.custom_draw) for s, p in zip(node.inputs, self.sockets.values())]
 
     def check_input_data(self, process):
         # decorator for process function
@@ -118,42 +141,48 @@ class NodeInputs:
                 self.pass_data(node)
         return wrapper
 
-    def __init__(self):
-        object.__setattr__(self, '_sockets', [])
-        object.__setattr__(self, '_socket_attr_names', set())
+    def __init__(self, wrap_node: WrapNode):
+        object.__setattr__(self, '_wrap_node', wrap_node)
+        object.__setattr__(self, '_sockets', dict())
 
     @property
-    def sockets(self) -> List[SocketProperties]:
-        return self._sockets
+    def wrap_node(self) -> WrapNode:
+        return object.__getattribute__(self, '_wrap_node')
 
     @property
-    def socket_attr_names(self) -> Set[str]:
-        return self._socket_attr_names
+    def sockets(self) -> Dict[str, SocketProperties]:
+        return object.__getattribute__(self, '_sockets')
 
     def __setattr__(self, key, value):
         # only used for adding new sockets
         if isinstance(value, SocketProperties):
-            # socket attribute contains only index to data in the sockets list
-            object.__setattr__(self, key, len(self.sockets))
-            self.sockets.append(value)
-            self.socket_attr_names.add(key)
+            self.sockets[key] = value
         else:
             raise TypeError("Only SocketProperties type can be assigned to a attribute")
 
     def __getattribute__(self, name):
-        if name not in object.__getattribute__(self, '_socket_attr_names'):  # Name intersections ???
+        if name not in object.__getattribute__(self, '_sockets'):  # Name intersections ???
             return object.__getattribute__(self, name)
 
-        if object.__getattribute__(self, '_current_layer') is None:
-            raise AttributeError("The values of sockets can't be read outside 'invoke layers' context manager")
-        # todo
+        if self.wrap_node.layer_number is None:
+            return object.__getattribute__(self, '_sockets')[name]
+        else:
+            # inside loop
+            socket_props = self.sockets[name]
+            bl_socket = self.wrap_node.bl_node.inputs[socket_props.name]
+            socket_data = bl_socket.sv_get(deepcopy=False, default=socket_props.default)
+            try:
+                layer_data = socket_data[self.wrap_node.layer_number]
+            except IndexError:
+                layer_data = socket_data[-1]
+            return copy(layer_data) if socket_props.deep_copy else layer_data
 
     def has_required_data(self, node: Node) -> bool:
-        return all([sock.is_linked for sock, prop in zip(node.inputs, self._sockets) if prop.mandatory])
+        return all([sock.is_linked for sock, prop in zip(node.inputs, self.sockets.values()) if prop.mandatory])
 
     def pass_data(self, node: Node):
         # just pass data unchanged in case if given data is not sufficient for starting process
-        for in_sock, prop in zip(node.inputs, self._sockets):
+        for in_sock, prop in zip(node.inputs, self.sockets.values()):
             try:
                 out_socket = node.outputs[prop.name]
                 if in_sock.is_linked:
@@ -174,23 +203,72 @@ class NodeInputs:
 
 
 class NodeOutputs:
-    def __init__(self):
-        self._sockets: List[SocketProperties] = []
+    """
+    it has two different attribute types
+    first are normal attributes and second attributes representing sockets
+    they handled differently in set and get attributes methods
+    socket attributes can also represent different data dependent on context
+    usually they returns properties of a socket
+    but in context of the process method they dill with actual data of a socket
+    """
+    def __init__(self, wrap_node: WrapNode):
+        self.sockets: Dict[str, SocketProperties] = dict()  # should be initialize first !!!
+        self.wrap_node: WrapNode = wrap_node
+        self.socket_data: Dict[str, list] = defaultdict(list)
+
+    @property
+    def sockets_props(self) -> ValuesView[SocketProperties]:
+        return self.sockets.values()
 
     def __setattr__(self, key, value):
         if isinstance(value, SocketProperties):
-            self._sockets.append(value)
+            # new sockets is added
+            self.sockets[key] = value
+        elif key != 'sockets' and key in self.sockets:
+            # handled data is added to socket probably from process method
+            self._add_socket_data(key, value)
+        else:
+            # normal attributes or methods are adding
+            object.__setattr__(self, key, value)
 
-        object.__setattr__(self, key, value)
+    def __getattribute__(self, name):
+        if name not in object.__getattribute__(self, 'sockets'):
+            # it is normal attribute
+            return object.__getattribute__(self, name)
+        elif not self.wrap_node.is_in_process:
+            # it is socket attribute and it is outside of process method
+            return object.__getattribute__(self, 'sockets')[name]
+        else:
+            # it is socket attribute and it is inside process method
+            return self._get_socket_data(name)
 
     def add_sockets(self, node: Node):
-        [node.outputs.new(p.socket_type.get_name(), p.name) for p in self._sockets]
-        [setattr(s, 'custom_draw', p.custom_draw) for s, p in zip(node.inputs, self._sockets)]
+        [node.outputs.new(p.socket_type.get_name(), p.name) for p in self.sockets_props]
+        [setattr(s, 'custom_draw', p.custom_draw) for s, p in zip(node.inputs, self.sockets_props)]
 
-    @staticmethod
-    def set_data(node: Node, data: list):
-        # data should be joined by layers, each layer should be consistent to output sockets
-        [s.sv_set(d) for s, d in zip(node.outputs, zip(*data))]
+    def set_data_to_bl_sockets(self):
+        [s.sv_set(self.socket_data[name]) for s, name in zip(self.wrap_node.bl_node.outputs, self.sockets)]
+
+    def _add_socket_data(self, socket_name: str, data):
+        # add data of current layer to socket, existing data will be overridden
+        if not self.wrap_node.is_in_process:
+            raise RuntimeError(f"Data can't be added to socket={socket_name} outside process method")
+        socket_data = self.socket_data[socket_name]
+        socket_layers_number = len
+        while socket_layers_number(socket_data) <= self.wrap_node.layer_number:
+            socket_data.append([])
+        socket_data[self.wrap_node.layer_number] = data
+
+    def _get_socket_data(self, socket_name: str):
+        # get data of current layer from socket
+        if not self.wrap_node.is_in_process:
+            raise AttributeError(f"Data can't be read from socket={socket_name} outside process method")
+        socket_data = self.socket_data[socket_name]
+        try:
+            return socket_data[self.wrap_node.layer_number]
+        except IndexError:
+            raise AttributeError(f"Nothing was assigned to the socket={socket_name} "
+                                 f"on current layer index={self.wrap_node.layer_number}")
 
 
 class NodeProps:

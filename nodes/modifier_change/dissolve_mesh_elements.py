@@ -18,7 +18,7 @@ modes = [(n, n, '', ic, i) for i, (n, ic) in
 node = WrapNode()
 
 node.props.mode = NodeProperties(bpy_props=bpy.props.EnumProperty(items=modes))
-node.props.mask_mode = NodeProperties(bpy_props= bpy.props.EnumProperty(items=modes))
+node.props.mask_mode = NodeProperties(bpy_props=bpy.props.EnumProperty(items=modes))
 node.props.use_face_split = NodeProperties(bpy_props=bpy.props.BoolProperty())
 node.props.use_boundary_tear = NodeProperties(bpy_props=bpy.props.BoolProperty())
 node.props.use_verts = NodeProperties(bpy_props=bpy.props.BoolProperty())
@@ -65,9 +65,7 @@ class SvDissolveMeshElements(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'mask_mode', expand=True, text='')
 
     def process(self):
-        return 
-        out = [node_process(inputs) for inputs in node_inputs.get_data(self)]
-        node_outputs.set_data(self, out)
+        node.outputs.verts = [(v[0]+1, v[1], v[2]) for v in node.inputs.verts]
 
 
 def register():
