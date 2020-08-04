@@ -1019,7 +1019,7 @@ class PlaneEquation(object):
         if plane2.is_parallel(line1) or plane2.is_parallel(line2):
             v1_new = v1 + v2
             v2_new = v1 - v2
-            info("{}, {} => {}, {}".format(v1, v2, v1_new, v2_new))
+            debug("{}, {} => {}, {}".format(v1, v2, v1_new, v2_new))
             line1 = LineEquation.from_direction_and_point(v1_new, p0)
             line2 = LineEquation.from_direction_and_point(v2_new, p0)
 
