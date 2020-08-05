@@ -10,6 +10,8 @@ from sverchok.utils.logging import error
 from sverchok.utils.geom import LineEquation, CubicSpline, CircleEquation2D, CircleEquation3D, Ellipse3D
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.surface.primitives import SvPlane
+from sverchok.utils.curve import knotvector as sv_knotvector
+from sverchok.utils.curve.nurbs import SvNurbsCurve
 
 class SvLine(SvCurve):
     __description__ = "Line"
@@ -48,6 +50,16 @@ class SvLine(SvCurve):
 
     def extrude_along_vector(self, vector):
         return SvPlane(self.point, self.direction, vector)
+
+    def to_nurbs(self, implementation=SvNurbsCurve.NATIVE):
+        knotvector = sv_knotvector.generate(1, 2)
+        u_min, u_max = self.get_u_bounds()
+        p1 = self.evaluate(u_min)
+        p2 = self.evaluate(u_max)
+        control_points = np.array([p1, p2])
+        return SvNurbsCurve.build(implementation,
+                degree=1, knotvector=knotvector,
+                control_points = control_points)
 
 class SvCircle(SvCurve):
     __description__ = "Circle"
