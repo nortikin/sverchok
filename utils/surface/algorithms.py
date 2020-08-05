@@ -19,6 +19,7 @@ from sverchok.utils.curve import (
         SvFlipCurve, SvNormalTrack, SvCircle,
         MathutilsRotationCalculator, DifferentialRotationCalculator
     )
+from sverchok.utils.curve.algorithms import curve_frame_on_surface_array
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.data import *
 
@@ -965,4 +966,56 @@ class SvTaperSweepSurface(SvSurface):
         scale = np.linalg.norm(taper_projections - taper_points, axis=1, keepdims=True)
         profile_points = self.profile.evaluate_array(us)
         return profile_points * scale + taper_projections
+
+class SvBlendSurface(SvSurface):
+    def __init__(self, surface1, surface2, curve1, curve2, bulge1, bulge2):
+        self.surface1 = surface1
+        self.surface2 = surface2
+        self.curve1 = curve1
+        self.curve2 = curve2
+        self.bulge1 = bulge1
+        self.bulge2 = bulge2
+        self.u_bounds = (0.0, 1.0)
+        self.v_bounds = (0.0, 1.0)
+
+    def get_u_min(self):
+        return self.u_bounds[0]
+
+    def get_u_max(self):
+        return self.u_bounds[1]
+
+    def get_v_min(self):
+        return self.v_bounds[0]
+
+    def get_v_max(self):
+        return self.v_bounds[1]
+
+    def evaluate_array(self, us, vs):
+        c1_min, c1_max = self.curve1.get_u_bounds()
+        c2_min, c2_max = self.curve2.get_u_bounds()
+        c1_us = (c1_max - c1_min) * us + c1_min
+        c2_us = (c2_max - c2_min) * us + c2_min
+
+        _, c1_points, _, _, c1_binormals = curve_frame_on_surface_array(self.surface1, self.curve1, c1_us)
+        _, c2_points, _, _, c2_binormals = curve_frame_on_surface_array(self.surface2, self.curve2, c2_us)
+        c1_binormals = self.bulge1 * c1_binormals
+        c2_binormals = self.bulge2 * c2_binormals
+
+        # See also sverchok.utils.curve.bezier.SvCubicBezierCurve.
+        # Here we have re-implementation of the same algorithm
+        # which works with arrays of control points
+        p0s = c1_points                 # (n, 3)
+        p1s = c1_points + c1_binormals
+        p2s = c2_points + c2_binormals
+        p3s = c2_points
+
+        c0 = (1 - vs)**3      # (n,)
+        c1 = 3*vs*(1-vs)**2
+        c2 = 3*vs**2*(1-vs)
+        c3 = vs**3
+
+        # (n,1)
+        c0, c1, c2, c3 = c0[:,np.newaxis], c1[:,np.newaxis], c2[:,np.newaxis], c3[:,np.newaxis]
+
+        return c0*p0s + c1*p1s + c2*p2s + c3*p3s
 
