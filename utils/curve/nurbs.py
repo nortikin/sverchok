@@ -43,6 +43,14 @@ class SvNurbsCurve(SvCurve):
         else:
             raise Exception(f"Unsupported NURBS Curve implementation: {implementation}")
 
+    @classmethod
+    def get(cls, curve, implementation = NATIVE):
+        if isinstance(curve, SvNurbsCurve):
+            return curve
+        if hasattr(curve, 'to_nurbs'):
+            return curve.to_nurbs(implementation = implementation)
+        return None
+
     def get_control_points(self):
         """
         returns: np.array of shape (k, 3)
@@ -304,6 +312,38 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         control_points = np.transpose(control_points, axes=(1,0,2))
         weights = np.stack((self.weights, self.weights)).T
         knotvector_v = sv_knotvector.generate(1, 2, clamped=True)
+        surface = SvNativeNurbsSurface(degree_u = self.degree, degree_v = 1,
+                        knotvector_u = self.knotvector, knotvector_v = knotvector_v,
+                        control_points = control_points,
+                        weights = weights)
+        return surface
+
+    def make_ruled_surface(self, curve2, vmin, vmax):
+        curve2 = SvNurbsCurve.get(curve2)
+        if curve2 is None:
+            raise TypeError("second curve is not NURBS")
+        if self.get_degree() != curve2.get_degree():
+            raise TypeError("curves have different degrees")
+
+        my_control_points = self.control_points
+        other_control_points = curve2.get_control_points()
+        if len(my_control_points) != len(other_control_points):
+            raise TypeError("curves have different number of control points")
+
+        if (self.get_knotvector() != curve2.get_knotvector()).any():
+            raise TypeError("curves have different knot vectors")
+
+        if vmin != 0:
+            my_control_points = (1 - vmin) * my_control_points + vmin * other_control_points
+        if vmax != 0:
+            other_control_points = (1 - vmax) * my_control_points + vmax * other_control_points
+
+        control_points = np.stack((my_control_points, other_control_points))
+        control_points = np.transpose(control_points, axes=(1,0,2))
+
+        weights = np.stack((self.weights, curve2.get_weights())).T
+        knotvector_v = sv_knotvector.generate(1, 2, clamped=True)
+
         surface = SvNativeNurbsSurface(degree_u = self.degree, degree_v = 1,
                         knotvector_u = self.knotvector, knotvector_v = knotvector_v,
                         control_points = control_points,

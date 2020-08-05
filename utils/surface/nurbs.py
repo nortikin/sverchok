@@ -42,6 +42,14 @@ class SvNurbsSurface(SvSurface):
         else:
             raise Exception(f"Unsupported NURBS Surface implementation: {implementation}")
 
+    @classmethod
+    def get(cls, surface, implementation = NATIVE):
+        if isinstance(surface, SvNurbsSurface):
+            return surface
+        if hasattr(surface, 'to_nurbs'):
+            return surface.to_nurbs(implementation=implementation)
+        return None
+
     def get_degree_u(self):
         raise Exception("Not implemented!")
 

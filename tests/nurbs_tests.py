@@ -2,8 +2,10 @@ import numpy as np
 import unittest
 
 from sverchok.utils.testing import SverchokTestCase, requires
+from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs import SvGeomdlCurve, SvNativeNurbsCurve, SvNurbsBasisFunctions, SvNurbsCurve
 from sverchok.utils.surface.nurbs import SvGeomdlSurface, SvNativeNurbsSurface
+from sverchok.utils.surface.algorithms import SvCurveLerpSurface
 from sverchok.dependencies import geomdl
 
 if geomdl is not None:
@@ -282,4 +284,37 @@ class NurbsSurfaceTests(SverchokTestCase):
         vs1 = geomdl_surface.gauss_curvature_array(self.us, self.vs)
         vs2 = native_surface.gauss_curvature_array(self.us, self.vs)
         self.assert_numpy_arrays_equal(vs1, vs2, precision=8, fail_fast=False)
+
+class OtherNurbsTests(SverchokTestCase):
+    def test_ruled_surface(self):
+        """
+        Test that
+        1) SvCurveLerpSurface.build gives a NURBS surface for two NURBS curves;
+        2) the resulting surface is identical to generic ruled surface.
+        """
+        control_points1 = np.array([[0, 0, 0], [0.5, 0, 0.5], [1, 0, 0]])
+        control_points2 = np.array([[0, 2, 0], [0.5, 3, 0.5], [1, 2, 0]])
+        # With non-trivial weights, this test will fail,
+        # because the resulting surface will have different parametrization
+        # comparing to generic ruled surface; however, the shape of the surface
+        # will be correct anyway.
+        weights1 = [1, 1, 1]
+        weights2 = [1, 1, 1]
+
+        knotvector = sv_knotvector.generate(degree=2, num_ctrlpts=3)
+        curve1 = SvNativeNurbsCurve(2, knotvector, control_points1, weights1)
+        curve2 = SvNativeNurbsCurve(2, knotvector, control_points2, weights2)
+
+        surf1 = SvCurveLerpSurface(curve1, curve2)
+        surf2 = SvCurveLerpSurface.build(curve1, curve2)
+
+        self.assertTrue(isinstance(surf2, SvNativeNurbsSurface))
+
+        us = np.array([0, 0, 0.5, 0.5, 1, 1])
+        vs = np.array([0, 0.5, 0.5, 1, 0.5, 1])
+
+        pts1 = surf1.evaluate_array(us, vs)
+        pts2 = surf2.evaluate_array(us, vs)
+
+        self.assert_numpy_arrays_equal(pts1, pts2, precision=8, fail_fast=False)
 

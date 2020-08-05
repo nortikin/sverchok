@@ -1,10 +1,11 @@
-Linear Surface
+Ruled Surface
 ==============
 
 Functionality
 -------------
 
 This node generates a Surface as a linear interpolation of two Curve objects.
+Such surface is widely known as a ruled surface, or a linear surface.
 
 Along U parameter, such surface forms a curve calculated as a linear interpolation of two curves.
 Along V parameter, such surface is always a straight line.

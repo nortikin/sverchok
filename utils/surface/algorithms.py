@@ -801,7 +801,7 @@ class SvConstPipeSurface(SvSurface):
         return result
 
 class SvCurveLerpSurface(SvSurface):
-    __description__ = "Lerp"
+    __description__ = "Ruled"
 
     def __init__(self, curve1, curve2):
         self.curve1 = curve1
@@ -811,6 +811,22 @@ class SvCurveLerpSurface(SvSurface):
         self.u_bounds = (0.0, 1.0)
         self.c1_min, self.c1_max = curve1.get_u_bounds()
         self.c2_min, self.c2_max = curve2.get_u_bounds()
+
+    @classmethod
+    def build(cls, curve1, curve2, vmin=0.0, vmax=1.0):
+        if hasattr(curve1, 'make_ruled_surface'):
+            try:
+                return curve1.make_ruled_surface(curve2, vmin, vmax)
+            except TypeError:
+                # make_ruled_surface method can raise TypeError in case
+                # it can't work with given curve2.
+                # In this case we must use generic method.
+                pass
+
+        # generic method
+        surface = SvCurveLerpSurface(curve1, curve2)
+        surface.v_bounds = (vmin, vmax)
+        return surface
 
     def evaluate(self, u, v):
         return self.evaluate_array(np.array([u]), np.array([v]))[0]

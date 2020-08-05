@@ -12,11 +12,11 @@ from sverchok.utils.surface.algorithms import SvCurveLerpSurface
 
 class SvCurveLerpNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Curve Lerp Linear Surface
-    Tooltip: Generate a linear surface between two curves (curves linear interpolation)
+    Triggers: Curve Lerp Linear Ruled Surface
+    Tooltip: Generate a ruled (linear) surface between two curves - a.k.a. curves linear interpolation
     """
     bl_idname = 'SvExCurveLerpNode'
-    bl_label = 'Linear Surface'
+    bl_label = 'Ruled Surface'
     bl_icon = 'MOD_THICKNESS'
 
     v_min : FloatProperty(
@@ -56,8 +56,7 @@ class SvCurveLerpNode(bpy.types.Node, SverchCustomTreeNode):
         surface_out = []
         for curve1s, curve2s, vmins, vmaxs in zip_long_repeat(curve1_s, curve2_s, vmin_s, vmax_s):
             for curve1, curve2, vmin, vmax in zip_long_repeat(curve1s, curve2s, vmins, vmaxs):
-                surface = SvCurveLerpSurface(curve1, curve2)
-                surface.v_bounds = (vmin, vmax)
+                surface = SvCurveLerpSurface.build(curve1, curve2, vmin, vmax)
                 surface_out.append(surface)
         self.outputs['Surface'].sv_set(surface_out)
 
