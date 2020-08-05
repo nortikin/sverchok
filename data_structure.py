@@ -204,7 +204,7 @@ def cycle_for_length(lst, count):
         result.append(lst[i % n])
     return result
 
-def repeat_last_for_length(lst, count):
+def repeat_last_for_length(lst, count, deepcopy=False):
     """
     Repeat last item of the list enough times
     for result's length to be equal to `count`.
@@ -219,7 +219,10 @@ def repeat_last_for_length(lst, count):
     x = lst[-1]
     result = lst[:]
     for i in range(count - n):
-        result.append(x)
+        if deepcopy:
+            result.append(copy.deepcopy(x))
+        else:
+            result.append(x)
     return result
 
 def sv_zip(*iterables):

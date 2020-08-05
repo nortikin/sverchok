@@ -75,6 +75,8 @@ def normalize(knot_vector):
     :return: normalized knot vector
     :rtype: np.array
     """
+    if not isinstance(knot_vector, np.ndarray):
+        knot_vector = np.array(knot_vector)
     m = knot_vector.min()
     M = knot_vector.max()
     if m >= M:

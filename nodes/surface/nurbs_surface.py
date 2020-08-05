@@ -5,7 +5,7 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, fullList, ensure_nesting_level, split_by_count
+from sverchok.data_structure import updateNode, zip_long_repeat, fullList, fullList_deep_copy, repeat_last_for_length, ensure_nesting_level, split_by_count
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.dummy_nodes import add_dummy
@@ -164,13 +164,13 @@ class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
             if self.surface_mode == 'NURBS':
                 if self.input_mode == '1D':
-                    fullList(weights, len(vertices))
+                    weights = repeat_last_for_length(weights, len(vertices), deepcopy=True)
                 else:
                     if isinstance(weights[0], (int, float)):
                         weights = [weights]
-                    fullList(weights, len(vertices))
+                    weights = repeat_last_for_length(weights, len(vertices), deepcopy=True)
                     for verts_u, weights_u in zip(vertices, weights):
-                        fullList(weights_u, len(verts_u))
+                        fullList_deep_copy(weights_u, len(verts_u))
 
             if self.input_mode == '1D':
                 n_v = u_size

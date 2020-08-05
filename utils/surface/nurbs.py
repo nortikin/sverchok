@@ -240,6 +240,10 @@ class SvNativeNurbsSurface(SvNurbsSurface):
         self.knotvector_v = np.array(knotvector_v)
         self.control_points = np.array(control_points)
         self.weights = np.array(weights)
+        c_ku, c_kv, _ = self.control_points.shape
+        w_ku, w_kv = self.weights.shape
+        if c_ku != w_ku or c_kv != w_kv:
+            raise Exception(f"Shape of control_points ({c_ku}, {c_kv}) does not match to shape of weights ({w_ku}, {w_kv})")
         self.basis_u = SvNurbsBasisFunctions(knotvector_u)
         self.basis_v = SvNurbsBasisFunctions(knotvector_v)
         self.u_bounds = (self.knotvector_u.min(), self.knotvector_u.max())
