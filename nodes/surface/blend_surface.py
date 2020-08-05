@@ -27,10 +27,10 @@ class SvBlendSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_COONS_PATCH'
 
     curve_options = [
-            ('UMIN', "Minimum U", "Use surface edge with minimal U parameter value", 0),
-            ('UMAX', "Maximum U", "Use surface edge with maximal U parameter value", 1),
-            ('VMIN', "Minimum V", "Use surface edge with minimal V parameter value", 2),
-            ('VMAX', "Maximum V", "Use surface edge with maximal V parameter value", 3),
+            ('UMIN', "Min U", "Use surface edge with minimal U parameter value", 0),
+            ('UMAX', "Max U", "Use surface edge with maximal U parameter value", 1),
+            ('VMIN', "Min V", "Use surface edge with minimal V parameter value", 2),
+            ('VMAX', "Max V", "Use surface edge with maximal V parameter value", 3),
             ('USER', "Custom", "Use user-defined curve in surface's U/V space", 4)
         ]
 
@@ -67,19 +67,23 @@ class SvBlendSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
     flip1 : BoolProperty(
             name = "Flip Curve 1",
+            description = "Reverse direction of the first curve",
             default = False,
             update = updateNode)
 
     flip2 : BoolProperty(
             name = "Flip Curve 2",
+            description = "Reverse direction of the second curve",
             default = False,
             update = updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'curve1_mode')
-        layout.prop(self, 'flip1', toggle=True)
-        layout.prop(self, 'curve2_mode')
-        layout.prop(self, 'flip2', toggle=True)
+        box = layout.row(align=True)
+        box.prop(self, 'curve1_mode', text='')
+        box.prop(self, 'flip1', toggle=True, text='Flip')
+        box = layout.row(align=True)
+        box.prop(self, 'curve2_mode', text='')
+        box.prop(self, 'flip2', toggle=True, text='Flip')
 
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', 'Surface1')
@@ -137,8 +141,6 @@ class SvBlendSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             uv_curve2_s = ensure_nesting_level(uv_curve2_s, 2, data_types=(SvCurve,))
         bulge1_s = ensure_nesting_level(bulge1_s, 2)
         bulge2_s = ensure_nesting_level(bulge2_s, 2)
-
-        print(uv_curve2_s)
 
         surfaces_out = []
         for surface1_i, curve1_i, bulge1_i, surface2_i, curve2_i, bulge2_i in zip_long_repeat(surface1_s, uv_curve1_s, bulge1_s, surface2_s, uv_curve2_s, bulge2_s):
