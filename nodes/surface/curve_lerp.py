@@ -8,7 +8,7 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve
-from sverchok.utils.surface import SvCurveLerpSurface
+from sverchok.utils.surface.algorithms import SvCurveLerpSurface
 
 class SvCurveLerpNode(bpy.types.Node, SverchCustomTreeNode):
     """

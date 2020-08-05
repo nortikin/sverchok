@@ -8,7 +8,7 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 
 from sverchok.utils.curve import SvCurve
-from sverchok.utils.surface import SvExtrudeCurvePointSurface
+from sverchok.utils.surface.algorithms import SvExtrudeCurvePointSurface
 
 class SvExtrudeCurvePointNode(bpy.types.Node, SverchCustomTreeNode):
     """

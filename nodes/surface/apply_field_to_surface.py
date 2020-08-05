@@ -6,7 +6,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat
-from sverchok.utils.surface import SvDeformedByFieldSurface, PROJECT, COPROJECT
+from sverchok.utils.surface.algorithms import SvDeformedByFieldSurface, PROJECT, COPROJECT
 
 class SvApplyFieldToSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         """
