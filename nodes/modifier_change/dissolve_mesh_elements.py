@@ -12,8 +12,7 @@ import bmesh
 from sverchok.data_structure import updateNode
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.handling_nodes import SocketProperties, SockTypes, NodeProperties, WrapNode, initialize_node
-from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh, pydata_from_bmesh
-
+from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh, mesh_indexes_from_bmesh
 
 modes = [(n, n, '', ic, i) for i, (n, ic) in
          enumerate(zip(('Verts', 'Edges', 'Faces'), ('VERTEXSEL', 'EDGESEL', 'FACESEL')))]
@@ -21,26 +20,23 @@ modes = [(n, n, '', ic, i) for i, (n, ic) in
 node = WrapNode()
 
 node.props.mask_mode = NodeProperties(bpy_props=bpy.props.EnumProperty(items=modes, update=updateNode))
-node.props.use_face_split = NodeProperties(bpy_props=bpy.props.BoolProperty(update=updateNode))
-node.props.use_boundary_tear = NodeProperties(bpy_props=bpy.props.BoolProperty(update=updateNode))
-node.props.use_verts = NodeProperties(bpy_props=bpy.props.BoolProperty(update=updateNode))
+node.props.use_face_split: bool = NodeProperties(bpy_props=bpy.props.BoolProperty(update=updateNode))
+node.props.use_boundary_tear: bool = NodeProperties(bpy_props=bpy.props.BoolProperty(update=updateNode))
+node.props.use_verts: bool = NodeProperties(bpy_props=bpy.props.BoolProperty(update=updateNode))
 
 node.inputs.verts = SocketProperties('Verts', SockTypes.VERTICES, deep_copy=False, vectorize=False, mandatory=True)
 node.inputs.edges = SocketProperties('Edges', SockTypes.STRINGS, deep_copy=False, vectorize=False)
 node.inputs.faces = SocketProperties('Faces', SockTypes.STRINGS, deep_copy=False, vectorize=False)
 node.inputs.mask = SocketProperties('Mask', SockTypes.STRINGS, deep_copy=False,
                                     custom_draw='draw_mask_socket_modes', mandatory=True)
-node.inputs.verts_data = SocketProperties('Verts data', SockTypes.STRINGS, deep_copy=False)
-node.inputs.edges_data = SocketProperties('Edges data', SockTypes.STRINGS, deep_copy=False)
-node.inputs.faces_data = SocketProperties('Faces data', SockTypes.STRINGS, deep_copy=False)
 
 node.outputs.verts = SocketProperties('Verts', SockTypes.VERTICES)
 node.outputs.edges = SocketProperties('Edges', SockTypes.STRINGS)
 node.outputs.faces = SocketProperties('Faces', SockTypes.STRINGS)
-node.outputs.mask = SocketProperties('Mask', SockTypes.STRINGS)
 node.outputs.verts_data = SocketProperties('Verts data', SockTypes.STRINGS)
 node.outputs.edges_data = SocketProperties('Edges data', SockTypes.STRINGS)
-node.outputs.faces_data = SocketProperties('Faces_data', SockTypes.STRINGS)
+node.outputs.faces_data = SocketProperties('Face data', SockTypes.STRINGS)
+node.outputs.loop_data = SocketProperties('Loop data', SockTypes.STRINGS)
 
 
 @initialize_node(node)
@@ -80,7 +76,10 @@ class SvDissolveMeshElements(bpy.types.Node, SverchCustomTreeNode):
                 bmesh.ops.dissolve_faces(bm,
                                          faces=[f for f, m in zip(bm.faces, node.inputs.mask) if m],
                                          use_verts=node.props.use_verts)
-            node.outputs.verts, node.outputs.edges, node.outputs.faces = pydata_from_bmesh(bm)
+            v, e, f, vi, ei, fi, li = mesh_indexes_from_bmesh(bm, 'sv_index')
+            node.outputs.verts, node.outputs.edges, node.outputs.faces = v, e, f
+            node.outputs.verts_data, node.outputs.edges_data, node.outputs.faces_data = vi, ei, fi
+            node.outputs.loop_data = li
 
 
 def register():

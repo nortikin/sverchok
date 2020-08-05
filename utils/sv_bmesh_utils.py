@@ -18,7 +18,7 @@
 
 from contextlib import contextmanager
 import math
-from operator import setitem
+from operator import setitem, getitem
 from itertools import count
 
 import numpy as np
@@ -171,6 +171,26 @@ def pydata_from_bmesh(bm, face_data=None):
     else:
         face_data_out = face_data_from_bmesh_faces(bm, face_data)
         return verts, edges, faces, face_data_out
+
+
+def mesh_indexes_from_bmesh(bm, layer_name):
+    # returns python mesh and old indexes of mesh elements
+    verts = [v.co[:] for v in bm.verts]
+    edges = [[e.verts[0].index, e.verts[1].index] for e in bm.edges]
+    faces = [[i.index for i in p.verts] for p in bm.faces]
+
+    old_elements_indexes = []
+    for sequence in [bm.verts, bm.edges, bm.faces]:
+        lay = sequence.layers.int.get(layer_name, None)
+        old_elements_indexes.append([getitem(el, lay) for el in sequence] if lay else [])
+
+    loop_lay = bm.loops.layers.int.get(layer_name, None)
+    old_elements_indexes.append(
+        [getitem(l, loop_lay) for face in bm.faces for l in face.loops] if loop_lay else [])
+
+    verts_indexes, edges_indexes, faces_indexes, loops_indexes = old_elements_indexes
+    return verts, edges, faces, verts_indexes, edges_indexes, faces_indexes, loops_indexes
+
 
 def get_partial_result_pydata(geom):
     '''used by the subdivide node to get new and old verts/edges/pols'''
