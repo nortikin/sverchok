@@ -116,7 +116,8 @@ def initialize_node(wrap_node: WrapNode):
     def wrapper(node_class: Type[Node]):
         wrap_node.props.add_properties(node_class.__annotations__)
         wrap_node.set_sv_init_method(node_class)
-        wrap_node.decorate_process_method(node_class)
+        if hasattr(node_class, 'process'):
+            wrap_node.decorate_process_method(node_class)
         return node_class
 
     return wrapper
