@@ -51,7 +51,11 @@ class SvNurbsBasisFunctions(object):
 
             def f(us):
                 denom1 = (u[i+p] - u[i])
-                denom2 = (u[i+p+1] - u[i+1])
+                try:
+                    denom2 = (u[i+p+1] - u[i+1])
+                except IndexError as e:
+                    print(f"u: {u}, i: {i}, p: {p}")
+                    raise e
                 if denom1 == 0:
                     c1 = 0
                 else:

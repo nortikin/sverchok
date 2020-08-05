@@ -10,6 +10,7 @@ import numpy as np
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.nurbs_common import nurbs_divide, SvNurbsBasisFunctions
+from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.dependencies import geomdl
 
 if geomdl is not None:
@@ -104,7 +105,11 @@ class SvGeomdlCurve(SvNurbsCurve):
         return np.array(self.curve.ctrlpts)
 
     def get_weights(self):
-        return np.array(self.curve.weights)
+        if self.curve.weights is not None:
+            return np.array(self.curve.weights)
+        else:
+            k = len(self.curve.ctrlpts)
+            return np.ones((k,))
 
     def get_knotvector(self):
         return np.array(self.curve.knotvector)
@@ -158,6 +163,23 @@ class SvGeomdlCurve(SvNurbsCurve):
 
     def get_u_bounds(self):
         return self.u_bounds
+
+    def extrude_along_vector(self, vector):
+        vector = np.array(vector)
+        my_control_points = self.get_control_points()
+        my_weights = self.get_weights()
+        other_control_points = my_control_points + vector
+        control_points = np.stack((my_control_points, other_control_points))
+        control_points = np.transpose(control_points, axes=(1,0,2)).tolist()
+        weights = np.stack((my_weights, my_weights)).T.tolist()
+        my_knotvector = self.get_knotvector()
+        my_degree = self.get_degree()
+        knotvector_v = sv_knotvector.generate(1, 2, clamped=True)
+        surface = SvGeomdlSurface.build(degree_u = my_degree, degree_v = 1,
+                        knotvector_u = my_knotvector, knotvector_v = knotvector_v,
+                        control_points = control_points,
+                        weights = weights)
+        return surface
 
 class SvNativeNurbsCurve(SvNurbsCurve):
     def __init__(self, degree, knotvector, control_points, weights=None):
@@ -274,4 +296,17 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         m = self.knotvector.min()
         M = self.knotvector.max()
         return (m, M)
+
+    def extrude_along_vector(self, vector):
+        vector = np.array(vector)
+        other_control_points = self.control_points + vector
+        control_points = np.stack((self.control_points, other_control_points))
+        control_points = np.transpose(control_points, axes=(1,0,2))
+        weights = np.stack((self.weights, self.weights)).T
+        knotvector_v = sv_knotvector.generate(1, 2, clamped=True)
+        surface = SvNativeNurbsSurface(degree_u = self.degree, degree_v = 1,
+                        knotvector_u = self.knotvector, knotvector_v = knotvector_v,
+                        control_points = control_points,
+                        weights = weights)
+        return surface
 
