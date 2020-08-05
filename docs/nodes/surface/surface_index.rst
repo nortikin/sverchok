@@ -18,6 +18,7 @@ Surface
    extrude_curve
    pipe
    coons_patch
+   blend_surface
    minimal_surface
    min_surface_from_curve
    apply_field_to_surface

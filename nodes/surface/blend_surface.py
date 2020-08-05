@@ -24,7 +24,7 @@ class SvBlendSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvBlendSurfaceNode'
     bl_label = 'Blend Surfaces'
     bl_icon = 'SURFACE_DATA'
-    sv_icon = 'SV_COONS_PATCH'
+    sv_icon = 'SV_BLEND_SURFACE'
 
     curve_options = [
             ('UMIN', "Min U", "Use surface edge with minimal U parameter value", 0),
