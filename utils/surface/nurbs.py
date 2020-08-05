@@ -1,7 +1,7 @@
 
 import numpy as np
 
-from sverchok.utils.curve.nurbs import SvNurbsBasisFunctions
+from sverchok.utils.nurbs_common import nurbs_divide, SvNurbsBasisFunctions
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
 from sverchok.dependencies import geomdl
