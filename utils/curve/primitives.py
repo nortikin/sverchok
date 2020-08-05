@@ -6,6 +6,10 @@
 # License-Filename: LICENSE
 
 import numpy as np
+from math import sin, cos, pi, radians, sqrt
+
+from mathutils import Vector, Matrix
+
 from sverchok.utils.logging import error
 from sverchok.utils.geom import LineEquation, CubicSpline, CircleEquation2D, CircleEquation3D, Ellipse3D
 from sverchok.utils.curve.core import SvCurve
