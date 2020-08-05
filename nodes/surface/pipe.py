@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.logging import info, exception
 
 from sverchok.utils.curve import SvCurve
-from sverchok.utils.surface import SvConstPipeSurface
+from sverchok.utils.surface.algorithms import SvConstPipeSurface
 from sverchok.utils.math import ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL
 
 class SvPipeSurfaceNode(bpy.types.Node, SverchCustomTreeNode):

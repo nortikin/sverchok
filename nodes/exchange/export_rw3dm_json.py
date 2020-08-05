@@ -115,7 +115,10 @@ else:
                 container = multi.CurveContainer()
                 for i, curve in enumerate(curves):
                     if not isinstance(curve, SvNurbsCurve):
-                        raise TypeError("Provided object #%s is not a NURBS curve, but %s!" % (i, type(curve)))
+                        if hasattr(curve, 'to_nurbs'):
+                            curve = curve.to_nurbs(implementation = SvNurbsCurve.GEOMDL)
+                        else:
+                            raise TypeError("Provided object #%s is not a NURBS curve, but %s!" % (i, type(curve)))
                     container.append(SvGeomdlCurve.from_any_nurbs(curve).curve)
                 return container
             else: # SURFACE
@@ -125,7 +128,10 @@ else:
                 container = multi.SurfaceContainer()
                 for i, surface in enumerate(surfaces):
                     if not isinstance(surface, SvNurbsSurface):
-                        raise TypeError("Provided object #%s is not a NURBS surface, but %s!" % (i, type(surface)))
+                        if hasattr(surface, 'to_nurbs'):
+                            surface = surface.to_nurbs(implementation = SvNurbsCurve.GEOMDL)
+                        else:
+                            raise TypeError("Provided object #%s is not a NURBS surface, but %s!" % (i, type(surface)))
                     container.append(SvGeomdlSurface.from_any_nurbs(surface).surface)
                 return container
 

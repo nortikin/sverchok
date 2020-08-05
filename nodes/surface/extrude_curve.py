@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.logging import info, exception
 
 from sverchok.utils.curve import SvCurve
-from sverchok.utils.surface import (
+from sverchok.utils.surface.algorithms import (
         SvExtrudeCurveCurveSurface, SvExtrudeCurveFrenetSurface,
         SvExtrudeCurveZeroTwistSurface, SvExtrudeCurveMathutilsSurface,
         SvExtrudeCurveTrackNormalSurface,

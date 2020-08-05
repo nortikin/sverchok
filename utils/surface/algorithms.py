@@ -15,11 +15,12 @@ from sverchok.utils.math import (
         ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL
     )
 from sverchok.utils.geom import LineEquation, rotate_vector_around_vector, autorotate_householder, autorotate_track, autorotate_diff
-from sverchok.utils.curve import (
-        SvFlipCurve, SvNormalTrack, SvCircle,
-        MathutilsRotationCalculator, DifferentialRotationCalculator
-    )
-from sverchok.utils.curve.algorithms import curve_frame_on_surface_array
+from sverchok.utils.curve.core import SvFlipCurve
+from sverchok.utils.curve.primitives import SvCircle
+from sverchok.utils.curve.algorithms import (
+            SvNormalTrack, curve_frame_on_surface_array,
+            MathutilsRotationCalculator, DifferentialRotationCalculator
+        )
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.data import *
 
@@ -343,6 +344,13 @@ class SvExtrudeCurveVectorSurface(SvSurface):
         self.vector = np.array(vector)
         self.normal_delta = 0.001
         self.__description__ = "Extrusion of {}".format(curve)
+
+    @classmethod
+    def build(cls, curve, vector):
+        if hasattr(curve, 'extrude_along_vector'):
+            return curve.extrude_along_vector(vector)
+        else:
+            return SvExtrudeCurveVectorSurface(curve, vector)
 
     def evaluate(self, u, v):
         point_on_curve = self.curve.evaluate(u)
