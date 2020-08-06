@@ -41,3 +41,4 @@ Modifier Change
    follow_active_quads
    separate_parts_to_indexes
    extrude_multi_alt
+   dissolve_mesh_elements

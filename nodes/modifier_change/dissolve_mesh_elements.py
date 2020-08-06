@@ -33,10 +33,10 @@ node.inputs.mask = SocketProperties('Mask', SockTypes.STRINGS, deep_copy=False,
 node.outputs.verts = SocketProperties('Verts', SockTypes.VERTICES)
 node.outputs.edges = SocketProperties('Edges', SockTypes.STRINGS)
 node.outputs.faces = SocketProperties('Faces', SockTypes.STRINGS)
-node.outputs.verts_data = SocketProperties('Verts data', SockTypes.STRINGS)
-node.outputs.edges_data = SocketProperties('Edges data', SockTypes.STRINGS)
-node.outputs.faces_data = SocketProperties('Face data', SockTypes.STRINGS)
-node.outputs.loop_data = SocketProperties('Loop data', SockTypes.STRINGS)
+node.outputs.verts_ind = SocketProperties('Verts ind', SockTypes.STRINGS)
+node.outputs.edges_ind = SocketProperties('Edges ind', SockTypes.STRINGS)
+node.outputs.faces_ind = SocketProperties('Face ind', SockTypes.STRINGS)
+node.outputs.loop_ind = SocketProperties('Loop ind', SockTypes.STRINGS)
 
 
 @initialize_node(node)
@@ -48,7 +48,7 @@ class SvDissolveMeshElements(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvDissolveMeshElements'
     bl_label = 'Dissolve mesh elements'
-    sv_icon = 'EXPERIMENTAL'
+    bl_icon = 'EXPERIMENTAL'
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'use_face_split', toggle=1)
@@ -78,8 +78,8 @@ class SvDissolveMeshElements(bpy.types.Node, SverchCustomTreeNode):
                                          use_verts=node.props.use_verts)
             v, e, f, vi, ei, fi, li = mesh_indexes_from_bmesh(bm, 'sv_index')
             node.outputs.verts, node.outputs.edges, node.outputs.faces = v, e, f
-            node.outputs.verts_data, node.outputs.edges_data, node.outputs.faces_data = vi, ei, fi
-            node.outputs.loop_data = li
+            node.outputs.verts_ind, node.outputs.edges_ind, node.outputs.faces_ind = vi, ei, fi
+            node.outputs.loop_ind = li
 
 
 def register():
