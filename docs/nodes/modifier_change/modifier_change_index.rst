@@ -34,7 +34,6 @@ Modifier Change
    split_faces
    vertices_mask
    make_monotone
-   dissolve_faces_2d
    planar_edgenet_to_polygons
    pulga_physics
    inset_faces
