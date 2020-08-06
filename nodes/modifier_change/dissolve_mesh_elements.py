@@ -48,7 +48,7 @@ class SvDissolveMeshElements(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvDissolveMeshElements'
     bl_label = 'Dissolve mesh elements'
-    sv_icon = 'SV_RANDOM_NUM_GEN'
+    sv_icon = 'EXPERIMENTAL'
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'use_face_split', toggle=1)
