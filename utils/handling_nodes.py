@@ -51,6 +51,7 @@ from bpy.types import Node
 
 
 class WrapNode:
+    # instancing the class for crating properties and sockets
     def __init__(self):
         self.props = NodeProps(self)
         self.inputs = NodeInputs(self)
@@ -84,6 +85,7 @@ class WrapNode:
 
     @contextmanager
     def read_socket_data(self, bl_node: Node):
+        # it switch the class in reading mode what indicates that it is used in process method
         self.bl_node = bl_node
         self.is_in_process = True
         try:
@@ -92,6 +94,7 @@ class WrapNode:
             self.is_in_process = False
 
     def layers_iterator(self):
+        # standard vectorization system
         max_layers_number = max([len(s.sv_get(default=[[]], deepcopy=False)) for s in self.bl_node.inputs])
         for layer_index in range(max_layers_number):
             self.layer_number = layer_index
@@ -99,6 +102,7 @@ class WrapNode:
 
     def pass_data(self, node: Node):
         # just pass data unchanged in case if given data is not sufficient for starting process
+        # I have found this very useful in some case
         for in_sock, prop in zip(node.inputs, self.inputs.sockets_props):
             try:
                 out_socket = node.outputs[prop.name]
@@ -112,7 +116,8 @@ class WrapNode:
 
 
 def initialize_node(wrap_node: WrapNode):
-
+    # class decorator for automatization sockets and property creation
+    # also it automates vectorization system at this moment
     def wrapper(node_class: Type[Node]):
         wrap_node.props.add_properties(node_class.__annotations__)
         wrap_node.set_sv_init_method(node_class)
@@ -262,6 +267,7 @@ class NodeOutputs:
             return self._get_socket_data(name)
 
     def add_sockets(self, node: Node):
+        # initialization sockets in a node
         [node.outputs.new(p.socket_type.get_name(), p.name) for p in self.sockets_props]
         [setattr(s, 'custom_draw', p.custom_draw) for s, p in zip(node.inputs, self.sockets_props)]
 
