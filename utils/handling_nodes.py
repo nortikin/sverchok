@@ -87,6 +87,7 @@ class WrapNode:
     def read_socket_data(self, bl_node: Node):
         # it switch the class in reading mode what indicates that it is used in process method
         self.bl_node = bl_node
+        self.outputs.clear()  # otherwise a node can keep outdated number of objects(layer) and their data
         self.is_in_process = True
         try:
             yield
@@ -273,6 +274,9 @@ class NodeOutputs:
 
     def set_data_to_bl_sockets(self):
         [s.sv_set(self.socket_data[name]) for s, name in zip(self.wrap_node.bl_node.outputs, self.sockets)]
+
+    def clear(self):
+        self.socket_data.clear()
 
     def _add_socket_data(self, socket_name: str, data):
         # add data of current layer to socket, existing data will be overridden
