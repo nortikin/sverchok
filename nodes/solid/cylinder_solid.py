@@ -46,7 +46,7 @@ else:
             size=3,
             update=updateNode)
         direction: FloatVectorProperty(
-            name="Origin",
+            name="Direction",
             default=(0, 0, 1),
             size=3,
             update=updateNode)
