@@ -34,7 +34,7 @@ else:
         bl_idname = 'SvSolidDistanceNode'
         bl_label = 'Solid Distance'
         bl_icon = 'OUTLINER_OB_EMPTY'
-        sv_icon = 'SV_POINTS_INSIDE_SOLID'
+        sv_icon = 'SV_SOLID_DISTANCE'
         solid_catergory = "Operators"
 
         modes = [
@@ -137,7 +137,7 @@ else:
                     infos_a.append(dist[2][0][0:3])
                     closest_points_b.append(dist[1][0][1][:])
                     infos_b.append(dist[2][0][3:])
-                    
+
                     closest_points_out_b.append(closest_points_b)
                     infos_out_b.append(infos_b)
 
