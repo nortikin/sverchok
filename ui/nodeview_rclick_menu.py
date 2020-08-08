@@ -10,7 +10,7 @@ import bpy
 from sverchok.utils.sv_node_utils import frame_adjust
 from sverchok.menu import draw_add_node_operator
 from sverchok.ui.presets import node_supports_presets
-from sverchok.core.sockets import SvCurveSocket, SvSurfaceSocket, SvStringsSocket
+from sverchok.core.sockets import SvCurveSocket, SvSurfaceSocket, SvStringsSocket, SvSolidSocket
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 supported_mesh_viewers = {'SvBmeshViewerNodeMK2', 'ViewerNode2'}
@@ -62,6 +62,7 @@ def get_output_sockets_map(node):
     got_faces = False
     got_curves = False
     got_surface = False
+    got_solid = False
     # we can surely use regex for this, but for now this will work.
     for socket in node.outputs:
 
@@ -86,6 +87,10 @@ def get_output_sockets_map(node):
         elif not got_surface and isinstance(socket, SvSurfaceSocket):
             output_map['surface'] = socket.name
             got_surface = True
+
+        elif not got_solid and isinstance(socket, SvSolidSocket):
+            output_map['solid'] = socket.name
+            got_solid = True
 
     return output_map
 
@@ -158,6 +163,12 @@ def add_connection(tree, bl_idname_new_node, offset):
                 links.new(outputs[output_map['surface']], eval_node.inputs[0])
                 links.new(eval_node.outputs[0], inputs[0])
                 links.new(eval_node.outputs[1], inputs[1])
+            elif 'solid' in output_map:
+                tree.nodes.remove(new_node)
+                new_node = nodes.new('SvSolidViewerNode')
+                offset_node_location(existing_node, new_node, offset)
+                frame_adjust(existing_node, new_node)
+                links.new(outputs[output_map['solid']], new_node.inputs[0])
             tree.sv_process = previous_state
             tree.update()
             # existing_node.process_node(None)
