@@ -17,6 +17,22 @@ else:
     import Mesh
     from FreeCAD import Base
 
+    def svmesh_to_solid(verts, faces, precision):
+        """
+        input: verts / faces / precision
+        output a Solid (FreeCad type)
+
+        this utility function is included in the node, to keep this code in the same place
+        """
+        
+        tri_faces = ensure_triangles(verts, faces, True)
+        faces_t = [[verts[c] for c in f] for f in tri_faces]
+        mesh = Mesh.Mesh(faces_t)
+        shape = Part.Shape()
+        shape.makeShapeFromMesh(mesh.Topology, precision)
+        shape = shape.removeSplitter()  # may slow it down, or be totally necessary
+        return Part.makeSolid(shape)
+
     def ensure_triangles(coords, indices, handle_concave_quads):
         """
         this fully tesselates the incoming topology into tris,

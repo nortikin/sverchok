@@ -227,6 +227,8 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
             geom = self.create_geom(bm, mask)
 
             try:
+                # we try the most likely blender binary compatible version first (official builds)
+
                 bevel_faces = bmesh.ops.bevel(bm,
                     geom=geom,
                     offset=offset,
@@ -242,6 +244,26 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
                     # strength= (float)
                     # hnmode= (enum in ['NONE', 'FACE', 'ADJACENT', 'FIXED_NORMAL_SHADING'], default 'NONE')
                     material=-1)['faces']
+            except TypeError as e:
+
+                # if the "try" failed, we try the new form of bmesh.ops.bevel arguments.
+                affect_geom = 'VERTICES' if self.vertexOnly else 'EDGES'
+                
+                bevel_faces = bmesh.ops.bevel(bm,
+                    geom=geom,
+                    offset=offset,
+                    offset_type=self.offsetType,
+                    segments=segments,
+                    profile=profile,
+                    #   profile_type=  (enum:  'SUPERELLIPSE', 'CUSTOM' ), default super
+                    affect=affect_geom,
+                    clamp_overlap = self.clamp_overlap,
+                    loop_slide = self.loop_slide,
+                    spread = spread,
+                    miter_inner = self.miter_inner,
+                    miter_outer = self.miter_outer,
+                    material=-1)['faces']
+
             except Exception as e:
                 self.exception(e)
 
