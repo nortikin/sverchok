@@ -110,6 +110,7 @@ class NodeViewMenuSolidTemplate(bpy.types.Menu):
 
     def draw(self, context):
         layout_draw_solid_categories(self.layout, node_cats["Solids"], self.bl_label)
+        layout_draw_solid_categories(self.layout, node_cats["Exchange"], self.bl_label)
         # layout_draw_categories(self.layout, node_cats[self.bl_label])
         # prop_menu_enum(data, property, text="", text_ctxt="", icon='NONE')
 
