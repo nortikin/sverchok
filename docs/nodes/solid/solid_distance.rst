@@ -29,14 +29,14 @@ Inputs
 All inputs are vectorized and the data will be matched to the longest list
 
 - **Solid / Solid Face / Solid Edge**: First element
-- ****Solid / Solid Face / Solid Edge / Vertices**: Second element
+- **Solid / Solid Face / Solid Edge / Vertices**: Second element
 
 Outputs
 -------
 
 - **Distance**: Minimum distance.
 - **Closest Point A and B**: Points in element where the distance is minimal
-- **Info A and B**: returns a triple per element with:
+- **Info A and B**: Returns a triple per element with:
   - Nearest topology item type (Face, Edge or Vertex)
   - Nearest topology item index
   - Nearest topology item parameter (UV coordinates for faces, T for edges and None for vertex)
