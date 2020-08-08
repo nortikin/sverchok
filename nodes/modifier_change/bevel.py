@@ -246,7 +246,7 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
                     material=-1)['faces']
             except TypeError as e:
 
-                # if the "try" failed, we try the new form of bmesh.ops.bevel arguments.
+                # if the "try" failed, we try the new form of bmesh.ops.bevel arguments..
                 affect_geom = 'VERTICES' if self.vertexOnly else 'EDGES'
                 
                 bevel_faces = bmesh.ops.bevel(bm,
