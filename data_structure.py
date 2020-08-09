@@ -814,6 +814,24 @@ def enum_item_5(s, icons):
     """return a 4*n list usable in enum property from a list with one value"""
     return [(no_space(n), n, '', icon, i) for i, (n, icon) in enumerate(zip(s, icons))]
 
+def sv_lambda(**kwargs):
+    """üsage: (like a named tuple)
+
+    structure = sv_lambda(keys=20, color=(1,0,0,0))
+
+    print(structure.keys)
+    print(structure.color)
+
+    useful for passing a parameter to a function that expects to be able to do a dot lookup
+    on the parameter, for instance a function that normally accepts "self" or "node", but the 
+    function only really looks up one or two..etc parameters.
+    """ 
+    dummy = lambda: None
+    for k, v in kwargs.items():
+        setattr(dummy, k, v)
+    return dummy
+
+
 
 #####################################################
 ############### debug settings magic ################
