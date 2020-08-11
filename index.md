@@ -290,7 +290,7 @@
     ---
     PolygonBoomNode
     SvEdgeBoomNode
-    SvDissolveFaces2D
+    SvDissolveMeshElements
     Pols2EdgsNode
     SvMeshJoinNode
     ---

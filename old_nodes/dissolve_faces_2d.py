@@ -24,6 +24,10 @@ class SvDissolveFaces2D(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Dissolve Faces 2D'
     bl_icon = 'MESH_PLANE'
 
+    @property
+    def replacement_nodes(self):
+        return [('SvDissolveMeshElements', {'Face mask': 'Mask'}, None)]
+
     @throttled
     def update_sockets(self, context):
         links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
