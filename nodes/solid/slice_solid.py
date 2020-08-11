@@ -52,7 +52,7 @@ else:
             slices_face = []
             faces_add = slices_face.extend if self.flat_output else slices_face.append
             slices_add = slices.extend if self.flat_output else slices.append
-            
+
             for solid, matrix in zip(*mlr([solids_in, matrixes])):
 
                 location = matrix.decompose()[0]
@@ -66,7 +66,9 @@ else:
                     for edge in wire.Edges:
                         curve = SvSolidEdgeCurve(edge)
                         edges_curves.append(curve)
-                    face = Part.Face(wire)
+
+                if wires:
+                    face = Part.Face(wires)
                     faces.append(SvSolidFaceSurface(face))
                 if faces:
                     faces_add(faces)

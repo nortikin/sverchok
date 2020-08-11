@@ -20,7 +20,7 @@ Solid
    solid_distance
    slice_solid
    mesh_to_solid
-   solid_to_mesh
+   solid_to_mesh_mk2
    solid_faces
    solid_edges
    solid_vertices
