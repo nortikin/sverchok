@@ -18,6 +18,7 @@ Solid
    offset_solid
    points_inside_solid
    solid_distance
+   slice_solid
    mesh_to_solid
    solid_to_mesh
    solid_faces

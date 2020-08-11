@@ -206,6 +206,7 @@
    SvOffsetSolidNode
    SvIsInsideSolidNode
    SvSolidDistanceNode
+   SvSliceSolidNode
    SvMeshToSolidNode
    SvSolidToMeshNode
    SvSolidVerticesNode
