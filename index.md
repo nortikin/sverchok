@@ -208,7 +208,7 @@
    SvSolidDistanceNode
    SvSliceSolidNode
    SvMeshToSolidNode
-   SvSolidToMeshNode
+   SvSolidToMeshNodeMk2
    SvSolidVerticesNode
    SvSolidEdgesNode
    SvSolidFacesNode
