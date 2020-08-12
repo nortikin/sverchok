@@ -102,6 +102,9 @@ class SvNurbsCurve(SvCurve):
         else:
             raise Exception("Not implemented yet!")
 
+    def insert_knot(self, u, count=1):
+        raise Exception("Not implemented!")
+
 class SvGeomdlCurve(SvNurbsCurve):
     """
     geomdl-based implementation of NURBS curves
@@ -224,6 +227,10 @@ class SvGeomdlCurve(SvNurbsCurve):
                         control_points = control_points,
                         weights = weights)
         return surface
+
+    def insert_knot(self, u, count=1):
+        curve = operations.insert_knot(self.curve, [u], [count])
+        return SvGeomdlCurve(curve)
 
 class SvNativeNurbsCurve(SvNurbsCurve):
     def __init__(self, degree, knotvector, control_points, weights=None):
@@ -415,4 +422,67 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 
     def get_nurbs_implementation(self):
         return SvNurbsCurve.NATIVE
+
+    def insert_knot(self, u_bar, count=1):
+        # "The NURBS book", 2nd edition, p.5.2, eq. 5.11
+        s = sv_knotvector.find_multiplicity(self.knotvector, u_bar)
+        #print(f"I: kv {self.knotvector}, u_bar {u_bar} => s {s}")
+        k = np.searchsorted(self.knotvector, u_bar, side='right')-1
+        p = self.degree
+        u = self.knotvector
+        new_knotvector = sv_knotvector.insert(self.knotvector, u_bar, count)
+        N = len(self.control_points)
+        control_points = self.get_homogenous_control_points()
+
+        for r in range(1, count+1):
+            prev_control_points = control_points
+            control_points = []
+            for i in range(N+1):
+                #print(f"I: i {i}, k {k}, p {p}, r {r}, s {s}, k-p+r-1 {k-p+r-1}, k-s {k-s}")
+                if i <= k-p+r-1:
+                    point = prev_control_points[i]
+                    #print(f"P[{r},{i}] := {i}{prev_control_points[i]}")
+                elif k - p + r <= i <= k - s:
+                    denominator = u[i+p-r+1] - u[i]
+                    alpha = (u_bar - u[i]) / denominator
+                    point = alpha * prev_control_points[i] + (1.0 - alpha) * prev_control_points[i-1]
+                    #print(f"P[{r},{i}]: alpha {alpha}, pts {i}{prev_control_points[i]}, {i-1}{prev_control_points[i-1]} => {point}")
+                else:
+                    point = prev_control_points[i-1]
+                    #print(f"P[{r},{i}] := {i-1}{prev_control_points[i-1]}")
+                control_points.append(point)
+            N += 1
+
+        control_points, weights = from_homogenous(np.array(control_points))
+        curve = SvNativeNurbsCurve(self.degree, new_knotvector,
+                    control_points, weights)
+        return curve
+
+    def split_at(self, t):
+        current_multiplicity = sv_knotvector.find_multiplicity(self.knotvector, t)
+        to_add = self.degree - current_multiplicity # + 1
+        curve = self.insert_knot(t, count=to_add)
+        knot_span = np.searchsorted(curve.knotvector, t)
+
+        ts = np.full((self.degree+1,), t)
+        knotvector1 = np.concatenate((curve.knotvector[:knot_span], ts))
+        knotvector2 = np.insert(curve.knotvector[knot_span:], 0, t)
+
+        control_points_1 = curve.control_points[:knot_span]
+        control_points_2 = curve.control_points[knot_span-1:]
+        weights_1 = curve.weights[:knot_span]
+        weights_2 = curve.weights[knot_span-1:]
+
+        kv_error = sv_knotvector.check(curve.degree, knotvector1, len(control_points_1))
+        if kv_error is not None:
+            raise Exception(kv_error)
+        kv_error = sv_knotvector.check(curve.degree, knotvector2, len(control_points_2))
+        if kv_error is not None:
+            raise Exception(kv_error)
+
+        curve1 = SvNativeNurbsCurve(curve.degree, knotvector1,
+                    control_points_1, weights_1)
+        curve2 = SvNativeNurbsCurve(curve.degree, knotvector2,
+                    control_points_2, weights_2)
+        return curve1, curve2
 

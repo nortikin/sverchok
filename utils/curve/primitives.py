@@ -12,11 +12,12 @@ from mathutils import Vector, Matrix
 
 from sverchok.utils.logging import error
 from sverchok.utils.geom import LineEquation, CircleEquation2D, CircleEquation3D, Ellipse3D
-from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.surface.primitives import SvPlane
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.bezier import SvBezierCurve
+from sverchok.utils.curve.algorithms import curve_segment
 
 class SvLine(SvCurve):
     __description__ = "Line"
@@ -162,6 +163,39 @@ class SvCircle(SvCurve):
 #         zs = np.zeros_like(xs)
 #         vectors = np.stack((xs, ys, zs)).T
 #         return np.apply_along_axis(lambda v: self.matrix @ v, 1, vectors)
+
+    def to_nurbs(self, implementation = SvNurbsCurve.NATIVE):
+        t_min, t_max = self.get_u_bounds()
+        if t_min < 0 or t_max > 2*pi:
+            raise UnsupportedCurveTypeException(f"Can't transform a circle arc out of 0-2pi bound ({t_min} - {t_max}) to NURBS")
+        control_points = np.array([[1, 0, 0],
+                                   [1, 1, 0],
+                                   [0, 1, 0],
+                                   [-1, 1, 0],
+                                   [-1, 0, 0],
+                                   [-1, -1, 0],
+                                   [0, -1, 0],
+                                   [1, -1, 0],
+                                   [1, 0, 0]])
+        control_points = self.radius * control_points
+        control_points = np.apply_along_axis(lambda v: self.matrix @ v, 1, control_points)
+        sqrt22 = sqrt(2.0)/2.0
+        weights = np.array([1, sqrt22, 1, sqrt22,
+                            1, sqrt22, 1, sqrt22, 1])
+        pi2 = pi/2.0
+        pi32 = 3*pi/2.0
+        knotvector = np.array([0, 0, 0,
+                               pi2, pi2,
+                               pi, pi,
+                               pi32, pi32,
+                               2*pi, 2*pi, 2*pi])
+        degree = 2
+        curve = SvNurbsCurve.build(implementation,
+                    degree, knotvector,
+                    control_points, weights)
+        if t_min != 0 or t_max != 2*pi:
+            curve = curve_segment(curve, t_min, t_max)
+        return curve
 
 class SvEllipse(SvCurve):
     __description__ = "Ellipse"

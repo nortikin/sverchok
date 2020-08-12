@@ -7,6 +7,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve, SvCurveSegment
+from sverchok.utils.curve.algorithms import curve_segment
 
 class SvCurveSegmentNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -58,7 +59,7 @@ class SvCurveSegmentNode(bpy.types.Node, SverchCustomTreeNode):
         curve_out = []
         for curves, tmins, tmaxs in zip_long_repeat(curve_s, tmin_s, tmax_s):
             for curve, t_min, t_max in zip_long_repeat(curves, tmins, tmaxs):
-                new_curve = SvCurveSegment(curve, t_min, t_max, self.rescale)
+                new_curve = curve_segment(curve, t_min, t_max, self.rescale)
                 curve_out.append(new_curve)
 
         self.outputs['Segment'].sv_set(curve_out)

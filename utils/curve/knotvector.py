@@ -87,12 +87,15 @@ def concatenate(kv1, kv2):
     M = kv1.max()
     return np.concatenate((kv1, kv2 + M))
 
-def to_multiplicity(knot_vector):
+def to_multiplicity(knot_vector, tolerance=1e-6):
     count = 0
     prev_u = None
     result = []
     for u in knot_vector:
-        last_match = (u == prev_u)
+        if prev_u is None:
+            last_match = False
+        else:
+            last_match = abs(u - prev_u) < tolerance
         if prev_u is None:
             count = 1
         elif last_match:
@@ -120,6 +123,17 @@ def elevate_degree_pairs(pairs, delta=1):
 def elevate_degree(knot_vector, delta=1):
     pairs = to_multiplicity(knot_vector)
     return from_multiplicity(elevate_degree_pairs(pairs, delta))
+
+def insert(knot_vector, u, count=1):
+    idx = np.searchsorted(knot_vector, u)
+    result = knot_vector
+    for i in range(count):
+        result = np.insert(result, idx, u)
+    return result
+
+def find_multiplicity(knot_vector, u, tolerance=1e-6):
+    pairs = to_multiplicity(knot_vector, tolerance)
+    return dict(pairs).get(u, 0)
 
 def check(degree, knot_vector, num_ctrlpts):
     """ Checks the validity of the input knot vector.
