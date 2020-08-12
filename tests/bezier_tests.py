@@ -21,7 +21,7 @@ class BezierTests(SverchokTestCase):
         generic = SvBezierCurve(points)
         cubic_points = cubic.evaluate_array(ts)
         generic_points = generic.evaluate_array(ts)
-        self.assert_numpy_arrays_equal(cubic_points, generic_points)
+        self.assert_numpy_arrays_equal(cubic_points, generic_points, precision=6)
 
     def test_tangents_equal(self):
         ts = np.linspace(0.0, 1.0, num=10)
