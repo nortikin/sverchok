@@ -14,7 +14,7 @@ from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.dependencies import geomdl
 
 if geomdl is not None:
-    from geomdl import NURBS, BSpline
+    from geomdl import NURBS, BSpline, operations
 
 ##################
 #                #
@@ -171,15 +171,17 @@ class SvGeomdlCurve(SvNurbsCurve):
         return np.array(vs)
 
     def tangent(self, t):
-        p, t = self.curve.tangent(t, normalize=False)
+        p, t = operations.tangent(self.curve, t, normalize=False)
         return np.array(t)
 
     def tangent_array(self, ts):
         t_min, t_max = self.get_u_bounds()
         ts[ts < t_min] = t_min
         ts[ts > t_max] = t_max
-        vs = self.curve.tangent(list(ts), normalize=False)
-        return np.array([t[1] for t in vs])
+        vs = operations.tangent(self.curve, list(ts), normalize=False)
+        tangents = [t[1] for t in vs]
+        #print(f"ts: {ts}, vs: {tangents}")
+        return np.array(tangents)
 
     def second_derivative(self, t):
         p, first, second = self.curve.derivatives(t, order=2)
