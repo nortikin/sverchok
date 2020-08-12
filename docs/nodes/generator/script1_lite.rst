@@ -66,7 +66,7 @@ in your code you might use them this way::
         v_out = b_verts
         f_out = rawdata[1]
 
-see a working script: https://github.com/nortikin/sverchok/pull/3455
+see a working script that ses two enums here: https://github.com/nortikin/sverchok/pull/3455
 
 - add ``ddir`` (a dunderless dir() function) to local namespace.  ``ddir(object, filter_str="some_string")`` . filter_str is optional::
 
