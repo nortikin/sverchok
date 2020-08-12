@@ -23,6 +23,9 @@ class ZeroCurvatureException(Exception):
     def get_message(self):
         return f"Curve has zero curvature at some points: {self.ts}"
 
+class UnsupportedCurveTypeException(TypeError):
+    pass
+
 ##################
 #                #
 #  Curves        #
@@ -334,6 +337,16 @@ class SvCurve(object):
     def get_u_bounds(self):
         raise Exception("not implemented!")
 
+    def get_degree(self):
+        raise Exception("`Get Degree' method is not applicable to curve of type `{}'".format(type(self)))
+
+    def get_control_points(self):
+        """
+        Returns: np.array of shape (n, 3)
+        """
+        return np.array([])
+        #raise Exception("Curve of type type `{}' does not have control points".format(type(self)))
+
 class SvScalarFunctionCurve(SvCurve):
     __description__ = "Function"
 
@@ -366,7 +379,38 @@ class SvConcatCurve(SvCurve):
             self.u_max = self.ranges.sum()
             self.min_bounds = np.insert(np.cumsum(self.ranges), 0, 0)
         self.tangent_delta = 0.001
-        self.__description__ = "Concat{}".format(curves)
+    
+    def __repr__(self):
+        return "+".join([str(curve) for curve in self.curves])
+
+#     @classmethod
+#     def build(cls, curves):
+#         if not curves:
+#             raise Exception("List of curves must be not empty")
+#         result = [curves[0]]
+#         for curve in curves[1:]:
+#             new_curve = None
+#             ok = False
+#             if hasattr(result[-1], 'concatenate'):
+#                 try:
+#                     new_curve = result[-1].concatenate(curve)
+#                     ok = True
+#                 except UnsupportedCurveTypeException as e:
+#                     print(e)
+#                     # "concatenate" method can't work with this type of curve
+#                     pass
+# 
+#             print(f"C: {curve}, prev: {result[-1]}, ok: {ok}, new: {new_curve}")
+# 
+#             if ok:
+#                 result[-1] = new_curve
+#             else:
+#                 result.append(curve)
+# 
+#         if len(result) == 1:
+#             return result[0]
+#         else:
+#             return SvConcatCurve(result)
 
     def get_u_bounds(self):
         return (0.0, self.u_max)
@@ -451,7 +495,9 @@ class SvFlipCurve(SvCurve):
             self.tangent_delta = curve.tangent_delta
         else:
             self.tangent_delta = 0.001
-        self.__description__ = "Flip({})".format(curve)
+
+    def __repr__(self):
+        return f"Flip {self.curve}"
 
     def get_u_bounds(self):
         return self.curve.get_u_bounds()
@@ -560,11 +606,13 @@ class SvCurveSegment(SvCurve):
         else:
             self.u_bounds = (u_min, u_max)
             self.target_u_bounds = (u_min, u_max)
+
+    def __repr__(self):
         if hasattr(curve, '__description__'):
             curve_description = curve.__description__
         else:
             curve_description = repr(curve)
-        self.__description__ = "{}[{} .. {}]".format(curve_description, u_min, u_max)
+        return "{}[{} .. {}]".format(curve_description, u_min, u_max)
 
     def get_u_bounds(self):
         return self.u_bounds
