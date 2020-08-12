@@ -15,26 +15,27 @@ The script node implementation is intended for quick, non serious, experimentati
 Features
 --------
 
-- easy template importing directly to node, or to text block (the latter is useful for making changes to a template before loading... as is needed with the `custom_draw_complex` example )
+- easy template importing directly to node, or to text block (the latter is useful for making changes to a template before loading... 
+as is needed with the ``custom_draw_complex`` example )
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/25421401/ff29eed2-2a5c-11e7-9594-f85295178f57.png
 
 - doesn't force an output socket, but an input socket is expected (else how does it update?!)
 - does allow you to set some defaults : numbers, and lists of stuff
 - does allow you to set the level of nestedness; means you don't need to unwrap/index stuff via code
-- does allow you to declare an override to the node's draw_button function, well... think of it more like an `append` to the draw code. There's an example of how you might make a light weight Curve mapping node by using the ui component of a RGB curve from a material node tree. it's a little convoluted, but it's usefulness musn't be dismissed.
-- has the option to **auto inject** the list of variable references as `parameters` much like javascript does for 'arguments` inside a function. In essence implemented like this ::
+- does allow you to declare an override to the node's draw_button function, well... think of it more like an ``append`` to the draw code. There's an example of how you might make a light weight Curve mapping node by using the ui component of a RGB curve from a material node tree. it's a little convoluted, but it's usefulness musn't be dismissed.
+- has the option to **auto inject** the list of variable references as **parameters** much like javascript does for **arguments** inside a function. In essence implemented like this ::
 
     parameters = eval("[" + ", ".join([i.name for i in self.inputs]) + "]")
 
 
-To enable this feature add the word "inject" on its own line in the header. If you have 3 input sockets, called `radius, amplitude, num_verts`,  then the variable `parameters` will be ::
+To enable this feature add the word "inject" on its own line in the header. If you have 3 input sockets, called ``radius, amplitude, num_verts``,  then the variable ``parameters`` will be ::
 
     parameters = [radius, amplitude, num_verts]
 
-This is handy for inner functions that are arranged to take arguments in exactly that order. See `<https://github.com/nortikin/sverchok/issues/942#issuecomment-264705956>`_ for an example use. Usually you'll use the 'vectorize' function with this to zip through each pair of arguments. see https://github.com/nortikin/sverchok/issues/942#issuecomment-263912890
+This is handy for inner functions that are arranged to take arguments in exactly that order. See <https://github.com/nortikin/sverchok/issues/942#issuecomment-264705956>_ for an example use. Usually you'll use the 'vectorize' function with this to zip through each pair of arguments. see https://github.com/nortikin/sverchok/issues/942#issuecomment-263912890
 
-- added a helper function `from sverchok.utils.snlite_utils import vectorize` , and this is made available to scripts without the need to import it now. Also see https://github.com/nortikin/sverchok/issues/942#issuecomment-263912890
+- added a helper function ``from sverchok.utils.snlite_utils import vectorize`` , and this is made available to scripts without the need to import it now. Also see https://github.com/nortikin/sverchok/issues/942#issuecomment-263912890
 
 - added an include directive::
 
@@ -45,7 +46,7 @@ This is handy for inner functions that are arranged to take arguments in exactly
 
 The include directive ensures the dependency is also stored in the gist when exported as json. The file named in angle brackets must be present in the current .blend file's text blocks.
 
-- added two (semi) customizable enums to make the custom draw a bit more useful, called `self.custom_enum` and `self.custom_enum_2`. No spaces in the elements, yes spaces between the elements.::
+- added two (semi) customizable enums to make the custom draw a bit more useful, called **self.custom_enum** and **self.custom_enum_2**. No spaces in the elements, yes spaces between the elements.::
 
     """
     enum = word1 word2 word3
@@ -66,7 +67,7 @@ in your code you might use them this way::
         f_out = rawdata[1]
 
 
-- add `ddir` (`dunderless dir`) to local namespace.  `ddir(object, filter_str="some_string")` . filter_str is optional.::
+- add ``ddir`` (``dunderless dir``) to local namespace.  ``ddir(object, filter_str="some_string")`` . filter_str is optional.::
 
     def ddir(content, filter_str=None):
         vals = []
