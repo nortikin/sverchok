@@ -25,12 +25,12 @@ Features
 - does allow you to declare an override to the node's draw_button function, well... think of it more like an `append` to the draw code. There's an example of how you might make a light weight Curve mapping node by using the ui component of a RGB curve from a material node tree. it's a little convoluted, but it's usefulness musn't be dismissed.
 - has the option to **auto inject** the list of variable references as `parameters` much like javascript does for 'arguments` inside a function. In essence implemented like this ::
 
-        parameters = eval("[" + ", ".join([i.name for i in self.inputs]) + "]")
+    parameters = eval("[" + ", ".join([i.name for i in self.inputs]) + "]")
 
 
 To enable this feature add the word "inject" on its own line in the header. If you have 3 input sockets, called `radius, amplitude, num_verts`,  then the variable `parameters` will be ::
 
-     parameters = [radius, amplitude, num_verts]
+    parameters = [radius, amplitude, num_verts]
 
 This is handy for inner functions that are arranged to take arguments in exactly that order. See `<https://github.com/nortikin/sverchok/issues/942#issuecomment-264705956>`_ for an example use. Usually you'll use the 'vectorize' function with this to zip through each pair of arguments. see https://github.com/nortikin/sverchok/issues/942#issuecomment-263912890
 
@@ -45,11 +45,26 @@ This is handy for inner functions that are arranged to take arguments in exactly
 
 The include directive ensures the dependency is also stored in the gist when exported as json. The file named in angle brackets must be present in the current .blend file's text blocks.
 
-- added a default enum to make the custom draw a bit more useful. For the time being there is only one custom enum, the default is "A","B" . called `self.custom_enum`. No spaces in the elements, yes spaces between the elements.::
+- added two (semi) customizable enums to make the custom draw a bit more useful, called `self.custom_enum` and `self.custom_enum_2`. No spaces in the elements, yes spaces between the elements.::
 
     """
     enum = word1 word2 word3
+    enum2 = raw clean
     """
+you make them visible on the ui by doing::
+
+    def ui(self, context, layout):
+        layout.prop(self, 'custom_enum', expand=True)
+        layout.prop(self, 'custom_enum_2', expand=True)
+
+in your code you might use them this way::
+
+    if self.custom_enum_2 == "clean":        
+        v_out, f_out = join_tris(b_verts, rawdata[1], params)
+    else:
+        v_out = b_verts
+        f_out = rawdata[1]
+
 
 - add `ddir` (`dunderless dir`) to local namespace.  `ddir(object, filter_str="some_string")` . filter_str is optional.::
 
@@ -61,7 +76,15 @@ The include directive ensures the dependency is also stored in the gist when exp
             vals = [n for n in dir(content) if not n.startswith('__') and filter_str in n]
         return vals
 
-- add `bmesh_from_pydata` and `pydata_from_bmesh` locally, so you don't have to import.
+- There are several aliases provided so they don't need to be imported manually::
+     bmesh_from_pydata
+     pydata_from_bmesh
+     ddir
+     np
+     bpy
+     vectorize
+
+
 - add operator callback. See: https://github.com/nortikin/sverchok/issues/942#issuecomment-300162017 ::
 
    """
