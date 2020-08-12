@@ -21,6 +21,7 @@ import sys
 import ast
 import json
 import traceback
+import numpy as np
 
 import bpy
 from bpy.props import StringProperty, IntVectorProperty, FloatVectorProperty, BoolProperty
@@ -122,6 +123,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         return [("A", "A", '', 0), ("B", "B", '', 1)]
 
+    def custom_enum_func_2(self, context):
+        ND = self.node_dict.get(hash(self))
+        if ND:
+            enum_list = ND['sockets']['custom_enum_2']
+            if enum_list:
+                return [(ce, ce, '', idx) for idx, ce in enumerate(enum_list)]
+
+        return [("A", "A", '', 0), ("B", "B", '', 1)]
+
 
     def custom_callback(self, context, operator):
         ND = self.node_dict.get(hash(self))
@@ -181,6 +191,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     custom_enum: bpy.props.EnumProperty(
         items=custom_enum_func, description="custom enum", update=updateNode
     )
+    custom_enum_2: bpy.props.EnumProperty(
+        items=custom_enum_func_2, description="custom enum 2", update=updateNode
+    )
+
 
     snlite_raise_exception: BoolProperty(name="raise exception")
 
@@ -402,6 +416,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         locals().update({
             'vectorize': vectorize,
             'bpy': bpy,
+            'np': np,
             'ddir': ddir,
             'bmesh_from_pydata': bmesh_from_pydata,
             'pydata_from_bmesh': pydata_from_bmesh

@@ -95,7 +95,8 @@ def parse_sockets(node):
     snlite_info = {
         'inputs': [], 'outputs': [],
         'snlite_ui': [], 'includes': {},
-        'custom_enum': [], 'callbacks': {}
+        'custom_enum': [], 'custom_enum_2': [],
+        'callbacks': {}
     }
 
     quotes = 0
@@ -122,6 +123,9 @@ def parse_sockets(node):
 
         elif L.startswith('enum ='):
             snlite_info['custom_enum'] = L[6:].strip().split(' ')
+
+        elif L.startswith('enum2 ='):
+            snlite_info['custom_enum_2'] = L[7:].strip().split(' ')
 
         elif L.startswith('include <') and L.endswith('>'):
             filename = L[9:-1]
