@@ -66,8 +66,7 @@ in your code you might use them this way::
         v_out = b_verts
         f_out = rawdata[1]
 
-
-- add ``ddir`` (``dunderless dir``) to local namespace.  ``ddir(object, filter_str="some_string")`` . filter_str is optional.::
+- add ``ddir`` (a dunderless dir() function) to local namespace.  ``ddir(object, filter_str="some_string")`` . filter_str is optional::
 
     def ddir(content, filter_str=None):
         vals = []
@@ -78,13 +77,13 @@ in your code you might use them this way::
         return vals
 
 - There are several aliases provided so they don't need to be imported manually::
+
      bmesh_from_pydata
      pydata_from_bmesh
      ddir
      np
      bpy
      vectorize
-
 
 - add operator callback. See: https://github.com/nortikin/sverchok/issues/942#issuecomment-300162017 ::
 
