@@ -8,10 +8,11 @@
 import numpy as np
 
 from sverchok.data_structure import zip_long_repeat
-from sverchok.utils.math import (
-        binomial
-    )
+from sverchok.utils.math import binomial
 from sverchok.utils.curve.core import SvCurve, SvConcatCurve
+from sverchok.utils.curve.nurbs import SvNurbsCurve
+from sverchok.utils.curve import knotvector as sv_knotvector
+from sverchok.utils.nurbs_common import elevate_bezier_degree
 
 # Pure-python (+ numpy) Bezier curves implementation
 
@@ -236,6 +237,22 @@ class SvBezierCurve(SvCurve):
             result.append(third)
         return result
 
+    def get_degree(self):
+        return self.degree
+
+    def get_control_points(self):
+        return self.points
+
+    def elevate_degree(self, delta=1):
+        points = elevate_bezier_degree(self.degree, self.points, delta)
+        return SvBezierCurve(points)
+
+    def to_nurbs(self, implementation = SvNurbsCurve.NATIVE):
+        knotvector = sv_knotvector.generate(self.degree, len(self.points))
+        return SvNurbsCurve.build(implementation,
+                degree = self.degree, knotvector = knotvector,
+                control_points = self.points)
+
 class SvCubicBezierCurve(SvCurve):
     __description__ = "Bezier[3*]"
     def __init__(self, p0, p1, p2, p3):
@@ -320,4 +337,21 @@ class SvCubicBezierCurve(SvCurve):
             third = self.third_derivative_array(ts)
             result.append(third)
         return result
+
+    def get_degree(self):
+        return 3
+
+    def get_control_points(self):
+        return np.array([self.p0, self.p1, self.p2, self.p3])
+
+    def to_nurbs(self, implementation = SvNurbsCurve.NATIVE):
+        knotvector = sv_knotvector.generate(3, 4)
+        control_points = np.array([self.p0, self.p1, self.p2, self.p3])
+        return SvNurbsCurve.build(implementation,
+                degree = 3, knotvector = knotvector,
+                control_points = control_points)
+
+    def elevate_degree(self, delta=1):
+        points = elevate_bezier_degree(3, self.get_control_points(), delta)
+        return SvBezierCurve(points)
 

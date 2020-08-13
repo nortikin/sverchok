@@ -7,6 +7,8 @@
 
 import numpy as np
 
+from sverchok.utils.math import binomial
+
 def nurbs_divide(numerator, denominator):
     if denominator.ndim != 2:
         denominator = denominator[np.newaxis].T
@@ -15,6 +17,32 @@ def nurbs_divide(numerator, denominator):
     result = np.zeros_like(numerator)
     result[good_num] = numerator[good_num] / denominator[good][np.newaxis].T
     return result
+
+def elevate_bezier_degree(self_degree, control_points, delta=1):
+    # See "The NURBS book" (2nd edition), p.5.5, eq. 5.36
+    t = delta
+    p = self_degree
+    new_points = []
+    P = control_points
+    for i in range(p+t+1):
+        j0 = max(0, i-t)
+        j1 = min(p, i)
+        js = range(j0, j1+1)
+        c1 = np.array([binomial(p, j) for j in js])
+        c2 = np.array([binomial(t, i-j) for j in js])
+        ps = P[j0:j1+1, :]
+        numerator = (c1 * c2)[np.newaxis].T * ps
+        denominator = binomial(p+t, i)
+        #print(f"E: p {p}, i {i}, c1 {c1}, c2 {c2}, denom {denominator}, ps {ps}")
+        point = numerator.sum(axis=0) / denominator
+        new_points.append(point)
+    return np.array(new_points)
+
+def from_homogenous(control_points):
+    weights = control_points[:,3]
+    weighted = control_points[:,0:3]
+    points = weighted / weights[np.newaxis].T
+    return points, weights
 
 class SvNurbsBasisFunctions(object):
     def __init__(self, knotvector):
@@ -98,3 +126,4 @@ class SvNurbsBasisFunctions(object):
         
         self._cache[(i,p,k)] = f
         return f
+

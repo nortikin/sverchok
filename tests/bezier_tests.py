@@ -21,7 +21,7 @@ class BezierTests(SverchokTestCase):
         generic = SvBezierCurve(points)
         cubic_points = cubic.evaluate_array(ts)
         generic_points = generic.evaluate_array(ts)
-        self.assert_numpy_arrays_equal(cubic_points, generic_points)
+        self.assert_numpy_arrays_equal(cubic_points, generic_points, precision=6)
 
     def test_tangents_equal(self):
         ts = np.linspace(0.0, 1.0, num=10)
@@ -90,7 +90,7 @@ class BezierTests(SverchokTestCase):
         self.assert_numpy_arrays_equal(v0r, v0)
         self.assert_numpy_arrays_equal(v1r, v1)
         self.assert_numpy_arrays_equal(a0r, a0)
-        self.assert_numpy_arrays_equal(a1r, a1)
+        self.assert_numpy_arrays_equal(a1r, a1, precision=8)
 
     def test_blend_third(self):
         p0 = np.array([0, 0, 0])
@@ -112,8 +112,8 @@ class BezierTests(SverchokTestCase):
         k0r = curve.third_derivative_array(np.array([0]))[0]
         k1r = curve.third_derivative_array(np.array([1]))[0]
 
-        self.assert_numpy_arrays_equal(v0r, v0)
-        self.assert_numpy_arrays_equal(v1r, v1)
+        self.assert_numpy_arrays_equal(v0r, v0, precision=6)
+        self.assert_numpy_arrays_equal(v1r, v1, precision=6)
         self.assert_numpy_arrays_equal(a0r, a0, precision=6)
         self.assert_numpy_arrays_equal(a1r, a1, precision=6)
         self.assert_numpy_arrays_equal(k0r, k0, precision=6)

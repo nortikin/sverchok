@@ -26,6 +26,7 @@ from sverchok.utils.logging import info, debug, warning
 from sverchok.utils.geom import interpolate_quadratic_bezier
 from sverchok.utils.sv_curve_utils import Arc
 from sverchok.utils.curve import SvCircle, SvLine, SvBezierCurve, SvCubicBezierCurve
+from sverchok.utils.curve.nurbs import SvNurbsCurve
 
 def make_functions_dict(*functions):
     return dict([(function.__name__, function) for function in functions])
@@ -489,7 +490,7 @@ class CurveTo(Statement):
                 r = interpreter.dflt_num_verts
 
             curve = SvCubicBezierCurve(vec(knot1), vec(handle1), vec(handle2), vec(knot2))
-            interpreter.curves.append(curve)
+            interpreter.new_curve(curve, self)
 
             points = interpolate_bezier(vec(knot1), vec(handle1), vec(handle2), vec(knot2), r)
 
@@ -599,7 +600,7 @@ class SmoothCurveTo(Statement):
                 r = interpreter.dflt_num_verts
 
             curve = SvCubicBezierCurve(vec(knot1), vec(handle1), vec(handle2), vec(knot2))
-            interpreter.curves.append(curve)
+            interpreter.new_curve(curve, self)
 
             points = interpolate_bezier(vec(knot1), vec(handle1), vec(handle2), vec(knot2), r)
 
@@ -692,7 +693,7 @@ class QuadraticCurveTo(Statement):
                 r = interpreter.dflt_num_verts
 
             curve = SvBezierCurve([vec(knot1), vec(handle), vec(knot2)])
-            interpreter.curves.append(curve)
+            interpreter.new_curve(curve, self)
 
             points = interpolate_quadratic_bezier(vec(knot1), vec(handle), vec(knot2), r)
 
@@ -793,7 +794,7 @@ class SmoothQuadraticCurveTo(Statement):
                 r = interpreter.dflt_num_verts
 
             curve = SvBezierCurve([vec(knot1), vec(handle), vec(knot2)])
-            interpreter.curves.append(curve)
+            interpreter.new_curve(curve, self)
 
             points = interpolate_quadratic_bezier(vec(knot1), vec(handle), vec(knot2), r)
 
@@ -890,7 +891,7 @@ class ArcTo(Statement):
             v0_index = v1_index
 
         curve = SvCircle.from_arc(arc)
-        interpreter.curves.append(curve)
+        interpreter.new_curve(curve, self)
 
         interpreter.position = v1
         interpreter.new_knot("A.#", *v1)
@@ -1015,7 +1016,11 @@ class Assign(Default):
 # * Contains the interpret() method, which runs the whole interpretation process.
 
 class Interpreter(object):
-    def __init__(self, node, input_names):
+
+    NURBS = 'NURBS'
+    BEZIER = 'BEZIER'
+
+    def __init__(self, node, input_names, curves_form = None, force_curves_form = False):
         self.position = (0, 0)
         self.next_vertex_index = 0
         self.segment_start_index = 0
@@ -1035,6 +1040,8 @@ class Interpreter(object):
         self.close_threshold = node.close_threshold
         self.defaults = dict()
         self.input_names = input_names
+        self.curves_form = curves_form
+        self.force_curves_form = force_curves_form
 
     def to3d(self, vertex):
         return Vector((vertex[0], vertex[1], 0))
@@ -1070,6 +1077,22 @@ class Interpreter(object):
         name = name.replace("#", str(self.segment_number))
         self.knotnames.append(name)
 
+    def new_curve(self, curve, statement):
+        if self.curves_form == Interpreter.NURBS:
+            if hasattr(curve, 'to_nurbs'):
+                curve = curve.to_nurbs()
+            else:
+                if self.force_curves_form:
+                    raise Exception(f"Cannot convert curve to NURBS: {statement}")
+        elif self.curves_form == Interpreter.BEZIER:
+            if not isinstance(curve, (SvBezierCurve, SvCubicBezierCurve)):
+                if hasattr(curve, 'to_bezier'):
+                    curve = curve.to_bezier
+                else:
+                    if self.force_curves_form:
+                        raise Exception("Cannot convert curve to Bezier: {statement}")
+        self.curves.append(curve)
+
     def new_line_segment(self, v1, v2):
         if isinstance(v1, int):
             v1, v2 = self.vertices[v1], self.vertices[v2]
@@ -1077,7 +1100,7 @@ class Interpreter(object):
         if (v1 - v2).length < self.close_threshold:
             return
         curve = SvLine.from_two_points(v1, v2)
-        self.curves.append(curve)
+        self.new_curve(curve, None)
 
     def start_new_segment(self):
         self.segment_start_index = self.next_vertex_index

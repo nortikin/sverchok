@@ -34,6 +34,14 @@ install:
         fi
         mv $BLENDER_DIR blender
         rm $BLENDER_TAR
+
+        pushd blender/
+        PYTHON=${BLENDER_VERSION}/python/bin/python3.7m
+        $PYTHON -m ensurepip
+        $PYTHON -m pip install --upgrade pip setuptools wheel
+        $PYTHON -m pip install --upgrade scipy geomdl scikit-image
+        popd
+
         echo "Current directory after downloading blender: $(pwd)"
         cd ..
     fi

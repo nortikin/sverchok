@@ -11,11 +11,12 @@ from math import sin, cos, pi, radians, sqrt
 from mathutils import Vector, Matrix
 
 from sverchok.utils.logging import error
-from sverchok.utils.geom import LineEquation, CubicSpline, CircleEquation2D, CircleEquation3D, Ellipse3D
+from sverchok.utils.geom import LineEquation, CircleEquation2D, CircleEquation3D, Ellipse3D
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.surface.primitives import SvPlane
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs import SvNurbsCurve
+from sverchok.utils.curve.bezier import SvBezierCurve
 
 class SvLine(SvCurve):
     __description__ = "Line"
@@ -29,6 +30,9 @@ class SvLine(SvCurve):
     def from_two_points(cls, point1, point2):
         direction = np.array(point2) - np.array(point1)
         return SvLine(point1, direction)
+
+    def get_degree(self):
+        return 1
 
     def get_u_bounds(self):
         return self.u_bounds
@@ -64,6 +68,12 @@ class SvLine(SvCurve):
         return SvNurbsCurve.build(implementation,
                 degree=1, knotvector=knotvector,
                 control_points = control_points)
+
+    def to_bezier(self):
+        u_min, u_max = self.get_u_bounds()
+        p1 = self.evaluate(u_min)
+        p2 = self.evaluate(u_max)
+        return SvBezierCurve([p1, p2])
 
 class SvCircle(SvCurve):
     __description__ = "Circle"
@@ -111,6 +121,9 @@ class SvCircle(SvCurve):
         circle = SvCircle(matrix, radius)
         circle.u_bounds = (0, angle)
         return circle
+
+    def get_degree(self):
+        return 2
 
     def get_u_bounds(self):
         return self.u_bounds
@@ -206,6 +219,9 @@ class SvEllipse(SvCurve):
         else: # F2
             df = self.matrix @ np.array([self.c, 0, 0])
             return self.center - df
+
+    def get_degree(self):
+        return 2
 
     def evaluate(self, t):
         v = np.array([self.a * cos(t), self.b * sin(t), 0])

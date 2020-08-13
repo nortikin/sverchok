@@ -83,6 +83,44 @@ def normalize(knot_vector):
         raise Exception("All knot values are equal")
     return (knot_vector - m) / (M - m)
 
+def concatenate(kv1, kv2):
+    M = kv1.max()
+    return np.concatenate((kv1, kv2 + M))
+
+def to_multiplicity(knot_vector):
+    count = 0
+    prev_u = None
+    result = []
+    for u in knot_vector:
+        last_match = (u == prev_u)
+        if prev_u is None:
+            count = 1
+        elif last_match:
+            count += 1
+        else:
+            result.append((prev_u, count))
+            count = 1
+        prev_u = u
+
+    if last_match:
+        result.append((u, count))
+    else:
+        result.append((u, 1))
+    return result
+
+def from_multiplicity(pairs):
+    result = []
+    for u, count in pairs:
+        result.extend([u] * count)
+    return np.array(result)
+
+def elevate_degree_pairs(pairs, delta=1):
+    return [(u, count+delta) for u, count in pairs]
+
+def elevate_degree(knot_vector, delta=1):
+    pairs = to_multiplicity(knot_vector)
+    return from_multiplicity(elevate_degree_pairs(pairs, delta))
+
 def check(degree, knot_vector, num_ctrlpts):
     """ Checks the validity of the input knot vector.
 
