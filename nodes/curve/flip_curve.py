@@ -33,7 +33,6 @@ class SvFlipCurveNode(bpy.types.Node, SverchCustomTreeNode):
                 curve_s = [curve_s]
             else:
                 out_level = 2
-            print("out_level", out_level)
 
             curves_out = []
             for curves in curve_s:
@@ -41,7 +40,6 @@ class SvFlipCurveNode(bpy.types.Node, SverchCustomTreeNode):
                 for curve in curves:
                     new_curve = reverse_curve(curve)
                     new_curves.append(new_curve)
-                print("new", new_curves)
                 if out_level == 1:
                     curves_out.extend(new_curves)
                 else:

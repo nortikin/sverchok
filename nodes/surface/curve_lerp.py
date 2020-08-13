@@ -29,6 +29,15 @@ class SvCurveLerpNode(bpy.types.Node, SverchCustomTreeNode):
         default = 1.0,
         update = updateNode)
 
+    native : BoolProperty(
+        name = "Native",
+        description = "Try to use native ruled surface implementation when possible; for example, make a NURBS surafce from two NURBS curves",
+        default = True,
+        update = updateNode)
+
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'native', toggle=True)
+
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve1")
         self.inputs.new('SvCurveSocket', "Curve2")
@@ -56,7 +65,11 @@ class SvCurveLerpNode(bpy.types.Node, SverchCustomTreeNode):
         surface_out = []
         for curve1s, curve2s, vmins, vmaxs in zip_long_repeat(curve1_s, curve2_s, vmin_s, vmax_s):
             for curve1, curve2, vmin, vmax in zip_long_repeat(curve1s, curve2s, vmins, vmaxs):
-                surface = SvCurveLerpSurface.build(curve1, curve2, vmin, vmax)
+                if self.native:
+                    surface = SvCurveLerpSurface.build(curve1, curve2, vmin, vmax)
+                else:
+                    surface = SvCurveLerpSurface(curve1, curve2)
+                    surface.v_bounds = (vmin, vmax)
                 surface_out.append(surface)
         self.outputs['Surface'].sv_set(surface_out)
 

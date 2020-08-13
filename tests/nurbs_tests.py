@@ -287,7 +287,7 @@ class NurbsSurfaceTests(SverchokTestCase):
         self.assert_numpy_arrays_equal(vs1, vs2, precision=8, fail_fast=False)
 
 class OtherNurbsTests(SverchokTestCase):
-    def test_ruled_surface(self):
+    def test_ruled_surface_1(self):
         """
         Test that
         1) SvCurveLerpSurface.build gives a NURBS surface for two NURBS curves;
@@ -319,6 +319,35 @@ class OtherNurbsTests(SverchokTestCase):
 
         self.assert_numpy_arrays_equal(pts1, pts2, precision=8, fail_fast=False)
 
+    def test_ruled_surface_2(self):
+        control_points1 = np.array([[0, 0, 0], [0.5, 0, 0.5], [0.5, 0.3, 0.5], [1, 0, 0]])
+        control_points2 = np.array([[0, 2, 0], [0.5, 3, 0.5], [1, 2, 0]])
+        # With non-trivial weights, this test will fail,
+        # because the resulting surface will have different parametrization
+        # comparing to generic ruled surface; however, the shape of the surface
+        # will be correct anyway.
+        weights1 = [1, 1, 1, 1]
+        weights2 = [1, 1, 1]
+
+        degree = 2
+        knotvector1 = sv_knotvector.generate(degree, num_ctrlpts=len(control_points1))
+        knotvector2 = sv_knotvector.generate(degree, num_ctrlpts=len(control_points2))
+        curve1 = SvNativeNurbsCurve(degree, knotvector1, control_points1, weights1)
+        curve2 = SvNativeNurbsCurve(degree, knotvector2, control_points2, weights2)
+
+        surf1 = SvCurveLerpSurface(curve1, curve2)
+        surf2 = SvCurveLerpSurface.build(curve1, curve2)
+
+        self.assertTrue(isinstance(surf2, SvNativeNurbsSurface))
+
+        us = np.array([0, 0, 0.5, 0.5, 1, 1])
+        vs = np.array([0, 0.5, 0.5, 1, 0.5, 1])
+
+        pts1 = surf1.evaluate_array(us, vs)
+        pts2 = surf2.evaluate_array(us, vs)
+
+        self.assert_numpy_arrays_equal(pts1, pts2, precision=8, fail_fast=False)
+
     def test_elevate_bezier_degree_1(self):
         points = np.array([[0, 0, 0], [1, 0, 0]])
         self_degree = 1
@@ -332,48 +361,6 @@ class OtherNurbsTests(SverchokTestCase):
         result = elevate_bezier_degree(self_degree, points, delta=3)
         expected = np.array([[0, 0, 0], [0.25, 0, 0], [0.5, 0, 0], [0.75, 0, 0], [1, 0, 0]])
         self.assert_numpy_arrays_equal(result, expected, fail_fast=False)
-
-    def test_to_multiplicity_1(self):
-        kv = np.array([0, 0, 0, 1, 1, 1], dtype=np.float64)
-        result = sv_knotvector.to_multiplicity(kv)
-        expected = [(0, 3), (1, 3)]
-        self.assert_sverchok_data_equal(result, expected)
-
-    def test_to_multiplicity_2(self):
-        kv = np.array([0, 0, 0, 0.3, 0.7, 1, 1, 1], dtype=np.float64)
-        result = sv_knotvector.to_multiplicity(kv)
-        expected = [(0, 3), (0.3, 1), (0.7, 1), (1, 3)]
-        self.assert_sverchok_data_equal(result, expected)
-
-    def test_to_multiplicity_3(self):
-        kv = np.array([0, 0, 0, 0.3, 0.7, 1, 1, 1, 1.5], dtype=np.float64)
-        result = sv_knotvector.to_multiplicity(kv)
-        expected = [(0, 3), (0.3, 1), (0.7, 1), (1, 3), (1.5, 1)]
-        self.assert_sverchok_data_equal(result, expected)
-
-    def test_to_multiplicity_4(self):
-        kv = np.array([0, 0, 0, 0.3, 0.7, 1, 1, 1, 1.5, 1.7], dtype=np.float64)
-        result = sv_knotvector.to_multiplicity(kv)
-        expected = [(0, 3), (0.3, 1), (0.7, 1), (1, 3), (1.5, 1), (1.7, 1)]
-        self.assert_sverchok_data_equal(result, expected)
-
-    def test_from_multiplicity_1(self):
-        pairs = [(0, 3), (1, 3)]
-        kv = sv_knotvector.from_multiplicity(pairs)
-        expected = np.array([0, 0, 0, 1, 1, 1])
-        self.assert_numpy_arrays_equal(kv, expected)
-
-    def test_from_multiplicity_2(self):
-        pairs = [(0, 3), (0.5, 1), (1, 3)]
-        kv = sv_knotvector.from_multiplicity(pairs)
-        expected = np.array([0, 0, 0, 0.5, 1, 1, 1])
-        self.assert_numpy_arrays_equal(kv, expected)
-
-    def test_elevate_knotvector(self):
-        kv = np.array([0, 0, 0, 1, 1, 1], dtype=np.float64)
-        result = sv_knotvector.elevate_degree(kv)
-        expected = np.array([0, 0, 0, 0, 1, 1, 1, 1])
-        self.assert_numpy_arrays_equal(result, expected)
 
     def test_from_homogenous(self):
         points = np.array([[0, 0, 1, 1], [0, 0, 4, 2], [0, 0, 9, 3]])
@@ -522,4 +509,82 @@ class OtherNurbsTests(SverchokTestCase):
         pt2 = curve2.evaluate(0.75)
         expected_pt2 = curve.evaluate(0.75)
         self.assert_numpy_arrays_equal(pt2, expected_pt2, precision=4)
+
+class KnotvectorTests(SverchokTestCase):
+    def test_to_multiplicity_1(self):
+        kv = np.array([0, 0, 0, 1, 1, 1], dtype=np.float64)
+        result = sv_knotvector.to_multiplicity(kv)
+        expected = [(0, 3), (1, 3)]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_to_multiplicity_2(self):
+        kv = np.array([0, 0, 0, 0.3, 0.7, 1, 1, 1], dtype=np.float64)
+        result = sv_knotvector.to_multiplicity(kv)
+        expected = [(0, 3), (0.3, 1), (0.7, 1), (1, 3)]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_to_multiplicity_3(self):
+        kv = np.array([0, 0, 0, 0.3, 0.7, 1, 1, 1, 1.5], dtype=np.float64)
+        result = sv_knotvector.to_multiplicity(kv)
+        expected = [(0, 3), (0.3, 1), (0.7, 1), (1, 3), (1.5, 1)]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_to_multiplicity_4(self):
+        kv = np.array([0, 0, 0, 0.3, 0.7, 1, 1, 1, 1.5, 1.7], dtype=np.float64)
+        result = sv_knotvector.to_multiplicity(kv)
+        expected = [(0, 3), (0.3, 1), (0.7, 1), (1, 3), (1.5, 1), (1.7, 1)]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_from_multiplicity_1(self):
+        pairs = [(0, 3), (1, 3)]
+        kv = sv_knotvector.from_multiplicity(pairs)
+        expected = np.array([0, 0, 0, 1, 1, 1])
+        self.assert_numpy_arrays_equal(kv, expected)
+
+    def test_from_multiplicity_2(self):
+        pairs = [(0, 3), (0.5, 1), (1, 3)]
+        kv = sv_knotvector.from_multiplicity(pairs)
+        expected = np.array([0, 0, 0, 0.5, 1, 1, 1])
+        self.assert_numpy_arrays_equal(kv, expected)
+
+    def test_elevate_knotvector(self):
+        kv = np.array([0, 0, 0, 1, 1, 1], dtype=np.float64)
+        result = sv_knotvector.elevate_degree(kv)
+        expected = np.array([0, 0, 0, 0, 1, 1, 1, 1])
+        self.assert_numpy_arrays_equal(result, expected)
+
+    def test_diff_1(self):
+        kv1 = np.array([0, 1, 2])
+        kv2 = np.array([0, 1, 2])
+        result = sv_knotvector.difference(kv1, kv2)
+        expected = []
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_diff_2(self):
+        kv1 = np.array([0, 1, 2], dtype=np.float64)
+        kv2 = np.array([0, 1, 1, 2], dtype=np.float64)
+        result = sv_knotvector.difference(kv1, kv2)
+        expected = [(1, 1)]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_diff_3(self):
+        kv1 = np.array([0, 1, 2], dtype=np.float64)
+        kv2 = np.array([0, 1, 1.5, 2], dtype=np.float64)
+        result = sv_knotvector.difference(kv1, kv2)
+        expected = [(1.5, 1)]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_merge_1(self):
+        kv1 = np.array([0, 1, 2])
+        kv2 = np.array([0, 1, 2])
+        result = sv_knotvector.merge(kv1, kv2)
+        expected = np.array([0, 1, 2])
+        self.assert_numpy_arrays_equal(result, expected)
+
+    def test_merge_2(self):
+        kv1 = np.array([0, 0.5, 2])
+        kv2 = np.array([0, 1.5, 2])
+        result = sv_knotvector.merge(kv1, kv2)
+        expected = np.array([0, 0.5, 1.5, 2])
+        self.assert_numpy_arrays_equal(result, expected)
 

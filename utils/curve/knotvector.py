@@ -16,6 +16,7 @@
 
 """
 
+from collections import defaultdict
 import numpy as np
 
 def generate(degree, num_ctrlpts, clamped=True):
@@ -146,6 +147,32 @@ def reverse(knot_vector):
 def find_multiplicity(knot_vector, u, tolerance=1e-6):
     pairs = to_multiplicity(knot_vector, tolerance)
     return dict(pairs).get(u, 0)
+
+def difference(src_kv, dst_kv):
+    src_pairs = dict(to_multiplicity(src_kv))
+    dst_pairs = to_multiplicity(dst_kv)
+    result = []
+    for dst_u, dst_multiplicity in dst_pairs:
+        src_multiplicity = src_pairs.get(dst_u, 0)
+        diff = dst_multiplicity - src_multiplicity
+        if diff > 0:
+            result.append((dst_u, diff))
+    return result
+
+def merge(kv1, kv2):
+    kv2 = rescale(kv2, kv1[0], kv1[-1])
+
+    kv1_pairs = to_multiplicity(kv1)
+    kv2_pairs = to_multiplicity(kv2)
+
+    pairs = defaultdict(int)
+    for u, multiplicity in kv1_pairs:
+        pairs[u] = multiplicity
+    for u, multiplicity in kv2_pairs:
+        pairs[u] = max(pairs[u], multiplicity)
+
+    result = [(u, pairs[u]) for u in sorted(pairs.keys())]
+    return from_multiplicity(result)
 
 def check(degree, knot_vector, num_ctrlpts):
     """ Checks the validity of the input knot vector.
