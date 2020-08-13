@@ -7,6 +7,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.curve import SvCurve, SvCurveSegment
+from sverchok.utils.curve.algorithms import split_curve
 
 class SvSplitCurveNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -95,11 +96,8 @@ class SvSplitCurveNode(bpy.types.Node, SverchCustomTreeNode):
                 t_min, t_max = curve.get_u_bounds()
                 if self.mode == 'EVEN':
                     splits = self._cut(t_min, t_max, segments)
-                splits = [t_min] + splits + [t_max]
-                pairs = zip(splits, splits[1:])
-                for start, end in pairs:
-                    new_curve = SvCurveSegment(curve, start, end, self.rescale)
-                    new_curves.append(new_curve)
+                #splits = [t_min] + splits + [t_max]
+                new_curves = split_curve(curve, splits, self.rescale)
                 if self.join:
                     curves_list.extend(new_curves)
                 else:

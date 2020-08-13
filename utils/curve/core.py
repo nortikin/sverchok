@@ -553,6 +553,9 @@ class SvReparametrizedCurve(SvCurve):
         else:
             self.tangent_delta = 0.001
 
+    def __repr__(self):
+        return f"{self.curve}::[{self.new_u_min}..{self.new_u_max}]"
+
     def get_u_bounds(self):
         return self.new_u_min, self.new_u_max
 
@@ -608,10 +611,11 @@ class SvCurveSegment(SvCurve):
             self.target_u_bounds = (u_min, u_max)
 
     def __repr__(self):
-        if hasattr(curve, '__description__'):
-            curve_description = curve.__description__
+        if hasattr(self.curve, '__description__'):
+            curve_description = self.curve.__description__
         else:
-            curve_description = repr(curve)
+            curve_description = repr(self.curve)
+        u_min, u_max = self.u_bounds
         return "{}[{} .. {}]".format(curve_description, u_min, u_max)
 
     def get_u_bounds(self):
