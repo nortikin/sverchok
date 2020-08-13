@@ -8,7 +8,11 @@
 import numpy as np
 
 from mathutils import Vector, Matrix
-from sverchok.utils.curve.core import SvCurve, ZeroCurvatureException, SvCurveSegment, SvReparametrizedCurve
+from sverchok.utils.curve.core import (
+        SvCurve, ZeroCurvatureException,
+        SvCurveSegment, SvReparametrizedCurve,
+        SvFlipCurve
+    )
 from sverchok.utils.geom import PlaneEquation, LineEquation, LinearSpline, CubicSpline
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
 from sverchok.utils.math import (
@@ -693,17 +697,29 @@ def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, on_zero_curvat
     matrices_np = np.linalg.inv(matrices_np)
     return matrices_np, surf_points, tangents, normals, binormals
 
+def reparametrize_curve(curve, new_t_min, new_t_max):
+    if hasattr(curve, 'reparametrize'):
+        return curve.reparametrize(new_t_min, new_t_max)
+    else:
+        return SvReparametrizedCurve(curve, new_t_min, new_t_max)
+
+def reverse_curve(curve):
+    if hasattr(curve, 'reverse'):
+        return curve.reverse()
+    else:
+        return SvFlipCurve(curve)
+
 def split_curve(curve, splits, rescale=False):
     if hasattr(curve, 'split_at'):
         result = []
         for split in splits:
             head, tail = curve.split_at(split)
             if rescale:
-                head = SvReparametrizedCurve(head, 0, 1)
+                head = reparametrize_curve(head, 0, 1)
             result.append(head)
             curve = tail
         if rescale:
-            tail = SvReparametrizedCurve(tail, 0, 1)
+            tail = reparametrize_curve(tail, 0, 1)
         result.append(tail)
         return result
     else:
@@ -727,7 +743,7 @@ def curve_segment(curve, new_t_min, new_t_max, rescale=False):
         if new_t_max < t_max:
             curve, end = curve.split_at(new_t_max)
         if rescale:
-            curve = SvReparametrizedCurve(curve, 0, 1)
+            curve = reparametrize_curve(curve, 0, 1)
         return curve
     else:
         return SvCurveSegment(curve, new_t_min, new_t_max, rescale)

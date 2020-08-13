@@ -102,6 +102,18 @@ class SvNurbsCurve(SvCurve):
         else:
             raise Exception("Not implemented yet!")
 
+    def reparametrize(self, new_t_min, new_t_max):
+        knotvector = sv_knotvector.rescale(self.get_knotvector(), new_t_min, new_t_max)
+        return SvNurbsCurve.build(self.get_nurbs_implementation(),
+                self.get_degree(), knotvector, self.get_control_points(), self.get_weights())
+
+    def reverse(self):
+        knotvector = sv_knotvector.reverse(self.get_knotvector())
+        control_points = self.get_control_points()[::-1]
+        weights = self.get_weights()[::-1]
+        return SvNurbsCurve.build(self.get_nurbs_implementation(),
+                self.get_degree(), knotvector, control_points, weights)
+
     def insert_knot(self, u, count=1):
         raise Exception("Not implemented!")
 

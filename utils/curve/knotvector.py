@@ -131,6 +131,18 @@ def insert(knot_vector, u, count=1):
         result = np.insert(result, idx, u)
     return result
 
+def rescale(knot_vector, new_t_min, new_t_max):
+    t_min = knot_vector[0]
+    t_max = knot_vector[-1]
+    k = (new_t_max - new_t_min) / (t_max - t_min)
+    return k * (knot_vector - t_min) + new_t_min
+
+def reverse(knot_vector):
+    t_max = knot_vector[-1]
+    t_min = knot_vector[0]
+    kv = t_max - knot_vector + t_min
+    return kv[::-1]
+
 def find_multiplicity(knot_vector, u, tolerance=1e-6):
     pairs = to_multiplicity(knot_vector, tolerance)
     return dict(pairs).get(u, 0)

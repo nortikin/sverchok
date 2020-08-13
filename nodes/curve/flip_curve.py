@@ -6,7 +6,8 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvCurve, SvFlipCurve
+from sverchok.utils.curve import SvCurve
+from sverchok.utils.curve.algorithms import reverse_curve
 
 class SvFlipCurveNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -32,17 +33,19 @@ class SvFlipCurveNode(bpy.types.Node, SverchCustomTreeNode):
                 curve_s = [curve_s]
             else:
                 out_level = 2
+            print("out_level", out_level)
 
             curves_out = []
             for curves in curve_s:
                 new_curves = []
                 for curve in curves:
-                    new_curve = SvFlipCurve(curve)
+                    new_curve = reverse_curve(curve)
                     new_curves.append(new_curve)
+                print("new", new_curves)
                 if out_level == 1:
                     curves_out.extend(new_curves)
                 else:
-                    curves_out.append(new_curve)
+                    curves_out.append(new_curves)
 
             self.outputs['Curve'].sv_set(curves_out)
 

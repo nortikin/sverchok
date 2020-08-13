@@ -6,7 +6,8 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvCurve, SvReparametrizedCurve
+from sverchok.utils.curve import SvCurve
+from sverchok.utils.curve.algorithms import reparametrize_curve
 
 class SvReparametrizeCurveNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -52,7 +53,7 @@ class SvReparametrizeCurveNode(bpy.types.Node, SverchCustomTreeNode):
         for curves, tmins, tmaxs in zip_long_repeat(curve_s, tmin_s, tmax_s):
             new_curves = []
             for curve, t_min, t_max in zip_long_repeat(curves, tmins, tmaxs):
-                new_curve = SvReparametrizedCurve(curve, t_min, t_max)
+                new_curve = reparametrize_curve(curve, t_min, t_max)
                 new_curves.append(new_curve)
             curve_out.append(new_curves)
 
