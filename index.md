@@ -579,6 +579,14 @@
     NodeReroute
     ConverterNode
 
+## SVG
+    SvSvgDocumentNode
+    SvSvgCircleNode
+    SvSvgFillStrokeNode
+    SvSvgPathNode
+    SvSvgTextNode
+    SvSvgPolygonsNode
+    
 ## Beta Nodes
     SvFormulaShapeNode
     SvHeavyTriangulateNode

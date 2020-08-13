@@ -75,6 +75,7 @@ menu_structure = [
     ["NODE_MT_category_SVERCHOK_BPY_Data", "BLENDER"],
     ["separator"],
     ["NODEVIEW_MT_AddNetwork", "SYSTEM"],
+    ["NODEVIEW_MT_AddSVG", "SYSTEM"],
     ["NODEVIEW_MT_AddBetas", "SV_BETA"],
     ["NODEVIEW_MT_AddAlphas", "SV_ALPHA"],
     ["separator"],
@@ -303,6 +304,7 @@ classes = [
     make_class('Logic', "Logic"),
     make_class('Network', "Network"),
     make_class('Exchange', "Exchange"),
+    make_class('SVG', "SVG"),
     make_class('Betas', "Beta Nodes"),
     make_class('Alphas', "Alpha Nodes"),
     # NODEVIEW_MT_Solids_Special_Menu
