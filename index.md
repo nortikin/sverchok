@@ -207,7 +207,6 @@
    SvIsInsideSolidNode
    SvSolidDistanceNode
    SvSliceSolidNode
-   SvSolidFromLoftNode
    SvMeshToSolidNode
    SvSolidToMeshNodeMk2
    SvSolidVerticesNode
@@ -586,7 +585,7 @@
     SvSvgPathNode
     SvSvgTextNode
     SvSvgPolygonsNode
-    
+
 ## Beta Nodes
     SvFormulaShapeNode
     SvHeavyTriangulateNode
