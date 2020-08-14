@@ -34,15 +34,13 @@ class ObjectParams:
 
     # Get the bmesh-edge index from a object edge
     def obj_to_bm_edge_index(self, edge):
-        bm_e_index = -1
         for bm_e in obj.bm.edges:
             if len(bm_e.verts) == 2:
                 v0 = bm_e.verts[0].index
                 v1 = bm_e.verts[0].index
                 if v0 in edge and v1 in edge:
-                    bm_e_index = bm_e.index
-                    break
-        return 
+                    return bm_e.index
+        return -1
     
     # Get the object face index from a bmesh face
     def bm_to_obj_face_index(self, bm_face):
@@ -509,4 +507,3 @@ class FaceRotation:
                        np.cos(rad)+n[2]*n[2]*(1-np.cos(rad)), 0], \
                        [0, 0, 0, 1]])
         return R
-
