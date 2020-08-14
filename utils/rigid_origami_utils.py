@@ -169,7 +169,7 @@ class InsideVertex:
                                         
             # Roll the edge order around each vertices
             for idx, target_ccw in enumerate(target_ccws):
-                if not idx in indices_outermost:
+                if idx not in indices_outermost:
                     continue
                 
                 # Choose a edge connected with a vertex outside, 
@@ -509,5 +509,4 @@ class FaceRotation:
                        np.cos(rad)+n[2]*n[2]*(1-np.cos(rad)), 0], \
                        [0, 0, 0, 1]])
         return R
-
 
