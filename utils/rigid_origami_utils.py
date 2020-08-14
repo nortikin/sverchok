@@ -100,7 +100,7 @@ class InsideVertex:
         cls.indices = indices
         
         # Create list of crease edges around each vertices
-        crease_indices = cls.__GetCreaseLinesAroundVertex(crease_lines, indices, obj)
+        crease_indices = cls.__get_crease_lines_around_vertex(crease_lines, indices, obj)
 
         cr_edges = [[crease_lines.edges[j] for j in crease_indices[i]] \
                     for i in range(len(crease_indices))]
@@ -124,7 +124,7 @@ class InsideVertex:
     # Function to get crease lines around the vertex
     # https://blender.stackexchange.com/questions/92406/circular-order-of-edges-around-vertex
     @classmethod
-    def __GetCreaseLinesAroundVertex(cls, crease_lines, inside_vert_indices, obj):
+    def __get_crease_lines_around_vertex(cls, crease_lines, inside_vert_indices, obj):
 
         # Sort link_edges around each vertices in counter-clockwise order
         bm_edges_ccws = []
@@ -136,7 +136,7 @@ class InsideVertex:
             bm_edge = bm_vert.link_edges[0]
             while bm_edge not in edges_counterclockwise_order:
                 edges_counterclockwise_order.append(bm_edge)
-                bm_edge = cls.__GetRightSideEdgeAroundVertex(bm_edge, bm_vert, obj)
+                bm_edge = cls.__get_right_side_edge_around_vertex(bm_edge, bm_vert, obj)
             bm_edges_ccws.append(edges_counterclockwise_order)
             
         crease_edge_indices = [[] for i in inside_vert_indices]
@@ -187,7 +187,7 @@ class InsideVertex:
         
     # Return the right edge of param edge regard to param vertex
     @classmethod
-    def __GetRightSideEdgeAroundVertex(cls, bm_edge, bm_vertex, obj):
+    def __get_right_side_edge_around_vertex(cls, bm_edge, bm_vertex, obj):
         for loop in bm_edge.link_loops:
             if loop.vert == bm_vertex:
                 break
@@ -213,7 +213,7 @@ class FoldAngleCalculator:
     
     # Function to calculate fold angles of each crease lines
     @classmethod
-    def CalcFoldAngle(cls, step_count, crease_lines, inside_vertices):
+    def calc_fold_angle(cls, step_count, crease_lines, inside_vertices):
         
         # Initialize current rho angles (updated in each steps)
         cls.current_rhos = np.array([angle for angle in crease_lines.angles])
@@ -349,7 +349,7 @@ class FaceRotation:
 
     # Function to rotate all faces
     @classmethod
-    def RotateFaces(cls):
+    def rotate_faces(cls):
         # Use deque to process rotating faces
         face_queue = deque()
         

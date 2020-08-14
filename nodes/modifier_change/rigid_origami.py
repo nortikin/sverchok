@@ -104,7 +104,7 @@ class SvRigidOrigamiNode(bpy.types.Node, SverchCustomTreeNode):
                     inside_vertices = InsideVertex.generate_inside_vertices( \
                                         obj, crease_lines)
                     # Calculation loop to determine the final angles
-                    FoldAngleCalculator.CalcFoldAngle(step, crease_lines, inside_vertices)
+                    FoldAngleCalculator.calc_fold_angle(step, crease_lines, inside_vertices)
 
                     crease_lines.delta_angles = [cur_rho - angle for cur_rho, angle \
                                 in zip(FoldAngleCalculator.current_rhos, crease_lines.angles)]
@@ -114,7 +114,7 @@ class SvRigidOrigamiNode(bpy.types.Node, SverchCustomTreeNode):
                     FaceRotation.inside_vertices = inside_vertices
                     FaceRotation.crease_lines = crease_lines
                     FaceRotation.fixed_face_index = int(fixed_face)
-                    verts_o = FaceRotation.RotateFaces()
+                    verts_o = FaceRotation.rotate_faces()
 
                 verts_out.append(verts_o)
             finally:
