@@ -102,7 +102,7 @@ class InsideVertex:
         
     # Function to generate inside vertex objects
     @classmethod
-    def GenerateInsideVertices(cls, obj, crease_lines):
+    def generate_inside_vertices(cls, obj, crease_lines):
         
         # Create vertex indices inside of the source paper
         num_verts = len(obj.verts)
