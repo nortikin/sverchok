@@ -99,7 +99,7 @@ class SvRigidOrigamiNode(bpy.types.Node, SverchCustomTreeNode):
                 # Extract crease lines
                 crease_lines = CreaseLines(obj, edge_indices, edge_angles, folding)
 
-                if len(edge_indices) > 0:
+                if edge_indices:
                     # Extract inside vertices
                     inside_vertices = InsideVertex.GenerateInsideVertices( \
                                         obj, crease_lines)
@@ -128,4 +128,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvRigidOrigamiNode)
-
