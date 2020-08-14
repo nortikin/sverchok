@@ -32,16 +32,6 @@ class ObjectParams:
         edge = tuple(sorted([bm_edge.verts[0].index, bm_edge.verts[1].index])) 
         return self.edges.index(edge)
 
-    # Get the bmesh-edge index from a object edge
-    def obj_to_bm_edge_index(self, edge):
-        for bm_e in obj.bm.edges:
-            if len(bm_e.verts) == 2:
-                v0 = bm_e.verts[0].index
-                v1 = bm_e.verts[0].index
-                if v0 in edge and v1 in edge:
-                    return bm_e.index
-        return -1
-    
     # Get the object face index from a bmesh face
     def bm_to_obj_face_index(self, bm_face):
         v_indices = [v.index for v in bm_face.verts]
