@@ -118,7 +118,7 @@ class SvRigidOrigamiNode(bpy.types.Node, SverchCustomTreeNode):
 
                 verts_out.append(verts_o)
             finally:
-                if obj != None:
+                if obj is not None:
                     obj.free()
 
         self.outputs['Vertices'].sv_set(verts_out)
