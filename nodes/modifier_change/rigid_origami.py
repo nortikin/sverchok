@@ -101,7 +101,7 @@ class SvRigidOrigamiNode(bpy.types.Node, SverchCustomTreeNode):
 
                 if edge_indices:
                     # Extract inside vertices
-                    inside_vertices = InsideVertex.GenerateInsideVertices( \
+                    inside_vertices = InsideVertex.generate_inside_vertices( \
                                         obj, crease_lines)
                     # Calculation loop to determine the final angles
                     FoldAngleCalculator.CalcFoldAngle(step, crease_lines, inside_vertices)
