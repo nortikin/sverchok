@@ -1,86 +1,73 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
-              "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-
-<svg xmlns="http://www.w3.org/2000/svg"
-     width="0.666667in" height="0.666667in"
-     viewBox="0 0 64 64">
-  <path id="Selection"
-        fill="none" stroke="black" stroke-width="1"
-        d="M 43.96,29.68
-           C 43.96,29.68 47.01,25.42 47.01,25.42
-             47.01,25.42 56.85,11.64 56.85,11.64
-             56.85,11.64 59.20,8.35 59.20,8.35
-             59.20,8.35 60.43,6.66 60.43,6.66
-             60.80,6.30 61.55,6.28 61.88,6.71
-             62.06,6.95 62.05,7.15 62.05,7.44
-             62.05,7.44 62.05,47.30 62.05,47.30
-             62.05,47.30 62.05,56.62 62.05,56.62
-             62.05,56.62 62.05,58.39 62.05,58.39
-             62.05,58.61 62.06,58.80 61.95,59.00
-             61.73,59.40 61.42,59.43 61.01,59.43
-             61.01,59.43 24.69,59.43 24.69,59.43
-             24.53,59.43 24.35,59.44 24.20,59.39
-             23.58,59.18 23.57,58.44 23.47,57.90
-             23.47,57.90 22.54,53.27 22.54,53.27
-             22.54,53.27 19.44,37.79 19.44,37.79
-             19.44,37.79 18.66,33.89 18.66,33.89
-             18.66,33.89 18.46,32.85 18.46,32.85
-             18.43,32.74 18.41,32.55 18.31,32.47
-             18.16,32.35 17.67,32.57 17.49,32.63
-             17.49,32.63 15.18,33.40 15.18,33.40
-             15.18,33.40 5.67,36.57 5.67,36.57
-             5.67,36.57 2.80,37.50 2.80,37.50
-             2.39,37.56 1.95,37.40 1.77,37.00
-             1.68,36.79 1.68,36.35 1.77,36.14
-             1.93,35.79 3.02,34.77 3.35,34.44
-             3.35,34.44 9.57,28.22 9.57,28.22
-             9.57,28.22 14.75,23.04 14.75,23.04
-             14.75,23.04 16.09,21.70 16.09,21.70
-             16.36,21.43 16.63,21.12 17.01,21.03
-             17.54,20.90 18.56,21.46 19.08,21.68
-             19.08,21.68 23.83,23.72 23.83,23.72
-             23.83,23.72 36.21,29.02 36.21,29.02
-             36.21,29.02 40.41,30.82 40.41,30.82
-             40.41,30.82 42.54,31.76 42.54,31.76
-             42.72,31.35 43.65,30.12 43.96,29.68 Z
-           M 58.98,11.95
-           C 58.98,11.95 56.54,15.36 56.54,15.36
-             56.54,15.36 48.61,26.45 48.61,26.45
-             48.61,26.45 33.68,47.36 33.68,47.36
-             33.68,47.36 28.80,54.19 28.80,54.19
-             28.80,54.19 26.39,57.60 26.39,57.60
-             26.39,57.60 60.22,57.60 60.22,57.60
-             60.22,57.60 60.22,10.30 60.22,10.30
-             60.22,10.30 58.98,11.95 58.98,11.95 Z
-           M 18.70,24.38
-           C 18.70,24.38 19.03,26.03 19.03,26.03
-             19.03,26.03 20.21,31.94 20.21,31.94
-             20.21,31.94 23.59,48.82 23.59,48.82
-             23.59,48.82 24.59,53.82 24.59,53.82
-             24.59,53.82 24.88,55.28 24.88,55.28
-             24.88,55.28 25.11,56.14 25.11,56.14
-             25.11,56.14 36.17,40.66 36.17,40.66
-             36.17,40.66 39.57,35.90 39.57,35.90
-             39.57,35.90 41.39,33.28 41.39,33.28
-             41.39,33.28 38.46,32.05 38.46,32.05
-             38.46,32.05 32.91,29.67 32.91,29.67
-             32.91,29.67 23.47,25.63 23.47,25.63
-             23.47,25.63 18.59,23.53 18.59,23.53
-             18.59,23.53 18.70,24.38 18.70,24.38 Z
-           M 14.87,25.66
-           C 14.87,25.66 11.46,29.07 11.46,29.07
-             11.46,29.07 8.05,32.49 8.05,32.49
-             8.05,32.49 6.28,34.32 6.28,34.32
-             6.28,34.32 9.39,33.32 9.39,33.32
-             9.39,33.32 14.99,31.45 14.99,31.45
-             14.99,31.45 17.98,30.48 17.98,30.48
-             17.98,30.48 17.64,28.71 17.64,28.71
-             17.64,28.71 17.04,25.72 17.04,25.72
-             17.04,25.72 16.70,23.89 16.70,23.89
-             16.70,23.89 14.87,25.66 14.87,25.66 Z
-           M 6.22,34.32
-           C 6.22,34.32 6.28,34.38 6.28,34.38
-             6.28,34.38 6.28,34.32 6.28,34.32
-             6.28,34.32 6.22,34.32 6.22,34.32 Z" />
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   sodipodi:docname="drawing.svg"
+   inkscape:version="1.0 (4035a4f, 2020-05-01)"
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 210 297"
+   height="64"
+   width="64">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     inkscape:window-maximized="0"
+     inkscape:window-y="23"
+     inkscape:window-x="0"
+     inkscape:window-height="669"
+     inkscape:window-width="1252"
+     showgrid="true"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="layer1"
+     inkscape:document-units="mm"
+     inkscape:cy="121"
+     inkscape:cx="117.5"
+     inkscape:zoom="2"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base">
+    <inkscape:grid
+       id="grid10"
+       type="xygrid" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Layer 1">
+    <path
+       id="path835"
+       d="M 54.72656,257.84472 H 220.48388 V 30.6958 Z"
+       style="fill:none;stroke:#000000;stroke-width:6.96093731;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;paint-order:normal" />
+    <path
+       id="path865"
+       d="M 54.72656,257.84472 36.30908,85.94824 l 98.22656,61.3916 z"
+       style="fill:none;stroke:#000000;stroke-width:6.96093731;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+    <path
+       id="path867"
+       d="M 36.30908,85.94824 42.44824,141.20068 -12.8042,153.479 Z"
+       style="fill:none;stroke:#000000;stroke-width:6.96093731;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+  </g>
 </svg>
