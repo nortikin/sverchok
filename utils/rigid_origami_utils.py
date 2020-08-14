@@ -107,7 +107,7 @@ class InsideVertex:
         # Create vertex indices inside of the source paper
         num_verts = len(obj.verts)
         indices = [v.index for v in obj.bm.verts if not v.is_boundary]
-        InsideVertex.indices = indices
+        cls.indices = indices
         
         # Create list of crease edges around each vertices
         crease_indices = cls.__GetCreaseLinesAroundVertex(crease_lines, indices, obj)
