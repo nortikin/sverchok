@@ -21,7 +21,7 @@ class SvRigidOrigamiNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvRigidOrigamiNode'
     bl_label = 'Rigid Origami'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    # sv_icon = ''
+    sv_icon = 'SV_ORIGAMI'
 
     folding_ratio : FloatProperty(
         name = "Folding ratio",
