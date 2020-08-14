@@ -190,7 +190,7 @@ class InsideVertex:
                 
             # Remove indices processed in this loop
             new_outmost_indices = [target_indices[i] for i in indices_outermost]
-            target_indices = [idx for i, idx in enumerate(target_indices) if not i in indices_outermost]
+            target_indices = [idx for i, idx in enumerate(target_indices) if i not in indices_outermost]
             outer_verts_indices.extend(new_outmost_indices)
         
         return crease_edge_indices
@@ -444,7 +444,7 @@ class FaceRotation:
                 obj_e = tuple(sorted([bm_e.verts[0].index, bm_e.verts[1].index]))
                 if obj_e != edge and obj_e in cls.crease_lines.edges:
                     e_cr_idx = cls.crease_lines.edges.index(obj_e)
-                    if not e_cr_idx in cls.inside_vertices[iv_idx].crease_indices:
+                    if e_cr_idx not in cls.inside_vertices[iv_idx].crease_indices:
                         continue
                     e_l_idx = cls.inside_vertices[iv_idx].crease_indices.index(e_cr_idx)
                     sign = 1
