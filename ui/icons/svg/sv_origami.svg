@@ -60,14 +60,14 @@
     <path
        id="path835"
        d="M 54.72656,257.84472 H 220.48388 V 30.6958 Z"
-       style="fill:none;stroke:#000000;stroke-width:6.96093731;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;paint-order:normal" />
+       style="fill:#ffffff;stroke:#000000;stroke-width:6.96093731;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;paint-order:normal" />
     <path
        id="path865"
        d="M 54.72656,257.84472 36.30908,85.94824 l 98.22656,61.3916 z"
-       style="fill:none;stroke:#000000;stroke-width:6.96093731;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+       style="fill:#ffffff;stroke:#000000;stroke-width:6.96093731;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
     <path
        id="path867"
        d="M 36.30908,85.94824 42.44824,141.20068 -12.8042,153.479 Z"
-       style="fill:none;stroke:#000000;stroke-width:6.96093731;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+       style="fill:#ffffff;stroke:#000000;stroke-width:6.96093731;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
   </g>
 </svg>
