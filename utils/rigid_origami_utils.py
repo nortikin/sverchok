@@ -493,14 +493,17 @@ class FaceRotation:
     def __rot_quat(cls, rad, n):
         n = n / np.linalg.norm(n)
         rad = float(rad)
-        R = np.array([[np.cos(rad)+n[0]*n[0]*(1-np.cos(rad)), \
-                       n[0]*n[1]*(1-np.cos(rad))-n[2]*np.sin(rad), \
-                       n[0]*n[2]*(1-np.cos(rad))+n[1]*np.sin(rad), 0], \
-                      [n[1]*n[0]*(1-np.cos(rad))+n[2]*np.sin(rad), \
-                       np.cos(rad)+n[1]*n[1]*(1-np.cos(rad)), \
-                       n[1]*n[2]*(1-np.cos(rad))-n[0]*np.sin(rad), 0], \
-                      [n[2]*n[0]*(1-np.cos(rad))-n[1]*np.sin(rad), \
-                       n[2]*n[1]*(1-np.cos(rad))+n[0]*np.sin(rad), \
-                       np.cos(rad)+n[2]*n[2]*(1-np.cos(rad)), 0], \
+        cos_rad = np.cos(rad)
+        sin_rad = np.sin(rad)
+        R = np.array([
+                       [cos_rad + n[0] * n[0] * (1 - cos_rad), \
+                       n[0] * n[1] * (1 - cos_rad) - n[2] * sin_rad , \
+                       n[0] * n[2] * (1 - cos_rad) + n[1] * sin_rad , 0], \
+                       [n[1] * n[0] * (1 - cos_rad)+ n[2] * sin_rad , \
+                       cos_rad + n[1] * n[1] * (1-cos_rad ), \
+                       n[1] * n[2] * (1 - cos_rad) - n[0] * sin_rad , 0], \
+                       [n[2] * n[0] * (1 - cos_rad) - n[1] * sin_rad , \
+                       n[2] * n[1] * (1 - cos_rad) + n[0] * sin_rad , \
+                       cos_rad + n[2] * n[2] * (1 - cos_rad), 0], \
                        [0, 0, 0, 1]])
         return R
