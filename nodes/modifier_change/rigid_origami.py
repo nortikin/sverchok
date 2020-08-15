@@ -24,24 +24,24 @@ class SvRigidOrigamiNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_ORIGAMI'
 
     folding_ratio : FloatProperty(
-        name = "Folding ratio",
-        description = "folding ratio from 0.0 to 1.0",
-        default = 0.0,
-        min = 0.0, max = 1.0,
-        update = updateNode)
+        name="Folding ratio",
+        description="folding ratio from 0.0 to 1.0",
+        default=0.0,
+        min=0.0, max=1.0,
+        update=updateNode)
 
     division_count : IntProperty(
-        name = "Division count",
-        description = "Count of dividing angles to calculate precisely",
-        default = 20,
-        min = 1, max = 100,
-        update = updateNode)
+        name="Division count",
+        description="Count of dividing angles to calculate precisely",
+        default=20,
+        min=1, max=100,
+        update=updateNode)
 
     fixed_face_index : IntProperty(
-        name = "Fixed face index",
-        description = "index of fixed face when folding",
-        default = 0,
-        update = updateNode)
+        name="Fixed face index",
+        description="index of fixed face when folding",
+        default=0,
+        update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
