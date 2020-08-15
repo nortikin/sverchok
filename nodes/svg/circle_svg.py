@@ -38,10 +38,10 @@ class SvgCircle():
 
     def draw(self, height, scale):
         svg = '<ellipse '
-        svg += 'cx="' + str(self.location[0] * scale) + '" '
-        svg += 'cy="' + str(height-self.location[1]* scale) + '" '
-        svg += 'rx="' + str(self.rad_x * scale) + '" '
-        svg += 'ry="' + str(self.rad_y * scale) + '" '
+        svg += f'cx="{self.location[0] * scale}" '
+        svg += f'cy="{height-self.location[1]* scale}" '
+        svg += f'rx="{self.rad_x * scale}" '
+        svg += f'ry="{self.rad_y * scale}" '
 
         if self.attributes:
             svg += self.attributes.draw(height, scale)
@@ -49,7 +49,10 @@ class SvgCircle():
         return svg
 
 class SvSvgCircleNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Circle '''
+    """
+    Triggers: Ellipse SVG
+    Tooltip: Svg circle/ellipse shape, the shapes will be wrapped in SVG Groups
+    """
     bl_idname = 'SvSvgCircleNode'
     bl_label = 'Circle SVG'
     bl_icon = 'MESH_CIRCLE'

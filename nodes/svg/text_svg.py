@@ -40,15 +40,15 @@ class SvgText():
     def draw(self, height, scale):
         svg = '<text '
 
-        svg += 'font-size="{}px" '.format(self.size)
-        svg += 'font-family="{}" '.format(self.font_family)
+        svg += f'font-size="{self.size * scale}px" '
+        svg += f'font-family="{self.font_family}" '
         x = self.location[0] * scale
-        y = height-self.location[1] * scale
+        y = height - self.location[1] * scale
         if self.angle != 0:
-            svg += 'transform="translate({},{})rotate({})" '.format(x,y,self.angle)
+            svg += f'transform="translate({x},{y})rotate({self.angle})" '
         else:
-            svg += 'x="{}" '.format(self.location[0] * scale)
-            svg += 'y="{}" '.format(height-self.location[1]* scale)
+            svg += f'x="{x}" '
+            svg += f'y="{y}" '
         if self.attributes:
             svg += self.attributes.draw(height, scale)
         svg += '>'
@@ -71,8 +71,14 @@ class SvSvgTextNode(bpy.types.Node, SverchCustomTreeNode):
     font_family: EnumProperty(
         name='Font',
         description='Font Size',
-        items=enum_item_4(["serif", 'sans-serif', 'monospace', 'cursive', 'fantasy']),
+        items=enum_item_4(["serif", 'sans-serif', 'monospace', 'cursive', 'fantasy', 'user']),
         default='monospace',
+        update=updateNode)
+
+    user_font: StringProperty(
+        name='Font Name',
+        description='Define font name',
+        default='',
         update=updateNode)
 
     angle: FloatProperty(
@@ -87,9 +93,6 @@ class SvSvgTextNode(bpy.types.Node, SverchCustomTreeNode):
         default='',
         update=updateNode)
 
-    group: BoolProperty(
-        name="Group",
-        update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Location")
@@ -103,6 +106,8 @@ class SvSvgTextNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "font_family", expand=False)
+        if self.font_family == 'user':
+            layout.prop(self, "user_font")
 
     def process(self):
 
@@ -111,11 +116,12 @@ class SvSvgTextNode(bpy.types.Node, SverchCustomTreeNode):
         params_in = [s.sv_get(deepcopy=False) for s in self.inputs[:4]]
         texts_out = []
         params_in.append(self.inputs['Fill / Stroke'].sv_get(deepcopy=False, default=None))
+        font_family = self.user_font if self.font_family == 'user' else self.font_family
 
         for params in zip(*mlr(params_in)):
             svg_texts = []
             for loc, text, size, angle, atts in zip(*mlr(params)):
-                svg_texts.append(SvgText(loc, text, size, angle, atts, self.font_family))
+                svg_texts.append(SvgText(loc, text, size, angle, atts, font_family))
 
             texts_out.append(SvgGroup(svg_texts))
 

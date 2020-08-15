@@ -109,39 +109,30 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'SVG Document'
     bl_icon = 'RNA'
 
-    def props_changed(self, context):
-        if self.node_id in evolver_mem:
-            self.info_label = "Props changed since execution"
-    def props_changed_and_update(self, context):
-        if self.node_id in evolver_mem:
-            self.info_label = "Props changed since execution"
-        updateNode(self, context)
-
     mode_items = [
         ('MM', 'mm', '', 0),
-        ('CM', 'cm', '', 1),
-        ('PIX', 'px', '', 2),
+        ('PIX', 'px', '', 1),
         ]
     units: EnumProperty(
         name="Mode",
         description="Set Fitness as maximun or as minimum",
         items=mode_items,
-        update=props_changed
+        update=updateNode
         )
     doc_width: FloatProperty(
         default=210,
         name='Width', description='Document Width',
-        update=props_changed)
+        update=updateNode)
     doc_height: FloatProperty(
         default=297,
         min=1,
         name='Height', description='Iterations',
-        update=props_changed)
+        update=updateNode)
     doc_scale: FloatProperty(
         default=10,
         min=1,
         name='Scale', description='Iterations',
-        update=props_changed)
+        update=updateNode)
 
 
     info_label: StringProperty(default="Not Executed")

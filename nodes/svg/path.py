@@ -38,16 +38,27 @@ class SvgPath():
     def draw(self, height, scale):
         verts = self.verts
         svg = '<path '
+        x = verts[0][0] * scale
+        y = height - verts[0][1] * scale
         if self.mode == 'LIN' or len(verts) < 3:
-            svg += 'd="M {} {}'.format(verts[0][0]* scale, height-verts[0][1]* scale)
+            svg += f'd="M {x} {y}'
             for v in verts[1:]:
-                svg += ' L {} {}'.format(scale * v[0], height - scale * v[1])
+                x = scale * v[0]
+                y = height - scale * v[1]
+                svg += f' L {x} {y}'
         else:
-            svg += 'd="M {} {}'.format(verts[0][0]* scale, height-verts[0][1]* scale)
-            svg += ' Q {} {}'.format(verts[1][0]* scale, height-verts[1][1]* scale)
-            svg += ' {} {}'.format(verts[2][0]* scale, height-verts[2][1]* scale)
+            svg += f'd="M {x} {y}'
+            x = verts[1][0] * scale
+            y = height - verts[1][1] * scale
+            svg += f' Q {x} {y}'
+            x = verts[2][0] * scale
+            y = height - verts[2][1] * scale
+            svg += f' {x} {y}'
             for v in verts[3:]:
-                svg += ' T {} {}'.format(scale * v[0], height - scale * v[1])
+                x = scale * v[0]
+                y = height - scale * v[1]
+                svg += f' T {x} {y}'
+
         if self.cyclic:
             svg += ' Z" '
         else:
