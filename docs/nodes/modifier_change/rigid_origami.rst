@@ -48,4 +48,8 @@ Miura fold simulation.
 .. image:: https://user-images.githubusercontent.com/64673405/90147700-6a49cb80-ddbd-11ea-9d57-07ae2880af8d.png
   :alt: https://user-images.githubusercontent.com/64673405/90147700-6a49cb80-ddbd-11ea-9d57-07ae2880af8d.png
 
+Windmill.
+
+.. image:: https://user-images.githubusercontent.com/64673405/90317118-23e1a180-df62-11ea-92aa-170079922ce7.png
+  :alt: https://user-images.githubusercontent.com/64673405/90317118-23e1a180-df62-11ea-92aa-170079922ce7.png
 
