@@ -305,6 +305,7 @@
     SvPokeFacesNode
     SvVertMaskNode
     SvSplitEdgesNode
+    SvRigidOrigamiNode
     ---
     SvFollowActiveQuads
 
@@ -626,7 +627,6 @@
     SvPulgaPhysicsNode
     SvTopologySimple
     SvSweepModulator
-    SvRigidOrigamiNode
     ---
     SvGetPropNodeMK2
     SvSetPropNodeMK2
