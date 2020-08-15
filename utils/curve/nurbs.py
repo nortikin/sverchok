@@ -103,7 +103,12 @@ class SvNurbsCurve(SvCurve):
             raise Exception("Not implemented yet!")
 
     def reparametrize(self, new_t_min, new_t_max):
-        knotvector = sv_knotvector.rescale(self.get_knotvector(), new_t_min, new_t_max)
+        kv = self.get_knotvector()
+        t_min, t_max = kv[0], kv[-1]
+        if t_min == new_t_min and t_max == new_t_max:
+            return self
+
+        knotvector = sv_knotvector.rescale(kv, new_t_min, new_t_max)
         return SvNurbsCurve.build(self.get_nurbs_implementation(),
                 self.get_degree(), knotvector, self.get_control_points(), self.get_weights())
 
@@ -130,7 +135,7 @@ class SvNurbsCurve(SvCurve):
     def insert_knot(self, u, count=1):
         raise Exception("Not implemented!")
 
-def unify_curves(curve1, curve2):
+def unify_two_curves(curve1, curve2):
     curve1 = curve1.to_knotvector(curve2)
     curve2 = curve2.to_knotvector(curve1)
     return curve1, curve2
@@ -429,7 +434,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         #print(f"kv1: {curve.get_knotvector().shape}, kv2: {curve2.get_knotvector().shape}")
         kv1, kv2 = curve.get_knotvector(), curve2.get_knotvector()
         if kv1.shape != kv2.shape or (kv1 != kv2).any():
-            curve, curve2 = unify_curves(curve, curve2)
+            curve, curve2 = unify_two_curves(curve, curve2)
             #raise UnsupportedCurveTypeException("curves have different knot vectors")
 
         my_control_points = curve.control_points

@@ -372,3 +372,41 @@ class SvNativeNurbsSurface(SvNurbsSurface):
         calc.set(surface, normal, surface_u, surface_v, duu, dvv, duv, nuu, nvv, nuv)
         return calc
 
+def unify_curves(curves):
+#     common_degree = None
+#     for curve in curves:
+#         degree = curve.get_degree()
+#         if common_degree is None:
+#             common_degree = degree
+#         else:
+#             if common_degree != degree:
+#                 raise Exception("Degrees of the curves are not equal")
+
+    curves = [curve.reparametrize(0.0, 1.0) for curve in curves]
+
+    result = []
+    for i, curve1 in enumerate(curves):
+        for j, curve2 in enumerate(curves):
+            if i != j:
+                curve1 = curve1.to_knotvector(curve2)
+        result.append(curve1)
+    return result
+
+def build_from_curves(curves, degree_u = None, implementation = SvNurbsSurface.NATIVE):
+    curves = unify_curves(curves)
+    degree_v = curves[0].get_degree()
+    if degree_u is None:
+        degree_u = degree_v
+    control_points = [curve.get_control_points() for curve in curves]
+    control_points = np.array(control_points)
+    weights = np.array([curve.get_weights() for curve in curves])
+    knotvector_u = sv_knotvector.generate(degree_u, len(curves))
+    knotvector_v = curves[0].get_knotvector()
+
+    surface = SvNurbsSurface.build(implementation,
+                degree_u, degree_v,
+                knotvector_u, knotvector_v,
+                control_points, weights)
+
+    return curves, surface
+
