@@ -588,3 +588,11 @@ class KnotvectorTests(SverchokTestCase):
         expected = np.array([0, 0.5, 1.5, 2])
         self.assert_numpy_arrays_equal(result, expected)
 
+    def test_from_tknots(self):
+        tknots = np.array([0, 5, 9, 14, 17.0]) / 17.0
+        degree = 3
+        knotvector = sv_knotvector.from_tknots(degree, tknots)
+        u4 = 0.5490196078431373
+        expected = np.array([0,0,0,0, u4, 1,1,1,1])
+        self.assert_numpy_arrays_equal(knotvector, expected, precision=6)
+

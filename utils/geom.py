@@ -130,6 +130,11 @@ class Spline(object):
             tknots = np.max(np.absolute(pts[1:] - pts[:-1]), 1)
             tknots = np.insert(tknots, 0, 0).cumsum()
             tknots = tknots / tknots[-1]
+        elif metric == 'CENTRIPETAL':
+            tmp = np.linalg.norm(pts[:-1] - pts[1:], axis=1)
+            tmp = np.sqrt(tmp)
+            tknots = np.insert(tmp, 0, 0).cumsum()
+            tknots = tknots / tknots[-1]
         elif metric == "X":
             tknots = pts[:,0]
             tknots = tknots - tknots[0]

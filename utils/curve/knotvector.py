@@ -68,6 +68,16 @@ def generate(degree, num_ctrlpts, clamped=True):
     # Return auto-generated knot vector
     return np.array(knot_vector)
 
+def from_tknots(degree, tknots):
+    n = len(tknots)
+    #m = degree + n + 1
+    result = [0] * (degree+1)
+    for j in range(1, n - degree):
+        u = tknots[j:j+degree].sum() / degree
+        result.append(u)
+    result.extend([1.0] * (degree+1))
+    return np.array(result)
+
 def normalize(knot_vector):
     """ Normalizes the input knot vector to [0, 1] domain.
 
