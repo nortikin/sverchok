@@ -19,6 +19,7 @@
 import cProfile
 import pstats
 from io import StringIO
+from contextlib import contextmanager
 
 import bpy
 from bpy.props import BoolProperty, EnumProperty
@@ -151,6 +152,34 @@ def have_gathered_stats():
     else:
         return False
 
+def reset_stats():
+    global _global_profile
+    _global_profile = None
+
+@contextmanager
+def profiling_enabled():
+    if is_profiling_enabled_in_settings():
+        global _profile_nesting
+        profile = None
+        try:
+            profile = get_global_profile()
+            _profile_nesting += 1
+            if _profile_nesting == 1:
+                profile.enable()
+            yield profile
+        finally:
+            _profile_nesting -= 1
+            if _profile_nesting == 0 and profile is not None:
+                profile.disable()
+    else:
+        yield None
+
+########################
+#
+# GUI
+#
+#########################
+
 class SvProfilingToggle(bpy.types.Operator):
     """Toggle profiling on/off"""
     bl_idname = "node.sverchok_profile_toggle"
@@ -218,8 +247,7 @@ class SvProfileReset(bpy.types.Operator):
     bl_options = {'INTERNAL'}
 
     def execute(self, context):
-        global _global_profile
-        _global_profile = None
+        reset_stats()
         info("Profiling statistics data cleared.")
         return {'FINISHED'}
     
