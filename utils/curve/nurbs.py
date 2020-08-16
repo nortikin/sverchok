@@ -54,7 +54,7 @@ class SvNurbsCurve(SvCurve):
 
     @classmethod
     def interpolate(cls, degree, points, metric='DISTANCE'):
-        return interpolate_nurbs_curve(cls, degree, metric)
+        return interpolate_nurbs_curve(cls, degree, points, metric)
 
     @classmethod
     def interpolate_list(cls, degree, points, metric='DISTANCE'):
