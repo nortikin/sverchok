@@ -15,7 +15,7 @@ from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.dependencies import geomdl
 
 if geomdl is not None:
-    from geomdl import NURBS, BSpline, operations
+    from geomdl import NURBS, BSpline, operations, fitting
 
 ##################
 #                #
@@ -53,15 +53,16 @@ class SvNurbsCurve(SvCurve):
         return None
 
     @classmethod
-    def interpolate(cls, implementation, degree, points, metric='DISTANCE'):
+    def interpolate(cls, degree, points, metric='DISTANCE'):
         n = len(points)
         tknots = Spline.create_knots(points, metric=metric)
         knotvector = sv_knotvector.from_tknots(degree, tknots)
         functions = SvNurbsBasisFunctions(knotvector)
+        coeffs_by_row = [functions.function(idx, degree)(tknots) for idx in range(n)]
         A = np.zeros((3*n, 3*n))
         for equation_idx, t in enumerate(tknots):
             for unknown_idx in range(n):
-                coeff = functions.function(unknown_idx, degree)(t)
+                coeff = coeffs_by_row[unknown_idx][equation_idx]
                 row = 3*equation_idx
                 col = 3*unknown_idx
                 A[row,col] = A[row+1,col+1] = A[row+2,col+2] = coeff
@@ -80,12 +81,13 @@ class SvNurbsCurve(SvCurve):
         control_points = np.array(control_points)
         weights = np.ones((n,))
 
-        return SvNurbsCurve.build(implementation,
+        return SvNurbsCurve.build(cls.get_nurbs_implementation(),
                     degree, knotvector,
                     control_points, weights)
 
-    def get_nurbs_implementation(self):
-        raise Exception("Not defined")
+    @classmethod
+    def get_nurbs_implementation(cls):
+        raise Exception("NURBS implementation is not defined")
 
     def get_control_points(self):
         """
@@ -202,6 +204,14 @@ class SvGeomdlCurve(SvNurbsCurve):
         return SvGeomdlCurve(curve)
 
     @classmethod
+    def interpolate(cls, degree, points, metric='DISTANCE'):
+        if metric not in {'DISTANCE', 'CENTRIPETAL'}:
+            raise Exception("Unsupported metric")
+        centripetal = metric == 'CENTRIPETAL'
+        curve = fitting.interpolate_curve(points.tolist(), degree, centripetal=centripetal)
+        return SvGeomdlCurve(curve)
+
+    @classmethod
     def from_any_nurbs(cls, curve):
         if not isinstance(curve, SvNurbsCurve):
             raise TypeError("Invalid surface type")
@@ -211,7 +221,8 @@ class SvGeomdlCurve(SvNurbsCurve):
                     curve.get_control_points(), 
                     curve.get_weights())
 
-    def get_nurbs_implementation(self):
+    @classmethod
+    def get_nurbs_implementation(cls):
         return SvNurbsCurve.GEOMDL
 
     def get_control_points(self):
@@ -492,7 +503,8 @@ class SvNativeNurbsCurve(SvNurbsCurve):
                         weights = weights)
         return surface
 
-    def get_nurbs_implementation(self):
+    @classmethod
+    def get_nurbs_implementation(cls):
         return SvNurbsCurve.NATIVE
 
     def insert_knot(self, u_bar, count=1):
