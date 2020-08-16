@@ -77,19 +77,25 @@ class SvNurbsBasisFunctions(object):
             n1 = self.function(i, p-1)
             n2 = self.function(i+1, p-1)
 
-            def f(us):
-                denom1 = (u[i+p] - u[i])
-                denom2 = (u[i+p+1] - u[i+1])
+            denom1 = (u[i+p] - u[i])
+            denom2 = (u[i+p+1] - u[i+1])
 
-                if denom1 == 0:
-                    c1 = 0
-                else:
-                    c1 = (us - u[i]) / denom1
-                if denom2 == 0:
-                    c2 = 0
-                else:
+            if denom1 == 0 and denom2 == 0:
+                def f(us):
+                    return np.zeros_like(us)
+            elif denom1 == 0 and denom2 != 0:
+                def f(us):
                     c2 = (u[i+p+1] - us) / denom2
-                return c1 * n1(us) + c2 * n2(us)
+                    return c2 * n2(us)
+            elif denom1 != 0 and denom2 == 0:
+                def f(us):
+                    c1 = (us - u[i]) / denom1
+                    return c1 * n1(us)
+            else: # denom1 != 0 and denom2 != 0
+                def f(us):
+                    c1 = (us - u[i]) / denom1
+                    c2 = (u[i+p+1] - us) / denom2
+                    return c1 * n1(us) + c2 * n2(us)
 
             self._cache[(i,p,0)] = f
             return f
