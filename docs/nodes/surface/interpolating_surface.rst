@@ -1,10 +1,19 @@
 Surface from Curves
 ===================
 
+Dependencies
+------------
+
+This node can optionally use Geomdl_ and / or SciPy_ libraries.
+
+.. _Geomdl: https://onurraufbingol.com/NURBS-Python/
+.. _SciPy: https://scipy.org/
+
 Functionality
 -------------
 
-This node generates a Surface object by interpolating several Curves. Two interpolation modes are supported: linear and cubic.
+This node generates a Surface object by interpolating several Curves. This
+operation is also known as "Loft". Several interpolation modes are supported.
 
 Surface domain: from 0 to 1 in both directions.
 
@@ -22,11 +31,46 @@ Parameters
 
 This node has the following parameters:
 
-* **Interpolation mode**. The available values are **Linear** and **Cubic**.
+* **Interpolation mode**. The available values are:
+
+  * **Linear**
+  * **Cubic**
+  * **BSpline**. Use B-Spline (NURBS) interpolation.
+  * **RBF**. Use Radial Basis Functions (RBF_) interpolation. This mode is
+    available only when SciPy_ library is available.
+
   The default mode is **Linear**.
-* **Cyclic**. This defines whether the surface should be cyclic (closed) in the
-  U direction - i.e., should the node create an interpolation between the last
-  curve and the first one. Unchecked by default.
+
+* **Implementation**. This parameter is available only if **Interpolation
+  mode** parameter is set to **BSpline**. This defines the implementation of
+  NURBS mathematics to be used. The available options are:
+
+  * **Geomdl**. Use Geomdl_ library. This option is available only when Geomdl package is installed.
+  * **Sverchok**. Use built-in Sverchok implementation.
+  
+  In general, built-in implementation should be faster; but Geomdl implementation is better tested.
+  The default option is **Geomdl**, when it is available; otherwise, built-in implementation is used.
+
+* **Function**. This parameter is available only when **Interpolation mode**
+  parameter is set to **RBF**. The specific function used by the node. The
+  available values are:
+
+  * Multi Quadric
+  * Inverse
+  * Gaussian
+  * Cubic
+  * Quintic
+  * Thin Plate
+
+  The default function is Multi Quadric.
+
+* **Cyclic**. This parameter is available only when **Interpolation mode**
+  parameter is set to **Linear** or **Cubic**. This defines whether the surface
+  should be cyclic (closed) in the U direction - i.e., should the node create
+  an interpolation between the last curve and the first one. Unchecked by
+  default.
+
+.. _RBF: http://www.scholarpedia.org/article/Radial_basis_function
 
 Outputs
 -------
