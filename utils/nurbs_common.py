@@ -49,84 +49,102 @@ class SvNurbsBasisFunctions(object):
         self.knotvector = np.array(knotvector)
         self._cache = dict()
 
-    def function(self, i, p):
-        f = self._cache.get((i,p, 0))
-        if f is not None:
-            return f
+    def function(self, i, p, reset_cache=True):
+        if reset_cache:
+            self._cache = dict()
+        def calc(us):
+            value = self._cache.get((i,p, 0))
+            if value is not None:
+                return value
 
-        u = self.knotvector
-        if p <= 0:
-            if i < 0 or i >= len(self.knotvector):
+            u = self.knotvector
+            if p <= 0:
+                if i < 0 or i >= len(u):
 
-                def n0(us):
-                    return np.zeros_like(us)
-            else:
+                    value = np.zeros_like(us)
+                    self._cache[(i,p,0)] = value
+                    return value
+                        
+                else:
 
-                def n0(us):
-                    is_last = u[i+1] >= self.knotvector[-1]
-                    if is_last:
-                        c2 = us <= u[i+1]
+                    if i+1 >= len(u):
+                        u_next = u[-1]
+                        is_last = True
                     else:
-                        c2 = us < u[i+1]
+                        u_next = u[i+1]
+                        is_last = u_next >= u[-1]
+                    if is_last:
+                        c2 = us <= u_next
+                    else:
+                        c2 = us < u_next
                     condition = np.logical_and(u[i] <= us, c2)
-                    return np.where(condition, 1.0, 0.0)
+                    value = np.where(condition, 1.0, 0.0)
+                    self._cache[(i,p,0)] = value
+                    return value
 
-            self._cache[(i,p,0)] = n0
-            return n0
-        else:
-            n1 = self.function(i, p-1)
-            n2 = self.function(i+1, p-1)
+            else:
+                denom1 = (u[i+p] - u[i])
+                denom2 = (u[i+p+1] - u[i+1])
 
-            denom1 = (u[i+p] - u[i])
-            denom2 = (u[i+p+1] - u[i+1])
+                if denom1 != 0:
+                    n1 = self.function(i, p-1, reset_cache=False)(us)
+                if denom2 != 0:
+                    n2 = self.function(i+1, p-1, reset_cache=False)(us)
 
-            if denom1 == 0 and denom2 == 0:
-                def f(us):
-                    return np.zeros_like(us)
-            elif denom1 == 0 and denom2 != 0:
-                def f(us):
+                if denom1 == 0 and denom2 == 0:
+                    value = np.zeros_like(us)
+                    self._cache[(i,p,0)] = value
+                    return value
+                elif denom1 == 0 and denom2 != 0:
                     c2 = (u[i+p+1] - us) / denom2
-                    return c2 * n2(us)
-            elif denom1 != 0 and denom2 == 0:
-                def f(us):
+                    value = c2 * n2
+                    self._cache[(i,p,0)] = value
+                    return value
+                elif denom1 != 0 and denom2 == 0:
                     c1 = (us - u[i]) / denom1
-                    return c1 * n1(us)
-            else: # denom1 != 0 and denom2 != 0
-                def f(us):
+                    value = c1 * n1
+                    self._cache[(i,p,0)] = value
+                    return value
+                else: # denom1 != 0 and denom2 != 0
                     c1 = (us - u[i]) / denom1
                     c2 = (u[i+p+1] - us) / denom2
-                    return c1 * n1(us) + c2 * n2(us)
+                    value = c1 * n1 + c2 * n2
+                    self._cache[(i,p,0)] = value
+                    return value
+        return calc
 
-            self._cache[(i,p,0)] = f
-            return f
+    def derivative(self, i, p, k, reset_cache=True):
+        if reset_cache:
+            self._cache = dict()
 
-    def derivative(self, i, p, k):
         if k == 0:
-            return self.function(i, p)
-        f = self._cache.get((i, p, k))
-        if f is not None:
-            return f
-        
-        n1 = self.derivative(i, p-1, k-1)
-        n2 = self.derivative(i+1, p-1, k-1)
-        u = self.knotvector
+            return self.function(i, p, reset_cache=False)
 
-        def f(us):
+        def calc(us):
+            value = self._cache.get((i, p, k))
+            if value is not None:
+                return value
+            
+            n1 = self.derivative(i, p-1, k-1, reset_cache=False)(us)
+            n2 = self.derivative(i+1, p-1, k-1, reset_cache=False)(us)
+            u = self.knotvector
+
             denom1 = u[i+p] - u[i]
             denom2 = u[i+p+1] - u[i+1]
 
             if denom1 == 0:
                 s1 = 0
             else:
-                s1 = n1(us) / denom1
+                s1 = n1 / denom1
 
             if denom2 == 0:
                 s2 = 0
             else:
-                s2 = n2(us) / denom2
+                s2 = n2 / denom2
 
-            return p*(s1 - s2)
+            value = p*(s1 - s2)
+            self._cache[(i,p,k)] = value
+            return value
         
-        self._cache[(i,p,k)] = f
-        return f
+        return calc
 
