@@ -5,6 +5,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nesting_level, describe_data_shape
 from sverchok.utils.geom import LinearSpline, CubicSpline
+from sverchok.utils.math import supported_metrics
 from sverchok.utils.curve import SvSplineCurve
 
 class SvCubicSplineNode(bpy.types.Node, SverchCustomTreeNode):
@@ -21,15 +22,9 @@ class SvCubicSplineNode(bpy.types.Node, SverchCustomTreeNode):
         default = False,
         update=updateNode)
 
-    metrics = [
-        ('MANHATTAN', 'Manhattan', "Manhattan distance metric", 0),
-        ('DISTANCE', 'Euclidan', "Eudlcian distance metric", 1),
-        ('POINTS', 'Points', "Points based", 2),
-        ('CHEBYSHEV', 'Chebyshev', "Chebyshev distance", 3)]
-
     metric: EnumProperty(name='Metric',
         description = "Knot mode",
-        default="DISTANCE", items=metrics,
+        default="DISTANCE", items=supported_metrics,
         update=updateNode)
 
     def draw_buttons(self, context, layout):

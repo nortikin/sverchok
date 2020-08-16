@@ -71,6 +71,14 @@ rbf_functions = [
     ('thin_plate', "Thin Plate", "Thin Plate", 5)
 ]
 
+supported_metrics = [
+        ('MANHATTAN', 'Manhattan', "Manhattan distance metric", 0),
+        ('DISTANCE', 'Euclidan', "Eudlcian distance metric", 1),
+        ('POINTS', 'Points', "Points based", 2),
+        ('CHEBYSHEV', 'Chebyshev', "Chebyshev distance", 3),
+        ('CENTRIPETAL', "Centripetal", "Centripetal distance - square root of Euclidian distance", 4)
+    ]
+
 def smooth(x):
     return 3*x*x - 2*x*x*x
 
