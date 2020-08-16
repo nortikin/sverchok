@@ -28,7 +28,7 @@ from sverchok.ui.development import displaying_sverchok_nodes
 
 ui_tooltip = "node.sv_generic_ui_tooltip"
 
-objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3'}
+objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3', 'SvExNurbsInNode', 'SvBezierInNode'}
 
 def redraw_panels():
     for window in bpy.context.window_manager.windows:
