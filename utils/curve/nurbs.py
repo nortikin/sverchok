@@ -7,9 +7,9 @@
 
 import numpy as np
 
-from sverchok.utils.geom import Spline
 from sverchok.utils.curve import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve import knotvector as sv_knotvector
+from sverchok.utils.curve.algorithms import interpolate_nurbs_curve
 from sverchok.utils.nurbs_common import nurbs_divide, SvNurbsBasisFunctions, elevate_bezier_degree, from_homogenous
 from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.dependencies import geomdl
@@ -54,36 +54,7 @@ class SvNurbsCurve(SvCurve):
 
     @classmethod
     def interpolate(cls, degree, points, metric='DISTANCE'):
-        n = len(points)
-        tknots = Spline.create_knots(points, metric=metric)
-        knotvector = sv_knotvector.from_tknots(degree, tknots)
-        functions = SvNurbsBasisFunctions(knotvector)
-        coeffs_by_row = [functions.function(idx, degree)(tknots) for idx in range(n)]
-        A = np.zeros((3*n, 3*n))
-        for equation_idx, t in enumerate(tknots):
-            for unknown_idx in range(n):
-                coeff = coeffs_by_row[unknown_idx][equation_idx]
-                row = 3*equation_idx
-                col = 3*unknown_idx
-                A[row,col] = A[row+1,col+1] = A[row+2,col+2] = coeff
-        B = np.zeros((3*n,1))
-        for point_idx, point in enumerate(points):
-            row = 3*point_idx
-            B[row:row+3] = point[:,np.newaxis]
-
-        x = np.linalg.solve(A, B)
-
-        control_points = []
-        for i in range(n):
-            row = i*3
-            control = x[row:row+3,0].T
-            control_points.append(control)
-        control_points = np.array(control_points)
-        weights = np.ones((n,))
-
-        return SvNurbsCurve.build(cls.get_nurbs_implementation(),
-                    degree, knotvector,
-                    control_points, weights)
+        return interpolate_nurbs_curve(cls, degree, metric)
 
     @classmethod
     def interpolate_list(cls, degree, points, metric='DISTANCE'):

@@ -98,6 +98,10 @@ def concatenate(kv1, kv2):
     M = kv1.max()
     return np.concatenate((kv1, kv2 + M))
 
+def average(knotvectors):
+    kvs = np.array(knotvectors)
+    return kvs.mean(axis=0)
+
 def to_multiplicity(knot_vector, tolerance=1e-6):
     count = 0
     prev_u = None

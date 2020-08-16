@@ -13,7 +13,9 @@ from sverchok.utils.curve.core import (
         SvCurveSegment, SvReparametrizedCurve,
         SvFlipCurve
     )
-from sverchok.utils.geom import PlaneEquation, LineEquation, LinearSpline, CubicSpline
+from sverchok.utils.nurbs_common import SvNurbsBasisFunctions
+from sverchok.utils.curve import knotvector as sv_knotvector
+from sverchok.utils.geom import PlaneEquation, LineEquation, Spline, LinearSpline, CubicSpline
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
 from sverchok.utils.math import (
     ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
@@ -747,4 +749,36 @@ def curve_segment(curve, new_t_min, new_t_max, rescale=False):
         return curve
     else:
         return SvCurveSegment(curve, new_t_min, new_t_max, rescale)
+
+def interpolate_nurbs_curve(cls, degree, points, metric='DISTANCE'):
+    n = len(points)
+    tknots = Spline.create_knots(points, metric=metric)
+    knotvector = sv_knotvector.from_tknots(degree, tknots)
+    functions = SvNurbsBasisFunctions(knotvector)
+    coeffs_by_row = [functions.function(idx, degree)(tknots) for idx in range(n)]
+    A = np.zeros((3*n, 3*n))
+    for equation_idx, t in enumerate(tknots):
+        for unknown_idx in range(n):
+            coeff = coeffs_by_row[unknown_idx][equation_idx]
+            row = 3*equation_idx
+            col = 3*unknown_idx
+            A[row,col] = A[row+1,col+1] = A[row+2,col+2] = coeff
+    B = np.zeros((3*n,1))
+    for point_idx, point in enumerate(points):
+        row = 3*point_idx
+        B[row:row+3] = point[:,np.newaxis]
+
+    x = np.linalg.solve(A, B)
+
+    control_points = []
+    for i in range(n):
+        row = i*3
+        control = x[row:row+3,0].T
+        control_points.append(control)
+    control_points = np.array(control_points)
+    weights = np.ones((n,))
+
+    return cls.build(cls.get_nurbs_implementation(),
+                degree, knotvector,
+                control_points, weights)
 
