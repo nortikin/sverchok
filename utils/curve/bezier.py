@@ -9,6 +9,7 @@ import numpy as np
 
 from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.math import binomial
+from sverchok.utils.geom import Spline
 from sverchok.utils.curve.core import SvCurve, SvConcatCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
@@ -115,6 +116,34 @@ class SvBezierCurve(SvCurve):
             new_curves = [SvConcatCurve(new_curves)]
 
         return new_controls, new_curves
+
+    @classmethod
+    def interpolate(cls, points, metric='DISTANCE'):
+        n = len(points)
+        tknots = Spline.create_knots(points, metric=metric)
+        matrix = np.zeros((3*n, 3*n))
+        for equation_idx, t in enumerate(tknots):
+            for unknown_idx in range(n):
+                coeff = SvBezierCurve.coefficient(n-1, unknown_idx, np.array([t]))[0]
+                #print(f"C[{equation_idx}][{unknown_idx}] = {coeff}")
+                row = 3*equation_idx
+                col = 3*unknown_idx
+                matrix[row,col] = matrix[row+1, col+1] = matrix[row+2,col+2] = coeff
+        #print(matrix)
+        B = np.zeros((3*n, 1))
+        for point_idx, point in enumerate(points):
+            row = 3*point_idx
+            B[row:row+3] = point[:,np.newaxis]
+        #print(B)
+        x = np.linalg.solve(matrix, B)
+        #print(x)
+        controls = []
+        for i in range(n):
+            row = i*3
+            control = x[row:row+3,0].T
+            controls.append(control)
+            #print(control)
+        return SvBezierCurve(controls)
 
     @classmethod
     def coefficient(cls, n, k, ts):
