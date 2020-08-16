@@ -53,3 +53,7 @@ Windmill.
 .. image:: https://user-images.githubusercontent.com/64673405/90317118-23e1a180-df62-11ea-92aa-170079922ce7.png
   :alt: https://user-images.githubusercontent.com/64673405/90317118-23e1a180-df62-11ea-92aa-170079922ce7.png
 
+Water bomb tessellation
+
+.. image:: https://user-images.githubusercontent.com/64673405/90325693-b5303280-dfb9-11ea-8df2-b5e32e3b5f86.png
+  :alt: https://user-images.githubusercontent.com/64673405/90325693-b5303280-dfb9-11ea-8df2-b5e32e3b5f86.png
