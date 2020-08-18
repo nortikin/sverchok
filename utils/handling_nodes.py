@@ -34,8 +34,7 @@ class SvTestNode(bpy.types.Node, SverchCustomTreeNode):
         node.outputs.verts = [(v[0] + x, v[1] + y, v[2]) for v, x, y in zip(
                               node.inputs.verts, cycle(node.inputs.x_axis), cycle(node.inputs.y_axis))]
 
-
-def register(): bpy.utils.register_class(SvTestNode), def untegister(): bpy.utils.unregister_class(SvTestNode)
+# the class will be registered automatically
 """
 
 
@@ -170,15 +169,15 @@ class NodeProperties(NamedTuple):
 
 
 class SocketProperties(NamedTuple):
-    name: str
-    socket_type: SockTypes
-    prop: NodeProperties = None
-    custom_draw: str = ''
-    deep_copy: bool = True
-    vectorize: bool = True
-    default: Any = [[]]
-    mandatory: bool = False
-    show_function: Callable[..., bool] = None
+    name: str  # name of a socket to display
+    socket_type: SockTypes  # which type of socket should be created
+    prop: NodeProperties = None  # property which should be displayed on socket
+    custom_draw: str = ''  # name of function which will draw socket UI
+    deep_copy: bool = True  # should be True if node modifies data of an input list
+    vectorize: bool = True  # False if input data should not be repeated to other inputs length
+    default: Any = [[]]  # if unlinked without property socket should have default value
+    mandatory: bool = False  # process method won't be called without linked mandatory sockets
+    show_function: Callable[..., bool] = None  # if it returns False the socket will be hidden upon properties chang
 
 
 class NodeInputs:
