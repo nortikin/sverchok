@@ -16,12 +16,12 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import numpy as np
 
 import bpy
-import numpy as np
 from bpy.props import IntProperty, BoolProperty
+
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 from sverchok.utils.handling_nodes import NodeProperties, SockTypes, SocketProperties, initialize_node, WrapNode
 
 
@@ -77,28 +77,17 @@ class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
             col.prop(self, "is_topo_mask", toggle=True)
 
     def process(self):
-        print("!!!!!!!!!!!!!!!!!!")
-        # Inds, MaSi, Dat = self.inputs
-        # OM = self.outputs[0]
-        # if OM.is_linked:
-        #     out = []
-        #     I = Inds.sv_get()
-        #     if not self.data_to_mask:
-        #         for Ind, Size in zip(I, safc(I, MaSi.sv_get()[0])):
-        #             Ma = np.zeros(Size, dtype= np.bool)
-        #             Ma[Ind] = 1
-        #             out.append(Ma.tolist())
-        #     else:
-        #         Ma = np.zeros_like(Dat.sv_get(), dtype= np.bool)
-        #         if not self.complex_data:
-        #             for m, i in zip(Ma, safc(Ma, I)):
-        #                 m[i] = 1
-        #                 out.append(m.tolist())
-        #         else:
-        #             for m, i in zip(Ma, safc(Ma, I)):
-        #                 m[i] = 1
-        #                 out.append(m[:, 0].tolist())
-        #     OM.sv_set(out)
+        if not node.props.data_to_mask:
+            mask = np.zeros(node.inputs.mask_size[0], dtype=bool)
+        else:
+            if node.props.is_topo_mask:
+                mask = np.zeros(len(node.inputs.data_to_mask), dtype=bool)
+            else:
+                # inconsistent mode with Sverchok data structure, should be reconsidered in MK2 version
+                mask = np.zeros_like(node.inputs.data_to_mask, dtype=bool)
+
+        mask[node.inputs.index] = True
+        node.outputs.mask = mask.tolist()
 
 
 def register():
