@@ -88,11 +88,3 @@ class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
 
         mask[node.inputs.index] = True
         node.outputs.mask = mask.tolist()
-
-
-def register():
-    bpy.utils.register_class(SvIndexToMaskNode)
-
-
-def unregister():
-    bpy.utils.unregister_class(SvIndexToMaskNode)

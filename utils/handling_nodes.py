@@ -124,6 +124,9 @@ class WrapNode:
                 continue
 
 
+node_classes = []  # to register
+
+
 def initialize_node(wrap_node: WrapNode):
     # class decorator for automatization sockets and property creation
     # also it automates vectorization system at this moment
@@ -132,6 +135,7 @@ def initialize_node(wrap_node: WrapNode):
         wrap_node.set_sv_init_method(node_class)
         if hasattr(node_class, 'process'):
             wrap_node.decorate_process_method(node_class)
+        node_classes.append(node_class)  # auto registration classes
         return node_class
 
     return wrapper
@@ -397,3 +401,6 @@ blender_properties = {
     bpy.props.PointerProperty()[0]: bpy.props.PointerProperty,
     bpy.props.StringProperty()[0]: bpy.props.StringProperty
 }
+
+
+register, unregister = bpy.utils.register_classes_factory(node_classes)
