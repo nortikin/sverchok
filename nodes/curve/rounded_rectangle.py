@@ -8,7 +8,8 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, repeat_last_for_length, get_data_nesting_level
-from sverchok.utils.curve import SvCircle, SvConcatCurve, SvLine
+from sverchok.utils.curve import SvCircle, SvLine
+from sverchok.utils.curve.algorithms import concatenate_curves
 
 class SvRoundedRectangleNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -40,6 +41,12 @@ class SvRoundedRectangleNode(bpy.types.Node, SverchCustomTreeNode):
         default = False,
         update = updateNode)
 
+    make_nurbs : BoolProperty(
+        name = "NURBS output",
+        description = "Generate a NURBS curve",
+        default = False,
+        update = updateNode)
+
     center: BoolProperty(
         name='Center', description='Center the rectangle around origin',
         default=False, update=updateNode)
@@ -54,6 +61,10 @@ class SvRoundedRectangleNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "center", toggle=True)
         layout.prop(self, "scale_to_unit", toggle=True)
         #layout.prop(self, "radius_per_corner", toggle=True)
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'make_nurbs', toggle=True)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Size X").prop_name = 'sizex'
@@ -118,7 +129,9 @@ class SvRoundedRectangleNode(bpy.types.Node, SverchCustomTreeNode):
         if (p8 - p7).length > 0:
             curves.append(SvLine.from_two_points(p7, p8))
 
-        curve = SvConcatCurve(curves, scale_to_unit = self.scale_to_unit)
+        if self.make_nurbs:
+            curves = [curve.to_nurbs() for curve in curves]
+        curve = concatenate_curves(curves, scale_to_unit = self.scale_to_unit)
         return (c1, c2, c3, c4), curve
 
     def process(self):

@@ -179,6 +179,7 @@ class SvCircle(SvCurve):
                                    [1, 0, 0]])
         control_points = self.radius * control_points
         control_points = np.apply_along_axis(lambda v: self.matrix @ v, 1, control_points)
+        control_points = self.center + control_points
         sqrt22 = sqrt(2.0)/2.0
         weights = np.array([1, sqrt22, 1, sqrt22,
                             1, sqrt22, 1, sqrt22, 1])

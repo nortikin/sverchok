@@ -6,7 +6,8 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvCurve, SvConcatCurve
+from sverchok.utils.curve import SvCurve
+from sverchok.utils.curve.algorithms import concatenate_curves
 
 class SvConcatCurvesNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -62,7 +63,7 @@ class SvConcatCurvesNode(bpy.types.Node, SverchCustomTreeNode):
             for curves in curve_s:
                 if self.check:
                     self.run_check(curves)
-                new_curve = SvConcatCurve.build(curves)
+                new_curve = concatenate_curves(curves)
                 curves_out.append(new_curve)
 
             self.outputs['Curve'].sv_set(curves_out)

@@ -11,7 +11,8 @@ from mathutils import Vector, Matrix
 from sverchok.utils.curve.core import (
         SvCurve, ZeroCurvatureException,
         SvCurveSegment, SvReparametrizedCurve,
-        SvFlipCurve
+        SvFlipCurve, SvConcatCurve,
+        UnsupportedCurveTypeException
     )
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions
 from sverchok.utils.curve import knotvector as sv_knotvector
@@ -21,6 +22,7 @@ from sverchok.utils.math import (
     ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
     NORMAL_DIR
 )
+from sverchok.utils.logging import info
 
 def make_euclidian_ts(pts):
     tmp = np.linalg.norm(pts[:-1] - pts[1:], axis=1)
@@ -699,7 +701,51 @@ def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, on_zero_curvat
     matrices_np = np.linalg.inv(matrices_np)
     return matrices_np, surf_points, tangents, normals, binormals
 
-def reparametrize_curve(curve, new_t_min, new_t_max):
+def concatenate_curves(curves, scale_to_unit=False):
+    if not curves:
+        raise Exception("List of curves must be not empty")
+    result = [curves[0]]
+    some_native = False
+    for idx, curve in enumerate(curves[1:]):
+        new_curve = None
+        ok = False
+        if hasattr(result[-1], 'concatenate'):
+            try:
+                if scale_to_unit:
+                    # P.1: try to join with rescaled curve
+                    new_curve = result[-1].concatenate(reparametrize_curve(curve))
+                else:
+                    new_curve = result[-1].concatenate(curve)
+                some_native = True
+                ok = True
+            except UnsupportedCurveTypeException as e:
+                # "concatenate" method can't work with this type of curve
+                info("Can't natively join curve #%s (%s), will use generic method: %s", idx+1, curve, e)
+                # P.2: if some curves were already joined natively,
+                # then we have to rescale each of other curves separately
+                if some_native and scale_to_unit:
+                    curve = reparametrize_curve(curve)
+
+        #print(f"C: {curve}, prev: {result[-1]}, ok: {ok}, new: {new_curve}")
+
+        if ok:
+            result[-1] = new_curve
+        else:
+            result.append(curve)
+
+    if len(result) == 1:
+        return result[0]
+    else:
+        # if any of curves were scaled while joining natively (at P.1),
+        # then all other were scaled at P.2;
+        # if no successfull joins were made, then we can rescale all curves
+        # at once.
+        return SvConcatCurve(result, scale_to_unit and not some_native)
+
+def reparametrize_curve(curve, new_t_min=0.0, new_t_max=1.0):
+    t_min, t_max = curve.get_u_bounds()
+    if t_min == new_t_min and t_max == new_t_max:
+        return curve
     if hasattr(curve, 'reparametrize'):
         return curve.reparametrize(new_t_min, new_t_max)
     else:

@@ -383,35 +383,6 @@ class SvConcatCurve(SvCurve):
     def __repr__(self):
         return "+".join([str(curve) for curve in self.curves])
 
-    @classmethod
-    def build(cls, curves):
-        if not curves:
-            raise Exception("List of curves must be not empty")
-        result = [curves[0]]
-        for idx, curve in enumerate(curves[1:]):
-            new_curve = None
-            ok = False
-            if hasattr(result[-1], 'concatenate'):
-                try:
-                    new_curve = result[-1].concatenate(curve)
-                    ok = True
-                except UnsupportedCurveTypeException as e:
-                    info("Can't natively join curve #%s (%s), will use generic method: %s", idx+1, curve, e)
-                    # "concatenate" method can't work with this type of curve
-                    pass
-
-            #print(f"C: {curve}, prev: {result[-1]}, ok: {ok}, new: {new_curve}")
-
-            if ok:
-                result[-1] = new_curve
-            else:
-                result.append(curve)
-
-        if len(result) == 1:
-            return result[0]
-        else:
-            return SvConcatCurve(result)
-
     def get_u_bounds(self):
         return (0.0, self.u_max)
 
