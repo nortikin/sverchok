@@ -26,9 +26,10 @@ node.outputs.closest_indexes = hn.SocketProperties(name='Closest indexes', socke
 
 
 @hn.initialize_node(node)
-class SvFindClosest(bpy.types.Node, SverchCustomTreeNode):
-    bl_idname = 'SvFindClosest'
-    bl_label = 'Find closest'
+class SvFindClosestValue(bpy.types.Node, SverchCustomTreeNode):
+    """Triggers: find search closest"""
+    bl_idname = 'SvFindClosestValue'
+    bl_label = 'Find closest value'
     bl_icon = 'VIEWZOOM'
 
     def process(self):
