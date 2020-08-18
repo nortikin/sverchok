@@ -62,7 +62,7 @@ class SvConcatCurvesNode(bpy.types.Node, SverchCustomTreeNode):
             for curves in curve_s:
                 if self.check:
                     self.run_check(curves)
-                new_curve = SvConcatCurve(curves)
+                new_curve = SvConcatCurve.build(curves)
                 curves_out.append(new_curve)
 
             self.outputs['Curve'].sv_set(curves_out)

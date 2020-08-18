@@ -73,7 +73,7 @@ class SvExNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
     degree : IntProperty(
             name = "Degree",
-            min = 2, max = 6,
+            min = 1, max = 6,
             default = 3,
             update = updateNode)
 
@@ -141,7 +141,8 @@ class SvExNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):
                 self.debug('Manual knots: %s', knots)
                 curve_knotvector = knots
 
-            new_curve = SvNurbsCurve.build(self.implementation, degree, curve_knotvector, vertices, curve_weights)
+            new_curve = SvNurbsCurve.build(self.implementation, degree, curve_knotvector, vertices, curve_weights, normalize_knots = self.normalize_knots)
+            curve_knotvector = new_curve.get_knotvector().tolist()
             if self.knot_mode == 'AUTO' and self.is_cyclic:
                 u_min = curve_knotvector[degree]
                 u_max = curve_knotvector[-degree-2]

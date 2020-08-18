@@ -94,7 +94,7 @@ def normalize(knot_vector):
         raise Exception("All knot values are equal")
     return (knot_vector - m) / (M - m)
 
-def concatenate(kv1, kv2):
+def concatenate_plain(kv1, kv2):
     M = kv1.max()
     return np.concatenate((kv1, kv2 + M))
 
@@ -131,6 +131,16 @@ def from_multiplicity(pairs):
     for u, count in pairs:
         result.extend([u] * count)
     return np.array(result)
+
+def concatenate(kv1, kv2, join_multiplicity):
+    join_knot = kv1.max()
+    kv2 = kv2 + join_knot
+    kv1_m = to_multiplicity(kv1)
+    kv2_m = to_multiplicity(kv2)
+    kv_m = dict(kv1_m[:-1] + kv2_m)
+    kv_m[join_knot] = join_multiplicity
+    kv_m = [(k, kv_m[k]) for k in sorted(kv_m.keys())]
+    return from_multiplicity(kv_m)
 
 def elevate_degree_pairs(pairs, delta=1):
     return [(u, count+delta) for u, count in pairs]

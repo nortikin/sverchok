@@ -98,6 +98,50 @@ class SvNurbsCurve(SvCurve):
 
         return curves
 
+    def concatenate(self, curve2, tolerance=1e-6):
+        curve1 = self
+        curve2 = SvNurbsCurve.to_nurbs(curve2)
+        if curve2 is None:
+            raise UnsupportedCurveTypeException("second curve is not NURBS")
+        
+        pt1 = curve1.evaluate(curve1.get_u_bounds()[1])
+        pt2 = curve2.evaluate(curve2.get_u_bounds()[0])
+        if np.linalg.norm(pt1 - pt2) > tolerance:
+            raise UnsupportedCurveTypeException("Curve end points do not match")
+
+        cp1 = curve1.get_control_points()[-1]
+        cp2 = curve2.get_control_points()[0]
+        if np.linalg.norm(cp1 - cp2) > tolerance:
+            raise UnsupportedCurveTypeException("End control points do not match")
+
+        w1 = curve1.get_weights()[-1]
+        w2 = curve1.get_weights()[0]
+        if w1 != w2:
+            raise UnsupportedCurveTypeException("Weights at endpoints do not match")
+
+        p1, p2 = curve1.get_degree(), curve2.get_degree()
+        if p1 > p2:
+            curve2 = curve2.elevate_degree(delta = p1-p2)
+        elif p2 > p1:
+            curve1 = curve1.elevate_degree(delta = p2-p1)
+        p = curve1.get_degree()
+
+        kv1 = curve1.get_knotvector()
+        kv2 = curve2.get_knotvector()
+        kv1_end_multiplicity = sv_knotvector.to_multiplicity(kv1)[-1][1]
+        kv2_start_multiplicity = sv_knotvector.to_multiplicity(kv2)[0][1]
+        if kv1_end_multiplicity != p+1:
+            raise UnsupportedCurveTypeException(f"End knot multiplicity of the first curve ({kv1_end_multiplicity}) is not equal to degree+1 ({p+1})")
+        if kv2_start_multiplicity != p+1:
+            raise UnsupportedCurveTypeException("Start knot multiplicity of the second curve ({kv2_start_multiplicity}) is not equal to degree+1 ({p+1})")
+
+        knotvector = sv_knotvector.concatenate(kv1, kv2, join_multiplicity=p)
+        weights = np.concatenate((curve1.get_weights(), curve2.get_weights()[1:]))
+        control_points = np.concatenate((curve1.get_control_points(), curve2.get_control_points()[1:]))
+
+        return SvNurbsCurve.build(self.get_nurbs_implementation(),
+                p, knotvector, control_points, weights)
+
     @classmethod
     def get_nurbs_implementation(cls):
         raise Exception("NURBS implementation is not defined")
@@ -148,7 +192,7 @@ class SvNurbsCurve(SvCurve):
             return SvNurbsCurve.build(self.get_nurbs_implementation(),
                     degree+delta, knotvector, control_points, weights)
         else:
-            raise Exception("Not implemented yet!")
+            raise UnsupportedCurveTypeException("Degree elevation is not implemented for non-bezier curves yet")
 
     def reparametrize(self, new_t_min, new_t_max):
         kv = self.get_knotvector()
@@ -214,7 +258,10 @@ class SvGeomdlCurve(SvNurbsCurve):
         if isinstance(knotvector, np.ndarray):
             knotvector = knotvector.tolist()
         curve.knotvector = knotvector
-        return SvGeomdlCurve(curve)
+
+        result = SvGeomdlCurve(curve)
+        result.u_bounds = curve.knotvector[0], curve.knotvector[-1]
+        return result
 
     @classmethod
     def interpolate(cls, degree, points, metric='DISTANCE'):
@@ -452,32 +499,6 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         m = self.knotvector.min()
         M = self.knotvector.max()
         return (m, M)
-
-#     def concatenate(self, curve2):
-#         curve1 = self
-#         curve2 = SvNurbsCurve.to_nurbs(curve2)
-#         if curve2 is None:
-#             raise UnsupportedCurveTypeException("second curve is not NURBS")
-# 
-#         w1 = curve1.get_weights()[-1]
-#         w2 = curve1.get_weights()[0]
-#         if w1 != w2:
-#             raise UnsupportedCurveTypeException("Weights at endpoints do not match")
-# 
-#         p1, p2 = curve1.get_degree(), curve2.get_degree()
-#         if p1 > p2:
-#             curve2 = curve2.elevate_degree(delta = p1-p2)
-#         elif p2 > p1:
-#             curve1 = curve1.elevate_degree(delta = p2-p1)
-# 
-#         #cp1 = curve1.get_control_points()[-1]
-#         #cp2 = curve2.get_control_points()[0]
-# 
-#         knotvector = sv_knotvector.concatenate(curve1.get_knotvector(), curve2.get_knotvector())
-#         #print("KV:", knotvector)
-#         weights = np.concatenate((curve1.get_weights(), curve2.get_weights()[1:]))
-#         control_points = np.concatenate((curve1.get_control_points(), curve2.get_control_points()[1:]))
-#         return SvNativeNurbsCurve(curve1.degree, knotvector, control_points, weights)
 
     def extrude_along_vector(self, vector):
         vector = np.array(vector)

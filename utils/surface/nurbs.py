@@ -136,7 +136,11 @@ class SvGeomdlSurface(SvNurbsSurface):
         surf.ctrlpts2d = ctrlpts
         surf.knotvector_u = knotvector_u
         surf.knotvector_v = knotvector_v
-        return SvGeomdlSurface(surf)
+
+        result = SvGeomdlSurface(surf)
+        result.u_bounds = surf.knotvector_u[0], surf.knotvector_u[-1]
+        result.v_bounds = surf.knotvector_v[0], surf.knotvector_v[-1]
+        return result
 
     @classmethod
     def from_any_nurbs(cls, surface):
@@ -429,10 +433,10 @@ def simple_loft(curves, degree_u = None, metric='DISTANCE', implementation=SvNur
     control_points = np.array(control_points)
     weights = [curve.get_weights() for curve in u_curves]
     knotvector_u = sv_knotvector.generate(degree_v, control_points.shape[0])
-    print("src KV U:", [curve.get_knotvector() for curve in u_curves])
+    #print("src KV U:", [curve.get_knotvector() for curve in u_curves])
     knotvector_v = sv_knotvector.average([curve.get_knotvector() for curve in u_curves])
-    print(f"KV U: degree {degree_v}, K {len(u_curves)} => {knotvector_u}")
-    print(f"KV V: {knotvector_v}")
+    #print(f"KV U: degree {degree_v}, K {len(u_curves)} => {knotvector_u}")
+    #print(f"KV V: {knotvector_v}")
     
     surface = SvNurbsSurface.build(implementation,
                 degree_v, degree_u,
