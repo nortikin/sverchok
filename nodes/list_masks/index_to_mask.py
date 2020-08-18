@@ -27,13 +27,6 @@ from sverchok.utils.handling_nodes import NodeProperties, SockTypes, SocketPrope
 
 node = WrapNode()
 
-
-def update_mode(node, context):
-    node.inputs['mask size'].hide_safe = node.data_to_mask
-    node.inputs['data to mask'].hide_safe = not node.data_to_mask
-    updateNode(node, context)
-
-
 node.props.data_to_mask = NodeProperties(
     bpy_props=BoolProperty(
         name="Data masking",
@@ -48,17 +41,22 @@ node.props.is_topo_mask = NodeProperties(
 node.props.index = NodeProperties(bpy_props=IntProperty(name="Index"))
 node.props.mask_size = NodeProperties(bpy_props=IntProperty(name='Mask Length', default=10, min=2))
 
-testf = lambda: True if not node.props.data_to_mas else False
-def test_f():
-    return True if not node.props.data_to_mask else False
-
-node.inputs.index = SocketProperties(name="Index", socket_type=SockTypes.STRINGS, prop=node.props.index, deep_copy=False)
-node.inputs.mask_size = SocketProperties(name="Mask size",
-                                         socket_type=SockTypes.STRINGS,
-                                         prop=node.props.mask_size,
-                                         deep_copy=False,
-                                         show_function=test_f)
-node.inputs.data_to_mask = SocketProperties(name="Data masking", socket_type=SockTypes.STRINGS, deep_copy=False)  # mandatory
+node.inputs.index = SocketProperties(
+    name="Index",
+    socket_type=SockTypes.STRINGS,
+    prop=node.props.index,
+    deep_copy=False)
+node.inputs.mask_size = SocketProperties(
+    name="Mask size",
+    socket_type=SockTypes.STRINGS,
+    prop=node.props.mask_size,
+    deep_copy=False,
+    show_function=lambda: not node.props.data_to_mask)
+node.inputs.data_to_mask = SocketProperties(
+    name="Data masking",
+    socket_type=SockTypes.STRINGS,
+    deep_copy=False,
+    show_function=lambda: node.props.data_to_mask)  # mandatory
 
 node.outputs.mask = SocketProperties(name="Mask", socket_type=SockTypes.STRINGS)
 

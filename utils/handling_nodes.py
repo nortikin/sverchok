@@ -157,7 +157,7 @@ class SockTypes(Enum):
 
 class NodeProperties(NamedTuple):
     bpy_props: tuple  # tuple is whet all bpy.props actually returns
-    name: str = ''  # not mandatory, the name will be overridden by attribute name
+    name: str = ''  # not mandatory, the name will be overridden by attribute name automatically
 
     def replace_name(self, new_name):
         props = list(self)
@@ -215,10 +215,11 @@ class NodeInputs:
             return self._get_socket_data(name)
 
     def add_sockets(self, node: Node):
-        # initialization sockets in a node
-        [node.inputs.new(p.socket_type.get_name(), p.name) for p in self.sockets.values()]
-        [setattr(s, 'prop_name', p.prop.name) for s, p in zip(node.inputs, self.sockets.values()) if p.prop]
-        [setattr(s, 'custom_draw', p.custom_draw) for s, p in zip(node.inputs, self.sockets.values())]
+        """initialization sockets in a node"""
+        for sock_prop in self.sockets_props:
+            socket = node.inputs.new(sock_prop.socket_type.get_name(), sock_prop.name)
+            socket.prop_name = sock_prop.prop.name if sock_prop.prop else ''
+            socket.custom_draw = sock_prop.custom_draw
 
     def has_required_data(self, node: Node) -> bool:
         # all mandatory are linked, but are there any data??
@@ -334,6 +335,10 @@ class NodeProps:
     def __setattr__(self, key, value):
         if isinstance(value, NodeProperties):
             # node property attribute
+            if not value.name:
+                # the property does not have its python name, it should be set for using in other parts
+                # for examples sockets should know python name of the property to display them
+                value = value.replace_name(key)
             self.properties[key] = value
         elif key != 'properties' and key in self.properties:
             # assigning to node property something what is node property
