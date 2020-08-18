@@ -56,7 +56,8 @@ node.inputs.data_to_mask = SocketProperties(
     name="Data masking",
     socket_type=SockTypes.STRINGS,
     deep_copy=False,
-    show_function=lambda: node.props.data_to_mask)  # mandatory
+    mandatory=True,
+    show_function=lambda: node.props.data_to_mask)
 
 node.outputs.mask = SocketProperties(name="Mask", socket_type=SockTypes.STRINGS)
 

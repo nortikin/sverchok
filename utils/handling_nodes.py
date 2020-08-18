@@ -222,8 +222,14 @@ class NodeInputs:
             socket.custom_draw = sock_prop.custom_draw
 
     def has_required_data(self, node: Node) -> bool:
-        # all mandatory are linked, but are there any data??
-        return all([sock.is_linked for sock, prop in zip(node.inputs, self.sockets.values()) if prop.mandatory])
+        """return True if all mandatory and not hidden sockets of a node are linked """
+        # todo but are there have any data??
+        for sock, sock_prop in zip(node.inputs, self.sockets_props):
+            if sock.hide:
+                continue
+            if sock_prop.mandatory and not sock.is_linked:
+                return False
+        return True
 
     def hide_sockets(self, node: Node):
         """Should be used for hiding sockets during node initialization or switching node parameter"""
