@@ -19,7 +19,8 @@ from sverchok.utils.curve.core import SvFlipCurve
 from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve.algorithms import (
             SvNormalTrack, curve_frame_on_surface_array,
-            MathutilsRotationCalculator, DifferentialRotationCalculator
+            MathutilsRotationCalculator, DifferentialRotationCalculator,
+            reparametrize_curve
         )
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.data import *
@@ -55,8 +56,15 @@ def rotate_vector_around_vector_np(v, k, theta):
 class SvInterpolatingSurface(SvSurface):
     __description__ = "Interpolating"
 
-    def __init__(self, u_bounds, v_bounds, u_spline_constructor, v_splines):
-        self.v_splines = v_splines
+    def __init__(self, u_bounds, v_bounds, u_spline_constructor, v_splines, reparametrize_v_splines=True):
+        if reparametrize_v_splines:
+            self.v_splines = [reparametrize_curve(spline) for spline in v_splines]
+        else:
+            for spline in v_splines:
+                m,M = spline.get_u_bounds()
+                if m != 0.0 or M != 1.0:
+                    raise Exception("one of splines has to be reparametrized")
+            self.v_splines = v_splines
         self.u_spline_constructor = u_spline_constructor
         self.u_bounds = u_bounds
         self.v_bounds = v_bounds
@@ -94,9 +102,7 @@ class SvInterpolatingSurface(SvSurface):
     def _evaluate(self, u, v):
         spline_vertices = []
         for spline in self.v_splines:
-            v_min, v_max = spline.get_u_bounds()
-            vx = (v_max - v_min) * v + v_min
-            point = spline.evaluate(vx)
+            point = spline.evaluate(v)
             spline_vertices.append(point)
         #spline_vertices = [spline.evaluate(v) for spline in self.v_splines]
         u_spline = self.get_u_spline(v, spline_vertices)
@@ -124,13 +130,17 @@ class SvInterpolatingSurface(SvSurface):
         for i, (u, v) in enumerate(zip(us, vs)):
             v_to_u[v].append(u)
             v_to_i[v].append(i)
-        for v, us_by_v in v_to_u.items():
+
+        # here we rely on fact that in Python 3.7+ dicts are ordered.
+        all_vs = np.array(list(v_to_u.keys()))
+        v_spline_points = np.array([spline.evaluate_array(all_vs) for spline in self.v_splines])
+
+        for v_idx, (v, us_by_v) in enumerate(v_to_u.items()):
             is_by_v = v_to_i[v]
             spline_vertices = []
-            for spline in self.v_splines:
-                v_min, v_max = spline.get_u_bounds()
-                vx = (v_max - v_min) * v + v_min
-                point = spline.evaluate(vx)
+            for spline_idx, spline in enumerate(self.v_splines):
+                point = v_spline_points[spline_idx,v_idx]
+                #point = spline.evaluate(v)
                 spline_vertices.append(point)
             u_spline = self.get_u_spline(v, spline_vertices)
             points = u_spline.evaluate_array(np.array(us_by_v))
