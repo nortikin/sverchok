@@ -134,7 +134,7 @@ def from_multiplicity(pairs):
 
 def concatenate(kv1, kv2, join_multiplicity):
     join_knot = kv1.max()
-    kv2 = kv2 + join_knot
+    kv2 = kv2 - kv2.min() + join_knot
     kv1_m = to_multiplicity(kv1)
     kv2_m = to_multiplicity(kv2)
     kv_m = dict(kv1_m[:-1] + kv2_m)

@@ -12,7 +12,7 @@ from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 #from sverchok.utils.curve.bezier import SvBezierCurve
-from sverchok.utils.curve.algorithms import concatenate_curves
+from sverchok.utils.curve.algorithms import concatenate_curves, reparametrize_curve
 
 class SvSplineCurve(SvCurve):
     __description__ = "Spline"
@@ -53,7 +53,10 @@ class SvSplineCurve(SvCurve):
         degree = 3 if isinstance(self.spline, CubicSpline) else 1
         n_points = 4 if isinstance(self.spline, CubicSpline) else 2
         knotvector = sv_knotvector.generate(degree, n_points)
+        t_segments = self.spline.get_t_segments()
+        #print(f"Cpts: {control_points.shape}; ts: {t_segments}")
         segments = [SvNurbsCurve.build(implementation,
                         degree, knotvector, points) for points in control_points]
+        segments = [reparametrize_curve(segment, t_min, t_max) for segment, (t_min, t_max) in zip(segments, t_segments)]
         return concatenate_curves(segments)
 

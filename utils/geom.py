@@ -216,6 +216,7 @@ class CubicSpline(Spline):
 
         self.tknots = tknots
         self.is_cyclic = is_cyclic
+        self.pts = np.array(vertices)
 
         n = len(locs)
         if n < 2:
@@ -276,6 +277,14 @@ class CubicSpline(Spline):
         out = ax + t_r * (bx + t_r * (cx + t_r * dx))
         return out
 
+    def get_t_segments(self):
+        N = len(self.pts)
+        if self.is_cyclic:
+            index = np.array(range(4, 4+N+1))
+        else:
+            index = np.array(range(N-1))
+        return list(zip(self.tknots[index], self.tknots[index+1]))
+
     def get_control_points(self, index=None):
         """
         Returns: np.array of shape (M, 4, 3),
@@ -283,7 +292,11 @@ class CubicSpline(Spline):
                  M = N - 1, where N is the number of points being interpolated.
         """
         if index is None:
-            index = np.array(range(len(self.splines)))
+            N = len(self.pts)
+            if self.is_cyclic:
+                index = np.array(range(4, 4+N))
+            else:
+                index = np.array(range(N-1))
         #n = len(index)
         to_calc = self.splines[index]
         a, b, c, d, tx = np.swapaxes(to_calc, 0, 1)
@@ -360,6 +373,9 @@ class LinearSpline(Spline):
         self.pts = pts
         self.tknots = tknots
         self.is_cyclic = is_cyclic
+
+    def get_t_segments(self):
+        return list(zip(self.tknots, self.tknots[1:]))
 
     def get_control_points(self):
         starts = self.pts[:-1]
