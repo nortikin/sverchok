@@ -305,6 +305,7 @@
     SvPokeFacesNode
     SvVertMaskNode
     SvSplitEdgesNode
+    SvRigidOrigamiNode
     ---
     SvFollowActiveQuads
 
