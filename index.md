@@ -352,6 +352,7 @@
     SvDatetimeStrings
     SvVDAttrsNode
     SvPolygonSortNode
+    SvFindClosestValue
 
 ## List Main
     ListJoinNode
