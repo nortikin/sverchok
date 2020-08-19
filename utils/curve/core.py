@@ -665,40 +665,6 @@ class SvLambdaCurve(SvCurve):
         points_h = np.vectorize(self.function, signature='()->(3)')(ts+self.tangent_delta)
         return (points_h - points) / self.tangent_delta
 
-class SvSplineCurve(SvCurve):
-    __description__ = "Spline"
-
-    def __init__(self, spline):
-        self.spline = spline
-        self.u_bounds = (0.0, 1.0)
-
-    @classmethod
-    def from_points(cls, points, metric=None, is_cyclic=False):
-        if not points or len(points) < 2:
-            raise Exception("At least two points are required")
-        if len(points) < 3:
-            return SvLine.from_two_points(points[0], points[1])
-        spline = CubicSpline(points, metric=metric, is_cyclic=is_cyclic)
-        return SvSplineCurve(spline)
-
-    def evaluate(self, t):
-        v = self.spline.eval_at_point(t)
-        return np.array(v)
-
-    def evaluate_array(self, ts):
-        vs = self.spline.eval(ts)
-        return np.array(vs)
-
-    def tangent(self, t):
-        vs = self.spline.tangent(np.array([t]))
-        return vs[0]
-
-    def tangent_array(self, ts):
-        return self.spline.tangent(ts)
-
-    def get_u_bounds(self):
-        return self.u_bounds
-
 class SvTaylorCurve(SvCurve):
     __description__ = "Taylor"
 
