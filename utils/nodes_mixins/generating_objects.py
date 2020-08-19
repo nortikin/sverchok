@@ -43,13 +43,14 @@ class BlenderObjects:
 
     def regenerate_objects(self, object_names: List[str], data_blocks):
         """
-        It will generate new or remove old objects
+        It will generate new or remove old objects, number of generated objects will be equal to given data_blocks
+        Object_names list can contain one name. In this case Blender will add suffix to next objects (.001, .002,...)
         :param data_blocks: any supported by property group data blocks ([bpy.types.Mesh])
         :param object_names: usually equal to name of data block
         :param data_block: for now it is support only be bpy.types.Mesh
         """
-        correct_collection_length(self.objects, len(object_names))
-        for prop_group, data_block, name in zip(self.objects, cycle(data_blocks), object_names):
+        correct_collection_length(self.objects, len(data_blocks))
+        for prop_group, data_block, name in zip(self.objects, data_blocks, cycle(object_names)):
             prop_group.ensure_links_to_objects(data_block, name)
 
 
