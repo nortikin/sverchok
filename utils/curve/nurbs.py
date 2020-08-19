@@ -410,7 +410,12 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         return self.degree
 
     def evaluate(self, t):
-        return self.evaluate_array(np.array([t]))[0]
+        #return self.evaluate_array(np.array([t]))[0]
+        numerator, denominator = self.fraction_single(0, t)
+        if denominator == 0:
+            return 0
+        else:
+            return numerator / denominator
 
     def fraction(self, deriv_order, ts):
         n = len(ts)
@@ -424,6 +429,19 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         denominator = coeffs.sum(axis=0) # (n,)
 
         return numerator, denominator[np.newaxis].T
+
+    def fraction_single(self, deriv_order, t):
+        p = self.degree
+        k = len(self.control_points)
+        ts = np.array([t])
+        ns = np.array([self.basis.derivative(i, p, deriv_order)(ts)[0] for i in range(k)]) # (k,)
+        coeffs = ns * self.weights # (k, )
+        coeffs_t = coeffs[np.newaxis].T
+        numerator = (coeffs_t * self.control_points) # (k, 3)
+        numerator = numerator.sum(axis=0) # (3,)
+        denominator = coeffs.sum(axis=0) # ()
+
+        return numerator, denominator
 
     def evaluate_array(self, ts):
         numerator, denominator = self.fraction(0, ts)

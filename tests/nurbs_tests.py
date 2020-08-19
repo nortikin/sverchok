@@ -480,6 +480,7 @@ class OtherNurbsTests(SverchokTestCase):
 
         pt1 = curve1.evaluate(0.25)
         expected_pt1 = curve.evaluate(0.25)
+        #print(f"Split3: Pt1: {pt1}, expected: {expected_pt1}")
         self.assert_numpy_arrays_equal(pt1, expected_pt1, precision=4)
 
         pt2 = curve2.evaluate(0.75)
@@ -504,11 +505,23 @@ class OtherNurbsTests(SverchokTestCase):
 
         pt1 = curve1.evaluate(0.25)
         expected_pt1 = curve.evaluate(0.25)
+        #print(f"Split4: Pt1: {pt1}, expected: {expected_pt1}")
         self.assert_numpy_arrays_equal(pt1, expected_pt1, precision=4)
 
         pt2 = curve2.evaluate(0.75)
         expected_pt2 = curve.evaluate(0.75)
         self.assert_numpy_arrays_equal(pt2, expected_pt2, precision=4)
+
+    def test_single_1(self):
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0]])
+        kv = sv_knotvector.generate(2,3)
+        weights = [1, 1, 1]
+        curve = SvNativeNurbsCurve(2, kv, points, weights)
+        t = 0.5
+        result = curve.evaluate(t)
+        #print(result)
+        expected = np.array([1, 0.5, 0])
+        self.assert_numpy_arrays_equal(result, expected, precision=6)
 
 class KnotvectorTests(SverchokTestCase):
     def test_to_multiplicity_1(self):
