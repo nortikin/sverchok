@@ -102,8 +102,8 @@ class SvSVGWrite(bpy.types.Operator):
 
 class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Genetics algorithm
-    Tooltip: Advanced node to find the best solution to a defined problem using a genetics algorithm technic
+    Triggers: Output SVG
+    Tooltip: Creates SVG document, define location, size and units 
     """
     bl_idname = 'SvSvgDocumentNode'
     bl_label = 'SVG Document'

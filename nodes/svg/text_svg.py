@@ -57,7 +57,10 @@ class SvgText():
         return svg
 
 class SvSvgTextNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Circle '''
+    """
+    Triggers: Text SVG
+    Tooltip: Creates SVG text. 
+    """
     bl_idname = 'SvSvgTextNode'
     bl_label = 'Text SVG'
     bl_icon = 'MESH_CIRCLE'

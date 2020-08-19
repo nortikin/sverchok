@@ -56,8 +56,8 @@ class SvgPolygons():
 
 class SvSvgPolygonsNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: SVG Path
-    Tooltip: Generate SVG Path
+    Triggers: SVG Polygons
+    Tooltip: Generate SVG Polygons
     """
     bl_idname = 'SvSvgPolygonsNode'
     bl_label = 'Polygons SVG'
