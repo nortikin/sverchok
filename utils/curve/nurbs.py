@@ -136,6 +136,7 @@ class SvNurbsCurve(SvCurve):
             raise UnsupportedCurveTypeException("Start knot multiplicity of the second curve ({kv2_start_multiplicity}) is not equal to degree+1 ({p+1})")
 
         knotvector = sv_knotvector.concatenate(kv1, kv2, join_multiplicity=p)
+        #print(f"Concat KV: {kv1} + {kv2} => {knotvector}")
         weights = np.concatenate((curve1.get_weights(), curve2.get_weights()[1:]))
         control_points = np.concatenate((curve1.get_control_points(), curve2.get_control_points()[1:]))
 

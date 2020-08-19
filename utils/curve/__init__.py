@@ -7,6 +7,7 @@
 
 from sverchok.utils.curve.core import *
 from sverchok.utils.curve.primitives import *
+from sverchok.utils.curve.splines import *
 from sverchok.utils.curve.algorithms import *
 from sverchok.utils.curve.bezier import *
 from sverchok.utils.curve.freecad import *
