@@ -50,8 +50,9 @@ class SvSplineCurve(SvCurve):
 
     def to_nurbs(self, implementation=SvNurbsCurve.NATIVE):
         control_points = self.spline.get_control_points()
-        knotvector = sv_knotvector.generate(self.degree, len(self.points))
-        degree = 3 if isinstance(spline, CubicSpline) else 1
+        degree = 3 if isinstance(self.spline, CubicSpline) else 1
+        n_points = 4 if isinstance(self.spline, CubicSpline) else 2
+        knotvector = sv_knotvector.generate(degree, n_points)
         segments = [SvNurbsCurve.build(implementation,
                         degree, knotvector, points) for points in control_points]
         return concatenate_curves(segments)
