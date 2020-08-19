@@ -11,7 +11,7 @@ from typing import List
 
 import bpy
 
-from sverchok.utils.handle_blender_data import pick_create_object, correct_collection_length
+from sverchok.utils.handle_blender_data import correct_collection_length
 
 
 class SvViewerMeshObjectList(bpy.types.PropertyGroup):
@@ -28,8 +28,8 @@ class SvViewerMeshObjectList(bpy.types.PropertyGroup):
         else:
             raise TypeError(f"Unsupported type={type(data_block)} of given data block")
         if not self.obj:
-            # objects can be deleted by users, so if property is exist it does not mean that it has an object
-            self.obj = pick_create_object(name, data_block)
+            # it looks like it means only that the property group item was created newly
+            self.obj = bpy.data.objects.new(name=name, object_data=data_block)
         try:
             bpy.context.scene.collection.objects.link(self.obj)
         except RuntimeError:
