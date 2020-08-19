@@ -130,6 +130,8 @@ def initialize_node(wrap_node: WrapNode):
     # class decorator for automatization sockets and property creation
     # also it automates vectorization system at this moment
     def wrapper(node_class: Type[Node]):
+        node_class.__annotations__ = dict()  # by default the class uses inherited dict which should be overridden
+        # if the dictionary is not overridden properties of node will be added to base class and shared with all nodes
         wrap_node.props.add_properties(node_class.__annotations__)
         wrap_node.set_sv_init_method(node_class)
         if hasattr(node_class, 'process'):
