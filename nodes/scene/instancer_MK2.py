@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import itertools
+from itertools import cycle
 
 import bpy
 from bpy.props import BoolProperty, StringProperty
@@ -55,15 +55,10 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode, BlenderObjects):
         if not self.activate:
             return
 
-        matrices = self.inputs['matrix'].sv_get(deepcopy=False, default=None)
-        if not matrices:
-            return
+        matrices = self.inputs['matrix'].sv_get(deepcopy=False, default=[])
+        objects = self.inputs['objects'].sv_get(deepcopy=False, default=[])
 
-        objects = self.inputs['objects'].sv_get(deepcopy=False, default=None)
-        if not objects:
-            return
-
-        meshes = [obj.data for obj, m in zip(itertools.cycle(objects), matrices)]
+        meshes = [obj.data for obj, m in zip(cycle(objects), matrices)]
         self.regenerate_objects([self.base_data_name], meshes)
         [setattr(prop.obj, 'matrix_local', m) for prop, m in zip(self.object_data, matrices)]
 
