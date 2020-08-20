@@ -34,6 +34,7 @@ def correct_collection_length(collection: bpy.types.bpy_prop_collection, length:
                     delete_data_block(value)
                 elif value and value.users == 1:
                     # it is data of an object and should be deleted if there are no other users
+                    # probably the value should be 2 in case if data block is owned by an object and node
                     delete_data_block(value)
             collection.remove(i)
 
@@ -81,6 +82,10 @@ def delete_data_block(data_block) -> None:
     @del_object.register
     def _(bl_obj: bpy.types.Material):
         bpy.data.materials.remove(bl_obj)
+
+    @del_object.register
+    def _(bl_obj: bpy.types.Light):
+        bpy.data.lights.remove(bl_obj)
 
     try:
         del_object(data_block)

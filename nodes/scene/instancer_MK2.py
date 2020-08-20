@@ -22,6 +22,12 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode, BlenderObjects):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_INSTANCER'
 
+    is_active: bpy.props.BoolProperty(
+        name='Live',
+        description="When enabled this will process incoming data",
+        default=True,
+        update=updateNode)
+
     full_copy: BoolProperty(name="Full Copy", update=updateNode)
 
     base_data_name: StringProperty(
@@ -36,13 +42,8 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode, BlenderObjects):
 
     def draw_buttons(self, context, layout):
         self.draw_object_properties(layout)
-        row = layout.row(align=True)
-        row.prop(self, "full_copy", text="full copy", toggle=True)
-
-        layout.label(text="Object base name")
-        col = layout.column(align=True)
-        row = col.row(align=True)
-        row.prop(self, "base_data_name", text="", icon='FILE_CACHE')
+        layout.prop(self, "base_data_name", text="", icon='OUTLINER_OB_MESH')
+        layout.prop(self, "full_copy", text="full copy", toggle=True)
 
     def process(self):
 
