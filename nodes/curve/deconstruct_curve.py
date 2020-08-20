@@ -17,7 +17,7 @@ class SvDeconstructCurveNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvDeconstructCurveNode'
     bl_label = 'Deconstruct Curve'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_CURVE_FRAME'
+    sv_icon = 'SV_DECONSTRUCT_CURVE'
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
