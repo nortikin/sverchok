@@ -46,10 +46,18 @@ class SvNurbsCurve(SvCurve):
 
     @classmethod
     def to_nurbs(cls, curve, implementation = NATIVE):
+        """
+        Try to convert arbitrary curve into NURBS.
+        Returns: an instance of SvNurbsCurve, or None,
+                 if this curve can not be converted to NURBS.
+        """
         if isinstance(curve, SvNurbsCurve):
             return curve
         if hasattr(curve, 'to_nurbs'):
-            return curve.to_nurbs(implementation = implementation)
+            try:
+                return curve.to_nurbs(implementation = implementation)
+            except UnsupportedCurveTypeException:
+                pass
         return None
 
     @classmethod
@@ -287,7 +295,7 @@ class SvGeomdlCurve(SvNurbsCurve):
     @classmethod
     def from_any_nurbs(cls, curve):
         if not isinstance(curve, SvNurbsCurve):
-            raise TypeError("Invalid surface type")
+            raise TypeError("Invalid curve type")
         if isinstance(curve, SvGeomdlCurve):
             return curve
         return SvGeomdlCurve.build(curve.get_degree(), curve.get_knotvector(),
