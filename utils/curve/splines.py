@@ -9,6 +9,7 @@ import numpy as np
 
 from sverchok.utils.geom import LinearSpline, CubicSpline
 from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.primitives import SvLine
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 #from sverchok.utils.curve.bezier import SvBezierCurve
