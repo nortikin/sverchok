@@ -10,6 +10,7 @@ from itertools import cycle
 from typing import List
 
 import bpy
+from sverchok.data_structure import updateNode
 
 from sverchok.utils.handle_blender_data import correct_collection_length
 
@@ -47,6 +48,27 @@ class BlenderObjects:
     """Should be used for generating list of objects"""
     object_data: bpy.props.CollectionProperty(type=SvViewerMeshObjectList)
 
+    is_active: bpy.props.BoolProperty(
+        name='Live',
+        description="When enabled this will process incoming data",
+        default=True,
+        update=updateNode)
+
+    show_objects: bpy.props.BoolProperty(
+        default=True,
+        update=lambda s, c: [setattr(prop.obj, 'hide_viewport', False if s.show_objects else True)
+                             for prop in s.object_data])
+
+    selectable_objects: bpy.props.BoolProperty(
+        default=True, 
+        update=lambda s, c: [setattr(prop.obj, 'hide_select', False if s.selectable_objects else True)
+                             for prop in s.object_data])
+
+    render_objects: bpy.props.BoolProperty(
+        default=True,
+        update=lambda s, c: [setattr(prop.obj, 'hide_render', False if s.render_objects else True)
+                             for prop in s.object_data])
+
     def regenerate_objects(self, object_names: List[str], data_blocks):
         """
         It will generate new or remove old objects, number of generated objects will be equal to given data_blocks
@@ -60,6 +82,18 @@ class BlenderObjects:
         for prop_group, data_block, name in zip(self.object_data, data_blocks, cycle(object_names)):
             prop_group.ensure_links_to_objects(data_block, name)
             prop_group.check_object_name(name)
+
+    def draw_object_properties(self, layout):
+        """Should be used for adding update, hide, select, render objects properties"""
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.column().prop(self, 'is_active', toggle=True)
+        row.prop(self, 'show_objects', toggle=True, text='',
+                 icon=f"RESTRICT_VIEW_{'OFF' if self.show_objects else 'ON'}")
+        row.prop(self, 'selectable_objects', toggle=True, text='',
+                 icon=f"RESTRICT_SELECT_{'OFF' if self.selectable_objects else 'ON'}")
+        row.prop(self, 'render_objects', toggle=True, text='',
+                 icon=f"RESTRICT_RENDER_{'OFF' if self.render_objects else 'ON'}")
 
 
 register, unregister = bpy.utils.register_classes_factory([SvViewerMeshObjectList])

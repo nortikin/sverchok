@@ -22,11 +22,6 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode, BlenderObjects):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_INSTANCER'
 
-    activate: BoolProperty(
-        default=True,
-        name='Show', description='Activate node?',
-        update=updateNode)
-
     full_copy: BoolProperty(name="Full Copy", update=updateNode)
 
     base_data_name: StringProperty(
@@ -40,8 +35,7 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode, BlenderObjects):
         self.outputs.new('SvObjectSocket', 'objects')
 
     def draw_buttons(self, context, layout):
-        row = layout.row(align=True)
-        row.prop(self, "activate", text="Update")
+        self.draw_object_properties(layout)
         row = layout.row(align=True)
         row.prop(self, "full_copy", text="full copy", toggle=True)
 
@@ -52,7 +46,7 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode, BlenderObjects):
 
     def process(self):
 
-        if not self.activate:
+        if not self.is_active:
             return
 
         matrices = self.inputs['matrix'].sv_get(deepcopy=False, default=[])
