@@ -36,6 +36,12 @@ class SvViewerMeshObjectList(bpy.types.PropertyGroup):
             # then the object already added, it looks like more faster way to ensure object is in the scene
             pass
 
+    def check_object_name(self, name: str) -> None:
+        """If base name of an object was changed names of all instances also should be changed"""
+        real_name = self.obj.name.rsplit('.', 1)[0]
+        if real_name != name:
+            self.obj.name = name
+
 
 class BlenderObjects:
     """Should be used for generating list of objects"""
@@ -50,8 +56,10 @@ class BlenderObjects:
         :param data_block: for now it is support only be bpy.types.Mesh
         """
         correct_collection_length(self.object_data, len(data_blocks))
+        prop_group: SvViewerMeshObjectList
         for prop_group, data_block, name in zip(self.object_data, data_blocks, cycle(object_names)):
             prop_group.ensure_links_to_objects(data_block, name)
+            prop_group.check_object_name(name)
 
 
 register, unregister = bpy.utils.register_classes_factory([SvViewerMeshObjectList])
