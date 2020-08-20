@@ -30,6 +30,7 @@ Curves
    length_rebuild
    curvature
    torsion
+   deconstruct_curve
    curve_frame
    curve_frame_on_surface
    zero_twist_frame
