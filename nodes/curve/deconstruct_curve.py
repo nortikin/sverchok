@@ -24,6 +24,7 @@ class SvDeconstructCurveNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Degree")
         self.outputs.new('SvStringsSocket', "KnotVector")
         self.outputs.new('SvVerticesSocket', "ControlPoints")
+        self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "Weights")
 
     def deconstruct(self, curve):
@@ -53,6 +54,9 @@ class SvDeconstructCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
         return degree, knots, points, weights
 
+    def make_edges(self, n):
+        return [(i, i+1) for i in range(n-1)]
+
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
@@ -64,33 +68,40 @@ class SvDeconstructCurveNode(bpy.types.Node, SverchCustomTreeNode):
         degree_out = []
         knots_out = []
         points_out = []
+        edges_out = []
         weights_out = []
 
         for curves in curve_s:
             new_degrees = []
             new_knots = []
             new_points = []
+            new_edges = []
             new_weights = []
             for curve in curves:
                 degree, knots, points, weights = self.deconstruct(curve)
+                edges = self.make_edges(len(points))
                 new_degrees.append(degree)
                 new_knots.append(knots)
                 new_points.append(points)
                 new_weights.append(weights)
+                new_edges.append(edges)
             if in_level == 2:
                 degree_out.append(new_degrees)
                 knots_out.append(new_knots)
                 points_out.append(new_points)
                 weights_out.append(new_weights)
+                edges_out.append(new_edges)
             else:
                 degree_out.extend(new_degrees)
                 knots_out.extend(new_knots)
                 points_out.extend(new_points)
                 weights_out.extend(new_weights)
+                edges_out.extend(new_edges)
 
         self.outputs['Degree'].sv_set(degree_out)
         self.outputs['KnotVector'].sv_set(knots_out)
         self.outputs['ControlPoints'].sv_set(points_out)
+        self.outputs['Edges'].sv_set(edges_out)
         self.outputs['Weights'].sv_set(weights_out)
 
 def register():
