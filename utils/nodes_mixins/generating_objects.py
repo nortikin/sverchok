@@ -11,28 +11,59 @@ from typing import List
 
 import bpy
 
-from sverchok.utils.handle_blender_data import correct_collection_length
+from sverchok.utils.handle_blender_data import correct_collection_length, delete_data_block
 
 
 class SvViewerMeshObjectList(bpy.types.PropertyGroup):
     obj: bpy.props.PointerProperty(type=bpy.types.Object)
 
-    def ensure_links_to_objects(self, data_block, name: str):
-        """Add to obj field data blocks with given name, if necessary"""
+    # Object have not information about in which collection it is located
+    # Keep here information about collection for performance reasons
+    # Now object can be only in on collection
+    collection: bpy.props.PointerProperty(type=bpy.types.Collection)
+
+    def ensure_object(self, data_block, name: str):
+        """Add object if it does not exist"""
         if not self.obj:
             # it looks like it means only that the property group item was created newly
             self.obj = bpy.data.objects.new(name=name, object_data=data_block)
+
+    def ensure_link_to_collection(self, collection: bpy.types.Collection = None):
+        """Links object to scene or given collection, unlink from previous collection"""
         try:
-            bpy.context.scene.collection.objects.link(self.obj)
+            if collection:
+                collection.objects.link(self.obj)
+            else:
+                # default collection
+                bpy.context.scene.collection.objects.link(self.obj)
         except RuntimeError:
             # then the object already added, it looks like more faster way to ensure object is in the scene
             pass
+
+        if self.collection != collection:
+            # new collection was given, object should be removed from previous one
+            if self.collection is None:
+                # it means that it is scene default collection
+                # from other hand if item only was created it also will be None but object is not in any collection yet
+                try:
+                    bpy.context.scene.collection.objects.unlink(self.obj)
+                except RuntimeError:
+                    pass
+            else:
+                self.collection.objects.unlink(self.obj)
+
+            self.collection = collection
 
     def check_object_name(self, name: str) -> None:
         """If base name of an object was changed names of all instances also should be changed"""
         real_name = self.obj.name.rsplit('.', 1)[0]
         if real_name != name:
             self.obj.name = name
+
+    def remove(self):
+        """Should be called before removing item"""
+        if self.obj:
+            delete_data_block(self.obj)
 
 
 class BlenderObjects:
@@ -54,31 +85,31 @@ class BlenderObjects:
         update=lambda s, c: [setattr(prop.obj, 'hide_render', False if s.render_objects else True)
                              for prop in s.object_data])
 
-    def regenerate_objects(self, object_names: List[str], data_blocks):
+    def regenerate_objects(self, object_names: List[str], data_blocks, collections: List[bpy.types.Collection] = None):
         """
         It will generate new or remove old objects, number of generated objects will be equal to given data_blocks
         Object_names list can contain one name. In this case Blender will add suffix to next objects (.001, .002,...)
-        :param data_blocks: any supported by property group data blocks ([bpy.types.Mesh])
+        :param collections: objects will be putted into collections if given, only one in list can be given
+        :param data_blocks: nearly any data blocks - mesh, curves, lights ...
         :param object_names: usually equal to name of data block
         :param data_blocks: for now it is support only be bpy.types.Mesh
         """
         correct_collection_length(self.object_data, len(data_blocks))
         prop_group: SvViewerMeshObjectList
-        for prop_group, data_block, name in zip(self.object_data, data_blocks, cycle(object_names)):
-            prop_group.ensure_links_to_objects(data_block, name)
+        input_data = zip(self.object_data, data_blocks, cycle(object_names), cycle(collections))
+        for prop_group, data_block, name, collection in input_data:
+            prop_group.ensure_object(data_block, name)
+            prop_group.ensure_link_to_collection(collection)
             prop_group.check_object_name(name)
 
     def draw_object_properties(self, layout):
-        """Should be used for adding update, hide, select, render objects properties"""
-        col = layout.column(align=True)
-        row = col.row(align=True)
-        row.column().prop(self, 'is_active', toggle=True)
-        row.prop(self, 'show_objects', toggle=True, text='',
-                 icon=f"RESTRICT_VIEW_{'OFF' if self.show_objects else 'ON'}")
-        row.prop(self, 'selectable_objects', toggle=True, text='',
-                 icon=f"RESTRICT_SELECT_{'OFF' if self.selectable_objects else 'ON'}")
-        row.prop(self, 'render_objects', toggle=True, text='',
-                 icon=f"RESTRICT_RENDER_{'OFF' if self.render_objects else 'ON'}")
+        """Should be used for adding hide, select, render objects properties"""
+        layout.prop(self, 'show_objects', toggle=True, text='',
+                    icon=f"RESTRICT_VIEW_{'OFF' if self.show_objects else 'ON'}")
+        layout.prop(self, 'selectable_objects', toggle=True, text='',
+                    icon=f"RESTRICT_SELECT_{'OFF' if self.selectable_objects else 'ON'}")
+        layout.prop(self, 'render_objects', toggle=True, text='',
+                    icon=f"RESTRICT_RENDER_{'OFF' if self.render_objects else 'ON'}")
 
 
 register, unregister = bpy.utils.register_classes_factory([SvViewerMeshObjectList])
