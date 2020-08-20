@@ -49,7 +49,10 @@ class SvNurbsCurve(SvCurve):
         if isinstance(curve, SvNurbsCurve):
             return curve
         if hasattr(curve, 'to_nurbs'):
-            return curve.to_nurbs(implementation = implementation)
+            try:
+                return curve.to_nurbs(implementation = implementation)
+            except UnsupportedCurveTypeException:
+                pass
         return None
 
     @classmethod
