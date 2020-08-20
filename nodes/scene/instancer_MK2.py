@@ -55,19 +55,23 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode, BlenderObjects):
         if not self.activate:
             return
 
-        matrices = self.inputs['matrix'].sv_get(deepcopy=False)
+        matrices = self.inputs['matrix'].sv_get(deepcopy=False, default=None)
         if not matrices:
             return
 
-        objects = self.inputs['objects'].sv_get(deepcopy=False)
+        objects = self.inputs['objects'].sv_get(deepcopy=False, default=None)
         if not objects:
             return
 
         meshes = [obj.data for obj, m in zip(itertools.cycle(objects), matrices)]
         self.regenerate_objects([self.base_data_name], meshes)
-        [setattr(prop.obj, 'matrix_local', m) for prop, m in zip(self.objects, matrices)]
+        [setattr(prop.obj, 'matrix_local', m) for prop, m in zip(self.object_data, matrices)]
 
-        self.outputs['objects'].sv_set([prop.obj for prop in self.objects])
+        self.outputs['objects'].sv_set([prop.obj for prop in self.object_data])
+
+    def sv_copy(self, original):
+        # object list should be clear other wise two nodes would have links to the same objects
+        self.object_data.clear()
 
 
 register, unregister = bpy.utils.register_classes_factory([SvInstancerNodeMK2])

@@ -39,7 +39,7 @@ class SvViewerMeshObjectList(bpy.types.PropertyGroup):
 
 class BlenderObjects:
     """Should be used for generating list of objects"""
-    objects: bpy.props.CollectionProperty(type=SvViewerMeshObjectList)
+    object_data: bpy.props.CollectionProperty(type=SvViewerMeshObjectList)
 
     def regenerate_objects(self, object_names: List[str], data_blocks):
         """
@@ -49,8 +49,8 @@ class BlenderObjects:
         :param object_names: usually equal to name of data block
         :param data_block: for now it is support only be bpy.types.Mesh
         """
-        correct_collection_length(self.objects, len(data_blocks))
-        for prop_group, data_block, name in zip(self.objects, data_blocks, cycle(object_names)):
+        correct_collection_length(self.object_data, len(data_blocks))
+        for prop_group, data_block, name in zip(self.object_data, data_blocks, cycle(object_names)):
             prop_group.ensure_links_to_objects(data_block, name)
 
 
