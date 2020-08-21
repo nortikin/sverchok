@@ -12,7 +12,6 @@ Scene
    FCurve_in
    curve_in
    instancer
-   instancer_MK2
    dupli_instances_mk4
    obj_remote_mk2
    3dview_props

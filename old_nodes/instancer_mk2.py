@@ -29,18 +29,18 @@ def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
 
     if obj_name in objects:
         sv_object = objects[obj_name]
-        
+
         if sv_object.data != blueprint_obj.data:
-            sv_object.data = blueprint_obj.data        
+            sv_object.data = blueprint_obj.data
     else:
-        data = blueprint_obj.data# data_kind.get(data_name)
+        data = blueprint_obj.data  # data_kind.get(data_name)
 
         if node.full_copy:
             sv_object = blueprint_obj.copy()
             sv_object.name = obj_name
         else:
             sv_object = objects.new(obj_name, blueprint_obj.data)
-        
+
         collection.objects.link(sv_object)
 
     # if the object is selected in the scene, this node can keep the instance unselected
@@ -49,11 +49,11 @@ def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
     # apply matrices
     if matrix:
         sv_object.matrix_local = list(zip(*matrix))
-        
+
         if sv_object.data:
             if hasattr(sv_object.data, "update"):
-                sv_object.data.update()   # for some reason this _is_ necessary.
-    
+                sv_object.data.update()  # for some reason this _is_ necessary.
+
     return sv_object
 
 
@@ -64,13 +64,16 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_INSTANCER'
 
+    @property
+    def replacement_nodes(self):
+        return [('SvInstancerNodeMK3', None, None)]
+
     @throttled
     def updateNode_copy(self, context):
         # this means we should empty the collection, and let process repopulate
         objects = bpy.data.collections[self.basedata_name].objects
         for obj in objects:
             bpy.data.objects.remove(obj)
-
 
     activate: BoolProperty(
         default=True,
@@ -89,7 +92,6 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     has_instance: BoolProperty(default=False)
-    
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'objects')
@@ -107,7 +109,6 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         row = col.row(align=True)
         row.prop(self, "basedata_name", text="", icon='FILE_CACHE')
-        
 
     def get_matrices(self):
         if self.inputs['matrix'].is_linked:
@@ -126,8 +127,8 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         objects = self.inputs['objects'].sv_get()
         if not objects:
             return
-        
-        new_objects = [ ]
+
+        new_objects = []
         with self.sv_throttle_tree_update():
 
             self.ensure_collection()
@@ -152,7 +153,6 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             collection = collections.new(self.basedata_name)
             bpy.context.scene.collection.children.link(collection)
 
-
     def remove_non_updated_objects(self, num_objects):
         meshes = bpy.data.meshes
         objects = bpy.data.objects
@@ -176,7 +176,6 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             obj.hide_select = False
             collection.objects.unlink(obj)
             objects.remove(obj)
-
 
     # def sv_free(self):
     #     # self.remove_non_updated_objects(-1)
