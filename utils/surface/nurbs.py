@@ -1,6 +1,7 @@
 
 import numpy as np
 
+from sverchok.utils.geom import Spline
 from sverchok.utils.nurbs_common import nurbs_divide, SvNurbsBasisFunctions
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import interpolate_nurbs_curve
@@ -416,30 +417,29 @@ def build_from_curves(curves, degree_u = None, implementation = SvNurbsSurface.N
 
     return curves, surface
 
-def simple_loft(curves, degree_u = None, metric='DISTANCE', implementation=SvNurbsSurface.NATIVE):
+def simple_loft(curves, degree_v = None, metric='DISTANCE', implementation=SvNurbsSurface.NATIVE):
     curve_class = type(curves[0])
     curves = unify_curves(curves)
-    degree_v = curves[0].get_degree()
-    if degree_u is None:
-        degree_u = degree_v
+    degree_u = curves[0].get_degree()
+    if degree_v is None:
+        degree_v = degree_u
 
     src_points = [curve.get_control_points() for curve in curves]
     src_points = np.array(src_points)
     src_points = np.transpose(src_points, axes=(1,0,2))
 
-    u_curves = [interpolate_nurbs_curve(curve_class, degree_u, points, metric) for points in src_points]
-    #print("U curves", u_curves)
-    control_points = [curve.get_control_points() for curve in u_curves]
+    v_curves = [interpolate_nurbs_curve(curve_class, degree_v, points, metric) for points in src_points]
+    control_points = [curve.get_control_points() for curve in v_curves]
     control_points = np.array(control_points)
-    weights = [curve.get_weights() for curve in u_curves]
-    knotvector_u = sv_knotvector.generate(degree_v, control_points.shape[0])
-    #print("src KV U:", [curve.get_knotvector() for curve in u_curves])
-    knotvector_v = sv_knotvector.average([curve.get_knotvector() for curve in u_curves])
-    #print(f"KV U: degree {degree_v}, K {len(u_curves)} => {knotvector_u}")
-    #print(f"KV V: {knotvector_v}")
+    weights = [curve.get_weights() for curve in v_curves]
+
+    mean_v_vector = control_points.mean(axis=0)
+    tknots_v = Spline.create_knots(mean_v_vector, metric=metric)
+    knotvector_v = sv_knotvector.from_tknots(degree_v, tknots_v)
+    knotvector_u = curves[0].get_knotvector()
     
     surface = SvNurbsSurface.build(implementation,
-                degree_v, degree_u,
+                degree_u, degree_v,
                 knotvector_u, knotvector_v,
                 control_points, weights)
     return curves, surface
