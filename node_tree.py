@@ -160,27 +160,6 @@ class SvNodeTreeCommon(object):
     def build_update_list(self):
         build_update_list(self)
 
-    def adjust_reroutes(self):
-
-        reroutes = [n for n in self.nodes if n.bl_idname == 'NodeReroute']
-        if not reroutes:
-            return
-        for n in reroutes:
-            s = n.inputs[0]
-            if s.links:
-                self.freeze(True)
-
-                other = get_other_socket(s)
-                s_type = other.bl_idname
-                if n.outputs[0].bl_idname != s_type:
-                    out_socket = n.outputs.new(s_type, "Output")
-                    in_sockets = [l.to_socket for l in n.outputs[0].links]
-                    n.outputs.remove(n.outputs[0])
-                    for i_s in in_sockets:
-                        l = self.links.new(i_s, out_socket)
-
-                self.unfreeze(True)
-
     def freeze(self, hard=False):
         if hard:
             self["don't update"] = 1
@@ -199,7 +178,7 @@ class SvNodeTreeCommon(object):
         return get_update_lists(self)
 
     @property
-    def sv_trees(self):
+    def sv_trees(self):  # todo the method does not belong to the class
         res = []
         for ng in bpy.data.node_groups:
             if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
@@ -218,7 +197,7 @@ class SvNodeTreeCommon(object):
     def get_nodes(self):
         return self.sv_links.get_nodes(self)
 
-    def get_groups(self):
+    def get_groups(self):  # todo it definitely doing something more than just get groups
         affected_groups =[]
         for node in self.nodes:
             if 'SvGroupNode' in node.bl_idname:
@@ -247,7 +226,7 @@ class SvNodeTreeCommon(object):
                     animated_nodes.append(node)
         process_from_nodes(animated_nodes)
 
-class SvGenericUITooltipOperator(bpy.types.Operator):
+class SvGenericUITooltipOperator(bpy.types.Operator):  # todo move into sv_panels
     arg: StringProperty()
     bl_idname = "node.sv_generic_ui_tooltip"
     bl_label = "tip"
@@ -262,22 +241,14 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     bl_label = 'Sverchok Nodes'
     bl_icon = 'RNA'
 
-    def turn_off_ng(self, context):
-        process_tree(self)
-        # should turn off tree. for now it does by updating it whole
-        # should work something like this
-        # outputs = filter(lambda n: isinstance(n,SvOutput), self.nodes)
-        # for node in outputs:
-        #   node.disable()
-
     def sv_process_tree_callback(self, context):
         process_tree(self)    
 
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
-    sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
+    sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=lambda s, c: process_tree(s))
     sv_bake: BoolProperty(name="Bake", default=True, description='Bake this layout')
 
-    sv_user_colors: StringProperty(default="")
+    sv_user_colors: StringProperty(default="")  # something related with heat map feture
 
     sv_show_error_in_tree: BoolProperty(
         description="use bgl to draw the error to the nodeview",
@@ -294,6 +265,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     )
 
     sv_toggle_nodetree_props: BoolProperty(name="Toggle visibility of props", description="Show more properties for this node tree")
+    # todo looks like this should belong to panel
 
     def on_draft_mode_changed(self, context):
         """
@@ -329,21 +301,6 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
                 description="Draft (simplified processing) mode",
                 default = False,
                 update=on_draft_mode_changed)
-
-    tree_link_count: IntProperty(name='keep track of current link count', default=0)
-
-
-    @property
-    def timestamp(self):
-        return time.monotonic()
-
-    @property
-    def has_link_count_changed(self):
-        link_count = len(self.links)
-        if not link_count == self.tree_link_count: 
-            # print('update event: link count changed', self.timestamp)
-            self.tree_link_count = link_count
-            return True
 
     def update(self):
         '''
@@ -399,13 +356,6 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
         self.has_changed = False
 
-    def get_nodes_supporting_draft_mode(self):
-        draft_nodes = []
-        for node in self.nodes:
-            if hasattr(node, 'does_support_draft_mode') and node.does_support_draft_mode():
-                draft_nodes.append(node)
-        return draft_nodes
-
 
 class SverchCustomTreeNode:
 
@@ -453,8 +403,7 @@ class SverchCustomTreeNode:
         """ does not return a vactor, it returns a:  tuple(x, y) """
         return recursive_framed_location_finder(self, self.location[:])
 
-
-    def ensure_enums_have_no_space(self, enums=None):
+    def ensure_enums_have_no_space(self, enums=None):  # todo does not looks that method has any relations with nodes
         """
         enums: a list of property names to check. like  self.current_op  
 
@@ -469,7 +418,6 @@ class SverchCustomTreeNode:
             if " " in current_value:
                 with self.sv_throttle_tree_update():        
                     setattr(self, enum_property, data_structure.no_space(current_value))
-
 
     def does_support_draft_mode(self):
         """
@@ -519,15 +467,6 @@ class SverchCustomTreeNode:
         with self.sv_throttle_tree_update():
             setattr(self, prop_name, prop_data)
 
-    def mark_error(self, err):
-        """
-        marks the with system error color
-        will automaticly be cleared and restored to
-        the old color
-        """
-        ng = self.id_data
-        update_error_nodes(ng, self.name, err)
-
     def getLogger(self):
         if hasattr(self, "draw_label"):
             name = self.draw_label()
@@ -554,17 +493,6 @@ class SverchCustomTreeNode:
     def exception(self, msg, *args, **kwargs):
         self.getLogger().exception(msg, *args, **kwargs)
 
-    def set_implicit_conversions(self, input_socket_name, policy):
-        """
-        Set implicit conversion policy to be used by default for specified input socket.
-        This policy will be used by default by subsequent .sv_get() calls to this socket.
-        Policy can be passed as direct reference to the class, or as a class name.
-        """
-        if isinstance(policy, str):
-            policy = getattr(sverchok.core.socket_conversions, policy)
-        #self.debug("Set default conversion policy for socket %s to %s", input_socket_name, policy)
-        self._implicit_conversion_policy[input_socket_name] = policy
-
     def get_implicit_conversions(self, input_socket_name, override=None):
         """
         Return implicit conversion policy that was set as default for specified socket
@@ -575,7 +503,7 @@ class SverchCustomTreeNode:
             return override
         return self._implicit_conversion_policy.get(input_socket_name, DefaultImplicitConversionPolicy)
 
-    def set_color(self):
+    def set_color(self):  # todo set_default_color ?
         color = color_def.get_color(self.bl_idname)
         if color:
             self.use_custom_color = True
@@ -701,7 +629,7 @@ class SverchCustomTreeNode:
         pass
 
     def sv_init(self, context):
-        self.create_sockets()
+        pass
 
     def init(self, context):
         """
@@ -825,7 +753,6 @@ class SverchCustomTreeNode:
         op.idtree = self.id_data.name
         return op
 
-
     def get_and_set_gl_scale_info(self, origin=None):
         """
         This function is called in sv_init in nodes that draw GL instructions to the nodeview, 
@@ -841,7 +768,6 @@ class SverchCustomTreeNode:
                 getattr(prefs, 'set_nodeview_render_params')(None)
         except Exception as err:
             print('failed to get gl scale info', err)
-
 
     def get_bpy_data_from_name(self, identifier, bpy_data_kind):
         """
