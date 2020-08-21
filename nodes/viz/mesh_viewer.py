@@ -7,25 +7,22 @@
 
 
 import numpy as np
-import itertools
+from itertools import cycle
 import collections
-import random
 from random import random as rnd_float
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, BoolVectorProperty
+from bpy.props import BoolProperty
 from mathutils import Matrix, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import dataCorrect, fullList, updateNode
+from sverchok.data_structure import fullList, updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.utils.sv_viewer_utils import natural_plus_one, greek_alphabet
-from sverchok.utils.sv_obj_helper import SvObjHelper, CALLBACK_OP, get_random_init_v3
+from sverchok.utils.sv_obj_helper import SvObjHelper, get_random_init_v3
 from sverchok.utils.modules.sv_bmesh_ops import find_islands_treemap
+from sverchok.utils.nodes_mixins.generating_objects import BlenderObjects, SvMeshData
+from sverchok.utils.handle_blender_data import correct_collection_length
 
-
-# this implements a customized version of this import
-# from sverchok.nodes.object_nodes.vertex_colors_mk3 import set_vertices
 
 def get_vertex_color_layer(obj):
     vcols = obj.data.vertex_colors
@@ -209,13 +206,15 @@ def make_bmesh_geometry_merged(node, obj_index, context, yielder_object):
     sv_object.matrix_local = Matrix.Identity(4)
 
 
-class SvMeshViewer(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
+class SvMeshViewer(bpy.types.Node, SverchCustomTreeNode, SvObjHelper, BlenderObjects):
     """ bmv Generate Live geom """
 
     bl_idname = 'SvMeshViewer'
     bl_label = 'Mesh viewer'
     bl_icon = 'OUTLINER_OB_MESH'
     sv_icon = 'SV_BMESH_VIEWER'
+
+    mesh_data: bpy.props.CollectionProperty(type=SvMeshData)
 
     grouping: BoolProperty(default=False, update=SvObjHelper.group_state_update_handler)
     merge: BoolProperty(default=False, update=updateNode)
@@ -324,63 +323,22 @@ class SvMeshViewer(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     def process(self):
 
         if not self.activate:
-            if self.outputs[0].is_linked:
-                self.outputs[0].sv_set(self.get_children())
             return
 
-        mverts, *mrest = self.get_geometry_from_sockets()
+        verts = self.inputs['vertices'].sv_get(deepcopy=False, default=[])
+        edges = self.inputs['edges'].sv_get(deepcopy=False, default=cycle([None]))
+        faces = self.inputs['faces'].sv_get(deepcopy=False, default=cycle([None]))
+        mat_indexes = self.inputs['material_idx'].sv_get(deepcopy=False, default=[])
+        matrices = self.inputs['matrix'].sv_get(deepcopy=False, default=[])
 
-        def get_edges_faces_matrices(obj_index):
-            for geom in mrest:
-                yield self.get_structure(geom, obj_index)
+        objects_number = max([len(verts), len(matrices)])  # todo if merged
 
-        # extend all non empty lists to longest of mverts or *mrest
-        maxlen = max(len(mverts), *(map(len, mrest)))
-        fullList(mverts, maxlen)
-        for idx in range(4):
-            if mrest[idx]:
-                fullList(mrest[idx], maxlen)
+        correct_collection_length(self.mesh_data, objects_number)
+        [me_data.regenerate_mesh(self.basedata_name, v, e, f) for me_data, v, e, f in
+            zip(self.mesh_data, verts, edges, faces)]
+        self.regenerate_objects([self.basedata_name], [d.mesh for d in self.mesh_data])
 
-        # we need to suppress depsgraph updates emminating from this part of the process/
-        with self.sv_throttle_tree_update():
-
-            if self.merge:
-                obj_index = 0
-
-                def keep_yielding():
-                    # this will yield all in one go.
-                    for idx, Verts in enumerate(mverts):
-                        if not Verts:
-                            continue
-
-                        data = get_edges_faces_matrices(idx)
-                        yield (Verts, data)
-
-                yielder_object = keep_yielding()
-                make_bmesh_geometry_merged(self, obj_index, bpy.context, yielder_object)
-
-            else:
-                for obj_index, Verts in enumerate(mverts):
-                    if not len(Verts) > 0:
-                        continue
-
-                    data = get_edges_faces_matrices(obj_index)
-                    make_bmesh_geometry(self, obj_index, bpy.context, Verts, *data)
-
-            last_index = (len(mverts) - 1) if not self.merge else 0
-            self.remove_non_updated_objects(last_index)
-
-            objs = self.get_children()
-
-            if self.grouping:
-                self.to_collection(objs)
-
-            self.set_corresponding_materials()
-            self.set_autosmooth(objs)
-            self.set_wireframe_visibility(objs)
-
-            if self.outputs[0].is_linked:
-                self.outputs[0].sv_set(objs)
+        self.outputs['Objects'].sv_set([obj_data.obj for obj_data in self.object_data])
 
     def set_autosmooth(self, objs):
         if not self.autosmooth:

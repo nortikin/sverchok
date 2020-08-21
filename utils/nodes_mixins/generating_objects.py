@@ -129,6 +129,11 @@ class BlenderObjects:
         :param object_names: usually equal to name of data block
         :param data_blocks: for now it is support only be bpy.types.Mesh
         """
+        if collections is None:
+            collections = [None]
+        if object_template is None:
+            object_template = [None]
+
         correct_collection_length(self.object_data, len(data_blocks))
         prop_group: SvObjectData
         input_data = zip(self.object_data, data_blocks, cycle(object_names), cycle(collections), cycle(object_template))
@@ -150,7 +155,7 @@ class BlenderObjects:
 class SvMeshData(bpy.types.PropertyGroup):
     mesh: bpy.props.PointerProperty(type=bpy.types.Mesh)
 
-    def regenerate_mesh(self, verts, edges=None, faces=None):
+    def regenerate_mesh(self, mesh_name: str, verts, edges=None, faces=None):
         """
         It takes vertices, edges and faces and updates mesh data block
         If it assume that topology is unchanged only position of vertices will be changed
@@ -161,6 +166,9 @@ class SvMeshData(bpy.types.PropertyGroup):
         if faces is None:
             faces = []
 
+        if not self.mesh:
+            # new mesh should be created
+            self.mesh = bpy.data.meshes.new(name=mesh_name)
         if self.is_topology_changed(len(verts), len(faces)):
             with empty_bmesh(False) as bm:
                 add_mesh_to_bmesh(bm, verts, edges, faces, update_indexes=False, update_normals=False)
@@ -186,6 +194,14 @@ class SvMeshData(bpy.types.PropertyGroup):
         """
         verts = np.array(verts, dtype=np.float32)  # todo will be this fast if it is already array float 32?
         self.mesh.vertices.foreach_set('co', np.ravel(verts))
+
+    def remove_data(self):
+        """
+        This method should be called before deleting the property
+        The mesh is belonged only to this property and should be deleted with it
+        """
+        if self.mesh:
+            delete_data_block(self.mesh)
 
 
 register, unregister = bpy.utils.register_classes_factory([SvObjectData, SvMeshData])
