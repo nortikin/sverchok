@@ -192,10 +192,21 @@ class SvNurbsCurve(SvCurve):
     def get_degree(self):
         raise Exception("Not implemented!")
 
-    def elevate_degree(self, delta=1):
+    def elevate_degree(self, delta=None, target=None):
+        if delta is None and target is None:
+            delta = 1
+        if delta is not None and target is not None:
+            raise Exception("Of delta and target, only one parameter can be specified")
+        degree = self.get_degree()
+        if delta is None:
+            delta = target - degree
+            if delta < 0:
+                raise Exception(f"Curve already has degree {degree}, which is greater than target {target}")
+        if delta == 0:
+            return self
+
         if self.is_bezier():
             control_points = self.get_homogenous_control_points()
-            degree = self.get_degree()
             control_points = elevate_bezier_degree(degree, control_points, delta)
             control_points, weights = from_homogenous(control_points)
             knotvector = self.get_knotvector()
