@@ -25,7 +25,7 @@ def correct_collection_length(collection: bpy.types.bpy_prop_collection, length:
     elif len(collection) > length:
         for i in range(len(collection) - 1, length - 1, -1):
             try:
-                collection[i].remove()
+                collection[i].remove_data()
             except AttributeError:
                 pass
             collection.remove(i)

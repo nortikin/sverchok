@@ -7,14 +7,17 @@
 
 
 from itertools import cycle
-from typing import List
+from typing import List, Union
+
+import numpy as np
 
 import bpy
 
 from sverchok.utils.handle_blender_data import correct_collection_length, delete_data_block
+from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh
 
 
-class SvViewerMeshObjectList(bpy.types.PropertyGroup):
+class SvObjectData(bpy.types.PropertyGroup):
     obj: bpy.props.PointerProperty(type=bpy.types.Object)
 
     # Object have not information about in which collection it is located
@@ -84,7 +87,7 @@ class SvViewerMeshObjectList(bpy.types.PropertyGroup):
             new_obj = bpy.data.objects.new(name=obj_name, object_data=data_block)
         self.obj = new_obj
 
-    def remove(self):
+    def remove_data(self):
         """Should be called before removing item"""
         if self.obj:
             delete_data_block(self.obj)
@@ -92,7 +95,7 @@ class SvViewerMeshObjectList(bpy.types.PropertyGroup):
 
 class BlenderObjects:
     """Should be used for generating list of objects"""
-    object_data: bpy.props.CollectionProperty(type=SvViewerMeshObjectList)
+    object_data: bpy.props.CollectionProperty(type=SvObjectData)
 
     show_objects: bpy.props.BoolProperty(
         default=True,
@@ -127,7 +130,7 @@ class BlenderObjects:
         :param data_blocks: for now it is support only be bpy.types.Mesh
         """
         correct_collection_length(self.object_data, len(data_blocks))
-        prop_group: SvViewerMeshObjectList
+        prop_group: SvObjectData
         input_data = zip(self.object_data, data_blocks, cycle(object_names), cycle(collections), cycle(object_template))
         for prop_group, data_block, name, collection, template in input_data:
             prop_group.ensure_object(data_block, name, template)
@@ -144,4 +147,45 @@ class BlenderObjects:
                     icon=f"RESTRICT_RENDER_{'OFF' if self.render_objects else 'ON'}")
 
 
-register, unregister = bpy.utils.register_classes_factory([SvViewerMeshObjectList])
+class SvMeshData(bpy.types.PropertyGroup):
+    mesh: bpy.props.PointerProperty(type=bpy.types.Mesh)
+
+    def regenerate_mesh(self, verts, edges=None, faces=None):
+        """
+        It takes vertices, edges and faces and updates mesh data block
+        If it assume that topology is unchanged only position of vertices will be changed
+        In this case it will be more efficient if vertices are given in np.array float32 format
+        """
+        if edges is None:
+            edges = []
+        if faces is None:
+            faces = []
+
+        if self.is_topology_changed(len(verts), len(faces)):
+            with empty_bmesh(False) as bm:
+                add_mesh_to_bmesh(bm, verts, edges, faces, update_indexes=False, update_normals=False)
+                bm.to_mesh(self.mesh)
+        else:
+            self.update_vertices(verts)
+        self.mesh.update()
+
+    def is_topology_changed(self, verts_number: int, faces_number: int) -> bool:
+        """
+        Simple and fast test but not 100% robust.
+        If number of vertices and faces are unchanged it assumes that topology is not changed
+        This test is useful if mesh just changed its location.
+        It is much faster just set new coordinate for each vector then recreate whole object
+        """
+        # todo edges?
+        return len(self.mesh.vertices) != verts_number or len(self.mesh.polygons) != faces_number
+
+    def update_vertices(self, verts: Union[list, np.ndarray]):
+        """
+        Just update position of mesh vertices, order and number of given vertices should be the same as mesh
+        numpy array with float32 type will be 10 times faster than any other input data
+        """
+        verts = np.array(verts, dtype=np.float32)  # todo will be this fast if it is already array float 32?
+        self.mesh.vertices.foreach_set('co', np.ravel(verts))
+
+
+register, unregister = bpy.utils.register_classes_factory([SvObjectData, SvMeshData])
