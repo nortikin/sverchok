@@ -497,6 +497,7 @@
     SvMetaballOutNode
     SvNurbsCurveOutNode
     SvNurbsSurfaceOutNode
+    SvInstancerNodeMK3
     ---
     SvGreasePencilStrokes
     SvEmptyOutNode
@@ -548,7 +549,6 @@
     SvTimerNode
     ---
     SvInstancerNode
-    SvInstancerNodeMK2
     SvDupliInstancesMK4
     SvLampOutNode
 

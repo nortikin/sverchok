@@ -15,13 +15,13 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.nodes_mixins.generating_objects import BlenderObjects
 
 
-class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode, BlenderObjects):
+class SvInstancerNodeMK3(bpy.types.Node, SverchCustomTreeNode, BlenderObjects):
     """
     Triggers: copy instancing duplicate
 
     Copy by mesh data from object input
     """
-    bl_idname = 'SvInstancerNodeMK2'
+    bl_idname = 'SvInstancerNodeMK3'
     bl_label = 'Obj instancer'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_INSTANCER'
@@ -84,4 +84,4 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode, BlenderObjects):
         self.object_data.clear()
 
 
-register, unregister = bpy.utils.register_classes_factory([SvInstancerNodeMK2])
+register, unregister = bpy.utils.register_classes_factory([SvInstancerNodeMK3])
