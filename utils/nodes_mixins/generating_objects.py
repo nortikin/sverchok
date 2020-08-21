@@ -31,6 +31,9 @@ class SvViewerMeshObjectList(bpy.types.PropertyGroup):
                 self.obj.data = data_block
             else:
                 self.obj = bpy.data.objects.new(name=name, object_data=data_block)
+        else:
+            # in case if data block was changed
+            self.obj.data = data_block
 
     def ensure_link_to_collection(self, collection: bpy.types.Collection = None):
         """Links object to scene or given collection, unlink from previous collection"""
