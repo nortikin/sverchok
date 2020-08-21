@@ -1,8 +1,12 @@
 import numpy as np
 import unittest
+from math import pi
+
+from mathutils import Matrix
 
 from sverchok.utils.testing import SverchokTestCase, requires
 from sverchok.utils.curve import knotvector as sv_knotvector
+from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve.nurbs import SvGeomdlCurve, SvNativeNurbsCurve, SvNurbsBasisFunctions, SvNurbsCurve
 from sverchok.utils.nurbs_common import elevate_bezier_degree, from_homogenous
 from sverchok.utils.surface.nurbs import SvGeomdlSurface, SvNativeNurbsSurface
@@ -522,6 +526,26 @@ class OtherNurbsTests(SverchokTestCase):
         #print(result)
         expected = np.array([1, 0.5, 0])
         self.assert_numpy_arrays_equal(result, expected, precision=6)
+
+    def test_circle_1(self):
+        circle = SvCircle(Matrix(), 1.0)
+        circle.u_bounds = (0, pi/6)
+        nurbs = circle.to_nurbs()
+        cpts = nurbs.get_control_points()
+        expected_cpts = np.array([[1.0, 0.0, 0.0 ],
+                                  [1.0, 0.26794919, 0.0 ],
+                                  [0.8660254,  0.5, 0.0 ]])
+        self.assert_numpy_arrays_equal(cpts, expected_cpts, precision=6)
+
+    def test_circle_2(self):
+        circle = SvCircle(Matrix(), 1.0)
+        t_max = pi + 0.3
+        circle.u_bounds = (0, t_max)
+        nurbs = circle.to_nurbs()
+        ts = np.array([0, pi/2, pi, t_max])
+        points = nurbs.evaluate_array(ts)
+        expected_points = circle.evaluate_array(ts)
+        self.assert_numpy_arrays_equal(points, expected_points, precision=6)
 
 class KnotvectorTests(SverchokTestCase):
     def test_to_multiplicity_1(self):

@@ -164,10 +164,83 @@ class SvCircle(SvCurve):
 #         vectors = np.stack((xs, ys, zs)).T
 #         return np.apply_along_axis(lambda v: self.matrix @ v, 1, vectors)
 
+    def _arc_to_nurbs(self, t_min, t_max, implementation = SvNurbsCurve.NATIVE):
+        alpha = t_max - t_min 
+        p0_x = cos(t_min)
+        p0_y = sin(t_min)
+        p2_x = cos(t_max)
+        p2_y = sin(t_max)
+        t_mid = 0.5*(t_max + t_min)
+        theta = 0.5*alpha
+        p1_r = 1.0 / cos(theta)
+        p1_x = p1_r * cos(t_mid)
+        p1_y = p1_r * sin(t_mid)
+
+        control_points = np.array([[p0_x, p0_y, 0],
+                                   [p1_x, p1_y, 0],
+                                   [p2_x, p2_y, 0]])
+        control_points = self.radius * control_points
+        control_points = np.apply_along_axis(lambda v: self.matrix @ v, 1, control_points)
+        control_points = self.center + control_points
+
+        w1 = cos(theta)
+        weights = np.array([1, w1, 1])
+        degree = 2
+        knotvector = sv_knotvector.generate(degree, 3)
+        knotvector = sv_knotvector.rescale(knotvector, t_min, t_max)
+
+        nurbs = SvNurbsCurve.build(implementation,
+                    degree, knotvector,
+                    control_points, weights)
+
+        if alpha > 2*pi/3:
+            nurbs = nurbs.insert_knot(t_mid)
+
+        return nurbs
+
+    def _half_circle_nurbs(self, t_min, implementation = SvNurbsCurve.NATIVE):
+        control_points = np.array([[1, 0, 0],
+                                   [1, 1, 0],
+                                   [0, 1, 0],
+                                   [-1, 1, 0],
+                                   [-1, 0, 0]])
+
+        ct, st = cos(t_min), sin(t_min)
+        rotate = np.array([[ct, -st, 0], [st, ct, 0], [0, 0, 1]])
+        control_points = np.apply_along_axis(lambda v: rotate @ v, 1, control_points)
+
+        control_points = self.radius * control_points
+        control_points = np.apply_along_axis(lambda v: self.matrix @ v, 1, control_points)
+        control_points = self.center + control_points
+
+        sqrt22 = sqrt(2.0)/2.0
+        weights = np.array([1, sqrt22, 1, sqrt22, 1])
+        pi2 = pi/2.0
+        knotvector = np.array([0, 0, 0,
+                               pi2, pi2,
+                               pi, pi, pi])
+        knotvector += t_min
+
+        degree = 2
+        nurbs = SvNurbsCurve.build(implementation,
+                    degree, knotvector,
+                    control_points, weights)
+        return nurbs
+
     def to_nurbs(self, implementation = SvNurbsCurve.NATIVE):
         t_min, t_max = self.get_u_bounds()
-        if t_min < 0 or t_max > 2*pi:
+        epsilon = 1e-6
+        if t_min < 0 or t_max > 2*pi + epsilon:
             raise UnsupportedCurveTypeException(f"Can't transform a circle arc out of 0-2pi bound ({t_min} - {t_max}) to NURBS")
+
+        #print(f"T {t_min},{t_max}, 2pi {2*pi}")
+        if t_max - t_min < pi:
+            return self._arc_to_nurbs(t_min, t_max, implementation)
+        elif t_max - t_min < 2*pi + epsilon:
+            half = self._half_circle_nurbs(t_min, implementation)
+            arc = self._arc_to_nurbs(t_min + pi, t_max, implementation)
+            return half.concatenate(arc)
+
         control_points = np.array([[1, 0, 0],
                                    [1, 1, 0],
                                    [0, 1, 0],
@@ -194,8 +267,10 @@ class SvCircle(SvCurve):
         curve = SvNurbsCurve.build(implementation,
                     degree, knotvector,
                     control_points, weights)
-        if t_min != 0 or t_max != 2*pi:
-            curve = curve_segment(curve, t_min, t_max)
+
+        #if t_min != 0 or t_max != 2*pi:
+            #print(f"Cut {t_min} - {t_max}")
+            #curve = curve_segment(curve, t_min, t_max)
         return curve
 
 class SvEllipse(SvCurve):

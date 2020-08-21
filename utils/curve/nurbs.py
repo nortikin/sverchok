@@ -7,6 +7,7 @@
 
 import numpy as np
 
+from sverchok.utils.logging import info
 from sverchok.utils.curve import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import interpolate_nurbs_curve
@@ -56,7 +57,8 @@ class SvNurbsCurve(SvCurve):
         if hasattr(curve, 'to_nurbs'):
             try:
                 return curve.to_nurbs(implementation = implementation)
-            except UnsupportedCurveTypeException:
+            except UnsupportedCurveTypeException as e:
+                info("Can't convert %s to NURBS curve: %s", curve, e)
                 pass
         return None
 
@@ -115,7 +117,7 @@ class SvNurbsCurve(SvCurve):
         pt1 = curve1.evaluate(curve1.get_u_bounds()[1])
         pt2 = curve2.evaluate(curve2.get_u_bounds()[0])
         if np.linalg.norm(pt1 - pt2) > tolerance:
-            raise UnsupportedCurveTypeException("Curve end points do not match")
+            raise UnsupportedCurveTypeException(f"Curve end points do not match: {pt1} != {pt2}")
 
         cp1 = curve1.get_control_points()[-1]
         cp2 = curve2.get_control_points()[0]
