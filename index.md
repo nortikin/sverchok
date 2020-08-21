@@ -491,7 +491,7 @@
     SvIDXViewer28
     SvViewer2D
     ---
-    SvBmeshViewerNodeV28
+    SvMeshViewer
     SvCurveViewerNodeV28
     SvPolylineViewerNodeV28
     SvTypeViewerNodeV28
