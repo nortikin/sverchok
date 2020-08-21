@@ -41,14 +41,16 @@ class SvInstancerNodeMK3(bpy.types.Node, SverchCustomTreeNode, BlenderObjects):
         default=True,
         update=updateNode)
 
-    full_copy: BoolProperty(name="Full Copy", update=update_full_copy)
+    full_copy: BoolProperty(name="Full Copy", update=update_full_copy, 
+                            description="All properties related with given objects will be copied into instances")
 
     base_data_name: StringProperty(
         default='Alpha',
         description='stores the mesh name found in the object, this mesh is instanced',
         update=updateNode)
 
-    collection: bpy.props.PointerProperty(type=bpy.types.Collection, update=updateNode)
+    collection: bpy.props.PointerProperty(type=bpy.types.Collection, update=updateNode, 
+                                          description="Collection where to put instances")
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'objects')

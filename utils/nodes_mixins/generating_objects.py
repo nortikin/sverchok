@@ -96,16 +96,19 @@ class BlenderObjects:
 
     show_objects: bpy.props.BoolProperty(
         default=True,
+        description="Show / hide objects in viewport",
         update=lambda s, c: [setattr(prop.obj, 'hide_viewport', False if s.show_objects else True)
                              for prop in s.object_data])
 
     selectable_objects: bpy.props.BoolProperty(
         default=True,
+        description="Make objects selectable / unselectable",
         update=lambda s, c: [setattr(prop.obj, 'hide_select', False if s.selectable_objects else True)
                              for prop in s.object_data])
 
     render_objects: bpy.props.BoolProperty(
         default=True,
+        description="Show / hide objects for render engines",
         update=lambda s, c: [setattr(prop.obj, 'hide_render', False if s.render_objects else True)
                              for prop in s.object_data])
 
