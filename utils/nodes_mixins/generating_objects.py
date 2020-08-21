@@ -22,11 +22,15 @@ class SvViewerMeshObjectList(bpy.types.PropertyGroup):
     # Now object can be only in on collection
     collection: bpy.props.PointerProperty(type=bpy.types.Collection)
 
-    def ensure_object(self, data_block, name: str):
-        """Add object if it does not exist"""
+    def ensure_object(self, data_block, name: str, object_template: bpy.types.Object = None):
+        """Add object if it does not exist, if object_template is given new object will be copied from it"""
         if not self.obj:
             # it looks like it means only that the property group item was created newly
-            self.obj = bpy.data.objects.new(name=name, object_data=data_block)
+            if object_template:
+                self.obj = object_template.copy()
+                self.obj.data = data_block
+            else:
+                self.obj = bpy.data.objects.new(name=name, object_data=data_block)
 
     def ensure_link_to_collection(self, collection: bpy.types.Collection = None):
         """Links object to scene or given collection, unlink from previous collection"""
@@ -60,6 +64,23 @@ class SvViewerMeshObjectList(bpy.types.PropertyGroup):
         if real_name != name:
             self.obj.name = name
 
+    def recreate_object(self, object_template: bpy.types.Object = None):
+        """
+        Object will be replaced by new object recreated from scratch or copied from given object_template if given
+        Previous object will be removed, data block remains unchanged
+        """
+        # in case recreated object should have a chance to get the same name of previous object
+        # previous object should be deleted first
+        data_block = self.obj.data
+        obj_name = self.obj.name
+        bpy.data.objects.remove(self.obj)
+        if object_template:
+            new_obj = object_template.copy()
+            new_obj.data = data_block
+        else:
+            new_obj = bpy.data.objects.new(name=obj_name, object_data=data_block)
+        self.obj = new_obj
+
     def remove(self):
         """Should be called before removing item"""
         if self.obj:
@@ -85,10 +106,15 @@ class BlenderObjects:
         update=lambda s, c: [setattr(prop.obj, 'hide_render', False if s.render_objects else True)
                              for prop in s.object_data])
 
-    def regenerate_objects(self, object_names: List[str], data_blocks, collections: List[bpy.types.Collection] = None):
+    def regenerate_objects(self,
+                           object_names: List[str],
+                           data_blocks,
+                           collections: List[bpy.types.Collection] = None,
+                           object_template: List[bpy.types.Object] = None):
         """
         It will generate new or remove old objects, number of generated objects will be equal to given data_blocks
         Object_names list can contain one name. In this case Blender will add suffix to next objects (.001, .002,...)
+        :param object_template: optionally, object which properties should be grabbed for instanced object
         :param collections: objects will be putted into collections if given, only one in list can be given
         :param data_blocks: nearly any data blocks - mesh, curves, lights ...
         :param object_names: usually equal to name of data block
@@ -96,9 +122,9 @@ class BlenderObjects:
         """
         correct_collection_length(self.object_data, len(data_blocks))
         prop_group: SvViewerMeshObjectList
-        input_data = zip(self.object_data, data_blocks, cycle(object_names), cycle(collections))
-        for prop_group, data_block, name, collection in input_data:
-            prop_group.ensure_object(data_block, name)
+        input_data = zip(self.object_data, data_blocks, cycle(object_names), cycle(collections), cycle(object_template))
+        for prop_group, data_block, name, collection, template in input_data:
+            prop_group.ensure_object(data_block, name, template)
             prop_group.ensure_link_to_collection(collection)
             prop_group.check_object_name(name)
 

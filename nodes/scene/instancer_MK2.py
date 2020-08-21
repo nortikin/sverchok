@@ -16,11 +16,24 @@ from sverchok.utils.nodes_mixins.generating_objects import BlenderObjects
 
 
 class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode, BlenderObjects):
-    ''' Copy by mesh data from object input '''
+    """
+    Triggers: copy instancing duplicate
+
+    Copy by mesh data from object input
+    """
     bl_idname = 'SvInstancerNodeMK2'
     bl_label = 'Obj instancer'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_INSTANCER'
+
+    def update_full_copy(self, context):
+        if self.full_copy:
+            props_and_samples = zip(self.object_data, cycle(self.inputs['objects'].sv_get(default=[], deepcopy=False)))
+            for prop, template in props_and_samples:
+                prop.recreate_object(template)
+        else:
+            [prop.recreate_object() for prop in self.object_data]
+        updateNode(self, context)
 
     is_active: bpy.props.BoolProperty(
         name='Live',
@@ -28,7 +41,7 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode, BlenderObjects):
         default=True,
         update=updateNode)
 
-    full_copy: BoolProperty(name="Full Copy", update=updateNode)
+    full_copy: BoolProperty(name="Full Copy", update=update_full_copy)
 
     base_data_name: StringProperty(
         default='Alpha',
@@ -59,9 +72,10 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode, BlenderObjects):
         matrices = self.inputs['matrix'].sv_get(deepcopy=False, default=[])
         objects = self.inputs['objects'].sv_get(deepcopy=False, default=[])
 
+        objects = [obj for obj, m in zip(cycle(objects), matrices)]
         meshes = [obj.data for obj, m in zip(cycle(objects), matrices)]
-        self.regenerate_objects([self.base_data_name], meshes, [self.collection])
-        [setattr(prop.obj, 'matrix_local', m) for prop, m in zip(self.object_data, matrices)]
+        self.regenerate_objects([self.base_data_name], meshes, [self.collection], objects if self.full_copy else [None])
+        [setattr(prop.obj, 'matrix_local', m) for prop, m in zip(self.object_data, matrices)]  # update???
 
         self.outputs['objects'].sv_set([prop.obj for prop in self.object_data])
 
