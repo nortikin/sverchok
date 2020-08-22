@@ -418,6 +418,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         self.degree = degree
         self.basis = SvNurbsBasisFunctions(knotvector)
         self.tangent_delta = 0.001
+        self.u_bounds = None # take from knotvector
         self.__description__ = f"Native NURBS (degree={degree}, pts={k})"
 
     def get_control_points(self):
@@ -537,9 +538,12 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         return result
 
     def get_u_bounds(self):
-        m = self.knotvector.min()
-        M = self.knotvector.max()
-        return (m, M)
+        if self.u_bounds is None:
+            m = self.knotvector.min()
+            M = self.knotvector.max()
+            return (m, M)
+        else:
+            return self.u_bounds
 
     def extrude_along_vector(self, vector):
         vector = np.array(vector)
