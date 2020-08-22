@@ -53,7 +53,7 @@
     SvPentagonTilerNode
     SvSpiralNodeMK2
 
-## Curves
+## Curves @ Primitives
     SvExLineCurveNode
     SvExCircleNode
     SvEllipseCurveNode
@@ -61,21 +61,32 @@
     SvArc3ptCurveNode
     SvArcSedCurveNode
     SvExCatenaryCurveNode
-    SvPolyArcNode
-    SvExCurveFormulaNode
+    ---
     SvExPolylineNode
     SvExFilletPolylineNode
-    SvExCubicSplineNode
-    SvBezierSplineNode
-    SvExNurbsCurveNode
     SvKinkyCurveNode
+    SvPolyArcNode
+
+## Curves @ NURBS
+    SvExNurbsCurveNode
+    SvExApproxNurbsCurveNode
+    SvExInterpolateNurbsCurveNode
+    SvDeconstructCurveNode
+
+## Curves @ Bezier
+    SvBezierSplineNode
+    SvExBezierCurveFitNode
+
+## Curves
+    @ Primitives
+    SvExCurveFormulaNode
+    SvExCubicSplineNode
     SvTangentsCurveNode
     SvExRbfCurveNode
     SvExCirclifyNode
+    @ Bezier
+    @ NURBS
     ---
-    SvExApproxNurbsCurveNode
-    SvExInterpolateNurbsCurveNode
-    SvExBezierCurveFitNode
     SvExMarchingSquaresNode
     SvExMSquaresOnSurfaceNode
     ---
@@ -93,7 +104,6 @@
     SvReparametrizeCurveNode
     SvExSurfaceBoundaryNode
     ---
-    SvDeconstructCurveNode
     SvExNearestPointOnCurveNode
     SvExOrthoProjectCurveNode
     SvExCurveEndpointsNode
@@ -116,18 +126,20 @@
     ---
     SvExEvalCurveNode
 
+## Surfaces @ NURBS
+    SvExNurbsSurfaceNode
+    SvExApproxNurbsSurfaceNode
+    SvExInterpolateNurbsSurfaceNode
+    SvExQuadsToNurbsNode
+
 ## Surfaces
     SvExPlaneSurfaceNode
     SvExSphereNode
     SvExSurfaceFormulaNode
     SvInterpolatingSurfaceNode
-    SvExNurbsSurfaceNode
     SvExMinimalSurfaceNode
     SvExMinSurfaceFromCurveNode
-    ---
-    SvExApproxNurbsSurfaceNode
-    SvExInterpolateNurbsSurfaceNode
-    SvExQuadsToNurbsNode
+    @ NURBS
     ---
     SvExRevolutionSurfaceNode
     SvExTaperSweepSurfaceNode
