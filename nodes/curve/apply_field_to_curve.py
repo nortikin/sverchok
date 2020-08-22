@@ -74,8 +74,11 @@ class SvApplyFieldToCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
                         control_points = np.stack((xs, ys, zs)).T
 
+                        knotvector = nurbs.get_knotvector()
+                        #old_t_min, old_t_max = curve.get_u_bounds()
+                        #knotvector = sv_knotvector.rescale(knotvector, old_t_min, old_t_max)
                         new_curve = SvNurbsCurve.build(nurbs.get_nurbs_implementation(),
-                                        nurbs.get_degree(), nurbs.get_knotvector(),
+                                        nurbs.get_degree(), knotvector, 
                                         control_points, nurbs.get_weights())
                     else:
                         new_curve = SvDeformedByFieldCurve(curve, field, coeff)
