@@ -292,6 +292,7 @@ classes = [
     # make | NODEVIEW_MT_Add + class name , menu name
     make_class('GeneratorsExt', "Generators Extended"),
     make_class('CurvePrimitives', "Curves @ Primitives"),
+    make_class('BezierCurves', "Curves @ Bezier"),
     make_class('NurbsCurves', "Curves @ NURBS"),
     make_class('Curves', "Curves"),
     make_class('NurbsSurfaces', "Surfaces @ NURBS"),

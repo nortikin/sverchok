@@ -73,17 +73,20 @@
     SvExInterpolateNurbsCurveNode
     SvDeconstructCurveNode
 
+## Curves @ Bezier
+    SvBezierSplineNode
+    SvExBezierCurveFitNode
+
 ## Curves
     @ Primitives
     SvExCurveFormulaNode
     SvExCubicSplineNode
-    SvBezierSplineNode
     SvTangentsCurveNode
     SvExRbfCurveNode
     SvExCirclifyNode
+    @ Bezier
     @ NURBS
     ---
-    SvExBezierCurveFitNode
     SvExMarchingSquaresNode
     SvExMSquaresOnSurfaceNode
     ---
