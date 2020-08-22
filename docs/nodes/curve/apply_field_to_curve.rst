@@ -73,3 +73,11 @@ Several Line curves modified by Noise vector field:
 
 .. image:: https://user-images.githubusercontent.com/284644/77443601-fd816500-6e0c-11ea-9ed2-0516eba95951.png
 
+Apply Attractor field to control points of a NURBS curve. Control polygon of a resulting curve is indicated with red:
+
+.. image:: https://user-images.githubusercontent.com/284644/90950162-8c4fe780-e468-11ea-9fa2-8d133fa07c58.png
+
+If we apply the same curve to all points of curve (disable "Use control points" mode), we will have different curve:
+
+.. image:: https://user-images.githubusercontent.com/284644/90950165-9245c880-e468-11ea-8439-0b450ae58010.png
+
