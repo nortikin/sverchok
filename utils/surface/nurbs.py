@@ -453,6 +453,8 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', i
         * list of curves - input curves after unification
         * generated NURBS surface.
     """
+    if knots_u not in {'UNIFY', 'AVERAGE'}:
+        raise Exception(f"Unsupported knots_u option: {knots_u}")
     curve_class = type(curves[0])
     curves = unify_degrees(curves)
     if knots_u == 'UNIFY':
