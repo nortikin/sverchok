@@ -36,6 +36,8 @@ from sverchok.ui import presets
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 node_cats = make_node_cats()
 
+menu_class_by_title = dict()
+
 def category_has_nodes(cat_name):
     cat = node_cats[cat_name]
     for item in cat:
@@ -81,7 +83,9 @@ menu_structure = [
     ["NODE_MT_category_SVERCHOK_GROUPS", "RNA"],
     ["NODEVIEW_MT_AddPresetOps", "SETTINGS"],
 ]
-def layout_draw_categories(layout, node_details):
+def layout_draw_categories(layout, category_name, node_details):
+    
+    global menu_class_by_title
 
     for node_info in node_details:
 
@@ -94,6 +98,13 @@ def layout_draw_categories(layout, node_details):
             continue
 
         bl_idname = node_info[0]
+
+        if bl_idname.startswith('@'):
+            submenu_title = bl_idname[1:].strip()
+            menu_title = category_name + ' @ ' + submenu_title
+            menu_class = menu_class_by_title[menu_title]
+            layout.menu(menu_class.__name__, text=submenu_title)
+            continue
 
         # this is a node bl_idname that can be registered but shift+A can drop it from showing.
         if bl_idname == 'ScalarMathNode':
@@ -115,15 +126,16 @@ class NodeViewMenuTemplate(bpy.types.Menu):
     bl_label = ""
 
     def draw(self, context):
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
+        layout_draw_categories(self.layout, self.bl_label, node_cats[self.bl_label])
         # prop_menu_enum(data, property, text="", text_ctxt="", icon='NONE')
-
 
 # quick class factory.
 def make_class(name, bl_label):
+    global menu_class_by_title
     name = 'NODEVIEW_MT_Add' + name
-    return type(name, (NodeViewMenuTemplate,), {'bl_label': bl_label})
-
+    clazz = type(name, (NodeViewMenuTemplate,), {'bl_label': bl_label})
+    menu_class_by_title[bl_label] = clazz
+    return clazz
 
 class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
     bl_label = "Sverchok Nodes"
@@ -183,7 +195,7 @@ class NODEVIEW_MT_Solids_Special_Menu(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
+        layout_draw_categories(self.layout, self.bl_label, node_cats[self.bl_label])
 
 
 class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
@@ -191,7 +203,7 @@ class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
+        layout_draw_categories(self.layout, self.bl_label, node_cats[self.bl_label])
         layout.menu("NODEVIEW_MT_AddGeneratorsExt", **icon('PLUGIN'))
 
 class NODEVIEW_MT_AddModifiers(bpy.types.Menu):
@@ -210,8 +222,8 @@ class NODEVIEW_MT_AddListOps(bpy.types.Menu):
         layout = self.layout
         layout.menu("NODEVIEW_MT_AddListmain")
         layout.menu("NODEVIEW_MT_AddListstruct")
-        layout_draw_categories(self.layout, node_cats["List Masks"])
-        layout_draw_categories(self.layout, node_cats["List Mutators"])
+        layout_draw_categories(self.layout, "List Masks", node_cats["List Masks"])
+        layout_draw_categories(self.layout, "List Mutators", node_cats["List Mutators"])
 
 preset_category_menus = dict()
 
@@ -260,7 +272,7 @@ def make_extra_category_menus():
 
                 def draw(self, context):
                     nodes = [[item.nodetype] for item in self.category_items]
-                    layout_draw_categories(self.layout, nodes)
+                    layout_draw_categories(self.layout, category.name, nodes)
 
             class_name = "NODEVIEW_MT_EX_" + category.identifier
             items = list(category.items(None))
@@ -279,7 +291,10 @@ classes = [
     # like magic.
     # make | NODEVIEW_MT_Add + class name , menu name
     make_class('GeneratorsExt', "Generators Extended"),
+    make_class('CurvePrimitives', "Curves @ Primitives"),
+    make_class('NurbsCurves', "Curves @ NURBS"),
     make_class('Curves', "Curves"),
+    make_class('NurbsSurfaces', "Surfaces @ NURBS"),
     make_class('Surfaces', "Surfaces"),
     make_class('Fields', "Fields"),
     make_class('Solids', "Solids"),
@@ -309,13 +324,21 @@ classes = [
 ]
 
 def register():
+    #global menu_class_by_title
+    #menu_class_by_title = dict()
+
     for category in presets.get_category_names():
         make_preset_category_menu(category)
     for class_name in classes:
         bpy.utils.register_class(class_name)
 
 def unregister():
+    global menu_class_by_title
+
     for class_name in classes:
         bpy.utils.unregister_class(class_name)
     for category in presets.get_category_names():
         bpy.utils.unregister_class(preset_category_menus[category])
+
+    menu_class_by_title = dict()
+
