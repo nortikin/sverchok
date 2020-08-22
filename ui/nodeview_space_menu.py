@@ -26,7 +26,7 @@ but massively condensed for sanity.
 
 import bpy
 
-from sverchok.menu import make_node_cats, draw_add_node_operator
+from sverchok.menu import make_node_cats, draw_add_node_operator, is_submenu_call, get_submenu_call_name, compose_submenu_name
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.extra_categories import get_extra_categories
 from sverchok.ui.sv_icons import node_icon, icon, get_icon_switch, custom_icon
@@ -99,9 +99,9 @@ def layout_draw_categories(layout, category_name, node_details):
 
         bl_idname = node_info[0]
 
-        if bl_idname.startswith('@'):
-            submenu_title = bl_idname[1:].strip()
-            menu_title = category_name + ' @ ' + submenu_title
+        if is_submenu_call(bl_idname):
+            submenu_title = get_submenu_call_name(bl_idname)
+            menu_title = compose_submenu_name(category_name, bl_idname)
             menu_class = menu_class_by_title[menu_title]
             layout.menu(menu_class.__name__, text=submenu_title)
             continue

@@ -77,15 +77,27 @@ def make_node_cats():
 
     return node_cats
 
+def is_submenu_name(name):
+    return '@' in name
+
+def is_submenu_call(name):
+    return name.startswith('@')
+
+def get_submenu_call_name(name):
+    return name[1:].strip()
+
+def compose_submenu_name(category, name):
+    return category + ' @ ' + get_submenu_call_name(name)
+
 def include_submenus(node_cats):
     result = defaultdict(list)
     for category in node_cats:
-        if '@' in category:
+        if is_submenu_name(category):
             continue
         for item in node_cats[category]:
             name = item[0]
-            if name.startswith('@'):
-                submenu_name = category + ' @ ' + name[1:].strip()
+            if is_submenu_call(name):
+                submenu_name = compose_submenu_name(category, name)
                 result[category].append(['separator'])
                 result[category].extend(node_cats[submenu_name])
             else:
@@ -451,7 +463,7 @@ def make_categories():
         node_items = []
         for item in nodes:
             nodetype = item[0]
-            if nodetype.startswith('@'):
+            if is_submenu_call(nodetype):
                 continue
             rna = get_node_class_reference(nodetype)
             if not rna and not nodetype == 'separator':
