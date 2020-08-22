@@ -42,6 +42,13 @@ Some nodes, that output complex curves composed from simple curves (for
 example, "Rounded rectangle"), have **NURBS output** parameter; when it is
 checked, such nodes output NURBS curves, so "NURBS Loft" can work with them.
 
+This node also has a restriction concerning degrees of input curves. In order
+for node to work, the input curves must:
+
+* Either all have the same degree;
+* Or, if some of curves have degree less than others, such smaller-degree
+  curves must have number of control points equal to degree plus one.
+
 Inputs
 ------
 
