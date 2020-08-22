@@ -1,5 +1,6 @@
 
 import numpy as np
+from collections import defaultdict
 
 from sverchok.utils.geom import Spline
 from sverchok.utils.nurbs_common import nurbs_divide, SvNurbsBasisFunctions
@@ -379,23 +380,39 @@ class SvNativeNurbsSurface(SvNurbsSurface):
         return calc
 
 def unify_curves(curves):
-#     common_degree = None
-#     for curve in curves:
-#         degree = curve.get_degree()
-#         if common_degree is None:
-#             common_degree = degree
-#         else:
-#             if common_degree != degree:
-#                 raise Exception("Degrees of the curves are not equal")
-
     curves = [curve.reparametrize(0.0, 1.0) for curve in curves]
+    max_degree = max(curve.get_degree() for curve in curves)
+    curves = [curve.elevate_degree(target=max_degree) for curve in curves]
+
+    dst_knots = defaultdict(int)
+    for curve in curves:
+        m = sv_knotvector.to_multiplicity(curve.get_knotvector())
+        for u, count in m:
+            u = round(u, 6)
+            dst_knots[u] = max(dst_knots[u], count)
 
     result = []
-    for i, curve1 in enumerate(curves):
-        for j, curve2 in enumerate(curves):
-            if i != j:
-                curve1 = curve1.to_knotvector(curve2)
-        result.append(curve1)
+#     for i, curve1 in enumerate(curves):
+#         for j, curve2 in enumerate(curves):
+#             if i != j:
+#                 curve1 = curve1.to_knotvector(curve2)
+#         result.append(curve1)
+
+    for curve in curves:
+        diffs = []
+        kv = np.round(curve.get_knotvector(), 6)
+        ms = dict(sv_knotvector.to_multiplicity(kv))
+        for dst_u, dst_multiplicity in dst_knots.items():
+            src_multiplicity = ms.get(dst_u, 0)
+            diff = dst_multiplicity - src_multiplicity
+            diffs.append((dst_u, diff))
+        #print(f"Src {ms}, dst {dst_knots} => diff {diffs}")
+
+        for u, diff in diffs:
+            if diff > 0:
+                curve = curve.insert_knot(u, diff)
+        result.append(curve)
+        
     return result
 
 def build_from_curves(curves, degree_u = None, implementation = SvNurbsSurface.NATIVE):
@@ -425,7 +442,13 @@ def simple_loft(curves, degree_v = None, metric='DISTANCE', implementation=SvNur
         degree_v = degree_u
 
     src_points = [curve.get_control_points() for curve in curves]
+#     lens = [len(pts) for pts in src_points]
+#     max_len, min_len = max(lens), min(lens)
+#     if max_len != min_len:
+#         raise Exception(f"Unify error: curves have different number of control points: {lens}")
+
     src_points = np.array(src_points)
+    #print("Src:", src_points)
     src_points = np.transpose(src_points, axes=(1,0,2))
 
     v_curves = [interpolate_nurbs_curve(curve_class, degree_v, points, metric) for points in src_points]

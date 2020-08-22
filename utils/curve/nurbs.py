@@ -241,6 +241,7 @@ class SvNurbsCurve(SvCurve):
         curve = curve.reparametrize(new_kv[0], new_kv[-1])
         old_kv = curve.get_knotvector()
         diff = sv_knotvector.difference(old_kv, new_kv)
+        #print(f"old {old_kv}, new {new_kv} => diff {diff}")
         # TODO: use knot refinement when possible
         for u, count in diff:
             curve = curve.insert_knot(u, count)
@@ -596,7 +597,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
     def insert_knot(self, u_bar, count=1):
         # "The NURBS book", 2nd edition, p.5.2, eq. 5.11
         s = sv_knotvector.find_multiplicity(self.knotvector, u_bar)
-        #print(f"I: kv {self.knotvector}, u_bar {u_bar} => s {s}")
+        #print(f"I: kv {len(self.knotvector)}{self.knotvector}, u_bar {u_bar} => s {s}")
         k = np.searchsorted(self.knotvector, u_bar, side='right')-1
         p = self.degree
         u = self.knotvector
