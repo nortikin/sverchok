@@ -13,12 +13,12 @@ from bpy.props import BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils.sv_obj_helper import SvObjHelper, get_random_init_v3
-from sverchok.utils.nodes_mixins.generating_objects import BlenderObjects, SvMeshData, SvViewerNode
+from sverchok.utils.sv_obj_helper import SvObjHelper
+from sverchok.utils.nodes_mixins.generating_objects import SvMeshData, SvViewerNode
 from sverchok.utils.handle_blender_data import correct_collection_length
 
 
-class SvMeshViewer(bpy.types.Node, SverchCustomTreeNode, SvObjHelper, SvViewerNode):
+class SvMeshViewer(SvViewerNode, bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     """ bmv Generate Live geom """
 
     bl_idname = 'SvMeshViewer'
@@ -93,10 +93,6 @@ class SvMeshViewer(bpy.types.Node, SverchCustomTreeNode, SvObjHelper, SvViewerNo
         self.regenerate_objects([self.base_data_name], [d.mesh for d in self.mesh_data], [self.collection])
 
         self.outputs['Objects'].sv_set([obj_data.obj for obj_data in self.object_data])
-
-    def sv_copy(self, other):
-        with self.sv_throttle_tree_update():
-            self.base_data_name = get_random_init_v3()
 
 
 register, unregister = bpy.utils.register_classes_factory([SvMeshViewer])

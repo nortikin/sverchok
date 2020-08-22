@@ -5,7 +5,8 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-
+import random
+import string
 from itertools import cycle
 from typing import List, Union
 
@@ -262,10 +263,44 @@ class SvViewerNode(BlenderObjects):
 
     def init_viewer(self):
         """Should be called from descendant class"""
-        self.base_data_name = get_random_init_v3()  # get not intersection with other viewer nodes name
+        self.base_data_name = bpy.context.scene.sv_object_names.get_available_name()
         self.use_custom_color = True
 
         self.outputs.new('SvObjectSocket', "Objects")
 
+    def sv_copy(self, other):
+        with self.sv_throttle_tree_update():
+            self.base_data_name = bpy.context.scene.sv_object_names.get_available_name()
 
-register, unregister = bpy.utils.register_classes_factory([SvObjectData, SvMeshData, SvSelectObjects])
+
+class SvObjectNames(bpy.types.PropertyGroup):
+    available_name_number = bpy.props.IntProperty(default=0, min=0, max=24)
+    greek_alphabet = [
+        'Alpha', 'Beta', 'Gamma', 'Delta',
+        'Epsilon', 'Zeta', 'Eta', 'Theta',
+        'Iota', 'Kappa', 'Lamda', 'Mu',
+        'Nu', 'Xi', 'Omicron', 'Pi',
+        'Rho', 'Sigma', 'Tau', 'Upsilon',
+        'Phi', 'Chi', 'Psi', 'Omega']
+
+    def get_available_name(self):
+        """It returns name from greek alphabet, if all names was used it returns random letters"""
+        if self.available_name_number <= 23:
+            name = self.greek_alphabet[self.available_name_number]
+            self.available_name_number += 1
+        else:
+            name = ''.join(random.sample(set(string.ascii_uppercase), 6))
+
+        return name
+
+
+module_classes = [SvObjectData, SvMeshData, SvSelectObjects, SvObjectNames]
+
+
+def register():
+    [bpy.utils.register_class(cls) for cls in module_classes]
+    bpy.types.Scene.sv_object_names = bpy.props.PointerProperty(type=SvObjectNames)
+
+
+def unregister():
+    [bpy.utils.unregister_class(cls) for cls in module_classes[::-1]]
