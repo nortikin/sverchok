@@ -18,7 +18,7 @@ from sverchok.utils.nodes_mixins.generating_objects import BlenderObjects, SvMes
 from sverchok.utils.handle_blender_data import correct_collection_length
 
 
-class SvMeshViewer(bpy.types.Node, SverchCustomTreeNode, SvObjHelper, BlenderObjects, SvViewerNode):
+class SvMeshViewer(bpy.types.Node, SverchCustomTreeNode, SvObjHelper, SvViewerNode):
     """ bmv Generate Live geom """
 
     bl_idname = 'SvMeshViewer'
@@ -63,7 +63,7 @@ class SvMeshViewer(bpy.types.Node, SverchCustomTreeNode, SvObjHelper, BlenderObj
         col.prop(self, 'to3d')
 
     def draw_label(self):
-        return f"MeV {self.basedata_name}"
+        return f"MeV {self.base_data_name}"
 
     @property
     def draw_3dpanel(self):
@@ -88,9 +88,9 @@ class SvMeshViewer(bpy.types.Node, SverchCustomTreeNode, SvObjHelper, BlenderObj
         objects_number = max([len(verts), len(matrices)])  # todo if merged
 
         correct_collection_length(self.mesh_data, objects_number)
-        [me_data.regenerate_mesh(self.basedata_name, v, e, f) for me_data, v, e, f in
+        [me_data.regenerate_mesh(self.base_data_name, v, e, f) for me_data, v, e, f in
             zip(self.mesh_data, verts, edges, faces)]
-        self.regenerate_objects([self.basedata_name], [d.mesh for d in self.mesh_data], [self.collection])
+        self.regenerate_objects([self.base_data_name], [d.mesh for d in self.mesh_data], [self.collection])
 
         self.outputs['Objects'].sv_set([obj_data.obj for obj_data in self.object_data])
 

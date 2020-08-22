@@ -40,6 +40,11 @@ class SvObjectData(bpy.types.PropertyGroup):
             # in case if data block was changed
             self.obj.data = data_block
 
+    def select(self):
+        """Just select the object"""
+        if self.obj:
+            self.obj.select_set(True)
+
     def ensure_link_to_collection(self, collection: bpy.types.Collection = None):
         """Links object to scene or given collection, unlink from previous collection"""
         try:
@@ -206,10 +211,28 @@ class SvMeshData(bpy.types.PropertyGroup):
             delete_data_block(self.mesh)
 
 
-class SvViewerNode:
+class SvSelectObjects(bpy.types.Operator):
+    """It calls `select` method of every item in `object_data` collection of node"""
+    bl_idname = 'node.sv_select_objects'
+    bl_label = "Select objects"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    @classmethod
+    def description(cls, context, properties):
+        return "Select generated objects"
+
+    def execute(self, context):
+        if hasattr(context.node, 'object_data'):
+            prop: SvObjectData
+            for prop in context.node.object_data:
+                prop.select()
+
+        return {'FINISHED'}
+
+
+class SvViewerNode(BlenderObjects):
     """
     Mixin for all nodes which displays any objects in viewport
-    Should be used with BlenderObjects mixin class
     """
 
     is_active: bpy.props.BoolProperty(name='Live', default=True, update=updateNode,
@@ -227,10 +250,15 @@ class SvViewerNode:
         col = layout.column(align=True)
         row = col.row(align=True)
         row.column().prop(self, 'is_active', toggle=True)
-        self.draw_object_properties(row)  # from BlenderObjects class
-        layout.prop(self, "base_data_name", text="", icon='OUTLINER_OB_MESH')
-        layout.prop_search(self, 'collection', bpy.data, 'collections', text='', icon='GROUP')
-        # todo add selection operator
+
+        self.draw_object_properties(row)  # hide, selectable, render
+
+        col = layout.column(align=True)
+        col.prop(self, "base_data_name", text="", icon='OUTLINER_OB_MESH')
+        row = col.row(align=True)
+        row.scale_y = 2
+        row.operator('node.sv_select_objects', text="Select")
+        col.prop_search(self, 'collection', bpy.data, 'collections', text='', icon='GROUP')
 
     def init_viewer(self):
         """Should be called from descendant class"""
@@ -240,4 +268,4 @@ class SvViewerNode:
         self.outputs.new('SvObjectSocket', "Objects")
 
 
-register, unregister = bpy.utils.register_classes_factory([SvObjectData, SvMeshData])
+register, unregister = bpy.utils.register_classes_factory([SvObjectData, SvMeshData, SvSelectObjects])
