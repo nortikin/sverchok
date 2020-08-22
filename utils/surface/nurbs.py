@@ -36,7 +36,7 @@ class SvNurbsSurface(SvSurface):
             raise Exception("V direction: " + kv_error)
 
         if implementation == SvNurbsSurface.GEOMDL:
-            return SvGeomdlSurface.build(degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights, normalize_knots)
+            return SvGeomdlSurface.build_geomdl(degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights, normalize_knots)
         elif implementation == SvNurbsSurface.NATIVE:
             if normalize_knots:
                 knotvector_u = sv_knotvector.normalize(knotvector_u)
@@ -123,7 +123,7 @@ class SvGeomdlSurface(SvNurbsSurface):
         return np.array(weights)
 
     @classmethod
-    def build(cls, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights, normalize_knots=False):
+    def build_geomdl(cls, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights, normalize_knots=False):
 
         def convert_row(verts_row, weights_row):
             return [(x*w, y*w, z*w, w) for (x,y,z), w in zip(verts_row, weights_row)]
@@ -150,7 +150,7 @@ class SvGeomdlSurface(SvNurbsSurface):
             raise TypeError("Invalid surface")
         if isinstance(surface, SvGeomdlSurface):
             return surface
-        return SvGeomdlSurface.build(surface.get_degree_u(), surface.get_degree_v(),
+        return SvGeomdlSurface.build_geomdl(surface.get_degree_u(), surface.get_degree_v(),
                     surface.get_knotvector_u(), surface.get_knotvector_v(),
                     surface.get_control_points(),
                     surface.get_weights())

@@ -41,7 +41,7 @@ class SvNurbsCurve(SvCurve):
                 knotvector = sv_knotvector.normalize(knotvector)
             return SvNativeNurbsCurve(degree, knotvector, control_points, weights)
         elif implementation == SvNurbsCurve.GEOMDL and geomdl is not None:
-            return SvGeomdlCurve.build(degree, knotvector, control_points, weights, normalize_knots)
+            return SvGeomdlCurve.build_geomdl(degree, knotvector, control_points, weights, normalize_knots)
         else:
             raise Exception(f"Unsupported NURBS Curve implementation: {implementation}")
 
@@ -265,7 +265,7 @@ class SvGeomdlCurve(SvNurbsCurve):
         self.__description__ = f"Geomdl NURBS (degree={curve.degree}, pts={len(curve.ctrlpts)})"
 
     @classmethod
-    def build(cls, degree, knotvector, control_points, weights=None, normalize_knots=False):
+    def build_geomdl(cls, degree, knotvector, control_points, weights=None, normalize_knots=False):
         if weights is not None:
             curve = NURBS.Curve(normalize_kv = normalize_knots)
         else:
@@ -312,7 +312,7 @@ class SvGeomdlCurve(SvNurbsCurve):
             raise TypeError("Invalid curve type")
         if isinstance(curve, SvGeomdlCurve):
             return curve
-        return SvGeomdlCurve.build(curve.get_degree(), curve.get_knotvector(),
+        return SvGeomdlCurve.build_geomdl(curve.get_degree(), curve.get_knotvector(),
                     curve.get_control_points(), 
                     curve.get_weights())
 
@@ -396,7 +396,7 @@ class SvGeomdlCurve(SvNurbsCurve):
         my_knotvector = self.get_knotvector()
         my_degree = self.get_degree()
         knotvector_v = sv_knotvector.generate(1, 2, clamped=True)
-        surface = SvGeomdlSurface.build(degree_u = my_degree, degree_v = 1,
+        surface = SvGeomdlSurface.build_geomdl(degree_u = my_degree, degree_v = 1,
                         knotvector_u = my_knotvector, knotvector_v = knotvector_v,
                         control_points = control_points,
                         weights = weights)
