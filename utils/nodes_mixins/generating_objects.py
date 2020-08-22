@@ -12,9 +12,11 @@ from typing import List, Union
 import numpy as np
 
 import bpy
+from sverchok.data_structure import updateNode
 
 from sverchok.utils.handle_blender_data import correct_collection_length, delete_data_block
 from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh
+from sverchok.utils.sv_obj_helper import get_random_init_v3
 
 
 class SvObjectData(bpy.types.PropertyGroup):
@@ -202,6 +204,40 @@ class SvMeshData(bpy.types.PropertyGroup):
         """
         if self.mesh:
             delete_data_block(self.mesh)
+
+
+class SvViewerNode:
+    """
+    Mixin for all nodes which displays any objects in viewport
+    Should be used with BlenderObjects mixin class
+    """
+
+    is_active: bpy.props.BoolProperty(name='Live', default=True, update=updateNode,
+                                      description="When enabled this will process incoming data",)
+
+    base_data_name: bpy.props.StringProperty(
+        default='Alpha',
+        description='stores the mesh name found in the object, this mesh is instanced',
+        update=updateNode)
+
+    collection: bpy.props.PointerProperty(type=bpy.types.Collection, update=updateNode,
+                                          description="Collection where to put objects")
+
+    def draw_viewer_properties(self, layout):
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.column().prop(self, 'is_active', toggle=True)
+        self.draw_object_properties(row)  # from BlenderObjects class
+        layout.prop(self, "base_data_name", text="", icon='OUTLINER_OB_MESH')
+        layout.prop_search(self, 'collection', bpy.data, 'collections', text='', icon='GROUP')
+        # todo add selection operator
+
+    def init_viewer(self):
+        """Should be called from descendant class"""
+        self.base_data_name = get_random_init_v3()  # get not intersection with other viewer nodes name
+        self.use_custom_color = True
+
+        self.outputs.new('SvObjectSocket', "Objects")
 
 
 register, unregister = bpy.utils.register_classes_factory([SvObjectData, SvMeshData])
