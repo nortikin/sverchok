@@ -379,10 +379,13 @@ class SvNativeNurbsSurface(SvNurbsSurface):
         calc.set(surface, normal, surface_u, surface_v, duu, dvv, duv, nuu, nvv, nuv)
         return calc
 
-def unify_curves(curves):
-    curves = [curve.reparametrize(0.0, 1.0) for curve in curves]
+def unify_degrees(curves):
     max_degree = max(curve.get_degree() for curve in curves)
     curves = [curve.elevate_degree(target=max_degree) for curve in curves]
+    return curves
+
+def unify_curves(curves):
+    curves = [curve.reparametrize(0.0, 1.0) for curve in curves]
 
     dst_knots = defaultdict(int)
     for curve in curves:
@@ -434,9 +437,32 @@ def build_from_curves(curves, degree_u = None, implementation = SvNurbsSurface.N
 
     return curves, surface
 
-def simple_loft(curves, degree_v = None, metric='DISTANCE', implementation=SvNurbsSurface.NATIVE):
+def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', implementation=SvNurbsSurface.NATIVE):
+    """
+    Loft between given NURBS curves (a.k.a skinning).
+
+    inputs:
+    * degree_v - degree of resulting surface along V parameter; by default - use the same degree as provided curves
+    * knots_u - one of:
+        - 'UNIFY' - unify knotvectors of given curves by inserting additional knots
+        - 'AVERAGE' - average knotvectors of given curves; this will work only if all curves have the same number of control points
+    * metric - metric for interpolation; most useful are 'DISTANCE' and 'CENTRIPETAL'
+    * implementation - NURBS maths implementation
+
+    output: tuple:
+        * list of curves - input curves after unification
+        * generated NURBS surface.
+    """
     curve_class = type(curves[0])
-    curves = unify_curves(curves)
+    curves = unify_degrees(curves)
+    if knots_u == 'UNIFY':
+        curves = unify_curves(curves)
+    else:
+        kvs = [len(curve.get_control_points()) for curve in curves]
+        max_kv, min_kv = max(kvs), min(kvs)
+        if max_kv != min_kv:
+            raise Exception(f"U knotvector averaging is not applicable: Curves have different number of control points: {kvs}")
+
     degree_u = curves[0].get_degree()
     if degree_v is None:
         degree_v = degree_u
@@ -459,7 +485,11 @@ def simple_loft(curves, degree_v = None, metric='DISTANCE', implementation=SvNur
     mean_v_vector = control_points.mean(axis=0)
     tknots_v = Spline.create_knots(mean_v_vector, metric=metric)
     knotvector_v = sv_knotvector.from_tknots(degree_v, tknots_v)
-    knotvector_u = curves[0].get_knotvector()
+    if knots_u == 'UNIFY':
+        knotvector_u = curves[0].get_knotvector()
+    else:
+        knotvectors = np.array([curve.get_knotvector() for curve in curves])
+        knotvector_u = knotvectors.mean(axis=0)
     
     surface = SvNurbsSurface.build(implementation,
                 degree_u, degree_v,
