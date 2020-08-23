@@ -307,6 +307,7 @@
     SvSplitEdgesNode
     ---
     SvFollowActiveQuads
+    SvFlatGeometryNode
 
 ## Modifier Make
     LineConnectNodeMK2
@@ -584,7 +585,8 @@
     SvSvgFillStrokeNode
     SvSvgPathNode
     SvSvgTextNode
-    SvSvgPolygonsNode
+    SvSvgMeshNode
+    SvSvgDimensionNode
 
 ## Beta Nodes
     SvFormulaShapeNode

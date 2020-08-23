@@ -41,3 +41,4 @@ Modifier Change
    separate_parts_to_indexes
    extrude_multi_alt
    dissolve_mesh_elements
+   flat_geometry

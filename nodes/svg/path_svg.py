@@ -35,7 +35,7 @@ def draw_path_linear_mode(verts, height, scale):
 
 def get_command(cmd_idx, commands, v_idx, verts_len):
     command = commands[min(cmd_idx, len(commands)-1)]
-    print(command)
+
     if v_idx+1 > verts_len-1 and not command in 'LT':
         return "T"
     if v_idx+2 > verts_len-1 and not command in 'LTQS':

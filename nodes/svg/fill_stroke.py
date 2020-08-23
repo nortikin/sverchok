@@ -51,7 +51,6 @@ class SvgAttributes():
             svg += f'    stroke-linecap:{self.node.stroke_linecap.lower()};\n'
             svg += f'    stroke-linejoin:{self.node.stroke_linejoin.lower()};\n'
             svg += f'    paint-order:markers {self.node.paint_order.lower().replace("_", " ")};\n'
-            print(self.dash_pattern)
             if self.dash_pattern[0]:
                 dasharray = [num*scale for num in self.dash_pattern]
                 svg += f'    stroke-dasharray:{str(dasharray)[1:-1].replace(",", "")};\n'
