@@ -75,6 +75,7 @@ class SvNurbsLoftNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "DegreeV").prop_name = 'degree_v'
         self.outputs.new('SvSurfaceSocket', "Surface")
         self.outputs.new('SvCurveSocket', "UnifiedCurves")
+        self.outputs.new('SvCurveSocket', "VCurves")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -88,22 +89,27 @@ class SvNurbsLoftNode(bpy.types.Node, SverchCustomTreeNode):
 
         surface_out = []
         curves_out = []
+        v_curves_out = []
         for curves_i, degrees in zip_long_repeat(curves_s, degrees_s):
             new_surfaces = []
             new_curves = []
+            new_v_curves = []
             for curves, degree_v in zip_long_repeat(curves_i, degrees):
-                unified_curves, new_surface = simple_loft(curves, 
+                unified_curves, v_curves, new_surface = simple_loft(curves, 
                                     degree_v = degree_v,
                                     knots_u = self.u_knots_mode,
                                     metric = self.metric,
                                     implementation = self.nurbs_implementation)
                 new_surfaces.append(new_surface)
                 new_curves.extend(unified_curves)
+                new_v_curves.extend(v_curves)
             surface_out.append(new_surfaces)
             curves_out.append(new_curves)
+            v_curves_out.append(new_v_curves)
 
         self.outputs['Surface'].sv_set(surface_out)
         self.outputs['UnifiedCurves'].sv_set(curves_out)
+        self.outputs['VCurves'].sv_set(v_curves_out)
 
 def register():
     bpy.utils.register_class(SvNurbsLoftNode)
