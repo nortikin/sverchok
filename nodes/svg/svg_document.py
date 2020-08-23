@@ -96,7 +96,7 @@ class SvSVGWrite(bpy.types.Operator):
 
     def execute(self, context):
         node = bpy.data.node_groups[self.idtree].nodes[self.idname]
-        # if not all([s.is_linked for s in node.inputs]):
+
         inputs = node.inputs
         if not (inputs['Folder Path'].is_linked and inputs['SVG Objects'].is_linked):
 

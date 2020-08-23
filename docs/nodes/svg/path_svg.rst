@@ -12,12 +12,14 @@ Modes
 - Linear: Creates a polyline along the input vertices
 - User: Creates a complex path using Letter commands to define segments
 
+
 Inputs
 ------
 
-- Vertices: Folder where de SVG file will be placed.
-- Commands: Only in user mode.
+- Vertices: Base vertices.
+- Commands: Letters to define how to interpret the vertices data. Only in user mode.
 - Fill / Stroke: Fill and Stroke attributes.
+
 
 Commands
 --------

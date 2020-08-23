@@ -16,10 +16,9 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import sin, cos, pi, degrees, radians
 
 import bpy
-from bpy.props import EnumProperty, BoolProperty, StringProperty, FloatProperty
+from bpy.props import EnumProperty, StringProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
@@ -29,19 +28,22 @@ from sverchok.utils.svg import SvgGroup
 class SvgText():
     def __repr__(self):
         return "<SVG Text>"
-    def __init__(self, location, text, size, angle, attributes, font_family):
+
+    def __init__(self, location, text, size, angle, attributes, font_family, font_alignment):
         self.location = location
         self.text = text
         self.size = size
         self.angle = angle
         self.attributes = attributes
         self.font_family = font_family
+        self.font_alignment = font_alignment
 
     def draw(self, height, scale):
         svg = '<text '
 
         svg += f'font-size="{self.size * scale}px" '
         svg += f'font-family="{self.font_family}" '
+        svg += f'text-anchor="{self.font_alignment}" '
         x = self.location[0] * scale
         y = height - self.location[1] * scale
         if self.angle != 0:
@@ -59,14 +61,15 @@ class SvgText():
 class SvSvgTextNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Text SVG
-    Tooltip: Creates SVG text. 
+    Tooltip: Creates SVG text.
     """
     bl_idname = 'SvSvgTextNode'
     bl_label = 'Text SVG'
     bl_icon = 'MESH_CIRCLE'
+    sv_icon = 'SV_TEXT_SVG'
 
     font_size: FloatProperty(
-        name='Size',
+        name='Text Size',
         description='Font Size',
         default=10,
         update=updateNode)
@@ -74,14 +77,20 @@ class SvSvgTextNode(bpy.types.Node, SverchCustomTreeNode):
     font_family: EnumProperty(
         name='Font',
         description='Font Size',
-        items=enum_item_4(["serif", 'sans-serif', 'monospace', 'cursive', 'fantasy', 'user']),
+        items=enum_item_4(['serif', 'sans-serif', 'monospace', 'cursive', 'fantasy', 'user']),
         default='monospace',
         update=updateNode)
 
     user_font: StringProperty(
-        name='Font Name',
+        name='Name',
         description='Define font name',
         default='',
+        update=updateNode)
+
+    font_alignment: EnumProperty(
+        name='Font Name',
+        description='Define font name',
+        items=enum_item_4(['start', 'middle', 'end']),
         update=updateNode)
 
     angle: FloatProperty(
@@ -111,6 +120,7 @@ class SvSvgTextNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "font_family", expand=False)
         if self.font_family == 'user':
             layout.prop(self, "user_font")
+        layout.prop(self, "font_alignment", expand=True)
 
     def process(self):
 
@@ -119,12 +129,13 @@ class SvSvgTextNode(bpy.types.Node, SverchCustomTreeNode):
         params_in = [s.sv_get(deepcopy=False) for s in self.inputs[:4]]
         texts_out = []
         params_in.append(self.inputs['Fill / Stroke'].sv_get(deepcopy=False, default=None))
-        font_family = self.user_font if self.font_family == 'user' else self.font_family
 
+        font_family = self.user_font if self.font_family == 'user' else self.font_family
+        print("process")
         for params in zip(*mlr(params_in)):
             svg_texts = []
-            for loc, text, size, angle, atts in zip(*mlr(params)):
-                svg_texts.append(SvgText(loc, text, size, angle, atts, font_family))
+            for loc, text, size, angle, atts  in zip(*mlr(params)):
+                svg_texts.append(SvgText(loc, text, size, angle, atts, font_family, self.font_alignment))
 
             texts_out.append(SvgGroup(svg_texts))
 

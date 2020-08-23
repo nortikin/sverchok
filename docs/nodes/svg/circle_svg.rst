@@ -9,7 +9,7 @@ Creates SVG ellipses (and circles).
 Inputs
 ------
 
-- Center: Folder where de SVG file will be placed.
+- Center: Center of ellipse.
 - Radius X: Horizontal Radius.
 - Radius Y: Vertical Radius.
 - Angle: Rotation of the ellipse.
