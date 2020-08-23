@@ -52,6 +52,22 @@ class SvNurbsMaths(object):
         else:
             return nurbs_class.build(implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights)
 
+    @staticmethod
+    def to_nurbs_curve(curve, implementation = NATIVE):
+        nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+        if nurbs_class is None:
+            raise Exception(f"Unsupported NURBS Curve implementation: {implementation}")
+        else:
+            return nurbs_class.to_nurbs(curve, implementation)
+
+    @staticmethod
+    def to_nurbs_surface(surface, implementation = NATIVE):
+        nurbs_class = SvNurbsMaths.surface_classes.get(implementation)
+        if nurbs_class is None:
+            raise Exception(f"Unsupported NURBS Surface implementation: {implementation}")
+        else:
+            return nurbs_class.to_nurbs(surface, implementation)
+
 def nurbs_divide(numerator, denominator):
     if denominator.ndim != 2:
         denominator = denominator[np.newaxis].T

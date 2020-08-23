@@ -11,7 +11,7 @@ from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.math import binomial
 from sverchok.utils.geom import Spline
 from sverchok.utils.nurbs_common import SvNurbsMaths
-from sverchok.utils.curve.core import SvCurve, SvConcatCurve
+from sverchok.utils.curve.core import SvCurve, SvConcatCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.nurbs_common import elevate_bezier_degree
 
@@ -282,6 +282,12 @@ class SvBezierCurve(SvCurve):
                 degree = self.degree, knotvector = knotvector,
                 control_points = self.points)
 
+    def concatenate(self, curve2):
+        curve2 = SvNurbsMaths.to_nurbs_curve(curve2)
+        if curve2 is None:
+            raise UnsupportedCurveTypeException("Second curve is not a NURBS")
+        return self.to_nurbs().concatenate(curve2)
+
 class SvCubicBezierCurve(SvCurve):
     __description__ = "Bezier[3*]"
     def __init__(self, p0, p1, p2, p3):
@@ -383,4 +389,10 @@ class SvCubicBezierCurve(SvCurve):
     def elevate_degree(self, delta=1):
         points = elevate_bezier_degree(3, self.get_control_points(), delta)
         return SvBezierCurve(points)
+
+    def concatenate(self, curve2):
+        curve2 = SvNurbsMaths.to_nurbs_curve(curve2)
+        if curve2 is None:
+            raise UnsupportedCurveTypeException("Second curve is not a NURBS")
+        return self.to_nurbs().concatenate(curve2)
 
