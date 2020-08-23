@@ -798,10 +798,13 @@ def curve_segment(curve, new_t_min, new_t_max, rescale=False):
 
 def interpolate_nurbs_curve(cls, degree, points, metric='DISTANCE'):
     n = len(points)
+    if points.ndim != 2:
+        raise Exception(f"Array of points was expected, but got {points.shape}: {points}")
     ndim = points.shape[1] # 3 or 4
     if ndim not in {3,4}:
         raise Exception(f"Only 3D and 4D points are supported, but ndim={ndim}")
     #points3d = points[:,:3]
+    #print("pts:", points)
     tknots = Spline.create_knots(points, metric=metric) # In 3D or in 4D, in general?
     knotvector = sv_knotvector.from_tknots(degree, tknots)
     functions = SvNurbsBasisFunctions(knotvector)
