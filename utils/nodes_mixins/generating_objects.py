@@ -13,8 +13,9 @@ from typing import List, Union
 import numpy as np
 
 import bpy
-from sverchok.data_structure import updateNode
+from mathutils import Matrix
 
+from sverchok.data_structure import updateNode
 from sverchok.utils.handle_blender_data import correct_collection_length, delete_data_block
 from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh
 
@@ -162,11 +163,12 @@ class BlenderObjects:
 class SvMeshData(bpy.types.PropertyGroup):
     mesh: bpy.props.PointerProperty(type=bpy.types.Mesh)
 
-    def regenerate_mesh(self, mesh_name: str, verts, edges=None, faces=None):
+    def regenerate_mesh(self, mesh_name: str, verts, edges=None, faces=None, matrix: Matrix = None):
         """
         It takes vertices, edges and faces and updates mesh data block
         If it assume that topology is unchanged only position of vertices will be changed
         In this case it will be more efficient if vertices are given in np.array float32 format
+        Can apply matrix to mesh optionally
         """
         if edges is None:
             edges = []
@@ -179,9 +181,13 @@ class SvMeshData(bpy.types.PropertyGroup):
         if self.is_topology_changed(len(verts), len(faces)):
             with empty_bmesh(False) as bm:
                 add_mesh_to_bmesh(bm, verts, edges, faces, update_indexes=False, update_normals=False)
+                if matrix:
+                    bm.transform(matrix)
                 bm.to_mesh(self.mesh)
         else:
             self.update_vertices(verts)
+            if matrix:
+                self.mesh.transform(matrix)
         self.mesh.update()
 
     def is_topology_changed(self, verts_number: int, faces_number: int) -> bool:
@@ -258,7 +264,7 @@ class SvViewerNode(BlenderObjects):
 
 
 class SvObjectNames(bpy.types.PropertyGroup):
-    available_name_number = bpy.props.IntProperty(default=0, min=0, max=24)
+    available_name_number: bpy.props.IntProperty(default=0, min=0, max=24)
     greek_alphabet = [
         'Alpha', 'Beta', 'Gamma', 'Delta',
         'Epsilon', 'Zeta', 'Eta', 'Theta',
