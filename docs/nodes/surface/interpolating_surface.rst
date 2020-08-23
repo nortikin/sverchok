@@ -15,6 +15,8 @@ Functionality
 This node generates a Surface object by interpolating several Curves. This
 operation is also known as "Loft". Several interpolation modes are supported.
 
+See also "NURBS Loft" node.
+
 Surface domain: from 0 to 1 in both directions.
 
 Inputs
