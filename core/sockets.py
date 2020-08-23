@@ -194,6 +194,10 @@ class SvSocketCommon:
                 new_node_idname = "SvMatrixInNodeMK4"
             elif self.bl_idname == "SvVerticesSocket":
                 new_node_idname = "GenVectorsNode"
+            elif self.bl_idname == "SvFilePathSocket":
+                new_node_idname = "SvFilePathNode"
+            elif self.bl_idname == "SvSvgSocket" and "Fill / Stroke" in self.name:
+                new_node_idname = "SvSvgFillStrokeNode"
             else:
                 return
 
