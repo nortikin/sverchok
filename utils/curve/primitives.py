@@ -239,6 +239,8 @@ class SvCircle(SvCurve):
             return self._arc_to_nurbs(t_min, t_max, implementation)
         elif t_max - t_min < 2*pi + epsilon:
             half = self._half_circle_nurbs(t_min, implementation)
+            if abs(t_max - t_min - pi) < epsilon:
+                return half
             arc = self._arc_to_nurbs(t_min + pi, t_max, implementation)
             return half.concatenate(arc)
 
