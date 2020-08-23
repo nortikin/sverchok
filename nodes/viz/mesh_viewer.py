@@ -13,12 +13,11 @@ from bpy.props import BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils.sv_obj_helper import SvObjHelper
 from sverchok.utils.nodes_mixins.generating_objects import SvMeshData, SvViewerNode
 from sverchok.utils.handle_blender_data import correct_collection_length
 
 
-class SvMeshViewer(SvViewerNode, bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
+class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
     """ bmv Generate Live geom """
 
     bl_idname = 'SvMeshViewer'
@@ -41,6 +40,7 @@ class SvMeshViewer(SvViewerNode, bpy.types.Node, SverchCustomTreeNode, SvObjHelp
 
     to3d: BoolProperty(default=False, update=updateNode)
     show_wireframe: BoolProperty(default=False, update=updateNode, name="Show Edges")
+    material: bpy.props.PointerProperty(type=bpy.types.Material)
 
     def sv_init(self, context):
         self.init_viewer()
@@ -53,9 +53,11 @@ class SvMeshViewer(SvViewerNode, bpy.types.Node, SverchCustomTreeNode, SvObjHelp
     def draw_buttons(self, context, layout):
         self.draw_viewer_properties(layout)
 
-    def draw_buttons_ext(self, context, layout):
-        self.draw_ext_object_buttons(context, layout)
+        row = layout.row(align=True)
+        row.prop_search(self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
+        row.operator('node.sv_create_material', text='', icon='ADD')
 
+    def draw_buttons_ext(self, context, layout):
         col = layout.column(align=True)
         col.prop(self, 'extended_matrix', text='Extended Matrix')
         col.prop(self, 'auto_smooth', text='smooth shade')
@@ -76,7 +78,7 @@ class SvMeshViewer(SvViewerNode, bpy.types.Node, SverchCustomTreeNode, SvObjHelp
 
     def process(self):
 
-        if not self.activate:
+        if not self.is_active:
             return
 
         verts = self.inputs['vertices'].sv_get(deepcopy=False, default=[])
@@ -95,4 +97,25 @@ class SvMeshViewer(SvViewerNode, bpy.types.Node, SverchCustomTreeNode, SvObjHelp
         self.outputs['Objects'].sv_set([obj_data.obj for obj_data in self.object_data])
 
 
-register, unregister = bpy.utils.register_classes_factory([SvMeshViewer])
+class SvCreateMaterial(bpy.types.Operator):
+    """It creates and add new material to a node"""
+    bl_idname = 'node.sv_create_material'
+    bl_label = "Create material"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    @classmethod
+    def description(cls, context, properties):
+        return "Crate new material"
+
+    def execute(self, context):
+        mat = bpy.data.materials.new('sv_material')
+        mat.use_nodes = True
+        context.node.material = mat
+        return {'FINISHED'}
+
+    @classmethod
+    def poll(cls, context):
+        return hasattr(context.node, 'material')
+
+
+register, unregister = bpy.utils.register_classes_factory([SvMeshViewer, SvCreateMaterial])
