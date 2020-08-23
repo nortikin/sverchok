@@ -14,7 +14,11 @@ from mathutils import Matrix, Vector
 from sverchok.utils.math import (
         ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL
     )
-from sverchok.utils.geom import LineEquation, rotate_vector_around_vector, autorotate_householder, autorotate_track, autorotate_diff
+from sverchok.utils.geom import (
+        LineEquation, CircleEquation3D,
+        rotate_vector_around_vector, autorotate_householder,
+         autorotate_track, autorotate_diff
+    )
 from sverchok.utils.curve.core import SvFlipCurve
 from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve.algorithms import (
@@ -23,6 +27,7 @@ from sverchok.utils.curve.algorithms import (
             reparametrize_curve
         )
 from sverchok.utils.surface.core import SvSurface
+from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.data import *
 
 def rotate_vector_around_vector_np(v, k, theta):
@@ -319,6 +324,15 @@ class SvRevolutionSurface(SvSurface):
         self.global_origin = global_origin
         self.normal_delta = 0.001
         self.v_bounds = (0.0, 2*pi)
+
+    @classmethod
+    def build(cls, curve, point, direction, v_min=0, v_max=2*pi, global_origin=True):
+        if hasattr(curve, 'make_revolution_surface'):
+            return curve.make_revolution_surface(point, direction, v_min, v_max, global_origin)
+        else:
+            surface = SvRevolutionSurface(curve, point, direction, global_origin)
+            surface.v_bounds = (v_min, v_max)
+            return surface
 
     def evaluate(self, u, v):
         point_on_curve = self.curve.evaluate(u)
@@ -1052,4 +1066,34 @@ class SvBlendSurface(SvSurface):
         c0, c1, c2, c3 = c0[:,np.newaxis], c1[:,np.newaxis], c2[:,np.newaxis], c3[:,np.newaxis]
 
         return c0*p0s + c1*p1s + c2*p2s + c3*p3s
+
+def nurbs_revolution_surface(curve, origin, axis, v_min=0, v_max=2*pi, global_origin=True):
+    my_control_points = curve.get_control_points()
+    my_weights = curve.get_weights()
+    control_points = []
+    weights = []
+    # TODO: vectorize with numpy? Or better let it so for better readability?
+    for my_control_point, my_weight in zip(my_control_points, my_weights):
+        eq = CircleEquation3D.from_axis_point(origin, axis, my_control_point)
+        circle = SvCircle.from_equation(eq)
+        circle.u_bounds = (v_min, v_max)
+        nurbs_circle = circle.to_nurbs()
+        parallel_points = nurbs_circle.get_control_points()
+        parallel_weights = nurbs_circle.get_weights() * my_weight
+        # all circles actually always have the same knotvector
+        circle_knotvector = nurbs_circle.get_knotvector()
+        control_points.append(parallel_points)
+        weights.append(parallel_weights)
+    control_points = np.array(control_points)
+    if global_origin:
+        control_points = control_points - origin
+
+    weights = np.array(weights)
+    degree_u = curve.get_degree()
+    degree_v = 2 # circle
+
+    return SvNurbsSurface.build(curve.get_nurbs_implementation(),
+            degree_u, degree_v,
+            curve.get_knotvector(), circle_knotvector,
+            control_points, weights)
 

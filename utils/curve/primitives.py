@@ -12,10 +12,10 @@ from mathutils import Vector, Matrix
 
 from sverchok.utils.logging import error
 from sverchok.utils.geom import LineEquation, CircleEquation2D, CircleEquation3D, Ellipse3D
+from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.surface.primitives import SvPlane
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve.algorithms import curve_segment
 
@@ -60,13 +60,13 @@ class SvLine(SvCurve):
     def extrude_along_vector(self, vector):
         return SvPlane(self.point, self.direction, vector)
 
-    def to_nurbs(self, implementation=SvNurbsCurve.NATIVE):
+    def to_nurbs(self, implementation=SvNurbsMaths.NATIVE):
         knotvector = sv_knotvector.generate(1, 2)
         u_min, u_max = self.get_u_bounds()
         p1 = self.evaluate(u_min)
         p2 = self.evaluate(u_max)
         control_points = np.array([p1, p2])
-        return SvNurbsCurve.build(implementation,
+        return SvNurbsMaths.build_curve(implementation,
                 degree=1, knotvector=knotvector,
                 control_points = control_points)
 
@@ -164,7 +164,7 @@ class SvCircle(SvCurve):
 #         vectors = np.stack((xs, ys, zs)).T
 #         return np.apply_along_axis(lambda v: self.matrix @ v, 1, vectors)
 
-    def _arc_to_nurbs(self, t_min, t_max, implementation = SvNurbsCurve.NATIVE):
+    def _arc_to_nurbs(self, t_min, t_max, implementation = SvNurbsMaths.NATIVE):
         alpha = t_max - t_min 
         p0_x = cos(t_min)
         p0_y = sin(t_min)
@@ -189,7 +189,7 @@ class SvCircle(SvCurve):
         knotvector = sv_knotvector.generate(degree, 3)
         knotvector = sv_knotvector.rescale(knotvector, t_min, t_max)
 
-        nurbs = SvNurbsCurve.build(implementation,
+        nurbs = SvNurbsMaths.build_curve(implementation,
                     degree, knotvector,
                     control_points, weights)
 
@@ -198,7 +198,7 @@ class SvCircle(SvCurve):
 
         return nurbs
 
-    def _half_circle_nurbs(self, t_min, implementation = SvNurbsCurve.NATIVE):
+    def _half_circle_nurbs(self, t_min, implementation = SvNurbsMaths.NATIVE):
         control_points = np.array([[1, 0, 0],
                                    [1, 1, 0],
                                    [0, 1, 0],
@@ -222,12 +222,12 @@ class SvCircle(SvCurve):
         knotvector += t_min
 
         degree = 2
-        nurbs = SvNurbsCurve.build(implementation,
+        nurbs = SvNurbsMaths.build_curve(implementation,
                     degree, knotvector,
                     control_points, weights)
         return nurbs
 
-    def to_nurbs(self, implementation = SvNurbsCurve.NATIVE):
+    def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
         t_min, t_max = self.get_u_bounds()
         epsilon = 1e-6
         if t_min < 0 or t_max > 2*pi + epsilon:
@@ -264,7 +264,7 @@ class SvCircle(SvCurve):
                                pi32, pi32,
                                2*pi, 2*pi, 2*pi])
         degree = 2
-        curve = SvNurbsCurve.build(implementation,
+        curve = SvNurbsMaths.build_curve(implementation,
                     degree, knotvector,
                     control_points, weights)
 

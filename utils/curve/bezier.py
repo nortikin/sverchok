@@ -10,8 +10,8 @@ import numpy as np
 from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.math import binomial
 from sverchok.utils.geom import Spline
+from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve, SvConcatCurve
-from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.nurbs_common import elevate_bezier_degree
 
@@ -276,9 +276,9 @@ class SvBezierCurve(SvCurve):
         points = elevate_bezier_degree(self.degree, self.points, delta)
         return SvBezierCurve(points)
 
-    def to_nurbs(self, implementation = SvNurbsCurve.NATIVE):
+    def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
         knotvector = sv_knotvector.generate(self.degree, len(self.points))
-        return SvNurbsCurve.build(implementation,
+        return SvNurbsMaths.build_curve(implementation,
                 degree = self.degree, knotvector = knotvector,
                 control_points = self.points)
 
@@ -373,10 +373,10 @@ class SvCubicBezierCurve(SvCurve):
     def get_control_points(self):
         return np.array([self.p0, self.p1, self.p2, self.p3])
 
-    def to_nurbs(self, implementation = SvNurbsCurve.NATIVE):
+    def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
         knotvector = sv_knotvector.generate(3, 4)
         control_points = np.array([self.p0, self.p1, self.p2, self.p3])
-        return SvNurbsCurve.build(implementation,
+        return SvNurbsMaths.build_curve(implementation,
                 degree = 3, knotvector = knotvector,
                 control_points = control_points)
 

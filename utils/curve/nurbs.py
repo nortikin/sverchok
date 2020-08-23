@@ -6,13 +6,19 @@
 # License-Filename: LICENSE
 
 import numpy as np
+from math import pi
+import traceback
 
 from sverchok.utils.logging import info
-from sverchok.utils.curve import SvCurve, UnsupportedCurveTypeException
+from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import interpolate_nurbs_curve
-from sverchok.utils.nurbs_common import nurbs_divide, SvNurbsBasisFunctions, elevate_bezier_degree, from_homogenous
+from sverchok.utils.nurbs_common import (
+        SvNurbsMaths,SvNurbsBasisFunctions,
+        nurbs_divide, elevate_bezier_degree, from_homogenous
+    )
 from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
+from sverchok.utils.surface.algorithms import nurbs_revolution_surface
 from sverchok.dependencies import geomdl
 
 if geomdl is not None:
@@ -28,22 +34,12 @@ class SvNurbsCurve(SvCurve):
     """
     Base abstract class for all supported implementations of NURBS curves.
     """
-    NATIVE = 'NATIVE'
-    GEOMDL = 'GEOMDL'
+    NATIVE = SvNurbsMaths.NATIVE
+    GEOMDL = SvNurbsMaths.GEOMDL
 
     @classmethod
     def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
-        kv_error = sv_knotvector.check(degree, knotvector, len(control_points))
-        if kv_error is not None:
-            raise Exception(kv_error)
-        if implementation == SvNurbsCurve.NATIVE:
-            if normalize_knots:
-                knotvector = sv_knotvector.normalize(knotvector)
-            return SvNativeNurbsCurve(degree, knotvector, control_points, weights)
-        elif implementation == SvNurbsCurve.GEOMDL and geomdl is not None:
-            return SvGeomdlCurve.build_geomdl(degree, knotvector, control_points, weights, normalize_knots)
-        else:
-            raise Exception(f"Unsupported NURBS Curve implementation: {implementation}")
+        return SvNurbsMaths.build_curve(implementation, degree, knotvector, control_points, weights, normalize_knots)
 
     @classmethod
     def to_nurbs(cls, curve, implementation = NATIVE):
@@ -233,6 +229,9 @@ class SvNurbsCurve(SvCurve):
         return SvNurbsCurve.build(self.get_nurbs_implementation(),
                 self.get_degree(), knotvector, control_points, weights)
 
+    def make_revolution_surface(self, origin, axis, v_min=0, v_max=2*pi, global_origin=True):
+        return nurbs_revolution_surface(self, origin, axis, v_min, v_max, global_origin)
+
     def to_knotvector(self, curve2):
         if curve2.get_degree() != self.get_degree():
             raise Exception("Degrees of the curves are not equal")
@@ -285,6 +284,10 @@ class SvGeomdlCurve(SvNurbsCurve):
         result = SvGeomdlCurve(curve)
         result.u_bounds = curve.knotvector[0], curve.knotvector[-1]
         return result
+
+    @classmethod
+    def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
+        return SvGeomdlCurve.build_geomdl(degree, knotvector, control_points, weights, normalize_knots)
 
     @classmethod
     def interpolate(cls, degree, points, metric='DISTANCE'):
@@ -407,7 +410,7 @@ class SvGeomdlCurve(SvNurbsCurve):
         return SvGeomdlCurve(curve)
 
 class SvNativeNurbsCurve(SvNurbsCurve):
-    def __init__(self, degree, knotvector, control_points, weights=None):
+    def __init__(self, degree, knotvector, control_points, weights=None, normalize_knots=False):
         self.control_points = np.array(control_points) # (k, 3)
         k = len(control_points)
         if weights is not None:
@@ -415,11 +418,17 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         else:
             self.weights = np.ones((k,))
         self.knotvector = np.array(knotvector)
+        if normalize_knots:
+            self.knotvector = sv_knotvector.normalize(self.knotvector)
         self.degree = degree
         self.basis = SvNurbsBasisFunctions(knotvector)
         self.tangent_delta = 0.001
         self.u_bounds = None # take from knotvector
         self.__description__ = f"Native NURBS (degree={degree}, pts={k})"
+
+    @classmethod
+    def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
+        return SvNativeNurbsCurve(degree, knotvector, control_points, weights, normalize_knots)
 
     def get_control_points(self):
         return self.control_points
@@ -660,4 +669,8 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         curve2 = SvNativeNurbsCurve(curve.degree, knotvector2,
                     control_points_2, weights_2)
         return curve1, curve2
+
+SvNurbsMaths.curve_classes[SvNurbsMaths.NATIVE] = SvNativeNurbsCurve
+if geomdl is not None:
+    SvNurbsMaths.curve_classes[SvNurbsMaths.GEOMDL] = SvGeomdlCurve
 

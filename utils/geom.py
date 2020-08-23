@@ -1806,6 +1806,27 @@ class CircleEquation3D(object):
         circle.normal = np.array(normal)
         return circle
 
+    @classmethod
+    def from_center_point_normal(cls, center, point, normal):
+        center = Vector(center)
+        point = Vector(point)
+        normal = Vector(normal)
+
+        radius = (point - center).length
+        circle = CircleEquation3D.from_center_radius_normal(center, radius, normal)
+        circle.point1 = np.array(point)
+        return circle
+
+    @classmethod
+    def from_axis_point(cls, point_on_axis, direction, point):
+        point_on_axis = Vector(point_on_axis)
+        direction = Vector(direction)
+        point = Vector(point)
+
+        axis = LineEquation.from_direction_and_point(direction, point_on_axis)
+        center = axis.projection_of_point(point)
+        return CircleEquation3D.from_center_point_normal(center, point, direction)
+
     def get_matrix(self):
         """
         Calculate the matrix, Z axis of which is
