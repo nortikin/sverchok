@@ -90,11 +90,12 @@ class SvCircle(SvCurve):
         """
         Make an instance of SvCircle from an instance of CircleEquation2D/3D.
         """
-        if isinstance(eq, CircleEquation2D):
+        # isinstance() wont work properly with "reload scripts".
+        if type(eq).__name__ == 'CircleEquation2D':
             matrix = Matrix.Translation(eq.center)
             circle = SvCircle(matrix, eq.radius)
             return circle
-        elif isinstance(eq, CircleEquation3D):
+        elif type(eq).__name__ == 'CircleEquation3D':
             circle = SvCircle(eq.get_matrix(), eq.radius)
             if eq.arc_angle:
                 circle.u_bounds = (0, eq.arc_angle)
