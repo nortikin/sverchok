@@ -119,34 +119,41 @@ class Spline(object):
         if metric == "DISTANCE":
             tmp = np.linalg.norm(pts[:-1] - pts[1:], axis=1)
             tknots = np.insert(tmp, 0, 0).cumsum()
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
         elif metric == "MANHATTAN":
             tmp = np.sum(np.absolute(pts[:-1] - pts[1:]), 1)
             tknots = np.insert(tmp, 0, 0).cumsum()
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
         elif metric == "POINTS":
             tknots = np.linspace(0, 1, len(pts))
         elif metric == "CHEBYSHEV":
             tknots = np.max(np.absolute(pts[1:] - pts[:-1]), 1)
             tknots = np.insert(tknots, 0, 0).cumsum()
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
         elif metric == 'CENTRIPETAL':
             tmp = np.linalg.norm(pts[:-1] - pts[1:], axis=1)
             tmp = np.sqrt(tmp)
             tknots = np.insert(tmp, 0, 0).cumsum()
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
         elif metric == "X":
             tknots = pts[:,0]
             tknots = tknots - tknots[0]
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
         elif metric == "Y":
             tknots = pts[:,1]
             tknots = tknots - tknots[0]
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
         elif metric == "Z":
             tknots = pts[:,2]
             tknots = tknots - tknots[0]
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
 
         return tknots
 
