@@ -34,52 +34,55 @@ class SvgAttributes():
         self.dash_pattern = dash_pattern
 
     def draw(self, height, scale):
-        # style="fill:none;fill-opacity:0.521569;stroke:#000000;stroke-width:3.99874;stroke-linecap:round;stroke-linejoin:round;stroke-dashoffset:336.378;paint-order:stroke fill markers" />
-        svg = 'style="'
+        svg = 'style="\n'
         if self.node.fill_mode == 'NONE':
-            svg += 'fill:none;fill-opacity:0;'
+            svg += '    fill:none;\n    fill-opacity:0;'
         else:
             col_p = self.fill_color
-            svg += 'fill:rgb' + str((int(255*col_p[0]), int(255*col_p[1]), int(255*col_p[2])))+'; '
-            svg += 'fill-opacity:'+str(col_p[3])+';'
+            svg += f'    fill:rgb{(int(255*col_p[0]), int(255*col_p[1]), int(255*col_p[2]))};\n'
+            svg += f'    fill-opacity:{col_p[3]};\n'
         if self.node.stroke_mode == 'NONE':
-            svg += 'stroke:none;stroke-opacity:0;stroke-width:0'
+            svg += '    stroke:none;\n    stroke-opacity:0;\n    stroke-width:0\n'
         else:
             col_p = self.stroke_color
-            svg += 'stroke:rgb{};'.format((int(255*col_p[0]), int(255*col_p[1]), int(255*col_p[2])))
-            svg += 'stroke-opacity:{};'.format(col_p[3])
-            svg += 'stroke-width:{};'.format(self.stroke_width*scale)
-            svg += 'stroke-linecap:{};'.format(self.node.stroke_linecap.lower())
-            svg += 'stroke-linejoin:{};'.format(self.node.stroke_linejoin.lower())
-            svg += 'paint-order:markers {};'.format(self.node.paint_order.lower().replace('_', ' '))
-
+            svg += f'    stroke:rgb{(int(255*col_p[0]), int(255*col_p[1]), int(255*col_p[2]))};\n'
+            svg += f'    stroke-opacity:{col_p[3]};\n'
+            svg += f'    stroke-width:{self.stroke_width*scale};\n'
+            svg += f'    stroke-linecap:{self.node.stroke_linecap.lower()};\n'
+            svg += f'    stroke-linejoin:{self.node.stroke_linejoin.lower()};\n'
+            svg += f'    paint-order:markers {self.node.paint_order.lower().replace("_", " ")};\n'
+            print(self.dash_pattern)
             if self.dash_pattern[0]:
                 dasharray = [num*scale for num in self.dash_pattern]
-                svg += 'stroke-dasharray:{};'.format(str(dasharray)[1:-1].replace(",", ""))
+                svg += f'    stroke-dasharray:{str(dasharray)[1:-1].replace(",", "")};\n'
         svg += '"'
 
         return svg
 
 class SvSvgFillStrokeNode(bpy.types.Node, SverchCustomTreeNode):
-        """
-        Triggers: color, line width
-        Tooltip: Define Fill /Stroke Style for svg objects
-        """
+    """
+    Triggers: color, line width
+    Tooltip: Define Fill /Stroke Style for svg objects
+    """
     bl_idname = 'SvSvgFillStrokeNode'
     bl_label = 'Fill / Stroke SVG'
     bl_icon = 'MESH_CIRCLE'
+    sv_icon = 'SV_FILL_STROKE_SVG'
 
-    def update_sockets(self, context):
+    def update_actual_sockets(self):
         self.inputs['Fill Color'].hide_safe = self.fill_mode == 'NONE'
         self.inputs['Stroke Color'].hide_safe = self.stroke_mode == 'NONE'
         self.inputs['Stroke Width'].hide_safe = self.stroke_mode == 'NONE'
         self.inputs['Dash Pattern'].hide_safe = self.stroke_type == 'Solid' or self.stroke_mode == 'NONE'
+    def update_sockets(self, context):
+        self.update_actual_sockets()
         updateNode(self, context)
 
     fill_modes = [('NONE', 'None', '', 0), ('FLAT', 'Flat', '', 1)]
     fill_mode: EnumProperty(
         name='Fill',
         items=fill_modes,
+        default="FLAT",
         update=update_sockets
         )
     stroke_mode: EnumProperty(
@@ -99,6 +102,7 @@ class SvSvgFillStrokeNode(bpy.types.Node, SverchCustomTreeNode):
         size=4,
         min=0.0,
         max=1.0,
+        default=(0,0,0,1),
         subtype='COLOR',
         update=update_sockets
         )
@@ -131,6 +135,7 @@ class SvSvgFillStrokeNode(bpy.types.Node, SverchCustomTreeNode):
         description="Color", size=4,
         min=0.0,
         max=1.0,
+        default=(0,0,0,1),
         subtype='COLOR',
         update=updateNode
         )
@@ -142,7 +147,7 @@ class SvSvgFillStrokeNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvColorSocket', "Stroke Color").prop_name = 'stroke_color'
         self.inputs.new('SvStringsSocket', "Stroke Width").prop_name = 'stroke_width'
         self.inputs.new('SvStringsSocket', "Dash Pattern")
-
+        self.update_actual_sockets()
         self.outputs.new('SvSvgSocket', "Fill / Stroke")
 
     def draw_buttons(self, context, layout):
