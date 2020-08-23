@@ -197,15 +197,35 @@ class SvInterpolatingSurface(SvSurface):
             for v_spline in self.v_splines:
                 v_min, v_max = v_spline.get_u_bounds()
                 vx = (v_max - v_min) * v + v_min
-                point = v_spline.evaluate(vx)
-                point_h = v_spline.evaluate(vx + h)
+                if vx +h <= v_max:
+                    point = v_spline.evaluate(vx)
+                    point_h = v_spline.evaluate(vx + h)
+                else:
+                    point = v_spline.evaluate(vx - h)
+                    point_h = v_spline.evaluate(vx)
                 spline_vertices.append(point)
                 spline_vertices_h.append(point_h)
-            u_spline = self.get_u_spline(v, spline_vertices)
-            u_spline_h = self.get_u_spline(v+h, spline_vertices_h)
-            points = u_spline.evaluate_array(us_by_v)
+            if v+h <= v_max:
+                u_spline = self.get_u_spline(v, spline_vertices)
+                u_spline_h = self.get_u_spline(v+h, spline_vertices_h)
+            else:
+                u_spline = self.get_u_spline(v-h, spline_vertices)
+                u_spline_h = self.get_u_spline(v, spline_vertices_h)
+            u_min, u_max = 0.0, 1.0
+
+            good_us = us_by_v + h < u_max
+            bad_us = np.logical_not(good_us)
+
+            good_points = np.broadcast_to(good_us[np.newaxis].T, (len(us_by_v), 3)).flatten()
+            bad_points = np.logical_not(good_points)
+            points = np.empty((len(us_by_v), 3))
+            points[good_us] = u_spline.evaluate_array(us_by_v[good_us])
+            points[bad_us] = u_spline.evaluate_array(us_by_v[bad_us] - h)
+            points_u_h = np.empty((len(us_by_v), 3))
+            points_u_h[good_us] = u_spline.evaluate_array(us_by_v[good_us] + h)
+            points_u_h[bad_us] = u_spline.evaluate_array(us_by_v[bad_us])
             points_v_h = u_spline_h.evaluate_array(us_by_v)
-            points_u_h = u_spline.evaluate_array(us_by_v + h)
+
             dvs = (points_v_h - points) / h
             dus = (points_u_h - points) / h
             normals = np.cross(dus, dvs)
