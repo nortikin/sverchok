@@ -30,16 +30,22 @@ class SvgCircle():
     def __repr__(self):
         return "<SVG Circle>"
 
-    def __init__(self, rad_x, rad_y, location, attributes):
+    def __init__(self, rad_x, rad_y, location, angle, attributes):
         self.rad_x = rad_x
         self.rad_y = rad_y
         self.location = location
+        self.angle = angle
         self.attributes = attributes
 
     def draw(self, height, scale):
         svg = '<ellipse '
-        svg += f'cx="{self.location[0] * scale}" '
-        svg += f'cy="{height-self.location[1]* scale}" '
+        x = self.location[0] * scale
+        y = height-self.location[1]* scale
+        if self.angle != 0:
+            svg += f'transform="translate({x},{y})rotate({self.angle})" '
+        else:
+            svg += f'cx="{x}" '
+            svg += f'cy="{y}" '
         svg += f'rx="{self.rad_x * scale}" '
         svg += f'ry="{self.rad_y * scale}" '
 
@@ -56,14 +62,17 @@ class SvSvgCircleNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSvgCircleNode'
     bl_label = 'Circle SVG'
     bl_icon = 'MESH_CIRCLE'
+    sv_icon = 'SV_CIRCLE_SVG'
 
-    rad_x: FloatProperty(name='Radius X', description='Radius', default=1.0, update=updateNode)
-    rad_y: FloatProperty(name='Radius Y', description='Radius', default=1.0, update=updateNode)
+    rad_x: FloatProperty(name='Radius X', description='Horizontal Radius', default=1.0, update=updateNode)
+    rad_y: FloatProperty(name='Radius Y', description='Vertical Radius', default=1.0, update=updateNode)
+    angle: FloatProperty(name='Angle', description='Angle', default=0.0, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Center")
         self.inputs.new('SvStringsSocket', "Radius X").prop_name = 'rad_x'
         self.inputs.new('SvStringsSocket', "Radius Y").prop_name = 'rad_y'
+        self.inputs.new('SvStringsSocket', "Angle").prop_name = 'angle'
         self.inputs.new('SvSvgSocket', "Fill / Stroke")
 
         self.outputs.new('SvSvgSocket', "SVG Objects")
@@ -72,14 +81,13 @@ class SvSvgCircleNode(bpy.types.Node, SverchCustomTreeNode):
 
         if not self.outputs[0].is_linked:
             return
-        params_in = [s.sv_get(deepcopy=False) for s in self.inputs[:3]]
+        params_in = [s.sv_get(deepcopy=False) for s in self.inputs[:4]]
         shapes_out = []
         params_in.append(self.inputs['Fill / Stroke'].sv_get(deepcopy=False, default=None))
         for params in zip(*mlr(params_in)):
-            shapes=[]
-            for loc, rad_x, rad_y, atts in zip(*mlr(params)):
-                print(atts)
-                shapes.append(SvgCircle(rad_x, rad_y, loc, atts))
+            shapes = []
+            for loc, rad_x, rad_y, angle, atts in zip(*mlr(params)):
+                shapes.append(SvgCircle(rad_x, rad_y, loc, angle, atts))
             shapes_out.append(SvgGroup(shapes))
         self.outputs[0].sv_set(shapes_out)
 
