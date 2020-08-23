@@ -8,6 +8,7 @@ from sverchok.utils.testing import SverchokTestCase, requires
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve.nurbs import SvGeomdlCurve, SvNativeNurbsCurve, SvNurbsBasisFunctions, SvNurbsCurve
+from sverchok.utils.curve.algorithms import interpolate_nurbs_curve
 from sverchok.utils.nurbs_common import elevate_bezier_degree, from_homogenous
 from sverchok.utils.surface.nurbs import SvGeomdlSurface, SvNativeNurbsSurface
 from sverchok.utils.surface.algorithms import SvCurveLerpSurface
@@ -632,4 +633,36 @@ class KnotvectorTests(SverchokTestCase):
         u4 = 0.5490196078431373
         expected = np.array([0,0,0,0, u4, 1,1,1,1])
         self.assert_numpy_arrays_equal(knotvector, expected, precision=6)
+
+class InterpolateTests(SverchokTestCase):
+    def test_interpolate_1(self):
+        "NURBS interpolation in 3D"
+        points = np.array([[0,0,0], [1,0,0], [1,1,0]], dtype=np.float64)
+        degree = 2
+        curve = interpolate_nurbs_curve(SvNativeNurbsCurve, degree, points)
+        ts = np.array([0, 0.5, 1])
+        result = curve.evaluate_array(ts)
+        self.assert_numpy_arrays_equal(result, points, precision=6)
+
+        ctrlpts = curve.get_control_points()
+        expected_ctrlpts = np.array([[ 0.0, 0.0,   0.0 ], [ 1.5, -0.5,  0.0 ], [ 1.0,   1.0,   0.0 ]])
+        self.assert_numpy_arrays_equal(ctrlpts, expected_ctrlpts, precision=6)
+
+    def test_interpolate_2(self):
+        "NURBS Interpolation in homogenous coordinates"
+        points = np.array([[0,0,0,1], [1,0,0,2], [1,1,0,1]], dtype=np.float64)
+        degree = 2
+        curve = interpolate_nurbs_curve(SvNativeNurbsCurve, degree, points)
+        ts = np.array([0, 0.5, 1])
+        result = curve.evaluate_array(ts)
+        expected = np.array([[0,0,0], [0.5,0,0], [1,1,0]])
+        self.assert_numpy_arrays_equal(result, expected, precision=6)
+
+        ctrlpts = curve.get_control_points()
+        expected_ctrlpts = np.array( [[ 0.0, 0.0, 0.0 ], [ 0.5, -0.16666667,  0.0 ], [ 1.0, 1.0, 0.0 ]])
+        self.assert_numpy_arrays_equal(ctrlpts, expected_ctrlpts, precision=6)
+
+        weights = curve.get_weights()
+        expected_weights = np.array([1, 3, 1])
+        self.assert_numpy_arrays_equal(weights, expected_weights, precision=6)
 

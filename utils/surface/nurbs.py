@@ -3,7 +3,7 @@ import numpy as np
 from collections import defaultdict
 
 from sverchok.utils.geom import Spline
-from sverchok.utils.nurbs_common import nurbs_divide, SvNurbsBasisFunctions
+from sverchok.utils.nurbs_common import nurbs_divide, SvNurbsBasisFunctions, from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import interpolate_nurbs_curve
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
@@ -469,7 +469,7 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', i
     if degree_v is None:
         degree_v = degree_u
 
-    src_points = [curve.get_control_points() for curve in curves]
+    src_points = [curve.get_homogenous_control_points() for curve in curves]
 #     lens = [len(pts) for pts in src_points]
 #     max_len, min_len = max(lens), min(lens)
 #     if max_len != min_len:
@@ -480,9 +480,15 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', i
     src_points = np.transpose(src_points, axes=(1,0,2))
 
     v_curves = [interpolate_nurbs_curve(curve_class, degree_v, points, metric) for points in src_points]
-    control_points = [curve.get_control_points() for curve in v_curves]
+    control_points = [curve.get_homogenous_control_points() for curve in v_curves]
     control_points = np.array(control_points)
-    weights = [curve.get_weights() for curve in v_curves]
+    #weights = [curve.get_weights() for curve in v_curves]
+    #weights = np.array([curve.get_weights() for curve in curves]).T
+    n,m,ndim = control_points.shape
+    control_points = control_points.reshape((n*m, ndim))
+    control_points, weights = from_homogenous(control_points)
+    control_points = control_points.reshape((n,m,3))
+    weights = weights.reshape((n,m))
 
     mean_v_vector = control_points.mean(axis=0)
     tknots_v = Spline.create_knots(mean_v_vector, metric=metric)
@@ -497,5 +503,5 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', i
                 degree_u, degree_v,
                 knotvector_u, knotvector_v,
                 control_points, weights)
-    return curves, surface
+    return curves, v_curves, surface
 
