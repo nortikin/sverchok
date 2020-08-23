@@ -16,29 +16,46 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 import os
-import ast
-import random
-import time
-from collections import namedtuple
-from typing import NamedTuple
-import numpy as np
+import webbrowser
+import sverchok
 import bpy
 from bpy.props import (
-    BoolProperty, StringProperty, EnumProperty, IntProperty, FloatProperty
+    BoolProperty, StringProperty, EnumProperty, FloatProperty
     )
 
-from mathutils.noise import seed_set, random
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.core.update_system import make_tree_from_nodes, do_update
 
 evolver_mem = {}
 
 pixels_to_mm = 3.77952756
 
-class SvSvgAppend(bpy.types.Operator):
+def spawn_server(save_path, file_name):
 
-    bl_idname = "node.svg_append"
+    _dirname = os.path.dirname(sverchok.__file__)
+    path1 = os.path.join(_dirname, 'utils', 'sv_svg_server.htm')
+    path2 = os.path.join(_dirname, 'utils', 'sv_svg_custom_server.htm')
+    # path2 = os.path.join(save_path, 'sv_svg_custom_server.html')
+    file_path = os.path.join(save_path, f'{file_name}.svg')
+    file_path_js = file_path.replace("\\","/")
+
+    with open(path1) as origin:
+        with open(path2, 'w') as destination:
+            for line in origin:
+                if '{{variable}}' in line:
+                    # destination.write(line.replace("{{variable}}", f'"{file_name}.svg"'))
+                    destination.write(line.replace("{{variable}}", f'"{file_path_js}"'))
+                else:
+                    destination.write(line)
+
+    webbrowser.open(path2)
+
+
+class SvSvgServer(bpy.types.Operator):
+    """
+    Opens in web browser a html file that updates frecuently showing the changes in the SVG file
+    """
+    bl_idname = "node.sv_svg_server"
     bl_label = "Append"
 
     idtree: bpy.props.StringProperty(default='')
@@ -47,17 +64,26 @@ class SvSvgAppend(bpy.types.Operator):
     def execute(self, context):
         tree = bpy.data.node_groups[self.idtree]
         node = bpy.data.node_groups[self.idtree].nodes[self.idname]
-
-        if not all([s.is_linked for s in node.inputs]):
+        inputs = node.inputs
+        if not (inputs['Folder Path'].is_linked and inputs['SVG Objects'].is_linked):
 
             return {'FINISHED'}
 
+        save_path = node.inputs[0].sv_get()[0]
+        file_name = node.file_name
+        bpy.ops.node.svg_write(idtree=self.idtree, idname=self.idname)
+        spawn_server(save_path, file_name)
 
         return {'FINISHED'}
 
+def get_template(complete_name):
+    old_svg_file = open(complete_name, "r")
+    data = old_svg_file.read()
+    file_end = data.find("</svg>")
+    return data[:file_end]
 
-def add_head(svg, width, height):
-    svg += '<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+str(width) +'mm" height="'+str(height)+'mm">\n'
+def add_head(width, height):
+    svg = f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:xlink="http://www.w3.org/1999/xlink" width="{width}mm" height="{height}mm">\n'
     return svg
 
 class SvSVGWrite(bpy.types.Operator):
@@ -69,21 +95,30 @@ class SvSVGWrite(bpy.types.Operator):
     idname: bpy.props.StringProperty(default='')
 
     def execute(self, context):
-        tree = bpy.data.node_groups[self.idtree]
         node = bpy.data.node_groups[self.idtree].nodes[self.idname]
-        if not all([s.is_linked for s in node.inputs]):
+        # if not all([s.is_linked for s in node.inputs]):
+        inputs = node.inputs
+        if not (inputs['Folder Path'].is_linked and inputs['SVG Objects'].is_linked):
 
             return {'FINISHED'}
+
+        save_path = inputs[0].sv_get()[0]
+        template_path = inputs[1].sv_get() if inputs[1].is_linked else []
+        shapes = inputs[2].sv_get()
+
         svg = ''
         scale = node.doc_scale
         doc_width = node.doc_width
         doc_height = node.doc_height
-        svg = add_head(svg, doc_width, doc_height)
+        if template_path:
+            svg += get_template(template_path[0])
+        else:
+            svg += add_head(doc_width, doc_height)
         height = doc_height
         if node.units == 'MM':
             scale *= pixels_to_mm
             height *= pixels_to_mm
-        shapes = node.inputs[1].sv_get()
+
 
 
         for shape in shapes:
@@ -91,7 +126,6 @@ class SvSVGWrite(bpy.types.Operator):
             svg += '\n'
 
         svg += '</svg>'
-        save_path = node.inputs[0].sv_get()[0]
         file_name = node.file_name
         complete_name = os.path.join(save_path, file_name+".svg")
         svg_file = open(complete_name, "w")
@@ -100,14 +134,16 @@ class SvSVGWrite(bpy.types.Operator):
         svg_file.close()
         return {'FINISHED'}
 
+
 class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Output SVG
-    Tooltip: Creates SVG document, define location, size and units 
+    Tooltip: Creates SVG document, define location, size and units
     """
     bl_idname = 'SvSvgDocumentNode'
     bl_label = 'SVG Document'
     bl_icon = 'RNA'
+    sv_icon = 'SV_SVG'
 
     mode_items = [
         ('MM', 'mm', '', 0),
@@ -134,22 +170,20 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
         name='Scale', description='Iterations',
         update=updateNode)
 
-
-    info_label: StringProperty(default="Not Executed")
-
-    memory: StringProperty(default="")
-    file_name: StringProperty(default="")
+    file_name: StringProperty(name="Name", default="Sv_svg")
+    live_update: BoolProperty(name='Live Update')
 
     def sv_init(self, context):
         self.width = 200
-        self.inputs.new('SvFilePathSocket', 'File Path')
+        self.inputs.new('SvFilePathSocket', 'Folder Path')
+        self.inputs.new('SvFilePathSocket', 'Template Path')
         self.inputs.new('SvSvgSocket', 'SVG Objects')
         self.outputs.new('SvVerticesSocket', 'Canvas Vertices')
         self.outputs.new('SvStringsSocket', 'Canvas Edges')
 
-
-
     def draw_buttons(self, context, layout):
+        layout.prop(self, "live_update")
+        self.wrapper_tracked_ui_draw_op(layout, "node.sv_svg_server", icon='RNA', text="Open Server")
         mode_row = layout.split(factor=0.4, align=False)
         mode_row.label(text="Units:")
         mode_row.prop(self, "units", text="")
@@ -157,29 +191,25 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "doc_width")
         layout.prop(self, "doc_height")
         layout.prop(self, "doc_scale")
-        self.wrapper_tracked_ui_draw_op(layout, "node.svg_append", icon='RNA', text="Append")
         self.wrapper_tracked_ui_draw_op(layout, "node.svg_write", icon='RNA_ADD', text="Write")
 
     def process(self):
 
-        # if self.node_id in evolver_mem and 'genes' in evolver_mem[self.node_id]:
         x = self.doc_width/(self.doc_scale)
         y = self.doc_height/(self.doc_scale)
         verts =[
-            (0,0,0),
-            (x,0,0),
-            (x,y,0),
-            (0,y,0),
+            (0, 0, 0),
+            (x, 0, 0),
+            (x, y, 0),
+            (0, y, 0),
 
 
         ]
         self.outputs['Canvas Vertices'].sv_set([verts])
         self.outputs['Canvas Edges'].sv_set([[(0, 1),(1, 2), (2, 3), (3, 0)]])
+        if self.live_update:
+            bpy.ops.node.svg_write(idtree=self.id_data.name, idname=self.name)
 
 
-
-
-
-
-classes = [SvSvgAppend, SvSVGWrite, SvSvgDocumentNode]
+classes = [SvSvgServer, SvSVGWrite, SvSvgDocumentNode]
 register, unregister = bpy.utils.register_classes_factory(classes)
