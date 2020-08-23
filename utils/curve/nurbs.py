@@ -446,7 +446,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         #return self.evaluate_array(np.array([t]))[0]
         numerator, denominator = self.fraction_single(0, t)
         if denominator == 0:
-            return 0
+            return np.array([0,0,0])
         else:
             return numerator / denominator
 
