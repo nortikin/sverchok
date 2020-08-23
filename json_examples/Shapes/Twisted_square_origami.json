@@ -1,0 +1,731 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        372.7096862792969,
+        -603.25537109375
+      ],
+      "params": {
+        "float_": 0.29999998211860657,
+        "float_draft_": 0.0,
+        "float_max": 1.0,
+        "float_min": 0.0,
+        "int_": 0,
+        "int_draft_": 0,
+        "show_limits": 1
+      },
+      "width": 140.0
+    },
+    "Constant List": {
+      "bl_idname": "SvConstantListNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        88.07112884521484,
+        -323.3764343261719
+      ],
+      "params": {
+        "float_value": -3.141590118408203,
+        "length": 6,
+        "mode": "FLOAT",
+        "out_level": 2
+      },
+      "width": 140.0
+    },
+    "Constant List.001": {
+      "bl_idname": "SvConstantListNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        98.20113372802734,
+        -509.06744384765625
+      ],
+      "params": {
+        "float_value": 3.141590118408203,
+        "length": 6,
+        "mode": "FLOAT",
+        "out_level": 2
+      },
+      "width": 140.0
+    },
+    "List Input": {
+      "bl_idname": "SvListInputNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -736.68603515625,
+        602.6008911132812
+      ],
+      "params": {
+        "mode": "vector",
+        "v_int": 8,
+        "vector_list": [
+          -1.0,
+          -1.0,
+          0.0,
+          1.0,
+          -1.0,
+          0.0,
+          -1.0,
+          1.0,
+          0.0,
+          1.0,
+          1.0,
+          0.0,
+          -1.0,
+          0.0,
+          0.0,
+          0.0,
+          -1.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "width": 246.10604858398438
+    },
+    "List Input.001": {
+      "bl_idname": "SvListInputNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -730.9505615234375,
+        295.66015625
+      ],
+      "params": {
+        "mode": "vector",
+        "v_int": 8,
+        "vector_list": [
+          0.0,
+          0.5,
+          0.0,
+          0.0,
+          -0.5,
+          0.0,
+          -0.5,
+          0.0,
+          0.0,
+          0.5,
+          0.0,
+          0.0,
+          -1.0,
+          -0.5,
+          0.0,
+          1.0,
+          0.5,
+          0.0,
+          0.5,
+          -1.0,
+          0.0,
+          -0.5,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "width": 246.10604858398438
+    },
+    "List Input.002": {
+      "bl_idname": "SvListInputNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -761.152099609375,
+        -41.42314147949219
+      ],
+      "params": {
+        "int_": 24,
+        "int_list": [
+          0,
+          1,
+          3,
+          2,
+          2,
+          0,
+          1,
+          3,
+          7,
+          4,
+          5,
+          6,
+          9,
+          9,
+          8,
+          8,
+          4,
+          6,
+          5,
+          7,
+          11,
+          8,
+          10,
+          9,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "width": 140.0
+    },
+    "List Input.003": {
+      "bl_idname": "SvListInputNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -605.6149291992188,
+        -127.58222961425781
+      ],
+      "params": {
+        "int_": 24,
+        "int_list": [
+          12,
+          14,
+          13,
+          15,
+          4,
+          5,
+          6,
+          7,
+          8,
+          10,
+          9,
+          11,
+          11,
+          10,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          14,
+          13,
+          15,
+          12,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "width": 140.0
+    },
+    "List Input.004": {
+      "bl_idname": "SvListInputNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -864.8081665039062,
+        -667.9407958984375
+      ],
+      "params": {
+        "int_": 9,
+        "int_list": [
+          11,
+          5,
+          0,
+          4,
+          9,
+          11,
+          8,
+          15,
+          12,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "width": 140.0
+    },
+    "List Input.005": {
+      "bl_idname": "SvListInputNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -710.5880737304688,
+        -753.2420654296875
+      ],
+      "params": {
+        "int_": 9,
+        "int_list": [
+          6,
+          14,
+          5,
+          10,
+          11,
+          14,
+          13,
+          10,
+          9,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "width": 140.0
+    },
+    "List Input.006": {
+      "bl_idname": "SvListInputNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -562.9304809570312,
+        -809.0159912109375
+      ],
+      "params": {
+        "int_": 9,
+        "int_list": [
+          13,
+          11,
+          9,
+          15,
+          8,
+          1,
+          3,
+          8,
+          10,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "width": 140.0
+    },
+    "List Input.007": {
+      "bl_idname": "SvListInputNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -411.9916076660156,
+        -895.9576416015625
+      ],
+      "params": {
+        "int_": 9,
+        "int_list": [
+          8,
+          9,
+          12,
+          2,
+          10,
+          6,
+          7,
+          7,
+          4,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "width": 140.0
+    },
+    "List Input.008": {
+      "bl_idname": "SvListInputNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -88.00865173339844,
+        -279.174560546875
+      ],
+      "params": {
+        "int_": 12,
+        "int_list": [
+          9,
+          14,
+          21,
+          8,
+          13,
+          20,
+          11,
+          12,
+          23,
+          22,
+          15,
+          10,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mode": "int_list"
+      },
+      "width": 140.0
+    },
+    "List Join": {
+      "bl_idname": "ListJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -370.39654541015625,
+        325.951171875
+      ],
+      "params": {
+        "JoinLevel": 2
+      },
+      "width": 140.0
+    },
+    "List Join.001": {
+      "bl_idname": "ListJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        292.4765319824219,
+        -322.4739685058594
+      ],
+      "params": {
+        "JoinLevel": 2
+      },
+      "width": 140.0
+    },
+    "List Zip": {
+      "bl_idname": "ZipNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -348.8019104003906,
+        60.930885314941406
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Zip.001": {
+      "bl_idname": "ZipNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -309.25653076171875,
+        -162.9715118408203
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Rigid Origami": {
+      "bl_idname": "SvRigidOrigamiNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        763.9081420898438,
+        215.3949737548828
+      ],
+      "params": {
+        "division_count": 20,
+        "fixed_face_index": 5
+      },
+      "width": 140.0
+    },
+    "Viewer Draw Mk3": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.5889999866485596,
+        0.21400000154972076
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1082.3763427734375,
+        55.88702392578125
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Index+": {
+      "bl_idname": "SvIDXViewer28",
+      "color": [
+        1.0,
+        0.5889999866485596,
+        0.21400000154972076
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1072.5218505859375,
+        -243.89556884765625
+      ],
+      "params": {
+        "activate": 0,
+        "display_edge_index": 1,
+        "display_vert_index": 0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "List Input",
+      0,
+      "List Join",
+      0
+    ],
+    [
+      "List Input.001",
+      0,
+      "List Join",
+      1
+    ],
+    [
+      "List Input.002",
+      0,
+      "List Zip",
+      0
+    ],
+    [
+      "List Input.003",
+      0,
+      "List Zip",
+      1
+    ],
+    [
+      "List Input.004",
+      0,
+      "List Zip.001",
+      0
+    ],
+    [
+      "List Input.005",
+      0,
+      "List Zip.001",
+      1
+    ],
+    [
+      "List Input.006",
+      0,
+      "List Zip.001",
+      2
+    ],
+    [
+      "List Input.007",
+      0,
+      "List Zip.001",
+      3
+    ],
+    [
+      "Constant List",
+      0,
+      "List Join.001",
+      0
+    ],
+    [
+      "Constant List.001",
+      0,
+      "List Join.001",
+      1
+    ],
+    [
+      "List Join",
+      0,
+      "Rigid Origami",
+      0
+    ],
+    [
+      "List Zip",
+      0,
+      "Rigid Origami",
+      1
+    ],
+    [
+      "List Zip.001",
+      0,
+      "Rigid Origami",
+      2
+    ],
+    [
+      "List Input.008",
+      0,
+      "Rigid Origami",
+      3
+    ],
+    [
+      "List Join.001",
+      0,
+      "Rigid Origami",
+      4
+    ],
+    [
+      "A Number",
+      0,
+      "Rigid Origami",
+      5
+    ],
+    [
+      "Rigid Origami",
+      0,
+      "Viewer Index+",
+      0
+    ],
+    [
+      "List Zip",
+      0,
+      "Viewer Index+",
+      1
+    ],
+    [
+      "Rigid Origami",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "List Zip",
+      0,
+      "Viewer Draw Mk3",
+      1
+    ],
+    [
+      "List Zip.001",
+      0,
+      "Viewer Draw Mk3",
+      2
+    ]
+  ]
+}

@@ -8,13 +8,21 @@
 import numpy as np
 
 from mathutils import Vector, Matrix
-from sverchok.utils.curve.core import SvCurve, ZeroCurvatureException
-from sverchok.utils.geom import PlaneEquation, LineEquation, LinearSpline, CubicSpline
+from sverchok.utils.curve.core import (
+        SvCurve, ZeroCurvatureException,
+        SvCurveSegment, SvReparametrizedCurve,
+        SvFlipCurve, SvConcatCurve,
+        UnsupportedCurveTypeException
+    )
+from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, from_homogenous
+from sverchok.utils.curve import knotvector as sv_knotvector
+from sverchok.utils.geom import PlaneEquation, LineEquation, Spline, LinearSpline, CubicSpline
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
 from sverchok.utils.math import (
     ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
     NORMAL_DIR
 )
+from sverchok.utils.logging import info
 
 def make_euclidian_ts(pts):
     tmp = np.linalg.norm(pts[:-1] - pts[1:], axis=1)
@@ -692,4 +700,142 @@ def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, on_zero_curvat
     matrices_np = np.transpose(matrices_np, axes=(0,2,1))
     matrices_np = np.linalg.inv(matrices_np)
     return matrices_np, surf_points, tangents, normals, binormals
+
+def concatenate_curves(curves, scale_to_unit=False):
+    if not curves:
+        raise Exception("List of curves must be not empty")
+    result = [curves[0]]
+    some_native = False
+    for idx, curve in enumerate(curves[1:]):
+        new_curve = None
+        ok = False
+        if hasattr(result[-1], 'concatenate'):
+            try:
+                if scale_to_unit:
+                    # P.1: try to join with rescaled curve
+                    new_curve = result[-1].concatenate(reparametrize_curve(curve))
+                else:
+                    new_curve = result[-1].concatenate(curve)
+                some_native = True
+                ok = True
+            except UnsupportedCurveTypeException as e:
+                # "concatenate" method can't work with this type of curve
+                info("Can't natively join curve #%s (%s), will use generic method: %s", idx+1, curve, e)
+                # P.2: if some curves were already joined natively,
+                # then we have to rescale each of other curves separately
+                if some_native and scale_to_unit:
+                    curve = reparametrize_curve(curve)
+
+        #print(f"C: {curve}, prev: {result[-1]}, ok: {ok}, new: {new_curve}")
+
+        if ok:
+            result[-1] = new_curve
+        else:
+            result.append(curve)
+
+    if len(result) == 1:
+        return result[0]
+    else:
+        # if any of curves were scaled while joining natively (at P.1),
+        # then all other were scaled at P.2;
+        # if no successfull joins were made, then we can rescale all curves
+        # at once.
+        return SvConcatCurve(result, scale_to_unit and not some_native)
+
+def reparametrize_curve(curve, new_t_min=0.0, new_t_max=1.0):
+    t_min, t_max = curve.get_u_bounds()
+    if t_min == new_t_min and t_max == new_t_max:
+        return curve
+    if hasattr(curve, 'reparametrize'):
+        return curve.reparametrize(new_t_min, new_t_max)
+    else:
+        return SvReparametrizedCurve(curve, new_t_min, new_t_max)
+
+def reverse_curve(curve):
+    if hasattr(curve, 'reverse'):
+        return curve.reverse()
+    else:
+        return SvFlipCurve(curve)
+
+def split_curve(curve, splits, rescale=False):
+    if hasattr(curve, 'split_at'):
+        result = []
+        for split in splits:
+            head, tail = curve.split_at(split)
+            if rescale:
+                head = reparametrize_curve(head, 0, 1)
+            result.append(head)
+            curve = tail
+        if rescale:
+            tail = reparametrize_curve(tail, 0, 1)
+        result.append(tail)
+        return result
+    else:
+        t_min, t_max = curve.get_u_bounds()
+        if splits[0] != t_min:
+            splits.insert(0, t_min)
+        if splits[-1] != t_max:
+            splits.append(t_max)
+        pairs = zip(splits, splits[1:])
+        result = []
+        for start, end in pairs:
+            segment = SvCurveSegment(curve, start, end, rescale)
+            result.append(segment)
+        return result
+
+def curve_segment(curve, new_t_min, new_t_max, rescale=False):
+    t_min, t_max = curve.get_u_bounds()
+    if hasattr(curve, 'split_at') and (new_t_min > t_min or new_t_max < t_max):
+        if new_t_min > t_min:
+            start, curve = curve.split_at(new_t_min)
+        if new_t_max < t_max:
+            curve, end = curve.split_at(new_t_max)
+        if rescale:
+            curve = reparametrize_curve(curve, 0, 1)
+        return curve
+    else:
+        return SvCurveSegment(curve, new_t_min, new_t_max, rescale)
+
+def interpolate_nurbs_curve(cls, degree, points, metric='DISTANCE'):
+    n = len(points)
+    if points.ndim != 2:
+        raise Exception(f"Array of points was expected, but got {points.shape}: {points}")
+    ndim = points.shape[1] # 3 or 4
+    if ndim not in {3,4}:
+        raise Exception(f"Only 3D and 4D points are supported, but ndim={ndim}")
+    #points3d = points[:,:3]
+    #print("pts:", points)
+    tknots = Spline.create_knots(points, metric=metric) # In 3D or in 4D, in general?
+    knotvector = sv_knotvector.from_tknots(degree, tknots)
+    functions = SvNurbsBasisFunctions(knotvector)
+    coeffs_by_row = [functions.function(idx, degree)(tknots) for idx in range(n)]
+    A = np.zeros((ndim*n, ndim*n))
+    for equation_idx, t in enumerate(tknots):
+        for unknown_idx in range(n):
+            coeff = coeffs_by_row[unknown_idx][equation_idx]
+            row = ndim*equation_idx
+            col = ndim*unknown_idx
+            for d in range(ndim):
+                A[row+d, col+d] = coeff
+    B = np.zeros((ndim*n,1))
+    for point_idx, point in enumerate(points):
+        row = ndim*point_idx
+        B[row:row+ndim] = point[:,np.newaxis]
+
+    x = np.linalg.solve(A, B)
+
+    control_points = []
+    for i in range(n):
+        row = i*ndim
+        control = x[row:row+ndim,0].T
+        control_points.append(control)
+    control_points = np.array(control_points)
+    if ndim == 3:
+        weights = np.ones((n,))
+    else: # 4
+        control_points, weights = from_homogenous(control_points)
+
+    return cls.build(cls.get_nurbs_implementation(),
+                degree, knotvector,
+                control_points, weights)
 

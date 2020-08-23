@@ -41,4 +41,5 @@ Modifier Change
    separate_parts_to_indexes
    extrude_multi_alt
    dissolve_mesh_elements
+   rigid_origami
    flat_geometry

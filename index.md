@@ -53,7 +53,7 @@
     SvPentagonTilerNode
     SvSpiralNodeMK2
 
-## Curves
+## Curves @ Primitives
     SvExLineCurveNode
     SvExCircleNode
     SvEllipseCurveNode
@@ -61,21 +61,32 @@
     SvArc3ptCurveNode
     SvArcSedCurveNode
     SvExCatenaryCurveNode
-    SvPolyArcNode
-    SvExCurveFormulaNode
+    ---
     SvExPolylineNode
     SvExFilletPolylineNode
-    SvExCubicSplineNode
-    SvBezierSplineNode
-    SvExNurbsCurveNode
     SvKinkyCurveNode
+    SvPolyArcNode
+
+## Curves @ NURBS
+    SvExNurbsCurveNode
+    SvExApproxNurbsCurveNode
+    SvExInterpolateNurbsCurveNode
+    SvDeconstructCurveNode
+
+## Curves @ Bezier
+    SvBezierSplineNode
+    SvExBezierCurveFitNode
+
+## Curves
+    @ Primitives
+    SvExCurveFormulaNode
+    SvExCubicSplineNode
     SvTangentsCurveNode
     SvExRbfCurveNode
     SvExCirclifyNode
+    @ Bezier
+    @ NURBS
     ---
-    SvExApproxNurbsCurveNode
-    SvExInterpolateNurbsCurveNode
-    SvExBezierCurveFitNode
     SvExMarchingSquaresNode
     SvExMSquaresOnSurfaceNode
     ---
@@ -115,18 +126,21 @@
     ---
     SvExEvalCurveNode
 
+## Surfaces @ NURBS
+    SvExNurbsSurfaceNode
+    SvExApproxNurbsSurfaceNode
+    SvExInterpolateNurbsSurfaceNode
+    SvNurbsLoftNode
+    SvExQuadsToNurbsNode
+
 ## Surfaces
     SvExPlaneSurfaceNode
     SvExSphereNode
     SvExSurfaceFormulaNode
     SvInterpolatingSurfaceNode
-    SvExNurbsSurfaceNode
     SvExMinimalSurfaceNode
     SvExMinSurfaceFromCurveNode
-    ---
-    SvExApproxNurbsSurfaceNode
-    SvExInterpolateNurbsSurfaceNode
-    SvExQuadsToNurbsNode
+    @ NURBS
     ---
     SvExRevolutionSurfaceNode
     SvExTaperSweepSurfaceNode
@@ -305,6 +319,7 @@
     SvPokeFacesNode
     SvVertMaskNode
     SvSplitEdgesNode
+    SvRigidOrigamiNode
     ---
     SvFollowActiveQuads
     SvFlatGeometryNode
@@ -353,6 +368,7 @@
     SvDatetimeStrings
     SvVDAttrsNode
     SvPolygonSortNode
+    SvFindClosestValue
 
 ## List Main
     ListJoinNode
@@ -497,6 +513,7 @@
     SvMetaballOutNode
     SvNurbsCurveOutNode
     SvNurbsSurfaceOutNode
+    SvInstancerNodeMK3
     ---
     SvGreasePencilStrokes
     SvEmptyOutNode
@@ -548,7 +565,6 @@
     SvTimerNode
     ---
     SvInstancerNode
-    SvInstancerNodeMK2
     SvDupliInstancesMK4
     SvLampOutNode
 

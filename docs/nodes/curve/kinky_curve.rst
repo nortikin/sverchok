@@ -37,6 +37,14 @@ This node has the following parameters:
   each smooth segment of the curve. Checked by default.
 * **Cyclic**. If checked, the node will generate a cyclic (closed) curve.
   Unchecked by default.
+* **NURBS output**. This parameter is available in the N panel only. If
+  checked, the node will output a NURBS curve. Built-in NURBS maths
+  implementation will be used. If not checked, the node will output generic
+  concatenated curve from several straight segments and circular arcs. In most
+  cases, there will be no difference; you may wish to output NURBS if you want
+  to use NURBS-specific API methods with generated curve, or if you want to
+  output the result in file format that understands NURBS only. Unchecked by
+  default.
 * **Metric**. This parameter is available in the N panel only. This defines the
   metric used to calculate curve's T parameter values corresponding to
   specified curve points. The available values are:

@@ -7,6 +7,7 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.geom import circle_by_start_end_tangent
 from sverchok.utils.curve import SvCircle, SvLine, SvConcatCurve
+from sverchok.utils.curve.algorithms import concatenate_curves
 
 class SvPolyArcNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -30,6 +31,12 @@ class SvPolyArcNode(bpy.types.Node, SverchCustomTreeNode):
             default = False,
             update = updateNode)
 
+    make_nurbs : BoolProperty(
+        name = "NURBS output",
+        description = "Generate a NURBS curve",
+        default = False,
+        update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvVerticesSocket', "Tangent")
@@ -41,6 +48,10 @@ class SvPolyArcNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "concat", toggle=True)
         layout.prop(self, "is_cyclic", toggle=True)
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'make_nurbs', toggle=True)
 
     def calc_tangent(self, verts):
         S = -Vector(verts[0])
@@ -100,8 +111,10 @@ class SvPolyArcNode(bpy.types.Node, SverchCustomTreeNode):
                     new_angles.append(angle)
                 new_curves.append(curve)
 
+            if self.make_nurbs:
+                new_curves = [c.to_nurbs() for c in new_curves]
             if self.concat:
-                new_curves = [SvConcatCurve(new_curves)]
+                new_curves = [concatenate_curves(new_curves)]
             curve_out.append(new_curves)
             center_out.append(new_centers)
             radius_out.append(new_radius)

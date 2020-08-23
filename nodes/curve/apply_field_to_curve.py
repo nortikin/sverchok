@@ -9,6 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 
 from sverchok.utils.field.vector import SvVectorField
 from sverchok.utils.curve import SvDeformedByFieldCurve, SvCurve
+from sverchok.utils.curve.nurbs import SvNurbsCurve
 
 class SvApplyFieldToCurveNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -26,11 +27,19 @@ class SvApplyFieldToCurveNode(bpy.types.Node, SverchCustomTreeNode):
                 default = 1.0,
                 update=updateNode)
 
+        use_control_points : BoolProperty(
+                name = "Use Control Points",
+                default = False,
+                update=updateNode)
+
         def sv_init(self, context):
             self.inputs.new('SvVectorFieldSocket', "Field")
             self.inputs.new('SvCurveSocket', "Curve")
             self.inputs.new('SvStringsSocket', "Coefficient").prop_name = 'coefficient'
             self.outputs.new('SvCurveSocket', "Curve")
+
+        def draw_buttons(self, context, layout):
+            layout.prop(self, "use_control_points", toggle=True)
 
         def process(self):
             if not any(socket.is_linked for socket in self.outputs):
@@ -47,7 +56,32 @@ class SvApplyFieldToCurveNode(bpy.types.Node, SverchCustomTreeNode):
             curve_out = []
             for curve_i, field_i, coeff_i in zip_long_repeat(curve_s, field_s, coeff_s):
                 for curve, field, coeff in zip_long_repeat(curve_i, field_i, coeff_i):
-                    new_curve = SvDeformedByFieldCurve(curve, field, coeff)
+                    if self.use_control_points:
+                        nurbs = SvNurbsCurve.to_nurbs(curve)
+                        if nurbs is not None:
+                            control_points = nurbs.get_control_points()
+                        else:
+                            raise Exception("Curve is not a NURBS!")
+
+                        cpt_xs = control_points[:,0]
+                        cpt_ys = control_points[:,1]
+                        cpt_zs = control_points[:,2]
+
+                        cpt_dxs, cpt_dys, cpt_dzs = field.evaluate_grid(cpt_xs, cpt_ys, cpt_zs)
+                        xs = cpt_xs + coeff * cpt_dxs
+                        ys = cpt_ys + coeff * cpt_dys
+                        zs = cpt_zs + coeff * cpt_dzs
+
+                        control_points = np.stack((xs, ys, zs)).T
+
+                        knotvector = nurbs.get_knotvector()
+                        #old_t_min, old_t_max = curve.get_u_bounds()
+                        #knotvector = sv_knotvector.rescale(knotvector, old_t_min, old_t_max)
+                        new_curve = SvNurbsCurve.build(nurbs.get_nurbs_implementation(),
+                                        nurbs.get_degree(), knotvector, 
+                                        control_points, nurbs.get_weights())
+                    else:
+                        new_curve = SvDeformedByFieldCurve(curve, field, coeff)
                     curve_out.append(new_curve)
 
             self.outputs['Curve'].sv_set(curve_out)

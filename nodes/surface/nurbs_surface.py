@@ -211,6 +211,8 @@ class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 surf_knotvector_v = knots_v
 
             new_surf = SvNurbsSurface.build(self.implementation, degree_u, degree_v, surf_knotvector_u, surf_knotvector_v, vertices, weights, self.normalize_knots)
+            surf_knotvector_u = new_surf.get_knotvector_u().tolist()
+            surf_knotvector_v = new_surf.get_knotvector_v().tolist()
             if self.is_cyclic_u:
                 u_min = surf_knotvector_u[degree_u]
                 u_max = surf_knotvector_u[-degree_u-2]

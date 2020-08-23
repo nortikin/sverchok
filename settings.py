@@ -268,7 +268,7 @@ class SverchokPreferences(AddonPreferences):
         items = node_panel_modes,
         name = "Display node buttons",
         description = "Where to show node insertion buttons. Restart Blender to apply changes.",
-        default = "X")
+        default = "T")
 
     node_panels_icons_only : BoolProperty(
             name = "Display icons only",

@@ -8,6 +8,65 @@
 import numpy as np
 
 from sverchok.utils.math import binomial
+from sverchok.utils.curve import knotvector as sv_knotvector
+from sverchok.dependencies import geomdl
+
+class SvNurbsMaths(object):
+    """
+    This class allows modules such as curve.primitives and others to
+    create NURBS curves or surfaces without need to import curves.nurbs
+    or surfaces.nurbs. It is required to exclude such imports because
+    curves.nurbs and surfaces.nurbs require curves.primitives and several
+    other curves.* and surfaces.* modules.
+    """
+    NATIVE = 'NATIVE'
+    GEOMDL = 'GEOMDL'
+
+    # Classes by implementation
+    curve_classes = dict()
+    surface_classes = dict()
+
+    @staticmethod
+    def build_curve(implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
+        kv_error = sv_knotvector.check(degree, knotvector, len(control_points))
+        if kv_error is not None:
+            raise Exception(kv_error)
+        nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+        if nurbs_class is None:
+            raise Exception(f"Unsupported NURBS Curve implementation: {implementation}")
+        else:
+            return nurbs_class.build(implementation, degree, knotvector, control_points, weights, normalize_knots)
+
+    @staticmethod
+    def build_surface(implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights=None, normalize_knots=False):
+        kv_error = sv_knotvector.check(degree_u, knotvector_u, len(control_points))
+        if kv_error is not None:
+            raise Exception("U direction: " + kv_error)
+        kv_error = sv_knotvector.check(degree_v, knotvector_v, len(control_points[0]))
+        if kv_error is not None:
+            raise Exception("V direction: " + kv_error)
+
+        nurbs_class = SvNurbsMaths.surface_classes.get(implementation)
+        if nurbs_class is None:
+            raise Exception(f"Unsupported NURBS Surface implementation: {implementation}")
+        else:
+            return nurbs_class.build(implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights)
+
+    @staticmethod
+    def to_nurbs_curve(curve, implementation = NATIVE):
+        nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+        if nurbs_class is None:
+            raise Exception(f"Unsupported NURBS Curve implementation: {implementation}")
+        else:
+            return nurbs_class.to_nurbs(curve, implementation)
+
+    @staticmethod
+    def to_nurbs_surface(surface, implementation = NATIVE):
+        nurbs_class = SvNurbsMaths.surface_classes.get(implementation)
+        if nurbs_class is None:
+            raise Exception(f"Unsupported NURBS Surface implementation: {implementation}")
+        else:
+            return nurbs_class.to_nurbs(surface, implementation)
 
 def nurbs_divide(numerator, denominator):
     if denominator.ndim != 2:
@@ -49,81 +108,102 @@ class SvNurbsBasisFunctions(object):
         self.knotvector = np.array(knotvector)
         self._cache = dict()
 
-    def function(self, i, p):
-        f = self._cache.get((i,p, 0))
-        if f is not None:
-            return f
+    def function(self, i, p, reset_cache=True):
+        if reset_cache:
+            self._cache = dict()
+        def calc(us):
+            value = self._cache.get((i,p, 0))
+            if value is not None:
+                return value
 
-        u = self.knotvector
-        if p <= 0:
-            if i < 0 or i >= len(self.knotvector):
+            u = self.knotvector
+            if p <= 0:
+                if i < 0 or i >= len(u):
 
-                def n0(us):
-                    return np.zeros_like(us)
-            else:
+                    value = np.zeros_like(us)
+                    self._cache[(i,p,0)] = value
+                    return value
+                        
+                else:
 
-                def n0(us):
-                    is_last = u[i+1] >= self.knotvector[-1]
-                    if is_last:
-                        c2 = us <= u[i+1]
+                    if i+1 >= len(u):
+                        u_next = u[-1]
+                        is_last = True
                     else:
-                        c2 = us < u[i+1]
+                        u_next = u[i+1]
+                        is_last = u_next >= u[-1]
+                    if is_last:
+                        c2 = us <= u_next
+                    else:
+                        c2 = us < u_next
                     condition = np.logical_and(u[i] <= us, c2)
-                    return np.where(condition, 1.0, 0.0)
+                    value = np.where(condition, 1.0, 0.0)
+                    self._cache[(i,p,0)] = value
+                    return value
 
-            self._cache[(i,p,0)] = n0
-            return n0
-        else:
-            n1 = self.function(i, p-1)
-            n2 = self.function(i+1, p-1)
-
-            def f(us):
+            else:
                 denom1 = (u[i+p] - u[i])
-                try:
-                    denom2 = (u[i+p+1] - u[i+1])
-                except IndexError as e:
-                    print(f"u: {u}, i: {i}, p: {p}")
-                    raise e
-                if denom1 == 0:
-                    c1 = 0
-                else:
-                    c1 = (us - u[i]) / denom1
-                if denom2 == 0:
-                    c2 = 0
-                else:
+                denom2 = (u[i+p+1] - u[i+1])
+
+                if denom1 != 0:
+                    n1 = self.function(i, p-1, reset_cache=False)(us)
+                if denom2 != 0:
+                    n2 = self.function(i+1, p-1, reset_cache=False)(us)
+
+                if denom1 == 0 and denom2 == 0:
+                    value = np.zeros_like(us)
+                    self._cache[(i,p,0)] = value
+                    return value
+                elif denom1 == 0 and denom2 != 0:
                     c2 = (u[i+p+1] - us) / denom2
-                return c1 * n1(us) + c2 * n2(us)
+                    value = c2 * n2
+                    self._cache[(i,p,0)] = value
+                    return value
+                elif denom1 != 0 and denom2 == 0:
+                    c1 = (us - u[i]) / denom1
+                    value = c1 * n1
+                    self._cache[(i,p,0)] = value
+                    return value
+                else: # denom1 != 0 and denom2 != 0
+                    c1 = (us - u[i]) / denom1
+                    c2 = (u[i+p+1] - us) / denom2
+                    value = c1 * n1 + c2 * n2
+                    self._cache[(i,p,0)] = value
+                    return value
+        return calc
 
-            self._cache[(i,p,0)] = f
-            return f
+    def derivative(self, i, p, k, reset_cache=True):
+        if reset_cache:
+            self._cache = dict()
 
-    def derivative(self, i, p, k):
         if k == 0:
-            return self.function(i, p)
-        f = self._cache.get((i, p, k))
-        if f is not None:
-            return f
-        
-        n1 = self.derivative(i, p-1, k-1)
-        n2 = self.derivative(i+1, p-1, k-1)
-        u = self.knotvector
+            return self.function(i, p, reset_cache=False)
 
-        def f(us):
+        def calc(us):
+            value = self._cache.get((i, p, k))
+            if value is not None:
+                return value
+            
+            n1 = self.derivative(i, p-1, k-1, reset_cache=False)(us)
+            n2 = self.derivative(i+1, p-1, k-1, reset_cache=False)(us)
+            u = self.knotvector
+
             denom1 = u[i+p] - u[i]
             denom2 = u[i+p+1] - u[i+1]
 
             if denom1 == 0:
                 s1 = 0
             else:
-                s1 = n1(us) / denom1
+                s1 = n1 / denom1
 
             if denom2 == 0:
                 s2 = 0
             else:
-                s2 = n2(us) / denom2
+                s2 = n2 / denom2
 
-            return p*(s1 - s2)
+            value = p*(s1 - s2)
+            self._cache[(i,p,k)] = value
+            return value
         
-        self._cache[(i,p,k)] = f
-        return f
+        return calc
 

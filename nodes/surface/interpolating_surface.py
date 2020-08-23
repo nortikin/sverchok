@@ -12,13 +12,13 @@ from sverchok.utils.geom import LinearSpline, CubicSpline
 from sverchok.utils.surface.algorithms import SvInterpolatingSurface
 from sverchok.utils.curve import SvSplineCurve, make_euclidian_ts
 from sverchok.dependencies import geomdl, scipy
-from sverchok.utils.curve.nurbs import SvGeomdlCurve
+from sverchok.utils.curve.nurbs import SvNurbsCurve, SvGeomdlCurve, SvNativeNurbsCurve
 from sverchok.utils.curve.rbf import SvRbfCurve
 from sverchok.utils.math import rbf_functions
 
 class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Interpolating surface from curves
+    Triggers: Loft / Interpolating surface from curves
     Tooltip: Generate interpolating surface across several curves
     """
     bl_idname = 'SvInterpolatingSurfaceNode'
@@ -31,8 +31,7 @@ class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             ('LIN', "Linear", "Linear interpolation", 0),
             ('CUBIC', "Cubic", "Cubic interpolation", 1)
         ]
-        if geomdl is not None:
-            modes.append(('BSPLINE', "B-Spline", "B-Spline interpolation", 2))
+        modes.append(('BSPLINE', "B-Spline", "B-Spline interpolation", 2))
         if scipy is not None:
             modes.append(('RBF', "RBF", "RBF interpolation", 3))
         return modes
@@ -42,6 +41,22 @@ class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Degree'].hide_safe = self.interp_mode != 'BSPLINE'
         self.inputs['Smooth'].hide_safe = self.interp_mode != 'RBF'
         self.inputs['Epsilon'].hide_safe = self.interp_mode != 'RBF'
+
+    def get_implementations(self, context):
+        items = []
+        i = 0
+        if geomdl is not None:
+            item = (SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation",i)
+            i += 1
+            items.append(item)
+        item = (SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", i)
+        items.append(item)
+        return items
+
+    nurbs_implementation : EnumProperty(
+            name = "Implementation",
+            items = get_implementations,
+            update = updateNode)
 
     interp_mode : EnumProperty(
         name = "Interpolation mode",
@@ -93,11 +108,15 @@ class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 spline = CubicSpline(vertices, metric='DISTANCE', is_cyclic=self.is_cyclic)
                 return SvSplineCurve(spline)
             return make
-        elif geomdl is not None and self.interp_mode == 'BSPLINE':
-            from geomdl import fitting
+        elif self.interp_mode == 'BSPLINE':
             def make(vertices):
-                curve = fitting.interpolate_curve(vertices, degree, centripetal=self.centripetal)
-                return SvGeomdlCurve(curve)
+                metric = 'CENTRIPETAL' if self.centripetal else 'DISTANCE'
+                vertices = np.array(vertices)
+                if geomdl is not None and self.nurbs_implementation == SvNurbsCurve.GEOMDL:
+                    curve = SvGeomdlCurve.interpolate(degree, vertices, metric=metric)
+                else:
+                    curve = SvNativeNurbsCurve.interpolate(degree, vertices, metric=metric)
+                return curve
             return make
         elif scipy is not None and self.interp_mode == 'RBF':
             from scipy.interpolate import Rbf
@@ -119,6 +138,7 @@ class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         if self.interp_mode in {'LIN', 'CUBIC'}:
             layout.prop(self, 'is_cyclic', toggle=True)
         if self.interp_mode == 'BSPLINE':
+            layout.prop(self, 'nurbs_implementation', text='')
             layout.prop(self, 'centripetal', toggle=True)
         if self.interp_mode == 'RBF':
             layout.prop(self, 'function')

@@ -8,6 +8,7 @@ class LinearSplineTests(SverchokTestCase):
     def setUp(self):
         super().setUp()
         vertices = [(-1, -1, 0), (0, 0, 0), (1, 2, 0), (2, 3, 0)]
+        self.control_points = np.array(vertices)
         self.spline = LinearSpline(vertices, metric="DISTANCE")
 
     def test_eval(self):
@@ -35,4 +36,10 @@ class LinearSplineTests(SverchokTestCase):
                  [-1, -2,  0],
                  [-1, -1,  0]])
         self.assert_numpy_arrays_equal(result, expected_result)
+
+    def test_control_points(self):
+        points = self.spline.get_control_points()
+        self.assertEquals(points.shape, (3,2,3))
+        expected = np.array(list(zip(self.control_points, self.control_points[1:])))
+        self.assert_numpy_arrays_equal(points, expected)
 

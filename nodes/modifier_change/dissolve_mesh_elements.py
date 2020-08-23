@@ -80,11 +80,3 @@ class SvDissolveMeshElements(bpy.types.Node, SverchCustomTreeNode):
             node.outputs.verts, node.outputs.edges, node.outputs.faces = v, e, f
             node.outputs.verts_ind, node.outputs.edges_ind, node.outputs.faces_ind = vi, ei, fi
             node.outputs.loop_ind = li
-
-
-def register():
-    bpy.utils.register_class(SvDissolveMeshElements)
-
-
-def unregister():
-    bpy.utils.unregister_class(SvDissolveMeshElements)

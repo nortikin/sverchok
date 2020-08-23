@@ -34,8 +34,7 @@ class SvTestNode(bpy.types.Node, SverchCustomTreeNode):
         node.outputs.verts = [(v[0] + x, v[1] + y, v[2]) for v, x, y in zip(
                               node.inputs.verts, cycle(node.inputs.x_axis), cycle(node.inputs.y_axis))]
 
-
-def register(): bpy.utils.register_class(SvTestNode), def untegister(): bpy.utils.unregister_class(SvTestNode)
+# the class will be registered automatically
 """
 
 
@@ -44,10 +43,12 @@ from contextlib import contextmanager
 from copy import copy
 from enum import Enum
 from functools import wraps
-from operator import setitem
-from typing import NamedTuple, Any, Type, Dict, Union, ValuesView
+from typing import NamedTuple, Any, Type, Dict, Union, ValuesView, Callable
 
+import bpy
 from bpy.types import Node
+
+from sverchok.data_structure import updateNode
 
 
 class WrapNode:
@@ -59,13 +60,16 @@ class WrapNode:
 
         self.bl_node: Union[Node, None] = None
         self.layer_number: Union[int, None] = None
-        self.is_in_process: bool = False
+        self.is_in_read_mode: bool = False
 
     def set_sv_init_method(self, node_class: Type[Node]):
         def sv_init(node, context):
             # the problem here is that it looks like Blender can't ketch any error from here if it is
             self.outputs.add_sockets(node)
             self.inputs.add_sockets(node)
+            with self.read_data_mode(node):
+                self.inputs.hide_sockets(node)
+                self.outputs.hide_sockets(node)
         node_class.sv_init = sv_init
 
     def decorate_process_method(self, node_class: Type[Node]):
@@ -74,7 +78,7 @@ class WrapNode:
             @wraps(node_class.process)
             def wrapper(node: Node):
                 if self.inputs.has_required_data(node):
-                    with self.read_socket_data(node):
+                    with self.read_data_mode(node):
                         for _ in self.layers_iterator():
                             process(node)
                         self.outputs.set_data_to_bl_sockets()
@@ -84,15 +88,18 @@ class WrapNode:
         node_class.process = decorate_process(node_class.process)
 
     @contextmanager
-    def read_socket_data(self, bl_node: Node):
-        # it switch the class in reading mode what indicates that it is used in process method
+    def read_data_mode(self, bl_node: Node):
+        """
+        it switch the class in reading mode what indicates that it is used by node instance
+        it should be used for reading node properties and sockets data
+        """
         self.bl_node = bl_node
         self.outputs.clear()  # otherwise a node can keep outdated number of objects(layer) and their data
-        self.is_in_process = True
+        self.is_in_read_mode = True
         try:
             yield
         finally:
-            self.is_in_process = False
+            self.is_in_read_mode = False
 
     def layers_iterator(self):
         # standard vectorization system
@@ -116,14 +123,20 @@ class WrapNode:
                 continue
 
 
+node_classes = []  # to register
+
+
 def initialize_node(wrap_node: WrapNode):
     # class decorator for automatization sockets and property creation
     # also it automates vectorization system at this moment
     def wrapper(node_class: Type[Node]):
+        node_class.__annotations__ = dict()  # by default the class uses inherited dict which should be overridden
+        # if the dictionary is not overridden properties of node will be added to base class and shared with all nodes
         wrap_node.props.add_properties(node_class.__annotations__)
         wrap_node.set_sv_init_method(node_class)
         if hasattr(node_class, 'process'):
             wrap_node.decorate_process_method(node_class)
+        node_classes.append(node_class)  # auto registration classes
         return node_class
 
     return wrapper
@@ -149,7 +162,7 @@ class SockTypes(Enum):
 
 class NodeProperties(NamedTuple):
     bpy_props: tuple  # tuple is whet all bpy.props actually returns
-    name: str = ''  # not mandatory, the name will be overridden by attribute name
+    name: str = ''  # not mandatory, the name will be overridden by attribute name automatically
 
     def replace_name(self, new_name):
         props = list(self)
@@ -158,14 +171,15 @@ class NodeProperties(NamedTuple):
 
 
 class SocketProperties(NamedTuple):
-    name: str
-    socket_type: SockTypes
-    prop: NodeProperties = None
-    custom_draw: str = ''
-    deep_copy: bool = True
-    vectorize: bool = True
-    default: Any = [[]]
-    mandatory: bool = False
+    name: str  # name of a socket to display
+    socket_type: SockTypes  # which type of socket should be created
+    prop: NodeProperties = None  # property which should be displayed on socket
+    custom_draw: str = ''  # name of function which will draw socket UI
+    deep_copy: bool = True  # should be True if node modifies data of an input list
+    vectorize: bool = True  # False if input data should not be repeated to other inputs length
+    default: Any = [[]]  # if unlinked without property socket should have default value
+    mandatory: bool = False  # process method won't be called without linked mandatory sockets
+    show_function: Callable[..., bool] = None  # if it returns False the socket will be hidden upon properties chang
 
 
 class NodeInputs:
@@ -198,7 +212,7 @@ class NodeInputs:
         if name not in object.__getattribute__(self, 'sockets'):
             # it is normal attribute
             return object.__getattribute__(self, name)
-        elif not self.wrap_node.is_in_process:
+        elif not self.wrap_node.is_in_read_mode:
             # it is socket attribute and it is outside of process method
             return object.__getattribute__(self, 'sockets')[name]
         else:
@@ -206,14 +220,29 @@ class NodeInputs:
             return self._get_socket_data(name)
 
     def add_sockets(self, node: Node):
-        # initialization sockets in a node
-        [node.inputs.new(p.socket_type.get_name(), p.name) for p in self.sockets.values()]
-        [setattr(s, 'prop_name', p.prop.name) for s, p in zip(node.inputs, self.sockets.values()) if p.prop]
-        [setattr(s, 'custom_draw', p.custom_draw) for s, p in zip(node.inputs, self.sockets.values())]
+        """initialization sockets in a node"""
+        for sock_prop in self.sockets_props:
+            socket = node.inputs.new(sock_prop.socket_type.get_name(), sock_prop.name)
+            socket.prop_name = sock_prop.prop.name if sock_prop.prop else ''
+            socket.custom_draw = sock_prop.custom_draw
 
     def has_required_data(self, node: Node) -> bool:
-        # all mandatory are linked, but are there any data??
-        return all([sock.is_linked for sock, prop in zip(node.inputs, self.sockets.values()) if prop.mandatory])
+        """return True if all mandatory and not hidden sockets of a node are linked """
+        # todo but are there have any data??
+        for sock, sock_prop in zip(node.inputs, self.sockets_props):
+            if sock.hide:
+                continue
+            if sock_prop.mandatory and not sock.is_linked:
+                return False
+        return True
+
+    def hide_sockets(self, node: Node):
+        """Should be used for hiding sockets during node initialization or switching node parameter"""
+        if not self.wrap_node.is_in_read_mode:
+            raise RuntimeError(f"Can't hide sockets of the node={node.name} not in read mode")
+        for sock, sock_prop in zip(node.inputs, self.sockets_props):
+            if sock_prop.show_function is not None:
+                sock.hide_safe = not sock_prop.show_function()
 
     def _get_socket_data(self, socket_name: str):
         # get socket attribute, inside loop
@@ -260,7 +289,7 @@ class NodeOutputs:
         if name not in object.__getattribute__(self, 'sockets'):
             # it is normal attribute
             return object.__getattribute__(self, name)
-        elif not self.wrap_node.is_in_process:
+        elif not self.wrap_node.is_in_read_mode:
             # it is socket attribute and it is outside of process method
             return object.__getattribute__(self, 'sockets')[name]
         else:
@@ -278,9 +307,17 @@ class NodeOutputs:
     def clear(self):
         self.socket_data.clear()
 
+    def hide_sockets(self, node: Node):
+        """Should be used for hiding sockets during node initialization or switching node parameter"""
+        if not self.wrap_node.is_in_read_mode:
+            raise RuntimeError(f"Can't hide sockets of the node={node.name} not in read mode")
+        for sock, sock_prop in zip(node.outputs, self.sockets_props):
+            if sock_prop.show_function is not None:
+                sock.hide_safe = not sock_prop.show_function()
+
     def _add_socket_data(self, socket_name: str, data):
         # add data of current layer to socket, existing data will be overridden
-        if not self.wrap_node.is_in_process:
+        if not self.wrap_node.is_in_read_mode:
             raise RuntimeError(f"Data can't be added to socket={socket_name} outside process method")
         socket_data = self.socket_data[socket_name]
         socket_layers_number = len
@@ -290,7 +327,7 @@ class NodeOutputs:
 
     def _get_socket_data(self, socket_name: str):
         # get data of current layer from socket
-        if not self.wrap_node.is_in_process:
+        if not self.wrap_node.is_in_read_mode:
             raise AttributeError(f"Data can't be read from socket={socket_name} outside process method")
         socket_data = self.socket_data[socket_name]
         try:
@@ -310,7 +347,8 @@ class NodeProps:
         if isinstance(value, NodeProperties):
             # node property attribute
             if not value.name:
-                # get property name from attribute
+                # the property does not have its python name, it should be set for using in other parts
+                # for examples sockets should know python name of the property to display them
                 value = value.replace_name(key)
             self.properties[key] = value
         elif key != 'properties' and key in self.properties:
@@ -325,7 +363,7 @@ class NodeProps:
         if name not in object.__getattribute__(self, 'properties'):
             # it is normal attribute
             return object.__getattribute__(self, name)
-        elif not self.wrap_node.is_in_process:
+        elif not self.wrap_node.is_in_read_mode:
             # it is node property attribute and it is outside of process method
             return object.__getattribute__(self, 'properties')[name]
         else:
@@ -333,4 +371,37 @@ class NodeProps:
             return getattr(self.wrap_node.bl_node, name)
 
     def add_properties(self, node_annotations: dict):
-        [setitem(node_annotations, prop.name, prop.bpy_props) for prop in self.properties.values()]
+        """Assign properties to annotation dictionary of a node, update function will be assigned automatically"""
+        def update_node(node, context):
+            with self.wrap_node.read_data_mode(node):
+                # without this manager sockets wont be able to read properties of a node instance
+                self.wrap_node.inputs.hide_sockets(node)
+                self.wrap_node.outputs.hide_sockets(node)
+                updateNode(node, context)
+
+        for name, prop in self.properties.items():
+
+            bpy_prop, bpy_prop_arguments = prop.bpy_props
+            bpy_prop_arguments['update'] = update_node
+            rebuild_bpy_prop = blender_properties[bpy_prop](**bpy_prop_arguments)
+
+            node_annotations[name] = rebuild_bpy_prop
+
+
+blender_properties = {
+    # properties are functions which return tuples with themselves as first argument
+    # it should help to rebuild properties with new arguments
+    bpy.props.BoolProperty()[0]: bpy.props.BoolProperty,
+    bpy.props.BoolVectorProperty()[0]: bpy.props.BoolVectorProperty,
+    bpy.props.CollectionProperty()[0]: bpy.props.CollectionProperty,
+    bpy.props.EnumProperty()[0]: bpy.props.EnumProperty,
+    bpy.props.FloatProperty()[0]: bpy.props.FloatProperty,
+    bpy.props.FloatVectorProperty()[0]: bpy.props.FloatVectorProperty,
+    bpy.props.IntProperty()[0]: bpy.props.IntProperty,
+    bpy.props.IntVectorProperty()[0]: bpy.props.IntVectorProperty,
+    bpy.props.PointerProperty()[0]: bpy.props.PointerProperty,
+    bpy.props.StringProperty()[0]: bpy.props.StringProperty
+}
+
+
+register, unregister = bpy.utils.register_classes_factory(node_classes)

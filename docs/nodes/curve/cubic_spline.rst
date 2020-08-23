@@ -26,12 +26,15 @@ Parameters
 This node has the following parameters:
 
 * **Cyclic**. If checked, the node will generate a cyclic (closed) curve. Unchecked by default.
-* **Metric**. This parameter is available in the N panel only. This defines the metric used to calculate curve's T parameter values corresponding to specified curve points. The available values are:
+* **Metric**. This parameter is available in the N panel only. This defines the
+  metric used to calculate curve's T parameter values corresponding to
+  specified curve points. The available values are:
 
    * Manhattan
    * Euclidian
    * Points (just number of points from the beginning)
-   * Chebyshev.
+   * Chebyshev
+   * Centripetal (square root of Euclidian distance).
 
 The default value is Euclidian.
 

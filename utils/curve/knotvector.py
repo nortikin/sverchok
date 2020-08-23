@@ -16,6 +16,7 @@
 
 """
 
+from collections import defaultdict
 import numpy as np
 
 def generate(degree, num_ctrlpts, clamped=True):
@@ -67,6 +68,16 @@ def generate(degree, num_ctrlpts, clamped=True):
     # Return auto-generated knot vector
     return np.array(knot_vector)
 
+def from_tknots(degree, tknots):
+    n = len(tknots)
+    #m = degree + n + 1
+    result = [0] * (degree+1)
+    for j in range(1, n - degree):
+        u = tknots[j:j+degree].sum() / degree
+        result.append(u)
+    result.extend([1.0] * (degree+1))
+    return np.array(result)
+
 def normalize(knot_vector):
     """ Normalizes the input knot vector to [0, 1] domain.
 
@@ -83,16 +94,24 @@ def normalize(knot_vector):
         raise Exception("All knot values are equal")
     return (knot_vector - m) / (M - m)
 
-def concatenate(kv1, kv2):
+def concatenate_plain(kv1, kv2):
     M = kv1.max()
     return np.concatenate((kv1, kv2 + M))
 
-def to_multiplicity(knot_vector):
+def average(knotvectors):
+    kvs = np.array(knotvectors)
+    return kvs.mean(axis=0)
+
+def to_multiplicity(knot_vector, tolerance=1e-6):
     count = 0
     prev_u = None
     result = []
     for u in knot_vector:
-        last_match = (u == prev_u)
+        if prev_u is None:
+            last_match = False
+        else:
+            last_match = abs(u - prev_u) < tolerance
+            #print(f"Match: {u} - {prev_u} = {abs(u - prev_u)}, => {last_match}")
         if prev_u is None:
             count = 1
         elif last_match:
@@ -114,12 +133,75 @@ def from_multiplicity(pairs):
         result.extend([u] * count)
     return np.array(result)
 
+def concatenate(kv1, kv2, join_multiplicity):
+    join_knot = kv1.max()
+    kv2 = kv2 - kv2.min() + join_knot
+    kv1_m = to_multiplicity(kv1)
+    kv2_m = to_multiplicity(kv2)
+    kv_m = dict(kv1_m[:-1] + kv2_m)
+    kv_m[join_knot] = join_multiplicity
+    kv_m = [(k, kv_m[k]) for k in sorted(kv_m.keys())]
+    return from_multiplicity(kv_m)
+
 def elevate_degree_pairs(pairs, delta=1):
     return [(u, count+delta) for u, count in pairs]
 
 def elevate_degree(knot_vector, delta=1):
     pairs = to_multiplicity(knot_vector)
     return from_multiplicity(elevate_degree_pairs(pairs, delta))
+
+def insert(knot_vector, u, count=1):
+    idx = np.searchsorted(knot_vector, u)
+    result = knot_vector
+    for i in range(count):
+        result = np.insert(result, idx, u)
+    return result
+
+def rescale(knot_vector, new_t_min, new_t_max):
+    t_min = knot_vector[0]
+    t_max = knot_vector[-1]
+    k = (new_t_max - new_t_min) / (t_max - t_min)
+    return k * (knot_vector - t_min) + new_t_min
+
+def reverse(knot_vector):
+    t_max = knot_vector[-1]
+    t_min = knot_vector[0]
+    kv = t_max - knot_vector + t_min
+    return kv[::-1]
+
+def find_multiplicity(knot_vector, u, tolerance=1e-6):
+    pairs = to_multiplicity(knot_vector, tolerance)
+    #print(f"kv {knot_vector} => {pairs}")
+    for k, count in pairs:
+        if abs(k - u) < tolerance:
+            return count
+    return 0
+
+def difference(src_kv, dst_kv):
+    src_pairs = dict(to_multiplicity(src_kv))
+    dst_pairs = to_multiplicity(dst_kv)
+    result = []
+    for dst_u, dst_multiplicity in dst_pairs:
+        src_multiplicity = src_pairs.get(dst_u, 0)
+        diff = dst_multiplicity - src_multiplicity
+        if diff > 0:
+            result.append((dst_u, diff))
+    return result
+
+def merge(kv1, kv2):
+    kv2 = rescale(kv2, kv1[0], kv1[-1])
+
+    kv1_pairs = to_multiplicity(kv1)
+    kv2_pairs = to_multiplicity(kv2)
+
+    pairs = defaultdict(int)
+    for u, multiplicity in kv1_pairs:
+        pairs[u] = multiplicity
+    for u, multiplicity in kv2_pairs:
+        pairs[u] = max(pairs[u], multiplicity)
+
+    result = [(u, pairs[u]) for u in sorted(pairs.keys())]
+    return from_multiplicity(result)
 
 def check(degree, knot_vector, num_ctrlpts):
     """ Checks the validity of the input knot vector.

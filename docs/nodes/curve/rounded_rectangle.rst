@@ -33,6 +33,14 @@ This node has the following parameters:
   Otherwise, each arc will have a domain of length ``pi/2``, and each straight
   line segment will have a domain of length equal to the segment's length.
   Unchecked by default.
+* **NURBS output**. This parameter is available in the N panel only. If
+  checked, the node will output a NURBS curve. Built-in NURBS maths
+  implementation will be used. If not checked, the node will output generic
+  concatenated curve from several straight segments and circular arcs. In most
+  cases, there will be no difference; you may wish to output NURBS if you want
+  to use NURBS-specific API methods with generated curve, or if you want to
+  output the result in file format that understands NURBS only. Unchecked by
+  default.
 
 Outputs
 -------

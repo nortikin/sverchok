@@ -12,7 +12,7 @@ from mathutils import Vector, Matrix
 
 from sverchok.utils.geom import LineEquation, CubicSpline
 from sverchok.utils.integrate import TrapezoidIntegral
-from sverchok.utils.logging import error
+from sverchok.utils.logging import info, error
 
 class ZeroCurvatureException(Exception):
     def __init__(self, ts, mask=None):
@@ -383,35 +383,6 @@ class SvConcatCurve(SvCurve):
     def __repr__(self):
         return "+".join([str(curve) for curve in self.curves])
 
-#     @classmethod
-#     def build(cls, curves):
-#         if not curves:
-#             raise Exception("List of curves must be not empty")
-#         result = [curves[0]]
-#         for curve in curves[1:]:
-#             new_curve = None
-#             ok = False
-#             if hasattr(result[-1], 'concatenate'):
-#                 try:
-#                     new_curve = result[-1].concatenate(curve)
-#                     ok = True
-#                 except UnsupportedCurveTypeException as e:
-#                     print(e)
-#                     # "concatenate" method can't work with this type of curve
-#                     pass
-# 
-#             print(f"C: {curve}, prev: {result[-1]}, ok: {ok}, new: {new_curve}")
-# 
-#             if ok:
-#                 result[-1] = new_curve
-#             else:
-#                 result.append(curve)
-# 
-#         if len(result) == 1:
-#             return result[0]
-#         else:
-#             return SvConcatCurve(result)
-
     def get_u_bounds(self):
         return (0.0, self.u_max)
 
@@ -553,6 +524,9 @@ class SvReparametrizedCurve(SvCurve):
         else:
             self.tangent_delta = 0.001
 
+    def __repr__(self):
+        return f"{self.curve}::[{self.new_u_min}..{self.new_u_max}]"
+
     def get_u_bounds(self):
         return self.new_u_min, self.new_u_max
 
@@ -608,10 +582,11 @@ class SvCurveSegment(SvCurve):
             self.target_u_bounds = (u_min, u_max)
 
     def __repr__(self):
-        if hasattr(curve, '__description__'):
-            curve_description = curve.__description__
+        if hasattr(self.curve, '__description__'):
+            curve_description = self.curve.__description__
         else:
-            curve_description = repr(curve)
+            curve_description = repr(self.curve)
+        u_min, u_max = self.u_bounds
         return "{}[{} .. {}]".format(curve_description, u_min, u_max)
 
     def get_u_bounds(self):
@@ -689,40 +664,6 @@ class SvLambdaCurve(SvCurve):
         points = np.vectorize(self.function, signature='()->(3)')(ts)
         points_h = np.vectorize(self.function, signature='()->(3)')(ts+self.tangent_delta)
         return (points_h - points) / self.tangent_delta
-
-class SvSplineCurve(SvCurve):
-    __description__ = "Spline"
-
-    def __init__(self, spline):
-        self.spline = spline
-        self.u_bounds = (0.0, 1.0)
-
-    @classmethod
-    def from_points(cls, points, metric=None, is_cyclic=False):
-        if not points or len(points) < 2:
-            raise Exception("At least two points are required")
-        if len(points) < 3:
-            return SvLine.from_two_points(points[0], points[1])
-        spline = CubicSpline(points, metric=metric, is_cyclic=is_cyclic)
-        return SvSplineCurve(spline)
-
-    def evaluate(self, t):
-        v = self.spline.eval_at_point(t)
-        return np.array(v)
-
-    def evaluate_array(self, ts):
-        vs = self.spline.eval(ts)
-        return np.array(vs)
-
-    def tangent(self, t):
-        vs = self.spline.tangent(np.array([t]))
-        return vs[0]
-
-    def tangent_array(self, ts):
-        return self.spline.tangent(ts)
-
-    def get_u_bounds(self):
-        return self.u_bounds
 
 class SvTaylorCurve(SvCurve):
     __description__ = "Taylor"

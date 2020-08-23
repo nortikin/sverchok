@@ -7,7 +7,8 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvSplineCurve, SvConcatCurve
+from sverchok.utils.curve import SvSplineCurve
+from sverchok.utils.curve.algorithms import concatenate_curves
 
 class SvKinkyCurveNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -48,12 +49,19 @@ class SvKinkyCurveNode(bpy.types.Node, SverchCustomTreeNode):
             default = True,
             update = updateNode)
 
+    make_nurbs : BoolProperty(
+        name = "NURBS output",
+        description = "Generate a NURBS curve",
+        default = False,
+        update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "concat", toggle=True)
         layout.prop(self, "is_cyclic", toggle=True)
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
+        layout.prop(self, 'make_nurbs', toggle=True)
         layout.prop(self, 'metric')
 
     def sv_init(self, context):
@@ -106,8 +114,13 @@ class SvKinkyCurveNode(bpy.types.Node, SverchCustomTreeNode):
                         segments[-1].extend(first_segment)
 
                 new_curves = [SvSplineCurve.from_points(segment, metric=self.metric) for segment in segments]
+                if self.make_nurbs:
+                    if self.concat:
+                        new_curves = [curve.to_nurbs().elevate_degree(target=3) for curve in new_curves]
+                    else:
+                        new_curves = [curve.to_nurbs() for curve in new_curves]
                 if self.concat:
-                    new_curves = [SvConcatCurve(new_curves)]
+                    new_curves = [concatenate_curves(new_curves)]
                 curve_out.append(new_curves)
 
         self.outputs['Curve'].sv_set(curve_out)
