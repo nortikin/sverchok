@@ -139,7 +139,7 @@ class SvNurbsCurve(SvCurve):
         if kv1_end_multiplicity != p+1:
             raise UnsupportedCurveTypeException(f"End knot multiplicity of the first curve ({kv1_end_multiplicity}) is not equal to degree+1 ({p+1})")
         if kv2_start_multiplicity != p+1:
-            raise UnsupportedCurveTypeException("Start knot multiplicity of the second curve ({kv2_start_multiplicity}) is not equal to degree+1 ({p+1})")
+            raise UnsupportedCurveTypeException(f"Start knot multiplicity of the second curve ({kv2_start_multiplicity}) is not equal to degree+1 ({p+1})")
 
         knotvector = sv_knotvector.concatenate(kv1, kv2, join_multiplicity=p)
         #print(f"Concat KV: {kv1} + {kv2} => {knotvector}")
