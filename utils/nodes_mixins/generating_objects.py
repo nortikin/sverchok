@@ -17,7 +17,6 @@ from sverchok.data_structure import updateNode
 
 from sverchok.utils.handle_blender_data import correct_collection_length, delete_data_block
 from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh
-from sverchok.utils.sv_obj_helper import get_random_init_v3
 
 
 class SvObjectData(bpy.types.PropertyGroup):
@@ -212,25 +211,6 @@ class SvMeshData(bpy.types.PropertyGroup):
             delete_data_block(self.mesh)
 
 
-class SvSelectObjects(bpy.types.Operator):
-    """It calls `select` method of every item in `object_data` collection of node"""
-    bl_idname = 'node.sv_select_objects'
-    bl_label = "Select objects"
-    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
-
-    @classmethod
-    def description(cls, context, properties):
-        return "Select generated objects"
-
-    def execute(self, context):
-        if hasattr(context.node, 'object_data'):
-            prop: SvObjectData
-            for prop in context.node.object_data:
-                prop.select()
-
-        return {'FINISHED'}
-
-
 class SvViewerNode(BlenderObjects):
     """
     Mixin for all nodes which displays any objects in viewport
@@ -255,10 +235,14 @@ class SvViewerNode(BlenderObjects):
         self.draw_object_properties(row)  # hide, selectable, render
 
         col = layout.column(align=True)
-        col.prop(self, "base_data_name", text="", icon='OUTLINER_OB_MESH')
+        row = col.row(align=True)
+        row.prop(self, "base_data_name", text="", icon='OUTLINER_OB_MESH')
+        row.operator('node.sv_generate_random_object_name', text='', icon='FILE_REFRESH')
+
         row = col.row(align=True)
         row.scale_y = 2
         row.operator('node.sv_select_objects', text="Select")
+
         col.prop_search(self, 'collection', bpy.data, 'collections', text='', icon='GROUP')
 
     def init_viewer(self):
@@ -289,12 +273,60 @@ class SvObjectNames(bpy.types.PropertyGroup):
             name = self.greek_alphabet[self.available_name_number]
             self.available_name_number += 1
         else:
-            name = ''.join(random.sample(set(string.ascii_uppercase), 6))
+            name = self.get_random_name()
 
         return name
 
+    @staticmethod
+    def get_random_name():
+        """Generate random name from random letters"""
+        return ''.join(random.sample(set(string.ascii_uppercase), 6))
 
-module_classes = [SvObjectData, SvMeshData, SvSelectObjects, SvObjectNames]
+
+class SvSelectObjects(bpy.types.Operator):
+    """It calls `select` method of every item in `object_data` collection of node"""
+    bl_idname = 'node.sv_select_objects'
+    bl_label = "Select objects"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    @classmethod
+    def description(cls, context, properties):
+        return "Select generated objects"
+
+    def execute(self, context):
+        prop: SvObjectData
+        for prop in context.node.object_data:
+            prop.select()
+        return {'FINISHED'}
+
+    @classmethod
+    def poll(cls, context):
+        return hasattr(context.node, 'object_data')
+
+
+class SvGenerateRandomObjectName(bpy.types.Operator):
+    """
+    It calls get_random_name fo sv_object_names property in scene
+    and assign it to base_data_name property of node
+    """
+    bl_idname = 'node.sv_generate_random_object_name'
+    bl_label = "Random name"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    @classmethod
+    def description(cls, context, properties):
+        return "Generate random name"
+
+    def execute(self, context):
+        context.node.base_data_name = bpy.context.scene.sv_object_names.get_random_name()
+        return {'FINISHED'}
+
+    @classmethod
+    def poll(cls, context):
+        return hasattr(context.node, 'base_data_name')
+
+
+module_classes = [SvObjectData, SvMeshData, SvSelectObjects, SvObjectNames, SvGenerateRandomObjectName]
 
 
 def register():
