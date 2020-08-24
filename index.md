@@ -322,6 +322,7 @@
     SvRigidOrigamiNode
     ---
     SvFollowActiveQuads
+    SvFlatGeometryNode
 
 ## Modifier Make
     LineConnectNodeMK2
@@ -593,6 +594,15 @@
     WifiOutNode
     NodeReroute
     ConverterNode
+
+## SVG
+    SvSvgDocumentNode
+    SvSvgCircleNode
+    SvSvgFillStrokeNode
+    SvSvgPathNode
+    SvSvgTextNode
+    SvSvgMeshNode
+    SvSvgDimensionNode
 
 ## Beta Nodes
     SvFormulaShapeNode
