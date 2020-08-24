@@ -95,7 +95,10 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
                     icon='HIDE_OFF' if self.show_wireframe else 'HIDE_ON')
 
     def draw_label(self):
-        return f"MeV {self.base_data_name}"
+        if self.hide:
+            return f"MeV {self.base_data_name}"
+        else:
+            return "Mesh viewer"
 
     @property
     def draw_3dpanel(self):
