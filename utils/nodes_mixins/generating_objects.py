@@ -103,25 +103,31 @@ class SvObjectData(bpy.types.PropertyGroup):
 
 class BlenderObjects:
     """Should be used for generating list of objects"""
+    def show_objects_update(self, context):
+        [setattr(prop.obj, 'hide_viewport', False if self.show_objects else True) for prop in self.object_data]
+
+    def selectable_objects_update(self, context):
+        [setattr(prop.obj, 'hide_select', False if self.selectable_objects else True) for prop in self.object_data]
+
+    def render_objects_update(self, context):
+        [setattr(prop.obj, 'hide_render', False if self.render_objects else True) for prop in self.object_data]
+
     object_data: bpy.props.CollectionProperty(type=SvObjectData)
 
     show_objects: bpy.props.BoolProperty(
         default=True,
         description="Show / hide objects in viewport",
-        update=lambda s, c: [setattr(prop.obj, 'hide_viewport', False if s.show_objects else True)
-                             for prop in s.object_data])
+        update=show_objects_update)
 
     selectable_objects: bpy.props.BoolProperty(
         default=True,
         description="Make objects selectable / unselectable",
-        update=lambda s, c: [setattr(prop.obj, 'hide_select', False if s.selectable_objects else True)
-                             for prop in s.object_data])
+        update=selectable_objects_update)
 
     render_objects: bpy.props.BoolProperty(
         default=True,
         description="Show / hide objects for render engines",
-        update=lambda s, c: [setattr(prop.obj, 'hide_render', False if s.render_objects else True)
-                             for prop in s.object_data])
+        update=render_objects_update)
 
     def regenerate_objects(self,
                            object_names: List[str],
@@ -163,7 +169,8 @@ class BlenderObjects:
 class SvMeshData(bpy.types.PropertyGroup):
     mesh: bpy.props.PointerProperty(type=bpy.types.Mesh)
 
-    def regenerate_mesh(self, mesh_name: str, verts, edges=None, faces=None, matrix: Matrix = None):
+    def regenerate_mesh(self, mesh_name: str, verts, edges=None, faces=None, matrix: Matrix = None,
+                        make_changes_test=True):
         """
         It takes vertices, edges and faces and updates mesh data block
         If it assume that topology is unchanged only position of vertices will be changed
@@ -178,7 +185,7 @@ class SvMeshData(bpy.types.PropertyGroup):
         if not self.mesh:
             # new mesh should be created
             self.mesh = bpy.data.meshes.new(name=mesh_name)
-        if self.is_topology_changed(len(verts), len(faces)):
+        if not make_changes_test or self.is_topology_changed(len(verts), len(edges), len(faces)):
             with empty_bmesh(False) as bm:
                 add_mesh_to_bmesh(bm, verts, edges, faces, update_indexes=False, update_normals=False)
                 if matrix:
@@ -198,15 +205,19 @@ class SvMeshData(bpy.types.PropertyGroup):
             is_smooth = np.zeros(len(self.mesh.polygons), dtype=bool)
         self.mesh.polygons.foreach_set('use_smooth', is_smooth)
 
-    def is_topology_changed(self, verts_number: int, faces_number: int) -> bool:
+    def is_topology_changed(self, verts_number: int, edges_number: int, faces_number: int) -> bool:
         """
         Simple and fast test but not 100% robust.
         If number of vertices and faces are unchanged it assumes that topology is not changed
         This test is useful if mesh just changed its location.
         It is much faster just set new coordinate for each vector then recreate whole object
         """
-        # todo edges?
-        return len(self.mesh.vertices) != verts_number or len(self.mesh.polygons) != faces_number
+        if not faces_number:
+            # edges can be take in account if mesh does not have polygons
+            # because Sverchok edges can exclude edges within polygons
+            return len(self.mesh.vertices) != verts_number or len(self.mesh.edges) != edges_number
+        else:
+            return len(self.mesh.vertices) != verts_number or len(self.mesh.polygons) != faces_number
 
     def update_vertices(self, verts: Union[list, np.ndarray]):
         """
@@ -267,8 +278,14 @@ class SvViewerNode(BlenderObjects):
         self.outputs.new('SvObjectSocket', "Objects")
 
     def sv_copy(self, other):
+        """
+        Regenerate object names, and clean data
+        Use super().sv_copy(other) to override this method
+        """
         with self.sv_throttle_tree_update():
             self.base_data_name = bpy.context.scene.sv_object_names.get_available_name()
+            # object and mesh lists should be clear other wise two nodes would have links to the same objects
+            self.object_data.clear()
 
 
 class SvObjectNames(bpy.types.PropertyGroup):

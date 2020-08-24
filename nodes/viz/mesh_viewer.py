@@ -48,6 +48,9 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
     material: bpy.props.PointerProperty(type=bpy.types.Material, update=updateNode)
     is_lock_origin: bpy.props.BoolProperty(name="Lock Origin", default=True, update=updateNode,
                                            description="If unlock origin can be set manually")
+    fast_mesh_update: bpy.props.BoolProperty(
+        default=True, update=updateNode,
+        description="Usually should be enabled. If some glitches with mesh update, switch it off")
 
     def sv_init(self, context):
         self.init_viewer()
@@ -72,6 +75,7 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
         row.prop(self, 'is_merge', text='Merge', toggle=1, icon='AUTOMERGE_ON' if self.is_merge else 'AUTOMERGE_OFF')
 
     def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'fast_mesh_update', text='Fast mesh update')
         layout.prop(self, 'is_smooth_mesh', text='smooth shade')
         layout.prop(self, 'to3d')
 
@@ -84,7 +88,7 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
         socket.draw_quick_link(context, layout, self)
         layout.label(text=socket.name)
         layout.prop(self, 'show_wireframe', text='', expand=True,
-                    icon='HIDE_OFF' if self.show_wireframe else 'HIDE_OFF')
+                    icon='HIDE_OFF' if self.show_wireframe else 'HIDE_ON')
 
     def draw_label(self):
         return f"MeV {self.base_data_name}"
@@ -97,6 +101,10 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
         row = layout.row(align=True)
         row.prop(self, 'base_data_name', text='')
         row.prop_search(self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
+
+    def sv_copy(self, other):
+        super().sv_copy(other)
+        self.mesh_data.clear()
 
     def process(self):
 
@@ -155,7 +163,7 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
         create_mesh_data = zip(self.mesh_data, cycle(verts), cycle(edges), cycle(faces), cycle(mesh_matrices),
                                cycle(mat_indexes))
         for me_data, v, e, f, m, mat_i in create_mesh_data:
-            me_data.regenerate_mesh(self.base_data_name, v, e, f, m)
+            me_data.regenerate_mesh(self.base_data_name, v, e, f, m, self.fast_mesh_update)
             if self.material:
                 me_data.mesh.materials.clear()
                 me_data.mesh.materials.append(self.material)
