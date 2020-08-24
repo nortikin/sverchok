@@ -229,6 +229,17 @@ class SvNurbsCurve(SvCurve):
         return SvNurbsCurve.build(self.get_nurbs_implementation(),
                 self.get_degree(), knotvector, control_points, weights)
 
+    def cut_segment(self, new_t_min, new_t_max, rescale=False):
+        t_min, t_max = 0.0, 1.0
+        curve = self
+        if new_t_min > t_min:
+            start, curve = curve.split_at(new_t_min)
+        if new_t_max < t_max:
+            curve, end = curve.split_at(new_t_max)
+        if rescale:
+            curve = curve.reparametrize(0, 1)
+        return curve
+
     def make_revolution_surface(self, origin, axis, v_min=0, v_max=2*pi, global_origin=True):
         return nurbs_revolution_surface(self, origin, axis, v_min, v_max, global_origin)
 

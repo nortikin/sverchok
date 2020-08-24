@@ -6,7 +6,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvCurve, SvTaylorCurve, SvLine, SvCircle, SvConcatCurve, SvFlipCurve, SvCurveLengthSolver
+from sverchok.utils.curve import SvCurve, SvTaylorCurve, SvLine, SvCircle, SvCurveLengthSolver
+from sverchok.utils.curve.algorithms import concatenate_curves, reverse_curve
+from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.geom import circle_by_two_derivatives
 
 class SvExtendCurveNode(bpy.types.Node, SverchCustomTreeNode):
@@ -128,6 +130,8 @@ class SvExtendCurveNode(bpy.types.Node, SverchCustomTreeNode):
         u_min, u_max = curve.get_u_bounds()
         start, end = curve.evaluate(u_min), curve.evaluate(u_max)
         start_extent, end_extent = None, None
+        is_nurbs = isinstance(curve, SvNurbsCurve)
+
         if self.mode == 'LINE':
             tangent_start = curve.tangent(u_min)
             tangent_end = curve.tangent(u_max)
@@ -150,7 +154,9 @@ class SvExtendCurveNode(bpy.types.Node, SverchCustomTreeNode):
                     eq1 = circle_by_two_derivatives(start, -tangent_start, second_start)
                     start_extent = SvCircle.from_equation(eq1)
                     start_extent = self.set_length(curve, start_extent, t_before, -1)
-                    start_extent = SvFlipCurve(start_extent)
+                    if is_nurbs:
+                        start_extent = start_extent.to_nurbs()
+                    start_extent = reverse_curve(start_extent)
                 else:
                     start_extent = self.make_line(start, tangent_start, t_before, -1)
                     start_extent = self.set_length(curve, start_extent, t_before, -1)
@@ -172,7 +178,9 @@ class SvExtendCurveNode(bpy.types.Node, SverchCustomTreeNode):
             if t_before > 0:
                 start_extent = SvTaylorCurve(start, [-tangent_start, second_start])
                 start_extent = self.set_length(curve, start_extent, t_before)
-                start_extent = SvFlipCurve(start_extent)
+                if is_nurbs:
+                    start_extent = start_extent.to_nurbs()
+                start_extent = reverse_curve(start_extent)
 
             if t_after > 0:
                 end_extent = SvTaylorCurve(end, [tangent_end, second_end])
@@ -188,13 +196,21 @@ class SvExtendCurveNode(bpy.types.Node, SverchCustomTreeNode):
             if t_before > 0:
                 start_extent = SvTaylorCurve(start, [-tangent_start, second_start, -third_start])
                 start_extent = self.set_length(curve, start_extent, t_before)
-                start_extent = SvFlipCurve(start_extent)
+                if is_nurbs:
+                    start_extent = start_extent.to_nurbs()
+                start_extent = reverse_curve(start_extent)
             if t_after > 0:
                 end_extent = SvTaylorCurve(end, [tangent_end, second_end, third_end])
                 end_extent = self.set_length(curve, end_extent, t_after)
 
         else:
             raise Exception("Unsupported mode")
+
+        if is_nurbs:
+            if start_extent is not None and not isinstance(start_extent, SvNurbsCurve):
+                start_extent = start_extent.to_nurbs(implementation=curve.get_nurbs_implementation())
+            if end_extent is not None and not isinstance(end_extent, SvNurbsCurve):
+                end_extent = end_extent.to_nurbs(implementation=curve.get_nurbs_implementation())
 
         return start_extent, end_extent
 
@@ -224,7 +240,7 @@ class SvExtendCurveNode(bpy.types.Node, SverchCustomTreeNode):
                 curves.append(curve)
                 if end_extent is not None:
                     curves.append(end_extent)
-                new_curve = SvConcatCurve(curves)
+                new_curve = concatenate_curves(curves)
                 curve_out.append(new_curve)
 
         self.outputs['StartExtent'].sv_set(start_out)
