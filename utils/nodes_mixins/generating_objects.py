@@ -15,7 +15,7 @@ import numpy as np
 import bpy
 from mathutils import Matrix
 
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, update_with_kwargs
 from sverchok.utils.handle_blender_data import correct_collection_length, delete_data_block
 from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh
 
@@ -103,8 +103,10 @@ class SvObjectData(bpy.types.PropertyGroup):
 
 class BlenderObjects:
     """Should be used for generating list of objects"""
-    def show_objects_update(self, context):
-        [setattr(prop.obj, 'hide_viewport', False if self.show_objects else True) for prop in self.object_data]
+    def show_objects_update(self, context, to_show: bool = None):
+        """Hide / show objects. It should be only place to hide objects"""
+        to_show = to_show if to_show is not None else self.show_objects
+        [setattr(prop.obj, 'hide_viewport', not to_show) for prop in self.object_data]
 
     def selectable_objects_update(self, context):
         [setattr(prop.obj, 'hide_select', False if self.selectable_objects else True) for prop in self.object_data]
@@ -117,7 +119,7 @@ class BlenderObjects:
     show_objects: bpy.props.BoolProperty(
         default=True,
         description="Show / hide objects in viewport",
-        update=show_objects_update)
+        update=update_with_kwargs(show_objects_update))
 
     selectable_objects: bpy.props.BoolProperty(
         default=True,
@@ -286,6 +288,14 @@ class SvViewerNode(BlenderObjects):
             self.base_data_name = bpy.context.scene.sv_object_names.get_available_name()
             # object and mesh lists should be clear other wise two nodes would have links to the same objects
             self.object_data.clear()
+
+    def show_viewport(self, is_show: bool):
+        """It should be called by node tree to show/hide objects"""
+        if not self.show_objects:
+            # just ignore request
+            pass
+        else:
+            self.show_objects_update(None, is_show)
 
 
 class SvObjectNames(bpy.types.PropertyGroup):
