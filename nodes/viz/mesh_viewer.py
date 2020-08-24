@@ -21,7 +21,11 @@ from sverchok.utils.sv_mesh_utils import mesh_join
 
 
 class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
-    """ bmv Generate Live geom """
+    """
+    Triggers: viewer mesh object instance
+
+    Generate mesh objects in viewport
+    """
 
     bl_idname = 'SvMeshViewer'
     bl_label = 'Mesh viewer'
