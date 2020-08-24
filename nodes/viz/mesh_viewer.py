@@ -45,7 +45,7 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
     to3d: BoolProperty(name="Show in 3D panel", default=False, update=updateNode,
                        description="Show node properties in 3D panel")
     show_wireframe: BoolProperty(default=False, update=updateNode, name="Show Edges")
-    material: bpy.props.PointerProperty(type=bpy.types.Material)
+    material: bpy.props.PointerProperty(type=bpy.types.Material, update=updateNode)
     is_lock_origin: bpy.props.BoolProperty(name="Lock Origin", default=True, update=updateNode,
                                            description="If unlock origin can be set manually")
 
@@ -101,22 +101,25 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
         verts = self.inputs['vertices'].sv_get(deepcopy=False, default=[])
         edges = self.inputs['edges'].sv_get(deepcopy=False, default=[[]])
         faces = self.inputs['faces'].sv_get(deepcopy=False, default=[[]])
-        mat_indexes = self.inputs['material_idx'].sv_get(deepcopy=False, default=[])
+        mat_indexes = self.inputs['material_idx'].sv_get(deepcopy=False, default=[[]])
         matrices = self.inputs['matrix'].sv_get(deepcopy=False, default=[])
 
         # first step is merge everything if the option
         if self.is_merge:
             if matrices:
                 objects_number = max([len(verts), len(matrices)])
+                mat_indexes = [[i for _, obj, mat_i in zip(range(objects_number), cycle(faces), cycle(mat_indexes))
+                                for f, i in zip(obj, cycle(mat_i))]]
                 _, *join_mesh_data = list(zip(*zip(range(objects_number), cycle(verts), cycle(edges), cycle(faces),
                                                    cycle(matrices))))
                 verts, edges, faces = apply_and_join_python(*join_mesh_data, True)
                 matrices = []
             else:
+                mat_indexes = [[i for obj, mat_i in zip(faces, cycle(mat_indexes)) for f, i in zip(obj, cycle(mat_i))]]
                 verts, edges, faces = mesh_join(verts, edges if edges[0] else [], faces)  # function has good API
                 verts, edges, faces = [verts], [edges], [faces]
 
-        objects_number = max([len(verts), len(matrices)])
+        objects_number = max([len(verts), len(matrices)]) if verts else 0
 
         # extract mesh matrices
         if self.apply_matrices_to == 'mesh':
@@ -142,13 +145,20 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
             else:
                 obj_matrices = []
 
-        # generate mesh data blocks
+        # regenerate mesh data blocks
         correct_collection_length(self.mesh_data, objects_number)
-        create_mesh_data = zip(self.mesh_data, cycle(verts), cycle(edges), cycle(faces), cycle(mesh_matrices))
-        for me_data, v, e, f, m in create_mesh_data:
+        create_mesh_data = zip(self.mesh_data, cycle(verts), cycle(edges), cycle(faces), cycle(mesh_matrices),
+                               cycle(mat_indexes))
+        for me_data, v, e, f, m, mat_i in create_mesh_data:
             me_data.regenerate_mesh(self.base_data_name, v, e, f, m)
+            if self.material:
+                me_data.mesh.materials.clear()
+                me_data.mesh.materials.append(self.material)
+            if mat_indexes:
+                mat_i = [mi for _, mi in zip(me_data.mesh.polygons, cycle(mat_i))]
+                me_data.mesh.polygons.foreach_set('material_index', mat_i)
 
-        # generate object data blocks
+        # regenerate object data blocks
         self.regenerate_objects([self.base_data_name], [d.mesh for d in self.mesh_data], [self.collection])
         [setattr(prop.obj, 'matrix_local', m) for prop, m in zip(self.object_data, cycle(obj_matrices))]
 
