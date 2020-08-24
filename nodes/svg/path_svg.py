@@ -123,8 +123,8 @@ class SvSvgPathNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_PATH_SVG'
 
     modes = [
-        ('LIN', 'Linear', '',0),
-        ('USER', 'User', '',3),
+        ('LIN', 'Linear', '', 0),
+        ('USER', 'User', '', 3),
         ]
     def update_sockets(self, context):
         self.inputs["Commands"].hide_safe = self.mode == "LIN"
@@ -163,6 +163,7 @@ If command Letter is not in the list [L, C, S, Q, T] it will be interpreted as L
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "Commands").prop_name = 'path_commands'
+        self.inputs["Commands"].hide_safe = True
         self.inputs.new('SvSvgSocket', "Fill / Stroke")
 
         self.outputs.new('SvSvgSocket', "SVG Objects")

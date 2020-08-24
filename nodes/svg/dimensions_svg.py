@@ -80,9 +80,9 @@ class SvgDimension():
                 dim_loc_a = loc_a + perp * (self.dim_offset)
                 dim_loc_b = loc_b + perp * (self.dim_offset + loc_a[0] - loc_b[0])
                 sign = 1 if self.dim_offset > 0 else -1
-                sign_b = 1 if self.dim_offset+loc_a[0] - loc_b[0] > 0 else -1
+                sign_b = 1 if self.dim_offset + loc_a[0] - loc_b[0] > 0 else -1
             else:
-                line_dir = Vector((0, 1, 0))
+                line_dir = Vector((0, -1, 0))
                 dim_loc_a = loc_a + perp * (self.dim_offset + loc_b[0] - loc_a[0])
                 dim_loc_b = loc_b + perp * (self.dim_offset)
                 sign = 1 if self.dim_offset + loc_b[0] - loc_a[0] > 0 else -1

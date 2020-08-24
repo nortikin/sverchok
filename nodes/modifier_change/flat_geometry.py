@@ -18,10 +18,9 @@
 
 from mathutils import Vector
 import bpy
-from sverchok.node_tree import SverchCustomTreeNode
-
-from sverchok.data_structure import updateNode, match_long_repeat as mlr, enum_item_4
 from bpy.props import  FloatVectorProperty, EnumProperty
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, match_long_repeat as mlr, enum_item_4
 
 
 def ortho_proyection(verts_in, plane_in):
