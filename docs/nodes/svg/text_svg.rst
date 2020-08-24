@@ -18,9 +18,10 @@ Inputs
 Options
 -------
 
-- Font Family: Offers 'serif', 'sans-serif', 'monospace', 'cursive', 'fantasy', 'user'
+- Font Family: Offers 'serif', 'sans-serif', 'monospace', 'cursive', 'fantasy', 'user'.
 - User Font: User defined font name like "Georgia", "Impact"..
-- Alignment: Text alignment. offers 'start', 'middle', 'end'
+- Alignment: Text alignment. offers 'start', 'middle', 'end'.
+- Weight: Text alignment. offers 'normal' and 'bold'.
 
 Outputs
 -------

@@ -28,11 +28,12 @@ class SvgText():
     def __repr__(self):
         return "<SVG Text>"
 
-    def __init__(self, location, text, size, angle, attributes, font_family, font_alignment):
+    def __init__(self, location, text, size, angle, weight, attributes, font_family, font_alignment):
         self.location = location
         self.text = text
         self.size = size
         self.angle = angle
+        self.weight = weight
         self.attributes = attributes
         self.font_family = font_family
         self.font_alignment = font_alignment
@@ -43,6 +44,7 @@ class SvgText():
         svg += f'font-size="{self.size * scale}px" '
         svg += f'font-family="{self.font_family}" '
         svg += f'text-anchor="{self.font_alignment}" '
+        svg += f'font-weight="{self.weight}" '
         x = self.location[0] * scale
         y = height - self.location[1] * scale
         if self.angle != 0:
@@ -91,12 +93,18 @@ class SvSvgTextNode(bpy.types.Node, SverchCustomTreeNode):
         description='Define font name',
         items=enum_item_4(['start', 'middle', 'end']),
         update=updateNode)
+    weight: EnumProperty(
+        name='Font Name',
+        description='Define font name',
+        items=enum_item_4(['normal', 'bold']),
+        update=updateNode)
 
     angle: FloatProperty(
         name='Angle',
         description='Text Rotation',
         default=0,
         update=updateNode)
+
 
     text: StringProperty(
         name='Text',
@@ -120,6 +128,7 @@ class SvSvgTextNode(bpy.types.Node, SverchCustomTreeNode):
         if self.font_family == 'user':
             layout.prop(self, "user_font")
         layout.prop(self, "font_alignment", expand=True)
+        layout.prop(self, "weight", expand=True)
 
     def process(self):
 
@@ -134,7 +143,7 @@ class SvSvgTextNode(bpy.types.Node, SverchCustomTreeNode):
         for params in zip(*mlr(params_in)):
             svg_texts = []
             for loc, text, size, angle, atts  in zip(*mlr(params)):
-                svg_texts.append(SvgText(loc, text, size, angle, atts, font_family, self.font_alignment))
+                svg_texts.append(SvgText(loc, text, size, angle, self.weight, atts, font_family, self.font_alignment))
 
             texts_out.append(SvgGroup(svg_texts))
 

@@ -204,6 +204,7 @@ class SvSvgMeshNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "Polygons / Edges")
         self.inputs.new('SvMatrixSocket', "Projection Plane")
+        self.inputs["Projection Plane"].hide_safe = True
         self.inputs.new('SvMatrixSocket', "Offset")
         self.inputs.new('SvSvgSocket', "Fill / Stroke")
 

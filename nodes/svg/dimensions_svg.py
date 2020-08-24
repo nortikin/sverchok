@@ -71,22 +71,16 @@ class SvgDimension():
                 sign_b = 1 if self.dim_offset > 0 else -1
 
         if self.dim_type == "Vertical" or self.dim_type == 1:
-            line_dir = Vector((0, -1, 0))
+            line_dir = Vector((0, 1, 0))
             perp = Vector ((1, 0, 0))
             diagonal = (line_dir + perp).normalized()
             higher_a = loc_a[0] > loc_b[0]
             angle = 90
-            if higher_a:
-                dim_loc_a = loc_a + perp * (self.dim_offset)
-                dim_loc_b = loc_b + perp * (self.dim_offset + loc_a[0] - loc_b[0])
-                sign = 1 if self.dim_offset > 0 else -1
-                sign_b = 1 if self.dim_offset + loc_a[0] - loc_b[0] > 0 else -1
-            else:
-                line_dir = Vector((0, -1, 0))
-                dim_loc_a = loc_a + perp * (self.dim_offset + loc_b[0] - loc_a[0])
-                dim_loc_b = loc_b + perp * (self.dim_offset)
-                sign = 1 if self.dim_offset + loc_b[0] - loc_a[0] > 0 else -1
-                sign_b = 1 if self.dim_offset > 0 else -1
+            dim_loc_a = loc_a + perp * (self.dim_offset)
+            dim_loc_b = loc_b + perp * (self.dim_offset + loc_a[0] - loc_b[0])
+            sign = 1 if self.dim_offset > 0 else -1
+            sign_b = 1 if self.dim_offset + loc_a[0] - loc_b[0] > 0 else -1
+
 
         if self.dim_type == "Aligned" or self.dim_type == 2:
             line_dir = (loc_b - loc_a).normalized()
