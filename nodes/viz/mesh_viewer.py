@@ -32,7 +32,7 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
 
     is_merge: BoolProperty(default=False, update=updateNode, description="Merge all meshes into one object")
 
-    auto_smooth: BoolProperty(
+    is_smooth_mesh: BoolProperty(
         default=False,
         update=updateNode,
         description="This auto sets all faces to smooth shade")
@@ -52,7 +52,7 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
     def sv_init(self, context):
         self.init_viewer()
         self.inputs.new('SvVerticesSocket', 'vertices')
-        self.inputs.new('SvStringsSocket', 'edges')
+        self.inputs.new('SvStringsSocket', 'edges').custom_draw = 'draw_edges_props'
         self.inputs.new('SvStringsSocket', 'faces')
         self.inputs.new('SvStringsSocket', 'material_idx')
         self.inputs.new('SvMatrixSocket', 'matrix').custom_draw = 'draw_matrix_props'
@@ -72,14 +72,19 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
         row.prop(self, 'is_merge', text='Merge', toggle=1, icon='AUTOMERGE_ON' if self.is_merge else 'AUTOMERGE_OFF')
 
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, 'auto_smooth', text='smooth shade')
-        layout.prop(self, 'show_wireframe')
+        layout.prop(self, 'is_smooth_mesh', text='smooth shade')
         layout.prop(self, 'to3d')
 
     def draw_matrix_props(self, socket, context, layout):
         socket.draw_quick_link(context, layout, self)
         layout.label(text=socket.name)
         layout.prop(self, 'apply_matrices_to', text='', expand=True)
+
+    def draw_edges_props(self, socket, context, layout):
+        socket.draw_quick_link(context, layout, self)
+        layout.label(text=socket.name)
+        layout.prop(self, 'show_wireframe', text='', expand=True,
+                    icon='HIDE_OFF' if self.show_wireframe else 'HIDE_OFF')
 
     def draw_label(self):
         return f"MeV {self.base_data_name}"
@@ -91,7 +96,7 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)
         row.prop(self, 'base_data_name', text='')
-        row.prop_search(self, 'material_pointer', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
+        row.prop_search(self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
 
     def process(self):
 
@@ -157,10 +162,13 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
             if mat_indexes:
                 mat_i = [mi for _, mi in zip(me_data.mesh.polygons, cycle(mat_i))]
                 me_data.mesh.polygons.foreach_set('material_index', mat_i)
+            me_data.set_smooth(self.is_smooth_mesh)
+
 
         # regenerate object data blocks
         self.regenerate_objects([self.base_data_name], [d.mesh for d in self.mesh_data], [self.collection])
         [setattr(prop.obj, 'matrix_local', m) for prop, m in zip(self.object_data, cycle(obj_matrices))]
+        [setattr(prop.obj, 'show_wire', self.show_wireframe) for prop in self.object_data]
 
         self.outputs['Objects'].sv_set([obj_data.obj for obj_data in self.object_data])
 

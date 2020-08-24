@@ -190,6 +190,14 @@ class SvMeshData(bpy.types.PropertyGroup):
                 self.mesh.transform(matrix)
         self.mesh.update()
 
+    def set_smooth(self, is_smooth_mesh):
+        """Make mesh smooth or flat"""
+        if is_smooth_mesh:
+            is_smooth = np.ones(len(self.mesh.polygons), dtype=bool)
+        else:
+            is_smooth = np.zeros(len(self.mesh.polygons), dtype=bool)
+        self.mesh.polygons.foreach_set('use_smooth', is_smooth)
+
     def is_topology_changed(self, verts_number: int, faces_number: int) -> bool:
         """
         Simple and fast test but not 100% robust.
