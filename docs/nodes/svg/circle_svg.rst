@@ -20,6 +20,7 @@ Outputs
 -------
 
 - SVG Objects
+- Curves: Generated Shapes as Sverchok Curve objects
 
 
 Examples
