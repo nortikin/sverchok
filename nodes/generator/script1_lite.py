@@ -453,7 +453,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             lineno = traceback.extract_tb(exc_traceback)[-1][1]
             print('on line: ', lineno)
             show = traceback.print_exception
-            show(exc_type, exc_value, exc_traceback, limit=4, file=sys.stdout)
+            show(exc_type, exc_value, exc_traceback, limit=6, file=sys.stdout)
             if hasattr(self, "snlite_raise_exception") and self.snlite_raise_exception:
                 raise #   SNLITE_EXCEPTION(sys.exc_info()[2]) from err
 

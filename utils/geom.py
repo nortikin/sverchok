@@ -119,34 +119,41 @@ class Spline(object):
         if metric == "DISTANCE":
             tmp = np.linalg.norm(pts[:-1] - pts[1:], axis=1)
             tknots = np.insert(tmp, 0, 0).cumsum()
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
         elif metric == "MANHATTAN":
             tmp = np.sum(np.absolute(pts[:-1] - pts[1:]), 1)
             tknots = np.insert(tmp, 0, 0).cumsum()
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
         elif metric == "POINTS":
             tknots = np.linspace(0, 1, len(pts))
         elif metric == "CHEBYSHEV":
             tknots = np.max(np.absolute(pts[1:] - pts[:-1]), 1)
             tknots = np.insert(tknots, 0, 0).cumsum()
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
         elif metric == 'CENTRIPETAL':
             tmp = np.linalg.norm(pts[:-1] - pts[1:], axis=1)
             tmp = np.sqrt(tmp)
             tknots = np.insert(tmp, 0, 0).cumsum()
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
         elif metric == "X":
             tknots = pts[:,0]
             tknots = tknots - tknots[0]
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
         elif metric == "Y":
             tknots = pts[:,1]
             tknots = tknots - tknots[0]
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
         elif metric == "Z":
             tknots = pts[:,2]
             tknots = tknots - tknots[0]
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
 
         return tknots
 
@@ -1805,6 +1812,27 @@ class CircleEquation3D(object):
         circle.radius = radius
         circle.normal = np.array(normal)
         return circle
+
+    @classmethod
+    def from_center_point_normal(cls, center, point, normal):
+        center = Vector(center)
+        point = Vector(point)
+        normal = Vector(normal)
+
+        radius = (point - center).length
+        circle = CircleEquation3D.from_center_radius_normal(center, radius, normal)
+        circle.point1 = np.array(point)
+        return circle
+
+    @classmethod
+    def from_axis_point(cls, point_on_axis, direction, point):
+        point_on_axis = Vector(point_on_axis)
+        direction = Vector(direction)
+        point = Vector(point)
+
+        axis = LineEquation.from_direction_and_point(direction, point_on_axis)
+        center = axis.projection_of_point(point)
+        return CircleEquation3D.from_center_point_normal(center, point, direction)
 
     def get_matrix(self):
         """

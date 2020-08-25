@@ -10,6 +10,7 @@ Nodes
    Curves<nodes/curve/curve_index>
    Surfaces<nodes/surface/surface_index>
    Fields<nodes/field/field_index>
+   Solids<nodes/solid/solid_index>
    Transforms <nodes/transforms/transforms_index>
    Analyzers <nodes/analyzer/analyzer_index>
    Modifier Change <nodes/modifier_change/modifier_change_index>
@@ -36,3 +37,4 @@ Nodes
    Layout <nodes/layout/layout_index>
    Network <nodes/network/network_index>
    Exchange <nodes/exchange/exchange_index>
+   SVG <nodes/exchange/svg_index>

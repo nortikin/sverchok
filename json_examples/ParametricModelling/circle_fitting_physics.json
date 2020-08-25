@@ -35,6 +35,27 @@
       "params": {},
       "width": 140.0
     },
+    "Mesh viewer": {
+      "bl_idname": "SvMeshViewer",
+      "collection": "",
+      "color": [
+        1.0,
+        0.5889999866485596,
+        0.21400000154972076
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        270.53326416015625,
+        362.92132568359375
+      ],
+      "params": {
+        "base_data_name": "Alpha"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
     "Plane": {
       "bl_idname": "SvPlaneNodeMk3",
       "color": [
@@ -51,7 +72,6 @@
       ],
       "params": {
         "dimension_mode": "SIZE",
-        "normalize": 1,
         "numx": 10,
         "numy": 10,
         "sizex": 10.0
@@ -76,6 +96,7 @@
         "drag_force": 0.10000000149011612,
         "fit_M": 1,
         "grow": 0.009999999776482582,
+        "is_animatable": 0,
         "iterations": 135,
         "max_rad": 2.559999942779541,
         "max_vel": 0.03999999910593033,
@@ -101,27 +122,6 @@
         "size": 400,
         "type_selected_mode": "Float"
       },
-      "width": 140.0
-    },
-    "Viewer BMesh": {
-      "bl_idname": "SvBmeshViewerNodeV28",
-      "color": [
-        1.0,
-        0.30000001192092896,
-        0.0
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        270.53326416015625,
-        362.92132568359375
-      ],
-      "params": {
-        "merge": 1,
-        "object_hide_render": 1
-      },
-      "use_custom_color": true,
       "width": 140.0
     }
   },
@@ -159,25 +159,25 @@
     [
       "Circle",
       0,
-      "Viewer BMesh",
+      "Mesh viewer",
       0
     ],
     [
       "Circle",
       1,
-      "Viewer BMesh",
+      "Mesh viewer",
       1
     ],
     [
       "Circle",
       2,
-      "Viewer BMesh",
+      "Mesh viewer",
       2
     ],
     [
       "Pulga Physics",
       0,
-      "Viewer BMesh",
+      "Mesh viewer",
       4
     ]
   ]

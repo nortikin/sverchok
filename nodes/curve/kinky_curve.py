@@ -115,7 +115,10 @@ class SvKinkyCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
                 new_curves = [SvSplineCurve.from_points(segment, metric=self.metric) for segment in segments]
                 if self.make_nurbs:
-                    new_curves = [curve.to_nurbs() for curve in new_curves]
+                    if self.concat:
+                        new_curves = [curve.to_nurbs().elevate_degree(target=3) for curve in new_curves]
+                    else:
+                        new_curves = [curve.to_nurbs() for curve in new_curves]
                 if self.concat:
                     new_curves = [concatenate_curves(new_curves)]
                 curve_out.append(new_curves)

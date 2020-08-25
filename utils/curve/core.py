@@ -13,6 +13,9 @@ from mathutils import Vector, Matrix
 from sverchok.utils.geom import LineEquation, CubicSpline
 from sverchok.utils.integrate import TrapezoidIntegral
 from sverchok.utils.logging import info, error
+from sverchok.utils.math import binomial
+from sverchok.utils.nurbs_common import SvNurbsMaths
+from sverchok.utils.curve import knotvector as sv_knotvector
 
 class ZeroCurvatureException(Exception):
     def __init__(self, ts, mask=None):
@@ -681,7 +684,7 @@ class SvTaylorCurve(SvCurve):
         denom = 1
         for i, vec in enumerate(self.derivatives):
             result = result + t**(i+1) * vec / denom
-            denom *= (i+1)
+            denom *= (i+2)
         return result
 
     def evaluate_array(self, ts):
@@ -691,7 +694,7 @@ class SvTaylorCurve(SvCurve):
         ts = ts[np.newaxis].T
         for i, vec in enumerate(self.derivatives):
             result = result + ts**(i+1) * vec / denom
-            denom *= (i+1)
+            denom *= (i+2)
         return result
 
     def tangent(self, t):
@@ -699,7 +702,7 @@ class SvTaylorCurve(SvCurve):
         denom = 1
         for i, vec in enumerate(self.derivatives):
             result = result + (i+1)*t**i * vec / denom
-            denom *= (i+1)
+            denom *= (i+2)
         return result
 
     def tangent_array(self, ts):
@@ -709,7 +712,7 @@ class SvTaylorCurve(SvCurve):
         ts = ts[np.newaxis].T
         for i, vec in enumerate(self.derivatives):
             result = result + (i+1)*ts**i * vec / denom
-            denom *= (i+1)
+            denom *= (i+2)
         return result
 
     def second_derivative(self, t):
@@ -723,7 +726,7 @@ class SvTaylorCurve(SvCurve):
         for k, vec in enumerate(self.derivatives[1:]):
             i = k+1
             result = result + (i+1)*i*ts**(i-1) * vec / denom
-            denom *= (i+1)
+            denom *= (i+2)
         return result
 
     def third_derivative_array(self, ts):
@@ -734,6 +737,44 @@ class SvTaylorCurve(SvCurve):
         for k, vec in enumerate(self.derivatives[2:]):
             i = k+2
             result = result + (i+1)*i*(i-1)*ts**(i-2) * vec / denom
-            denom *= (i+1)
+            denom *= (i+2)
         return result
+    
+    def get_degree(self):
+        return len(self.derivatives)
+
+    def get_control_points(self):
+        n = self.get_degree()
+        factorials = np.empty((n,))
+        f = 1
+        for i in range(1, n+1):
+            factorials[i-1] = f
+            f *= (i+1)
+
+        A = np.zeros((n+1, n+1))
+        for t_power in range(n+1):
+            for ctrlpt_i in range(t_power+1):
+                sign = 1 if (t_power-ctrlpt_i) % 2 == 0 else -1
+                A[t_power,ctrlpt_i] = binomial(n,ctrlpt_i) * binomial(n-ctrlpt_i, t_power-ctrlpt_i) * sign
+
+        control_points = np.empty((n+1, 3))
+        for d in range(3):
+
+            B = np.empty((n+1, 1))
+            B[0,0] = self.start[d]
+            B[1:,0] = self.derivatives[:,d] / factorials
+
+            x = np.linalg.solve(A, B)
+            control_points[:,d] = x[:,0]
+
+        return control_points
+
+    def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
+        control_points = self.get_control_points() 
+        degree = self.get_degree()
+        knotvector = sv_knotvector.generate(degree, len(control_points))
+        nurbs = SvNurbsMaths.build_curve(implementation,
+                degree = degree, knotvector = knotvector,
+                control_points = control_points)
+        return nurbs.cut_segment(*self.u_bounds)
 

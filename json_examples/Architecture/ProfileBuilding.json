@@ -27,8 +27,7 @@
     "Select mesh elements by location.002": "Frame.002",
     "Switch.001": "Frame.004",
     "UV Connection.001": "Frame.001",
-    "Vector in.001": "Frame.001",
-    "Viewer BMesh": "Frame.004"
+    "Vector in.001": "Frame.001"
   },
   "groups": {},
   "nodes": {
@@ -43,7 +42,9 @@
       ],
       "params": {
         "float_": 0.0,
+        "float_draft_": 0.0,
         "int_": 0,
+        "int_draft_": 0,
         "selected_mode": "int"
       },
       "width": 140.0
@@ -59,7 +60,9 @@
       ],
       "params": {
         "float_": 0.0,
+        "float_draft_": 0.0,
         "int_": 1,
+        "int_draft_": 0,
         "selected_mode": "int"
       },
       "width": 140.0
@@ -112,7 +115,7 @@
     },
     "Frame": {
       "bl_idname": "NodeFrame",
-      "height": 923.4965209960938,
+      "height": 920.628662109375,
       "hide": false,
       "label": "Profile",
       "location": [
@@ -120,11 +123,11 @@
         111.21172332763672
       ],
       "params": {},
-      "width": 707.29248046875
+      "width": 706.9644165039062
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
-      "height": 557.42333984375,
+      "height": 555.8921508789062,
       "hide": false,
       "label": "Base Form",
       "location": [
@@ -132,11 +135,11 @@
         190.14381408691406
       ],
       "params": {},
-      "width": 791.2181396484375
+      "width": 790.8900756835938
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "height": 894.410888671875,
+      "height": 892.1141967773438,
       "hide": false,
       "label": "Mask Top & Bottom",
       "location": [
@@ -144,11 +147,11 @@
         -151.44383239746094
       ],
       "params": {},
-      "width": 817.0706176757812
+      "width": 816.3535766601562
     },
     "Frame.003": {
       "bl_idname": "NodeFrame",
-      "height": 386.094482421875,
+      "height": 382.66766357421875,
       "hide": false,
       "label": "Inset",
       "location": [
@@ -156,11 +159,11 @@
         10.079999923706055
       ],
       "params": {},
-      "width": 397.261962890625
+      "width": 396.933837890625
     },
     "Frame.004": {
       "bl_idname": "NodeFrame",
-      "height": 635.000244140625,
+      "height": 633.0316162109375,
       "hide": false,
       "label": "Assign Materials",
       "location": [
@@ -168,7 +171,7 @@
         148.50210571289062
       ],
       "params": {},
-      "width": 821.6016845703125
+      "width": 821.2734375
     },
     "Inset faces": {
       "bl_idname": "SvInsetFaces",
@@ -215,7 +218,11 @@
         157.33985900878906
       ],
       "params": {
-        "items_": "OR"
+        "items_": "OR",
+        "prop_types": [
+          false,
+          false
+        ]
       },
       "width": 140.0
     },
@@ -229,7 +236,11 @@
         138.02403259277344
       ],
       "params": {
-        "items_": "NOT"
+        "items_": "NOT",
+        "prop_types": [
+          false,
+          false
+        ]
       },
       "width": 140.0
     },
@@ -245,6 +256,27 @@
       "params": {
         "do_join": 0
       },
+      "width": 140.0
+    },
+    "Mesh viewer": {
+      "bl_idname": "SvMeshViewer",
+      "collection": "",
+      "color": [
+        1.0,
+        0.5889999866485596,
+        0.21400000154972076
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2365.52880859375,
+        456.7216491699219
+      ],
+      "params": {
+        "base_data_name": "Alpha"
+      },
+      "use_custom_color": true,
       "width": 140.0
     },
     "Note": {
@@ -538,10 +570,7 @@
         2176.942611694336,
         192.38851928710938
       ],
-      "params": {
-        "selected_mode": 1,
-        "switch_count": 1
-      },
+      "params": {},
       "width": 140.0
     },
     "UV Connection.001": {
@@ -573,43 +602,19 @@
       ],
       "params": {},
       "width": 100.0
-    },
-    "Viewer BMesh": {
-      "bl_idname": "SvBmeshViewerNodeV28",
-      "color": [
-        1.0,
-        0.30000001192092896,
-        0.0
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        2364.264877319336,
-        457.9855041503906
-      ],
-      "params": {},
-      "use_custom_color": true,
-      "width": 140.0
     }
   },
   "update_lists": [
     [
-      "Number Range",
+      "Number Range.005",
       0,
-      "Vector in.001",
-      2
+      "Formula.001",
+      0
     ],
     [
       "Number Range.001",
       0,
       "Formula",
-      0
-    ],
-    [
-      "Number Range.005",
-      0,
-      "Formula.001",
       0
     ],
     [
@@ -641,6 +646,12 @@
       0,
       "Profile Parametric Mk3.001",
       4
+    ],
+    [
+      "Number Range",
+      0,
+      "Vector in.001",
+      2
     ],
     [
       "Profile Parametric Mk3.001",
@@ -777,23 +788,23 @@
     [
       "Inset faces.001",
       0,
-      "Viewer BMesh",
+      "Mesh viewer",
       0
     ],
     [
       "Inset faces.001",
       2,
-      "Viewer BMesh",
+      "Mesh viewer",
       2
     ],
     [
       "Switch.001",
       0,
-      "Viewer BMesh",
+      "Mesh viewer",
       3
     ],
     [
-      "Viewer BMesh",
+      "Mesh viewer",
       0,
       "Assign Materials List",
       0

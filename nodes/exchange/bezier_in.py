@@ -11,7 +11,7 @@ from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
-from sverchok.utils.curve import SvConcatCurve
+from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve.bezier import SvCubicBezierCurve
 
 class SvBezierInCallbackOp(bpy.types.Operator):
@@ -141,7 +141,7 @@ class SvBezierInNode(bpy.types.Node, SverchCustomTreeNode):
             points.append([c0, c1, c2, c3])
             segment = SvCubicBezierCurve(c0, c1, c2, c3)
             segments.append(segment)
-        return points, SvConcatCurve(segments)
+        return points, concatenate_curves(segments)
 
     def process(self):
 

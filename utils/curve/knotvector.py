@@ -111,6 +111,7 @@ def to_multiplicity(knot_vector, tolerance=1e-6):
             last_match = False
         else:
             last_match = abs(u - prev_u) < tolerance
+            #print(f"Match: {u} - {prev_u} = {abs(u - prev_u)}, => {last_match}")
         if prev_u is None:
             count = 1
         elif last_match:
@@ -170,7 +171,11 @@ def reverse(knot_vector):
 
 def find_multiplicity(knot_vector, u, tolerance=1e-6):
     pairs = to_multiplicity(knot_vector, tolerance)
-    return dict(pairs).get(u, 0)
+    #print(f"kv {knot_vector} => {pairs}")
+    for k, count in pairs:
+        if abs(k - u) < tolerance:
+            return count
+    return 0
 
 def difference(src_kv, dst_kv):
     src_pairs = dict(to_multiplicity(src_kv))

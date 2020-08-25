@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<style media="screen">
+  #div1{
+    text-align: center;
+  }
+  #div2{
+    opacity: 0.7;
+    display:block;
+    position:fixed;
+    bottom:0px;
+    left:0px;
+    padding: 10px;
+    font-family: sans-serif;
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+  #div2:hover{
+    opacity: 1;
+  }
+  #canvas{
+    border-style: solid;
+    border-width: thin;
+    box-shadow: 4px 4px grey;
+    border-color: gray;
+  }
+  #refresh_slider{
+    display: inline-block;
+
+  }
+  #zoom_slider{
+    display: inline-block;
+
+  }
+  #refresh_rate{
+    padding-right: 20px;
+
+  }
+  #file_name{
+    padding-right: 20px;
+
+  }
+  label{
+  padding-left: 20px;
+
+
+  }
+</style>
+<body>
+
+<div id="div1">
+  <img id="canvas" src="gh.svg">
+
+</div>
+<div id="div2">
+  <span id="file_name">File: "E:/SverchokDev/sv_tosvg/Sv_svg.svg"</span>
+  <button id="PauseButton" onclick="pause_feed()">Pause</button>
+  <button id="PlayButton"onclick="live_feed = start_feed()">Play</button>
+  <form id="refresh_slider">
+  <label for="refresh_rate">Refresh rate (<span id="r_rate">250ms</span>):</label>
+  <input type="range" id="refresh_rate" name="vol" min="100" max="2000" onchange="update_interval(this.value)">
+</form >
+<form id="zoom_slider">
+
+  <label for="zoom">Zoom (<span id="zoom_value">Auto</span>):</label>
+  <input type="range" id="zoom" name="zoom" min="0" max="300" step="10" onchange="update_zoom(this.value)">
+</form >
+
+  </div>
+</body>
+
+<script>
+  var a=0
+  var paused= false
+  var file_name = "E:/SverchokDev/sv_tosvg/Sv_svg.svg"
+  function reload_svg(){
+  <!-- console.log(a) -->
+
+  var para = document.getElementById("canvas");
+
+
+para.setAttribute("src", file_name+"?"+a);
+
+a= a+1
+
+  }
+function showPause(){
+    var butt = document.getElementById("PauseButton");
+    butt.style.display="inline-block";
+    var playButt = document.getElementById("PlayButton");
+    playButt.style.display="none";}
+ function update_zoom(val){
+     var para = document.getElementById("canvas");
+     var zoom_value = document.getElementById("zoom_value");
+     if (val==0){
+       para.style.width= "auto"
+       zoom_value.textContent="Auto"}
+     else{
+       zoom_value.textContent=val+"% of screen width"
+     para.style.width= val+ "%"}
+ }
+ function update_interval(val){
+    clearInterval(live_feed);
+    live_feed = setInterval(reload_svg , val);
+    var r_rate = document.getElementById("r_rate");
+    r_rate.textContent=val+"ms"
+    if (paused){
+      showPause();
+      paused= false;
+
+    }
+ }
+function pause_feed(){
+    var butt = document.getElementById("PauseButton");
+    butt.style.display="none";
+    var playButt = document.getElementById("PlayButton");
+    playButt.style.display="inline-block";
+
+    clearInterval(live_feed)
+    paused=true
+  }
+ function start_feed(){
+    var butt = document.getElementById("PauseButton");
+    butt.style.display="inline-block";
+    var playButt = document.getElementById("PlayButton");
+    playButt.style.display="none";
+    refresh_rate = document.getElementById("refresh_rate").value
+    console.log(refresh_rate)
+    live_feed = setInterval(reload_svg , refresh_rate)
+    paused=false
+ }
+ var playButt = document.getElementById("PlayButton");
+ playButt.style.display="none";
+ document.getElementById("refresh_rate").value = 250;
+ document.getElementById("zoom").value = 0;
+ live_feed = setInterval(reload_svg , 250);
+ </script>
+ </html>

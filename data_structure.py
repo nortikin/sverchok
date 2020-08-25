@@ -15,7 +15,7 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-
+from functools import wraps
 from math import radians, ceil
 import itertools
 import ast
@@ -906,6 +906,28 @@ def updateNode(self, context):
     """
     CurrentEvents.new_event(BlenderEventsTypes.node_property_update, self)
     self.process_node(context)
+
+
+def update_with_kwargs(update_function, **kwargs):
+    """
+    You can wrap property update function for adding extra key arguments to it, like this:
+
+    def update_prop(self, context, extra_arg=None):
+        print(extra_arg)
+
+    node_prop_name: bpy.props.BoolProperty(update=update_with_kwargs(update_prop, extra_arg='node_prop_name'))
+    """
+
+    # https://docs.python.org/3/library/functools.html#functools.partial
+    @wraps(update_function)
+    def handel_update_call(node, context):
+        update_function(node, context, **handel_update_call.extra_args)
+
+    handel_update_call.extra_args = dict()
+    for attr_name, data in kwargs.items():
+        handel_update_call.extra_args[attr_name] = data
+
+    return handel_update_call
 
 
 ##############################################################

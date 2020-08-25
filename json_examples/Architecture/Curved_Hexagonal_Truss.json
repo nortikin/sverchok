@@ -11,6 +11,7 @@
     "List Split": "Frame",
     "List Split.001": "Frame.002",
     "Mesh Join": "Frame.002",
+    "Mesh viewer": "Frame.001",
     "Move": "Frame",
     "Plane": "Frame",
     "Polygon Boom": "Frame.002",
@@ -19,7 +20,6 @@
     "Segment": "Frame.002",
     "Solidify": "Frame.001",
     "Vector Math": "Frame.002",
-    "Viewer BMesh": "Frame.001",
     "Viewer Draw Mk3.001": "Frame.001"
   },
   "groups": {},
@@ -62,7 +62,7 @@
       "hide": false,
       "label": "",
       "location": [
-        594.5363464355469,
+        594.536376953125,
         -1177.153793334961
       ],
       "params": {
@@ -126,7 +126,7 @@
     },
     "Frame": {
       "bl_idname": "NodeFrame",
-      "height": 452.89105224609375,
+      "height": 452.06829833984375,
       "hide": false,
       "label": "Control Surface",
       "location": [
@@ -134,11 +134,11 @@
         107.1540756225586
       ],
       "params": {},
-      "width": 1252.63330078125
+      "width": 1252.7852783203125
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
-      "height": 400.29412841796875,
+      "height": 422.86370849609375,
       "hide": false,
       "label": "Cover",
       "location": [
@@ -146,11 +146,11 @@
         56.54072189331055
       ],
       "params": {},
-      "width": 806.707763671875
+      "width": 806.859619140625
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "height": 732.0890502929688,
+      "height": 729.35498046875,
       "hide": false,
       "label": "Structure",
       "location": [
@@ -158,7 +158,7 @@
         -95.03233337402344
       ],
       "params": {},
-      "width": 1550.7640380859375
+      "width": 1550.9158935546875
     },
     "Inset Special": {
       "bl_idname": "SvInsetSpecial",
@@ -210,9 +210,30 @@
       "label": "",
       "location": [
         1457.0633239746094,
-        -1038.8115692138672
+        -1038.811508178711
       ],
       "params": {},
+      "width": 140.0
+    },
+    "Mesh viewer": {
+      "bl_idname": "SvMeshViewer",
+      "collection": "",
+      "color": [
+        1.0,
+        0.5889999866485596,
+        0.21400000154972076
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1369.1665115356445,
+        -456.61589431762695
+      ],
+      "params": {
+        "base_data_name": "Alpha"
+      },
+      "use_custom_color": true,
       "width": 140.0
     },
     "Move": {
@@ -297,7 +318,7 @@
       "hide": false,
       "label": "",
       "location": [
-        591.9270324707031,
+        591.927001953125,
         -1403.2000579833984
       ],
       "params": {
@@ -365,7 +386,7 @@
       "hide": false,
       "label": "",
       "location": [
-        829.8253479003906,
+        829.8252868652344,
         -1280.355209350586
       ],
       "params": {
@@ -376,48 +397,6 @@
           -1.7100000381469727
         ]
       },
-      "width": 140.0
-    },
-    "Viewer BMesh": {
-      "bl_idname": "SvBmeshViewerNodeV28",
-      "color": [
-        1.0,
-        0.30000001192092896,
-        0.0
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        1369.1665115356445,
-        -456.61589431762695
-      ],
-      "params": {
-        "basedata_name": "Epsilon",
-        "lp": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ]
-      },
-      "use_custom_color": true,
       "width": 140.0
     },
     "Viewer Draw Mk3.001": {
@@ -444,30 +423,6 @@
   },
   "update_lists": [
     [
-      "Polygon Grid",
-      1,
-      "Dual Mesh",
-      0
-    ],
-    [
-      "Polygon Grid",
-      2,
-      "Dual Mesh",
-      1
-    ],
-    [
-      "Polygon Grid",
-      3,
-      "Dual Mesh",
-      2
-    ],
-    [
-      "Dual Mesh",
-      1,
-      "Polygons to Edges",
-      0
-    ],
-    [
       "A Number",
       0,
       "Plane",
@@ -522,18 +477,6 @@
       2
     ],
     [
-      "Component Analyzer",
-      0,
-      "Vector Math",
-      0
-    ],
-    [
-      "Vector Math",
-      0,
-      "List Split.001",
-      0
-    ],
-    [
       "Bend object along surface",
       0,
       "Polygon Boom",
@@ -543,54 +486,6 @@
       "Polygon Grid",
       3,
       "Polygon Boom",
-      1
-    ],
-    [
-      "Polygon Boom",
-      0,
-      "Segment",
-      0
-    ],
-    [
-      "List Split.001",
-      0,
-      "Segment",
-      1
-    ],
-    [
-      "Segment",
-      0,
-      "Mesh Join",
-      0
-    ],
-    [
-      "Segment",
-      1,
-      "Mesh Join",
-      1
-    ],
-    [
-      "Mesh Join",
-      0,
-      "Curve Viewer",
-      0
-    ],
-    [
-      "Mesh Join",
-      1,
-      "Curve Viewer",
-      1
-    ],
-    [
-      "Vector Math",
-      0,
-      "Curve Viewer.001",
-      0
-    ],
-    [
-      "Polygons to Edges",
-      0,
-      "Curve Viewer.001",
       1
     ],
     [
@@ -620,25 +515,109 @@
     [
       "Solidify",
       0,
-      "Viewer Draw Mk3.001",
+      "Mesh viewer",
       0
     ],
     [
       "Solidify",
       2,
-      "Viewer Draw Mk3.001",
+      "Mesh viewer",
       2
+    ],
+    [
+      "Component Analyzer",
+      0,
+      "Vector Math",
+      0
+    ],
+    [
+      "Vector Math",
+      0,
+      "List Split.001",
+      0
+    ],
+    [
+      "Polygon Boom",
+      0,
+      "Segment",
+      0
+    ],
+    [
+      "List Split.001",
+      0,
+      "Segment",
+      1
+    ],
+    [
+      "Segment",
+      0,
+      "Mesh Join",
+      0
+    ],
+    [
+      "Segment",
+      1,
+      "Mesh Join",
+      1
+    ],
+    [
+      "Polygon Grid",
+      1,
+      "Dual Mesh",
+      0
+    ],
+    [
+      "Polygon Grid",
+      2,
+      "Dual Mesh",
+      1
+    ],
+    [
+      "Polygon Grid",
+      3,
+      "Dual Mesh",
+      2
+    ],
+    [
+      "Dual Mesh",
+      1,
+      "Polygons to Edges",
+      0
+    ],
+    [
+      "Vector Math",
+      0,
+      "Curve Viewer.001",
+      0
+    ],
+    [
+      "Polygons to Edges",
+      0,
+      "Curve Viewer.001",
+      1
+    ],
+    [
+      "Mesh Join",
+      0,
+      "Curve Viewer",
+      0
+    ],
+    [
+      "Mesh Join",
+      1,
+      "Curve Viewer",
+      1
     ],
     [
       "Solidify",
       0,
-      "Viewer BMesh",
+      "Viewer Draw Mk3.001",
       0
     ],
     [
       "Solidify",
       2,
-      "Viewer BMesh",
+      "Viewer Draw Mk3.001",
       2
     ]
   ]

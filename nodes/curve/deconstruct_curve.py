@@ -44,7 +44,7 @@ class SvDeconstructCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
         try:
             points = nurbs.get_control_points().tolist()
-        except:
+        except Exception as e:
             points = []
 
         if hasattr(nurbs, 'get_weights'):

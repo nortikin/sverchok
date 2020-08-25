@@ -54,7 +54,8 @@ socket_colors = {
     "SvTextSocket": (0.68, 0.85, 0.90, 1),
     "SvDictionarySocket": (1.0, 1.0, 1.0, 1.0),
     "SvFilePathSocket": (0.9, 0.9, 0.3, 1.0),
-    "SvSolidSocket": (0.0, 0.65, 0.3, 1.0)
+    "SvSolidSocket": (0.0, 0.65, 0.3, 1.0),
+    "SvSvgSocket": (0.1, 0.5, 1, 1.0)
 }
 
 def process_from_socket(self, context):
@@ -193,6 +194,10 @@ class SvSocketCommon:
                 new_node_idname = "SvMatrixInNodeMK4"
             elif self.bl_idname == "SvVerticesSocket":
                 new_node_idname = "GenVectorsNode"
+            elif self.bl_idname == "SvFilePathSocket":
+                new_node_idname = "SvFilePathNode"
+            elif self.bl_idname == "SvSvgSocket" and "Fill / Stroke" in self.name:
+                new_node_idname = "SvSvgFillStrokeNode"
             else:
                 return
 
@@ -583,6 +588,17 @@ class SvFilePathSocket(NodeSocket, SvSocketCommon):
         else:
             return [[self.default_value]]
 
+class SvSvgSocket(NodeSocket, SvSocketCommon):
+    '''For file path data'''
+    bl_idname = "SvSvgSocket"
+    bl_label = "SVG Data Socket"
+
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
+        if self.is_linked and not self.is_output:
+            return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
+        else:
+            return [[default]]
+
 class SvDictionarySocket(NodeSocket, SvSocketCommon):
     '''For dictionary data'''
     bl_idname = "SvDictionarySocket"
@@ -777,7 +793,9 @@ type_map_to = {
     "d": SvDummySocket.bl_idname,
     "q": SvQuaternionSocket.bl_idname,
     "t": SvTextSocket.bl_idname,
-    "f": SvFilePathSocket.bl_idname
+    "f": SvFilePathSocket.bl_idname,
+    "so": SvSolidSocket.bl_idname,
+    "sv": SvSvgSocket.bl_idname
 }
 
 type_map_from = {bl_idname: shortname for shortname, bl_idname in type_map_to.items()}
@@ -789,7 +807,7 @@ classes = [
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
     SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket,
     SvSurfaceSocket, SvCurveSocket, SvScalarFieldSocket, SvVectorFieldSocket,
-    SvSolidSocket
+    SvSolidSocket, SvSvgSocket
 ]
 
 register, unregister = bpy.utils.register_classes_factory(classes)

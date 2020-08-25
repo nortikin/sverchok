@@ -73,7 +73,7 @@ class SvExNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
     degree : IntProperty(
             name = "Degree",
-            min = 1, max = 6,
+            min = 1, max = 11,
             default = 3,
             update = updateNode)
 

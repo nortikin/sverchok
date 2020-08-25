@@ -33,6 +33,7 @@ Surface
    nurbs_surface
    approximate_nurbs_surface
    interpolate_nurbs_surface
+   nurbs_loft
    intersect_curve_surface
    nearest_point
    ortho_project
