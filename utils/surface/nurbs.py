@@ -80,6 +80,7 @@ class SvGeomdlSurface(SvNurbsSurface):
         self.surface = surface
         self.u_bounds = (0, 1)
         self.v_bounds = (0, 1)
+        self.__description__ = f"Geomdl NURBS (degree={surface.degree_u}x{surface.degree_v}, pts={len(surface.ctrlpts2d)}x{len(surface.ctrlpts2d[0])})"
 
     def get_degree_u(self):
         return self.surface.degree_u
@@ -263,6 +264,7 @@ class SvNativeNurbsSurface(SvNurbsSurface):
         self.u_bounds = (self.knotvector_u.min(), self.knotvector_u.max())
         self.v_bounds = (self.knotvector_v.min(), self.knotvector_v.max())
         self.normal_delta = 0.0001
+        self.__description__ = f"Native NURBS (degree={degree_u}x{degree_v}, pts={self.control_points.shape[0]}x{self.control_points.shape[1]})"
 
     @classmethod
     def build(cls, implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights=None, normalize_knots=False):
