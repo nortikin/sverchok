@@ -701,11 +701,12 @@ def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, on_zero_curvat
     matrices_np = np.linalg.inv(matrices_np)
     return matrices_np, surf_points, tangents, normals, binormals
 
-def concatenate_curves(curves, scale_to_unit=False):
+def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
     if not curves:
         raise Exception("List of curves must be not empty")
     result = [curves[0]]
     some_native = False
+    exceptions = []
     for idx, curve in enumerate(curves[1:]):
         new_curve = None
         ok = False
@@ -719,6 +720,7 @@ def concatenate_curves(curves, scale_to_unit=False):
                 some_native = True
                 ok = True
             except UnsupportedCurveTypeException as e:
+                exceptions.append(e)
                 # "concatenate" method can't work with this type of curve
                 info("Can't natively join curve #%s (%s), will use generic method: %s", idx+1, curve, e)
                 # P.2: if some curves were already joined natively,
@@ -736,11 +738,15 @@ def concatenate_curves(curves, scale_to_unit=False):
     if len(result) == 1:
         return result[0]
     else:
-        # if any of curves were scaled while joining natively (at P.1),
-        # then all other were scaled at P.2;
-        # if no successfull joins were made, then we can rescale all curves
-        # at once.
-        return SvConcatCurve(result, scale_to_unit and not some_native)
+        if allow_generic:
+            # if any of curves were scaled while joining natively (at P.1),
+            # then all other were scaled at P.2;
+            # if no successfull joins were made, then we can rescale all curves
+            # at once.
+            return SvConcatCurve(result, scale_to_unit and not some_native)
+        else:
+            err_msg = "\n".join([str(e) for e in exceptions])
+            raise Exception(f"Could not join some curves natively. Result is: {result}.\nErrors were:\n{err_msg}")
 
 def reparametrize_curve(curve, new_t_min=0.0, new_t_max=1.0):
     t_min, t_max = curve.get_u_bounds()
