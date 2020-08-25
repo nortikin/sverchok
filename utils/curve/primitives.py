@@ -20,12 +20,14 @@ from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve.algorithms import curve_segment
 
 class SvLine(SvCurve):
-    __description__ = "Line"
 
     def __init__(self, point, direction):
         self.point = np.array(point)
         self.direction = np.array(direction)
         self.u_bounds = (0.0, 1.0)
+
+    def __repr__(self):
+        return f"<{self.point} - {self.point+self.direction}>"
 
     @classmethod
     def from_two_points(cls, point1, point2):
