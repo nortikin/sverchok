@@ -701,6 +701,21 @@ def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, on_zero_curvat
     matrices_np = np.linalg.inv(matrices_np)
     return matrices_np, surf_points, tangents, normals, binormals
 
+def unify_curves_degree(curves):
+    """
+    Make sure that all curves have the same degree, by
+    elevating degree where necessary.
+    Assumes all curves have get_degree() and elevate_degree() methods.
+    Can raise UnsupportedCurveTypeException if some degrees can not be elevated.
+
+    input: list of SvCurve
+    output: list of SvCurve
+    """
+
+    max_degree = max(curve.get_degree() for curve in curves)
+    curves = [curve.elevate_degree(target=max_degree) for curve in curves]
+    return curves
+
 def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
     if not curves:
         raise Exception("List of curves must be not empty")

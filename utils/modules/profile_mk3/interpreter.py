@@ -1087,7 +1087,7 @@ class Interpreter(object):
         elif self.curves_form == Interpreter.BEZIER:
             if not isinstance(curve, (SvBezierCurve, SvCubicBezierCurve)):
                 if hasattr(curve, 'to_bezier'):
-                    curve = curve.to_bezier
+                    curve = curve.to_bezier()
                 else:
                     if self.force_curves_form:
                         raise Exception("Cannot convert curve to Bezier: {statement}")
