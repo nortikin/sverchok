@@ -6,6 +6,7 @@
     "Matrix Math": "Tangent Move",
     "Matrix Track To": "Tangent Move",
     "Matrix out": "Tangent Move",
+    "Mesh viewer": "Output",
     "Move": "Bottom Flat",
     "Move.002": "Tangent Move",
     "Note.001": "Tangent Move",
@@ -19,8 +20,7 @@
     "Select mesh elements by location.001": "Bottom Flat",
     "Vector Noise": "Fractal",
     "Vector in": "Bottom Flat",
-    "Vertex Normal": "Tangent Move",
-    "Viewer BMesh": "Output"
+    "Vertex Normal": "Tangent Move"
   },
   "groups": {},
   "nodes": {
@@ -42,7 +42,7 @@
     },
     "Bottom Flat": {
       "bl_idname": "NodeFrame",
-      "height": 605.8386840820312,
+      "height": 603.775390625,
       "hide": false,
       "label": "Make Bottom Flat",
       "location": [
@@ -50,11 +50,11 @@
         10.079999923706055
       ],
       "params": {},
-      "width": 599.3994140625
+      "width": 599.55126953125
     },
     "Fractal": {
       "bl_idname": "NodeFrame",
-      "height": 400.6192626953125,
+      "height": 399.04327392578125,
       "hide": false,
       "label": "Fractal vectors",
       "location": [
@@ -62,7 +62,7 @@
         193.4789276123047
       ],
       "params": {},
-      "width": 606.992431640625
+      "width": 607.144287109375
     },
     "Inset faces": {
       "bl_idname": "SvInsetFaces",
@@ -149,6 +149,27 @@
         19.41971206665039
       ],
       "params": {},
+      "width": 140.0
+    },
+    "Mesh viewer": {
+      "bl_idname": "SvMeshViewer",
+      "collection": "",
+      "color": [
+        1.0,
+        0.5889999866485596,
+        0.21400000154972076
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        3502.428943634033,
+        437.2855052947998
+      ],
+      "params": {
+        "base_data_name": "Alpha"
+      },
+      "use_custom_color": true,
       "width": 140.0
     },
     "Move": {
@@ -361,7 +382,7 @@
     },
     "Output": {
       "bl_idname": "NodeFrame",
-      "height": 541.9617919921875,
+      "height": 569.0123901367188,
       "hide": false,
       "label": "Output",
       "location": [
@@ -369,7 +390,7 @@
         10.079999923706055
       ],
       "params": {},
-      "width": 483.674072265625
+      "width": 483.826171875
     },
     "Proportional Edit Falloff": {
       "bl_idname": "SvProportionalEditNode",
@@ -538,7 +559,7 @@
     },
     "Tangent Move": {
       "bl_idname": "NodeFrame",
-      "height": 536.373779296875,
+      "height": 534.6459350585938,
       "hide": false,
       "label": "Move along Tangents",
       "location": [
@@ -546,7 +567,7 @@
         10.079999923706055
       ],
       "params": {},
-      "width": 1703.2313232421875
+      "width": 1703.3831787109375
     },
     "Torus": {
       "bl_idname": "SvTorusNodeMK2",
@@ -623,27 +644,6 @@
       ],
       "params": {},
       "width": 140.0
-    },
-    "Viewer BMesh": {
-      "bl_idname": "SvBmeshViewerNodeV28",
-      "color": [
-        1.0,
-        0.30000001192092896,
-        0.0
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        3502.428943634033,
-        437.2855052947998
-      ],
-      "params": {
-        "autosmooth": 1,
-        "basedata_name": "Alpha"
-      },
-      "use_custom_color": true,
-      "width": 140.0
     }
   },
   "update_lists": [
@@ -652,36 +652,6 @@
       "Vertices",
       "Reroute",
       "Input"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Scale.002",
-      "Vertices"
-    ],
-    [
-      "Scale.002",
-      0,
-      "Vector Noise",
-      0
-    ],
-    [
-      "Vector Noise",
-      0,
-      "Scale",
-      0
-    ],
-    [
-      "Scale",
-      0,
-      "Vector Rewire",
-      0
-    ],
-    [
-      "Vector Rewire",
-      0,
-      "Matrix In",
-      0
     ],
     [
       "Torus",
@@ -708,6 +678,36 @@
       3
     ],
     [
+      "Reroute",
+      "Output",
+      "Scale.002",
+      "Vertices"
+    ],
+    [
+      "Scale.002",
+      0,
+      "Vector Noise",
+      0
+    ],
+    [
+      "Vector Noise",
+      0,
+      "Scale",
+      0
+    ],
+    [
+      "Scale",
+      0,
+      "Vector Rewire",
+      0
+    ],
+    [
+      "Vector Rewire",
+      0,
+      "Matrix In",
+      0
+    ],
+    [
       "Matrix Track To",
       0,
       "Matrix Math",
@@ -717,18 +717,6 @@
       "Matrix In",
       0,
       "Matrix Math",
-      1
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Move.002",
-      "Vertices"
-    ],
-    [
-      "Matrix Math",
-      0,
-      "Move.002",
       1
     ],
     [
@@ -754,6 +742,18 @@
       "Edges",
       "Reroute.002",
       "Input"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Move.002",
+      "Vertices"
+    ],
+    [
+      "Matrix Math",
+      0,
+      "Move.002",
+      1
     ],
     [
       "Move.002",
@@ -784,12 +784,6 @@
       2,
       "Inset faces",
       4
-    ],
-    [
-      "Inset faces",
-      "Faces",
-      "Reroute.004",
-      "Input"
     ],
     [
       "Inset faces",
@@ -840,33 +834,39 @@
       "Input"
     ],
     [
+      "Inset faces",
+      "Faces",
+      "Reroute.004",
+      "Input"
+    ],
+    [
       "Reroute.003",
       "Output",
-      "Viewer BMesh",
+      "Mesh viewer",
       "vertices"
     ],
     [
       "Reroute.004",
       "Output",
-      "Viewer BMesh",
+      "Mesh viewer",
       "faces"
     ],
     [
       "Inset faces",
       3,
-      "Viewer BMesh",
+      "Mesh viewer",
       3
-    ],
-    [
-      "Viewer BMesh",
-      0,
-      "Assign Materials List",
-      0
     ],
     [
       "Matrix Math",
       0,
       "Matrix out",
+      0
+    ],
+    [
+      "Mesh viewer",
+      0,
+      "Assign Materials List",
       0
     ]
   ]
