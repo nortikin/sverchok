@@ -5,16 +5,22 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-
+import random
+import string
 from itertools import cycle
-from typing import List
+from typing import List, Union
+
+import numpy as np
 
 import bpy
+from mathutils import Matrix
 
+from sverchok.data_structure import updateNode, update_with_kwargs
 from sverchok.utils.handle_blender_data import correct_collection_length, delete_data_block
+from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh
 
 
-class SvViewerMeshObjectList(bpy.types.PropertyGroup):
+class SvObjectData(bpy.types.PropertyGroup):
     obj: bpy.props.PointerProperty(type=bpy.types.Object)
 
     # Object have not information about in which collection it is located
@@ -34,6 +40,11 @@ class SvViewerMeshObjectList(bpy.types.PropertyGroup):
         else:
             # in case if data block was changed
             self.obj.data = data_block
+
+    def select(self):
+        """Just select the object"""
+        if self.obj:
+            self.obj.select_set(True)
 
     def ensure_link_to_collection(self, collection: bpy.types.Collection = None):
         """Links object to scene or given collection, unlink from previous collection"""
@@ -84,7 +95,7 @@ class SvViewerMeshObjectList(bpy.types.PropertyGroup):
             new_obj = bpy.data.objects.new(name=obj_name, object_data=data_block)
         self.obj = new_obj
 
-    def remove(self):
+    def remove_data(self):
         """Should be called before removing item"""
         if self.obj:
             delete_data_block(self.obj)
@@ -92,25 +103,33 @@ class SvViewerMeshObjectList(bpy.types.PropertyGroup):
 
 class BlenderObjects:
     """Should be used for generating list of objects"""
-    object_data: bpy.props.CollectionProperty(type=SvViewerMeshObjectList)
+    def show_objects_update(self, context, to_show: bool = None):
+        """Hide / show objects. It should be only place to hide objects"""
+        to_show = to_show if to_show is not None else self.show_objects
+        [setattr(prop.obj, 'hide_viewport', not to_show) for prop in self.object_data]
+
+    def selectable_objects_update(self, context):
+        [setattr(prop.obj, 'hide_select', False if self.selectable_objects else True) for prop in self.object_data]
+
+    def render_objects_update(self, context):
+        [setattr(prop.obj, 'hide_render', False if self.render_objects else True) for prop in self.object_data]
+
+    object_data: bpy.props.CollectionProperty(type=SvObjectData)
 
     show_objects: bpy.props.BoolProperty(
         default=True,
         description="Show / hide objects in viewport",
-        update=lambda s, c: [setattr(prop.obj, 'hide_viewport', False if s.show_objects else True)
-                             for prop in s.object_data])
+        update=update_with_kwargs(show_objects_update))
 
     selectable_objects: bpy.props.BoolProperty(
         default=True,
         description="Make objects selectable / unselectable",
-        update=lambda s, c: [setattr(prop.obj, 'hide_select', False if s.selectable_objects else True)
-                             for prop in s.object_data])
+        update=selectable_objects_update)
 
     render_objects: bpy.props.BoolProperty(
         default=True,
         description="Show / hide objects for render engines",
-        update=lambda s, c: [setattr(prop.obj, 'hide_render', False if s.render_objects else True)
-                             for prop in s.object_data])
+        update=render_objects_update)
 
     def regenerate_objects(self,
                            object_names: List[str],
@@ -126,8 +145,13 @@ class BlenderObjects:
         :param object_names: usually equal to name of data block
         :param data_blocks: for now it is support only be bpy.types.Mesh
         """
+        if collections is None:
+            collections = [None]
+        if object_template is None:
+            object_template = [None]
+
         correct_collection_length(self.object_data, len(data_blocks))
-        prop_group: SvViewerMeshObjectList
+        prop_group: SvObjectData
         input_data = zip(self.object_data, data_blocks, cycle(object_names), cycle(collections), cycle(object_template))
         for prop_group, data_block, name, collection, template in input_data:
             prop_group.ensure_object(data_block, name, template)
@@ -143,5 +167,249 @@ class BlenderObjects:
         layout.prop(self, 'render_objects', toggle=True, text='',
                     icon=f"RESTRICT_RENDER_{'OFF' if self.render_objects else 'ON'}")
 
+    @property
+    def properties_to_skip_iojson(self) -> List[str]:
+        """
+        Used during serialization process
+        Should be overridden in this way: return super().properties_to_skip_iojson + ['my_property']
+        """
+        return ['object_data']
 
-register, unregister = bpy.utils.register_classes_factory([SvViewerMeshObjectList])
+
+class SvMeshData(bpy.types.PropertyGroup):
+    mesh: bpy.props.PointerProperty(type=bpy.types.Mesh)
+
+    def regenerate_mesh(self, mesh_name: str, verts, edges=None, faces=None, matrix: Matrix = None,
+                        make_changes_test=True):
+        """
+        It takes vertices, edges and faces and updates mesh data block
+        If it assume that topology is unchanged only position of vertices will be changed
+        In this case it will be more efficient if vertices are given in np.array float32 format
+        Can apply matrix to mesh optionally
+        """
+        if edges is None:
+            edges = []
+        if faces is None:
+            faces = []
+
+        if not self.mesh:
+            # new mesh should be created
+            self.mesh = bpy.data.meshes.new(name=mesh_name)
+        if not make_changes_test or self.is_topology_changed(len(verts), len(edges), len(faces)):
+            with empty_bmesh(False) as bm:
+                add_mesh_to_bmesh(bm, verts, edges, faces, update_indexes=False, update_normals=False)
+                if matrix:
+                    bm.transform(matrix)
+                bm.to_mesh(self.mesh)
+        else:
+            self.update_vertices(verts)
+            if matrix:
+                self.mesh.transform(matrix)
+        self.mesh.update()
+
+    def set_smooth(self, is_smooth_mesh):
+        """Make mesh smooth or flat"""
+        if is_smooth_mesh:
+            is_smooth = np.ones(len(self.mesh.polygons), dtype=bool)
+        else:
+            is_smooth = np.zeros(len(self.mesh.polygons), dtype=bool)
+        self.mesh.polygons.foreach_set('use_smooth', is_smooth)
+
+    def is_topology_changed(self, verts_number: int, edges_number: int, faces_number: int) -> bool:
+        """
+        Simple and fast test but not 100% robust.
+        If number of vertices and faces are unchanged it assumes that topology is not changed
+        This test is useful if mesh just changed its location.
+        It is much faster just set new coordinate for each vector then recreate whole object
+        """
+        if not faces_number:
+            # edges can be take in account if mesh does not have polygons
+            # because Sverchok edges can exclude edges within polygons
+            return len(self.mesh.vertices) != verts_number or len(self.mesh.edges) != edges_number
+        else:
+            return len(self.mesh.vertices) != verts_number or len(self.mesh.polygons) != faces_number
+
+    def update_vertices(self, verts: Union[list, np.ndarray]):
+        """
+        Just update position of mesh vertices, order and number of given vertices should be the same as mesh
+        numpy array with float32 type will be 10 times faster than any other input data
+        """
+        verts = np.array(verts, dtype=np.float32)  # todo will be this fast if it is already array float 32?
+        self.mesh.vertices.foreach_set('co', np.ravel(verts))
+
+    def remove_data(self):
+        """
+        This method should be called before deleting the property
+        The mesh is belonged only to this property and should be deleted with it
+        """
+        if self.mesh:
+            delete_data_block(self.mesh)
+
+
+class SvViewerNode(BlenderObjects):
+    """
+    Mixin for all nodes which displays any objects in viewport
+    """
+
+    is_active: bpy.props.BoolProperty(name='Live', default=True, update=updateNode,
+                                      description="When enabled this will process incoming data",)
+
+    base_data_name: bpy.props.StringProperty(
+        default='Alpha',
+        description='stores the mesh name found in the object, this mesh is instanced',
+        update=updateNode)
+
+    collection: bpy.props.PointerProperty(type=bpy.types.Collection, update=updateNode,
+                                          description="Collection where to put objects")
+
+    def draw_viewer_properties(self, layout):
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.column().prop(self, 'is_active', toggle=True)
+
+        self.draw_object_properties(row)  # hide, selectable, render
+
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.prop(self, "base_data_name", text="", icon='OUTLINER_OB_MESH')
+        row.operator('node.sv_generate_random_object_name', text='', icon='FILE_REFRESH')
+
+        row = col.row(align=True)
+        row.scale_y = 2
+        row.operator('node.sv_select_objects', text="Select")
+
+        col.prop_search(self, 'collection', bpy.data, 'collections', text='', icon='GROUP')
+
+    def init_viewer(self):
+        """Should be called from descendant class"""
+        self.base_data_name = bpy.context.scene.sv_object_names.get_available_name()
+        self.use_custom_color = True
+
+        self.outputs.new('SvObjectSocket', "Objects")
+
+    def sv_copy(self, other):
+        """
+        Regenerate object names, and clean data
+        Use super().sv_copy(other) to override this method
+        """
+        with self.sv_throttle_tree_update():
+            self.base_data_name = bpy.context.scene.sv_object_names.get_available_name()
+            # object and mesh lists should be clear other wise two nodes would have links to the same objects
+            self.object_data.clear()
+
+    def show_viewport(self, is_show: bool):
+        """It should be called by node tree to show/hide objects"""
+        if not self.show_objects:
+            # just ignore request
+            pass
+        else:
+            self.show_objects_update(None, is_show)
+
+    @property
+    def properties_to_skip_iojson(self) -> List[str]:
+        """
+        Used during serialization process
+        Should be overridden in this way: return super().properties_to_skip_iojson + ['my_property']
+        """
+        return super().properties_to_skip_iojson + ['collection']
+
+    def storage_get_data(self, storage):
+        """
+        Manually serialization node properties
+        Should be overridden in zis way: super().storage_get_data(storage); storage['my_prop'] = value
+        """
+        storage['collection'] = self.collection.name if self.collection else ''
+
+    def storage_set_data(self, storage):
+        """
+        Manually serialization node properties
+        Should be overridden in zis way: super().storage_get_data(storage); self.my_prop = storage['my_prop']
+        """
+        collection_name = storage['collection']
+        if collection_name:
+            collection = (bpy.data.collections.get(collection_name))
+            if not collection:
+                collection = bpy.data.collections.new(collection_name)
+                bpy.context.collection.children.link(collection)
+            self.collection = collection
+
+
+class SvObjectNames(bpy.types.PropertyGroup):
+    available_name_number: bpy.props.IntProperty(default=0, min=0, max=24)
+    greek_alphabet = [
+        'Alpha', 'Beta', 'Gamma', 'Delta',
+        'Epsilon', 'Zeta', 'Eta', 'Theta',
+        'Iota', 'Kappa', 'Lamda', 'Mu',
+        'Nu', 'Xi', 'Omicron', 'Pi',
+        'Rho', 'Sigma', 'Tau', 'Upsilon',
+        'Phi', 'Chi', 'Psi', 'Omega']
+
+    def get_available_name(self):
+        """It returns name from greek alphabet, if all names was used it returns random letters"""
+        if self.available_name_number <= 23:
+            name = self.greek_alphabet[self.available_name_number]
+            self.available_name_number += 1
+        else:
+            name = self.get_random_name()
+
+        return name
+
+    @staticmethod
+    def get_random_name():
+        """Generate random name from random letters"""
+        return ''.join(random.sample(set(string.ascii_uppercase), 6))
+
+
+class SvSelectObjects(bpy.types.Operator):
+    """It calls `select` method of every item in `object_data` collection of node"""
+    bl_idname = 'node.sv_select_objects'
+    bl_label = "Select objects"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    @classmethod
+    def description(cls, context, properties):
+        return "Select generated objects"
+
+    def execute(self, context):
+        prop: SvObjectData
+        for prop in context.node.object_data:
+            prop.select()
+        return {'FINISHED'}
+
+    @classmethod
+    def poll(cls, context):
+        return hasattr(context.node, 'object_data')
+
+
+class SvGenerateRandomObjectName(bpy.types.Operator):
+    """
+    It calls get_random_name fo sv_object_names property in scene
+    and assign it to base_data_name property of node
+    """
+    bl_idname = 'node.sv_generate_random_object_name'
+    bl_label = "Random name"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    @classmethod
+    def description(cls, context, properties):
+        return "Generate random name"
+
+    def execute(self, context):
+        context.node.base_data_name = bpy.context.scene.sv_object_names.get_random_name()
+        return {'FINISHED'}
+
+    @classmethod
+    def poll(cls, context):
+        return hasattr(context.node, 'base_data_name')
+
+
+module_classes = [SvObjectData, SvMeshData, SvSelectObjects, SvObjectNames, SvGenerateRandomObjectName]
+
+
+def register():
+    [bpy.utils.register_class(cls) for cls in module_classes]
+    bpy.types.Scene.sv_object_names = bpy.props.PointerProperty(type=SvObjectNames)
+
+
+def unregister():
+    [bpy.utils.unregister_class(cls) for cls in module_classes[::-1]]

@@ -5,7 +5,7 @@ Viz
 .. toctree::
    :maxdepth: 2
 
-   viewer_bmesh
+   mesh_viewer
    viewer_metaball
    viewer_waveform_output
    vd_draw_experimental

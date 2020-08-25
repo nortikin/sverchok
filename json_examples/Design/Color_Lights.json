@@ -224,6 +224,27 @@
       "params": {},
       "width": 140.0
     },
+    "Mesh viewer": {
+      "bl_idname": "SvMeshViewer",
+      "collection": "",
+      "color": [
+        1.0,
+        0.5889999866485596,
+        0.21400000154972076
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        726.9242553710938,
+        65.43453979492188
+      ],
+      "params": {
+        "base_data_name": "Alpha"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
     "Move.001": {
       "bl_idname": "SvMoveNodeMk3",
       "height": 100.0,
@@ -255,12 +276,8 @@
       "params": {
         "center": 1,
         "dimension_mode": "SIZE",
-        "linkSizes": 1,
-        "normalize": 1,
-        "sizeRatio": 1.0,
         "sizex": 20.0,
-        "sizey": 20.0,
-        "syncing": 0
+        "sizey": 20.0
       },
       "use_custom_color": true,
       "width": 140.0
@@ -278,26 +295,6 @@
         "z_": 1.499999761581421
       },
       "width": 100.0
-    },
-    "Viewer BMesh": {
-      "bl_idname": "SvBmeshViewerNodeV28",
-      "color": [
-        1.0,
-        0.30000001192092896,
-        0.0
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        726.9242553710938,
-        65.43453979492188
-      ],
-      "params": {
-        "material": ""
-      },
-      "use_custom_color": true,
-      "width": 140.0
     }
   },
   "update_lists": [
@@ -320,6 +317,12 @@
       2
     ],
     [
+      "Color in MK1",
+      0,
+      "List Split",
+      0
+    ],
+    [
       "Line",
       0,
       "Move.001",
@@ -330,12 +333,6 @@
       0,
       "Move.001",
       1
-    ],
-    [
-      "Color in MK1",
-      0,
-      "List Split",
-      0
     ],
     [
       "Move.001",
@@ -352,13 +349,13 @@
     [
       "Plane",
       0,
-      "Viewer BMesh",
+      "Mesh viewer",
       0
     ],
     [
       "Plane",
       2,
-      "Viewer BMesh",
+      "Mesh viewer",
       2
     ]
   ]
