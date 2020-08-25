@@ -187,6 +187,11 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
 
         self.outputs['Objects'].sv_set([obj_data.obj for obj_data in self.object_data])
 
+    # Serialization properties
+    @property
+    def properties_to_skip_iojson(self):
+        return super().properties_to_skip_iojson + ['mesh_data']
+
 
 class SvCreateMaterial(bpy.types.Operator):
     """It creates and add new material to a node"""
