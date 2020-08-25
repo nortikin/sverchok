@@ -24,6 +24,10 @@ This node has the following parameters:
 
 * **Check coincidence**. If enabled, then the node will check that the end points of curves being concatenated do actually coincide (within threshold). If they do not, the node will give an error (become red), and the processing will stop.
 * **Max distance**. Maximum distance between end points of the curves, which is allowable to decide that they actually coincide. The default value is 0.001. This parameter is only available if **Check coincidence** parameter is enabled.
+* **All NURBS**. This parameter is available in the N panel only. If checked,
+  then the node will try to convert all input curves to NURBS, and output a
+  NURBS curve. The node will fail (become red) if it was not able either to
+  convert one of input curves, or join resulting NURBS curves.
 
 Outputs
 -------
