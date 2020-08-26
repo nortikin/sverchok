@@ -248,10 +248,7 @@ class SvScalarMathNodeMK4(bpy.types.Node, SverchCustomTreeNode):
         elif len(self.outputs) == 2:
             self.outputs[0].replace_socket("SvStringsSocket", "sin( x )")
 
-
     def process(self):
-
-        self.ensure_enums_have_no_space(enums=["current_op"])
 
         if self.outputs[0].is_linked:
             current_func = func_from_mode(self.current_op)

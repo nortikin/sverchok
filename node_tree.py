@@ -342,22 +342,6 @@ class SverchCustomTreeNode:
         """ does not return a vactor, it returns a:  tuple(x, y) """
         return recursive_framed_location_finder(self, self.location[:])
 
-    def ensure_enums_have_no_space(self, enums=None):  # todo does not looks that method has any relations with nodes
-        """
-        enums: a list of property names to check. like  self.current_op  
-
-            self.ensure_enums_have_no_space(enums=[current_op])
-
-        due to changes in EnumProperty defintion "laws" individual enum identifiers must not
-        contain spaces. This function takes a list of enums that the node currently holds, and 
-        makes sure the stored enum has no spaces.
-        """
-        for enum_property in enums:
-            current_value = getattr(self, enum_property)
-            if " " in current_value:
-                with self.sv_throttle_tree_update():        
-                    setattr(self, enum_property, data_structure.no_space(current_value))
-
     def does_support_draft_mode(self):
         """
         Nodes that either store separate property values

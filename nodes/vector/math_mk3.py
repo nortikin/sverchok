@@ -179,10 +179,7 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                 s = self.inputs[idx].replace_socket(socket_type.get(t_in), renames[idx])
                 s.prop_name = f'v3_input_{idx}' if t_in == 'v' else 'amount'
 
-
     def process(self):
-
-        self.ensure_enums_have_no_space(enums=["current_op"])
 
         inputs, outputs = self.inputs, self.outputs
 
