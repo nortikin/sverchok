@@ -505,6 +505,17 @@ class SverchCustomTreeNode:
     def exception(self, msg, *args, **kwargs):
         self.getLogger().exception(msg, *args, **kwargs)
 
+    def set_implicit_conversions(self, input_socket_name, policy):
+        """
+        Set implicit conversion policy to be used by default for specified input socket.
+        This policy will be used by default by subsequent .sv_get() calls to this socket.
+        Policy can be passed as direct reference to the class, or as a class name.
+        """
+        if isinstance(policy, str):
+            policy = getattr(sverchok.core.socket_conversions, policy)
+        #self.debug("Set default conversion policy for socket %s to %s", input_socket_name, policy)
+        self._implicit_conversion_policy[input_socket_name] = policy
+
     def get_implicit_conversions(self, input_socket_name, override=None):
         """
         Return implicit conversion policy that was set as default for specified socket
