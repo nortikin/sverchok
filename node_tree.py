@@ -85,9 +85,13 @@ class SvNodeTreeCommon(object):
     '''
     Common methods shared between Sverchok node trees
     '''
+
+    # auto update toggle of node tree
     sv_process: BoolProperty(name="Process", default=True, description='Process layout')
-    has_changed: BoolProperty(default=False)
+    has_changed: BoolProperty(default=False)  # "True if changes of links in tree was detected"
     limited_init: BoolProperty(default=False)
+
+    # for throttle method usage when links are created in tree via Python
     skip_tree_update: BoolProperty(default=False)
     configuring_new_node: BoolProperty(name="indicate node initialization", default=False)
     tree_id_memory: StringProperty(default="")
