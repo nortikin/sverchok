@@ -400,7 +400,9 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     @property
     def instances(self):
         res = []
-        for ng in self.sv_trees:
+        sv_trees = [ng for ng in bpy.data.node_groups
+                    if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}]
+        for ng in sv_trees:
             for node in ng.nodes:
                 if node.bl_idname == self.cls_bl_idname:
                     res.append(node)

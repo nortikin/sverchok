@@ -176,6 +176,17 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
         wm.event_timer_remove(self._timer)
         self.report({'INFO'}, "Live Update mode disabled")
 
+
+class SvGenericUITooltipOperator(bpy.types.Operator):
+    arg: StringProperty()
+    bl_idname = "node.sv_generic_ui_tooltip"
+    bl_label = "tip"
+
+    @classmethod
+    def description(cls, context, properties):
+        return properties.arg
+
+
 class SV_PT_3DPanel(bpy.types.Panel):
     ''' Panel to manipuplate parameters in Sverchok layouts '''
 
@@ -508,7 +519,8 @@ sv_tools_classes = [
     SV_PT_3DPanel,
     SvRemoveStaleDrawCallbacks,
     SvToggleProcess,
-    SvToggleDraft
+    SvToggleDraft,
+    SvGenericUITooltipOperator
 ]
 
 

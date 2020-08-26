@@ -19,25 +19,21 @@
 
 import sys
 import time
-from contextlib import contextmanager
 import textwrap
 
 import bpy
-from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, EnumProperty
-from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
-from mathutils import Matrix
+from bpy.props import StringProperty, BoolProperty, EnumProperty
+from bpy.types import NodeTree
 
 from sverchok import data_structure
-from sverchok.data_structure import get_other_socket
 
 from sverchok.core.update_system import (
     build_update_list,
     process_from_node, process_from_nodes,
     process_tree,
-    get_update_lists, update_error_nodes,
+    get_update_lists,
     get_original_node_color,
-    is_first_run,
-    reset_error_nodes)
+    is_first_run,)
 from sverchok.core.links import (
     SvLinks)
 from sverchok.core.node_id_dict import SvNodesDict
@@ -48,7 +44,6 @@ from sverchok.core.events import CurrentEvents, BlenderEventsTypes
 
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
-from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.docstring import SvDocstring
 import sverchok.utils.logging
 from sverchok.utils.logging import debug
@@ -57,59 +52,8 @@ from sverchok.ui import color_def
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
 from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_with_bgl
 
-class SvLinkNewNodeInput(bpy.types.Operator):
-    ''' Spawn and link new node to the left of the caller node'''
-    bl_idname = "node.sv_quicklink_new_node_input"
-    bl_label = "Add a new node to the left"
 
-    socket_index: IntProperty()
-    origin: StringProperty()
-    new_node_idname: StringProperty()
-    new_node_offsetx: IntProperty(default=-200)
-    new_node_offsety: IntProperty(default=0)
-
-    def execute(self, context):
-        tree = context.space_data.edit_tree
-        nodes, links = tree.nodes, tree.links
-
-        caller_node = nodes.get(self.origin)
-        new_node = nodes.new(self.new_node_idname)
-        new_node.location[0] = caller_node.location[0] + self.new_node_offsetx
-        new_node.location[1] = caller_node.location[1] + self.new_node_offsety
-        links.new(new_node.outputs[0], caller_node.inputs[self.socket_index])
-
-        if caller_node.parent:
-            new_node.parent = caller_node.parent
-            new_node.location = new_node.absolute_location
-
-        new_node.process_node(context)
-
-        return {'FINISHED'}
-
-
-@contextmanager
-def throttle_tree_update(node):
-    """ usage
-    from sverchok.node_tree import throttle_tree_update
-
-    inside your node, f.ex inside a wrapped_update that creates a socket
-
-    def wrapped_update(self, context):
-        with throttle_tree_update(self):
-            self.inputs.new(...)
-            self.outputs.new(...)
-
-    that's it. 
-
-    """
-    try:
-        node.id_data.skip_tree_update = True
-        yield node
-    finally:
-        node.id_data.skip_tree_update = False
-
-
-def throttled(func):
+def throttled(func):  # todo would be good to move it in data_structure module
     """
     use as a decorator
 
@@ -135,7 +79,6 @@ def throttled(func):
         self.process_node(context)
 
     return wrapper_update
-
 
 
 class SvNodeTreeCommon(object):
@@ -176,14 +119,6 @@ class SvNodeTreeCommon(object):
 
     def get_update_lists(self):
         return get_update_lists(self)
-
-    @property
-    def sv_trees(self):  # todo the method does not belong to the class
-        res = []
-        for ng in bpy.data.node_groups:
-            if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
-                res.append(ng)
-        return res
 
     def update_sv_links(self):
         self.sv_links.create_new_links(self)
@@ -226,14 +161,6 @@ class SvNodeTreeCommon(object):
                     animated_nodes.append(node)
         process_from_nodes(animated_nodes)
 
-class SvGenericUITooltipOperator(bpy.types.Operator):  # todo move into sv_panels
-    arg: StringProperty()
-    bl_idname = "node.sv_generic_ui_tooltip"
-    bl_label = "tip"
-
-    @classmethod
-    def description(cls, context, properties):
-        return properties.arg
 
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     ''' Sverchok - architectural node programming of geometry in low level '''
@@ -260,7 +187,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
     sv_bake: BoolProperty(name="Bake", default=True, description='Bake this layout')
 
-    sv_user_colors: StringProperty(default="")  # something related with heat map feture
+    sv_user_colors: StringProperty(default="")  # something related with heat map feature
 
     sv_show_error_in_tree: BoolProperty(
         description="use bgl to draw the error to the nodeview",
@@ -473,7 +400,7 @@ class SverchCustomTreeNode:
         return self.get('_was_in_draft_mode', False)
 
     def sv_throttle_tree_update(self):
-        return throttle_tree_update(self)
+        return data_structure.throttle_tree_update(self)
 
     def sv_setattr_with_throttle(self, prop_name, prop_data):
         with self.sv_throttle_tree_update():
@@ -826,11 +753,7 @@ class SverchCustomTreeNode:
         return None
 
 
-classes = [
-    SverchCustomTree, 
-    SvLinkNewNodeInput,
-    SvGenericUITooltipOperator
-]
+classes = [SverchCustomTree]
 
 
 register, unregister = bpy.utils.register_classes_factory(classes)
