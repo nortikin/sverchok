@@ -13,6 +13,7 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve, unify_two_curves
 from sverchok.utils.curve.algorithms import reverse_curve
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.nurbs import SvNurbsSurface
+from sverchok.utils.surface.algorithms import SvCurveLerpSurface
 
 class SvCoonsSurface(SvSurface):
     __description__ = "Coons Patch"
@@ -21,8 +22,8 @@ class SvCoonsSurface(SvSurface):
         self.curve2 = curve2
         self.curve3 = curve3
         self.curve4 = curve4
-        self.linear1 = SvCurveLerpSurface(curve1, SvFlipCurve(curve3))
-        self.linear2 = SvCurveLerpSurface(curve2, SvFlipCurve(curve4))
+        self.linear1 = SvCurveLerpSurface.build(curve1, reverse_curve(curve3))
+        self.linear2 = SvCurveLerpSurface.build(curve2, reverse_curve(curve4))
         self.c1_t_min, self.c1_t_max = curve1.get_u_bounds()
         self.c3_t_min, self.c3_t_max = curve3.get_u_bounds()
 
