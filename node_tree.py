@@ -91,7 +91,6 @@ class SvNodeTreeCommon(object):
 
     # for throttle method usage when links are created in tree via Python
     skip_tree_update: BoolProperty(default=False)
-    configuring_new_node: BoolProperty(name="indicate node initialization", default=False)
     tree_id_memory: StringProperty(default="")
     sv_links = SvLinks()
     nodes_dict = SvNodesDict()
@@ -258,7 +257,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         if self.skip_tree_update:
             # print('throttled update from context manager')
             return
-        if self.configuring_new_node or self.is_frozen() or not self.sv_process:
+        if self.is_frozen() or not self.sv_process:
             return
 
         self.sv_update()
@@ -276,14 +275,10 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             self.animation_update()
             # process_tree(self)
 
-    def process(self):
+    def process(self):  # todo looks like this method is not used any more
         """
         process the Sverchok tree upon editor changes from handler
         """
-
-        if self.configuring_new_node:
-            # print('skipping global process during node init')
-            return
 
         if self.has_changed:
             # print('processing build list: because has_changed==True')
@@ -574,8 +569,6 @@ class SverchCustomTreeNode:
         - delegates further initialization information to sv_init
         - sets node color
         - unfreezes the node
-        - sets custom defaults (nodes, and sockets)
-
         """
         CurrentEvents.new_event(BlenderEventsTypes.add_node, self)
         ng = self.id_data
@@ -585,13 +578,11 @@ class SverchCustomTreeNode:
         if hasattr(self, "sv_init"):
 
             try:
-                ng.configuring_new_node = True
                 self.sv_init(context)
             except Exception as err:
                 print('nodetree.node.sv_init failure - stare at the error message below')
                 sys.stderr.write('ERROR: %s\n' % str(err))
 
-        ng.configuring_new_node = False
         self.set_color()
         ng.unfreeze()
 
