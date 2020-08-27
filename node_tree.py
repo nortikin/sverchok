@@ -39,7 +39,6 @@ from sverchok.core.links import (
 from sverchok.core.node_id_dict import SvNodesDict
 
 from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
-from sverchok.core.node_defaults import set_defaults_if_defined
 from sverchok.core.events import CurrentEvents, BlenderEventsTypes
 
 from sverchok.utils import get_node_class_reference
@@ -89,7 +88,6 @@ class SvNodeTreeCommon(object):
     # auto update toggle of node tree
     sv_process: BoolProperty(name="Process", default=True, description='Process layout')
     has_changed: BoolProperty(default=False)  # "True if changes of links in tree was detected"
-    limited_init: BoolProperty(default=False)
 
     # for throttle method usage when links are created in tree via Python
     skip_tree_update: BoolProperty(default=False)
@@ -596,10 +594,6 @@ class SverchCustomTreeNode:
         ng.configuring_new_node = False
         self.set_color()
         ng.unfreeze()
-
-        if not ng.limited_init:
-            # print('applying default for', self.name)
-            set_defaults_if_defined(self)
 
     def process_node(self, context):
         '''
