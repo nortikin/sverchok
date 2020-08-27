@@ -246,6 +246,12 @@ class SvSwapSurface(SvSurface):
             self.normal_delta = 0.001
         self.__description__ = "Swapped {}".format(surface)
 
+    @staticmethod
+    def build(surface):
+        if hasattr(surface, 'swap_uv'):
+            return surface.swap_uv()
+        return SvSwapSurface(surface)
+
     def get_u_min(self):
         return self.surface.get_v_min()
 

@@ -32,7 +32,7 @@ class SvSwapSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         surface_out = []
         for surfaces in surface_s:
             for surface in surfaces:
-                new_surface = SvSwapSurface(surface)
+                new_surface = SvSwapSurface.build(surface)
                 surface_out.append(new_surface)
 
         self.outputs['Surface'].sv_set(surface_out)
