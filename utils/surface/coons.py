@@ -67,6 +67,7 @@ def coons_surface(curve1, curve2, curve3, curve4):
     if any(c is None for c in nurbs_curves):
         return SvCoonsSurface(*curves)
     try:
+        nurbs_curves = [c.reparametrize(0,1) for c in nurbs_curves]
         degrees = [c.get_degree() for c in nurbs_curves]
         implementation = nurbs_curves[0].get_nurbs_implementation()
 
@@ -100,8 +101,10 @@ def coons_surface(curve1, curve2, curve3, curve4):
         diff_2to1 = sv_knotvector.difference(ruled2.get_knotvector_u(), ruled1.get_knotvector_u())
 
         for v, count in diff_1to2:
+            #print(f"R1: insert V={v} {count} times")
             ruled1 = ruled1.insert_knot(SvNurbsSurface.V, v, count)
         for u, count in diff_2to1:
+            #print(f"R2: insert U={u} {count} times")
             ruled2 = ruled2.insert_knot(SvNurbsSurface.U, u, count)
         #print(f"R1: {ruled1.get_control_points().shape}, R2: {ruled2.get_control_points().shape}")
 
@@ -128,8 +131,10 @@ def coons_surface(curve1, curve2, curve3, curve4):
         knotvector_u = ruled1.get_knotvector_u()
         knotvector_v = ruled2.get_knotvector_v()
         for u, count in sv_knotvector.get_internal_knots(knotvector_u, output_multiplicity=True):
+            #print(f"B: insert U={u} {count} times")
             bilinear = bilinear.insert_knot(SvNurbsSurface.U, u, count)
         for v, count in sv_knotvector.get_internal_knots(knotvector_v, output_multiplicity=True):
+            #print(f"B: insert V={v} {count} times")
             bilinear = bilinear.insert_knot(SvNurbsSurface.V, v, count)
 
         control_points = ruled1.get_control_points() + ruled2.get_control_points() - bilinear.get_control_points()
