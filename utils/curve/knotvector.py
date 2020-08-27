@@ -177,9 +177,17 @@ def find_multiplicity(knot_vector, u, tolerance=1e-6):
             return count
     return 0
 
-def difference(src_kv, dst_kv):
-    src_pairs = dict(to_multiplicity(src_kv))
-    dst_pairs = to_multiplicity(dst_kv)
+def get_internal_knots(knot_vector, output_multiplicity = False, tolerance=1e-6):
+    pairs = to_multiplicity(knot_vector)
+    internal = pairs[1:-1]
+    if output_multiplicity:
+        return internal
+    else:
+        return [u for u,_ in internal]
+
+def difference(src_kv, dst_kv, tolerance=1e-6):
+    src_pairs = dict(to_multiplicity(src_kv, tolerance))
+    dst_pairs = to_multiplicity(dst_kv, tolerance)
     result = []
     for dst_u, dst_multiplicity in dst_pairs:
         src_multiplicity = src_pairs.get(dst_u, 0)
@@ -187,6 +195,11 @@ def difference(src_kv, dst_kv):
         if diff > 0:
             result.append((dst_u, diff))
     return result
+
+def equal(kv1, kv2):
+    if len(kv1) != len(kv2):
+        return False
+    return (kv1 == kv2).all()
 
 def merge(kv1, kv2):
     kv2 = rescale(kv2, kv1[0], kv1[-1])

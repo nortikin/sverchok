@@ -48,8 +48,99 @@ class SvNurbsSurface(SvSurface):
             return surface.to_nurbs(implementation=implementation)
         return None
 
+    @classmethod
+    def get_nurbs_implementation(cls):
+        raise Exception("NURBS implementation is not defined")
+
     def insert_knot(self, direction, parameter, count=1):
         raise Exception("Not implemented!")
+
+    def swap_uv(self):
+        degree_u = self.get_degree_u()
+        degree_v = self.get_degree_v()
+        knotvector_u = self.get_knotvector_u()
+        knotvector_v = self.get_knotvector_v()
+
+        control_points = self.get_control_points()
+        weights = self.get_weights()
+
+        control_points = np.transpose(control_points, axes=(1,0,2))
+        weights = weights.T
+
+        return SvNurbsSurface.build(self.get_nurbs_implementation(),
+                degree_v, degree_u,
+                knotvector_v, knotvector_u,
+                control_points, weights)
+
+    def elevate_degree(self, direction, delta=None, target=None):
+        if delta is None and target is None:
+            delta = 1
+        if delta is not None and target is not None:
+            raise Exception("Of delta and target, only one parameter can be specified")
+        if direction == SvNurbsSurface.U:
+            degree = self.get_degree_u()
+        else:
+            degree = self.get_degree_v()
+        if delta is None:
+            delta = target - degree
+            if delta < 0:
+                raise Exception(f"Surface already has degree {degree}, which is greater than target {target}")
+        if delta == 0:
+            return self
+
+        implementation = self.get_nurbs_implementation()
+
+        if direction == SvNurbsSurface.U:
+            new_points = []
+            new_weights = []
+            new_u_degree = None
+            for i in range(self.control_points.shape[1]):
+                fixed_v_points = self.control_points[:,i]
+                fixed_v_weights = self.weights[:,i]
+                fixed_v_curve = SvNurbsMaths.build_curve(implementation,
+                                    self.degree_u, self.knotvector_u,
+                                    fixed_v_points, fixed_v_weights)
+                fixed_v_curve = fixed_v_curve.elevate_degree(delta)
+                fixed_v_knotvector = fixed_v_curve.get_knotvector()
+                new_u_degree = fixed_v_curve.get_degree()
+                fixed_v_points = fixed_v_curve.get_control_points()
+                fixed_v_weights = fixed_v_curve.get_weights()
+                new_points.append(fixed_v_points)
+                new_weights.append(fixed_v_weights)
+
+            new_points = np.transpose(np.array(new_points), axes=(1,0,2))
+            new_weights = np.array(new_weights).T
+
+            return SvNurbsSurface.build(self.get_nurbs_implementation(),
+                    new_u_degree, self.degree_v,
+                    fixed_v_knotvector, self.knotvector_v,
+                    new_points, new_weights)
+
+        elif direction == SvNurbsSurface.V:
+            new_points = []
+            new_weights = []
+            new_v_degree = None
+            for i in range(self.control_points.shape[0]):
+                fixed_u_points = self.control_points[i,:]
+                fixed_u_weights = self.weights[i,:]
+                fixed_u_curve = SvNurbsMaths.build_curve(implementation,
+                                    self.degree_v, self.knotvector_v,
+                                    fixed_u_points, fixed_u_weights)
+                fixed_u_curve = fixed_u_curve.elevate_degree(delta)
+                fixed_u_knotvector = fixed_u_curve.get_knotvector()
+                new_v_degree = fixed_u_curve.get_degree()
+                fixed_u_points = fixed_u_curve.get_control_points()
+                fixed_u_weights = fixed_u_curve.get_weights()
+                new_points.append(fixed_u_points)
+                new_weights.append(fixed_u_weights)
+
+            new_points = np.array(new_points)
+            new_weights = np.array(new_weights)
+
+            return SvNurbsSurface.build(implementation,
+                    self.degree_u, new_v_degree,
+                    self.knotvector_u, fixed_u_knotvector,
+                    new_points, new_weights)
 
     def get_degree_u(self):
         raise Exception("Not implemented!")
@@ -87,6 +178,10 @@ class SvGeomdlSurface(SvNurbsSurface):
         self.u_bounds = (0, 1)
         self.v_bounds = (0, 1)
         self.__description__ = f"Geomdl NURBS (degree={surface.degree_u}x{surface.degree_v}, pts={len(surface.ctrlpts2d)}x{len(surface.ctrlpts2d[0])})"
+
+    @classmethod
+    def get_nurbs_implementation(cls):
+        return SvNurbsSurface.GEOMDL
 
     def insert_knot(self, direction, parameter, count=1):
         if direction == SvNurbsSurface.U:
@@ -285,6 +380,10 @@ class SvNativeNurbsSurface(SvNurbsSurface):
     @classmethod
     def build(cls, implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights=None, normalize_knots=False):
         return SvNativeNurbsSurface(degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights, normalize_knots)
+
+    @classmethod
+    def get_nurbs_implementation(cls):
+        return SvNurbsSurface.NATIVE
 
     def insert_knot(self, direction, parameter, count=1):
         if direction == SvNurbsSurface.U:
