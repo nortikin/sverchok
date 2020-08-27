@@ -103,6 +103,7 @@ def coons_surface(curve1, curve2, curve3, curve4):
             ruled1 = ruled1.insert_knot(SvNurbsSurface.V, v, count)
         for u, count in diff_2to1:
             ruled2 = ruled2.insert_knot(SvNurbsSurface.U, u, count)
+        #print(f"R1: {ruled1.get_control_points().shape}, R2: {ruled2.get_control_points().shape}")
 
         linear_kv = sv_knotvector.generate(1, 2)
 
@@ -126,10 +127,10 @@ def coons_surface(curve1, curve2, curve3, curve4):
 
         knotvector_u = ruled1.get_knotvector_u()
         knotvector_v = ruled2.get_knotvector_v()
-        for u in sv_knotvector.get_internal_knots(knotvector_u):
-            bilinear = bilinear.insert_knot(SvNurbsSurface.U, u)
-        for v in sv_knotvector.get_internal_knots(knotvector_v):
-            bilinear = bilinear.insert_knot(SvNurbsSurface.V, v)
+        for u, count in sv_knotvector.get_internal_knots(knotvector_u, output_multiplicity=True):
+            bilinear = bilinear.insert_knot(SvNurbsSurface.U, u, count)
+        for v, count in sv_knotvector.get_internal_knots(knotvector_v, output_multiplicity=True):
+            bilinear = bilinear.insert_knot(SvNurbsSurface.V, v, count)
 
         control_points = ruled1.get_control_points() + ruled2.get_control_points() - bilinear.get_control_points()
         weights = ruled1.get_weights() + ruled2.get_weights() - bilinear.get_weights()
