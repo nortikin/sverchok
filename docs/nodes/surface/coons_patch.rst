@@ -20,6 +20,11 @@ on.
 
 The surface is calculated as a Coons patch, see https://en.wikipedia.org/wiki/Coons_patch.
 
+When all provided curves are NURBS or NURBS-like, then the node will try to
+output NURBS surface. The sufficient requirement for this is that opposite
+curves have equal degree. If it is not possible to make a NURBS surface, the
+node will create a generic Coons surface.
+
 Surface domain: from 0 to 1 in both directions.
 
 Inputs
