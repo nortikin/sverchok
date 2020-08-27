@@ -33,7 +33,7 @@ from sverchok.data_structure import get_other_socket, updateNode, match_long_rep
 from sverchok.core.update_system import make_tree_from_nodes, do_update
 from sverchok.core.monad_properties import SvIntPropertySettingsGroup, SvFloatPropertySettingsGroup, ensure_unique
 from sverchok.core.events import CurrentEvents, BlenderEventsTypes
-
+from sverchok.utils.handle_blender_data import get_sv_trees
 
 MONAD_COLOR = (0.830819, 0.911391, 0.754562)
 
@@ -400,9 +400,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     @property
     def instances(self):
         res = []
-        sv_trees = [ng for ng in bpy.data.node_groups
-                    if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}]
-        for ng in sv_trees:
+        for ng in get_sv_trees():
             for node in ng.nodes:
                 if node.bl_idname == self.cls_bl_idname:
                     res.append(node)
