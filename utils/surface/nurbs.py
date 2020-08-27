@@ -94,11 +94,11 @@ class SvNurbsSurface(SvSurface):
             new_points = []
             new_weights = []
             new_u_degree = None
-            for i in range(self.control_points.shape[1]):
-                fixed_v_points = self.control_points[:,i]
-                fixed_v_weights = self.weights[:,i]
+            for i in range(self.get_control_points().shape[1]):
+                fixed_v_points = self.get_control_points()[:,i]
+                fixed_v_weights = self.get_weights()[:,i]
                 fixed_v_curve = SvNurbsMaths.build_curve(implementation,
-                                    self.degree_u, self.knotvector_u,
+                                    self.get_degree_u(), self.get_knotvector_u(),
                                     fixed_v_points, fixed_v_weights)
                 fixed_v_curve = fixed_v_curve.elevate_degree(delta)
                 fixed_v_knotvector = fixed_v_curve.get_knotvector()
@@ -112,19 +112,19 @@ class SvNurbsSurface(SvSurface):
             new_weights = np.array(new_weights).T
 
             return SvNurbsSurface.build(self.get_nurbs_implementation(),
-                    new_u_degree, self.degree_v,
-                    fixed_v_knotvector, self.knotvector_v,
+                    new_u_degree, self.get_degree_v(),
+                    fixed_v_knotvector, self.get_knotvector_v(),
                     new_points, new_weights)
 
         elif direction == SvNurbsSurface.V:
             new_points = []
             new_weights = []
             new_v_degree = None
-            for i in range(self.control_points.shape[0]):
-                fixed_u_points = self.control_points[i,:]
-                fixed_u_weights = self.weights[i,:]
+            for i in range(self.get_control_points().shape[0]):
+                fixed_u_points = self.get_control_points()[i,:]
+                fixed_u_weights = self.get_weights()[i,:]
                 fixed_u_curve = SvNurbsMaths.build_curve(implementation,
-                                    self.degree_v, self.knotvector_v,
+                                    self.get_degree_v(), self.get_knotvector_v(),
                                     fixed_u_points, fixed_u_weights)
                 fixed_u_curve = fixed_u_curve.elevate_degree(delta)
                 fixed_u_knotvector = fixed_u_curve.get_knotvector()
@@ -138,8 +138,8 @@ class SvNurbsSurface(SvSurface):
             new_weights = np.array(new_weights)
 
             return SvNurbsSurface.build(implementation,
-                    self.degree_u, new_v_degree,
-                    self.knotvector_u, fixed_u_knotvector,
+                    self.get_degree_u(), new_v_degree,
+                    self.get_knotvector_u(), fixed_u_knotvector,
                     new_points, new_weights)
 
     def get_degree_u(self):
@@ -390,9 +390,9 @@ class SvNativeNurbsSurface(SvNurbsSurface):
             new_points = []
             new_weights = []
             new_u_degree = None
-            for i in range(self.control_points.shape[1]):
-                fixed_v_points = self.control_points[:,i]
-                fixed_v_weights = self.weights[:,i]
+            for i in range(self.get_control_points().shape[1]):
+                fixed_v_points = self.get_control_points()[:,i]
+                fixed_v_weights = self.get_weights()[:,i]
                 fixed_v_curve = SvNurbsMaths.build_curve(SvNurbsMaths.NATIVE,
                                     self.degree_u, self.knotvector_u,
                                     fixed_v_points, fixed_v_weights)
@@ -415,9 +415,9 @@ class SvNativeNurbsSurface(SvNurbsSurface):
             new_points = []
             new_weights = []
             new_v_degree = None
-            for i in range(self.control_points.shape[0]):
-                fixed_u_points = self.control_points[i,:]
-                fixed_u_weights = self.weights[i,:]
+            for i in range(self.get_control_points().shape[0]):
+                fixed_u_points = self.get_control_points()[i,:]
+                fixed_u_weights = self.get_weights()[i,:]
                 fixed_u_curve = SvNurbsMaths.build_curve(SvNurbsMaths.NATIVE,
                                     self.degree_v, self.knotvector_v,
                                     fixed_u_points, fixed_u_weights)
