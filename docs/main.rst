@@ -17,6 +17,7 @@ Contents:
    geometry
    curves
    surfaces
+   nurbs
    fields
    solids
    induction
