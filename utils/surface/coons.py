@@ -56,10 +56,10 @@ class SvCoonsSurface(SvSurface):
         return b
     
     def evaluate(self, u, v):    
-        return self.linear1.evaluate(u, v) + self.linear2.evaluate(v, 1-u) - self._calc_b(u, v, False)
+        return self.linear1.evaluate(1-u, 1-v) + self.linear2.evaluate(1-v, u) - self._calc_b(1-u, 1-v, False)
     
     def evaluate_array(self, us, vs):
-        return self.linear1.evaluate_array(us, vs) + self.linear2.evaluate_array(vs, 1-us) - self._calc_b(us, vs, True)
+        return self.linear1.evaluate_array(1-us, 1-vs) + self.linear2.evaluate_array(1-vs, us) - self._calc_b(1-us, 1-vs, True)
 
 def coons_surface(curve1, curve2, curve3, curve4):
     curves = [curve1, curve2, curve3, curve4]
