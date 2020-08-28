@@ -833,6 +833,14 @@ def sv_lambda(**kwargs):
     return dummy
 
 
+class classproperty:
+    """https://stackoverflow.com/a/13624858/10032221"""
+    def __init__(self, fget):
+        self.fget = fget
+
+    def __get__(self, owner_self, owner_cls):
+        return self.fget(owner_cls)
+
 
 #####################################################
 ############### debug settings magic ################

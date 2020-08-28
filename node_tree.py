@@ -26,6 +26,7 @@ from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import NodeTree
 
 from sverchok import data_structure
+from sverchok.data_structure import classproperty
 
 from sverchok.core.update_system import (
     build_update_list,
@@ -289,7 +290,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
 class SverchCustomTreeNode:
 
-    # A cache for get_docstring() method
+    # A cache for docstring property
     _docstring = None
 
     _implicit_conversion_policy = dict()
@@ -434,41 +435,14 @@ class SverchCustomTreeNode:
             self.use_custom_color = True
             self.color = color
 
-    @classmethod
-    def get_docstring(cls):
+    @classproperty
+    def docstring(cls):
         """
         Get SvDocstring instance parsed from node's docstring.
         """
-        docstring = cls._docstring
-        if docstring is not None:
-            return docstring
-        else:
+        if cls._docstring is None:
             cls._docstring = SvDocstring(cls.__doc__)
-            return cls._docstring
-
-    @classmethod
-    def get_tooltip(cls):
-        """
-        Obtain tooltip for node for use in UI.
-
-        This method is to be overriden in specific node class if node author
-        does not like for some reason that tooltip is extracted from node's
-        docstring.
-        """
-
-        return cls.get_docstring().get_tooltip()
-
-    @classmethod
-    def get_shorthand(cls):
-        """
-        Obtain node shorthand.
-
-        This method is to be overriden in specific node class if node author
-        does not like for some reason that shorthand is extracted from node's
-        docstring.
-        """
-
-        return cls.get_docstring().get_shorthand()
+        return cls._docstring
 
     def node_replacement_menu(self, context, layout):
         """
