@@ -325,7 +325,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         return self.node_dict.get(self.n_id)
 
     def reset_node_dict(self):
-        self.node_dict.get(self.n_id) = {}
+        self.node_dict[self.n_id] = {}
 
     def set_node_dict_keys(self, **kwargs):
         ND = self.node_dict.get(self.n_id)
