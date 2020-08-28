@@ -90,7 +90,9 @@ class SvgPath():
         self.attributes = attributes[0] if attributes else []
         self.node = node
 
-    def draw(self, height, scale):
+    def draw(self, document):
+        height = document.height
+        scale = document.scale
         verts = self.verts
         svg = '<path '
         if self.node.mode == 'LIN' or len(verts) < 3 or not self.commands:
@@ -104,7 +106,7 @@ class SvgPath():
             svg += '" '
 
         if self.attributes:
-            svg += self.attributes.draw(height, scale)
+            svg += self.attributes.draw(document)
         else:
             svg += 'fill="none" '
             svg += 'stroke-width="1px"'

@@ -55,20 +55,22 @@ class SvgCircle():
         self.angle = angle
         self.attributes = attributes
 
-    def draw(self, height, scale):
-        svg = '<ellipse '
+    def draw(self, document):
+        height = document.height
+        scale = document.scale
+        svg = '<ellipse\n'
         x = self.location[0] * scale
         y = height-self.location[1]* scale
         if self.angle != 0:
-            svg += f'transform="translate({x},{y})rotate({self.angle})" '
+            svg += f'    transform="translate({x},{y})rotate({self.angle})"\n'
         else:
-            svg += f'cx="{x}" '
-            svg += f'cy="{y}" '
-        svg += f'rx="{self.rad_x * scale}" '
-        svg += f'ry="{self.rad_y * scale}" '
+            svg += f'    cx="{x}"\n'
+            svg += f'    cy="{y}"\n'
+        svg += f'    rx="{self.rad_x * scale}"\n'
+        svg += f'    ry="{self.rad_y * scale}"\n'
 
         if self.attributes:
-            svg += self.attributes.draw(height, scale)
+            svg += self.attributes.draw(document)
         svg += '/>'
         return svg
 

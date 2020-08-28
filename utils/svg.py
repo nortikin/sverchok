@@ -4,16 +4,23 @@
 #
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
+from math import degrees
 class SvgGroup():
     def __repr__(self):
         return "<SVG Group of {} {}>".format(len(self.shapes), self.shapes[0].__repr__())
-    def __init__(self, shapes):
+    def __init__(self, shapes, name=None):
         self.shapes = shapes
+        self.name = name
 
-    def draw(self, height, scale):
-        svg = '<g>\n'
+
+    def draw(self, document):
+        scale = document.scale
+        if self.name:
+            svg = f'<g id="{self.name}">\n'
+        else:
+            svg = '<g>\n'
         for shape in self.shapes:
-            svg += shape.draw(height, scale)
+            svg += shape.draw(document)
             svg += '\n'
 
         svg += '</g>'

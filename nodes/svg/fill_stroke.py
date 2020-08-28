@@ -23,34 +23,45 @@ from bpy.props import FloatVectorProperty, BoolProperty, IntProperty, FloatPrope
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import match_long_repeat as mlr, enum_item_4, updateNode
+
 class SvgAttributes():
     def __repr__(self):
         return "SVG Attributes"
-    def __init__(self, fill_color, stroke_width, stroke_color, dash_pattern, node):
-        self.fill_color = fill_color
+    def __init__(self, fill, stroke, stroke_width, dash_pattern, node):
+        self.fill = fill
+        self.stroke = stroke
         self.stroke_width = stroke_width
-        self.stroke_color = stroke_color
-        self.node = node
         self.dash_pattern = dash_pattern
+        self.node = node
 
-    def draw(self, height, scale):
+    def draw(self, document):
+        scale = document.scale
         svg = 'style="\n'
+        svg += f'    mix-blend-mode:{self.node.blend_mode.lower()};\n'
         if self.node.fill_mode == 'NONE':
-            svg += '    fill:none;\n    fill-opacity:0;'
+            svg += '    fill:none;\n    fill-opacity:0;\n'
+        elif self.node.fill_mode == 'FLAT':
+            color = self.fill
+            svg += f'    fill:rgb{(int(255*color[0]), int(255*color[1]), int(255*color[2]))};\n'
+            svg += f'    fill-opacity:{color[3]};\n'
         else:
-            col_p = self.fill_color
-            svg += f'    fill:rgb{(int(255*col_p[0]), int(255*col_p[1]), int(255*col_p[2]))};\n'
-            svg += f'    fill-opacity:{col_p[3]};\n'
+            document.defs[self.fill.name] = self.fill
+            svg += f'    fill:url(#{self.fill.name});\n'
         if self.node.stroke_mode == 'NONE':
             svg += '    stroke:none;\n    stroke-opacity:0;\n    stroke-width:0\n'
         else:
-            col_p = self.stroke_color
-            svg += f'    stroke:rgb{(int(255*col_p[0]), int(255*col_p[1]), int(255*col_p[2]))};\n'
-            svg += f'    stroke-opacity:{col_p[3]};\n'
+            if self.node.stroke_mode == 'FLAT':
+                color = self.stroke
+                svg += f'    stroke:rgb{(int(255*color[0]), int(255*color[1]), int(255*color[2]))};\n'
+                svg += f'    stroke-opacity:{color[3]};\n'
+            else:
+                document.defs[self.stroke.name] = self.stroke
+                svg += f'    stroke:url(#{self.stroke.name});\n'
             svg += f'    stroke-width:{self.stroke_width*scale};\n'
             svg += f'    stroke-linecap:{self.node.stroke_linecap.lower()};\n'
             svg += f'    stroke-linejoin:{self.node.stroke_linejoin.lower()};\n'
             svg += f'    paint-order:markers {self.node.paint_order.lower().replace("_", " ")};\n'
+
             if self.dash_pattern[0]:
                 dasharray = [num*scale for num in self.dash_pattern]
                 svg += f'    stroke-dasharray:{str(dasharray)[1:-1].replace(",", "")};\n'
@@ -69,15 +80,24 @@ class SvSvgFillStrokeNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_FILL_STROKE_SVG'
 
     def update_actual_sockets(self):
-        self.inputs['Fill Color'].hide_safe = self.fill_mode == 'NONE'
-        self.inputs['Stroke Color'].hide_safe = self.stroke_mode == 'NONE'
+        self.inputs['Fill Color'].hide_safe = self.fill_mode != 'FLAT'
+        self.inputs['Fill Pattern'].hide_safe = self.fill_mode != 'PATTERN'
+        self.inputs['Stroke Color'].hide_safe = self.stroke_mode != 'FLAT'
+        self.inputs['Stroke Pattern'].hide_safe = self.stroke_mode != 'PATTERN'
         self.inputs['Stroke Width'].hide_safe = self.stroke_mode == 'NONE'
         self.inputs['Dash Pattern'].hide_safe = self.stroke_type == 'Solid' or self.stroke_mode == 'NONE'
+
     def update_sockets(self, context):
         self.update_actual_sockets()
         updateNode(self, context)
 
-    fill_modes = [('NONE', 'None', '', 0), ('FLAT', 'Flat', '', 1)]
+    blend_mode: EnumProperty(
+        name='Blend',
+        items=enum_item_4(['Normal', 'Multiply', 'Screen', 'Overlay', 'Darken', 'Lighten', 'Color-dodge', 'Color-burn', 'Hard-light', 'Soft-light', 'Difference', 'Exclusion', 'Hue', 'Saturation', 'Color', 'Luminosity']),
+        default="Normal",
+        update=update_sockets
+        )
+    fill_modes = [('NONE', 'None', '', 0), ('FLAT', 'Flat', '', 1), ('PATTERN', 'Pattern', '', 2)]
     fill_mode: EnumProperty(
         name='Fill',
         items=fill_modes,
@@ -138,18 +158,21 @@ class SvSvgFillStrokeNode(bpy.types.Node, SverchCustomTreeNode):
         subtype='COLOR',
         update=updateNode
         )
-# fill-rule stroke-dasharray stroke-linecap, stroke-linejoin
+
 
     def sv_init(self, context):
 
         self.inputs.new('SvColorSocket', "Fill Color").prop_name = 'fill_color'
+        self.inputs.new('SvSvgSocket', "Fill Pattern")
         self.inputs.new('SvColorSocket', "Stroke Color").prop_name = 'stroke_color'
+        self.inputs.new('SvSvgSocket', "Stroke Pattern")
         self.inputs.new('SvStringsSocket', "Stroke Width").prop_name = 'stroke_width'
         self.inputs.new('SvStringsSocket', "Dash Pattern")
         self.update_actual_sockets()
         self.outputs.new('SvSvgSocket', "Fill / Stroke")
 
     def draw_buttons(self, context, layout):
+        layout.prop(self, "blend_mode", expand=False)
         layout.prop(self, "fill_mode", expand=False)
         col = layout.column(align=True)
         col.prop(self, "stroke_mode", expand=False)
@@ -161,18 +184,38 @@ class SvSvgFillStrokeNode(bpy.types.Node, SverchCustomTreeNode):
             if self.fill_mode != 'NONE':
                 layout.prop(self, "paint_order", expand=False)
 
+    def get_data(self):
+        if self.fill_mode == 'FLAT':
+            fill = self.inputs['Fill Color'].sv_get(deepcopy=False)
+        elif self.fill_mode == 'PATTERN':
+            fill = self.inputs['Fill Pattern'].sv_get(deepcopy=False, default=[[None]])
+        else:
+            fill = [[None]]
+        if self.stroke_mode == 'FLAT':
+            stroke = self.inputs['Stroke Color'].sv_get(deepcopy=False)
+        elif self.stroke_mode == 'PATTERN':
+            stroke = self.inputs['Stroke Pattern'].sv_get(deepcopy=False, default=[[None]])
+        else:
+            stroke = [[None]]
+
+        stroke_width = self.inputs['Stroke Width'].sv_get(deepcopy=False)
+        dash_pattern = self.inputs['Dash Pattern'].sv_get(deepcopy=False, default=[[None]])
+
+        return mlr([fill, stroke, stroke_width, dash_pattern])
 
     def process(self):
 
         if not self.outputs[0].is_linked:
             return
         params_in = [s.sv_get(deepcopy=False, default=[[None]]) for s in self.inputs]
+        params_in = self.get_data()
+
         attributes_out = []
-        for params in zip(*mlr(params_in)):
+        for params in zip(*params_in):
             attributes = []
             dash_pattern = params[-1]
-            for fill_color, stroke_color, stroke_width  in zip(*mlr(params[:-1])):
-                attributes.append(SvgAttributes(fill_color, stroke_width, stroke_color, dash_pattern, self))
+            for fill, stroke, stroke_width  in zip(*mlr(params[:-1])):
+                attributes.append(SvgAttributes(fill, stroke, stroke_width, dash_pattern, self))
             attributes_out.append(attributes)
         self.outputs[0].sv_set(attributes_out)
 

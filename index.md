@@ -603,6 +603,8 @@
     SvSvgTextNode
     SvSvgMeshNode
     SvSvgDimensionNode
+    SvSvgPatternNode
+    SvSvgGroupNode
 
 ## Beta Nodes
     SvFormulaShapeNode

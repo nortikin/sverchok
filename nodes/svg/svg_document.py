@@ -82,8 +82,8 @@ def get_template(complete_name):
     file_end = data.find("</svg>")
     return data[:file_end]
 
-def add_head(width, height):
-    svg = f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:xlink="http://www.w3.org/1999/xlink" width="{width}mm" height="{height}mm">\n'
+def add_head(width, height, units):
+    svg = f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:xlink="http://www.w3.org/1999/xlink" width="{width}{units}" height="{height}{units}">\n'
     return svg
 
 class SvSVGWrite(bpy.types.Operator):
@@ -111,24 +111,34 @@ class SvSVGWrite(bpy.types.Operator):
         doc_width = node.doc_width
         doc_height = node.doc_height
         if template_path:
-            svg += get_template(template_path[0])
+            svg_head = get_template(template_path[0])
         else:
-            svg += add_head(doc_width, doc_height)
+            units = 'mm'if node.units == 'MM' else 'px'
+            svg_head = add_head(doc_width, doc_height, units)
         height = doc_height
         if node.units == 'MM':
             scale *= pixels_to_mm
             height *= pixels_to_mm
 
-
-
+        document = lambda: None
+        document.defs = {}
+        document.height = height
+        document.scale = scale
+        svg_shapes = ''
         for shape in shapes:
-            svg += shape.draw(height, scale)
-            svg += '\n'
+            svg_shapes += shape.draw(document)
+            svg_shapes += '\n'
 
-        svg += '</svg>'
+        svg_defs = '<defs>\n'
+        for definition in document.defs:
+            svg_defs += document.defs[definition].draw(document)
+            svg_defs += '\n'
+        svg_defs += '</defs>\n'
+        svg_end = '</svg>'
         file_name = node.file_name
         complete_name = os.path.join(save_path, file_name+".svg")
         svg_file = open(complete_name, "w")
+        svg = svg_head + svg_defs +svg_shapes + svg_end
         svg_file.write(svg)
 
         svg_file.close()
