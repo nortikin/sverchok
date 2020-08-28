@@ -20,6 +20,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fullList, match_long_repeat
+from sverchok.utils.nodes_mixins.draft_mode import DraftMode
 
 directionItems = [("XY", "XY", ""), ("YZ", "YZ", ""), ("ZX", "ZX", "")]
 
@@ -63,7 +64,7 @@ def make_plane(stepsx, stepsy, center, direction, separate):
     return verts, edges, polys
 
 
-class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvPlaneNodeMK2(DraftMode, bpy.types.Node, SverchCustomTreeNode):
     ''' Plane MK2 '''
     bl_idname = 'SvPlaneNodeMK2'
     bl_label = 'Plane MK2'

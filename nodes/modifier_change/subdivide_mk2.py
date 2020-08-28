@@ -24,6 +24,7 @@ from numpy import ndarray
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList, Matrix_generate, numpy_full_list
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, numpy_data_from_bmesh, get_partial_result_pydata
+from sverchok.utils.nodes_mixins.draft_mode import DraftMode
 
 socket_names = ['Vertices', 'Edges', 'Faces', 'FaceData']
 def get_selected_edges(use_mask, masks, bm_edges):
@@ -38,7 +39,7 @@ def get_selected_edges(use_mask, masks, bm_edges):
 
     return bm_edges
 
-class SvSubdivideNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvSubdivideNodeMK2(DraftMode, bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: subdivide
     Tooltip: Subdivide edges and faces

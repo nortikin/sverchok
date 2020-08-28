@@ -9,13 +9,14 @@ from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repe
 from sverchok.utils.logging import info, exception
 from sverchok.utils.marching_cubes import isosurface_np
 from sverchok.dependencies import mcubes, skimage
+from sverchok.utils.nodes_mixins.draft_mode import DraftMode
 
 if skimage is not None:
     import skimage.measure
 
 # This node can work without dependencies, but slower.
 
-class SvExMarchingCubesNode(bpy.types.Node, SverchCustomTreeNode):
+class SvExMarchingCubesNode(DraftMode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Marching Cubes
     Tooltip: Marching Cubes

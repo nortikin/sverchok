@@ -290,17 +290,9 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
 class SverchCustomTreeNode:
 
-    # A cache for docstring property
-    _docstring = None
+    _docstring = None  # A cache for docstring property
 
     _implicit_conversion_policy = dict()
-
-    # In node classes that support draft mode
-    # and use separate properties in the draft mode,
-    # this should contain mapping from "standard"
-    # mode property names to draft mode property names.
-    # E.g., draft_properties_mapping = dict(count = 'count_draft').
-    draft_properties_mapping = dict()
 
     n_id : StringProperty(default="")
     
@@ -333,47 +325,6 @@ class SverchCustomTreeNode:
     def absolute_location(self):
         """ does not return a vactor, it returns a:  tuple(x, y) """
         return recursive_framed_location_finder(self, self.location[:])
-
-    def does_support_draft_mode(self):
-        """
-        Nodes that either store separate property values
-        for draft mode, or perform another version of
-        algorithm in draft mode, should return True here.
-        """
-        return False
-
-    def on_draft_mode_changed(self, new_draft_mode):
-        """
-        This is triggered when Draft mode of the tree is toggled.
-        Nodes should not usually override this, but may override
-        sv_draft_mode_changed() instead.
-        """
-        if self.does_support_draft_mode():
-            if new_draft_mode == True:
-                with self.sv_throttle_tree_update():
-                    if not self.was_in_draft_mode():
-                        # Copy values from standard properties
-                        # to draft mode ones, when the node enters the
-                        # draft mode first time.
-                        for prop_name, draft_prop_name in self.draft_properties_mapping.items():
-                            setattr(self, draft_prop_name, getattr(self, prop_name))
-                    self['_was_in_draft_mode'] = True
-        self.sv_draft_mode_changed(new_draft_mode)
-
-    def sv_draft_mode_changed(self, new_draft_mode):
-        """
-        This is triggered when Draft mode of the tree is toggled.
-        Nodes may override this if they need to do something specific
-        on this event.
-        """
-        pass
-
-    def was_in_draft_mode(self):
-        """
-        Whether this instance of the node ever has been in Draft mode.
-        Nodes should not usually override this.
-        """
-        return self.get('_was_in_draft_mode', False)
 
     def sv_throttle_tree_update(self):
         return data_structure.throttle_tree_update(self)
@@ -408,7 +359,7 @@ class SverchCustomTreeNode:
     def exception(self, msg, *args, **kwargs):
         self.getLogger().exception(msg, *args, **kwargs)
 
-    def set_implicit_conversions(self, input_socket_name, policy):
+    def set_implicit_conversions(self, input_socket_name, policy):  # <- is not used now
         """
         Set implicit conversion policy to be used by default for specified input socket.
         This policy will be used by default by subsequent .sv_get() calls to this socket.

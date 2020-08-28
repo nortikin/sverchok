@@ -24,7 +24,7 @@ import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, list_match_func, list_match_modes
 from sverchok.utils.modules.matrix_utils import matrix_apply_np
-
+from sverchok.utils.nodes_mixins.draft_mode import DraftMode
 
 directionItems = [("XY", "XY", ""), ("YZ", "YZ", ""), ("ZX", "ZX", "")]
 dimensionsItems = [
@@ -222,7 +222,7 @@ plane_func_dict = {
     'NUMBER': planes_number_steps
 
 }
-class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
+class SvPlaneNodeMk3(DraftMode, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Grid,
     Tooltip: Generate a Plane primitive.
