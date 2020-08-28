@@ -78,6 +78,9 @@ class SvLine(SvCurve):
         p2 = self.evaluate(u_max)
         return SvBezierCurve([p1, p2])
 
+    def to_bezier_segments(self):
+        return [self.to_bezier()]
+
 class SvCircle(SvCurve):
     __description__ = "Circle"
 

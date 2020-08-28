@@ -287,6 +287,12 @@ class SvBezierCurve(SvCurve):
         if curve2 is None:
             raise UnsupportedCurveTypeException("Second curve is not a NURBS")
         return self.to_nurbs().concatenate(curve2)
+    
+    def to_bezier(self):
+        return self
+
+    def to_bezier_segments(self):
+        return [self]
 
 class SvCubicBezierCurve(SvCurve):
     __description__ = "Bezier[3*]"
@@ -395,4 +401,10 @@ class SvCubicBezierCurve(SvCurve):
         if curve2 is None:
             raise UnsupportedCurveTypeException("Second curve is not a NURBS")
         return self.to_nurbs().concatenate(curve2)
+
+    def to_bezier(self):
+        return self
+
+    def to_bezier_segments(self):
+        return [self]
 

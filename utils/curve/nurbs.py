@@ -11,6 +11,7 @@ import traceback
 
 from sverchok.utils.logging import info
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
+from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import unify_curves_degree
 from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_two_curves, unify_curves
@@ -237,6 +238,9 @@ class SvNurbsCurve(SvCurve):
         p = self.get_degree()
         return p+1 == k
 
+    def is_rational(self):
+        raise Exception("Not implemented!")
+
     def get_knotvector(self):
         """
         returns: np.array of shape (X,)
@@ -297,6 +301,27 @@ class SvNurbsCurve(SvCurve):
         if rescale:
             curve = curve.reparametrize(0, 1)
         return curve
+
+    def to_bezier(self):
+        points = self.get_control_points()
+        if not self.is_bezier():
+            n = len(points)
+            p = self.get_degree()
+            raise UnsupportedCurveTypeException(f"Curve with {n} control points and {p}'th degree can not be converted into Bezier curve")
+        return SvBezierCurve(points)
+
+    def to_bezier_segments(self):
+        if self.is_rational():
+            raise UnsupportedCurveTypeException("Rational NURBS curve can not be converted into non-rational Bezier curves")
+        if self.is_bezier():
+            return [self.to_bezier()]
+        segments = []
+        rest = self
+        for u in sv_knotvector.get_internal_knots(self.get_knotvector()):
+            segment, rest = rest.split_at(u)
+            segments.append(segment.to_bezier())
+        segments.append(rest.to_bezier())
+        return segments
 
     def make_revolution_surface(self, origin, axis, v_min=0, v_max=2*pi, global_origin=True):
         return nurbs_revolution_surface(self, origin, axis, v_min, v_max, global_origin)
@@ -386,6 +411,12 @@ class SvGeomdlCurve(SvNurbsCurve):
     @classmethod
     def get_nurbs_implementation(cls):
         return SvNurbsCurve.GEOMDL
+
+    def is_rational(self):
+        if self.curve.weights is None:
+            return False
+        w, W = min(self.curve.weights), max(self.curve.weights)
+        return w < W
 
     def get_control_points(self):
         return np.array(self.curve.ctrlpts)
@@ -493,6 +524,10 @@ class SvNativeNurbsCurve(SvNurbsCurve):
     @classmethod
     def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
         return SvNativeNurbsCurve(degree, knotvector, control_points, weights, normalize_knots)
+
+    def is_rational(self):
+        w, W = self.weights.min(), self.weights.max()
+        return w < W
 
     def get_control_points(self):
         return self.control_points
