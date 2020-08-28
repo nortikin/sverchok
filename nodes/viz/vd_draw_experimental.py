@@ -48,8 +48,8 @@ default_fragment_shader = '''
     uniform float brightness;
 
     in vec3 pos;
-    layout(location = 0) out vec4 gl_FragColor;
-    
+    out vec4 gl_FragColor;
+
     void main()
     {
         gl_FragColor = vec4(pos * brightness, 1.0);

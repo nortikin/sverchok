@@ -119,7 +119,7 @@ def get_2d_uniform_color_shader():
 
     uniform_2d_fragment_shader = '''
     uniform vec4 color;
-    layout(location = 0) out vec4 gl_FragColor;
+    out vec4 gl_FragColor;
     void main()
     {
        gl_FragColor = color;
@@ -149,7 +149,7 @@ def get_2d_smooth_color_shader():
     smooth_2d_fragment_shader = '''
     in vec4 a_color;
 
-    layout(location = 0) out vec4 gl_FragColor;
+    out vec4 gl_FragColor;
     void main()
     {
         gl_FragColor = a_color;
