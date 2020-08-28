@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -36,7 +36,7 @@ class gridshader():
     def __init__(self, dims, loc, palette, channels):
         x, y = (0, 0)
         w, h = dims
-        
+
         if channels == 2:
             h *= 2
 
@@ -49,7 +49,7 @@ class gridshader():
 
         if channels == 1:
             """
-            0 - - - - - - 1  low color           0 = (x,     y)  
+            0 - - - - - - 1  low color           0 = (x,     y)
             |  -          |                      1 = (x + W, y)
             |      -      |
             |          -  |
@@ -69,7 +69,7 @@ class gridshader():
 
         elif channels == 2:
             """
-            0 - - - - - - 1  low color           0 = (x,     y)  
+            0 - - - - - - 1  low color           0 = (x,     y)
             |  -          |                      1 = (x + W, y)
             |      -      |
             |          -  |
@@ -78,7 +78,7 @@ class gridshader():
             |      -      |
             |          -  |
             4 + + + + + + 5  low color           4 = (x,     y - h2)
-            |  -          |                      5 = (x + w, y - h2)                      
+            |  -          |                      5 = (x + w, y - h2)
             |      -      |
             |          -  |
             6 - - - - - - 7  high color          6 = (x,     y - h3)
@@ -89,7 +89,7 @@ class gridshader():
                                                  9 = (x + w, y - h)
 
             """
-            
+
             self.background_coords = [
                 (x, y),      (x + w, y),
                 (x, y - h1), (x + w, y - h1),
@@ -98,11 +98,11 @@ class gridshader():
                 (x, y - h),  (x + w, y - h)]
 
             self.background_indices = [
-                (0, 1, 3), (0, 3, 2), 
+                (0, 1, 3), (0, 3, 2),
                 (2, 3, 5), (2, 5, 4),
                 (4, 5, 7), (4, 7, 6),
                 (6, 7, 9), (6, 9, 8)]
-            
+
             self.background_colors = [lc, lc, hc, hc, lc, lc, hc, hc, lc, lc]
 
 def advanced_grid_xy(context, args, xy):
@@ -114,9 +114,9 @@ def advanced_grid_xy(context, args, xy):
     config.background_shader.bind()
     config.background_shader.uniform_float("viewProjectionMatrix", matrix)
     config.background_shader.uniform_float("x_offset", x)
-    config.background_shader.uniform_float("y_offset", y)    
+    config.background_shader.uniform_float("y_offset", y)
     config.background_batch.draw(config.background_shader)
-    
+
     ## background grid / ticks
     if hasattr(config, 'tick_shader'):
         config.tick_shader.bind()
@@ -131,7 +131,7 @@ def advanced_grid_xy(context, args, xy):
     config.line_shader.uniform_float("viewProjectionMatrix", matrix)
     config.line_shader.uniform_float("color", (1, 0, 0, 1))
     config.line_shader.uniform_float("x_offset", x)
-    config.line_shader.uniform_float("y_offset", y)    
+    config.line_shader.uniform_float("y_offset", y)
     config.line_batch.draw(config.line_shader)
 
 class NodeTreeGetter():
@@ -190,6 +190,7 @@ def get_2d_uniform_color_shader():
 
     uniform_2d_fragment_shader = '''
     uniform vec4 color;
+    out vec4 gl_FragColor;
     void main()
     {
        gl_FragColor = color;
@@ -208,7 +209,7 @@ def get_2d_smooth_color_shader():
     uniform float y_offset;
 
     out vec4 a_color;
-   
+
     void main()
     {
         gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
@@ -218,13 +219,13 @@ def get_2d_smooth_color_shader():
 
     smooth_2d_fragment_shader = '''
     in vec4 a_color;
-
+    out vec4 gl_FragColor;
     void main()
     {
         gl_FragColor = a_color;
     }
     '''
-    return gpu.types.GPUShader(smooth_2d_vertex_shader, smooth_2d_fragment_shader)    
+    return gpu.types.GPUShader(smooth_2d_vertex_shader, smooth_2d_fragment_shader)
 
 signed_digital_voltage_max = {
     8: 127,
@@ -234,11 +235,11 @@ signed_digital_voltage_max = {
 }
 
 class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
-    
+
     """
     Triggers: SvWaveformViewer
-    Tooltip: 
-    
+    Tooltip:
+
     """
 
     def extended_docstring(self, auto_print=False):
@@ -275,7 +276,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     location_theta: bpy.props.FloatProperty(name="location theta")
 
     def update_socket_count(self, context):
-        ... # if self.num_channels < MAX_SOCKETS 
+        ... # if self.num_channels < MAX_SOCKETS
 
     def get_drawing_attributes(self):
         """
@@ -302,7 +303,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         description='num channels interleaved', update=updateNode)
 
     bitrates = [(k, k, '', i) for i, k in enumerate("8 16 24 32".split())]
-    
+
     bits: bpy.props.EnumProperty(
         items=bitrates,
         description="standard bitrate options",
@@ -346,17 +347,17 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         if self.display_sampler_config:
             box1 = col.box()
             box_col = box1.column(align=True)
-            
+
             box_col.prop(self, 'num_channels')
             box_col.prop(self, 'sample_rate')
             box_row1 = box_col.row()
             box_row1.prop(self, 'bits', expand=True)
-            
+
             box_col.separator()
             row1 = box_col.row()
             row1.prop(self, 'auto_normalize', toggle=True)
             row1.prop(self, 'multi_channel_sockets', toggle=True)
-            
+
             box_col.separator()
             box_col.prop(self, 'colour_limits')
 
@@ -389,8 +390,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         """
         The scope displays time-ticks based on a multiple of 512 frames
 
-        | . . . . | . . . . | . . . . | . . . . | . . . . 
-        
+        | . . . . | . . . . | . . . . | . . . . | . . . .
+
         """
 
         tick_data = lambda: None
@@ -425,7 +426,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
     def generate_2d_drawing_data(self, wave_data, wave_params, dims, loc):
         """
-        equip wave_data with time domain, and rescale and translate (offset) 
+        equip wave_data with time domain, and rescale and translate (offset)
         """
 
         voltage_max = signed_digital_voltage_max.get(int(self.bits))
@@ -436,17 +437,17 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
         # set up a container
         data = lambda: None
-        data.verts = None 
+        data.verts = None
         data.indices = None
-    
+
         unit_data = np.array(wave_data)
 
         if num_channels == 2:
             """
             GL_LINES    indices = [0 2] [1 3] [2 4] [3 5] [4 6] [5 7]
-                        wave_data = [A0, A1, B0, B1, C0, C1....] 
+                        wave_data = [A0, A1, B0, B1, C0, C1....]
                         time_data = [0.0, 0.0, 0.1, 0.1, 0.2, 0.2, 0.3, 0.4....)
-            
+
             2 different waveforms come in, interwoven.
             - lines must be drawn between A0 B0, B0 C0, C0 D0,....
             - lines must be drawn between A1 B1, B1 C1, C1 D1,..
@@ -455,12 +456,12 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
 
                     C0,
-            A0.    .   'D0 
+            A0.    .   'D0
                'B0'
 
 
             A1-.       -D1
-                B1--C1' 
+                B1--C1'
 
             0.0 0.1 0.2 0.3
 
@@ -473,7 +474,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
             # [x] interweaved UNIT_DATA
             A1 = unit_data   # np.array([0, 0, 1, 1, 2, 2, 3, 3, 4, 4])
-                
+
             # [x] rescale | depends on bitrate, and whether there is normalizing
             A1_AMPED = A1 * (h2 / voltage_max)
 
@@ -489,7 +490,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             gather = ext.extend
             _ = [gather(((d, d+2), (d+1, d+3))) for d in range(0, samples_per_channel-2, 2)]
             data.indices = ext
-            
+
             time_data = np.linspace(0, w, samples_per_channel/2, endpoint=True).repeat(2)
             data.verts = (np.vstack([time_data, unit_data]).T + [x , y]).tolist()
         else:
@@ -497,8 +498,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             """
             GL_LINE_STRIP   no indices needed
             """
-            
-            h2 = -int(h/2)    
+
+            h2 = -int(h/2)
             time_data = np.linspace(0, w, num_frames, endpoint=True)
             A1 = unit_data
 
@@ -507,10 +508,10 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
             # [x] offset
             OFFSET = h2
-            unit_data = A1_AMPED + OFFSET    
+            unit_data = A1_AMPED + OFFSET
 
             data.verts = (np.vstack([time_data, unit_data]).T + [x , y]).tolist()
-    
+
         return data
 
 
@@ -553,7 +554,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             config.background_shader = get_2d_smooth_color_shader()
             config.background_batch = batch_for_shader(
                 config.background_shader, 'TRIS', {
-                "pos": grid_data.background_coords, 
+                "pos": grid_data.background_coords,
                 "color": grid_data.background_colors},
                 indices=grid_data.background_indices
             )
@@ -611,9 +612,9 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     def get_waveparams(self):
         # reference http://blog.acipo.com/wave-generation-in-python/
         # (nchannels, sampwidth, framerate, nframes, comptype, compname)
-        
+
         # sampwidth
-        # :    1 = 8bit, 
+        # :    1 = 8bit,
         # :    2 = 16bit, (int values between +-32767)
         # :    4 = 32bit?
         num_frames = self.num_channels * self.sample_data_length
@@ -645,7 +646,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
                 # print(f'multi channel socket = False, num_channels = 1, (len(data),) == ({len(data)}, )')
 
 
-        # at this point data is a single list.        
+        # at this point data is a single list.
         self.sample_data_length = len(data)
         # data = "".join((wave.struct.pack('h', int(d)) for d in data))
         if raw:

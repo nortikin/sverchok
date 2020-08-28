@@ -85,6 +85,7 @@ def simple28_grid_xy(x, y, args):
 
     bg_fragment_shader = '''
     uniform vec4 color;
+    out vec4 gl_FragColor;
     void main()
     {
        gl_FragColor = color;
@@ -111,7 +112,7 @@ def simple28_grid_xy(x, y, args):
     uniform float y_offset;
 
     out vec4 a_color;
-   
+
     void main()
     {
         gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
@@ -201,7 +202,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
             # print('did not find preferences - you need to save user preferences')
             multiplier = 1.0
             scale = 1.0
-        
+
         # cache this.
         self.location_theta = multiplier
         return scale
