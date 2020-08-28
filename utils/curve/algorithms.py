@@ -341,6 +341,15 @@ class SvCurveLerpCurve(SvCurve):
         self.c2_min, self.c2_max = curve2.get_u_bounds()
         self.tangent_delta = 0.001
 
+    @staticmethod
+    def build(curve1, curve2, coefficient):
+        if hasattr(curve1, 'lerp_to'):
+            try:
+                return curve1.lerp_to(curve2, coefficient)
+            except UnsupportedCurveTypeException:
+                pass
+        return SvCurveLerpCurve(curve1, curve2, coefficient)
+
     def get_u_bounds(self):
         return self.u_bounds
 
@@ -717,6 +726,20 @@ def unify_curves_degree(curves):
     return curves
 
 def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
+    """
+    Concatenate a list of curves. When possible, use `concatenate` method of
+    curves to make a "native" concatenation - for example, make one Nurbs out of
+    several Nurbs.
+
+    inputs:
+    * curves: list of SvCurve
+    * scale_to_unit: if specified, reparametrize each curve to [0; 1] before concatenation.
+    * allow_generic: what to do it it is not possible to concatenate curves natively:
+        True - use generic SvConcatCurve
+        False - raise an Exeption.
+
+    output: SvCurve.
+    """
     if not curves:
         raise Exception("List of curves must be not empty")
     result = [curves[0]]
@@ -816,47 +839,4 @@ def curve_segment(curve, new_t_min, new_t_max, rescale=False):
         return curve
     else:
         return SvCurveSegment(curve, new_t_min, new_t_max, rescale)
-
-def interpolate_nurbs_curve(cls, degree, points, metric='DISTANCE'):
-    n = len(points)
-    if points.ndim != 2:
-        raise Exception(f"Array of points was expected, but got {points.shape}: {points}")
-    ndim = points.shape[1] # 3 or 4
-    if ndim not in {3,4}:
-        raise Exception(f"Only 3D and 4D points are supported, but ndim={ndim}")
-    #points3d = points[:,:3]
-    #print("pts:", points)
-    tknots = Spline.create_knots(points, metric=metric) # In 3D or in 4D, in general?
-    knotvector = sv_knotvector.from_tknots(degree, tknots)
-    functions = SvNurbsBasisFunctions(knotvector)
-    coeffs_by_row = [functions.function(idx, degree)(tknots) for idx in range(n)]
-    A = np.zeros((ndim*n, ndim*n))
-    for equation_idx, t in enumerate(tknots):
-        for unknown_idx in range(n):
-            coeff = coeffs_by_row[unknown_idx][equation_idx]
-            row = ndim*equation_idx
-            col = ndim*unknown_idx
-            for d in range(ndim):
-                A[row+d, col+d] = coeff
-    B = np.zeros((ndim*n,1))
-    for point_idx, point in enumerate(points):
-        row = ndim*point_idx
-        B[row:row+ndim] = point[:,np.newaxis]
-
-    x = np.linalg.solve(A, B)
-
-    control_points = []
-    for i in range(n):
-        row = i*ndim
-        control = x[row:row+ndim,0].T
-        control_points.append(control)
-    control_points = np.array(control_points)
-    if ndim == 3:
-        weights = np.ones((n,))
-    else: # 4
-        control_points, weights = from_homogenous(control_points)
-
-    return cls.build(cls.get_nurbs_implementation(),
-                degree, knotvector,
-                control_points, weights)
 

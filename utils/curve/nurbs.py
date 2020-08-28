@@ -12,7 +12,8 @@ import traceback
 from sverchok.utils.logging import info
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.curve.algorithms import interpolate_nurbs_curve
+from sverchok.utils.curve.algorithms import unify_curves_degree
+from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_two_curves, unify_curves
 from sverchok.utils.nurbs_common import (
         SvNurbsMaths,SvNurbsBasisFunctions,
         nurbs_divide, elevate_bezier_degree, from_homogenous
@@ -149,6 +150,26 @@ class SvNurbsCurve(SvCurve):
         return SvNurbsCurve.build(self.get_nurbs_implementation(),
                 p, knotvector, control_points, weights)
 
+    def lerp_to(self, curve2, coefficient):
+        curve1 = self
+        curve2 = SvNurbsCurve.to_nurbs(curve2)
+        if curve2 is None:
+            raise UnsupportedCurveTypeException("second curve is not NURBS")
+        curve1, curve2 = unify_curves_degree([curve1, curve2])
+        curve1, curve2 = unify_two_curves(curve1, curve2)
+
+        c1cp = curve1.get_homogenous_control_points()
+        c2cp = curve2.get_homogenous_control_points()
+
+        cpts = c1cp * (1 - coefficient) + coefficient * c2cp
+
+        points, weights = from_homogenous(cpts)
+
+        return SvNurbsCurve.build(curve1.get_nurbs_implementation(),
+                curve1.get_degree(),
+                curve1.get_knotvector(),
+                points, weights)
+
     def make_ruled_surface(self, curve2, vmin, vmax):
         curve = self
         curve2 = SvNurbsCurve.to_nurbs(curve2)
@@ -185,7 +206,6 @@ class SvNurbsCurve(SvCurve):
                         control_points = control_points,
                         weights = weights)
         return surface
-
 
     @classmethod
     def get_nurbs_implementation(cls):
@@ -297,11 +317,6 @@ class SvNurbsCurve(SvCurve):
 
     def insert_knot(self, u, count=1):
         raise Exception("Not implemented!")
-
-def unify_two_curves(curve1, curve2):
-    curve1 = curve1.to_knotvector(curve2)
-    curve2 = curve2.to_knotvector(curve1)
-    return curve1, curve2
 
 class SvGeomdlCurve(SvNurbsCurve):
     """

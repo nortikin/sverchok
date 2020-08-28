@@ -8,7 +8,7 @@ from sverchok.utils.nurbs_common import (
         nurbs_divide, from_homogenous
     )
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.curve.algorithms import interpolate_nurbs_curve
+from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_curves
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
 from sverchok.dependencies import geomdl
 
@@ -552,45 +552,6 @@ class SvNativeNurbsSurface(SvNurbsSurface):
         calc.set(surface, normal, surface_u, surface_v, duu, dvv, duv, nuu, nvv, nuv)
         return calc
 
-def unify_degrees(curves):
-    max_degree = max(curve.get_degree() for curve in curves)
-    curves = [curve.elevate_degree(target=max_degree) for curve in curves]
-    return curves
-
-def unify_curves(curves):
-    curves = [curve.reparametrize(0.0, 1.0) for curve in curves]
-
-    dst_knots = defaultdict(int)
-    for curve in curves:
-        m = sv_knotvector.to_multiplicity(curve.get_knotvector())
-        for u, count in m:
-            u = round(u, 6)
-            dst_knots[u] = max(dst_knots[u], count)
-
-    result = []
-#     for i, curve1 in enumerate(curves):
-#         for j, curve2 in enumerate(curves):
-#             if i != j:
-#                 curve1 = curve1.to_knotvector(curve2)
-#         result.append(curve1)
-
-    for curve in curves:
-        diffs = []
-        kv = np.round(curve.get_knotvector(), 6)
-        ms = dict(sv_knotvector.to_multiplicity(kv))
-        for dst_u, dst_multiplicity in dst_knots.items():
-            src_multiplicity = ms.get(dst_u, 0)
-            diff = dst_multiplicity - src_multiplicity
-            diffs.append((dst_u, diff))
-        #print(f"Src {ms}, dst {dst_knots} => diff {diffs}")
-
-        for u, diff in diffs:
-            if diff > 0:
-                curve = curve.insert_knot(u, diff)
-        result.append(curve)
-        
-    return result
-
 def build_from_curves(curves, degree_u = None, implementation = SvNurbsSurface.NATIVE):
     curves = unify_curves(curves)
     degree_v = curves[0].get_degree()
@@ -629,7 +590,7 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', i
     if knots_u not in {'UNIFY', 'AVERAGE'}:
         raise Exception(f"Unsupported knots_u option: {knots_u}")
     curve_class = type(curves[0])
-    curves = unify_degrees(curves)
+    curves = unify_curves_degree(curves)
     if knots_u == 'UNIFY':
         curves = unify_curves(curves)
     else:
