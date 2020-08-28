@@ -31,7 +31,6 @@ from sverchok.core.update_system import (
     build_update_list,
     process_from_node, process_from_nodes,
     process_tree,
-    get_update_lists,
     get_original_node_color,
     is_first_run,)
 from sverchok.core.links import (
@@ -182,32 +181,6 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
                 pass
         process_tree(self)
 
-    def sv_process_tree_callback(self, context):
-        process_tree(self)    
-
-    sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
-    sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
-    sv_bake: BoolProperty(name="Bake", default=True, description='Bake this layout')
-
-    sv_user_colors: StringProperty(default="")  # something related with heat map feature
-
-    sv_show_error_in_tree: BoolProperty(
-        description="use bgl to draw the error to the nodeview",
-        name="Show error in tree", default=False, update=sv_process_tree_callback)
-
-    sv_subtree_evaluation_order: EnumProperty(
-        name="Subtree eval order",
-        items=[(k, k, '', i) for i, k in enumerate(["X", "Y", "None"])],
-        description=textwrap.dedent("""\
-            1) X, Y modes evaluate subtrees in sequence of lowest absolute node location, useful when working with real geometry
-            2) None does no sorting
-        """),
-        default="None", update=sv_process_tree_callback
-    )
-
-    sv_toggle_nodetree_props: BoolProperty(name="Toggle visibility of props", description="Show more properties for this node tree")
-    # todo looks like this should belong to panel
-
     def on_draft_mode_changed(self, context):
         """
         This is triggered when Draft mode of the tree is toggled.
@@ -236,18 +209,42 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
                     self.freeze(hard=True)
                 bpy.context.window.cursor_set("DEFAULT")
 
+    sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
+    sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
 
-    sv_draft : BoolProperty(
-                name = "Draft",
-                description="Draft (simplified processing) mode",
-                default = False,
-                update=on_draft_mode_changed)
+    # something related with heat map feature
+    # looks like it keeps dictionary of nodes and their user defined colors in string format
+    sv_user_colors: StringProperty(default="")
+
+    # option whether error message of nodes should be shown in tree space or not
+    # for showing error message all tree should be reevaluated what is not nice
+    sv_show_error_in_tree: BoolProperty(
+        description="use bgl to draw the error to the nodeview",
+        name="Show error in tree", default=False, update=lambda s, c: process_tree(s))
+
+    # if several nodes are disconnected this option determine order of their evaluation
+    sv_subtree_evaluation_order: EnumProperty(
+        name="Subtree eval order",
+        items=[(k, k, '', i) for i, k in enumerate(["X", "Y", "None"])],
+        description=textwrap.dedent("""\
+            1) X, Y modes evaluate subtrees in sequence of lowest absolute node location, useful when working with real geometry
+            2) None does no sorting
+        """),
+        default="None", update=lambda s, c: process_tree(s)
+    )
+
+    # this mode will replace properties of some nodes so they could have lesser values for draft mode
+    sv_draft: BoolProperty(
+        name="Draft",
+        description="Draft (simplified processing) mode",
+        default=False,
+        update=on_draft_mode_changed)
 
     def update(self):
-        '''
-        Tags tree for update for handle
-        get update list for debug info, tuple (fulllist, dictofpartiallists)
-        '''
+        """
+        This method is called if collection of nodes or links of the tree was changed
+        First of all it checks is it worth bothering and then gives initiative to `update system`
+        """
 
         CurrentEvents.new_event(BlenderEventsTypes.tree_update, self)
 
@@ -256,16 +253,12 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         if is_first_run():
             return
         if self.skip_tree_update:
-            # print('throttled update from context manager')
             return
         if self.is_frozen() or not self.sv_process:
             return
 
         self.sv_update()
         self.has_changed = False
-
-        # self.has_changed = True
-        # self.process()
 
     def process_ani(self):
         """
