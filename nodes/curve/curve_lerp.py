@@ -46,7 +46,7 @@ class SvCurveLerpCurveNode(bpy.types.Node, SverchCustomTreeNode):
         curves_out = []
         for curve1s, curve2s, coeffs in zip_long_repeat(curve1_s, curve2_s, coeff_s):
             for curve1, curve2, coeff in zip_long_repeat(curve1s, curve2s, coeffs):
-                curve = SvCurveLerpCurve(curve1, curve2, coeff)
+                curve = SvCurveLerpCurve.build(curve1, curve2, coeff)
                 curves_out.append(curve)
 
             self.outputs['Curve'].sv_set(curves_out)

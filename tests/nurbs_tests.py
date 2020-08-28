@@ -8,7 +8,7 @@ from sverchok.utils.testing import SverchokTestCase, requires
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve.nurbs import SvGeomdlCurve, SvNativeNurbsCurve, SvNurbsBasisFunctions, SvNurbsCurve
-from sverchok.utils.curve.algorithms import interpolate_nurbs_curve
+from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve
 from sverchok.utils.nurbs_common import elevate_bezier_degree, from_homogenous
 from sverchok.utils.surface.nurbs import SvGeomdlSurface, SvNativeNurbsSurface
 from sverchok.utils.surface.algorithms import SvCurveLerpSurface

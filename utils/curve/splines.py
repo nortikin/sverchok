@@ -10,9 +10,9 @@ import numpy as np
 from sverchok.utils.geom import LinearSpline, CubicSpline
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve.primitives import SvLine
+from sverchok.utils.curve.bezier import SvBezierCurve, SvCubicBezierCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs import SvNurbsCurve
-#from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve.algorithms import concatenate_curves, reparametrize_curve
 
 class SvSplineCurve(SvCurve):
@@ -60,4 +60,11 @@ class SvSplineCurve(SvCurve):
                         degree, knotvector, points) for points in control_points]
         segments = [reparametrize_curve(segment, t_min, t_max) for segment, (t_min, t_max) in zip(segments, t_segments)]
         return concatenate_curves(segments)
+
+    def to_bezier_segments(self):
+        control_points = self.spline.get_control_points()
+        is_cubic = isinstance(self.spline, CubicSpline)
+        curve_constructor = lambda cs: SvCubicBezierCurve(*cs) if is_cubic else SvBezierCurve
+        segments = [curve_constructor(points) for points in control_points]
+        return segments
 

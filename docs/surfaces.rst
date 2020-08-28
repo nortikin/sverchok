@@ -27,10 +27,10 @@ each point on 2D plane to some point in 3D space. We will be considering only
 point.
 
 It is important to understand, that each surface can be defined by more than
-one function (which is called parametrization of curve). We usually use the one
+one function (which is called parametrization of surface). We usually use the one
 which is most fitting our goals in specific task.
 
-We usually use the letters **u** and **v** for curve parameters.
+We usually use the letters **u** and **v** for surface parameters.
 
 Excercise for the reader: write down several possible parametrization for the
 unit square surface, which has corners `(0, 0, 0)`, `(0, 1, 0)`, `(1, 1, 0)`,

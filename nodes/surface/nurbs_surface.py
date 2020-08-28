@@ -57,7 +57,7 @@ class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     u_size : IntProperty(
             name = "U Size",
             default = 5,
-            min = 3,
+            min = 2,
             update = updateNode)
 
     surface_modes = [
@@ -89,13 +89,13 @@ class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
     degree_u : IntProperty(
             name = "Degree U",
-            min = 2, max = 6,
+            min = 1, max = 6,
             default = 3,
             update = updateNode)
 
     degree_v : IntProperty(
             name = "Degree V",
-            min = 2, max = 6,
+            min = 1, max = 6,
             default = 3,
             update = updateNode)
 
