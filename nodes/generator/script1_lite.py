@@ -35,7 +35,7 @@ from sverchok.utils.snlite_utils import vectorize, ddir
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, node_id
 
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
@@ -115,7 +115,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     bl_icon = 'SCRIPTPLUGINS'
 
     def custom_enum_func(self, context):
-        ND = self.node_dict.get(hash(self))
+        ND = self.get_node_dict()
         if ND:
             enum_list = ND['sockets']['custom_enum']
             if enum_list:
@@ -124,7 +124,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         return [("A", "A", '', 0), ("B", "B", '', 1)]
 
     def custom_enum_func_2(self, context):
-        ND = self.node_dict.get(hash(self))
+        ND = self.get_node_dict()
         if ND:
             enum_list = ND['sockets']['custom_enum_2']
             if enum_list:
@@ -134,13 +134,13 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
 
     def custom_callback(self, context, operator):
-        ND = self.node_dict.get(hash(self))
+        ND = self.get_node_dict()
         if ND:
             ND['sockets']['callbacks'][operator.cb_name](self, context)
 
 
     def make_operator(self, new_func_name, force=False):
-        ND = self.node_dict.get(hash(self))
+        ND = self.get_node_dict()
         if ND:
             callbacks = ND['sockets']['callbacks']
             if not (new_func_name in callbacks) or force:
@@ -277,13 +277,9 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             self.flush_excess_sockets(k, v)
 
         self.add_props_to_sockets(socket_info)
-
-        self.node_dict[hash(self)] = {}
-        self.node_dict[hash(self)]['sockets'] = socket_info
-
+        self.reset_node_dict()
+        self.set_node_dict_keys(sockets=socket_info)
         return True
-
-
 
 
     def sv_init(self, context):
@@ -310,12 +306,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def nuke_me(self):
         self.script_str = ''
         self.script_name = ''
-        self.node_dict[hash(self)] = {}
+        self.reset_node_dict()
         for socket_set in [self.inputs, self.outputs]:
             socket_set.clear()
 
     def sv_copy(self, node):
-        self.node_dict[hash(self)] = {}
+        self.reset_node_dict()
         self.load()
         self.n_id = ""
 
@@ -323,6 +319,18 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if not all([self.script_name, self.script_str]):
             return
         self.process_script()
+
+    def get_node_dict(self):
+        self.n_id = node_id(self)
+        return self.node_dict.get(self.n_id)
+
+    def reset_node_dict(self):
+        self.node_dict.get(self.n_id) = {}
+
+    def set_node_dict_keys(self, **kwargs):
+        ND = self.node_dict.get(self.n_id)
+        for k, v in kwargs.items():
+            ND[k] = v
 
 
     def make_new_locals(self):
@@ -334,12 +342,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             self.update_sockets()
 
         # make inputs local, do function with inputs, return outputs if present
-        ND = self.node_dict.get(hash(self))
+        ND = self.get_node_dict()
         if not ND:
             print('hash invalidated')
             self.injected_state = False
             self.update_sockets()
-            ND = self.node_dict.get(hash(self))
+            ND = self.get_node_dict()
             self.load()
 
         socket_info = ND['sockets']
@@ -426,7 +434,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             locals().update({output.name: []})
 
         try:
-            socket_info = self.node_dict[hash(self)]['sockets']
+            socket_info = self.get_node_dict()['sockets']
 
             # inject once!
             if not self.injected_state:
@@ -458,7 +466,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 raise #   SNLITE_EXCEPTION(sys.exc_info()[2]) from err
 
     def custom_draw(self, context, layout):
-        tk = self.node_dict.get(hash(self))
+        tk = self.get_node_dict()
         if not tk or not tk.get('sockets'):
             return
 
@@ -544,10 +552,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         # this check and function call is needed to allow loading node trees directly
         # from a .blend in order to export them via create_dict_of_tree
-        if not self.node_dict or not self.node_dict.get(hash(self)):
+        if not self.node_dict or not self.get_node_dict():
             self.make_new_locals()
 
-        storage = self.node_dict[hash(self)]['sockets']
+        storage = self.get_node_dict()['sockets']
 
         ui_info = storage['snlite_ui']
         node_dict['snlite_ui'] = []
