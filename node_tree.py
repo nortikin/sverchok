@@ -82,58 +82,54 @@ def throttled(func):  # todo would be good to move it in data_structure module
 
 class SvNodeTreeCommon(object):
     '''
-    Common methods shared between Sverchok node trees
+    Common methods shared between Sverchok node trees (normal and monad trees)
     '''
 
-    # auto update toggle of node tree
+    # auto update toggle of the node tree
     sv_process: BoolProperty(name="Process", default=True, description='Process layout')
     has_changed: BoolProperty(default=False)  # "True if changes of links in tree was detected"
 
-    # for throttle method usage when links are created in tree via Python
+    # for throttle method usage when links are created in the tree via Python
     skip_tree_update: BoolProperty(default=False)
-    tree_id_memory: StringProperty(default="")
-    sv_links = SvLinks()
-    nodes_dict = SvNodesDict()
+    tree_id_memory: StringProperty(default="")  # identifier of the tree, should be used via `tree_id` property
+    sv_links = SvLinks()  # cached Python links
+    nodes_dict = SvNodesDict()  # cached Python nodes
 
     @property
     def tree_id(self):
+        """Identifier of the tree"""
         if not self.tree_id_memory:
             self.tree_id_memory = str(hash(self) ^ hash(time.monotonic()))
         return self.tree_id_memory
 
-    def build_update_list(self):
-        build_update_list(self)
-
     def freeze(self, hard=False):
+        """Temporary prevent tree from updating nodes"""
         if hard:
             self["don't update"] = 1
         elif not self.is_frozen():
             self["don't update"] = 0
 
     def is_frozen(self):
+        """Nodes of the tree won't be updated during changes events"""
         return "don't update" in self
 
     def unfreeze(self, hard=False):
+        """
+        Remove freeze mode from tree.
+        If freeze mode was in hard mode `hard` argument should be True to unfreeze tree
+        """
         if self.is_frozen():
             if hard or self["don't update"] == 0:
                 del self["don't update"]
 
-    def get_update_lists(self):
-        return get_update_lists(self)
-
-    def update_sv_links(self):
-        self.sv_links.create_new_links(self)
-
-    def links_have_changed(self):
-        return self.sv_links.links_have_changed(self)
-
-    def store_links_cache(self):
-        self.sv_links.store_links_cache(self)
-
-    def get_nodes(self):
-        return self.sv_links.get_nodes(self)
-
-    def get_groups(self):  # todo it definitely doing something more than just get groups
+    def get_groups(self):
+        """
+        It gets monads of node tree,
+        Update them (the sv_update method will check if anything changed inside the monad
+        and will change the monad outputs in that case)
+        Return the monads that have changed (
+        to inform the caller function that the nodes downstream have to be updated with the new data)
+        """
         affected_groups =[]
         for node in self.nodes:
             if 'SvGroupNode' in node.bl_idname:
@@ -145,16 +141,21 @@ class SvNodeTreeCommon(object):
         return affected_groups
 
     def sv_update(self):
-        self.update_sv_links()
-        if self.links_have_changed():
+        """
+        the method checks if anything changed inside the normal tree or monad
+        and update them if necessary
+        """
+        self.sv_links.create_new_links(self)
+        if self.sv_links.links_have_changed(self):
             self.has_changed = True
             build_update_list(self)
-            process_from_nodes(self.get_nodes())
-            self.store_links_cache()
+            process_from_nodes(self.sv_links.get_nodes(self))
+            self.sv_links.store_links_cache(self)
         else:
             process_from_nodes(self.get_groups())
 
     def animation_update(self):
+        """Find animatable nodes and update from them"""
         animated_nodes = []
         for node in self.nodes:
             if hasattr(node, 'is_animatable'):
@@ -282,7 +283,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
         if self.has_changed:
             # print('processing build list: because has_changed==True')
-            self.build_update_list()
+            build_update_list(self)
             self.has_changed = False
         if self.is_frozen():
             # print('not processing: because self/tree.is_frozen') 

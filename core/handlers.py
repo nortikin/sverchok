@@ -74,8 +74,8 @@ def sv_handler_undo_post(scene):
     links_changed = False
     for ng in sverchok_trees():
         num_to_test_against += len(ng.nodes)
-        ng.update_sv_links()
-        links_changed = ng.links_have_changed()
+        ng.sv_links.create_new_links(ng)
+        links_changed = ng.sv_links.links_have_changed(ng)
         if links_changed:
             break
 
