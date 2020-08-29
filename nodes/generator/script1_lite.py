@@ -24,12 +24,13 @@ import traceback
 import numpy as np
 
 import bpy
-from bpy.props import StringProperty, IntVectorProperty, FloatVectorProperty, BoolProperty
+from bpy.props import (
+    StringProperty, IntVectorProperty, FloatVectorProperty, BoolProperty, PointerProperty
+)
 
 from sverchok.utils.sv_update_utils import sv_get_local_path
 from sverchok.utils.snlite_importhelper import (
-    UNPARSABLE, set_autocolor, parse_sockets, are_matched,
-    get_rgb_curve, set_rgb_curve
+    UNPARSABLE, set_autocolor, parse_sockets, are_matched, get_rgb_curve, set_rgb_curve
 )
 from sverchok.utils.snlite_utils import vectorize, ddir
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
@@ -152,7 +153,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 exec(code, locals(), locals())
                 callbacks[new_func_name] = locals()[new_func_name]
 
+    def updateNodeWrapped(self, context):
+        is self.script_pointer:
+            script_name = self.script_pointer.name
 
+    script_pointer: PointerProperty(
+        name="text datablock", poll=lambda s, o: True, type=bpy.types.Text, update=updateNodeWrapped)
     script_name: StringProperty()
     script_str: StringProperty()
     node_dict = {}
@@ -490,7 +496,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if not self.script_str:
             col = layout.column(align=True)
             row = col.row()
-            row.prop_search(self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
+            
+            # row.prop_search(self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
+            row.prop_search(self, 'script_pointer', bpy.data, 'texts', text='', icon='TEXT')
+            
             row.operator(sn_callback, text='', icon='PLUGIN').fn_name = 'load'
         else:
             self.draw_animatable_buttons(layout, icon_only=True)
