@@ -155,7 +155,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     def updateNodeWrapped(self, context):
         if self.script_pointer:
-            script_name = self.script_pointer.name
+            self.script_name = self.script_pointer.name
+            updateNode(self, context)
 
     script_pointer: PointerProperty(
         name="text datablock", poll=lambda s, o: True, type=bpy.types.Text, update=updateNodeWrapped)
@@ -327,14 +328,13 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.process_script()
 
     def get_node_dict(self):
-        self.n_id = node_id(self)
-        return self.node_dict.get(self.n_id)
+        return self.node_dict.get(node_id(self))
 
     def reset_node_dict(self):
-        self.node_dict[self.n_id] = {}
+        self.node_dict[node_id(self)] = {}
 
     def set_node_dict_keys(self, **kwargs):
-        ND = self.node_dict.get(self.n_id)
+        ND = self.node_dict.get(node_id(self))
         for k, v in kwargs.items():
             ND[k] = v
 
