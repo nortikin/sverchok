@@ -154,7 +154,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 callbacks[new_func_name] = locals()[new_func_name]
 
     def updateNodeWrapped(self, context):
-        is self.script_pointer:
+        if self.script_pointer:
             script_name = self.script_pointer.name
 
     script_pointer: PointerProperty(
