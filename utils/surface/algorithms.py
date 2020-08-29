@@ -1047,16 +1047,29 @@ def nurbs_revolution_surface(curve, origin, axis, v_min=0, v_max=2*pi, global_or
     my_weights = curve.get_weights()
     control_points = []
     weights = []
+
+    any_circle = SvCircle(Matrix(), 1)
+    any_circle.u_bounds = (v_min, v_max)
+    any_circle = any_circle.to_nurbs()
+    # all circles with given (v_min, v_max)
+    # actually always have the same knotvector
+    # and the same number of control points
+    n = len(any_circle.get_control_points())
+    circle_knotvector = any_circle.get_knotvector()
+    circle_weights = any_circle.get_weights()
+
     # TODO: vectorize with numpy? Or better let it so for better readability?
     for my_control_point, my_weight in zip(my_control_points, my_weights):
         eq = CircleEquation3D.from_axis_point(origin, axis, my_control_point)
-        circle = SvCircle.from_equation(eq)
-        circle.u_bounds = (v_min, v_max)
-        nurbs_circle = circle.to_nurbs()
-        parallel_points = nurbs_circle.get_control_points()
-        parallel_weights = nurbs_circle.get_weights() * my_weight
-        # all circles actually always have the same knotvector
-        circle_knotvector = nurbs_circle.get_knotvector()
+        if abs(eq.radius) < 1e-8:
+            parallel_points = np.empty((n, 3))
+            parallel_points[:] = np.array(eq.center) #[np.newaxis].T
+        else:
+            circle = SvCircle.from_equation(eq)
+            circle.u_bounds = (v_min, v_max)
+            nurbs_circle = circle.to_nurbs()
+            parallel_points = nurbs_circle.get_control_points()
+        parallel_weights = circle_weights * my_weight
         control_points.append(parallel_points)
         weights.append(parallel_weights)
     control_points = np.array(control_points)
