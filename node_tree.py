@@ -288,17 +288,23 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         self.has_changed = False
 
 
-class SverchCustomTreeNode:
+class UpdateNodes:
+    """Everything related with update system of nodes"""
+    n_id: StringProperty(default="")  # identifier of the node, should be used via `node_id` property
 
-    _docstring = None  # A cache for docstring property
+    @property
+    def node_id(self):
+        """Identifier of the node"""
+        if not self.n_id:
+            self.n_id = str(hash(self) ^ hash(time.monotonic()))
+        return self.n_id
 
-    _implicit_conversion_policy = dict()
-
-    n_id : StringProperty(default="")
-    
-    def update(self):
-        CurrentEvents.new_event(BlenderEventsTypes.node_update, self)
-        self.sv_update()
+    def sv_init(self, context):
+        """
+        This method will be called during node creation
+        Typically it is used for socket creating and assigning properties to sockets
+        """
+        pass
 
     def sv_update(self):
         """
@@ -308,32 +314,134 @@ class SverchCustomTreeNode:
         """
         pass
 
-    def insert_link(self, link):
-        CurrentEvents.new_event(BlenderEventsTypes.add_link_to_node, self)
+    def sv_copy(self, original):
+        """
+        Override this method to do anything node-specific
+        at the moment of node being copied.
+        """
+        pass
 
-    @classmethod
-    def poll(cls, ntree):
-        return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType']
-
-    @property
-    def node_id(self):
-        if not self.n_id:
-            self.n_id = str(hash(self) ^ hash(time.monotonic()))
-        return self.n_id
-
-    @property
-    def absolute_location(self):
-        """ does not return a vactor, it returns a:  tuple(x, y) """
-        return recursive_framed_location_finder(self, self.location[:])
+    def sv_free(self):
+        """
+        Override this method to do anything node-specific upon node removal
+        """
+        pass
 
     def sv_throttle_tree_update(self):
+        """
+        It will temporary switch off updating node tree upon adding/removing node/links in a node tree
+
+        class MyNode:
+            def property_update(self, context):
+                with self.throttle_tree_update():
+                    self.inputs.remove('MySocket')
+        """
         return data_structure.throttle_tree_update(self)
 
-    def sv_setattr_with_throttle(self, prop_name, prop_data):
-        with self.sv_throttle_tree_update():
-            setattr(self, prop_name, prop_data)
+    def init(self, context):
+        """
+        this function is triggered upon node creation,
+        - freezes the node
+        - delegates further initialization information to sv_init
+        - sets node color
+        - unfreezes the node
+        """
+        CurrentEvents.new_event(BlenderEventsTypes.add_node, self)
+        ng = self.id_data
 
-    def getLogger(self):
+        ng.freeze()
+        ng.nodes_dict.load_node(self)
+        if hasattr(self, "sv_init"):
+
+            try:
+                self.sv_init(context)
+            except Exception as err:
+                print('nodetree.node.sv_init failure - stare at the error message below')
+                sys.stderr.write('ERROR: %s\n' % str(err))
+
+        self.set_color()
+        ng.unfreeze()
+
+    def free(self):
+        """
+        This method is not supposed to be overriden in specific nodes.
+        Override sv_free() instead
+        """
+        self.sv_free()
+
+        for s in self.outputs:
+            s.sv_forget()
+
+        node_tree = self.id_data
+        node_tree.nodes_dict.forget_node(self)
+
+        CurrentEvents.new_event(BlenderEventsTypes.free_node, self)
+        if hasattr(self, "has_3dview_props"):
+            print("about to remove this node's props from Sv3DProps")
+            try:
+                bpy.ops.node.sv_remove_3dviewpropitem(node_name=self.name, tree_name=self.id_data.name)
+            except:
+                print(f'failed to remove {self.name} from tree={self.id_data.name}')
+
+    def copy(self, original):
+        """
+        This method is not supposed to be overriden in specific nodes.
+        Override sv_copy() instead.
+        """
+        CurrentEvents.new_event(BlenderEventsTypes.copy_node, self)
+        settings = get_original_node_color(self.id_data, original.name)
+        if settings is not None:
+            self.use_custom_color, self.color = settings
+        self.sv_copy(original)
+        self.n_id = ""
+        self.id_data.nodes_dict.load_node(self)
+
+    def update(self):
+        """
+        The method will be triggered upon editor changes, typically before node tree update method.
+        It is better to avoid using this trigger.
+        """
+        CurrentEvents.new_event(BlenderEventsTypes.node_update, self)
+        self.sv_update()
+
+    def insert_link(self, link):
+        """It will be triggered only if one socket is connected with another by user"""
+        CurrentEvents.new_event(BlenderEventsTypes.add_link_to_node, self)
+
+    def process_node(self, context):
+        '''
+        Doesn't work as intended, inherited functions can't be used for bpy.props
+        update= ...
+        Still this is called from updateNode
+        '''
+        if self.id_data.bl_idname == "SverchCustomTreeType":
+            if self.id_data.is_frozen():
+                return
+
+            # self.id_data.has_changed = True
+
+            if data_structure.DEBUG_MODE:
+                a = time.perf_counter()
+                process_from_node(self)
+                b = time.perf_counter()
+                debug("Partial update from node %s in %s", self.name, round(b - a, 4))
+            else:
+                process_from_node(self)
+        elif self.id_data.bl_idname == "SverchGroupTreeType":
+            monad = self.id_data
+            for instance in monad.instances:
+                instance.process_node(context)
+        else:
+            pass
+
+
+class NodeUtils:
+    """
+    Helper methods.
+    Most of them has nothing related with nodes and using as aliases of some functionality.
+    The class can be surely ignored during creating of new nodes.
+    """
+    def get_logger(self):
         if hasattr(self, "draw_label"):
             name = self.draw_label()
         else:
@@ -345,19 +453,91 @@ class SverchCustomTreeNode:
         return sverchok.utils.logging.getLogger(name)
 
     def debug(self, msg, *args, **kwargs):
-        self.getLogger().debug(msg, *args, **kwargs)
+        self.get_logger().debug(msg, *args, **kwargs)
 
     def info(self, msg, *args, **kwargs):
-        self.getLogger().info(msg, *args, **kwargs)
+        self.get_logger().info(msg, *args, **kwargs)
 
     def warning(self, msg, *args, **kwargs):
-        self.getLogger().warning(msg, *args, **kwargs)
+        self.get_logger().warning(msg, *args, **kwargs)
 
     def error(self, msg, *args, **kwargs):
-        self.getLogger().error(msg, *args, **kwargs)
+        self.get_logger().error(msg, *args, **kwargs)
 
     def exception(self, msg, *args, **kwargs):
-        self.getLogger().exception(msg, *args, **kwargs)
+        self.get_logger().exception(msg, *args, **kwargs)
+
+    def wrapper_tracked_ui_draw_op(self, layout_element, operator_idname, **keywords):
+        """
+        this wrapper allows you to track the origin of a clicked operator, by automatically passing
+        the idname and idtree of the tree.
+
+        example usage:
+
+            row.separator()
+            self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', text='')
+
+        """
+        op = layout_element.operator(operator_idname, **keywords)
+        op.idname = self.name
+        op.idtree = self.id_data.name
+        return op
+
+    def get_bpy_data_from_name(self, identifier, bpy_data_kind):  # todo, method which have nothing related with nodes
+        """
+        fail gracefuly?
+        This function acknowledges that the identifier being passed can be a string or an object proper.
+        for a long time Sverchok stored the result of a prop_search as a StringProperty, and many nodes will
+        be stored with that data in .blends, here we try to permit older blends having data stored as a string,
+        but newly used prop_search results will be stored as a pointerproperty of type bpy.types.Object
+        regarding the need to trim the first 3 chars of a stored StringProperty, best let Blender devs enlighten you
+        https://developer.blender.org/T58641
+
+        example usage inside a node:
+
+            text = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
+
+        if the text does not exist you get None
+        """
+
+        try:
+            if isinstance(identifier, bpy.types.Object) and identifier.name in bpy_data_kind:
+                return bpy_data_kind.get(identifier.name)
+
+            elif isinstance(identifier, str):
+                if identifier in bpy_data_kind:
+                    return bpy_data_kind.get(identifier)
+                elif identifier[3:] in bpy_data_kind:
+                    return bpy_data_kind.get(identifier[3:])
+                return identifier
+
+        except Exception as err:
+            self.error(f"identifier '{identifier}' not found in {bpy_data_kind} - with error {err}")
+
+        return None
+
+
+class SverchCustomTreeNode(UpdateNodes, NodeUtils):
+    """Base class for all nodes"""
+    _docstring = None  # A cache for docstring property
+
+    _implicit_conversion_policy = dict()
+
+    @classmethod
+    def poll(cls, ntree):
+        return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType']
+
+    @property
+    def absolute_location(self):
+        """
+        It can be useful in case if a node is in a frame node
+        does not return a vactor, it returns a:  tuple(x, y)
+        """
+        return recursive_framed_location_finder(self, self.location[:])
+
+    def sv_setattr_with_throttle(self, prop_name, prop_data):  # todo didn't get wide usage, to remove
+        with self.sv_throttle_tree_update():
+            setattr(self, prop_name, prop_data)
 
     def set_implicit_conversions(self, input_socket_name, policy):  # <- is not used now
         """
@@ -395,6 +575,16 @@ class SverchCustomTreeNode:
             cls._docstring = SvDocstring(cls.__doc__)
         return cls._docstring
 
+    def rclick_menu(self, context, layout):
+        """
+        Override this method to add specific items into
+        node's right-click menu.
+        Default implementation calls `node_replacement_menu'.
+        """
+        self.node_replacement_menu(context, layout)
+
+    # Replacing old nodes by new - functionality
+
     def node_replacement_menu(self, context, layout):
         """
         Draw menu items with node replacement operators.
@@ -424,14 +614,6 @@ class SverchCustomTreeNode:
                     set_outputs_mapping(op, outputs_mapping)
                 else:
                     self.error("Can't build replacement menu: no such node class: %s",bl_idname)
-
-    def rclick_menu(self, context, layout):
-        """
-        Override this method to add specific items into
-        node's right-click menu.
-        Default implementation calls `node_replacement_menu'.
-        """
-        self.node_replacement_menu(context, layout)
 
     def migrate_links_from(self, old_node, operator):
         """
@@ -478,124 +660,9 @@ class SverchCustomTreeNode:
         """
         pass
 
-    def sv_init(self, context):
-        pass
+    # Methods for OpenGL viewers
 
-    def init(self, context):
-        """
-        this function is triggered upon node creation,
-        - freezes the node
-        - delegates further initialization information to sv_init
-        - sets node color
-        - unfreezes the node
-        """
-        CurrentEvents.new_event(BlenderEventsTypes.add_node, self)
-        ng = self.id_data
-
-        ng.freeze()
-        ng.nodes_dict.load_node(self)
-        if hasattr(self, "sv_init"):
-
-            try:
-                self.sv_init(context)
-            except Exception as err:
-                print('nodetree.node.sv_init failure - stare at the error message below')
-                sys.stderr.write('ERROR: %s\n' % str(err))
-
-        self.set_color()
-        ng.unfreeze()
-
-    def process_node(self, context):
-        '''
-        Doesn't work as intended, inherited functions can't be used for bpy.props
-        update= ...
-        Still this is called from updateNode
-        '''
-        if self.id_data.bl_idname == "SverchCustomTreeType":
-            if self.id_data.is_frozen():
-                return
-
-            # self.id_data.has_changed = True
-
-            if data_structure.DEBUG_MODE:
-                a = time.perf_counter()
-                process_from_node(self)
-                b = time.perf_counter()
-                debug("Partial update from node %s in %s", self.name, round(b - a, 4))
-            else:
-                process_from_node(self)
-        elif self.id_data.bl_idname == "SverchGroupTreeType":
-            monad = self.id_data
-            for instance in monad.instances:
-                instance.process_node(context)
-        else:
-            pass
-
-    def copy(self, original):
-        """
-        This method is not supposed to be overriden in specific nodes.
-        Override sv_copy() instead.
-        """
-        CurrentEvents.new_event(BlenderEventsTypes.copy_node, self)
-        settings = get_original_node_color(self.id_data, original.name)
-        if settings is not None:
-            self.use_custom_color, self.color = settings
-        self.sv_copy(original)
-        self.n_id = ""
-        self.id_data.nodes_dict.load_node(self)
-
-    def sv_copy(self, original):
-        """
-        Override this method to do anything node-specific
-        at the moment of node being copied.
-        """
-        pass
-        
-    def free(self):
-        """
-        This method is not supposed to be overriden in specific nodes.
-        Override sv_free() instead
-        """
-        self.sv_free()
-
-        for s in self.outputs:
-            s.sv_forget()
-
-        node_tree = self.id_data
-        node_tree.nodes_dict.forget_node(self)
-
-        CurrentEvents.new_event(BlenderEventsTypes.free_node, self)
-        if hasattr(self, "has_3dview_props"):
-            print("about to remove this node's props from Sv3DProps")
-            try:
-                bpy.ops.node.sv_remove_3dviewpropitem(node_name=self.name, tree_name=self.id_data.name)
-            except:
-                print(f'failed to remove {self.name} from tree={self.id_data.name}')
-
-    def sv_free(self):
-        """
-        Override this method to do anything node-specific upon node removal
-
-        """
-        pass
-
-    def wrapper_tracked_ui_draw_op(self, layout_element, operator_idname, **keywords):
-        """
-        this wrapper allows you to track the origin of a clicked operator, by automatically passing
-        the idname and idtree of the tree.
-
-        example usage:
-
-            row.separator()
-            self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', text='')
-
-        """
-        op = layout_element.operator(operator_idname, **keywords)
-        op.idname = self.name
-        op.idtree = self.id_data.name
-        return op
-
-    def get_and_set_gl_scale_info(self, origin=None):
+    def get_and_set_gl_scale_info(self, origin=None):  # todo, probably openGL viewers should have its own mixin class
         """
         This function is called in sv_init in nodes that draw GL instructions to the nodeview, 
         the nodeview scale and dpi differs between users and must be queried to get correct nodeview
@@ -607,45 +674,9 @@ class SverchCustomTreeNode:
             print('getting gl scale params')
             from sverchok.utils.context_managers import sv_preferences
             with sv_preferences() as prefs:
-                getattr(prefs, 'set_nodeview_render_params')(None)
+                prefs.set_nodeview_render_params(None)
         except Exception as err:
             print('failed to get gl scale info', err)
 
-    def get_bpy_data_from_name(self, identifier, bpy_data_kind):
-        """
-        fail gracefuly?
-        This function acknowledges that the identifier being passed can be a string or an object proper.
-        for a long time Sverchok stored the result of a prop_search as a StringProperty, and many nodes will
-        be stored with that data in .blends, here we try to permit older blends having data stored as a string,
-        but newly used prop_search results will be stored as a pointerproperty of type bpy.types.Object
-        regarding the need to trim the first 3 chars of a stored StringProperty, best let Blender devs enlighten you
-        https://developer.blender.org/T58641
-        
-        example usage inside a node:
-        
-            text = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
-        
-        if the text does not exist you get None
-        """
 
-        try:
-            if isinstance(identifier, bpy.types.Object) and identifier.name in bpy_data_kind:
-                return bpy_data_kind.get(identifier.name)
-            
-            elif isinstance(identifier, str):
-                if identifier in bpy_data_kind:
-                    return bpy_data_kind.get(identifier)
-                elif identifier[3:] in bpy_data_kind:
-                    return bpy_data_kind.get(identifier[3:])
-                return identifier
-
-        except Exception as err:
-             self.error(f"identifier '{identifier}' not found in {bpy_data_kind} - with error {err}")
-
-        return None
-
-
-classes = [SverchCustomTree]
-
-
-register, unregister = bpy.utils.register_classes_factory(classes)
+register, unregister = bpy.utils.register_classes_factory([SverchCustomTree])
