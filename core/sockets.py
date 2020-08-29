@@ -272,8 +272,10 @@ class SvSocketCommon:
         if not self.needs_data_conversion():
             return source_data
         else:
-            self.node.debug(f"Trying to convert data for input socket {self.name} by {DefaultImplicitConversionPolicy}")
-            return DefaultImplicitConversionPolicy.convert(self, source_data)
+            if implicit_conversions is None:
+                implicit_conversions = DefaultImplicitConversionPolicy
+            self.node.debug(f"Trying to convert data for input socket {self.name} by {implicit_conversions}")
+            return implicit_conversions.convert(self, source_data)
 
 
 class SvSocketStandard(SvSocketCommon):
