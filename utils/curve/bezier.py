@@ -287,6 +287,15 @@ class SvBezierCurve(SvCurve):
         if curve2 is None:
             raise UnsupportedCurveTypeException("Second curve is not a NURBS")
         return self.to_nurbs().concatenate(curve2)
+
+    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
+        return self.to_nurbs().make_revolution_surface(self, point, direction, v_min, v_max, global_origin)
+    
+    def extrude_along_vector(self, vector):
+        return self.to_nurbs().extrude_along_vector(vector)
+
+    def make_ruled_surface(self, curve2, vmin, vmax):
+        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
     
     def to_bezier(self):
         return self
@@ -402,6 +411,15 @@ class SvCubicBezierCurve(SvCurve):
             raise UnsupportedCurveTypeException("Second curve is not a NURBS")
         return self.to_nurbs().concatenate(curve2)
 
+    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
+        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
+
+    def extrude_along_vector(self, vector):
+        return self.to_nurbs().extrude_along_vector(vector)
+
+    def make_ruled_surface(self, curve2, vmin, vmax):
+        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
+    
     def to_bezier(self):
         return self
 

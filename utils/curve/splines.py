@@ -68,3 +68,12 @@ class SvSplineCurve(SvCurve):
         segments = [curve_constructor(points) for points in control_points]
         return segments
 
+    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
+        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
+
+    def extrude_along_vector(self, vector):
+        return self.to_nurbs().extrude_along_vector(vector)
+
+    def make_ruled_surface(self, curve2, vmin, vmax):
+        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
+    
