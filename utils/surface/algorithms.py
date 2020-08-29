@@ -348,11 +348,13 @@ class SvRevolutionSurface(SvSurface):
     @classmethod
     def build(cls, curve, point, direction, v_min=0, v_max=2*pi, global_origin=True):
         if hasattr(curve, 'make_revolution_surface'):
-            return curve.make_revolution_surface(point, direction, v_min, v_max, global_origin)
-        else:
-            surface = SvRevolutionSurface(curve, point, direction, global_origin)
-            surface.v_bounds = (v_min, v_max)
-            return surface
+            try:
+                return curve.make_revolution_surface(point, direction, v_min, v_max, global_origin)
+            except UnsupportedCurveTypeException:
+                pass
+        surface = SvRevolutionSurface(curve, point, direction, global_origin)
+        surface.v_bounds = (v_min, v_max)
+        return surface
 
     def evaluate(self, u, v):
         point_on_curve = self.curve.evaluate(u)
@@ -392,9 +394,11 @@ class SvExtrudeCurveVectorSurface(SvSurface):
     @classmethod
     def build(cls, curve, vector):
         if hasattr(curve, 'extrude_along_vector'):
-            return curve.extrude_along_vector(vector)
-        else:
-            return SvExtrudeCurveVectorSurface(curve, vector)
+            try:
+                return curve.extrude_along_vector(vector)
+            except UnsupportedCurveTypeException:
+                pass
+        return SvExtrudeCurveVectorSurface(curve, vector)
 
     def evaluate(self, u, v):
         point_on_curve = self.curve.evaluate(u)
@@ -431,6 +435,15 @@ class SvExtrudeCurvePointSurface(SvSurface):
         self.point = point
         self.normal_delta = 0.001
         self.__description__ = "Extrusion of {}".format(curve)
+
+    @staticmethod
+    def build(curve, point):
+        if hasattr(curve, 'extrude_to_point'):
+            try:
+                return curve.extrude_to_point(point)
+            except UnsupportedCurveTypeException:
+                pass
+        return SvExtrudeCurvePointSurface(curve, point)
 
     def evaluate(self, u, v):
         point_on_curve = self.curve.evaluate(u)

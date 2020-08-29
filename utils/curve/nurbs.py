@@ -208,6 +208,32 @@ class SvNurbsCurve(SvCurve):
                         weights = weights)
         return surface
 
+    def extrude_to_point(self, point):
+        my_control_points = self.get_control_points()
+        n = len(my_control_points)
+        other_control_points = np.empty((n,3))
+        other_control_points[:] = point
+
+        control_points = np.stack((my_control_points, other_control_points))
+        control_points = np.transpose(control_points, axes=(1,0,2))
+
+        my_weights = self.get_weights()
+        other_weights = my_weights
+        #other_weights = np.ones((n,))
+        weights = np.stack((my_weights, other_weights)).T
+
+        knotvector_u = self.get_knotvector()
+        knotvector_v = sv_knotvector.generate(1, 2, clamped=True)
+
+        degree_u = self.get_degree()
+        degree_v = 1
+
+        surface = SvNurbsMaths.build_surface(self.get_nurbs_implementation(),
+                        degree_u, degree_v,
+                        knotvector_u, knotvector_v,
+                        control_points, weights)
+        return surface
+
     @classmethod
     def get_nurbs_implementation(cls):
         raise Exception("NURBS implementation is not defined")

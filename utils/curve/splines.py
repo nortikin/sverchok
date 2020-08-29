@@ -76,4 +76,7 @@ class SvSplineCurve(SvCurve):
 
     def make_ruled_surface(self, curve2, vmin, vmax):
         return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
+
+    def extrude_to_point(self, point):
+        return self.to_nurbs().extrude_to_point(point)
     

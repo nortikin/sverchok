@@ -778,3 +778,15 @@ class SvTaylorCurve(SvCurve):
                 control_points = control_points)
         return nurbs.cut_segment(*self.u_bounds)
 
+    def extrude_to_point(self, point):
+        return self.to_nurbs().extrude_to_point(point)
+
+    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
+        return self.to_nurbs().make_revolution_surface(self, point, direction, v_min, v_max, global_origin)
+    
+    def extrude_along_vector(self, vector):
+        return self.to_nurbs().extrude_along_vector(vector)
+
+    def make_ruled_surface(self, curve2, vmin, vmax):
+        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
+

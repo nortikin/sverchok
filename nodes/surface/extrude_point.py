@@ -41,7 +41,7 @@ class SvExtrudeCurvePointNode(bpy.types.Node, SverchCustomTreeNode):
         surface_out = []
         for curves, points in zip_long_repeat(curve_s, point_s):
             for curve, point in zip_long_repeat(curves, points):
-                surface = SvExtrudeCurvePointSurface(curve, np.array(point))
+                surface = SvExtrudeCurvePointSurface.build(curve, np.array(point))
                 surface_out.append(surface)
 
         self.outputs['Surface'].sv_set(surface_out)

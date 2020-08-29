@@ -62,6 +62,15 @@ class SvLine(SvCurve):
     def extrude_along_vector(self, vector):
         return SvPlane(self.point, self.direction, vector)
 
+    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
+        return self.to_nurbs().make_revolution_surface(self, point, direction, v_min, v_max, global_origin)
+    
+    def make_ruled_surface(self, curve2, vmin, vmax):
+        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
+
+    def extrude_to_point(self, point):
+        return self.to_nurbs().extrude_to_point(point)
+
     def to_nurbs(self, implementation=SvNurbsMaths.NATIVE):
         knotvector = sv_knotvector.generate(1, 2)
         u_min, u_max = self.get_u_bounds()
@@ -280,6 +289,18 @@ class SvCircle(SvCurve):
             #print(f"Cut {t_min} - {t_max}")
             #curve = curve_segment(curve, t_min, t_max)
         return curve
+
+    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
+        return self.to_nurbs().make_revolution_surface(self, point, direction, v_min, v_max, global_origin)
+    
+    def extrude_along_vector(self, vector):
+        return self.to_nurbs().extrude_along_vector(vector)
+
+    def make_ruled_surface(self, curve2, vmin, vmax):
+        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
+
+    def extrude_to_point(self, point):
+        return self.to_nurbs().extrude_to_point(point)
 
 class SvEllipse(SvCurve):
     __description__ = "Ellipse"
