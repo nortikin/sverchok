@@ -9,6 +9,7 @@ from sverchok.utils.nurbs_common import (
     )
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_curves
+from sverchok.utils.curve.algorithms import unify_curves_degree
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
 from sverchok.dependencies import geomdl
 
@@ -637,6 +638,7 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', i
                 degree_u, degree_v,
                 knotvector_u, knotvector_v,
                 control_points, weights)
+    surface.u_bounds = curves[0].get_u_bounds()
     return curves, v_curves, surface
 
 SvNurbsMaths.surface_classes[SvNurbsMaths.NATIVE] = SvNativeNurbsSurface

@@ -291,6 +291,37 @@ class SvNurbsCurve(SvCurve):
         return SvNurbsCurve.build(self.get_nurbs_implementation(),
                 self.get_degree(), knotvector, control_points, weights)
 
+    def split_at(self, t):
+        current_multiplicity = sv_knotvector.find_multiplicity(self.get_knotvector(), t)
+        to_add = self.get_degree() - current_multiplicity # + 1
+        curve = self.insert_knot(t, count=to_add)
+        knot_span = np.searchsorted(curve.get_knotvector(), t)
+
+        ts = np.full((self.get_degree()+1,), t)
+        knotvector1 = np.concatenate((curve.get_knotvector()[:knot_span], ts))
+        knotvector2 = np.insert(curve.get_knotvector()[knot_span:], 0, t)
+
+        control_points_1 = curve.get_control_points()[:knot_span]
+        control_points_2 = curve.get_control_points()[knot_span-1:]
+        weights_1 = curve.get_weights()[:knot_span]
+        weights_2 = curve.get_weights()[knot_span-1:]
+
+        #print(f"S: ctlpts1: {len(control_points_1)}, 2: {len(control_points_2)}")
+        kv_error = sv_knotvector.check(curve.get_degree(), knotvector1, len(control_points_1))
+        if kv_error is not None:
+            raise Exception(kv_error)
+        kv_error = sv_knotvector.check(curve.get_degree(), knotvector2, len(control_points_2))
+        if kv_error is not None:
+            raise Exception(kv_error)
+
+        curve1 = SvNurbsCurve.build(curve.get_nurbs_implementation(),
+                    curve.get_degree(), knotvector1,
+                    control_points_1, weights_1)
+        curve2 = SvNurbsCurve.build(curve.get_nurbs_implementation(),
+                    curve.get_degree(), knotvector2,
+                    control_points_2, weights_2)
+        return curve1, curve2
+
     def cut_segment(self, new_t_min, new_t_max, rescale=False):
         t_min, t_max = 0.0, 1.0
         curve = self
@@ -705,33 +736,6 @@ class SvNativeNurbsCurve(SvNurbsCurve):
                     control_points, weights)
         return curve
 
-    def split_at(self, t):
-        current_multiplicity = sv_knotvector.find_multiplicity(self.knotvector, t)
-        to_add = self.degree - current_multiplicity # + 1
-        curve = self.insert_knot(t, count=to_add)
-        knot_span = np.searchsorted(curve.knotvector, t)
-
-        ts = np.full((self.degree+1,), t)
-        knotvector1 = np.concatenate((curve.knotvector[:knot_span], ts))
-        knotvector2 = np.insert(curve.knotvector[knot_span:], 0, t)
-
-        control_points_1 = curve.control_points[:knot_span]
-        control_points_2 = curve.control_points[knot_span-1:]
-        weights_1 = curve.weights[:knot_span]
-        weights_2 = curve.weights[knot_span-1:]
-
-        kv_error = sv_knotvector.check(curve.degree, knotvector1, len(control_points_1))
-        if kv_error is not None:
-            raise Exception(kv_error)
-        kv_error = sv_knotvector.check(curve.degree, knotvector2, len(control_points_2))
-        if kv_error is not None:
-            raise Exception(kv_error)
-
-        curve1 = SvNativeNurbsCurve(curve.degree, knotvector1,
-                    control_points_1, weights_1)
-        curve2 = SvNativeNurbsCurve(curve.degree, knotvector2,
-                    control_points_2, weights_2)
-        return curve1, curve2
 
 SvNurbsMaths.curve_classes[SvNurbsMaths.NATIVE] = SvNativeNurbsCurve
 if geomdl is not None:

@@ -6,6 +6,7 @@
 # License-Filename: LICENSE
 
 import numpy as np
+from collections import defaultdict
 
 from sverchok.utils.geom import Spline
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous
