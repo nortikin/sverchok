@@ -289,7 +289,7 @@ class SvBezierCurve(SvCurve):
         return self.to_nurbs().concatenate(curve2)
 
     def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
-        return self.to_nurbs().make_revolution_surface(self, point, direction, v_min, v_max, global_origin)
+        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
     
     def extrude_along_vector(self, vector):
         return self.to_nurbs().extrude_along_vector(vector)

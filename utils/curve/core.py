@@ -782,7 +782,7 @@ class SvTaylorCurve(SvCurve):
         return self.to_nurbs().extrude_to_point(point)
 
     def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
-        return self.to_nurbs().make_revolution_surface(self, point, direction, v_min, v_max, global_origin)
+        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
     
     def extrude_along_vector(self, vector):
         return self.to_nurbs().extrude_along_vector(vector)

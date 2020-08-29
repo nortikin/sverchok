@@ -19,7 +19,7 @@ from sverchok.utils.geom import (
         rotate_vector_around_vector, autorotate_householder,
          autorotate_track, autorotate_diff
     )
-from sverchok.utils.curve.core import SvFlipCurve
+from sverchok.utils.curve.core import SvFlipCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve.algorithms import (
             SvNormalTrack, curve_frame_on_surface_array,
