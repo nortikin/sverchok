@@ -201,10 +201,10 @@ class SvGeomdlSurface(SvNurbsSurface):
         return self.surface.degree_v
 
     def get_knotvector_u(self):
-        return self.surface.knotvector_u
+        return np.array(self.surface.knotvector_u)
 
     def get_knotvector_v(self):
-        return self.surface.knotvector_v
+        return np.array(self.surface.knotvector_v)
 
     def get_control_points(self):
         pts = []
