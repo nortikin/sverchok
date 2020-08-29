@@ -521,6 +521,15 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
     """Base class for all nodes"""
     _docstring = None  # A cache for docstring property
 
+    @classproperty
+    def docstring(cls):
+        """
+        Get SvDocstring instance parsed from node's docstring.
+        """
+        if cls._docstring is None:
+            cls._docstring = SvDocstring(cls.__doc__)
+        return cls._docstring
+
     @classmethod
     def poll(cls, ntree):
         return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType']
@@ -533,24 +542,11 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
         """
         return recursive_framed_location_finder(self, self.location[:])
 
-    def sv_setattr_with_throttle(self, prop_name, prop_data):  # todo didn't get wide usage, to remove
-        with self.sv_throttle_tree_update():
-            setattr(self, prop_name, prop_data)
-
     def set_color(self):  # todo set_default_color ?
         color = color_def.get_color(self.bl_idname)
         if color:
             self.use_custom_color = True
             self.color = color
-
-    @classproperty
-    def docstring(cls):
-        """
-        Get SvDocstring instance parsed from node's docstring.
-        """
-        if cls._docstring is None:
-            cls._docstring = SvDocstring(cls.__doc__)
-        return cls._docstring
 
     def rclick_menu(self, context, layout):
         """
