@@ -1,15 +1,13 @@
-
-import unittest
-from sverchok.core.socket_data import SvSetSocket, get_output_socket_data
+from sverchok.core.update_system import process_tree
 from sverchok.utils.testing import *
-from sverchok.utils.logging import debug, info
+
 
 class IntersectEdgesTest2(ReferenceTreeTestCase):
     # There are 2 3x3 planes intersecting
     reference_file_name = "intersecting_planes.blend.gz"
 
     def test_intersect_edges(self):
-        self.tree.process()
+        process_tree(self.tree)
 
         node = self.tree.nodes["Intersect Edges MK2"]
 

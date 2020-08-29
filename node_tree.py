@@ -270,23 +270,6 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             self.animation_update()
             # process_tree(self)
 
-    def process(self):  # todo looks like this method is not used any more
-        """
-        process the Sverchok tree upon editor changes from handler
-        """
-
-        if self.has_changed:
-            # print('processing build list: because has_changed==True')
-            build_update_list(self)
-            self.has_changed = False
-        if self.is_frozen():
-            # print('not processing: because self/tree.is_frozen') 
-            return
-        if self.sv_process:
-            process_tree(self)
-
-        self.has_changed = False
-
 
 class UpdateNodes:
     """Everything related with update system of nodes"""
@@ -438,7 +421,7 @@ class UpdateNodes:
 class NodeUtils:
     """
     Helper methods.
-    Most of them has nothing related with nodes and using as aliases of some functionality.
+    Most of them have nothing related with nodes and using as aliases of some functionality.
     The class can be surely ignored during creating of new nodes.
     """
     def get_logger(self):
