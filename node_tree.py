@@ -521,8 +521,6 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
     """Base class for all nodes"""
     _docstring = None  # A cache for docstring property
 
-    _implicit_conversion_policy = dict()
-
     @classmethod
     def poll(cls, ntree):
         return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType']
@@ -538,27 +536,6 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
     def sv_setattr_with_throttle(self, prop_name, prop_data):  # todo didn't get wide usage, to remove
         with self.sv_throttle_tree_update():
             setattr(self, prop_name, prop_data)
-
-    def set_implicit_conversions(self, input_socket_name, policy):  # <- is not used now
-        """
-        Set implicit conversion policy to be used by default for specified input socket.
-        This policy will be used by default by subsequent .sv_get() calls to this socket.
-        Policy can be passed as direct reference to the class, or as a class name.
-        """
-        if isinstance(policy, str):
-            policy = getattr(sverchok.core.socket_conversions, policy)
-        #self.debug("Set default conversion policy for socket %s to %s", input_socket_name, policy)
-        self._implicit_conversion_policy[input_socket_name] = policy
-
-    def get_implicit_conversions(self, input_socket_name, override=None):
-        """
-        Return implicit conversion policy that was set as default for specified socket
-        by set_implicit_conversions() call.
-        If override is specified, then it is returned in all cases.
-        """
-        if override is not None:
-            return override
-        return self._implicit_conversion_policy.get(input_socket_name, DefaultImplicitConversionPolicy)
 
     def set_color(self):  # todo set_default_color ?
         color = color_def.get_color(self.bl_idname)
