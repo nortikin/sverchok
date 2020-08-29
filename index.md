@@ -131,6 +131,8 @@
     SvExApproxNurbsSurfaceNode
     SvExInterpolateNurbsSurfaceNode
     SvNurbsLoftNode
+    SvDeconstructSurfaceNode
+    ---
     SvExQuadsToNurbsNode
 
 ## Surfaces
