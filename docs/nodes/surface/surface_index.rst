@@ -23,6 +23,7 @@ Surface
    min_surface_from_curve
    apply_field_to_surface
    surface_domain
+   deconstruct_surface
    subdomain
    flip
    swap

@@ -29,6 +29,15 @@ class SvDeconstructSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "Weights")
 
+    split_points : BoolProperty(
+            name = "Split by row",
+            description = "Split lists of control points and weights by row",
+            default = False,
+            update = updateNode)
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'split_points')
+
     def deconstruct(self, surface):
         nurbs = SvNurbsSurface.get(surface)
         if nurbs is None:
@@ -51,44 +60,39 @@ class SvDeconstructSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         try:
             points = nurbs.get_control_points()
             n_u,n_v,_ = points.shape
-            points = points.reshape((n_u*n_v, 3)).tolist()
+            if self.split_points:
+                points = points.tolist()
+            else:
+                points = points.reshape((n_u*n_v, 3)).tolist()
         except Exception as e:
             points = []
             n_u = n_v = 0
 
         if hasattr(nurbs, 'get_weights'):
-            weights = nurbs.get_weights().tolist()
+            weights = nurbs.get_weights()
+            if self.split_points:
+                weights = weights.flatten().tolist()
+            else:
+                weights = weights.tolist()
         else:
             weights = []
 
         return degree_u, degree_v, knots_u, knots_v, points, n_u, n_v, weights
 
     def make_edges(self, samples_u, samples_v):
-        edges = []
-        for row in range(samples_v):
-            e_row = [(i + samples_u * row, (i+1) + samples_u * row) for i in range(samples_u-1)]
-            edges.extend(e_row)
-            if row < samples_v - 1:
-                e_col = [(i + samples_u * row, i + samples_u * (row+1)) for i in range(samples_u)]
-                edges.extend(e_col)
+        if self.split_points:
+            row = [(i,i+1) for i in range(samples_u-1)]
+            edges = [row] * samples_v
+        else:
+            edges = []
+            for row in range(samples_v):
+                e_row = [(i + samples_u * row, (i+1) + samples_u * row) for i in range(samples_u-1)]
+                edges.extend(e_row)
+                if row < samples_v - 1:
+                    e_col = [(i + samples_u * row, i + samples_u * (row+1)) for i in range(samples_u)]
+                    edges.extend(e_col)
         return edges
 
-#     def make_edges(self, x_verts, y_verts):
-#         grid = np.arange(x_verts*y_verts, dtype=np.int32).reshape(y_verts, x_verts)
-#         edg_x_dir = np.empty((y_verts-1, x_verts, 2), 'i')
-#         edg_x_dir[:, :, 0] = grid[:-1, :]
-#         edg_x_dir[:, :, 1] = grid[1:, :]
-# 
-#         edg_y_dir = np.empty((y_verts, x_verts-1, 2), 'i')
-#         edg_y_dir[:, :, 0] = grid[:, :-1]
-#         edg_y_dir[:, :, 1] = grid[:, 1:]
-# 
-#         edge_num = (x_verts-1)* (y_verts) + (x_verts)*(y_verts-1)
-#         edges = np.empty((edge_num, 2), 'i')
-#         edges[:(y_verts - 1) * (x_verts), :] = edg_x_dir.reshape(-1, 2)
-#         edges[(y_verts - 1) * (x_verts):, :] = edg_y_dir.reshape(-1, 2)
-#         return edges.tolist()
-# 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
@@ -117,7 +121,6 @@ class SvDeconstructSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 degree_u, degree_v, knots_u, knots_v, points, n_u, n_v, weights = self.deconstruct(surface)
                 if points:
                     edges = self.make_edges(n_v, n_u)
-                    #edges = self.make_edges(len(points[0]), len(points))
                 else:
                     edges = []
                 new_degrees_u.append(degree_u)
