@@ -494,14 +494,14 @@ class SvNativeNurbsSurface(SvNurbsSurface):
 
     def evaluate_array(self, us, vs):
         numerator, denominator = self.fraction(0, 0, us, vs)
-        return numerator / denominator
+        return nurbs_divide(numerator, denominator)
 
     def normal(self, u, v):
         return self.normal_array(np.array([u]), np.array([v]))[0]
 
     def normal_array(self, us, vs):
         numerator, denominator = self.fraction(0, 0, us, vs)
-        surface = numerator / denominator
+        surface = nurbs_divide(numerator, denominator)
         numerator_u, denominator_u = self.fraction(1, 0, us, vs)
         numerator_v, denominator_v = self.fraction(0, 1, us, vs)
         surface_u = (numerator_u - surface*denominator_u) / denominator
@@ -513,7 +513,7 @@ class SvNativeNurbsSurface(SvNurbsSurface):
 
     def derivatives_data_array(self, us, vs):
         numerator, denominator = self.fraction(0, 0, us, vs)
-        surface = numerator / denominator
+        surface = nurbs_divide(numerator, denominator)
         numerator_u, denominator_u = self.fraction(1, 0, us, vs)
         numerator_v, denominator_v = self.fraction(0, 1, us, vs)
         surface_u = (numerator_u - surface*denominator_u) / denominator
@@ -523,7 +523,7 @@ class SvNativeNurbsSurface(SvNurbsSurface):
     def curvature_calculator(self, us, vs, order=True):
     
         numerator, denominator = self.fraction(0, 0, us, vs)
-        surface = numerator / denominator
+        surface = nurbs_divide(numerator, denominator)
         numerator_u, denominator_u = self.fraction(1, 0, us, vs)
         numerator_v, denominator_v = self.fraction(0, 1, us, vs)
         surface_u = (numerator_u - surface*denominator_u) / denominator

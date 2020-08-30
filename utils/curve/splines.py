@@ -55,11 +55,13 @@ class SvSplineCurve(SvCurve):
         n_points = 4 if isinstance(self.spline, CubicSpline) else 2
         knotvector = sv_knotvector.generate(degree, n_points)
         t_segments = self.spline.get_t_segments()
-        #print(f"Cpts: {control_points.shape}; ts: {t_segments}")
         segments = [SvNurbsCurve.build(implementation,
                         degree, knotvector, points) for points in control_points]
         segments = [reparametrize_curve(segment, t_min, t_max) for segment, (t_min, t_max) in zip(segments, t_segments)]
-        return concatenate_curves(segments)
+#         pairs = [f"#{i}: {t_min}-{t_max}: {segment.evaluate(t_min)} -- {segment.evaluate(t_max)}" for i, (segment, (t_min, t_max)) in enumerate(zip(segments, t_segments))]
+#         pairs = ", ".join(pairs)
+#         print(f"S: {pairs}")
+        return concatenate_curves(segments, allow_generic=False)
 
     def to_bezier_segments(self):
         control_points = self.spline.get_control_points()
