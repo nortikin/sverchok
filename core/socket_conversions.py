@@ -66,6 +66,11 @@ def is_ultimately(data, data_type):
         return is_ultimately(data[0], data_type)
     return isinstance(data, data_type)
 
+
+def is_string_to_vector(socket):
+    other = get_other_socket(socket)
+    return other.bl_idname == 'SvStringsSocket' and socket.bl_idname == 'SvVerticesSocket'
+
 # ---
 
 
@@ -212,6 +217,8 @@ class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
             return cls.quaternions_to_matrices(socket, source_data)
         elif is_matrix_to_quaternion(socket):
             return cls.matrices_to_quaternions(socket, source_data)
+        elif is_string_to_vector(socket):
+            return cls.string_to_vector(socket, source_data)
         elif socket.bl_idname in cls.get_lenient_socket_types():
             return source_data
         elif cls.data_type_check(socket, source_data):
@@ -269,6 +276,11 @@ class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
     @classmethod
     def matrices_to_quaternions(cls, socket, source_data):
         return get_quaternions_from_matrices(source_data)
+
+    @classmethod
+    def string_to_vector(cls, socket, source_data):
+        return [[(v, v, v) for v in obj] for obj in source_data]
+
 
 class FieldImplicitConversionPolicy(DefaultImplicitConversionPolicy):
     @classmethod
