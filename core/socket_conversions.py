@@ -279,7 +279,8 @@ class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
 
     @classmethod
     def string_to_vector(cls, socket, source_data):
-        return [[(v, v, v) for v in obj] for obj in source_data]
+        # it can be so that socket is string but data their are already vectors
+        return [[(v, v, v) if isinstance(v, (float, int)) else v for v in obj] for obj in source_data]
 
 
 class FieldImplicitConversionPolicy(DefaultImplicitConversionPolicy):
