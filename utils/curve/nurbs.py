@@ -159,12 +159,16 @@ class SvNurbsCurve(SvCurve):
         curve1, curve2 = unify_curves_degree([curve1, curve2])
         curve1, curve2 = unify_two_curves(curve1, curve2)
 
-        c1cp = curve1.get_homogenous_control_points()
-        c2cp = curve2.get_homogenous_control_points()
+        #c1cp = curve1.get_homogenous_control_points()
+        #c2cp = curve2.get_homogenous_control_points()
+        c1cp = curve1.get_control_points()
+        c2cp = curve2.get_control_points()
+        ws1 = curve1.get_weights()
+        ws2 = curve2.get_weights()
 
-        cpts = c1cp * (1 - coefficient) + coefficient * c2cp
+        points = c1cp * (1 - coefficient) + coefficient * c2cp
 
-        points, weights = from_homogenous(cpts)
+        weights = ws1 * (1 - coefficient) + coefficient * ws2
 
         return SvNurbsCurve.build(curve1.get_nurbs_implementation(),
                 curve1.get_degree(),

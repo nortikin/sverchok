@@ -71,6 +71,9 @@ class SvLine(SvCurve):
     def extrude_to_point(self, point):
         return self.to_nurbs().extrude_to_point(point)
 
+    def lerp_to(self, curve2, coefficient):
+        return self.to_nurbs().lerp_to(curve2, coefficient)
+
     def to_nurbs(self, implementation=SvNurbsMaths.NATIVE):
         knotvector = sv_knotvector.generate(1, 2)
         u_min, u_max = self.get_u_bounds()
@@ -301,6 +304,9 @@ class SvCircle(SvCurve):
 
     def extrude_to_point(self, point):
         return self.to_nurbs().extrude_to_point(point)
+
+    def lerp_to(self, curve2, coefficient):
+        return self.to_nurbs().lerp_to(curve2, coefficient)
 
 class SvEllipse(SvCurve):
     __description__ = "Ellipse"

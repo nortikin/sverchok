@@ -82,3 +82,6 @@ class SvSplineCurve(SvCurve):
     def extrude_to_point(self, point):
         return self.to_nurbs().extrude_to_point(point)
     
+    def lerp_to(self, curve2, coefficient):
+        return self.to_nurbs().lerp_to(curve2, coefficient)
+

@@ -299,6 +299,12 @@ class SvBezierCurve(SvCurve):
 
     def extrude_to_point(self, point):
         return self.to_nurbs().extrude_to_point(point)
+
+    def lerp_to(self, curve2, coefficient):
+        if isinstance(curve2, SvBezierCurve) and curve2.degree == self.degree:
+            points = (1.0 - coefficient) * self.points + coefficient * curve2.points
+            return SvBezierCurve(points)
+        return self.to_nurbs().lerp_to(curve2, coefficient)
     
     def to_bezier(self):
         return self
@@ -425,6 +431,15 @@ class SvCubicBezierCurve(SvCurve):
     
     def extrude_to_point(self, point):
         return self.to_nurbs().extrude_to_point(point)
+
+    def lerp_to(self, curve2, coefficient):
+        if isinstance(curve2, SvCubicBezierCurve):
+            p1 = (1.0 - coefficient) * self.p1 + coefficient * curve2.p1
+            p2 = (1.0 - coefficient) * self.p2 + coefficient * curve2.p2
+            p3 = (1.0 - coefficient) * self.p3 + coefficient * curve2.p3
+            p4 = (1.0 - coefficient) * self.p4 + coefficient * curve2.p4
+            return SvCubicBezierCurve(p1, p2, p3, p4)
+        return self.to_nurbs().lerp_to(curve2, coefficient)
     
     def to_bezier(self):
         return self

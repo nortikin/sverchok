@@ -790,3 +790,6 @@ class SvTaylorCurve(SvCurve):
     def make_ruled_surface(self, curve2, vmin, vmax):
         return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
 
+    def lerp_to(self, curve2, coefficient):
+        return self.to_nurbs().lerp_to(curve2, coefficient)
+
