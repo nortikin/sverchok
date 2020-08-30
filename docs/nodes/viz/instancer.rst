@@ -1,7 +1,7 @@
 Obj instancer
 =============
 
-.. image:: https://user-images.githubusercontent.com/28003269/90861816-71647100-e39d-11ea-80de-5591a991a3fe.png
+.. image:: https://user-images.githubusercontent.com/28003269/91664575-3848a100-eb01-11ea-8f35-e9e2f659b092.png
 
 Functionality
 -------------
@@ -50,11 +50,15 @@ Parameters
 | Base Name       | The base name the instances will have. Naming logic will be as           |
 |                 | Blender gives names objects                                              |
 +-----------------+--------------------------------------------------------------------------+
+| Random name     | Generates random name with random letters                                |
++-----------------+--------------------------------------------------------------------------+
 | Show objects    | Show / hide objects in viewport.                                         |
 +-----------------+--------------------------------------------------------------------------+
 | Selectable obj  | Make objects selectable / unselectable                                   |
 +-----------------+--------------------------------------------------------------------------+
 | Render objects  | Show / hide objects for render engines                                   |
++-----------------+--------------------------------------------------------------------------+
+| Select          | Select every object in 3dview that was created by this Node              |
 +-----------------+--------------------------------------------------------------------------+
 | Collection      | Collection where to put instances                                        |
 +-----------------+--------------------------------------------------------------------------+
