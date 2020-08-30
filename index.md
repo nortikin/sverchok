@@ -598,13 +598,13 @@
 ## SVG
     SvSvgDocumentNode
     SvSvgCircleNode
-    SvSvgFillStrokeNode
-    SvSvgPathNode
-    SvSvgTextNode
+    SvSvgPathNodeMk2
     SvSvgMeshNode
+    SvSvgTextNode
     SvSvgDimensionNode
-    SvSvgPatternNode
     SvSvgGroupNode
+    SvSvgFillStrokeNodeMk2
+    SvSvgPatternNode
 
 ## Beta Nodes
     SvFormulaShapeNode

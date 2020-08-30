@@ -49,7 +49,9 @@ class SvgDimension():
         self.line_attributes = lines_attrib
         self.font_family = font_family
 
-    def draw(self, height, scale):
+    def draw(self, document):
+        height = document.height
+        scale = document.scale
         loc_a = Vector(self.location)
         loc_b = Vector(self.location_b)
 
@@ -108,16 +110,18 @@ class SvgDimension():
         for line in lines:
             lines_svg += draw_edge(line, scale, height)
             if self.line_attributes:
-                lines_svg += self.line_attributes.draw(height, scale)
+                lines_svg += self.line_attributes.draw(document)
             else:
                 lines_svg += 'stroke-width="1px" '
                 lines_svg += 'stroke="rgb(0,0,0)"'
             lines_svg += '/>'
 
-        text_svg = self.draw_dimension_text(dim_loc_a, dim_loc_b, height, scale, angle)
+        text_svg = self.draw_dimension_text(dim_loc_a, dim_loc_b, angle, document)
         return lines_svg + text_svg
 
-    def draw_dimension_text(self, dim_loc_a, dim_loc_b, height, scale, angle):
+    def draw_dimension_text(self, dim_loc_a, dim_loc_b, angle, document):
+        height = document.height
+        scale = document.scale
         text_loc = (dim_loc_a + dim_loc_b)/2
         x = text_loc[0] * scale
         y = height - text_loc[1] * scale
@@ -128,7 +132,7 @@ class SvgDimension():
         text_svg += f'transform="translate({x},{y})rotate({angle})translate({0},{self.text_offset * scale})" '
 
         if self.text_attributes:
-            text_svg += self.text_attributes.draw(height, scale)
+            text_svg += self.text_attributes.draw(document)
         text_svg += '>'
         precision = self.node.decimal_precision
         p_format = "{:10."+str(precision)+"f}"

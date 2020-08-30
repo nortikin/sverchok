@@ -69,12 +69,12 @@ class SvgAttributes():
 
         return svg
 
-class SvSvgFillStrokeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSvgFillStrokeNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: color, line width
     Tooltip: Define Fill /Stroke Style for svg objects
     """
-    bl_idname = 'SvSvgFillStrokeNode'
+    bl_idname = 'SvSvgFillStrokeNodeMk2'
     bl_label = 'Fill / Stroke SVG'
     bl_icon = 'MESH_CIRCLE'
     sv_icon = 'SV_FILL_STROKE_SVG'
@@ -222,8 +222,8 @@ class SvSvgFillStrokeNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvSvgFillStrokeNode)
+    bpy.utils.register_class(SvSvgFillStrokeNodeMk2)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvSvgFillStrokeNode)
+    bpy.utils.unregister_class(SvSvgFillStrokeNodeMk2)

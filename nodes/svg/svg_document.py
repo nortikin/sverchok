@@ -82,9 +82,27 @@ def get_template(complete_name):
     file_end = data.find("</svg>")
     return data[:file_end]
 
+
 def add_head(width, height, units):
     svg = f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:xlink="http://www.w3.org/1999/xlink" width="{width}{units}" height="{height}{units}">\n'
     return svg
+
+
+def draw_svg_defs(document, defs_list, all_defs_list):
+    svg_defs=''
+    new_def_list = []
+    for def_key in defs_list:
+        svg_defs += document.defs[def_key].draw(document)
+
+        svg_defs += '\n'
+    for def_key in document.defs:
+        if def_key not in all_defs_list:
+            new_def_list.append(def_key)
+            all_defs_list.append(def_key)
+
+    if new_def_list:
+        svg_defs += draw_svg_defs(document, new_def_list, all_defs_list)
+    return svg_defs
 
 class SvSVGWrite(bpy.types.Operator):
 
@@ -129,10 +147,11 @@ class SvSVGWrite(bpy.types.Operator):
             svg_shapes += shape.draw(document)
             svg_shapes += '\n'
 
+
+        defs_list= list(document.defs)
         svg_defs = '<defs>\n'
-        for definition in document.defs:
-            svg_defs += document.defs[definition].draw(document)
-            svg_defs += '\n'
+        svg_defs += draw_svg_defs(document, defs_list, defs_list)
+
         svg_defs += '</defs>\n'
         svg_end = '</svg>'
         file_name = node.file_name

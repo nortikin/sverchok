@@ -10,7 +10,9 @@ Inputs
 ------
 
 - Fill Color
+- Fill Pattern
 - Stroke Color
+- Stroke Pattern
 - Stroke Width
 - Dash Pattern
 
@@ -18,6 +20,7 @@ Inputs
 Options
 -------
 
+- Blend: offers 'normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color' and 'luminosity'
 - Fill: offers 'None', 'Flat'
 - Stroke: offers 'None', 'Flat'
 - Stroke Cap: Offers 'Butt', 'Round', 'Square'

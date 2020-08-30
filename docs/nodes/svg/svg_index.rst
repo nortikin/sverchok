@@ -9,6 +9,8 @@ SVG
    circle_svg
    dimensions_svg
    mesh_svg
-   path_svg
+   path_svg_mk2
    text_svg
-   fill_stroke
+   group_svg
+   fill_stroke_mk2
+   pattern_svg

@@ -87,6 +87,7 @@ class SvSvgCircleNode(bpy.types.Node, SverchCustomTreeNode):
     rad_x: FloatProperty(name='Radius X', description='Horizontal Radius', default=1.0, update=updateNode)
     rad_y: FloatProperty(name='Radius Y', description='Vertical Radius', default=1.0, update=updateNode)
     angle: FloatProperty(name='Angle', description='Shape Rotation Angle', default=0.0, update=updateNode)
+    ungroup: BoolProperty(name='Ungroup', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Center")
@@ -97,6 +98,9 @@ class SvSvgCircleNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs.new('SvSvgSocket', "SVG Objects")
         self.outputs.new('SvCurveSocket', "Curves")
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "ungroup")
 
     def process(self):
 
@@ -117,7 +121,10 @@ class SvSvgCircleNode(bpy.types.Node, SverchCustomTreeNode):
                     curve = SvCircle(center, rad_x)
                     curve.u_bounds = (0, 2*pi)
                     curves_out.append(curve)
-            shapes_out.append(SvgGroup(shapes))
+            if self.ungroup:
+                shapes_out.extend(shapes)
+            else:
+                shapes_out.append(SvgGroup(shapes))
         self.outputs[0].sv_set(shapes_out)
         self.outputs[1].sv_set(curves_out)
 

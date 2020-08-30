@@ -15,6 +15,11 @@ Inputs
 - Angle: Rotation of the ellipse.
 - Fill / Stroke: Fill and Stroke attributes.
 
+Options
+-------
+
+- Ungroup: When enabled the node will flatten the input lists outputting SVG Circles in stead of SVG Groups of SVG Circles 
+
 
 Outputs
 -------
