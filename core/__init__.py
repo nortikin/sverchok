@@ -14,7 +14,7 @@ core_modules = [
     "monad_properties", "sv_custom_exceptions",
     "node_id_dict", "links", "sockets",
     "handlers", "update_system", "upgrade_nodes",
-    "monad", "node_defaults", "events"
+    "monad", "events"
 ]
 
 def sv_register_modules(modules):
@@ -113,12 +113,10 @@ def init_architecture(sv_name, utils_modules, ui_modules):
 
 def init_bookkeeping(sv_name):
 
-    from sverchok.core import node_defaults
     from sverchok.utils import ascii_print, auto_gather_node_classes
 
     sverchok.data_structure.SVERCHOK_NAME = sv_name
     ascii_print.show_welcome()
-    node_defaults.register_defaults()
     auto_gather_node_classes()
 
 

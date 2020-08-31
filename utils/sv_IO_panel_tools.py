@@ -27,6 +27,7 @@ from itertools import chain
 
 import bpy
 
+from sverchok.core.update_system import build_update_list, get_update_lists
 from sverchok import old_nodes
 from sverchok.utils import dummy_nodes
 from sverchok.utils.sv_IO_monad_helpers import pack_monad, unpack_monad
@@ -388,9 +389,9 @@ def create_dict_of_tree(ng, skip_set={}, selected=False, identified_node=None, s
     # try/except for now, node tree links might be invalid
     # among other things. auto rebuild on F8
     try:
-        ng.build_update_list()
+        build_update_list(ng)
         links_out = []
-        for name in chain(*ng.get_update_lists()[0]):
+        for name in chain(*get_update_lists(ng)[0]):
             for socket in ng.nodes[name].inputs:
                 if selected and not ng.nodes[name].select:
                     continue
@@ -674,20 +675,17 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
 
 
 def add_nodes(ng, nodes_to_import, nodes, create_texts):
-    '''
+    """
     return the dictionary that tracks which nodes got renamed due to conflicts.
-    setting 'ng.limited_init' supresses any custom defaults associated with nodes in the json.
-    '''
+    """
     name_remap = {}
-    ng.limited_init = True
-    # ng.skip_tree_update = True
+
     try:
         for n in sorted(nodes_to_import):
             add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts)
     except Exception as err:
         exception(err)
-    # ng.skip_tree_update = False
-    ng.limited_init = False
+
     return name_remap
 
 

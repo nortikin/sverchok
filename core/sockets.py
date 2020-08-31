@@ -272,9 +272,10 @@ class SvSocketCommon:
         if not self.needs_data_conversion():
             return source_data
         else:
-            policy = self.node.get_implicit_conversions(self.name, implicit_conversions)
-            self.node.debug(f"Trying to convert data for input socket {self.name} by {policy}")
-            return policy.convert(self, source_data)
+            if implicit_conversions is None:
+                implicit_conversions = DefaultImplicitConversionPolicy
+            self.node.debug(f"Trying to convert data for input socket {self.name} by {implicit_conversions}")
+            return implicit_conversions.convert(self, source_data)
 
 
 class SvSocketStandard(SvSocketCommon):
@@ -801,13 +802,42 @@ type_map_to = {
 type_map_from = {bl_idname: shortname for shortname, bl_idname in type_map_to.items()}
 
 
+class SvLinkNewNodeInput(bpy.types.Operator):
+    ''' Spawn and link new node to the left of the caller node'''
+    bl_idname = "node.sv_quicklink_new_node_input"
+    bl_label = "Add a new node to the left"
+
+    socket_index: IntProperty()
+    origin: StringProperty()
+    new_node_idname: StringProperty()
+    new_node_offsetx: IntProperty(default=-200)
+    new_node_offsety: IntProperty(default=0)
+
+    def execute(self, context):
+        tree = context.space_data.edit_tree
+        nodes, links = tree.nodes, tree.links
+
+        caller_node = nodes.get(self.origin)
+        new_node = nodes.new(self.new_node_idname)
+        new_node.location[0] = caller_node.location[0] + self.new_node_offsetx
+        new_node.location[1] = caller_node.location[1] + self.new_node_offsety
+        links.new(new_node.outputs[0], caller_node.inputs[self.socket_index])
+
+        if caller_node.parent:
+            new_node.parent = caller_node.parent
+            new_node.location = new_node.absolute_location
+
+        new_node.process_node(context)
+
+        return {'FINISHED'}
+
 
 classes = [
     SvVerticesSocket, SvMatrixSocket, SvStringsSocket, SvFilePathSocket,
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
     SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket,
     SvSurfaceSocket, SvCurveSocket, SvScalarFieldSocket, SvVectorFieldSocket,
-    SvSolidSocket, SvSvgSocket
+    SvSolidSocket, SvSvgSocket, SvLinkNewNodeInput
 ]
 
 register, unregister = bpy.utils.register_classes_factory(classes)

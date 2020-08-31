@@ -23,7 +23,7 @@ from bpy.props import EnumProperty, FloatProperty, FloatVectorProperty, BoolProp
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import (
-    levelsOflist, levels_of_list_or_np, numpy_match_long_repeat, updateNode)
+    levelsOflist, levels_of_list_or_np, numpy_match_long_repeat, updateNode, no_space)
 
 from sverchok.ui.sv_icons import custom_icon
 import numpy as np
@@ -179,7 +179,6 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                 s = self.inputs[idx].replace_socket(socket_type.get(t_in), renames[idx])
                 s.prop_name = f'v3_input_{idx}' if t_in == 'v' else 'amount'
 
-
     def process(self):
 
         self.ensure_enums_have_no_space(enums=["current_op"])
@@ -212,6 +211,23 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             params.append(self.output_numpy)
         result = recurse_func(*params)
         outputs[0].sv_set(result)
+
+    def ensure_enums_have_no_space(self, enums=None):
+        """
+        enums: a list of property names to check. like  self.current_op
+
+            self.ensure_enums_have_no_space(enums=[current_op])
+
+        https://github.com/nortikin/sverchok/pull/3483#discussion_r478389849
+        due to changes in EnumProperty definition "laws" individual enum identifiers must not
+        contain spaces. This function takes a list of enums that the node currently holds, and
+        makes sure the stored enum has no spaces.
+        """
+        for enum_property in enums:
+            current_value = getattr(self, enum_property)
+            if " " in current_value:
+                with self.sv_throttle_tree_update():
+                    setattr(self, enum_property, no_space(current_value))
 
 
 

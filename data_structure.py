@@ -15,6 +15,7 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+from contextlib import contextmanager
 from functools import wraps
 from math import radians, ceil
 import itertools
@@ -832,6 +833,14 @@ def sv_lambda(**kwargs):
     return dummy
 
 
+class classproperty:
+    """https://stackoverflow.com/a/13624858/10032221"""
+    def __init__(self, fget):
+        self.fget = fget
+
+    def __get__(self, owner_self, owner_cls):
+        return self.fget(owner_cls)
+
 
 #####################################################
 ############### debug settings magic ################
@@ -928,6 +937,28 @@ def update_with_kwargs(update_function, **kwargs):
         handel_update_call.extra_args[attr_name] = data
 
     return handel_update_call
+
+
+@contextmanager
+def throttle_tree_update(node):
+    """ usage
+    from sverchok.node_tree import throttle_tree_update
+
+    inside your node, f.ex inside a wrapped_update that creates a socket
+
+    def wrapped_update(self, context):
+        with throttle_tree_update(self):
+            self.inputs.new(...)
+            self.outputs.new(...)
+
+    that's it.
+
+    """
+    try:
+        node.id_data.skip_tree_update = True
+        yield node
+    finally:
+        node.id_data.skip_tree_update = False
 
 
 ##############################################################

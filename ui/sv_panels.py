@@ -176,6 +176,17 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
         wm.event_timer_remove(self._timer)
         self.report({'INFO'}, "Live Update mode disabled")
 
+
+class SvGenericUITooltipOperator(bpy.types.Operator):
+    arg: StringProperty()
+    bl_idname = "node.sv_generic_ui_tooltip"
+    bl_label = "tip"
+
+    @classmethod
+    def description(cls, context, properties):
+        return properties.arg
+
+
 class SV_PT_3DPanel(bpy.types.Panel):
     ''' Panel to manipuplate parameters in Sverchok layouts '''
 
@@ -340,12 +351,12 @@ class SV_PT_ToolsMenu(bpy.types.Panel):
 
     def draw_nodetree_props(self, layout, ng):
         box = layout.box()
-        triangle = "TRIA_UP" if ng.sv_toggle_nodetree_props else "TRIA_DOWN"
+        triangle = "TRIA_UP" if bpy.context.scene.sv_toggle_node_tree_props else "TRIA_DOWN"
         row = box.row()
         row.label(text=f"Active Tree: {ng.name}")
-        row.prop(ng, "sv_toggle_nodetree_props", text="", icon=triangle)
+        row.prop(bpy.context.scene, "sv_toggle_node_tree_props", text="", icon=triangle)
 
-        if ng.sv_toggle_nodetree_props:
+        if bpy.context.scene.sv_toggle_node_tree_props:
             col = box.column()
             
             row = col.row()
@@ -508,7 +519,8 @@ sv_tools_classes = [
     SV_PT_3DPanel,
     SvRemoveStaleDrawCallbacks,
     SvToggleProcess,
-    SvToggleDraft
+    SvToggleDraft,
+    SvGenericUITooltipOperator
 ]
 
 
@@ -523,6 +535,9 @@ def register():
         default=False,
         description='Allows updates directly to object-in nodes from 3d panel')
 
+    bpy.types.Scene.sv_toggle_node_tree_props = BoolProperty(name="Toggle visibility of tree props",
+                                                             description="Show more properties for this node tree")
+
     for class_name in sv_tools_classes:
         bpy.utils.register_class(class_name)
 
@@ -533,6 +548,7 @@ def unregister():
     for class_name in reversed(sv_tools_classes):
         bpy.utils.unregister_class(class_name)
 
+    del bpy.types.Scene.sv_toggle_node_tree_props
     del bpy.types.NodeTree.SvShowIn3D
     del bpy.types.Scene.SvShowIn3D_active
     bpy.types.NODE_HT_header.remove(node_show_tree_mode)

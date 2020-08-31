@@ -84,3 +84,7 @@ def delete_data_block(data_block) -> None:
     except ReferenceError:
         # looks like already was deleted
         pass
+
+
+def get_sv_trees():
+    return [ng for ng in bpy.data.node_groups if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}]

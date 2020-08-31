@@ -24,7 +24,7 @@ from bpy.props import EnumProperty, FloatProperty, IntProperty, BoolProperty
 
 from sverchok.ui.sv_icons import custom_icon
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, numpy_list_match_func
+from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, numpy_list_match_func, no_space
 from sverchok.utils.sv_itertools import (recurse_fx, recurse_fxy, recurse_f_level_control)
 import numpy as np
 # pylint: disable=C0326
@@ -248,7 +248,6 @@ class SvScalarMathNodeMK4(bpy.types.Node, SverchCustomTreeNode):
         elif len(self.outputs) == 2:
             self.outputs[0].replace_socket("SvStringsSocket", "sin( x )")
 
-
     def process(self):
 
         self.ensure_enums_have_no_space(enums=["current_op"])
@@ -272,6 +271,23 @@ class SvScalarMathNodeMK4(bpy.types.Node, SverchCustomTreeNode):
                 result = recurse_f_level_control(params, ops, math_numpy, matching_f, desired_levels)
 
             self.outputs[0].sv_set(result)
+
+    def ensure_enums_have_no_space(self, enums=None):
+        """
+        enums: a list of property names to check. like  self.current_op
+
+            self.ensure_enums_have_no_space(enums=[current_op])
+
+        https://github.com/nortikin/sverchok/pull/3483#discussion_r478389849
+        due to changes in EnumProperty definition "laws" individual enum identifiers must not
+        contain spaces. This function takes a list of enums that the node currently holds, and
+        makes sure the stored enum has no spaces.
+        """
+        for enum_property in enums:
+            current_value = getattr(self, enum_property)
+            if " " in current_value:
+                with self.sv_throttle_tree_update():
+                    setattr(self, enum_property, no_space(current_value))
 
 
 classes = [SvScalarMathNodeMK4]

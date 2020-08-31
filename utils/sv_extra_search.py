@@ -62,7 +62,7 @@ def ensure_short_description(description):
 def ensure_valid_show_string(nodetype):
 
     loop_reverse[nodetype.bl_label] = nodetype.bl_idname
-    description = nodetype.bl_rna.get_shorthand()
+    description = nodetype.bl_rna.docstring.get_shorthand()
     return nodetype.bl_label + ensure_short_description(description)
 
 def function_iterator(module_file):

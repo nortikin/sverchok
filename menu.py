@@ -192,13 +192,13 @@ class SverchNodeItem(object):
 
     def get_node_strings(self):
         node_class = self.get_node_class()
-        if hasattr(node_class, 'get_shorthand'):
-            shorthand = node_class.get_shorthand()
+        if hasattr(node_class, 'docstring'):
+            shorthand = node_class.docstring.get_shorthand()
         else:
             shorthand = ""
 
-        if hasattr(node_class, 'get_tooltip'):
-            tooltip = node_class.get_tooltip()
+        if hasattr(node_class, 'docstring'):
+            tooltip = node_class.docstring.get_tooltip()
         else:
             tooltip = ""
 
@@ -246,8 +246,8 @@ class SverchNodeItem(object):
         node_class = self.get_node_class()
         SverchNodeAddOperator.__name__ = node_class.__name__
 
-        if hasattr(node_class, "get_tooltip"):
-            SverchNodeAddOperator.__doc__ = node_class.get_tooltip()
+        if hasattr(node_class, "docstring"):
+            SverchNodeAddOperator.__doc__ = node_class.docstring.get_tooltip()
         else:
             SverchNodeAddOperator.__doc__ = node_class.__doc__
 

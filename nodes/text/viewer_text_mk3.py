@@ -19,8 +19,8 @@
 import bpy
 from bpy.props import StringProperty, BoolProperty, IntProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttle_tree_update
-from sverchok.data_structure import levelsOflist, changable_sockets, multi_socket, updateNode
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import levelsOflist, throttle_tree_update, multi_socket, updateNode
 
 socket_types = {
     "SvVerticesSocket": "VERTICES",

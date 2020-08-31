@@ -21,6 +21,7 @@ from bpy.props import FloatProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode
+from sverchok.utils.nodes_mixins.draft_mode import DraftMode
 
 
 def uget(self, origin):
@@ -42,7 +43,7 @@ def uset(self, value, origin, min_prop, max_prop):
     return None
 
 
-class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
+class SvNumberNode(DraftMode, bpy.types.Node, SverchCustomTreeNode):
     ''' Integer  / Float '''
     bl_idname = 'SvNumberNode'
     bl_label = 'A Number'

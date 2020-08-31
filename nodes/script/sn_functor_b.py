@@ -175,7 +175,8 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
                 text_datablock = self.get_bpy_data_from_name(self.script_name, bpy.data.texts)
                 if text_datablock:
                     self.script_str = text_datablock.as_string()
-                    self.sv_setattr_with_throttle("script_pointer", text_datablock)
+                    with self.sv_throttle_tree_update():
+                        self.script_pointer = text_datablock
                 else:
                     return None
 
