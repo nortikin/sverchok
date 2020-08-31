@@ -11,11 +11,57 @@ from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException
 from sverchok.utils.surface.nurbs import SvNurbsSurface
+from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve, curve_to_freecad_nurbs, curves_to_wire
 
 from sverchok.dependencies import FreeCAD
 if FreeCAD is not None:
     from FreeCAD import Base
     import Part
+
+def curves_to_face(sv_curves):
+    """
+    Make a Part.Face from a list of SvCurve.
+    Curves must have NURBS representation, must form a closed loop, and it must
+    be planar, otherwise an exception will be raised.
+    
+    input: list of SvCurve.
+    output: tuple:
+    * Part.Face
+    * List of SvFreeCadNurbsCurve for outer wire of the face
+    * SvFreeCadNurbsSurface for face's surface.
+    """
+    wire = curves_to_wire(sv_curves)
+    if not wire.isClosed():
+        raise Exception("The wire is not closed")
+    face = Part.Face(wire)
+    surface = SvSolidFaceSurface(face).to_nurbs()
+    wire_curves = []
+    for wire_edge in face.OuterWire.Edges:
+        pair = face.curveOnSurface(wire_edge)
+        fc_curve, t_min, t_max = pair
+        curve = SvFreeCadNurbsCurve(fc_curve, ndim=2)
+        wire_curves.append(curve)
+    return face, wire_curves, surface
+
+def surface_to_freecad(sv_surface):
+    """
+    Convert SvSurface into FreeCAD's Surface.
+    The surface must be presentable as NURBS.
+
+    input: SvSurface
+    output: SvFreeCadNurbsSurface
+    """
+    nurbs = SvNurbsSurface.get(sv_surface)
+    if nurbs is None:
+        raise Exception("not a NURBS surface")
+    fc_surface = SvNurbsMaths.build_surface(SvNurbsMaths.FREECAD,
+                nurbs.get_degree_u(),
+                nurbs.get_degree_v(),
+                nurbs.get_knotvector_u(),
+                nurbs.get_knotvector_v(),
+                nurbs.get_control_points(),
+                nurbs.get_weights())
+    return fc_surface
 
 class SvSolidFaceSurface(SvSurface):
     __description__ = "Solid Face"

@@ -220,6 +220,7 @@
    SvSolidBooleanNode
    SvMirrorSolidNode
    SvOffsetSolidNode
+   SvSolidFaceExtrudeNode
    SvIsInsideSolidNode
    SvSolidDistanceNode
    SvSliceSolidNode

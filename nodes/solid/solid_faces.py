@@ -2,8 +2,7 @@
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.utils.surface.nurbs import SvNurbsSurface
-from sverchok.utils.curve.nurbs import SvNurbsCurve
-from sverchok.utils.curve.core import SvConcatCurve
+#from sverchok.utils.curve.core import SvConcatCurve
 from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve
 
 if FreeCAD is None:
@@ -14,9 +13,9 @@ else:
     from bpy.props import BoolProperty
     from sverchok.node_tree import SverchCustomTreeNode
     from sverchok.data_structure import updateNode
-    from sverchok.utils.surface import SvSurface
-    from sverchok.utils.curve import SvSolidEdgeCurve
-    from sverchok.utils.surface import SvSolidFaceSurface
+    from sverchok.utils.surface.core import SvSurface
+    from sverchok.utils.curve.freecad import SvSolidEdgeCurve
+    from sverchok.utils.surface.freecad import SvSolidFaceSurface
 
     class SvSolidFacesNode(bpy.types.Node, SverchCustomTreeNode):
         """

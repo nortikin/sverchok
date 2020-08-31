@@ -13,8 +13,8 @@ else:
     from sverchok.data_structure import updateNode, match_long_repeat as mlr
     from FreeCAD import Base
     import Part
-    from sverchok.utils.curve import SvSolidEdgeCurve
-    from sverchok.utils.surface import SvSolidFaceSurface
+    from sverchok.utils.curve.freecad import SvSolidEdgeCurve
+    from sverchok.utils.surface.freecad import SvSolidFaceSurface
 
     class SvSliceSolidNode(bpy.types.Node, SverchCustomTreeNode):
         """

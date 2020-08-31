@@ -18,6 +18,30 @@ if FreeCAD is not None:
     import Part
     from Part import Geom2d
 
+def curve_to_freecad_nurbs(sv_curve):
+    """
+    Convert SvCurve to FreeCAD's NURBS curve.
+    Raise an exception if it is not possible.
+
+    input: SvCurve
+    output: SvFreeCadNurbsCurve
+    """
+    nurbs = SvNurbsCurve.to_nurbs(sv_curve)
+    if nurbs is None:
+        raise Exception("not a NURBS curve")
+    fc_curve = SvNurbsMaths.build_curve(SvNurbsMaths.FREECAD,
+                nurbs.get_degree(),
+                nurbs.get_knotvector(),
+                nurbs.get_control_points(),
+                nurbs.get_weights())
+    return fc_curve
+
+def curves_to_wire(sv_curves):
+    fc_curves = [curve_to_freecad_nurbs(curve).curve for curve in sv_curves]
+    shapes = [Part.Edge(curve) for curve in fc_curves]
+    wire = Part.Wire(shapes)
+    return wire
+
 class SvSolidEdgeCurve(SvCurve):
     __description__ = "Solid Edge"
     def __init__(self, solid_edge):
