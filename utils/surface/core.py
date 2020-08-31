@@ -12,6 +12,9 @@ from collections import defaultdict
 from sverchok.utils.logging import info, exception
 from sverchok.utils.surface.data import *
 
+class UnsupportedSurfaceTypeException(TypeError):
+    pass
+
 class SvSurface(object):
     def __repr__(self):
         if hasattr(self, '__description__'):

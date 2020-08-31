@@ -10,7 +10,9 @@ from sverchok.utils.nurbs_common import (
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_curves
 from sverchok.utils.curve.algorithms import unify_curves_degree
+from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
+from sverchok.utils.logging import info
 from sverchok.dependencies import geomdl
 
 if geomdl is not None:
@@ -46,7 +48,10 @@ class SvNurbsSurface(SvSurface):
         if isinstance(surface, SvNurbsSurface):
             return surface
         if hasattr(surface, 'to_nurbs'):
-            return surface.to_nurbs(implementation=implementation)
+            try:
+                return surface.to_nurbs(implementation=implementation)
+            except UnsupportedSurfaceTypeException as e:
+                info("Can't convert %s to NURBS: %s", surface, e)
         return None
 
     @classmethod

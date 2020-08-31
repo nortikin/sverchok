@@ -4,6 +4,7 @@ from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.core import SvConcatCurve
+from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve
 
 if FreeCAD is None:
     add_dummy('SvSolidFacesNode', 'Solid Faces', 'FreeCAD')
@@ -16,15 +17,6 @@ else:
     from sverchok.utils.surface import SvSurface
     from sverchok.utils.curve import SvSolidEdgeCurve
     from sverchok.utils.surface import SvSolidFaceSurface
-
-        def to_nurbs(self, implementation = SvNurbsSurface.NATIVE):
-            surface = self.surface.toBSpline()
-            nurbs = SvNurbsSurface.build(implementation,
-                        surface.UDegree, surface.VDegree,
-                        surface.UKnotSequence, surface.VKnotSequence,
-                        surface.getPoles(), surface.getWeights())
-            return nurbs
-
 
     class SvSolidFacesNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -69,7 +61,10 @@ else:
                 outer_wires = []
                 for f in solid.Faces:
                     surface = SvSolidFaceSurface(f)
-                    face_surface.append(surface)
+                    nurbs = SvNurbsSurface.get(surface)
+                    if nurbs is None:
+                        nurbs = surface
+                    face_surface.append(nurbs)
                     outer_wire = []
                     face_trims = []
                     for e in f.OuterWire.Edges:
@@ -79,11 +74,7 @@ else:
                             pass
                         trim,m,M = f.curveOnSurface(e)
                         trim = trim.toBSpline(m,M)
-                        controls = [(v.x,v.y,0.0) for v in trim.getPoles()]
-                        trim = SvNurbsCurve.build(SvNurbsCurve.NATIVE,
-                                    trim.Degree, trim.KnotSequence,
-                                    controls,
-                                    trim.getWeights())
+                        trim = SvFreeCadNurbsCurve(trim, ndim=2)
                         face_trims.append(trim)
                     #face_trims = SvConcatCurve(face_trims)
                     

@@ -46,15 +46,16 @@ class SvSolidEdgeCurve(SvCurve):
     def get_u_bounds(self):
         return self.u_bounds
 
-    def to_nurbs(self, implementation = SvNurbsCurve.NATIVE):
+    def to_nurbs(self, implementation = SvNurbsMaths.FREECAD):
         curve = self.curve.toBSpline(*self.u_bounds)
         curve.transform(self.edge.Matrix)
-        control_points = curve.getPoles()
-        #print(control_points)
-        curve = SvNurbsCurve.build(implementation,
-                    curve.Degree, curve.KnotSequence,
+        control_points = np.array(curve.getPoles())
+        weights = np.array(curve.getWeights())
+        knotvector = np.array(curve.KnotSequence)
+        curve = SvNurbsMaths.build_curve(implementation,
+                    curve.Degree, knotvector,
                     control_points,
-                    curve.getWeights())
+                    weights)
         #curve.u_bounds = self.u_bounds
         return curve
 
@@ -91,10 +92,25 @@ class SvFreeCadCurve(SvCurve):
     #def get_u_bounds(self):
     #    return (self.curve.FirstParameter, self.curve.LastParameter)
 
+    def to_nurbs(self, implementation = SvNurbsMaths.FREECAD):
+        curve = self.curve.toBSpline(*self.u_bounds)
+        #curve.transform(self.edge.Matrix)
+        control_points = np.array(curve.getPoles())
+        weights = np.array(curve.getWeights())
+        knotvector = np.array(curve.KnotSequence)
+
+        curve = SvNurbsMaths.build_curve(implementation,
+                    curve.Degree, knotvector,
+                    control_points,
+                    weights)
+        #curve.u_bounds = self.u_bounds
+        return curve
+
 class SvFreeCadNurbsCurve(SvNurbsCurve):
     def __init__(self, curve, ndim=3):
         self.curve = curve
         self.ndim = ndim
+        self.__description__ = f"FreeCAD NURBS (degree={curve.Degree}, pts={curve.NbPoles})"
 
     @classmethod
     def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):

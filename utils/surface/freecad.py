@@ -9,7 +9,7 @@ import numpy as np
 
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.surface.core import SvSurface
+from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 
 from sverchok.dependencies import FreeCAD
@@ -58,6 +58,7 @@ class SvSolidFaceSurface(SvSurface):
         for u, v in zip(us, vs):
             v_out.append(self.surface.curvature(u, v, "Gauss"))
         return np.array(v_out)
+
     def mean_curvature_array(self, us, vs):
         v_out = []
         for u,v in zip(us, vs):
@@ -72,6 +73,11 @@ class SvSolidFaceSurface(SvSurface):
         for u,v in zip(us, vs):
             v_out.append(self.surface.normal(u, v))
         return np.array(v_out)
+
+    def to_nurbs(self, implementation = SvNurbsMaths.FREECAD):
+        faces = self.face.toNurbs().Faces
+        nurbs = faces[0].Surface
+        return SvFreeCadNurbsSurface(nurbs)
 
 class SvFreeCadNurbsSurface(SvNurbsSurface):
     def __init__(self, surface):
@@ -115,10 +121,16 @@ class SvFreeCadNurbsSurface(SvNurbsSurface):
         return self.surface.VDegree
 
     def get_knotvector_u(self):
-        return np.array(self.surface.UKnotSequence)
+        ks = self.surface.getUKnots()
+        ms = self.surface.getUMultiplicities()
+        pairs = zip(ks, ms)
+        return sv_knotvector.from_multiplicity(pairs)
 
     def get_knotvector_v(self):
-        return np.array(self.surface.VKnotSequence)
+        ks = self.surface.getVKnots()
+        ms = self.surface.getVMultiplicities()
+        pairs = zip(ks, ms)
+        return sv_knotvector.from_multiplicity(pairs)
 
     def get_control_points(self):
         poles = self.surface.getPoles()
@@ -130,16 +142,16 @@ class SvFreeCadNurbsSurface(SvNurbsSurface):
         return np.array(weights)
 
     def get_u_min(self):
-        return self.surface.UKnotSequence[0]
+        return self.get_knotvector_u()[0]
 
     def get_u_max(self):
-        return self.surface.UKnotSequence[-1]
+        return self.get_knotvector_u()[-1]
 
     def get_v_min(self):
-        return self.surface.VKnotSequence[0]
+        return self.get_knotvector_v()[0]
 
     def get_v_max(self):
-        return self.surface.VKnotSequence[-1]
+        return self.get_knotvector_v()[-1]
 
     def _convert(self, p):
         return [p.x, p.y, p.z]
@@ -157,4 +169,6 @@ class SvFreeCadNurbsSurface(SvNurbsSurface):
 
     def normal_array(self, us, vs):
         return np.vectorize(self.normal, signature='(),()->(3)')(us, vs)
+
+SvNurbsMaths.surface_classes[SvNurbsMaths.FREECAD] = SvFreeCadNurbsSurface
 
