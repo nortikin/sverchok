@@ -516,6 +516,7 @@
     SvNurbsCurveOutNode
     SvNurbsSurfaceOutNode
     SvInstancerNodeMK3
+    SvLightViewerNode
     ---
     SvGreasePencilStrokes
     SvEmptyOutNode
