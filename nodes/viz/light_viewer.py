@@ -22,7 +22,7 @@ class SvLightViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = "SvLightViewerNode"
     bl_label = "Light viewer"
-    bl_icon = 'LIGHT'  # "OUTLINER_OB_LAMP"
+    bl_icon = 'LIGHT'
 
     lamp_types = [
         ("POINT", "Point", "Omnidirectional point light source", "LAMP_POINT", 0),
@@ -91,30 +91,13 @@ class SvLightViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
         name="Show cone", description="Draw transparent cone in the 3D View",
         default=False, update=updateNode)
 
-    max_bounces: bpy.props.IntProperty(
-        name="Max Bounces", description="Maximum number of bounces the lamp will contribute to the render",
-        min=1, max=1000000, default=1024, update=updateNode)
-
     cast_shadow: bpy.props.BoolProperty(
         name="Cast shadow", description="Lamp casts shadows",
-        default=True, update=updateNode)
-
-    multiple_imporance: bpy.props.BoolProperty(
-        name="Multiple importance", description="Use multiple importance sampling for the lamp",
-        default=True, update=updateNode)
-
-    use_nodes: bpy.props.BoolProperty(
-        name="Use Nodes", description="Use node tree instead of directly specified color",
         default=True, update=updateNode)
 
     light_color: bpy.props.FloatVectorProperty(
         name="Color", description="Light color", update=updateNode,
         default=(1.0, 1.0, 1.0, 1.0), size=4, min=0.0, max=1.0, subtype='COLOR')
-
-    emission_node_name: bpy.props.StringProperty(
-        name="Emission Node",
-        description="Name of Emission node in the lamp shader, that contains Sthrength and Color inputs",
-        default="Emission", update=updateNode)
 
     def sv_init(self, context):
         self.init_viewer()
@@ -151,13 +134,8 @@ class SvLightViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, 'shape_type')
 
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, 'use_nodes')
-        layout.prop(self, 'max_bounces')
         layout.prop(self, 'cast_shadow')
-        layout.prop(self, 'multiple_imporance')
-        if self.light_type == 'SPOT':
-            layout.prop(self, 'show_cone')
-        layout.prop(self, 'emission_node_name')
+        layout.prop(self, 'show_cone')
 
     def draw_label(self):
         if self.hide:
@@ -202,6 +180,7 @@ class SvLightViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
                 prop.light.shadow_soft_size = size[0]
                 prop.light.spot_size = spot_size[0]
                 prop.light.spot_blend = spot_blend[0]
+                prop.light.show_cone = self.show_cone
 
             elif self.light_type == 'AREA':
                 prop.light.shape = self.shape_type
@@ -212,6 +191,11 @@ class SvLightViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
                 else:
                     prop.light.size = size_x[0]
                     prop.light.size_y = size_y[0]
+
+            if bpy.context.scene.render.engine == 'BLENDER_EEVEE':
+                prop.light.use_shadow = self.cast_shadow
+            elif bpy.context.scene.render.engine == 'CYCLES':
+                prop.light.cycles.cast_shadow = self.cast_shadow
 
         self.outputs['Objects'].sv_set([obj_data.obj for obj_data in self.object_data])
 
