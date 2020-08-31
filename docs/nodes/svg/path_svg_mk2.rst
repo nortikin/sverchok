@@ -58,3 +58,5 @@ Examples
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/svg/path_svg/blender_sverchok_path_svg_example_1.png
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/svg/path_svg/blender_sverchok_path_svg_example_2.png
+
+.. image:: https://user-images.githubusercontent.com/10011941/91660167-f7d32e00-ead4-11ea-9aba-f34630b4df0f.png

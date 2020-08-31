@@ -1,5 +1,5 @@
 Pattern SVG
-==========
+===========
 
 Functionality
 -------------
@@ -30,3 +30,5 @@ Examples
 --------
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/svg/pattern_svg/blender_sverchok_pattern_svg_example.png
+
+.. image:: https://user-images.githubusercontent.com/10011941/91660253-92cc0800-ead5-11ea-87b3-29a75591ca0a.png

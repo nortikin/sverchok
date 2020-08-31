@@ -1,5 +1,5 @@
-Pattern SVG
-==========
+Group SVG
+=========
 
 Functionality
 -------------
@@ -26,5 +26,9 @@ Outputs
 
 Examples
 --------
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/svg/group_svg/blender_sverchok_group_svg_example.png
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/svg/group_svg/blender_sverchok_group_svg_example_1.png
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/svg/pattern_svg/blender_sverchok_pattern_svg_example.png

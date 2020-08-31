@@ -198,7 +198,7 @@ class SvSocketCommon:
                 new_node_idname = "SvFilePathNode"
             elif self.bl_idname == "SvSvgSocket":
                 if "Fill / Stroke" in self.name:
-                    new_node_idname = "SvSvgFillStrokeNode"
+                    new_node_idname = "SvSvgFillStrokeNodeMk2"
                 elif "Pattern" in self.name:
                     new_node_idname = "SvSvgPatternNode"
                 else:
