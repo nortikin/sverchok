@@ -71,6 +71,8 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_INSTANCER'
 
+    replacement_nodes = [('SvInstancerNodeMK3', None, None)]
+
     def obj_available(self, context):
         if not bpy.data.meshes:
             return [('None', 'None', "", 0)]

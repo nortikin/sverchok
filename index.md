@@ -566,7 +566,6 @@
     SvFrameInfoNodeMK2
     SvTimerNode
     ---
-    SvInstancerNode
     SvDupliInstancesMK4
     SvLampOutNode
 
