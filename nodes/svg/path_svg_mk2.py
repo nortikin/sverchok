@@ -18,9 +18,11 @@
 
 
 import bpy
-from bpy.props import EnumProperty, BoolProperty, StringProperty
+from bpy.props import EnumProperty, BoolProperty, StringProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import match_long_repeat as mlr, updateNode
+from sverchok.utils.svg import SvgGroup, SvgCurve
+from sverchok.utils.curve import SvCurve
 
 def draw_path_linear_mode(verts, height, scale):
 
@@ -90,7 +92,9 @@ class SvgPath():
         self.attributes = attributes[0] if attributes else []
         self.node = node
 
-    def draw(self, height, scale):
+    def draw(self, document):
+        height = document.height
+        scale = document.scale
         verts = self.verts
         svg = '<path '
         if self.node.mode == 'LIN' or len(verts) < 3 or not self.commands:
@@ -104,7 +108,7 @@ class SvgPath():
             svg += '" '
 
         if self.attributes:
-            svg += self.attributes.draw(height, scale)
+            svg += self.attributes.draw(document)
         else:
             svg += 'fill="none" '
             svg += 'stroke-width="1px"'
@@ -112,22 +116,25 @@ class SvgPath():
         svg += '/>'
         return svg
 
-class SvSvgPathNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSvgPathNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: SVG Path
     Tooltip: Generate SVG Path
     """
-    bl_idname = 'SvSvgPathNode'
+    bl_idname = 'SvSvgPathNodeMk2'
     bl_label = 'Path SVG'
     bl_icon = 'MESH_CIRCLE'
     sv_icon = 'SV_PATH_SVG'
 
     modes = [
         ('LIN', 'Linear', '', 0),
+        ('CURVE', 'Curve', '', 1),
         ('USER', 'User', '', 3),
         ]
     def update_sockets(self, context):
-        self.inputs["Commands"].hide_safe = self.mode == "LIN"
+        self.inputs["Vertices"].hide_safe = self.mode == "CURVE"
+        self.inputs["Curve"].hide_safe = self.mode != "CURVE"
+        self.inputs["Commands"].hide_safe = self.mode != "USER"
         updateNode(self, context)
 
     mode: EnumProperty(
@@ -160,35 +167,58 @@ If command Letter is not in the list [L, C, S, Q, T] it will be interpreted as L
         default="L",
         update=updateNode
     )
+    curve_samples: IntProperty(
+        min=2, default=25, name='Samples',
+        description='Curve Resolution used if curved path is not possible', update=updateNode
+    )
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvCurveSocket', "Curve")
         self.inputs.new('SvStringsSocket', "Commands").prop_name = 'path_commands'
-        self.inputs["Commands"].hide_safe = True
         self.inputs.new('SvSvgSocket', "Fill / Stroke")
+        self.inputs["Curve"].hide_safe = True
+        self.inputs["Commands"].hide_safe = True
 
         self.outputs.new('SvSvgSocket', "SVG Objects")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)
+        if self.mode == 'CURVE':
+            layout.prop(self, 'curve_samples')
+
         layout.prop(self, "cyclic", expand=True)
 
     def process(self):
 
         if not self.outputs[0].is_linked:
             return
-        verts_in = self.inputs['Vertices'].sv_get(deepcopy=True)
-        commands_in = self.inputs['Commands'].sv_get(deepcopy=True)
-        shapes = []
-        atts_in = self.inputs['Fill / Stroke'].sv_get(deepcopy=False, default=None)
-        for verts, commands, atts in zip(*mlr([verts_in, commands_in, atts_in])):
-            shapes.append(SvgPath(verts, commands, atts, self))
-        self.outputs[0].sv_set(shapes)
+        if self.mode == "CURVE":
+            curves_in = self.inputs['Curve'].sv_get(deepcopy=False)
+            atts_in = self.inputs['Fill / Stroke'].sv_get(deepcopy=False, default=None)
+            if isinstance(curves_in[0], SvCurve):
+                curves_in = [curves_in]
+
+            groups = []
+            for curves, atts in zip(*mlr([curves_in, atts_in])):
+                curves_out = []
+                for c, att in zip(*mlr([curves, atts])):
+                    curves_out.append(SvgCurve(c, att, self))
+                groups.append(SvgGroup(curves_out))
+            self.outputs[0].sv_set(groups)
+        else:
+            verts_in = self.inputs['Vertices'].sv_get(deepcopy=True)
+            commands_in = self.inputs['Commands'].sv_get(deepcopy=True)
+            shapes = []
+            atts_in = self.inputs['Fill / Stroke'].sv_get(deepcopy=False, default=None)
+            for verts, commands, atts in zip(*mlr([verts_in, commands_in, atts_in])):
+                shapes.append(SvgPath(verts, commands, atts, self))
+            self.outputs[0].sv_set(shapes)
 
 
 
 def register():
-    bpy.utils.register_class(SvSvgPathNode)
+    bpy.utils.register_class(SvSvgPathNodeMk2)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvSvgPathNode)
+    bpy.utils.unregister_class(SvSvgPathNodeMk2)

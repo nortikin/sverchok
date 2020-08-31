@@ -38,7 +38,9 @@ class SvgText():
         self.font_family = font_family
         self.font_alignment = font_alignment
 
-    def draw(self, height, scale):
+    def draw(self, document):
+        height = document.height
+        scale = document.scale
         svg = '<text '
 
         svg += f'font-size="{self.size * scale}px" '
@@ -53,7 +55,7 @@ class SvgText():
             svg += f'x="{x}" '
             svg += f'y="{y}" '
         if self.attributes:
-            svg += self.attributes.draw(height, scale)
+            svg += self.attributes.draw(document)
         svg += '>'
         svg += self.text
         svg += '</text>'

@@ -55,20 +55,22 @@ class SvgCircle():
         self.angle = angle
         self.attributes = attributes
 
-    def draw(self, height, scale):
-        svg = '<ellipse '
+    def draw(self, document):
+        height = document.height
+        scale = document.scale
+        svg = '<ellipse\n'
         x = self.location[0] * scale
         y = height-self.location[1]* scale
         if self.angle != 0:
-            svg += f'transform="translate({x},{y})rotate({self.angle})" '
+            svg += f'    transform="translate({x},{y})rotate({self.angle})"\n'
         else:
-            svg += f'cx="{x}" '
-            svg += f'cy="{y}" '
-        svg += f'rx="{self.rad_x * scale}" '
-        svg += f'ry="{self.rad_y * scale}" '
+            svg += f'    cx="{x}"\n'
+            svg += f'    cy="{y}"\n'
+        svg += f'    rx="{self.rad_x * scale}"\n'
+        svg += f'    ry="{self.rad_y * scale}"\n'
 
         if self.attributes:
-            svg += self.attributes.draw(height, scale)
+            svg += self.attributes.draw(document)
         svg += '/>'
         return svg
 
@@ -85,6 +87,7 @@ class SvSvgCircleNode(bpy.types.Node, SverchCustomTreeNode):
     rad_x: FloatProperty(name='Radius X', description='Horizontal Radius', default=1.0, update=updateNode)
     rad_y: FloatProperty(name='Radius Y', description='Vertical Radius', default=1.0, update=updateNode)
     angle: FloatProperty(name='Angle', description='Shape Rotation Angle', default=0.0, update=updateNode)
+    ungroup: BoolProperty(name='Ungroup', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Center")
@@ -95,6 +98,9 @@ class SvSvgCircleNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs.new('SvSvgSocket', "SVG Objects")
         self.outputs.new('SvCurveSocket', "Curves")
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "ungroup")
 
     def process(self):
 
@@ -115,7 +121,10 @@ class SvSvgCircleNode(bpy.types.Node, SverchCustomTreeNode):
                     curve = SvCircle(center, rad_x)
                     curve.u_bounds = (0, 2*pi)
                     curves_out.append(curve)
-            shapes_out.append(SvgGroup(shapes))
+            if self.ungroup:
+                shapes_out.extend(shapes)
+            else:
+                shapes_out.append(SvgGroup(shapes))
         self.outputs[0].sv_set(shapes_out)
         self.outputs[1].sv_set(curves_out)
 

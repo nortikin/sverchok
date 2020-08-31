@@ -41,14 +41,16 @@ z_sort_mode_items = [
 def verts_pol(polygon, verts):
     return [verts[c] for c in polygon]
 
-def draw_pols(verts, polygons, attributes, height, scale):
+def draw_pols(verts, polygons, attributes, document):
     svg = ''
+    scale = document.scale
+    height = document.height
     func = draw_edge if len(polygons[0]) < 3 else draw_pol
     for p, atts in zip(*mlr([polygons, attributes])):
         svg += func(verts_pol(p, verts), scale, height)
 
         if atts:
-            svg += atts.draw(height, scale)
+            svg += atts.draw(document)
         svg += '/>'
 
     return svg
@@ -67,7 +69,7 @@ def draw_edge(p, scale, height):
     svg += f'x2="{p[1][0]* scale}" y2="{height- p[1][1]* scale}" '
     return svg
 
-def draw_sorted_pols(verts, polygons, attributes, height, scale, z_func):
+def draw_sorted_pols(verts, polygons, attributes, document, z_func):
     v_pols = []
     z_key = []
     svg = ''
@@ -85,12 +87,13 @@ def draw_sorted_pols(verts, polygons, attributes, height, scale, z_func):
 
 
     func = draw_edge if len(polygons[0]) < 3 else draw_pol
-
+    scale = document.scale
+    height = document.height
     for p, atts in zip(*mlr([sorted_v_pols, attributes])):
         svg += func(p, scale, height)
 
         if atts:
-            svg += atts.draw(height, scale)
+            svg += atts.draw(document)
         svg += '/>\n'
     return svg
 
@@ -105,7 +108,7 @@ class SvgMesh():
         self.node = node
 
 
-    def draw(self, height, scale):
+    def draw(self, document):
 
         verts = self.verts
         svg = '<g>\n'
@@ -115,9 +118,9 @@ class SvgMesh():
                 z_func_sort = lambda x: -1 * z_func(x)
             else:
                 z_func_sort = z_func
-            svg += draw_sorted_pols(verts, self.polygons, self.attributes, height, scale, z_func_sort)
+            svg += draw_sorted_pols(verts, self.polygons, self.attributes, document, z_func_sort)
         else:
-            svg += draw_pols(verts, self.polygons, self.attributes, height, scale)
+            svg += draw_pols(verts, self.polygons, self.attributes, document)
         svg += '</g>'
         return svg
 
@@ -125,10 +128,7 @@ def user_ortho_projection(verts, plane, offset):
     inverted_matrix = plane.inverted()
     vs = []
     for v in verts:
-        # new_v = Vector(v) @ inverted_matrix
-        # vs.append(Vector(v) @ inverted_matrix)
         vs.append(offset @ inverted_matrix @ Vector(v))
-        # vs.append([new_v[0], new_v[1], new_v[2]])
     return vs
 
 ortho_projection_func_dict = {
