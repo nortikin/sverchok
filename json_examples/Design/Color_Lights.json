@@ -19,7 +19,7 @@
       },
       "width": 110.0
     },
-    "Light viewer": {
+    "Light viewer.001": {
       "bl_idname": "SvLightViewerNode",
       "collection": "",
       "color": [
@@ -32,17 +32,16 @@
       "label": "",
       "lamp_type": "SPOT",
       "location": [
-        149.39559936523438,
-        75.6929931640625
+        154.19656372070312,
+        77.55731964111328
       ],
       "params": {
         "base_data_name": "Beta",
         "light_type": "SPOT",
-        "size": 0.6399999260902405,
+        "size": 0.6399999856948853,
         "spot_blend": 0.0,
-        "spot_size": 1.9799995422363281,
-        "strength": 1000.0,
-        "type": 2
+        "spot_size": 1.9800000190734863,
+        "strength": 1000.0
       },
       "use_custom_color": true,
       "width": 140.0
@@ -302,6 +301,18 @@
   },
   "update_lists": [
     [
+      "Plane",
+      0,
+      "Mesh viewer",
+      0
+    ],
+    [
+      "Plane",
+      2,
+      "Mesh viewer",
+      2
+    ],
+    [
       "List Input",
       0,
       "Color in MK1",
@@ -320,6 +331,12 @@
       2
     ],
     [
+      "Color in MK1",
+      0,
+      "List Split",
+      0
+    ],
+    [
       "Line",
       0,
       "Move.001",
@@ -332,34 +349,16 @@
       1
     ],
     [
-      "Color in MK1",
-      0,
-      "List Split",
-      0
-    ],
-    [
       "Move.001",
       0,
-      "Light viewer",
+      "Light viewer.001",
       0
     ],
     [
       "List Split",
       0,
-      "Light viewer",
+      "Light viewer.001",
       7
-    ],
-    [
-      "Plane",
-      0,
-      "Mesh viewer",
-      0
-    ],
-    [
-      "Plane",
-      2,
-      "Mesh viewer",
-      2
     ]
   ]
 }
