@@ -63,7 +63,7 @@ class SvLightViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
         items=lamp_types, default="POINT", update=update_light_type)
 
     shape_type: bpy.props.EnumProperty(
-        name="Area type", description="Area shape type", default="RECTANGLE",
+        name="Shape", description="Area shape type", default="RECTANGLE",
         items=shape_types, update=update_shape_type)
 
     size: bpy.props.FloatProperty(
@@ -76,8 +76,8 @@ class SvLightViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
         name="Size Y", description="Light source size", default=0.1, update=updateNode)
 
     spot_size: bpy.props.FloatProperty(
-        name="Spot Size", description="Angle of the spotlight beam (degrees)",
-        default=45.0, min=0.0, max=180.0, update=updateNode)
+        name="Spot Size", description="Angle of the spotlight beam",
+        default=1.57, update=updateNode)
 
     spot_blend: bpy.props.FloatProperty(
         name="Spot Blend", description="The softness of the spotlight edge",
@@ -157,8 +157,9 @@ class SvLightViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
         strengths = self.inputs['Strength'].sv_get(deepcopy=False, default=[None])
         colors = self.inputs['Color'].sv_get(deepcopy=False, default=[None])
 
-        objects_number = max([len(i) if i != [None] else 0 for i in
-                             [origins, sizes_sq, sizes_x, sizes_y, spot_sizes, spot_blends, strengths, colors]])
+        objects_number = 0 if origins == [None] else max(
+            [len(i) if i != [None] else 0 for i in
+                [origins, sizes_sq, sizes_x, sizes_y, spot_sizes, spot_blends, strengths, colors]])
 
         correct_collection_length(self.light_data, objects_number)
         [props.regenerate_light(self.base_data_name, self.light_type) for props in self.light_data]

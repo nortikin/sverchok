@@ -569,7 +569,6 @@
     ---
     SvInstancerNode
     SvDupliInstancesMK4
-    SvLampOutNode
 
 ## Objects
     SvVertexGroupNodeMK2
