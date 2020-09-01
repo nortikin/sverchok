@@ -169,6 +169,17 @@ class SvFreeCadNurbsCurve(SvNurbsCurve):
         curve.buildFromPolesMultsKnots(pts, mults, knots, False, degree, weights)
         return SvFreeCadNurbsCurve(curve, ndim=2)
     
+    @classmethod
+    def from_any_nurbs(cls, curve):
+        if not isinstance(curve, SvNurbsCurve):
+            raise TypeError("Invalid curve type")
+        if isinstance(curve, SvFreeCadNurbsCurve):
+            return curve
+        return SvFreeCadNurbsCurve.build(SvNurbsMaths.FREECAD,
+                    curve.get_degree(), curve.get_knotvector(),
+                    curve.get_control_points(), 
+                    curve.get_weights())
+
     def is_closed(self, eps=None):
         return self.curve.isClosed()
     
