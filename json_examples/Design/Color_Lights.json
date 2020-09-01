@@ -19,12 +19,13 @@
       },
       "width": 110.0
     },
-    "Lamp.001": {
-      "bl_idname": "SvLampOutNode",
+    "Light viewer": {
+      "bl_idname": "SvLightViewerNode",
+      "collection": "",
       "color": [
-        0.0,
-        0.5,
-        0.20000000298023224
+        1.0,
+        0.5889999866485596,
+        0.21400000154972076
       ],
       "height": 100.0,
       "hide": false,
@@ -35,11 +36,13 @@
         75.6929931640625
       ],
       "params": {
-        "area_type": "SQUARE",
+        "base_data_name": "Beta",
+        "light_type": "SPOT",
         "size": 0.6399999260902405,
         "spot_blend": 0.0,
-        "spot_size": 57.53999710083008,
-        "strength": 1000.0
+        "spot_size": 1.9799995422363281,
+        "strength": 1000.0,
+        "type": 2
       },
       "use_custom_color": true,
       "width": 140.0
@@ -317,12 +320,6 @@
       2
     ],
     [
-      "Color in MK1",
-      0,
-      "List Split",
-      0
-    ],
-    [
       "Line",
       0,
       "Move.001",
@@ -335,15 +332,21 @@
       1
     ],
     [
+      "Color in MK1",
+      0,
+      "List Split",
+      0
+    ],
+    [
       "Move.001",
       0,
-      "Lamp.001",
+      "Light viewer",
       0
     ],
     [
       "List Split",
       0,
-      "Lamp.001",
+      "Light viewer",
       7
     ],
     [
