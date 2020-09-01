@@ -64,7 +64,7 @@ class SvSolidFaceExtrudeNode(bpy.types.Node, SverchCustomTreeNode):
                 if not is_solid_face_surface(face_surface):
                     # face_surface is an instance of SvSurface,
                     # but not a instance of SvFreeCadNurbsSurface
-                    self.info("Surface %s is not a face of a solid, will convert automatically", face_surface)
+                    self.debug("Surface %s is not a face of a solid, will convert automatically", face_surface)
                     face_surface = surface_to_freecad(face_surface, make_face=True) # SvFreeCadNurbsSurface
 
                 fc_face = face_surface.face
