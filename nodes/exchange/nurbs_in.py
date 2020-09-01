@@ -4,6 +4,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, StringProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs import SvNurbsCurve
@@ -38,7 +39,7 @@ class SvExNurbsInCallbackOp(bpy.types.Operator):
         getattr(node, self.fn_name)(self)
         return {'FINISHED'}
 
-class SvExNurbsInNode(bpy.types.Node, SverchCustomTreeNode):
+class SvExNurbsInNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """
     Triggers: Input NURBS
     Tooltip: Get NURBS curve or surface objects from scene
@@ -118,7 +119,7 @@ class SvExNurbsInNode(bpy.types.Node, SverchCustomTreeNode):
             update = updateNode)
 
     def draw_buttons(self, context, layout):
-
+        self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, 'implementation', text='')
 
         col = layout.column(align=True)
@@ -292,4 +293,3 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvExNurbsInNode)
     bpy.utils.unregister_class(SvExNurbsInCallbackOp)
-

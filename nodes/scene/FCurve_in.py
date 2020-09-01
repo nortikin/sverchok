@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -10,6 +10,7 @@ import bpy
 # from mathutils import Vector
 from bpy.props import IntProperty, StringProperty, EnumProperty  # FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_operator_mixins import SvGenericCallbackWithParams
 
@@ -19,7 +20,7 @@ class SvFCurveMK1CB(bpy.types.Operator, SvGenericCallbackWithParams):
     bl_label = "Callback for fcurve sampler node mk1"
     bl_options = {'INTERNAL'}
 
-class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
+class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     '''
     Triggers: FCurve In
     Tooltip: Get result of curve evaluated at frame x
@@ -64,7 +65,7 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new("SvStringsSocket", "Evaluated")
 
     def draw_buttons(self, context, layout):
-
+        self.draw_animatable_buttons(layout, icon_only=True)
         row = layout.row(align=True)
         row.prop_search(self, 'object_name', bpy.data, 'objects', text='', icon='OBJECT_DATA')
         row.operator("node.sv_fcurvenodemk1_callback_with_params", text='', icon="ZOOM_IN").fn_name="add_empty"
