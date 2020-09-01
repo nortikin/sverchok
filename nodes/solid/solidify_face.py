@@ -8,7 +8,7 @@
 import numpy as np
 
 import bpy
-from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty
+from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode
@@ -19,18 +19,18 @@ from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import FreeCAD
 
 if FreeCAD is None:
-    add_dummy('SvSolidFaceExtrudeNode', 'Extrude Face (Solid)', 'FreeCAD')
+    add_dummy('SvSolidFaceSolidifyNode', 'Solidify Face (Solid)', 'FreeCAD')
 else:
     import Part
     from FreeCAD import Base
 
-class SvSolidFaceExtrudeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSolidFaceSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Extrude Solid Face
-    Tooltip: Make a Solid by extruding one face
+    Triggers: Soldify Solid Face Offset Thickness
+    Tooltip: Make a Solid by offsetting (adding thickness, solidifying) a Face of a Solid
     """
-    bl_idname = 'SvSolidFaceExtrudeNode'
-    bl_label = 'Extrude Face (Solid)'
+    bl_idname = 'SvSolidFaceSolidifyNode'
+    bl_label = 'Solidify Face (Solid)'
     bl_icon = 'EDGESEL'
     solid_catergory = "Operators"
 
@@ -40,11 +40,23 @@ class SvSolidFaceExtrudeNode(bpy.types.Node, SverchCustomTreeNode):
             default=False,
             update=updateNode)
 
+    offset : FloatProperty(
+            name = "Offset",
+            description = "Thickness value",
+            default = 0.1,
+            update=updateNode)
+
+    tolerance : FloatProperty(
+            name = "Tolerance",
+            description = "precision of approximation",
+            default = 0.01,
+            precision=6,
+            update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "SolidFace")
-        p = self.inputs.new('SvVerticesSocket', "Vector")
-        p.use_prop = True
-        p.prop = (0.0, 0.0, 1.0)
+        self.inputs.new('SvStringsSocket', "Offset").prop_name = 'offset'
+        self.inputs.new('SvStringsSocket', "Tolerance").prop_name = 'tolerance'
         self.outputs.new('SvSolidSocket', "Solid")
         self.update_sockets(context)
 
@@ -54,13 +66,15 @@ class SvSolidFaceExtrudeNode(bpy.types.Node, SverchCustomTreeNode):
 
         face_surfaces_s = self.inputs['SolidFace'].sv_get()
         face_surfaces_s = ensure_nesting_level(face_surfaces_s, 2, data_types=(SvSurface,))
-        offset_s = self.inputs['Vector'].sv_get()
-        offset_s = ensure_nesting_level(offset_s, 3)
+        offset_s = self.inputs['Offset'].sv_get()
+        offset_s = ensure_nesting_level(offset_s, 2)
+        tolerance_s = self.inputs['Tolerance'].sv_get()
+        tolerance_s = ensure_nesting_level(tolerance_s, 2)
 
         solids_out = []
-        for face_surfaces, offsets in zip_long_repeat(face_surfaces_s, offset_s):
+        for face_surfaces, offsets, tolerances in zip_long_repeat(face_surfaces_s, offset_s, tolerance_s):
             #new_solids = []
-            for face_surface, offset in zip_long_repeat(face_surfaces, offsets):
+            for face_surface, offset, tolerance in zip_long_repeat(face_surfaces, offsets, tolerances):
                 if not is_solid_face_surface(face_surface):
                     # face_surface is an instance of SvSurface,
                     # but not a instance of SvFreeCadNurbsSurface
@@ -68,8 +82,7 @@ class SvSolidFaceExtrudeNode(bpy.types.Node, SverchCustomTreeNode):
                     face_surface = surface_to_freecad(face_surface, make_face=True) # SvFreeCadNurbsSurface
 
                 fc_face = face_surface.face
-                fc_offset = Base.Vector(*offset)
-                shape = fc_face.extrude(fc_offset)
+                shape = fc_face.makeOffsetShape(offset, tolerance, fill=True)
                 solids_out.append(shape)
             #solids_out.append(new_solids)
 
@@ -77,9 +90,9 @@ class SvSolidFaceExtrudeNode(bpy.types.Node, SverchCustomTreeNode):
 
 def register():
     if FreeCAD is not None:
-        bpy.utils.register_class(SvSolidFaceExtrudeNode)
+        bpy.utils.register_class(SvSolidFaceSolidifyNode)
 
 def unregister():
     if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSolidFaceExtrudeNode)
+        bpy.utils.unregister_class(SvSolidFaceSolidifyNode)
 
