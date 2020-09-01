@@ -187,6 +187,39 @@ class SvNurbsSurface(SvSurface):
         weighted = weights * points
         return np.concatenate((weighted, weights), axis=2)
 
+    def get_min_u_continuity(self):
+        """
+        Return minimum continuity degree of the surface in the U direction (guaranteed by knotvector):
+        0 - point-wise continuity only (C0),
+        1 - tangent continuity (C1),
+        2 - 2nd derivative continuity (C2), and so on.
+        """
+        kv = self.get_knotvector_u()
+        degree = self.get_degree_u()
+        return sv_knotvector.get_min_continuity(kv, degree)
+
+    def get_min_v_continuity(self):
+        """
+        Return minimum continuity degree of the surface in the V direction (guaranteed by knotvector):
+        0 - point-wise continuity only (C0),
+        1 - tangent continuity (C1),
+        2 - 2nd derivative continuity (C2), and so on.
+        """
+        kv = self.get_knotvector_v()
+        degree = self.get_degree_v()
+        return sv_knotvector.get_min_continuity(kv, degree)
+    
+    def get_min_continuity(self):
+        """
+        Return minimum continuity degree of the surface (guaranteed by knotvectors):
+        0 - point-wise continuity only (C0),
+        1 - tangent continuity (C1),
+        2 - 2nd derivative continuity (C2), and so on.
+        """
+        c_u = self.get_min_u_continuity()
+        c_v = self.get_min_v_continuity()
+        return min(c_u, c_v)
+
 class SvGeomdlSurface(SvNurbsSurface):
     def __init__(self, surface):
         self.surface = surface

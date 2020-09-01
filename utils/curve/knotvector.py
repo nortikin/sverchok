@@ -185,6 +185,14 @@ def get_internal_knots(knot_vector, output_multiplicity = False, tolerance=1e-6)
     else:
         return [u for u,_ in internal]
 
+def get_min_continuity(knotvector, degree):
+    ms = to_multiplicity(knotvector)[1:-1]
+    if not ms:
+        return degree
+    multiplicities = [p[1] for p in ms]
+    max_mult = max(multiplicities)
+    return degree - max_mult
+
 def difference(src_kv, dst_kv, tolerance=1e-6):
     src_pairs = dict(to_multiplicity(src_kv, tolerance))
     dst_pairs = to_multiplicity(dst_kv, tolerance)
