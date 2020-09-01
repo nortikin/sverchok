@@ -211,7 +211,6 @@
 ## Solids @ Make Face
     SvSolidPolygonFaceNode
     SvSolidWireFaceNode
-    SvSolidSurfaceFaceNode
 
 ## Solids
    SvBoxSolidNode
