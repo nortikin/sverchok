@@ -43,25 +43,30 @@ def curves_to_face(sv_curves):
         wire_curves.append(curve)
     return face, wire_curves, surface
 
-def surface_to_freecad(sv_surface):
+def surface_to_freecad(sv_surface, make_face=False):
     """
     Convert SvSurface into FreeCAD's Surface.
     The surface must be presentable as NURBS.
 
-    input: SvSurface
+    input:
+      * sv_surface: SvSurface
+      * make_face: if True, create a Part.Face out of the surface and assign it
+        to the `face` property of the resulting surface
     output: SvFreeCadNurbsSurface
     """
     nurbs = SvNurbsSurface.get(sv_surface)
     if nurbs is None:
         raise Exception("not a NURBS surface")
-    fc_surface = SvNurbsMaths.build_surface(SvNurbsMaths.FREECAD,
+    sv_fc_nurbs = SvNurbsMaths.build_surface(SvNurbsMaths.FREECAD,
                 nurbs.get_degree_u(),
                 nurbs.get_degree_v(),
                 nurbs.get_knotvector_u(),
                 nurbs.get_knotvector_v(),
                 nurbs.get_control_points(),
                 nurbs.get_weights())
-    return fc_surface
+    if make_face:
+        sv_fc_nurbs.face = Part.Face(sv_fc_nurbs.surface)
+    return sv_fc_nurbs
 
 class SvSolidFaceSurface(SvSurface):
     __description__ = "Solid Face"
@@ -70,6 +75,7 @@ class SvSolidFaceSurface(SvSurface):
         self.surface = solid_face.Surface
         self.u_bounds = solid_face.ParameterRange[:2]
         self.v_bounds = solid_face.ParameterRange[2:]
+
     def get_u_min(self):
         return self.u_bounds[0]
 
@@ -123,11 +129,12 @@ class SvSolidFaceSurface(SvSurface):
     def to_nurbs(self, implementation = SvNurbsMaths.FREECAD):
         faces = self.face.toNurbs().Faces
         nurbs = faces[0].Surface
-        return SvFreeCadNurbsSurface(nurbs)
+        return SvFreeCadNurbsSurface(nurbs, face=self.face)
 
 class SvFreeCadNurbsSurface(SvNurbsSurface):
-    def __init__(self, surface):
+    def __init__(self, surface, face=None):
         self.surface = surface
+        self.face = face
 
     @classmethod
     def build(cls, implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights=None, normalize_knots=False):
@@ -155,6 +162,18 @@ class SvFreeCadNurbsSurface(SvNurbsSurface):
                     degree_u, degree_v,
                     weights.tolist())
         return SvFreeCadNurbsSurface(surface)
+
+    def __repr__(self):
+        degree_u = self.surface.UDegree
+        degree_v = self.surface.VDegree
+        points = self.surface.getPoles()
+        points_u = len(points)
+        points_v = len(points[0])
+        if self.face is None:
+            word = "surface"
+        else:
+            word = "Face"
+        return f"<FreeCAD NURBS (degree={degree_u}x{degree_v}, pts={points_u}x{points_v}) {word}>"
     
     @classmethod
     def get_nurbs_implementation(cls):
@@ -215,6 +234,16 @@ class SvFreeCadNurbsSurface(SvNurbsSurface):
 
     def normal_array(self, us, vs):
         return np.vectorize(self.normal, signature='(),()->(3)')(us, vs)
+
+#     def to_nurbs(self, **kwargs):
+#         return self
+
+def is_solid_face_surface(surface):
+    if not isinstance(surface, SvSurface):
+        return False
+    if not hasattr(surface, 'face') or surface.face is None:
+        return False
+    return True
 
 SvNurbsMaths.surface_classes[SvNurbsMaths.FREECAD] = SvFreeCadNurbsSurface
 

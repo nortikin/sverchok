@@ -208,12 +208,18 @@
     SvExVectorFieldLinesNode
     SvExScalarFieldGraphNode
 
+## Solids @ Make Face
+    SvSolidPolygonFaceNode
+    SvSolidWireFaceNode
+    SvSolidSurfaceFaceNode
+
 ## Solids
    SvBoxSolidNode
    SvCylinderSolidNode
    SvConeSolidNode
    SvSphereSolidNode
    SvToursSolidNode
+   @ Make Face
    SvTransformSolidNode
    SvChamferSolidNode
    SvFilletSolidNode
