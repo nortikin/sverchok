@@ -11,7 +11,7 @@ from sverchok.utils.logging import info, debug
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.core import UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve, unify_two_curves
-from sverchok.utils.curve.algorithms import reverse_curve
+from sverchok.utils.curve.algorithms import reverse_curve, reparametrize_curve
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.algorithms import SvCurveLerpSurface
@@ -19,6 +19,10 @@ from sverchok.utils.surface.algorithms import SvCurveLerpSurface
 class SvCoonsSurface(SvSurface):
     __description__ = "Coons Patch"
     def __init__(self, curve1, curve2, curve3, curve4):
+        curve1 = reparametrize_curve(curve1)
+        curve2 = reparametrize_curve(curve2)
+        curve3 = reparametrize_curve(curve3)
+        curve4 = reparametrize_curve(curve4)
         self.curve1 = curve1
         self.curve2 = curve2
         self.curve3 = curve3
