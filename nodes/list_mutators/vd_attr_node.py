@@ -13,7 +13,7 @@ from bpy.props import BoolProperty, StringProperty, IntProperty, CollectionPrope
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, enum_item_5
 from sverchok.nodes.viz.vd_draw_experimental import SvVDExperimental
-from sverchok.core.sockets import socket_colors
+
 
 sock_str = {
     'enum': "SvStringsSocket",
@@ -22,6 +22,14 @@ sock_str = {
     'i': "SvStringsSocket",
     'b': "SvStringsSocket"
 }
+
+
+socket_colors = {
+    "SvStringsSocket": (0.6, 1.0, 0.6, 1.0),
+    "SvVerticesSocket": (0.9, 0.6, 0.2, 1.0),
+    "SvColorSocket": (0.9, 0.8, 0.0, 1.0),
+}
+
 
 def props(**x):
     prop = lambda: None

@@ -42,21 +42,6 @@ from sverchok.data_structure import (
 from sverchok.utils.field.scalar import SvConstantScalarField
 from sverchok.utils.field.vector import SvMatrixVectorField, SvConstantVectorField
 
-socket_colors = {
-    "SvStringsSocket": (0.6, 1.0, 0.6, 1.0),
-    "SvVerticesSocket": (0.9, 0.6, 0.2, 1.0),
-    "SvQuaternionSocket": (0.9, 0.4, 0.7, 1.0),
-    "SvColorSocket": (0.9, 0.8, 0.0, 1.0),
-    "SvMatrixSocket": (0.2, 0.8, 0.8, 1.0),
-    "SvDummySocket": (0.8, 0.8, 0.8, 0.3),
-    "SvSeparatorSocket": (0.0, 0.0, 0.0, 0.0),
-    "SvObjectSocket": (0.69, 0.74, 0.73, 1.0),
-    "SvTextSocket": (0.68, 0.85, 0.90, 1),
-    "SvDictionarySocket": (1.0, 1.0, 1.0, 1.0),
-    "SvFilePathSocket": (0.9, 0.9, 0.3, 1.0),
-    "SvSolidSocket": (0.0, 0.65, 0.3, 1.0),
-    "SvSvgSocket": (0.1, 0.5, 1, 1.0)
-}
 
 def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
@@ -65,6 +50,8 @@ def process_from_socket(self, context):
 
 class SvSocketCommon:
     """ Base class for all Sockets """
+    color = (1, 0, 0, 1)  # base color, other sockets should override the property, use FloatProperty for dynamic
+
     use_prop: BoolProperty(default=False)
 
     use_expander: BoolProperty(default=True)
@@ -262,7 +249,7 @@ class SvSocketCommon:
                 layout.label(text=text)
 
     def draw_color(self, context, node):
-        return socket_colors[self.bl_idname]
+        return self.color
 
     def needs_data_conversion(self):
         if not self.is_linked:
@@ -296,6 +283,8 @@ def filter_kinds(self, object):
 class SvObjectSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvObjectSocket"
     bl_label = "Object Socket"
+
+    color = (0.69, 0.74, 0.73, 1.0)
 
     """
     object_kinds could be any of these:
@@ -343,6 +332,8 @@ class SvTextSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvTextSocket"
     bl_label = "Text Socket"
 
+    color = (0.68,  0.85,  0.90, 1)
+
     text: StringProperty(update=process_from_socket)
 
     def draw(self, context, layout, node, text):
@@ -350,9 +341,6 @@ class SvTextSocket(NodeSocket, SvSocketCommon):
             layout.label(text=text)
         if not self.is_linked and not self.is_output:
             layout.prop(self, 'text')
-
-    def draw_color(self, context, node):
-        return (0.68,  0.85,  0.90, 1)
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
@@ -369,6 +357,8 @@ class SvMatrixSocket(NodeSocket, SvSocketCommon):
 
     bl_idname = "SvMatrixSocket"
     bl_label = "Matrix Socket"
+
+    color = (0.2, 0.8, 0.8, 1.0)
 
     num_matrices: IntProperty(default=0)
 
@@ -398,6 +388,8 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvVerticesSocket"
     bl_label ="Vertices Socket"
 
+    color = (0.9, 0.6, 0.2, 1.0)
+
     prop: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
     use_prop: BoolProperty(default=False)
 
@@ -420,6 +412,8 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
     '''For quaternion data'''
     bl_idname = "SvQuaternionSocket"
     bl_label = "Quaternion Socket"
+
+    color = (0.9, 0.4, 0.7, 1.0)
 
     prop: FloatVectorProperty(default=(1, 0, 0, 0), size=4, subtype='QUATERNION', update=process_from_socket)
     use_prop: BoolProperty(default=False)
@@ -444,6 +438,8 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvColorSocket"
     bl_label = "Color Socket"
 
+    color = (0.9, 0.8, 0.0, 1.0)
+
     prop: FloatVectorProperty(default=(0, 0, 0, 1), size=4, subtype='COLOR', min=0, max=1, update=process_from_socket)
     use_prop: BoolProperty(default=False)
 
@@ -466,6 +462,8 @@ class SvDummySocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvDummySocket"
     bl_label = "Dummys Socket"
 
+    color = (0.8, 0.8, 0.8, 0.3)
+
     def sv_get(self):
         if self.is_linked:
             return self.links[0].bl_idname
@@ -476,6 +474,8 @@ class SvSeparatorSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvSeparatorSocket"
     bl_label = "Separator Socket"
 
+    color = (0.0, 0.0, 0.0, 0.0)
+
     def draw(self, context, layout, node, text):
         # layout.label("")
         layout.label(text="——————")
@@ -485,6 +485,8 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
     '''Generic, mostly numbers, socket type'''
     bl_idname = "SvStringsSocket"
     bl_label = "Strings Socket"
+
+    color = (0.6, 1.0, 0.6, 1.0)
 
     prop_type: StringProperty(default='')
     prop_index: IntProperty()
@@ -514,6 +516,8 @@ class SvFilePathSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvFilePathSocket"
     bl_label = "File Path Socket"
 
+    color = (0.9, 0.9, 0.3, 1.0)
+
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
@@ -525,6 +529,8 @@ class SvSvgSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvSvgSocket"
     bl_label = "SVG Data Socket"
 
+    color = (0.1, 0.5, 1, 1.0)
+
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
@@ -535,6 +541,8 @@ class SvDictionarySocket(NodeSocket, SvSocketCommon):
     '''For dictionary data'''
     bl_idname = "SvDictionarySocket"
     bl_label = "Dictionary Socket"
+
+    color = (1.0, 1.0, 1.0, 1.0)
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
@@ -554,8 +562,8 @@ class SvChameleonSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvChameleonSocket"
     bl_label = "Chameleon Socket"
 
-    dynamic_color: FloatVectorProperty(default=(0.0, 0.0, 0.0, 0.0), size=4,
-                                       description="For storing color of other socket via catch_props method")
+    color: FloatVectorProperty(default=(0.0, 0.0, 0.0, 0.0), size=4,
+                               description="For storing color of other socket via catch_props method")
     dynamic_type: StringProperty(default='SvChameleonSocket',
                                  description="For storing type of other socket via catch_props method")
 
@@ -563,10 +571,10 @@ class SvChameleonSocket(NodeSocket, SvSocketCommon):
         # should be called during update event of a node for catching its property
         other = self.other
         if other:
-            self.dynamic_color = socket_colors[other.bl_idname]
+            self.color = other.color
             self.dynamic_type = other.bl_idname
         else:
-            self.dynamic_color = (0.0, 0.0, 0.0, 0.0)
+            self.color = (0.0, 0.0, 0.0, 0.0)
             self.dynamic_type = self.bl_idname
 
     def sv_get(self, default=sentinel, deepcopy=True):
@@ -580,15 +588,12 @@ class SvChameleonSocket(NodeSocket, SvSocketCommon):
         else:
             return default
 
-    def draw_color(self, context, node):
-        return self.dynamic_color
 
 class SvSurfaceSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvSurfaceSocket"
     bl_label = "Surface Socket"
 
-    def draw_color(self, context, node):
-        return (0.4, 0.2, 1.0, 1.0)
+    color = (0.4, 0.2, 1.0, 1.0)
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
@@ -606,8 +611,7 @@ class SvCurveSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvCurveSocket"
     bl_label = "Curve Socket"
 
-    def draw_color(self, context, node):
-        return (0.5, 0.6, 1.0, 1.0)
+    color = (0.5, 0.6, 1.0, 1.0)
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
@@ -625,8 +629,7 @@ class SvScalarFieldSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvScalarFieldSocket"
     bl_label = "Scalar Field Socket"
 
-    def draw_color(self, context, node):
-        return (0.9, 0.4, 0.1, 1.0)
+    color = (0.9, 0.4, 0.1, 1.0)
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if implicit_conversions is None:
@@ -646,8 +649,7 @@ class SvVectorFieldSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvVectorFieldSocket"
     bl_label = "Vector Field Socket"
 
-    def draw_color(self, context, node):
-        return (0.1, 0.1, 0.9, 1.0)
+    color = (0.1, 0.1, 0.9, 1.0)
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if implicit_conversions is None:
@@ -666,6 +668,8 @@ class SvVectorFieldSocket(NodeSocket, SvSocketCommon):
 class SvSolidSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvSolidSocket"
     bl_label = "Solid Socket"
+
+    color = (0.0, 0.65, 0.3, 1.0)
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
