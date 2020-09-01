@@ -29,6 +29,7 @@ from sverchok.utils.curve.algorithms import (
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.data import *
+from sverchok.utils.logging import info, debug
 
 def rotate_vector_around_vector_np(v, k, theta):
     """
@@ -874,10 +875,11 @@ class SvCurveLerpSurface(SvSurface):
         if hasattr(curve1, 'make_ruled_surface'):
             try:
                 return curve1.make_ruled_surface(curve2, vmin, vmax)
-            except TypeError:
+            except TypeError as e:
                 # make_ruled_surface method can raise TypeError in case
                 # it can't work with given curve2.
                 # In this case we must use generic method.
+                debug("Can't make a native ruled surface: %s", e)
                 pass
 
         # generic method
