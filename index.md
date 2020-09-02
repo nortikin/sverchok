@@ -229,7 +229,6 @@
    SvSolidFaceExtrudeNode
    SvSolidFaceSolidifyNode
    SvSolidFaceRevolveNode
-   SvRuledSolidNode
    SvIsInsideSolidNode
    SvSolidDistanceNode
    SvSliceSolidNode
@@ -665,6 +664,7 @@
     SvPulgaPhysicsNode
     SvTopologySimple
     SvSweepModulator
+    SvRuledSolidNode
     ---
     SvGetPropNodeMK2
     SvSetPropNodeMK2
