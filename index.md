@@ -516,6 +516,7 @@
     SvNurbsCurveOutNode
     SvNurbsSurfaceOutNode
     SvInstancerNodeMK3
+    SvLightViewerNode
     ---
     SvGreasePencilStrokes
     SvEmptyOutNode
@@ -567,7 +568,6 @@
     SvTimerNode
     ---
     SvDupliInstancesMK4
-    SvLampOutNode
 
 ## Objects
     SvVertexGroupNodeMK2

@@ -16,6 +16,6 @@ Viz
    console_node
    viewer_texture
    viewer_texture_lite
-   lamp_out
+   light_viewer
    vd_matrix
    instancer

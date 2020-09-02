@@ -246,6 +246,26 @@ class SvMeshData(bpy.types.PropertyGroup):
             delete_data_block(self.mesh)
 
 
+class SvLightData(bpy.types.PropertyGroup):
+    light: bpy.props.PointerProperty(type=bpy.types.Light)
+
+    def regenerate_light(self, light_name: str, light_type: str):
+        if not self.light:
+            # new mesh should be created
+            self.light = bpy.data.lights.new(name=light_name, type=light_type)
+        elif self.light.type != light_type:
+            # in case if type was changed
+            self.light.type = light_type
+
+    def remove_data(self):
+        """
+        This method should be called before deleting the property
+        The mesh is belonged only to this property and should be deleted with it
+        """
+        if self.light:
+            delete_data_block(self.light)
+
+
 class SvViewerNode(BlenderObjects):
     """
     Mixin for all nodes which displays any objects in viewport
@@ -403,7 +423,7 @@ class SvGenerateRandomObjectName(bpy.types.Operator):
         return hasattr(context.node, 'base_data_name')
 
 
-module_classes = [SvObjectData, SvMeshData, SvSelectObjects, SvObjectNames, SvGenerateRandomObjectName]
+module_classes = [SvObjectData, SvMeshData, SvSelectObjects, SvObjectNames, SvGenerateRandomObjectName, SvLightData]
 
 
 def register():
