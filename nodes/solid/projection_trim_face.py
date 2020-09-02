@@ -98,7 +98,6 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
             projections = [fc_face.makePerspectiveProjection(edge, point).Edges for edge in fc_edges]
 
         projections = sum(projections, [])
-        print(projections)
         wire = Part.Wire(projections)
 
         cut_fc_face = Part.Face(face_surface.surface, wire)

@@ -129,7 +129,7 @@ class SvSolidFaceSurface(SvSurface):
     def to_nurbs(self, implementation = SvNurbsMaths.FREECAD):
         faces = self.face.toNurbs().Faces
         nurbs = faces[0].Surface
-        return SvFreeCadNurbsSurface(nurbs, face=self.face)
+        return SvFreeCadNurbsSurface(nurbs, face=faces[0])
 
 class SvFreeCadNurbsSurface(SvNurbsSurface):
     def __init__(self, surface, face=None):
@@ -239,7 +239,7 @@ class SvFreeCadNurbsSurface(SvNurbsSurface):
 #         return self
 
 def is_solid_face_surface(surface):
-    if not isinstance(surface, SvSurface):
+    if not isinstance(surface, SvFreeCadNurbsSurface):
         return False
     if not hasattr(surface, 'face') or surface.face is None:
         return False

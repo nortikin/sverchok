@@ -29,7 +29,9 @@ def calc_rho(edges1, edges2):
     for e1, e2 in zip(edges1, edges2):
         s1 = e1.Curve.StartPoint
         s2 = e2.Curve.StartPoint
-        s += s1.distanceToPoint(s2)
+        e1 = e1.Curve.EndPoint
+        e2 = e2.Curve.EndPoint
+        s += s1.distanceToPoint(s2) + e1.distanceToPoint(e2)
     return s
 
 def reorder(edges1, edges2):
@@ -40,6 +42,7 @@ def reorder(edges1, edges2):
         sum_rho = calc_rho(edges1, rotated2)
         if min_sum_rho is None or sum_rho < min_sum_rho:
             best = rotated2
+            min_sum_rho = sum_rho
     return edges1, best
 
 def reverse_edges(edges, reverse=True, flip=True):
