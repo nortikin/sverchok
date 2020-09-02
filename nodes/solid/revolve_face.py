@@ -32,6 +32,7 @@ class SvSolidFaceRevolveNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSolidFaceRevolveNode'
     bl_label = 'Revolve Face (Solid)'
     bl_icon = 'EDGESEL'
+    sv_icon = 'SV_REVOLVE_FACE'
     solid_catergory = "Operators"
 
     refine_solid: BoolProperty(
