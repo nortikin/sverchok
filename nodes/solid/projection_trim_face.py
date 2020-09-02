@@ -22,7 +22,7 @@ from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import FreeCAD
 
 if FreeCAD is None:
-    add_dummy('SvProjectTrimFaceNode', 'Cut Surface to make Face (Solid)', 'FreeCAD')
+    add_dummy('SvProjectTrimFaceNode', 'Face from Surface (Solid)', 'FreeCAD')
 else:
     import Part
     from FreeCAD import Base
@@ -33,7 +33,7 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Make a Face of a Solid by trimming a Surface with projected Curve(s)
     """
     bl_idname = 'SvProjectTrimFaceNode'
-    bl_label = "Cut Surface to make Face (Solid)"
+    bl_label = "Face from Surface (Solid)"
     bl_icon = 'EDGESEL'
     solid_catergory = "Inputs"
 
