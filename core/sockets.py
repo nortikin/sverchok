@@ -51,6 +51,7 @@ def process_from_socket(self, context):
 class SvSocketCommon:
     """ Base class for all Sockets """
     color = (1, 0, 0, 1)  # base color, other sockets should override the property, use FloatProperty for dynamic
+    quick_link_to_node = str()  # sockets which often used with other nodes can fill its `bl_idname` here
 
     use_prop: BoolProperty(default=False)
 
@@ -166,29 +167,17 @@ class SvSocketCommon:
         return counter
 
     def draw_quick_link(self, context, layout, node):
-
-        if self.bl_idname == "SvMatrixSocket":
-            new_node_idname = "SvMatrixInNodeMK4"
-        elif self.bl_idname == "SvVerticesSocket":
-            new_node_idname = "GenVectorsNode"
-        elif self.bl_idname == "SvFilePathSocket":
-            new_node_idname = "SvFilePathNode"
-        elif self.bl_idname == "SvSvgSocket":
-            if "Fill / Stroke" in self.name:
-                new_node_idname = "SvSvgFillStrokeNodeMk2"
-            elif "Pattern" in self.name:
-                new_node_idname = "SvSvgPatternNode"
-            else:
-                return
-        else:
-            return
-
-        op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
-        op.socket_index = self.index
-        op.origin = node.name
-        op.new_node_idname = new_node_idname
-        op.new_node_offsetx = -200 - 40 * self.index  ## this is not so useful, we should infer visible socket location
-        op.new_node_offsety = -30 * self.index  ## this is not so useful, we should infer visible socket location
+        """
+        Will draw button for creating new node which is often used with such type of sockets
+        The socket should have `bl_idname` of other node in `quick_link_to_node` attribute for using this UI
+        """
+        if self.quick_link_to_node:
+            op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
+            op.socket_index = self.index
+            op.origin = node.name
+            op.new_node_idname = self.quick_link_to_node
+            op.new_node_offsetx = -200 - 40 * self.index  # this is not so useful, we should infer visible socket location
+            op.new_node_offsety = -30 * self.index  # this is not so useful, we should infer visible socket location
 
     def draw(self, context, layout, node, text):
 
@@ -353,6 +342,7 @@ class SvMatrixSocket(NodeSocket, SvSocketCommon):
     bl_label = "Matrix Socket"
 
     color = (0.2, 0.8, 0.8, 1.0)
+    quick_link_to_node = 'SvMatrixInNodeMK4'
 
     num_matrices: IntProperty(default=0)
 
@@ -383,6 +373,7 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
     bl_label ="Vertices Socket"
 
     color = (0.9, 0.6, 0.2, 1.0)
+    quick_link_to_node = 'GenVectorsNode'
 
     prop: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
     use_prop: BoolProperty(default=False)
@@ -511,6 +502,7 @@ class SvFilePathSocket(NodeSocket, SvSocketCommon):
     bl_label = "File Path Socket"
 
     color = (0.9, 0.9, 0.3, 1.0)
+    quick_link_to_node = 'SvFilePathNode'
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
@@ -524,6 +516,15 @@ class SvSvgSocket(NodeSocket, SvSocketCommon):
     bl_label = "SVG Data Socket"
 
     color = (0.1, 0.5, 1, 1.0)
+
+    @property
+    def quick_link_to_node(self):
+        if "Fill / Stroke" in self.name:
+            return "SvSvgFillStrokeNodeMk2"
+        elif "Pattern" in self.name:
+            return "SvSvgPatternNode"
+        else:
+            return
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
