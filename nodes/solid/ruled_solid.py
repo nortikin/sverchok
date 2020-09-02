@@ -59,6 +59,7 @@ class SvRuledSolidNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvRuledSolidNode'
     bl_label = 'Solid from two Faces'
     bl_icon = 'EDGESEL'
+    sv_icon = 'SV_RULED_SOLID'
     solid_catergory = "Operators"
 
     reverse1 : BoolProperty(
