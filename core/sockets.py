@@ -59,8 +59,6 @@ class SvSocketCommon:
     custom_draw: StringProperty(description="For name of method which will draw socket UI (optionally)")
     prop_name: StringProperty(default='', description="For displaying node property in socket UI")
 
-    quicklink_func_name: StringProperty(default="", name="quicklink_func_name")
-
     def get_prop_name(self):
         if hasattr(self.node, 'missing_dependecy'):
             return []
@@ -219,13 +217,6 @@ class SvSocketCommon:
 
             elif self.use_prop:  # no property but use default prop
                 self.draw_expander_template(context, layout, prop_origin=self)
-
-            elif self.quicklink_func_name:
-                try:
-                    getattr(node, self.quicklink_func_name)(self, context, layout, node)
-                except Exception as e:
-                    self.draw_quick_link(context, layout, node)
-                layout.label(text=text)
 
             else:  # no property and not use default prop
                 self.draw_quick_link(context, layout, node)
@@ -473,6 +464,7 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
 
     color = (0.6, 1.0, 0.6, 1.0)
 
+    quick_link_to_node: StringProperty()  # this can be overridden by socket instances
     prop_type: StringProperty(default='')
     prop_index: IntProperty()
 

@@ -116,19 +116,6 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     def properties_to_skip_iojson(self):
         return {'vd_items_props', 'vd_items_group'}
 
-    @staticmethod
-    def draw_basic_lightnormal_qlink(socket, context, layout, node):
-        visible_socket_index = socket.infer_visible_location_of_socket(node)
-        # print('visible socket index', visible_socket_index)
-        new_node_idname = "GenVectorsNode"
-
-        op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
-        op.socket_index = socket.index
-        op.origin = node.name
-        op.new_node_idname = new_node_idname
-        op.new_node_offsetx = -200 - 40 * visible_socket_index
-        op.new_node_offsety = -30 * visible_socket_index
-
     def draw_group(self, context, layout):
         if self.vd_items_group:
             layout.template_list("SV_UL_VDMK3ItemList", "", self, "vd_items_group", self, "property_index")
@@ -140,7 +127,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
             socket = inew(sock_str[socket.kind], socket.name)
             socket.hide = True
             if prop_name == 'vector_light':
-                socket.quicklink_func_name = "draw_basic_lightnormal_qlink"
+                socket.quick_link_to_node = "GenVectorsNode"
   
     def vd_init_uilayout_data(self, context):
         for key, value in maximum_spec_vd_dict.items():
