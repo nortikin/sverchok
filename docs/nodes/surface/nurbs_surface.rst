@@ -1,7 +1,7 @@
 Build NURBS surface
 ===================
 
-.. image:: /docs/assets/nodes/surface/node_build_nurbs_surface.png
+.. image:: ../../../docs/assets/nodes/surface/node_build_nurbs_surface.png
 
 Dependencies
 ------------
@@ -88,7 +88,7 @@ This node has the following output:
 Examples of usage
 -----------------
 
-.. image:: /docs/assets/nodes/surface/nurbs_surface_01.png
+.. image:: ../../../docs/assets/nodes/surface/nurbs_surface_01.png
 
 These example use a plane as control points.
 

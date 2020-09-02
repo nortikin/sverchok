@@ -37,4 +37,4 @@ Nodes
    Layout <nodes/layout/layout_index>
    Network <nodes/network/network_index>
    Exchange <nodes/exchange/exchange_index>
-   SVG <nodes/exchange/svg_index>
+   SVG <nodes/svg/svg_index>
