@@ -92,13 +92,21 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
 
         if self.projection_type == 'PARALLEL':
             vector = Base.Vector(*vector)
-            projections = [fc_face.makeParallelProjection(edge, vector).Edges for edge in fc_edges]
+            projections = [fc_face.makeParallelProjection(edge, vector) for edge in fc_edges]
+            projections = [p.Edges for p in projections]
         else: # PERSPECTIVE
             point = Base.Vector(*point)
             projections = [fc_face.makePerspectiveProjection(edge, point).Edges for edge in fc_edges]
 
         projections = sum(projections, [])
-        wire = Part.Wire(projections)
+        if not projections:
+            words = f"along {vector}" if self.projection_type == 'PARALLEL' else f"from {point}"
+            raise Exception(f"Projection {words} of {sv_curves} onto {face_surface} is empty for some reason")
+        try:
+            wire = Part.Wire(projections)
+        except Part.OCCError as e:
+            ps = [SvFreeCadNurbsCurve(p.Curve) for p in projections]
+            raise Exception(f"Can't make a valid Wire out of curves {sv_curves} projected onto {face_surface}:\n{e}\nProjections are: {ps}")
 
         cut_fc_face = Part.Face(face_surface.surface, wire)
         cut_face_surface = SvFreeCadNurbsSurface(face_surface.surface, face=cut_fc_face) 

@@ -32,7 +32,7 @@ def curves_to_face(sv_curves):
     """
     wire = curves_to_wire(sv_curves)
     if not wire.isClosed():
-        raise Exception("The wire is not closed")
+        raise Exception(f"The wire is not closed: {sv_curves}")
     face = Part.Face(wire)
     surface = SvSolidFaceSurface(face).to_nurbs()
     wire_curves = []

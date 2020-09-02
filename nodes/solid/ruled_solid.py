@@ -65,26 +65,38 @@ class SvRuledSolidNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_RULED_SOLID'
     solid_catergory = "Operators"
 
+    flip_face1 : BoolProperty(
+            name = "Flip Face",
+            description = "Flip the orientation of the first face",
+            default = False,
+            update = updateNode)
+
+    flip_face2 : BoolProperty(
+            name = "Flip Face",
+            description = "Flip the orientation of the second face",
+            default = False,
+            update = updateNode)
+
     reverse1 : BoolProperty(
-            name = "Reverse",
+            name = "Rev. Edges",
             description = "Reverse the order of edges in the first face",
             default = False,
             update = updateNode)
 
     reverse2 : BoolProperty(
-            name = "Reverse",
+            name = "Rev. Edges",
             description = "Reverse the order of edges in the second face",
             default = False,
             update = updateNode)
 
     flip1 : BoolProperty(
-            name = "Flip",
+            name = "Flip Edges",
             description = "Reverse the direction of edges in the first face",
             default = False,
             update = updateNode)
 
     flip2 : BoolProperty(
-            name = "Flip",
+            name = "Flip Edges",
             description = "Reverse the direction of edges in the second face",
             default = False,
             update = updateNode)
@@ -97,19 +109,27 @@ class SvRuledSolidNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.label(text='First Face:')
         row = layout.row(align=True)
+        row.prop(self, 'flip_face1', toggle=True)
         row.prop(self, 'reverse1', toggle=True)
         row.prop(self, 'flip1', toggle=True)
 
         layout.label(text='Second Face:')
         row = layout.row(align=True)
+        row.prop(self, 'flip_face2', toggle=True)
         row.prop(self, 'reverse2', toggle=True)
         row.prop(self, 'flip2', toggle=True)
 
     def make_solid(self, face1, face2):
+        if self.flip_face1:
+            face1.face.reverse()
+        if self.flip_face2:
+            face2.face.reverse()
         edges1 = face1.face.OuterWire.Edges
         edges2 = face2.face.OuterWire.Edges
-        if len(edges1) != len(edges2):
-            raise Exception("Faces have different number of edges")
+        n1 = len(edges1)
+        n2 = len(edges2)
+        if n1 != n2:
+            raise Exception(f"Faces have different number of edges: {n1} != {n2}")
 
         fc_sides = []
         sv_sides = []
