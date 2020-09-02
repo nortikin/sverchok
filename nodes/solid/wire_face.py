@@ -31,6 +31,7 @@ class SvSolidWireFaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSolidWireFaceNode'
     bl_label = "Face from Curves (Solid)"
     bl_icon = 'EDGESEL'
+    sv_icon = 'SV_CURVES_FACE'
     solid_catergory = "Inputs"
 
     def sv_init(self, context):

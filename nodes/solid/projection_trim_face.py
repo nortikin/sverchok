@@ -35,6 +35,7 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvProjectTrimFaceNode'
     bl_label = "Face from Surface (Solid)"
     bl_icon = 'EDGESEL'
+    sv_icon = 'SV_PROJECT_CUT_FACE'
     solid_catergory = "Inputs"
 
     @throttled
