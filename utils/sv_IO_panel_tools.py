@@ -159,7 +159,7 @@ def collect_custom_socket_properties(node, node_dict):
         # print("Socket %d of %d" % (socket.index + 1, len(node.inputs)))
 
         storable = {}
-        tracked_props = 'use_expander', 'use_quicklink', 'expanded', 'use_prop'
+        tracked_props = 'expanded', 'use_prop'
 
         for tracked_prop_name in tracked_props:
             if not hasattr(socket, tracked_prop_name):

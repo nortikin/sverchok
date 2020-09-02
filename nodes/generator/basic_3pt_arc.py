@@ -122,24 +122,20 @@ class svBasicArcNode(bpy.types.Node, SverchCustomTreeNode):
         - this lets you define the ui of that quicklink, in this case it replicates
           the standard quicklink.
         """
+        new_node_idname = "GenVectorsNode"
 
-        if socket.use_quicklink:
-            new_node_idname = "GenVectorsNode"
-
-            op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
-            op.socket_index = socket.index
-            op.origin = node.name
-            op.new_node_idname = new_node_idname
-            op.new_node_offsetx = -200 - 40 * socket.index
-            op.new_node_offsety = -30 * socket.index
+        op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
+        op.socket_index = socket.index
+        op.origin = node.name
+        op.new_node_idname = new_node_idname
+        op.new_node_offsetx = -200 - 40 * socket.index
+        op.new_node_offsety = -30 * socket.index
 
     def sv_init(self, context):
 
         # inputs
         self.inputs.new('SvStringsSocket', "num_verts").prop_name = 'num_verts'
         vector_prop = self.inputs.new('SvVerticesSocket', "arc_pts")
-        vector_prop.use_expander = False
-        vector_prop.use_quicklink = True
         vector_prop.quicklink_func_name = 'draw_basic_arc_qlink'
 
         # outputs

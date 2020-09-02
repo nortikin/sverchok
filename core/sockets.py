@@ -54,8 +54,6 @@ class SvSocketCommon:
 
     use_prop: BoolProperty(default=False)
 
-    use_expander: BoolProperty(default=True)
-    use_quicklink: BoolProperty(default=True)
     expanded: BoolProperty(default=False)
     custom_draw: StringProperty(description="For name of method which will draw socket UI (optionally)")
     prop_name: StringProperty(default='', description="For displaying node property in socket UI")
@@ -136,25 +134,22 @@ class SvSocketCommon:
         if self.bl_idname == "SvStringsSocket":
             layout.prop(prop_origin, prop_name)
         else:
-            if self.use_expander:
-                split = layout.split(factor=.2, align=True)
-                c1 = split.column(align=True)
-                c2 = split.column(align=True)
+            split = layout.split(factor=.2, align=True)
+            c1 = split.column(align=True)
+            c2 = split.column(align=True)
 
-                if self.expanded:
-                    c1.prop(self, "expanded", icon='TRIA_UP', text='')
-                    c1.label(text=self.name[0])
-                    c2.prop(prop_origin, prop_name, text="", expand=True)
-                else:
-                    c1.prop(self, "expanded", icon='TRIA_DOWN', text="")
-                    row = c2.row(align=True)
-                    if self.bl_idname == "SvColorSocket":
-                        row.prop(prop_origin, prop_name)
-                    else:
-                        row.template_component_menu(prop_origin, prop_name, name=self.name)
-
+            if self.expanded:
+                c1.prop(self, "expanded", icon='TRIA_UP', text='')
+                c1.label(text=self.name[0])
+                c2.prop(prop_origin, prop_name, text="", expand=True)
             else:
-                layout.template_component_menu(prop_origin, prop_name, name=self.name)
+                c1.prop(self, "expanded", icon='TRIA_DOWN', text="")
+                row = c2.row(align=True)
+                if self.bl_idname == "SvColorSocket":
+                    row.prop(prop_origin, prop_name)
+                else:
+                    row.template_component_menu(prop_origin, prop_name, name=self.name)
+
 
     def infer_visible_location_of_socket(self, node):
         # currently only handles inputs.
@@ -172,29 +167,28 @@ class SvSocketCommon:
 
     def draw_quick_link(self, context, layout, node):
 
-        if self.use_quicklink:
-            if self.bl_idname == "SvMatrixSocket":
-                new_node_idname = "SvMatrixInNodeMK4"
-            elif self.bl_idname == "SvVerticesSocket":
-                new_node_idname = "GenVectorsNode"
-            elif self.bl_idname == "SvFilePathSocket":
-                new_node_idname = "SvFilePathNode"
-            elif self.bl_idname == "SvSvgSocket":
-                if "Fill / Stroke" in self.name:
-                    new_node_idname = "SvSvgFillStrokeNodeMk2"
-                elif "Pattern" in self.name:
-                    new_node_idname = "SvSvgPatternNode"
-                else:
-                    return
+        if self.bl_idname == "SvMatrixSocket":
+            new_node_idname = "SvMatrixInNodeMK4"
+        elif self.bl_idname == "SvVerticesSocket":
+            new_node_idname = "GenVectorsNode"
+        elif self.bl_idname == "SvFilePathSocket":
+            new_node_idname = "SvFilePathNode"
+        elif self.bl_idname == "SvSvgSocket":
+            if "Fill / Stroke" in self.name:
+                new_node_idname = "SvSvgFillStrokeNodeMk2"
+            elif "Pattern" in self.name:
+                new_node_idname = "SvSvgPatternNode"
             else:
                 return
+        else:
+            return
 
-            op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
-            op.socket_index = self.index
-            op.origin = node.name
-            op.new_node_idname = new_node_idname
-            op.new_node_offsetx = -200 - 40 * self.index  ## this is not so useful, we should infer visible socket location
-            op.new_node_offsety = -30 * self.index  ## this is not so useful, we should infer visible socket location
+        op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
+        op.socket_index = self.index
+        op.origin = node.name
+        op.new_node_idname = new_node_idname
+        op.new_node_offsetx = -200 - 40 * self.index  ## this is not so useful, we should infer visible socket location
+        op.new_node_offsety = -30 * self.index  ## this is not so useful, we should infer visible socket location
 
     def draw(self, context, layout, node, text):
 
