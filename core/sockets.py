@@ -149,33 +149,13 @@ class SvSocketCommon:
                 else:
                     row.template_component_menu(prop_origin, prop_name, name=self.name)
 
-
-    def infer_visible_location_of_socket(self, node):
-        # currently only handles inputs.
-        if self.is_output:
-            return 0
-
-        counter = 0
-        for socket in node.inputs:
-            if not socket.hide:
-                if socket == self:
-                    break
-                counter += 1
-
-        return counter
-
     def draw_quick_link(self, context, layout, node):
         """
         Will draw button for creating new node which is often used with such type of sockets
         The socket should have `bl_idname` of other node in `quick_link_to_node` attribute for using this UI
         """
         if self.quick_link_to_node:
-            op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
-            op.socket_index = self.index
-            op.origin = node.name
-            op.new_node_idname = self.quick_link_to_node
-            op.new_node_offsetx = -200 - 40 * self.index  # this is not so useful, we should infer visible socket location
-            op.new_node_offsety = -30 * self.index  # this is not so useful, we should infer visible socket location
+            layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
 
     def draw(self, context, layout, node, text):
 
@@ -676,24 +656,16 @@ class SvLinkNewNodeInput(bpy.types.Operator):
     bl_idname = "node.sv_quicklink_new_node_input"
     bl_label = "Add a new node to the left"
 
-    socket_index: IntProperty()
-    origin: StringProperty()
-    new_node_idname: StringProperty()
-    new_node_offsetx: IntProperty(default=-200)
-    new_node_offsety: IntProperty(default=0)
-
     def execute(self, context):
-        tree = context.space_data.edit_tree
-        nodes, links = tree.nodes, tree.links
+        tree, node, socket = context.node.id_data, context.node, context.socket
 
-        caller_node = nodes.get(self.origin)
-        new_node = nodes.new(self.new_node_idname)
-        new_node.location[0] = caller_node.location[0] + self.new_node_offsetx
-        new_node.location[1] = caller_node.location[1] + self.new_node_offsety
-        links.new(new_node.outputs[0], caller_node.inputs[self.socket_index])
+        new_node = tree.nodes.new(socket.quick_link_to_node)
+        links_number = len([s for s in node.inputs if s.is_linked])
+        new_node.location = (node.location[0] - 200, node.location[1] - 100 * links_number)
+        tree.links.new(new_node.outputs[0], socket)
 
-        if caller_node.parent:
-            new_node.parent = caller_node.parent
+        if node.parent:
+            new_node.parent = node.parent
             new_node.location = new_node.absolute_location
 
         new_node.process_node(context)
