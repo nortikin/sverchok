@@ -180,6 +180,10 @@ class SvFreeCadNurbsCurve(SvNurbsCurve):
                     curve.get_control_points(), 
                     curve.get_weights())
 
+    @classmethod
+    def get_nurbs_implementation(cls):
+        return SvNurbsMaths.FREECAD
+
     def is_closed(self, eps=None):
         return self.curve.isClosed()
     
@@ -222,6 +226,11 @@ class SvFreeCadNurbsCurve(SvNurbsCurve):
 
     def get_weights(self):
         return np.array(self.curve.getWeights())
+
+    def insert_knot(self, u, count=1):
+        curve = SvFreeCadNurbsCurve(self.curve.copy(), self.ndim) # copy
+        curve.curve.insertKnot(u, count)
+        return curve
 
 SvNurbsMaths.curve_classes[SvNurbsMaths.FREECAD] = SvFreeCadNurbsCurve
 
