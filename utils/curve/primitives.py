@@ -121,7 +121,7 @@ class SvCircle(SvCurve):
             raise TypeError("Unsupported argument type:" + str(eq))
 
     @classmethod
-    def from_arc(cls, arc):
+    def from_arc(cls, arc, z_axis='Z'):
         """
         Make an instance of SvCircle from an instance of sverchok.utils.sv_curve_utils.Arc
         """
@@ -137,6 +137,11 @@ class SvCircle(SvCurve):
         matrix = matrix @ scale_x @ scale_y @ rot_z
         if arc.delta < 0:
             matrix = matrix @ Matrix.Rotation(radians(180), 4, 'X')
+
+        if z_axis == 'Y':
+            matrix = Matrix.Rotation(radians(90), 4, 'X') @ matrix
+        elif z_axis == 'X':
+            matrix = Matrix.Rotation(radians(90), 4, 'Z') @ Matrix.Rotation(radians(90), 4, 'X') @ matrix
         circle = SvCircle(matrix, radius)
         circle.u_bounds = (0, angle)
         return circle

@@ -890,7 +890,7 @@ class ArcTo(Statement):
             interpreter.new_edge(v0_index, v1_index)
             v0_index = v1_index
 
-        curve = SvCircle.from_arc(arc)
+        curve = SvCircle.from_arc(arc, z_axis=interpreter.z_axis)
         interpreter.new_curve(curve, self)
 
         interpreter.position = v1
@@ -1020,7 +1020,7 @@ class Interpreter(object):
     NURBS = 'NURBS'
     BEZIER = 'BEZIER'
 
-    def __init__(self, node, input_names, curves_form = None, force_curves_form = False):
+    def __init__(self, node, input_names, curves_form = None, force_curves_form = False, z_axis='Z'):
         self.position = (0, 0)
         self.next_vertex_index = 0
         self.segment_start_index = 0
@@ -1042,9 +1042,15 @@ class Interpreter(object):
         self.input_names = input_names
         self.curves_form = curves_form
         self.force_curves_form = force_curves_form
+        self.z_axis = z_axis
 
     def to3d(self, vertex):
-        return Vector((vertex[0], vertex[1], 0))
+        if self.z_axis == 'X':
+            return Vector((0, vertex[0], vertex[1]))
+        elif self.z_axis == 'Y':
+            return Vector((vertex[0], 0, vertex[1]))
+        else: # self.z_axis == 'Z':
+            return Vector((vertex[0], vertex[1], 0))
 
     def assert_not_closed(self):
         if self.closed:
