@@ -163,14 +163,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if not self.halt_updates:
             updateNode(self, context)
 
-    int_list: IntVectorProperty(
-        name='int_list', description="Integer list",
-        default=defaults, size=32, update=updateNode2)
-
-    float_list: FloatVectorProperty(
-        name='float_list', description="Float list",
-        default=defaults, size=32, update=updateNode2)
-
     mode_options = [
         ("To_TextBlok", "To TextBlok", "", 0),
         ("To_Node", "To Node", "", 1),
@@ -233,7 +225,16 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             else:
                 socket = sockets.new(*socket_description[:2])
 
-            # adding property to socket
+            self.add_prop_to_socket(socket, default_value)
+
+        return True
+
+    def add_prop_to_socket(self, socket, default_value):
+
+        self.id_data.freeze(hard=True)
+        try:
+            self.halt_updates = True
+
             if default_value:
                 if isinstance(default_value, float):
                     socket.use_prop = True
@@ -249,30 +250,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             else:
                 socket.use_prop = False
 
-        return True
-
-
-    def add_props_to_sockets(self, socket_info):
-
-        self.id_data.freeze(hard=True)
-        try:
-            self.halt_updates = True
-
-            for idx, (socket_description) in enumerate(socket_info['inputs']):
-                dval = socket_description[2]
-                print(idx, socket_description)
-
-                s = self.inputs[idx]
-
-                if isinstance(dval, float):
-                    s.prop_type = "float_list"
-                    s.prop_index = idx
-                    self.float_list[idx] = self.float_list[idx] or dval  # pick up current if not zero
-
-                elif isinstance(dval, int):
-                    s.prop_type = "int_list"
-                    s.prop_index = idx
-                    self.int_list[idx] = self.int_list[idx] or dval
         except:
             print('some failure in the add_props_to_sockets function. ouch.')
 
@@ -302,8 +279,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 return
 
             self.flush_excess_sockets(k, v)
-
-        self.add_props_to_sockets(socket_info)
 
         self.node_dict[hash(self)] = {}
         self.node_dict[hash(self)]['sockets'] = socket_info
