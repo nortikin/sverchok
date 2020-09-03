@@ -212,15 +212,42 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         sockets = getattr(self, k)
 
         for idx, (socket_description) in enumerate(v):
+            """
+            Socket description at the moment of typing is list of: [
+            socket_type: str, 
+            socket_name: str, 
+            default: int value, float value or None,
+            nested: int]
+            """
+            default_value = socket_description[2]
+
             if socket_description is UNPARSABLE:
                 print(socket_description, idx, 'was unparsable')
                 return
 
             if len(sockets) > 0 and idx in set(range(len(sockets))):
                 if not are_matched(sockets[idx], socket_description):
-                    sockets[idx].replace_socket(*socket_description[:2])
+                    socket = sockets[idx].replace_socket(*socket_description[:2])
+                else:
+                    socket = sockets[idx]
             else:
-                sockets.new(*socket_description[:2])
+                socket = sockets.new(*socket_description[:2])
+
+            # adding property to socket
+            if default_value:
+                if isinstance(default_value, float):
+                    socket.use_prop = True
+                    socket.default_property_type = 'float'
+                    socket.default_float_property = default_value
+                elif isinstance(default_value, int):
+                    socket.use_prop = True
+                    socket.default_property_type = 'int'
+                    socket.default_int_property = default_value
+                else:
+                    # unsupported type
+                    socket.use_prop = False
+            else:
+                socket.use_prop = False
 
         return True
 
