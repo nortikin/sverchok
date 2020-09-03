@@ -32,6 +32,8 @@ def curves_to_face(sv_curves):
     """
     wire = curves_to_wire(sv_curves)
     if not wire.isClosed():
+        for i, edge in enumerate(wire.Edges):
+            print(f"#{i}: {edge.Curve.StartPoint} - {edge.Curve.EndPoint}")
         raise Exception(f"The wire is not closed: {sv_curves}")
     face = Part.Face(wire)
     surface = SvSolidFaceSurface(face).to_nurbs()
