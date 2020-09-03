@@ -321,7 +321,14 @@ class SvNurbsCurve(SvCurve):
         return SvNurbsCurve.build(self.get_nurbs_implementation(),
                 self.get_degree(), knotvector, control_points, weights)
 
-    def split_at(self, t):
+    def _split_at(self, t):
+        # Split without building SvNurbsCurve objects:
+        # Some implementations (geomdl in particular)
+        # can check number of control points vs curve degree,
+        # and that can be bad for very small segments;
+        # on the other hand, we may not care about it
+        # if we are throwing away that small segment and
+        # going to use only the bigger one.
         current_multiplicity = sv_knotvector.find_multiplicity(self.get_knotvector(), t)
         to_add = self.get_degree() - current_multiplicity # + 1
         curve = self.insert_knot(t, count=to_add)
@@ -344,21 +351,45 @@ class SvNurbsCurve(SvCurve):
         if kv_error is not None:
             raise Exception(kv_error)
 
-        curve1 = SvNurbsCurve.build(curve.get_nurbs_implementation(),
-                    curve.get_degree(), knotvector1,
+        curve1 = (knotvector1, control_points_1, weights_1)
+        curve2 = (knotvector2, control_points_2, weights_2)
+        return curve1, curve2
+
+    def split_at(self, t):
+        c1, c2 = self._split_at(t)
+        degree = self.get_degree()
+        implementation = self.get_nurbs_implementation()
+
+        knotvector1, control_points_1, weights_1 = c1
+        knotvector2, control_points_2, weights_2 = c2
+
+        curve1 = SvNurbsCurve.build(implementation,
+                    degree, knotvector1,
                     control_points_1, weights_1)
-        curve2 = SvNurbsCurve.build(curve.get_nurbs_implementation(),
-                    curve.get_degree(), knotvector2,
+        curve2 = SvNurbsCurve.build(implementation,
+                    degree, knotvector2,
                     control_points_2, weights_2)
         return curve1, curve2
 
     def cut_segment(self, new_t_min, new_t_max, rescale=False):
-        t_min, t_max = 0.0, 1.0
+        t_min, t_max = self.get_u_bounds()
+        degree = self.get_degree()
+        implementation = self.get_nurbs_implementation()
         curve = self
+        params = (self.get_knotvector(), self.get_control_points(), self.get_weights())
         if new_t_min > t_min:
-            start, curve = curve.split_at(new_t_min)
+            _, params = curve._split_at(new_t_min)
+            knotvector, control_points, weights = params
+            curve = SvNurbsCurve.build(implementation,
+                        degree, knotvector,
+                        control_points, weights)
         if new_t_max < t_max:
-            curve, end = curve.split_at(new_t_max)
+            params, _ = curve._split_at(new_t_max)
+            knotvector, control_points, weights = params
+            curve = SvNurbsCurve.build(implementation,
+                        degree, knotvector,
+                        control_points, weights)
+        t1, t2 = curve.get_u_bounds()
         if rescale:
             curve = curve.reparametrize(0, 1)
         return curve
