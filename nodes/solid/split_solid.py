@@ -28,6 +28,8 @@ def make_solids(solid, face_surface):
     face = face_surface.face
     result, map = solid.generalFuse([face])
     solids = map[0]
+    if not solids:
+        solids = result.Solids
     return solids
 
 class SvSplitSolidNode(bpy.types.Node, SverchCustomTreeNode):
@@ -53,7 +55,7 @@ class SvSplitSolidNode(bpy.types.Node, SverchCustomTreeNode):
         face_surfaces_s = self.inputs['SolidFace'].sv_get()
         face_surfaces_s = ensure_nesting_level(face_surfaces_s, 2, data_types=(SvSurface,))
         solids_s = self.inputs['Solid'].sv_get()
-        solids_s = ensure_nesting_level(solids_s, 2, data_types=(Part.Solid,))
+        solids_s = ensure_nesting_level(solids_s, 2, data_types=(Part.Shape,))
 
         solids_out = []
         for solids, face_surfaces in zip_long_repeat(solids_s, face_surfaces_s):
