@@ -11,7 +11,8 @@ from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.math import binomial
 from sverchok.utils.geom import Spline
 from sverchok.utils.nurbs_common import SvNurbsMaths
-from sverchok.utils.curve.core import SvCurve, SvConcatCurve, UnsupportedCurveTypeException
+from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
+from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.nurbs_common import elevate_bezier_degree
 
@@ -75,7 +76,7 @@ class SvBezierCurve(SvCurve):
         return SvBezierCurve([p0, p1, p2, p3, p4, p5, p6, p7])
 
     @classmethod
-    def build_tangent_curve(cls, points, tangents, cyclic=False, concat=False):
+    def build_tangent_curve(cls, points, tangents, cyclic=False, concat=False, as_nurbs=False):
         """
         Build cubic Bezier curve spline, which goes through specified `points',
         having specified `tangents' at these points.
@@ -110,10 +111,15 @@ class SvBezierCurve(SvCurve):
                         point2)
             curve_controls = [curve.p0.tolist(), curve.p1.tolist(),
                               curve.p2.tolist(), curve.p3.tolist()]
+            if as_nurbs:
+                curve = curve.to_nurbs()
             new_curves.append(curve)
             new_controls.append(curve_controls)
         if concat:
-            new_curves = [SvConcatCurve(new_curves)]
+            new_curve = concatenate_curves(new_curves)
+            new_curves = [new_curve]
+            if as_nurbs:
+                new_controls = new_curve.get_control_points().tolist()
 
         return new_controls, new_curves
 
