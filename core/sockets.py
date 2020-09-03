@@ -20,8 +20,8 @@
 import math
 
 import bpy
-from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, FloatProperty
-from bpy.types import NodeTree, NodeSocket
+from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty
+from bpy.types import NodeSocket
 
 from sverchok.core.socket_conversions import (
         DefaultImplicitConversionPolicy,
@@ -33,14 +33,7 @@ from sverchok.core.socket_data import (
     SvGetSocketInfo, SvGetSocket, SvSetSocket, SvForgetSocket,
     SvNoDataError, sentinel)
 
-from sverchok.data_structure import (
-    updateNode,
-    get_other_socket,
-    socket_id,
-    replace_socket)
-
-from sverchok.utils.field.scalar import SvConstantScalarField
-from sverchok.utils.field.vector import SvMatrixVectorField, SvConstantVectorField
+from sverchok.data_structure import get_other_socket, replace_socket
 
 
 def process_from_socket(self, context):
@@ -53,9 +46,7 @@ class SvSocketCommon:
     color = (1, 0, 0, 1)  # base color, other sockets should override the property, use FloatProperty for dynamic
     quick_link_to_node = str()  # sockets which often used with other nodes can fill its `bl_idname` here
 
-    use_prop: BoolProperty(default=False)
-
-    expanded: BoolProperty(default=False)
+    use_prop: BoolProperty(default=False)  # set True to use default socket property if it has got it
     custom_draw: StringProperty(description="For name of method which will draw socket UI (optionally)")
     prop_name: StringProperty(default='', description="For displaying node property in socket UI")
 
@@ -128,26 +119,15 @@ class SvSocketCommon:
         except:
             return ''
 
-    def draw_expander_template(self, context, layout, prop_origin, prop_name="prop"):
-
-        if self.bl_idname == "SvStringsSocket":
-            layout.prop(prop_origin, prop_name)
-        else:
-            split = layout.split(factor=.2, align=True)
-            c1 = split.column(align=True)
-            c2 = split.column(align=True)
-
-            if self.expanded:
-                c1.prop(self, "expanded", icon='TRIA_UP', text='')
-                c1.label(text=self.name[0])
-                c2.prop(prop_origin, prop_name, text="", expand=True)
-            else:
-                c1.prop(self, "expanded", icon='TRIA_DOWN', text="")
-                row = c2.row(align=True)
-                if self.bl_idname == "SvColorSocket":
-                    row.prop(prop_origin, prop_name)
-                else:
-                    row.template_component_menu(prop_origin, prop_name, name=self.name)
+    def draw_property(self, layout, prop_origin=None, prop_name='prop'):
+        """
+        This method can be overridden for showing property in another way
+        Property will be shown only if socket is unconnected input
+        If prop_origin is None then the default socket property should be shown
+        """
+        if prop_origin is None:
+            prop_origin = self
+        layout.prop(prop_origin, prop_name)
 
     def draw_quick_link(self, context, layout, node):
         """
@@ -193,10 +173,10 @@ class SvSocketCommon:
 
         else:  # unlinked INPUT
             if self.get_prop_name():  # has property
-                self.draw_expander_template(context, layout, prop_origin=node, prop_name=self.get_prop_name())
+                self.draw_property(layout, prop_origin=node, prop_name=self.get_prop_name())
 
             elif self.use_prop:  # no property but use default prop
-                self.draw_expander_template(context, layout, prop_origin=self)
+                self.draw_property(layout)
 
             else:  # no property and not use default prop
                 self.draw_quick_link(context, layout, node)
@@ -347,7 +327,7 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
     quick_link_to_node = 'GenVectorsNode'
 
     prop: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
-    use_prop: BoolProperty(default=False)
+    expanded: BoolProperty(default=False)  # for minimizing showing socket property
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
@@ -363,6 +343,23 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
         else:
             return default
 
+    def draw_property(self, layout, prop_origin=None, prop_name='prop'):
+        if prop_origin is None:
+            prop_origin = self
+
+        split = layout.split(factor=.2, align=True)
+        c1 = split.column(align=True)
+        c2 = split.column(align=True)
+
+        if self.expanded:
+            c1.prop(self, "expanded", icon='TRIA_UP', text='')
+            c1.label(text=self.name[0])
+            c2.prop(prop_origin, prop_name, text="", expand=True)
+        else:
+            c1.prop(self, "expanded", icon='TRIA_DOWN', text="")
+            row = c2.row(align=True)
+            row.template_component_menu(prop_origin, prop_name, name=self.name)
+
 
 class SvQuaternionSocket(NodeSocket, SvSocketCommon):
     '''For quaternion data'''
@@ -372,7 +369,6 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
     color = (0.9, 0.4, 0.7, 1.0)
 
     prop: FloatVectorProperty(default=(1, 0, 0, 0), size=4, subtype='QUATERNION', update=process_from_socket)
-    use_prop: BoolProperty(default=False)
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
@@ -397,7 +393,7 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
     color = (0.9, 0.8, 0.0, 1.0)
 
     prop: FloatVectorProperty(default=(0, 0, 0, 1), size=4, subtype='COLOR', min=0, max=1, update=process_from_socket)
-    use_prop: BoolProperty(default=False)
+    expanded: BoolProperty(default=False)  # for minimizing showing socket property
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
@@ -411,6 +407,23 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
             raise SvNoDataError(self)
         else:
             return default
+
+    def draw_property(self, layout, prop_origin=None, prop_name='prop'):
+        if prop_origin is None:
+            prop_origin = self
+
+        split = layout.split(factor=.2, align=True)
+        c1 = split.column(align=True)
+        c2 = split.column(align=True)
+
+        if self.expanded:
+            c1.prop(self, "expanded", icon='TRIA_UP', text='')
+            c1.label(text=self.name[0])
+            c2.prop(prop_origin, prop_name, text="", expand=True)
+        else:
+            c1.prop(self, "expanded", icon='TRIA_DOWN', text="")
+            row = c2.row(align=True)
+            row.prop(prop_origin, prop_name)
 
 
 class SvDummySocket(NodeSocket, SvSocketCommon):
