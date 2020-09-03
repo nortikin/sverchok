@@ -468,11 +468,6 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
         if self.is_linked and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.get_prop_name():
-            # to deal with subtype ANGLE, this solution should be considered temporary...
-            _, prop_dict = getattr(self.node.rna_type, self.get_prop_name(), (None, {}))
-            subtype = prop_dict.get("subtype", "")
-            if subtype == "ANGLE":
-                return [[math.degrees(getattr(self.node, self.get_prop_name()))]]
             return [[getattr(self.node, self.get_prop_name())]]
         elif self.prop_type:
             return [[getattr(self.node, self.prop_type)[self.prop_index]]]
