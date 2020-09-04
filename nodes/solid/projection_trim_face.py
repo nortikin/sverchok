@@ -68,19 +68,11 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
         p.use_prop = True
         p.prop = (0.0, 0.0, 0.0)
         self.outputs.new('SvSurfaceSocket', "SolidFace")
-        self.outputs.new('SvCurveSocket', "TrimCurves")
-        self.outputs.new('SvCurveSocket', "Edges")
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
         layout.label(text='Projection:')
         layout.prop(self, 'projection_type', text='')
-
-    def get_trim(self, fc_face, fc_edge):
-        trim, m, M = fc_face.curveOnSurface(fc_edge)
-        trim = trim.toBSpline(m, M)
-        trim = SvFreeCadNurbsCurve(trim, ndim=2)
-        return trim
 
     def cut(self, face_surface, sv_curves, point, vector):
         # face_surface : SvFreeCadNurbsSurface
@@ -113,10 +105,8 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
 
         cut_fc_face = Part.Face(face_surface.surface, wire)
         cut_face_surface = SvFreeCadNurbsSurface(face_surface.surface, face=cut_fc_face) 
-        wire_curves = [SvFreeCadNurbsCurve(edge.Curve) for edge in projections]
-        projected_wire = [self.get_trim(fc_face, edge) for edge in projections]
 
-        return cut_face_surface, wire_curves, projected_wire
+        return cut_face_surface
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -133,25 +123,17 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
         vector_s = ensure_nesting_level(vector_s, 3)
 
         faces_out = []
-        trim_out = []
-        edges_out = []
         for surfaces, curves_i, points, vectors in zip_long_repeat(surface_s, curve_s, point_s, vector_s):
             new_faces = []
             new_trim = []
             new_edges = []
             for surface, curves, point, vector in zip_long_repeat(surfaces, curves_i, points, vectors):
                 face_surface = surface_to_freecad(surface) # SvFreeCadNurbsSurface
-                face, edges, trim = self.cut(face_surface, curves, point, vector)
+                face = self.cut(face_surface, curves, point, vector)
                 new_faces.append(face)
-                new_trim.append(trim)
-                new_edges.append(edges)
             faces_out.append(new_faces)
-            trim_out.append(new_trim)
-            edges_out.append(new_edges)
 
         self.outputs['SolidFace'].sv_set(faces_out)
-        self.outputs['TrimCurves'].sv_set(trim_out)
-        self.outputs['Edges'].sv_set(edges_out)
 
 def register():
     if FreeCAD is not None:
