@@ -42,6 +42,17 @@ def curves_to_wire(sv_curves):
     wire = Part.Wire(shapes)
     return wire
 
+def make_helix(pitch, height, radius, apex_angle=0):
+    # FIXME: in FreeCAD pydoc, there is also "makeLongHelix",
+    # which seems to be more suitable here because it said to be "multi-edge";
+    # However, in my experiments, makeLongHelix always makes
+    # a helix with exactly one turn, while makeHelix makes as many
+    # turns as necessary.
+    wire = Part.makeHelix(pitch, height, radius, apex_angle)
+    fc_edge = wire.Edges[0]
+    curve = SvSolidEdgeCurve(fc_edge).to_nurbs()
+    return curve
+
 class SvSolidEdgeCurve(SvCurve):
     __description__ = "Solid Edge"
     def __init__(self, solid_edge):

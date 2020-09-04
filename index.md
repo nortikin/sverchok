@@ -61,6 +61,7 @@
     SvArc3ptCurveNode
     SvArcSedCurveNode
     SvExCatenaryCurveNode
+    SvFreeCadHelixNode
     ---
     SvExPolylineNode
     SvExFilletPolylineNode
