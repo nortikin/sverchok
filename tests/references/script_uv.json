@@ -10,6 +10,25 @@
         0.800000011920929,
         0.949999988079071
       ],
+      "custom_socket_props": {
+        "0": {
+          "default_float_property": 1.0,
+          "use_prop": true
+        },
+        "1": {
+          "default_float_property": 3.0,
+          "use_prop": true
+        },
+        "2": {
+          "default_int_property": 300,
+          "default_property_type": "int",
+          "use_prop": true
+        },
+        "3": {
+          "default_float_property": 0.12999999523162842,
+          "use_prop": true
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",

@@ -448,8 +448,6 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
     color = (0.6, 1.0, 0.6, 1.0)
 
     quick_link_to_node: StringProperty()  # this can be overridden by socket instances
-    prop_type: StringProperty(default='')
-    prop_index: IntProperty()
 
     default_property_type: bpy.props.EnumProperty(items=[(i, i, '') for i in ['float', 'int']])
     default_float_property: bpy.props.FloatProperty(update=process_from_socket)
