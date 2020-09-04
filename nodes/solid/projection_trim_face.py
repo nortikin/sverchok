@@ -45,7 +45,8 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
 
     projection_types = [
             ('PARALLEL', "Parallel", "Use parallel projection along given vector", 0),
-            ('PERSPECTIVE', "Perspective", "Use perspective projection from given pont", 1)
+            ('PERSPECTIVE', "Perspective", "Use perspective projection from given pont", 1),
+            ('ORTHO', "Orthogonal", "Use orthogonal projection", 2)
         ]
     
     projection_type : EnumProperty(
@@ -94,9 +95,12 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
             vector = Base.Vector(*vector)
             projections = [fc_face.makeParallelProjection(edge, vector) for edge in fc_edges]
             projections = [p.Edges for p in projections]
-        else: # PERSPECTIVE
+        elif self.projection_type == 'PERSPECTIVE':
             point = Base.Vector(*point)
             projections = [fc_face.makePerspectiveProjection(edge, point).Edges for edge in fc_edges]
+        else: # ORTHO
+            projections = [fc_face.project(fc_edges).Edges]
+            print("P", projections)
 
         projections = sum(projections, [])
         if not projections:
