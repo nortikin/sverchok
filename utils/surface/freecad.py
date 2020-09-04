@@ -18,32 +18,47 @@ if FreeCAD is not None:
     from FreeCAD import Base
     import Part
 
-def curves_to_face(sv_curves):
+def curves_to_face(sv_curves, planar=True):
     """
     Make a Part.Face from a list of SvCurve.
     Curves must have NURBS representation, must form a closed loop, and it must
     be planar, otherwise an exception will be raised.
     
-    input: list of SvCurve.
+    input:
+        * list of SvCurve.
+        * planar: True to make a flat face; in this case, all curves
+            must lie exactly in one plane
     output: tuple:
     * Part.Face
     * List of SvFreeCadNurbsCurve for outer wire of the face
     * SvFreeCadNurbsSurface for face's surface.
     """
-    wire = curves_to_wire(sv_curves)
+    # Check
+    sv_curves = [curve_to_freecad_nurbs(curve) for curve in sv_curves]
+    edges = [Part.Edge(curve.curve) for curve in sv_curves]
+    wire = Part.Wire(edges)
     if not wire.isClosed():
         for i, edge in enumerate(wire.Edges):
             print(f"#{i}: {edge.Curve.StartPoint} - {edge.Curve.EndPoint}")
         raise Exception(f"The wire is not closed: {sv_curves}")
-    face = Part.Face(wire)
-    surface = SvSolidFaceSurface(face).to_nurbs()
+
+    if planar:
+        try:
+            fc_face = Part.Face(wire)
+        except Part.OCCError as e:
+            raise Exception(f"Can't create a Face from {sv_curves}: {e}\nProbably these curves are not all lying in the same plane?")
+        surface = SvSolidFaceSurface(fc_face).to_nurbs()
+    else:
+        fc_face = Part.makeFilledFace(edges)
+        surface = SvSolidFaceSurface(fc_face).to_nurbs()
+
     wire_curves = []
-    for wire_edge in face.OuterWire.Edges:
-        pair = face.curveOnSurface(wire_edge)
+    for wire_edge in fc_face.OuterWire.Edges:
+        pair = fc_face.curveOnSurface(wire_edge)
         fc_curve, t_min, t_max = pair
         curve = SvFreeCadNurbsCurve(fc_curve, ndim=2)
         wire_curves.append(curve)
-    return face, wire_curves, surface
+    return fc_face, wire_curves, surface
 
 def surface_to_freecad(sv_surface, make_face=False):
     """

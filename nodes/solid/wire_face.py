@@ -8,6 +8,7 @@
 import numpy as np
 
 import bpy
+from bpy.props import BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, get_data_nesting_level, updateNode
@@ -34,6 +35,15 @@ class SvSolidWireFaceNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_CURVES_FACE'
     solid_catergory = "Inputs"
 
+    planar : BoolProperty(
+            name = "Planar",
+            description = "Make a planar (flat) face; all curves must lie exactly in one plane in this case",
+            default = True,
+            update = updateNode)
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'planar', toggle=True)
+
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Edges")
         self.outputs.new('SvSurfaceSocket', "SolidFace")
@@ -50,7 +60,7 @@ class SvSolidWireFaceNode(bpy.types.Node, SverchCustomTreeNode):
         for curves_i in curve_s:
             new_faces = []
             for curves in curves_i:
-                _, _, face = curves_to_face(curves)
+                _, _, face = curves_to_face(curves, planar=self.planar)
                 new_faces.append(face)
             faces_out.append(new_faces)
 
