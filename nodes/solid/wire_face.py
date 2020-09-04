@@ -19,7 +19,7 @@ from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import FreeCAD
 
 if FreeCAD is None:
-    add_dummy('SvSolidWireFaceNode', 'Extrude Face (Solid)', 'FreeCAD')
+    add_dummy('SvSolidWireFaceNode', 'Face from Curves (Solid)', 'FreeCAD')
 else:
     import Part
     from FreeCAD import Base
