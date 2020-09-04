@@ -100,7 +100,6 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
             projections = [fc_face.makePerspectiveProjection(edge, point).Edges for edge in fc_edges]
         else: # ORTHO
             projections = [fc_face.project(fc_edges).Edges]
-            print("P", projections)
 
         projections = sum(projections, [])
         if not projections:
