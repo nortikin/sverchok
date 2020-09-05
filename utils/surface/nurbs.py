@@ -173,6 +173,15 @@ class SvNurbsSurface(SvSurface):
         """
         raise Exception("Not implemented!")
 
+    def get_homogenous_control_points(self):
+        """
+        returns: np.array of shape (m, n, 4)
+        """
+        points = self.get_control_points()
+        weights = np.transpose(self.get_weights()[np.newaxis], axes=(1,2,0))
+        weighted = weights * points
+        return np.concatenate((weighted, weights), axis=2)
+
 class SvGeomdlSurface(SvNurbsSurface):
     def __init__(self, surface):
         self.surface = surface

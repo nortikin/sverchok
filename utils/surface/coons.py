@@ -8,6 +8,7 @@
 import numpy as np
 
 from sverchok.utils.logging import info, debug
+from sverchok.utils.nurbs_common import from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.core import UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve, unify_two_curves
@@ -122,8 +123,14 @@ def coons_surface(curve1, curve2, curve3, curve4):
         pt3 = nurbs_curves[2].evaluate(c3_t_min)
         pt4 = nurbs_curves[2].evaluate(c3_t_max)
 
+        w1 = nurbs_curves[0].get_weights()[0]
+        w2 = nurbs_curves[0].get_weights()[-1]
+        w3 = nurbs_curves[2].get_weights()[0]
+        w4 = nurbs_curves[2].get_weights()[-1]
+
         linear_pts = np.array([[pt1,pt3], [pt2,pt4]])
-        linear_weights = np.array([[1,1], [1,1]])
+        linear_weights = np.array([[w1,w3], [w2,w4]])
+        #linear_weights = np.array([[1,1], [1,1]])
         bilinear = SvNurbsSurface.build(implementation,
                     1, 1,
                     linear_kv, linear_kv,
