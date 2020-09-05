@@ -485,7 +485,7 @@ class NodeUtils:
 
         try:
             if isinstance(identifier, bpy.types.Object) and identifier.name in bpy_data_kind:
-                return bpy_data_kind.get(identifier.name)
+                return bpy_data_kind.get(identifier.name)  # todo it looks ridiculous to search known object
 
             elif isinstance(identifier, str):
                 if identifier in bpy_data_kind:

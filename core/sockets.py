@@ -94,6 +94,44 @@ class SvSocketCommon:
 
         self.hide = value
 
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
+        """
+        The method is used for getting input socket data
+        In most cases the method should not be overridden
+        If socket uses custom implicit_conversion it should implements default_conversion_name attribute
+        Also a socket can use its default_property
+        Order of getting data (if available):
+        1. writen socket data
+        2. node default property
+        3. socket default property
+        4. script default property
+        5. Raise no data error
+        :param default: script default property
+        :param deepcopy: in most cases should be False for efficiency but not in cases if input data will be modified
+        :param implicit_conversions: if needed automatic conversion data from one socket type to another
+        :return: data bound to the socket
+        """
+        if implicit_conversions is None:
+            if hasattr(self, 'default_conversion_name'):
+                pass  # todo
+            else:
+                implicit_conversions = DefaultImplicitConversionPolicy
+
+        if self.is_linked and not self.is_output:
+            # todo if need conversion deep copy?
+            return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
+        elif self.get_prop_name():
+            return [[getattr(self.node, self.get_prop_name())]]
+        elif self.use_prop and hasattr(self, 'default_property'):
+            if isinstance(self.default_property, (str, int, float)):
+                return [[self.default_property]]
+            else:
+                return [self.default_property]
+        elif default is not sentinel:
+            return default
+        else:
+            raise SvNoDataError(self)
+
     def sv_set(self, data):
         """Set output data"""
         SvSetSocket(self, data)
@@ -119,15 +157,16 @@ class SvSocketCommon:
         except:
             return ''
 
-    def draw_property(self, layout, prop_origin=None, prop_name='prop'):
+    def draw_property(self, layout, prop_origin=None, prop_name='default_property'):
         """
         This method can be overridden for showing property in another way
         Property will be shown only if socket is unconnected input
         If prop_origin is None then the default socket property should be shown
         """
-        if prop_origin is None:
-            prop_origin = self
-        layout.prop(prop_origin, prop_name)
+        if prop_origin is None and hasattr(self, prop_name):
+            layout.prop(self, 'default_property')
+        else:
+            layout.prop(prop_origin, prop_name)
 
     def draw_quick_link(self, context, layout, node):
         """
@@ -228,7 +267,15 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
         type=bpy.types.Object, # what kind of objects are we showing
         update=process_from_socket)
 
-    def draw(self, context, layout, node, text):
+    @property
+    def default_property(self):
+        # this can be more granular and even attempt to set object_ref_points from object_ref, and then wipe object_ref
+        obj_ref = self.node.get_bpy_data_from_name(self.object_ref or self.object_ref_pointer, bpy.data.objects)
+        if not obj_ref:
+            raise SvNoDataError(self)
+        return obj_ref
+
+    def draw(self, context, layout, node, text):  # todo replace by draw property
         if self.custom_draw:
             super().draw(context, layout, node, text)
         elif not self.is_output and not self.is_linked:
@@ -238,19 +285,6 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
         else:
             layout.label(text=text)
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.is_linked and not self.is_output:
-            return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
-        elif self.object_ref or self.object_ref_pointer:
-            # this can be more granular and even attempt to set object_ref_points from object_ref, and then wipe object_ref
-            obj_ref = self.node.get_bpy_data_from_name(self.object_ref or self.object_ref_pointer, bpy.data.objects)
-            if not obj_ref:
-                raise SvNoDataError(self)
-            return [obj_ref]
-        elif default is sentinel:
-            raise SvNoDataError(self)
-        else:
-            return default
 
 class SvTextSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvTextSocket"
@@ -258,23 +292,14 @@ class SvTextSocket(NodeSocket, SvSocketCommon):
 
     color = (0.68,  0.85,  0.90, 1)
 
-    text: StringProperty(update=process_from_socket)
+    default_property: StringProperty(update=process_from_socket)
 
-    def draw(self, context, layout, node, text):
+    def draw(self, context, layout, node, text):  # todo use draw property
         if self.is_linked and not self.is_output:
             layout.label(text=text)
         if not self.is_linked and not self.is_output:
             layout.prop(self, 'text')
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.is_linked and not self.is_output:
-            return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
-        elif self.text:
-            return [self.text]
-        elif default is sentinel:
-            raise SvNoDataError(self)
-        else:
-            return default
 
 class SvMatrixSocket(NodeSocket, SvSocketCommon):
     '''4x4 matrix Socket type'''
@@ -285,7 +310,7 @@ class SvMatrixSocket(NodeSocket, SvSocketCommon):
     color = (0.2, 0.8, 0.8, 1.0)
     quick_link_to_node = 'SvMatrixInNodeMK4'
 
-    num_matrices: IntProperty(default=0)
+    num_matrices: IntProperty(default=0)  # todo after number of layers refactoring
 
     @property
     def extra_info(self):
@@ -296,17 +321,6 @@ class SvMatrixSocket(NodeSocket, SvSocketCommon):
 
         return info
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        self.num_matrices = 0
-        if self.is_linked and not self.is_output:
-            source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
-            return self.convert_data(source_data, implicit_conversions)
-
-        elif default is sentinel:
-            raise SvNoDataError(self)
-        else:
-            return default
-
 
 class SvVerticesSocket(NodeSocket, SvSocketCommon):
     '''For vertex data'''
@@ -316,24 +330,11 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
     color = (0.9, 0.6, 0.2, 1.0)
     quick_link_to_node = 'GenVectorsNode'
 
-    prop: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
+    default_property: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
+
     expanded: BoolProperty(default=False)  # for minimizing showing socket property
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.is_linked and not self.is_output:
-            source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
-            return self.convert_data(source_data, implicit_conversions)
-
-        if self.get_prop_name():
-            return [[getattr(self.node, self.get_prop_name())[:]]]
-        elif self.use_prop:
-            return [[self.prop[:]]]
-        elif default is sentinel:
-            raise SvNoDataError(self)
-        else:
-            return default
-
-    def draw_property(self, layout, prop_origin=None, prop_name='prop'):
+    def draw_property(self, layout, prop_origin=None, prop_name='default_property'):
         if prop_origin is None:
             prop_origin = self
 
@@ -358,21 +359,8 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
 
     color = (0.9, 0.4, 0.7, 1.0)
 
-    prop: FloatVectorProperty(default=(1, 0, 0, 0), size=4, subtype='QUATERNION', update=process_from_socket)
-
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.is_linked and not self.is_output:
-            source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
-            return self.convert_data(source_data, implicit_conversions)
-
-        if self.get_prop_name():
-            return [[getattr(self.node, self.get_prop_name())[:]]]
-        elif self.use_prop:
-            return [[self.prop[:]]]
-        elif default is sentinel:
-            raise SvNoDataError(self)
-        else:
-            return default
+    default_property: FloatVectorProperty(default=(1, 0, 0, 0), size=4, subtype='QUATERNION',
+                                          update=process_from_socket)
 
 
 class SvColorSocket(NodeSocket, SvSocketCommon):
@@ -382,23 +370,11 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
 
     color = (0.9, 0.8, 0.0, 1.0)
 
-    prop: FloatVectorProperty(default=(0, 0, 0, 1), size=4, subtype='COLOR', min=0, max=1, update=process_from_socket)
+    default_property: FloatVectorProperty(default=(0, 0, 0, 1), size=4, subtype='COLOR', min=0, max=1,
+                                          update=process_from_socket)
     expanded: BoolProperty(default=False)  # for minimizing showing socket property
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.is_linked and not self.is_output:
-            return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
-
-        if self.get_prop_name():
-            return [[getattr(self.node, self.get_prop_name())[:]]]
-        elif self.use_prop:
-            return [[self.prop[:]]]
-        elif default is sentinel:
-            raise SvNoDataError(self)
-        else:
-            return default
-
-    def draw_property(self, layout, prop_origin=None, prop_name='prop'):
+    def draw_property(self, layout, prop_origin=None, prop_name='default_property'):
         if prop_origin is None:
             prop_origin = self
 
@@ -453,21 +429,9 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
     default_float_property: bpy.props.FloatProperty(update=process_from_socket)
     default_int_property: bpy.props.IntProperty(update=process_from_socket)
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        # debug("Node %s, socket %s, is_linked: %s, is_output: %s",
-        #         self.node.name, self.name, self.is_linked, self.is_output)
-
-        if self.is_linked and not self.is_output:
-            return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
-        elif self.get_prop_name():
-            return [[getattr(self.node, self.get_prop_name())]]
-        elif self.use_prop:
-            return [[self.default_float_property if self.default_property_type == 'float' else
-                     self.default_int_property]]
-        elif default is not sentinel:
-            return default
-        else:
-            raise SvNoDataError(self)
+    @property
+    def default_property(self):
+        return self.default_float_property if self.default_property_type == 'float' else self.default_int_property
 
     def draw_property(self, layout, prop_origin=None, prop_name=None):
         if prop_origin and prop_name:
@@ -479,7 +443,6 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
                 layout.prop(self, 'default_int_property', text=self.name)
 
 
-
 class SvFilePathSocket(NodeSocket, SvSocketCommon):
     '''For file path data'''
     bl_idname = "SvFilePathSocket"
@@ -488,11 +451,6 @@ class SvFilePathSocket(NodeSocket, SvSocketCommon):
     color = (0.9, 0.9, 0.3, 1.0)
     quick_link_to_node = 'SvFilePathNode'
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.is_linked and not self.is_output:
-            return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
-        else:
-            return [[self.default_value]]
 
 class SvSvgSocket(NodeSocket, SvSocketCommon):
     '''For file path data'''
@@ -510,11 +468,6 @@ class SvSvgSocket(NodeSocket, SvSocketCommon):
         else:
             return
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.is_linked and not self.is_output:
-            return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
-        else:
-            return [[default]]
 
 class SvDictionarySocket(NodeSocket, SvSocketCommon):
     '''For dictionary data'''
@@ -522,18 +475,6 @@ class SvDictionarySocket(NodeSocket, SvSocketCommon):
     bl_label = "Dictionary Socket"
 
     color = (1.0, 1.0, 1.0, 1.0)
-
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.is_linked and not self.is_output:
-            source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
-            return self.convert_data(source_data, implicit_conversions)
-
-        if self.get_prop_name():
-            return [[getattr(self.node, self.get_prop_name())[:]]]
-        elif default is sentinel:
-            raise SvNoDataError(self)
-        else:
-            return default
 
 
 class SvChameleonSocket(NodeSocket, SvSocketCommon):
@@ -556,17 +497,6 @@ class SvChameleonSocket(NodeSocket, SvSocketCommon):
             self.color = (0.0, 0.0, 0.0, 0.0)
             self.dynamic_type = self.bl_idname
 
-    def sv_get(self, default=sentinel, deepcopy=True):
-        if self.is_linked and not self.is_output:
-            return SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
-
-        if self.get_prop_name():
-            return [[getattr(self.node, self.get_prop_name())[:]]]
-        elif default is sentinel:
-            raise SvNoDataError(self)
-        else:
-            return default
-
 
 class SvSurfaceSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvSurfaceSocket"
@@ -574,17 +504,6 @@ class SvSurfaceSocket(NodeSocket, SvSocketCommon):
 
     color = (0.4, 0.2, 1.0, 1.0)
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.is_linked and not self.is_output:
-            source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
-            return self.convert_data(source_data, implicit_conversions)
-
-        if self.prop_name:
-            return [[getattr(self.node, self.prop_name)[:]]]
-        elif default is sentinel:
-            raise SvNoDataError(self)
-        else:
-            return default
 
 class SvCurveSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvCurveSocket"
@@ -592,75 +511,28 @@ class SvCurveSocket(NodeSocket, SvSocketCommon):
 
     color = (0.5, 0.6, 1.0, 1.0)
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.is_linked and not self.is_output:
-            source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
-            return self.convert_data(source_data, implicit_conversions)
-
-        if self.prop_name:
-            return [[getattr(self.node, self.prop_name)[:]]]
-        elif default is sentinel:
-            raise SvNoDataError(self)
-        else:
-            return default
 
 class SvScalarFieldSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvScalarFieldSocket"
     bl_label = "Scalar Field Socket"
 
     color = (0.9, 0.4, 0.1, 1.0)
+    default_conversion_name = 'FieldImplicitConversionPolicy'  # todo using Enum?
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if implicit_conversions is None:
-            implicit_conversions = FieldImplicitConversionPolicy
-        if self.is_linked and not self.is_output:
-            source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
-            return self.convert_data(source_data, implicit_conversions)
-
-        if self.prop_name:
-            return [[getattr(self.node, self.prop_name)[:]]]
-        elif default is sentinel:
-            raise SvNoDataError(self)
-        else:
-            return default
 
 class SvVectorFieldSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvVectorFieldSocket"
     bl_label = "Vector Field Socket"
 
     color = (0.1, 0.1, 0.9, 1.0)
+    default_conversion_name = 'FieldImplicitConversionPolicy'  # todo using Enum?
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if implicit_conversions is None:
-            implicit_conversions = FieldImplicitConversionPolicy
-        if self.is_linked and not self.is_output:
-            source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
-            return self.convert_data(source_data, implicit_conversions)
-
-        if self.prop_name:
-            return [[getattr(self.node, self.prop_name)[:]]]
-        elif default is sentinel:
-            raise SvNoDataError(self)
-        else:
-            return default
 
 class SvSolidSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvSolidSocket"
     bl_label = "Solid Socket"
 
     color = (0.0, 0.65, 0.3, 1.0)
-
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.is_linked and not self.is_output:
-            source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
-            return self.convert_data(source_data, implicit_conversions)
-
-        if self.prop_name:
-            return [[getattr(self.node, self.prop_name)[:]]]
-        elif default is sentinel:
-            raise SvNoDataError(self)
-        else:
-            return default
 
 
 class SvLinkNewNodeInput(bpy.types.Operator):
