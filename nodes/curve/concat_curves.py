@@ -9,6 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.algorithms import concatenate_curves
+from sverchok.utils.curve.nurbs_algorithms import concatenate_nurbs_curves
 
 class SvConcatCurvesNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -85,7 +86,10 @@ class SvConcatCurvesNode(bpy.types.Node, SverchCustomTreeNode):
                     self.run_check(curves)
                 if self.all_nurbs:
                     curves = self.to_nurbs(curves)
-                new_curve = concatenate_curves(curves, allow_generic=not self.all_nurbs)
+                if self.all_nurbs:
+                    new_curve = concatenate_nurbs_curves(curves)
+                else:
+                    new_curve = concatenate_curves(curves)
                 curves_out.append(new_curve)
 
             self.outputs['Curve'].sv_set(curves_out)

@@ -10,7 +10,9 @@ from sverchok.utils.nurbs_common import (
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_curves
 from sverchok.utils.curve.algorithms import unify_curves_degree
+from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
+from sverchok.utils.logging import info
 from sverchok.dependencies import geomdl
 
 if geomdl is not None:
@@ -46,7 +48,10 @@ class SvNurbsSurface(SvSurface):
         if isinstance(surface, SvNurbsSurface):
             return surface
         if hasattr(surface, 'to_nurbs'):
-            return surface.to_nurbs(implementation=implementation)
+            try:
+                return surface.to_nurbs(implementation=implementation)
+            except UnsupportedSurfaceTypeException as e:
+                info("Can't convert %s to NURBS: %s", surface, e)
         return None
 
     @classmethod
@@ -181,6 +186,39 @@ class SvNurbsSurface(SvSurface):
         weights = np.transpose(self.get_weights()[np.newaxis], axes=(1,2,0))
         weighted = weights * points
         return np.concatenate((weighted, weights), axis=2)
+
+    def get_min_u_continuity(self):
+        """
+        Return minimum continuity degree of the surface in the U direction (guaranteed by knotvector):
+        0 - point-wise continuity only (C0),
+        1 - tangent continuity (C1),
+        2 - 2nd derivative continuity (C2), and so on.
+        """
+        kv = self.get_knotvector_u()
+        degree = self.get_degree_u()
+        return sv_knotvector.get_min_continuity(kv, degree)
+
+    def get_min_v_continuity(self):
+        """
+        Return minimum continuity degree of the surface in the V direction (guaranteed by knotvector):
+        0 - point-wise continuity only (C0),
+        1 - tangent continuity (C1),
+        2 - 2nd derivative continuity (C2), and so on.
+        """
+        kv = self.get_knotvector_v()
+        degree = self.get_degree_v()
+        return sv_knotvector.get_min_continuity(kv, degree)
+    
+    def get_min_continuity(self):
+        """
+        Return minimum continuity degree of the surface (guaranteed by knotvectors):
+        0 - point-wise continuity only (C0),
+        1 - tangent continuity (C1),
+        2 - 2nd derivative continuity (C2), and so on.
+        """
+        c_u = self.get_min_u_continuity()
+        c_v = self.get_min_v_continuity()
+        return min(c_u, c_v)
 
 class SvGeomdlSurface(SvNurbsSurface):
     def __init__(self, surface):

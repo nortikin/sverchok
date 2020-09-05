@@ -8,6 +8,8 @@
 import numpy as np
 from sverchok.utils.logging import info, exception
 from sverchok.utils.surface.core import SvSurface
+from sverchok.utils.nurbs_common import SvNurbsMaths
+from sverchok.utils.curve import knotvector as sv_knotvector
 
 class SvPlane(SvSurface):
     __description__ = "Plane"
@@ -61,4 +63,22 @@ class SvPlane(SvSurface):
         n = np.linalg.norm(normal)
         normal = normal / n
         return np.tile(normal, len(us)).T
+
+    def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
+        u_min, u_max = self.u_bounds
+        v_min, v_max = self.v_bounds
+        pt1 = self.evaluate(u_min, v_min)
+        pt2 = self.evaluate(u_min, v_max)
+        pt3 = self.evaluate(u_max, v_min)
+        pt4 = self.evaluate(u_max, v_max)
+
+        control_points = np.array([[pt1, pt2], [pt3, pt4]])
+        weights = np.array([[1,1], [1, 1]])
+        degree_u = degree_v = 1
+        knotvector_u = knotvector_v = sv_knotvector.generate(1, 2)
+
+        return SvNurbsMaths.build_surface(implementation,
+                degree_u, degree_v,
+                knotvector_u, knotvector_v,
+                control_points, weights)
 

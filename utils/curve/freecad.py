@@ -7,7 +7,51 @@
 
 import numpy as np
 
+from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.nurbs import SvNurbsCurve
+from sverchok.utils.curve import knotvector as sv_knotvector
+
+from sverchok.dependencies import FreeCAD
+if FreeCAD is not None:
+    from FreeCAD import Base
+    import Part
+    from Part import Geom2d
+
+def curve_to_freecad_nurbs(sv_curve):
+    """
+    Convert SvCurve to FreeCAD's NURBS curve.
+    Raise an exception if it is not possible.
+
+    input: SvCurve
+    output: SvFreeCadNurbsCurve
+    """
+    nurbs = SvNurbsCurve.to_nurbs(sv_curve)
+    if nurbs is None:
+        raise Exception("not a NURBS curve")
+    fc_curve = SvNurbsMaths.build_curve(SvNurbsMaths.FREECAD,
+                nurbs.get_degree(),
+                nurbs.get_knotvector(),
+                nurbs.get_control_points(),
+                nurbs.get_weights())
+    return fc_curve
+
+def curves_to_wire(sv_curves):
+    fc_curves = [curve_to_freecad_nurbs(curve).curve for curve in sv_curves]
+    shapes = [Part.Edge(curve) for curve in fc_curves]
+    wire = Part.Wire(shapes)
+    return wire
+
+def make_helix(pitch, height, radius, apex_angle=0):
+    # FIXME: in FreeCAD pydoc, there is also "makeLongHelix",
+    # which seems to be more suitable here because it said to be "multi-edge";
+    # However, in my experiments, makeLongHelix always makes
+    # a helix with exactly one turn, while makeHelix makes as many
+    # turns as necessary.
+    wire = Part.makeHelix(pitch, height, radius, apex_angle)
+    fc_edge = wire.Edges[0]
+    curve = SvSolidEdgeCurve(fc_edge)
+    return curve
 
 class SvSolidEdgeCurve(SvCurve):
     __description__ = "Solid Edge"
@@ -36,4 +80,168 @@ class SvSolidEdgeCurve(SvCurve):
 
     def get_u_bounds(self):
         return self.u_bounds
+
+    def to_nurbs(self, implementation = SvNurbsMaths.FREECAD):
+        curve = self.curve.toBSpline(*self.u_bounds)
+        curve.transform(self.edge.Matrix)
+        control_points = np.array(curve.getPoles())
+        weights = np.array(curve.getWeights())
+        knotvector = np.array(curve.KnotSequence)
+        curve = SvNurbsMaths.build_curve(implementation,
+                    curve.Degree, knotvector,
+                    control_points,
+                    weights)
+        #curve.u_bounds = self.u_bounds
+        return curve
+
+class SvFreeCadCurve(SvCurve):
+    __description__ = "FreeCAD"
+    def __init__(self, curve, bounds, ndim=3):
+        self.curve = curve
+        self.u_bounds = bounds
+        self.ndim = ndim
+
+    def _convert(self, p):
+        if self.ndim == 2:
+            return [p.x, p.y, 0]
+        else:
+            return [p.x, p.y, p.z]
+
+    def evaluate(self, t):
+        p = self.curve.value(t)
+        return np.array(self._convert(p))
+
+    def evaluate_array(self, ts):
+        return np.vectorize(self.evaluate, signature='()->(3)')(ts)
+
+    def tangent(self, t):
+        p = self.edge.tangentAt(t)
+        return np.array(self._convert(p))
+
+    def tangent_array(self, ts):
+        return np.vectorize(self.tangent, signature='()->(3)')(ts)
+
+    def get_u_bounds(self):
+        return self.u_bounds
+
+    #def get_u_bounds(self):
+    #    return (self.curve.FirstParameter, self.curve.LastParameter)
+
+    def to_nurbs(self, implementation = SvNurbsMaths.FREECAD):
+        curve = self.curve.toBSpline(*self.u_bounds)
+        #curve.transform(self.edge.Matrix)
+        control_points = np.array(curve.getPoles())
+        weights = np.array(curve.getWeights())
+        knotvector = np.array(curve.KnotSequence)
+
+        curve = SvNurbsMaths.build_curve(implementation,
+                    curve.Degree, knotvector,
+                    control_points,
+                    weights)
+        #curve.u_bounds = self.u_bounds
+        return curve
+
+class SvFreeCadNurbsCurve(SvNurbsCurve):
+    def __init__(self, curve, ndim=3):
+        self.curve = curve
+        self.ndim = ndim
+        self.__description__ = f"FreeCAD NURBS (degree={curve.Degree}, pts={curve.NbPoles})"
+
+    @classmethod
+    def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
+        n = len(control_points)
+        if weights is None:
+            weights = np.ones((n,))
+
+        if normalize_knots:
+            knotvector = sv_knotvector.normalize(knotvector)
+
+        pts = [Base.Vector(t[0], t[1], t[2]) for t in control_points]
+        ms = sv_knotvector.to_multiplicity(knotvector)
+        knots = [p[0] for p in ms]
+        mults = [p[1] for p in ms]
+
+        curve = Part.BSplineCurve()
+        curve.buildFromPolesMultsKnots(pts, mults, knots, False, degree, weights)
+        return SvFreeCadNurbsCurve(curve)
+
+    @classmethod
+    def build_2d(cls, degree, knotvector, control_points, weights=None):
+        n = len(control_points)
+        if weights is None:
+            weights = np.ones((n,))
+
+        pts = [Base.Vector2d(t[0], t[1]) for t in control_points]
+        ms = sv_knotvector.to_multiplicity(knotvector)
+        knots = [p[0] for p in ms]
+        mults = [p[1] for p in ms]
+
+        curve = Geom2d.BSplineCurve2d()
+        curve.buildFromPolesMultsKnots(pts, mults, knots, False, degree, weights)
+        return SvFreeCadNurbsCurve(curve, ndim=2)
+    
+    @classmethod
+    def from_any_nurbs(cls, curve):
+        if not isinstance(curve, SvNurbsCurve):
+            raise TypeError("Invalid curve type")
+        if isinstance(curve, SvFreeCadNurbsCurve):
+            return curve
+        return SvFreeCadNurbsCurve.build(SvNurbsMaths.FREECAD,
+                    curve.get_degree(), curve.get_knotvector(),
+                    curve.get_control_points(), 
+                    curve.get_weights())
+
+    @classmethod
+    def get_nurbs_implementation(cls):
+        return SvNurbsMaths.FREECAD
+
+    def is_closed(self, eps=None):
+        return self.curve.isClosed()
+    
+    def _convert(self, p):
+        if self.ndim == 2:
+            return [p.x, p.y, 0]
+        else:
+            return [p.x, p.y, p.z]
+
+    def evaluate(self, t):
+        pt = self.curve.value(t)
+        return np.array(self._convert(pt))
+
+    def evaluate_array(self, ts):
+        return np.vectorize(self.evaluate, signature='()->(3)')(ts)
+    
+    def tangent(self, t):
+        v = self.curve.tangent(t)
+        return np.array(self._convert(v))
+    
+    def tangent_array(self, ts):
+        return np.vectorize(self.tangent, signature='()->(3)')(ts)    
+
+    def get_u_bounds(self):
+        return (self.curve.FirstParameter, self.curve.LastParameter)
+
+    def get_knotvector(self):
+        knots = self.curve.getKnots()
+        mults = self.curve.getMultiplicities()
+        ms = zip(knots, mults)
+        return sv_knotvector.from_multiplicity(ms)
+
+    def get_degree(self):
+        return self.curve.Degree
+
+    def get_control_points(self):
+        poles = self.curve.getPoles()
+        poles = [self._convert(p) for p in poles]
+        return np.array(poles)
+
+    def get_weights(self):
+        return np.array(self.curve.getWeights())
+
+    def insert_knot(self, u, count=1):
+        curve = SvFreeCadNurbsCurve(self.curve.copy(), self.ndim) # copy
+        curve.curve.insertKnot(u, count)
+        return curve
+
+SvNurbsMaths.curve_classes[SvNurbsMaths.FREECAD] = SvFreeCadNurbsCurve
 

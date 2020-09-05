@@ -21,6 +21,7 @@ class SvNurbsMaths(object):
     """
     NATIVE = 'NATIVE'
     GEOMDL = 'GEOMDL'
+    FREECAD = 'FREECAD'
 
     # Classes by implementation
     curve_classes = dict()

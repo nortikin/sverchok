@@ -9,4 +9,4 @@ from sverchok.utils.surface.core import *
 from sverchok.utils.surface.data import *
 from sverchok.utils.surface.sphere import *
 from sverchok.utils.surface.primitives import *
-from sverchok.utils.surface.freecad import *
+

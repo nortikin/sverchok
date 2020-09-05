@@ -11,6 +11,7 @@ from collections import defaultdict
 from sverchok.utils.geom import Spline
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector
+from sverchok.utils.curve.algorithms import unify_curves_degree
 from sverchok.utils.decorators import deprecated
 
 def unify_two_curves(curve1, curve2):
@@ -107,4 +108,13 @@ def interpolate_nurbs_curve(cls, degree, points, metric='DISTANCE'):
                     control_points, weights)
     else:
         raise TypeError(f"Unsupported type of `cls` parameter: {type(cls)}")
+
+def concatenate_nurbs_curves(curves):
+    if not curves:
+        raise Exception("List of curves must be not empty")
+    curves = unify_curves_degree(curves)
+    result = curves[0]
+    for curve in curves[1:]:
+        result = result.concatenate(curve)
+    return result
 

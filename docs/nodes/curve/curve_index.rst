@@ -18,6 +18,7 @@ Curves
    bezier_spline
    tangent_curve
    kinky_curve
+   freecad_helix
    curve_formula
    apply_field_to_curve
    offset_mk2
@@ -59,5 +60,6 @@ Curves
    nearest_point
    rbf_curve
    ortho_project
+   project_curve_surface
    eval_curve
 

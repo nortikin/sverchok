@@ -181,7 +181,7 @@ class SvNurbsCurve(SvCurve):
         if curve2 is None:
             raise UnsupportedCurveTypeException("second curve is not NURBS")
         if curve.get_degree() != curve2.get_degree():
-            raise UnsupportedCurveTypeException("curves have different degrees")
+            raise UnsupportedCurveTypeException(f"curves have different degrees: {curve.get_degree()} != {curve2.get_degree()}")
 
         #print(f"kv1: {curve.get_knotvector().shape}, kv2: {curve2.get_knotvector().shape}")
         kv1, kv2 = curve.get_knotvector(), curve2.get_knotvector()
@@ -434,6 +434,17 @@ class SvNurbsCurve(SvCurve):
 
     def insert_knot(self, u, count=1):
         raise Exception("Not implemented!")
+
+    def get_min_continuity(self):
+        """
+        Return minimum continuity degree of the curve (guaranteed by curve's knotvector):
+        0 - point-wise continuity only (C0),
+        1 - tangent continuity (C1),
+        2 - 2nd derivative continuity (C2), and so on.
+        """
+        kv = self.get_knotvector()
+        degree = self.get_degree()
+        return sv_knotvector.get_min_continuity(kv, degree)
 
 class SvGeomdlCurve(SvNurbsCurve):
     """
