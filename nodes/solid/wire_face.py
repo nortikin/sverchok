@@ -26,7 +26,7 @@ else:
 
 class SvSolidWireFaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Solid Face Wire
+    Triggers: Solid Face Wire Curve
     Tooltip: Make a Face of a Solid from it's boundary edges (wire) defined by one or several Curves
     """
     bl_idname = 'SvSolidWireFaceNode'

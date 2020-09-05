@@ -11,6 +11,7 @@ Solid
    sphere_solid
    torus_solid
    polygon_face
+   wire_face
    transform_solid
    chamfer_solid
    fillet_solid

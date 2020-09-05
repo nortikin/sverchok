@@ -7,7 +7,8 @@ Functionality
 This node generates a Solid Face object, i.e. a Surface trimmed with an edge,
 from a polygon, i.e. set of vertices and edges.
 
-**NOTE**: The polygon provided must be planar (flat), i.e. all vertices must lie in the same plane. Otherwise, the node will fail (become red).
+**NOTE**: The polygon provided must be planar (flat), i.e. all vertices must
+lie in the same plane. Otherwise, the node will fail (become red).
 
 Solid Face object can be later used for construction of Solids (by extrusion, for example).
 
