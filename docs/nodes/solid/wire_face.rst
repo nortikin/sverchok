@@ -10,6 +10,8 @@ the face.
 
 Solid Face object can be later used for construction of Solids (by extrusion, for example).
 
+**NOTE**: this node supports only NURBS and NURBS-like curves.
+
 Inputs
 ------
 

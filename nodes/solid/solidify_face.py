@@ -59,7 +59,6 @@ class SvSolidFaceSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Offset").prop_name = 'offset'
         self.inputs.new('SvStringsSocket', "Tolerance").prop_name = 'tolerance'
         self.outputs.new('SvSolidSocket', "Solid")
-        self.update_sockets(context)
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):

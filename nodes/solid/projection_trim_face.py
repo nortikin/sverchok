@@ -114,9 +114,12 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
 
         surface_s = self.inputs['Surface'].sv_get()
         surface_s = ensure_nesting_level(surface_s, 2, data_types=(SvSurface,))
-        curve_s = self.inputs['Cut'].sv_get()
-        # List of curves per surface
-        curve_s = ensure_nesting_level(curve_s, 3, data_types=(SvCurve,))
+        if self.inputs['Cut'].is_linked:
+            curve_s = self.inputs['Cut'].sv_get()
+            # List of curves per surface
+            curve_s = ensure_nesting_level(curve_s, 3, data_types=(SvCurve,))
+        else:
+            curve_s = [[[]]]
         point_s = self.inputs['Point'].sv_get()
         point_s = ensure_nesting_level(point_s, 3)
         vector_s = self.inputs['Vector'].sv_get()
@@ -129,7 +132,10 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
             new_edges = []
             for surface, curves, point, vector in zip_long_repeat(surfaces, curves_i, points, vectors):
                 face_surface = surface_to_freecad(surface) # SvFreeCadNurbsSurface
-                face = self.cut(face_surface, curves, point, vector)
+                if curves:
+                    face = self.cut(face_surface, curves, point, vector)
+                else:
+                    face = face_surface
                 new_faces.append(face)
             faces_out.append(new_faces)
 
