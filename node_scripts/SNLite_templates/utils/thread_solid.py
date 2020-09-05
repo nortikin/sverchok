@@ -15,6 +15,6 @@ from FreeCAD import Base
 import Part
 
 solid_out = []
-solid = Part.makeThread(pitch, depth, height, radius)
+solid = Part.makeThread(pitch_in, depth_in, height_in, radius_in)
 solid_out.append(solid)
 
