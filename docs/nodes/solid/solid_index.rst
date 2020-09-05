@@ -21,6 +21,7 @@ Solid
    offset_solid
    extrude_face
    solidify_face
+   revolve_face
    points_inside_solid
    solid_distance
    slice_solid
