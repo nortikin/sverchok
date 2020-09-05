@@ -20,6 +20,7 @@ Solid
    mirror_solid
    offset_solid
    extrude_face
+   solidify_face
    points_inside_solid
    solid_distance
    slice_solid
