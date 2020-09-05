@@ -35,7 +35,7 @@ class SvSweepSolidFaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSweepSolidFaceNode'
     bl_label = 'Sweep Face (Solid)'
     bl_icon = 'EDGESEL'
-    sv_icon = 'SV_REVOLVE_FACE'
+    sv_icon = 'SV_SWEEP_FACE'
     solid_catergory = "Operators"
 
     use_frenet : BoolProperty(
