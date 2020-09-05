@@ -65,16 +65,16 @@ class SvBezierSplineNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         p = self.inputs.new('SvVerticesSocket', "Start")    # 0
         p.use_prop = True
-        p.prop = (0.0, 0.0, 0.0)
+        p.default_property = (0.0, 0.0, 0.0)
         p = self.inputs.new('SvVerticesSocket', "Control1") # 1
         p.use_prop = True
-        p.prop = (1.0, 1.0, 0.0)
+        p.default_property = (1.0, 1.0, 0.0)
         p = self.inputs.new('SvVerticesSocket', "Control2") # 2
         p.use_prop = True
-        p.prop = (2.0, -1.0, 0.0)
+        p.default_property = (2.0, -1.0, 0.0)
         p = self.inputs.new('SvVerticesSocket', "End")      # 3
         p.use_prop = True
-        p.prop = (3.0, 0.0, 0.0)
+        p.default_property = (3.0, 0.0, 0.0)
         self.inputs.new('SvVerticesSocket', "ControlPoints") # 4
         self.outputs.new('SvCurveSocket', "Curve")
         self.outputs.new('SvVerticesSocket', "ControlPoints")

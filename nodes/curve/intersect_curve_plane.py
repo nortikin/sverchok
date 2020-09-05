@@ -57,10 +57,10 @@ else:
             self.inputs.new('SvCurveSocket', "Curve")
             d = self.inputs.new('SvVerticesSocket', "Point")
             d.use_prop = True
-            d.prop = (0.0, 0.0, 0.0)
+            d.default_proerty = (0.0, 0.0, 0.0)
             d = self.inputs.new('SvVerticesSocket', "Normal")
             d.use_prop = True
-            d.prop = (0.0, 0.0, 1.0)
+            d.default_property = (0.0, 0.0, 1.0)
             self.outputs.new('SvVerticesSocket', "Point")
             self.outputs.new('SvStringsSocket', "T")
 

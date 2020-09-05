@@ -117,6 +117,9 @@ class SvSocketCommon:
         elif self.use_prop and hasattr(self, 'default_property') and self.default_property is not None:
             if isinstance(self.default_property, (str, int, float)):
                 return [[self.default_property]]
+            elif hasattr(self.default_property, '__len__'):
+                # it looks like as some BLender property array - convert to tuple
+                return [[self.default_property[:]]]
             else:
                 return [self.default_property]
         elif default is not sentinel:

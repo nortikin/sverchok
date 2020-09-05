@@ -46,7 +46,7 @@ else:
             self.inputs.new('SvVerticesSocket', "Vertices")
             d = self.inputs.new('SvVerticesSocket', "Center")
             d.use_prop = True
-            d.prop = (0.0, 0.0, 0.0)
+            d.default_property = (0.0, 0.0, 0.0)
             self.inputs.new('SvStringsSocket', "Radius").prop_name = "radius"
 
             self.outputs.new('SvVerticesSocket', "Vertices")

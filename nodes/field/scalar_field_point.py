@@ -53,7 +53,7 @@ class SvScalarFieldPointNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         d = self.inputs.new('SvVerticesSocket', "Center")
         d.use_prop = True
-        d.prop = (0.0, 0.0, 0.0)
+        d.default_property = (0.0, 0.0, 0.0)
 
         self.inputs.new('SvStringsSocket', 'Amplitude').prop_name = 'amplitude'
         self.inputs.new('SvStringsSocket', 'Coefficient').prop_name = 'coefficient'

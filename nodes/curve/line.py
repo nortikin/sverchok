@@ -48,13 +48,13 @@ class SvLineCurveNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         p = self.inputs.new('SvVerticesSocket', "Point1")
         p.use_prop = True
-        p.prop = (0.0, 0.0, 0.0)
+        p.default_property = (0.0, 0.0, 0.0)
         p = self.inputs.new('SvVerticesSocket', "Point2")
         p.use_prop = True
-        p.prop = (1.0, 0.0, 0.0)
+        p.default_property = (1.0, 0.0, 0.0)
         p = self.inputs.new('SvVerticesSocket', "Direction")
         p.use_prop = True
-        p.prop = (1.0, 0.0, 0.0)
+        p.default_property = (1.0, 0.0, 0.0)
         self.inputs.new('SvStringsSocket', "UMin").prop_name = 'u_min'
         self.inputs.new('SvStringsSocket', "UMax").prop_name = 'u_max'
         self.outputs.new('SvCurveSocket', "Curve")

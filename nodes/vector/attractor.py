@@ -89,11 +89,11 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', "Vertices")
         c = self.inputs.new('SvVerticesSocket', "Center")
         c.use_prop = True
-        c.prop = (0.0, 0.0, 0.0)
+        c.default_property = (0.0, 0.0, 0.0)
 
         d = self.inputs.new('SvVerticesSocket', "Direction")
         d.use_prop = True
-        d.prop = (0.0, 0.0, 1.0)
+        d.default_property = (0.0, 0.0, 1.0)
 
         self.inputs.new('SvStringsSocket', 'Amplitude').prop_name = 'amplitude'
         self.inputs.new('SvStringsSocket', 'Coefficient').prop_name = 'coefficient'
