@@ -35,7 +35,7 @@ class SvProjectCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvProjectCurveSurfaceNode'
     bl_label = "Project Curve to Surface (NURBS)"
     bl_icon = 'EDGESEL'
-    sv_icon = 'SV_PROJECT_CUT_FACE'
+    sv_icon = 'SV_PROJECT_CURVE'
 
     @throttled
     def update_sockets(self, context):
