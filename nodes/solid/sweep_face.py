@@ -62,8 +62,8 @@ class SvSweepSolidFaceNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'rotate_face', toggle=True)
 
     def sv_init(self, context):
-        self.inputs.new('SvSurfaceSocket', "SolidFace")
-        self.inputs.new('SvCurveSocket', "Curve")
+        self.inputs.new('SvSurfaceSocket', "Profile")
+        self.inputs.new('SvCurveSocket', "Path")
         self.outputs.new('SvSolidSocket', "Solid")
 
     def make_solid(self, face, path):
@@ -88,9 +88,9 @@ class SvSweepSolidFaceNode(bpy.types.Node, SverchCustomTreeNode):
         if not any(socket.is_linked for socket in self.outputs):
             return
 
-        face_surface_s = self.inputs['SolidFace'].sv_get()
+        face_surface_s = self.inputs['Profile'].sv_get()
         face_surface_s = ensure_nesting_level(face_surface_s, 2, data_types=(SvSurface,))
-        curve_s = self.inputs['Curve'].sv_get()
+        curve_s = self.inputs['Path'].sv_get()
         curve_s = ensure_nesting_level(curve_s, 2, data_types=(SvCurve,))
 
         solid_out = []

@@ -22,6 +22,7 @@ Solid
    extrude_face
    solidify_face
    revolve_face
+   sweep_face
    split_solid
    points_inside_solid
    solid_distance
