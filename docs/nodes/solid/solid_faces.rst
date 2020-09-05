@@ -19,6 +19,8 @@ Outputs
 
 **Outer Wire**: The curves that limit that surfaces. One set of curves for each surface.
 
+**TrimCurves**. Curves in face's U/V parameter space, that limit each face. One set of curves for each surface.
+
 
 Examples
 --------

@@ -10,6 +10,7 @@ Solid
    cylinder_solid
    sphere_solid
    torus_solid
+   polygon_face
    transform_solid
    chamfer_solid
    fillet_solid
