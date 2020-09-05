@@ -114,7 +114,7 @@ class SvSocketCommon:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.get_prop_name():
             return [[getattr(self.node, self.get_prop_name())]]
-        elif self.use_prop and hasattr(self, 'default_property'):
+        elif self.use_prop and hasattr(self, 'default_property') and self.default_property is not None:
             if isinstance(self.default_property, (str, int, float)):
                 return [[self.default_property]]
             else:
@@ -219,37 +219,38 @@ class SvSocketCommon:
             return implicit_conversions.convert(self, source_data)
 
 
-def filter_kinds(self, object):
-    if self.object_kinds in {'ALL', ''}:
-        return True
-
-    if not self.object_kinds:
-        return True
-    kind = self.object_kinds
-    if "," in kind:
-        kinds = kind.split(',')
-        if object.type in set(kinds):
-            return True
-    if object.type == kind:
-        return True
-
 class SvObjectSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvObjectSocket"
     bl_label = "Object Socket"
 
+    def filter_kinds(self, object):
+        """
+        object_kinds could be any of these:
+         [‘MESH’, ‘CURVE’, ‘SURFACE’, ‘META’, ‘FONT’, ‘VOLUME’, ‘ARMATURE’, ‘LATTICE’,
+         ‘EMPTY’, ‘GPENCIL’, ‘CAMERA’, ‘LIGHT’, ‘SPEAKER’, ‘LIGHT_PROBE’, ‘EMPTY’
+
+        for example
+            socket.object_kinds = "MESH"
+        or if you want various kinds
+            socket.object_kinds = "MESH,CURVE"
+        """
+        if self.object_kinds in {'ALL', ''}:
+            return True
+
+        if not self.object_kinds:
+            return True
+        kind = self.object_kinds
+        if "," in kind:
+            kinds = kind.split(',')
+            if object.type in set(kinds):
+                return True
+        if object.type == kind:
+            return True
+
     color = (0.69, 0.74, 0.73, 1.0)
+    use_prop: BoolProperty(default=True)
 
-    """
-    object_kinds could be any of these:
-     [‘MESH’, ‘CURVE’, ‘SURFACE’, ‘META’, ‘FONT’, ‘VOLUME’, ‘ARMATURE’, ‘LATTICE’,
-     ‘EMPTY’, ‘GPENCIL’, ‘CAMERA’, ‘LIGHT’, ‘SPEAKER’, ‘LIGHT_PROBE’, ‘EMPTY’
-
-    for example
-        socket.object_kinds = "MESH"
-    or if you want various kinds
-        socket.object_kinds = "MESH,CURVE"
-    """
-    object_kinds: StringProperty(default='ALL')
+    object_kinds: StringProperty(default='ALL')  # use for filtering objects, see filter_kinds method
     object_ref: StringProperty(update=process_from_socket)
     object_ref_pointer: bpy.props.PointerProperty(
         name="Object Reference",
@@ -260,20 +261,13 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
     @property
     def default_property(self):
         # this can be more granular and even attempt to set object_ref_points from object_ref, and then wipe object_ref
-        obj_ref = self.node.get_bpy_data_from_name(self.object_ref or self.object_ref_pointer, bpy.data.objects)
-        if not obj_ref:
-            raise SvNoDataError(self)
-        return obj_ref
+        return self.node.get_bpy_data_from_name(self.object_ref or self.object_ref_pointer, bpy.data.objects)
 
-    def draw(self, context, layout, node, text):  # todo replace by draw property
-        if self.custom_draw:
-            super().draw(context, layout, node, text)
-        elif not self.is_output and not self.is_linked:
-            layout.prop_search(self, 'object_ref_pointer', bpy.data, 'objects', text=self.name)
-        elif self.is_linked:
-            layout.label(text=text + '. ' + SvGetSocketInfo(self))
+    def draw_property(self, layout, prop_origin=None, prop_name='default_property'):
+        if prop_origin:
+            layout.prop(prop_origin, prop_name)  # need for consistency, probably will never be used
         else:
-            layout.label(text=text)
+            layout.prop_search(self, 'object_ref_pointer', bpy.data, 'objects', text=self.name)
 
 
 class SvTextSocket(NodeSocket, SvSocketCommon):
@@ -283,12 +277,6 @@ class SvTextSocket(NodeSocket, SvSocketCommon):
     color = (0.68,  0.85,  0.90, 1)
 
     default_property: StringProperty(update=process_from_socket)
-
-    def draw(self, context, layout, node, text):  # todo use draw property
-        if self.is_linked and not self.is_output:
-            layout.label(text=text)
-        if not self.is_linked and not self.is_output:
-            layout.prop(self, 'text')
 
 
 class SvMatrixSocket(NodeSocket, SvSocketCommon):
