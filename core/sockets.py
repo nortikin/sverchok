@@ -113,7 +113,14 @@ class SvSocketCommon:
         if self.is_linked and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.get_prop_name():
-            return [[getattr(self.node, self.get_prop_name())]]
+            prop = getattr(self.node, self.get_prop_name())
+            if isinstance(prop, (str, int, float)):
+                return [[prop]]
+            elif hasattr(prop, '__len__'):
+                # it looks like as some BLender property array - convert to tuple
+                return [[prop[:]]]
+            else:
+                return [prop]
         elif self.use_prop and hasattr(self, 'default_property') and self.default_property is not None:
             if isinstance(self.default_property, (str, int, float)):
                 return [[self.default_property]]
