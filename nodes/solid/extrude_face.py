@@ -27,7 +27,7 @@ else:
 class SvSolidFaceExtrudeNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Extrude Solid Face
-    Tooltip: Make a Solid by extruding one face
+    Tooltip: Make a Solid by extruding one face along a vector
     """
     bl_idname = 'SvSolidFaceExtrudeNode'
     bl_label = 'Extrude Face (Solid)'

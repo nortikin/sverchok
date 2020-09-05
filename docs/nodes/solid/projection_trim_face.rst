@@ -23,10 +23,12 @@ This node has the following inputs:
   Surface. The node can use a list of Curves per each Surface. Curves must form
   a precisely closed loop. This input is optional; if it is not connected, then
   the whole surface will be used as a face.
-* **Vector**. Parallel projection vector. This input is available and mandatory
-  only if **Projection** parameter is set to **Parallel**.
-* **Point**. Perspective projection origin point. This input is available and
-  mandatory only if **Projection** parameter is set to **Perspective**.
+* **Vector**. Parallel projection vector. This input is available only if
+  **Projection** parameter is set to **Parallel**. The default value is ``(0,
+  0, -1)`` (down along Z axis).
+* **Point**. Perspective projection origin point. This input is available only
+  if **Projection** parameter is set to **Perspective**. The default value is
+  ``(0, 0, 0)`` (global origin).
 
 Parameters
 ----------
