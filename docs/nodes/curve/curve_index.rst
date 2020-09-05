@@ -59,5 +59,6 @@ Curves
    nearest_point
    rbf_curve
    ortho_project
+   project_curve_surface
    eval_curve
 
