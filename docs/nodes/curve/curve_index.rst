@@ -18,6 +18,7 @@ Curves
    bezier_spline
    tangent_curve
    kinky_curve
+   freecad_helix
    curve_formula
    apply_field_to_curve
    offset_mk2

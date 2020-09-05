@@ -13,7 +13,7 @@ Functionality
 
 This node calculates the projection of a given Curve onto given Surface. Several types of projections are available.
 
-**NOTE**: This node can work with NURBS and NURBS-like curves and surfaces only.
+**NOTE**: This node can work with NURBS and NURBS-like curves and surfaces only. Output curves are always NURBS.
 
 Inputs
 ------

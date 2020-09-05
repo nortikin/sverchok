@@ -50,7 +50,7 @@ def make_helix(pitch, height, radius, apex_angle=0):
     # turns as necessary.
     wire = Part.makeHelix(pitch, height, radius, apex_angle)
     fc_edge = wire.Edges[0]
-    curve = SvSolidEdgeCurve(fc_edge).to_nurbs()
+    curve = SvSolidEdgeCurve(fc_edge)
     return curve
 
 class SvSolidEdgeCurve(SvCurve):
