@@ -17,18 +17,11 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import math
-
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty
 from bpy.types import NodeSocket
 
-from sverchok.core.socket_conversions import (
-        DefaultImplicitConversionPolicy,
-        FieldImplicitConversionPolicy,
-        is_vector_to_matrix
-    )
-
+from sverchok.core.socket_conversions import ConversionPolicies, is_vector_to_matrix
 from sverchok.core.socket_data import (
     SvGetSocketInfo, SvGetSocket, SvSetSocket, SvForgetSocket,
     SvNoDataError, sentinel)
@@ -113,12 +106,11 @@ class SvSocketCommon:
         """
         if implicit_conversions is None:
             if hasattr(self, 'default_conversion_name'):
-                pass  # todo
+                implicit_conversions = ConversionPolicies.get_conversion(self.default_conversion_name)
             else:
-                implicit_conversions = DefaultImplicitConversionPolicy
+                implicit_conversions = ConversionPolicies.DEFAULT.conversion
 
         if self.is_linked and not self.is_output:
-            # todo if need conversion deep copy?
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.get_prop_name():
             return [[getattr(self.node, self.get_prop_name())]]
@@ -219,12 +211,10 @@ class SvSocketCommon:
             return False
         return self.other.bl_idname != self.bl_idname
 
-    def convert_data(self, source_data, implicit_conversions=None):
+    def convert_data(self, source_data, implicit_conversions=ConversionPolicies.DEFAULT.conversion):
         if not self.needs_data_conversion():
             return source_data
         else:
-            if implicit_conversions is None:
-                implicit_conversions = DefaultImplicitConversionPolicy
             self.node.debug(f"Trying to convert data for input socket {self.name} by {implicit_conversions}")
             return implicit_conversions.convert(self, source_data)
 
@@ -517,7 +507,7 @@ class SvScalarFieldSocket(NodeSocket, SvSocketCommon):
     bl_label = "Scalar Field Socket"
 
     color = (0.9, 0.4, 0.1, 1.0)
-    default_conversion_name = 'FieldImplicitConversionPolicy'  # todo using Enum?
+    default_conversion_name = ConversionPolicies.FIELD.conversion_name
 
 
 class SvVectorFieldSocket(NodeSocket, SvSocketCommon):
@@ -525,7 +515,7 @@ class SvVectorFieldSocket(NodeSocket, SvSocketCommon):
     bl_label = "Vector Field Socket"
 
     color = (0.1, 0.1, 0.9, 1.0)
-    default_conversion_name = 'FieldImplicitConversionPolicy'  # todo using Enum?
+    default_conversion_name = ConversionPolicies.FIELD.conversion_name
 
 
 class SvSolidSocket(NodeSocket, SvSocketCommon):
