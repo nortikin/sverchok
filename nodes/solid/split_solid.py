@@ -24,9 +24,9 @@ else:
     import Part
     from FreeCAD import Base
 
-def make_solids(solid, face_surface):
-    face = face_surface.face
-    result, map = solid.generalFuse([face])
+def make_solids(solid, face_surfaces):
+    faces = [face_surface.face for face_surface in face_surfaces]
+    result, map = solid.generalFuse(faces)
     solids = map[0]
     if not solids:
         solids = result.Solids
@@ -53,17 +53,18 @@ class SvSplitSolidNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         face_surfaces_s = self.inputs['SolidFace'].sv_get()
-        face_surfaces_s = ensure_nesting_level(face_surfaces_s, 2, data_types=(SvSurface,))
+        face_surfaces_s = ensure_nesting_level(face_surfaces_s, 3, data_types=(SvSurface,))
         solids_s = self.inputs['Solid'].sv_get()
         solids_s = ensure_nesting_level(solids_s, 2, data_types=(Part.Shape,))
 
         solids_out = []
-        for solids, face_surfaces in zip_long_repeat(solids_s, face_surfaces_s):
-            for solid, face_surface in zip_long_repeat(solids, face_surfaces):
-                if not is_solid_face_surface(face_surface):
-                    face_surface = surface_to_freecad(face_surface, make_face=True) # SvFreeCadNurbsSurface
+        for solids, face_surfaces_i in zip_long_repeat(solids_s, face_surfaces_s):
+            for solid, face_surfaces in zip_long_repeat(solids, face_surfaces_i):
+                for i in range(len(face_surfaces)):
+                    if not is_solid_face_surface(face_surfaces[i]):
+                        face_surfaces[i] = surface_to_freecad(face_surfaces[i], make_face=True) # SvFreeCadNurbsSurface
 
-                new_solids = make_solids(solid, face_surface)
+                new_solids = make_solids(solid, face_surfaces)
                 solids_out.append(new_solids)
 
         self.outputs['Solids'].sv_set(solids_out)
