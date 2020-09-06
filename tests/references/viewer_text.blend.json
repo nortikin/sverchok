@@ -10,32 +10,6 @@
         0.5,
         0.5
       ],
-      "custom_socket_props": {
-        "0": {
-          "prop_name": "radius_t"
-        },
-        "1": {
-          "prop_name": "radius_b"
-        },
-        "2": {
-          "prop_name": "parallels"
-        },
-        "3": {
-          "prop_name": "meridians"
-        },
-        "4": {
-          "prop_name": "height"
-        },
-        "5": {
-          "prop_name": "twist"
-        },
-        "6": {
-          "prop_name": "phase"
-        },
-        "7": {
-          "prop_name": "scale"
-        }
-      },
       "height": 2.0,
       "hide": false,
       "label": "",

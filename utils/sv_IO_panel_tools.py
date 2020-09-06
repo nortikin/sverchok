@@ -159,6 +159,9 @@ def collect_custom_socket_properties(node, node_dict):
         filtered_properties = dict()
         for prop_name in socket.keys():
             # Don't use socket.items() because enum property value will be index instead of string
+            if prop_name in socket.properties_to_skip_iojson:
+                # socket itself know which property useless to memorize
+                continue
             if hasattr(socket, prop_name):
                 # Some old files can have nodes with sockets with keys which do not exist anymore
                 # such keys can be ignored

@@ -227,6 +227,21 @@ class SvSocketCommon:
                     f"Cause is '{e}'")
             self.objects_number = 0
 
+    @property
+    def properties_to_skip_iojson(self):
+        """
+        Used during serialization process
+        Should be overridden in this way: return super().properties_to_skip_iojson + ['my_property']
+        """
+        skip_serialization_attributes = {
+            # all this attributes can be skipped because they are static, they are always set only in sv_init method
+            # but the attribute should be removed from this list if its value is changed outside sv_init method
+            'quick_link_to_node', 'custom_draw', 'prop_name', 'use_prop',
+            # utils attributes, Sverchok itself knows what to put in them
+            'objects_number'
+        }
+        return skip_serialization_attributes
+
 
 class SvObjectSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvObjectSocket"
