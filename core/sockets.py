@@ -21,12 +21,13 @@ import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty
 from bpy.types import NodeSocket
 
-from sverchok.core.socket_conversions import ConversionPolicies, is_vector_to_matrix
+from sverchok.core.socket_conversions import ConversionPolicies
 from sverchok.core.socket_data import (
     SvGetSocketInfo, SvGetSocket, SvSetSocket, SvForgetSocket,
     SvNoDataError, sentinel)
 
 from sverchok.data_structure import get_other_socket, replace_socket
+from sverchok.utils.logging import warning
 
 
 def process_from_socket(self, context):
@@ -42,6 +43,8 @@ class SvSocketCommon:
     use_prop: BoolProperty(default=False)  # set True to use default socket property if it has got it
     custom_draw: StringProperty(description="For name of method which will draw socket UI (optionally)")
     prop_name: StringProperty(default='', description="For displaying node property in socket UI")
+
+    objects_number: IntProperty(min=0)  # utility field for showing number of objects in sockets data
 
     def get_prop_name(self):
         if hasattr(self.node, 'missing_dependecy'):
@@ -147,18 +150,6 @@ class SvSocketCommon:
         return the new socket, the old reference might be invalid"""
         return replace_socket(self, new_type, new_name)
 
-    @property
-    def extra_info(self):
-        # print("getting base extra info")
-        return ""
-
-    def get_socket_info(self):
-        """ Return Number of encapsulated data lists, or empty str  """
-        try:
-            return SvGetSocketInfo(self)
-        except:
-            return ''
-
     def draw_property(self, layout, prop_origin=None, prop_name='default_property'):
         """
         This method can be overridden for showing property in another way
@@ -181,23 +172,14 @@ class SvSocketCommon:
     def draw(self, context, layout, node, text):
 
         # just handle custom draw..be it input or output.
-        # hasattr may be excessive here
-        if hasattr(self, 'custom_draw') and self.custom_draw:
+        if self.custom_draw:
             # does the node have the draw function referred to by
             # the string stored in socket's custom_draw attribute
             if hasattr(node, self.custom_draw):
                 getattr(node, self.custom_draw)(self, context, layout)
-                return
 
-        if self.is_linked:  # linked INPUT or OUTPUT
-            t = text
-            if not self.is_output:
-                if self.get_prop_name():
-                    prop = node.rna_type.properties.get(self.get_prop_name(), None)
-                    t = prop.name if prop else text
-            info_text = t + '. ' + SvGetSocketInfo(self)
-            info_text += self.extra_info
-            layout.label(text=info_text)
+        elif self.is_linked:  # linked INPUT or OUTPUT
+            layout.label(text=text + f". {self.objects_number or ''}")
 
         elif self.is_output:  # unlinked OUTPUT
             layout.label(text=text)
@@ -227,6 +209,23 @@ class SvSocketCommon:
         else:
             self.node.debug(f"Trying to convert data for input socket {self.name} by {implicit_conversions}")
             return implicit_conversions.convert(self, source_data)
+
+    def update_objects_number(self):
+        """
+        Should be called each time after process method of the socket owner
+        It will update number of objects to show in socket labels
+        """
+        try:
+            if self.is_output:
+                objects_info = SvGetSocketInfo(self)
+                self.objects_number = int(objects_info) if objects_info else 0
+            else:
+                data = self.sv_get(deepcopy=False, default=[])
+                self.objects_number = len(data) if data else 0
+        except Exception as e:
+            warning(f"Socket='{self.name}' of node='{self.node.name}' can't update number of objects on the label. "
+                    f"Cause is '{e}'")
+            self.objects_number = 0
 
 
 class SvObjectSocket(NodeSocket, SvSocketCommon):
@@ -297,17 +296,6 @@ class SvMatrixSocket(NodeSocket, SvSocketCommon):
 
     color = (0.2, 0.8, 0.8, 1.0)
     quick_link_to_node = 'SvMatrixInNodeMK4'
-
-    num_matrices: IntProperty(default=0)  # todo after number of layers refactoring
-
-    @property
-    def extra_info(self):
-        # print("getting matrix extra info")
-        info = ""
-        if is_vector_to_matrix(self):
-            info = (" (" + str(self.num_matrices) + ")")
-
-        return info
 
 
 class SvVerticesSocket(NodeSocket, SvSocketCommon):
