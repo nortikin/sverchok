@@ -47,6 +47,11 @@ class SvSocketCommon:
     objects_number: IntProperty(min=0)  # utility field for showing number of objects in sockets data
 
     def get_prop_name(self):
+        """
+        Intended to return name of property related with socket owned by its node
+        Name can be replaced by twin property name in draft mode of a tree
+        If does not have 'missing_dependecy' attribute it can return empty list, reasons unknown
+        """
         if hasattr(self.node, 'missing_dependecy'):
             return []
         if self.node and hasattr(self.node, 'does_support_draft_mode') and self.node.does_support_draft_mode() and hasattr(self.node.id_data, 'sv_draft') and self.node.id_data.sv_draft:
@@ -60,6 +65,7 @@ class SvSocketCommon:
 
     @property
     def other(self):
+        """Returns opposite liked socket, if socket is outputs it will return one random opposite linked socket"""
         return get_other_socket(self)
 
     @property
@@ -69,7 +75,7 @@ class SvSocketCommon:
 
     @property
     def index(self):
-        """Index of socket"""
+        """Index of socket, hidden sockets are also taken into account"""
         node = self.node
         sockets = node.outputs if self.is_output else node.inputs
         for i, s in enumerate(sockets):
@@ -78,6 +84,7 @@ class SvSocketCommon:
 
     @property
     def hide_safe(self):
+        """It will hide even linked sockets"""
         return self.hide
 
     @hide_safe.setter
@@ -199,6 +206,7 @@ class SvSocketCommon:
         return self.color
 
     def needs_data_conversion(self):
+        """True if other socket has got different type"""
         if not self.is_linked:
             return False
         return self.other.bl_idname != self.bl_idname
