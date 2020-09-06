@@ -393,7 +393,8 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             gather({"name" : node_name, "bl_idname": node.bl_idname, "start": start, "duration": delta})
 
             # probably it's not grate place for doing it
-            [s.update_objects_number() for s in chain(node.inputs, node.outputs)]
+            # reroute nodes can be in node variable
+            [s.update_objects_number() for s in chain(node.inputs, node.outputs) if hasattr(s, 'update_objects_number')]
 
         except Exception as err:
             ng = nodes.id_data
