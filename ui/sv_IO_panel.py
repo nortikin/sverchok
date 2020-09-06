@@ -18,105 +18,83 @@
 
 
 import bpy
-from sverchok.node_tree import SverchCustomTree
-from sverchok.node_tree import SverchCustomTreeNode
 
-from sverchok.utils.sv_IO_panel_tools import (
-    _EXPORTER_REVISION_,
-    get_file_obj_from_zip,
-    find_enumerators,
-    compile_socket, write_json,
-    has_state_switch_protection,
-    create_dict_of_tree, import_tree)
+from sverchok.utils.sv_IO_panel_tools import _EXPORTER_REVISION_
 
 
-class SV_PT_IOLayoutsMenu(bpy.types.Panel):
-    bl_idname = "SV_PT_IOLayoutsMenu"
-    bl_label = "SV import/export"
+class ExportImportPanels:
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = 'Sverchok'
-    bl_options = {'DEFAULT_CLOSED'}
-    use_pin = True
 
     @classmethod
     def poll(cls, context):
-        try:
-            return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
-        except:
-            return False
+        return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
+
+
+class SV_PT_IOLayoutsMenu(ExportImportPanels, bpy.types.Panel):
+    bl_idname = "SV_PT_IOLayoutsMenu"
+    bl_label = ""
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_header(self, context):
+        self.layout.label(text=f"SV Import/Export  (v {_EXPORTER_REVISION_})")
 
     def draw(self, context):
-        layout = self.layout
+        pass
+
+
+class SV_PT_IOExportMenu(ExportImportPanels, bpy.types.Panel):
+    bl_idname = "SV_PT_IOExportMenu"
+    bl_category = 'Sverchok'
+    bl_parent_id = 'SV_PT_IOLayoutsMenu'
+
+    def draw(self, context):
         ntree = context.space_data.node_tree
-        row = layout.row(align=True)
-        row.scale_y = 0.5
-        row.label(text=_EXPORTER_REVISION_)
-
-        box = layout.box()
         io_props = ntree.io_panel_properties
-        type_display = io_props.io_options_enum
-        box.row(align=True).prop(io_props, 'io_options_enum', expand=True)
 
-        if type_display == 'Export':
-            ''' export '''
+        col = self.layout.column(heading="Options")
 
-            col = box.column(align=True)
-            col.prop(io_props, 'export_selected_only', toggle=True)
+        imp = col.operator('node.tree_exporter', text='Export to JSON', icon='FILE_BACKUP')
+        imp.id_tree = ntree.name
+        imp.compress = io_props.compress_output
 
-            row1 = col.row(align=True)
-            row1.scale_y = 1.4
-            row1.prop(io_props, 'compress_output', text='Zip', toggle=True)
-            imp = row1.operator('node.tree_exporter', text='Export', icon='FILE_BACKUP')
-            imp.id_tree = ntree.name
-            imp.compress = io_props.compress_output
+        exp = col.operator('node.tree_export_to_gist', text='Export to gist', icon='URL')
+        exp.selected_only = io_props.export_selected_only
 
-            row1b = col.row(align=True)
-            exp = row1b.operator('node.tree_export_to_gist', text='Export to gist', icon='URL')
-            exp.selected_only = io_props.export_selected_only
+        col.operator('node.blend_to_archive', text='Archive .blend as .zip').archive_ext = 'zip'
+        col.operator('node.blend_to_archive', text='Archive .blend as .gz').archive_ext = 'gz'
 
-            ziprow = col.row(align=True)
-            ziprow.label(text='Archive .blend as')
-            ziprow.operator('node.blend_to_archive', text='.zip').archive_ext = 'zip'
-            ziprow.operator('node.blend_to_archive', text='.gz').archive_ext = 'gz'
-
-        else:
-            ''' import '''
-            col = box.column(align=True)
-            row3 = col.row(align=True)
-            row3.scale_y = 1
-            row3.prop(io_props, 'new_nodetree_name', text='')
-            row2 = col.row(align=True)
-            row2.scale_y = 1.2
-            exp1 = row2.operator('node.tree_importer', text='Here', icon='RNA')
-            exp1.id_tree = ntree.name
-
-            exp2 = row2.operator('node.tree_importer', text='New', icon='RNA_ADD')
-            exp2.id_tree = ''
-            exp2.new_nodetree_name = io_props.new_nodetree_name
-
-            # ''' import into from json '''
-            row4 = col.row(align=True)
-            #row4.prop(io_props, "gist_id", text='')
-            #exp4 = row4.operator(
-            #    'node.tree_import_from_gist',
-            #    text='Import',
-            #    icon='RNA_ADD')
-            #exp4.gist_id = io_props.gist_id
-            #exp4.id_tree = ntree.name
-            #row4.separator()
-            exp5 = row4.operator('node.tree_import_from_gist', text='from gist link', icon='URL')
-            exp5.gist_id = 'clipboard'
-            exp5.id_tree = ntree.name
+        col.use_property_split = True
+        col.prop(io_props, 'export_selected_only')
+        col.prop(io_props, 'compress_output', text='Zip')
 
 
-def register():
-    bpy.utils.register_class(SV_PT_IOLayoutsMenu)
+class SV_PT_IOImportMenu(ExportImportPanels, bpy.types.Panel):
+    bl_idname = "SV_PT_IOImportMenu"
+    bl_label = "Import"
+    bl_parent_id = 'SV_PT_IOLayoutsMenu'
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        ntree = context.space_data.node_tree
+        io_props = ntree.io_panel_properties
+
+        col = self.layout.column()
+
+        op = col.operator('node.tree_import_from_gist', text='from gist link', icon='URL')
+        op.gist_id = 'clipboard'
+        op.id_tree = ntree.name
+
+        op = col.operator('node.tree_importer', text='Import into this tree', icon='RNA')
+        op.id_tree = ntree.name
+
+        op = col.operator('node.tree_importer', text='Import into new tree', icon='RNA_ADD')
+        op.id_tree = ''
+        op.new_nodetree_name = io_props.new_nodetree_name
+
+        col.use_property_split = True
+        col.prop(io_props, 'new_nodetree_name', text='Tree name:')
 
 
-def unregister():
-    bpy.utils.unregister_class(SV_PT_IOLayoutsMenu)
-
-
-if __name__ == '__main__':
-    register()
+register, unregister = bpy.utils.register_classes_factory([SV_PT_IOLayoutsMenu, SV_PT_IOExportMenu, SV_PT_IOImportMenu])

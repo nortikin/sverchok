@@ -15,12 +15,13 @@ class SvIOPanelProperties(bpy.types.PropertyGroup):
 
     new_nodetree_name: StringProperty(
         name='new_nodetree_name',
-        default="Imported_name",
+        default="Imported tree",
         description="The name to give the new NodeTree, defaults to: Imported")
 
     compress_output: BoolProperty(
         default=0,
         name='compress_output',
+        options={'HIDDEN'},
         description='option to also compress the json, will generate both')
 
     gist_id: StringProperty(
@@ -28,13 +29,9 @@ class SvIOPanelProperties(bpy.types.PropertyGroup):
         default="Enter Gist ID here",
         description="This gist ID will be used to obtain the RAW .json from github")
 
-    io_options_enum: EnumProperty(
-        items=[("Import", "Import", "", 0), ("Export", "Export", "", 1)],
-        description="display import or export",
-        default="Export")
-
     export_selected_only: BoolProperty(
         name="Selected Only",
+        options={'HIDDEN'},
         description="Export selected nodes only",
         default=False)
 
