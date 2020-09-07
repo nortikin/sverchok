@@ -155,9 +155,11 @@ class SvFreeCadNurbsSurface(SvNurbsSurface):
 
     @classmethod
     def build(cls, implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights=None, normalize_knots=False):
+        control_points = np.asarray(control_points)
         m,n,_ = control_points.shape
         if weights is None:
             weights = np.ones((m,n))
+        weights = np.asarray(weights)
         if normalize_knots:
             knotvector_u = sv_knotvector.normalize(knotvector_u)
             knotvector_v = sv_knotvector.normalize(knotvector_v)
