@@ -126,6 +126,10 @@ else:
                                     message = repr(result)
                                 raise Exception("Can't find the nearest point for {}: {}".format(src_point, message))
                             t0 = result.x
+                            if t0 < t_min:
+                                t0 = t_min
+                            elif t0 > t_max:
+                                t0 = t_max
                         else:
                             t0 = init_t
                             new_points.append(init_point)
