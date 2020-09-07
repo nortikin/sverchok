@@ -31,9 +31,9 @@ def make_solids(solid, face_surfaces):
     if not solids:
         solids = result.Solids
     cut_faces = []
-    for lst in map[1:]:
+    for per_input_face in map[1:]:
         item = []
-        for shape in lst:
+        for shape in per_input_face:
             if isinstance(shape, Part.Face):
                 cut_face = SvSolidFaceSurface(shape).to_nurbs()
                 item.append(cut_face)
