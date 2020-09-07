@@ -26,8 +26,6 @@ from sverchok.utils import profile
 from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.ui.development import displaying_sverchok_nodes
 
-ui_tooltip = "node.sv_generic_ui_tooltip"
-
 objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3', 'SvExNurbsInNode', 'SvBezierInNode'}
 
 def redraw_panels():
@@ -83,7 +81,7 @@ class SvToggleDraft(bpy.types.Operator):
         return {'FINISHED'}
 
 class SvRemoveStaleDrawCallbacks(bpy.types.Operator):
-
+    """This will clear the opengl drawing if Sverchok didn't manage to correctly clear it on its own"""
     bl_idname = "node.remove_stale_draw_callbacks"
     bl_label = "Remove Stale drawing"
 
@@ -175,16 +173,6 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
         wm = context.window_manager
         wm.event_timer_remove(self._timer)
         self.report({'INFO'}, "Live Update mode disabled")
-
-
-class SvGenericUITooltipOperator(bpy.types.Operator):
-    arg: StringProperty()
-    bl_idname = "node.sv_generic_ui_tooltip"
-    bl_label = "tip"
-
-    @classmethod
-    def description(cls, context, properties):
-        return properties.arg
 
 
 class SV_PT_3DPanel(bpy.types.Panel):
@@ -290,103 +278,23 @@ class SV_PT_3DPanel(bpy.types.Panel):
                         node.draw_buttons_3dpanel(col)
 
 
-class SV_PT_ToolsMenu(bpy.types.Panel):
-    bl_idname = "SV_PT_ToolsMenu"
-    bl_label = "SV " + version_and_sha
+class SverchokPanels:
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = 'Sverchok'
-    use_pin = True
 
     @classmethod
     def poll(cls, context):
         try:
-            return context.space_data.edit_tree.bl_idname == 'SverchCustomTreeType'
-        except:
+            return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
+        except AttributeError:
             return False
 
-    def draw_profiling_info_if_needed(self, layout, addon):
-        if addon.preferences.profile_mode != "NONE":
-            profile_col = layout.column(align=True)
 
-            if profile.is_currently_enabled:
-                profile_col.operator("node.sverchok_profile_toggle", text="Stop profiling", icon="CANCEL")
-            else:
-                profile_col.operator("node.sverchok_profile_toggle", text="Start profiling", icon="TIME")
-
-            if profile.have_gathered_stats():
-                row = profile_col.row(align=True)
-                row.operator("node.sverchok_profile_dump", text="Dump data", icon="TEXT")
-                row.operator("node.sverchok_profile_save", text="Save data", icon="FILE_TICK")
-                profile_col.operator("node.sverchok_profile_reset", text="Reset data", icon="X")
-
-    def draw_interaction_template(self, layout):
-        col = box.column(align=True)
-        row = col.row(align=True)
-        row.label(text='Layout')
-
-        col0 = row.column(align=True)
-        col0.scale_x = little_width
-        col0.label(text='B')
-
-        col1 = row.column(align=True)
-        col1.scale_x = little_width
-        col1.label(icon='RESTRICT_VIEW_OFF', text=' ')
-
-        col2 = row.column(align=True)
-        col2.scale_x = little_width
-        col2.label(icon='ANIM', text=' ')
-
-        col3 = row.column(align=True)
-        col3.scale_x = little_width
-        col3.label(text='P')
-
-        col4 = row.column(align=True)
-        col4.scale_x = little_width
-        col4.label(text='D')
-
-        col5 = row.column(align=True)
-        col5.scale_x = little_width
-        col5.label(text='F')
-
-    def draw_nodetree_props(self, layout, ng):
-        box = layout.box()
-        triangle = "TRIA_UP" if bpy.context.scene.sv_toggle_node_tree_props else "TRIA_DOWN"
-        row = box.row()
-        row.label(text=f"Active Tree: {ng.name}")
-        row.prop(bpy.context.scene, "sv_toggle_node_tree_props", text="", icon=triangle)
-
-        if bpy.context.scene.sv_toggle_node_tree_props:
-            col = box.column()
-            
-            row = col.row()
-            row.prop(ng, "sv_show_error_in_tree", icon="CONSOLE")
-            tooltip_exception = "This will show Node Exceptions in the 3dview, right beside the node"
-            row.operator(ui_tooltip, text="", icon="QUESTION").arg = tooltip_exception
-
-            row = col.row()
-            row.label(text="Eval dir")
-            row.prop(ng, "sv_subtree_evaluation_order", expand=True)
-            tooltip_eval_order = "This will give you control over the order in which subset graphs are evaluated"
-            row.operator(ui_tooltip, text="", icon="QUESTION").arg = tooltip_eval_order
-            
-            row = col.row()
-            row.operator('node.remove_stale_draw_callbacks')
-            tooltip_gl_purge = "This will clear the opengl drawing if Sverchok didn't manage to correctly clear it on its own"
-            row.operator(ui_tooltip, text="", icon="QUESTION").arg = tooltip_gl_purge
-
-    def draw_general_sverchok_features(self, layout, context):
-        box_layout = layout.box()
-        box_layout.label(text="General Sverchok utils")
-        if context.scene.sv_new_version:
-            row = box_layout.row()
-            row.alert = True
-            row.operator(
-                "node.sverchok_update_addon", text='Upgrade Sverchok addon')
-        else:
-            sha_update = "node.sverchok_check_for_upgrades_wsha"
-            box_layout.row().operator(sha_update, text='Check for updates')
-        box_layout.row().operator('node.sv_show_latest_commits')
+class SV_PT_ToolsMenu(SverchokPanels, bpy.types.Panel):
+    bl_idname = "SV_PT_ToolsMenu"
+    bl_label = f"Tree properties ({version_and_sha})"
+    use_pin = True
 
     def draw(self, context):
 
@@ -396,10 +304,6 @@ class SV_PT_ToolsMenu(bpy.types.Panel):
         layout.active = True
 
         little_width = 0.32
-
-        addon = context.preferences.addons.get(sverchok.__name__)
-
-        self.draw_profiling_info_if_needed(layout, addon)
 
         row = layout.row(align=True)
         col = row.column(align=True)
@@ -485,9 +389,69 @@ class SV_PT_ToolsMenu(bpy.types.Panel):
                 split.scale_x = little_width
                 split.prop(tree, 'use_fake_user', toggle=True, text='F')
 
-        self.draw_nodetree_props(layout, ng)
-        self.draw_general_sverchok_features(layout, context)
 
+class SV_PT_ActiveTreePanel(SverchokPanels, bpy.types.Panel):
+    bl_idname = "SV_PT_ActiveTreePanel"
+    bl_label = "Properties"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = 'SV_PT_ToolsMenu'
+
+    def draw_header(self, context):
+        ng = context.space_data.node_tree
+        self.layout.label(text=f"{ng.name}")
+
+    def draw(self, context):
+        ng = context.space_data.node_tree
+        col = self.layout.column()
+
+        col.operator('node.remove_stale_draw_callbacks')
+
+        col.use_property_split = True
+        col.prop(ng, "sv_show_error_in_tree")
+        col.prop(ng, "sv_subtree_evaluation_order", text="Eval order")
+
+
+class SV_PT_ProfilingPanel(SverchokPanels, bpy.types.Panel):
+    bl_idname = "SV_PT_ProfilingPanel"
+    bl_label = "Tree profiling"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = 'SV_PT_ToolsMenu'
+
+    def draw(self, context):
+        addon = context.preferences.addons.get(sverchok.__name__)
+        col = self.layout.column()
+
+        col.use_property_split = True
+        col.prop(addon.preferences, 'profile_mode')
+
+        col_start_profiling = col.column()
+        col_start_profiling.active = addon.preferences.profile_mode != "NONE"
+        if profile.is_currently_enabled:
+            col_start_profiling.operator("node.sverchok_profile_toggle", text="Stop profiling", icon="CANCEL")
+        else:
+            col_start_profiling.operator("node.sverchok_profile_toggle", text="Start profiling", icon="TIME")
+
+        col_save = col.column()
+        col_save.active = profile.have_gathered_stats()
+        col_save.operator("node.sverchok_profile_dump", text="Dump data", icon="TEXT")
+        col_save.operator("node.sverchok_profile_save", text="Save data", icon="FILE_TICK")
+        col_save.operator("node.sverchok_profile_reset", text="Reset data", icon="X")
+
+
+class SV_PT_SverchokUtilsPanel(SverchokPanels, bpy.types.Panel):
+    bl_idname = "SV_PT_SverchokUtilsPanel"
+    bl_label = "General Utils"
+
+    def draw(self, context):
+        col = self.layout.column()
+        col.operator('node.sv_show_latest_commits')
+
+        if context.scene.sv_new_version:
+            col_alert = self.layout.column()
+            col_alert.alert = True
+            col_alert.operator("node.sverchok_update_addon", text='Upgrade Sverchok addon')
+        else:
+            col.operator("node.sverchok_check_for_upgrades_wsha", text='Check for updates')
 
 
 def node_show_tree_mode(self, context):
@@ -520,7 +484,9 @@ sv_tools_classes = [
     SvRemoveStaleDrawCallbacks,
     SvToggleProcess,
     SvToggleDraft,
-    SvGenericUITooltipOperator
+    SV_PT_ActiveTreePanel,
+    SV_PT_ProfilingPanel,
+    SV_PT_SverchokUtilsPanel
 ]
 
 
@@ -535,9 +501,6 @@ def register():
         default=False,
         description='Allows updates directly to object-in nodes from 3d panel')
 
-    bpy.types.Scene.sv_toggle_node_tree_props = BoolProperty(name="Toggle visibility of tree props",
-                                                             description="Show more properties for this node tree")
-
     for class_name in sv_tools_classes:
         bpy.utils.register_class(class_name)
 
@@ -548,7 +511,6 @@ def unregister():
     for class_name in reversed(sv_tools_classes):
         bpy.utils.unregister_class(class_name)
 
-    del bpy.types.Scene.sv_toggle_node_tree_props
     del bpy.types.NodeTree.SvShowIn3D
     del bpy.types.Scene.SvShowIn3D_active
     bpy.types.NODE_HT_header.remove(node_show_tree_mode)

@@ -220,18 +220,19 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     # option whether error message of nodes should be shown in tree space or not
     # for showing error message all tree should be reevaluated what is not nice
     sv_show_error_in_tree: BoolProperty(
-        description="use bgl to draw the error to the nodeview",
-        name="Show error in tree", default=False, update=lambda s, c: process_tree(s))
+        description="This will show Node Exceptions in the 3dview, right beside the node",
+        name="Show error in tree", default=False, update=lambda s, c: process_tree(s), options=set())
 
     # if several nodes are disconnected this option determine order of their evaluation
     sv_subtree_evaluation_order: EnumProperty(
         name="Subtree eval order",
         items=[(k, k, '', i) for i, k in enumerate(["X", "Y", "None"])],
         description=textwrap.dedent("""\
+            This will give you control over the order in which subset graphs are evaluated
             1) X, Y modes evaluate subtrees in sequence of lowest absolute node location, useful when working with real geometry
             2) None does no sorting
         """),
-        default="None", update=lambda s, c: process_tree(s)
+        default="None", update=lambda s, c: process_tree(s), options=set()
     )
 
     # this mode will replace properties of some nodes so they could have lesser values for draft mode

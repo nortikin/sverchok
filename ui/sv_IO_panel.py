@@ -29,16 +29,16 @@ class ExportImportPanels:
 
     @classmethod
     def poll(cls, context):
-        return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
+        try:
+            return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
+        except AttributeError:
+            return False
 
 
 class SV_PT_IOLayoutsMenu(ExportImportPanels, bpy.types.Panel):
     bl_idname = "SV_PT_IOLayoutsMenu"
-    bl_label = ""
+    bl_label = f"Import/Export  (v {_EXPORTER_REVISION_})"
     bl_options = {'DEFAULT_CLOSED'}
-
-    def draw_header(self, context):
-        self.layout.label(text=f"SV Import/Export  (v {_EXPORTER_REVISION_})")
 
     def draw(self, context):
         pass
@@ -46,6 +46,7 @@ class SV_PT_IOLayoutsMenu(ExportImportPanels, bpy.types.Panel):
 
 class SV_PT_IOExportMenu(ExportImportPanels, bpy.types.Panel):
     bl_idname = "SV_PT_IOExportMenu"
+    bl_label = "Export"
     bl_category = 'Sverchok'
     bl_parent_id = 'SV_PT_IOLayoutsMenu'
 
