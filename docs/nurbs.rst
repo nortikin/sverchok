@@ -21,8 +21,15 @@ At the moment, Sverchok supports two implementations of NURBS mathematics:
 * Built-in (native) implementation in Sverchok itself. In many cases, it is
   faster than Geomdl implementation, and it does not require any additional
   dependencies.
+* FreeCAD_ libraries. FreeCAD uses OpenCASCADE kernel, which is implemented in
+  C++, so it is faster than Geomdl implementation; it is also considered to be
+  more widely tested compared to Sverchok built-in implementation. However, it
+  is in general slower comparing to built-in implementation, when you want to
+  evaluate a lot of points on one curve or surface. Please refer to
+  Dependencies_ wiki page for installation instructions.
 
 .. _Geomdl: https://onurraufbingol.com/NURBS-Python/
+.. _FreeCAD: https://www.freecadweb.org/
 .. _Dependencies: https://github.com/nortikin/sverchok/wiki/Dependencies
 
 Terminology
@@ -38,6 +45,10 @@ for reference.
   common shape of the curve or surface. In general, NURBS curve / surface does
   not go through it's control points, apart of some special cases. NURBS
   surfaces always have a rectangular grid of control points (m x n).
+* **Control Polygon** (for a curve): a polygon composed from control points of
+  a curve, connected with edges.
+* **Control Net** (for a surface): a grid-like mesh, composed from control
+  points of a surface, connected with edges.
 * **Weight**: a number, usually positive, which defines how strong a given
   control point "attracts" the curve or surface. Sverchok can work with
   negative weights usually, but there is a lot of software that can't, so
@@ -59,7 +70,7 @@ for reference.
   affects the shape of curve of surface, so for details please refer to the
   literature. Each number in the knot vector is called **knot**. Knot vector of
   a NURBS curve with degree **p** and **n** control points always must contain
-  **p + n + 1** knots. NURBS surfaces have two knot vectors: one for U
+  exactly **p + n + 1** knots. NURBS surfaces have two knot vectors: one for U
   parameter and one for V.
 * **Knot multiplicity**. A number of times one knot is repeated in the knot
   vector. For example, if we have a knot vector ``0 1 2 2 2 3 4 5``, then we
@@ -83,14 +94,15 @@ for reference.
   clamped uniform knot vector.
 * **Non-Uniform knot vector**. Most general form of knot vectors. Knot vector,
   in which distance between neighbour knots is different in different places.
-  For example, ``0 0 0.5 0.6 1.5 1.7 1.9 2 2 2`` is a non-uniform knot vector.
+  For example, ``0 0 0.5 0.6 1.5 1.7 1.9 2 2 2`` is a non-uniform (and clamped)
+  knot vector.
 
 .. _Book: https://www.springer.com/gp/book/9783642973857
 
 Workflow
 ^^^^^^^^
 
-Some software has a "full NURBS workflow", which means that all curves /
+Some software products have a "full NURBS workflow", which means that all curves /
 surfaces it is operating with is always NURBS, and whatever complex things you
 do with those objects you will always have NURBS again.
 Sverchok does not have a goal to have "full NURBS workflow", at least at the
@@ -126,7 +138,12 @@ converted to NURBS, "NURBS-like". Examples of NURBS-like curves are:
 
 Sverchok has "NURBS to JSON" and "JSON to NURBS" nodes, which allow to save
 NURBS objects in JSON format and read NURBS from it; such JSON format can be
-used with rw3dm_ utlity to convert it from / to `3dm` files.
+used with rw3dm_ utlity to convert it from / to `3dm` files. Later there can
+appear nodes that will export NURBS objects to other widely-used formats.
+
+So, with some restrictions, it is possible to prepare complex scenes built from
+NURBS objects only, to export them to other CAD software for further processing
+or manufacturing. This is, however, not a primary workflow at the moment.
 
 .. _rw3dm: https://github.com/orbingol/rw3dm
 
@@ -142,7 +159,7 @@ Blender's internal NURBS support is currently limited in two aspects:
 
 So, Sverchok has limited features in interacting with Blender's native NURBS objects:
 
-* **NURBS In** object can bring arbitrary Blender's NURBS curves or surfaces
+* **NURBS In** node can bring arbitrary Blender's NURBS curves or surfaces
   from scene to Sverchok space;
 * **NURBS Curve Out** and **NURBS Surface Out** nodes allow to generate
   Blender's NURBS objects in scene, but without possibility to specify
