@@ -27,82 +27,79 @@ class SV_PT_3DPanel(bpy.types.Panel):
             col.operator('wm.sv_obj_modal_update', text='Start live update', icon='EDITMODE_HLT').mode = 'start'
 
         col.operator('node.sv_scan_properties', text='Scan for props')
-        col.template_list("SV_UL_NodeTreePropertyList", "", bpy.data, 'node_groups',
+        col.template_list("SV_UL_NodeTreePropertyList", "", context.scene, 'sv_ui_node_props',
                           bpy.context.scene.sverchok_panel_properties, "selected_tree")
 
 
 class SV_UL_NodeTreePropertyList(bpy.types.UIList):
     """Show in 3D tool panel"""
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-        tree = item
+        prop = item
+        tree = prop.tree
 
-        col = layout.column(align=True)
-        row = col.row(align=True)
-        row.alignment = 'LEFT'
+        row = layout.row(align=True)
 
-        if tree.SvShowIn3D:
-            row.prop(tree, 'SvShowIn3D', icon='DOWNARROW_HLT', emboss=False, text='')
-            for i, prop in enumerate(tree.sv_ui_node_props):
-                row_prop = col.column().row(align=True)
-                prop.draw(row_prop, tree)
-                move_up = row_prop.operator('node.sv_move_properties', text='', icon='TRIA_UP')
-                move_up.direction = 'UP'
-                move_up.prop_index = i
-                move_up.tree_owner = tree.name
-                move_down = row_prop.operator('node.sv_move_properties', text='', icon='TRIA_DOWN')
-                move_down.direction = 'DOWN'
-                move_down.prop_index = i
-                move_down.tree_owner = tree.name
+        if not prop.node_name:
+            # it is tree item
+            row.prop(tree, 'SvShowIn3D', icon='DOWNARROW_HLT' if tree.SvShowIn3D else 'RIGHTARROW',
+                     emboss=False, text='')
+            row = row.row()
+            row.label(text=tree.name)
+
+            # buttons
+            row = row.row(align=True)
+            row.alignment = 'RIGHT'
+            row.ui_units_x = 7
+            row.operator('node.sverchok_bake_all', text='B').node_tree_name = tree.name
+            row.prop(tree, 'sv_show', icon=f"RESTRICT_VIEW_{'OFF' if tree.sv_show else 'ON'}", text=' ')
+            row.prop(tree, 'sv_animate', icon='ANIM', text=' ')
+            row.prop(tree, "sv_process", toggle=True, text="P")
+            row.prop(tree, "sv_draft", toggle=True, text="D")
+            row.prop(tree, 'use_fake_user', toggle=True, text='F')
         else:
-            row.prop(tree, 'SvShowIn3D', icon='RIGHTARROW', emboss=False, text='')
+            # it is node item
+            row_space = row.row()
+            row_space.alignment = 'LEFT'
+            row_space.ui_units_x = 1
+            row_space.label(text='')
 
-        row = row.row()
-        row.label(text=tree.name)
+            prop.draw(row, tree, index)
 
-        # buttons
-        row = row.row(align=True)
-        row.alignment = 'RIGHT'
-        row.ui_units_x = 7
-        row.operator('node.sverchok_bake_all', text='B').node_tree_name = tree.name
-        row.prop(tree, 'sv_show', icon=f"RESTRICT_VIEW_{'OFF' if tree.sv_show else 'ON'}", text=' ')
-        row.prop(tree, 'sv_animate', icon='ANIM', text=' ')
-        row.prop(tree, "sv_process", toggle=True, text="P")
-        row.prop(tree, "sv_draft", toggle=True, text="D")
-        row.prop(tree, 'use_fake_user', toggle=True, text='F')
+            move_up = row.operator('node.sv_move_properties', text='', icon='TRIA_UP')
+            move_up.direction = 'UP'
+            move_up.prop_index = index
+            move_down = row.operator('node.sv_move_properties', text='', icon='TRIA_DOWN')
+            move_down.direction = 'DOWN'
+            move_down.prop_index = index
 
     def filter_items(self, context, data, prop_name):
-        trees = getattr(data, prop_name)
+        ui_list = getattr(data, prop_name)
         filter_name = self.filter_name
         filter_invert = self.use_filter_invert
 
-        filter_tree_types = [tree.bl_idname == 'SverchCustomTreeType' for tree in trees]
+        hide_props = [True if not prop.node_name else prop.tree.SvShowIn3D for prop in ui_list]
 
-        filter_tree_names = [filter_name in tree.name for tree in trees]
-        filter_tree_names = [not f for f in filter_tree_names] if filter_invert else filter_tree_names
-
-        combine_filter = [f1 and f2 for f1, f2 in zip(filter_tree_types, filter_tree_names)]
         # next code is needed for hiding wrong tree types
-        combine_filter = [not f for f in combine_filter] if filter_invert else combine_filter
-        combine_filter = [self.bitflag_filter_item if f else 0 for f in combine_filter]
+        combine_filter = [not f for f in hide_props] if filter_invert else hide_props
+        combine_filter = [self.bitflag_filter_item if f else 0 for f in hide_props]
         return combine_filter, []
 
 
 class Sv3dPropItem(bpy.types.PropertyGroup):
     """It represents property of a node item in 3D panel"""
     node_name: bpy.props.StringProperty()
+    tree: bpy.props.PointerProperty(type=bpy.types.NodeTree)
 
-    def draw(self, layout, tree):
+    def draw(self, layout, tree, index):
         node = tree.nodes.get(self.node_name, None)
         if not node:
             # properties are not automatically removed from Sv3DProps when a node is deleted.
             row = layout.row()
             row.alert = True
             row.label(icon='ERROR', text=f'missing node: "{self.node_name}"')
-            op = row.operator('node.sv_remove_3dviewpropitem', icon='CANCEL', text='')
-            op.tree_name = tree.name
-            op.node_name = self.node_name
-
-        node.draw_buttons_3dpanel(layout.column())
+            row.operator('node.sv_remove_3dviewprop_item', icon='CANCEL', text='').prop_index = index
+        else:
+            node.draw_buttons_3dpanel(layout.column())
 
 
 class SvLayoutScanProperties(bpy.types.Operator):
@@ -112,8 +109,15 @@ class SvLayoutScanProperties(bpy.types.Operator):
     bl_label = "scan for properties in Sverchok layouts"
 
     def execute(self, context):
-        for tree in bpy.data.node_groups:
+        """
+        1. Recreate hierarchical data structure from list
+        2. Update the data structure
+        3. Recreate list from scratch
+        """
+        ui_list = context.scene.sv_ui_node_props
+        props = self.convert_ui_list(ui_list)
 
+        for tree in bpy.data.node_groups:
             if tree.bl_idname != 'SverchCustomTreeType':
                 continue
 
@@ -123,19 +127,44 @@ class SvLayoutScanProperties(bpy.types.Operator):
                     if node.draw_3dpanel:
                         nodes_to_show.add(node.name)
 
-            showed_nodes = {prop.node_name for prop in tree.sv_ui_node_props}
+            showed_nodes = props.get(tree.name, {})
             for name_to_show in nodes_to_show:
                 if name_to_show not in showed_nodes:
-                    debug(f'3D PANEL: add property of the node="{name_to_show}"')
-                    item = tree.sv_ui_node_props.add()
-                    item.node_name = name_to_show
+                    showed_nodes[name_to_show] = None
 
-            for i in range(len(showed_nodes) - 1, -1, -1):
-                if tree.sv_ui_node_props[i].node_name not in nodes_to_show:
-                    debug(f'3D PANEL: remove property of the node="{tree.sv_ui_node_props[i].node_name}"')
-                    tree.sv_ui_node_props.remove(i)
+            for showed_name in showed_nodes.copy():
+                if showed_name not in nodes_to_show:
+                    del showed_nodes[showed_name]
+
+            props[tree.name] = showed_nodes
+
+        ui_list.clear()
+        for tree_name in props:
+            tree = bpy.data.node_groups[tree_name]
+
+            ui_list.add().tree = tree
+
+            for node_name in props[tree_name]:
+                prop = ui_list.add()
+                prop.node_name = node_name
+                prop.tree = tree
 
         return {'FINISHED'}
+
+    @staticmethod
+    def convert_ui_list(ui_list):
+        """
+        create more complex data structure:
+        {tree_name: {prop1: 0, prop2: 1},
+        tree_name2: {prop1: 0,}, ...}
+        """
+        trees = dict()
+        for prop in ui_list:
+            if not prop.node_name:
+                trees[prop.tree.name] = dict()
+            else:
+                trees[prop.tree.name][prop.node_name] = None
+        return trees
 
 
 class SvLayoutMoveProperties(bpy.types.Operator):
@@ -145,11 +174,17 @@ class SvLayoutMoveProperties(bpy.types.Operator):
 
     direction: bpy.props.EnumProperty(items=[(i, i, '') for i in ['UP', 'DOWN']])
     prop_index: bpy.props.IntProperty(min=0)
-    tree_owner: bpy.props.StringProperty()
 
     def execute(self, context):
-        tree = bpy.data.node_groups.get(self.tree_owner)
-        tree.sv_ui_node_props.move(self.prop_index, self.prop_index - (1 if self.direction == 'UP' else -1))
+        ui_list = context.scene.sv_ui_node_props
+        if self.direction == 'UP':
+            above_item = None if self.prop_index == 0 else ui_list[self.prop_index - 1]
+            if above_item and above_item.node_name:
+                ui_list.move(self.prop_index, self.prop_index - 1)
+        else:
+            below_item = None if self.prop_index == len(ui_list) - 1 else ui_list[self.prop_index + 1]
+            if below_item and below_item.node_name:
+                ui_list.move(self.prop_index, self.prop_index + 1)
 
         return {'FINISHED'}
 
@@ -157,23 +192,14 @@ class SvLayoutMoveProperties(bpy.types.Operator):
 class Sv3dPropRemoveItem(bpy.types.Operator):
     ''' remove item by node_name from tree.Sv3Dprops  '''
 
-    bl_idname = "node.sv_remove_3dviewpropitem"
+    bl_idname = "node.sv_remove_3dviewprop_item"
     bl_label = "remove item from Sv3Dprops - useful for removed nodes"
 
-    tree_name: bpy.props.StringProperty(description="store tree name")
-    node_name: bpy.props.StringProperty(description="store node name")
+    prop_index: bpy.props.IntProperty()
 
     def execute(self, context):
-
-        tree = bpy.data.node_groups[self.tree_name]
-        props = tree.sv_ui_node_props
-
-        for index in range(len(props)):
-            if props[index].node_name == self.node_name:
-                props.remove(index)
-                return {'FINISHED'}
-
-        return {'CANCELLED'}
+        context.scene.sv_ui_node_props.remove(self.prop_index)
+        return {'FINISHED'}
 
 
 classes = [
@@ -189,10 +215,10 @@ classes = [
 def register():
     [bpy.utils.register_class(cls) for cls in classes]
 
-    bpy.types.NodeTree.sv_ui_node_props = bpy.props.CollectionProperty(type=Sv3dPropItem)
+    bpy.types.Scene.sv_ui_node_props = bpy.props.CollectionProperty(type=Sv3dPropItem)
 
 
 def unregister():
     [bpy.utils.unregister_class(cls) for cls in classes[::-1]]
 
-    del bpy.types.NodeTree.sv_ui_node_props
+    del bpy.types.Scene.sv_ui_node_props
