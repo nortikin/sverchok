@@ -297,97 +297,14 @@ class SV_PT_ToolsMenu(SverchokPanels, bpy.types.Panel):
     use_pin = True
 
     def draw(self, context):
-
         ng = context.space_data.node_tree
         ng_name = ng.name
-        layout = self.layout
-        layout.active = True
 
-        little_width = 0.32
-
-        row = layout.row(align=True)
-        col = row.column(align=True)
-        col.scale_y = 3.0
-        col.scale_x = 0.5
-
-        # two oversized buttons
-
+        col = self.layout.column()
+        col.operator("node.sverchok_update_current", text="Update {0}".format(ng_name)).node_group = ng_name
         col.operator("node.sverchok_update_all", text="Update all")
-        col = row.column(align=True)
-        col.scale_y = 3.0
-
-        op = col.operator("node.sverchok_update_current", text="Update {0}".format(ng_name))
-        op.node_group = ng_name
-
-        # end two oversized buttons
-        
-        box = layout.box()
-
-        col = box.column(align=True)
-        row = col.row(align=True)
-        row.label(text='Layout')
-
-        col0 = row.column(align=True)
-        col0.scale_x = little_width
-        col0.label(text='B')
-
-        col1 = row.column(align=True)
-        col1.scale_x = little_width
-        col1.label(icon='RESTRICT_VIEW_OFF', text=' ')
-
-        col2 = row.column(align=True)
-        col2.scale_x = little_width
-        col2.label(icon='ANIM', text=' ')
-
-        col3 = row.column(align=True)
-        col3.scale_x = little_width
-        col3.label(text='P')
-
-        col4 = row.column(align=True)
-        col4.scale_x = little_width
-        col4.label(text='D')
-
-        col5 = row.column(align=True)
-        col5.scale_x = little_width
-        col5.label(text='F')
-
-        for name, tree in bpy.data.node_groups.items():
-            if tree.bl_idname == 'SverchCustomTreeType':
-
-                row = col.row(align=True)
-                # tree name
-                if name == ng_name:
-                    row.label(text=name)
-                else:
-                    row.operator('node.sv_switch_layout', text=name).layout_name = name
-
-                # bakery
-                split = row.column(align=True)
-                split.scale_x = little_width
-                baka = split.operator('node.sverchok_bake_all', text='B')
-                baka.node_tree_name = name
-
-                # eye
-                split = row.column(align=True)
-                split.scale_x = little_width
-                view_icon = 'RESTRICT_VIEW_' + ('OFF' if tree.sv_show else 'ON')
-                split.prop(tree, 'sv_show', icon=view_icon, text=' ')
-
-                split = row.column(align=True)
-                split.scale_x = little_width
-                split.prop(tree, 'sv_animate', icon='ANIM', text=' ')
-
-                split = row.column(align=True)
-                split.scale_x = little_width
-                split.prop(tree, "sv_process", toggle=True, text="P")
-
-                split = row.column(align=True)
-                split.scale_x = little_width
-                split.prop(tree, "sv_draft", toggle=True, text="D")
-
-                split = row.column(align=True)
-                split.scale_x = little_width
-                split.prop(tree, 'use_fake_user', toggle=True, text='F')
+        col.template_list("SV_UL_NodeTreePropertyList", "", bpy.data, 'node_groups',
+                          bpy.context.scene.sverchok_panel_properties, "selected_tree")
 
 
 class SV_PT_ActiveTreePanel(SverchokPanels, bpy.types.Panel):
@@ -454,6 +371,50 @@ class SV_PT_SverchokUtilsPanel(SverchokPanels, bpy.types.Panel):
             col.operator("node.sverchok_check_for_upgrades_wsha", text='Check for updates')
 
 
+class SV_UL_NodeTreePropertyList(bpy.types.UIList):
+
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+        tree = item
+
+        row = layout.row(align=True)
+        # tree name
+        if context.space_data.node_tree and context.space_data.node_tree.name == tree.name:
+            row.label(text=tree.name)
+        else:
+            row.operator('node.sv_switch_layout', text=tree.name).layout_name = tree.name
+
+        # buttons
+        row = row.row(align=True)
+        row.alignment = 'RIGHT'
+        row.ui_units_x = 5.5
+        row.operator('node.sverchok_bake_all', text='B').node_tree_name = tree.name
+        row.prop(tree, 'sv_show', icon= f"RESTRICT_VIEW_{'OFF' if tree.sv_show else 'ON'}", text=' ')
+        row.prop(tree, 'sv_animate', icon='ANIM', text=' ')
+        row.prop(tree, "sv_process", toggle=True, text="P")
+        row.prop(tree, "sv_draft", toggle=True, text="D")
+        row.prop(tree, 'use_fake_user', toggle=True, text='F')
+
+    def filter_items(self, context, data, prop_name):
+        trees = getattr(data, prop_name)
+        filter_name = self.filter_name
+        filter_invert = self.use_filter_invert
+
+        filter_tree_types = [tree.bl_idname == 'SverchCustomTreeType' for tree in trees]
+
+        filter_tree_names = [filter_name in tree.name for tree in trees]
+        filter_tree_names = [not f for f in filter_tree_names] if filter_invert else filter_tree_names
+
+        combine_filter = [f1 and f2 for f1, f2 in zip(filter_tree_types, filter_tree_names)]
+        # next code is needed for hiding wrong tree types
+        combine_filter = [not f for f in combine_filter] if filter_invert else combine_filter
+        combine_filter = [self.bitflag_filter_item if f else 0 for f in combine_filter]
+        return combine_filter, []
+
+
+class SverchokPanelProperties(bpy.types.PropertyGroup):
+    selected_tree = bpy.props.IntProperty()  # index for UIList
+
+
 def node_show_tree_mode(self, context):
     if not displaying_sverchok_nodes(context):
         return
@@ -486,7 +447,9 @@ sv_tools_classes = [
     SvToggleDraft,
     SV_PT_ActiveTreePanel,
     SV_PT_ProfilingPanel,
-    SV_PT_SverchokUtilsPanel
+    SV_PT_SverchokUtilsPanel,
+    SV_UL_NodeTreePropertyList,
+    SverchokPanelProperties
 ]
 
 
@@ -504,10 +467,14 @@ def register():
     for class_name in sv_tools_classes:
         bpy.utils.register_class(class_name)
 
+    bpy.types.Scene.sverchok_panel_properties = bpy.props.PointerProperty(type=SverchokPanelProperties)
+
     bpy.types.NODE_HT_header.append(node_show_tree_mode)
     bpy.types.VIEW3D_HT_header.append(view3d_show_live_mode)
 
 def unregister():
+    del bpy.types.Scene.sverchok_panel_properties
+
     for class_name in reversed(sv_tools_classes):
         bpy.utils.unregister_class(class_name)
 

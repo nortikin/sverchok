@@ -54,7 +54,10 @@ class SV_PT_IOExportMenu(ExportImportPanels, bpy.types.Panel):
         ntree = context.space_data.node_tree
         io_props = ntree.io_panel_properties
 
-        col = self.layout.column(heading="Options")
+        try:
+            col = self.layout.column(heading="Options")  # new syntax in >= 2.90
+        except TypeError:
+            col = self.layout.column()  # old syntax in <= 2.83
 
         imp = col.operator('node.tree_exporter', text='Export to JSON', icon='FILE_BACKUP')
         imp.id_tree = ntree.name
