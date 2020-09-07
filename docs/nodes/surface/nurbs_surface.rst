@@ -6,9 +6,10 @@ Build NURBS surface
 Dependencies
 ------------
 
-This node can optionally use Geomdl_ library.
+This node can optionally use Geomdl_ library; also it can optionally use FreeCAD_ libraries.
 
 .. _Geomdl: https://onurraufbingol.com/NURBS-Python/
+.. _FreeCAD: https://www.freecadweb.org/
 
 Functionality
 -------------
@@ -54,6 +55,7 @@ This node has the following parameters:
 
   * **Geomdl**. Use Geomdl_ library. This option is available only when Geomdl package is installed.
   * **Sverchok**. Use built-in Sverchok implementation.
+  * **FreCAD**. Use FreeCAD_ libraries. This option is available only when FreeCAD libraries are installed.
   
   In general, built-in implementation should be faster; but Geomdl implementation is better tested.
   The default option is **Geomdl**, when it is available; otherwise, built-in implementation is used.
