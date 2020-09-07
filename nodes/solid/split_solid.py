@@ -13,7 +13,7 @@ from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode
 from sverchok.utils.surface.core import SvSurface
-from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface
+from sverchok.utils.surface.freecad import SvSolidFaceSurface, surface_to_freecad, is_solid_face_surface
 from sverchok.utils.dummy_nodes import add_dummy
 
 from sverchok.dependencies import FreeCAD
@@ -30,7 +30,15 @@ def make_solids(solid, face_surfaces):
     solids = map[0]
     if not solids:
         solids = result.Solids
-    return solids
+    cut_faces = []
+    for lst in map[1:]:
+        item = []
+        for shape in lst:
+            if isinstance(shape, Part.Face):
+                cut_face = SvSolidFaceSurface(shape).to_nurbs()
+                item.append(cut_face)
+        cut_faces.append(item)
+    return solids, cut_faces
 
 class SvSplitSolidNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -47,6 +55,7 @@ class SvSplitSolidNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvSolidSocket', "Solid")
         self.inputs.new('SvSurfaceSocket', "SolidFace")
         self.outputs.new('SvSolidSocket', "Solids")
+        self.outputs.new('SvSurfaceSocket', "CutFaces")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -58,16 +67,20 @@ class SvSplitSolidNode(bpy.types.Node, SverchCustomTreeNode):
         solids_s = ensure_nesting_level(solids_s, 2, data_types=(Part.Shape,))
 
         solids_out = []
+        cut_faces_out = []
         for solids, face_surfaces_i in zip_long_repeat(solids_s, face_surfaces_s):
             for solid, face_surfaces in zip_long_repeat(solids, face_surfaces_i):
                 for i in range(len(face_surfaces)):
                     if not is_solid_face_surface(face_surfaces[i]):
                         face_surfaces[i] = surface_to_freecad(face_surfaces[i], make_face=True) # SvFreeCadNurbsSurface
 
-                new_solids = make_solids(solid, face_surfaces)
+                new_solids, cut_faces = make_solids(solid, face_surfaces)
                 solids_out.append(new_solids)
+                cut_faces_out.append(cut_faces)
 
         self.outputs['Solids'].sv_set(solids_out)
+        if 'CutFaces' in self.outputs:
+            self.outputs['CutFaces'].sv_set(cut_faces_out)
 
 def register():
     if FreeCAD is not None:
