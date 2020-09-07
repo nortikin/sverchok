@@ -145,6 +145,7 @@ class SvFreeCadNurbsCurve(SvNurbsCurve):
     def __init__(self, curve, ndim=3):
         self.curve = curve
         self.ndim = ndim
+        self.u_bounds = None # from FreeCAD data
         self.__description__ = f"FreeCAD NURBS (degree={curve.Degree}, pts={curve.NbPoles})"
 
     @classmethod
@@ -219,7 +220,10 @@ class SvFreeCadNurbsCurve(SvNurbsCurve):
         return np.vectorize(self.tangent, signature='()->(3)')(ts)    
 
     def get_u_bounds(self):
-        return (self.curve.FirstParameter, self.curve.LastParameter)
+        if self.u_bounds is None:
+            return (self.curve.FirstParameter, self.curve.LastParameter)
+        else:
+            return self.u_bounds
 
     def get_knotvector(self):
         knots = self.curve.getKnots()

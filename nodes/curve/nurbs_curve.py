@@ -4,10 +4,12 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, fullList
+from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
+from sverchok.dependencies import FreeCAD
 
 class SvExNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -32,6 +34,10 @@ class SvExNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):
             items.append(item)
         item = (SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", i)
         items.append(item)
+        i += 1
+        if FreeCAD is not None:
+            item = (SvNurbsMaths.FREECAD, "FreeCAD", "FreeCAD library implementation",i)
+            items.append(item)
         return items
 
     implementation : EnumProperty(
