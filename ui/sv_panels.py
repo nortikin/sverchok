@@ -175,109 +175,6 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
         self.report({'INFO'}, "Live Update mode disabled")
 
 
-class SV_PT_3DPanel(bpy.types.Panel):
-    ''' Panel to manipuplate parameters in Sverchok layouts '''
-
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_category = 'Tool'
-    bl_label = "Sverchok " + version_and_sha
-    bl_options = {'DEFAULT_CLOSED'}
-    # bl_category = 'Sverchok'
-
-    def draw(self, context):
-        layout = self.layout
-        little_width = 0.32
-
-        addon = context.preferences.addons.get(sverchok.__name__)
-        if addon.preferences.enable_live_objin:
-
-            # Live Update Modal trigger.
-            row = layout.row()
-            OP = 'wm.sv_obj_modal_update'
-            if context.scene.SvShowIn3D_active:
-                row.operator(OP, text='Stop live update', icon='CANCEL').mode = 'end'
-            else:
-                row.operator(OP, text='Start live update', icon='EDITMODE_HLT').mode = 'start'
-
-        col = layout.column(align=True)
-        row = col.row(align=True)
-        row.scale_y = 2.0
-        row.operator('node.sv_scan_propertyes', text='Scan for props')
-        row.operator("node.sverchok_update_all", text="Update all")
-        row = col.row(align=True)
-        row.prop(context.scene, 'sv_do_clear', text='hard clean', toggle=True)
-        delley = row.operator(
-            'node.sv_delete_nodelayouts',
-            text='Clean layouts').do_clear = context.scene.sv_do_clear
-
-        for tree in bpy.data.node_groups:
-            if tree.bl_idname == 'SverchCustomTreeType':
-                box = layout.box()
-                col = box.column(align=True)
-                row = col.row(align=True)
-
-                split = row.column(align=True)
-                split.scale_x = little_width
-                icoco = 'DOWNARROW_HLT' if tree.SvShowIn3D else 'RIGHTARROW'
-                split.prop(tree, 'SvShowIn3D', icon=icoco, emboss=False, text=' ')
-
-                split = row.column(align=True)
-                split.label(text=tree.name)
-
-                # bakery
-                split = row.column(align=True)
-                split.scale_x = little_width
-                baka = split.operator('node.sverchok_bake_all', text='B')
-                baka.node_tree_name = tree.name
-
-                # eye
-                split = row.column(align=True)
-                split.scale_x = little_width
-                if tree.sv_show:
-                    split.prop(tree, 'sv_show', icon='RESTRICT_VIEW_OFF', text=' ')
-                else:
-                    split.prop(tree, 'sv_show', icon='RESTRICT_VIEW_ON', text=' ')
-                split = row.column(align=True)
-                split.scale_x = little_width
-                # if tree.sv_animate:
-                split.prop(tree, 'sv_animate', icon='ANIM', text=' ')
-                # else:
-                #    split.prop(tree, 'sv_animate', icon='LOCKED', text=' ')
-
-                split = row.column(align=True)
-                split.scale_x = little_width
-                split.prop(tree, "sv_process", toggle=True, text="P")
-
-                split = row.column(align=True)
-                split.scale_x = little_width
-                split.prop(tree, "sv_draft", toggle=True, text="D")
-
-                split = row.column(align=True)
-                split.scale_x = little_width
-                split.prop(tree, 'use_fake_user', toggle=True, text='F')
-
-                # variables
-                if tree.SvShowIn3D:
-                   
-                    for item in tree.Sv3DProps:
-                        no = item.node_name
-
-                        # properties are not automatically removed from Sv3DProps when a node is deleted.
-                        # temporary fix for ui.
-                        node = tree.nodes.get(no, None)
-                        if not node:
-                            row = col.row()
-                            row.alert = True
-                            row.label(icon='ERROR', text=f'missing node: "{no}"')
-                            op = row.operator('node.sv_remove_3dviewpropitem', icon='CANCEL', text='')
-                            op.tree_name =  tree.name
-                            op.node_name = no
-                            continue
-
-                        node.draw_buttons_3dpanel(col)
-
-
 class SverchokPanels:
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
@@ -296,7 +193,7 @@ class SV_PT_ToolsMenu(SverchokPanels, bpy.types.Panel):
     def draw(self, context):
         col = self.layout.column()
         col.operator("node.sverchok_update_all", text="Update all")
-        col.template_list("SV_UL_NodeTreePropertyList", "", bpy.data, 'node_groups',
+        col.template_list("SV_UL_TreePropertyList", "", bpy.data, 'node_groups',
                           bpy.context.scene.sverchok_panel_properties, "selected_tree")
 
 
@@ -366,8 +263,8 @@ class SV_PT_SverchokUtilsPanel(SverchokPanels, bpy.types.Panel):
             col.operator("node.sverchok_check_for_upgrades_wsha", text='Check for updates')
 
 
-class SV_UL_NodeTreePropertyList(bpy.types.UIList):
-
+class SV_UL_TreePropertyList(bpy.types.UIList):
+    """Show in node tree editor"""
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         tree = item
 
@@ -436,14 +333,13 @@ def view3d_show_live_mode(self, context):
 sv_tools_classes = [
     Sv3DViewObjInUpdater,
     SV_PT_ToolsMenu,
-    SV_PT_3DPanel,
     SvRemoveStaleDrawCallbacks,
     SvToggleProcess,
     SvToggleDraft,
     SV_PT_ActiveTreePanel,
     SV_PT_ProfilingPanel,
     SV_PT_SverchokUtilsPanel,
-    SV_UL_NodeTreePropertyList,
+    SV_UL_TreePropertyList,
     SverchokPanelProperties
 ]
 
