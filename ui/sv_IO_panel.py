@@ -101,4 +101,39 @@ class SV_PT_IOImportMenu(ExportImportPanels, bpy.types.Panel):
         col.prop(io_props, 'new_nodetree_name', text='Tree name:')
 
 
-register, unregister = bpy.utils.register_classes_factory([SV_PT_IOLayoutsMenu, SV_PT_IOExportMenu, SV_PT_IOImportMenu])
+class SvIOPanelProperties(bpy.types.PropertyGroup):
+
+    new_nodetree_name: bpy.props.StringProperty(
+        name='new_nodetree_name',
+        default="Imported tree",
+        description="The name to give the new NodeTree, defaults to: Imported")
+
+    compress_output: bpy.props.BoolProperty(
+        default=0,
+        name='compress_output',
+        options={'HIDDEN'},
+        description='option to also compress the json, will generate both')
+
+    gist_id: bpy.props.StringProperty(
+        name='new_gist_id',
+        default="Enter Gist ID here",
+        description="This gist ID will be used to obtain the RAW .json from github")
+
+    export_selected_only: bpy.props.BoolProperty(
+        name="Selected Only",
+        options={'HIDDEN'},
+        description="Export selected nodes only",
+        default=False)
+
+
+classes = [SV_PT_IOLayoutsMenu, SV_PT_IOExportMenu, SV_PT_IOImportMenu, SvIOPanelProperties]
+
+
+def register():
+    [bpy.utils.register_class(cls) for cls in classes]
+    bpy.types.Scene.io_panel_properties = bpy.props.PointerProperty(type=SvIOPanelProperties)
+
+
+def unregister():
+    del bpy.types.Scene.io_panel_properties
+    [bpy.utils.unregister_class(cls) for cls in classes[::-1]]
