@@ -285,10 +285,7 @@ class SverchokPanels:
 
     @classmethod
     def poll(cls, context):
-        try:
-            return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
-        except AttributeError:
-            return False
+        return context.space_data.tree_type == 'SverchCustomTreeType'
 
 
 class SV_PT_ToolsMenu(SverchokPanels, bpy.types.Panel):
@@ -297,11 +294,7 @@ class SV_PT_ToolsMenu(SverchokPanels, bpy.types.Panel):
     use_pin = True
 
     def draw(self, context):
-        ng = context.space_data.node_tree
-        ng_name = ng.name
-
         col = self.layout.column()
-        col.operator("node.sverchok_update_current", text="Update {0}".format(ng_name)).node_group = ng_name
         col.operator("node.sverchok_update_all", text="Update all")
         col.template_list("SV_UL_NodeTreePropertyList", "", bpy.data, 'node_groups',
                           bpy.context.scene.sverchok_panel_properties, "selected_tree")
@@ -309,18 +302,19 @@ class SV_PT_ToolsMenu(SverchokPanels, bpy.types.Panel):
 
 class SV_PT_ActiveTreePanel(SverchokPanels, bpy.types.Panel):
     bl_idname = "SV_PT_ActiveTreePanel"
-    bl_label = "Properties"
+    bl_label = "Active tree"
     bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = 'SV_PT_ToolsMenu'
 
-    def draw_header(self, context):
-        ng = context.space_data.node_tree
-        self.layout.label(text=f"{ng.name}")
+    @classmethod
+    def poll(cls, context):
+        return bool(context.space_data.node_tree)
 
     def draw(self, context):
         ng = context.space_data.node_tree
         col = self.layout.column()
 
+        col.operator("node.sverchok_update_current", text="Update {0}".format(ng.name)).node_group = ng.name
         col.operator('node.remove_stale_draw_callbacks')
 
         col.use_property_split = True
@@ -358,6 +352,7 @@ class SV_PT_ProfilingPanel(SverchokPanels, bpy.types.Panel):
 class SV_PT_SverchokUtilsPanel(SverchokPanels, bpy.types.Panel):
     bl_idname = "SV_PT_SverchokUtilsPanel"
     bl_label = "General Utils"
+    bl_order = 10
 
     def draw(self, context):
         col = self.layout.column()

@@ -38,9 +38,9 @@ class SvIOPanelProperties(bpy.types.PropertyGroup):
 
 def register():
     register_class(SvIOPanelProperties)
-    bpy.types.NodeTree.io_panel_properties = PointerProperty(name="io_panel_properties", type=SvIOPanelProperties)
+    bpy.types.Scene.io_panel_properties = PointerProperty(name="io_panel_properties", type=SvIOPanelProperties)
 
 
 def unregister():
-    del bpy.types.NodeTree.io_panel_properties
+    del bpy.types.Scene.io_panel_properties
     unregister_class(SvIOPanelProperties)

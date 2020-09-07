@@ -194,8 +194,8 @@ class SvSwitchToLayout (bpy.types.Operator):
 
     def execute(self, context):
         ng = bpy.data.node_groups.get(self.layout_name)
-        if ng and context.space_data.edit_tree.name != self.layout_name:
-            context.space_data.path.start(bpy.data.node_groups[self.layout_name])
+        if ng:
+            context.space_data.path.start(ng)
         else:
             return {'CANCELLED'}
         return {'FINISHED'}

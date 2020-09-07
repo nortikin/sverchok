@@ -29,16 +29,14 @@ class ExportImportPanels:
 
     @classmethod
     def poll(cls, context):
-        try:
-            return context.space_data.node_tree.bl_idname == 'SverchCustomTreeType'
-        except AttributeError:
-            return False
+        return context.space_data.tree_type == 'SverchCustomTreeType'
 
 
 class SV_PT_IOLayoutsMenu(ExportImportPanels, bpy.types.Panel):
     bl_idname = "SV_PT_IOLayoutsMenu"
     bl_label = f"Import/Export  (v {_EXPORTER_REVISION_})"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_order = 1
 
     def draw(self, context):
         pass
@@ -51,16 +49,17 @@ class SV_PT_IOExportMenu(ExportImportPanels, bpy.types.Panel):
     bl_parent_id = 'SV_PT_IOLayoutsMenu'
 
     def draw(self, context):
-        ntree = context.space_data.node_tree
-        io_props = ntree.io_panel_properties
+        io_props = context.scene.io_panel_properties
 
         try:
             col = self.layout.column(heading="Options")  # new syntax in >= 2.90
         except TypeError:
             col = self.layout.column()  # old syntax in <= 2.83
 
+        col.active = bool(context.space_data.node_tree)
+
         imp = col.operator('node.tree_exporter', text='Export to JSON', icon='FILE_BACKUP')
-        imp.id_tree = ntree.name
+        imp.id_tree = context.space_data.node_tree.name if context.space_data.node_tree else ''
         imp.compress = io_props.compress_output
 
         exp = col.operator('node.tree_export_to_gist', text='Export to gist', icon='URL')
@@ -81,17 +80,18 @@ class SV_PT_IOImportMenu(ExportImportPanels, bpy.types.Panel):
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
-        ntree = context.space_data.node_tree
-        io_props = ntree.io_panel_properties
+        io_props = context.scene.io_panel_properties
 
         col = self.layout.column()
 
         op = col.operator('node.tree_import_from_gist', text='from gist link', icon='URL')
         op.gist_id = 'clipboard'
-        op.id_tree = ntree.name
+        op.id_tree = context.space_data.node_tree.name if context.space_data.node_tree else ''
 
-        op = col.operator('node.tree_importer', text='Import into this tree', icon='RNA')
-        op.id_tree = ntree.name
+        col_to_current_tree = col.column()
+        col_to_current_tree.active = bool(context.space_data.node_tree)
+        op = col_to_current_tree.operator('node.tree_importer', text='Import into this tree', icon='RNA')
+        op.id_tree = context.space_data.node_tree.name if context.space_data.node_tree else ''
 
         op = col.operator('node.tree_importer', text='Import into new tree', icon='RNA_ADD')
         op.id_tree = ''
