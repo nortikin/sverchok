@@ -47,8 +47,8 @@ class Popup3DMenu(bpy.types.Operator):
     bl_label = "Show properties"
     bl_options = {'INTERNAL'}
 
-    tree_name = bpy.props.StringProperty()
-    node_name = bpy.props.StringProperty()
+    tree_name: bpy.props.StringProperty()
+    node_name: bpy.props.StringProperty()
 
     def execute(self, context):
         return {'FINISHED'}

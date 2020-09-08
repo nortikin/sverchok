@@ -38,8 +38,7 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_LIST_INPUT'
 
     defaults = [0 for i in range(32)]
-    draw_3dpanel: BoolProperty(name='Show in 3D panel', description='show in 3d panel', default=False,
-                               update=lambda n, c: bpy.context.scene.sv_ui_node_props.update_show_property(n))
+    draw_3dpanel: BoolProperty(name='Show in 3D panel', description='show in 3d panel', default=False)
 
     int_: IntProperty(
         name='int_', description='integer number', default=1, min=1, max=128, update=updateNode)
@@ -117,8 +116,7 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_3dpanel(self, layout, in_menu=None):
         if not in_menu:
-            menu = layout.row(align=True).operator('node.popup_3d_menu', text=f'Show: "{self.label or self.name}"', 
-                                                   icon=self.bl_icon)
+            menu = layout.row(align=True).operator('node.popup_3d_menu', text=f'Show: "{self.label or self.name}"')
             menu.tree_name = self.id_data.name
             menu.node_name = self.name
         else:

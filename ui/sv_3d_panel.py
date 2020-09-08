@@ -27,6 +27,10 @@ class SV_PT_3DPanel(bpy.types.Panel):
             col.operator('wm.sv_obj_modal_update', text='Start live update', icon='EDITMODE_HLT').mode = 'start'
 
         col.operator('node.sv_scan_properties', text='Scan for props')
+
+        col_edit = col.column()
+        col_edit.use_property_split = True
+        col_edit.prop(context.scene.sv_ui_node_props, 'edit')
         col.template_list("SV_UL_NodeTreePropertyList", "", context.scene.sv_ui_node_props, 'props',
                           bpy.context.scene.sverchok_panel_properties, "selected_tree")
 
@@ -50,24 +54,35 @@ class SV_UL_NodeTreePropertyList(bpy.types.UIList):
 
             prop.draw_node(row, index)
 
-            move_up = row.operator('node.sv_move_properties', text='', icon='TRIA_UP')
-            move_up.direction = 'UP'
-            move_up.prop_index = index
-            move_down = row.operator('node.sv_move_properties', text='', icon='TRIA_DOWN')
-            move_down.direction = 'DOWN'
-            move_down.prop_index = index
+            if data.edit:
+                move_up = row.operator('node.sv_move_properties', text='', icon='TRIA_UP')
+                move_up.direction = 'UP'
+                move_up.prop_index = index
+                move_down = row.operator('node.sv_move_properties', text='', icon='TRIA_DOWN')
+                move_down.direction = 'DOWN'
+                move_down.prop_index = index
+                row.operator('node.sv_remove_3dviewprop_item', text='', icon='CANCEL').prop_index = index
 
     def filter_items(self, context, data, prop_name):
         ui_list = data
 
-        items_filter = ui_list.filter(self.filter_name, self.use_filter_invert)
-        combine_filter = [self.bitflag_filter_item if f else 0 for f in items_filter]
-        return combine_filter, []
+        filter_trees = [prop.type == 'TREE' for prop in ui_list.props]
+        filter_props = [prop.type == 'TREE' or prop.tree.sv_show_in_3d for prop in ui_list.props]
+
+        filter_names = [self.filter_name in (prop.node_label or prop.node_name).lower() for prop in ui_list.props]
+        filter_names = [not f for f in filter_names] if self.use_filter_invert else filter_names
+
+        mix_filters = [ft or (fp and fn) for ft, fp, fn in zip(filter_trees, filter_props, filter_names)]
+        # next code is needed for hiding wrong tree types
+        mix_with_inverse = [not f for f in mix_filters] if self.use_filter_invert else mix_filters
+        mix_with_inverse = [self.bitflag_filter_item if f else 0 for f in mix_with_inverse]
+        return mix_with_inverse, []
 
 
 class Sv3dPropItem(bpy.types.PropertyGroup):
     """It represents property of a node item in 3D panel"""
     node_name: bpy.props.StringProperty()
+    node_label: bpy.props.StringProperty()
     tree: bpy.props.PointerProperty(type=bpy.types.NodeTree)
 
     @property
@@ -110,6 +125,8 @@ class Sv3dPropItem(bpy.types.PropertyGroup):
 class Sv3DNodeProperties(bpy.types.PropertyGroup):
     """It stores list of trees and node properties items in 3D panel"""
     props: bpy.props.CollectionProperty(type=Sv3dPropItem)
+    edit: bpy.props.BoolProperty(name="Edit properties", description="Edit position of node properties in 3D panel",
+                                 default=False, options=set())
 
     def move_prop(self, direction: str, from_index: int):
         """
@@ -151,26 +168,11 @@ class Sv3DNodeProperties(bpy.types.PropertyGroup):
         for tree_name in props:
             tree = bpy.data.node_groups[tree_name]
 
-            self.add().tree = tree
+            self.add(tree=tree)
 
             for node_name in props[tree_name]:
-                prop = self.add()
-                prop.node_name = node_name
-                prop.tree = tree
-
-    def filter(self, name: str = None, invert: bool = False):
-        """
-        Create filter mask of node property types, tree type items will be always shown
-        Also it will filter out thous node properties which trees have sv_show_in_3d with False value
-        :param name: string which should be in property name
-        :param invert: returns inverted filter
-        :return: bool list
-        """
-        hide_props = [True if prop.type == 'TREE' else prop.tree.sv_show_in_3d for prop in self.props]
-
-        # next code is needed for hiding wrong tree types
-        hide_props = [not f for f in hide_props] if invert else hide_props
-        return hide_props
+                node = tree.nodes.get(node_name)
+                self.add(tree=tree, node_name=node.name, node_label=node.label)
 
     def update_show_property(self, node):
         """This method will automatically add/remove property from 3d panel upon show 3d property changes"""
@@ -182,17 +184,17 @@ class Sv3DNodeProperties(bpy.types.PropertyGroup):
                 if tree_end is None:
                     # tree item should be added first
                     self.add(tree=node.id_data)
-                    self.add(tree=node.id_data, node_name=node.name)
+                    self.add(tree=node.id_data, node_name=node.name, node_label=node.label)
                 else:
                     # tree already added
-                    self.insert(tree_end + 1, tree=node.id_data, node_name=node.name)
+                    self.insert(tree_end + 1, tree=node.id_data, node_name=node.name, node_label=node.label)
         else:
             # item should be removed
             position = self.search_node(node.name, node.id_data.name)
             if position:
                 self.props.remove(position)
 
-    def insert(self, index, tree=None, node_name=None):
+    def insert(self, index, tree=None, node_name=None, node_label=None):
         """Inserts element into custom position"""
         # move is quite efficient operation, looks independent from collection length
         current_index = len(self.props)
@@ -201,18 +203,22 @@ class Sv3DNodeProperties(bpy.types.PropertyGroup):
             prop.tree = tree
         if node_name:
             prop.node_name = node_name
+        if node_label:
+            prop.node_label = node_label
         self.props.move(current_index, index)
         return prop
 
     def clear(self):
         self.props.clear()
 
-    def add(self, tree=None, node_name=None):
+    def add(self, tree=None, node_name=None, node_label=None):
         prop = self.props.add()
         if tree:
             prop.tree = tree
         if node_name:
             prop.node_name = node_name
+        if node_label:
+            prop.node_label = node_label
         return prop
 
     def search_tree(self, name: str):
@@ -316,7 +322,13 @@ class Sv3dPropRemoveItem(bpy.types.Operator):
     prop_index: bpy.props.IntProperty()
 
     def execute(self, context):
-        context.scene.sv_ui_node_props.props.remove(self.prop_index)
+        prop = context.scene.sv_ui_node_props.props[self.prop_index]
+        node = prop.tree.nodes.get(prop.node_name)
+        if node:
+            # assume that node will delete its itself
+            node.draw_3dpanel = False
+        else:
+            context.scene.sv_ui_node_props.props.remove(self.prop_index)
         return {'FINISHED'}
 
 
