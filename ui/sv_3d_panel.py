@@ -39,7 +39,6 @@ class SV_UL_NodeTreePropertyList(bpy.types.UIList):
     """Show in 3D tool panel"""
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         prop = item
-        tree = prop.tree
 
         row = layout.row(align=True)
 
@@ -61,7 +60,9 @@ class SV_UL_NodeTreePropertyList(bpy.types.UIList):
                 move_down = row.operator('node.sv_move_properties', text='', icon='TRIA_DOWN')
                 move_down.direction = 'DOWN'
                 move_down.prop_index = index
-                row.operator('node.sv_remove_3dviewprop_item', text='', icon='CANCEL').prop_index = index
+                edit_label = row.operator('node.popup_edit_label', text='', icon='GREASEPENCIL')
+                edit_label.tree_name = prop.tree.name
+                edit_label.node_name = prop.node_name
 
     def filter_items(self, context, data, prop_name):
         ui_list = data
@@ -69,7 +70,8 @@ class SV_UL_NodeTreePropertyList(bpy.types.UIList):
         filter_trees = [prop.type == 'TREE' for prop in ui_list.props]
         filter_props = [prop.type == 'TREE' or prop.tree.sv_show_in_3d for prop in ui_list.props]
 
-        filter_names = [self.filter_name in (prop.node_label or prop.node_name).lower() for prop in ui_list.props]
+        filter_names = [self.filter_name.lower() in (prop.node_label or prop.node_name).lower() for
+                        prop in ui_list.props]
         filter_names = [not f for f in filter_names] if self.use_filter_invert else filter_names
 
         mix_filters = [ft or (fp and fn) for ft, fp, fn in zip(filter_trees, filter_props, filter_names)]
@@ -194,6 +196,12 @@ class Sv3DNodeProperties(bpy.types.PropertyGroup):
             if position:
                 self.props.remove(position)
 
+    def update_node_label(self, tree_name, node_name, label):
+        """It will update label of given node in the list"""
+        node_index = self.search_node(node_name=node_name, tree_name=tree_name)
+        if node_index:
+            self.props[node_index].node_label = label
+
     def insert(self, index, tree=None, node_name=None, node_label=None):
         """Inserts element into custom position"""
         # move is quite efficient operation, looks independent from collection length
@@ -230,7 +238,10 @@ class Sv3DNodeProperties(bpy.types.PropertyGroup):
         return None
 
     def search_node(self, node_name, tree_name):
-        """Several trees can have nodes with similar names"""
+        """
+        It returns index of given node in list or None
+        Several trees can have nodes with similar names
+        """
         for i, prop in enumerate(self.props):
             if prop.type == 'NODE':
                 if prop.tree.name == tree_name and prop.node_name == node_name:
@@ -332,6 +343,34 @@ class Sv3dPropRemoveItem(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class SvPopupEditLabel(bpy.types.Operator):
+    """
+    Menu for editing node labels
+    """
+    bl_idname = "node.popup_edit_label"
+    bl_label = "Edit label"
+    bl_options = {'INTERNAL'}
+
+    tree_name: bpy.props.StringProperty()
+    node_name: bpy.props.StringProperty()
+
+    def execute(self, context):
+        tree = bpy.data.node_groups.get(self.tree_name)
+        node = tree.nodes.get(self.node_name)
+        context.scene.sv_ui_node_props.update_node_label(self.tree_name, self.node_name, node.label)
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self)
+
+    def draw(self, context):
+        tree = bpy.data.node_groups.get(self.tree_name)
+        node = tree.nodes.get(self.node_name)
+        self.layout.label(text=f'Edit label of node="{node.label or node.name}"')
+        self.layout.prop(node, 'label')
+
+
 classes = [
     SV_PT_3DPanel,
     SV_UL_NodeTreePropertyList,
@@ -339,7 +378,8 @@ classes = [
     SvLayoutScanProperties,
     SvLayoutMoveProperties,
     Sv3dPropRemoveItem,
-    Sv3DNodeProperties
+    Sv3DNodeProperties,
+    SvPopupEditLabel
 ]
 
 

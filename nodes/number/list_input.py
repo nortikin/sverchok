@@ -38,7 +38,8 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_LIST_INPUT'
 
     defaults = [0 for i in range(32)]
-    draw_3dpanel: BoolProperty(name='Show in 3D panel', description='show in 3d panel', default=False)
+    draw_3dpanel: BoolProperty(name='Show in 3D panel', description='show in 3d panel', default=False,
+                               update=lambda n, c: bpy.context.scene.sv_ui_node_props.update_show_property(n))
 
     int_: IntProperty(
         name='int_', description='integer number', default=1, min=1, max=128, update=updateNode)
