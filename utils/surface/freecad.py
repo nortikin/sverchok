@@ -258,7 +258,7 @@ class SvFreeCadNurbsSurface(SvNurbsSurface):
 #         return self
 
 def is_solid_face_surface(surface):
-    if not isinstance(surface, SvFreeCadNurbsSurface):
+    if not isinstance(surface, (SvFreeCadNurbsSurface, SvSolidFaceSurface)):
         return False
     if not hasattr(surface, 'face') or surface.face is None:
         return False
