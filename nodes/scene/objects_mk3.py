@@ -141,7 +141,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         default=True, update=updateNode)
 
     object_names: bpy.props.CollectionProperty(type=SvOB3BDataCollection)
-    to3d: BoolProperty(
+    draw_3dpanel: BoolProperty(
         default=False, 
         description="Show in Sverchok control panel",
         update=updateNode)
@@ -228,12 +228,8 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.draw_obj_names(layout)
 
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, 'to3d', text="To Control panel")
+        layout.prop(self, 'draw_3dpanel', text="To Control panel")
         self.draw_animatable_buttons(layout)
-
-    @property
-    def draw_3dpanel(self):
-        return True if self.to3d and any((s.is_linked for s in self.outputs)) else False
 
     def draw_buttons_3dpanel(self, layout):
         callback = 'node.ob3_callback'

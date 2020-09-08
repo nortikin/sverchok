@@ -38,7 +38,7 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_LIST_INPUT'
 
     defaults = [0 for i in range(32)]
-    to3d: BoolProperty(name='to3d', description='show in 3d panel', default=True)
+    draw_3dpanel: BoolProperty(name='Show in 3D panel', description='show in 3d panel', default=False)
 
     int_: IntProperty(
         name='int_', description='integer number', default=1, min=1, max=128, update=updateNode)
@@ -112,27 +112,28 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, 'to3d', text='to3d')
+        layout.prop(self, 'draw_3dpanel')
 
-    @property
-    def draw_3dpanel(self):
-        return False if not self.outputs[0].is_linked or not self.to3d else True
-
-    def draw_buttons_3dpanel(self, layout):
-        layout.row(align=True).label(text=self.label or self.name)
-
-        if self.mode == 'vector':
-            colum_list = layout.column(align=True)
-            for i in range(self.v_int):
-                row = colum_list.row(align=True)
-                for j in range(3):
-                    row.prop(self, 'vector_list', index=i*3+j, text='XYZ'[j]+(self.label if self.label else self.name))
+    def draw_buttons_3dpanel(self, layout, in_menu=None):
+        if not in_menu:
+            menu = layout.row(align=True).operator('node.popup_3d_menu', text=f'Show: "{self.label or self.name}"', 
+                                                   icon=self.bl_icon)
+            menu.tree_name = self.id_data.name
+            menu.node_name = self.name
         else:
-            colum_list = layout.column(align=True)
-            for i in range(self.int_):
-                row = colum_list.row(align=True)
-                row.prop(self, self.mode, index=i, text=str(i)+(self.label if self.label else self.name))
-                row.scale_x = 0.8
+            layout.label(text=self.label or self.name)
+            if self.mode == 'vector':
+                colum_list = layout.column(align=True)
+                for i in range(self.v_int):
+                    row = colum_list.row(align=True)
+                    for j in range(3):
+                        row.prop(self, 'vector_list', index=i*3+j, text='XYZ'[j]+(self.label if self.label else self.name))
+            else:
+                colum_list = layout.column(align=True)
+                for i in range(self.int_):
+                    row = colum_list.row(align=True)
+                    row.prop(self, self.mode, index=i, text=str(i)+(self.label if self.label else self.name))
+                    row.scale_x = 0.8
 
     def process(self):
         if self.outputs[0].is_linked:

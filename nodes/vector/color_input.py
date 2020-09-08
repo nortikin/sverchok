@@ -39,9 +39,9 @@ class SvColorInputNode(bpy.types.Node, SverchCustomTreeNode):
         name="Color", description="Color", size=4,
         min=0.0, max=1.0, subtype='COLOR', update=updateNode)
 
-    to3d: BoolProperty(
+    draw_3dpanel: BoolProperty(
         name = "To 3D Panel", description="Show this node in 3D panel",
-        default=True, update=updateNode)
+        default=False, update=updateNode)
 
     def sv_init(self, context):
         self.outputs.new("SvColorSocket", "Color")
@@ -53,16 +53,12 @@ class SvColorInputNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
-        layout.prop(self, "to3d")
-
-    @property
-    def draw_3dpanel(self):
-        return False if not self.outputs[0].is_linked or not self.to3d else True
+        layout.prop(self, "draw_3dpanel")
 
     def draw_buttons_3dpanel(self, layout):
-        layout.label(text=self.label if self.label else self.name)
-        layout.template_color_picker(self, 'color_data', value_slider=True)
-        layout.prop(self, 'color_data', text='')
+        row = layout.row(align=True)
+        row.label(text=self.label if self.label else self.name)
+        row.prop(self, 'color_data', text='')
 
     def process(self):
         if self.use_alpha:
