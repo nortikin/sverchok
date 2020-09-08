@@ -39,8 +39,10 @@ class SvCustomSwitcher(bpy.types.Node, SverchCustomTreeNode):
             self['previous_user_list'] = values
         self['user_list'] = values
 
-    to3d: bpy.props.BoolProperty(name='Show in 3d panel', default=True,
-                                  description='Show items of this node in 3d panel of 3d view screen')
+    draw_3dpanel: bpy.props.BoolProperty(
+        name='Show in 3d panel', default=False,
+        update=lambda n, c: bpy.context.scene.sv_ui_node_props.update_show_property(n),
+        description='Show items of this node in 3d panel of 3d view screen')
     multiple_selection: bpy.props.BoolProperty(name='Multiple selection', default=True, update=update_mode,
                                                 description='Selection several items simultaneously')
     ui_scale: bpy.props.FloatProperty(name='Size of buttons', default=1.0, min=0.5, max=5)
@@ -64,12 +66,8 @@ class SvCustomSwitcher(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row()
         row.scale_y = 2
         row.prop(self, 'multiple_selection', toggle=True)
-        layout.prop(self, 'to3d', toggle=True)
+        layout.prop(self, 'draw_3dpanel', toggle=True)
         layout.prop(self, 'ui_scale', text='Size of buttons')
-
-    @property
-    def draw_3dpanel(self):
-        return True if self.to3d and self.inputs[0].is_linked else False
 
     def draw_buttons_3dpanel(self, layout, in_menu=None):
         # I think it is moore appropriate place for coding layout of 3d panel

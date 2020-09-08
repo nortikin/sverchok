@@ -41,7 +41,7 @@ class SvColorInputNode(bpy.types.Node, SverchCustomTreeNode):
 
     draw_3dpanel: BoolProperty(
         name = "To 3D Panel", description="Show this node in 3D panel",
-        default=False, update=updateNode)
+        default=False, update=lambda n, c: bpy.context.scene.sv_ui_node_props.update_show_property(n))
 
     def sv_init(self, context):
         self.outputs.new("SvColorSocket", "Color")

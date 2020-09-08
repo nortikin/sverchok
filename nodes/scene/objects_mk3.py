@@ -144,7 +144,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     draw_3dpanel: BoolProperty(
         default=False, 
         description="Show in Sverchok control panel",
-        update=updateNode)
+        update=lambda n, c: bpy.context.scene.sv_ui_node_props.update_show_property(n))
 
     active_obj_index: bpy.props.IntProperty()
 

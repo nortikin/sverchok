@@ -172,11 +172,84 @@ class Sv3DNodeProperties(bpy.types.PropertyGroup):
         hide_props = [not f for f in hide_props] if invert else hide_props
         return hide_props
 
+    def update_show_property(self, node):
+        """This method will automatically add/remove property from 3d panel upon show 3d property changes"""
+        if node.draw_3dpanel:
+            # item should be added
+            if (node.id_data.name, node.name) not in [(prop.tree.name, prop.node_name) for prop in self.props]:
+                # just in case if it was not already added, how?
+                tree_end = self.search_tree_end(node.id_data.name)
+                if tree_end is None:
+                    # tree item should be added first
+                    self.add(tree=node.id_data)
+                    self.add(tree=node.id_data, node_name=node.name)
+                else:
+                    # tree already added
+                    self.insert(tree_end + 1, tree=node.id_data, node_name=node.name)
+        else:
+            # item should be removed
+            position = self.search_node(node.name, node.id_data.name)
+            if position:
+                self.props.remove(position)
+
+    def insert(self, index, tree=None, node_name=None):
+        """Inserts element into custom position"""
+        # move is quite efficient operation, looks independent from collection length
+        current_index = len(self.props)
+        prop = self.props.add()
+        if tree:
+            prop.tree = tree
+        if node_name:
+            prop.node_name = node_name
+        self.props.move(current_index, index)
+        return prop
+
     def clear(self):
         self.props.clear()
 
-    def add(self):
-        return self.props.add()
+    def add(self, tree=None, node_name=None):
+        prop = self.props.add()
+        if tree:
+            prop.tree = tree
+        if node_name:
+            prop.node_name = node_name
+        return prop
+
+    def search_tree(self, name: str):
+        """Find position of a tree, return int or None if tree does not exist"""
+        for i, prop in enumerate(self.props):
+            if prop.type == 'TREE':
+                if prop.tree.name == name:
+                    return i
+        return None
+
+    def search_node(self, node_name, tree_name):
+        """Several trees can have nodes with similar names"""
+        for i, prop in enumerate(self.props):
+            if prop.type == 'NODE':
+                if prop.tree.name == tree_name and prop.node_name == node_name:
+                    return i
+        return None
+
+    def search_tree_end(self, tree_name):
+        """Return index of last property item of given tre or None if tree does not exist"""
+        tree_index = self.search_tree(tree_name)
+        if tree_index is not None:
+            last_index = None
+            for prop_index, prop in enumerate(self.props[tree_index:]):
+                last_index = prop_index
+                if prop.type == 'TREE' and prop.tree.name != tree_name:
+                    # another tree has started
+                    return tree_index + prop_index - 1
+            if last_index is None:
+                # the tree is last and does not have properties
+                return tree_index
+            else:
+                # tree is last but has properties
+                return tree_index + last_index
+        else:
+            # tree does not exist
+            return None
 
 
 class SvLayoutScanProperties(bpy.types.Operator):

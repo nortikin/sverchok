@@ -46,8 +46,11 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
         description='Apply matrices to',
         update=updateNode)
 
-    to3d: BoolProperty(name="Show in 3D panel", default=False, update=updateNode,
-                       description="Show node properties in 3D panel")
+    draw_3dpanel: BoolProperty(
+        name="Show in 3D panel", default=False, 
+        update=lambda n, c: bpy.context.scene.sv_ui_node_props.update_show_property(n),
+        description="Show node properties in 3D panel")
+
     show_wireframe: BoolProperty(default=False, update=updateNode, name="Show Edges")
     material: bpy.props.PointerProperty(type=bpy.types.Material, update=updateNode)
     is_lock_origin: bpy.props.BoolProperty(name="Lock Origin", default=True, update=updateNode,
@@ -81,7 +84,7 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'fast_mesh_update', text='Fast mesh update')
         layout.prop(self, 'is_smooth_mesh', text='smooth shade')
-        layout.prop(self, 'to3d')
+        layout.prop(self, 'draw_3dpanel')
 
     def draw_matrix_props(self, socket, context, layout):
         socket.draw_quick_link(context, layout, self)
@@ -99,10 +102,6 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
             return f"MeV {self.base_data_name}"
         else:
             return "Mesh viewer"
-
-    @property
-    def draw_3dpanel(self):
-        return self.to3d
 
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)

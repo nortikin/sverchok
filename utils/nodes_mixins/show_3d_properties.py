@@ -14,7 +14,12 @@ class Show3DProperties:
     Mixin for classes which should show their properties in 3D panel
     It is not mandatory to use but nodes should implement all attributes and methods of this class
     """
-    draw_3dpanel: bpy.props.BoolProperty(name="To 3D Panel", description="Show this node in 3D panel", default=False)
+    draw_3dpanel: bpy.props.BoolProperty(
+        name="To 3D Panel",
+        description="Show this node in 3D panel", 
+        default=False,
+        update=lambda n, c: bpy.context.scene.sv_ui_node_props.update_show_property(n)  # automatically add/remove item
+    )
 
     def draw_buttons_3dpanel(self, layout, in_menu=False):
         """
