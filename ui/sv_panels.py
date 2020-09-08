@@ -345,11 +345,6 @@ sv_tools_classes = [
 
 
 def register():
-    bpy.types.NodeTree.SvShowIn3D = BoolProperty(
-        name='show in panel',
-        default=True,
-        description='Show properties in 3d panel or not')
-
     bpy.types.Scene.SvShowIn3D_active = BoolProperty(
         name='update from 3dview',
         default=False,
@@ -369,7 +364,6 @@ def unregister():
     for class_name in reversed(sv_tools_classes):
         bpy.utils.unregister_class(class_name)
 
-    del bpy.types.NodeTree.SvShowIn3D
     del bpy.types.Scene.SvShowIn3D_active
     bpy.types.NODE_HT_header.remove(node_show_tree_mode)
     bpy.types.VIEW3D_HT_header.remove(view3d_show_live_mode)
