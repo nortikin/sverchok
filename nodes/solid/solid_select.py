@@ -45,14 +45,15 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
             ('SPHERE', "By Center and Radius", "By center and radius", 2),
             ('PLANE', "By Plane", "By plane defined by point and normal", 3),
             ('CYLINDER', "By Cylinder", "By cylinder defined by point, direction vector and radius", 4),
-            ('DIRECTION', "By Direction", "By direction", 5)
+            ('DIRECTION', "By Direction", "By direction", 5),
+            ('SOLID_DISTANCE', "By Distance to Solid", "By Distance to Solid", 6)
             #('BBOX', "By Bounding Box", "By bounding box", 6)
         ]
 
     known_criteria = {
-            'VERTS': {'SIDE', 'SPHERE', 'PLANE', 'CYLINDER'},
-            'EDGES': {'SIDE', 'SPHERE', 'PLANE', 'CYLINDER', 'DIRECTION'},
-            'FACES': {'SIDE', 'NORMAL', 'SPHERE', 'PLANE', 'CYLINDER'}
+            'VERTS': {'SIDE', 'SPHERE', 'PLANE', 'CYLINDER', 'SOLID_DISTANCE'},
+            'EDGES': {'SIDE', 'SPHERE', 'PLANE', 'CYLINDER', 'DIRECTION', 'SOLID_DISTANCE'},
+            'FACES': {'SIDE', 'NORMAL', 'SPHERE', 'PLANE', 'CYLINDER', 'SOLID_DISTANCE'}
         }
 
     element_type : EnumProperty(
@@ -72,10 +73,11 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
     @throttled
     def update_sockets(self, context):
         self.inputs['Direction'].hide_safe = self.criteria_type not in {'SIDE', 'NORMAL', 'PLANE', 'CYLINDER', 'DIRECTION'}
-        self.inputs['Center'].hide_safe = self.criteria_type not in {'SPHERE', 'PLANE', 'CYLINDER', 'BBOX'}
+        self.inputs['Center'].hide_safe = self.criteria_type not in {'SPHERE', 'PLANE', 'CYLINDER'}
         self.inputs['Percent'].hide_safe = self.criteria_type not in {'SIDE', 'NORMAL', 'DIRECTION'}
-        self.inputs['Radius'].hide_safe = self.criteria_type not in {'SPHERE', 'PLANE', 'CYLINDER', 'BBOX'}
-        self.inputs['Precision'].hide_safe = self.element_type == 'VERTS'
+        self.inputs['Radius'].hide_safe = self.criteria_type not in {'SPHERE', 'PLANE', 'CYLINDER', 'SOLID_DISTANCE'}
+        self.inputs['Tool'].hide_safe = self.criteria_type not in {'SOLID_DISTANCE'}
+        self.inputs['Precision'].hide_safe = self.element_type == 'VERTS' or self.criteria_type in {'SOLID_DISTANCE'}
 
     criteria_type : EnumProperty(
             name = "Criteria",
@@ -104,11 +106,12 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'element_type')
         layout.prop(self, 'criteria_type', text='')
-        if self.element_type in {'EDGES', 'FACES'}:
+        if self.element_type in {'EDGES', 'FACES'} and self.criteria_type not in {'SOLID_DISTANCE'}:
             layout.prop(self, 'include_partial')
 
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', "Solid")
+        self.inputs.new('SvSolidSocket', "Tool")
         d = self.inputs.new('SvVerticesSocket', "Direction")
         d.use_prop = True
         d.prop = (0.0, 0.0, 1.0)
@@ -161,6 +164,11 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
         line = LineEquation.from_direction_and_point(direction, center)
         condition = lambda v: line.distance_to_point(v) < radius
         return topo.get_vertices_by_location_mask(condition)
+
+    def _verts_by_solid_distance(self, topo, tool, radius):
+        condition = lambda v: v.distToShape(tool)[0] < radius
+        mask = [condition(v) for v in topo.solid.Vertexes]
+        return mask
 
     # EDGES
 
@@ -219,6 +227,11 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
         threshold = self.map_percent(values, percent)
         return (values > threshold).tolist()
 
+    def _edges_by_solid_distance(self, topo, tool, radius):
+        condition = lambda e: e.distToShape(tool)[0] < radius
+        mask = [condition(e) for e in topo.solid.Edges]
+        return mask
+
     # FACES
 
     def _faces_by_side(self, topo, direction, percent):
@@ -276,9 +289,14 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
             return distances < radius
         return topo.get_faces_by_location_mask(condition, self.include_partial)
 
+    def _faces_by_solid_distance(self, topo, tool, radius):
+        condition = lambda f: f.distToShape(tool)[0] < radius
+        mask = [condition(f) for f in topo.solid.Faces]
+        return mask
+
     # SWITCH
 
-    def calc_mask(self, solid, precision, direction, center, percent, radius):
+    def calc_mask(self, solid, tool, precision, direction, center, percent, radius):
         topo = SvSolidTopology(solid)
         if self.element_type == 'VERTS':
             if self.criteria_type == 'SIDE':
@@ -289,6 +307,8 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
                 vertex_mask = self._verts_by_plane(topo, center, direction, radius)
             elif self.criteria_type == 'CYLINDER':
                 vertex_mask = self._verts_by_cylinder(topo, center, direction, radius)
+            elif self.criteria_type == 'SOLID_DISTANCE':
+                vertex_mask = self._verts_by_solid_distance(topo, tool, radius)
             else:
                 raise Exception("Unknown criteria for vertices")
             verts = [v for c, v in zip(vertex_mask, solid.Vertexes) if c]
@@ -306,6 +326,8 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
                 edge_mask = self._edges_by_cylinder(topo, center, direction, radius)
             elif self.criteria_type == 'DIRECTION':
                 edge_mask = self._edges_by_direction(topo, direction, percent)
+            elif self.criteria_type == 'SOLID_DISTANCE':
+                edge_mask = self._edges_by_solid_distance(topo, tool, radius)
             else:
                 raise Exception("Unknown criteria for edges")
             edges = [e for c, e in zip(edge_mask, solid.Edges) if c]
@@ -323,6 +345,8 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
                 face_mask = self._faces_by_plane(topo, center, direction, radius)
             elif self.criteria_type == 'CYLINDER':
                 face_mask = self._faces_by_cylinder(topo, center, direction, radius)
+            elif self.criteria_mask == 'SOLID_DISTANCE':
+                face_mask = self._faces_by_solid_distance(topo, tool, radius)
             else:
                 raise Exception("Unknown criteria type for faces")
             faces = [f for c, f in zip(face_mask, solid.Faces) if c]
@@ -337,6 +361,11 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         solid_s = self.inputs['Solid'].sv_get()
+        if self.criteria_type in {'SOLID_DISTANCE'}:
+            tool_s = self.inputs['Tool'].sv_get()
+            tool_s = ensure_nesting_level(tool_s, 2, data_types=(Part.Shape,))
+        else:
+            tool_s = [[None]]
         direction_s = self.inputs['Direction'].sv_get()
         center_s = self.inputs['Center'].sv_get()
         percent_s = self.inputs['Percent'].sv_get()
@@ -353,12 +382,12 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
         vertex_mask_out = []
         edge_mask_out = []
         face_mask_out = []
-        for solids, directions, centers, percents, radiuses, precisions in zip_long_repeat(solid_s, direction_s, center_s, percent_s, radius_s, precision_s):
+        for objects in zip_long_repeat(solid_s, tool_s, direction_s, center_s, percent_s, radius_s, precision_s):
             vertex_mask_new = []
             edge_mask_new = []
             face_mask_new = []
-            for solid, direction, center, percent, radius, precision in zip_long_repeat(solids, directions, centers, percents, radiuses, precisions):
-                vertex_mask, edge_mask, face_mask = self.calc_mask(solid, precision, direction, center, percent, radius)
+            for solid, tool, direction, center, percent, radius, precision in zip_long_repeat(*objects):
+                vertex_mask, edge_mask, face_mask = self.calc_mask(solid, tool, precision, direction, center, percent, radius)
                 vertex_mask_new.append(vertex_mask)
                 edge_mask_new.append(edge_mask)
                 face_mask_new.append(face_mask)
