@@ -83,11 +83,11 @@ class SvExAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         d = self.inputs.new('SvVerticesSocket', "Center")
         d.use_prop = True
-        d.prop = (0.0, 0.0, 0.0)
+        d.default_property = (0.0, 0.0, 0.0)
 
         d = self.inputs.new('SvVerticesSocket', "Direction")
         d.use_prop = True
-        d.prop = (0.0, 0.0, 1.0)
+        d.default_property = (0.0, 0.0, 1.0)
 
         self.inputs.new('SvStringsSocket', 'Faces')
         self.inputs.new('SvStringsSocket', 'Amplitude').prop_name = 'amplitude'

@@ -24,7 +24,7 @@ class SvExtrudeCurveVectorNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvCurveSocket', "Profile")
         p = self.inputs.new('SvVerticesSocket', "Vector")
         p.use_prop = True
-        p.prop = (0.0, 0.0, 1.0)
+        p.default_property = (0.0, 0.0, 1.0)
         self.outputs.new('SvSurfaceSocket', "Surface")
 
     def process(self):

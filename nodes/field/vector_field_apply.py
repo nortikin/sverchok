@@ -34,7 +34,7 @@ class SvVectorFieldApplyNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVectorFieldSocket', "Field")
         d = self.inputs.new('SvVerticesSocket', "Vertices")
         d.use_prop = True
-        d.prop = (0.0, 0.0, 0.0)
+        d.default_property = (0.0, 0.0, 0.0)
         self.inputs.new('SvStringsSocket', "Coefficient").prop_name = 'coefficient'
         self.inputs.new('SvStringsSocket', "Iterations").prop_name = 'iterations'
         self.outputs.new('SvVerticesSocket', 'Vertices')

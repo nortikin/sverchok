@@ -162,7 +162,7 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
                 self.inputs.remove(self.inputs[-1])
             p = self.inputs.new('SvVerticesSocket', 'Base Point')
             p.use_prop = True
-            p.prop = (0.0, 0.0, 0.0)
+            p.default_property = (0.0, 0.0, 0.0)
 
         if self.mode == 'AXIS':
             while len(self.inputs) > 2:

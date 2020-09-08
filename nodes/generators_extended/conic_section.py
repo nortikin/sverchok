@@ -82,15 +82,15 @@ class SvConicSectionNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         apex = self.inputs.new('SvVerticesSocket', "ConeApex")
         apex.use_prop = True
-        apex.prop = (0.0, 0.0, 0.0)
+        apex.default_property = (0.0, 0.0, 0.0)
 
         cone_dir = self.inputs.new('SvVerticesSocket', "ConeDirection")
         cone_dir.use_prop = True
-        cone_dir.prop = (0.0, 0.0, 1.0)
+        cone_dir.default_property = (0.0, 0.0, 1.0)
 
         cone_gen = self.inputs.new('SvVerticesSocket', "Generatrix")
         cone_gen.use_prop = True
-        cone_gen.prop = (1.0, 0.0, 1.0)
+        cone_gen.default_property = (1.0, 0.0, 1.0)
 
         self.inputs.new('SvStringsSocket', 'Alpha').prop_name = 'alpha'
         self.inputs.new('SvStringsSocket', "Count").prop_name = 'nlines'
@@ -98,11 +98,11 @@ class SvConicSectionNode(bpy.types.Node, SverchCustomTreeNode):
 
         plane_v = self.inputs.new('SvVerticesSocket', "PlanePoint")
         plane_v.use_prop = True
-        plane_v.prop = (0.0, 0.0, 1.0)
+        plane_v.default_property = (0.0, 0.0, 1.0)
 
         plane_d = self.inputs.new('SvVerticesSocket', "PlaneDirection")
         plane_d.use_prop = True
-        plane_d.prop = (0.0, 0.0, 1.0)
+        plane_d.default_property = (0.0, 0.0, 1.0)
 
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")

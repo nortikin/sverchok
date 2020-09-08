@@ -51,11 +51,11 @@ class SvCastCurveNode(bpy.types.Node, SverchCustomTreeNode):
             
             p = self.inputs.new('SvVerticesSocket', "Center")
             p.use_prop = True
-            p.prop = (0.0, 0.0, 0.0)
+            p.default_property = (0.0, 0.0, 0.0)
 
             p = self.inputs.new('SvVerticesSocket', "Direction")
             p.use_prop = True
-            p.prop = (0.0, 0.0, 1.0)
+            p.default_property = (0.0, 0.0, 1.0)
 
             self.inputs.new('SvStringsSocket', "Radius").prop_name = 'radius'
             self.inputs.new('SvStringsSocket', "Coefficient").prop_name = 'coefficient'

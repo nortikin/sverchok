@@ -22,7 +22,7 @@ class SvVectorFieldEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVectorFieldSocket', "Field")
         d = self.inputs.new('SvVerticesSocket', "Vertices")
         d.use_prop = True
-        d.prop = (0.0, 0.0, 0.0)
+        d.default_property = (0.0, 0.0, 0.0)
         self.outputs.new('SvVerticesSocket', 'Vectors')
 
     def process(self):

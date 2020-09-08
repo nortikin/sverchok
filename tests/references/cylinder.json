@@ -1,4 +1,7 @@
 {
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
   "nodes": {
     "Cylinder": {
       "bl_idname": "SvCylinderNodeMK2",
@@ -35,8 +38,5 @@
       "width": 140.0
     }
   },
-  "framed_nodes": {},
-  "update_lists": [],
-  "export_version": "0.079",
-  "groups": {}
+  "update_lists": []
 }

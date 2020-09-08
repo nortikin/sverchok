@@ -78,10 +78,10 @@ else:
             self.inputs.new('SvScalarFieldSocket', "Field")
             p = self.inputs.new('SvVerticesSocket', "Vertices")
             p.use_prop = True
-            p.prop = (0.0, 0.0, 0.0)
+            p.default_property = (0.0, 0.0, 0.0)
             p = self.inputs.new('SvVerticesSocket', "Direction")
             p.use_prop = True
-            p.prop = (0.0, 0.0, 1.0)
+            p.default_property = (0.0, 0.0, 1.0)
             self.inputs.new('SvStringsSocket', 'IsoValue').prop_name = 'iso_value'
             self.inputs.new('SvStringsSocket', 'MaxDistance').prop_name = 'max_distance'
             self.outputs.new('SvVerticesSocket', 'Vertices')
