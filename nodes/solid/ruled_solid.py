@@ -101,6 +101,24 @@ class SvRuledSolidNode(bpy.types.Node, SverchCustomTreeNode):
             default = False,
             update = updateNode)
 
+    precision_min: FloatProperty(
+            name = "Min Precision",
+            default = 0.01,
+            precision=6,
+            update = updateNode)
+
+    precision_max: FloatProperty(
+            name = "Max Precision",
+            default = 0.01,
+            precision=6,
+            update = updateNode)
+
+    precision_work: FloatProperty(
+            name = "Working Precision",
+            default = 0.01,
+            precision=6,
+            update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "SolidFace1")
         self.inputs.new('SvSurfaceSocket', "SolidFace2")
@@ -118,6 +136,12 @@ class SvRuledSolidNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, 'flip_face2', toggle=True)
         row.prop(self, 'reverse2', toggle=True)
         row.prop(self, 'flip2', toggle=True)
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'precision_work')
+        layout.prop(self, 'precision_min')
+        layout.prop(self, 'precision_max')
 
     def make_solid(self, face1, face2):
         if self.flip_face1:
@@ -145,7 +169,13 @@ class SvRuledSolidNode(bpy.types.Node, SverchCustomTreeNode):
             sv_sides.append(sv_side)
 
         shell = Part.makeShell([face1.face, face2.face] + fc_sides)
-        solid = Part.makeSolid(shell)
+        lst = [face1.face, face2.face] + fc_sides
+        sh = lst[0].fuse(lst[1:])
+        solid = Part.makeSolid(sh)
+        if not solid.isValid():
+            self.debug("Resulting solid is not valid!")
+            if not solid.fix(self.precision_work, self.precision_min, self.precision_max):
+                self.error("Solid is not valid, and is not possible to fix")
         return solid
 
     def process(self):
