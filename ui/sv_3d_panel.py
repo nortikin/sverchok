@@ -8,8 +8,6 @@
 
 import bpy
 
-from sverchok.utils.logging import debug
-
 
 class SV_PT_3DPanel(bpy.types.Panel):
     """Panel to manipulate parameters in Sverchok layouts"""
@@ -32,7 +30,7 @@ class SV_PT_3DPanel(bpy.types.Panel):
         col_edit.use_property_split = True
         col_edit.prop(context.scene.sv_ui_node_props, 'edit')
         col.template_list("SV_UL_NodeTreePropertyList", "", context.scene.sv_ui_node_props, 'props',
-                          bpy.context.scene.sverchok_panel_properties, "selected_tree")
+                          context.scene.sv_ui_node_props, "selected")
 
 
 class SV_UL_NodeTreePropertyList(bpy.types.UIList):
@@ -129,6 +127,7 @@ class Sv3DNodeProperties(bpy.types.PropertyGroup):
     props: bpy.props.CollectionProperty(type=Sv3dPropItem)
     edit: bpy.props.BoolProperty(name="Edit properties", description="Edit position of node properties in 3D panel",
                                  default=False, options=set())
+    selected: bpy.props.IntProperty()  # selected item
 
     def move_prop(self, direction: str, from_index: int):
         """

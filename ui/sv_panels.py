@@ -211,7 +211,7 @@ class SV_PT_ActiveTreePanel(SverchokPanels, bpy.types.Panel):
         ng = context.space_data.node_tree
         col = self.layout.column()
 
-        col.operator("node.sverchok_update_current", text="Update {0}".format(ng.name)).node_group = ng.name
+        col.operator("node.sverchok_update_current", text=f'Update "{ng.name}"').node_group = ng.name
         col.operator('node.remove_stale_draw_callbacks')
 
         col.use_property_split = True
@@ -225,12 +225,15 @@ class SV_PT_ProfilingPanel(SverchokPanels, bpy.types.Panel):
     bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = 'SV_PT_ToolsMenu'
 
+    def draw_header(self, context):
+        addon = context.preferences.addons.get(sverchok.__name__)
+        row = self.layout.row()
+        row.ui_units_x = 3
+        row.prop(addon.preferences, 'profile_mode', text='')
+
     def draw(self, context):
         addon = context.preferences.addons.get(sverchok.__name__)
         col = self.layout.column()
-
-        col.use_property_split = True
-        col.prop(addon.preferences, 'profile_mode')
 
         col_start_profiling = col.column()
         col_start_profiling.active = addon.preferences.profile_mode != "NONE"
@@ -293,7 +296,7 @@ class SV_UL_TreePropertyList(bpy.types.UIList):
 
         filter_tree_types = [tree.bl_idname == 'SverchCustomTreeType' for tree in trees]
 
-        filter_tree_names = [filter_name in tree.name for tree in trees]
+        filter_tree_names = [filter_name.lower() in tree.name.lower() for tree in trees]
         filter_tree_names = [not f for f in filter_tree_names] if filter_invert else filter_tree_names
 
         combine_filter = [f1 and f2 for f1, f2 in zip(filter_tree_types, filter_tree_names)]
@@ -304,7 +307,7 @@ class SV_UL_TreePropertyList(bpy.types.UIList):
 
 
 class SverchokPanelProperties(bpy.types.PropertyGroup):
-    selected_tree = bpy.props.IntProperty()  # index for UIList
+    selected_tree: bpy.props.IntProperty()  # index for UIList
 
 
 def node_show_tree_mode(self, context):
