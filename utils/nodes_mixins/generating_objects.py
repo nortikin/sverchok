@@ -195,7 +195,7 @@ class SvMeshData(bpy.types.PropertyGroup):
         if not self.mesh:
             # new mesh should be created
             self.mesh = bpy.data.meshes.new(name=mesh_name)
-        if not make_changes_test or self.is_topology_changed(len(verts), len(edges), len(faces)):
+        if not make_changes_test or self.is_topology_changed(verts, edges, faces):
             with empty_bmesh(False) as bm:
                 add_mesh_to_bmesh(bm, verts, edges, faces, update_indexes=False, update_normals=False)
                 if matrix:
@@ -215,19 +215,22 @@ class SvMeshData(bpy.types.PropertyGroup):
             is_smooth = np.zeros(len(self.mesh.polygons), dtype=bool)
         self.mesh.polygons.foreach_set('use_smooth', is_smooth)
 
-    def is_topology_changed(self, verts_number: int, edges_number: int, faces_number: int) -> bool:
+    def is_topology_changed(self, verts: list, edges: list, faces: list) -> bool:
         """
         Simple and fast test but not 100% robust.
         If number of vertices and faces are unchanged it assumes that topology is not changed
         This test is useful if mesh just changed its location.
         It is much faster just set new coordinate for each vector then recreate whole object
         """
-        if not faces_number:
+        if not faces:
             # edges can be take in account if mesh does not have polygons
             # because Sverchok edges can exclude edges within polygons
-            return len(self.mesh.vertices) != verts_number or len(self.mesh.edges) != edges_number
+            return len(self.mesh.vertices) != len(verts) or len(self.mesh.edges) != len(edges)
         else:
-            return len(self.mesh.vertices) != verts_number or len(self.mesh.polygons) != faces_number
+            number_is_changed = len(self.mesh.vertices) != len(verts) or len(self.mesh.polygons) != len(faces)
+            # check several polygons indexes
+            are_polygons_changed = any([list(p.vertices) != f for _, p, f in zip(range(5), self.mesh.polygons, faces)])
+            return number_is_changed or are_polygons_changed
 
     def update_vertices(self, verts: Union[list, np.ndarray]):
         """
