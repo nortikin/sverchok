@@ -12,6 +12,7 @@ from os.path import basename, dirname
 from time import localtime, strftime
 
 import bpy
+import sverchok
 from bpy.utils import register_class, unregister_class
 from bpy.props import StringProperty, BoolProperty
 from sverchok.utils.sv_update_utils import version_and_sha
@@ -46,6 +47,10 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
     id_tree: StringProperty()
     compress: BoolProperty()
+
+    @classmethod
+    def poll(cls, context):
+        return bool(context.space_data.node_tree)
 
     def execute(self, context):
         ng = bpy.data.node_groups[self.id_tree]
@@ -91,6 +96,17 @@ class SvNodeTreeExporter(bpy.types.Operator):
         wm = context.window_manager
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
+
+    def draw(self, context):
+        self.layout.label(text=f'Save node tree "{self.id_tree}" into json:')
+
+        try:
+            col = self.layout.column(heading="Options")  # new syntax in >= 2.90
+        except TypeError:
+            col = self.layout.column()  # old syntax in <= 2.83
+
+        col.use_property_split = True
+        col.prop(self, 'compress', text="Create ZIP archive")
 
 
 class SvNodeTreeImporterSilent(bpy.types.Operator):
@@ -149,18 +165,15 @@ class SvNodeTreeImporter(bpy.types.Operator):
         default="*.json",
         options={'HIDDEN'})
 
-    id_tree: StringProperty()
+    current_tree_name: StringProperty()  # from where it was called
     new_nodetree_name: StringProperty()
 
     def execute(self, context):
-        if not self.id_tree:
-            ng_name = self.new_nodetree_name
-            ng_params = {
-                'name': ng_name or 'unnamed_tree',
-                'type': 'SverchCustomTreeType'}
-            ng = bpy.data.node_groups.new(**ng_params)
-        else:
-            ng = bpy.data.node_groups[self.id_tree]
+        ng = context.scene.io_panel_properties.import_tree
+        if not ng:
+            self.report(type={'WARNING'}, message="The tree was not chosen, have a look at property (N) panel")
+            return {'CANCELLED'}
+
         import_tree(ng, self.filepath)
 
         # set new node tree to active
@@ -168,9 +181,17 @@ class SvNodeTreeImporter(bpy.types.Operator):
         return {'FINISHED'}
 
     def invoke(self, context, event):
+        # it will set current tree as default
+        current_tree = bpy.data.node_groups.get(self.current_tree_name)
+        context.scene.io_panel_properties.import_tree = current_tree
         wm = context.window_manager
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
+
+    def draw(self, context):
+        col = self.layout.column()
+        col.label(text="Destination tree to import JSON:")
+        col.template_ID(context.scene.io_panel_properties, 'import_tree', new='node.new_import_tree')
 
 
 class SvNodeTreeImportFromGist(bpy.types.Operator):
@@ -208,9 +229,13 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
 class SvNodeTreeExportToGist(bpy.types.Operator):
     """Export to anonymous gist and copy id to clipboard"""
     bl_idname = "node.tree_export_to_gist"
-    bl_label = "sv NodeTree Gist Export Operator"
+    bl_label = "Export to GIST (github account)"
 
     selected_only: BoolProperty(name="Selected only", default=False)
+
+    @classmethod
+    def poll(cls, context):
+        return bool(context.space_data.node_tree)
 
     def execute(self, context):
         ng = context.space_data.node_tree
@@ -252,6 +277,31 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
 
         return {'CANCELLED'}
 
+    def invoke(self, context, event):
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self)
+
+    def draw(self, context):
+        addon = context.preferences.addons.get(sverchok.__name__)
+        token = addon.preferences.github_token
+
+        col = self.layout.column()
+        if not token:
+            row_info = col.row(align=True)
+            row_info.label(text="You should generate token before importing")
+            row_link = row_info.row(align=True)
+            row_link.ui_units_x = 2.5
+            row_link.operator("node.sv_github_api_token_help", text="Learn", icon='URL')
+            col.prop(addon.preferences, "github_token", text="Token")
+
+        try:
+            col = self.layout.column(heading="Options")  # new syntax in >= 2.90
+        except TypeError:
+            col = self.layout.column()  # old syntax in <= 2.83
+
+        col.use_property_split = True
+        col.prop(self, 'selected_only')
+
 
 def show_selected_in_OSfilebrowsesr(file_path):
     if os.name == 'nt':
@@ -266,8 +316,8 @@ class SvBlendToArchive(bpy.types.Operator):
     bl_idname = "node.blend_to_archive"
     bl_label = "Archive .blend"
 
-    archive_ext: bpy.props.StringProperty(default='zip')
-    
+    # _archive_ext: bpy.props.StringProperty(default='zip')
+    archive_ext: bpy.props.EnumProperty(items=[(i, i, '') for i in ['zip', 'gz']])
 
     def complete_msg(self, blend_archive_path):
         msg = 'saved current .blend as archive at ' + blend_archive_path
@@ -307,6 +357,32 @@ class SvBlendToArchive(bpy.types.Operator):
 
         return {'CANCELLED'}
 
+    def invoke(self, context, event):
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self)
+
+    def draw(self, context):
+        try:
+            col = self.layout.column(heading="Options")  # new syntax in >= 2.90
+        except TypeError:
+            col = self.layout.column()  # old syntax in <= 2.83
+
+        col.use_property_split = True
+        row = col.row(align=True)
+        row.prop(self, 'archive_ext', text="Extension", expand=True)
+
+
+class SvNewImportTree(bpy.types.Operator):
+    """Add new tree into node collection for importing json file"""
+    bl_idname = "node.new_import_tree"
+    bl_label = "Add new SV tree"
+
+    def execute(self, context):
+        tree = bpy.data.node_groups.new(name="Import tree", type='SverchCustomTreeType')
+        context.scene.io_panel_properties.import_tree = tree
+        return {'FINISHED'}
+
+
 class SvOpenTokenHelpOperator(bpy.types.Operator):
     """Open a wiki page with information about GitHub API tokens creation
     in the browser"""
@@ -326,7 +402,8 @@ classes = [
     SvNodeTreeImporterSilent,
     SvNodeTreeImportFromGist,
     SvBlendToArchive,
-    SvOpenTokenHelpOperator
+    SvOpenTokenHelpOperator,
+    SvNewImportTree
 ]
 
 

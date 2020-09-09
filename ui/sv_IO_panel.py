@@ -49,81 +49,42 @@ class SV_PT_IOExportMenu(ExportImportPanels, bpy.types.Panel):
     bl_parent_id = 'SV_PT_IOLayoutsMenu'
 
     def draw(self, context):
-        io_props = context.scene.io_panel_properties
-
-        try:
-            col = self.layout.column(heading="Options")  # new syntax in >= 2.90
-        except TypeError:
-            col = self.layout.column()  # old syntax in <= 2.83
-
-        col.active = bool(context.space_data.node_tree)
+        col = self.layout.column()
 
         imp = col.operator('node.tree_exporter', text='Export to JSON', icon='FILE_BACKUP')
         imp.id_tree = context.space_data.node_tree.name if context.space_data.node_tree else ''
-        imp.compress = io_props.compress_output
 
-        exp = col.operator('node.tree_export_to_gist', text='Export to gist', icon='URL')
-        exp.selected_only = io_props.export_selected_only
-
-        col.operator('node.blend_to_archive', text='Archive .blend as .zip').archive_ext = 'zip'
-        col.operator('node.blend_to_archive', text='Archive .blend as .gz').archive_ext = 'gz'
-
-        col.use_property_split = True
-        col.prop(io_props, 'export_selected_only')
-        col.prop(io_props, 'compress_output', text='Zip')
+        col.operator('node.tree_export_to_gist', text='Export to gist', icon='URL')
+        col.operator('node.blend_to_archive', text='Save .blend')
 
 
 class SV_PT_IOImportMenu(ExportImportPanels, bpy.types.Panel):
     bl_idname = "SV_PT_IOImportMenu"
     bl_label = "Import"
     bl_parent_id = 'SV_PT_IOLayoutsMenu'
-    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
-        io_props = context.scene.io_panel_properties
-
         col = self.layout.column()
 
-        op = col.operator('node.tree_import_from_gist', text='from gist link', icon='URL')
+        op = col.operator('node.tree_import_from_gist', text='Import GIST link', icon='URL')
         op.gist_id = 'clipboard'
         op.id_tree = context.space_data.node_tree.name if context.space_data.node_tree else ''
 
-        col_to_current_tree = col.column()
-        col_to_current_tree.active = bool(context.space_data.node_tree)
-        op = col_to_current_tree.operator('node.tree_importer', text='Import into this tree', icon='RNA')
-        op.id_tree = context.space_data.node_tree.name if context.space_data.node_tree else ''
-
-        op = col.operator('node.tree_importer', text='Import into new tree', icon='RNA_ADD')
-        op.id_tree = ''
-        op.new_nodetree_name = io_props.new_nodetree_name
-
-        col.use_property_split = True
-        col.prop(io_props, 'new_nodetree_name', text='Tree name:')
+        op = col.operator('node.tree_importer', text='Import JSON file', icon='RNA')
+        op.current_tree_name = context.space_data.node_tree.name if context.space_data.node_tree else ''
 
 
 class SvIOPanelProperties(bpy.types.PropertyGroup):
 
-    new_nodetree_name: bpy.props.StringProperty(
-        name='new_nodetree_name',
-        default="Imported tree",
-        description="The name to give the new NodeTree, defaults to: Imported")
-
-    compress_output: bpy.props.BoolProperty(
-        default=0,
-        name='compress_output',
-        options={'HIDDEN'},
-        description='option to also compress the json, will generate both')
+    def sv_tree_filter(self, context):
+        return context.bl_idname == 'SverchCustomTreeType'
 
     gist_id: bpy.props.StringProperty(
         name='new_gist_id',
         default="Enter Gist ID here",
         description="This gist ID will be used to obtain the RAW .json from github")
 
-    export_selected_only: bpy.props.BoolProperty(
-        name="Selected Only",
-        options={'HIDDEN'},
-        description="Export selected nodes only",
-        default=False)
+    import_tree: bpy.props.PointerProperty(type=bpy.types.NodeTree, poll=sv_tree_filter)
 
 
 classes = [SV_PT_IOLayoutsMenu, SV_PT_IOExportMenu, SV_PT_IOImportMenu, SvIOPanelProperties]
