@@ -83,6 +83,22 @@ if FreeCAD is not None:
                 for pt in data[0]:
                     self._points_by_face[i_face].append((pt.x, pt.y, pt.z))
 
+        def calc_normals(self):
+            self._normals_by_face = dict()
+            for face in self.solid.Faces:
+                #face.tessellate(precision)
+                #u_min, u_max, v_min, v_max = face.ParameterRange
+                sum_normal = Base.Vector(0,0,0)
+                for u, v in face.getUVNodes():
+                    normal = face.normalAt(u,v)
+                    sum_normal = sum_normal + normal
+                sum_normal = np.array([sum_normal.x, sum_normal.y, sum_normal.z])
+                sum_normal = sum_normal / np.linalg.norm(sum_normal)
+                self._normals_by_face[SvSolidTopology.Item(face)] = sum_normal
+
+        def get_normal_by_face(self, face):
+            return self._normals_by_face[SvSolidTopology.Item(face)]
+
         def get_vertices_by_location(self, condition):
             to_tuple = lambda v : (v.X, v.Y, v.Z)
             return [to_tuple(v) for v in self.solid.Vertexes if condition(to_tuple(v))]

@@ -257,13 +257,10 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
     def _faces_by_normal(self, topo, direction, percent):
         direction = np.array(direction)
 
-        def calc_value(points):
-            approx = linear_approximation(points)
-            plane = approx.most_similar_plane()
-            plane_normal = np.array(plane.normal)
-            return direction.dot(plane_normal)
+        def calc_value(normal):
+            return direction.dot(normal)
 
-        values = np.array([calc_value(topo.get_points_by_face(face)) for face in topo.solid.Faces])
+        values = np.array([calc_value(topo.get_normal_by_face(face)) for face in topo.solid.Faces])
         threshold = self.map_percent(values, percent)
         return (values > threshold).tolist()
 
@@ -338,6 +335,7 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
             if self.criteria_type == 'SIDE':
                 face_mask = self._faces_by_side(topo, direction, percent)
             elif self.criteria_type == 'NORMAL':
+                topo.calc_normals()
                 face_mask = self._faces_by_normal(topo, direction, percent)
             elif self.criteria_type == 'SPHERE':
                 face_mask = self._faces_by_sphere(topo, center, radius)
