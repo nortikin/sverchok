@@ -331,11 +331,19 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
 
     default_property: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
 
+    # this property is needed for back capability, after renaming prop to default_property
+    # should be removed after https://github.com/nortikin/sverchok/issues/3514
+    prop: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
+
     expanded: BoolProperty(default=False)  # for minimizing showing socket property
 
     def draw_property(self, layout, prop_origin=None, prop_name='default_property'):
         if prop_origin is None:
             prop_origin = self
+
+            if hasattr(self, 'prop'):
+                # it means the the socket is using old name of the default property
+                prop_name = 'prop'
 
         split = layout.split(factor=.2, align=True)
         c1 = split.column(align=True)
