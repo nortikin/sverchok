@@ -19,7 +19,130 @@
 
 import bpy
 
+from sverchok.ui.development import displaying_sverchok_nodes
+from sverchok.core.update_system import process_tree, build_update_list
+
+
+class SvToggleProcess(bpy.types.Operator):
+    bl_idname = "node.sv_toggle_process"
+    bl_label = "Toggle processing of the current node tree"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        return displaying_sverchok_nodes(context)
+
+    def execute(self, context):
+        node_tree = context.space_data.node_tree
+        node_tree.sv_process = not node_tree.sv_process
+        if node_tree.sv_process:
+            message = "Processing enabled for `%s'" % node_tree.name
+        else:
+            message = "Processing disabled for `%s'" % node_tree.name
+        self.report({'INFO'}, message)
+        self.redraw()
+        return {'FINISHED'}
+
+    @staticmethod
+    def redraw():
+        for window in bpy.context.window_manager.windows:
+            for area in window.screen.areas:
+                if area.type == 'NODE_EDITOR':
+                    for region in area.regions:
+                        if region.type in {'HEADER', 'UI', 'WINDOW'}:
+                            region.tag_redraw()
+
+
+class SvToggleDraft(bpy.types.Operator):
+    bl_idname = "node.sv_toggle_draft"
+    bl_label = "Toggle draft mode of the current node tree"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        return displaying_sverchok_nodes(context)
+
+    def execute(self, context):
+        node_tree = context.space_data.node_tree
+        node_tree.sv_draft = not node_tree.sv_draft
+
+        if node_tree.sv_draft:
+            message = "Draft mode set for `%s'" % node_tree.name
+        else:
+            message = "Draft mode disabled for `%s'" % node_tree.name
+        self.report({'INFO'}, message)
+        self.redraw()
+        return {'FINISHED'}
+
+    @staticmethod
+    def redraw():
+        for window in bpy.context.window_manager.windows:
+            for area in window.screen.areas:
+                if area.type == 'NODE_EDITOR':
+                    for region in area.regions:
+                        if region.type in {'HEADER', 'UI', 'WINDOW'}:
+                            region.tag_redraw()
+
+
+class SverchokUpdateContext(bpy.types.Operator):
+    """Update current Sverchok node tree"""
+    bl_idname = "node.sverchok_update_context"
+    bl_label = "Update current node tree"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    @classmethod
+    def poll(cls, context):
+        return displaying_sverchok_nodes(context)
+
+    def execute(self, context):
+        try:
+            bpy.context.window.cursor_set("WAIT")
+            ng = context.space_data.node_tree
+            if ng:
+                ng.unfreeze(hard=True)
+                build_update_list(ng)
+                process_tree(ng)
+        except:
+            pass
+        finally:
+            bpy.context.window.cursor_set("DEFAULT")
+
+        return {'FINISHED'}
+
+
+class SverchokUpdateContextForced(bpy.types.Operator):
+    """Update current Sverchok node tree (even if it's processing is disabled)"""
+    bl_idname = "node.sverchok_update_context_force"
+    bl_label = "Update current node tree - forced mode"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    @classmethod
+    def poll(cls, context):
+        return displaying_sverchok_nodes(context)
+
+    def execute(self, context):
+        try:
+            bpy.context.window.cursor_set("WAIT")
+            ng = context.space_data.node_tree
+            if ng:
+                try:
+                    prev_process_state = ng.sv_process
+                    ng.sv_process = True
+                    ng.unfreeze(hard=True)
+                    build_update_list(ng)
+                    process_tree(ng)
+                finally:
+                    ng.sv_process = prev_process_state
+        except:
+            pass
+        finally:
+            bpy.context.window.cursor_set("DEFAULT")
+
+        return {'FINISHED'}
+
+
 nodeview_keymaps = []
+
 
 def add_keymap():
     wm = bpy.context.window_manager
@@ -128,8 +251,16 @@ def remove_keymap():
     nodeview_keymaps.clear()
 
 
+classes = [SvToggleProcess, SvToggleDraft, SverchokUpdateContext, SverchokUpdateContextForced]
+
+
 def register():
+    [bpy.utils.register_class(cls) for cls in classes]
+
     add_keymap()
+
 
 def unregister():
     remove_keymap()
+
+    [bpy.utils.unregister_class(cls) for cls in classes[::-1]]

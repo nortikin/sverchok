@@ -8,7 +8,7 @@ from sverchok.dependencies import sv_dependencies, pip, ensurepip, draw_message,
 from sverchok import data_structure
 from sverchok.core import handlers
 from sverchok.core import update_system
-from sverchok.utils import sv_panels_tools, logging
+from sverchok.utils import logging
 from sverchok.utils.sv_gist_tools import TOKEN_HELP_URL
 from sverchok.ui import color_def
 

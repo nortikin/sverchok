@@ -17,68 +17,13 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import StringProperty, BoolProperty, FloatProperty
-
 
 import sverchok
-from sverchok.core.update_system import process_from_nodes, process_tree, build_update_list
 from sverchok.utils import profile
 from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.ui.development import displaying_sverchok_nodes
+from sverchok.core.update_system import process_tree, build_update_list
 
-objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3', 'SvExNurbsInNode', 'SvBezierInNode'}
-
-def redraw_panels():
-    for window in bpy.context.window_manager.windows:
-        for area in window.screen.areas:
-            if area.type == 'NODE_EDITOR':
-                for region in area.regions:
-                    if region.type in {'HEADER', 'UI', 'WINDOW'}:
-                        region.tag_redraw()
-
-class SvToggleProcess(bpy.types.Operator):
-    bl_idname = "node.sv_toggle_process"
-    bl_label = "Toggle processing of the current node tree"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    @classmethod
-    def poll(cls, context):
-        return displaying_sverchok_nodes(context)
-
-    def execute(self, context):
-        layout = self.layout
-        node_tree = context.space_data.node_tree
-        node_tree.sv_process = not node_tree.sv_process
-        if node_tree.sv_process:
-            message = "Processing enabled for `%s'" % node_tree.name
-        else:
-            message = "Processing disabled for `%s'" % node_tree.name
-        self.report({'INFO'}, message)
-        redraw_panels()
-        return {'FINISHED'}
-
-class SvToggleDraft(bpy.types.Operator):
-    bl_idname = "node.sv_toggle_draft"
-    bl_label = "Toggle draft mode of the current node tree"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    @classmethod
-    def poll(cls, context):
-        return displaying_sverchok_nodes(context)
-
-    def execute(self, context):
-        layout = self.layout
-        node_tree = context.space_data.node_tree
-        node_tree.sv_draft = not node_tree.sv_draft
-        #node_tree.on_draft_mode_changed(context)
-
-        if node_tree.sv_draft:
-            message = "Draft mode set for `%s'" % node_tree.name
-        else:
-            message = "Draft mode disabled for `%s'" % node_tree.name
-        self.report({'INFO'}, message)
-        redraw_panels()
-        return {'FINISHED'}
 
 class SvRemoveStaleDrawCallbacks(bpy.types.Operator):
     """This will clear the opengl drawing if Sverchok didn't manage to correctly clear it on its own"""
@@ -92,87 +37,6 @@ class SvRemoveStaleDrawCallbacks(bpy.types.Operator):
         sv_clean(scene)
         sv_scene_handler(scene)
         return {'FINISHED'}
-
-
-class Sv3DViewObjInUpdater(bpy.types.Operator, object):
-
-    """Operator which runs its self from a timer"""
-    bl_idname = "wm.sv_obj_modal_update"
-    bl_label = "start n stop obj updating"
-
-    _timer = None
-    mode: StringProperty(default='toggle')
-    node_name: StringProperty(default='')
-    node_group: StringProperty(default='')
-    speed: FloatProperty(default=1 / 13)
-
-    def modal(self, context, event):
-
-        if not context.scene.SvShowIn3D_active:
-            self.cancel(context)
-            return {'FINISHED'}
-
-        if not (event.type == 'TIMER'):
-            return {'PASS_THROUGH'}
-
-        obj_nodes = []
-        for ng in bpy.data.node_groups:
-            if ng.bl_idname == 'SverchCustomTreeType':
-                if ng.sv_process:
-                    nodes = []
-                    for n in ng.nodes:
-                        if n.bl_idname in objects_nodes_set:
-                            nodes.append(n)
-                    if nodes:
-                        obj_nodes.append(nodes)
-
-        ''' reaches here only if event is TIMER and self.active '''
-        for n in obj_nodes:
-            # print('calling process on:', n.name, n.id_data)
-            process_from_nodes(n)
-
-        return {'PASS_THROUGH'}
-
-    def start(self, context):
-        context.scene.SvShowIn3D_active = True
-
-        # rate can only be set in event_timer_add (I think...)
-        # self.speed = 1 / context.node.updateRate
-
-        wm = context.window_manager
-        self._timer = wm.event_timer_add(self.speed, window=context.window)
-        wm.modal_handler_add(self)
-        self.report({'INFO'}, "Live Update mode enabled")
-
-    def stop(self, context):
-        context.scene.SvShowIn3D_active = False
-
-    def toggle(self, context):
-        if context.scene.SvShowIn3D_active:
-            self.stop(context)
-        else:
-            self.start(context)
-
-    def event_dispatcher(self, context, type_op):
-        if type_op == 'start':
-            self.start(context)
-        elif type_op == 'end':
-            self.stop(context)
-        else:
-            self.toggle(context)
-
-    def execute(self, context):
-        # n  = context.node
-        # self.node_name = context.node.name
-        # self.node_group = context.node.id_data.name
-
-        self.event_dispatcher(context, self.mode)
-        return {'RUNNING_MODAL'}
-
-    def cancel(self, context):
-        wm = context.window_manager
-        wm.event_timer_remove(self._timer)
-        self.report({'INFO'}, "Live Update mode disabled")
 
 
 class SverchokPanels:
@@ -194,7 +58,7 @@ class SV_PT_ToolsMenu(SverchokPanels, bpy.types.Panel):
         col = self.layout.column()
         col.operator("node.sverchok_update_all", text="Update all")
         col.template_list("SV_UL_TreePropertyList", "", bpy.data, 'node_groups',
-                          bpy.context.scene.sverchok_panel_properties, "selected_tree")
+                          bpy.context.scene, "ui_list_selected_tree")
 
 
 class SV_PT_ActiveTreePanel(SverchokPanels, bpy.types.Panel):
@@ -307,8 +171,95 @@ class SV_UL_TreePropertyList(bpy.types.UIList):
         return combine_filter, []
 
 
-class SverchokPanelProperties(bpy.types.PropertyGroup):
-    selected_tree: bpy.props.IntProperty()  # index for UIList
+class SverchokUpdateAll(bpy.types.Operator):
+    """Update all Sverchok node trees"""
+    bl_idname = "node.sverchok_update_all"
+    bl_label = "Update all node trees"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        try:
+            bpy.context.window.cursor_set("WAIT")
+            sv_ngs = filter(lambda ng: ng.bl_idname == 'SverchCustomTreeType', bpy.data.node_groups)
+            for ng in sv_ngs:
+                ng.unfreeze(hard=True)
+            build_update_list()
+            process_tree()
+        finally:
+            bpy.context.window.cursor_set("DEFAULT")
+        return {'FINISHED'}
+
+
+class SverchokBakeAll(bpy.types.Operator):
+    """Bake all nodes on this layout"""
+    bl_idname = "node.sverchok_bake_all"
+    bl_label = "Sverchok bake all"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    node_tree_name: bpy.props.StringProperty(name='tree_name', default='')
+
+    @classmethod
+    def poll(cls, context):
+        if bpy.data.node_groups.__len__():
+            return True
+
+    def execute(self, context):
+        ng = bpy.data.node_groups[self.node_tree_name]
+
+        nodes = filter(lambda n: n.bl_idname == 'SvVDExperimental', ng.nodes)
+        for node in nodes:
+            if node.activate:
+                node.bake()
+
+        return {'FINISHED'}
+
+
+class SverchokUpdateCurrent(bpy.types.Operator):
+    """Update current Sverchok node tree"""
+    bl_idname = "node.sverchok_update_current"
+    bl_label = "Update current node tree"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    node_group: bpy.props.StringProperty(default="")
+
+    def execute(self, context):
+        try:
+            bpy.context.window.cursor_set("WAIT")
+            ng = bpy.data.node_groups.get(self.node_group)
+            if ng:
+                ng.unfreeze(hard=True)
+                build_update_list(ng)
+                process_tree(ng)
+        finally:
+            bpy.context.window.cursor_set("DEFAULT")
+        return {'FINISHED'}
+
+
+class SvSwitchToLayout(bpy.types.Operator):
+    """Switch to exact layout, user friendly way"""
+    bl_idname = "node.sv_switch_layout"
+    bl_label = "switch layouts"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    layout_name: bpy.props.StringProperty(
+        default='', name='layout_name',
+        description='layout name to change layout by button')
+
+    @classmethod
+    def poll(cls, context):
+        if context.space_data.type == 'NODE_EDITOR':
+            if bpy.context.space_data.tree_type == 'SverchCustomTreeType':
+                return True
+        else:
+            return False
+
+    def execute(self, context):
+        ng = bpy.data.node_groups.get(self.layout_name)
+        if ng:
+            context.space_data.path.start(ng)
+        else:
+            return {'CANCELLED'}
+        return {'FINISHED'}
 
 
 def node_show_tree_mode(self, context):
@@ -328,28 +279,30 @@ def node_show_tree_mode(self, context):
             icon = 'CHECKMARK'
         layout.label(text=message, icon=icon)
 
+
 def view3d_show_live_mode(self, context):
     if context.scene.SvShowIn3D_active:
         layout = self.layout
         OP = 'wm.sv_obj_modal_update'
         layout.operator(OP, text='Stop Live Update', icon='CANCEL').mode = 'end'
-        
+
+
 sv_tools_classes = [
-    Sv3DViewObjInUpdater,
     SV_PT_ToolsMenu,
     SvRemoveStaleDrawCallbacks,
-    SvToggleProcess,
-    SvToggleDraft,
     SV_PT_ActiveTreePanel,
     SV_PT_ProfilingPanel,
     SV_PT_SverchokUtilsPanel,
     SV_UL_TreePropertyList,
-    SverchokPanelProperties
+    SverchokUpdateAll,
+    SverchokBakeAll,
+    SverchokUpdateCurrent,
+    SvSwitchToLayout
 ]
 
 
 def register():
-    bpy.types.Scene.SvShowIn3D_active = BoolProperty(
+    bpy.types.Scene.SvShowIn3D_active = bpy.props.BoolProperty(
         name='update from 3dview',
         default=False,
         description='Allows updates directly to object-in nodes from 3d panel')
@@ -357,13 +310,16 @@ def register():
     for class_name in sv_tools_classes:
         bpy.utils.register_class(class_name)
 
-    bpy.types.Scene.sverchok_panel_properties = bpy.props.PointerProperty(type=SverchokPanelProperties)
+    bpy.types.Scene.ui_list_selected_tree = bpy.props.IntProperty()  # Pointer to selected item in list of trees
+    bpy.types.Scene.sv_new_version = bpy.props.BoolProperty(default=False)
 
     bpy.types.NODE_HT_header.append(node_show_tree_mode)
     bpy.types.VIEW3D_HT_header.append(view3d_show_live_mode)
 
+
 def unregister():
-    del bpy.types.Scene.sverchok_panel_properties
+    del bpy.types.Scene.ui_list_selected_tree
+    del bpy.types.Scene.sv_new_version
 
     for class_name in reversed(sv_tools_classes):
         bpy.utils.unregister_class(class_name)
