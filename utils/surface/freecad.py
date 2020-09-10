@@ -38,8 +38,18 @@ def curves_to_face(sv_curves, planar=True):
     edges = [Part.Edge(curve.curve) for curve in sv_curves]
     wire = Part.Wire(edges)
     if not wire.isClosed():
+        last_point = None
+        distance = None
         for i, edge in enumerate(wire.Edges):
-            print(f"#{i}: {edge.Curve.StartPoint} - {edge.Curve.EndPoint}")
+            p1, p2 = edge.Curve.StartPoint, edge.Curve.EndPoint
+            if last_point is not None:
+                distance = last_point.distanceToPoint(p1)
+            print(f"#{i}: distance={distance}: ({p1.x}, {p1.y}, {p1.z}) - ({p2.x}, {p2.y}, {p2.z})")
+            last_point = p2
+        p1 = wire.Edges[-1].Curve.EndPoint
+        p2 = wire.Edges[0].Curve.StartPoint
+        distance = p1.distanceToPoint(p2)
+        print(f"Last - first distance = {distance}")
         raise Exception(f"The wire is not closed: {sv_curves}")
 
     if planar:
