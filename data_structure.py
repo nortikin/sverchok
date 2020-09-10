@@ -32,7 +32,7 @@ from numpy import (
     concatenate as np_concatenate,
     tile as np_tile,
     float64,
-    int32)
+    int32, int64)
 from sverchok.utils.logging import info
 from sverchok.core.events import CurrentEvents, BlenderEventsTypes
 
@@ -469,7 +469,7 @@ def levels_of_list_or_np(lst):
         return level
     return 0
 
-def get_data_nesting_level(data, data_types=(float, int, float64, int32, str)):
+def get_data_nesting_level(data, data_types=(float, int, float64, int32, int64, str)):
     """
     data: number, or list of numbers, or list of lists, etc.
     data_types: list or tuple of types.
@@ -505,7 +505,7 @@ def get_data_nesting_level(data, data_types=(float, int, float64, int32, str)):
 
     return helper(data, 0)
 
-def ensure_nesting_level(data, target_level, data_types=(float, int, int32, float64, str)):
+def ensure_nesting_level(data, target_level, data_types=(float, int, int32, int64, float64, str)):
     """
     data: number, or list of numbers, or list of lists, etc.
     target_level: data nesting level required for further processing.
@@ -578,7 +578,7 @@ def describe_data_shape(data):
     nesting, result = helper(data)
     return "Level {}: {}".format(nesting, result)
 
-def describe_data_structure(data, data_types=(float, int, int32, float64, str)):
+def describe_data_structure(data, data_types=(float, int, int32, int64, float64, str)):
     if isinstance(data, data_types):
         return "*"
     elif isinstance(data, (list, tuple)):

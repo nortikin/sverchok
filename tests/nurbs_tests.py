@@ -5,6 +5,7 @@ from math import pi
 from mathutils import Matrix
 
 from sverchok.utils.testing import SverchokTestCase, requires
+from sverchok.utils.geom import circle_by_three_points
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve.nurbs import SvGeomdlCurve, SvNativeNurbsCurve, SvNurbsBasisFunctions, SvNurbsCurve
@@ -547,6 +548,50 @@ class OtherNurbsTests(SverchokTestCase):
         points = nurbs.evaluate_array(ts)
         expected_points = circle.evaluate_array(ts)
         self.assert_numpy_arrays_equal(points, expected_points, precision=6)
+
+    def test_arc_1(self):
+        circle = SvCircle(Matrix(), 1.0)
+        t_min = 0.1
+        t_max = 1.4
+        pt1 = circle.evaluate(t_max)
+        nurbs = circle._arc_to_nurbs(t_min, t_max)
+        pt2 = nurbs.evaluate(t_max)
+        self.assert_numpy_arrays_equal(pt1, pt2, precision=8)
+
+    def test_arc_2(self):
+        pt1 = (-5, 0, 0)
+        pt2 = (-4, 3, 0)
+        pt3 = (-3, 4, 0)
+        eq = circle_by_three_points(pt1, pt2, pt3)
+        matrix = eq.get_matrix()
+        arc = SvCircle(matrix, eq.radius)
+        arc.u_bounds = (0.0, eq.arc_angle)
+        nurbs = arc.to_nurbs()
+        u_min, u_max = nurbs.get_u_bounds()
+        self.assertEquals(u_min, 0, "U_min")
+        self.assertEquals(u_max, eq.arc_angle, "U_max")
+        startpoint = nurbs.evaluate(u_min)
+        self.assert_sverchok_data_equal(startpoint.tolist(), pt1, precision=8)
+        endpoint = nurbs.evaluate(u_max)
+        self.assert_sverchok_data_equal(endpoint.tolist(), pt3, precision=8)
+
+    def test_arc_3(self):
+        pt1 = np.array((-4, 2, 0))
+        pt2 = np.array((0, 2.5, 0))
+        pt3 = np.array((4, 2, 0))
+        eq = circle_by_three_points(pt1, pt2, pt3)
+        #matrix = eq.get_matrix()
+        arc = SvCircle(center=np.array(eq.center), vectorx = np.array(pt1 - eq.center), normal=eq.normal)
+        arc.u_bounds = (0.0, eq.arc_angle)
+        nurbs = arc.to_nurbs()
+        u_min, u_max = nurbs.get_u_bounds()
+        self.assertEquals(u_min, 0, "U_min")
+        self.assertEquals(u_max, eq.arc_angle, "U_max")
+        startpoint = arc.evaluate(u_min)
+        self.assert_sverchok_data_equal(startpoint.tolist(), pt1, precision=6)
+        endpoint = arc.evaluate(u_max)
+        self.assert_sverchok_data_equal(endpoint.tolist(), pt3, precision=6)
+
 
 class KnotvectorTests(SverchokTestCase):
     def test_to_multiplicity_1(self):

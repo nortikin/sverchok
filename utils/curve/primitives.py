@@ -11,7 +11,7 @@ from math import sin, cos, pi, radians, sqrt
 from mathutils import Vector, Matrix
 
 from sverchok.utils.logging import error
-from sverchok.utils.geom import LineEquation, CircleEquation2D, CircleEquation3D, Ellipse3D
+from sverchok.utils.geom import LineEquation, CircleEquation2D, CircleEquation3D, Ellipse3D, rotate_vector_around_vector_np, rotate_vector_around_vector
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.surface.primitives import SvPlane
@@ -96,10 +96,33 @@ class SvLine(SvCurve):
 class SvCircle(SvCurve):
     __description__ = "Circle"
 
-    def __init__(self, matrix, radius):
-        self.matrix = np.array(matrix.to_3x3())
-        self.center = np.array(matrix.translation)
-        self.radius = radius
+    def __init__(self, matrix=None, radius=None, center=None, normal=None, vectorx=None):
+        if matrix is not None:
+            self.matrix = np.array(matrix.to_3x3())
+            self.center = np.array(matrix.translation)
+        elif center is not None:
+            self.center = center
+        if matrix is None:
+            normal = normal / np.linalg.norm(normal)
+            vx = vectorx / np.linalg.norm(vectorx)
+            vy = np.cross(normal, vx)
+            vy = vy / np.linalg.norm(vy)
+            m = np.stack((vx, vy, normal))
+            self.matrix = np.linalg.inv(m)
+        if radius is not None:
+            self.radius = radius
+        else:
+            self.radius = np.linalg.norm(vectorx)
+        if normal is not None:
+            self.normal = normal
+        elif matrix is not None:
+            z = Vector([0,0,1])
+            self.normal = np.array(matrix @ z)
+        if vectorx is not None:
+            self.vectorx = vectorx
+        elif matrix is not None:
+            x = Vector([1,0,0])
+            self.vectorx = np.array(matrix @ x)
         self.u_bounds = (0.0, 2*pi)
 
     @classmethod
@@ -153,18 +176,13 @@ class SvCircle(SvCurve):
         return self.u_bounds
 
     def evaluate(self, t):
-        r = self.radius
-        x = r * cos(t)
-        y = r * sin(t)
-        return self.matrix @ np.array([x, y, 0]) + self.center
+        vx = self.vectorx
+        return self.center + rotate_vector_around_vector(vx, self.normal, t)
 
     def evaluate_array(self, ts):
-        r = self.radius
-        xs = r * np.cos(ts)
-        ys = r * np.sin(ts)
-        zs = np.zeros_like(xs)
-        vertices = np.stack((xs, ys, zs)).T
-        return np.apply_along_axis(lambda v: self.matrix @ v, 1, vertices) + self.center
+        n = len(ts)
+        vx = np.broadcast_to(self.vectorx[np.newaxis], (n,3))
+        return self.center + rotate_vector_around_vector_np(vx, self.normal, ts)
 
     def tangent(self, t):
         x = - self.radius * sin(t)
