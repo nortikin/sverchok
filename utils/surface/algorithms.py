@@ -16,8 +16,8 @@ from sverchok.utils.math import (
     )
 from sverchok.utils.geom import (
         LineEquation, CircleEquation3D,
-        rotate_vector_around_vector, autorotate_householder,
-         autorotate_track, autorotate_diff
+        rotate_vector_around_vector, rotate_vector_around_vector_np,
+        autorotate_householder, autorotate_track, autorotate_diff
     )
 from sverchok.utils.curve.core import SvFlipCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.primitives import SvCircle
@@ -30,34 +30,6 @@ from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.data import *
 from sverchok.utils.logging import info, debug
-
-def rotate_vector_around_vector_np(v, k, theta):
-    """
-    Rotate vector v around vector k by theta angle.
-    input: v, k - np.array of shape (3,); theta - float, in radians.
-    output: np.array.
-
-    This implements Rodrigues' formula: https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
-    """
-    if not isinstance(v, np.ndarray):
-        v = np.array(v)
-    if not isinstance(k, np.ndarray):
-        k = np.array(k)
-    if k.ndim == 1:
-        k = k[np.newaxis]
-    k = k / np.linalg.norm(k, axis=1)
-
-    if isinstance(theta, np.ndarray):
-        ct, st = np.cos(theta)[np.newaxis].T, np.sin(theta)[np.newaxis].T
-    else:
-        ct, st = cos(theta), sin(theta)
-
-    s1 = ct * v
-    s2 = st * np.cross(k, v)
-    p1 = 1.0 - ct
-    p2 = np.apply_along_axis(lambda vi : k.dot(vi), 1, v)
-    s3 = p1 * p2 * k
-    return s1 + s2 + s3
 
 class SvInterpolatingSurface(SvSurface):
     __description__ = "Interpolating"

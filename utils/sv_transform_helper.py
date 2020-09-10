@@ -20,6 +20,7 @@ import bpy
 from bpy.props import (EnumProperty, BoolProperty)
 
 from sverchok.data_structure import updateNode
+from sverchok.node_tree import throttled
 from sverchok.settings import get_params
 
 from math import pi
@@ -98,6 +99,7 @@ class SvAngleHelper():
         ''' Override this in the derived class to update specific angle values'''
         # print("SvAngleHelper update_angles called")
 
+    @throttled
     def update_angle_units(self, context):
         ''' Update all the angles to preserve their values in the new units '''
         if self.angle_units == self.last_angle_units:
@@ -113,8 +115,6 @@ class SvAngleHelper():
             self.inhibit_updates = False  # reactivate updates
 
         self.last_angle_units = self.angle_units  # keep track of the last units
-
-        updateNode(self, context)
 
     def angle_unit_conversion_factor(self, new_angle_units):
         return self.angle_conversion_factor(self.angle_units, new_angle_units)
