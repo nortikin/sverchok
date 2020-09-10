@@ -79,7 +79,7 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
             for center, radius, t_min, t_max in zip_long_repeat(centers, radiuses, t_mins, t_maxs):
                 au = self.radians_conversion_factor()
                 t_min, t_max = t_min*au, t_max*au
-                curve = SvCircle(center, radius)
+                curve = SvCircle(matrix=center, radius=radius)
                 curve.u_bounds = (t_min, t_max)
                 curves_out.append(curve)
 

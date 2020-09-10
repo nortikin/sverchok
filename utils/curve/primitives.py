@@ -121,7 +121,7 @@ class SvCircle(SvCurve):
         if vectorx is not None:
             self.vectorx = vectorx
         elif matrix is not None:
-            x = Vector([1,0,0])
+            x = Vector([radius,0,0])
             self.vectorx = np.array(matrix @ x)
         self.u_bounds = (0.0, 2*pi)
 
