@@ -7,11 +7,12 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.utils.sv_transform_helper import AngleUnits, SvAngleHelper
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 
 from sverchok.utils.curve import SvCircle
 
-class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCircleNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     """
     Triggers: Circle
     Tooltip: Generate circular curve
@@ -28,12 +29,30 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
     t_min : FloatProperty(
         name = "T Min",
         default = 0.0,
-        update = updateNode)
+        update = SvAngleHelper.update_angle)
 
     t_max : FloatProperty(
         name = "T Max",
         default = 2*pi,
-        update = updateNode)
+        update = SvAngleHelper.update_angle)
+
+    # Override properties from SvAngleHelper to set radians as default
+    angle_units: EnumProperty(
+        name="Angle Units", description="Angle units (Radians/Degrees/Unities)",
+        default=AngleUnits.RADIANS, items=AngleUnits.get_blender_enum(),
+        update=SvAngleHelper.update_angle_units)
+
+    last_angle_units: EnumProperty(
+        name="Last Angle Units", description="Angle units (Radians/Degrees/Unities)",
+        default=AngleUnits.RADIANS, items=AngleUnits.get_blender_enum())
+
+    def update_angles(self, context, au):
+        ''' Update all the angles to preserve their values in the new units '''
+        self.t_min = self.t_min * au
+        self.t_max = self.t_max * au
+
+    def draw_buttons(self, context, layout):
+        self.draw_angle_units_buttons(context, layout)
 
     def sv_init(self, context):
         self.inputs.new('SvMatrixSocket', "Center")
@@ -58,6 +77,8 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
         curves_out = []
         for centers, radiuses, t_mins, t_maxs in zip_long_repeat(center_s, radius_s, t_min_s, t_max_s):
             for center, radius, t_min, t_max in zip_long_repeat(centers, radiuses, t_mins, t_maxs):
+                au = self.radians_conversion_factor()
+                t_min, t_max = t_min*au, t_max*au
                 curve = SvCircle(center, radius)
                 curve.u_bounds = (t_min, t_max)
                 curves_out.append(curve)
