@@ -24,12 +24,20 @@ This node has the following inputs:
   origin, and the circle is laying in the XOY plane.
 * **Radius**. Circle radius. The default value is 1.0.
 * **T Min**. Minimum value of the curve parameter. The default value is 0.0.
-* **T Max**. Maximum value of the curve parameter. The default value is 2*pi.
+* **T Max**. Maximum value of the curve parameter. The default value is 2*pi (radians).
 
 Parameters
 ----------
 
-This node does not have parameters.
+This node has the following parameter:
+
+* **Angle Units**. The units in which values of **T Min**, **T Max** inputs are measured. The available options are:
+
+  * **Rad**. Radians (2*pi is full circle).
+  * **Deg**. Degrees (360 is full circle).
+  * **Uni**. Unit circles (1.0 is full circle).
+
+  The default value is **Rad**.
 
 Outputs
 -------
