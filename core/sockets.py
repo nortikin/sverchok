@@ -120,6 +120,9 @@ class SvSocketCommon:
             else:
                 implicit_conversions = ConversionPolicies.DEFAULT.conversion
 
+        sock_has_default = hasattr(self, 'default_property') and self.default_property is not None
+        sock_has_old_default = hasattr(self, 'prop') and self.prop is not None
+
         if self.is_linked and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.get_prop_name():
@@ -131,14 +134,15 @@ class SvSocketCommon:
                 return [[prop[:]]]
             else:
                 return [prop]
-        elif self.use_prop and hasattr(self, 'default_property') and self.default_property is not None:
-            if isinstance(self.default_property, (str, int, float)):
-                return [[self.default_property]]
-            elif hasattr(self.default_property, '__len__'):
+        elif self.use_prop and sock_has_default or sock_has_old_default:
+            default_property = self.prop if sock_has_old_default else self.default_property
+            if isinstance(default_property, (str, int, float)):
+                return [[default_property]]
+            elif hasattr(default_property, '__len__'):
                 # it looks like as some BLender property array - convert to tuple
-                return [[self.default_property[:]]]
+                return [[default_property[:]]]
             else:
-                return [self.default_property]
+                return [default_property]
         elif default is not sentinel:
             return default
         else:
@@ -331,11 +335,19 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
 
     default_property: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
 
+    # this property is needed for back capability, after renaming prop to default_property
+    # should be removed after https://github.com/nortikin/sverchok/issues/3514
+    prop: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
+
     expanded: BoolProperty(default=False)  # for minimizing showing socket property
 
     def draw_property(self, layout, prop_origin=None, prop_name='default_property'):
         if prop_origin is None:
             prop_origin = self
+
+            if hasattr(self, 'prop'):
+                # it means the the socket is using old name of the default property
+                prop_name = 'prop'
 
         split = layout.split(factor=.2, align=True)
         c1 = split.column(align=True)
