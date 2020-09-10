@@ -587,9 +587,9 @@ class OtherNurbsTests(SverchokTestCase):
         u_min, u_max = nurbs.get_u_bounds()
         self.assertEquals(u_min, 0, "U_min")
         self.assertEquals(u_max, eq.arc_angle, "U_max")
-        startpoint = arc.evaluate(u_min)
+        startpoint = nurbs.evaluate(u_min)
         self.assert_sverchok_data_equal(startpoint.tolist(), pt1, precision=6)
-        endpoint = arc.evaluate(u_max)
+        endpoint = nurbs.evaluate(u_max)
         self.assert_sverchok_data_equal(endpoint.tolist(), pt3, precision=6)
 
 

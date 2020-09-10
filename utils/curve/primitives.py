@@ -136,7 +136,12 @@ class SvCircle(SvCurve):
             circle = SvCircle(matrix, eq.radius)
             return circle
         elif type(eq).__name__ == 'CircleEquation3D':
-            circle = SvCircle(eq.get_matrix(), eq.radius)
+            if eq.point1 is not None:
+                circle = SvCircle(center = np.array(eq.center),
+                            vectorx = np.array(eq.point1) - np.array(eq.center),
+                            normal = eq.normal)
+            else:
+                circle = SvCircle(eq.get_matrix(), eq.radius)
             if eq.arc_angle:
                 circle.u_bounds = (0, eq.arc_angle)
             return circle
