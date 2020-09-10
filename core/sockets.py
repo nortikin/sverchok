@@ -55,7 +55,8 @@ socket_colors = {
     "SvDictionarySocket": (1.0, 1.0, 1.0, 1.0),
     "SvFilePathSocket": (0.9, 0.9, 0.3, 1.0),
     "SvSolidSocket": (0.0, 0.65, 0.3, 1.0),
-    "SvSvgSocket": (0.1, 0.5, 1, 1.0)
+    "SvSvgSocket": (0.1, 0.5, 1, 1.0),
+    "SvPulgaForceSocket": (0.4, 0.3, 0.6, 1.0)
 }
 
 def process_from_socket(self, context):
@@ -605,6 +606,17 @@ class SvSvgSocket(NodeSocket, SvSocketCommon):
         else:
             return [[default]]
 
+class SvPulgaForceSocket(NodeSocket, SvSocketCommon):
+    '''For file path data'''
+    bl_idname = "SvPulgaForceSocket"
+    bl_label = "Pulga Force Socket"
+
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
+        if self.is_linked and not self.is_output:
+            return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
+        else:
+            return [[default]]
+
 class SvDictionarySocket(NodeSocket, SvSocketCommon):
     '''For dictionary data'''
     bl_idname = "SvDictionarySocket"
@@ -842,7 +854,7 @@ classes = [
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
     SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket,
     SvSurfaceSocket, SvCurveSocket, SvScalarFieldSocket, SvVectorFieldSocket,
-    SvSolidSocket, SvSvgSocket, SvLinkNewNodeInput
+    SvSolidSocket, SvSvgSocket, SvPulgaForceSocket, SvLinkNewNodeInput
 ]
 
 register, unregister = bpy.utils.register_classes_factory(classes)
