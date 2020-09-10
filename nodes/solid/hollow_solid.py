@@ -53,14 +53,17 @@ class SvHollowSolidNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', "Solid")
         self.inputs.new('SvStringsSocket', "Thickness").prop_name = 'thickness'
-        self.inputs.new('SvStringsSocket', "EdgeMask")
+        self.inputs.new('SvStringsSocket', "FaceMask")
         self.outputs.new('SvSolidSocket', "Solid")
 
-    def make_solid(solid, thickness, mask):
+    def make_solid(self, solid, thickness, mask):
         mask = repeat_last_for_length(mask, len(solid.Faces))
-        faces = [face for c, face in zip(mask, solid.Faces) if c]
-        shape = solid.makeThickness(faces, thickness, self.tolerance)
-        return shape
+        faces = [face for c, face in zip(mask, solid.Faces) if not c]
+        try:
+            shape = solid.makeThickness(faces, thickness, self.tolerance)
+            return shape
+        except Part.OCCError as e:
+            raise Exception(f"FreeCAD API method failed: {e}. Incorrect faces mask?")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -70,8 +73,11 @@ class SvHollowSolidNode(bpy.types.Node, SverchCustomTreeNode):
         solids_s = ensure_nesting_level(solids_s, 2, data_types=(Part.Shape,))
         thickness_s = self.inputs['Thickness'].sv_get()
         thickness_s = ensure_nesting_level(thickness_s, 2)
-        mask_s = self.inputs['EdgeMask'].sv_get()
-        mask_s = ensure_nesting_level(mask_s, 3)
+        if self.inputs['FaceMask'].is_linked:
+            mask_s = self.inputs['FaceMask'].sv_get()
+            mask_s = ensure_nesting_level(mask_s, 3)
+        else:
+            mask_s = [[[True]]]
 
         solids_out = []
         for params in zip_long_repeat(solids_s, thickness_s, mask_s):
