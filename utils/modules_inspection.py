@@ -21,8 +21,9 @@ def iter_classes_from_module(module, base_types):
     :return: class
     """
     path = module.__name__
-    for module_name in iter_submodule_names(Path(module.__file__).parent):
-        nest_module = sys.modules.get(path + '.' + module_name, None)
+    root_path = str(Path(module.__file__).parent)
+    for module_name in iter_submodule_names(root_path):
+        nest_module = sys.modules.get(path + '.' + root_path + module_name, None)
         if nest_module is None:
             print("Looks like some module was not imported")
         else:
@@ -32,17 +33,19 @@ def iter_classes_from_module(module, base_types):
                     yield cls
 
 
-def iter_submodule_names(path, root=""):
+def iter_submodule_names(path, depth=0, root="", current_depth=1):
     """
     Return all sub modules of given module (all sub folders of given folder)
     :param path: absolute path - str
+    :param depth: 0 means it returns all submodules, if 1 it returns only modules from given directory, if 2 ... so on
     :param root: for internal work
+    :param current_depth: for internal work
     :return: module name - str
     """
     for _, module_name, is_package in pkgutil.iter_modules([str(path)]):
-        if is_package:
-            sub_path = path / module_name
+        if is_package and (depth == 0 or current_depth < depth):
+            sub_path = f'{path} // {module_name}' 
             sub_root = root + module_name + "."
-            yield from iter_submodule_names(sub_path, sub_root)
+            yield from iter_submodule_names(sub_path, depth=depth, root=sub_root, current_depth=current_depth + 1)
         else:
-            yield root + module_name
+            yield module_name
