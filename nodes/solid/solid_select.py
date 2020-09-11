@@ -11,7 +11,7 @@ import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode
+from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode, get_data_nesting_level
 from sverchok.utils.geom import PlaneEquation, LineEquation, linear_approximation
 from sverchok.utils.solid import SvSolidTopology
 from sverchok.utils.dummy_nodes import add_dummy
@@ -97,7 +97,12 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
             update = update_sockets)
 
     include_partial: BoolProperty(name="Include partial selection",
-            description="Include partially selected edges/faces",
+            description="Include partially selected edges/faces - for primary selection",
+            default=False,
+            update=updateNode)
+
+    include_partial_other: BoolProperty(name="Include partial selection",
+            description="Include partially selected vertices/edges/faces - for secondary selection",
             default=False,
             update=updateNode)
 
@@ -129,8 +134,21 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'element_type')
         layout.prop(self, 'criteria_type', text='')
+
         if self.element_type in {'EDGES', 'FACES'} and self.criteria_type not in {'SOLID_DISTANCE'}:
-            layout.prop(self, 'include_partial')
+            if self.element_type == 'EDGES':
+                text = "Partially selected edges"
+            else:
+                text = "Partially selected faces"
+            layout.prop(self, 'include_partial', text=text)
+
+        if self.element_type == 'VERTS':
+            text = "Partially selected edges, faces"
+            layout.prop(self, 'include_partial_other', text=text)
+        elif self.element_type == 'EDGES':
+            text = "Partially selected faces"
+            layout.prop(self, 'include_partial_other', text=text)
+
         if self.criteria_type == 'SOLID_INSIDE':
             layout.prop(self, 'tolerance')
             layout.prop(self, 'include_shell')
@@ -354,8 +372,8 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 raise Exception("Unknown criteria for vertices")
             verts = [v for c, v in zip(vertex_mask, solid.Vertexes) if c]
-            edge_mask = topo.get_edges_by_vertices_mask(verts)
-            face_mask = topo.get_faces_by_vertices_mask(verts)
+            edge_mask = topo.get_edges_by_vertices_mask(verts, self.include_partial_other)
+            face_mask = topo.get_faces_by_vertices_mask(verts, self.include_partial_other)
         elif self.element_type == 'EDGES':
             topo.tessellate(precision)
             if self.criteria_type == 'SIDE':
@@ -376,7 +394,7 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
                 raise Exception("Unknown criteria for edges")
             edges = [e for c, e in zip(edge_mask, solid.Edges) if c]
             vertex_mask = topo.get_vertices_by_edges_mask(edges)
-            face_mask = topo.get_faces_by_edges_mask(edges)
+            face_mask = topo.get_faces_by_edges_mask(edges, self.include_partial_other)
         else: # FACES
             topo.tessellate(precision)
             if self.criteria_type == 'SIDE':
@@ -419,6 +437,7 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
         radius_s = self.inputs['Radius'].sv_get()
         precision_s = self.inputs['Precision'].sv_get()
 
+        input_level = get_data_nesting_level(solid_s, data_types=(Part.Shape,))
         solid_s = ensure_nesting_level(solid_s, 2, data_types=(Part.Shape,))
         direction_s = ensure_nesting_level(direction_s, 3)
         center_s = ensure_nesting_level(center_s, 3)
@@ -438,9 +457,15 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
                 vertex_mask_new.append(vertex_mask)
                 edge_mask_new.append(edge_mask)
                 face_mask_new.append(face_mask)
-            vertex_mask_out.append(vertex_mask_new)
-            edge_mask_out.append(edge_mask_new)
-            face_mask_out.append(face_mask_new)
+
+            if input_level == 2:
+                vertex_mask_out.append(vertex_mask_new)
+                edge_mask_out.append(edge_mask_new)
+                face_mask_out.append(face_mask_new)
+            else:
+                vertex_mask_out.extend(vertex_mask_new)
+                edge_mask_out.extend(edge_mask_new)
+                face_mask_out.extend(face_mask_new)
 
         self.outputs['VerticesMask'].sv_set(vertex_mask_out)
         self.outputs['EdgesMask'].sv_set(edge_mask_out)

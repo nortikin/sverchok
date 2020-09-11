@@ -134,32 +134,56 @@ if FreeCAD is not None:
         def get_faces_by_vertex(self, vertex):
             return [i.item for i in self._faces_by_vertex[SvSolidTopology.Item(vertex)]]
 
-        def get_faces_by_vertices_mask(self, vertices):
-            good = set()
-            for vertex in vertices:
-                new = self._faces_by_vertex[SvSolidTopology.Item(vertex)]
-                good.update(new)
-            return [SvSolidTopology.Item(face) in good for face in self.solid.Faces]
+        def get_faces_by_vertices_mask(self, vertices, include_partial=True):
+            if include_partial:
+                good = set()
+                for vertex in vertices:
+                    new = self._faces_by_vertex[SvSolidTopology.Item(vertex)]
+                    good.update(new)
+                return [SvSolidTopology.Item(face) in good for face in self.solid.Faces]
+            else:
+                vertices = set([SvSolidTopology.Item(v) for v in vertices])
+                mask = []
+                for face in self.solid.Faces:
+                    ok = all(SvSolidTopology.Item(v) in vertices for v in face.Vertexes)
+                    mask.append(ok)
+                return mask
 
         def get_faces_by_edge(self, edge):
             return [i.item for i in self._faces_by_edge[SvSolidTopology.Item(edge)]]
 
-        def get_faces_by_edges_mask(self, edges):
-            good = set()
-            for edge in edges:
-                new = self._faces_by_edge[SvSolidTopology.Item(edge)]
-                good.update(new)
-            return [SvSolidTopology.Item(edge) in good for edge in self.solid.Edges]
+        def get_faces_by_edges_mask(self, edges, include_partial=True):
+            if include_partial:
+                good = set()
+                for edge in edges:
+                    new = self._faces_by_edge[SvSolidTopology.Item(edge)]
+                    good.update(new)
+                return [SvSolidTopology.Item(edge) in good for edge in self.solid.Edges]
+            else:
+                edges = set([SvSolidTopology.Item(e) for e in edges])
+                mask = []
+                for face in self.solid.Faces:
+                    ok = all(SvSolidTopology.Item(e) in edges for e in face.Edges)
+                    mask.append(ok)
+                return mask
 
         def get_edges_by_vertex(self, vertex):
             return [i.item for i in self._edges_by_vertex[SvSolidTopology.Item(vertex)]]
 
-        def get_edges_by_vertices_mask(self, vertices):
-            good = set()
-            for vertex in vertices:
-                new = self._edges_by_vertex[SvSolidTopology.Item(vertex)]
-                good.update(new)
-            return [SvSolidTopology.Item(edge) in good for edge in self.solid.Edges]
+        def get_edges_by_vertices_mask(self, vertices, include_partial=True):
+            if include_partial:
+                good = set()
+                for vertex in vertices:
+                    new = self._edges_by_vertex[SvSolidTopology.Item(vertex)]
+                    good.update(new)
+                return [SvSolidTopology.Item(edge) in good for edge in self.solid.Edges]
+            else:
+                vertices = set([SvSolidTopology.Item(v) for v in vertices])
+                mask = []
+                for edge in self.solid.Edges:
+                    ok = all(SvSolidTopology.Item(v) in vertices for v in edge.Vertexes)
+                    mask.append(ok)
+                return mask
 
         def get_edges_by_faces_mask(self, faces):
             good = set()
