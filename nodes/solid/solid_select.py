@@ -408,7 +408,7 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
                 face_mask = self._faces_by_plane(topo, center, direction, radius)
             elif self.criteria_type == 'CYLINDER':
                 face_mask = self._faces_by_cylinder(topo, center, direction, radius)
-            elif self.criteria_mask == 'SOLID_DISTANCE':
+            elif self.criteria_type == 'SOLID_DISTANCE':
                 face_mask = self._faces_by_solid_distance(topo, tool, radius)
             elif self.criteria_type == 'SOLID_INSIDE':
                 face_mask = self._faces_by_solid_inside(topo, tool)
