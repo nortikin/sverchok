@@ -59,6 +59,10 @@ class SvHollowSolidNode(bpy.types.Node, SverchCustomTreeNode):
     def make_solid(self, solid, thickness, mask):
         if not solid.isValid():
             raise Exception("Solid is not valid")
+        if all(mask):
+            self.info("No faces are selected to be removed; the node will operate as `Offset' operation")
+        if not any(mask):
+            raise Exception("Invalid faces mask: all faces are to be removed")
         mask = repeat_last_for_length(mask, len(solid.Faces))
         faces = [face for c, face in zip(mask, solid.Faces) if not c]
         try:
