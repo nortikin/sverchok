@@ -26,6 +26,7 @@ from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
+from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
 
 class SvOB3BDataCollection(bpy.types.PropertyGroup):
@@ -96,8 +97,7 @@ class SvOB3Callback(bpy.types.Operator):
         return {'FINISHED'}
 
 
-
-class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """
     Triggers: obj Input Scene Objects pydata
     Tooltip: Get Scene Objects into Sverchok Tree
@@ -141,10 +141,6 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         default=True, update=updateNode)
 
     object_names: bpy.props.CollectionProperty(type=SvOB3BDataCollection)
-    draw_3dpanel: BoolProperty(
-        default=False, 
-        description="Show in Sverchok control panel",
-        update=lambda n, c: bpy.context.scene.sv_ui_node_props.update_show_property(n))
 
     active_obj_index: bpy.props.IntProperty()
 

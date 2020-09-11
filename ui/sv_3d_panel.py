@@ -149,6 +149,36 @@ class Sv3DNodeProperties(bpy.types.PropertyGroup):
         else:
             raise TypeError(f'Unsupported direction="{direction}", possible values="UP", "DOWN"')
 
+    def update_properties(self):
+        """It will add or remove properties from list according state of existing layouts"""
+        # 1. Recreate hierarchical data structure from list
+        # 2. Update the data structure
+        # 3. Recreate list from scratch
+        props = self.generate_data_structure()
+
+        for tree in bpy.data.node_groups:
+            if tree.bl_idname != 'SverchCustomTreeType':
+                continue
+
+            nodes_to_show = set()
+            for node in tree.nodes:
+                if hasattr(node, 'draw_3dpanel'):
+                    if node.draw_3dpanel:
+                        nodes_to_show.add(node.name)
+
+            showed_nodes = props.get(tree.name, {})
+            for name_to_show in nodes_to_show:
+                if name_to_show not in showed_nodes:
+                    showed_nodes[name_to_show] = None
+
+            for showed_name in showed_nodes.copy():
+                if showed_name not in nodes_to_show:
+                    del showed_nodes[showed_name]
+
+            props[tree.name] = showed_nodes
+
+        self.recreate_list(props)
+
     def generate_data_structure(self):
         """
         create more complex data structure:
@@ -178,48 +208,11 @@ class Sv3DNodeProperties(bpy.types.PropertyGroup):
                 node = tree.nodes.get(node_name)
                 self.add(tree=tree, node_name=node.name, node_label=node.label)
 
-    def update_show_property(self, node):
-        """This method will automatically add/remove property from 3d panel upon show 3d property changes"""
-        if node.draw_3dpanel:
-            # item should be added
-            if (node.id_data.name, node.name) not in [(prop.tree.name, prop.node_name) for prop in self.props]:
-                # just in case if it was not already added, how?
-                tree_end = self.search_tree_end(node.id_data.name)
-                if tree_end is None:
-                    # tree item should be added first
-                    self.add(tree=node.id_data)
-                    self.add(tree=node.id_data, node_name=node.name, node_label=node.label)
-                else:
-                    # tree already added
-                    self.insert(tree_end + 1, tree=node.id_data, node_name=node.name, node_label=node.label)
-        else:
-            # item should be removed
-            position = self.search_node(node.name, node.id_data.name)
-            if position:
-                self.props.remove(position)
-
     def update_node_label(self, tree_name, node_name, label):
         """It will update label of given node in the list"""
         node_index = self.search_node(node_name=node_name, tree_name=tree_name)
         if node_index:
             self.props[node_index].node_label = label
-
-    def insert(self, index, tree=None, node_name=None, node_label=None):
-        """Inserts element into custom position"""
-        # move is quite efficient operation, looks independent from collection length
-        current_index = len(self.props)
-        prop = self.props.add()
-        if tree:
-            prop.tree = tree
-        if node_name:
-            prop.node_name = node_name
-        if node_label:
-            prop.node_label = node_label
-        self.props.move(current_index, index)
-        return prop
-
-    def clear(self):
-        self.props.clear()
 
     def add(self, tree=None, node_name=None, node_label=None):
         prop = self.props.add()
@@ -230,14 +223,6 @@ class Sv3DNodeProperties(bpy.types.PropertyGroup):
         if node_label:
             prop.node_label = node_label
         return prop
-
-    def search_tree(self, name: str):
-        """Find position of a tree, return int or None if tree does not exist"""
-        for i, prop in enumerate(self.props):
-            if prop.type == 'TREE':
-                if prop.tree.name == name:
-                    return i
-        return None
 
     def search_node(self, node_name, tree_name):
         """
@@ -250,26 +235,6 @@ class Sv3DNodeProperties(bpy.types.PropertyGroup):
                     return i
         return None
 
-    def search_tree_end(self, tree_name):
-        """Return index of last property item of given tre or None if tree does not exist"""
-        tree_index = self.search_tree(tree_name)
-        if tree_index is not None:
-            last_index = None
-            for prop_index, prop in enumerate(self.props[tree_index:]):
-                last_index = prop_index
-                if prop.type == 'TREE' and prop.tree.name != tree_name:
-                    # another tree has started
-                    return tree_index + prop_index - 1
-            if last_index is None:
-                # the tree is last and does not have properties
-                return tree_index
-            else:
-                # tree is last but has properties
-                return tree_index + last_index
-        else:
-            # tree does not exist
-            return None
-
 
 class SvLayoutScanProperties(bpy.types.Operator):
     """
@@ -280,37 +245,7 @@ class SvLayoutScanProperties(bpy.types.Operator):
     bl_label = "scan for properties in Sverchok layouts"
 
     def execute(self, context):
-        """
-        1. Recreate hierarchical data structure from list
-        2. Update the data structure
-        3. Recreate list from scratch
-        """
-        ui_list = context.scene.sv_ui_node_props
-        props = ui_list.generate_data_structure()
-
-        for tree in bpy.data.node_groups:
-            if tree.bl_idname != 'SverchCustomTreeType':
-                continue
-
-            nodes_to_show = set()
-            for node in tree.nodes:
-                if hasattr(node, 'draw_3dpanel'):
-                    if node.draw_3dpanel:
-                        nodes_to_show.add(node.name)
-
-            showed_nodes = props.get(tree.name, {})
-            for name_to_show in nodes_to_show:
-                if name_to_show not in showed_nodes:
-                    showed_nodes[name_to_show] = None
-
-            for showed_name in showed_nodes.copy():
-                if showed_name not in nodes_to_show:
-                    del showed_nodes[showed_name]
-
-            props[tree.name] = showed_nodes
-
-        ui_list.recreate_list(props)
-
+        context.scene.sv_ui_node_props.update_properties()
         return {'FINISHED'}
 
 

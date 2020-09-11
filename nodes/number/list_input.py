@@ -29,8 +29,10 @@ from sverchok.utils.listutils import (
     listinput_drawI,
     listinput_drawF
     )
+from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
-class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvListInputNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     ''' Creta a float or int List '''
     bl_idname = 'SvListInputNode'
     bl_label = 'List Input'
@@ -38,8 +40,6 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_LIST_INPUT'
 
     defaults = [0 for i in range(32)]
-    draw_3dpanel: BoolProperty(name='Show in 3D panel', description='show in 3d panel', default=False,
-                               update=lambda n, c: bpy.context.scene.sv_ui_node_props.update_show_property(n))
 
     int_: IntProperty(
         name='int_', description='integer number', default=1, min=1, max=128, update=updateNode)
@@ -110,10 +110,6 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             col = layout.column(align=True)
             listinput_drawF(self,col)
-
-
-    def draw_buttons_ext(self, context, layout):
-        layout.prop(self, 'draw_3dpanel')
 
     def draw_buttons_3dpanel(self, layout, in_menu=None):
         if not in_menu:

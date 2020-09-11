@@ -12,13 +12,13 @@ import bpy
 class Show3DProperties:
     """
     Mixin for classes which should show their properties in 3D panel
-    It is not mandatory to use but nodes should implement all attributes and methods of this class
+    It is better to use this mixin because if any changes it simpler to fix them in one place
     """
     draw_3dpanel: bpy.props.BoolProperty(
         name="To 3D Panel",
         description="Show this node in 3D panel", 
         default=False,
-        update=lambda n, c: bpy.context.scene.sv_ui_node_props.update_show_property(n)  # automatically add/remove item
+        update=lambda n, c: bpy.context.scene.sv_ui_node_props.update_properties()  # automatically add/remove item
     )
 
     def draw_buttons_3dpanel(self, layout, in_menu=False):
@@ -36,6 +36,11 @@ class Show3DProperties:
             menu.node_name = self.name
         else:
             layout.prop(self, 'mu_prop')
+
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'draw_3dpanel', icon='PLUGIN', text='to 3dview')
+        if hasattr(super(), 'draw_buttons_ext'):
+            super().draw_buttons_ext(context, layout)  # in case if mixin override other class with such method
 
 
 class Popup3DMenu(bpy.types.Operator):
@@ -55,7 +60,7 @@ class Popup3DMenu(bpy.types.Operator):
 
     def invoke(self, context, event):
         wm = context.window_manager
-        return wm.invoke_props_dialog(self)
+        return wm.invoke_popup(self)
 
     def draw(self, context):
         tree = bpy.data.node_groups.get(self.tree_name)

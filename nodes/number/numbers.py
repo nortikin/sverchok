@@ -22,6 +22,7 @@ from bpy.props import FloatProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode
 from sverchok.utils.nodes_mixins.draft_mode import DraftMode
+from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
 
 def uget(self, origin):
@@ -43,7 +44,7 @@ def uset(self, value, origin, min_prop, max_prop):
     return None
 
 
-class SvNumberNode(DraftMode, bpy.types.Node, SverchCustomTreeNode):
+class SvNumberNode(Show3DProperties, DraftMode, bpy.types.Node, SverchCustomTreeNode):
     ''' Integer  / Float '''
     bl_idname = 'SvNumberNode'
     bl_label = 'A Number'
@@ -89,8 +90,6 @@ class SvNumberNode(DraftMode, bpy.types.Node, SverchCustomTreeNode):
         items=mode_options, default="float", update=wrapped_update)
 
     show_limits: BoolProperty(default=False)
-    draw_3dpanel: BoolProperty(default=False, 
-                               update=lambda n, c: bpy.context.scene.sv_ui_node_props.update_show_property(n))
 
     draft_properties_mapping = dict(float_ = 'float_draft_', int_ = 'int_draft_')
 
@@ -117,10 +116,6 @@ class SvNumberNode(DraftMode, bpy.types.Node, SverchCustomTreeNode):
             c.prop(self, 'show_limits', icon='SETTINGS', text='')
 
             c.prop(self, 'to3d', icon='PLUGIN', text='')
-
-    def draw_buttons_ext(self, context, layout):
-        c = layout.column(align=True)
-        c.prop(self, 'draw_3dpanel', icon='PLUGIN', text='to 3dview')
 
     def get_prop_name(self):
         if self.id_data.sv_draft:

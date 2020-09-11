@@ -9,9 +9,10 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
 
-class SvCustomSwitcher(bpy.types.Node, SverchCustomTreeNode):
+class SvCustomSwitcher(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: custom switcher
     Convert input to buttons
@@ -39,10 +40,6 @@ class SvCustomSwitcher(bpy.types.Node, SverchCustomTreeNode):
             self['previous_user_list'] = values
         self['user_list'] = values
 
-    draw_3dpanel: bpy.props.BoolProperty(
-        name='Show in 3d panel', default=False,
-        update=lambda n, c: bpy.context.scene.sv_ui_node_props.update_show_property(n),
-        description='Show items of this node in 3d panel of 3d view screen')
     multiple_selection: bpy.props.BoolProperty(name='Multiple selection', default=True, update=update_mode,
                                                 description='Selection several items simultaneously')
     ui_scale: bpy.props.FloatProperty(name='Size of buttons', default=1.0, min=0.5, max=5)

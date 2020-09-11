@@ -18,9 +18,10 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.nodes_mixins.generating_objects import SvMeshData, SvViewerNode
 from sverchok.utils.handle_blender_data import correct_collection_length
 from sverchok.utils.sv_mesh_utils import mesh_join
+from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
 
-class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
+class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: viewer mesh object instance
 
@@ -45,11 +46,6 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
         items=[(n, n, '', ic, i)for i, (n, ic) in enumerate(zip(['object', 'mesh'], ['OBJECT_DATA', 'MESH_DATA']))],
         description='Apply matrices to',
         update=updateNode)
-
-    draw_3dpanel: BoolProperty(
-        name="Show in 3D panel", default=False, 
-        update=lambda n, c: bpy.context.scene.sv_ui_node_props.update_show_property(n),
-        description="Show node properties in 3D panel")
 
     show_wireframe: BoolProperty(default=False, update=updateNode, name="Show Edges")
     material: bpy.props.PointerProperty(type=bpy.types.Material, update=updateNode)

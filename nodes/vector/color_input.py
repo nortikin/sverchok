@@ -23,8 +23,10 @@ from bpy.props import FloatProperty, BoolProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fullList
 from sverchok.utils.sv_itertools import sv_zip_longest
+from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
-class SvColorInputNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvColorInputNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Color Input
     Tooltip: Specify color using color picker
@@ -38,10 +40,6 @@ class SvColorInputNode(bpy.types.Node, SverchCustomTreeNode):
     color_data: FloatVectorProperty(
         name="Color", description="Color", size=4,
         min=0.0, max=1.0, subtype='COLOR', update=updateNode)
-
-    draw_3dpanel: BoolProperty(
-        name = "To 3D Panel", description="Show this node in 3D panel",
-        default=False, update=lambda n, c: bpy.context.scene.sv_ui_node_props.update_show_property(n))
 
     def sv_init(self, context):
         self.outputs.new("SvColorSocket", "Color")
