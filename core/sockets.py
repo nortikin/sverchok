@@ -345,7 +345,7 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
         if prop_origin is None:
             prop_origin = self
 
-            if hasattr(self, 'prop'):
+            if hasattr(self, 'prop') and self.prop:
                 # it means the the socket is using old name of the default property
                 prop_name = 'prop'
 
