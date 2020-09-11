@@ -180,6 +180,7 @@ class SvNurbsCurve(SvCurve):
         curve2 = SvNurbsCurve.to_nurbs(curve2)
         if curve2 is None:
             raise UnsupportedCurveTypeException("second curve is not NURBS")
+        curve, curve2 = unify_curves_degree([curve, curve2])
         if curve.get_degree() != curve2.get_degree():
             raise UnsupportedCurveTypeException(f"curves have different degrees: {curve.get_degree()} != {curve2.get_degree()}")
 
