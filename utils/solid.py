@@ -158,7 +158,7 @@ if FreeCAD is not None:
                 for edge in edges:
                     new = self._faces_by_edge[SvSolidTopology.Item(edge)]
                     good.update(new)
-                return [SvSolidTopology.Item(edge) in good for edge in self.solid.Edges]
+                return [SvSolidTopology.Item(face) in good for face in self.solid.Faces]
             else:
                 edges = set([SvSolidTopology.Item(e) for e in edges])
                 mask = []
