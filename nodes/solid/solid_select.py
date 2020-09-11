@@ -13,7 +13,6 @@ from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty, FloatProp
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode, get_data_nesting_level
 from sverchok.utils.geom import PlaneEquation, LineEquation, linear_approximation
-from sverchok.utils.solid import SvSolidTopology
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import FreeCAD
 
@@ -23,6 +22,7 @@ else:
     import FreeCAD
     import Part
     from FreeCAD import Base
+    from sverchok.utils.solid import SvSolidTopology
 
 class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
     """
