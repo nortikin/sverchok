@@ -115,8 +115,6 @@ class SvNumberNode(Show3DProperties, DraftMode, bpy.types.Node, SverchCustomTree
             c = layout.column()
             c.prop(self, 'show_limits', icon='SETTINGS', text='')
 
-            c.prop(self, 'to3d', icon='PLUGIN', text='')
-
     def get_prop_name(self):
         if self.id_data.sv_draft:
             if self.selected_mode == 'float':
