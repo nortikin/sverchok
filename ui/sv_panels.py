@@ -64,7 +64,6 @@ class SV_PT_ToolsMenu(SverchokPanels, bpy.types.Panel):
 class SV_PT_ActiveTreePanel(SverchokPanels, bpy.types.Panel):
     bl_idname = "SV_PT_ActiveTreePanel"
     bl_label = "Active tree"
-    bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = 'SV_PT_ToolsMenu'
 
     @classmethod
@@ -118,6 +117,7 @@ class SV_PT_SverchokUtilsPanel(SverchokPanels, bpy.types.Panel):
     bl_idname = "SV_PT_SverchokUtilsPanel"
     bl_label = "General Utils"
     bl_order = 10
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         col = self.layout.column()

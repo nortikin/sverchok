@@ -26,6 +26,7 @@ class SV_PT_3DPanel(bpy.types.Panel):
         else:
             col.operator('wm.sv_obj_modal_update', text='Start live update', icon='EDITMODE_HLT').mode = 'start'
 
+        col.operator('node.sverchok_update_all', text='Update all trees')
         col.operator('node.sv_scan_properties', text='Scan for props')
 
         col_edit = col.column()
@@ -271,8 +272,10 @@ class Sv3DNodeProperties(bpy.types.PropertyGroup):
 
 
 class SvLayoutScanProperties(bpy.types.Operator):
-    """Scan layouts of Sverchok for properties"""
-
+    """
+    Scan layouts of Sverchok for properties
+    Nodes with available "Show in 3D" properties on will be added to property list
+    """
     bl_idname = "node.sv_scan_properties"
     bl_label = "scan for properties in Sverchok layouts"
 
@@ -373,8 +376,7 @@ class SvPopupEditLabel(bpy.types.Operator):
 
 
 class Sv3DViewObjInUpdater(bpy.types.Operator, object):
-
-    """Operator which runs its self from a timer"""
+    """For automatic trees reevaluation upon changes in 3D space"""
     bl_idname = "wm.sv_obj_modal_update"
     bl_label = "start n stop obj updating"
 

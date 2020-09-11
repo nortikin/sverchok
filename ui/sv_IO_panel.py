@@ -70,8 +70,8 @@ class SV_PT_IOExportMenu(ExportImportPanels, bpy.types.Panel):
         imp = col.operator('node.tree_exporter', text='Export to JSON', icon='FILE_BACKUP')
         imp.id_tree = context.space_data.node_tree.name if context.space_data.node_tree else ''
 
-        col.operator('node.tree_export_to_gist', text='Export to gist', icon='URL')
-        col.operator('node.blend_to_archive', text='Save .blend')
+        col.operator('node.tree_export_to_gist', text='Export to GIST', icon='URL')
+        col.operator('node.blend_to_archive', text='Archive .blend (zip/gz)')
 
 
 class SV_PT_IOImportMenu(ExportImportPanels, bpy.types.Panel):
@@ -82,12 +82,12 @@ class SV_PT_IOImportMenu(ExportImportPanels, bpy.types.Panel):
     def draw(self, context):
         col = self.layout.column()
 
+        op = col.operator('node.tree_importer', text='Import JSON file', icon='RNA')
+        op.current_tree_name = context.space_data.node_tree.name if context.space_data.node_tree else ''
+
         op = col.operator('node.tree_import_from_gist', text='Import GIST link', icon='URL')
         op.gist_id = 'clipboard'
         op.id_tree = context.space_data.node_tree.name if context.space_data.node_tree else ''
-
-        op = col.operator('node.tree_importer', text='Import JSON file', icon='RNA')
-        op.current_tree_name = context.space_data.node_tree.name if context.space_data.node_tree else ''
 
 
 class SvIOPanelProperties(bpy.types.PropertyGroup):
