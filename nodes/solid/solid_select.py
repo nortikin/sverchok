@@ -31,7 +31,7 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvSelectSolidNode'
     bl_label = 'Select Solid Elements'
-    bl_icon = 'EDGESEL'
+    bl_icon = 'UV_SYNC_SELECT'
     solid_catergory = "Operators"
 
     element_types = [
