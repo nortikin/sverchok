@@ -32,6 +32,7 @@ Solid
    solid_faces
    solid_edges
    solid_vertices
+   solid_select
    import_solid
    export_solid
    solid_viewer

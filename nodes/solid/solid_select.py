@@ -137,16 +137,16 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
 
         if self.element_type in {'EDGES', 'FACES'} and self.criteria_type not in {'SOLID_DISTANCE'}:
             if self.element_type == 'EDGES':
-                text = "Partially selected edges"
+                text = "1. Partially selected edges"
             else:
-                text = "Partially selected faces"
+                text = "1. Partially selected faces"
             layout.prop(self, 'include_partial', text=text)
 
         if self.element_type == 'VERTS':
-            text = "Partially selected edges, faces"
+            text = "2. Partially selected edges, faces"
             layout.prop(self, 'include_partial_other', text=text)
         elif self.element_type == 'EDGES':
-            text = "Partially selected faces"
+            text = "2. Partially selected faces"
             layout.prop(self, 'include_partial_other', text=text)
 
         if self.criteria_type == 'SOLID_INSIDE':
