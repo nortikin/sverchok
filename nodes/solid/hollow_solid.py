@@ -47,18 +47,36 @@ class SvHollowSolidNode(bpy.types.Node, SverchCustomTreeNode):
             precision=6,
             update=updateNode)
 
+    mask_options = [
+            ('REMOVE', "Removed", "Faces to be removed", 'REMOVE', 0),
+            ('SHELL', "Shell", "Faces from which to make the shell", 'MOD_THICKNESS', 1)
+        ]
+
+    mask_usage : EnumProperty(
+            name = "Mask usage",
+            description = "What faces are selected by mask",
+            items = mask_options,
+            default = 'REMOVE',
+            update=updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'tolerance')
+
+    def draw_mask_options(self, socket, context, layout):
+        layout.label(text=socket.name)
+        layout.prop(self, 'mask_usage', text='', expand=True)
 
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', "Solid")
         self.inputs.new('SvStringsSocket', "Thickness").prop_name = 'thickness'
-        self.inputs.new('SvStringsSocket', "FaceMask")
+        self.inputs.new('SvStringsSocket', "FaceMask").custom_draw = 'draw_mask_options'
         self.outputs.new('SvSolidSocket', "Solid")
 
     def make_solid(self, solid, thickness, mask):
         if not solid.isValid():
             raise Exception("Solid is not valid")
+        if self.mask_usage == 'SHELL':
+            mask = [not c for c in mask]
         if all(mask):
             self.info("No faces are selected to be removed; the node will operate as `Offset' operation")
         if not any(mask):
