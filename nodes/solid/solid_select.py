@@ -22,6 +22,7 @@ if FreeCAD is None:
 else:
     import FreeCAD
     import Part
+    from FreeCAD import Base
 
 class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -46,15 +47,25 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
             ('PLANE', "By Plane", "By plane defined by point and normal", 3),
             ('CYLINDER', "By Cylinder", "By cylinder defined by point, direction vector and radius", 4),
             ('DIRECTION', "By Direction", "By direction", 5),
-            ('SOLID_DISTANCE', "By Distance to Solid", "By Distance to Solid", 6)
+            ('SOLID_DISTANCE', "By Distance to Solid", "By Distance to Solid", 6),
+            ('SOLID_INSIDE', "Inside Solid", "Select elements that are inside given solid", 7)
             #('BBOX', "By Bounding Box", "By bounding box", 6)
         ]
 
     known_criteria = {
-            'VERTS': {'SIDE', 'SPHERE', 'PLANE', 'CYLINDER', 'SOLID_DISTANCE'},
-            'EDGES': {'SIDE', 'SPHERE', 'PLANE', 'CYLINDER', 'DIRECTION', 'SOLID_DISTANCE'},
-            'FACES': {'SIDE', 'NORMAL', 'SPHERE', 'PLANE', 'CYLINDER', 'SOLID_DISTANCE'}
+            'VERTS': {'SIDE', 'SPHERE', 'PLANE', 'CYLINDER', 'SOLID_DISTANCE', 'SOLID_INSIDE'},
+            'EDGES': {'SIDE', 'SPHERE', 'PLANE', 'CYLINDER', 'DIRECTION', 'SOLID_DISTANCE', 'SOLID_INSIDE'},
+            'FACES': {'SIDE', 'NORMAL', 'SPHERE', 'PLANE', 'CYLINDER', 'SOLID_DISTANCE', 'SOLID_INSIDE'}
         }
+
+    @throttled
+    def update_type(self, context):
+        criteria = self.criteria_type
+        available = SvSelectSolidNode.known_criteria[self.element_type]
+        if criteria not in available:
+            self.criteria_type = available[0]
+        else:
+            self.update_sockets(context)
 
     element_type : EnumProperty(
             name = "Select",
@@ -76,7 +87,7 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Center'].hide_safe = self.criteria_type not in {'SPHERE', 'PLANE', 'CYLINDER'}
         self.inputs['Percent'].hide_safe = self.criteria_type not in {'SIDE', 'NORMAL', 'DIRECTION'}
         self.inputs['Radius'].hide_safe = self.criteria_type not in {'SPHERE', 'PLANE', 'CYLINDER', 'SOLID_DISTANCE'}
-        self.inputs['Tool'].hide_safe = self.criteria_type not in {'SOLID_DISTANCE'}
+        self.inputs['Tool'].hide_safe = self.criteria_type not in {'SOLID_DISTANCE', 'SOLID_INSIDE'}
         self.inputs['Precision'].hide_safe = self.element_type == 'VERTS' or self.criteria_type in {'SOLID_DISTANCE'}
 
     criteria_type : EnumProperty(
@@ -103,11 +114,26 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
         precision=4,
         update=updateNode)
 
+    tolerance : FloatProperty(
+        name = "Tolerance",
+        default = 0.01,
+        precision = 4,
+        update=updateNode)
+
+    include_shell : BoolProperty(
+        name = "Including shell",
+        description = "indicates if the point lying directly on a face is considered to be inside or not",
+        default = False,
+        update=updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'element_type')
         layout.prop(self, 'criteria_type', text='')
         if self.element_type in {'EDGES', 'FACES'} and self.criteria_type not in {'SOLID_DISTANCE'}:
             layout.prop(self, 'include_partial')
+        if self.criteria_type == 'SOLID_INSIDE':
+            layout.prop(self, 'tolerance')
+            layout.prop(self, 'include_shell')
 
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', "Solid")
@@ -167,6 +193,11 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
 
     def _verts_by_solid_distance(self, topo, tool, radius):
         condition = lambda v: v.distToShape(tool)[0] < radius
+        mask = [condition(v) for v in topo.solid.Vertexes]
+        return mask
+
+    def _verts_by_solid_inside(self, topo, tool):
+        condition = lambda v: tool.isInside(v.Point, self.tolerance, self.include_shell)
         mask = [condition(v) for v in topo.solid.Vertexes]
         return mask
 
@@ -232,6 +263,12 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
         mask = [condition(e) for e in topo.solid.Edges]
         return mask
 
+    def _edges_by_solid_inside(self, topo, tool):
+        def condition(points):
+            good = [tool.isInside(Base.Vector(*p), self.tolerance, self.include_shell) for p in points]
+            return np.array(good)
+        return topo.get_edges_by_location_mask(condition, self.include_partial)
+
     # FACES
 
     def _faces_by_side(self, topo, direction, percent):
@@ -291,6 +328,12 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
         mask = [condition(f) for f in topo.solid.Faces]
         return mask
 
+    def _faces_by_solid_inside(self, topo, tool):
+        def condition(points):
+            good = [tool.isInside(Base.Vector(*p), self.tolerance, self.include_shell) for p in points]
+            return np.array(good)
+        return topo.get_faces_by_location_mask(condition, self.include_partial)
+
     # SWITCH
 
     def calc_mask(self, solid, tool, precision, direction, center, percent, radius):
@@ -306,6 +349,8 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
                 vertex_mask = self._verts_by_cylinder(topo, center, direction, radius)
             elif self.criteria_type == 'SOLID_DISTANCE':
                 vertex_mask = self._verts_by_solid_distance(topo, tool, radius)
+            elif self.criteria_type == 'SOLID_INSIDE':
+                vertex_mask = self._verts_by_solid_inside(topo, tool)
             else:
                 raise Exception("Unknown criteria for vertices")
             verts = [v for c, v in zip(vertex_mask, solid.Vertexes) if c]
@@ -325,6 +370,8 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
                 edge_mask = self._edges_by_direction(topo, direction, percent)
             elif self.criteria_type == 'SOLID_DISTANCE':
                 edge_mask = self._edges_by_solid_distance(topo, tool, radius)
+            elif self.criteria_type == 'SOLID_INSIDE':
+                edge_mask = self._edges_by_solid_inside(topo, tool)
             else:
                 raise Exception("Unknown criteria for edges")
             edges = [e for c, e in zip(edge_mask, solid.Edges) if c]
@@ -345,6 +392,8 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
                 face_mask = self._faces_by_cylinder(topo, center, direction, radius)
             elif self.criteria_mask == 'SOLID_DISTANCE':
                 face_mask = self._faces_by_solid_distance(topo, tool, radius)
+            elif self.criteria_type == 'SOLID_INSIDE':
+                face_mask = self._faces_by_solid_inside(topo, tool)
             else:
                 raise Exception("Unknown criteria type for faces")
             faces = [f for c, f in zip(face_mask, solid.Faces) if c]
@@ -359,7 +408,7 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         solid_s = self.inputs['Solid'].sv_get()
-        if self.criteria_type in {'SOLID_DISTANCE'}:
+        if self.criteria_type in {'SOLID_DISTANCE', 'SOLID_INSIDE'}:
             tool_s = self.inputs['Tool'].sv_get()
             tool_s = ensure_nesting_level(tool_s, 2, data_types=(Part.Shape,))
         else:
