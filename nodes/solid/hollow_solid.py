@@ -11,7 +11,7 @@ import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode, repeat_last_for_length
+from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode, repeat_last_for_length, get_data_nesting_level
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.freecad import SvSolidFaceSurface, surface_to_freecad, is_solid_face_surface
 from sverchok.utils.dummy_nodes import add_dummy
@@ -57,6 +57,8 @@ class SvHollowSolidNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvSolidSocket', "Solid")
 
     def make_solid(self, solid, thickness, mask):
+        if not solid.isValid():
+            raise Exception("Solid is not valid")
         mask = repeat_last_for_length(mask, len(solid.Faces))
         faces = [face for c, face in zip(mask, solid.Faces) if not c]
         try:
@@ -70,6 +72,7 @@ class SvHollowSolidNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         solids_s = self.inputs['Solid'].sv_get()
+        input_level = get_data_nesting_level(solids_s, data_types=(Part.Shape,))
         solids_s = ensure_nesting_level(solids_s, 2, data_types=(Part.Shape,))
         thickness_s = self.inputs['Thickness'].sv_get()
         thickness_s = ensure_nesting_level(thickness_s, 2)
@@ -85,7 +88,10 @@ class SvHollowSolidNode(bpy.types.Node, SverchCustomTreeNode):
             for solid, thickness, mask in zip_long_repeat(*params):
                 new_solid = self.make_solid(solid, thickness, mask)
                 new_solids.append(new_solid)
-            solids_out.append(new_solids)
+            if input_level == 2:
+                solids_out.append(new_solids)
+            else:
+                solids_out.extend(new_solids)
 
         self.outputs['Solid'].sv_set(solids_out)
 
