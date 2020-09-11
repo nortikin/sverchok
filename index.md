@@ -241,6 +241,7 @@
    SvSolidVerticesNode
    SvSolidEdgesNode
    SvSolidFacesNode
+   SvSelectSolidNode
    SvSolidViewerNode
 
 ## Analyzers
