@@ -52,6 +52,18 @@ This node has the following parameters:
   generated at the first step - so it will be "roughly nearest point". So, if
   this parameter is not checked, higher values of **Init resolution** parameter
   will lead to more precise output. Checked by default.
+* **Method**. This parameter is available in the N panel only. This defines the
+  algorithm to be used. In simple cases, all algorithms will give the same
+  result; in more complex cases, you will have to try all and select the one
+  which works for you case. The available values are: 
+
+   * Brent. Uses Brent’s algorithm to find a local minimum. The algorithm uses
+     inverse parabolic interpolation when possible to speed up convergence of
+     the golden section method.
+   * Bounded. Uses the Brent method to find a local minimum in the interval.
+   * Golden. Uses the golden section search technique. It uses analog of the
+     bisection method to decrease the bracketed interval. It is usually
+     preferable to use the Brent method.
 
 Outputs
 -------
