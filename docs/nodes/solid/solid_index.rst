@@ -27,6 +27,7 @@ Solid
    points_inside_solid
    solid_distance
    slice_solid
+   hollow_solid
    mesh_to_solid
    solid_to_mesh_mk2
    solid_faces
