@@ -538,7 +538,7 @@ class SverchokPreferences(AddonPreferences):
         draw_freecad_ops()
 
         if any(package.module is None for package in sv_dependencies.values()):
-            box.operator('wm.url_open', text="Read installation instructions for missing dependencies").url = "https://github.com/portnov/sverchok-extra"
+            box.operator('wm.url_open', text="Read installation instructions for missing dependencies").url = "https://github.com/nortikin/sverchok/wiki/Dependencies"
 
     def draw(self, context):
 
