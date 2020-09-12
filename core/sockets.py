@@ -120,9 +120,6 @@ class SvSocketCommon:
             else:
                 implicit_conversions = ConversionPolicies.DEFAULT.conversion
 
-        sock_has_default = hasattr(self, 'default_property') and self.default_property is not None
-        sock_has_old_default = hasattr(self, 'prop') and self.prop is not None
-
         if self.is_linked and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.get_prop_name():
@@ -134,8 +131,8 @@ class SvSocketCommon:
                 return [[prop[:]]]
             else:
                 return [prop]
-        elif self.use_prop and sock_has_default or sock_has_old_default:
-            default_property = self.prop if sock_has_old_default else self.default_property
+        elif self.use_prop and hasattr(self, 'default_property') and self.default_property is not None:
+            default_property = self.default_property
             if isinstance(default_property, (str, int, float)):
                 return [[default_property]]
             elif hasattr(default_property, '__len__'):
@@ -333,21 +330,24 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
     color = (0.9, 0.6, 0.2, 1.0)
     quick_link_to_node = 'GenVectorsNode'
 
-    default_property: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
-
     # this property is needed for back capability, after renaming prop to default_property
     # should be removed after https://github.com/nortikin/sverchok/issues/3514
+    # using via default_property property
     prop: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
 
     expanded: BoolProperty(default=False)  # for minimizing showing socket property
 
-    def draw_property(self, layout, prop_origin=None, prop_name='default_property'):
+    @property
+    def default_property(self):
+        return self.prop
+
+    @default_property.setter
+    def default_property(self, value):
+        self.prop = value
+
+    def draw_property(self, layout, prop_origin=None, prop_name='prop'):
         if prop_origin is None:
             prop_origin = self
-
-            if hasattr(self, 'prop') and self.prop:
-                # it means the the socket is using old name of the default property
-                prop_name = 'prop'
 
         split = layout.split(factor=.2, align=True)
         c1 = split.column(align=True)
