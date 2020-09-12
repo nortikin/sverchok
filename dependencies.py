@@ -76,12 +76,13 @@ except ImportError:
     scipy = None
 
 geomdl_d = sv_dependencies["geomdl"] = SvDependency("geomdl", "https://github.com/orbingol/NURBS-Python/tree/master/geomdl")
+geomdl_d.pip_installable = True
 try:
     import geomdl
     geomdl_d.message = "geomdl package is available"
     geomdl_d.module = geomdl
 except ImportError:
-    geomdl_d.message = "geomdl package is not available, NURBS / BSpline related nodes will not be available"
+    geomdl_d.message = "geomdl package is not available, some NURBS related nodes will not be available"
     info(geomdl_d.message)
     geomdl = None
 
