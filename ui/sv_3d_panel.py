@@ -57,7 +57,7 @@ class SV_UL_NodeTreePropertyList(bpy.types.UIList):
                 move_down.direction = 'DOWN'
                 move_down.prop_index = index
 
-                row.operator('node.popup_edit_label', text='', icon='GREASEPENCIL').tree_name = prop.tree_name
+                row.operator('node.popup_edit_label', text='', icon='GREASEPENCIL').prop_index = index
                 row.prop(item, 'show_tree', text='', icon=f"RESTRICT_VIEW_{'OFF' if item.show_tree else 'ON'}")
 
         elif prop.type == 'NODE':
@@ -77,9 +77,7 @@ class SV_UL_NodeTreePropertyList(bpy.types.UIList):
                 move_down.direction = 'DOWN'
                 move_down.prop_index = index
 
-                edit_label = row.operator('node.popup_edit_label', text='', icon='GREASEPENCIL')
-                edit_label.tree_name = prop.tree_name
-                edit_label.node_name = prop.node_name
+                row.operator('node.popup_edit_label', text='', icon='GREASEPENCIL').prop_index = index
 
                 row.operator('node.sv_remove_3dviewprop_item', text='', icon='CANCEL').prop_index = index
 
@@ -125,7 +123,7 @@ class Sv3dPropItem(bpy.types.PropertyGroup):
     https://devtalk.blender.org/t/crash-after-reload-script-f8/15284
     so now it is tree_name instead
     """
-    tree_name: bpy.props.StringProperty()
+    tree_name: bpy.props.StringProperty()  # all item types should have actual name of a tree
     show_tree: bpy.props.BoolProperty(default=True)  # switch on/off showing tree in 3d panel
     show_props: bpy.props.BoolProperty(default=True)  # store actual data only in tree type items
 
@@ -140,7 +138,7 @@ class Sv3dPropItem(bpy.types.PropertyGroup):
     @staticmethod
     def draw_node(list_item, layout):
         tree = bpy.data.node_groups.get(list_item.tree_name)
-        node = tree.nodes.get(list_item.node_name, None)
+        node = tree.nodes.get(list_item.node_name) if tree is not None else None
         if not node:
             # properties are not automatically removed from Sv3DProps when a node is deleted.
             row = layout.row()
@@ -154,22 +152,27 @@ class Sv3dPropItem(bpy.types.PropertyGroup):
         row.prop(list_item, 'show_props', icon='DOWNARROW_HLT' if list_item.show_props else 'RIGHTARROW',
                  emboss=False, text='')
         row = row.row()
-        row.active = list_item.show_tree
-        row.label(text=list_item.tree_name)
+        tree = bpy.data.node_groups.get(list_item.tree_name)
+        if tree is None:
+            row.alert = True
+            row.label(text=f'"{list_item.tree_name}" was renamed / deleted')
+        else:
+            row.alert = False
+            row.active = list_item.show_tree
+            row.label(text=list_item.tree_name)
 
-        # buttons
-        if not ui_list.edit:
-            tree = bpy.data.node_groups.get(list_item.tree_name)
-            row = row.row(align=True)
-            row.alignment = 'RIGHT'
-            row.ui_units_x = 7
-            row.operator('node.sverchok_bake_all', text='B').node_tree_name = list_item.tree_name
-            row.prop(tree, 'sv_show',
-                     icon=f"RESTRICT_VIEW_{'OFF' if tree.sv_show else 'ON'}", text=' ')
-            row.prop(tree, 'sv_animate', icon='ANIM', text=' ')
-            row.prop(tree, "sv_process", toggle=True, text="P")
-            row.prop(tree, "sv_draft", toggle=True, text="D")
-            row.prop(tree, 'use_fake_user', toggle=True, text='F')
+            # buttons
+            if not ui_list.edit:
+                row = row.row(align=True)
+                row.alignment = 'RIGHT'
+                row.ui_units_x = 7
+                row.operator('node.sverchok_bake_all', text='B').node_tree_name = list_item.tree_name
+                row.prop(tree, 'sv_show',
+                         icon=f"RESTRICT_VIEW_{'OFF' if tree.sv_show else 'ON'}", text=' ')
+                row.prop(tree, 'sv_animate', icon='ANIM', text=' ')
+                row.prop(tree, "sv_process", toggle=True, text="P")
+                row.prop(tree, "sv_draft", toggle=True, text="D")
+                row.prop(tree, 'use_fake_user', toggle=True, text='F')
 
 
 class Sv3DNodeProperties(bpy.types.PropertyGroup):
@@ -224,6 +227,11 @@ class Sv3DNodeProperties(bpy.types.PropertyGroup):
         # 2. Update the data structure
         # 3. Recreate list from scratch
         props = self.generate_data_structure()
+
+        # if tree was renamed or removed list can contain outdated information, such trees can be only ignored
+        for tree_name in props.copy():
+            if tree_name not in bpy.data.node_groups:
+                del props[tree_name]
 
         for tree in bpy.data.node_groups:
             if tree.bl_idname != 'SverchCustomTreeType':
@@ -283,17 +291,6 @@ class Sv3DNodeProperties(bpy.types.PropertyGroup):
             for node_name in props[tree_name]['props']:
                 node = tree.nodes.get(node_name)
                 self.add(tree_name=tree.name, node_name=node.name, node_label=node.label)
-
-    def update_name(self, name, tree_name, node_name=None):
-        """It will update label of given node in the list or name of given tree"""
-        if node_name:
-            node_index = self.search_node(node_name, tree_name)
-            if node_index is not None:
-                self.props[node_index].node_label = name
-        else:
-            tree_index = self.search_tree(tree_name)
-            if tree_index is not None:
-                self.props[tree_index].tree_name = name
 
     def add(self, tree_name=None, node_name=None, node_label=None):
         prop = self.props.add()
@@ -383,36 +380,49 @@ class SvPopupEditLabel(bpy.types.Operator):
     bl_label = "Edit label"
     bl_options = {'INTERNAL'}
 
-    tree_name: bpy.props.StringProperty()
-    node_name: bpy.props.StringProperty()
+    prop_index: bpy.props.IntProperty()
 
-    new_tree_name: bpy.props.StringProperty()  # for internal usage
+    # for internal usage
+    new_node_name: bpy.props.StringProperty()  # actually will be assigned to node label
+    new_tree_name: bpy.props.StringProperty()
 
     def execute(self, context):
-        tree = bpy.data.node_groups.get(self.tree_name)
-        node = tree.nodes.get(self.node_name)
-        if node:
-            context.scene.sv_ui_node_props.update_name(node.label, self.tree_name, self.node_name)
-        else:
-            context.scene.sv_ui_node_props.update_name(self.new_tree_name, self.tree_name)
-            tree.name = self.new_tree_name
+        prop = context.scene.sv_ui_node_props.props[self.prop_index]
+        tree = bpy.data.node_groups.get(prop.tree_name)
+        node = tree.nodes.get(prop.node_name) if tree is not None else None
+        if prop.type == 'NODE':
+            prop.node_label = self.new_node_name
+            if node is not None:
+                node.label = self.new_node_name
+        elif prop.type == 'TREE':
+            old_tree_name = prop.tree_name
+            for prop in context.scene.sv_ui_node_props.props[self.prop_index:]:
+                # tree names in nested properties also should be renamed
+                if prop.tree_name != old_tree_name:
+                    break
+                prop.tree_name = self.new_tree_name
+            if tree is not None:
+                tree.name = self.new_tree_name
         return {'FINISHED'}
 
     def invoke(self, context, event):
-        tree = bpy.data.node_groups.get(self.tree_name)
-        self.new_tree_name = tree.name
+        prop = context.scene.sv_ui_node_props.props[self.prop_index]
+        if prop.type == 'NODE':
+            self.new_node_name = prop.node_label or prop.node_name
+            self.new_tree_name = ''
+        elif prop.type == 'TREE':
+            self.new_node_name = ''
+            self.new_tree_name = prop.tree_name
 
         wm = context.window_manager
         return wm.invoke_props_dialog(self)
 
     def draw(self, context):
-        tree = bpy.data.node_groups.get(self.tree_name)
-        node = tree.nodes.get(self.node_name)
-        if node:
-            self.layout.label(text=f'Edit label of node="{node.label or node.name}"')
-            self.layout.prop(node, 'label')
+        if self.new_node_name:
+            self.layout.label(text=f'Edit label of node="{self.new_node_name}"')
+            self.layout.prop(self, 'new_node_name')
         else:
-            self.layout.label(text=f'Edit tree name="{tree.name}"')
+            self.layout.label(text=f'Edit tree name="{self.new_tree_name}"')
             self.layout.prop(self, 'new_tree_name')
 
 
