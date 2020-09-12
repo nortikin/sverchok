@@ -233,6 +233,7 @@
    SvSolidFaceRevolveNode
    SvSweepSolidFaceNode
    SvSplitSolidNode
+   SvHollowSolidNode
    SvIsInsideSolidNode
    SvSolidDistanceNode
    SvSliceSolidNode
