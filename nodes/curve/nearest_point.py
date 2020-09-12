@@ -66,9 +66,25 @@ else:
             default = True,
             update = updateNode)
 
+        solvers = [
+                ('Brent', "Brent", "Uses inverse parabolic interpolation when possible to speed up convergence of golden section method", 0),
+                ('Bounded', "Bounded", "Uses the Brent method to find a local minimum in the interval", 1),
+                ('Golden', 'Golden Section', "Uses the golden section search technique", 2)
+            ]
+
+        method : EnumProperty(
+            name = "Method",
+            description = "Solver method to use; select the one which works for your case",
+            items = solvers,
+            default = 'Brent',
+            update = updateNode)
+
         def draw_buttons(self, context, layout):
             layout.prop(self, 'samples')
             layout.prop(self, 'precise', toggle=True)
+
+        def draw_buttons_ext(self, context, layout):
+            layout.prop(self, 'method')
 
         def sv_init(self, context):
             self.inputs.new('SvCurveSocket', "Curve")
@@ -117,7 +133,7 @@ else:
                             result = minimize_scalar(goal(curve, src_point),
                                         bounds = (t_min, t_max),
                                         bracket = bracket,
-                                        method = 'Brent'
+                                        method = self.method
                                     )
                             if not result.success:
                                 if hasattr(result, 'message'):
