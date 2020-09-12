@@ -23,6 +23,7 @@ from sverchok.utils import profile
 from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.ui.development import displaying_sverchok_nodes
 from sverchok.core.update_system import process_tree, build_update_list
+from sverchok.utils.context_managers import sv_preferences
 
 
 class SvRemoveStaleDrawCallbacks(bpy.types.Operator):
@@ -87,7 +88,12 @@ class SV_PT_ProfilingPanel(SverchokPanels, bpy.types.Panel):
     bl_idname = "SV_PT_ProfilingPanel"
     bl_label = "Tree profiling"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = 'SV_PT_ToolsMenu'
+    bl_order = 9
+
+    @classmethod
+    def poll(cls, context):
+        with sv_preferences() as prefs:
+            return super().poll(context) and prefs.developer_mode
 
     def draw_header(self, context):
         addon = context.preferences.addons.get(sverchok.__name__)
