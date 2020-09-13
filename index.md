@@ -466,6 +466,7 @@
     SvVectorRewire
     ---
     SvVertSortNode
+    SvQuadGridSortVertsNode
     VectorDropNode
     VectorPolarInNode
     VectorPolarOutNode

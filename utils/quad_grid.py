@@ -9,7 +9,7 @@ import bmesh
 
 from sverchok.utils.logging import debug, info
 
-class Parser(object):
+class SvQuadGridParser(object):
     """
     Parse a "bmesh" object, which contains a "quad grid", i.e.
     mesh consisting of quads only, in topology similar to subdivided plane (m x n vertices).
@@ -63,14 +63,14 @@ class Parser(object):
         # so the edge is pointing in positive X direction.
         # If we can't find such, then search for positive Y...
         self.row_length = None
-        self.transposed = False
+        self.y_direction = False
         good_x = []
         good_y = []
         for vert in self.bmesh.verts:
             if len(vert.link_edges) == 2:
                 for loop in vert.link_loops:
                     other_vert = loop.edge.other_vert(vert)
-                    #debug(f"V#{vert.index}: x {vert.co.x} => #{other_vert.index} {other_vert.co.x}")
+                    #info(f"V#{vert.index}: x {vert.co.x} => #{other_vert.index} {other_vert.co.x}")
                     if other_vert.co.x > vert.co.x:
                         good_x.append(loop)
                     if other_vert.co.y > vert.co.y:
@@ -80,13 +80,20 @@ class Parser(object):
             loop = good_x[0]
         elif good_y:
             loop = good_y[0]
+            self.y_direction = True
         else:
             raise Exception("Could not find a vertex to start from")
 
         vert = loop.vert
-        #debug(f"Start with v.{vert.index}, loop {self._show_loop(loop)}")
+        #info(f"Start with v.{vert.index}, loop {self._show_loop(loop)}")
         self.current_loop = loop
         self.current_vert = vert
+        self.start_loop = loop
+        self.start_vert = vert
+
+    def _reset(self):
+        self.current_loop = self.start_loop
+        self.current_vert = self.start_vert
 
     def _show_loop(self, loop):
         # Debug utility
@@ -99,12 +106,12 @@ class Parser(object):
         start_k = len(self.current_vert.link_edges)
         next_loop = self.current_loop.link_loop_next
         k = len(next_loop.vert.link_edges)
-        #debug(f"> from {self._show_loop(self.current_loop)} => {self._show_loop(next_loop)}, k={k} (for v.{next_loop.vert.index}) of {self.row_start_k}")
+        #info(f"> from {self._show_loop(self.current_loop)} => {self._show_loop(next_loop)}, k={k} (for v.{next_loop.vert.index}) of {self.row_start_k}")
         if k == self.row_start_k:
             loop = next_loop
         else:
             loop = next_loop.link_loop_radial_next.link_loop_next
-        #debug(f"> to {self._show_loop(loop)}")
+        #info(f"> to {self._show_loop(loop)}")
         return loop
 
     def _prev_loop(self):
@@ -114,12 +121,12 @@ class Parser(object):
         next_loop = self.current_loop.link_loop_prev
         other_vert = next_loop.edge.other_vert(next_loop.vert)
         k = len(other_vert.link_edges)
-        #debug(f"< from {self._show_loop(self.current_loop)} => {self._show_loop(next_loop)}, k={k} for v.{other_vert.index}")
+        #info(f"< from {self._show_loop(self.current_loop)} => {self._show_loop(next_loop)}, k={k} for v.{other_vert.index}")
         if k == 2:
             loop = next_loop
         else:
             loop = next_loop.link_loop_radial_prev.link_loop_prev
-        #debug(f"< to {self._show_loop(loop)}")
+        #info(f"< to {self._show_loop(loop)}")
         return loop
 
     def _step_forward(self):
@@ -143,7 +150,7 @@ class Parser(object):
         while True:
             self._step_forward()
             k = len(self.current_vert.link_edges)
-            #debug(f"> C: {self.current_vert.index}, k={k}")
+            #info(f"> C: {self.current_vert.index}, k={k}")
             result.append(self.current_vert.index)
             if self.current_vert.is_boundary and k == self.row_start_k:
                 break
@@ -171,7 +178,7 @@ class Parser(object):
         for i in range(self.row_length-1):
             self._step_backward()
             k = len(self.current_vert.link_edges)
-            #debug(f"< C[{i}]: {self.current_vert.index}, k={k}")
+            #info(f"< C[{i}]: {self.current_vert.index}, k={k}")
             edge = self.current_loop.edge
             vert = edge.other_vert(self.current_vert)
             result.append(vert.index)
@@ -189,13 +196,13 @@ class Parser(object):
         self.current_loop = self.row_start_loop
         start_face_idx = self.current_loop.face.index
         loop = self.current_loop.link_loop_prev.link_loop_prev.link_loop_radial_next
-        #debug(f"N/: F {loop.face.index}, V {loop.vert.index}, E {self._show_loop(loop)}")
+        #info(f"N/: F {loop.face.index}, V {loop.vert.index}, E {self._show_loop(loop)}")
         self.current_loop = loop
         self.current_vert = self.current_loop.vert
         last = loop.face.index == start_face_idx
         return last
 
-    def get_verts_sequence(self):
+    def get_verts_sequence(self, flat=False):
         """
         Return list of lists of vertices indexes,
         sorted row-by-row.
@@ -209,6 +216,10 @@ class Parser(object):
 
         row = self._walk_row_backward()
         result.append(row)
+
+        if flat:
+            result = sum(result, [])
+        self._reset()
         return result
 
     def get_ordered_verts(self, flat=False):
