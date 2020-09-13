@@ -11,14 +11,14 @@ from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException
 from sverchok.utils.surface.nurbs import SvNurbsSurface
-from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve, curve_to_freecad_nurbs, curves_to_wire
+from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve, curve_to_freecad, curve_to_freecad_nurbs, curves_to_wire
 
 from sverchok.dependencies import FreeCAD
 if FreeCAD is not None:
     from FreeCAD import Base
     import Part
 
-def curves_to_face(sv_curves, planar=True):
+def curves_to_face(sv_curves, planar=True, force_nurbs=True):
     """
     Make a Part.Face from a list of SvCurve.
     Curves must have NURBS representation, must form a closed loop, and it must
@@ -28,15 +28,21 @@ def curves_to_face(sv_curves, planar=True):
         * list of SvCurve.
         * planar: True to make a flat face; in this case, all curves
             must lie exactly in one plane
-    output: tuple:
-    * Part.Face
-    * List of SvFreeCadNurbsCurve for outer wire of the face
-    * SvFreeCadNurbsSurface for face's surface.
+        * force_nurbs: True if you want NURBS surface as output even when
+            curves are not NURBS
+    output:
+    * SvSolidFaceSurface for face's surface;
+        SvFreeCadNurbsSurface if force_nurbs == True.
     """
     # Check
-    sv_curves = [curve_to_freecad_nurbs(curve) for curve in sv_curves]
+    sv_curves = [curve_to_freecad(curve) for curve in sv_curves]
+    all_nurbs = all(isinstance(curve, SvFreeCadNurbsCurve) for curve in sv_curves)
     edges = [Part.Edge(curve.curve) for curve in sv_curves]
-    wire = Part.Wire(edges)
+    try:
+        wire = Part.Wire(edges)
+    except Part.OCCError as e:
+        fc_curves = [edge.Curve for edge in edges]
+        raise Exception(f"Can't build a Wire out of edges: {fc_curves}: {e}")
     if not wire.isClosed():
         last_point = None
         distance = None
@@ -57,18 +63,15 @@ def curves_to_face(sv_curves, planar=True):
             fc_face = Part.Face(wire)
         except Part.OCCError as e:
             raise Exception(f"Can't create a Face from {sv_curves}: {e}\nProbably these curves are not all lying in the same plane?")
-        surface = SvSolidFaceSurface(fc_face).to_nurbs()
+        surface = SvSolidFaceSurface(fc_face)
     else:
         fc_face = Part.makeFilledFace(edges)
-        surface = SvSolidFaceSurface(fc_face).to_nurbs()
+        surface = SvSolidFaceSurface(fc_face)
 
-    wire_curves = []
-    for wire_edge in fc_face.OuterWire.Edges:
-        pair = fc_face.curveOnSurface(wire_edge)
-        fc_curve, t_min, t_max = pair
-        curve = SvFreeCadNurbsCurve(fc_curve, ndim=2)
-        wire_curves.append(curve)
-    return fc_face, wire_curves, surface
+    if all_nurbs or force_nurbs:
+        surface = surface.to_nurbs()
+
+    return surface
 
 def surface_to_freecad(sv_surface, make_face=False):
     """

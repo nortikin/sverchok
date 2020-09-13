@@ -6,17 +6,50 @@
 # License-Filename: LICENSE
 
 import numpy as np
+import math
 
 from sverchok.utils.nurbs_common import SvNurbsMaths
-from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
+from sverchok.utils.curve.primitives import SvLine, SvCircle
+from sverchok.utils.logging import info
 
 from sverchok.dependencies import FreeCAD
 if FreeCAD is not None:
     from FreeCAD import Base
     import Part
     from Part import Geom2d
+
+curve_converters = dict()
+
+def line_to_freecad(line):
+    u_min, u_max = line.get_u_bounds()
+    p1 = tuple(line.evaluate(u_min))
+    p2 = tuple(line.evaluate(u_max))
+    p1 = Base.Vector(*p1)
+    p2 = Base.Vector(*p2)
+    fc_line = Part.LineSegment(p1, p2)
+    return fc_line
+
+curve_converters[SvLine] = line_to_freecad
+
+def circle_to_freecad(circle):
+    center = tuple(circle.center)
+    normal = tuple(circle.normal)
+    vectorx = tuple(circle.vectorx / np.linalg.norm(circle.vectorx))
+    radius = circle.get_actual_radius()
+    u_min, u_max = circle.get_u_bounds()
+
+    fc_circle = Part.Circle(Base.Vector(*center), Base.Vector(*normal), radius)
+    if u_min != 0 or u_max != 2*math.pi:
+        fc_circle.XAxis = Base.Vector(*vectorx)
+        fc_arc = fc_circle.trim(u_min, u_max)
+        return fc_arc
+    else:
+        return fc_circle
+
+curve_converters[SvCircle] = circle_to_freecad
 
 def curve_to_freecad_nurbs(sv_curve):
     """
@@ -28,7 +61,7 @@ def curve_to_freecad_nurbs(sv_curve):
     """
     nurbs = SvNurbsCurve.to_nurbs(sv_curve)
     if nurbs is None:
-        raise Exception("not a NURBS curve")
+        raise Exception(f"{sv_curve} is not a NURBS curve")
     fc_curve = SvNurbsMaths.build_curve(SvNurbsMaths.FREECAD,
                 nurbs.get_degree(),
                 nurbs.get_knotvector(),
@@ -248,4 +281,16 @@ class SvFreeCadNurbsCurve(SvNurbsCurve):
         return curve
 
 SvNurbsMaths.curve_classes[SvNurbsMaths.FREECAD] = SvFreeCadNurbsCurve
+
+def curve_to_freecad(sv_curve):
+    converter = curve_converters.get(type(sv_curve), None)
+    if converter is not None:
+        try:
+            fc_curve = converter(sv_curve)
+            bounds = fc_curve.FirstParameter, fc_curve.LastParameter
+            return SvFreeCadCurve(fc_curve, bounds)
+        except UnsupportedCurveTypeException as e:
+            info(f"Can't convert {sv_curve} to native FreeCAD curve: {e}")
+            pass
+    return curve_to_freecad_nurbs(sv_curve)
 

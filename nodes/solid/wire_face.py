@@ -60,7 +60,7 @@ class SvSolidWireFaceNode(bpy.types.Node, SverchCustomTreeNode):
         for curves_i in curve_s:
             new_faces = []
             for curves in curves_i:
-                _, _, face = curves_to_face(curves, planar=self.planar)
+                face = curves_to_face(curves, planar=self.planar, force_nurbs=False)
                 new_faces.append(face)
             faces_out.append(new_faces)
 

@@ -94,7 +94,6 @@ class SvLine(SvCurve):
         return [self.to_bezier()]
 
 class SvCircle(SvCurve):
-    __description__ = "Circle"
 
     def __init__(self, matrix=None, radius=None, center=None, normal=None, vectorx=None):
         if matrix is not None:
@@ -117,13 +116,36 @@ class SvCircle(SvCurve):
             self.normal = normal
         elif matrix is not None:
             z = Vector([0,0,1])
-            self.normal = np.array(matrix @ z)
+            m = matrix.copy()
+            m.translation = Vector()
+            self.normal = np.array(m @ z)
         if vectorx is not None:
             self.vectorx = vectorx
         elif matrix is not None:
             x = Vector([radius,0,0])
-            self.vectorx = np.array(matrix @ x)
+            m = matrix.copy()
+            m.translation = Vector()
+            self.vectorx = np.array(m @ x)
         self.u_bounds = (0.0, 2*pi)
+
+    def __repr__(self):
+        try:
+            r = str(self.get_actual_radius())
+        except UnsupportedCurveTypeException:
+            r = f"Matrix @ {self.radius}"
+        return f"<Circle C={self.center}, N={self.normal}, R={r}>"
+
+    def get_actual_radius(self, tolerance=1e-10):
+        x = np.array([self.radius, 0, 0])
+        y = np.array([0, self.radius, 0])
+        m = self.matrix
+        vx = m @ x
+        vy = m @ y
+        rx = np.linalg.norm(vx)
+        ry = np.linalg.norm(vy)
+        if abs(rx - ry) > tolerance:
+            raise UnsupportedCurveTypeException(f"This SvCircle instance is not an exact circle: {rx} != {ry}")
+        return (rx + ry) / 2.0
 
     @classmethod
     def from_equation(cls, eq):
@@ -153,12 +175,17 @@ class SvCircle(SvCurve):
         """
         Make an instance of SvCircle from an instance of sverchok.utils.sv_curve_utils.Arc
         """
-        radius = abs(arc.radius)
-        radius_dx = arc.radius.real / radius
-        radius_dy = arc.radius.imag / radius
+        if arc.radius.real == arc.radius.imag:
+            radius = arc.radius.real
+            radius_dx = radius_dy = 1.0
+            scale_x = scale_y = Matrix.Identity(4)
+        else:
+            radius = abs(arc.radius)
+            radius_dx = arc.radius.real / radius
+            radius_dy = arc.radius.imag / radius
+            scale_x = Matrix.Scale(radius_dx, 4, (1,0,0))
+            scale_y = Matrix.Scale(radius_dy, 4, (0,1,0))
         matrix = Matrix.Translation(Vector((arc.center.real, arc.center.imag, 0)))
-        scale_x = Matrix.Scale(radius_dx, 4, (1,0,0))
-        scale_y = Matrix.Scale(radius_dy, 4, (0,1,0))
         rotation = radians(arc.theta)
         angle = radians(abs(arc.delta))
         rot_z = Matrix.Rotation(rotation, 4, 'Z')
@@ -170,7 +197,7 @@ class SvCircle(SvCurve):
             matrix = Matrix.Rotation(radians(90), 4, 'X') @ matrix
         elif z_axis == 'X':
             matrix = Matrix.Rotation(radians(90), 4, 'Z') @ Matrix.Rotation(radians(90), 4, 'X') @ matrix
-        circle = SvCircle(matrix, radius)
+        circle = SvCircle(matrix=matrix, radius=radius)
         circle.u_bounds = (0, angle)
         return circle
 
