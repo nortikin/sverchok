@@ -17,7 +17,7 @@ from sverchok.dependencies import geomdl
 
 if geomdl is not None:
     from geomdl import operations
-    from geomdl import NURBS
+    from geomdl import NURBS, BSpline
 
 ##################
 #                #
@@ -286,7 +286,10 @@ class SvGeomdlSurface(SvNurbsSurface):
             surf = NURBS.Surface(normalize_kv = normalize_knots)
         surf.degree_u = degree_u
         surf.degree_v = degree_v
-        ctrlpts = list(map(convert_row, control_points, weights))
+        if weights is None:
+            ctrlpts = control_points
+        else:
+            ctrlpts = list(map(convert_row, control_points, weights))
         surf.ctrlpts2d = ctrlpts
         surf.knotvector_u = knotvector_u
         surf.knotvector_v = knotvector_v
@@ -413,11 +416,14 @@ class SvNativeNurbsSurface(SvNurbsSurface):
             self.knotvector_u = sv_knotvector.normalize(self.knotvector_u)
             self.knotvector_v = sv_knotvector.normalize(self.knotvector_v)
         self.control_points = np.array(control_points)
-        self.weights = np.array(weights)
         c_ku, c_kv, _ = self.control_points.shape
-        w_ku, w_kv = self.weights.shape
-        if c_ku != w_ku or c_kv != w_kv:
-            raise Exception(f"Shape of control_points ({c_ku}, {c_kv}) does not match to shape of weights ({w_ku}, {w_kv})")
+        if weights is None:
+            self.weights = weights = np.ones((c_ku, c_kv))
+        else:
+            self.weights = np.array(weights)
+            w_ku, w_kv = self.weights.shape
+            if c_ku != w_ku or c_kv != w_kv:
+                raise Exception(f"Shape of control_points ({c_ku}, {c_kv}) does not match to shape of weights ({w_ku}, {w_kv})")
         self.basis_u = SvNurbsBasisFunctions(knotvector_u)
         self.basis_v = SvNurbsBasisFunctions(knotvector_v)
         self.u_bounds = (self.knotvector_u.min(), self.knotvector_u.max())

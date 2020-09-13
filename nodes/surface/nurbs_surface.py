@@ -183,16 +183,19 @@ class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 n_u = len(vertices) // n_v
 
                 vertices = split_by_count(vertices, n_u)
-                weights = split_by_count(weights, n_u)
+                if self.surface_mode == 'NURBS':
+                    weights = split_by_count(weights, n_u)
 
             if self.knot_mode == 'AUTO':
                 if self.is_cyclic_v:
                     for row_idx in range(len(vertices)):
                         vertices[row_idx].extend(vertices[row_idx][:degree_v+1])
-                        weights[row_idx].extend(weights[row_idx][:degree_v+1])
+                        if self.surface_mode == 'NURBS':
+                            weights[row_idx].extend(weights[row_idx][:degree_v+1])
                 if self.is_cyclic_u:
                     vertices.extend(vertices[:degree_u+1])
-                    weights.extend(weights[:degree_u+1])
+                    if self.surface_mode == 'NURBS':
+                        weights.extend(weights[:degree_u+1])
                 self.debug("UxV: %s x %s", len(vertices), len(vertices[0]))
 
             n_u_total = len(vertices)
