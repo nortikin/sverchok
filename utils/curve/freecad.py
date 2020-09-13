@@ -9,10 +9,11 @@ import numpy as np
 import math
 
 from sverchok.utils.nurbs_common import SvNurbsMaths
-from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.primitives import SvLine, SvCircle
+from sverchok.utils.logging import info
 
 from sverchok.dependencies import FreeCAD
 if FreeCAD is not None:
@@ -37,13 +38,13 @@ def circle_to_freecad(circle):
     center = tuple(circle.center)
     normal = tuple(circle.normal)
     vectorx = tuple(circle.vectorx / np.linalg.norm(circle.vectorx))
-    radius = circle.radius
+    radius = circle.get_actual_radius()
     u_min, u_max = circle.get_u_bounds()
 
     fc_circle = Part.Circle(Base.Vector(*center), Base.Vector(*normal), radius)
     if u_min != 0 or u_max != 2*math.pi:
+        fc_circle.XAxis = Base.Vector(*vectorx)
         fc_arc = fc_circle.trim(u_min, u_max)
-        fc_arc.XAxis = Base.Vector(*vectorx)
         return fc_arc
     else:
         return fc_circle
@@ -284,9 +285,12 @@ SvNurbsMaths.curve_classes[SvNurbsMaths.FREECAD] = SvFreeCadNurbsCurve
 def curve_to_freecad(sv_curve):
     converter = curve_converters.get(type(sv_curve), None)
     if converter is not None:
-        fc_curve = converter(sv_curve)
-        bounds = fc_curve.FirstParameter, fc_curve.LastParameter
-        return SvFreeCadCurve(fc_curve, bounds)
-    else:
-        return curve_to_freecad_nurbs(sv_curve)
+        try:
+            fc_curve = converter(sv_curve)
+            bounds = fc_curve.FirstParameter, fc_curve.LastParameter
+            return SvFreeCadCurve(fc_curve, bounds)
+        except UnsupportedCurveTypeException as e:
+            info(f"Can't convert {sv_curve} to native FreeCAD curve: {e}")
+            pass
+    return curve_to_freecad_nurbs(sv_curve)
 
