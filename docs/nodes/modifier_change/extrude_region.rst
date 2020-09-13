@@ -51,6 +51,9 @@ This node has the following parameters:
       for each pair of **Height** and **Scale** input values.
     - In **Matrix** mode, extrusion operation will be performed one time for
       each matrix passed into **Matrix** input.
+- **Dissolve Orthogonal Edges**. This parameter is available only since Blender
+  version 2.90. Removes and connects edges whose faces form a flat surface and
+  intersect new edges. Unchecked by default.
 - **Keep original**. If checked, the original geometry will be passed to output
   as well as extruded geometry. This parameter is visible only in
   **Properties** (N) panel.
@@ -116,4 +119,8 @@ Example of FaceData sockets usage:
 Example of Mask output usage together with Extrude Separate node:
 
 .. image:: https://user-images.githubusercontent.com/284644/71817318-4562dc80-30a7-11ea-9f44-ae2d2bae7acf.png
+
+Example of "Dissolve orthogonal edges" parameter usage:
+
+.. image:: https://user-images.githubusercontent.com/284644/93020158-1537ea00-f5f5-11ea-9857-ff9d2059bb36.png
 
