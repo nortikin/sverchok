@@ -132,7 +132,7 @@ utils_modules = [
     "profile", "logging", "testing", "sv_requests", "sv_examples_utils", "sv_shader_sources",
     "avl_tree", "sv_nodeview_draw_helper", "sv_font_xml_parser", "exception_drawing_with_bgl",
     "wfc_algorithm", "handling_nodes", "handle_blender_data", "nodes_mixins.generating_objects",
-    "nodes_mixins.show_3d_properties",
+    "nodes_mixins.show_3d_properties", "modules_inspection",
     # UI text editor ui
     "text_editor_submenu", "text_editor_plugins",
     # UI operators and tools

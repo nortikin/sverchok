@@ -783,7 +783,7 @@ class SvRunTests(bpy.types.Operator):
         name="Module to test",
         description="Pick up which module to test",
         items=[(i, i, '') for i in 
-               chain(['All'], iter_submodule_names(str(Path(sverchok.__file__).parent) + '\\tests', depth=1))])
+               chain(['All'], iter_submodule_names(Path(sverchok.__file__).parent / 'tests', depth=1))])
 
     def execute(self, context):
         if self.test_module == 'All':
