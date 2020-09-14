@@ -165,7 +165,7 @@ class Sv3dPropItem(bpy.types.PropertyGroup):
             if not ui_list.edit:
                 row = row.row(align=True)
                 row.alignment = 'RIGHT'
-                row.ui_units_x = 7
+                row.ui_units_x = 5
                 row.operator('node.sverchok_bake_all', text='B').node_tree_name = list_item.tree_name
                 row.prop(tree, 'sv_show',
                          icon=f"RESTRICT_VIEW_{'OFF' if tree.sv_show else 'ON'}", text=' ')
