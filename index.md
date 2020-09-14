@@ -386,6 +386,7 @@
     SvVDAttrsNode
     SvPolygonSortNode
     SvFindClosestValue
+    SvMultiCacheNode
 
 ## List Main
     ListJoinNode
