@@ -161,6 +161,13 @@ class SvSolidFaceSurface(SvSurface):
         nurbs = faces[0].Surface
         return SvFreeCadNurbsSurface(nurbs, face=faces[0])
 
+    def get_min_continuity(self):
+        s = self.surface.Continuity[1]
+        if s == 'N':
+            return -1
+        else:
+            return int(s)
+
 class SvFreeCadNurbsSurface(SvNurbsSurface):
     def __init__(self, surface, face=None):
         self.surface = surface

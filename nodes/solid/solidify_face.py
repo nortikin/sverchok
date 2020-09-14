@@ -81,7 +81,8 @@ class SvSolidFaceSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
                     self.debug("Surface %s is not a face of a solid, will convert automatically", face_surface)
                     face_surface = surface_to_freecad(face_surface, make_face=True) # SvFreeCadNurbsSurface
 
-                if face_surface.get_min_continuity() < 1:
+                continuity = face_surface.get_min_continuity()
+                if continuity >= 0 and continuity < 1:
                     raise Exception("This node requires at least C1 continuity of the surface; only C0 is guaranteed by surface's knotvector")
                 fc_face = face_surface.face
                 shape = fc_face.makeOffsetShape(offset, tolerance, fill=True)
