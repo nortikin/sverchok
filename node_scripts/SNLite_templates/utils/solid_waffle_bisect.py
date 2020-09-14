@@ -212,6 +212,8 @@ def do_waffel(solid, matrix_a, matrix_b, zs_a, zs_b, thickness, split, select):
     intersections = do_intersect_pairs(solid, matrix_a, matrix_b, zs_a, zs_b, thickness)
     split_parts_a = defaultdict(list)
     split_parts_b = defaultdict(list)
+    other_parts_a = defaultdict(list)
+    other_parts_b = defaultdict(list)
     n_a = intersections.n_a
     
     for i in range(len(zs_a)):
@@ -223,32 +225,31 @@ def do_waffel(solid, matrix_a, matrix_b, zs_a, zs_b, thickness, split, select):
             mid_a, mid_b = do_split(intersection, split, select)
             split_parts_a[i].append(mid_a)
             split_parts_b[j].append(mid_b)
+            other_parts_a[i].append(mid_b)
+            other_parts_b[j].append(mid_a)
     
     result_a = []
-    result_b = []
-    for i in range(len(intersections.solids_a)):
-        split_parts = split_parts_a[i]
-        other_parts = [o.item for o in intersections.clean_a[i]]
-        print(f"A[{i}]/parts: {split_parts} + {other_parts}")
-        all_parts = split_parts + list(other_parts)
-        if not all_parts:
+    for i, solid_a in enumerate(intersections.solids_a):
+        cut_parts = other_parts_a[i]
+        print(f"A[{i}]/parts: {solid_a} - {cut_parts}")
+        if not cut_parts:
             print(f"A[{i}]: no parts")
         else:
-            for part in all_parts:
+            for part in cut_parts:
                 part.fix(0.01, 0.01, 0.01)
-            body = all_parts[0].fuse(all_parts[1:])
+            body = solid_a.cut(cut_parts)
             result_a.append(body)
-    for j in range(len(intersections.solids_a)):
-        split_parts = split_parts_b[j]
-        other_parts = [o.item for o in intersections.clean_b[j]]
-        print(f"B[{j}]/parts: {split_parts} + {other_parts}")
-        all_parts = split_parts + list(other_parts)
-        if not all_parts:
+            
+    result_b = []
+    for j, solid_b in enumerate(intersections.solids_b):
+        cut_parts = other_parts_b[j]
+        print(f"B[{j}]/parts: {solid_b} - {cut_parts}")
+        if not cut_parts:
             print(f"B[{j}]: no parts")
         else:
-            for part in all_parts:
+            for part in cut_parts:
                 part.fix(0.01, 0.01, 0.01)
-            body = all_parts[0].fuse(all_parts[1:])
+            body = solid_b.cut(cut_parts)
             result_b.append(body)
     
     return result_a, result_b, intersections.matrices_a, intersections.matrices_b
