@@ -574,9 +574,12 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             data = self.get_data()
             if len(data[0]) > 1:
                 coords, edge_indices, face_indices = mesh_join(data[0], data[1], data[2])
-            else:
+                if not coords:
+                    return
+            elif len(data[0][0]) > 0:
                 coords, edge_indices, face_indices = [d[0].tolist() if type(d[0]) == ndarray else d[0] for d in data[:3]]
-
+            else:
+                return
             geom = lambda: None
             geom.verts = coords
 
