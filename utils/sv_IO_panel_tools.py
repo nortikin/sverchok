@@ -168,6 +168,9 @@ def collect_custom_socket_properties(node, node_dict):
                 value = getattr(socket, prop_name)
                 default_value = socket.bl_rna.properties[prop_name].default
                 if value != default_value:
+                    if hasattr(value, '__len__'):
+                        # it looks like as some BLender property array - convert to tuple
+                        value = value[:]
                     filtered_properties[prop_name] = value
 
         if filtered_properties:
