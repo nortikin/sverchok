@@ -34,7 +34,7 @@ if FreeCAD is not None:
                 return self.item.isSame(other.item)
 
             def __repr__(self):
-                return f"<Item: {type(self.item)} #{self.item.hashCode()}>"
+                return f"<Item: {type(self.item).__name__} #{self.item.hashCode()}>"
 
         def __init__(self, solid):
             self.solid = solid
