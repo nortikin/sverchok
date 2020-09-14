@@ -19,7 +19,7 @@
 from math import sin, cos, pi, degrees, radians
 from mathutils import Matrix
 import bpy
-from bpy.props import BoolProperty, IntProperty, FloatProperty, FloatVectorProperty, EnumProperty
+from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
@@ -34,17 +34,20 @@ class SvPulgaFitForceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvPulgaFitForceNode'
     bl_label = 'Pulga Fit Force'
     bl_icon = 'MOD_PHYSICS'
-    sv_icon = 'SV_CIRCLE_SVG'
+    sv_icon = 'SV_PULGA_FIT_FORCE'
 
-    force : FloatProperty(
+    force: FloatProperty(
         name='Magnitude', description='Shrink if collide with others / Grow if does not ',
         default=0.0, update=updateNode)
-    min_rad : FloatProperty(
+    min_rad: FloatProperty(
         name='Min. Radius', description='Do not shrink under this value',
         default=0.1, precision=3, update=updateNode)
-    max_rad : FloatProperty(
+    max_rad: FloatProperty(
         name='Max. Radius', description='Do not grow over this value',
         default=1.0, precision=3, update=updateNode)
+
+    mode: EnumProperty(name="Mode", items=enum_item_4(['Absolute', 'Relative', 'Percent']), update=updateNode)
+
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Magnitude").prop_name = 'force'
@@ -52,6 +55,9 @@ class SvPulgaFitForceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Max Radius").prop_name = 'max_rad'
 
         self.outputs.new('SvPulgaForceSocket', "Force")
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'mode')
 
     def process(self):
 
@@ -63,7 +69,7 @@ class SvPulgaFitForceNode(bpy.types.Node, SverchCustomTreeNode):
         forces_out = []
 
         for force in zip(forces_in, min_rad_in, max_rad_in):
-            forces_out.append(SvFitForce(*force))
+            forces_out.append(SvFitForce(*force, self.mode))
         self.outputs[0].sv_set([forces_out])
 
 

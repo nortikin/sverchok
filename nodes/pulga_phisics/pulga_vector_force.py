@@ -39,7 +39,7 @@ class SvPulgaVectorForceNode(bpy.types.Node, SverchCustomTreeNode):
 
     force: FloatVectorProperty(name='Force', description='Force direction, if will also accept a Vector Field', size=3, default=(0.0,0,0), update=updateNode)
     magnitude: FloatProperty(name='Strength', description='Force multiplayer', default=1, update=updateNode)
-    mass_dependent: BoolProperty(name='Proportional to Mass', update=updateNode)
+    mass_proportional: BoolProperty(name='Proportional to Mass', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Force").prop_name = 'force'
@@ -48,21 +48,24 @@ class SvPulgaVectorForceNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvPulgaForceSocket', "Force")
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "mass_dependent")
+        layout.prop(self, "mass_proportional")
 
     def process(self):
 
         if not any(s.is_linked for s in self.outputs):
             return
+
         forces_in = self.inputs["Force"].sv_get(deepcopy=False)
         strength_in = self.inputs["Strength"].sv_get(deepcopy=False)
+        
         if isinstance(forces_in[0], SvVectorField):
             force_class = SvFieldForce
         else:
             force_class = SvWorldForce
         forces_out = []
+
         for force, strength in zip_long_repeat(forces_in, strength_in):
-            forces_out.append(force_class(force, strength, self.mass_dependent))
+            forces_out.append(force_class(force, strength, self.mass_proportional))
         self.outputs[0].sv_set([forces_out])
 
 

@@ -368,12 +368,19 @@ class SvAlignForce():
             ps.r += np.sum(ps.relations.result, axis=1)
 
 class SvFitForce():
-    def __init__(self, magnitude, min_radius, max_radius):
+    def __init__(self, magnitude, min_radius, max_radius, mode):
 
         self.magnitude = np.array(magnitude)
         self.uniform_magnitude = len(magnitude) < 2
         self.min_radius = np.array(min_radius)
         self.max_radius = np.array(max_radius)
+        if mode == 'Absolute':
+            self.absolute= True
+        else:
+            self.absolute= False
+            if mode == 'Percent':
+                self.magnitude /= 100
+
         self.size_changer = True
         self.needs = ['dif_v', 'dist', 'collide']
 
@@ -394,9 +401,12 @@ class SvFitForce():
         free = np.setdiff1d(self.all_range, touch)
         v_grow = len(self.f_magnitude) > 1
         grow_un, grow_tou = [self.f_magnitude[free], self.f_magnitude[touch]] if v_grow else [self.f_magnitude, self.f_magnitude]
-        ps.rads[free] += grow_un * 0.1
-        ps.rads[touch] -= grow_tou * 0.1
-
+        if self.absolute:
+            ps.rads[free] += grow_un
+            ps.rads[touch] -= grow_tou
+        else:
+            ps.rads[free] += grow_un * ps.rads[free]
+            ps.rads[touch] -= grow_tou * ps.rads[touch]
         ps.rads = np.clip(ps.rads, self.min_radius, self.max_radius)
 
 class SvDragForce():
@@ -457,56 +467,61 @@ class SvDragForce():
         self.add_func(ps)
 
 class SvWorldForce():
-    def __init__(self, force, strength, mass_dependent):
+    def __init__(self, force, strength, mass_proportional):
 
         self.strength, self.force = numpy_match_long_repeat([np.array(strength), np.array(force)])
 
-        self.force *= self.strength[:,np.newaxis]
-        self.func = self.apply_const
-        self.mass_dependent = mass_dependent
+        self.force *= self.strength[:, np.newaxis]
+        self.func = self.apply_mass_proportional
+        self.mass_proportional = mass_proportional
 
     def setup(self, ps):
         size_change = ps.size_change
-        if len(self.force)> 1:
+        if len(self.force) > 1:
             self.force2 = numpy_fit_long_repeat([self.force], ps.v_len)[0]
-        if size_change and not self.mass_dependent:
-            self.func = self.apply_const
-        elif not self.mass_dependent:
+        if size_change and self.mass_proportional:
+            self.func = self.apply_mass_proportional
+
+        elif self.mass_proportional:
+
             self.force2 = self.force * ps.mass[:, np.newaxis]
             self.func = self.apply_dependant
         else:
+
             self.force2 = self.force
             self.func = self.apply_dependant
 
-    def apply_const(self, ps):
+    def apply_mass_proportional(self, ps):
         '''apply constant forces'''
 
         ps.r += self.force2 * ps.mass[:, np.newaxis]
+
     def apply_dependant(self, ps):
         '''apply constant forces'''
 
         ps.r += self.force2
+
     def add(self, ps):
         self.func(ps)
 
 class SvFieldForce():
-    def __init__(self, field, strength, mass_dependent):
+    def __init__(self, field, strength, mass_proportional):
 
         self.field = field
-        self.func = self.apply_const
-        self.mass_dependent = mass_dependent
+        self.func = self.apply_mass_proportional
+        self.mass_proportional = mass_proportional
         self.strength = np.array(strength)
-        if self.mass_dependent:
+        if self.mass_proportional:
             self.add_func = self.apply_dependant
         else:
-            self.add_func = self.apply_const
+            self.add_func = self.apply_mass_proportional
 
 
     def setup(self, ps):
         pass
 
 
-    def apply_const(self, ps):
+    def apply_mass_proportional(self, ps):
         '''apply constant forces'''
         if not np.any(self.strength != 0):
             return
@@ -556,9 +571,9 @@ class SvPinForce():
         self.pins = np.array(indices)
         self.unpinned = []
         self.use_pins_goal = use_pins_goal
-        self.pins_goal_pos = pins_goal_pos
+        self.pins_goal_pos = np.array(pins_goal_pos)
         self.pin_force = True
-        self.pin_type =  pin_type_get(pin_type)
+        self.pin_type = pin_type_get(pin_type)
 
     def setup(self, ps):
         if self.pins.dtype == np.int32:
@@ -566,22 +581,21 @@ class SvPinForce():
                 self.pins = self.pins == 1
                 self.unpinned = np.invert(self.pins)
             else:
-                self.unpinned = np.ones(len(ps.verts), dtype=np.bool)
+                self.unpinned = np.ones(len(ps.verts), dtype=np.bool_)
                 self.unpinned[self.pins] = False
         for axis in self.pin_type:
             ps.vel[self.pins, axis] = 0
 
-        if self.use_pins_goal:
-            ps.verts[self.pins, :] = np.array(self.pins_goal_pos)
-
     def add(self, ps):
+        if self.use_pins_goal:
+            ps.verts[self.pins, :] = self.pins_goal_pos
         ps.params["Pins Reactions"] = -ps.r[self.pins]
         for axis in self.pin_type:
             ps.params["Pins Reactions"][:, axis] = 0
             ps.vel[self.pins, axis] = 0
             ps.r[self.pins, axis] = 0
         # ps.vel[self.pins, :] = 0
-        ps.params['unpinned'][self.pins] = 0
+        ps.params['unpinned'][self.pins] = False
 
 class SvSpringsForce():
     def __init__(self, springs, spring_k, fixed_len, clamp, use_fix_len ):
@@ -598,11 +612,10 @@ class SvSpringsForce():
             self.dist_rest = self.fixed_len
         else:
             self.dist_rest = calc_rest_length(ps.verts, self.springs)
-        if self.use_clamp:
             self.clamp_distance = self.dist_rest * self.clamp
 
     def add(self, ps):
-        # ps, np_springs, dist_rest, spring_k = spring_params
+
 
         pairs = ps.verts[self.springs, :]
         dif_v = pairs[:, 0, :] - pairs[:, 1, :]
@@ -616,11 +629,10 @@ class SvSpringsForce():
         x = dif_l[:, np.newaxis]
         k = self.spring_k[:, np.newaxis]
 
-        result = np.zeros((ps.v_len, 3), dtype=np.float64)
-        np.add.at(result, self.springs[:, 0], -normal_v * x * k)
-        np.add.at(result, self.springs[:, 1], normal_v * x * k)
+        np.add.at(ps.r, self.springs[:, 0], -normal_v * x * k)
+        np.add.at(ps.r, self.springs[:, 1], normal_v * x * k)
 
-        ps.r += result
+
 
 class SvTimedForce():
     def __init__(self, force, start, end):
@@ -640,9 +652,8 @@ class SvTimedForce():
 
     def add(self, ps):
         iteration = ps.iteration
-        print(iteration)
         if self.end > iteration >= self.start:
-            print(2, iteration)
+
             self.force.add(ps)
 
 class SvObstaclesForce():
@@ -801,7 +812,7 @@ class PulgaSystem():
         for force in self.forces:
             if hasattr(force, 'pin_force'):
                 self.pinned = True
-                self.params['unpinned'] = np.ones(self.v_len, dtype=np.int16)
+                self.params['unpinned'] = np.ones(self.v_len, dtype=np.bool_)
                 if force.use_pins_goal:
                     self.goal_pins = True
                     break
@@ -871,17 +882,20 @@ class PulgaSystem():
 
     def hard_update(self, cache):
         '''replace verts, rads and vel (in NumPy)'''
+
         size_change = self.size_change
         verts, rads, vel, react = cache
         if len(verts) == self.v_len:
+
             if self.pinned and self.goal_pins:
                 unpinned = self.params['unpinned']
                 self.verts[unpinned] = verts[unpinned]
             else:
                 self.verts = verts
             self.vel = vel
-            if not size_change:
+            if size_change:
                 self.rads = rads
+                self.mass = self.density * np.power(self.rads, 3)
 
     def hard_update_list(self, cache):
         '''replace verts, rads and velocity'''
@@ -894,8 +908,9 @@ class PulgaSystem():
                     self.verts[unpinned] = np.array(verts)[unpinned]
                 else:
                     self.verts = np.array(verts)
-                if not size_change:
+                if size_change:
                     self.rads = np.array(rads)
+                    self.mass = self.density * np.power(self.rads, 3)
                 self.vel = np.array(vel)
         else:
             self.hard_update(cache)
@@ -959,7 +974,7 @@ class PulgaSystem():
         if self.aware:
             self.relations_update()
         if self.pinned:
-            self.params['unpinned'][:] = 1
+            self.params['unpinned'][:] = True
         for force in self.forces:
 
             force.add(self)
@@ -975,17 +990,16 @@ def local_dict(dictionaries, name):
 def pulga_system_init(parameters, gates, out_lists, cache):
     '''the main function of the engine'''
 
-
     ps = PulgaSystem(parameters)
 
     iterations = parameters[1]
     iterations_max = max(iterations)
     iterations_rec = [i-1 for i in iterations]
     out_params = [iterations_rec, ps, gates["output"], out_lists]
+    ps.setup_forces()
 
-    if gates["accumulate"]:
-        if len(cache) > 0:
-            ps.hard_update_list(cache)
+    if gates["accumulate"] and len(cache) > 0:
+        ps.hard_update_list(cache)
 
     iterate(iterations_max, out_params)
 
@@ -995,7 +1009,7 @@ def pulga_system_init(parameters, gates, out_lists, cache):
 def iterate(iterations_max, out_params):
     ''' execute repeatedly the defined force map'''
     ps = out_params[1]
-    ps.setup_forces()
+
     for it in range(iterations_max):
         ps.iterate()
         # for i in range(num_forces):
