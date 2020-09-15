@@ -29,7 +29,7 @@ from sverchok.data_structure import changable_sockets, dataCorrect, updateNode, 
 
 
 class SvvMultiCacheReset(bpy.types.Operator):
-
+    '''Clear Cache'''
     bl_idname = "node.multy_cache_reset"
     bl_label = "Multi Cache Reset"
 
@@ -53,11 +53,11 @@ class SvMultiCacheNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_MULTI_CACHE'
 
     in_bucket: IntProperty(
-        name='In Bucket', description="Input cache identifier",
+        name='In Bucket', description="Identifier of the bucket where data will be strored",
         default=0,
         update=updateNode)
     out_bucket: IntProperty(
-        name='Out Bucket', description="Output cache identifier",
+        name='Out Bucket', description="Identifier of the bucket that will be outputted",
         default=0,
         update=updateNode)
 
@@ -83,7 +83,7 @@ class SvMultiCacheNode(bpy.types.Node, SverchCustomTreeNode):
 
         layout.prop(self, 'pause_recording')
         layout.prop(self, 'unwrap')
-        self.wrapper_tracked_ui_draw_op(layout, "node.multy_cache_reset", icon='RNA', text="RESET")
+        self.wrapper_tracked_ui_draw_op(layout, "node.multy_cache_reset", icon='X', text="RESET")
 
 
     def sv_init(self, context):
