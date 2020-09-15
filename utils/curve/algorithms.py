@@ -224,6 +224,30 @@ class DifferentialRotationCalculator(object):
         else:
             raise Exception("Unsupported algorithm")
 
+class SvCurveFrameCalculator(object):
+    def __init__(self, curve, algorithm, z_axis=2, resolution=50):
+        self.algorithm = algorithm
+        self.z_axis = z_axis
+        self.curve = curve
+        if algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            self.calculator = DifferentialRotationCalculator(curve, algorithm, resolution)
+
+    def get_matrix(self, tangent):
+        return MathutilsRotationCalculator.get_matrix(tangent, scale=1.0,
+                axis=self.z_axis,
+                algorithm = self.algorithm,
+                scale_all=False)
+
+    def get_matrices(self, ts):
+        if self.algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            return self.calculator.get_matrices(ts)
+        elif self.algorithm in {HOUSEHOLDER, TRACK, DIFF}:
+            tangents = self.curve.tangent_array(ts)
+            matrices = np.vectorize(lambda t : self.get_matrix(t), signature='(3)->(3,3)')(tangents)
+            return matrices
+        else:
+            raise Exception("Unsupported algorithm")
+
 class SvDeformedByFieldCurve(SvCurve):
     def __init__(self, curve, field, coefficient=1.0):
         self.curve = curve

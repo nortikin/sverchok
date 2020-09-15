@@ -9,10 +9,11 @@ from sverchok.utils.nurbs_common import (
     )
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_curves
-from sverchok.utils.curve.algorithms import unify_curves_degree
+from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveFrameCalculator
 from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
 from sverchok.utils.logging import info
+from sverchok.data_structure import repeat_last_for_length
 from sverchok.dependencies import geomdl
 
 if geomdl is not None:
@@ -693,6 +694,47 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', i
                 control_points, weights)
     surface.u_bounds = curves[0].get_u_bounds()
     return curves, v_curves, surface
+
+def nurbs_sweep_impl(path, profiles, ts, degree_v, frame_calculator, knots_u = 'UNIFY', metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE):
+    if len(profiles) != len(ts):
+        raise Exception("Number of profiles is not equal to number of T values")
+    if len(ts) < 2:
+        raise Exception("At least 2 profiles are required")
+
+    path_points = path.evaluate_array(ts)
+    frames = frame_calculator(ts)
+    to_loft = []
+    for profile, path_point, frame in zip(profiles, path_points, frames):
+        profile_controls = profile.get_control_points()
+        profile_controls = np.apply_along_axis(lambda p: frame @ p + path_point, 1, profile_controls)
+        profile = SvNurbsMaths.build_curve(implementation,
+                    profile.get_degree(),
+                    profile.get_knotvector(),
+                    profile_controls,
+                    profile.get_weights())
+        to_loft.append(profile)
+
+    return simple_loft(to_loft, degree_v=degree_v,
+            knots_u = knots_u, metric = metric,
+            implementation = implementation)
+
+def nurbs_sweep(path, profiles, ts, min_profiles, degree_v, algorithm, knots_u = 'UNIFY', metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE, **kwargs):
+    if ts and len(profiles) != len(ts):
+        raise Exception("Number of profiles is not equal to number of T values")
+    if len(profiles) == 2 and len(profiles) < min_profiles:
+        coeffs = np.linspace(0.0, 1.0, num=min_profiles)
+        p0, p1 = profiles
+        profiles = [p0.lerp_to(p1, coeff) for coeff in coeffs]
+    else:
+        profiles = repeat_last_for_length(profiles, min_profiles)
+    if not ts:
+        ts = np.linspace(0.0, 1.0, num=len(profiles))
+
+    frame_calculator = SvCurveFrameCalculator(path, algorithm, **kwargs).get_matrices
+
+    return nurbs_sweep_impl(path, profiles, ts, degree_v, frame_calculator,
+                knots_u=knots_u, metric=metric,
+                implementation=implementation)
 
 SvNurbsMaths.surface_classes[SvNurbsMaths.NATIVE] = SvNativeNurbsSurface
 if geomdl is not None:
