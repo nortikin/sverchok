@@ -209,7 +209,6 @@ def run_all_tests(pattern=None):
             return result
     finally:
         logging.getLogger().removeHandler(log_handler)
-        return buffer.getvalue().split('\n')[-2] if buffer else "Global error"
 
 
 def run_test_from_file(file_name):
@@ -787,10 +786,11 @@ class SvRunTests(bpy.types.Operator):
 
     def execute(self, context):
         if self.test_module == 'All':
-            test_result = run_all_tests()
+            # making self.report after all tests lead to strange error, so no report for testing all
+            run_all_tests()
         else:
             test_result = run_test_from_file(self.test_module + '.py')
-        self.report(type={'ERROR'} if test_result != 'OK' else {'INFO'}, message=test_result)
+            self.report(type={'ERROR'} if test_result != 'OK' else {'INFO'}, message=test_result)
         return {'FINISHED'}
 
     def invoke(self, context, event):
