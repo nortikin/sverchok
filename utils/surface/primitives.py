@@ -16,8 +16,8 @@ class SvPlane(SvSurface):
     
     def __init__(self, point, vector1, vector2):
         self.point = point
-        self.vector1 = vector1
-        self.vector2 = vector2
+        self.vector1 = np.array(vector1)
+        self.vector2 = np.array(vector2)
         self._normal = np.cross(vector1, vector2)
         n = np.linalg.norm(self._normal)
         self._normal = self._normal / n
