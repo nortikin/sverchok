@@ -9,9 +9,10 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
 
-class SvCustomSwitcher(bpy.types.Node, SverchCustomTreeNode):
+class SvCustomSwitcher(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: custom switcher
     Convert input to buttons
@@ -39,16 +40,12 @@ class SvCustomSwitcher(bpy.types.Node, SverchCustomTreeNode):
             self['previous_user_list'] = values
         self['user_list'] = values
 
-    to3d: bpy.props.BoolProperty(name='Show in 3d panel', default=True,
-                                  description='Show items of this node in 3d panel of 3d view screen')
     multiple_selection: bpy.props.BoolProperty(name='Multiple selection', default=True, update=update_mode,
                                                 description='Selection several items simultaneously')
     ui_scale: bpy.props.FloatProperty(name='Size of buttons', default=1.0, min=0.5, max=5)
     string_values: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup, description='Storage of items names')
     user_list: bpy.props.BoolVectorProperty(name="User selection", size=32, update=updateNode, set=set_user_list,
                                              get=get_user_list, description='Selection status of items')
-    show_in_3d: bpy.props.BoolProperty(name='show in panel', default=True,
-                                        description='Show properties in 3d panel or not')
 
     def sv_init(self, context):
         self['user_list'] = [False for _ in range(32)]
@@ -66,24 +63,24 @@ class SvCustomSwitcher(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row()
         row.scale_y = 2
         row.prop(self, 'multiple_selection', toggle=True)
-        layout.prop(self, 'to3d', toggle=True)
+        layout.prop(self, 'draw_3dpanel', toggle=True)
         layout.prop(self, 'ui_scale', text='Size of buttons')
 
-    @property
-    def draw_3dpanel(self):
-        return True if self.to3d and self.inputs[0].is_linked else False
-
-    def draw_buttons_3dpanel(self, layout):
+    def draw_buttons_3dpanel(self, layout, in_menu=None):
         # I think it is moore appropriate place for coding layout of 3d panel
-        col = layout.column()
-        row = col.row(align=True)
-        name = self.label if self.label else self.name
-        switch_icon = 'DOWNARROW_HLT' if self.show_in_3d else 'RIGHTARROW'
-        row.prop(self, 'show_in_3d', text=name, icon=switch_icon)
-        mode_icon = 'SNAP_ON' if self.multiple_selection else 'SNAP_OFF'
-        row.prop(self, 'multiple_selection', toggle=True, text='', icon=mode_icon)
-        if self.show_in_3d:
+        if not in_menu:
+            row = layout.row(align=True)
+
+            menu = row.operator('node.popup_3d_menu', text=f'Show "{self.label or self.name}"', icon=self.bl_icon)
+            menu.tree_name = self.id_data.name
+            menu.node_name = self.name
+        else:
             col = layout.column(align=True)
+            row = col.row(align=True)
+            row.label(text=self.label or self.name)
+            row.prop(self, 'multiple_selection', toggle=True, text='',
+                     icon='SNAP_ON' if self.multiple_selection else 'SNAP_OFF')
+
             for i, val in enumerate(self.string_values):
                 col.prop(self, "user_list", toggle=True, index=i, text=val.name)
 

@@ -88,13 +88,13 @@ else:
             self.inputs.new('SvSurfaceSocket', "Surface")
             p = self.inputs.new('SvVerticesSocket', "Source")
             p.use_prop = True
-            p.prop = (0.0, 0.0, 1.0)
+            p.default_property = (0.0, 0.0, 1.0)
             p = self.inputs.new('SvVerticesSocket', "Point")
             p.use_prop = True
-            p.prop = (0.0, 0.0, 1.0)
+            p.default_property = (0.0, 0.0, 1.0)
             p = self.inputs.new('SvVerticesSocket', "Direction")
             p.use_prop = True
-            p.prop = (0.0, 0.0, -1.0)
+            p.default_property = (0.0, 0.0, -1.0)
             self.outputs.new('SvVerticesSocket', "Point")
             self.outputs.new('SvVerticesSocket', "UVPoint")
             self.update_sockets(context)

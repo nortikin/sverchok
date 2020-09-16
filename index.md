@@ -61,6 +61,7 @@
     SvArc3ptCurveNode
     SvArcSedCurveNode
     SvExCatenaryCurveNode
+    SvFreeCadHelixNode
     ---
     SvExPolylineNode
     SvExFilletPolylineNode
@@ -92,6 +93,7 @@
     ---
     SvExApplyFieldToCurveNode
     SvExCastCurveNode
+    SvProjectCurveSurfaceNode
     SvOffsetCurveMk2Node
     SvCurveOffsetOnSurfaceNode
     SvExIsoUvCurveNode
@@ -208,18 +210,30 @@
     SvExVectorFieldLinesNode
     SvExScalarFieldGraphNode
 
+## Solids @ Make Face
+    SvSolidPolygonFaceNode
+    SvSolidWireFaceNode
+    SvProjectTrimFaceNode
+
 ## Solids
    SvBoxSolidNode
    SvCylinderSolidNode
    SvConeSolidNode
    SvSphereSolidNode
    SvToursSolidNode
+   @ Make Face
    SvTransformSolidNode
    SvChamferSolidNode
    SvFilletSolidNode
    SvSolidBooleanNode
    SvMirrorSolidNode
    SvOffsetSolidNode
+   SvSolidFaceExtrudeNode
+   SvSolidFaceSolidifyNode
+   SvSolidFaceRevolveNode
+   SvSweepSolidFaceNode
+   SvSplitSolidNode
+   SvHollowSolidNode
    SvIsInsideSolidNode
    SvSolidDistanceNode
    SvSliceSolidNode
@@ -228,6 +242,7 @@
    SvSolidVerticesNode
    SvSolidEdgesNode
    SvSolidFacesNode
+   SvSelectSolidNode
    SvSolidViewerNode
 
 ## Analyzers
@@ -371,6 +386,7 @@
     SvVDAttrsNode
     SvPolygonSortNode
     SvFindClosestValue
+    SvMultiCacheNode
 
 ## List Main
     ListJoinNode
@@ -451,6 +467,7 @@
     SvVectorRewire
     ---
     SvVertSortNode
+    SvQuadGridSortVertsNode
     VectorDropNode
     VectorPolarInNode
     VectorPolarOutNode
@@ -516,6 +533,7 @@
     SvNurbsCurveOutNode
     SvNurbsSurfaceOutNode
     SvInstancerNodeMK3
+    SvLightViewerNode
     ---
     SvGreasePencilStrokes
     SvEmptyOutNode
@@ -567,7 +585,6 @@
     SvTimerNode
     ---
     SvDupliInstancesMK4
-    SvLampOutNode
 
 ## Objects
     SvVertexGroupNodeMK2
@@ -672,6 +689,7 @@
     SvPulgaPhysicsNode
     SvTopologySimple
     SvSweepModulator
+    SvRuledSolidNode
     ---
     SvGetPropNodeMK2
     SvSetPropNodeMK2

@@ -17,7 +17,13 @@ class ArcFilletData(object):
         self.matrix = matrix
 
     def get_curve(self):
-        circle = SvCircle(self.matrix, self.radius)
+        center = np.array(self.center)
+        normal = np.array(self.normal)
+        p1 = np.array(self.p1)
+
+        circle = SvCircle(center = center,
+                    normal = -normal,
+                    vectorx = p1 - center)
         circle.u_bounds = (0.0, self.angle)
         #circle.u_bounds = (-self.angle, 0.0)
         return circle

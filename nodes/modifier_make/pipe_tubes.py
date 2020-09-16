@@ -55,7 +55,7 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
 
         s = self.inputs.new('SvVerticesSocket', "Size")
         s.use_prop = True
-        s.prop = (0.5,0.5,0.5)
+        s.default_property = (0.5,0.5,0.5)
         #self.inputs.new('SvStringsSocket', "Extrude", "Extrude").prop_name = 'extrude'
         self.outputs.new('SvVerticesSocket', 'Vers')
         self.outputs.new('SvStringsSocket', "Pols")

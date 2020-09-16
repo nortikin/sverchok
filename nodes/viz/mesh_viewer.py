@@ -18,9 +18,10 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.nodes_mixins.generating_objects import SvMeshData, SvViewerNode
 from sverchok.utils.handle_blender_data import correct_collection_length
 from sverchok.utils.sv_mesh_utils import mesh_join
+from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
 
-class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
+class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: viewer mesh object instance
 
@@ -46,8 +47,6 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
         description='Apply matrices to',
         update=updateNode)
 
-    to3d: BoolProperty(name="Show in 3D panel", default=False, update=updateNode,
-                       description="Show node properties in 3D panel")
     show_wireframe: BoolProperty(default=False, update=updateNode, name="Show Edges")
     material: bpy.props.PointerProperty(type=bpy.types.Material, update=updateNode)
     is_lock_origin: bpy.props.BoolProperty(name="Lock Origin", default=True, update=updateNode,
@@ -81,7 +80,7 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'fast_mesh_update', text='Fast mesh update')
         layout.prop(self, 'is_smooth_mesh', text='smooth shade')
-        layout.prop(self, 'to3d')
+        layout.prop(self, 'draw_3dpanel')
 
     def draw_matrix_props(self, socket, context, layout):
         socket.draw_quick_link(context, layout, self)
@@ -99,10 +98,6 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
             return f"MeV {self.base_data_name}"
         else:
             return "Mesh viewer"
-
-    @property
-    def draw_3dpanel(self):
-        return self.to3d
 
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)

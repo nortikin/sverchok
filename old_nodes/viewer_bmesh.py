@@ -254,7 +254,8 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         default=False,
         description="experimental option to find islands in the outputmesh and colour them randomly")
 
-    to3d: BoolProperty(default=False, update=updateNode)
+    draw_3dpanel: BoolProperty(default=False, 
+                               update=lambda n, c: bpy.context.scene.sv_ui_node_props.update_properties())
     show_wireframe: BoolProperty(default=False, update=updateNode, name="Show Edges")
 
     def sv_init(self, context):
@@ -295,14 +296,10 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             box.prop(self, 'layer_choice', text='layer')
             box.prop(self, 'randomize_vcol_islands', text='randomize vcol islands')
             box.prop(self, 'show_wireframe')
-        col.prop(self, 'to3d')
+        col.prop(self, 'draw_3dpanel')
 
     def draw_label(self):
         return f"BV {self.basedata_name}"
-
-    @property
-    def draw_3dpanel(self):
-        return self.to3d
 
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)

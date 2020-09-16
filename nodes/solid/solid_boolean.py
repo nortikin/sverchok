@@ -89,8 +89,9 @@ else:
         def multi_union(self):
             solids = self.inputs[2].sv_get()
             base = solids[0].copy()
-            for s in solids[1:]:
-                base = base.fuse(s)
+            base = base.fuse(solids[1:])
+#             for s in solids[1:]:
+#                 base = base.fuse(s)
             if self.refine_solid:
                 base = base.removeSplitter()
             self.outputs[0].sv_set([base])
@@ -106,8 +107,9 @@ else:
         def multi_intersect(self):
             solids = self.inputs[2].sv_get()
             base = solids[0].copy()
-            for s in solids[1:]:
-                base = base.common(s)
+            base = base.common(solids[1:])
+#             for s in solids[1:]:
+#                 base = base.common(s)
             self.outputs[0].sv_set([base])
 
         def single_difference(self):
@@ -123,8 +125,9 @@ else:
         def multi_difference(self):
             solids = self.inputs[2].sv_get()
             base = solids[0].copy()
-            for s in solids[1:]:
-                base = base.cut(s)
+            base = base.cut(solids[1:])
+#             for s in solids[1:]:
+#                 base = base.cut(s)
 
             self.outputs[0].sv_set([base])
 

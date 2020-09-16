@@ -21,6 +21,7 @@ class SvNurbsMaths(object):
     """
     NATIVE = 'NATIVE'
     GEOMDL = 'GEOMDL'
+    FREECAD = 'FREECAD'
 
     # Classes by implementation
     curve_classes = dict()
@@ -98,10 +99,18 @@ def elevate_bezier_degree(self_degree, control_points, delta=1):
     return np.array(new_points)
 
 def from_homogenous(control_points):
-    weights = control_points[:,3]
-    weighted = control_points[:,0:3]
-    points = weighted / weights[np.newaxis].T
-    return points, weights
+    if control_points.ndim == 2: # curve
+        weights = control_points[:,3]
+        weighted = control_points[:,0:3]
+        points = weighted / weights[np.newaxis].T
+        return points, weights
+    elif control_points.ndim == 3: # surface
+        weights = control_points[:,:,3]
+        weighted = control_points[:,:,0:3]
+        points = weighted / weights[np.newaxis].T
+        return points, weights
+    else:
+        raise Exception(f"control_points have ndim={control_points.ndim}, supported are only 2 and 3")
 
 class SvNurbsBasisFunctions(object):
     def __init__(self, knotvector):

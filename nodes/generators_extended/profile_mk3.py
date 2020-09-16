@@ -658,7 +658,9 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         for values in zip(*parameters):
             variables = dict(zip(var_names, values))
             curves_form = Interpreter.NURBS if self.nurbs_out else None
-            interpreter = Interpreter(self, input_names, curves_form=curves_form)
+            interpreter = Interpreter(self, input_names,
+                            curves_form=curves_form,
+                            z_axis=self.selected_axis)
             interpreter.interpret(profile, variables)
             verts = self.extend_out_verts(interpreter.vertices)
             result_vertices.append(verts)

@@ -10,12 +10,14 @@ from sverchok.utils.nurbs_common import (
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_curves
 from sverchok.utils.curve.algorithms import unify_curves_degree
+from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
+from sverchok.utils.logging import info
 from sverchok.dependencies import geomdl
 
 if geomdl is not None:
     from geomdl import operations
-    from geomdl import NURBS
+    from geomdl import NURBS, BSpline
 
 ##################
 #                #
@@ -46,7 +48,10 @@ class SvNurbsSurface(SvSurface):
         if isinstance(surface, SvNurbsSurface):
             return surface
         if hasattr(surface, 'to_nurbs'):
-            return surface.to_nurbs(implementation=implementation)
+            try:
+                return surface.to_nurbs(implementation=implementation)
+            except UnsupportedSurfaceTypeException as e:
+                info("Can't convert %s to NURBS: %s", surface, e)
         return None
 
     @classmethod
@@ -173,6 +178,48 @@ class SvNurbsSurface(SvSurface):
         """
         raise Exception("Not implemented!")
 
+    def get_homogenous_control_points(self):
+        """
+        returns: np.array of shape (m, n, 4)
+        """
+        points = self.get_control_points()
+        weights = np.transpose(self.get_weights()[np.newaxis], axes=(1,2,0))
+        weighted = weights * points
+        return np.concatenate((weighted, weights), axis=2)
+
+    def get_min_u_continuity(self):
+        """
+        Return minimum continuity degree of the surface in the U direction (guaranteed by knotvector):
+        0 - point-wise continuity only (C0),
+        1 - tangent continuity (C1),
+        2 - 2nd derivative continuity (C2), and so on.
+        """
+        kv = self.get_knotvector_u()
+        degree = self.get_degree_u()
+        return sv_knotvector.get_min_continuity(kv, degree)
+
+    def get_min_v_continuity(self):
+        """
+        Return minimum continuity degree of the surface in the V direction (guaranteed by knotvector):
+        0 - point-wise continuity only (C0),
+        1 - tangent continuity (C1),
+        2 - 2nd derivative continuity (C2), and so on.
+        """
+        kv = self.get_knotvector_v()
+        degree = self.get_degree_v()
+        return sv_knotvector.get_min_continuity(kv, degree)
+    
+    def get_min_continuity(self):
+        """
+        Return minimum continuity degree of the surface (guaranteed by knotvectors):
+        0 - point-wise continuity only (C0),
+        1 - tangent continuity (C1),
+        2 - 2nd derivative continuity (C2), and so on.
+        """
+        c_u = self.get_min_u_continuity()
+        c_v = self.get_min_v_continuity()
+        return min(c_u, c_v)
+
 class SvGeomdlSurface(SvNurbsSurface):
     def __init__(self, surface):
         self.surface = surface
@@ -239,7 +286,10 @@ class SvGeomdlSurface(SvNurbsSurface):
             surf = NURBS.Surface(normalize_kv = normalize_knots)
         surf.degree_u = degree_u
         surf.degree_v = degree_v
-        ctrlpts = list(map(convert_row, control_points, weights))
+        if weights is None:
+            ctrlpts = control_points
+        else:
+            ctrlpts = list(map(convert_row, control_points, weights))
         surf.ctrlpts2d = ctrlpts
         surf.knotvector_u = knotvector_u
         surf.knotvector_v = knotvector_v
@@ -366,11 +416,14 @@ class SvNativeNurbsSurface(SvNurbsSurface):
             self.knotvector_u = sv_knotvector.normalize(self.knotvector_u)
             self.knotvector_v = sv_knotvector.normalize(self.knotvector_v)
         self.control_points = np.array(control_points)
-        self.weights = np.array(weights)
         c_ku, c_kv, _ = self.control_points.shape
-        w_ku, w_kv = self.weights.shape
-        if c_ku != w_ku or c_kv != w_kv:
-            raise Exception(f"Shape of control_points ({c_ku}, {c_kv}) does not match to shape of weights ({w_ku}, {w_kv})")
+        if weights is None:
+            self.weights = weights = np.ones((c_ku, c_kv))
+        else:
+            self.weights = np.array(weights)
+            w_ku, w_kv = self.weights.shape
+            if c_ku != w_ku or c_kv != w_kv:
+                raise Exception(f"Shape of control_points ({c_ku}, {c_kv}) does not match to shape of weights ({w_ku}, {w_kv})")
         self.basis_u = SvNurbsBasisFunctions(knotvector_u)
         self.basis_v = SvNurbsBasisFunctions(knotvector_v)
         self.u_bounds = (self.knotvector_u.min(), self.knotvector_u.max())

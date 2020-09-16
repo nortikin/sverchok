@@ -156,30 +156,25 @@ def collect_custom_socket_properties(node, node_dict):
     input_socket_storage = {}
     for socket in node.inputs:
 
-        # print("Socket %d of %d" % (socket.index + 1, len(node.inputs)))
-
-        storable = {}
-        tracked_props = 'use_expander', 'use_quicklink', 'expanded', 'use_prop'
-
-        for tracked_prop_name in tracked_props:
-            if not hasattr(socket, tracked_prop_name):
+        filtered_properties = dict()
+        for prop_name in socket.keys():
+            # Don't use socket.items() because enum property value will be index instead of string
+            if prop_name in socket.properties_to_skip_iojson:
+                # socket itself know which property useless to memorize
                 continue
+            if hasattr(socket, prop_name):
+                # Some old files can have nodes with sockets with keys which do not exist anymore
+                # such keys can be ignored
+                value = getattr(socket, prop_name)
+                default_value = socket.bl_rna.properties[prop_name].default
+                if value != default_value:
+                    if hasattr(value, '__len__'):
+                        # it looks like as some BLender property array - convert to tuple
+                        value = value[:]
+                    filtered_properties[prop_name] = value
 
-            value = getattr(socket, tracked_prop_name)
-            default_value = socket.bl_rna.properties[tracked_prop_name].default
-            # property value same as default ? => don't store it
-            if value == default_value:
-                continue
-
-            # print("Processing custom property: ", tracked_prop_name, " value = ", value)
-            storable[tracked_prop_name] = value
-
-            if tracked_prop_name == 'use_prop' and value:
-                # print("prop type:", type(socket.prop))
-                storable['prop'] = socket.prop[:]
-
-        if storable:
-            input_socket_storage[socket.index] = storable
+        if filtered_properties:
+            input_socket_storage[socket.index] = filtered_properties
 
     if input_socket_storage:
         node_dict['custom_socket_props'] = input_socket_storage

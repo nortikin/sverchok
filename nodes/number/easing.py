@@ -168,16 +168,13 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
     location_theta: FloatProperty(name="location theta")
 
     def custom_draw_socket(self, socket, context, l):
-        info = socket.get_socket_info()
-
         r = l.row(align=True)
         split = r.split(factor=0.85)
         r1 = split.row(align=True)
         r1.prop(self, "selected_mode", text="")
         r1.prop(self, 'activate', icon='NORMALIZE_FCURVES', text="")
-        if info:
-            r2 = split.row()
-            r2.label(text=info)
+        r2 = split.row()
+        r2.label(text=f"{socket.objects_number or ''}")
 
     def draw_buttons_ext(self, context, l):
         l.prop(self, "selected_theme_mode")

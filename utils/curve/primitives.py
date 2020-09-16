@@ -11,7 +11,7 @@ from math import sin, cos, pi, radians, sqrt
 from mathutils import Vector, Matrix
 
 from sverchok.utils.logging import error
-from sverchok.utils.geom import LineEquation, CircleEquation2D, CircleEquation3D, Ellipse3D
+from sverchok.utils.geom import LineEquation, CircleEquation2D, CircleEquation3D, Ellipse3D, rotate_vector_around_vector_np, rotate_vector_around_vector
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.surface.primitives import SvPlane
@@ -94,13 +94,58 @@ class SvLine(SvCurve):
         return [self.to_bezier()]
 
 class SvCircle(SvCurve):
-    __description__ = "Circle"
 
-    def __init__(self, matrix, radius):
-        self.matrix = np.array(matrix.to_3x3())
-        self.center = np.array(matrix.translation)
-        self.radius = radius
+    def __init__(self, matrix=None, radius=None, center=None, normal=None, vectorx=None):
+        if matrix is not None:
+            self.matrix = np.array(matrix.to_3x3())
+            self.center = np.array(matrix.translation)
+        elif center is not None:
+            self.center = center
+        if matrix is None:
+            normal = normal / np.linalg.norm(normal)
+            vx = vectorx / np.linalg.norm(vectorx)
+            vy = np.cross(normal, vx)
+            vy = vy / np.linalg.norm(vy)
+            m = np.stack((vx, vy, normal))
+            self.matrix = np.linalg.inv(m)
+        if radius is not None:
+            self.radius = radius
+        else:
+            self.radius = np.linalg.norm(vectorx)
+        if normal is not None:
+            self.normal = normal
+        elif matrix is not None:
+            z = Vector([0,0,1])
+            m = matrix.copy()
+            m.translation = Vector()
+            self.normal = np.array(m @ z)
+        if vectorx is not None:
+            self.vectorx = vectorx
+        elif matrix is not None:
+            x = Vector([radius,0,0])
+            m = matrix.copy()
+            m.translation = Vector()
+            self.vectorx = np.array(m @ x)
         self.u_bounds = (0.0, 2*pi)
+
+    def __repr__(self):
+        try:
+            r = str(self.get_actual_radius())
+        except UnsupportedCurveTypeException:
+            r = f"Matrix @ {self.radius}"
+        return f"<Circle C={self.center}, N={self.normal}, R={r}>"
+
+    def get_actual_radius(self, tolerance=1e-10):
+        x = np.array([self.radius, 0, 0])
+        y = np.array([0, self.radius, 0])
+        m = self.matrix
+        vx = m @ x
+        vy = m @ y
+        rx = np.linalg.norm(vx)
+        ry = np.linalg.norm(vy)
+        if abs(rx - ry) > tolerance:
+            raise UnsupportedCurveTypeException(f"This SvCircle instance is not an exact circle: {rx} != {ry}")
+        return (rx + ry) / 2.0
 
     @classmethod
     def from_equation(cls, eq):
@@ -113,7 +158,12 @@ class SvCircle(SvCurve):
             circle = SvCircle(matrix, eq.radius)
             return circle
         elif type(eq).__name__ == 'CircleEquation3D':
-            circle = SvCircle(eq.get_matrix(), eq.radius)
+            if eq.point1 is not None:
+                circle = SvCircle(center = np.array(eq.center),
+                            vectorx = np.array(eq.point1) - np.array(eq.center),
+                            normal = eq.normal)
+            else:
+                circle = SvCircle(eq.get_matrix(), eq.radius)
             if eq.arc_angle:
                 circle.u_bounds = (0, eq.arc_angle)
             return circle
@@ -121,23 +171,33 @@ class SvCircle(SvCurve):
             raise TypeError("Unsupported argument type:" + str(eq))
 
     @classmethod
-    def from_arc(cls, arc):
+    def from_arc(cls, arc, z_axis='Z'):
         """
         Make an instance of SvCircle from an instance of sverchok.utils.sv_curve_utils.Arc
         """
-        radius = abs(arc.radius)
-        radius_dx = arc.radius.real / radius
-        radius_dy = arc.radius.imag / radius
+        if arc.radius.real == arc.radius.imag:
+            radius = arc.radius.real
+            radius_dx = radius_dy = 1.0
+            scale_x = scale_y = Matrix.Identity(4)
+        else:
+            radius = abs(arc.radius)
+            radius_dx = arc.radius.real / radius
+            radius_dy = arc.radius.imag / radius
+            scale_x = Matrix.Scale(radius_dx, 4, (1,0,0))
+            scale_y = Matrix.Scale(radius_dy, 4, (0,1,0))
         matrix = Matrix.Translation(Vector((arc.center.real, arc.center.imag, 0)))
-        scale_x = Matrix.Scale(radius_dx, 4, (1,0,0))
-        scale_y = Matrix.Scale(radius_dy, 4, (0,1,0))
         rotation = radians(arc.theta)
         angle = radians(abs(arc.delta))
         rot_z = Matrix.Rotation(rotation, 4, 'Z')
         matrix = matrix @ scale_x @ scale_y @ rot_z
         if arc.delta < 0:
             matrix = matrix @ Matrix.Rotation(radians(180), 4, 'X')
-        circle = SvCircle(matrix, radius)
+
+        if z_axis == 'Y':
+            matrix = Matrix.Rotation(radians(90), 4, 'X') @ matrix
+        elif z_axis == 'X':
+            matrix = Matrix.Rotation(radians(90), 4, 'Z') @ Matrix.Rotation(radians(90), 4, 'X') @ matrix
+        circle = SvCircle(matrix=matrix, radius=radius)
         circle.u_bounds = (0, angle)
         return circle
 
@@ -148,18 +208,13 @@ class SvCircle(SvCurve):
         return self.u_bounds
 
     def evaluate(self, t):
-        r = self.radius
-        x = r * cos(t)
-        y = r * sin(t)
-        return self.matrix @ np.array([x, y, 0]) + self.center
+        vx = self.vectorx
+        return self.center + rotate_vector_around_vector(vx, self.normal, t)
 
     def evaluate_array(self, ts):
-        r = self.radius
-        xs = r * np.cos(ts)
-        ys = r * np.sin(ts)
-        zs = np.zeros_like(xs)
-        vertices = np.stack((xs, ys, zs)).T
-        return np.apply_along_axis(lambda v: self.matrix @ v, 1, vertices) + self.center
+        n = len(ts)
+        vx = np.broadcast_to(self.vectorx[np.newaxis], (n,3))
+        return self.center + rotate_vector_around_vector_np(vx, self.normal, ts)
 
     def tangent(self, t):
         x = - self.radius * sin(t)

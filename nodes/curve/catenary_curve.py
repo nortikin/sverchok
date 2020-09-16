@@ -34,13 +34,13 @@ else:
         def sv_init(self, context):
             p = self.inputs.new('SvVerticesSocket', "Point1")
             p.use_prop = True
-            p.prop = (-1.0, 0.0, 0.0)
+            p.default_property = (-1.0, 0.0, 0.0)
             p = self.inputs.new('SvVerticesSocket', "Point2")
             p.use_prop = True
-            p.prop = (1.0, 0.0, 0.0)
+            p.default_property = (1.0, 0.0, 0.0)
             p = self.inputs.new('SvVerticesSocket', "Gravity")
             p.use_prop = True
-            p.prop = (0.0, 0.0, -1.0)
+            p.default_property = (0.0, 0.0, -1.0)
 
             self.inputs.new('SvStringsSocket', "Length").prop_name = 'length'
 

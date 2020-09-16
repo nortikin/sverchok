@@ -6,10 +6,12 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, fullList, fullList_deep_copy, repeat_last_for_length, ensure_nesting_level, split_by_count
+from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
+from sverchok.dependencies import FreeCAD
 
 class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -41,6 +43,10 @@ class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             items.append(item)
         item = (SvNurbsSurface.NATIVE, "Sverchok", "Sverchok built-in implementation", i)
         items.append(item)
+        i += 1
+        if FreeCAD is not None:
+            item = (SvNurbsMaths.FREECAD, "FreeCAD", "FreeCAD library implementation",i)
+            items.append(item)
         return items
 
     implementation : EnumProperty(
@@ -177,16 +183,19 @@ class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 n_u = len(vertices) // n_v
 
                 vertices = split_by_count(vertices, n_u)
-                weights = split_by_count(weights, n_u)
+                if self.surface_mode == 'NURBS':
+                    weights = split_by_count(weights, n_u)
 
             if self.knot_mode == 'AUTO':
                 if self.is_cyclic_v:
                     for row_idx in range(len(vertices)):
                         vertices[row_idx].extend(vertices[row_idx][:degree_v+1])
-                        weights[row_idx].extend(weights[row_idx][:degree_v+1])
+                        if self.surface_mode == 'NURBS':
+                            weights[row_idx].extend(weights[row_idx][:degree_v+1])
                 if self.is_cyclic_u:
                     vertices.extend(vertices[:degree_u+1])
-                    weights.extend(weights[:degree_u+1])
+                    if self.surface_mode == 'NURBS':
+                        weights.extend(weights[:degree_u+1])
                 self.debug("UxV: %s x %s", len(vertices), len(vertices[0]))
 
             n_u_total = len(vertices)

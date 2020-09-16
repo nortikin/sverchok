@@ -27,7 +27,7 @@ class SvScalarFieldEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvScalarFieldSocket', "Field")
         d = self.inputs.new('SvVerticesSocket', "Vertices")
         d.use_prop = True
-        d.prop = (0.0, 0.0, 0.0)
+        d.default_property = (0.0, 0.0, 0.0)
         self.outputs.new('SvStringsSocket', 'Value')
 
     def process(self):

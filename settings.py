@@ -8,7 +8,7 @@ from sverchok.dependencies import sv_dependencies, pip, ensurepip, draw_message,
 from sverchok import data_structure
 from sverchok.core import handlers
 from sverchok.core import update_system
-from sverchok.utils import sv_panels_tools, logging
+from sverchok.utils import logging
 from sverchok.utils.sv_gist_tools import TOKEN_HELP_URL
 from sverchok.ui import color_def
 
@@ -283,9 +283,6 @@ class SverchokPreferences(AddonPreferences):
             min = 0, max = 12
         )
 
-    enable_live_objin: BoolProperty(
-        description="Objects in edit mode will be updated in object-in Node")
-
     ##  BLF/BGL/GPU  scale and location props
 
     render_scale: FloatProperty(
@@ -386,7 +383,6 @@ class SverchokPreferences(AddonPreferences):
                 toolbar_box.prop(self, "node_panels_columns")
 
         col1.prop(self, "over_sized_buttons")
-        col1.prop(self, "enable_live_objin", text='Enable Live Object-In')
         col1.prop(self, "external_editor", text="Ext Editor")
         col1.prop(self, "real_sverchok_path", text="Src Directory")
 
@@ -404,7 +400,6 @@ class SverchokPreferences(AddonPreferences):
 
         col2box = col2.box()
         col2box.label(text="Debug:")
-        col2box.prop(self, "profile_mode")
         col2box.prop(self, "show_debug")
         col2box.prop(self, "heat_map")
         col2box.prop(self, "developer_mode")
@@ -538,7 +533,7 @@ class SverchokPreferences(AddonPreferences):
         draw_freecad_ops()
 
         if any(package.module is None for package in sv_dependencies.values()):
-            box.operator('wm.url_open', text="Read installation instructions for missing dependencies").url = "https://github.com/portnov/sverchok-extra"
+            box.operator('wm.url_open', text="Read installation instructions for missing dependencies").url = "https://github.com/nortikin/sverchok/wiki/Dependencies"
 
     def draw(self, context):
 

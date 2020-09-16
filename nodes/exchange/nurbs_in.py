@@ -236,7 +236,8 @@ class SvExNurbsInNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if spline.use_cyclic_u:
             u_min = curve_knotvector[curve_degree]
             u_max = curve_knotvector[-curve_degree-2]
-            new_curve.u_bounds = u_min, u_max
+            new_curve = new_curve.cut_segment(u_min, u_max)
+            #new_curve.u_bounds = u_min, u_max
         else:
             if spline.use_endpoint_u:
                 u_min = min(curve_knotvector)

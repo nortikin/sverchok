@@ -30,13 +30,13 @@ class SvArcSedCurveNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         p = self.inputs.new('SvVerticesSocket', "Start")
         p.use_prop = True
-        p.prop = (0.0, 0.0, 0.0)
+        p.default_property = (0.0, 0.0, 0.0)
         p = self.inputs.new('SvVerticesSocket', "End")
         p.use_prop = True
-        p.prop = (1.0, 0.0, 0.0)
+        p.default_property = (1.0, 0.0, 0.0)
         p = self.inputs.new('SvVerticesSocket', "Tangent")
         p.use_prop = True
-        p.prop = (0.0, 1.0, 0.0)
+        p.default_property = (0.0, 1.0, 0.0)
         self.outputs.new('SvCurveSocket', "Arc")
         self.outputs.new('SvCurveSocket', "Circle")
         self.outputs.new('SvMatrixSocket', "Center")
