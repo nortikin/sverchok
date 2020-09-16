@@ -1,4 +1,5 @@
 
+import numpy as np
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
@@ -158,7 +159,7 @@ class SvNurbsSweepNode(bpy.types.Node, SverchCustomTreeNode):
                                     metric = self.metric,
                                     implementation = self.nurbs_implementation,
                                     resolution = resolution,
-                                    normal = normal)
+                                    normal = np.array(normal))
                 new_surfaces.append(surface)
             surfaces_out.append(new_surfaces)
 

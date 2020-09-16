@@ -245,7 +245,8 @@ class SvCurveFrameCalculator(object):
             n = len(ts)
             return np.broadcast_to(identity, (n, 3,3))
         elif self.algorithm == NORMAL_DIR:
-            return self.curve.frame_by_plane_array(ts, self.normal)
+            matrices, _, _ = self.curve.frame_by_plane_array(ts, self.normal)
+            return matrices
         elif self.algorithm in {FRENET, ZERO, TRACK_NORMAL}:
             return self.calculator.get_matrices(ts)
         elif self.algorithm in {HOUSEHOLDER, TRACK, DIFF}:

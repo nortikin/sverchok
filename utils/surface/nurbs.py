@@ -706,6 +706,7 @@ def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = 'UNIFY', me
     to_loft = []
     for profile, path_point, frame in zip(profiles, path_points, frames):
         profile_controls = profile.get_control_points()
+        print("F", frame)
         profile_controls = np.apply_along_axis(lambda p: frame @ p + path_point, 1, profile_controls)
         profile = SvNurbsMaths.build_curve(implementation,
                     profile.get_degree(),
