@@ -636,6 +636,13 @@ class SvIsoUvCurve(SvCurve):
         self.tangent_delta = 0.001
         self.__description__ = "{} at {} = {}".format(surface, fixed_axis, value)
 
+    @staticmethod
+    def take(surface, fixed_axis, value, flip=False):
+        if hasattr(surface, 'iso_curve'):
+            return surface.iso_curve(fixed_axis, value, flip=flip)
+        else:
+            return SvIsoUvCurve(surface, fixed_axis, value, flip=flip)
+
     def get_u_bounds(self):
         if self.fixed_axis == 'U':
             return self.surface.get_v_min(), self.surface.get_v_max()

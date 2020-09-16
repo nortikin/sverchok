@@ -221,6 +221,9 @@ class SvNurbsSurface(SvSurface):
         c_v = self.get_min_v_continuity()
         return min(c_u, c_v)
 
+    def iso_curve(sefl, fixed_direction, param):
+        raise Exception("Not implemented")
+
 class SvGeomdlSurface(SvNurbsSurface):
     def __init__(self, surface):
         self.surface = surface
@@ -355,6 +358,42 @@ class SvGeomdlSurface(SvNurbsSurface):
         verts = np.array(verts)
         return verts
 
+    def iso_curve(self, fixed_direction, param, flip=False):
+        if self.surface.rational:
+            raise UnsupportedSurfaceTypeException("iso_curve() is not supported for rational Geomdl surfaces yet")
+        controls = self.get_control_points()
+        weights = self.get_weights()
+        k_u,k_v = weights.shape
+        if fixed_direction == SvNurbsSurface.U:
+            q_curves = [SvNurbsMaths.build_curve(self.get_nurbs_implementation(),
+                            self.get_degree_u(),
+                            self.get_knotvector_u(),
+                            controls[:,j], weights[:,j]) for j in range(k_v)]
+            q_controls = [q_curve.evaluate(param) for q_curve in q_curves]
+            q_weights = np.ones((k_v,))
+            curve = SvNurbsMaths.build_curve(self.get_nurbs_implementation(),
+                    self.get_degree_v(),
+                    self.get_knotvector_v(),
+                    q_controls, q_weights)
+            if flip:
+                return curve.reverse()
+            else:
+                return curve
+        elif fixed_direction == SvNurbsSurface.V:
+            q_curves = [SvNurbsMaths.build_curve(self.get_nurbs_implementation(),
+                            self.get_degree_v(),
+                            self.get_knotvector_v(),
+                            controls[i,:], weights[i,:]) for i in range(k_u)]
+            q_controls = [q_curve.evaluate(param) for q_curve in q_curves]
+            q_weights = np.ones((k_u,))
+            curve = SvNurbsMaths.build_curve(self.get_nurbs_implementation(),
+                    self.get_degree_u(),
+                    self.get_knotvector_u(),
+                    q_controls, q_weights)
+            if flip:
+                return curve.reverse()
+            else:
+                return curve
     def normal(self, u, v):
         return self.normal_array(np.array([u]), np.array([v]))[0]
 
@@ -565,6 +604,41 @@ class SvNativeNurbsSurface(SvNurbsSurface):
         normal = normal / n
         return normal
 
+    def iso_curve(self, fixed_direction, param, flip=False):
+        controls = self.get_control_points()
+        weights = self.get_weights()
+        k_u,k_v = weights.shape
+        if fixed_direction == SvNurbsSurface.U:
+            q_curves = [SvNurbsMaths.build_curve(self.get_nurbs_implementation(),
+                            self.get_degree_u(),
+                            self.get_knotvector_u(),
+                            controls[:,j], weights[:,j]) for j in range(k_v)]
+            q_controls = [q_curve.evaluate(param) for q_curve in q_curves]
+            q_weights = [q_curve.fraction_single(0, param)[1] for q_curve in q_curves]
+            curve = SvNurbsMaths.build_curve(self.get_nurbs_implementation(),
+                    self.get_degree_v(),
+                    self.get_knotvector_v(),
+                    q_controls, q_weights)
+            if flip:
+                return curve.reverse()
+            else:
+                return curve
+        elif fixed_direction == SvNurbsSurface.V:
+            q_curves = [SvNurbsMaths.build_curve(self.get_nurbs_implementation(),
+                            self.get_degree_v(),
+                            self.get_knotvector_v(),
+                            controls[i,:], weights[i,:]) for i in range(k_u)]
+            q_controls = [q_curve.evaluate(param) for q_curve in q_curves]
+            q_weights = [q_curve.fraction_single(0, param)[1] for q_curve in q_curves]
+            curve = SvNurbsMaths.build_curve(self.get_nurbs_implementation(),
+                    self.get_degree_u(),
+                    self.get_knotvector_u(),
+                    q_controls, q_weights)
+            if flip:
+                return curve.reverse()
+            else:
+                return curve
+
     def derivatives_data_array(self, us, vs):
         numerator, denominator = self.fraction(0, 0, us, vs)
         surface = nurbs_divide(numerator, denominator)
@@ -658,6 +732,9 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', i
     if degree_v is None:
         degree_v = degree_u
 
+    if degree_v > len(curves):
+        raise Exception(f"V degree ({degree_v}) must be not greater than number of curves ({len(curves)}) minus 1")
+
     src_points = [curve.get_homogenous_control_points() for curve in curves]
 #     lens = [len(pts) for pts in src_points]
 #     max_len, min_len = max(lens), min(lens)
@@ -695,9 +772,23 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', i
     surface.u_bounds = curves[0].get_u_bounds()
     return curves, v_curves, surface
 
+def interpolate_nurbs_curves(curves, base_vs, target_vs,
+        degree_v = None, knots_u = 'UNIFY', metric='DISTANCE',
+        implementation = SvNurbsSurface.NATIVE):
+    min_v, max_v = min(base_vs), max(base_vs)
+    vectors = np.array([(0,0,v) for v in base_vs])
+    to_loft = [curve.transform(None, vector) for curve, vector in zip(curves, vectors)]
+    #to_loft = curves
+    _,_,lofted = simple_loft(to_loft,
+                degree_v = degree_v, knots_u = knots_u,
+                metric = 'DISTANCE',
+                implementation = implementation)
+    back_vectors = np.array([(0,0,-v) for v in np.linspace(min_v, max_v, num=len(target_vs))])
+    return [lofted.iso_curve(fixed_direction='V', param=v).transform(None, back) for v, back in zip(target_vs, back_vectors)]
+
 def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = 'UNIFY', metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE):
     if len(profiles) != len(ts):
-        raise Exception("Number of profiles is not equal to number of T values")
+        raise Exception(f"Number of profiles ({len(profiles)}) is not equal to number of T values ({len(ts)})")
     if len(ts) < 2:
         raise Exception("At least 2 profiles are required")
 
@@ -705,32 +796,44 @@ def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = 'UNIFY', me
     frames = frame_calculator(ts)
     to_loft = []
     for profile, path_point, frame in zip(profiles, path_points, frames):
-        profile_controls = profile.get_control_points()
-        profile_controls = np.apply_along_axis(lambda p: frame @ p + path_point, 1, profile_controls)
-        profile = SvNurbsMaths.build_curve(implementation,
-                    profile.get_degree(),
-                    profile.get_knotvector(),
-                    profile_controls,
-                    profile.get_weights())
+        profile = profile.transform(frame, path_point)
         to_loft.append(profile)
 
-    return simple_loft(to_loft, degree_v = path.get_degree(),
+    _, _, surface = simple_loft(to_loft, degree_v = path.get_degree(),
             knots_u = knots_u, metric = metric,
             implementation = implementation)
+    return surface
 
 def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE, **kwargs):
-    if ts and len(profiles) != len(ts):
-        raise Exception("Number of profiles is not equal to number of T values")
-    if len(profiles) == 2 and len(profiles) < min_profiles:
+    n_profiles = len(profiles)
+    have_ts = ts is not None and len(ts) > 0
+    if have_ts and n_profiles != len(ts):
+        raise Exception(f"Number of profiles ({n_profiles}) is not equal to number of T values ({len(ts)})")
+
+    t_min, t_max = path.get_u_bounds()
+    if not have_ts:
+        ts = np.linspace(t_min, t_max, num=n_profiles)
+
+    if n_profiles == 2 and n_profiles < min_profiles:
         coeffs = np.linspace(0.0, 1.0, num=min_profiles)
         p0, p1 = profiles
         profiles = [p0.lerp_to(p1, coeff) for coeff in coeffs]
+        ts = np.linspace(t_min, t_max, num=min_profiles)
+    elif n_profiles < min_profiles:
+        target_vs = np.linspace(0.0, 1.0, num=min_profiles)
+        max_degree = n_profiles - 1
+        profiles = interpolate_nurbs_curves(profiles, ts, target_vs,
+                    degree_v = min(max_degree, path.get_degree()),
+                    knots_u = knots_u, metric = metric,
+                    implementation = implementation)
+        ts = np.linspace(t_min, t_max, num=min_profiles)
     else:
         profiles = repeat_last_for_length(profiles, min_profiles)
-    if not ts:
-        ts = np.linspace(0.0, 1.0, num=len(profiles))
 
     frame_calculator = SvCurveFrameCalculator(path, algorithm, **kwargs).get_matrices
+
+#     for i, p in enumerate(profiles):
+#         print(f"P#{i}: {p.get_control_points()}")
 
     return nurbs_sweep_impl(path, profiles, ts, frame_calculator,
                 knots_u=knots_u, metric=metric,

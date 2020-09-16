@@ -74,7 +74,7 @@ class SvNurbsSweepNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Resolution'].hide_safe = self.algorithm not in {ZERO, TRACK_NORMAL}
         self.inputs['Normal'].hide_safe = self.algorithm != NORMAL_DIR
         self.inputs['V'].hide_safe = not self.explicit_v
-        self.inputs['VSections'].hide_safe = self.explicit_v
+        #self.inputs['VSections'].hide_safe = self.explicit_v
 
     algorithm : EnumProperty(
             name = "Algorithm",
@@ -98,7 +98,7 @@ class SvNurbsSweepNode(bpy.types.Node, SverchCustomTreeNode):
         name = "Explicit V values",
         description = "Provide values of V parameter (along path curve) for profile curves explicitly",
         default = False,
-        update = updateNode)
+        update = update_sockets)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'nurbs_implementation', text='')
@@ -147,11 +147,17 @@ class SvNurbsSweepNode(bpy.types.Node, SverchCustomTreeNode):
         for params in zip_long_repeat(path_s, profile_s, v_s, profiles_count_s, resolution_s, normal_s):
             new_surfaces = []
             for path, profiles, vs, profiles_count, resolution, normal in zip_long_repeat(*params):
+                path = SvNurbsCurve.to_nurbs(path)
+                if path is None:
+                    raise Exception("Path is not a NURBS curve!")
+                profiles = [SvNurbsCurve.to_nurbs(profile) for profile in profiles]
+                if any(p is None for p in profiles):
+                    raise Exception("Some of profiles are not NURBS curves!")
                 if self.explicit_v:
                     ts = np.array(vs)
                 else:
                     ts = None
-                _, _, surface = nurbs_sweep(path, profiles,
+                surface = nurbs_sweep(path, profiles,
                                     ts = ts,
                                     min_profiles = profiles_count,
                                     algorithm = self.algorithm,
