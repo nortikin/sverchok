@@ -24,13 +24,6 @@ FAIL_COLOR = (0.1, 0.05, 0)
 READY_COLOR = (1, 0.3, 0)
 
 
-def calc_median(vlist):
-    a = Vector((0, 0, 0))
-    for v in vlist:
-        a += v
-    return a / len(vlist)
-
-
 class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: blf
@@ -149,8 +142,6 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
                 colx.scale_x = little_width
                 colx.prop(self, colprop, text="")
 
-        layout.row().prop(self, 'draw_obj_idx', text="Draw Object Index", toggle=True)
-
 
     def get_face_extras(self, geom):
         face_medians = []
@@ -211,7 +202,7 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
             concat_face = display_topology.face_data.append
             concat_text = display_topology.text_data.append
 
-            prefix_if_needed = lambda obj_index, chars: (f'{obj_index}: {chars}') if self.draw_obj_idx else chars
+            prefix_if_needed = lambda obj_index, chars: f'{chars}'
 
             
             for obj_index, final_verts in enumerate(geom.verts):
