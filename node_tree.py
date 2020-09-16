@@ -180,7 +180,6 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
                 node.show_viewport(self.sv_show)
             except AttributeError:
                 pass
-        process_tree(self)
 
     def on_draft_mode_changed(self, context):
         """

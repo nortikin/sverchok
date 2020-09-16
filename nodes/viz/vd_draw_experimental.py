@@ -637,6 +637,17 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     def sv_free(self):
         callback_disable(node_id(self))
 
+    def show_viewport(self, is_show: bool):
+        """It should be called by node tree to show/hide objects"""
+        if not self.activate:
+            # just ignore request
+            pass
+        else:
+            if is_show:
+                self.process()
+            else:
+                callback_disable(node_id(self))
+
 
 classes = [SvVDExperimental]
 register, unregister = bpy.utils.register_classes_factory(classes)
