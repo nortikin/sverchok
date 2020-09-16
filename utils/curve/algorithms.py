@@ -20,7 +20,7 @@ from sverchok.utils.geom import PlaneEquation, LineEquation, Spline, LinearSplin
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
 from sverchok.utils.math import (
     ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
-    NORMAL_DIR
+    NORMAL_DIR, NONE
 )
 from sverchok.utils.logging import info
 
@@ -225,10 +225,11 @@ class DifferentialRotationCalculator(object):
             raise Exception("Unsupported algorithm")
 
 class SvCurveFrameCalculator(object):
-    def __init__(self, curve, algorithm, z_axis=2, resolution=50):
+    def __init__(self, curve, algorithm, z_axis=2, resolution=50, normal=None):
         self.algorithm = algorithm
         self.z_axis = z_axis
         self.curve = curve
+        self.normal = normal
         if algorithm in {FRENET, ZERO, TRACK_NORMAL}:
             self.calculator = DifferentialRotationCalculator(curve, algorithm, resolution)
 
@@ -239,7 +240,13 @@ class SvCurveFrameCalculator(object):
                 scale_all=False)
 
     def get_matrices(self, ts):
-        if self.algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+        if self.algorithm == NONE:
+            identity = np.eye(3)
+            n = len(ts)
+            return np.broadcast_to(identity, (n, 3,3))
+        elif self.algorithm == NORMAL_DIR:
+            return self.curve.frame_by_plane_array(ts, self.normal)
+        elif self.algorithm in {FRENET, ZERO, TRACK_NORMAL}:
             return self.calculator.get_matrices(ts)
         elif self.algorithm in {HOUSEHOLDER, TRACK, DIFF}:
             tangents = self.curve.tangent_array(ts)

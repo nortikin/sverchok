@@ -695,7 +695,7 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', i
     surface.u_bounds = curves[0].get_u_bounds()
     return curves, v_curves, surface
 
-def nurbs_sweep_impl(path, profiles, ts, degree_v, frame_calculator, knots_u = 'UNIFY', metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE):
+def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = 'UNIFY', metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE):
     if len(profiles) != len(ts):
         raise Exception("Number of profiles is not equal to number of T values")
     if len(ts) < 2:
@@ -714,11 +714,11 @@ def nurbs_sweep_impl(path, profiles, ts, degree_v, frame_calculator, knots_u = '
                     profile.get_weights())
         to_loft.append(profile)
 
-    return simple_loft(to_loft, degree_v=degree_v,
+    return simple_loft(to_loft, degree_v = path.get_degree(),
             knots_u = knots_u, metric = metric,
             implementation = implementation)
 
-def nurbs_sweep(path, profiles, ts, min_profiles, degree_v, algorithm, knots_u = 'UNIFY', metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE, **kwargs):
+def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE, **kwargs):
     if ts and len(profiles) != len(ts):
         raise Exception("Number of profiles is not equal to number of T values")
     if len(profiles) == 2 and len(profiles) < min_profiles:
@@ -732,7 +732,7 @@ def nurbs_sweep(path, profiles, ts, min_profiles, degree_v, algorithm, knots_u =
 
     frame_calculator = SvCurveFrameCalculator(path, algorithm, **kwargs).get_matrices
 
-    return nurbs_sweep_impl(path, profiles, ts, degree_v, frame_calculator,
+    return nurbs_sweep_impl(path, profiles, ts, frame_calculator,
                 knots_u=knots_u, metric=metric,
                 implementation=implementation)
 
