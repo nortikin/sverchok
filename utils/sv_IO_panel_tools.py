@@ -165,6 +165,10 @@ def collect_custom_socket_properties(node, node_dict):
             if hasattr(socket, prop_name):
                 # Some old files can have nodes with sockets with keys which do not exist anymore
                 # such keys can be ignored
+                socket_type = socket.bl_rna.properties[prop_name].type
+                if socket_type == 'POINTER':
+                    # This original behavior before socket refactoring
+                    continue  # todo definitely should be something better
                 value = getattr(socket, prop_name)
                 default_value = socket.bl_rna.properties[prop_name].default
                 if value != default_value:
