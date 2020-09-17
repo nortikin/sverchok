@@ -133,7 +133,7 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
         '''function to set data for exporting json''' 
 
         local_storage = {
-            'filenames': [file_elem.name for file_elem in self.files], 
+            'filenames': [{"name": file_elem.name} for file_elem in self.files], 
             'directory': self.directory
         }
         node_dict['string_storage'] = json.dumps(local_storage)
