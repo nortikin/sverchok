@@ -6,6 +6,8 @@
 # License-Filename: LICENSE
 
 import os
+import json
+
 import bpy
 import bmesh
 from bpy.props import (
@@ -17,6 +19,7 @@ from bpy.types import (
         Operator,
         OperatorFileListElement,
         )
+
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.modules import sv_bmesh
