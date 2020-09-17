@@ -123,7 +123,7 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
         dirname = json.loads(strings_json)['dirname']
         
         self.id_data.freeze(hard=True)
-        self.set_data(dirname, filenames):
+        self.set_data(dirname, filenames)
         self.id_data.unfreeze(hard=True)
 
     def storage_get_data(self, node_dict):
