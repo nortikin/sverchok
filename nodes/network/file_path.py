@@ -120,10 +120,10 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
 
         strings_json = storage['string_storage']
         filenames = json.loads(strings_json)['filenames']
-        dirname = json.loads(strings_json)['dirname']
+        directory = json.loads(strings_json)['directory']
         
         self.id_data.freeze(hard=True)
-        self.set_data(dirname, filenames)
+        self.set_data(directory, filenames)
         self.id_data.unfreeze(hard=True)
 
     def storage_get_data(self, node_dict):
@@ -131,7 +131,7 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
 
         local_storage = {
             'filenames': [file_elem.name for file_elem in self.files], 
-            'dirname': self.dirname
+            'directory': self.directory
         }
         node_dict['string_storage'] = json.dumps(local_storage)
 
