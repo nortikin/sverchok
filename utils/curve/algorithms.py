@@ -14,6 +14,7 @@ from sverchok.utils.curve.core import (
         SvFlipCurve, SvConcatCurve,
         UnsupportedCurveTypeException
     )
+from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.geom import PlaneEquation, LineEquation, Spline, LinearSpline, CubicSpline
@@ -639,9 +640,11 @@ class SvIsoUvCurve(SvCurve):
     @staticmethod
     def take(surface, fixed_axis, value, flip=False):
         if hasattr(surface, 'iso_curve'):
-            return surface.iso_curve(fixed_axis, value, flip=flip)
-        else:
-            return SvIsoUvCurve(surface, fixed_axis, value, flip=flip)
+            try:
+                return surface.iso_curve(fixed_axis, value, flip=flip)
+            except UnsupportedSurfaceTypeException:
+                pass
+        return SvIsoUvCurve(surface, fixed_axis, value, flip=flip)
 
     def get_u_bounds(self):
         if self.fixed_axis == 'U':

@@ -84,6 +84,7 @@ class SvNurbsSweepNode(bpy.types.Node, SverchCustomTreeNode):
 
     resolution : IntProperty(
         name = "Resolution",
+        description = "Resolution for rotation calculation algorithm",
         min = 10, default = 50,
         update = updateNode)
 
