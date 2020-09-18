@@ -8,7 +8,7 @@
 
 import bpy
 from mathutils import Vector
-from mathutils.geometry import normal  # takes 3 or more! :)
+from mathutils.geometry import normal
 from bpy.props import (BoolProperty, FloatVectorProperty, StringProperty, FloatProperty)
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -18,10 +18,6 @@ from sverchok.data_structure import (
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.sv_idx_viewer28_draw import draw_indices_2D, draw_indices_2D_wbg
-
-# status colors
-FAIL_COLOR = (0.1, 0.05, 0)
-READY_COLOR = (1, 0.3, 0)
 
 
 class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
@@ -61,8 +57,8 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         update=updateNode)
 
-    draw_bg: BoolProperty(
-        name='draw_bg', description='draw background poly?',
+    draw_background: BoolProperty(
+        name='draw_background', description='draw background polygons or not',
         default=False, update=updateNode)
 
     background_color: make_color_prop("background_color", (.2, .2, .2, 1.0))
@@ -83,12 +79,12 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         split = row.split()
         r = split.column()
         r.prop(self, "activate", text="Show", toggle=True, icon=view_icon)
-        row.prop(self, "draw_bg", text="BG", toggle=True)
+        row.prop(self, "draw_background", text="BG", toggle=True)
 
     def get_settings_dict(self):
         
         """
-        Produce a dict of settings for the callback:
+        Produce a dict of settings for the callback
             
         A copy is needed, we can't have reference to the node in a callback, 
         it will crash blender on undo
@@ -97,7 +93,7 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         return {
             'background_color': self.background_color[:],
             'font_text_color': self.font_text_color[:],
-            'draw_bg': self.draw_bg,
+            'draw_background': self.draw_background,
             'scale': self.get_scale()
         }.copy()
 
@@ -190,11 +186,10 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
 
         config = self.get_settings_dict()
         geom = self.get_geometry()
-
-        draw_func = draw_indices_2D_wbg if self.draw_bg else draw_indices_2D
+        
         draw_data = {
             'tree_name': self.id_data.name[:],
-            'custom_function': draw_func,
+            'custom_function': draw_3dview_text,
             'args': (geom, config)} 
 
         callback_enable(n_id, draw_data, overlay='POST_PIXEL')
