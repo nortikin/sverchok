@@ -126,6 +126,7 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
             'background_color': self.background_color[:],
             'font_text_color': self.font_text_color[:],
             'draw_background': self.draw_background,
+            'anchor': self.anchor_direction,
             'scale': self.text_node_scale
         }.copy()
 
