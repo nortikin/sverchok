@@ -393,7 +393,7 @@ def draw_indices_2D_wbg(context, args):
         print(traceback.format_exc())
 
 
-# -------------------- BLF TEXT VIEWER
+# -------------------- BLF TEXT VIEWER ------------------- #
 
 
 
@@ -477,99 +477,20 @@ def draw_3dview_text(context, args):
         data_index_counter = len(final_draw_data)
         final_draw_data[data_index_counter] = (index_str, pos_x, pos_y, txt_width, txt_height, type_draw, pts)
 
-    # THIS SECTION IS ONLY EXECUTED IF BOTH FORWARD AND BACKFACING ARE DRAWN
+    # blf.color(font_id, *vert_idx_color)
+    if geom.vert_data and geom.text_data:
+        for text_item, (idx, location) in zip(geom.text_data, geom.vert_data):
+            gather_index(text_item, location, 'verts')
+    else:
+        for vidx in geom.vert_data:
+            gather_index(vidx[0], vidx[1], 'verts')
 
-    if draw_bface:
+    # blf.color(font_id, *edge_idx_color)
+    for eidx in geom.edge_data:
+        gather_index(eidx[0], eidx[1], 'edges')
 
-        # blf.color(font_id, *vert_idx_color)
-        if geom.vert_data and geom.text_data:
-            for text_item, (idx, location) in zip(geom.text_data, geom.vert_data):
-                gather_index(text_item, location, 'verts')
-        else:
-            for vidx in geom.vert_data:
-                gather_index(vidx[0], vidx[1], 'verts')
-    
-        # blf.color(font_id, *edge_idx_color)
-        for eidx in geom.edge_data:
-            gather_index(eidx[0], eidx[1], 'edges')
+    # blf.color(font_id, *face_idx_color)
+    for fidx in geom.face_data:
+        gather_index(fidx[0], fidx[1], 'faces')
 
-        # blf.color(font_id, *face_idx_color)
-        for fidx in geom.face_data:
-            gather_index(fidx[0], fidx[1], 'faces')
-
-        draw_all_text_at_once(final_draw_data)
-        # if drawing all geometry, we end early.
-        return
-
-    # THIS SECTION IS ONLY EXECUTED IF ONLY FORWARD FACING  / NON OCCLUDED FACES ARE GOING TO BE DRAWN.
-
-    eye = Vector(region3d.view_matrix[2][:3])
-    eye.length = region3d.view_distance
-    eye_location = region3d.view_location + eye  
-
-    try:
-
-        for obj_index, polygons in enumerate(geom.faces):
-            edges = geom.edges[obj_index] if obj_index < len(geom.edges) else []
-            vertices = geom.verts[obj_index]
-            bvh = BVHTree.FromPolygons(vertices, polygons, all_triangles=False, epsilon=0.0)
-
-            cache_vert_indices = set()
-            cache_edge_indices = set()
-
-            # blf.color(font_id, *face_idx_color)
-            for idx, polygon in enumerate(polygons):
-
-                # check the face normal, reject it if it's facing away.
-
-                face_normal = geom.face_normals[obj_index][idx]
-                world_coordinate = geom.face_medians[obj_index][idx]
-
-                result_vector = eye_location - world_coordinate
-                dot_value = face_normal.dot(result_vector.normalized())
-
-                if dot_value < 0.0:
-                    continue # reject
-
-                # cast ray from eye towards the median of the polygon, the reycast will return (almost definitely..)
-                # but if the return idx does not correspond with the polygon index, then it is occluded :)
-
-                # bvh.ray_cast(origin, direction, distance=sys.float_info.max) : returns
-                # if hit: (Vector location, Vector normal, int index, float distance) else all (None, ...)
-
-                direction = world_coordinate - eye_location
-                hit = bvh.ray_cast(eye_location, direction)
-                if hit:
-                    if hit[2] == idx:
-                        if display_face_index:
-                            gather_index(idx, world_coordinate, 'faces')
-                        
-                        if display_vert_index:
-                            for j in polygon:
-                                cache_vert_indices.add(j)
-
-                        # this could be woefully slow...
-                        if display_edge_index and edges:
-                            for j in range(len(polygon)-1):
-                                cache_edge_indices.add(tuple(sorted([polygon[j], polygon[j+1]])))
-                            cache_edge_indices.add(tuple(sorted([polygon[-1], polygon[0]])))
-
-            # blf.color(font_id, *vert_idx_color)
-            for idx in cache_vert_indices:
-                gather_index(idx, vertices[idx], 'verts')
-
-            # blf.color(font_id, *edge_idx_color)
-            for idx, edge in enumerate(edges):
-                sorted_edge = tuple(sorted(edge))
-                if sorted_edge in cache_edge_indices:
-                    idx1, idx2 = sorted_edge
-                    loc = vertices[idx1].lerp(vertices[idx2], 0.5)
-                    gather_index(idx, loc, 'edges')
-                    cache_edge_indices.remove(sorted_edge)
-
-        draw_all_text_at_once(final_draw_data)
-
-    except Exception as err:
-        print('---- ERROR in sv_idx_viewer28 Occlusion backface drawing ----')
-        print(err)
-        print(traceback.format_exc())
+    draw_all_text_at_once(final_draw_data)
