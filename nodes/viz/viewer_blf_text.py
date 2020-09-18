@@ -110,7 +110,7 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         r.prop(self, "activate", text="Show", toggle=True, icon=view_icon)
         row.prop(self, "draw_background", text="BG", toggle=True)
         new_row = layout.row()
-        new_row.prop(self, "anchord_direction")
+        new_row.prop(self, "anchor_direction")
 
 
     def get_settings_dict(self):
