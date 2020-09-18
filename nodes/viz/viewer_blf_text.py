@@ -35,6 +35,17 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'INFO'
     sv_icon = 'SV_INDEX_VIEWER'
 
+    def show_viewport(self, is_show: bool):
+        """It should be called by node tree to show/hide objects"""
+        if not self.activate:
+            # just ignore request
+            pass
+        else:
+            if is_show:
+                self.process()
+            else:
+                callback_disable(node_id(self))
+
     def get_scale(self):
         return 1.0
 
@@ -53,14 +64,6 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
     draw_bg: BoolProperty(
         name='draw_bg', description='draw background poly?',
         default=False, update=updateNode)
-
-    display_vert_index: BoolProperty(
-        name="Vertices", description="Display vertex indices",
-        default=True, update=updateNode)
-    display_edge_index: BoolProperty(
-        name="Edges", description="Display edge indices", update=updateNode)
-    display_face_index: BoolProperty(
-        name="Faces", description="Display face indices", update=updateNode)
 
     bg_verts_col: make_color_prop("bg_verts", (.2, .2, .2, 1.0))
     numid_verts_col: make_color_prop("numid_verts", (0.6, 1, 0.3, 1.0))
@@ -81,15 +84,6 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         r = split.column()
         r.prop(self, "activate", text="Show", toggle=True, icon=view_icon)
         row.prop(self, "draw_bg", text="BG", toggle=True)
-        # row.prop(self, "draw_bface", text="", icon='GHOST_ENABLED', toggle=True)
-
-        # col = column_all.column(align=True)
-        # for item, item_icon in zip(['vert', 'edge', 'face'], ['VERTEXSEL', 'EDGESEL', 'FACESEL']):
-        #     row = col.row(align=True)
-        #     row.prop(self, f"display_{item}_index", toggle=True, icon=item_icon, text='')
-        #     row.prop(self, f"numid_{item}s_col", text="")
-        #     if self.draw_bg:
-        #         row.prop(self, f"bg_{item}s_col", text="") 
 
     def get_settings_dict(self):
         '''Produce a dict of settings for the callback'''
@@ -112,25 +106,6 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.label(text='Colors')
 
-        # for _icon in ['VERTEXSEL', 'EDGESEL', 'FACESEL']:
-        #     colz = row.column(align=True)
-        #     colz.scale_x = little_width
-        #     colz.label(icon=_icon, text=' ')
-
-        # colprops = [
-        #     ['Numbers :', ['numid_verts_col', 'numid_edges_col', 'numid_faces_col']],
-        #     ['Background :', ['bg_verts_col', 'bg_edges_col', 'bg_faces_col']]
-        # ]
-
-        # for label, geometry_types in colprops:
-        #     row = col.row(align=True)
-        #     row.label(text=label)
-        #     for colprop in geometry_types:
-        #         colx = row.column(align=True)
-        #         colx.scale_x = little_width
-        #         colx.prop(self, colprop, text="")
-
-
     def get_geometry(self):
         inputs = self.inputs
         geom = lambda: None
@@ -138,18 +113,9 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         for socket in ['locations', 'text']:
             input_stream = inputs[socket].sv_get(default=[])
             if socket == 'locations' and input_stream:
-                
-                # ensure they are Vector()
                 input_stream = Vector_generate(input_stream)
-                
-                # # ensure they are Matrix() multiplied
-                # for obj_index, verts in enumerate(input_stream):
-                #     if obj_index < len(geom.matrix):
-                #         matrix = geom.matrix[obj_index]
-                #         input_stream[obj_index] = [matrix @ v for v in verts]
 
             setattr(geom, socket, input_stream)
-
 
         # pass only data onto the draw callback that you intend to show.
         display_topology = lambda: None
@@ -217,6 +183,7 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         n_id = node_id(self)
+
         callback_disable(n_id)
         if self.end_early():
             return
@@ -224,9 +191,10 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         config = self.get_settings_dict()
         geom = self.get_geometry()
 
+        draw_func = draw_indices_2D_wbg if self.draw_bg else draw_indices_2D
         draw_data = {
             'tree_name': self.id_data.name[:],
-            'custom_function': draw_indices_2D_wbg if self.draw_bg else draw_indices_2D,
+            'custom_function': draw_func,
             'args': (geom, config)} 
 
         callback_enable(n_id, draw_data, overlay='POST_PIXEL')
