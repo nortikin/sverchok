@@ -863,7 +863,11 @@ def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', 
     if not have_ts:
         ts = np.linspace(t_min, t_max, num=n_profiles)
 
-    if n_profiles == 2 and n_profiles < min_profiles:
+    if n_profiles == 1:
+        p = profiles[0]
+        ts = np.linspace(t_min, t_max, num=min_profiles)
+        profiles = [p] * min_profiles
+    elif n_profiles == 2 and n_profiles < min_profiles:
         coeffs = np.linspace(0.0, 1.0, num=min_profiles)
         p0, p1 = profiles
         profiles = [p0.lerp_to(p1, coeff) for coeff in coeffs]
