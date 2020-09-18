@@ -9,11 +9,11 @@
 import bpy
 from mathutils import Vector
 from mathutils.geometry import normal
-from bpy.props import (BoolProperty, FloatVectorProperty, StringProperty, FloatProperty, IntProperty)
+from bpy.props import (BoolProperty, FloatVectorProperty, StringProperty, FloatProperty, IntProperty, EnumProperty)
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
-    dataCorrect, node_id, updateNode, fullList, Vector_generate, Matrix_generate)
+    node_id, updateNode, fullList, Vector_generate, enum_item_5)
 
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.context_managers import sv_preferences
@@ -53,8 +53,7 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
 
     activate: BoolProperty(
         name='Show', description='Activate node?',
-        default=True,
-        update=updateNode)
+        default=True, update=updateNode)
 
     draw_background: BoolProperty(
         name='draw_background', description='draw background polygons or not',
@@ -64,6 +63,13 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         name="rounding", default=3, min=0, soft_max=8, 
         description="in coordinate mode, Use this slider to adjust how precise you want to display each coordinate",
         update=updateNode)
+
+    anchor_direction: EnumProperty(
+        items=items=enum_item_5(
+            ["left", "right", "center", "top", "bottom"], 
+            ["ANCHOR_LEFT", "ANCHOR_RIGHT", "ANCHOR_CENTER", "ANCHOR_TOP", "ANCHOR_BOTTOM"]),
+        description="offers a way to anchor all text items to the location",
+        default="middle", update=updateNode)
 
     background_color: make_color_prop("background_color", (.2, .2, .2, 1.0))
     font_text_color: make_color_prop("font_text_color", (0.6, 1, 0.3, 1.0))
@@ -204,6 +210,7 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
     def sv_copy(self, node):
         ''' reset n_id on copy '''
         self.n_id = ''
+
 
 def register():
     bpy.utils.register_class(SvViewerTextBLF)
