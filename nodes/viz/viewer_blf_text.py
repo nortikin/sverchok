@@ -61,6 +61,11 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         name='draw_background', description='draw background polygons or not',
         default=False, update=updateNode)
 
+    coordinate_rounding: IntProperty(
+        name="rounding", default=3, min=0, soft_max=8, 
+        description="in coordinate mode, Use this slider to adjust how precise you want to display each coordinate",
+        update=updateNode)
+
     background_color: make_color_prop("background_color", (.2, .2, .2, 1.0))
     font_text_color: make_color_prop("font_text_color", (0.6, 1, 0.3, 1.0))
 
