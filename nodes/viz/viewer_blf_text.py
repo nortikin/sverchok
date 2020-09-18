@@ -7,9 +7,15 @@
 
 
 import bpy
+import blf
+import bgl
+import gpu
 from mathutils import Vector
 from mathutils.geometry import normal
 from bpy.props import (BoolProperty, FloatVectorProperty, StringProperty, FloatProperty, IntProperty, EnumProperty)
+
+from gpu_extras.batch import batch_for_shader
+
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
@@ -17,7 +23,128 @@ from sverchok.data_structure import (
 
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.context_managers import sv_preferences
-from sverchok.utils.sv_idx_viewer28_draw import draw_3dview_text
+
+
+# -------------------- BLF TEXT VIEWER ------------------- #
+
+def calc_median(vlist):
+    a = Vector((0, 0, 0))
+    for v in vlist:
+        a += v
+    return a / len(vlist)
+
+def adjust_list(in_list, x, y):
+    return [[old_x + x, old_y + y] for (old_x, old_y) in in_list]
+
+
+def generate_points_tris(width, height, x, y):
+    amp = 5  # radius fillet
+
+    width += 2
+    height += 4
+    width = ((width/2) - amp) + 2
+    height -= (2*amp)
+
+    height += 4
+    width += 3    
+
+    final_list = [
+        # a
+        [-width+x, +height+y],   # A         D - - - - - E
+        [+width+x, -height+y],   # B         A .         |
+        [-width+x, -height+y],   # C         |   .    b  |
+        # b                                  |     .     |
+        [-width+x, +height+y],   # D         |   a   .   |
+        [+width+x, +height+y],   # E         |         . F
+        [+width+x, -height+y]    # F         C - - - - - B
+    ] 
+    return final_list
+
+
+def draw_3dview_text(context, args):
+
+    context = bpy.context
+    region = context.region
+    region3d = context.space_data.region_3d
+
+    geom, settings = args
+
+    txt_color = settings['font_text_color']
+    bg_color = settings['background_color']
+    scale = settings['scale']
+    draw_bg = settings['draw_background']
+    anchor = settings['anchor']
+
+    font_id = 0
+    text_height = int(13.0 * scale)
+    blf.size(font_id, text_height, 72)  # should check prefs.dpi
+
+    region_mid_width = region.width / 2.0
+    region_mid_height = region.height / 2.0
+
+    # vars for projection
+    perspective_matrix = region3d.perspective_matrix.copy()
+
+    final_draw_data = {}
+    data_index_counter = 0
+
+    def draw_all_text_at_once(final_draw_data):
+
+        # build bg mesh and vcol data
+        full_bg_Verts = []
+        add_vert_list = full_bg_Verts.extend
+        
+        full_bg_colors = []
+        add_vcol = full_bg_colors.extend
+        for counter, (_, _, _, _, _, type_draw, pts) in final_draw_data.items():
+            col = settings[f'bg_{type_draw}_col']
+            add_vert_list(pts)
+            add_vcol((col,) * 6)
+
+        # draw background
+        shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
+        batch = batch_for_shader(shader, 'TRIS', {"pos": full_bg_Verts, "color": full_bg_colors})
+        batch.draw(shader)
+
+        # draw text 
+        for counter, (index_str, pos_x, pos_y, txt_width, txt_height, type_draw, pts) in final_draw_data.items():
+            text_color = settings[f'numid_{type_draw}_col']
+            blf.color(font_id, *text_color)
+            blf.position(0, pos_x, pos_y, 0)
+            blf.draw(0, index_str)
+
+    def gather_index(index, vec, type_draw):
+
+        vec_4d = perspective_matrix @ vec.to_4d()
+        if vec_4d.w <= 0.0:
+            return
+
+        x = region_mid_width + region_mid_width * (vec_4d.x / vec_4d.w)
+        y = region_mid_height + region_mid_height * (vec_4d.y / vec_4d.w)
+
+        # ---- draw text ----
+        index_str = str(index)
+        txt_width, txt_height = blf.dimensions(0, index_str)
+
+        # blf.position(0, x - (txt_width / 2), y - (txt_height / 2), 0)
+        pos_x = x - (txt_width / 2)
+        pos_y = y - (txt_height / 2)
+        # blf.draw(0, index_str)
+        pts = generate_points_tris(txt_width, txt_height, x, y-1)
+        data_index_counter = len(final_draw_data)
+        final_draw_data[data_index_counter] = (index_str, pos_x, pos_y, txt_width, txt_height, type_draw, pts)
+
+    # blf.color(font_id, *vert_idx_color)
+    if geom.locations_data and geom.text_data:
+        for text_item, (idx, location) in zip(geom.text_data, geom.locations_data):
+            gather_index(text_item, location, 'verts')
+    else:
+        for vidx in geom.locations_data:
+            gather_index(vidx[0], vidx[1], 'verts')
+
+
+    draw_all_text_at_once(final_draw_data)
+
 
 
 class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
