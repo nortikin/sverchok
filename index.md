@@ -523,6 +523,7 @@
     SvMatrixViewer28
     SvIDXViewer28
     SvViewer2D
+    SvViewerTextBLF
     ---
     SvMeshViewer
     SvCurveViewerNodeV28
