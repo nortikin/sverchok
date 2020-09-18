@@ -81,7 +81,7 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         r = split.column()
         r.prop(self, "activate", text="Show", toggle=True, icon=view_icon)
         row.prop(self, "draw_bg", text="BG", toggle=True)
-        row.prop(self, "draw_bface", text="", icon='GHOST_ENABLED', toggle=True)
+        # row.prop(self, "draw_bface", text="", icon='GHOST_ENABLED', toggle=True)
 
         # col = column_all.column(align=True)
         # for item, item_icon in zip(['vert', 'edge', 'face'], ['VERTEXSEL', 'EDGESEL', 'FACESEL']):
@@ -131,29 +131,6 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         #         colx.prop(self, colprop, text="")
 
 
-    # def get_face_extras(self, geom):
-    #     face_medians = []
-    #     face_normals = []
-    #     for obj_index, faces in enumerate(geom.faces):
-            
-    #         verts = geom.verts[obj_index]
-            
-    #         medians = []
-    #         normals = []
-    #         concat_median = medians.append
-    #         concat_normal = normals.append
-
-    #         for face in faces:
-    #             poly_verts = [verts[idx] for idx in face]
-    #             concat_normal(normal(poly_verts))
-    #             concat_median(calc_median(poly_verts))
-            
-    #         face_medians.append(medians)
-    #         face_normals.append(normals)
-        
-    #     return face_medians, face_normals
-
-
     def get_geometry(self):
         inputs = self.inputs
         geom = lambda: None
@@ -165,67 +142,47 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
                 # ensure they are Vector()
                 input_stream = Vector_generate(input_stream)
                 
-                # ensure they are Matrix() multiplied
-                for obj_index, verts in enumerate(input_stream):
-                    if obj_index < len(geom.matrix):
-                        matrix = geom.matrix[obj_index]
-                        input_stream[obj_index] = [matrix @ v for v in verts]
+                # # ensure they are Matrix() multiplied
+                # for obj_index, verts in enumerate(input_stream):
+                #     if obj_index < len(geom.matrix):
+                #         matrix = geom.matrix[obj_index]
+                #         input_stream[obj_index] = [matrix @ v for v in verts]
 
             setattr(geom, socket, input_stream)
 
 
         # pass only data onto the draw callback that you intend to show.
         display_topology = lambda: None
-        display_topology.vert_data = []
-        display_topology.edge_data = []
-        display_topology.face_data = []
+        display_topology.locations_data = []
         display_topology.text_data = []
 
-        concat_vert = display_topology.vert_data.append
-        concat_edge = display_topology.edge_data.append
-        concat_face = display_topology.face_data.append
+        concat_locations = display_topology.locations_data.append
         concat_text = display_topology.text_data.append
 
-        prefix_if_needed = lambda obj_index, chars: f'{chars}'
-
+        prefix_if_needed = lambda chars: f'{chars}'
         
-        for obj_index, final_verts in enumerate(geom.verts):
+        for final_verts in geom.locations:
 
-            # can't display vert idx and text simultaneously - ...
-            if self.display_vert_index:
-                for idx, vpos in enumerate(final_verts):
-                    chars = prefix_if_needed(obj_index, idx)
-                    concat_vert((chars, vpos))
-                
-                if geom.text:    
-                    text_items = self.get_text_of_correct_length(obj_index, geom, len(final_verts))                        
-                    for text_item, vpos in zip(text_items, final_verts):
 
-                        # yikes, don't feed this function nonsense :)
+            for idx, vpos in enumerate(final_verts):
+                chars = prefix_if_needed(idx)
+                concat_locations((chars, vpos))
+            
+            if geom.text:    
+                text_items = self.get_text_of_correct_length(obj_index, geom, len(final_verts))                        
+                for text_item, vpos in zip(text_items, final_verts):
 
-                        if isinstance(text_item, float):
-                            chars = prefix_if_needed(obj_index, text_item)
-                        elif isinstance(text_item, list) and len(text_item) == 1:
-                            chars = prefix_if_needed(obj_index, text_item[0])
+                    # yikes, don't feed this function nonsense :)
+                    if isinstance(text_item, float):
+                        chars = prefix_if_needed(obj_index, text_item)
+                    elif isinstance(text_item, list) and len(text_item) == 1:
+                        chars = prefix_if_needed(obj_index, text_item[0])
 
-                        else:
-                            # in case it receives [0, 0, 0] or (0, 0, 0).. etc
-                            chars = prefix_if_needed(obj_index, text_item)
+                    else:
+                        # in case it receives [0, 0, 0] or (0, 0, 0).. etc
+                        chars = prefix_if_needed(obj_index, text_item)
 
-                        concat_text((chars))
-
-            if self.display_edge_index and obj_index < len(geom.edges):
-                for edge_index, (idx1, idx2) in enumerate(geom.edges[obj_index]):
-                    loc = final_verts[idx1].lerp(final_verts[idx2], 0.5)
-                    chars = prefix_if_needed(obj_index, edge_index)
-                    concat_edge((chars, loc))
-
-            if self.display_face_index and obj_index < len(geom.faces):
-                for face_index, f in enumerate(geom.faces[obj_index]):
-                    poly_verts = [final_verts[idx] for idx in f]
-                    median = calc_median(poly_verts)
-                    chars = prefix_if_needed(obj_index, face_index)
-                    concat_face((chars, median))
+                    concat_text((chars))
 
         return display_topology
 
