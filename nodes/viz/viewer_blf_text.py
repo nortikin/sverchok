@@ -127,11 +127,10 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
 
         prefix_if_needed = lambda chars: f'{chars}'
         
-        for final_verts in geom.locations:
+        for obj_index, final_verts in enumerate(geom.locations):
 
-
-            for idx, vpos in enumerate(final_verts):
-                chars = prefix_if_needed(idx)
+            for vpos in final_verts:
+                chars = prefix_if_needed(vpos)
                 concat_locations((chars, vpos))
             
             if geom.text:    
