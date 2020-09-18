@@ -83,7 +83,7 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
     skip_empty_strings: BoolProperty(name="Skip empty Strings", update=updateNode)
 
     anchor_direction: EnumProperty(
-        items=items=enum_item_5(
+        items=enum_item_5(
             ["left", "right", "center", "top", "bottom"], 
             ["ANCHOR_LEFT", "ANCHOR_RIGHT", "ANCHOR_CENTER", "ANCHOR_TOP", "ANCHOR_BOTTOM"]),
         description="offers a way to anchor all text items to the location",
@@ -109,6 +109,9 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         r = split.column()
         r.prop(self, "activate", text="Show", toggle=True, icon=view_icon)
         row.prop(self, "draw_background", text="BG", toggle=True)
+        new_row = layout.row()
+        new_row.prop(self, "anchord_direction")
+
 
     def get_settings_dict(self):
         
@@ -145,27 +148,28 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         concat_locations = display_data.locations_data.append
         concat_text = display_data.text_data.append
 
-        convert_if_needed = lambda chars: f'{chars}'
+        # convert_if_needed = lambda chars: f'{chars}'
         
         for obj_index, final_verts in enumerate(geom.locations):
 
-            for vpos in final_verts:
-                chars = convert_if_needed(vpos)
-                concat_locations((chars, vpos))
+            pass
+            # for vpos in final_verts:
+            #     chars = convert_if_needed(vpos)
+            #     concat_locations((chars, vpos))
             
-            if geom.text:    
-                text_items = self.get_text_of_correct_length(obj_index, geom, len(final_verts))                        
-                for text_item, vpos in zip(text_items, final_verts):
+            # if geom.text:    
+            #     text_items = self.get_text_of_correct_length(obj_index, geom, len(final_verts))                        
+            #     for text_item, vpos in zip(text_items, final_verts):
 
-                    # yikes, don't feed this function nonsense :)
-                    if isinstance(text_item, float):
-                        chars = convert_if_needed(obj_index, text_item)
-                    elif isinstance(text_item, list) and len(text_item) == 1:
-                        chars = convert_if_needed(obj_index, text_item[0])
-                    else:
-                        # in case it receives [0, 0, 0] or (0, 0, 0).. etc
-                        chars = convert_if_needed(obj_index, text_item)
-                    concat_text((chars))
+            #         # yikes, don't feed this function nonsense :)
+            #         if isinstance(text_item, float):
+            #             chars = convert_if_needed(obj_index, text_item)
+            #         elif isinstance(text_item, list) and len(text_item) == 1:
+            #             chars = convert_if_needed(obj_index, text_item[0])
+            #         else:
+            #             # in case it receives [0, 0, 0] or (0, 0, 0).. etc
+            #             chars = convert_if_needed(obj_index, text_item)
+            #         concat_text((chars))
 
         return display_data
 

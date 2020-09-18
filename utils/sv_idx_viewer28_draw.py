@@ -406,14 +406,8 @@ def draw_3dview_text(context, args):
     geom, settings = args
 
     vert_idx_color = settings['numid_verts_col']
-    edge_idx_color = settings['numid_edges_col']
-    face_idx_color = settings['numid_faces_col']
     vert_bg_color = settings['bg_verts_col']
-    edge_bg_color = settings['bg_edges_col']
-    face_bg_color = settings['bg_faces_col']
     display_vert_index = settings['display_vert_index']
-    display_edge_index = settings['display_edge_index']
-    display_face_index = settings['display_face_index']
     scale = settings['scale']
     draw_bg = settings['draw_bg']
     draw_bface = settings['draw_bface']
