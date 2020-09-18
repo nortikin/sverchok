@@ -118,19 +118,19 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
             setattr(geom, socket, input_stream)
 
         # pass only data onto the draw callback that you intend to show.
-        display_topology = lambda: None
-        display_topology.locations_data = []
-        display_topology.text_data = []
+        display_data = lambda: None
+        display_data.locations_data = []
+        display_data.text_data = []
 
-        concat_locations = display_topology.locations_data.append
-        concat_text = display_topology.text_data.append
+        concat_locations = display_data.locations_data.append
+        concat_text = display_data.text_data.append
 
-        prefix_if_needed = lambda chars: f'{chars}'
+        convert_if_needed = lambda chars: f'{chars}'
         
         for obj_index, final_verts in enumerate(geom.locations):
 
             for vpos in final_verts:
-                chars = prefix_if_needed(vpos)
+                chars = convert_if_needed(vpos)
                 concat_locations((chars, vpos))
             
             if geom.text:    
@@ -139,20 +139,22 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
 
                     # yikes, don't feed this function nonsense :)
                     if isinstance(text_item, float):
-                        chars = prefix_if_needed(obj_index, text_item)
+                        chars = convert_if_needed(obj_index, text_item)
                     elif isinstance(text_item, list) and len(text_item) == 1:
-                        chars = prefix_if_needed(obj_index, text_item[0])
-
+                        chars = convert_if_needed(obj_index, text_item[0])
                     else:
                         # in case it receives [0, 0, 0] or (0, 0, 0).. etc
-                        chars = prefix_if_needed(obj_index, text_item)
-
+                        chars = convert_if_needed(obj_index, text_item)
                     concat_text((chars))
 
-        return display_topology
+        return display_data
 
     def get_text_of_correct_length(self, obj_index, geom, num_elements_to_fill):
-        """ get text elements, and extend if needed"""
+
+        """ 
+        if the len(locations) is larger than len(text), then this auto extends till they match
+        """
+
         if obj_index < len(geom.text):
             text_items = geom.text[obj_index]
         else:
@@ -160,7 +162,6 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
 
         if not (len(text_items) == num_elements_to_fill):
             
-            # ---- this doesn't touch the data, but returns a copy, or a modified copy -----
             if len(text_items) < num_elements_to_fill:
                 return text_items + [text_items[-1], ] * (num_elements_to_fill - len(text_items))
             else:
@@ -169,6 +170,11 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         return text_items
 
     def end_early(self):
+        
+        """
+        self.process can end/break early depending on various scenarios, listed in the code below
+        """
+        
         if not self.id_data.sv_show:
             return True
 
