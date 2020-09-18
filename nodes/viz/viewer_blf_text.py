@@ -10,19 +10,22 @@ import bpy
 import blf
 import bgl
 import gpu
-from mathutils import Vector
-from mathutils.geometry import normal
-from bpy.props import (BoolProperty, FloatVectorProperty, StringProperty, FloatProperty, IntProperty, EnumProperty)
-
 from gpu_extras.batch import batch_for_shader
 
-
-from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (
-    node_id, updateNode, fullList, Vector_generate, enum_item_5)
+from mathutils import Vector
+from mathutils.geometry import normal
+from bpy.props import (
+    BoolProperty, FloatVectorProperty, 
+    StringProperty, FloatProperty, IntProperty, EnumProperty
+)
 
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.context_managers import sv_preferences
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (
+    node_id, updateNode, fullList, Vector_generate, enum_item_5
+)
+
 
 
 # -------------------- BLF TEXT VIEWER ------------------- #
