@@ -405,12 +405,10 @@ def draw_3dview_text(context, args):
 
     geom, settings = args
 
-    vert_idx_color = settings['numid_verts_col']
-    vert_bg_color = settings['bg_verts_col']
-    display_vert_index = settings['display_vert_index']
+    txt_color = settings['font_text_color']
+    bg_color = settings['background_color']
     scale = settings['scale']
-    draw_bg = settings['draw_bg']
-    draw_bface = settings['draw_bface']
+    draw_bg = settings['draw_background']
 
     font_id = 0
     text_height = int(13.0 * scale)

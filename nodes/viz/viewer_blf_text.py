@@ -26,8 +26,10 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
     Tooltip:  view text in 3dview using basic blf features (size, orientation, color..)
 
     The idea is that you can display with this node the following:
+
     - if the locations socket is only connected, then you can display their coordinates 
         : and add rounding per component
+
     - if both location and text socket are connected a few things happen
         : if the length of text and location lists aren't equal, the node matches them at runtime
         : if a text element is empty, this is skipped
@@ -35,6 +37,7 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
 
           locations = [[v1, v2, v3, v4....], [v1, v2, v3, v4....], n]  (n-collections of vectors)
           text = [["str1, "str2", str3, "str4", ...], ["str1, "str2", str3, "str4", ...], n] (n-collections of text elements)
+
     - user can set the following properties of text
         : the viewport text-scale, globally for the node
         : text anchor globally (at the moment: L R C T B )
