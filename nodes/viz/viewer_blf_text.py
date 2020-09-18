@@ -129,15 +129,13 @@ def draw_3dview_text(context, args):
         index_str = str(index)
         txt_width, txt_height = blf.dimensions(0, index_str)
 
-        # blf.position(0, x - (txt_width / 2), y - (txt_height / 2), 0)
         pos_x = x - (txt_width / 2)
         pos_y = y - (txt_height / 2)
-        # blf.draw(0, index_str)
+
         pts = generate_points_tris(txt_width, txt_height, x, y-1)
         data_index_counter = len(final_draw_data)
         final_draw_data[data_index_counter] = (index_str, pos_x, pos_y, txt_width, txt_height, type_draw, pts)
 
-    # blf.color(font_id, *vert_idx_color)
     if geom.locations_data and geom.text_data:
         for text_item, (idx, location) in zip(geom.text_data, geom.locations_data):
             gather_index(text_item, location, 'verts')
