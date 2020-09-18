@@ -54,14 +54,6 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         name='draw_bg', description='draw background poly?',
         default=False, update=updateNode)
 
-    draw_obj_idx: BoolProperty(
-        name='draw_obj_idx', description='draw object index beside part index',
-        default=False, update=updateNode)
-
-    draw_bface: BoolProperty(
-        name='draw_bface', description='draw backfacing indices?',
-        default=True, update=updateNode)
-
     display_vert_index: BoolProperty(
         name="Vertices", description="Display vertex indices",
         default=True, update=updateNode)
@@ -70,11 +62,7 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
     display_face_index: BoolProperty(
         name="Faces", description="Display face indices", update=updateNode)
 
-    bg_edges_col: make_color_prop("bg_edges", (.2, .2, .2, 1.0))
-    bg_faces_col: make_color_prop("bg_faces", (.2, .2, .2, 1.0))
     bg_verts_col: make_color_prop("bg_verts", (.2, .2, .2, 1.0))
-    numid_edges_col: make_color_prop("numid_edges", (1.0, 1.0, 0.1, 1.0))
-    numid_faces_col: make_color_prop("numid_faces", (1.0, .8, .8, 1.0))
     numid_verts_col: make_color_prop("numid_verts", (0.6, 1, 0.3, 1.0))
 
     def sv_init(self, context):
@@ -95,13 +83,13 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "draw_bg", text="BG", toggle=True)
         row.prop(self, "draw_bface", text="", icon='GHOST_ENABLED', toggle=True)
 
-        col = column_all.column(align=True)
-        for item, item_icon in zip(['vert', 'edge', 'face'], ['VERTEXSEL', 'EDGESEL', 'FACESEL']):
-            row = col.row(align=True)
-            row.prop(self, f"display_{item}_index", toggle=True, icon=item_icon, text='')
-            row.prop(self, f"numid_{item}s_col", text="")
-            if self.draw_bg:
-                row.prop(self, f"bg_{item}s_col", text="") 
+        # col = column_all.column(align=True)
+        # for item, item_icon in zip(['vert', 'edge', 'face'], ['VERTEXSEL', 'EDGESEL', 'FACESEL']):
+        #     row = col.row(align=True)
+        #     row.prop(self, f"display_{item}_index", toggle=True, icon=item_icon, text='')
+        #     row.prop(self, f"numid_{item}s_col", text="")
+        #     if self.draw_bg:
+        #         row.prop(self, f"bg_{item}s_col", text="") 
 
     def get_settings_dict(self):
         '''Produce a dict of settings for the callback'''
@@ -124,55 +112,55 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.label(text='Colors')
 
-        for _icon in ['VERTEXSEL', 'EDGESEL', 'FACESEL']:
-            colz = row.column(align=True)
-            colz.scale_x = little_width
-            colz.label(icon=_icon, text=' ')
+        # for _icon in ['VERTEXSEL', 'EDGESEL', 'FACESEL']:
+        #     colz = row.column(align=True)
+        #     colz.scale_x = little_width
+        #     colz.label(icon=_icon, text=' ')
 
-        colprops = [
-            ['Numbers :', ['numid_verts_col', 'numid_edges_col', 'numid_faces_col']],
-            ['Background :', ['bg_verts_col', 'bg_edges_col', 'bg_faces_col']]
-        ]
+        # colprops = [
+        #     ['Numbers :', ['numid_verts_col', 'numid_edges_col', 'numid_faces_col']],
+        #     ['Background :', ['bg_verts_col', 'bg_edges_col', 'bg_faces_col']]
+        # ]
 
-        for label, geometry_types in colprops:
-            row = col.row(align=True)
-            row.label(text=label)
-            for colprop in geometry_types:
-                colx = row.column(align=True)
-                colx.scale_x = little_width
-                colx.prop(self, colprop, text="")
+        # for label, geometry_types in colprops:
+        #     row = col.row(align=True)
+        #     row.label(text=label)
+        #     for colprop in geometry_types:
+        #         colx = row.column(align=True)
+        #         colx.scale_x = little_width
+        #         colx.prop(self, colprop, text="")
 
 
-    def get_face_extras(self, geom):
-        face_medians = []
-        face_normals = []
-        for obj_index, faces in enumerate(geom.faces):
+    # def get_face_extras(self, geom):
+    #     face_medians = []
+    #     face_normals = []
+    #     for obj_index, faces in enumerate(geom.faces):
             
-            verts = geom.verts[obj_index]
+    #         verts = geom.verts[obj_index]
             
-            medians = []
-            normals = []
-            concat_median = medians.append
-            concat_normal = normals.append
+    #         medians = []
+    #         normals = []
+    #         concat_median = medians.append
+    #         concat_normal = normals.append
 
-            for face in faces:
-                poly_verts = [verts[idx] for idx in face]
-                concat_normal(normal(poly_verts))
-                concat_median(calc_median(poly_verts))
+    #         for face in faces:
+    #             poly_verts = [verts[idx] for idx in face]
+    #             concat_normal(normal(poly_verts))
+    #             concat_median(calc_median(poly_verts))
             
-            face_medians.append(medians)
-            face_normals.append(normals)
+    #         face_medians.append(medians)
+    #         face_normals.append(normals)
         
-        return face_medians, face_normals
+    #     return face_medians, face_normals
 
 
     def get_geometry(self):
         inputs = self.inputs
         geom = lambda: None
 
-        for socket in ['matrix', 'verts', 'edges', 'faces', 'text']:
+        for socket in ['locations', 'text']:
             input_stream = inputs[socket].sv_get(default=[])
-            if socket == 'verts' and input_stream:
+            if socket == 'locations' and input_stream:
                 
                 # ensure they are Vector()
                 input_stream = Vector_generate(input_stream)
@@ -185,65 +173,61 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
 
             setattr(geom, socket, input_stream)
 
-        if not self.draw_bface:
-            geom.face_medians, geom.face_normals = self.get_face_extras(geom)
-            return geom
 
-        else:
-            # pass only data onto the draw callback that you intend to show.
-            display_topology = lambda: None
-            display_topology.vert_data = []
-            display_topology.edge_data = []
-            display_topology.face_data = []
-            display_topology.text_data = []
+        # pass only data onto the draw callback that you intend to show.
+        display_topology = lambda: None
+        display_topology.vert_data = []
+        display_topology.edge_data = []
+        display_topology.face_data = []
+        display_topology.text_data = []
 
-            concat_vert = display_topology.vert_data.append
-            concat_edge = display_topology.edge_data.append
-            concat_face = display_topology.face_data.append
-            concat_text = display_topology.text_data.append
+        concat_vert = display_topology.vert_data.append
+        concat_edge = display_topology.edge_data.append
+        concat_face = display_topology.face_data.append
+        concat_text = display_topology.text_data.append
 
-            prefix_if_needed = lambda obj_index, chars: f'{chars}'
+        prefix_if_needed = lambda obj_index, chars: f'{chars}'
 
-            
-            for obj_index, final_verts in enumerate(geom.verts):
+        
+        for obj_index, final_verts in enumerate(geom.verts):
 
-                # can't display vert idx and text simultaneously - ...
-                if self.display_vert_index:
-                    for idx, vpos in enumerate(final_verts):
-                        chars = prefix_if_needed(obj_index, idx)
-                        concat_vert((chars, vpos))
-                    
-                    if geom.text:    
-                        text_items = self.get_text_of_correct_length(obj_index, geom, len(final_verts))                        
-                        for text_item, vpos in zip(text_items, final_verts):
+            # can't display vert idx and text simultaneously - ...
+            if self.display_vert_index:
+                for idx, vpos in enumerate(final_verts):
+                    chars = prefix_if_needed(obj_index, idx)
+                    concat_vert((chars, vpos))
+                
+                if geom.text:    
+                    text_items = self.get_text_of_correct_length(obj_index, geom, len(final_verts))                        
+                    for text_item, vpos in zip(text_items, final_verts):
 
-                            # yikes, don't feed this function nonsense :)
+                        # yikes, don't feed this function nonsense :)
 
-                            if isinstance(text_item, float):
-                                chars = prefix_if_needed(obj_index, text_item)
-                            elif isinstance(text_item, list) and len(text_item) == 1:
-                                chars = prefix_if_needed(obj_index, text_item[0])
+                        if isinstance(text_item, float):
+                            chars = prefix_if_needed(obj_index, text_item)
+                        elif isinstance(text_item, list) and len(text_item) == 1:
+                            chars = prefix_if_needed(obj_index, text_item[0])
 
-                            else:
-                                # in case it receives [0, 0, 0] or (0, 0, 0).. etc
-                                chars = prefix_if_needed(obj_index, text_item)
+                        else:
+                            # in case it receives [0, 0, 0] or (0, 0, 0).. etc
+                            chars = prefix_if_needed(obj_index, text_item)
 
-                            concat_text((chars))
+                        concat_text((chars))
 
-                if self.display_edge_index and obj_index < len(geom.edges):
-                    for edge_index, (idx1, idx2) in enumerate(geom.edges[obj_index]):
-                        loc = final_verts[idx1].lerp(final_verts[idx2], 0.5)
-                        chars = prefix_if_needed(obj_index, edge_index)
-                        concat_edge((chars, loc))
+            if self.display_edge_index and obj_index < len(geom.edges):
+                for edge_index, (idx1, idx2) in enumerate(geom.edges[obj_index]):
+                    loc = final_verts[idx1].lerp(final_verts[idx2], 0.5)
+                    chars = prefix_if_needed(obj_index, edge_index)
+                    concat_edge((chars, loc))
 
-                if self.display_face_index and obj_index < len(geom.faces):
-                    for face_index, f in enumerate(geom.faces[obj_index]):
-                        poly_verts = [final_verts[idx] for idx in f]
-                        median = calc_median(poly_verts)
-                        chars = prefix_if_needed(obj_index, face_index)
-                        concat_face((chars, median))
+            if self.display_face_index and obj_index < len(geom.faces):
+                for face_index, f in enumerate(geom.faces[obj_index]):
+                    poly_verts = [final_verts[idx] for idx in f]
+                    median = calc_median(poly_verts)
+                    chars = prefix_if_needed(obj_index, face_index)
+                    concat_face((chars, median))
 
-            return display_topology
+        return display_topology
 
     def get_text_of_correct_length(self, obj_index, geom, num_elements_to_fill):
         """ get text elements, and extend if needed"""
