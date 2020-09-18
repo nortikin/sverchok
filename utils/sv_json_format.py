@@ -7,6 +7,8 @@
 
 
 from __future__ import annotations
+
+from itertools import chain
 from typing import TYPE_CHECKING, Union, Tuple, Any
 
 import bpy
@@ -96,7 +98,7 @@ class NodeFormat:
         return json_node
 
     def add_mandatory_attributes(self, node: SverchCustomTreeNode):
-        # todo different for reroutes and frames and monads
+        # todo different for monads
         self._json_data['bl_idname'] = node.bl_idname
         self._json_data['height'] = node.height
         self._json_data['width'] = node.width
@@ -132,7 +134,9 @@ class BPYProperty:
         self._data = data
 
     def is_to_export(self) -> bool:
-        if not self.is_to_save:
+        if not self.is_valid:
+            return False  # deprecated property
+        elif not self.is_to_save:
             return False
         elif self.type == 'POINTER':
             return False  # pointers does not supported know
@@ -142,9 +146,20 @@ class BPYProperty:
             return True
 
     @property
+    def is_valid(self) -> bool:
+        """
+        If data does not have property with given name property is invalid
+        It can be so that data.keys() or data.items() can give names of properties which are not in data class any more
+        Such properties cab consider as deprecated
+        """
+        return self.name in self._data.bl_rna.properties
+
+    @property
     def value(self) -> Any:
-        if self.is_array:
-            return getattr(self._data, self.name)[:]  # convert to tuple
+        if self.is_array_like:
+            return tuple(getattr(self._data, self.name))
+        elif self.type == 'COLLECTION':
+            return self.extract_collection_values()
         else:
             return getattr(self._data, self.name)
 
@@ -154,16 +169,34 @@ class BPYProperty:
 
     @property
     def default_value(self) -> Any:
-        return self._data.bl_rna.properties[self.name].default
+        if self.type == 'COLLECTION':
+            return None  # there is no default value
+        else:
+            return self._data.bl_rna.properties[self.name].default
 
     @property
     def is_to_save(self) -> bool:
         return not self._data.bl_rna.properties[self.name].is_skip_save
 
     @property
-    def is_array(self) -> bool:
-        if self.type in {'BOOL', 'FLOAT', 'INT'}:
+    def is_array_like(self) -> bool:
+        if self.type in {'BOOLEAN', 'FLOAT', 'INT'}:
             return self._data.bl_rna.properties[self.name].is_array
+        elif self.type == 'ENUM':
+            # Enum can return set of values, array like
+            return self._data.bl_rna.properties[self.name].is_enum_flag
         else:
             # other properties does not have is_array attribute
             return False
+
+    def extract_collection_values(self):
+        """returns something like this: [{"name": "", "my_prop": 1.0}, {"name": "", "my_prop": 2.0}, ...]"""
+        items = []
+        for item in getattr(self._data, self.name):
+            item_props = {}
+            for prop_name in chain(['name'], item.keys()):
+                prop = BPYProperty(item, prop_name)
+                if prop.is_to_export():
+                    item_props[prop.name] = prop.value
+            items.append(item_props)
+        return items
