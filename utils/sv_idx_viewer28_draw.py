@@ -409,6 +409,7 @@ def draw_3dview_text(context, args):
     bg_color = settings['background_color']
     scale = settings['scale']
     draw_bg = settings['draw_background']
+    anchor = settings['anchor']
 
     font_id = 0
     text_height = int(13.0 * scale)
@@ -470,19 +471,12 @@ def draw_3dview_text(context, args):
         final_draw_data[data_index_counter] = (index_str, pos_x, pos_y, txt_width, txt_height, type_draw, pts)
 
     # blf.color(font_id, *vert_idx_color)
-    if geom.vert_data and geom.text_data:
-        for text_item, (idx, location) in zip(geom.text_data, geom.vert_data):
+    if geom.locations_data and geom.text_data:
+        for text_item, (idx, location) in zip(geom.text_data, geom.locations_data):
             gather_index(text_item, location, 'verts')
     else:
-        for vidx in geom.vert_data:
+        for vidx in geom.locations_data:
             gather_index(vidx[0], vidx[1], 'verts')
 
-    # blf.color(font_id, *edge_idx_color)
-    for eidx in geom.edge_data:
-        gather_index(eidx[0], eidx[1], 'edges')
-
-    # blf.color(font_id, *face_idx_color)
-    for fidx in geom.face_data:
-        gather_index(fidx[0], fidx[1], 'faces')
 
     draw_all_text_at_once(final_draw_data)
