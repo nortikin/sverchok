@@ -53,16 +53,6 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'INFO'
     sv_icon = 'SV_INDEX_VIEWER'
 
-    def show_viewport(self, is_show: bool):
-        """It should be called by node tree to show/hide objects"""
-        if not self.activate:
-            return
-
-        if is_show:
-            self.process()
-        else:
-            callback_disable(node_id(self))
-
     def make_color_prop(name, col):
         return FloatVectorProperty(
             name=name, description='', size=4, min=0.0, max=1.0,
@@ -237,6 +227,16 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
     def sv_copy(self, node):
         ''' reset n_id on copy '''
         self.n_id = ''
+
+    def show_viewport(self, is_show: bool):
+        """It should be called by node tree to show/hide objects"""
+        if not self.activate:
+            return
+
+        if is_show:
+            self.process()
+        else:
+            callback_disable(node_id(self))
 
 
 def register():
