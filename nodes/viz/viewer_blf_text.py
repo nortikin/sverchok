@@ -65,8 +65,8 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         name='draw_bg', description='draw background poly?',
         default=False, update=updateNode)
 
-    bg_verts_col: make_color_prop("bg_verts", (.2, .2, .2, 1.0))
-    numid_verts_col: make_color_prop("numid_verts", (0.6, 1, 0.3, 1.0))
+    background_color: make_color_prop("background_color", (.2, .2, .2, 1.0))
+    font_text_color: make_color_prop("font_text_color", (0.6, 1, 0.3, 1.0))
 
     def sv_init(self, context):
         inew = self.inputs.new
@@ -86,25 +86,20 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "draw_bg", text="BG", toggle=True)
 
     def get_settings_dict(self):
-        '''Produce a dict of settings for the callback'''
-        # A copy is needed, we can't have reference to the
-        # node in a callback, it will crash blender on undo
+        
+        """
+        Produce a dict of settings for the callback:
+            
+        A copy is needed, we can't have reference to the node in a callback, 
+        it will crash blender on undo
+        """
+
         return {
-            'bg_verts_col': self.bg_verts_col[:],
-            'numid_verts_col': self.numid_verts_col[:],
-            'display_vert_index': self.display_vert_index,
+            'background_color': self.background_color[:],
+            'font_text_color': self.font_text_color[:],
             'draw_bg': self.draw_bg,
             'scale': self.get_scale()
         }.copy()
-
-    def draw_buttons_ext(self, context, layout):
-        row = layout.row(align=True)
-        box = layout.box()
-        little_width = 0.735
-
-        col = box.column(align=True)
-        row = col.row(align=True)
-        row.label(text='Colors')
 
     def get_geometry(self):
         inputs = self.inputs
