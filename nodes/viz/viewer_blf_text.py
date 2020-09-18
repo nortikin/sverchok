@@ -35,8 +35,8 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
 
           locations = [[v1, v2, v3, v4....], [v1, v2, v3, v4....]]  (two collections of vectors)
           text = [["str1, "str2", str3, "str4", ...], ["str1, "str2", str3, "str4", ...]] (two collections of text elements)
-    - user can set the follwing properties of text
-        : the viewport text-scale, globally for the text
+    - user can set the following properties of text
+        : the viewport text-scale, globally for the node
         : text anchor globally (at the moment: L R C T B )
         : text color
         : background polygon color, and whether to show it or not. 
@@ -87,7 +87,7 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
             ["left", "right", "center", "top", "bottom"], 
             ["ANCHOR_LEFT", "ANCHOR_RIGHT", "ANCHOR_CENTER", "ANCHOR_TOP", "ANCHOR_BOTTOM"]),
         description="offers a way to anchor all text items to the location",
-        default="middle", update=updateNode)
+        default="center", update=updateNode)
 
     background_color: make_color_prop("background_color", (.2, .2, .2, 1.0))
     font_text_color: make_color_prop("font_text_color", (0.6, 1, 0.3, 1.0))
