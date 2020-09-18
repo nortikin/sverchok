@@ -64,6 +64,8 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         description="in coordinate mode, Use this slider to adjust how precise you want to display each coordinate",
         update=updateNode)
 
+    skip_empty_strings: BoolProperty(name="Skip empty Strings", update=updateNode)
+
     anchor_direction: EnumProperty(
         items=items=enum_item_5(
             ["left", "right", "center", "top", "bottom"], 
