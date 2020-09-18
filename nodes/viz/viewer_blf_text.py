@@ -110,7 +110,7 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         r.prop(self, "activate", text="Show", toggle=True, icon=view_icon)
         row.prop(self, "draw_background", text="BG", toggle=True)
         new_row = layout.row()
-        new_row.prop(self, "anchor_direction")
+        new_row.prop(self, "anchor_direction", expand=True)
 
 
     def get_settings_dict(self):
@@ -204,10 +204,10 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
             return True
 
         self.use_custom_color = True
-        if not (self.activate and self.inputs['verts'].is_linked):
+        if not (self.activate and self.inputs['locations'].is_linked):
             return True
 
-        verts = self.inputs['verts'].sv_get()
+        verts = self.inputs['locations'].sv_get()
         if not verts:
             return True
 
