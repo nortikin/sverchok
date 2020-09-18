@@ -9,7 +9,7 @@
 import bpy
 from mathutils import Vector
 from mathutils.geometry import normal
-from bpy.props import (BoolProperty, FloatVectorProperty, StringProperty, FloatProperty)
+from bpy.props import (BoolProperty, FloatVectorProperty, StringProperty, FloatProperty, IntProperty)
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
@@ -17,7 +17,7 @@ from sverchok.data_structure import (
 
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.context_managers import sv_preferences
-from sverchok.utils.sv_idx_viewer28_draw import draw_indices_2D, draw_indices_2D_wbg
+from sverchok.utils.sv_idx_viewer28_draw import draw_3dview_text
 
 
 class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
@@ -34,13 +34,12 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
     def show_viewport(self, is_show: bool):
         """It should be called by node tree to show/hide objects"""
         if not self.activate:
-            # just ignore request
-            pass
+            return
+
+        if is_show:
+            self.process()
         else:
-            if is_show:
-                self.process()
-            else:
-                callback_disable(node_id(self))
+            callback_disable(node_id(self))
 
     def get_scale(self):
         return 1.0
