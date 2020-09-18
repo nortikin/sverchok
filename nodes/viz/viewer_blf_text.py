@@ -60,9 +60,6 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         else:
             callback_disable(node_id(self))
 
-    def get_scale(self):
-        return 1.0
-
     def make_color_prop(name, col):
         return FloatVectorProperty(
             name=name, description='', size=4, min=0.0, max=1.0,
@@ -126,7 +123,7 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
             'background_color': self.background_color[:],
             'font_text_color': self.font_text_color[:],
             'draw_background': self.draw_background,
-            'scale': self.get_scale()
+            'scale': self.text_node_scale
         }.copy()
 
     def get_geometry(self):
