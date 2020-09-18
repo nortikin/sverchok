@@ -24,6 +24,25 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: blf
     Tooltip:  view text in 3dview using basic blf features (size, orientation, color..)
+
+    The idea is that you can display with this node the following:
+    - if the locations socket is only connected, then you can display their coordinates 
+        : and add rounding per component
+    - if both location and text socket are connected a few things happen
+        : if the length of text and location lists aren't equal, the node matches them at runtime
+        : if a text element is empty, this is skipped
+        : the node expects this kind of input
+
+          locations = [[v1, v2, v3, v4....], [v1, v2, v3, v4....]]  (two collections of vectors)
+          text = [["str1, "str2", str3, "str4", ...], ["str1, "str2", str3, "str4", ...]] (two collections of text elements)
+    - user can set the follwing properties of text
+        : the viewport text-scale, globally for the text
+        : text anchor globally (at the moment: L R C T B )
+        : text color
+        : background polygon color, and whether to show it or not. 
+        - showing background polygon may be moderately more processor intensive, as it must first calculate all polygon sizes
+          and locations and draw them all first, then draw text over all of them.
+
     """
 
     bl_idname = 'SvViewerTextBLF'
@@ -75,6 +94,7 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
 
     background_color: make_color_prop("background_color", (.2, .2, .2, 1.0))
     font_text_color: make_color_prop("font_text_color", (0.6, 1, 0.3, 1.0))
+    text_node_scale: FloatProperty(name="text scale", default=1.0, min=0.1, update=updateNode)
 
     def sv_init(self, context):
         inew = self.inputs.new
