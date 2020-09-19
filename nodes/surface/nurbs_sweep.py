@@ -22,8 +22,7 @@ class SvNurbsSweepNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvNurbsSweepNode'
     bl_label = 'NURBS Sweep'
-    bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_SURFACE_FROM_CURVES'
+    bl_icon = 'GP_MULTIFRAME_EDITING'
 
     u_knots_modes = [
             ('UNIFY', "Unify", "Unify knot vectors of curves by inserting knots into curves where needed", 0),
