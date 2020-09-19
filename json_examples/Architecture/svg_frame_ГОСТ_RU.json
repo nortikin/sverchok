@@ -1,0 +1,2570 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {
+    "A Number": "Frame.006",
+    "Bisect": "Frame.002",
+    "Color in": "Frame.002",
+    "Component Analyzer": "Frame.002",
+    "File Path": "Frame",
+    "Fill / Stroke SVG.002": "Frame.002",
+    "Fill / Stroke SVG.003": "Frame.001",
+    "Fill / Stroke SVG.004": "Frame.006",
+    "Fill / Stroke SVG.005": "Frame.006",
+    "Fill / Stroke SVG.006": "Frame.006",
+    "Frame.001": "Frame.006",
+    "Frame.002": "Frame.005",
+    "Frame.007": "Frame.006",
+    "Frame.008": "Frame.006",
+    "Frame.009": "Frame.006",
+    "List Join": "Frame",
+    "List Join.001": "Frame.008",
+    "List Join.002": "Frame.009",
+    "List Join.003": "Frame.007",
+    "List Join.004": "Frame.006",
+    "Map Range": "Frame.002",
+    "Matrix In": "Frame.002",
+    "Matrix In.001": "Frame.002",
+    "Mesh SVG.001": "Frame.002",
+    "Mesh SVG.002": "Frame.006",
+    "Mesh SVG.003": "Frame.006",
+    "Objects in Lite": "Frame.006",
+    "Objects in Lite.001": "Frame.006",
+    "Plane": "Frame.002",
+    "Reroute": "Frame.002",
+    "Reroute.001": "Frame.002",
+    "Rotate": "Frame.002",
+    "SVG Document": "Frame",
+    "Scalar Math": "Frame.002",
+    "Scale": "Frame.002",
+    "Suzanne": "Frame.002",
+    "Text SVG": "Frame.001",
+    "Text SVG.001": "Frame.008",
+    "Text SVG.002": "Frame.008",
+    "Text SVG.003": "Frame.008",
+    "Text SVG.004": "Frame.008",
+    "Text SVG.005": "Frame.008",
+    "Text SVG.006": "Frame.009",
+    "Text SVG.007": "Frame.007",
+    "Text SVG.008": "Frame.008",
+    "Text SVG.009": "Frame.008",
+    "Text SVG.010": "Frame.008",
+    "Text SVG.011": "Frame.008",
+    "Text SVG.012": "Frame.008",
+    "Text SVG.013": "Frame.008",
+    "Text SVG.014": "Frame.008",
+    "Text SVG.015": "Frame.008",
+    "Text SVG.016": "Frame.009",
+    "Text SVG.017": "Frame.009",
+    "Text SVG.018": "Frame.009",
+    "Text SVG.019": "Frame.009",
+    "Text SVG.020": "Frame.009",
+    "Text SVG.021": "Frame.007",
+    "Text SVG.022": "Frame.007",
+    "Text SVG.023": "Frame.008",
+    "Vector in": "Frame.001",
+    "Vector in.001": "Frame.002",
+    "Vector in.002": "Frame.008",
+    "Vector in.003": "Frame.008",
+    "Vector in.004": "Frame.008",
+    "Vector in.005": "Frame.008",
+    "Vector in.006": "Frame.008",
+    "Vector in.007": "Frame.007",
+    "Vector in.008": "Frame.008",
+    "Vector in.009": "Frame.008",
+    "Vector in.010": "Frame.008",
+    "Vector in.011": "Frame.008",
+    "Vector in.012": "Frame.008",
+    "Vector in.013": "Frame.008",
+    "Vector in.014": "Frame.008",
+    "Vector in.015": "Frame.008",
+    "Vector in.016": "Frame.008",
+    "Vector in.017": "Frame.009",
+    "Vector in.018": "Frame.009",
+    "Vector in.019": "Frame.009",
+    "Vector in.020": "Frame.009",
+    "Vector in.021": "Frame.007",
+    "Vector in.022": "Frame.007",
+    "Vector in.023": "Frame.009",
+    "Vector in.024": "Frame.009",
+    "Vector out": "Frame.002",
+    "Viewer Draw Mk3": "Frame",
+    "Viewer Draw Mk3.003": "Frame.006",
+    "Viewer Draw Mk3.004": "Frame.006",
+    "Viewer Draw Mk3.005": "Frame.002",
+    "Viewer Draw Mk3.006": "Frame.002",
+    "Viewer Draw Mk3.007": "Frame.002"
+  },
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2378.0830078125,
+        -1104.883316040039
+      ],
+      "params": {
+        "float_": 0.30000001192092896,
+        "float_draft_": 0.0,
+        "int_": 0,
+        "int_draft_": 0
+      },
+      "width": 140.0
+    },
+    "Bisect": {
+      "bl_idname": "SvBisectNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2149.300976753235,
+        876.5763397216797
+      ],
+      "params": {
+        "inner": 1,
+        "outer": 0
+      },
+      "width": 140.0
+    },
+    "Color in": {
+      "bl_idname": "SvColorsInNodeMK1",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1481.1812257766724,
+        582.4952392578125
+      ],
+      "params": {
+        "a_": 1.0,
+        "s_": 0.800000011920929,
+        "selected_mode": "HSV",
+        "v_": 1.0
+      },
+      "width": 110.0
+    },
+    "Component Analyzer": {
+      "bl_idname": "SvComponentAnalyzerNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1873.4574708938599,
+        570.5930786132812
+      ],
+      "params": {
+        "face_mode": "Normal"
+      },
+      "width": 140.0
+    },
+    "File Path": {
+      "bl_idname": "SvFilePathNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        992.4474487304688,
+        -234.642333984375
+      ],
+      "params": {
+        "directory": "/home/ololo/Documents/BLENDER/SVERCHOK/Blends2.90/svg/",
+        "files_num": 0
+      },
+      "string_storage": "{\"filenames\": [{\"name\": \"\"}], \"directory\": \"/home/ololo/Documents/BLENDER/SVERCHOK/Blends2.90/svg/\"}",
+      "width": 140.0
+    },
+    "Fill / Stroke SVG.002": {
+      "bl_idname": "SvSvgFillStrokeNodeMk2",
+      "custom_socket_props": {
+        "0": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1321.0047121047974,
+        624.1259155273438
+      ],
+      "params": {
+        "fill_color": [
+          0.10000000149011612,
+          0.30000001192092896,
+          0.5,
+          0.5
+        ],
+        "fill_mode": "FLAT",
+        "stroke_color": [
+          0.028503872454166412,
+          0.20367328822612762,
+          0.8485279083251953,
+          1.0
+        ],
+        "stroke_mode": "FLAT",
+        "stroke_width": 0.05000000074505806
+      },
+      "width": 140.0
+    },
+    "Fill / Stroke SVG.003": {
+      "bl_idname": "SvSvgFillStrokeNodeMk2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        47.22650146484375,
+        -396.83927154541016
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Fill / Stroke SVG.004": {
+      "bl_idname": "SvSvgFillStrokeNodeMk2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -478.73602294921875,
+        -397.5717315673828
+      ],
+      "params": {
+        "fill_mode": "NONE",
+        "stroke_mode": "FLAT",
+        "stroke_width": 0.10000000149011612
+      },
+      "width": 140.0
+    },
+    "Fill / Stroke SVG.005": {
+      "bl_idname": "SvSvgFillStrokeNodeMk2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2376.686767578125,
+        -1202.393325805664
+      ],
+      "params": {
+        "fill_mode": "FLAT",
+        "stroke_mode": "NONE",
+        "stroke_width": 0.004999999888241291
+      },
+      "width": 140.0
+    },
+    "Fill / Stroke SVG.006": {
+      "bl_idname": "SvSvgFillStrokeNodeMk2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -478.73602294921875,
+        -654.6791534423828
+      ],
+      "params": {
+        "fill_mode": "NONE",
+        "stroke_mode": "FLAT",
+        "stroke_width": 0.05000000074505806
+      },
+      "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.006851916667073965,
+        0.8611325025558472,
+        1.0
+      ],
+      "height": 455.357666015625,
+      "hide": false,
+      "label": "\u0432\u044b\u0432\u043e\u0434",
+      "location": [
+        177.3408203125,
+        -526.910400390625
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 689.0922241210938
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "height": 349.3687438964844,
+      "hide": false,
+      "label": "\u041d\u0410\u0417\u0412\u0410\u041d\u0418\u0415",
+      "location": [
+        374.7153015136719,
+        170.12276458740234
+      ],
+      "params": {},
+      "width": 431.8487548828125
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.03076334111392498,
+        0.9349285364151001,
+        0.10699035227298737
+      ],
+      "height": 1124.7279052734375,
+      "hide": false,
+      "label": "\u0433\u043e\u043b\u043e\u0432\u0430",
+      "location": [
+        -196.63642597198486,
+        571.9842681884766
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 1672.991455078125
+    },
+    "Frame.005": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 1184.7279052734375,
+      "hide": false,
+      "label": "\u0441\u043e\u0434\u0435\u0440\u0436\u0438\u043c\u043e\u0435",
+      "location": [
+        -210.64561462402344,
+        337.066650390625
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 1732.9913330078125
+    },
+    "Frame.006": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.67134690284729,
+        0.5706473588943481,
+        1.0
+      ],
+      "height": 1875.7685546875,
+      "hide": false,
+      "label": "\u043e\u0444\u043e\u0440\u043c\u043b\u0435\u043d\u0438\u0435",
+      "location": [
+        -49.90087890625,
+        89.69297790527344
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 2890.80419921875
+    },
+    "Frame.007": {
+      "bl_idname": "NodeFrame",
+      "height": 298.9739990234375,
+      "hide": false,
+      "label": "\u041b\u0418\u0421\u0422\u042b",
+      "location": [
+        -54.75731658935547,
+        94.55487251281738
+      ],
+      "params": {},
+      "width": 1207.815673828125
+    },
+    "Frame.008": {
+      "bl_idname": "NodeFrame",
+      "height": 831.52880859375,
+      "hide": false,
+      "label": "\u0421\u041e\u0414\u0415\u0420\u0416\u0410\u041d\u0418\u0415",
+      "location": [
+        -60.14175796508789,
+        75.68814659118652
+      ],
+      "params": {},
+      "width": 1863.2464599609375
+    },
+    "Frame.009": {
+      "bl_idname": "NodeFrame",
+      "height": 560.3052978515625,
+      "hide": false,
+      "label": "\u0418\u0417\u041c\u042b",
+      "location": [
+        -36.20475196838379,
+        153.1888656616211
+      ],
+      "params": {},
+      "width": 1195.390380859375
+    },
+    "List Join": {
+      "bl_idname": "ListJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        997.798095703125,
+        -370.1383361816406
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Join.001": {
+      "bl_idname": "ListJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -229.2838478088379,
+        -1247.4710330963135
+      ],
+      "params": {
+        "mix_check": 0
+      },
+      "width": 140.0
+    },
+    "List Join.002": {
+      "bl_idname": "ListJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -889.0945835113525,
+        -430.0341567993164
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Join.003": {
+      "bl_idname": "ListJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -883.3569259643555,
+        -939.4096050262451
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Join.004": {
+      "bl_idname": "ListJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        167.1998748779297,
+        -735.4558868408203
+      ],
+      "params": {
+        "mix_check": 0
+      },
+      "width": 140.0
+    },
+    "Map Range": {
+      "bl_idname": "SvMapRangeNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1671.8512697219849,
+        421.3542785644531
+      ],
+      "params": {
+        "new_max": 0.6499999761581421,
+        "new_min": 0.550000011920929
+      },
+      "width": 140.0
+    },
+    "Matrix In": {
+      "bl_idname": "SvMatrixInNodeMK4",
+      "custom_socket_props": {
+        "0": {
+          "expanded": true
+        },
+        "6": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2361.344433784485,
+        770.9859771728516
+      ],
+      "params": {
+        "angle": 90.0,
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "location_": [
+          0.0,
+          -0.32999998331069946,
+          0.0
+        ]
+      },
+      "width": 140.0
+    },
+    "Matrix In.001": {
+      "bl_idname": "SvMatrixInNodeMK4",
+      "custom_socket_props": {
+        "0": {
+          "expanded": true
+        },
+        "1": {
+          "expanded": true
+        },
+        "6": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1328.7859621047974,
+        975.1762847900391
+      ],
+      "params": {
+        "angle": 74.27999877929688,
+        "angle_x": 10.109999656677246,
+        "angle_y": 24.65999984741211,
+        "angle_z": 0.0,
+        "axis": [
+          0.0,
+          0.20000000298023224,
+          0.0
+        ],
+        "location_": [
+          4.440000057220459,
+          -2.9600000381469727,
+          7.010000228881836
+        ],
+        "rotation_mode": "EULER",
+        "scale": [
+          0.07000002264976501,
+          0.07000002264976501,
+          0.07000002264976501
+        ]
+      },
+      "width": 140.0
+    },
+    "Mesh SVG.001": {
+      "bl_idname": "SvSvgMeshNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1106.0565309524536,
+        903.0402984619141
+      ],
+      "params": {
+        "elements_sort": 1,
+        "projection_mode": "Perspective",
+        "sort_mode": "MIN"
+      },
+      "width": 140.0
+    },
+    "Mesh SVG.002": {
+      "bl_idname": "SvSvgMeshNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -298.11163330078125,
+        -398.36158752441406
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Mesh SVG.003": {
+      "bl_idname": "SvSvgMeshNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -298.11163330078125,
+        -655.4689483642578
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Objects in Lite": {
+      "bl_idname": "SvObjInLite",
+      "color": [
+        0.904932975769043,
+        1.0,
+        0.883421003818512
+      ],
+      "geom": "{\"Vertices\": [20.5, 0.5, 0.0, 2.0, 29.200000762939453, 0.0, 2.0, 0.5, 0.0, 20.5, 29.200000762939453, 0.0, 20.5, 6.0, 0.0, 6.0, 6.0, 0.0, 7.5, 6.0, 0.0, 5.0, 6.0, 0.0, 4.0, 6.0, 0.0, 3.0, 6.0, 0.0, 15.5, 0.5, 0.0, 2.0, 4.0, 0.0, 2.0, 3.5, 0.0, 20.5, 2.0, 0.0, 20.5, 3.0, 0.0, 20.5, 3.5, 0.0, 20.5, 5.0, 0.0, 8.5, 3.5, 0.0, 8.5, 4.0, 0.0, 3.0, 3.5, 0.0, 4.0, 0.5, 0.0, 5.0, 3.5, 0.0, 7.5, 0.5, 0.0, 6.0, 0.5, 0.0, 15.5, 3.5, 0.0, 17.0, 2.0, 0.0, 17.0, 3.5, 0.0, 8.5, 0.5, 0.0, 18.5, 2.0, 0.0, 2.0, 6.0, 0.0, 18.5, 3.5, 0.0, 8.5, 2.0, 0.0, 2.0, 0.5, 0.0, 15.5, 3.0, 0.0, 8.5, 3.5, 0.0, 8.5, 5.0, 0.0, 8.5, 6.0, 0.0], \"Edges\": [1, 2, 1, 3, 0, 3, 11, 12, 27, 36, 10, 24, 8, 20, 7, 21, 9, 19, 12, 17, 11, 18, 6, 22, 5, 23, 25, 26, 0, 32, 4, 29, 13, 31, 14, 33, 15, 34, 16, 35, 28, 30], \"Polygons\": [], \"MaterialIdx\": [], \"Matrix\": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]}",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0436\u0438\u0440\u043d\u043e\u0435",
+      "location": [
+        -2381.72900390625,
+        -408.29603576660156
+      ],
+      "params": {
+        "currently_storing": 1,
+        "obj_name": "Plane"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Objects in Lite.001": {
+      "bl_idname": "SvObjInLite",
+      "color": [
+        0.904932975769043,
+        1.0,
+        0.883421003818512
+      ],
+      "geom": "{\"Vertices\": [8.5, 1.0, 0.0, 8.5, 1.5, 0.0, 8.5, 2.0, 0.0, 8.5, 2.5, 0.0, 8.5, 3.0, 0.0, 8.5, 4.5, 0.0, 8.5, 5.0, 0.0, 8.5, 5.5, 0.0, 2.0, 1.0, 0.0, 2.0, 1.5, 0.0, 2.0, 2.0, 0.0, 2.0, 2.5, 0.0, 2.0, 3.0, 0.0, 2.0, 4.5, 0.0, 2.0, 5.0, 0.0, 2.0, 5.5, 0.0], \"Edges\": [0, 8, 1, 9, 2, 10, 3, 11, 4, 12, 5, 13, 6, 14, 7, 15], \"Polygons\": [], \"MaterialIdx\": [], \"Matrix\": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]}",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0442\u043e\u043d\u043a\u043e\u0435",
+      "location": [
+        -2381.72900390625,
+        -666.1614532470703
+      ],
+      "params": {
+        "currently_storing": 1,
+        "obj_name": "Plane.001"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Plane": {
+      "bl_idname": "SvPlaneNodeMk3",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1494.9424562454224,
+        1267.7279205322266
+      ],
+      "params": {
+        "sizex": 50.0,
+        "sizey": 50.0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Reroute": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1917.4086427688599,
+        831.1408233642578
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Reroute.001": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1900.4218263626099,
+        873.7768096923828
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Rotate": {
+      "bl_idname": "SvRotationNodeMk3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1733.6237306594849,
+        951.6496734619141
+      ],
+      "params": {
+        "angle_": -90.0,
+        "axis_": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "width": 140.0
+    },
+    "SVG Document": {
+      "bl_idname": "SvSvgDocumentNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1221.5396728515625,
+        -272.3248596191406
+      ],
+      "params": {
+        "file_name": "default"
+      },
+      "width": 200.0
+    },
+    "Scalar Math": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1678.7548341751099,
+        541.3441162109375
+      ],
+      "params": {
+        "current_op": "ABS",
+        "input_mode_two": "Float"
+      },
+      "width": 140.0
+    },
+    "Scale": {
+      "bl_idname": "SvScaleNodeMk3",
+      "custom_socket_props": {
+        "2": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1521.8444337844849,
+        967.8166046142578
+      ],
+      "params": {
+        "scale": [
+          5.0,
+          5.0,
+          5.0
+        ]
+      },
+      "width": 140.0
+    },
+    "Suzanne": {
+      "bl_idname": "SvSuzanneNode",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2354.71772480011,
+        875.0158538818359
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Text SVG": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        279.07525634765625,
+        -263.23123931884766
+      ],
+      "params": {
+        "font_alignment": "middle",
+        "font_size": 0.5,
+        "text": "\u041d\u0410\u0417\u0412\u0410\u041d\u0418\u0415 \u0427\u0415\u0420\u0422\u0415\u0416\u0410",
+        "weight": "bold"
+      },
+      "width": 140.0
+    },
+    "Text SVG.001": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1741.5217628479004,
+        -1521.868616104126
+      ],
+      "params": {
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u0413\u0410\u041f"
+      },
+      "width": 140.0
+    },
+    "Text SVG.002": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1741.5217628479004,
+        -1778.4043827056885
+      ],
+      "params": {
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u0413\u0418\u041f"
+      },
+      "width": 140.0
+    },
+    "Text SVG.003": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1741.5217628479004,
+        -1261.866418838501
+      ],
+      "params": {
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u0420\u0410\u0417\u0420\u0410\u0411\u041e\u0422\u0410\u041b"
+      },
+      "width": 140.0
+    },
+    "Text SVG.004": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0413\u0410\u041f",
+      "location": [
+        -1420.087802886963,
+        -1527.0733280181885
+      ],
+      "params": {
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u0424\u0410\u041c\u0418\u041b\u0418\u042f2"
+      },
+      "width": 140.0
+    },
+    "Text SVG.005": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0413\u0418\u041f",
+      "location": [
+        -1420.087802886963,
+        -1780.8692264556885
+      ],
+      "params": {
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u0424\u0410\u041c\u0418\u041b\u0418\u042f3"
+      },
+      "width": 140.0
+    },
+    "Text SVG.006": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1099.4558506011963,
+        -620.4646377563477
+      ],
+      "params": {
+        "font_alignment": "middle",
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u0414\u0410\u0422\u0410"
+      },
+      "width": 140.0
+    },
+    "Text SVG.007": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1741.4987716674805,
+        -931.0260601043701
+      ],
+      "params": {
+        "font_alignment": "middle",
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u0421\u0422\u0410\u0414\u0418\u042f"
+      },
+      "width": 140.0
+    },
+    "Text SVG.008": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0421\u0422\u0410\u0414\u0418\u042f",
+      "location": [
+        -1088.799716949463,
+        -1265.956995010376
+      ],
+      "params": {
+        "font_alignment": "middle",
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u0420\u0414"
+      },
+      "width": 140.0
+    },
+    "Text SVG.009": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u041b\u0418\u0421\u0422",
+      "location": [
+        -1088.799716949463,
+        -1510.073205947876
+      ],
+      "params": {
+        "font_alignment": "middle",
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "1"
+      },
+      "width": 140.0
+    },
+    "Text SVG.010": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u041b\u0418\u0421\u0422\u041e\u0412",
+      "location": [
+        -1088.799716949463,
+        -1768.382287979126
+      ],
+      "params": {
+        "font_alignment": "middle",
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "16"
+      },
+      "width": 140.0
+    },
+    "Text SVG.011": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0428\u0418\u0424\u0420",
+      "location": [
+        -760.2253761291504,
+        -1265.6133670806885
+      ],
+      "params": {
+        "font_alignment": "middle",
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u041d\u0410\u0418\u041c\u0415\u041d\u041e\u0412\u0410\u041d\u0418\u0415 \u0420\u0410\u0417\u0414\u0415\u041b\u0410 | \u0422\u041e\u041c\u0410 | \u0428\u0418\u0424\u0420"
+      },
+      "width": 140.0
+    },
+    "Text SVG.012": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u041e\u0411\u042a\u0415\u041a\u0422",
+      "location": [
+        -761.1266212463379,
+        -1527.6875858306885
+      ],
+      "params": {
+        "font_alignment": "middle",
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u041d\u0410\u0418\u041c\u0415\u041d\u041e\u0412\u0410\u041d\u0418\u0415 \u041e\u0411\u042a\u0415\u041a\u0422\u0410"
+      },
+      "width": 140.0
+    },
+    "Text SVG.013": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0417\u0414\u0410\u041d\u0418\u0415",
+      "location": [
+        -758.3270606994629,
+        -1777.661096572876
+      ],
+      "params": {
+        "font_alignment": "middle",
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u041d\u0410\u0418\u041c\u0415\u041d\u041e\u0412\u0410\u041d\u0418\u0415 \u0417\u0414\u0410\u041d\u0418\u042f"
+      },
+      "width": 140.0
+    },
+    "Text SVG.014": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0421\u041e\u0414\u0415\u0420\u0416\u0418\u041c\u041e\u0415",
+      "location": [
+        -439.3508644104004,
+        -1261.7115116119385
+      ],
+      "params": {
+        "font_alignment": "middle",
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u0421\u041e\u0414\u0415\u0420\u0416\u0418\u041c\u041e\u0415 \u041b\u0418\u0421\u0422\u0410"
+      },
+      "width": 140.0
+    },
+    "Text SVG.015": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u041e\u0420\u0413\u0410\u041d\u0418\u0417\u0410\u0426\u0418\u042f",
+      "location": [
+        -439.3508644104004,
+        -1511.573938369751
+      ],
+      "params": {
+        "font_alignment": "middle",
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u041e\u0420\u0413\u0410\u041d\u0418\u0417\u0410\u0426\u0418\u042f"
+      },
+      "width": 140.0
+    },
+    "Text SVG.016": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1099.4558506011963,
+        -371.2304458618164
+      ],
+      "params": {
+        "font_alignment": "middle",
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u041b\u0418\u0421\u0422"
+      },
+      "width": 140.0
+    },
+    "Text SVG.017": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1425.2100009918213,
+        -626.3769912719727
+      ],
+      "params": {
+        "font_alignment": "middle",
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u041f\u041e\u0414\u041f."
+      },
+      "width": 140.0
+    },
+    "Text SVG.018": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1425.2100009918213,
+        -364.6946792602539
+      ],
+      "params": {
+        "font_alignment": "middle",
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u041a\u041e\u041b.\u0423\u0427"
+      },
+      "width": 140.0
+    },
+    "Text SVG.019": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1734.8110752105713,
+        -364.6946792602539
+      ],
+      "params": {
+        "font_alignment": "middle",
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u0418\u0417\u041c."
+      },
+      "width": 140.0
+    },
+    "Text SVG.020": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1734.8110752105713,
+        -626.3769912719727
+      ],
+      "params": {
+        "font_alignment": "middle",
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u2116\u0414\u041e\u041a."
+      },
+      "width": 140.0
+    },
+    "Text SVG.021": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1427.4553146362305,
+        -931.0260601043701
+      ],
+      "params": {
+        "font_alignment": "middle",
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u041b\u0418\u0421\u0422"
+      },
+      "width": 140.0
+    },
+    "Text SVG.022": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1094.2961349487305,
+        -931.0260601043701
+      ],
+      "params": {
+        "font_alignment": "middle",
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u041b\u0418\u0421\u0422\u041e\u0412"
+      },
+      "width": 140.0
+    },
+    "Text SVG.023": {
+      "bl_idname": "SvSvgTextNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0420\u0410\u0417\u0420\u0410\u0411\u041e\u0422\u0410\u041b",
+      "location": [
+        -1420.087802886963,
+        -1265.874963760376
+      ],
+      "params": {
+        "font_family": "monospace",
+        "font_size": 0.25,
+        "text": "\u0424\u0410\u041c\u0418\u041b\u0418\u042f1"
+      },
+      "width": 140.0
+    },
+    "Vector in": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        79.07525634765625,
+        -263.23123931884766
+      ],
+      "params": {
+        "x_": 11.5,
+        "y_": 28.5
+      },
+      "width": 100.0
+    },
+    "Vector in.001": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2332.785840034485,
+        487.9129943847656
+      ],
+      "params": {
+        "x_": 15.120000839233398,
+        "y_": 13.199999809265137,
+        "z_": 0.0
+      },
+      "width": 100.0
+    },
+    "Vector in.002": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1892.5303077697754,
+        -1782.732629776001
+      ],
+      "params": {
+        "x_": 2.0999999046325684,
+        "y_": 2.0999999046325684
+      },
+      "width": 100.0
+    },
+    "Vector in.003": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1548.079013824463,
+        -1270.2032108306885
+      ],
+      "params": {
+        "x_": 4.099999904632568,
+        "y_": 3.0999999046325684
+      },
+      "width": 100.0
+    },
+    "Vector in.004": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1548.079013824463,
+        -1531.4014530181885
+      ],
+      "params": {
+        "x_": 4.099999904632568,
+        "y_": 2.5999999046325684
+      },
+      "width": 100.0
+    },
+    "Vector in.005": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1548.079013824463,
+        -1785.1973514556885
+      ],
+      "params": {
+        "x_": 4.099999904632568,
+        "y_": 2.0999999046325684
+      },
+      "width": 100.0
+    },
+    "Vector in.006": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1892.5303077697754,
+        -1524.860803604126
+      ],
+      "params": {
+        "x_": 2.0999999046325684,
+        "y_": 2.5999999046325684
+      },
+      "width": 100.0
+    },
+    "Vector in.007": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1891.1725997924805,
+        -932.6820659637451
+      ],
+      "params": {
+        "x_": 16.25,
+        "y_": 3.0999999046325684
+      },
+      "width": 100.0
+    },
+    "Vector in.008": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1238.473545074463,
+        -1267.613000869751
+      ],
+      "params": {
+        "x_": 16.25,
+        "y_": 2.450000047683716
+      },
+      "width": 100.0
+    },
+    "Vector in.009": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1238.473545074463,
+        -1511.729211807251
+      ],
+      "params": {
+        "x_": 17.75,
+        "y_": 2.450000047683716
+      },
+      "width": 100.0
+    },
+    "Vector in.010": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1238.473545074463,
+        -1770.038293838501
+      ],
+      "params": {
+        "x_": 19.5,
+        "y_": 2.450000047683716
+      },
+      "width": 100.0
+    },
+    "Vector in.011": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -909.8992042541504,
+        -1267.2693729400635
+      ],
+      "params": {
+        "x_": 14.5,
+        "y_": 5.349999904632568
+      },
+      "width": 100.0
+    },
+    "Vector in.012": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -910.8004493713379,
+        -1529.3435916900635
+      ],
+      "params": {
+        "x_": 14.5,
+        "y_": 4.099999904632568
+      },
+      "width": 100.0
+    },
+    "Vector in.013": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -908.0008888244629,
+        -1779.317102432251
+      ],
+      "params": {
+        "x_": 12.0,
+        "y_": 2.5999999046325684
+      },
+      "width": 100.0
+    },
+    "Vector in.014": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -589.0246925354004,
+        -1263.3675174713135
+      ],
+      "params": {
+        "x_": 12.0,
+        "y_": 1.100000023841858
+      },
+      "width": 100.0
+    },
+    "Vector in.015": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -589.0246925354004,
+        -1513.229944229126
+      ],
+      "params": {
+        "x_": 18.0,
+        "y_": 1.100000023841858
+      },
+      "width": 100.0
+    },
+    "Vector in.016": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1891.1955909729004,
+        -1263.522424697876
+      ],
+      "params": {
+        "x_": 2.0999999046325684,
+        "y_": 3.0999999046325684
+      },
+      "width": 100.0
+    },
+    "Vector in.017": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1574.8838291168213,
+        -628.0329971313477
+      ],
+      "params": {
+        "x_": 6.75,
+        "y_": 3.5999999046325684
+      },
+      "width": 100.0
+    },
+    "Vector in.018": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1574.8838291168213,
+        -366.3506851196289
+      ],
+      "params": {
+        "x_": 3.5,
+        "y_": 3.5999999046325684
+      },
+      "width": 100.0
+    },
+    "Vector in.019": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1884.4849033355713,
+        -366.3506851196289
+      ],
+      "params": {
+        "x_": 2.5,
+        "y_": 3.5999999046325684
+      },
+      "width": 100.0
+    },
+    "Vector in.020": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1884.4849033355713,
+        -628.0329971313477
+      ],
+      "params": {
+        "x_": 5.5,
+        "y_": 3.5999999046325684
+      },
+      "width": 100.0
+    },
+    "Vector in.021": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1577.1291427612305,
+        -932.6820659637451
+      ],
+      "params": {
+        "x_": 17.75,
+        "y_": 3.0999999046325684
+      },
+      "width": 100.0
+    },
+    "Vector in.022": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1243.9699630737305,
+        -932.6820659637451
+      ],
+      "params": {
+        "x_": 19.5,
+        "y_": 3.0999999046325684
+      },
+      "width": 100.0
+    },
+    "Vector in.023": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1249.1296787261963,
+        -372.8864517211914
+      ],
+      "params": {
+        "x_": 4.5,
+        "y_": 3.5999999046325684
+      },
+      "width": 100.0
+    },
+    "Vector in.024": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1249.1296787261963,
+        -622.1206436157227
+      ],
+      "params": {
+        "x_": 8.0,
+        "y_": 3.5999999046325684
+      },
+      "width": 100.0
+    },
+    "Vector out": {
+      "bl_idname": "VectorsOutNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1672.0271730422974,
+        680.5901489257812
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Viewer Draw Mk3": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1481.5396728515625,
+        -272.3248596191406
+      ],
+      "params": {
+        "display_verts": 0,
+        "edge_color": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "use_dashed": 1
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw Mk3.003": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2170.953369140625,
+        -405.4458465576172
+      ],
+      "params": {
+        "display_faces": 0,
+        "display_verts": 0,
+        "edge_color": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "line_width": 2
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw Mk3.004": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2170.953369140625,
+        -664.6557769775391
+      ],
+      "params": {
+        "display_faces": 0,
+        "display_verts": 0,
+        "edge_color": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "line_width": 1
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw Mk3.005": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -888.3530397415161,
+        892.4052581787109
+      ],
+      "params": {
+        "display_edges": 0,
+        "display_verts": 0,
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw Mk3.006": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1141.6847047805786,
+        1161.3761138916016
+      ],
+      "params": {
+        "display_edges": 1,
+        "display_faces": 0,
+        "display_verts": 0,
+        "edge_color": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw Mk3.007": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -947.2707033157349,
+        1161.8604888916016
+      ],
+      "params": {
+        "display_faces": 0,
+        "display_verts": 0,
+        "edge_color": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Vector in.019",
+      0,
+      "Text SVG.019",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.019",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.019",
+      4
+    ],
+    [
+      "Vector in.002",
+      0,
+      "Text SVG.002",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.002",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.002",
+      4
+    ],
+    [
+      "Suzanne",
+      0,
+      "Bisect",
+      0
+    ],
+    [
+      "Suzanne",
+      2,
+      "Bisect",
+      1
+    ],
+    [
+      "Matrix In",
+      0,
+      "Bisect",
+      2
+    ],
+    [
+      "Bisect",
+      "vertices",
+      "Reroute.001",
+      "Input"
+    ],
+    [
+      "Bisect",
+      "polygons",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Component Analyzer",
+      "Vertices"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Component Analyzer",
+      "Faces"
+    ],
+    [
+      "Component Analyzer",
+      0,
+      "Vector out",
+      0
+    ],
+    [
+      "Vector out",
+      2,
+      "Scalar Math",
+      0
+    ],
+    [
+      "Vector in.006",
+      0,
+      "Text SVG.001",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.001",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.001",
+      4
+    ],
+    [
+      "Vector in.010",
+      0,
+      "Text SVG.010",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.010",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.010",
+      4
+    ],
+    [
+      "Vector in.021",
+      0,
+      "Text SVG.021",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.021",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.021",
+      4
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Rotate",
+      "Vertices"
+    ],
+    [
+      "Rotate",
+      0,
+      "Scale",
+      0
+    ],
+    [
+      "Scale",
+      0,
+      "Viewer Draw Mk3.006",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Viewer Draw Mk3.006",
+      "faces"
+    ],
+    [
+      "Vector in.015",
+      0,
+      "Text SVG.015",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.015",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.015",
+      4
+    ],
+    [
+      "Vector in.009",
+      0,
+      "Text SVG.009",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.009",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.009",
+      4
+    ],
+    [
+      "Vector in.011",
+      0,
+      "Text SVG.011",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.011",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.011",
+      4
+    ],
+    [
+      "Objects in Lite",
+      0,
+      "Mesh SVG.002",
+      0
+    ],
+    [
+      "Objects in Lite",
+      1,
+      "Mesh SVG.002",
+      1
+    ],
+    [
+      "Fill / Stroke SVG.004",
+      0,
+      "Mesh SVG.002",
+      4
+    ],
+    [
+      "Vector in.018",
+      0,
+      "Text SVG.018",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.018",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.018",
+      4
+    ],
+    [
+      "Vector in.024",
+      0,
+      "Text SVG.006",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.006",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.006",
+      4
+    ],
+    [
+      "Vector in.023",
+      0,
+      "Text SVG.016",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.016",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.016",
+      4
+    ],
+    [
+      "Vector in.017",
+      0,
+      "Text SVG.017",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.017",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.017",
+      4
+    ],
+    [
+      "Vector in.020",
+      0,
+      "Text SVG.020",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.020",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.020",
+      4
+    ],
+    [
+      "Text SVG.019",
+      0,
+      "List Join.002",
+      0
+    ],
+    [
+      "Text SVG.018",
+      0,
+      "List Join.002",
+      1
+    ],
+    [
+      "Text SVG.016",
+      0,
+      "List Join.002",
+      2
+    ],
+    [
+      "Text SVG.020",
+      0,
+      "List Join.002",
+      3
+    ],
+    [
+      "Text SVG.017",
+      0,
+      "List Join.002",
+      4
+    ],
+    [
+      "Text SVG.006",
+      0,
+      "List Join.002",
+      5
+    ],
+    [
+      "Vector in.022",
+      0,
+      "Text SVG.022",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.022",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.022",
+      4
+    ],
+    [
+      "Vector in.007",
+      0,
+      "Text SVG.007",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.007",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.007",
+      4
+    ],
+    [
+      "Text SVG.007",
+      0,
+      "List Join.003",
+      0
+    ],
+    [
+      "Text SVG.021",
+      0,
+      "List Join.003",
+      1
+    ],
+    [
+      "Text SVG.022",
+      0,
+      "List Join.003",
+      2
+    ],
+    [
+      "Vector in.016",
+      0,
+      "Text SVG.003",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.003",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.003",
+      4
+    ],
+    [
+      "Vector in.012",
+      0,
+      "Text SVG.012",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.012",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.012",
+      4
+    ],
+    [
+      "Vector in.008",
+      0,
+      "Text SVG.008",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.008",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.008",
+      4
+    ],
+    [
+      "Vector in.003",
+      0,
+      "Text SVG.023",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.023",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.023",
+      4
+    ],
+    [
+      "Vector in.013",
+      0,
+      "Text SVG.013",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.013",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.013",
+      4
+    ],
+    [
+      "Vector in.005",
+      0,
+      "Text SVG.005",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.005",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.005",
+      4
+    ],
+    [
+      "Vector in.004",
+      0,
+      "Text SVG.004",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.004",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.004",
+      4
+    ],
+    [
+      "Vector in.014",
+      0,
+      "Text SVG.014",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Text SVG.014",
+      2
+    ],
+    [
+      "Fill / Stroke SVG.005",
+      0,
+      "Text SVG.014",
+      4
+    ],
+    [
+      "Text SVG.015",
+      0,
+      "List Join.001",
+      0
+    ],
+    [
+      "Text SVG.014",
+      0,
+      "List Join.001",
+      1
+    ],
+    [
+      "Text SVG.003",
+      0,
+      "List Join.001",
+      2
+    ],
+    [
+      "Text SVG.001",
+      0,
+      "List Join.001",
+      3
+    ],
+    [
+      "Text SVG.002",
+      0,
+      "List Join.001",
+      4
+    ],
+    [
+      "Text SVG.023",
+      0,
+      "List Join.001",
+      5
+    ],
+    [
+      "Text SVG.004",
+      0,
+      "List Join.001",
+      6
+    ],
+    [
+      "Text SVG.005",
+      0,
+      "List Join.001",
+      7
+    ],
+    [
+      "Text SVG.013",
+      0,
+      "List Join.001",
+      8
+    ],
+    [
+      "Text SVG.012",
+      0,
+      "List Join.001",
+      9
+    ],
+    [
+      "Text SVG.008",
+      0,
+      "List Join.001",
+      10
+    ],
+    [
+      "Text SVG.009",
+      0,
+      "List Join.001",
+      11
+    ],
+    [
+      "Text SVG.010",
+      0,
+      "List Join.001",
+      12
+    ],
+    [
+      "Text SVG.011",
+      0,
+      "List Join.001",
+      13
+    ],
+    [
+      "Objects in Lite.001",
+      0,
+      "Mesh SVG.003",
+      0
+    ],
+    [
+      "Objects in Lite.001",
+      1,
+      "Mesh SVG.003",
+      1
+    ],
+    [
+      "Fill / Stroke SVG.006",
+      0,
+      "Mesh SVG.003",
+      4
+    ],
+    [
+      "Mesh SVG.002",
+      0,
+      "List Join.004",
+      0
+    ],
+    [
+      "Mesh SVG.003",
+      0,
+      "List Join.004",
+      1
+    ],
+    [
+      "List Join.002",
+      0,
+      "List Join.004",
+      2
+    ],
+    [
+      "List Join.003",
+      0,
+      "List Join.004",
+      3
+    ],
+    [
+      "List Join.001",
+      0,
+      "List Join.004",
+      4
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Map Range",
+      0
+    ],
+    [
+      "Map Range",
+      0,
+      "Color in",
+      0
+    ],
+    [
+      "Color in",
+      0,
+      "Fill / Stroke SVG.002",
+      0
+    ],
+    [
+      "Scale",
+      0,
+      "Mesh SVG.001",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Mesh SVG.001",
+      "Polygons / Edges"
+    ],
+    [
+      "Matrix In.001",
+      0,
+      "Mesh SVG.001",
+      2
+    ],
+    [
+      "Vector in.001",
+      0,
+      "Mesh SVG.001",
+      3
+    ],
+    [
+      "Fill / Stroke SVG.002",
+      0,
+      "Mesh SVG.001",
+      4
+    ],
+    [
+      "Mesh SVG.001",
+      1,
+      "Viewer Draw Mk3.005",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Viewer Draw Mk3.005",
+      "faces"
+    ],
+    [
+      "Objects in Lite.001",
+      0,
+      "Viewer Draw Mk3.004",
+      0
+    ],
+    [
+      "Objects in Lite.001",
+      1,
+      "Viewer Draw Mk3.004",
+      1
+    ],
+    [
+      "Plane",
+      0,
+      "Viewer Draw Mk3.007",
+      0
+    ],
+    [
+      "Plane",
+      2,
+      "Viewer Draw Mk3.007",
+      2
+    ],
+    [
+      "Matrix In.001",
+      0,
+      "Viewer Draw Mk3.007",
+      3
+    ],
+    [
+      "Vector in",
+      0,
+      "Text SVG",
+      0
+    ],
+    [
+      "Fill / Stroke SVG.003",
+      0,
+      "Text SVG",
+      4
+    ],
+    [
+      "List Join.004",
+      0,
+      "List Join",
+      2
+    ],
+    [
+      "Text SVG",
+      0,
+      "List Join",
+      3
+    ],
+    [
+      "Mesh SVG.001",
+      0,
+      "List Join",
+      4
+    ],
+    [
+      "File Path",
+      0,
+      "SVG Document",
+      0
+    ],
+    [
+      "List Join",
+      0,
+      "SVG Document",
+      2
+    ],
+    [
+      "Objects in Lite",
+      0,
+      "Viewer Draw Mk3.003",
+      0
+    ],
+    [
+      "Objects in Lite",
+      1,
+      "Viewer Draw Mk3.003",
+      1
+    ],
+    [
+      "SVG Document",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "SVG Document",
+      1,
+      "Viewer Draw Mk3",
+      1
+    ]
+  ]
+}
