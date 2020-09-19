@@ -18,6 +18,26 @@ if FreeCAD is not None:
     from FreeCAD import Base
     import Part
 
+def get_curve_endpoints(fc_curve):
+    if hasattr(fc_curve, 'StartPoint'):
+        p1, p2 = fc_curve.StartPoint, fc_curve.EndPoint
+    else:
+        t1, t2 = fc_curve.FirstParameter, fc_curve.LastParameter
+        if hasattr(fc_curve, 'valueAt'):
+            p1, p2 = fc_curve.valueAt(t1), fc_curve.valueAt(t2)
+        else:
+            p1, p2 = fc_curve.value(t1), fc_curve.value(t2)
+    return p1, p2
+
+def get_edge_endpoints(fc_edge):
+    t1, t2 = fc_edge.ParameterRange
+    fc_curve = fc_edge.Curve
+    if hasattr(fc_curve, 'valueAt'):
+        p1, p2 = fc_curve.valueAt(t1), fc_curve.valueAt(t2)
+    else:
+        p1, p2 = fc_curve.value(t1), fc_curve.value(t2)
+    return p1, p2
+
 def curves_to_face(sv_curves, planar=True, force_nurbs=True):
     """
     Make a Part.Face from a list of SvCurve.
@@ -47,13 +67,13 @@ def curves_to_face(sv_curves, planar=True, force_nurbs=True):
         last_point = None
         distance = None
         for i, edge in enumerate(wire.Edges):
-            p1, p2 = edge.Curve.StartPoint, edge.Curve.EndPoint
+            p1, p2 = get_edge_endpoints(edge)
             if last_point is not None:
                 distance = last_point.distanceToPoint(p1)
-            print(f"#{i}: distance={distance}: ({p1.x}, {p1.y}, {p1.z}) - ({p2.x}, {p2.y}, {p2.z})")
+                print(f"#{i-1}-{i}: distance={distance}: ({last_point.x}, {last_point.y}, {last_point.z}) - ({p1.x}, {p1.y}, {p1.z})")
             last_point = p2
-        p1 = wire.Edges[-1].Curve.EndPoint
-        p2 = wire.Edges[0].Curve.StartPoint
+        p1 = get_edge_endpoints(wire.Edges[-1])[1]
+        p2 = get_edge_endpoints(wire.Edges[0])[0]
         distance = p1.distanceToPoint(p2)
         print(f"Last - first distance = {distance}")
         raise Exception(f"The wire is not closed: {sv_curves}")
