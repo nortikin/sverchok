@@ -184,6 +184,11 @@ Outputs
 This node has the following outputs:
 
 * **Surface**. The generated NURBS surface.
+* **AllProfiles**. Curves that were actually used to construct the surface.
+  These are the curves provided in the **Profile** input, placed at their
+  places along path curve and interpolated (if several profiles were used).
+* **VCurves**. Curves along V direction of the surface, which were used to
+  calculate surface's control points during skinning process.
 
 Examples of usage
 -----------------
