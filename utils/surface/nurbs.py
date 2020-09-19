@@ -700,7 +700,7 @@ def build_from_curves(curves, degree_u = None, implementation = SvNurbsSurface.N
 
     return curves, surface
 
-def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', implementation=SvNurbsSurface.NATIVE):
+def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', tknots=None, implementation=SvNurbsSurface.NATIVE):
     """
     Loft between given NURBS curves (a.k.a skinning).
 
@@ -714,6 +714,7 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', i
 
     output: tuple:
         * list of curves - input curves after unification
+        * list of NURBS curves along V direction
         * generated NURBS surface.
     """
     if knots_u not in {'UNIFY', 'AVERAGE'}:
@@ -745,7 +746,7 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', i
     #print("Src:", src_points)
     src_points = np.transpose(src_points, axes=(1,0,2))
 
-    v_curves = [interpolate_nurbs_curve(curve_class, degree_v, points, metric) for points in src_points]
+    v_curves = [interpolate_nurbs_curve(curve_class, degree_v, points, metric=metric, tknots=tknots) for points in src_points]
     control_points = [curve.get_homogenous_control_points() for curve in v_curves]
     control_points = np.array(control_points)
     #weights = [curve.get_weights() for curve in v_curves]
@@ -790,9 +791,11 @@ def interpolate_nurbs_curves(curves, base_vs, target_vs,
     vectors = np.array([(0,0,v) for v in base_vs])
     to_loft = [curve.transform(None, vector) for curve, vector in zip(curves, vectors)]
     #to_loft = curves
+    tknots = (base_vs - min_v) / (max_v - min_v)
     _,_,lofted = simple_loft(to_loft,
                 degree_v = degree_v, knots_u = knots_u,
-                metric = 'DISTANCE',
+                #metric = 'POINTS',
+                tknots = tknots,
                 implementation = implementation)
     # Calculate iso_curves of the lofted surface, and move them back along Z axis
     back_vectors = np.array([(0,0,-v) for v in np.linspace(min_v, max_v, num=len(target_vs))])
@@ -812,7 +815,11 @@ def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = 'UNIFY', me
         returns np.array((n, 3, 3)) of curve frames.
     * rest: arguments for simple_loft function.
 
-    Returns: SvNurbsSurface.
+    output: tuple:
+        * list of curves - initial profile curves placed / rotated along the path curve
+        * list of curves - interpolated profile curves
+        * list of NURBS curves along V direction
+        * generated NURBS surface.
     """
     if len(profiles) != len(ts):
         raise Exception(f"Number of profiles ({len(profiles)}) is not equal to number of T values ({len(ts)})")
@@ -826,10 +833,10 @@ def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = 'UNIFY', me
         profile = profile.transform(frame, path_point)
         to_loft.append(profile)
 
-    _, _, surface = simple_loft(to_loft, degree_v = path.get_degree(),
+    unified_curves, v_curves, surface = simple_loft(to_loft, degree_v = path.get_degree(),
             knots_u = knots_u, metric = metric,
             implementation = implementation)
-    return surface
+    return to_loft, unified_curves, v_curves, surface
 
 def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE, **kwargs):
     """
@@ -852,7 +859,11 @@ def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', 
     * implementation: surface implementation
     * kwargs: arguments for rotation calculation algorithm
 
-    Returns: SvNurbsSurface.
+    output: tuple:
+        * list of curves - initial profile curves placed / rotated along the path curve
+        * list of curves - interpolated profile curves
+        * list of NURBS curves along V direction
+        * generated NURBS surface.
     """
     n_profiles = len(profiles)
     have_ts = ts is not None and len(ts) > 0

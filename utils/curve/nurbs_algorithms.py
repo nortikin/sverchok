@@ -59,7 +59,7 @@ def unify_curves(curves):
         
     return result
 
-def interpolate_nurbs_curve(cls, degree, points, metric='DISTANCE'):
+def interpolate_nurbs_curve(cls, degree, points, metric='DISTANCE', tknots=None):
     n = len(points)
     if points.ndim != 2:
         raise Exception(f"Array of points was expected, but got {points.shape}: {points}")
@@ -68,7 +68,8 @@ def interpolate_nurbs_curve(cls, degree, points, metric='DISTANCE'):
         raise Exception(f"Only 3D and 4D points are supported, but ndim={ndim}")
     #points3d = points[:,:3]
     #print("pts:", points)
-    tknots = Spline.create_knots(points, metric=metric) # In 3D or in 4D, in general?
+    if tknots is None:
+        tknots = Spline.create_knots(points, metric=metric) # In 3D or in 4D, in general?
     knotvector = sv_knotvector.from_tknots(degree, tknots)
     functions = SvNurbsBasisFunctions(knotvector)
     coeffs_by_row = [functions.function(idx, degree)(tknots) for idx in range(n)]
