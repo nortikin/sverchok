@@ -74,6 +74,11 @@ class SvLine(SvCurve):
     def lerp_to(self, curve2, coefficient):
         return self.to_nurbs().lerp_to(curve2, coefficient)
 
+    def reverse(self):
+        t_min, t_max = self.get_u_bounds()
+        p1, p2 = self.evaluate(t_min), self.evaluate(t_max)
+        return SvLine.from_two_points(p2, p1)
+
     def to_nurbs(self, implementation=SvNurbsMaths.NATIVE):
         knotvector = sv_knotvector.generate(1, 2)
         u_min, u_max = self.get_u_bounds()
