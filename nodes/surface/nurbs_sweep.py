@@ -7,11 +7,13 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.logging import info, exception
 from sverchok.utils.math import supported_metrics
+from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.math import ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, NORMAL_DIR, NONE, TRACK_NORMAL
 from sverchok.utils.surface.nurbs import nurbs_sweep
 from sverchok.dependencies import geomdl
+from sverchok.dependencies import FreeCAD
 
 class SvNurbsSweepNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -51,6 +53,11 @@ class SvNurbsSweepNode(bpy.types.Node, SverchCustomTreeNode):
             items.append(item)
         item = (SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", i)
         items.append(item)
+        i += 1
+        if FreeCAD is not None:
+            item = (SvNurbsMaths.FREECAD, "FreeCAD", "FreeCAD implementation",i)
+            i += 1
+            items.append(item)
         return items
 
     nurbs_implementation : EnumProperty(
@@ -66,7 +73,7 @@ class SvNurbsSweepNode(bpy.types.Node, SverchCustomTreeNode):
         (TRACK, "Tracking", "Use quaternion-based tracking", 4),
         (DIFF, "Rotation difference", "Use rotational difference calculation", 5),
         (TRACK_NORMAL, "Track normal", "Try to maintain constant normal direction by tracking along curve", 6),
-        (NORMAL_DIR, "Specified plane", "Use plane defined by normal vector in Normal input; i.e., offset in direction perpendicular to Normal input", 7)
+        (NORMAL_DIR, "Specified Y", "Use plane defined by normal vector in Normal input; i.e., offset in direction perpendicular to Normal input", 7)
     ]
 
     @throttled
@@ -119,7 +126,7 @@ class SvNurbsSweepNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Resolution").prop_name = 'resolution'
         p = self.inputs.new('SvVerticesSocket', "Normal")
         p.use_prop = True
-        p.default_property = (0.0, 0.0, 1.0)
+        p.default_property = (0.0, 1.0, 0.0)
         self.outputs.new('SvSurfaceSocket', "Surface")
         self.update_sockets(context)
 
