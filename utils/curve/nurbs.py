@@ -447,6 +447,29 @@ class SvNurbsCurve(SvCurve):
         degree = self.get_degree()
         return sv_knotvector.get_min_continuity(kv, degree)
 
+    def transform(self, frame, vector):
+        """
+        Apply transformation matrix to the curve.
+        Inputs:
+        * frame: np.array of shape (3,3) - transformation matrix
+        * vector: np.array of shape (3,) - translation vector
+        Output: new NURBS curve of the same implementation.
+        """
+        if frame is None and vector is None:
+            return self
+        elif frame is None and vector is not None:
+            fn = lambda p: p + vector
+        elif frame is not None and vector is None:
+            fn = lambda p: frame @ p
+        else:
+            fn = lambda p: frame @ p + vector
+        new_controls = np.apply_along_axis(fn, 1, self.get_control_points())
+        return SvNurbsMaths.build_curve(self.get_nurbs_implementation(),
+                    self.get_degree(),
+                    self.get_knotvector(),
+                    new_controls,
+                    self.get_weights())
+
 class SvGeomdlCurve(SvNurbsCurve):
     """
     geomdl-based implementation of NURBS curves

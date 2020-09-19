@@ -14,13 +14,14 @@ from sverchok.utils.curve.core import (
         SvFlipCurve, SvConcatCurve,
         UnsupportedCurveTypeException
     )
+from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.geom import PlaneEquation, LineEquation, Spline, LinearSpline, CubicSpline
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
 from sverchok.utils.math import (
     ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
-    NORMAL_DIR
+    NORMAL_DIR, NONE
 )
 from sverchok.utils.logging import info
 
@@ -220,6 +221,38 @@ class DifferentialRotationCalculator(object):
             return frenet @ rotation_matrices
         elif self.algorithm == TRACK_NORMAL:
             matrices = self.normal_tracker.evaluate_array(ts)
+            return matrices
+        else:
+            raise Exception("Unsupported algorithm")
+
+class SvCurveFrameCalculator(object):
+    def __init__(self, curve, algorithm, z_axis=2, resolution=50, normal=None):
+        self.algorithm = algorithm
+        self.z_axis = z_axis
+        self.curve = curve
+        self.normal = normal
+        if algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            self.calculator = DifferentialRotationCalculator(curve, algorithm, resolution)
+
+    def get_matrix(self, tangent):
+        return MathutilsRotationCalculator.get_matrix(tangent, scale=1.0,
+                axis=self.z_axis,
+                algorithm = self.algorithm,
+                scale_all=False)
+
+    def get_matrices(self, ts):
+        if self.algorithm == NONE:
+            identity = np.eye(3)
+            n = len(ts)
+            return np.broadcast_to(identity, (n, 3,3))
+        elif self.algorithm == NORMAL_DIR:
+            matrices, _, _ = self.curve.frame_by_plane_array(ts, self.normal)
+            return matrices
+        elif self.algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            return self.calculator.get_matrices(ts)
+        elif self.algorithm in {HOUSEHOLDER, TRACK, DIFF}:
+            tangents = self.curve.tangent_array(ts)
+            matrices = np.vectorize(lambda t : self.get_matrix(t), signature='(3)->(3,3)')(tangents)
             return matrices
         else:
             raise Exception("Unsupported algorithm")
@@ -603,6 +636,15 @@ class SvIsoUvCurve(SvCurve):
         self.flip = flip
         self.tangent_delta = 0.001
         self.__description__ = "{} at {} = {}".format(surface, fixed_axis, value)
+
+    @staticmethod
+    def take(surface, fixed_axis, value, flip=False):
+        if hasattr(surface, 'iso_curve'):
+            try:
+                return surface.iso_curve(fixed_axis, value, flip=flip)
+            except UnsupportedSurfaceTypeException:
+                pass
+        return SvIsoUvCurve(surface, fixed_axis, value, flip=flip)
 
     def get_u_bounds(self):
         if self.fixed_axis == 'U':

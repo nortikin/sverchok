@@ -54,6 +54,7 @@ proportional_falloff_types = [
 all_falloff_types = falloff_types + [(id, title, desc, i + len(falloff_types)) for id, title, desc, i in proportional_falloff_types]
 
 # Vector rotation calculation algorithms
+NONE = 'NONE'
 ZERO = 'ZERO'
 FRENET = 'FRENET'
 HOUSEHOLDER = 'householder'
