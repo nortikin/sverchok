@@ -127,6 +127,8 @@ class SvNurbsSweepNode(bpy.types.Node, SverchCustomTreeNode):
         p.use_prop = True
         p.default_property = (0.0, 1.0, 0.0)
         self.outputs.new('SvSurfaceSocket', "Surface")
+        self.outputs.new('SvCurveSocket', "AllProfiles")
+        self.outputs.new('SvCurveSocket', "VCurves")
         self.update_sockets(context)
 
     def process(self):
@@ -151,8 +153,13 @@ class SvNurbsSweepNode(bpy.types.Node, SverchCustomTreeNode):
         profiles_count_s = ensure_nesting_level(profiles_count_s, 2)
 
         surfaces_out = []
+        curves_out = []
+        v_curves_out = []
         for params in zip_long_repeat(path_s, profile_s, v_s, profiles_count_s, resolution_s, normal_s):
             new_surfaces = []
+            new_curves = []
+            new_v_curves = []
+            new_profiles = []
             for path, profiles, vs, profiles_count, resolution, normal in zip_long_repeat(*params):
                 path = SvNurbsCurve.to_nurbs(path)
                 if path is None:
@@ -164,7 +171,7 @@ class SvNurbsSweepNode(bpy.types.Node, SverchCustomTreeNode):
                     ts = np.array(vs)
                 else:
                     ts = None
-                surface = nurbs_sweep(path, profiles,
+                _, unified_curves, v_curves, surface = nurbs_sweep(path, profiles,
                                     ts = ts,
                                     min_profiles = profiles_count,
                                     algorithm = self.algorithm,
@@ -174,9 +181,17 @@ class SvNurbsSweepNode(bpy.types.Node, SverchCustomTreeNode):
                                     resolution = resolution,
                                     normal = np.array(normal))
                 new_surfaces.append(surface)
+                new_curves.extend(unified_curves)
+                new_v_curves.extend(v_curves)
             surfaces_out.append(new_surfaces)
+            curves_out.append(new_curves)
+            v_curves_out.append(new_v_curves)
 
         self.outputs['Surface'].sv_set(surfaces_out)
+        if 'AllProfiles' in self.outputs:
+            self.outputs['AllProfiles'].sv_set(curves_out)
+        if 'VCurves' in self.outputs:
+            self.outputs['VCurves'].sv_set(v_curves_out)
 
 def register():
     bpy.utils.register_class(SvNurbsSweepNode)
