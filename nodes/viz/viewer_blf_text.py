@@ -186,8 +186,6 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
             name=name, description='', size=4, min=0.0, max=1.0,
             default=col, subtype='COLOR', update=updateNode)
 
-    n_id: StringProperty(default='', options={'SKIP_SAVE'})
-
     activate: BoolProperty(
         name='Show', description='Activate node?',
         default=True, update=updateNode)
@@ -351,10 +349,6 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_free(self):
         callback_disable(node_id(self))
-
-    def sv_copy(self, node):
-        ''' reset n_id on copy '''
-        self.n_id = ''
 
     def show_viewport(self, is_show: bool):
         """It should be called by node tree to show/hide objects"""
