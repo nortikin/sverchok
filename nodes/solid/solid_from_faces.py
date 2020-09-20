@@ -79,10 +79,10 @@ class SvSolidFromFacesNode(bpy.types.Node, SverchCustomTreeNode):
                         surfaces[i] = surface_to_freecad(surfaces[i], make_face=True)
                 solid = self.make_solid(surfaces)
                 new_solids.append(solid)
-            if input_level == 1:
-                solids_out.extend(new_solids)
-            else:
+            if input_level > 2:
                 solids_out.append(new_solids)
+            else:
+                solids_out.extend(new_solids)
 
         self.outputs['Solid'].sv_set(solids_out)
 
