@@ -294,10 +294,10 @@ class SvFreeCadNurbsSurface(SvNurbsSurface):
     def normal_array(self, us, vs):
         return np.vectorize(self.normal, signature='(),()->(3)')(us, vs)
 
-    def iso_curve(self, fixed_axis, param, flip=False):
-        if fixed_axis == 'U':
+    def iso_curve(self, fixed_direction, param, flip=False):
+        if fixed_direction == 'U':
             fc_curve = self.surface.uIso(param)
-        elif fixed_axis == 'V':
+        elif fixed_direction == 'V':
             fc_curve = self.surface.vIso(param)
         else:
             raise Exception("Unsupported direction")

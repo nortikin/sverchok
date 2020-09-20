@@ -229,6 +229,7 @@
    SvSolidBooleanNode
    SvMirrorSolidNode
    SvOffsetSolidNode
+   SvSolidFromFacesNode
    SvSolidFaceExtrudeNode
    SvSolidFaceSolidifyNode
    SvSolidFaceRevolveNode

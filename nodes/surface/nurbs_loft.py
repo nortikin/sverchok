@@ -95,6 +95,9 @@ class SvNurbsLoftNode(bpy.types.Node, SverchCustomTreeNode):
             new_curves = []
             new_v_curves = []
             for curves, degree_v in zip_long_repeat(curves_i, degrees):
+                curves = [SvNurbsCurve.to_nurbs(c) for c in curves]
+                if any(c is None for c in curves):
+                    raise Exception("Some of curves are not NURBS!")
                 unified_curves, v_curves, new_surface = simple_loft(curves, 
                                     degree_v = degree_v,
                                     knots_u = self.u_knots_mode,
