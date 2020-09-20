@@ -8,7 +8,7 @@
 
 from functools import singledispatch
 from itertools import chain
-from typing import Any
+from typing import Any, List
 
 import bpy
 
@@ -124,7 +124,10 @@ class BPYProperty:
     def value(self, value):
         if not self.is_valid:
             raise TypeError(f'Can not read "value" of invalid property "{self.name}"')
-        setattr(self._data, self.name, value)
+        if self.type == 'COLLECTION':
+            self._set_collection_values(value)
+        else:
+            setattr(self._data, self.name, value)
 
     @property
     def type(self) -> str:
@@ -196,3 +199,10 @@ class BPYProperty:
                     item_props[prop.name] = prop.default_value if default_value else prop.value
             items.append(item_props)
         return items
+
+    def _set_collection_values(self, value: List[dict]):
+        for item, item_values in zip(getattr(self._data, self.name), value):
+            for prop_name, prop_value in item_values.items():
+                prop = BPYProperty(item, prop_name)
+                if prop.is_valid:
+                    prop.value = prop_value
