@@ -32,7 +32,7 @@ class SvSolidFromFacesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSolidFromFacesNode'
     bl_label = 'Solid from Faces'
     bl_icon = 'EDGESEL'
-    sv_icon = 'SV_EXTRUDE_FACE'
+    sv_icon = 'SV_MAKE_SOLID'
     solid_catergory = "Input"
 
     validate : BoolProperty(
