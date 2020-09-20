@@ -19,6 +19,7 @@ Solid
    solid_boolean
    mirror_solid
    offset_solid
+   solid_from_faces
    extrude_face
    solidify_face
    revolve_face

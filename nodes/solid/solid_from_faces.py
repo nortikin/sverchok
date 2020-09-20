@@ -54,11 +54,11 @@ class SvSolidFromFacesNode(bpy.types.Node, SverchCustomTreeNode):
             update = updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'validate')
         layout.prop(self, 'check_closed')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
+        layout.prop(self, 'validate')
         if self.validate:
             layout.prop(self, 'tolerance')
 
