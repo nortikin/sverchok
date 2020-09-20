@@ -5,6 +5,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.geom import LinearSpline, CubicSpline
+from sverchok.utils.curve.primitives import SvLine
 from sverchok.utils.curve import SvSplineCurve
 
 class SvPolylineNode(bpy.types.Node, SverchCustomTreeNode):
@@ -33,8 +34,15 @@ class SvPolylineNode(bpy.types.Node, SverchCustomTreeNode):
         default="DISTANCE", items=metrics,
         update=updateNode)
 
+    concat : BoolProperty(
+        name = "Concatenate",
+        description = "If checked, output single curve which goes through all points; otherwise, output a separate curve for each edge",
+        default = True,
+        update=updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "is_cyclic", toggle=True)
+        layout.prop(self, "concat", toggle=True)
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -44,9 +52,15 @@ class SvPolylineNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvCurveSocket', "Curve")
 
-    def build_spline(self, path):
-        spline = LinearSpline(path, metric = self.metric, is_cyclic = self.is_cyclic)
-        return spline
+    def make_edges(self, vertices, is_cyclic):
+        curves = []
+        for v1, v2 in zip(vertices[:-1], vertices[1:]):
+            line = SvLine.from_two_points(v1, v2)
+            curves.append(line)
+        if is_cyclic:
+            line = SvLine.from_two_points(vertices[-1], vertices[0])
+            curves.append(line)
+        return curves
 
     def process(self):
         if not any(o.is_linked for o in self.outputs):
@@ -56,9 +70,13 @@ class SvPolylineNode(bpy.types.Node, SverchCustomTreeNode):
 
         out_curves = []
         for vertices in vertices_s:
-            spline = self.build_spline(vertices)
-            curve = SvSplineCurve(spline)
-            out_curves.append(curve)
+            if self.concat:
+                spline = LinearSpline(vertices, metric = self.metric, is_cyclic = self.is_cyclic)
+                curve = SvSplineCurve(spline)
+                out_curves.append(curve)
+            else:
+                curves = self.make_edges(vertices, is_cyclic = self.is_cyclic)
+                out_curves.append(curves)
 
         self.outputs['Curve'].sv_set(out_curves)
 
