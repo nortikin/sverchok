@@ -35,14 +35,32 @@ class SvSolidFromFacesNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_EXTRUDE_FACE'
     solid_catergory = "Input"
 
+    validate : BoolProperty(
+            name = "Validate",
+            description = "Make sure that the constructed body is valid in terms of OCC core",
+            default = True,
+            update = updateNode)
+
+    check_closed : BoolProperty(
+            name = "Body is closed",
+            description = "Check that the constructed body is closed - otherwise raise an exception",
+            default = True,
+            update = updateNode)
+
     tolerance : FloatProperty(
             name = "Tolerance",
             default = 0.001,
             precision = 6,
             update = updateNode)
 
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'validate')
+        layout.prop(self, 'check_closed')
+
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, 'tolerance')
+        self.draw_buttons(context, layout)
+        if self.validate:
+            layout.prop(self, 'tolerance')
 
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "SolidFaces")
@@ -55,11 +73,13 @@ class SvSolidFromFacesNode(bpy.types.Node, SverchCustomTreeNode):
         ok = shape.isValid()
         if not ok:
             self.debug("Constructed solid is not valid, will try to fix it")
-            ok = shape.fix(self.tolerance, self.tolerance, self.tolerance)
-            if not ok:
-                raise Exception("Constructed Solid object is not valid and can't be fixed automatically")
-        if not shape.isClosed():
-            raise Exception("Constructed Solid object is not closed")
+            if self.validate:
+                ok = shape.fix(self.tolerance, self.tolerance, self.tolerance)
+                if not ok:
+                    raise Exception("Constructed Solid object is not valid and can't be fixed automatically")
+        if self.check_closed:
+            if not shape.isClosed():
+                raise Exception("Constructed Solid object is not closed")
         return shape
 
     def process(self):
