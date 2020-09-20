@@ -7,6 +7,8 @@
 
 
 from functools import singledispatch
+from itertools import chain
+from typing import Any
 
 import bpy
 
@@ -88,3 +90,109 @@ def delete_data_block(data_block) -> None:
 
 def get_sv_trees():
     return [ng for ng in bpy.data.node_groups if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}]
+
+
+# ~~~~ encapsulation Blender objects ~~~~
+
+
+class BPYProperty:
+    def __init__(self, data, prop_name: str):
+        self.name = prop_name
+        self._data = data
+
+    @property
+    def is_valid(self) -> bool:
+        """
+        If data does not have property with given name property is invalid
+        It can be so that data.keys() or data.items() can give names of properties which are not in data class any more
+        Such properties cab consider as deprecated
+        """
+        return self.name in self._data.bl_rna.properties
+
+    @property
+    def value(self) -> Any:
+        if not self.is_valid:
+            raise TypeError(f'Can not read "value" of invalid property "{self.name}"')
+        if self.is_array_like:
+            return tuple(getattr(self._data, self.name))
+        elif self.type == 'COLLECTION':
+            return self._extract_collection_values()
+        else:
+            return getattr(self._data, self.name)
+
+    @value.setter
+    def value(self, value):
+        if not self.is_valid:
+            raise TypeError(f'Can not read "value" of invalid property "{self.name}"')
+        setattr(self._data, self.name, value)
+
+    @property
+    def type(self) -> str:
+        if not self.is_valid:
+            raise TypeError(f'Can not read "type" of invalid property "{self.name}"')
+        return self._data.bl_rna.properties[self.name].type
+
+    @property
+    def default_value(self) -> Any:
+        if not self.is_valid:
+            raise TypeError(f'Can not read "default_value" of invalid property "{self.name}"')
+        if self.type == 'COLLECTION':
+            return self._extract_collection_values(default_value=True)
+        else:
+            return self._data.bl_rna.properties[self.name].default
+
+    @property
+    def is_to_save(self) -> bool:
+        if not self.is_valid:
+            raise TypeError(f'Can not read "is_to_save" of invalid property "{self.name}"')
+        return not self._data.bl_rna.properties[self.name].is_skip_save
+
+    @property
+    def is_array_like(self) -> bool:
+        if not self.is_valid:
+            raise TypeError(f'Can not read "is_array_like" of invalid property "{self.name}"')
+        if self.type in {'BOOLEAN', 'FLOAT', 'INT'}:
+            return self._data.bl_rna.properties[self.name].is_array
+        elif self.type == 'ENUM':
+            # Enum can return set of values, array like
+            return self._data.bl_rna.properties[self.name].is_enum_flag
+        else:
+            # other properties does not have is_array attribute
+            return False
+
+    def filter_collection_values(self, skip_default=True, skip_save=True, skip_pointers=True):
+        if self.type != 'COLLECTION':
+            raise TypeError(f'Method supported only "collection" types, "{self.type}" was given')
+        if not self.is_valid:
+            raise TypeError(f'Can not read "non default collection values" of invalid property "{self.name}"')
+        items = []
+        for item in getattr(self._data, self.name):
+            item_props = {}
+            for prop_name in chain(['name'], item.__annotations__):  # item.items() will return only changed values
+                prop = BPYProperty(item, prop_name)
+                if not prop.is_valid:
+                    continue
+                if skip_save and not prop.is_to_save:
+                    continue
+                if skip_pointers and prop.type == 'POINTER':
+                    continue
+                if prop.type != 'COLLECTION':
+                    if skip_default and prop.default_value == prop.value:
+                        continue
+                    item_props[prop.name] = prop.value
+                else:
+                    item_props[prop.name] = prop.filter_collection_values(skip_default, skip_save, skip_pointers)
+            items.append(item_props)
+        return items
+
+    def _extract_collection_values(self, default_value: bool = False):
+        """returns something like this: [{"name": "", "my_prop": 1.0}, {"name": "", "my_prop": 2.0}, ...]"""
+        items = []
+        for item in getattr(self._data, self.name):
+            item_props = {}
+            for prop_name in chain(['name'], item.__annotations__):  # item.items() will return only changed values
+                prop = BPYProperty(item, prop_name)
+                if prop.is_valid:
+                    item_props[prop.name] = prop.default_value if default_value else prop.value
+            items.append(item_props)
+        return items

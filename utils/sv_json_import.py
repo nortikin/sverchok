@@ -16,6 +16,7 @@ import bpy
 from sverchok.utils.sv_IO_panel_tools import get_file_obj_from_zip
 from sverchok.utils.logging import debug, info, warning
 from sverchok.utils import dummy_nodes
+from sverchok.utils.handle_blender_data import BPYProperty
 
 if TYPE_CHECKING:
     from sverchok.node_tree import SverchCustomTree, SverchCustomTreeNode
@@ -26,6 +27,7 @@ if TYPE_CHECKING:
 class JSONImporter01:
     def __init__(self, structure: dict):
         self._structure = structure
+        self._fails_log = FailsLog()
 
     @classmethod
     def init_from_path(cls, path: str) -> JSONImporter01:
@@ -40,18 +42,18 @@ class JSONImporter01:
             warning(f'File should have .zip or .json extension, got ".{path.rsplit(".")[-1]}" instead')
 
     def import_into_tree(self, tree: SverchCustomTree):
-        fails_log = FailsLog()
-        tree_name = tree.name
-        with TreeGenerator.start_from_tree(tree, fails_log) as tree_builder:
+        with TreeGenerator.start_from_tree(tree, self._fails_log) as tree_builder:
             for node_importer in self._nodes():
                 node = tree_builder.add_node(node_importer.node_type, node_importer.node_name)
                 if node is None:
                     continue
-                node_builder = NodeGenerator(tree_name, node.name, fails_log)
+                node_builder = NodeGenerator(tree.name, node.name, self._fails_log)
                 for attr_name, attr_value in node_importer.node_attributes():
                     node_builder.set_node_attribute(attr_name, attr_value)
+                for prop_name, prop_value in node_importer.node_properties():
+                    node_builder.set_node_property(BPYProperty(node, prop_name), prop_value)
 
-        fails_log.report_log_result()
+        self._fails_log.report_log_result()
 
     def _nodes(self) -> Generator[NodeImporter01]:
         if "nodes" in self._structure:
@@ -59,7 +61,7 @@ class JSONImporter01:
             if isinstance(nodes, dict):
                 for node_name, node_structure in nodes.items():
                     if isinstance(node_structure, dict):
-                        yield NodeImporter01(node_name, node_structure)
+                        yield NodeImporter01(node_name, node_structure, self._fails_log)
                     else:
                         debug(f'Node "{node_name}" has unsupported format - skip')
             else:
@@ -75,9 +77,10 @@ class JSONImporter01:
 
 
 class NodeImporter01:
-    def __init__(self, node_name: str, structure: dict):
+    def __init__(self, node_name: str, structure: dict, log: FailsLog):
         self.node_name = node_name
         self._structure = structure
+        self._fails_log = log
 
     @property
     def node_type(self):
@@ -86,12 +89,19 @@ class NodeImporter01:
     def node_attributes(self) -> Generator[tuple]:
         required_attributes = ["height", "width", "label", "hide", "location", "color", "use_custom_color"]
         if "location" not in self._structure:
+            self._fails_log.add_fail('Read node location fail')
             debug(f'Node "{self.node_name}" does not have location attribute')
         for attr in required_attributes:
             if attr in self._structure:
                 yield attr, self._structure[attr]
 
-    def node_properties(self) -> Generator[tuple]: ...
+    def node_properties(self) -> Generator[tuple]:
+        if not isinstance(self._structure.get('params', dict()), dict):
+            self._fails_log.add_fail('Read node properties fail')
+            debug(f'Node "{self.node_name}" has unsupported format of properties')
+        else:
+            for prop_name, prop_value in self._structure.get('params', dict()).items():
+                yield prop_name, prop_value
 
     def input_socket_properties(self) -> Generator[tuple]: ...
 
@@ -150,21 +160,20 @@ class NodeGenerator:
             setattr(self.node, attr_name, value)
         except Exception as e:
             debug(f'Node "{self._node_name}" cant set attribute "{attr_name}", {e}')
-            self._fails_log.add_fail('Set attr to a node')
+            self._fails_log.add_fail('Set attr to a node fail')
 
-    def set_node_property(self, prop: BPYProperty): ...
+    def set_node_property(self, prop: BPYProperty, value):
+        try:
+            prop.value = value
+        except Exception as e:
+            debug(f'Node "{self._node_name}" cant set property "{prop.name}", {e}')
+            self._fails_log.add_fail('Set property to a node fail')
 
-    def set_socket_property(self, socket_identifier: str, prop: BPYProperty): ...
+    def set_input_socket_property(self, socket_identifier: str, prop: BPYProperty): ...
 
     @property
     def node(self) -> SverchCustomTreeNode:
         return bpy.data.node_groups[self._tree_name].nodes[self._node_name]
-
-
-class BPYProperty:
-    def __init__(self, data, prop_name: str): ...
-
-    def set_property(self, data): ...
 
 
 class FailsLog:

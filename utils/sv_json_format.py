@@ -8,11 +8,11 @@
 
 from __future__ import annotations
 
-from itertools import chain
 from typing import TYPE_CHECKING, Union, Tuple, Any
 
 import bpy
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
+from sverchok.utils.handle_blender_data import BPYProperty
 
 if TYPE_CHECKING:
     from sverchok.node_tree import SverchCustomTree, SverchCustomTreeNode
@@ -113,8 +113,11 @@ class NodeFormat:
     def add_node_properties(self, node: SverchCustomTreeNode):
         for prop_name in node.keys():
             prop = BPYProperty(node, prop_name)
-            if prop.is_to_export():
-                self._json_data["params"][prop.name] = prop.value
+            if self._is_property_to_export(prop):
+                if prop.type == 'COLLECTION':
+                    self._json_data["params"][prop_name] = prop.filter_collection_values()
+                else:
+                    self._json_data["params"][prop.name] = prop.value
 
     def add_socket_properties(self, node: SverchCustomTreeNode):
         # output sockets does not have anything worth exporting
@@ -122,81 +125,23 @@ class NodeFormat:
             sock_props = dict()
             for prop_name in sock.keys():
                 prop = BPYProperty(sock, prop_name)
-                if prop.is_to_export():
-                    sock_props[prop.name] = prop.value
+                if self._is_property_to_export(prop):
+                    if prop.type == 'COLLECTION':
+                        self._json_data["params"][prop_name] = prop.filter_collection_values()
+                    else:
+                        self._json_data["params"][prop.name] = prop.value
             if sock_props:
                 self._json_data['custom_socket_props'][str(i)] = sock_props
 
-
-class BPYProperty:
-    def __init__(self, data, prop_name: str):
-        self.name = prop_name
-        self._data = data
-
-    def is_to_export(self) -> bool:
-        if not self.is_valid:
+    @staticmethod
+    def _is_property_to_export(prop: BPYProperty) -> bool:
+        if not prop.is_valid:
             return False  # deprecated property
-        elif not self.is_to_save:
+        elif not prop.is_to_save:
             return False
-        elif self.type == 'POINTER':
+        elif prop.type == 'POINTER':
             return False  # pointers does not supported know
-        elif self.default_value == self.value:
+        elif prop.default_value == prop.value:
             return False  # the value will be loaded from code
         else:
             return True
-
-    @property
-    def is_valid(self) -> bool:
-        """
-        If data does not have property with given name property is invalid
-        It can be so that data.keys() or data.items() can give names of properties which are not in data class any more
-        Such properties cab consider as deprecated
-        """
-        return self.name in self._data.bl_rna.properties
-
-    @property
-    def value(self) -> Any:
-        if self.is_array_like:
-            return tuple(getattr(self._data, self.name))
-        elif self.type == 'COLLECTION':
-            return self.extract_collection_values()
-        else:
-            return getattr(self._data, self.name)
-
-    @property
-    def type(self) -> str:
-        return self._data.bl_rna.properties[self.name].type
-
-    @property
-    def default_value(self) -> Any:
-        if self.type == 'COLLECTION':
-            return None  # there is no default value
-        else:
-            return self._data.bl_rna.properties[self.name].default
-
-    @property
-    def is_to_save(self) -> bool:
-        return not self._data.bl_rna.properties[self.name].is_skip_save
-
-    @property
-    def is_array_like(self) -> bool:
-        if self.type in {'BOOLEAN', 'FLOAT', 'INT'}:
-            return self._data.bl_rna.properties[self.name].is_array
-        elif self.type == 'ENUM':
-            # Enum can return set of values, array like
-            return self._data.bl_rna.properties[self.name].is_enum_flag
-        else:
-            # other properties does not have is_array attribute
-            return False
-
-    def extract_collection_values(self):
-        """returns something like this: [{"name": "", "my_prop": 1.0}, {"name": "", "my_prop": 2.0}, ...]"""
-        items = []
-        for item in getattr(self._data, self.name):
-            item_props = {}
-            for prop_name in chain(['name'], item.keys()):
-                prop = BPYProperty(item, prop_name)
-                if prop.is_to_export():
-                    item_props[prop.name] = prop.value
-            items.append(item_props)
-        return items
