@@ -52,6 +52,14 @@ class JSONImporter01:
                     node_builder.set_node_attribute(attr_name, attr_value)
                 for prop_name, prop_value in node_importer.node_properties():
                     node_builder.set_node_property(BPYProperty(node, prop_name), prop_value)
+                for sock_index, prop_name, prop_value in node_importer.input_socket_properties():
+                    try:
+                        socket = node.inputs[sock_index]
+                    except Exception as e:
+                        self._fails_log.add_fail('find socket fail')
+                        debug(f'Node "{node.name}" don not find socket with index "{sock_index}", {e}')
+                    else:
+                        node_builder.set_input_socket_property(BPYProperty(socket, prop_name), prop_value)
 
         self._fails_log.report_log_result()
 
@@ -103,7 +111,24 @@ class NodeImporter01:
             for prop_name, prop_value in self._structure.get('params', dict()).items():
                 yield prop_name, prop_value
 
-    def input_socket_properties(self) -> Generator[tuple]: ...
+    def input_socket_properties(self) -> Generator[tuple]:
+        if not isinstance(self._structure.get('custom_socket_props', dict()), dict):
+            self._fails_log.add_fail('Read socket properties fail')
+            debug(f'Node "{self.node_name}" has unsupported format of sockets properties')
+        else:
+            for str_index, sock_props in self._structure.get('custom_socket_props', dict()).items():
+                if not isinstance(sock_props, dict):
+                    self._fails_log.add_fail('read socket data fail')
+                    debug(f'Node "{self.node_name}" has unsupported format of socket properties')
+                    continue
+                try:
+                    sock_index = int(str_index)
+                except ValueError:
+                    self._fails_log.add_fail('read socket index fail')
+                    debug(f'Node "{self.node_name}" can data "{str_index}" to socket index')
+                else:
+                    for prop_name, prop_value in sock_props.items():
+                        yield sock_index, prop_name, prop_value
 
 
 class TreeGenerator:
@@ -169,7 +194,12 @@ class NodeGenerator:
             debug(f'Node "{self._node_name}" cant set property "{prop.name}", {e}')
             self._fails_log.add_fail('Set property to a node fail')
 
-    def set_input_socket_property(self, socket_identifier: str, prop: BPYProperty): ...
+    def set_input_socket_property(self, prop: BPYProperty, value):
+        try:
+            prop.value = value
+        except Exception as e:
+            debug(f'Node "{self._node_name}" cant set socket properties "{prop.name}", {e}')
+            self._fails_log.add_fail('Set property to a socket fail')
 
     @property
     def node(self) -> SverchCustomTreeNode:

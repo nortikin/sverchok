@@ -127,9 +127,9 @@ class NodeFormat:
                 prop = BPYProperty(sock, prop_name)
                 if self._is_property_to_export(prop):
                     if prop.type == 'COLLECTION':
-                        self._json_data["params"][prop_name] = prop.filter_collection_values()
+                        sock_props[prop_name] = prop.filter_collection_values()
                     else:
-                        self._json_data["params"][prop.name] = prop.value
+                        sock_props[prop.name] = prop.value
             if sock_props:
                 self._json_data['custom_socket_props'][str(i)] = sock_props
 

@@ -141,6 +141,8 @@ class BPYProperty:
             raise TypeError(f'Can not read "default_value" of invalid property "{self.name}"')
         if self.type == 'COLLECTION':
             return self._extract_collection_values(default_value=True)
+        if self.is_array_like:
+            return tuple(self._data.bl_rna.properties[self.name].default_array)
         else:
             return self._data.bl_rna.properties[self.name].default
 
