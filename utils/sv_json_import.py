@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING, Union, Generator, ContextManager
 import bpy
 from sverchok.utils.sv_IO_panel_tools import get_file_obj_from_zip
 from sverchok.utils.logging import debug, info, warning
+from sverchok.utils import dummy_nodes
 
 if TYPE_CHECKING:
     from sverchok.node_tree import SverchCustomTree, SverchCustomTreeNode
@@ -83,7 +84,7 @@ class NodeImporter01:
         return self._structure['bl_idname']
 
     def node_attributes(self) -> Generator[tuple]:
-        required_attributes = ["height", "width", "label", "hide", "location"]
+        required_attributes = ["height", "width", "label", "hide", "location", "color", "use_custom_color"]
         if "location" not in self._structure:
             debug(f'Node "{self.node_name}" does not have location attribute')
         for attr in required_attributes:
@@ -117,6 +118,10 @@ class TreeGenerator:
 
     def add_node(self, bl_type: str, node_name: str) -> Union[NodeGenerator, None]:
         try:
+            if dummy_nodes.is_dependent(bl_type):
+                # some node types are not registered if dependencies are not installed
+                # in this case such nodes are registered as dummies
+                dummy_nodes.register_dummy(bl_type)
             node = self._tree.nodes.new(bl_type)
         except Exception as e:
             debug(f'Exporting node "{node_name}" is failed, {e}')
