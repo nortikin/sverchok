@@ -85,3 +85,9 @@ class SvSplineCurve(SvCurve):
     def lerp_to(self, curve2, coefficient):
         return self.to_nurbs().lerp_to(curve2, coefficient)
 
+    def split_at(self, t):
+        return self.to_nurbs().split_at(t)
+
+    def cut_segment(self, new_t_min, new_t_max, rescale=False):
+        return self.to_nurbs().cut_segment(new_t_min, new_t_max, rescale=rescale)
+

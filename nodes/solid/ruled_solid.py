@@ -101,21 +101,16 @@ class SvRuledSolidNode(bpy.types.Node, SverchCustomTreeNode):
             default = False,
             update = updateNode)
 
-    precision_min: FloatProperty(
-            name = "Min Precision",
-            default = 0.01,
-            precision=6,
+    validate : BoolProperty(
+            name = "Validate",
+            description = "Make sure that the constructed body is valid in terms of OCC core",
+            default = True,
             update = updateNode)
 
-    precision_max: FloatProperty(
-            name = "Max Precision",
-            default = 0.01,
-            precision=6,
-            update = updateNode)
 
-    precision_work: FloatProperty(
-            name = "Working Precision",
-            default = 0.01,
+    precision: FloatProperty(
+            name = "Tolerance",
+            default = 0.001,
             precision=6,
             update = updateNode)
 
@@ -139,9 +134,9 @@ class SvRuledSolidNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
-        layout.prop(self, 'precision_work')
-        layout.prop(self, 'precision_min')
-        layout.prop(self, 'precision_max')
+        layout.prop(self, 'validate')
+        if self.validate:
+            layout.prop(self, 'precision')
 
     def make_solid(self, face1, face2):
         if self.flip_face1:
@@ -174,8 +169,12 @@ class SvRuledSolidNode(bpy.types.Node, SverchCustomTreeNode):
         solid = Part.makeSolid(sh)
         if not solid.isValid():
             self.debug("Resulting solid is not valid!")
-            if not solid.fix(self.precision_work, self.precision_min, self.precision_max):
-                self.error("Solid is not valid, and is not possible to fix")
+            if not solid.fix(self.precision, self.precision, self.precision):
+                message = "Solid is not valid, and is not possible to fix"
+                if self.validate:
+                    raise Exception(message)
+                else:
+                    self.error(message)
         return solid
 
     def process(self):
