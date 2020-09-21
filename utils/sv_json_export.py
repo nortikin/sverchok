@@ -20,10 +20,22 @@ if TYPE_CHECKING:
     SverchCustomTreeNode = Union[SverchCustomTreeNode, bpy.types.Node]
 
 
-class JSONFormat01:
+class JSONImporter:
     """It's only know about Sverchok JSON structure nad can fill it"""
+    @classmethod
+    def create_from_tree(cls, tree: SverchCustomTree, save_defaults: bool = False) -> dict:
+        root_tree_importer = TreeImporter01()
+        return root_tree_importer.import_tree(tree)
+
+    @classmethod
+    def create_from_nodes(cls, nodes: list, save_defaults: bool = False) -> JSONImporter: ...
+
+    def _add_monad_tree(self, monad_name, magic_string): ...
+
+
+class TreeImporter01:
     def __init__(self):
-        self._json_data = {
+        self._structure = {
             "export_version": "0.10",
             "framed_nodes": dict(),
             "groups": dict(),
@@ -31,30 +43,22 @@ class JSONFormat01:
             "update_lists": []
         }
 
-    def get_dict(self):
-        return self._json_data
+    def import_tree(self, tree: SverchCustomTree) -> dict:
+        for node in tree.nodes:
+            self._add_node(node)
+            self._add_node_in_frame(node)
+        for link in tree.links:
+            self._add_link(link)
+        return self._structure
 
-    @classmethod
-    def create_from_tree(cls, node_group: SverchCustomTree, save_defaults: bool = False) -> JSONFormat01:
-        sv_json = cls()
-        for node in node_group.nodes:
-            sv_json.add_node(node)
-            sv_json.add_node_in_frame(node)
-        for link in node_group.links:
-            sv_json.add_link(link)
-        return sv_json
-
-    @classmethod
-    def create_from_nodes(cls, nodes: list, save_defaults: bool = False) -> JSONFormat01: ...
-
-    def add_node(self, node: SverchCustomTreeNode) -> NodeFormat:
+    def _add_node(self, node: SverchCustomTreeNode) -> NodeFormat:
         json_node = NodeFormat.create_from_node(node)
-        self._json_data['nodes'][node.name] = json_node.get_dict()
+        self._structure['nodes'][node.name] = json_node.get_dict()
 
-    def add_link(self, link: bpy.types.NodeLink):
+    def _add_link(self, link: bpy.types.NodeLink):
         if hasattr(link.from_socket, 'index') and hasattr(link.to_socket, 'index'):
             # there are normal nodes from both sides of the link, get their indexes
-            self._json_data['update_lists'].append([
+            self._structure['update_lists'].append([
                 link.from_node.name, link.from_socket.index, link.to_node.name, link.to_socket.index
             ])
         else:
@@ -62,15 +66,13 @@ class JSONFormat01:
             # it is strange solution but it is how current exporter works
             # potentially it can bring troubles in case if normal node has several sockets with equal names
             # what is not forbidden by Blender API
-            self._json_data['update_lists'].append([
+            self._structure['update_lists'].append([
                 link.from_node.name, link.from_socket.name, link.to_node.name, link.to_socket.name
             ])
 
-    def add_node_in_frame(self, node: SverchCustomTreeNode):
+    def _add_node_in_frame(self, node: SverchCustomTreeNode):
         if node.parent:
-            self._json_data["framed_nodes"][node.name] = node.parent.name
-
-    def add_monad_tree(self, monad_name, magic_string): ...
+            self._structure["framed_nodes"][node.name] = node.parent.name
 
 
 class NodeFormat:
