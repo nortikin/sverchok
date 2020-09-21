@@ -7,6 +7,9 @@
 
 
 import bpy
+from bpy.props import StringProperty, FloatProperty
+import bl_operators
+
 from sverchok.utils.sv_node_utils import frame_adjust
 from sverchok.menu import draw_add_node_operator
 from sverchok.ui.presets import node_supports_presets
@@ -179,7 +182,39 @@ def add_connection(tree, bl_idname_new_node, offset):
         # maybe vdmk2 + indexviewer
         ...
 
+class SvAddNumberParamOperator(bl_operators.node.NodeAddOperator, bpy.types.Operator):
+    bl_idname = "node.sv_add_named_number"
+    bl_label = "Add Number parameter"
+    bl_options = {'REGISTER', 'UNDO'}
+    bl_property = 'value'
 
+    label : StringProperty(
+            name = "Label",
+            default = "Number"
+        )
+
+    value : FloatProperty(name = "Value", default = 0.0)
+
+    def execute(self, context):
+        self.use_transform = True
+        self.type = 'SvNumberNode'
+        setting = self.settings.add()
+        setting.name = 'label'
+        setting.value = '"' + self.label + '"'
+        setting = self.settings.add()
+        setting.name = 'float_'
+        setting.value = str(self.value)
+        self.create_node(context)
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self)
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, 'value')
+        layout.prop(self, 'label')
 
 class SvGenericDeligationOperator(bpy.types.Operator):
 
@@ -264,6 +299,9 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
     def draw_conveniences(self, context, node):
         layout = self.layout
         layout.separator()
+
+        layout.operator(SvAddNumberParamOperator.bl_idname)
+
         for nodelist in common_nodes:
             for named_node in nodelist:
                 if named_node == '---':
@@ -274,6 +312,7 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
 
 
 def register():
+    bpy.utils.register_class(SvAddNumberParamOperator)
     bpy.utils.register_class(SvGenericDeligationOperator)
     bpy.utils.register_class(SvNodeviewRClickMenu)
 
@@ -281,3 +320,5 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvNodeviewRClickMenu)
     bpy.utils.unregister_class(SvGenericDeligationOperator)
+    bpy.utils.unregister_class(SvAddNumberParamOperator)
+
