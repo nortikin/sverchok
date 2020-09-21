@@ -55,51 +55,33 @@ class JSONImporter01:
                 for prop_name, prop_value in node_importer.node_properties():
                     node_builder.set_node_property(BPYProperty(node, prop_name), prop_value)
                 for sock_index, prop_name, prop_value in node_importer.input_socket_properties():
-                    try:
+                    with self._fails_log.add_fail("Search socket", f'Node: {node.name}'):
                         socket = node.inputs[sock_index]
-                    except Exception as e:
-                        self._fails_log.add_fail('find socket fail')
-                        debug(f'Node "{node.name}" don not find socket with index "{sock_index}", {e}')
-                    else:
-                        node_builder.set_input_socket_property(BPYProperty(socket, prop_name), prop_value)
+                    node_builder.set_input_socket_property(BPYProperty(socket, prop_name), prop_value)
 
             for from_node_name, from_socket_index, to_node_name, to_socket_index in self._links():
-                try:
+                with self._fails_log.add_fail("Search node to link"):
                     from_node_name = new_node_names[from_node_name]
                     to_node_name = new_node_names[to_node_name]
-                except Exception as e:
-                    debug(f'Fail to find node to link it, {e}')
-                else:
-                    tree_builder.add_link(from_node_name, from_socket_index, to_node_name, to_socket_index)
+                tree_builder.add_link(from_node_name, from_socket_index, to_node_name, to_socket_index)
 
         self._fails_log.report_log_result()
 
     def _nodes(self) -> Generator[NodeImporter01]:
-        if "nodes" in self._structure:
-            nodes = self._structure["nodes"]
-            if isinstance(nodes, dict):
-                for node_name, node_structure in nodes.items():
-                    if isinstance(node_structure, dict):
-                        yield NodeImporter01(node_name, node_structure, self._fails_log)
-                    else:
-                        debug(f'Node "{node_name}" has unsupported format - skip')
-            else:
-                debug('Nodes have unsupported format')
+        if "nodes" not in self._structure:
+            return
+        nodes = self._structure["nodes"]
+        with self._fails_log.add_fail("Reading nodes"):
+            for node_name, node_structure in nodes.items():
+                yield NodeImporter01(node_name, node_structure, self._fails_log)
 
     def _links(self) -> Generator[tuple]:
-        if 'update_lists' in self._structure:
-            links = self._structure['update_lists']
-            if not isinstance(links, list):
-                self._fails_log.add_fail('Read links fail')
-                debug(f'Main tree has links with unsupported format')
-                return
-            for link in links:
-                try:
-                    from_node_name, form_socket_index, to_node_name, to_socket_index = link
-                    yield from_node_name, form_socket_index, to_node_name, to_socket_index
-                except Exception as e:
-                    self._fails_log.add_fail('Read link fail')
-                    debug(f'Fail to read link "{link}"')
+        if 'update_lists' not in self._structure:
+            return
+        links = self._structure['update_lists']
+        with self._fails_log.add_fail("Reading links"):
+            for from_node_name, form_socket_index, to_node_name, to_socket_index in links:
+                yield from_node_name, form_socket_index, to_node_name, to_socket_index
 
     def _parent_nodes(self) -> Generator[tuple]: ...
 
@@ -117,38 +99,25 @@ class NodeImporter01:
         return self._structure['bl_idname']
 
     def node_attributes(self) -> Generator[tuple]:
-        required_attributes = ["height", "width", "label", "hide", "location", "color", "use_custom_color"]
-        if "location" not in self._structure:
-            self._fails_log.add_fail('Read node location fail')
-            debug(f'Node "{self.node_name}" does not have location attribute')
+        with self._fails_log.add_fail("Reading node location", f'Node: {self.node_name}'):
+            yield "location", self._structure["location"]
+
+        required_attributes = ["height", "width", "label", "hide", "color", "use_custom_color"]
         for attr in required_attributes:
             if attr in self._structure:
                 yield attr, self._structure[attr]
 
     def node_properties(self) -> Generator[tuple]:
-        if not isinstance(self._structure.get('params', dict()), dict):
-            self._fails_log.add_fail('Read node properties fail')
-            debug(f'Node "{self.node_name}" has unsupported format of properties')
-        else:
+        with self._fails_log.add_fail("Reading node properties", f'Node: {self.node_name}'):
             for prop_name, prop_value in self._structure.get('params', dict()).items():
                 yield prop_name, prop_value
 
     def input_socket_properties(self) -> Generator[tuple]:
-        if not isinstance(self._structure.get('custom_socket_props', dict()), dict):
-            self._fails_log.add_fail('Read socket properties fail')
-            debug(f'Node "{self.node_name}" has unsupported format of sockets properties')
-        else:
+        with self._fails_log.add_fail("Reading sockets properties", f'Node: {self.node_name}'):
             for str_index, sock_props in self._structure.get('custom_socket_props', dict()).items():
-                if not isinstance(sock_props, dict):
-                    self._fails_log.add_fail('read socket data fail')
-                    debug(f'Node "{self.node_name}" has unsupported format of socket properties')
-                    continue
-                try:
+                with self._fails_log.add_fail("Reading socket properties", 
+                                              f'Node: {self.node_name}, Socket: {str_index}'):
                     sock_index = int(str_index)
-                except ValueError:
-                    self._fails_log.add_fail('read socket index fail')
-                    debug(f'Node "{self.node_name}" can data "{str_index}" to socket index')
-                else:
                     for prop_name, prop_value in sock_props.items():
                         yield sock_index, prop_name, prop_value
 
@@ -174,26 +143,22 @@ class TreeGenerator:
             builder._tree.unfreeze(hard=True)
 
     def add_node(self, bl_type: str, node_name: str) -> Union[NodeGenerator, None]:
-        try:
+        with self._fails_log.add_fail("Creating node", f'Tree: {self._tree_name}, Node: {node_name}'):
             if dummy_nodes.is_dependent(bl_type):
                 # some node types are not registered if dependencies are not installed
                 # in this case such nodes are registered as dummies
                 dummy_nodes.register_dummy(bl_type)
             node = self._tree.nodes.new(bl_type)
-        except Exception as e:
-            debug(f'Exporting node "{node_name}" is failed, {e}')
-            self._fails_log.add_fail('import node fails')
-        else:
             node.name = node_name
             return node
 
     def add_link(self, from_node_name, from_socket_index, to_node_name, to_socket_index):
-        try:
+        with self._fails_log.add_fail(
+                "Creating link", f'Tree: {self._tree_name}, from: {from_node_name, from_socket_index}, '
+                                 f'to: {to_node_name, to_socket_index}'):
             from_socket = self._tree.nodes[from_node_name].outputs[from_socket_index]
             to_socket = self._tree.nodes[to_node_name].inputs[to_socket_index]
             self._tree.links.new(from_socket, to_socket)
-        except Exception as e:
-            debug(f'Fail to create socket from "{from_node_name}"')
 
     def apply_frame(self, frame_name: str, nodes): ...
 
@@ -209,25 +174,19 @@ class NodeGenerator:
         self._fails_log: FailsLog = log
 
     def set_node_attribute(self, attr_name, value):
-        try:
+        with self._fails_log.add_fail("Setting node attribute",
+                                      f'Tree: {self._tree_name}, Node: {self._node_name}, attr: {attr_name}'):
             setattr(self.node, attr_name, value)
-        except Exception as e:
-            debug(f'Node "{self._node_name}" cant set attribute "{attr_name}", {e}')
-            self._fails_log.add_fail('Set attr to a node fail')
 
     def set_node_property(self, prop: BPYProperty, value):
-        try:
+        with self._fails_log.add_fail("Setting node property",
+                                      f'Tree: {self._tree_name}, Node: {self._node_name}, attr: {prop.name}'):
             prop.value = value
-        except Exception as e:
-            debug(f'Node "{self._node_name}" cant set property "{prop.name}", {e}')
-            self._fails_log.add_fail('Set property to a node fail')
 
     def set_input_socket_property(self, prop: BPYProperty, value):
-        try:
+        with self._fails_log.add_fail("Setting socket property",
+                                      f'Tree: {self._tree_name}, Node: {self._node_name}, prop: {prop.name}'):
             prop.value = value
-        except Exception as e:
-            debug(f'Node "{self._node_name}" cant set socket properties "{prop.name}", {e}')
-            self._fails_log.add_fail('Set property to a socket fail')
 
     @property
     def node(self) -> SverchCustomTreeNode:
@@ -238,8 +197,13 @@ class FailsLog:
     def __init__(self):
         self._log = defaultdict(int)
 
-    def add_fail(self, fail_name):
-        self._log[fail_name] += 1
+    @contextmanager
+    def add_fail(self, fail_name, source=None):
+        try:
+            yield
+        except Exception as e:
+            self._log[fail_name] += 1
+            debug(f'FAIL: "{fail_name}", {"SOURCE: " if source else ""}{source or ""}, {e}')
 
     @property
     def has_fails(self) -> bool:
@@ -248,6 +212,6 @@ class FailsLog:
     def report_log_result(self):
         if self.has_fails:
             warning(f'During import next fails has happened:')
-            [print(f'{msg} - {number}') for msg, number in self._log.items()]
+            [print(f'FAIL: {msg} - {number}') for msg, number in self._log.items()]
         else:
             info(f'Import done with no fails')
