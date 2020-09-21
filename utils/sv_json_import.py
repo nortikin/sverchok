@@ -42,38 +42,45 @@ class JSONImporter01:
             warning(f'File should have .zip or .json extension, got ".{path.rsplit(".")[-1]}" instead')
 
     def import_into_tree(self, tree: SverchCustomTree):
-        with TreeGenerator.start_from_tree(tree, self._fails_log) as tree_builder:
-            new_node_names = dict()
-            for node_importer in self._nodes():
-                node = tree_builder.add_node(node_importer.node_type, node_importer.node_name)
+
+        root_tree_builder = TreeImporter01(tree, self._structure, self._fails_log)
+        root_tree_builder.import_tree()
+        self._fails_log.report_log_result()
+
+    def _monads(self) -> Generator[str]:
+        ...
+
+
+class TreeImporter01:
+    def __init__(self, tree: SverchCustomTree, structure: dict, log: FailsLog):
+        self._tree = tree
+        self._structure = structure
+        self._fails_log = log
+        self._new_node_names = dict()  # map(old_node_name, new_node_name)
+
+    def import_tree(self):
+        with TreeGenerator.start_from_tree(self._tree, self._fails_log) as tree_builder:
+            for node_name, node_type, node_structure in self._nodes():
+                node = tree_builder.add_node(node_type, node_name)
                 if node is None:
                     continue
-                new_node_names[node_importer.node_name] = node.name
-                node_builder = NodeGenerator(tree.name, node.name, self._fails_log)
-                for attr_name, attr_value in node_importer.node_attributes():
-                    node_builder.set_node_attribute(attr_name, attr_value)
-                for prop_name, prop_value in node_importer.node_properties():
-                    node_builder.set_node_property(BPYProperty(node, prop_name), prop_value)
-                for sock_index, prop_name, prop_value in node_importer.input_socket_properties():
-                    with self._fails_log.add_fail("Search socket", f'Node: {node.name}'):
-                        socket = node.inputs[sock_index]
-                    node_builder.set_input_socket_property(BPYProperty(socket, prop_name), prop_value)
+                self._new_node_names[node_name] = node.name
+                NodeImporter01(node, node_structure, self._fails_log).import_node()
 
             for from_node_name, from_socket_index, to_node_name, to_socket_index in self._links():
                 with self._fails_log.add_fail("Search node to link"):
-                    from_node_name = new_node_names[from_node_name]
-                    to_node_name = new_node_names[to_node_name]
+                    from_node_name = self._new_node_names[from_node_name]
+                    to_node_name = self._new_node_names[to_node_name]
                 tree_builder.add_link(from_node_name, from_socket_index, to_node_name, to_socket_index)
 
-        self._fails_log.report_log_result()
-
-    def _nodes(self) -> Generator[NodeImporter01]:
+    def _nodes(self) -> Generator[tuple]:
         if "nodes" not in self._structure:
             return
         nodes = self._structure["nodes"]
         with self._fails_log.add_fail("Reading nodes"):
             for node_name, node_structure in nodes.items():
-                yield NodeImporter01(node_name, node_structure, self._fails_log)
+                with self._fails_log.add_fail("Reading node"):
+                    yield node_name, node_structure['bl_idname'], node_structure
 
     def _links(self) -> Generator[tuple]:
         if 'update_lists' not in self._structure:
@@ -85,21 +92,35 @@ class JSONImporter01:
 
     def _parent_nodes(self) -> Generator[tuple]: ...
 
-    def _monads(self) -> Generator[str]: ...
-
 
 class NodeImporter01:
-    def __init__(self, node_name: str, structure: dict, log: FailsLog):
-        self.node_name = node_name
+    def __init__(self, node: SverchCustomTreeNode, structure: dict, log: FailsLog):
+        self._node = node
         self._structure = structure
         self._fails_log = log
 
-    @property
-    def node_type(self):
-        return self._structure['bl_idname']
+    def import_node(self):
+        for attr_name, attr_value in self._node_attributes():
+            with self._fails_log.add_fail(
+                    "Setting node attribute",
+                    f'Tree: {self._node.id_data.name}, Node: {self._node.name}, attr: {attr_name}'):
+                setattr(self._node, attr_name, attr_value)
 
-    def node_attributes(self) -> Generator[tuple]:
-        with self._fails_log.add_fail("Reading node location", f'Node: {self.node_name}'):
+        for prop_name, prop_value in self._node_properties():
+            with self._fails_log.add_fail(
+                    "Setting node property",
+                    f'Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}'):
+                BPYProperty(self._node, prop_name).value = prop_value
+
+        for sock_index, prop_name, prop_value in self._input_socket_properties():
+            with self._fails_log.add_fail(
+                    "Setting socket property",
+                    f'Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}'):
+                socket = self._node.inputs[sock_index]
+                BPYProperty(socket, prop_name).value = prop_value
+
+    def _node_attributes(self) -> Generator[tuple]:
+        with self._fails_log.add_fail("Reading node location", f'Node: {self._node.name}'):
             yield "location", self._structure["location"]
 
         required_attributes = ["height", "width", "label", "hide", "color", "use_custom_color"]
@@ -107,16 +128,16 @@ class NodeImporter01:
             if attr in self._structure:
                 yield attr, self._structure[attr]
 
-    def node_properties(self) -> Generator[tuple]:
-        with self._fails_log.add_fail("Reading node properties", f'Node: {self.node_name}'):
+    def _node_properties(self) -> Generator[tuple]:
+        with self._fails_log.add_fail("Reading node properties", f'Node: {self._node.name}'):
             for prop_name, prop_value in self._structure.get('params', dict()).items():
                 yield prop_name, prop_value
 
-    def input_socket_properties(self) -> Generator[tuple]:
-        with self._fails_log.add_fail("Reading sockets properties", f'Node: {self.node_name}'):
+    def _input_socket_properties(self) -> Generator[tuple]:
+        with self._fails_log.add_fail("Reading sockets properties", f'Node: {self._node.name}'):
             for str_index, sock_props in self._structure.get('custom_socket_props', dict()).items():
                 with self._fails_log.add_fail("Reading socket properties", 
-                                              f'Node: {self.node_name}, Socket: {str_index}'):
+                                              f'Node: {self._node.name}, Socket: {str_index}'):
                     sock_index = int(str_index)
                     for prop_name, prop_value in sock_props.items():
                         yield sock_index, prop_name, prop_value
@@ -142,7 +163,7 @@ class TreeGenerator:
             # avoiding using tree object directly for crash preventing, probably too cautious
             builder._tree.unfreeze(hard=True)
 
-    def add_node(self, bl_type: str, node_name: str) -> Union[NodeGenerator, None]:
+    def add_node(self, bl_type: str, node_name: str) -> Union[SverchCustomTreeNode, None]:
         with self._fails_log.add_fail("Creating node", f'Tree: {self._tree_name}, Node: {node_name}'):
             if dummy_nodes.is_dependent(bl_type):
                 # some node types are not registered if dependencies are not installed
@@ -165,32 +186,6 @@ class TreeGenerator:
     @property
     def _tree(self) -> SverchCustomTree:
         return bpy.data.node_groups[self._tree_name]
-
-
-class NodeGenerator:
-    def __init__(self, tree_name: str, node_name: str, log: FailsLog):
-        self._tree_name: str = tree_name
-        self._node_name: str = node_name
-        self._fails_log: FailsLog = log
-
-    def set_node_attribute(self, attr_name, value):
-        with self._fails_log.add_fail("Setting node attribute",
-                                      f'Tree: {self._tree_name}, Node: {self._node_name}, attr: {attr_name}'):
-            setattr(self.node, attr_name, value)
-
-    def set_node_property(self, prop: BPYProperty, value):
-        with self._fails_log.add_fail("Setting node property",
-                                      f'Tree: {self._tree_name}, Node: {self._node_name}, attr: {prop.name}'):
-            prop.value = value
-
-    def set_input_socket_property(self, prop: BPYProperty, value):
-        with self._fails_log.add_fail("Setting socket property",
-                                      f'Tree: {self._tree_name}, Node: {self._node_name}, prop: {prop.name}'):
-            prop.value = value
-
-    @property
-    def node(self) -> SverchCustomTreeNode:
-        return bpy.data.node_groups[self._tree_name].nodes[self._node_name]
 
 
 class FailsLog:
