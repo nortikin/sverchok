@@ -729,7 +729,10 @@ def center_nodes(nodes_json_dict, target_center=None):
     average_location = [x / float(n) for x in location_sum]
     for key in nodes_json_dict:
         node = nodes_json_dict[key]
-        node['location'] = [x - x0 + x1 for x, x0, x1 in zip(node['location'], average_location, target_center)]
+        loc = node['location']
+        new_loc = [x - x0 + x1 for x, x0, x1 in zip(loc, average_location, target_center)]
+        node['location'] = new_loc
+        nodes_json_dict[key] = node
 
 def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None):
 
