@@ -270,15 +270,14 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
 
         # convert_if_needed = lambda chars: f'{chars}'
         
-        for obj_index, final_verts in enumerate(geom.locations):
+        for obj_index, locations in enumerate(geom.locations):
 
-            pass
-            # for vpos in final_verts:
+            # for vpos in locations:
             #     chars = convert_if_needed(vpos)
             #     concat_locations((chars, vpos))
             
             # if geom.text:    
-            #     text_items = self.get_text_of_correct_length(obj_index, geom, len(final_verts))                        
+            #     text_items = self.get_text_of_correct_length(obj_index, geom, len(locations))                        
             #     for text_item, vpos in zip(text_items, final_verts):
 
             #         # yikes, don't feed this function nonsense :)
@@ -290,6 +289,7 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
             #             # in case it receives [0, 0, 0] or (0, 0, 0).. etc
             #             chars = convert_if_needed(obj_index, text_item)
             #         concat_text((chars))
+            pass
 
         return display_data
 
