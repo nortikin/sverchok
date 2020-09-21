@@ -55,6 +55,54 @@ class GeometryTests(SverchokTestCase):
         res2 = circle.evaluate(t_max)
         self.assert_numpy_arrays_equal(res2, pt3, precision=6)
 
+    def test_arc_values_2(self):
+        pt1 = np.array((-4, -2, 0))
+        pt2 = np.array((-5, 0, 0))
+        pt3 = np.array((-4, 2, 0))
+        eq = circle_by_three_points(pt1, pt2, pt3)
+        circle = SvCircle.from_equation(eq)
+        res1 = circle.evaluate(0)
+        self.assert_numpy_arrays_equal(res1, pt1, precision=6)
+        t_max = eq.arc_angle
+        res2 = circle.evaluate(t_max)
+        self.assert_numpy_arrays_equal(res2, pt3, precision=6)
+
+    def test_arc_values_3(self):
+        pt1 = np.array((-1, 0, 0))
+        pt2 = np.array((0, 2, 0))
+        pt3 = np.array((1, 0, 0))
+        eq = circle_by_three_points(pt1, pt2, pt3)
+        circle = SvCircle.from_equation(eq)
+        res1 = circle.evaluate(0)
+        self.assert_numpy_arrays_equal(res1, pt1, precision=6)
+        t_max = eq.arc_angle
+        res2 = circle.evaluate(t_max)
+        self.assert_numpy_arrays_equal(res2, pt3, precision=6)
+
+    def test_arc_values_4(self):
+        pt1 = np.array((0, 1, 0))
+        pt2 = np.array((1, 1, 0))
+        pt3 = np.array((1, 0, 0))
+        eq = circle_by_three_points(pt1, pt2, pt3)
+        circle = SvCircle.from_equation(eq)
+        res1 = circle.evaluate(0)
+        self.assert_numpy_arrays_equal(res1, pt1, precision=6)
+        t_max = eq.arc_angle
+        res2 = circle.evaluate(t_max)
+        self.assert_numpy_arrays_equal(res2, pt3, precision=6)
+
+    def test_arc_values_5(self):
+        pt1 = np.array((0, 1, 0))
+        pt2 = np.array((1, 1, 0))
+        pt3 = np.array((0, 0, 0))
+        eq = circle_by_three_points(pt1, pt2, pt3)
+        circle = SvCircle.from_equation(eq)
+        res1 = circle.evaluate(0)
+        self.assert_numpy_arrays_equal(res1, pt1, precision=6)
+        t_max = eq.arc_angle
+        res2 = circle.evaluate(t_max)
+        self.assert_numpy_arrays_equal(res2, pt3, precision=6)
+
     def test_arc_derivative_1(self):
         pt1 = (-5, 0, 0)
         pt2 = (-4, 3, 0)
