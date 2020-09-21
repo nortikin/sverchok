@@ -43,10 +43,12 @@ class JSONImporter01:
 
     def import_into_tree(self, tree: SverchCustomTree):
         with TreeGenerator.start_from_tree(tree, self._fails_log) as tree_builder:
+            new_node_names = dict()
             for node_importer in self._nodes():
                 node = tree_builder.add_node(node_importer.node_type, node_importer.node_name)
                 if node is None:
                     continue
+                new_node_names[node_importer.node_name] = node.name
                 node_builder = NodeGenerator(tree.name, node.name, self._fails_log)
                 for attr_name, attr_value in node_importer.node_attributes():
                     node_builder.set_node_attribute(attr_name, attr_value)
@@ -61,6 +63,15 @@ class JSONImporter01:
                     else:
                         node_builder.set_input_socket_property(BPYProperty(socket, prop_name), prop_value)
 
+            for from_node_name, from_socket_index, to_node_name, to_socket_index in self._links():
+                try:
+                    from_node_name = new_node_names[from_node_name]
+                    to_node_name = new_node_names[to_node_name]
+                except Exception as e:
+                    debug(f'Fail to find node to link it, {e}')
+                else:
+                    tree_builder.add_link(from_node_name, from_socket_index, to_node_name, to_socket_index)
+
         self._fails_log.report_log_result()
 
     def _nodes(self) -> Generator[NodeImporter01]:
@@ -74,10 +85,21 @@ class JSONImporter01:
                         debug(f'Node "{node_name}" has unsupported format - skip')
             else:
                 debug('Nodes have unsupported format')
-        else:
-            debug('Nodes in root tree was not found')
 
-    def _links(self) -> Generator[tuple]: ...
+    def _links(self) -> Generator[tuple]:
+        if 'update_lists' in self._structure:
+            links = self._structure['update_lists']
+            if not isinstance(links, list):
+                self._fails_log.add_fail('Read links fail')
+                debug(f'Main tree has links with unsupported format')
+                return
+            for link in links:
+                try:
+                    from_node_name, form_socket_index, to_node_name, to_socket_index = link
+                    yield from_node_name, form_socket_index, to_node_name, to_socket_index
+                except Exception as e:
+                    self._fails_log.add_fail('Read link fail')
+                    debug(f'Fail to read link "{link}"')
 
     def _parent_nodes(self) -> Generator[tuple]: ...
 
@@ -165,7 +187,13 @@ class TreeGenerator:
             node.name = node_name
             return node
 
-    def add_link(self, from_node_name, from_socket_identifier, to_node_name, to_socket_identifier): ...
+    def add_link(self, from_node_name, from_socket_index, to_node_name, to_socket_index):
+        try:
+            from_socket = self._tree.nodes[from_node_name].outputs[from_socket_index]
+            to_socket = self._tree.nodes[to_node_name].inputs[to_socket_index]
+            self._tree.links.new(from_socket, to_socket)
+        except Exception as e:
+            debug(f'Fail to create socket from "{from_node_name}"')
 
     def apply_frame(self, frame_name: str, nodes): ...
 
