@@ -326,9 +326,9 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         if not (self.activate and self.inputs['locations'].is_linked):
             return True
 
-        verts = self.inputs['locations'].sv_get()
-        if not verts:
+        if not self.inputs['locations'].sv_get():
             return True
+
 
     def process(self):
         n_id = node_id(self)
@@ -346,6 +346,7 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
             'args': (geom, config)} 
 
         callback_enable(n_id, draw_data, overlay='POST_PIXEL')
+
 
     def sv_free(self):
         callback_disable(node_id(self))
