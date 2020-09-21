@@ -62,35 +62,43 @@ class TreeImporter01:
         with TreeGenerator.start_from_tree(self._tree, self._fails_log) as tree_builder:
             for node_name, node_type, node_structure in self._nodes():
                 node = tree_builder.add_node(node_type, node_name)
-                if node is None:
-                    continue
-                self._new_node_names[node_name] = node.name
-                NodeImporter01(node, node_structure, self._fails_log).import_node()
+                if node:
+                    self._new_node_names[node_name] = node.name
+                    NodeImporter01(node, node_structure, self._fails_log).import_node()
 
             for from_node_name, from_socket_index, to_node_name, to_socket_index in self._links():
                 with self._fails_log.add_fail("Search node to link"):
-                    from_node_name = self._new_node_names[from_node_name]
-                    to_node_name = self._new_node_names[to_node_name]
+                    from_node_name = self._get_new_node_name(from_node_name)
+                    to_node_name = self._get_new_node_name(to_node_name)
                 tree_builder.add_link(from_node_name, from_socket_index, to_node_name, to_socket_index)
 
+            for node_name, parent_name in self._parent_nodes():
+                with self._fails_log.add_fail(
+                        "Assign node parent",
+                        f'Tree: {self._tree.name}, Node: {node_name}, Parent node: {parent_name}'):
+                    node_name = self._get_new_node_name(node_name)
+                    parent_name = self._get_new_node_name(parent_name)
+                    self._tree.nodes[node_name].parent = self._tree.nodes[parent_name]
+
+    def _get_new_node_name(self, old_name):
+        return self._new_node_names[old_name]
+
     def _nodes(self) -> Generator[tuple]:
-        if "nodes" not in self._structure:
-            return
-        nodes = self._structure["nodes"]
-        with self._fails_log.add_fail("Reading nodes"):
-            for node_name, node_structure in nodes.items():
+        with self._fails_log.add_fail("Reading nodes", f'Tree: {self._tree.name}'):
+            for node_name, node_structure in self._structure.get("nodes", dict()).items():
                 with self._fails_log.add_fail("Reading node"):
                     yield node_name, node_structure['bl_idname'], node_structure
 
     def _links(self) -> Generator[tuple]:
-        if 'update_lists' not in self._structure:
-            return
-        links = self._structure['update_lists']
-        with self._fails_log.add_fail("Reading links"):
-            for from_node_name, form_socket_index, to_node_name, to_socket_index in links:
+        with self._fails_log.add_fail("Reading links", f'Tree: {self._tree.name}'):
+            for from_node_name, form_socket_index, to_node_name, to_socket_index in \
+                    self._structure.get('update_lists', []):
                 yield from_node_name, form_socket_index, to_node_name, to_socket_index
 
-    def _parent_nodes(self) -> Generator[tuple]: ...
+    def _parent_nodes(self) -> Generator[tuple]:
+        with self._fails_log.add_fail("Reading parent nodes", f'Tree: {self._tree.name}'):
+            for node, parent in self._structure.get("framed_nodes", dict()).items():
+                yield node, parent
 
 
 class NodeImporter01:
@@ -180,8 +188,6 @@ class TreeGenerator:
             from_socket = self._tree.nodes[from_node_name].outputs[from_socket_index]
             to_socket = self._tree.nodes[to_node_name].inputs[to_socket_index]
             self._tree.links.new(from_socket, to_socket)
-
-    def apply_frame(self, frame_name: str, nodes): ...
 
     @property
     def _tree(self) -> SverchCustomTree:
