@@ -20,6 +20,7 @@ import os
 from os.path import exists, isfile
 import subprocess
 import webbrowser
+import socket
 
 import bpy
 from bpy.props import StringProperty, CollectionProperty, BoolProperty, FloatProperty
@@ -33,6 +34,7 @@ from sverchok.utils.development import get_branch
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
 from sverchok.ui.presets import get_presets, SverchPresetReplaceOperator, SvSaveSelected, node_supports_presets
 from sverchok.nodes.__init__ import nodes_dict
+from sverchok.settings import PYPATH
 
 def displaying_sverchok_nodes(context):
     return context.space_data.tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}
@@ -55,6 +57,32 @@ class SvCopyIDName(bpy.types.Operator):
 
     def execute(self, context):
         context.window_manager.clipboard = self.name
+        return {'FINISHED'}
+
+def is_port_open(host, port):
+    try:
+        a_socket = socket. socket(socket. AF_INET, socket. SOCK_STREAM)
+        location = (host, port)
+        #location = ("127.0.0.1", 80)
+        result = a_socket. connect_ex(location)
+        return (result == 0)
+    finally:
+        a_socket. close()
+
+class SvRunPydoc(bpy.types.Operator):
+    """Open browser with available Python API"""
+    bl_idname = "node.sv_run_pydoc"
+    bl_label = "Open PyDoc"
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        HOST = "localhost"
+        PORT = 8080
+        if is_port_open(HOST, PORT):
+            webbrowser.open(f"http://{HOST}:{PORT}/")
+        else:
+            cmd = [PYPATH, '-m', 'pydoc', '-n', HOST, '-p', str(PORT), '-b']
+            subprocess.Popen(cmd)
         return {'FINISHED'}
 
 def get_docs_filepath(string_dir, filename):
@@ -318,6 +346,7 @@ def register():
     bpy.utils.register_class(SvViewHelpForNode)
     bpy.utils.register_class(SvViewSourceForNode)
     bpy.utils.register_class(SV_MT_LoadPresetMenu)
+    bpy.utils.register_class(SvRunPydoc)
     bpy.types.NODE_PT_active_node_generic.append(idname_draw)
 
 
@@ -327,6 +356,7 @@ def unregister():
         bpy.types.NODE_HT_header.remove(node_show_branch)
     bpy.utils.unregister_class(SV_MT_LoadPresetMenu)
     bpy.types.NODE_PT_active_node_generic.remove(idname_draw)
+    bpy.utils.unregister_class(SvRunPydoc)
     bpy.utils.unregister_class(SvCopyIDName)
     bpy.utils.unregister_class(SvViewHelpForNode)
     bpy.utils.unregister_class(SvViewSourceForNode)
