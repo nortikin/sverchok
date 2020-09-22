@@ -223,25 +223,55 @@ class SvGeneralFuse(object):
         self.result, self.map = solids[0].generalFuse(solids[1:])
         self._per_source = defaultdict(set)
         self._per_source_idx = defaultdict(set)
-        for i, (source, items) in enumerate(zip(solids, self.map)):
-            items = set(SvSolidTopology.Item(i) for i in items)
-            key = SvSolidTopology.Item(source)
-            self._per_source[key] = items
-            self._per_source_idx[i] = items
+        self._sources_by_part = defaultdict(set)
+        self._source_idxs_by_part = defaultdict(set)
+        for src_idx, (source, parts) in enumerate(zip(solids, self.map)):
+            items = set(SvSolidTopology.Item(i) for i in parts)
+
+            src_key = SvSolidTopology.Item(source)
+            self._per_source[src_key] = items
+            self._per_source_idx[src_idx] = items
+
+            for item in items:
+                self._sources_by_part[item].add(src_key)
+                self._source_idxs_by_part[item].add(src_idx)
         
-        self._edge_sources = defaultdict(list)
+        self._edge_indirect_source_idxs = defaultdict(set)
+        self._edge_indirect_sources = defaultdict(set)
         for part in self.result.Solids:
+            item = SvSolidTopology.Item(part)
+            sources = self._sources_by_part[item]
+            src_idxs = self._source_idxs_by_part[item]
             for edge in part.Edges:
-                self._edge_sources[SvSolidTopology.Item(edge)].append(part)
+                edge_item = SvSolidTopology.Item(edge)
+                self._edge_indirect_sources[edge_item].update(sources)
+                self._edge_indirect_source_idxs[edge_item].update(src_idxs)
+
+#         self._edge_direct_source_idxs = defaultdict(set)
+#         self._edge_direct_sources = defaultdict(set)
+#         for part in self.result.Solids:
+#             item = SvSolidTopology.Item(part)
+#             for edge in part.Edges:
+#                 edge_item = SvSolidTopology.Item(edge)
+#                 indirect_sources = self._edge_indirect_sources[edge_item]
+#                 indirect_source_idxs = self._edge_indirect_source_idxs[edge_item]
+#                 for src_idx, indirect_source in zip(indirect_source_idxs, indirect_sources):
+#                     src_edges = set(SvSolidTopology.Item(e) for e in indirect_source.item.Edges)
+#                     if edge_item in src_edges:
+#                         self._edge_direct_sources[edge_item].add(indirect_source)
+#                         self._edge_direct_source_idxs[edge_item].add(src_idx)
     
     def get_all_parts(self):
         return self.result.Solids
     
-    def get_union_all(self):
+    def get_union_all(self, refine=False):
         solids = self.result.Solids
-        return solids[0].fuse(solids[1:])
+        solid = solids[0].fuse(solids[1:])
+        if refine:
+            solid = solid.removeSplitter()
+        return solid
 
-    def get_intersect_all(self):
+    def get_intersect_all(self, refine=False):
         result = None
         for source, parts in self._per_source.items():
             if result is None:
@@ -251,13 +281,19 @@ class SvGeneralFuse(object):
         if not result:
             return None
         elif len(result) == 1:
-            return list(result)[0]
+            return list(result)[0].item
         else:
-            solids = list(result)
-            return solids[0].fuse(solids[1:])
+            solids = [p.item for p in result]
+            solid = solids[0].fuse(solids[1:])
+            if refine:
+                solid = solid.removeSplitter()
+            return solid
     
     def get_edge_sources(self, edge):
-        return self._edge_sources[SvSolidTopology.Item(edge)]
+        return self._edge_indirect_sources[SvSolidTopology.Item(edge)]
+    
+    def get_edge_source_idxs(self, edge):
+        return self._edge_indirect_source_idxs[SvSolidTopology.Item(edge)]
     
     def get_by_source(self, solid):
         return self._per_source[SvSolidTopology.Item(solid)]
@@ -288,12 +324,22 @@ class SvGeneralFuse(object):
                 result.difference_update(results)
         return result
     
-    def get_clean_part_by_idx(self, idx):
+    def get_clean_part_by_idx(self, idx, refine=False):
         result = self._per_source_idx[idx].copy()
         for source_idx, results in self._per_source_idx.items():
             if source_idx != idx:
                 result.difference_update(results)
-        return result
+
+        parts = [part.item for part in result]
+        if not parts:
+            solid = None
+        elif len(parts) == 1:
+            solid = parts[0]
+        else:
+            solid = parts[0].fuse(parts[1:])
+            if do_refine:
+                solid = solid.removeSplitter()
+        return solid
 
 def basic_mesher(solids, precisions):
     verts = []

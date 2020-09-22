@@ -8,7 +8,7 @@
 import bpy
 from bpy.props import BoolProperty, FloatProperty, EnumProperty
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, match_long_repeat as mlr, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
@@ -16,6 +16,8 @@ from sverchok.utils.dummy_nodes import add_dummy
 if FreeCAD is None:
     add_dummy('SvSolidBooleanNode', 'Solid Boolean', 'FreeCAD')
 else:
+    from sverchok.utils.solid import SvGeneralFuse
+
     import Part
 
 class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
@@ -48,11 +50,12 @@ class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
         default="ITX",
         update=updateNode)
 
+    @throttled
     def update_mode(self, context):
         self.inputs['Solid A'].hide_safe = self.nest_objs
         self.inputs['Solid B'].hide_safe = self.nest_objs
         self.inputs['Solids'].hide_safe = not self.nest_objs
-        updateNode(self, context)
+        self.outputs['EdgeMask'].hide_safe = not self.generate_masks
 
     nest_objs: BoolProperty(
         name="Accumulate nested",
@@ -66,8 +69,15 @@ class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         update=updateNode)
 
+    generate_masks : BoolProperty(
+        name = "Generate Masks",
+        description = "Calculate masks so it will be possible to know which edges / faces are new",
+        default = False,
+        update = update_mode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "selected_mode", toggle=True)
+        layout.prop(self, 'generate_masks', toggle=True)
         layout.prop(self, "nest_objs", toggle=True)
         if self.selected_mode == 'UNION':
             layout.prop(self, "refine_solid")
@@ -76,41 +86,77 @@ class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvSolidSocket', "Solid A")
         self.inputs.new('SvSolidSocket', "Solid B")
         self.inputs.new('SvSolidSocket', "Solids")
-        self.inputs['Solids'].hide_safe = True
 
         self.outputs.new('SvSolidSocket', "Solid")
+        self.outputs.new('SvStringsSocket', "EdgeMask")
+
+        self.update_mode(context)
 
     def make_solid(self, solids):
-        do_refine = self.refine_solid and self.selected_mode in {'UNION'}
+        if self.generate_masks:
+            solid, mask = self.make_solid_general(solids)
+        else:
+            solid = self.make_solid_simple(solids)
+            mask = []
+        #do_refine = self.refine_solid and self.selected_mode in {'UNION'}
+        #if do_refine:
+        #    solid = solid.removeSplitter()
+        return solid, mask
+
+    def make_solid_simple(self, solids):
         base = solids[0].copy()
         rest = solids[1:]
         if self.selected_mode == 'UNION':
             solid = base.fuse(rest)
-        elif sel.selected_mode == 'ITX':
+        elif self.selected_mode == 'ITX':
             solid = base.common(rest)
         elif self.selected_mode == 'DIFF':
             solid = base.cut(rest)
         else:
             raise Exception("Unknown mode")
+        do_refine = self.refine_solid and self.selected_mode in {'UNION'}
         if do_refine:
             solid = solid.removeSplitter()
         return solid
+
+    def make_solid_general(self, solids):
+        do_refine = self.refine_solid and self.selected_mode in {'UNION'}
+
+        fused = SvGeneralFuse(solids)
+        if self.selected_mode == 'UNION':
+            solid = fused.get_union_all(refine=do_refine)
+        elif self.selected_mode == 'ITX':
+            solid = fused.get_intersect_all(refine=do_refine)
+        elif self.selected_mode == 'DIFF':
+            solid = fused.get_clean_part_by_idx(0, refine=do_refine)
+        else:
+            raise Exception("Unknown mode")
+
+        mask = []
+        if solid is not None:
+            for i, edge in enumerate(solid.Edges):
+                srcs = fused.get_edge_source_idxs(edge)
+                print(f"E#{i} => {srcs}")
+                is_new = len(srcs) > 1
+                mask.append(is_new)
+
+        return solid, mask
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
 
         solids_out = []
+        edge_masks_out = []
         if self.nest_objs:
             solids_in = self.inputs['Solids'].sv_get()
             #level = get_data_nesting_level(solids_in, data_types=(Part.Shape,))
             solids_in = ensure_nesting_level(solids_in, 2, data_types=(Part.Shape,))
 
             for solids in solids_in:
-                solid = self.make_solid(solids)
+                solid, edge_mask = self.make_solid(solids)
                 solids_out.append(solid)
-
-            self.outputs['Solid'].sv_set(solids_out)
+                edge_masks_out.append(edge_mask)
 
         else:
             solids_a_in = self.inputs['Solid A'].sv_get()
@@ -121,18 +167,23 @@ class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
             solids_b_in = ensure_nesting_level(solids_b_in, 2, data_types=(Part.Shape,))
             level = max(level_a, level_b)
 
-            solids_out = []
             for params in zip_long_repeat(solids_a_in, solids_b_in):
                 new_solids = []
+                new_edge_masks = []
                 for solid_a, solid_b in zip_long_repeat(*params):
-                    solid = self.make_solid([solid_a, solid_b])
+                    solid, edge_mask = self.make_solid([solid_a, solid_b])
                     new_solids.append(solid)
+                    new_edge_masks.append(edge_mask)
                 if level == 1:
                     solids_out.extend(new_solids)
+                    edge_masks_out.extend(new_edge_masks)
                 else:
                     solids_out.append(new_solids)
+                    edge_masks_out.append(new_edge_masks)
 
-            self.outputs['Solid'].sv_set(solids_out)
+        self.outputs['Solid'].sv_set(solids_out)
+        if 'EdgeMask' in self.outputs:
+            self.outputs['EdgeMask'].sv_set(edge_masks_out)
 
 def register():
     if FreeCAD is not None:
