@@ -238,14 +238,22 @@ class SvGeneralFuse(object):
         
         self._edge_indirect_source_idxs = defaultdict(set)
         self._edge_indirect_sources = defaultdict(set)
+        self._face_indirect_source_idxs = defaultdict(set)
+        self._face_indirect_sources = defaultdict(set)
         for part in self.result.Solids:
             item = SvSolidTopology.Item(part)
             sources = self._sources_by_part[item]
             src_idxs = self._source_idxs_by_part[item]
+
             for edge in part.Edges:
                 edge_item = SvSolidTopology.Item(edge)
                 self._edge_indirect_sources[edge_item].update(sources)
                 self._edge_indirect_source_idxs[edge_item].update(src_idxs)
+
+            for face in part.Faces:
+                face_item = SvSolidTopology.Item(face)
+                self._face_indirect_source_idxs[face_item].update(src_idxs)
+                self._face_indirect_sources[face_item].update(sources)
 
 #         self._edge_direct_source_idxs = defaultdict(set)
 #         self._edge_direct_sources = defaultdict(set)
@@ -294,6 +302,12 @@ class SvGeneralFuse(object):
     
     def get_edge_source_idxs(self, edge):
         return self._edge_indirect_source_idxs[SvSolidTopology.Item(edge)]
+
+    def get_face_sources(self, face):
+        return self._face_indirect_sources[SvSolidTopology.Item(face)]
+    
+    def get_face_source_idxs(self, face):
+        return self._face_indirect_source_idxs[SvSolidTopology.Item(face)]
     
     def get_by_source(self, solid):
         return self._per_source[SvSolidTopology.Item(solid)]

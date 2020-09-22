@@ -21,7 +21,7 @@ else:
     import Part
 
 class BoolResult(object):
-    def __init__(self, solid, edge_mask=None, edge_map=None):
+    def __init__(self, solid, edge_mask=None, edge_map=None, face_mask=None, face_map=None):
         self.solid = solid
         if edge_mask is None:
             edge_mask = []
@@ -29,6 +29,12 @@ class BoolResult(object):
         if edge_map is None:
             edge_map = []
         self.edge_map = edge_map
+        if face_mask is None:
+            face_mask = []
+        self.face_mask = face_mask
+        if face_map is None:
+            face_map = []
+        self.face_map = face_map
 
 class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -65,8 +71,10 @@ class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Solid A'].hide_safe = self.nest_objs
         self.inputs['Solid B'].hide_safe = self.nest_objs
         self.inputs['Solids'].hide_safe = not self.nest_objs
-        self.outputs['EdgeMask'].hide_safe = not self.generate_masks
+        self.outputs['EdgesMask'].hide_safe = not self.generate_masks
         self.outputs['EdgeSources'].hide_safe = not self.generate_masks
+        self.outputs['FacesMask'].hide_safe = not self.generate_masks
+        self.outputs['FaceSources'].hide_safe = not self.generate_masks
 
     nest_objs: BoolProperty(
         name="Accumulate nested",
@@ -99,8 +107,10 @@ class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvSolidSocket', "Solids")
 
         self.outputs.new('SvSolidSocket', "Solid")
-        self.outputs.new('SvStringsSocket', "EdgeMask")
+        self.outputs.new('SvStringsSocket', "EdgesMask")
         self.outputs.new('SvStringsSocket', "EdgeSources")
+        self.outputs.new('SvStringsSocket', "FacesMask")
+        self.outputs.new('SvStringsSocket', "FaceSources")
 
         self.update_mode(context)
 
@@ -142,14 +152,23 @@ class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
 
         edge_mask = []
         edge_map = []
+        face_mask = []
+        face_map = []
+
         if solid is not None:
-            for i, edge in enumerate(solid.Edges):
+            for edge in solid.Edges:
                 srcs = fused.get_edge_source_idxs(edge)
                 edge_map.append(list(srcs))
                 is_new = len(srcs) > 1
                 edge_mask.append(is_new)
 
-        return BoolResult(solid, edge_mask, edge_map)
+            for face in solid.Faces:
+                srcs = fused.get_face_source_idxs(face)
+                face_map.append(list(srcs))
+                is_new = len(srcs) > 1
+                face_mask.append(is_new)
+
+        return BoolResult(solid, edge_mask, edge_map, face_mask, face_map)
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -158,6 +177,8 @@ class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
         solids_out = []
         edge_masks_out = []
         edge_srcs_out = []
+        face_masks_out = []
+        face_srcs_out = []
         if self.nest_objs:
             solids_in = self.inputs['Solids'].sv_get()
             #level = get_data_nesting_level(solids_in, data_types=(Part.Shape,))
@@ -168,6 +189,8 @@ class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
                 solids_out.append(result.solid)
                 edge_masks_out.append(result.edge_mask)
                 edge_srcs_out.append(result.edge_map)
+                face_masks_out.append(result.face_mask)
+                face_srcs_out.append(result.face_map)
 
         else:
             solids_a_in = self.inputs['Solid A'].sv_get()
@@ -182,25 +205,37 @@ class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
                 new_solids = []
                 new_edge_masks = []
                 new_edge_srcs = []
+                new_face_masks = []
+                new_face_srcs = []
                 for solid_a, solid_b in zip_long_repeat(*params):
                     result = self.make_solid([solid_a, solid_b])
                     new_solids.append(result.solid)
                     new_edge_masks.append(result.edge_mask)
                     new_edge_srcs.append(result.edge_map)
+                    new_face_masks.append(result.face_mask)
+                    new_face_srcs.append(result.face_map)
                 if level == 1:
                     solids_out.extend(new_solids)
                     edge_masks_out.extend(new_edge_masks)
                     edge_srcs_out.extend(new_edge_srcs)
+                    face_masks_out.extend(new_face_masks)
+                    face_srcs_out.extend(new_face_srcs)
                 else:
                     solids_out.append(new_solids)
                     edge_masks_out.append(new_edge_masks)
                     edge_srcs_out.append(new_edge_srcs)
+                    face_masks_out.append(new_face_masks)
+                    face_srcs_out.append(new_face_srcs)
 
         self.outputs['Solid'].sv_set(solids_out)
-        if 'EdgeMask' in self.outputs:
-            self.outputs['EdgeMask'].sv_set(edge_masks_out)
+        if 'EdgesMask' in self.outputs:
+            self.outputs['EdgesMask'].sv_set(edge_masks_out)
         if 'EdgeSources' in self.outputs:
             self.outputs['EdgeSources'].sv_set(edge_srcs_out)
+        if 'FacesMask' in self.outputs:
+            self.outputs['FacesMask'].sv_set(face_masks_out)
+        if 'FaceSources' in self.outputs:
+            self.outputs['FaceSources'].sv_set(face_srcs_out)
 
 def register():
     if FreeCAD is not None:
