@@ -23,6 +23,8 @@ else:
         sv_icon = 'SV_CHAMFER_SOLID'
         solid_catergory = "Operators"
 
+        replacement_nodes = [('SvFilletSolidNode', None, None)]
+
         distance_a: FloatProperty(
             name="Distance A",
             default=0.1,

@@ -24,6 +24,7 @@ else:
         sv_icon = 'SV_FILLET_SOLID'
         solid_catergory = "Operators"
 
+        replacement_nodes = [('SvChamferSolidNode', None, None)]
 
         radius_start: FloatProperty(
             name="Radius Start",
