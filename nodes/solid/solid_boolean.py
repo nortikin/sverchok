@@ -140,6 +140,10 @@ class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
     def make_solid_general(self, solids):
         do_refine = self.refine_solid and self.selected_mode in {'UNION'}
 
+        for i in range(len(solids)):
+            if not isinstance(solids[i], Part.Solid):
+                solids[i] = Part.makeSolid(solids[i])
+
         fused = SvGeneralFuse(solids)
         if self.selected_mode == 'UNION':
             solid = fused.get_union_all(refine=do_refine)

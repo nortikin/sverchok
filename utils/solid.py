@@ -234,6 +234,7 @@ class SvGeneralFuse(object):
 
             for item in items:
                 self._sources_by_part[item].add(src_key)
+                #print(f"{src_idx}: P[{item}] := {src_key}")
                 self._source_idxs_by_part[item].add(src_idx)
         
         self._edge_indirect_source_idxs = defaultdict(set)
@@ -244,6 +245,7 @@ class SvGeneralFuse(object):
             item = SvSolidTopology.Item(part)
             sources = self._sources_by_part[item]
             src_idxs = self._source_idxs_by_part[item]
+            #print(f"P? {item} => {src_idxs}")
 
             for edge in part.Edges:
                 edge_item = SvSolidTopology.Item(edge)
