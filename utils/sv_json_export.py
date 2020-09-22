@@ -24,32 +24,12 @@ if TYPE_CHECKING:
 
 class JSONImporter:
     """It's only know about Sverchok JSON structure nad can fill it"""
-    def get_structure(self, tree: SverchCustomTree, save_defaults: bool = False) -> dict:
-        groups = dict()
-        for monad, owner_node_type in self._monad_trees(tree):
-            groups[monad.name] = TreeImporter01().import_monad(monad, owner_node_type)
-        structure = TreeImporter01().import_tree(tree)
-        structure['groups'] = groups
-        return structure
+    @staticmethod
+    def get_structure(tree: SverchCustomTree, save_defaults: bool = False) -> dict:
+        return TreeImporter01().import_tree(tree)
 
     @classmethod
     def create_from_nodes(cls, nodes: list, save_defaults: bool = False) -> JSONImporter: ...
-
-    @staticmethod
-    def _monad_trees(base_tree) -> Generator[tuple]:
-        yielded_trees = set()
-        trees_to_scan = [base_tree]
-        safe_counter = 0
-        while trees_to_scan:
-            tree = trees_to_scan.pop()
-            for node in tree.nodes:
-                if hasattr(node, 'monad') and node.monad and node.monad not in yielded_trees:
-                    yield node.monad, node.bl_idname
-                    yielded_trees.add(node.monad)
-                    trees_to_scan.append(node.monad)
-            safe_counter += 1
-            if safe_counter > 1000:
-                raise RecursionError('Fail to find all monads')
 
 
 class TreeImporter01:
@@ -77,7 +57,7 @@ class TreeImporter01:
         return json.dumps(self._structure)
 
     def _add_node(self, node: SverchCustomTreeNode):
-        self._structure['nodes'][node.name] = NodeImporter01().import_node(node)
+        self._structure['nodes'][node.name] = NodeImporter01().import_node(node, self._structure['groups'])
 
     def _add_link(self, link: bpy.types.NodeLink):
         if hasattr(link.from_socket, 'index') and hasattr(link.to_socket, 'index'):
@@ -112,14 +92,14 @@ class NodeImporter01:
             "custom_socket_props": dict()
         }
 
-    def import_node(self, node: SverchCustomTreeNode) -> dict:
+    def import_node(self, node: SverchCustomTreeNode, groups: dict) -> dict:
         self._add_mandatory_attributes(node)
         self._add_node_properties(node)
         self._add_socket_properties(node)
 
         if hasattr(node, 'monad') and node.monad:
             self._structure['bl_idname'] = 'SvMonadGenericNode'
-            pack_monad(node, self._structure['params'], {node.monad.name: ''}, lambda: '')
+            pack_monad(node, self._structure['params'], groups, TreeImporter01().import_tree)
 
         if node.bl_idname in {'SvGroupInputsNodeExp', 'SvGroupOutputsNodeExp'}:
             self._structure[node.node_kind] = node.stash()
