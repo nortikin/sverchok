@@ -8,11 +8,13 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Union, Tuple, Any
+import json
+from typing import TYPE_CHECKING, Union, Generator
 
 import bpy
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.handle_blender_data import BPYProperty
+from sverchok.utils.sv_IO_monad_helpers import pack_monad
 
 if TYPE_CHECKING:
     from sverchok.node_tree import SverchCustomTree, SverchCustomTreeNode
@@ -22,15 +24,32 @@ if TYPE_CHECKING:
 
 class JSONImporter:
     """It's only know about Sverchok JSON structure nad can fill it"""
-    @classmethod
-    def create_from_tree(cls, tree: SverchCustomTree, save_defaults: bool = False) -> dict:
-        root_tree_importer = TreeImporter01()
-        return root_tree_importer.import_tree(tree)
+    def get_structure(self, tree: SverchCustomTree, save_defaults: bool = False) -> dict:
+        groups = dict()
+        for monad, owner_node_type in self._monad_trees(tree):
+            groups[monad.name] = TreeImporter01().import_monad(monad, owner_node_type)
+        structure = TreeImporter01().import_tree(tree)
+        structure['groups'] = groups
+        return structure
 
     @classmethod
     def create_from_nodes(cls, nodes: list, save_defaults: bool = False) -> JSONImporter: ...
 
-    def _add_monad_tree(self, monad_name, magic_string): ...
+    @staticmethod
+    def _monad_trees(base_tree) -> Generator[tuple]:
+        yielded_trees = set()
+        trees_to_scan = [base_tree]
+        safe_counter = 0
+        while trees_to_scan:
+            tree = trees_to_scan.pop()
+            for node in tree.nodes:
+                if hasattr(node, 'monad') and node.monad and node.monad not in yielded_trees:
+                    yield node.monad, node.bl_idname
+                    yielded_trees.add(node.monad)
+                    trees_to_scan.append(node.monad)
+            safe_counter += 1
+            if safe_counter > 1000:
+                raise RecursionError('Fail to find all monads')
 
 
 class TreeImporter01:
@@ -51,9 +70,14 @@ class TreeImporter01:
             self._add_link(link)
         return self._structure
 
-    def _add_node(self, node: SverchCustomTreeNode) -> NodeFormat:
-        json_node = NodeFormat.create_from_node(node)
-        self._structure['nodes'][node.name] = json_node.get_dict()
+    def import_monad(self, monad, owner_node_type) -> dict:
+        self._structure['bl_idname'] = monad.bl_idname
+        self._structure['cls_bl_idname'] = owner_node_type
+        self.import_tree(monad)
+        return json.dumps(self._structure)
+
+    def _add_node(self, node: SverchCustomTreeNode):
+        self._structure['nodes'][node.name] = NodeImporter01().import_node(node)
 
     def _add_link(self, link: bpy.types.NodeLink):
         if hasattr(link.from_socket, 'index') and hasattr(link.to_socket, 'index'):
@@ -75,9 +99,9 @@ class TreeImporter01:
             self._structure["framed_nodes"][node.name] = node.parent.name
 
 
-class NodeFormat:
+class NodeImporter01:
     def __init__(self):
-        self._json_data = {
+        self._structure = {
             "bl_idname": "",
             "height": None,
             "width": None,
@@ -88,40 +112,42 @@ class NodeFormat:
             "custom_socket_props": dict()
         }
 
-    def get_dict(self):
-        return self._json_data
+    def import_node(self, node: SverchCustomTreeNode) -> dict:
+        self._add_mandatory_attributes(node)
+        self._add_node_properties(node)
+        self._add_socket_properties(node)
 
-    @classmethod
-    def create_from_node(cls, node: SverchCustomTreeNode) -> NodeFormat:
-        json_node = cls()
-        json_node.add_mandatory_attributes(node)
-        json_node.add_node_properties(node)
-        json_node.add_socket_properties(node)
-        return json_node
+        if hasattr(node, 'monad') and node.monad:
+            self._structure['bl_idname'] = 'SvMonadGenericNode'
+            pack_monad(node, self._structure['params'], {node.monad.name: ''}, lambda: '')
 
-    def add_mandatory_attributes(self, node: SverchCustomTreeNode):
-        # todo different for monads
-        self._json_data['bl_idname'] = node.bl_idname
-        self._json_data['height'] = node.height
-        self._json_data['width'] = node.width
-        self._json_data['label'] = node.label
-        self._json_data['hide'] = node.hide
-        self._json_data['location'] = recursive_framed_location_finder(node, node.location[:])
+        if node.bl_idname in {'SvGroupInputsNodeExp', 'SvGroupOutputsNodeExp'}:
+            self._structure[node.node_kind] = node.stash()
+
+        return self._structure
+
+    def _add_mandatory_attributes(self, node: SverchCustomTreeNode):
+        self._structure['bl_idname'] = node.bl_idname
+        self._structure['height'] = node.height
+        self._structure['width'] = node.width
+        self._structure['label'] = node.label
+        self._structure['hide'] = node.hide
+        self._structure['location'] = recursive_framed_location_finder(node, node.location[:])
 
         if node.use_custom_color:
-            self._json_data['color'] = node.color[:]
-            self._json_data['use_custom_color'] = True
+            self._structure['color'] = node.color[:]
+            self._structure['use_custom_color'] = True
 
-    def add_node_properties(self, node: SverchCustomTreeNode):
+    def _add_node_properties(self, node: SverchCustomTreeNode):
         for prop_name in node.keys():
             prop = BPYProperty(node, prop_name)
             if self._is_property_to_export(prop):
                 if prop.type == 'COLLECTION':
-                    self._json_data["params"][prop_name] = prop.filter_collection_values()
+                    self._structure["params"][prop_name] = prop.filter_collection_values()
                 else:
-                    self._json_data["params"][prop.name] = prop.value
+                    self._structure["params"][prop.name] = prop.value
 
-    def add_socket_properties(self, node: SverchCustomTreeNode):
+    def _add_socket_properties(self, node: SverchCustomTreeNode):
         # output sockets does not have anything worth exporting
         for i, sock in enumerate(node.inputs):
             sock_props = dict()
@@ -133,7 +159,7 @@ class NodeFormat:
                     else:
                         sock_props[prop.name] = prop.value
             if sock_props:
-                self._json_data['custom_socket_props'][str(i)] = sock_props
+                self._structure['custom_socket_props'][str(i)] = sock_props
 
     @staticmethod
     def _is_property_to_export(prop: BPYProperty) -> bool:
