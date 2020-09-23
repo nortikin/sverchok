@@ -47,12 +47,6 @@ class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_SOLID_BOOLEAN'
     solid_catergory = "Operators"
 
-    precision: FloatProperty(
-        name="Length",
-        default=0.1,
-        precision=4,
-        update=updateNode)
-
     mode_options = [
         ("ITX", "Intersect", "", 0),
         ("UNION", "Union", "", 1),
