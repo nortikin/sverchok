@@ -513,12 +513,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     # ---- IO Json storage is handled in this node locally ----
 
-
-    def storage_set_data(self, node_ref):
-
+    def save_to_json(self, node_data: dict):
         texts = bpy.data.texts
 
-        data_list = node_ref.get('snlite_ui')
+        data_list = node_data.get('snlite_ui')
         if data_list:
             # self.node_dict[hash(self)]['sockets']['snlite_ui'] = ui_elements
             for data_json_str in data_list:
@@ -526,7 +524,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 if data_dict['bl_idname'] == 'ShaderNodeRGBCurve':
                     set_rgb_curve(data_dict)
 
-        includes = node_ref.get('includes')
+        includes = node_data.get('includes')
         if includes:
             for include_name, include_content in includes.items():
                 new_text = texts.new(include_name)
@@ -535,15 +533,13 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 if include_name == new_text.name:
                     continue
 
-                print('| in', node_ref.name, 'the importer encountered')
+                print('| in', self.name, 'the importer encountered')
                 print('| an include called', include_name, '. While trying')
                 print('| to write this file to bpy.data.texts another file')
                 print('| with the same name was encountered. The importer')
                 print('| automatically made a datablock called', new_text.name)
 
-
-    def storage_get_data(self, node_dict):
-
+    def load_from_json(self, node_data: dict):
         # this check and function call is needed to allow loading node trees directly
         # from a .blend in order to export them via create_dict_of_tree
         if not self.node_dict or not self.node_dict.get(hash(self)):
@@ -552,7 +548,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         storage = self.node_dict[hash(self)]['sockets']
 
         ui_info = storage['snlite_ui']
-        node_dict['snlite_ui'] = []
+        node_data['snlite_ui'] = []
         print(ui_info)
         for _, info in enumerate(ui_info):
             mat_name = info['mat_name']
@@ -562,13 +558,52 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 data = get_rgb_curve(mat_name, node_name)
                 print(data)
                 data_json_str = json.dumps(data)
-                node_dict['snlite_ui'].append(data_json_str)
+                node_data['snlite_ui'].append(data_json_str)
 
         includes = storage['includes']
         if includes:
-            node_dict['includes'] = {}
+            node_data['includes'] = {}
             for k, v in includes.items():
-                node_dict['includes'][k] = v
+                node_data['includes'][k] = v
+
+
+        '''
+        Scripted Node will no longer create alternative versions of a file.
+        If a scripted node wants to make a file called 'inverse.py' and the
+        current .blend already contains such a file, then for simplicity the
+        importer will not try to create 'inverse.001.py' and reference that.
+        It will instead do nothing and assume the existing python file is
+        functionally the same.
+
+        If you have files that work differently but have the same name, stop.
+
+        '''
+        params = node_data.get('params')
+        if params:
+
+            script_name = params.script_name
+            script_content = params.script_str
+
+            with self.sv_throttle_tree_update():
+                texts = bpy.data.texts
+                if script_name and not (script_name in texts):
+                    new_text = texts.new(script_name)
+                    new_text.from_string(script_content)
+                elif script_name and (script_name in texts):
+                    # This was added to fix existing texts with the same name but no / different content.
+                    if texts[script_name].as_string() == script_content:
+                        self.debug("SN skipping text named `%s' - their content are the same", script_name)
+                    else:
+                        self.info("SN text named `%s' already found in current, but content differs", script_name)
+                        new_text = texts.new(script_name)
+                        new_text.from_string(script_content)
+                        script_name = new_text.name
+                        self.info('SN text named replaced with %s', script_name)
+
+            self.script_name = script_name
+            self.script_str = script_content
+
+        self.load()
 
 
 classes = [

@@ -140,6 +140,12 @@ class NodeImporter01:
                 socket = self._node.inputs[sock_index]
                 BPYProperty(socket, prop_name).value = prop_value
 
+        if hasattr(self._node, 'load_from_json'):
+            with self._fails_log.add_fail(
+                    "Setting advance node properties",
+                    f'Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}'):
+                self._node.load_from_json(self._structure)
+
     def _node_attributes(self) -> Generator[tuple]:
         with self._fails_log.add_fail("Reading node location", f'Node: {self._node.name}'):
             yield "location", self._structure["location"]

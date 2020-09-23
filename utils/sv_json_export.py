@@ -104,6 +104,8 @@ class NodeImporter01:
         if node.bl_idname in {'SvGroupInputsNodeExp', 'SvGroupOutputsNodeExp'}:
             self._structure[node.node_kind] = node.stash()
 
+        if hasattr(node, 'save_to_json'):
+            node.save_to_json(self._structure)
         return self._structure
 
     def _add_mandatory_attributes(self, node: SverchCustomTreeNode):
