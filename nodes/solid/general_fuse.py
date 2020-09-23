@@ -123,6 +123,12 @@ class SvSolidGeneralFuseNode(bpy.types.Node, SverchCustomTreeNode):
 
         result = SvBoolResult(solid_result)
 
+        for part in good:
+            solid_map = []
+            srcs = fused.get_part_source_idxs(part)
+            solid_map.append(list(srcs))
+            result.solid_map.append(solid_map)
+
         for solid in result_solid_list:
             if solid is None:
                 continue
@@ -131,11 +137,6 @@ class SvSolidGeneralFuseNode(bpy.types.Node, SverchCustomTreeNode):
             edge_map = []
             face_mask = []
             face_map = []
-            solid_map = []
-
-            srcs = fused.get_part_source_idxs(solid)
-            solid_map.append(list(srcs))
-            result.solid_map.append(solid_map)
 
             for edge in solid.Edges:
                 srcs = fused.get_edge_source_idxs(edge)
@@ -165,8 +166,9 @@ class SvSolidGeneralFuseNode(bpy.types.Node, SverchCustomTreeNode):
 
             # merged body has all sources from all it's parts
             solid_map_set = set()
-            for part_map in solid_map:
-                solid_map_set.update(set(part_map))
+            for part_maps in result.solid_map:
+                for part_map in part_maps:
+                    solid_map_set.update(set(part_map))
             result.solid_map = list(solid_map_set)
 
         return result
