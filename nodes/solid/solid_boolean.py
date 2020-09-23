@@ -16,25 +16,9 @@ from sverchok.utils.dummy_nodes import add_dummy
 if FreeCAD is None:
     add_dummy('SvSolidBooleanNode', 'Solid Boolean', 'FreeCAD')
 else:
-    from sverchok.utils.solid import SvGeneralFuse
+    from sverchok.utils.solid import SvGeneralFuse, SvBoolResult
 
     import Part
-
-class BoolResult(object):
-    def __init__(self, solid, edge_mask=None, edge_map=None, face_mask=None, face_map=None):
-        self.solid = solid
-        if edge_mask is None:
-            edge_mask = []
-        self.edge_mask = edge_mask
-        if edge_map is None:
-            edge_map = []
-        self.edge_map = edge_map
-        if face_mask is None:
-            face_mask = []
-        self.face_mask = face_mask
-        if face_map is None:
-            face_map = []
-        self.face_map = face_map
 
 class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -113,7 +97,7 @@ class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
             return self.make_solid_general(solids)
         else:
             solid = self.make_solid_simple(solids)
-            return BoolResult(solid)
+            return SvBoolResult(solid)
 
     def make_solid_simple(self, solids):
         base = solids[0].copy()
@@ -166,7 +150,7 @@ class SvSolidBooleanNode(bpy.types.Node, SverchCustomTreeNode):
                 is_new = len(srcs) > 1
                 face_mask.append(is_new)
 
-        return BoolResult(solid, edge_mask, edge_map, face_mask, face_map)
+        return SvBoolResult(solid, edge_mask, edge_map, face_mask, face_map)
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
