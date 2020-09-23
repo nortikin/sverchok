@@ -42,7 +42,20 @@ class SvSolidGeneralFuseNode(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         update=updateNode)
 
+    set_modes = [
+            ('EQ', "Exact", "Index sets are specified exactly", 0),
+            ('SUB', "Subsets", "Index sets are specified by their subsets", 1)
+        ]
+    
+    set_mode : EnumProperty(
+        name = "Sets mode",
+        items = set_modes,
+        default = 'EQ',
+        update = updateNode)
+
     def draw_buttons(self, context, layout):
+        layout.label(text='Specify:')
+        layout.prop(self, 'set_mode', text='')
         layout.prop(self, 'merge_result')
         if self.merge_result:
             layout.prop(self, "refine_solid")
@@ -58,6 +71,12 @@ class SvSolidGeneralFuseNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "FacesMask")
         self.outputs.new('SvStringsSocket', "FaceSources")
 
+    def _check_subset(self, subset, srcs):
+        if self.set_mode == 'EQ':
+            return set(subset) == srcs
+        else:
+            return set(subset).issubset(srcs)
+
     def _process(self, solids, include_idxs, exclude_idxs):
         fused = SvGeneralFuse(solids)
         good = []
@@ -67,7 +86,7 @@ class SvSolidGeneralFuseNode(bpy.types.Node, SverchCustomTreeNode):
             if include_idxs is not None:
                 include = False
                 for idxs in include_idxs:
-                    if set(idxs) == src_idxs:
+                    if self._check_subset(idxs, src_idxs):
                         include = True
                         break
             else:
@@ -76,7 +95,7 @@ class SvSolidGeneralFuseNode(bpy.types.Node, SverchCustomTreeNode):
             exclude = False
             if exclude_idxs is not None:
                 for idxs in exclude_idxs:
-                    if set(idxs) == src_idxs:
+                    if self._check_subset(idxs, src_idxs):
                         exclude = True
                         break
 
