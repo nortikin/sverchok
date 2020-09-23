@@ -188,7 +188,7 @@ class SvSocketCommon:
                 getattr(node, self.custom_draw)(self, context, layout)
 
         elif self.is_linked:  # linked INPUT or OUTPUT
-            layout.label(text=self.label or text + f". {self.objects_number or ''}")
+            layout.label(text=(self.label or text) + f". {self.objects_number or ''}")
 
         elif self.is_output:  # unlinked OUTPUT
             layout.label(text=self.label or text)
