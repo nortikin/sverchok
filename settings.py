@@ -513,7 +513,7 @@ class SverchokPreferences(AddonPreferences):
 
         box = layout.box()
         box.label(text="Dependencies:")
-        
+
         row = draw_message(box, "pip")
         if pip is not None:
             row.operator('node.sv_ex_pip_install', text="Upgrade PIP").package = "pip setuptools wheel"
@@ -529,6 +529,7 @@ class SverchokPreferences(AddonPreferences):
         draw_message(box, "mcubes")
         draw_message(box, "circlify")
         draw_message(box, "lbt-ladybug")
+        draw_message(box, "cython")
 
         draw_freecad_ops()
 
