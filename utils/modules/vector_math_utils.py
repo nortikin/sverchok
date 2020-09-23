@@ -66,7 +66,7 @@ def angle_between(v1, v2):
     """ adapted from David Wolever https://stackoverflow.com/a/13849249 """
     v1_u = unit_vector(v1)
     v2_u = unit_vector(v2)
-    print(v2_u)
+
     return np.arccos(np.clip(np_dot(v1_u, v2_u), -1.0, 1.0))
 # project from https://stackoverflow.com/a/55226228
 def reflect(v1, v2):
