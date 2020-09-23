@@ -118,3 +118,7 @@ Example of **EdgesMask** output usage:
 
 .. image:: https://user-images.githubusercontent.com/284644/94038496-f1885700-fddf-11ea-93e6-894aea236ef8.png
 
+Example of **EdgeSources** output usage. Take five cubes, fuse them, then select only edges that came from intersection of cubes number 1 and 2 (starting from zero), and make fillet for them:
+
+.. image:: https://user-images.githubusercontent.com/284644/94045977-82176500-fde9-11ea-9c9d-2bce61012280.png
+
