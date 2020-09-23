@@ -42,9 +42,11 @@ class SvPulgaBoundingBoxForceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Pulga Boundaries Force'
     bl_icon = 'MOD_PHYSICS'
     sv_icon = 'SV_PULGA_BOUNDARIES_FORCE'
+
     def update_sockets_and_node(self, context):
         self.update_sockets()
         updateNode(self, context)
+
     def update_sockets(self):
         self.inputs['Bounding Box'].hide_safe = self.mode != 'Box'
         self.inputs['Center'].hide_safe = not 'Sphere' in self.mode and not 'Plane' in self.mode
@@ -54,15 +56,18 @@ class SvPulgaBoundingBoxForceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Polygons'].hide_safe = not 'Mesh' in self.mode
         self.inputs['Solid'].hide_safe = not 'Solid_(' in self.mode
         self.inputs['Solid Face'].hide_safe = 'Solid_Face' != self.mode
+
     mode_items=['Box', 'Sphere', 'Sphere Surface', 'Plane', 'Mesh (Surface)', 'Mesh (Volume)']
     if FreeCAD is not None:
         mode_items.append('Solid (Surface)')
         mode_items.append('Solid (Volume)')
         mode_items.append('Solid Face')
+
     mode: EnumProperty(
-        name='Magnitude', description='Drag Force Constant',
+        name='Mode', description='Boundaries definition mode',
         items=enum_item_4(mode_items),
-        default='Box',  update=update_sockets_and_node)
+        default='Box',
+        update=update_sockets_and_node)
     center: FloatVectorProperty(
         name='Center',
         description='Bunding Shpere center',
@@ -149,7 +154,6 @@ class SvPulgaBoundingBoxForceNode(bpy.types.Node, SverchCustomTreeNode):
                 forces_out.append(SvBoundingSolidSurfaceForce(force, volume=volume))
 
         self.outputs[0].sv_set([forces_out])
-
 
 
 
