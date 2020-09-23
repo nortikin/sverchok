@@ -310,6 +310,12 @@ class SvGeneralFuse(object):
     
     def get_face_source_idxs(self, face):
         return self._face_indirect_source_idxs[SvSolidTopology.Item(face)]
+
+    def get_part_sources(self, part):
+        return self._sources_by_part[SvSolidTopology.Item(part)]
+
+    def get_part_source_idxs(self, part):
+        return self._source_idxs_by_part[SvSolidTopology.Item(part)]
     
     def get_by_source(self, solid):
         return self._per_source[SvSolidTopology.Item(solid)]
