@@ -41,7 +41,7 @@ class SvPulgaBoundingBoxForceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvPulgaBoundingBoxForceNode'
     bl_label = 'Pulga Boundaries Force'
     bl_icon = 'MOD_PHYSICS'
-    sv_icon = 'SV_CIRCLE_SVG'
+    sv_icon = 'SV_PULGA_BOUNDARIES_FORCE'
     def update_sockets_and_node(self, context):
         self.update_sockets()
         updateNode(self, context)
@@ -70,12 +70,14 @@ class SvPulgaBoundingBoxForceNode(bpy.types.Node, SverchCustomTreeNode):
         size=3,
         update=updateNode)
     radius: FloatProperty(
-        name='Radius', description='Bunding Shpere radius',
-    default=0.0, update=updateNode)
+        name='Radius',
+        description='Bunding Shpere radius',
+        default=0.0,
+        update=updateNode)
     normal: FloatVectorProperty(
         name='Normal',
         description='Bunding Shpere center',
-        default=(0,0,0),
+        default=(0, 0, 0),
         size=3,
         update=updateNode)
 
@@ -88,13 +90,13 @@ class SvPulgaBoundingBoxForceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Polygons")
         self.inputs.new('SvSolidSocket', "Solid")
         self.inputs.new('SvSurfaceSocket', "Solid Face")
-
+        self.update_sockets()
 
         self.outputs.new('SvPulgaForceSocket', "Force")
 
-
     def draw_buttons(self, context, layout):
         layout.prop(self, 'mode')
+
     def process(self):
 
         if not any(s.is_linked for s in self.outputs):
