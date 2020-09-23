@@ -499,15 +499,11 @@ class SvSvgSocket(NodeSocket, SvSocketCommon):
 
 
 class SvPulgaForceSocket(NodeSocket, SvSocketCommon):
-    '''For file path data'''
+    '''For Pulga forces data'''
     bl_idname = "SvPulgaForceSocket"
     bl_label = "Pulga Force Socket"
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.is_linked and not self.is_output:
-            return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
-        else:
-            return [[default]]
+    color = (0.4, 0.3, 0.6, 1.0)
 
 class SvDictionarySocket(NodeSocket, SvSocketCommon):
     '''For dictionary data'''
