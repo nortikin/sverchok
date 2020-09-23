@@ -24,54 +24,57 @@ from bpy.props import BoolProperty, IntProperty, FloatProperty, FloatVectorPrope
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
 from sverchok.data_structure import match_long_repeat as mlr
-from sverchok.utils.pulga_physics_core_2 import SvBoundingBoxForce
+from sverchok.utils.pulga_physics_core_2 import SvEdgesAngleForce
 
-class SvPulgaBoundingBoxForceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPulgaAngleForceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Define Boundaries
-    Tooltip: System Limits
+    Triggers: Ellipse SVG
+    Tooltip: Svg circle/ellipse shape, the shapes will be wrapped in SVG Groups
     """
-    bl_idname = 'SvPulgaBoundingBoxForceNode'
-    bl_label = 'Pulga Bounding box Force'
+    bl_idname = 'SvPulgaAngleForceNode'
+    bl_label = 'Pulga Angle Force'
     bl_icon = 'MOD_PHYSICS'
-    sv_icon = 'SV_CIRCLE_SVG'
+    sv_icon = 'SV_PULGA_ANGLES_FORCE'
 
-    magnitude: FloatProperty(
-        name='Magnitude', description='Drag Force Constant',
-        default=0.0, precision=3, update=updateNode)
+    fixed_angle: FloatProperty(
+        name='Rest Angle', description='Specify spring rest angle, 0 to calculate it from initial position',
+        default=0.0, update=updateNode)
+    stiffness: FloatProperty(
+        name='Stiffness', description='Springs stiffness constant',
+        default=0.0, precision=4,
+        update=updateNode)
 
+    mass_dependent: BoolProperty(name='mass_dependent', update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvVerticesSocket', "Bounding Box")
+        self.inputs.new('SvStringsSocket', "Springs")
+        self.inputs.new('SvStringsSocket', "Stiffness").prop_name = 'stiffness'
+        self.inputs.new('SvStringsSocket', "Angle").prop_name = 'fixed_angle'
 
 
         self.outputs.new('SvPulgaForceSocket', "Force")
-
-
 
     def process(self):
 
         if not any(s.is_linked for s in self.outputs):
             return
-        b_box = self.inputs["Bounding Box"].sv_get(deepcopy=False)
-
+        springs_in = self.inputs["Springs"].sv_get(deepcopy=False)
+        stiffness_in = self.inputs["Stiffness"].sv_get(deepcopy=False)
+        lengths_in = self.inputs["Angle"].sv_get(deepcopy=False)
 
         forces_out = []
+        use_fix_len = self.inputs["Angle"].is_linked
+        for force_params in zip(*mlr([springs_in, stiffness_in, lengths_in])):
 
-        forces_out = []
-        for force in b_box:
-
-            forces_out.append(SvBoundingBoxForce(force))
-
-
+            forces_out.append(SvEdgesAngleForce(*force_params, use_fix_len))
         self.outputs[0].sv_set([forces_out])
 
 
 
 
 def register():
-    bpy.utils.register_class(SvPulgaBoundingBoxForceNode)
+    bpy.utils.register_class(SvPulgaAngleForceNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvPulgaBoundingBoxForceNode)
+    bpy.utils.unregister_class(SvPulgaAngleForceNode)

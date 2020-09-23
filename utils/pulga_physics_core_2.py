@@ -6,7 +6,8 @@
 # License-Filename: LICENSE
 
 import numpy as np
-
+from mathutils.bvhtree import BVHTree
+from sverchok.utils.modules.vector_math_utils import angle_between, unit_vector, np_dot
 def cross_indices3(n):
     '''create crossed indices'''
 
@@ -224,6 +225,301 @@ class SvBoundingBoxForce():
 
         ps.verts = np.clip(ps.verts, self.bbox_min + ps.rads[:, np.newaxis], self.bbox_max - ps.rads[:, np.newaxis])
 
+def project_on_plane(vects, normal):
+    distance = np.sum(vects * normal, axis=1)
+    return vects - normal * distance[:,np.newaxis]
+
+class SvBoundingSphereForce():
+    def __init__(self, center, radius):
+
+
+        self.center = center[0]
+        self.radius = radius[0]
+
+
+
+    def setup(self, ps):
+        pass
+
+
+    def add(self, ps):
+        vs = ps.verts - self.center
+        dist = np.linalg.norm(vs, axis=1)
+        mask = dist + ps.rads > self.radius
+        vs_normal = vs[mask]/dist[mask, np.newaxis]
+        ps.verts[mask] = vs_normal*(self.radius - ps.rads[mask])[:,np.newaxis]
+
+        ps.vel[mask] = project_on_plane(ps.vel[mask], vs_normal)
+        ps.r[mask] = project_on_plane(ps.r[mask], vs_normal)
+
+class SvBoundingSphereSurfaceForce():
+    def __init__(self, center, radius):
+
+
+        self.center = center[0]
+        self.radius = radius[0]
+
+
+
+    def setup(self, ps):
+        pass
+
+
+    def add(self, ps):
+        vs = ps.verts - self.center
+        dist = np.linalg.norm(vs, axis=1)
+        mask = dist == 0
+        vs[mask]=ps.verts[mask]+[[1,0,0]]
+        dist[mask] =1
+        vs_normal = vs/dist[:, np.newaxis]
+        ps.verts = vs_normal * self.radius
+
+        ps.vel = project_on_plane(ps.vel, vs_normal)
+        ps.r = project_on_plane(ps.r, vs_normal)
+
+class SvBoundingPlaneSurfaceForce():
+    def __init__(self, center, normal):
+
+
+        self.center = np.array(center[0])
+        self.normal = np.array(normal[0])
+        self.normal = self.normal/np.linalg.norm(self.normal)
+
+
+    def setup(self, ps):
+        pass
+
+
+    def add(self, ps):
+
+        vs = ps.verts - self.center
+        distance = np.sum(vs * self.normal, axis=1)
+        print(distance)
+        ps.verts = ps.verts - self.normal[np.newaxis, :] * distance[:, np.newaxis]
+
+        ps.vel = project_on_plane(ps.vel, self.normal)
+        ps.r = project_on_plane(ps.r, self.normal)
+
+
+class SvBoundingMeshSurfaceForce():
+    def __init__(self, vertices, polygons, volume=False):
+
+
+        self.bvh = BVHTree.FromPolygons(vertices, polygons, all_triangles=False, epsilon=0.0)
+
+        if volume:
+            self.add = self.add_volume
+        else:
+            self.add = self.add_surface
+
+    def setup(self, ps):
+        self.nearest = np.zeros(ps.verts.shape, dtype=np.float64)
+        self.normals = np.zeros(ps.verts.shape, dtype=np.float64)
+
+    def find2(self, verts):
+        v_nearest = self.nearest
+        v_normals = self.normals
+        for v, near, norm in zip(verts, v_nearest, v_normals):
+            nearest, normal, _, _ = self.bvh.find_nearest(v)
+
+            near[0] = nearest[0]
+            near[1] = nearest[1]
+            near[2] = nearest[2]
+            norm[0] = normal[0]
+            norm[1] = normal[1]
+            norm[2] = normal[2]
+
+    def add_surface(self, ps):
+
+        self.find2(ps.verts)
+        ps.verts = self.nearest
+        ps.vel = project_on_plane(ps.vel, self.normals)
+        ps.r = project_on_plane(ps.r, self.normals)
+
+    def add_volume(self, ps):
+        self.find2(ps.verts)
+        p2 = self.nearest - ps.verts
+        outer_mask = np_dot(p2, self.normals) <= 0
+        ps.verts[outer_mask] = self.nearest[outer_mask]
+
+        ps.vel[outer_mask] = project_on_plane(ps.vel[outer_mask], self.normals[outer_mask])
+        ps.r[outer_mask] = project_on_plane(ps.r[outer_mask], self.normals[outer_mask])
+import Part
+from  FreeCAD import Base
+from sverchok.utils.surface.freecad import is_solid_face_surface
+class SvBoundingSolidSurfaceForce():
+    def __init__(self, solid, volume=False):
+
+        if isinstance(solid, Part.Solid):
+            self.shape = solid.OuterShell
+        elif is_solid_face_surface(solid):
+            self.shape= solid.face
+        else:
+
+            self.shape = solid
+
+        if volume:
+            self.add = self.add_volume
+        else:
+            self.add = self.add_surface
+        def outside(v):
+            return np.array(not self.shape.isInside(Base.Vector(v), 1e-6, False))
+        self.outside = np.vectorize(outside, signature='(3)->()')
+        def find(v):
+            vertex = Part.Vertex(Base.Vector(v))
+
+            dist = self.shape.distToShape(vertex)
+            if str(dist[2][0][0]) == "b'Face'":
+                normal = self.shape.Faces[dist[2][0][1]].normalAt(*dist[2][0][2])
+            elif str(dist[2][0][0]) == "b'Edge'":
+                edge = self.shape.Edges[dist[2][0][1]]
+                vector = self.shape.Edges[dist[2][0][1]].valueAt(dist[2][0][2])
+                face_list = self.shape.ancestorsOfType(edge,Part.Face)
+                normal=[0,0,0]
+                count=0
+                for face in face_list:
+                    for edge1 in face.Edges:
+
+                        if edge1.isSame(edge):
+                            param = face.Surface.parameter(vector)
+                            normal_ed = face.normalAt(*param)
+                            normal[0] += normal_ed[0]
+                            normal[1] += normal_ed[1]
+                            normal[2] += normal_ed[2]
+                            count+=1
+                            break
+                if count > 0:
+                    normal[0] /= count
+                    normal[1] /= count
+                    normal[2] /= count
+                else:
+                    normal = [0, 0, 1]
+            else:
+                vertex = self.shape.Vertexes[dist[2][0][1]]
+                face_list = self.shape.ancestorsOfType(vertex, Part.Face)
+                normal = [0, 0, 0]
+                count = 0
+                for face in face_list:
+                    for vertex1 in face.Vertexes:
+
+                        if vertex1.isSame(vertex):
+                            param = face.Surface.parameter(vertex.Point)
+                            normal_ed = face.normalAt(*param)
+                            normal[0] += normal_ed[0]
+                            normal[1] += normal_ed[1]
+                            normal[2] += normal_ed[2]
+                            count+=1
+                            break
+                if count > 0:
+                    normal[0] /= count
+                    normal[1] /= count
+                    normal[2] /= count
+                else:
+                    normal = [0, 0, 1]
+            return np.array([dist[1][0][0][:], normal[:]])
+
+
+        self.find = np.vectorize(find, signature='(3)->(2,3)')
+    def find_closest(self,v):
+        vertex = Part.Vertex(Base.Vector(v))
+
+        dist = self.shape.distToShape(vertex)
+        if str(dist[2][0][0]) == "b'Face'":
+            normal = self.shape.Faces[dist[2][0][1]].normalAt(*dist[2][0][2])
+        elif str(dist[2][0][0]) == "b'Edge'":
+            edge = self.shape.Edges[dist[2][0][1]]
+            vector = self.shape.Edges[dist[2][0][1]].valueAt(dist[2][0][2])
+            face_list = self.shape.ancestorsOfType(edge, Part.Face)
+            normal = [0,0,0]
+            count = 0
+            for face in face_list:
+                for edge1 in face.Edges:
+
+                    if edge1.isSame(edge):
+                        param = face.Surface.parameter(vector)
+                        normal_ed = face.normalAt(*param)
+                        normal[0] += normal_ed[0]
+                        normal[1] += normal_ed[1]
+                        normal[2] += normal_ed[2]
+                        count+=1
+                        break
+            if count > 0:
+                normal[0] /= count
+                normal[1] /= count
+                normal[2] /= count
+            else:
+                normal = [0, 0, 1]
+        else:
+            vertex = self.shape.Vertexes[dist[2][0][1]]
+            face_list = self.shape.ancestorsOfType(vertex, Part.Face)
+            normal = [0, 0, 0]
+            count = 0
+            for face in face_list:
+                for vertex1 in face.Vertexes:
+
+                    if vertex1.isSame(vertex):
+                        param = face.Surface.parameter(vertex.Point)
+                        normal_ed = face.normalAt(*param)
+                        normal[0] += normal_ed[0]
+                        normal[1] += normal_ed[1]
+                        normal[2] += normal_ed[2]
+                        count+=1
+                        break
+            if count > 0:
+                normal[0] /= count
+                normal[1] /= count
+                normal[2] /= count
+            else:
+                normal = [0, 0, 1]
+        return dist[1][0][0], normal
+    def find2(self, verts):
+        v_nearest = self.nearest
+        v_normals = self.normals
+        for v, near, norm in zip(verts, v_nearest, v_normals):
+            nearest, normal = self.find_closest(v)
+            near[0] = nearest[0]
+            near[1] = nearest[1]
+            near[2] = nearest[2]
+            norm[0] = normal[0]
+            norm[1] = normal[1]
+            norm[2] = normal[2]
+    def find_masked(self, verts, mask):
+        v_nearest = self.nearest
+        v_normals = self.normals
+        for v, near, norm in zip(verts[mask], v_nearest[mask], v_normals[mask]):
+            nearest, normal = self.find_closest(v)
+            near[0] = nearest[0]
+            near[1] = nearest[1]
+            near[2] = nearest[2]
+            norm[0] = normal[0]
+            norm[1] = normal[1]
+            norm[2] = normal[2]
+
+    def is_outside(self, verts):
+
+        return np.array([not self.shape.isInside(Base.Vector(v), 1e-6, False) for v in verts], dtype=np.bool_)
+    def setup(self, ps):
+        self.nearest = np.zeros(ps.verts.shape, dtype=np.float64)
+        self.normals = np.zeros(ps.verts.shape, dtype=np.float64)
+
+
+    def add_surface(self, ps):
+        # find = self.find(ps.verts)
+        # ps.verts = find[:,0,:]
+        # ps.vel = project_on_plane(ps.vel, find[:,1,:])
+        # ps.r = project_on_plane(ps.r, find[:,1,:])
+        self.find2(ps.verts)
+        ps.verts = self.nearest
+        ps.vel = project_on_plane(ps.vel, self.normals)
+        ps.r = project_on_plane(ps.r, self.normals)
+
+    def add_volume(self, ps):
+        outside = self.is_outside(ps.verts)
+        find_masked(self, verts, outside)
+        ps.verts[outside] =  self.nearest[outside]
+        ps.vel[outside] = project_on_plane(ps.vel[outside], self.normals[outside])
+        ps.r[outside] = project_on_plane(ps.r[outside], self.normals[outside])
+
 
 class SvRandomForce():
     def __init__(self, random_force, random_variation, random_seed):
@@ -253,11 +549,19 @@ class SvRandomForce():
         ps.r += self.random_v
 
 class SvCollisionForce():
-    def __init__(self, magnitude):
+    def __init__(self, magnitude, use_kdtree=False):
 
         self.magnitude = np.array(magnitude)
         self.uniform_magnitude = len(magnitude) < 2
         self.needs = ['dif_v', 'dist', 'dist_cor', 'collide', 'normal_v']
+        self.use_kdtree = use_kdtree
+        if self.use_kdtree:
+            self.needs = ['kd_tree', 'max_radius']
+            self.add = self.add_kdt
+        else:
+            self.needs = ['indexes', 'sum_rad', 'dif_v', 'dist', 'dist_cor', 'collide', 'normal_v']
+            self.add = self.add_brute_force
+
 
     def setup(self, ps):
         ps.aware = True
@@ -268,33 +572,63 @@ class SvCollisionForce():
         else:
             self.f_magnitude = numpy_fit_long_repeat([self.magnitude], ps.v_len)
 
-    def add(self, ps):
+    def add_brute_force(self, ps):
         ps.relations.result[:] = 0
         id0 = ps.relations.index_inter[:, 0]
         id1 = ps.relations.index_inter[:, 1]
 
         le = ps.relations.dist[ps.relations.mask, np.newaxis] - ps.relations.sum_rad[ps.relations.mask, np.newaxis]
         no = ps.relations.normal_v[ps.relations.mask]
-
         sf = self.f_magnitude[:, np.newaxis]
         len0, len1 = [sf, sf] if self.uniform_magnitude else [sf[id1], sf[id0]]
 
-        ps.relations.result[id0, id1, :] = -no * le * len0
-        ps.relations.result[id1, id0, :] = no * le * len1
-        ps.r += np.sum(ps.relations.result, axis=1)
+        np.add.at(ps.r, id0, -no * le * len0)
+        np.add.at(ps.r, id1, no * le * len1)
+
+    def add_kdt(self, ps):
+        indexes = ps.relations.kd_tree.query_pairs(r=ps.relations.max_radius*2, output_type='ndarray')
+
+        if len(indexes) > 0:
+
+            id0 = indexes[:, 0]
+            id1 = indexes[:, 1]
+            dif_v = ps.verts[indexes[:, 0], :] - ps.verts[indexes[:, 1], :]
+
+            sum_rad = ps.rads[indexes[:, 0]] + ps.rads[indexes[:, 1]]
+
+            dist = np.linalg.norm(dif_v, axis=1)
+            dist_cor = np.clip(dist, 1e-6, 1e4)
+
+            normal_v = dif_v / dist_cor[:, np.newaxis]
+
+
+
+            le = (dist - sum_rad)[:, np.newaxis]
+
+            variable_coll = len(self.f_magnitude) > 1
+            sf = self.f_magnitude[:, np.newaxis]
+            len0, len1 = [sf[id1], sf[id0]] if variable_coll else [sf, sf]
+
+
+            np.add.at(ps.r, id0, -normal_v * le * len0)
+            np.add.at(ps.r, id1, normal_v * le * len1)
 
 
 class SvAttractionForce():
-    def __init__(self, magnitude, decay, max_distance, use_scipy=False):
+    def __init__(self, magnitude, decay, max_distance, use_kdtree=False):
 
         self.magnitude = np.array(magnitude)
         self.uniform_magnitude = len(magnitude) < 2
         print(self.magnitude, self.uniform_magnitude)
         self.decay = np.array(decay)
-        self.use_scipy = use_scipy
+        self.use_kdtree = use_kdtree
         self.max_distance = max_distance[0]
-        self.needs = ['dif_v', 'dist', 'dist_cor', 'attract', 'normal_v']
-
+        if self.use_kdtree:
+            self.needs = ['kd_tree']
+            self.add = self.add_kdt
+        else:
+            self.needs = ['indexes', 'sum_rad', 'mass_product', 'dif_v', 'dist', 'dist_cor', 'attract', 'normal_v']
+            self.add = self.add_brute_force
 
     def setup(self, ps):
         ps.aware = True
@@ -305,7 +639,7 @@ class SvAttractionForce():
         else:
             self.f_magnitude = numpy_fit_long_repeat([self.magnitude], ps.v_len)
 
-    def add(self, ps):
+    def add_brute_force(self, ps):
         rel = ps.relations
         mask = np.all(( rel.dist < self.max_distance, ps.relations.attract_mask), axis=0)
         index_non_inter = ps.relations.indexes[mask]
@@ -318,11 +652,31 @@ class SvAttractionForce():
         att = self.f_magnitude
         len0, len1 = [att, att] if self.uniform_magnitude else [att[id1], att[id0]]
 
+        np.add.at(ps.r, id0, -direction * len0)
+        np.add.at(ps.r, id1, direction * len1)
 
-        ps.relations.result[:] = 0
-        ps.relations.result[id0, id1, :] = -direction * len0
-        ps.relations.result[id1, id0, :] = direction * len1
-        ps.r += np.sum(ps.relations.result, axis=1)
+    def add_kdt(self, ps):
+        rel = ps.relations
+        indexes = ps.relations.kd_tree.query_pairs(r=self.max_distance, output_type='ndarray')
+        if len(indexes)>0:
+
+            dif_v = ps.verts[indexes[:, 0], :] - ps.verts[indexes[:, 1], :]
+            mass_product = ps.mass[indexes[:, 0]] * ps.mass[indexes[:, 1]]
+
+            dist = np.linalg.norm(dif_v, axis=1)
+            dist_cor = np.clip(dist, 1e-6, 1e4)
+            id0 = indexes[:, 0]
+            id1 = indexes[:, 1]
+            dist2 = np.power(dist, self.decay)[:, np.newaxis]
+            dist_cor = np.clip(dist, 1e-6, 1e4)
+            normal_v = dif_v / dist_cor[:, np.newaxis]
+
+            direction = normal_v / dist2 * mass_product[:, np.newaxis]
+
+            att = self.f_magnitude
+            len0, len1 = [att, att] if self.uniform_magnitude else [att[id1], att[id0]]
+            np.add.at(ps.r, id0, -direction * len0)
+            np.add.at(ps.r, id1, direction * len1)
 
 
 class SvAlignForce():
@@ -633,6 +987,73 @@ class SvSpringsForce():
         np.add.at(ps.r, self.springs[:, 1], normal_v * x * k)
 
 
+class SvEdgesAngleForce():
+    def __init__(self, springs, spring_k, fixed_angle, use_fix_angle):
+        self.springs = np.array(springs)
+        self.spring_k = np.array(spring_k)
+        self.use_fix_angle = use_fix_angle
+        self.fixed_angle = fixed_angle
+        self.rest_ang = fixed_angle
+
+    def setup(self, ps):
+        rel=[[] for i in range(ps.v_len)]
+        for (e0, e1) in self.springs:
+            rel[e0].append(e1)
+            rel[e1].append(e0)
+        target_v = []
+        rest_ang = []
+        rel_idx = []
+
+        if self.use_fix_angle or self.fixed_angle[0] > 0:
+            self.rest_ang = self.fixed_angle
+            for v,r, idx in zip(ps.verts, rel, range(ps.v_len)):
+                if len(r) == 2:
+                    target_v.append(idx)
+                    rel_idx.append(r)
+                elif len(r)>2:
+                    for idx0, idx1 in zip(r,r[1:]+[r[0]]):
+                        target_v.append(idx)
+                        rel_idx.append([idx0, idx1])
+
+            self.target_v = np.array(target_v)
+            self.rest_ang = self.fixed_angle
+            self.rel_idx = np.array(rel_idx)
+        else:
+
+            for v,r, idx in zip(ps.verts, rel, range(ps.v_len)):
+                if len(r) == 2:
+                    vec = ps.verts[r[0]] - v
+                    vec2 = ps.verts[r[1]] - v
+                    rest_ang.append(angle_between([vec], [vec2])[0])
+                    target_v.append(idx)
+                    rel_idx.append(r)
+                elif len(r)>2:
+                    for idx0, idx1 in zip(r,r[1:]+[r[0]]):
+                        vec = ps.verts[idx0] - v
+                        vec2 = ps.verts[idx1] - v
+                        rest_ang.append(angle_between([vec], [vec2])[0])
+                        target_v.append(idx)
+                        rel_idx.append([idx0, idx1])
+            self.target_v = np.array(target_v)
+            self.rest_ang = np.array(rest_ang)
+            self.rel_idx = np.array(rel_idx)
+
+
+    def add(self, ps):
+
+
+        vs = ps.verts[self.target_v, :]
+        v1_u = unit_vector(ps.verts[self.rel_idx[:,0]] - vs)
+        v2_u = unit_vector(ps.verts[self.rel_idx[:,1]] - vs)
+        act_ang = np.arccos(np.clip(np_dot(v1_u, v2_u), -1.0, 1.0))
+
+
+        average_vector = (v1_u + v2_u)/2
+        f = average_vector * ((self.rest_ang - act_ang)*self.spring_k)[:, np.newaxis]
+        ps.r[self.target_v] += f
+        np.add.at(ps.r, self.target_v, f)
+
+
 
 class SvTimedForce():
     def __init__(self, force, start, end):
@@ -789,7 +1210,7 @@ def limit_speed(np_vel, max_vel):
     vel_exceded = vel_mag > max_vel
     np_vel[vel_exceded] = np_vel[vel_exceded] / vel_mag[vel_exceded, np.newaxis] * max_vel
 
-
+from sverchok.dependencies import scipy
 class PulgaSystem():
     '''Store states'''
     verts, rads, vel, density = [[], [], [], []]
@@ -824,25 +1245,31 @@ class PulgaSystem():
 
 
     def relations_setup(self):
-
-        self.relations.indexes = cross_indices3(self.v_len)
-        self.relations.result = np.zeros((self.v_len, self.v_len, 3), dtype=np.float64)
+        if 'indexes' in self.relations.needed:
+            self.relations.indexes = cross_indices3(self.v_len)
+        if 'cross_matrix' in self.relations.needed:
+            self.relations.result = np.zeros((self.v_len, self.v_len, 3), dtype=np.float64)
         if not self.size_change:
-            self.relations.sum_rad = self.rads[self.relations.indexes[:, 0]] + self.rads[self.relations.indexes[:, 1]]
-            self.relations.mass_product = self.mass[self.relations.indexes[:, 0]] * self.mass[self.relations.indexes[:, 1]]
+            if 'sum_rad' in self.relations.needed:
+                self.relations.sum_rad = self.rads[self.relations.indexes[:, 0]] + self.rads[self.relations.indexes[:, 1]]
+            if 'mass_product' in self.relations.needed:
+                self.relations.mass_product = self.mass[self.relations.indexes[:, 0]] * self.mass[self.relations.indexes[:, 1]]
 
     def relations_update(self):
-
+        if 'kd_tree' in self.relations.needed:
+            self.relations.kd_tree = scipy.spatial.cKDTree(self.verts)
         if self.size_change:
-            self.relations.sum_rad = self.rads[self.relations.indexes[:, 0]] + self.rads[self.relations.indexes[:, 1]]
-            self.relations.mass_product = self.mass[self.relations.indexes[:, 0]] * self.mass[self.relations.indexes[:, 1]]
+            if 'sum_rad' in self.relations.needed:
+                self.relations.sum_rad = self.rads[self.relations.indexes[:, 0]] + self.rads[self.relations.indexes[:, 1]]
+            if 'mass_product' in self.relations.needed:
+                self.relations.mass_product = self.mass[self.relations.indexes[:, 0]] * self.mass[self.relations.indexes[:, 1]]
 
         if 'max_radius' in self.relations.needed:
             self.relations.max_radius = np.amax(self.rads)
         if 'dif_v' in self.relations.needed:
-            dif_v = self.verts[self.relations.indexes[:, 0], :] - self.verts[self.relations.indexes[:, 1], :]
+            self.relations.dif_v = self.verts[self.relations.indexes[:, 0], :] - self.verts[self.relations.indexes[:, 1], :]
         if 'dist' in self.relations.needed:
-            self.relations.dist = np.linalg.norm(dif_v, axis=1)
+            self.relations.dist = np.linalg.norm(self.relations.dif_v, axis=1)
         if 'collide' in self.relations.needed or 'attract' in self.relations.needed:
             self.relations.mask = self.relations.sum_rad > self.relations.dist
             self.relations.index_inter = self.relations.indexes[self.relations.mask]
@@ -852,10 +1279,12 @@ class PulgaSystem():
             self.relations.attract_mask = np.invert(self.relations.mask)
             self.relations.index_non_inter = self.relations.indexes[self.relations.attract_mask]
             self.relations.some_attractions = (len(self.relations.index_inter) < len(self.relations.index_inter))
+
         if 'dist_cor' in self.relations.needed or 'normal_v' in self.relations.needed:
             self.relations.dist_cor = np.clip(self.relations.dist, 1e-6, 1e4)
+
         if 'normal_v' in self.relations.needed:
-            self.relations.normal_v = dif_v / self.relations.dist_cor[:, np.newaxis]
+            self.relations.normal_v = self.relations.dif_v / self.relations.dist_cor[:, np.newaxis]
         if 'cross_matrix' in self.relations.needed:
             self.relations.result[:] = 0
 

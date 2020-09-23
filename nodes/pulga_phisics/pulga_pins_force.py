@@ -33,8 +33,8 @@ class SvPulgaPinForceNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvPulgaPinForceNode'
     bl_label = 'Pulga Pin Force'
-    bl_icon = 'MOD_PHYSICS'
-    sv_icon = 'SV_CIRCLE_SVG'
+    bl_icon = 'PINNED'
+
 
     fixed_len: FloatProperty(name='Length', description='Force', default=0.0, update=updateNode)
     pin_type: EnumProperty(name='Axis', description='Constrained', items=enum_item_4(['XYZ', 'XY','XZ', 'YZ', 'X','Y', 'Z']), default='XYZ', update=updateNode)

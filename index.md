@@ -629,6 +629,7 @@
     SvPulgaBoundingBoxForceNode
     SvPulgaInflateForceNode
     SvPulgaAttractorsForceNode
+    SvPulgaAngleForceNode
 
 ## SVG
     SvSvgDocumentNode

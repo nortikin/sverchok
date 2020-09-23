@@ -22,57 +22,57 @@ import bpy
 from bpy.props import EnumProperty, BoolProperty, IntProperty, FloatProperty, FloatVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import match_long_repeat as mlr, updateNode
-from sverchok.utils.pulga_physics_core_2 import SvAttractionForce
-
-class SvPulgaSelfAttractionForceNode(bpy.types.Node, SverchCustomTreeNode):
+from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
+from sverchok.data_structure import match_long_repeat as mlr, enum_item_4
+from sverchok.utils.pulga_physics_core_2 import SvCollisionForce
+from sverchok.dependencies import scipy, Cython
+class SvPulgaSelfCollisionForceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: gravity among vertices
-    Tooltip: Attraction between vertices
+    Triggers: Collide verts
+    Tooltip: Collision forces between vertices
     """
-    bl_idname = 'SvPulgaSelfAttractionForceNode'
-    bl_label = 'Pulga Self Attraction Force'
+    bl_idname = 'SvPulgaSelfCollisionForceNode'
+    bl_label = 'Pulga Self Collision Force'
     bl_icon = 'MOD_PHYSICS'
-    # sv_icon = 'SV_CIRCLE_SVG'
+    sv_icon = 'SV_PULGA_COLLISION_FORCE'
 
-    force : FloatProperty(
-        name='Strength', description='Attraction between vertices',
+    force: FloatProperty(
+        name='Strength', description='Collision forces between vertices',
         default=0.0, precision=4, step=1e-2, update=updateNode)
-    decay : FloatProperty(
-        name='Decay', description='0 = no decay, 1 = linear, 2 = quadratic...',
-        default=0.0, precision=3, update=updateNode)
-    max_distance : FloatProperty(
-        name='Max Distance', description='Maximun distance',
-        default=0.0, precision=3, update=updateNode)
+    mode: EnumProperty(
+        name='Mode',
+        description='Algorithm used for calculation',
+        items=enum_item_4(['Brute Force', 'Kd-tree']),
+        default='Kd-tree', update=updateNode)
+
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Magnitude").prop_name = 'force'
-        self.inputs.new('SvStringsSocket', "Decay").prop_name = 'decay'
-        self.inputs.new('SvStringsSocket', "Max Distance").prop_name = 'max_distance'
-
 
         self.outputs.new('SvPulgaForceSocket', "Force")
 
+    def draw_buttons(self, context, layout):
+        if scipy is not None and Cython is not None:
+            layout.prop(self, 'mode')
 
     def process(self):
 
         if not any(s.is_linked for s in self.outputs):
             return
         forces_in = self.inputs["Magnitude"].sv_get(deepcopy=False)
-        decay_in = self.inputs["Decay"].sv_get(deepcopy=False)
-        max_distance = self.inputs["Max Distance"].sv_get(deepcopy=False)
 
         forces_out = []
-        for force_params in zip(forces_in, decay_in, max_distance):
-            forces_out.append(SvAttractionForce(*force_params))
+        use_kdtree = self.mode in "Kd-tree" and scipy is not None and Cython is not None
+        for force in forces_in:
+            forces_out.append(SvCollisionForce(force, use_kdtree=use_kdtree))
         self.outputs[0].sv_set([forces_out])
 
 
 
 
 def register():
-    bpy.utils.register_class(SvPulgaSelfAttractionForceNode)
+    bpy.utils.register_class(SvPulgaSelfCollisionForceNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvPulgaSelfAttractionForceNode)
+    bpy.utils.unregister_class(SvPulgaSelfCollisionForceNode)

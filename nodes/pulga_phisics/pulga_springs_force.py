@@ -34,7 +34,7 @@ class SvPulgaSpringsForceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvPulgaSpringsForceNode'
     bl_label = 'Pulga Springs Force'
     bl_icon = 'MOD_PHYSICS'
-    sv_icon = 'SV_CIRCLE_SVG'
+    sv_icon = 'SV_PULGA_SPRINGS_FORCE'
 
     fixed_len : FloatProperty(
         name='Rest Length', description='Specify spring rest length, 0 to calculate it from initial position',

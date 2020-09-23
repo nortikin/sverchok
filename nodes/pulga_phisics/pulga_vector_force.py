@@ -35,11 +35,23 @@ class SvPulgaVectorForceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvPulgaVectorForceNode'
     bl_label = 'Pulga Vector Force'
     bl_icon = 'MESH_CIRCLE'
-    sv_icon = 'SV_CIRCLE_SVG'
+    sv_icon = 'SV_PULGA_VECTOR_FORCE'
 
-    force: FloatVectorProperty(name='Force', description='Force direction, if will also accept a Vector Field', size=3, default=(0.0,0,0), update=updateNode)
-    magnitude: FloatProperty(name='Strength', description='Force multiplayer', default=1, update=updateNode)
-    mass_proportional: BoolProperty(name='Proportional to Mass', update=updateNode)
+    force: FloatVectorProperty(
+        name='Force',
+        description='Force direction, if will also accept a Vector Field',
+        size=3,
+        default=(0, 0, 1),
+        update=updateNode)
+    magnitude: FloatProperty(
+        name='Strength',
+        description='Force multiplayer',
+        default=1,
+        update=updateNode)
+    mass_proportional: BoolProperty(
+        name='Proportional to Mass',
+        description='Multiply Force with mass (like Gravity force)',
+        update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Force").prop_name = 'force'
@@ -57,7 +69,7 @@ class SvPulgaVectorForceNode(bpy.types.Node, SverchCustomTreeNode):
 
         forces_in = self.inputs["Force"].sv_get(deepcopy=False)
         strength_in = self.inputs["Strength"].sv_get(deepcopy=False)
-        
+
         if isinstance(forces_in[0], SvVectorField):
             force_class = SvFieldForce
         else:
