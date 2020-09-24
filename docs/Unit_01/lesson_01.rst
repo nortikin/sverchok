@@ -15,7 +15,7 @@ Let's make a Plane, we will need 4 vectors and we'll define them using math. I'l
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5426922/20290ef0-837b-11e4-9863-8a0a586aed7d.png
 
-We carefully pick points on the unit-circle so that when we connect them via edges it results in a square. To begin we want to create a series of numbers, to represent those points on the unit-circle. Essentially this sequence is ``[0.25 pi, 0.75 pi, 1.25 pi, 1.75 pi]``. Because these aren't whole numbers (``Integers``), but so called ``Floats``, we use a ``Number Range`` Node configured to output ``Floats``.
+We carefully pick points on the unit-circle so that when we connect them via edges it results in a square. To begin we want to create a series of numbers, to represent those points on the unit-circle. Essentially this sequence is ``[0.25 pi, 0.75 pi, 1.25 pi, 1.75 pi]``. Because these aren't whole numbers (``Integers``), but so called ``Floats``, we use a ``Number Range`` Node configured to output ``Floats``. And some edits here and there
 
 **Making a series of numbers**
 
@@ -23,7 +23,7 @@ We carefully pick points on the unit-circle so that when we connect them via edg
 
 |number_range|
 
-By default this node will generate a standard range: ``[0.0, 1.0, 2.0, 3.0.....9.0]``,
+By default this node will generate a standard range: ``[0.0, 1.0, 2.0, 3.0.....9.0]``, and more info here
 
 **Seeing the output of the Range Float node**
 
