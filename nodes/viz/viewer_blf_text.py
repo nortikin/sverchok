@@ -27,6 +27,7 @@ from sverchok.data_structure import (
 )
 
 
+round_if_needed = lambda p, n: f'({p[0]:.{n}f}, {p[1]:.{n}f}, {p[2]:.{n}f})'
 
 # -------------------- BLF TEXT VIEWER ------------------- #
 
@@ -266,30 +267,17 @@ class SvViewerTextBLF(bpy.types.Node, SverchCustomTreeNode):
         display_data.text_data = []
 
         concat_locations = display_data.locations_data.append
-        concat_text = display_data.text_data.append
+        concat_text = display_data.text_data.extend
 
-        # convert_if_needed = lambda chars: f'{chars}'
-        
         for obj_index, locations in enumerate(geom.locations):
 
-            # for vpos in locations:
-            #     chars = convert_if_needed(vpos)
-            #     concat_locations((chars, vpos))
+            for vpos in locations:
+                chars = round_if_needed(vpos, self.coordinate_rounding)
+                concat_locations((chars, vpos))
             
-            # if geom.text:    
-            #     text_items = self.get_text_of_correct_length(obj_index, geom, len(locations))                        
-            #     for text_item, vpos in zip(text_items, final_verts):
-
-            #         # yikes, don't feed this function nonsense :)
-            #         if isinstance(text_item, float):
-            #             chars = convert_if_needed(obj_index, text_item)
-            #         elif isinstance(text_item, list) and len(text_item) == 1:
-            #             chars = convert_if_needed(obj_index, text_item[0])
-            #         else:
-            #             # in case it receives [0, 0, 0] or (0, 0, 0).. etc
-            #             chars = convert_if_needed(obj_index, text_item)
-            #         concat_text((chars))
-            pass
+            if geom.text:    
+                text_items = self.get_text_of_correct_length(obj_index, geom, len(locations))                        
+                concat_text(text_items)
 
         return display_data
 
