@@ -41,7 +41,6 @@ from sverchok.utils.sv_text_io_common import (
     new_output_socket,
     name_dict,
     text_modes,
-    CommonTextMixinIO
 )
 
 
@@ -85,7 +84,7 @@ def pop_all_data(node, n_id):
     node.json_data.pop(n_id, None)
 
 
-class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO, SvAnimatableNode):
+class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """
     Triggers: Text in from datablock
     Tooltip: Quickly load text from datablock into NodeView
@@ -574,6 +573,62 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO, S
             text = self.get_bpy_data_from_name(self.text, bpy.data.texts)
             if text:
                 self.file_pointer = text
+
+    def save_to_json(self, node_data: dict):
+        texts = bpy.data.texts
+
+        node_data['current_text'] = self.text
+        node_data['textmode'] = self.textmode
+        if self.textmode == 'JSON':
+            # add the json as full member to the tree :)
+            text_str = texts[self.text].as_string()
+            json_as_dict = json.loads(text_str)
+            node_data['text_lines'] = {}
+            node_data['text_lines']['stored_as_json'] = json_as_dict
+        else:
+            node_data['text_lines'] = texts[self.text].as_string()
+
+    def load_from_json(self, node_data: dict):
+        '''
+        as it's a beta service, old IO json may not be compatible - in this interest
+        of neat code we assume it finds everything.
+        '''
+        texts = bpy.data.texts
+        params = node_data.get('params')
+
+        # original textin used 'current_text', textin+ uses 'text'
+        current_text = params.get('current_text', params.get('text'))
+
+        # it's not clear from the exporter code why textmode parameter isn't stored
+        # in params.. for now this lets us look in both places. ugly but whatever.
+        textmode = params.get('textmode')
+        if not textmode:
+            textmode = node_data.get('textmode')
+        self.textmode = textmode
+
+        if not current_text:
+            self.info("`%s' doesn't store a current_text in params", self.name)
+
+        elif not current_text in texts:
+            new_text = texts.new(current_text)
+            text_line_entry = node_data['text_lines']
+
+            if self.textmode == 'JSON':
+                if isinstance(text_line_entry, str):
+                    self.debug('loading old text json content / backward compatibility mode')
+
+                elif isinstance(text_line_entry, dict):
+                    text_line_entry = json.dumps(text_line_entry['stored_as_json'])
+
+            new_text.from_string(text_line_entry)
+
+        else:
+            # reaches here if  (current_text) and (current_text in texts)
+            # can probably skip this..
+            # texts[current_text].from_string(node_ref['text_lines'])
+            self.debug('%s seems to reuse a text block loaded by another node - skipping', self.name)
+
+        self.load()
 
 
 def register():
