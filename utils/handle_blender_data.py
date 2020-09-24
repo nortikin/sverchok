@@ -5,10 +5,12 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+from __future__ import annotations
 
+from enum import Enum
 from functools import singledispatch
 from itertools import chain
-from typing import Any, List
+from typing import Any, List, Union
 
 import bpy
 
@@ -113,10 +115,13 @@ class BPYProperty:
     def value(self) -> Any:
         if not self.is_valid:
             raise TypeError(f'Can not read "value" of invalid property "{self.name}"')
-        if self.is_array_like:
+        elif self.is_array_like:
             return tuple(getattr(self._data, self.name))
         elif self.type == 'COLLECTION':
             return self._extract_collection_values()
+        elif self.type == 'POINTER':  # it simply returns name of data block or None
+            data_block = getattr(self._data, self.name)
+            return data_block.name if data_block is not None else None
         else:
             return getattr(self._data, self.name)
 
@@ -139,12 +144,25 @@ class BPYProperty:
     def default_value(self) -> Any:
         if not self.is_valid:
             raise TypeError(f'Can not read "default_value" of invalid property "{self.name}"')
-        if self.type == 'COLLECTION':
+        elif self.type == 'COLLECTION':
             return self._extract_collection_values(default_value=True)
-        if self.is_array_like:
+        elif self.is_array_like:
             return tuple(self._data.bl_rna.properties[self.name].default_array)
+        elif self.type == 'POINTER':
+            return None
         else:
             return self._data.bl_rna.properties[self.name].default
+
+    @property
+    def pointer_type(self) -> BPYPointers:
+        if self.type != 'POINTER':
+            raise TypeError(f'Only POINTER property type has `pointer_type` attribute, "{self.type}" given')
+        return BPYPointers.get_type(self._data.bl_rna.properties[self.name].fixed_type)
+
+    @property
+    def data_collection(self):
+        """For pointer properties only, pointer type is MESH it will return bpy.data.meshes"""
+        return self.pointer_type.collection
 
     @property
     def is_to_save(self) -> bool:
@@ -208,3 +226,46 @@ class BPYProperty:
                 prop = BPYProperty(item, prop_name)
                 if prop.is_valid:
                     prop.value = prop_value
+
+
+class BPYPointers(Enum):
+    # pointer name = type of data
+    OBJECT = bpy.types.Object
+    MESH = bpy.types.Mesh
+    NODE_TREE = bpy.types.NodeTree
+    MATERIAL = bpy.types.Material
+    COLLECTION = bpy.types.Collection
+    TEXT = bpy.types.Text
+    LIGHT = bpy.types.Light
+    IMAGE = bpy.types.Image
+    TEXTURE = bpy.types.Texture
+    VECTOR_FONT = bpy.types.VectorFont
+    GREASE_PENCIL = bpy.types.GreasePencil
+
+    @property
+    def collection(self):
+        collections = {
+            BPYPointers.OBJECT: bpy.data.objects,
+            BPYPointers.MESH: bpy.data.meshes,
+            BPYPointers.NODE_TREE: bpy.data.node_groups,
+            BPYPointers.MATERIAL:  bpy.data.materials,
+            BPYPointers.COLLECTION: bpy.data.collections,
+            BPYPointers.TEXT: bpy.data.texts,
+            BPYPointers.LIGHT: bpy.data.lights,
+            BPYPointers.IMAGE: bpy.data.images,
+            BPYPointers.TEXTURE: bpy.data.textures,
+            BPYPointers.VECTOR_FONT: bpy.data.curves,
+            BPYPointers.GREASE_PENCIL: bpy.data.grease_pencils
+        }
+        return collections[self]
+
+    @property
+    def type(self):
+        return self.value
+
+    @classmethod
+    def get_type(cls, bl_rna) -> Union[BPYPointers, None]:
+        for pointer in BPYPointers:
+            if pointer.type.bl_rna == bl_rna:
+                return pointer
+        raise TypeError(f'Type: "{bl_rna}" was not found in: {[t.type.bl_rna for t in BPYPointers]}')

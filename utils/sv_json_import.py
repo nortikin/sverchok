@@ -131,14 +131,22 @@ class NodeImporter01:
             with self._fails_log.add_fail(
                     "Setting node property",
                     f'Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}'):
-                BPYProperty(self._node, prop_name).value = prop_value
+                prop = BPYProperty(self._node, prop_name)
+                if prop.type == 'POINTER':
+                    prop.value = prop.data_collection.get(prop_value)
+                else:
+                    prop.value = prop_value
 
         for sock_index, prop_name, prop_value in self._input_socket_properties():
             with self._fails_log.add_fail(
                     "Setting socket property",
                     f'Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}'):
                 socket = self._node.inputs[sock_index]
-                BPYProperty(socket, prop_name).value = prop_value
+                prop = BPYProperty(socket, prop_name)
+                if prop.type == 'POINTER':
+                    prop.value = prop.data_collection.get(prop_value)
+                else:
+                    prop.value = prop_value
 
         if hasattr(self._node, 'load_from_json'):
             with self._fails_log.add_fail(

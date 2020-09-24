@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Union, Generator
 
 import bpy
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
-from sverchok.utils.handle_blender_data import BPYProperty
+from sverchok.utils.handle_blender_data import BPYProperty, BPYPointers
 from sverchok.utils.sv_IO_monad_helpers import pack_monad
 
 if TYPE_CHECKING:
@@ -125,6 +125,7 @@ class NodeImporter01:
             prop = BPYProperty(node, prop_name)
             if self._is_property_to_export(prop):
                 if prop.type == 'COLLECTION':
+                    # protection from storing default values
                     self._structure["params"][prop_name] = prop.filter_collection_values()
                 else:
                     self._structure["params"][prop.name] = prop.value
@@ -149,8 +150,8 @@ class NodeImporter01:
             return False  # deprecated property
         elif not prop.is_to_save:
             return False
-        elif prop.type == 'POINTER':
-            return False  # pointers does not supported know
+        elif prop.type == 'POINTER' and prop.pointer_type == BPYPointers.OBJECT:
+            return False  # object pointers does not supported now to protect overriding user data
         elif prop.default_value == prop.value:
             return False  # the value will be loaded from code
         else:
