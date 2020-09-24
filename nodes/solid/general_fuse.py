@@ -43,27 +43,41 @@ class SvSolidGeneralFuseNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     set_modes = [
-            ('EQ', "Exact", "Index sets are specified exactly", 0),
-            ('SUB', "Subsets", "Index sets are specified by their subsets", 1)
+            ('EQ', "Exact", "Index sets are specified exactly: [1] means all parts that come from source #1 only", 0),
+            ('SUB', "Subsets", "Index sets are specified by their subsets: [1] means all parts that come from source #1, and, optionally, other sources", 1)
         ]
     
-    set_mode : EnumProperty(
-        name = "Sets mode",
+    include_mode : EnumProperty(
+        name = "Sets specification mode",
+        description = "How index sets are identified",
+        items = set_modes,
+        default = 'EQ',
+        update = updateNode)
+
+    exclude_mode : EnumProperty(
+        name = "Sets specification mode",
+        description = "How index sets are identified",
         items = set_modes,
         default = 'EQ',
         update = updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.label(text='Specify:')
-        layout.prop(self, 'set_mode', text='')
         layout.prop(self, 'merge_result')
         if self.merge_result:
             layout.prop(self, "refine_solid")
 
+    def draw_include(self, socket, context, layout):
+        layout.label(text=socket.name)
+        layout.prop(self, 'include_mode', text='')
+
+    def draw_exclude(self, socket, context, layout):
+        layout.label(text=socket.name)
+        layout.prop(self, 'exclude_mode', text='')
+
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', "Solids")
-        self.inputs.new('SvStringsSocket', "Include")
-        self.inputs.new('SvStringsSocket', "Exclude")
+        self.inputs.new('SvStringsSocket', "Include").custom_draw = 'draw_include'
+        self.inputs.new('SvStringsSocket', "Exclude").custom_draw = 'draw_exclude'
         self.outputs.new('SvSolidSocket', "Solid")
         self.outputs.new('SvStringsSocket', "SolidSources")
         self.outputs.new('SvStringsSocket', "EdgesMask")
@@ -71,8 +85,8 @@ class SvSolidGeneralFuseNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "FacesMask")
         self.outputs.new('SvStringsSocket', "FaceSources")
 
-    def _check_subset(self, subset, srcs):
-        if self.set_mode == 'EQ':
+    def _check_subset(self, mode, subset, srcs):
+        if mode == 'EQ':
             return set(subset) == srcs
         else:
             return set(subset).issubset(srcs)
@@ -86,7 +100,7 @@ class SvSolidGeneralFuseNode(bpy.types.Node, SverchCustomTreeNode):
             if include_idxs is not None:
                 include = False
                 for idxs in include_idxs:
-                    if self._check_subset(idxs, src_idxs):
+                    if self._check_subset(self.include_mode, idxs, src_idxs):
                         include = True
                         break
             else:
@@ -95,7 +109,7 @@ class SvSolidGeneralFuseNode(bpy.types.Node, SverchCustomTreeNode):
             exclude = False
             if exclude_idxs is not None:
                 for idxs in exclude_idxs:
-                    if self._check_subset(idxs, src_idxs):
+                    if self._check_subset(self.exclude_mode, idxs, src_idxs):
                         exclude = True
                         break
 
