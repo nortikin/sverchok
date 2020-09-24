@@ -33,9 +33,9 @@ class SvPulgaSelfAttractionForceNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Attraction between vertices
     """
     bl_idname = 'SvPulgaSelfAttractionForceNode'
-    bl_label = 'Pulga Self Attraction Force'
+    bl_label = 'Pulga Attraction Force'
     bl_icon = 'MOD_PHYSICS'
-    sv_icon = 'SV_PULGA_COLLISION_FORCE'
+    sv_icon = 'SV_PULGA_ATTRACTION_FORCE'
 
     force: FloatProperty(
         name='Strength', description='Attraction between vertices',

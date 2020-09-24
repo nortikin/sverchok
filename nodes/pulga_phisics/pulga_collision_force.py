@@ -32,7 +32,7 @@ class SvPulgaSelfCollisionForceNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Collision forces between vertices
     """
     bl_idname = 'SvPulgaSelfCollisionForceNode'
-    bl_label = 'Pulga Self Collision Force'
+    bl_label = 'Pulga Collision Force'
     bl_icon = 'MOD_PHYSICS'
     sv_icon = 'SV_PULGA_COLLISION_FORCE'
 
