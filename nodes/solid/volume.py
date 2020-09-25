@@ -14,23 +14,23 @@ from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
 
 if FreeCAD is None:
-    add_dummy('SvSolidCenterOfMassNode', 'Center of Mass', 'FreeCAD')
+    add_dummy('SvSolidVolumeNode', 'Solid Volume', 'FreeCAD')
 else:
     import Part
 
-class SvSolidCenterOfMassNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSolidVolumeNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Center of Mass
-    Tooltip: Calculate center of mass (barycenter) of a Solid object
+    Triggers: Volume Solid
+    Tooltip: Calculate total volume of a Solid object
     """
-    bl_idname = 'SvSolidCenterOfMassNode'
-    bl_label = 'Center of Mass'
+    bl_idname = 'SvSolidVolumeNode'
+    bl_label = 'Solid Volume'
     bl_icon = 'OUTLINER_OB_EMPTY'
     solid_catergory = "Operators"
 
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', "Solid")
-        self.outputs.new('SvVerticesSocket', "Center")
+        self.outputs.new('SvStringsSocket', "Volume")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -41,18 +41,18 @@ class SvSolidCenterOfMassNode(bpy.types.Node, SverchCustomTreeNode):
         def calc(solid):
             if not isinstance(solid, Part.Solid):
                 solid = Part.makeSolid(solid)
-            c = solid.CenterOfMass
-            return tuple(c)
+            c = solid.Volume
+            return [c]
 
-        centers_out = map_recursive(calc, solids_in, data_types=(Part.Shape,))
+        volume_out = map_recursive(calc, solids_in, data_types=(Part.Shape,))
 
-        self.outputs['Center'].sv_set(centers_out)
+        self.outputs['Volume'].sv_set(volume_out)
 
 def register():
     if FreeCAD is not None:
-        bpy.utils.register_class(SvSolidCenterOfMassNode)
+        bpy.utils.register_class(SvSolidVolumeNode)
 
 def unregister():
     if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSolidCenterOfMassNode)
+        bpy.utils.unregister_class(SvSolidVolumeNode)
 
