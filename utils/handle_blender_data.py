@@ -131,6 +131,8 @@ class BPYProperty:
             raise TypeError(f'Can not read "value" of invalid property "{self.name}"')
         if self.type == 'COLLECTION':
             self._set_collection_values(value)
+        elif self.type == 'POINTER' and isinstance(value, str):
+            setattr(self._data, self.name, self.data_collection.get(value))
         else:
             setattr(self._data, self.name, value)
 
@@ -219,7 +221,13 @@ class BPYProperty:
         return items
 
     def _set_collection_values(self, value: List[dict]):
-        for item, item_values in zip(getattr(self._data, self.name), value):
+        collection = getattr(self._data, self.name)
+        for item_index, item_values in enumerate(value):
+            # Some collections can be empty, in this case they should be expanded to be able to get new values
+            if item_index == len(collection):
+                item = collection.add()
+            else:
+                item = collection[item_index]
             for prop_name, prop_value in item_values.items():
                 prop = BPYProperty(item, prop_name)
                 if prop.is_valid:

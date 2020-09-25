@@ -149,8 +149,13 @@ class NodeImporter01:
     def _apply_property(self, data, prop_name: str, value: Any):
         prop = BPYProperty(data, prop_name)
         if prop.type == 'COLLECTION':
-            for item_values in value:
-                item = getattr(data, prop_name).add()
+            collection = getattr(data, prop_name)
+            for item_index, item_values in enumerate(value):
+                # Some collections can be empty, in this case they should be expanded to be able to get new values
+                if item_index == len(collection):
+                    item = collection.add()
+                else:
+                    item = collection[item_index]
                 for item_prop_name, item_prop_value in item_values.items():
                     self._apply_property(item, item_prop_name, item_prop_value)
         elif prop.type == 'POINTER':
