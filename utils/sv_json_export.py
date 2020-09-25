@@ -150,8 +150,6 @@ class NodeImporter01:
             return False  # deprecated property
         elif not prop.is_to_save:
             return False
-        elif prop.type == 'POINTER' and prop.pointer_type == BPYPointers.OBJECT:
-            return False  # object pointers does not supported now to protect overriding user data
         elif prop.default_value == prop.value:
             return False  # the value will be loaded from code
         else:

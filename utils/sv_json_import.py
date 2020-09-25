@@ -10,13 +10,13 @@ from __future__ import annotations
 import json
 from collections import defaultdict
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Union, Generator, ContextManager
+from typing import TYPE_CHECKING, Union, Generator, ContextManager, Any
 
 import bpy
 from sverchok.utils.sv_IO_panel_tools import get_file_obj_from_zip
 from sverchok.utils.logging import debug, info, warning
 from sverchok.utils import dummy_nodes
-from sverchok.utils.handle_blender_data import BPYProperty
+from sverchok.utils.handle_blender_data import BPYProperty, BPYPointers
 from sverchok.utils.sv_IO_monad_helpers import unpack_monad
 
 if TYPE_CHECKING:
@@ -131,28 +131,35 @@ class NodeImporter01:
             with self._fails_log.add_fail(
                     "Setting node property",
                     f'Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}'):
-                prop = BPYProperty(self._node, prop_name)
-                if prop.type == 'POINTER':
-                    prop.value = prop.data_collection.get(prop_value)
-                else:
-                    prop.value = prop_value
+                self._apply_property(self._node, prop_name, prop_value)
 
         for sock_index, prop_name, prop_value in self._input_socket_properties():
             with self._fails_log.add_fail(
                     "Setting socket property",
                     f'Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}'):
                 socket = self._node.inputs[sock_index]
-                prop = BPYProperty(socket, prop_name)
-                if prop.type == 'POINTER':
-                    prop.value = prop.data_collection.get(prop_value)
-                else:
-                    prop.value = prop_value
+                self._apply_property(socket, prop_name, prop_value)
 
         if hasattr(self._node, 'load_from_json'):
             with self._fails_log.add_fail(
                     "Setting advance node properties",
                     f'Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}'):
                 self._node.load_from_json(self._structure)
+
+    def _apply_property(self, data, prop_name: str, value: Any):
+        prop = BPYProperty(data, prop_name)
+        if prop.type == 'COLLECTION':
+            for item_values in value:
+                item = getattr(data, prop_name).add()
+                for item_prop_name, item_prop_value in item_values.items():
+                    self._apply_property(item, item_prop_name, item_prop_value)
+        elif prop.type == 'POINTER':
+            if prop.pointer_type != BPYPointers.OBJECT:
+                prop.value = prop.data_collection.get(value)
+            else:  # object pointers does not supported now to protect overriding user data
+                pass
+        else:
+            prop.value = value
 
     def _node_attributes(self) -> Generator[tuple]:
         with self._fails_log.add_fail("Reading node location", f'Node: {self._node.name}'):

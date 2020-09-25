@@ -183,7 +183,7 @@ class BPYProperty:
             # other properties does not have is_array attribute
             return False
 
-    def filter_collection_values(self, skip_default=True, skip_save=True, skip_pointers=True):
+    def filter_collection_values(self, skip_default=True, skip_save=True):
         if self.type != 'COLLECTION':
             raise TypeError(f'Method supported only "collection" types, "{self.type}" was given')
         if not self.is_valid:
@@ -197,14 +197,12 @@ class BPYProperty:
                     continue
                 if skip_save and not prop.is_to_save:
                     continue
-                if skip_pointers and prop.type == 'POINTER':
-                    continue
                 if prop.type != 'COLLECTION':
                     if skip_default and prop.default_value == prop.value:
                         continue
                     item_props[prop.name] = prop.value
                 else:
-                    item_props[prop.name] = prop.filter_collection_values(skip_default, skip_save, skip_pointers)
+                    item_props[prop.name] = prop.filter_collection_values(skip_default, skip_save)
             items.append(item_props)
         return items
 
