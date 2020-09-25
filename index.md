@@ -221,6 +221,7 @@
    SvRefineSolidNode
    SvIsSolidClosedNode
    SvSolidCenterOfMassNode
+   SvSolidFaceAreaNode
    SvSolidAreaNode
    SvSolidVolumeNode
 
