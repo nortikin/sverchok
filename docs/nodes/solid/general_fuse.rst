@@ -11,11 +11,11 @@ This node requires FreeCAD_ library to work.
 Functionality
 -------------
 
-This node finds Boolean intersections of several Solid object at once, at
+This node finds Boolean intersections of several Solid object at once, and
 allows one to combine resulting parts in different ways. This is a generalized,
 more complex, but more powerful, analog of "Solid Boolean" node: all what
 "Solid General Fuse" node does can be done with several consequential
-applications "Solid Boolean" node. For complex boolean operations on many
+applications of "Solid Boolean" node. For complex boolean operations on many
 parts, one application of "Solid General Fuse" will give you better performance
 compared to many "Solid Boolean" applications.
 
@@ -82,6 +82,9 @@ of source objects; they are joined by OR. For example, if for Include input you
 have "Exact" mode, and you've provided ``[[0, 1], [2,3]]``, then you will have
 parts that come from intersection of bodies number 0 and 1, OR from
 intersection of bodies number 2 and 3.
+
+If neither Include or Exclude input is connected, then the node will output all
+parts of all intersections.
 
 After such playing, we can either fuse the remaining parts into one object, or
 leave them as different objects.
@@ -158,15 +161,15 @@ This node has the following outputs:
   This output is only available when **Merge Result** parameter is not checked,
   or when **Refine Solid** parameter is not checked.
 
-The following illustrates how **EdgeSources** output is calculated:
+The following illustrates how **EdgeSources** output is calculated (here Solid
+Boolean node is used, but General Fuse node works the same way):
 
 .. image:: https://user-images.githubusercontent.com/284644/94042893-8ccffb00-fde5-11ea-938e-328df1d65d7e.png
 
-Here we have two cubes, 0 (plugged into Solid A input), and 1 (plugged into
-Solid B input). Purple edges came from cube 0, for them EdgeSources output
-contains ``[0]``. Orange edges came from cube 1, for them EdgeSources output
-contains ``[1]``. Edges marked with cyan came from both cubes, for them
-EdgeSources output contains ``[0, 1]``.
+Here we have two cubes, 0 and 1. Purple edges came from cube 0, for them
+EdgeSources output contains ``[0]``. Orange edges came from cube 1, for them
+EdgeSources output contains ``[1]``. Edges marked with cyan came from both
+cubes, for them EdgeSources output contains ``[0, 1]``.
 
 FaceSources output is calculated similarly, but for faces instead of edges.
 
