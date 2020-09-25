@@ -22,13 +22,13 @@ else:
 
 class SvSolidGeneralFuseNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Union, Diff, Intersect
-    Tooltip: Perform Boolean Operations on Solids
+    Triggers: General Union, Diff, Intersect
+    Tooltip: Generalized Boolean Operations on Solids
     """
     bl_idname = 'SvSolidGeneralFuseNode'
     bl_label = 'Solid General Fuse'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_SOLID_BOOLEAN'
+    sv_icon = 'SV_GENERAL_FUSE'
     solid_catergory = "Operators"
 
     @throttled
