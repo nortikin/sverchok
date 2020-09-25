@@ -61,7 +61,10 @@ else:
                 for edge, m in zip(solid.Edges, mask):
                     if m:
                         selected_edges.append(edge)
-                solid_o = solid.makeFillet(r_s, r_e, selected_edges)
+                if selected_edges:
+                    solid_o = solid.makeFillet(r_s, r_e, selected_edges)
+                else:
+                    solid_o = solid
                 solids.append(solid_o)
 
 

@@ -25,7 +25,7 @@ in a body at once). In this "Accumulative" node, the node performs as follows:
   bodies as "tools", to cut "holes" in the first body.
 
 This node can also produce information about which element of the resulting
-Solid object came from which source object.Calculating such information can
+Solid object came from which source object. Calculating such information can
 take time, so this is an optional feature.
 
 Inputs

@@ -17,6 +17,7 @@ Solid
    chamfer_solid
    fillet_solid
    solid_boolean
+   general_fuse
    mirror_solid
    offset_solid
    solid_from_faces

@@ -310,6 +310,12 @@ class SvGeneralFuse(object):
     
     def get_face_source_idxs(self, face):
         return self._face_indirect_source_idxs[SvSolidTopology.Item(face)]
+
+    def get_part_sources(self, part):
+        return self._sources_by_part[SvSolidTopology.Item(part)]
+
+    def get_part_source_idxs(self, part):
+        return self._source_idxs_by_part[SvSolidTopology.Item(part)]
     
     def get_by_source(self, solid):
         return self._per_source[SvSolidTopology.Item(solid)]
@@ -356,6 +362,25 @@ class SvGeneralFuse(object):
             if do_refine:
                 solid = solid.removeSplitter()
         return solid
+
+class SvBoolResult(object):
+    def __init__(self, solid, edge_mask=None, edge_map=None, face_mask=None, face_map=None, solid_map=None):
+        self.solid = solid
+        if edge_mask is None:
+            edge_mask = []
+        self.edge_mask = edge_mask
+        if edge_map is None:
+            edge_map = []
+        self.edge_map = edge_map
+        if face_mask is None:
+            face_mask = []
+        self.face_mask = face_mask
+        if face_map is None:
+            face_map = []
+        self.face_map = face_map
+        if solid_map is None:
+            solid_map = []
+        self.solid_map = solid_map
 
 def basic_mesher(solids, precisions):
     verts = []

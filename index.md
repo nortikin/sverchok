@@ -227,6 +227,7 @@
    SvChamferSolidNode
    SvFilletSolidNode
    SvSolidBooleanNode
+   SvSolidGeneralFuseNode
    SvMirrorSolidNode
    SvOffsetSolidNode
    SvSolidFromFacesNode
