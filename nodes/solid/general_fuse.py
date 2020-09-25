@@ -31,16 +31,24 @@ class SvSolidGeneralFuseNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_SOLID_BOOLEAN'
     solid_catergory = "Operators"
 
+    @throttled
+    def update_sockets(self, context):
+        hide_masks = self.merge_result and self.refine_solid
+        self.outputs['EdgesMask'].hide_safe = hide_masks
+        self.outputs['EdgeSources'].hide_safe = hide_masks
+        self.outputs['FacesMask'].hide_safe = hide_masks
+        self.outputs['FaceSources'].hide_safe = hide_masks
+
     refine_solid: BoolProperty(
         name="Refine Solid",
         description="Removes redundant edges (may slow the process)",
         default=True,
-        update=updateNode)
+        update=update_sockets)
 
     merge_result : BoolProperty(
         name = "Merge Result",
         default=True,
-        update=updateNode)
+        update=update_sockets)
 
     set_modes = [
             ('EQ', "Exact", "Index sets are specified exactly: [1] means all parts that come from source #1 only", 0),
@@ -84,6 +92,7 @@ class SvSolidGeneralFuseNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "EdgeSources")
         self.outputs.new('SvStringsSocket', "FacesMask")
         self.outputs.new('SvStringsSocket', "FaceSources")
+        self.update_sockets(context)
 
     def _check_subset(self, mode, subset, srcs):
         if mode == 'EQ':
@@ -123,6 +132,8 @@ class SvSolidGeneralFuseNode(bpy.types.Node, SverchCustomTreeNode):
                 solid_result = good
             else:
                 solid = good[0].fuse(good[1:])
+                if self.refine_solid:
+                    solid = solid.removeSplitter()
                 solid_result = [solid]
         else:
             solid_result = good
@@ -130,36 +141,11 @@ class SvSolidGeneralFuseNode(bpy.types.Node, SverchCustomTreeNode):
         # solid_result is always a list of Solids
         result = SvBoolResult(solid_result)
 
+        # result.solid_map identifies which part of solid
+        # came from which source object
         for part in good:
             srcs = fused.get_part_source_idxs(part)
             result.solid_map.append(list(srcs))
-
-        for solid in solid_result:
-            if solid is None:
-                continue
-
-            edge_mask = []
-            edge_map = []
-            face_mask = []
-            face_map = []
-
-            for edge in solid.Edges:
-                srcs = fused.get_edge_source_idxs(edge)
-                edge_map.append(list(srcs))
-                is_new = len(srcs) > 1
-                edge_mask.append(is_new)
-
-            result.edge_map.append(edge_map)
-            result.edge_mask.append(edge_mask)
-
-            for face in solid.Faces:
-                srcs = fused.get_face_source_idxs(face)
-                face_map.append(list(srcs))
-                is_new = len(srcs) > 1
-                face_mask.append(is_new)
-
-            result.face_map.append(face_map)
-            result.face_mask.append(face_mask)
 
         if self.merge_result:
             # merged body has all sources from all it's parts
@@ -168,9 +154,37 @@ class SvSolidGeneralFuseNode(bpy.types.Node, SverchCustomTreeNode):
                 solid_map_set.update(set(part_map))
             result.solid_map = [list(solid_map_set)]
 
-        if self.merge_result and self.refine_solid:
-            #print("Do refine!")
-            result.solid[0] = result.solid[0].removeSplitter()
+        # if we've done merge + removeSplitter(), we will not
+        # be able to correctly identify edges / faces of the
+        # resulting body with edges / faces of source objects
+        if not (self.merge_result and self.refine_solid):
+            for solid in solid_result:
+                if solid is None:
+                    continue
+
+                edge_mask = []
+                edge_map = []
+                face_mask = []
+                face_map = []
+
+                for edge in solid.Edges:
+                    srcs = fused.get_edge_source_idxs(edge)
+                    edge_map.append(list(srcs))
+                    is_new = len(srcs) > 1
+                    edge_mask.append(is_new)
+
+                result.edge_map.append(edge_map)
+                result.edge_mask.append(edge_mask)
+
+                for face in solid.Faces:
+                    srcs = fused.get_face_source_idxs(face)
+                    face_map.append(list(srcs))
+                    is_new = len(srcs) > 1
+                    face_mask.append(is_new)
+
+                result.face_map.append(face_map)
+                result.face_mask.append(face_mask)
+
         return result
 
     def process(self):
@@ -197,6 +211,7 @@ class SvSolidGeneralFuseNode(bpy.types.Node, SverchCustomTreeNode):
         for solids, include_idxs, exclude_idxs in zip_long_repeat(solids_in, include_in, exclude_in):
             result = self._process(solids, include_idxs, exclude_idxs)
 
+#               Just debugging
 #             solid_level = get_data_nesting_level(result.solid, data_types=(Part.Shape,))
 #             mask_level = get_data_nesting_level(result.edge_mask)
 #             map_level = get_data_nesting_level(result.edge_map)
