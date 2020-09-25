@@ -7,15 +7,17 @@ Sverchok sockets can contain the elements of any number of objects. The number o
 
 Each collection is a list of objects and these objects are themselves lists down to the most basic level which is the list of coordinates of each vertex.
 
-So a vertex is a list of coordinates (X,Y,Z): 
+A vertex is also a list of coordinates (X,Y,Z): 
 
 ``v0 = (1.0, 3.8, 2.5) v1 = (0.0, 0.0,0.0) v2 = (2.1, 3.1, 4.1)`` 
 
-A list of vertexes is made of several coordinates: 
+A list of vertexes is made of several lists of coordinates per vertex: 
 
 ``vertices = [(1.0, 3.8, 2.5), (0.0,0.0,0.0), (2.1,3.1,4.1)]``
 
-And each list element has an index starting by "0" and ending in "n", from left to right. So, in the above vertices list the indices for each vertex are:
+Each list element has an index starting by "0" and ending in "n", from left to right.
+
+In the above vertices list the indices for each vertex are:
 
 ``v0 = 0, v1 = 1, v2 = 2``
 
@@ -27,7 +29,7 @@ If we want to generate an object composed by 3 edges from the above vertices ind
 
 ``edges_list = [(0, 1), (1, 2), (2, 3)]``
 
-So basically, sverchok works by using nodes to creat lists of values, then using other nodes to evaluate those lists and generate new lists. Eventually the results of the final list will be used to generate the final output that will be passed to the viewport with a viewer node.
+At a fundamental level sverchok works by using nodes to creat lists of values, then using other nodes to evaluate those lists and generate new lists. Eventually the results of the final list will be used to generate the output that will be passed to the viewport with a viewer node.
 
 This is why the nesting concept is fundamental in order to use Sverchok.
 
