@@ -14,23 +14,23 @@ from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
 
 if FreeCAD is None:
-    add_dummy('SvRefineSolidNode', 'Refine Solid', 'FreeCAD')
+    add_dummy('SvIsSolidClosedNode', 'Validate Solid', 'FreeCAD')
 else:
     import Part
 
-class SvRefineSolidNode(bpy.types.Node, SverchCustomTreeNode):
+class SvIsSolidClosedNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Refine Solid
-    Tooltip: Refine Solid by removing unnecessary edges
+    Triggers: Closed Solid
+    Tooltip: Check if the Solid object is closed
     """
-    bl_idname = 'SvRefineSolidNode'
-    bl_label = 'Refine Solid'
+    bl_idname = 'SvIsSolidClosedNode'
+    bl_label = 'Is Solid Closed'
     bl_icon = 'OUTLINER_OB_EMPTY'
     solid_catergory = "Operators"
 
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', "Solid")
-        self.outputs.new('SvSolidSocket', "Solid")
+        self.outputs.new('SvStringsSocket', "IsClosed")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -38,18 +38,18 @@ class SvRefineSolidNode(bpy.types.Node, SverchCustomTreeNode):
 
         solids_in = self.inputs['Solid'].sv_get()
 
-        def refine(solid):
-            return solid.removeSplitter()
+        def check(solid):
+            return solid.isClosed()
 
-        solids_out = map_recursive(refine, solids_in, data_types=(Part.Shape,))
+        closed_out = map_recursive(check, solids_in, data_types=(Part.Shape,))
 
-        self.outputs['Solid'].sv_set(solids_out)
+        self.outputs['IsClosed'].sv_set(closed_out)
 
 def register():
     if FreeCAD is not None:
-        bpy.utils.register_class(SvRefineSolidNode)
+        bpy.utils.register_class(SvIsSolidClosedNode)
 
 def unregister():
     if FreeCAD is not None:
-        bpy.utils.unregister_class(SvRefineSolidNode)
+        bpy.utils.unregister_class(SvIsSolidClosedNode)
 

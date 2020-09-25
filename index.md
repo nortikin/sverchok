@@ -219,6 +219,7 @@
 ## Solids @ Analyze
    SvSolidValidateNode
    SvRefineSolidNode
+   SvIsSolidClosedNode
 
 ## Solids
    SvBoxSolidNode
