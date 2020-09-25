@@ -220,6 +220,7 @@
    SvSolidValidateNode
    SvRefineSolidNode
    SvIsSolidClosedNode
+   SvSolidCenterOfMassNode
 
 ## Solids
    SvBoxSolidNode
