@@ -26,17 +26,18 @@ from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
 from sverchok.data_structure import match_long_repeat as mlr, enum_item_4
 from sverchok.utils.pulga_physics_core_2 import SvCollisionForce
 from sverchok.dependencies import scipy, Cython
-class SvPulgaSelfCollisionForceNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvPulgaCollisionForceNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Collide verts
     Tooltip: Collision forces between vertices
     """
-    bl_idname = 'SvPulgaSelfCollisionForceNode'
+    bl_idname = 'SvPulgaCollisionForceNode'
     bl_label = 'Pulga Collision Force'
     bl_icon = 'MOD_PHYSICS'
     sv_icon = 'SV_PULGA_COLLISION_FORCE'
 
-    force: FloatProperty(
+    strength: FloatProperty(
         name='Strength', description='Collision forces between vertices',
         default=0.0, precision=4, step=1e-2, update=updateNode)
     mode: EnumProperty(
@@ -47,7 +48,7 @@ class SvPulgaSelfCollisionForceNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def sv_init(self, context):
-        self.inputs.new('SvStringsSocket', "Magnitude").prop_name = 'force'
+        self.inputs.new('SvStringsSocket', "Strength").prop_name = 'strength'
 
         self.outputs.new('SvPulgaForceSocket', "Force")
 
@@ -59,7 +60,7 @@ class SvPulgaSelfCollisionForceNode(bpy.types.Node, SverchCustomTreeNode):
 
         if not any(s.is_linked for s in self.outputs):
             return
-        forces_in = self.inputs["Magnitude"].sv_get(deepcopy=False)
+        forces_in = self.inputs["Strength"].sv_get(deepcopy=False)
 
         forces_out = []
         use_kdtree = self.mode in "Kd-tree" and scipy is not None and Cython is not None
@@ -71,8 +72,8 @@ class SvPulgaSelfCollisionForceNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvPulgaSelfCollisionForceNode)
+    bpy.utils.register_class(SvPulgaCollisionForceNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvPulgaSelfCollisionForceNode)
+    bpy.utils.unregister_class(SvPulgaCollisionForceNode)

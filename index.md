@@ -620,8 +620,8 @@
     SvPulgaDragForceNode
     SvPulgaPinForceNode
     SvPulgaTimedForceNode
-    SvPulgaSelfCollisionForceNode
-    SvPulgaSelfAttractionForceNode
+    SvPulgaCollisionForceNode
+    SvPulgaAttractionForceNode
     SvPulgaAlignForceNode
     SvPulgaFitForceNode
     SvPulgaObstacleForceNode

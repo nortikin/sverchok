@@ -27,17 +27,17 @@ from sverchok.utils.pulga_physics_core_2 import SvAttractionForce
 from sverchok.dependencies import scipy, Cython
 
 
-class SvPulgaSelfAttractionForceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPulgaAttractionForceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: gravity among vertices
+    Triggers: Attraction among vertices
     Tooltip: Attraction between vertices
     """
-    bl_idname = 'SvPulgaSelfAttractionForceNode'
+    bl_idname = 'SvPulgaAttractionForceNode'
     bl_label = 'Pulga Attraction Force'
     bl_icon = 'MOD_PHYSICS'
     sv_icon = 'SV_PULGA_ATTRACTION_FORCE'
 
-    force: FloatProperty(
+    strength: FloatProperty(
         name='Strength', description='Attraction between vertices',
         default=0.0, precision=4, step=1e-2, update=updateNode)
     decay: FloatProperty(
@@ -53,7 +53,7 @@ class SvPulgaSelfAttractionForceNode(bpy.types.Node, SverchCustomTreeNode):
         default='Kd-tree', update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvStringsSocket', "Magnitude").prop_name = 'force'
+        self.inputs.new('SvStringsSocket', "Strength").prop_name = 'strength'
         self.inputs.new('SvStringsSocket', "Decay").prop_name = 'decay'
         self.inputs.new('SvStringsSocket', "Max Distance").prop_name = 'max_distance'
 
@@ -68,12 +68,12 @@ class SvPulgaSelfAttractionForceNode(bpy.types.Node, SverchCustomTreeNode):
 
         if not any(s.is_linked for s in self.outputs):
             return
-        forces_in = self.inputs["Magnitude"].sv_get(deepcopy=False)
-        decay_in = self.inputs["Decay"].sv_get(deepcopy=False)
+        strength = self.inputs["Strength"].sv_get(deepcopy=False)
+        decay = self.inputs["Decay"].sv_get(deepcopy=False)
         max_distance = self.inputs["Max Distance"].sv_get(deepcopy=False)
         use_kdtree = self.mode in "Kd-tree" and scipy is not None and Cython is not None
         forces_out = []
-        for force_params in zip(forces_in, decay_in, max_distance):
+        for force_params in zip(strength, decay, max_distance):
             forces_out.append(SvAttractionForce(*force_params, use_kdtree=use_kdtree))
         self.outputs[0].sv_set([forces_out])
 
@@ -81,8 +81,8 @@ class SvPulgaSelfAttractionForceNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvPulgaSelfAttractionForceNode)
+    bpy.utils.register_class(SvPulgaAttractionForceNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvPulgaSelfAttractionForceNode)
+    bpy.utils.unregister_class(SvPulgaAttractionForceNode)

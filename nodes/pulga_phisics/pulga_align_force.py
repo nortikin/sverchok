@@ -24,8 +24,8 @@ from bpy.props import EnumProperty, IntProperty, FloatProperty, FloatVectorPrope
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
 from sverchok.data_structure import match_long_repeat as mlr, enum_item_4
-from sverchok.dependencies import scipy
 from sverchok.utils.pulga_physics_core_2 import SvAlignForce
+from sverchok.dependencies import scipy, Cython
 
 class SvPulgaAlignForceNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -35,40 +35,50 @@ class SvPulgaAlignForceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvPulgaAlignForceNode'
     bl_label = 'Pulga Align Force'
     bl_icon = 'MOD_PHYSICS'
-    sv_icon = 'SV_CIRCLE_SVG'
+    sv_icon = 'SV_PULGA_ALIGN_FORCE'
 
 
-    magnitude: FloatProperty(
-        name='Magnitude', description='Drag Force Constant',
+    strength: FloatProperty(
+        name='Strength', description='Drag Force Constant',
         default=0.0, precision=3, update=updateNode)
-    radius: FloatProperty(
-        name='Radius', description='Drag Force Constant',
+    decay: FloatProperty(
+        name='Decay', description='0 = no decay, 1 = linear, 2 = quadratic...',
         default=0.0, precision=3, update=updateNode)
+    max_distance: FloatProperty(
+        name='Max. Distance', description='Maximun distance',
+        default=0.0, precision=3, update=updateNode)
+    mode: EnumProperty(
+        name='Mode',
+        description='Algorithm used for calculation',
+        items=enum_item_4(['Brute Force', 'Kd-tree']),
+        default='Kd-tree', update=updateNode)
 
 
     def sv_init(self, context):
-        self.inputs.new('SvStringsSocket', "Magnitude").prop_name = 'magnitude'
-        self.inputs.new('SvStringsSocket', "Radius").prop_name = 'radius'
-
+        self.inputs.new('SvStringsSocket', "Strength").prop_name = 'strength'
+        self.inputs.new('SvStringsSocket', "Decay").prop_name = 'decay'
+        self.inputs.new('SvStringsSocket', "Max. Distance").prop_name = 'max_distance'
 
         self.outputs.new('SvPulgaForceSocket', "Force")
 
+    def draw_buttons(self, context, layout):
+        if scipy is not None and Cython is not None:
+            layout.prop(self, 'mode')
 
     def process(self):
 
         if not any(s.is_linked for s in self.outputs):
             return
-        magnitude = self.inputs["Magnitude"].sv_get(deepcopy=False)
-        radius = self.inputs["Radius"].sv_get(deepcopy=False)
-
+        strength = self.inputs["Strength"].sv_get(deepcopy=False)
+        decay = self.inputs["Decay"].sv_get(deepcopy=False)
+        max_distance = self.inputs["Max. Distance"].sv_get(deepcopy=False)
+        use_kdtree = self.mode in "Kd-tree" and scipy is not None and Cython is not None
 
         forces_out = []
 
-        forces_out = []
+        for force in zip(strength, decay, max_distance):
 
-        for force in zip(magnitude, radius):
-
-            forces_out.append(SvAlignForce(*force))
+            forces_out.append(SvAlignForce(*force, use_kdtree=use_kdtree))
 
 
         self.outputs[0].sv_set([forces_out])

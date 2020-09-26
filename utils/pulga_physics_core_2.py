@@ -515,7 +515,7 @@ class SvBoundingSolidSurfaceForce():
 
     def add_volume(self, ps):
         outside = self.is_outside(ps.verts)
-        find_masked(self, verts, outside)
+        self.find_masked(self, ps.verts, outside)
         ps.verts[outside] =  self.nearest[outside]
         ps.vel[outside] = project_on_plane(ps.vel[outside], self.normals[outside])
         ps.r[outside] = project_on_plane(ps.r[outside], self.normals[outside])
@@ -570,7 +570,7 @@ class SvCollisionForce():
         if self.uniform_magnitude:
             self.f_magnitude = self.magnitude
         else:
-            self.f_magnitude = numpy_fit_long_repeat([self.magnitude], ps.v_len)
+            self.f_magnitude = numpy_fit_long_repeat([self.magnitude], ps.v_len)[0]
 
     def add_brute_force(self, ps):
         ps.relations.result[:] = 0
@@ -619,7 +619,7 @@ class SvAttractionForce():
 
         self.magnitude = np.array(magnitude)
         self.uniform_magnitude = len(magnitude) < 2
-        print(self.magnitude, self.uniform_magnitude)
+
         self.decay = np.array(decay)
         self.use_kdtree = use_kdtree
         self.max_distance = max_distance[0]
@@ -637,17 +637,17 @@ class SvAttractionForce():
         if self.uniform_magnitude:
             self.f_magnitude = self.magnitude
         else:
-            self.f_magnitude = numpy_fit_long_repeat([self.magnitude], ps.v_len)
+            self.f_magnitude = numpy_fit_long_repeat([self.magnitude], ps.v_len)[0]
 
     def add_brute_force(self, ps):
-        rel = ps.relations
-        mask = np.all(( rel.dist < self.max_distance, ps.relations.attract_mask), axis=0)
+        relations = ps.relations
+        mask = np.all((relations.dist < self.max_distance, relations.attract_mask), axis=0)
         index_non_inter = ps.relations.indexes[mask]
         id0 = index_non_inter[:, 0]
         id1 = index_non_inter[:, 1]
-        dist2 = np.power(rel.dist[mask], self.decay)[:, np.newaxis]
-        no = ps.relations.normal_v[mask]
-        direction = no / dist2 * rel.mass_product[mask, np.newaxis]
+        dist2 = np.power(relations.dist[mask], self.decay)[:, np.newaxis]
+        normal = relations.normal_v[mask]
+        direction = normal / dist2 * relations.mass_product[mask, np.newaxis]
 
         att = self.f_magnitude
         len0, len1 = [att, att] if self.uniform_magnitude else [att[id1], att[id0]]
@@ -656,9 +656,9 @@ class SvAttractionForce():
         np.add.at(ps.r, id1, direction * len1)
 
     def add_kdt(self, ps):
-        rel = ps.relations
-        indexes = ps.relations.kd_tree.query_pairs(r=self.max_distance, output_type='ndarray')
-        if len(indexes)>0:
+        relations = ps.relations
+        indexes = relations.kd_tree.query_pairs(r=self.max_distance, output_type='ndarray')
+        if len(indexes) > 0:
 
             dif_v = ps.verts[indexes[:, 0], :] - ps.verts[indexes[:, 1], :]
             mass_product = ps.mass[indexes[:, 0]] * ps.mass[indexes[:, 1]]
@@ -680,15 +680,22 @@ class SvAttractionForce():
 
 
 class SvAlignForce():
-    def __init__(self, magnitude, radius):
+    def __init__(self, strength, decay, max_distance, use_kdtree=False):
 
-        self.magnitude = np.array(magnitude)
-        self.uniform_magnitude = len(magnitude) < 2
+        self.strength = np.array(strength)
+        self.uniform_strength = len(strength) < 2
+        self.decay = decay[0]
 
-        self.f_magnitude = self.magnitude
-        self.radius = np.array(radius)
 
-        self.needs = ['dif_v', 'dist', 'dist_cor']
+        self.f_strength = self.strength
+        self.max_distance = np.array(max_distance[0])
+        self.use_kdtree = use_kdtree
+        if self.use_kdtree:
+            self.needs = ['kd_tree']
+            self.add = self.add_kdt
+        else:
+            self.needs = ['indexes', 'dif_v', 'dist', 'dist_cor']
+            self.add = self.add_brute_force
 
 
     def setup(self, ps):
@@ -696,30 +703,57 @@ class SvAlignForce():
         ps.aware = True
         for need in self.needs:
             ps.relations.needed[need] = True
-        if self.uniform_magnitude:
-            self.f_magnitude = self.magnitude
+        if self.uniform_strength:
+            self.f_strength = self.strength
         else:
-            self.f_magnitude = numpy_fit_long_repeat([self.magnitude], ps.v_len)
+            self.f_strength = numpy_fit_long_repeat([self.strength], ps.v_len)[0]
 
-    def add(self, ps):
+
+
+    def add_brute_force(self, ps):
         rel = ps.relations
-        mask = ps.relations.dist_cor < self.radius
+        mask = ps.relations.dist_cor < self.max_distance
         id0 = ps.relations.indexes[mask, 0]
         id1 = ps.relations.indexes[mask, 1]
-        ps.relations.result[:] = 0
-        if self.uniform_magnitude:
-            constant = (self.f_magnitude / (ps.relations.dist_cor[mask] * ps.v_len))[:, np.newaxis]
+        dist2 = np.power(ps.relations.dist_cor[mask], self.decay)
 
-            ps.relations.result[id0, id1, :] = ps.vel[id1, :] * constant
-            ps.relations.result[id1, id0, :] = ps.vel[id0, :] * constant
-            ps.r += np.sum(ps.relations.result, axis=1)
+
+        if self.uniform_strength:
+            print(self.f_strength)
+            constant = (self.f_strength / (dist2 * ps.v_len))[:, np.newaxis]
+            np.add.at(ps.r, id0, ps.vel[id1, :] * constant)
+            np.add.at(ps.r, id1, ps.vel[id0, :] * constant)
+
         else:
-            constant0 = (self.f_magnitude[id0] / (ps.relations.dist_cor[mask] * ps.v_len))[:, np.newaxis]
-            constant1 = (self.f_magnitude[id1] / (ps.relations.dist_cor[mask] * ps.v_len))[:, np.newaxis]
+            constant0 = (self.f_strength[id0] / (dist2 * ps.v_len))[:, np.newaxis]
+            constant1 = (self.f_strength[id1] / (dist2 * ps.v_len))[:, np.newaxis]
+            np.add.at(ps.r, id0, ps.vel[id1, :] * constant0)
+            np.add.at(ps.r, id1, ps.vel[id0, :] * constant1)
 
-            ps.relations.result[id0, id1, :] = ps.vel[id1, :] * constant0
-            ps.relations.result[id1, id0, :] = ps.vel[id0, :] * constant1
-            ps.r += np.sum(ps.relations.result, axis=1)
+    def add_kdt(self, ps):
+
+        rel = ps.relations
+        indexes = ps.relations.kd_tree.query_pairs(r=self.max_distance, output_type='ndarray')
+        if len(indexes) > 0:
+            dif_v = ps.verts[indexes[:, 0], :] - ps.verts[indexes[:, 1], :]
+            dist = np.linalg.norm(dif_v, axis=1)
+            dist_cor = np.clip(dist, 1e-6, 1e4)
+            id0 = indexes[:, 0]
+            id1 = indexes[:, 1]
+            dist2 = np.power(dist_cor, self.decay)
+
+
+            if self.uniform_strength:
+                constant = (self.f_strength / (dist2 * ps.v_len))[:, np.newaxis]
+                np.add.at(ps.r, id0, ps.vel[id1, :] * constant)
+                np.add.at(ps.r, id1, ps.vel[id0, :] * constant)
+
+            else:
+                constant0 = (self.f_strength[id0] / (dist2 * ps.v_len))[:, np.newaxis]
+                constant1 = (self.f_strength[id1] / (dist2 * ps.v_len))[:, np.newaxis]
+                np.add.at(ps.r, id0, ps.vel[id1, :] * constant0)
+                np.add.at(ps.r, id1, ps.vel[id0, :] * constant1)
+
 
 class SvFitForce():
     def __init__(self, magnitude, min_radius, max_radius, mode):
@@ -747,7 +781,7 @@ class SvFitForce():
         if self.uniform_magnitude:
             self.f_magnitude = self.magnitude
         else:
-            self.f_magnitude = numpy_fit_long_repeat([self.magnitude], ps.v_len)
+            self.f_magnitude = numpy_fit_long_repeat([self.magnitude], ps.v_len)[0]
 
     def add(self, ps):
         rel = ps.relations
