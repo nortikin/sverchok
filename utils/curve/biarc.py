@@ -24,10 +24,11 @@ class SvBiArc(SvConcatCurve):
     @staticmethod
     def calc(point_a, point_b, tangent_a, tangent_b, p):
         xx = point_b - point_a
+        xx /= np.linalg.norm(xx)
         zz = np.cross(tangent_a, tangent_b)
         volume = np.dot(xx, zz)
         if abs(volume) > 1e-6:
-            raise Exception("Provided tangents are not coplanar")
+            raise Exception(f"Provided tangents are not coplanar, volume={volume}, zz={zz}")
         c = np.linalg.norm(point_b - point_a) * 0.5
         origin = (point_a + point_b) * 0.5
 
@@ -35,7 +36,6 @@ class SvBiArc(SvConcatCurve):
         
         tangent_a /= np.linalg.norm(tangent_a)
         tangent_b /= np.linalg.norm(tangent_b)
-        xx /= np.linalg.norm(xx)
         zz /= np.linalg.norm(zz)
         yy = np.cross(zz, xx)
 
@@ -60,8 +60,7 @@ class SvBiArc(SvConcatCurve):
         #print("R1", r1, "R2", r2)
         theta1 = 2 * arg(cexp(-1j * alpha) + cexp(-1j*omega)/p)
         theta2 = 2 * arg(cexp(1j*beta) + p*cexp(1j*omega))
-        #print("T1", theta1)
-        #print("T2", theta2)
+        #print("T1", theta1, "T2", theta2)
 
         vectorx_a = r1 * norm_a
         center1 = point_a + vectorx_a
@@ -70,7 +69,12 @@ class SvBiArc(SvConcatCurve):
         arc1 = SvCircle(#radius = r1,
                     center = center1,
                     normal = -zz, vectorx = point_a - center1)
-        arc1.u_bounds = (0.0, theta1)
+        if theta1 > 0:
+            arc1.u_bounds = (0.0, theta1)
+        else:
+            theta1 = -theta1
+            arc1.u_bounds = (0.0, theta1)
+            arc1.normal = -arc1.normal
 
         junction = arc1.evaluate(theta1)
         #print("J", junction)
@@ -78,7 +82,12 @@ class SvBiArc(SvConcatCurve):
         arc2 = SvCircle(#radius = r2,
                     center = center2,
                     normal = -zz, vectorx = junction - center2)
-        arc2.u_bounds = (0.0, theta2)
+        if theta2 > 0:
+            arc2.u_bounds = (0.0, theta2)
+        else:
+            theta2 = -theta2
+            arc2.u_bounds = (0.0, theta2)
+            arc2.normal = -arc2.normal
 
         return SvBiArc(arc1, arc2)
 
