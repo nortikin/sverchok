@@ -37,9 +37,12 @@ curve_converters[SvLine] = line_to_freecad
 def circle_to_freecad(circle):
     center = tuple(circle.center)
     normal = tuple(circle.normal)
-    vectorx = tuple(circle.vectorx / np.linalg.norm(circle.vectorx))
+    #vectorx = tuple(circle.vectorx / np.linalg.norm(circle.vectorx))
     radius = circle.get_actual_radius()
     u_min, u_max = circle.get_u_bounds()
+    vectorx = circle.evaluate(0) - circle.center
+    vectorx /= np.linalg.norm(vectorx)
+    vectorx = tuple(vectorx)
 
     fc_circle = Part.Circle(Base.Vector(*center), Base.Vector(*normal), radius)
     if u_min != 0 or u_max != 2*math.pi:

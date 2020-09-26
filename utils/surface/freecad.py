@@ -59,14 +59,21 @@ def curves_to_face(sv_curves, planar=True, force_nurbs=True):
     all_nurbs = all(isinstance(curve, SvFreeCadNurbsCurve) for curve in sv_curves)
     edges = [Part.Edge(curve.curve) for curve in sv_curves]
     try:
-        wire = Part.Wire(edges)
+        wire = Part.Wire(Part.__sortEdges__(edges))
+        #for edge in edges:
+        #    wire.add(edge)
     except Part.OCCError as e:
         fc_curves = [edge.Curve for edge in edges]
+        for edge in edges:
+            print(f"Curve {edge.Curve}, endpoints: {get_edge_endpoints(edge)}")
         raise Exception(f"Can't build a Wire out of edges: {fc_curves}: {e}")
+
     if not wire.isClosed():
+
         last_point = None
         distance = None
         for i, edge in enumerate(wire.Edges):
+            print(f"Edge #{i}, Curve {edge.Curve}, endpoints: {get_edge_endpoints(edge)}")
             p1, p2 = get_edge_endpoints(edge)
             if last_point is not None:
                 distance = last_point.distanceToPoint(p1)
