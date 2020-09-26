@@ -28,6 +28,7 @@ class SvSolidFaceAreaNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSolidFaceAreaNode'
     bl_label = 'Solid Face Area'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_AREA'
     solid_catergory = "Operators"
 
     def sv_init(self, context):

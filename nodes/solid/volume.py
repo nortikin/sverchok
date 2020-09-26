@@ -26,6 +26,7 @@ class SvSolidVolumeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSolidVolumeNode'
     bl_label = 'Solid Volume'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'SNAP_VOLUME'
     solid_catergory = "Operators"
 
     def sv_init(self, context):
