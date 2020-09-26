@@ -543,18 +543,18 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         for name in result_masks_dict.keys():
             self.outputs[name].sv_set(result_masks_dict[name])
 
-    def storage_set_data(self, storage):
-        geom = storage['geom']
-        filename = storage['params']['filename']
+    def load_from_json(self, node_data: dict, import_version):
+        geom = node_data['geom']
+        filename = node_data['params']['filename']
 
         bpy.data.texts.new(filename)
         bpy.data.texts[filename].clear()
         bpy.data.texts[filename].write(geom)
 
-    def storage_get_data(self, storage):
+    def save_to_json(self, node_data: dict):
         if self.filename and self.filename in bpy.data.texts:
             text = bpy.data.texts[self.filename].as_string()
-            storage['geom'] = text
+            node_data['geom'] = text
         else:
             self.warning("Unknown filename: {}".format(self.filename))
 

@@ -168,9 +168,10 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs['vertices'].sv_set(points)
 
-    def storage_set_data(self, storage):
-        self.mode = storage["params"]["mode"]
-        self.mode_change(None)
+    def load_from_json(self, node_data: dict, import_version: float):
+        if import_version <= 0.08:
+            self.mode = node_data["params"]["mode"]
+            self.mode_change(None)
 
 
 def register():

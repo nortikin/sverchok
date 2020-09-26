@@ -168,17 +168,12 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
                 addition += int(xcoef*4)
         return vertices
 
-
-    def storage_get_data(self, node_ref):
-        # it is technically possible to store images inside json as base64     o_0   just a thought.
-        pack_pointer_property_name(self.image_pointer, node_ref, "image_name")
-        self.info(f"You are storing this layout {self.id_data.name} as a json, it will not include images")
-
-    def storage_set_data(self, node_ref):
-        self.image_pointer = unpack_pointer_property_name(bpy.data.images, node_ref, "image_name")
-        if not self.image_pointer:
-            proposed_name = node_ref.get("image_name")
-            self.info(f"image data not found in current {proposed_name}")
+    def load_from_json(self, node_data: dict, import_version: float):
+        if import_version <= 0.08:
+            self.image_pointer = unpack_pointer_property_name(bpy.data.images, node_data, "image_name")
+            if not self.image_pointer:
+                proposed_name = node_data.get("image_name")
+                self.info(f"image data not found in current {proposed_name}")
 
 
 def register():

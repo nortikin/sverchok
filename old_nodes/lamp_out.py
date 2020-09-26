@@ -310,11 +310,10 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
         for object_name in objs:
             lamps_data.remove(lamps_data[object_name])
 
-    def storage_get_data(self, storage):
-        storage["lamp_type"] = self.type
+    def load_from_json(self, node_data: dict, import_version: float):
+        if import_version <= 0.08:
+            self.type = node_data.get("lamp_type", "POINT")
 
-    def storage_set_data(self, storage):
-        self.type = storage.get("lamp_type", "POINT")
 
 def register():
     bpy.utils.register_class(SvLampOutNode)

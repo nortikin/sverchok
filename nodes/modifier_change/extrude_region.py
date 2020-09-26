@@ -326,11 +326,10 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
         if 'FaceData' in self.outputs:
             self.outputs['FaceData'].sv_set(result_face_data)
 
-    def storage_get_data(self, storage):
-        storage['mask_out_type'] = list(self.mask_out_type)
+    def load_from_json(self, node_data: dict, import_version: float):
+        if import_version <= 0.08:
+            self.mask_out_type = set(node_data.get('mask_out_type', []))
 
-    def storage_set_data(self, storage):
-        self.mask_out_type = set(storage.get('mask_out_type', []))
 
 def register():
     bpy.utils.register_class(SvExtrudeRegionNode)

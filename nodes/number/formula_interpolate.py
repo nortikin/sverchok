@@ -364,18 +364,15 @@ class SvFormulaInterpolateNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Curve'].sv_set(curve_out)
         self.outputs['ControlPoints'].sv_set(ct_points_out)
 
-    def storage_get_data(self, storage):
-        points = [(entry.x, entry.y) for entry in self.control_points]
-        storage['control_points'] = points
-        storage['variables'] = self.get_variables()
+    def load_from_json(self, node_data: dict, import_version: float):
+        if import_version <= 0.08:
+            self.control_points.clear()
+            for x, y in node_data.get('control_points', []):
+                entry = self.control_points.add()
+                entry.x = x
+                entry.y = y
+            self.adjust_sockets(variables=node_data.get('variables', []))
 
-    def storage_set_data(self, storage):
-        self.control_points.clear()
-        for x, y in storage.get('control_points', []):
-            entry = self.control_points.add()
-            entry.x = x
-            entry.y = y
-        self.adjust_sockets(variables = storage.get('variables', []))
 
 classes = [
             SvPointEntry,

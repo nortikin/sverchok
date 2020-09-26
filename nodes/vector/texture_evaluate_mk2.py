@@ -215,12 +215,10 @@ class SvTextureEvaluateNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatabl
             return 'Displace' + texture +' ' + self.color_channel.title() + ' channel'
         else:
             return self.label or self.name
-    
-    def storage_get_data(self, node_ref):
-        pack_pointer_property_name(self.texture_pointer, node_ref, "texture_name")
 
-    def storage_set_data(self, node_ref):
-        self.texture_pointer = unpack_pointer_property_name(bpy.data.textures, node_ref, "texture_name")
+    def load_from_json(self, node_data: dict, import_version: float):
+        if import_version <= 0.08:
+            self.texture_pointer = unpack_pointer_property_name(bpy.data.textures, node_data, "texture_name")
 
 
 classes = [SvTextureEvaluateNodeMk2]

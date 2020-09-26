@@ -336,25 +336,19 @@ class SvViewerNode(BlenderObjects):
         """
         return super().properties_to_skip_iojson + ['collection']
 
-    def storage_get_data(self, storage):
-        """
-        Manually serialization node properties
-        Should be overridden in zis way: super().storage_get_data(storage); storage['my_prop'] = value
-        """
-        storage['collection'] = self.collection.name if self.collection else ''
-
-    def storage_set_data(self, storage):
+    def load_from_json(self, node_data: dict, import_version: float):
         """
         Manually serialization node properties
         Should be overridden in zis way: super().storage_get_data(storage); self.my_prop = storage['my_prop']
         """
-        collection_name = storage['collection']
-        if collection_name:
-            collection = (bpy.data.collections.get(collection_name))
-            if not collection:
-                collection = bpy.data.collections.new(collection_name)
-                bpy.context.collection.children.link(collection)
-            self.collection = collection
+        if import_version <= 0.08:
+            collection_name = node_data['collection']
+            if collection_name:
+                collection = (bpy.data.collections.get(collection_name))
+                if not collection:
+                    collection = bpy.data.collections.new(collection_name)
+                    bpy.context.collection.children.link(collection)
+                self.collection = collection
 
 
 class SvObjectNames(bpy.types.PropertyGroup):

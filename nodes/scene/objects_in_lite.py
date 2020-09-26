@@ -149,11 +149,9 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
 
         self.pass_data_to_sockets()
 
-
-
-    def storage_set_data(self, storage):
-        geom = storage['geom']
-        name = storage['params']["obj_name"]
+    def load_from_json(self, node_data: dict, import_version: float):
+        geom = node_data['geom']
+        name = node_data['params']["obj_name"]
         geom_dict = json.loads(geom)
 
         if not geom_dict:
@@ -177,11 +175,10 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
 
             # rename if obj existed
             if not obj.name == name:
-                storage['params']["obj_name"] = obj.name
+                node_data['params']["obj_name"] = obj.name
                 self.obj_name = obj.name
-    
 
-    def storage_get_data(self, storage):
+    def save_to_json(self, node_data: dict):
         # generate flat data, and inject into incoming storage variable
         obj = self.node_dict.get(hash(self))
         print(obj)
@@ -189,8 +186,7 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
             self.error('failed to obtain local geometry, can not add to json')
             return
 
-        storage['geom'] = json.dumps(flatten(obj))
-
+        node_data['geom'] = json.dumps(flatten(obj))
 
 
 def register():

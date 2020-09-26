@@ -208,13 +208,10 @@ class SvLightViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
     def properties_to_skip_iojson(self):
         return super().properties_to_skip_iojson + ['light_data']
 
-    def storage_get_data(self, storage):
-        super().storage_get_data(storage)
-        storage["lamp_type"] = self.light_type
-
-    def storage_set_data(self, storage):
-        super().storage_get_data(storage)
-        self.light_type = storage.get("lamp_type", "POINT")
+    def load_from_json(self, node_data: dict, import_version: float):
+        if import_version <= 0.08:
+            super().load_from_json(node_data)
+            self.light_type = node_data.get("lamp_type", "POINT")
 
 
 register, unregister = bpy.utils.register_classes_factory([SvLightViewerNode])

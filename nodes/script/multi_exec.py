@@ -248,21 +248,16 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         self.outputs[0].sv_set(out)
 
-    def storage_set_data(self, storage):
-        strings_json = storage['string_storage']
-        lines_list = json.loads(strings_json)['lines']
-        self.id_data.freeze(hard=True)
-        self.dynamic_strings.clear()
-        for line in lines_list:
-            self.dynamic_strings.add().line = line
+    def load_from_json(self, node_data: dict, import_version: float):
+        if import_version <= 0.08:
+            strings_json = node_data['string_storage']
+            lines_list = json.loads(strings_json)['lines']
+            self.id_data.freeze(hard=True)
+            self.dynamic_strings.clear()
+            for line in lines_list:
+                self.dynamic_strings.add().line = line
 
-        self.id_data.unfreeze(hard=True)
-
-    def storage_get_data(self, node_dict):
-        local_storage = {'lines': []}
-        for item in self.dynamic_strings:
-            local_storage['lines'].append(item.line)
-        node_dict['string_storage'] = json.dumps(local_storage)
+            self.id_data.unfreeze(hard=True)
 
 
 def register():
