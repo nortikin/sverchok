@@ -25,13 +25,13 @@ if TYPE_CHECKING:
     SverchCustomTreeNode = Union[SverchCustomTreeNode, bpy.types.Node]
 
 
-class JSONImporter01:
+class JSONImporter:
     def __init__(self, structure: dict):
         self._structure = structure
         self._fails_log = FailsLog()
 
     @classmethod
-    def init_from_path(cls, path: str) -> JSONImporter01:
+    def init_from_path(cls, path: str) -> JSONImporter:
         if path.endswith('.zip'):
             structure = get_file_obj_from_zip(path)
             return cls(structure)
@@ -75,7 +75,8 @@ class TreeImporter01:
                     node = tree_builder.add_node(node_type, node_name)
                 if node:
                     self._new_node_names[node_name] = node.name
-                    NodeImporter01(node, node_structure, self._fails_log).import_node()
+                    NodeImporter01(node, node_structure, self._fails_log,
+                                   float(self._structure['export_version'])).import_node()
 
             for from_node_name, from_socket_index, to_node_name, to_socket_index in self._links():
                 with self._fails_log.add_fail("Search node to link"):
@@ -113,10 +114,11 @@ class TreeImporter01:
 
 
 class NodeImporter01:
-    def __init__(self, node: SverchCustomTreeNode, structure: dict, log: FailsLog):
+    def __init__(self, node: SverchCustomTreeNode, structure: dict, log: FailsLog, import_version: float):
         self._node = node
         self._structure = structure
         self._fails_log = log
+        self._import_version = import_version
 
     def import_node(self):
         for attr_name, attr_value in self._node_attributes():
@@ -144,7 +146,7 @@ class NodeImporter01:
             with self._fails_log.add_fail(
                     "Setting advance node properties",
                     f'Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}'):
-                self._node.load_from_json(self._structure)
+                self._node.load_from_json(self._structure, self._import_version)
 
     def _apply_property(self, data, prop_name: str, value: Any):
         prop = BPYProperty(data, prop_name)

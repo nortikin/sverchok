@@ -22,14 +22,14 @@ if TYPE_CHECKING:
     SverchCustomTreeNode = Union[SverchCustomTreeNode, bpy.types.Node]
 
 
-class JSONImporter:
+class JSONExporter:
     """It's only know about Sverchok JSON structure nad can fill it"""
     @staticmethod
     def get_structure(tree: SverchCustomTree, save_defaults: bool = False) -> dict:
         return TreeImporter01().import_tree(tree)
 
     @classmethod
-    def create_from_nodes(cls, nodes: list, save_defaults: bool = False) -> JSONImporter: ...
+    def create_from_nodes(cls, nodes: list, save_defaults: bool = False) -> JSONExporter: ...
 
 
 class TreeImporter01:

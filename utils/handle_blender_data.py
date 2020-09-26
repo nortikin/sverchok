@@ -133,6 +133,8 @@ class BPYProperty:
             self._set_collection_values(value)
         elif self.type == 'POINTER' and isinstance(value, str):
             setattr(self._data, self.name, self.data_collection.get(value))
+        elif self.type == 'ENUM' and self.is_array_like:
+            setattr(self._data, self.name, set(value))
         else:
             setattr(self._data, self.name, value)
 
@@ -149,7 +151,10 @@ class BPYProperty:
         elif self.type == 'COLLECTION':
             return self._extract_collection_values(default_value=True)
         elif self.is_array_like:
-            return tuple(self._data.bl_rna.properties[self.name].default_array)
+            if self.type == 'ENUM':
+                return tuple(self._data.bl_rna.properties[self.name].default_flag)
+            else:
+                return tuple(self._data.bl_rna.properties[self.name].default_array)
         elif self.type == 'POINTER':
             return None
         else:
@@ -193,7 +198,11 @@ class BPYProperty:
         items = []
         for item in getattr(self._data, self.name):
             item_props = {}
-            for prop_name in chain(['name'], item.__annotations__):  # item.items() will return only changed values
+
+            # in some nodes collections are getting just PropertyGroup type instead of its subclasses
+            # PropertyGroup itself does not have any properties
+            item_properties = item.__annotations__ if hasattr(item, '__annotations__') else []
+            for prop_name in chain(['name'], item_properties):  # item.items() will return only changed values
                 prop = BPYProperty(item, prop_name)
                 if not prop.is_valid:
                     continue
@@ -213,7 +222,11 @@ class BPYProperty:
         items = []
         for item in getattr(self._data, self.name):
             item_props = {}
-            for prop_name in chain(['name'], item.__annotations__):  # item.items() will return only changed values
+
+            # in some nodes collections are getting just PropertyGroup type instead of its subclasses
+            # PropertyGroup itself does not have any properties
+            item_properties = item.__annotations__ if hasattr(item, '__annotations__') else []
+            for prop_name in chain(['name'], item_properties):  # item.items() will return only changed values
                 prop = BPYProperty(item, prop_name)
                 if prop.is_valid:
                     item_props[prop.name] = prop.default_value if default_value else prop.value
