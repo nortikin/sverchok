@@ -105,7 +105,8 @@ Authors:
 -  Marius Giurgi,      
 -  Durman,     
 -  Ivan Prytov,
--  Victor Doval
+-  Victor Doval,
+-  Dion Moult
 
 Email: sverchok-b3d@yandex.ru  
 
