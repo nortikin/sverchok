@@ -1,6 +1,13 @@
 Polygon Face (Solid)
 ====================
 
+Dependencies
+------------
+
+This node requires FreeCAD_ library to work.
+
+.. _FreeCAD: ../../solids.rst
+
 Functionality
 -------------
 

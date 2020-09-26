@@ -216,6 +216,15 @@
     SvSolidWireFaceNode
     SvProjectTrimFaceNode
 
+## Solids @ Analyze
+   SvSolidValidateNode
+   SvRefineSolidNode
+   SvIsSolidClosedNode
+   SvSolidCenterOfMassNode
+   SvSolidFaceAreaNode
+   SvSolidAreaNode
+   SvSolidVolumeNode
+
 ## Solids
    SvBoxSolidNode
    SvCylinderSolidNode
@@ -247,6 +256,7 @@
    SvSolidEdgesNode
    SvSolidFacesNode
    SvSelectSolidNode
+   @ Analyze
    SvSolidViewerNode
 
 ## Analyzers

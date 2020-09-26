@@ -30,7 +30,11 @@ class UiTests(SverchokTestCase):
                     'SvExMinimalScalarFieldNode',
                     'SvExScalarFieldGraphNode',
                     'SvExMeshNormalFieldNode',
-                    'SvExMinimalVectorFieldNode'
+                    'SvExMinimalVectorFieldNode',
+                    'SvSolidCenterOfMassNode',
+                    'SvIsSolidClosedNode',
+                    'SvRefineSolidNode',
+                    'SvSolidValidateNode'
                 ]
         
         sv_init = sverchok.__file__

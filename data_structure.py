@@ -663,6 +663,27 @@ def partition(p, lst):
             bad.append(item)
     return good, bad
 
+def map_recursive(fn, data, data_types=(float, int, int32, int64, float64, str)):
+    def helper(data, level):
+        if isinstance(data, data_types):
+            return fn(data)
+        elif isinstance(data, (list, tuple)):
+            return [helper(item, level+1) for item in data]
+        else:
+            raise TypeError(f"Encountered unknown data of type {type(data)} at nesting level #{level}")
+    return helper(data, 0)
+
+def map_unzip_recursirve(fn, data, data_types=(float, int, int32, int64, float64, str)):
+    def helper(data, level):
+        if isinstance(data, data_types):
+            return fn(data)
+        elif isinstance(data, (list, tuple)):
+            results = [helper(item, level+1) for item in data]
+            return transpose_list(results)
+        else:
+            raise TypeError(f"Encountered unknown data of type {type(data)} at nesting level #{level}")
+    return helper(data, 0)
+
 #####################################################
 ################### matrix magic ####################
 #####################################################

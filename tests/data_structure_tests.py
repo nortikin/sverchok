@@ -150,3 +150,38 @@ class CalcMaskTests(SverchokTestCase):
         expected = [True, False]
         self.assertEquals(mask, expected)
 
+class MapRecursiveTests(SverchokTestCase):
+    def test_map_1(self):
+        data = [1, 2, 3, 4]
+        fn = lambda x: x+1
+        expected = [2, 3, 4, 5]
+        result = map_recursive(fn, data)
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_map_2(self):
+        data = [[1, 2, 3, 4]]
+        fn = lambda x: x+1
+        expected = [[2, 3, 4, 5]]
+        result = map_recursive(fn, data)
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_map_3(self):
+        data = [[1], [2], [3], [4]]
+        fn = lambda x: x+1
+        expected = [[2], [3], [4], [5]]
+        result = map_recursive(fn, data)
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_map_unzip_1(self):
+        data = [1, 2, 3, 4]
+        fn = lambda x: (x, x+1)
+        result = map_unzip_recursirve(fn, data)
+        expected = [[1,2,3,4], [2,3,4,5]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_map_unzip_2(self):
+        data = [[1, 2, 3, 4]]
+        fn = lambda x: (x, x+1)
+        result = map_unzip_recursirve(fn, data)
+        expected = [[[1,2,3,4]], [[2,3,4,5]]]
+        self.assert_sverchok_data_equal(result, expected)

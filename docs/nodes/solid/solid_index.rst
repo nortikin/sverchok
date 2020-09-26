@@ -39,4 +39,11 @@ Solid
    solid_select
    import_solid
    export_solid
+   face_area
+   area
+   volume
+   center_of_mass
+   is_closed
+   refine
+   validate
    solid_viewer
