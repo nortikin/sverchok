@@ -39,6 +39,8 @@ class GeneralFuseTests(NodeProcessTestCase):
 
         self.tree.links.new(join.outputs[0], self.node.inputs["Solids"])
 
+        self.node.refine_solid = False
+
         self.node.process()
 
         out = self.get_output_data("Solid")
@@ -119,6 +121,8 @@ class GeneralFuseTests(NodeProcessTestCase):
         self.tree.links.new(box1.outputs[0], join.inputs[0])
         self.tree.links.new(box2.outputs[0], join.inputs[1])
         self.tree.links.new(join.outputs[0], self.node.inputs["Solids"])
+
+        self.node.refine_solid = False
 
         self.node.process()
 
