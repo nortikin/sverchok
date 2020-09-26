@@ -43,7 +43,24 @@ class SvBiArcNode(bpy.types.Node, SverchCustomTreeNode):
             default = True,
             update = updateNode)
 
+    @throttled
+    def update_sockets(self, context):
+        self.outputs['Center1'].hide_safe = not self.show_details
+        self.outputs['Center2'].hide_safe = not self.show_details
+        self.outputs['Radius1'].hide_safe = not self.show_details
+        self.outputs['Radius2'].hide_safe = not self.show_details
+        self.outputs['Angle1'].hide_safe = not self.show_details
+        self.outputs['Angle2'].hide_safe = not self.show_details
+        self.outputs['Junction'].hide_safe = not self.show_details
+
+    show_details : BoolProperty(
+            name = "Show Details",
+            description = "Show outputs with curve details",
+            default = False,
+            update = update_sockets)
+
     def draw_buttons(self, context, layout):
+        layout.prop(self, 'show_details', toggle=True)
         layout.prop(self, "join")
 
     def draw_buttons_ext(self, context, layout):
