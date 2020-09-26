@@ -39,7 +39,7 @@ Solid
    solid_select
    import_solid
    export_solid
-   solid_face_area
+   face_area
    area
    volume
    center_of_mass
