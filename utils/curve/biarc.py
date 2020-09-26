@@ -13,7 +13,7 @@ from mathutils import Vector, Matrix
 
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve.primitives import SvCircle
-from sverchok.utils.curve.algorithms import SvConcatCurve
+from sverchok.utils.curve.algorithms import SvConcatCurve, concatenate_curves
 
 class SvBiArc(SvConcatCurve):
     def __init__(self, arc1, arc2):
@@ -21,26 +21,31 @@ class SvBiArc(SvConcatCurve):
         self.arc1 = arc1
         self.arc2 = arc2
 
+    def to_nurbs(self, implementation=None):
+        return concatenate_curves([self.arc1.to_nurbs(), self.arc2.to_nurbs()], allow_generic=False)
+
     @staticmethod
-    def calc(point_a, point_b, tangent_a, tangent_b, p):
+    def calc(point_a, point_b, tangent_a, tangent_b, p, planar_tolerance=1e-6):
         xx = point_b - point_a
         xx /= np.linalg.norm(xx)
-        zz = np.cross(tangent_a, tangent_b)
-        volume = np.dot(xx, zz)
-        if abs(volume) > 1e-6:
-            raise Exception(f"Provided tangents are not coplanar, volume={volume}, zz={zz}")
-        c = np.linalg.norm(point_b - point_a) * 0.5
-        origin = (point_a + point_b) * 0.5
+        tangent_normal = np.cross(tangent_a, tangent_b)
+        volume = np.dot(xx, tangent_normal)
+        if abs(volume) > planar_tolerance:
+            raise Exception(f"Provided tangents are not coplanar, volume={volume}")
 
-        zz = np.cross(tangent_a, xx)
-        
-        tangent_a /= np.linalg.norm(tangent_a)
-        tangent_b /= np.linalg.norm(tangent_b)
+        zz_a = np.cross(tangent_a, xx)
+        zz_b = np.cross(tangent_b, xx)
+        zz = (zz_a + zz_b)
         zz /= np.linalg.norm(zz)
         yy = np.cross(zz, xx)
 
-        norm_a = np.cross(zz, tangent_a)
-        norm_b = - np.cross(zz, tangent_b)
+        c = np.linalg.norm(point_b - point_a) * 0.5
+        
+        tangent_a /= np.linalg.norm(tangent_a)
+        tangent_b /= np.linalg.norm(tangent_b)
+
+        to_center_a = np.cross(zz, tangent_a)
+        to_center_b = - np.cross(zz, tangent_b)
 
         matrix_inv = np.stack((xx, yy, zz))
         matrix = np.linalg.inv(matrix_inv)
@@ -62,9 +67,9 @@ class SvBiArc(SvConcatCurve):
         theta2 = 2 * arg(cexp(1j*beta) + p*cexp(1j*omega))
         #print("T1", theta1, "T2", theta2)
 
-        vectorx_a = r1 * norm_a
+        vectorx_a = r1 * to_center_a
         center1 = point_a + vectorx_a
-        center2 = point_b + r2 * norm_b
+        center2 = point_b + r2 * to_center_b
 
         arc1 = SvCircle(#radius = r1,
                     center = center1,
@@ -74,7 +79,7 @@ class SvBiArc(SvConcatCurve):
         else:
             theta1 = -theta1
             arc1.u_bounds = (0.0, theta1)
-            arc1.normal = -arc1.normal
+            arc1.set_normal(-arc1.normal)
 
         junction = arc1.evaluate(theta1)
         #print("J", junction)
@@ -87,7 +92,11 @@ class SvBiArc(SvConcatCurve):
         else:
             theta2 = -theta2
             arc2.u_bounds = (0.0, theta2)
-            arc2.normal = -arc2.normal
+            arc2.set_normal(-arc2.normal)
 
-        return SvBiArc(arc1, arc2)
+        curve = SvBiArc(arc1, arc2)
+        curve.p = p
+        curve.junction = junction
+
+        return curve
 

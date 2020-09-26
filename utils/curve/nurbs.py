@@ -112,10 +112,13 @@ class SvNurbsCurve(SvCurve):
         if curve2 is None:
             raise UnsupportedCurveTypeException("second curve is not NURBS")
         
-        pt1 = curve1.evaluate(curve1.get_u_bounds()[1])
-        pt2 = curve2.evaluate(curve2.get_u_bounds()[0])
-        if np.linalg.norm(pt1 - pt2) > tolerance:
-            raise UnsupportedCurveTypeException(f"Curve end points do not match: {pt1} != {pt2}")
+        c1_end = curve1.get_u_bounds()[1]
+        c2_start = curve2.get_u_bounds()[0]
+        pt1 = curve1.evaluate(c1_end)
+        pt2 = curve2.evaluate(c2_start)
+        dpt = np.linalg.norm(pt1 - pt2)
+        if dpt > tolerance:
+            raise UnsupportedCurveTypeException(f"Curve end points do not match: C1({c1_end}) = {pt1} != C2({c2_start}) = {pt2}, distance={dpt}")
 
         cp1 = curve1.get_control_points()[-1]
         cp2 = curve2.get_control_points()[0]

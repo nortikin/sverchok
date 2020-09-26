@@ -107,12 +107,7 @@ class SvCircle(SvCurve):
         elif center is not None:
             self.center = center
         if matrix is None:
-            normal = normal / np.linalg.norm(normal)
-            vx = vectorx / np.linalg.norm(vectorx)
-            vy = np.cross(normal, vx)
-            vy = vy / np.linalg.norm(vy)
-            m = np.stack((vx, vy, normal))
-            self.matrix = np.linalg.inv(m)
+            self.matrix = SvCircle.calc_matrix(normal, vectorx)
         if radius is not None:
             self.radius = radius
         else:
@@ -132,6 +127,19 @@ class SvCircle(SvCurve):
             m.translation = Vector()
             self.vectorx = np.array(m @ x)
         self.u_bounds = (0.0, 2*pi)
+
+    @staticmethod
+    def calc_matrix(normal, vectorx):
+        normal = normal / np.linalg.norm(normal)
+        vx = vectorx / np.linalg.norm(vectorx)
+        vy = np.cross(normal, vx)
+        vy = vy / np.linalg.norm(vy)
+        m = np.stack((vx, vy, normal))
+        return np.linalg.inv(m)
+
+    def set_normal(self, normal):
+        self.normal = normal
+        self.matrix = SvCircle.calc_matrix(normal, self.vectorx)
 
     def __repr__(self):
         try:
