@@ -10,12 +10,12 @@
 ## English
 
 [RU](https://github.com/nortikin/sverchok/blob/master/README_RU.md)  
-**addon for**: [Blender](http://blender.org) version *2.80* and above. For *2.79* see [special installation instruction](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation).  
-**current sverchok version**: Find version in addon settings or in the node Sverchok panel   
+**Addon for**: [Blender](http://blender.org) version *2.80* and above. For *2.79* see [special installation instruction](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation).  
+**Current sverchok version**: Find version in addon settings or in the node Sverchok panel   
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
-**prerequisites**: While sverchok is fundamentally self contained, it does require Python 3.6+, and `numpy`. Both of these are included in recent versions of Blender (precompiled binaries are convenient for this), and do not require any additional steps by the user to obtain. We have added optional nodes that make use of additional libraries; if you have them, Please refer to [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies) for list of such dependencies and instructions for their installation.
+**Prerequisites**: While sverchok is fundamentally self contained, it does require Python 3.6+, and `numpy`. Both of these are included in recent versions of Blender (precompiled binaries are convenient for this), and do not require any additional steps by the user to obtain. We have added optional nodes that make use of additional libraries; if you have them, Please refer to [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies) for list of such dependencies and instructions for their installation.
 
-**manual**: [In English](http://nikitron.cc.ua/sverch/html/main.html) - This is an introduction to Sverchok and contains 3 lessons, and documentation on almost all nodes. If anything isn't clear (or missing) in this document please ask about it on the [Issue Tracker](https://github.com/nortikin/sverchok/issues), we want to get these lessons right and you can help us! 
+**Manual**: [In English](http://nikitron.cc.ua/sverch/html/main.html) - This is an introduction to Sverchok and contains 3 lessons, and documentation on almost all nodes. If anything isn't clear (or missing) in this document please ask about it on the [Issue Tracker](https://github.com/nortikin/sverchok/issues), we want to get these lessons right and you can help us! 
 
   
 ### Description
@@ -29,9 +29,10 @@ Mesh and geometry programming consists of combining basic elements such as:
   - surfaces  
   - scalar and vector fields  
   - solids  
+  - insolation/sun heating calculations   
 
 ### Possibilities
-Comes with more than 500 nodes to help create and manipulate geometry. Combining these nodes will allow you to:
+Comes with more than 600 nodes to help create and manipulate geometry. Combining these nodes will allow you to:
 
   - do parametric constructions  
   - easily change parameters with sliders and formulas    
@@ -65,8 +66,12 @@ Install Sverchok as you would any blender addon.
    do provide additional nodes and scripts that make use of so called "3rd party" libraries like: 
    - scipy
    - marching cubes 
-   - shapely
-   - FreeCAD
+   - geomdl   
+   - SciKit-image   
+   - shapely  
+   - circlify  
+   - freecadpython3lib   
+   - ladybug  
    
    Instructions regarding their installation is found at this [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies)
 
@@ -103,10 +108,11 @@ Authors:
 -  Eleanor Howick,    
 -  Walter Perdan,    
 -  Marius Giurgi,      
--  Durman,     
--  Ivan Prytov,
--  Victor Doval,
--  Dion Moult
+-  Sergey Soluyanov,     
+-  Ivan Prytov,   
+-  Victor Doval,  
+-  Dion Moult,  
+-  Alessandro Zomparelli   
 
 Email: sverchok-b3d@yandex.ru  
 
