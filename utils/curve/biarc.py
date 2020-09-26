@@ -21,8 +21,8 @@ class SvBiArc(SvConcatCurve):
         self.arc1 = arc1
         self.arc2 = arc2
 
-    def to_nurbs(self, implementation=None):
-        return concatenate_curves([self.arc1.to_nurbs(), self.arc2.to_nurbs()], allow_generic=False)
+    def __repr__(self):
+        return f"<BiArc C1={self.arc1.center} R1={self.arc1.radius} C2={self.arc2.center} R2={self.arc2.radius}>"
 
     @staticmethod
     def calc(point_a, point_b, tangent_a, tangent_b, p, planar_tolerance=1e-6):
@@ -99,4 +99,31 @@ class SvBiArc(SvConcatCurve):
         curve.junction = junction
 
         return curve
+
+    def to_nurbs(self, implementation=None):
+        return concatenate_curves([self.arc1.to_nurbs(), self.arc2.to_nurbs()], allow_generic=False)
+
+    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
+        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
+    
+    def extrude_along_vector(self, vector):
+        return self.to_nurbs().extrude_along_vector(vector)
+
+    def make_ruled_surface(self, curve2, vmin, vmax):
+        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
+
+    def extrude_to_point(self, point):
+        return self.to_nurbs().extrude_to_point(point)
+
+    def lerp_to(self, curve2, coefficient):
+        if isinstance(curve2, SvBezierCurve) and curve2.degree == self.degree:
+            points = (1.0 - coefficient) * self.points + coefficient * curve2.points
+            return SvBezierCurve(points)
+        return self.to_nurbs().lerp_to(curve2, coefficient)
+    
+    def split_at(self, t):
+        return self.to_nurbs().split_at(t)
+
+    def cut_segment(self, new_t_min, new_t_max, rescale=False):
+        return self.to_nurbs().cut_segment(new_t_min, new_t_max, rescale=rescale)
 
