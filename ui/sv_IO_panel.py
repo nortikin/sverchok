@@ -36,6 +36,8 @@ from sverchok.utils.sv_IO_panel_tools import (
     load_json_from_gist,
     import_tree,
     write_json)
+from sverchok.utils.sv_json_export import JSONExporter
+from sverchok.utils.sv_json_import import JSONImporter
 
 
 class ExportImportPanels:
@@ -135,7 +137,8 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
         # future: should check if filepath is a folder or ends in \
 
-        layout_dict = create_dict_of_tree(ng)
+        layout_dict = JSONExporter.get_structure(ng)
+
         if not layout_dict:
             msg = 'no update list found - didn\'t export'
             self.report({"WARNING"}, msg)
@@ -208,7 +211,8 @@ class SvNodeTreeImporter(bpy.types.Operator):
             self.report(type={'WARNING'}, message="The tree was not chosen, have a look at property (N) panel")
             return {'CANCELLED'}
 
-        import_tree(ng, self.filepath)
+        importer = JSONImporter.init_from_path(self.filepath)
+        importer.import_into_tree(ng)
 
         # set new node tree to active
         context.space_data.node_tree = ng
