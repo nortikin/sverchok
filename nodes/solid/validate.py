@@ -14,7 +14,7 @@ from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
 
 if FreeCAD is None:
-    add_dummy('SvSolidValidateNode', 'Validate Solid', 'FreeCAD')
+    add_dummy('SvSolidValidateNode', 'Validate & Fix Solid', 'FreeCAD')
 else:
     import Part
 
@@ -24,7 +24,7 @@ class SvSolidValidateNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Validate or fix Solid objects
     """
     bl_idname = 'SvSolidValidateNode'
-    bl_label = 'Validate Solid'
+    bl_label = 'Validate & Fix Solid'
     bl_icon = 'OUTLINER_OB_EMPTY'
     solid_catergory = "Operators"
 

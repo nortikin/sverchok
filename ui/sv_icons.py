@@ -46,6 +46,7 @@ def custom_icon(name):
 
 def load_custom_icons():
     if len(_icon_collection):  # return if custom icons already loaded
+        #print("Icons were already loaded?")
         return
 
     custom_icons = bpy.utils.previews.new()
@@ -58,7 +59,8 @@ def load_custom_icons():
     for iconFile in iconFiles:
         iconName = os.path.splitext(iconFile)[0]
         iconID = iconName.upper()
-        custom_icons.load(iconID, os.path.join(iconsDir, iconFile), "IMAGE")
+        preview = custom_icons.load(iconID, os.path.join(iconsDir, iconFile), "IMAGE")
+        #debug(f"{iconID} => {tuple(preview.image_size)}")
 
     for provider in _icon_providers.values():
         provider.init(custom_icons)

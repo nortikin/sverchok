@@ -14,7 +14,7 @@ from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
 
 if FreeCAD is None:
-    add_dummy('SvIsSolidClosedNode', 'Validate Solid', 'FreeCAD')
+    add_dummy('SvIsSolidClosedNode', 'Is Solid Closed', 'FreeCAD')
 else:
     import Part
 
