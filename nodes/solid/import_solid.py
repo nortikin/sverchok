@@ -27,7 +27,7 @@ else:
             if not any(socket.is_linked for socket in self.outputs):
                 return
 
-            files = self.inputs[0].sv_get()
+            files = self.inputs[0].sv_get()[0]
 
             solids = []
             for f in files:

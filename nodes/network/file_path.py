@@ -114,7 +114,7 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
         for file_elem in self.files:
             filepath = os.path.join(directory, file_elem.name)
             files.append(filepath)
-        self.outputs['File Path'].sv_set(files)
+        self.outputs['File Path'].sv_set([files])
 
     # iojson stuff
 
