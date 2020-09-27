@@ -32,9 +32,9 @@ class GeometryTests(SverchokTestCase):
 
     def test_circle_equal_1(self):
         circle1 = SvCircle(Matrix(), 1.0)
-        x = np.array([1, 0, 0])
-        origin = np.array([0, 0, 0])
-        z = np.array([0, 0, 1])
+        x = np.array([1, 0, 0], dtype=np.float64)
+        origin = np.array([0, 0, 0], dtype=np.float64)
+        z = np.array([0, 0, 1], dtype=np.float64)
         circle2 = SvCircle(center=origin, normal=z, vectorx=x)
 
         ts = np.linspace(0, pi/2, num=50)
