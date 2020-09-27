@@ -22,7 +22,7 @@ class SvBiArcNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvBiArcNode'
     bl_label = 'Bi Arc'
     bl_icon = 'SPHERECURVE'
-    sv_icon = 'SV_POLYARC'
+    sv_icon = 'SV_BIARC'
 
     planar_tolerance : FloatProperty(
             name = "Planar Tolerance",
@@ -92,6 +92,8 @@ class SvBiArcNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'Angle1')
         self.outputs.new('SvStringsSocket', 'Angle2')
         self.outputs.new('SvVerticesSocket', "Junction")
+
+        self.update_sockets(context)
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
