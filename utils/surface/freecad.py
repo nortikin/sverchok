@@ -38,7 +38,7 @@ def get_edge_endpoints(fc_edge):
         p1, p2 = fc_curve.value(t1), fc_curve.value(t2)
     return p1, p2
 
-def curves_to_face(sv_curves, planar=True, force_nurbs=True):
+def curves_to_face(sv_curves, planar=True, force_nurbs=True, tolerance=None):
     """
     Make a Part.Face from a list of SvCurve.
     Curves must have NURBS representation, must form a closed loop, and it must
@@ -59,8 +59,9 @@ def curves_to_face(sv_curves, planar=True, force_nurbs=True):
     all_nurbs = all(isinstance(curve, SvFreeCadNurbsCurve) for curve in sv_curves)
     edges = [curve.curve.toShape() for curve in sv_curves]
     fc_curves = [edge.Curve for edge in edges]
-    for edge in edges:
-        edge.fixTolerance(1e-5)
+    if tolerance is not None:
+        for edge in edges:
+            edge.fixTolerance(tolerance)
     try:
         wire = Part.Wire(edges[0])
         for edge in edges[1:]:
