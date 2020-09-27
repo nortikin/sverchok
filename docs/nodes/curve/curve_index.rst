@@ -11,6 +11,7 @@ Curves
    rounded_rectangle
    arc_3pt
    arc_sed
+   biarc
    polyarc
    polyline
    cubic_spline

@@ -24,11 +24,11 @@ class SvBiArcNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'SPHERECURVE'
     sv_icon = 'SV_BIARC'
 
-    planar_tolerance : FloatProperty(
-            name = "Planar Tolerance",
+    planar_accuracy : IntProperty(
+            name = "Planar Accuracy",
             description = "Tolerance value for checking if the curve is planar",
-            default = 1e-6,
-            precision = 8,
+            default = 6,
+            min = 1,
             update = updateNode)
 
     parameter : FloatProperty(
@@ -65,7 +65,7 @@ class SvBiArcNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
-        layout.prop(self, 'planar_tolerance')
+        layout.prop(self, 'planar_accuracy')
 
     def sv_init(self, context):
         p = self.inputs.new('SvVerticesSocket', "Point1")
@@ -111,6 +111,8 @@ class SvBiArcNode(bpy.types.Node, SverchCustomTreeNode):
         tangent2_s = ensure_nesting_level(tangent2_s, 3)
         param_s = ensure_nesting_level(param_s, 2)
 
+        planar_tolerance = 10 ** (-self.planar_accuracy)
+
         curve_out = []
         arc1_out = []
         arc2_out = []
@@ -140,7 +142,7 @@ class SvBiArcNode(bpy.types.Node, SverchCustomTreeNode):
                 tangent2 = np.array(tangent2)
 
                 curve = SvBiArc.calc(point1, point2, tangent1, tangent2, parameter,
-                            planar_tolerance = self.planar_tolerance)
+                            planar_tolerance = planar_tolerance)
 
                 curve_new.append(curve)
                 arc1_new.append(curve.arc1)
