@@ -711,15 +711,14 @@ class SvAlignForce():
 
 
     def add_brute_force(self, ps):
-        rel = ps.relations
-        mask = ps.relations.dist_cor < self.max_distance
-        id0 = ps.relations.indexes[mask, 0]
-        id1 = ps.relations.indexes[mask, 1]
-        dist2 = np.power(ps.relations.dist_cor[mask], self.decay)
+        relations = ps.relations
+        mask = relations.dist_cor < self.max_distance
+        id0 = relations.indexes[mask, 0]
+        id1 = relations.indexes[mask, 1]
+        dist2 = np.power(relations.dist_cor[mask], self.decay)
 
 
         if self.uniform_strength:
-            print(self.f_strength)
             constant = (self.f_strength / (dist2 * ps.v_len))[:, np.newaxis]
             np.add.at(ps.r, id0, ps.vel[id1, :] * constant)
             np.add.at(ps.r, id1, ps.vel[id0, :] * constant)
@@ -732,8 +731,8 @@ class SvAlignForce():
 
     def add_kdt(self, ps):
 
-        rel = ps.relations
-        indexes = ps.relations.kd_tree.query_pairs(r=self.max_distance, output_type='ndarray')
+        relations = ps.relations
+        indexes = relations.kd_tree.query_pairs(r=self.max_distance, output_type='ndarray')
         if len(indexes) > 0:
             dif_v = ps.verts[indexes[:, 0], :] - ps.verts[indexes[:, 1], :]
             dist = np.linalg.norm(dif_v, axis=1)
