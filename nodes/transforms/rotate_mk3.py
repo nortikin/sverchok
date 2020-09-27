@@ -186,7 +186,7 @@ class SvRotationNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     w_: FloatProperty(
         name='W', description='W', default=1.0, update=updateNode)
 
-    actual_mode: StringProperty(default="AXIS")
+    actual_mode: StringProperty(default="AXIS", options={'SKIP_SAVE'})
 
     def update_sockets(self):
 
@@ -250,8 +250,6 @@ class SvRotationNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         name='Output NumPy',
         description='Output NumPy arrays',
         default=False, update=updateNode)
-
-    properties_to_skip_iojson = ['actual_mode']
 
     def sv_init(self, context):
         new_input = self.inputs.new

@@ -288,7 +288,6 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.adjust_sockets()
         updateNode(self, context)
 
-    properties_to_skip_iojson = ['file_pointer', 'updating_name_from_pointer']
     updating_name_from_pointer: BoolProperty(name="updating name")
     filename: StringProperty(default="", update=captured_updateNode)
     file_pointer: PointerProperty(type=bpy.types.Text, poll=lambda s, o: True, update=pointer_update)

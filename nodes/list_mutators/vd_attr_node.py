@@ -68,7 +68,7 @@ def property_change(item, context, changed_attr):
         node.inputs[socket_name].hide_safe = not getattr(item, changed_attr) 
 
 class SvVDMK3Item(bpy.types.PropertyGroup):
-    attr_name: StringProperty() 
+    attr_name: StringProperty(options={'SKIP_SAVE'})
     show_socket: BoolProperty(default=False, update=lambda s, c: property_change(s, c, 'show_socket'))
     use_default: BoolProperty(default=False, update=lambda s, c: property_change(s, c, 'use_default'))
     origin_node_name: StringProperty(options={'SKIP_SAVE'})
@@ -111,10 +111,6 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     property_index: IntProperty(name='index', default=0)
     vd_items_group: CollectionProperty(name="vd attrs", type=SvVDMK3Item)
     vd_items_props: CollectionProperty(name="vd props", type=SvVDMK3Properties)
-
-    @property
-    def properties_to_skip_iojson(self):
-        return {'vd_items_props', 'vd_items_group'}
 
     def draw_group(self, context, layout):
         if self.vd_items_group:

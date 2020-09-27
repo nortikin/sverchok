@@ -208,8 +208,6 @@ class SvFormulaInterpolateNode(bpy.types.Node, SverchCustomTreeNode):
 
     is_cyclic: BoolProperty(name="Cyclic", default=False, update=updateNode)
 
-    properties_to_skip_iojson = ['control_points']
-
     def sv_init(self, context):
         self.width = 200
         self.inputs.new('SvStringsSocket', "x").prop_name = 'x_in'

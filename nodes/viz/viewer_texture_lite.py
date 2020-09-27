@@ -36,8 +36,6 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_TEXTURE_VIEWER_LITE'
     texture = {}
 
-    n_id: StringProperty(default='')
-
     def pointer_update(self, context):
         if self.image_pointer:
             self.image = self.image_pointer.name
@@ -64,7 +62,6 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
         items=out_modes, description="how to output values",
         default="bgl", update=updateNode)
 
-    properties_to_skip_iojson = ["image_pointer", "location_theta"]
     location_theta: FloatProperty(name="location theta")
 
     @property

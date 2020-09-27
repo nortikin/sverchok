@@ -105,8 +105,6 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             self.text = ""
         # need to do other stuff?
 
-    properties_to_skip_iojson = ['file_pointer']    
-
     # general settings
     n_id: StringProperty(default='')
     force_input: BoolProperty()

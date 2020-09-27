@@ -152,10 +152,10 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
     show_options: BoolProperty(default=0)
 
-    properties_to_skip_iojson = ["font_pointer"]
     updating_name_from_pointer: BoolProperty(name="updating name")
     fontname: StringProperty(default='', update=captured_updateNode)
-    font_pointer: PointerProperty(type=bpy.types.VectorFont, poll=lambda s, o: True, update=pointer_update)
+    font_pointer: PointerProperty(type=bpy.types.VectorFont, poll=lambda s, o: True, update=pointer_update,
+                                  options={'SKIP_SAVE'})
     fsize: FloatProperty(default=1.0, update=updateNode)
 
     # space

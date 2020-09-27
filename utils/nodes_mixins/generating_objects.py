@@ -114,7 +114,7 @@ class BlenderObjects:
     def render_objects_update(self, context):
         [setattr(prop.obj, 'hide_render', False if self.render_objects else True) for prop in self.object_data]
 
-    object_data: bpy.props.CollectionProperty(type=SvObjectData)
+    object_data: bpy.props.CollectionProperty(type=SvObjectData, options={'SKIP_SAVE'})
 
     show_objects: bpy.props.BoolProperty(
         default=True,
@@ -167,17 +167,9 @@ class BlenderObjects:
         layout.prop(self, 'render_objects', toggle=True, text='',
                     icon=f"RESTRICT_RENDER_{'OFF' if self.render_objects else 'ON'}")
 
-    @property
-    def properties_to_skip_iojson(self) -> List[str]:
-        """
-        Used during serialization process
-        Should be overridden in this way: return super().properties_to_skip_iojson + ['my_property']
-        """
-        return ['object_data']
-
 
 class SvMeshData(bpy.types.PropertyGroup):
-    mesh: bpy.props.PointerProperty(type=bpy.types.Mesh)
+    mesh: bpy.props.PointerProperty(type=bpy.types.Mesh, options={'SKIP_SAVE'})
 
     def regenerate_mesh(self, mesh_name: str, verts, edges=None, faces=None, matrix: Matrix = None,
                         make_changes_test=True):
@@ -327,14 +319,6 @@ class SvViewerNode(BlenderObjects):
             pass
         else:
             self.show_objects_update(None, is_show)
-
-    @property
-    def properties_to_skip_iojson(self) -> List[str]:
-        """
-        Used during serialization process
-        Should be overridden in this way: return super().properties_to_skip_iojson + ['my_property']
-        """
-        return super().properties_to_skip_iojson + ['collection']
 
     def load_from_json(self, node_data: dict, import_version: float):
         """

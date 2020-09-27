@@ -129,8 +129,6 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
         name="Emission Node", description="Name of Emission node in the lamp shader, that contains Sthrength and Color inputs",
         default="Emission", update=updateNode)
 
-    properties_to_skip_iojson = ['type']
-
     def sv_init(self, context):
         self.inputs.new('SvMatrixSocket', 'Origin')
         self.inputs.new('SvStringsSocket', 'Size').prop_name = 'size'

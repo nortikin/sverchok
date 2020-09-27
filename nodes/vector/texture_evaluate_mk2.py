@@ -100,8 +100,6 @@ class SvTextureEvaluateNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatabl
         else:
             outputs[0].replace_socket('SvColorSocket', 'Color')
 
-    properties_to_skip_iojson = ['texture_pointer']
-
     texture_pointer: bpy.props.PointerProperty(
         type=bpy.types.Texture,
         name='Texture',

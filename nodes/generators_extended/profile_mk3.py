@@ -431,8 +431,6 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.adjust_sockets()
         updateNode(self, context)
 
-    properties_to_skip_iojson = ["file_pointer"]
-
     filename : StringProperty(default="")
     file_pointer: PointerProperty(
         type=bpy.types.Text, poll=lambda s, o: True, update=pointer_update)

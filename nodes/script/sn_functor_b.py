@@ -83,8 +83,6 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
     loaded: BoolProperty()
     node_dict = {}
 
-    properties_to_skip_iojson = ["script_pointer", "script_str", "script_name"]
-
     def handle_execution_nid(self, func_name, msg, args):
         ND = self.node_dict.get(hash(self))
         if not ND:
@@ -273,7 +271,7 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
             local_storage['lines'].append(line.body)
         node_data['string_storage'] = json.dumps(local_storage)
 
-    def load_from_json(self, node_data):
+    def load_from_json(self, node_data: dict, import_version: float):
 
         # maybe this file/blend already has this textblock, we could end early
         self.script_pointer = unpack_pointer_property_name(bpy.data.texts, node_data, "textfile_name")

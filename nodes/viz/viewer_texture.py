@@ -116,7 +116,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.activate = False
         updateNode(self, context)
 
-    n_id: StringProperty(default='')
     to_image_viewer: BoolProperty(
         name='Pass', description='Transfer pixels to image viewer',
         default=False, update=wrapped_updateNode_)
@@ -168,7 +167,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         description='set name (minus filetype) for exporting to image viewer')
     total_size: IntProperty(default=0)
 
-    properties_to_skip_iojson = ["location_theta"]
     location_theta: FloatProperty(name="location theta")
 
     @property

@@ -109,8 +109,6 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
             default = False,
             update = updateNode)
 
-    properties_to_skip_iojson = ['mask_out_type']
-
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', 'Edges')

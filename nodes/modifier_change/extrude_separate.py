@@ -99,8 +99,6 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
             dict(Vertices='Verts', Polygons='Faces'))
     ]
 
-    properties_to_skip_iojson = ['mask_out_type']
-
     def sv_init(self, context):
         inew = self.inputs.new
         onew = self.outputs.new

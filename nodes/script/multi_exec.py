@@ -84,8 +84,6 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     dynamic_strings: bpy.props.CollectionProperty(type=SvExecNodeDynaStringItem)
 
-    properties_to_skip_iojson = ['text_pointer']
-
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
         row = layout.row(align=True)
