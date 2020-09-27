@@ -98,6 +98,18 @@ class SvLine(SvCurve):
     def to_bezier_segments(self):
         return [self.to_bezier()]
 
+def rotate_radius(radius, normal, thetas):
+    ct = np.cos(thetas)[np.newaxis].T
+    st = np.sin(thetas)[np.newaxis].T
+
+    normal /= np.linalg.norm(normal)
+    
+    binormal = np.cross(normal, radius)
+    vx = radius * ct
+    vy = binormal * st
+
+    return vx + vy
+
 class SvCircle(SvCurve):
 
     def __init__(self, matrix=None, radius=None, center=None, normal=None, vectorx=None):
@@ -233,9 +245,10 @@ class SvCircle(SvCurve):
         return self.center + rotate_vector_around_vector(vx, self.normal, t)
 
     def evaluate_array(self, ts):
-        n = len(ts)
-        vx = np.broadcast_to(self.vectorx[np.newaxis], (n,3))
-        return self.center + rotate_vector_around_vector_np(vx, self.normal, ts)
+        #n = len(ts)
+        #vx = np.broadcast_to(self.vectorx[np.newaxis], (n,3))
+        #return self.center + rotate_vector_around_vector_np(vx, self.normal, ts)
+        return self.center + rotate_radius(self.vectorx, self.normal, ts)
 
     def tangent(self, t):
         x = - self.radius * sin(t)
