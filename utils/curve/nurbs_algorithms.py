@@ -115,7 +115,10 @@ def concatenate_nurbs_curves(curves):
         raise Exception("List of curves must be not empty")
     curves = unify_curves_degree(curves)
     result = curves[0]
-    for curve in curves[1:]:
-        result = result.concatenate(curve)
+    for i, curve in enumerate(curves[1:]):
+        try:
+            result = result.concatenate(curve)
+        except Exception as e:
+            raise Exception(f"Can't append curve #{i+1}: {e}")
     return result
 

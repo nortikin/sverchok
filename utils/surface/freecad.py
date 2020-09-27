@@ -55,19 +55,29 @@ def curves_to_face(sv_curves, planar=True, force_nurbs=True):
         SvFreeCadNurbsSurface if force_nurbs == True.
     """
     # Check
-    sv_curves = [curve_to_freecad(curve) for curve in sv_curves]
+    sv_curves = sum([curve_to_freecad(curve) for curve in sv_curves], [])
     all_nurbs = all(isinstance(curve, SvFreeCadNurbsCurve) for curve in sv_curves)
-    edges = [Part.Edge(curve.curve) for curve in sv_curves]
+    edges = [curve.curve.toShape() for curve in sv_curves]
+    fc_curves = [edge.Curve for edge in edges]
+    for edge in edges:
+        edge.fixTolerance(1e-5)
     try:
-        wire = Part.Wire(Part.__sortEdges__(edges))
+        wire = Part.Wire(edges[0])
+        for edge in edges[1:]:
+            wire.add(edge)
+        #wire = Part.Wire(edges)
         #for edge in edges:
         #    wire.add(edge)
     except Part.OCCError as e:
-        fc_curves = [edge.Curve for edge in edges]
         for edge in edges:
             print(f"Curve {edge.Curve}, endpoints: {get_edge_endpoints(edge)}")
         raise Exception(f"Can't build a Wire out of edges: {fc_curves}: {e}")
 
+    if len(edges) != len(wire.Edges):
+        raise Exception(f"Cant build a Wire out of edges: {fc_curves}: was able to add only {len(wire.Edges)} edges of {len(edges)}")
+
+    #wire.fix(0, 0, 0)
+    #wire.fixTolerance(1e-5)
     if not wire.isClosed():
 
         last_point = None
