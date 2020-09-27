@@ -66,6 +66,7 @@
     SvExPolylineNode
     SvExFilletPolylineNode
     SvKinkyCurveNode
+    SvBiArcNode
     SvPolyArcNode
 
 ## Curves @ NURBS
@@ -101,7 +102,7 @@
     ---
     SvExCurveLerpCurveNode
     SvExConcatCurvesNode
-    SvExBlendCurvesNode
+    SvExBlendCurvesMk2Node
     SvExFlipCurveNode
     SvReparametrizeCurveNode
     SvExSurfaceBoundaryNode

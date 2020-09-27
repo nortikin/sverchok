@@ -98,6 +98,18 @@ class SvLine(SvCurve):
     def to_bezier_segments(self):
         return [self.to_bezier()]
 
+def rotate_radius(radius, normal, thetas):
+    ct = np.cos(thetas)[np.newaxis].T
+    st = np.sin(thetas)[np.newaxis].T
+
+    normal /= np.linalg.norm(normal)
+    
+    binormal = np.cross(normal, radius)
+    vx = radius * ct
+    vy = binormal * st
+
+    return vx + vy
+
 class SvCircle(SvCurve):
 
     def __init__(self, matrix=None, radius=None, center=None, normal=None, vectorx=None):
@@ -107,12 +119,7 @@ class SvCircle(SvCurve):
         elif center is not None:
             self.center = center
         if matrix is None:
-            normal = normal / np.linalg.norm(normal)
-            vx = vectorx / np.linalg.norm(vectorx)
-            vy = np.cross(normal, vx)
-            vy = vy / np.linalg.norm(vy)
-            m = np.stack((vx, vy, normal))
-            self.matrix = np.linalg.inv(m)
+            self.matrix = SvCircle.calc_matrix(normal, vectorx)
         if radius is not None:
             self.radius = radius
         else:
@@ -132,6 +139,27 @@ class SvCircle(SvCurve):
             m.translation = Vector()
             self.vectorx = np.array(m @ x)
         self.u_bounds = (0.0, 2*pi)
+
+    def copy(self):
+        circle = SvCircle(radius=self.radius,
+                    center=self.center,
+                    normal=self.normal,
+                    vectorx=self.vectorx)
+        circle.u_bounds = self.u_bounds
+        return circle
+
+    @staticmethod
+    def calc_matrix(normal, vectorx):
+        normal = normal / np.linalg.norm(normal)
+        vx = vectorx / np.linalg.norm(vectorx)
+        vy = np.cross(normal, vx)
+        vy = vy / np.linalg.norm(vy)
+        m = np.stack((vx, vy, normal))
+        return np.linalg.inv(m)
+
+    def set_normal(self, normal):
+        self.normal = normal
+        self.matrix = SvCircle.calc_matrix(normal, self.vectorx)
 
     def __repr__(self):
         try:
@@ -217,9 +245,10 @@ class SvCircle(SvCurve):
         return self.center + rotate_vector_around_vector(vx, self.normal, t)
 
     def evaluate_array(self, ts):
-        n = len(ts)
-        vx = np.broadcast_to(self.vectorx[np.newaxis], (n,3))
-        return self.center + rotate_vector_around_vector_np(vx, self.normal, ts)
+        #n = len(ts)
+        #vx = np.broadcast_to(self.vectorx[np.newaxis], (n,3))
+        #return self.center + rotate_vector_around_vector_np(vx, self.normal, ts)
+        return self.center + rotate_radius(self.vectorx, self.normal, ts)
 
     def tangent(self, t):
         x = - self.radius * sin(t)
@@ -308,6 +337,16 @@ class SvCircle(SvCurve):
     def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
         t_min, t_max = self.get_u_bounds()
         epsilon = 1e-6
+
+        if -2*pi < t_min < 0 and 0 < t_max < 2*pi:
+            arc1 = self.copy()
+            arc1.u_bounds = (2*pi + t_min, 2*pi)
+            arc1 = arc1.to_nurbs()
+            arc2 = self.copy()
+            arc2.u_bounds = (0, t_max)
+            arc2 = arc2.to_nurbs()
+            return arc1.concatenate(arc2)
+
         if t_min < 0 or t_max > 2*pi + epsilon:
             raise UnsupportedCurveTypeException(f"Can't transform a circle arc out of 0-2pi bound ({t_min} - {t_max}) to NURBS")
 
