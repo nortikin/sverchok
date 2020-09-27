@@ -133,8 +133,6 @@ class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatabl
     materials : CollectionProperty(type=SvMaterialEntry)
     selected : IntProperty()
 
-    properties_to_skip_iojson = ['materials']
-
     def sv_init(self, context):
         self.width = 200
         self.inputs.new('SvObjectSocket', 'Object')

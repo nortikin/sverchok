@@ -133,40 +133,21 @@ class NodeImporter01:
             with self._fails_log.add_fail(
                     "Setting node property",
                     f'Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}'):
-                self._apply_property(self._node, prop_name, prop_value)
+                BPYProperty(self._node, prop_name).value = prop_value
 
-        for sock_index, prop_name, prop_value in self._input_socket_properties():
-            with self._fails_log.add_fail(
-                    "Setting socket property",
-                    f'Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}'):
-                socket = self._node.inputs[sock_index]
-                self._apply_property(socket, prop_name, prop_value)
-
+        # this block is before applying socket properties because some nodes can generate them in load method
         if hasattr(self._node, 'load_from_json'):
             with self._fails_log.add_fail(
                     "Setting advance node properties",
                     f'Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}'):
                 self._node.load_from_json(self._structure, self._import_version)
 
-    def _apply_property(self, data, prop_name: str, value: Any):
-        prop = BPYProperty(data, prop_name)
-        if prop.type == 'COLLECTION':
-            collection = getattr(data, prop_name)
-            for item_index, item_values in enumerate(value):
-                # Some collections can be empty, in this case they should be expanded to be able to get new values
-                if item_index == len(collection):
-                    item = collection.add()
-                else:
-                    item = collection[item_index]
-                for item_prop_name, item_prop_value in item_values.items():
-                    self._apply_property(item, item_prop_name, item_prop_value)
-        elif prop.type == 'POINTER':
-            if prop.pointer_type != BPYPointers.OBJECT:
-                prop.value = prop.data_collection.get(value)
-            else:  # object pointers does not supported now to protect overriding user data
-                pass
-        else:
-            prop.value = value
+        for sock_index, prop_name, prop_value in self._input_socket_properties():
+            with self._fails_log.add_fail(
+                    "Setting socket property",
+                    f'Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}'):
+                socket = self._node.inputs[sock_index]
+                BPYProperty(socket, prop_name).value = prop_value
 
     def _node_attributes(self) -> Generator[tuple]:
         with self._fails_log.add_fail("Reading node location", f'Node: {self._node.name}'):
