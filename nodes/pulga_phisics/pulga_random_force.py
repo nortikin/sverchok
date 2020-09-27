@@ -34,7 +34,7 @@ class SvPulgaRandomForceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvPulgaRandomForceNode'
     bl_label = 'Pulga Random Force'
     bl_icon = 'MOD_PHYSICS'
-    sv_icon = 'SV_CIRCLE_SVG'
+    sv_icon = 'SV_PULGA_RANDOM_FORCE'
 
     random_seed : IntProperty(
         name='Seed', description='Random seed number',

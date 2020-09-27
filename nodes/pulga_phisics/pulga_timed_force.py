@@ -34,7 +34,7 @@ class SvPulgaTimedForceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvPulgaTimedForceNode'
     bl_label = 'Pulga Timed Force'
     bl_icon = 'MOD_PHYSICS'
-    sv_icon = 'SV_CIRCLE_SVG'
+    sv_icon = 'SV_PULGA_TIMED_FORCE'
 
     start: IntProperty(name='Start', description='Force', default=0, update=updateNode)
     end: IntProperty(name='End', description='Force', default=0, update=updateNode)

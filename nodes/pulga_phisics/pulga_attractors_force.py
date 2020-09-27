@@ -34,23 +34,23 @@ class SvPulgaAttractorsForceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvPulgaAttractorsForceNode'
     bl_label = 'Pulga Attractors Force'
     bl_icon = 'MOD_PHYSICS'
-    sv_icon = 'SV_CIRCLE_SVG'
+    sv_icon = 'SV_PULGA_ATTRACTORS_FORCE'
 
-    force : FloatProperty(
+    strength: FloatProperty(
         name='Strength', description='Attractors Force magnitude',
         default=0.0, precision=3, update=updateNode)
-    clamp : FloatProperty(
-        name='Clamp', description='Attractors maximum influence distance',
+    max_distance: FloatProperty(
+        name='Max Distance', description='Attractors maximum influence distance',
         default=0.0, precision=3, update=updateNode)
-    decay_power : FloatProperty(
+    decay_power: FloatProperty(
         name='Decay', description='Decay with distance 0 = no decay, 1 = linear, 2 = quadratic...',
         default=0.0, precision=3, update=updateNode)
 
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Location")
-        self.inputs.new('SvStringsSocket', "Force").prop_name = 'force'
-        self.inputs.new('SvStringsSocket', "Clamp").prop_name = 'clamp'
+        self.inputs.new('SvStringsSocket', "Strength").prop_name = 'strength'
+        self.inputs.new('SvStringsSocket', "Max. Distance").prop_name = 'max_distance'
         self.inputs.new('SvStringsSocket', "Decay").prop_name = 'decay_power'
 
 
@@ -63,15 +63,15 @@ class SvPulgaAttractorsForceNode(bpy.types.Node, SverchCustomTreeNode):
         if not any(s.is_linked for s in self.outputs):
             return
         loc = self.inputs["Location"].sv_get(deepcopy=False)
-        force = self.inputs["Force"].sv_get(deepcopy=False)
-        clamp = self.inputs["Clamp"].sv_get(deepcopy=False)
+        strength = self.inputs["Strength"].sv_get(deepcopy=False)
+        max_distance = self.inputs["Max. Distance"].sv_get(deepcopy=False)
         decay_power = self.inputs["Decay"].sv_get(deepcopy=False)
 
 
         forces_out = []
 
         forces_out = []
-        for force in zip_long_repeat(loc, force, clamp, decay_power):
+        for force in zip_long_repeat(loc, strength, max_distance, decay_power):
 
             forces_out.append(SvAttractorsForce(*force))
 

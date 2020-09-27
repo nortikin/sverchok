@@ -34,7 +34,7 @@ class SvPulgaObstacleForceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvPulgaObstacleForceNode'
     bl_label = 'Pulga Obstacles Force'
     bl_icon = 'MOD_PHYSICS'
-    sv_icon = 'SV_CIRCLE_SVG'
+    sv_icon = 'SV_PULGA_OBSTACLES_FORCE'
 
     magnitude: FloatProperty(
         name='Magnitude', description='Drag Force Constant',

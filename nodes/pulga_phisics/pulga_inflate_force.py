@@ -34,7 +34,7 @@ class SvPulgaInflateForceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvPulgaInflateForceNode'
     bl_label = 'Pulga Inflate Force'
     bl_icon = 'MOD_PHYSICS'
-    sv_icon = 'SV_CIRCLE_SVG'
+    sv_icon = 'SV_PULGA_INFLATE_FORCE'
 
 
     force : FloatProperty(
