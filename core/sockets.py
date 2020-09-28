@@ -33,8 +33,6 @@ from sverchok.data_structure import (
     SIMPLE_DATA_TYPES,
     flatten_data, graft_data, map_at_level, wrap_data)
 
-from sverchok.node_tree import throttle_tree_update
-
 from sverchok.utils.field.scalar import SvConstantScalarField
 from sverchok.utils.field.vector import SvMatrixVectorField, SvConstantVectorField
 from sverchok.utils.curve import SvCurve, SvReparametrizeCurve
@@ -89,7 +87,7 @@ class SvSocketProcessing(object):
         if self.skip_simplify_mode_update:
             return
 
-        with throttle_tree_update(self.node):
+        with self.node.sv_throttle_tree_update():
             try:
                 self.skip_simplify_mode_update = True
                 if self.use_flatten:
@@ -103,7 +101,7 @@ class SvSocketProcessing(object):
         if self.skip_simplify_mode_update:
             return
 
-        with throttle_tree_update(self.node):
+        with self.node.sv_throttle_tree_update():
             try:
                 self.skip_simplify_mode_update = True
                 if self.use_simplify:
