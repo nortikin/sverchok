@@ -35,7 +35,8 @@ from sverchok.data_structure import (
 
 from sverchok.utils.field.scalar import SvConstantScalarField
 from sverchok.utils.field.vector import SvMatrixVectorField, SvConstantVectorField
-from sverchok.utils.curve import SvCurve, SvReparametrizeCurve
+from sverchok.utils.curve import SvCurve
+from sverchok.utils.curve.algorithms import reparametrize_curve
 from sverchok.utils.surface import SvSurface
 
 from sverchok.utils.logging import warning
@@ -814,13 +815,13 @@ class SvCurveSocket(NodeSocket, SvSocketCommon):
     def preprocess_input(self, data):
         data = SvSocketCommon.preprocess_input(self, data)
         if self.reparametrize:
-            data = map_at_level(SvReparametrizeCurve, data, data_types=(SvCurve,))
+            data = map_at_level(reparametrize_curve, data, data_types=(SvCurve,))
         return data
 
     def postprocess_output(self, data):
         data = SvSocketCommon.postprocess_output(self, data)
         if self.reparametrize:
-            data = map_at_level(SvReparametrizeCurve, data, data_types=(SvCurve,))
+            data = map_at_level(reparametrize_curve, data, data_types=(SvCurve,))
         return data
 
 class SvScalarFieldSocket(NodeSocket, SvSocketCommon):
