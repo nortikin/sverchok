@@ -74,7 +74,7 @@ class SvHollowSolidNode(bpy.types.Node, SverchCustomTreeNode):
 
     def make_solid(self, solid, thickness, mask):
         if not solid.isValid():
-            raise Exception("Solid is not valid")
+            raise Exception("Input solid is not valid")
         if self.mask_usage == 'REMOVE':
             mask = [not c for c in mask]
         if all(mask):
