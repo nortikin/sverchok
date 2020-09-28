@@ -18,6 +18,7 @@
 
 import collections
 import time
+from itertools import chain
 
 import bpy
 from mathutils import Vector
@@ -390,6 +391,10 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
 
             timings.append(delta)
             gather({"name" : node_name, "bl_idname": node.bl_idname, "start": start, "duration": delta})
+
+            # probably it's not grate place for doing it
+            # reroute nodes can be in node variable
+            [s.update_objects_number() for s in chain(node.inputs, node.outputs) if hasattr(s, 'update_objects_number')]
 
         except Exception as err:
             ng = nodes.id_data

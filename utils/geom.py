@@ -119,34 +119,41 @@ class Spline(object):
         if metric == "DISTANCE":
             tmp = np.linalg.norm(pts[:-1] - pts[1:], axis=1)
             tknots = np.insert(tmp, 0, 0).cumsum()
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
         elif metric == "MANHATTAN":
             tmp = np.sum(np.absolute(pts[:-1] - pts[1:]), 1)
             tknots = np.insert(tmp, 0, 0).cumsum()
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
         elif metric == "POINTS":
             tknots = np.linspace(0, 1, len(pts))
         elif metric == "CHEBYSHEV":
             tknots = np.max(np.absolute(pts[1:] - pts[:-1]), 1)
             tknots = np.insert(tknots, 0, 0).cumsum()
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
         elif metric == 'CENTRIPETAL':
             tmp = np.linalg.norm(pts[:-1] - pts[1:], axis=1)
             tmp = np.sqrt(tmp)
             tknots = np.insert(tmp, 0, 0).cumsum()
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
         elif metric == "X":
             tknots = pts[:,0]
             tknots = tknots - tknots[0]
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
         elif metric == "Y":
             tknots = pts[:,1]
             tknots = tknots - tknots[0]
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
         elif metric == "Z":
             tknots = pts[:,2]
             tknots = tknots - tknots[0]
-            tknots = tknots / tknots[-1]
+            if tknots[-1] != 0:
+                tknots = tknots / tknots[-1]
 
         return tknots
 
@@ -1806,6 +1813,27 @@ class CircleEquation3D(object):
         circle.normal = np.array(normal)
         return circle
 
+    @classmethod
+    def from_center_point_normal(cls, center, point, normal):
+        center = Vector(center)
+        point = Vector(point)
+        normal = Vector(normal)
+
+        radius = (point - center).length
+        circle = CircleEquation3D.from_center_radius_normal(center, radius, normal)
+        circle.point1 = np.array(point)
+        return circle
+
+    @classmethod
+    def from_axis_point(cls, point_on_axis, direction, point):
+        point_on_axis = Vector(point_on_axis)
+        direction = Vector(direction)
+        point = Vector(point)
+
+        axis = LineEquation.from_direction_and_point(direction, point_on_axis)
+        center = axis.projection_of_point(point)
+        return CircleEquation3D.from_center_point_normal(center, point, direction)
+
     def get_matrix(self):
         """
         Calculate the matrix, Z axis of which is
@@ -1936,33 +1964,36 @@ def circle_by_three_points(p1, p2, p3):
     factored out from basic_3pt_arc.py.
     """
     v1, v2, v3 = Vector(p1), Vector(p2), Vector(p3)
+    edge1 = v2 - v1
+    edge2 = v3 - v2
     edge1_mid = v1.lerp(v2, 0.5)
     edge2_mid = v2.lerp(v3, 0.5)
-    axis = mathutils.geometry.normal(v1, v2, v3)
-    mat_rot = Matrix.Rotation(math.radians(90.0), 4, axis)
 
-    mid1 = ((v1 - edge1_mid) @ mat_rot) + edge1_mid
-    mid2 = ((v2 - edge1_mid) @ mat_rot) + edge1_mid
-    mid3 = ((v2 - edge2_mid) @ mat_rot) + edge2_mid
-    mid4 = ((v3 - edge2_mid) @ mat_rot) + edge2_mid
-
-    r = mathutils.geometry.intersect_line_line(mid1, mid2, mid3, mid4)
-    if not r:
+    plane0 = PlaneEquation.from_three_points(v1, v2, v3)
+    plane1 = PlaneEquation.from_normal_and_point(edge1, edge1_mid)
+    plane2 = PlaneEquation.from_normal_and_point(edge2, edge2_mid)
+    axis = plane1.intersect_with_plane(plane2)
+    if not axis:
         return None
-    center, _ = r
+    center = plane0.intersect_with_line(axis)
+
+    dv1 = np.array(v1 - center)
+    dv3 = np.array(v3 - center)
+    radius = np.linalg.norm(dv1)
 
     # find arc angle.
-    alpha = (v1 - center).angle((v3 - center), 0)
-    beta = 2 * math.pi - alpha
+    e1 = np.array(v1 - v2)
+    e2 = np.array(v3 - v2)
+    cs = e1.dot(e2) / (np.linalg.norm(e1) * np.linalg.norm(e2))
+    interior_angle = np.arccos(cs)
+    beta = 2*math.pi - 2*interior_angle
 
-    interior_angle = (v1 - v2).angle(v3 - v2, 0)
-    if interior_angle > 0.5 * math.pi:
-        beta = 2*math.pi - 2*interior_angle
+    normal = - np.cross(e1,e2)
 
     circle = CircleEquation3D()
-    circle.radius = (v1 - center).length
+    circle.radius = radius
     circle.center = center
-    circle.normal = axis
+    circle.normal = Vector(normal).normalized() # axis.direction
     circle.point1 = np.array(v1)
     circle.arc_angle = beta
     return circle
@@ -2094,4 +2125,32 @@ def rotate_vector_around_vector(v, k, theta):
     ct, st = cos(theta), sin(theta)
 
     return ct * v + st * (k.cross(v)) + (1 - ct) * (k.dot(v)) * k
+
+def rotate_vector_around_vector_np(v, k, theta):
+    """
+    Rotate vector v around vector k by theta angle.
+    input: v, k - np.array of shape (3,); theta - float, in radians.
+    output: np.array.
+
+    This implements Rodrigues' formula: https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
+    """
+    if not isinstance(v, np.ndarray):
+        v = np.array(v)
+    if not isinstance(k, np.ndarray):
+        k = np.array(k)
+    if k.ndim == 1:
+        k = k[np.newaxis]
+    k = k / np.linalg.norm(k, axis=1)
+
+    if isinstance(theta, np.ndarray):
+        ct, st = np.cos(theta)[np.newaxis].T, np.sin(theta)[np.newaxis].T
+    else:
+        ct, st = cos(theta), sin(theta)
+
+    s1 = ct * v
+    s2 = st * np.cross(k, v)
+    p1 = 1.0 - ct
+    p2 = np.apply_along_axis(lambda vi : k.dot(vi), 1, v)
+    s3 = p1 * p2 * k
+    return s1 + s2 + s3
 

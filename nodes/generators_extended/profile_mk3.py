@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import os
+import numpy as np
 
 import bpy
 from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatProperty, IntProperty, PointerProperty
@@ -28,6 +29,7 @@ from sverchok.utils.sv_node_utils import sync_pointer_and_stored_name
 from sverchok.core.socket_data import SvNoDataError
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.logging import info, debug, warning
+from sverchok.utils.curve.algorithms import concatenate_curves, unify_curves_degree
 from sverchok.utils.sv_update_utils import sv_get_local_path
 
 from sverchok.utils.modules.profile_mk3.interpreter import Interpreter
@@ -454,6 +456,25 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         name="X command threshold", min=0, max=1, default=0.0005, precision=6, update=updateNode,
         description="If distance between first and last point is less than this, X command will remove the last point")
 
+    nurbs_out : BoolProperty(
+        name = "NURBS output",
+        description = "Output NURBS curves",
+        default = False,
+        update = updateNode)
+
+    concat_curves : BoolProperty(
+        name = "Concatenate",
+        description = "Concatenate curves",
+        default = False,
+        update = updateNode)
+
+    concat_tolerance : FloatProperty(
+        name = "Concat tolerance",
+        min = 0.0,
+        default = 0.0001,
+        precision = 6,
+        update = updateNode)
+
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, 'selected_axis', expand=True)
@@ -472,6 +493,12 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.draw_buttons(context, layout)
 
         layout.prop(self, "close_threshold")
+
+        layout.label(text='Curves output settings')
+        layout.prop(self, 'nurbs_out', toggle=True)
+        layout.prop(self, 'concat_curves', toggle=True)
+        if self.concat_curves:
+            layout.prop(self, 'concat_tolerance')
 
         layout.label(text="Profile Generator settings")
         layout.prop(self, "precision")
@@ -573,6 +600,21 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             extend = lambda v: (v[0], v[1], 0)
         return list(map(extend, verts))
 
+    def group_curves(self, curves):
+        result = [[curves[0]]]
+        tolerance = self.concat_tolerance
+        for curve1, curve2 in zip(curves, curves[1:]):
+            _, t_max_1 = curve1.get_u_bounds()
+            t_min_2, _ = curve2.get_u_bounds()
+            end1 = curve1.evaluate(t_max_1)
+            begin2 = curve2.evaluate(t_min_2)
+            distance = np.linalg.norm(begin2 - end1)
+            if distance > tolerance:
+                result.append([curve2])
+            else:
+                result[-1].append(curve2)
+        return result
+
     def process(self):
         if not any(o.is_linked for o in self.outputs):
             return
@@ -615,7 +657,10 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         for values in zip(*parameters):
             variables = dict(zip(var_names, values))
-            interpreter = Interpreter(self, input_names)
+            curves_form = Interpreter.NURBS if self.nurbs_out else None
+            interpreter = Interpreter(self, input_names,
+                            curves_form=curves_form,
+                            z_axis=self.selected_axis)
             interpreter.interpret(profile, variables)
             verts = self.extend_out_verts(interpreter.vertices)
             result_vertices.append(verts)
@@ -623,7 +668,17 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             knots = self.extend_out_verts(interpreter.knots)
             result_knots.append(knots)
             result_names.append([[name] for name in interpreter.knotnames])
-            result_curves.append(interpreter.curves)
+            all_curves = interpreter.curves
+            if self.concat_curves:
+                new_curves = []
+                for curves in self.group_curves(all_curves):
+                    if self.nurbs_out:
+                        curves = unify_curves_degree(curves)
+                    curve = concatenate_curves(curves)
+                    new_curves.append(curve)
+                result_curves.append(new_curves)
+            else:
+                result_curves.append(all_curves)
 
         self.outputs['Vertices'].sv_set(result_vertices)
         self.outputs['Edges'].sv_set(result_edges)

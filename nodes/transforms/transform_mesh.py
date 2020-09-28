@@ -557,7 +557,7 @@ class SvTransformMesh(bpy.types.Node, SverchCustomTreeNode):
             row = col.row()
             row.prop(self, 'direction_mode', expand=True)
             if self.direction_mode == DIR_MODE.cust:
-                socket.draw_expander_template(context, col, self, 'direction')
+                socket.draw_property(col, self, 'direction')
 
     def process(self):
         if not self.inputs['Verts'].is_linked:

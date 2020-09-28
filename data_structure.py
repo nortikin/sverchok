@@ -15,7 +15,8 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-
+from contextlib import contextmanager
+from functools import wraps
 from math import radians, ceil
 import itertools
 import ast
@@ -31,7 +32,7 @@ from numpy import (
     concatenate as np_concatenate,
     tile as np_tile,
     float64,
-    int32)
+    int32, int64)
 from sverchok.utils.logging import info
 from sverchok.core.events import CurrentEvents, BlenderEventsTypes
 
@@ -468,7 +469,7 @@ def levels_of_list_or_np(lst):
         return level
     return 0
 
-SIMPLE_DATA_TYPES = (float, int, float64, int32, str)
+SIMPLE_DATA_TYPES = (float, int, float64, int32, int64, str)
 
 def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
     """
@@ -624,7 +625,7 @@ def describe_data_shape(data):
     nesting, result = helper(data)
     return "Level {}: {}".format(nesting, result)
 
-def describe_data_structure(data, data_types=(float, int, int32, float64, str)):
+def describe_data_structure(data, data_types=SIMPLE_DATA_TYPES):
     if isinstance(data, data_types):
         return "*"
     elif isinstance(data, (list, tuple)):
@@ -708,6 +709,27 @@ def partition(p, lst):
         else:
             bad.append(item)
     return good, bad
+
+def map_recursive(fn, data, data_types=SIMPLE_DATA_TYPES):
+    def helper(data, level):
+        if isinstance(data, data_types):
+            return fn(data)
+        elif isinstance(data, (list, tuple)):
+            return [helper(item, level+1) for item in data]
+        else:
+            raise TypeError(f"Encountered unknown data of type {type(data)} at nesting level #{level}")
+    return helper(data, 0)
+
+def map_unzip_recursirve(fn, data, data_types=SIMPLE_DATA_TYPES):
+    def helper(data, level):
+        if isinstance(data, data_types):
+            return fn(data)
+        elif isinstance(data, (list, tuple)):
+            results = [helper(item, level+1) for item in data]
+            return transpose_list(results)
+        else:
+            raise TypeError(f"Encountered unknown data of type {type(data)} at nesting level #{level}")
+    return helper(data, 0)
 
 #####################################################
 ################### matrix magic ####################
@@ -879,6 +901,14 @@ def sv_lambda(**kwargs):
     return dummy
 
 
+class classproperty:
+    """https://stackoverflow.com/a/13624858/10032221"""
+    def __init__(self, fget):
+        self.fget = fget
+
+    def __get__(self, owner_self, owner_cls):
+        return self.fget(owner_cls)
+
 
 #####################################################
 ############### debug settings magic ################
@@ -953,6 +983,50 @@ def updateNode(self, context):
     """
     CurrentEvents.new_event(BlenderEventsTypes.node_property_update, self)
     self.process_node(context)
+
+
+def update_with_kwargs(update_function, **kwargs):
+    """
+    You can wrap property update function for adding extra key arguments to it, like this:
+
+    def update_prop(self, context, extra_arg=None):
+        print(extra_arg)
+
+    node_prop_name: bpy.props.BoolProperty(update=update_with_kwargs(update_prop, extra_arg='node_prop_name'))
+    """
+
+    # https://docs.python.org/3/library/functools.html#functools.partial
+    @wraps(update_function)
+    def handel_update_call(node, context):
+        update_function(node, context, **handel_update_call.extra_args)
+
+    handel_update_call.extra_args = dict()
+    for attr_name, data in kwargs.items():
+        handel_update_call.extra_args[attr_name] = data
+
+    return handel_update_call
+
+
+@contextmanager
+def throttle_tree_update(node):
+    """ usage
+    from sverchok.node_tree import throttle_tree_update
+
+    inside your node, f.ex inside a wrapped_update that creates a socket
+
+    def wrapped_update(self, context):
+        with throttle_tree_update(self):
+            self.inputs.new(...)
+            self.outputs.new(...)
+
+    that's it.
+
+    """
+    try:
+        node.id_data.skip_tree_update = True
+        yield node
+    finally:
+        node.id_data.skip_tree_update = False
 
 
 ##############################################################

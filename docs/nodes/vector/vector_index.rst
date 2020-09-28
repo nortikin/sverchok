@@ -24,6 +24,7 @@ Vector
    vector_polar_out
    vertices_delete_doubles
    vertices_sort
+   quad_grid
    variable_lacunarity
    turbulence
    color_input

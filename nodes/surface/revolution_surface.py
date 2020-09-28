@@ -47,10 +47,10 @@ class SvRevolutionSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvCurveSocket', "Profile")
         p = self.inputs.new('SvVerticesSocket', "Point")
         p.use_prop = True
-        p.prop = (0.0, 0.0, 0.0)
+        p.default_property = (0.0, 0.0, 0.0)
         p = self.inputs.new('SvVerticesSocket', "Direction")
         p.use_prop = True
-        p.prop = (0.0, 0.0, 1.0)
+        p.default_property = (0.0, 0.0, 1.0)
         self.inputs.new('SvStringsSocket', 'AngleFrom').prop_name = 'v_min'
         self.inputs.new('SvStringsSocket', 'AngleTo').prop_name = 'v_max'
         self.outputs.new('SvSurfaceSocket', "Surface")
@@ -81,8 +81,10 @@ class SvRevolutionSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         for curves, points, directions, v_mins, v_maxs in zip_long_repeat(curve_s, point_s, direction_s, v_min_s, v_max_s):
             for curve, point, direction, v_min, v_max in zip_long_repeat(curves, points, directions, v_mins, v_maxs):
                 origin = self.origin == 'GLOBAL'
-                surface = SvRevolutionSurface(curve, np.array(point), np.array(direction), global_origin=origin)
-                surface.v_bounds = (v_min, v_max)
+                surface = SvRevolutionSurface.build(curve,
+                                np.array(point), np.array(direction),
+                                v_min, v_max,
+                                global_origin=origin)
                 surface_out.append(surface)
 
         self.outputs['Surface'].sv_set(surface_out)

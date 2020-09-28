@@ -27,6 +27,7 @@ from itertools import chain
 
 import bpy
 
+from sverchok.core.update_system import build_update_list, get_update_lists
 from sverchok import old_nodes
 from sverchok.utils import dummy_nodes
 from sverchok.utils.sv_IO_monad_helpers import pack_monad, unpack_monad
@@ -155,30 +156,29 @@ def collect_custom_socket_properties(node, node_dict):
     input_socket_storage = {}
     for socket in node.inputs:
 
-        # print("Socket %d of %d" % (socket.index + 1, len(node.inputs)))
-
-        storable = {}
-        tracked_props = 'use_expander', 'use_quicklink', 'expanded', 'use_prop'
-
-        for tracked_prop_name in tracked_props:
-            if not hasattr(socket, tracked_prop_name):
+        filtered_properties = dict()
+        for prop_name in socket.keys():
+            # Don't use socket.items() because enum property value will be index instead of string
+            if prop_name in socket.properties_to_skip_iojson:
+                # socket itself know which property useless to memorize
                 continue
+            if hasattr(socket, prop_name):
+                # Some old files can have nodes with sockets with keys which do not exist anymore
+                # such keys can be ignored
+                socket_type = socket.bl_rna.properties[prop_name].type
+                if socket_type == 'POINTER':
+                    # This original behavior before socket refactoring
+                    continue  # todo definitely should be something better
+                value = getattr(socket, prop_name)
+                default_value = socket.bl_rna.properties[prop_name].default
+                if value != default_value:
+                    if hasattr(value, '__len__'):
+                        # it looks like as some BLender property array - convert to tuple
+                        value = value[:]
+                    filtered_properties[prop_name] = value
 
-            value = getattr(socket, tracked_prop_name)
-            default_value = socket.bl_rna.properties[tracked_prop_name].default
-            # property value same as default ? => don't store it
-            if value == default_value:
-                continue
-
-            # print("Processing custom property: ", tracked_prop_name, " value = ", value)
-            storable[tracked_prop_name] = value
-
-            if tracked_prop_name == 'use_prop' and value:
-                # print("prop type:", type(socket.prop))
-                storable['prop'] = socket.prop[:]
-
-        if storable:
-            input_socket_storage[socket.index] = storable
+        if filtered_properties:
+            input_socket_storage[socket.index] = filtered_properties
 
     if input_socket_storage:
         node_dict['custom_socket_props'] = input_socket_storage
@@ -388,9 +388,9 @@ def create_dict_of_tree(ng, skip_set={}, selected=False, identified_node=None, s
     # try/except for now, node tree links might be invalid
     # among other things. auto rebuild on F8
     try:
-        ng.build_update_list()
+        build_update_list(ng)
         links_out = []
-        for name in chain(*ng.get_update_lists()[0]):
+        for name in chain(*get_update_lists(ng)[0]):
             for socket in ng.nodes[name].inputs:
                 if selected and not ng.nodes[name].select:
                     continue
@@ -674,20 +674,17 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
 
 
 def add_nodes(ng, nodes_to_import, nodes, create_texts):
-    '''
+    """
     return the dictionary that tracks which nodes got renamed due to conflicts.
-    setting 'ng.limited_init' supresses any custom defaults associated with nodes in the json.
-    '''
+    """
     name_remap = {}
-    ng.limited_init = True
-    # ng.skip_tree_update = True
+
     try:
         for n in sorted(nodes_to_import):
             add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts)
     except Exception as err:
         exception(err)
-    # ng.skip_tree_update = False
-    ng.limited_init = False
+
     return name_remap
 
 
@@ -732,7 +729,10 @@ def center_nodes(nodes_json_dict, target_center=None):
     average_location = [x / float(n) for x in location_sum]
     for key in nodes_json_dict:
         node = nodes_json_dict[key]
-        node['location'] = [x - x0 + x1 for x, x0, x1 in zip(node['location'], average_location, target_center)]
+        loc = node['location']
+        new_loc = [x - x0 + x1 for x, x0, x1 in zip(loc, average_location, target_center)]
+        node['location'] = new_loc
+        nodes_json_dict[key] = node
 
 def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None):
 

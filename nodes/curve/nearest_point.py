@@ -66,15 +66,31 @@ else:
             default = True,
             update = updateNode)
 
+        solvers = [
+                ('Brent', "Brent", "Uses inverse parabolic interpolation when possible to speed up convergence of golden section method", 0),
+                ('Bounded', "Bounded", "Uses the Brent method to find a local minimum in the interval", 1),
+                ('Golden', 'Golden Section', "Uses the golden section search technique", 2)
+            ]
+
+        method : EnumProperty(
+            name = "Method",
+            description = "Solver method to use; select the one which works for your case",
+            items = solvers,
+            default = 'Brent',
+            update = updateNode)
+
         def draw_buttons(self, context, layout):
             layout.prop(self, 'samples')
             layout.prop(self, 'precise', toggle=True)
+
+        def draw_buttons_ext(self, context, layout):
+            layout.prop(self, 'method')
 
         def sv_init(self, context):
             self.inputs.new('SvCurveSocket', "Curve")
             p = self.inputs.new('SvVerticesSocket', "Point")
             p.use_prop = True
-            p.prop = (0.0, 0.0, 0.0)
+            p.default_property = (0.0, 0.0, 0.0)
             self.outputs.new('SvVerticesSocket', "Point")
             self.outputs.new('SvStringsSocket', "T")
 
@@ -117,7 +133,7 @@ else:
                             result = minimize_scalar(goal(curve, src_point),
                                         bounds = (t_min, t_max),
                                         bracket = bracket,
-                                        method = 'Brent'
+                                        method = self.method
                                     )
                             if not result.success:
                                 if hasattr(result, 'message'):
@@ -126,6 +142,10 @@ else:
                                     message = repr(result)
                                 raise Exception("Can't find the nearest point for {}: {}".format(src_point, message))
                             t0 = result.x
+                            if t0 < t_min:
+                                t0 = t_min
+                            elif t0 > t_max:
+                                t0 = t_max
                         else:
                             t0 = init_t
                             new_points.append(init_point)

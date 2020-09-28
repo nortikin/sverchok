@@ -93,6 +93,28 @@
       },
       "width": 140.0
     },
+    "Mesh viewer": {
+      "bl_idname": "SvMeshViewer",
+      "collection": "",
+      "color": [
+        1.0,
+        0.5889999866485596,
+        0.21400000154972076
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        904.3076171875,
+        291.5682678222656
+      ],
+      "params": {
+        "base_data_name": "Alpha",
+        "is_smooth_mesh": 1
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
     "Regular Solid": {
       "bl_idname": "SvRegularSolid",
       "height": 100.0,
@@ -105,48 +127,6 @@
       "params": {
         "source": "12"
       },
-      "width": 140.0
-    },
-    "Viewer BMesh": {
-      "bl_idname": "SvBmeshViewerNodeV28",
-      "color": [
-        1.0,
-        0.30000001192092896,
-        0.0
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        904.3076171875,
-        291.5682678222656
-      ],
-      "params": {
-        "autosmooth": 1,
-        "lp": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ]
-      },
-      "use_custom_color": true,
       "width": 140.0
     }
   },
@@ -238,13 +218,13 @@
     [
       "Inset faces.003",
       0,
-      "Viewer BMesh",
+      "Mesh viewer",
       0
     ],
     [
       "Inset faces.003",
       2,
-      "Viewer BMesh",
+      "Mesh viewer",
       2
     ]
   ]

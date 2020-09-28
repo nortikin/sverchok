@@ -6,6 +6,8 @@
 # License-Filename: LICENSE
 
 import os
+import json
+
 import bpy
 import bmesh
 from bpy.props import (
@@ -17,6 +19,7 @@ from bpy.types import (
         Operator,
         OperatorFileListElement,
         )
+
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.modules import sv_bmesh
@@ -71,6 +74,8 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
         subtype='DIR_PATH',
         update=updateNode)
 
+    properties_to_skip_iojson = ['files'] 
+
     def sv_init(self, context):
 
         self.outputs.new('SvFilePathSocket', "File Path")
@@ -109,8 +114,29 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
         for file_elem in self.files:
             filepath = os.path.join(directory, file_elem.name)
             files.append(filepath)
-        self.outputs['File Path'].sv_set(files)
+        self.outputs['File Path'].sv_set([files])
 
+    # iojson stuff
+
+    def storage_set_data(self, storage):
+        '''function to get data when importing from json''' 
+
+        strings_json = storage['string_storage']
+        filenames = json.loads(strings_json)['filenames']
+        directory = json.loads(strings_json)['directory']
+        
+        self.id_data.freeze(hard=True)
+        self.set_data(directory, filenames)
+        self.id_data.unfreeze(hard=True)
+
+    def storage_get_data(self, node_dict):
+        '''function to set data for exporting json''' 
+
+        local_storage = {
+            'filenames': [{"name": file_elem.name} for file_elem in self.files], 
+            'directory': self.directory
+        }
+        node_dict['string_storage'] = json.dumps(local_storage)
 
 
 classes = [SvFilePathNode, SvFilePathFinder]

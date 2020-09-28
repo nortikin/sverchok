@@ -48,10 +48,11 @@ default_fragment_shader = '''
     uniform float brightness;
 
     in vec3 pos;
+    out vec4 FragColor;
 
     void main()
     {
-        gl_FragColor = vec4(pos * brightness, 1.0);
+        FragColor = vec4(pos * brightness, 1.0);
     }
 '''
 
@@ -358,17 +359,6 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     u_gap_size: FloatProperty(default=0.19, min=0.0001, name="gap size", update=updateNode)
     u_resolution: FloatVectorProperty(default=(25.0, 18.0), size=2, min=0.01, name="resolution", update=updateNode)
 
-
-    @staticmethod
-    def draw_basic_attr_qlink(socket, context, layout, node):
-        visible_socket_index = socket.infer_visible_location_of_socket(node)
-        op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
-        op.socket_index = socket.index
-        op.origin = node.name
-        op.new_node_idname = "SvVDAttrsNode"
-        op.new_node_offsetx = -200 - 40 * visible_socket_index
-        op.new_node_offsety = -30 * visible_socket_index
-
     def configureAttrSocket(self, context):
         self.inputs['attrs'].hide_safe = not self.node_ui_show_attrs_socket
 
@@ -383,7 +373,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
         attr_socket = inew('SvStringsSocket', 'attrs')
         attr_socket.hide = True
-        attr_socket.quicklink_func_name = "draw_basic_attr_qlink"
+        attr_socket.quick_link_to_node = "SvVDAttrsNode"
 
         self.node_dict[hash(self)] = {}
 
@@ -573,9 +563,12 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             data = self.get_data()
             if len(data[0]) > 1:
                 coords, edge_indices, face_indices = mesh_join(data[0], data[1], data[2])
-            else:
+                if not coords:
+                    return
+            elif len(data[0][0]) > 0:
                 coords, edge_indices, face_indices = [d[0].tolist() if type(d[0]) == ndarray else d[0] for d in data[:3]]
-
+            else:
+                return
             geom = lambda: None
             geom.verts = coords
 
@@ -643,6 +636,17 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_free(self):
         callback_disable(node_id(self))
+
+    def show_viewport(self, is_show: bool):
+        """It should be called by node tree to show/hide objects"""
+        if not self.activate:
+            # just ignore request
+            pass
+        else:
+            if is_show:
+                self.process()
+            else:
+                callback_disable(node_id(self))
 
 
 classes = [SvVDExperimental]

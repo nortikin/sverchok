@@ -53,7 +53,7 @@
     SvPentagonTilerNode
     SvSpiralNodeMK2
 
-## Curves
+## Curves @ Primitives
     SvExLineCurveNode
     SvExCircleNode
     SvEllipseCurveNode
@@ -61,26 +61,40 @@
     SvArc3ptCurveNode
     SvArcSedCurveNode
     SvExCatenaryCurveNode
-    SvPolyArcNode
-    SvExCurveFormulaNode
+    SvFreeCadHelixNode
+    ---
     SvExPolylineNode
     SvExFilletPolylineNode
-    SvExCubicSplineNode
-    SvBezierSplineNode
-    SvExNurbsCurveNode
     SvKinkyCurveNode
+    SvBiArcNode
+    SvPolyArcNode
+
+## Curves @ NURBS
+    SvExNurbsCurveNode
+    SvExApproxNurbsCurveNode
+    SvExInterpolateNurbsCurveNode
+    SvDeconstructCurveNode
+
+## Curves @ Bezier
+    SvBezierSplineNode
+    SvExBezierCurveFitNode
+
+## Curves
+    @ Primitives
+    SvExCurveFormulaNode
+    SvExCubicSplineNode
     SvTangentsCurveNode
     SvExRbfCurveNode
     SvExCirclifyNode
+    @ Bezier
+    @ NURBS
     ---
-    SvExApproxNurbsCurveNode
-    SvExInterpolateNurbsCurveNode
-    SvExBezierCurveFitNode
     SvExMarchingSquaresNode
     SvExMSquaresOnSurfaceNode
     ---
     SvExApplyFieldToCurveNode
     SvExCastCurveNode
+    SvProjectCurveSurfaceNode
     SvOffsetCurveMk2Node
     SvCurveOffsetOnSurfaceNode
     SvExIsoUvCurveNode
@@ -88,7 +102,7 @@
     ---
     SvExCurveLerpCurveNode
     SvExConcatCurvesNode
-    SvExBlendCurvesNode
+    SvExBlendCurvesMk2Node
     SvExFlipCurveNode
     SvReparametrizeCurveNode
     SvExSurfaceBoundaryNode
@@ -115,18 +129,24 @@
     ---
     SvExEvalCurveNode
 
+## Surfaces @ NURBS
+    SvExNurbsSurfaceNode
+    SvExApproxNurbsSurfaceNode
+    SvExInterpolateNurbsSurfaceNode
+    SvNurbsLoftNode
+    SvNurbsSweepNode
+    SvDeconstructSurfaceNode
+    ---
+    SvExQuadsToNurbsNode
+
 ## Surfaces
     SvExPlaneSurfaceNode
     SvExSphereNode
     SvExSurfaceFormulaNode
     SvInterpolatingSurfaceNode
-    SvExNurbsSurfaceNode
     SvExMinimalSurfaceNode
     SvExMinSurfaceFromCurveNode
-    ---
-    SvExApproxNurbsSurfaceNode
-    SvExInterpolateNurbsSurfaceNode
-    SvExQuadsToNurbsNode
+    @ NURBS
     ---
     SvExRevolutionSurfaceNode
     SvExTaperSweepSurfaceNode
@@ -192,18 +212,42 @@
     SvExVectorFieldLinesNode
     SvExScalarFieldGraphNode
 
+## Solids @ Make Face
+    SvSolidPolygonFaceNode
+    SvSolidWireFaceNode
+    SvProjectTrimFaceNode
+
+## Solids @ Analyze
+   SvSolidValidateNode
+   SvRefineSolidNode
+   SvIsSolidClosedNode
+   SvSolidCenterOfMassNode
+   SvSolidFaceAreaNode
+   SvSolidAreaNode
+   SvSolidVolumeNode
+
 ## Solids
    SvBoxSolidNode
    SvCylinderSolidNode
    SvConeSolidNode
    SvSphereSolidNode
    SvToursSolidNode
+   @ Make Face
    SvTransformSolidNode
    SvChamferSolidNode
    SvFilletSolidNode
    SvSolidBooleanNode
+   SvSolidGeneralFuseNode
    SvMirrorSolidNode
    SvOffsetSolidNode
+   SvSolidFromFacesNode
+   SvRuledSolidNode
+   SvSolidFaceExtrudeNode
+   SvSolidFaceSolidifyNode
+   SvSolidFaceRevolveNode
+   SvSweepSolidFaceNode
+   SvSplitSolidNode
+   SvHollowSolidNode
    SvIsInsideSolidNode
    SvSolidDistanceNode
    SvSliceSolidNode
@@ -212,6 +256,8 @@
    SvSolidVerticesNode
    SvSolidEdgesNode
    SvSolidFacesNode
+   SvSelectSolidNode
+   @ Analyze
    SvSolidViewerNode
 
 ## Analyzers
@@ -308,6 +354,7 @@
     SvRigidOrigamiNode
     ---
     SvFollowActiveQuads
+    SvFlatGeometryNode
 
 ## Modifier Make
     LineConnectNodeMK2
@@ -354,6 +401,7 @@
     SvVDAttrsNode
     SvPolygonSortNode
     SvFindClosestValue
+    SvMultiCacheNode
 
 ## List Main
     ListJoinNode
@@ -434,6 +482,7 @@
     SvVectorRewire
     ---
     SvVertSortNode
+    SvQuadGridSortVertsNode
     VectorDropNode
     VectorPolarInNode
     VectorPolarOutNode
@@ -490,7 +539,7 @@
     SvIDXViewer28
     SvViewer2D
     ---
-    SvBmeshViewerNodeV28
+    SvMeshViewer
     SvCurveViewerNodeV28
     SvPolylineViewerNodeV28
     SvTypeViewerNodeV28
@@ -498,6 +547,8 @@
     SvMetaballOutNode
     SvNurbsCurveOutNode
     SvNurbsSurfaceOutNode
+    SvInstancerNodeMK3
+    SvLightViewerNode
     ---
     SvGreasePencilStrokes
     SvEmptyOutNode
@@ -548,10 +599,7 @@
     SvFrameInfoNodeMK2
     SvTimerNode
     ---
-    SvInstancerNode
-    SvInstancerNodeMK2
     SvDupliInstancesMK4
-    SvLampOutNode
 
 ## Objects
     SvVertexGroupNodeMK2
@@ -579,6 +627,17 @@
     WifiOutNode
     NodeReroute
     ConverterNode
+
+## SVG
+    SvSvgDocumentNode
+    SvSvgCircleNode
+    SvSvgPathNodeMk2
+    SvSvgMeshNode
+    SvSvgTextNode
+    SvSvgDimensionNode
+    SvSvgGroupNode
+    SvSvgFillStrokeNodeMk2
+    SvSvgPatternNode
 
 ## Beta Nodes
     SvFormulaShapeNode

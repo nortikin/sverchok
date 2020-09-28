@@ -13,8 +13,8 @@ else:
     from sverchok.data_structure import updateNode, match_long_repeat as mlr
     from FreeCAD import Base
     import Part
-    from sverchok.utils.curve import SvSolidEdgeCurve
-    from sverchok.utils.surface import SvSolidFaceSurface
+    from sverchok.utils.curve.freecad import SvSolidEdgeCurve
+    from sverchok.utils.surface.freecad import SvSolidFaceSurface
 
     class SvSliceSolidNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -69,7 +69,7 @@ else:
 
                 if wires:
                     face = Part.Face(wires)
-                    faces.append(SvSolidFaceSurface(face))
+                    faces.append(SvSolidFaceSurface(face).to_nurbs())
                 if faces:
                     faces_add(faces)
                 if edges_curves:
@@ -78,8 +78,6 @@ else:
             self.outputs['Edges'].sv_set(slices)
             self.outputs['Faces'].sv_set(slices_face)
 
-
-
 def register():
     if FreeCAD is not None:
         bpy.utils.register_class(SvSliceSolidNode)
@@ -87,3 +85,4 @@ def register():
 def unregister():
     if FreeCAD is not None:
         bpy.utils.unregister_class(SvSliceSolidNode)
+

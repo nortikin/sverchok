@@ -14,8 +14,12 @@ from mathutils import Matrix, Vector
 from sverchok.utils.math import (
         ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL
     )
-from sverchok.utils.geom import LineEquation, rotate_vector_around_vector, autorotate_householder, autorotate_track, autorotate_diff
-from sverchok.utils.curve.core import SvFlipCurve
+from sverchok.utils.geom import (
+        LineEquation, CircleEquation3D,
+        rotate_vector_around_vector, rotate_vector_around_vector_np,
+        autorotate_householder, autorotate_track, autorotate_diff
+    )
+from sverchok.utils.curve.core import SvFlipCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve.algorithms import (
             SvNormalTrack, curve_frame_on_surface_array,
@@ -23,35 +27,9 @@ from sverchok.utils.curve.algorithms import (
             reparametrize_curve
         )
 from sverchok.utils.surface.core import SvSurface
+from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.data import *
-
-def rotate_vector_around_vector_np(v, k, theta):
-    """
-    Rotate vector v around vector k by theta angle.
-    input: v, k - np.array of shape (3,); theta - float, in radians.
-    output: np.array.
-
-    This implements Rodrigues' formula: https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
-    """
-    if not isinstance(v, np.ndarray):
-        v = np.array(v)
-    if not isinstance(k, np.ndarray):
-        k = np.array(k)
-    if k.ndim == 1:
-        k = k[np.newaxis]
-    k = k / np.linalg.norm(k, axis=1)
-
-    if isinstance(theta, np.ndarray):
-        ct, st = np.cos(theta)[np.newaxis].T, np.sin(theta)[np.newaxis].T
-    else:
-        ct, st = cos(theta), sin(theta)
-
-    s1 = ct * v
-    s2 = st * np.cross(k, v)
-    p1 = 1.0 - ct
-    p2 = np.apply_along_axis(lambda vi : k.dot(vi), 1, v)
-    s3 = p1 * p2 * k
-    return s1 + s2 + s3
+from sverchok.utils.logging import info, debug
 
 class SvInterpolatingSurface(SvSurface):
     __description__ = "Interpolating"
@@ -192,15 +170,35 @@ class SvInterpolatingSurface(SvSurface):
             for v_spline in self.v_splines:
                 v_min, v_max = v_spline.get_u_bounds()
                 vx = (v_max - v_min) * v + v_min
-                point = v_spline.evaluate(vx)
-                point_h = v_spline.evaluate(vx + h)
+                if vx +h <= v_max:
+                    point = v_spline.evaluate(vx)
+                    point_h = v_spline.evaluate(vx + h)
+                else:
+                    point = v_spline.evaluate(vx - h)
+                    point_h = v_spline.evaluate(vx)
                 spline_vertices.append(point)
                 spline_vertices_h.append(point_h)
-            u_spline = self.get_u_spline(v, spline_vertices)
-            u_spline_h = self.get_u_spline(v+h, spline_vertices_h)
-            points = u_spline.evaluate_array(us_by_v)
+            if v+h <= v_max:
+                u_spline = self.get_u_spline(v, spline_vertices)
+                u_spline_h = self.get_u_spline(v+h, spline_vertices_h)
+            else:
+                u_spline = self.get_u_spline(v-h, spline_vertices)
+                u_spline_h = self.get_u_spline(v, spline_vertices_h)
+            u_min, u_max = 0.0, 1.0
+
+            good_us = us_by_v + h < u_max
+            bad_us = np.logical_not(good_us)
+
+            good_points = np.broadcast_to(good_us[np.newaxis].T, (len(us_by_v), 3)).flatten()
+            bad_points = np.logical_not(good_points)
+            points = np.empty((len(us_by_v), 3))
+            points[good_us] = u_spline.evaluate_array(us_by_v[good_us])
+            points[bad_us] = u_spline.evaluate_array(us_by_v[bad_us] - h)
+            points_u_h = np.empty((len(us_by_v), 3))
+            points_u_h[good_us] = u_spline.evaluate_array(us_by_v[good_us] + h)
+            points_u_h[bad_us] = u_spline.evaluate_array(us_by_v[bad_us])
             points_v_h = u_spline_h.evaluate_array(us_by_v)
-            points_u_h = u_spline.evaluate_array(us_by_v + h)
+
             dvs = (points_v_h - points) / h
             dus = (points_u_h - points) / h
             normals = np.cross(dus, dvs)
@@ -320,6 +318,17 @@ class SvRevolutionSurface(SvSurface):
         self.normal_delta = 0.001
         self.v_bounds = (0.0, 2*pi)
 
+    @classmethod
+    def build(cls, curve, point, direction, v_min=0, v_max=2*pi, global_origin=True):
+        if hasattr(curve, 'make_revolution_surface'):
+            try:
+                return curve.make_revolution_surface(point, direction, v_min, v_max, global_origin)
+            except UnsupportedCurveTypeException:
+                pass
+        surface = SvRevolutionSurface(curve, point, direction, global_origin)
+        surface.v_bounds = (v_min, v_max)
+        return surface
+
     def evaluate(self, u, v):
         point_on_curve = self.curve.evaluate(u)
         dv = point_on_curve - self.point
@@ -358,9 +367,11 @@ class SvExtrudeCurveVectorSurface(SvSurface):
     @classmethod
     def build(cls, curve, vector):
         if hasattr(curve, 'extrude_along_vector'):
-            return curve.extrude_along_vector(vector)
-        else:
-            return SvExtrudeCurveVectorSurface(curve, vector)
+            try:
+                return curve.extrude_along_vector(vector)
+            except UnsupportedCurveTypeException:
+                pass
+        return SvExtrudeCurveVectorSurface(curve, vector)
 
     def evaluate(self, u, v):
         point_on_curve = self.curve.evaluate(u)
@@ -397,6 +408,15 @@ class SvExtrudeCurvePointSurface(SvSurface):
         self.point = point
         self.normal_delta = 0.001
         self.__description__ = "Extrusion of {}".format(curve)
+
+    @staticmethod
+    def build(curve, point):
+        if hasattr(curve, 'extrude_to_point'):
+            try:
+                return curve.extrude_to_point(point)
+            except UnsupportedCurveTypeException:
+                pass
+        return SvExtrudeCurvePointSurface(curve, point)
 
     def evaluate(self, u, v):
         point_on_curve = self.curve.evaluate(u)
@@ -827,10 +847,11 @@ class SvCurveLerpSurface(SvSurface):
         if hasattr(curve1, 'make_ruled_surface'):
             try:
                 return curve1.make_ruled_surface(curve2, vmin, vmax)
-            except TypeError:
+            except TypeError as e:
                 # make_ruled_surface method can raise TypeError in case
                 # it can't work with given curve2.
                 # In this case we must use generic method.
+                debug("Can't make a native ruled surface: %s", e)
                 pass
 
         # generic method
@@ -918,51 +939,6 @@ class SvSurfaceLerpSurface(SvSurface):
         k = self.coefficient
         points = (1.0 - k) * s1_points + k * s2_points
         return points
-
-class SvCoonsSurface(SvSurface):
-    __description__ = "Coons Patch"
-    def __init__(self, curve1, curve2, curve3, curve4):
-        self.curve1 = curve1
-        self.curve2 = curve2
-        self.curve3 = curve3
-        self.curve4 = curve4
-        self.linear1 = SvCurveLerpSurface(curve1, SvFlipCurve(curve3))
-        self.linear2 = SvCurveLerpSurface(curve2, SvFlipCurve(curve4))
-        self.c1_t_min, self.c1_t_max = curve1.get_u_bounds()
-        self.c3_t_min, self.c3_t_max = curve3.get_u_bounds()
-
-        self.corner1 = self.curve1.evaluate(self.c1_t_min)
-        self.corner2 = self.curve1.evaluate(self.c1_t_max)
-        self.corner3 = self.curve3.evaluate(self.c3_t_max)
-        self.corner4 = self.curve3.evaluate(self.c3_t_min)
-
-        self.normal_delta = 0.001
-    
-    def get_u_min(self):
-        return 0
-    
-    def get_u_max(self):
-        return 1
-    
-    def get_v_min(self):
-        return 0
-    
-    def get_v_max(self):
-        return 1
-
-    def _calc_b(self, u, v, is_array):
-        corner1, corner2, corner3, corner4 = self.corner1, self.corner2, self.corner3, self.corner4
-        if is_array:
-            u = u[np.newaxis].T
-            v = v[np.newaxis].T
-        b = (corner1 * (1 - u) * (1 - v) + corner2 * u * (1 - v) + corner3 * (1 - u) * v + corner4 * u * v)
-        return b
-    
-    def evaluate(self, u, v):    
-        return self.linear1.evaluate(u, v) + self.linear2.evaluate(v, 1-u) - self._calc_b(u, v, False)
-    
-    def evaluate_array(self, us, vs):
-        return self.linear1.evaluate_array(us, vs) + self.linear2.evaluate_array(vs, 1-us) - self._calc_b(us, vs, True)
 
 class SvTaperSweepSurface(SvSurface):
     __description__ = "Taper & Sweep"
@@ -1052,4 +1028,47 @@ class SvBlendSurface(SvSurface):
         c0, c1, c2, c3 = c0[:,np.newaxis], c1[:,np.newaxis], c2[:,np.newaxis], c3[:,np.newaxis]
 
         return c0*p0s + c1*p1s + c2*p2s + c3*p3s
+
+def nurbs_revolution_surface(curve, origin, axis, v_min=0, v_max=2*pi, global_origin=True):
+    my_control_points = curve.get_control_points()
+    my_weights = curve.get_weights()
+    control_points = []
+    weights = []
+
+    any_circle = SvCircle(Matrix(), 1)
+    any_circle.u_bounds = (v_min, v_max)
+    any_circle = any_circle.to_nurbs()
+    # all circles with given (v_min, v_max)
+    # actually always have the same knotvector
+    # and the same number of control points
+    n = len(any_circle.get_control_points())
+    circle_knotvector = any_circle.get_knotvector()
+    circle_weights = any_circle.get_weights()
+
+    # TODO: vectorize with numpy? Or better let it so for better readability?
+    for my_control_point, my_weight in zip(my_control_points, my_weights):
+        eq = CircleEquation3D.from_axis_point(origin, axis, my_control_point)
+        if abs(eq.radius) < 1e-8:
+            parallel_points = np.empty((n, 3))
+            parallel_points[:] = np.array(eq.center) #[np.newaxis].T
+        else:
+            circle = SvCircle.from_equation(eq)
+            circle.u_bounds = (v_min, v_max)
+            nurbs_circle = circle.to_nurbs()
+            parallel_points = nurbs_circle.get_control_points()
+        parallel_weights = circle_weights * my_weight
+        control_points.append(parallel_points)
+        weights.append(parallel_weights)
+    control_points = np.array(control_points)
+    if global_origin:
+        control_points = control_points - origin
+
+    weights = np.array(weights)
+    degree_u = curve.get_degree()
+    degree_v = 2 # circle
+
+    return SvNurbsSurface.build(curve.get_nurbs_implementation(),
+            degree_u, degree_v,
+            curve.get_knotvector(), circle_knotvector,
+            control_points, weights)
 

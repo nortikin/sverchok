@@ -96,7 +96,11 @@ class SvEvalCurveNode(bpy.types.Node, SverchCustomTreeNode):
                     else:
                         ts = np.array(ts)
 
-                    curve_verts = curve.evaluate_array(ts)
+                    if len(ts) == 1:
+                        v = curve.evaluate(ts[0])
+                        curve_verts = np.array([v])
+                    else:
+                        curve_verts = curve.evaluate_array(ts)
                     curve_verts = curve_verts.tolist()
                     n = len(ts)
                     curve_edges = [(i,i+1) for i in range(n-1)]

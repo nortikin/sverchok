@@ -12,7 +12,8 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvCurve, SvLine, SvFlipCurve
+from sverchok.utils.curve import SvCurve, SvLine
+from sverchok.utils.curve.algorithms import reverse_curve
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.surface.algorithms import SvBlendSurface
 
@@ -149,11 +150,11 @@ class SvBlendSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 if self.curve1_mode != 'USER':
                     curve1 = self.make_uv_curve(surface1, self.curve1_mode, self.flip1)
                 elif self.flip1:
-                    curve1 = SvFlipCurve(curve1)
+                    curve1 = reverse_curve(curve1)
                 if self.curve2_mode != 'USER':
                     curve2 = self.make_uv_curve(surface2, self.curve2_mode, self.flip2)
                 elif self.flip2:
-                    curve2 = SvFlipCurve(curve2)
+                    curve2 = reverse_curve(curve2)
 
                 surface = SvBlendSurface(surface1, surface2, curve1, curve2, bulge1, bulge2)
                 new_surfaces.append(surface)

@@ -14,13 +14,14 @@ from sverchok.utils.curve.core import (
         SvFlipCurve, SvConcatCurve,
         UnsupportedCurveTypeException
     )
-from sverchok.utils.nurbs_common import SvNurbsBasisFunctions
+from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
+from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.geom import PlaneEquation, LineEquation, Spline, LinearSpline, CubicSpline
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
 from sverchok.utils.math import (
     ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
-    NORMAL_DIR
+    NORMAL_DIR, NONE
 )
 from sverchok.utils.logging import info
 
@@ -224,6 +225,38 @@ class DifferentialRotationCalculator(object):
         else:
             raise Exception("Unsupported algorithm")
 
+class SvCurveFrameCalculator(object):
+    def __init__(self, curve, algorithm, z_axis=2, resolution=50, normal=None):
+        self.algorithm = algorithm
+        self.z_axis = z_axis
+        self.curve = curve
+        self.normal = normal
+        if algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            self.calculator = DifferentialRotationCalculator(curve, algorithm, resolution)
+
+    def get_matrix(self, tangent):
+        return MathutilsRotationCalculator.get_matrix(tangent, scale=1.0,
+                axis=self.z_axis,
+                algorithm = self.algorithm,
+                scale_all=False)
+
+    def get_matrices(self, ts):
+        if self.algorithm == NONE:
+            identity = np.eye(3)
+            n = len(ts)
+            return np.broadcast_to(identity, (n, 3,3))
+        elif self.algorithm == NORMAL_DIR:
+            matrices, _, _ = self.curve.frame_by_plane_array(ts, self.normal)
+            return matrices
+        elif self.algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            return self.calculator.get_matrices(ts)
+        elif self.algorithm in {HOUSEHOLDER, TRACK, DIFF}:
+            tangents = self.curve.tangent_array(ts)
+            matrices = np.vectorize(lambda t : self.get_matrix(t), signature='(3)->(3,3)')(tangents)
+            return matrices
+        else:
+            raise Exception("Unsupported algorithm")
+
 class SvDeformedByFieldCurve(SvCurve):
     def __init__(self, curve, field, coefficient=1.0):
         self.curve = curve
@@ -340,6 +373,15 @@ class SvCurveLerpCurve(SvCurve):
         self.c1_min, self.c1_max = curve1.get_u_bounds()
         self.c2_min, self.c2_max = curve2.get_u_bounds()
         self.tangent_delta = 0.001
+
+    @staticmethod
+    def build(curve1, curve2, coefficient):
+        if hasattr(curve1, 'lerp_to'):
+            try:
+                return curve1.lerp_to(curve2, coefficient)
+            except UnsupportedCurveTypeException:
+                pass
+        return SvCurveLerpCurve(curve1, curve2, coefficient)
 
     def get_u_bounds(self):
         return self.u_bounds
@@ -595,6 +637,15 @@ class SvIsoUvCurve(SvCurve):
         self.tangent_delta = 0.001
         self.__description__ = "{} at {} = {}".format(surface, fixed_axis, value)
 
+    @staticmethod
+    def take(surface, fixed_axis, value, flip=False):
+        if hasattr(surface, 'iso_curve'):
+            try:
+                return surface.iso_curve(fixed_axis, value, flip=flip)
+            except UnsupportedSurfaceTypeException:
+                pass
+        return SvIsoUvCurve(surface, fixed_axis, value, flip=flip)
+
     def get_u_bounds(self):
         if self.fixed_axis == 'U':
             return self.surface.get_v_min(), self.surface.get_v_max()
@@ -701,11 +752,41 @@ def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, on_zero_curvat
     matrices_np = np.linalg.inv(matrices_np)
     return matrices_np, surf_points, tangents, normals, binormals
 
-def concatenate_curves(curves, scale_to_unit=False):
+def unify_curves_degree(curves):
+    """
+    Make sure that all curves have the same degree, by
+    elevating degree where necessary.
+    Assumes all curves have get_degree() and elevate_degree() methods.
+    Can raise UnsupportedCurveTypeException if some degrees can not be elevated.
+
+    input: list of SvCurve
+    output: list of SvCurve
+    """
+
+    max_degree = max(curve.get_degree() for curve in curves)
+    curves = [curve.elevate_degree(target=max_degree) for curve in curves]
+    return curves
+
+def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
+    """
+    Concatenate a list of curves. When possible, use `concatenate` method of
+    curves to make a "native" concatenation - for example, make one Nurbs out of
+    several Nurbs.
+
+    inputs:
+    * curves: list of SvCurve
+    * scale_to_unit: if specified, reparametrize each curve to [0; 1] before concatenation.
+    * allow_generic: what to do it it is not possible to concatenate curves natively:
+        True - use generic SvConcatCurve
+        False - raise an Exeption.
+
+    output: SvCurve.
+    """
     if not curves:
         raise Exception("List of curves must be not empty")
     result = [curves[0]]
     some_native = False
+    exceptions = []
     for idx, curve in enumerate(curves[1:]):
         new_curve = None
         ok = False
@@ -719,6 +800,7 @@ def concatenate_curves(curves, scale_to_unit=False):
                 some_native = True
                 ok = True
             except UnsupportedCurveTypeException as e:
+                exceptions.append(e)
                 # "concatenate" method can't work with this type of curve
                 info("Can't natively join curve #%s (%s), will use generic method: %s", idx+1, curve, e)
                 # P.2: if some curves were already joined natively,
@@ -736,11 +818,15 @@ def concatenate_curves(curves, scale_to_unit=False):
     if len(result) == 1:
         return result[0]
     else:
-        # if any of curves were scaled while joining natively (at P.1),
-        # then all other were scaled at P.2;
-        # if no successfull joins were made, then we can rescale all curves
-        # at once.
-        return SvConcatCurve(result, scale_to_unit and not some_native)
+        if allow_generic:
+            # if any of curves were scaled while joining natively (at P.1),
+            # then all other were scaled at P.2;
+            # if no successfull joins were made, then we can rescale all curves
+            # at once.
+            return SvConcatCurve(result, scale_to_unit and not some_native)
+        else:
+            err_msg = "\n".join([str(e) for e in exceptions])
+            raise Exception(f"Could not join some curves natively. Result is: {result}.\nErrors were:\n{err_msg}")
 
 def reparametrize_curve(curve, new_t_min=0.0, new_t_max=1.0):
     t_min, t_max = curve.get_u_bounds()
@@ -795,36 +881,4 @@ def curve_segment(curve, new_t_min, new_t_max, rescale=False):
         return curve
     else:
         return SvCurveSegment(curve, new_t_min, new_t_max, rescale)
-
-def interpolate_nurbs_curve(cls, degree, points, metric='DISTANCE'):
-    n = len(points)
-    tknots = Spline.create_knots(points, metric=metric)
-    knotvector = sv_knotvector.from_tknots(degree, tknots)
-    functions = SvNurbsBasisFunctions(knotvector)
-    coeffs_by_row = [functions.function(idx, degree)(tknots) for idx in range(n)]
-    A = np.zeros((3*n, 3*n))
-    for equation_idx, t in enumerate(tknots):
-        for unknown_idx in range(n):
-            coeff = coeffs_by_row[unknown_idx][equation_idx]
-            row = 3*equation_idx
-            col = 3*unknown_idx
-            A[row,col] = A[row+1,col+1] = A[row+2,col+2] = coeff
-    B = np.zeros((3*n,1))
-    for point_idx, point in enumerate(points):
-        row = 3*point_idx
-        B[row:row+3] = point[:,np.newaxis]
-
-    x = np.linalg.solve(A, B)
-
-    control_points = []
-    for i in range(n):
-        row = i*3
-        control = x[row:row+3,0].T
-        control_points.append(control)
-    control_points = np.array(control_points)
-    weights = np.ones((n,))
-
-    return cls.build(cls.get_nurbs_implementation(),
-                degree, knotvector,
-                control_points, weights)
 

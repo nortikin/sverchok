@@ -163,14 +163,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if not self.halt_updates:
             updateNode(self, context)
 
-    int_list: IntVectorProperty(
-        name='int_list', description="Integer list",
-        default=defaults, size=32, update=updateNode2)
-
-    float_list: FloatVectorProperty(
-        name='float_list', description="Float list",
-        default=defaults, size=32, update=updateNode2)
-
     mode_options = [
         ("To_TextBlok", "To TextBlok", "", 0),
         ("To_Node", "To Node", "", 1),
@@ -212,40 +204,52 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         sockets = getattr(self, k)
 
         for idx, (socket_description) in enumerate(v):
+            """
+            Socket description at the moment of typing is list of: [
+            socket_type: str, 
+            socket_name: str, 
+            default: int value, float value or None,
+            nested: int]
+            """
+            default_value = socket_description[2]
+
             if socket_description is UNPARSABLE:
                 print(socket_description, idx, 'was unparsable')
                 return
 
             if len(sockets) > 0 and idx in set(range(len(sockets))):
                 if not are_matched(sockets[idx], socket_description):
-                    sockets[idx].replace_socket(*socket_description[:2])
+                    socket = sockets[idx].replace_socket(*socket_description[:2])
+                else:
+                    socket = sockets[idx]
             else:
-                sockets.new(*socket_description[:2])
+                socket = sockets.new(*socket_description[:2])
+
+            self.add_prop_to_socket(socket, default_value)
 
         return True
 
-
-    def add_props_to_sockets(self, socket_info):
+    def add_prop_to_socket(self, socket, default_value):
 
         self.id_data.freeze(hard=True)
         try:
             self.halt_updates = True
 
-            for idx, (socket_description) in enumerate(socket_info['inputs']):
-                dval = socket_description[2]
-                print(idx, socket_description)
+            if default_value:
+                if isinstance(default_value, float):
+                    socket.use_prop = True
+                    socket.default_property_type = 'float'
+                    socket.default_float_property = default_value
+                elif isinstance(default_value, int):
+                    socket.use_prop = True
+                    socket.default_property_type = 'int'
+                    socket.default_int_property = default_value
+                else:
+                    # unsupported type
+                    socket.use_prop = False
+            else:
+                socket.use_prop = False
 
-                s = self.inputs[idx]
-
-                if isinstance(dval, float):
-                    s.prop_type = "float_list"
-                    s.prop_index = idx
-                    self.float_list[idx] = self.float_list[idx] or dval  # pick up current if not zero
-
-                elif isinstance(dval, int):
-                    s.prop_type = "int_list"
-                    s.prop_index = idx
-                    self.int_list[idx] = self.int_list[idx] or dval
         except:
             print('some failure in the add_props_to_sockets function. ouch.')
 
@@ -275,8 +279,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 return
 
             self.flush_excess_sockets(k, v)
-
-        self.add_props_to_sockets(socket_info)
 
         self.node_dict[hash(self)] = {}
         self.node_dict[hash(self)]['sockets'] = socket_info
@@ -453,7 +455,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             lineno = traceback.extract_tb(exc_traceback)[-1][1]
             print('on line: ', lineno)
             show = traceback.print_exception
-            show(exc_type, exc_value, exc_traceback, limit=4, file=sys.stdout)
+            show(exc_type, exc_value, exc_traceback, limit=6, file=sys.stdout)
             if hasattr(self, "snlite_raise_exception") and self.snlite_raise_exception:
                 raise #   SNLITE_EXCEPTION(sys.exc_info()[2]) from err
 

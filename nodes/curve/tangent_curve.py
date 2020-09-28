@@ -29,9 +29,18 @@ class SvTangentsCurveNode(bpy.types.Node, SverchCustomTreeNode):
         default = False,
         update = updateNode)
 
+    make_nurbs : BoolProperty(
+        name = "NURBS output",
+        description = "Generate a NURBS curve",
+        default = False,
+        update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'cyclic', toggle=True)
         layout.prop(self, 'concat', toggle=True)
+
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'make_nurbs', toggle=True)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Points")
@@ -53,7 +62,8 @@ class SvTangentsCurveNode(bpy.types.Node, SverchCustomTreeNode):
         controls_out = []
         for points, tangents in zip_long_repeat(points_s, tangents_s):
             new_controls, new_curves = SvBezierCurve.build_tangent_curve(points, tangents,
-                                            cyclic = self.cyclic, concat = self.concat)
+                                            cyclic = self.cyclic, concat = self.concat,
+                                            as_nurbs = self.make_nurbs)
             curve_out.append(new_curves)
             controls_out.append(new_controls)
 

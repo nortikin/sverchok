@@ -73,7 +73,7 @@ class SvOffsetCurveNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Offset").prop_name = 'offset'
         p = self.inputs.new('SvVerticesSocket', "Vector")
         p.use_prop = True
-        p.prop = (0.1, 0.0, 0.0)
+        p.default_property = (0.1, 0.0, 0.0)
         self.inputs.new('SvStringsSocket', "Resolution").prop_name = 'resolution'
         self.outputs.new('SvCurveSocket', "Curve")
         self.update_sockets(context)

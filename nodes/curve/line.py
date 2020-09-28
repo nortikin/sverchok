@@ -39,22 +39,27 @@ class SvLineCurveNode(bpy.types.Node, SverchCustomTreeNode):
         default = 0.0,
         update = updateNode)
 
-
     u_max : FloatProperty(
         name = "U Max",
         default = 1.0,
         update = updateNode)
 
+    join : BoolProperty(
+        name = "Join",
+        description = "If checked, output single flat list of curves for all sets of inputs",
+        default = True,
+        update = updateNode)
+
     def sv_init(self, context):
         p = self.inputs.new('SvVerticesSocket', "Point1")
         p.use_prop = True
-        p.prop = (0.0, 0.0, 0.0)
+        p.default_property = (0.0, 0.0, 0.0)
         p = self.inputs.new('SvVerticesSocket', "Point2")
         p.use_prop = True
-        p.prop = (1.0, 0.0, 0.0)
+        p.default_property = (1.0, 0.0, 0.0)
         p = self.inputs.new('SvVerticesSocket', "Direction")
         p.use_prop = True
-        p.prop = (1.0, 0.0, 0.0)
+        p.default_property = (1.0, 0.0, 0.0)
         self.inputs.new('SvStringsSocket', "UMin").prop_name = 'u_min'
         self.inputs.new('SvStringsSocket', "UMax").prop_name = 'u_max'
         self.outputs.new('SvCurveSocket', "Curve")
@@ -62,6 +67,7 @@ class SvLineCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", text="")
+        layout.prop(self, 'join', toggle=True)
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -81,6 +87,7 @@ class SvLineCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
         curves_out = []
         for point1s, point2s, directions, u_mins, u_maxs in zip_long_repeat(point1_s, point2_s, direction_s, u_min_s, u_max_s):
+            new_curves = []
             for point1, point2, direction, u_min, u_max in zip_long_repeat(point1s, point2s, directions, u_mins, u_maxs):
                 point1 = np.array(point1)
                 if self.mode == 'AB':
@@ -88,7 +95,11 @@ class SvLineCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
                 line = SvLine(point1, direction)
                 line.u_bounds = (u_min, u_max)
-                curves_out.append(line)
+                new_curves.append(line)
+            if self.join:
+                curves_out.extend(new_curves)
+            else:
+                curves_out.append(new_curves)
 
         self.outputs['Curve'].sv_set(curves_out)
 

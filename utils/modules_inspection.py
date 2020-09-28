@@ -6,9 +6,9 @@
 # License-Filename: LICENSE
 
 
+import sverchok
 import sys
 import inspect
-import pkgutil
 from pathlib import Path
 
 
@@ -20,29 +20,33 @@ def iter_classes_from_module(module, base_types):
     :param base_types: for example: [bpy.types.Node]
     :return: class
     """
-    path = module.__name__
-    for module_name in iter_submodule_names(Path(module.__file__).parent):
-        nest_module = sys.modules.get(path + '.' + module_name, None)
+    module_root = Path(module.__file__).parent
+    sv_root = Path(sverchok.__file__).parent
+    for path in module_root.rglob('*.py'):
+        relative_path = path.relative_to(sv_root.parent).with_suffix('')
+        relative_address = ".".join(relative_path.parts)
+        nest_module = sys.modules.get(relative_address, None)
         if nest_module is None:
-            print("Looks like some module was not imported")
+            pass
+            # print(f'Looks like module="{relative_address}" was not imported')
         else:
-            clses = inspect.getmembers(nest_module, inspect.isclass)
-            for _, cls in clses:
+            classes = inspect.getmembers(nest_module, inspect.isclass)
+            for _, cls in classes:
                 if any(base in base_types for base in cls.__bases__):
                     yield cls
 
 
-def iter_submodule_names(path, root=""):
+def iter_submodule_names(path: Path, depth=0, _current_depth=1):
     """
     Return all sub modules of given module (all sub folders of given folder)
-    :param path: absolute path - str
-    :param root: for internal work
+    :param path: Path object from 'pathlib' module, for example root path of Sverchok Path(sverchok.__file__).parent
+    :param depth: 0 means it returns all submodules, if 1 it returns only modules from given directory, if 2 ... so on
+    :param _current_depth: for internal work
     :return: module name - str
     """
-    for _, module_name, is_package in pkgutil.iter_modules([str(path)]):
-        if is_package:
-            sub_path = path / module_name
-            sub_root = root + module_name + "."
-            yield from iter_submodule_names(sub_path, sub_root)
+    for sub_path in path.iterdir():
+        if sub_path.is_dir() and (depth == 0 or _current_depth < depth):
+            yield from iter_submodule_names(sub_path, depth=depth, _current_depth=_current_depth + 1)
         else:
-            yield root + module_name
+            if sub_path.suffix == '.py':
+                yield sub_path.stem

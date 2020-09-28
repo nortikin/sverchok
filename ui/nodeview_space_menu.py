@@ -26,7 +26,7 @@ but massively condensed for sanity.
 
 import bpy
 
-from sverchok.menu import make_node_cats, draw_add_node_operator
+from sverchok.menu import make_node_cats, draw_add_node_operator, is_submenu_call, get_submenu_call_name, compose_submenu_name
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.extra_categories import get_extra_categories
 from sverchok.ui.sv_icons import node_icon, icon, get_icon_switch, custom_icon
@@ -35,6 +35,8 @@ from sverchok.ui import presets
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 node_cats = make_node_cats()
+
+menu_class_by_title = dict()
 
 def category_has_nodes(cat_name):
     cat = node_cats[cat_name]
@@ -75,13 +77,16 @@ menu_structure = [
     ["NODE_MT_category_SVERCHOK_BPY_Data", "BLENDER"],
     ["separator"],
     ["NODEVIEW_MT_AddNetwork", "SYSTEM"],
+    ["NODEVIEW_MT_AddSVG", "SV_SVG"],
     ["NODEVIEW_MT_AddBetas", "SV_BETA"],
     ["NODEVIEW_MT_AddAlphas", "SV_ALPHA"],
     ["separator"],
     ["NODE_MT_category_SVERCHOK_GROUPS", "RNA"],
     ["NODEVIEW_MT_AddPresetOps", "SETTINGS"],
 ]
-def layout_draw_categories(layout, node_details):
+def layout_draw_categories(layout, category_name, node_details):
+    
+    global menu_class_by_title
 
     for node_info in node_details:
 
@@ -94,6 +99,13 @@ def layout_draw_categories(layout, node_details):
             continue
 
         bl_idname = node_info[0]
+
+        if is_submenu_call(bl_idname):
+            submenu_title = get_submenu_call_name(bl_idname)
+            menu_title = compose_submenu_name(category_name, bl_idname)
+            menu_class = menu_class_by_title[menu_title]
+            layout.menu(menu_class.__name__, text=submenu_title)
+            continue
 
         # this is a node bl_idname that can be registered but shift+A can drop it from showing.
         if bl_idname == 'ScalarMathNode':
@@ -115,15 +127,16 @@ class NodeViewMenuTemplate(bpy.types.Menu):
     bl_label = ""
 
     def draw(self, context):
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
+        layout_draw_categories(self.layout, self.bl_label, node_cats[self.bl_label])
         # prop_menu_enum(data, property, text="", text_ctxt="", icon='NONE')
-
 
 # quick class factory.
 def make_class(name, bl_label):
+    global menu_class_by_title
     name = 'NODEVIEW_MT_Add' + name
-    return type(name, (NodeViewMenuTemplate,), {'bl_label': bl_label})
-
+    clazz = type(name, (NodeViewMenuTemplate,), {'bl_label': bl_label})
+    menu_class_by_title[bl_label] = clazz
+    return clazz
 
 class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
     bl_label = "Sverchok Nodes"
@@ -183,7 +196,7 @@ class NODEVIEW_MT_Solids_Special_Menu(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
+        layout_draw_categories(self.layout, self.bl_label, node_cats[self.bl_label])
 
 
 class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
@@ -191,7 +204,7 @@ class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
-        layout_draw_categories(self.layout, node_cats[self.bl_label])
+        layout_draw_categories(self.layout, self.bl_label, node_cats[self.bl_label])
         layout.menu("NODEVIEW_MT_AddGeneratorsExt", **icon('PLUGIN'))
 
 class NODEVIEW_MT_AddModifiers(bpy.types.Menu):
@@ -210,8 +223,8 @@ class NODEVIEW_MT_AddListOps(bpy.types.Menu):
         layout = self.layout
         layout.menu("NODEVIEW_MT_AddListmain")
         layout.menu("NODEVIEW_MT_AddListstruct")
-        layout_draw_categories(self.layout, node_cats["List Masks"])
-        layout_draw_categories(self.layout, node_cats["List Mutators"])
+        layout_draw_categories(self.layout, "List Masks", node_cats["List Masks"])
+        layout_draw_categories(self.layout, "List Mutators", node_cats["List Mutators"])
 
 preset_category_menus = dict()
 
@@ -260,7 +273,7 @@ def make_extra_category_menus():
 
                 def draw(self, context):
                     nodes = [[item.nodetype] for item in self.category_items]
-                    layout_draw_categories(self.layout, nodes)
+                    layout_draw_categories(self.layout, category.name, nodes)
 
             class_name = "NODEVIEW_MT_EX_" + category.identifier
             items = list(category.items(None))
@@ -279,9 +292,15 @@ classes = [
     # like magic.
     # make | NODEVIEW_MT_Add + class name , menu name
     make_class('GeneratorsExt', "Generators Extended"),
+    make_class('CurvePrimitives', "Curves @ Primitives"),
+    make_class('BezierCurves', "Curves @ Bezier"),
+    make_class('NurbsCurves', "Curves @ NURBS"),
     make_class('Curves', "Curves"),
+    make_class('NurbsSurfaces', "Surfaces @ NURBS"),
     make_class('Surfaces', "Surfaces"),
     make_class('Fields', "Fields"),
+    make_class('MakeSolidFace', "Solids @ Make Face"),
+    make_class('AnalyzeSolid', "Solids @ Analyze"),
     make_class('Solids', "Solids"),
     make_class('Transforms', "Transforms"),
     make_class('Analyzers', "Analyzers"),
@@ -303,19 +322,28 @@ classes = [
     make_class('Logic', "Logic"),
     make_class('Network', "Network"),
     make_class('Exchange', "Exchange"),
+    make_class('SVG', "SVG"),
     make_class('Betas', "Beta Nodes"),
     make_class('Alphas', "Alpha Nodes"),
     # NODEVIEW_MT_Solids_Special_Menu
 ]
 
 def register():
+    #global menu_class_by_title
+    #menu_class_by_title = dict()
+
     for category in presets.get_category_names():
         make_preset_category_menu(category)
     for class_name in classes:
         bpy.utils.register_class(class_name)
 
 def unregister():
+    global menu_class_by_title
+
     for class_name in classes:
         bpy.utils.unregister_class(class_name)
     for category in presets.get_category_names():
         bpy.utils.unregister_class(preset_category_menus[category])
+
+    menu_class_by_title = dict()
+

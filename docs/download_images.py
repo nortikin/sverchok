@@ -47,8 +47,9 @@ def process_rst(path):
     with open(path, 'w') as rst:
         rst.write(output)
 
-for directory, subdirs, fnames in walk("."):
-    for fname in fnames:
-        if fnmatch.fnmatch(fname, "*.rst"):
-            process_rst(join(directory, fname))
+if __name__ == '__main__':
+    for directory, subdirs, fnames in walk("."):
+        for fname in fnames:
+            if fnmatch.fnmatch(fname, "*.rst"):
+                process_rst(join(directory, fname))
 

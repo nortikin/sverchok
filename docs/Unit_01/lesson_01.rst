@@ -11,9 +11,13 @@ Lesson 01 - A Plane
 
 Nodes covered in this lesson: ``Scalar Math, Vector In, Number, Number Range, Viewer Draw, Stethoschope, Simple Topology, Vector Math``. 
 
-Let's make a Plane, we will need 4 vectors and we'll define them using math. I'll use the Trigonometric concept of the ``unit-circle`` to get coordinates which are ``0.5 PI`` appart. 
+Let's make a Plane, we will need 4 vectors and we'll define them using math. I'll use the Trigonometric concept of the ``unit-circle`` to get coordinates which are ``0.5 PI`` appart.
+
+   *Note*: The perimeter of a circle is C=2*PI*r . In the unit-circle radius=1 so it's perimter is C=2*PI . For the square we need 4 vertexes with equal distance apart so 2*PI/4=0.5*PI. If you consider that a circle represents an angle of 360 degrees then 2πr=360º and this means that 0*π places represents a vertex at 0 degrees of the circle: 0PI=0º ; 0.5PI=90º ; 1PI=180º ; 1.5PI=270º
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5426922/20290ef0-837b-11e4-9863-8a0a586aed7d.png
+
+We will rotate the square 45º to match the Blender's Plane. So the starting vertex will not be at 0*PI=0º but at 0.25PI=45º
 
 We carefully pick points on the unit-circle so that when we connect them via edges it results in a square. To begin we want to create a series of numbers, to represent those points on the unit-circle. Essentially this sequence is ``[0.25 pi, 0.75 pi, 1.25 pi, 1.75 pi]``. Because these aren't whole numbers (``Integers``), but so called ``Floats``, we use a ``Number Range`` Node configured to output ``Floats``.
 
@@ -160,7 +164,7 @@ Now hook the ``Edges`` output socket of *Simple Topology* node into the ``Edges`
 Using the same Simple Topology Node we will instead pass a polygon to the Viewer Draw, the Viewer Draw is able to infer how to draw edges from the Polygon information. 
 
 - Disconnect the ``Edges`` socket from the ``Viewer Draw`` (you don't have to clear the Edges field)
-- In *Simple Topology* node fill the Faces field with the shorthand: ``0,1,2,3``.  This means "i want a face described by these vertex indices".
+- In *Simple Topology* node fill the Faces field with the shorthand: ``0 1 2 3``.  This means "i want a face described by these vertex indices".
 - Connect the output of the ``Faces`` socket to the ``Faces`` input on Viewer Draw. You should now see the following:
 
 |first_face|

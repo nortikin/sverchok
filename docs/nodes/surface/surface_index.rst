@@ -23,6 +23,7 @@ Surface
    min_surface_from_curve
    apply_field_to_surface
    surface_domain
+   deconstruct_surface
    subdomain
    flip
    swap
@@ -33,6 +34,8 @@ Surface
    nurbs_surface
    approximate_nurbs_surface
    interpolate_nurbs_surface
+   nurbs_loft
+   nurbs_sweep
    intersect_curve_surface
    nearest_point
    ortho_project

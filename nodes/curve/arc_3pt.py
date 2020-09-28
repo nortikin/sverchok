@@ -29,13 +29,13 @@ class SvArc3ptCurveNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         p = self.inputs.new('SvVerticesSocket', "Point1")
         p.use_prop = True
-        p.prop = (0.0, 0.0, 0.0)
+        p.default_property = (0.0, 0.0, 0.0)
         p = self.inputs.new('SvVerticesSocket', "Point2")
         p.use_prop = True
-        p.prop = (1.0, 0.0, 0.0)
+        p.default_property = (1.0, 0.0, 0.0)
         p = self.inputs.new('SvVerticesSocket', "Point3")
         p.use_prop = True
-        p.prop = (0.0, 1.0, 0.0)
+        p.default_property = (0.0, 1.0, 0.0)
         self.outputs.new('SvCurveSocket', "Arc")
         self.outputs.new('SvCurveSocket', "Circle")
         self.outputs.new('SvMatrixSocket', "Center")
@@ -74,8 +74,12 @@ class SvArc3ptCurveNode(bpy.types.Node, SverchCustomTreeNode):
                     raise Exception("Can't build a circle by these points: {}, {}, {}".format(point1, point2, point3))
                 matrix = circle_data.get_matrix()
                 circle = SvCircle(matrix, circle_data.radius)
-                arc = SvCircle(matrix, circle_data.radius)
-                arc.u_bounds = (0.0, circle_data.arc_angle)
+#                 arc = SvCircle(radius=circle_data.radius,
+#                                 center=np.array(circle_data.center),
+#                                 normal=np.array(circle_data.normal),
+#                                 vectorx = np.array(circle_data.point1) - np.array(circle_data.center))
+                #arc.u_bounds = (0.0, circle_data.arc_angle)
+                arc = SvCircle.from_equation(circle_data)
                 arcs_new.append(arc)
                 circles_new.append(circle)
                 centers_new.append(matrix)

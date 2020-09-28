@@ -75,7 +75,7 @@ class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Resolution").prop_name = 'resolution'
         p = self.inputs.new('SvVerticesSocket', "Normal")
         p.use_prop = True
-        p.prop = (0.0, 0.0, 1.0)
+        p.default_property = (0.0, 0.0, 1.0)
         self.outputs.new('SvSurfaceSocket', "Surface")
         self.origin = EXTRUSION # default for newly created nodes
         self.update_sockets(context)

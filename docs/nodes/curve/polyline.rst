@@ -27,7 +27,12 @@ Parameters
 This node has the following parameters:
 
 * **Cyclic**. If checked, the node will generate a cyclic (closed) curve. Unchecked by default.
-* **Metric**. This parameter is available in the N panel only. This defines the metric used to calculate curve's T parameter values corresponding to specified curve points. The available values are:
+* **Concatenate**. If checked, the node will generate one Curve object that
+  passes through all provided vertices. Otherwise, the node will generate a
+  separate Curve object for each edge. Checked by default.
+* **Metric**. This parameter is available in the N panel only. This defines the
+  metric used to calculate curve's T parameter values corresponding to
+  specified curve points. The available values are:
 
    * Manhattan
    * Euclidian

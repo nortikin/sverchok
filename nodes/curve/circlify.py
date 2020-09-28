@@ -54,7 +54,7 @@ else:
             self.inputs.new('SvStringsSocket', 'Radiuses')
             d = self.inputs.new('SvVerticesSocket', "Center")
             d.use_prop = True
-            d.prop = (0.0, 0.0, 0.0)
+            d.default_property = (0.0, 0.0, 0.0)
 
             self.inputs.new('SvStringsSocket', "MajorRadius").prop_name = 'major_radius'
             self.outputs.new('SvCurveSocket', "Circles")

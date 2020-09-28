@@ -10,8 +10,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, StringProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
-from sverchok.utils.curve import SvConcatCurve
+from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve.bezier import SvCubicBezierCurve
 
 class SvBezierInCallbackOp(bpy.types.Operator):
@@ -37,7 +38,7 @@ class SvBezierInCallbackOp(bpy.types.Operator):
         node.get_objects_from_scene(self)
         return {'FINISHED'}
 
-class SvBezierInNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBezierInNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """
     Triggers: Input Bezier
     Tooltip: Get Bezier Curve objects from scene
@@ -101,6 +102,7 @@ class SvBezierInNode(bpy.types.Node, SverchCustomTreeNode):
             layout.label(text='--None--')
 
     def draw_buttons(self, context, layout):
+        self.draw_animatable_buttons(layout, icon_only=True)
         col = layout.column(align=True)
         row = col.row(align=True)
 
@@ -141,7 +143,7 @@ class SvBezierInNode(bpy.types.Node, SverchCustomTreeNode):
             points.append([c0, c1, c2, c3])
             segment = SvCubicBezierCurve(c0, c1, c2, c3)
             segments.append(segment)
-        return points, SvConcatCurve(segments)
+        return points, concatenate_curves(segments)
 
     def process(self):
 
@@ -184,4 +186,3 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvBezierInNode)
     bpy.utils.unregister_class(SvBezierInCallbackOp)
-

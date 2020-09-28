@@ -22,10 +22,14 @@ depsgraph_need = False
 def get_sv_depsgraph():
     global sv_depsgraph
     global depsgraph_need
+
     if not depsgraph_need:
 
         sv_depsgraph = bpy.context.evaluated_depsgraph_get()
         depsgraph_need = True
+    elif not sv_depsgraph:
+        sv_depsgraph = bpy.context.evaluated_depsgraph_get()
+
     return sv_depsgraph
 
 def set_sv_depsgraph_need(val):
@@ -74,8 +78,8 @@ def sv_handler_undo_post(scene):
     links_changed = False
     for ng in sverchok_trees():
         num_to_test_against += len(ng.nodes)
-        ng.update_sv_links()
-        links_changed = ng.links_have_changed()
+        ng.sv_links.create_new_links(ng)
+        links_changed = ng.sv_links.links_have_changed(ng)
         if links_changed:
             break
 

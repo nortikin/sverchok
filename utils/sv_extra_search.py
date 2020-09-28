@@ -28,7 +28,7 @@ from sverchok.utils.docstring import SvDocstring
 from sverchok.ui.sv_icons import custom_icon
 from sverchok.utils.sv_default_macros import macros, DefaultMacros
 from nodeitems_utils import _node_categories
-
+from sverchok.utils.extra_categories import get_extra_categories
 # pylint: disable=c0326
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
@@ -62,7 +62,7 @@ def ensure_short_description(description):
 def ensure_valid_show_string(nodetype):
 
     loop_reverse[nodetype.bl_label] = nodetype.bl_idname
-    description = nodetype.bl_rna.get_shorthand()
+    description = nodetype.bl_rna.docstring.get_shorthand()
     return nodetype.bl_label + ensure_short_description(description)
 
 def function_iterator(module_file):
@@ -95,8 +95,17 @@ def fx_extend(idx, datastorage):
         datastorage.append((func_name, format_macro_item(func_name, func_descriptor), '', idx))
         idx +=1
 
+def gather_extra_nodes(idx, datastorage, context):
+    extra_categories = get_extra_categories()
+    for cat in extra_categories:
+        for node in cat.items(context):
+            description = SvDocstring(node.get_node_class().__doc__).get_shorthand()
+            showstring = node.label + ensure_short_description(description)
+            datastorage.append((str(idx), showstring,'',idx))
+            loop_reverse[node.label] = node.nodetype
+            idx +=1
 
-def gather_items():
+def gather_items(context):
     fx = []
     idx = 0
     for _, node_list in node_cats.items():
@@ -114,6 +123,7 @@ def gather_items():
         fx.append((k, format_item(k, v), '', idx))
         idx += 1
 
+    gather_extra_nodes(idx, fx, context)
     fx_extend(idx, fx)
 
     return fx
@@ -164,7 +174,7 @@ class SvExtraSearch(bpy.types.Operator):
 
     def invoke(self, context, event):
         context.space_data.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
-        loop['results'] = gather_items()
+        loop['results'] = gather_items(context)
         wm = context.window_manager
         wm.invoke_search_popup(self)
         return {'FINISHED'}

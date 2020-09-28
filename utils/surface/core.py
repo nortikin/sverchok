@@ -12,6 +12,9 @@ from collections import defaultdict
 from sverchok.utils.logging import info, exception
 from sverchok.utils.surface.data import *
 
+class UnsupportedSurfaceTypeException(TypeError):
+    pass
+
 class SvSurface(object):
     def __repr__(self):
         if hasattr(self, '__description__'):
@@ -245,6 +248,12 @@ class SvSwapSurface(SvSurface):
         else:
             self.normal_delta = 0.001
         self.__description__ = "Swapped {}".format(surface)
+
+    @staticmethod
+    def build(surface):
+        if hasattr(surface, 'swap_uv'):
+            return surface.swap_uv()
+        return SvSwapSurface(surface)
 
     def get_u_min(self):
         return self.surface.get_v_min()

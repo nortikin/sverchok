@@ -8,6 +8,66 @@
 import numpy as np
 
 from sverchok.utils.math import binomial
+from sverchok.utils.curve import knotvector as sv_knotvector
+from sverchok.dependencies import geomdl
+
+class SvNurbsMaths(object):
+    """
+    This class allows modules such as curve.primitives and others to
+    create NURBS curves or surfaces without need to import curves.nurbs
+    or surfaces.nurbs. It is required to exclude such imports because
+    curves.nurbs and surfaces.nurbs require curves.primitives and several
+    other curves.* and surfaces.* modules.
+    """
+    NATIVE = 'NATIVE'
+    GEOMDL = 'GEOMDL'
+    FREECAD = 'FREECAD'
+
+    # Classes by implementation
+    curve_classes = dict()
+    surface_classes = dict()
+
+    @staticmethod
+    def build_curve(implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
+        kv_error = sv_knotvector.check(degree, knotvector, len(control_points))
+        if kv_error is not None:
+            raise Exception(kv_error)
+        nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+        if nurbs_class is None:
+            raise Exception(f"Unsupported NURBS Curve implementation: {implementation}")
+        else:
+            return nurbs_class.build(implementation, degree, knotvector, control_points, weights, normalize_knots)
+
+    @staticmethod
+    def build_surface(implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights=None, normalize_knots=False):
+        kv_error = sv_knotvector.check(degree_u, knotvector_u, len(control_points))
+        if kv_error is not None:
+            raise Exception("U direction: " + kv_error)
+        kv_error = sv_knotvector.check(degree_v, knotvector_v, len(control_points[0]))
+        if kv_error is not None:
+            raise Exception("V direction: " + kv_error)
+
+        nurbs_class = SvNurbsMaths.surface_classes.get(implementation)
+        if nurbs_class is None:
+            raise Exception(f"Unsupported NURBS Surface implementation: {implementation}")
+        else:
+            return nurbs_class.build(implementation, degree_u, degree_v, knotvector_u, knotvector_v, control_points, weights)
+
+    @staticmethod
+    def to_nurbs_curve(curve, implementation = NATIVE):
+        nurbs_class = SvNurbsMaths.curve_classes.get(implementation)
+        if nurbs_class is None:
+            raise Exception(f"Unsupported NURBS Curve implementation: {implementation}")
+        else:
+            return nurbs_class.to_nurbs(curve, implementation)
+
+    @staticmethod
+    def to_nurbs_surface(surface, implementation = NATIVE):
+        nurbs_class = SvNurbsMaths.surface_classes.get(implementation)
+        if nurbs_class is None:
+            raise Exception(f"Unsupported NURBS Surface implementation: {implementation}")
+        else:
+            return nurbs_class.to_nurbs(surface, implementation)
 
 def nurbs_divide(numerator, denominator):
     if denominator.ndim != 2:
@@ -39,10 +99,18 @@ def elevate_bezier_degree(self_degree, control_points, delta=1):
     return np.array(new_points)
 
 def from_homogenous(control_points):
-    weights = control_points[:,3]
-    weighted = control_points[:,0:3]
-    points = weighted / weights[np.newaxis].T
-    return points, weights
+    if control_points.ndim == 2: # curve
+        weights = control_points[:,3]
+        weighted = control_points[:,0:3]
+        points = weighted / weights[np.newaxis].T
+        return points, weights
+    elif control_points.ndim == 3: # surface
+        weights = control_points[:,:,3]
+        weighted = control_points[:,:,0:3]
+        points = weighted / weights[np.newaxis].T
+        return points, weights
+    else:
+        raise Exception(f"control_points have ndim={control_points.ndim}, supported are only 2 and 3")
 
 class SvNurbsBasisFunctions(object):
     def __init__(self, knotvector):

@@ -24,6 +24,15 @@ class SvIsoUvCurveNode(bpy.types.Node, SverchCustomTreeNode):
         default = 0.5,
         update = updateNode)
 
+    join : BoolProperty(
+        name = "Join",
+        description = "If checked, output single flat list of curves for all sets of inputs",
+        default = True,
+        update = updateNode)
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'join', toggle=True)
+
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "Surface")
         self.inputs.new('SvStringsSocket', "Value").prop_name = 'value'
@@ -44,11 +53,20 @@ class SvIsoUvCurveNode(bpy.types.Node, SverchCustomTreeNode):
         u_curves_out = []
         v_curves_out = []
         for surfaces, values in zip_long_repeat(surface_s, value_s):
+            new_u_curves = []
+            new_v_curves = []
             for surface, value in zip_long_repeat(surfaces, values):
-                u_curve = SvIsoUvCurve(surface, 'V', value)
-                v_curve = SvIsoUvCurve(surface, 'U', value)
-                u_curves_out.append(u_curve)
-                v_curves_out.append(v_curve)
+                u_curve = SvIsoUvCurve.take(surface, 'V', value)
+                v_curve = SvIsoUvCurve.take(surface, 'U', value)
+                new_u_curves.append(u_curve)
+                new_v_curves.append(v_curve)
+            
+            if self.join:
+                u_curves_out.extend(new_u_curves)
+                v_curves_out.extend(new_v_curves)
+            else:
+                u_curves_out.append(new_u_curves)
+                v_curves_out.append(new_v_curves)
 
         self.outputs['UCurve'].sv_set(u_curves_out)
         self.outputs['VCurve'].sv_set(v_curves_out)

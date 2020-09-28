@@ -19,26 +19,28 @@
       },
       "width": 110.0
     },
-    "Lamp.001": {
-      "bl_idname": "SvLampOutNode",
+    "Light viewer.001": {
+      "bl_idname": "SvLightViewerNode",
+      "collection": "",
       "color": [
-        0.0,
-        0.5,
-        0.20000000298023224
+        1.0,
+        0.5889999866485596,
+        0.21400000154972076
       ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "lamp_type": "SPOT",
       "location": [
-        149.39559936523438,
-        75.6929931640625
+        154.19656372070312,
+        77.55731964111328
       ],
       "params": {
-        "area_type": "SQUARE",
-        "size": 0.6399999260902405,
+        "base_data_name": "Beta",
+        "light_type": "SPOT",
+        "size": 0.6399999856948853,
         "spot_blend": 0.0,
-        "spot_size": 57.53999710083008,
+        "spot_size": 1.9800000190734863,
         "strength": 1000.0
       },
       "use_custom_color": true,
@@ -224,6 +226,27 @@
       "params": {},
       "width": 140.0
     },
+    "Mesh viewer": {
+      "bl_idname": "SvMeshViewer",
+      "collection": "",
+      "color": [
+        1.0,
+        0.5889999866485596,
+        0.21400000154972076
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        726.9242553710938,
+        65.43453979492188
+      ],
+      "params": {
+        "base_data_name": "Alpha"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
     "Move.001": {
       "bl_idname": "SvMoveNodeMk3",
       "height": 100.0,
@@ -255,12 +278,8 @@
       "params": {
         "center": 1,
         "dimension_mode": "SIZE",
-        "linkSizes": 1,
-        "normalize": 1,
-        "sizeRatio": 1.0,
         "sizex": 20.0,
-        "sizey": 20.0,
-        "syncing": 0
+        "sizey": 20.0
       },
       "use_custom_color": true,
       "width": 140.0
@@ -278,29 +297,21 @@
         "z_": 1.499999761581421
       },
       "width": 100.0
-    },
-    "Viewer BMesh": {
-      "bl_idname": "SvBmeshViewerNodeV28",
-      "color": [
-        1.0,
-        0.30000001192092896,
-        0.0
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        726.9242553710938,
-        65.43453979492188
-      ],
-      "params": {
-        "material": ""
-      },
-      "use_custom_color": true,
-      "width": 140.0
     }
   },
   "update_lists": [
+    [
+      "Plane",
+      0,
+      "Mesh viewer",
+      0
+    ],
+    [
+      "Plane",
+      2,
+      "Mesh viewer",
+      2
+    ],
     [
       "List Input",
       0,
@@ -320,6 +331,12 @@
       2
     ],
     [
+      "Color in MK1",
+      0,
+      "List Split",
+      0
+    ],
+    [
       "Line",
       0,
       "Move.001",
@@ -332,34 +349,16 @@
       1
     ],
     [
-      "Color in MK1",
-      0,
-      "List Split",
-      0
-    ],
-    [
       "Move.001",
       0,
-      "Lamp.001",
+      "Light viewer.001",
       0
     ],
     [
       "List Split",
       0,
-      "Lamp.001",
+      "Light viewer.001",
       7
-    ],
-    [
-      "Plane",
-      0,
-      "Viewer BMesh",
-      0
-    ],
-    [
-      "Plane",
-      2,
-      "Viewer BMesh",
-      2
     ]
   ]
 }

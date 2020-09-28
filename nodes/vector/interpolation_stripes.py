@@ -162,7 +162,7 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', 'IntervalY')
         a = self.inputs.new('SvVerticesSocket', 'Attractor')
         a.use_prop = True
-        s.prop = (0, 0, 1)   ## WTF
+        s.default_property = (0, 0, 1)   ## WTF
         self.outputs.new('SvVerticesSocket', 'vStripesOut')
         self.outputs.new('SvVerticesSocket', 'vStripesIn')
         self.outputs.new('SvVerticesSocket', 'vShape')

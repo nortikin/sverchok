@@ -7,8 +7,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, repeat_last_for_length, ensure_nesting_level
 from sverchok.utils.logging import info, exception
-from sverchok.utils.curve import SvLine, SvConcatCurve
+from sverchok.utils.curve import SvLine
 from sverchok.utils.fillet import calc_fillet
+from sverchok.utils.curve.algorithms import concatenate_curves
 
 class SvFilletPolylineNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -42,11 +43,21 @@ class SvFilletPolylineNode(bpy.types.Node, SverchCustomTreeNode):
         default = False,
         update = updateNode)
 
+    make_nurbs : BoolProperty(
+        name = "NURBS output",
+        description = "Generate a NURBS curve",
+        default = False,
+        update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "concat", toggle=True)
         if self.concat:
             layout.prop(self, "scale_to_unit", toggle=True)
         layout.prop(self, "cyclic", toggle=True)
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'make_nurbs', toggle=True)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
@@ -92,8 +103,13 @@ class SvFilletPolylineNode(bpy.types.Node, SverchCustomTreeNode):
             edge.u_bounds = (0.0, edge_len)
             curves.append(edge)
 
+        if self.make_nurbs:
+            if self.concat:
+                curves = [curve.to_nurbs().elevate_degree(target=2) for curve in curves]
+            else:
+                curves = [curve.to_nurbs() for curve in curves]
         if self.concat:
-            concat = SvConcatCurve(curves, scale_to_unit = self.scale_to_unit)
+            concat = concatenate_curves(curves, scale_to_unit = self.scale_to_unit)
             return concat, centers
         else:
             return curves, centers

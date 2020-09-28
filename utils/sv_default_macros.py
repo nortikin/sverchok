@@ -112,6 +112,10 @@ macros = {
         'display_name': "download archive from url",
         'file': 'macro',
         'ident': ['verbose_macro_handler', 'url']},
+    "> blend 2 zip": {
+        'display_name': "archive blend as zip",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'blend 2 zip']},        
     "> all numpy True": {
         'display_name': "existing nodes to numpy",
         'file': 'macro',
@@ -251,6 +255,9 @@ class DefaultMacros():
 
         elif term == 'url':
             bpy.ops.node.sv_load_archived_blend_url()
+
+        elif term == 'blend 2 zip':
+            bpy.ops.node.blend_to_archive(archive_ext="zip")
 
 
 # EOF

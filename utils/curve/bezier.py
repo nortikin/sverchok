@@ -10,8 +10,9 @@ import numpy as np
 from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.math import binomial
 from sverchok.utils.geom import Spline
-from sverchok.utils.curve.core import SvCurve, SvConcatCurve
-from sverchok.utils.curve.nurbs import SvNurbsCurve
+from sverchok.utils.nurbs_common import SvNurbsMaths
+from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
+from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.nurbs_common import elevate_bezier_degree
 
@@ -75,7 +76,7 @@ class SvBezierCurve(SvCurve):
         return SvBezierCurve([p0, p1, p2, p3, p4, p5, p6, p7])
 
     @classmethod
-    def build_tangent_curve(cls, points, tangents, cyclic=False, concat=False):
+    def build_tangent_curve(cls, points, tangents, cyclic=False, concat=False, as_nurbs=False):
         """
         Build cubic Bezier curve spline, which goes through specified `points',
         having specified `tangents' at these points.
@@ -110,10 +111,15 @@ class SvBezierCurve(SvCurve):
                         point2)
             curve_controls = [curve.p0.tolist(), curve.p1.tolist(),
                               curve.p2.tolist(), curve.p3.tolist()]
+            if as_nurbs:
+                curve = curve.to_nurbs()
             new_curves.append(curve)
             new_controls.append(curve_controls)
         if concat:
-            new_curves = [SvConcatCurve(new_curves)]
+            new_curve = concatenate_curves(new_curves)
+            new_curves = [new_curve]
+            if as_nurbs:
+                new_controls = new_curve.get_control_points().tolist()
 
         return new_controls, new_curves
 
@@ -276,11 +282,47 @@ class SvBezierCurve(SvCurve):
         points = elevate_bezier_degree(self.degree, self.points, delta)
         return SvBezierCurve(points)
 
-    def to_nurbs(self, implementation = SvNurbsCurve.NATIVE):
+    def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
         knotvector = sv_knotvector.generate(self.degree, len(self.points))
-        return SvNurbsCurve.build(implementation,
+        return SvNurbsMaths.build_curve(implementation,
                 degree = self.degree, knotvector = knotvector,
                 control_points = self.points)
+
+    def concatenate(self, curve2):
+        curve2 = SvNurbsMaths.to_nurbs_curve(curve2)
+        if curve2 is None:
+            raise UnsupportedCurveTypeException("Second curve is not a NURBS")
+        return self.to_nurbs().concatenate(curve2)
+
+    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
+        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
+    
+    def extrude_along_vector(self, vector):
+        return self.to_nurbs().extrude_along_vector(vector)
+
+    def make_ruled_surface(self, curve2, vmin, vmax):
+        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
+
+    def extrude_to_point(self, point):
+        return self.to_nurbs().extrude_to_point(point)
+
+    def lerp_to(self, curve2, coefficient):
+        if isinstance(curve2, SvBezierCurve) and curve2.degree == self.degree:
+            points = (1.0 - coefficient) * self.points + coefficient * curve2.points
+            return SvBezierCurve(points)
+        return self.to_nurbs().lerp_to(curve2, coefficient)
+    
+    def split_at(self, t):
+        return self.to_nurbs().split_at(t)
+
+    def cut_segment(self, new_t_min, new_t_max, rescale=False):
+        return self.to_nurbs().cut_segment(new_t_min, new_t_max, rescale=rescale)
+
+    def to_bezier(self):
+        return self
+
+    def to_bezier_segments(self):
+        return [self]
 
 class SvCubicBezierCurve(SvCurve):
     __description__ = "Bezier[3*]"
@@ -373,14 +415,53 @@ class SvCubicBezierCurve(SvCurve):
     def get_control_points(self):
         return np.array([self.p0, self.p1, self.p2, self.p3])
 
-    def to_nurbs(self, implementation = SvNurbsCurve.NATIVE):
+    def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
         knotvector = sv_knotvector.generate(3, 4)
         control_points = np.array([self.p0, self.p1, self.p2, self.p3])
-        return SvNurbsCurve.build(implementation,
+        return SvNurbsMaths.build_curve(implementation,
                 degree = 3, knotvector = knotvector,
                 control_points = control_points)
 
     def elevate_degree(self, delta=1):
         points = elevate_bezier_degree(3, self.get_control_points(), delta)
         return SvBezierCurve(points)
+
+    def concatenate(self, curve2):
+        curve2 = SvNurbsMaths.to_nurbs_curve(curve2)
+        if curve2 is None:
+            raise UnsupportedCurveTypeException("Second curve is not a NURBS")
+        return self.to_nurbs().concatenate(curve2)
+
+    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
+        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
+
+    def extrude_along_vector(self, vector):
+        return self.to_nurbs().extrude_along_vector(vector)
+
+    def make_ruled_surface(self, curve2, vmin, vmax):
+        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
+    
+    def extrude_to_point(self, point):
+        return self.to_nurbs().extrude_to_point(point)
+
+    def lerp_to(self, curve2, coefficient):
+        if isinstance(curve2, SvCubicBezierCurve):
+            p1 = (1.0 - coefficient) * self.p1 + coefficient * curve2.p1
+            p2 = (1.0 - coefficient) * self.p2 + coefficient * curve2.p2
+            p3 = (1.0 - coefficient) * self.p3 + coefficient * curve2.p3
+            p4 = (1.0 - coefficient) * self.p4 + coefficient * curve2.p4
+            return SvCubicBezierCurve(p1, p2, p3, p4)
+        return self.to_nurbs().lerp_to(curve2, coefficient)
+    
+    def split_at(self, t):
+        return self.to_nurbs().split_at(t)
+
+    def cut_segment(self, new_t_min, new_t_max, rescale=False):
+        return self.to_nurbs().cut_segment(new_t_min, new_t_max, rescale=rescale)
+
+    def to_bezier(self):
+        return self
+
+    def to_bezier_segments(self):
+        return [self]
 

@@ -10,7 +10,7 @@ else:
     from bpy.props import BoolProperty
     from sverchok.node_tree import SverchCustomTreeNode
     from sverchok.data_structure import updateNode
-    from sverchok.utils.curve import SvSolidEdgeCurve
+    from sverchok.utils.curve.freecad import SvSolidEdgeCurve
 
     class SvSolidEdgesNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -49,7 +49,7 @@ else:
                 edges_curves = []
                 for e in solid.Edges:
                     try:
-                        curve = SvSolidEdgeCurve(e)
+                        curve = SvSolidEdgeCurve(e).to_nurbs()
                         edges_curves.append(curve)
                     except TypeError:
                         pass

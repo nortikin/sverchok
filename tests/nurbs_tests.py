@@ -1,9 +1,15 @@
 import numpy as np
 import unittest
+from math import pi
+
+from mathutils import Matrix
 
 from sverchok.utils.testing import SverchokTestCase, requires
+from sverchok.utils.geom import circle_by_three_points
 from sverchok.utils.curve import knotvector as sv_knotvector
+from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve.nurbs import SvGeomdlCurve, SvNativeNurbsCurve, SvNurbsBasisFunctions, SvNurbsCurve
+from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve
 from sverchok.utils.nurbs_common import elevate_bezier_degree, from_homogenous
 from sverchok.utils.surface.nurbs import SvGeomdlSurface, SvNativeNurbsSurface
 from sverchok.utils.surface.algorithms import SvCurveLerpSurface
@@ -58,7 +64,7 @@ class NurbsCurveTests(SverchokTestCase):
     #@unittest.skip
     @requires(geomdl)
     def test_curve_eval(self):
-        geomdl_curve = SvGeomdlCurve.build(self.degree, self.knotvector, self.control_points, self.weights)
+        geomdl_curve = SvGeomdlCurve.build_geomdl(self.degree, self.knotvector, self.control_points, self.weights)
         t1s = geomdl_curve.evaluate_array(self.ts)
         native_curve = SvNativeNurbsCurve(self.degree, self.knotvector, self.control_points, self.weights)
         t2s = native_curve.evaluate_array(self.ts)
@@ -68,7 +74,7 @@ class NurbsCurveTests(SverchokTestCase):
     @requires(geomdl)
     def test_curve_eval_2(self):
         weights = [1.0, 2.0, 3.0, 1.0]
-        geomdl_curve = SvGeomdlCurve.build(self.degree, self.knotvector, self.control_points, weights)
+        geomdl_curve = SvGeomdlCurve.build_geomdl(self.degree, self.knotvector, self.control_points, weights)
         t1s = geomdl_curve.evaluate_array(self.ts)
         native_curve = SvNativeNurbsCurve(self.degree, self.knotvector, self.control_points, weights)
         t2s = native_curve.evaluate_array(self.ts)
@@ -77,7 +83,7 @@ class NurbsCurveTests(SverchokTestCase):
     #@unittest.skip
     @requires(geomdl)
     def test_curve_tangent(self):
-        geomdl_curve = SvGeomdlCurve.build(self.degree, self.knotvector, self.control_points, self.weights)
+        geomdl_curve = SvGeomdlCurve.build_geomdl(self.degree, self.knotvector, self.control_points, self.weights)
         t1s = geomdl_curve.tangent_array(self.ts)
         native_curve = SvNativeNurbsCurve(self.degree, self.knotvector, self.control_points, self.weights)
         t2s = native_curve.tangent_array(self.ts)
@@ -87,7 +93,7 @@ class NurbsCurveTests(SverchokTestCase):
     @requires(geomdl)
     def test_curve_tangent_2(self):
         weights = [1.0, 2.0, 3.0, 1.0]
-        geomdl_curve = SvGeomdlCurve.build(self.degree, self.knotvector, self.control_points, weights)
+        geomdl_curve = SvGeomdlCurve.build_geomdl(self.degree, self.knotvector, self.control_points, weights)
         t1s = geomdl_curve.tangent_array(self.ts)
         native_curve = SvNativeNurbsCurve(self.degree, self.knotvector, self.control_points, weights)
         t2s = native_curve.tangent_array(self.ts)
@@ -96,7 +102,7 @@ class NurbsCurveTests(SverchokTestCase):
     #@unittest.skip
     @requires(geomdl)
     def test_curve_second(self):
-        geomdl_curve = SvGeomdlCurve.build(self.degree, self.knotvector, self.control_points, self.weights)
+        geomdl_curve = SvGeomdlCurve.build_geomdl(self.degree, self.knotvector, self.control_points, self.weights)
         t1s = geomdl_curve.second_derivative_array(self.ts)
         native_curve = SvNativeNurbsCurve(self.degree, self.knotvector, self.control_points, self.weights)
         t2s = native_curve.second_derivative_array(self.ts)
@@ -106,7 +112,7 @@ class NurbsCurveTests(SverchokTestCase):
     @requires(geomdl)
     def test_curve_second(self):
         weights = [1.0, 2.0, 3.0, 1.0]
-        geomdl_curve = SvGeomdlCurve.build(self.degree, self.knotvector, self.control_points, weights)
+        geomdl_curve = SvGeomdlCurve.build_geomdl(self.degree, self.knotvector, self.control_points, weights)
         t1s = geomdl_curve.second_derivative_array(self.ts)
         native_curve = SvNativeNurbsCurve(self.degree, self.knotvector, self.control_points, weights)
         t2s = native_curve.second_derivative_array(self.ts)
@@ -115,7 +121,7 @@ class NurbsCurveTests(SverchokTestCase):
     #@unittest.skip
     @requires(geomdl)
     def test_curve_third(self):
-        geomdl_curve = SvGeomdlCurve.build(self.degree, self.knotvector, self.control_points, self.weights)
+        geomdl_curve = SvGeomdlCurve.build_geomdl(self.degree, self.knotvector, self.control_points, self.weights)
         t1s = geomdl_curve.third_derivative_array(self.ts)
         native_curve = SvNativeNurbsCurve(self.degree, self.knotvector, self.control_points, self.weights)
         t2s = native_curve.third_derivative_array(self.ts)
@@ -125,7 +131,7 @@ class NurbsCurveTests(SverchokTestCase):
     @requires(geomdl)
     def test_curve_third_2(self):
         weights = [1.0, 2.0, 3.0, 1.0]
-        geomdl_curve = SvGeomdlCurve.build(self.degree, self.knotvector, self.control_points, weights)
+        geomdl_curve = SvGeomdlCurve.build_geomdl(self.degree, self.knotvector, self.control_points, weights)
         t1s = geomdl_curve.third_derivative_array(self.ts)
         native_curve = SvNativeNurbsCurve(self.degree, self.knotvector, self.control_points, weights)
         t2s = native_curve.third_derivative_array(self.ts)
@@ -154,7 +160,7 @@ class NurbsCurveTests(SverchokTestCase):
         degree = 2
         knotvector = [0, 0, 0, 1, 1, 1]
         weights = [1, 1, 1]
-        geomdl_curve = SvGeomdlCurve.build(degree, knotvector, points, weights)
+        geomdl_curve = SvGeomdlCurve.build_geomdl(degree, knotvector, points, weights)
         native_curve = SvNativeNurbsCurve(degree, knotvector, points, weights)
         p1s = geomdl_curve.third_derivative_array(ts)
         p2s = native_curve.third_derivative_array(ts)
@@ -223,7 +229,7 @@ class NurbsSurfaceTests(SverchokTestCase):
     @requires(geomdl)
     #@unittest.skip
     def test_eval(self):
-        geomdl_surface = SvGeomdlSurface.build(self.degree_u, self.degree_v, self.knotvector_u, self.knotvector_v, self.control_points, self.weights)
+        geomdl_surface = SvGeomdlSurface.build_geomdl(self.degree_u, self.degree_v, self.knotvector_u, self.knotvector_v, self.control_points, self.weights)
         native_surface = SvNativeNurbsSurface(self.degree_u, self.degree_v, self.knotvector_u, self.knotvector_v, self.control_points, self.weights)
         vs1 = geomdl_surface.evaluate_array(self.us, self.vs)
         vs2 = native_surface.evaluate_array(self.us, self.vs)
@@ -234,7 +240,7 @@ class NurbsSurfaceTests(SverchokTestCase):
     def test_eval_2(self):
         weights = [[1,1,1,1], [1,2,3,1], [1,3,4,1], [1,4,5,1], [1,1,1,1]]
 
-        geomdl_surface = SvGeomdlSurface.build(self.degree_u, self.degree_v, self.knotvector_u, self.knotvector_v, self.control_points, weights)
+        geomdl_surface = SvGeomdlSurface.build_geomdl(self.degree_u, self.degree_v, self.knotvector_u, self.knotvector_v, self.control_points, weights)
         native_surface = SvNativeNurbsSurface(self.degree_u, self.degree_v, self.knotvector_u, self.knotvector_v, self.control_points, weights)
         vs1 = geomdl_surface.evaluate_array(self.us, self.vs)
         vs2 = native_surface.evaluate_array(self.us, self.vs)
@@ -243,7 +249,7 @@ class NurbsSurfaceTests(SverchokTestCase):
     @requires(geomdl)
     #@unittest.skip
     def test_normal(self):
-        geomdl_surface = SvGeomdlSurface.build(self.degree_u, self.degree_v, self.knotvector_u, self.knotvector_v, self.control_points, self.weights)
+        geomdl_surface = SvGeomdlSurface.build_geomdl(self.degree_u, self.degree_v, self.knotvector_u, self.knotvector_v, self.control_points, self.weights)
         native_surface = SvNativeNurbsSurface(self.degree_u, self.degree_v, self.knotvector_u, self.knotvector_v, self.control_points, self.weights)
         vs1 = geomdl_surface.normal_array(self.us, self.vs)
         vs2 = native_surface.normal_array(self.us, self.vs)
@@ -252,7 +258,7 @@ class NurbsSurfaceTests(SverchokTestCase):
     @requires(geomdl)
     #@unittest.skip
     def test_gauss_curvature(self):
-        geomdl_surface = SvGeomdlSurface.build(self.degree_u, self.degree_v, self.knotvector_u, self.knotvector_v, self.control_points, self.weights)
+        geomdl_surface = SvGeomdlSurface.build_geomdl(self.degree_u, self.degree_v, self.knotvector_u, self.knotvector_v, self.control_points, self.weights)
         native_surface = SvNativeNurbsSurface(self.degree_u, self.degree_v, self.knotvector_u, self.knotvector_v, self.control_points, self.weights)
         vs1 = geomdl_surface.gauss_curvature_array(self.us, self.vs)
         vs2 = native_surface.gauss_curvature_array(self.us, self.vs)
@@ -270,7 +276,7 @@ class NurbsSurfaceTests(SverchokTestCase):
         us = us.flatten()
         vs = vs.flatten()
 
-        geomdl_surface = SvGeomdlSurface.build(self.degree_u, self.degree_v, self.knotvector_u, self.knotvector_v, self.control_points, weights)
+        geomdl_surface = SvGeomdlSurface.build_geomdl(self.degree_u, self.degree_v, self.knotvector_u, self.knotvector_v, self.control_points, weights)
         native_surface = SvNativeNurbsSurface(self.degree_u, self.degree_v, self.knotvector_u, self.knotvector_v, self.control_points, weights)
         c1 = geomdl_surface.curvature_calculator(us, vs)
         c2 = native_surface.curvature_calculator(us, vs)
@@ -523,6 +529,70 @@ class OtherNurbsTests(SverchokTestCase):
         expected = np.array([1, 0.5, 0])
         self.assert_numpy_arrays_equal(result, expected, precision=6)
 
+    def test_circle_1(self):
+        circle = SvCircle(Matrix(), 1.0)
+        circle.u_bounds = (0, pi/6)
+        nurbs = circle.to_nurbs()
+        cpts = nurbs.get_control_points()
+        expected_cpts = np.array([[1.0, 0.0, 0.0 ],
+                                  [1.0, 0.26794919, 0.0 ],
+                                  [0.8660254,  0.5, 0.0 ]])
+        self.assert_numpy_arrays_equal(cpts, expected_cpts, precision=6)
+
+    def test_circle_2(self):
+        circle = SvCircle(Matrix(), 1.0)
+        t_max = pi + 0.3
+        circle.u_bounds = (0, t_max)
+        nurbs = circle.to_nurbs()
+        ts = np.array([0, pi/2, pi, t_max])
+        points = nurbs.evaluate_array(ts)
+        expected_points = circle.evaluate_array(ts)
+        self.assert_numpy_arrays_equal(points, expected_points, precision=6)
+
+    def test_arc_1(self):
+        circle = SvCircle(Matrix(), 1.0)
+        t_min = 0.1
+        t_max = 1.4
+        pt1 = circle.evaluate(t_max)
+        nurbs = circle._arc_to_nurbs(t_min, t_max)
+        pt2 = nurbs.evaluate(t_max)
+        self.assert_numpy_arrays_equal(pt1, pt2, precision=8)
+
+    def test_arc_2(self):
+        pt1 = (-5, 0, 0)
+        pt2 = (-4, 3, 0)
+        pt3 = (-3, 4, 0)
+        eq = circle_by_three_points(pt1, pt2, pt3)
+        matrix = eq.get_matrix()
+        arc = SvCircle(matrix, eq.radius)
+        arc.u_bounds = (0.0, eq.arc_angle)
+        nurbs = arc.to_nurbs()
+        u_min, u_max = nurbs.get_u_bounds()
+        self.assertEquals(u_min, 0, "U_min")
+        self.assertEquals(u_max, eq.arc_angle, "U_max")
+        startpoint = nurbs.evaluate(u_min)
+        self.assert_sverchok_data_equal(startpoint.tolist(), pt1, precision=8)
+        endpoint = nurbs.evaluate(u_max)
+        self.assert_sverchok_data_equal(endpoint.tolist(), pt3, precision=8)
+
+    def test_arc_3(self):
+        pt1 = np.array((-4, 2, 0))
+        pt2 = np.array((0, 2.5, 0))
+        pt3 = np.array((4, 2, 0))
+        eq = circle_by_three_points(pt1, pt2, pt3)
+        #matrix = eq.get_matrix()
+        arc = SvCircle(center=np.array(eq.center), vectorx = np.array(pt1 - eq.center), normal=eq.normal)
+        arc.u_bounds = (0.0, eq.arc_angle)
+        nurbs = arc.to_nurbs()
+        u_min, u_max = nurbs.get_u_bounds()
+        self.assertEquals(u_min, 0, "U_min")
+        self.assertEquals(u_max, eq.arc_angle, "U_max")
+        startpoint = nurbs.evaluate(u_min)
+        self.assert_sverchok_data_equal(startpoint.tolist(), pt1, precision=6)
+        endpoint = nurbs.evaluate(u_max)
+        self.assert_sverchok_data_equal(endpoint.tolist(), pt3, precision=6)
+
+
 class KnotvectorTests(SverchokTestCase):
     def test_to_multiplicity_1(self):
         kv = np.array([0, 0, 0, 1, 1, 1], dtype=np.float64)
@@ -608,4 +678,36 @@ class KnotvectorTests(SverchokTestCase):
         u4 = 0.5490196078431373
         expected = np.array([0,0,0,0, u4, 1,1,1,1])
         self.assert_numpy_arrays_equal(knotvector, expected, precision=6)
+
+class InterpolateTests(SverchokTestCase):
+    def test_interpolate_1(self):
+        "NURBS interpolation in 3D"
+        points = np.array([[0,0,0], [1,0,0], [1,1,0]], dtype=np.float64)
+        degree = 2
+        curve = interpolate_nurbs_curve(SvNativeNurbsCurve, degree, points)
+        ts = np.array([0, 0.5, 1])
+        result = curve.evaluate_array(ts)
+        self.assert_numpy_arrays_equal(result, points, precision=6)
+
+        ctrlpts = curve.get_control_points()
+        expected_ctrlpts = np.array([[ 0.0, 0.0,   0.0 ], [ 1.5, -0.5,  0.0 ], [ 1.0,   1.0,   0.0 ]])
+        self.assert_numpy_arrays_equal(ctrlpts, expected_ctrlpts, precision=6)
+
+    def test_interpolate_2(self):
+        "NURBS Interpolation in homogenous coordinates"
+        points = np.array([[0,0,0,1], [1,0,0,2], [1,1,0,1]], dtype=np.float64)
+        degree = 2
+        curve = interpolate_nurbs_curve(SvNativeNurbsCurve, degree, points)
+        ts = np.array([0, 0.5, 1])
+        result = curve.evaluate_array(ts)
+        expected = np.array([[0,0,0], [0.5,0,0], [1,1,0]])
+        self.assert_numpy_arrays_equal(result, expected, precision=6)
+
+        ctrlpts = curve.get_control_points()
+        expected_ctrlpts = np.array( [[ 0.0, 0.0, 0.0 ], [ 0.5, -0.16666667,  0.0 ], [ 1.0, 1.0, 0.0 ]])
+        self.assert_numpy_arrays_equal(ctrlpts, expected_ctrlpts, precision=6)
+
+        weights = curve.get_weights()
+        expected_weights = np.array([1, 3, 1])
+        self.assert_numpy_arrays_equal(weights, expected_weights, precision=6)
 

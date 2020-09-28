@@ -11,6 +11,7 @@ Curves
    rounded_rectangle
    arc_3pt
    arc_sed
+   biarc
    polyarc
    polyline
    cubic_spline
@@ -18,6 +19,7 @@ Curves
    bezier_spline
    tangent_curve
    kinky_curve
+   freecad_helix
    curve_formula
    apply_field_to_curve
    offset_mk2
@@ -30,6 +32,7 @@ Curves
    length_rebuild
    curvature
    torsion
+   deconstruct_curve
    curve_frame
    curve_frame_on_surface
    zero_twist_frame
@@ -58,5 +61,6 @@ Curves
    nearest_point
    rbf_curve
    ortho_project
+   project_curve_surface
    eval_curve
 

@@ -15,6 +15,8 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+from copy import deepcopy
+from enum import Enum
 
 from sverchok.data_structure import get_other_socket, get_data_nesting_level
 from sverchok.utils.field.vector import SvVectorField, SvMatrixVectorField, SvConstantVectorField
@@ -65,6 +67,11 @@ def is_ultimately(data, data_type):
     if isinstance(data, (list, tuple)):
         return is_ultimately(data[0], data_type)
     return isinstance(data, data_type)
+
+
+def is_string_to_vector(socket):
+    other = get_other_socket(socket)
+    return other.bl_idname == 'SvStringsSocket' and socket.bl_idname == 'SvVerticesSocket'
 
 # ---
 
@@ -142,6 +149,7 @@ def get_locs_from_matrices(data):
 
 def matrices_to_vfield(data):
     if isinstance(data, Matrix):
+        data = deepcopy(data)
         return SvMatrixVectorField(data)
     elif isinstance(data, (list, tuple)):
         return [matrices_to_vfield(item) for item in data]
@@ -150,6 +158,7 @@ def matrices_to_vfield(data):
 
 def vertices_to_vfield(data):
     if isinstance(data, (tuple, list)) and len(data) == 3 and isinstance(data[0], (float, int)):
+        data = deepcopy(data)
         return SvConstantVectorField(data)
     elif isinstance(data, (list, tuple)):
         return [vertices_to_vfield(item) for item in data]
@@ -204,6 +213,7 @@ class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
     """
     @classmethod
     def convert(cls, socket, source_data):
+        # let policy to decide if deep copy of data is needed
         if is_vector_to_matrix(socket):
             return cls.vectors_to_matrices(socket, source_data)
         elif is_matrix_to_vector(socket):
@@ -212,6 +222,8 @@ class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
             return cls.quaternions_to_matrices(socket, source_data)
         elif is_matrix_to_quaternion(socket):
             return cls.matrices_to_quaternions(socket, source_data)
+        elif is_string_to_vector(socket):
+            return cls.string_to_vector(socket, source_data)
         elif socket.bl_idname in cls.get_lenient_socket_types():
             return source_data
         elif cls.data_type_check(socket, source_data):
@@ -270,9 +282,16 @@ class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
     def matrices_to_quaternions(cls, socket, source_data):
         return get_quaternions_from_matrices(source_data)
 
+    @classmethod
+    def string_to_vector(cls, socket, source_data):
+        # it can be so that socket is string but data their are already vectors
+        return [[(v, v, v) if isinstance(v, (float, int)) else v for v in obj] for obj in source_data]
+
+
 class FieldImplicitConversionPolicy(DefaultImplicitConversionPolicy):
     @classmethod
     def convert(cls, socket, source_data):
+        # let policy to decide if deep copy of data is needed
         if is_matrix_to_vfield(socket):
             return matrices_to_vfield(source_data) 
         elif is_vertex_to_vfield(socket):
@@ -285,3 +304,24 @@ class FieldImplicitConversionPolicy(DefaultImplicitConversionPolicy):
         else:
             super().convert(socket, source_data)
 
+
+class ConversionPolicies(Enum):
+    """It should keeps all policy classes"""
+    DEFAULT = DefaultImplicitConversionPolicy
+    FIELD = FieldImplicitConversionPolicy
+
+    @property
+    def conversion(self):
+        return self.value
+
+    @property
+    def conversion_name(self):
+        return self.value.__name__
+
+    @classmethod
+    def get_conversion(cls, conversion_name: str):
+        for enum in cls:
+            if conversion_name == enum.conversion_name:
+                return enum.conversion
+        raise LookupError(f"Conversion policy with name={conversion_name} was not found,"
+                          f"Available names: {[e.conversion_name for e in cls]}")

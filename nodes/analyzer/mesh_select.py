@@ -90,11 +90,11 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
 
         d = self.inputs.new('SvVerticesSocket', "Direction")
         d.use_prop = True
-        d.prop = (0.0, 0.0, 1.0)
+        d.default_property = (0.0, 0.0, 1.0)
 
         c = self.inputs.new('SvVerticesSocket', "Center")
         c.use_prop = True
-        c.prop = (0.0, 0.0, 0.0)
+        c.default_property = (0.0, 0.0, 0.0)
 
         self.inputs.new('SvStringsSocket', 'Percent').prop_name = 'percent'
         self.inputs.new('SvStringsSocket', 'Radius').prop_name = 'radius'
