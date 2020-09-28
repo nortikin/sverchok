@@ -554,7 +554,6 @@ class SverchokPreferences(AddonPreferences):
         draw_message(box, "skimage")
         draw_message(box, "mcubes")
         draw_message(box, "circlify")
-        draw_message(box, "lbt-ladybug")
 
         draw_freecad_ops()
 

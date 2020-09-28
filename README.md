@@ -75,7 +75,6 @@ Install Sverchok as you would any blender addon.
    - shapely  
    - circlify  
    - freecadpython3lib   
-   - ladybug  
    
    Instructions regarding their installation is found at this [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies)
 
