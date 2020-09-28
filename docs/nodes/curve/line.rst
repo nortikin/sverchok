@@ -25,12 +25,17 @@ This node has the following inputs:
 Parameters
 ----------
 
-This node has the following parameter:
+This node has the following parameters:
 
 * **Mode**:
    
   * **Two points**: line is defined by two points on the line.
   * **Point and direction**: line is defined by one point on the line and the directing vector.
+
+* **Join**. If checked, the node will output a single flat list of Curve
+  objects for all sets of input parameters. Otherwise, it will output a
+  separate list of Curve objects for each set of input parameters. Checked by
+  default.
 
 Outputs
 -------

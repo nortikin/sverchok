@@ -190,10 +190,11 @@ def get_2d_uniform_color_shader():
 
     uniform_2d_fragment_shader = '''
     uniform vec4 color;
-    out vec4 gl_FragColor;
+    out vec4 FragColor;
+
     void main()
     {
-       gl_FragColor = color;
+       FragColor = color;
     }
     '''
     return gpu.types.GPUShader(uniform_2d_vertex_shader, uniform_2d_fragment_shader)
@@ -219,10 +220,11 @@ def get_2d_smooth_color_shader():
 
     smooth_2d_fragment_shader = '''
     in vec4 a_color;
-    out vec4 gl_FragColor;
+    out vec4 FragColor;
+
     void main()
     {
-        gl_FragColor = a_color;
+        FragColor = a_color;
     }
     '''
     return gpu.types.GPUShader(smooth_2d_vertex_shader, smooth_2d_fragment_shader)

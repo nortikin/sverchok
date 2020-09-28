@@ -23,7 +23,7 @@ else:
 
             if not all(s.is_linked for s in node.inputs):
                 return {'FINISHED'}
-            folder_path = node.inputs[0].sv_get()[0]
+            folder_path = node.inputs[0].sv_get()[0][0]
             solids = node.inputs[1].sv_get()
             base_name = node.base_name
             if not base_name:

@@ -79,7 +79,7 @@ safe_names = make_functions_dict(
         # From mathutlis module
         Vector, Matrix,
         # Python type conversions
-        tuple, list, str, dict,
+        tuple, list, str, dict, set,
         any, all
     )
 # Constants

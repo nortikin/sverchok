@@ -66,6 +66,7 @@
     SvExPolylineNode
     SvExFilletPolylineNode
     SvKinkyCurveNode
+    SvBiArcNode
     SvPolyArcNode
 
 ## Curves @ NURBS
@@ -101,7 +102,7 @@
     ---
     SvExCurveLerpCurveNode
     SvExConcatCurvesNode
-    SvExBlendCurvesNode
+    SvExBlendCurvesMk2Node
     SvExFlipCurveNode
     SvReparametrizeCurveNode
     SvExSurfaceBoundaryNode
@@ -133,6 +134,7 @@
     SvExApproxNurbsSurfaceNode
     SvExInterpolateNurbsSurfaceNode
     SvNurbsLoftNode
+    SvNurbsSweepNode
     SvDeconstructSurfaceNode
     ---
     SvExQuadsToNurbsNode
@@ -215,6 +217,15 @@
     SvSolidWireFaceNode
     SvProjectTrimFaceNode
 
+## Solids @ Analyze
+   SvSolidValidateNode
+   SvRefineSolidNode
+   SvIsSolidClosedNode
+   SvSolidCenterOfMassNode
+   SvSolidFaceAreaNode
+   SvSolidAreaNode
+   SvSolidVolumeNode
+
 ## Solids
    SvBoxSolidNode
    SvCylinderSolidNode
@@ -226,8 +237,11 @@
    SvChamferSolidNode
    SvFilletSolidNode
    SvSolidBooleanNode
+   SvSolidGeneralFuseNode
    SvMirrorSolidNode
    SvOffsetSolidNode
+   SvSolidFromFacesNode
+   SvRuledSolidNode
    SvSolidFaceExtrudeNode
    SvSolidFaceSolidifyNode
    SvSolidFaceRevolveNode
@@ -243,6 +257,7 @@
    SvSolidEdgesNode
    SvSolidFacesNode
    SvSelectSolidNode
+   @ Analyze
    SvSolidViewerNode
 
 ## Analyzers
@@ -386,6 +401,7 @@
     SvVDAttrsNode
     SvPolygonSortNode
     SvFindClosestValue
+    SvMultiCacheNode
 
 ## List Main
     ListJoinNode
@@ -671,7 +687,6 @@
     SvPulgaPhysicsNode
     SvTopologySimple
     SvSweepModulator
-    SvRuledSolidNode
     ---
     SvGetPropNodeMK2
     SvSetPropNodeMK2

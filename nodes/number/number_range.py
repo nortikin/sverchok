@@ -121,15 +121,21 @@ class SvGenNumberRange(bpy.types.Node, SverchCustomTreeNode):
         if mode == 'RANGE':
 
             self.inputs[1].prop_name = 'stop_' + self.number_mode
+            self.inputs[1].label = 'stop'
             self.inputs[2].prop_name = 'step_' + self.number_mode
+            self.inputs[2].label = 'step'
 
         elif mode == 'RANGE_COUNT':
             self.inputs[1].prop_name = 'stop_' + self.number_mode
+            self.inputs[1].label = 'stop'
             self.inputs[2].prop_name = 'count_'
+            self.inputs[2].label = 'count'
 
         else:
             self.inputs[1].prop_name = 'step_' + self.number_mode
+            self.inputs[1].label = 'step'
             self.inputs[2].prop_name = 'count_'
+            self.inputs[2].label = 'count'
 
         self.current_mode = mode
         updateNode(self, context)
@@ -148,8 +154,12 @@ class SvGenNumberRange(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Start").prop_name = 'start_float'
-        self.inputs.new('SvStringsSocket', "Step").prop_name = 'stop_float'
-        self.inputs.new('SvStringsSocket', "Stop").prop_name = 'step_float'
+        sock1 = self.inputs.new('SvStringsSocket', "Step")
+        sock1.prop_name = 'stop_float'
+        sock1.label = 'stop'
+        sock2 = self.inputs.new('SvStringsSocket', "Stop")
+        sock2.prop_name = 'step_float'
+        sock2.label = 'step'
 
         self.outputs.new('SvStringsSocket', "Range")
 

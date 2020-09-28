@@ -300,6 +300,7 @@ classes = [
     make_class('Surfaces', "Surfaces"),
     make_class('Fields', "Fields"),
     make_class('MakeSolidFace', "Solids @ Make Face"),
+    make_class('AnalyzeSolid', "Solids @ Analyze"),
     make_class('Solids', "Solids"),
     make_class('Transforms', "Transforms"),
     make_class('Analyzers', "Analyzers"),

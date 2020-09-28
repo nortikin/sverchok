@@ -136,6 +136,9 @@ class SV_PT_SverchokUtilsPanel(SverchokPanels, bpy.types.Panel):
         else:
             col.operator("node.sverchok_check_for_upgrades_wsha", text='Check for updates')
 
+        with sv_preferences() as prefs:
+            if prefs.developer_mode:
+                col.operator("node.sv_run_pydoc")
 
 class SV_UL_TreePropertyList(bpy.types.UIList):
     """Show in node tree editor"""

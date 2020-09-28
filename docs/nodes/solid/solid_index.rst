@@ -17,8 +17,11 @@ Solid
    chamfer_solid
    fillet_solid
    solid_boolean
+   general_fuse
    mirror_solid
    offset_solid
+   solid_from_faces
+   ruled_solid
    extrude_face
    solidify_face
    revolve_face
@@ -36,4 +39,11 @@ Solid
    solid_select
    import_solid
    export_solid
+   face_area
+   area
+   volume
+   center_of_mass
+   is_closed
+   refine
+   validate
    solid_viewer

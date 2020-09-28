@@ -43,6 +43,7 @@ class SvSocketCommon:
     some of the properties can be skipped because they are static, they are always set only in sv_init method
     """
     color = (1, 0, 0, 1)  # base color, other sockets should override the property, use FloatProperty for dynamic
+    label: StringProperty()  # It will be drawn instead of name if given
     quick_link_to_node = str()  # sockets which often used with other nodes can fill its `bl_idname` here
 
     # set True to use default socket property if it has got it
@@ -196,10 +197,10 @@ class SvSocketCommon:
                 getattr(node, self.custom_draw)(self, context, layout)
 
         elif self.is_linked:  # linked INPUT or OUTPUT
-            layout.label(text=text + f". {self.objects_number or ''}")
+            layout.label(text=(self.label or text) + f". {self.objects_number or ''}")
 
         elif self.is_output:  # unlinked OUTPUT
-            layout.label(text=text)
+            layout.label(text=self.label or text)
 
         else:  # unlinked INPUT
             if self.get_prop_name():  # has property
@@ -210,7 +211,7 @@ class SvSocketCommon:
 
             else:  # no property and not use default prop
                 self.draw_quick_link(context, layout, node)
-                layout.label(text=text)
+                layout.label(text=self.label or text)
 
     def draw_color(self, context, node):
         return self.color

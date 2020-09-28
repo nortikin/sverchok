@@ -100,6 +100,7 @@ def include_submenus(node_cats):
                 submenu_name = compose_submenu_name(category, name)
                 result[category].append(['separator'])
                 result[category].extend(node_cats[submenu_name])
+                result[category].append(['separator'])
             else:
                 result[category].append(item)
     return result

@@ -112,10 +112,13 @@ class SvNurbsCurve(SvCurve):
         if curve2 is None:
             raise UnsupportedCurveTypeException("second curve is not NURBS")
         
-        pt1 = curve1.evaluate(curve1.get_u_bounds()[1])
-        pt2 = curve2.evaluate(curve2.get_u_bounds()[0])
-        if np.linalg.norm(pt1 - pt2) > tolerance:
-            raise UnsupportedCurveTypeException(f"Curve end points do not match: {pt1} != {pt2}")
+        c1_end = curve1.get_u_bounds()[1]
+        c2_start = curve2.get_u_bounds()[0]
+        pt1 = curve1.evaluate(c1_end)
+        pt2 = curve2.evaluate(c2_start)
+        dpt = np.linalg.norm(pt1 - pt2)
+        if dpt > tolerance:
+            raise UnsupportedCurveTypeException(f"Curve end points do not match: C1({c1_end}) = {pt1} != C2({c2_start}) = {pt2}, distance={dpt}")
 
         cp1 = curve1.get_control_points()[-1]
         cp2 = curve2.get_control_points()[0]
@@ -446,6 +449,29 @@ class SvNurbsCurve(SvCurve):
         kv = self.get_knotvector()
         degree = self.get_degree()
         return sv_knotvector.get_min_continuity(kv, degree)
+
+    def transform(self, frame, vector):
+        """
+        Apply transformation matrix to the curve.
+        Inputs:
+        * frame: np.array of shape (3,3) - transformation matrix
+        * vector: np.array of shape (3,) - translation vector
+        Output: new NURBS curve of the same implementation.
+        """
+        if frame is None and vector is None:
+            return self
+        elif frame is None and vector is not None:
+            fn = lambda p: p + vector
+        elif frame is not None and vector is None:
+            fn = lambda p: frame @ p
+        else:
+            fn = lambda p: frame @ p + vector
+        new_controls = np.apply_along_axis(fn, 1, self.get_control_points())
+        return SvNurbsMaths.build_curve(self.get_nurbs_implementation(),
+                    self.get_degree(),
+                    self.get_knotvector(),
+                    new_controls,
+                    self.get_weights())
 
 class SvGeomdlCurve(SvNurbsCurve):
     """

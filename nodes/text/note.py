@@ -53,7 +53,7 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
 
     text: StringProperty(name='text', default='your text here', update=update_text)
 
-    show_text: BoolProperty(default=False, name="Show text", description="Show text box in node")
+    show_text: BoolProperty(default=True, name="Show text", description="Show text box in node")
 
     def format_text(self):
         n_id = node_id(self)
@@ -126,12 +126,7 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
             self.format_text()
 
         if self.outputs and self.outputs['Text Out'].is_linked:
-            # I'm not sure that this makes sense, but keeping it like
-            # old note right now. Would expect one value, and optional
-            # split, or split via a text processing node,
-            # but keeping this for now
-            text = [[a] for a in self.text.split()]
-            self.outputs['Text Out'].sv_set([text])
+            self.outputs['Text Out'].sv_set([[self.text]])
 
     def sv_copy(self, node):
         self.n_id = ''
