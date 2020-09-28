@@ -13,6 +13,8 @@ from contextlib import contextmanager
 from typing import TYPE_CHECKING, Union, Generator, ContextManager, Any
 
 import bpy
+from sverchok.core.update_system import build_update_list, process_tree
+from sverchok import old_nodes
 from sverchok.utils.sv_IO_panel_tools import get_file_obj_from_zip
 from sverchok.utils.logging import debug, info, warning
 from sverchok.utils import dummy_nodes
@@ -47,6 +49,10 @@ class JSONImporter:
         root_tree_builder = TreeImporter01(tree, self._structure, self._fails_log)
         root_tree_builder.import_tree()
         self._fails_log.report_log_result()
+
+        # Update tree
+        build_update_list(tree)
+        process_tree(tree)
 
 
 class TreeImporter01:
@@ -133,13 +139,15 @@ class NodeImporter01:
             with self._fails_log.add_fail(
                     "Setting node property",
                     f'Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}'):
-                BPYProperty(self._node, prop_name).value = prop_value
+                prop = BPYProperty(self._node, prop_name)
+                if prop.is_valid:  # some files can have outdated properties which should be filtered
+                    prop.value = prop_value
 
         # this block is before applying socket properties because some nodes can generate them in load method
         if hasattr(self._node, 'load_from_json'):
             with self._fails_log.add_fail(
                     "Setting advance node properties",
-                    f'Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}'):
+                    f'Tree: {self._node.id_data.name}, Node: {self._node.name}'):
                 self._node.load_from_json(self._structure, self._import_version)
 
         for sock_index, prop_name, prop_value in self._input_socket_properties():
@@ -147,7 +155,9 @@ class NodeImporter01:
                     "Setting socket property",
                     f'Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}'):
                 socket = self._node.inputs[sock_index]
-                BPYProperty(socket, prop_name).value = prop_value
+                prop = BPYProperty(socket, prop_name)
+                if prop.is_valid:
+                    prop.value = prop_value
 
     def _node_attributes(self) -> Generator[tuple]:
         with self._fails_log.add_fail("Reading node location", f'Node: {self._node.name}'):
@@ -195,6 +205,8 @@ class TreeGenerator:
 
     def add_node(self, bl_type: str, node_name: str) -> Union[SverchCustomTreeNode, None]:
         with self._fails_log.add_fail("Creating node", f'Tree: {self._tree_name}, Node: {node_name}'):
+            if old_nodes.is_old(bl_type):  # old node classes are registered only by request
+                old_nodes.register_old(bl_type)
             if dummy_nodes.is_dependent(bl_type):
                 # some node types are not registered if dependencies are not installed
                 # in this case such nodes are registered as dummies

@@ -539,7 +539,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 print('| with the same name was encountered. The importer')
                 print('| automatically made a datablock called', new_text.name)
 
-    def load_from_json(self, node_data: dict):
+    def load_from_json(self, node_data: dict, import_version: float):
         # this check and function call is needed to allow loading node trees directly
         # from a .blend in order to export them via create_dict_of_tree
         if not self.node_dict or not self.node_dict.get(hash(self)):

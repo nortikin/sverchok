@@ -355,7 +355,7 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
     def save_to_json(self, node_data: dict):
         node_data['object_names'] = [o.name for o in self.object_names]
 
-    def load_from_json(self, node_data: dict):
+    def load_from_json(self, node_data: dict, import_version: float):
         for named_object in node_data.get('object_names', []):
             self.object_names.add().name = named_object
 

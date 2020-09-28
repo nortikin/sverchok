@@ -586,7 +586,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         else:
             node_data['text_lines'] = texts[self.text].as_string()
 
-    def load_from_json(self, node_data: dict):
+    def load_from_json(self, node_data: dict, import_version: float):
         '''
         as it's a beta service, old IO json may not be compatible - in this interest
         of neat code we assume it finds everything.

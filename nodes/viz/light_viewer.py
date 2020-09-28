@@ -206,7 +206,7 @@ class SvLightViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
 
     def load_from_json(self, node_data: dict, import_version: float):
         if import_version <= 0.08:
-            super().load_from_json(node_data)
+            super().load_from_json(node_data, import_version)
             self.light_type = node_data.get("lamp_type", "POINT")
 
 

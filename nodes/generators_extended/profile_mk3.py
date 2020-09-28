@@ -685,7 +685,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if 'Curve' in self.outputs:
             self.outputs['Curve'].sv_set(result_curves)
 
-    def load_from_json(self, node_data: dict):
+    def load_from_json(self, node_data: dict, import_version: float):
         profile = node_data['profile']
         filename = node_data['params']['filename']
 

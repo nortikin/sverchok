@@ -124,7 +124,7 @@ class SvSocketAquisition:
             # print('add', s, stype, 'to', self.name)
             sockets.new(stype, s)
 
-    def load_from_json(self, node_data: dict):
+    def load_from_json(self, node_data: dict, import_version: float):
         socket_kinds = node_data.get(self.node_kind)
         self.repopulate(socket_kinds)
 
