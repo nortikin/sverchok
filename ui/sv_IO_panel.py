@@ -123,6 +123,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
     id_tree: bpy.props.StringProperty()
     compress: bpy.props.BoolProperty()
+    only_selected_nodes: bpy.props.BoolProperty(description="Only selected nodes will be imported")
 
     @classmethod
     def poll(cls, context):
@@ -137,7 +138,10 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
         # future: should check if filepath is a folder or ends in \
 
-        layout_dict = JSONExporter.get_structure(ng)
+        if self.only_selected_nodes:
+            layout_dict = JSONExporter.get_nodes_structure([node for node in ng.nodes if node.select])
+        else:
+            layout_dict = JSONExporter.get_tree_structure(ng)
 
         if not layout_dict:
             msg = 'no update list found - didn\'t export'
@@ -183,6 +187,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
             col = self.layout.column()  # old syntax in <= 2.83
 
         col.use_property_split = True
+        col.prop(self, 'only_selected_nodes')
         col.prop(self, 'compress', text="Create ZIP archive")
 
 
@@ -259,7 +264,7 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
             return {'CANCELLED'}
 
         # import tree and set new node tree to active
-        import_tree(ng, nodes_json=nodes_json)
+        JSONImporter(nodes_json).import_into_tree(ng)
         context.space_data.node_tree = ng
         return {'FINISHED'}
 
@@ -283,7 +288,11 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
         time_stamp = strftime("%Y.%m.%d | %H:%M", localtime())
         gist_description = f"Sverchok.{version_and_sha} | Blender.{app_version} | {ng.name} | {time_stamp}"
 
-        layout_dict = create_dict_of_tree(ng, skip_set={}, selected=self.selected_only)
+        # layout_dict = create_dict_of_tree(ng, skip_set={}, selected=self.selected_only)
+        if self.selected_only:
+            layout_dict = JSONExporter.get_nodes_structure([node for node in ng.nodes if node.select])
+        else:
+            layout_dict = JSONExporter.get_tree_structure(ng)
 
         try:
             gist_body = json.dumps(layout_dict, sort_keys=True, indent=2)

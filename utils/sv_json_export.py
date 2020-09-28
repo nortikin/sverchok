@@ -8,12 +8,11 @@
 
 from __future__ import annotations
 
-import json
-from typing import TYPE_CHECKING, Union, Generator
+from typing import TYPE_CHECKING, Union, List
 
 import bpy
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
-from sverchok.utils.handle_blender_data import BPYProperty, BPYPointers
+from sverchok.utils.handle_blender_data import BPYProperty
 from sverchok.utils.sv_IO_monad_helpers import pack_monad
 
 if TYPE_CHECKING:
@@ -25,11 +24,12 @@ if TYPE_CHECKING:
 class JSONExporter:
     """It's only know about Sverchok JSON structure nad can fill it"""
     @staticmethod
-    def get_structure(tree: SverchCustomTree, save_defaults: bool = False) -> dict:
+    def get_tree_structure(tree: SverchCustomTree, save_defaults: bool = False) -> dict:
         return TreeExporter01().export_tree(tree)
 
-    @classmethod
-    def create_from_nodes(cls, nodes: list, save_defaults: bool = False) -> JSONExporter: ...
+    @staticmethod
+    def get_nodes_structure(nodes: List[SverchCustomTreeNode]) -> dict:
+        return TreeExporter01().export_nodes(nodes)
 
 
 class TreeExporter01:
@@ -50,11 +50,18 @@ class TreeExporter01:
             self._add_link(link)
         return self._structure
 
-    def export_monad(self, monad, owner_node_type) -> dict:
-        self._structure['bl_idname'] = monad.bl_idname
-        self._structure['cls_bl_idname'] = owner_node_type
-        self.export_tree(monad)
-        return json.dumps(self._structure)
+    def export_nodes(self, nodes: List[SverchCustomTreeNode]):
+        """Expecting get nodes from one tree"""
+        for node in nodes:
+            self._add_node(node)
+            self._add_node_in_frame(node)
+        if nodes:
+            tree = nodes[0].id_data
+            input_node_names = {node.name for node in nodes}
+            for link in tree.links:
+                if link.from_node.name in input_node_names and link.to_node.name in input_node_names:
+                    self._add_link(link)
+        return self._structure
 
     def _add_node(self, node: SverchCustomTreeNode):
         self._structure['nodes'][node.name] = NodeExporter01().export_node(node, self._structure['groups'])
