@@ -10,7 +10,8 @@ from sverchok.old_nodes import is_old
 from sverchok.utils.dummy_nodes import is_dummy
 from sverchok.utils.testing import *
 from sverchok.utils.sv_IO_panel_tools import import_tree
-from sverchok.utils.sv_examples_utils import examples_paths
+from sverchok.ui.sv_examples_menu import example_categories_names
+
 
 class ScriptUvImportTest(SverchokTestCase):
 
@@ -71,15 +72,13 @@ UNITTEST_SKIPLIST = [
 class ExamplesImportTest(SverchokTestCase):
     def test_import_examples(self):
 
-        for cat in examples_paths:
+        examples_path = Path(sverchok.__file__).parent / 'json_examples'
 
-            if not examples_paths.get(cat):
-                info("Dir named: %s is empty", cat)
-                continue
+        for category_name in example_categories_names():
 
-            info("Opening Dir named: %s", cat)
+            info("Opening Dir named: %s", category_name)
 
-            examples_set = Path(examples_paths.get(cat))
+            examples_set = examples_path / category_name
             for listed_path in examples_set.iterdir():
 
                 # cast from Path class to dumb string.

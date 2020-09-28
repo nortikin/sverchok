@@ -26,13 +26,13 @@ class JSONExporter:
     """It's only know about Sverchok JSON structure nad can fill it"""
     @staticmethod
     def get_structure(tree: SverchCustomTree, save_defaults: bool = False) -> dict:
-        return TreeImporter01().import_tree(tree)
+        return TreeExporter01().export_tree(tree)
 
     @classmethod
     def create_from_nodes(cls, nodes: list, save_defaults: bool = False) -> JSONExporter: ...
 
 
-class TreeImporter01:
+class TreeExporter01:
     def __init__(self):
         self._structure = {
             "export_version": "0.10",
@@ -42,7 +42,7 @@ class TreeImporter01:
             "update_lists": []
         }
 
-    def import_tree(self, tree: SverchCustomTree) -> dict:
+    def export_tree(self, tree: SverchCustomTree) -> dict:
         for node in tree.nodes:
             self._add_node(node)
             self._add_node_in_frame(node)
@@ -50,14 +50,14 @@ class TreeImporter01:
             self._add_link(link)
         return self._structure
 
-    def import_monad(self, monad, owner_node_type) -> dict:
+    def export_monad(self, monad, owner_node_type) -> dict:
         self._structure['bl_idname'] = monad.bl_idname
         self._structure['cls_bl_idname'] = owner_node_type
-        self.import_tree(monad)
+        self.export_tree(monad)
         return json.dumps(self._structure)
 
     def _add_node(self, node: SverchCustomTreeNode):
-        self._structure['nodes'][node.name] = NodeImporter01().import_node(node, self._structure['groups'])
+        self._structure['nodes'][node.name] = NodeExporter01().export_node(node, self._structure['groups'])
 
     def _add_link(self, link: bpy.types.NodeLink):
         if hasattr(link.from_socket, 'index') and hasattr(link.to_socket, 'index'):
@@ -79,7 +79,7 @@ class TreeImporter01:
             self._structure["framed_nodes"][node.name] = node.parent.name
 
 
-class NodeImporter01:
+class NodeExporter01:
     def __init__(self):
         self._structure = {
             "bl_idname": "",
@@ -92,14 +92,14 @@ class NodeImporter01:
             "custom_socket_props": dict()
         }
 
-    def import_node(self, node: SverchCustomTreeNode, groups: dict) -> dict:
+    def export_node(self, node: SverchCustomTreeNode, groups: dict) -> dict:
         self._add_mandatory_attributes(node)
         self._add_node_properties(node)
         self._add_socket_properties(node)
 
         if hasattr(node, 'monad') and node.monad:
             self._structure['bl_idname'] = 'SvMonadGenericNode'
-            pack_monad(node, self._structure['params'], groups, TreeImporter01().import_tree)
+            pack_monad(node, self._structure['params'], groups, TreeExporter01().export_tree)
 
         if node.bl_idname in {'SvGroupInputsNodeExp', 'SvGroupOutputsNodeExp'}:
             self._structure[node.node_kind] = node.stash()
