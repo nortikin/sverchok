@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 from collections import defaultdict
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Union, Generator, ContextManager, Any
+from typing import TYPE_CHECKING, Union, Generator, ContextManager
 
 import bpy
 from sverchok.core.update_system import build_update_list, process_tree
@@ -18,7 +18,7 @@ from sverchok import old_nodes
 from sverchok.utils.sv_IO_panel_tools import get_file_obj_from_zip
 from sverchok.utils.logging import debug, info, warning
 from sverchok.utils import dummy_nodes
-from sverchok.utils.handle_blender_data import BPYProperty, BPYPointers
+from sverchok.utils.handle_blender_data import BPYProperty, BPYNode
 from sverchok.utils.sv_IO_monad_helpers import unpack_monad
 
 if TYPE_CHECKING:
@@ -54,6 +54,22 @@ class JSONImporter:
         build_update_list(tree)
         process_tree(tree)
 
+    def import_node_settings(self, node: SverchCustomTreeNode):
+        """
+        It takes first node from file and apply its settings to given node
+        It is strange but it is how it was originally implemented
+        """
+        node = BPYNode(node)
+        for prop in node.properties:
+            if prop.is_to_save:
+                prop.unset()
+
+        tree_importer = TreeImporter01(node.data.id_data, self._structure, self._fails_log)
+        for node_name, node_type, node_structure in tree_importer.nodes():
+            node_importer = NodeImporter01(node.data, node_structure, self._fails_log, tree_importer.file_version)
+            node_importer.import_node(apply_attributes=False)
+            break
+
 
 class TreeImporter01:
     def __init__(self, tree: SverchCustomTree, structure: dict, log: FailsLog):
@@ -81,8 +97,7 @@ class TreeImporter01:
                     node = tree_builder.add_node(node_type, node_name)
                 if node:
                     self._new_node_names[node_name] = node.name
-                    NodeImporter01(node, node_structure, self._fails_log,
-                                   float(self._structure['export_version'])).import_node()
+                    NodeImporter01(node, node_structure, self._fails_log, self.file_version).import_node()
 
             for from_node_name, from_socket_index, to_node_name, to_socket_index in self._links():
                 with self._fails_log.add_fail("Search node to link"):
@@ -98,14 +113,18 @@ class TreeImporter01:
                     parent_name = self._get_new_node_name(parent_name)
                     self._tree.nodes[node_name].parent = self._tree.nodes[parent_name]
 
-    def _get_new_node_name(self, old_name):
-        return self._new_node_names[old_name]
+    @property
+    def file_version(self):
+        return float(self._structure['export_version'])
 
-    def _nodes(self) -> Generator[tuple]:
+    def nodes(self) -> Generator[tuple]:
         with self._fails_log.add_fail("Reading nodes", f'Tree: {self._tree.name}'):
             for node_name, node_structure in self._structure.get("nodes", dict()).items():
                 with self._fails_log.add_fail("Reading node"):
                     yield node_name, node_structure['bl_idname'], node_structure
+
+    def _get_new_node_name(self, old_name):
+        return self._new_node_names[old_name]
 
     def _links(self) -> Generator[tuple]:
         with self._fails_log.add_fail("Reading links", f'Tree: {self._tree.name}'):
@@ -126,12 +145,13 @@ class NodeImporter01:
         self._fails_log = log
         self._import_version = import_version
 
-    def import_node(self):
-        for attr_name, attr_value in self._node_attributes():
-            with self._fails_log.add_fail(
-                    "Setting node attribute",
-                    f'Tree: {self._node.id_data.name}, Node: {self._node.name}, attr: {attr_name}'):
-                setattr(self._node, attr_name, attr_value)
+    def import_node(self, apply_attributes: bool = True):
+        if apply_attributes:
+            for attr_name, attr_value in self._node_attributes():
+                with self._fails_log.add_fail(
+                        "Setting node attribute",
+                        f'Tree: {self._node.id_data.name}, Node: {self._node.name}, attr: {attr_name}'):
+                    setattr(self._node, attr_name, attr_value)
 
         for prop_name, prop_value in self._node_properties():
             if prop_name in {"all_props", "cls_dict", "monad"}:

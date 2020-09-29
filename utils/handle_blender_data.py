@@ -97,6 +97,16 @@ def get_sv_trees():
 # ~~~~ encapsulation Blender objects ~~~~
 
 
+class BPYNode:
+    def __init__(self, node):
+        self.data = node
+
+    @property
+    def properties(self) -> List[BPYProperty]:
+        node_properties = self.data.bl_rna.__annotations__ if hasattr(self.data.bl_rna, '__annotations__') else []
+        return [BPYProperty(self.data, prop_name) for prop_name in node_properties]
+
+
 class BPYProperty:
     def __init__(self, data, prop_name: str):
         self.name = prop_name
@@ -189,6 +199,9 @@ class BPYProperty:
         else:
             # other properties does not have is_array attribute
             return False
+
+    def unset(self):
+        self._data.property_unset(self.name)
 
     def filter_collection_values(self, skip_default=True, skip_save=True):
         if self.type != 'COLLECTION':
