@@ -186,6 +186,8 @@ class SvSocketCommon(SvSocketProcessing):
 
     objects_number: IntProperty(min=0)  # utility field for showing number of objects in sockets data
 
+    description : StringProperty()
+
     def get_prop_name(self):
         """
         Intended to return name of property related with socket owned by its node
@@ -484,6 +486,8 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
             layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
 
     def draw_menu_items(self, context, layout):
+        if self.description:
+            layout.operator('node.sv_socket_show_help', text=self.label or self.name, icon='QUESTION').text = self.description
         self.draw_simplify_modes(layout)
         if self.can_graft():
             layout.prop(self, 'use_graft')
@@ -866,6 +870,20 @@ class SvLinkNewNodeInput(bpy.types.Operator):
 
         return {'FINISHED'}
 
+class SvSocketHelpOp(bpy.types.Operator):
+    bl_idname = "node.sv_socket_show_help"
+    bl_label = "Socket description"
+    bl_options = {'INTERNAL', 'REGISTER'}
+
+    text : StringProperty()
+
+    @classmethod
+    def description(cls, context, properties):
+        return properties.text
+
+    def execute(self, context):
+        self.report({'INFO'}, self.text)
+        return {'FINISHED'}
 
 classes = [
     SV_MT_SocketOptionsMenu,
@@ -873,7 +891,7 @@ classes = [
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
     SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket,
     SvSurfaceSocket, SvCurveSocket, SvScalarFieldSocket, SvVectorFieldSocket,
-    SvSolidSocket, SvSvgSocket, SvLinkNewNodeInput
+    SvSolidSocket, SvSvgSocket, SvLinkNewNodeInput, SvSocketHelpOp
 ]
 
 register, unregister = bpy.utils.register_classes_factory(classes)
