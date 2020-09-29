@@ -216,6 +216,7 @@
     SvSolidPolygonFaceNode
     SvSolidWireFaceNode
     SvProjectTrimFaceNode
+    SvShrinkExpandSolidFaceNode
 
 ## Solids @ Analyze
    SvSolidValidateNode
