@@ -88,7 +88,7 @@ class TreeImporter01:
                 TreeImporter01(monad, json.loads(str_struct), self._fails_log).import_tree()
 
         with TreeGenerator.start_from_tree(self._tree, self._fails_log) as tree_builder:
-            for node_name, node_type, node_structure in self._nodes():
+            for node_name, node_type, node_structure in self.nodes():
                 if node_type == 'SvMonadGenericNode':
                     node = None
                     with self._fails_log.add_fail("Creating monad node", f'Tree: {self._tree.name}'):

@@ -32,10 +32,7 @@ from sverchok.utils import sv_gist_tools
 from sverchok.utils.sv_gist_tools import show_token_help, TOKEN_HELP_URL
 from sverchok.utils.sv_IO_panel_tools import (
     propose_archive_filepath,
-    create_dict_of_tree,
-    load_json_from_gist,
-    import_tree,
-    write_json)
+    load_json_from_gist)
 from sverchok.utils.sv_json_export import JSONExporter
 from sverchok.utils.sv_json_import import JSONImporter
 
@@ -149,7 +146,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
             warning(msg)
             return {'CANCELLED'}
 
-        write_json(layout_dict, destination_path)
+        json.dump(layout_dict, open(destination_path, 'w'), sort_keys=True, indent=2)
         msg = 'exported to: ' + destination_path
         self.report({"INFO"}, msg)
         info(msg)

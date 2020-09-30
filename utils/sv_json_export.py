@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 class JSONExporter:
     """It's only know about Sverchok JSON structure nad can fill it"""
     @staticmethod
-    def get_tree_structure(tree: SverchCustomTree, save_defaults: bool = False) -> dict:
+    def get_tree_structure(tree: SverchCustomTree) -> dict:
         return TreeExporter01().export_tree(tree)
 
     @staticmethod

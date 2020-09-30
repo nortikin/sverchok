@@ -3,7 +3,8 @@ import unittest
 import json
 
 from sverchok.utils.testing import *
-from sverchok.utils.sv_IO_panel_tools import create_dict_of_tree
+from sverchok.utils.sv_json_export import JSONExporter
+
 
 class ExportSingleSimpleNode(EmptyTreeTestCase):
 
@@ -14,7 +15,7 @@ class ExportSingleSimpleNode(EmptyTreeTestCase):
         node.Divz = 4
         node.Size = 1.0299999713897705
 
-        export_result = create_dict_of_tree(self.tree)
+        export_result = JSONExporter.get_tree_structure(self.tree)
 
         self.assert_json_equals_file(export_result, "box.json")
 
@@ -34,7 +35,7 @@ class ExportSingleSimpleNode(EmptyTreeTestCase):
         node.phase = 1.0299999713897705
         node.scale = 1.0299999713897705
 
-        export_result = create_dict_of_tree(self.tree)
+        export_result = JSONExporter.get_tree_structure(self.tree)
 
         self.assert_json_equals_file(export_result, "cylinder.json")
 
@@ -52,6 +53,6 @@ class ExportSingleSimpleNode(EmptyTreeTestCase):
         node.torus_sP = 0.029999999329447746
         node.torus_sT = 1
 
-        export_result = create_dict_of_tree(self.tree)
+        export_result = JSONExporter.get_tree_structure(self.tree)
 
         self.assert_json_equals_file(export_result, "torus.json")
