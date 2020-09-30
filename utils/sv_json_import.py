@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import json
+import traceback
 from collections import defaultdict
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, Union, Generator, ContextManager
@@ -16,7 +17,7 @@ import bpy
 from sverchok.core.update_system import build_update_list, process_tree
 from sverchok import old_nodes
 from sverchok.utils.sv_IO_panel_tools import get_file_obj_from_zip
-from sverchok.utils.logging import debug, info, warning
+from sverchok.utils.logging import info, warning, getLogger, logging
 from sverchok.utils import dummy_nodes
 from sverchok.utils.handle_blender_data import BPYProperty, BPYNode
 from sverchok.utils.sv_IO_monad_helpers import unpack_monad
@@ -69,6 +70,14 @@ class JSONImporter:
             node_importer = NodeImporter01(node.data, node_structure, self._fails_log, tree_importer.file_version)
             node_importer.import_node(apply_attributes=False)
             break
+
+    @property
+    def has_fails(self) -> bool:
+        return self._fails_log.has_fails
+
+    @property
+    def fail_massage(self) -> str:
+        return self._fails_log.fail_message
 
 
 class TreeImporter01:
@@ -258,7 +267,10 @@ class FailsLog:
             yield
         except Exception as e:
             self._log[fail_name] += 1
-            debug(f'FAIL: "{fail_name}", {"SOURCE: " if source else ""}{source or ""}, {e}')
+            logger = getLogger()
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f'FAIL: "{fail_name}", {"SOURCE: " if source else ""}{source or ""}, {e}')
+                traceback.print_exc()
 
     @property
     def has_fails(self) -> bool:
@@ -267,6 +279,10 @@ class FailsLog:
     def report_log_result(self):
         if self.has_fails:
             warning(f'During import next fails has happened:')
-            [print(f'FAIL: {msg} - {number}') for msg, number in self._log.items()]
+            print(self.fail_message)
         else:
             info(f'Import done with no fails')
+
+    @property
+    def fail_message(self) -> str:
+        return '\n'.join([f'FAIL: {msg} - {number}' for msg, number in self._log.items()])

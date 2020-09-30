@@ -214,6 +214,8 @@ class SvNodeTreeImporter(bpy.types.Operator):
 
         importer = JSONImporter.init_from_path(self.filepath)
         importer.import_into_tree(ng)
+        if importer.has_fails:
+            self.report({'ERROR'}, importer.fail_massage)
 
         # set new node tree to active
         context.space_data.node_tree = ng
