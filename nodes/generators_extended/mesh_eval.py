@@ -543,6 +543,8 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             self.outputs[name].sv_set(result_masks_dict[name])
 
     def load_from_json(self, node_data: dict, import_version):
+        if 'geom' not in node_data:
+            return  # looks like the node was empty when it was exported
         geom = node_data['geom']
         filename = node_data['params']['filename']
 

@@ -581,8 +581,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         params = node_data.get('params')
         if params:
 
-            script_name = params.script_name
-            script_content = params.script_str
+            script_name = params.get('script_name')
+            script_content = params.get('script_str')
 
             with self.sv_throttle_tree_update():
                 texts = bpy.data.texts

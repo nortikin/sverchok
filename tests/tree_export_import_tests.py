@@ -1,6 +1,3 @@
-
-import unittest
-import json
 import traceback
 
 from sverchok.core import upgrade_nodes
@@ -14,7 +11,11 @@ class ScriptUvExportTest(ReferenceTreeTestCase):
 
     def test_script_uv_export(self):
         export_result = JSONExporter.get_tree_structure(self.tree)
-        self.assert_json_equals_file(export_result, "script_uv.json")
+        importer = JSONImporter(export_result)
+        importer.import_into_tree(self.tree)
+        if importer.has_fails:
+            raise(ImportError(importer.fail_massage))
+
 
 class ProfileExportTest(ReferenceTreeTestCase):
 
@@ -23,8 +24,6 @@ class ProfileExportTest(ReferenceTreeTestCase):
     def setUp(self):
         # We have to load text block as well
         self.link_text_block("Profile.txt")
-        
-
         self.maxDiff = None
         super().setUp()
 
@@ -36,8 +35,11 @@ class ProfileExportTest(ReferenceTreeTestCase):
             traceback.print_exc()
 
         export_result = JSONExporter.get_tree_structure(self.tree)
-        # self.store_reference_json("profile.json", export_result)
-        self.assert_json_equals_file(export_result, "profile.json")
+        importer = JSONImporter(export_result)
+        importer.import_into_tree(self.tree)
+        if importer.has_fails:
+            raise(ImportError(importer.fail_massage))
+
 
 class MeshExprExportTest(ReferenceTreeTestCase):
 
@@ -50,8 +52,11 @@ class MeshExprExportTest(ReferenceTreeTestCase):
 
     def test_mesh_expr_export(self):
         export_result = JSONExporter.get_tree_structure(self.tree)
-        #self.store_reference_json("mesh.json", export_result)
-        self.assert_json_equals_file(export_result, "mesh.json")
+        importer = JSONImporter(export_result)
+        importer.import_into_tree(self.tree)
+        if importer.has_fails:
+            raise(ImportError(importer.fail_massage))
+
 
 class MonadExportTest(ReferenceTreeTestCase):
 
@@ -64,12 +69,15 @@ class MonadExportTest(ReferenceTreeTestCase):
     @unittest.skip("Linking node tree with Monad node does not work correctly.")
     def test_monad_export(self):
         export_result = JSONExporter.get_tree_structure(self.tree)
-        #self.store_reference_json("monad_e.json", export_result)
-        self.assert_json_equals_file(export_result, "monad_1.json")
+        importer = JSONImporter(export_result)
+        importer.import_into_tree(self.tree)
+        if importer.has_fails:
+            raise(ImportError(importer.fail_massage))
 
     def tearDown(self):
         remove_node_tree("PulledCube")
         super().tearDown()
+
 
 class ViewerTextExportTest(ReferenceTreeTestCase):
 
@@ -77,5 +85,7 @@ class ViewerTextExportTest(ReferenceTreeTestCase):
 
     def test_textview_expr_export(self):
         export_result = JSONExporter.get_tree_structure(self.tree)
-        #self.store_reference_json("viewer_text.blend.json", export_result)
-        self.assert_json_equals_file(export_result, "viewer_text.blend.json")
+        importer = JSONImporter(export_result)
+        importer.import_into_tree(self.tree)
+        if importer.has_fails:
+            raise(ImportError(importer.fail_massage))

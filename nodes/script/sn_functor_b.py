@@ -274,7 +274,8 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
         node_data['string_storage'] = json.dumps(local_storage)
 
     def load_from_json(self, node_data: dict, import_version: float):
-
+        if 'textfile_name' not in node_data:
+            return  # just empty node, nothing to do
         # maybe this file/blend already has this textblock, we could end early
         self.script_pointer = unpack_pointer_property_name(bpy.data.texts, node_data, "textfile_name")
         if self.script_pointer:

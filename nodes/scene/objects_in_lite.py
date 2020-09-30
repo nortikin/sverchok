@@ -150,6 +150,8 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         self.pass_data_to_sockets()
 
     def load_from_json(self, node_data: dict, import_version: float):
+        if 'geom' not in node_data:
+            return  # looks like a node was empty when it was imported
         geom = node_data['geom']
         name = node_data['params']["obj_name"]
         geom_dict = json.loads(geom)
