@@ -265,6 +265,8 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
                 self.exception(err)
 
     def save_to_json(self, node_data):
+        if self.script_pointer is None:
+            return  # just empty node, nothing to do
         pack_pointer_property_name(self.script_pointer, node_data, "textfile_name")
         local_storage = {'lines': []}
         for line in self.script_pointer.lines:

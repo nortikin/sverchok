@@ -5,7 +5,7 @@ import traceback
 
 from sverchok.core import upgrade_nodes
 from sverchok.utils.testing import *
-from utils.sv_json_export import JSONExporter
+from sverchok.utils.sv_json_export import JSONExporter
 
 
 class ScriptUvExportTest(ReferenceTreeTestCase):

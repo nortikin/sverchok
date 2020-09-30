@@ -573,6 +573,8 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 self.file_pointer = text
 
     def save_to_json(self, node_data: dict):
+        if not self.text:
+            return  # empty node, nothing to do
         texts = bpy.data.texts
 
         node_data['current_text'] = self.text
