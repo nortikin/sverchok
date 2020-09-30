@@ -26,7 +26,6 @@ import bpy
 
 import sverchok
 from sverchok.utils.logging import debug, info, warning, error, exception
-from sverchok.utils.sv_IO_panel_tools import _EXPORTER_REVISION_
 from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.utils import sv_gist_tools
 from sverchok.utils.sv_gist_tools import show_token_help, TOKEN_HELP_URL
@@ -49,7 +48,7 @@ class ExportImportPanels:
 
 class SV_PT_IOLayoutsMenu(ExportImportPanels, bpy.types.Panel):
     bl_idname = "SV_PT_IOLayoutsMenu"
-    bl_label = f"Import/Export  (v {_EXPORTER_REVISION_})"
+    bl_label = f"Import/Export"
     bl_options = {'DEFAULT_CLOSED'}
     bl_order = 1
 
