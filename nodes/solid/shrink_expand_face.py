@@ -12,6 +12,7 @@ from bpy.props import BoolProperty, EnumProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode
+from sverchok.utils.curve.freecad import SvSolidEdgeCurve
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface, SvSolidFaceSurface
 from sverchok.utils.dummy_nodes import add_dummy
@@ -59,6 +60,7 @@ class SvShrinkExpandSolidFaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvSurfaceSocket', "SolidFace")
         self.inputs.new('SvStringsSocket', "Offset").prop_name = 'offset'
         self.outputs.new('SvSurfaceSocket', "SolidFace")
+        self.outputs.new('SvCurveSocket', "SolidEdges")
 
     def _process(self, face_surface, offset):
         fc_face = face_surface.face
@@ -69,7 +71,9 @@ class SvShrinkExpandSolidFaceNode(bpy.types.Node, SverchCustomTreeNode):
                         #intersection = True
                     )
         surface = SvSolidFaceSurface(new_fc_face)
-        return surface
+        fc_edges = new_fc_face.OuterWire.Edges
+        sv_edges = [SvSolidEdgeCurve(e) for e in fc_edges]
+        return surface, sv_edges
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -81,16 +85,21 @@ class SvShrinkExpandSolidFaceNode(bpy.types.Node, SverchCustomTreeNode):
         offset_s = ensure_nesting_level(offset_s, 2)
 
         surface_out = []
+        edges_out = []
         for inputs in zip_long_repeat(face_surfaces_s, offset_s):
             new_surfaces = []
+            new_edges = []
             for face_surface, offset in zip_long_repeat(*inputs):
                 if not is_solid_face_surface(face_surface):
                     face_surface = surface_to_freecad(face_surface, make_face=True)
-                surface = self._process(face_surface, offset)
+                surface, edges = self._process(face_surface, offset)
                 new_surfaces.append(surface)
+                new_edges.append(edges)
             surface_out.append(new_surfaces)
+            edges_out.append(new_edges)
 
         self.outputs['SolidFace'].sv_set(surface_out)
+        self.outputs['SolidEdges'].sv_set(edges_out)
 
 def register():
     if FreeCAD is not None:
