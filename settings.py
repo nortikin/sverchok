@@ -270,12 +270,12 @@ class SverchokPreferences(AddonPreferences):
         default="POST",
         update=set_frame_change)
 
-    #  ctrl+space settings
+    #  alt+space settings
 
     show_icons: BoolProperty(
-        name="Show icons in ctrl+space menu",
+        name="Show icons in alt+space menu",
         default=False,
-        description="Use icons in ctrl+space menu")
+        description="Use icons in alt+space menu")
 
     over_sized_buttons: BoolProperty(
         default=False, name="Big buttons", description="Very big buttons")
