@@ -3,7 +3,7 @@ from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 #from sverchok.utils.curve.core import SvConcatCurve
-from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve
+from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve, SvFreeCadCurve
 
 if FreeCAD is None:
     add_dummy('SvSolidFacesNode', 'Solid Faces', 'FreeCAD')
@@ -33,6 +33,11 @@ else:
             default=False,
             update=updateNode)
 
+        nurbs_output : BoolProperty(
+            name = "NURBS Output",
+            description = "Output curves and surfaces in NURBS representation",
+            default = False,
+            update=updateNode)
 
         def sv_init(self, context):
             self.inputs.new('SvSolidSocket', "Solid")
@@ -43,6 +48,10 @@ else:
 
         def draw_buttons(self, context, layout):
             layout.prop(self, 'flat_output')
+
+        def draw_buttons_ext(self, context, layout):
+            self.draw_buttons(context, layout)
+            layout.prop(self, 'nurbs_output', toggle=True)
 
         def process(self):
             if not any(socket.is_linked for socket in self.outputs):
@@ -60,20 +69,30 @@ else:
                 outer_wires = []
                 for f in solid.Faces:
                     surface = SvSolidFaceSurface(f)
-                    nurbs = SvNurbsSurface.get(surface)
-                    if nurbs is None:
-                        nurbs = surface
-                    face_surface.append(nurbs)
+                    if self.nurbs_output:
+                        out_surface = SvNurbsSurface.get(surface)
+                        if out_surface is None:
+                            out_surface = surface
+                    else:
+                        out_surface = surface
+                    face_surface.append(out_surface)
                     outer_wire = []
                     face_trims = []
                     for e in f.OuterWire.Edges:
                         try:
-                            outer_wire.append(SvSolidEdgeCurve(e).to_nurbs())
+                            if self.nurbs_output:
+                                outer_wire.append(SvSolidEdgeCurve(e).to_nurbs())
+                            else:
+                                outer_wire.append(SvSolidEdgeCurve(e))
                         except TypeError:
                             pass
                         trim,m,M = f.curveOnSurface(e)
-                        trim = trim.toBSpline(m,M)
-                        trim = SvFreeCadNurbsCurve(trim, ndim=2)
+                        if self.nurbs_output:
+                            trim = trim.toBSpline(m,M)
+                            trim = SvFreeCadNurbsCurve(trim, ndim=2)
+                        else:
+                            #trim = trim.trim(m, M)
+                            trim = SvFreeCadCurve(trim, (m,M), ndim=2)
                         face_trims.append(trim)
                     #face_trims = SvConcatCurve(face_trims)
                     
