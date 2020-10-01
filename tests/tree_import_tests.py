@@ -53,21 +53,6 @@ class MonadImportTest(SverchokTestCase):
             self.assert_node_input_equals("ImportedTree", "Monad", "Num X", [[4]])
 
 
-class ListJoinImportTest(SverchokTestCase):
-    """
-    It tests how tree will be imported if json has unordered links
-    Order of links has matter for such nodes like `list join` because their does init all their sockets from start
-    and new sockets only if existing sockets already connected
-    """
-    def test_list_join_node(self):
-        with self.temporary_node_tree("Import tree") as tree:
-            with self.assert_logs_no_errors():
-                importer = JSONImporter.init_from_path(self.get_reference_file_path("list_join_import.json"))
-                importer.import_into_tree(tree)
-            if importer.has_fails:
-                raise ImportError(importer.fail_massage)
-
-
 # to keep automated tests from breaking, i've collected a list of examples that need to be skipped
 # because they
 #  1) require .blend data (greasepencil strokes) or
