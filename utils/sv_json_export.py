@@ -8,7 +8,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Union, List
+from typing import TYPE_CHECKING, Union, List, Generator
 
 import bpy
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
@@ -46,7 +46,7 @@ class TreeExporter01:
         for node in tree.nodes:
             self._add_node(node)
             self._add_node_in_frame(node)
-        for link in tree.links:
+        for link in self._ordered_links(tree):
             self._add_link(link)
         return self._structure
 
@@ -58,7 +58,7 @@ class TreeExporter01:
         if nodes:
             tree = nodes[0].id_data
             input_node_names = {node.name for node in nodes}
-            for link in tree.links:
+            for link in self._ordered_links(tree):
                 if link.from_node.name in input_node_names and link.to_node.name in input_node_names:
                     self._add_link(link)
         return self._structure
@@ -84,6 +84,13 @@ class TreeExporter01:
     def _add_node_in_frame(self, node: SverchCustomTreeNode):
         if node.parent:
             self._structure["framed_nodes"][node.name] = node.parent.name
+
+    @staticmethod
+    def _ordered_links(tree: SverchCustomTree) -> Generator[bpy.types.NodeLink]:
+        for node in tree.nodes:
+            for input_socket in node.inputs:
+                for link in input_socket.links:
+                    yield link
 
 
 class NodeExporter01:

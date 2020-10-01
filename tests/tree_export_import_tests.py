@@ -89,3 +89,15 @@ class ViewerTextExportTest(ReferenceTreeTestCase):
         importer.import_into_tree(self.tree)
         if importer.has_fails:
             raise(ImportError(importer.fail_massage))
+
+
+class ListJoinImportTest(ReferenceTreeTestCase):
+
+    reference_file_name = "list_join_import.blend.gz"
+
+    def test_list_join_node_import(self):
+        export_result = JSONExporter.get_tree_structure(self.tree)
+        importer = JSONImporter(export_result)
+        importer.import_into_tree(self.tree)
+        if importer.has_fails:
+            raise(ImportError(importer.fail_massage))
