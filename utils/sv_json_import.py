@@ -136,19 +136,10 @@ class TreeImporter01:
         return self._new_node_names[old_name]
 
     def _links(self) -> Generator[tuple]:
-        """Order of links has matter, some nodes should be connected in order from first input socket to last"""
         with self._fails_log.add_fail("Reading links", f'Tree: {self._tree.name}'):
-
-            node_input_links = defaultdict(list)  # each input socket can have only on link
-            for from_node_name, form_socket_index, to_node_name, to_socket_index \
-                    in self._structure.get('update_lists', []):  # distribute links via nodes
-                node_input_links[to_node_name].append([from_node_name, form_socket_index,
-                                                       to_node_name, to_socket_index])
-
-            for node, input_links in node_input_links.items():
-                for from_node_name, form_socket_index, to_node_name, to_socket_index \
-                        in sorted(input_links, key=lambda l: l[3]):
-                    yield from_node_name, form_socket_index, to_node_name, to_socket_index
+            for from_node_name, form_socket_index, to_node_name, to_socket_index in \
+                    self._structure.get('update_lists', []):
+                yield from_node_name, form_socket_index, to_node_name, to_socket_index
 
     def _parent_nodes(self) -> Generator[tuple]:
         with self._fails_log.add_fail("Reading parent nodes", f'Tree: {self._tree.name}'):
