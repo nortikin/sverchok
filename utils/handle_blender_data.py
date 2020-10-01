@@ -98,17 +98,24 @@ def get_sv_trees():
 
 
 class BPYNode:
+    """Wrapping around ordinary node for extracting some its information"""
     def __init__(self, node):
         self.data = node
 
     @property
     def properties(self) -> List[BPYProperty]:
+        """Iterator over all node properties"""
         node_properties = self.data.bl_rna.__annotations__ if hasattr(self.data.bl_rna, '__annotations__') else []
         return [BPYProperty(self.data, prop_name) for prop_name in node_properties]
 
 
 class BPYProperty:
+    """Wrapper over any property to get access to advance information"""
     def __init__(self, data, prop_name: str):
+        """
+        Data block can be any blender data like, node, trees, sockets
+        Use with caution as far it keeps straight reference to Blender object
+        """
         self.name = prop_name
         self._data = data
 
@@ -123,6 +130,7 @@ class BPYProperty:
 
     @property
     def value(self) -> Any:
+        """Returns value of the property in Python format, list of dicts for collection, tuple for array"""
         if not self.is_valid:
             raise TypeError(f'Can not read "value" of invalid property "{self.name}"')
         elif self.is_array_like:
@@ -137,6 +145,7 @@ class BPYProperty:
 
     @value.setter
     def value(self, value):
+        """Apply values in python format to the property"""
         if not self.is_valid:
             raise TypeError(f'Can not read "value" of invalid property "{self.name}"')
         if self.type == 'COLLECTION':
@@ -150,12 +159,14 @@ class BPYProperty:
 
     @property
     def type(self) -> str:
+        """Type of property: STRING, FLOAT, INT, POINTER, COLLECTION"""
         if not self.is_valid:
             raise TypeError(f'Can not read "type" of invalid property "{self.name}"')
         return self._data.bl_rna.properties[self.name].type
 
     @property
     def default_value(self) -> Any:
+        """Returns default value, None for pointers, list of dicts of default values for collections"""
         if not self.is_valid:
             raise TypeError(f'Can not read "default_value" of invalid property "{self.name}"')
         elif self.type == 'COLLECTION':
@@ -172,23 +183,26 @@ class BPYProperty:
 
     @property
     def pointer_type(self) -> BPYPointers:
+        """It returns subtypes of POINTER type"""
         if self.type != 'POINTER':
             raise TypeError(f'Only POINTER property type has `pointer_type` attribute, "{self.type}" given')
         return BPYPointers.get_type(self._data.bl_rna.properties[self.name].fixed_type)
 
     @property
     def data_collection(self):
-        """For pointer properties only, pointer type is MESH it will return bpy.data.meshes"""
+        """For pointer properties only, if pointer type is MESH it will return bpy.data.meshes"""
         return self.pointer_type.collection
 
     @property
     def is_to_save(self) -> bool:
+        """False if property has option BoolProperty(options={'SKIP_SAVE'})"""
         if not self.is_valid:
             raise TypeError(f'Can not read "is_to_save" of invalid property "{self.name}"')
         return not self._data.bl_rna.properties[self.name].is_skip_save
 
     @property
     def is_array_like(self) -> bool:
+        """True for VectorArray, FloatArray, IntArray, Enum with enum flag"""
         if not self.is_valid:
             raise TypeError(f'Can not read "is_array_like" of invalid property "{self.name}"')
         if self.type in {'BOOLEAN', 'FLOAT', 'INT'}:
@@ -201,9 +215,11 @@ class BPYProperty:
             return False
 
     def unset(self):
+        """Assign default value to the property"""
         self._data.property_unset(self.name)
 
     def filter_collection_values(self, skip_default=True, skip_save=True):
+        """Convert data of collection property into python format with skipping certain properties"""
         if self.type != 'COLLECTION':
             raise TypeError(f'Method supported only "collection" types, "{self.type}" was given')
         if not self.is_valid:
@@ -247,6 +263,7 @@ class BPYProperty:
         return items
 
     def _set_collection_values(self, value: List[dict]):
+        """Assign Python data to collection property"""
         collection = getattr(self._data, self.name)
         for item_index, item_values in enumerate(value):
             # Some collections can be empty, in this case they should be expanded to be able to get new values
@@ -261,6 +278,10 @@ class BPYProperty:
 
 
 class BPYPointers(Enum):
+    """
+    Pointer types which are used in Sverchok
+    New properties should be added with updating collection property
+    """
     # pointer name = type of data
     OBJECT = bpy.types.Object
     MESH = bpy.types.Mesh
@@ -276,6 +297,7 @@ class BPYPointers(Enum):
 
     @property
     def collection(self):
+        """Map of pointer type and its collection"""
         collections = {
             BPYPointers.OBJECT: bpy.data.objects,
             BPYPointers.MESH: bpy.data.meshes,
@@ -293,10 +315,12 @@ class BPYPointers(Enum):
 
     @property
     def type(self):
+        """Return Blender type of the pointer"""
         return self.value
 
     @classmethod
     def get_type(cls, bl_rna) -> Union[BPYPointers, None]:
+        """Return Python pointer corresponding to given Blender pointer class (bpy.types.Mesh.bl_rna)"""
         for pointer in BPYPointers:
             if pointer.type.bl_rna == bl_rna:
                 return pointer

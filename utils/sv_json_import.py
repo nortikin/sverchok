@@ -29,12 +29,14 @@ if TYPE_CHECKING:
 
 
 class JSONImporter:
+    """Read given structure, generate tree and log errors during the whole importing process"""
     def __init__(self, structure: dict):
         self._structure = structure
         self._fails_log = FailsLog()
 
     @classmethod
     def init_from_path(cls, path: str) -> JSONImporter:
+        """It will decode json from given path and initialize importer"""
         if path.endswith('.zip'):
             structure = get_file_obj_from_zip(path)
             return cls(structure)
@@ -46,7 +48,7 @@ class JSONImporter:
             warning(f'File should have .zip or .json extension, got ".{path.rsplit(".")[-1]}" instead')
 
     def import_into_tree(self, tree: SverchCustomTree):
-
+        """Import json structure into given tree and update it"""
         root_tree_builder = TreeImporter01(tree, self._structure, self._fails_log)
         root_tree_builder.import_tree()
         self._fails_log.report_log_result()
@@ -73,14 +75,20 @@ class JSONImporter:
 
     @property
     def has_fails(self) -> bool:
+        """True if there was at least one fail during importing process"""
         return self._fails_log.has_fails
 
     @property
     def fail_massage(self) -> str:
+        """Brief information about fails if their was"""
         return self._fails_log.fail_message
 
 
 class TreeImporter01:
+    """
+    It reads given structure, regenerate it into given tree and logs fails
+    It expects to read files with version 0.1 and earlier
+    """
     def __init__(self, tree: SverchCustomTree, structure: dict, log: FailsLog):
         self._tree = tree
         self._structure = structure
@@ -88,9 +96,11 @@ class TreeImporter01:
         self._new_node_names = dict()  # map(old_node_name, new_node_name)
 
     def import_tree(self):
+        """Reads and generates nodes, frames, links, monad"""
         # create recursion, this is how monad import intend to work
-        # in original module monads does not take in account that they can get another name
+        # in original module monad does not take in account that they can get another name
         # it logic remains and in this module
+        # monad is designed to be imported recursively
         with self._fails_log.add_fail("Reading monads", f'Tree: {self._tree.name}'):
             for name, str_struct in self._structure.get('groups', dict()).items():
                 monad = bpy.data.node_groups.new(name, 'SverchGroupTreeType')
@@ -123,31 +133,44 @@ class TreeImporter01:
                     self._tree.nodes[node_name].parent = self._tree.nodes[parent_name]
 
     @property
-    def file_version(self):
+    def file_version(self) -> float:
+        """json structure version"""
         return float(self._structure['export_version'])
 
     def nodes(self) -> Generator[tuple]:
+        """Reads node names and their structure from tree structure"""
         with self._fails_log.add_fail("Reading nodes", f'Tree: {self._tree.name}'):
             for node_name, node_structure in self._structure.get("nodes", dict()).items():
                 with self._fails_log.add_fail("Reading node"):
                     yield node_name, node_structure['bl_idname'], node_structure
 
     def _get_new_node_name(self, old_name):
+        """
+        Created nodes during import can get different name cause of not to overlap with names of existing nodes
+        So this method will find new name by given old name, if name was not changed it will return old name
+        """
         return self._new_node_names[old_name]
 
     def _links(self) -> Generator[tuple]:
+        """
+        Read list of links and return them in next format
+        (from_node_name, from_node_index(or name), to_node_name, to_node_index(or name))
+        socket will have name if socket was reroute or other socket was reroute
+        """
         with self._fails_log.add_fail("Reading links", f'Tree: {self._tree.name}'):
             for from_node_name, form_socket_index, to_node_name, to_socket_index in \
                     self._structure.get('update_lists', []):
                 yield from_node_name, form_socket_index, to_node_name, to_socket_index
 
     def _parent_nodes(self) -> Generator[tuple]:
+        """returns (node name, frame name)"""
         with self._fails_log.add_fail("Reading parent nodes", f'Tree: {self._tree.name}'):
             for node, parent in self._structure.get("framed_nodes", dict()).items():
                 yield node, parent
 
 
 class NodeImporter01:
+    """Apply attributes and node/sockets properties to given node, log fails"""
     def __init__(self, node: SverchCustomTreeNode, structure: dict, log: FailsLog, import_version: float):
         self._node = node
         self._structure = structure
@@ -155,6 +178,7 @@ class NodeImporter01:
         self._import_version = import_version
 
     def import_node(self, apply_attributes: bool = True):
+        """Reads node structure and apply settings to node"""
         if apply_attributes:
             for attr_name, attr_value in self._node_attributes():
                 with self._fails_log.add_fail(
@@ -189,6 +213,7 @@ class NodeImporter01:
                     prop.value = prop_value
 
     def _node_attributes(self) -> Generator[tuple]:
+        """Reads node attributes from node structure, returns (attr_name, value)"""
         with self._fails_log.add_fail("Reading node location", f'Node: {self._node.name}'):
             yield "location", self._structure["location"]
 
@@ -198,11 +223,13 @@ class NodeImporter01:
                 yield attr, self._structure[attr]
 
     def _node_properties(self) -> Generator[tuple]:
+        """Reads node properties, returns (prop_name, prop_value)"""
         with self._fails_log.add_fail("Reading node properties", f'Node: {self._node.name}'):
             for prop_name, prop_value in self._structure.get('params', dict()).items():
                 yield prop_name, prop_value
 
     def _input_socket_properties(self) -> Generator[tuple]:
+        """Reads input socket properties"""
         with self._fails_log.add_fail("Reading sockets properties", f'Node: {self._node.name}'):
             for str_index, sock_props in self._structure.get('custom_socket_props', dict()).items():
                 with self._fails_log.add_fail("Reading socket properties", 
@@ -213,17 +240,18 @@ class NodeImporter01:
 
 
 class TreeGenerator:
+    """Adds nodes and links to given tree, also logs fails"""
     def __init__(self, tree_name: str, log: FailsLog):
         self._tree_name: str = tree_name
         self._fails_log: FailsLog = log
 
     @classmethod
     @contextmanager
-    def start_from_new(cls, tree_name) -> TreeGenerator: ...
-
-    @classmethod
-    @contextmanager
     def start_from_tree(cls, tree: SverchCustomTree, log: FailsLog) -> ContextManager[TreeGenerator]:
+        """
+        Returns itself and freezing tree what should prevent tree from updating
+        but actually often tree can unfreeze itself in during importing
+        """
         tree.freeze(hard=True)
         builder = cls(tree.name, log)
         try:
@@ -233,6 +261,10 @@ class TreeGenerator:
             builder._tree.unfreeze(hard=True)
 
     def add_node(self, bl_type: str, node_name: str) -> Union[SverchCustomTreeNode, None]:
+        """
+        Trying to add node with given bl_idname into given tree
+        Also it can register dummy and old nodes and register fails
+        """
         with self._fails_log.add_fail("Creating node", f'Tree: {self._tree_name}, Node: {node_name}'):
             if old_nodes.is_old(bl_type):  # old node classes are registered only by request
                 old_nodes.register_old(bl_type)
@@ -245,6 +277,7 @@ class TreeGenerator:
             return node
 
     def add_link(self, from_node_name, from_socket_index, to_node_name, to_socket_index):
+        """Searching sockets and trying to connect them by link"""
         with self._fails_log.add_fail(
                 "Creating link", f'Tree: {self._tree_name}, from: {from_node_name, from_socket_index}, '
                                  f'to: {to_node_name, to_socket_index}'):
@@ -254,15 +287,18 @@ class TreeGenerator:
 
     @property
     def _tree(self) -> SverchCustomTree:
+        """Given tree"""
         return bpy.data.node_groups[self._tree_name]
 
 
 class FailsLog:
+    """Keen register fails messages and count them, for example {'add_node': 4} """
     def __init__(self):
         self._log = defaultdict(int)
 
     @contextmanager
     def add_fail(self, fail_name, source=None):
+        """Increase counter of given fail message, also printing error message in debug mode"""
         try:
             yield
         except Exception as e:
@@ -274,9 +310,11 @@ class FailsLog:
 
     @property
     def has_fails(self) -> bool:
+        """True if at least one fail was added"""
         return bool(self._log)
 
     def report_log_result(self):
+        """Prints fails if their was or that they did not happen"""
         if self.has_fails:
             warning(f'During import next fails has happened:')
             print(self.fail_message)
@@ -285,4 +323,9 @@ class FailsLog:
 
     @property
     def fail_message(self) -> str:
+        """
+        Returns fail message in such format:
+        FAIL add node - 4
+        FAIL read property - 10
+        """
         return '\n'.join([f'FAIL: {msg} - {number}' for msg, number in self._log.items()])

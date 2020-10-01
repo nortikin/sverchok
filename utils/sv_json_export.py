@@ -22,17 +22,28 @@ if TYPE_CHECKING:
 
 
 class JSONExporter:
-    """It's only know about Sverchok JSON structure nad can fill it"""
+    """Static class for responsible for exporting into JSON format"""
     @staticmethod
     def get_tree_structure(tree: SverchCustomTree) -> dict:
+        """Generate structure of given tree which van be saved into json format"""
         return TreeExporter01().export_tree(tree)
 
     @staticmethod
     def get_nodes_structure(nodes: List[SverchCustomTreeNode]) -> dict:
+        """Generate structure of given nodes which can be saved into json format"""
         return TreeExporter01().export_nodes(nodes)
 
 
 class TreeExporter01:
+    """
+    It keeps structure of tree which can be saved into json format
+    Structure including:
+    export version
+    nodes, node_name and node structure
+    links which are determined by node names adn socket indexes
+    frames
+    monad(s) which are reading recursively what is efficiently
+    """
     def __init__(self):
         self._structure = {
             "export_version": "0.10",
@@ -43,6 +54,7 @@ class TreeExporter01:
         }
 
     def export_tree(self, tree: SverchCustomTree) -> dict:
+        """Generate structure from given tree"""
         for node in tree.nodes:
             self._add_node(node)
             self._add_node_in_frame(node)
@@ -51,7 +63,10 @@ class TreeExporter01:
         return self._structure
 
     def export_nodes(self, nodes: List[SverchCustomTreeNode]):
-        """Expecting get nodes from one tree"""
+        """
+        Generate structure from given node
+        Expecting get nodes from one tree, for example importing only selected nodes in a tree
+        """
         for node in nodes:
             self._add_node(node)
             self._add_node_in_frame(node)
@@ -64,9 +79,15 @@ class TreeExporter01:
         return self._structure
 
     def _add_node(self, node: SverchCustomTreeNode):
+        """Add into structure name of given node and its structure"""
         self._structure['nodes'][node.name] = NodeExporter01().export_node(node, self._structure['groups'])
 
     def _add_link(self, link: bpy.types.NodeLink):
+        """Add link into tree structure, it can have to formats:
+        (from_node_name, from_socket_index, to_node_name, to_socket_index)
+        and if at least at one side there is reroute node
+        (from_node_name, from_socket_name, to_node_name, to_socket_name)
+        """
         if hasattr(link.from_socket, 'index') and hasattr(link.to_socket, 'index'):
             # there are normal nodes from both sides of the link, get their indexes
             self._structure['update_lists'].append([
@@ -82,11 +103,13 @@ class TreeExporter01:
             ])
 
     def _add_node_in_frame(self, node: SverchCustomTreeNode):
+        """It adds information to structure node name: frame name"""
         if node.parent:
             self._structure["framed_nodes"][node.name] = node.parent.name
 
     @staticmethod
     def _ordered_links(tree: SverchCustomTree) -> Generator[bpy.types.NodeLink]:
+        """Returns all links in whole tree where links always are going in order from top input socket to bottom"""
         for node in tree.nodes:
             for input_socket in node.inputs:
                 for link in input_socket.links:
@@ -94,6 +117,19 @@ class TreeExporter01:
 
 
 class NodeExporter01:
+    """
+    It keeps structure of node data which can be converted into json format
+    it keeps attributes like location, color, width
+    all kinds of node properties including nesting collections and pointers
+    the same properties for sockets
+    only non default properties will get into the structure
+    pointer properties will get only name of assigned data block
+    also it calls `save_to_json(node_data: dict)` method of given node if it has got it
+    but ut is not recommended to use it
+    it saves special attributes for monad(s)
+    it is possible to made it skip saving a property by marking it like that BoolProperty(option={'SKIP_SAVE'})
+    this option will impact only on saving the property into json file
+    """
     def __init__(self):
         self._structure = {
             "bl_idname": "",
@@ -107,6 +143,7 @@ class NodeExporter01:
         }
 
     def export_node(self, node: SverchCustomTreeNode, groups: dict) -> dict:
+        """It returns structure of given node"""
         self._add_mandatory_attributes(node)
         self._add_node_properties(node)
         self._add_socket_properties(node)
@@ -123,6 +160,7 @@ class NodeExporter01:
         return self._structure
 
     def _add_mandatory_attributes(self, node: SverchCustomTreeNode):
+        """It adds attributes which all nodes have"""
         self._structure['bl_idname'] = node.bl_idname
         self._structure['height'] = node.height
         self._structure['width'] = node.width
@@ -135,6 +173,7 @@ class NodeExporter01:
             self._structure['use_custom_color'] = True
 
     def _add_node_properties(self, node: SverchCustomTreeNode):
+        """adds non default node properties"""
         for prop_name in node.keys():
             prop = BPYProperty(node, prop_name)
             if self._is_property_to_export(prop):
@@ -145,7 +184,10 @@ class NodeExporter01:
                     self._structure["params"][prop.name] = prop.value
 
     def _add_socket_properties(self, node: SverchCustomTreeNode):
-        # output sockets does not have anything worth exporting
+        """
+        add non default input socket properties
+        output sockets does not have anything worth exporting
+        """
         for i, sock in enumerate(node.inputs):
             sock_props = dict()
             for prop_name in sock.keys():
@@ -160,6 +202,7 @@ class NodeExporter01:
 
     @staticmethod
     def _is_property_to_export(prop: BPYProperty) -> bool:
+        """Mark properties which should be skipped to save into json"""
         if not prop.is_valid:
             return False  # deprecated property
         elif not prop.is_to_save:
