@@ -540,32 +540,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 print('| automatically made a datablock called', new_text.name)
 
     def load_from_json(self, node_data: dict, import_version: float):
-        # this check and function call is needed to allow loading node trees directly
-        # from a .blend in order to export them via create_dict_of_tree
-        if not self.node_dict or not self.node_dict.get(hash(self)):
-            self.make_new_locals()
-
-        storage = self.node_dict[hash(self)]['sockets']
-
-        ui_info = storage['snlite_ui']
-        node_data['snlite_ui'] = []
-        print(ui_info)
-        for _, info in enumerate(ui_info):
-            mat_name = info['mat_name']
-            node_name = info['node_name']
-            bl_idname = info['bl_idname']
-            if bl_idname == 'ShaderNodeRGBCurve':
-                data = get_rgb_curve(mat_name, node_name)
-                print(data)
-                data_json_str = json.dumps(data)
-                node_data['snlite_ui'].append(data_json_str)
-
-        includes = storage['includes']
-        if includes:
-            node_data['includes'] = {}
-            for k, v in includes.items():
-                node_data['includes'][k] = v
-
 
         '''
         Scripted Node will no longer create alternative versions of a file.
@@ -604,6 +578,32 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             self.script_str = script_content
 
         self.load()
+
+        # this check and function call is needed to allow loading node trees directly
+        # from a .blend in order to export them via create_dict_of_tree
+        if not self.node_dict or not self.node_dict.get(hash(self)):
+            self.make_new_locals()
+
+        storage = self.node_dict[hash(self)]['sockets']
+
+        ui_info = storage['snlite_ui']
+        node_data['snlite_ui'] = []
+        print(ui_info)
+        for _, info in enumerate(ui_info):
+            mat_name = info['mat_name']
+            node_name = info['node_name']
+            bl_idname = info['bl_idname']
+            if bl_idname == 'ShaderNodeRGBCurve':
+                data = get_rgb_curve(mat_name, node_name)
+                print(data)
+                data_json_str = json.dumps(data)
+                node_data['snlite_ui'].append(data_json_str)
+
+        includes = storage['includes']
+        if includes:
+            node_data['includes'] = {}
+            for k, v in includes.items():
+                node_data['includes'][k] = v
 
 
 classes = [

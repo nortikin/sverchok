@@ -17,7 +17,8 @@ class ScriptUvImportTest(SverchokTestCase):
     def test_script_uv_import(self):
         with self.temporary_node_tree("ImportedTree") as new_tree:
             with self.assert_logs_no_errors():
-                JSONImporter.init_from_path(self.get_reference_file_path("script_uv.json")).import_into_tree(new_tree)
+                path = self.get_reference_file_path("script_uv.json")
+                JSONImporter.init_from_path(path).import_into_tree(new_tree)
 
             # Check links
             self.assert_nodes_linked("ImportedTree", "Scripted Node Lite", "verts", "UV Connection", "vertices")
