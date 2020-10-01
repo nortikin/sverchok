@@ -30,7 +30,7 @@ else:
 
         nurbs_output : BoolProperty(
             name = "NURBS Output",
-            description = "Output curves and surfaces in NURBS representation",
+            description = "Output curves in NURBS representation",
             default = False,
             update=updateNode)
 
