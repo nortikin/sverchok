@@ -140,7 +140,7 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
         description='sorting inserted objects by names',
         default=True, update=updateNode)
 
-    object_names: bpy.props.CollectionProperty(type=SvOB3BDataCollection)
+    object_names: bpy.props.CollectionProperty(type=SvOB3BDataCollection, options={'SKIP_SAVE'})
 
     active_obj_index: bpy.props.IntProperty()
 
