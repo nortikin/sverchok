@@ -829,7 +829,7 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
             err_msg = "\n".join([str(e) for e in exceptions])
             raise Exception(f"Could not join some curves natively. Result is: {result}.\nErrors were:\n{err_msg}")
 
-def sort_curves_for_concat(curves):
+def sort_curves_for_concat(curves, allow_flip=False):
     if not curves:
         return curves
 
@@ -844,13 +844,23 @@ def sort_curves_for_concat(curves):
     def select_next(last_pair, pairs, other_idxs):
         min_error = None
         best_idx = None
-        for idx in other_idxs:
-            c2 = pairs[idx]
-            error = calc_error(last_pair, c2)
+        best_flip = False
+
+        if allow_flip:
+            combinations = [(flip, idx) for idx in other_idxs for flip in [False, True]]
+        else:
+            combinations = [(False, idx) for idx in other_idxs]
+
+        for flip, idx in combinations:
+            start, end = pairs[idx]
+            if flip:
+                start, end = end, start
+            error = calc_error(last_pair, (start, end))
             if min_error is None or error < min_error:
                 min_error = error
                 best_idx = idx
-        return best_idx
+                best_flip = flip
+        return best_idx, best_flip
 
     pairs = []
     for curve in curves:
@@ -861,15 +871,25 @@ def sort_curves_for_concat(curves):
 
     all_idxs = list(range(len(curves)))
     result_idxs = [0]
+    result_flips = [False]
     last_pair = pairs[0]
     rest_idxs = all_idxs[1:]
     while rest_idxs:
-        next_idx = select_next(last_pair, pairs, rest_idxs)
+        next_idx, next_flip = select_next(last_pair, pairs, rest_idxs)
         rest_idxs.remove(next_idx)
         result_idxs.append(next_idx)
+        result_flips.append(next_flip)
         last_pair = pairs[next_idx]
+        if next_flip:
+            last_pair = last_pair[1], last_pair[0]
 
-    result = [curve[i] for i in result_idxs]
+    result = []
+    for idx, flip in zip(result_idxs, result_flips):
+        curve = curves[idx]
+        if flip:
+            curve = reverse_curve(curve)
+        result.append(curve)
+
     return result
 
 def reparametrize_curve(curve, new_t_min=0.0, new_t_max=1.0):
