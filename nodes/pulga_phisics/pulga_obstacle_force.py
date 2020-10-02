@@ -16,20 +16,18 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import sin, cos, pi, degrees, radians
-from mathutils import Matrix
+
 import bpy
-from bpy.props import BoolProperty, IntProperty, FloatProperty, FloatVectorProperty
+from bpy.props import FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
-from sverchok.data_structure import match_long_repeat as mlr
-from sverchok.utils.pulga_physics_core_2 import SvObstaclesForce
+from sverchok.data_structure import (match_long_repeat, updateNode)
+from sverchok.utils.pulga_physics_core_2 import SvObstaclesBVHForce
 
 class SvPulgaObstacleForceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Resistance from environment
-    Tooltip: Movement resistance from environment
+    Triggers: Colliding Obstacles
+    Tooltip: Objects that collide with particles
     """
     bl_idname = 'SvPulgaObstacleForceNode'
     bl_label = 'Pulga Obstacles Force'
@@ -40,18 +38,17 @@ class SvPulgaObstacleForceNode(bpy.types.Node, SverchCustomTreeNode):
         name='Magnitude', description='Drag Force Constant',
         default=0.0, precision=3, update=updateNode)
 
-    obstacles_bounce : FloatProperty(
-        name='Obstacles Bounce', description='Obstacles Bounce',
+    absorption: FloatProperty(
+        name='Absorption', description='Obstacles Velocity and acceleration absortion. 0 = hard surface, 1 = soft surface',
         default=0.1, update=updateNode)
+
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "Pols")
-        self.inputs.new('SvStringsSocket', "Bounce").prop_name = 'obstacles_bounce'
+        self.inputs.new('SvStringsSocket', "Absorption").prop_name = 'absorption'
 
         self.outputs.new('SvPulgaForceSocket', "Force")
-
-
 
     def process(self):
 
@@ -59,14 +56,14 @@ class SvPulgaObstacleForceNode(bpy.types.Node, SverchCustomTreeNode):
             return
         magnitude = self.inputs["Vertices"].sv_get(deepcopy=False)
         pols = self.inputs["Pols"].sv_get(deepcopy=False)
-        bounce = self.inputs["Bounce"].sv_get(deepcopy=False)
+        absorption = self.inputs["Absorption"].sv_get(deepcopy=False)
 
         forces_out = []
 
         forces_out = []
-        for force in zip(magnitude, pols, bounce):
+        for force in zip(magnitude, pols, absorption):
+            forces_out.append(SvObstaclesBVHForce(*force))
 
-            forces_out.append(SvObstaclesForce(*force))
 
 
         self.outputs[0].sv_set([forces_out])

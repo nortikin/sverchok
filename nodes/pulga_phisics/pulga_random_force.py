@@ -16,20 +16,18 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import sin, cos, pi, degrees, radians
-from mathutils import Matrix
+
 import bpy
-from bpy.props import BoolProperty, IntProperty, FloatProperty, FloatVectorProperty
+from bpy.props import IntProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
-from sverchok.data_structure import match_long_repeat as mlr
+from sverchok.data_structure import updateNode
 from sverchok.utils.pulga_physics_core_2 import SvRandomForce
 
 class SvPulgaRandomForceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Ellipse SVG
-    Tooltip: Svg circle/ellipse shape, the shapes will be wrapped in SVG Groups
+    Triggers: Random Force
+    Tooltip: Applies a random force that can variate with time
     """
     bl_idname = 'SvPulgaRandomForceNode'
     bl_label = 'Pulga Random Force'
