@@ -470,7 +470,7 @@ def levels_of_list_or_np(lst):
         return level
     return 0
 
-SIMPLE_DATA_TYPES = (float, int, float64, int32, str)
+SIMPLE_DATA_TYPES = (float, int, float64, int32, int64, str)
 
 def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
     """
