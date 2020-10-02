@@ -52,8 +52,6 @@ class SvSortCurvesNode(bpy.types.Node, SverchCustomTreeNode):
 
         curve_s = self.inputs['Curves'].sv_get()
         results = map_at_level(_process, curve_s, item_level=1, data_types=(SvCurve,))
-        #if isinstance(results, SvCurvesSortResult):
-        #    results = [results]
         results = unzip_dict_recursive(results, item_type = SvCurvesSortResult, to_dict=to_dict)
 
         self.outputs['Curves'].sv_set(results['Curves'])
