@@ -469,7 +469,9 @@ def levels_of_list_or_np(lst):
         return level
     return 0
 
-def get_data_nesting_level(data, data_types=(float, int, float64, int32, int64, str)):
+SIMPLE_DATA_TYPES = (float, int, float64, int32, str)
+
+def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
     """
     data: number, or list of numbers, or list of lists, etc.
     data_types: list or tuple of types.
@@ -505,7 +507,7 @@ def get_data_nesting_level(data, data_types=(float, int, float64, int32, int64, 
 
     return helper(data, 0)
 
-def ensure_nesting_level(data, target_level, data_types=(float, int, int32, int64, float64, str)):
+def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES):
     """
     data: number, or list of numbers, or list of lists, etc.
     target_level: data nesting level required for further processing.
@@ -529,6 +531,13 @@ def ensure_nesting_level(data, target_level, data_types=(float, int, int32, int6
     for i in range(target_level - current_level):
         result = [result]
     return result
+
+def map_at_level(function, data, item_level=0, data_types=SIMPLE_DATA_TYPES):
+    current_level = get_data_nesting_level(data, data_types)
+    if current_level == item_level:
+        return function(data)
+    else:
+        return [map_at_level(function, item, item_level, data_types) for item in data]
 
 def transpose_list(lst):
     """
@@ -578,7 +587,7 @@ def describe_data_shape(data):
     nesting, result = helper(data)
     return "Level {}: {}".format(nesting, result)
 
-def describe_data_structure(data, data_types=(float, int, int32, int64, float64, str)):
+def describe_data_structure(data, data_types=SIMPLE_DATA_TYPES):
     if isinstance(data, data_types):
         return "*"
     elif isinstance(data, (list, tuple)):
@@ -663,7 +672,7 @@ def partition(p, lst):
             bad.append(item)
     return good, bad
 
-def map_recursive(fn, data, data_types=(float, int, int32, int64, float64, str)):
+def map_recursive(fn, data, data_types=SIMPLE_DATA_TYPES):
     def helper(data, level):
         if isinstance(data, data_types):
             return fn(data)
@@ -673,7 +682,7 @@ def map_recursive(fn, data, data_types=(float, int, int32, int64, float64, str))
             raise TypeError(f"Encountered unknown data of type {type(data)} at nesting level #{level}")
     return helper(data, 0)
 
-def map_unzip_recursirve(fn, data, data_types=(float, int, int32, int64, float64, str)):
+def map_unzip_recursirve(fn, data, data_types=SIMPLE_DATA_TYPES):
     def helper(data, level):
         if isinstance(data, data_types):
             return fn(data)
