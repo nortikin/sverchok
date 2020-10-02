@@ -6,6 +6,7 @@
 # License-Filename: LICENSE
 
 import numpy as np
+import itertools
 
 from mathutils import Vector, Matrix
 from sverchok.utils.curve.core import (
@@ -827,6 +828,49 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
         else:
             err_msg = "\n".join([str(e) for e in exceptions])
             raise Exception(f"Could not join some curves natively. Result is: {result}.\nErrors were:\n{err_msg}")
+
+def sort_curves_for_concat(curves):
+    if not curves:
+        return curves
+
+    def calc_error(c1, c2):
+        c1end = c1[1]
+        c2begin = c2[0]
+
+        dc = c1end - c2begin
+        d = (dc * dc).sum()
+        return d
+
+    def select_next(last_pair, pairs, other_idxs):
+        min_error = None
+        best_idx = None
+        for idx in other_idxs:
+            c2 = pairs[idx]
+            error = calc_error(last_pair, c2)
+            if min_error is None or error < min_error:
+                min_error = error
+                best_idx = idx
+        return best_idx
+
+    pairs = []
+    for curve in curves:
+        u_min, u_max = curve.get_u_bounds()
+        begin = curve.evaluate(u_min)
+        end = curve.evaluate(u_max)
+        pairs.append((begin, end))
+
+    all_idxs = list(range(len(curves)))
+    result_idxs = [0]
+    last_pair = pairs[0]
+    rest_idxs = all_idxs[1:]
+    while rest_idxs:
+        next_idx = select_next(last_pair, pairs, rest_idxs)
+        rest_idxs.remove(next_idx)
+        result_idxs.append(next_idx)
+        last_pair = pairs[next_idx]
+
+    result = [curve[i] for i in result_idxs]
+    return result
 
 def reparametrize_curve(curve, new_t_min=0.0, new_t_max=1.0):
     t_min, t_max = curve.get_u_bounds()
