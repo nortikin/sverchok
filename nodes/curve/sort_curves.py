@@ -20,7 +20,8 @@ class SvSortCurvesNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvSortCurvesNode'
     bl_label = 'Sort Curves'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'SORTALPHA'
+    sv_icon = 'SV_SORT_CURVES'
 
     allow_flip : BoolProperty(
             name = "Allow Reverse",
