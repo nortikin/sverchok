@@ -270,12 +270,12 @@ class SverchokPreferences(AddonPreferences):
         default="POST",
         update=set_frame_change)
 
-    #  ctrl+space settings
+    #  Menu settings
 
     show_icons: BoolProperty(
-        name="Show icons in ctrl+space menu",
+        name="Show icons in Shift-A menu",
         default=False,
-        description="Use icons in ctrl+space menu")
+        description="Use icons in Shift-A menu")
 
     over_sized_buttons: BoolProperty(
         default=False, name="Big buttons", description="Very big buttons")
@@ -554,7 +554,6 @@ class SverchokPreferences(AddonPreferences):
         draw_message(box, "skimage")
         draw_message(box, "mcubes")
         draw_message(box, "circlify")
-        draw_message(box, "lbt-ladybug")
 
         draw_freecad_ops()
 

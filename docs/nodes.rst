@@ -27,7 +27,6 @@ Nodes
    List Masks <nodes/list_masks/list_masks_index>
    List Mutators <nodes/list_mutators/list_mutators_index>
    Dictionary <nodes/dictionary/dictionary_index>
-   Ladybug <nodes/ladybug/ladybug_index>
 
    Viz <nodes/viz/viz_index>
    Text <nodes/text/text_index>

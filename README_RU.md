@@ -78,7 +78,6 @@
    - shapely  
    - circlify  
    - freecadpython3lib   
-   - ladybug  
    [описание здесь](https://github.com/nortikin/sverchok/wiki/Dependencies)
 
 

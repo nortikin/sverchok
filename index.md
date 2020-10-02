@@ -608,10 +608,6 @@
     SvMaterialIndexNode
     SvSetCustomUVMap
 
-## Ladybug
-    SvExLadyBugLocationNode
-    SvExLadyBugSunPositionNode
-
 ## Exchange
     SvExNurbsToJsonNode
     SvExJsonToNurbsNode
