@@ -829,6 +829,13 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
             err_msg = "\n".join([str(e) for e in exceptions])
             raise Exception(f"Could not join some curves natively. Result is: {result}.\nErrors were:\n{err_msg}")
 
+class SvCurvesSortResult(object):
+    def __init__(self):
+        self.curves = []
+        self.indexes = []
+        self.flips = []
+        self.sum_error = 0
+
 def sort_curves_for_concat(curves, allow_flip=False):
     if not curves:
         return curves
@@ -860,7 +867,7 @@ def sort_curves_for_concat(curves, allow_flip=False):
                 min_error = error
                 best_idx = idx
                 best_flip = flip
-        return best_idx, best_flip
+        return min_error, best_idx, best_flip
 
     pairs = []
     for curve in curves:
@@ -874,21 +881,26 @@ def sort_curves_for_concat(curves, allow_flip=False):
     result_flips = [False]
     last_pair = pairs[0]
     rest_idxs = all_idxs[1:]
+
+    result = SvCurvesSortResult()
+
     while rest_idxs:
-        next_idx, next_flip = select_next(last_pair, pairs, rest_idxs)
+        error, next_idx, next_flip = select_next(last_pair, pairs, rest_idxs)
         rest_idxs.remove(next_idx)
         result_idxs.append(next_idx)
         result_flips.append(next_flip)
         last_pair = pairs[next_idx]
+        result.sum_error += error
         if next_flip:
             last_pair = last_pair[1], last_pair[0]
 
-    result = []
     for idx, flip in zip(result_idxs, result_flips):
+        result.indexes.append(idx)
+        result.flips.append(flip)
         curve = curves[idx]
         if flip:
             curve = reverse_curve(curve)
-        result.append(curve)
+        result.curves.append(curve)
 
     return result
 

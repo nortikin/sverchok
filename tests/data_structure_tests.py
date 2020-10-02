@@ -185,3 +185,21 @@ class MapRecursiveTests(SverchokTestCase):
         result = map_unzip_recursirve(fn, data)
         expected = [[[1,2,3,4]], [[2,3,4,5]]]
         self.assert_sverchok_data_equal(result, expected)
+
+    def test_unzip_dict_1(self):
+        data = [{'A': 1, 'B': 2}, {'A': 3, 'B': 4}, {'A': 5, 'B': 6}]
+        result = unzip_dict_recursive(data)
+        expected = {'A': [1,3,5], 'B': [2,4,6]}
+        self.assert_dicts_equal(result, expected)
+
+    def test_unzip_dict_2(self):
+        data = [[{'A': 1, 'B': 2}, {'A': 3, 'B': 4}, {'A': 5, 'B': 6}]]
+        result = unzip_dict_recursive(data)
+        expected = {'A': [[1,3,5]], 'B': [[2,4,6]]}
+        self.assert_dicts_equal(result, expected)
+
+    def test_unzip_dict_3(self):
+        data = [[{'A': 1, 'B': 2}], [{'A': 3, 'B': 4}], [{'A': 5, 'B': 6}]]
+        result = unzip_dict_recursive(data)
+        expected = {'A': [[1], [3], [5]], 'B': [[2], [4], [6]]}
+        self.assert_dicts_equal(result, expected)

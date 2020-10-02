@@ -16,6 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 from contextlib import contextmanager
+from collections import defaultdict
 from functools import wraps
 from math import radians, ceil
 import itertools
@@ -692,6 +693,32 @@ def map_unzip_recursirve(fn, data, data_types=SIMPLE_DATA_TYPES):
         else:
             raise TypeError(f"Encountered unknown data of type {type(data)} at nesting level #{level}")
     return helper(data, 0)
+
+def unzip_dict_recursive(data, item_type=dict, to_dict=None):
+
+    if to_dict is None:
+        to_dict = id
+
+    def helper(data):
+        current_level = get_data_nesting_level(data, data_types=(item_type,))
+        if current_level == 0:
+            return to_dict(data)
+        elif current_level == 1:
+            result = defaultdict(list)
+            for dct in data:
+                dct = to_dict(dct)
+                for key, value in dct.items():
+                    result[key].append(value)
+            return result
+        else:
+            result = defaultdict(list)
+            for item in data:
+                sub_result = helper(item)
+                for key, value in sub_result.items():
+                    result[key].append(value)
+            return result
+
+    return helper(data)
 
 #####################################################
 ################### matrix magic ####################
