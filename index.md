@@ -101,6 +101,7 @@
     SvExCurveOnSurfaceNode
     ---
     SvExCurveLerpCurveNode
+    SvSortCurvesNode
     SvExConcatCurvesNode
     SvExBlendCurvesMk2Node
     SvExFlipCurveNode
