@@ -16,20 +16,17 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import sin, cos, pi, degrees, radians
-from mathutils import Matrix
 import bpy
-from bpy.props import BoolProperty, IntProperty, FloatProperty, FloatVectorProperty
+from bpy.props import BoolProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
-from sverchok.data_structure import match_long_repeat as mlr
+from sverchok.data_structure import (zip_long_repeat, updateNode)
 from sverchok.utils.pulga_physics_core_2 import SvEdgesAngleForce
 
 class SvPulgaAngleForceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Ellipse SVG
-    Tooltip: Svg circle/ellipse shape, the shapes will be wrapped in SVG Groups
+    Triggers: Angles at edges
+    Tooltip: Force the keeps angles between edges
     """
     bl_idname = 'SvPulgaAngleForceNode'
     bl_label = 'Pulga Angle Force'
@@ -41,7 +38,7 @@ class SvPulgaAngleForceNode(bpy.types.Node, SverchCustomTreeNode):
         default=0.0, update=updateNode)
     stiffness: FloatProperty(
         name='Stiffness', description='Springs stiffness constant',
-        default=0.0, precision=4,
+        default=0.1, precision=4,
         update=updateNode)
 
     mass_dependent: BoolProperty(name='mass_dependent', update=updateNode)
@@ -64,7 +61,7 @@ class SvPulgaAngleForceNode(bpy.types.Node, SverchCustomTreeNode):
 
         forces_out = []
         use_fix_len = self.inputs["Angle"].is_linked
-        for force_params in zip(*mlr([springs_in, stiffness_in, lengths_in])):
+        for force_params in zip_long_repeat(springs_in, stiffness_in, lengths_in):
 
             forces_out.append(SvEdgesAngleForce(*force_params, use_fix_len))
         self.outputs[0].sv_set([forces_out])

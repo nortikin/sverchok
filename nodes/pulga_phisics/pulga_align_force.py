@@ -16,14 +16,11 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import sin, cos, pi, degrees, radians
-from mathutils import Matrix
 import bpy
-from bpy.props import EnumProperty, IntProperty, FloatProperty, FloatVectorProperty
+from bpy.props import EnumProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
-from sverchok.data_structure import match_long_repeat as mlr, enum_item_4
+from sverchok.data_structure import (zip_long_repeat, enum_item_4, updateNode)
 from sverchok.utils.pulga_physics_core_2 import SvAlignForce
 from sverchok.dependencies import scipy, Cython
 
@@ -40,13 +37,13 @@ class SvPulgaAlignForceNode(bpy.types.Node, SverchCustomTreeNode):
 
     strength: FloatProperty(
         name='Strength', description='Drag Force Constant',
-        default=0.0, precision=3, update=updateNode)
+        default=0.1, precision=3, update=updateNode)
     decay: FloatProperty(
         name='Decay', description='0 = no decay, 1 = linear, 2 = quadratic...',
-        default=0.0, precision=3, update=updateNode)
+        default=1.0, precision=3, update=updateNode)
     max_distance: FloatProperty(
         name='Max. Distance', description='Maximun distance',
-        default=0.0, precision=3, update=updateNode)
+        default=10.0, precision=3, update=updateNode)
     mode: EnumProperty(
         name='Mode',
         description='Algorithm used for calculation',
@@ -76,7 +73,7 @@ class SvPulgaAlignForceNode(bpy.types.Node, SverchCustomTreeNode):
 
         forces_out = []
 
-        for force in zip(strength, decay, max_distance):
+        for force in zip_long_repeat(strength, decay, max_distance):
 
             forces_out.append(SvAlignForce(*force, use_kdtree=use_kdtree))
 

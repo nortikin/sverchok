@@ -22,19 +22,18 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty, FloatVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
-from sverchok.data_structure import match_long_repeat as mlr, zip_long_repeat
+from sverchok.data_structure import (zip_long_repeat, updateNode)
 from sverchok.utils.pulga_physics_core_2 import SvWorldForce, SvFieldForce
 from sverchok.utils.field.vector import SvVectorField
 
 class SvPulgaVectorForceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Ellipse SVG
-    Tooltip: Svg circle/ellipse shape, the shapes will be wrapped in SVG Groups
+    Triggers: Directional Force
+    Tooltip: Applies Force defined as a Vector or a Vector Field
     """
     bl_idname = 'SvPulgaVectorForceNode'
     bl_label = 'Pulga Vector Force'
-    bl_icon = 'MESH_CIRCLE'
+    bl_icon = 'MOD_PHYSICS'
     sv_icon = 'SV_PULGA_VECTOR_FORCE'
 
     force: FloatVectorProperty(

@@ -28,8 +28,8 @@ from sverchok.utils.pulga_physics_core_2 import pulga_system_init
 
 class SvPulgaPhysicsSolverNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     '''
-    Triggers: Springs, Cloth
-    Tooltip: Physics Engine
+    Triggers: Simulate Particles
+    Tooltip: Modular Physics Engine
     '''
     bl_idname = 'SvPulgaPhysicsSolverNode'
     bl_label = 'Pulga Physics Solver'

@@ -21,12 +21,12 @@ import bpy
 from bpy.props import IntProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import zip_long_repeat, updateNode
 from sverchok.utils.pulga_physics_core_2 import SvRandomForce
 
 class SvPulgaRandomForceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Random Force
+    Triggers: Fortuitous Force
     Tooltip: Applies a random force that can variate with time
     """
     bl_idname = 'SvPulgaRandomForceNode'
@@ -39,10 +39,10 @@ class SvPulgaRandomForceNode(bpy.types.Node, SverchCustomTreeNode):
         default=0, min=0, update=updateNode)
     force : FloatProperty(
         name='Strength Force', description='Random force magnitude',
-        default=0.0, precision=3, step=1e-1, update=updateNode)
+        default=0.1, precision=3, step=1e-1, update=updateNode)
     random_variation : FloatProperty(
         name='Variation', description='Random force variation',
-        default=0.0, min=0, max=1, update=updateNode)
+        default=0.1, min=0, max=1, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Magnitude").prop_name = 'force'
@@ -59,7 +59,7 @@ class SvPulgaRandomForceNode(bpy.types.Node, SverchCustomTreeNode):
         random_variation = self.inputs["Variation"].sv_get(deepcopy=False)
         random_seed = self.inputs["Seed"].sv_get(deepcopy=False)
         forces_out = []
-        for force in zip(forces_in, random_variation, random_seed):
+        for force in zip_long_repeat(forces_in, random_variation, random_seed):
             forces_out.append(SvRandomForce(*force))
         self.outputs[0].sv_set([forces_out])
 

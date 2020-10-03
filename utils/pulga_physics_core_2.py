@@ -8,6 +8,18 @@
 import numpy as np
 from mathutils.bvhtree import BVHTree
 from sverchok.utils.modules.vector_math_utils import angle_between, unit_vector, np_dot
+from sverchok.dependencies import FreeCAD
+if FreeCAD is not None:
+    import Part
+    from  FreeCAD import Base
+from sverchok.utils.surface.freecad import is_solid_face_surface
+from sverchok.dependencies import scipy
+
+def reflect(v1, mirror):
+
+    dot2 = 2 * np.sum(mirror * v1, axis=1)
+    return v1 - (dot2[:, np.newaxis] * mirror)
+
 def cross_indices3(n):
     '''create crossed indices'''
 
@@ -107,60 +119,13 @@ def calc_area_var_sides(pol_side_max, pols_sides, pol_v, pols_normal):
     tot = np.sum(prod, axis=0)
     return abs(np.sum(tot * pols_normal, axis=1) / 2)
 
-def baricentric_mask(p_triang, edges, np_pol_v, coll_normals, ed_id, rad_axis):
-    '''helper function to mask which points are inside the triangles'''
-    edge = edges[:, ed_id, :]
-    v0 = np_pol_v[:, ed_id, :]
-    vp0 = p_triang - v0[:, np.newaxis, :]
-    cross = np.cross(edge[:, np.newaxis, :], vp0)
-    return np.sum(coll_normals * cross, axis=2) > -rad_axis
 
-def collide_normals_get(collide_v1, collide_v2):
-    '''get normalized normals'''
-    collide_normals = np.cross(collide_v1, collide_v2)
-    collide_normals_d = np.linalg.norm(collide_normals, axis=1)
-    return collide_normals / collide_normals_d[:, np.newaxis]
-
-
-def b_box_coll_filter(np_pol_v, verts, rad):
-    '''filter intersections by checking bounding box overlap'''
-    verts_x = verts[np.newaxis, :, :]
-    rads_x = rad[np.newaxis, :, np.newaxis]
-    keep = np.amin(np_pol_v, axis=1)[:, np.newaxis, :] < verts_x + rads_x
-    keep2 = np.amax(np_pol_v, axis=1)[:, np.newaxis, :] > verts_x - rads_x
-    keep3 = np.any(keep*keep2, axis=0)
-    keep = np.any(keep*keep2, axis=1)
-    verts_m = np.all(keep3, axis=1)
-    pols_m = np.all(keep, axis=1)
-
-    return pols_m, verts_m
-
-def collision_dist(verts, collide_p_co, coll_norm):
-    '''get collision distance and normal'''
-    vector_coll = verts[np.newaxis, :, :] - collide_p_co[:, np.newaxis, :]
-    coll_dist = np.sum(vector_coll * coll_norm, axis=2)
-    return coll_dist
-
-
-def pts_in_tris(p_triang, edges, pol_v, coll_normals, rad_axis, coll_mask):
-    '''calculate if points are inside the triangles'''
-    w = baricentric_mask(p_triang, edges, pol_v, coll_normals, 0, rad_axis)
-    u = baricentric_mask(p_triang, edges, pol_v, coll_normals, 1, rad_axis)
-    v = baricentric_mask(p_triang, edges, pol_v, coll_normals, 2, rad_axis)
-    return w * u * v * coll_mask
-
-
-def coll_displace(coll_normals, coll_inter, coll_sign, wuv, num_int):
-    '''calculate resultant collision displacement'''
-    rr = wuv[:, :, np.newaxis] * coll_normals * coll_inter[:, :, np.newaxis]*-coll_sign[:, :, np.newaxis]
-    return np.sum(rr, axis=0) / num_int
-
-
-def coll_vel(coll_normals, vels, wuv, num_int):
-    '''calculate resultant collision speed'''
-    new_vel_mag = np.sum(coll_normals * vels[np.newaxis, :, :], axis=-1)
-    new_vel = new_vel_mag[:, :, np.newaxis] * coll_normals * wuv[:, :, np.newaxis]
-    return np.sum(new_vel, axis=0)*-2 / num_int
+def bvh_safe_check(verts, pols):
+    len_v = len(verts)
+    for p in pols:
+        for c in p:
+            if c > len_v:
+                raise Exception(f"Index {c} should be less than vertices length ({len_v})")
 
 
 class SvAttractorsForce():
@@ -208,12 +173,9 @@ class SvBoundingBoxForce():
         bbox_min = np.amin(np_bbox, axis=0)
         self.bbox_min = bbox_min
         self.bbox_max = bbox_max
-        print(bbox_min, bbox_max)
-
 
     def setup(self, ps):
         pass
-
 
     def add(self, ps):
         min_mask = ps.verts <= self.bbox_min + ps.rads[:, np.newaxis]
@@ -252,6 +214,7 @@ class SvBoundingSphereForce():
         ps.vel[mask] = project_on_plane(ps.vel[mask], vs_normal)
         ps.r[mask] = project_on_plane(ps.r[mask], vs_normal)
 
+
 class SvBoundingSphereSurfaceForce():
     def __init__(self, center, radius):
 
@@ -277,6 +240,7 @@ class SvBoundingSphereSurfaceForce():
         ps.vel = project_on_plane(ps.vel, vs_normal)
         ps.r = project_on_plane(ps.r, vs_normal)
 
+
 class SvBoundingPlaneSurfaceForce():
     def __init__(self, center, normal):
 
@@ -294,7 +258,6 @@ class SvBoundingPlaneSurfaceForce():
 
         vs = ps.verts - self.center
         distance = np.sum(vs * self.normal, axis=1)
-        print(distance)
         ps.verts = ps.verts - self.normal[np.newaxis, :] * distance[:, np.newaxis]
 
         ps.vel = project_on_plane(ps.vel, self.normal)
@@ -304,7 +267,7 @@ class SvBoundingPlaneSurfaceForce():
 class SvBoundingMeshSurfaceForce():
     def __init__(self, vertices, polygons, volume=False):
 
-
+        bvh_safe_check(vertices, polygons)
         self.bvh = BVHTree.FromPolygons(vertices, polygons, all_triangles=False, epsilon=0.0)
 
         if volume:
@@ -316,7 +279,7 @@ class SvBoundingMeshSurfaceForce():
         self.nearest = np.zeros(ps.verts.shape, dtype=np.float64)
         self.normals = np.zeros(ps.verts.shape, dtype=np.float64)
 
-    def find2(self, verts):
+    def find_nearest(self, verts):
         v_nearest = self.nearest
         v_normals = self.normals
         for v, near, norm in zip(verts, v_nearest, v_normals):
@@ -331,31 +294,29 @@ class SvBoundingMeshSurfaceForce():
 
     def add_surface(self, ps):
 
-        self.find2(ps.verts)
+        self.find_nearest(ps.verts)
         ps.verts = self.nearest
         ps.vel = project_on_plane(ps.vel, self.normals)
         ps.r = project_on_plane(ps.r, self.normals)
 
     def add_volume(self, ps):
-        self.find2(ps.verts)
+        self.find_nearest(ps.verts)
         p2 = self.nearest - ps.verts
         outer_mask = np_dot(p2, self.normals) <= 0
         ps.verts[outer_mask] = self.nearest[outer_mask]
 
         ps.vel[outer_mask] = project_on_plane(ps.vel[outer_mask], self.normals[outer_mask])
         ps.r[outer_mask] = project_on_plane(ps.r[outer_mask], self.normals[outer_mask])
-import Part
-from  FreeCAD import Base
-from sverchok.utils.surface.freecad import is_solid_face_surface
+
+
 class SvBoundingSolidSurfaceForce():
     def __init__(self, solid, volume=False):
 
         if isinstance(solid, Part.Solid):
             self.shape = solid.OuterShell
         elif is_solid_face_surface(solid):
-            self.shape= solid.face
+            self.shape = solid.face
         else:
-
             self.shape = solid
 
         if volume:
@@ -504,10 +465,6 @@ class SvBoundingSolidSurfaceForce():
 
 
     def add_surface(self, ps):
-        # find = self.find(ps.verts)
-        # ps.verts = find[:,0,:]
-        # ps.vel = project_on_plane(ps.vel, find[:,1,:])
-        # ps.r = project_on_plane(ps.r, find[:,1,:])
         self.find2(ps.verts)
         ps.verts = self.nearest
         ps.vel = project_on_plane(ps.vel, self.normals)
@@ -548,6 +505,7 @@ class SvRandomForce():
             self.random_v = self.random_v * (1 - self.random_variation) + random_var * self.random_variation
         ps.r += self.random_v
 
+
 class SvCollisionForce():
     def __init__(self, magnitude, use_kdtree=False):
 
@@ -556,7 +514,7 @@ class SvCollisionForce():
         self.needs = ['dif_v', 'dist', 'dist_cor', 'collide', 'normal_v']
         self.use_kdtree = use_kdtree
         if self.use_kdtree:
-            self.needs = ['kd_tree', 'max_radius']
+            self.needs = ['kd_tree', 'max_radius', 'kd_collisions']
             self.add = self.add_kdt
         else:
             self.needs = ['indexes', 'sum_rad', 'dif_v', 'dist', 'dist_cor', 'collide', 'normal_v']
@@ -586,48 +544,49 @@ class SvCollisionForce():
         np.add.at(ps.r, id1, no * le * len1)
 
     def add_kdt(self, ps):
-        indexes = ps.relations.kd_tree.query_pairs(r=ps.relations.max_radius*2, output_type='ndarray')
+        relations = ps.relations
+        if len(relations.kd_indexes) > 0:
 
-        if len(indexes) > 0:
+            id0 = relations.kd_indexes[:, 0]
+            id1 = relations.kd_indexes[:, 1]
+            sum_rad = relations.kd_sum_rad
+            dif_v = relations.kd_dif_v
+            dist = relations.kd_dist
+            mask = relations.kd_mask
+            dist_cor = np.clip(dist[mask], 1e-6, 1e4)
 
-            id0 = indexes[:, 0]
-            id1 = indexes[:, 1]
-            dif_v = ps.verts[indexes[:, 0], :] - ps.verts[indexes[:, 1], :]
-
-            sum_rad = ps.rads[indexes[:, 0]] + ps.rads[indexes[:, 1]]
-
-            dist = np.linalg.norm(dif_v, axis=1)
-            dist_cor = np.clip(dist, 1e-6, 1e4)
-
-            normal_v = dif_v / dist_cor[:, np.newaxis]
+            normal_v = dif_v[mask] / dist_cor[:, np.newaxis]
 
 
 
-            le = (dist - sum_rad)[:, np.newaxis]
+            le = (dist[mask] - sum_rad[mask])[:, np.newaxis]
 
             variable_coll = len(self.f_magnitude) > 1
             sf = self.f_magnitude[:, np.newaxis]
-            len0, len1 = [sf[id1], sf[id0]] if variable_coll else [sf, sf]
+            len0, len1 = [sf[id1[mask]], sf[id0[mask]]] if variable_coll else [sf, sf]
 
 
-            np.add.at(ps.r, id0, -normal_v * le * len0)
-            np.add.at(ps.r, id1, normal_v * le * len1)
+            np.add.at(ps.r, id0[mask], -normal_v * le * len0)
+            np.add.at(ps.r, id1[mask], normal_v * le * len1)
 
 
 class SvAttractionForce():
-    def __init__(self, magnitude, decay, max_distance, use_kdtree=False):
+    def __init__(self, magnitude, decay, max_distance, stop_on_collide=False, use_kdtree=False):
 
         self.magnitude = np.array(magnitude)
         self.uniform_magnitude = len(magnitude) < 2
 
-        self.decay = np.array(decay)
+        self.decay = np.array(decay[0])
         self.use_kdtree = use_kdtree
         self.max_distance = max_distance[0]
+        self.stop_on_collide = stop_on_collide
         if self.use_kdtree:
             self.needs = ['kd_tree']
             self.add = self.add_kdt
         else:
-            self.needs = ['indexes', 'sum_rad', 'mass_product', 'dif_v', 'dist', 'dist_cor', 'attract', 'normal_v']
+            self.needs = ['indexes', 'sum_rad', 'mass_product', 'dif_v', 'dist', 'dist_cor', 'normal_v']
+            if self.stop_on_collide:
+                self.needs.append('attract_mask')
             self.add = self.add_brute_force
 
     def setup(self, ps):
@@ -641,13 +600,17 @@ class SvAttractionForce():
 
     def add_brute_force(self, ps):
         relations = ps.relations
-        mask = np.all((relations.dist < self.max_distance, relations.attract_mask), axis=0)
+        if self.stop_on_collide:
+            mask = np.all((relations.dist < self.max_distance, relations.attract_mask), axis=0)
+        else:
+            mask = relations.dist < self.max_distance
         index_non_inter = ps.relations.indexes[mask]
         id0 = index_non_inter[:, 0]
         id1 = index_non_inter[:, 1]
         dist2 = np.power(relations.dist[mask], self.decay)[:, np.newaxis]
         normal = relations.normal_v[mask]
         direction = normal / dist2 * relations.mass_product[mask, np.newaxis]
+
 
         att = self.f_magnitude
         len0, len1 = [att, att] if self.uniform_magnitude else [att[id1], att[id0]]
@@ -660,16 +623,25 @@ class SvAttractionForce():
         indexes = relations.kd_tree.query_pairs(r=self.max_distance, output_type='ndarray')
         if len(indexes) > 0:
 
-            dif_v = ps.verts[indexes[:, 0], :] - ps.verts[indexes[:, 1], :]
-            mass_product = ps.mass[indexes[:, 0]] * ps.mass[indexes[:, 1]]
-
-            dist = np.linalg.norm(dif_v, axis=1)
-            dist_cor = np.clip(dist, 1e-6, 1e4)
             id0 = indexes[:, 0]
             id1 = indexes[:, 1]
-            dist2 = np.power(dist, self.decay)[:, np.newaxis]
-            dist_cor = np.clip(dist, 1e-6, 1e4)
-            normal_v = dif_v / dist_cor[:, np.newaxis]
+            dif_v = ps.verts[id0, :] - ps.verts[id1, :]
+
+            dist = np.linalg.norm(dif_v, axis=1)
+            if self.stop_on_collide:
+                collide_mask = dist > ps.mass[id0] * ps.mass[id1]
+                dist_cor = np.clip(dist[collide_mask], 1e-6, 1e4)
+                dist2 = np.power(dist[collide_mask], self.decay)[:, np.newaxis]
+                normal_v = dif_v[collide_mask] / dist_cor[:, np.newaxis]
+                id0 = indexes[collide_mask, 0]
+                id1 = indexes[collide_mask, 1]
+                mass_product = (ps.mass[id0] * ps.mass[id1])
+            else:
+
+                mass_product = ps.mass[id0] * ps.mass[id1]
+                dist_cor = np.clip(dist, 1e-6, 1e4)
+                dist2 = np.power(dist, self.decay)[:, np.newaxis]
+                normal_v = dif_v / dist_cor[:, np.newaxis]
 
             direction = normal_v / dist2 * mass_product[:, np.newaxis]
 
@@ -755,21 +727,27 @@ class SvAlignForce():
 
 
 class SvFitForce():
-    def __init__(self, magnitude, min_radius, max_radius, mode):
+    def __init__(self, magnitude, min_radius, max_radius, mode, use_kdtree=False):
 
         self.magnitude = np.array(magnitude)
         self.uniform_magnitude = len(magnitude) < 2
         self.min_radius = np.array(min_radius)
         self.max_radius = np.array(max_radius)
         if mode == 'Absolute':
-            self.absolute= True
+            self.absolute = True
         else:
-            self.absolute= False
+            self.absolute = False
             if mode == 'Percent':
                 self.magnitude /= 100
 
         self.size_changer = True
-        self.needs = ['dif_v', 'dist', 'collide']
+        self.use_kdtree = use_kdtree
+        if self.use_kdtree:
+            self.needs = ['kd_tree', 'max_radius', 'kd_collisions']
+            self.add = self.add_kdt
+        else:
+            self.needs = ['indexes', 'sum_rad', 'dif_v', 'dist', 'collide']
+            self.add = self.add_brute_force
 
     def setup(self, ps):
         ps.aware = True
@@ -782,12 +760,12 @@ class SvFitForce():
         else:
             self.f_magnitude = numpy_fit_long_repeat([self.magnitude], ps.v_len)[0]
 
-    def add(self, ps):
+    def add_brute_force(self, ps):
         rel = ps.relations
         touch = np.unique(rel.index_inter)
         free = np.setdiff1d(self.all_range, touch)
-        v_grow = len(self.f_magnitude) > 1
-        grow_un, grow_tou = [self.f_magnitude[free], self.f_magnitude[touch]] if v_grow else [self.f_magnitude, self.f_magnitude]
+        u_grow = self.uniform_magnitude
+        grow_un, grow_tou = [self.f_magnitude, self.f_magnitude] if u_grow else [self.f_magnitude[free], self.f_magnitude[touch]]
         if self.absolute:
             ps.rads[free] += grow_un
             ps.rads[touch] -= grow_tou
@@ -796,10 +774,34 @@ class SvFitForce():
             ps.rads[touch] -= grow_tou * ps.rads[touch]
         ps.rads = np.clip(ps.rads, self.min_radius, self.max_radius)
 
+    def add_kdt(self, ps):
+        relations = ps.relations
+        if len(relations.kd_indexes) > 0:
+            touch = np.unique(relations.kd_indexes[ps.relations.kd_mask])
+            free = np.setdiff1d(self.all_range, touch)
+            u_grow = self.uniform_magnitude
+            grow_un, grow_tou = [self.f_magnitude, self.f_magnitude] if u_grow else [self.f_magnitude[free], self.f_magnitude[touch]]
+            if self.absolute:
+                ps.rads[free] += grow_un
+                ps.rads[touch] -= grow_tou
+            else:
+                ps.rads[free] += grow_un * ps.rads[free]
+                ps.rads[touch] -= grow_tou * ps.rads[touch]
+            ps.rads = np.clip(ps.rads, self.min_radius, self.max_radius)
+        else:
+            if self.absolute:
+                ps.rads += self.f_magnitude
+
+            else:
+                ps.rads += self.f_magnitude * ps.rads
+
+            ps.rads = np.clip(ps.rads, self.min_radius, self.max_radius)
+
+
 class SvDragForce():
 
     def __init__(self, drag_force, exponent):
-        print()
+
         self.magnitude = np.array(drag_force)
         self.surf = 0
         self.exponent = exponent
@@ -808,11 +810,11 @@ class SvDragForce():
 
     def setup(self, ps):
         size_change = ps.size_change
-        if len(self.magnitude)<2:
+        if len(self.magnitude) < 2:
             self.ap_magnitude = self.magnitude
         else:
             self.ap_magnitude = numpy_fit_long_repeat([self.magnitude], ps.v_len)[0]
-        if len(self.exponent)<2:
+        if len(self.exponent) < 2:
             self.ap_exponent = self.exponent
         else:
             self.ap_exponent = numpy_fit_long_repeat([self.exponent], ps.v_len)[0]
@@ -853,6 +855,7 @@ class SvDragForce():
     def add(self, ps):
         self.add_func(ps)
 
+
 class SvWorldForce():
     def __init__(self, force, strength, mass_proportional):
 
@@ -890,6 +893,7 @@ class SvWorldForce():
 
     def add(self, ps):
         self.func(ps)
+
 
 class SvFieldForce():
     def __init__(self, field, strength, mass_proportional):
@@ -937,7 +941,7 @@ class SvFieldForce():
 
 
 def pin_type_get(pin_type):
-    print(pin_type, isinstance(pin_type[0], str))
+
     if isinstance(pin_type[0], str):
         axis = []
         for ch in pin_type[0]:
@@ -951,6 +955,7 @@ def pin_type_get(pin_type):
     else:
         pin_types =[[0,1,2], [0,1], [0,2], [1,2],[0],[1],[2]]
         return np.array(pin_types[pin_type[0]])
+
 
 class SvPinForce():
     def __init__(self, indices, pin_type, pins_goal_pos, use_pins_goal):
@@ -984,8 +989,9 @@ class SvPinForce():
         # ps.vel[self.pins, :] = 0
         ps.params['unpinned'][self.pins] = False
 
+
 class SvSpringsForce():
-    def __init__(self, springs, spring_k, fixed_len, clamp, use_fix_len ):
+    def __init__(self, springs, spring_k, fixed_len, clamp, use_fix_len):
         self.springs = np.array(springs)
         self.spring_k = np.array(spring_k)
         self.use_fix_len = use_fix_len
@@ -1087,7 +1093,6 @@ class SvEdgesAngleForce():
         np.add.at(ps.r, self.target_v, f)
 
 
-
 class SvTimedForce():
     def __init__(self, force, start, end):
 
@@ -1110,77 +1115,46 @@ class SvTimedForce():
 
             self.force.add(ps)
 
-class SvObstaclesForce():
-    def __init__(self, obstacles, obstacles_pols, obstacles_bounce):
 
-        np_collide_v = np.array(obstacles)
-        np_collide_pol = np.array(obstacles_pols, dtype=np.int16)
-        np_pol_v = np_collide_v[np_collide_pol]
-        collide_v1 = np_pol_v[:, 1, :] - np_pol_v[:, 0, :]
-        collide_v2 = np_pol_v[:, 2, :] - np_pol_v[:, 0, :]
-        edges = np.zeros(np_pol_v.shape, dtype=np.float32)
-        edges[:, 0, :] = collide_v1
-        edges[:, 1, :] = np_pol_v[:, 2, :] - np_pol_v[:, 1, :]
-        edges[:, 2, :] = np_pol_v[:, 0, :] - np_pol_v[:, 2, :]
+class SvObstaclesBVHForce():
+    def __init__(self, verts, pols, absorption):
 
-        coll_norm = collide_normals_get(collide_v1, collide_v2)
-        coll_p_co = np_pol_v[:, 0, :]
-        bounce = np.array(obstacles_bounce)
 
-        self.coll_p_co = coll_p_co
-        self.collide_normals = coll_norm
-        self.pol_v = np_pol_v
-        self.bounce = bounce
-        self.edges = edges
-            # limits_composite[0].append(local_func)
-            # limits_composite[1].append(collide_params)
+        bvh_safe_check(verts, pols)
+        self.bvh = BVHTree.FromPolygons(verts, pols, all_triangles=False, epsilon=0.0)
+        self.absorption = 1 - max(min(absorption[0],1),0)
 
     def setup(self, ps):
-        pass
+        self.nearest = np.zeros(ps.verts.shape, dtype=np.float64)
+        self.normals = np.zeros(ps.verts.shape, dtype=np.float64)
+        self.distance = np.zeros(len(ps.verts), dtype=np.float64)
 
+    def find_nearest(self, verts):
+        v_nearest = self.nearest
+        v_normals = self.normals
+        v_dist = self.distance
+        for v, near, norm, idx in zip(verts, v_nearest, v_normals, range(len(verts))):
+            nearest, normal, _, distance = self.bvh.find_nearest(v)
+
+            near[0] = nearest[0]
+            near[1] = nearest[1]
+            near[2] = nearest[2]
+            norm[0] = normal[0]
+            norm[1] = normal[1]
+            norm[2] = normal[2]
+            v_dist[idx] = distance
 
     def add(self, ps):
 
-        collide_p_co = self.coll_p_co
-        collide_normals = self.collide_normals
-        pol_v = self.pol_v
-        bounce = self.bounce
-        edges = self.edges
-
-        pols_m, verts_m = b_box_coll_filter(pol_v, ps.verts, ps.rads)
-
-        verts = ps.verts[verts_m]
-        rads = ps.rads[verts_m]
-        vels = ps.vel[verts_m]
-        index = ps.index[verts_m]
-
-        coll_norm = collide_normals[pols_m, np.newaxis, :]
-        coll_dist = collision_dist(verts, collide_p_co[pols_m], coll_norm)
-        coll_inter = np.absolute(coll_dist) - rads[np.newaxis, :]
-        coll_mask = coll_inter < 0
-        if not np.any(coll_mask):
-            return
-
-        coll_sign = 2*(coll_dist > 0) - 1
-        mask_none = np.any(coll_mask, axis=0)
-
-        p_triang = verts[mask_none] + coll_dist[:, mask_none, np.newaxis] * coll_norm
-        rad_axis = rads[np.newaxis, mask_none]
-        index = index[mask_none]
-        coll_mask = coll_mask[:, mask_none]
-        coll_inter = coll_inter[:, mask_none]
-        coll_sign = coll_sign[:, mask_none]
-        vels = vels[mask_none]
-
-        wuv = pts_in_tris(p_triang, edges[pols_m], pol_v[pols_m], coll_norm, rad_axis, coll_mask)
-        num_int = np.maximum(np.sum(wuv, axis=0), 1)[:, np.newaxis]
-
-        displace = np.zeros((ps.v_len, 3), dtype=np.float32)
-        velocity = np.zeros((ps.v_len, 3), dtype=np.float32)
-        displace[index, :] = coll_displace(coll_norm, coll_inter, coll_sign, wuv, num_int)
-        velocity[index, :] = coll_vel(coll_norm, vels, wuv, num_int)
-        ps.verts += displace
-        ps.vel += velocity * bounce
+        self.find_nearest(ps.verts)
+        mask = self.distance < ps.rads
+        p2 = self.nearest[mask] - ps.verts[mask]
+        outer_mask = np_dot(p2, self.normals[mask]) >= 0
+        sign = np.ones(outer_mask.shape, dtype=np.int32)
+        sign[outer_mask] = -1
+        ps.verts[mask] = self.nearest[mask]+self.normals[mask]*ps.rads[mask, np.newaxis]*sign[:,np.newaxis]
+        ps.vel[mask] = reflect(ps.vel[mask], self.normals[mask]) * self.absorption
+        ps.r[mask] = reflect(ps.r[mask], self.normals[mask]) * self.absorption
 
 
 class SvInflateForce():
@@ -1243,7 +1217,7 @@ def limit_speed(np_vel, max_vel):
     vel_exceded = vel_mag > max_vel
     np_vel[vel_exceded] = np_vel[vel_exceded] / vel_mag[vel_exceded, np.newaxis] * max_vel
 
-from sverchok.dependencies import scipy
+
 class PulgaSystem():
     '''Store states'''
     verts, rads, vel, density = [[], [], [], []]
@@ -1289,29 +1263,36 @@ class PulgaSystem():
                 self.relations.mass_product = self.mass[self.relations.indexes[:, 0]] * self.mass[self.relations.indexes[:, 1]]
 
     def relations_update(self):
+        if 'max_radius' in self.relations.needed:
+            self.relations.max_radius = np.amax(self.rads)
         if 'kd_tree' in self.relations.needed:
             self.relations.kd_tree = scipy.spatial.cKDTree(self.verts)
+        if 'kd_collisions' in self.relations.needed:
+            indexes = self.relations.kd_tree.query_pairs(r=self.relations.max_radius*2, output_type='ndarray')
+            self.relations.kd_indexes = indexes
+            if len(indexes) > 0:
+                self.relations.kd_dif_v = self.verts[indexes[:, 0], :] - self.verts[indexes[:, 1], :]
+                self.relations.kd_sum_rad = self.rads[indexes[:, 0]] + self.rads[indexes[:, 1]]
+                self.relations.kd_dist = np.linalg.norm(self.relations.kd_dif_v, axis=1)
+                self.relations.kd_mask = self.relations.kd_dist < self.relations.kd_sum_rad
         if self.size_change:
             if 'sum_rad' in self.relations.needed:
                 self.relations.sum_rad = self.rads[self.relations.indexes[:, 0]] + self.rads[self.relations.indexes[:, 1]]
             if 'mass_product' in self.relations.needed:
                 self.relations.mass_product = self.mass[self.relations.indexes[:, 0]] * self.mass[self.relations.indexes[:, 1]]
 
-        if 'max_radius' in self.relations.needed:
-            self.relations.max_radius = np.amax(self.rads)
+
         if 'dif_v' in self.relations.needed:
             self.relations.dif_v = self.verts[self.relations.indexes[:, 0], :] - self.verts[self.relations.indexes[:, 1], :]
         if 'dist' in self.relations.needed:
             self.relations.dist = np.linalg.norm(self.relations.dif_v, axis=1)
-        if 'collide' in self.relations.needed or 'attract' in self.relations.needed:
+        if 'collide' in self.relations.needed or 'attract_mask' in self.relations.needed:
             self.relations.mask = self.relations.sum_rad > self.relations.dist
             self.relations.index_inter = self.relations.indexes[self.relations.mask]
         if 'collide' in self.relations.needed:
             self.relations.some_collisions = len(self.relations.index_inter) > 0
-        if 'attract' in self.relations.needed:
+        if 'attract_mask' in self.relations.needed:
             self.relations.attract_mask = np.invert(self.relations.mask)
-            self.relations.index_non_inter = self.relations.indexes[self.relations.attract_mask]
-            self.relations.some_attractions = (len(self.relations.index_inter) < len(self.relations.index_inter))
 
         if 'dist_cor' in self.relations.needed or 'normal_v' in self.relations.needed:
             self.relations.dist_cor = np.clip(self.relations.dist, 1e-6, 1e4)
@@ -1339,7 +1320,7 @@ class PulgaSystem():
         self.density = np.array(density)
         if len(density) > 1:
             self.density = numpy_fit_long_repeat([self.density], self.v_len)[0]
-        # p["Pins Reactions"] = []
+
         p["Pins Reactions"] = np.array([[]])
 
     def hard_update(self, cache):
@@ -1416,11 +1397,6 @@ class PulgaSystem():
         return
 
 
-    def apply_pins(self):
-        '''cancel forces on pins'''
-        self.params["Pins Reactions"] = -self.r[self.params["Pins"]]
-        self.r[self.params["Pins"], :] = 0
-
     def setup_forces(self):
         for force in self.forces:
             if hasattr(force, 'size_changer'):
@@ -1474,8 +1450,6 @@ def iterate(iterations_max, out_params):
 
     for it in range(iterations_max):
         ps.iterate()
-        # for i in range(num_forces):
-        #     force_map[i](force_parameters[i])
         output_data(it, out_params)
 
 
@@ -1488,14 +1462,13 @@ def output_data(it, params):
         record_data(data_out, out_lists)
 
 
-def prepare_output_data(ps, gate):
+def prepare_output_data(ps, use_numpy_out):
     '''prepare data to output'''
-    use_numpy_out = gate
 
     if use_numpy_out:
         return [ps.verts, ps.rads, ps.vel, ps.params["Pins Reactions"]]
-    else:
-        return [ps.verts.tolist(), ps.rads.tolist(), ps.vel.tolist(), ps.params["Pins Reactions"].tolist()]
+
+    return [ps.verts.tolist(), ps.rads.tolist(), ps.vel.tolist(), ps.params["Pins Reactions"].tolist()]
 
 
 def record_data(data_out, out_lists):

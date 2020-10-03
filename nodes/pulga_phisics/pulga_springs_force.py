@@ -16,34 +16,31 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import sin, cos, pi, degrees, radians
-from mathutils import Matrix
 import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty, FloatVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
-from sverchok.data_structure import match_long_repeat as mlr
+from sverchok.data_structure import (zip_long_repeat, updateNode)
 from sverchok.utils.pulga_physics_core_2 import SvSpringsForce
 
 class SvPulgaSpringsForceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Ellipse SVG
-    Tooltip: Svg circle/ellipse shape, the shapes will be wrapped in SVG Groups
+    Triggers: Flexible coils
+    Tooltip: Creates Springs (Flexible coils) from edges index
     """
     bl_idname = 'SvPulgaSpringsForceNode'
     bl_label = 'Pulga Springs Force'
     bl_icon = 'MOD_PHYSICS'
     sv_icon = 'SV_PULGA_SPRINGS_FORCE'
 
-    fixed_len : FloatProperty(
+    fixed_len: FloatProperty(
         name='Rest Length', description='Specify spring rest length, 0 to calculate it from initial position',
         default=0.0, update=updateNode)
-    stiffness : FloatProperty(
+    stiffness: FloatProperty(
         name='Stiffness', description='Springs stiffness constant',
-        default=0.0, precision=4,
+        default=0.1, precision=4,
         update=updateNode)
-    clamp : FloatProperty(
+    clamp: FloatProperty(
         name='Clamp', description='Limit the springs force, proportional  to rest length. 0 to disable clamping',
         default=0.0, precision=4,
         update=updateNode)
@@ -68,7 +65,7 @@ class SvPulgaSpringsForceNode(bpy.types.Node, SverchCustomTreeNode):
         clamp_in = self.inputs["Clamp"].sv_get(deepcopy=False)
         forces_out = []
         use_fix_len = self.inputs["Length"].is_linked
-        for force_params in zip(*mlr([springs_in, stiffness_in, lengths_in, clamp_in])):
+        for force_params in zip_long_repeat(springs_in, stiffness_in, lengths_in, clamp_in):
 
             forces_out.append(SvSpringsForce(*force_params, use_fix_len))
         self.outputs[0].sv_set([forces_out])

@@ -22,14 +22,13 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty, FloatVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
-from sverchok.data_structure import match_long_repeat as mlr
+from sverchok.data_structure import (zip_long_repeat, updateNode)
 from sverchok.utils.pulga_physics_core_2 import SvInflateForce
 
 class SvPulgaInflateForceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Ellipse SVG
-    Tooltip: Svg circle/ellipse shape, the shapes will be wrapped in SVG Groups
+    Triggers: Pump up polygons
+    Tooltip: Push vertices along polygons normal
     """
     bl_idname = 'SvPulgaInflateForceNode'
     bl_label = 'Pulga Inflate Force'
@@ -57,7 +56,7 @@ class SvPulgaInflateForceNode(bpy.types.Node, SverchCustomTreeNode):
 
         forces_out = []
 
-        for force_params in zip(*mlr([pols_in, force_in])):
+        for force_params in zip_long_repeat(pols_in, force_in):
 
             forces_out.append(SvInflateForce(*force_params))
         self.outputs[0].sv_set([forces_out])

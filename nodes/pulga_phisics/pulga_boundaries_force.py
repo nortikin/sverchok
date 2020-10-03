@@ -16,14 +16,11 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import sin, cos, pi, degrees, radians
-from mathutils import Matrix
 import bpy
 from bpy.props import EnumProperty, IntProperty, FloatProperty, FloatVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
-from sverchok.data_structure import match_long_repeat as mlr, enum_item_4
+from sverchok.data_structure import (zip_long_repeat, enum_item_4, updateNode)
 from sverchok.utils.pulga_physics_core_2 import (
     SvBoundingBoxForce,
     SvBoundingSphereForce,
@@ -35,8 +32,8 @@ from sverchok.dependencies import FreeCAD
 
 class SvPulgaBoundingBoxForceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Define Boundaries
-    Tooltip: System Limits
+    Triggers: Spacial Ambit
+    Tooltip: Define simulation Limits by Volume or Surface
     """
     bl_idname = 'SvPulgaBoundingBoxForceNode'
     bl_label = 'Pulga Boundaries Force'
@@ -55,7 +52,7 @@ class SvPulgaBoundingBoxForceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Vertices'].hide_safe = not 'Mesh' in self.mode
         self.inputs['Polygons'].hide_safe = not 'Mesh' in self.mode
         self.inputs['Solid'].hide_safe = not 'Solid_(' in self.mode
-        self.inputs['Solid Face'].hide_safe = 'Solid_Face' != self.mode
+        self.inputs['Solid Face'].hide_safe = self.mode != 'Solid_Face'
 
     mode_items=['Box', 'Sphere', 'Sphere Surface', 'Plane', 'Mesh (Surface)', 'Mesh (Volume)']
     if FreeCAD is not None:
@@ -118,7 +115,7 @@ class SvPulgaBoundingBoxForceNode(bpy.types.Node, SverchCustomTreeNode):
             radius = self.inputs["Radius"].sv_get(deepcopy=False)
 
             forces_out = []
-            for force in zip(center, radius):
+            for force in zip_long_repeat(center, radius):
                 forces_out.append(SvBoundingSphereForce(*force))
         elif self.mode == 'Sphere_Surface':
 
@@ -126,7 +123,7 @@ class SvPulgaBoundingBoxForceNode(bpy.types.Node, SverchCustomTreeNode):
             radius = self.inputs["Radius"].sv_get(deepcopy=False)
 
             forces_out = []
-            for force in zip(center, radius):
+            for force in zip_long_repeat(center, radius):
                 forces_out.append(SvBoundingSphereSurfaceForce(*force))
         elif self.mode == 'Plane':
 
@@ -134,7 +131,7 @@ class SvPulgaBoundingBoxForceNode(bpy.types.Node, SverchCustomTreeNode):
             radius = self.inputs["Normal"].sv_get(deepcopy=False)
 
             forces_out = []
-            for force in zip(center, radius):
+            for force in zip_long_repeat(center, radius):
                 forces_out.append(SvBoundingPlaneSurfaceForce(*force))
         elif 'Mesh' in self.mode:
 
@@ -142,7 +139,7 @@ class SvPulgaBoundingBoxForceNode(bpy.types.Node, SverchCustomTreeNode):
             polygons = self.inputs["Polygons"].sv_get(deepcopy=False)
             volume = self.mode == "Mesh_(Volume)"
             forces_out = []
-            for force in zip(verts, polygons):
+            for force in zip_long_repeat(verts, polygons):
                 forces_out.append(SvBoundingMeshSurfaceForce(*force, volume))
 
         elif 'Solid' in self.mode:

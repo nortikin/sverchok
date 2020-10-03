@@ -16,14 +16,11 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import sin, cos, pi, degrees, radians
-from mathutils import Matrix
 import bpy
-from bpy.props import EnumProperty, BoolProperty, IntProperty, FloatProperty, FloatVectorProperty
+from bpy.props import EnumProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
-from sverchok.data_structure import match_long_repeat as mlr, enum_item_4
+from sverchok.data_structure import (enum_item_4, updateNode)
 from sverchok.utils.pulga_physics_core_2 import SvCollisionForce
 from sverchok.dependencies import scipy, Cython
 
@@ -39,7 +36,7 @@ class SvPulgaCollisionForceNode(bpy.types.Node, SverchCustomTreeNode):
 
     strength: FloatProperty(
         name='Strength', description='Collision forces between vertices',
-        default=0.0, precision=4, step=1e-2, update=updateNode)
+        default=0.01, precision=4, step=1e-2, update=updateNode)
     mode: EnumProperty(
         name='Mode',
         description='Algorithm used for calculation',

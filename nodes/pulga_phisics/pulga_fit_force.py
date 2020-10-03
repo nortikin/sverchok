@@ -16,20 +16,17 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import sin, cos, pi, degrees, radians
-from mathutils import Matrix
 import bpy
-from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
-
+from bpy.props import  FloatProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
-from sverchok.data_structure import match_long_repeat as mlr, enum_item_4
+from sverchok.data_structure import (enum_item_4, updateNode)
 from sverchok.utils.pulga_physics_core_2 import SvFitForce
+from sverchok.dependencies import scipy, Cython
 
 class SvPulgaFitForceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Grow / Shrink
-    Tooltip: Shrink if collide with others / Grow if does not
+    Triggers: Grow / Shrink Force
+    Tooltip: Shrink Radius (reducing mass) if collide with others / Grow if does not
     """
     bl_idname = 'SvPulgaFitForceNode'
     bl_label = 'Pulga Fit Force'
@@ -38,7 +35,7 @@ class SvPulgaFitForceNode(bpy.types.Node, SverchCustomTreeNode):
 
     force: FloatProperty(
         name='Magnitude', description='Shrink if collide with others / Grow if does not ',
-        default=0.0, update=updateNode)
+        default=0.1, update=updateNode)
     min_rad: FloatProperty(
         name='Min. Radius', description='Do not shrink under this value',
         default=0.1, precision=3, update=updateNode)
@@ -48,6 +45,11 @@ class SvPulgaFitForceNode(bpy.types.Node, SverchCustomTreeNode):
 
     mode: EnumProperty(name="Mode", items=enum_item_4(['Absolute', 'Relative', 'Percent']), update=updateNode)
 
+    algorithm: EnumProperty(
+        name='Algorithm',
+        description='Algorithm used for calculation',
+        items=enum_item_4(['Brute Force', 'Kd-tree']),
+        default='Kd-tree', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Magnitude").prop_name = 'force'
@@ -58,6 +60,8 @@ class SvPulgaFitForceNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'mode')
+        if scipy is not None and Cython is not None:
+            layout.prop(self, 'algorithm')
 
     def process(self):
 
@@ -67,9 +71,9 @@ class SvPulgaFitForceNode(bpy.types.Node, SverchCustomTreeNode):
         min_rad_in = self.inputs["Min Radius"].sv_get(deepcopy=False)
         max_rad_in = self.inputs["Max Radius"].sv_get(deepcopy=False)
         forces_out = []
-
+        use_kdtree = self.algorithm == "Kd-tree" and scipy is not None and Cython is not None
         for force in zip(forces_in, min_rad_in, max_rad_in):
-            forces_out.append(SvFitForce(*force, self.mode))
+            forces_out.append(SvFitForce(*force, self.mode, use_kdtree=use_kdtree))
         self.outputs[0].sv_set([forces_out])
 
 

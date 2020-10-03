@@ -19,11 +19,10 @@
 from math import sin, cos, pi, degrees, radians
 from mathutils import Matrix
 import bpy
-from bpy.props import BoolProperty, IntProperty, FloatProperty, FloatVectorProperty
+from bpy.props import FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
-from sverchok.data_structure import match_long_repeat as mlr
+from sverchok.data_structure import (zip_long_repeat, updateNode)
 from sverchok.utils.pulga_physics_core_2 import SvDragForce
 
 class SvPulgaDragForceNode(bpy.types.Node, SverchCustomTreeNode):
@@ -38,7 +37,7 @@ class SvPulgaDragForceNode(bpy.types.Node, SverchCustomTreeNode):
 
     magnitude: FloatProperty(
         name='Magnitude', description='Drag Force Constant',
-        default=0.0, precision=3, update=updateNode)
+        default=0.5, precision=3, update=updateNode)
 
     exponent: FloatProperty(name='Exponent', description='Velocity exponent (2 = accurate)', default=1.0, update=updateNode)
 
@@ -60,7 +59,7 @@ class SvPulgaDragForceNode(bpy.types.Node, SverchCustomTreeNode):
         forces_out = []
 
         forces_out = []
-        for force in zip(magnitude, exponent):
+        for force in zip_long_repeat(magnitude, exponent):
 
             forces_out.append(SvDragForce(*force))
 

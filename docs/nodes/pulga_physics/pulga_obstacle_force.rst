@@ -24,9 +24,8 @@ Examples
 Grid of vertices colliding with a soft spherical mesh:
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_obstacle_force/blender_sverchok_pulga_obstacle_force_example_01.png
-  :alt: circle_fitting_pulga_physics_procedural_design.png
+
 
 Trajectories of vertices colliding with a hard spherical mesh.
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_obstacle_force/blender_sverchok_pulga_obstacle_force_example_02.png
-  :alt: textile_structures_pulga_physics_procedural_design.png

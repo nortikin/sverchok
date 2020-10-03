@@ -19,17 +19,16 @@
 from math import sin, cos, pi, degrees, radians
 from mathutils import Matrix
 import bpy
-from bpy.props import BoolProperty, IntProperty, FloatProperty, FloatVectorProperty, EnumProperty
+from bpy.props import  FloatProperty, FloatVectorProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
-from sverchok.data_structure import match_long_repeat as mlr, enum_item_4
+from sverchok.data_structure import (zip_long_repeat, enum_item_4, updateNode)
 from sverchok.utils.pulga_physics_core_2 import SvPinForce
 
 class SvPulgaPinForceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Ellipse SVG
-    Tooltip: Svg circle/ellipse shape, the shapes will be wrapped in SVG Groups
+    Triggers: Constrain Vertices
+    Tooltip: Pin Particles (Vertices) movement along defined axis 
     """
     bl_idname = 'SvPulgaPinForceNode'
     bl_label = 'Pulga Pin Force'
@@ -58,7 +57,7 @@ class SvPulgaPinForceNode(bpy.types.Node, SverchCustomTreeNode):
         pins_goal_pos = self.inputs["Pins Goal"].sv_get(deepcopy=False, default=[[]])
         forces_out = []
         use_pin_goal = self.inputs["Pins Goal"].is_linked
-        for force_params in zip(*mlr([pins_in, pin_type, pins_goal_pos])):
+        for force_params in zip_long_repeat(pins_in, pin_type, pins_goal_pos):
 
             forces_out.append(SvPinForce(*force_params, use_pin_goal))
         self.outputs[0].sv_set([forces_out])

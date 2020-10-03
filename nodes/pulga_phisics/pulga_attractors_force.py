@@ -16,20 +16,17 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import sin, cos, pi, degrees, radians
-from mathutils import Matrix
 import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty, FloatVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
-from sverchok.data_structure import match_long_repeat as mlr, zip_long_repeat
+from sverchok.data_structure import (zip_long_repeat, updateNode)
 from sverchok.utils.pulga_physics_core_2 import SvAttractorsForce
 
 class SvPulgaAttractorsForceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Define Boundaries
-    Tooltip: System Limits
+    Triggers: Attraction Points
+    Tooltip: Attractor/Repeller points with distance limit
     """
     bl_idname = 'SvPulgaAttractorsForceNode'
     bl_label = 'Pulga Attractors Force'
@@ -38,12 +35,12 @@ class SvPulgaAttractorsForceNode(bpy.types.Node, SverchCustomTreeNode):
 
     strength: FloatProperty(
         name='Strength', description='Attractors Force magnitude',
-        default=0.0, precision=3, update=updateNode)
+        default=1.0, precision=3, update=updateNode)
     max_distance: FloatProperty(
         name='Max Distance', description='Attractors maximum influence distance',
-        default=0.0, precision=3, update=updateNode)
+        default=10.0, precision=3, update=updateNode)
     decay_power: FloatProperty(
-        name='Decay', description='Decay with distance 0 = no decay, 1 = linear, 2 = quadratic...',
+        name='Decay', description='Decay with distance 0 = no decay, 1 = linear, 2 = cubic...',
         default=0.0, precision=3, update=updateNode)
 
 

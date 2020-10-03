@@ -22,14 +22,13 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty, FloatVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
-from sverchok.data_structure import match_long_repeat as mlr, zip_long_repeat
+from sverchok.data_structure import (zip_long_repeat, updateNode)
 from sverchok.utils.pulga_physics_core_2 import SvTimedForce
 
 class SvPulgaTimedForceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Ellipse SVG
-    Tooltip: Svg circle/ellipse shape, the shapes will be wrapped in SVG Groups
+    Triggers: Temporize Force
+    Tooltip: Constrain the application of forces in a time range
     """
     bl_idname = 'SvPulgaTimedForceNode'
     bl_label = 'Pulga Timed Force'

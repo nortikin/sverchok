@@ -16,13 +16,11 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import sin, cos, pi, degrees, radians
-from mathutils import Matrix
 import bpy
-from bpy.props import EnumProperty, BoolProperty, IntProperty, FloatProperty, FloatVectorProperty
+from bpy.props import BoolProperty, EnumProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import match_long_repeat as mlr, enum_item_4, updateNode
+from sverchok.data_structure import zip_long_repeat, enum_item_4, updateNode
 from sverchok.utils.pulga_physics_core_2 import SvAttractionForce
 from sverchok.dependencies import scipy, Cython
 
@@ -39,13 +37,17 @@ class SvPulgaAttractionForceNode(bpy.types.Node, SverchCustomTreeNode):
 
     strength: FloatProperty(
         name='Strength', description='Attraction between vertices',
-        default=0.0, precision=4, step=1e-2, update=updateNode)
+        default=0.01, precision=4, step=1e-2, update=updateNode)
     decay: FloatProperty(
         name='Decay', description='0 = no decay, 1 = linear, 2 = quadratic...',
-        default=0.0, precision=3, update=updateNode)
+        default=1.0, precision=3, update=updateNode)
     max_distance: FloatProperty(
         name='Max Distance', description='Maximun distance',
-        default=0.0, precision=3, update=updateNode)
+        default=10.0, precision=3, update=updateNode)
+    stop_on_collide: BoolProperty(
+        name='Stop when colliding',
+        description='Stop attraction if they are colliding',
+        update=updateNode)
     mode: EnumProperty(
         name='Mode',
         description='Algorithm used for calculation',
@@ -63,6 +65,7 @@ class SvPulgaAttractionForceNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         if scipy is not None and Cython is not None:
             layout.prop(self, 'mode')
+        layout.prop(self, 'stop_on_collide')
 
     def process(self):
 
@@ -73,8 +76,8 @@ class SvPulgaAttractionForceNode(bpy.types.Node, SverchCustomTreeNode):
         max_distance = self.inputs["Max Distance"].sv_get(deepcopy=False)
         use_kdtree = self.mode in "Kd-tree" and scipy is not None and Cython is not None
         forces_out = []
-        for force_params in zip(strength, decay, max_distance):
-            forces_out.append(SvAttractionForce(*force_params, use_kdtree=use_kdtree))
+        for force_params in zip_long_repeat(strength, decay, max_distance):
+            forces_out.append(SvAttractionForce(*force_params, stop_on_collide=self.stop_on_collide, use_kdtree=use_kdtree))
         self.outputs[0].sv_set([forces_out])
 
 
