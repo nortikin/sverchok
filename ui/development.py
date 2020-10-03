@@ -196,7 +196,7 @@ class SvViewSourceForNode(bpy.types.Operator):
         return {'CANCELLED'}
         
     def view_source_internal(self, areas, fpath):
-        block_name = fpath.split('\\')[-1]
+        block_name = os.path.basename(fpath)
         repeated = False
         for t in bpy.data.texts:
             if t.name == block_name:
