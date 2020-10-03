@@ -16,15 +16,17 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import bpy
-from mathutils import Matrix, Vector
-from bpy.props import BoolProperty
-from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (Vector_generate, Vector_degenerate,
-                                     Matrix_generate, updateNode)
-from sverchok.utils.modules.matrix_utils import matrix_apply_np
+from copy import copy
+from functools import reduce
+from itertools import cycle
 
-import numpy as np
+import bpy
+from bpy.props import BoolProperty
+
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode
+import sverchok.utils.meshes as me
+
 
 class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Multiply vectors on matrixes with several objects in output '''
@@ -46,29 +48,39 @@ class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
         layout.prop(self, 'output_numpy')
+
     def rclick_menu(self, context, layout):
         '''right click sv_menu items'''
         layout.prop(self, "output_numpy", expand=False)
 
     def process(self):
-        if not self.outputs['Vectors'].is_linked:
+        if not self.inputs['Vectors'].is_linked:
             return
 
-        vecs_ = self.inputs['Vectors'].sv_get(deepcopy=False)
-        mats = self.inputs['Matrixes'].sv_get(deepcopy=False)
+        vertices = self.inputs['Vectors'].sv_get(deepcopy=False)
+        matrices = self.inputs['Matrixes'].sv_get(deepcopy=False, default=[])
 
-        out = []
-        s_len = max(map(len, [vecs_, mats]))
-        vecs = [np.array(vs) for vs in vecs_]
-        v_l = len(vecs_) - 1
-        m_l = len(mats) - 1
-        func = matrix_apply_np
-        if self.output_numpy:
-            out = [func(vecs[min(i, v_l)], mats[min(i, m_l)]) for i in range(s_len)]
-        else:
-            out = [func(vecs[min(i, v_l)], mats[min(i, m_l)]).tolist() for i in range(s_len)]
+        out_vertices = []
+        if matrices:
+            if isinstance(matrices[0][0][0], (int, float)):  # one level nesting
+                for v, m in zip(cycle(vertices), matrices):
+                    v = copy(v)
+                    mesh = me.to_mesh(v) if not self.output_numpy else me.NpMesh(v)
+                    mesh.apply_matrix(m)
+                    out_vertices.append(mesh.vertices)
 
-        self.outputs['Vectors'].sv_set(out)
+            else:  # otherwise it expects two levels nesting
+                for v, ms in zip(cycle(vertices), matrices):
+                    meshes = []
+                    for m in ms:
+                        v = copy(v)
+                        mesh = me.to_mesh(v) if not self.output_numpy else me.NpMesh(v)
+                        mesh.apply_matrix(m)
+                        meshes.append(mesh)
+                    mesh = reduce(lambda m1, m2: m1.add_mesh(m2), meshes)
+                    out_vertices.append(mesh.vertices)
+
+        self.outputs['Vectors'].sv_set(out_vertices or vertices)
 
 
 def register():
