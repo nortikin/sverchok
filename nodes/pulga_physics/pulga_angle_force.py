@@ -40,17 +40,20 @@ class SvPulgaAngleForceNode(bpy.types.Node, SverchCustomTreeNode):
         name='Stiffness', description='Springs stiffness constant',
         default=0.1, precision=4,
         update=updateNode)
+    def update_sockets(self, context):
+        self.inputs[0].label = self.mode
     mode: EnumProperty(
         name='Mode',
         items=enum_item_4(['Edges', 'Polygons']),
         default='Edges',
-        update=updateNode
+        update=update_sockets
     )
 
     mass_dependent: BoolProperty(name='mass_dependent', update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvStringsSocket', "Springs")
+        self.inputs.new('SvStringsSocket', "Edge_Pol")
+        self.inputs[0].label = 'Edges'
         self.inputs.new('SvStringsSocket', "Stiffness").prop_name = 'stiffness'
         self.inputs.new('SvStringsSocket', "Angle").prop_name = 'fixed_angle'
 
@@ -63,7 +66,7 @@ class SvPulgaAngleForceNode(bpy.types.Node, SverchCustomTreeNode):
 
         if not any(s.is_linked for s in self.outputs):
             return
-        springs_in = self.inputs["Springs"].sv_get(deepcopy=False)
+        springs_in = self.inputs["Edge_Pol"].sv_get(deepcopy=False)
         stiffness_in = self.inputs["Stiffness"].sv_get(deepcopy=False)
         lengths_in = self.inputs["Angle"].sv_get(deepcopy=False)
 

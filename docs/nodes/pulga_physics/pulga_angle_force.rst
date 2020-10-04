@@ -14,14 +14,14 @@ Input
 
 **Edges**.
 
-**strength**: Strength of the angle force.
+**Stiffness**: Strength of the angle force.
 
 **Rest Angle**: Angle when the force will be 0. If 0 is the input value the rest angle will be calculated from the start position
 
 Options
 -------
 
-**Mode**: Chose between edges and polygons, note that with Polygon Mode only two faces per edge will be used
+**Mode**: Chose between edges and polygons, note that with Polygon Mode only two faces per edge will be used.
 
 
 
