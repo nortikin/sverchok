@@ -87,6 +87,28 @@ class SvExEnsurePip(bpy.types.Operator):
             self.report({'ERROR'}, "Cannot install PIP, see console output for details")
             return {'CANCELLED'}
 
+class SvSelectFreeCadPath(bpy.types.Operator):
+    """Select a directory with FreeCAD Python API libraries"""
+    bl_idname = "node.sv_select_freecad_path"
+    bl_label = "Select FreeCAD Path"
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    directory : bpy.props.StringProperty(
+            name = "FreeCAD path",
+            description = "Path to FreeCAD Python API libraries",
+            subtype = 'DIR_PATH'
+        )
+
+    def execute(self, context):
+        from sverchok.utils.context_managers import sv_preferences
+        with sv_preferences() as prefs:
+            prefs.FreeCAD_folder = self.directory
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        context.window_manager.fileselect_add(self)
+        return {'RUNNING_MODAL'}
+
 class SvSetFreeCadPath(bpy.types.Operator):
     """Save FreeCAD path in system"""
     bl_idname = "node.sv_set_freecad_path"
@@ -248,12 +270,12 @@ class SverchokPreferences(AddonPreferences):
         default="POST",
         update=set_frame_change)
 
-    #  ctrl+space settings
+    #  Menu settings
 
     show_icons: BoolProperty(
-        name="Show icons in ctrl+space menu",
+        name="Show icons in Shift-A menu",
         default=False,
-        description="Use icons in ctrl+space menu")
+        description="Use icons in Shift-A menu")
 
     over_sized_buttons: BoolProperty(
         default=False, name="Big buttons", description="Very big buttons")
@@ -279,7 +301,7 @@ class SverchokPreferences(AddonPreferences):
     node_panels_columns : IntProperty(
             name = "Columns",
             description = "Number of icon panels per row; Set to 0 for automatic selection",
-            default = 4,
+            default = 0,
             min = 0, max = 12
         )
 
@@ -365,7 +387,10 @@ class SverchokPreferences(AddonPreferences):
     dload_archive_name: StringProperty(name="archive name", default="master") # default = "master"
     dload_archive_path: StringProperty(name="archive path", default="https://github.com/nortikin/sverchok/archive/")
 
-    FreeCAD_folder: StringProperty(name="FreeCAD python 3.7 folder")
+    FreeCAD_folder: StringProperty(
+            name="FreeCAD python 3.7 folder",
+            description = "Path to FreeCAD Python API library files (FreeCAD.so on Linux and MacOS, FreeCAD.dll on Windows). On Linux the usual location is /usr/lib/freecad/lib, on Windows it can be something like E:\programs\conda-0.18.3\\bin"
+        )
 
     def general_tab(self, layout):
         col = layout.row().column()
@@ -508,6 +533,7 @@ class SverchokPreferences(AddonPreferences):
             else:
                 tx = "Reset path"
             row.prop(self, 'FreeCAD_folder')
+            row.operator('node.sv_select_freecad_path', text="Browse...").directory = self.FreeCAD_folder
             row.operator('node.sv_set_freecad_path', text=tx).FreeCAD_folder = self.FreeCAD_folder
             return row
 
@@ -528,7 +554,6 @@ class SverchokPreferences(AddonPreferences):
         draw_message(box, "skimage")
         draw_message(box, "mcubes")
         draw_message(box, "circlify")
-        draw_message(box, "lbt-ladybug")
         draw_message(box, "cython")
 
         draw_freecad_ops()
@@ -574,11 +599,13 @@ def register():
     bpy.utils.register_class(SvExPipInstall)
     bpy.utils.register_class(SvExEnsurePip)
     bpy.utils.register_class(SvSetFreeCadPath)
+    bpy.utils.register_class(SvSelectFreeCadPath)
     bpy.utils.register_class(SverchokPreferences)
 
 
 def unregister():
     bpy.utils.unregister_class(SverchokPreferences)
+    bpy.utils.unregister_class(SvSelectFreeCadPath)
     bpy.utils.unregister_class(SvSetFreeCadPath)
     bpy.utils.unregister_class(SvExEnsurePip)
     bpy.utils.unregister_class(SvExPipInstall)

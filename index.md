@@ -66,6 +66,7 @@
     SvExPolylineNode
     SvExFilletPolylineNode
     SvKinkyCurveNode
+    SvBiArcNode
     SvPolyArcNode
 
 ## Curves @ NURBS
@@ -100,8 +101,9 @@
     SvExCurveOnSurfaceNode
     ---
     SvExCurveLerpCurveNode
+    SvSortCurvesNode
     SvExConcatCurvesNode
-    SvExBlendCurvesNode
+    SvExBlendCurvesMk2Node
     SvExFlipCurveNode
     SvReparametrizeCurveNode
     SvExSurfaceBoundaryNode
@@ -133,6 +135,7 @@
     SvExApproxNurbsSurfaceNode
     SvExInterpolateNurbsSurfaceNode
     SvNurbsLoftNode
+    SvNurbsSweepNode
     SvDeconstructSurfaceNode
     ---
     SvExQuadsToNurbsNode
@@ -215,6 +218,15 @@
     SvSolidWireFaceNode
     SvProjectTrimFaceNode
 
+## Solids @ Analyze
+   SvSolidValidateNode
+   SvRefineSolidNode
+   SvIsSolidClosedNode
+   SvSolidCenterOfMassNode
+   SvSolidFaceAreaNode
+   SvSolidAreaNode
+   SvSolidVolumeNode
+
 ## Solids
    SvBoxSolidNode
    SvCylinderSolidNode
@@ -226,8 +238,11 @@
    SvChamferSolidNode
    SvFilletSolidNode
    SvSolidBooleanNode
+   SvSolidGeneralFuseNode
    SvMirrorSolidNode
    SvOffsetSolidNode
+   SvSolidFromFacesNode
+   SvRuledSolidNode
    SvSolidFaceExtrudeNode
    SvSolidFaceSolidifyNode
    SvSolidFaceRevolveNode
@@ -243,6 +258,7 @@
    SvSolidEdgesNode
    SvSolidFacesNode
    SvSelectSolidNode
+   @ Analyze
    SvSolidViewerNode
 
 ## Analyzers
@@ -593,10 +609,6 @@
     SvMaterialIndexNode
     SvSetCustomUVMap
 
-## Ladybug
-    SvExLadyBugLocationNode
-    SvExLadyBugSunPositionNode
-
 ## Exchange
     SvExNurbsToJsonNode
     SvExJsonToNurbsNode
@@ -690,7 +702,6 @@
     SvPulgaPhysicsNode
     SvTopologySimple
     SvSweepModulator
-    SvRuledSolidNode
     ---
     SvGetPropNodeMK2
     SvSetPropNodeMK2

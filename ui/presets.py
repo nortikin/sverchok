@@ -288,7 +288,7 @@ class SvPreset(object):
                     id_tree = ntree.name
                     ng = bpy.data.node_groups[id_tree]
 
-                    center = SvPreset.get_target_location(ng)
+                    center = tuple(context.space_data.cursor_location)
                     # Deselect everything, so as a result only imported nodes
                     # will be selected
                     bpy.ops.node.select_all(action='DESELECT')

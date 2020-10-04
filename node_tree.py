@@ -105,13 +105,13 @@ class SvNodeTreeCommon(object):
     def freeze(self, hard=False):
         """Temporary prevent tree from updating nodes"""
         if hard:
-            self["don't update"] = 1
+            self["DoNotUpdate"] = 1
         elif not self.is_frozen():
-            self["don't update"] = 0
+            self["DoNotUpdate"] = 0
 
     def is_frozen(self):
         """Nodes of the tree won't be updated during changes events"""
-        return "don't update" in self
+        return "DoNotUpdate" in self
 
     def unfreeze(self, hard=False):
         """
@@ -119,8 +119,8 @@ class SvNodeTreeCommon(object):
         If freeze mode was in hard mode `hard` argument should be True to unfreeze tree
         """
         if self.is_frozen():
-            if hard or self["don't update"] == 0:
-                del self["don't update"]
+            if hard or self["DoNotUpdate"] == 0:
+                del self["DoNotUpdate"]
 
     def get_groups(self):
         """
@@ -180,7 +180,6 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
                 node.show_viewport(self.sv_show)
             except AttributeError:
                 pass
-        process_tree(self)
 
     def on_draft_mode_changed(self, context):
         """

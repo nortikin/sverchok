@@ -118,17 +118,6 @@ except ImportError:
     info(circlify_d.message)
     circlify = None
 
-ladydug_d = sv_dependencies["lbt-ladybug"] = SvDependency("lbt-ladybug", "https://github.com/ladybug-tools/ladybug")
-try:
-    import ladybug
-    ladydug_d.message = "Ladybug package is available"
-    ladydug_d.module = ladybug
-except ImportError:
-    ladydug_d.message = "Ladybug package is not available. Ladybug module will not be available"
-    ladydug_d.pip_installable = True
-    info(ladydug_d.message)
-    ladybug = None
-
 freecad_d = sv_dependencies["freecad"] = SvDependency("FreeCAD", "https://www.freecadweb.org/")
 try:
     import FreeCAD

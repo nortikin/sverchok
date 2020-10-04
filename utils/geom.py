@@ -1986,17 +1986,14 @@ def circle_by_three_points(p1, p2, p3):
     e2 = np.array(v3 - v2)
     cs = e1.dot(e2) / (np.linalg.norm(e1) * np.linalg.norm(e2))
     interior_angle = np.arccos(cs)
-    if interior_angle > 0.5 * math.pi:
-        beta = 2*math.pi - 2*interior_angle
-    else:
-        cs = dv1.dot(dv3) / (radius*radius)
-        alpha = np.arccos(cs)
-        beta = 2 * math.pi - alpha
+    beta = 2*math.pi - 2*interior_angle
+
+    normal = - np.cross(e1,e2)
 
     circle = CircleEquation3D()
     circle.radius = radius
     circle.center = center
-    circle.normal = axis.direction
+    circle.normal = Vector(normal).normalized() # axis.direction
     circle.point1 = np.array(v1)
     circle.arc_angle = beta
     return circle

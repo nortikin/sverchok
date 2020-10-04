@@ -31,6 +31,11 @@ This node has the following inputs:
   **Tangency**. This defines the strength with which the tangent vector of the
   second curve at it's starting point will affect the generated blending curve.
   The default value is 1.0.
+* **Parameter**. This input is available only if **Continuity** parameter is
+  set to **BiArc**. This defines the value of P parameter of the family of
+  biarc_ curves, that are generated as blending curves. The default value is 1.0.
+
+.. _biarc: https://en.wikipedia.org/wiki/Biarc
 
 Parameters
 ----------
@@ -47,6 +52,9 @@ This node has the following parameters:
   * **1 - Tangency**. The blending curves are generated so that the tangent
     vectors of the curves are equal at their meeting points. The generated
     curves are cubic Bezier curves.
+  * **1 - Bi Arc**. The blending curves are generated as biarc_ curves, i.e.
+    pairs of circular arcs; they are generated so that the tanent vectors of
+    the curves are equal at their meeting points.
   * **2 - Normals**. The blending curves are generated so that 1) tangent
     vectors of the curves are equal at the meeting points; 2) second
     derivatives of the curves are also equal at the meeting points. Thus,

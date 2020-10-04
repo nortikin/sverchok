@@ -25,11 +25,15 @@ This node has the following input:
 Parameters
 ----------
 
-This node has the following parameter:
+This node has the following parameters:
 
 * **Planar**. If checked, then the generated Face will be planar (flat). For
   this, all input curves must lie in one plane. If not checked, then non-planar
   curves are allowed, and the surface will be not flat. Checked by default.
+* **Accuracy**. This parameter is only available in the N panel. This defines
+  the tolerance for checking if ends of curves coincide. Bigger values mean
+  that ends of curves must coincide with better precision. The default value is
+  8.
 
 Outputs
 -------

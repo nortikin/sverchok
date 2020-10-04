@@ -48,11 +48,11 @@ default_fragment_shader = '''
     uniform float brightness;
 
     in vec3 pos;
-    out vec4 gl_FragColor;
+    out vec4 FragColor;
 
     void main()
     {
-        gl_FragColor = vec4(pos * brightness, 1.0);
+        FragColor = vec4(pos * brightness, 1.0);
     }
 '''
 
@@ -636,6 +636,17 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_free(self):
         callback_disable(node_id(self))
+
+    def show_viewport(self, is_show: bool):
+        """It should be called by node tree to show/hide objects"""
+        if not self.activate:
+            # just ignore request
+            pass
+        else:
+            if is_show:
+                self.process()
+            else:
+                callback_disable(node_id(self))
 
 
 classes = [SvVDExperimental]

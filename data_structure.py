@@ -16,6 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 from contextlib import contextmanager
+from collections import defaultdict
 from functools import wraps
 from math import radians, ceil
 import itertools
@@ -469,7 +470,9 @@ def levels_of_list_or_np(lst):
         return level
     return 0
 
-def get_data_nesting_level(data, data_types=(float, int, float64, int32, int64, str)):
+SIMPLE_DATA_TYPES = (float, int, float64, int32, int64, str)
+
+def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
     """
     data: number, or list of numbers, or list of lists, etc.
     data_types: list or tuple of types.
@@ -505,7 +508,7 @@ def get_data_nesting_level(data, data_types=(float, int, float64, int32, int64, 
 
     return helper(data, 0)
 
-def ensure_nesting_level(data, target_level, data_types=(float, int, int32, int64, float64, str)):
+def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES):
     """
     data: number, or list of numbers, or list of lists, etc.
     target_level: data nesting level required for further processing.
@@ -529,6 +532,19 @@ def ensure_nesting_level(data, target_level, data_types=(float, int, int32, int6
     for i in range(target_level - current_level):
         result = [result]
     return result
+
+def map_at_level(function, data, item_level=0, data_types=SIMPLE_DATA_TYPES):
+    """
+    Given a nested list of object, apply `function` to each sub-list of items.
+    Nesting structure of the result will be simpler than such of the input:
+    most nested levels (`item_level` of them) will be eliminated.
+    Refer to data_structure_tests.py for examples.
+    """
+    current_level = get_data_nesting_level(data, data_types)
+    if current_level == item_level:
+        return function(data)
+    else:
+        return [map_at_level(function, item, item_level, data_types) for item in data]
 
 def transpose_list(lst):
     """
@@ -578,7 +594,7 @@ def describe_data_shape(data):
     nesting, result = helper(data)
     return "Level {}: {}".format(nesting, result)
 
-def describe_data_structure(data, data_types=(float, int, int32, int64, float64, str)):
+def describe_data_structure(data, data_types=SIMPLE_DATA_TYPES):
     if isinstance(data, data_types):
         return "*"
     elif isinstance(data, (list, tuple)):
@@ -662,6 +678,82 @@ def partition(p, lst):
         else:
             bad.append(item)
     return good, bad
+
+def map_recursive(fn, data, data_types=SIMPLE_DATA_TYPES):
+    """
+    Given a nested list of items, apply `fn` to each of these items.
+    Nesting structure of the result will be the same as in the input.
+    """
+    def helper(data, level):
+        if isinstance(data, data_types):
+            return fn(data)
+        elif isinstance(data, (list, tuple)):
+            return [helper(item, level+1) for item in data]
+        else:
+            raise TypeError(f"Encountered unknown data of type {type(data)} at nesting level #{level}")
+    return helper(data, 0)
+
+def map_unzip_recursirve(fn, data, data_types=SIMPLE_DATA_TYPES):
+    """
+    Given a nested list of items, apply `fn` to each of these items.
+    This method expects that `fn` will return a tuple (or list) of results.
+    After applying `fn` to each of items of data, "unzip" the result, so that
+    each item of result of `fn` would be in a separate nested list.
+    Nesting structure of each of items of the result of this method will be
+    the same as nesting structure of input data.
+    Refer to data_structure_tests.py for examples.
+    """
+    def helper(data, level):
+        if isinstance(data, data_types):
+            return fn(data)
+        elif isinstance(data, (list, tuple)):
+            results = [helper(item, level+1) for item in data]
+            return transpose_list(results)
+        else:
+            raise TypeError(f"Encountered unknown data of type {type(data)} at nesting level #{level}")
+    return helper(data, 0)
+
+def unzip_dict_recursive(data, item_type=dict, to_dict=None):
+    """
+    Given a nested list of dictionaries, return a dictionary of nested lists.
+    Nesting structure of each of values of resulting dictionary will be similar to
+    nesting structure of input data, only at the deepest level, instead of dictionaries
+    you will have their values.
+
+    inputs:
+    * data: nested list of dictionaries.
+    * item_type: allows to use arbitrary class instead of standard python's dict.
+    * to_dict: a function which translates data item into python's dict (or
+      another class with the same interface). Identity by default.
+
+    output: dictionary of nested lists.
+
+    Refer to data_structure_tests.py for examples.
+    """
+
+    if to_dict is None:
+        to_dict = lambda d: d
+
+    def helper(data):
+        current_level = get_data_nesting_level(data, data_types=(item_type,))
+        if current_level == 0:
+            return to_dict(data)
+        elif current_level == 1:
+            result = defaultdict(list)
+            for dct in data:
+                dct = to_dict(dct)
+                for key, value in dct.items():
+                    result[key].append(value)
+            return result
+        else:
+            result = defaultdict(list)
+            for item in data:
+                sub_result = helper(item)
+                for key, value in sub_result.items():
+                    result[key].append(value)
+            return result
+
+    return helper(data)
 
 #####################################################
 ################### matrix magic ####################
