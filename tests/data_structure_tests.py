@@ -248,3 +248,98 @@ class MapRecursiveTests(SverchokTestCase):
         result = unzip_dict_recursive(data)
         expected = {'A': [[1], [3], [5]], 'B': [[2], [4], [6]]}
         self.assert_dicts_equal(result, expected)
+
+    def test_map_nested_1(self):
+        "Trivial case"
+        data = [1, 2, 3]
+        fn = lambda x: x+1
+        result = map_nested(fn, data, max_level=1)
+        expected = [2, 3, 4]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_map_nested_2(self):
+        data = [[1, 2, 3]]
+        fn = lambda x: x+1
+        result = map_nested(fn, data, max_level=2)
+        expected = [[2, 3, 4]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_map_nested_3(self):
+        data = [[1], [2], [3]]
+        fn = lambda x: x+1
+        result = map_nested(fn, data, max_level=2)
+        expected = [[2], [3], [4]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_map_nested_4(self):
+        data = [[1,2], [3,4], [5,6]]
+        result = map_nested(sum, data, max_level=1)
+        expected = [1+2, 3+4, 5+6]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_map_nested_5(self):
+        data = [[[1,2], [3,4], [5,6]]]
+        result = map_nested(sum, data, max_level=2)
+        expected = [[1+2, 3+4, 5+6]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_map_nested_6(self):
+        data = [[[1,2]], [[3,4]], [[5,6]]]
+        result = map_nested(sum, data, max_level=2)
+        expected = [[1+2], [3+4], [5+6]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_map_nested_7(self):
+        data = [[[1,2]], [[3,4]], [[5,6]]]
+        # Fn consumes two arguments
+        fn = lambda x,y: x+y
+        result = map_nested(fn, data, max_level=2, single_argument=False)
+        expected = [[1+2], [3+4], [5+6]]
+        self.assert_sverchok_data_equal(result, expected)
+
+class ZipTests(SverchokTestCase):
+    def test_zip_long_repeat_nested_1(self):
+        list1 = [1,2,3]
+        list2 = [4,5,6]
+
+        result = zip_long_repeat_nested(list1, list2, max_level=1)
+        expected = [(1,4), (2,5), (3,6)]
+
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_zip_long_repeat_nested_2(self):
+        list1 = [[1,2,3]]
+        list2 = [[4,5,6]]
+
+        result = zip_long_repeat_nested(list1, list2, max_level=2)
+        expected = [[(1,4), (2,5), (3,6)]]
+
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_zip_long_repeat_nested_3(self):
+        list1 = [[1], [2], [3]]
+        list2 = [[4], [5], [6]]
+
+        result = zip_long_repeat_nested(list1, list2, max_level=2)
+        expected = [[(1,4)], [(2,5)], [(3,6)]]
+
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_zip_long_repeat_nested_4(self):
+        list1 = [[1,2]]
+        list2 = [[4,5,6]]
+
+        result = zip_long_repeat_nested(list1, list2, max_level=2)
+        expected = [[(1,4), (2,5), (2,6)]]
+
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_zip_long_repeat_nested_5(self):
+        list1 = [[1], [2], [3]]
+        list2 = [[4], [5]]
+
+        result = zip_long_repeat_nested(list1, list2, max_level=2)
+        expected = [[(1,4)], [(2,5)], [(3,5)]]
+
+        self.assert_sverchok_data_equal(result, expected)
+

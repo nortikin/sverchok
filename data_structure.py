@@ -700,6 +700,32 @@ def map_recursive(fn, data, data_types=SIMPLE_DATA_TYPES):
             raise TypeError(f"Encountered unknown data of type {type(data)} at nesting level #{level}")
     return helper(data, 0)
 
+def map_nested(fn, data, max_level=2, single_argument=True):
+    """
+    Given a nested list of items, apply `fn` to each of these items;
+    but do not go deeper than `max_level` nesting level.
+    With max_level == 1, this is the same as map.
+    If single_argument == True, then this method is expecting, that `fn`
+    consumes one argument - item of input data at `max_level` nesting level,
+    even if that is a tuple or list or whatever. Otherwise, `fn` will be passed
+    with several arguments - assuming item of input data at `max_level` nesting
+    level is tuple itself, each item of that tuple will be passed as a separate
+    argument of `fn`.
+    Returns: nested list.
+    Refer to data_structure_tests.py for examples.
+    """
+    def helper(data, level):
+        if level == max_level:
+            if single_argument:
+                return fn(data)
+            else:
+                return fn(*data)
+        elif isinstance(data, (list, tuple)):
+            return [helper(item, level+1) for item in data]
+        else:
+            raise TypeError(f"Encountered unknown data of type {type(data)} at nesting level #{level}")
+    return helper(data, 0)
+
 def map_unzip_recursirve(fn, data, data_types=SIMPLE_DATA_TYPES):
     """
     Given a nested list of items, apply `fn` to each of these items.
@@ -761,6 +787,22 @@ def unzip_dict_recursive(data, item_type=dict, to_dict=None):
             return result
 
     return helper(data)
+
+def zip_long_repeat_nested(*lists, max_level=2):
+    """
+    Given several nested lists, perform zip_long_repeat on them,
+    recursively, but do not go deeper than `max_level` nesting level.
+    With max_level == 1, this is the same as zip_long_repeat.
+    Returns: nested list. At the `max_level` nesting level, it will have
+    tuples composed of items of input lists at the same level.
+    Refer to data_structure_tests.py for examples.
+    """
+    def helper(data, level):
+        if level+1 == max_level:
+            return list(zip_long_repeat(*data))
+        else:
+            return [helper(item, level+1) for item in zip_long_repeat(*data)]
+    return helper(lists, 0)
 
 #####################################################
 ################### matrix magic ####################

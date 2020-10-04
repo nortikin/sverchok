@@ -104,6 +104,7 @@
     SvSortCurvesNode
     SvExConcatCurvesNode
     SvExBlendCurvesMk2Node
+    SvTwoCircleTangentsNode
     SvExFlipCurveNode
     SvReparametrizeCurveNode
     SvExSurfaceBoundaryNode
