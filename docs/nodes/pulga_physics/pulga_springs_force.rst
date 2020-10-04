@@ -5,8 +5,11 @@ Functionality
 -------------
 
 This node creates a force to be applied with the Pulga Physics Solver node.
+
 The springs are defined as edges indices.
+
 The force direction the direction of the edge.
+
 The force magnitude will be:  (Spring Length - Spring Rest Length) * Stiffness
 
 Input

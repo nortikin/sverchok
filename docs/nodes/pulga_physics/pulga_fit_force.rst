@@ -5,6 +5,7 @@ Functionality
 -------------
 
 This node creates a force to be applied with the Pulga Physics Solver node.
+
 The force will make the particles (vertices) radius to shrink when the collide or grow if the do not.
 
 Input

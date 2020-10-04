@@ -12,7 +12,7 @@ The node will apply a force along the normal of the input polygons proportional 
 Input
 -----
 
-**Polygons**.
+**Polygons**: Polygon Indices referring to the particle system vertices.
 
 **Strength**: Magnitude of the inflate force.
 

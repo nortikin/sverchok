@@ -5,6 +5,7 @@ Functionality
 -------------
 
 This node creates a force to be applied with the Pulga Physics Solver node.
+
 The force restricts the movement of the pinned verts
 
 

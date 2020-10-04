@@ -5,6 +5,7 @@ Functionality
 -------------
 
 This node creates a force to be applied with the Pulga Physics Solver node.
+
 Obstacles (meshes) that will collide with the system particles (vertices)
 
 

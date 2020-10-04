@@ -1003,6 +1003,7 @@ class SvSpringsForce():
     def setup(self, ps):
         if self.use_fix_len or self.fixed_len[0] > 0:
             self.dist_rest = self.fixed_len
+            self.clamp_distance = self.dist_rest * self.clamp
         else:
             self.dist_rest = calc_rest_length(ps.verts, self.springs)
             self.clamp_distance = self.dist_rest * self.clamp

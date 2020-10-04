@@ -65,12 +65,16 @@ Examples
 
 Arranging circles with attraction and collision.
 
-.. image:: https://user-images.githubusercontent.com/10011941/55254066-3d902500-5257-11e9-9a28-46d3deffcf0b.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_fit_force/blender_sverchok_pulga_fit_force_example_02.png
   :alt: circle_fitting_pulga_physics_procedural_design.png
+
+Inflating a cube simulating a pillow.
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_inflate_force/blender_sverchok_pulga_inflate_force_example_02.png
 
 Tensile structures can be studied with collisions and pinned points.
 
-.. image:: https://user-images.githubusercontent.com/10011941/55254067-3e28bb80-5257-11e9-8988-7e19e8a2462b.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_pin_force/blender_sverchok_pulga_pin_force_example_01.png
   :alt: textile_structures_pulga_physics_procedural_design.png
 
 .. image:: https://user-images.githubusercontent.com/10011941/56082937-23da0a80-5e1f-11e9-9b50-611629574cef.png

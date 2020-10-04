@@ -5,8 +5,13 @@ Functionality
 -------------
 
 This node creates a force to be applied with the Pulga Physics Solver node.
+
 The force applies part of the velocity of the near particles (vertices) to each particle.
-The force direction will be the velocity of the near vertex
+
+The generated effect is similar to the flocking behavior of groups of birds.
+
+The force direction will be the velocity of the near vertex.
+
 The force magnitude will be:  1/(Distance to the power of Decay) * 1/(number of vertices of the system) * Force Strength
 
 Input

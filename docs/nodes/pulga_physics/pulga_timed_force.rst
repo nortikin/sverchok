@@ -23,4 +23,4 @@ Examples
 
 In the following example a Random force will be applied on the first 50 iterations, after a Fit force will be applied.
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_timed_force/blender_sverchok_pulga_timed_force_example_01.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_timed_force/blender_sverchok_pulga_timed_force_example.png

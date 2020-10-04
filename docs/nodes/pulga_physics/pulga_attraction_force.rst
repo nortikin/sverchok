@@ -5,8 +5,11 @@ Functionality
 -------------
 
 This node creates a force to be applied with the Pulga Physics Solver node.
+
 The force will be applied when de particles (vertices) are farer than the sum of particle radius.
+
 The force direction will be the difference of the vertices location
+
 The force magnitude will be:  1/(Distance to the power of Decay) * Masses product * Force Strength
 
 Input
