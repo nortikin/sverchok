@@ -17,11 +17,11 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty, FloatProperty
+from bpy.props import EnumProperty, BoolProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (zip_long_repeat, updateNode)
-from sverchok.utils.pulga_physics_core_2 import SvEdgesAngleForce
+from sverchok.data_structure import (zip_long_repeat, enum_item_4, updateNode)
+from sverchok.utils.pulga_physics_core_2 import SvEdgesAngleForce, SvPolygonsAngleForce
 
 class SvPulgaAngleForceNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -40,6 +40,12 @@ class SvPulgaAngleForceNode(bpy.types.Node, SverchCustomTreeNode):
         name='Stiffness', description='Springs stiffness constant',
         default=0.1, precision=4,
         update=updateNode)
+    mode: EnumProperty(
+        name='Mode',
+        items=enum_item_4(['Edges', 'Polygons']),
+        default='Edges',
+        update=updateNode
+    )
 
     mass_dependent: BoolProperty(name='mass_dependent', update=updateNode)
 
@@ -51,6 +57,8 @@ class SvPulgaAngleForceNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs.new('SvPulgaForceSocket', "Force")
 
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'mode')
     def process(self):
 
         if not any(s.is_linked for s in self.outputs):
@@ -62,8 +70,10 @@ class SvPulgaAngleForceNode(bpy.types.Node, SverchCustomTreeNode):
         forces_out = []
         use_fix_len = self.inputs["Angle"].is_linked
         for force_params in zip_long_repeat(springs_in, stiffness_in, lengths_in):
-
-            forces_out.append(SvEdgesAngleForce(*force_params, use_fix_len))
+            if self.mode =='Edges':
+                forces_out.append(SvEdgesAngleForce(*force_params, use_fix_len))
+            else:
+                forces_out.append(SvPolygonsAngleForce(*force_params, use_fix_len))
         self.outputs[0].sv_set([forces_out])
 
 

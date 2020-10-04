@@ -1027,6 +1027,83 @@ class SvSpringsForce():
         np.add.at(ps.r, self.springs[:, 1], normal_v * x * k)
 
 
+
+def faces_angle(normals, edges, pols):
+    '''
+    angle between faces of each edge (only first two faces)
+    normals: list as [vertex, vertex, ...], being each vertex Vector([float, float, float]).
+    edges: list as [edge, edge,..], being each edge [int, int].
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    returns angle of faces (in radians) connected to each edge as [int, int,...]
+    '''
+
+    angles = []
+    for edg in ad_faces:
+        if len(edg) > 1:
+            dot_p = Vector(normals[edg[0]]).dot(Vector(normals[edg[1]]))
+            ang = acos(dot_p)
+        else:
+            ang = 2*pi
+        angles.append(ang)
+    return angles
+
+from math import acos, pi
+from mathutils import Vector
+from sverchok.utils.sv_mesh_utils import polygons_to_edges, polygons_to_edges_np
+from sverchok.utils.modules.edge_utils import adjacent_faces_number
+class SvPolygonsAngleForce():
+    def __init__(self, polygons, polygons_k, fixed_angle, use_fix_angle):
+        self.polygons = np.array(polygons)
+        self.spring_k = np.array(polygons_k)
+        self.use_fix_angle = use_fix_angle
+        self.fixed_angle = fixed_angle
+        self.rest_angles = np.array(fixed_angle)
+        self.edges = polygons_to_edges_np([polygons], True, False)[0]
+        ad_faces = adjacent_faces_number(self.edges, polygons)
+        e_sorted = [sorted(e) for e in self.edges]
+        ad_faces = [[] for e in self.edges]
+        for idp, pol in enumerate(polygons):
+            for edge in zip(pol, pol[1:] + [pol[0]]):
+                e_s = sorted(edge)
+                if e_s in e_sorted:
+                    idx = e_sorted.index(e_s)
+                    ad_faces[idx].append(idp)
+
+        self.adjacent_faces = ad_faces
+        valid_adjecent_faces=[]
+        valid_edges=[]
+        for idx, edg in enumerate(self.adjacent_faces):
+            if len(edg) > 1:
+                faces_idx=[edg[0], edg[1]]
+                valid_adjecent_faces.append(faces_idx)
+                valid_edges.append(e_sorted[idx])
+            self.np_adjecent_faces = np.array(valid_adjecent_faces)
+            self.valid_edges = np.array(valid_edges)
+
+    def setup(self, ps):
+        if not self.use_fix_angle:
+            pol_v = ps.verts[self.polygons, :]
+            pols_normal = pols_normals(pol_v, 1)
+            dot_p = np_dot(pols_normal[self.np_adjecent_faces[:,0]], pols_normal[self.np_adjecent_faces[:,1]])
+            rest_angles = np.arccos(np.clip(dot_p, -1.0, 1.0))
+
+            self.rest_angles = rest_angles
+
+    def add(self, ps):
+        pol_v = ps.verts[self.polygons, :]
+        pols_normal = pols_normals(pol_v, 1)
+        v1 = pols_normal[self.np_adjecent_faces[:,0]]
+        v2 = pols_normal[self.np_adjecent_faces[:,1]]
+
+        act_angles = np.arccos(np.clip(np_dot(v1, v2), -1.0, 1.0))
+        average_vector = (v1 + v2)/2
+    
+        f = average_vector * ((self.rest_angles - act_angles)*self.spring_k)[:, np.newaxis]
+
+        np.add.at(ps.r, self.valid_edges[:,0], f)
+        np.add.at(ps.r, self.valid_edges[:,1], f)
+
+
 class SvEdgesAngleForce():
     def __init__(self, springs, spring_k, fixed_angle, use_fix_angle):
         self.springs = np.array(springs)
@@ -1090,7 +1167,7 @@ class SvEdgesAngleForce():
 
         average_vector = (v1_u + v2_u)/2
         f = average_vector * ((self.rest_ang - act_ang)*self.spring_k)[:, np.newaxis]
-        ps.r[self.target_v] += f
+        # ps.r[self.target_v] += f
         np.add.at(ps.r, self.target_v, f)
 
 
