@@ -21,7 +21,7 @@ from math import radians, ceil
 import itertools
 import ast
 import copy
-from itertools import zip_longest
+from itertools import zip_longest, chain, cycle
 import bpy
 from mathutils import Vector, Matrix
 from numpy import (
@@ -90,6 +90,18 @@ def repeat_last(lst):
     """
     last = [lst[-1]] if lst else []
     yield from chain(lst, cycle(last))
+
+
+def fixed_iter(data, iter_number, fill_value=0):
+    """
+    Creates iterator for given data which will be yielded iter_number times
+    If data is shorter then iter_number last element will be cycled
+    If data is empty [fill_value] list will be used instead
+    """
+    if not data:
+        data = [fill_value]
+    for i, item in zip(range(iter_number), chain(data, cycle([data[-1]]))):
+        yield item
 
 
 def match_long_repeat(lsts):
