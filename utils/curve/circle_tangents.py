@@ -8,15 +8,20 @@
 import numpy as np
 from math import sqrt, acos, asin, pi
 
+from sverchok.utils.math import np_signed_angle
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.primitives import SvCircle, SvLine
 
 def make_symmetric_arc(xx, circle, bounds):
+    u1, u2 = bounds
+    alpha = np_signed_angle(xx, circle.vectorx, circle.normal)
     arc = circle.copy()
     arc.vectorx = xx * arc.radius
     arc.matrix = SvCircle.calc_matrix(arc.normal, arc.vectorx)
+    u1 = (u1 - alpha + pi) % (2*pi) - pi
+    u2 = (u2 - alpha + pi) % (2*pi) - pi
     arc.u_bounds = bounds
-    return arc
+    return u1, u2, arc
 
 class SvTwoCircleTangentsData(object):
     def __init__(self):
@@ -48,8 +53,8 @@ def calc_two_circles_tangents(circle1, circle2, planar_tolerance=1e-6, calc_oute
         #print("Cos b", cos_beta)
         beta = acos(-cos_beta)
         
-        outer_arc1 = make_symmetric_arc(xx, circle1, (beta, 2*pi-beta))
-        outer_arc2 = make_symmetric_arc(xx, circle2, (-beta, beta))
+        _, _, outer_arc1 = make_symmetric_arc(xx, circle1, (beta, 2*pi-beta))
+        _, _, outer_arc2 = make_symmetric_arc(xx, circle2, (-beta, beta))
         
         c1p1 = outer_arc1.evaluate(beta)
         c2p1 = outer_arc2.evaluate(beta)
@@ -69,8 +74,8 @@ def calc_two_circles_tangents(circle1, circle2, planar_tolerance=1e-6, calc_oute
         cos_beta = r_sum / d
         beta = acos(cos_beta)
 
-        inner_arc1 = make_symmetric_arc(xx, circle1, (beta, 2*pi-beta))
-        inner_arc2 = make_symmetric_arc(xx, circle2, (-(pi-beta), pi-beta))
+        _, _, inner_arc1 = make_symmetric_arc(xx, circle1, (beta, 2*pi-beta))
+        _, _, inner_arc2 = make_symmetric_arc(xx, circle2, (-(pi-beta), pi-beta))
         
         c1p1 = inner_arc1.evaluate(beta)
         c2p1 = inner_arc2.evaluate(pi-beta)
@@ -93,6 +98,8 @@ class SvCircleTangentData(object):
         self.tangent1_point = None
         self.tangent2 = None
         self.tangent2_point = None
+        self.angle1 = None
+        self.angle2 = None
 
 def calc_circle_tangents(circle, point, planar_tolerance=1e-6):
     planar = np.dot(circle.normal, point)
@@ -108,8 +115,8 @@ def calc_circle_tangents(circle, point, planar_tolerance=1e-6):
         cos_beta = circle.radius / d
         beta = acos(cos_beta)
 
-        result.inner_arc = make_symmetric_arc(xx, circle, (-beta, beta))
-        result.outer_arc = make_symmetric_arc(xx, circle, (beta, 2*pi-beta))
+        result.angle1, result.angle2, result.inner_arc = make_symmetric_arc(xx, circle, (-beta, beta))
+        _, _, result.outer_arc = make_symmetric_arc(xx, circle, (beta, 2*pi-beta))
 
         result.tangent1_point = result.inner_arc.evaluate(-beta)
         result.tangent2_point = result.inner_arc.evaluate(beta)
