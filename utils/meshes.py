@@ -207,6 +207,10 @@ class MeshElements(Collection):
         """Copy attributes from given other mesh elements"""
         self._attrs.update(other._attrs)
 
+    def get_attribute(self, attr: str, default=None) -> list:
+        """Get elements attribute, using instead of polygons['attr']"""
+        return self._attrs.get(attr, default)
+
     def __len__(self):
         return len(self.data)
 
