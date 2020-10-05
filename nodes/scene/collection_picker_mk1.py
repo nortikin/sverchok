@@ -28,8 +28,6 @@ class SvCollectionPicker(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
     bl_label = 'Collection Picker'
     bl_icon = 'GROUP'
 
-    properties_to_skip_iojson = ['collection']
-
     def find_collections(self, object):
         return True
 

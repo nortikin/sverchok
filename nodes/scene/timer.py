@@ -334,8 +334,6 @@ class SvTimerNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     timers: CollectionProperty(name="Timers", type=SvTimerPropertyGroup)
 
-    properties_to_skip_iojson = ['timers']
-
     def update_time_slider(self, context):
         ''' Callback to update timers time when scrubbing the timer slider '''
         if self.inhibit_update:

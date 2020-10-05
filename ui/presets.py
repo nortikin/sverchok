@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import os
+from functools import reduce
 from os.path import join, isdir, basename, dirname
 import shutil
 from glob import glob
@@ -28,11 +29,12 @@ import hashlib
 import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 
-from sverchok.utils.sv_IO_panel_tools import write_json, create_dict_of_tree, import_tree, import_node_settings
 from sverchok.utils.logging import debug, info, error, exception
 from sverchok.utils import sv_gist_tools
 from sverchok.utils import sv_IO_panel_tools
 from sverchok.utils import get_node_class_reference
+from sverchok.utils.sv_json_import import JSONImporter
+from sverchok.utils.sv_json_export import JSONExporter
 import sverchok
 
 # To be moved somewhere under core/
@@ -288,11 +290,14 @@ class SvPreset(object):
                     id_tree = ntree.name
                     ng = bpy.data.node_groups[id_tree]
 
-                    center = tuple(context.space_data.cursor_location)
+                    center = context.space_data.cursor_location
                     # Deselect everything, so as a result only imported nodes
                     # will be selected
                     bpy.ops.node.select_all(action='DESELECT')
-                    import_tree(ng, self.path, center = center)
+                    JSONImporter.init_from_path(self.path).import_into_tree(ng)
+                    new_nodes = [node for node in ng.nodes if node.select]
+                    new_nodes_center = reduce(lambda v1, v2: v1 + v2, [n.location for n in new_nodes]) / len(new_nodes)
+                    [setattr(n, 'location', n.location + center - new_nodes_center) for n in new_nodes]
                     bpy.ops.transform.translate('INVOKE_DEFAULT')
                     return {'FINISHED'}
 
@@ -337,8 +342,7 @@ class SverchPresetReplaceOperator(bpy.types.Operator):
         ng = bpy.data.node_groups[id_tree]
 
         preset = SvPreset(path = self.preset_path, category = node.bl_idname)
-        node_json = list(preset.data['nodes'].values())[0]
-        import_node_settings(node, node_json, overwrite_presentation_props = False)
+        JSONImporter(preset.data).import_node_settings(node)
         return {'FINISHED'}
 
 def get_presets(category=None, search=None, mkdir=True):
@@ -405,11 +409,11 @@ class SvSaveSelected(bpy.types.Operator):
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
-        layout_dict = create_dict_of_tree(ng, selected=True, save_defaults = self.save_defaults)
+        layout_dict = JSONExporter.get_nodes_structure([n for n in ng.nodes if n.select])
         preset = SvPreset(name=self.preset_name, category = self.category)
         preset.make_add_operator()
         destination_path = preset.path
-        write_json(layout_dict, destination_path)
+        json.dump(layout_dict, open(destination_path, 'w'), sort_keys=True, indent=2)
         msg = 'exported to: ' + destination_path
         self.report({"INFO"}, msg)
         info(msg)

@@ -33,7 +33,7 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
     bl_icon = 'OUTLINER_OB_MESH'
     sv_icon = 'SV_BMESH_VIEWER'
 
-    mesh_data: bpy.props.CollectionProperty(type=SvMeshData)
+    mesh_data: bpy.props.CollectionProperty(type=SvMeshData, options={'SKIP_SAVE'})
 
     is_merge: BoolProperty(default=False, update=updateNode, description="Merge all meshes into one object")
 
@@ -181,11 +181,6 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
         [setattr(prop.obj, 'show_wire', self.show_wireframe) for prop in self.object_data]
 
         self.outputs['Objects'].sv_set([obj_data.obj for obj_data in self.object_data])
-
-    # Serialization properties
-    @property
-    def properties_to_skip_iojson(self):
-        return super().properties_to_skip_iojson + ['mesh_data']
 
 
 class SvCreateMaterial(bpy.types.Operator):

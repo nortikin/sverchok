@@ -431,8 +431,6 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.adjust_sockets()
         updateNode(self, context)
 
-    properties_to_skip_iojson = ["file_pointer"]
-
     filename : StringProperty(default="")
     file_pointer: PointerProperty(
         type=bpy.types.Text, poll=lambda s, o: True, update=pointer_update)
@@ -687,18 +685,20 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if 'Curve' in self.outputs:
             self.outputs['Curve'].sv_set(result_curves)
 
-    def storage_set_data(self, storage):
-        profile = storage['profile']
-        filename = storage['params']['filename']
+    def load_from_json(self, node_data: dict, import_version: float):
+        if 'profile' not in node_data:
+            return  # looks like a node was empty when it was exported
+        profile = node_data['profile']
+        filename = node_data['params']['filename']
 
         bpy.data.texts.new(filename)
         bpy.data.texts[filename].clear()
         bpy.data.texts[filename].write(profile)
 
-    def storage_get_data(self, storage):
+    def save_to_json(self, node_data: dict):
         if self.filename and self.filename.strip() in bpy.data.texts:
             text = bpy.data.texts[self.filename.strip()].as_string()
-            storage['profile'] = text
+            node_data['profile'] = text
         else:
             self.warning("Unknown filename: {}".format(self.filename))
 
