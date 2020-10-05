@@ -6,6 +6,10 @@
 # License-Filename: LICENSE
 
 """
+The module provide basic operations with meshes
+Also support several mesh types
+All mesh types share the same API so user should not know which type of mesh is used
+
 It is important to import this module like that: import meshes
 And don't do this: from meshes import PyMesh
 It can bring unexpected errors
@@ -34,6 +38,7 @@ PyPolygon = List[int]
 
 
 def to_mesh(vertices, edges=None, polygons=None) -> Union[PyMesh, NpMesh]:
+    """Convert mesh elements into a mesh with type dependent on type of given elements"""
     if isinstance(vertices, (list, tuple)):
         return PyMesh(vertices, edges, polygons)
     elif isinstance(vertices, np.ndarray):
@@ -67,6 +72,11 @@ class Mesh(ABC):
 
 
 def convert_mesh_type(method: Callable) -> Callable:
+    """
+    Decorator for methods with mesh as first argument
+    it will convert this attribute into the same type as type of the class of the method
+    mesh class should have `cast` method which will be called to convert mesh
+    """
     @wraps(method)
     def wrap_method(base_mesh, mesh, *args, **kwargs):
         mesh = mesh.cast(type(base_mesh))
@@ -77,7 +87,7 @@ def convert_mesh_type(method: Callable) -> Callable:
 class PyMesh(Mesh):
     """
     Data structure of Python mesh and its basic operations
-    It does not copy any containers
+    Its methods always generates new lists so there is no need in list.copy()
     """
     def __init__(self, vertices: List[PyVertex], edges: List[PyEdge] = None, polygons: List[PyPolygon] = None):
         # Example usage: PyMesh(vertices, edges, faces).polygons['materials'] = [0, 1, 1, ...]
@@ -98,10 +108,12 @@ class PyMesh(Mesh):
         return self
 
     def apply_matrix(self, matrix: Matrix) -> PyMesh:
+        """It will generate new vertices with given matrix applied"""
         self.vertices.data = [tuple(matrix @ Vector(v)) for v in self.vertices]
         return self
 
     def cast(self, mesh_type: Type[Mesh]) -> Mesh:
+        """Convert itself into other mesh types"""
         if mesh_type == PyMesh:
             return self
         elif mesh_type == NpMesh:
@@ -115,6 +127,10 @@ class PyMesh(Mesh):
 
 
 class NpMesh(Mesh):
+    """
+    Numpy mesh data structure
+    For keeping balance between simplicity and efficiency only vertices has numpy format
+    """
     def __init__(self, vertices: Iterable, edges: List[PyEdge] = None, polygons: List[PyPolygon] = None):
         # array is copied only if dtype does not match
         self._vertices = MeshElements(np.asarray(vertices, dtype=np.float32))
@@ -123,6 +139,7 @@ class NpMesh(Mesh):
 
     @convert_mesh_type
     def add_mesh(self, mesh: NpMesh) -> NpMesh:
+        """To join many meshes - reduce(lambda m1, m2: m1.add_mesh(m2), [mesh, mesh, mesh, mesh])"""
         self_vertices_number = len(self.vertices)
         self.vertices.join_data(mesh.vertices)
         mesh.edges.data = [(edge[0] + self_vertices_number, edge[1] + self_vertices_number) for edge in mesh.edges]
@@ -132,10 +149,12 @@ class NpMesh(Mesh):
         return self
 
     def apply_matrix(self, matrix) -> NpMesh:
+        """It will generate new vertices with given matrix applied"""
         self.vertices.data = matrix_apply_np(self.vertices.data, matrix)
         return self
 
     def cast(self, mesh_type: Type[Mesh]) -> Mesh:
+        """Convert itself into other mesh types"""
         if mesh_type == PyMesh:
             cast_mesh = PyMesh(self.vertices.data.tolist(), self.edges.data, self.polygons.data)
             cast_mesh.vertices.copy_attributes(self.vertices)
@@ -149,7 +168,19 @@ class NpMesh(Mesh):
 
 
 class MeshElements(Collection):
+    """
+    Class for data of mesh elements such as vertices, edges, polygons
+    Main reason of this class is to keep elements attributes
+
+    It supports:
+    iteration over elements - [vertex for vertex in mesh.vertices]
+    check if list of elements is not empty - if mesh.vertices: "There are some vertices in mesh"
+    gen number of elements - polygon_number = len(mesh.polygons)
+    set attributes to elements - mesh.polygons['material'] = material_indexes
+    get attributes of elements - vertex_colors = mesh.vertices['vertex color']
+    """
     def __init__(self, data: Union[list, np.ndarray]):
+        """Data should be vertices, edges or faces"""
         self.data = data
 
         # given data can has its attributes
@@ -158,8 +189,8 @@ class MeshElements(Collection):
 
     def join_data(self, other: MeshElements):
         """
-        Merging two lists into first
-        Also attributes should be merged
+        Merging two elements data into first
+        Also attributes are merged
         """
         if self._attrs or other._attrs:
             for key in self._attrs.keys() | other._attrs.keys():
@@ -173,6 +204,7 @@ class MeshElements(Collection):
             raise TypeError(f'Type "{type(self.data).__name__}" of "data" attribute does not supported')
 
     def copy_attributes(self, other: MeshElements):
+        """Copy attributes from given other mesh elements"""
         self._attrs.update(other._attrs)
 
     def __len__(self):
