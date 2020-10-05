@@ -154,17 +154,17 @@ class MeshElements(Collection):
 
         # given data can has its attributes
         # data can has different length then actual number of elements (vertices, edges, polygons)
-        self.attrs: Dict[str, list] = dict()
+        self._attrs: Dict[str, list] = dict()
 
     def join_data(self, other: MeshElements):
         """
         Merging two lists into first
         Also attributes should be merged
         """
-        if self.attrs or other.attrs:
-            for key in self.attrs.keys() | other.attrs.keys():
-                self.attrs[key] = list(chain(fixed_iter(self.attrs.get(key), len(self.data)),
-                                             fixed_iter(other.attrs.get(key), len(other.data))))
+        if self._attrs or other._attrs:
+            for key in self._attrs.keys() | other._attrs.keys():
+                self._attrs[key] = list(chain(fixed_iter(self._attrs.get(key), len(self.data)),
+                                              fixed_iter(other._attrs.get(key), len(other.data))))
         if isinstance(self.data, list):
             self.data = self.data + other.data
         elif isinstance(self.data, np.ndarray):
@@ -173,7 +173,7 @@ class MeshElements(Collection):
             raise TypeError(f'Type "{type(self.data).__name__}" of "data" attribute does not supported')
 
     def copy_attributes(self, other: MeshElements):
-        self.attrs.update(other.attrs)
+        self._attrs.update(other._attrs)
 
     def __len__(self):
         return len(self.data)
@@ -186,3 +186,12 @@ class MeshElements(Collection):
 
     def __bool__(self):
         return bool(self.data)
+
+    def __getitem__(self, item):
+        return self._attrs[item]
+
+    def __setitem__(self, key, value):
+        self._attrs[key] = value
+
+    def __delitem__(self, key):
+        del self._attrs[key]

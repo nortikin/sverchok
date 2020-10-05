@@ -132,14 +132,14 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
 
                 mesh = me.to_mesh(*elements)
                 if materials:
-                    mesh.polygons.attrs['material'] = materials
+                    mesh.polygons['material'] = materials
                 if matrix:
                     mesh.apply_matrix(matrix)
                 meshes.append(mesh)
             base_mesh = reduce(lambda m1, m2: m1.add_mesh(m2), meshes)
 
             verts, edges, faces = [base_mesh.vertices.data], [base_mesh.edges.data], [base_mesh.polygons.data]
-            mat_indexes = [base_mesh.polygons.attrs['material']]
+            mat_indexes = [base_mesh.polygons['material']]
             matrices = []
 
         objects_number = max([len(verts), len(matrices)]) if verts else 0
