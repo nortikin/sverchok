@@ -58,11 +58,11 @@ class SvMeshJoinNode(bpy.types.Node, SverchCustomTreeNode):
 
         meshes = [me.to_mesh(*m) for m in zip(vertices, chain(edges, cycle([[]])), chain(polygons, cycle([[]])))]
         joined_mesh = reduce(lambda m1, m2: m1.add_mesh(m2), meshes)
-        self.outputs['Vertices'].sv_set([joined_mesh.vertices])
+        self.outputs['Vertices'].sv_set([joined_mesh.vertices.data])
         if joined_mesh.edges:
-            self.outputs['PolyEdge'].sv_set([joined_mesh.edges])
+            self.outputs['PolyEdge'].sv_set([joined_mesh.edges.data])
         if joined_mesh.polygons:
-            self.outputs['PolyEdge'].sv_set([joined_mesh.polygons])
+            self.outputs['PolyEdge'].sv_set([joined_mesh.polygons.data])
 
 
 def register():
