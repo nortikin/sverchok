@@ -5,20 +5,19 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-
+from functools import reduce
 from itertools import cycle
 
 import bpy
 from bpy.props import BoolProperty
 from mathutils import Matrix
 
-from sverchok.nodes.matrix.apply_and_join import apply_and_join_python
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, repeat_last
 from sverchok.utils.nodes_mixins.generating_objects import SvMeshData, SvViewerNode
 from sverchok.utils.handle_blender_data import correct_collection_length
-from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
+import sverchok.utils.meshes as me
 
 
 class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
@@ -121,18 +120,27 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
 
         # first step is merge everything if the option
         if self.is_merge:
-            if matrices:
-                objects_number = max([len(verts), len(matrices)])
-                mat_indexes = [[i for _, obj, mat_i in zip(range(objects_number), cycle(faces), cycle(mat_indexes))
-                                for f, i in zip(obj, cycle(mat_i))]]
-                _, *join_mesh_data = list(zip(*zip(range(objects_number), cycle(verts), cycle(edges), cycle(faces),
-                                                   cycle(matrices))))
-                verts, edges, faces = apply_and_join_python(*join_mesh_data, True)
-                matrices = []
-            else:
-                mat_indexes = [[i for obj, mat_i in zip(faces, cycle(mat_indexes)) for f, i in zip(obj, cycle(mat_i))]]
-                verts, edges, faces = mesh_join(verts, edges if edges[0] else [], faces)  # function has good API
-                verts, edges, faces = [verts], [edges], [faces]
+            objects_number = max([len(verts), len(matrices)])
+            meshes = []
+            for i, *elements, materials, matrix in zip(
+                    range(objects_number),
+                    repeat_last(verts),
+                    repeat_last(edges),
+                    repeat_last(faces),
+                    repeat_last(mat_indexes),
+                    repeat_last(matrices if matrices else [[]])):
+
+                mesh = me.to_mesh(*elements)
+                if materials:
+                    mesh.polygons.attrs['material'] = materials
+                if matrix:
+                    mesh.apply_matrix(matrix)
+                meshes.append(mesh)
+            base_mesh = reduce(lambda m1, m2: m1.add_mesh(m2), meshes)
+
+            verts, edges, faces = [base_mesh.vertices.data], [base_mesh.edges.data], [base_mesh.polygons.data]
+            mat_indexes = [base_mesh.polygons.attrs['material']]
+            matrices = []
 
         objects_number = max([len(verts), len(matrices)]) if verts else 0
 

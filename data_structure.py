@@ -88,13 +88,8 @@ def repeat_last(lst):
     and then keep repeating the last element,
     use with terminating input
     """
-    i = -1
-    while lst:
-        i += 1
-        if len(lst) > i:
-            yield lst[i]
-        else:
-            yield lst[-1]
+    last = [lst[-1]] if lst else []
+    yield from chain(lst, cycle(last))
 
 
 def match_long_repeat(lsts):
