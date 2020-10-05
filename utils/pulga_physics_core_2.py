@@ -954,6 +954,7 @@ def pin_type_get(pin_type):
         return np.array(axis)
     else:
         pin_types =[[0,1,2], [0,1], [0,2], [1,2],[0],[1],[2]]
+
         return np.array(pin_types[pin_type[0]])
 
 
@@ -981,9 +982,12 @@ class SvPinForce():
     def add(self, ps):
         if self.use_pins_goal:
             ps.verts[self.pins, :] = self.pins_goal_pos
-        ps.params["Pins Reactions"] = -ps.r[self.pins]
+        ps.params["Pins Reactions"][self.pins] = -ps.r[self.pins]
+        for i in range(3):
+            if not i in self.pin_type:
+                ps.params["Pins Reactions"][:, i] = 0
         for axis in self.pin_type:
-            ps.params["Pins Reactions"][:, axis] = 0
+
             ps.vel[self.pins, axis] = 0
             ps.r[self.pins, axis] = 0
         # ps.vel[self.pins, :] = 0
@@ -1010,21 +1014,23 @@ class SvSpringsForce():
 
     def add(self, ps):
 
+        id0 = self.springs[:, 0]
+        id1 = self.springs[:, 1]
 
-        pairs = ps.verts[self.springs, :]
-        dif_v = pairs[:, 0, :] - pairs[:, 1, :]
+        dif_v = ps.verts[id0, :] - ps.verts[id1, :]
         dist = np.linalg.norm(dif_v, axis=1)
+
         if self.use_clamp:
             dif_l = np.clip(dist - self.dist_rest, -self.clamp_distance, self.clamp_distance)
         else:
             dif_l = dist - self.dist_rest
         dist[dist == 0] = 1
-        normal_v = dif_v / dist[:, np.newaxis]
-        x = dif_l[:, np.newaxis]
-        k = self.spring_k[:, np.newaxis]
 
-        np.add.at(ps.r, self.springs[:, 0], -normal_v * x * k)
-        np.add.at(ps.r, self.springs[:, 1], normal_v * x * k)
+        dif_v /= dist[:, np.newaxis]
+        force = dif_v * (dif_l * self.spring_k)[:, np.newaxis]
+
+        np.subtract.at(ps.r, id0, force)
+        np.add.at(ps.r, id1, force)
 
 
 
@@ -1092,16 +1098,16 @@ class SvPolygonsAngleForce():
     def add(self, ps):
         pol_v = ps.verts[self.polygons, :]
         pols_normal = pols_normals(pol_v, 1)
-        v1 = pols_normal[self.np_adjecent_faces[:,0]]
-        v2 = pols_normal[self.np_adjecent_faces[:,1]]
+        v1 = pols_normal[self.np_adjecent_faces[:, 0]]
+        v2 = pols_normal[self.np_adjecent_faces[:, 1]]
 
         act_angles = np.arccos(np.clip(np_dot(v1, v2), -1.0, 1.0))
         average_vector = (v1 + v2)/2
-    
-        f = average_vector * ((self.rest_angles - act_angles)*self.spring_k)[:, np.newaxis]
 
-        np.add.at(ps.r, self.valid_edges[:,0], f)
-        np.add.at(ps.r, self.valid_edges[:,1], f)
+        force = average_vector * ((self.rest_angles - act_angles)*self.spring_k)[:, np.newaxis]
+
+        np.add.at(ps.r, self.valid_edges[:,0], force)
+        np.add.at(ps.r, self.valid_edges[:,1], force)
 
 
 class SvEdgesAngleForce():
@@ -1167,7 +1173,6 @@ class SvEdgesAngleForce():
 
         average_vector = (v1_u + v2_u)/2
         f = average_vector * ((self.rest_ang - act_ang)*self.spring_k)[:, np.newaxis]
-        # ps.r[self.target_v] += f
         np.add.at(ps.r, self.target_v, f)
 
 
@@ -1251,7 +1256,6 @@ class SvInflateForce():
             pols_sides = np.array(p_len)
             pol_side_max = len(pols[0])
 
-        # inflate_params = [ps,
         self.pols = np_pols
         self.pols_side_max = pol_side_max
         self.pols_sides = pols_sides
@@ -1273,20 +1277,19 @@ class SvInflateForce():
 
         pol_v = ps.verts[np_pols, :]
         pols_normal = pols_normals(pol_v, inflate)
-        result = np.zeros((ps.v_len, 3), dtype=np.float64)
 
         if p_regular:
             p_area = calc_area(pol_side_max, pol_v, pols_normal)[:, np.newaxis]
             for i in range(pol_side_max):
-                np.add.at(result, np_pols[:, i], pols_normal * p_area)
+                np.add.at(ps.r, np_pols[:, i], pols_normal * p_area)
 
         else:
             p_area = calc_area_var_sides(pol_side_max, pols_sides, pol_v, pols_normal)[:, np.newaxis]
             for i in range(pol_side_max):
                 mask = pols_sides > i
-                np.add.at(result, np_pols[mask, i], pols_normal[mask] * p_area[mask])
+                np.add.at(ps.r, np_pols[mask, i], pols_normal[mask] * p_area[mask])
 
-        ps.r += result
+
 
 
 def limit_speed(np_vel, max_vel):
@@ -1322,7 +1325,11 @@ class PulgaSystem():
                 if force.use_pins_goal:
                     self.goal_pins = True
                     break
-
+        if self.pinned:
+            self.params["Pins Reactions"] = np.zeros(self.verts.shape, dtype=np.float64)
+        else:
+            self.params["Pins Reactions"] = np.array([[]])
+            self.params['unpinned'] = True
 
         for force in self.forces:
             if hasattr(force, 'size_changer'):
@@ -1399,7 +1406,7 @@ class PulgaSystem():
         if len(density) > 1:
             self.density = numpy_fit_long_repeat([self.density], self.v_len)[0]
 
-        p["Pins Reactions"] = np.array([[]])
+
 
     def hard_update(self, cache):
         '''replace verts, rads and vel (in NumPy)'''
@@ -1519,7 +1526,7 @@ def pulga_system_init(parameters, gates, out_lists, cache):
 
     iterate(iterations_max, out_params)
 
-    return ps.verts, ps.rads, ps.vel, ps.params["Pins Reactions"]
+    return ps.verts, ps.rads, ps.vel, ps.params["Pins Reactions"][np.invert(ps.params['unpinned'])]
 
 
 def iterate(iterations_max, out_params):
@@ -1544,9 +1551,9 @@ def prepare_output_data(ps, use_numpy_out):
     '''prepare data to output'''
 
     if use_numpy_out:
-        return [ps.verts, ps.rads, ps.vel, ps.params["Pins Reactions"]]
+        return [ps.verts, ps.rads, ps.vel, ps.params["Pins Reactions"][np.invert(ps.params['unpinned'])]]
 
-    return [ps.verts.tolist(), ps.rads.tolist(), ps.vel.tolist(), ps.params["Pins Reactions"].tolist()]
+    return [ps.verts.tolist(), ps.rads.tolist(), ps.vel.tolist(), ps.params["Pins Reactions"][np.invert(ps.params['unpinned'])].tolist()]
 
 
 def record_data(data_out, out_lists):
