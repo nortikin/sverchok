@@ -16,7 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from sverchok.data_structure import fullList_deep_copy
 
 def mesh_join(vertices_s, edges_s, faces_s):
     '''Given list of meshes represented by lists of vertices, edges and faces,
@@ -37,40 +36,6 @@ def mesh_join(vertices_s, edges_s, faces_s):
         offset += len(vertices)
     return result_vertices, result_edges, result_faces
 
-
-def mesh_join_ext(vertices_s, edges_s, faces_s, wrap=False):
-    '''Given list of meshes represented by lists of vertices, edges and faces,
-    produce one joined mesh.'''
-
-    offset = 0
-    result_vertices = []
-    result_edges = []
-    result_faces = []
-
-    num_vert_streams = len(vertices_s)
-
-    if num_vert_streams == len(edges_s) == len(faces_s):
-        # print('matching stream lengths')
-        pass
-    elif num_vert_streams > len(edges_s):
-        fullList_deep_copy(edges_s, num_vert_streams)
-
-    if num_vert_streams > len(faces_s):
-        fullList_deep_copy(faces_s, num_vert_streams)
-
-
-    for vertices, edges, faces in zip(vertices_s, edges_s, faces_s):
-        result_vertices.extend(vertices)
-        new_edges = [tuple(i + offset for i in edge) for edge in edges]
-        new_faces = [[i + offset for i in face] for face in faces]
-        result_edges.extend(new_edges)
-        result_faces.extend(new_faces)
-        offset += len(vertices)
-
-    if wrap:
-        return [result_vertices], [result_edges], [result_faces]
-
-    return result_vertices, result_edges, result_faces
 
 def polygons_to_edges(obj, unique_edges=False):
     out = []
