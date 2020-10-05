@@ -15,6 +15,7 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+from copy import copy
 
 import bpy
 from mathutils import Vector
@@ -88,6 +89,7 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if self.mode == "3D":
             verts_out, edges_out = intersect_edges_3d(verts_in, edges_in, 1 / 10 ** self.epsilon)
         elif self.alg_mode_2d == "Alg_1":
+            verts_in = copy(verts_in)
             verts_out, edges_out = intersect_edges_2d(verts_in, edges_in, 1 / 10 ** self.epsilon)
         elif self.alg_mode_2d == "Sweep_line":
             verts_out, edges_out = intersect_sv_edges(verts_in, edges_in, self.epsilon)
