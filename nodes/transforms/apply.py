@@ -67,7 +67,7 @@ class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
                     v = copy(v)
                     mesh = me.to_mesh(v) if not self.output_numpy else me.NpMesh(v)
                     mesh.apply_matrix(m)
-                    out_vertices.append(mesh.vertices)
+                    out_vertices.append(mesh.vertices.data)
 
             else:  # otherwise it expects two levels nesting
                 for v, ms in zip(cycle(vertices), matrices):
@@ -78,7 +78,7 @@ class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
                         mesh.apply_matrix(m)
                         meshes.append(mesh)
                     mesh = reduce(lambda m1, m2: m1.add_mesh(m2), meshes)
-                    out_vertices.append(mesh.vertices)
+                    out_vertices.append(mesh.vertices.data)
 
         self.outputs['Vectors'].sv_set(out_vertices or vertices)
 
