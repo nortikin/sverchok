@@ -532,6 +532,14 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
     color = (0.9, 0.6, 0.2, 1.0)
     quick_link_to_node = 'GenVectorsNode'
 
+    def setup_parameter_node(self, param_node):
+        if self.use_prop or self.get_prop_name():
+            value = self.sv_get()[0][0]
+            param_node.x_ = value[0]
+            param_node.y_ = value[1]
+            param_node.z_ = value[2]
+        
+
     # this property is needed for back capability, after renaming prop to default_property
     # should be removed after https://github.com/nortikin/sverchok/issues/3514
     # using via default_property property
