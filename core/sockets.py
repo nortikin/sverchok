@@ -221,6 +221,12 @@ class SvSocketCommon(SvSocketProcessing):
 
     description : StringProperty()
 
+    def get_link_parameter_node(self):
+        return self.quick_link_to_node
+
+    def setup_parameter_node(self, param_node):
+        pass
+
     def get_prop_name(self):
         """
         Intended to return name of property related with socket owned by its node
@@ -353,6 +359,13 @@ class SvSocketCommon(SvSocketProcessing):
         if self.quick_link_to_node:
             layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
 
+    def draw_link_input_menu(self, context, layout, node):
+        op = layout.operator('node.sv_input_link_wifi_menu', text="", icon="PLUGIN")
+        op.tree_name = node.id_data.name
+        op.node_name = node.name
+        op.input_name = self.name
+
+
     def draw(self, context, layout, node, text):
 
         def draw_label(text):
@@ -379,6 +392,7 @@ class SvSocketCommon(SvSocketProcessing):
 
         else:  # unlinked INPUT
             if self.get_prop_name():  # has property
+                self.draw_link_input_menu(context, layout, node)
                 self.draw_property(layout, prop_origin=node, prop_name=self.get_prop_name())
 
             elif self.node.bl_idname == 'SvGroupTreeNode' and hasattr(self, 'draw_group_property'):  # group node
@@ -392,6 +406,7 @@ class SvSocketCommon(SvSocketProcessing):
                     self.draw_group_property(layout, text, interface_socket)
 
             elif self.use_prop:  # no property but use default prop
+                self.draw_link_input_menu(context, layout, node)
                 self.draw_property(layout)
 
             else:  # no property and not use default prop
@@ -714,6 +729,24 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
     default_property_type: bpy.props.EnumProperty(items=[(i, i, '') for i in ['float', 'int']])
     default_float_property: bpy.props.FloatProperty(update=process_from_socket)
     default_int_property: bpy.props.IntProperty(update=process_from_socket)
+
+    def get_link_parameter_node(self):
+        if self.quick_link_to_node:
+            return self.quick_link_to_node
+        else:
+            return 'SvNumberNode'
+
+    def setup_parameter_node(self, param_node):
+        if param_node.bl_idname == 'SvNumberNode':
+            if self.use_prop or self.get_prop_name():
+                value = self.sv_get()[0][0]
+                print("V", value)
+                if isinstance(value, int):
+                    param_node.selected_mode = 'int'
+                    param_node.int_ = value
+                elif isinstance(value, float):
+                    param_node.selected_mode = 'float'
+                    param_node.float_ = value
 
     @property
     def default_property(self):
@@ -1039,15 +1072,144 @@ class SvSocketHelpOp(bpy.types.Operator):
         bpy.context.window_manager.popup_menu(draw, title="Socket description", icon='QUESTION')
         return {'FINISHED'}
 
+def setup_new_node_location(new_node, old_node):
+    links_number = len([s for s in old_node.inputs if s.is_linked])
+    new_node.location = (old_node.location[0] - 200, old_node.location[1] - 100 * links_number)
+    if old_node.parent:
+        new_node.parent = old_node.parent
+        new_node.location = new_node.absolute_location
+
+class SvInputLinkWifiMenuOp(bpy.types.Operator):
+    bl_idname = "node.sv_input_link_wifi_menu"
+    bl_label = "Link Wifi - menu"
+    bl_options = {'INTERNAL', 'REGISTER'}
+    bl_property = "option"
+
+    def get_items(self, context):
+        tree = context.space_data.node_tree
+        node = tree.nodes[self.node_name]
+        socket = node.inputs[self.input_name]
+
+        items = []
+        link_param_node = socket.get_link_parameter_node()
+        if link_param_node:
+            items.append(
+                    ('__SV_PARAM_CREATE__', "Create new parameter", "Create new node", 0)
+                )
+
+        items.append(
+                    ('__SV_WIFI_CREATE__', "Create new WiFi pair", "Create new Wifi node", 1)
+                )
+        i = 2
+        for name, node in tree.nodes.items():
+            if node.bl_idname == 'WifiInNode':
+                item = ('WIFI_' + node.var_name, f"{node.name} - {node.var_name}", "Link to existing wifi input", i)
+                items.append(item)
+                i += 1
+        return items
+
+    option : EnumProperty(items = get_items)
+    tree_name : StringProperty()
+    node_name : StringProperty()
+    input_name : StringProperty()
+
+    def execute(self, context):
+        print(self.option)
+
+        tree = bpy.data.node_groups[self.tree_name]
+        node = tree.nodes[self.node_name]
+        socket = node.inputs[self.input_name]
+
+        def is_linked(node1, node2):
+            for link in tree.links:
+                if link.from_node == node1 and link.to_node == node2:
+                    return True
+            return False
+
+        if self.option == '__SV_PARAM_CREATE__':
+            with node.sv_throttle_tree_update():
+                new_node = tree.nodes.new(socket.get_link_parameter_node())
+                socket.setup_parameter_node(new_node)
+                links_number = len([s for s in node.inputs if s.is_linked])
+                new_node.location = (node.location[0] - 200, node.location[1] - 100 * links_number)
+                tree.links.new(new_node.outputs[0], socket)
+
+                if node.parent:
+                    new_node.parent = node.parent
+                    new_node.location = new_node.absolute_location
+
+            new_node.process_node(context)
+
+        elif self.option == '__SV_WIFI_CREATE__':
+            with node.sv_throttle_tree_update():
+                param_node = tree.nodes.new(socket.get_link_parameter_node())
+
+                wifi_in_node = tree.nodes.new('WifiInNode')
+                wifi_in_node.gen_var_name()
+                wifi_var = wifi_in_node.var_name
+                print("new name", wifi_var)
+
+                wifi_out_node = tree.nodes.new('WifiOutNode')
+                wifi_out_node.var_name = wifi_var
+
+                socket.setup_parameter_node(param_node)
+
+                tree.links.new(param_node.outputs[0], wifi_in_node.inputs[0])
+                tree.links.new(wifi_out_node.outputs[0], socket)
+
+                setup_new_node_location(wifi_out_node, node)
+                setup_new_node_location(wifi_in_node, wifi_out_node)
+                setup_new_node_location(param_node, wifi_in_node)
+
+            param_node.process_node(context)
+
+        elif self.option.startswith('WIFI_'):
+            wifi_var = self.option[5:]
+
+            found_existing = False
+            for name, wifi_node in tree.nodes.items():
+                if wifi_node.bl_idname == 'WifiOutNode' and is_linked(wifi_node, node):
+                    if wifi_node.var_name == wifi_var:
+                        tree.links.new(wifi_node.outputs[0], socket)
+                        found_existing = True
+                        break
+
+            if not found_existing:
+                new_node = tree.nodes.new('WifiOutNode')
+                new_node.var_name = wifi_var
+                new_node.set_var_name()
+                links_number = len([s for s in node.inputs if s.is_linked])
+                new_node.location = (node.location[0] - 200, node.location[1] - 100 * links_number)
+                tree.links.new(new_node.outputs[0], socket)
+
+                if node.parent:
+                    new_node.parent = node.parent
+                    new_node.location = new_node.absolute_location
+
+                new_node.process_node(context)
+
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        context.space_data.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
+        wm = context.window_manager
+        wm.invoke_search_popup(self)
+        return {'FINISHED'}
+
 classes = [
     SV_MT_SocketOptionsMenu,
     SvVerticesSocket, SvMatrixSocket, SvStringsSocket, SvFilePathSocket,
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
     SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket,
     SvSurfaceSocket, SvCurveSocket, SvScalarFieldSocket, SvVectorFieldSocket,
+<<<<<<< HEAD
     SvSolidSocket, SvSvgSocket, SvPulgaForceSocket, SvLinkNewNodeInput,
     SvStringsSocketInterface, SvVerticesSocketInterface,
     SvSocketHelpOp
+=======
+    SvSolidSocket, SvSvgSocket, SvLinkNewNodeInput, SvSocketHelpOp,
+    SvInputLinkWifiMenuOp
+>>>>>>> "quick links" menu
 ]
 
 def socket_interface_classes():
