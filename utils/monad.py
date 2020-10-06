@@ -603,9 +603,11 @@ class SvMonadCreateFromSelected(Operator):
 
     @classmethod
     def poll(cls, context):
-        tree_type = context.space_data.tree_type
-        if tree_type == 'SverchCustomTreeType':
-            return True
+        return cls.can_be_added(context)[0]
+
+    @classmethod
+    def description(cls, context, properties):
+        return cls.can_be_added(context)[1]
 
     def execute(self, context):
 
@@ -664,6 +666,19 @@ class SvMonadCreateFromSelected(Operator):
         # requires (todo) a final ntree update here
         process_from_node(parent_node)
         return {'FINISHED'}
+
+    @classmethod
+    def can_be_added(cls, context):
+        tree = context.space_data.path[-1].node_tree
+        if tree.bl_idname == 'SverchCustomTreeType':
+            for node in tree.nodes:
+                if node.bl_idname == 'SvGroupNode':
+                    return False, 'Either monad or group node should be used in the tree'
+            return True, 'Add monad node'
+        elif tree.bl_idname == 'SverchGroupTreeType':
+            return True, "Add monad node"
+        else:
+            return False, f"Can't add in '{tree.bl_idname}' type"
 
 
 class SvMonadExpand(Operator):

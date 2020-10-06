@@ -80,7 +80,8 @@ menu_structure = [
     ["NODEVIEW_MT_AddBetas", "SV_BETA"],
     ["NODEVIEW_MT_AddAlphas", "SV_ALPHA"],
     ["separator"],
-    ["NODE_MT_category_SVERCHOK_GROUPS", "RNA"],
+    ["NODE_MT_category_SVERCHOK_MONAD", "RNA"],
+    ["NODE_MT_category_SVERCHOK_GROUP", "NODETREE"],
     ["NODEVIEW_MT_AddPresetOps", "SETTINGS"],
 ]
 def layout_draw_categories(layout, category_name, node_details):
@@ -256,6 +257,15 @@ class NODEVIEW_MT_AddPresetOps(bpy.types.Menu):
             class_name = preset_category_menus[category].__name__
             layout.menu(class_name)
 
+
+class NODE_MT_category_SVERCHOK_GROUP(bpy.types.Menu):
+    bl_label = "Group"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator('node.add_group_node')
+
+
 extra_category_menu_classes = dict()
 
 def make_extra_category_menus():
@@ -288,6 +298,7 @@ classes = [
     NODEVIEW_MT_AddModifiers,
     NODEVIEW_MT_AddGenerators,
     NODEVIEW_MT_AddPresetOps,
+    NODE_MT_category_SVERCHOK_GROUP,
     # like magic.
     # make | NODEVIEW_MT_Add + class name , menu name
     make_class('GeneratorsExt', "Generators Extended"),
