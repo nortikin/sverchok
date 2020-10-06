@@ -33,6 +33,10 @@ class SvTwoCircleTangentsData(object):
         self.inner_tangent2 = None
         self.inner_arc1 = None
         self.inner_arc2 = None
+        self.circle1_outer_angle1 = None
+        self.circle1_outer_angle2 = None
+        self.circle2_outer_angle1 = None
+        self.circle2_outer_angle2 = None
 
 def calc_two_circles_tangents(circle1, circle2, planar_tolerance=1e-6, calc_outer=True, calc_inner=True):
     dc = circle2.center - circle1.center
