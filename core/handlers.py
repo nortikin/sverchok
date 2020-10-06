@@ -129,7 +129,7 @@ def sv_scene_handler(scene):
 @persistent
 def sv_main_handler(scene):
     """
-    Main Sverchok handler for updating node tree upon editor changes
+    On depsgraph update (pre)
     """
     global pre_running
     global sv_depsgraph
@@ -143,15 +143,7 @@ def sv_main_handler(scene):
     pre_running = True
     if depsgraph_need:
         sv_depsgraph = bpy.context.evaluated_depsgraph_get()
-    for ng in sverchok_trees():
-        # if P (sv_process is False, we can skip this node tree.
-        if not ng.sv_process:
-            continue
 
-        if ng.has_changed:
-            print('depsgraph_update_pre called - ng.has_changed -> ')
-
-            ng.process()
     pre_running = False
 
 
