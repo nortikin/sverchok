@@ -78,11 +78,6 @@ Tensile structures can be studied with pinned points.
   :alt: textile_structures_pulga_physics_procedural_design.png
 
 
-Traction structures can be converted to compression structures with inverted gravity.
-
-.. image:: https://user-images.githubusercontent.com/10011941/55254068-3e28bb80-5257-11e9-86b3-2243b4e7ac4e.png
-  :alt: compression_structures_pulga_physics_procedural_design.png
-
 Using the caternary as a structural modeling tool:
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_physics_solver/blender_sverchok_pulga_physics_solver_example_02.png
