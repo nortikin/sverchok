@@ -243,7 +243,7 @@ def sv_zip(*iterables):
         yield result
 
 list_match_modes = [
-    ("SHORT",  "Match Short",  "Match shortest List",    1),
+    ("SHORT",  "Short",  "Match shortest List",    1),
     ("CYCLE",  "Cycle",  "Match longest List by cycling",     2),
     ("REPEAT", "Repeat Last", "Match longest List by repeating last item",     3),
     ("XREF",   "X-Ref",  "Cross reference (fast cycle of long)",  4),
@@ -916,9 +916,9 @@ def sv_lambda(**kwargs):
     print(structure.color)
 
     useful for passing a parameter to a function that expects to be able to do a dot lookup
-    on the parameter, for instance a function that normally accepts "self" or "node", but the 
+    on the parameter, for instance a function that normally accepts "self" or "node", but the
     function only really looks up one or two..etc parameters.
-    """ 
+    """
     dummy = lambda: None
     for k, v in kwargs.items():
         setattr(dummy, k, v)
