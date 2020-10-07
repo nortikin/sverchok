@@ -26,16 +26,14 @@ import bpy
 
 import sverchok
 from sverchok.utils.logging import debug, info, warning, error, exception
-from sverchok.utils.sv_IO_panel_tools import _EXPORTER_REVISION_
 from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.utils import sv_gist_tools
 from sverchok.utils.sv_gist_tools import show_token_help, TOKEN_HELP_URL
 from sverchok.utils.sv_IO_panel_tools import (
     propose_archive_filepath,
-    create_dict_of_tree,
-    load_json_from_gist,
-    import_tree,
-    write_json)
+    load_json_from_gist)
+from sverchok.utils.sv_json_export import JSONExporter
+from sverchok.utils.sv_json_import import JSONImporter
 
 
 class ExportImportPanels:
@@ -50,7 +48,7 @@ class ExportImportPanels:
 
 class SV_PT_IOLayoutsMenu(ExportImportPanels, bpy.types.Panel):
     bl_idname = "SV_PT_IOLayoutsMenu"
-    bl_label = f"Import/Export  (v {_EXPORTER_REVISION_})"
+    bl_label = f"Import/Export"
     bl_options = {'DEFAULT_CLOSED'}
     bl_order = 1
 
@@ -121,6 +119,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
     id_tree: bpy.props.StringProperty()
     compress: bpy.props.BoolProperty()
+    only_selected_nodes: bpy.props.BoolProperty(description="Only selected nodes will be imported")
 
     @classmethod
     def poll(cls, context):
@@ -135,14 +134,18 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
         # future: should check if filepath is a folder or ends in \
 
-        layout_dict = create_dict_of_tree(ng)
+        if self.only_selected_nodes:
+            layout_dict = JSONExporter.get_nodes_structure([node for node in ng.nodes if node.select])
+        else:
+            layout_dict = JSONExporter.get_tree_structure(ng)
+
         if not layout_dict:
             msg = 'no update list found - didn\'t export'
             self.report({"WARNING"}, msg)
             warning(msg)
             return {'CANCELLED'}
 
-        write_json(layout_dict, destination_path)
+        json.dump(layout_dict, open(destination_path, 'w'), sort_keys=True, indent=2)
         msg = 'exported to: ' + destination_path
         self.report({"INFO"}, msg)
         info(msg)
@@ -180,6 +183,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
             col = self.layout.column()  # old syntax in <= 2.83
 
         col.use_property_split = True
+        col.prop(self, 'only_selected_nodes')
         col.prop(self, 'compress', text="Create ZIP archive")
 
 
@@ -208,7 +212,10 @@ class SvNodeTreeImporter(bpy.types.Operator):
             self.report(type={'WARNING'}, message="The tree was not chosen, have a look at property (N) panel")
             return {'CANCELLED'}
 
-        import_tree(ng, self.filepath)
+        importer = JSONImporter.init_from_path(self.filepath)
+        importer.import_into_tree(ng)
+        if importer.has_fails:
+            self.report({'ERROR'}, importer.fail_massage)
 
         # set new node tree to active
         context.space_data.node_tree = ng
@@ -255,7 +262,7 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
             return {'CANCELLED'}
 
         # import tree and set new node tree to active
-        import_tree(ng, nodes_json=nodes_json)
+        JSONImporter(nodes_json).import_into_tree(ng)
         context.space_data.node_tree = ng
         return {'FINISHED'}
 
@@ -279,7 +286,11 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
         time_stamp = strftime("%Y.%m.%d | %H:%M", localtime())
         gist_description = f"Sverchok.{version_and_sha} | Blender.{app_version} | {ng.name} | {time_stamp}"
 
-        layout_dict = create_dict_of_tree(ng, skip_set={}, selected=self.selected_only)
+        # layout_dict = create_dict_of_tree(ng, skip_set={}, selected=self.selected_only)
+        if self.selected_only:
+            layout_dict = JSONExporter.get_nodes_structure([node for node in ng.nodes if node.select])
+        else:
+            layout_dict = JSONExporter.get_tree_structure(ng)
 
         try:
             gist_body = json.dumps(layout_dict, sort_keys=True, indent=2)

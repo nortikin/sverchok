@@ -245,7 +245,6 @@ class SvObjHelper():
     # most importantly, what kind of base data are we making?
     data_kind: StringProperty(name='data kind', default='MESH')
 
-    properties_to_skip_iojson = ['material_pointer']
     # to be used if the node has no material input.
     material: StringProperty(name='material', default='')
     material_pointer: bpy.props.PointerProperty(

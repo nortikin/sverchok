@@ -6,6 +6,7 @@
 # License-Filename: LICENSE
 
 import numpy as np
+import itertools
 
 from mathutils import Vector, Matrix
 from sverchok.utils.curve.core import (
@@ -827,6 +828,81 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
         else:
             err_msg = "\n".join([str(e) for e in exceptions])
             raise Exception(f"Could not join some curves natively. Result is: {result}.\nErrors were:\n{err_msg}")
+
+class SvCurvesSortResult(object):
+    def __init__(self):
+        self.curves = []
+        self.indexes = []
+        self.flips = []
+        self.sum_error = 0
+
+def sort_curves_for_concat(curves, allow_flip=False):
+    if not curves:
+        return curves
+
+    def calc_error(c1, c2):
+        c1end = c1[1]
+        c2begin = c2[0]
+
+        dc = c1end - c2begin
+        d = (dc * dc).sum()
+        return d
+
+    def select_next(last_pair, pairs, other_idxs):
+        min_error = None
+        best_idx = None
+        best_flip = False
+
+        if allow_flip:
+            combinations = [(flip, idx) for idx in other_idxs for flip in [False, True]]
+        else:
+            combinations = [(False, idx) for idx in other_idxs]
+
+        for flip, idx in combinations:
+            start, end = pairs[idx]
+            if flip:
+                start, end = end, start
+            error = calc_error(last_pair, (start, end))
+            if min_error is None or error < min_error:
+                min_error = error
+                best_idx = idx
+                best_flip = flip
+        return min_error, best_idx, best_flip
+
+    pairs = []
+    for curve in curves:
+        u_min, u_max = curve.get_u_bounds()
+        begin = curve.evaluate(u_min)
+        end = curve.evaluate(u_max)
+        pairs.append((begin, end))
+
+    all_idxs = list(range(len(curves)))
+    result_idxs = [0]
+    result_flips = [False]
+    last_pair = pairs[0]
+    rest_idxs = all_idxs[1:]
+
+    result = SvCurvesSortResult()
+
+    while rest_idxs:
+        error, next_idx, next_flip = select_next(last_pair, pairs, rest_idxs)
+        rest_idxs.remove(next_idx)
+        result_idxs.append(next_idx)
+        result_flips.append(next_flip)
+        last_pair = pairs[next_idx]
+        result.sum_error += error
+        if next_flip:
+            last_pair = last_pair[1], last_pair[0]
+
+    for idx, flip in zip(result_idxs, result_flips):
+        result.indexes.append(idx)
+        result.flips.append(flip)
+        curve = curves[idx]
+        if flip:
+            curve = reverse_curve(curve)
+        result.curves.append(curve)
+
+    return result
 
 def reparametrize_curve(curve, new_t_min=0.0, new_t_max=1.0):
     t_min, t_max = curve.get_u_bounds()

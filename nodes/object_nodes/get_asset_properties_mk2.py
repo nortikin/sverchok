@@ -96,9 +96,6 @@ class SvGetAssetPropertiesMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatable
 
     Mode: EnumProperty(name="get modes", default="objects", items=e(M), update=updateNode)
     Type: EnumProperty(name="get types", default="MESH", items=e(T), update=updateNode)
-
-    properties_to_skip_iojson: ["object_pointer", "image_pointer", "text_pointer"]
-
     text_pointer: PointerProperty(type=bpy.types.Text, poll=lambda s, o: True, update=updateNode)
     object_pointer: PointerProperty(type=bpy.types.Object, poll=type_filter, update=updateNode)
     image_pointer: PointerProperty(type=bpy.types.Image, poll=lambda s, o: True, update=updateNode)

@@ -83,6 +83,9 @@ class SvEdgeBoomNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, 'sort')
 
     def process(self):
+        if not self.inputs['Vertices'].is_linked:
+            return
+
         vertices_s = self.inputs['Vertices'].sv_get()
         edges_s = self.inputs['Edges'].sv_get(default=[[]])
         faces_s = self.inputs['Faces'].sv_get(default=[[]])

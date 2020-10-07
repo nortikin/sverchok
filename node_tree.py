@@ -273,7 +273,10 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
 class UpdateNodes:
     """Everything related with update system of nodes"""
-    n_id: StringProperty(default="")  # identifier of the node, should be used via `node_id` property
+
+    # identifier of the node, should be used via `node_id` property
+    # overriding the property without `skip_save` option can lead to wrong importing bgl viewer nodes
+    n_id: StringProperty(options={'SKIP_SAVE'})
 
     @property
     def node_id(self):

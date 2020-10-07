@@ -104,7 +104,6 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Stethoscope MK2'
     bl_icon = 'LONGDISPLAY'
 
-    n_id: StringProperty(default='')
     font_id: IntProperty(default=0, update=updateNode)
 
     text_color: FloatVectorProperty(

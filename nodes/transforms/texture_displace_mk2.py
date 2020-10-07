@@ -93,8 +93,6 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def change_direction_sockets(self, context):
         self.inputs['Custom Axis'].hide_safe = self.out_mode != 'Custom_Axis'
 
-    properties_to_skip_iojson = ['texture_pointer']
-
     texture_pointer: bpy.props.PointerProperty(
         type=bpy.types.Texture,
         name='Texture',
@@ -251,11 +249,9 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         else:
             return self.label or self.name
 
-    def storage_get_data(self, node_ref):
-        pack_pointer_property_name(self.texture_pointer, node_ref, "texture_name")
-
-    def storage_set_data(self, node_ref):
-        self.texture_pointer = unpack_pointer_property_name(bpy.data.textures, node_ref, "texture_name")
+    def load_from_json(self, node_data: dict, import_version: float):
+        if import_version <= 0.08:
+            self.texture_pointer = unpack_pointer_property_name(bpy.data.textures, node_data, "texture_name")
 
 
 classes = [SvDisplaceNodeMk2]

@@ -65,8 +65,6 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         name='Value', description='New Max',
         default=.5, update=updateNode)
 
-    n_id: StringProperty(default='')
-
     def sv_init(self, context):
         self.width=200
         self.inputs.new('SvStringsSocket', "Value").prop_name = 'value'
@@ -92,9 +90,6 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         except AttributeError:
             layout.label(text="Connect input to activate")
             return
-
-    def sv_copy(self, node):
-        self.n_id = ''
 
     def free(self):
         m = bpy.data.node_groups.get(node_group_name)
@@ -128,20 +123,19 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         self.outputs[0].sv_set(result)
 
-    def storage_set_data(self, node_ref):
+    def load_from_json(self, node_dict: dict, import_version: float):
         '''function to get data when importing from json'''
-        data_list = node_ref.get('curve_data')
+        data_list = node_dict.get('curve_data')
         data_dict = json.loads(data_list)
         curve_node_name = self._get_curve_node_name()
         set_rgb_curve(data_dict, curve_node_name)
 
-    def storage_get_data(self, node_dict):
+    def save_to_json(self, node_data: dict):
         '''function to set data for exporting json'''
         curve_node_name = self._get_curve_node_name()
         data = get_rgb_curve(node_group_name, curve_node_name)
         data_json_str = json.dumps(data)
-        node_dict['curve_data'] = data_json_str
-
+        node_data['curve_data'] = data_json_str
 
 
 def register():

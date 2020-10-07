@@ -38,7 +38,7 @@ class SvColorInputNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     use_alpha: BoolProperty(name="Use Alpha", default=False, update=updateNode)
 
     color_data: FloatVectorProperty(
-        name="Color", description="Color", size=4,
+        name="Color", description="Color", size=4, default=[0, 0, 0, 1],
         min=0.0, max=1.0, subtype='COLOR', update=updateNode)
 
     def sv_init(self, context):
