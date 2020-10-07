@@ -569,6 +569,7 @@
     SvTextOutNodeMK2
     ---
     NoteNode
+    TextSplitNode
     SvGTextNode
 
 ## BPY Data
