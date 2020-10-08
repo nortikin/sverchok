@@ -21,7 +21,7 @@ from bpy.props import BoolProperty, EnumProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, enum_item_4, updateNode
-from sverchok.utils.pulga_physics_core_2 import SvAttractionForce
+from sverchok.utils.pulga_physics_modular_core import SvAttractionForce
 from sverchok.dependencies import scipy, Cython
 
 

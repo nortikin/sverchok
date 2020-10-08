@@ -642,6 +642,7 @@
     SvPulgaInflateForceNode
     SvPulgaAttractorsForceNode
     SvPulgaAngleForceNode
+    SvPulgaPhysicsNode
 
 ## SVG
     SvSvgDocumentNode
@@ -699,7 +700,6 @@
     SvSeparateMeshNodeMK2
     SvMultiExtrudeAlt
     SvPlanarEdgenetToPolygons
-    SvPulgaPhysicsNode
     SvTopologySimple
     SvSweepModulator
     ---

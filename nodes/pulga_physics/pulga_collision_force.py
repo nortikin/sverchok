@@ -21,7 +21,7 @@ from bpy.props import EnumProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (enum_item_4, updateNode)
-from sverchok.utils.pulga_physics_core_2 import SvCollisionForce
+from sverchok.utils.pulga_physics_modular_core import SvCollisionForce
 from sverchok.dependencies import scipy, Cython
 
 class SvPulgaCollisionForceNode(bpy.types.Node, SverchCustomTreeNode):

@@ -14,6 +14,8 @@ if FreeCAD is not None:
     from  FreeCAD import Base
 from sverchok.utils.surface.freecad import is_solid_face_surface
 from sverchok.dependencies import scipy
+from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
+from sverchok.utils.modules.edge_utils import adjacent_faces_number
 
 def reflect(v1, mirror):
 
@@ -163,7 +165,8 @@ class SvAttractorsForce():
         v_attract[mask, :] = 0
 
         r_attract = np.sum(v_attract, axis=0)
-        ps.r += r_attract
+        ps.force_resultant += r_attract
+
 
 class SvBoundingBoxForce():
     def __init__(self, b_box):
@@ -180,16 +183,18 @@ class SvBoundingBoxForce():
     def add(self, ps):
         min_mask = ps.verts <= self.bbox_min + ps.rads[:, np.newaxis]
         max_mask = ps.verts >= self.bbox_max - ps.rads[:, np.newaxis]
-        out_vals=np.any([min_mask, max_mask], axis=0)
+        out_vals = np.any([min_mask, max_mask], axis=0)
 
         ps.vel[out_vals] = 0
-        ps.r[out_vals] = 0
+        ps.force_resultant[out_vals] = 0
 
         ps.verts = np.clip(ps.verts, self.bbox_min + ps.rads[:, np.newaxis], self.bbox_max - ps.rads[:, np.newaxis])
+
 
 def project_on_plane(vects, normal):
     distance = np.sum(vects * normal, axis=1)
     return vects - normal * distance[:,np.newaxis]
+
 
 class SvBoundingSphereForce():
     def __init__(self, center, radius):
@@ -212,7 +217,7 @@ class SvBoundingSphereForce():
         ps.verts[mask] = vs_normal*(self.radius - ps.rads[mask])[:,np.newaxis]
 
         ps.vel[mask] = project_on_plane(ps.vel[mask], vs_normal)
-        ps.r[mask] = project_on_plane(ps.r[mask], vs_normal)
+        ps.force_resultant[mask] = project_on_plane(ps.force_resultant[mask], vs_normal)
 
 
 class SvBoundingSphereSurfaceForce():
@@ -233,12 +238,12 @@ class SvBoundingSphereSurfaceForce():
         dist = np.linalg.norm(vs, axis=1)
         mask = dist == 0
         vs[mask]=ps.verts[mask]+[[1,0,0]]
-        dist[mask] =1
+        dist[mask] = 1
         vs_normal = vs/dist[:, np.newaxis]
         ps.verts = vs_normal * self.radius
 
         ps.vel = project_on_plane(ps.vel, vs_normal)
-        ps.r = project_on_plane(ps.r, vs_normal)
+        ps.force_resultant = project_on_plane(ps.force_resultant, vs_normal)
 
 
 class SvBoundingPlaneSurfaceForce():
@@ -261,10 +266,10 @@ class SvBoundingPlaneSurfaceForce():
         ps.verts = ps.verts - self.normal[np.newaxis, :] * distance[:, np.newaxis]
 
         ps.vel = project_on_plane(ps.vel, self.normal)
-        ps.r = project_on_plane(ps.r, self.normal)
+        ps.force_resultant = project_on_plane(ps.force_resultant, self.normal)
 
 
-class SvBoundingMeshSurfaceForce():
+class SvBoundingMeshForce():
     def __init__(self, vertices, polygons, volume=False):
 
         bvh_safe_check(vertices, polygons)
@@ -297,19 +302,18 @@ class SvBoundingMeshSurfaceForce():
         self.find_nearest(ps.verts)
         ps.verts = self.nearest
         ps.vel = project_on_plane(ps.vel, self.normals)
-        ps.r = project_on_plane(ps.r, self.normals)
+        ps.force_resultant = project_on_plane(ps.force_resultant, self.normals)
 
     def add_volume(self, ps):
         self.find_nearest(ps.verts)
-        p2 = self.nearest - ps.verts
-        outer_mask = np_dot(p2, self.normals) <= 0
+        outer_mask = np_dot(self.nearest - ps.verts, self.normals) <= 0
         ps.verts[outer_mask] = self.nearest[outer_mask]
 
         ps.vel[outer_mask] = project_on_plane(ps.vel[outer_mask], self.normals[outer_mask])
-        ps.r[outer_mask] = project_on_plane(ps.r[outer_mask], self.normals[outer_mask])
+        ps.force_resultant[outer_mask] = project_on_plane(ps.force_resultant[outer_mask], self.normals[outer_mask])
 
 
-class SvBoundingSolidSurfaceForce():
+class SvBoundingSolidForce():
     def __init__(self, solid, volume=False):
 
         if isinstance(solid, Part.Solid):
@@ -323,64 +327,7 @@ class SvBoundingSolidSurfaceForce():
             self.add = self.add_volume
         else:
             self.add = self.add_surface
-        def outside(v):
-            return np.array(not self.shape.isInside(Base.Vector(v), 1e-6, False))
-        self.outside = np.vectorize(outside, signature='(3)->()')
-        def find(v):
-            vertex = Part.Vertex(Base.Vector(v))
 
-            dist = self.shape.distToShape(vertex)
-            if str(dist[2][0][0]) == "b'Face'":
-                normal = self.shape.Faces[dist[2][0][1]].normalAt(*dist[2][0][2])
-            elif str(dist[2][0][0]) == "b'Edge'":
-                edge = self.shape.Edges[dist[2][0][1]]
-                vector = self.shape.Edges[dist[2][0][1]].valueAt(dist[2][0][2])
-                face_list = self.shape.ancestorsOfType(edge,Part.Face)
-                normal=[0,0,0]
-                count=0
-                for face in face_list:
-                    for edge1 in face.Edges:
-
-                        if edge1.isSame(edge):
-                            param = face.Surface.parameter(vector)
-                            normal_ed = face.normalAt(*param)
-                            normal[0] += normal_ed[0]
-                            normal[1] += normal_ed[1]
-                            normal[2] += normal_ed[2]
-                            count+=1
-                            break
-                if count > 0:
-                    normal[0] /= count
-                    normal[1] /= count
-                    normal[2] /= count
-                else:
-                    normal = [0, 0, 1]
-            else:
-                vertex = self.shape.Vertexes[dist[2][0][1]]
-                face_list = self.shape.ancestorsOfType(vertex, Part.Face)
-                normal = [0, 0, 0]
-                count = 0
-                for face in face_list:
-                    for vertex1 in face.Vertexes:
-
-                        if vertex1.isSame(vertex):
-                            param = face.Surface.parameter(vertex.Point)
-                            normal_ed = face.normalAt(*param)
-                            normal[0] += normal_ed[0]
-                            normal[1] += normal_ed[1]
-                            normal[2] += normal_ed[2]
-                            count+=1
-                            break
-                if count > 0:
-                    normal[0] /= count
-                    normal[1] /= count
-                    normal[2] /= count
-                else:
-                    normal = [0, 0, 1]
-            return np.array([dist[1][0][0][:], normal[:]])
-
-
-        self.find = np.vectorize(find, signature='(3)->(2,3)')
     def find_closest(self,v):
         vertex = Part.Vertex(Base.Vector(v))
 
@@ -433,7 +380,8 @@ class SvBoundingSolidSurfaceForce():
             else:
                 normal = [0, 0, 1]
         return dist[1][0][0], normal
-    def find2(self, verts):
+
+    def find(self, verts):
         v_nearest = self.nearest
         v_normals = self.normals
         for v, near, norm in zip(verts, v_nearest, v_normals):
@@ -444,6 +392,7 @@ class SvBoundingSolidSurfaceForce():
             norm[0] = normal[0]
             norm[1] = normal[1]
             norm[2] = normal[2]
+
     def find_masked(self, verts, mask):
         v_nearest = self.nearest
         v_normals = self.normals
@@ -465,17 +414,17 @@ class SvBoundingSolidSurfaceForce():
 
 
     def add_surface(self, ps):
-        self.find2(ps.verts)
+        self.find(ps.verts)
         ps.verts = self.nearest
         ps.vel = project_on_plane(ps.vel, self.normals)
-        ps.r = project_on_plane(ps.r, self.normals)
+        ps.force_resultant = project_on_plane(ps.force_resultant, self.normals)
 
     def add_volume(self, ps):
         outside = self.is_outside(ps.verts)
-        self.find_masked(self, ps.verts, outside)
+        self.find_masked(ps.verts, outside)
         ps.verts[outside] =  self.nearest[outside]
         ps.vel[outside] = project_on_plane(ps.vel[outside], self.normals[outside])
-        ps.r[outside] = project_on_plane(ps.r[outside], self.normals[outside])
+        ps.force_resultant[outside] = project_on_plane(ps.force_resultant[outside], self.normals[outside])
 
 
 class SvRandomForce():
@@ -503,7 +452,7 @@ class SvRandomForce():
         if self.random_variate:
             random_var = 2 * self.random_force * np.random.random((ps.v_len, 3)) - self.random_force
             self.random_v = self.random_v * (1 - self.random_variation) + random_var * self.random_variation
-        ps.r += self.random_v
+        ps.force_resultant += self.random_v
 
 
 class SvCollisionForce():
@@ -540,8 +489,8 @@ class SvCollisionForce():
         sf = self.f_magnitude[:, np.newaxis]
         len0, len1 = [sf, sf] if self.uniform_magnitude else [sf[id1], sf[id0]]
 
-        np.add.at(ps.r, id0, -no * le * len0)
-        np.add.at(ps.r, id1, no * le * len1)
+        np.add.at(ps.force_resultant, id0, -no * le * len0)
+        np.add.at(ps.force_resultant, id1, no * le * len1)
 
     def add_kdt(self, ps):
         relations = ps.relations
@@ -566,8 +515,8 @@ class SvCollisionForce():
             len0, len1 = [sf[id1[mask]], sf[id0[mask]]] if variable_coll else [sf, sf]
 
 
-            np.add.at(ps.r, id0[mask], -normal_v * le * len0)
-            np.add.at(ps.r, id1[mask], normal_v * le * len1)
+            np.add.at(ps.force_resultant, id0[mask], -normal_v * le * len0)
+            np.add.at(ps.force_resultant, id1[mask], normal_v * le * len1)
 
 
 class SvAttractionForce():
@@ -615,8 +564,8 @@ class SvAttractionForce():
         att = self.f_magnitude
         len0, len1 = [att, att] if self.uniform_magnitude else [att[id1], att[id0]]
 
-        np.add.at(ps.r, id0, -direction * len0)
-        np.add.at(ps.r, id1, direction * len1)
+        np.add.at(ps.force_resultant, id0, -direction * len0)
+        np.add.at(ps.force_resultant, id1, direction * len1)
 
     def add_kdt(self, ps):
         relations = ps.relations
@@ -647,8 +596,8 @@ class SvAttractionForce():
 
             att = self.f_magnitude
             len0, len1 = [att, att] if self.uniform_magnitude else [att[id1], att[id0]]
-            np.add.at(ps.r, id0, -direction * len0)
-            np.add.at(ps.r, id1, direction * len1)
+            np.add.at(ps.force_resultant, id0, -direction * len0)
+            np.add.at(ps.force_resultant, id1, direction * len1)
 
 
 class SvAlignForce():
@@ -692,14 +641,14 @@ class SvAlignForce():
 
         if self.uniform_strength:
             constant = (self.f_strength / (dist2 * ps.v_len))[:, np.newaxis]
-            np.add.at(ps.r, id0, ps.vel[id1, :] * constant)
-            np.add.at(ps.r, id1, ps.vel[id0, :] * constant)
+            np.add.at(ps.force_resultant, id0, ps.vel[id1, :] * constant)
+            np.add.at(ps.force_resultant, id1, ps.vel[id0, :] * constant)
 
         else:
             constant0 = (self.f_strength[id0] / (dist2 * ps.v_len))[:, np.newaxis]
             constant1 = (self.f_strength[id1] / (dist2 * ps.v_len))[:, np.newaxis]
-            np.add.at(ps.r, id0, ps.vel[id1, :] * constant0)
-            np.add.at(ps.r, id1, ps.vel[id0, :] * constant1)
+            np.add.at(ps.force_resultant, id0, ps.vel[id1, :] * constant0)
+            np.add.at(ps.force_resultant, id1, ps.vel[id0, :] * constant1)
 
     def add_kdt(self, ps):
 
@@ -716,14 +665,14 @@ class SvAlignForce():
 
             if self.uniform_strength:
                 constant = (self.f_strength / (dist2 * ps.v_len))[:, np.newaxis]
-                np.add.at(ps.r, id0, ps.vel[id1, :] * constant)
-                np.add.at(ps.r, id1, ps.vel[id0, :] * constant)
+                np.add.at(ps.force_resultant, id0, ps.vel[id1, :] * constant)
+                np.add.at(ps.force_resultant, id1, ps.vel[id0, :] * constant)
 
             else:
                 constant0 = (self.f_strength[id0] / (dist2 * ps.v_len))[:, np.newaxis]
                 constant1 = (self.f_strength[id1] / (dist2 * ps.v_len))[:, np.newaxis]
-                np.add.at(ps.r, id0, ps.vel[id1, :] * constant0)
-                np.add.at(ps.r, id1, ps.vel[id0, :] * constant1)
+                np.add.at(ps.force_resultant, id0, ps.vel[id1, :] * constant0)
+                np.add.at(ps.force_resultant, id1, ps.vel[id0, :] * constant1)
 
 
 class SvFitForce():
@@ -805,7 +754,7 @@ class SvDragForce():
         self.magnitude = np.array(drag_force)
         self.surf = 0
         self.exponent = exponent
-        self.add_func = self.add_size_change
+        self.add = self.add_size_change
 
 
     def setup(self, ps):
@@ -823,9 +772,9 @@ class SvDragForce():
         if not size_change:
             self.constant = (self.ap_magnitude * self.surf)[:, np.newaxis]
 
-            self.add_func = self.add_constant_size
+            self.add = self.add_constant_size
         else:
-            self.add_func = self.add_size_change
+            self.add = self.add_size_change
             self.ap_magnitude = self.magnitude[:, np.newaxis]
 
     def add_size_change(self, ps):
@@ -837,7 +786,7 @@ class SvDragForce():
         self.surf = np.power(ps.rads, 2)
         drag = -vel_norm * self.ap_magnitude * vel_mag2[:, np.newaxis] * self.surf[:, np.newaxis]
 
-        ps.r += drag
+        ps.force_resultant += drag
 
     def add_constant_size(self, ps):
 
@@ -850,10 +799,8 @@ class SvDragForce():
 
         drag = -vel_norm * vel_mag2[:, np.newaxis] *  self.constant
 
-        ps.r += drag
+        ps.force_resultant += drag
 
-    def add(self, ps):
-        self.add_func(ps)
 
 
 class SvWorldForce():
@@ -874,25 +821,23 @@ class SvWorldForce():
 
         elif self.mass_proportional:
 
-            self.force2 = self.force * ps.mass[:, np.newaxis]
-            self.func = self.apply_dependant
+            self.force_final = self.force * ps.mass[:, np.newaxis]
+            self.add = self.apply_dependant
         else:
 
-            self.force2 = self.force
-            self.func = self.apply_dependant
+            self.force_final = self.force
+            self.add = self.apply_dependant
 
     def apply_mass_proportional(self, ps):
         '''apply constant forces'''
 
-        ps.r += self.force2 * ps.mass[:, np.newaxis]
+        ps.force_resultant += self.force_final * ps.mass[:, np.newaxis]
 
     def apply_dependant(self, ps):
         '''apply constant forces'''
 
-        ps.r += self.force2
+        ps.force_resultant += self.force_final
 
-    def add(self, ps):
-        self.func(ps)
 
 
 class SvFieldForce():
@@ -920,9 +865,9 @@ class SvFieldForce():
         ys = ps.verts[:, 1]
         zs = ps.verts[:, 2]
         rx, ry, rz = self.field.evaluate_grid(xs, ys, zs)
-        ps.r[:, 0] += rx * ps.mass * self.strength
-        ps.r[:, 1] += ry * ps.mass * self.strength
-        ps.r[:, 2] += rz * ps.mass * self.strength
+        ps.force_resultant[:, 0] += rx * ps.mass * self.strength
+        ps.force_resultant[:, 1] += ry * ps.mass * self.strength
+        ps.force_resultant[:, 2] += rz * ps.mass * self.strength
 
     def apply_dependant(self, ps):
         '''apply constant forces'''
@@ -932,9 +877,9 @@ class SvFieldForce():
         ys = ps.verts[:, 1]
         zs = ps.verts[:, 2]
         rx, ry, rz = self.field.evaluate_grid(xs, ys, zs)
-        ps.r[:, 0] += rx * self.strength
-        ps.r[:, 1] += ry * self.strength
-        ps.r[:, 2] += rz * self.strength
+        ps.force_resultant[:, 0] += rx * self.strength
+        ps.force_resultant[:, 1] += ry * self.strength
+        ps.force_resultant[:, 2] += rz * self.strength
 
     def add(self, ps):
         self.add_func(ps)
@@ -952,10 +897,10 @@ def pin_type_get(pin_type):
             else:
                 axis.append(2)
         return np.array(axis)
-    else:
-        pin_types =[[0,1,2], [0,1], [0,2], [1,2],[0],[1],[2]]
 
-        return np.array(pin_types[pin_type[0]])
+    pin_types = [[0, 1, 2], [0, 1], [0, 2], [1, 2], [0], [1], [2]]
+
+    return np.array(pin_types[pin_type[0]])
 
 
 class SvPinForce():
@@ -982,15 +927,15 @@ class SvPinForce():
     def add(self, ps):
         if self.use_pins_goal:
             ps.verts[self.pins, :] = self.pins_goal_pos
-        ps.params["Pins Reactions"][self.pins] = -ps.r[self.pins]
+        ps.params["Pins Reactions"][self.pins] = -ps.force_resultant[self.pins]
         for i in range(3):
             if not i in self.pin_type:
                 ps.params["Pins Reactions"][:, i] = 0
         for axis in self.pin_type:
 
             ps.vel[self.pins, axis] = 0
-            ps.r[self.pins, axis] = 0
-        # ps.vel[self.pins, :] = 0
+            ps.force_resultant[self.pins, axis] = 0
+
         ps.params['unpinned'][self.pins] = False
 
 
@@ -1029,34 +974,10 @@ class SvSpringsForce():
         dif_v /= dist[:, np.newaxis]
         force = dif_v * (dif_l * self.spring_k)[:, np.newaxis]
 
-        np.subtract.at(ps.r, id0, force)
-        np.add.at(ps.r, id1, force)
+        np.subtract.at(ps.force_resultant, id0, force)
+        np.add.at(ps.force_resultant, id1, force)
 
 
-
-def faces_angle(normals, edges, pols):
-    '''
-    angle between faces of each edge (only first two faces)
-    normals: list as [vertex, vertex, ...], being each vertex Vector([float, float, float]).
-    edges: list as [edge, edge,..], being each edge [int, int].
-    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
-    returns angle of faces (in radians) connected to each edge as [int, int,...]
-    '''
-
-    angles = []
-    for edg in ad_faces:
-        if len(edg) > 1:
-            dot_p = Vector(normals[edg[0]]).dot(Vector(normals[edg[1]]))
-            ang = acos(dot_p)
-        else:
-            ang = 2*pi
-        angles.append(ang)
-    return angles
-
-from math import acos, pi
-from mathutils import Vector
-from sverchok.utils.sv_mesh_utils import polygons_to_edges, polygons_to_edges_np
-from sverchok.utils.modules.edge_utils import adjacent_faces_number
 class SvPolygonsAngleForce():
     def __init__(self, polygons, polygons_k, fixed_angle, use_fix_angle):
         self.polygons = np.array(polygons)
@@ -1076,11 +997,11 @@ class SvPolygonsAngleForce():
                     ad_faces[idx].append(idp)
 
         self.adjacent_faces = ad_faces
-        valid_adjecent_faces=[]
-        valid_edges=[]
+        valid_adjecent_faces = []
+        valid_edges = []
         for idx, edg in enumerate(self.adjacent_faces):
             if len(edg) > 1:
-                faces_idx=[edg[0], edg[1]]
+                faces_idx = [edg[0], edg[1]]
                 valid_adjecent_faces.append(faces_idx)
                 valid_edges.append(e_sorted[idx])
             self.np_adjecent_faces = np.array(valid_adjecent_faces)
@@ -1090,7 +1011,7 @@ class SvPolygonsAngleForce():
         if not self.use_fix_angle:
             pol_v = ps.verts[self.polygons, :]
             pols_normal = pols_normals(pol_v, 1)
-            dot_p = np_dot(pols_normal[self.np_adjecent_faces[:,0]], pols_normal[self.np_adjecent_faces[:,1]])
+            dot_p = np_dot(pols_normal[self.np_adjecent_faces[:, 0]], pols_normal[self.np_adjecent_faces[:, 1]])
             rest_angles = np.arccos(np.clip(dot_p, -1.0, 1.0))
 
             self.rest_angles = rest_angles
@@ -1104,10 +1025,10 @@ class SvPolygonsAngleForce():
         act_angles = np.arccos(np.clip(np_dot(v1, v2), -1.0, 1.0))
         average_vector = (v1 + v2)/2
 
-        force = average_vector * ((self.rest_angles - act_angles)*self.spring_k)[:, np.newaxis]
+        force = average_vector * ((self.rest_angles - act_angles) * self.spring_k)[:, np.newaxis]
 
-        np.add.at(ps.r, self.valid_edges[:,0], force)
-        np.add.at(ps.r, self.valid_edges[:,1], force)
+        np.add.at(ps.force_resultant, self.valid_edges[:, 0], force)
+        np.add.at(ps.force_resultant, self.valid_edges[:, 1], force)
 
 
 class SvEdgesAngleForce():
@@ -1173,7 +1094,7 @@ class SvEdgesAngleForce():
 
         average_vector = (v1_u + v2_u)/2
         f = average_vector * ((self.rest_ang - act_ang)*self.spring_k)[:, np.newaxis]
-        np.add.at(ps.r, self.target_v, f)
+        np.add.at(ps.force_resultant, self.target_v, f)
 
 
 class SvTimedForce():
@@ -1231,13 +1152,12 @@ class SvObstaclesBVHForce():
 
         self.find_nearest(ps.verts)
         mask = self.distance < ps.rads
-        p2 = self.nearest[mask] - ps.verts[mask]
-        outer_mask = np_dot(p2, self.normals[mask]) >= 0
+        outer_mask = np_dot(self.nearest[mask] - ps.verts[mask], self.normals[mask]) >= 0
         sign = np.ones(outer_mask.shape, dtype=np.int32)
         sign[outer_mask] = -1
-        ps.verts[mask] = self.nearest[mask]+self.normals[mask]*ps.rads[mask, np.newaxis]*sign[:,np.newaxis]
+        ps.verts[mask] = self.nearest[mask] + self.normals[mask] * ps.rads[mask, np.newaxis] * sign[:, np.newaxis]
         ps.vel[mask] = reflect(ps.vel[mask], self.normals[mask]) * self.absorption
-        ps.r[mask] = reflect(ps.r[mask], self.normals[mask]) * self.absorption
+        ps.force_resultant[mask] = reflect(ps.force_resultant[mask], self.normals[mask]) * self.absorption
 
 
 class SvInflateForce():
@@ -1281,15 +1201,13 @@ class SvInflateForce():
         if p_regular:
             p_area = calc_area(pol_side_max, pol_v, pols_normal)[:, np.newaxis]
             for i in range(pol_side_max):
-                np.add.at(ps.r, np_pols[:, i], pols_normal * p_area)
+                np.add.at(ps.force_resultant, np_pols[:, i], pols_normal * p_area)
 
         else:
             p_area = calc_area_var_sides(pol_side_max, pols_sides, pol_v, pols_normal)[:, np.newaxis]
             for i in range(pol_side_max):
                 mask = pols_sides > i
-                np.add.at(ps.r, np_pols[mask, i], pols_normal[mask] * p_area[mask])
-
-
+                np.add.at(ps.force_resultant, np_pols[mask, i], pols_normal[mask] * p_area[mask])
 
 
 def limit_speed(np_vel, max_vel):
@@ -1308,7 +1226,7 @@ class PulgaSystem():
         self.main_setup(init_params)
         self.mass = self.density * np.power(self.rads, 3)
         self.random_v = []
-        self.r = np.zeros((self.v_len, 3), dtype=np.float64)
+        self.force_resultant = np.zeros((self.v_len, 3), dtype=np.float64)
         self.index = np.arange(self.v_len)
         self.size_change = False
         self.aware = False
@@ -1389,24 +1307,22 @@ class PulgaSystem():
 
     def main_setup(self, local_params):
         '''prepare main data'''
-        p = self.params
+        params = self.params
         initial_pos, _, rads_in, initial_vel, max_vel, density, forces = local_params
         self.forces = forces
         self.verts = np.array(initial_pos)
         self.rads = np.array(rads_in, dtype=np.float64)
         self.vel = np.array(initial_vel, dtype=np.float64)
         self.v_len = len(self.verts)
-        p['max_vel'] = np.array(max_vel)
+        params['max_vel'] = np.array(max_vel)
         self.rads, self.vel = numpy_fit_long_repeat([self.rads, self.vel], self.v_len)
 
-        if len(p['max_vel']) > 1:
-            p['max_vel'] = numpy_fit_long_repeat([p['max_vel']], self.v_len)[0]
+        if len(params['max_vel']) > 1:
+            params['max_vel'] = numpy_fit_long_repeat([params['max_vel']], self.v_len)[0]
 
         self.density = np.array(density)
         if len(density) > 1:
             self.density = numpy_fit_long_repeat([self.density], self.v_len)[0]
-
-
 
     def hard_update(self, cache):
         '''replace verts, rads and vel (in NumPy)'''
@@ -1445,42 +1361,14 @@ class PulgaSystem():
 
     def apply_forces(self):
         '''resultant --> acceleration --> speed --> position'''
-        acc = self.r / self.mass[:, np.newaxis]
+        acc = self.force_resultant / self.mass[:, np.newaxis]
         self.vel += acc
 
         if np.any(self.params['max_vel']) > 0:
             limit_speed(self.vel, self.params['max_vel'])
 
         self.verts += self.vel
-        self.r[:] = 0
-
-    def pins_init(self, dicti, forces_composite):
-        local_func, local_gates, local_params = dicti
-        pins, pins_goal_pos = local_params
-        use_pins, use_pins_goal = local_gates
-
-        if not use_pins:
-            self.params["Pins Reactions"] = np.array([[]])
-            return
-
-        self.params['Pins'] = np.array(pins)
-
-        if self.params['Pins'].dtype == np.int32:
-            if len(self.params['Pins']) == len(self.verts):
-                self.params['Pins'] = self.params['Pins'] == 1
-                self.params['unpinned'] = np.invert(self.params['Pins'])
-            else:
-                self.params['unpinned'] = np.ones(len(self.verts), dtype=np.bool)
-                self.params['unpinned'][self.params['Pins']] = False
-
-        self.vel[self.params['Pins'], :] = 0
-
-        if use_pins_goal:
-            self.verts[self.params['Pins'], :] = np.array(pins_goal_pos)
-        forces_composite[0].append(local_func)
-        forces_composite[1].append(self)
-        return
-
+        self.force_resultant[:] = 0
 
     def setup_forces(self):
         for force in self.forces:

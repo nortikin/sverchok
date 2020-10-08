@@ -21,7 +21,7 @@ from bpy.props import BoolProperty, IntProperty, FloatProperty, FloatVectorPrope
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (zip_long_repeat, updateNode)
-from sverchok.utils.pulga_physics_core_2 import SvAttractorsForce
+from sverchok.utils.pulga_physics_modular_core import SvAttractorsForce
 
 class SvPulgaAttractorsForceNode(bpy.types.Node, SverchCustomTreeNode):
     """

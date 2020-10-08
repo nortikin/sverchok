@@ -23,7 +23,7 @@ from bpy.props import  FloatProperty, FloatVectorProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (zip_long_repeat, enum_item_4, updateNode)
-from sverchok.utils.pulga_physics_core_2 import SvPinForce
+from sverchok.utils.pulga_physics_modular_core import SvPinForce
 
 class SvPulgaPinForceNode(bpy.types.Node, SverchCustomTreeNode):
     """

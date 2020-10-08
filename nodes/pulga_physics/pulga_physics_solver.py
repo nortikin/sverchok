@@ -23,7 +23,7 @@ from bpy.props import IntProperty, StringProperty, BoolProperty, FloatProperty, 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode, match_long_repeat
-from sverchok.utils.pulga_physics_core_2 import pulga_system_init
+from sverchok.utils.pulga_physics_modular_core import pulga_system_init
 
 
 class SvPulgaPhysicsSolverNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):

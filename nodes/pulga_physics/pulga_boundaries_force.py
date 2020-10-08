@@ -21,13 +21,13 @@ from bpy.props import EnumProperty, IntProperty, FloatProperty, FloatVectorPrope
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (zip_long_repeat, enum_item_4, updateNode)
-from sverchok.utils.pulga_physics_core_2 import (
+from sverchok.utils.pulga_physics_modular_core import (
     SvBoundingBoxForce,
     SvBoundingSphereForce,
     SvBoundingSphereSurfaceForce,
     SvBoundingPlaneSurfaceForce,
-    SvBoundingMeshSurfaceForce,
-    SvBoundingSolidSurfaceForce)
+    SvBoundingMeshForce,
+    SvBoundingSolidForce)
 from sverchok.dependencies import FreeCAD
 
 class SvPulgaBoundingBoxForceNode(bpy.types.Node, SverchCustomTreeNode):
@@ -140,7 +140,7 @@ class SvPulgaBoundingBoxForceNode(bpy.types.Node, SverchCustomTreeNode):
             volume = self.mode == "Mesh_(Volume)"
             forces_out = []
             for force in zip_long_repeat(verts, polygons):
-                forces_out.append(SvBoundingMeshSurfaceForce(*force, volume))
+                forces_out.append(SvBoundingMeshForce(*force, volume))
 
         elif 'Solid' in self.mode:
             input_name = 'Solid' if self.mode in ['Solid_(Surface)', 'Solid_(Volume)'] else 'Solid Face'
@@ -148,7 +148,7 @@ class SvPulgaBoundingBoxForceNode(bpy.types.Node, SverchCustomTreeNode):
             volume = self.mode == "Solid_(Volume)"
             forces_out = []
             for force in solid:
-                forces_out.append(SvBoundingSolidSurfaceForce(force, volume=volume))
+                forces_out.append(SvBoundingSolidForce(force, volume=volume))
 
         self.outputs[0].sv_set([forces_out])
 
