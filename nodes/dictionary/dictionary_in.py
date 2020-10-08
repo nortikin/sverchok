@@ -76,7 +76,7 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
                 self.inputs.move(sock_ind, sock_ind + 1)
             self.down = False
 
-    keys = set(f"key_{i}" for i in range(10))
+    input_keys = set(f"key_{i}" for i in range(10))
 
     up: bpy.props.BoolProperty(update=lift_item)
     down: bpy.props.BoolProperty(update=down_item)
@@ -104,7 +104,7 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
 
         # add property to new socket and add extra empty socket
         if list(self.inputs)[-1].is_linked and len(self.inputs) < 11:
-            free_keys = self.keys - set(sock.prop_name for sock in list(self.inputs)[:-1])
+            free_keys = self.input_keys - set(sock.prop_name for sock in list(self.inputs)[:-1])
             last_sock = list(self.inputs)[-1]
             last_sock.prop_name = free_keys.pop()
             last_sock.custom_draw = 'draw_socket'

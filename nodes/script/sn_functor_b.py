@@ -83,8 +83,6 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
     loaded: BoolProperty()
     node_dict = {}
 
-    properties_to_skip_iojson = ["script_pointer", "script_str", "script_name"]
-
     def handle_execution_nid(self, func_name, msg, args):
         ND = self.node_dict.get(hash(self))
         if not ND:
@@ -266,27 +264,29 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor, SvAni
                 self.exception(f'failed: {str_from} -> {str_to}')
                 self.exception(err)
 
-
-    def storage_get_data(self, node_ref):
-        pack_pointer_property_name(self.script_pointer, node_ref, "textfile_name")
+    def save_to_json(self, node_data):
+        if self.script_pointer is None:
+            return  # just empty node, nothing to do
+        pack_pointer_property_name(self.script_pointer, node_data, "textfile_name")
         local_storage = {'lines': []}
         for line in self.script_pointer.lines:
             local_storage['lines'].append(line.body)
-        node_ref['string_storage'] = json.dumps(local_storage)
+        node_data['string_storage'] = json.dumps(local_storage)
 
-    def storage_set_data(self, node_ref):
-
+    def load_from_json(self, node_data: dict, import_version: float):
+        if 'textfile_name' not in node_data:
+            return  # just empty node, nothing to do
         # maybe this file/blend already has this textblock, we could end early
-        self.script_pointer = unpack_pointer_property_name(bpy.data.texts, node_ref, "textfile_name")
+        self.script_pointer = unpack_pointer_property_name(bpy.data.texts, node_data, "textfile_name")
         if self.script_pointer:
             self.load(bpy.context)
             return
-        
+
         # seems we need to create this text block from scratch
         with self.sv_throttle_tree_update():
-            desired_name = node_ref.get("textfile_name")
+            desired_name = node_data.get("textfile_name")
             self.script_pointer = bpy.data.texts.new(desired_name)
-            strings_json = node_ref['string_storage']
+            strings_json = node_data['string_storage']
             lines_list = json.loads(strings_json)['lines']
             lines_str = "\n".join(lines_list)
             self.script_pointer.from_string(lines_str)

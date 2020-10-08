@@ -107,7 +107,7 @@ Authors:
 -  Agustin Gimenez, 
 -  Dealga McArdle,  
 -  Konstantin Vorobiew, 
--  Ilya Protnov,  
+-  Ilya Portnov,  
 -  Eleanor Howick,    
 -  Walter Perdan,    
 -  Marius Giurgi,      

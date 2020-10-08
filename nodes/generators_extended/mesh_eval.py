@@ -288,7 +288,6 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.adjust_sockets()
         updateNode(self, context)
 
-    properties_to_skip_iojson = ['file_pointer', 'updating_name_from_pointer']
     updating_name_from_pointer: BoolProperty(name="updating name")
     filename: StringProperty(default="", update=captured_updateNode)
     file_pointer: PointerProperty(type=bpy.types.Text, poll=lambda s, o: True, update=pointer_update)
@@ -543,18 +542,20 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         for name in result_masks_dict.keys():
             self.outputs[name].sv_set(result_masks_dict[name])
 
-    def storage_set_data(self, storage):
-        geom = storage['geom']
-        filename = storage['params']['filename']
+    def load_from_json(self, node_data: dict, import_version):
+        if 'geom' not in node_data:
+            return  # looks like the node was empty when it was exported
+        geom = node_data['geom']
+        filename = node_data['params']['filename']
 
         bpy.data.texts.new(filename)
         bpy.data.texts[filename].clear()
         bpy.data.texts[filename].write(geom)
 
-    def storage_get_data(self, storage):
+    def save_to_json(self, node_data: dict):
         if self.filename and self.filename in bpy.data.texts:
             text = bpy.data.texts[self.filename].as_string()
-            storage['geom'] = text
+            node_data['geom'] = text
         else:
             self.warning("Unknown filename: {}".format(self.filename))
 

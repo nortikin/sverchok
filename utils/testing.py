@@ -18,8 +18,8 @@ from sverchok.data_structure import get_data_nesting_level
 from sverchok.core.socket_data import SvNoDataError, get_output_socket_data
 from sverchok.utils.logging import debug, info, exception
 from sverchok.utils.context_managers import sv_preferences
-from sverchok.utils.sv_IO_panel_tools import import_tree
 from sverchok.utils.modules_inspection import iter_submodule_names
+from sverchok.utils.sv_json_import import JSONImporter
 
 try:
     import coverage
@@ -380,7 +380,7 @@ class SverchokTestCase(unittest.TestCase):
 
         try:
             new_tree = get_or_create_node_tree(imported_tree_name)
-            import_tree(new_tree, self.get_reference_file_path(reference_file_name))
+            JSONImporter.init_from_path(self.get_reference_file_path(reference_file_name)).import_into_tree(new_tree)
             self.assert_nodes_are_equal(actual_node, get_node(reference_node_name, imported_tree_name))
         finally:
             remove_node_tree(imported_tree_name)

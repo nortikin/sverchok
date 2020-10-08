@@ -941,13 +941,16 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         except:
             outputs[3].sv_set([])
 
-
-    def storage_set_data(self, storage):
+    def load_from_json(self, node_data: dict, import_version: float):
+        texts = bpy.data.texts
+        new_text = texts.new(node_data['params']['filename'])
+        new_text.from_string(node_data['path_file'])
+        self.update()
         
         self.id_data.freeze(hard=True)
         self.SvLists.clear()
 
-        strings_json = storage['profile_sublist_storage']
+        strings_json = node_data['profile_sublist_storage']
         
         out_points = json.loads(strings_json)['knots']
         self.SvLists.add().name = 'knots'
@@ -963,8 +966,7 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         self.id_data.unfreeze(hard=True)
 
-
-    def storage_get_data(self, node_dict): 
+    def save_to_json(self, node_data: dict):
         local_storage = {'knots': [], 'knotsnames': []} 
 
         if "knots" in self.SvLists:
@@ -976,13 +978,12 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 local_storage['knotsnames'].append(outname.SvName) 
         
         # store anyway  
-        node_dict['profile_sublist_storage'] = json.dumps(local_storage, sort_keys=True) 
+        node_data['profile_sublist_storage'] = json.dumps(local_storage, sort_keys=True)
         
         if self.filename:
-            node_dict['path_file'] = bpy.data.texts[self.filename].as_string() 
+            node_data['path_file'] = bpy.data.texts[self.filename].as_string()
         else:
-            node_dict['path_file'] = ""
-
+            node_data['path_file'] = ""
 
 
 classes = SvSublistGroup, SvListGroup, SvProfileNodeMK2, SvPrifilizer

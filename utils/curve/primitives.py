@@ -392,6 +392,13 @@ class SvCircle(SvCurve):
             #curve = curve_segment(curve, t_min, t_max)
         return curve
 
+    def reverse(self):
+        circle = self.copy()
+        u1, u2 = self.u_bounds
+        circle.u_bounds = (2*pi - u2, 2*pi - u1)
+        circle.normal = - circle.normal
+        return circle
+
     def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
         return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
     

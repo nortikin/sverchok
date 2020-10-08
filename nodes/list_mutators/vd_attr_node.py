@@ -68,10 +68,10 @@ def property_change(item, context, changed_attr):
         node.inputs[socket_name].hide_safe = not getattr(item, changed_attr) 
 
 class SvVDMK3Item(bpy.types.PropertyGroup):
-    attr_name: StringProperty() 
+    attr_name: StringProperty(options={'SKIP_SAVE'})
     show_socket: BoolProperty(default=False, update=lambda s, c: property_change(s, c, 'show_socket'))
     use_default: BoolProperty(default=False, update=lambda s, c: property_change(s, c, 'use_default'))
-    origin_node_name: StringProperty()
+    origin_node_name: StringProperty(options={'SKIP_SAVE'})
 
 class SvVDMK3Properties(bpy.types.PropertyGroup):
     # this populates a property-group using VDExperimental.__annotations__ as the source -
@@ -111,10 +111,6 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     property_index: IntProperty(name='index', default=0)
     vd_items_group: CollectionProperty(name="vd attrs", type=SvVDMK3Item)
     vd_items_props: CollectionProperty(name="vd props", type=SvVDMK3Properties)
-
-    @property
-    def properties_to_skip_iojson(self):
-        return {'vd_items_props', 'vd_items_group'}
 
     def draw_group(self, context, layout):
         if self.vd_items_group:
@@ -209,42 +205,29 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
 
     ## ---- UI JSON STORAGE SECTION BELOW THIS LINE
 
-    def storage_set_data(self, storage):
+    def load_from_json(self, node_data: dict, import_version: float):
         """ this gets triggered by IOJSON to populate this node from json """
-        strings_json = storage['attr_storage']
-        attrs_dict = json.loads(strings_json)['attrs']
-        state_dict = json.loads(strings_json)['state']
-        
-        self.id_data.freeze(hard=True)
+        if import_version <= 0.08:
+            strings_json = node_data['attr_storage']
+            attrs_dict = json.loads(strings_json)['attrs']
+            state_dict = json.loads(strings_json)['state']
 
-        # repopulate vd_items_group
-        for item in self.vd_items_group:
-            attr_details = attrs_dict[item.attr_name]
-            socket_repr, associated_socket = self.get_repr_and_socket_from_attr_name(item.attr_name)
-            if attr_details['show_socket']:
-                item.show_socket = True
-            if attr_details['use_default']:
-                item.use_default = True
+            self.id_data.freeze(hard=True)
 
-        # repopulate vd_items_props
-        for item, value in state_dict.items():
-            setattr(self.vd_items_props[0], item, value)
-       
-        self.id_data.unfreeze(hard=True)
+            # repopulate vd_items_group
+            for item in self.vd_items_group:
+                attr_details = attrs_dict[item.attr_name]
+                socket_repr, associated_socket = self.get_repr_and_socket_from_attr_name(item.attr_name)
+                if attr_details['show_socket']:
+                    item.show_socket = True
+                if attr_details['use_default']:
+                    item.use_default = True
 
-    def storage_get_data(self, node_dict):
-        """ this is triggered by IOJSON to gather all serializable data for json storage """
-        local_storage = {'attrs': {}, 'state': {}}
-        for item in self.vd_items_group:
-            data_to_store_for_attr = dict(show_socket=item.show_socket, use_default=item.use_default)
-            local_storage['attrs'][item.attr_name] = data_to_store_for_attr
-        
-        for attr, item in maximum_spec_vd_dict.items():
-            value = getattr(self.vd_items_props[0], attr)
-            value = self.make_value_serializable(attr, value)
-            local_storage['state'][attr] = value
+            # repopulate vd_items_props
+            for item, value in state_dict.items():
+                setattr(self.vd_items_props[0], item, value)
 
-        node_dict['attr_storage'] = json.dumps(local_storage)
+            self.id_data.unfreeze(hard=True)
 
 
 classes = [SvVDMK3Item, SvVDMK3Properties, SV_UL_VDMK3ItemList, SvVDAttrsNode]

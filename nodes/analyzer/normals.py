@@ -34,7 +34,7 @@ def calc_mesh_normals(vertices, edges, faces):
     for vertex in bm.verts:
         vertex_normals.append(tuple(vertex.normal))
     for face in bm.faces:
-        face_normals.append(tuple(face.normal))
+        face_normals.append(tuple(face.normal.normalized()))
     bm.free()
     return vertex_normals, face_normals
 

@@ -119,19 +119,19 @@ class SvColorRampNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         self.outputs[0].sv_set(result)
 
-    def storage_set_data(self, node_ref):
+    def load_from_json(self, node_data: dict, import_version: float):
         '''function to get data when importing from json'''
-        data_list = node_ref.get('color_ramp_data')
+        data_list = node_data.get('color_ramp_data')
         data_dict = json.loads(data_list)
         color_ramp_node_name = self._get_color_ramp_node_name()
         set_color_ramp(data_dict, color_ramp_node_name)
 
-    def storage_get_data(self, node_dict):
+    def save_to_json(self, node_data: dict):
         '''function to set data for exporting json'''
         color_ramp_node_name = self._get_color_ramp_node_name()
         data = get_color_ramp(node_group_name, color_ramp_node_name)
         data_json_str = json.dumps(data)
-        node_dict['color_ramp_data'] = data_json_str
+        node_data['color_ramp_data'] = data_json_str
 
 
 
