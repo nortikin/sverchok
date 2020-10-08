@@ -56,7 +56,7 @@ class SvLightViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Size Y'].hide_safe = square
         updateNode(self, context)
 
-    light_data: bpy.props.CollectionProperty(type=SvLightData)
+    light_data: bpy.props.CollectionProperty(type=SvLightData, options={'SKIP_SAVE'})
 
     light_type: bpy.props.EnumProperty(
         name="Type", description="Light source type",
@@ -204,17 +204,10 @@ class SvLightViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
         super().sv_copy(other)
         self.light_data.clear()
 
-    @property
-    def properties_to_skip_iojson(self):
-        return super().properties_to_skip_iojson + ['light_data']
-
-    def storage_get_data(self, storage):
-        super().storage_get_data(storage)
-        storage["lamp_type"] = self.light_type
-
-    def storage_set_data(self, storage):
-        super().storage_get_data(storage)
-        self.light_type = storage.get("lamp_type", "POINT")
+    def load_from_json(self, node_data: dict, import_version: float):
+        if import_version <= 0.08:
+            super().load_from_json(node_data, import_version)
+            self.light_type = node_data.get("lamp_type", "POINT")
 
 
 register, unregister = bpy.utils.register_classes_factory([SvLightViewerNode])

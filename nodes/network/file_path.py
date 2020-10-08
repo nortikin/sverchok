@@ -74,8 +74,6 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
         subtype='DIR_PATH',
         update=updateNode)
 
-    properties_to_skip_iojson = ['files'] 
-
     def sv_init(self, context):
 
         self.outputs.new('SvFilePathSocket', "File Path")
@@ -110,33 +108,28 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
         if not any(s.is_linked for s in self.outputs):
             return
         directory = self.directory
-        files = []
-        for file_elem in self.files:
-            filepath = os.path.join(directory, file_elem.name)
-            files.append(filepath)
-        self.outputs['File Path'].sv_set([files])
+        if self.files:
+            files = []
+            for file_elem in self.files:
+                filepath = os.path.join(directory, file_elem.name)
+                files.append(filepath)
+            self.outputs['File Path'].sv_set([files])
+        else:
+            self.outputs['File Path'].sv_set([[self.directory]])
 
     # iojson stuff
 
-    def storage_set_data(self, storage):
+    def load_from_json(self, node_dict: dict, import_version: float):
         '''function to get data when importing from json''' 
 
-        strings_json = storage['string_storage']
-        filenames = json.loads(strings_json)['filenames']
-        directory = json.loads(strings_json)['directory']
-        
-        self.id_data.freeze(hard=True)
-        self.set_data(directory, filenames)
-        self.id_data.unfreeze(hard=True)
+        if import_version <= 0.08:
+            strings_json = node_dict['string_storage']
+            filenames = json.loads(strings_json)['filenames']
+            directory = json.loads(strings_json)['directory']
 
-    def storage_get_data(self, node_dict):
-        '''function to set data for exporting json''' 
-
-        local_storage = {
-            'filenames': [{"name": file_elem.name} for file_elem in self.files], 
-            'directory': self.directory
-        }
-        node_dict['string_storage'] = json.dumps(local_storage)
+            self.id_data.freeze(hard=True)
+            self.set_data(directory, filenames)
+            self.id_data.unfreeze(hard=True)
 
 
 classes = [SvFilePathNode, SvFilePathFinder]

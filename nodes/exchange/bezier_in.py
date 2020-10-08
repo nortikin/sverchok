@@ -176,8 +176,6 @@ class SvBezierInNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.outputs['ControlPoints'].sv_set(controls_out)
         self.outputs['Matrices'].sv_set(matrices_out)
 
-    def storage_get_data(self, node_dict):
-        node_dict['object_names'] = [o.name for o in self.object_names]
 
 def register():
     bpy.utils.register_class(SvBezierInCallbackOp)

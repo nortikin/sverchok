@@ -24,6 +24,7 @@ Curves
    apply_field_to_curve
    offset_mk2
    offset_on_surface
+   sort_curves
    concat_curves
    blend_curves
    extend_curve

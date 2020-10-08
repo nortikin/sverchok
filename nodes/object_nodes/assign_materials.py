@@ -133,8 +133,6 @@ class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatabl
     materials : CollectionProperty(type=SvMaterialEntry)
     selected : IntProperty()
 
-    properties_to_skip_iojson = ['materials']
-
     def sv_init(self, context):
         self.width = 200
         self.inputs.new('SvObjectSocket', 'Object')
@@ -171,16 +169,13 @@ class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatabl
 
         self.outputs['Object'].sv_set(objects)
 
-    def storage_get_data(self, storage):
-        materials = [entry.material.name for entry in self.materials]
-        storage['materials'] = materials
-
-    def storage_set_data(self, storage):
-        for material_name in storage.get('materials', []):
-            material = bpy.data.materials.get(material_name)
-            if material is None:
-                material = bpy.data.materials.new(material_name)
-            self.materials.add().material = material
+    def load_from_json(self, node_data: dict, import_version: float):
+        if import_version <= 0.08:
+            for material_name in node_data.get('materials', []):
+                material = bpy.data.materials.get(material_name)
+                if material is None:
+                    material = bpy.data.materials.new(material_name)
+                self.materials.add().material = material
 
 classes = [SvMaterialEntry, SvMaterialList, UI_UL_SvMaterialUiList, SvAddMaterial, SvRemoveMaterial, SvMoveMaterial, SvAssignMaterialListNode]
 

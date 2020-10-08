@@ -333,8 +333,6 @@ class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
     inset_type: bpy.props.EnumProperty(items=inset_type_items, update=updateNode,
                                        description="Switch between inserting type")
 
-    properties_to_skip_iojson = ['mask_type']
-
     replacement_nodes = [
         ('SvExtrudeSeparateNode',
             dict(Verts='Vertices', Faces='Polygons'),
@@ -397,11 +395,10 @@ class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Face data'].sv_set(out_face_data)
         self.outputs['Mask'].sv_set(out_mask)
 
-    def storage_get_data(self, storage):
-        storage['mask_type'] = list(self.mask_type)
+    def load_from_json(self, node_data: dict, import_version: float):
+        if import_version <= 0.08:
+            self.mask_type = set(node_data.get('mask_type', []))
 
-    def storage_set_data(self, storage):
-        self.mask_type = set(storage.get('mask_type', []))
 
 def register():
     bpy.utils.register_class(SvInsetFaces)

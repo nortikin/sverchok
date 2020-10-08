@@ -196,7 +196,7 @@ class SvViewSourceForNode(bpy.types.Operator):
         return {'CANCELLED'}
         
     def view_source_internal(self, areas, fpath):
-        block_name = fpath.split('\\')[-1]
+        block_name = os.path.basename(fpath)
         repeated = False
         for t in bpy.data.texts:
             if t.name == block_name:
@@ -230,10 +230,8 @@ class SvViewSourceForNode(bpy.types.Operator):
     
     def get_filepath_from_node(self, n):
         """ get full filepath on disk for a given node reference """
-        sv_path = os.path.dirname(sverchok.__file__)
-        path_structure = n.__module__.split('.')[1:]  # strip sverchok
-        path_structure[-1] += '.py'
-        return os.path.join(sv_path, *path_structure)
+        import inspect
+        return inspect.getfile(n.__class__)
 
 class SV_MT_LoadPresetMenu(bpy.types.Menu):
     bl_label = "Load Node Preset"

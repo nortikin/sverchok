@@ -18,8 +18,8 @@ from sverchok.data_structure import get_data_nesting_level
 from sverchok.core.socket_data import SvNoDataError, get_output_socket_data
 from sverchok.utils.logging import debug, info, exception
 from sverchok.utils.context_managers import sv_preferences
-from sverchok.utils.sv_IO_panel_tools import import_tree
 from sverchok.utils.modules_inspection import iter_submodule_names
+from sverchok.utils.sv_json_import import JSONImporter
 
 try:
     import coverage
@@ -380,7 +380,7 @@ class SverchokTestCase(unittest.TestCase):
 
         try:
             new_tree = get_or_create_node_tree(imported_tree_name)
-            import_tree(new_tree, self.get_reference_file_path(reference_file_name))
+            JSONImporter.init_from_path(self.get_reference_file_path(reference_file_name)).import_into_tree(new_tree)
             self.assert_nodes_are_equal(actual_node, get_node(reference_node_name, imported_tree_name))
         finally:
             remove_node_tree(imported_tree_name)
@@ -427,22 +427,28 @@ class SverchokTestCase(unittest.TestCase):
             message = header + "\n".join(messages)
             self.fail(message)
 
-    def assert_sverchok_data_equal(self, data1, data2, precision=None):
+    def assert_sverchok_data_equal(self, data1, data2, precision=None, message=None):
         """
         Assert that two arrays of Sverchok data (nested tuples or lists)
         are equal.
         Floating-point numbers are compared with specified precision.
         """
+        def format_message(text):
+            if message is None:
+                return text
+            else:
+                return f"{text}: {message}"
+
         level1 = get_data_nesting_level(data1)
         level2 = get_data_nesting_level(data2)
         if level1 != level2:
-            raise AssertionError("Nesting level of 1st data {} != nesting level of 2nd data {}".format(level1, level2))
+            raise AssertionError(format_message(f"Nesting level of 1st data {level1} != nesting level of 2nd data {level2}"))
         
         def do_assert(d1, d2, idxs):
             if precision is not None:
                 d1 = round(d1, precision)
                 d2 = round(d2, precision)
-            self.assertEqual(d1, d2, "Data 1 [{}] != Data 2 [{}]".format(idxs, idxs))
+            self.assertEqual(d1, d2, format_message(f"Data 1 [{idxs}] != Data 2 [{idxs}]"))
 
         if level1 == 0:
             do_assert(data1, data2, [])
@@ -453,14 +459,14 @@ class SverchokTestCase(unittest.TestCase):
             index = prev_indicies[-1]
             if step == level1:
                 if index >= len(item1):
-                    raise AssertionError("At {}: index {} >= length of Item 1: {}".format(prev_indicies, index, item1))
+                    raise AssertionError(format_message(f"At {prev_indicies}: index {index} >= length of Item 1: {item1}"))
                 if index >= len(item2):
-                    raise AssertionError("At {}: index {} >= length of Item 2: {}".format(prev_indicies, index, item2))
+                    raise AssertionError(format_message(f"At {prev_indicies}: index {index} >= length of Item 2: {item2}"))
                 do_assert(item1[index], item2[index], prev_indicies)
             else:
                 l1 = len(item1)
                 l2 = len(item2)
-                self.assertEquals(l1, l2, "Size of data 1 at level {} != size of data 2".format(step))
+                self.assertEquals(l1, l2, format_message(f"Size of data 1 at level {step} != size of data 2"))
                 for next_idx in range(len(item1[index])):
                     new_indicies = prev_indicies[:]
                     new_indicies.append(next_idx)
@@ -476,6 +482,17 @@ class SverchokTestCase(unittest.TestCase):
         self.assert_sverchok_data_equal(data, expected_data, precision=precision)
         #self.assertEquals(data, expected_data)
     
+    def assert_dicts_equal(self, first, second, precision=None):
+        keys1 = set(first.keys())
+        keys2 = set(second.keys())
+        if keys1 != keys2:
+            raise AssertionError(f"Keys of first dictionary {keys1} do not match to keys of the second dictionary {keys2}")
+        for key in first.keys():
+            value1 = first[key]
+            value2 = second[key]
+            self.assert_sverchok_data_equal(value1, value2, precision=precision, message=f"Values for dictionary key {key} do not match")
+
+
     @contextmanager
     def assert_prints_stdout(self, regexp):
         """
@@ -655,7 +672,7 @@ class NodeProcessTestCase(EmptyTreeTestCase):
         """
         data = self.get_output_data(output_name)
         expected_data = self.load_reference_sverchok_data(expected_data_file_name)
-        self.assert_sverchok_data_equal(data, expected_data, message)
+        self.assert_sverchok_data_equal(data, expected_data, message=message)
 
     def setUp(self):
         super().setUp()
