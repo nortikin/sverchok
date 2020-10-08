@@ -24,16 +24,16 @@ class SvGroupTree(bpy.types.NodeTree):
     sv_show: bpy.props.BoolProperty(name="Show", default=True, description='Show group tree')
     sv_draft: bpy.props.BoolProperty(name="Draft",  description="Simplified processing mode")
 
-    @property
     def upstream_trees(self) -> List['SvGroupTree']:
-        next_group_nodes = [node for node in self.nodes if node.bl_idname == 'SvGroupNode']
+        next_group_nodes = [node for node in self.nodes if node.bl_idname == 'SvGroupTreeNode']
         trees = [self]
         safe_counter = 0
         while next_group_nodes:
             next_node = next_group_nodes.pop()
             if next_node.node_tree:
                 trees.append(next_node.node_tree)
-                next_group_nodes.extend([node for node in next_node.node_tree.nodes if node.bl_idname == 'SvGroupNode'])
+                next_group_nodes.extend([
+                    node for node in next_node.node_tree.nodes if node.bl_idname == 'SvGroupTreeNode'])
             safe_counter += 1
 
             if safe_counter > 1000:
@@ -41,9 +41,9 @@ class SvGroupTree(bpy.types.NodeTree):
         return trees
 
 
-class SvGroupNode(bpy.types.NodeCustomGroup):
+class SvGroupTreeNode(bpy.types.NodeCustomGroup):
     """Node for keeping sub trees"""
-    bl_idname = 'SvGroupNode'
+    bl_idname = 'SvGroupTreeNode'
     bl_label = 'Group node (mockup)'
 
     def nested_tree_filter(self, context):
@@ -53,7 +53,7 @@ class SvGroupNode(bpy.types.NodeCustomGroup):
             # trying to avoid creating loops of group trees to each other
             # upstream trees of tested treed should nad share trees
             # with downstream trees of current tree
-            tested_tree_upstream_trees = {t.name for t in tested_tree.upstream_trees}
+            tested_tree_upstream_trees = {t.name for t in tested_tree.upstream_trees()}
             current_tree_downstream_trees = {p.node_tree.name for p in bpy.context.space_data.path}
             shared_trees = tested_tree_upstream_trees & current_tree_downstream_trees
             return not shared_trees
@@ -64,6 +64,14 @@ class SvGroupNode(bpy.types.NodeCustomGroup):
         """Apply filtered tree to `node_tree` attribute.
         By this attribute Blender is aware of linking between the node and nested tree."""
         self.node_tree = self.group_tree
+        # also default values should be fixed
+        if self.node_tree:
+            for node_sock, interface_sock in zip(self.inputs, self.node_tree.inputs):
+                if hasattr(interface_sock, 'default_value') and hasattr(node_sock, 'default_property'):
+                    node_sock.default_property = interface_sock.default_value
+        else:  # in case if None is assigned to node_tree
+            self.inputs.clear()
+            self.outputs.clear()
 
     group_tree: bpy.props.PointerProperty(type=SvGroupTree, poll=nested_tree_filter, update=update_group_tree)
 
@@ -84,6 +92,10 @@ class SvGroupNode(bpy.types.NodeCustomGroup):
         else:
             row.operator('node.add_group_tree', text='', icon='ADD')
 
+    def process_node(self, context):
+        # update properties of socket of the node trigger this method
+        pass
+
 
 class AddGroupNode(bpy.types.Operator):
     bl_idname = "node.add_group_node"
@@ -100,7 +112,7 @@ class AddGroupNode(bpy.types.Operator):
     def execute(self, context):
         tree = context.space_data.path[-1].node_tree
         bpy.ops.node.select_all(action='DESELECT')
-        group_node = tree.nodes.new('SvGroupNode')
+        group_node = tree.nodes.new('SvGroupTreeNode')
         group_node.location = context.space_data.cursor_location
         bpy.ops.transform.translate('INVOKE_DEFAULT')
         return {'FINISHED'}
@@ -110,7 +122,7 @@ class AddGroupNode(bpy.types.Operator):
         tree = context.space_data.path[-1].node_tree
         if tree.bl_idname == 'SverchCustomTreeType':
             for node in tree.nodes:
-                if node.bl_idname.startswith('SvGroupNodeMonad'):
+                if node.bl_idname.startswith('SvGroupTreeNodeMonad'):
                     return False, 'Either monad or group node should be used in the tree'
             return True, 'Add group node'
         elif tree.bl_idname == 'SvGroupTree':
@@ -141,5 +153,14 @@ class EditGroupTree(bpy.types.Operator):
         return {'FINISHED'}
 
 
-register, unregister = bpy.utils.register_classes_factory([
-    SvGroupTree, SvGroupNode, AddGroupNode, AddGroupTree, EditGroupTree])
+classes = [SvGroupTree, SvGroupTreeNode, AddGroupNode, AddGroupTree, EditGroupTree]
+
+
+def register():
+    [bpy.utils.register_class(cls) for cls in classes]
+    bpy.types.NodeGroupOutput.process_node = lambda s, c: None  # this function is called during a socket value update
+
+
+def unregister():
+    del bpy.types.NodeGroupOutput.process_node
+    [bpy.utils.unregister_class(cls) for cls in classes[::-1]]
