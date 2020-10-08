@@ -48,7 +48,7 @@ class SvMultiCacheNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Stores a Numerical List in mutiple memory buckets
     """
     bl_idname = 'SvMultiCacheNode'
-    bl_label = 'Multy Cache'
+    bl_label = 'Multi Cache'
     bl_icon = 'RNA'
     sv_icon = 'SV_MULTI_CACHE'
 

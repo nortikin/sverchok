@@ -52,11 +52,11 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
     Tooltip: Physics Engine
     '''
     bl_idname = 'SvPulgaPhysicsNode'
-    bl_label = 'Pulga Physics'
+    bl_label = 'Pulga Physics Lite'
     bl_icon = 'MOD_PHYSICS'
 
     n_id : StringProperty()
-    
+
     iterations : IntProperty(
         name='Iterations', description='Number of Iterations',
         default=1, min=1, update=updateNode)
@@ -558,4 +558,3 @@ def register():
 def unregister():
     '''unregister class in Blender'''
     bpy.utils.unregister_class(SvPulgaPhysicsNode)
-

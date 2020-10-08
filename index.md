@@ -625,6 +625,25 @@
     NodeReroute
     ConverterNode
 
+## Pulga Physics
+    SvPulgaPhysicsSolverNode
+    SvPulgaVectorForceNode
+    SvPulgaSpringsForceNode
+    SvPulgaDragForceNode
+    SvPulgaPinForceNode
+    SvPulgaTimedForceNode
+    SvPulgaCollisionForceNode
+    SvPulgaAttractionForceNode
+    SvPulgaAlignForceNode
+    SvPulgaFitForceNode
+    SvPulgaObstacleForceNode
+    SvPulgaRandomForceNode
+    SvPulgaBoundingBoxForceNode
+    SvPulgaInflateForceNode
+    SvPulgaAttractorsForceNode
+    SvPulgaAngleForceNode
+    SvPulgaPhysicsNode
+
 ## SVG
     SvSvgDocumentNode
     SvSvgCircleNode
@@ -681,7 +700,6 @@
     SvSeparateMeshNodeMK2
     SvMultiExtrudeAlt
     SvPlanarEdgenetToPolygons
-    SvPulgaPhysicsNode
     SvTopologySimple
     SvSweepModulator
     ---

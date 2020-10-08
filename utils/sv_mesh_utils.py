@@ -16,6 +16,10 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from sverchok.data_structure import fullList_deep_copy
+from numpy import array, empty, concatenate, unique, sort, int32, ndarray
+
+
 
 def mesh_join(vertices_s, edges_s, faces_s):
     '''Given list of meshes represented by lists of vertices, edges and faces,
@@ -52,3 +56,47 @@ def polygons_to_edges(obj, unique_edges=False):
         out.append(out_edges)
     return out
 
+
+def pol_to_edges(pol):
+
+    edges = empty([len(pol), 2], 'i')
+    edges[:, 0] = pol
+    edges[1:, 1] = pol[:-1]
+    edges[0, 1] = pol[-1]
+
+    return edges
+
+def polygons_to_edges_np(obj, unique_edges=False, output_numpy=False):
+    result = []
+
+    for pols in obj:
+        regular_mesh = True
+        try:
+            np_pols = array(pols, dtype=int32)
+        except ValueError:
+            regular_mesh = False
+
+        if not regular_mesh:
+            if output_numpy:
+                result.append(concatenate([pol_to_edges(p) for p in pols]))
+            else:
+                result.append(polygons_to_edges([pols], unique_edges)[0])
+        else:
+
+            edges = empty(list(np_pols.shape)+[2], 'i')
+            edges[:, :, 0] = np_pols
+            edges[:, 1:, 1] = np_pols[:, :-1]
+            edges[:, 0, 1] = np_pols[:, -1]
+
+            edges = edges.reshape(-1, 2)
+            if output_numpy:
+                if unique_edges:
+                    result.append(unique(sort(edges), axis=0))
+                else:
+                    result.append(edges)
+            else:
+                if unique_edges:
+                    result.append(unique(sort(edges), axis=0).tolist())
+                else:
+                    result.append(edges.tolist())
+    return result

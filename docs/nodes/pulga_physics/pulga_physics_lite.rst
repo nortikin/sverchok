@@ -1,11 +1,11 @@
-Pulga Physics
-=============
+Pulga Physics Lite
+=================
 
 Functionality
 -------------
 
 This node creates simulations from input parameters, it is meant to be used in form-finding purposes.
-It creates the simulation using the inputed vertices as spheric particles that react to applied forces.
+It creates the simulation using the inputted vertices as spherical particles that react to applied forces.
 
 The node is a basic NumPy implementation of basic physics system heavily inspired in "The Nature of Code" by Daniel Shiffman
 and the Kangoroo Plug-in for Grasshopper. Due the nature of the algorithm it can get very intensive, handle with responsibility
@@ -19,7 +19,7 @@ Input & Output
 +========================+===============+===============================================+
 | **Initial_Pos**        | Vertices      | Vertices in original state                    |
 +------------------------+---------------+-----------------------------------------------+
-| **Iterations**         | Vertices      | Number of iterations of the process           |
+| **Iterations**         | Integer       | Number of iterations of the process           |
 +------------------------+---------------+-----------------------------------------------+
 | **Springs**            | Strings       | Edges referenced to vertices                  |
 +------------------------+---------------+-----------------------------------------------+
