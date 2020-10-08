@@ -23,6 +23,7 @@ class SvGroupTree(bpy.types.NodeTree):
 
     sv_show: bpy.props.BoolProperty(name="Show", default=True, description='Show group tree')
     sv_draft: bpy.props.BoolProperty(name="Draft",  description="Simplified processing mode")
+    description: bpy.props.StringProperty(name="Tree description")
 
     def upstream_trees(self) -> List['SvGroupTree']:
         next_group_nodes = [node for node in self.nodes if node.bl_idname == 'SvGroupTreeNode']
@@ -77,13 +78,19 @@ class SvGroupTreeNode(bpy.types.NodeCustomGroup):
 
     def draw_buttons(self, context, layout):
         if self.node_tree:
-            row = layout.row(align=True)
+            row_description = layout.row()
+
+            row = row_description.row(align=True)
             row.scale_x = 5
             row.alignment = 'RIGHT'
             row.prop(self.node_tree, 'sv_show', text="",
                      icon=f'RESTRICT_VIEW_{"OFF" if self.node_tree.sv_show else "ON"}')
             row.prop(self.node_tree, 'sv_draft', text="", icon='EVENT_D')
             row.prop(self.node_tree, 'use_fake_user', text="")
+
+            add_description = row_description.operator('node.add_tree_description', text='', icon='QUESTION')
+            add_description.tree_name = self.node_tree.name
+            add_description.description = self.node_tree.description
 
         row = layout.row(align=True)
         row.prop_search(self, 'group_tree', bpy.data, 'node_groups', text='')
@@ -153,7 +160,44 @@ class EditGroupTree(bpy.types.Operator):
         return {'FINISHED'}
 
 
-classes = [SvGroupTree, SvGroupTreeNode, AddGroupNode, AddGroupTree, EditGroupTree]
+class AddTreeDescription(bpy.types.Operator):
+    bl_idname = 'node.add_tree_description'
+    bl_label = "Tree description"
+
+    tree_name: bpy.props.StringProperty(options={'HIDDEN'})
+
+    from_file: bpy.props.BoolProperty()
+    text_name: bpy.props.StringProperty(description="Text with description of the node")
+    description: bpy.props.StringProperty()
+
+    @classmethod
+    def description(cls, context, properties):
+        return properties.description
+
+    def execute(self, context):
+        tree = bpy.data.node_groups[self.tree_name]
+        if self.from_file:
+            tree.description = bpy.data.texts[self.text_name].as_string()
+        else:
+            tree.description = self.description
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
+
+    def draw(self, context):
+        col = self.layout.column()
+        col.use_property_split = True
+        row = col.row()
+        row.active = not self.from_file
+        row.prop(self, 'description')
+        col.prop(self, 'from_file')
+        row = col.row()
+        row.active = self.from_file
+        row.prop_search(self, 'text_name', bpy.data, 'texts', text="Description")
+
+
+classes = [SvGroupTree, SvGroupTreeNode, AddGroupNode, AddGroupTree, EditGroupTree, AddTreeDescription]
 
 
 def register():
