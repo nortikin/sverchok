@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 # from __future__ import annotations <- Don't use it here, `group node` will loose its `group tree` attribute
-
+from functools import reduce
 from typing import Tuple, List
 
 import bpy
@@ -153,10 +153,10 @@ class AddGroupNode(PlacingNodeOperator, bpy.types.Operator):
         path = context.space_data.path[-1] if len(context.space_data.path) else None
         if not path:
             return False, ''
-        tree = context.space_data.path[-1].node_tree
+        tree = path.node_tree
         if tree.bl_idname == 'SverchCustomTreeType':
             for node in tree.nodes:
-                if node.bl_idname.startswith('SvGroupTreeNodeMonad'):
+                if node.bl_idname.startswith('SvGroupNodeMonad'):
                     return False, 'Either monad or group node should be used in the tree'
             return True, 'Add group node'
         elif tree.bl_idname == 'SvGroupTree':
@@ -203,6 +203,93 @@ class AddGroupTree(bpy.types.Operator):
         sub_tree.nodes.new('NodeGroupOutput').location = (250, 0)  # create node for getting data from sub tree
         context.space_data.path.append(sub_tree, node=context.node)  # notify window that to edit the sub tree
         return {'FINISHED'}
+
+
+class AddGroupTreeFromSelected(bpy.types.Operator):
+    bl_idname = "node.add_group_tree_from_selected"
+    bl_label = "Add group tree from selected"
+
+    @classmethod
+    def poll(cls, context):
+        path = context.space_data.path
+        if len(path):
+            if path[-1].node_tree.bl_idname in {'SverchCustomTreeType', SvGroupTree.bl_idname}:
+                return bool(cls.filter_selected_nodes(path[-1].node_tree))
+        return False
+
+    def execute(self, context):
+        """
+        Add group tree from selected:
+        01. Deselect group Input and Output nodes
+        02. Copy nodes into clipboard
+        03. Create group tree and move into one
+        04. Past nodes from clipboard
+        05. Move nodes into tree center
+        06. Add group "input" and "output" outside of bounding box of the nodes
+        07. Connect "input" and "output" sockets with group nodes
+        08. Add Group tree node in center of selected node in initial tree
+        09. Link the node with appropriate sockets
+        10. Delete selected nodes in initial tree
+        """
+        # group nodes if selected
+        base_tree = context.space_data.path[-1].node_tree
+        [setattr(n, 'select', False) for n in base_tree.nodes
+         if n.select and n.bl_idname in {'NodeGroupInput', 'NodeGroupOutput'}]
+
+        # copy and past nodes into group tree
+        bpy.ops.node.clipboard_copy()
+        sub_tree = bpy.data.node_groups.new('Sverchok group', SvGroupTree.bl_idname)
+        context.space_data.path.append(sub_tree)
+        bpy.ops.node.clipboard_paste()
+
+        # move nodes in tree center
+        sub_tree_nodes = self.filter_selected_nodes(sub_tree)
+        center = reduce(lambda v1, v2: v1 + v2, [n.location for n in sub_tree_nodes]) / len(sub_tree_nodes)
+        [setattr(n, 'location', n.location - center) for n in sub_tree_nodes]
+
+        # add group input and output nodes
+        min_x = min(n.location[0] for n in sub_tree_nodes)
+        max_x = max(n.location[0] for n in sub_tree_nodes)
+        input_node = sub_tree.nodes.new('NodeGroupInput')
+        input_node.location = (min_x - 250, 0)
+        output_node = sub_tree.nodes.new('NodeGroupOutput')
+        output_node.location = (max_x + 250, 0)
+
+        # link group nodes
+        from_node_sockets_to_connect = []  # [(node_name, socket_index), ...]
+        to_node_sockets_to_connect = []  # [(node_name, socket_index), ...]
+        for link in base_tree.links:
+            if not link.from_node.select and link.to_node.select:
+                from_node_sockets_to_connect.append((link.from_node.name, link.from_socket.index))
+                sub_node = sub_tree.nodes[link.to_node.name]
+                sub_tree.links.new(input_node.outputs[-1], sub_node.inputs[link.to_socket.index])
+            elif link.from_node.select and not link.to_node.select:
+                to_node_sockets_to_connect.append((link.to_node.name, link.to_socket.index))
+                sub_node = sub_tree.nodes[link.from_node.name]
+                sub_tree.links.new(output_node.inputs[-1], sub_node.outputs[link.from_socket.index])
+
+        # add group tree node
+        initial_nodes = self.filter_selected_nodes(base_tree)
+        center = reduce(lambda v1, v2: v1 + v2, [n.location for n in initial_nodes]) / len(initial_nodes)
+        group_node = base_tree.nodes.new(SvGroupTreeNode.bl_idname)
+        group_node.select = False
+        group_node.group_tree = sub_tree
+        group_node.location = center
+
+        # link group node
+        for (from_node, from_socket), input_socket in zip(from_node_sockets_to_connect, group_node.inputs):
+            base_tree.links.new(input_socket, base_tree.nodes[from_node].outputs[from_socket])
+        for output_socket, (to_node, to_socket) in zip(group_node.outputs, to_node_sockets_to_connect):
+            base_tree.links.new(base_tree.nodes[to_node].inputs[to_socket], output_socket)
+
+        # delete selected nodes
+        [base_tree.nodes.remove(n) for n in self.filter_selected_nodes(base_tree)]
+
+        return {'FINISHED'}
+
+    @staticmethod
+    def filter_selected_nodes(tree) -> list:
+        return [n for n in tree.nodes if n.select and n.bl_idname not in {'NodeGroupInput', 'NodeGroupOutput'}]
 
 
 class EditGroupTree(bpy.types.Operator):
@@ -252,7 +339,7 @@ class AddTreeDescription(bpy.types.Operator):
 
 
 classes = [SvGroupTree, SvGroupTreeNode, AddGroupNode, AddGroupTree, EditGroupTree, AddTreeDescription, 
-           AddNodeOutputInput]
+           AddNodeOutputInput, AddGroupTreeFromSelected]
 
 
 def register():

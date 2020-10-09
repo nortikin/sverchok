@@ -672,7 +672,7 @@ class SvMonadCreateFromSelected(Operator):
         tree = context.space_data.path[-1].node_tree
         if tree.bl_idname == 'SverchCustomTreeType':
             for node in tree.nodes:
-                if node.bl_idname == 'SvGroupNode':
+                if node.bl_idname == 'SvGroupTreeNode':
                     return False, 'Either monad or group node should be used in the tree'
             return True, 'Add monad node'
         elif tree.bl_idname == 'SverchGroupTreeType':

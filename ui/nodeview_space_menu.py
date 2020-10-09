@@ -266,6 +266,7 @@ class NODE_MT_category_SVERCHOK_GROUP(bpy.types.Menu):
         layout.operator('node.add_group_node')
         layout.operator('node.add_node_output_input', text="Group input").node_type = 'input'
         layout.operator('node.add_node_output_input', text="Group output").node_type = 'output'
+        layout.operator('node.add_group_tree_from_selected')
 
 
 extra_category_menu_classes = dict()
