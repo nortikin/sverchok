@@ -536,6 +536,7 @@
     Sv3DviewPropsNode
     ---
     SvVDExperimental
+    SvViewer3D
     SvMatrixViewer28
     SvIDXViewer28
     SvViewer2D
