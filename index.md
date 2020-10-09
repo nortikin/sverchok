@@ -431,6 +431,7 @@
 
 ## Dictionary
     SvDataInputNode
+    SvDataItemNode
     SvDictionaryIn
     SvDictionaryOut
 
