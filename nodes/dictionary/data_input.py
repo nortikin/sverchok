@@ -22,7 +22,7 @@ from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty, F
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.nodes.dictionary.dictionary_in import SvDict
+from sverchok.utils.dictionary import SvDict
 
 SUPPORTED_TYPES = [
         ('float', "Float", 'SvStringsSocket', 'SvDefaultColumnHandler'),
