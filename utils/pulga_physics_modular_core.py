@@ -480,7 +480,7 @@ class SvCollisionForce():
             self.f_magnitude = numpy_fit_long_repeat([self.magnitude], ps.v_len)[0]
 
     def add_brute_force(self, ps):
-        ps.relations.result[:] = 0
+
         id0 = ps.relations.index_inter[:, 0]
         id1 = ps.relations.index_inter[:, 1]
 
