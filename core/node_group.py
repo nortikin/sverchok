@@ -104,9 +104,41 @@ class SvGroupTreeNode(bpy.types.NodeCustomGroup):
         pass
 
 
-class AddGroupNode(bpy.types.Operator):
+class PlacingNodeOperator:
+    # quite basic operator can be moved to some more general module
+    @staticmethod
+    def placing_node(context, node_type: str):
+        tree = context.space_data.path[-1].node_tree
+        bpy.ops.node.select_all(action='DESELECT')
+        group_node = tree.nodes.new(node_type)
+        group_node.location = context.space_data.cursor_location
+
+    @staticmethod
+    def store_mouse_cursor(context, event):
+        # convert mouse position to the View2D for later node placement
+        space = context.space_data
+        space.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
+
+    # Default invoke stores the mouse position to place the node correctly
+    # and invokes the transform operator
+    def invoke(self, context, event):
+        self.store_mouse_cursor(context, event)
+        result = self.execute(context)
+
+        if 'FINISHED' in result:
+            # removes the node again if transform is canceled
+            bpy.ops.node.translate_attach_remove_on_cancel('INVOKE_DEFAULT')
+
+        return result
+
+
+class AddGroupNode(PlacingNodeOperator, bpy.types.Operator):
     bl_idname = "node.add_group_node"
     bl_label = "Add group node"
+
+    def execute(self, context):
+        self.placing_node(context, 'SvGroupTreeNode')
+        return {'FINISHED'}
 
     @classmethod
     def poll(cls, context):
@@ -116,16 +148,11 @@ class AddGroupNode(bpy.types.Operator):
     def description(cls, context, properties):
         return cls.can_be_added(context)[1]
 
-    def execute(self, context):
-        tree = context.space_data.path[-1].node_tree
-        bpy.ops.node.select_all(action='DESELECT')
-        group_node = tree.nodes.new('SvGroupTreeNode')
-        group_node.location = context.space_data.cursor_location
-        bpy.ops.transform.translate('INVOKE_DEFAULT')
-        return {'FINISHED'}
-
     @classmethod
     def can_be_added(cls, context) -> Tuple[bool, str]:
+        path = context.space_data.path[-1] if len(context.space_data.path) else None
+        if not path:
+            return False, ''
         tree = context.space_data.path[-1].node_tree
         if tree.bl_idname == 'SverchCustomTreeType':
             for node in tree.nodes:
@@ -136,6 +163,33 @@ class AddGroupNode(bpy.types.Operator):
             return True, "Add group node"
         else:
             return False, f"Can't add in '{tree.bl_idname}' type"
+
+
+class AddNodeOutputInput(PlacingNodeOperator, bpy.types.Operator):
+    bl_idname = "node.add_node_output_input"
+    bl_label = "Add output input nodes"
+
+    node_type: bpy.props.EnumProperty(items=[(i, i, '') for i in ['input', 'output']])
+
+    def execute(self, context):
+        if self.node_type == 'input':
+            node_type = 'NodeGroupInput'
+        else:
+            node_type = 'NodeGroupOutput'
+        self.placing_node(context, node_type)
+        return {'FINISHED'}
+
+    @classmethod
+    def poll(cls, context):
+        path = context.space_data.path
+        if len(path):
+            if path[-1].node_tree.bl_idname == SvGroupTree.bl_idname:
+                return True
+        return False
+
+    @classmethod
+    def description(cls, context, properties):
+        return f'Add group {properties.node_type} node'
 
 
 class AddGroupTree(bpy.types.Operator):
@@ -197,7 +251,8 @@ class AddTreeDescription(bpy.types.Operator):
         row.prop_search(self, 'text_name', bpy.data, 'texts', text="Description")
 
 
-classes = [SvGroupTree, SvGroupTreeNode, AddGroupNode, AddGroupTree, EditGroupTree, AddTreeDescription]
+classes = [SvGroupTree, SvGroupTreeNode, AddGroupNode, AddGroupTree, EditGroupTree, AddTreeDescription, 
+           AddNodeOutputInput]
 
 
 def register():
