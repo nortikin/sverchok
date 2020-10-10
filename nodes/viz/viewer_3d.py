@@ -122,7 +122,6 @@ def fill_points_colors(vectors_color, data, color_per_point, random_colors):
 
 def view_3d_geom(context, args):
     """
-    x and y are passed by default so you could add font content
     draws the batches
     """
 
@@ -182,7 +181,6 @@ def view_3d_geom(context, args):
     bgl.glEnable(bgl.GL_BLEND)
 
 
-
 def splitted_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offset):
     total_p_verts = 0
     p_vertices, vertex_colors, indices = [], [], []
@@ -192,6 +190,7 @@ def splitted_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offs
         indices.append([c + idx_offset + total_p_verts for c in range(len(pol))])
         total_p_verts += len(pol)
     return p_vertices, vertex_colors, indices, total_p_verts
+
 
 def splitted_facet_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offset, normals, light):
     total_p_verts = 0
@@ -225,6 +224,7 @@ def splitted_facet_polygons_geom_v_cols(polygon_indices, original_idx, v_path, c
         total_p_verts += len(pol)
     return p_vertices, vertex_colors, indices, total_p_verts
 
+
 def splitted_smooth_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offset, normals, light):
     total_p_verts = 0
     p_vertices, vertex_colors, indices = [], [], []
@@ -250,7 +250,7 @@ def polygons_geom(config, vecs, polygons, p_vertices, p_vertex_colors, p_indices
     '''generates polygons geometry'''
 
     if (config.color_per_polygon and not config.polygon_use_vertex_color) or config.shade_mode == 'facet':
-        polygon_indices, original_idx = ensure_triangles(vecs, polygons, True)
+        polygon_indices, original_idx = ensure_triangles(vecs, polygons, config.handle_concave_quads)
         if config.shade_mode == 'facet':
             normals = [normal(*[Vector(vecs[c]) for c in p]) for p in polygons]
             if config.polygon_use_vertex_color:
@@ -266,7 +266,7 @@ def polygons_geom(config, vecs, polygons, p_vertices, p_vertex_colors, p_indices
         p_vertex_colors.extend(v_c)
         p_indices.extend(idx)
     else:
-        polygon_indices, original_idx = ensure_triangles(vecs, polygons, True)
+        polygon_indices, original_idx = ensure_triangles(vecs, polygons, config.handle_concave_quads)
         p_vertices.extend(v_path)
         print('p_cols',p_cols)
         if config.shade_mode == 'smooth':
@@ -385,6 +385,7 @@ def generate_mesh_geom(config, vecs_in):
 
     return geom
 
+
 def get_shader_data(named_shader=None):
     source = bpy.data.texts[named_shader].as_string()
     exec(source)
@@ -413,12 +414,12 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         default=True, update=updateNode
         )
     draw_gl_polygonoffset: BoolProperty(
-        name="draw gl polygon offset",
+        name="Draw gl polygon offset",
         default=True,
         update=updateNode
         )
     draw_gl_wireframe: BoolProperty(
-        name="draw gl wireframe",
+        name="Draw gl wireframe",
         default=False,
         update=updateNode)
     vector_light: FloatVectorProperty(
@@ -427,6 +428,10 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
     extended_matrix: BoolProperty(
         default=False,
         description='Allows mesh.transform(matrix) operation, quite fast!')
+
+    handle_concave_quads: BoolProperty(
+        name='Handle Concave Quads', default=False, update=updateNode,
+        description='tessellate quads using geometry.tessellate_polygon, expect some speed impact')
 
     point_size: IntProperty(
         min=1, default=4, name='Verts Size',
@@ -483,6 +488,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
     display_edges: BoolProperty(
         update=updateNode, name='Display Edges', default=True
         )
+
     polygon_color: FloatVectorProperty(
         update=updateNode, name='Ploygons Color', default=(.2, .7, 1.0, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR'
@@ -492,7 +498,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         )
 
     # dashed line props
-    use_dashed: BoolProperty(name='use dashes', update=updateNode)
+    use_dashed: BoolProperty(name='Dashes Edges', update=updateNode)
     u_dash_size: FloatProperty(default=0.12, min=0.0001, name="dash size", update=updateNode)
     u_gap_size: FloatProperty(default=0.19, min=0.0001, name="gap size", update=updateNode)
     u_resolution: FloatVectorProperty(default=(25.0, 18.0), size=2, min=0.01, name="resolution", update=updateNode)
@@ -527,7 +533,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
     def configureAttrSocket(self, context):
         self.inputs['attrs'].hide_safe = not self.node_ui_show_attrs_socket
 
-    node_ui_show_attrs_socket: BoolProperty(default=False, name='show attrs socket', update=configureAttrSocket)
+    node_ui_show_attrs_socket: BoolProperty(default=False, name='Show attributes socket', update=configureAttrSocket)
 
     def draw_buttons(self, context, layout):
         addon = context.preferences.addons.get(sverchok.__name__)
@@ -556,14 +562,21 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         self.draw_buttons(context, layout)
         layout.label(text='Light Direction')
         layout.prop(self, 'vector_light', text='')
-        layout.prop(self, 'draw_gl_polygonoffset')
-        layout.prop(self, 'draw_gl_wireframe')
-        layout.prop(self, "use_dashed")
+        self.draw_additional_props(context, layout)
         if self.use_dashed:
             layout.prop(self, "u_dash_size")
             layout.prop(self, "u_gap_size")
-            layout.row().prop(self, "u_resolution")
+            layout.prop(self, "u_resolution")
+
+    def draw_additional_props(self, context, layout):
+        layout.prop(self, 'draw_gl_polygonoffset')
+        layout.prop(self, 'draw_gl_wireframe')
+        layout.prop(self, 'handle_concave_quads')
         layout.prop(self, 'node_ui_show_attrs_socket')
+        layout.prop(self, "use_dashed")
+
+    def rclick_menu(self, context, layout):
+        self.draw_additional_props(context, layout)
 
     def add_gl_stuff_to_config(self, config):
         config.dashed_shader = gpu.types.GPUShader(dashed_vertex_shader, dashed_fragment_shader)
@@ -645,6 +658,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         config.shade_mode = self.selected_draw_mode
         config.draw_gl_polygonoffset = self.draw_gl_polygonoffset
         config.draw_gl_wireframe = self.draw_gl_wireframe
+        config.handle_concave_quads = self.handle_concave_quads
 
         config.draw_dashed = self.use_dashed
         config.u_dash_size = self.u_dash_size
