@@ -84,7 +84,6 @@ class SvDataItemNode(bpy.types.Node, SverchCustomTreeNode):
         count = d.get_max_nesting_level() + 1
         existing = len(self.keys)
         dc = count - existing
-        print("C", count, existing, dc)
         if dc > 0:
             for i in range(dc):
                 k = self.keys.add()
@@ -122,23 +121,19 @@ class SvDataItemNode(bpy.types.Node, SverchCustomTreeNode):
         #n_existing = len(self.outputs)
         with self.sv_throttle_tree_update():
             links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
-            print("L", links)
             self.outputs.clear()
 
             new_socks = []
             if show_item:
-                print("new Item socket")
                 sock = self.outputs.new('SvStringsSocket', "Item")
                 new_socks.append(sock)
 
             if len(empty) == 1:
                 for key, data in d.get_nested_inputs_at(empty[0]).items():
-                    print("new", data['type'], data['name'])
                     sock = self.outputs.new(data['type'], data['name'])
                     new_socks.append(sock)
 
             for new_sock in new_socks:
-                print("?", new_sock)
                 for to_sock in links.get(new_sock.name, []):
                     self.id_data.links.new(new_sock, to_sock)
 
