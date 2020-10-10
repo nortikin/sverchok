@@ -215,6 +215,12 @@ class UI_UL_SvColumnDescriptorsList(bpy.types.UIList):
         row.prop(item, 'name', text='')
         row.prop(item, 'data_type', text='')
 
+        # data is SvSpreadsheetData here
+        remove = row.operator(SvSpreadsheetRemoveColumn.bl_idname, text='', icon='REMOVE')
+        remove.nodename = data.nodename
+        remove.treename = data.treename
+        remove.item_index = index
+
 class SvSpreadsheetAddColumn(bpy.types.Operator):
     bl_label = "Add spreadsheet column"
     bl_idname = "sverchok.spreadsheet_column_add"
@@ -226,6 +232,22 @@ class SvSpreadsheetAddColumn(bpy.types.Operator):
     def execute(self, context):
         node = bpy.data.node_groups[self.treename].nodes[self.nodename]
         node.add_column()
+        updateNode(node, context)
+        return {'FINISHED'}
+
+class SvSpreadsheetRemoveColumn(bpy.types.Operator):
+    bl_label = "Remove spreadsheet column"
+    bl_idname = "sverchok.spreadsheet_column_remove"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    nodename : StringProperty(name='nodename')
+    treename : StringProperty(name='treename')
+    item_index : IntProperty(name='item_index')
+
+    def execute(self, context):
+        node = bpy.data.node_groups[self.treename].nodes[self.nodename]
+        idx = self.item_index
+        node.remove_column(idx)
         updateNode(node, context)
         return {'FINISHED'}
 
@@ -309,6 +331,11 @@ class SvDataInputNode(bpy.types.Node, SverchCustomTreeNode):
             item.nodename = self.name
         return column
 
+    def remove_column(self, idx):
+        self.spreadsheet.columns.remove(idx)
+        for data_row in self.spreadsheet.data:
+            data_row.items.remove(idx)
+
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
@@ -329,7 +356,7 @@ classes = [
         SvColumnDescriptor, SvSpreadsheetValue,
         SvSpreadsheetRow, SvSpreadsheetData,
         UI_UL_SvColumnDescriptorsList,
-        SvSpreadsheetAddColumn,
+        SvSpreadsheetAddColumn, SvSpreadsheetRemoveColumn,
         SvSpreadsheetAddRow, SvSpreadsheetRemoveRow, SvSpreadsheetMoveRow,
         SvDataInputNode
     ]
