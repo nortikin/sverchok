@@ -121,6 +121,22 @@ class SvSpreadsheetRemoveRow(bpy.types.Operator):
         updateNode(node, context)
         return {'FINISHED'}
 
+class SvSpreadsheetMoveRow(bpy.types.Operator):
+    bl_label = "Move spreadsheet row"
+    bl_idname = "sverchok.spreadsheet_row_shift"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    nodename : StringProperty(name='nodename')
+    treename : StringProperty(name='treename')
+    item_index : IntProperty(name='item_index')
+    shift : IntProperty(name='shift')
+
+    def execute(self, context):
+        node = bpy.data.node_groups[self.treename].nodes[self.nodename]
+        selected_index = self.item_index
+        node.move_row(self.item_index, self.shift, context)
+        return {'FINISHED'}
+
 class SvSpreadsheetData(PropertyGroup):
     columns : CollectionProperty(name = "Columns", type=SvColumnDescriptor)
     data : CollectionProperty(name = "Data", type=SvSpreadsheetRow)
@@ -130,10 +146,12 @@ class SvSpreadsheetData(PropertyGroup):
 
     def draw(self, layout):
         n = len(self.columns)
-        grid = layout.grid_flow(row_major=True, columns=n+2, align=True)
+        grid = layout.grid_flow(row_major=True, columns=n+4, align=True)
         grid.label(text="Item name")
         for column in self.columns:
             grid.label(text=column.name)
+        grid.separator()
+        grid.separator()
         grid.separator()
         for index, data_row in enumerate(self.data):
             grid.prop(data_row, 'name', text='')
@@ -143,6 +161,18 @@ class SvSpreadsheetData(PropertyGroup):
                 handler_name = type_handlers[prop_type]
                 handler = globals()[handler_name]
                 handler.draw(grid, item, prop_name, column.name)
+
+            up = grid.operator(SvSpreadsheetMoveRow.bl_idname, text='', icon='TRIA_UP')
+            up.nodename = self.nodename
+            up.treename = self.treename
+            up.item_index = index
+            up.shift = -1
+
+            down = grid.operator(SvSpreadsheetMoveRow.bl_idname, text='', icon='TRIA_DOWN')
+            down.nodename = self.nodename
+            down.treename = self.treename
+            down.item_index = index
+            down.shift = 1
 
             remove = grid.operator(SvSpreadsheetRemoveRow.bl_idname, text='', icon='REMOVE')
             remove.nodename = self.nodename
@@ -265,6 +295,12 @@ class SvDataInputNode(bpy.types.Node, SverchCustomTreeNode):
             item.nodename = self.name
         return data_row
 
+    def move_row(self, selected_index, shift, context):
+        next_index = selected_index + shift
+        if (0 <= selected_index < len(self.spreadsheet.data)) and (0 <= next_index < len(self.spreadsheet.data)):
+            self.spreadsheet.data.move(selected_index, next_index)
+            updateNode(self, context)
+
     def add_column(self):
         column = self.spreadsheet.columns.add()
         for data_row in self.spreadsheet.data:
@@ -294,7 +330,7 @@ classes = [
         SvSpreadsheetRow, SvSpreadsheetData,
         UI_UL_SvColumnDescriptorsList,
         SvSpreadsheetAddColumn,
-        SvSpreadsheetAddRow, SvSpreadsheetRemoveRow,
+        SvSpreadsheetAddRow, SvSpreadsheetRemoveRow, SvSpreadsheetMoveRow,
         SvDataInputNode
     ]
 
