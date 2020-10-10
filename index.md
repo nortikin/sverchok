@@ -399,7 +399,6 @@
     SvListModifierNode
     SvFixEmptyObjectsNode
     SvDatetimeStrings
-    SvVDAttrsNode
     SvVDAttrsNodeMk2
     SvPolygonSortNode
     SvFindClosestValue
@@ -536,8 +535,7 @@
 ## Viz
     Sv3DviewPropsNode
     ---
-    SvVDExperimental
-    SvViewer3D
+    SvViewerDrawMk4
     SvMatrixViewer28
     SvIDXViewer28
     SvViewer2D

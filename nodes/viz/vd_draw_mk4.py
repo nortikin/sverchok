@@ -16,12 +16,15 @@ from bpy.props import (
     StringProperty, BoolProperty, FloatVectorProperty, EnumProperty, FloatProperty, IntProperty)
 
 from mathutils import Vector, Matrix
+from itertools import cycle
+from mathutils.noise import random, seed_set
 from mathutils.geometry import tessellate_polygon as tessellate
 from numpy import ndarray
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, updateNode, enum_item_5, match_long_repeat
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
+from sverchok.core.socket_data import SvGetSocketInfo
 from sverchok.utils.sv_shader_sources import dashed_vertex_shader, dashed_fragment_shader
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
@@ -30,6 +33,11 @@ from sverchok.utils.modules.geom_utils import obtain_normal3 as normal
 from sverchok.utils.context_managers import hard_freeze
 from sverchok.utils.sv_mesh_utils import mesh_join
 
+socket_dict = {
+    'vector_color': ('display_verts', 'UV_VERTEXSEL', 'color_per_point', 'vector_random_colors', 'random_seed'),
+    'edge_color': ('display_edges', 'UV_EDGESEL', 'color_per_edge', 'edges_use_vertex_color'),
+    'face_color': ('display_faces', 'UV_FACESEL', 'color_per_polygon', 'polygon_use_vertex_color'),
+    }
 
 default_vertex_shader = '''
     uniform mat4 viewProjectionMatrix;
@@ -55,6 +63,27 @@ default_fragment_shader = '''
         FragColor = vec4(pos * brightness, 1.0);
     }
 '''
+def fill_points_colors(vectors_color, data, color_per_point, random_colors):
+    points_color = []
+    if color_per_point:
+        for cols, sub_data in zip(cycle(vectors_color), data):
+            if random_colors:
+                for  n in sub_data:
+                    points_color.append([random(), random(), random(), 1])
+            else:
+                for c, n in zip(cycle(cols), sub_data):
+                    points_color.append(c)
+    else:
+        for nums, col in zip(data, cycle(vectors_color[0])):
+            if random_colors:
+                r_color = [random(), random(), random(), 1]
+                for n in nums:
+                    points_color.append(r_color)
+            else:
+                for n in nums:
+                    points_color.append(col)
+
+    return points_color
 
 def edges_from_faces(indices):
     """ we don't want repeat edges, ever.."""
@@ -178,7 +207,12 @@ def draw_smooth(coords, vcols, indices=None):
 
 def draw_verts(context, args):
     geom, config = args
-    draw_uniform('POINTS', geom.verts, None, config.vcol, config.point_size)
+    # draw_uniform('POINTS', geom.verts, None, config.vcol, config.point_size)
+    bgl.glPointSize(config.point_size)
+    shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
+    batch = batch_for_shader(shader, 'POINTS', {"pos" : geom.verts, "color": config.vcols})
+    batch.draw(shader)
+    bgl.glPointSize(1)
 
 def pack_dashed_config(config):
     dashed_config = lambda: None
@@ -195,8 +229,13 @@ def draw_lines_uniform(context, config, coords, indices, line_color, line_width)
         config.matrix = context.region_data.perspective_matrix
         dashed_config = pack_dashed_config(config)
 
-    params = dict(dashed_data=dashed_config) if config.draw_dashed else {}
-    draw_uniform('LINES', coords, indices, config.line4f, config.line_width, **params)
+    # params = dict(dashed_data=dashed_config) if config.draw_dashed else {}
+    # draw_uniform('LINES', coords, indices, config.line4f, config.line_width, **params)
+    bgl.glLineWidth(config.line_width)
+    shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
+    batch = batch_for_shader(shader, 'LINES', {"pos" : coords, "color": config.vcols}, indices=indices)
+    batch.draw(shader)
+    bgl.glLineWidth(1)
 
 def draw_edges(context, args):
     geom, config = args
@@ -267,7 +306,7 @@ def get_shader_data(named_shader=None):
     names = ['vertex_shader', 'fragment_shader', 'draw_fragment']
     return [local_vars.get(name) for name in names]
 
-class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
+class SvVDExperimental4(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: exp vd mk3
     Tooltip: drawing, with experimental features
@@ -275,12 +314,11 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     not a very exciting node.
     """
 
-    bl_idname = 'SvVDExperimental'
-    bl_label = 'Viewer Draw Mk3'
+    bl_idname = 'SvVDExperimental4'
+    bl_label = 'Viewer Draw Mk4'
     bl_icon = 'GREASEPENCIL'
     sv_icon = 'SV_DRAW_VIEWER'
 
-    replacement_nodes = [('SvViewer3D', dict(verts='Vertices', edges='Edges', faces='Polygons', matrix='Matrix'), None)]
     node_dict = {}
 
     def populate_node_with_custom_shader_from_text(self):
@@ -358,6 +396,56 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     u_gap_size: FloatProperty(default=0.19, min=0.0001, name="gap size", update=updateNode)
     u_resolution: FloatVectorProperty(default=(25.0, 18.0), size=2, min=0.01, name="resolution", update=updateNode)
 
+
+    vector_color: FloatVectorProperty(
+        update=updateNode, name='Vertices Color', default=(.9, .9, .95, 1.0),
+        size=4, min=0.0, max=1.0, subtype='COLOR'
+        )
+    display_verts: BoolProperty(
+        update=updateNode, name='Display Vertices', default=True
+        )
+    vector_random_colors: BoolProperty(
+        update=updateNode, name='Random Vertices Color', default=False
+        )
+    random_seed: IntProperty(
+        min=1, default=1, name='Random Seed',
+        description='Seed of random colors', update=updateNode
+    )
+    color_per_point: BoolProperty(
+        update=updateNode, name='Color per point', default=False,
+        description='Toggle between color per point or per object'
+        )
+    color_per_edge: BoolProperty(
+        update=updateNode, name='Color per edge', default=False,
+        description='Toggle between color per edge or per object'
+        )
+    color_per_polygon: BoolProperty(
+        update=updateNode, name='Color per polygon', default=False,
+        description='Toggle between color per polygon or per object'
+        )
+    polygon_use_vertex_color: BoolProperty(
+        update=updateNode, name='Polys Vertex Color', default=False,
+        description='Colorize polygons using vertices color'
+        )
+    edges_use_vertex_color: BoolProperty(
+        update=updateNode, name='Edges Vertex Color', default=False,
+        description='Colorize edges using vertices color'
+        )
+
+    edge_color: FloatVectorProperty(
+        update=updateNode, name='Edges Color', default=(.9, .9, .35, 1.0),
+        size=4, min=0.0, max=1.0, subtype='COLOR'
+        )
+    display_edges: BoolProperty(
+        update=updateNode, name='Display Edges', default=True
+        )
+    face_color: FloatVectorProperty(
+        update=updateNode, name='Ploygons Color', default=(.2, .7, 1.0, 1.0),
+        size=4, min=0.0, max=1.0, subtype='COLOR'
+        )
+    display_faces: BoolProperty(
+        update=updateNode, name='Display Polygons', default=True
+        )
     def configureAttrSocket(self, context):
         self.inputs['attrs'].hide_safe = not self.node_ui_show_attrs_socket
 
@@ -369,12 +457,45 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         inew('SvStringsSocket', 'edges')
         inew('SvStringsSocket', 'faces')
         inew('SvMatrixSocket', 'matrix')
-
+        vc0 = self.inputs.new('SvColorSocket', "Vector Color")
+        vc0.prop_name = 'vector_color'
+        vc0.custom_draw = 'draw_color_socket'
+        vc = self.inputs.new('SvColorSocket', "Edge Color")
+        vc.prop_name = 'edge_color'
+        vc.custom_draw = 'draw_color_socket'
+        vc2 = self.inputs.new('SvColorSocket', "Polygon Color")
+        vc2.prop_name = 'face_color'
+        vc2.custom_draw = 'draw_color_socket'
         attr_socket = inew('SvStringsSocket', 'attrs')
         attr_socket.hide = True
         attr_socket.quick_link_to_node = "SvVDAttrsNode"
 
         self.node_dict[hash(self)] = {}
+
+    def draw_color_socket(self, socket, context, layout):
+        socket_info = socket_dict[socket.prop_name]
+        layout.prop(self, socket_info[0], text="", icon=socket_info[1])
+        layout.prop(self, socket_info[2], text="", icon='COLOR')
+        display_color = not socket.is_linked
+        draw_name = True
+        if len(socket_info) < 5:
+            layout.prop(self, socket_info[3], text="", icon='VPAINT_HLT')
+
+        else:
+            layout.prop(self, socket_info[3], text="", icon='MOD_NOISE')
+            if socket_info[3] in self and self[socket_info[3]]:
+                layout.prop(self, socket_info[4], text="Seed")
+                draw_name = False
+
+        if socket_info[3] in self:
+            display_color = display_color and  not self[socket_info[3]]
+
+
+        if display_color:
+            layout.prop(self, socket.prop_name, text="")
+        else:
+            if draw_name:
+                layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
 
     def draw_buttons(self, context, layout):
         r0 = layout.row()
@@ -386,16 +507,16 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         if b1:
             inside_box = b1.row(align=True)
             button_column = inside_box.column(align=True)
-            button_column.prop(self, "display_verts", text='', icon="UV_VERTEXSEL")
-            button_column.prop(self, "display_edges", text='', icon="UV_EDGESEL")
-            button_column.prop(self, "display_faces", text='', icon="UV_FACESEL")
+            # button_column.prop(self, "display_verts", text='', icon="UV_VERTEXSEL")
+            # button_column.prop(self, "display_edges", text='', icon="UV_EDGESEL")
+            # button_column.prop(self, "display_faces", text='', icon="UV_FACESEL")
 
             colors_column = inside_box.column(align=True)
-            colors_column.prop(self, "vert_color", text='')
-            colors_column.prop(self, "edge_color", text='')
-            if not self.selected_draw_mode == 'fragment':
-                colors_column.prop(self, "face_color", text='')
-            else:
+            # colors_column.prop(self, "vert_color", text='')
+            # colors_column.prop(self, "edge_color", text='')
+            if self.selected_draw_mode == 'fragment':
+                # colors_column.prop(self, "face_color", text='')
+            # else:
                 colors_column.prop(self, "custom_shader_location", icon='TEXT', text='')
 
         row = layout.row(align=True)
@@ -419,7 +540,6 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             )
 
     def rclick_menu(self, context, layout):
-        self.node_replacement_menu(context, layout)
         self.draw_additional_props(context, layout)
 
     def draw_additional_props(self, context, layout):
@@ -440,7 +560,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
         config = lambda: None
         config.vector_light = self.vector_light[:]
-        config.vcol = self.vert_color[:]
+        config.vcol = self.vector_color[:]
         config.line4f = self.edge_color[:]
         config.face4f = self.face_color[:]
         config.display_verts = self.display_verts
@@ -456,6 +576,13 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         config.u_dash_size = self.u_dash_size
         config.u_gap_size = self.u_gap_size
         config.u_resolution = self.u_resolution[:]
+
+        config.color_per_point = self.color_per_point
+        config.color_per_edge = self.color_per_edge
+        config.color_per_polygon = self.color_per_polygon
+        config.polygon_use_vertex_color = self.polygon_use_vertex_color
+        config.edges_use_vertex_color = self.edges_use_vertex_color
+        config.random_colors = self.vector_random_colors
 
         return config
 
@@ -553,26 +680,36 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             return
 
         verts_socket, edges_socket, faces_socket, matrix_socket = self.inputs[:4]
-
+        vector_color = self.inputs['Vector Color'].sv_get(default=[[self.vector_color]])
+        edge_color = self.inputs['Edge Color'].sv_get(default=[[self.edge_color]])
+        poly_color = self.inputs['Polygon Color'].sv_get(default=[[self.face_color]])
+        seed_set(self.random_seed)
         if verts_socket.is_linked:
 
             display_faces = self.display_faces and faces_socket.is_linked
             display_edges = self.display_edges and (edges_socket.is_linked or faces_socket.is_linked)
 
             config = self.fill_config()
+            config.vector_color = vector_color
+            config.edge_color = edge_color
+            config.poly_color = poly_color
             data = self.get_data()
-            if len(data[0]) > 1:
-                coords, edge_indices, face_indices = mesh_join(data[0], data[1], data[2])
-                if not coords:
-                    return
-            elif len(data[0][0]) > 0:
-                coords, edge_indices, face_indices = [d[0].tolist() if type(d[0]) == ndarray else d[0] for d in data[:3]]
-            else:
+            coords, edge_indices, face_indices = data[0], data[1], data[2]
+            # if len(data[0]) > 1:
+            #     coords, edge_indices, face_indices = data[0], data[1], data[2]
+            if not coords:
                 return
+            # elif len(data[0][0]) > 0:
+            #     coords, edge_indices, face_indices = [d[0].tolist() if type(d[0]) == ndarray else d[0] for d in data[:3]]
+            # else:
+            #     return
+
             geom = lambda: None
             geom.verts = coords
 
             if self.display_verts and not any([display_edges, display_faces]):
+                config.vcols = fill_points_colors(vector_color, coords, config.color_per_point, config.random_colors)
+                geom.verts = [v for ob in coords for v in ob]
                 gl_instructions = self.format_draw_data(func=draw_verts, args=(geom, config))
                 callback_enable(n_id, gl_instructions)
                 return
@@ -580,8 +717,12 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             if edges_socket.is_linked and not faces_socket.is_linked:
                 if self.use_dashed:
                     self.add_gl_stuff_to_config(config)
-
-                geom.edges = edge_indices
+                config.vcols = fill_points_colors(vector_color, coords, config.color_per_point, config.random_colors)
+                geom.verts = [v for ob in coords for v in ob]
+                coords, edge_a,_= mesh_join(coords,edge_indices,face_indices)
+                geom.verts=coords
+                geom.edges = edge_a
+                print(geom.edges)
                 gl_instructions = self.format_draw_data(func=draw_edges, args=(geom, config))
                 callback_enable(n_id, gl_instructions)
                 return
@@ -649,5 +790,5 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                 callback_disable(node_id(self))
 
 
-classes = [SvVDExperimental]
+classes = [SvVDExperimental4]
 register, unregister = bpy.utils.register_classes_factory(classes)

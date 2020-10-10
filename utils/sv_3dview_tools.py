@@ -53,7 +53,7 @@ def get_center(self, context):
 
         inputs = node.inputs
 
-        if node.bl_idname in {'SvViewer3D'}:
+        if node.bl_idname in {'SvViewerDrawMk4'}:
             matrix_socket = inputs['Matrix']
             vertex_socket = inputs['Vertices']
 

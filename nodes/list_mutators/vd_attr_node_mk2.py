@@ -12,7 +12,7 @@ import bpy
 from bpy.props import BoolProperty, StringProperty, IntProperty, CollectionProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, enum_item_5
-from sverchok.nodes.viz.viewer_3d import SvViewer3D
+from sverchok.nodes.viz.viewer_3d import SvViewerDrawMk4
 
 
 sock_str = {
@@ -53,7 +53,7 @@ maximum_spec_vd_dict = dict(
     draw_gl_wireframe=props(name="wireframe", kind="b"),
     draw_gl_polygonoffset=props(name="fix zfighting", kind="b"),
     point_size=props(name="point size", kind="i"),
-    edge_width=props(name="edge width", kind="i"),
+    line_width=props(name="edge width", kind="i"),
     vector_light=props(name="light direction", kind="3f"),
     extended_matrix=props(name="extended matrix", kind="b"),
 )
@@ -81,7 +81,7 @@ class SvVDMK4Properties(bpy.types.PropertyGroup):
     # this populates a property-group using VDExperimental.__annotations__ as the source -
     __annotations__ = {}
     for key, v in maximum_spec_vd_dict.items():
-        prop_func, kw_args = SvViewer3D.__annotations__[key]
+        prop_func, kw_args = SvViewerDrawMk4.__annotations__[key]
         copy_kw_args = copy.deepcopy(kw_args)
         copy_kw_args.pop('update', None)
         __annotations__[key] = prop_func(**copy_kw_args)
@@ -98,7 +98,7 @@ class SV_UL_VDMK4ItemList(bpy.types.UIList):
         layout.prop(item, "show_socket", text="", icon='TRACKING', toggle=True)
         layout.prop(item, "use_default", text="", icon='SETTINGS', toggle=True)
         layout.label(text=attr_name)
-        layout.prop(node.vd_items_props[0], attr_name, text='')
+        layout.prop(node.vd_items_props_mk2[0], attr_name, text='')
 
 class SvVDAttrsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -113,12 +113,12 @@ class SvVDAttrsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'MOD_HUE_SATURATION'
 
     property_index: IntProperty(name='index', default=0)
-    vd_items_group: CollectionProperty(name="vd attrs", type=SvVDMK4Item)
-    vd_items_props: CollectionProperty(name="vd props", type=SvVDMK4Properties)
+    vd_items_group_mk2: CollectionProperty(name="vd attrs", type=SvVDMK4Item)
+    vd_items_props_mk2: CollectionProperty(name="vd props", type=SvVDMK4Properties)
 
     def draw_group(self, context, layout):
-        if self.vd_items_group:
-            layout.template_list("SV_UL_VDMK4ItemList", "", self, "vd_items_group", self, "property_index")
+        if self.vd_items_group_mk2:
+            layout.template_list("SV_UL_VDMK4ItemList", "", self, "vd_items_group_mk2", self, "property_index")
 
     def vd_init_sockets(self, context):
         self.outputs.new("SvStringsSocket", name="attrs")
@@ -131,12 +131,12 @@ class SvVDAttrsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
     def vd_init_uilayout_data(self, context):
         for key, value in maximum_spec_vd_dict.items():
-            item = self.vd_items_group.add()
+            item = self.vd_items_group_mk2.add()
             item.attr_name = key
             item.show_socket = False
             item.origin_node_name = self.name
 
-        self.vd_items_props.add()
+        self.vd_items_props_mk2.add()
 
     def sv_init(self, context):
         self.vd_init_sockets(context)
@@ -149,9 +149,9 @@ class SvVDAttrsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         self.draw_group(context, layout)
 
     def ensure_correct_origin_node_name(self):
-        if self.vd_items_group:
-            if not self.vd_items_group[0].origin_node_name == self.name:
-                for item in self.vd_items_group:
+        if self.vd_items_group_mk2:
+            if not self.vd_items_group_mk2[0].origin_node_name == self.name:
+                for item in self.vd_items_group_mk2:
                     item.origin_node_name = self.name
 
     def get_repr_and_socket_from_attr_name(self, attr_name):
@@ -170,7 +170,7 @@ class SvVDAttrsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             elif socket_repr.kind in {'b'}:
                 return bool(data[0][0])
             elif socket_repr.kind in {'enum'}:
-                prop_signature = self.vd_items_props.__annotations__[item.attr_name][1]
+                prop_signature = self.vd_items_props_mk2.__annotations__[item.attr_name][1]
                 enum_index = data[0][0]
                 enum_item = prop_signature['items'][enum_index]
                 return enum_item[0]
@@ -186,14 +186,14 @@ class SvVDAttrsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     def attrdict_from_state(self):
 
         current_attr_dict = {}
-        if self.vd_items_group and self.vd_items_props:
-            for item in self.vd_items_group:
+        if self.vd_items_group_mk2 and self.vd_items_props_mk2:
+            for item in self.vd_items_group_mk2:
                 attr = item.attr_name
                 if not item.show_socket and not item.use_default:
                     # apparantly no desire to pass this attr
                     continue
                 if item.use_default or not item.show_socket:
-                    value = getattr(self.vd_items_props[0], attr)
+                    value = getattr(self.vd_items_props_mk2[0], attr)
                     value = self.make_value_serializable(attr, value)
                 else:
                     value = self.get_attr_from_input(item)
@@ -222,8 +222,8 @@ class SvVDAttrsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
             self.id_data.freeze(hard=True)
 
-            # repopulate vd_items_group
-            for item in self.vd_items_group:
+            # repopulate vd_items_group_mk2
+            for item in self.vd_items_group_mk2:
                 attr_details = attrs_dict[item.attr_name]
                 socket_repr, associated_socket = self.get_repr_and_socket_from_attr_name(item.attr_name)
                 if attr_details['show_socket']:
@@ -231,9 +231,9 @@ class SvVDAttrsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                 if attr_details['use_default']:
                     item.use_default = True
 
-            # repopulate vd_items_props
+            # repopulate vd_items_props_mk2
             for item, value in state_dict.items():
-                setattr(self.vd_items_props[0], item, value)
+                setattr(self.vd_items_props_mk2[0], item, value)
 
             self.id_data.unfreeze(hard=True)
 

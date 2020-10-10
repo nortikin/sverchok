@@ -12,7 +12,7 @@ import bpy
 from bpy.props import BoolProperty, StringProperty, IntProperty, CollectionProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, enum_item_5
-from sverchok.nodes.viz.vd_draw_experimental import SvVDExperimental
+from sverchok.old_nodes.vd_draw_experimental import SvVDExperimental
 
 
 sock_str = {

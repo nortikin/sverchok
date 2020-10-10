@@ -134,7 +134,7 @@ def add_connection(tree, bl_idname_new_node, offset):
             tree.update()   # without this the node won't show output until an update is triggered manually
             # existing_node.process_node(None)
 
-        elif bl_idname_new_node == 'SvVDExperimental':
+        elif bl_idname_new_node == 'SvViewerDrawMk4':
             previous_state = tree.sv_process
             tree.sv_process = False
             if 'verts' in output_map:
@@ -192,9 +192,9 @@ class SvGenericDeligationOperator(bpy.types.Operator):
         tree = context.space_data.edit_tree
 
         if self.fn == 'vdmk2':
-            add_connection(tree, bl_idname_new_node="SvVDExperimental", offset=[60, 0])
+            add_connection(tree, bl_idname_new_node="SvViewerDrawMk4", offset=[60, 0])
         elif self.fn == 'vdmk2 + idxv':
-            add_connection(tree, bl_idname_new_node=["ViewerNode2", "IndexViewerNode"], offset=[180, 0])
+            add_connection(tree, bl_idname_new_node=["SvViewerDrawMk4", "IndexViewerNode"], offset=[180, 0])
         elif self.fn == '+idxv':
             add_connection(tree, bl_idname_new_node="IndexViewerNode", offset=[180, 0])
         elif self.fn == 'stethoscope':

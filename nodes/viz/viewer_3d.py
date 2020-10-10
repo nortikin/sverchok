@@ -153,7 +153,7 @@ def view_3d_geom(context, args):
 
 
     if config.draw_edges:
-        bgl.glLineWidth(config.edge_width)
+        bgl.glLineWidth(config.line_width)
 
         if config.draw_dashed:
             shader = config.dashed_shader
@@ -393,9 +393,9 @@ def get_shader_data(named_shader=None):
     return [local_vars.get(name) for name in names]
 
 
-class SvViewer3D(bpy.types.Node, SverchCustomTreeNode):
+class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
     '''Curved interpolation'''
-    bl_idname = 'SvViewer3D'
+    bl_idname = 'SvViewerDrawMk4'
     bl_label = 'Viewer Draw'
     bl_icon = 'HIDE_OFF'
     sv_icon = 'SV_EASING'
@@ -427,15 +427,12 @@ class SvViewer3D(bpy.types.Node, SverchCustomTreeNode):
     extended_matrix: BoolProperty(
         default=False,
         description='Allows mesh.transform(matrix) operation, quite fast!')
-    draw_verts: BoolProperty(
-        default=False, name='See Verts',
-        description='Drawing Verts', update=updateNode
-    )
+
     point_size: IntProperty(
         min=1, default=4, name='Verts Size',
         description='Point Size', update=updateNode
     )
-    edge_width: IntProperty(
+    line_width: IntProperty(
         min=1, default=1, name='Edge Width',
         description='Edge Width', update=updateNode
     )
@@ -547,7 +544,7 @@ class SvViewer3D(bpy.types.Node, SverchCustomTreeNode):
 
         row = c0.row(align=True)
         row.prop(self, "point_size")
-        row.prop(self, "edge_width")
+        row.prop(self, "line_width")
         row = layout.row(align=True)
         row.scale_y = 4.0 if over_sized_buttons else 1
         self.wrapper_tracked_ui_draw_op(row, "node.sverchok_mesh_baker_mk3", icon='OUTLINER_OB_MESH', text="B A K E")
@@ -598,6 +595,9 @@ class SvViewer3D(bpy.types.Node, SverchCustomTreeNode):
         attr_socket.quick_link_to_node = "SvVDAttrsNodeMk2"
 
 
+    def migrate_from(self, old_node):
+        self.vectors_color = old_node.vert_color
+        self.polygon_color = old_node.face_color
 
     def draw_color_socket(self, socket, context, layout):
         socket_info = socket_dict[socket.prop_name]
@@ -633,7 +633,7 @@ class SvViewer3D(bpy.types.Node, SverchCustomTreeNode):
         config.draw_edges = self.display_edges
         config.draw_polys = self.display_faces and self.inputs['Polygons'].is_linked
         config.point_size = self.point_size
-        config.edge_width = self.edge_width
+        config.line_width = self.line_width
         config.color_per_point = self.color_per_point
         config.color_per_edge = self.color_per_edge
         config.color_per_polygon = self.color_per_polygon
@@ -770,5 +770,5 @@ class SvViewer3D(bpy.types.Node, SverchCustomTreeNode):
 
 
 
-classes = [SvViewer3D,]
+classes = [SvViewerDrawMk4,]
 register, unregister = bpy.utils.register_classes_factory(classes)

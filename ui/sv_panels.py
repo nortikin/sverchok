@@ -215,7 +215,7 @@ class SverchokBakeAll(bpy.types.Operator):
     def execute(self, context):
         ng = bpy.data.node_groups[self.node_tree_name]
 
-        nodes = filter(lambda n: n.bl_idname == 'SvViewer3D', ng.nodes)
+        nodes = filter(lambda n: n.bl_idname == 'SvViewerDrawMk4', ng.nodes)
         for node in nodes:
             if node.activate:
                 node.bake()
