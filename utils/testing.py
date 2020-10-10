@@ -14,7 +14,7 @@ import ast
 
 import sverchok
 from sverchok.old_nodes import is_old
-from sverchok.data_structure import get_data_nesting_level
+from sverchok.data_structure import get_data_nesting_level, SIMPLE_DATA_TYPES
 from sverchok.core.socket_data import SvNoDataError, get_output_socket_data
 from sverchok.utils.logging import debug, info, exception
 from sverchok.utils.context_managers import sv_preferences
@@ -427,7 +427,7 @@ class SverchokTestCase(unittest.TestCase):
             message = header + "\n".join(messages)
             self.fail(message)
 
-    def assert_sverchok_data_equal(self, data1, data2, precision=None, message=None):
+    def assert_sverchok_data_equal(self, data1, data2, precision=None, message=None, data_types=SIMPLE_DATA_TYPES):
         """
         Assert that two arrays of Sverchok data (nested tuples or lists)
         are equal.
@@ -439,8 +439,8 @@ class SverchokTestCase(unittest.TestCase):
             else:
                 return f"{text}: {message}"
 
-        level1 = get_data_nesting_level(data1)
-        level2 = get_data_nesting_level(data2)
+        level1 = get_data_nesting_level(data1, data_types=data_types)
+        level2 = get_data_nesting_level(data2, data_types=data_types)
         if level1 != level2:
             raise AssertionError(format_message(f"Nesting level of 1st data {level1} != nesting level of 2nd data {level2}"))
         

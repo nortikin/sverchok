@@ -98,10 +98,12 @@ class VariableCollector(ast.NodeVisitor):
 
         self.generic_visit(node)
 
-def get_variables(string):
+def get_variables(string, known_vars = None):
     """
     Get set of free variables used by formula
     """
+    if known_vars is None:
+        known_vars = safe_names
     string = string.strip()
     if not len(string):
         return set()
@@ -109,7 +111,7 @@ def get_variables(string):
     visitor = VariableCollector()
     visitor.visit(root)
     result = visitor.variables
-    return result.difference(safe_names.keys())
+    return result.difference(known_vars.keys())
 
 def sv_compile(string):
     try:

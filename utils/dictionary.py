@@ -39,6 +39,11 @@ class SvDict(dict):
         """
         self.inputs = dict()
 
+    def copy(self):
+        result = SvDict(super().copy())
+        result.inputs = self.inputs
+        return result
+
     @staticmethod
     def get_inputs(d):
         if isinstance(d, SvDict) and d.inputs:

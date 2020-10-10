@@ -26,13 +26,16 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.dictionary import SvDict
 from sverchok.utils.logging import info, debug
+from sverchok.utils.modules.spreadsheet import eval_spreadsheet
+from sverchok.utils.profile import profile
 
 SUPPORTED_TYPES = [
         ('float', "Float", 'SvStringsSocket', 'SvDefaultColumnHandler'),
         ('int', "Integer", 'SvStringsSocket', 'SvDefaultColumnHandler'),
         ('str', "String", 'SvStringsSocket', 'SvDefaultColumnHandler'),
         ('bool', "Boolean", 'SvStringsSocket', 'SvDefaultColumnHandler'),
-        ('vector', "Vector", 'SvVerticesSocket', 'SvVectorColumnHandler')
+        ('vector', "Vector", 'SvVerticesSocket', 'SvVectorColumnHandler'),
+        ('formula', "Formula", 'SvStringsSocket', 'SvDefaultColumnHandler')
     ]
 
 supported_type_items = [(id, name, name) for id, name, sock, cls in SUPPORTED_TYPES]
@@ -74,6 +77,7 @@ class SvSpreadsheetValue(PropertyGroup):
     vector_value : FloatVectorProperty(
             name = "Value", size=3,
             update=update_value)
+    formula_value : StringProperty(name="Formula", update=update_value)
     
     def get_value(self, data_type):
         prop_name = f"{data_type}_value"
@@ -104,7 +108,6 @@ class SvSpreadsheetAddRow(bpy.types.Operator):
 
     nodename : StringProperty(name='nodename')
     treename : StringProperty(name='treename')
-    columns : CollectionProperty(name = "Columns", type=SvColumnDescriptor)
 
     def execute(self, context):
         node = bpy.data.node_groups[self.treename].nodes[self.nodename]
@@ -151,6 +154,7 @@ class SvSpreadsheetData(PropertyGroup):
     nodename : StringProperty(name='nodename')
     treename : StringProperty(name='treename')
 
+    @profile
     def draw(self, layout):
         n = len(self.columns)
         grid = layout.grid_flow(row_major=True, columns=n+4, align=True)
@@ -191,10 +195,10 @@ class SvSpreadsheetData(PropertyGroup):
         add.nodename = self.nodename
         add.treename = self.treename
 
-        for column in self.columns:
-            c = add.columns.add()
-            c.name = column.name
-            c.data_type = column.data_type
+#         for column in self.columns:
+#             c = add.columns.add()
+#             c.name = column.name
+#             c.data_type = column.data_type
 
     def set_node(self, node):
         self.treename = node.id_data.name
@@ -215,6 +219,16 @@ class SvSpreadsheetData(PropertyGroup):
                     }
 
         return data
+
+    def evaluate(self):
+        src_dict = self.get_data()
+        formula_cols = [col.name for col in self.columns if col.data_type == 'formula']
+        if not formula_cols:
+            return src_dict
+        else:
+            row_names = list(src_dict.keys())
+            variables = dict()
+            return eval_spreadsheet(src_dict, row_names, formula_cols, variables)
 
 class UI_UL_SvColumnDescriptorsList(bpy.types.UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index, flt_flag):
@@ -330,8 +344,6 @@ class SvDataInputNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_update(self):
         self.spreadsheet.set_node(self)
-        self.spreadsheet.nodename = self.name
-        self.spreadsheet.treename = self.id_data.name
 
     def draw_buttons(self, context, layout):
         self.spreadsheet.draw(layout)
@@ -383,7 +395,7 @@ class SvDataInputNode(bpy.types.Node, SverchCustomTreeNode):
         if not any(socket.is_linked for socket in self.outputs):
             return
 
-        data = self.spreadsheet.get_data()
+        data = self.spreadsheet.evaluate()
         rows = list(data.values())
         columns = defaultdict(dict)
         for row_key, row in data.items():
