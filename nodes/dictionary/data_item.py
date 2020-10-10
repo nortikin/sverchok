@@ -51,11 +51,6 @@ class SvDictKeyEntry(bpy.types.PropertyGroup):
             items = get_items,
             update = update_key)
 
-class UI_UL_SvDictKeyList(bpy.types.UIList):
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index, flt_flag):
-        row = layout.row(align=True)
-        row.prop(item, 'key', text='')
-
 class SvDataItemNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: data dictionary item
@@ -70,7 +65,6 @@ class SvDataItemNode(bpy.types.Node, SverchCustomTreeNode):
     selected : IntProperty()
 
     def draw_buttons(self, context, layout):
-        #layout.template_list("UI_UL_SvDictKeyList", "keys", self, "keys", self, "selected")
         for i in range(len(self.keys)):
             layout.prop(self.keys[i], 'key', text='')
 
@@ -181,7 +175,7 @@ class SvDataItemNode(bpy.types.Node, SverchCustomTreeNode):
         self.update_keys(None)
         if not self.keys:
             return
-        #self.update_sockets(None)
+        self.update_sockets(None)
 
         data = self.get_data()
         outputs = defaultdict(list)
@@ -201,7 +195,7 @@ class SvDataItemNode(bpy.types.Node, SverchCustomTreeNode):
         for i, values in outputs.items():
             self.outputs[i].sv_set([values])
 
-classes = [SvStringItem, SvDictKeyEntry, UI_UL_SvDictKeyList, SvDataItemNode]
+classes = [SvStringItem, SvDictKeyEntry, SvDataItemNode]
 
 def register():
     for cls in classes: bpy.utils.register_class(cls)

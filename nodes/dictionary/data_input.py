@@ -105,6 +105,22 @@ class SvSpreadsheetAddRow(bpy.types.Operator):
         updateNode(node, context)
         return {'FINISHED'}
 
+class SvSpreadsheetRemoveRow(bpy.types.Operator):
+    bl_label = "Remove spreadsheet row"
+    bl_idname = "sverchok.spreadsheet_row_remove"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    nodename : StringProperty(name='nodename')
+    treename : StringProperty(name='treename')
+    item_index : IntProperty(name='item_index')
+
+    def execute(self, context):
+        node = bpy.data.node_groups[self.treename].nodes[self.nodename]
+        idx = self.item_index
+        node.spreadsheet.data.remove(idx)
+        updateNode(node, context)
+        return {'FINISHED'}
+
 class SvSpreadsheetData(PropertyGroup):
     columns : CollectionProperty(name = "Columns", type=SvColumnDescriptor)
     data : CollectionProperty(name = "Data", type=SvSpreadsheetRow)
@@ -114,11 +130,12 @@ class SvSpreadsheetData(PropertyGroup):
 
     def draw(self, layout):
         n = len(self.columns)
-        grid = layout.grid_flow(row_major=True, columns=n+1, align=True)
+        grid = layout.grid_flow(row_major=True, columns=n+2, align=True)
         grid.label(text="Item name")
         for column in self.columns:
             grid.label(text=column.name)
-        for data_row in self.data:
+        grid.separator()
+        for index, data_row in enumerate(self.data):
             grid.prop(data_row, 'name', text='')
             for column, item in zip(self.columns, data_row.items):
                 prop_type = column.data_type
@@ -126,6 +143,11 @@ class SvSpreadsheetData(PropertyGroup):
                 handler_name = type_handlers[prop_type]
                 handler = globals()[handler_name]
                 handler.draw(grid, item, prop_name, column.name)
+
+            remove = grid.operator(SvSpreadsheetRemoveRow.bl_idname, text='', icon='REMOVE')
+            remove.nodename = self.nodename
+            remove.treename = self.treename
+            remove.item_index = index
 
         row = layout.row(align=True)
         add = row.operator(SvSpreadsheetAddRow.bl_idname, text='', icon='ADD')
@@ -271,7 +293,8 @@ classes = [
         SvColumnDescriptor, SvSpreadsheetValue,
         SvSpreadsheetRow, SvSpreadsheetData,
         UI_UL_SvColumnDescriptorsList,
-        SvSpreadsheetAddColumn, SvSpreadsheetAddRow,
+        SvSpreadsheetAddColumn,
+        SvSpreadsheetAddRow, SvSpreadsheetRemoveRow,
         SvDataInputNode
     ]
 
