@@ -42,10 +42,17 @@ type_handlers = dict([(id, cls) for id, name, sock, cls in SUPPORTED_TYPES])
 type_sockets = dict([(id, sock) for id, name, sock, cls in SUPPORTED_TYPES])
 
 class SvColumnDescriptor(PropertyGroup):
-    name : StringProperty(name="Name")
+    def update_column(self, context):
+        if hasattr(context, 'node'):
+            updateNode(context.node, context)
+        else:
+            pass
+
+    name : StringProperty(name="Name", update=update_column)
     data_type : EnumProperty(name = "Type",
                     items = supported_type_items,
-                    default = supported_type_items[0][0]
+                    default = supported_type_items[0][0],
+                    update = update_column
                 )
 
 class SvSpreadsheetValue(PropertyGroup):
@@ -216,6 +223,18 @@ class UI_UL_SvColumnDescriptorsList(bpy.types.UIList):
         row.prop(item, 'data_type', text='')
 
         # data is SvSpreadsheetData here
+        up = row.operator(SvSpreadsheetMoveColumn.bl_idname, text='', icon='TRIA_UP')
+        up.nodename = data.nodename
+        up.treename = data.treename
+        up.item_index = index
+        up.shift = -1
+
+        down = row.operator(SvSpreadsheetMoveColumn.bl_idname, text='', icon='TRIA_DOWN')
+        down.nodename = data.nodename
+        down.treename = data.treename
+        down.item_index = index
+        down.shift = 1
+
         remove = row.operator(SvSpreadsheetRemoveColumn.bl_idname, text='', icon='REMOVE')
         remove.nodename = data.nodename
         remove.treename = data.treename
@@ -249,6 +268,22 @@ class SvSpreadsheetRemoveColumn(bpy.types.Operator):
         idx = self.item_index
         node.remove_column(idx)
         updateNode(node, context)
+        return {'FINISHED'}
+
+class SvSpreadsheetMoveColumn(bpy.types.Operator):
+    bl_label = "Move spreadsheet column"
+    bl_idname = "sverchok.spreadsheet_column_shift"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    nodename : StringProperty(name='nodename')
+    treename : StringProperty(name='treename')
+    item_index : IntProperty(name='item_index')
+    shift : IntProperty(name='shift')
+
+    def execute(self, context):
+        node = bpy.data.node_groups[self.treename].nodes[self.nodename]
+        selected_index = self.item_index
+        node.move_column(self.item_index, self.shift, context)
         return {'FINISHED'}
 
 class SvDefaultColumnHandler(object):
@@ -336,6 +371,14 @@ class SvDataInputNode(bpy.types.Node, SverchCustomTreeNode):
         for data_row in self.spreadsheet.data:
             data_row.items.remove(idx)
 
+    def move_column(self, selected_index, shift, context):
+        next_index = selected_index + shift
+        if (0 <= selected_index < len(self.spreadsheet.columns)) and (0 <= next_index < len(self.spreadsheet.columns)):
+            self.spreadsheet.columns.move(selected_index, next_index)
+            for data_row in self.spreadsheet.data:
+                data_row.items.move(selected_index, next_index)
+            updateNode(self, context)
+
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
@@ -356,7 +399,7 @@ classes = [
         SvColumnDescriptor, SvSpreadsheetValue,
         SvSpreadsheetRow, SvSpreadsheetData,
         UI_UL_SvColumnDescriptorsList,
-        SvSpreadsheetAddColumn, SvSpreadsheetRemoveColumn,
+        SvSpreadsheetAddColumn, SvSpreadsheetRemoveColumn, SvSpreadsheetMoveColumn,
         SvSpreadsheetAddRow, SvSpreadsheetRemoveRow, SvSpreadsheetMoveRow,
         SvDataInputNode
     ]
