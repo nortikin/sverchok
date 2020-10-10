@@ -430,7 +430,7 @@
     ListFlipNode
 
 ## Dictionary
-    SvDataInputNode
+    SvSpreadsheetNode
     SvDataItemNode
     SvDictionaryIn
     SvDictionaryOut

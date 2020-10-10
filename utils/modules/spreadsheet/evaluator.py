@@ -166,8 +166,9 @@ def eval_compiled_spreadsheet(compiled_src_dict, row_names, order, variables, al
     variables.update(accessors)
     for row_name, col_name in order:
         compiled = compiled_src_dict[row_name][col_name]
-        value = safe_eval_compiled(compiled, variables, allowed_names)
-        result[row_name][col_name] = value
+        if compiled:
+            value = safe_eval_compiled(compiled, variables, allowed_names)
+            result[row_name][col_name] = value
     return result
 
 def eval_spreadsheet(src_dict, row_names, col_names, variables, allowed_names=None):
