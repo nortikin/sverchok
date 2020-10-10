@@ -24,6 +24,7 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.dictionary import SvDict
 from sverchok.utils.modules.eval_formula import get_variables
 from sverchok.utils.modules.spreadsheet.evaluator import eval_spreadsheet, SvSpreadsheetAccessor
+from sverchok.utils.logging import info, debug
 
 SUPPORTED_TYPES = [
         ('float', "Float", 'SvStringsSocket', 'SvDefaultColumnHandler'),
@@ -45,7 +46,7 @@ class SvColumnDescriptor(PropertyGroup):
         if hasattr(context, 'node'):
             context.node.on_update_column(context)
         else:
-            pass
+            info("update_column: no node in context")
 
     name : StringProperty(name="Name", update=update_column)
     data_type : EnumProperty(name = "Type",
@@ -85,7 +86,7 @@ class SvSpreadsheetValue(PropertyGroup):
 class SvSpreadsheetRow(PropertyGroup):
     def update_name(self, context):
         if hasattr(context, 'node'):
-            context.node.on_update_value(context)
+            context.node.on_update_row_name(context)
         else:
             pass
 
@@ -129,7 +130,7 @@ class SvSpreadsheetRemoveRow(bpy.types.Operator):
     def execute(self, context):
         node = bpy.data.node_groups[self.treename].nodes[self.nodename]
         idx = self.item_index
-        node.spreadsheet.data.remove(idx)
+        node.remove_row(idx)
         updateNode(node, context)
         return {'FINISHED'}
 
@@ -195,6 +196,7 @@ class SvSpreadsheetData(PropertyGroup):
         add = row.operator(SvSpreadsheetAddRow.bl_idname, text='', icon='ADD')
         add.nodename = self.nodename
         add.treename = self.treename
+        return row
 
     def set_node(self, node):
         self.treename = node.id_data.name

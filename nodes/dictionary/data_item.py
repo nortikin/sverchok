@@ -59,7 +59,7 @@ class SvDataItemNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvDataItemNode'
     bl_label = "Data Items"
-    bl_icon = 'MATERIAL'
+    bl_icon = 'SNAP_VERTEX'
 
     keys : CollectionProperty(type=SvDictKeyEntry)
     selected : IntProperty()

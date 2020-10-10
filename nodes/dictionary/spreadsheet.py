@@ -19,7 +19,7 @@
 from collections import defaultdict
 
 import bpy
-from bpy.props import CollectionProperty
+from bpy.props import CollectionProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, match_long_repeat, zip_long_repeat
@@ -34,9 +34,55 @@ class SvSpreadsheetNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvSpreadsheetNode'
     bl_label = "Spreadsheet"
-    bl_icon = 'MATERIAL'
+    bl_icon = 'VIEW_ORTHO'
 
     spreadsheet : PointerProperty(type=SvSpreadsheetData)
+
+    @throttled
+    def adjust_outputs(self, context):
+
+        if self.out_mode == 'ROW':
+            names = [row.name for row in self.spreadsheet.data]
+            types = ['SvStringsSocket' for row in self.spreadsheet.data]
+        elif self.out_mode == 'COL':
+            names = [col.name for col in self.spreadsheet.columns]
+            types = [type_sockets[col.data_type] for col in self.spreadsheet.columns]
+        else:
+            names = []
+            types = []
+
+        links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
+        for key in self.outputs.keys():
+            if key not in {'Data', 'Rows', 'Columns'}:
+                self.outputs.remove(self.outputs[key])
+
+        new_socks = []
+        for key, sock_type in zip(names, types):
+            sock = self.outputs.new(sock_type, key)
+            new_socks.append(sock)
+
+        for new_sock in new_socks:
+            for to_sock in links.get(new_sock.name, []):
+                try:
+                    self.id_data.links.new(new_sock, to_sock)
+                except:
+                    pass
+
+        self.outputs['Data'].hide_safe = self.out_mode != 'NONE'
+        self.outputs['Rows'].hide_safe = self.out_mode != 'NONE'
+        self.outputs['Columns'].hide_safe = self.out_mode != 'NONE'
+
+    out_modes = [
+            ('NONE', "Dictionaries", "Do not display separate outputs", 0),
+            ('ROW', "By Rows", "Display separate output for each row", 1),
+            ('COL', "By Columns", "Display separate output for each column", 2)
+        ]
+
+    out_mode : EnumProperty(
+            name = "Outputs",
+            items = out_modes,
+            default = 'NONE',
+            update = adjust_outputs)
 
     def sv_init(self, context):
         self.width = 500
@@ -53,10 +99,11 @@ class SvSpreadsheetNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_update(self):
         self.spreadsheet.set_node(self)
-        self.adjust_sockets()
+        self.adjust_inputs()
 
     def draw_buttons(self, context, layout):
-        self.spreadsheet.draw(layout)
+        row = self.spreadsheet.draw(layout)
+        row.prop(self, 'out_mode')
 
     def draw_buttons_ext(self, context, layout):
         layout.template_list("UI_UL_SvColumnDescriptorsList", "columns", self.spreadsheet, "columns", self.spreadsheet, "selected")
@@ -66,7 +113,7 @@ class SvSpreadsheetNode(bpy.types.Node, SverchCustomTreeNode):
         add.nodename = self.name
         add.treename = self.id_data.name
 
-    def adjust_sockets(self):
+    def adjust_inputs(self):
         variables = self.spreadsheet.get_variables()
         for key in self.inputs.keys():
             if (key not in variables) and key not in ['Input']:
@@ -82,11 +129,17 @@ class SvSpreadsheetNode(bpy.types.Node, SverchCustomTreeNode):
 
     @throttled
     def on_update_value(self, context):
-        self.adjust_sockets()
+        self.adjust_inputs()
+
+    @throttled
+    def on_update_row_name(self, context):
+        self.adjust_inputs()
+        self.adjust_outputs(context)
 
     @throttled
     def on_update_column(self, context):
-        self.adjust_sockets()
+        self.adjust_inputs()
+        self.adjust_outputs(context)
 
     def check_row_uniq(self):
         row_names = [row.name for row in self.spreadsheet.data]
@@ -110,13 +163,19 @@ class SvSpreadsheetNode(bpy.types.Node, SverchCustomTreeNode):
             item = data_row.items.add()
             item.treename = self.id_data.name
             item.nodename = self.name
+        self.adjust_outputs(None)
         return data_row
+
+    def remove_row(self, idx):
+        self.spreadsheet.data.remove(idx)
+        self.adjust_outputs(None)
 
     def move_row(self, selected_index, shift, context):
         next_index = selected_index + shift
         if (0 <= selected_index < len(self.spreadsheet.data)) and (0 <= next_index < len(self.spreadsheet.data)):
             self.spreadsheet.data.move(selected_index, next_index)
-            updateNode(self, context)
+            self.adjust_outputs(context)
+            #updateNode(self, context)
 
     def add_column(self):
         column = self.spreadsheet.columns.add()
@@ -124,12 +183,14 @@ class SvSpreadsheetNode(bpy.types.Node, SverchCustomTreeNode):
             item = data_row.items.add()
             item.treename = self.id_data.name
             item.nodename = self.name
+        self.adjust_outputs(None)
         return column
 
     def remove_column(self, idx):
         self.spreadsheet.columns.remove(idx)
         for data_row in self.spreadsheet.data:
             data_row.items.remove(idx)
+        self.adjust_outputs(None)
 
     def move_column(self, selected_index, shift, context):
         next_index = selected_index + shift
@@ -137,7 +198,8 @@ class SvSpreadsheetNode(bpy.types.Node, SverchCustomTreeNode):
             self.spreadsheet.columns.move(selected_index, next_index)
             for data_row in self.spreadsheet.data:
                 data_row.items.move(selected_index, next_index)
-            updateNode(self, context)
+            self.adjust_outputs(context)
+            #updateNode(self, context)
 
     def get_input(self):
         variables = self.spreadsheet.get_variables()
@@ -154,6 +216,7 @@ class SvSpreadsheetNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.check_row_uniq()
         self.check_column_uniq()
+        #self.adjust_outputs(None)
 
         input_data_s = self.inputs['Input'].sv_get(default = [None])
 
@@ -168,6 +231,7 @@ class SvSpreadsheetNode(bpy.types.Node, SverchCustomTreeNode):
         data_out = []
         rows_out = []
         columns_out = []
+        specific_outs = defaultdict(list)
         for input_data, *objects in zip(*parameters):
             if var_names:
                 var_values_s = zip_long_repeat(*objects)
@@ -189,9 +253,21 @@ class SvSpreadsheetNode(bpy.types.Node, SverchCustomTreeNode):
                 columns = list(columns.values())
                 columns_out.extend(columns)
 
+                if self.out_mode == 'ROW':
+                    for sp_row, row in zip(self.spreadsheet.data, data.values()):
+                        values = list(row.values())
+                        specific_outs[sp_row.name].append(values)
+                elif self.out_mode == 'COL':
+                    for sp_col, column in zip(self.spreadsheet.columns, columns):
+                        values = list(column.values())
+                        specific_outs[sp_col.name].append(values)
+
         self.outputs['Data'].sv_set(data_out)
         self.outputs['Rows'].sv_set(rows_out)
         self.outputs['Columns'].sv_set(columns_out)
+
+        for key, values in specific_outs.items():
+            self.outputs[key].sv_set(values)
 
 classes = [
         SvColumnDescriptor, SvSpreadsheetValue,
