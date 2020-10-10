@@ -86,13 +86,26 @@ class ReferenceCollector(ast.NodeVisitor):
                     self.references[name].add(node.attr)
         self.generic_visit(node)
 
-class SvSpreadsheetAccessor(object):
+class SvSpreadsheetRowAccessor(object):
     def __init__(self, data, row_name):
         self.data = data
         self.row_name = row_name
 
     def __getattr__(self, attr_name):
+        if self.data is None:
+            raise NameError("Input spreadsheet socket is not connected")
+        if self.row_name not in self.data:
+            raise AttributeError(f"No row named `{self.row_name}' in the input spreadsheet")
+        if attr_name not in self.data[self.row_name]:
+            raise AttributeError(f"No column named `{attr_name}' in the input spreadsheet")
         return self.data[self.row_name][attr_name]
+
+class SvSpreadsheetAccessor(object):
+    def __init__(self, data):
+        self.data = data
+
+    def __getattr__(self, attr_name):
+        return SvSpreadsheetRowAccessor(self.data, attr_name)
 
 def get_references(string, row_names, col_names=None):
     string = string.strip()
@@ -124,10 +137,6 @@ def get_dependencies(src_dict, row_names, col_names):
                     refs = get_references(string, row_names, col_names)
                     for to_row_name in refs:
                         for to_col_name in refs[to_row_name]:
-                            #to_row_idx = row_names.index(to_row_name)
-                            #to_col_idx = col_names.index(to_col_name)
-                            #to_idx = n_cols * to_row_idx + to_col_idx
-                            #edges.append((from_idx, to_idx))
                             edges.append((from_idx, to_row_name, to_col_name))
     edges_res = []
     for from_idx, to_row_name, to_col_name in edges:
@@ -146,13 +155,13 @@ def compile_spreadsheet(src_dict, col_names):
         for col_name in col_names:
             if col_name in src_dict[row_name]:
                 formula = src_dict[row_name][col_name]
-                if isinstance(formula, str):
+                if formula and isinstance(formula, str):
                     result[row_name][col_name] = sv_compile(formula)
     return result
 
 def eval_compiled_spreadsheet(compiled_src_dict, row_names, order, variables, allowed_names=None):
     result = compiled_src_dict.copy()
-    accessors = {name : SvSpreadsheetAccessor(result, name) for name in row_names}
+    accessors = {name : SvSpreadsheetRowAccessor(result, name) for name in row_names}
     variables = variables.copy()
     variables.update(accessors)
     for row_name, col_name in order:
