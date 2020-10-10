@@ -47,7 +47,7 @@ type_sockets = dict([(id, sock) for id, name, sock, cls in SUPPORTED_TYPES])
 class SvColumnDescriptor(PropertyGroup):
     def update_column(self, context):
         if hasattr(context, 'node'):
-            updateNode(context.node, context)
+            context.node.on_update_column(context)
         else:
             pass
 
@@ -214,9 +214,13 @@ class SvSpreadsheetData(PropertyGroup):
 
         return data
 
-    def evaluate(self, input_data, variables):
-        src_dict = self.get_data()
+    def get_formula_cols(self):
         formula_cols = [col.name for col in self.columns if col.data_type == 'formula']
+        return formula_cols
+
+    def evaluate(self, input_data, variables):
+        formula_cols = self.get_formula_cols()
+        src_dict = self.get_data()
         if not formula_cols:
             return src_dict
         else:
@@ -227,7 +231,7 @@ class SvSpreadsheetData(PropertyGroup):
 
     def get_variables(self):
         src_dict = self.get_data()
-        formula_cols = [col.name for col in self.columns if col.data_type == 'formula']
+        formula_cols = self.get_formula_cols()
         variables = set()
         for data_row in src_dict.values():
             for col_name in formula_cols:
@@ -382,10 +386,17 @@ class SvDataInputNode(bpy.types.Node, SverchCustomTreeNode):
                 self.debug("Variable {} not in inputs {}, add it".format(v, str(self.inputs.keys())))
                 self.inputs.new('SvStringsSocket', v)
 
+        formula_cols = self.spreadsheet.get_formula_cols()
+        self.inputs['Input'].hide_safe = len(formula_cols) == 0
+
     @throttled
     def on_update_value(self, context):
         self.adjust_sockets()
 
+    @throttled
+    def on_update_column(self, context):
+        self.adjust_sockets()
+        
     def add_row(self):
         data_row = self.spreadsheet.data.add()
         for column in self.spreadsheet.columns:
