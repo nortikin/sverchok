@@ -22,8 +22,7 @@ class SvGroupTree(bpy.types.NodeTree):
         return False  # only for inner usage
 
     sv_show: bpy.props.BoolProperty(name="Show", default=True, description='Show group tree')
-    sv_draft: bpy.props.BoolProperty(name="Draft",  description="Simplified processing mode")
-    description: bpy.props.StringProperty(name="Tree description")
+    description: bpy.props.StringProperty(name="Tree description", default="Group nodes don`t work at the moment")
 
     def upstream_trees(self) -> List['SvGroupTree']:
         next_group_nodes = [node for node in self.nodes if node.bl_idname == 'SvGroupTreeNode']
@@ -41,6 +40,15 @@ class SvGroupTree(bpy.types.NodeTree):
                 raise RecursionError(f'Looks like group tree "{self}" has links to itself from other groups')
         return trees
 
+    def can_be_linked(self):
+        # trying to avoid creating loops of group trees to each other
+        # upstream trees of tested treed should nad share trees
+        # with downstream trees of current tree
+        tested_tree_upstream_trees = {t.name for t in self.upstream_trees()}
+        current_tree_downstream_trees = {p.node_tree.name for p in bpy.context.space_data.path}
+        shared_trees = tested_tree_upstream_trees & current_tree_downstream_trees
+        return not shared_trees
+
 
 class SvGroupTreeNode(bpy.types.NodeCustomGroup):
     """Node for keeping sub trees"""
@@ -50,14 +58,8 @@ class SvGroupTreeNode(bpy.types.NodeCustomGroup):
     def nested_tree_filter(self, context):
         """Define which tree we would like to use as nested trees."""
         tested_tree = context
-        if tested_tree.bl_idname == 'SvGroupTree':  # It should be our dedicated to this class
-            # trying to avoid creating loops of group trees to each other
-            # upstream trees of tested treed should nad share trees
-            # with downstream trees of current tree
-            tested_tree_upstream_trees = {t.name for t in tested_tree.upstream_trees()}
-            current_tree_downstream_trees = {p.node_tree.name for p in bpy.context.space_data.path}
-            shared_trees = tested_tree_upstream_trees & current_tree_downstream_trees
-            return not shared_trees
+        if tested_tree.bl_idname == SvGroupTree.bl_idname:  # It should be our dedicated to this class
+            return tested_tree.can_be_linked()
         else:
             return False
 
@@ -85,19 +87,23 @@ class SvGroupTreeNode(bpy.types.NodeCustomGroup):
             row.alignment = 'RIGHT'
             row.prop(self.node_tree, 'sv_show', text="",
                      icon=f'RESTRICT_VIEW_{"OFF" if self.node_tree.sv_show else "ON"}')
-            row.prop(self.node_tree, 'sv_draft', text="", icon='EVENT_D')
             row.prop(self.node_tree, 'use_fake_user', text="")
 
             add_description = row_description.operator('node.add_tree_description', text='', icon='QUESTION')
             add_description.tree_name = self.node_tree.name
             add_description.description = self.node_tree.description
 
-        row = layout.row(align=True)
-        row.prop_search(self, 'group_tree', bpy.data, 'node_groups', text='')
+        col = layout.column()
+        # col.template_ID(self, 'group_tree')
+        row_name = col.row()
+        row_ops = col.row()
+        row_search = row_ops.row(align=True)
+        row_search.operator('node.search_group_tree', text='', icon='VIEWZOOM')
         if self.group_tree:
-            row.operator('node.edit_group_tree', text='', icon='FILE_PARENT')
+            row_name.prop(self.group_tree, 'name', text='')
+            row_search.operator('node.edit_group_tree', text=' ', icon='FILE_PARENT')
         else:
-            row.operator('node.add_group_tree', text='', icon='ADD')
+            row_search.operator('node.add_group_tree', text='New', icon='ADD')
 
     def process_node(self, context):
         # update properties of socket of the node trigger this method
@@ -338,8 +344,35 @@ class AddTreeDescription(bpy.types.Operator):
         row.prop_search(self, 'text_name', bpy.data, 'texts', text="Description")
 
 
+class SearchGroupTree(bpy.types.Operator):
+    """Browse group trees to be linked"""
+    bl_idname = 'node.search_group_tree'
+    bl_label = 'Search group tree'
+    bl_property = 'tree_name'
+
+    def available_trees(self, context):
+        linkable_trees = filter(lambda t: hasattr(t, 'can_be_linked') and t.can_be_linked(), bpy.data.node_groups)
+        return [(t.name, t.name, '') for t in linkable_trees]
+
+    tree_name: bpy.props.EnumProperty(items=available_trees)
+
+    group_node_name: bpy.props.StringProperty(options={'SKIP_SAVE'})
+
+    def execute(self, context):
+        tree = context.space_data.path[-1].node_tree
+        tree_to_link = bpy.data.node_groups[self.tree_name]
+        group_node = tree.nodes[self.group_node_name]
+        group_node.group_tree = tree_to_link
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        self.group_node_name = context.node.name  # execute context does not have the attribute -_-
+        context.window_manager.invoke_search_popup(self)
+        return {'FINISHED'}
+
+
 classes = [SvGroupTree, SvGroupTreeNode, AddGroupNode, AddGroupTree, EditGroupTree, AddTreeDescription, 
-           AddNodeOutputInput, AddGroupTreeFromSelected]
+           AddNodeOutputInput, AddGroupTreeFromSelected, SearchGroupTree]
 
 
 def register():
