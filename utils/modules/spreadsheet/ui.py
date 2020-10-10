@@ -83,7 +83,13 @@ class SvSpreadsheetValue(PropertyGroup):
         return handler.get_data(value)
 
 class SvSpreadsheetRow(PropertyGroup):
-    name : StringProperty(name="Name")
+    def update_name(self, context):
+        if hasattr(context, 'node'):
+            context.node.on_update_value(context)
+        else:
+            pass
+
+    name : StringProperty(name="Name", update=update_name)
     items : CollectionProperty(name = "Columns", type=SvSpreadsheetValue)
 
     def get_data(self, column_descriptions):

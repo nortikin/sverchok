@@ -87,6 +87,22 @@ class SvSpreadsheetNode(bpy.types.Node, SverchCustomTreeNode):
     @throttled
     def on_update_column(self, context):
         self.adjust_sockets()
+
+    def check_row_uniq(self):
+        row_names = [row.name for row in self.spreadsheet.data]
+        existing = set()
+        for name in row_names:
+            if name in existing:
+                raise Exception(f"Row name `{name}` is duplicated!")
+            existing.add(name)
+
+    def check_column_uniq(self):
+        col_names = [col.name for col in self.spreadsheet.columns]
+        existing = set()
+        for name in col_names:
+            if name in existing:
+                raise Exception(f"Column name `{name}` is duplicated!")
+            existing.add(name)
         
     def add_row(self):
         data_row = self.spreadsheet.data.add()
@@ -135,6 +151,9 @@ class SvSpreadsheetNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+
+        self.check_row_uniq()
+        self.check_column_uniq()
 
         input_data_s = self.inputs['Input'].sv_get(default = [None])
 
