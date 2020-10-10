@@ -12,7 +12,7 @@ import bpy
 from bpy.props import BoolProperty, StringProperty, IntProperty, CollectionProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, enum_item_5
-from sverchok.nodes.viz.vd_draw_experimental import SvVDExperimental
+from sverchok.nodes.viz.viewer_3d import SvViewer3D
 
 
 sock_str = {
@@ -38,20 +38,24 @@ def props(**x):
 
 # this dict (ordered by default as per python 3.7 ?..) determines the order of sockets
 maximum_spec_vd_dict = dict(
-    vert_color=props(name="points rgba", kind="4f"),
-    edge_color=props(name="edge rgba", kind="4f"),
-    face_color=props(name="face rgba", kind="4f"),
+    activate=props(name="activate", kind="b"),
     display_verts=props(name="display verts", kind="b"),
     display_edges=props(name="display edges", kind="b"),
     display_faces=props(name="display faces", kind="b"),
+    color_per_point=props(name="Color per point", kind="b"),
+    color_per_edge=props(name="Color per edge", kind="b"),
+    color_per_polygon=props(name="Color per face", kind="b"),
+    vector_random_colors=props(name="Random Vertices Color", kind="b"),
+    random_seed=props(name="Random Seed", kind="i"),
+    edges_use_vertex_color=props(name="Edges Vertex Color", kind="b"),
+    polygon_use_vertex_color=props(name="Polys Vertex Color", kind="b"),
     selected_draw_mode=props(name="shade mode", kind="enum"),
     draw_gl_wireframe=props(name="wireframe", kind="b"),
     draw_gl_polygonoffset=props(name="fix zfighting", kind="b"),
     point_size=props(name="point size", kind="i"),
-    line_width=props(name="line width", kind="i"),
-    extended_matrix=props(name="extended matrix", kind="b"),
+    edge_width=props(name="edge width", kind="i"),
     vector_light=props(name="light direction", kind="3f"),
-    activate=props(name="activate", kind="b")
+    extended_matrix=props(name="extended matrix", kind="b"),
 )
 
 def property_change(item, context, changed_attr):
@@ -67,22 +71,22 @@ def property_change(item, context, changed_attr):
     if changed_attr == 'show_socket':
         node.inputs[socket_name].hide_safe = not getattr(item, changed_attr)
 
-class SvVDMK3Item(bpy.types.PropertyGroup):
+class SvVDMK4Item(bpy.types.PropertyGroup):
     attr_name: StringProperty(options={'SKIP_SAVE'})
     show_socket: BoolProperty(default=False, update=lambda s, c: property_change(s, c, 'show_socket'))
     use_default: BoolProperty(default=False, update=lambda s, c: property_change(s, c, 'use_default'))
     origin_node_name: StringProperty(options={'SKIP_SAVE'})
 
-class SvVDMK3Properties(bpy.types.PropertyGroup):
+class SvVDMK4Properties(bpy.types.PropertyGroup):
     # this populates a property-group using VDExperimental.__annotations__ as the source -
     __annotations__ = {}
     for key, v in maximum_spec_vd_dict.items():
-        prop_func, kw_args = SvVDExperimental.__annotations__[key]
+        prop_func, kw_args = SvViewer3D.__annotations__[key]
         copy_kw_args = copy.deepcopy(kw_args)
         copy_kw_args.pop('update', None)
         __annotations__[key] = prop_func(**copy_kw_args)
 
-class SV_UL_VDMK3ItemList(bpy.types.UIList):
+class SV_UL_VDMK4ItemList(bpy.types.UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
 
         # is there a nicer way to do this? can we use  .active_node ?
@@ -96,7 +100,7 @@ class SV_UL_VDMK3ItemList(bpy.types.UIList):
         layout.label(text=attr_name)
         layout.prop(node.vd_items_props[0], attr_name, text='')
 
-class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVDAttrsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: vd attr
     Tooltip: Attribute Node for Viewer Draw Experimental
@@ -104,19 +108,17 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     Allows access to VD Experimental's attributes which control how the
     node draws faces/edges. It can also switch off the node.
     """
-    bl_idname = 'SvVDAttrsNode'
+    bl_idname = 'SvVDAttrsNodeMk2'
     bl_label = 'VD Attributes'
     bl_icon = 'MOD_HUE_SATURATION'
 
-    replacement_nodes = [('SvVDAttrsNodeMk2', dict(verts='Vertices', edges='Edges', faces='Polygons', matrix='Matrix'), None)]
-
     property_index: IntProperty(name='index', default=0)
-    vd_items_group: CollectionProperty(name="vd attrs", type=SvVDMK3Item)
-    vd_items_props: CollectionProperty(name="vd props", type=SvVDMK3Properties)
+    vd_items_group: CollectionProperty(name="vd attrs", type=SvVDMK4Item)
+    vd_items_props: CollectionProperty(name="vd props", type=SvVDMK4Properties)
 
     def draw_group(self, context, layout):
         if self.vd_items_group:
-            layout.template_list("SV_UL_VDMK3ItemList", "", self, "vd_items_group", self, "property_index")
+            layout.template_list("SV_UL_VDMK4ItemList", "", self, "vd_items_group", self, "property_index")
 
     def vd_init_sockets(self, context):
         self.outputs.new("SvStringsSocket", name="attrs")
@@ -148,9 +150,9 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def ensure_correct_origin_node_name(self):
         if self.vd_items_group:
-           if not self.vd_items_group[0].origin_node_name == self.name:
-               for item in self.vd_items_group:
-                   item.origin_node_name = self.name
+            if not self.vd_items_group[0].origin_node_name == self.name:
+                for item in self.vd_items_group:
+                    item.origin_node_name = self.name
 
     def get_repr_and_socket_from_attr_name(self, attr_name):
         socket_repr = maximum_spec_vd_dict[attr_name]
@@ -201,6 +203,10 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
 
         return current_attr_dict
 
+    def migrate_from(self, old_node):
+        self.location.y += 150
+        raise Exception('Migration has to be done manually')
+
     def process(self):
         self.ensure_correct_origin_node_name()
         self.outputs['attrs'].sv_set([self.attrdict_from_state])
@@ -232,5 +238,5 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
             self.id_data.unfreeze(hard=True)
 
 
-classes = [SvVDMK3Item, SvVDMK3Properties, SV_UL_VDMK3ItemList, SvVDAttrsNode]
+classes = [SvVDMK4Item, SvVDMK4Properties, SV_UL_VDMK4ItemList, SvVDAttrsNodeMk2]
 register, unregister = bpy.utils.register_classes_factory(classes)

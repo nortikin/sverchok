@@ -400,6 +400,7 @@
     SvFixEmptyObjectsNode
     SvDatetimeStrings
     SvVDAttrsNode
+    SvVDAttrsNodeMk2
     SvPolygonSortNode
     SvFindClosestValue
     SvMultiCacheNode

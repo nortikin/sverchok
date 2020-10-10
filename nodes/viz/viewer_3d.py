@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from itertools import cycle
-from mathutils import Vector
+from mathutils import Vector, Matrix
 from mathutils.geometry import tessellate_polygon as tessellate, normal
 from mathutils.noise import random, seed_set
 from numpy import float64 as np_float64, linspace as np_linspace
@@ -27,7 +27,7 @@ from bpy.props import StringProperty, FloatProperty, IntProperty, EnumProperty, 
 import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
-
+import sverchok
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_mesh_utils import polygons_to_edges
@@ -37,13 +37,14 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_shader_sources import dashed_vertex_shader, dashed_fragment_shader
-
+from sverchok.utils.context_managers import hard_freeze
+from sverchok.utils.geom import multiply_vectors_deep
 
 
 socket_dict = {
-    'vector_color': ('vector_toggle', 'UV_VERTEXSEL', 'color_per_point', 'vector_random_colors', 'random_seed'),
-    'edge_color': ('edge_toggle', 'UV_EDGESEL', 'color_per_edge', 'edges_use_vertex_color'),
-    'polygon_color': ('polygon_toggle', 'UV_FACESEL', 'color_per_polygon', 'polygon_use_vertex_color'),
+    'vector_color': ('display_verts', 'UV_VERTEXSEL', 'color_per_point', 'vector_random_colors', 'random_seed'),
+    'edge_color': ('display_edges', 'UV_EDGESEL', 'color_per_edge', 'edges_use_vertex_color'),
+    'polygon_color': ('display_faces', 'UV_FACESEL', 'color_per_polygon', 'polygon_use_vertex_color'),
     }
 
 default_vertex_shader = '''
@@ -119,7 +120,7 @@ def fill_points_colors(vectors_color, data, color_per_point, random_colors):
 
     return points_color
 
-def view_2d_geom(context, args):
+def view_3d_geom(context, args):
     """
     x and y are passed by default so you could add font content
     draws the batches
@@ -127,12 +128,15 @@ def view_2d_geom(context, args):
 
     geom, config = args
 
-
+    bgl.glEnable(bgl.GL_BLEND)
     if config.draw_polys:
+        if config.draw_gl_wireframe:
+            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
         if config.draw_gl_polygonoffset:
             bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
             bgl.glPolygonOffset(1.0, 1.0)
-        if config.selected_draw_mode == 'fragment':
+
+        if config.shade_mode == 'fragment':
             config.p_batch = batch_for_shader(config.p_shader, 'TRIS', {"position": geom.p_vertices}, indices=geom.p_indices)
             config.p_shader.bind()
             matrix = context.region_data.perspective_matrix
@@ -144,6 +148,9 @@ def view_2d_geom(context, args):
         config.p_batch.draw(config.p_shader)
         if config.draw_gl_polygonoffset:
             bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
+        if config.draw_gl_wireframe:
+            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
+
 
     if config.draw_edges:
         bgl.glLineWidth(config.edge_width)
@@ -172,6 +179,7 @@ def view_2d_geom(context, args):
 
         config.v_batch.draw(config.v_shader)
         bgl.glPointSize(1)
+    bgl.glEnable(bgl.GL_BLEND)
 
 
 
@@ -240,17 +248,16 @@ def get_vertex_normals(vecs, polygons):
 
 def polygons_geom(config, vecs, polygons, p_vertices, p_vertex_colors, p_indices, v_path, p_cols, idx_p_offset, points_colors):
     '''generates polygons geometry'''
-    calc_normals = config.selected_draw_mode in ["facet", "smooth"]
 
-    if (config.color_per_polygon and not config.polygon_use_vertex_color) or config.selected_draw_mode == 'facet':
+    if (config.color_per_polygon and not config.polygon_use_vertex_color) or config.shade_mode == 'facet':
         polygon_indices, original_idx = ensure_triangles(vecs, polygons, True)
-        if config.selected_draw_mode == 'facet':
+        if config.shade_mode == 'facet':
             normals = [normal(*[Vector(vecs[c]) for c in p]) for p in polygons]
             if config.polygon_use_vertex_color:
                 p_v, v_c, idx, total_p_verts = splitted_facet_polygons_geom_v_cols(polygon_indices, original_idx, v_path, points_colors, idx_p_offset[0], normals, config.vector_light)
             else:
                 p_v, v_c, idx, total_p_verts = splitted_facet_polygons_geom(polygon_indices, original_idx, v_path, p_cols, idx_p_offset[0], normals, config.vector_light)
-        elif config.selected_draw_mode == 'smooth':
+        elif config.shade_mode == 'smooth':
             normals = get_vertex_normals(vecs, polygons)
             p_v, v_c, idx, total_p_verts = splitted_smooth_polygons_geom(polygon_indices, original_idx, v_path, p_cols, idx_p_offset[0], normals, config.vector_light)
         else:
@@ -262,7 +269,7 @@ def polygons_geom(config, vecs, polygons, p_vertices, p_vertex_colors, p_indices
         polygon_indices, original_idx = ensure_triangles(vecs, polygons, True)
         p_vertices.extend(v_path)
         print('p_cols',p_cols)
-        if config.selected_draw_mode == 'smooth':
+        if config.shade_mode == 'smooth':
             normals = get_vertex_normals(v_path, polygons)
             colors = []
             for normal_v in normals:
@@ -299,7 +306,7 @@ def generate_mesh_geom(config, vecs_in):
     if config.color_per_polygon:
         pol_color = config.poly_color
     else:
-        if config.selected_draw_mode == 'facet':
+        if config.shade_mode == 'facet':
             pol_color = [[c] for c in config.poly_color[0]]
         else:
             pol_color = config.poly_color[0]
@@ -351,13 +358,13 @@ def generate_mesh_geom(config, vecs_in):
         geom.e_vertices, geom.e_vertex_colors, geom.e_indices = e_vertices, e_vertex_colors, e_indices
 
 
-    if config.draw_polys and config.selected_draw_mode != 'fragment':
-        if config.polygon_use_vertex_color and config.selected_draw_mode != 'facet':
+    if config.draw_polys and config.shade_mode != 'fragment':
+        if config.polygon_use_vertex_color and config.shade_mode != 'facet':
             p_vertex_colors = points_color
         config.p_shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
         geom.p_vertices, geom.p_vertex_colors, geom.p_indices = p_vertices, p_vertex_colors, p_indices
 
-    elif config.selected_draw_mode == 'fragment' and config.draw_polys:
+    elif config.shade_mode == 'fragment' and config.draw_polys:
 
         config.draw_fragment_function = None
 
@@ -389,7 +396,7 @@ def get_shader_data(named_shader=None):
 class SvViewer3D(bpy.types.Node, SverchCustomTreeNode):
     '''Curved interpolation'''
     bl_idname = 'SvViewer3D'
-    bl_label = 'Viewer 3D'
+    bl_label = 'Viewer Draw'
     bl_icon = 'HIDE_OFF'
     sv_icon = 'SV_EASING'
 
@@ -410,17 +417,16 @@ class SvViewer3D(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         update=updateNode
         )
-    draw_scale: FloatProperty(
-        min=0.0, default=10.0, name='Scale',
-        description='Drawing Scale', update=updateNode
-    )
-    drawing_size: IntVectorProperty(
-        update=updateNode, name='Size', default=(150, 150),
-        size=2
-        )
+    draw_gl_wireframe: BoolProperty(
+        name="draw gl wireframe",
+        default=False,
+        update=updateNode)
     vector_light: FloatVectorProperty(
         name='vector light', subtype='DIRECTION', min=0, max=1, size=3,
         default=(0.2, 0.6, 0.4), update=updateNode)
+    extended_matrix: BoolProperty(
+        default=False,
+        description='Allows mesh.transform(matrix) operation, quite fast!')
     draw_verts: BoolProperty(
         default=False, name='See Verts',
         description='Drawing Verts', update=updateNode
@@ -442,7 +448,7 @@ class SvViewer3D(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode, name='Vertices Color', default=(.9, .9, .95, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR'
         )
-    vector_toggle: BoolProperty(
+    display_verts: BoolProperty(
         update=updateNode, name='Display Vertices', default=True
         )
     vector_random_colors: BoolProperty(
@@ -477,14 +483,14 @@ class SvViewer3D(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode, name='Edges Color', default=(.9, .9, .35, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR'
         )
-    edge_toggle: BoolProperty(
+    display_edges: BoolProperty(
         update=updateNode, name='Display Edges', default=True
         )
     polygon_color: FloatVectorProperty(
         update=updateNode, name='Ploygons Color', default=(.2, .7, 1.0, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR'
         )
-    polygon_toggle: BoolProperty(
+    display_faces: BoolProperty(
         update=updateNode, name='Display Polygons', default=True
         )
 
@@ -516,11 +522,19 @@ class SvViewer3D(bpy.types.Node, SverchCustomTreeNode):
         self.populate_node_with_custom_shader_from_text()
         if context:
             self.process_node(context)
+
     custom_vertex_shader: StringProperty(default=default_vertex_shader, name='vertex shader')
     custom_fragment_shader: StringProperty(default=default_fragment_shader, name='fragment shader')
     custom_shader_location: StringProperty(update=wrapped_update, name='custom shader location')
 
+    def configureAttrSocket(self, context):
+        self.inputs['attrs'].hide_safe = not self.node_ui_show_attrs_socket
+
+    node_ui_show_attrs_socket: BoolProperty(default=False, name='show attrs socket', update=configureAttrSocket)
+
     def draw_buttons(self, context, layout):
+        addon = context.preferences.addons.get(sverchok.__name__)
+        over_sized_buttons = addon.preferences.over_sized_buttons
         r0 = layout.row()
         r0.prop(self, "activate", text="", icon="HIDE_" + ("OFF" if self.activate else "ON"))
         r0.separator()
@@ -534,37 +548,54 @@ class SvViewer3D(bpy.types.Node, SverchCustomTreeNode):
         row = c0.row(align=True)
         row.prop(self, "point_size")
         row.prop(self, "edge_width")
+        row = layout.row(align=True)
+        row.scale_y = 4.0 if over_sized_buttons else 1
+        self.wrapper_tracked_ui_draw_op(row, "node.sverchok_mesh_baker_mk3", icon='OUTLINER_OB_MESH', text="B A K E")
+        row.separator()
+        self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', text='')
+
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
         layout.label(text='Light Direction')
         layout.prop(self, 'vector_light', text='')
         layout.prop(self, 'draw_gl_polygonoffset')
+        layout.prop(self, 'draw_gl_wireframe')
         layout.prop(self, "use_dashed")
         if self.use_dashed:
             layout.prop(self, "u_dash_size")
             layout.prop(self, "u_gap_size")
             layout.row().prop(self, "u_resolution")
+        layout.prop(self, 'node_ui_show_attrs_socket')
 
     def add_gl_stuff_to_config(self, config):
         config.dashed_shader = gpu.types.GPUShader(dashed_vertex_shader, dashed_fragment_shader)
 
+    def bake(self):
+        with self.sv_throttle_tree_update():
+            bpy.ops.node.sverchok_mesh_baker_mk3(
+                idname=self.name, idtree=self.id_data.name
+            )
     def sv_init(self, context):
-        self.inputs.new('SvStringsSocket', "Number")
-        self.inputs.new('SvVerticesSocket', "Vecs")
-        self.inputs.new('SvStringsSocket', "Edges")
-        self.inputs.new('SvStringsSocket', "Polygons")
-        self.inputs.new('SvCurveSocket', "Curve")
-        self.inputs.new('SvMatrixSocket', 'Matrix')
-        vc0 = self.inputs.new('SvColorSocket', "Vector Color")
+        new_input = self.inputs.new
+        new_input('SvVerticesSocket', "Vertices")
+        new_input('SvStringsSocket', "Edges")
+        new_input('SvStringsSocket', "Polygons")
+        new_input('SvMatrixSocket', 'Matrix')
+
+        vc0 = new_input('SvColorSocket', "Vector Color")
         vc0.prop_name = 'vector_color'
         vc0.custom_draw = 'draw_color_socket'
-        vc = self.inputs.new('SvColorSocket', "Edge Color")
+        vc = new_input('SvColorSocket', "Edge Color")
         vc.prop_name = 'edge_color'
         vc.custom_draw = 'draw_color_socket'
-        vc2 = self.inputs.new('SvColorSocket', "Polygon Color")
+        vc2 = new_input('SvColorSocket', "Polygon Color")
         vc2.prop_name = 'polygon_color'
         vc2.custom_draw = 'draw_color_socket'
+
+        attr_socket = new_input('SvStringsSocket', 'attrs')
+        attr_socket.hide = True
+        attr_socket.quick_link_to_node = "SvVDAttrsNodeMk2"
 
 
 
@@ -591,15 +622,16 @@ class SvViewer3D(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, socket.prop_name, text="")
         else:
             if draw_name:
-                layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
+                reduced_name = socket.name[:2] + ". Col"
+                layout.label(text=reduced_name+ '. ' + SvGetSocketInfo(socket))
 
 
     def create_config(self):
         config = lambda: None
 
-        config.draw_verts = self.vector_toggle
-        config.draw_edges = self.edge_toggle
-        config.draw_polys = self.polygon_toggle and self.inputs['Polygons'].is_linked
+        config.draw_verts = self.display_verts
+        config.draw_edges = self.display_edges
+        config.draw_polys = self.display_faces and self.inputs['Polygons'].is_linked
         config.point_size = self.point_size
         config.edge_width = self.edge_width
         config.color_per_point = self.color_per_point
@@ -608,9 +640,11 @@ class SvViewer3D(bpy.types.Node, SverchCustomTreeNode):
         config.polygon_use_vertex_color = self.polygon_use_vertex_color
         config.edges_use_vertex_color = self.edges_use_vertex_color
         config.random_colors = self.vector_random_colors
+
         config.vector_light = Vector(self.vector_light)
-        config.selected_draw_mode = self.selected_draw_mode
+        config.shade_mode = self.selected_draw_mode
         config.draw_gl_polygonoffset = self.draw_gl_polygonoffset
+        config.draw_gl_wireframe = self.draw_gl_wireframe
 
         config.draw_dashed = self.use_dashed
         config.u_dash_size = self.u_dash_size
@@ -622,7 +656,59 @@ class SvViewer3D(bpy.types.Node, SverchCustomTreeNode):
 
         return config
 
+
+    def handle_attr_socket(self):
+        """
+        this socket expects input dictionary wrapped. once.
+
+            [  {attr: attr_vale, attr2: attr2_value } ]
+
+        """
+
+        if self.node_ui_show_attrs_socket and not self.inputs['attrs'].hide and self.inputs['attrs'].is_linked:
+            socket_acquired_attrs = self.inputs['attrs'].sv_get(default=[{'activate': False}])
+
+            if socket_acquired_attrs:
+                try:
+                    with hard_freeze(self) as node:
+                        for k, new_value in socket_acquired_attrs[0].items():
+                            print(f"setattr(node, {k}, {new_value})")
+                            setattr(node, k, new_value)
+                except Exception as err:
+                    print('error inside socket_acquired_attrs: ', err)
+                    self.id_data.unfreeze(hard=True)  # ensure this thing is unfrozen
+
+    def get_data(self):
+        verts_socket, edges_socket, faces_socket, matrix_socket = self.inputs[:4]
+        edge_indices = [[]]
+        face_indices = [[]]
+
+        propv = verts_socket.sv_get(deepcopy=False, default=[[]])
+        coords = propv
+
+        if edges_socket.is_linked:
+            prope = edges_socket.sv_get(deepcopy=False, default=[[]])
+            edge_indices = prope
+
+        if faces_socket.is_linked:
+            propf = faces_socket.sv_get(deepcopy=False, default=[[]])
+            face_indices = propf
+
+        if matrix_socket.is_linked:
+            m = matrix_socket.sv_get(deepcopy=False, default=[Matrix()])
+            verts, matrix = match_long_repeat([propv, m])
+            coords = [multiply_vectors_deep(mx, v) for mx, v in zip(matrix, verts)]
+        else:
+            matrix = [Matrix()]
+            verts = coords
+        return match_long_repeat([coords, edge_indices, face_indices, verts, matrix])
+
     def process(self):
+
+        self.handle_attr_socket()
+        if not (self.id_data.sv_show and self.activate):
+            callback_disable(node_id(self))
+            return
         n_id = node_id(self)
         callback_disable(n_id)
         inputs = self.inputs
@@ -631,9 +717,9 @@ class SvViewer3D(bpy.types.Node, SverchCustomTreeNode):
             return
 
 
-        if not inputs['Vecs'].is_linked:
+        if not inputs['Vertices'].is_linked:
             return
-        vecs = inputs['Vecs'].sv_get(default=[[]])
+        vecs = inputs['Vertices'].sv_get(default=[[]])
 
         edges = inputs['Edges'].sv_get(default=[[]])
         polygons = inputs['Polygons'].sv_get(default=[[]])
@@ -654,7 +740,7 @@ class SvViewer3D(bpy.types.Node, SverchCustomTreeNode):
 
         config.polygons = polygons
         config.matrix = matrix
-        if not inputs['Edges'].is_linked and self.edge_toggle:
+        if not inputs['Edges'].is_linked and self.display_edges:
             config.edges = polygons_to_edges(polygons, unique_edges=True)
 
         geom = generate_mesh_geom(config, vecs)
@@ -663,13 +749,24 @@ class SvViewer3D(bpy.types.Node, SverchCustomTreeNode):
         draw_data = {
 
             'tree_name': self.id_data.name[:],
-            'custom_function': view_2d_geom,
+            'custom_function': view_3d_geom,
             'args': (geom, config)
         }
         callback_enable(n_id, draw_data)
 
     def sv_free(self):
         callback_disable(node_id(self))
+
+    def show_viewport(self, is_show: bool):
+        """It should be called by node tree to show/hide objects"""
+        if not self.activate:
+            # just ignore request
+            pass
+        else:
+            if is_show:
+                self.process()
+            else:
+                callback_disable(node_id(self))
 
 
 

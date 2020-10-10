@@ -32,7 +32,7 @@ class SvRemoveStaleDrawCallbacks(bpy.types.Operator):
     bl_label = "Remove Stale drawing"
 
     def execute(self, context):
-        
+
         from sverchok.core.handlers import sv_clean, sv_scene_handler
         scene = context.scene
         sv_clean(scene)
@@ -215,7 +215,7 @@ class SverchokBakeAll(bpy.types.Operator):
     def execute(self, context):
         ng = bpy.data.node_groups[self.node_tree_name]
 
-        nodes = filter(lambda n: n.bl_idname == 'SvVDExperimental', ng.nodes)
+        nodes = filter(lambda n: n.bl_idname == 'SvViewer3D', ng.nodes)
         for node in nodes:
             if node.activate:
                 node.bake()
@@ -336,4 +336,3 @@ def unregister():
     del bpy.types.Scene.SvShowIn3D_active
     bpy.types.NODE_HT_header.remove(node_show_tree_mode)
     bpy.types.VIEW3D_HT_header.remove(view3d_show_live_mode)
-

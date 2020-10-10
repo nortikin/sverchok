@@ -280,6 +280,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'GREASEPENCIL'
     sv_icon = 'SV_DRAW_VIEWER'
 
+    replacement_nodes = [('SvViewer3D', dict(verts='Vertices', edges='Edges', faces='Polygons', matrix='Matrix'), None)]
     node_dict = {}
 
     def populate_node_with_custom_shader_from_text(self):
@@ -418,6 +419,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             )
 
     def rclick_menu(self, context, layout):
+        self.node_replacement_menu(context, layout)
         self.draw_additional_props(context, layout)
 
     def draw_additional_props(self, context, layout):
