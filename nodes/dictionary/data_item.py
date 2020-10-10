@@ -5,6 +5,8 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+from collections import defaultdict
+
 import bpy
 from bpy.types import Operator, Node, PropertyGroup
 from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty, FloatProperty, CollectionProperty, PointerProperty, FloatVectorProperty
@@ -22,7 +24,7 @@ class SvStringItem(bpy.types.PropertyGroup):
 class SvDictKeyEntry(bpy.types.PropertyGroup):
     def update_key(self, context):
         if hasattr(context, 'node'):
-            context.node.update_sockets(context)
+            context.node.update_sockets_throttled(context)
             #updateNode(context.node, context)
         else:
             info("Node is not defined in this context, so will not update the node.")
@@ -73,25 +75,29 @@ class SvDataItemNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self.keys[i], 'key', text='')
 
     def get_data(self):
-        d = self.inputs['Data'].sv_get()[0]
-        if not isinstance(d, SvDict):
-            d = SvDict(d)
-        return d
+        ds = self.inputs['Data'].sv_get()
+        result = []
+        for d in ds:
+            if not isinstance(d, SvDict):
+                d = SvDict(d)
+            result.append(d)
+        return result
 
     def update_keys(self, context):
         if not self.inputs['Data'].links:
             return
-        d = self.get_data()
+        d = self.get_data()[0]
         count = d.get_max_nesting_level() + 1
-        print("C", count)
         existing = len(self.keys)
         dc = count - existing
+        print("C", count, existing, dc)
         if dc > 0:
             for i in range(dc):
                 k = self.keys.add()
         else:
             for i in range(-dc):
-                self.keys.remove(-1)
+                n = len(self.keys)
+                self.keys.remove(n-1)
 
         for i, k in enumerate(self.keys):
             keys = [ANY] + list(d.get_nested_keys_at(i))
@@ -100,8 +106,11 @@ class SvDataItemNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_update(self):
         self.update_keys(None)
         self.update_sockets(None)
-
+    
     @throttled
+    def update_sockets_throttled(self, context):
+        self.update_sockets(context)
+
     def update_sockets(self, context):
         if not self.inputs['Data'].links:
             return
@@ -116,7 +125,7 @@ class SvDataItemNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             raise Exception("Not more than one key can be unset")
         
-        d = self.get_data()
+        d = self.get_data()[0]
         #n_existing = len(self.outputs)
         links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
         self.outputs.clear()
@@ -153,13 +162,13 @@ class SvDataItemNode(bpy.types.Node, SverchCustomTreeNode):
     def get_dict(self, data, keys, level):
         possible_keys = data.get_nested_keys_at(level)
         print("P", possible_keys)
-        result = []
+        result = {}
         for key in possible_keys:
             keys_option = [str(k) for k in keys]
             keys_option[level] = key
             value = self.get_item(data, keys_option)
             print("Option", keys_option, value)
-            result.append(value)
+            result[key] = value
         return result
 
     def process(self):
@@ -169,17 +178,23 @@ class SvDataItemNode(bpy.types.Node, SverchCustomTreeNode):
         self.update_keys(None)
         if not self.keys:
             return
+        #self.update_sockets(None)
 
         data = self.get_data()
-        dict_keys = [k.key for k in self.keys]
-        empty = [i for i, key in enumerate(dict_keys) if key == ANY]
-        if not empty:
-            value = self.get_item(data, dict_keys)
-            self.outputs['Item'].sv_set([value])
-        elif len(empty) == 1:
-            values = self.get_dict(data, dict_keys, empty[0])
-            for i, value in enumerate(values):
-                self.outputs[i].sv_set([value])
+        outputs = defaultdict(list)
+        for data_dict in data:
+            dict_keys = [k.key for k in self.keys]
+            empty = [i for i, key in enumerate(dict_keys) if key == ANY]
+            if not empty:
+                value = self.get_item(data_dict, dict_keys)
+                outputs[0].append(value)
+            elif len(empty) == 1:
+                values = self.get_dict(data_dict, dict_keys, empty[0])
+                for key, value in values.items():
+                    outputs[key].append(value)
+
+        for i, values in outputs.items():
+            self.outputs[i].sv_set([values])
 
 classes = [SvStringItem, SvDictKeyEntry, UI_UL_SvDictKeyList, SvDataItemNode]
 

@@ -16,6 +16,8 @@
 #
 # END GPL LICENSE BLOCK #####
 
+from collections import defaultdict
+
 import bpy
 from bpy.types import Operator, Node, PropertyGroup
 from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty, FloatProperty, CollectionProperty, PointerProperty, FloatVectorProperty
@@ -23,6 +25,7 @@ from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty, F
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.dictionary import SvDict
+from sverchok.utils.logging import info, debug
 
 SUPPORTED_TYPES = [
         ('float', "Float", 'SvStringsSocket', 'SvDefaultColumnHandler'),
@@ -46,12 +49,24 @@ class SvColumnDescriptor(PropertyGroup):
                 )
 
 class SvSpreadsheetValue(PropertyGroup):
-    int_value : IntProperty(name="Value")
-    float_value : FloatProperty(name="Value")
-    str_value : StringProperty(name="Value")
-    bool_value : BoolProperty(name="Value")
+
+    nodename : StringProperty(name='nodename')
+    treename : StringProperty(name='treename')
+
+    def update_value(self, context):
+        if hasattr(context, 'node'):
+            node = context.node
+        else:
+            node = bpy.data.node_groups[self.treename].nodes[self.nodename]
+        updateNode(node, context)
+
+    int_value : IntProperty(name="Value", update=update_value)
+    float_value : FloatProperty(name="Value", update=update_value)
+    str_value : StringProperty(name="Value", update=update_value)
+    bool_value : BoolProperty(name="Value", update=update_value)
     vector_value : FloatVectorProperty(
-            name = "Value", size=3)
+            name = "Value", size=3,
+            update=update_value)
     
     def get_value(self, data_type):
         prop_name = f"{data_type}_value"
@@ -86,9 +101,7 @@ class SvSpreadsheetAddRow(bpy.types.Operator):
 
     def execute(self, context):
         node = bpy.data.node_groups[self.treename].nodes[self.nodename]
-        data_row = node.spreadsheet.data.add()
-        for column in self.columns:
-            data_row.items.add()
+        node.add_row()
         updateNode(node, context)
         return {'FINISHED'}
 
@@ -124,6 +137,14 @@ class SvSpreadsheetData(PropertyGroup):
             c.name = column.name
             c.data_type = column.data_type
 
+    def set_node(self, node):
+        self.treename = node.id_data.name
+        self.nodename = node.name
+        for data_row in self.data:
+            for item in data_row.items:
+                item.treename = self.treename
+                item.nodename = self.nodename
+
     def get_data(self):
         data = SvDict()
         for data_row in self.data:
@@ -152,9 +173,7 @@ class SvSpreadsheetAddColumn(bpy.types.Operator):
 
     def execute(self, context):
         node = bpy.data.node_groups[self.treename].nodes[self.nodename]
-        node.spreadsheet.columns.add()
-        for data_row in node.spreadsheet.data:
-            data_row.items.add()
+        node.add_column()
         updateNode(node, context)
         return {'FINISHED'}
 
@@ -189,10 +208,19 @@ class SvDataInputNode(bpy.types.Node, SverchCustomTreeNode):
     spreadsheet : PointerProperty(type=SvSpreadsheetData)
 
     def sv_init(self, context):
-        self.width = 600
+        self.width = 500
         self.outputs.new('SvDictionarySocket', "Data")
+        self.outputs.new('SvDictionarySocket', "Rows")
+        self.outputs.new('SvDictionarySocket', "Columns")
+
+        column = self.add_column()
+        column.name = "Value"
+
+        row = self.add_row()
+        row.name = "Item"
 
     def sv_update(self):
+        self.spreadsheet.set_node(self)
         self.spreadsheet.nodename = self.name
         self.spreadsheet.treename = self.id_data.name
 
@@ -207,12 +235,37 @@ class SvDataInputNode(bpy.types.Node, SverchCustomTreeNode):
         add.nodename = self.name
         add.treename = self.id_data.name
 
+    def add_row(self):
+        data_row = self.spreadsheet.data.add()
+        for column in self.spreadsheet.columns:
+            item = data_row.items.add()
+            item.treename = self.id_data.name
+            item.nodename = self.name
+        return data_row
+
+    def add_column(self):
+        column = self.spreadsheet.columns.add()
+        for data_row in self.spreadsheet.data:
+            item = data_row.items.add()
+            item.treename = self.id_data.name
+            item.nodename = self.name
+        return column
+
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
 
         data = self.spreadsheet.get_data()
+        rows = list(data.values())
+        columns = defaultdict(dict)
+        for row_key, row in data.items():
+            for col_key, item in row.items():
+                columns[col_key][row_key] = item
+        columns = list(columns.values())
+
         self.outputs['Data'].sv_set([data])
+        self.outputs['Rows'].sv_set(rows)
+        self.outputs['Columns'].sv_set(columns)
 
 classes = [
         SvColumnDescriptor, SvSpreadsheetValue,
