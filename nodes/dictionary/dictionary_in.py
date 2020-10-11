@@ -12,40 +12,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-
-
-class SvDict(dict):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        """
-        Special attribute for keeping meta data which helps to unwrap dictionaries properly for `dictionary out` node
-        This attribute should be set only by nodes which create new dictionaries or change existing one
-        Order of keys in `self.inputs` dictionary should be the same as order of input data of the dictionary
-        `self.inputs` dictionary should keep data in next format:
-        {data.id:  # it helps to track data, if is changed `dictionary out` recreate new socket for this data
-            {'type': any socket type with which input data is related,
-             'name': name of output socket,
-             'nest': only for 'SvDictionarySocket' type, should keep dictionary with the same data structure
-             }}
-             
-        For example, there is the dictionary:
-        dict('My values': [0,1,2], 'My vertices': [(0,0,0), (1,0,0), (0,1,0)])
-        
-        Metadata should look in this way:
-        self.inputs = {'Values id':
-                           {'type': 'SvStringsSocket',
-                           {'name': 'My values',
-                           {'nest': None
-                           }
-                      'Vertices id':
-                          {'type': 'SvVerticesSocket',
-                          {'name': 'My vertices',
-                          {'nest': None
-                          }
-                      }
-        """
-        self.inputs = dict()
-
+from sverchok.utils.dictionary import SvDict
 
 class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -155,7 +122,6 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
                     'nest': sock.sv_get()[0].inputs if sock.dynamic_type == 'SvDictionarySocket' else None}
             out.append(out_dict)
         self.outputs[0].sv_set(out)
-
 
 def register():
     [bpy.utils.register_class(cl) for cl in [SvDictionaryIn]]
