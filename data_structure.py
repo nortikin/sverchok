@@ -546,6 +546,11 @@ def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES, input
     return result
 
 def flatten_data(data, target_level=1, data_types=SIMPLE_DATA_TYPES):
+    """
+    Reduce nesting level of `data` to `target_level`, by concatenating nested sub-lists.
+    Raises an exception if nesting level is already less than `target_level`.
+    Refer to data_structure_tests.py for examples.
+    """
     current_level = get_data_nesting_level(data, data_types)
     if current_level < target_level:
         raise TypeError(f"Can't flatten data to level {target_level}: data already have level {current_level}")
@@ -558,6 +563,13 @@ def flatten_data(data, target_level=1, data_types=SIMPLE_DATA_TYPES):
         return result
 
 def graft_data(data, item_level=1, wrap_level=1, data_types=SIMPLE_DATA_TYPES):
+    """
+    For each nested item of the list, which has it's own nesting level of `target_level`,
+    wrap that item into a pair of [].
+    For example, with item_level==0, this means wrap each number in the nested list
+    (however deep this number is nested) into pair of [].
+    Refer to data_structure_tests.py for examples.
+    """
     def wrap(item):
         for i in range(wrap_level):
             item = [item]
