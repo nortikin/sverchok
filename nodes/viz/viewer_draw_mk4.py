@@ -20,21 +20,18 @@ from itertools import cycle
 from mathutils import Vector, Matrix
 from mathutils.geometry import tessellate_polygon as tessellate, normal
 from mathutils.noise import random, seed_set
-from numpy import float64 as np_float64, linspace as np_linspace
 import bpy
-from bpy.props import StringProperty, FloatProperty, IntProperty, EnumProperty, BoolProperty, FloatVectorProperty, IntVectorProperty
+from bpy.props import StringProperty, FloatProperty, IntProperty, EnumProperty, BoolProperty, FloatVectorProperty
 
 import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 import sverchok
-from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_mesh_utils import polygons_to_edges
 from sverchok.core.socket_data import SvGetSocketInfo
 from sverchok.data_structure import updateNode, node_id, match_long_repeat, enum_item_5
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.ui import bgl_callback_nodeview as nvBGL
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.utils.sv_shader_sources import dashed_vertex_shader, dashed_fragment_shader
@@ -107,8 +104,9 @@ def fill_points_colors(vectors_color, data, color_per_point, random_colors):
                 for  n in sub_data:
                     points_color.append([random(), random(), random(), 1])
             else:
-                for c, n in zip(cycle(cols), sub_data):
-                    points_color.append(c)
+                for col, n in zip(cycle(cols), sub_data):
+                    points_color.append(col)
+
     else:
         for nums, col in zip(data, cycle(vectors_color[0])):
             if random_colors:
@@ -123,9 +121,11 @@ def fill_points_colors(vectors_color, data, color_per_point, random_colors):
 
 def draw_matrix(context, args):
     """ this takes one or more matrices packed into an iterable """
+    matrices, scale = args
+
     mdraw = MatrixDraw28()
-    for matrix in args[0]:
-        mdraw.draw_matrix(matrix, scale=args[1])
+    for matrix in matrices:
+        mdraw.draw_matrix(matrix, scale=scale)
 
 def view_3d_geom(context, args):
     """
@@ -135,6 +135,7 @@ def view_3d_geom(context, args):
     geom, config = args
 
     bgl.glEnable(bgl.GL_BLEND)
+
     if config.draw_polys:
         if config.draw_gl_wireframe:
             bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
@@ -143,15 +144,17 @@ def view_3d_geom(context, args):
             bgl.glPolygonOffset(1.0, 1.0)
 
         if config.shade_mode == 'fragment':
-            config.p_batch = batch_for_shader(config.p_shader, 'TRIS', {"position": geom.p_vertices}, indices=geom.p_indices)
+            p_batch = batch_for_shader(config.p_shader, 'TRIS', {"position": geom.p_vertices}, indices=geom.p_indices)
             config.p_shader.bind()
             matrix = context.region_data.perspective_matrix
             config.p_shader.uniform_float("viewProjectionMatrix", matrix)
             config.p_shader.uniform_float("brightness", 0.5)
         else:
-            config.p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices, "color": geom.p_vertex_colors}, indices=geom.p_indices)
+            p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices, "color": geom.p_vertex_colors}, indices=geom.p_indices)
             config.p_shader.bind()
-        config.p_batch.draw(config.p_shader)
+
+        p_batch.draw(config.p_shader)
+
         if config.draw_gl_polygonoffset:
             bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
         if config.draw_gl_wireframe:
@@ -173,49 +176,39 @@ def view_3d_geom(context, args):
             shader.uniform_float("m_color", geom.e_vertex_colors[0])
             batch.draw(shader)
         else:
-            config.e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices, "color": geom.e_vertex_colors}, indices=geom.e_indices)
+            e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices, "color": geom.e_vertex_colors}, indices=geom.e_indices)
             config.e_shader.bind()
-            config.e_batch.draw(config.e_shader)
+            e_batch.draw(config.e_shader)
+
         bgl.glLineWidth(1)
 
     if config.draw_verts:
         bgl.glPointSize(config.point_size)
-        config.v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices, "color": geom.points_color})
+        v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices, "color": geom.points_color})
         config.v_shader.bind()
 
-        config.v_batch.draw(config.v_shader)
+        v_batch.draw(config.v_shader)
         bgl.glPointSize(1)
+
     bgl.glEnable(bgl.GL_BLEND)
 
 
 def splitted_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offset):
+    '''geometry of the splitted polygons (splitted to assign colors)'''
     total_p_verts = 0
     p_vertices, vertex_colors, indices = [], [], []
+
     for pol, idx in zip(polygon_indices, original_idx):
         p_vertices.extend([v_path[c] for c in pol])
         vertex_colors.extend([cols[idx % len(cols)] for c in pol])
         indices.append([c + idx_offset + total_p_verts for c in range(len(pol))])
         total_p_verts += len(pol)
+
     return p_vertices, vertex_colors, indices, total_p_verts
 
 
 def splitted_facet_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offset, normals, light):
-    total_p_verts = 0
-    p_vertices, vertex_colors, indices = [], [], []
-    for pol, idx in zip(polygon_indices, original_idx):
-        p_vertices.extend([v_path[c] for c in pol])
-        factor = (normals[idx].dot(light))*0.5+0.5
-        colors=[]
-        for c in pol:
-            col = cols[idx % len(cols)]
-            colors.append([col[0]*factor, col[1]*factor, col[2]*factor, col[3]])
-        vertex_colors.extend(colors)
-        indices.append([c + idx_offset + total_p_verts for c in range(len(pol))])
-        total_p_verts += len(pol)
-    return p_vertices, vertex_colors, indices, total_p_verts
-
-
-def splitted_facet_polygons_geom_v_cols(polygon_indices, original_idx, v_path, cols, idx_offset, normals, light):
+    '''geometry of the splitted polygons (splitted to assign colors* normals)'''
     total_p_verts = 0
     p_vertices, vertex_colors, indices = [], [], []
 
@@ -223,34 +216,65 @@ def splitted_facet_polygons_geom_v_cols(polygon_indices, original_idx, v_path, c
         p_vertices.extend([v_path[c] for c in pol])
         factor = (normals[idx].dot(light))*0.5+0.5
         colors = []
+
         for c in pol:
-            col = cols[c % len(cols)]
+            col = cols[idx % len(cols)]
             colors.append([col[0]*factor, col[1]*factor, col[2]*factor, col[3]])
+
         vertex_colors.extend(colors)
         indices.append([c + idx_offset + total_p_verts for c in range(len(pol))])
         total_p_verts += len(pol)
+
+    return p_vertices, vertex_colors, indices, total_p_verts
+
+
+def splitted_facet_polygons_geom_v_cols(polygon_indices, original_idx, v_path, cols, idx_offset, normals, light):
+    '''geometry of the splitted polygons (splitted to assign vertex_colors * face_normals)'''
+
+    total_p_verts = 0
+    p_vertices, vertex_colors, indices = [], [], []
+
+    for pol, idx in zip(polygon_indices, original_idx):
+        p_vertices.extend([v_path[c] for c in pol])
+        factor = (normals[idx].dot(light)) * 0.5 + 0.5
+        colors = []
+
+        for c in pol:
+            col = cols[c % len(cols)]
+            colors.append([col[0] * factor, col[1] * factor, col[2] * factor, col[3]])
+
+        vertex_colors.extend(colors)
+        indices.append([c + idx_offset + total_p_verts for c in range(len(pol))])
+        total_p_verts += len(pol)
+
     return p_vertices, vertex_colors, indices, total_p_verts
 
 
 def splitted_smooth_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offset, normals, light):
+    '''geometry of the splitted polygons (splitted to assign face_colors * vertex_normals)'''
+
     total_p_verts = 0
     p_vertices, vertex_colors, indices = [], [], []
+
     for pol, idx in zip(polygon_indices, original_idx):
         p_vertices.extend([v_path[c] for c in pol])
-        colors=[]
+        colors = []
+
         for c in pol:
-            factor = (normals[c].dot(light))*0.5+0.5
+            factor = (normals[c].dot(light)) * 0.5 + 0.5
             col = cols[idx % len(cols)]
-            colors.append([col[0]*factor, col[1]*factor, col[2]*factor, col[3]])
+            colors.append([col[0] * factor, col[1] * factor, col[2] * factor, col[3]])
+
         vertex_colors.extend(colors)
         indices.append([c + idx_offset + total_p_verts for c in range(len(pol))])
         total_p_verts += len(pol)
+
     return p_vertices, vertex_colors, indices, total_p_verts
 
 
 def get_vertex_normals(vecs, polygons):
-    bm = bmesh_from_pydata(vecs, [], polygons, normal_update=True)
-    return [vert.normal for vert in bm.verts]
+    mesh = bmesh_from_pydata(vecs, [], polygons, normal_update=True)
+    return [vert.normal for vert in mesh.verts]
 
 
 def polygons_geom(config, vecs, polygons, p_vertices, p_vertex_colors, p_indices, v_path, p_cols, idx_p_offset, points_colors):
@@ -258,24 +282,29 @@ def polygons_geom(config, vecs, polygons, p_vertices, p_vertex_colors, p_indices
 
     if (config.color_per_polygon and not config.polygon_use_vertex_color) or config.shade_mode == 'facet':
         polygon_indices, original_idx = ensure_triangles(vecs, polygons, config.handle_concave_quads)
+
         if config.shade_mode == 'facet':
             normals = [normal(*[Vector(vecs[c]) for c in p]) for p in polygons]
+
             if config.polygon_use_vertex_color:
                 p_v, v_c, idx, total_p_verts = splitted_facet_polygons_geom_v_cols(polygon_indices, original_idx, v_path, points_colors, idx_p_offset[0], normals, config.vector_light)
             else:
                 p_v, v_c, idx, total_p_verts = splitted_facet_polygons_geom(polygon_indices, original_idx, v_path, p_cols, idx_p_offset[0], normals, config.vector_light)
+
         elif config.shade_mode == 'smooth':
             normals = get_vertex_normals(vecs, polygons)
             p_v, v_c, idx, total_p_verts = splitted_smooth_polygons_geom(polygon_indices, original_idx, v_path, p_cols, idx_p_offset[0], normals, config.vector_light)
+
         else:
             p_v, v_c, idx, total_p_verts = splitted_polygons_geom(polygon_indices, original_idx, v_path, p_cols, idx_p_offset[0])
+
         p_vertices.extend(p_v)
         p_vertex_colors.extend(v_c)
         p_indices.extend(idx)
     else:
         polygon_indices, original_idx = ensure_triangles(vecs, polygons, config.handle_concave_quads)
         p_vertices.extend(v_path)
-        print('p_cols',p_cols)
+
         if config.shade_mode == 'smooth':
             normals = get_vertex_normals(v_path, polygons)
             colors = []
@@ -294,15 +323,15 @@ def polygons_geom(config, vecs, polygons, p_vertices, p_vertex_colors, p_indices
 def edges_geom(config, edges, e_col, v_path, e_vertices, e_vertex_colors, e_indices, idx_e_offset):
     '''generates edges geometry'''
     if config.color_per_edge and not config.edges_use_vertex_color:
-        for (v, v1), col in zip(edges, cycle(e_col)):
-            e_vertices.extend([v_path[v], v_path[v1]])
+        for (idx0, idx1), col in zip(edges, cycle(e_col)):
+            e_vertices.extend([v_path[idx0], v_path[idx1]])
             e_vertex_colors.extend([col, col])
             e_indices.append([len(e_vertices)-2, len(e_vertices)-1])
 
     else:
         e_vertices.extend(v_path)
         e_vertex_colors.extend([e_col for v in v_path])
-        e_indices.extend([[c + idx_e_offset[0] for c in e] for e in edges ])
+        e_indices.extend([[c + idx_e_offset[0] for c in e] for e in edges])
         idx_e_offset[0] += len(v_path)
 
 
@@ -331,6 +360,7 @@ def generate_mesh_geom(config, vecs_in):
 
     idx_p_offset = [0]
     idx_e_offset = [0]
+
     if config.matrix[0]:
         vecs_in, mats_in = match_long_repeat([vecs_in, config.matrix])
         use_matrix = True
@@ -338,11 +368,14 @@ def generate_mesh_geom(config, vecs_in):
         mats_in = cycle(config.matrix)
         use_matrix = False
 
-    points_color = fill_points_colors(config.vector_color, vecs_in, config.color_per_point, config.random_colors)
+    if config.draw_verts or (config.draw_edges and config.edges_use_vertex_color) or (config.draw_polys and config.polygon_use_vertex_color):
+        points_color = fill_points_colors(config.vector_color, vecs_in, config.color_per_point, config.random_colors)
+    else:
+        points_color = []
 
     for vecs, mat, polygons, edges, p_cols, e_col in zip(vecs_in, mats_in, cycle(polygons_s), cycle(edges_s), cycle(pol_color), cycle(edge_color)):
         if use_matrix:
-            v_path =[(mat @ Vector(v))[:] for v in vecs]
+            v_path = [(mat @ Vector(v))[:] for v in vecs]
         else:
             v_path = vecs
         v_vertices.extend(v_path)
@@ -350,7 +383,6 @@ def generate_mesh_geom(config, vecs_in):
             edges_geom(config, edges, e_col, v_path, e_vertices, e_vertex_colors, e_indices, idx_e_offset)
         if config.draw_polys:
             polygons_geom(config, vecs, polygons, p_vertices, p_vertex_colors, p_indices, v_path, p_cols, idx_p_offset, points_color)
-
 
     if config.draw_verts:
 
@@ -388,7 +420,6 @@ def generate_mesh_geom(config, vecs_in):
         else:
             config.p_shader = gpu.types.GPUShader(default_vertex_shader, default_fragment_shader)
         geom.p_vertices, geom.p_vertex_colors, geom.p_indices = p_vertices, p_vertex_colors, p_indices
-        # config.batch = batch_for_shader(config.shader, 'TRIS', {"position": p_vertices}, indices=p_indices)
 
     return geom
 
@@ -399,6 +430,9 @@ def get_shader_data(named_shader=None):
     local_vars = vars().copy()
     names = ['vertex_shader', 'fragment_shader', 'draw_fragment']
     return [local_vars.get(name) for name in names]
+
+def add_dashed_shader(config):
+    config.dashed_shader = gpu.types.GPUShader(dashed_vertex_shader, dashed_fragment_shader)
 
 
 class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
@@ -509,6 +543,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         )
 
     matrix_draw_scale: FloatProperty(default=1, min=0.0001, name="Drawing matrix scale", update=updateNode)
+
     # dashed line props
     use_dashed: BoolProperty(name='Dashes Edges', update=updateNode)
     u_dash_size: FloatProperty(default=0.12, min=0.0001, name="dash size", update=updateNode)
@@ -527,7 +562,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
 
             except Exception as err:
                 print(err)
-                print(traceback.format_exc())
+
 
                 # reset custom shader
                 self.custom_vertex_shader = ''
@@ -559,10 +594,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         if self.selected_draw_mode == 'fragment':
             layout.prop(self, "custom_shader_location", icon='TEXT', text='')
 
-        c0 = layout.column(align=True)
-        row = c0.row(align=True)
-
-        row = c0.row(align=True)
+        row = layout.row(align=True)
         row.prop(self, "point_size")
         row.prop(self, "line_width")
         row = layout.row(align=True)
@@ -593,9 +625,6 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
     def rclick_menu(self, context, layout):
         self.draw_additional_props(context, layout)
 
-    def add_gl_stuff_to_config(self, config):
-        config.dashed_shader = gpu.types.GPUShader(dashed_vertex_shader, dashed_fragment_shader)
-
     def bake(self):
         with self.sv_throttle_tree_update():
             bpy.ops.node.sverchok_mesh_baker_mk3(
@@ -609,15 +638,15 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         new_input('SvStringsSocket', "Polygons")
         new_input('SvMatrixSocket', 'Matrix')
 
-        vc0 = new_input('SvColorSocket', "Vector Color")
-        vc0.prop_name = 'vector_color'
-        vc0.custom_draw = 'draw_color_socket'
-        vc = new_input('SvColorSocket', "Edge Color")
-        vc.prop_name = 'edge_color'
-        vc.custom_draw = 'draw_color_socket'
-        vc2 = new_input('SvColorSocket', "Polygon Color")
-        vc2.prop_name = 'polygon_color'
-        vc2.custom_draw = 'draw_color_socket'
+        v_col = new_input('SvColorSocket', "Vector Color")
+        v_col.prop_name = 'vector_color'
+        v_col.custom_draw = 'draw_color_socket'
+        e_col = new_input('SvColorSocket', "Edge Color")
+        e_col.prop_name = 'edge_color'
+        e_col.custom_draw = 'draw_color_socket'
+        p_col = new_input('SvColorSocket', "Polygon Color")
+        p_col.prop_name = 'polygon_color'
+        p_col.custom_draw = 'draw_color_socket'
 
         attr_socket = new_input('SvStringsSocket', 'attrs')
         attr_socket.hide = True
@@ -625,7 +654,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
 
 
     def migrate_from(self, old_node):
-        self.vectors_color = old_node.vert_color
+        self.vector_color = old_node.vert_color
         self.polygon_color = old_node.face_color
 
     def draw_color_socket(self, socket, context, layout):
@@ -681,7 +710,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         config.u_gap_size = self.u_gap_size
         config.u_resolution = self.u_resolution[:]
 
-        config.node=self
+        config.node = self
 
 
         return config
@@ -768,7 +797,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
             config.edges = edges
 
             if self.use_dashed:
-                self.add_gl_stuff_to_config(config)
+                add_dashed_shader(config)
 
             config.polygons = polygons
             config.matrix = matrix
@@ -788,7 +817,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
 
         elif inputs['Matrix'].is_linked:
             matrices = inputs['Matrix'].sv_get(deepcopy=False, default=[Matrix()])
-            # gl_instructions = self.format_draw_data(func=draw_matrix, args=(matrices, ))
+
             gl_instructions = {
                 'tree_name': self.id_data.name[:],
                 'custom_function': draw_matrix,
