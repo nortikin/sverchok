@@ -259,6 +259,8 @@ class SvSpreadsheetData(PropertyGroup):
         for data_row in self.data:
             row_names.add(data_row.name)
         variables.difference_update(row_names)
+        col_names = set(col.name for col in self.columns)
+        variables.difference_update(col_names)
         if 'Input' in variables:
             variables.remove('Input')
         return variables

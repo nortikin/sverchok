@@ -24,9 +24,10 @@ from sverchok.utils.topo import stable_topo_sort
 from sverchok.utils.modules.eval_formula import sv_compile, safe_eval, safe_eval_compiled
 
 class ReferenceCollector(ast.NodeVisitor):
-    def __init__(self, row_names, col_names=None):
+    def __init__(self, row_names, col_names, this_row_name):
         self.row_names = row_names
         self.col_names = col_names
+        self.this_row_name = this_row_name
         self.references = defaultdict(set)
         # Stack of local variables
         # It is not enough to track just a plain set of names,
@@ -82,8 +83,16 @@ class ReferenceCollector(ast.NodeVisitor):
         if isinstance(node.value, ast.Name):
             name = node.value.id
             if not self.is_local(name) and name in self.row_names:
-                if self.col_names is None or node.attr in self.col_names:
+                if node.attr in self.col_names:
                     self.references[name].add(node.attr)
+        self.generic_visit(node)
+
+    def visit_Name(self, node):
+        name = node.id
+        if not self.is_local(name):
+            if name in self.col_names:
+                self.references[self.this_row_name].add(name)
+
         self.generic_visit(node)
 
 class SvSpreadsheetRowAccessor(object):
@@ -107,12 +116,12 @@ class SvSpreadsheetAccessor(object):
     def __getattr__(self, attr_name):
         return SvSpreadsheetRowAccessor(self.data, attr_name)
 
-def get_references(string, row_names, col_names=None):
+def get_references(string, row_names, col_names, this_row_name):
     string = string.strip()
     if not len(string):
         return defaultdict(set)
     root = ast.parse(string, mode='eval')
-    visitor = ReferenceCollector(row_names, col_names)
+    visitor = ReferenceCollector(row_names, col_names, this_row_name)
     visitor.visit(root)
     result = visitor.references
     return result
@@ -134,7 +143,7 @@ def get_dependencies(src_dict, row_names, col_names):
                 rev_idx[(row_name, col_name)] = from_idx
                 #from_idx += 1
                 if isinstance(string, str):
-                    refs = get_references(string, row_names, col_names)
+                    refs = get_references(string, row_names, col_names, row_name)
                     for to_row_name in refs:
                         for to_col_name in refs[to_row_name]:
                             edges.append((from_idx, to_row_name, to_col_name))
@@ -161,13 +170,17 @@ def compile_spreadsheet(src_dict, col_names):
 
 def eval_compiled_spreadsheet(compiled_src_dict, row_names, order, variables, allowed_names=None):
     result = compiled_src_dict.copy()
-    accessors = {name : SvSpreadsheetRowAccessor(result, name) for name in row_names}
+    named_accessors = {name : SvSpreadsheetRowAccessor(result, name) for name in row_names}
     variables = variables.copy()
-    variables.update(accessors)
+    variables.update(named_accessors)
+    col_names = list(list(compiled_src_dict.values())[0].keys())
     for row_name, col_name in order:
         compiled = compiled_src_dict[row_name][col_name]
         if compiled:
-            value = safe_eval_compiled(compiled, variables, allowed_names)
+            item_variables = variables.copy()
+            column_accessors = {name : compiled_src_dict[row_name][name] for name in col_names}
+            item_variables.update(column_accessors)
+            value = safe_eval_compiled(compiled, item_variables, allowed_names)
             result[row_name][col_name] = value
     return result
 
