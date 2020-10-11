@@ -53,6 +53,14 @@ Inputs
 - Faces color
 - attrs: Attributes socket
 
+Examples
+--------
+
+.. image:: https://user-images.githubusercontent.com/10011941/95666436-eb250980-0b59-11eb-9785-3d6f3d40fbdc.png
+
+.. image:: https://user-images.githubusercontent.com/10011941/95681591-fd965600-0be0-11eb-9fbf-6c124ba71c03.png
+
+.. image:: (https://user-images.githubusercontent.com/10011941/95681673-81e8d900-0be1-11eb-8ff0-b5a57675617c.png
 
 Support
 -------
