@@ -17,6 +17,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from mathutils import Matrix
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, FloatProperty, EnumProperty
 from bpy.types import NodeTree, NodeSocket
@@ -33,8 +34,8 @@ from sverchok.data_structure import (
     SIMPLE_DATA_TYPES,
     flatten_data, graft_data, map_at_level, wrap_data)
 
-from sverchok.utils.field.scalar import SvConstantScalarField
-from sverchok.utils.field.vector import SvMatrixVectorField, SvConstantVectorField
+from sverchok.utils.field.scalar import SvScalarField, SvConstantScalarField
+from sverchok.utils.field.vector import SvVectorField, SvMatrixVectorField, SvConstantVectorField
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.algorithms import reparametrize_curve
 from sverchok.utils.surface import SvSurface
@@ -145,7 +146,7 @@ class SvSocketProcessing(object):
         return hasattr(self, 'do_simplify') and (self.allow_simplify or self.is_output)
 
     def can_graft(self):
-        return self.is_output or self.allow_graft
+        return hasattr(self, 'do_graft') and (self.is_output or self.allow_graft)
 
     def can_wrap(self):
         return self.is_output or self.allow_wrap
@@ -187,7 +188,15 @@ class SvSocketProcessing(object):
         return self.has_simplify_modes(context) or self.can_graft() or self.can_wrap()
 
     def draw_menu_button(self, context, layout, node, text):
-        pass
+        if (self.is_output or self.is_linked or not self.use_prop):
+            layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
+
+    def draw_menu_items(self, context, layout):
+        self.draw_simplify_modes(layout)
+        if self.can_graft():
+            layout.prop(self, 'use_graft')
+        if self.can_wrap():
+            layout.prop(self, 'use_wrap')
 
 class SvSocketCommon(SvSocketProcessing):
     """
@@ -485,6 +494,12 @@ class SvMatrixSocket(NodeSocket, SvSocketCommon):
     color = (0.2, 0.8, 0.8, 1.0)
     quick_link_to_node = 'SvMatrixInNodeMK4'
 
+    def do_flatten(self, data):
+        return flatten_data(data, 1, data_types=(Matrix,))
+
+    def do_graft(self, data):
+        return graft_data(data, item_level=0, data_types=(Matrix,))
+
 class SvVerticesSocket(NodeSocket, SvSocketCommon):
     '''For vertex data'''
     bl_idname = "SvVerticesSocket"
@@ -499,17 +514,6 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
     prop: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
 
     expanded: BoolProperty(default=False)  # for minimizing showing socket property
-
-    def draw_menu_button(self, context, layout, node, text):
-        if (self.is_output or self.is_linked or not self.use_prop):
-            layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
-
-    def draw_menu_items(self, context, layout):
-        self.draw_simplify_modes(layout)
-        if self.can_graft():
-            layout.prop(self, 'use_graft')
-        if self.can_wrap():
-            layout.prop(self, 'use_wrap')
 
     def do_simplify(self, data):
         return flatten_data(data, 2)
@@ -668,10 +672,6 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
             elif self.default_property_type == 'int':
                 layout.prop(self, 'default_int_property', text=self.name)
 
-    def draw_menu_button(self, context, layout, node, text):
-        if (self.is_output or self.is_linked or not self.prop_name):
-            layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
-
     def draw_menu_items(self, context, layout):
         self.draw_simplify_modes(layout)
         if self.can_graft():
@@ -690,11 +690,8 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
     def do_graft(self, data):
         return graft_data(data, item_level=0, data_types = SIMPLE_DATA_TYPES + (SvCurve, SvSurface))
 
-    def do_flattern(self, data):
-        return flattern_data(data, 1)
-
     def do_simplify(self, data):
-        return flattern_data(data, 2)
+        return flatten_data(data, 2)
 
     def do_graft(self, data):
         return graft_data(data, item_level=0, data_types = SIMPLE_DATA_TYPES + (SvCurve, SvSurface))
@@ -776,6 +773,12 @@ class SvDictionarySocket(NodeSocket, SvSocketCommon):
 
     color = (1.0, 1.0, 1.0, 1.0)
 
+    def do_flatten(self, data):
+        return flatten_data(data, 1, data_types=(dict,))
+
+    def do_simplify(self, data):
+        return flatten_data(data, 2, data_types=(dict,))
+
 class SvChameleonSocket(NodeSocket, SvSocketCommon):
     '''Using as input socket with color of other connected socket'''
     bl_idname = "SvChameleonSocket"
@@ -802,16 +805,6 @@ class SvSurfaceSocket(NodeSocket, SvSocketCommon):
 
     color = (0.4, 0.2, 1.0, 1.0)
 
-    def draw_menu_button(self, context, layout, node, text):
-        layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
-
-    def draw_menu_items(self, context, layout):
-        self.draw_simplify_modes(layout)
-        if self.can_graft():
-            layout.prop(self, 'use_graft')
-        if self.can_wrap():
-            layout.prop(self, 'use_wrap')
-
     def do_flatten(self, data):
         return flatten_data(data, 1, data_types=(SvSurface,))
 
@@ -835,15 +828,8 @@ class SvCurveSocket(NodeSocket, SvSocketCommon):
             flags.append('R')
         return flags
 
-    def draw_menu_button(self, context, layout, node, text):
-        layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
-
     def draw_menu_items(self, context, layout):
-        self.draw_simplify_modes(layout)
-        if self.can_graft():
-            layout.prop(self, 'use_graft')
-        if self.can_wrap():
-            layout.prop(self, 'use_wrap')
+        super().draw_menu_items(context, layout)
         layout.prop(self, 'reparametrize')
 
     def do_flatten(self, data):
@@ -871,6 +857,12 @@ class SvScalarFieldSocket(NodeSocket, SvSocketCommon):
     color = (0.9, 0.4, 0.1, 1.0)
     default_conversion_name = ConversionPolicies.FIELD.conversion_name
 
+    def do_flatten(self, data):
+        return flatten_data(data, 1, data_types=(SvScalarField,))
+
+    def do_graft(self, data):
+        return graft_data(data, item_level=0, data_types=(SvScalarField,))
+
 class SvVectorFieldSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvVectorFieldSocket"
     bl_label = "Vector Field Socket"
@@ -878,12 +870,27 @@ class SvVectorFieldSocket(NodeSocket, SvSocketCommon):
     color = (0.1, 0.1, 0.9, 1.0)
     default_conversion_name = ConversionPolicies.FIELD.conversion_name
 
+    def do_flatten(self, data):
+        return flatten_data(data, 1, data_types=(SvVectorField,))
+
+    def do_graft(self, data):
+        return graft_data(data, item_level=0, data_types=(SvVectorField,))
+
 class SvSolidSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvSolidSocket"
     bl_label = "Solid Socket"
 
     color = (0.0, 0.65, 0.3, 1.0)
 
+    def do_flatten(self, data):
+        from sverchok.dependencies import FreeCAD
+        import Part
+        return flatten_data(data, 1, data_types=(Part.Shape,))
+
+    def do_graft(self, data):
+        from sverchok.dependencies import FreeCAD
+        import Part
+        return graft_data(data, item_level=0, data_types=(Part.Shape,))
 
 class SvLinkNewNodeInput(bpy.types.Operator):
     ''' Spawn and link new node to the left of the caller node'''
