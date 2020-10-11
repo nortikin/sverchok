@@ -35,7 +35,6 @@ Modifier Change
    vertices_mask
    make_monotone
    planar_edgenet_to_polygons
-   pulga_physics
    inset_faces
    follow_active_quads
    separate_parts_to_indexes

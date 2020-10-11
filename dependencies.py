@@ -128,9 +128,19 @@ except ImportError:
     info(freecad_d.message)
     FreeCAD = None
 
+cython_d = sv_dependencies["cython"] = SvDependency("Cython", "https://www.freecadweb.org/")
+cython_d.pip_installable = True
+try:
+    import Cython
+    cython_d.message = "Cython package is available"
+    cython_d.module = Cython
+except ImportError:
+    cython_d.message = "Cython package is not available, Enhanched KDTree search will not be available"
+    info(cython_d.message)
+    Cython = None
+
 good_names = [d.package for d in sv_dependencies.values() if d.module is not None and d.package is not None]
 if good_names:
     info("Dependencies available: %s.", ", ".join(good_names))
 else:
     info("No dependencies are available.")
-
