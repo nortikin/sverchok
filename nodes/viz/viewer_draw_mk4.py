@@ -274,13 +274,14 @@ def splitted_smooth_polygons_geom(polygon_indices, original_idx, v_path, cols, i
 
 def get_vertex_normals(vecs, polygons):
     mesh = bmesh_from_pydata(vecs, [], polygons, normal_update=True)
-    return [vert.normal for vert in mesh.verts]
+    return [Vector(vert.normal) for vert in mesh.verts]
 
 
 def polygons_geom(config, vecs, polygons, p_vertices, p_vertex_colors, p_indices, v_path, p_cols, idx_p_offset, points_colors):
     '''generates polygons geometry'''
 
     if (config.color_per_polygon and not config.polygon_use_vertex_color) or config.shade_mode == 'facet':
+
         polygon_indices, original_idx = ensure_triangles(vecs, polygons, config.handle_concave_quads)
 
         if config.shade_mode == 'facet':
@@ -308,10 +309,16 @@ def polygons_geom(config, vecs, polygons, p_vertices, p_vertex_colors, p_indices
         if config.shade_mode == 'smooth':
             normals = get_vertex_normals(v_path, polygons)
             colors = []
-            for normal_v in normals:
+            if config.polygon_use_vertex_color:
+                for normal_v, col in zip(normals, points_colors):
+
+                    factor = normal_v.dot(config.vector_light)*0.5+0.5
+                    colors.append([col[0]*factor, col[1]*factor, col[2]*factor, col[3]])
+            else:
                 col = p_cols
-                factor = normal_v.dot(config.vector_light)*0.5+0.5
-                colors.append([col[0]*factor, col[1]*factor, col[2]*factor, col[3]])
+                for normal_v in normals:
+                    factor = normal_v.dot(config.vector_light)*0.5+0.5
+                    colors.append([col[0]*factor, col[1]*factor, col[2]*factor, col[3]])
             p_vertex_colors.extend(colors)
         else:
             p_vertex_colors.extend([p_cols for v in v_path])
@@ -398,7 +405,7 @@ def generate_mesh_geom(config, vecs_in):
 
 
     if config.draw_polys and config.shade_mode != 'fragment':
-        if config.polygon_use_vertex_color and config.shade_mode != 'facet':
+        if config.polygon_use_vertex_color and config.shade_mode not in ['facet', 'smooth']:
             p_vertex_colors = points_color
         config.p_shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
         geom.p_vertices, geom.p_vertex_colors, geom.p_indices = p_vertices, p_vertex_colors, p_indices
