@@ -104,6 +104,32 @@ class SvSpreadsheetRow(PropertyGroup):
             data[column.name] = item.get_value(column.data_type)
         return data
 
+    def draw(self, spreadsheet, layout, index):
+        layout.prop(self, 'name', text='')
+        for column, item in zip(spreadsheet.columns, self.items):
+            prop_type = column.data_type
+            prop_name = f"{prop_type}_value"
+            handler_name = type_handlers[prop_type]
+            handler = globals()[handler_name]
+            handler.draw(layout, item, prop_name, column.name)
+
+        up = layout.operator(SvSpreadsheetMoveRow.bl_idname, text='', icon='TRIA_UP')
+        up.nodename = spreadsheet.nodename
+        up.treename = spreadsheet.treename
+        up.item_index = index
+        up.shift = -1
+
+        down = layout.operator(SvSpreadsheetMoveRow.bl_idname, text='', icon='TRIA_DOWN')
+        down.nodename = spreadsheet.nodename
+        down.treename = spreadsheet.treename
+        down.item_index = index
+        down.shift = 1
+
+        remove = layout.operator(SvSpreadsheetRemoveRow.bl_idname, text='', icon='REMOVE')
+        remove.nodename = spreadsheet.nodename
+        remove.treename = spreadsheet.treename
+        remove.item_index = index
+
 class SvSpreadsheetAddRow(bpy.types.Operator):
     bl_label = "Add spreadsheet row"
     bl_idname = "sverchok.spreadsheet_row_add"
@@ -117,6 +143,13 @@ class SvSpreadsheetAddRow(bpy.types.Operator):
         node.add_row()
         updateNode(node, context)
         return {'FINISHED'}
+
+    @staticmethod
+    def draw_button(treename, nodename, layout):
+        add = layout.operator(SvSpreadsheetAddRow.bl_idname, text='', icon='ADD')
+        add.nodename = nodename
+        add.treename = treename
+        return add
 
 class SvSpreadsheetRemoveRow(bpy.types.Operator):
     bl_label = "Remove spreadsheet row"
@@ -157,45 +190,24 @@ class SvSpreadsheetData(PropertyGroup):
     nodename : StringProperty(name='nodename')
     treename : StringProperty(name='treename')
 
+    def draw_header(self, layout, separators=True):
+        layout.label(text="Item name")
+        for column in self.columns:
+            layout.label(text=column.name)
+        if separators:
+            layout.separator()
+            layout.separator()
+            layout.separator()
+
     def draw(self, layout):
         n = len(self.columns)
         grid = layout.grid_flow(row_major=True, columns=n+4, align=True)
-        grid.label(text="Item name")
-        for column in self.columns:
-            grid.label(text=column.name)
-        grid.separator()
-        grid.separator()
-        grid.separator()
+        self.draw_header(grid)
         for index, data_row in enumerate(self.data):
-            grid.prop(data_row, 'name', text='')
-            for column, item in zip(self.columns, data_row.items):
-                prop_type = column.data_type
-                prop_name = f"{prop_type}_value"
-                handler_name = type_handlers[prop_type]
-                handler = globals()[handler_name]
-                handler.draw(grid, item, prop_name, column.name)
-
-            up = grid.operator(SvSpreadsheetMoveRow.bl_idname, text='', icon='TRIA_UP')
-            up.nodename = self.nodename
-            up.treename = self.treename
-            up.item_index = index
-            up.shift = -1
-
-            down = grid.operator(SvSpreadsheetMoveRow.bl_idname, text='', icon='TRIA_DOWN')
-            down.nodename = self.nodename
-            down.treename = self.treename
-            down.item_index = index
-            down.shift = 1
-
-            remove = grid.operator(SvSpreadsheetRemoveRow.bl_idname, text='', icon='REMOVE')
-            remove.nodename = self.nodename
-            remove.treename = self.treename
-            remove.item_index = index
+            data_row.draw(self, grid, index)
 
         row = layout.row(align=True)
-        add = row.operator(SvSpreadsheetAddRow.bl_idname, text='', icon='ADD')
-        add.nodename = self.nodename
-        add.treename = self.treename
+        SvSpreadsheetAddRow.draw_button(self.treename, self.nodename, row)
         return row
 
     def set_node(self, node):
