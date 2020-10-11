@@ -127,7 +127,7 @@ class SvSolidEdgeCurve(SvCurve):
 
     def to_nurbs(self, implementation = SvNurbsMaths.FREECAD):
         curve = self.curve.toBSpline(*self.u_bounds)
-        curve.transform(self.edge.Matrix)
+        #curve.transform(self.edge.Matrix)
         control_points = np.array(curve.getPoles())
         weights = np.array(curve.getWeights())
         knotvector = np.array(curve.KnotSequence)
