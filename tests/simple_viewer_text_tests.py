@@ -21,7 +21,6 @@ class TextViewerTest(EmptyTreeTestCase):
 
         # Read what the operator has written to the text buffer.
         text = bpy.data.texts['Sverchok_viewer'].as_string()
-        print(text)
         # Test that text in buffer equals exactly to the text saved
         # in the file from the first test run.
         with open(self.get_reference_file_path("text_viewer_out.txt"), "r") as f:
