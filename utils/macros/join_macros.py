@@ -54,7 +54,7 @@ def join_macros(context, operator, term, nodes, links):
             join_nodes[i].location = maxx + 100, maxy - (180+(22*(len(selected_nodes)))) * i
             if framed:
                 join_nodes[i].parent = framed
-            
+
 
         sorted_nodes = sorted(selected_nodes, key=lambda n: n.location.y, reverse=True)
 
@@ -65,13 +65,13 @@ def join_macros(context, operator, term, nodes, links):
                     links.new(node.outputs[n], join_nodes[j].inputs[i])
 
         if all(node.outputs[0].bl_idname == "SvVerticesSocket" for node in sorted_nodes):
-            viewer_node = nodes.new("SvVDExperimental")
+            viewer_node = nodes.new("SvViewerDrawMk4")
 
             viewer_node.location = join_nodes[0].absolute_location[0] + join_nodes[0].width + 100, maxy
             if framed:
                 viewer_node.parent = framed
 
-            # link the output switch node to the SvVDExperimental node
+            # link the output switch node to the SvViewerDrawMk4 node
             links.new(join_nodes[0].outputs[0], viewer_node.inputs[0])
             if len(socket_indices) > 1:
                 links.new(join_nodes[1].outputs[0], viewer_node.inputs[socket_indices[1]])

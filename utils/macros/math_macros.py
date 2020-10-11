@@ -74,7 +74,7 @@ def math_macros(context, operator, term, nodes, links):
         links.new(node.outputs[0], math_node.inputs[i])
 
     if is_vector:
-        viewer_node = nodes.new("SvVDExperimental")
+        viewer_node = nodes.new("SvViewerDrawMk4")
         viewer_node.location = math_node.location.x + math_node.width + 100, maxy
 
         # link the output math node to the ViewerDraw node

@@ -32,7 +32,7 @@ def add_temporal_viewer_draw(tree, nodes, links, existing_node, cut_links):
     tree = nodes[0].id_data
     previous_state = tree.sv_process
     tree.sv_process = False
-    bl_idname_new_node = 'SvVDExperimental'
+    bl_idname_new_node = 'SvViewerDrawMk4'
     output_map = get_output_sockets_map(existing_node)
     try:
         new_node = nodes['Temporal Viewer']

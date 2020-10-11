@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -22,7 +22,7 @@ def gp_macro_one(context, operator, term, nodes, links):
         ['SvGenNumberRange', (720, 90)],
         ['SvInterpolationNodeMK3', (880, 40)],
         ['LineConnectNodeMK2', (1060, -40)],
-        ['SvVDExperimental', (1245, 50)],
+        ['SvViewerDrawMk4', (1245, 50)],
     ]
 
     made_nodes = []
@@ -64,7 +64,7 @@ def gp_macro_one(context, operator, term, nodes, links):
     # Viewer Draw
     made_nodes[7]
     links.new(made_nodes[6].outputs[0], made_nodes[7].inputs[0])
-    links.new(made_nodes[6].outputs[1], made_nodes[7].inputs[1])    
+    links.new(made_nodes[6].outputs[1], made_nodes[7].inputs[1])
 
 
 def gp_macro_two(context, operator, term, nodes, links):
@@ -75,7 +75,7 @@ def gp_macro_two(context, operator, term, nodes, links):
         # needs a list join lev2 from MULX to VECINTRANGE
         ['SvInterpolationNodeMK3', (680, 40)],
         ['LineConnectNodeMK2', (860, -40)],
-        ['SvVDExperimental', (1045, 50)],
+        ['SvViewerDrawMk4', (1045, 50)],
         ['ListJoinNode', (430, -20)]
     ]
 
@@ -96,7 +96,7 @@ def gp_macro_two(context, operator, term, nodes, links):
     obj_id, path_len, scalar_math, vec_int, uv_con, drawnode, listjoin = made_nodes
 
     # -- node settings --
-    obj_id.Mode = 'grease_pencils' 
+    obj_id.Mode = 'grease_pencils'
     vec_int.infer_from_integer_input = True
     scalar_math.current_op = 'MUL'
     scalar_math.y_ = 25
