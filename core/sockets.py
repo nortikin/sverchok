@@ -17,7 +17,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from mathutils import Matrix
+from mathutils import Matrix, Quaternion
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, FloatProperty, EnumProperty
 from bpy.types import NodeTree, NodeSocket
@@ -573,6 +573,12 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
             c1.prop(self, "expanded", icon='TRIA_DOWN', text="")
             row = c2.row(align=True)
             row.template_component_menu(prop_origin, prop_name, name=self.name)
+
+    def do_flatten(self, data):
+        return flatten_data(data, 1, data_types=(Quaternion,))
+
+    def do_graft(self, data):
+        return graft_data(data, item_level=0, data_types=(Quaternion,))
 
 class SvColorSocket(NodeSocket, SvSocketCommon):
     '''For color data'''
