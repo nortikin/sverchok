@@ -8,7 +8,7 @@ Viz
    mesh_viewer
    viewer_metaball
    viewer_waveform_output
-   vd_draw_experimental
+   viewer_draw_mk4
    viewer_2d
    empty_out
    viewer_nurbs_curve

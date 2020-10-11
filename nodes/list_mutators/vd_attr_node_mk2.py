@@ -12,7 +12,7 @@ import bpy
 from bpy.props import BoolProperty, StringProperty, IntProperty, CollectionProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, enum_item_5
-from sverchok.nodes.viz.viewer_3d import SvViewerDrawMk4
+from sverchok.nodes.viz.viewer_draw_mk4 import SvViewerDrawMk4
 
 
 sock_str = {
@@ -98,12 +98,12 @@ class SV_UL_VDMK4ItemList(bpy.types.UIList):
         layout.prop(item, "show_socket", text="", icon='TRACKING', toggle=True)
         layout.prop(item, "use_default", text="", icon='SETTINGS', toggle=True)
         layout.label(text=attr_name)
-        layout.prop(node.vd_items_props_mk2[0], attr_name, text='')
+        layout.prop(node.vd_mk4_items_props[0], attr_name, text='')
 
 class SvVDAttrsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: vd attr
-    Tooltip: Attribute Node for Viewer Draw Experimental
+    Triggers: Viewer Draw control
+    Tooltip: Attribute Node for Viewer Draw
 
     Allows access to VD Experimental's attributes which control how the
     node draws faces/edges. It can also switch off the node.
@@ -113,12 +113,12 @@ class SvVDAttrsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'MOD_HUE_SATURATION'
 
     property_index: IntProperty(name='index', default=0)
-    vd_items_group_mk2: CollectionProperty(name="vd attrs", type=SvVDMK4Item)
-    vd_items_props_mk2: CollectionProperty(name="vd props", type=SvVDMK4Properties)
+    vd_mk4_items_group: CollectionProperty(name="vd attrs", type=SvVDMK4Item)
+    vd_mk4_items_props: CollectionProperty(name="vd props", type=SvVDMK4Properties)
 
     def draw_group(self, context, layout):
-        if self.vd_items_group_mk2:
-            layout.template_list("SV_UL_VDMK4ItemList", "", self, "vd_items_group_mk2", self, "property_index")
+        if self.vd_mk4_items_group:
+            layout.template_list("SV_UL_VDMK4ItemList", "", self, "vd_mk4_items_group", self, "property_index")
 
     def vd_init_sockets(self, context):
         self.outputs.new("SvStringsSocket", name="attrs")
@@ -131,12 +131,12 @@ class SvVDAttrsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
     def vd_init_uilayout_data(self, context):
         for key, value in maximum_spec_vd_dict.items():
-            item = self.vd_items_group_mk2.add()
+            item = self.vd_mk4_items_group.add()
             item.attr_name = key
             item.show_socket = False
             item.origin_node_name = self.name
 
-        self.vd_items_props_mk2.add()
+        self.vd_mk4_items_props.add()
 
     def sv_init(self, context):
         self.vd_init_sockets(context)
@@ -149,9 +149,9 @@ class SvVDAttrsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         self.draw_group(context, layout)
 
     def ensure_correct_origin_node_name(self):
-        if self.vd_items_group_mk2:
-            if not self.vd_items_group_mk2[0].origin_node_name == self.name:
-                for item in self.vd_items_group_mk2:
+        if self.vd_mk4_items_group:
+            if not self.vd_mk4_items_group[0].origin_node_name == self.name:
+                for item in self.vd_mk4_items_group:
                     item.origin_node_name = self.name
 
     def get_repr_and_socket_from_attr_name(self, attr_name):
@@ -170,7 +170,7 @@ class SvVDAttrsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             elif socket_repr.kind in {'b'}:
                 return bool(data[0][0])
             elif socket_repr.kind in {'enum'}:
-                prop_signature = self.vd_items_props_mk2.__annotations__[item.attr_name][1]
+                prop_signature = self.vd_mk4_items_props.__annotations__[item.attr_name][1]
                 enum_index = data[0][0]
                 enum_item = prop_signature['items'][enum_index]
                 return enum_item[0]
@@ -186,14 +186,14 @@ class SvVDAttrsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     def attrdict_from_state(self):
 
         current_attr_dict = {}
-        if self.vd_items_group_mk2 and self.vd_items_props_mk2:
-            for item in self.vd_items_group_mk2:
+        if self.vd_mk4_items_group and self.vd_mk4_items_props:
+            for item in self.vd_mk4_items_group:
                 attr = item.attr_name
                 if not item.show_socket and not item.use_default:
                     # apparantly no desire to pass this attr
                     continue
                 if item.use_default or not item.show_socket:
-                    value = getattr(self.vd_items_props_mk2[0], attr)
+                    value = getattr(self.vd_mk4_items_props[0], attr)
                     value = self.make_value_serializable(attr, value)
                 else:
                     value = self.get_attr_from_input(item)
@@ -210,32 +210,6 @@ class SvVDAttrsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         self.ensure_correct_origin_node_name()
         self.outputs['attrs'].sv_set([self.attrdict_from_state])
-
-    ## ---- UI JSON STORAGE SECTION BELOW THIS LINE
-
-    def load_from_json(self, node_data: dict, import_version: float):
-        """ this gets triggered by IOJSON to populate this node from json """
-        if import_version <= 0.08:
-            strings_json = node_data['attr_storage']
-            attrs_dict = json.loads(strings_json)['attrs']
-            state_dict = json.loads(strings_json)['state']
-
-            self.id_data.freeze(hard=True)
-
-            # repopulate vd_items_group_mk2
-            for item in self.vd_items_group_mk2:
-                attr_details = attrs_dict[item.attr_name]
-                socket_repr, associated_socket = self.get_repr_and_socket_from_attr_name(item.attr_name)
-                if attr_details['show_socket']:
-                    item.show_socket = True
-                if attr_details['use_default']:
-                    item.use_default = True
-
-            # repopulate vd_items_props_mk2
-            for item, value in state_dict.items():
-                setattr(self.vd_items_props_mk2[0], item, value)
-
-            self.id_data.unfreeze(hard=True)
 
 
 classes = [SvVDMK4Item, SvVDMK4Properties, SV_UL_VDMK4ItemList, SvVDAttrsNodeMk2]

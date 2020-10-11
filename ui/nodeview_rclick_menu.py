@@ -163,6 +163,7 @@ def add_connection(tree, bl_idname_new_node, offset):
                 links.new(outputs[output_map['surface']], eval_node.inputs[0])
                 links.new(eval_node.outputs[0], inputs[0])
                 links.new(eval_node.outputs[1], inputs[1])
+                links.new(eval_node.outputs[2], inputs[2])
             elif 'solid' in output_map:
                 tree.nodes.remove(new_node)
                 new_node = nodes.new('SvSolidViewerNode')

@@ -36,6 +36,7 @@ from sverchok.data_structure import updateNode, node_id, match_long_repeat, enum
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
+from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.utils.sv_shader_sources import dashed_vertex_shader, dashed_fragment_shader
 from sverchok.utils.context_managers import hard_freeze
 from sverchok.utils.geom import multiply_vectors_deep
@@ -119,6 +120,12 @@ def fill_points_colors(vectors_color, data, color_per_point, random_colors):
                     points_color.append(col)
 
     return points_color
+
+def draw_matrix(context, args):
+    """ this takes one or more matrices packed into an iterable """
+    mdraw = MatrixDraw28()
+    for matrix in args[0]:
+        mdraw.draw_matrix(matrix, scale=args[1])
 
 def view_3d_geom(context, args):
     """
@@ -395,11 +402,15 @@ def get_shader_data(named_shader=None):
 
 
 class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
-    '''Curved interpolation'''
+    """
+    Triggers: vd geometry preview
+    Tooltip: drawing preview on 3d scene, with experimental features
+
+    """
     bl_idname = 'SvViewerDrawMk4'
     bl_label = 'Viewer Draw'
-    bl_icon = 'HIDE_OFF'
-    sv_icon = 'SV_EASING'
+    bl_icon = 'GREASEPENCIL'
+    sv_icon = 'SV_DRAW_VIEWER'
 
     node_dict = {}
 
@@ -490,19 +501,21 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         )
 
     polygon_color: FloatVectorProperty(
-        update=updateNode, name='Ploygons Color', default=(.2, .7, 1.0, 1.0),
+        update=updateNode, name='Ploygons Color', default=(0.14, 0.54, 0.81, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR'
         )
     display_faces: BoolProperty(
         update=updateNode, name='Display Polygons', default=True
         )
 
+    matrix_draw_scale: FloatProperty(default=1, min=0.0001, name="Drawing matrix scale", update=updateNode)
     # dashed line props
     use_dashed: BoolProperty(name='Dashes Edges', update=updateNode)
     u_dash_size: FloatProperty(default=0.12, min=0.0001, name="dash size", update=updateNode)
     u_gap_size: FloatProperty(default=0.19, min=0.0001, name="gap size", update=updateNode)
     u_resolution: FloatVectorProperty(default=(25.0, 18.0), size=2, min=0.01, name="resolution", update=updateNode)
 
+    # custom shader props
     def populate_node_with_custom_shader_from_text(self):
         if self.custom_shader_location in bpy.data.texts:
             try:
@@ -530,6 +543,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
     custom_fragment_shader: StringProperty(default=default_fragment_shader, name='fragment shader')
     custom_shader_location: StringProperty(update=wrapped_update, name='custom shader location')
 
+    # attributes socket props
     def configureAttrSocket(self, context):
         self.inputs['attrs'].hide_safe = not self.node_ui_show_attrs_socket
 
@@ -573,6 +587,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'draw_gl_wireframe')
         layout.prop(self, 'handle_concave_quads')
         layout.prop(self, 'node_ui_show_attrs_socket')
+        layout.prop(self, 'matrix_draw_scale')
         layout.prop(self, "use_dashed")
 
     def rclick_menu(self, context, layout):
@@ -586,6 +601,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
             bpy.ops.node.sverchok_mesh_baker_mk3(
                 idname=self.name, idtree=self.id_data.name
             )
+
     def sv_init(self, context):
         new_input = self.inputs.new
         new_input('SvVerticesSocket', "Vertices")
@@ -731,42 +747,53 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
             return
 
 
-        if not inputs['Vertices'].is_linked:
+        if not any([inputs['Vertices'].is_linked, inputs['Matrix'].is_linked]):
             return
-        vecs = inputs['Vertices'].sv_get(default=[[]])
 
-        edges = inputs['Edges'].sv_get(default=[[]])
-        polygons = inputs['Polygons'].sv_get(default=[[]])
-        matrix = inputs['Matrix'].sv_get(default=[[]])
-        vector_color = inputs['Vector Color'].sv_get(default=[[self.vector_color]])
-        edge_color = inputs['Edge Color'].sv_get(default=[[self.edge_color]])
-        poly_color = inputs['Polygon Color'].sv_get(default=[[self.polygon_color]])
-        seed_set(self.random_seed)
-        config = self.create_config()
+        if inputs['Vertices'].is_linked:
+            vecs = inputs['Vertices'].sv_get(default=[[]])
 
-        config.vector_color = vector_color
-        config.edge_color = edge_color
-        config.poly_color = poly_color
-        config.edges = edges
+            edges = inputs['Edges'].sv_get(default=[[]])
+            polygons = inputs['Polygons'].sv_get(default=[[]])
+            matrix = inputs['Matrix'].sv_get(default=[[]])
+            vector_color = inputs['Vector Color'].sv_get(default=[[self.vector_color]])
+            edge_color = inputs['Edge Color'].sv_get(default=[[self.edge_color]])
+            poly_color = inputs['Polygon Color'].sv_get(default=[[self.polygon_color]])
+            seed_set(self.random_seed)
+            config = self.create_config()
 
-        if self.use_dashed:
-            self.add_gl_stuff_to_config(config)
+            config.vector_color = vector_color
+            config.edge_color = edge_color
+            config.poly_color = poly_color
+            config.edges = edges
 
-        config.polygons = polygons
-        config.matrix = matrix
-        if not inputs['Edges'].is_linked and self.display_edges:
-            config.edges = polygons_to_edges(polygons, unique_edges=True)
+            if self.use_dashed:
+                self.add_gl_stuff_to_config(config)
 
-        geom = generate_mesh_geom(config, vecs)
+            config.polygons = polygons
+            config.matrix = matrix
+            if not inputs['Edges'].is_linked and self.display_edges:
+                config.edges = polygons_to_edges(polygons, unique_edges=True)
+
+            geom = generate_mesh_geom(config, vecs)
 
 
-        draw_data = {
+            draw_data = {
 
-            'tree_name': self.id_data.name[:],
-            'custom_function': view_3d_geom,
-            'args': (geom, config)
-        }
-        callback_enable(n_id, draw_data)
+                'tree_name': self.id_data.name[:],
+                'custom_function': view_3d_geom,
+                'args': (geom, config)
+            }
+            callback_enable(n_id, draw_data)
+
+        elif inputs['Matrix'].is_linked:
+            matrices = inputs['Matrix'].sv_get(deepcopy=False, default=[Matrix()])
+            # gl_instructions = self.format_draw_data(func=draw_matrix, args=(matrices, ))
+            gl_instructions = {
+                'tree_name': self.id_data.name[:],
+                'custom_function': draw_matrix,
+                'args': (matrices, self.matrix_draw_scale)}
+            callback_enable(n_id, gl_instructions)
 
     def sv_free(self):
         callback_disable(node_id(self))
