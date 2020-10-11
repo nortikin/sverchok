@@ -309,6 +309,7 @@ class ConversionPolicies(Enum):
     """It should keeps all policy classes"""
     DEFAULT = DefaultImplicitConversionPolicy
     FIELD = FieldImplicitConversionPolicy
+    LENIENT = LenientImplicitConversionPolicy
 
     @property
     def conversion(self):
@@ -325,3 +326,4 @@ class ConversionPolicies(Enum):
                 return enum.conversion
         raise LookupError(f"Conversion policy with name={conversion_name} was not found,"
                           f"Available names: {[e.conversion_name for e in cls]}")
+

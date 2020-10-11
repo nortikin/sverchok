@@ -799,6 +799,8 @@ class SvChameleonSocket(NodeSocket, SvSocketCommon):
             self.color = (0.0, 0.0, 0.0, 0.0)
             self.dynamic_type = self.bl_idname
 
+    default_conversion_name = ConversionPolicies.LENIENT.conversion_name
+
 class SvSurfaceSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvSurfaceSocket"
     bl_label = "Surface Socket"
