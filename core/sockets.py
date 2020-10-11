@@ -63,6 +63,9 @@ class SV_MT_SocketOptionsMenu(bpy.types.Menu):
             context.socket.draw_menu_items(context, layout)
 
 class SvSocketProcessing(object):
+    """
+    Mixin class for data processing logic of a socket.
+    """
     # These properties are to be set explicitly by node classes
     # for input sockets, if the node knows it can handle simplified data.
     # For outputs, these properties are not used.
@@ -122,6 +125,18 @@ class SvSocketProcessing(object):
             name = "Simplify",
             default = False,
             update = update_simplify_flag)
+
+    def get_mode_flags(self):
+        flags = []
+        if self.use_flatten:
+            flags.append('F')
+        if self.use_simplify:
+            flags.append('S')
+        if self.use_graft:
+            flags.append('G')
+        if self.use_wrap:
+            flags.append('W')
+        return flags
 
     def can_flatten(self):
         return hasattr(self, 'do_flatten') and (self.allow_flatten or self.is_output)
@@ -217,7 +232,7 @@ class SvSocketCommon(SvSocketProcessing):
 
     @property
     def other(self):
-        """Returns opposite liked socket, if socket is outputs it will return one random opposite linked socket"""
+        """Returns opposite linked socket, if socket is outputs it will return one random opposite linked socket"""
         return get_other_socket(self)
 
     @property
@@ -332,6 +347,15 @@ class SvSocketCommon(SvSocketProcessing):
 
     def draw(self, context, layout, node, text):
 
+        def draw_label(text):
+            flags = self.get_mode_flags()
+            if flags:
+                text = text + " [" + ",".join(flags) + "]"
+            if self.description:
+                layout.operator('node.sv_socket_show_help', text=text, emboss=False).text = self.description
+            else:
+                layout.label(text=text)
+
         # just handle custom draw..be it input or output.
         if self.custom_draw:
             # does the node have the draw function referred to by
@@ -340,10 +364,10 @@ class SvSocketCommon(SvSocketProcessing):
                 getattr(node, self.custom_draw)(self, context, layout)
 
         elif self.is_linked:  # linked INPUT or OUTPUT
-            layout.label(text=(self.label or text) + f". {self.objects_number or ''}")
+            draw_label((self.label or text) + f". {self.objects_number or ''}")
 
         elif self.is_output:  # unlinked OUTPUT
-            layout.label(text=self.label or text)
+            draw_label(self.label or text)
 
         else:  # unlinked INPUT
             if self.get_prop_name():  # has property
@@ -354,7 +378,7 @@ class SvSocketCommon(SvSocketProcessing):
 
             else:  # no property and not use default prop
                 self.draw_quick_link(context, layout, node)
-                layout.label(text=self.label or text)
+                draw_label(self.label or text)
 
         if self.has_menu(context):
             self.draw_menu_button(context, layout, node, text)
@@ -481,8 +505,6 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
             layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
 
     def draw_menu_items(self, context, layout):
-        if self.description:
-            layout.operator('node.sv_socket_show_help', text=self.label or self.name, icon='QUESTION').text = self.description
         self.draw_simplify_modes(layout)
         if self.can_graft():
             layout.prop(self, 'use_graft')
@@ -612,6 +634,12 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
             default = False,
             update = process_from_socket)
 
+    def get_mode_flags(self):
+        flags = super().get_mode_flags()
+        if self.use_graft_2:
+            flags.append('G2')
+        return flags
+
     def get_prop_data(self):
         if self.get_prop_name():
             return {"prop_name": self.get_prop_name()}
@@ -662,32 +690,6 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
     def do_graft(self, data):
         return graft_data(data, item_level=0, data_types = SIMPLE_DATA_TYPES + (SvCurve, SvSurface))
 
-class SvFilePathSocket(NodeSocket, SvSocketCommon):
-    '''For file path data'''
-    bl_idname = "SvFilePathSocket"
-    bl_label = "File Path Socket"
-
-    color = (0.9, 0.9, 0.3, 1.0)
-    quick_link_to_node = 'SvFilePathNode'
-
-
-class SvSvgSocket(NodeSocket, SvSocketCommon):
-    '''For file path data'''
-    bl_idname = "SvSvgSocket"
-    bl_label = "SVG Data Socket"
-
-    color = (0.1, 0.5, 1, 1.0)
-
-    @property
-    def quick_link_to_node(self):
-        if "Fill / Stroke" in self.name:
-            return "SvSvgFillStrokeNodeMk2"
-        elif "Pattern" in self.name:
-            return "SvSvgPatternNode"
-        else:
-            return
-
-
     def do_flattern(self, data):
         return flattern_data(data, 1)
 
@@ -733,6 +735,32 @@ class SvSvgSocket(NodeSocket, SvSocketCommon):
         if self.use_wrap:
             result = wrap_data(result)
         return result
+
+class SvFilePathSocket(NodeSocket, SvSocketCommon):
+    '''For file path data'''
+    bl_idname = "SvFilePathSocket"
+    bl_label = "File Path Socket"
+
+    color = (0.9, 0.9, 0.3, 1.0)
+    quick_link_to_node = 'SvFilePathNode'
+
+
+class SvSvgSocket(NodeSocket, SvSocketCommon):
+    '''For file path data'''
+    bl_idname = "SvSvgSocket"
+    bl_label = "SVG Data Socket"
+
+    color = (0.1, 0.5, 1, 1.0)
+
+    @property
+    def quick_link_to_node(self):
+        if "Fill / Stroke" in self.name:
+            return "SvSvgFillStrokeNodeMk2"
+        elif "Pattern" in self.name:
+            return "SvSvgPatternNode"
+        else:
+            return
+
 
 class SvDictionarySocket(NodeSocket, SvSocketCommon):
     '''For dictionary data'''
@@ -793,6 +821,12 @@ class SvCurveSocket(NodeSocket, SvSocketCommon):
             name = "Reparametrize",
             default = False,
             update = process_from_socket)
+
+    def get_mode_flags(self):
+        flags = super().get_mode_flags()
+        if self.reparametrize:
+            flags.append('R')
+        return flags
 
     def draw_menu_button(self, context, layout, node, text):
         layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
@@ -877,7 +911,11 @@ class SvSocketHelpOp(bpy.types.Operator):
         return properties.text
 
     def execute(self, context):
-        self.report({'INFO'}, self.text)
+        def draw(menu, context):
+            col = menu.layout.column(align=True)
+            for line in self.text.split('\n'):
+                col.label(text=line)
+        bpy.context.window_manager.popup_menu(draw, title="Socket description", icon='QUESTION')
         return {'FINISHED'}
 
 classes = [
@@ -890,3 +928,4 @@ classes = [
 ]
 
 register, unregister = bpy.utils.register_classes_factory(classes)
+
