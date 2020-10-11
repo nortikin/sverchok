@@ -763,7 +763,8 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         return match_long_repeat([coords, edge_indices, face_indices, verts, matrix])
 
     def process(self):
-
+        if bpy.app.background:
+            return
         self.handle_attr_socket()
         if not (self.id_data.sv_show and self.activate):
             callback_disable(node_id(self))
