@@ -294,7 +294,7 @@
       "width": 140.0
     },
     "Viewer Draw Mk3": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         0.6284880042076111,
         0.931007981300354,
