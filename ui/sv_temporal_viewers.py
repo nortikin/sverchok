@@ -119,7 +119,7 @@ def add_temporal_viewer(context, force_stetoscope, cut_links):
 
     existing_node = nodes.active
 
-    if len(existing_node.outputs) == 0:
+    if not hasattr(existing_node,'outputs') or len(existing_node.outputs) == 0:
         return
 
     is_drawable = any([socket.bl_idname in ['SvMatrixSocket', 'SvVerticesSocket'] for socket in existing_node.outputs])
