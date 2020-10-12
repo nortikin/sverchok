@@ -1,126 +1,391 @@
 {
-  "export_version": "0.079",
-  "framed_nodes": {},
+  "export_version": "0.10",
+  "framed_nodes": {
+    "Area": "Frame.005",
+    "Bezier Spline (Curve)": "Frame.003",
+    "Bezier Spline (Curve).001": "Frame.002",
+    "Circle (Curve)": "Frame.001",
+    "Color in": "Frame.012",
+    "Contour 2D": "Frame.006",
+    "Edges to faces 2D": "Frame.006",
+    "Edges to faces 2D.001": "Frame.005",
+    "Evaluate Curve": "Frame.003",
+    "Evaluate Curve.001": "Frame.002",
+    "Evaluate Curve.002": "Frame.001",
+    "Frame.001": "Frame.017",
+    "Frame.002": "Frame.017",
+    "Frame.003": "Frame.017",
+    "Intersect Edges": "Frame.006",
+    "List Input": "Frame.012",
+    "List Input.001": "Frame.012",
+    "List Input.002": "Frame.012",
+    "List Join": "Frame.006",
+    "List Join.001": "Frame.006",
+    "List Mask (out)": "Frame.006",
+    "List Mask (out).001": "Frame.005",
+    "List Mask (out).002": "Frame.005",
+    "Logic functions": "Frame.005",
+    "Merge by Distance": "Frame.012",
+    "Merge mesh 2D": "Frame.005",
+    "Mesh Join": "Frame.006",
+    "Select mesh elements by location": "Frame.006",
+    "Viewer Draw": "Frame.006",
+    "Viewer Draw.001": "Frame.001",
+    "Viewer Draw.002": "Frame.002",
+    "Viewer Draw.003": "Frame.003",
+    "Viewer Draw.004": "Frame.012",
+    "Viewer Draw.005": "Frame.005"
+  },
   "groups": {},
   "nodes": {
+    "Area": {
+      "bl_idname": "SvAreaNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2683.8118286132812,
+        -1594.3728942871094
+      ],
+      "params": {},
+      "width": 140.0
+    },
     "Bezier Spline (Curve)": {
       "bl_idname": "SvBezierSplineNode",
       "custom_socket_props": {
         "0": {
           "expanded": true,
           "prop": [
-            -2.0,
+            -1.0,
             0.0,
             0.0
-          ],
-          "use_prop": true
+          ]
         },
         "1": {
           "expanded": true,
           "prop": [
-            5.0,
+            -0.23999999463558197,
             0.0,
             0.0
-          ],
-          "use_prop": true
+          ]
         },
         "2": {
           "expanded": true,
           "prop": [
-            5.0,
-            0.0,
+            0.14999999105930328,
+            0.5,
             0.0
-          ],
-          "use_prop": true
+          ]
         },
         "3": {
           "expanded": true,
           "prop": [
-            2.0,
-            1.0,
+            0.8659999966621399,
+            0.5,
             0.0
-          ],
-          "use_prop": true
+          ]
         }
       },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -280.6067810058594,
-        117.17616271972656
-      ],
-      "params": {
-        "mode": "3_2pt_tan"
-      },
-      "width": 140.0
-    },
-    "Circle": {
-      "bl_idname": "SvCircleNode",
-      "color": [
-        0.0,
-        0.5,
-        0.5
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        303.83038330078125,
-        336.7546081542969
-      ],
-      "params": {
-        "rad_": 2.0,
-        "vert_": 48
-      },
-      "use_custom_color": true,
-      "width": 140.0
-    },
-    "Crop mesh 2D": {
-      "bl_idname": "SvCropMesh2D",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        526.4841918945312,
-        365.8992004394531
-      ],
-      "params": {
-        "alg_mode": "Blender",
-        "mode": "outer"
-      },
-      "width": 140.0
-    },
-    "Evaluate Curve": {
-      "bl_idname": "SvExEvalCurveNode",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -101.39099884033203,
-        132.51739501953125
+        353.11029052734375,
+        -940.975715637207
       ],
       "params": {},
       "width": 140.0
     },
-    "List Input": {
-      "bl_idname": "SvListInputNode",
+    "Bezier Spline (Curve).001": {
+      "bl_idname": "SvBezierSplineNode",
+      "custom_socket_props": {
+        "0": {
+          "expanded": true,
+          "prop": [
+            -1.0,
+            0.0,
+            0.0
+          ]
+        },
+        "1": {
+          "expanded": true,
+          "prop": [
+            -0.23999999463558197,
+            0.0,
+            0.0
+          ]
+        },
+        "2": {
+          "expanded": true,
+          "prop": [
+            0.14999999105930328,
+            -0.5,
+            0.0
+          ]
+        },
+        "3": {
+          "expanded": true,
+          "prop": [
+            0.8659999966621399,
+            -0.5,
+            0.0
+          ]
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -470.58099365234375,
-        -31.22298812866211
+        341.4090881347656,
+        -1363.8501815795898
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Circle (Curve)": {
+      "bl_idname": "SvExCircleNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        345.551025390625,
+        -1798.1175994873047
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Color in": {
+      "bl_idname": "SvColorsInNodeMK1",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2856.1989135742188,
+        -907.2793579101562
       ],
       "params": {
-        "mode": "vector",
-        "v_int": 2,
-        "vector_list": [
-          2.0,
+        "b_": 0.75,
+        "g_": 0.75,
+        "r_": 0.75
+      },
+      "width": 110.0
+    },
+    "Contour 2D": {
+      "bl_idname": "SvContourNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1703.0390319824219,
+        -1151.8834838867188
+      ],
+      "params": {
+        "rad_": 0.03999999910593033,
+        "rm_doubles": 0.0010999999940395355,
+        "vert_": 4
+      },
+      "width": 140.0
+    },
+    "Edges to faces 2D": {
+      "bl_idname": "SvEdgesToFaces2D",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2240.6177673339844,
+        -1158.0242309570312
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Edges to faces 2D.001": {
+      "bl_idname": "SvEdgesToFaces2D",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2686.4861450195312,
+        -1413.0393981933594
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Evaluate Curve": {
+      "bl_idname": "SvExEvalCurveNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        556.8338623046875,
+        -936.012092590332
+      ],
+      "params": {
+        "sample_size": 30
+      },
+      "width": 140.0
+    },
+    "Evaluate Curve.001": {
+      "bl_idname": "SvExEvalCurveNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        541.4090881347656,
+        -1363.8501815795898
+      ],
+      "params": {
+        "sample_size": 30
+      },
+      "width": 140.0
+    },
+    "Evaluate Curve.002": {
+      "bl_idname": "SvExEvalCurveNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        539.0554809570312,
+        -1795.9529266357422
+      ],
+      "params": {
+        "sample_size": 100
+      },
+      "width": 140.0
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 374.647216796875,
+      "hide": false,
+      "label": "circle",
+      "location": [
+        -367.63446044921875,
+        -26.795333862304688
+      ],
+      "params": {},
+      "width": 600.0000610351562
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 409.749755859375,
+      "hide": false,
+      "label": "bottom curve",
+      "location": [
+        -388.6966247558594,
+        48.075111389160156
+      ],
+      "params": {},
+      "width": 600.0
+    },
+    "Frame.003": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 414.587890625,
+      "hide": false,
+      "label": "upper curve",
+      "location": [
+        -376.99542236328125,
+        94.86913299560547
+      ],
+      "params": {},
+      "width": 600.0
+    },
+    "Frame.005": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 498.871826171875,
+      "hide": false,
+      "label": "black circle",
+      "location": [
+        341.04791259765625,
+        98.01004028320312
+      ],
+      "params": {},
+      "width": 924.5224609375
+    },
+    "Frame.006": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 521.116455078125,
+      "hide": false,
+      "label": "logo",
+      "location": [
+        -312.2635803222656,
+        47.90728759765625
+      ],
+      "params": {},
+      "width": 1516.5701904296875
+    },
+    "Frame.012": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 702.49365234375,
+      "hide": false,
+      "label": "TRI color",
+      "location": [
+        -929.4793090820312,
+        763.5648803710938
+      ],
+      "params": {},
+      "width": 557.658203125
+    },
+    "Frame.017": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 1294.5880126953125,
+      "hide": false,
+      "label": "inputs",
+      "location": [
+        -154.67269897460938,
+        134.64405822753906
+      ],
+      "params": {},
+      "width": 671.701171875
+    },
+    "Intersect Edges": {
+      "bl_idname": "SvIntersectEdgesNodeMK2",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1526.1084899902344,
+        -1154.4083862304688
+      ],
+      "params": {
+        "mode": "2D",
+        "rm_doubles": 0.0010000000474974513,
+        "rm_switch": true
+      },
+      "width": 140.0
+    },
+    "List Input": {
+      "bl_idname": "SvListInputNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2668.1740112304688,
+        -947.3660278320312
+      ],
+      "params": {
+        "float_list": [
+          0.10000000149011612,
           1.0,
           0.0,
-          2.0,
-          -1.0,
+          0.0,
+          0.0,
           0.0,
           0.0,
           0.0,
@@ -148,89 +413,341 @@
           0.0,
           0.0,
           0.0
-        ]
+        ],
+        "int_": 3,
+        "mode": "float_list"
       },
       "width": 140.0
     },
-    "Mesh Join": {
-      "bl_idname": "SvMeshJoinNode",
+    "List Input.001": {
+      "bl_idname": "SvListInputNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        118.60899353027344,
-        111.95136260986328
+        2668.1740112304688,
+        -1129.7905883789062
+      ],
+      "params": {
+        "float_list": [
+          0.5,
+          0.5,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "int_": 3,
+        "mode": "float_list"
+      },
+      "width": 140.0
+    },
+    "List Input.002": {
+      "bl_idname": "SvListInputNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2840.9804077148438,
+        -1127.6443481445312
+      ],
+      "params": {
+        "float_list": [
+          1.0,
+          0.0,
+          0.20000000298023224,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "int_": 3,
+        "mode": "float_list"
+      },
+      "width": 140.0
+    },
+    "List Join": {
+      "bl_idname": "ListJoinNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1102.1221618652344,
+        -1153.6796264648438
       ],
       "params": {},
       "width": 140.0
     },
-    "Offset line": {
-      "bl_idname": "SvOffsetLineNode",
+    "List Join.001": {
+      "bl_idname": "ListJoinNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        338.6090087890625,
-        123.41402435302734
+        1101.1423034667969,
+        -1395.0346069335938
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Mask (out)": {
+      "bl_idname": "MaskListNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2063.6055603027344,
+        -1158.5354614257812
       ],
       "params": {
-        "offset": 0.10000000149011612
+        "Level": 2
       },
       "width": 140.0
     },
-    "Viewer Draw Mk3": {
-      "bl_idname": "SvViewerDrawMk4",
-      "color": [
-        1.0,
-        0.5889999866485596,
-        0.21400000154972076
-      ],
+    "List Mask (out).001": {
+      "bl_idname": "MaskListNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        725.7998657226562,
-        396.0020751953125
+        2879.5098266601562,
+        -1413.7173767089844
       ],
       "params": {
-        "activate": 1,
-        "custom_fragment_shader": "\n    uniform float brightness;\n\n    in vec3 pos;\n\n    void main()\n    {\n        gl_FragColor = vec4(pos * brightness, 1.0);\n    }\n",
-        "custom_shader_location": "",
-        "custom_vertex_shader": "\n    uniform mat4 viewProjectionMatrix;\n\n    in vec3 position;\n    out vec3 pos;\n\n    void main()\n    {\n        pos = position;\n        gl_Position = viewProjectionMatrix * vec4(position, 1.0f);\n    }\n",
-        "display_edges": 1,
-        "display_faces": 1,
-        "display_verts": 0,
-        "draw_gl_polygonoffset": 1,
-        "draw_gl_wireframe": 0,
+        "Level": 2
+      },
+      "width": 140.0
+    },
+    "List Mask (out).002": {
+      "bl_idname": "MaskListNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        3225.3550415039062,
+        -1414.6155700683594
+      ],
+      "params": {
+        "Level": 2
+      },
+      "width": 140.0
+    },
+    "Logic functions": {
+      "bl_idname": "SvLogicNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2685.9033813476562,
+        -1723.2314147949219
+      ],
+      "params": {
+        "items_": "LESS",
+        "prop_types": [
+          true,
+          true
+        ]
+      },
+      "width": 140.0
+    },
+    "Merge by Distance": {
+      "bl_idname": "SvMergeByDistanceNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2664.1447143554688,
+        -656.5064086914062
+      ],
+      "params": {
+        "distance": 0.029999999329447746
+      },
+      "width": 140.0
+    },
+    "Merge mesh 2D": {
+      "bl_idname": "SvMergeMesh2D",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        3054.3787231445312,
+        -1410.1281433105469
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Mesh Join": {
+      "bl_idname": "SvMeshJoinNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1325.4621276855469,
+        -1158.0665893554688
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Note": {
+      "bl_idname": "NoteNode",
+      "color": [
+        1.0,
+        0.8993440270423889,
+        0.9742509722709656
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1057.25830078125,
+        -913.431884765625
+      ],
+      "params": {
+        "n_id": "-7572912227783136283",
+        "show_text": false,
+        "text": "Nikitron | 2020 | Sverchok logo"
+      },
+      "use_custom_color": true,
+      "width": 400.0
+    },
+    "Select mesh elements by location": {
+      "bl_idname": "SvMeshSelectNode",
+      "custom_socket_props": {
+        "3": {
+          "prop": [
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1888.0923767089844,
+        -1157.7511596679688
+      ],
+      "params": {
+        "mode": "BySphere",
+        "radius": 0.9800000190734863
+      },
+      "width": 140.0
+    },
+    "Viewer Draw": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2417.7124938964844,
+        -1156.5745239257812
+      ],
+      "params": {
+        "activate": false,
+        "display_verts": false,
+        "vector_color": [
+          0.800000011920929,
+          0.800000011920929,
+          0.800000011920929,
+          1.0
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw.001": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        745.5510864257812,
+        -1798.1175994873047
+      ],
+      "params": {
+        "activate": false,
+        "display_verts": false,
         "edge_color": [
-          0.0,
-          0.0011443882249295712,
-          0.14550375938415527,
+          0.8956438899040222,
+          0.32270321249961853,
+          1.0,
           1.0
-        ],
-        "extended_matrix": 0,
-        "polygon_color": [
-          0.14000000059604645,
-          0.5400000214576721,
-          0.8100000023841858,
-          1.0
-        ],
-        "handle_concave_quads": 0,
-        "line_width": 1,
-        "node_ui_show_attrs_socket": 0,
-        "point_size": 4.0,
-        "selected_draw_mode": "facet",
-        "u_dash_size": 0.11999999731779099,
-        "u_gap_size": 0.1899999976158142,
-        "u_resolution": [
-          25.0,
-          18.0
-        ],
-        "use_dashed": 0,
-        "vector_light": [
-          0.20000000298023224,
-          0.6000000238418579,
-          0.4000000059604645
         ],
         "vector_color": [
           0.800000011920929,
@@ -241,14 +758,134 @@
       },
       "use_custom_color": true,
       "width": 140.0
+    },
+    "Viewer Draw.002": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        741.4090881347656,
+        -1363.8501815795898
+      ],
+      "params": {
+        "activate": false,
+        "display_verts": false,
+        "vector_color": [
+          0.800000011920929,
+          0.800000011920929,
+          0.800000011920929,
+          1.0
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw.003": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        753.1102905273438,
+        -940.975715637207
+      ],
+      "params": {
+        "activate": false,
+        "display_verts": false,
+        "vector_color": [
+          0.800000011920929,
+          0.800000011920929,
+          0.800000011920929,
+          1.0
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw.004": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        3021.8029174804688,
+        -690.0938110351562
+      ],
+      "params": {
+        "color_per_polygon": true,
+        "display_edges": false,
+        "display_verts": false,
+        "point_size": 7
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw.005": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        3408.3342895507812,
+        -1416.5345153808594
+      ],
+      "params": {
+        "display_edges": false,
+        "display_verts": false,
+        "polygon_color": [
+          0.012966225855052471,
+          0.03907668590545654,
+          0.05552525445818901,
+          1.0
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
     }
   },
   "update_lists": [
     [
-      "List Input",
+      "Evaluate Curve.002",
       0,
-      "Bezier Spline (Curve)",
-      3
+      "Viewer Draw.001",
+      0
+    ],
+    [
+      "Evaluate Curve.002",
+      1,
+      "Viewer Draw.001",
+      1
+    ],
+    [
+      "Circle (Curve)",
+      0,
+      "Evaluate Curve.002",
+      0
     ],
     [
       "Bezier Spline (Curve)",
@@ -259,61 +896,289 @@
     [
       "Evaluate Curve",
       0,
-      "Mesh Join",
+      "Viewer Draw.003",
       0
     ],
     [
       "Evaluate Curve",
       1,
-      "Mesh Join",
+      "Viewer Draw.003",
       1
     ],
     [
-      "Mesh Join",
+      "Bezier Spline (Curve).001",
       0,
-      "Offset line",
+      "Evaluate Curve.001",
       0
     ],
     [
-      "Mesh Join",
+      "Evaluate Curve.001",
+      0,
+      "Viewer Draw.002",
+      0
+    ],
+    [
+      "Evaluate Curve.001",
       1,
-      "Offset line",
+      "Viewer Draw.002",
       1
     ],
     [
-      "Circle",
+      "Contour 2D",
       0,
-      "Crop mesh 2D",
+      "Edges to faces 2D",
       0
     ],
     [
-      "Circle",
-      2,
-      "Crop mesh 2D",
+      "List Mask (out)",
+      3,
+      "Edges to faces 2D",
       1
     ],
     [
-      "Offset line",
+      "Contour 2D",
+      1,
+      "List Mask (out)",
+      0
+    ],
+    [
+      "Select mesh elements by location",
+      1,
+      "List Mask (out)",
+      1
+    ],
+    [
+      "Contour 2D",
       0,
-      "Crop mesh 2D",
+      "Select mesh elements by location",
+      0
+    ],
+    [
+      "Contour 2D",
+      1,
+      "Select mesh elements by location",
+      1
+    ],
+    [
+      "Intersect Edges",
+      0,
+      "Contour 2D",
       2
     ],
     [
-      "Offset line",
+      "Intersect Edges",
       1,
-      "Crop mesh 2D",
+      "Contour 2D",
       3
     ],
     [
-      "Crop mesh 2D",
+      "Mesh Join",
       0,
-      "Viewer Draw Mk3",
+      "Intersect Edges",
       0
     ],
     [
-      "Crop mesh 2D",
+      "Mesh Join",
       1,
-      "Viewer Draw Mk3",
+      "Intersect Edges",
+      1
+    ],
+    [
+      "List Join",
+      0,
+      "Mesh Join",
+      0
+    ],
+    [
+      "List Join.001",
+      0,
+      "Mesh Join",
+      1
+    ],
+    [
+      "Evaluate Curve",
+      0,
+      "List Join",
+      0
+    ],
+    [
+      "Evaluate Curve.001",
+      0,
+      "List Join",
+      1
+    ],
+    [
+      "Evaluate Curve.002",
+      0,
+      "List Join",
+      2
+    ],
+    [
+      "Evaluate Curve",
+      1,
+      "List Join.001",
+      0
+    ],
+    [
+      "Evaluate Curve.001",
+      1,
+      "List Join.001",
+      1
+    ],
+    [
+      "Evaluate Curve.002",
+      1,
+      "List Join.001",
+      2
+    ],
+    [
+      "Edges to faces 2D",
+      0,
+      "Merge by Distance",
+      0
+    ],
+    [
+      "Edges to faces 2D",
+      1,
+      "Merge by Distance",
+      1
+    ],
+    [
+      "List Input",
+      0,
+      "Color in",
+      0
+    ],
+    [
+      "List Input.001",
+      0,
+      "Color in",
+      1
+    ],
+    [
+      "List Input.002",
+      0,
+      "Color in",
+      2
+    ],
+    [
+      "Merge by Distance",
+      0,
+      "Viewer Draw.004",
+      0
+    ],
+    [
+      "Merge by Distance",
+      2,
+      "Viewer Draw.004",
+      2
+    ],
+    [
+      "Color in",
+      0,
+      "Viewer Draw.004",
+      6
+    ],
+    [
+      "Contour 2D",
+      0,
+      "Edges to faces 2D.001",
+      0
+    ],
+    [
+      "Contour 2D",
+      1,
+      "Edges to faces 2D.001",
+      1
+    ],
+    [
+      "Area",
+      0,
+      "Logic functions",
+      0
+    ],
+    [
+      "Edges to faces 2D.001",
+      0,
+      "Area",
+      0
+    ],
+    [
+      "Edges to faces 2D.001",
+      1,
+      "Area",
+      1
+    ],
+    [
+      "Edges to faces 2D.001",
+      1,
+      "List Mask (out).001",
+      0
+    ],
+    [
+      "Logic functions",
+      0,
+      "List Mask (out).001",
+      1
+    ],
+    [
+      "Edges to faces 2D.001",
+      0,
+      "Merge mesh 2D",
+      0
+    ],
+    [
+      "List Mask (out).001",
+      4,
+      "Merge mesh 2D",
+      1
+    ],
+    [
+      "Edges to faces 2D.001",
+      0,
+      "Merge mesh 2D",
+      2
+    ],
+    [
+      "List Mask (out).001",
+      3,
+      "Merge mesh 2D",
+      3
+    ],
+    [
+      "Merge mesh 2D",
+      1,
+      "List Mask (out).002",
+      0
+    ],
+    [
+      "Merge mesh 2D",
+      3,
+      "List Mask (out).002",
+      1
+    ],
+    [
+      "Merge mesh 2D",
+      0,
+      "Viewer Draw.005",
+      0
+    ],
+    [
+      "List Mask (out).002",
+      4,
+      "Viewer Draw.005",
+      2
+    ],
+    [
+      "Edges to faces 2D",
+      0,
+      "Viewer Draw",
+      0
+    ],
+    [
+      "Edges to faces 2D",
+      1,
+      "Viewer Draw",
       2
     ]
   ]
