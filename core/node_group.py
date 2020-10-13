@@ -10,6 +10,7 @@ from functools import reduce
 from typing import Tuple, List
 
 import bpy
+from sverchok.utils.tree_structure import Tree
 
 
 class SvGroupTree(bpy.types.NodeTree):
@@ -102,6 +103,7 @@ class SvGroupTreeNode(bpy.types.NodeCustomGroup):
         if self.group_tree:
             row_name.prop(self.group_tree, 'name', text='')
             row_search.operator('node.edit_group_tree', text=' ', icon='FILE_PARENT')
+            row_ops.operator('node.ungroup_group_tree', text='', icon='MOD_PHYSICS')
         else:
             row_search.operator('node.add_group_tree', text='New', icon='ADD')
 
@@ -237,7 +239,7 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
         09. Link the node with appropriate sockets
         10. Delete selected nodes in initial tree
         """
-        # group nodes if selected
+        # deselect group nodes if selected
         base_tree = context.space_data.path[-1].node_tree
         [setattr(n, 'select', False) for n in base_tree.nodes
          if n.select and n.bl_idname in {'NodeGroupInput', 'NodeGroupOutput'}]
@@ -261,19 +263,6 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
         output_node = sub_tree.nodes.new('NodeGroupOutput')
         output_node.location = (max_x + 250, 0)
 
-        # link group nodes
-        from_node_sockets_to_connect = []  # [(node_name, socket_index), ...]
-        to_node_sockets_to_connect = []  # [(node_name, socket_index), ...]
-        for link in base_tree.links:
-            if not link.from_node.select and link.to_node.select:
-                from_node_sockets_to_connect.append((link.from_node.name, link.from_socket.index))
-                sub_node = sub_tree.nodes[link.to_node.name]
-                sub_tree.links.new(input_node.outputs[-1], sub_node.inputs[link.to_socket.index])
-            elif link.from_node.select and not link.to_node.select:
-                to_node_sockets_to_connect.append((link.to_node.name, link.to_socket.index))
-                sub_node = sub_tree.nodes[link.from_node.name]
-                sub_tree.links.new(output_node.inputs[-1], sub_node.outputs[link.from_socket.index])
-
         # add group tree node
         initial_nodes = self.filter_selected_nodes(base_tree)
         center = reduce(lambda v1, v2: v1 + v2, [n.location for n in initial_nodes]) / len(initial_nodes)
@@ -282,11 +271,24 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
         group_node.group_tree = sub_tree
         group_node.location = center
 
-        # link group node
-        for (from_node, from_socket), input_socket in zip(from_node_sockets_to_connect, group_node.inputs):
-            base_tree.links.new(input_socket, base_tree.nodes[from_node].outputs[from_socket])
-        for output_socket, (to_node, to_socket) in zip(group_node.outputs, to_node_sockets_to_connect):
-            base_tree.links.new(base_tree.nodes[to_node].inputs[to_socket], output_socket)
+        # linking, linking should be ordered from first socket to last (in case like `join list` nodes)
+        py_base_tree = Tree.from_bl_tree(base_tree)
+        for py_node in py_base_tree.nodes.values():  # is selected
+            if not py_node.select:
+                continue
+            for in_py_socket in py_node.inputs:
+                for out_py_socket in in_py_socket.linked_sockets:  # only one link always
+                    if out_py_socket.node.select:
+                        continue
+                    sub_tree.links.new(in_py_socket.get_bl_socket(sub_tree), input_node.outputs[-1])
+                    base_tree.links.new(group_node.inputs[-1], out_py_socket.get_bl_socket(base_tree))
+
+            for out_py_socket in py_node.outputs:
+                if any(not s.node.select for s in out_py_socket.linked_sockets):
+                    sub_tree.links.new(output_node.inputs[-1], out_py_socket.get_bl_socket(sub_tree))
+                for in_py_socket in out_py_socket.linked_sockets:
+                    if not in_py_socket.node.select:
+                        base_tree.links.new(in_py_socket.get_bl_socket(base_tree), group_node.outputs[-1])
 
         # delete selected nodes
         [base_tree.nodes.remove(n) for n in self.filter_selected_nodes(base_tree)]
@@ -296,6 +298,68 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
     @staticmethod
     def filter_selected_nodes(tree) -> list:
         return [n for n in tree.nodes if n.select and n.bl_idname not in {'NodeGroupInput', 'NodeGroupOutput'}]
+
+
+class UngroupGroupTree(bpy.types.Operator):
+    bl_idname = 'node.ungroup_group_tree'
+    bl_label = "Ungroup group tree"
+
+    @classmethod
+    def poll(cls, context):
+        if context.active_node and hasattr(context.active_node, 'node_tree'):
+            return True
+        elif context.node:
+            return True
+        return False
+
+    def execute(self, context):
+        """Similar to AddGroupTreeFromSelected operator but in backward direction (from sub tree to tree)"""
+        # go to sub tree, select all except input and output groups and mark nodes to be copied
+        group_node = context.node
+        sub_tree = group_node.node_tree
+        bpy.ops.node.edit_group_tree({'node': group_node})
+        [setattr(n, 'select', False) for n in sub_tree.nodes]
+        group_nodes_filter = filter(lambda n: n.bl_idname not in {'NodeGroupInput', 'NodeGroupOutput'}, sub_tree.nodes)
+        for i, node in enumerate(group_nodes_filter):
+            node.select = True
+            node['ungroup order'] = i  # this will be copied within the nodes
+
+        # copy and past nodes into group tree
+        bpy.ops.node.clipboard_copy()
+        context.space_data.path.pop()
+        bpy.ops.node.clipboard_paste()  # this will deselect all and select only pasted nodes
+
+        # move nodes in group node center
+        tree = context.space_data.path[-1].node_tree
+        tree_select_nodes = [n for n in tree.nodes if n.select]
+        center = reduce(lambda v1, v2: v1 + v2, [n.location for n in tree_select_nodes]) / len(tree_select_nodes)
+        [setattr(n, 'location', n.location - (center - group_node.location)) for n in tree_select_nodes]
+
+        # create in links
+        for group_input_node in [n for n in sub_tree.nodes if n.bl_idname == 'NodeGroupInput']:
+            for in_socket, sub_out_socket in zip(group_node.inputs, group_input_node.outputs):
+                if in_socket.is_linked and sub_out_socket.is_linked:
+                    link_out_socket = in_socket.links[0].from_socket
+                    for sub_link in sub_out_socket.links:
+                        link_in_socket, *_ = [n.inputs[sub_link.to_socket.index] for n in tree_select_nodes
+                                               if n['ungroup order'] == sub_link.to_node['ungroup order']]
+                        tree.links.new(link_in_socket, link_out_socket)
+
+        # create out links
+        for group_output_node in [n for n in sub_tree.nodes if n.bl_idname == 'NodeGroupOutput']:
+            for out_socket, sub_in_socket in zip(group_node.outputs, group_output_node.inputs):
+                if out_socket.is_linked and sub_in_socket.is_linked:
+                    for link in out_socket.links:
+                        link_in_socket = link.to_socket
+                        link_out_socket, *_ = [
+                            n.outputs[sub_in_socket.links[0].from_socket.index] for n in tree_select_nodes
+                            if n['ungroup order'] == sub_in_socket.links[0].from_node['ungroup order']]
+                        tree.links.new(link_in_socket, link_out_socket)
+
+        # delete group node
+        tree.nodes.remove(group_node)
+
+        return {'FINISHED'}
 
 
 class EditGroupTree(bpy.types.Operator):
@@ -372,7 +436,7 @@ class SearchGroupTree(bpy.types.Operator):
 
 
 classes = [SvGroupTree, SvGroupTreeNode, AddGroupNode, AddGroupTree, EditGroupTree, AddTreeDescription, 
-           AddNodeOutputInput, AddGroupTreeFromSelected, SearchGroupTree]
+           AddNodeOutputInput, AddGroupTreeFromSelected, SearchGroupTree, UngroupGroupTree]
 
 
 def register():
