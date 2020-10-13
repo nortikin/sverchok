@@ -323,6 +323,10 @@ class UngroupGroupTree(bpy.types.Operator):
         for i, node in enumerate(group_nodes_filter):
             node.select = True
             node['ungroup order'] = i  # this will be copied within the nodes
+        tree = context.space_data.path[-1].node_tree
+        for node in tree.nodes:
+            if 'ungroup order' in node:
+                del node['ungroup order']
 
         # copy and past nodes into group tree
         bpy.ops.node.clipboard_copy()
@@ -330,34 +334,46 @@ class UngroupGroupTree(bpy.types.Operator):
         bpy.ops.node.clipboard_paste()  # this will deselect all and select only pasted nodes
 
         # move nodes in group node center
-        tree = context.space_data.path[-1].node_tree
         tree_select_nodes = [n for n in tree.nodes if n.select]
         center = reduce(lambda v1, v2: v1 + v2, [n.location for n in tree_select_nodes]) / len(tree_select_nodes)
         [setattr(n, 'location', n.location - (center - group_node.location)) for n in tree_select_nodes]
 
+        # recreate py tree structure
+        sub_py_tree = Tree.from_bl_tree(sub_tree)
+        [setattr(sub_py_tree.nodes[n.name], 'type', n.bl_idname) for n in sub_tree.nodes]
+        py_tree = Tree.from_bl_tree(tree)
+        [setattr(py_tree.nodes[n.name], 'select', n.select) for n in tree.nodes]
+        group_py_node = py_tree.nodes[group_node.name]
+        sorted_sub_nodes = sorted([n for n in sub_tree.nodes if 'ungroup order' in n], 
+                                  key=lambda n: n['ungroup order'])
+        sorted_nodes = sorted([n for n in tree.nodes if 'ungroup order' in n], key=lambda n: n['ungroup order'])
+        for sub_node, node in zip(sorted_sub_nodes, sorted_nodes):
+            sub_py_tree.nodes[sub_node.name].twin = py_tree.nodes[node.name]
+            py_tree.nodes[node.name].twin = sub_py_tree.nodes[sub_node.name]
+
         # create in links
-        for group_input_node in [n for n in sub_tree.nodes if n.bl_idname == 'NodeGroupInput']:
-            for in_socket, sub_out_socket in zip(group_node.inputs, group_input_node.outputs):
-                if in_socket.is_linked and sub_out_socket.is_linked:
-                    link_out_socket = in_socket.links[0].from_socket
-                    for sub_link in sub_out_socket.links:
-                        link_in_socket, *_ = [n.inputs[sub_link.to_socket.index] for n in tree_select_nodes
-                                               if n['ungroup order'] == sub_link.to_node['ungroup order']]
-                        tree.links.new(link_in_socket, link_out_socket)
+        for group_input_py_node in [n for n in sub_py_tree.nodes.values() if n.type == 'NodeGroupInput']:
+            for group_in_s, input_out_s in zip(group_py_node.inputs, group_input_py_node.outputs):
+                if group_in_s.links and input_out_s.links:
+                    link_out_s = group_in_s.linked_sockets[0]
+                    for twin_in_s in input_out_s.linked_sockets:
+                        link_in_s = twin_in_s.node.twin.inputs[twin_in_s.index]
+                        tree.links.new(link_in_s.get_bl_socket(tree), link_out_s.get_bl_socket(tree))
 
         # create out links
-        for group_output_node in [n for n in sub_tree.nodes if n.bl_idname == 'NodeGroupOutput']:
-            for out_socket, sub_in_socket in zip(group_node.outputs, group_output_node.inputs):
-                if out_socket.is_linked and sub_in_socket.is_linked:
-                    for link in out_socket.links:
-                        link_in_socket = link.to_socket
-                        link_out_socket, *_ = [
-                            n.outputs[sub_in_socket.links[0].from_socket.index] for n in tree_select_nodes
-                            if n['ungroup order'] == sub_in_socket.links[0].from_node['ungroup order']]
-                        tree.links.new(link_in_socket, link_out_socket)
+        for group_output_py_node in [n for n in sub_py_tree.nodes.values() if n.type == 'NodeGroupOutput']:
+            for group_out_s, output_in_s in zip(group_py_node.outputs, group_output_py_node.inputs):
+                if group_out_s.links and output_in_s.links:
+                    twin_out_s = output_in_s.linked_sockets[0]
+                    for link_in_s in group_out_s.linked_sockets:
+                        link_out_s = twin_out_s.node.twin.outputs[twin_out_s.index]
+                        tree.links.new(link_in_s.get_bl_socket(tree), link_out_s.get_bl_socket(tree))
 
         # delete group node
         tree.nodes.remove(group_node)
+        for node in tree.nodes:
+            if 'ungroup order' in node:
+                del node['ungroup order']
 
         return {'FINISHED'}
 
