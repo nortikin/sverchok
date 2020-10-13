@@ -1,16 +1,25 @@
 {
   "export_version": "0.10",
   "framed_nodes": {
+    "Area.004": "Frame.005",
+    "Area.005": "Frame.004",
+    "Area.006": "Frame.003",
     "Frame.003": "Frame.007",
     "Frame.004": "Frame.007",
     "Frame.005": "Frame.007",
     "IcoSphere": "Frame.006",
     "List Decompose": "Frame.002",
+    "List Del Levels": "Frame.005",
+    "List Del Levels.001": "Frame.004",
+    "List Del Levels.002": "Frame.003",
     "List Input": "Frame.006",
+    "List Join.002": "Frame.005",
+    "List Join.003": "Frame.004",
+    "List Join.004": "Frame.003",
     "List Length": "Frame",
-    "Monad": "Frame.003",
-    "Monad.001": "Frame.004",
-    "Monad.002": "Frame.005",
+    "List Math.002": "Frame.005",
+    "List Math.003": "Frame.004",
+    "List Math.004": "Frame.003",
     "Random Num Gen": "Frame",
     "Reroute": "Frame.002",
     "Scripted Node Lite": "Frame.008",
@@ -23,10 +32,53 @@
     "Viewer Draw.002": "Frame.004",
     "Viewer Draw.003": "Frame.005"
   },
-  "groups": {
-    "Monad": "{\"export_version\": \"0.10\", \"framed_nodes\": {}, \"groups\": {}, \"nodes\": {\"Group Inputs Exp\": {\"bl_idname\": \"SvGroupInputsNodeExp\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [-125.56634521484375, -284.74932861328125], \"params\": {\"node_kind\": \"outputs\"}, \"custom_socket_props\": {}, \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true, \"outputs\": [[\"data\", \"SvStringsSocket\"], [\"Vertices\", \"SvVerticesSocket\"]]}, \"Group Outputs Exp\": {\"bl_idname\": \"SvGroupOutputsNodeExp\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [794.835205078125, -284.74932861328125], \"params\": {\"node_kind\": \"inputs\"}, \"custom_socket_props\": {}, \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true, \"inputs\": [[\"Function\", \"SvStringsSocket\"], [\"Vertices\", \"SvVerticesSocket\"], [\"data\", \"SvStringsSocket\"]]}, \"Area.004\": {\"bl_idname\": \"SvAreaNode\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [266.947265625, -296.736572265625], \"params\": {\"sum_faces\": true}, \"custom_socket_props\": {}}, \"List Join.002\": {\"bl_idname\": \"ListJoinNode\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [432.144775390625, -270.47991943359375], \"params\": {\"JoinLevel\": 2}, \"custom_socket_props\": {}}, \"List Math.002\": {\"bl_idname\": \"ListFuncNode\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [614.835205078125, -276.45782470703125], \"params\": {\"func_\": \"SUM\"}, \"custom_socket_props\": {}}, \"List Del Levels\": {\"bl_idname\": \"ListLevelsNode\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [84.43365478515625, -299.0187072753906], \"params\": {\"Sverch_LisLev\": \"2,3,4\"}, \"custom_socket_props\": {}}}, \"update_lists\": [[\"List Math.002\", 0, \"Group Outputs Exp\", 0], [\"Group Inputs Exp\", 1, \"Group Outputs Exp\", 1], [\"List Del Levels\", 0, \"Group Outputs Exp\", 2], [\"Group Inputs Exp\", 1, \"Area.004\", 0], [\"List Del Levels\", 0, \"Area.004\", 1], [\"Area.004\", 0, \"List Join.002\", 0], [\"List Join.002\", 0, \"List Math.002\", 0], [\"Group Inputs Exp\", 0, \"List Del Levels\", 0]], \"bl_idname\": \"SverchGroupTreeType\", \"cls_bl_idname\": \"SvGroupNodeMonad_140589627819783\"}"
-  },
+  "groups": {},
   "nodes": {
+    "Area.004": {
+      "bl_idname": "SvAreaNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        369.5359878540039,
+        -805.2884368896484
+      ],
+      "params": {
+        "sum_faces": true
+      },
+      "width": 140.0
+    },
+    "Area.005": {
+      "bl_idname": "SvAreaNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        387.4482650756836,
+        -283.5451850891113
+      ],
+      "params": {
+        "sum_faces": true
+      },
+      "width": 140.0
+    },
+    "Area.006": {
+      "bl_idname": "SvAreaNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        357.3230667114258,
+        193.22540283203125
+      ],
+      "params": {
+        "sum_faces": true
+      },
+      "width": 140.0
+    },
     "Frame": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
@@ -61,7 +113,7 @@
         0.6079999804496765
       ],
       "custom_socket_props": {},
-      "height": 442.75531005859375,
+      "height": 436.35528564453125,
       "hide": false,
       "label": "green",
       "location": [
@@ -70,7 +122,7 @@
       ],
       "params": {},
       "use_custom_color": true,
-      "width": 429.0797424316406
+      "width": 559.5272216796875
     },
     "Frame.004": {
       "bl_idname": "NodeFrame",
@@ -80,7 +132,7 @@
         0.6079999804496765
       ],
       "custom_socket_props": {},
-      "height": 421.9343566894531,
+      "height": 442.7907409667969,
       "hide": false,
       "label": "orange",
       "location": [
@@ -89,7 +141,7 @@
       ],
       "params": {},
       "use_custom_color": true,
-      "width": 430.5060729980469
+      "width": 546.8622436523438
     },
     "Frame.005": {
       "bl_idname": "NodeFrame",
@@ -99,7 +151,7 @@
         0.6079999804496765
       ],
       "custom_socket_props": {},
-      "height": 430.8736267089844,
+      "height": 433.1270446777344,
       "hide": false,
       "label": "blue",
       "location": [
@@ -108,7 +160,7 @@
       ],
       "params": {},
       "use_custom_color": true,
-      "width": 393.7261657714844
+      "width": 534.618896484375
     },
     "Frame.006": {
       "bl_idname": "NodeFrame",
@@ -126,7 +178,7 @@
     "Frame.007": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 1430.3553466796875,
+      "height": 1437.75537109375,
       "hide": false,
       "label": "material areas",
       "location": [
@@ -134,7 +186,7 @@
         222.81358337402344
       ],
       "params": {},
-      "width": 500.8915100097656
+      "width": 631.3389892578125
     },
     "Frame.008": {
       "bl_idname": "NodeFrame",
@@ -183,6 +235,51 @@
       "params": {
         "count": 3,
         "level": 2
+      },
+      "width": 140.0
+    },
+    "List Del Levels": {
+      "bl_idname": "ListLevelsNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        380.9536819458008,
+        -653.0442962646484
+      ],
+      "params": {
+        "Sverch_LisLev": "2,3,4"
+      },
+      "width": 140.0
+    },
+    "List Del Levels.001": {
+      "bl_idname": "ListLevelsNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        378.1548385620117,
+        -155.79903030395508
+      ],
+      "params": {
+        "Sverch_LisLev": "2,3,4"
+      },
+      "width": 140.0
+    },
+    "List Del Levels.002": {
+      "bl_idname": "ListLevelsNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        353.67810821533203,
+        315.31817626953125
+      ],
+      "params": {
+        "Sverch_LisLev": "2,3,4"
       },
       "width": 140.0
     },
@@ -285,6 +382,51 @@
       },
       "width": 140.0
     },
+    "List Join.002": {
+      "bl_idname": "ListJoinNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        529.0849685668945,
+        -630.1589202880859
+      ],
+      "params": {
+        "JoinLevel": 2
+      },
+      "width": 140.0
+    },
+    "List Join.003": {
+      "bl_idname": "ListJoinNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        545.1144943237305,
+        -151.75831985473633
+      ],
+      "params": {
+        "JoinLevel": 2
+      },
+      "width": 140.0
+    },
+    "List Join.004": {
+      "bl_idname": "ListJoinNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        518.7548904418945,
+        319.35888671875
+      ],
+      "params": {
+        "JoinLevel": 2
+      },
+      "width": 140.0
+    },
     "List Length": {
       "bl_idname": "ListLengthNode",
       "custom_socket_props": {},
@@ -298,172 +440,49 @@
       "params": {},
       "width": 140.0
     },
-    "Monad": {
-      "bl_idname": "SvMonadGenericNode",
-      "color": [
-        0.8308190107345581,
-        0.911391019821167,
-        0.7545620203018188
-      ],
+    "List Math.002": {
+      "bl_idname": "ListFuncNode",
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        484.1255874633789,
-        203.4919891357422
+        536.6723709106445,
+        -822.6989593505859
       ],
       "params": {
-        "all_props": {
-          "cls_bl_idname": "SvGroupNodeMonad_140589627819783",
-          "float_props": {},
-          "int_props": {},
-          "name": "Monad"
-        },
-        "cls_dict": {
-          "cls_bl_idname": "SvGroupNodeMonad_140589627819783",
-          "input_template": [
-            [
-              "data",
-              "SvStringsSocket",
-              {}
-            ],
-            [
-              "Vertices",
-              "SvVerticesSocket",
-              {}
-            ]
-          ],
-          "output_template": [
-            [
-              "Function",
-              "SvStringsSocket"
-            ],
-            [
-              "Vertices",
-              "SvVerticesSocket"
-            ],
-            [
-              "data",
-              "SvStringsSocket"
-            ]
-          ]
-        },
-        "monad": "Monad"
+        "func_": "SUM"
       },
-      "use_custom_color": true,
       "width": 140.0
     },
-    "Monad.001": {
-      "bl_idname": "SvMonadGenericNode",
-      "color": [
-        0.8308190107345581,
-        0.911391019821167,
-        0.7545620203018188
-      ],
+    "List Math.003": {
+      "bl_idname": "ListFuncNode",
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        494.5110092163086,
-        -120.6656379699707
+        543.2877731323242,
+        -351.8365058898926
       ],
       "params": {
-        "all_props": {
-          "cls_bl_idname": "SvGroupNodeMonad_140589627819783",
-          "float_props": {},
-          "int_props": {},
-          "name": "Monad"
-        },
-        "cls_dict": {
-          "cls_bl_idname": "SvGroupNodeMonad_140589627819783",
-          "input_template": [
-            [
-              "data",
-              "SvStringsSocket",
-              {}
-            ],
-            [
-              "Vertices",
-              "SvVerticesSocket",
-              {}
-            ]
-          ],
-          "output_template": [
-            [
-              "Function",
-              "SvStringsSocket"
-            ],
-            [
-              "Vertices",
-              "SvVerticesSocket"
-            ],
-            [
-              "data",
-              "SvStringsSocket"
-            ]
-          ]
-        },
-        "monad": "Monad"
+        "func_": "SUM"
       },
-      "use_custom_color": true,
       "width": 140.0
     },
-    "Monad.002": {
-      "bl_idname": "SvMonadGenericNode",
-      "color": [
-        0.8308190107345581,
-        0.911391019821167,
-        0.7545620203018188
-      ],
+    "List Math.004": {
+      "bl_idname": "ListFuncNode",
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        510.4286880493164,
-        -598.7263641357422
+        518.810920715332,
+        130.58750915527344
       ],
       "params": {
-        "all_props": {
-          "cls_bl_idname": "SvGroupNodeMonad_140589627819783",
-          "float_props": {},
-          "int_props": {},
-          "name": "Monad"
-        },
-        "cls_dict": {
-          "cls_bl_idname": "SvGroupNodeMonad_140589627819783",
-          "input_template": [
-            [
-              "data",
-              "SvStringsSocket",
-              {}
-            ],
-            [
-              "Vertices",
-              "SvVerticesSocket",
-              {}
-            ]
-          ],
-          "output_template": [
-            [
-              "Function",
-              "SvStringsSocket"
-            ],
-            [
-              "Vertices",
-              "SvVerticesSocket"
-            ],
-            [
-              "data",
-              "SvStringsSocket"
-            ]
-          ]
-        },
-        "monad": "Monad"
+        "func_": "SUM"
       },
-      "use_custom_color": true,
       "width": 140.0
     },
     "Note": {
@@ -823,32 +842,20 @@
       0
     ],
     [
-      "List Decompose",
-      0,
-      "Monad",
-      0
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Monad",
-      "Vertices"
-    ],
-    [
-      "Monad",
+      "List Math.004",
       0,
       "Stethoscope MK2.004",
       0
     ],
     [
-      "Monad",
-      1,
+      "Reroute",
+      "Output",
       "Viewer Draw.001",
-      0
+      "Vertices"
     ],
     [
-      "Monad",
-      2,
+      "List Del Levels.002",
+      0,
       "Viewer Draw.001",
       2
     ],
@@ -859,32 +866,20 @@
       3
     ],
     [
-      "Monad.001",
+      "List Math.003",
       0,
       "Stethoscope MK2.005",
       0
     ],
     [
-      "List Decompose",
-      1,
-      "Monad.001",
-      0
-    ],
-    [
       "Reroute",
       "Output",
-      "Monad.001",
+      "Viewer Draw.002",
       "Vertices"
     ],
     [
-      "Monad.001",
-      1,
-      "Viewer Draw.002",
-      0
-    ],
-    [
-      "Monad.001",
-      2,
+      "List Del Levels.001",
+      0,
       "Viewer Draw.002",
       2
     ],
@@ -895,20 +890,20 @@
       3
     ],
     [
-      "Monad.002",
+      "List Math.002",
       0,
       "Stethoscope MK2.006",
       0
     ],
     [
-      "Monad.002",
-      1,
+      "Reroute",
+      "Output",
       "Viewer Draw.003",
-      0
+      "Vertices"
     ],
     [
-      "Monad.002",
-      2,
+      "List Del Levels",
+      0,
       "Viewer Draw.003",
       2
     ],
@@ -919,16 +914,94 @@
       3
     ],
     [
+      "List Join.003",
+      0,
+      "List Math.003",
+      0
+    ],
+    [
+      "Area.005",
+      0,
+      "List Join.003",
+      0
+    ],
+    [
       "List Decompose",
-      2,
-      "Monad.002",
+      1,
+      "List Del Levels.001",
       0
     ],
     [
       "Reroute",
       "Output",
-      "Monad.002",
+      "Area.005",
       "Vertices"
+    ],
+    [
+      "List Del Levels.001",
+      0,
+      "Area.005",
+      1
+    ],
+    [
+      "List Join.004",
+      0,
+      "List Math.004",
+      0
+    ],
+    [
+      "Area.006",
+      0,
+      "List Join.004",
+      0
+    ],
+    [
+      "List Decompose",
+      0,
+      "List Del Levels.002",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Area.006",
+      "Vertices"
+    ],
+    [
+      "List Del Levels.002",
+      0,
+      "Area.006",
+      1
+    ],
+    [
+      "Area.004",
+      0,
+      "List Join.002",
+      0
+    ],
+    [
+      "List Join.002",
+      0,
+      "List Math.002",
+      0
+    ],
+    [
+      "List Decompose",
+      2,
+      "List Del Levels",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Area.004",
+      "Vertices"
+    ],
+    [
+      "List Del Levels",
+      0,
+      "Area.004",
+      1
     ]
   ]
 }
