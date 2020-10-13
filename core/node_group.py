@@ -241,6 +241,9 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
         """
         # deselect group nodes if selected
         base_tree = context.space_data.path[-1].node_tree
+        if not self.can_be_grouped(base_tree):
+            self.report({'WARNING'}, 'Current selection can not be converted to group')
+            return {'CANCELLED'}
         [setattr(n, 'select', False) for n in base_tree.nodes
          if n.select and n.bl_idname in {'NodeGroupInput', 'NodeGroupOutput'}]
 
@@ -299,6 +302,23 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
     def filter_selected_nodes(tree) -> list:
         return [n for n in tree.nodes if n.select and n.bl_idname not in {'NodeGroupInput', 'NodeGroupOutput'}]
 
+    @staticmethod
+    def can_be_grouped(tree) -> bool:
+        # if there is one or more unselected nodes between nodes to be grouped
+        # then current selection can't be grouped
+        py_tree = Tree.from_bl_tree(tree)
+        [setattr(py_tree.nodes[n.name], 'select', n.select) for n in tree.nodes]
+        for node in py_tree.nodes.values():
+            if not node.select:
+                continue
+            for neighbour_node in node.next_nodes:
+                if neighbour_node.select:
+                    continue
+                for next_node in neighbour_node.bfs_walk():
+                    if next_node.select:
+                        return False
+        return True
+
 
 class UngroupGroupTree(bpy.types.Operator):
     bl_idname = 'node.ungroup_group_tree'
@@ -323,7 +343,7 @@ class UngroupGroupTree(bpy.types.Operator):
         for i, node in enumerate(group_nodes_filter):
             node.select = True
             node['ungroup order'] = i  # this will be copied within the nodes
-        tree = context.space_data.path[-1].node_tree
+        tree = context.space_data.path[-2].node_tree
         for node in tree.nodes:
             if 'ungroup order' in node:
                 del node['ungroup order']
