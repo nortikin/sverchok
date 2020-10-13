@@ -1,0 +1,934 @@
+{
+  "export_version": "0.10",
+  "framed_nodes": {
+    "Frame.003": "Frame.007",
+    "Frame.004": "Frame.007",
+    "Frame.005": "Frame.007",
+    "IcoSphere": "Frame.006",
+    "List Decompose": "Frame.002",
+    "List Input": "Frame.006",
+    "List Length": "Frame",
+    "Monad": "Frame.003",
+    "Monad.001": "Frame.004",
+    "Monad.002": "Frame.005",
+    "Random Num Gen": "Frame",
+    "Reroute": "Frame.002",
+    "Scripted Node Lite": "Frame.008",
+    "Stethoscope MK2": "Frame",
+    "Stethoscope MK2.001": "Frame.008",
+    "Stethoscope MK2.004": "Frame.003",
+    "Stethoscope MK2.005": "Frame.004",
+    "Stethoscope MK2.006": "Frame.005",
+    "Viewer Draw.001": "Frame.003",
+    "Viewer Draw.002": "Frame.004",
+    "Viewer Draw.003": "Frame.005"
+  },
+  "groups": {
+    "Monad": "{\"export_version\": \"0.10\", \"framed_nodes\": {}, \"groups\": {}, \"nodes\": {\"Group Inputs Exp\": {\"bl_idname\": \"SvGroupInputsNodeExp\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [-125.56634521484375, -284.74932861328125], \"params\": {\"node_kind\": \"outputs\"}, \"custom_socket_props\": {}, \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true, \"outputs\": [[\"data\", \"SvStringsSocket\"], [\"Vertices\", \"SvVerticesSocket\"]]}, \"Group Outputs Exp\": {\"bl_idname\": \"SvGroupOutputsNodeExp\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [794.835205078125, -284.74932861328125], \"params\": {\"node_kind\": \"inputs\"}, \"custom_socket_props\": {}, \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true, \"inputs\": [[\"Function\", \"SvStringsSocket\"], [\"Vertices\", \"SvVerticesSocket\"], [\"data\", \"SvStringsSocket\"]]}, \"Area.004\": {\"bl_idname\": \"SvAreaNode\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [266.947265625, -296.736572265625], \"params\": {\"sum_faces\": true}, \"custom_socket_props\": {}}, \"List Join.002\": {\"bl_idname\": \"ListJoinNode\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [432.144775390625, -270.47991943359375], \"params\": {\"JoinLevel\": 2}, \"custom_socket_props\": {}}, \"List Math.002\": {\"bl_idname\": \"ListFuncNode\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [614.835205078125, -276.45782470703125], \"params\": {\"func_\": \"SUM\"}, \"custom_socket_props\": {}}, \"List Del Levels\": {\"bl_idname\": \"ListLevelsNode\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [84.43365478515625, -299.0187072753906], \"params\": {\"Sverch_LisLev\": \"2,3,4\"}, \"custom_socket_props\": {}}}, \"update_lists\": [[\"List Math.002\", 0, \"Group Outputs Exp\", 0], [\"Group Inputs Exp\", 1, \"Group Outputs Exp\", 1], [\"List Del Levels\", 0, \"Group Outputs Exp\", 2], [\"Group Inputs Exp\", 1, \"Area.004\", 0], [\"List Del Levels\", 0, \"Area.004\", 1], [\"Area.004\", 0, \"List Join.002\", 0], [\"List Join.002\", 0, \"List Math.002\", 0], [\"Group Inputs Exp\", 0, \"List Del Levels\", 0]], \"bl_idname\": \"SverchGroupTreeType\", \"cls_bl_idname\": \"SvGroupNodeMonad_140589627819783\"}"
+  },
+  "nodes": {
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 284.7841796875,
+      "hide": false,
+      "label": "initial mask per object",
+      "location": [
+        -236.18377685546875,
+        -131.94302368164062
+      ],
+      "params": {},
+      "width": 585.3868408203125
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 285.4263000488281,
+      "hide": false,
+      "label": "dispatch",
+      "location": [
+        -28.65412139892578,
+        92.74955749511719
+      ],
+      "params": {},
+      "width": 200.0
+    },
+    "Frame.003": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "custom_socket_props": {},
+      "height": 442.75531005859375,
+      "hide": false,
+      "label": "green",
+      "location": [
+        197.32648468017578,
+        319.164794921875
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 429.0797424316406
+    },
+    "Frame.004": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "custom_socket_props": {},
+      "height": 421.9343566894531,
+      "hide": false,
+      "label": "orange",
+      "location": [
+        207.71190643310547,
+        195.08884811401367
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 430.5060729980469
+    },
+    "Frame.005": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "custom_socket_props": {},
+      "height": 430.8736267089844,
+      "hide": false,
+      "label": "blue",
+      "location": [
+        190.54846954345703,
+        -81.53831481933594
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 393.7261657714844
+    },
+    "Frame.006": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 213.09703063964844,
+      "hide": false,
+      "label": "initial object",
+      "location": [
+        -3.906005859375,
+        -153.02589416503906
+      ],
+      "params": {},
+      "width": 389.0772705078125
+    },
+    "Frame.007": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 1430.3553466796875,
+      "hide": false,
+      "label": "material areas",
+      "location": [
+        170.585693359375,
+        222.81358337402344
+      ],
+      "params": {},
+      "width": 500.8915100097656
+    },
+    "Frame.008": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 485.62664794921875,
+      "hide": false,
+      "label": "sorting",
+      "location": [
+        -142.6126251220703,
+        188.7503662109375
+      ],
+      "params": {},
+      "width": 202.1768798828125
+    },
+    "IcoSphere": {
+      "bl_idname": "SvIcosphereNode",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -823.7589111328125,
+        -51.90296936035156
+      ],
+      "params": {
+        "radius": 2.049999952316284
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "List Decompose": {
+      "bl_idname": "SvListDecomposeNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -63.997432708740234,
+        -108.00852966308594
+      ],
+      "params": {
+        "count": 3,
+        "level": 2
+      },
+      "width": 140.0
+    },
+    "List Input": {
+      "bl_idname": "SvListInputNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1012.8361206054688,
+        -55.606849670410156
+      ],
+      "params": {
+        "int_": 2,
+        "int_list": [
+          2,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "width": 140.0
+    },
+    "List Input.001": {
+      "bl_idname": "SvListInputNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "matrix",
+      "location": [
+        -71.62352752685547,
+        -409.7667236328125
+      ],
+      "params": {
+        "mode": "vector",
+        "v_int": 2,
+        "vector_list": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          4.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "width": 140.0
+    },
+    "List Length": {
+      "bl_idname": "ListLengthNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1033.18359375,
+        -352.22515869140625
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Monad": {
+      "bl_idname": "SvMonadGenericNode",
+      "color": [
+        0.8308190107345581,
+        0.911391019821167,
+        0.7545620203018188
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        484.1255874633789,
+        203.4919891357422
+      ],
+      "params": {
+        "all_props": {
+          "cls_bl_idname": "SvGroupNodeMonad_140589627819783",
+          "float_props": {},
+          "int_props": {},
+          "name": "Monad"
+        },
+        "cls_dict": {
+          "cls_bl_idname": "SvGroupNodeMonad_140589627819783",
+          "input_template": [
+            [
+              "data",
+              "SvStringsSocket",
+              {}
+            ],
+            [
+              "Vertices",
+              "SvVerticesSocket",
+              {}
+            ]
+          ],
+          "output_template": [
+            [
+              "Function",
+              "SvStringsSocket"
+            ],
+            [
+              "Vertices",
+              "SvVerticesSocket"
+            ],
+            [
+              "data",
+              "SvStringsSocket"
+            ]
+          ]
+        },
+        "monad": "Monad"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Monad.001": {
+      "bl_idname": "SvMonadGenericNode",
+      "color": [
+        0.8308190107345581,
+        0.911391019821167,
+        0.7545620203018188
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        494.5110092163086,
+        -120.6656379699707
+      ],
+      "params": {
+        "all_props": {
+          "cls_bl_idname": "SvGroupNodeMonad_140589627819783",
+          "float_props": {},
+          "int_props": {},
+          "name": "Monad"
+        },
+        "cls_dict": {
+          "cls_bl_idname": "SvGroupNodeMonad_140589627819783",
+          "input_template": [
+            [
+              "data",
+              "SvStringsSocket",
+              {}
+            ],
+            [
+              "Vertices",
+              "SvVerticesSocket",
+              {}
+            ]
+          ],
+          "output_template": [
+            [
+              "Function",
+              "SvStringsSocket"
+            ],
+            [
+              "Vertices",
+              "SvVerticesSocket"
+            ],
+            [
+              "data",
+              "SvStringsSocket"
+            ]
+          ]
+        },
+        "monad": "Monad"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Monad.002": {
+      "bl_idname": "SvMonadGenericNode",
+      "color": [
+        0.8308190107345581,
+        0.911391019821167,
+        0.7545620203018188
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        510.4286880493164,
+        -598.7263641357422
+      ],
+      "params": {
+        "all_props": {
+          "cls_bl_idname": "SvGroupNodeMonad_140589627819783",
+          "float_props": {},
+          "int_props": {},
+          "name": "Monad"
+        },
+        "cls_dict": {
+          "cls_bl_idname": "SvGroupNodeMonad_140589627819783",
+          "input_template": [
+            [
+              "data",
+              "SvStringsSocket",
+              {}
+            ],
+            [
+              "Vertices",
+              "SvVerticesSocket",
+              {}
+            ]
+          ],
+          "output_template": [
+            [
+              "Function",
+              "SvStringsSocket"
+            ],
+            [
+              "Vertices",
+              "SvVerticesSocket"
+            ],
+            [
+              "data",
+              "SvStringsSocket"
+            ]
+          ]
+        },
+        "monad": "Monad"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Note": {
+      "bl_idname": "NoteNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1027.11474609375,
+        191.1424560546875
+      ],
+      "params": {
+        "n_id": "-7274830787456972808",
+        "show_text": false,
+        "text": "Nikitron | 2020 | List_multymask SNL node"
+      },
+      "width": 400.0
+    },
+    "Random Num Gen": {
+      "bl_idname": "SvRndNumGen",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -847.7967529296875,
+        -300.2158203125
+      ],
+      "params": {
+        "high_i": 2
+      },
+      "width": 140.0
+    },
+    "Reroute": {
+      "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "verts",
+      "location": [
+        6.801826477050781,
+        -325.43479919433594
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Scripted Node Lite": {
+      "bl_idname": "SvScriptNodeLite",
+      "color": [
+        0.0,
+        0.800000011920929,
+        0.949999988079071
+      ],
+      "custom_socket_props": {
+        "2": {
+          "default_int_property": 2,
+          "default_property_type": "int"
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -368.5140075683594,
+        -53.28538513183594
+      ],
+      "params": {
+        "n_id": "-7788089944793720137",
+        "script_name": "exec",
+        "script_str": "'''\nin data s d=[[]] n=0\nin mask s d=[[]] n=0\nin level s d=2 n=2\nout data_out s\n'''\n\nfrom sverchok.nodes.list_struct.flip import flip\n\n\ndef rec(data_in, mask, level):\n    # \u0440\u0435\u043a\u0443\u0440\u0441\u0438\u044f \u043c\u0430\u0441\u043a\u0438\u0440\u043e\u0432\u043a\u0438\n    print(level)\n    if level > 1:\n        l = level - 1\n        dic = []\n        for d,m in zip(data_in,mask):\n            dic.append(rec(d,m,l))\n        return dic\n    else:\n        data_out = []\n        dic = {}\n        for d,m in zip(data_in,mask):\n            if not m in dic: \n                dic[m] = []\n            dic[m].append(d)\n        for v in dic.values():\n            data_out.append(v)\n        return data_out\n\ndata_out = flip(rec(data,mask,level),level-2)"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Stethoscope MK2": {
+      "bl_idname": "SvStethoscopeNodeMK2",
+      "color": [
+        1.0,
+        0.8993440270423889,
+        0.9742509722709656
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -647.7967529296875,
+        -300.2158203125
+      ],
+      "params": {
+        "compact": true,
+        "location_theta": 1.0,
+        "num_elements": 2,
+        "text_color": [
+          0.949999988079071,
+          0.949999988079071,
+          0.949999988079071
+        ],
+        "view_by_element": true
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Stethoscope MK2.001": {
+      "bl_idname": "SvStethoscopeNodeMK2",
+      "color": [
+        1.0,
+        0.8993440270423889,
+        0.9742509722709656
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -366.3371276855469,
+        200.6266326904297
+      ],
+      "params": {
+        "compact": true,
+        "line_width": 47,
+        "location_theta": 1.0,
+        "num_elements": 3,
+        "text_color": [
+          0.949999988079071,
+          0.949999988079071,
+          0.949999988079071
+        ],
+        "view_by_element": true
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Stethoscope MK2.004": {
+      "bl_idname": "SvStethoscopeNodeMK2",
+      "color": [
+        1.0,
+        0.8993440270423889,
+        0.9742509722709656
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        713.2053298950195,
+        335.7553253173828
+      ],
+      "params": {
+        "location_theta": 1.0,
+        "num_elements": 1,
+        "text_color": [
+          0.949999988079071,
+          0.949999988079071,
+          0.949999988079071
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Stethoscope MK2.005": {
+      "bl_idname": "SvStethoscopeNodeMK2",
+      "color": [
+        1.0,
+        0.8993440270423889,
+        0.9742509722709656
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        714.8256149291992,
+        -128.20927810668945
+      ],
+      "params": {
+        "location_theta": 1.0,
+        "num_elements": 1,
+        "text_color": [
+          0.949999988079071,
+          0.949999988079071,
+          0.949999988079071
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Stethoscope MK2.006": {
+      "bl_idname": "SvStethoscopeNodeMK2",
+      "color": [
+        1.0,
+        0.8993440270423889,
+        0.9742509722709656
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        700.0383377075195,
+        -608.8729095458984
+      ],
+      "params": {
+        "location_theta": 1.0,
+        "num_elements": 1,
+        "text_color": [
+          0.949999988079071,
+          0.949999988079071,
+          0.949999988079071
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw.001": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        711.0341873168945,
+        282.93052673339844
+      ],
+      "params": {
+        "display_edges": false,
+        "display_verts": false,
+        "polygon_color": [
+          0.16457197070121765,
+          0.8100000619888306,
+          0.13284258544445038,
+          1.0
+        ],
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw.002": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        725.0170822143555,
+        -170.92079544067383
+      ],
+      "params": {
+        "display_edges": false,
+        "display_verts": false,
+        "polygon_color": [
+          0.8100003600120544,
+          0.1465928852558136,
+          0.0186094269156456,
+          1.0
+        ],
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw.003": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        704.1548538208008,
+        -657.1360931396484
+      ],
+      "params": {
+        "display_edges": false,
+        "display_verts": false,
+        "polygon_color": [
+          0.09928319603204727,
+          0.11020801216363907,
+          0.8100003600120544,
+          1.0
+        ],
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "List Input",
+      0,
+      "IcoSphere",
+      0
+    ],
+    [
+      "IcoSphere",
+      2,
+      "List Length",
+      0
+    ],
+    [
+      "List Length",
+      0,
+      "Random Num Gen",
+      0
+    ],
+    [
+      "Random Num Gen",
+      0,
+      "Stethoscope MK2",
+      0
+    ],
+    [
+      "IcoSphere",
+      2,
+      "Scripted Node Lite",
+      0
+    ],
+    [
+      "Random Num Gen",
+      0,
+      "Scripted Node Lite",
+      1
+    ],
+    [
+      "Scripted Node Lite",
+      0,
+      "Stethoscope MK2.001",
+      0
+    ],
+    [
+      "IcoSphere",
+      "Vertices",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Scripted Node Lite",
+      0,
+      "List Decompose",
+      0
+    ],
+    [
+      "List Decompose",
+      0,
+      "Monad",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Monad",
+      "Vertices"
+    ],
+    [
+      "Monad",
+      0,
+      "Stethoscope MK2.004",
+      0
+    ],
+    [
+      "Monad",
+      1,
+      "Viewer Draw.001",
+      0
+    ],
+    [
+      "Monad",
+      2,
+      "Viewer Draw.001",
+      2
+    ],
+    [
+      "List Input.001",
+      0,
+      "Viewer Draw.001",
+      3
+    ],
+    [
+      "Monad.001",
+      0,
+      "Stethoscope MK2.005",
+      0
+    ],
+    [
+      "List Decompose",
+      1,
+      "Monad.001",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Monad.001",
+      "Vertices"
+    ],
+    [
+      "Monad.001",
+      1,
+      "Viewer Draw.002",
+      0
+    ],
+    [
+      "Monad.001",
+      2,
+      "Viewer Draw.002",
+      2
+    ],
+    [
+      "List Input.001",
+      0,
+      "Viewer Draw.002",
+      3
+    ],
+    [
+      "Monad.002",
+      0,
+      "Stethoscope MK2.006",
+      0
+    ],
+    [
+      "Monad.002",
+      1,
+      "Viewer Draw.003",
+      0
+    ],
+    [
+      "Monad.002",
+      2,
+      "Viewer Draw.003",
+      2
+    ],
+    [
+      "List Input.001",
+      0,
+      "Viewer Draw.003",
+      3
+    ],
+    [
+      "List Decompose",
+      2,
+      "Monad.002",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Monad.002",
+      "Vertices"
+    ]
+  ]
+}
