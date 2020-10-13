@@ -41,7 +41,7 @@
       "hide": false,
       "label": "",
       "location": [
-        369.5359878540039,
+        369.5359802246094,
         -805.2884368896484
       ],
       "params": {
@@ -56,8 +56,8 @@
       "hide": false,
       "label": "",
       "location": [
-        387.4482650756836,
-        -283.5451850891113
+        387.4482727050781,
+        -283.54518127441406
       ],
       "params": {
         "sum_faces": true
@@ -71,7 +71,7 @@
       "hide": false,
       "label": "",
       "location": [
-        357.3230667114258,
+        357.32305908203125,
         193.22540283203125
       ],
       "params": {
@@ -117,7 +117,7 @@
       "hide": false,
       "label": "green",
       "location": [
-        197.32648468017578,
+        197.32647705078125,
         319.164794921875
       ],
       "params": {},
@@ -136,8 +136,8 @@
       "hide": false,
       "label": "orange",
       "location": [
-        207.71190643310547,
-        195.08884811401367
+        207.7119140625,
+        195.08885192871094
       ],
       "params": {},
       "use_custom_color": true,
@@ -155,7 +155,7 @@
       "hide": false,
       "label": "blue",
       "location": [
-        190.54846954345703,
+        190.5484619140625,
         -81.53831481933594
       ],
       "params": {},
@@ -245,7 +245,7 @@
       "hide": false,
       "label": "",
       "location": [
-        380.9536819458008,
+        380.95367431640625,
         -653.0442962646484
       ],
       "params": {
@@ -260,8 +260,8 @@
       "hide": false,
       "label": "",
       "location": [
-        378.1548385620117,
-        -155.79903030395508
+        378.15484619140625,
+        -155.7990264892578
       ],
       "params": {
         "Sverch_LisLev": "2,3,4"
@@ -275,7 +275,7 @@
       "hide": false,
       "label": "",
       "location": [
-        353.67810821533203,
+        353.6781005859375,
         315.31817626953125
       ],
       "params": {
@@ -389,7 +389,7 @@
       "hide": false,
       "label": "",
       "location": [
-        529.0849685668945,
+        529.0849609375,
         -630.1589202880859
       ],
       "params": {
@@ -404,8 +404,8 @@
       "hide": false,
       "label": "",
       "location": [
-        545.1144943237305,
-        -151.75831985473633
+        545.114501953125,
+        -151.75831604003906
       ],
       "params": {
         "JoinLevel": 2
@@ -419,7 +419,7 @@
       "hide": false,
       "label": "",
       "location": [
-        518.7548904418945,
+        518.7548828125,
         319.35888671875
       ],
       "params": {
@@ -447,7 +447,7 @@
       "hide": false,
       "label": "",
       "location": [
-        536.6723709106445,
+        536.67236328125,
         -822.6989593505859
       ],
       "params": {
@@ -462,8 +462,8 @@
       "hide": false,
       "label": "",
       "location": [
-        543.2877731323242,
-        -351.8365058898926
+        543.2877807617188,
+        -351.8365020751953
       ],
       "params": {
         "func_": "SUM"
@@ -477,7 +477,7 @@
       "hide": false,
       "label": "",
       "location": [
-        518.810920715332,
+        518.8109130859375,
         130.58750915527344
       ],
       "params": {
@@ -487,6 +487,11 @@
     },
     "Note": {
       "bl_idname": "NoteNode",
+      "color": [
+        1.0,
+        0.8993440270423889,
+        0.9742509722709656
+      ],
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
@@ -500,6 +505,7 @@
         "show_text": false,
         "text": "Nikitron | 2020 | List_multymask SNL node"
       },
+      "use_custom_color": true,
       "width": 400.0
     },
     "Random Num Gen": {
@@ -525,7 +531,7 @@
       "label": "verts",
       "location": [
         6.801826477050781,
-        -325.43479919433594
+        -325.43482971191406
       ],
       "params": {},
       "width": 16.0
@@ -629,8 +635,8 @@
       "hide": true,
       "label": "",
       "location": [
-        713.2053298950195,
-        335.7553253173828
+        713.205322265625,
+        335.75531005859375
       ],
       "params": {
         "location_theta": 1.0,
@@ -656,8 +662,8 @@
       "hide": true,
       "label": "",
       "location": [
-        714.8256149291992,
-        -128.20927810668945
+        714.8256225585938,
+        -128.2092742919922
       ],
       "params": {
         "location_theta": 1.0,
@@ -683,7 +689,7 @@
       "hide": true,
       "label": "",
       "location": [
-        700.0383377075195,
+        700.038330078125,
         -608.8729095458984
       ],
       "params": {
@@ -710,8 +716,8 @@
       "hide": false,
       "label": "",
       "location": [
-        711.0341873168945,
-        282.93052673339844
+        711.0341796875,
+        282.9305419921875
       ],
       "params": {
         "display_edges": false,
@@ -739,8 +745,8 @@
       "hide": false,
       "label": "",
       "location": [
-        725.0170822143555,
-        -170.92079544067383
+        725.01708984375,
+        -170.92079162597656
       ],
       "params": {
         "display_edges": false,
@@ -768,7 +774,7 @@
       "hide": false,
       "label": "",
       "location": [
-        704.1548538208008,
+        704.1548461914062,
         -657.1360931396484
       ],
       "params": {
@@ -788,45 +794,117 @@
   },
   "update_lists": [
     [
+      "Reroute",
+      "Output",
+      "Area.004",
+      "Vertices"
+    ],
+    [
+      "List Del Levels",
+      0,
+      "Area.004",
+      1
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Area.005",
+      "Vertices"
+    ],
+    [
+      "List Del Levels.001",
+      0,
+      "Area.005",
+      1
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Area.006",
+      "Vertices"
+    ],
+    [
+      "List Del Levels.002",
+      0,
+      "Area.006",
+      1
+    ],
+    [
       "List Input",
       0,
       "IcoSphere",
       0
     ],
     [
+      "Scripted Node Lite",
+      0,
+      "List Decompose",
+      0
+    ],
+    [
+      "List Decompose",
+      2,
+      "List Del Levels",
+      0
+    ],
+    [
+      "List Decompose",
+      1,
+      "List Del Levels.001",
+      0
+    ],
+    [
+      "List Decompose",
+      0,
+      "List Del Levels.002",
+      0
+    ],
+    [
+      "Area.004",
+      0,
+      "List Join.002",
+      0
+    ],
+    [
+      "Area.005",
+      0,
+      "List Join.003",
+      0
+    ],
+    [
+      "Area.006",
+      0,
+      "List Join.004",
+      0
+    ],
+    [
       "IcoSphere",
       2,
       "List Length",
       0
     ],
     [
+      "List Join.002",
+      0,
+      "List Math.002",
+      0
+    ],
+    [
+      "List Join.003",
+      0,
+      "List Math.003",
+      0
+    ],
+    [
+      "List Join.004",
+      0,
+      "List Math.004",
+      0
+    ],
+    [
       "List Length",
       0,
       "Random Num Gen",
-      0
-    ],
-    [
-      "Random Num Gen",
-      0,
-      "Stethoscope MK2",
-      0
-    ],
-    [
-      "IcoSphere",
-      2,
-      "Scripted Node Lite",
-      0
-    ],
-    [
-      "Random Num Gen",
-      0,
-      "Scripted Node Lite",
-      1
-    ],
-    [
-      "Scripted Node Lite",
-      0,
-      "Stethoscope MK2.001",
       0
     ],
     [
@@ -836,9 +914,15 @@
       "Input"
     ],
     [
+      "Random Num Gen",
+      0,
+      "Stethoscope MK2",
+      0
+    ],
+    [
       "Scripted Node Lite",
       0,
-      "List Decompose",
+      "Stethoscope MK2.001",
       0
     ],
     [
@@ -848,46 +932,10 @@
       0
     ],
     [
-      "Reroute",
-      "Output",
-      "Viewer Draw.001",
-      "Vertices"
-    ],
-    [
-      "List Del Levels.002",
-      0,
-      "Viewer Draw.001",
-      2
-    ],
-    [
-      "List Input.001",
-      0,
-      "Viewer Draw.001",
-      3
-    ],
-    [
       "List Math.003",
       0,
       "Stethoscope MK2.005",
       0
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Viewer Draw.002",
-      "Vertices"
-    ],
-    [
-      "List Del Levels.001",
-      0,
-      "Viewer Draw.002",
-      2
-    ],
-    [
-      "List Input.001",
-      0,
-      "Viewer Draw.002",
-      3
     ],
     [
       "List Math.002",
@@ -898,6 +946,42 @@
     [
       "Reroute",
       "Output",
+      "Viewer Draw.001",
+      "Vertices"
+    ],
+    [
+      "List Del Levels.002",
+      0,
+      "Viewer Draw.001",
+      2
+    ],
+    [
+      "List Input.001",
+      0,
+      "Viewer Draw.001",
+      3
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Viewer Draw.002",
+      "Vertices"
+    ],
+    [
+      "List Del Levels.001",
+      0,
+      "Viewer Draw.002",
+      2
+    ],
+    [
+      "List Input.001",
+      0,
+      "Viewer Draw.002",
+      3
+    ],
+    [
+      "Reroute",
+      "Output",
       "Viewer Draw.003",
       "Vertices"
     ],
@@ -914,93 +998,15 @@
       3
     ],
     [
-      "List Join.003",
-      0,
-      "List Math.003",
-      0
-    ],
-    [
-      "Area.005",
-      0,
-      "List Join.003",
-      0
-    ],
-    [
-      "List Decompose",
-      1,
-      "List Del Levels.001",
-      0
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Area.005",
-      "Vertices"
-    ],
-    [
-      "List Del Levels.001",
-      0,
-      "Area.005",
-      1
-    ],
-    [
-      "List Join.004",
-      0,
-      "List Math.004",
-      0
-    ],
-    [
-      "Area.006",
-      0,
-      "List Join.004",
-      0
-    ],
-    [
-      "List Decompose",
-      0,
-      "List Del Levels.002",
-      0
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Area.006",
-      "Vertices"
-    ],
-    [
-      "List Del Levels.002",
-      0,
-      "Area.006",
-      1
-    ],
-    [
-      "Area.004",
-      0,
-      "List Join.002",
-      0
-    ],
-    [
-      "List Join.002",
-      0,
-      "List Math.002",
-      0
-    ],
-    [
-      "List Decompose",
+      "IcoSphere",
       2,
-      "List Del Levels",
+      "Scripted Node Lite",
       0
     ],
     [
-      "Reroute",
-      "Output",
-      "Area.004",
-      "Vertices"
-    ],
-    [
-      "List Del Levels",
+      "Random Num Gen",
       0,
-      "Area.004",
+      "Scripted Node Lite",
       1
     ]
   ]

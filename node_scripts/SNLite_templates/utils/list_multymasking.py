@@ -8,9 +8,15 @@ out data_out s
 from sverchok.nodes.list_struct.flip import flip
 
 
+'''
+https://gist.github.com/5247af90ca28ba96a3698786593a1fe4
+import this example of usage multimask SNL 
+'''
+
+
 def rec(data_in, mask, level):
     # рекурсия маскировки
-    print(level)
+    # print(level)
     if level > 1:
         l = level - 1
         dic = []
