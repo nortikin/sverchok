@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -12,7 +12,7 @@ import bpy
 from bpy.props import BoolProperty, StringProperty, IntProperty, CollectionProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, enum_item_5
-from sverchok.nodes.viz.vd_draw_experimental import SvVDExperimental
+from sverchok.old_nodes.vd_draw_experimental import SvVDExperimental
 
 
 sock_str = {
@@ -65,7 +65,7 @@ def property_change(item, context, changed_attr):
     node = ng.nodes[item.origin_node_name]
     socket_name = maximum_spec_vd_dict[item.attr_name].name
     if changed_attr == 'show_socket':
-        node.inputs[socket_name].hide_safe = not getattr(item, changed_attr) 
+        node.inputs[socket_name].hide_safe = not getattr(item, changed_attr)
 
 class SvVDMK3Item(bpy.types.PropertyGroup):
     attr_name: StringProperty(options={'SKIP_SAVE'})
@@ -84,29 +84,31 @@ class SvVDMK3Properties(bpy.types.PropertyGroup):
 
 class SV_UL_VDMK3ItemList(bpy.types.UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-        
+
         # is there a nicer way to do this? can we use  .active_node ?
         node = context.space_data.edit_tree.nodes[item.origin_node_name]
-        
+
         attr_name = item.attr_name
         socket_string_name = sock_str[maximum_spec_vd_dict[attr_name].kind]
         layout.template_node_socket(color=socket_colors[socket_string_name])
         layout.prop(item, "show_socket", text="", icon='TRACKING', toggle=True)
         layout.prop(item, "use_default", text="", icon='SETTINGS', toggle=True)
         layout.label(text=attr_name)
-        layout.prop(node.vd_items_props[0], attr_name, text='') 
+        layout.prop(node.vd_items_props[0], attr_name, text='')
 
 class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: vd attr 
+    Triggers: vd attr
     Tooltip: Attribute Node for Viewer Draw Experimental
-    
+
     Allows access to VD Experimental's attributes which control how the
     node draws faces/edges. It can also switch off the node.
     """
     bl_idname = 'SvVDAttrsNode'
     bl_label = 'VD Attributes'
     bl_icon = 'MOD_HUE_SATURATION'
+
+    replacement_nodes = [('SvVDAttrsNodeMk2', dict(verts='Vertices', edges='Edges', faces='Polygons', matrix='Matrix'), None)]
 
     property_index: IntProperty(name='index', default=0)
     vd_items_group: CollectionProperty(name="vd attrs", type=SvVDMK3Item)
@@ -124,7 +126,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
             socket.hide = True
             if prop_name == 'vector_light':
                 socket.quick_link_to_node = "GenVectorsNode"
-  
+
     def vd_init_uilayout_data(self, context):
         for key, value in maximum_spec_vd_dict.items():
             item = self.vd_items_group.add()
@@ -155,7 +157,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         return socket_repr, self.inputs[socket_repr.name]
 
     def get_attr_from_input(self, item):
-        
+
         socket_repr, associated_socket = self.get_repr_and_socket_from_attr_name(item.attr_name)
 
         if associated_socket.is_linked:
@@ -181,12 +183,12 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     @property
     def attrdict_from_state(self):
 
-        current_attr_dict = {}        
+        current_attr_dict = {}
         if self.vd_items_group and self.vd_items_props:
             for item in self.vd_items_group:
                 attr = item.attr_name
                 if not item.show_socket and not item.use_default:
-                    # apparantly no desire to pass this attr 
+                    # apparantly no desire to pass this attr
                     continue
                 if item.use_default or not item.show_socket:
                     value = getattr(self.vd_items_props[0], attr)

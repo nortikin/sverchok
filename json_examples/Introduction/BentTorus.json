@@ -214,7 +214,7 @@
       "width": 140.0
     },
     "Viewer Draw Mk3": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         1.0,
         0.30000001192092896,
@@ -241,7 +241,7 @@
       "width": 140.0
     },
     "Viewer Draw Mk3.001": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         1.0,
         0.30000001192092896,
@@ -262,7 +262,7 @@
           1.0,
           1.0
         ],
-        "face_color": [
+        "polygon_color": [
           0.17936842143535614,
           0.8100000619888306,
           0.39302897453308105,

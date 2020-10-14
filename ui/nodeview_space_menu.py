@@ -76,6 +76,7 @@ menu_structure = [
     ["NODE_MT_category_SVERCHOK_BPY_Data", "BLENDER"],
     ["separator"],
     ["NODEVIEW_MT_AddNetwork", "SYSTEM"],
+    ["NODEVIEW_MT_AddPulgaPhysics", "MOD_PHYSICS"],
     ["NODEVIEW_MT_AddSVG", "SV_SVG"],
     ["NODEVIEW_MT_AddBetas", "SV_BETA"],
     ["NODEVIEW_MT_AddAlphas", "SV_ALPHA"],
@@ -85,7 +86,7 @@ menu_structure = [
     ["NODEVIEW_MT_AddPresetOps", "SETTINGS"],
 ]
 def layout_draw_categories(layout, category_name, node_details):
-    
+
     global menu_class_by_title
 
     for node_info in node_details:
@@ -334,6 +335,7 @@ classes = [
     make_class('Logic', "Logic"),
     make_class('Network', "Network"),
     make_class('Exchange', "Exchange"),
+    make_class('PulgaPhysics', "Pulga Physics"),
     make_class('SVG', "SVG"),
     make_class('Betas', "Beta Nodes"),
     make_class('Alphas', "Alpha Nodes"),
@@ -358,4 +360,3 @@ def unregister():
         bpy.utils.unregister_class(preset_category_menus[category])
 
     menu_class_by_title = dict()
-

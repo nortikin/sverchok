@@ -22,8 +22,8 @@ class ScriptUvImportTest(SverchokTestCase):
 
             # Check links
             self.assert_nodes_linked("ImportedTree", "Scripted Node Lite", "verts", "UV Connection", "vertices")
-            self.assert_nodes_linked("ImportedTree", "UV Connection", "vertices", "Viewer Draw", "verts")
-            self.assert_nodes_linked("ImportedTree", "UV Connection", "data", "Viewer Draw", "edges")
+            self.assert_nodes_linked("ImportedTree", "UV Connection", "vertices", "Viewer Draw", "Vertices")
+            self.assert_nodes_linked("ImportedTree", "UV Connection", "data", "Viewer Draw", "Edges")
 
             # Check random node properties
             self.assert_node_property_equals("ImportedTree", "UV Connection", "cap_U", False)

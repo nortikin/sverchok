@@ -382,6 +382,13 @@ class SvBoolResult(object):
             solid_map = []
         self.solid_map = solid_map
 
+def transform_solid(matrix, solid):
+    """
+    Utility funciton to apply mathutils.Matrix to a Solid object.
+    """
+    mat = Base.Matrix(*[i for v in matrix for i in v])
+    return solid.transformGeometry(mat)
+
 def basic_mesher(solids, precisions):
     verts = []
     faces = []
@@ -427,7 +434,6 @@ def mefisto_mesher(solids, max_edge_length):
         faces.append(mesh.Topology[1])
 
     return verts, faces
-
 
 def svmesh_to_solid(verts, faces, precision, remove_splitter=True):
     """

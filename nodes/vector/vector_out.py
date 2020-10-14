@@ -46,6 +46,8 @@ class VectorsOutNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "X")
         self.outputs.new('SvStringsSocket', "Y")
         self.outputs.new('SvStringsSocket', "Z")
+        self.width = 100
+
     def draw_buttons_ext(self, ctx, layout):
         layout.prop(self, "output_numpy", toggle=False)
 

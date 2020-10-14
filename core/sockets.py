@@ -592,6 +592,13 @@ class SvSvgSocket(NodeSocket, SvSocketCommon):
             return
 
 
+class SvPulgaForceSocket(NodeSocket, SvSocketCommon):
+    '''For Pulga forces data'''
+    bl_idname = "SvPulgaForceSocket"
+    bl_label = "Pulga Force Socket"
+
+    color = (0.4, 0.3, 0.6, 1.0)
+
 class SvDictionarySocket(NodeSocket, SvSocketCommon):
     '''For dictionary data'''
     bl_idname = "SvDictionarySocket"
@@ -685,7 +692,7 @@ classes = [
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
     SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket,
     SvSurfaceSocket, SvCurveSocket, SvScalarFieldSocket, SvVectorFieldSocket,
-    SvSolidSocket, SvSvgSocket, SvLinkNewNodeInput,
+    SvSolidSocket, SvSvgSocket, SvPulgaForceSocket, SvLinkNewNodeInput,
     SvStringsSocketInterface, SvVerticesSocketInterface
 ]
 

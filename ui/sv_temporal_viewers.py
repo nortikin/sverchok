@@ -32,7 +32,7 @@ def add_temporal_viewer_draw(tree, nodes, links, existing_node, cut_links):
     tree = nodes[0].id_data
     previous_state = tree.sv_process
     tree.sv_process = False
-    bl_idname_new_node = 'SvVDExperimental'
+    bl_idname_new_node = 'SvViewerDrawMk4'
     output_map = get_output_sockets_map(existing_node)
     try:
         new_node = nodes['Temporal Viewer']
@@ -119,7 +119,7 @@ def add_temporal_viewer(context, force_stetoscope, cut_links):
 
     existing_node = nodes.active
 
-    if len(existing_node.outputs) == 0:
+    if not hasattr(existing_node,'outputs') or len(existing_node.outputs) == 0:
         return
 
     is_drawable = any([socket.bl_idname in ['SvMatrixSocket', 'SvVerticesSocket'] for socket in existing_node.outputs])

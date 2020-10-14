@@ -42,8 +42,9 @@ def range_stop_count(start, stop, count, n_type, out_numpy):
 
 def range_step_count(start, step, count, n_type, out_numpy):
     ''' Gives count values with step from start'''
-    stop = start + step * count
-    result = np.arange(start, stop, step, dtype=n_type)
+    stop = start + step * (count-1)
+    result = np.linspace(start, stop, num=count, dtype=n_type)
+
     return result if out_numpy else result.tolist()
 
 

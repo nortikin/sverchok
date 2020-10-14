@@ -7,9 +7,9 @@
 
 
 import bpy
-from bpy.props import BoolProperty, IntProperty, StringProperty
+from bpy.props import EnumProperty, BoolProperty, IntProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (multi_socket, updateNode, levels_of_list_or_np)
+from sverchok.data_structure import (list_match_func, list_match_modes, zip_long_repeat, multi_socket, updateNode, levels_of_list_or_np)
 
 from sverchok.utils.listutils import joiner, myZip_2, wrapper_2
 import numpy as np
@@ -65,6 +65,29 @@ def numpy_join(slots, level, mix, true_depth):
 
     return python_join(slots, level, mix, False)
 
+def match_and_join(slots, level, wrap, match_func):
+    result = []
+    if level == 1:
+        for sb in slots:
+            result.extend([sb] if wrap else sb)
+    else:
+        for s in zip(*match_func(slots)):
+            result.append(match_and_join(s, level-1, wrap, match_func))
+
+    return result
+
+def match_and_join_mix(slots, level, wrap, match_func):
+    result = []
+    if level == 1:
+        for sb in zip(*slots):
+            result.extend([sb] if wrap else sb)
+    else:
+        for s in zip(*match_func(slots)):
+            result.append(match_and_join_mix(s, level-1, wrap, match_func))
+
+    return result
+
+
 class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
     ''' ListJoin node '''
     bl_idname = 'ListJoinNode'
@@ -77,12 +100,22 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
         default=1, min=1, update=updateNode)
 
     mix_check: BoolProperty(
-        name='mix', description='Grouping similar to zip()',
+        name='Mix', description='Grouping similar to zip()',
         default=False, update=updateNode)
 
     wrap_check: BoolProperty(
-        name='wrap', description='Grouping similar to append(list)',
+        name='Wrap', description='Grouping similar to append(list)',
         default=False, update=updateNode)
+
+    match_and_join: BoolProperty(
+        name='Match', description='Grouping similar to zip()',
+        default=False, update=updateNode)
+
+    list_match: EnumProperty(
+        name="Match",
+        description="Behavior on different list lengths",
+        items=list_match_modes, default="REPEAT",
+        update=updateNode)
 
     numpy_mode: BoolProperty(
         name='NumPy Mode', description='better to work with lists of NumPy arrays',
@@ -100,10 +133,19 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'data')
 
     def draw_buttons(self, context, layout):
+        if self.numpy_mode:
+            layout.prop(self, "mix_check", text="mix")
+        else:
+            if self.match_and_join:
+                row1 = layout.row()
+                row1.prop(self, "match_and_join")
+                row1.prop(self, "list_match", text="")
+            else:
+                layout.prop(self, "match_and_join")
 
-        layout.prop(self, "mix_check", text="mix")
-        if not self.numpy_mode:
-            layout.prop(self, "wrap_check", text="wrap")
+            row = layout.row()
+            row.prop(self, "mix_check", text="Mix")
+            row.prop(self, "wrap_check", text="Wrap")
         layout.prop(self, "JoinLevel", text="JoinLevel lists")
 
     def draw_buttons_ext(self, context, layout):
@@ -111,7 +153,20 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "numpy_mode", toggle=False, text='NumPy mode')
 
     def rclick_menu(self, context, layout):
-        self.draw_buttons(context, layout)
+        if self.numpy_mode:
+            layout.prop(self, "mix_check", text="mix")
+        else:
+            if self.match_and_join:
+                row1 = layout.row()
+                row1.prop(self, "match_and_join")
+                layout.prop_menu_enum(self, "list_match", text="Match method")
+            else:
+                layout.prop(self, "match_and_join")
+
+
+            layout.prop(self, "mix_check", text="Mix")
+            layout.prop(self, "wrap_check", text="Wrap")
+        layout.prop(self, "JoinLevel", text="JoinLevel lists")
         layout.prop(self, "numpy_mode", toggle=True, text='NumPy mode')
 
 
@@ -132,17 +187,23 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
                 slots.append(socket.sv_get())
         if len(slots) == 0:
             return
-
-        if self.numpy_mode:
-            if self.outputs[0].bl_idname == 'SvVerticesSocket':
-                min_axis = 2
+        if self.match_and_join:
+            match_func = list_match_func[self.list_match]
+            if self.mix_check:
+                result = match_and_join_mix(slots, self.JoinLevel, self.wrap_check, match_func)
             else:
-                min_axis = 1
-            depth = levels_of_list_or_np(slots[0])
-            true_depth = depth - min_axis
-            result = numpy_join(slots, self.JoinLevel, self.mix_check, true_depth)
+                result = match_and_join(slots, self.JoinLevel, self.wrap_check, match_func)
         else:
-            result = python_join(slots, self.JoinLevel, self.mix_check, self.wrap_check)
+            if self.numpy_mode:
+                if self.outputs[0].bl_idname == 'SvVerticesSocket':
+                    min_axis = 2
+                else:
+                    min_axis = 1
+                depth = levels_of_list_or_np(slots[0])
+                true_depth = depth - min_axis
+                result = numpy_join(slots, self.JoinLevel, self.mix_check, true_depth)
+            else:
+                result = python_join(slots, self.JoinLevel, self.mix_check, self.wrap_check)
 
         self.outputs[0].sv_set(result)
 

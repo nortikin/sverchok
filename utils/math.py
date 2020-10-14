@@ -278,3 +278,14 @@ def binomial(n,k):
         n -= 1
     return b
 
+def np_mixed_product(a, b, c):
+    return np.dot(a, np.cross(b, c))
+
+def np_signed_angle(a, b, normal):
+    cross = np.cross(a, b)
+    scalar = np.dot(cross, normal)
+    sign = 1 if scalar >= 0 else -1
+    sin_alpha = np.linalg.norm(cross) / (np.linalg.norm(a) * np.linalg.norm(b))
+    alpha = asin(sin_alpha)
+    return sign * alpha
+
