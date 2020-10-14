@@ -368,13 +368,13 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
             row.template_component_menu(prop_origin, prop_name, name=self.name)
 
     def draw_group_property(self, layout, text, interface_socket):
-        if interface_socket.show_property:
+        if not interface_socket.hide_value:
             layout.template_component_menu(self, 'prop', name=text)
         else:
             layout.label(text=text)
 
 
-class SvVerticesSocketInterface(bpy.types.NodeSocketInterfaceStandard):
+class SvVerticesSocketInterface(bpy.types.NodeSocketInterface):
     """
     The only reason of existing this class
     is that `prop` attribute of VerticesSocket can't be renamed to `default_property
@@ -385,7 +385,6 @@ class SvVerticesSocketInterface(bpy.types.NodeSocketInterfaceStandard):
     color = SvVerticesSocket.color
 
     default_value: FloatVectorProperty(name="Default value", default=(0, 0, 0), size=3)
-    show_property: bpy.props.BoolProperty(name="Show property", default=True)
 
     def draw_color(self, context):
         return self.color
@@ -393,7 +392,7 @@ class SvVerticesSocketInterface(bpy.types.NodeSocketInterfaceStandard):
     def draw(self, context, layout):
         col = layout.column()
         col.prop(self, 'default_value')
-        col.prop(self, 'show_property')
+        col.prop(self, 'hide_value')
 
 
 class SvQuaternionSocket(NodeSocket, SvSocketCommon):
@@ -425,7 +424,7 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
             row.template_component_menu(prop_origin, prop_name, name=self.name)
 
     def draw_group_property(self, layout, text, interface_socket):
-        if interface_socket.show_property:
+        if not interface_socket.hide_value:
             layout.template_component_menu(self, 'default_property', name=text)
         else:
             layout.label(text=text)
@@ -460,7 +459,7 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
             row.prop(prop_origin, prop_name)
 
     def draw_group_property(self, layout, text, interface_socket):
-        if interface_socket.show_property:
+        if not interface_socket.hide_value:
             layout.prop(self, 'default_property', text=text)
         else:
             layout.label(text=text)
@@ -532,15 +531,16 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
 
     def draw_group_property(self, layout, text, interface_socket):
         # only for input sockets group node nodes with sub trees
-        if interface_socket.default_type == 'float':
-            layout.prop(self, 'default_float_property', text=text)
-        elif interface_socket.default_type == 'int':
-            layout.prop(self, 'default_int_property', text=text)
+        if not interface_socket.hide_value:
+            if interface_socket.default_type == 'float':
+                layout.prop(self, 'default_float_property', text=text)
+            elif interface_socket.default_type == 'int':
+                layout.prop(self, 'default_int_property', text=text)
         else:
             layout.label(text=text)
 
 
-class SvStringsSocketInterface(bpy.types.NodeSocketInterfaceStandard):
+class SvStringsSocketInterface(bpy.types.NodeSocketInterface):
     bl_idname = "SvStringsSocketInterface"
     bl_socket_idname = "SvStringsSocket"
     bl_label = "Number"
@@ -548,7 +548,7 @@ class SvStringsSocketInterface(bpy.types.NodeSocketInterfaceStandard):
 
     default_float_value: bpy.props.FloatProperty(name='Default value')
     default_int_value: bpy.props.IntProperty(name='Default value')
-    default_type: bpy.props.EnumProperty(items=[(i, i, '') for i in ['float', 'int', 'none']])
+    default_type: bpy.props.EnumProperty(items=[(i, i, '') for i in ['float', 'int']])
 
     @property
     def default_value(self):
@@ -558,6 +558,7 @@ class SvStringsSocketInterface(bpy.types.NodeSocketInterfaceStandard):
         return self.color
 
     def draw(self, context, layout):
+        layout.prop(self, 'hide_value')
         layout.prop(self, 'default_type', expand=True)
         if self.default_type == 'float':
             layout.prop(self, 'default_float_value')
@@ -716,15 +717,14 @@ def socket_interface_classes():
             prop_args['name'] = "Default value"
             socket_interface_attributes['__annotations__'] = {}
             socket_interface_attributes['__annotations__']['default_value'] = (prop_func, prop_args)
-            socket_interface_attributes['__annotations__']['show_property'] = bpy.props.BoolProperty(default=True)
 
             def draw(self, context, layout):
                 col = layout.column()
                 col.prop(self, 'default_value')
-                col.prop(self, 'show_property')
+                col.prop(self, 'hide_value')
             socket_interface_attributes['draw'] = draw
         yield type(
-            f'{socket_cls.__name__}Interface', (bpy.types.NodeSocketInterfaceStandard,), socket_interface_attributes)
+            f'{socket_cls.__name__}Interface', (bpy.types.NodeSocketInterface,), socket_interface_attributes)
 
 
 register, unregister = bpy.utils.register_classes_factory(classes + list(socket_interface_classes()))
