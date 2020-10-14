@@ -7,9 +7,10 @@
 
 # from __future__ import annotations <- Don't use it here, `group node` will loose its `group tree` attribute
 from functools import reduce
-from typing import Tuple, List
+from typing import Tuple, List, Set, Dict
 
 import bpy
+from mathutils import Vector
 from sverchok.utils.tree_structure import Tree
 
 
@@ -102,7 +103,7 @@ class SvGroupTreeNode(bpy.types.NodeCustomGroup):
         row_search.operator('node.search_group_tree', text='', icon='VIEWZOOM')
         if self.group_tree:
             row_name.prop(self.group_tree, 'name', text='')
-            row_search.operator('node.edit_group_tree', text=' ', icon='FILE_PARENT')
+            row_search.operator('node.edit_group_tree', text='Edit', icon='FILE_PARENT')
             row_ops.operator('node.ungroup_group_tree', text='', icon='MOD_PHYSICS')
         else:
             row_search.operator('node.add_group_tree', text='New', icon='ADD')
@@ -247,6 +248,10 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
         [setattr(n, 'select', False) for n in base_tree.nodes
          if n.select and n.bl_idname in {'NodeGroupInput', 'NodeGroupOutput'}]
 
+        # Frames can't be just copied because they does not have absolute location, but they can be recreated
+        frame_names = {n.name for n in base_tree.nodes if n.select and n.bl_idname == 'NodeFrame'}
+        [setattr(n, 'select', False) for n in base_tree.nodes if n.bl_idname == 'NodeFrame']
+
         # copy and past nodes into group tree
         bpy.ops.node.clipboard_copy()
         sub_tree = bpy.data.node_groups.new('Sverchok group', SvGroupTree.bl_idname)
@@ -258,6 +263,10 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
         center = reduce(lambda v1, v2: v1 + v2, [n.location for n in sub_tree_nodes]) / len(sub_tree_nodes)
         [setattr(n, 'location', n.location - center) for n in sub_tree_nodes]
 
+        # recreate frames
+        node_name_mapping = {n.name: n.name for n in sub_tree.nodes}  # all nodes have the same name as in base tree
+        self.recreate_frames(base_tree, sub_tree, frame_names, node_name_mapping)
+
         # add group input and output nodes
         min_x = min(n.location[0] for n in sub_tree_nodes)
         max_x = max(n.location[0] for n in sub_tree_nodes)
@@ -268,7 +277,8 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
 
         # add group tree node
         initial_nodes = self.filter_selected_nodes(base_tree)
-        center = reduce(lambda v1, v2: v1 + v2, [n.location for n in initial_nodes]) / len(initial_nodes)
+        center = reduce(lambda v1, v2: v1 + v2,
+                        [Vector(n.absolute_location) for n in initial_nodes]) / len(initial_nodes)
         group_node = base_tree.nodes.new(SvGroupTreeNode.bl_idname)
         group_node.select = False
         group_node.group_tree = sub_tree
@@ -293,8 +303,11 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
                     if not in_py_socket.node.select:
                         base_tree.links.new(in_py_socket.get_bl_socket(base_tree), group_node.outputs[-1])
 
-        # delete selected nodes
+        # delete selected nodes and copied frames without children
         [base_tree.nodes.remove(n) for n in self.filter_selected_nodes(base_tree)]
+        with_children_frames = {n.parent.name for n in base_tree.nodes if n.parent}
+        [base_tree.nodes.remove(n) for n in base_tree.nodes
+         if n.name in frame_names and n.name not in with_children_frames]
 
         return {'FINISHED'}
 
@@ -319,6 +332,29 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
                         return False
         return True
 
+    @staticmethod
+    def recreate_frames(from_tree: bpy.types.NodeTree,
+                        to_tree: bpy.types.NodeTree,
+                        frame_names: Set[str],
+                        from_to_node_names: Dict[str, str]):
+        """from_to_node_names - mapping of node names between two trees"""
+        new_frame_names = {n: to_tree.nodes.new('NodeFrame').name for n in frame_names}
+        frame_attributes = ['label', 'use_custom_color', 'color', 'label_size', 'text']
+        for frame_name in frame_names:
+            old_frame = from_tree.nodes[frame_name]
+            new_frame = to_tree.nodes[new_frame_names[frame_name]]
+            for attr in frame_attributes:
+                setattr(new_frame, attr, getattr(old_frame, attr))
+        for from_node in from_tree.nodes:
+            if from_node.name not in from_to_node_names:
+                continue
+            if from_node.parent and from_node.parent.name in new_frame_names:
+                if from_node.bl_idname == 'NodeFrame':
+                    to_node = to_tree.nodes[new_frame_names[from_node.name]]
+                else:
+                    to_node = to_tree.nodes[from_to_node_names[from_node.name]]
+                to_node.parent = to_tree.nodes[new_frame_names[from_node.parent.name]]
+
 
 class UngroupGroupTree(bpy.types.Operator):
     bl_idname = 'node.ungroup_group_tree'
@@ -334,19 +370,26 @@ class UngroupGroupTree(bpy.types.Operator):
 
     def execute(self, context):
         """Similar to AddGroupTreeFromSelected operator but in backward direction (from sub tree to tree)"""
+
         # go to sub tree, select all except input and output groups and mark nodes to be copied
         group_node = context.node
         sub_tree = group_node.node_tree
         bpy.ops.node.edit_group_tree({'node': group_node})
         [setattr(n, 'select', False) for n in sub_tree.nodes]
         group_nodes_filter = filter(lambda n: n.bl_idname not in {'NodeGroupInput', 'NodeGroupOutput'}, sub_tree.nodes)
-        for i, node in enumerate(group_nodes_filter):
+        for node in group_nodes_filter:
             node.select = True
-            node['ungroup order'] = i  # this will be copied within the nodes
+            node['sub_node_name'] = node.name  # this will be copied within the nodes
+
+        # the attribute should be empty in destination tree
         tree = context.space_data.path[-2].node_tree
         for node in tree.nodes:
-            if 'ungroup order' in node:
-                del node['ungroup order']
+            if 'sub_node_name' in node:
+                del node['sub_node_name']
+
+        # Frames can't be just copied because they does not have absolute location, but they can be recreated
+        frame_names = {n.name for n in sub_tree.nodes if n.select and n.bl_idname == 'NodeFrame'}
+        [setattr(n, 'select', False) for n in sub_tree.nodes if n.bl_idname == 'NodeFrame']
 
         # copy and past nodes into group tree
         bpy.ops.node.clipboard_copy()
@@ -355,8 +398,13 @@ class UngroupGroupTree(bpy.types.Operator):
 
         # move nodes in group node center
         tree_select_nodes = [n for n in tree.nodes if n.select]
-        center = reduce(lambda v1, v2: v1 + v2, [n.location for n in tree_select_nodes]) / len(tree_select_nodes)
+        center = reduce(lambda v1, v2: v1 + v2, 
+                        [Vector(n.absolute_location) for n in tree_select_nodes]) / len(tree_select_nodes)
         [setattr(n, 'location', n.location - (center - group_node.location)) for n in tree_select_nodes]
+
+        # recreate frames
+        node_name_mapping = {n['sub_node_name']: n.name for n in tree.nodes if 'sub_node_name' in n}
+        AddGroupTreeFromSelected.recreate_frames(sub_tree, tree, frame_names, node_name_mapping)
 
         # recreate py tree structure
         sub_py_tree = Tree.from_bl_tree(sub_tree)
@@ -364,12 +412,10 @@ class UngroupGroupTree(bpy.types.Operator):
         py_tree = Tree.from_bl_tree(tree)
         [setattr(py_tree.nodes[n.name], 'select', n.select) for n in tree.nodes]
         group_py_node = py_tree.nodes[group_node.name]
-        sorted_sub_nodes = sorted([n for n in sub_tree.nodes if 'ungroup order' in n], 
-                                  key=lambda n: n['ungroup order'])
-        sorted_nodes = sorted([n for n in tree.nodes if 'ungroup order' in n], key=lambda n: n['ungroup order'])
-        for sub_node, node in zip(sorted_sub_nodes, sorted_nodes):
-            sub_py_tree.nodes[sub_node.name].twin = py_tree.nodes[node.name]
-            py_tree.nodes[node.name].twin = sub_py_tree.nodes[sub_node.name]
+        for node in tree.nodes:
+            if 'sub_node_name' in node:
+                sub_py_tree.nodes[node['sub_node_name']].twin = py_tree.nodes[node.name]
+                py_tree.nodes[node.name].twin = sub_py_tree.nodes[node['sub_node_name']]
 
         # create in links
         for group_input_py_node in [n for n in sub_py_tree.nodes.values() if n.type == 'NodeGroupInput']:
@@ -392,8 +438,8 @@ class UngroupGroupTree(bpy.types.Operator):
         # delete group node
         tree.nodes.remove(group_node)
         for node in tree.nodes:
-            if 'ungroup order' in node:
-                del node['ungroup order']
+            if 'sub_node_name' in node:
+                del node['sub_node_name']
 
         return {'FINISHED'}
 
