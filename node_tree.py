@@ -335,18 +335,21 @@ class UpdateNodes:
         CurrentEvents.new_event(BlenderEventsTypes.add_node, self)
         ng = self.id_data
 
-        ng.freeze()
-        ng.nodes_dict.load_node(self)
-        if hasattr(self, "sv_init"):
+        if ng.bl_idname == 'SvGroupTree':
+            self.sv_init(context)
+        else:
+            ng.freeze()
+            ng.nodes_dict.load_node(self)
+            if hasattr(self, "sv_init"):
 
-            try:
-                self.sv_init(context)
-            except Exception as err:
-                print('nodetree.node.sv_init failure - stare at the error message below')
-                sys.stderr.write('ERROR: %s\n' % str(err))
+                try:
+                    self.sv_init(context)
+                except Exception as err:
+                    print('nodetree.node.sv_init failure - stare at the error message below')
+                    sys.stderr.write('ERROR: %s\n' % str(err))
 
-        self.set_color()
-        ng.unfreeze()
+            self.set_color()
+            ng.unfreeze()
 
     def free(self):
         """
@@ -518,7 +521,7 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
 
     @classmethod
     def poll(cls, ntree):
-        return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType']
+        return ntree.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType', 'SvGroupTree'}
 
     @property
     def absolute_location(self):
@@ -638,4 +641,12 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
             print('failed to get gl scale info', err)
 
 
-register, unregister = bpy.utils.register_classes_factory([SverchCustomTree])
+def register():
+    bpy.utils.register_class(SverchCustomTree)
+    bpy.types.NodeReroute.absolute_location = property(
+        lambda self: recursive_framed_location_finder(self, self.location[:]))
+
+
+def unregister():
+    del bpy.types.NodeReroute.absolute_location
+    bpy.utils.unregister_class(SverchCustomTree)
