@@ -570,6 +570,8 @@
     ---
     NoteNode
     SvGTextNode
+    ---
+    SvExportGcodeNode
 
 ## BPY Data
     SvGetPropNode
