@@ -208,7 +208,7 @@ def separate_nodes(ng, links=None):
             node_set_list[-1].add(n)
 
     found_node_sets = [ns for ns in node_set_list if len(ns) > 1]
-  
+
     if hasattr(ng, "sv_subtree_evaluation_order"):
         sorting_type = ng.sv_subtree_evaluation_order
         if sorting_type in {'X', 'Y'}:
@@ -367,7 +367,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
     timings = []
     graph = []
     gather = graph.append
-    
+
     total_time = 0
     done_nodes = set(procesed_nodes)
 
@@ -401,19 +401,19 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             update_error_nodes(ng, node_name, err)
             #traceback.print_tb(err.__traceback__)
             exception("Node %s had exception: %s", node_name, err)
-            
+
             if hasattr(ng, "sv_show_error_in_tree"):
                 # not yet supported in monad trees..
                 if ng.sv_show_error_in_tree:
                     error_text = traceback.format_exc()
                     start_exception_drawing_with_bgl(ng, node_name, error_text, err)
-            
+
             return None
 
     graphs.append(graph)
     if data_structure.DEBUG_MODE:
         debug("Node set updated in: %.4f seconds", total_time)
-    
+
     return timings
 
 
@@ -462,6 +462,9 @@ def process_to_node(node):
     update_list = make_tree_from_nodes([node.name], ng, down=False)
     do_update(update_list, ng.nodes)
 
+def check_fake_user(ng):
+    if not ng.use_fake_user:
+        ng.use_fake_user = True
 
 def process_from_nodes(nodes):
 
@@ -476,6 +479,7 @@ def process_from_nodes(nodes):
             print("Something not very important happend in Blender memory", node, type(node))
 
     ng = nodes[0].id_data
+    check_fake_user(ng)
     update_list = make_tree_from_nodes(node_names, ng)
     reset_error_some_nodes(ng, update_list)
     do_update(update_list, ng.nodes)
