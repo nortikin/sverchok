@@ -15,6 +15,7 @@ from sverchok.utils.tree_structure import Tree
 
 
 class SvGroupTree(bpy.types.NodeTree):
+    """Separate tree class for sub trees"""
     bl_idname = 'SvGroupTree'
     bl_icon = 'NODETREE'
     bl_label = 'Group tree'
@@ -27,6 +28,11 @@ class SvGroupTree(bpy.types.NodeTree):
     description: bpy.props.StringProperty(name="Tree description", default="Group nodes don`t work at the moment")
 
     def upstream_trees(self) -> List['SvGroupTree']:
+        """
+        It will try to return all the tree sub trees (in case if there is group nodes)
+        and sub trees of sub trees and so on
+        The method can help to predict if linking new sub tree can lead to cyclic linking
+        """
         next_group_nodes = [node for node in self.nodes if node.bl_idname == 'SvGroupTreeNode']
         trees = [self]
         safe_counter = 0
@@ -43,9 +49,8 @@ class SvGroupTree(bpy.types.NodeTree):
         return trees
 
     def can_be_linked(self):
-        # trying to avoid creating loops of group trees to each other
-        # upstream trees of tested treed should nad share trees
-        # with downstream trees of current tree
+        """trying to avoid creating loops of group trees to each other"""
+        # upstream trees of tested treed should nad share trees with downstream trees of current tree
         tested_tree_upstream_trees = {t.name for t in self.upstream_trees()}
         current_tree_downstream_trees = {p.node_tree.name for p in bpy.context.space_data.path}
         shared_trees = tested_tree_upstream_trees & current_tree_downstream_trees
@@ -114,6 +119,7 @@ class SvGroupTreeNode(bpy.types.NodeCustomGroup):
 
 
 class PlacingNodeOperator:
+    """Helper class for locating nodes in a node tree"""
     # quite basic operator can be moved to some more general module
     @staticmethod
     def placing_node(context, node_type: str):
@@ -142,6 +148,7 @@ class PlacingNodeOperator:
 
 
 class AddGroupNode(PlacingNodeOperator, bpy.types.Operator):
+    """Creating just group node without linking any sub tree to it"""
     bl_idname = "node.add_group_node"
     bl_label = "Add group node"
 
@@ -175,6 +182,7 @@ class AddGroupNode(PlacingNodeOperator, bpy.types.Operator):
 
 
 class AddNodeOutputInput(PlacingNodeOperator, bpy.types.Operator):
+    """Operator for creating output and input nodes in sub trees"""
     bl_idname = "node.add_node_output_input"
     bl_label = "Add output input nodes"
 
@@ -202,10 +210,12 @@ class AddNodeOutputInput(PlacingNodeOperator, bpy.types.Operator):
 
 
 class AddGroupTree(bpy.types.Operator):
+    """Create empty sub tree for group node"""
     bl_idname = "node.add_group_tree"
     bl_label = "Add group tree"
 
     def execute(self, context):
+        """Link new sub tree to group node, create input and output nodes in sub tree and go to edit one"""
         sub_tree = bpy.data.node_groups.new('Sverchok group', 'SvGroupTree')  # creating sub tree
         context.node.group_tree = sub_tree  # link sub tree to group node
         sub_tree.nodes.new('NodeGroupInput').location = (-250, 0)  # create node for putting data into sub tree
@@ -215,6 +225,7 @@ class AddGroupTree(bpy.types.Operator):
 
 
 class AddGroupTreeFromSelected(bpy.types.Operator):
+    """Create instead of select nodes group node and placing them into sub tree"""
     bl_idname = "node.add_group_tree_from_selected"
     bl_label = "Add group tree from selected"
 
@@ -238,7 +249,7 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
         07. Connect "input" and "output" sockets with group nodes
         08. Add Group tree node in center of selected node in initial tree
         09. Link the node with appropriate sockets
-        10. Delete selected nodes in initial tree
+        10. Cleaning
         """
         # deselect group nodes if selected
         base_tree = context.space_data.path[-1].node_tree
@@ -320,10 +331,12 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
 
     @staticmethod
     def filter_selected_nodes(tree) -> list:
+        """Avoiding selecting nodes which should not be copied into sub tree"""
         return [n for n in tree.nodes if n.select and n.bl_idname not in {'NodeGroupInput', 'NodeGroupOutput'}]
 
     @staticmethod
     def can_be_grouped(tree) -> bool:
+        """True if selected nodes can be putted into group (does not produce cyclic links)"""
         # if there is one or more unselected nodes between nodes to be grouped
         # then current selection can't be grouped
         py_tree = Tree.from_bl_tree(tree)
@@ -344,7 +357,10 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
                         to_tree: bpy.types.NodeTree,
                         frame_names: Set[str],
                         from_to_node_names: Dict[str, str]):
-        """from_to_node_names - mapping of node names between two trees"""
+        """
+        It will copy frames from one tree to another
+        from_to_node_names - mapping of node names between two trees
+        """
         new_frame_names = {n: to_tree.nodes.new('NodeFrame').name for n in frame_names}
         frame_attributes = ['label', 'use_custom_color', 'color', 'label_size', 'text']
         for frame_name in frame_names:
@@ -364,6 +380,7 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
 
 
 class UngroupGroupTree(bpy.types.Operator):
+    """Put sub nodes into current layout and delete current group node"""
     bl_idname = 'node.ungroup_group_tree'
     bl_label = "Ungroup group tree"
 
@@ -462,6 +479,7 @@ class UngroupGroupTree(bpy.types.Operator):
 
 
 class EditGroupTree(bpy.types.Operator):
+    """Go into sub tree to edit"""
     bl_idname = 'node.edit_group_tree'
     bl_label = 'Edit group tree'
 
@@ -471,6 +489,7 @@ class EditGroupTree(bpy.types.Operator):
 
 
 class AddTreeDescription(bpy.types.Operator):
+    """UI for filling Group tree description"""
     bl_idname = 'node.add_tree_description'
     bl_label = "Tree description"
 

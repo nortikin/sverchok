@@ -376,9 +376,11 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
 
 class SvVerticesSocketInterface(bpy.types.NodeSocketInterface):
     """
-    The only reason of existing this class
-    is that `prop` attribute of VerticesSocket can't be renamed to `default_property
+    This socket will be created in tree.inputs to tree.outputs collection 
+    when normal socket will be connected to input or output group nodes
     """
+    # The only reason of existing this class
+    # is that `prop` attribute of VerticesSocket can't be renamed to `default_property
     bl_idname = "SvVerticesSocketInterface"
     bl_socket_idname = "SvVerticesSocket"
     bl_label = "Vertices"
@@ -541,6 +543,10 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
 
 
 class SvStringsSocketInterface(bpy.types.NodeSocketInterface):
+    """
+    This socket will be created in tree.inputs to tree.outputs collection 
+    when normal socket will be connected to input or output group nodes
+    """
     bl_idname = "SvStringsSocketInterface"
     bl_socket_idname = "SvStringsSocket"
     bl_label = "Number"

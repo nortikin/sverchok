@@ -16,6 +16,7 @@ import bpy
 
 
 class Tree:
+    """Structure similar to blender node groups but is more efficient in searching neighbours"""
     def __init__(self):
         self._nodes: Dict[str, Node] = {}
         self._links: Dict[Tuple[str, str]: Link] = {}  # Tuple[node_name, identifier]
@@ -59,13 +60,16 @@ class Node:
 
     @property
     def next_nodes(self) -> Iterable[Node]:
+        """Returns all nodes which are linked wia the node output sockets"""
         return {other_s.node for s in self.outputs for other_s in s.linked_sockets}
 
     @property
     def last_nodes(self) -> Iterable[Node]:
+        """Returns all nodes which are linked wia the node input sockets"""
         return {other_s.node for s in self.inputs for other_s in s.linked_sockets}
 
     def bfs_walk(self) -> Generator[Node]:
+        """Forward walk from the current node, it will visit all next nodes"""
         # https://en.wikipedia.org/wiki/Tree_traversal#Breadth-first_search
         waiting_nodes = deque([self])
         safe_counter = count()
@@ -80,15 +84,21 @@ class Node:
                                      f'or most likely it is circular')
 
     def get_bl_node(self, tree: bpy.types.NodeTree) -> bpy.types.Node:
+        """
+        Will return the node from given tree with the same name
+        In future it can be improved and should use index instead of name
+        """
         return tree.nodes[self.name]
 
     def get_input_socket(self, identifier: str) -> Socket:
+        """Search input socket by its identifier"""
         for socket in self._inputs:
             if socket.identifier == identifier:
                 return socket
         raise LookupError(f'Socket "{identifier}" was not found in node"{self.name}" inputs{self._inputs}')
 
     def get_output_socket(self, identifier: str) -> Socket:
+        """Search output socket by its identifier"""
         for socket in self._outputs:
             if socket.identifier == identifier:
                 return socket
@@ -96,6 +106,7 @@ class Node:
 
     @classmethod
     def from_bl_node(cls, bl_node: bpy.types.Node) -> Node:
+        """Generate node and its sockets from Blender node instance"""
         node = cls(bl_node.name)
         node.select = bl_node.select
         for in_socket in bl_node.inputs:
@@ -117,6 +128,7 @@ class Socket:
 
     @property
     def index(self) -> int:
+        """Index of the node in inputs or outputs collection"""
         return getattr(self.node, 'outputs' if self.is_output else 'inputs').index(self)
 
     @property
@@ -128,6 +140,7 @@ class Socket:
         return self._links
 
     def get_bl_socket(self, bl_tree: bpy.types.NodeTree) -> bpy.types.NodeSocket:
+        """Search socket in given tree by its identifier"""
         bl_node = self.node.get_bl_node(bl_tree)
         for bl_socket in bl_node.outputs if self.is_output else bl_node.inputs:
             if bl_socket.identifier == self.identifier:
@@ -138,10 +151,12 @@ class Socket:
 
     @property
     def linked_sockets(self) -> List[Socket]:
+        """All sockets which share the same links"""
         return [link.to_socket if self.is_output else link.from_socket for link in self.links]
 
     @classmethod
     def from_bl_socket(cls, node: Node, bl_socket: bpy.types.NodeSocket) -> Socket:
+        """Generate socket from Blender socket instance"""
         return cls(node, bl_socket.is_output, bl_socket.identifier)
 
     def __repr__(self):
