@@ -65,6 +65,11 @@ class SvNeuro_Elman:
                 etalon = etalon + [0] * d
             etalon_ = list(map(lambda x: x / maxim, etalon))
             self.learning(outA, outB, outC, etalon_, maxim, prop)
+        #     print("it's learning")
+        # else:
+        #     print("without learning")
+
+        # print("outC", outC)
         outC_ = list(map(lambda x: x * maxim, outC))
         return outC_
 
@@ -108,8 +113,8 @@ class SvNeuro_Elman:
     def func_ej_last(self, dj, yj):
         return dj - yj
 
-    # def func_ej_inner(self, Esigmak, wkj):
-    #     return Esigmak * wkj
+    def func_ej_inner(self, Esigmak, wkj):
+        return Esigmak * wkj
 
     def delta_wji(self, sigmaj, yi, prop):
         return prop['k_learning'] * sigmaj * yi
@@ -148,7 +153,9 @@ class SvNeuro_Elman:
 
                     for ida, a in enumerate(outA):
                         dwji = self.delta_wji(sigmaB, a, prop)
+                        print(f"list_wA={list_wA}\tida={ida}\tidb={idb}\toutA={outA}")
                         list_wA[ida][idb] = self.func_w(list_wA[ida][idb], dwji, prop)
+                        print("eA", eA, "\tida=", ida)
                         eA[ida] += sigmaB * dwji
 
                 xi = xi - prop['epsilon'] * xi * (maxim - xi)
@@ -185,9 +192,6 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
     lA: IntProperty(name='lA', default=1, min=0, update=updateNode)
     lB: IntProperty(name='lB', default=5, min=0, update=updateNode)
     lC: IntProperty(name='lC', default=1, min=0, update=updateNode)
-
-    # def __init__(self, *args, **kwargs):
-    #     self.Elman = SvNeuro_Elman()
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "data")
@@ -239,11 +243,6 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
                      'k_lambda': 0.0001,
                      'Elman': Elman,
                      }
-
-
-
-            # props['wA'] = self.Elman.init_w(props['InA'], props['InB'], props['trashold'])
-            # props['wB'] = self.Elman.init_w(props['InB'], props['InC'], props['trashold'])
             print("initialize handle:", handle[0])
 
         print("******-----------**********")
@@ -312,33 +311,40 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
 
 # *********************************
 
-# class SvNeuroOps(bpy.types.Operator):
-#     """ Neuro operators """
-#     bl_idname = "node.sverchok_neuro"
-#     bl_label = "Sverchok Neuro operators"
-#     bl_options = {'REGISTER', 'UNDO'}
-#
-#     typ: IntProperty(name='typ', default=0)
-#     handle_name: StringProperty(name='handle')
-#
-#     def execute(self, context):
-#         if self.typ == 1:
-#             handle = handle_read(self.handle_name)
-#             prop = handle[1]
-#             Elman = SvNeuro_Elman()
-#             if handle[0]:
-#                 prop['wA'] = Elman.init_w(prop['InA'], prop['InB'], prop['trashold'])
-#                 prop['wB'] = Elman.init_w(prop['InB'], prop['InC'], prop['trashold'])
-#                 handle_write(self.handle_name, prop)
-#
-#         return {'FINISHED'}
+class SvNeuroOps(bpy.types.Operator):
+    """ Neuro operators """
+    bl_idname = "node.sverchok_neuro"
+    bl_label = "Sverchok Neuro operators"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    typ: IntProperty(name='typ', default=0)
+    handle_name: StringProperty(name='handle')
+
+    def execute(self, context):
+        if self.typ == 1:
+            handle = handle_read(self.handle_name)
+            prop = handle[1]
+            Elman = SvNeuro_Elman()
+            if handle[0]:
+                prop['wA'] = Elman.init_w(prop['InA'], prop['InB'], prop['trashold'])
+                prop['wB'] = Elman.init_w(prop['InB'], prop['InC'], prop['trashold'])
+                handle_write(self.handle_name, prop)
+
+        return {'FINISHED'}
 
 
 def register():
-    # bpy.utils.register_class(SvNeuroOps)
+    bpy.utils.register_class(SvNeuroOps)
     bpy.utils.register_class(SvNeuroElman1LNode)
 
 
 def unregister():
     bpy.utils.unregister_class(SvNeuroElman1LNode)
-    # bpy.utils.unregister_class(SvNeuroOps)
+    bpy.utils.unregister_class(SvNeuroOps)
+
+# TODO - Не нравится, что структура выходных данных не соответсвует эталону
+# TODO - Сделать дескрипторы ко всем видимым элементам
+# TODO - Количество входных элементов не должно соответсвовать количеству входных узлов А. Это сильно тормозит комп
+#  Придумать как решить эту проблему
+# TODO - Необходимо обрабатывать несколко объектов. Т.е. получил несколко объектов, так и выдавать несколько объектов
+# TODO - Сеть получилась необучаема
