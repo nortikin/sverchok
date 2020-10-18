@@ -155,13 +155,12 @@ class SV_UL_TreePropertyList(bpy.types.UIList):
         # buttons
         row = row.row(align=True)
         row.alignment = 'RIGHT'
-        row.ui_units_x = 5.5
+        row.ui_units_x = 4.5
         row.operator('node.sverchok_bake_all', text='B').node_tree_name = tree.name
         row.prop(tree, 'sv_show', icon= f"RESTRICT_VIEW_{'OFF' if tree.sv_show else 'ON'}", text=' ')
         row.prop(tree, 'sv_animate', icon='ANIM', text=' ')
         row.prop(tree, "sv_process", toggle=True, text="P")
         row.prop(tree, "sv_draft", toggle=True, text="D")
-        row.prop(tree, 'use_fake_user', toggle=True, text='F')
 
     def filter_items(self, context, data, prop_name):
         trees = getattr(data, prop_name)

@@ -26,7 +26,7 @@ from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import NodeTree
 
 from sverchok import data_structure
-from sverchok.data_structure import classproperty
+from sverchok.data_structure import classproperty, post_load_call
 
 from sverchok.core.update_system import (
     build_update_list,
@@ -636,6 +636,16 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
                 prefs.set_nodeview_render_params(None)
         except Exception as err:
             print('failed to get gl scale info', err)
+
+
+@post_load_call
+def add_use_fake_user_to_trees():
+    """When ever space node editor switches to another tree or creates new one,
+    this function will set True to `use_fake_user` of all Sverchok trees"""
+    def set_fake_user():
+        [setattr(t, 'use_fake_user', True) for t in bpy.data.node_groups if t.bl_idname == 'SverchCustomTreeType']
+    bpy.msgbus.subscribe_rna(key=(bpy.types.SpaceNodeEditor, 'node_tree'), owner=object(), args=(),
+                             notify=set_fake_user)
 
 
 register, unregister = bpy.utils.register_classes_factory([SverchCustomTree])
