@@ -46,17 +46,23 @@ class SvNeuro_Elman:
 
         return out
 
-    def sigmoida(self, x, a):
-        if a == 0:
-            b = 1
-        else:
-            b = 1 / a
-        return 1 / (1 + exp(-b * x).real + 1e-8)
+    def sigmoida(self, signal, prop_in):
+        # if prop_in == 0:
+        #     b = 1
+        # else:
+        #     b = 1 / prop_in
+        # result = 1 / (1 + exp(-b * signal).real + 1e-8)
+        # print("signal", signal)
+        result = (exp(signal).real - exp(-signal).real) / (exp(signal).real + exp(-signal).real + 1e-8)
+        return result
 
     def neuro(self, list_in, etalon, maxim, is_learning, prop):
         outA = self.layerA(list_in, prop)
+        print("outA", outA)
         outB = self.layerB(outA, prop)
+        print("outB", outB)
         outC = self.layerC(outB, prop)
+        print("outC", outC)
 
         if is_learning:
             len_etalon = len(etalon)
@@ -75,28 +81,30 @@ class SvNeuro_Elman:
 
     def layerA(self, list_in, prop):
         outA = deepcopy(list_in)
-        lin = len(outA)
-        if lin < prop['InA']:
-            d = prop['InA'] - lin
-            outA.extend([1] * d)
+        len_outa = len(outA)
+        if len_outa < prop['InA']:
+            ext_list_in = prop['InA'] - len_outa
+            outA.extend([1] * ext_list_in)
         return outA
 
     def layerB(self, outA, prop):
         outB = [0] * prop['InB']
-        for ida, la in enumerate(prop['wA']):
-            for idb, lb in enumerate(la):
-                t1 = lb * outA[ida]
-                outB[idb] += t1
+        for idx_a, weights_a in enumerate(prop['wA']):
+            for idx_b, wa in enumerate(weights_a):
+                signal_a = wa * outA[idx_a]
+                # TODO - Здесь можно поставить порог, ниже которого сигнал не пройдёт
+                outB[idx_b] += signal_a
 
-        outB_ = [self.sigmoida(p, prop['InB']) for p in outB]
+        outB_ = [self.sigmoida(signal_b, prop['InB']) for signal_b in outB]
         return outB_
 
     def layerC(self, outB, prop):
         outC = [0] * prop['InC']
-        for idb, lb in enumerate(prop['wB']):
-            for idc, lc in enumerate(lb):
-                t1 = lc * outB[idb]
-                outC[idc] += t1
+        for idx_b, weights_b in enumerate(prop['wB']):
+            for idx_c, wb in enumerate(weights_b):
+                signal_b = wb * outB[idx_b]
+                # TODO - Здесь можно поставить порог, ниже которого сигнал не пройдёт
+                outC[idx_c] += signal_b
         return outC
 
     # **********************
@@ -127,13 +135,10 @@ class SvNeuro_Elman:
         list_wB = deepcopy(prop['wB'])
         list_x = deepcopy(outA)
         for idx, x in enumerate(outA):
-            step = 0
-
             xi = deepcopy(x)
             outB_ = deepcopy(outB)
             outC_ = deepcopy(outC)
-            while step < prop['cycles']:
-                step += 1
+            for step in range(prop['cycles']):
                 eB = [0] * prop['InB']
                 eA = [0] * prop['InA']
                 for idc, c in enumerate(outC_):
@@ -181,13 +186,13 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
 
     Elman = None
 
-    k_learning: FloatProperty(name='k_learning', default=0.1, update=updateNode)
-    gisterezis: FloatProperty(name='gisterezis', default=0.1, min=0.0, update=updateNode)
-    maximum: FloatProperty(name='maximum', default=3.0, update=updateNode)
+    k_learning: FloatProperty(name='k_learning', default=0.1, update=updateNode, description="Коэффициент обучения")
+    gisterezis: FloatProperty(name='gisterezis', default=0.1, min=0.0, update=updateNode, description="Точность обучения")
+    maximum: FloatProperty(name='maximum', default=3.0, update=updateNode, description="Максимальное значение выходного слоя")
     menushka: BoolProperty(name='menushka', default=False)
     epsilon: FloatProperty(name='epsilon', default=1.0, update=updateNode)
     treshold: FloatProperty(name='treshold', default=0.01, update=updateNode)
-    k_lambda: FloatProperty(name='k_lambda', default=0.001, max=0.1, update=updateNode)
+    k_lambda: FloatProperty(name='k_lambda', default=0.0001, max=0.1, update=updateNode, description="Точность обучения")
     cycles: IntProperty(name='cycles', default=3, min=1, update=updateNode)
     lA: IntProperty(name='lA', default=1, min=0, update=updateNode)
     lB: IntProperty(name='lB', default=5, min=0, update=updateNode)
