@@ -17,7 +17,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # by Alexander Nedovizin
-from pprint import pprint
 
 import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty, FloatProperty
@@ -47,22 +46,13 @@ class SvNeuro_Elman:
         return out
 
     def sigmoida(self, signal, prop_in):
-        # if prop_in == 0:
-        #     b = 1
-        # else:
-        #     b = 1 / prop_in
-        # result = 1 / (1 + exp(-b * signal).real + 1e-8)
-        # print("signal", signal)
         result = (exp(signal).real - exp(-signal).real) / (exp(signal).real + exp(-signal).real + 1e-8)
         return result
 
     def neuro(self, list_in, etalon, maxim, is_learning, prop):
         outA = self.layerA(list_in, prop)
-        print("outA", outA)
         outB = self.layerB(outA, prop)
-        print("outB", outB)
         outC = self.layerC(outB, prop)
-        print("outC", outC)
 
         if is_learning:
             len_etalon = len(etalon)
@@ -71,11 +61,7 @@ class SvNeuro_Elman:
                 etalon = etalon + [0] * d
             etalon_ = list(map(lambda x: x / maxim, etalon))
             self.learning(outA, outB, outC, etalon_, maxim, prop)
-        #     print("it's learning")
-        # else:
-        #     print("without learning")
 
-        # print("outC", outC)
         outC_ = list(map(lambda x: x * maxim, outC))
         return outC_
 
@@ -187,16 +173,16 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
     Elman = None
 
     k_learning: FloatProperty(name='k_learning', default=0.1, update=updateNode, description="Коэффициент обучения")
-    gisterezis: FloatProperty(name='gisterezis', default=0.1, min=0.0, update=updateNode, description="Точность обучения")
+    gisterezis: FloatProperty(name='gisterezis', default=0.1, min=0.0, update=updateNode, description="Задаёт порог действительных значений внутри алгоритма обучения (в планах)")
     maximum: FloatProperty(name='maximum', default=3.0, update=updateNode, description="Максимальное значение выходного слоя")
-    menushka: BoolProperty(name='menushka', default=False)
-    epsilon: FloatProperty(name='epsilon', default=1.0, update=updateNode)
-    treshold: FloatProperty(name='treshold', default=0.01, update=updateNode)
+    menushka: BoolProperty(name='menushka', default=False, description="Дополнительные параметры")
+    epsilon: FloatProperty(name='epsilon', default=1.0, update=updateNode, description="Коэффициент участвует в функции оценки обучения")
+    treshold: FloatProperty(name='treshold', default=0.01, update=updateNode, description="Участвует в оценке обучения")
     k_lambda: FloatProperty(name='k_lambda', default=0.0001, max=0.1, update=updateNode, description="Точность обучения")
-    cycles: IntProperty(name='cycles', default=3, min=1, update=updateNode)
-    lA: IntProperty(name='lA', default=1, min=0, update=updateNode)
-    lB: IntProperty(name='lB', default=5, min=0, update=updateNode)
-    lC: IntProperty(name='lC', default=1, min=0, update=updateNode)
+    cycles: IntProperty(name='cycles', default=3, min=1, update=updateNode, description="Внутренние циклы обучения")
+    lA: IntProperty(name='lA', default=1, min=0, update=updateNode, description="Входной слой (должен соответствовать количеству элементов на входе)")
+    lB: IntProperty(name='lB', default=5, min=0, update=updateNode, description="Внутренний слой (больше узлов - точнее расчеты)")
+    lC: IntProperty(name='lC', default=1, min=0, update=updateNode, description="Выходной слой (должен соответствовать количеству элементов на выходе)")
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "data")
@@ -248,9 +234,7 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
                      'k_lambda': 0.0001,
                      'Elman': Elman,
                      }
-            print("initialize handle:", handle[0])
 
-        print("******-----------**********")
         self.Elman = props['Elman']
         self.Elman.gister = abs(self.gisterezis)
         self.Elman.k_learning = self.k_learning
@@ -271,7 +255,6 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
                 props['InC'] = self.lC
                 props['wA'] = self.Elman.init_w(props['InA'], props['InB'], props['trashold'])
                 props['wB'] = self.Elman.init_w(props['InB'], props['InC'], props['trashold'])
-                print("Elman again ... By handle:", handle[0])
 
             props['gister'] = self.gisterezis
             props['k_learning'] = self.k_learning
@@ -282,16 +265,10 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
 
             input_data = self.inputs['data'].sv_get()
 
-            print("pre etalon ", input_etalon)
-            print("pre data ", input_data)
-
             if type(input_etalon[0]) not in [list, tuple]:
                 input_etalon = [input_etalon]
             if type(input_data[0]) not in [list, tuple]:
                 input_data = [input_data]
-
-            print("etalon ", input_etalon)
-            print("data ", input_data)
 
             for idx, data in enumerate(input_data):
                 let = len(input_etalon) - 1
@@ -299,10 +276,6 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
                 data2 = [1.0] + data
                 if type(eta) not in [list, tuple]:
                     eta = [eta]
-
-                print("\nPROCESS:")
-                pprint("data2={0}\neta={1}\nself.maximum={2}\nflag={3}\nprops={4}".format(data2, eta, self.maximum,
-                                                                                          is_learning, props))
 
                 result.append([self.Elman.neuro(data2, eta, self.maximum, is_learning, props)])
             result.append(result.pop(0))
@@ -317,7 +290,7 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
 # *********************************
 
 class SvNeuroOps(bpy.types.Operator):
-    """ Neuro operators """
+    """ Перезапуск узла """
     bl_idname = "node.sverchok_neuro"
     bl_label = "Sverchok Neuro operators"
     bl_options = {'REGISTER', 'UNDO'}
@@ -348,8 +321,7 @@ def unregister():
     bpy.utils.unregister_class(SvNeuroOps)
 
 # TODO - Не нравится, что структура выходных данных не соответсвует эталону
-# TODO - Сделать дескрипторы ко всем видимым элементам
-# TODO - Количество входных элементов не должно соответсвовать количеству входных узлов А. Это сильно тормозит комп
-#  Придумать как решить эту проблему
 # TODO - Необходимо обрабатывать несколко объектов. Т.е. получил несколко объектов, так и выдавать несколько объектов
-# TODO - Сеть получилась необучаема
+#  т.е. сколько объектов - столько обучений
+# TODO - Добавить слот для обучения цепью узлов
+# TODO - Выдлеить основные параметры и дополнительные
