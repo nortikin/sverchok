@@ -7,7 +7,7 @@
 
 import numpy as np
 from mathutils.bvhtree import BVHTree
-from sverchok.utils.modules.vector_math_utils import angle_between, unit_vector, np_dot
+from sverchok.utils.modules.vector_math_utils import angle_between, unit_vector
 from sverchok.dependencies import FreeCAD
 if FreeCAD is not None:
     import Part
@@ -16,6 +16,9 @@ from sverchok.utils.surface.freecad import is_solid_face_surface
 from sverchok.dependencies import scipy
 from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
 from sverchok.utils.modules.edge_utils import adjacent_faces_number
+
+def np_dot(u, v, axis=1):
+    return np.sum(u * v, axis=axis)
 
 def reflect(v1, mirror):
 
@@ -131,16 +134,16 @@ def bvh_safe_check(verts, pols):
 
 
 class SvAttractorsForce():
-    def __init__(self, attractors, att_force, att_clamp, att_decay_power):
+    def __init__(self, location, strength, clamp, decay_power):
 
-        # attractors, att_force, att_clamp, att_decay_power = local_params
-        np_attrac = np.array(attractors)
-        np_attrac_f = np.array(att_force)
-        np_attrac_clamp = np.array(att_clamp)
-        np_attrac_decay_pow = np.array(att_decay_power)
-        params = numpy_match_long_repeat([np_attrac, np_attrac_f, np_attrac_clamp, np_attrac_decay_pow])
+        np_location = np.array(location)
+        np_strength = np.array(strength)
+        np_clamp = np.array(clamp)
+        np_decay_pow = np.array(decay_power)
+        params = numpy_match_long_repeat([np_location, np_strength, np_clamp, np_decay_pow])
         self.points = params[0]
-        self.magnitude = params[1]
+        self.strength = params[1]
+        self.use_attractors = np.any(params[1] != 0)
         self.clamp = params[2]
         self.decay = params[3]
 
@@ -151,6 +154,8 @@ class SvAttractorsForce():
 
 
     def add(self, ps):
+        if not self.use_attractors:
+            return
         v_attract = ps.verts[np.newaxis, :, :] - self.points[:, np.newaxis, :]
         dist_attract = np.linalg.norm(v_attract, axis=2)
         mask = dist_attract > self.clamp[:, np.newaxis]
@@ -158,11 +163,174 @@ class SvAttractorsForce():
         dist_attract2 = np.power(dist_attract, self.decay[:, np.newaxis])
         dist_attract_cor = np.clip(dist_attract2[mask_true], 1e-2, 1e4)
 
-        v_attract *= self.magnitude[:, np.newaxis, np.newaxis]
+        v_attract *= self.strength[:, np.newaxis, np.newaxis]
         v_attract_normal = v_attract[mask_true] / dist_attract_cor[:, np.newaxis]
 
         v_attract[mask_true] = -v_attract_normal
         v_attract[mask, :] = 0
+
+        r_attract = np.sum(v_attract, axis=0)
+        ps.force_resultant += r_attract
+
+
+
+class SvAttractorsLineForce():
+    def __init__(self, location, direction, strength, clamp, decay_power):
+
+        np_location = np.array(location)
+        np_direction = np.array(direction)
+        np_strength = np.array(strength)
+        np_clamp = np.array(clamp)
+        np_decay_pow = np.array(decay_power)
+        params = numpy_match_long_repeat([np_location, np_direction, np_strength, np_clamp, np_decay_pow])
+        self.points = params[0]
+        self.direction = params[1]/np.linalg.norm(params[1], axis=1)[:, np.newaxis]
+        self.strength = params[2]
+        self.use_attractors = np.any(params[2] != 0)
+        self.clamp = params[3]
+        self.decay = params[4]
+
+
+
+    def setup(self, ps):
+        pass
+
+
+    def add(self, ps):
+        if not self.use_attractors:
+            return
+        v_attract = ps.verts[np.newaxis, :, :] - self.points[:, np.newaxis, :]
+        vect_proy = np_dot(v_attract, self.direction[:, np.newaxis, :], axis=2)
+
+        closest_point = self.points[:, np.newaxis, :] + vect_proy[:, :, np.newaxis] * self.direction[:, np.newaxis, :]
+
+        dif_v = closest_point -  ps.verts[np.newaxis, :, :]
+        dist_attract = np.linalg.norm(dif_v, axis=2)
+        mask = dist_attract > self.clamp[:, np.newaxis]
+
+        mask_true = np.invert(mask)
+        dist_attract2 = np.power(dist_attract, self.decay[:, np.newaxis])
+        dist_attract_cor = np.clip(dist_attract2[mask_true], 1e-2, 1e4)
+
+        dif_v *= self.strength[:, np.newaxis, np.newaxis]
+        v_attract_normal = dif_v[mask_true] / dist_attract_cor[:, np.newaxis]
+
+        v_attract[mask_true] = v_attract_normal
+        v_attract[mask, :] = 0
+
+        r_attract = np.sum(v_attract, axis=0)
+        ps.force_resultant += r_attract
+
+
+class SvAttractorsPlaneForce():
+    def __init__(self, location, normal, strength, clamp, decay_power):
+
+        np_location = np.array(location)
+        np_normal = np.array(normal)
+        np_strength = np.array(strength)
+        np_clamp = np.array(clamp)
+        np_decay_pow = np.array(decay_power)
+        params = numpy_match_long_repeat([np_location, np_normal, np_strength, np_clamp, np_decay_pow])
+
+        self.points = params[0]
+        self.normal = params[1]/np.linalg.norm(params[1], axis=1)[:, np.newaxis]
+        self.strength = params[2]
+        self.use_attractors = np.any(params[2] != 0)
+        self.clamp = params[3]
+        self.decay = params[4]
+
+
+
+    def setup(self, ps):
+        pass
+
+
+    def add(self, ps):
+        if not self.use_attractors:
+            return
+
+        v_attract = ps.verts[np.newaxis, :, :] - self.points[:, np.newaxis, :]
+        dist_attract = np_dot(v_attract, self.normal[:, np.newaxis, :], axis=2)
+
+        mask = dist_attract > self.clamp[:, np.newaxis]
+        mask_true = np.invert(mask)
+        plane_side = dist_attract < 0
+        dist_attract2 = np.power(dist_attract, self.decay[:, np.newaxis])
+        dist_attract_cor = np.clip(dist_attract2, 1e-2, 1e4)
+        dist_attract_cor[plane_side] *= -1
+
+        v_attract_normal = self.normal[:, np.newaxis, :] / dist_attract_cor[:, :, np.newaxis] * self.strength[:, np.newaxis, np.newaxis]
+        v_attract[mask_true] = -v_attract_normal[mask_true]
+        v_attract[mask, :] = 0
+
+        r_attract = np.sum(v_attract, axis=0)
+        ps.force_resultant += r_attract
+
+
+class SvVortexForce():
+
+    def __init__(self, location, direction, rot_strength, inflow_strength, forward_strength, clamp, decay_power):
+
+
+        np_location = np.array(location)
+        np_direction = np.array(direction)
+        np_rot_strength = np.array(rot_strength)
+        np_inflow_strength = np.array(inflow_strength)
+        np_forward_strength = np.array(forward_strength)
+        np_clamp = np.array(clamp)
+        np_decay_pow = np.array(decay_power)
+        params = numpy_match_long_repeat([np_location, np_direction, np_rot_strength, np_inflow_strength, np_forward_strength, np_clamp, np_decay_pow])
+        self.points = params[0]
+        self.direction = params[1]/np.linalg.norm(params[1], axis=1)[:, np.newaxis]
+        self.rot_strength = params[2]
+        self.use_rotation = np.any(params[2] != 0)
+        self.inflow_strength = params[3]
+        self.use_inflow = np.any(params[3] != 0)
+        self.forward_strength = params[4]
+        self.use_forward = np.any(params[4] != 0)
+        self.use_vortex = np.any([self.use_rotation, self.use_inflow, self.use_forward])
+        self.clamp = params[5]
+        self.decay = params[6]
+
+
+
+    def setup(self, ps):
+        pass
+
+
+    def add(self, ps):
+
+        if not self.use_vortex:
+            return
+
+        v_attract = ps.verts[np.newaxis, :, :] - self.points[:, np.newaxis, :]
+        vect_proy = np_dot(v_attract, self.direction[:, np.newaxis, :],axis=2)
+
+        closest_point = self.points[:, np.newaxis, :] +vect_proy[:, :, np.newaxis] * self.direction[:, np.newaxis, :]
+
+        dif_v = closest_point -  ps.verts[np.newaxis, :, :]
+        dist_attract = np.linalg.norm(dif_v, axis=2)
+        mask_true = dist_attract < self.clamp[:, np.newaxis]
+
+        dist_attract2 = np.power(dist_attract, self.decay[:, np.newaxis])
+        dist_attract_cor = np.clip(dist_attract2, 1e-2, 1e4)
+
+
+        v_attract_normal = dif_v/ dist_attract_cor[:, :,np.newaxis]
+        v_attract[:] = 0
+
+        if self.use_rotation:
+            v_rotation = np.cross(v_attract_normal, self.direction[:, np.newaxis, :]) * self.rot_strength[:, np.newaxis, np.newaxis]
+            v_attract[mask_true] += v_rotation[mask_true]
+
+        if self.use_forward:
+            v_forward = self.direction[:, np.newaxis, :] *  self.forward_strength[:, np.newaxis, np.newaxis] / dist_attract_cor[:, :,np.newaxis]
+            v_attract[mask_true] += v_forward[mask_true]
+
+        if self.use_inflow:
+            v_attract_normal *= self.inflow_strength[:, np.newaxis, np.newaxis]
+            v_attract[mask_true] += v_attract_normal[mask_true]
+
 
         r_attract = np.sum(v_attract, axis=0)
         ps.force_resultant += r_attract

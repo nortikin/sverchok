@@ -640,8 +640,9 @@
     SvPulgaRandomForceNode
     SvPulgaBoundingBoxForceNode
     SvPulgaInflateForceNode
-    SvPulgaAttractorsForceNode
+    SvPulgaAttractorsForceNodeMk2
     SvPulgaAngleForceNode
+    SvPulgaVortexForceNode
     SvPulgaPhysicsNode
 
 ## SVG
