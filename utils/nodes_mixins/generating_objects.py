@@ -7,7 +7,7 @@
 
 import random
 import string
-from itertools import cycle
+from itertools import cycle, chain
 from typing import List, Union
 
 import numpy as np
@@ -262,11 +262,32 @@ class SvLightData(bpy.types.PropertyGroup):
 
 
 class SvCurveData(bpy.types.PropertyGroup):
+    """For now it is supporting only one spline per curve"""
     curve: bpy.props.PointerProperty(type=bpy.types.Curve)
 
-    def regenerate_curve(self, curve_name: str):
+    def regenerate_curve(self, curve_name: str, vertices: Union[list, np.ndarray], curve_type: str = 'POLY'):
         if not self.curve:
-            self.curve = bpy.data.curves.new(name=curve_name, type='CURVE')  # only curves for now
+            self.curve = bpy.data.curves.new(name=curve_name, type='CURVE')  # type ['CURVE', 'SURFACE', 'FONT']
+            spline = self.curve.splines.new(curve_type)
+            spline.points.add(len(vertices) - 1)
+        elif len(self.curve.splines[0].points) != len(vertices):
+            self.curve.splines.clear()
+            spline = self.curve.splines.new(curve_type)
+            spline.points.add(len(vertices) - 1)
+        else:
+            spline = self.curve.splines[0]
+
+        if spline.type != curve_type:
+            spline.type = curve_type
+
+        # flatten vertices array and add W component (X, Y, Z, W), W is responsible for drawing NURBS curves
+        if isinstance(vertices, np.ndarray):
+            w_vertices = np.concatenate((vertices, np.ones((len(vertices), 1), dtype=np.float32)), axis=1)
+            vertices = np.ravel(w_vertices)
+        else:
+            vertices = [co for v in vertices for co in chain(v, [1])]
+
+        spline.points.foreach_set('co', vertices)
 
     def remove_data(self):
         """

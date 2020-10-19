@@ -6,10 +6,15 @@
 # License-Filename: LICENSE
 
 
+from functools import reduce
+
 import bpy
+from mathutils import Matrix
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, repeat_last
 from sverchok.utils.nodes_mixins.generating_objects import SvViewerNode, SvCurveData
+from sverchok.utils.handle_blender_data import correct_collection_length
+import sverchok.utils.meshes as me
 
 
 class SvPolylineViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
@@ -28,7 +33,7 @@ class SvPolylineViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
 
     dimension_modes = [(k, k, '', i) for i, k in enumerate(["3D", "2D"])]
 
-    curve_data: bpy.props.PointerProperty(type=SvCurveData)
+    curve_data: bpy.props.CollectionProperty(type=SvCurveData, options={'SKIP_SAVE'})
     material: bpy.props.PointerProperty(type=bpy.types.Material, update=updateNode)
 
     curve_dimensions: bpy.props.EnumProperty(
@@ -51,12 +56,16 @@ class SvPolylineViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
     preview_resolution_u: bpy.props.IntProperty(
         name="Resolution Preview U",
         default=2, min=1, max=5, update=updateNode)
+    apply_matrices_to: bpy.props.EnumProperty(
+        items=[(n, n, '', ic, i)for i, (n, ic) in enumerate(zip(['object', 'mesh'], ['OBJECT_DATA', 'MESH_DATA']))],
+        description='Apply matrices to',
+        update=updateNode)
 
     def sv_init(self, context):
         super().init_viewer()
 
         self.inputs.new('SvVerticesSocket', 'vertices')
-        self.inputs.new('SvMatrixSocket', 'matrix')
+        self.inputs.new('SvMatrixSocket', 'matrix').custom_draw = 'draw_matrix_props'
         radii = self.inputs.new('SvStringsSocket', 'radii')
         radii.use_prop = True
         radii.default_float_property = 0.2
@@ -100,6 +109,73 @@ class SvPolylineViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "use_auto_uv", text="Use UV for mapping")  # todo?? soon to be deprecated
         row = layout.row()
         row.prop(self, "preview_resolution_u")
+
+    def draw_matrix_props(self, socket, context, layout):
+        socket.draw_quick_link(context, layout, self)
+        layout.label(text=socket.name)
+        layout.prop(self, 'apply_matrices_to', text='', expand=True)
+
+    def process(self):
+        if not self.is_active:
+            return
+
+        vertices = self.inputs['vertices'].sv_get(deepcopy=False, default=[])
+        matrices = self.inputs['matrix'].sv_get(deepcopy=False, default=[])
+
+        # first step is merge everything if the option
+        if self.is_merge:
+            objects_number = max([len(vertices), len(matrices)])
+            meshes = []
+            for i, verts, matrix in zip(range(objects_number), repeat_last(vertices), repeat_last(matrices)):
+                mesh = me.to_mesh(verts)
+                if matrix:
+                    mesh.apply_matrix(matrix)
+                meshes.append(mesh)
+
+            base_mesh = reduce(lambda m1, m2: m1.add_mesh(m2), meshes)
+            vertices = [base_mesh.vertices.data]
+            matrices = []
+
+        objects_number = max([len(vertices), len(matrices)]) if len(vertices) else 0
+
+        # extract mesh matrices
+        if self.apply_matrices_to == 'mesh':
+            if matrices:
+                mesh_matrices = matrices
+            else:
+                mesh_matrices = [None]
+        else:
+            mesh_matrices = [None]
+
+        # extract object matrices
+        if self.apply_matrices_to == 'object':
+            if matrices:
+                obj_matrices = matrices
+            else:
+                if self.is_lock_origin:
+                    obj_matrices = [Matrix.Identity(4)]
+                else:
+                    obj_matrices = []
+        else:
+            if self.is_lock_origin:
+                obj_matrices = [Matrix.Identity(4)]
+            else:
+                obj_matrices = []
+
+        # regenerate mesh data blocks
+        correct_collection_length(self.curve_data, objects_number)
+        for cu_data, verts, matrix in zip(self.curve_data, repeat_last(vertices), repeat_last(mesh_matrices)):
+            if matrix:
+                mesh = me.to_mesh(verts)
+                mesh.apply_matrix(matrix)
+                verts = mesh.vertices.data
+            cu_data.regenerate_curve(self.base_data_name, verts)
+
+        # regenerate object data blocks
+        self.regenerate_objects([self.base_data_name], [d.curve for d in self.curve_data], [self.collection])
+        [setattr(prop.obj, 'matrix_local', m) for prop, m in zip(self.object_data, repeat_last(obj_matrices))]
+
+        self.outputs['Objects'].sv_set([obj_data.obj for obj_data in self.object_data])
 
 
 register, unregister = bpy.utils.register_classes_factory([SvPolylineViewerNode])
