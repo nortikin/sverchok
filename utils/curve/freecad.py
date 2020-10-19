@@ -13,6 +13,7 @@ from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.primitives import SvLine, SvCircle
+from sverchok.utils.curve.biarc import SvBiArc
 from sverchok.utils.logging import info
 
 from sverchok.dependencies import FreeCAD
@@ -30,26 +31,36 @@ def line_to_freecad(line):
     p1 = Base.Vector(*p1)
     p2 = Base.Vector(*p2)
     fc_line = Part.LineSegment(p1, p2)
-    return fc_line
+    return [fc_line]
 
 curve_converters[SvLine] = line_to_freecad
 
 def circle_to_freecad(circle):
     center = tuple(circle.center)
     normal = tuple(circle.normal)
-    vectorx = tuple(circle.vectorx / np.linalg.norm(circle.vectorx))
+    #vectorx = tuple(circle.vectorx / np.linalg.norm(circle.vectorx))
     radius = circle.get_actual_radius()
     u_min, u_max = circle.get_u_bounds()
+    vectorx = circle.evaluate(0) - circle.center
+    vectorx /= np.linalg.norm(vectorx)
+    vectorx = tuple(vectorx)
 
     fc_circle = Part.Circle(Base.Vector(*center), Base.Vector(*normal), radius)
     if u_min != 0 or u_max != 2*math.pi:
         fc_circle.XAxis = Base.Vector(*vectorx)
         fc_arc = fc_circle.trim(u_min, u_max)
-        return fc_arc
+        return [fc_arc]
     else:
-        return fc_circle
+        return [fc_circle]
 
 curve_converters[SvCircle] = circle_to_freecad
+
+def biarc_to_freecad(biarc):
+    arc1 = circle_to_freecad(biarc.arc1)
+    arc2 = circle_to_freecad(biarc.arc2)
+    return arc1 + arc2
+
+curve_converters[SvBiArc] = biarc_to_freecad
 
 def curve_to_freecad_nurbs(sv_curve):
     """
@@ -116,7 +127,7 @@ class SvSolidEdgeCurve(SvCurve):
 
     def to_nurbs(self, implementation = SvNurbsMaths.FREECAD):
         curve = self.curve.toBSpline(*self.u_bounds)
-        curve.transform(self.edge.Matrix)
+        #curve.transform(self.edge.Matrix)
         control_points = np.array(curve.getPoles())
         weights = np.array(curve.getWeights())
         knotvector = np.array(curve.KnotSequence)
@@ -247,7 +258,9 @@ class SvFreeCadNurbsCurve(SvNurbsCurve):
     
     def tangent(self, t):
         v = self.curve.tangent(t)
-        return np.array(self._convert(v))
+        if not isinstance(v, tuple):
+            v = self._convert(v)
+        return np.array(v)
     
     def tangent_array(self, ts):
         return np.vectorize(self.tangent, signature='()->(3)')(ts)    
@@ -286,11 +299,15 @@ def curve_to_freecad(sv_curve):
     converter = curve_converters.get(type(sv_curve), None)
     if converter is not None:
         try:
-            fc_curve = converter(sv_curve)
-            bounds = fc_curve.FirstParameter, fc_curve.LastParameter
-            return SvFreeCadCurve(fc_curve, bounds)
+            fc_curves = converter(sv_curve)
+            result = []
+            for fc_curve in fc_curves:
+                bounds = fc_curve.FirstParameter, fc_curve.LastParameter
+                sv_curve = SvFreeCadCurve(fc_curve, bounds)
+                result.append(sv_curve)
+            return result
         except UnsupportedCurveTypeException as e:
             info(f"Can't convert {sv_curve} to native FreeCAD curve: {e}")
             pass
-    return curve_to_freecad_nurbs(sv_curve)
+    return [curve_to_freecad_nurbs(sv_curve)]
 

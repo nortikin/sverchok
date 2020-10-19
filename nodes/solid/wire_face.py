@@ -8,7 +8,7 @@
 import numpy as np
 
 import bpy
-from bpy.props import BoolProperty
+from bpy.props import BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, get_data_nesting_level, updateNode
@@ -41,8 +41,19 @@ class SvSolidWireFaceNode(bpy.types.Node, SverchCustomTreeNode):
             default = True,
             update = updateNode)
 
+    accuracy : IntProperty(
+            name = "Accuracy",
+            description = "Tolerance parameter for checking if ends of edges coincide",
+            default = 8,
+            min = 1,
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'planar', toggle=True)
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'accuracy')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Edges")
@@ -52,6 +63,8 @@ class SvSolidWireFaceNode(bpy.types.Node, SverchCustomTreeNode):
         if not any(socket.is_linked for socket in self.outputs):
             return
 
+        tolerance = 10 ** (-self.accuracy)
+
         curve_s = self.inputs['Edges'].sv_get()
         #input_level = get_data_nesting_level(curve_s, data_types=(SvCurve,))
         curve_s = ensure_nesting_level(curve_s, 3, data_types=(SvCurve,))
@@ -60,7 +73,7 @@ class SvSolidWireFaceNode(bpy.types.Node, SverchCustomTreeNode):
         for curves_i in curve_s:
             new_faces = []
             for curves in curves_i:
-                face = curves_to_face(curves, planar=self.planar, force_nurbs=False)
+                face = curves_to_face(curves, planar=self.planar, force_nurbs=False, tolerance=tolerance)
                 new_faces.append(face)
             faces_out.append(new_faces)
 

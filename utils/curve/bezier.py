@@ -312,6 +312,12 @@ class SvBezierCurve(SvCurve):
             return SvBezierCurve(points)
         return self.to_nurbs().lerp_to(curve2, coefficient)
     
+    def split_at(self, t):
+        return self.to_nurbs().split_at(t)
+
+    def cut_segment(self, new_t_min, new_t_max, rescale=False):
+        return self.to_nurbs().cut_segment(new_t_min, new_t_max, rescale=rescale)
+
     def to_bezier(self):
         return self
 
@@ -447,6 +453,12 @@ class SvCubicBezierCurve(SvCurve):
             return SvCubicBezierCurve(p1, p2, p3, p4)
         return self.to_nurbs().lerp_to(curve2, coefficient)
     
+    def split_at(self, t):
+        return self.to_nurbs().split_at(t)
+
+    def cut_segment(self, new_t_min, new_t_max, rescale=False):
+        return self.to_nurbs().cut_segment(new_t_min, new_t_max, rescale=rescale)
+
     def to_bezier(self):
         return self
 

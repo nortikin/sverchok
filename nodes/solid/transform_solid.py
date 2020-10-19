@@ -10,6 +10,7 @@ else:
 
     from sverchok.node_tree import SverchCustomTreeNode
     from sverchok.data_structure import updateNode, match_long_repeat as mlr
+    from sverchok.utils.solid import transform_solid
     from FreeCAD import Base
 
     class SvTransformSolidNode(bpy.types.Node, SverchCustomTreeNode):
@@ -42,8 +43,7 @@ else:
             matrixes = self.inputs[1].sv_get()
             solids = []
             for solid, matrix in zip(*mlr([solids_in, matrixes])):
-                mat = Base.Matrix(*[i for v in matrix for i in v])
-                solid_o = solid.transformGeometry(mat)
+                solid_o = transform_solid(matrix, solid)
                 solids.append(solid_o)
 
             self.outputs['Solid'].sv_set(solids)

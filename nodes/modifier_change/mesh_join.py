@@ -15,11 +15,13 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+from functools import reduce
+from itertools import cycle, chain
 
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.sv_mesh_utils import mesh_join
+import sverchok.utils.meshes as me
 
 
 class SvMeshJoinNode(bpy.types.Node, SverchCustomTreeNode):
@@ -37,21 +39,30 @@ class SvMeshJoinNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'PolyEdge')
 
     def process(self):
-        Vertices, PolyEdge = self.inputs
-        Vertices_out, PolyEdge_out = self.outputs
+        if not self.inputs['Vertices'].is_linked:
+            return
 
-        if Vertices.is_linked:
-            verts = Vertices.sv_get()
-            poly_edge = PolyEdge.sv_get(default=[[]])
+        vertices = self.inputs['Vertices'].sv_get(default=[])
+        edges = []
+        polygons = []
 
-            if PolyEdge.is_linked:
-                verts_out, _, poly_edge_out = mesh_join(verts, [], poly_edge)
-                PolyEdge_out.sv_set([poly_edge_out])
+        poly_edges = self.inputs['PolyEdge'].sv_get(default=[])
+        first_elements = [obj[0] for obj in poly_edges]
+        if first_elements:
+            if all([len(el) == 2 for el in first_elements]):
+                edges = poly_edges
+            elif all([len(el) != 2 for el in first_elements]):
+                polygons = poly_edges
             else:
-                verts_out = []
-                _ = [verts_out.extend(vlist) for vlist in verts]
+                raise TypeError('PoyEdge socket should consist either all edges or all faces')  # Sv architecture law
 
-            Vertices_out.sv_set([verts_out])
+        meshes = [me.to_mesh(*m) for m in zip(vertices, chain(edges, cycle([[]])), chain(polygons, cycle([[]])))]
+        joined_mesh = reduce(lambda m1, m2: m1.add_mesh(m2), meshes)
+        self.outputs['Vertices'].sv_set([joined_mesh.vertices.data])
+        if joined_mesh.edges:
+            self.outputs['PolyEdge'].sv_set([joined_mesh.edges.data])
+        if joined_mesh.polygons:
+            self.outputs['PolyEdge'].sv_set([joined_mesh.polygons.data])
 
 
 def register():

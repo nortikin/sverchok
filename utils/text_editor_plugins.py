@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -16,9 +16,9 @@ def has_selection(self, text):
 
 # maybe fuzzy module?
 def fuzzy_compare(named_seeker, named_current):
-    """ 
-    try to find the stored datablock.name with or without extra chars, 
-    if these things fail then there is no compare anyway 
+    """
+    try to find the stored datablock.name with or without extra chars,
+    if these things fail then there is no compare anyway
     """
     try:
         if named_seeker == named_current: return True
@@ -51,8 +51,8 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
             return {'FINISHED'}
 
         node_types = set([
-            'SvScriptNodeLite', 'SvTextInNodeMK2', 'SvGenerativeArtNode', 
-            'SvSNFunctorB', 'SvVDExperimental', 'SvProfileNodeMK3'])
+            'SvScriptNodeLite', 'SvTextInNodeMK2', 'SvGenerativeArtNode',
+            'SvSNFunctorB', 'SvViewerDrawMk4', 'SvProfileNodeMK3'])
 
         for ng in ngs:
 
@@ -89,7 +89,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                 elif hasattr(n, "current_text") and fuzzy_compare(n.current_text, text_file_name):
                     n.reload()
 
-                elif n.bl_idname == 'SvVDExperimental' and n.selected_draw_mode == "fragment":
+                elif n.bl_idname == 'SvViewerDrawMk4' and n.selected_draw_mode == "fragment":
                     with n.sv_throttle_tree_update():
                         if n.custom_shader_location == text_file_name:
                             n.custom_shader_location = n.custom_shader_location
@@ -105,7 +105,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
 
 
         return {'FINISHED'}
-  
+
 # store keymaps here to access after registration
 addon_keymaps = []
 

@@ -36,15 +36,25 @@ def process_from_socket(self, context):
 
 
 class SvSocketCommon:
-    """ Base class for all Sockets """
+    """
+    Base class for all Sockets
+
+    'SKIP_SAVE' in properties means skipping them during saving in JSON format
+    some of the properties can be skipped because they are static, they are always set only in sv_init method
+    """
     color = (1, 0, 0, 1)  # base color, other sockets should override the property, use FloatProperty for dynamic
+    label: StringProperty()  # It will be drawn instead of name if given
     quick_link_to_node = str()  # sockets which often used with other nodes can fill its `bl_idname` here
 
-    use_prop: BoolProperty(default=False)  # set True to use default socket property if it has got it
-    custom_draw: StringProperty(description="For name of method which will draw socket UI (optionally)")
-    prop_name: StringProperty(default='', description="For displaying node property in socket UI")
+    # set True to use default socket property if it has got it
+    use_prop: BoolProperty(default=False, options={'SKIP_SAVE'})
+    custom_draw: StringProperty(description="For name of method which will draw socket UI (optionally)",
+                                options={'SKIP_SAVE'})
+    prop_name: StringProperty(default='', description="For displaying node property in socket UI",
+                              options={'SKIP_SAVE'})
 
-    objects_number: IntProperty(min=0)  # utility field for showing number of objects in sockets data
+    # utility field for showing number of objects in sockets data
+    objects_number: IntProperty(min=0, options={'SKIP_SAVE'})
 
     def get_prop_name(self):
         """
@@ -187,10 +197,10 @@ class SvSocketCommon:
                 getattr(node, self.custom_draw)(self, context, layout)
 
         elif self.is_linked:  # linked INPUT or OUTPUT
-            layout.label(text=text + f". {self.objects_number or ''}")
+            layout.label(text=(self.label or text) + f". {self.objects_number or ''}")
 
         elif self.is_output:  # unlinked OUTPUT
-            layout.label(text=text)
+            layout.label(text=self.label or text)
 
         else:  # unlinked INPUT
             if self.get_prop_name():  # has property
@@ -201,7 +211,7 @@ class SvSocketCommon:
 
             else:  # no property and not use default prop
                 self.draw_quick_link(context, layout, node)
-                layout.label(text=text)
+                layout.label(text=self.label or text)
 
     def draw_color(self, context, node):
         return self.color
@@ -236,21 +246,6 @@ class SvSocketCommon:
                     f"Cause is '{e}'")
             self.objects_number = 0
 
-    @property
-    def properties_to_skip_iojson(self):
-        """
-        Used during serialization process
-        Should be overridden in this way: return super().properties_to_skip_iojson + ['my_property']
-        """
-        skip_serialization_attributes = {
-            # all this attributes can be skipped because they are static, they are always set only in sv_init method
-            # but the attribute should be removed from this list if its value is changed outside sv_init method
-            'quick_link_to_node', 'custom_draw', 'prop_name', 'use_prop',
-            # utils attributes, Sverchok itself knows what to put in them
-            'objects_number'
-        }
-        return skip_serialization_attributes
-
 
 class SvObjectSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvObjectSocket"
@@ -281,7 +276,7 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
             return True
 
     color = (0.69, 0.74, 0.73, 1.0)
-    use_prop: BoolProperty(default=True)
+    use_prop: BoolProperty(default=True, options={'SKIP_SAVE'})
 
     object_kinds: StringProperty(default='ALL')  # use for filtering objects, see filter_kinds method
     object_ref: StringProperty(update=process_from_socket)
@@ -372,6 +367,24 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
 
     default_property: FloatVectorProperty(default=(1, 0, 0, 0), size=4, subtype='QUATERNION',
                                           update=process_from_socket)
+    expanded: BoolProperty(default=False)  # for minimizing showing socket property
+
+    def draw_property(self, layout, prop_origin=None, prop_name='prop'):
+        if prop_origin is None:
+            prop_origin = self
+
+        split = layout.split(factor=.2, align=True)
+        c1 = split.column(align=True)
+        c2 = split.column(align=True)
+
+        if self.expanded:
+            c1.prop(self, "expanded", icon='TRIA_UP', text='')
+            c1.label(text=self.name[0])
+            c2.prop(prop_origin, prop_name, text="", expand=True)
+        else:
+            c1.prop(self, "expanded", icon='TRIA_DOWN', text="")
+            row = c2.row(align=True)
+            row.template_component_menu(prop_origin, prop_name, name=self.name)
 
 
 class SvColorSocket(NodeSocket, SvSocketCommon):
@@ -434,7 +447,7 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
 
     color = (0.6, 1.0, 0.6, 1.0)
 
-    quick_link_to_node: StringProperty()  # this can be overridden by socket instances
+    quick_link_to_node: StringProperty(options={'SKIP_SAVE'})  # this can be overridden by socket instances
 
     default_property_type: bpy.props.EnumProperty(items=[(i, i, '') for i in ['float', 'int']])
     default_float_property: bpy.props.FloatProperty(update=process_from_socket)
@@ -479,6 +492,13 @@ class SvSvgSocket(NodeSocket, SvSocketCommon):
         else:
             return
 
+
+class SvPulgaForceSocket(NodeSocket, SvSocketCommon):
+    '''For Pulga forces data'''
+    bl_idname = "SvPulgaForceSocket"
+    bl_label = "Pulga Force Socket"
+
+    color = (0.4, 0.3, 0.6, 1.0)
 
 class SvDictionarySocket(NodeSocket, SvSocketCommon):
     '''For dictionary data'''
@@ -573,7 +593,7 @@ classes = [
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
     SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket,
     SvSurfaceSocket, SvCurveSocket, SvScalarFieldSocket, SvVectorFieldSocket,
-    SvSolidSocket, SvSvgSocket, SvLinkNewNodeInput
+    SvSolidSocket, SvSvgSocket, SvPulgaForceSocket, SvLinkNewNodeInput
 ]
 
 register, unregister = bpy.utils.register_classes_factory(classes)

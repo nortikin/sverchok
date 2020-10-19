@@ -6,6 +6,7 @@
 # License-Filename: LICENSE
 
 import numpy as np
+import itertools
 
 from mathutils import Vector, Matrix
 from sverchok.utils.curve.core import (
@@ -14,13 +15,14 @@ from sverchok.utils.curve.core import (
         SvFlipCurve, SvConcatCurve,
         UnsupportedCurveTypeException
     )
+from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.geom import PlaneEquation, LineEquation, Spline, LinearSpline, CubicSpline
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
 from sverchok.utils.math import (
     ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
-    NORMAL_DIR
+    NORMAL_DIR, NONE
 )
 from sverchok.utils.logging import info
 
@@ -220,6 +222,38 @@ class DifferentialRotationCalculator(object):
             return frenet @ rotation_matrices
         elif self.algorithm == TRACK_NORMAL:
             matrices = self.normal_tracker.evaluate_array(ts)
+            return matrices
+        else:
+            raise Exception("Unsupported algorithm")
+
+class SvCurveFrameCalculator(object):
+    def __init__(self, curve, algorithm, z_axis=2, resolution=50, normal=None):
+        self.algorithm = algorithm
+        self.z_axis = z_axis
+        self.curve = curve
+        self.normal = normal
+        if algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            self.calculator = DifferentialRotationCalculator(curve, algorithm, resolution)
+
+    def get_matrix(self, tangent):
+        return MathutilsRotationCalculator.get_matrix(tangent, scale=1.0,
+                axis=self.z_axis,
+                algorithm = self.algorithm,
+                scale_all=False)
+
+    def get_matrices(self, ts):
+        if self.algorithm == NONE:
+            identity = np.eye(3)
+            n = len(ts)
+            return np.broadcast_to(identity, (n, 3,3))
+        elif self.algorithm == NORMAL_DIR:
+            matrices, _, _ = self.curve.frame_by_plane_array(ts, self.normal)
+            return matrices
+        elif self.algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+            return self.calculator.get_matrices(ts)
+        elif self.algorithm in {HOUSEHOLDER, TRACK, DIFF}:
+            tangents = self.curve.tangent_array(ts)
+            matrices = np.vectorize(lambda t : self.get_matrix(t), signature='(3)->(3,3)')(tangents)
             return matrices
         else:
             raise Exception("Unsupported algorithm")
@@ -604,6 +638,15 @@ class SvIsoUvCurve(SvCurve):
         self.tangent_delta = 0.001
         self.__description__ = "{} at {} = {}".format(surface, fixed_axis, value)
 
+    @staticmethod
+    def take(surface, fixed_axis, value, flip=False):
+        if hasattr(surface, 'iso_curve'):
+            try:
+                return surface.iso_curve(fixed_axis, value, flip=flip)
+            except UnsupportedSurfaceTypeException:
+                pass
+        return SvIsoUvCurve(surface, fixed_axis, value, flip=flip)
+
     def get_u_bounds(self):
         if self.fixed_axis == 'U':
             return self.surface.get_v_min(), self.surface.get_v_max()
@@ -785,6 +828,81 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
         else:
             err_msg = "\n".join([str(e) for e in exceptions])
             raise Exception(f"Could not join some curves natively. Result is: {result}.\nErrors were:\n{err_msg}")
+
+class SvCurvesSortResult(object):
+    def __init__(self):
+        self.curves = []
+        self.indexes = []
+        self.flips = []
+        self.sum_error = 0
+
+def sort_curves_for_concat(curves, allow_flip=False):
+    if not curves:
+        return curves
+
+    def calc_error(c1, c2):
+        c1end = c1[1]
+        c2begin = c2[0]
+
+        dc = c1end - c2begin
+        d = (dc * dc).sum()
+        return d
+
+    def select_next(last_pair, pairs, other_idxs):
+        min_error = None
+        best_idx = None
+        best_flip = False
+
+        if allow_flip:
+            combinations = [(flip, idx) for idx in other_idxs for flip in [False, True]]
+        else:
+            combinations = [(False, idx) for idx in other_idxs]
+
+        for flip, idx in combinations:
+            start, end = pairs[idx]
+            if flip:
+                start, end = end, start
+            error = calc_error(last_pair, (start, end))
+            if min_error is None or error < min_error:
+                min_error = error
+                best_idx = idx
+                best_flip = flip
+        return min_error, best_idx, best_flip
+
+    pairs = []
+    for curve in curves:
+        u_min, u_max = curve.get_u_bounds()
+        begin = curve.evaluate(u_min)
+        end = curve.evaluate(u_max)
+        pairs.append((begin, end))
+
+    all_idxs = list(range(len(curves)))
+    result_idxs = [0]
+    result_flips = [False]
+    last_pair = pairs[0]
+    rest_idxs = all_idxs[1:]
+
+    result = SvCurvesSortResult()
+
+    while rest_idxs:
+        error, next_idx, next_flip = select_next(last_pair, pairs, rest_idxs)
+        rest_idxs.remove(next_idx)
+        result_idxs.append(next_idx)
+        result_flips.append(next_flip)
+        last_pair = pairs[next_idx]
+        result.sum_error += error
+        if next_flip:
+            last_pair = last_pair[1], last_pair[0]
+
+    for idx, flip in zip(result_idxs, result_flips):
+        result.indexes.append(idx)
+        result.flips.append(flip)
+        curve = curves[idx]
+        if flip:
+            curve = reverse_curve(curve)
+        result.curves.append(curve)
+
+    return result
 
 def reparametrize_curve(curve, new_t_min=0.0, new_t_max=1.0):
     t_min, t_max = curve.get_u_bounds()

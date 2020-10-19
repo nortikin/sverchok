@@ -529,7 +529,7 @@
       "width": 127.0509033203125
     },
     "VD Experimental.001": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         0.6284880042076111,
         0.931007981300354,
@@ -550,7 +550,7 @@
       "width": 140.0
     },
     "VD Experimental.002": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         0.6284880042076111,
         0.931007981300354,
@@ -576,7 +576,7 @@
       "width": 140.0
     },
     "VD Experimental.003": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         0.6284880042076111,
         0.931007981300354,
@@ -602,7 +602,7 @@
           0.20071381330490112,
           1.0
         ],
-        "face_color": [
+        "polygon_color": [
           0.5,
           1.0,
           0.5,

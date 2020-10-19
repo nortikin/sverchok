@@ -10,3 +10,4 @@ List Mutators
    combinatorics
    filter_empty_lists
    find_closest
+   multi_cache

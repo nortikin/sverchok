@@ -24,6 +24,7 @@ else:
         sv_icon = 'SV_FILLET_SOLID'
         solid_catergory = "Operators"
 
+        replacement_nodes = [('SvChamferSolidNode', None, None)]
 
         radius_start: FloatProperty(
             name="Radius Start",
@@ -60,7 +61,10 @@ else:
                 for edge, m in zip(solid.Edges, mask):
                     if m:
                         selected_edges.append(edge)
-                solid_o = solid.makeFillet(r_s, r_e, selected_edges)
+                if selected_edges:
+                    solid_o = solid.makeFillet(r_s, r_e, selected_edges)
+                else:
+                    solid_o = solid
                 solids.append(solid_o)
 
 

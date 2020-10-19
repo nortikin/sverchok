@@ -2,7 +2,6 @@
 import json
 
 from sverchok.utils.testing import *
-from sverchok.utils.sv_IO_panel_tools import import_tree
 
 class ImportSingleSimpleNode(EmptyTreeTestCase):
 

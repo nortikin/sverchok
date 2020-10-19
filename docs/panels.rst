@@ -6,7 +6,7 @@ Panels of Sverchok
 Node Tree Panel
 ===============
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/docs_intro/sverchok_main_panel.png
+.. image:: https://user-images.githubusercontent.com/28003269/93044130-f709d280-f664-11ea-80ff-cc8b559def0b.png
   :alt: nodetreepanel.ng
 
 This panel allows to manage Sverchok layouts as easy as you press buttons on an elevator.
@@ -14,23 +14,16 @@ This panel allows to manage Sverchok layouts as easy as you press buttons on an 
 Update
 ------
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/docs_intro/sverchok_main_panel_01.png
-  :alt: nodetreeupdate.png
-
-+-------------------+---------------------------------+
-| Update            | description                     |
-+===================+=================================+
-| all               | Updates all trees of sverchok.  |
-+-------------------+---------------------------------+
-| Update layout     | Updates currently active layout |
-+-------------------+---------------------------------+
+In case if automatic tree update is turned off it is possible to make update manually. 
+`Update all` will update all trees and `Update "Current tree name"` button on active tree panel
+will update only current tree.
 
 Layout manager
 --------------
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/docs_intro/sverchok_main_panel_02.png
+.. image:: https://user-images.githubusercontent.com/28003269/93044391-c1b1b480-f665-11ea-8b5c-5d2dbb2dc9c9.png
 
-Box to quickly pick layout, switch between them with buttons instead of popup list. Also have settings:
+List to quickly pick layout, switch between them with buttons instead of popup list. Also have settings:
 
 
 +--------------------+----------------------------------------------------------------------------------------+
@@ -50,23 +43,27 @@ Box to quickly pick layout, switch between them with buttons instead of popup li
 | **Fake User**      | Sets fake user so layout isn't deleted on save                                         |
 +--------------------+----------------------------------------------------------------------------------------+
 
+*Note: It is possible to filter trees by its names via standard blender interface right below the list.*
+
 Active Tree Properties
 ----------------------
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/docs_intro/sverchok_main_panel_03.png
+.. image:: https://user-images.githubusercontent.com/28003269/93044536-308f0d80-f666-11ea-87a9-5b8f6d111585.png
   :alt: tree_properties.png
 
-**Show error in tree**: Display the errors in the node-tree right beside the Node
-
-**Eval dir**: This will give you control over the order in which subset graphs are evaluated
+**Update "Current tree name"**: update tree manually
 
 **Remove Stale Drawing**: This will clear the opengl drawing if Sverchok didn't manage to correctly clear it on its own
 
-Check for updates
------------------
+**Eval order**: This will give you control over the order in which subset graphs are evaluated
 
-.. image:: https://cloud.githubusercontent.com/assets/5783432/4512958/8671953c-4b46-11e4-898d-e09eec52b464.png
-  :alt: upgradenewversion.png
+**Show error**: Display the errors in the node-tree right beside the Node
+
+General utils panel
+-------------------
+
+.. image:: https://user-images.githubusercontent.com/28003269/93044715-7ea41100-f666-11ea-92e0-45b88145d914.png
+  :alt: general utils panel
 
 **Check for updates** - finds if master branch on github has new version of Sverchok. In future there will be releases, but now dangerous update.
 
@@ -267,126 +264,93 @@ The "Item" tab of the N panel contains the following parts:
 3D Panel
 ========
 
-.. image:: https://user-images.githubusercontent.com/28003269/70139516-16bea400-16ac-11ea-9c77-3125856b4d28.png
+.. image:: https://user-images.githubusercontent.com/28003269/93045091-5bc62c80-f667-11ea-8a8b-e4652a553afd.png
 
 With this panel your layout becomes addon itself. So, you making your life easy.
 Since Blender 2.8 this panel has two instances. One instance located on `N` panel in `Tool` category of `3D` editor.
 Another located in `Active tool and workspace settings` shelf of `Properties` editor.
 
-Scan for props
---------------
 
-.. image:: https://cloud.githubusercontent.com/assets/5783432/4512955/866461fa-4b46-11e4-8caf-d650d15f5c5f.png
-  :alt: scanprops.png
+**Start live update** - will start update layouts by a timer (several times in second)
 
-When layout is in, check for next nodes to embad them as properties:
+**Update all trees** - manual update of all layouts
+
+Node properties list
+--------------------
+
+Some nodes can display their properties on the 3D panel. 
+For this you have to turn on an appropriate property on N panel of selected node in a node tree.
+
+Some nodes which can displayed its properties on th 3D panel:
  - A number
  - Color input
  - List Input
  - Objects in
  - Viewer BMesh
 
-Read documentation of this nodes for getting more details about how to enable them on 3D panel.
+**Scan for props** - Nodes which should display their properties on the panel will be added 
+and which should not will be removed from the panel. Order of existing items will be unchanged.
 
-Sorting them by label, that user defined in node tree panel or if no label, the name of the node is used.
+**Edit properties** - turn property list into edit mode it will add extra buttons form  managing the list
 
-Update all
-----------
+.. image:: https://user-images.githubusercontent.com/28003269/93045886-6d103880-f669-11ea-95a6-eb385295ce42.png
 
-.. image:: https://cloud.githubusercontent.com/assets/5783432/4512955/866461fa-4b46-11e4-8caf-d650d15f5c5f.png
-  :alt: updateall.png
+*Note: in edit mode it is possible to change order of items, rename items, remove displaying node properties in list, 
+torn on/off displaying node tree in list. It is recommended to rename nodes and trees via list interface 
+otherwise for properly displaying items `scan for props` button should be pressed after each renaming.
+Changes node labels can be renamed from other UI in case if filtering properties are not going to be used.*
 
-Forces update of all layouts.
+**filter** (below list) - can be used for filtering properties
 
-Clean
------
-
-.. image:: https://cloud.githubusercontent.com/assets/5783432/4512954/8662fbf8-4b46-11e4-8f67-243a56c48856.png
-  :alt: cleanlayout.png
-
-Button to remove sverchok layouts, that has not users (0)
-
-**hard clean**  - boolean flag to remove layouts even if it has users (1,2...), but not fake user (F). Fake user layout will be left.
-
-**Clean layouts** - remove layouts. Button active only if no node tree windiw around. Better to make active layout nothing or fake user layout to prevent blender crash. Easyest way - activate your Faked user layout, on 3D press **ctrl+UP** and press button. than again **ctrl+UP** to go back. No wastes left after sverchok in scene.
-
-Use with care.
-
-
-Properties
-----------
-
-.. image:: https://cloud.githubusercontent.com/assets/5783432/4512956/8666aeba-4b46-11e4-9c13-651e3826f111.png
-  :alt: properties.png
-
-Layouts by box. Every layout has buttons:
-
-+--------------------+----------------------------------------------------------------------------------------+
-| Button             | Function                                                                               |
-+====================+========================================================================================+
-| **B**              | bake this layout - will gather all layout's viewer draw and viewer text to bake them.  |
-|                    | Bake only if bakeable button is active on node, else ignore.                           |
-+--------------------+----------------------------------------------------------------------------------------+
-| **Show layout**    | show or hide all viewers - to draw or not to draw OpenGL in window, but bmesh viewer   |
-|                    | not handled for now.                                                                   |
-+--------------------+----------------------------------------------------------------------------------------+
-| **Animate layout** | to animate the layout (or not) - may preserve you time.                                |
-+--------------------+----------------------------------------------------------------------------------------+
-| **P**              | Process layout, allows safely manupilate monsterouse layouts.                          |
-+--------------------+----------------------------------------------------------------------------------------+
-| **D**              | Activate Draft mode                                                                    |
-+--------------------+----------------------------------------------------------------------------------------+
-| **F**              | Fake user of layout to preserve from removing with reloading file or                   |
-|                    | with **clean layouts** button.                                                         |
-+--------------------+----------------------------------------------------------------------------------------+
+In normal mode tree items display the same properties as layout manager
 
 Import Export Panel
 ===================
 
-.. image:: https://cloud.githubusercontent.com/assets/5783432/4519324/9e11b7be-4cb6-11e4-86c9-ee5e136ed088.png
+.. image:: https://user-images.githubusercontent.com/28003269/93055868-a30ae800-f67c-11ea-9df8-cd27b13ef716.png
   :alt: panelio.png
 
-location: N panel of any Sverchok Tree.
+location: N panel.
 
-Import and export of the current state of a Sverchok Tree. This tool stores
+Export
+------
+
++---------+-------------------------------------------------------------------------------------------------+
+| feature | description                                                                                     |
++=========+=================================================================================================+
+| Export  | To save node tree in JSON format, see note what information are putted into a file              |
+| to JSON |                                                                                                 |
++---------+-------------------------------------------------------------------------------------------------+
+| Export  | It creates JSON file from current tree and upload it into your github account.                  |
+| to GIST | It will let you quickly share your trees with other users                                       |
+|         | For using the button you have generate token and put it in the addon preferences.               |
++---------+-------------------------------------------------------------------------------------------------+
+| Archive | It will let to put current file into zip or gz archive. Current file should be saved.           |
+| .blend  | Archive will be created in the same directory.                                                  |
++---------+-------------------------------------------------------------------------------------------------+
+
+*Note: JSON file stores:*
 
  - Node state: location, hidden, frame parent
  - Node parameters: (internal state) like booleans, enum toggles and strings
  - connections and connection order (order is important for dynamic-socket nodes)
 
-Export
-------
-
-.. image:: https://cloud.githubusercontent.com/assets/5783432/4519326/9e4320f6-4cb6-11e4-88ba-b6dc3ce48d5a.png
-  :alt: panelexport.png
-
-+---------+-------------------------------------------------------------------------------------------------+
-| feature | description                                                                                     |
-+=========+=================================================================================================+
-| Zip     | When toggled to *on* this will perform an extra zip operation when you press Export. The zip    |
-|         | can sometimes be a lot smaller that the json. These files can also be read by the import        |
-|         | feature.                                                                                        |
-+---------+-------------------------------------------------------------------------------------------------+
-| Export  | Export to file, opens file browser in blender to let you type the name of the file, Sverchok    |
-|         | will auto append the .json or .zip file extention - trust it.                                   |
-+---------+-------------------------------------------------------------------------------------------------+
-
 Import
 ------
-
-.. image:: https://cloud.githubusercontent.com/assets/5783432/4519325/9e2f2c40-4cb6-11e4-8b03-479a411ead3d.png
-  :alt: panelimport.png
 
 +-------------+-------------------------------------------------------------------------------------------------+
 | feature     | description                                                                                     |
 +=============+=================================================================================================+
-| Layout name | name of layout to use, has a default but you might want to force a name                         |
+| Import JSON | Download tree from json file. It is possible to choose existing layout where new tree should    |
+| file        | be added.                                                                                       |
 +-------------+-------------------------------------------------------------------------------------------------+
-| Import      | import to new layout with name (described above). Can import directly from zip file if there is |
-|             | only one .json in the zip. Warning to the descerned reader, only import from zip if the source  |
-|             | is trusted. If you are not sure, resist the urge and take the time to learn a little bit about  |
-|             | what you are doing.                                                                             |
+| Import GIST | It will let to import tree into current layout. Clipboard should contain GIST link.             |
+| link        |                                                                                                 |
 +-------------+-------------------------------------------------------------------------------------------------+
+
+*Note: choosing tree where to put importing tree:*
+
+.. image:: https://user-images.githubusercontent.com/28003269/93057890-ab185700-f67f-11ea-8274-41edeb490758.png
 
 **Warnings**
 

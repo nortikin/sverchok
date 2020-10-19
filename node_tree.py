@@ -26,7 +26,7 @@ from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import NodeTree
 
 from sverchok import data_structure
-from sverchok.data_structure import classproperty
+from sverchok.data_structure import classproperty, post_load_call
 
 from sverchok.core.update_system import (
     build_update_list,
@@ -105,13 +105,13 @@ class SvNodeTreeCommon(object):
     def freeze(self, hard=False):
         """Temporary prevent tree from updating nodes"""
         if hard:
-            self["don't update"] = 1
+            self["DoNotUpdate"] = 1
         elif not self.is_frozen():
-            self["don't update"] = 0
+            self["DoNotUpdate"] = 0
 
     def is_frozen(self):
         """Nodes of the tree won't be updated during changes events"""
-        return "don't update" in self
+        return "DoNotUpdate" in self
 
     def unfreeze(self, hard=False):
         """
@@ -119,8 +119,8 @@ class SvNodeTreeCommon(object):
         If freeze mode was in hard mode `hard` argument should be True to unfreeze tree
         """
         if self.is_frozen():
-            if hard or self["don't update"] == 0:
-                del self["don't update"]
+            if hard or self["DoNotUpdate"] == 0:
+                del self["DoNotUpdate"]
 
     def get_groups(self):
         """
@@ -180,7 +180,6 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
                 node.show_viewport(self.sv_show)
             except AttributeError:
                 pass
-        process_tree(self)
 
     def on_draft_mode_changed(self, context):
         """
@@ -220,18 +219,19 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     # option whether error message of nodes should be shown in tree space or not
     # for showing error message all tree should be reevaluated what is not nice
     sv_show_error_in_tree: BoolProperty(
-        description="use bgl to draw the error to the nodeview",
-        name="Show error in tree", default=False, update=lambda s, c: process_tree(s))
+        description="This will show Node Exceptions in the 3dview, right beside the node",
+        name="Show error in tree", default=False, update=lambda s, c: process_tree(s), options=set())
 
     # if several nodes are disconnected this option determine order of their evaluation
     sv_subtree_evaluation_order: EnumProperty(
         name="Subtree eval order",
         items=[(k, k, '', i) for i, k in enumerate(["X", "Y", "None"])],
         description=textwrap.dedent("""\
+            This will give you control over the order in which subset graphs are evaluated
             1) X, Y modes evaluate subtrees in sequence of lowest absolute node location, useful when working with real geometry
             2) None does no sorting
         """),
-        default="None", update=lambda s, c: process_tree(s)
+        default="None", update=lambda s, c: process_tree(s), options=set()
     )
 
     # this mode will replace properties of some nodes so they could have lesser values for draft mode
@@ -273,7 +273,10 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
 class UpdateNodes:
     """Everything related with update system of nodes"""
-    n_id: StringProperty(default="")  # identifier of the node, should be used via `node_id` property
+
+    # identifier of the node, should be used via `node_id` property
+    # overriding the property without `skip_save` option can lead to wrong importing bgl viewer nodes
+    n_id: StringProperty(options={'SKIP_SAVE'})
 
     @property
     def node_id(self):
@@ -633,6 +636,16 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
                 prefs.set_nodeview_render_params(None)
         except Exception as err:
             print('failed to get gl scale info', err)
+
+
+@post_load_call
+def add_use_fake_user_to_trees():
+    """When ever space node editor switches to another tree or creates new one,
+    this function will set True to `use_fake_user` of all Sverchok trees"""
+    def set_fake_user():
+        [setattr(t, 'use_fake_user', True) for t in bpy.data.node_groups if t.bl_idname == 'SverchCustomTreeType']
+    bpy.msgbus.subscribe_rna(key=(bpy.types.SpaceNodeEditor, 'node_tree'), owner=object(), args=(),
+                             notify=set_fake_user)
 
 
 register, unregister = bpy.utils.register_classes_factory([SverchCustomTree])

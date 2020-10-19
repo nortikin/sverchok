@@ -13,10 +13,9 @@ class IntersectEdgesTest2(ReferenceTreeTestCase):
 
         result_verts = get_output_socket_data(node, "Verts_out")
         result_edges = get_output_socket_data(node, "Edges_out")
-        #info("Result: %s", result_verts)
+        info("Result: %s", result_verts)
 
         #self.store_reference_sverchok_data("intersecting_planes_result_verts.txt", result_verts)
         self.assert_sverchok_data_equals_file(result_verts, "intersecting_planes_result_verts.txt", precision=8)
         #self.store_reference_sverchok_data("intersecting_planes_result_faces.txt", result_edges)
         self.assert_sverchok_data_equals_file(result_edges, "intersecting_planes_result_faces.txt", precision=8)
-

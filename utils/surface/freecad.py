@@ -18,7 +18,27 @@ if FreeCAD is not None:
     from FreeCAD import Base
     import Part
 
-def curves_to_face(sv_curves, planar=True, force_nurbs=True):
+def get_curve_endpoints(fc_curve):
+    if hasattr(fc_curve, 'StartPoint'):
+        p1, p2 = fc_curve.StartPoint, fc_curve.EndPoint
+    else:
+        t1, t2 = fc_curve.FirstParameter, fc_curve.LastParameter
+        if hasattr(fc_curve, 'valueAt'):
+            p1, p2 = fc_curve.valueAt(t1), fc_curve.valueAt(t2)
+        else:
+            p1, p2 = fc_curve.value(t1), fc_curve.value(t2)
+    return p1, p2
+
+def get_edge_endpoints(fc_edge):
+    t1, t2 = fc_edge.ParameterRange
+    fc_curve = fc_edge.Curve
+    if hasattr(fc_curve, 'valueAt'):
+        p1, p2 = fc_curve.valueAt(t1), fc_curve.valueAt(t2)
+    else:
+        p1, p2 = fc_curve.value(t1), fc_curve.value(t2)
+    return p1, p2
+
+def curves_to_face(sv_curves, planar=True, force_nurbs=True, tolerance=None):
     """
     Make a Part.Face from a list of SvCurve.
     Curves must have NURBS representation, must form a closed loop, and it must
@@ -35,25 +55,43 @@ def curves_to_face(sv_curves, planar=True, force_nurbs=True):
         SvFreeCadNurbsSurface if force_nurbs == True.
     """
     # Check
-    sv_curves = [curve_to_freecad(curve) for curve in sv_curves]
+    sv_curves = sum([curve_to_freecad(curve) for curve in sv_curves], [])
     all_nurbs = all(isinstance(curve, SvFreeCadNurbsCurve) for curve in sv_curves)
-    edges = [Part.Edge(curve.curve) for curve in sv_curves]
+    edges = [curve.curve.toShape() for curve in sv_curves]
+    fc_curves = [edge.Curve for edge in edges]
+    if tolerance is not None:
+        for edge in edges:
+            edge.fixTolerance(tolerance)
     try:
-        wire = Part.Wire(edges)
+        wire = Part.Wire(edges[0])
+        for edge in edges[1:]:
+            wire.add(edge)
+        #wire = Part.Wire(edges)
+        #for edge in edges:
+        #    wire.add(edge)
     except Part.OCCError as e:
-        fc_curves = [edge.Curve for edge in edges]
+        for edge in edges:
+            print(f"Curve {edge.Curve}, endpoints: {get_edge_endpoints(edge)}")
         raise Exception(f"Can't build a Wire out of edges: {fc_curves}: {e}")
+
+    if len(edges) != len(wire.Edges):
+        raise Exception(f"Cant build a Wire out of edges: {fc_curves}: was able to add only {len(wire.Edges)} edges of {len(edges)}")
+
+    #wire.fix(0, 0, 0)
+    #wire.fixTolerance(1e-5)
     if not wire.isClosed():
+
         last_point = None
         distance = None
         for i, edge in enumerate(wire.Edges):
-            p1, p2 = edge.Curve.StartPoint, edge.Curve.EndPoint
+            print(f"Edge #{i}, Curve {edge.Curve}, endpoints: {get_edge_endpoints(edge)}")
+            p1, p2 = get_edge_endpoints(edge)
             if last_point is not None:
                 distance = last_point.distanceToPoint(p1)
-            print(f"#{i}: distance={distance}: ({p1.x}, {p1.y}, {p1.z}) - ({p2.x}, {p2.y}, {p2.z})")
+                print(f"#{i-1}-{i}: distance={distance}: ({last_point.x}, {last_point.y}, {last_point.z}) - ({p1.x}, {p1.y}, {p1.z})")
             last_point = p2
-        p1 = wire.Edges[-1].Curve.EndPoint
-        p2 = wire.Edges[0].Curve.StartPoint
+        p1 = get_edge_endpoints(wire.Edges[-1])[1]
+        p2 = get_edge_endpoints(wire.Edges[0])[0]
         distance = p1.distanceToPoint(p2)
         print(f"Last - first distance = {distance}")
         raise Exception(f"The wire is not closed: {sv_curves}")
@@ -273,6 +311,16 @@ class SvFreeCadNurbsSurface(SvNurbsSurface):
 
     def normal_array(self, us, vs):
         return np.vectorize(self.normal, signature='(),()->(3)')(us, vs)
+
+    def iso_curve(self, fixed_direction, param, flip=False):
+        if fixed_direction == 'U':
+            fc_curve = self.surface.uIso(param)
+        elif fixed_direction == 'V':
+            fc_curve = self.surface.vIso(param)
+        else:
+            raise Exception("Unsupported direction")
+
+        return SvFreeCadNurbsCurve(fc_curve)
 
 #     def to_nurbs(self, **kwargs):
 #         return self

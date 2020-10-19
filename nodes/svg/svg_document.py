@@ -69,7 +69,7 @@ class SvSvgServer(bpy.types.Operator):
 
             return {'FINISHED'}
 
-        save_path = node.inputs[0].sv_get()[0]
+        save_path = node.inputs[0].sv_get()[0][0]
         file_name = node.file_name
         bpy.ops.node.svg_write(idtree=self.idtree, idname=self.idname)
         spawn_server(save_path, file_name)
@@ -120,8 +120,8 @@ class SvSVGWrite(bpy.types.Operator):
 
             return {'FINISHED'}
 
-        save_path = inputs[0].sv_get()[0]
-        template_path = inputs[1].sv_get() if inputs[1].is_linked else []
+        save_path = inputs[0].sv_get()[0][0]
+        template_path = inputs[1].sv_get()[0] if inputs[1].is_linked else []
         shapes = inputs[2].sv_get()
 
         svg = ''

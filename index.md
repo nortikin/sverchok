@@ -66,6 +66,7 @@
     SvExPolylineNode
     SvExFilletPolylineNode
     SvKinkyCurveNode
+    SvBiArcNode
     SvPolyArcNode
 
 ## Curves @ NURBS
@@ -100,8 +101,9 @@
     SvExCurveOnSurfaceNode
     ---
     SvExCurveLerpCurveNode
+    SvSortCurvesNode
     SvExConcatCurvesNode
-    SvExBlendCurvesNode
+    SvExBlendCurvesMk2Node
     SvExFlipCurveNode
     SvReparametrizeCurveNode
     SvExSurfaceBoundaryNode
@@ -133,6 +135,7 @@
     SvExApproxNurbsSurfaceNode
     SvExInterpolateNurbsSurfaceNode
     SvNurbsLoftNode
+    SvNurbsSweepNode
     SvDeconstructSurfaceNode
     ---
     SvExQuadsToNurbsNode
@@ -215,6 +218,15 @@
     SvSolidWireFaceNode
     SvProjectTrimFaceNode
 
+## Solids @ Analyze
+   SvSolidValidateNode
+   SvRefineSolidNode
+   SvIsSolidClosedNode
+   SvSolidCenterOfMassNode
+   SvSolidFaceAreaNode
+   SvSolidAreaNode
+   SvSolidVolumeNode
+
 ## Solids
    SvBoxSolidNode
    SvCylinderSolidNode
@@ -226,8 +238,11 @@
    SvChamferSolidNode
    SvFilletSolidNode
    SvSolidBooleanNode
+   SvSolidGeneralFuseNode
    SvMirrorSolidNode
    SvOffsetSolidNode
+   SvSolidFromFacesNode
+   SvRuledSolidNode
    SvSolidFaceExtrudeNode
    SvSolidFaceSolidifyNode
    SvSolidFaceRevolveNode
@@ -243,6 +258,7 @@
    SvSolidEdgesNode
    SvSolidFacesNode
    SvSelectSolidNode
+   @ Analyze
    SvSolidViewerNode
 
 ## Analyzers
@@ -383,9 +399,10 @@
     SvListModifierNode
     SvFixEmptyObjectsNode
     SvDatetimeStrings
-    SvVDAttrsNode
+    SvVDAttrsNodeMk2
     SvPolygonSortNode
     SvFindClosestValue
+    SvMultiCacheNode
 
 ## List Main
     ListJoinNode
@@ -518,7 +535,7 @@
 ## Viz
     Sv3DviewPropsNode
     ---
-    SvVDExperimental
+    SvViewerDrawMk4
     SvMatrixViewer28
     SvIDXViewer28
     SvViewer2D
@@ -592,10 +609,6 @@
     SvMaterialIndexNode
     SvSetCustomUVMap
 
-## Ladybug
-    SvExLadyBugLocationNode
-    SvExLadyBugSunPositionNode
-
 ## Exchange
     SvExNurbsToJsonNode
     SvExJsonToNurbsNode
@@ -611,6 +624,25 @@
     WifiOutNode
     NodeReroute
     ConverterNode
+
+## Pulga Physics
+    SvPulgaPhysicsSolverNode
+    SvPulgaVectorForceNode
+    SvPulgaSpringsForceNode
+    SvPulgaDragForceNode
+    SvPulgaPinForceNode
+    SvPulgaTimedForceNode
+    SvPulgaCollisionForceNode
+    SvPulgaAttractionForceNode
+    SvPulgaAlignForceNode
+    SvPulgaFitForceNode
+    SvPulgaObstacleForceNode
+    SvPulgaRandomForceNode
+    SvPulgaBoundingBoxForceNode
+    SvPulgaInflateForceNode
+    SvPulgaAttractorsForceNode
+    SvPulgaAngleForceNode
+    SvPulgaPhysicsNode
 
 ## SVG
     SvSvgDocumentNode
@@ -668,10 +700,8 @@
     SvSeparateMeshNodeMK2
     SvMultiExtrudeAlt
     SvPlanarEdgenetToPolygons
-    SvPulgaPhysicsNode
     SvTopologySimple
     SvSweepModulator
-    SvRuledSolidNode
     ---
     SvGetPropNodeMK2
     SvSetPropNodeMK2

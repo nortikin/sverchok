@@ -118,17 +118,6 @@ except ImportError:
     info(circlify_d.message)
     circlify = None
 
-ladydug_d = sv_dependencies["lbt-ladybug"] = SvDependency("lbt-ladybug", "https://github.com/ladybug-tools/ladybug")
-try:
-    import ladybug
-    ladydug_d.message = "Ladybug package is available"
-    ladydug_d.module = ladybug
-except ImportError:
-    ladydug_d.message = "Ladybug package is not available. Ladybug module will not be available"
-    ladydug_d.pip_installable = True
-    info(ladydug_d.message)
-    ladybug = None
-
 freecad_d = sv_dependencies["freecad"] = SvDependency("FreeCAD", "https://www.freecadweb.org/")
 try:
     import FreeCAD
@@ -139,9 +128,19 @@ except ImportError:
     info(freecad_d.message)
     FreeCAD = None
 
+cython_d = sv_dependencies["cython"] = SvDependency("Cython", "https://www.freecadweb.org/")
+cython_d.pip_installable = True
+try:
+    import Cython
+    cython_d.message = "Cython package is available"
+    cython_d.module = Cython
+except ImportError:
+    cython_d.message = "Cython package is not available, Enhanched KDTree search will not be available"
+    info(cython_d.message)
+    Cython = None
+
 good_names = [d.package for d in sv_dependencies.values() if d.module is not None and d.package is not None]
 if good_names:
     info("Dependencies available: %s.", ", ".join(good_names))
 else:
     info("No dependencies are available.")
-

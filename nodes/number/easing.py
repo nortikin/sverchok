@@ -85,10 +85,10 @@ def simple28_grid_xy(x, y, args):
 
     bg_fragment_shader = '''
     uniform vec4 color;
-    out vec4 gl_FragColor;
+    out vec4 FragColor;
     void main()
     {
-       gl_FragColor = color;
+       FragColor = color;
     }
     '''
 
@@ -122,10 +122,11 @@ def simple28_grid_xy(x, y, args):
 
     line_fragment_shader = '''
     in vec4 a_color;
-
+    out vec4 FragColor;
+    
     void main()
     {
-        gl_FragColor = a_color;
+        FragColor = a_color;
     }
     '''
 

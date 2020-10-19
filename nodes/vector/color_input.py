@@ -23,8 +23,10 @@ from bpy.props import FloatProperty, BoolProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fullList
 from sverchok.utils.sv_itertools import sv_zip_longest
+from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
-class SvColorInputNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvColorInputNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Color Input
     Tooltip: Specify color using color picker
@@ -36,12 +38,8 @@ class SvColorInputNode(bpy.types.Node, SverchCustomTreeNode):
     use_alpha: BoolProperty(name="Use Alpha", default=False, update=updateNode)
 
     color_data: FloatVectorProperty(
-        name="Color", description="Color", size=4,
+        name="Color", description="Color", size=4, default=[0, 0, 0, 1],
         min=0.0, max=1.0, subtype='COLOR', update=updateNode)
-
-    to3d: BoolProperty(
-        name = "To 3D Panel", description="Show this node in 3D panel",
-        default=True, update=updateNode)
 
     def sv_init(self, context):
         self.outputs.new("SvColorSocket", "Color")
@@ -53,16 +51,12 @@ class SvColorInputNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
-        layout.prop(self, "to3d")
-
-    @property
-    def draw_3dpanel(self):
-        return False if not self.outputs[0].is_linked or not self.to3d else True
+        layout.prop(self, "draw_3dpanel")
 
     def draw_buttons_3dpanel(self, layout):
-        layout.label(text=self.label if self.label else self.name)
-        layout.template_color_picker(self, 'color_data', value_slider=True)
-        layout.prop(self, 'color_data', text='')
+        row = layout.row(align=True)
+        row.label(text=self.label if self.label else self.name)
+        row.prop(self, 'color_data', text='')
 
     def process(self):
         if self.use_alpha:

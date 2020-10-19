@@ -1,239 +1,269 @@
 {
-  "export_version": "0.079",
-  "framed_nodes": {},
+  "export_version": "0.10",
+  "framed_nodes": {
+    "Formula": "Frame.002",
+    "Formula.001": "Frame.002",
+    "Formula.002": "Frame",
+    "Formula.003": "Frame",
+    "Gen Vectors.001": "Frame.002",
+    "Gen Vectors.003": "Frame",
+    "List Zip": "Frame.001",
+    "Matrix Deform": "Frame.002",
+    "Number Range": "Frame",
+    "Number Range.002": "Frame.001",
+    "Number Range.003": "Frame.001",
+    "Number Range.004": "Frame.002",
+    "Number Range.005": "Frame.002",
+    "UV Connection": "Frame.002",
+    "Vector in": "Frame.002"
+  },
   "groups": {},
   "nodes": {
-    "A Number": {
-      "bl_idname": "SvNumberNode",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        27.58025550842285,
-        -895.8607177734375
-      ],
-      "params": {
-        "float_": 60.0,
-        "float_draft_": 0.0,
-        "int_": 0,
-        "int_draft_": 0
-      },
-      "width": 140.0
-    },
     "Formula": {
       "bl_idname": "SvFormulaNodeMk3",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -347.0594482421875,
-        -917.5125732421875
+        -613.7801895141602,
+        -1064.2400970458984
       ],
       "params": {
-        "formula1": "cos(x*pi/180)*n0",
-        "wrap": 0
+        "formula1": "cos(x*pi/90)*n"
       },
-      "width": 140.0
+      "width": 196.7825927734375
     },
     "Formula.001": {
       "bl_idname": "SvFormulaNodeMk3",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -396.8990783691406,
-        -734.0225830078125
+        -606.3495864868164,
+        -908.2494964599609
       ],
       "params": {
-        "formula1": "sin(x*pi/180)*n0*cos(n)",
-        "wrap": 0
+        "formula1": "sin(x*pi/90)*n"
       },
       "width": 189.837158203125
     },
     "Formula.002": {
       "bl_idname": "SvFormulaNodeMk3",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -347.0476989746094,
-        -351.4258117675781
+        -595.9663391113281,
+        -231.9815902709961
       ],
       "params": {
-        "formula1": "cos(x*pi/180)",
-        "wrap": 0
+        "formula1": "cos(x*pi/180)"
       },
       "width": 140.0
     },
     "Formula.003": {
       "bl_idname": "SvFormulaNodeMk3",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -347.04827880859375,
-        -164.75888061523438
+        -592.0486145019531,
+        -81.92662811279297
       ],
       "params": {
-        "formula1": "sin(x*pi/180)",
-        "wrap": 0
+        "formula1": "sin(x*pi/180)"
       },
       "width": 140.0
     },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 339.0733642578125,
+      "hide": false,
+      "label": "verts",
+      "location": [
+        -275.0003356933594,
+        92.8322525024414
+      ],
+      "params": {},
+      "width": 592.73388671875
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 414.7106018066406,
+      "hide": false,
+      "label": "edges",
+      "location": [
+        12.829601287841797,
+        7.743277072906494
+      ],
+      "params": {},
+      "width": 387.48651123046875
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 486.19549560546875,
+      "hide": false,
+      "label": "matrix",
+      "location": [
+        -20.356300354003906,
+        -67.23631286621094
+      ],
+      "params": {},
+      "width": 919.1060791015625
+    },
     "Gen Vectors.001": {
       "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -36.49382019042969,
-        -713.0039672851562
+        -332.8691177368164,
+        -910.0440521240234
       ],
       "params": {},
       "width": 140.0
     },
     "Gen Vectors.003": {
       "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -36.49308776855469,
-        -328.09088134765625
+        -411.399169921875,
+        -151.96063995361328
       ],
       "params": {},
       "width": 140.0
     },
     "List Zip": {
       "bl_idname": "ZipNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -36.49366760253906,
-        -488.3409423828125
+        -612.7554817199707,
+        -450.06305837631226
       ],
       "params": {},
       "width": 140.0
     },
-    "Matrix In": {
-      "bl_idname": "SvMatrixInNodeMK4",
+    "Matrix Deform": {
+      "bl_idname": "MatrixDeformNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        284.8458557128906,
-        -687.3954467773438
+        -119.85407257080078,
+        -926.4515228271484
       ],
-      "params": {
-        "angle": 0.0,
-        "axis": [
-          0.0,
-          0.0,
-          1.0
-        ],
-        "location_": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          1.0,
-          1.0,
-          1.0
-        ]
-      },
+      "params": {},
       "width": 140.0
     },
     "Number Range": {
       "bl_idname": "SvGenNumberRange",
+      "custom_socket_props": {
+        "1": {
+          "label": "stop"
+        },
+        "2": {
+          "label": "step"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -845.1690063476562,
-        -143.183837890625
+        -804.1330261230469,
+        -155.80419158935547
       ],
       "params": {
-        "count_": 10,
+        "current_mode": "RANGE",
         "number_mode": "int",
-        "range_mode": "RANGE",
-        "start_int": 0,
         "step_int": 20,
         "stop_int": 380
       },
       "width": 140.0
     },
-    "Number Range.001": {
-      "bl_idname": "SvGenNumberRange",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -844.2490234375,
-        -300.7467956542969
-      ],
-      "params": {
-        "count_": 10,
-        "number_mode": "float",
-        "range_mode": "RANGE",
-        "start_float": 1.0,
-        "step_float": 0.10000000149011612,
-        "stop_float": 2.799999952316284
-      },
-      "width": 140.0
-    },
     "Number Range.002": {
       "bl_idname": "SvGenNumberRange",
+      "custom_socket_props": {
+        "1": {
+          "label": "stop"
+        },
+        "2": {
+          "label": "step"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -841.1259155273438,
-        -458.56890869140625
+        -798.296314239502,
+        -437.2894072532654
       ],
       "params": {
-        "count_": 10,
+        "current_mode": "RANGE",
         "number_mode": "int",
-        "range_mode": "RANGE",
-        "start_int": 0,
-        "step_int": 1,
         "stop_int": 18
       },
       "width": 140.0
     },
     "Number Range.003": {
       "bl_idname": "SvGenNumberRange",
+      "custom_socket_props": {
+        "1": {
+          "label": "stop"
+        },
+        "2": {
+          "label": "step"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -843.0715942382812,
-        -617.7630615234375
+        -800.2419929504395,
+        -620.019784450531
       ],
       "params": {
-        "count_": 10,
+        "current_mode": "RANGE",
         "number_mode": "int",
-        "range_mode": "RANGE",
         "start_int": 1,
-        "step_int": 1,
         "stop_int": 19
       },
       "width": 140.0
     },
     "Number Range.004": {
       "bl_idname": "SvGenNumberRange",
+      "custom_socket_props": {
+        "1": {
+          "label": "stop"
+        },
+        "2": {
+          "label": "step"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -842.9569702148438,
-        -775.7496948242188
+        -835.7295303344727,
+        -880.8044891357422
       ],
       "params": {
-        "count_": 10,
+        "current_mode": "RANGE",
         "number_mode": "int",
-        "range_mode": "RANGE",
         "start_int": 1,
         "step_int": 10,
         "stop_int": 720
@@ -242,38 +272,104 @@
     },
     "Number Range.005": {
       "bl_idname": "SvGenNumberRange",
+      "custom_socket_props": {
+        "1": {
+          "label": "stop"
+        },
+        "2": {
+          "label": "step"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -845.2865600585938,
-        -939.5830078125
+        -835.6428604125977,
+        -1059.151840209961
       ],
       "params": {
-        "count_": 10,
-        "number_mode": "float",
-        "range_mode": "RANGE",
+        "current_mode": "RANGE",
         "start_float": 1.0,
         "step_float": 0.10000000149011612,
         "stop_float": 8.199999809265137
       },
       "width": 140.0
     },
+    "UV Connection": {
+      "bl_idname": "LineConnectNodeMK2",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -116.62346649169922,
+        -1100.055404663086
+      ],
+      "params": {
+        "polygons": "Edges"
+      },
+      "width": 140.0
+    },
+    "Vector in": {
+      "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -315.0032424926758,
+        -1056.5418548583984
+      ],
+      "params": {
+        "x_": 1.0,
+        "y_": 2.0
+      },
+      "width": 100.0
+    },
     "Viewer Draw Mk3": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         1.0,
         0.30000001192092896,
         0.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        538.5095825195312,
-        -408.8273010253906
+        424.00048828125,
+        -469.7588195800781
       ],
-      "params": {},
+      "params": {
+        "edges_use_vertex_color": true,
+        "vector_random_colors": true
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw Mk3.001": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        132.04168701171875,
+        -972.7400512695312
+      ],
+      "params": {
+        "color_per_point": true,
+        "edges_use_vertex_color": true,
+        "line_width": 4,
+        "point_size": 6,
+        "vector_random_colors": true
+      },
       "use_custom_color": true,
       "width": 140.0
     }
@@ -295,79 +391,13 @@
       "Formula.003",
       0,
       "Gen Vectors.003",
-      0
+      1
     ],
     [
       "Formula.002",
       0,
       "Gen Vectors.003",
-      1
-    ],
-    [
-      "Number Range.004",
-      0,
-      "Formula",
-      0
-    ],
-    [
-      "Number Range.005",
-      0,
-      "Formula",
-      1
-    ],
-    [
-      "Number Range.004",
-      0,
-      "Formula.001",
-      0
-    ],
-    [
-      "Number Range.005",
-      0,
-      "Formula.001",
-      1
-    ],
-    [
-      "Number Range.005",
-      0,
-      "Formula.001",
       2
-    ],
-    [
-      "Formula.001",
-      0,
-      "Gen Vectors.001",
-      0
-    ],
-    [
-      "Formula",
-      0,
-      "Gen Vectors.001",
-      1
-    ],
-    [
-      "Formula.001",
-      0,
-      "Gen Vectors.001",
-      2
-    ],
-    [
-      "Gen Vectors.001",
-      0,
-      "Matrix In",
-      0
-    ],
-    [
-      "Gen Vectors.001",
-      0,
-      "Matrix In",
-      6
-    ],
-    [
-      "A Number",
-      0,
-      "Matrix In",
-      7
     ],
     [
       "Number Range.002",
@@ -394,10 +424,82 @@
       1
     ],
     [
-      "Matrix In",
+      "Matrix Deform",
       0,
       "Viewer Draw Mk3",
       3
+    ],
+    [
+      "Number Range.004",
+      0,
+      "Formula.001",
+      0
+    ],
+    [
+      "Number Range.005",
+      0,
+      "Formula.001",
+      1
+    ],
+    [
+      "Number Range.004",
+      0,
+      "Formula",
+      0
+    ],
+    [
+      "Number Range.005",
+      0,
+      "Formula",
+      1
+    ],
+    [
+      "Formula.001",
+      0,
+      "Gen Vectors.001",
+      0
+    ],
+    [
+      "Formula",
+      0,
+      "Gen Vectors.001",
+      1
+    ],
+    [
+      "Gen Vectors.001",
+      0,
+      "Matrix Deform",
+      0
+    ],
+    [
+      "Vector in",
+      0,
+      "Matrix Deform",
+      3
+    ],
+    [
+      "Gen Vectors.001",
+      0,
+      "Matrix Deform",
+      4
+    ],
+    [
+      "Gen Vectors.001",
+      0,
+      "UV Connection",
+      0
+    ],
+    [
+      "UV Connection",
+      0,
+      "Viewer Draw Mk3.001",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "Viewer Draw Mk3.001",
+      1
     ]
   ]
 }

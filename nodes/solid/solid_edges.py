@@ -28,14 +28,22 @@ else:
             default=False,
             update=updateNode)
 
+        nurbs_output : BoolProperty(
+            name = "NURBS Output",
+            description = "Output curves in NURBS representation",
+            default = False,
+            update=updateNode)
 
         def sv_init(self, context):
             self.inputs.new('SvSolidSocket', "Solid")
             self.outputs.new('SvCurveSocket', "Edges")
 
-
         def draw_buttons(self, context, layout):
             layout.prop(self, 'flat_output')
+
+        def draw_buttons_ext(self, context, layout):
+            self.draw_buttons(context, layout)
+            layout.prop(self, 'nurbs_output', toggle=True)
 
         def process(self):
             if not any(socket.is_linked for socket in self.outputs):
@@ -49,16 +57,16 @@ else:
                 edges_curves = []
                 for e in solid.Edges:
                     try:
-                        curve = SvSolidEdgeCurve(e).to_nurbs()
+                        curve = SvSolidEdgeCurve(e)
+                        if self.nurbs_output:
+                            curve = curve.to_nurbs()
                         edges_curves.append(curve)
                     except TypeError:
                         pass
 
-
                 edges_add(edges_curves)
 
             self.outputs['Edges'].sv_set(edges)
-
 
 def register():
     if FreeCAD is not None:
@@ -67,3 +75,4 @@ def register():
 def unregister():
     if FreeCAD is not None:
         bpy.utils.unregister_class(SvSolidEdgesNode)
+

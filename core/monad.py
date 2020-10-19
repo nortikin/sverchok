@@ -26,7 +26,6 @@ from bpy.props import StringProperty, FloatProperty, IntProperty, BoolProperty, 
 
 import sverchok
 from sverchok.utils import get_node_class_reference, sv_IO_monad_helpers
-from sverchok.utils.sv_IO_panel_tools import create_dict_of_tree, import_tree
 from sverchok.utils.logging import info, error
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import get_other_socket, updateNode, match_long_repeat
@@ -34,6 +33,8 @@ from sverchok.core.update_system import make_tree_from_nodes, do_update
 from sverchok.core.monad_properties import SvIntPropertySettingsGroup, SvFloatPropertySettingsGroup, ensure_unique
 from sverchok.core.events import CurrentEvents, BlenderEventsTypes
 from sverchok.utils.handle_blender_data import get_sv_trees
+from sverchok.utils.sv_json_export import JSONExporter
+from sverchok.utils.sv_json_import import JSONImporter
 
 MONAD_COLOR = (0.830819, 0.911391, 0.754562)
 
@@ -90,7 +91,7 @@ def monad_make_unique(node):
 
     # the new tree dict will contain information about 1 node only, and 
     # the node_group too (at the moment) but the node_group data can be ignored.
-    layout_json = create_dict_of_tree(ng=node_tree, identified_node=node)
+    layout_json = JSONExporter.get_nodes_structure([node])
 
     # do not restore links this way. wipe this entry and restore at a later stage.
     layout_json['update_lists'] = []
@@ -106,7 +107,7 @@ def monad_make_unique(node):
     pre_nodes = set(nodes)
 
     # place new empty version of the monad node
-    import_tree(node_tree, nodes_json=layout_json)
+    JSONImporter(layout_json).import_into_tree(node_tree)
 
     """
     notions..:

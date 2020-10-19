@@ -5,22 +5,22 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-
+from functools import reduce
 from itertools import cycle
 
 import bpy
 from bpy.props import BoolProperty
 from mathutils import Matrix
 
-from sverchok.nodes.matrix.apply_and_join import apply_and_join_python
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, repeat_last
 from sverchok.utils.nodes_mixins.generating_objects import SvMeshData, SvViewerNode
 from sverchok.utils.handle_blender_data import correct_collection_length
-from sverchok.utils.sv_mesh_utils import mesh_join
+from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
+import sverchok.utils.meshes as me
 
 
-class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
+class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: viewer mesh object instance
 
@@ -32,7 +32,7 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'OUTLINER_OB_MESH'
     sv_icon = 'SV_BMESH_VIEWER'
 
-    mesh_data: bpy.props.CollectionProperty(type=SvMeshData)
+    mesh_data: bpy.props.CollectionProperty(type=SvMeshData, options={'SKIP_SAVE'})
 
     is_merge: BoolProperty(default=False, update=updateNode, description="Merge all meshes into one object")
 
@@ -46,8 +46,6 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
         description='Apply matrices to',
         update=updateNode)
 
-    to3d: BoolProperty(name="Show in 3D panel", default=False, update=updateNode,
-                       description="Show node properties in 3D panel")
     show_wireframe: BoolProperty(default=False, update=updateNode, name="Show Edges")
     material: bpy.props.PointerProperty(type=bpy.types.Material, update=updateNode)
     is_lock_origin: bpy.props.BoolProperty(name="Lock Origin", default=True, update=updateNode,
@@ -81,7 +79,7 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'fast_mesh_update', text='Fast mesh update')
         layout.prop(self, 'is_smooth_mesh', text='smooth shade')
-        layout.prop(self, 'to3d')
+        layout.prop(self, 'draw_3dpanel')
 
     def draw_matrix_props(self, socket, context, layout):
         socket.draw_quick_link(context, layout, self)
@@ -99,10 +97,6 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
             return f"MeV {self.base_data_name}"
         else:
             return "Mesh viewer"
-
-    @property
-    def draw_3dpanel(self):
-        return self.to3d
 
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)
@@ -126,18 +120,27 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
 
         # first step is merge everything if the option
         if self.is_merge:
-            if matrices:
-                objects_number = max([len(verts), len(matrices)])
-                mat_indexes = [[i for _, obj, mat_i in zip(range(objects_number), cycle(faces), cycle(mat_indexes))
-                                for f, i in zip(obj, cycle(mat_i))]]
-                _, *join_mesh_data = list(zip(*zip(range(objects_number), cycle(verts), cycle(edges), cycle(faces),
-                                                   cycle(matrices))))
-                verts, edges, faces = apply_and_join_python(*join_mesh_data, True)
-                matrices = []
-            else:
-                mat_indexes = [[i for obj, mat_i in zip(faces, cycle(mat_indexes)) for f, i in zip(obj, cycle(mat_i))]]
-                verts, edges, faces = mesh_join(verts, edges if edges[0] else [], faces)  # function has good API
-                verts, edges, faces = [verts], [edges], [faces]
+            objects_number = max([len(verts), len(matrices)])
+            meshes = []
+            for i, *elements, materials, matrix in zip(
+                    range(objects_number),
+                    repeat_last(verts),
+                    repeat_last(edges),
+                    repeat_last(faces),
+                    repeat_last(mat_indexes),
+                    repeat_last(matrices if matrices else [[]])):
+
+                mesh = me.to_mesh(*elements)
+                if materials:
+                    mesh.polygons['material'] = materials
+                if matrix:
+                    mesh.apply_matrix(matrix)
+                meshes.append(mesh)
+            base_mesh = reduce(lambda m1, m2: m1.add_mesh(m2), meshes)
+
+            verts, edges, faces = [base_mesh.vertices.data], [base_mesh.edges.data], [base_mesh.polygons.data]
+            mat_indexes = [base_mesh.polygons.get_attribute('material', [])]
+            matrices = []
 
         objects_number = max([len(verts), len(matrices)]) if verts else 0
 
@@ -186,11 +189,6 @@ class SvMeshViewer(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
         [setattr(prop.obj, 'show_wire', self.show_wireframe) for prop in self.object_data]
 
         self.outputs['Objects'].sv_set([obj_data.obj for obj_data in self.object_data])
-
-    # Serialization properties
-    @property
-    def properties_to_skip_iojson(self):
-        return super().properties_to_skip_iojson + ['mesh_data']
 
 
 class SvCreateMaterial(bpy.types.Operator):

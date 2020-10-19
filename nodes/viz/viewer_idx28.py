@@ -318,6 +318,18 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         ''' reset n_id on copy '''
         self.n_id = ''
 
+    def show_viewport(self, is_show: bool):
+        """It should be called by node tree to show/hide objects"""
+        if not self.activate:
+            # just ignore request
+            pass
+        else:
+            if is_show:
+                self.process()
+            else:
+                callback_disable(node_id(self))
+
+
 def register():
     bpy.utils.register_class(SvIDXViewer28)
 
