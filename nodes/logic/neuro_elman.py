@@ -45,7 +45,7 @@ class SvNeuro_Elman:
 
         return out
 
-    def sigmoida(self, signal, prop_in):
+    def sigmoida(self, signal):
         result = (exp(signal).real - exp(-signal).real) / (exp(signal).real + exp(-signal).real + 1e-8)
         return result
 
@@ -81,7 +81,7 @@ class SvNeuro_Elman:
                 # TODO - Здесь можно поставить порог, ниже которого сигнал не пройдёт
                 outB[idx_b] += signal_a
 
-        outB_ = [self.sigmoida(signal_b, prop['InB']) for signal_b in outB]
+        outB_ = [self.sigmoida(signal_b) for signal_b in outB]
         return outB_
 
     def layerC(self, outB, prop):
@@ -117,49 +117,49 @@ class SvNeuro_Elman:
         return (1 - prop['k_lambda']) * w + dw
 
     def learning(self, outA, outB, outC, etalon, maxim, prop):
-        list_wA = deepcopy(prop['wA'])
-        list_wB = deepcopy(prop['wB'])
-        list_x = deepcopy(outA)
-        for idx, x in enumerate(outA):
-            xi = deepcopy(x)
+        weights_a = deepcopy(prop['wA'])
+        weights_b = deepcopy(prop['wB'])
+        outA_ = deepcopy(outA)
+        for idx, native_signal_a in enumerate(outA):
+            processed_signal_a = deepcopy(native_signal_a)
             outB_ = deepcopy(outB)
             outC_ = deepcopy(outC)
             for step in range(prop['cycles']):
-                eB = [0] * prop['InB']
-                eA = [0] * prop['InA']
-                for idc, c in enumerate(outC_):
-                    c_ = self.sigmoida(c, prop['InC'])
-                    eC = self.func_ej_last(etalon[idc], c)
+                in_b = [0] * prop['InB']
+                in_a = [0] * prop['InA']
+                for idc, signal_c in enumerate(outC_):
+                    c_ = self.sigmoida(signal_c)
+                    eC = self.func_ej_last(etalon[idc], signal_c)
                     f_vC = self.f_vj_sigmoida(prop['InC'], c_)
                     sigmaC = self.sigma(eC, f_vC)
 
-                    for idb, b in enumerate(outB_):
-                        dwji = self.delta_wji(sigmaC, b, prop)
-                        list_wB[idb][idc] = self.func_w(list_wB[idb][idc], dwji, prop)
-                        eB[idb] += sigmaC * dwji
+                    for idb, signal_b in enumerate(outB_):
+                        dwji = self.delta_wji(sigmaC, signal_b, prop)
+                        weights_b[idb][idc] = self.func_w(weights_b[idb][idc], dwji, prop)
+                        in_b[idb] += sigmaC * dwji
 
-                for idb, b in enumerate(outB_):
-                    f_vB = self.f_vj_sigmoida(prop['InB'], b)
-                    sigmaB = self.sigma(eB[idb], f_vB)
+                for idb, signal_b in enumerate(outB_):
+                    f_vB = self.f_vj_sigmoida(prop['InB'], signal_b)
+                    sigmaB = self.sigma(in_b[idb], f_vB)
 
-                    for ida, a in enumerate(outA):
-                        dwji = self.delta_wji(sigmaB, a, prop)
-                        print(f"list_wA={list_wA}\tida={ida}\tidb={idb}\toutA={outA}")
-                        list_wA[ida][idb] = self.func_w(list_wA[ida][idb], dwji, prop)
-                        print("eA", eA, "\tida=", ida)
-                        eA[ida] += sigmaB * dwji
+                    for ida, signal_a in enumerate(outA):
+                        dwji = self.delta_wji(sigmaB, signal_a, prop)
+                        print(f"list_wA={weights_a}\tida={ida}\tidb={idb}\toutA={outA}")
+                        weights_a[ida][idb] = self.func_w(weights_a[ida][idb], dwji, prop)
+                        print("eA", in_a, "\tida=", ida)
+                        in_a[ida] += sigmaB * dwji
 
-                xi = xi - prop['epsilon'] * xi * (maxim - xi)
-                absdx = abs(x - xi)
+                processed_signal_a -= prop['epsilon'] * processed_signal_a * (maxim - processed_signal_a)
+                absdx = abs(native_signal_a - processed_signal_a)
                 if absdx <= prop['trashold'] or absdx > abs(maxim / 2):
                     break
-                list_x[idx] = xi
+                outA_[idx] = processed_signal_a
 
-                outB_ = self.layerB(list_x, prop)
+                outB_ = self.layerB(outA_, prop)
                 outC_ = self.layerC(outB, prop)
 
-        prop['wA'] = list_wA
-        prop['wB'] = list_wB
+        prop['wA'] = weights_a
+        prop['wB'] = weights_b
 
 
 class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
@@ -170,19 +170,26 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_NEURO'
 
-    Elman = None
+    elman = None
 
     k_learning: FloatProperty(name='k_learning', default=0.1, update=updateNode, description="Коэффициент обучения")
-    gisterezis: FloatProperty(name='gisterezis', default=0.1, min=0.0, update=updateNode, description="Задаёт порог действительных значений внутри алгоритма обучения (в планах)")
-    maximum: FloatProperty(name='maximum', default=3.0, update=updateNode, description="Максимальное значение выходного слоя")
+    gisterezis: FloatProperty(name='gisterezis', default=0.1, min=0.0, update=updateNode,
+                              description="Задаёт порог значений внутри алгоритма обучения (в планах)")
+    maximum: FloatProperty(name='maximum', default=3.0, update=updateNode,
+                           description="Максимальное значение входного и выходного слоя")
     menushka: BoolProperty(name='menushka', default=False, description="Дополнительные параметры")
-    epsilon: FloatProperty(name='epsilon', default=1.0, update=updateNode, description="Коэффициент участвует в функции оценки обучения")
+    epsilon: FloatProperty(name='epsilon', default=1.0, update=updateNode,
+                           description="Коэффициент участвует в функции оценки обучения")
     treshold: FloatProperty(name='treshold', default=0.01, update=updateNode, description="Участвует в оценке обучения")
-    k_lambda: FloatProperty(name='k_lambda', default=0.0001, max=0.1, update=updateNode, description="Точность обучения")
+    k_lambda: FloatProperty(name='k_lambda', default=0.0001, max=0.1, update=updateNode,
+                            description="Шаг изменения веса при обучении")
     cycles: IntProperty(name='cycles', default=3, min=1, update=updateNode, description="Внутренние циклы обучения")
-    lA: IntProperty(name='lA', default=1, min=0, update=updateNode, description="Входной слой (должен соответствовать количеству элементов на входе)")
-    lB: IntProperty(name='lB', default=5, min=0, update=updateNode, description="Внутренний слой (больше узлов - точнее расчеты)")
-    lC: IntProperty(name='lC', default=1, min=0, update=updateNode, description="Выходной слой (должен соответствовать количеству элементов на выходе)")
+    lA: IntProperty(name='lA', default=1, min=0, update=updateNode,
+                    description="Входной слой (должен соответствовать количеству элементов на входе)")
+    lB: IntProperty(name='lB', default=5, min=0, update=updateNode,
+                    description="Внутренний слой (больше узлов - точнее расчеты)")
+    lC: IntProperty(name='lC', default=1, min=0, update=updateNode,
+                    description="Выходной слой (должен соответствовать количеству элементов на выходе)")
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "data")
@@ -192,22 +199,24 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
         handle_name = self.name + self.id_data.name
-        layout.prop(self, "k_learning", text="koeff learning")
-        layout.prop(self, "gisterezis", text="gisterezis")
+
+        col_top = layout.column(align=True)
+        row = col_top.row(align=True)
+        row.prop(self, "lA", text="A layer")
+        row = col_top.row(align=True)
+        row.prop(self, "lB", text="B layer")
+        row = col_top.row(align=True)
+        row.prop(self, "lC", text="C layer")
+
         layout.prop(self, "maximum", text="maximum")
-        layout.prop(self, "cycles", text="cycles")
         op_start = layout.operator('node.sverchok_neuro', text='Restart')
         op_start.typ = 1
         op_start.handle_name = handle_name
         layout.prop(self, "menushka", text="extend sets:")
         if self.menushka:
-            col_top = layout.column(align=True)
-            row = col_top.row(align=True)
-            row.prop(self, "lA", text="A layer")
-            row = col_top.row(align=True)
-            row.prop(self, "lB", text="B layer")
-            row = col_top.row(align=True)
-            row.prop(self, "lC", text="C layer")
+            layout.prop(self, "k_learning", text="koeff learning")
+            layout.prop(self, "gisterezis", text="gisterezis")
+            layout.prop(self, "cycles", text="cycles")
             col = layout.column(align=True)
             col.prop(self, "epsilon", text="epsilon")
             col = layout.column(align=True)
@@ -220,7 +229,7 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
         handle = handle_read(handle_name)
         props = handle[1]
         if not handle[0]:
-            Elman = SvNeuro_Elman()
+            elman = SvNeuro_Elman()
             props = {'InA': 2,
                      'InB': 5,
                      'InC': 1,
@@ -232,12 +241,12 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
                      'cycles': 3,
                      'trashold': 0.01,
                      'k_lambda': 0.0001,
-                     'Elman': Elman,
+                     'Elman': elman,
                      }
 
-        self.Elman = props['Elman']
-        self.Elman.gister = abs(self.gisterezis)
-        self.Elman.k_learning = self.k_learning
+        self.elman = props['Elman']
+        self.elman.gister = abs(self.gisterezis)
+        self.elman.k_learning = self.k_learning
 
         result = []
         if self.outputs['result'].is_linked and self.inputs['data'].is_linked:
@@ -253,8 +262,8 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
                 props['InA'] = self.lA + 1
                 props['InB'] = self.lB
                 props['InC'] = self.lC
-                props['wA'] = self.Elman.init_w(props['InA'], props['InB'], props['trashold'])
-                props['wB'] = self.Elman.init_w(props['InB'], props['InC'], props['trashold'])
+                props['wA'] = self.elman.init_w(props['InA'], props['InB'], props['trashold'])
+                props['wB'] = self.elman.init_w(props['InB'], props['InC'], props['trashold'])
 
             props['gister'] = self.gisterezis
             props['k_learning'] = self.k_learning
@@ -277,7 +286,7 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
                 if type(eta) not in [list, tuple]:
                     eta = [eta]
 
-                result.append([self.Elman.neuro(data2, eta, self.maximum, is_learning, props)])
+                result.append([self.elman.neuro(data2, eta, self.maximum, is_learning, props)])
             result.append(result.pop(0))
 
         else:
@@ -302,10 +311,11 @@ class SvNeuroOps(bpy.types.Operator):
         if self.typ == 1:
             handle = handle_read(self.handle_name)
             prop = handle[1]
-            Elman = SvNeuro_Elman()
+            elman = SvNeuro_Elman()
             if handle[0]:
-                prop['wA'] = Elman.init_w(prop['InA'], prop['InB'], prop['trashold'])
-                prop['wB'] = Elman.init_w(prop['InB'], prop['InC'], prop['trashold'])
+                prop['wA'] = elman.init_w(prop['InA'], prop['InB'], prop['trashold'])
+                prop['wB'] = elman.init_w(prop['InB'], prop['InC'], prop['trashold'])
+                prop['Elman'] = elman
                 handle_write(self.handle_name, prop)
 
         return {'FINISHED'}
@@ -324,4 +334,3 @@ def unregister():
 # TODO - Необходимо обрабатывать несколко объектов. Т.е. получил несколко объектов, так и выдавать несколько объектов
 #  т.е. сколько объектов - столько обучений
 # TODO - Добавить слот для обучения цепью узлов
-# TODO - Выдлеить основные параметры и дополнительные
