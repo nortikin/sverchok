@@ -15,7 +15,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve, SvLine
 from sverchok.utils.curve.algorithms import reverse_curve
 from sverchok.utils.surface import SvSurface
-from sverchok.utils.surface.algorithms import SvBlendSurface
+from sverchok.utils.surface.algorithms import SvBlendSurface, blend_surfaces
 
 class SvBlendSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -156,7 +156,7 @@ class SvBlendSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 elif self.flip2:
                     curve2 = reverse_curve(curve2)
 
-                surface = SvBlendSurface(surface1, surface2, curve1, curve2, bulge1, bulge2)
+                surface = blend_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2)
                 new_surfaces.append(surface)
             surfaces_out.append(new_surfaces)
 

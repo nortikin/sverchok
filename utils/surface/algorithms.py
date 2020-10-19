@@ -20,14 +20,15 @@ from sverchok.utils.geom import (
         autorotate_householder, autorotate_track, autorotate_diff
     )
 from sverchok.utils.curve.core import SvFlipCurve, UnsupportedCurveTypeException
-from sverchok.utils.curve.primitives import SvCircle
+from sverchok.utils.curve.primitives import SvCircle, SvLine
 from sverchok.utils.curve.algorithms import (
             SvNormalTrack, curve_frame_on_surface_array,
             MathutilsRotationCalculator, DifferentialRotationCalculator,
             reparametrize_curve
         )
-from sverchok.utils.surface.core import SvSurface
+from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException
 from sverchok.utils.surface.nurbs import SvNurbsSurface
+from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.surface.data import *
 from sverchok.utils.logging import info, debug
 
@@ -1028,6 +1029,114 @@ class SvBlendSurface(SvSurface):
         c0, c1, c2, c3 = c0[:,np.newaxis], c1[:,np.newaxis], c2[:,np.newaxis], c3[:,np.newaxis]
 
         return c0*p0s + c1*p1s + c2*p2s + c3*p3s
+
+blend_surface_adapters = []
+
+def blend_nurbs_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2):
+    surface1 = SvNurbsSurface.get(surface1)
+    surface2 = SvNurbsSurface.get(surface2)
+    if surface1 is None or surface2 is None:
+        raise UnsupportedSurfaceTypeException("surfaces are not nurbs")
+    if not isinstance(curve1, SvLine) or not isinstance(curve2, SvLine):
+        raise UnsupportedSurfaceTypeException("only lines are supported")
+
+    bounds_1 = surface1.get_bounds()
+    bounds_2 = surface2.get_bounds()
+
+    def get_iso_values(line, bounds):
+        p1 = line.point
+        p2 = line.point + line.direction
+        if p1[0] == p2[0] and p1[0] in bounds[0]:
+            if p1[1] == bounds[1][0] and p2[1] == bounds[1][1]:
+                return 0, p1[0]
+
+        if p1[1] == p2[1] and p1[1] in bounds[1]:
+            if p1[0] == bounds[0][0] and p2[0] == bounds[0][1]:
+                return 1, p1[1]
+        raise UnsupportedSurfaceTypeException("only iso-lines are supported")
+
+    fixed_axis_1, fixed_value_1 = get_iso_values(curve1, bounds_1)
+    fixed_axis_2, fixed_value_2 = get_iso_values(curve2, bounds_2)
+
+    degrees_1 = surface1.get_degree_u(), surface1.get_degree_v()
+    degrees_2 = surface2.get_degree_u(), surface2.get_degree_v()
+
+    degree_1 = degrees_1[1-fixed_axis_1]
+    degree_2 = degrees_2[1-fixed_axis_2]
+    if degree_1 != degree_2:
+        raise UnsupportedSurfaceTypeException("degrees are different")
+
+    knotvectors_1 = surface1.get_knotvector_u(), surface1.get_knotvector_v()
+    knotvectors_2 = surface2.get_knotvector_u(), surface2.get_knotvector_v()
+    knotvector_1 = knotvectors_1[1-fixed_axis_1]
+    knotvector_2 = knotvectors_2[1-fixed_axis_2]
+    if not sv_knotvector.equal(knotvector_1, knotvector_2):
+        raise UnsupportedSurfaceTypeException("knotvectors are different")
+
+    if fixed_value_1 == bounds_1[fixed_axis_1][0]:
+        sign_1 = -1
+    elif fixed_value_2 == bounds_1[fixed_axis_1][1]:
+        sign_1 = 1
+    else:
+        raise UnsupportedSurfaceTypeException("not a boundary curve")
+
+    if fixed_value_2 == bounds_2[fixed_axis_2][0]:
+        sign_2 = -1
+    elif fixed_value_2 == bounds_2[fixed_axis_2][1]:
+        sign_2 = 1
+    else:
+        raise UnsupportedSurfaceTypeException("not a boundary curve")
+
+    controls_1 = surface1.get_control_points()
+    if fixed_axis_1 == 1:
+        controls_1 = np.transpose(controls_1, axes=(1,0,2))
+    controls_2 = surface2.get_control_points()
+    if fixed_axis_2 == 1:
+        controls_2 = np.transpose(controls_2, axes=(1,0,2))
+        print(f"C2S: {controls_2.shape}")
+
+    if sign_1 == -1:
+        boundary_1 = controls_1[0,:]
+        next_1 = controls_1[1,:]
+    else:
+        boundary_1 = controls_1[-1,:]
+        next_1 = controls_1[-2,:]
+    if sign_2 == -1:
+        boundary_2 = controls_2[0,:]
+        next_2 = controls_2[1,:]
+    else:
+        boundary_2 = controls_2[-1,:]
+        next_2 = controls_2[-2,:]
+    print(f"1: sign {sign_1}, b {boundary_1}, next {next_1}")
+    print(f"2: sign {sign_2}, b {boundary_2}, next {next_2}")
+
+    vectors_1 = (boundary_1 - next_1)
+    vectors_2 = (boundary_2 - next_2)
+
+    midpoints_1 = boundary_1 - bulge1*vectors_1
+    midpoints_2 = boundary_2 + bulge2*vectors_2
+
+    controls = np.stack((boundary_1, midpoints_1, midpoints_2, boundary_2))
+
+    degree_u = 3
+
+    knotvector_u = sv_knotvector.generate(degree_u, 4)
+
+    return SvNurbsSurface.build(surface1.get_nurbs_implementation(),
+            degree_u, degree_1,
+            knotvector_u, knotvector_1,
+            controls)
+
+blend_surface_adapters.append(blend_nurbs_surfaces)
+
+def blend_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2):
+    for adapter in blend_surface_adapters:
+        try:
+            return adapter(surface1, surface2, curve1, curve2, bulge1, bulge2)
+        except UnsupportedSurfaceTypeException as e:
+            print(e)
+            pass
+    return SvBlendSurface(surface1, surface2, curve1, curve2, bulge1, bulge2)
 
 def nurbs_revolution_surface(curve, origin, axis, v_min=0, v_max=2*pi, global_origin=True):
     my_control_points = curve.get_control_points()
