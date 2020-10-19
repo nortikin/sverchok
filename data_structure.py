@@ -1230,7 +1230,6 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
     elif isinstance(out_count, int):
         lenod = len(node.outputs)
         ng.freeze(True)
-        print(out_count)
         if out_count > 30:
             out_count = 30
         if lenod < out_count:
