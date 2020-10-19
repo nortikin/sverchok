@@ -648,4 +648,12 @@ def add_use_fake_user_to_trees():
                              notify=set_fake_user)
 
 
-register, unregister = bpy.utils.register_classes_factory([SverchCustomTree])
+def register():
+    bpy.utils.register_class(SverchCustomTree)
+    bpy.types.NodeReroute.absolute_location = property(
+        lambda self: recursive_framed_location_finder(self, self.location[:]))
+
+
+def unregister():
+    del bpy.types.NodeReroute.absolute_location
+    bpy.utils.unregister_class(SverchCustomTree)

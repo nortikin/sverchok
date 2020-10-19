@@ -129,7 +129,7 @@ utils_modules = [
     "sv_curve_utils", "voronoi", "sv_script", "sv_itertools", "script_importhelper", "sv_oldnodes_parser",
     "csg_core", "csg_geom", "geom", "sv_easing_functions", "sv_text_io_common", "sv_obj_baker",
     "snlite_utils", "snlite_importhelper", "context_managers", "sv_node_utils", "sv_noise_utils",
-    "profile", "logging", "testing", "sv_requests", "sv_shader_sources",
+    "profile", "logging", "testing", "sv_requests", "sv_shader_sources", "tree_structure",
     "avl_tree", "sv_nodeview_draw_helper", "sv_font_xml_parser", "exception_drawing_with_bgl",
     "wfc_algorithm", "handling_nodes", "handle_blender_data", "nodes_mixins.generating_objects",
     "nodes_mixins.show_3d_properties", "modules_inspection", "sv_json_export", "sv_json_import",
