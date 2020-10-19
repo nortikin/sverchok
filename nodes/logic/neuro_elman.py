@@ -32,6 +32,7 @@ from cmath import exp
 
 
 class SvNeuro_Elman:
+    """ A set of functions for working with a neuron """
 
     def init_w(self, number, ext, treshold):
         out = []
@@ -46,7 +47,10 @@ class SvNeuro_Elman:
         return result
 
     def neuro(self, list_in, etalon, maxim, is_learning, prop):
-        outA = self.layerA(list_in, prop)
+        """ The function calculates the output values depending on the input """
+
+        _list_in = [signal_a/maxim for signal_a in list_in]
+        outA = self.layerA(_list_in, prop)
         outB = self.layerB(outA, prop)
         outC = self.layerC(outB, prop)
 
@@ -164,24 +168,25 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
 
     elman = None
 
-    k_learning: FloatProperty(name='k_learning', default=0.1, update=updateNode, description="Коэффициент обучения")
+    k_learning: FloatProperty(name='k_learning', default=0.1, update=updateNode, description="Learning rate")
     gisterezis: FloatProperty(name='gisterezis', default=0.1, min=0.0, update=updateNode,
-                              description="Задаёт порог значений внутри алгоритма обучения (в планах)")
+                              description="Sets the threshold of values inside the learning algorithm (in plans)")
     maximum: FloatProperty(name='maximum', default=3.0, update=updateNode,
-                           description="Максимальное значение входного и выходного слоя")
-    menushka: BoolProperty(name='menushka', default=False, description="Дополнительные параметры")
+                           description="The maximum value of the input and output layer")
+    menushka: BoolProperty(name='menushka', default=False, description="Extra options")
     epsilon: FloatProperty(name='epsilon', default=1.0, update=updateNode,
-                           description="Коэффициент участвует в функции оценки обучения")
-    treshold: FloatProperty(name='treshold', default=0.01, update=updateNode, description="Участвует в оценке обучения")
+                           description="The coefficient participates in the learning assessment function")
+    treshold: FloatProperty(name='treshold', default=0.01, update=updateNode,
+                            description="Participates in learning assessment")
     k_lambda: FloatProperty(name='k_lambda', default=0.0001, max=0.1, update=updateNode,
-                            description="Шаг изменения веса при обучении")
-    cycles: IntProperty(name='cycles', default=3, min=1, update=updateNode, description="Внутренние циклы обучения")
+                            description="Weight change step during training")
+    cycles: IntProperty(name='cycles', default=3, min=1, update=updateNode, description="Internal Learning Loops")
     lA: IntProperty(name='lA', default=1, min=0, update=updateNode,
-                    description="Входной слой (должен соответствовать количеству элементов на входе)")
+                    description="Input layer (must match the number of elements in the input)")
     lB: IntProperty(name='lB', default=5, min=0, update=updateNode,
-                    description="Внутренний слой (больше узлов - точнее расчеты)")
+                    description="Inner layer (more nodes - more accurate calculations)")
     lC: IntProperty(name='lC', default=1, min=0, update=updateNode,
-                    description="Выходной слой (должен соответствовать количеству элементов на выходе)")
+                    description="Output layer (must match the number of elements in the output)")
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "data")
@@ -201,7 +206,7 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
         row.prop(self, "lC", text="C layer")
 
         layout.prop(self, "maximum", text="maximum")
-        op_start = layout.operator('node.sverchok_neuro', text='Restart')
+        op_start = layout.operator('node.sverchok_neuro', text='Reset')
         op_start.typ = 1
         op_start.handle_name = handle_name
         layout.prop(self, "menushka", text="extend sets:")
@@ -286,7 +291,7 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
 # *********************************
 
 class SvNeuroOps(bpy.types.Operator):
-    """ Перезапуск узла """
+    """ Resetting weights """
     bl_idname = "node.sverchok_neuro"
     bl_label = "Sverchok Neuro operators"
     bl_options = {'REGISTER', 'UNDO'}
@@ -315,5 +320,3 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvNeuroElman1LNode)
     bpy.utils.unregister_class(SvNeuroOps)
-
-# TODO - Добавить слот для обучения цепью узлов
