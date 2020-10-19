@@ -33,10 +33,6 @@ from cmath import exp
 
 class SvNeuro_Elman:
 
-    def __init__(self):
-        self.gister = 0.1
-        self.k_learning = 0.1
-
     def init_w(self, number, ext, treshold):
         out = []
         for _ in range(number):
@@ -78,7 +74,6 @@ class SvNeuro_Elman:
         for idx_a, weights_a in enumerate(prop['wA']):
             for idx_b, wa in enumerate(weights_a):
                 signal_a = wa * outA[idx_a]
-                # TODO - Здесь можно поставить порог, ниже которого сигнал не пройдёт
                 outB[idx_b] += signal_a
 
         outB_ = [self.sigmoida(signal_b) for signal_b in outB]
@@ -89,7 +84,6 @@ class SvNeuro_Elman:
         for idx_b, weights_b in enumerate(prop['wB']):
             for idx_c, wb in enumerate(weights_b):
                 signal_b = wb * outB[idx_b]
-                # TODO - Здесь можно поставить порог, ниже которого сигнал не пройдёт
                 outC[idx_c] += signal_b
         return outC
 
@@ -144,9 +138,7 @@ class SvNeuro_Elman:
 
                     for ida, signal_a in enumerate(outA):
                         dwji = self.delta_wji(sigmaB, signal_a, prop)
-                        print(f"list_wA={weights_a}\tida={ida}\tidb={idb}\toutA={outA}")
                         weights_a[ida][idb] = self.func_w(weights_a[ida][idb], dwji, prop)
-                        print("eA", in_a, "\tida=", ida)
                         in_a[ida] += sigmaB * dwji
 
                 processed_signal_a -= prop['epsilon'] * processed_signal_a * (maxim - processed_signal_a)
@@ -245,9 +237,6 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
                      }
 
         self.elman = props['Elman']
-        self.elman.gister = abs(self.gisterezis)
-        self.elman.k_learning = self.k_learning
-
         result = []
         if self.outputs['result'].is_linked and self.inputs['data'].is_linked:
 
@@ -286,11 +275,9 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
                 if type(eta) not in [list, tuple]:
                     eta = [eta]
 
-                result.append([self.elman.neuro(data2, eta, self.maximum, is_learning, props)])
-            result.append(result.pop(0))
-
+                result.append(self.elman.neuro(data2, eta, self.maximum, is_learning, props))
         else:
-            result = [[[]]]
+            result = [[]]
 
         handle_write(handle_name, props)
         self.outputs['result'].sv_set(result)
@@ -311,11 +298,10 @@ class SvNeuroOps(bpy.types.Operator):
         if self.typ == 1:
             handle = handle_read(self.handle_name)
             prop = handle[1]
-            elman = SvNeuro_Elman()
             if handle[0]:
+                elman = prop['Elman']
                 prop['wA'] = elman.init_w(prop['InA'], prop['InB'], prop['trashold'])
                 prop['wB'] = elman.init_w(prop['InB'], prop['InC'], prop['trashold'])
-                prop['Elman'] = elman
                 handle_write(self.handle_name, prop)
 
         return {'FINISHED'}
@@ -330,7 +316,4 @@ def unregister():
     bpy.utils.unregister_class(SvNeuroElman1LNode)
     bpy.utils.unregister_class(SvNeuroOps)
 
-# TODO - Не нравится, что структура выходных данных не соответсвует эталону
-# TODO - Необходимо обрабатывать несколко объектов. Т.е. получил несколко объектов, так и выдавать несколько объектов
-#  т.е. сколько объектов - столько обучений
 # TODO - Добавить слот для обучения цепью узлов
