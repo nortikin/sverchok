@@ -258,7 +258,9 @@ class SvFreeCadNurbsCurve(SvNurbsCurve):
     
     def tangent(self, t):
         v = self.curve.tangent(t)
-        return np.array(self._convert(v))
+        if not isinstance(v, tuple):
+            v = self._convert(v)
+        return np.array(v)
     
     def tangent_array(self, ts):
         return np.vectorize(self.tangent, signature='()->(3)')(ts)    

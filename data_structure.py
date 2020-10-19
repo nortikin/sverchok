@@ -941,6 +941,24 @@ class classproperty:
         return self.fget(owner_cls)
 
 
+def post_load_call(function):  # better place would be in handlers module but import cyclic error
+    """
+    Usage: if you need function which should be called each time when blender is lunched
+    or new file is opened use this decorator
+    Limitation: the function should not get any properties because it will be called by handler
+    """
+    post_load_call.registered_functions.append(function)
+
+    @wraps(function)
+    def wrapper():
+        function()
+
+    return wrapper()
+
+
+post_load_call.registered_functions = []
+
+
 #####################################################
 ############### debug settings magic ################
 #####################################################

@@ -26,7 +26,7 @@ from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import NodeTree
 
 from sverchok import data_structure
-from sverchok.data_structure import classproperty
+from sverchok.data_structure import classproperty, post_load_call
 
 from sverchok.core.update_system import (
     build_update_list,
@@ -335,21 +335,18 @@ class UpdateNodes:
         CurrentEvents.new_event(BlenderEventsTypes.add_node, self)
         ng = self.id_data
 
-        if ng.bl_idname == 'SvGroupTree':
-            self.sv_init(context)
-        else:
-            ng.freeze()
-            ng.nodes_dict.load_node(self)
-            if hasattr(self, "sv_init"):
+        ng.freeze()
+        ng.nodes_dict.load_node(self)
+        if hasattr(self, "sv_init"):
 
-                try:
-                    self.sv_init(context)
-                except Exception as err:
-                    print('nodetree.node.sv_init failure - stare at the error message below')
-                    sys.stderr.write('ERROR: %s\n' % str(err))
+            try:
+                self.sv_init(context)
+            except Exception as err:
+                print('nodetree.node.sv_init failure - stare at the error message below')
+                sys.stderr.write('ERROR: %s\n' % str(err))
 
-            self.set_color()
-            ng.unfreeze()
+        self.set_color()
+        ng.unfreeze()
 
     def free(self):
         """
@@ -521,7 +518,7 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
 
     @classmethod
     def poll(cls, ntree):
-        return ntree.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType', 'SvGroupTree'}
+        return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType']
 
     @property
     def absolute_location(self):
@@ -639,6 +636,16 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
                 prefs.set_nodeview_render_params(None)
         except Exception as err:
             print('failed to get gl scale info', err)
+
+
+@post_load_call
+def add_use_fake_user_to_trees():
+    """When ever space node editor switches to another tree or creates new one,
+    this function will set True to `use_fake_user` of all Sverchok trees"""
+    def set_fake_user():
+        [setattr(t, 'use_fake_user', True) for t in bpy.data.node_groups if t.bl_idname == 'SverchCustomTreeType']
+    bpy.msgbus.subscribe_rna(key=(bpy.types.SpaceNodeEditor, 'node_tree'), owner=object(), args=(),
+                             notify=set_fake_user)
 
 
 def register():
