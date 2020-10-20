@@ -1,6 +1,6 @@
 # Neuro Elman 1 Layer
 
-<img src="/home/sanya/.config/blender/2.90/scripts/addons/sverchok-master/nodes/logic/neuro.png"/>
+<img src="neuro.png"/>
 
 <h2>Functionality</h2>
 <p>
@@ -63,10 +63,10 @@ Logic -> Neuro Elman 1 Layer
 </p>
 <strong>Подготовка набора данных</strong>
 <p>
-<img src="/home/sanya/.config/blender/2.90/scripts/addons/sverchok-master/nodes/logic/neuro_data_in.png"/>
-<img src="/home/sanya/.config/blender/2.90/scripts/addons/sverchok-master/nodes/logic/neuro_data_in_text.png"/>
+<img src="neuro_data_in.png"/>
+<img src="neuro_data_in_text.png"/>
 <br>Аналогично подготовим ожидаемые данные<br>
-<img src="/home/sanya/.config/blender/2.90/scripts/addons/sverchok-master/nodes/logic/neuro_etalon.png"/>
+<img src="neuro_etalon.png"/>
 </p>
 <strong>Подготовка узла</strong>
 <ul>
@@ -74,15 +74,15 @@ Logic -> Neuro Elman 1 Layer
 <li><b>B layer</b> - поставим 5, но может быт любым (экспериментируйте)</li>
 <li><b>C layer</b> - задаём 1, т.к. на выходе должны получить результат в одно число</li>
 </ul>
-<img src="/home/sanya/.config/blender/2.90/scripts/addons/sverchok-master/nodes/logic/neuro_ansumble.png"/>
+<img src="neuro_ansumble.png"/>
 <br>
 Запускаем анимацию и ждём минуту. Затем выключаем анимацию. У меня получился такой результат:
 <br>
-<img src="/home/sanya/.config/blender/2.90/scripts/addons/sverchok-master/nodes/logic/neuro_training_result.png"/>
+<img src="neuro_training_result.png"/>
 
 <p>
 Давайте проверим результат обучения.<br>
-<img src="/home/sanya/.config/blender/2.90/scripts/addons/sverchok-master/nodes/logic/neuro_result.png"/>
+<img src="neuro_result.png"/>
 <br>
 </p>
 
