@@ -7,14 +7,10 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from mathutils.kdtree import KDTree
 
 import sverchok
-<<<<<<< HEAD
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
-=======
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, ensure_nesting_level, get_data_nesting_level
+from sverchok.core.socket_data import SvNoDataError
 from sverchok.utils.field.scalar import SvScalarField
->>>>>>> "Field random probe" mk2.
 
 BATCH_SIZE = 50
 MAX_ITERATIONS = 1000
@@ -104,7 +100,10 @@ class SvFieldRandomProbeMk2Node(bpy.types.Node, SverchCustomTreeNode):
         if not any(socket.is_linked for socket in self.outputs):
             return
 
-        fields_s = self.inputs['Field'].sv_get()
+        if self.proportional and not self.inputs['Field'].is_linked:
+            raise SvNoDataError(socket=self.inputs['Field'], node=self)
+
+        fields_s = self.inputs['Field'].sv_get(default=[[None]])
         vertices_s = self.inputs['Bounds'].sv_get()
         count_s = self.inputs['Count'].sv_get()
         min_r_s = self.inputs['MinDistance'].sv_get()
@@ -113,7 +112,8 @@ class SvFieldRandomProbeMk2Node(bpy.types.Node, SverchCustomTreeNode):
         field_max_s = self.inputs['FieldMax'].sv_get()
         seed_s = self.inputs['Seed'].sv_get()
 
-        fields_s = ensure_nesting_level(fields_s, 2, data_types=(SvScalarField,))
+        if self.inputs['Field'].is_linked:
+            fields_s = ensure_nesting_level(fields_s, 2, data_types=(SvScalarField,))
         vertices_s = ensure_nesting_level(vertices_s, 4)
         count_s = ensure_nesting_level(count_s, 2)
         min_r_s = ensure_nesting_level(min_r_s, 2)
@@ -160,17 +160,19 @@ class SvFieldRandomProbeMk2Node(bpy.types.Node, SverchCustomTreeNode):
                     batch_zs = np.array(batch_zs)#[np.newaxis][np.newaxis]
                     batch = np.array(batch)
 
-                    values = field.evaluate_grid(batch_xs, batch_ys, batch_zs)
-                    #values = values[0][0]
-                    good_idxs = values >= threshold
-                    if not self.proportional:
-                        candidates = batch[good_idxs].tolist()
+                    if field is None:
+                        candidates = batch.tolist()
                     else:
-                        candidates = []
-                        for vert, value in zip(batch[good_idxs].tolist(), values[good_idxs].tolist()):
-                            probe = random.uniform(field_min, field_max)
-                            if probe <= value:
-                                candidates.append(vert)
+                        values = field.evaluate_grid(batch_xs, batch_ys, batch_zs)
+                        good_idxs = values >= threshold
+                        if not self.proportional:
+                            candidates = batch[good_idxs].tolist()
+                        else:
+                            candidates = []
+                            for vert, value in zip(batch[good_idxs].tolist(), values[good_idxs].tolist()):
+                                probe = random.uniform(field_min, field_max)
+                                if probe <= value:
+                                    candidates.append(vert)
 
                     if min_r == 0:
                         good_verts = candidates
