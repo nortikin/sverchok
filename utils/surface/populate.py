@@ -46,6 +46,7 @@ def populate_surface(surface, field, count, threshold, proportional=False, field
     * surface : SvSurface
     * field : SvScalarField. Pass None to use even (uniform) distribution.
     * count: number of points to generate.
+    * threshold: do not generate points where value of scalar field is less than this value.
     * proportional: if True, then density of points will be proportional to
       scalar field value. Otherwise, values of the field will be used only to not
       generate points in places where scalar field is less than threshold.

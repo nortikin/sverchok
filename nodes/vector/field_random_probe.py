@@ -1,3 +1,9 @@
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
 
 import random
 import numpy as np
@@ -11,19 +17,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, ensure_nesting_level, get_data_nesting_level
 from sverchok.core.socket_data import SvNoDataError
 from sverchok.utils.field.scalar import SvScalarField
-
-BATCH_SIZE = 50
-MAX_ITERATIONS = 1000
-
-def _check_all(v_new, vs_old, min_r):
-    kdt = KDTree(len(vs_old))
-    for i, v in enumerate(vs_old):
-        kdt.insert(v, i)
-    kdt.balance()
-    nearest, idx, dist = kdt.find(v_new)
-    if dist is None:
-        return True
-    return (dist >= min_r)
+from sverchok.utils.field.probe import field_random_probe
 
 class SvFieldRandomProbeMk2Node(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -127,63 +121,8 @@ class SvFieldRandomProbeMk2Node(bpy.types.Node, SverchCustomTreeNode):
         for objects in inputs:
             for field, vertices, threshold, field_min, field_max, count, min_r, seed in zip_long_repeat(*objects):
 
-                random.seed(seed)
-
-                b1, b2 = self.get_bounds(vertices)
-                x_min, y_min, z_min = b1
-                x_max, y_max, z_max = b2
-
-                done = 0
-                new_verts = []
-                iterations = 0
-                while done < count:
-                    iterations += 1
-                    if iterations > MAX_ITERATIONS:
-                        self.error("Maximum number of iterations (%s) reached, stop.", MAX_ITERATIONS)
-                        break
-                    batch_xs = []
-                    batch_ys = []
-                    batch_zs = []
-                    batch = []
-                    left = count - done
-                    max_size = min(BATCH_SIZE, left)
-                    for i in range(max_size):
-                        x = random.uniform(x_min, x_max)
-                        y = random.uniform(y_min, y_max)
-                        z = random.uniform(z_min, z_max)
-                        batch_xs.append(x)
-                        batch_ys.append(y)
-                        batch_zs.append(z)
-                        batch.append((x, y, z))
-                    batch_xs = np.array(batch_xs)#[np.newaxis][np.newaxis]
-                    batch_ys = np.array(batch_ys)#[np.newaxis][np.newaxis]
-                    batch_zs = np.array(batch_zs)#[np.newaxis][np.newaxis]
-                    batch = np.array(batch)
-
-                    if field is None:
-                        candidates = batch.tolist()
-                    else:
-                        values = field.evaluate_grid(batch_xs, batch_ys, batch_zs)
-                        good_idxs = values >= threshold
-                        if not self.proportional:
-                            candidates = batch[good_idxs].tolist()
-                        else:
-                            candidates = []
-                            for vert, value in zip(batch[good_idxs].tolist(), values[good_idxs].tolist()):
-                                probe = random.uniform(field_min, field_max)
-                                if probe <= value:
-                                    candidates.append(vert)
-
-                    if min_r == 0:
-                        good_verts = candidates
-                    else:
-                        good_verts = []
-                        for candidate in candidates:
-                            if _check_all(candidate, new_verts + good_verts, min_r):
-                                good_verts.append(candidate)
-
-                    new_verts.extend(good_verts)
-                    done += len(good_verts)
+                bbox = self.get_bounds(vertices)
+                new_verts = field_random_probe(field, bbox, count, threshold, self.proportional, field_min, field_max, min_r, seed)
 
                 verts_out.append(new_verts)
 
