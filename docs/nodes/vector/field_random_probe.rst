@@ -18,7 +18,9 @@ Inputs
 
 This node has the following inputs:
 
-* **Field**. The scalar field defining the distribution of generated points. This input is mandatory.
+* **Field**. The scalar field defining the distribution of generated points. If
+  this input is not connected, the node will generate evenly distributed
+  points. This input is mandatory, if **Proportional** parameter is checked.
 * **Bounds**. Vertices defining the general area where the points will be
   generated. Only bounding box of these vertices will be used. This input is
   mandatory.
