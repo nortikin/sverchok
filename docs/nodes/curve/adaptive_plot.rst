@@ -18,8 +18,10 @@ The following algorithm is used:
    * Having greater length;
    * Having bigger curvature value.
 
-   Number of points to be added into each subdivision is calcluated proportionally to this "subdivision factor".
-   These additional points can be distributed either evenly, or randomly.
+   Number of points to be added into each subdivision is calcluated
+   proportionally to this "subdivision factor".
+   These additional points can be distributed either evenly (in terms of
+   curve's T parameter), or randomly.
 
 * Then all resulting points are connected to make a curve-like mesh object.
 
@@ -29,7 +31,7 @@ Inputs
 This node has the following inputs:
 
 * **Curve**. The curve to be plotted. This input is mandatory.
-* **Samples**. Number of initial subdivisions. The default value is 25.
+* **Segments**. Number of initial subdivisions. The default value is 25.
 * **Min per segment**. Minimal number of additional points, which is to be
   added into intervals which have the least value of subdivision factor (length
   and/or curvature). The default value is 0 - do not add points to such

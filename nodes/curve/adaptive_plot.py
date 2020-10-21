@@ -19,7 +19,7 @@ class SvAdaptivePlotCurveNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'CURVE_NCURVE'
 
     sample_size : IntProperty(
-            name = "Samples",
+            name = "Segments",
             default = 50,
             min = 4,
             update = updateNode)
@@ -81,7 +81,7 @@ class SvAdaptivePlotCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
-        self.inputs.new('SvStringsSocket', "Samples").prop_name = 'sample_size'
+        self.inputs.new('SvStringsSocket', "Segments").prop_name = 'sample_size'
         self.inputs.new('SvStringsSocket', "MinPpe").prop_name = 'min_ppe'
         self.inputs.new('SvStringsSocket', "MaxPpe").prop_name = 'max_ppe'
         self.inputs.new('SvStringsSocket', "Seed").prop_name = 'seed'
@@ -96,7 +96,7 @@ class SvAdaptivePlotCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
         curve_s = self.inputs['Curve'].sv_get()
         curve_s = ensure_nesting_level(curve_s, 2, data_types = (SvCurve,))
-        samples_s = self.inputs['Samples'].sv_get()
+        samples_s = self.inputs['Segments'].sv_get()
         min_ppe_s = self.inputs['MinPpe'].sv_get()
         max_ppe_s = self.inputs['MaxPpe'].sv_get()
         seed_s = self.inputs['Seed'].sv_get()
