@@ -26,7 +26,7 @@ def _check_all(v_new, vs_old, min_r):
         return True
     return (dist >= min_r)
 
-def field_random_probe(field, bbox, count, threshold=0, proportional=False, field_min=None, field_max=None, min_r=0, seed=0):
+def field_random_probe(field, bbox, count, threshold=0, proportional=False, field_min=None, field_max=None, min_r=0, seed=0, predicate=None):
     """
     Generate random points within bounding box, with distribution controlled (optionally) by a scalar field.
 
@@ -45,6 +45,7 @@ def field_random_probe(field, bbox, count, threshold=0, proportional=False, fiel
       Mandatory if `proportional` is set to True.
     * min_r: minimum distance between generated points. Set to zero to disable this check.
     * seed: random generator seed value.
+    * predicate: additional predicate to check if generated point is valid. Optional.
 
     outputs:
         list of vertices.
@@ -105,6 +106,9 @@ def field_random_probe(field, bbox, count, threshold=0, proportional=False, fiel
             for candidate in candidates:
                 if _check_all(candidate, new_verts + good_verts, min_r):
                     good_verts.append(candidate)
+
+        if predicate is not None:
+            good_verts = [vert for vert in good_verts if predicate(vert)]
 
         new_verts.extend(good_verts)
         done += len(good_verts)

@@ -38,7 +38,7 @@ def _check_all(v_new, vs_old, min_r):
 BATCH_SIZE = 100
 MAX_ITERATIONS = 1000
 
-def populate_surface(surface, field, count, threshold, proportional=False, field_min=None, field_max=None, min_r=0, seed=0):
+def populate_surface(surface, field, count, threshold, proportional=False, field_min=None, field_max=None, min_r=0, seed=0, predicate=None):
     """
     Generate random points on the surface, with distribution controlled (optionally) by scalar field.
 
@@ -56,6 +56,9 @@ def populate_surface(surface, field, count, threshold, proportional=False, field
       surface. Mandatory if `proportional` is set to True.
     * min_r: minimum distance between generated points. Set to zero to disable this check.
     * seed: random generator seed value.
+    * predicate: additional predicate to check if generated point is valid.
+      Takes two arguments: point in UV space and the same point in 3D space.
+      Optional.
 
     outputs: tuple:
     * Coordinates of points in surface's UV space
@@ -122,8 +125,11 @@ def populate_surface(surface, field, count, threshold, proportional=False, field
             good_uvs = []
             for candidate_uv, candidate in zip(candidate_uvs, candidates):
                 if min_r == 0 or _check_all(candidate, new_verts + good_verts, min_r):
-                    good_verts.append(candidate)
-                    good_uvs.append(candidate_uv)
+                    if predicate is not None:
+                        if not predicate(candidate_uv, candidate):
+                            continue
+                    good_verts.append(tuple(candidate))
+                    good_uvs.append(tuple(candidate_uv))
                     done += 1
             new_verts.extend(good_verts)
             new_uv.extend(good_uvs)
