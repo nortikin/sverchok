@@ -7,7 +7,7 @@
 
 import random
 import string
-from itertools import cycle, chain
+from itertools import cycle
 from typing import List, Union
 
 import numpy as np
@@ -15,7 +15,7 @@ import numpy as np
 import bpy
 from mathutils import Matrix
 
-from sverchok.data_structure import updateNode, update_with_kwargs
+from sverchok.data_structure import updateNode, update_with_kwargs, numpy_full_list, repeat_last
 from sverchok.utils.handle_blender_data import correct_collection_length, delete_data_block
 from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh
 
@@ -265,29 +265,32 @@ class SvCurveData(bpy.types.PropertyGroup):
     """For now it is supporting only one spline per curve"""
     curve: bpy.props.PointerProperty(type=bpy.types.Curve)
 
-    def regenerate_curve(self, curve_name: str, vertices: Union[list, np.ndarray], curve_type: str = 'POLY'):
+    def regenerate_curve(self,
+                         curve_name: str,
+                         vertices: Union[List[list], List[np.ndarray]],
+                         spline_type: str = 'POLY',
+                         vertices_radius: Union[List[list], List[np.ndarray]] = None,
+                         close_spline: bool = False,
+                         use_smooth: bool = True,
+                         tilt: Union[List[list], List[np.ndarray]] = None):
+        # Be aware that curve consists multiple splines
         if not self.curve:
             self.curve = bpy.data.curves.new(name=curve_name, type='CURVE')  # type ['CURVE', 'SURFACE', 'FONT']
-            spline = self.curve.splines.new(curve_type)
-            spline.points.add(len(vertices) - 1)
-        elif len(self.curve.splines[0].points) != len(vertices):
+        if len(self.curve.splines) != len(vertices) \
+                or any(len(s.points) != len(v) for s, v in zip(self.curve.splines, vertices)):
+            # if at least on spline has wrong number of points whole list of splines should be recreated
+            # thanks to Blender API
             self.curve.splines.clear()
-            spline = self.curve.splines.new(curve_type)
-            spline.points.add(len(vertices) - 1)
-        else:
-            spline = self.curve.splines[0]
+            [self.curve.splines.new(spline_type) for _ in range(len(vertices))]
+            [s.points.add(len(v) - 1) for s, v in zip(self.curve.splines, vertices)]
 
-        if spline.type != curve_type:
-            spline.type = curve_type
-
-        # flatten vertices array and add W component (X, Y, Z, W), W is responsible for drawing NURBS curves
-        if isinstance(vertices, np.ndarray):
-            w_vertices = np.concatenate((vertices, np.ones((len(vertices), 1), dtype=np.float32)), axis=1)
-            vertices = np.ravel(w_vertices)
-        else:
-            vertices = [co for v in vertices for co in chain(v, [1])]
-
-        spline.points.foreach_set('co', vertices)
+        for s, v, r, t in zip(self.curve.splines, vertices,
+                              repeat_last(vertices_radius or [None]), repeat_last(tilt or [None])):
+            v = np.asarray(v, dtype=np.float32)
+            if r is None:
+                r = np.ones(len(v), dtype=np.float32)
+            r = np.asarray(r, dtype=np.float32)
+            self._regenerate_spline(s, v, spline_type, r, t, close_spline, use_smooth)
 
     def remove_data(self):
         """
@@ -296,6 +299,27 @@ class SvCurveData(bpy.types.PropertyGroup):
         """
         if self.curve:
             delete_data_block(self.curve)
+
+    @staticmethod
+    def _regenerate_spline(spline: bpy.types.Spline,
+                           vertices: np.ndarray,
+                           spline_type: str = 'POLY',
+                           vertices_radius: np.ndarray = None,
+                           tilt: np.ndarray = None,
+                           close_spline: bool = False,
+                           use_smooth: bool = True):
+        spline.type = spline_type
+        spline.use_cyclic_u = close_spline
+        spline.use_smooth = use_smooth
+
+        # flatten vertices array and add W component (X, Y, Z, W), W is responsible for drawing NURBS curves
+        w_vertices = np.concatenate((vertices, np.ones((len(vertices), 1), dtype=np.float32)), axis=1)
+        flatten_vertices = np.ravel(w_vertices)
+        spline.points.foreach_set('co', flatten_vertices)
+        if vertices_radius:
+            spline.points.foreach_set('radius', numpy_full_list(vertices_radius, len(vertices)))
+        if tilt:
+            spline.points.foreach_set('tilt', numpy_full_list(tilt, len(vertices)))
 
 
 class SvViewerNode(BlenderObjects):
@@ -370,6 +394,12 @@ class SvViewerNode(BlenderObjects):
                     collection = bpy.data.collections.new(collection_name)
                     bpy.context.collection.children.link(collection)
                 self.collection = collection
+
+    def draw_label(self):
+        if self.hide:
+            return f"{self.bl_label[:2]}V {self.base_data_name}"
+        else:
+            return self.bl_label
 
 
 class SvObjectNames(bpy.types.PropertyGroup):
