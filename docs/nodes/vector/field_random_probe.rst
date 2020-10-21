@@ -23,6 +23,9 @@ This node has the following inputs:
   generated. Only bounding box of these vertices will be used. This input is
   mandatory.
 * **Count**. The number of points to be generated. The default value is 50.
+* **MinDistance**. Minimum allowable distance between generated points. If set
+  to zero, there will be no restriction on distance between points. Default
+  value is 0.
 * **Threshold**. Threshold value: the node will not generate points in areas
   where the value of scalar field is less than this value. The default value is
   0.5.
