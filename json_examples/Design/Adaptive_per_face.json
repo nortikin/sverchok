@@ -799,13 +799,13 @@
       "Reroute",
       "Output",
       "Viewer Draw Mk3.001",
-      "verts"
+      "Vertices"
     ],
     [
       "Reroute.002",
       "Output",
       "Viewer Draw Mk3.001",
-      "faces"
+      "Polygons"
     ]
   ]
 }

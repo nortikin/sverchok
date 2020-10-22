@@ -830,13 +830,13 @@
       "Reroute",
       "Output",
       "VD Experimental.003",
-      "verts"
+      "Vertices"
     ],
     [
       "Reroute.001",
       "Output",
       "VD Experimental.003",
-      "faces"
+      "Polygons"
     ],
     [
       "Reroute",
