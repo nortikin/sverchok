@@ -252,13 +252,9 @@ class TreeGenerator:
         Returns itself and freezing tree what should prevent tree from updating
         but actually often tree can unfreeze itself in during importing
         """
-        tree.freeze(hard=True)
-        builder = cls(tree.name, log)
-        try:
+        with tree.throttle_update():
+            builder = cls(tree.name, log)
             yield builder
-        finally:
-            # avoiding using tree object directly for crash preventing, probably too cautious
-            builder._tree.unfreeze(hard=True)
 
     def add_node(self, bl_type: str, node_name: str) -> Union[SverchCustomTreeNode, None]:
         """

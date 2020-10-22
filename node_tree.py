@@ -20,6 +20,7 @@
 import sys
 import time
 import textwrap
+from contextlib import contextmanager
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
@@ -90,7 +91,7 @@ class SvNodeTreeCommon(object):
     has_changed: BoolProperty(default=False)  # "True if changes of links in tree was detected"
 
     # for throttle method usage when links are created in the tree via Python
-    skip_tree_update: BoolProperty(default=False)
+    skip_tree_update: BoolProperty(default=False)  # usage only via throttle_update method
     tree_id_memory: StringProperty(default="")  # identifier of the tree, should be used via `tree_id` property
     sv_links = SvLinks()  # cached Python links
     nodes_dict = SvNodesDict()  # cached Python nodes
@@ -162,6 +163,21 @@ class SvNodeTreeCommon(object):
                 if node.is_animatable:
                     animated_nodes.append(node)
         process_from_nodes(animated_nodes)
+
+    @contextmanager
+    def throttle_update(self):
+        """ usage
+        with tree.throttle_update():
+            tree.nodes.new(...)
+            tree.links.new(...)
+        tree should be updated manually if needed
+        """
+        previous_state = self.skip_tree_update
+        self.skip_tree_update = True
+        try:
+            yield self
+        finally:
+            self.skip_tree_update = previous_state
 
 
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
@@ -401,7 +417,7 @@ class UpdateNodes:
         Still this is called from updateNode
         '''
         if self.id_data.bl_idname == "SverchCustomTreeType":
-            if self.id_data.is_frozen():
+            if self.id_data.is_frozen() or self.id_data.skip_tree_update:
                 return
 
             # self.id_data.has_changed = True
