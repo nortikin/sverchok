@@ -56,12 +56,13 @@ class SvAdaptivePlotCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
     count : IntProperty(
             name = "Count",
-            description = "Total number of points",
+            description = "Total number of points; NOTE: with Random mode enabled, actual number of generated points can be smaller than specified here",
             min = 2, default = 50,
             update = updateNode)
 
     random : BoolProperty(
             name = "Random",
+            description = "Distribute points randomly; NOTE: in this mode, if Total Count is specified, actual number of generated points can be less than specified",
             default = False,
             update = update_sockets)
 
