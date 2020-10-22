@@ -316,9 +316,9 @@ class SvCurveData(bpy.types.PropertyGroup):
         w_vertices = np.concatenate((vertices, np.ones((len(vertices), 1), dtype=np.float32)), axis=1)
         flatten_vertices = np.ravel(w_vertices)
         spline.points.foreach_set('co', flatten_vertices)
-        if vertices_radius:
+        if vertices_radius is not None:
             spline.points.foreach_set('radius', numpy_full_list(vertices_radius, len(vertices)))
-        if tilt:
+        if tilt is not None:
             spline.points.foreach_set('tilt', numpy_full_list(tilt, len(vertices)))
 
 

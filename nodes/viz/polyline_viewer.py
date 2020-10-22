@@ -16,7 +16,11 @@ import sverchok.utils.meshes as me
 
 
 class SvPolylineViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
-    """Poly line"""  # todo fix
+    """
+    Triggers: viewer polyline object nurbs NURBS curves splines
+
+    Generate curve objects in viewport
+    """
     bl_idname = 'SvPolylineViewerNode'
     bl_label = 'Polyline Viewer'
     bl_icon = 'MOD_CURVE'
@@ -30,16 +34,21 @@ class SvPolylineViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
     is_lock_origin: bpy.props.BoolProperty(name="Lock Origin", default=True, update=updateNode,
                                            description="If unlock origin can be set manually")
     is_merge: bpy.props.BoolProperty(default=False, update=updateNode, description="Merge all meshes into one object")
-    bevel_depth: bpy.props.FloatProperty(name="Bevel depth", min=0.0, default=0.2, update=updateNode)
-    resolution: bpy.props.IntProperty(min=0, default=3, update=updateNode)
-    curve_type: bpy.props.EnumProperty(items=[(i, i, '') for i in ['NURBS', 'POLY']], update=updateNode)
-    close: bpy.props.BoolProperty(default=False, update=updateNode)
-    caps: bpy.props.BoolProperty(update=updateNode)
+    bevel_depth: bpy.props.FloatProperty(name="Bevel depth", min=0.0, default=0.2, update=updateNode,
+                                         description="Changes the size of the bevel")
+    resolution: bpy.props.IntProperty(name="Resolution", min=0, default=3, update=updateNode,
+                                      description="Alters the smoothness of the bevel")
+    curve_type: bpy.props.EnumProperty(items=[(i, i, '') for i in ['NURBS', 'POLY']], update=updateNode,
+                                       description="Curve type")
+    close: bpy.props.BoolProperty(default=False, update=updateNode, description="Closes generated curves")
+    caps: bpy.props.BoolProperty(update=updateNode, description="Seals the ends of a beveled curve")
     data_kind: bpy.props.StringProperty(default='CURVE')
     use_smooth: bpy.props.BoolProperty(update=updateNode, default=True)
     show_wire: bpy.props.BoolProperty(update=updateNode)
     preview_resolution_u: bpy.props.IntProperty(
-        name="Resolution Preview U", default=2, min=1, max=5, update=updateNode)
+        name="Resolution Preview U", default=2, min=1, max=5, update=updateNode,
+        description="The resolution property defines the number of points that are"
+                    " computed between every pair of control points.")
     apply_matrices_to: bpy.props.EnumProperty(
         items=[(n, n, '', ic, i)for i, (n, ic) in enumerate(zip(['object', 'mesh'], ['OBJECT_DATA', 'MESH_DATA']))],
         description='Apply matrices to', update=updateNode)
@@ -66,16 +75,16 @@ class SvPolylineViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
         row.operator('node.sv_create_material', text='', icon='ADD')
 
         row = col.row(align=True)
-        row.active = False if \
+        row_lock = row.row(align=True)
+        row_lock.active = False if \
             not self.is_merge and self.inputs['matrix'].is_linked and self.apply_matrices_to == 'object' else True
-        row.prop(self, 'is_lock_origin', text="Origin", icon='LOCKED' if self.is_lock_origin else 'UNLOCKED')
+        row_lock.prop(self, 'is_lock_origin', text="Origin", icon='LOCKED' if self.is_lock_origin else 'UNLOCKED')
         row.prop(self, 'is_merge', text='Merge', toggle=1, icon='AUTOMERGE_ON' if self.is_merge else 'AUTOMERGE_OFF')
 
         col_dimensions = col.column(align=True)
         col_dimensions.row(align=True).prop(self, 'curve_dimensions', expand=True)
-        if self.curve_dimensions == '3D':
-            col_dimensions.prop(self, 'bevel_depth')
-            col_dimensions.prop(self, 'resolution', text='subdiv')
+        col_dimensions.prop(self, 'bevel_depth')
+        col_dimensions.prop(self, 'resolution')
 
         row = col.row(align=True)
         row.prop(self, 'curve_type', expand=True)
@@ -106,6 +115,8 @@ class SvPolylineViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
         if not socket.is_linked:
             row.prop_search(socket, 'object_ref_pointer', bpy.data, 'objects', 
                             text=f'{socket.name}. {socket.objects_number if socket.objects_number else ""}')
+        else:
+            row.label(text=f'{socket.name}. {socket.objects_number if socket.objects_number else ""}')
         row = row.row(align=True)
         row.ui_units_x = 0.6
         row.prop(self, 'caps', text='C', toggle=True)
@@ -194,6 +205,10 @@ class SvPolylineViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
         [setattr(prop.obj, 'show_wire', self.show_wire) for prop in self.object_data]
 
         self.outputs['Objects'].sv_set([obj_data.obj for obj_data in self.object_data])
+
+    def sv_copy(self, other):
+        super().sv_copy(other)
+        self.curve_data.clear()
 
 
 register, unregister = bpy.utils.register_classes_factory([SvPolylineViewerNode])
