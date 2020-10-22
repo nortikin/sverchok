@@ -7,12 +7,72 @@
 
 import numpy as np
 import numpy.random
-from math import ceil, isnan
+from math import ceil, floor, isnan
+import random
 
 from sverchok.utils.logging import debug, info, exception
 from sverchok.utils.curve import SvCurve, SvCurveLengthSolver
 
-def populate_curve(curve, samples_t, by_length = False, by_curvature = True, min_ppe = 1, max_ppe = 5, curvature_clip = 100, seed = None):
+class CurvePopulationController(object):
+    def set_factors(self, factor_range, factors):
+        raise Exception("Not implemented")
+
+    def get_points_count(self, i):
+        raise Exception("Not implemented")
+
+class MinMaxPerSegment(CurvePopulationController):
+    def __init__(self, min_ppe, max_ppe):
+        self.min_ppe = min_ppe
+        self.max_ppe = max_ppe
+
+    def set_factors(self, factor_range, factors, include_ends):
+        self.factors = factors
+        self.factor_range = factor_range
+        self.include_ends = include_ends
+
+    def get_points_count(self, i):
+        factor = self.factors[i]
+        if self.factor_range == 0 or isnan(factor):
+            ppe = (self.min_ppe + self.max_ppe)/2
+        else:
+            ppe_range = self.max_ppe - self.min_ppe
+            ppe = self.min_ppe + ppe_range * factor
+
+        if self.include_ends:
+            ppe += 2
+        return ppe
+
+class TotalCount(CurvePopulationController):
+    def __init__(self, total_count):
+        self.total_count = total_count
+
+    def set_factors(self, factor_range, factors, include_ends):
+        self.include_ends = include_ends
+        count = self.total_count
+        #if include_ends:
+        count -= len(factors) + 1
+        self.factors = factors
+        self.factor_range = factor_range
+        self.points_per_segment = [0 for _ in range(len(factors))]
+        total_factor = sum(factors)
+        weights = [factor / total_factor for factor in factors]
+        self.points_per_segment = [floor(w * count) for w in weights]
+        done = sum(self.points_per_segment)
+        while done < count:
+            max_factor_index = max(range(len(factors)), key = factors.__getitem__)
+            self.points_per_segment[max_factor_index] += 1
+            done += 1
+
+    def get_points_count(self, idx):
+        ppe = self.points_per_segment[idx]
+        if self.include_ends:
+            ppe += 2
+        return ppe
+
+def populate_curve(curve, samples_t, by_length = False, by_curvature = True, population_controller = None, curvature_clip = 100, seed = None):
+    if population_controller is None:
+        population_controller = MinMaxPerSegment(1, 5)
+
     t_min, t_max = curve.get_u_bounds()
     t_range = np.linspace(t_min, t_max, num=samples_t)
 
@@ -58,9 +118,9 @@ def populate_curve(curve, samples_t, by_length = False, by_curvature = True, min
     if max_factor != 0:
         factors = factors / max_factor
 
-    ppe_range = max_ppe - min_ppe
-
     need_random = seed is not None
+    population_controller.set_factors(factor_range, factors, include_ends=not need_random)
+
     if seed == 0:
         seed = 12345
     if need_random:
@@ -69,11 +129,7 @@ def populate_curve(curve, samples_t, by_length = False, by_curvature = True, min
     for i in range(samples_t - 1):
         t1 = t_range[i]
         t2 = t_range[i+1]
-        factor = factors[i]
-        if factor_range == 0 or isnan(factor):
-            ppe = (min_ppe + max_ppe)/2
-        else:
-            ppe = min_ppe + ppe_range * factor
+        ppe = population_controller.get_points_count(i)
         ppe = ceil(ppe)
         if ppe > 0:
             if need_random:
@@ -83,7 +139,7 @@ def populate_curve(curve, samples_t, by_length = False, by_curvature = True, min
                 if t_r[-1] != t2:
                     t_r.append(t2)
             else:
-                space = np.linspace(t1, t2, num=ppe+2, endpoint=True)
+                space = np.linspace(t1, t2, num=ppe, endpoint=True)
                 #debug("Space: %s - %s (%s): %s", t1, t2, ppe, space)
                 t_r = space[1:].tolist()
             new_t.extend(t_r)

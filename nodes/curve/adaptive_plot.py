@@ -7,7 +7,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve
-from sverchok.utils.adaptive_curve import populate_curve
+from sverchok.utils.adaptive_curve import populate_curve, MinMaxPerSegment, TotalCount
 
 class SvAdaptivePlotCurveNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -21,8 +21,26 @@ class SvAdaptivePlotCurveNode(bpy.types.Node, SverchCustomTreeNode):
     sample_size : IntProperty(
             name = "Segments",
             default = 50,
-            min = 4,
+            min = 3,
             update = updateNode)
+
+    @throttled
+    def update_sockets(self, context):
+        self.inputs['Seed'].hide_safe = not self.random
+        self.inputs['Count'].hide_safe = self.gen_mode != 'TOTAL'
+        self.inputs['MinPpe'].hide_safe = self.gen_mode == 'TOTAL'
+        self.inputs['MaxPpe'].hide_safe = self.gen_mode == 'TOTAL'
+
+    modes = [
+            ('TOTAL', "Total count", "Specify total number of points to generate", 0),
+            ('SEGMENT', "Per segment", "Specify minimum and maximum number of points per segment", 1)
+        ]
+
+    gen_mode : EnumProperty(
+            name = "Points count",
+            items = modes,
+            default = 'TOTAL',
+            update = update_sockets)
 
     min_ppe : IntProperty(
             name = "Min per segment",
@@ -36,9 +54,11 @@ class SvAdaptivePlotCurveNode(bpy.types.Node, SverchCustomTreeNode):
             min = 1, default = 5,
             update = updateNode)
 
-    @throttled
-    def update_sockets(self, context):
-        self.inputs['Seed'].hide_safe = not self.random
+    count : IntProperty(
+            name = "Count",
+            description = "Total number of points",
+            min = 2, default = 50,
+            update = updateNode)
 
     random : BoolProperty(
             name = "Random",
@@ -72,6 +92,7 @@ class SvAdaptivePlotCurveNode(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, 'by_curvature', toggle=True)
         row.prop(self, 'by_length', toggle=True)
+        layout.prop(self, 'gen_mode')
         layout.prop(self, 'random', toggle=True)
 
     def draw_buttons_ext(self, context, layout):
@@ -84,6 +105,7 @@ class SvAdaptivePlotCurveNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Segments").prop_name = 'sample_size'
         self.inputs.new('SvStringsSocket', "MinPpe").prop_name = 'min_ppe'
         self.inputs.new('SvStringsSocket', "MaxPpe").prop_name = 'max_ppe'
+        self.inputs.new('SvStringsSocket', "Count").prop_name = 'count'
         self.inputs.new('SvStringsSocket', "Seed").prop_name = 'seed'
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
@@ -97,6 +119,7 @@ class SvAdaptivePlotCurveNode(bpy.types.Node, SverchCustomTreeNode):
         curve_s = self.inputs['Curve'].sv_get()
         curve_s = ensure_nesting_level(curve_s, 2, data_types = (SvCurve,))
         samples_s = self.inputs['Segments'].sv_get()
+        count_s = self.inputs['Count'].sv_get()
         min_ppe_s = self.inputs['MinPpe'].sv_get()
         max_ppe_s = self.inputs['MaxPpe'].sv_get()
         seed_s = self.inputs['Seed'].sv_get()
@@ -104,16 +127,20 @@ class SvAdaptivePlotCurveNode(bpy.types.Node, SverchCustomTreeNode):
         verts_out = []
         edges_out = []
         ts_out = []
-        inputs = zip_long_repeat(curve_s, samples_s, min_ppe_s, max_ppe_s, seed_s)
-        for curves, samples_i, min_ppe_i, max_ppe_i, seed_i in inputs:
-            objects = zip_long_repeat(curves, samples_i, min_ppe_i, max_ppe_i, seed_i)
-            for curve, samples, min_ppe, max_ppe, seed in objects:
+        inputs = zip_long_repeat(curve_s, samples_s, min_ppe_s, max_ppe_s, count_s, seed_s)
+        for curves, samples_i, min_ppe_i, max_ppe_i, count_i, seed_i in inputs:
+            objects = zip_long_repeat(curves, samples_i, min_ppe_i, max_ppe_i, count_i, seed_i)
+            for curve, samples, min_ppe, max_ppe, count, seed in objects:
                 if not self.random:
                     seed = None
-                new_t = populate_curve(curve, samples,
+                if self.gen_mode == 'SEGMENT':
+                    controller = MinMaxPerSegment(min_ppe, max_ppe)
+                else:
+                    controller = TotalCount(count)
+                new_t = populate_curve(curve, samples+1,
                             by_length = self.by_length,
                             by_curvature = self.by_curvature,
-                            min_ppe = min_ppe, max_ppe = max_ppe,
+                            population_controller = controller,
                             curvature_clip = self.curvature_clip,
                             seed = seed)
                 n = len(new_t)
