@@ -95,12 +95,15 @@ class RandomVectorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', "Random")
 
     def rclick_menu(self, context, layout):
-        layout.prop(self, "output_numpy", toggle=True)
-        layout.prop_menu_enum(self, "correct_output")
+        layout.prop_menu_enum(self, 'list_match')
+        layout.prop(self, 'output_numpy', toggle=True)
+        layout.prop_menu_enum(self, 'correct_output')
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
+        layout.prop(self, 'list_match')
         layout.prop(self, 'output_numpy')
+        layout.prop(self, 'correct_output')
 
     def process(self):
 
