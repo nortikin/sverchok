@@ -47,11 +47,12 @@ class JSONImporter:
         else:
             warning(f'File should have .zip or .json extension, got ".{path.rsplit(".")[-1]}" instead')
 
-    def import_into_tree(self, tree: SverchCustomTree):
+    def import_into_tree(self, tree: SverchCustomTree, print_log: bool = True):
         """Import json structure into given tree and update it"""
         root_tree_builder = TreeImporter01(tree, self._structure, self._fails_log)
         root_tree_builder.import_tree()
-        self._fails_log.report_log_result()
+        if print_log:
+            self._fails_log.report_log_result()
 
         # Update tree
         build_update_list(tree)

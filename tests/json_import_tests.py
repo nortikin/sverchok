@@ -9,7 +9,7 @@ class ScriptUvImportTest(SverchokTestCase):
         with self.temporary_node_tree("ImportedTree") as new_tree:
             path = self.get_reference_file_path("script_uv.json")
             importer = JSONImporter.init_from_path(path)
-            importer.import_into_tree(new_tree)
+            importer.import_into_tree(new_tree, print_log=False)
             if importer.has_fails:
                 raise (ImportError(importer.fail_massage))
 
@@ -28,7 +28,7 @@ class ProfileImportTest(SverchokTestCase):
     def test_profile_import(self):
         with self.temporary_node_tree("ImportedTree") as new_tree:
             importer = JSONImporter.init_from_path(self.get_reference_file_path("profile.json"))
-            importer.import_into_tree(new_tree)
+            importer.import_into_tree(new_tree, print_log=False)
             if importer.has_fails:
                 raise (ImportError(importer.fail_massage))
 
@@ -38,7 +38,7 @@ class MeshExprImportTest(SverchokTestCase):
     def test_mesh_expr_import(self):
         with self.temporary_node_tree("ImportedTree") as new_tree:
             importer = JSONImporter.init_from_path(self.get_reference_file_path("mesh.json"))
-            importer.import_into_tree(new_tree)
+            importer.import_into_tree(new_tree, print_log=False)
             if importer.has_fails:
                 raise (ImportError(importer.fail_massage))
 
@@ -48,7 +48,7 @@ class MonadImportTest(SverchokTestCase):
     def test_monad_import(self):
         with self.temporary_node_tree("ImportedTree") as new_tree:
             importer = JSONImporter.init_from_path(self.get_reference_file_path("monad_1.json"))
-            importer.import_into_tree(new_tree)
+            importer.import_into_tree(new_tree, print_log=False)
             if importer.has_fails:
                 raise (ImportError(importer.fail_massage))
 
@@ -70,7 +70,7 @@ UNITTEST_SKIPLIST = [
     "SverchokLogo.json" # Blender 2.90 has a crash in delaunay_2d_cdt on this file :/
 ]
 
-@batch_only
+# @batch_only
 class ExamplesImportTest(SverchokTestCase):
     def test_import_examples(self):
 
@@ -100,7 +100,7 @@ class ExamplesImportTest(SverchokTestCase):
                         # that will just take time anyway
                         new_tree.sv_process = False
                         importer = JSONImporter.init_from_path(path)
-                        importer.import_into_tree(new_tree)
+                        importer.import_into_tree(new_tree, print_log=False)
                         if importer.has_fails:
                             raise ImportError(importer.fail_massage)
                         for node in new_tree.nodes:
