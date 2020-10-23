@@ -31,7 +31,7 @@ from copy import deepcopy
 from cmath import exp
 
 
-class SvNeuro_Elman:
+class SvNeuroElman:
     """ A set of functions for working with a neuron """
 
     def init_w(self, number, ext, treshold):
@@ -50,109 +50,115 @@ class SvNeuro_Elman:
         """ The function calculates the output values depending on the input """
 
         _list_in = [signal_a/maxim for signal_a in list_in]
-        outA = self.layerA(_list_in, prop)
-        outB = self.layerB(outA, prop)
-        outC = self.layerC(outB, prop)
+        out_a = self.layer_a(_list_in, prop)
+        out_b = self.layer_b(out_a, prop)
+        out_c = self.layer_c(out_b, prop)
 
         if is_learning:
             len_etalon = len(etalon)
             if len_etalon < prop['InC']:
                 d = prop['InC'] - len_etalon
                 etalon = etalon + [0] * d
-            etalon_ = list(map(lambda x: x / maxim, etalon))
-            self.learning(outA, outB, outC, etalon_, maxim, prop)
+            _etalon = list(map(lambda x: x / maxim, etalon))
+            self.learning(out_a, out_b, out_c, _etalon, maxim, prop)
 
-        outC_ = list(map(lambda x: x * maxim, outC))
-        return outC_
+        _out_c = list(map(lambda x: x * maxim, out_c))
+        return _out_c
 
-    def layerA(self, list_in, prop):
-        outA = deepcopy(list_in)
-        len_outa = len(outA)
+    def layer_a(self, list_in, prop):
+        out_a = deepcopy(list_in)
+        len_outa = len(out_a)
         if len_outa < prop['InA']:
             ext_list_in = prop['InA'] - len_outa
-            outA.extend([1] * ext_list_in)
-        return outA
+            out_a.extend([1] * ext_list_in)
+        return out_a
 
-    def layerB(self, outA, prop):
-        outB = [0] * prop['InB']
+    def layer_b(self, outA, prop):
+        out_b = [0] * prop['InB']
         for idx_a, weights_a in enumerate(prop['wA']):
             for idx_b, wa in enumerate(weights_a):
                 signal_a = wa * outA[idx_a]
-                outB[idx_b] += signal_a
+                out_b[idx_b] += signal_a
 
-        outB_ = [self.sigmoida(signal_b) for signal_b in outB]
-        return outB_
+        _out_b = [self.sigmoida(signal_b) for signal_b in out_b]
+        return _out_b
 
-    def layerC(self, outB, prop):
-        outC = [0] * prop['InC']
+    def layer_c(self, outB, prop):
+        out_c = [0] * prop['InC']
         for idx_b, weights_b in enumerate(prop['wB']):
             for idx_c, wb in enumerate(weights_b):
                 signal_b = wb * outB[idx_b]
-                outC[idx_c] += signal_b
-        return outC
+                out_c[idx_c] += signal_b
+        return out_c
 
     # **********************
-    def sigma(self, ej, f_vj):
+    @staticmethod
+    def sigma(ej, f_vj):
         return ej * f_vj
 
-    def f_vj_sigmoida(self, a, yj):
+    @staticmethod
+    def f_vj_sigmoida(a, yj):
         if a == 0:
             b = 1
         else:
             b = 1 / a
         return b * yj * (1 - yj)
 
-    def func_ej_last(self, dj, yj):
+    @staticmethod
+    def func_ej_last(dj, yj):
         return dj - yj
 
-    def func_ej_inner(self, Esigmak, wkj):
-        return Esigmak * wkj
+    @staticmethod
+    def func_ej_inner(e_sigma_k, wkj):
+        return e_sigma_k * wkj
 
-    def delta_wji(self, sigmaj, yi, prop):
-        return prop['k_learning'] * sigmaj * yi
+    @staticmethod
+    def delta_wji(sigma_j, yi, prop):
+        return prop['k_learning'] * sigma_j * yi
 
-    def func_w(self, w, dw, prop):
+    @staticmethod
+    def func_w(w, dw, prop):
         return (1 - prop['k_lambda']) * w + dw
 
-    def learning(self, outA, outB, outC, etalon, maxim, prop):
+    def learning(self, out_a, out_b, out_c, etalon, maxim, prop):
         weights_a = deepcopy(prop['wA'])
         weights_b = deepcopy(prop['wB'])
-        outA_ = deepcopy(outA)
-        for idx, native_signal_a in enumerate(outA):
+        _out_a = deepcopy(out_a)
+        for idx, native_signal_a in enumerate(out_a):
             processed_signal_a = deepcopy(native_signal_a)
-            outB_ = deepcopy(outB)
-            outC_ = deepcopy(outC)
-            for step in range(prop['cycles']):
+            _out_b = deepcopy(out_b)
+            _out_c = deepcopy(out_c)
+            for _ in range(prop['cycles']):
                 in_b = [0] * prop['InB']
                 in_a = [0] * prop['InA']
-                for idc, signal_c in enumerate(outC_):
+                for idc, signal_c in enumerate(_out_c):
                     c_ = self.sigmoida(signal_c)
-                    eC = self.func_ej_last(etalon[idc], signal_c)
-                    f_vC = self.f_vj_sigmoida(prop['InC'], c_)
-                    sigmaC = self.sigma(eC, f_vC)
+                    e_c = self.func_ej_last(etalon[idc], signal_c)
+                    f_vc = self.f_vj_sigmoida(prop['InC'], c_)
+                    sigma_c = self.sigma(e_c, f_vc)
 
-                    for idb, signal_b in enumerate(outB_):
-                        dwji = self.delta_wji(sigmaC, signal_b, prop)
+                    for idb, signal_b in enumerate(_out_b):
+                        dwji = self.delta_wji(sigma_c, signal_b, prop)
                         weights_b[idb][idc] = self.func_w(weights_b[idb][idc], dwji, prop)
-                        in_b[idb] += sigmaC * dwji
+                        in_b[idb] += sigma_c * dwji
 
-                for idb, signal_b in enumerate(outB_):
-                    f_vB = self.f_vj_sigmoida(prop['InB'], signal_b)
-                    sigmaB = self.sigma(in_b[idb], f_vB)
+                for idb, signal_b in enumerate(_out_b):
+                    f_vb = self.f_vj_sigmoida(prop['InB'], signal_b)
+                    sigma_b = self.sigma(in_b[idb], f_vb)
 
-                    for ida, signal_a in enumerate(outA):
-                        dwji = self.delta_wji(sigmaB, signal_a, prop)
+                    for ida, signal_a in enumerate(out_a):
+                        dwji = self.delta_wji(sigma_b, signal_a, prop)
                         weights_a[ida][idb] = self.func_w(weights_a[ida][idb], dwji, prop)
-                        in_a[ida] += sigmaB * dwji
+                        in_a[ida] += sigma_b * dwji
 
                 processed_signal_a -= prop['epsilon'] * processed_signal_a * (maxim - processed_signal_a)
                 absdx = abs(native_signal_a - processed_signal_a)
                 if absdx <= prop['trashold'] or absdx > abs(maxim / 2):
                     break
-                outA_[idx] = processed_signal_a
+                _out_a[idx] = processed_signal_a
 
-                outB_ = self.layerB(outA_, prop)
-                outC_ = self.layerC(outB, prop)
+                _out_b = self.layer_b(_out_a, prop)
+                _out_c = self.layer_c(out_b, prop)
 
         prop['wA'] = weights_a
         prop['wB'] = weights_b
@@ -226,7 +232,7 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
         handle = handle_read(handle_name)
         props = handle[1]
         if not handle[0]:
-            elman = SvNeuro_Elman()
+            elman = SvNeuroElman()
             props = {'InA': 2,
                      'InB': 5,
                      'InC': 1,
