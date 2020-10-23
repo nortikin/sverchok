@@ -1071,11 +1071,8 @@ def throttle_tree_update(node):
     that's it.
 
     """
-    try:
-        node.id_data.skip_tree_update = True
+    with node.id_data.throttle_update():
         yield node
-    finally:
-        node.id_data.skip_tree_update = False
 
 
 ##############################################################

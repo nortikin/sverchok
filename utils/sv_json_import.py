@@ -47,11 +47,12 @@ class JSONImporter:
         else:
             warning(f'File should have .zip or .json extension, got ".{path.rsplit(".")[-1]}" instead')
 
-    def import_into_tree(self, tree: SverchCustomTree):
+    def import_into_tree(self, tree: SverchCustomTree, print_log: bool = True):
         """Import json structure into given tree and update it"""
         root_tree_builder = TreeImporter01(tree, self._structure, self._fails_log)
         root_tree_builder.import_tree()
-        self._fails_log.report_log_result()
+        if print_log:
+            self._fails_log.report_log_result()
 
         # Update tree
         build_update_list(tree)
@@ -252,13 +253,9 @@ class TreeGenerator:
         Returns itself and freezing tree what should prevent tree from updating
         but actually often tree can unfreeze itself in during importing
         """
-        tree.freeze(hard=True)
-        builder = cls(tree.name, log)
-        try:
+        with tree.throttle_update():
+            builder = cls(tree.name, log)
             yield builder
-        finally:
-            # avoiding using tree object directly for crash preventing, probably too cautious
-            builder._tree.unfreeze(hard=True)
 
     def add_node(self, bl_type: str, node_name: str) -> Union[SverchCustomTreeNode, None]:
         """

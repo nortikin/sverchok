@@ -12,7 +12,7 @@ class ScriptUvExportTest(ReferenceTreeTestCase):
     def test_script_uv_export(self):
         export_result = JSONExporter.get_tree_structure(self.tree)
         importer = JSONImporter(export_result)
-        importer.import_into_tree(self.tree)
+        importer.import_into_tree(self.tree, print_log=False)
         if importer.has_fails:
             raise(ImportError(importer.fail_massage))
 
@@ -36,7 +36,7 @@ class ProfileExportTest(ReferenceTreeTestCase):
 
         export_result = JSONExporter.get_tree_structure(self.tree)
         importer = JSONImporter(export_result)
-        importer.import_into_tree(self.tree)
+        importer.import_into_tree(self.tree, print_log=False)
         if importer.has_fails:
             raise(ImportError(importer.fail_massage))
 
@@ -53,7 +53,7 @@ class MeshExprExportTest(ReferenceTreeTestCase):
     def test_mesh_expr_export(self):
         export_result = JSONExporter.get_tree_structure(self.tree)
         importer = JSONImporter(export_result)
-        importer.import_into_tree(self.tree)
+        importer.import_into_tree(self.tree, print_log=False)
         if importer.has_fails:
             raise(ImportError(importer.fail_massage))
 
@@ -70,7 +70,7 @@ class MonadExportTest(ReferenceTreeTestCase):
     def test_monad_export(self):
         export_result = JSONExporter.get_tree_structure(self.tree)
         importer = JSONImporter(export_result)
-        importer.import_into_tree(self.tree)
+        importer.import_into_tree(self.tree, print_log=False)
         if importer.has_fails:
             raise(ImportError(importer.fail_massage))
 
@@ -86,7 +86,7 @@ class ViewerTextExportTest(ReferenceTreeTestCase):
     def test_textview_expr_export(self):
         export_result = JSONExporter.get_tree_structure(self.tree)
         importer = JSONImporter(export_result)
-        importer.import_into_tree(self.tree)
+        importer.import_into_tree(self.tree, print_log=False)
         if importer.has_fails:
             raise(ImportError(importer.fail_massage))
 
@@ -98,6 +98,6 @@ class ListJoinImportTest(ReferenceTreeTestCase):
     def test_list_join_node_import(self):
         export_result = JSONExporter.get_tree_structure(self.tree)
         importer = JSONImporter(export_result)
-        importer.import_into_tree(self.tree)
+        importer.import_into_tree(self.tree, print_log=False)
         if importer.has_fails:
             raise(ImportError(importer.fail_massage))
