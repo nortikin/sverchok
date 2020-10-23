@@ -335,18 +335,21 @@ class UpdateNodes:
         CurrentEvents.new_event(BlenderEventsTypes.add_node, self)
         ng = self.id_data
 
-        ng.freeze()
-        ng.nodes_dict.load_node(self)
-        if hasattr(self, "sv_init"):
+        if ng.bl_idname == 'SvGroupTree':
+            self.sv_init(context)
+        else:
+            ng.freeze()
+            ng.nodes_dict.load_node(self)
+            if hasattr(self, "sv_init"):
 
-            try:
-                self.sv_init(context)
-            except Exception as err:
-                print('nodetree.node.sv_init failure - stare at the error message below')
-                sys.stderr.write('ERROR: %s\n' % str(err))
+                try:
+                    self.sv_init(context)
+                except Exception as err:
+                    print('nodetree.node.sv_init failure - stare at the error message below')
+                    sys.stderr.write('ERROR: %s\n' % str(err))
 
-        self.set_color()
-        ng.unfreeze()
+            self.set_color()
+            ng.unfreeze()
 
     def free(self):
         """
