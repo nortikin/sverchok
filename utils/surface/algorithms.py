@@ -1075,7 +1075,7 @@ def blend_nurbs_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2):
 
     if fixed_value_1 == bounds_1[fixed_axis_1][0]:
         sign_1 = -1
-    elif fixed_value_2 == bounds_1[fixed_axis_1][1]:
+    elif fixed_value_1 == bounds_1[fixed_axis_1][1]:
         sign_1 = 1
     else:
         raise UnsupportedSurfaceTypeException("not a boundary curve")
@@ -1113,7 +1113,7 @@ def blend_nurbs_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2):
     vectors_1 = (boundary_1 - next_1)
     vectors_2 = (boundary_2 - next_2)
 
-    midpoints_1 = boundary_1 - bulge1*vectors_1
+    midpoints_1 = boundary_1 + bulge1*vectors_1
     midpoints_2 = boundary_2 + bulge2*vectors_2
 
     controls = np.stack((boundary_1, midpoints_1, midpoints_2, boundary_2))
