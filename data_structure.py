@@ -89,7 +89,7 @@ def repeat_last(lst):
     and then keep repeating the last element,
     use with terminating input
     """
-    last = [lst[-1]] if lst else []
+    last = [lst[-1]] if len(lst) else []  # len(lst) in case of numpy arrays
     yield from chain(lst, cycle(last))
 
 

@@ -542,7 +542,7 @@
     ---
     SvMeshViewer
     SvCurveViewerNodeV28
-    SvPolylineViewerNodeV28
+    SvPolylineViewerNode
     SvTypeViewerNodeV28
     SvSkinViewerNodeV28
     SvMetaballOutNode
