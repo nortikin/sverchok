@@ -61,7 +61,7 @@ class TreeWalkTest(SverchokTestCase):
         with self.subTest(msg="Go backward, multiple nodes"):
             node_indexes = (n.id for n in self.tree.bfs_walk([self.tree.nodes[i] for i in [4, 6]],
                                                              direction='BACKWARD'))
-            self.assertCountEqual(node_indexes, [4, 3, 2, 1, 5, 9, 8, 10])
+            self.assertCountEqual(node_indexes, [6, 4, 3, 2, 1, 5, 9, 8, 10])
 
     def test_input_output_nodes(self):
         with self.subTest(msg="Input nodes search"):

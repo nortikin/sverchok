@@ -28,16 +28,21 @@ class Tree(ABC):
         return [node for node in self.nodes.values() if node.is_output]
 
     @staticmethod
-    def bfs_walk(nodes: List[Node], direction: str = 'FORWARD') -> Generator[Node]:  # todo not for graphs
+    def bfs_walk(nodes: List[Node], direction: str = 'FORWARD') -> Generator[Node]:
         """Forward walk from the current node, it will visit all next nodes"""
-        # https://en.wikipedia.org/wiki/Tree_traversal#Breadth-first_search
+        # https://en.wikipedia.org/wiki/Breadth-first_search
         waiting_nodes = deque(nodes)
+        discovered = set(nodes)
+
         safe_counter = count()
         max_node_number = 20000
         while waiting_nodes:
             node = waiting_nodes.popleft()
-            waiting_nodes.extend(node.next_nodes if direction == 'FORWARD' else node.last_nodes)
             yield node
+            for next_node in (node.next_nodes if direction == 'FORWARD' else node.last_nodes):
+                if next_node not in discovered:
+                    waiting_nodes.append(next_node)
+                    discovered.add(next_node)
 
             if next(safe_counter) > max_node_number:
                 raise RecursionError(f'The tree has either more then={max_node_number} nodes '
@@ -45,6 +50,7 @@ class Tree(ABC):
 
     @staticmethod
     def dfs_walk(nodes: List[Node], direction: str = 'FORWARD') -> Generator:
+        # https://en.wikipedia.org/wiki/Depth-first_search
         stack = nodes
         visited = set()
 
