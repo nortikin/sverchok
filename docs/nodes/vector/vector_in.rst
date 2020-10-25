@@ -25,6 +25,12 @@ In the N-Panel (and on the right-click menu) you can find:
 
 **Implementation**: Python or NumPy. Python is the default and is usually faster if you input regular lists and want to get regular list. The NumPy implementation will be faster if you are using/getting lists of NumPy arrays.
 
+**Match List**: Define how list with different lengths should be matched ('Short', 'Repeat Last' or 'Cycle')
+
+**Simplify Output**: Method to keep output data suitable for most of the rest of the Sverchok nodes
+  - None: Do not perform any change on the data. Only for advanced users
+  - Flat: It will flat the output to keep vectors list in Level 3 (regular vector list)
+
 **Output NumPy**: Get NumPy arrays in stead of regular lists.
 
 Outputs
