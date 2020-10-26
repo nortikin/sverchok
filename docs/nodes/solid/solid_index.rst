@@ -46,4 +46,5 @@ Solid
    is_closed
    refine
    validate
+   make_compound
    solid_viewer
