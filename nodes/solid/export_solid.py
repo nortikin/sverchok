@@ -15,18 +15,7 @@ else:
 
     from FreeCAD import Part
 
-    from sverchok.utils.curve.freecad import curve_to_freecad
-    from sverchok.utils.surface.freecad import surface_to_freecad
-
-    def make_solid(ob):
-        if isinstance(ob, Part.Shape):
-            return ob
-        elif isinstance(ob, SvCurve):
-            return [c.curve.toShape() for c in curve_to_freecad(ob)]
-        elif isinstance(ob, SvSurface):
-            return surface_to_freecad(ob, make_face=True).face
-        else:
-            raise Exception(f"Unknown data type in input: {ob}")
+    from sverchok.utils.solid import to_solid
 
     class SvExportSolidMk2Operator(bpy.types.Operator):
 
@@ -56,7 +45,8 @@ else:
             if not base_name:
                 base_name = "sv_solid"
             for i, object in enumerate(objects):
-                shape = map_recursive(make_solid, object, data_types=(Part.Shape, SvCurve, SvSurface))
+                shape = map_recursive(to_solid, object, data_types=(Part.Shape, SvCurve, SvSurface))
+                print("Exporting", shape)
                 if isinstance(shape, (list, tuple)):
                     shape = flatten_data(shape, data_types=(Part.Shape, SvCurve, SvSurface))
                 if isinstance(shape, (list,tuple)):
