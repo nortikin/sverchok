@@ -70,28 +70,44 @@ class Tree(ABC):
 
     @staticmethod
     def sorted_walk(to_nodes: List[Node]) -> Generator[Node]:
-        stack = to_nodes
-        discovered = set(to_nodes)  # gray color
+        # https://en.wikipedia.org/wiki/Topological_sorting
+        stack = []
+        discovered = set()  # gray color
         visited = set()  # black color
 
         safe_counter = count()
         max_node_number = 20000
-        while stack:
-            node = stack[-1]
-            next_visited = []
-            for next_node in node.last_nodes:
-                next_visited.append(True if next_node in visited else False)
-                if next_node not in discovered and next_node not in visited:
-                    stack.append(next_node)
-                    visited.add(next_node)
-            if not next_visited or all(next_visited):
-                stack.pop()
-                yield node
-                visited.add(node)
 
-            if next(safe_counter) > max_node_number:
-                raise RecursionError(f'The tree has either more then={max_node_number} nodes '
-                                     f'or most likely it is circular')
+        for to_node in to_nodes:
+            if to_node in visited:
+                continue
+            else:
+                stack.append(to_node)
+                discovered.add(to_node)
+
+            while stack:
+                node = stack[-1]
+                next_undiscovered_node = None
+                for next_node in node.last_nodes:
+                    if next_node in discovered:
+                        raise RecursionError(f'The tree is cycled')
+                    if next_node not in visited:
+                        next_undiscovered_node = next_node
+                        break
+
+                if next_undiscovered_node is not None:
+                    stack.append(next_undiscovered_node)
+                    discovered.add(next_undiscovered_node)
+                else:
+                    # last node in stack does not have next nodes or all of them are visited
+                    stack.pop()
+                    yield node
+                    visited.add(node)
+                    discovered.remove(node)
+
+                if next(safe_counter) > max_node_number:
+                    raise RuntimeError(f'The tree has either more then={max_node_number} nodes '
+                                       f'or most likely it is circular')
 
 
 class Node(ABC):

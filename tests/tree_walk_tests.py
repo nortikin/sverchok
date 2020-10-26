@@ -31,6 +31,26 @@ class TreeWalkTest(SverchokTestCase):
             nodes[node_id].next_nodes.extend(nodes[i] for i in outputs)
         self.tree.nodes.update(nodes)
 
+        self.cycle_tree = Tree()
+        # 5-->-          ->--6
+        #      \       /
+        # 1-->--2-->--3-->--4
+        #  \               /
+        #   -----<--------
+        nodes_relations = {
+            1: ([4], [2]),
+            2: ([1, 5], [3]),
+            3: ([2], [4, 6]),
+            4: ([3], [1]),
+            5: ([], [2]),
+            6: ([3], [])
+        }
+        nodes = {n_id: Node(n_id) for n_id in nodes_relations}
+        for node_id, (inputs, outputs) in nodes_relations.items():
+            nodes[node_id].last_nodes.extend(nodes[i] for i in inputs)
+            nodes[node_id].next_nodes.extend(nodes[i] for i in outputs)
+        self.cycle_tree.nodes.update(nodes)
+
     def test_dfs_walk(self):
         with self.subTest(msg="With empty walk"):
             self.assertEqual(list(self.tree.dfs_walk([])), [])
@@ -46,6 +66,8 @@ class TreeWalkTest(SverchokTestCase):
             node_indexes_walk = [n.id for n in self.tree.dfs_walk([self.tree.nodes[i] for i in [4, 6]],
                                                                   direction='BACKWARD')]
             self.assertCountEqual(node_indexes_walk, [4, 6, 3, 2, 1, 5, 9, 8, 10])
+        with self.subTest(msg="With cycle tree"):
+            self.assertCountEqual((n.id for n in self.cycle_tree.dfs_walk([self.cycle_tree.nodes[2]])), [2, 3, 4, 1, 6])
 
     def test_bfs_walk(self):
         with self.subTest(msg="With empty walk"):
@@ -62,6 +84,8 @@ class TreeWalkTest(SverchokTestCase):
             node_indexes = (n.id for n in self.tree.bfs_walk([self.tree.nodes[i] for i in [4, 6]],
                                                              direction='BACKWARD'))
             self.assertCountEqual(node_indexes, [6, 4, 3, 2, 1, 5, 9, 8, 10])
+        with self.subTest(msg="With cycle tree"):
+            self.assertCountEqual((n.id for n in self.cycle_tree.bfs_walk([self.cycle_tree.nodes[2]])), [2, 3, 4, 1, 6])
 
     def test_sorted_walk(self):
         with self.subTest(msg="With empty tree"):
@@ -74,6 +98,13 @@ class TreeWalkTest(SverchokTestCase):
             walk_indexes = [n.id for n in self.tree.sorted_walk([self.tree.nodes[i] for i in [4, 7]])]
             self.assertCountEqual(walk_indexes, [1, 2, 8, 10, 9, 5, 3, 6, 7, 4])
             self.assertEqual(walk_indexes[6], 3, msg="Wrong walk order")
+        with self.subTest(msg="go toward multiple nodes stacked together"):
+            walk_indexes = [n.id for n in self.tree.sorted_walk([self.tree.nodes[i] for i in [6, 7]])]
+            self.assertCountEqual(walk_indexes, [1, 2, 8, 10, 9, 5, 3, 6, 7])
+            self.assertEqual(walk_indexes[6], 3, msg="Wrong walk order")
+        with self.subTest(msg="With cycle tree"):
+            self.assertRaises(RecursionError,
+                              lambda: [n.id for n in self.cycle_tree.sorted_walk([self.cycle_tree.nodes[6]])])
 
     def test_input_output_nodes(self):
         with self.subTest(msg="Input nodes search"):
