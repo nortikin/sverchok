@@ -3,6 +3,7 @@ import bpy
 from bpy.props import StringProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.data_structure import flatten_data
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.surface.core import SvSurface
 from sverchok.dependencies import FreeCAD
@@ -21,7 +22,7 @@ else:
         if isinstance(ob, Part.Shape):
             return ob
         elif isinstance(ob, SvCurve):
-            return curve_to_freecad(ob).curve
+            return [c.curve.toShape() for c in curve_to_freecad(ob)]
         elif isinstance(ob, SvSurface):
             return surface_to_freecad(ob, make_face=True).face
         else:
@@ -50,19 +51,29 @@ else:
 
             folder_path = node.inputs[0].sv_get()[0][0]
             objects = node.inputs[self.input_name].sv_get()
+            objects = flatten_data(objects, data_types=(Part.Shape, SvCurve, SvSurface))
             base_name = node.base_name
             if not base_name:
                 base_name = "sv_solid"
             for i, object in enumerate(objects):
-                solid = make_solid(object)
-                file_path = folder_path + base_name + "_"  + "%05d" % i
-                if node.mode == "BREP":
-                    solid.exportBrep(file_path + ".brp")
-
-                elif node.mode == "IGES":
-                    solid.exportIges(file_path + ".igs")
+                shapes = make_solid(object)
+                if isinstance(shapes, (list,tuple)):
+                    has_subshapes = True
                 else:
-                    solid.exportStep(file_path + ".stp")
+                    shapes = [shapes]
+                    has_subshapes = False
+                for j, shape in enumerate(shapes):
+                    if has_subshapes:
+                        file_path = folder_path + base_name + "_"  + "%05d" % i + "_" + "%05d" % j
+                    else:
+                        file_path = folder_path + base_name + "_"  + "%05d" % i
+                    if node.mode == "BREP":
+                        shape.exportBrep(file_path + ".brp")
+
+                    elif node.mode == "IGES":
+                        shape.exportIges(file_path + ".igs")
+                    else:
+                        shape.exportStep(file_path + ".stp")
 
             return {'FINISHED'}
 
