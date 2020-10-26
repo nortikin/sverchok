@@ -614,6 +614,8 @@
     SvExJsonToNurbsNode
     SvImportSolidNode
     SvExportSolidNode
+    SvReadFCStdNode
+    SvWriteFCStdNode
 
 ## Network
     UdpClientNode
