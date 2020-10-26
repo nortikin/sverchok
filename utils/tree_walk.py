@@ -49,7 +49,7 @@ class Tree(ABC):
                                      f'or most likely it is circular')
 
     @staticmethod
-    def dfs_walk(nodes: List[Node], direction: str = 'FORWARD') -> Generator:
+    def dfs_walk(nodes: List[Node], direction: str = 'FORWARD') -> Generator[Node]:
         # https://en.wikipedia.org/wiki/Depth-first_search
         stack = nodes
         visited = set()
@@ -63,6 +63,31 @@ class Tree(ABC):
             for next_node in current_node.next_nodes if direction == 'FORWARD' else current_node.last_nodes:
                 if next_node not in visited:
                     stack.append(next_node)
+
+            if next(safe_counter) > max_node_number:
+                raise RecursionError(f'The tree has either more then={max_node_number} nodes '
+                                     f'or most likely it is circular')
+
+    @staticmethod
+    def sorted_walk(to_nodes: List[Node]) -> Generator[Node]:
+        stack = to_nodes
+        discovered = set(to_nodes)  # gray color
+        visited = set()  # black color
+
+        safe_counter = count()
+        max_node_number = 20000
+        while stack:
+            node = stack[-1]
+            next_visited = []
+            for next_node in node.last_nodes:
+                next_visited.append(True if next_node in visited else False)
+                if next_node not in discovered and next_node not in visited:
+                    stack.append(next_node)
+                    visited.add(next_node)
+            if not next_visited or all(next_visited):
+                stack.pop()
+                yield node
+                visited.add(node)
 
             if next(safe_counter) > max_node_number:
                 raise RecursionError(f'The tree has either more then={max_node_number} nodes '

@@ -63,6 +63,18 @@ class TreeWalkTest(SverchokTestCase):
                                                              direction='BACKWARD'))
             self.assertCountEqual(node_indexes, [6, 4, 3, 2, 1, 5, 9, 8, 10])
 
+    def test_sorted_walk(self):
+        with self.subTest(msg="With empty tree"):
+            self.assertCountEqual(list(self.tree.sorted_walk([])), [])
+        with self.subTest(msg="Go toward node"):
+            walk_indexes = [n.id for n in self.tree.sorted_walk([self.tree.nodes[6]])]
+            self.assertCountEqual(walk_indexes, [1, 2, 8, 10, 9, 5, 3, 6])
+            self.assertEqual(walk_indexes[6], 3, msg="Wrong walk order")
+        with self.subTest(msg="go toward multiple nodes"):
+            walk_indexes = [n.id for n in self.tree.sorted_walk([self.tree.nodes[i] for i in [4, 7]])]
+            self.assertCountEqual(walk_indexes, [1, 2, 8, 10, 9, 5, 3, 6, 7, 4])
+            self.assertEqual(walk_indexes[6], 3, msg="Wrong walk order")
+
     def test_input_output_nodes(self):
         with self.subTest(msg="Input nodes search"):
             self.assertCountEqual((n.id for n in self.tree.input_nodes), [1, 8, 10])
