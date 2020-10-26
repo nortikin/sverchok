@@ -6,18 +6,19 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import flatten_data, map_recursive
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.surface.core import SvSurface
+from sverchok.utils.logging import debug
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
 
 if FreeCAD is None:
-    add_dummy('SvExportSolidMk2Node', 'Export Solid', 'FreeCAD')
+    add_dummy('SvExportSolidNode', 'Export Solid', 'FreeCAD')
 else:
 
     from FreeCAD import Part
 
     from sverchok.utils.solid import to_solid
 
-    class SvExportSolidMk2Operator(bpy.types.Operator):
+    class SvExportSolidOperator(bpy.types.Operator):
 
         bl_idname = "node.sv_export_solid_mk2"
         bl_label = "Export Solid"
@@ -25,7 +26,6 @@ else:
 
         idtree: StringProperty(default='')
         idname: StringProperty(default='')
-        input_name : StringProperty(default='')
 
         def execute(self, context):
             tree = bpy.data.node_groups[self.idtree]
@@ -34,23 +34,23 @@ else:
             if not node.inputs['Folder Path'].is_linked:
                 self.report({'WARNING'}, "Folder path is not specified")
                 return {'FINISHED'}
-            if not node.inputs[self.input_name].is_linked:
+            if not node.inputs['Solids'].is_linked:
                 self.report({'WARNING'}, "Object to be exported is not specified")
                 return {'FINISHED'}
 
             folder_path = node.inputs[0].sv_get()[0][0]
-            objects = node.inputs[self.input_name].sv_get()
+            objects = node.inputs['Solids'].sv_get()
             #objects = flatten_data(objects, data_types=(Part.Shape, SvCurve, SvSurface))
             base_name = node.base_name
             if not base_name:
                 base_name = "sv_solid"
-            for i, object in enumerate(objects):
-                shape = map_recursive(to_solid, object, data_types=(Part.Shape, SvCurve, SvSurface))
-                print("Exporting", shape)
+            for i, shape in enumerate(objects):
+                #shape = map_recursive(to_solid, object, data_types=(Part.Shape, SvCurve, SvSurface))
+                debug("Exporting", shape)
                 if isinstance(shape, (list, tuple)):
-                    shape = flatten_data(shape, data_types=(Part.Shape, SvCurve, SvSurface))
+                    shape = flatten_data(shape, data_types=(Part.Shape,))
                 if isinstance(shape, (list,tuple)):
-                    print("Make compound:", shape)
+                    debug("Make compound:", shape)
                     shape = Part.Compound(shape)
                 file_path = folder_path + base_name + "_"  + "%05d" % i
 
@@ -67,27 +67,27 @@ else:
 
             return {'FINISHED'}
 
-    class SvExportSolidMk2Node(bpy.types.Node, SverchCustomTreeNode):
+    class SvExportSolidNode(bpy.types.Node, SverchCustomTreeNode):
         """
         Triggers: Export Solid
         Tooltip: Export Solid to BREP, IGES or STEP
         """
-        bl_idname = 'SvExportSolidMk2Node'
+        bl_idname = 'SvExportSolidNode'
         bl_label = 'Export Solid'
         bl_icon = 'EXPORT'
         solid_catergory = "Outputs"
         # sv_icon = 'SV_VORONOI'
 
-        mode_items = [
+        file_types = [
                 ("BREP", "BREP", "", 0),
                 ("IGES", "IGES", "", 1),
                 ("STEP", "STEP", "", 2),
             ]
 
         mode: EnumProperty(
-            name="Mode",
+            name="File Type",
             description="Choose file type",
-            items=mode_items,
+            items=file_types,
             default="BREP",
             )
 
@@ -96,49 +96,25 @@ else:
             description="Name of file",
             )
 
-        input_types = [
-                ('Solids', "Solids", "Solid objects", 0),
-                ('Curves', "Curves", "NURBS-like curves", 1),
-                ('Surfaces', "Surfaces", "NURBS-like surfaces", 2)
-            ]
-
-        @throttled
-        def update_sockets(self, context):
-            self.inputs['Solids'].hide_safe = self.input_type != 'Solids'
-            self.inputs['Curves'].hide_safe = self.input_type != 'Curves'
-            self.inputs['Surfaces'].hide_safe = self.input_type != 'Surfaces'
-
-        input_type : EnumProperty(
-                name = "Input type",
-                description = "Type of objects to export",
-                items = input_types,
-                default = input_types[0][0],
-                update = update_sockets)
-
         def draw_buttons(self, context, layout):
-            layout.prop(self, "input_type")
             layout.prop(self, "mode")
             layout.prop(self, "base_name")
-            op = self.wrapper_tracked_ui_draw_op(layout, SvExportSolidMk2Operator.bl_idname, icon='EXPORT', text="EXPORT")
-            op.input_name = self.input_type
+            self.wrapper_tracked_ui_draw_op(layout, SvExportSolidOperator.bl_idname, icon='EXPORT', text="EXPORT")
 
         def sv_init(self, context):
             self.inputs.new('SvFilePathSocket', "Folder Path")
             self.inputs.new('SvSolidSocket', "Solids")
-            self.inputs.new('SvCurveSocket', "Curves")
-            self.inputs.new('SvSurfaceSocket', "Surfaces")
-            self.update_sockets(context)
 
         def process(self):
             pass
 
 def register():
     if FreeCAD is not None:
-        bpy.utils.register_class(SvExportSolidMk2Operator)
-        bpy.utils.register_class(SvExportSolidMk2Node)
+        bpy.utils.register_class(SvExportSolidOperator)
+        bpy.utils.register_class(SvExportSolidNode)
 
 def unregister():
     if FreeCAD is not None:
-        bpy.utils.unregister_class(SvExportSolidMk2Node)
-        bpy.utils.unregister_class(SvExportSolidMk2Operator)
+        bpy.utils.unregister_class(SvExportSolidNode)
+        bpy.utils.unregister_class(SvExportSolidOperator)
 
