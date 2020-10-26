@@ -540,6 +540,23 @@ def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES):
         result = [result]
     return result
 
+def flatten_data(data, target_level=1, data_types=SIMPLE_DATA_TYPES):
+    """
+    Reduce nesting level of `data` to `target_level`, by concatenating nested sub-lists.
+    Raises an exception if nesting level is already less than `target_level`.
+    Refer to data_structure_tests.py for examples.
+    """
+    current_level = get_data_nesting_level(data, data_types)
+    if current_level < target_level:
+        raise TypeError(f"Can't flatten data to level {target_level}: data already have level {current_level}")
+    elif current_level == target_level:
+        return data
+    else:
+        result = []
+        for item in data:
+            result.extend(flatten_data(item, target_level=target_level, data_types=data_types))
+        return result
+
 def map_at_level(function, data, item_level=0, data_types=SIMPLE_DATA_TYPES):
     """
     Given a nested list of object, apply `function` to each sub-list of items.
