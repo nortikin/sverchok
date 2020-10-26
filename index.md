@@ -613,7 +613,7 @@
     SvExNurbsToJsonNode
     SvExJsonToNurbsNode
     SvImportSolidNode
-    SvExportSolidNode
+    SvExportSolidMk2Node
 
 ## Network
     UdpClientNode
