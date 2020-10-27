@@ -9,6 +9,7 @@ else:
     import bpy,sys
     from bpy.props import IntProperty, FloatProperty, StringProperty, BoolProperty
     from sverchok.node_tree import SverchCustomTreeNode
+    from sverchok.utils.logging import info, exception
     from numpy import ndarray
 
     class SvReadFCStdNode(bpy.types.Node, SverchCustomTreeNode):
