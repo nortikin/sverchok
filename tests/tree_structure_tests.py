@@ -15,7 +15,7 @@ class TreeStructureTest(SverchokTestCase):
         with self.temporary_node_tree("ImportedTree") as new_tree:
             new_tree.sv_process = False
             importer = JSONImporter.init_from_path(str(examples_path / "Architecture" / "ProfileBuilding.json"))
-            importer.import_into_tree(new_tree)  # todo make it moot
+            importer.import_into_tree(new_tree, print_log=False)
             tree = ts.Tree(new_tree)
             self.are_trees_equal(new_tree, tree)
 

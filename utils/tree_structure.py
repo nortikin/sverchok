@@ -34,10 +34,6 @@ class Tree(tw.Tree):
     def links(self) -> LinksCollection:
         return self._links
 
-    @classmethod
-    def from_bl_tree(cls, bl_tree: bpy.types.NodeTree) -> Tree:
-        return cls(bl_tree)
-
 
 class TreeCollections(Mapping):
     """
