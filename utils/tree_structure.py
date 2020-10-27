@@ -89,6 +89,7 @@ class Node(tw.Node):
 
     @property
     def index(self):
+        """Index of node location in Blender collection from which it was copied"""
         return self._index
 
     @property
@@ -200,6 +201,7 @@ class Link:
 
     @property
     def index(self):
+        """Index of the link location in Blender collection from which it was copied"""
         return self._index
 
     @property

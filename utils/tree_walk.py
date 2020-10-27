@@ -17,19 +17,24 @@ from typing import Generator, List
 class Tree(ABC):
     @property
     @abstractmethod
-    def nodes(self): ...
+    def nodes(self): ...  # something iterable
 
     @property
     def input_nodes(self) -> List[Node]:
+        """Nodes which don't have nodes before"""
         return [node for node in self.nodes.values() if node.is_input]
 
     @property
     def output_nodes(self) -> List[Node]:
+        """Nodes which don't have nodes after"""
         return [node for node in self.nodes.values() if node.is_output]
 
     @staticmethod
     def bfs_walk(nodes: List[Node], direction: str = 'FORWARD') -> Generator[Node]:
-        """Forward walk from the current node, it will visit all next nodes"""
+        """
+        Walk from the current node, it will visit all next nodes in FORWARD of BACKWARD direction
+        First will be visited children nodes than children of children nodes and etc
+        """
         # https://en.wikipedia.org/wiki/Breadth-first_search
         waiting_nodes = deque(nodes)
         discovered = set(nodes)
@@ -50,6 +55,10 @@ class Tree(ABC):
 
     @staticmethod
     def dfs_walk(nodes: List[Node], direction: str = 'FORWARD') -> Generator[Node]:
+        """
+        Walk from the current node, it will visit all next nodes in FORWARD of BACKWARD direction
+        First will be visited first child and its children then second child and etc
+        """
         # https://en.wikipedia.org/wiki/Depth-first_search
         stack = nodes
         visited = set()
@@ -70,6 +79,9 @@ class Tree(ABC):
 
     @staticmethod
     def sorted_walk(to_nodes: List[Node]) -> Generator[Node]:
+        """
+        If tree is 0--1--2--3 and node "3" is given the method will return nodes in next order [0, 1, 2, 3]
+        """
         # https://en.wikipedia.org/wiki/Topological_sorting
         stack = []
         discovered = set()  # gray color
@@ -121,14 +133,24 @@ class Node(ABC):
 
     @property
     def is_input(self) -> bool:
+        """doesn't have nodes before"""
         return not bool(self.last_nodes)
 
     @property
     def is_output(self):
+        """doesn't have nodes after"""
         return not bool(self.next_nodes)
 
     def bfs_walk(self, direction: str = 'FORWARD') -> Generator[Node]:
+        """
+        Walk from the current node, it will visit all next nodes in FORWARD of BACKWARD direction
+        First will be visited children nodes than children of children nodes and etc
+        """
         yield from Tree.bfs_walk([self], direction)
 
     def dfs_walk(self, direction: str = 'FORWARD') -> Generator[Node]:
+        """
+        Walk from the current node, it will visit all next nodes in FORWARD of BACKWARD direction
+        First will be visited first child and its children then second child and etc
+        """
         yield from Tree.dfs_walk([self], direction)
