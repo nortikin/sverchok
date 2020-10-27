@@ -7,14 +7,18 @@ if FreeCAD is None:
 
 else:
     F = FreeCAD
-    import bpy,sys
-    from bpy.props import IntProperty, FloatProperty, StringProperty, BoolProperty,EnumProperty
+    import bpy
+    from bpy.props import StringProperty, BoolProperty,EnumProperty
     from sverchok.node_tree import SverchCustomTreeNode, throttled
-    from sverchok.data_structure import updateNode
-    from numpy import ndarray
+    from sverchok.data_structure import updateNode, match_long_repeat
+    from sverchok.utils.logging import info
 
     class SvWriteFCStdNode(bpy.types.Node, SverchCustomTreeNode):
-        ''' SvWriteFCStdNode '''
+    """
+    Triggers: write FreeCAD file
+    Tooltip: write parts in a .FCStd file 
+    """
+    
         bl_idname = 'SvWriteFCStdNode'
         bl_label = 'Write FCStd'
         bl_icon = 'IMPORT'
@@ -93,15 +97,16 @@ else:
 
                 if any((self.inputs['Verts'].is_linked,self.inputs['Faces'].is_linked,self.write_update)):
 
-                    verts=self.inputs['Verts'].sv_get()
-                    pols=self.inputs['Faces'].sv_get()
-                    fc_write_parts(fc_file,verts,pols,self.part_name,None,self.obj_format)
+                    verts_in = self.inputs['Verts'].sv_get(deepcopy=False)
+                    pols_in = self.inputs['Faces'].sv_get(deepcopy=False)
+                    verts, pols = match_long_repeat([verts_in, pols_in])
+                    fc_write_parts(fc_file, verts, pols, self.part_name, None, self.obj_format)
 
             elif self.obj_format == 'solid':
 
                 if self.inputs['Solid'].is_linked and self.write_update:
                     solid=self.inputs['Solid'].sv_get()
-                    fc_write_parts(fc_file,None,None,self.part_name,solid,self.obj_format)
+                    fc_write_parts(fc_file, None, None, self.part_name, solid, self.obj_format)
 
             else:
                 return             
@@ -113,7 +118,7 @@ def fc_write_parts(fc_file, verts, faces, part_name, solid, mod):
         F.open(fc_file)
         Fname = bpy.path.display_name_from_filepath(fc_file)
     except:
-        print ('FCStd open error')
+        info ('FCStd open error')
         return
 
 
@@ -139,13 +144,8 @@ def fc_write_parts(fc_file, verts, faces, part_name, solid, mod):
 
     if mod == 'solid': #EXPORT SOLID 
 
-        #if len(solid)==1:
-            #new_part = F.ActiveDocument.addObject("Part::Feature",part_name) #single: give numberless name
-            #new_part.Shape = solid[0]
-
-        #else:
         for i,s in enumerate(solid):      
-            new_part = F.ActiveDocument.addObject("Part::Feature",part_name+str(i)) #multiple: give numbered name
+            new_part = F.ActiveDocument.addObject( "Part::Feature",part_name+str(i) ) #multiple: give numbered name
             new_part.Shape = s
 
     else: #EXPORT MESH
@@ -165,8 +165,8 @@ def fc_write_parts(fc_file, verts, faces, part_name, solid, mod):
                 meshdata.append( temp_verts[v2] )
                 meshdata.append( temp_verts[v3] )
 
-            mesh = Mesh.Mesh(meshdata)
-            obj = F.ActiveDocument.addObject("Mesh::Feature", part_name+str(i))
+            mesh = Mesh.Mesh( meshdata )
+            obj = F.ActiveDocument.addObject( "Mesh::Feature", part_name+str(i) )
             obj.Mesh = mesh
 
 
