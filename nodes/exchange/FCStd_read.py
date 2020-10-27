@@ -63,7 +63,7 @@ def LoadSolid(fc_file,part_filter,inv_filter):
     if ',' in part_filter:
         part_filter = part_filter.split(',')
 
-    elif len(part_filter)==0:
+    elif not part_filter:
         part_filter = ['all']
 
     else:
