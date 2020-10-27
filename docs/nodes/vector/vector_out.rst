@@ -21,6 +21,10 @@ Advanced Parameters
 
 In the N-Panel (and on the right-click menu) you can find:
 
+**Simplify Output**: Method to keep output data suitable for most of the rest of the Sverchok nodes
+  - None: Do not perform any change on the data. Only for advanced users
+  - Flat: It will flat the output to keep vectors list in Level 3 (regular vector list)
+
 **Output NumPy**: Get NumPy arrays in stead of regular lists (makes the node faster if you input NumPy arrays).
 
 Outputs

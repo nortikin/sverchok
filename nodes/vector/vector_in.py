@@ -19,7 +19,8 @@
 import bpy
 from bpy.props import FloatProperty, BoolProperty, StringProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, fullList, fullList_deep_copy, numpy_match_long_repeat
+from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, numpy_list_match_func
+from sverchok.utils.sv_itertools import recurse_f_level_control
 from sverchok.utils.sv_itertools import sv_zip_longest
 from numpy import array
 
@@ -41,27 +42,33 @@ class SvVectorFromCursor(bpy.types.Operator):
 
         return{'FINISHED'}
 
-def python_pack_vecs(X_, Y_, Z_, output_numpy):
+def python_pack_vecs(params, constant, matching_f):
+    X_, Y_, Z_ = params
+    output_numpy, _ = constant
     series_vec = []
-    for x, y, z in zip(X_, Y_, Z_):
-        max_v = max(map(len, (x, y, z)))
-        fullList(x, max_v)
-        fullList(y, max_v)
-        fullList(z, max_v)
+    for vs in zip(X_, Y_, Z_):
+        x, y, z = matching_f(vs)
         series_vec.append(array([x,y,z]).T if output_numpy else list(zip(x, y, z)))
     return series_vec
 
-def numpy_pack_vecs(X_, Y_, Z_, output_numpy):
+def numpy_pack_vecs(params, constant, matching_f):
+    X_, Y_, Z_ = params
+    output_numpy, match_mode = constant
+    np_match = numpy_list_match_func[match_mode]
     series_vec = []
     for obj in zip(X_, Y_, Z_):
         np_obj = [array(p) for p in obj]
-        x, y, z = numpy_match_long_repeat(np_obj)
+        x, y, z = np_match(np_obj)
         vecs = array([x,y,z]).T
         series_vec.append(vecs if output_numpy else vecs.tolist())
     return series_vec
 
 class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Generator vectors '''
+    """
+    Triggers: Combine XYZ
+    Tooltip:  Generate vectors from numbers list.
+    """
+
     bl_idname = 'GenVectorsNode'
     bl_label = 'Vector in'
     sv_icon = 'SV_VECTOR_IN'
@@ -70,7 +77,7 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
     y_: FloatProperty(name='Y', description='Y', default=0.0, precision=3, update=updateNode)
     z_: FloatProperty(name='Z', description='Z', default=0.0, precision=3, update=updateNode)
 
-    advanced_mode: BoolProperty(name='deep copy', update=updateNode, default=True)
+
     show_3d_cursor_button: BoolProperty(name='show button', update=updateNode, default=False)
     implementation_modes = [
         ("NumPy", "NumPy", "NumPy", 0),
@@ -80,7 +87,21 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
         name='Implementation', items=implementation_modes,
         description='Choose calculation method',
         default="Python", update=updateNode)
+    list_match: EnumProperty(
+        name="List Match",
+        description="Behavior on different list lengths",
+        items=numpy_list_match_modes, default="REPEAT",
+        update=updateNode)
 
+    correct_output_modes = [
+        ('NONE', 'None', 'Leave at multi-object level (Advanced)', 0),
+        ('FLAT', 'Flat Output', 'Flat to object level', 2),
+    ]
+    correct_output: EnumProperty(
+        name="Simplify Output",
+        description="Behavior on different list lengths, object level",
+        items=correct_output_modes, default="FLAT",
+        update=updateNode)
     output_numpy: BoolProperty(
         name='Output NumPy',
         description='Output NumPy arrays',
@@ -103,15 +124,18 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
             get_cursor.treename = self.id_data.name
 
     def draw_buttons_ext(self, context, layout):
-        layout.row().prop(self, 'advanced_mode')
         layout.label(text="Implementation:")
         layout.prop(self, "implementation", expand=True)
+        layout.prop(self, 'list_match')
         layout.prop(self, "output_numpy", toggle=False)
+        layout.prop(self, 'correct_output')
+
 
     def rclick_menu(self, context, layout):
-        layout.prop(self, "advanced_mode", text="use deep copy")
         layout.prop_menu_enum(self, "implementation", text="Implementation")
-        layout.prop(self, "output_numpy", toggle=True)
+        layout.prop_menu_enum(self, 'list_match')
+        layout.prop(self, 'output_numpy', toggle=True)
+        layout.prop_menu_enum(self, 'correct_output')
         layout.prop(self, "show_3d_cursor_button", text="show 3d cursor button")
         if not any(s.is_linked for s in self.inputs):
             opname = 'node.sverchok_vector_from_cursor'
@@ -120,23 +144,20 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
             get_cursor.treename = self.id_data.name
 
     def process(self):
+
         if not self.outputs['Vectors'].is_linked:
             return
-        inputs = self.inputs
-        X_ = inputs['X'].sv_get()
-        Y_ = inputs['Y'].sv_get()
-        Z_ = inputs['Z'].sv_get()
-        series_vec = []
-        max_obj = max(map(len, (X_, Y_, Z_)))
+
+        params = [si.sv_get(default=[[]], deepcopy=False) for si in self.inputs]
+
+        matching_f = list_match_func[self.list_match]
+        desired_levels = [2, 2, 2]
+        ops = [self.output_numpy, self.list_match]
+        concatenate = 'APPEND' if self.correct_output == 'NONE' else "EXTEND"
         pack_func = numpy_pack_vecs if self.implementation == 'NumPy' else python_pack_vecs
-        fullList_main = fullList_deep_copy if self.advanced_mode else fullList
-        fullList_main(X_, max_obj)
-        fullList_main(Y_, max_obj)
-        fullList_main(Z_, max_obj)
-        series_vec = pack_func(X_, Y_, Z_, self.output_numpy)
+        result = recurse_f_level_control(params, ops, pack_func, matching_f, desired_levels, concatenate=concatenate)
 
-
-        self.outputs['Vectors'].sv_set(series_vec)
+        self.outputs[0].sv_set(result)
 
 
 def register():
