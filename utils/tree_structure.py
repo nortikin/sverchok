@@ -8,47 +8,92 @@
 
 from __future__ import annotations
 
-from collections import deque
-from itertools import count
-from typing import Dict, Tuple, List, Iterable, Generator
+from collections import Mapping
+from typing import List, Iterable
 
 import bpy
 
+import sverchok.utils.tree_walk as tw
 
-class Tree:
-    """Structure similar to blender node groups but is more efficient in searching neighbours"""
-    def __init__(self):
-        self._nodes: Dict[str, Node] = {}
-        self._links: Dict[Tuple[str, str]: Link] = {}  # Tuple[node_name, identifier]
+
+class Tree(tw.Tree):
+    """
+    Structure similar to blender node groups but is more efficient in searching neighbours
+    Each time when nodes or links collections are changed the instance of the tree should be recreated
+    so it is immutable data structure
+    """
+    def __init__(self, bl_tree: bpy.types.NodeTree):
+        self._nodes = NodesCollection(bl_tree)
+        self._links = LinksCollection(bl_tree, self)
 
     @property
-    def nodes(self) -> Dict[str, Node]:
+    def nodes(self) -> NodesCollection:
         return self._nodes
 
     @property
-    def links(self) -> Dict[Tuple[str, int]: Link]:
+    def links(self) -> LinksCollection:
         return self._links
 
     @classmethod
     def from_bl_tree(cls, bl_tree: bpy.types.NodeTree) -> Tree:
-        tree = cls()
-        for bl_node in bl_tree.nodes:
-            tree.nodes[bl_node.name] = Node.from_bl_node(bl_node)
-        for bl_link in bl_tree.links:
+        return cls(bl_tree)
+
+
+class TreeCollections(Mapping):
+    """
+    The idea of this collection is to have access to its elements by their identifier
+    and meantime to have access to their indexes of true blender collections
+    so to get fast mapping between python and blender collections
+    downside is that this collection is immutable
+    because it impossible to predict order of Blender collection after changing of their content
+    """
+    def __init__(self):
+        self._dict = dict()
+
+    def __getitem__(self, item):
+        return self._dict[item]
+
+    def __iter__(self):
+        return iter(self._dict.values())
+
+    def __len__(self):
+        return len(self._dict)
+
+    def __contains__(self, item):
+        return item in self._dict
+
+
+class NodesCollection(TreeCollections):
+    def __init__(self, bl_tree: bpy.types.NodeTree):
+        super().__init__()
+        for i, bl_node in enumerate(bl_tree.nodes):
+            self._dict[bl_node.name] = Node.from_bl_node(bl_node, i)
+
+
+class LinksCollection(TreeCollections):
+    def __init__(self, bl_tree: bpy.types.NodeTree, tree: Tree):
+        super().__init__()
+        for i, bl_link in enumerate(bl_tree.links):
             from_node = tree.nodes[bl_link.from_node.name]
             from_socket = from_node.get_output_socket(bl_link.from_socket.identifier)
             to_node = tree.nodes[bl_link.to_node.name]
             to_socket = to_node.get_input_socket(bl_link.to_socket.identifier)
-            tree.links[(bl_link.to_node.name, bl_link.to_socket.identifier)] = Link(from_socket, to_socket)
-        return tree
+
+            self._dict[(bl_link.from_node.name, bl_link.from_socket.identifier,
+                        bl_link.to_node.name, bl_link.to_socket.identifier)] = Link(from_socket, to_socket, i)
 
 
-class Node:
-    def __init__(self, name: str):
+class Node(tw.Node):
+    def __init__(self, name: str, index: int):
         self.name = name
-        self.select = False
+        self.select = False  # todo consider to remove
         self._inputs = []
         self._outputs = []
+        self._index = index
+
+    @property
+    def index(self):
+        return self._index
 
     @property
     def inputs(self) -> list:
@@ -68,27 +113,12 @@ class Node:
         """Returns all nodes which are linked wia the node input sockets"""
         return {other_s.node for s in self.inputs for other_s in s.linked_sockets}
 
-    def bfs_walk(self) -> Generator[Node]:
-        """Forward walk from the current node, it will visit all next nodes"""
-        # https://en.wikipedia.org/wiki/Tree_traversal#Breadth-first_search
-        waiting_nodes = deque([self])
-        safe_counter = count()
-        max_node_number = 2000
-        while waiting_nodes:
-            node = waiting_nodes.popleft()
-            waiting_nodes.extend(node.next_nodes)
-            yield node
-
-            if next(safe_counter) > max_node_number:
-                raise RecursionError(f'The tree has either more then={max_node_number} nodes '
-                                     f'or most likely it is circular')
-
-    def get_bl_node(self, tree: bpy.types.NodeTree) -> bpy.types.Node:
+    def get_bl_node(self, tree: bpy.types.NodeTree, by_name=True) -> bpy.types.Node:
         """
         Will return the node from given tree with the same name
-        In future it can be improved and should use index instead of name
+        if by_name is False it will use node index instead what will be faster
         """
-        return tree.nodes[self.name]
+        return tree.nodes[self.name if by_name else self.index]
 
     def get_input_socket(self, identifier: str) -> Socket:
         """Search input socket by its identifier"""
@@ -105,9 +135,9 @@ class Node:
         raise LookupError(f'Socket "{identifier}" was not found in Node "{self.name}" outputs{self._outputs}')
 
     @classmethod
-    def from_bl_node(cls, bl_node: bpy.types.Node) -> Node:
+    def from_bl_node(cls, bl_node: bpy.types.Node, index: int) -> Node:
         """Generate node and its sockets from Blender node instance"""
-        node = cls(bl_node.name)
+        node = cls(bl_node.name, index)
         node.select = bl_node.select
         for in_socket in bl_node.inputs:
             node.inputs.append(Socket.from_bl_socket(node, in_socket))
@@ -164,11 +194,17 @@ class Socket:
 
 
 class Link:
-    def __init__(self, from_socket: Socket, to_socket: Socket):
+    def __init__(self, from_socket: Socket, to_socket: Socket, index: int):
         self.from_socket = from_socket
         self.to_socket = to_socket
         from_socket.links.append(self)
         to_socket.links.append(self)
+
+        self._index = index
+
+    @property
+    def index(self):
+        return self._index
 
     @property
     def from_node(self) -> Node:
