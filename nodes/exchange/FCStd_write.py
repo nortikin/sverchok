@@ -107,7 +107,7 @@ else:
                 return             
             
 
-def FC_WRITE_PARTS(fc_file,verts,faces,part_name,solid,mod):
+def fc_write_parts(fc_file, verts, faces, part_name, solid, mod):
 
     try:
         F.open(fc_file)
