@@ -6,20 +6,23 @@ if FreeCAD is None:
 
 else:
     F = FreeCAD
-    import bpy,sys
-    from bpy.props import IntProperty, FloatProperty, StringProperty, BoolProperty
+    import bpy
+    from bpy.props import StringProperty, BoolProperty
     from sverchok.node_tree import SverchCustomTreeNode
-    from sverchok.utils.logging import info, exception
-    from numpy import ndarray
+    from sverchok.data_structure import updateNode
+    from sverchok.utils.logging import info
 
     class SvReadFCStdNode(bpy.types.Node, SverchCustomTreeNode):
-        ''' SvReadFCStdNode '''
+    """
+    Triggers: Read FreeCAD file
+    Tooltip: import parts from a .FCStd file 
+    """
         bl_idname = 'SvReadFCStdNode'
         bl_label = 'Read FCStd'
         bl_icon = 'IMPORT'
         solid_catergory = "Inputs"
         
-        read_update : BoolProperty(name="read_update", default=True)
+        read_update : BoolProperty(name="read_update", default=True, update = updateNode )
         part_filter : StringProperty(name="part_filter", default="", description="use ',' to separate name with no space: part1,part2,... ")
         inv_filter : BoolProperty(name="inv_filter", default=False)
 
@@ -48,7 +51,7 @@ else:
                 solids = []
 
                 for f in files:
-                    S = LoadSolid(f,self.part_filter,self.inv_filter)
+                    S = LoadSolid(f, self.part_filter, self.inv_filter)
                     for s in S:
                         solids.append(s)
                 
@@ -78,7 +81,7 @@ def LoadSolid(fc_file,part_filter,inv_filter):
 
         for obj in F.ActiveDocument.Objects:
 
-            if obj.Module in ('Part','PartDesign'):
+            if obj.Module in ('Part', 'PartDesign'):
                 
                 if not inv_filter:
                     if obj.Label in part_filter or 'all' in part_filter:
