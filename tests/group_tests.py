@@ -3,12 +3,13 @@ from pathlib import Path
 import bpy
 
 import sverchok
-from sverchok.utils.testing import SverchokTestCase
+from sverchok.utils.testing import SverchokTestCase, unittest
 from sverchok.utils.sv_json_import import JSONImporter
 
 
 class GroupingTest(SverchokTestCase):
 
+    @unittest.skip("On Travis it is lunched looks like without UI and it can't tests operators in this way")
     def test_grouping_nodes(self):
 
         examples_path = Path(sverchok.__file__).parent / 'json_examples'
@@ -35,5 +36,4 @@ class GroupingTest(SverchokTestCase):
 
 
 if __name__ == '__main__':
-    import unittest
     unittest.main(exit=False)
