@@ -87,12 +87,10 @@ def LoadSolid(fc_file,part_filter,inv_filter):
                     if not obj.Label in part_filter:
                         solids.append(obj.Shape)
 
-        F.closeDocument(Fname)
-
     except:
-        print ('FCStd read error')
-        return []
-
+        info('FCStd read error')
+    finally:
+        F.closeDocument(Fname)
     return solids
     
 
