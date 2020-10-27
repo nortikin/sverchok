@@ -95,13 +95,13 @@ else:
 
                     verts=self.inputs['Verts'].sv_get()
                     pols=self.inputs['Faces'].sv_get()
-                    FC_WRITE_PARTS(fc_file,verts,pols,self.part_name,None,self.obj_format)
+                    fc_write_parts(fc_file,verts,pols,self.part_name,None,self.obj_format)
 
             elif self.obj_format == 'solid':
 
                 if self.inputs['Solid'].is_linked and self.write_update:
                     solid=self.inputs['Solid'].sv_get()
-                    FC_WRITE_PARTS(fc_file,None,None,self.part_name,solid,self.obj_format)
+                    fc_write_parts(fc_file,None,None,self.part_name,solid,self.obj_format)
 
             else:
                 return             
