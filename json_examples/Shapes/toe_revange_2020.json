@@ -1,12 +1,12 @@
 {
-  "export_version": "0.079",
+  "export_version": "0.10",
   "framed_nodes": {
     "Evaluate Curve": "Frame",
     "Formula": "Frame.001",
     "Formula.001": "Frame.001",
     "Note.001": "Frame",
     "Objects in Lite": "Frame.002",
-    "Polyline Viewer.001": "Frame.002",
+    "Polyline Viewer.003": "Frame.002",
     "Scalar Math": "Frame.001",
     "Scripted Node Lite": "Frame",
     "Vector out": "Frame.001"
@@ -15,6 +15,7 @@
   "nodes": {
     "Evaluate Curve": {
       "bl_idname": "SvExEvalCurveNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -23,13 +24,13 @@
         -199.6656036376953
       ],
       "params": {
-        "eval_mode": "AUTO",
         "sample_size": 200
       },
       "width": 140.0
     },
     "Formula": {
       "bl_idname": "SvFormulaNodeMk3",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -44,6 +45,7 @@
     },
     "Formula.001": {
       "bl_idname": "SvFormulaNodeMk3",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -58,6 +60,7 @@
     },
     "Frame": {
       "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
       "height": 252.3343963623047,
       "hide": false,
       "label": "generator",
@@ -70,6 +73,7 @@
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
       "height": 210.1357421875,
       "hide": false,
       "label": "twist",
@@ -82,7 +86,8 @@
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "height": 405.5419921875,
+      "custom_socket_props": {},
+      "height": 464.89044189453125,
       "hide": false,
       "label": "bevel object",
       "location": [
@@ -90,7 +95,7 @@
         -1.1232242584228516
       ],
       "params": {},
-      "width": 392.3338623046875
+      "width": 389.03125
     },
     "Note": {
       "bl_idname": "NoteNode",
@@ -99,6 +104,7 @@
         0.8993440270423889,
         0.9742509722709656
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -107,7 +113,8 @@
         -16.087749481201172
       ],
       "params": {
-        "show_text": 0,
+        "n_id": "-8503949147017359024",
+        "show_text": false,
         "text": "Nikitron 2020 | Toe revange from radiation dust . SNL implemented generator. Input letters l r t as in this example and create new toes. Schema was taken from Russian magazine 'Nauka i gizn''."
       },
       "use_custom_color": true,
@@ -120,6 +127,7 @@
         0.8993440270423889,
         0.9742509722709656
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -128,6 +136,7 @@
         -205.29336547851562
       ],
       "params": {
+        "n_id": "-8503949147017355483",
         "text": "l r r l r t"
       },
       "use_custom_color": true,
@@ -140,7 +149,8 @@
         1.0,
         0.883421003818512
       ],
-      "geom": "{\"Vertices\": [-1.2019426822662354, 0.0, 0.0, -1.0447529554367065, 0.1184345930814743, 0.0, -0.8746780753135681, 0.22233791649341583, 0.0, -0.6932308077812195, 0.3096092939376831, 0.0, -0.5019239187240601, 0.37814801931381226, 0.0, -0.30227020382881165, 0.4258534014225006, 0.0, -0.09578245878219604, 0.4506247639656067, 0.0, 0.11602653563022614, 0.450361430644989, 0.0, 0.3316439986228943, 0.4229626953601837, 0.0, 0.549557089805603, 0.36632785201072693, 0.0, 0.7682530879974365, 0.2783562242984772, 0.0, 0.9862191677093506, 0.15694713592529297, 0.0, 1.2019426822662354, 0.0, 0.0], \"Edges\": [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12], \"Polygons\": [], \"MaterialIdx\": [], \"Matrix\": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, -2.6762638092041016, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]}",
+      "custom_socket_props": {},
+      "geom": "{\"Vertices\": [-1.2019426822662354, 0.0, 0.0, -1.0447529554367065, 0.1184345930814743, 0.0, -0.8746780753135681, 0.22233791649341583, 0.0, -0.6932308077812195, 0.3096092939376831, 0.0, -0.5019239187240601, 0.37814801931381226, 0.0, -0.30227020382881165, 0.4258534014225006, 0.0, -0.09578245878219604, 0.4506247639656067, 0.0, 0.11602653563022614, 0.450361430644989, 0.0, 0.3316439986228943, 0.4229626953601837, 0.0, 0.549557089805603, 0.36632785201072693, 0.0, 0.7682530879974365, 0.2783562242984772, 0.0, 0.9862191677093506, 0.15694713592529297, 0.0, 1.2019426822662354, 0.0, 0.0], \"Edges\": [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12], \"Polygons\": [], \"MaterialIdx\": [], \"Matrix\": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]}",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -149,21 +159,26 @@
         -436.4497318267822
       ],
       "params": {
-        "currently_storing": 1,
-        "modifiers": 0,
+        "currently_storing": true,
         "obj_name": "BezierCurve"
       },
       "use_custom_color": true,
       "width": 140.0
     },
-    "Polyline Viewer": {
-      "bl_idname": "SvPolylineViewerNodeV28",
+    "Polyline Viewer.002": {
+      "bl_idname": "SvPolylineViewerNode",
       "color": [
-        0.6284880042076111,
-        0.931007981300354,
-        1.0
+        1.0,
+        0.5889999866485596,
+        0.21400000154972076
       ],
       "custom_socket_props": {
+        "2": {
+          "default_float_property": 0.20000000298023224
+        },
+        "3": {
+          "default_float_property": -45.68400192260742
+        },
         "4": {
           "object_kinds": "CURVE"
         }
@@ -172,35 +187,22 @@
       "hide": false,
       "label": "",
       "location": [
-        849.6615600585938,
-        18.201631546020508
+        874.505859375,
+        22.590808868408203
       ],
       "params": {
-        "basedata_name": "Alpha",
-        "bspline": 1,
-        "caps": 0,
-        "close": 0,
-        "curve_dimensions": "3D",
-        "depth": 0.8299999833106995,
-        "grouping": 1,
-        "preview_resolution_u": 3,
-        "radii": 0.3199999928474426,
-        "resolution": 4,
-        "selected_mode": "Single",
-        "show_wire": 0,
-        "twist": -45.5099983215332,
-        "use_auto_uv": 1,
-        "use_smooth": 1
+        "bevel_depth": 0.8299999833106995,
+        "is_lock_origin": false
       },
       "use_custom_color": true,
       "width": 140.0
     },
-    "Polyline Viewer.001": {
-      "bl_idname": "SvPolylineViewerNodeV28",
+    "Polyline Viewer.003": {
+      "bl_idname": "SvPolylineViewerNode",
       "color": [
-        0.6284880042076111,
-        0.931007981300354,
-        1.0
+        1.0,
+        0.5889999866485596,
+        0.21400000154972076
       ],
       "custom_socket_props": {
         "4": {
@@ -211,27 +213,22 @@
       "hide": false,
       "label": "",
       "location": [
-        633.8111877441406,
-        -420.4580020904541
+        630.5085754394531,
+        -434.10955238342285
       ],
       "params": {
-        "basedata_name": "Gamma",
-        "bspline": 0,
-        "close": 0,
+        "base_data_name": "Gamma",
+        "bevel_depth": 0.0,
         "curve_dimensions": "2D",
-        "depth": 0.0,
-        "object_hide_viewport": 1,
-        "object_select": 1,
-        "radii": 0.0,
-        "selected_mode": "Single",
-        "twist": 0.0,
-        "use_smooth": 0
+        "curve_type": "POLY",
+        "is_lock_origin": false
       },
       "use_custom_color": true,
       "width": 140.0
     },
     "Scalar Math": {
       "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -252,6 +249,7 @@
         0.800000011920929,
         0.949999988079071
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -260,18 +258,16 @@
         -205.78904724121094
       ],
       "params": {
-        "halt_updates": 0,
-        "inject_params": 0,
-        "injected_state": 0,
+        "n_id": "-8503949147017355656",
         "script_name": "Text",
         "script_str": "from sverchok.utils.geom import LinearSpline, CubicSpline\nfrom sverchok.utils.math import supported_metrics\nfrom sverchok.utils.curve import SvSplineCurve\n\n\"\"\"\nin numbr s d=[[]] n=0\nout splin C\nout verts v\n\"\"\"\n\n# '''use note node to define toe\n# l - left, r - right, t - top,\n# bake, convert to curve and\n# extrude 0.3\n# Start always from l finish with t\n# and finish inside out\n# use live_curve script \n# to materialize curve to tie\n# Nikitron, 2014'''\n\n\nout = [ \n        (0, 0.2, -5),\n        (0, 0.2, -3),\n        (0, 0.2, 0),\n        (1, 0.2, 1),\n        (3, 5, 2),\n        (0, 7, 2),\n        (-3, 5, 2),\n        (-1, 0.5, 1) ]\nfront = True\n\nvecs = [(0.8660254037844386, 0.0, -0.5),\n        (0,0,1),\n        (-0.8660254037844386, 0.0, -0.5)]\nif numbr:\n    n_ = numbr[0][0].split(' ')\n    print('default letters:  ',n_)\n    for k, i in enumerate(n_):\n        if i[0] == 'l':\n            i = 0\n        elif i[0] == 't':\n            i = 1\n        elif i[0] == 'r':\n            i = 2\n        v = vecs[i]\n        if front:\n            front = False\n            y1 = -0.015\n            y2 = 0.015\n        else:\n            front = True\n            y1 = 0.015\n            y2 = -0.015\n        out.append([v[0]*k*0.05+v[0],\n                    y1*(k+1),\n                    v[2]*k*0.05+v[2]])\n        out.append([v[0]*k*0.05+v[0],\n                    y2*(k+1),\n                    v[2]*k*0.05+v[2]])\n    out.extend([\n            (0, -0.4,-1),\n            (0, -0.2,-3),\n            (0, 0,-10)])\n\nspline = CubicSpline(out, metric = 'CHEBYSHEV', is_cyclic = False)\ncurve = SvSplineCurve(spline)\nverts=[out]\n\nsplin = [curve]\n"
       },
-      "snlite_ui": [],
       "use_custom_color": true,
       "width": 140.0
     },
     "Vector out": {
       "bl_idname": "VectorsOutNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -285,24 +281,6 @@
   },
   "update_lists": [
     [
-      "Note.001",
-      0,
-      "Scripted Node Lite",
-      0
-    ],
-    [
-      "Scripted Node Lite",
-      0,
-      "Evaluate Curve",
-      0
-    ],
-    [
-      "Evaluate Curve",
-      0,
-      "Vector out",
-      0
-    ],
-    [
       "Vector out",
       2,
       "Formula.001",
@@ -312,6 +290,24 @@
       "Formula.001",
       0,
       "Scalar Math",
+      0
+    ],
+    [
+      "Evaluate Curve",
+      0,
+      "Vector out",
+      0
+    ],
+    [
+      "Scripted Node Lite",
+      0,
+      "Evaluate Curve",
+      0
+    ],
+    [
+      "Note.001",
+      0,
+      "Scripted Node Lite",
       0
     ],
     [
@@ -329,25 +325,25 @@
     [
       "Objects in Lite",
       0,
-      "Polyline Viewer.001",
+      "Polyline Viewer.003",
       0
     ],
     [
       "Evaluate Curve",
       0,
-      "Polyline Viewer",
+      "Polyline Viewer.002",
       0
     ],
     [
       "Formula",
       0,
-      "Polyline Viewer",
+      "Polyline Viewer.002",
       2
     ],
     [
-      "Polyline Viewer.001",
+      "Polyline Viewer.003",
       0,
-      "Polyline Viewer",
+      "Polyline Viewer.002",
       4
     ]
   ]

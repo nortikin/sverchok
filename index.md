@@ -542,7 +542,7 @@
     ---
     SvMeshViewer
     SvCurveViewerNodeV28
-    SvPolylineViewerNodeV28
+    SvPolylineViewerNode
     SvTypeViewerNodeV28
     SvSkinViewerNodeV28
     SvMetaballOutNode
@@ -640,8 +640,9 @@
     SvPulgaRandomForceNode
     SvPulgaBoundingBoxForceNode
     SvPulgaInflateForceNode
-    SvPulgaAttractorsForceNode
+    SvPulgaAttractorsForceNodeMk2
     SvPulgaAngleForceNode
+    SvPulgaVortexForceNode
     SvPulgaPhysicsNode
 
 ## SVG

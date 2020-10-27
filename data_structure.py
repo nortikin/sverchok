@@ -89,7 +89,7 @@ def repeat_last(lst):
     and then keep repeating the last element,
     use with terminating input
     """
-    last = [lst[-1]] if lst else []
+    last = [lst[-1]] if len(lst) else []  # len(lst) in case of numpy arrays
     yield from chain(lst, cycle(last))
 
 
@@ -539,6 +539,23 @@ def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES):
     for i in range(target_level - current_level):
         result = [result]
     return result
+
+def flatten_data(data, target_level=1, data_types=SIMPLE_DATA_TYPES):
+    """
+    Reduce nesting level of `data` to `target_level`, by concatenating nested sub-lists.
+    Raises an exception if nesting level is already less than `target_level`.
+    Refer to data_structure_tests.py for examples.
+    """
+    current_level = get_data_nesting_level(data, data_types)
+    if current_level < target_level:
+        raise TypeError(f"Can't flatten data to level {target_level}: data already have level {current_level}")
+    elif current_level == target_level:
+        return data
+    else:
+        result = []
+        for item in data:
+            result.extend(flatten_data(item, target_level=target_level, data_types=data_types))
+        return result
 
 def map_at_level(function, data, item_level=0, data_types=SIMPLE_DATA_TYPES):
     """
@@ -1071,11 +1088,8 @@ def throttle_tree_update(node):
     that's it.
 
     """
-    try:
-        node.id_data.skip_tree_update = True
+    with node.id_data.throttle_update():
         yield node
-    finally:
-        node.id_data.skip_tree_update = False
 
 
 ##############################################################
