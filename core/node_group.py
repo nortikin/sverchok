@@ -296,9 +296,9 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
         group_node.location = center
 
         # linking, linking should be ordered from first socket to last (in case like `join list` nodes)
-        py_base_tree = Tree.from_bl_tree(base_tree)
+        py_base_tree = Tree(base_tree)
         input_node['connected_sockets'] = dict()  # Dict[node.name + socket.identifier, socket index of input node]
-        for py_node in py_base_tree.nodes.values():  # is selected
+        for py_node in py_base_tree.nodes:  # is selected
             if not py_node.select:
                 continue
             for in_py_socket in py_node.inputs:
@@ -339,9 +339,9 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
         """True if selected nodes can be putted into group (does not produce cyclic links)"""
         # if there is one or more unselected nodes between nodes to be grouped
         # then current selection can't be grouped
-        py_tree = Tree.from_bl_tree(tree)
+        py_tree = Tree(tree)
         [setattr(py_tree.nodes[n.name], 'select', n.select) for n in tree.nodes]
-        for node in py_tree.nodes.values():
+        for node in py_tree.nodes:
             if not node.select:
                 continue
             for neighbour_node in node.next_nodes:
@@ -434,9 +434,9 @@ class UngroupGroupTree(bpy.types.Operator):
             context.space_data.path.pop()  # should exit from sub tree anywhere
 
         # recreate py tree structure
-        sub_py_tree = Tree.from_bl_tree(sub_tree)
+        sub_py_tree = Tree(sub_tree)
         [setattr(sub_py_tree.nodes[n.name], 'type', n.bl_idname) for n in sub_tree.nodes]
-        py_tree = Tree.from_bl_tree(tree)
+        py_tree = Tree(tree)
         [setattr(py_tree.nodes[n.name], 'select', n.select) for n in tree.nodes]
         group_py_node = py_tree.nodes[group_node.name]
         for node in tree.nodes:
@@ -445,7 +445,7 @@ class UngroupGroupTree(bpy.types.Operator):
                 py_tree.nodes[node.name].twin = sub_py_tree.nodes[node['sub_node_name']]
 
         # create in links
-        for group_input_py_node in [n for n in sub_py_tree.nodes.values() if n.type == 'NodeGroupInput']:
+        for group_input_py_node in [n for n in sub_py_tree.nodes if n.type == 'NodeGroupInput']:
             for group_in_s, input_out_s in zip(group_py_node.inputs, group_input_py_node.outputs):
                 if group_in_s.links and input_out_s.links:
                     link_out_s = group_in_s.linked_sockets[0]
@@ -459,7 +459,7 @@ class UngroupGroupTree(bpy.types.Operator):
                             tree.links.new(link_in_s.get_bl_socket(tree), link_out_s.get_bl_socket(tree))
 
         # create out links
-        for group_output_py_node in [n for n in sub_py_tree.nodes.values() if n.type == 'NodeGroupOutput']:
+        for group_output_py_node in [n for n in sub_py_tree.nodes if n.type == 'NodeGroupOutput']:
             for group_out_s, output_in_s in zip(group_py_node.outputs, group_output_py_node.inputs):
                 if group_out_s.links and output_in_s.links:
                     twin_out_s = output_in_s.linked_sockets[0]
