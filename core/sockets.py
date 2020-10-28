@@ -17,31 +17,196 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from mathutils import Matrix, Quaternion
 import bpy
-from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty
-from bpy.types import NodeSocket
+from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, FloatProperty, EnumProperty
+from bpy.types import NodeTree, NodeSocket
 
-from sverchok.core.socket_conversions import ConversionPolicies
+from sverchok.core.socket_conversions import ConversionPolicies, is_vector_to_matrix, FieldImplicitConversionPolicy
 from sverchok.core.socket_data import (
     SvGetSocketInfo, SvGetSocket, SvSetSocket, SvForgetSocket,
     SvNoDataError, sentinel)
 
-from sverchok.data_structure import get_other_socket, replace_socket
-from sverchok.utils.logging import warning
+from sverchok.data_structure import (
+    get_other_socket,
+    socket_id,
+    replace_socket,
+    SIMPLE_DATA_TYPES,
+    flatten_data, graft_data, map_at_level, wrap_data)
 
+from sverchok.utils.field.scalar import SvScalarField, SvConstantScalarField
+from sverchok.utils.field.vector import SvVectorField, SvMatrixVectorField, SvConstantVectorField
+from sverchok.utils.curve import SvCurve
+from sverchok.utils.curve.algorithms import reparametrize_curve
+from sverchok.utils.surface import SvSurface
+
+from sverchok.utils.logging import warning
 
 def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
     self.node.process_node(context)
 
+class SV_MT_SocketOptionsMenu(bpy.types.Menu):
+    bl_label = "Socket Options"
 
-class SvSocketCommon:
+    test : BoolProperty(name="Test")
+
+    @classmethod
+    def poll(cls, context):
+        return hasattr(context, 'node') and hasattr(context, 'socket')
+
+    def draw(self, context):
+        node = context.node
+        if not node:
+            return
+        layout = self.layout
+        if hasattr(context.socket, 'draw_menu_items'):
+            context.socket.draw_menu_items(context, layout)
+
+class SvSocketProcessing(object):
+    """
+    Mixin class for data processing logic of a socket.
+    """
+    # These properties are to be set explicitly by node classes
+    # for input sockets, if the node knows it can handle simplified data.
+    # For outputs, these properties are not used.
+    allow_flatten : BoolProperty(default = False)
+    allow_simplify : BoolProperty(default = False)
+    allow_graft : BoolProperty(default = False)
+    allow_wrap : BoolProperty(default = False)
+
+    # technical property
+    skip_simplify_mode_update: BoolProperty(default=False)
+
+    use_graft : BoolProperty(
+            name = "Graft",
+            default = False,
+            update = process_from_socket)
+
+    use_wrap : BoolProperty(
+            name = "Wrap",
+            default = False,
+            update = process_from_socket)
+
+    def update_flatten_flag(self, context):
+        if self.skip_simplify_mode_update:
+            return
+
+        with self.node.sv_throttle_tree_update():
+            try:
+                self.skip_simplify_mode_update = True
+                if self.use_flatten:
+                    self.use_simplify = False
+            finally:
+                self.skip_simplify_mode_update = False
+                
+        process_from_socket(self, context)
+
+    def update_simplify_flag(self, context):
+        if self.skip_simplify_mode_update:
+            return
+
+        with self.node.sv_throttle_tree_update():
+            try:
+                self.skip_simplify_mode_update = True
+                if self.use_simplify:
+                    self.use_flatten = False
+            finally:
+                self.skip_simplify_mode_update = False
+                
+        process_from_socket(self, context)
+
+    # Only one of properties can be set to true: use_flatten or use_simplfy
+    use_flatten : BoolProperty(
+            name = "Flatten",
+            default = False,
+            update = update_flatten_flag)
+
+    use_simplify : BoolProperty(
+            name = "Simplify",
+            default = False,
+            update = update_simplify_flag)
+
+    def get_mode_flags(self):
+        flags = []
+        if self.use_flatten:
+            flags.append('F')
+        if self.use_simplify:
+            flags.append('S')
+        if self.use_graft:
+            flags.append('G')
+        if self.use_wrap:
+            flags.append('W')
+        return flags
+
+    def can_flatten(self):
+        return hasattr(self, 'do_flatten') and (self.allow_flatten or self.is_output)
+
+    def can_simplify(self):
+        return hasattr(self, 'do_simplify') and (self.allow_simplify or self.is_output)
+
+    def can_graft(self):
+        return hasattr(self, 'do_graft') and (self.is_output or self.allow_graft)
+
+    def can_wrap(self):
+        return self.is_output or self.allow_wrap
+
+    def draw_simplify_modes(self, layout):
+        if self.can_flatten():
+            layout.prop(self, 'use_flatten')
+        if self.can_simplify():
+            layout.prop(self, 'use_simplify')
+
+    def preprocess_input(self, data):
+        result = data
+        if self.use_flatten:
+            result = self.do_flatten(data)
+        elif self.use_simplify:
+            result = self.do_simplify(data)
+        if self.use_graft:
+            result = self.do_graft(result)
+        if self.use_wrap:
+            result = wrap_data(result)
+        return result
+
+    def postprocess_output(self, data):
+        result = data
+        if self.use_flatten:
+            result = self.do_flatten(data)
+        elif self.use_simplify:
+            result = self.do_simplify(data)
+        if self.use_graft:
+            result = self.do_graft(result)
+        if self.use_wrap:
+            result = wrap_data(result)
+        return result
+
+    def has_simplify_modes(self, context):
+        return self.can_flatten() or self.can_simplify()
+
+    def has_menu(self, context):
+        return self.has_simplify_modes(context) or self.can_graft() or self.can_wrap()
+
+    def draw_menu_button(self, context, layout, node, text):
+        if hasattr(node.id_data, 'sv_show_socket_menus') and node.id_data.sv_show_socket_menus:
+            if (self.is_output or self.is_linked or not self.use_prop):
+                layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
+
+    def draw_menu_items(self, context, layout):
+        self.draw_simplify_modes(layout)
+        if self.can_graft():
+            layout.prop(self, 'use_graft')
+        if self.can_wrap():
+            layout.prop(self, 'use_wrap')
+
+class SvSocketCommon(SvSocketProcessing):
     """
     Base class for all Sockets
 
     'SKIP_SAVE' in properties means skipping them during saving in JSON format
     some of the properties can be skipped because they are static, they are always set only in sv_init method
     """
+
     color = (1, 0, 0, 1)  # base color, other sockets should override the property, use FloatProperty for dynamic
     label: StringProperty()  # It will be drawn instead of name if given
     quick_link_to_node = str()  # sockets which often used with other nodes can fill its `bl_idname` here
@@ -55,6 +220,8 @@ class SvSocketCommon:
 
     # utility field for showing number of objects in sockets data
     objects_number: IntProperty(min=0, options={'SKIP_SAVE'})
+
+    description : StringProperty()
 
     def get_prop_name(self):
         """
@@ -75,7 +242,7 @@ class SvSocketCommon:
 
     @property
     def other(self):
-        """Returns opposite liked socket, if socket is outputs it will return one random opposite linked socket"""
+        """Returns opposite linked socket, if socket is outputs it will return one random opposite linked socket"""
         return get_other_socket(self)
 
     @property
@@ -157,6 +324,7 @@ class SvSocketCommon:
 
     def sv_set(self, data):
         """Set output data"""
+        data = self.postprocess_output(data)
         SvSetSocket(self, data)
 
     def sv_forget(self):
@@ -189,6 +357,15 @@ class SvSocketCommon:
 
     def draw(self, context, layout, node, text):
 
+        def draw_label(text):
+            flags = self.get_mode_flags()
+            if flags:
+                text = text + " [" + ",".join(flags) + "]"
+            if self.description:
+                layout.operator('node.sv_socket_show_help', text=text, emboss=False).text = self.description
+            else:
+                layout.label(text=text)
+
         # just handle custom draw..be it input or output.
         if self.custom_draw:
             # does the node have the draw function referred to by
@@ -197,10 +374,10 @@ class SvSocketCommon:
                 getattr(node, self.custom_draw)(self, context, layout)
 
         elif self.is_linked:  # linked INPUT or OUTPUT
-            layout.label(text=(self.label or text) + f". {self.objects_number or ''}")
+            draw_label((self.label or text) + f". {self.objects_number or ''}")
 
         elif self.is_output:  # unlinked OUTPUT
-            layout.label(text=self.label or text)
+            draw_label(self.label or text)
 
         else:  # unlinked INPUT
             if self.get_prop_name():  # has property
@@ -221,7 +398,10 @@ class SvSocketCommon:
 
             else:  # no property and not use default prop
                 self.draw_quick_link(context, layout, node)
-                layout.label(text=self.label or text)
+                draw_label(self.label or text)
+
+        if self.has_menu(context):
+            self.draw_menu_button(context, layout, node, text)
 
     def draw_color(self, context, node):
         return self.color
@@ -316,7 +496,6 @@ class SvTextSocket(NodeSocket, SvSocketCommon):
 
     default_property: StringProperty(update=process_from_socket)
 
-
 class SvMatrixSocket(NodeSocket, SvSocketCommon):
     '''4x4 matrix Socket type'''
 
@@ -326,6 +505,11 @@ class SvMatrixSocket(NodeSocket, SvSocketCommon):
     color = (0.2, 0.8, 0.8, 1.0)
     quick_link_to_node = 'SvMatrixInNodeMK4'
 
+    def do_flatten(self, data):
+        return flatten_data(data, 1, data_types=(Matrix,))
+
+    def do_graft(self, data):
+        return graft_data(data, item_level=0, data_types=(Matrix,))
 
 class SvVerticesSocket(NodeSocket, SvSocketCommon):
     '''For vertex data'''
@@ -341,6 +525,9 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
     prop: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
 
     expanded: BoolProperty(default=False)  # for minimizing showing socket property
+
+    def do_simplify(self, data):
+        return flatten_data(data, 2)
 
     @property
     def default_property(self):
@@ -366,6 +553,9 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
             c1.prop(self, "expanded", icon='TRIA_DOWN', text="")
             row = c2.row(align=True)
             row.template_component_menu(prop_origin, prop_name, name=self.name)
+
+    def do_graft(self, data):
+        return graft_data(data, item_level=1)
 
     def draw_group_property(self, layout, text, interface_socket):
         if not interface_socket.hide_value:
@@ -396,7 +586,6 @@ class SvVerticesSocketInterface(bpy.types.NodeSocketInterface):
         col.prop(self, 'default_value')
         col.prop(self, 'hide_value')
 
-
 class SvQuaternionSocket(NodeSocket, SvSocketCommon):
     '''For quaternion data'''
     bl_idname = "SvQuaternionSocket"
@@ -425,12 +614,17 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
             row = c2.row(align=True)
             row.template_component_menu(prop_origin, prop_name, name=self.name)
 
+    def do_flatten(self, data):
+        return flatten_data(data, 1, data_types=(Quaternion,))
+
+    def do_graft(self, data):
+        return graft_data(data, item_level=0, data_types=(Quaternion,))
+
     def draw_group_property(self, layout, text, interface_socket):
         if not interface_socket.hide_value:
             layout.template_component_menu(self, 'default_property', name=text)
         else:
             layout.label(text=text)
-
 
 class SvColorSocket(NodeSocket, SvSocketCommon):
     '''For color data'''
@@ -466,7 +660,6 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
         else:
             layout.label(text=text)
 
-
 class SvDummySocket(NodeSocket, SvSocketCommon):
     '''Dummy Socket for sockets awaiting assignment of type'''
     bl_idname = "SvDummySocket"
@@ -497,6 +690,26 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
     bl_label = "Strings Socket"
 
     color = (0.6, 1.0, 0.6, 1.0)
+
+    use_graft_2 : BoolProperty(
+            name = "Graft Topology",
+            default = False,
+            update = process_from_socket)
+
+    def get_mode_flags(self):
+        flags = super().get_mode_flags()
+        if self.use_graft_2:
+            flags.append('G2')
+        return flags
+
+    def get_prop_data(self):
+        if self.get_prop_name():
+            return {"prop_name": self.get_prop_name()}
+        elif self.prop_type:
+            return {"prop_type": self.prop_type,
+                    "prop_index": self.prop_index}
+        else:
+            return {}
 
     quick_link_to_node: StringProperty(options={'SKIP_SAVE'})  # this can be overridden by socket instances
 
@@ -530,6 +743,67 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
                 layout.prop(self, 'default_float_property', text=self.name)
             elif self.default_property_type == 'int':
                 layout.prop(self, 'default_int_property', text=self.name)
+
+    def draw_menu_items(self, context, layout):
+        self.draw_simplify_modes(layout)
+        if self.can_graft():
+            layout.prop(self, 'use_graft')
+            if not self.use_flatten:
+                layout.prop(self, 'use_graft_2')
+        if self.can_wrap():
+            layout.prop(self, 'use_wrap')
+
+    def do_flatten(self, data):
+        return flatten_data(data, 1)
+
+    def do_simplify(self, data):
+        return flatten_data(data, 2)
+
+    def do_graft(self, data):
+        return graft_data(data, item_level=0, data_types = SIMPLE_DATA_TYPES + (SvCurve, SvSurface))
+
+    def do_simplify(self, data):
+        return flatten_data(data, 2)
+
+    def do_graft(self, data):
+        return graft_data(data, item_level=0, data_types = SIMPLE_DATA_TYPES + (SvCurve, SvSurface))
+
+    def do_graft_2(self, data):
+        def to_zero_base(lst):
+            m = min(lst)
+            return [x - m for x in lst]
+
+        result = map_at_level(to_zero_base, data, item_level=1, data_types = SIMPLE_DATA_TYPES + (SvCurve, SvSurface))
+        result = graft_data(result, item_level=1, data_types = SIMPLE_DATA_TYPES + (SvCurve, SvSurface))
+        return result
+
+    def preprocess_input(self, data):
+        result = data
+        if self.use_flatten:
+            result = self.do_flatten(data)
+        elif self.use_simplify:
+            result = self.do_simplify(data)
+        if self.use_graft:
+            result = self.do_graft(result)
+        elif not self.use_flatten and self.use_graft_2:
+            result = self.do_graft_2(result)
+        if self.use_wrap:
+            result = wrap_data(result)
+        return result
+
+    def postprocess_output(self, data):
+        result = data
+        if self.use_flatten:
+            result = self.do_flatten(data)
+        elif self.use_simplify:
+            result = self.do_simplify(data)
+        if self.use_graft:
+            result = self.do_graft(result)
+        elif self.use_graft_2:
+            result = self.do_graft_2(result)
+        if self.use_wrap:
+            result = wrap_data(result)
+        return result
 
     def draw_group_property(self, layout, text, interface_socket):
         # only for input sockets group node nodes with sub trees
@@ -571,7 +845,6 @@ class SvStringsSocketInterface(bpy.types.NodeSocketInterface):
         elif self.default_type == 'int':
             layout.prop(self, 'default_int_value')
 
-
 class SvFilePathSocket(NodeSocket, SvSocketCommon):
     '''For file path data'''
     bl_idname = "SvFilePathSocket"
@@ -612,6 +885,11 @@ class SvDictionarySocket(NodeSocket, SvSocketCommon):
 
     color = (1.0, 1.0, 1.0, 1.0)
 
+    def do_flatten(self, data):
+        return flatten_data(data, 1, data_types=(dict,))
+
+    def do_simplify(self, data):
+        return flatten_data(data, 2, data_types=(dict,))
 
 class SvChameleonSocket(NodeSocket, SvSocketCommon):
     '''Using as input socket with color of other connected socket'''
@@ -633,6 +911,7 @@ class SvChameleonSocket(NodeSocket, SvSocketCommon):
             self.color = (0.0, 0.0, 0.0, 0.0)
             self.dynamic_type = self.bl_idname
 
+    default_conversion_name = ConversionPolicies.LENIENT.conversion_name
 
 class SvSurfaceSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvSurfaceSocket"
@@ -640,6 +919,11 @@ class SvSurfaceSocket(NodeSocket, SvSocketCommon):
 
     color = (0.4, 0.2, 1.0, 1.0)
 
+    def do_flatten(self, data):
+        return flatten_data(data, 1, data_types=(SvSurface,))
+
+    def do_graft(self, data):
+        return graft_data(data, item_level=0, data_types=(SvSurface,))
 
 class SvCurveSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvCurveSocket"
@@ -647,6 +931,38 @@ class SvCurveSocket(NodeSocket, SvSocketCommon):
 
     color = (0.5, 0.6, 1.0, 1.0)
 
+    reparametrize: BoolProperty(
+            name = "Reparametrize",
+            default = False,
+            update = process_from_socket)
+
+    def get_mode_flags(self):
+        flags = super().get_mode_flags()
+        if self.reparametrize:
+            flags.append('R')
+        return flags
+
+    def draw_menu_items(self, context, layout):
+        super().draw_menu_items(context, layout)
+        layout.prop(self, 'reparametrize')
+
+    def do_flatten(self, data):
+        return flatten_data(data, 1, data_types=(SvCurve,))
+
+    def do_graft(self, data):
+        return graft_data(data, item_level=0, data_types=(SvCurve,))
+
+    def preprocess_input(self, data):
+        data = SvSocketCommon.preprocess_input(self, data)
+        if self.reparametrize:
+            data = map_at_level(reparametrize_curve, data, data_types=(SvCurve,))
+        return data
+
+    def postprocess_output(self, data):
+        data = SvSocketCommon.postprocess_output(self, data)
+        if self.reparametrize:
+            data = map_at_level(reparametrize_curve, data, data_types=(SvCurve,))
+        return data
 
 class SvScalarFieldSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvScalarFieldSocket"
@@ -655,6 +971,11 @@ class SvScalarFieldSocket(NodeSocket, SvSocketCommon):
     color = (0.9, 0.4, 0.1, 1.0)
     default_conversion_name = ConversionPolicies.FIELD.conversion_name
 
+    def do_flatten(self, data):
+        return flatten_data(data, 1, data_types=(SvScalarField,))
+
+    def do_graft(self, data):
+        return graft_data(data, item_level=0, data_types=(SvScalarField,))
 
 class SvVectorFieldSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvVectorFieldSocket"
@@ -663,6 +984,11 @@ class SvVectorFieldSocket(NodeSocket, SvSocketCommon):
     color = (0.1, 0.1, 0.9, 1.0)
     default_conversion_name = ConversionPolicies.FIELD.conversion_name
 
+    def do_flatten(self, data):
+        return flatten_data(data, 1, data_types=(SvVectorField,))
+
+    def do_graft(self, data):
+        return graft_data(data, item_level=0, data_types=(SvVectorField,))
 
 class SvSolidSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvSolidSocket"
@@ -670,6 +996,15 @@ class SvSolidSocket(NodeSocket, SvSocketCommon):
 
     color = (0.0, 0.65, 0.3, 1.0)
 
+    def do_flatten(self, data):
+        from sverchok.dependencies import FreeCAD
+        import Part
+        return flatten_data(data, 1, data_types=(Part.Shape,))
+
+    def do_graft(self, data):
+        from sverchok.dependencies import FreeCAD
+        import Part
+        return graft_data(data, item_level=0, data_types=(Part.Shape,))
 
 class SvLinkNewNodeInput(bpy.types.Operator):
     ''' Spawn and link new node to the left of the caller node'''
@@ -692,16 +1027,35 @@ class SvLinkNewNodeInput(bpy.types.Operator):
 
         return {'FINISHED'}
 
+class SvSocketHelpOp(bpy.types.Operator):
+    bl_idname = "node.sv_socket_show_help"
+    bl_label = "Socket description"
+    bl_options = {'INTERNAL', 'REGISTER'}
+
+    text : StringProperty()
+
+    @classmethod
+    def description(cls, context, properties):
+        return properties.text
+
+    def execute(self, context):
+        def draw(menu, context):
+            col = menu.layout.column(align=True)
+            for line in self.text.split('\n'):
+                col.label(text=line)
+        bpy.context.window_manager.popup_menu(draw, title="Socket description", icon='QUESTION')
+        return {'FINISHED'}
 
 classes = [
+    SV_MT_SocketOptionsMenu,
     SvVerticesSocket, SvMatrixSocket, SvStringsSocket, SvFilePathSocket,
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
     SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket,
     SvSurfaceSocket, SvCurveSocket, SvScalarFieldSocket, SvVectorFieldSocket,
     SvSolidSocket, SvSvgSocket, SvPulgaForceSocket, SvLinkNewNodeInput,
-    SvStringsSocketInterface, SvVerticesSocketInterface
+    SvStringsSocketInterface, SvVerticesSocketInterface,
+    SvSocketHelpOp
 ]
-
 
 def socket_interface_classes():
     """
@@ -741,3 +1095,4 @@ def socket_interface_classes():
 
 
 register, unregister = bpy.utils.register_classes_factory(classes + list(socket_interface_classes()))
+

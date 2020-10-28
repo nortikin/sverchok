@@ -100,6 +100,48 @@ class DataStructureTests(SverchokTestCase):
         self.subtest_assert_equals(describe_data_shape([1]), 'Level 1: list [1] of int')
         self.subtest_assert_equals(describe_data_shape([[(1,2,3)]]), 'Level 3: list [1] of list [1] of tuple [3] of int')
 
+    def test_flatten_1(self):
+        data = [[1,2], [3,4]]
+        result = flatten_data(data)
+        expected = [1,2,3,4]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_flatten_2(self):
+        data = [[[1,2], [3,4]], [[5,6], [7,8]]]
+        result = flatten_data(data, target_level=2)
+        expected = [[1,2], [3,4], [5,6], [7,8]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_flatten_3(self):
+        data = [[[1,2], [3,4]], [[5,6], [7,8]]]
+        result = flatten_data(data, target_level=1)
+        expected = [1,2, 3,4, 5,6, 7,8]
+        self.assert_sverchok_data_equal(result, expected)
+    
+    def test_graft_1(self):
+        data = [1,2,3]
+        result = graft_data(data, item_level=0)
+        expected = [[1], [2], [3]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_graft_2(self):
+        data = [[1, 2, 3]]
+        result = graft_data(data, item_level=0)
+        expected = [[[1], [2], [3]]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_graft_3(self):
+        data = [[1, 2], [3]]
+        result = graft_data(data, item_level=1)
+        expected = [[[1, 2]], [[3]]]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_graft_4(self):
+        data = [[1, 2], [3]]
+        result = graft_data(data, item_level=0)
+        expected = [[[1], [2]], [[3]]]
+        self.assert_sverchok_data_equal(result, expected)
+
 class CalcMaskTests(SverchokTestCase):
     def test_calc_mask_1(self):
         subset = [1]

@@ -515,11 +515,13 @@ def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
 
     return helper(data, 0)
 
-def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES):
+def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES, input_name=None):
     """
     data: number, or list of numbers, or list of lists, etc.
     target_level: data nesting level required for further processing.
     data_types: list or tuple of types.
+    input_name: name of input socket data was taken from. Optional. If specified,
+        used for error reporting.
 
     Wraps data in so many [] as required to achieve target nesting level.
     Raises an exception, if data already has too high nesting level.
@@ -534,7 +536,10 @@ def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES):
 
     current_level = get_data_nesting_level(data, data_types)
     if current_level > target_level:
-        raise TypeError("ensure_nesting_level: input data already has nesting level of {}. Required level was {}.".format(current_level, target_level))
+        if input_name is None:
+            raise TypeError("ensure_nesting_level: input data already has nesting level of {}. Required level was {}.".format(current_level, target_level))
+        else:
+            raise TypeError("Input data in socket {} already has nesting level of {}. Required level was {}.".format(input_name, current_level, target_level))
     result = data
     for i in range(target_level - current_level):
         result = [result]
@@ -556,6 +561,34 @@ def flatten_data(data, target_level=1, data_types=SIMPLE_DATA_TYPES):
         for item in data:
             result.extend(flatten_data(item, target_level=target_level, data_types=data_types))
         return result
+
+def graft_data(data, item_level=1, wrap_level=1, data_types=SIMPLE_DATA_TYPES):
+    """
+    For each nested item of the list, which has it's own nesting level of `target_level`,
+    wrap that item into a pair of [].
+    For example, with item_level==0, this means wrap each number in the nested list
+    (however deep this number is nested) into pair of [].
+    Refer to data_structure_tests.py for examples.
+    """
+    def wrap(item):
+        for i in range(wrap_level):
+            item = [item]
+        return item
+
+    def helper(data):
+        current_level = get_data_nesting_level(data, data_types)
+        if current_level == item_level:
+            return wrap(data)
+        else:
+            result = [helper(item) for item in data]
+            return result
+
+    return helper(data)
+
+def wrap_data(data, wrap_level=1):
+    for i in range(wrap_level):
+        data = [data]
+    return data
 
 def map_at_level(function, data, item_level=0, data_types=SIMPLE_DATA_TYPES):
     """

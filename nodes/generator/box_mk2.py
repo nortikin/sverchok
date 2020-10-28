@@ -318,7 +318,7 @@ class SvBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Divy").prop_name = 'Divy'
         self.inputs.new('SvStringsSocket', "Divz").prop_name = 'Divz'
         self.inputs.new('SvMatrixSocket', "Matrix")
-        self.outputs.new('SvVerticesSocket', "Vers")
+        self.outputs.new('SvVerticesSocket', "Vers").description = "Box vertices"
         self.outputs.new('SvStringsSocket', "Edgs")
         self.outputs.new('SvStringsSocket', "Pols")
 

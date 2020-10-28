@@ -237,6 +237,12 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_show_error_in_tree: BoolProperty(
         description="This will show Node Exceptions in the 3dview, right beside the node",
         name="Show error in tree", default=False, update=lambda s, c: process_tree(s), options=set())
+    
+    sv_show_socket_menus : BoolProperty(
+        name = "Show socket menus",
+        description = "Display socket dropdown menu buttons. NOTE: options that are enabled in those menus will be effective regardless of this checkbox!",
+        default = False,
+        options=set())
 
     # if several nodes are disconnected this option determine order of their evaluation
     sv_subtree_evaluation_order: EnumProperty(
