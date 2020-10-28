@@ -22,12 +22,12 @@ class Tree(ABC):
     @property
     def input_nodes(self) -> List[Node]:
         """Nodes which don't have nodes before"""
-        return [node for node in self.nodes.values() if node.is_input]
+        return [node for node in self.nodes if node.is_input]
 
     @property
     def output_nodes(self) -> List[Node]:
         """Nodes which don't have nodes after"""
-        return [node for node in self.nodes.values() if node.is_output]
+        return [node for node in self.nodes if node.is_output]
 
     @staticmethod
     def bfs_walk(nodes: List[Node], direction: str = 'FORWARD') -> Generator[Node]:

@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, ValuesView
 
 from sverchok.utils.testing import SverchokTestCase
 import sverchok.utils.tree_walk as tw
@@ -115,11 +115,31 @@ class TreeWalkTest(SverchokTestCase):
 
 class Tree(tw.Tree):
     def __init__(self):
-        self._nodes = dict()
+        self._nodes = Nodes()
 
     @property
-    def nodes(self) -> Dict[int, 'Node']:
+    def nodes(self) -> 'Nodes':
         return self._nodes
+
+
+class Nodes:
+    def __init__(self):
+        self._nodes = dict()
+
+    def __getitem__(self, item):
+        return self._nodes[item]
+
+    def __setitem__(self, key, value):
+        self._nodes[key] = value
+
+    def __len__(self):
+        return len(self._nodes)
+
+    def __iter__(self):
+        return iter(self._nodes.values())
+
+    def update(self, nodes: dict):
+        self._nodes.update(nodes)
 
 
 class Node(tw.Node):
