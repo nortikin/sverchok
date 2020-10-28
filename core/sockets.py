@@ -188,8 +188,9 @@ class SvSocketProcessing(object):
         return self.has_simplify_modes(context) or self.can_graft() or self.can_wrap()
 
     def draw_menu_button(self, context, layout, node, text):
-        if (self.is_output or self.is_linked or not self.use_prop):
-            layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
+        if hasattr(node.id_data, 'sv_show_socket_menus') and node.id_data.sv_show_socket_menus:
+            if (self.is_output or self.is_linked or not self.use_prop):
+                layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
 
     def draw_menu_items(self, context, layout):
         self.draw_simplify_modes(layout)
