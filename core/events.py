@@ -24,6 +24,15 @@ from bpy.types import Node, NodeTree
 from sverchok.utils.context_managers import sv_preferences
 
 
+class GroupEvent:
+    GROUP_NODE_UPDATE = 'group_node_update'
+
+    def __init__(self, event_type: str, updated_tree: str = None, updated_node: str = None):
+        self.type = event_type
+        self.updated_tree = updated_tree
+        self.updated_node = updated_node
+
+
 class BlenderEventsTypes(Enum):
     tree_update = auto()  # this updates is calling last with exception of creating new node
     monad_tree_update = auto()

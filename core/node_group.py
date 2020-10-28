@@ -6,11 +6,17 @@
 # License-Filename: LICENSE
 
 # from __future__ import annotations <- Don't use it here, `group node` will loose its `group tree` attribute
+import time
 from functools import reduce
 from typing import Tuple, List, Set, Dict
 
 import bpy
+from sverchok.core.update_system import process_from_node
+from sverchok.data_structure import extend_blender_class
 from mathutils import Vector
+
+from sverchok.core.group_handlers import MainHandler
+from sverchok.core.events import GroupEvent
 from sverchok.utils.tree_structure import Tree
 
 
@@ -19,6 +25,17 @@ class SvGroupTree(bpy.types.NodeTree):
     bl_idname = 'SvGroupTree'
     bl_icon = 'NODETREE'
     bl_label = 'Group tree'
+
+    handler = MainHandler()
+
+    tree_id_memory: bpy.props.StringProperty(default="")  # identifier of the tree, should be used via `tree_id`
+
+    @property
+    def tree_id(self):
+        """Identifier of the tree"""
+        if not self.tree_id_memory:
+            self.tree_id_memory = str(hash(self) ^ hash(time.monotonic()))
+        return self.tree_id_memory
 
     @classmethod
     def poll(cls, context):
@@ -57,7 +74,18 @@ class SvGroupTree(bpy.types.NodeTree):
         return not shared_trees
 
 
-class SvGroupTreeNode(bpy.types.NodeCustomGroup):
+class NodeId:
+    n_id: bpy.props.StringProperty(options={'SKIP_SAVE'})
+
+    @property
+    def node_id(self):
+        """Identifier of the node"""
+        if not self.n_id:
+            self.n_id = str(hash(self) ^ hash(time.monotonic()))
+        return self.n_id
+
+
+class SvGroupTreeNode(NodeId, bpy.types.NodeCustomGroup):
     """Node for keeping sub trees"""
     bl_idname = 'SvGroupTreeNode'
     bl_label = 'Group node (mockup)'
@@ -114,8 +142,31 @@ class SvGroupTreeNode(bpy.types.NodeCustomGroup):
             row_search.operator('node.add_group_tree', text='New', icon='ADD')
 
     def process_node(self, context):
-        # update properties of socket of the node trigger this method
-        pass
+        """update properties of socket of the node trigger this method"""
+        process_from_node(self)
+
+    def process(self):
+        # first should pass data into GroupInput nodes of subtree
+        for input_node in (n for n in self.node_tree.nodes if n.bl_idname == 'NodeGroupInput'):
+            for in_s, out_s, int_in_s in zip(self.inputs, input_node.outputs, self.node_tree.inputs):
+                if out_s.identifier == '__extend__':  # virtual socket
+                    break
+                # also before getting data from socket `socket.use_prop` property should be set
+                in_s.use_prop = not int_in_s.hide_value
+                if hasattr(int_in_s, 'default_type'):
+                    in_s.default_property_type = int_in_s.default_type
+                out_s.sv_set(in_s.sv_get(deepcopy=False))
+
+        # now the tree is ready to update
+        self.node_tree.handler.send(GroupEvent(GroupEvent.GROUP_NODE_UPDATE, updated_tree=self.node_tree.name))
+
+        # get result from tree
+        for output_node in (n for n in self.node_tree.nodes if n.bl_idname == 'NodeGroupOutput'):
+            # if multiple outputs nodes sockets will be overridden by each other
+            for out_s, in_s in zip(self.outputs, output_node.inputs):
+                if out_s.identifier == '__extend__':  # virtual socket
+                    break
+                out_s.sv_set(in_s.sv_get(deepcopy=False))
 
 
 class PlacingNodeOperator:
@@ -557,11 +608,16 @@ classes = [SvGroupTree, SvGroupTreeNode, AddGroupNode, AddGroupTree, EditGroupTr
            AddNodeOutputInput, AddGroupTreeFromSelected, SearchGroupTree, UngroupGroupTree]
 
 
-def register():
-    [bpy.utils.register_class(cls) for cls in classes]
-    bpy.types.NodeGroupOutput.process_node = lambda s, c: None  # this function is called during a socket value update
+@extend_blender_class
+class NodeGroupOutput(NodeId):
+    def process_node(self, context):
+        # this function is called during a socket value update
+        pass
 
 
-def unregister():
-    del bpy.types.NodeGroupOutput.process_node
-    [bpy.utils.unregister_class(cls) for cls in classes[::-1]]
+@extend_blender_class
+class NodeGroupInput(NodeId):
+    pass
+
+
+register, unregister = bpy.utils.register_classes_factory(classes)
