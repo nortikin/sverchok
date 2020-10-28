@@ -234,6 +234,13 @@
    SvSphereSolidNode
    SvToursSolidNode
    @ Make Face
+   SvSolidFaceExtrudeNode
+   SvSolidFaceSolidifyNode
+   SvSolidFaceRevolveNode
+   SvSweepSolidFaceNode
+   SvRuledSolidNode
+   SvSolidFromFacesNode
+   ---
    SvTransformSolidNode
    SvChamferSolidNode
    SvFilletSolidNode
@@ -241,14 +248,9 @@
    SvSolidGeneralFuseNode
    SvMirrorSolidNode
    SvOffsetSolidNode
-   SvSolidFromFacesNode
-   SvRuledSolidNode
-   SvSolidFaceExtrudeNode
-   SvSolidFaceSolidifyNode
-   SvSolidFaceRevolveNode
-   SvSweepSolidFaceNode
    SvSplitSolidNode
    SvHollowSolidNode
+   ---
    SvIsInsideSolidNode
    SvSolidDistanceNode
    SvSliceSolidNode
