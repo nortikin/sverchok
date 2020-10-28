@@ -25,7 +25,7 @@ if FreeCAD is not None:
 
     from sverchok.nodes.solid.mesh_to_solid import ensure_triangles
     from sverchok.utils.curve.freecad import curve_to_freecad
-    from sverchok.utils.surface.freecad import surface_to_freecad
+    from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface
 
 class SvSolidTopology(object):
     class Item(object):
@@ -469,7 +469,10 @@ def to_solid(ob):
     elif isinstance(ob, SvCurve):
         return [c.curve.toShape() for c in curve_to_freecad(ob)]
     elif isinstance(ob, SvSurface):
-        return surface_to_freecad(ob, make_face=True).face
+        if is_solid_face_surface(ob):
+            return ob.face
+        else:
+            return surface_to_freecad(ob, make_face=True).face
     else:
         raise Exception(f"Unknown data type in input: {ob}")
 
