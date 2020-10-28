@@ -36,3 +36,5 @@ The following Units will introduce no more than 10 node types per lesson. Take y
    Lesson 02 - A Circle <Unit_01/lesson_02>
    Lesson 03 - A Grid <Unit_01/lesson_03>
    
+   Data structure manipulation with socket menus <socket_menus>
+
