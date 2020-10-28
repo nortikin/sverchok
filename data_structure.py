@@ -976,6 +976,21 @@ def post_load_call(function):  # better place would be in handlers module but im
 post_load_call.registered_functions = []
 
 
+def extend_blender_class(cls):
+    """
+    It is class decorator for adding extra logic into base Blender classes
+    Decorated class should have the same name as Blender class
+    Take into account that this decorator does not delete anything onto reload event
+    """
+    bl_class = getattr(bpy.types, cls.__name__)
+    if hasattr(cls, '__annotations__'):
+        for name, prop in cls.__annotations__.items():
+            setattr(bl_class, name, prop)
+    for key in (key for key in dir(cls) if not key.startswith('_')):
+        setattr(bl_class, key, getattr(cls, key))
+    return cls
+
+
 #####################################################
 ############### debug settings magic ################
 #####################################################
