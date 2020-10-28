@@ -89,7 +89,7 @@ def repeat_last(lst):
     and then keep repeating the last element,
     use with terminating input
     """
-    last = [lst[-1]] if lst else []
+    last = [lst[-1]] if len(lst) else []  # len(lst) in case of numpy arrays
     yield from chain(lst, cycle(last))
 
 
@@ -991,6 +991,24 @@ class classproperty:
         return self.fget(owner_cls)
 
 
+def post_load_call(function):  # better place would be in handlers module but import cyclic error
+    """
+    Usage: if you need function which should be called each time when blender is lunched
+    or new file is opened use this decorator
+    Limitation: the function should not get any properties because it will be called by handler
+    """
+    post_load_call.registered_functions.append(function)
+
+    @wraps(function)
+    def wrapper():
+        function()
+
+    return wrapper()
+
+
+post_load_call.registered_functions = []
+
+
 #####################################################
 ############### debug settings magic ################
 #####################################################
@@ -1103,11 +1121,8 @@ def throttle_tree_update(node):
     that's it.
 
     """
-    try:
-        node.id_data.skip_tree_update = True
+    with node.id_data.throttle_update():
         yield node
-    finally:
-        node.id_data.skip_tree_update = False
 
 
 ##############################################################
@@ -1262,7 +1277,6 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
     elif isinstance(out_count, int):
         lenod = len(node.outputs)
         ng.freeze(True)
-        print(out_count)
         if out_count > 30:
             out_count = 30
         if lenod < out_count:

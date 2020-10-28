@@ -33,6 +33,8 @@ class SvPulgaAttractorsForceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'MOD_PHYSICS'
     sv_icon = 'SV_PULGA_ATTRACTORS_FORCE'
 
+    replacement_nodes = [('SvPulgaAttractorsForceNodeMk2', None, None)]
+    
     strength: FloatProperty(
         name='Strength', description='Attractors Force magnitude',
         default=1.0, precision=3, update=updateNode)

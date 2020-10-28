@@ -382,6 +382,16 @@ class SvSocketCommon(SvSocketProcessing):
             if self.get_prop_name():  # has property
                 self.draw_property(layout, prop_origin=node, prop_name=self.get_prop_name())
 
+            elif self.node.bl_idname == 'SvGroupTreeNode' and hasattr(self, 'draw_group_property'):  # group node
+                if self.node.node_tree:  # when tree is removed from node sockets still exist
+                    interface_socket = self.node.node_tree.inputs[self.index]
+                    self.draw_group_property(layout, text, interface_socket)
+
+            elif self.node.bl_idname == 'NodeGroupOutput' and hasattr(self, 'draw_group_property'):  # group out node
+                if self.index < len(self.id_data.outputs):  # in case of last socket of the node which is virtual
+                    interface_socket = self.id_data.outputs[self.index]
+                    self.draw_group_property(layout, text, interface_socket)
+
             elif self.use_prop:  # no property but use default prop
                 self.draw_property(layout)
 
@@ -546,6 +556,35 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
     def do_graft(self, data):
         return graft_data(data, item_level=1)
 
+    def draw_group_property(self, layout, text, interface_socket):
+        if not interface_socket.hide_value:
+            layout.template_component_menu(self, 'prop', name=text)
+        else:
+            layout.label(text=text)
+
+
+class SvVerticesSocketInterface(bpy.types.NodeSocketInterface):
+    """
+    This socket will be created in tree.inputs to tree.outputs collection 
+    when normal socket will be connected to input or output group nodes
+    """
+    # The only reason of existing this class
+    # is that `prop` attribute of VerticesSocket can't be renamed to `default_property
+    bl_idname = "SvVerticesSocketInterface"
+    bl_socket_idname = "SvVerticesSocket"
+    bl_label = "Vertices"
+    color = SvVerticesSocket.color
+
+    default_value: FloatVectorProperty(name="Default value", default=(0, 0, 0), size=3)
+
+    def draw_color(self, context):
+        return self.color
+
+    def draw(self, context, layout):
+        col = layout.column()
+        col.prop(self, 'default_value')
+        col.prop(self, 'hide_value')
+
 class SvQuaternionSocket(NodeSocket, SvSocketCommon):
     '''For quaternion data'''
     bl_idname = "SvQuaternionSocket"
@@ -580,6 +619,12 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
     def do_graft(self, data):
         return graft_data(data, item_level=0, data_types=(Quaternion,))
 
+    def draw_group_property(self, layout, text, interface_socket):
+        if not interface_socket.hide_value:
+            layout.template_component_menu(self, 'default_property', name=text)
+        else:
+            layout.label(text=text)
+
 class SvColorSocket(NodeSocket, SvSocketCommon):
     '''For color data'''
     bl_idname = "SvColorSocket"
@@ -607,6 +652,12 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
             c1.prop(self, "expanded", icon='TRIA_DOWN', text="")
             row = c2.row(align=True)
             row.prop(prop_origin, prop_name)
+
+    def draw_group_property(self, layout, text, interface_socket):
+        if not interface_socket.hide_value:
+            layout.prop(self, 'default_property', text=text)
+        else:
+            layout.label(text=text)
 
 class SvDummySocket(NodeSocket, SvSocketCommon):
     '''Dummy Socket for sockets awaiting assignment of type'''
@@ -668,6 +719,20 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
     @property
     def default_property(self):
         return self.default_float_property if self.default_property_type == 'float' else self.default_int_property
+
+    @default_property.setter
+    def default_property(self, value):
+        if hasattr(self.node, 'node_tree'):  # belong to group node
+            interface_socket = self.node.node_tree.inputs[self.index]
+            if interface_socket.default_type == 'float':
+                self.default_float_property = value
+            elif interface_socket.default_type == 'int':
+                self.default_int_property = value
+        else:
+            if self.default_property_type == 'float':
+                self.default_float_property = value
+            else:
+                self.default_int_property = value
 
     def draw_property(self, layout, prop_origin=None, prop_name=None):
         if prop_origin and prop_name:
@@ -738,6 +803,46 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
         if self.use_wrap:
             result = wrap_data(result)
         return result
+
+    def draw_group_property(self, layout, text, interface_socket):
+        # only for input sockets group node nodes with sub trees
+        if not interface_socket.hide_value:
+            if interface_socket.default_type == 'float':
+                layout.prop(self, 'default_float_property', text=text)
+            elif interface_socket.default_type == 'int':
+                layout.prop(self, 'default_int_property', text=text)
+        else:
+            layout.label(text=text)
+
+
+class SvStringsSocketInterface(bpy.types.NodeSocketInterface):
+    """
+    This socket will be created in tree.inputs to tree.outputs collection 
+    when normal socket will be connected to input or output group nodes
+    """
+    bl_idname = "SvStringsSocketInterface"
+    bl_socket_idname = "SvStringsSocket"
+    bl_label = "Number"
+    color = SvStringsSocket.color
+
+    default_float_value: bpy.props.FloatProperty(name='Default value')
+    default_int_value: bpy.props.IntProperty(name='Default value')
+    default_type: bpy.props.EnumProperty(items=[(i, i, '') for i in ['float', 'int']])
+
+    @property
+    def default_value(self):
+        return self.default_float_value if self.default_type == 'float' else self.default_int_value
+
+    def draw_color(self, context):
+        return self.color
+
+    def draw(self, context, layout):
+        layout.prop(self, 'hide_value')
+        layout.prop(self, 'default_type', expand=True)
+        if self.default_type == 'float':
+            layout.prop(self, 'default_float_value')
+        elif self.default_type == 'int':
+            layout.prop(self, 'default_int_value')
 
 class SvFilePathSocket(NodeSocket, SvSocketCommon):
     '''For file path data'''
@@ -946,8 +1051,47 @@ classes = [
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
     SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket,
     SvSurfaceSocket, SvCurveSocket, SvScalarFieldSocket, SvVectorFieldSocket,
-    SvSolidSocket, SvSvgSocket, SvPulgaForceSocket, SvLinkNewNodeInput, SvSocketHelpOp
+    SvSolidSocket, SvSvgSocket, SvPulgaForceSocket, SvLinkNewNodeInput,
+    SvStringsSocketInterface, SvVerticesSocketInterface,
+    SvSocketHelpOp
 ]
 
-register, unregister = bpy.utils.register_classes_factory(classes)
+def socket_interface_classes():
+    """
+    All sockets should have their twins - SocketInterface
+    Tis function generate SocketInterface classes for Sockets for which interface sockets was not coded manually
+    This function assume to find all socket and interface classes in classes variable of the current module
+
+    If socket class has default property interface will also have this property named `default value`
+    This value will be used for setting it to `default property` during connecting group tree to group node
+    Also interface will get `show property` attribute which should hide property from group node
+    Socket itself should track status of this property
+    """
+    sockets = {cls for cls in classes if hasattr(cls, 'links')}  # best test for now
+    with_interface_sockets = {globals()[cls.bl_socket_idname] for cls in classes if hasattr(cls, 'bl_socket_idname')}
+    for socket_cls in sockets - with_interface_sockets:
+        socket_interface_attributes = {
+            'bl_idname': f'{socket_cls.__name__}Interface',
+            'bl_socket_idname': socket_cls.__name__,
+            'bl_label': socket_cls.bl_label,
+            'color': socket_cls.color,
+            'draw_color': lambda self, context: self.color
+        }
+        if 'default_property' in socket_cls.__annotations__:
+            prop_func, prop_args = socket_cls.__annotations__['default_property']
+            prop_args = {k: prop_args[k] for k in prop_args if k not in {'update', 'name'}}
+            prop_args['name'] = "Default value"
+            socket_interface_attributes['__annotations__'] = {}
+            socket_interface_attributes['__annotations__']['default_value'] = (prop_func, prop_args)
+
+            def draw(self, context, layout):
+                col = layout.column()
+                col.prop(self, 'default_value')
+                col.prop(self, 'hide_value')
+            socket_interface_attributes['draw'] = draw
+        yield type(
+            f'{socket_cls.__name__}Interface', (bpy.types.NodeSocketInterface,), socket_interface_attributes)
+
+
+register, unregister = bpy.utils.register_classes_factory(classes + list(socket_interface_classes()))
 

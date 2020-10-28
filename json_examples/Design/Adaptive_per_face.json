@@ -506,7 +506,7 @@
       "width": 140.0
     },
     "Viewer Draw Mk3": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         1.0,
         0.30000001192092896,
@@ -527,7 +527,7 @@
       "width": 140.0
     },
     "Viewer Draw Mk3.001": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         1.0,
         0.30000001192092896,
@@ -799,13 +799,13 @@
       "Reroute",
       "Output",
       "Viewer Draw Mk3.001",
-      "verts"
+      "Vertices"
     ],
     [
       "Reroute.002",
       "Output",
       "Viewer Draw Mk3.001",
-      "faces"
+      "Polygons"
     ]
   ]
 }

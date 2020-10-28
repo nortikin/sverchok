@@ -10,7 +10,7 @@
   },
   "nodes": {
     "Viewer Draw Mk3": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         1.0,
         0.5889999866485596,
@@ -40,7 +40,7 @@
           1.0
         ],
         "extended_matrix": false,
-        "face_color": [
+        "polygon_color": [
           0.14000000059604645,
           0.5400000214576721,
           0.8100000023841858,
@@ -63,7 +63,7 @@
           0.6000000238418579,
           0.4000000059604645
         ],
-        "vert_color": [
+        "vector_color": [
           0.800000011920929,
           0.800000011920929,
           0.800000011920929,

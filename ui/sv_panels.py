@@ -32,7 +32,7 @@ class SvRemoveStaleDrawCallbacks(bpy.types.Operator):
     bl_label = "Remove Stale drawing"
 
     def execute(self, context):
-        
+
         from sverchok.core.handlers import sv_clean, sv_scene_handler
         scene = context.scene
         sv_clean(scene)
@@ -155,13 +155,12 @@ class SV_UL_TreePropertyList(bpy.types.UIList):
         # buttons
         row = row.row(align=True)
         row.alignment = 'RIGHT'
-        row.ui_units_x = 5.5
+        row.ui_units_x = 4.5
         row.operator('node.sverchok_bake_all', text='B').node_tree_name = tree.name
         row.prop(tree, 'sv_show', icon= f"RESTRICT_VIEW_{'OFF' if tree.sv_show else 'ON'}", text=' ')
         row.prop(tree, 'sv_animate', icon='ANIM', text=' ')
         row.prop(tree, "sv_process", toggle=True, text="P")
         row.prop(tree, "sv_draft", toggle=True, text="D")
-        row.prop(tree, 'use_fake_user', toggle=True, text='F')
 
     def filter_items(self, context, data, prop_name):
         trees = getattr(data, prop_name)
@@ -215,7 +214,7 @@ class SverchokBakeAll(bpy.types.Operator):
     def execute(self, context):
         ng = bpy.data.node_groups[self.node_tree_name]
 
-        nodes = filter(lambda n: n.bl_idname == 'SvVDExperimental', ng.nodes)
+        nodes = filter(lambda n: n.bl_idname == 'SvViewerDrawMk4', ng.nodes)
         for node in nodes:
             if node.activate:
                 node.bake()
@@ -336,4 +335,3 @@ def unregister():
     del bpy.types.Scene.SvShowIn3D_active
     bpy.types.NODE_HT_header.remove(node_show_tree_mode)
     bpy.types.VIEW3D_HT_header.remove(view3d_show_live_mode)
-

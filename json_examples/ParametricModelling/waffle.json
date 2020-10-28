@@ -1,27 +1,27 @@
 {
-  "export_version": "0.079",
+  "export_version": "0.10",
   "framed_nodes": {
     "A Number": "Frame.002",
     "A Number.001": "Frame.002",
-    "Convex Hull": "Frame.003",
+    "A Number.002": "Frame.002",
+    "A Number.003": "Frame.002",
     "Cross Section": "Frame.001",
     "Cross Section.001": "Frame.001",
     "Cross Section.002": "Frame.001",
+    "Edges to faces 2D": "Frame.004",
+    "Edges to faces 2D.001": "Frame.004",
     "Extrude Separate Faces": "Frame.003",
     "Frame": "Frame.005",
     "Frame.001": "Frame.005",
     "Frame.002": "Frame.005",
     "Frame.003": "Frame.005",
     "Frame.004": "Frame.005",
-    "Input Switch MOD": "Frame.003",
-    "List Input": "Frame",
-    "List Input.001": "Frame",
     "List Item": "Frame.004",
+    "List Repeater": "Frame",
     "Matrix In": "Frame",
     "Matrix In.001": "Frame",
     "Note.001": "Frame.005",
     "Number Range": "Frame",
-    "Random Vector": "Frame.003",
     "Regular Solid": "Frame.003",
     "Reroute": "Frame.003",
     "Reroute.001": "Frame.003",
@@ -29,9 +29,12 @@
     "VD Experimental.001": "Frame.004",
     "VD Experimental.002": "Frame.004",
     "VD Experimental.003": "Frame.003",
-    "Vector X | Y | Z": "Frame",
+    "Vector X | Y | Z": "Frame.002",
+    "Vector X | Y | Z.001": "Frame.002",
     "Vectors in.004": "Frame",
     "Vectors in.005": "Frame",
+    "Viewer Draw": "Frame",
+    "Viewer Draw.001": "Frame",
     "Wafel": "Frame.004",
     "Wafel.003": "Frame.004"
   },
@@ -39,170 +42,225 @@
   "nodes": {
     "A Number": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "thickness",
       "location": [
-        -2102.3719787597656,
-        -1082.4689331054688
+        -2099.896858215332,
+        -1244.1311416625977
       ],
       "params": {
-        "float_": 0.029999999329447746,
-        "float_draft_": 0.0,
-        "int_": 0,
-        "int_draft_": 0
+        "draw_3dpanel": true,
+        "float_": 0.029999999329447746
       },
       "width": 140.0
     },
     "A Number.001": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "size sections",
       "location": [
-        -2110.8441467285156,
-        -983.3209838867188
+        -2099.930549621582,
+        -1142.4486465454102
       ],
       "params": {
-        "float_": 0.800000011920929,
-        "float_draft_": 0.0,
-        "int_": 0,
-        "int_draft_": 0
+        "draw_3dpanel": true,
+        "float_": 0.75
       },
       "width": 140.0
     },
-    "Convex Hull": {
-      "bl_idname": "SvConvexHullNodeMK2",
+    "A Number.002": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
-      "label": "",
+      "label": "sections",
       "location": [
-        -1529.7906494140625,
-        -793.7852783203125
+        -2105.946907043457,
+        -1334.4866104125977
       ],
-      "params": {},
+      "params": {
+        "draw_3dpanel": true,
+        "int_": 7,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "A Number.003": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "roto",
+      "location": [
+        -2110.044075012207,
+        -1437.6308975219727
+      ],
+      "params": {
+        "draw_3dpanel": true,
+        "float_": 92.0
+      },
       "width": 140.0
     },
     "Cross Section": {
       "bl_idname": "CrossSectionNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -853.1024780273438,
-        -698.6077880859375
+        -879.5420761108398,
+        -777.4299545288086
       ],
       "params": {
-        "fill_check": 1,
-        "tri": 1
+        "fill_check": true
       },
       "width": 148.62173461914062
     },
     "Cross Section.001": {
       "bl_idname": "CrossSectionNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -858.571044921875,
-        -958.7239990234375
+        -885.0106430053711,
+        -1037.5461654663086
       ],
       "params": {
-        "fill_check": 1,
-        "tri": 1
+        "fill_check": true
       },
       "width": 151.08511352539062
     },
     "Cross Section.002": {
       "bl_idname": "CrossSectionNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -601.2911987304688,
-        -745.2752685546875
+        -627.7307968139648,
+        -824.0974349975586
       ],
       "params": {
-        "fill_check": 0,
-        "tri": 0
+        "tri": false
+      },
+      "width": 140.0
+    },
+    "Edges to faces 2D": {
+      "bl_idname": "SvEdgesToFaces2D",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        88.30864715576172,
+        -728.1901321411133
+      ],
+      "params": {
+        "do_intersect": true
+      },
+      "width": 140.0
+    },
+    "Edges to faces 2D.001": {
+      "bl_idname": "SvEdgesToFaces2D",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        90.2558364868164,
+        -973.5385818481445
+      ],
+      "params": {
+        "do_intersect": true
       },
       "width": 140.0
     },
     "Extrude Separate Faces": {
       "bl_idname": "SvExtrudeSeparateNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1544.0283203125,
-        -500.4442138671875
+        -1601.0085220336914,
+        -715.2284164428711
       ],
-      "mask_out_type": [],
       "params": {
-        "height_": 0.20000000298023224,
-        "scale_": 0.5
+        "height_": 0.05000000074505806,
+        "mask_out_type": [],
+        "scale_": 0.800000011920929
       },
       "width": 140.0
     },
     "Frame": {
       "bl_idname": "NodeFrame",
-      "height": 596.5257568359375,
+      "custom_socket_props": {},
+      "height": 777.0208129882812,
       "hide": false,
       "label": "Section matrices",
       "location": [
-        -167.2046356201172,
-        -605.294921875
+        -250.9510726928711,
+        -641.9378280639648
       ],
       "params": {},
-      "width": 610.3379516601562
+      "width": 803.51904296875
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
-      "height": 533.392333984375,
+      "custom_socket_props": {},
+      "height": 533.570068359375,
       "hide": false,
       "label": "sections",
       "location": [
-        -1477.2991943359375,
-        1190.4915771484375
+        -1503.7387924194336,
+        1111.6694107055664
       ],
       "params": {},
       "width": 457.2799072265625
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "height": 233.678955078125,
+      "custom_socket_props": {},
+      "height": 767.5513916015625,
       "hide": false,
       "label": "inputs",
       "location": [
-        41.326019287109375,
-        191.23883056640625
+        43.80113983154297,
+        29.576622009277344
       ],
       "params": {},
-      "width": 208.4720458984375
+      "width": 240.63671875
     },
     "Frame.003": {
       "bl_idname": "NodeFrame",
-      "height": 555.2545776367188,
+      "custom_socket_props": {},
+      "height": 516.7821044921875,
       "hide": false,
       "label": "Object_to_sect",
       "location": [
-        -176.2230224609375,
-        -150.84490966796875
+        -233.5217056274414,
+        -258.33443450927734
       ],
       "params": {},
-      "width": 841.3101806640625
+      "width": 617.6080932617188
     },
     "Frame.004": {
       "bl_idname": "NodeFrame",
-      "height": 634.6707153320312,
+      "custom_socket_props": {},
+      "height": 714.1197509765625,
       "hide": false,
       "label": "outputs",
       "location": [
-        -28.274215698242188,
-        -205.84217834472656
+        -80.5752182006836,
+        -232.88037872314453
       ],
       "params": {},
-      "width": 688.8506469726562
+      "width": 875.6963500976562
     },
     "Frame.005": {
       "bl_idname": "NodeFrame",
@@ -211,138 +269,27 @@
         0.6079999804496765,
         0.6079999804496765
       ],
-      "height": 1599.8226318359375,
+      "custom_socket_props": {},
+      "height": 1443.00390625,
       "hide": false,
       "label": "",
       "location": [
-        -30.0,
-        10.0
+        -86.2796859741211,
+        -36.955101013183594
       ],
       "params": {},
       "use_custom_color": true,
-      "width": 2527.662109375
-    },
-    "Input Switch MOD": {
-      "bl_idname": "SvInputSwitchNodeMOD",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -1350.2115478515625,
-        -557.7578125
-      ],
-      "params": {
-        "num_switches": 3,
-        "selected": 1
-      },
-      "width": 140.0
-    },
-    "List Input": {
-      "bl_idname": "SvListInputNode",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -1481.2472381591797,
-        -1485.3763427734375
-      ],
-      "params": {
-        "float_list": [
-          0.029999999329447746,
-          1.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0
-        ],
-        "int_": 3,
-        "mode": "float_list"
-      },
-      "width": 140.0
-    },
-    "List Input.001": {
-      "bl_idname": "SvListInputNode",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -1658.4873504638672,
-        -1485.2037353515625
-      ],
-      "params": {
-        "float_list": [
-          1.0,
-          0.009999999776482582,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0
-        ],
-        "int_": 3,
-        "mode": "float_list"
-      },
-      "width": 140.0
+      "width": 2683.43115234375
     },
     "List Item": {
       "bl_idname": "SvListItemNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": true,
       "label": "",
       "location": [
-        -332.0327606201172,
-        -1047.521255493164
+        -365.44051361083984,
+        -1017.8127517700195
       ],
       "params": {
         "index": 2,
@@ -350,62 +297,46 @@
       },
       "width": 140.0
     },
-    "Matrix In": {
-      "bl_idname": "SvMatrixInNodeMK4",
+    "List Repeater": {
+      "bl_idname": "ListRepeaterNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1286.0168914794922,
-        -1186.370849609375
+        -1574.6714096069336,
+        -1380.8208236694336
       ],
       "params": {
-        "angle": 0.0,
-        "axis": [
-          0.0,
-          0.0,
-          1.0
-        ],
-        "location_": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          1.0,
-          1.0,
-          1.0
-        ]
+        "level": 2,
+        "unwrap": true
       },
+      "width": 140.0
+    },
+    "Matrix In": {
+      "bl_idname": "SvMatrixInNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1369.763328552246,
+        -1223.0136947631836
+      ],
+      "params": {},
       "width": 140.0
     },
     "Matrix In.001": {
       "bl_idname": "SvMatrixInNodeMK4",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1286.0168914794922,
-        -1397.0433349609375
+        -1369.763328552246,
+        -1433.6863021850586
       ],
-      "params": {
-        "angle": 0.0,
-        "axis": [
-          0.0,
-          0.0,
-          1.0
-        ],
-        "location_": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          1.0,
-          1.0,
-          1.0
-        ]
-      },
+      "params": {},
       "width": 140.0
     },
     "Note.001": {
@@ -415,15 +346,17 @@
         0.8993440270423889,
         0.9742509722709656
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "2014_11_29 (2019_11_29 updated)",
       "location": [
-        -1403.0374755859375,
-        -140.1774139404297
+        -918.7844467163086,
+        -517.596061706543
       ],
       "params": {
-        "show_text": 0,
+        "n_id": "-9119609101607395338",
+        "show_text": false,
         "text": "This layout completely was developed by Nikitron\nWaffel layout represents power of simple math\nthat makes possible manufacturing from 3D"
       },
       "use_custom_color": true,
@@ -431,57 +364,43 @@
     },
     "Number Range": {
       "bl_idname": "SvGenNumberRange",
+      "custom_socket_props": {
+        "1": {
+          "label": "stop"
+        },
+        "2": {
+          "label": "count"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1650.6038055419922,
-        -1224.5166015625
+        -1772.9782943725586,
+        -1266.1496810913086
       ],
       "params": {
         "count_": 5,
-        "number_mode": "float",
+        "current_mode": "RANGE_COUNT",
         "range_mode": "RANGE_COUNT",
         "start_float": -0.699999988079071,
-        "step_float": 1.0,
         "stop_float": 0.5
       },
       "width": 140.0
     },
-    "Random Vector": {
-      "bl_idname": "RandomVectorNodeMK2",
-      "color": [
-        0.9200000166893005,
-        0.9200000166893005,
-        0.9200000166893005
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -1766.4925537109375,
-        -780.1481323242188
-      ],
-      "params": {
-        "count_inner": 500
-      },
-      "use_custom_color": true,
-      "width": 140.0
-    },
     "Regular Solid": {
       "bl_idname": "SvRegularSolid",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1762.262939453125,
-        -490.74542236328125
+        -1787.587013244629,
+        -821.1177597045898
       ],
       "params": {
-        "changing_preset": 0,
-        "dual": 1,
+        "dual": true,
         "eTrunc": 0.14800000190734863,
-        "preset": "0",
         "size": 1.5,
         "snub": "Right",
         "source": "12",
@@ -491,215 +410,282 @@
     },
     "Reroute": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1168.75732421875,
-        -770.4481811523438
+        -1423.9230728149414,
+        -722.9023971557617
       ],
       "params": {},
       "width": 16.0
     },
     "Reroute.001": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1176.58349609375,
-        -870.4052124023438
+        -1431.7492446899414,
+        -822.8594589233398
       ],
       "params": {},
       "width": 16.0
     },
     "Scalar Math.001": {
       "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1696.3547821044922,
-        -1113.4742431640625
+        -1762.8115463256836,
+        -1153.5791244506836
       ],
       "params": {
-        "current_op": "NEG",
-        "input_mode_two": "Float"
+        "current_op": "NEG"
       },
       "width": 127.0509033203125
     },
     "VD Experimental.001": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         0.6284880042076111,
         0.931007981300354,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        156.81788635253906,
-        -651.9292755126953
+        310.2431411743164,
+        -677.4802322387695
       ],
       "params": {
-        "activate": 1,
-        "display_verts": 0
+        "display_verts": false,
+        "edge_color": [
+          0.048368118703365326,
+          0.8999999165534973,
+          0.058125089854002,
+          1.0
+        ],
+        "line_width": 2,
+        "polygon_color": [
+          0.010483639314770699,
+          1.0,
+          0.0129276467487216,
+          0.5
+        ]
       },
       "use_custom_color": true,
       "width": 140.0
     },
     "VD Experimental.002": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         0.6284880042076111,
         0.931007981300354,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        140.6286163330078,
-        -1000.6797637939453
+        310.2558364868164,
+        -1019.1972732543945
       ],
       "params": {
-        "display_verts": 0,
+        "display_verts": false,
         "edge_color": [
+          0.37899211049079895,
+          0.8089581727981567,
           1.0,
-          0.20546786487102509,
-          0.03758023679256439,
           1.0
+        ],
+        "line_width": 2,
+        "polygon_color": [
+          0.024912556633353233,
+          0.4465143382549286,
+          1.0,
+          0.5
         ]
       },
       "use_custom_color": true,
       "width": 140.0
     },
     "VD Experimental.003": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         0.6284880042076111,
         0.931007981300354,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1125.182373046875,
-        -506.28521728515625
+        -1369.978858947754,
+        -622.2179489135742
       ],
       "params": {
-        "activate": 1,
-        "display_edges": 1,
-        "display_faces": 0,
-        "display_verts": 0,
-        "draw_gl_polygonoffset": 1,
-        "draw_gl_wireframe": 0,
+        "display_faces": false,
+        "display_verts": false,
         "edge_color": [
           0.20071381330490112,
           0.39311447739601135,
           0.20071381330490112,
           1.0
         ],
-        "face_color": [
+        "polygon_color": [
           0.5,
           1.0,
           0.5,
           1.0
         ],
-        "handle_concave_quads": 0,
-        "node_ui_show_attrs_socket": 0,
+        "random_seed": 2,
         "selected_draw_mode": "facet",
         "u_dash_size": 0.30000001192092896,
-        "u_gap_size": 0.20000000298023224,
-        "use_dashed": 1
+        "u_gap_size": 0.20000000298023224
       },
       "use_custom_color": true,
       "width": 140.0
     },
     "Vector X | Y | Z": {
       "bl_idname": "SvAxisInputNodeMK2",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1559.6165008544922,
-        -1402.83251953125
+        -2113.175178527832,
+        -1679.0859756469727
       ],
       "params": {
         "axis_x": "0",
-        "axis_y": "0"
+        "axis_z": "0"
       },
-      "width": 100.0
+      "width": 179.5294189453125
+    },
+    "Vector X | Y | Z.001": {
+      "bl_idname": "SvAxisInputNodeMK2",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2112.067756652832,
+        -1770.0683975219727
+      ],
+      "params": {
+        "axis_y": "0",
+        "axis_z": "0"
+      },
+      "width": 179.5294189453125
     },
     "Vectors in.004": {
       "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": true,
       "label": "",
       "location": [
-        -1400.6112518310547,
-        -1226.929443359375
+        -1555.8435287475586,
+        -1263.5722885131836
       ],
-      "params": {
-        "y_": 0.0,
-        "z_": 0.0
-      },
+      "params": {},
       "width": 100.0
     },
     "Vectors in.005": {
       "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": true,
       "label": "",
       "location": [
-        -1409.3600311279297,
-        -1412.8740234375
+        -1552.6780014038086,
+        -1318.3047103881836
       ],
-      "params": {
-        "x_": 0.0,
-        "z_": 0.0
-      },
+      "params": {},
       "width": 100.0
     },
-    "Wafel": {
-      "bl_idname": "SvWafelNode",
+    "Viewer Draw": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -77.44316864013672,
-        -962.2157135009766
+        -1169.4592514038086,
+        -1558.573631286621
       ],
       "params": {
-        "bindCircle": 0,
+        "activate": false
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw.001": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1169.763328552246,
+        -1223.0136947631836
+      ],
+      "params": {
+        "activate": false
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Wafel": {
+      "bl_idname": "SvWafelNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -129.74417114257812,
+        -989.2539138793945
+      ],
+      "params": {
         "circle_rad": 0.019999999552965164,
-        "do_contra": 1,
-        "do_tube_sect": 0,
+        "do_contra": true,
         "out_up_down": "Down",
-        "rounded": 0,
-        "rounded_outside": 0,
         "threshold": 10.0
       },
       "width": 140.0
     },
     "Wafel.003": {
       "bl_idname": "SvWafelNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -81.18870544433594,
-        -669.3585968017578
+        -133.48970794677734,
+        -696.3967971801758
       ],
       "params": {
-        "bindCircle": 0,
         "circle_rad": 0.019999999552965164,
-        "do_contra": 1,
-        "out_up_down": "Up",
-        "rounded": 0,
-        "rounded_outside": 0,
+        "do_contra": true,
         "threshold": 10.0
       },
       "width": 140.0
@@ -707,52 +693,28 @@
   },
   "update_lists": [
     [
-      "A Number.001",
-      0,
-      "Scalar Math.001",
-      0
+      "Reroute",
+      "Output",
+      "VD Experimental.003",
+      "Vertices"
     ],
     [
-      "Scalar Math.001",
-      0,
-      "Number Range",
-      0
+      "Reroute.001",
+      "Output",
+      "VD Experimental.003",
+      "Polygons"
     ],
     [
-      "A Number.001",
-      0,
-      "Number Range",
-      1
+      "Extrude Separate Faces",
+      "Polygons",
+      "Reroute.001",
+      "Input"
     ],
     [
-      "Number Range",
-      0,
-      "Vectors in.005",
-      1
-    ],
-    [
-      "Vectors in.005",
-      0,
-      "Matrix In.001",
-      0
-    ],
-    [
-      "Vector X | Y | Z",
-      0,
-      "Matrix In.001",
-      6
-    ],
-    [
-      "List Input",
-      0,
-      "Matrix In.001",
-      7
-    ],
-    [
-      "Random Vector",
-      0,
-      "Convex Hull",
-      0
+      "Extrude Separate Faces",
+      "Vertices",
+      "Reroute",
+      "Input"
     ],
     [
       "Regular Solid",
@@ -767,130 +729,52 @@
       2
     ],
     [
-      "Convex Hull",
-      0,
-      "Input Switch MOD",
-      2
-    ],
-    [
-      "Convex Hull",
-      1,
-      "Input Switch MOD",
-      3
-    ],
-    [
-      "Extrude Separate Faces",
-      0,
-      "Input Switch MOD",
-      12
-    ],
-    [
-      "Extrude Separate Faces",
-      2,
-      "Input Switch MOD",
-      13
-    ],
-    [
-      "Input Switch MOD",
-      "Data 0",
-      "Reroute",
-      "Input"
-    ],
-    [
-      "Number Range",
-      0,
-      "Vectors in.004",
-      0
-    ],
-    [
-      "Vectors in.004",
-      0,
-      "Matrix In",
-      0
-    ],
-    [
-      "Vector X | Y | Z",
-      0,
-      "Matrix In",
-      6
-    ],
-    [
-      "List Input.001",
-      0,
-      "Matrix In",
-      7
-    ],
-    [
-      "Input Switch MOD",
-      "Data 1",
-      "Reroute.001",
-      "Input"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "VD Experimental.003",
-      "verts"
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "VD Experimental.003",
-      "faces"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Cross Section.001",
-      "vertices"
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "Cross Section.001",
-      "edg_pol"
-    ],
-    [
       "Matrix In.001",
       0,
-      "Cross Section.001",
+      "Viewer Draw",
       3
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Cross Section",
-      "vertices"
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "Cross Section",
-      "edg_pol"
     ],
     [
       "Matrix In",
       0,
-      "Cross Section",
+      "Viewer Draw.001",
       3
     ],
     [
-      "Cross Section",
+      "Wafel.003",
       0,
-      "Cross Section.002",
+      "Edges to faces 2D",
       0
     ],
     [
-      "Cross Section",
+      "Wafel.003",
       1,
-      "Cross Section.002",
+      "Edges to faces 2D",
       1
     ],
     [
-      "Matrix In.001",
+      "Edges to faces 2D",
       0,
-      "Cross Section.002",
-      3
+      "VD Experimental.001",
+      0
+    ],
+    [
+      "Edges to faces 2D",
+      1,
+      "VD Experimental.001",
+      2
+    ],
+    [
+      "Edges to faces 2D.001",
+      0,
+      "VD Experimental.002",
+      0
+    ],
+    [
+      "Edges to faces 2D.001",
+      1,
+      "VD Experimental.002",
+      2
     ],
     [
       "Cross Section.002",
@@ -917,22 +801,22 @@
       3
     ],
     [
+      "List Item",
+      0,
+      "Wafel",
+      4
+    ],
+    [
       "Wafel",
       0,
-      "VD Experimental.002",
+      "Edges to faces 2D.001",
       0
     ],
     [
       "Wafel",
       1,
-      "VD Experimental.002",
+      "Edges to faces 2D.001",
       1
-    ],
-    [
-      "Cross Section",
-      0,
-      "List Item",
-      0
     ],
     [
       "Cross Section.002",
@@ -965,16 +849,148 @@
       4
     ],
     [
-      "Wafel.003",
+      "Cross Section",
       0,
-      "VD Experimental.001",
+      "List Item",
       0
     ],
     [
-      "Wafel.003",
-      1,
-      "VD Experimental.001",
+      "Number Range",
+      0,
+      "Vectors in.005",
       1
+    ],
+    [
+      "Number Range",
+      0,
+      "Vectors in.004",
+      0
+    ],
+    [
+      "A Number.001",
+      0,
+      "Scalar Math.001",
+      0
+    ],
+    [
+      "Scalar Math.001",
+      0,
+      "Number Range",
+      0
+    ],
+    [
+      "A Number.001",
+      0,
+      "Number Range",
+      1
+    ],
+    [
+      "A Number.002",
+      0,
+      "Number Range",
+      2
+    ],
+    [
+      "Vectors in.005",
+      0,
+      "Matrix In.001",
+      0
+    ],
+    [
+      "Vector X | Y | Z.001",
+      0,
+      "Matrix In.001",
+      6
+    ],
+    [
+      "List Repeater",
+      0,
+      "Matrix In.001",
+      7
+    ],
+    [
+      "Vectors in.004",
+      0,
+      "Matrix In",
+      0
+    ],
+    [
+      "Vector X | Y | Z",
+      0,
+      "Matrix In",
+      6
+    ],
+    [
+      "List Repeater",
+      0,
+      "Matrix In",
+      7
+    ],
+    [
+      "A Number.003",
+      0,
+      "List Repeater",
+      0
+    ],
+    [
+      "A Number.002",
+      0,
+      "List Repeater",
+      1
+    ],
+    [
+      "Cross Section",
+      0,
+      "Cross Section.002",
+      0
+    ],
+    [
+      "Cross Section",
+      1,
+      "Cross Section.002",
+      1
+    ],
+    [
+      "Matrix In.001",
+      0,
+      "Cross Section.002",
+      3
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Cross Section.001",
+      "vertices"
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Cross Section.001",
+      "edg_pol"
+    ],
+    [
+      "Matrix In.001",
+      0,
+      "Cross Section.001",
+      3
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Cross Section",
+      "vertices"
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Cross Section",
+      "edg_pol"
+    ],
+    [
+      "Matrix In",
+      0,
+      "Cross Section",
+      3
     ]
   ]
 }

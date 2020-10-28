@@ -141,6 +141,28 @@ class SverchokUpdateContextForced(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class EnterExitGroupNodes(bpy.types.Operator):
+    bl_idname = 'node.enter_exit_group_nodes'
+    bl_label = "Enter exit from group nodes"
+
+    def execute(self, context):
+        node = context.active_node
+        if node and hasattr(node, 'monad'):
+            bpy.ops.node.sv_monad_enter()
+        elif node and hasattr(node, 'node_tree'):
+            bpy.ops.node.edit_group_tree({'node': node})
+        elif len(context.space_data.path) > 1:
+            context.space_data.path.pop()
+        return {'FINISHED'}
+
+    @classmethod
+    def poll(cls, context):
+        if context.space_data.tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType', 'SvGroupTree'}:
+            return True
+        else:
+            return False
+
+
 nodeview_keymaps = []
 
 
@@ -162,7 +184,7 @@ def add_keymap():
         nodeview_keymaps.append((km, kmi))
 
         # TAB           | enter or exit monad depending on selection and edit_tree type
-        kmi = km.keymap_items.new('node.sv_monad_enter', 'TAB', 'PRESS')
+        kmi = km.keymap_items.new('node.enter_exit_group_nodes', 'TAB', 'PRESS')
         nodeview_keymaps.append((km, kmi))
 
         # alt + G       | expand current monad into original state
@@ -251,7 +273,7 @@ def remove_keymap():
     nodeview_keymaps.clear()
 
 
-classes = [SvToggleProcess, SvToggleDraft, SverchokUpdateContext, SverchokUpdateContextForced]
+classes = [SvToggleProcess, SvToggleDraft, SverchokUpdateContext, SverchokUpdateContextForced, EnterExitGroupNodes]
 
 
 def register():

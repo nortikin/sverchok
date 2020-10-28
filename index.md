@@ -234,6 +234,13 @@
    SvSphereSolidNode
    SvToursSolidNode
    @ Make Face
+   SvSolidFaceExtrudeNode
+   SvSolidFaceSolidifyNode
+   SvSolidFaceRevolveNode
+   SvSweepSolidFaceNode
+   SvRuledSolidNode
+   SvSolidFromFacesNode
+   ---
    SvTransformSolidNode
    SvChamferSolidNode
    SvFilletSolidNode
@@ -241,14 +248,9 @@
    SvSolidGeneralFuseNode
    SvMirrorSolidNode
    SvOffsetSolidNode
-   SvSolidFromFacesNode
-   SvRuledSolidNode
-   SvSolidFaceExtrudeNode
-   SvSolidFaceSolidifyNode
-   SvSolidFaceRevolveNode
-   SvSweepSolidFaceNode
    SvSplitSolidNode
    SvHollowSolidNode
+   ---
    SvIsInsideSolidNode
    SvSolidDistanceNode
    SvSliceSolidNode
@@ -258,6 +260,7 @@
    SvSolidEdgesNode
    SvSolidFacesNode
    SvSelectSolidNode
+   SvCompoundSolidNode
    @ Analyze
    SvSolidViewerNode
 
@@ -399,7 +402,7 @@
     SvListModifierNode
     SvFixEmptyObjectsNode
     SvDatetimeStrings
-    SvVDAttrsNode
+    SvVDAttrsNodeMk2
     SvPolygonSortNode
     SvFindClosestValue
     SvMultiCacheNode
@@ -535,14 +538,14 @@
 ## Viz
     Sv3DviewPropsNode
     ---
-    SvVDExperimental
+    SvViewerDrawMk4
     SvMatrixViewer28
     SvIDXViewer28
     SvViewer2D
     ---
     SvMeshViewer
     SvCurveViewerNodeV28
-    SvPolylineViewerNodeV28
+    SvPolylineViewerNode
     SvTypeViewerNodeV28
     SvSkinViewerNodeV28
     SvMetaballOutNode
@@ -640,8 +643,9 @@
     SvPulgaRandomForceNode
     SvPulgaBoundingBoxForceNode
     SvPulgaInflateForceNode
-    SvPulgaAttractorsForceNode
+    SvPulgaAttractorsForceNodeMk2
     SvPulgaAngleForceNode
+    SvPulgaVortexForceNode
     SvPulgaPhysicsNode
 
 ## SVG

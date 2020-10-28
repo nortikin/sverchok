@@ -6,7 +6,7 @@ if FreeCAD is None:
     add_dummy('SvBoxSolidNode', 'Box (Solid)', 'FreeCAD')
 else:
     import bpy
-    from bpy.props import FloatProperty, FloatVectorProperty
+    from bpy.props import FloatProperty, FloatVectorProperty, EnumProperty
     from sverchok.node_tree import SverchCustomTreeNode
     from sverchok.data_structure import updateNode
     from sverchok.data_structure import match_long_repeat as mlr
@@ -49,6 +49,19 @@ else:
             size=3,
             update=updateNode)
 
+        origin_options = [
+                ('CORNER', "Corner", "`Origin` input defines the location of box's corner with smallest X, Y, Z coordinate values", 0),
+                ('CENTER', "Center", "`Origin` input defines the location of box's center", 1),
+                ('BOTTOM', "Bottom", "`Origin` input defines the location of center of box's bottom face", 2)
+            ]
+
+        origin_type : EnumProperty(
+            name = "Origin type",
+            description = "Which point of the box is defined by `Origin` input",
+            items = origin_options,
+            default = 'CORNER',
+            update=updateNode)
+
 
         def sv_init(self, context):
             self.inputs.new('SvStringsSocket', "Length").prop_name = 'box_length'
@@ -58,7 +71,8 @@ else:
             self.inputs.new('SvVerticesSocket', "Direction").prop_name = 'direction'
             self.outputs.new('SvSolidSocket', "Solid")
 
-
+        def draw_buttons(self, context, layout):
+            layout.prop(self, 'origin_type')
 
         def process(self):
             if not any(socket.is_linked for socket in self.outputs):
@@ -68,7 +82,14 @@ else:
 
             solids = []
             for l, w, h, o ,d  in zip(*mlr(p)):
-                box = Part.makeBox(l, w, h, Base.Vector(o), Base.Vector(d))
+                origin = Base.Vector(o)
+                if self.origin_type == 'CENTER':
+                    dc = Base.Vector(l/2.0, w/2.0, h/2.0)
+                    origin = origin - dc
+                elif self.origin_type == 'BOTTOM':
+                    dc = Base.Vector(l/2.0, w/2.0, 0)
+                    origin = origin - dc
+                box = Part.makeBox(l, w, h, origin, Base.Vector(d))
                 solids.append(box)
 
             self.outputs['Solid'].sv_set(solids)

@@ -1,10 +1,11 @@
 {
-  "export_version": "0.079",
+  "export_version": "0.10",
   "framed_nodes": {},
   "groups": {},
   "nodes": {
     "A Number": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -13,16 +14,14 @@
         -215.14053344726562
       ],
       "params": {
-        "float_": 0.0,
-        "float_draft_": 0.0,
         "int_": 15,
-        "int_draft_": 0,
         "selected_mode": "int"
       },
       "width": 140.0
     },
     "A Number.001": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -31,25 +30,13 @@
         -48.4946403503418
       ],
       "params": {
-        "float_": 0.75,
-        "float_draft_": 0.0,
-        "int_": 0,
-        "int_draft_": 0
+        "float_": 0.75
       },
       "width": 140.0
     },
     "Apply Vector Field": {
       "bl_idname": "SvExVectorFieldApplyNode",
-      "custom_socket_props": {
-        "1": {
-          "prop": [
-            0.0,
-            0.0,
-            0.0
-          ],
-          "use_prop": true
-        }
-      },
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -64,6 +51,7 @@
     },
     "Cubic Spline": {
       "bl_idname": "SvExCubicSplineNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -76,6 +64,7 @@
     },
     "Evaluate Curve": {
       "bl_idname": "SvExEvalCurveNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -83,13 +72,12 @@
         603.443603515625,
         37.664676666259766
       ],
-      "params": {
-        "sample_size": 50
-      },
+      "params": {},
       "width": 140.0
     },
     "List Split": {
       "bl_idname": "SvListSplitNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -127,6 +115,7 @@
     },
     "Noise Vector Field": {
       "bl_idname": "SvExNoiseVectorFieldNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -137,22 +126,30 @@
       "params": {},
       "width": 140.0
     },
-    "Polyline Viewer": {
-      "bl_idname": "SvPolylineViewerNodeV28",
+    "Polyline Viewer.001": {
+      "bl_idname": "SvPolylineViewerNode",
       "color": [
         1.0,
-        0.30000001192092896,
-        0.0
+        0.5889999866485596,
+        0.21400000154972076
       ],
+      "custom_socket_props": {
+        "2": {
+          "default_float_property": 0.20000000298023224
+        },
+        "4": {
+          "object_kinds": "CURVE"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        804.1566772460938,
-        194.48263549804688
+        806.090576171875,
+        187.6922607421875
       ],
       "params": {
-        "basedata_name": "RV_Alpha"
+        "base_data_name": "RV_Alpha"
       },
       "use_custom_color": true,
       "width": 140.0
@@ -164,6 +161,7 @@
         0.5,
         0.5
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -180,6 +178,7 @@
     },
     "Vector Field Math": {
       "bl_idname": "SvExVectorFieldMathNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -194,6 +193,7 @@
     },
     "Vector Field Math.001": {
       "bl_idname": "SvExVectorFieldMathNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -201,13 +201,12 @@
         -200.76620483398438,
         117.0380859375
       ],
-      "params": {
-        "operation": "ADD"
-      },
+      "params": {},
       "width": 140.0
     },
     "Vector Field Math.002": {
       "bl_idname": "SvExVectorFieldMathNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -222,6 +221,7 @@
     },
     "Vector P Field": {
       "bl_idname": "SvHomogenousVectorField",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -241,6 +241,7 @@
     },
     "Voronoi Field": {
       "bl_idname": "SvExVoronoiFieldNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -254,21 +255,33 @@
   },
   "update_lists": [
     [
-      "Random Vector",
+      "Vector Field Math.001",
       0,
-      "Voronoi Field",
+      "Apply Vector Field",
       0
     ],
     [
-      "Matrix In",
+      "Vector P Field",
       0,
-      "Vector Field Math.002",
+      "Apply Vector Field",
+      1
+    ],
+    [
+      "List Split",
+      0,
+      "Cubic Spline",
       0
     ],
     [
-      "Noise Vector Field",
+      "Apply Vector Field",
       0,
-      "Vector Field Math.002",
+      "List Split",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "List Split",
       1
     ],
     [
@@ -296,6 +309,18 @@
       1
     ],
     [
+      "Matrix In",
+      0,
+      "Vector Field Math.002",
+      0
+    ],
+    [
+      "Noise Vector Field",
+      0,
+      "Vector Field Math.002",
+      1
+    ],
+    [
       "A Number",
       0,
       "Vector P Field",
@@ -314,33 +339,9 @@
       2
     ],
     [
-      "Vector Field Math.001",
+      "Random Vector",
       0,
-      "Apply Vector Field",
-      0
-    ],
-    [
-      "Vector P Field",
-      0,
-      "Apply Vector Field",
-      1
-    ],
-    [
-      "Apply Vector Field",
-      0,
-      "List Split",
-      0
-    ],
-    [
-      "A Number",
-      0,
-      "List Split",
-      1
-    ],
-    [
-      "List Split",
-      0,
-      "Cubic Spline",
+      "Voronoi Field",
       0
     ],
     [
@@ -352,7 +353,7 @@
     [
       "Evaluate Curve",
       0,
-      "Polyline Viewer",
+      "Polyline Viewer.001",
       0
     ]
   ]

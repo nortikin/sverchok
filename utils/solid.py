@@ -12,6 +12,8 @@ import numpy as np
 from mathutils.kdtree import KDTree
 
 from sverchok.data_structure import match_long_repeat as mlr
+from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.surface.core import SvSurface
 from sverchok.dependencies import FreeCAD
 
 if FreeCAD is not None:
@@ -20,7 +22,10 @@ if FreeCAD is not None:
     import Mesh
     import MeshPart
     from FreeCAD import Base
+
     from sverchok.nodes.solid.mesh_to_solid import ensure_triangles
+    from sverchok.utils.curve.freecad import curve_to_freecad
+    from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface
 
 class SvSolidTopology(object):
     class Item(object):
@@ -382,6 +387,13 @@ class SvBoolResult(object):
             solid_map = []
         self.solid_map = solid_map
 
+def transform_solid(matrix, solid):
+    """
+    Utility funciton to apply mathutils.Matrix to a Solid object.
+    """
+    mat = Base.Matrix(*[i for v in matrix for i in v])
+    return solid.transformGeometry(mat)
+
 def basic_mesher(solids, precisions):
     verts = []
     faces = []
@@ -428,7 +440,6 @@ def mefisto_mesher(solids, max_edge_length):
 
     return verts, faces
 
-
 def svmesh_to_solid(verts, faces, precision, remove_splitter=True):
     """
     input:
@@ -451,3 +462,17 @@ def svmesh_to_solid(verts, faces, precision, remove_splitter=True):
         shape = shape.removeSplitter() 
 
     return Part.makeSolid(shape)
+
+def to_solid(ob):
+    if isinstance(ob, Part.Shape):
+        return ob
+    elif isinstance(ob, SvCurve):
+        return [c.curve.toShape() for c in curve_to_freecad(ob)]
+    elif isinstance(ob, SvSurface):
+        if is_solid_face_surface(ob):
+            return ob.face
+        else:
+            return surface_to_freecad(ob, make_face=True).face
+    else:
+        raise Exception(f"Unknown data type in input: {ob}")
+

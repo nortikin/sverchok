@@ -480,7 +480,7 @@ def make_categories():
                     category,
                     items=node_items))
             node_count += len(nodes)
-    node_categories.append(SverchNodeCategory("SVERCHOK_GROUPS", "Groups", items=sv_group_items))
+    node_categories.append(SverchNodeCategory("SVERCHOK_MONAD", "Monad", items=sv_group_items))
 
     return node_categories, node_count, original_categories
 

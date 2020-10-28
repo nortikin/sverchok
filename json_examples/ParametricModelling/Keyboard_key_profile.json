@@ -193,7 +193,7 @@
       "width": 140.0
     },
     "VD Experimental": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         1.0,
         0.30000001192092896,

@@ -151,7 +151,7 @@ limited_dissolve.py
 limited_dissolve_mk2.py
 mesh_separate_mk2.py
 symmetrize.py
-vd_attr_node.py
+vd_attr_node_mk2.py
 scalar_field_point.py
 bvh_nearest_new.py
 quads_to_nurbs.py
@@ -185,5 +185,3 @@ sun_position.py""".split("\n")
         for directory, subdirs, fnames in walk(nodes_dir):
             with self.subTest(directory=basename(directory)):
                 check_category(directory)
-
-

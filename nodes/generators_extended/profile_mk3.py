@@ -69,7 +69,7 @@ input like:
     #   : single line comment prefix
 
     Each integer or floating value may be represented as
-    
+
     * Integer or floating literal (usual python syntax, such as 5 or 7.5)
     * Variable name, such as a or b or variable_name
     * Negation sign and a variable name, such as `-a` or `-size`.
@@ -85,7 +85,7 @@ input like:
     "default" and "let" definitions may use previously defined variables, or variables
     expected to be provided as inputs. Just note that these statements are evaluated in
     the same order as they follow in the input profile text.
-    
+
     Statements may optionally be separated by semicolons (;).
     For some commands (namely: H/h, V/v) the trailing semicolon is *required*!
 
@@ -153,7 +153,7 @@ class SvPrifilizerMk3(bpy.types.Operator):
         else:
             a = str(round(x[0], precision)) + ',' + str(round(x[1], precision)) + ' '
         return a
-    
+
     def curve_points_count(self):
         count = bpy.data.node_groups[self.treename].nodes[self.nodename].curve_points_count
         return str(count)
@@ -356,7 +356,7 @@ class SvPrifilizerMk3(bpy.types.Operator):
         tree = bpy.context.space_data.edit_tree
         links = tree.links
 
-        vd = tree.nodes.new("SvVDExperimental")
+        vd = tree.nodes.new("SvViewerDrawMk4")
 
         vd.location = loc+Vector((200,225))
 
@@ -545,7 +545,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             variables.difference_update(vs)
 
         return list(sorted(list(variables)))
-    
+
     def get_optional_inputs(self, profile):
         result = set()
         if not profile:
@@ -588,7 +588,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             if var in self.inputs and self.inputs[var].is_linked:
                 result[var] = self.inputs[var].sv_get()[0]
         return result
-    
+
     def extend_out_verts(self, verts):
         if self.selected_axis == 'X':
             extend = lambda v: (0, v[0], v[1])

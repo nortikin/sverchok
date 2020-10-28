@@ -1,0 +1,392 @@
+{
+  "export_version": "0.10",
+  "framed_nodes": {
+    "Cricket": "Frame.001",
+    "Cylinder": "Frame",
+    "IcoSphere": "Frame",
+    "Random Vector": "Frame",
+    "Suzanne": "Frame.001"
+  },
+  "groups": {},
+  "nodes": {
+    "Cricket": {
+      "bl_idname": "SvCricketNode",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -529.6409912109375,
+        59.43431091308594
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Cylinder": {
+      "bl_idname": "SvCylinderNodeMK2",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "custom_socket_props": {},
+      "height": 2.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -756.6506118774414,
+        340.1278533935547
+      ],
+      "params": {
+        "cap_bottom": false,
+        "cap_top": false,
+        "meridians": 6,
+        "parallels": 4,
+        "radius_b": 0.20000000298023224,
+        "radius_t": 0.20000000298023224
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 783.9095458984375,
+      "hide": false,
+      "label": "any",
+      "location": [
+        -64.25101470947266,
+        65.97309875488281
+      ],
+      "params": {},
+      "width": 211.33148193359375
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 269.434326171875,
+      "hide": false,
+      "label": "shape",
+      "location": [
+        -30.0,
+        10.0
+      ],
+      "params": {},
+      "width": 206.7218017578125
+    },
+    "IcoSphere": {
+      "bl_idname": "SvIcosphereNode",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -757.7652359008789,
+        -77.19978332519531
+      ],
+      "params": {
+        "radius": 1.0699999332427979,
+        "subdivisions": 3
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "KDT Closest Verts MK2": {
+      "bl_idname": "SvKDTreeNodeMK2",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -131.14785766601562,
+        257.2608337402344
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Join": {
+      "bl_idname": "ListJoinNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        42.8825569152832,
+        259.924072265625
+      ],
+      "params": {
+        "JoinLevel": 2
+      },
+      "width": 140.0
+    },
+    "Mesh viewer": {
+      "bl_idname": "SvMeshViewer",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        441.4587707519531,
+        264.8141174316406
+      ],
+      "params": {
+        "draw_3dpanel": true,
+        "is_smooth_mesh": true
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Move": {
+      "bl_idname": "SvMoveNodeMk3",
+      "custom_socket_props": {
+        "1": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -319.700439453125,
+        255.4720458984375
+      ],
+      "params": {
+        "movement_vectors": [
+          0.0,
+          1.7100000381469727,
+          0.0
+        ]
+      },
+      "width": 140.0
+    },
+    "Note": {
+      "bl_idname": "NoteNode",
+      "color": [
+        1.0,
+        0.8993440270423889,
+        0.9742509722709656
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -726.1419067382812,
+        698.3723754882812
+      ],
+      "params": {
+        "n_id": "-8553002635828309372",
+        "show_text": false,
+        "text": "Sergey Soluyanov | Nikitron | 2020 | shape to initial primitive"
+      },
+      "use_custom_color": true,
+      "width": 400.0
+    },
+    "Random Vector": {
+      "bl_idname": "RandomVectorNodeMK3",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -746.4337539672852,
+        508.90953063964844
+      ],
+      "params": {
+        "count_inner": 20,
+        "seed": 2
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Reroute": {
+      "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -244.40066528320312,
+        32.538673400878906
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Reroute.001": {
+      "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -243.7980499267578,
+        2.8879241943359375
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Suzanne": {
+      "bl_idname": "SvSuzanneNode",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -522.919189453125,
+        -58.977996826171875
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Symmetrize Mesh": {
+      "bl_idname": "SvSymmetrizeNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -531.2872314453125,
+        550.5790405273438
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Vector Lerp": {
+      "bl_idname": "SvVectorLerp",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        219.71656799316406,
+        251.9279022216797
+      ],
+      "params": {
+        "factor_": 0.699999988079071
+      },
+      "width": 140.0
+    },
+    "Viewer Draw Mk3": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -345.2423095703125,
+        549.888916015625
+      ],
+      "params": {
+        "activate": false
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Symmetrize Mesh",
+      0,
+      "Move",
+      0
+    ],
+    [
+      "Cricket",
+      "Vertices",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Cricket",
+      "Faces",
+      "Reroute.001",
+      "Input"
+    ],
+    [
+      "Random Vector",
+      0,
+      "Symmetrize Mesh",
+      0
+    ],
+    [
+      "Random Vector",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "Move",
+      0,
+      "KDT Closest Verts MK2",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "KDT Closest Verts MK2",
+      "find"
+    ],
+    [
+      "KDT Closest Verts MK2",
+      0,
+      "List Join",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Vector Lerp",
+      "Vertices A"
+    ],
+    [
+      "List Join",
+      0,
+      "Vector Lerp",
+      2
+    ],
+    [
+      "Vector Lerp",
+      0,
+      "Mesh viewer",
+      0
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Mesh viewer",
+      "faces"
+    ]
+  ]
+}

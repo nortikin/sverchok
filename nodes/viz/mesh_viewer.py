@@ -191,25 +191,4 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
         self.outputs['Objects'].sv_set([obj_data.obj for obj_data in self.object_data])
 
 
-class SvCreateMaterial(bpy.types.Operator):
-    """It creates and add new material to a node"""
-    bl_idname = 'node.sv_create_material'
-    bl_label = "Create material"
-    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
-
-    @classmethod
-    def description(cls, context, properties):
-        return "Crate new material"
-
-    def execute(self, context):
-        mat = bpy.data.materials.new('sv_material')
-        mat.use_nodes = True
-        context.node.material = mat
-        return {'FINISHED'}
-
-    @classmethod
-    def poll(cls, context):
-        return hasattr(context.node, 'material')
-
-
-register, unregister = bpy.utils.register_classes_factory([SvMeshViewer, SvCreateMaterial])
+register, unregister = bpy.utils.register_classes_factory([SvMeshViewer])

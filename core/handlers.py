@@ -245,6 +245,12 @@ handler_dict = {
 }
 
 
+@persistent
+def call_user_functions_on_post_load_event(scene):
+    for function in data_structure.post_load_call.registered_functions:
+        function()
+
+
 def register():
 
     app_handler_ops(append=handler_dict)
@@ -257,7 +263,10 @@ def register():
     else:
         print("Couldn't setup Sverchok frame change handler")
 
+    bpy.app.handlers.load_post.append(call_user_functions_on_post_load_event)
+
 
 def unregister():
     app_handler_ops(remove=handler_dict)
     set_frame_change(None)
+    bpy.app.handlers.load_post.remove(call_user_functions_on_post_load_event)

@@ -1,0 +1,166 @@
+{
+  "export_version": "0.10",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        825.9047241210938,
+        235.29605102539062
+      ],
+      "params": {
+        "float_": 0.30000001192092896
+      },
+      "width": 140.0
+    },
+    "Cricket": {
+      "bl_idname": "SvCricketNode",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        611.6544799804688,
+        465.7433776855469
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Mesh viewer": {
+      "bl_idname": "SvMeshViewer",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1295.3404541015625,
+        468.6470031738281
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Note": {
+      "bl_idname": "NoteNode",
+      "color": [
+        1.0,
+        0.8993440270423889,
+        0.9742509722709656
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        610.64404296875,
+        567.291015625
+      ],
+      "params": {
+        "n_id": "-7169263317586298776",
+        "show_text": false,
+        "text": "Nikitron | 2020 | Concave your cricket, please."
+      },
+      "use_custom_color": true,
+      "width": 400.0
+    },
+    "Random points on mesh": {
+      "bl_idname": "SvRandomPointsOnMesh",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        827.0868530273438,
+        474.92742919921875
+      ],
+      "params": {
+        "points_number": 5000,
+        "seed": 1
+      },
+      "width": 140.0
+    },
+    "Scripted Node Lite": {
+      "bl_idname": "SvScriptNodeLite",
+      "color": [
+        0.0,
+        0.800000011920929,
+        0.949999988079071
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1061.67822265625,
+        470.7362365722656
+      ],
+      "params": {
+        "n_id": "-9215397972143259885",
+        "script_name": "concave",
+        "script_str": "\"\"\"\nin vertices_in v\nin alpha_in s\nout vertices_out v\nout edges_out s\nout faces_out s\n\"\"\"\n\nfrom scipy.spatial import Delaunay\nimport numpy as np\nfrom collections import defaultdict\n\nfrom sverchok.data_structure import zip_long_repeat\n\ndef alpha_shape_3D(pos, alpha):\n    \"\"\"\n    Compute the alpha shape (concave hull) of a set of 3D points.\n    Parameters:\n        pos - np.array of shape (n,3) points.\n        alpha - alpha value.\n    return\n        outer surface vertex indices, edge indices, and triangle indices\n    \"\"\"\n\n    tetra = Delaunay(pos)\n    # Find radius of the circumsphere.\n    # By definition, radius of the sphere fitting inside the tetrahedral needs \n    # to be smaller than alpha value\n    # http://mathworld.wolfram.com/Circumsphere.html\n    tetrapos = np.take(pos,tetra.vertices,axis=0)\n    normsq = np.sum(tetrapos**2,axis=2)[:,:,None]\n    ones = np.ones((tetrapos.shape[0],tetrapos.shape[1],1))\n    a = np.linalg.det(np.concatenate((tetrapos,ones),axis=2))\n    Dx = np.linalg.det(np.concatenate((normsq,tetrapos[:,:,[1,2]],ones),axis=2))\n    Dy = -np.linalg.det(np.concatenate((normsq,tetrapos[:,:,[0,2]],ones),axis=2))\n    Dz = np.linalg.det(np.concatenate((normsq,tetrapos[:,:,[0,1]],ones),axis=2))\n    c = np.linalg.det(np.concatenate((normsq,tetrapos),axis=2))\n    r = np.sqrt(Dx**2+Dy**2+Dz**2-4*a*c)/(2*np.abs(a))\n\n    # Find tetrahedrals\n    tetras = tetra.simplices[r<alpha,:]\n    # triangles\n    TriComb = np.array([(0, 1, 2), (0, 1, 3), (0, 2, 3), (1, 2, 3)])\n    Triangles = tetras[:,TriComb].reshape(-1,3)\n    Triangles = np.sort(Triangles,axis=1)\n    # Remove triangles that occurs twice, because they are within shapes\n    TrianglesDict = defaultdict(int)\n    for tri in Triangles:TrianglesDict[tuple(tri)] += 1\n    Triangles=np.array([tri for tri in TrianglesDict if TrianglesDict[tri] ==1])\n    #edges\n    EdgeComb=np.array([(0, 1), (0, 2), (1, 2)])\n    Edges=Triangles[:,EdgeComb].reshape(-1,2)\n    Edges=np.sort(Edges,axis=1)\n    Edges=np.unique(Edges,axis=0)\n\n    Vertices = np.unique(Edges)\n    return Vertices,Edges,Triangles\n\nvertices_out = []\nedges_out = []\nfaces_out = []\n\nfor vertices, alpha in zip_long_repeat(vertices_in, alpha_in):\n    if isinstance(alpha, (list, tuple)):\n        alpha = alpha[0]\n\n    _, new_edges, new_faces = alpha_shape_3D(vertices, alpha)\n    #print(new_vertices)\n    new_vertices = vertices\n\n    vertices_out.append(new_vertices)\n    edges_out.append(new_edges.tolist())\n    faces_out.append(new_faces.tolist())"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Cricket",
+      0,
+      "Random points on mesh",
+      0
+    ],
+    [
+      "Cricket",
+      1,
+      "Random points on mesh",
+      1
+    ],
+    [
+      "Random points on mesh",
+      0,
+      "Scripted Node Lite",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Scripted Node Lite",
+      1
+    ],
+    [
+      "Scripted Node Lite",
+      0,
+      "Mesh viewer",
+      0
+    ],
+    [
+      "Scripted Node Lite",
+      1,
+      "Mesh viewer",
+      1
+    ],
+    [
+      "Scripted Node Lite",
+      2,
+      "Mesh viewer",
+      2
+    ]
+  ]
+}

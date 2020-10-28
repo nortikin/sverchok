@@ -20,13 +20,14 @@
 import sys
 import time
 import textwrap
+from contextlib import contextmanager
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import NodeTree
 
 from sverchok import data_structure
-from sverchok.data_structure import classproperty
+from sverchok.data_structure import classproperty, post_load_call
 
 from sverchok.core.update_system import (
     build_update_list,
@@ -90,7 +91,7 @@ class SvNodeTreeCommon(object):
     has_changed: BoolProperty(default=False)  # "True if changes of links in tree was detected"
 
     # for throttle method usage when links are created in the tree via Python
-    skip_tree_update: BoolProperty(default=False)
+    skip_tree_update: BoolProperty(default=False)  # usage only via throttle_update method
     tree_id_memory: StringProperty(default="")  # identifier of the tree, should be used via `tree_id` property
     sv_links = SvLinks()  # cached Python links
     nodes_dict = SvNodesDict()  # cached Python nodes
@@ -162,6 +163,21 @@ class SvNodeTreeCommon(object):
                 if node.is_animatable:
                     animated_nodes.append(node)
         process_from_nodes(animated_nodes)
+
+    @contextmanager
+    def throttle_update(self):
+        """ usage
+        with tree.throttle_update():
+            tree.nodes.new(...)
+            tree.links.new(...)
+        tree should be updated manually if needed
+        """
+        previous_state = self.skip_tree_update
+        self.skip_tree_update = True
+        try:
+            yield self
+        finally:
+            self.skip_tree_update = previous_state
 
 
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
@@ -335,18 +351,21 @@ class UpdateNodes:
         CurrentEvents.new_event(BlenderEventsTypes.add_node, self)
         ng = self.id_data
 
-        ng.freeze()
-        ng.nodes_dict.load_node(self)
-        if hasattr(self, "sv_init"):
+        if ng.bl_idname == 'SvGroupTree':
+            self.sv_init(context)
+        else:
+            ng.freeze()
+            ng.nodes_dict.load_node(self)
+            if hasattr(self, "sv_init"):
 
-            try:
-                self.sv_init(context)
-            except Exception as err:
-                print('nodetree.node.sv_init failure - stare at the error message below')
-                sys.stderr.write('ERROR: %s\n' % str(err))
+                try:
+                    self.sv_init(context)
+                except Exception as err:
+                    print('nodetree.node.sv_init failure - stare at the error message below')
+                    sys.stderr.write('ERROR: %s\n' % str(err))
 
-        self.set_color()
-        ng.unfreeze()
+            self.set_color()
+            ng.unfreeze()
 
     def free(self):
         """
@@ -401,7 +420,7 @@ class UpdateNodes:
         Still this is called from updateNode
         '''
         if self.id_data.bl_idname == "SverchCustomTreeType":
-            if self.id_data.is_frozen():
+            if self.id_data.is_frozen() or self.id_data.skip_tree_update:
                 return
 
             # self.id_data.has_changed = True
@@ -638,4 +657,22 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
             print('failed to get gl scale info', err)
 
 
-register, unregister = bpy.utils.register_classes_factory([SverchCustomTree])
+@post_load_call
+def add_use_fake_user_to_trees():
+    """When ever space node editor switches to another tree or creates new one,
+    this function will set True to `use_fake_user` of all Sverchok trees"""
+    def set_fake_user():
+        [setattr(t, 'use_fake_user', True) for t in bpy.data.node_groups if t.bl_idname == 'SverchCustomTreeType']
+    bpy.msgbus.subscribe_rna(key=(bpy.types.SpaceNodeEditor, 'node_tree'), owner=object(), args=(),
+                             notify=set_fake_user)
+
+
+def register():
+    bpy.utils.register_class(SverchCustomTree)
+    bpy.types.NodeReroute.absolute_location = property(
+        lambda self: recursive_framed_location_finder(self, self.location[:]))
+
+
+def unregister():
+    del bpy.types.NodeReroute.absolute_location
+    bpy.utils.unregister_class(SverchCustomTree)

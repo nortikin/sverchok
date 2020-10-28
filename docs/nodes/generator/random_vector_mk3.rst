@@ -20,6 +20,19 @@ Inputs & Parameters
 | Scale      | Scales vertices on some value *Floats*.                                 |
 +------------+-------------------------------------------------------------------------+
 
+Advanced Parameters
+-------------------
+
+In the N-Panel (and on the right-click menu) you can find:
+
+**Simplify Output**: Method to keep output data suitable for most of the rest of the Sverchok nodes
+  - None: Do not perform any change on the data. Only for advanced users
+  - Flat: It will flat the output to keep vectors list in Level 3 (regular vector list)
+
+**Match List**: Define how list with different lengths should be matched ('Short', 'Repeat Last' or 'Cycle')
+
+**Output NumPy**: Get NumPy arrays in stead of regular lists (makes the node faster).
+
 Outputs
 -------
 
@@ -31,7 +44,7 @@ Examples
 Notes
 -----
 
-Seed is applied per output, not for the whole operation (Should this be changed?)
+Seed is applied per output, not for the whole operation
 A unit vector has length of 1, a convex hull of random unit vectors will approximate a sphere with radius off 1.
 
 Examples

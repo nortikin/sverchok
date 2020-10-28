@@ -1485,7 +1485,7 @@
       "width": 140.0
     },
     "Viewer Draw Mk3": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         0.6284880042076111,
         0.931007981300354,
@@ -1508,7 +1508,7 @@
       "width": 140.0
     },
     "Viewer Draw Mk3.001": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         0.6284880042076111,
         0.931007981300354,
@@ -1531,7 +1531,7 @@
       "width": 140.0
     },
     "Viewer Draw Mk3.002": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         0.6284880042076111,
         0.931007981300354,
@@ -1554,7 +1554,7 @@
       "width": 140.0
     },
     "Viewer Draw Mk3.003": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         0.6284880042076111,
         0.931007981300354,
@@ -1577,7 +1577,7 @@
       "width": 140.0
     },
     "Viewer Draw Mk3.004": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         0.6284880042076111,
         0.931007981300354,
@@ -1597,7 +1597,7 @@
       "width": 140.0
     },
     "Viewer Draw Mk3.005": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         0.6284880042076111,
         0.931007981300354,
@@ -1619,7 +1619,7 @@
       "width": 140.0
     },
     "Viewer Draw Mk3.006": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         0.6284880042076111,
         0.931007981300354,
@@ -1639,7 +1639,7 @@
       "width": 140.0
     },
     "Viewer Draw Mk3.007": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         0.6284880042076111,
         0.931007981300354,
@@ -1667,7 +1667,7 @@
       "width": 140.0
     },
     "Viewer Draw Mk3.008": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         0.6284880042076111,
         0.931007981300354,
@@ -1694,7 +1694,7 @@
       "width": 140.0
     },
     "Viewer Draw Mk3.009": {
-      "bl_idname": "SvVDExperimental",
+      "bl_idname": "SvViewerDrawMk4",
       "color": [
         0.6284880042076111,
         0.931007981300354,
@@ -2432,7 +2432,7 @@
       "Reroute",
       "Output",
       "Viewer Draw Mk3.001",
-      "faces"
+      "Polygons"
     ]
   ]
 }

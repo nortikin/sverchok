@@ -115,7 +115,7 @@ macros = {
     "> blend 2 zip": {
         'display_name': "archive blend as zip",
         'file': 'macro',
-        'ident': ['verbose_macro_handler', 'blend 2 zip']},        
+        'ident': ['verbose_macro_handler', 'blend 2 zip']},
     "> all numpy True": {
         'display_name': "existing nodes to numpy",
         'file': 'macro',
@@ -175,7 +175,7 @@ class DefaultMacros():
         if term == 'obj vd':
             obj_in_node = nodes.new('SvObjInLite')
             obj_in_node.dget()
-            vd_node = nodes.new('SvVDExperimental')
+            vd_node = nodes.new('SvViewerDrawMk4')
             vd_node.location = obj_in_node.location.x + 180, obj_in_node.location.y
 
             links.new(obj_in_node.outputs[0], vd_node.inputs[0])
@@ -185,7 +185,7 @@ class DefaultMacros():
         elif term == 'objs vd':
             obj_in_node = nodes.new('SvObjectsNodeMK3')
             obj_in_node.get_objects_from_scene(operator)
-            vd_node = nodes.new('SvVDExperimental')
+            vd_node = nodes.new('SvViewerDrawMk4')
             vd_node.location = obj_in_node.location.x + 180, obj_in_node.location.y
 
             links.new(obj_in_node.outputs[0], vd_node.inputs[0])
@@ -209,11 +209,11 @@ class DefaultMacros():
 
         elif "join" in term:
             join_macros(context, operator, term, nodes, links)
-            
+
         elif "math" in term:
             math_macros(context, operator, term, nodes, links)
             return {'FINISHED'}
-            
+
         elif "switch" in term:
             switch_macros(context, operator, term, nodes, links)
             return {'FINISHED'}

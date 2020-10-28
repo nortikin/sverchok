@@ -50,7 +50,7 @@ def switch_macros(context, operator, term, nodes, links):
             links.new(node.outputs[n], switch_node.inputs[remapped_index])
 
     if all(node.outputs[0].bl_idname == "SvVerticesSocket" for node in sorted_nodes):
-        viewer_node = nodes.new("SvVDExperimental")
+        viewer_node = nodes.new("SvViewerDrawMk4")
         viewer_node.location = switch_node.location.x + switch_node.width + 100, maxy
 
         # link the input switch node to the ViewerDraw node

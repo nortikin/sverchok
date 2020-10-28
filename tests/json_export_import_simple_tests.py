@@ -21,7 +21,7 @@ class ExportImportEachNode(EmptyTreeTestCase):
                 if tree_structure is not None:
                     with self.subTest(type='IMPORT', node=node_class.bl_idname):
                         importer = JSONImporter(tree_structure)
-                        importer.import_into_tree(self.tree)
+                        importer.import_into_tree(self.tree, print_log=False)
                         if importer.has_fails:
                             raise (ImportError(importer.fail_massage))
             finally:
