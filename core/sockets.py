@@ -49,8 +49,6 @@ def process_from_socket(self, context):
 class SV_MT_SocketOptionsMenu(bpy.types.Menu):
     bl_label = "Socket Options"
 
-    test : BoolProperty(name="Test")
-
     @classmethod
     def poll(cls, context):
         return hasattr(context, 'node') and hasattr(context, 'socket')
@@ -755,12 +753,6 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
 
     def do_flatten(self, data):
         return flatten_data(data, 1)
-
-    def do_simplify(self, data):
-        return flatten_data(data, 2)
-
-    def do_graft(self, data):
-        return graft_data(data, item_level=0, data_types = SIMPLE_DATA_TYPES + (SvCurve, SvSurface))
 
     def do_simplify(self, data):
         return flatten_data(data, 2)
