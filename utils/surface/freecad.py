@@ -11,32 +11,12 @@ from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException
 from sverchok.utils.surface.nurbs import SvNurbsSurface
-from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve, curve_to_freecad, curve_to_freecad_nurbs, curves_to_wire
+from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve, curve_to_freecad, curve_to_freecad_nurbs, curves_to_wire, get_edge_endpoints
 
 from sverchok.dependencies import FreeCAD
 if FreeCAD is not None:
     from FreeCAD import Base
     import Part
-
-def get_curve_endpoints(fc_curve):
-    if hasattr(fc_curve, 'StartPoint'):
-        p1, p2 = fc_curve.StartPoint, fc_curve.EndPoint
-    else:
-        t1, t2 = fc_curve.FirstParameter, fc_curve.LastParameter
-        if hasattr(fc_curve, 'valueAt'):
-            p1, p2 = fc_curve.valueAt(t1), fc_curve.valueAt(t2)
-        else:
-            p1, p2 = fc_curve.value(t1), fc_curve.value(t2)
-    return p1, p2
-
-def get_edge_endpoints(fc_edge):
-    t1, t2 = fc_edge.ParameterRange
-    fc_curve = fc_edge.Curve
-    if hasattr(fc_curve, 'valueAt'):
-        p1, p2 = fc_curve.valueAt(t1), fc_curve.valueAt(t2)
-    else:
-        p1, p2 = fc_curve.value(t1), fc_curve.value(t2)
-    return p1, p2
 
 def curves_to_face(sv_curves, planar=True, force_nurbs=True, tolerance=None):
     """

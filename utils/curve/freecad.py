@@ -311,3 +311,23 @@ def curve_to_freecad(sv_curve):
             pass
     return [curve_to_freecad_nurbs(sv_curve)]
 
+def get_curve_endpoints(fc_curve):
+    if hasattr(fc_curve, 'StartPoint'):
+        p1, p2 = fc_curve.StartPoint, fc_curve.EndPoint
+    else:
+        t1, t2 = fc_curve.FirstParameter, fc_curve.LastParameter
+        if hasattr(fc_curve, 'valueAt'):
+            p1, p2 = fc_curve.valueAt(t1), fc_curve.valueAt(t2)
+        else:
+            p1, p2 = fc_curve.value(t1), fc_curve.value(t2)
+    return p1, p2
+
+def get_edge_endpoints(fc_edge):
+    t1, t2 = fc_edge.ParameterRange
+    fc_curve = fc_edge.Curve
+    if hasattr(fc_curve, 'valueAt'):
+        p1, p2 = fc_curve.valueAt(t1), fc_curve.valueAt(t2)
+    else:
+        p1, p2 = fc_curve.value(t1), fc_curve.value(t2)
+    return p1, p2
+
