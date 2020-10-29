@@ -72,7 +72,7 @@ def curve_to_freecad_nurbs(sv_curve):
     """
     nurbs = SvNurbsCurve.to_nurbs(sv_curve)
     if nurbs is None:
-        raise Exception(f"{sv_curve} is not a NURBS curve")
+        raise TypeError(f"{sv_curve} is not a NURBS curve")
     fc_curve = SvNurbsMaths.build_curve(SvNurbsMaths.FREECAD,
                 nurbs.get_degree(),
                 nurbs.get_knotvector(),

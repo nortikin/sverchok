@@ -987,6 +987,7 @@ class SvSolidSocket(NodeSocket, SvSocketCommon):
     bl_label = "Solid Socket"
 
     color = (0.0, 0.65, 0.3, 1.0)
+    default_conversion_name = ConversionPolicies.SOLID.conversion_name
 
     def do_flatten(self, data):
         from sverchok.dependencies import FreeCAD

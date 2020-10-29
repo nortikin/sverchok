@@ -23,6 +23,7 @@ from sverchok.utils.field.vector import SvVectorField, SvMatrixVectorField, SvCo
 from sverchok.utils.field.scalar import SvScalarField, SvConstantScalarField
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface import SvSurface
+from sverchok.utils.solid_conversion import to_solid_recursive
 
 from mathutils import Matrix, Quaternion
 from numpy import ndarray
@@ -174,13 +175,15 @@ def numbers_to_sfield(data):
         raise TypeError("Unexpected data type from String socket: %s" % type(data))
 
 class ImplicitConversionProhibited(Exception):
-    def __init__(self, socket):
+    def __init__(self, socket, msg=None):
         super().__init__()
         self.socket = socket
         self.node = socket.node
         self.from_socket_type = socket.other.bl_idname
         self.to_socket_type = socket.bl_idname
         self.message = "Implicit conversion from socket type {} to socket type {} is not supported for socket {} of node {}. Please use explicit conversion nodes.".format(self.from_socket_type, self.to_socket_type, socket.name, socket.node.name)
+        if msg is not None:
+            self.message += "\nReason: " + msg
 
     def __str__(self):
         return self.message
@@ -304,12 +307,20 @@ class FieldImplicitConversionPolicy(DefaultImplicitConversionPolicy):
         else:
             super().convert(socket, source_data)
 
+class SolidImplicitConversionPolicy(NoImplicitConversionPolicy):
+    @classmethod
+    def convert(cls, socket, source_data):
+        try:
+            return to_solid_recursive(source_data)
+        except TypeError as e:
+            raise ImplicitConversionProhibited(socket, msg=str(e))
 
 class ConversionPolicies(Enum):
     """It should keeps all policy classes"""
     DEFAULT = DefaultImplicitConversionPolicy
     FIELD = FieldImplicitConversionPolicy
     LENIENT = LenientImplicitConversionPolicy
+    SOLID = SolidImplicitConversionPolicy
 
     @property
     def conversion(self):
