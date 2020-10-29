@@ -235,9 +235,16 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     # option whether error message of nodes should be shown in tree space or not
     # for showing error message all tree should be reevaluated what is not nice
     sv_show_error_in_tree: BoolProperty(
-        description="This will show Node Exceptions in the 3dview, right beside the node",
-        name="Show error in tree", default=False, update=lambda s, c: process_tree(s), options=set())
-    
+        description="This will show Node Exceptions in the node view, right beside the node",
+        name="Show error in tree", default=True, update=lambda s, c: process_tree(s), options=set())
+
+    sv_show_error_details : BoolProperty(
+            name = "Show error details",
+            description = "Display exception stack in the node view as well",
+            default = False, 
+            update=lambda s, c: process_tree(s),
+            options=set())
+
     sv_show_socket_menus : BoolProperty(
         name = "Show socket menus",
         description = "Display socket dropdown menu buttons. NOTE: options that are enabled in those menus will be effective regardless of this checkbox!",

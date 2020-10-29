@@ -82,6 +82,8 @@ class SV_PT_ActiveTreePanel(SverchokPanels, bpy.types.Panel):
         row = col.row(align=True)
         row.prop(ng, "sv_subtree_evaluation_order", text="Eval order", expand=True)
         col.prop(ng, "sv_show_error_in_tree", text="Show error")
+        if ng.sv_show_error_in_tree:
+            col.prop(ng, "sv_show_error_details")
         col.prop(ng, "sv_show_socket_menus")
 
 

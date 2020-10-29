@@ -18,7 +18,7 @@
 from copy import deepcopy
 from enum import Enum
 
-from sverchok.data_structure import get_other_socket, get_data_nesting_level
+from sverchok.data_structure import get_other_socket, get_data_nesting_level, is_ultimately
 from sverchok.utils.field.vector import SvVectorField, SvMatrixVectorField, SvConstantVectorField
 from sverchok.utils.field.scalar import SvScalarField, SvConstantScalarField
 from sverchok.utils.curve import SvCurve
@@ -63,12 +63,6 @@ def is_vertex_to_vfield(socket):
 def is_string_to_sfield(socket):
     other = get_other_socket(socket)
     return other.bl_idname == 'SvStringsSocket' and socket.bl_idname == 'SvScalarFieldSocket'
-
-def is_ultimately(data, data_type):
-    if isinstance(data, (list, tuple)):
-        return is_ultimately(data[0], data_type)
-    return isinstance(data, data_type)
-
 
 def is_string_to_vector(socket):
     other = get_other_socket(socket)
@@ -181,9 +175,10 @@ class ImplicitConversionProhibited(Exception):
         self.node = socket.node
         self.from_socket_type = socket.other.bl_idname
         self.to_socket_type = socket.bl_idname
-        self.message = "Implicit conversion from socket type {} to socket type {} is not supported for socket {} of node {}. Please use explicit conversion nodes.".format(self.from_socket_type, self.to_socket_type, socket.name, socket.node.name)
-        if msg is not None:
-            self.message += "\nReason: " + msg
+        if msg is None:
+            self.message = "Implicit conversion from socket type {} to socket type {} is not supported for socket {} of node {}. Please use explicit conversion nodes.".format(self.from_socket_type, self.to_socket_type, socket.name, socket.node.name)
+        else:
+            self.message = msg
 
     def __str__(self):
         return self.message
@@ -313,7 +308,7 @@ class SolidImplicitConversionPolicy(NoImplicitConversionPolicy):
         try:
             return to_solid_recursive(source_data)
         except TypeError as e:
-            raise ImplicitConversionProhibited(socket, msg=str(e))
+            raise ImplicitConversionProhibited(socket, msg=f"Cannot perform implicit socket conversion for socket {socket.name}: {e}")
 
 class ConversionPolicies(Enum):
     """It should keeps all policy classes"""
