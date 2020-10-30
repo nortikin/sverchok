@@ -112,6 +112,8 @@ def match_long_repeat(lsts):
     max_l = 0
     tmp = []
     for l in lsts:
+        if not hasattr(l, '__len__'):
+            raise TypeError(f"Cannot perform data matching: input of type {type(l)} is not a list or tuple, but an atomic object")
         max_l = max(max_l, len(l))
     for l in lsts:
         if len(l) == max_l:
@@ -811,6 +813,15 @@ def unzip_dict_recursive(data, item_type=dict, to_dict=None):
             return result
 
     return helper(data)
+
+def is_ultimately(data, data_types):
+    """
+    Check if data is a nested list / tuple / array
+    which ultimately consists of items of data_types.
+    """
+    if isinstance(data, (list, tuple, ndarray)):
+        return is_ultimately(data[0], data_types)
+    return isinstance(data, data_types)
 
 #####################################################
 ################### matrix magic ####################
