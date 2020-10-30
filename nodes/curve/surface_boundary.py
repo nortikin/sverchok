@@ -6,7 +6,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvCurve, SvIsoUvCurve, SvConcatCurve
+from sverchok.utils.curve import SvCurve, SvIsoUvCurve, concatenate_curves
 from sverchok.utils.surface import SvSurface
 
 class SvSurfaceBoundaryNode(bpy.types.Node, SverchCustomTreeNode):
@@ -31,6 +31,12 @@ class SvSurfaceBoundaryNode(bpy.types.Node, SverchCustomTreeNode):
         default = 'NO',
         update = updateNode)
 
+    concatenate : BoolProperty(
+        name = "Concatenate",
+        description = "Concatenate all edge curves into one Curve object",
+        default = True,
+        update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "Surface")
         self.outputs.new('SvCurveSocket', "Boundary")
@@ -38,6 +44,8 @@ class SvSurfaceBoundaryNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.label(text="Cyclic:")
         layout.prop(self, 'cyclic_mode', text='')
+        if self.cyclic_mode == 'NO':
+            layout.prop(self, 'concatenate', toggle=True)
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -57,7 +65,10 @@ class SvSurfaceBoundaryNode(bpy.types.Node, SverchCustomTreeNode):
                     curve2 = SvIsoUvCurve(surface, 'U', u_max, flip=False)
                     curve3 = SvIsoUvCurve(surface, 'V', v_max, flip=True)
                     curve4 = SvIsoUvCurve(surface, 'U', u_min, flip=True)
-                    new_curves = [SvConcatCurve([curve1, curve2, curve3, curve4])]
+                    if self.concatenate:
+                        new_curves = [concatenate_curves([curve1, curve2, curve3, curve4])]
+                    else:
+                        new_curves = [curve1, curve2, curve3, curve4]
                 elif self.cyclic_mode == 'U':
                     curve1 = SvIsoUvCurve(surface, 'V', v_max, flip=False)
                     curve2 = SvIsoUvCurve(surface, 'V', v_min, flip=False)
