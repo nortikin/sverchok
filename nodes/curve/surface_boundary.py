@@ -6,7 +6,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvCurve, SvIsoUvCurve, concatenate_curves
+from sverchok.utils.curve import SvCurve, SvIsoUvCurve, concatenate_curves, sort_curves_for_concat
 from sverchok.utils.surface import SvSurface
 
 class SvSurfaceBoundaryNode(bpy.types.Node, SverchCustomTreeNode):
@@ -61,21 +61,22 @@ class SvSurfaceBoundaryNode(bpy.types.Node, SverchCustomTreeNode):
                 u_min, u_max = surface.get_u_min(), surface.get_u_max()
                 v_min, v_max = surface.get_v_min(), surface.get_v_max()
                 if self.cyclic_mode == 'NO':
-                    curve1 = SvIsoUvCurve(surface, 'V', v_min, flip=False)
-                    curve2 = SvIsoUvCurve(surface, 'U', u_max, flip=False)
-                    curve3 = SvIsoUvCurve(surface, 'V', v_max, flip=True)
-                    curve4 = SvIsoUvCurve(surface, 'U', u_min, flip=True)
+                    curve1 = SvIsoUvCurve.take(surface, 'V', v_min, flip=False)
+                    curve2 = SvIsoUvCurve.take(surface, 'U', u_max, flip=False)
+                    curve3 = SvIsoUvCurve.take(surface, 'V', v_max, flip=True)
+                    curve4 = SvIsoUvCurve.take(surface, 'U', u_min, flip=True)
                     if self.concatenate:
-                        new_curves = [concatenate_curves([curve1, curve2, curve3, curve4])]
+                        sorted_curves = sort_curves_for_concat([curve1, curve2, curve3, curve4], allow_flip=True).curves
+                        new_curves = [concatenate_curves(sorted_curves)]
                     else:
                         new_curves = [curve1, curve2, curve3, curve4]
                 elif self.cyclic_mode == 'U':
-                    curve1 = SvIsoUvCurve(surface, 'V', v_max, flip=False)
-                    curve2 = SvIsoUvCurve(surface, 'V', v_min, flip=False)
+                    curve1 = SvIsoUvCurve.take(surface, 'V', v_max, flip=False)
+                    curve2 = SvIsoUvCurve.take(surface, 'V', v_min, flip=False)
                     new_curves = [curve1, curve2]
                 elif self.cyclic_mode == 'V':
-                    curve1 = SvIsoUvCurve(surface, 'U', u_max, flip=False)
-                    curve2 = SvIsoUvCurve(surface, 'U', u_min, flip=False)
+                    curve1 = SvIsoUvCurve.take(surface, 'U', u_max, flip=False)
+                    curve2 = SvIsoUvCurve.take(surface, 'U', u_min, flip=False)
                     new_curves = [curve1, curve2]
                 else:
                     raise Exception("Unsupported mode")
