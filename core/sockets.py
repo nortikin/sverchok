@@ -1109,11 +1109,19 @@ class SvInputLinkWifiMenuOp(bpy.types.Operator):
                     ('__SV_WIFI_CREATE__', "Create new WiFi pair", "Create new Wifi node", 1)
                 )
         i = 2
+
         for name, node in tree.nodes.items():
-            if node.bl_idname == 'WifiInNode':
-                item = ('WIFI_' + node.var_name, f"{node.name} - {node.var_name}", "Link to existing wifi input", i)
+            if node.bl_idname == link_param_node:
+                item = ('PARAM_' + node.name, f"Link to input: {node.label or node.name}", "Link to existing input node", i)
                 items.append(item)
                 i += 1
+
+        for name, node in tree.nodes.items():
+            if node.bl_idname == 'WifiInNode':
+                item = ('WIFI_' + node.var_name, f"Link to WiFi: {node.var_name}", "Link to existing wifi input", i)
+                items.append(item)
+                i += 1
+
         return items
 
     option : EnumProperty(items = get_items)
@@ -1175,6 +1183,11 @@ class SvInputLinkWifiMenuOp(bpy.types.Operator):
                 setup_new_node_location(param_node, wifi_in_node)
 
             param_node.process_node(context)
+
+        elif self.option.startswith('PARAM_'):
+            input_name = self.option[6:]
+            param_node = tree.nodes[input_name]
+            tree.links.new(param_node.outputs[0], socket)
 
         elif self.option.startswith('WIFI_'):
             wifi_var = self.option[5:]
