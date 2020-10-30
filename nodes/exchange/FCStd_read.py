@@ -29,7 +29,6 @@ else:
         selected_part : StringProperty(default='',update = updateNode) 
 
         def draw_buttons(self, context, layout):
-
             col = layout.column(align=True)
             if self.inputs['File Path'].is_linked:
                 self.wrapper_tracked_ui_draw_op(
@@ -53,10 +52,9 @@ else:
                 return            
 
             if self.read_update:
-                
                 files = self.inputs['File Path'].sv_get()[0]
-
                 part_filter = []
+                
                 if self.inputs['Part Filter'].is_linked:
                     part_filter = self.inputs['Part Filter'].sv_get()[0]
                 
@@ -64,18 +62,14 @@ else:
                     part_filter.append(self.selected_part)
 
                 solids = []
-
                 for f in files:
                     S = LoadSolid(f,part_filter,self.inv_filter)
                     for s in S:
                         solids.append(s)
-                
                 self.outputs['Solid'].sv_set(solids)
-            
+                
             else:
                 return
-
-
 
     class SvShowFcstdNamesOp(bpy.types.Operator):
         bl_idname = "node.sv_show_fcstd_names"
@@ -125,29 +119,21 @@ else:
             wm.invoke_search_popup(self)
             return {'FINISHED'}
    
-
 def LoadSolid(fc_file,part_filter,inv_filter):
     solids = []
-
     try:
-
         F.open(fc_file) 
         Fname = bpy.path.display_name_from_filepath(fc_file)
         F.setActiveDocument(Fname)
-
+        
         for obj in F.ActiveDocument.Objects:
-
             if obj.Module in ('Part','PartDesign'):
-                
                 if not inv_filter:
-
                     if obj.Label in part_filter or len(part_filter)==0:
                         solids.append(obj.Shape)
-
                 else:
                     if not obj.Label in part_filter:
                         solids.append(obj.Shape)
-
     except:
         info('FCStd read error')
     finally:
