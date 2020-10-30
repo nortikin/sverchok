@@ -1122,9 +1122,15 @@ class SvInputLinkMenuOp(bpy.types.Operator):
 
         for name, node in tree.nodes.items():
             if node.bl_idname == 'WifiInNode':
-                item = ('WIFI_' + node.var_name, f"Link to WiFi: {node.var_name}", "Link to existing WiFi input node", i)
-                items.append(item)
-                i += 1
+                for input_idx, wifi_input in enumerate(node.inputs):
+                    linked = get_other_socket(wifi_input)
+                    if linked is None:
+                        continue
+                    if linked.bl_idname != socket.bl_idname:
+                        continue
+                    item = (f"WIFI_{input_idx}_{node.var_name}", f"Link to WiFi: {node.label or node.name} - {node.var_name}[{input_idx}]", "Link to existing WiFi input node", i)
+                    items.append(item)
+                    i += 1
 
         return items
 
@@ -1192,13 +1198,14 @@ class SvInputLinkMenuOp(bpy.types.Operator):
             tree.links.new(param_node.outputs[0], socket)
 
         elif self.option.startswith('WIFI_'):
-            wifi_var = self.option[5:]
+            prefix, socket_idx, wifi_var = self.option.split('_', maxsplit=2)
+            socket_idx = int(socket_idx)
 
             found_existing = False
             for name, wifi_node in tree.nodes.items():
                 if wifi_node.bl_idname == 'WifiOutNode' and is_linked(wifi_node, node):
                     if wifi_node.var_name == wifi_var:
-                        tree.links.new(wifi_node.outputs[0], socket)
+                        tree.links.new(wifi_node.outputs[socket_idx], socket)
                         found_existing = True
                         break
 
@@ -1208,7 +1215,7 @@ class SvInputLinkMenuOp(bpy.types.Operator):
                 new_node.set_var_name()
                 links_number = len([s for s in node.inputs if s.is_linked])
                 new_node.location = (node.location[0] - 200, node.location[1] - 100 * links_number)
-                tree.links.new(new_node.outputs[0], socket)
+                tree.links.new(new_node.outputs[socket_idx], socket)
 
                 if node.parent:
                     new_node.parent = node.parent
