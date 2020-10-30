@@ -1210,14 +1210,9 @@ classes = [
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
     SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket,
     SvSurfaceSocket, SvCurveSocket, SvScalarFieldSocket, SvVectorFieldSocket,
-<<<<<<< HEAD
     SvSolidSocket, SvSvgSocket, SvPulgaForceSocket, SvLinkNewNodeInput,
     SvStringsSocketInterface, SvVerticesSocketInterface,
-    SvSocketHelpOp
-=======
-    SvSolidSocket, SvSvgSocket, SvLinkNewNodeInput, SvSocketHelpOp,
-    SvInputLinkWifiMenuOp
->>>>>>> "quick links" menu
+    SvSocketHelpOp, SvInputLinkWifiMenuOp
 ]
 
 def socket_interface_classes():
