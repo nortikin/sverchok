@@ -104,7 +104,7 @@ def surface_to_freecad(sv_surface, make_face=False):
     """
     nurbs = SvNurbsSurface.get(sv_surface)
     if nurbs is None:
-        raise TypeError("not a NURBS surface")
+        raise TypeError(f"{sv_surface} is not a NURBS surface")
     sv_fc_nurbs = SvNurbsMaths.build_surface(SvNurbsMaths.FREECAD,
                 nurbs.get_degree_u(),
                 nurbs.get_degree_v(),
