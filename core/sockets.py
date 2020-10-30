@@ -1137,6 +1137,7 @@ class SvInputLinkWifiMenuOp(bpy.types.Operator):
         if self.option == '__SV_PARAM_CREATE__':
             with node.sv_throttle_tree_update():
                 new_node = tree.nodes.new(socket.get_link_parameter_node())
+                new_node.label = socket.label or socket.name
                 socket.setup_parameter_node(new_node)
                 links_number = len([s for s in node.inputs if s.is_linked])
                 new_node.location = (node.location[0] - 200, node.location[1] - 100 * links_number)
@@ -1150,14 +1151,18 @@ class SvInputLinkWifiMenuOp(bpy.types.Operator):
 
         elif self.option == '__SV_WIFI_CREATE__':
             with node.sv_throttle_tree_update():
+                label = socket.label or socket.name
                 param_node = tree.nodes.new(socket.get_link_parameter_node())
+                param_node.label = label
 
                 wifi_in_node = tree.nodes.new('WifiInNode')
+                wifi_in_node.label = f"WiFi In - {label}"
                 wifi_in_node.gen_var_name()
                 wifi_var = wifi_in_node.var_name
                 print("new name", wifi_var)
 
                 wifi_out_node = tree.nodes.new('WifiOutNode')
+                wifi_out_node.label = f"WiFi Out - {label}"
                 wifi_out_node.var_name = wifi_var
 
                 socket.setup_parameter_node(param_node)
