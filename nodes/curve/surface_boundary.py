@@ -15,7 +15,7 @@ class SvSurfaceBoundaryNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Generate a curve from curve's boundary
     """
     bl_idname = 'SvExSurfaceBoundaryNode'
-    bl_label = 'Surface Boundary'
+    bl_label = "Surface's Boundary"
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_SURFACE_BOUNDARY'
 
