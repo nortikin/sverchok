@@ -11,26 +11,49 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections import deque
 from itertools import count
-from typing import Generator, List
+from typing import Generator, List, TypeVar, Generic
 
 
-class Tree(ABC):
+class Node(ABC):
+    @property
+    @abstractmethod
+    def next_nodes(self) -> List[Node]: ...
+
+    @property
+    @abstractmethod
+    def last_nodes(self) -> List[Node]: ...
+
+    @property
+    def is_input(self) -> bool:
+        """doesn't have nodes before"""
+        return not bool(self.last_nodes)
+
+    @property
+    def is_output(self):
+        """doesn't have nodes after"""
+        return not bool(self.next_nodes)
+
+
+NodeType = TypeVar('NodeType', bound=Node)
+
+
+class Tree(ABC, Generic[NodeType]):
     @property
     @abstractmethod
     def nodes(self): ...  # something iterable
 
     @property
-    def input_nodes(self) -> List[Node]:
+    def input_nodes(self) -> List[NodeType]:
         """Nodes which don't have nodes before"""
         return [node for node in self.nodes if node.is_input]
 
     @property
-    def output_nodes(self) -> List[Node]:
+    def output_nodes(self) -> List[NodeType]:
         """Nodes which don't have nodes after"""
         return [node for node in self.nodes if node.is_output]
 
     @staticmethod
-    def bfs_walk(nodes: List[Node], direction: str = 'FORWARD') -> Generator[Node]:
+    def bfs_walk(nodes: List[NodeType], direction: str = 'FORWARD') -> Generator[NodeType]:
         """
         Walk from the current node, it will visit all next nodes in FORWARD of BACKWARD direction
         First will be visited children nodes than children of children nodes and etc
@@ -54,7 +77,7 @@ class Tree(ABC):
                                      f'or most likely it is circular')
 
     @staticmethod
-    def dfs_walk(nodes: List[Node], direction: str = 'FORWARD') -> Generator[Node]:
+    def dfs_walk(nodes: List[NodeType], direction: str = 'FORWARD') -> Generator[NodeType]:
         """
         Walk from the current node, it will visit all next nodes in FORWARD of BACKWARD direction
         First will be visited first child and its children then second child and etc
@@ -78,7 +101,7 @@ class Tree(ABC):
                                      f'or most likely it is circular')
 
     @staticmethod
-    def sorted_walk(to_nodes: List[Node]) -> Generator[Node]:
+    def sorted_walk(to_nodes: List[NodeType]) -> Generator[NodeType]:
         """
         If tree is 0--1--2--3 and node "3" is given the method will return nodes in next order [0, 1, 2, 3]
         """
@@ -120,37 +143,3 @@ class Tree(ABC):
                 if next(safe_counter) > max_node_number:
                     raise RuntimeError(f'The tree has either more then={max_node_number} nodes '
                                        f'or most likely it is circular')
-
-
-class Node(ABC):
-    @property
-    @abstractmethod
-    def next_nodes(self) -> List[Node]: ...
-
-    @property
-    @abstractmethod
-    def last_nodes(self) -> List[Node]: ...
-
-    @property
-    def is_input(self) -> bool:
-        """doesn't have nodes before"""
-        return not bool(self.last_nodes)
-
-    @property
-    def is_output(self):
-        """doesn't have nodes after"""
-        return not bool(self.next_nodes)
-
-    def bfs_walk(self, direction: str = 'FORWARD') -> Generator[Node]:
-        """
-        Walk from the current node, it will visit all next nodes in FORWARD of BACKWARD direction
-        First will be visited children nodes than children of children nodes and etc
-        """
-        yield from Tree.bfs_walk([self], direction)
-
-    def dfs_walk(self, direction: str = 'FORWARD') -> Generator[Node]:
-        """
-        Walk from the current node, it will visit all next nodes in FORWARD of BACKWARD direction
-        First will be visited first child and its children then second child and etc
-        """
-        yield from Tree.dfs_walk([self], direction)

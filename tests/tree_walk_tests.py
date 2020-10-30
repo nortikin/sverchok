@@ -1,4 +1,4 @@
-from typing import Dict, ValuesView
+from typing import TypeVar, Generic, Dict, Iterator
 
 from sverchok.utils.testing import SverchokTestCase
 import sverchok.utils.tree_walk as tw
@@ -55,12 +55,12 @@ class TreeWalkTest(SverchokTestCase):
         with self.subTest(msg="With empty walk"):
             self.assertEqual(list(self.tree.dfs_walk([])), [])
         with self.subTest(msg='Go forward'):
-            self.assertCountEqual((n.id for n in self.tree.nodes[10].dfs_walk()), [10, 9, 5, 3, 6, 7, 4])
+            self.assertCountEqual((n.id for n in self.tree.dfs_walk([self.tree.nodes[10]])), [10, 9, 5, 3, 6, 7, 4])
         with self.subTest(msg='Go forward, multiple nodes'):
             node_indexes_walk = [n.id for n in self.tree.dfs_walk([self.tree.nodes[i] for i in [1, 3]])]
             self.assertCountEqual(node_indexes_walk, [1, 2, 3, 6, 4, 7])
         with self.subTest(msg='Go backward'):
-            self.assertCountEqual((n.id for n in self.tree.nodes[6].dfs_walk(direction='BACKWARD')),
+            self.assertCountEqual((n.id for n in self.tree.dfs_walk([self.tree.nodes[6]], direction='BACKWARD')),
                                   [6, 3, 2, 1, 5, 9, 10, 8])
         with self.subTest(msg='Go backward, multiple nodes'):
             node_indexes_walk = [n.id for n in self.tree.dfs_walk([self.tree.nodes[i] for i in [4, 6]],
@@ -73,12 +73,12 @@ class TreeWalkTest(SverchokTestCase):
         with self.subTest(msg="With empty walk"):
             self.assertCountEqual(list(self.tree.bfs_walk([])), [])
         with self.subTest(msg="Go forward"):
-            self.assertCountEqual((n.id for n in self.tree.nodes[2].bfs_walk()), [2, 3, 6, 4, 7])
+            self.assertCountEqual((n.id for n in self.tree.bfs_walk([self.tree.nodes[2]])), [2, 3, 6, 4, 7])
         with self.subTest(msg="Go forward, multiple nodes"):
             node_indexes = (n.id for n in self.tree.bfs_walk([self.tree.nodes[i] for i in [1, 5]]))
             self.assertCountEqual(node_indexes, [1, 2, 3, 4, 5, 6, 7])
         with self.subTest(msh="Go backward"):
-            self.assertCountEqual((n.id for n in self.tree.nodes[3].bfs_walk(direction='BACKWARD')),
+            self.assertCountEqual((n.id for n in self.tree.bfs_walk([self.tree.nodes[3]], direction='BACKWARD')),
                                   [3, 2, 1, 5, 9, 8, 10])
         with self.subTest(msg="Go backward, multiple nodes"):
             node_indexes = (n.id for n in self.tree.bfs_walk([self.tree.nodes[i] for i in [4, 6]],
@@ -113,35 +113,6 @@ class TreeWalkTest(SverchokTestCase):
             self.assertCountEqual((n.id for n in self.tree.output_nodes), [4, 7])
 
 
-class Tree(tw.Tree):
-    def __init__(self):
-        self._nodes = Nodes()
-
-    @property
-    def nodes(self) -> 'Nodes':
-        return self._nodes
-
-
-class Nodes:
-    def __init__(self):
-        self._nodes = dict()
-
-    def __getitem__(self, item):
-        return self._nodes[item]
-
-    def __setitem__(self, key, value):
-        self._nodes[key] = value
-
-    def __len__(self):
-        return len(self._nodes)
-
-    def __iter__(self):
-        return iter(self._nodes.values())
-
-    def update(self, nodes: dict):
-        self._nodes.update(nodes)
-
-
 class Node(tw.Node):
     def __init__(self, node_id):
         self.id: int = node_id
@@ -158,6 +129,38 @@ class Node(tw.Node):
 
     def __repr__(self):
         return f'<Node={self.id}>'
+
+
+NodeType = TypeVar('NodeType', bound=Node)
+
+
+class Nodes(Generic[NodeType]):
+    def __init__(self):
+        self._nodes: Dict[str, NodeType] = dict()
+
+    def __getitem__(self, item) -> NodeType:
+        return self._nodes[item]
+
+    def __setitem__(self, key, value):
+        self._nodes[key] = value
+
+    def __len__(self):
+        return len(self._nodes)
+
+    def __iter__(self) -> Iterator[NodeType]:
+        return iter(self._nodes.values())
+
+    def update(self, nodes: dict):
+        self._nodes.update(nodes)
+
+
+class Tree(tw.Tree[NodeType]):
+    def __init__(self):
+        self._nodes = Nodes()
+
+    @property
+    def nodes(self) -> Nodes[NodeType]:
+        return self._nodes
 
 
 if __name__ == '__main__':
