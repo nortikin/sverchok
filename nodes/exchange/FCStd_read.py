@@ -42,9 +42,7 @@ else:
 
         def sv_init(self, context):
             self.inputs.new('SvFilePathSocket', "File Path")
-            self.inputs.new('SvStringsSocket', "Part Filter")   
-
-
+            self.inputs.new('SvStringsSocket', "Part Filter")
             self.outputs.new('SvSolidSocket', "Solid")
 
         def process(self):
@@ -85,7 +83,7 @@ else:
         bl_options = {'INTERNAL', 'REGISTER'}
         bl_property = "option"
 
-        def LabelReader(self,context):
+        def LabelReader(self,context): #enum callback
             labels=[('','','')]
 
             tree = bpy.data.node_groups[self.idtree]
@@ -93,24 +91,18 @@ else:
             fc_file_list = node.inputs['File Path'].sv_get()[0]
 
             try:
-
                 for f in fc_file_list:
                     F.open(f) 
                     Fname = bpy.path.display_name_from_filepath(f)
                     F.setActiveDocument(Fname)
-
                     for obj in F.ActiveDocument.Objects:
-
                         if obj.Module in ('Part','PartDesign'):
                             labels.append( (obj.Label, obj.Label, obj.Label) )
-
             except:
                 info('FCStd read error')
             finally:
                 F.closeDocument(Fname)
-            
-            return labels
-            
+            return labels  
             
         option : EnumProperty(items=LabelReader)
         idtree : StringProperty()
