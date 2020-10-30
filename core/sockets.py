@@ -360,7 +360,7 @@ class SvSocketCommon(SvSocketProcessing):
             layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
 
     def draw_link_input_menu(self, context, layout, node):
-        op = layout.operator('node.sv_input_link_wifi_menu', text="", icon="PLUGIN")
+        op = layout.operator('node.sv_input_link_menu_popup', text="", icon="PLUGIN")
         op.tree_name = node.id_data.name
         op.node_name = node.name
         op.input_name = self.name
@@ -1087,9 +1087,10 @@ def setup_new_node_location(new_node, old_node):
         new_node.parent = old_node.parent
         new_node.location = new_node.absolute_location
 
-class SvInputLinkWifiMenuOp(bpy.types.Operator):
-    bl_idname = "node.sv_input_link_wifi_menu"
-    bl_label = "Link Wifi - menu"
+class SvInputLinkMenuOp(bpy.types.Operator):
+    "Opens a menu"
+    bl_idname = "node.sv_input_link_menu_popup"
+    bl_label = "Link to existing parameter or add a new one"
     bl_options = {'INTERNAL', 'REGISTER'}
     bl_property = "option"
 
@@ -1102,23 +1103,23 @@ class SvInputLinkWifiMenuOp(bpy.types.Operator):
         link_param_node = socket.get_link_parameter_node()
         if link_param_node:
             items.append(
-                    ('__SV_PARAM_CREATE__', "Create new parameter", "Create new node", 0)
+                    ('__SV_PARAM_CREATE__', "Create new parameter", "Create new parameter node", 0)
                 )
 
         items.append(
-                    ('__SV_WIFI_CREATE__', "Create new WiFi pair", "Create new Wifi node", 1)
+                    ('__SV_WIFI_CREATE__', "Create new parameter via WiFi", "Create new parameter node and link it via WiFi pair", 1)
                 )
         i = 2
 
         for name, node in tree.nodes.items():
             if node.bl_idname == link_param_node:
-                item = ('PARAM_' + node.name, f"Link to input: {node.label or node.name}", "Link to existing input node", i)
+                item = ('PARAM_' + node.name, f"Link to parameter: {node.label or node.name}", "Link to existing input node", i)
                 items.append(item)
                 i += 1
 
         for name, node in tree.nodes.items():
             if node.bl_idname == 'WifiInNode':
-                item = ('WIFI_' + node.var_name, f"Link to WiFi: {node.var_name}", "Link to existing wifi input", i)
+                item = ('WIFI_' + node.var_name, f"Link to WiFi: {node.var_name}", "Link to existing WiFi input node", i)
                 items.append(item)
                 i += 1
 
@@ -1130,7 +1131,6 @@ class SvInputLinkWifiMenuOp(bpy.types.Operator):
     input_name : StringProperty()
 
     def execute(self, context):
-        print(self.option)
 
         tree = bpy.data.node_groups[self.tree_name]
         node = tree.nodes[self.node_name]
@@ -1167,7 +1167,6 @@ class SvInputLinkWifiMenuOp(bpy.types.Operator):
                 wifi_in_node.label = f"WiFi In - {label}"
                 wifi_in_node.gen_var_name()
                 wifi_var = wifi_in_node.var_name
-                print("new name", wifi_var)
 
                 wifi_out_node = tree.nodes.new('WifiOutNode')
                 wifi_out_node.label = f"WiFi Out - {label}"
@@ -1230,7 +1229,7 @@ classes = [
     SvSurfaceSocket, SvCurveSocket, SvScalarFieldSocket, SvVectorFieldSocket,
     SvSolidSocket, SvSvgSocket, SvPulgaForceSocket, SvLinkNewNodeInput,
     SvStringsSocketInterface, SvVerticesSocketInterface,
-    SvSocketHelpOp, SvInputLinkWifiMenuOp
+    SvSocketHelpOp, SvInputLinkMenuOp
 ]
 
 def socket_interface_classes():
