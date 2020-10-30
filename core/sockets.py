@@ -410,7 +410,8 @@ class SvSocketCommon(SvSocketProcessing):
                 self.draw_property(layout)
 
             else:  # no property and not use default prop
-                self.draw_quick_link(context, layout, node)
+                self.draw_link_input_menu(context, layout, node)
+                #self.draw_quick_link(context, layout, node)
                 draw_label(self.label or text)
 
         if self.has_menu(context):
@@ -1101,15 +1102,17 @@ class SvInputLinkMenuOp(bpy.types.Operator):
 
         items = []
         link_param_node = socket.get_link_parameter_node()
+        i = 0
         if link_param_node:
             items.append(
-                    ('__SV_PARAM_CREATE__', "Create new parameter", "Create new parameter node", 0)
+                    ('__SV_PARAM_CREATE__', "Create new parameter", "Create new parameter node", i)
                 )
+            i += 1
 
-        items.append(
-                    ('__SV_WIFI_CREATE__', "Create new parameter via WiFi", "Create new parameter node and link it via WiFi pair", 1)
-                )
-        i = 2
+            items.append(
+                        ('__SV_WIFI_CREATE__', "Create new parameter via WiFi", "Create new parameter node and link it via WiFi pair", 1)
+                    )
+            i += 1
 
         for name, node in tree.nodes.items():
             if node.bl_idname == link_param_node:
@@ -1125,7 +1128,7 @@ class SvInputLinkMenuOp(bpy.types.Operator):
 
         return items
 
-    option : EnumProperty(items = get_items)
+    option : EnumProperty(name = "Action", description = "Action to be executed", items = get_items)
     tree_name : StringProperty()
     node_name : StringProperty()
     input_name : StringProperty()
