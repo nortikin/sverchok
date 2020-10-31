@@ -235,7 +235,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         try:
             self.halt_updates = True
 
-            if default_value:
+            if default_value is not None:
                 if isinstance(default_value, float):
                     if not socket.use_prop or socket.default_property_type != 'float':
                         socket.use_prop = True
