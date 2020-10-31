@@ -237,13 +237,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
             if default_value:
                 if isinstance(default_value, float):
-                    socket.use_prop = True
-                    socket.default_property_type = 'float'
-                    socket.default_float_property = default_value
+                    if not socket.use_prop or socket.default_property_type != 'float':
+                        socket.use_prop = True
+                        socket.default_property_type = 'float'
+                        socket.default_float_property = default_value
                 elif isinstance(default_value, int):
-                    socket.use_prop = True
-                    socket.default_property_type = 'int'
-                    socket.default_int_property = default_value
+                    if not socket.use_prop or socket.default_property_type != 'int':
+                        socket.use_prop = True
+                        socket.default_property_type = 'int'
+                        socket.default_int_property = default_value
                 else:
                     # unsupported type
                     socket.use_prop = False
