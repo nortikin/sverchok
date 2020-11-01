@@ -73,6 +73,29 @@ class SvGroupTree(bpy.types.NodeTree):
         shared_trees = tested_tree_upstream_trees & current_tree_downstream_trees
         return not shared_trees
 
+    def update(self):
+        """trigger on links or nodes collections changes"""
+        # When group input or output nodes are connected some extra work should be done
+        self.update_sockets()  # probably more precise trigger could be found for calling this method
+        self.handler.send(GroupEvent(GroupEvent.GROUP_TREE_UPDATE, self.name))
+
+    def update_sockets(self):  # todo it lets simplify sockets API
+        """Set properties of sockets of parent nodes"""
+        for node in self._parent_nodes():
+            for n_in_s, t_in_s in zip(node.inputs, self.inputs):
+                # also before getting data from socket `socket.use_prop` property should be set
+                n_in_s.use_prop = not t_in_s.hide_value
+                if hasattr(t_in_s, 'default_type'):
+                    n_in_s.default_property_type = t_in_s.default_type
+
+    def _parent_nodes(self):
+        """Returns all parent nodes"""
+        # todo optimisation?
+        for tree in (t for t in bpy.data.node_groups if t.bl_idname in {'SverchCustomTreeType', 'SvGroupTree'}):
+            for node in tree.nodes:
+                if hasattr(node, 'node_tree') and node.node_tree.name == self.name:
+                    yield node
+
 
 class NodeId:
     n_id: bpy.props.StringProperty(options={'SKIP_SAVE'})
@@ -149,12 +172,6 @@ class SvGroupTreeNode(NodeId, bpy.types.NodeCustomGroup):
         # first should pass data into GroupInput nodes of subtree
         for input_node in (n for n in self.node_tree.nodes if n.bl_idname == 'NodeGroupInput'):
             for in_s, out_s, int_in_s in zip(self.inputs, input_node.outputs, self.node_tree.inputs):
-                if out_s.identifier == '__extend__':  # virtual socket
-                    break
-                # also before getting data from socket `socket.use_prop` property should be set
-                in_s.use_prop = not int_in_s.hide_value
-                if hasattr(int_in_s, 'default_type'):
-                    in_s.default_property_type = int_in_s.default_type
                 out_s.sv_set(in_s.sv_get(deepcopy=False))
 
         # now the tree is ready to update

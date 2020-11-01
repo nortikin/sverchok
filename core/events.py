@@ -14,24 +14,33 @@ during evaluation of Python code.
 Details: https://github.com/nortikin/sverchok/issues/3077
 """
 
+from __future__ import annotations
 
 from enum import Enum, auto
-from typing import NamedTuple, Union, List
+from typing import NamedTuple, Union, List, Optional, TYPE_CHECKING
 from itertools import takewhile
 
+import bpy
 from bpy.types import Node, NodeTree
 
 from sverchok.utils.context_managers import sv_preferences
 
+if TYPE_CHECKING:
+    from sverchok.core.node_group import SvGroupTree
+
 
 class GroupEvent:
     GROUP_NODE_UPDATE = 'group_node_update'
+    GROUP_TREE_UPDATE = 'group_tree_update'
 
     def __init__(self, event_type: str, updated_tree: str = None, updated_node: str = None):
         self.type = event_type
         self.updated_tree = updated_tree
         self.updated_node = updated_node
 
+    @property
+    def bl_tree(self) -> Optional[SvGroupTree]:
+        return bpy.data.node_groups.get(self.updated_tree, None)
 
 class BlenderEventsTypes(Enum):
     tree_update = auto()  # this updates is calling last with exception of creating new node
