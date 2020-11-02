@@ -1001,6 +1001,7 @@ class SvCurveSocket(NodeSocket, SvSocketCommon):
 class SvScalarFieldSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvScalarFieldSocket"
     bl_label = "Scalar Field Socket"
+    quick_link_to_node = 'SvNumberNode'
 
     color = (0.9, 0.4, 0.1, 1.0)
     default_conversion_name = ConversionPolicies.FIELD.conversion_name
@@ -1014,6 +1015,7 @@ class SvScalarFieldSocket(NodeSocket, SvSocketCommon):
 class SvVectorFieldSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvVectorFieldSocket"
     bl_label = "Vector Field Socket"
+    quick_link_to_node = 'GenVectorsNode'
 
     color = (0.1, 0.1, 0.9, 1.0)
     default_conversion_name = ConversionPolicies.FIELD.conversion_name
