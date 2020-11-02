@@ -8,10 +8,9 @@
 # from __future__ import annotations <- Don't use it here, `group node` will loose its `group tree` attribute
 import time
 from functools import reduce
-from typing import Tuple, List, Set, Dict
+from typing import Tuple, List, Set, Dict, Iterator
 
 import bpy
-from sverchok.core.update_system import process_from_node
 from sverchok.data_structure import extend_blender_class
 from mathutils import Vector
 
@@ -80,15 +79,25 @@ class SvGroupTree(bpy.types.NodeTree):
         self.handler.send(GroupEvent(GroupEvent.GROUP_TREE_UPDATE, self.name))
 
     def update_sockets(self):  # todo it lets simplify sockets API
-        """Set properties of sockets of parent nodes"""
-        for node in self._parent_nodes():
+        """Set properties of sockets of parent nodes and of output modes"""
+        for node in self.parent_nodes():
             for n_in_s, t_in_s in zip(node.inputs, self.inputs):
                 # also before getting data from socket `socket.use_prop` property should be set
                 n_in_s.use_prop = not t_in_s.hide_value
                 if hasattr(t_in_s, 'default_type'):
                     n_in_s.default_property_type = t_in_s.default_type
+        for node in (n for n in self.nodes if n.bl_idname == 'NodeGroupOutput'):
+            for n_in_s, t_out_s in zip(node.inputs, self.outputs):
+                n_in_s.use_prop = not t_out_s.hide_value
+                if hasattr(t_out_s, 'default_type'):
+                    n_in_s.default_property_type = t_out_s.default_type
 
-    def _parent_nodes(self):
+    def update_nodes(self, nodes: list):
+        """This method expect to get list of its nodes which should be updated"""
+        self.handler.send(GroupEvent(GroupEvent.NODES_UPDATE, updated_tree=self.name,
+                                     updated_nodes=[n.name for n in nodes]))
+
+    def parent_nodes(self) -> Iterator['SvGroupTreeNode']:
         """Returns all parent nodes"""
         # todo optimisation?
         for tree in (t for t in bpy.data.node_groups if t.bl_idname in {'SverchCustomTreeType', 'SvGroupTree'}):
@@ -97,7 +106,7 @@ class SvGroupTree(bpy.types.NodeTree):
                     yield node
 
 
-class NodeId:
+class BaseNode:
     n_id: bpy.props.StringProperty(options={'SKIP_SAVE'})
 
     @property
@@ -107,8 +116,19 @@ class NodeId:
             self.n_id = str(hash(self) ^ hash(time.monotonic()))
         return self.n_id
 
+    def process_node(self, context):
+        """update properties of socket of the node trigger this method"""
+        self.id_data.update_nodes([self])
 
-class SvGroupTreeNode(NodeId, bpy.types.NodeCustomGroup):
+    def pass_socket_data(self, inputs: bpy.types.NodeInputs, outputs: bpy.types.NodeOutputs):
+        """Should be used for passing data from/to group nodes to/from input/output nodes"""
+        for in_s, out_s in zip(inputs, outputs):
+            if out_s.identifier == '__extend__' or in_s.identifier == '__extend__':  # virtual socket
+                break
+            out_s.sv_set(in_s.sv_get(deepcopy=False))
+
+
+class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
     """Node for keeping sub trees"""
     bl_idname = 'SvGroupTreeNode'
     bl_label = 'Group node (mockup)'
@@ -130,6 +150,7 @@ class SvGroupTreeNode(NodeId, bpy.types.NodeCustomGroup):
             for node_sock, interface_sock in zip(self.inputs, self.node_tree.inputs):
                 if hasattr(interface_sock, 'default_value') and hasattr(node_sock, 'default_property'):
                     node_sock.default_property = interface_sock.default_value
+                self.node_tree.update_sockets()  # properties of input socket properties should be updated
         else:  # in case if None is assigned to node_tree
             self.inputs.clear()
             self.outputs.clear()
@@ -164,26 +185,15 @@ class SvGroupTreeNode(NodeId, bpy.types.NodeCustomGroup):
         else:
             row_search.operator('node.add_group_tree', text='New', icon='ADD')
 
-    def process_node(self, context):
-        """update properties of socket of the node trigger this method"""
-        process_from_node(self)
-
     def process(self):
+        if not self.node_tree:
+            return
+
         # first should pass data into GroupInput nodes of subtree
         for input_node in (n for n in self.node_tree.nodes if n.bl_idname == 'NodeGroupInput'):
-            for in_s, out_s, int_in_s in zip(self.inputs, input_node.outputs, self.node_tree.inputs):
-                out_s.sv_set(in_s.sv_get(deepcopy=False))
+            self.pass_socket_data(self.inputs, input_node.outputs)
 
-        # now the tree is ready to update
         self.node_tree.handler.send(GroupEvent(GroupEvent.GROUP_NODE_UPDATE, updated_tree=self.node_tree.name))
-
-        # get result from tree
-        for output_node in (n for n in self.node_tree.nodes if n.bl_idname == 'NodeGroupOutput'):
-            # if multiple outputs nodes sockets will be overridden by each other
-            for out_s, in_s in zip(self.outputs, output_node.inputs):
-                if out_s.identifier == '__extend__':  # virtual socket
-                    break
-                out_s.sv_set(in_s.sv_get(deepcopy=False))
 
 
 class PlacingNodeOperator:
@@ -305,7 +315,7 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
                 return bool(cls.filter_selected_nodes(path[-1].node_tree))
         return False
 
-    def execute(self, context):
+    def execute(self, context):  # todo move main logic into separate method which could be tested
         """
         Add group tree from selected:
         01. Deselect group Input and Output nodes
@@ -415,7 +425,7 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
             for neighbour_node in node.next_nodes:
                 if neighbour_node.select:
                     continue
-                for next_node in neighbour_node.bfs_walk():
+                for next_node in py_tree.bfs_walk([neighbour_node]):
                     if next_node.select:
                         return False
         return True
@@ -621,20 +631,25 @@ class SearchGroupTree(bpy.types.Operator):
         return {'FINISHED'}
 
 
-classes = [SvGroupTree, SvGroupTreeNode, AddGroupNode, AddGroupTree, EditGroupTree, AddTreeDescription, 
+classes = [SvGroupTree, SvGroupTreeNode, AddGroupNode, AddGroupTree, EditGroupTree, AddTreeDescription,
            AddNodeOutputInput, AddGroupTreeFromSelected, SearchGroupTree, UngroupGroupTree]
 
 
 @extend_blender_class
-class NodeGroupOutput(NodeId):
-    def process_node(self, context):
-        # this function is called during a socket value update
-        pass
+class NodeGroupOutput(BaseNode):
+    def process(self):
+        # pass data to all parent group nodes
+        for group_node in self.id_data.parent_nodes():
+            # if socket was just linked it will have `is_linked` equal False https://developer.blender.org/T82318
+            self.pass_socket_data(self.inputs, group_node.outputs)
 
 
 @extend_blender_class
-class NodeGroupInput(NodeId):
-    pass
+class NodeGroupInput(BaseNode):
+    def process(self):
+        # should grab data from parent nodes when it is connected
+        for group_node in self.id_data.parent_nodes():
+            self.pass_socket_data(group_node.inputs, self.outputs)
 
 
 register, unregister = bpy.utils.register_classes_factory(classes)

@@ -17,7 +17,7 @@ Details: https://github.com/nortikin/sverchok/issues/3077
 from __future__ import annotations
 
 from enum import Enum, auto
-from typing import NamedTuple, Union, List, Optional, TYPE_CHECKING
+from typing import NamedTuple, Union, List, TYPE_CHECKING
 from itertools import takewhile
 
 import bpy
@@ -32,15 +32,20 @@ if TYPE_CHECKING:
 class GroupEvent:
     GROUP_NODE_UPDATE = 'group_node_update'
     GROUP_TREE_UPDATE = 'group_tree_update'
+    NODES_UPDATE = 'nodes_update'
 
-    def __init__(self, event_type: str, updated_tree: str = None, updated_node: str = None):
+    def __init__(self, event_type: str, updated_tree: str = None, updated_nodes: List[str] = None):
         self.type = event_type
         self.updated_tree = updated_tree
-        self.updated_node = updated_node
+        self.updated_nodes = updated_nodes
 
     @property
-    def bl_tree(self) -> Optional[SvGroupTree]:
-        return bpy.data.node_groups.get(self.updated_tree, None)
+    def bl_tree(self) -> SvGroupTree:
+        return bpy.data.node_groups[self.updated_tree]
+
+    def __repr__(self):
+        return f'{self.type.upper()} event, TREE={self.updated_tree}' \
+               + (f', NODES={self.updated_nodes}' if self.updated_nodes else '')
 
 class BlenderEventsTypes(Enum):
     tree_update = auto()  # this updates is calling last with exception of creating new node

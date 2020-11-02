@@ -158,7 +158,10 @@ class TreeCollections(Mapping, Generic[Element]):
         return len(self._dict)
 
     def __contains__(self, item):
-        return item in self._dict
+        try:
+            return item.name in self._dict
+        except AttributeError:
+            return item in self._dict
 
     def __sub__(self, other) -> List[Element]:
         if isinstance(other, TreeCollections):
