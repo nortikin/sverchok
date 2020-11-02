@@ -1,4 +1,5 @@
 import os
+import sys
 import subprocess
 
 import bpy
@@ -12,7 +13,7 @@ from sverchok.utils import logging
 from sverchok.utils.sv_gist_tools import TOKEN_HELP_URL
 from sverchok.ui import color_def
 
-PYPATH = bpy.app.binary_path_python
+PYPATH = sys.executable  # bpy.app.binary_path_python
 
 def get_params(settings_and_fallbacks):
     """
