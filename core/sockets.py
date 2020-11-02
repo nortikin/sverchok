@@ -359,7 +359,15 @@ class SvSocketCommon(SvSocketProcessing):
         if self.quick_link_to_node:
             layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
 
+    def does_support_link_input_menu(self, context, layout, node):
+        param_node = self.get_link_parameter_node()
+        if not param_node:
+            return False
+        return True
+
     def draw_link_input_menu(self, context, layout, node):
+        if not self.does_support_link_input_menu(context, layout, node):
+            return
         op = layout.operator('node.sv_input_link_menu_popup', text="", icon="PLUGIN")
         op.tree_name = node.id_data.name
         op.node_name = node.name
@@ -585,6 +593,11 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
         else:
             layout.label(text=text)
 
+    def does_support_link_input_menu(self, context, layout, node):
+        ok = super().does_support_link_input_menu(context, layout, node)
+        if not ok:
+            return False
+        return self.name not in {'Vertices', 'Verts'}
 
 class SvVerticesSocketInterface(bpy.types.NodeSocketInterface):
     """
@@ -744,6 +757,12 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
             return self.quick_link_to_node
         else:
             return 'SvNumberNode'
+
+    def does_support_link_input_menu(self, context, layout, node):
+        ok = super().does_support_link_input_menu(context, layout, node)
+        if not ok:
+            return False
+        return self.name not in {'Edges', 'Polygons', 'Edgs', 'Polys', 'Faces', 'EdgPol', 'Mask', 'EdgesMask', 'FaceMask'}
 
     def setup_parameter_node(self, param_node):
         if param_node.bl_idname == 'SvNumberNode':
