@@ -13,7 +13,6 @@ from contextlib import contextmanager
 from functools import wraps
 from typing import Generator, ContextManager, Dict, TYPE_CHECKING, Union, List
 
-import bpy
 from sverchok.core.events import GroupEvent
 from sverchok.utils.tree_structure import Tree
 from sverchok.utils.logging import debug
@@ -29,7 +28,14 @@ class MainHandler:
         self.handlers = group_node_update(group_tree_update(nodes_update()))
 
     def send(self, event: GroupEvent):
+
+        # handler should override this if if output node was changed indeed
+        # but not when update call was created by paren tree
+        event.output_was_changed = False
+
         self.handlers.send(event)
+        if event.output_was_changed:
+            pass_running(event.bl_tree)
 
 
 class NodesStatus:
@@ -91,14 +97,11 @@ def group_node_update(next_handler=None) -> Generator[None, GroupEvent, None]:
             with print_errors():
                 debug(event)
                 with NodesStatus.update_tree_nodes(event.bl_tree) as tree:
-                    [setattr(n, 'is_updated', False) for n in tree.nodes if n.bl_tween.bl_idname == 'NodeGroupInput']
-                    for node in tree.sorted_walk(
-                            [n for n in tree.output_nodes if n.bl_tween.bl_idname == 'NodeGroupOutput']):
+                    if tree.nodes.active_input:
+                        tree.nodes.active_input.is_updated = False
+                    for node in tree.sorted_walk([tree.nodes.active_output] if tree.nodes.active_output else []):
                         if not node.is_updated:
-                            if node.bl_tween.bl_idname == 'NodeGroupInput':  # already updated by triggered group node
-                                node.is_updated = True
-                            else:
-                                node.update()
+                            node.update()
                             [setattr(n, 'is_updated', False) for n in node.next_nodes]
 
         else:
@@ -121,18 +124,12 @@ def group_tree_update(next_handler=None):
             with print_errors():
                 debug(event)
                 with NodesStatus.update_tree_nodes(event.bl_tree) as tree:
-                    output_was_changed = False  # optimisation
-                    for node in tree.sorted_walk(
-                            [n for n in tree.output_nodes if n.bl_tween.bl_idname == 'NodeGroupOutput']):
+                    for node in tree.sorted_walk([tree.nodes.active_output] if tree.nodes.active_output else []):
                         if not node.is_updated:
                             if node.is_output:
-                                output_was_changed = True
+                                event.output_was_changed = True
                             node.update()
                             [setattr(n, 'is_updated', False) for n in node.next_nodes]
-
-                    # pass running to base trees
-                    if output_was_changed:
-                        pass_running(event.bl_tree)
 
         else:
             if next_handler:
@@ -152,18 +149,13 @@ def nodes_update(next_handler=None):
             with print_errors():
                 debug(event)
                 with NodesStatus.update_tree_nodes(event.bl_tree) as tree:
-                    output_was_changed = False  # optimisation
                     outdated_nodes = set(event.updated_nodes)
-                    for node in tree.sorted_walk(
-                            [n for n in tree.output_nodes if n.bl_tween.bl_idname == 'NodeGroupOutput']):
+                    for node in tree.sorted_walk([tree.nodes.active_output] if tree.nodes.active_output else []):
                         if not node.is_updated or node.name in outdated_nodes:
                             if node.is_output:
-                                output_was_changed = True
+                                event.output_was_changed = True
                             node.update()
                             [setattr(n, 'is_updated', False) for n in node.next_nodes]
-
-                    if output_was_changed:
-                        pass_running(event.bl_tree)
 
         else:
             if next_handler:
@@ -175,21 +167,22 @@ def pass_running(from_tree: SvGroupTree):
     It asks update group nodes of upper trees
     there could be several group nodes in one tree and group nodes can be in multiple trees as well
     thous nodes also should be update only if output data was changed
+
+    this function can't be called from generator chain otherwise if in parent tree there is another group node
+    it will raise "ValueError: generator already executing"
     """
     trees_to_nodes: Dict[SvTree, List[SvGroupTreeNode]] = defaultdict(list)
     for node in from_tree.parent_nodes():
         trees_to_nodes[node.id_data].append(node)
 
-    group_node_class: SvGroupTreeNode = bpy.types.Node.bl_rna_get_subclass_py('SvGroupTreeNode')
-    process_method = group_node_class.process
-    del group_node_class.process  # this method should not be called
-    try:
-        for sv_tree, nodes in trees_to_nodes.items():
+    for sv_tree, nodes in trees_to_nodes.items():
+        try:
+            [n.toggle_active(False) for n in nodes]
             sv_tree.update_nodes(nodes)
-    except Exception as e:
-        print(e)
-    finally:
-        group_node_class.process = process_method
+        except Exception as e:
+            print(e)
+        finally:
+            [n.toggle_active(True, to_update=False) for n in nodes]
 
 
 @contextmanager

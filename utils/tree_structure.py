@@ -9,7 +9,7 @@
 from __future__ import annotations
 
 from collections import Mapping
-from typing import List, Iterable, TypeVar, TYPE_CHECKING, Dict, Any, Generic
+from typing import List, Iterable, TypeVar, TYPE_CHECKING, Dict, Any, Generic, Optional
 
 import bpy
 
@@ -24,6 +24,7 @@ class Node(tw.Node):
         self.name = name
         self.select = False  # todo consider to remove
         self.is_updated = False
+
         self._inputs: List[Socket] = []
         self._outputs: List[Socket] = []
         self._index = index
@@ -173,8 +174,25 @@ class TreeCollections(Mapping, Generic[Element]):
 class NodesCollection(TreeCollections[NodeType]):
     def __init__(self, bl_tree: SvGroupTree, tree: Tree):
         super().__init__()
+        self._active_input: Optional[Node] = None
+        self._active_output: Optional[Node] = None
         for i, bl_node in enumerate(bl_tree.nodes):
-            self._dict[bl_node.name] = Node.from_bl_node(bl_node, i, tree)
+            node = Node.from_bl_node(bl_node, i, tree)
+            self._dict[bl_node.name] = node
+
+            # https://developer.blender.org/T82350
+            if bl_node.bl_idname == 'NodeGroupInput':
+                self._active_input = node
+            if bl_node.bl_idname == 'NodeGroupOutput':
+                self._active_output = node
+
+    @property
+    def active_input(self) -> Optional[Node]:
+        return self._active_input
+
+    @property
+    def active_output(self) -> Optional[Node]:
+        return self._active_output
 
 
 class LinksCollection(TreeCollections):

@@ -144,7 +144,7 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
     def update_group_tree(self, context):
         """Apply filtered tree to `node_tree` attribute.
         By this attribute Blender is aware of linking between the node and nested tree."""
-        self.node_tree = self.group_tree
+        self.node_tree: SvGroupTree = self.group_tree
         # also default values should be fixed
         if self.node_tree:
             for node_sock, interface_sock in zip(self.inputs, self.node_tree.inputs):
@@ -157,6 +157,21 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
 
     group_tree: bpy.props.PointerProperty(type=SvGroupTree, poll=nested_tree_filter, update=update_group_tree)
 
+    def toggle_active(self, state: bool, to_update: bool = True):
+        """This function can change state of `is_active` attribute without node updating"""
+        if 'toggle_active' in self:
+            # avoiding recursion
+            del self['toggle_active']
+            return
+        else:
+            self['toggle_active'] = True
+            self.is_active = state  # it will call the method again and will delete 'toggle_active' key
+            if state and to_update:
+                self.id_data.update_nodes([self])
+
+    is_active: bpy.props.BoolProperty(name="Live", description='Update realtime if active', default=True,
+                                      update=lambda s, c: s.toggle_active(s.is_active))
+
     def draw_buttons(self, context, layout):
         if self.node_tree:
             row_description = layout.row()
@@ -164,6 +179,7 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
             row = row_description.row(align=True)
             row.scale_x = 5
             row.alignment = 'RIGHT'
+            row.prop(self, 'is_active', toggle=True)
             row.prop(self.node_tree, 'sv_show', text="",
                      icon=f'RESTRICT_VIEW_{"OFF" if self.node_tree.sv_show else "ON"}')
             row.prop(self.node_tree, 'use_fake_user', text="")
@@ -186,13 +202,10 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
             row_search.operator('node.add_group_tree', text='New', icon='ADD')
 
     def process(self):
-        if not self.node_tree:
+        if not self.node_tree or not self.is_active:
             return
 
-        # first should pass data into GroupInput nodes of subtree
-        for input_node in (n for n in self.node_tree.nodes if n.bl_idname == 'NodeGroupInput'):
-            self.pass_socket_data(self.inputs, input_node.outputs)
-
+        self.node_tree: SvGroupTree
         self.node_tree.handler.send(GroupEvent(GroupEvent.GROUP_NODE_UPDATE, updated_tree=self.node_tree.name))
 
 
@@ -343,7 +356,7 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
 
         # copy and past nodes into group tree
         bpy.ops.node.clipboard_copy()
-        sub_tree = bpy.data.node_groups.new('Sverchok group', SvGroupTree.bl_idname)
+        sub_tree: SvGroupTree = bpy.data.node_groups.new('Sverchok group', SvGroupTree.bl_idname)
         context.space_data.path.append(sub_tree)
         bpy.ops.node.clipboard_paste()
 
