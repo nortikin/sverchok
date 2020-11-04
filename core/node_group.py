@@ -7,6 +7,8 @@
 
 # from __future__ import annotations <- Don't use it here, `group node` will loose its `group tree` attribute
 import time
+from collections import namedtuple
+from contextlib import contextmanager
 from functools import reduce
 from typing import Tuple, List, Set, Dict, Iterator
 
@@ -75,6 +77,9 @@ class SvGroupTree(bpy.types.NodeTree):
     def update(self):
         """trigger on links or nodes collections changes"""
         # When group input or output nodes are connected some extra work should be done
+        self.check_last_socket()  # Should not be too expensive to call it each update
+
+        self.check_reroutes_sockets()
         self.update_sockets()  # probably more precise trigger could be found for calling this method
         self.handler.send(GroupEvent(GroupEvent.GROUP_TREE_UPDATE, self.name))
 
@@ -83,7 +88,8 @@ class SvGroupTree(bpy.types.NodeTree):
         for node in self.parent_nodes():
             for n_in_s, t_in_s in zip(node.inputs, self.inputs):
                 # also before getting data from socket `socket.use_prop` property should be set
-                n_in_s.use_prop = not t_in_s.hide_value
+                if hasattr(n_in_s, 'default_property'):
+                    n_in_s.use_prop = not t_in_s.hide_value
                 if hasattr(t_in_s, 'default_type'):
                     n_in_s.default_property_type = t_in_s.default_type
         for node in (n for n in self.nodes if n.bl_idname == 'NodeGroupOutput'):
@@ -91,6 +97,63 @@ class SvGroupTree(bpy.types.NodeTree):
                 n_in_s.use_prop = not t_out_s.hide_value
                 if hasattr(t_out_s, 'default_type'):
                     n_in_s.default_property_type = t_out_s.default_type
+
+    def check_reroutes_sockets(self):
+        """
+        Fix reroute sockets type
+        For now it does work properly in first update
+        because all new sockets even if they have links have `is_linked` attribute with False value
+        at next update events all works perfectly (skip first update?)
+
+        There is hope this will be fixed https://developer.blender.org/T82390
+        """
+        tree = Tree(self)
+        socket_job = []
+        Requirements = namedtuple('Requirements', ['left_n_i', 'left_s_i', 'left_t', 'reroute_n_i',
+                                                   'right_n_is', 'right_s_is'])
+        # analytical part, it's impossible to use Tree structure and modify the tree
+        for node in tree.sorted_walk(tree.output_nodes):
+            # walk should be sorted in case if reroute nodes are going one after other
+            if node.bl_tween.bl_idname == 'NodeReroute':
+                rer_in_s = node.inputs[0]
+                rer_out_s = node.outputs[0]
+                if rer_in_s.links:
+                    left_s = rer_in_s.linked_sockets[0]
+                    left_type = left_s.type if hasattr(left_s, 'type') else left_s.bl_tween.bl_idname
+                    if left_type != rer_in_s.bl_tween.bl_idname:
+                        rer_out_s.type = left_type
+                        socket_job.append(Requirements(left_s.node.index, left_s.index, left_type, node.index,
+                                                       [s.node.index for s in rer_out_s.linked_sockets],
+                                                       [s.index for s in rer_out_s.linked_sockets]))
+
+        # regenerating sockets
+        for props in socket_job:
+            left_s = self.nodes[props.left_n_i].outputs[props.left_s_i]
+            reroute = self.nodes[props.reroute_n_i]
+
+            # handle input socket
+            in_s = reroute.inputs.new(props.left_t, left_s.name)
+            self.links.new(in_s, left_s)
+            reroute.inputs.remove(reroute.inputs[0])
+
+            # handle output sockets
+            out_s = reroute.outputs.new(props.left_t, left_s.name)
+            for right_n_i, right_s_i in zip(props.right_n_is, props.right_s_is):
+                left_s = self.nodes[right_n_i].inputs[right_s_i]
+                self.links.new(left_s, out_s)
+            reroute.outputs.remove(reroute.outputs[0])
+        
+    def check_last_socket(self):
+        """Override socket creation of standard operator in Node interface menu"""
+        if self.inputs:
+            if self.inputs[-1].bl_socket_idname == 'NodeSocketFloat':
+                # This is wrong socket type -> fixing
+                self.inputs.remove(self.inputs[-1])
+                self.inputs.new('SvStringsSocket', 'Value')
+        if self.outputs:
+            if self.outputs[-1].bl_socket_idname == 'NodeSocketFloat':
+                self.outputs.remove(self.outputs[-1])
+                self.outputs.new('SvStringsSocket', 'Value')
 
     def update_nodes(self, nodes: list):
         """This method expect to get list of its nodes which should be updated"""
@@ -308,6 +371,7 @@ class AddGroupTree(bpy.types.Operator):
     def execute(self, context):
         """Link new sub tree to group node, create input and output nodes in sub tree and go to edit one"""
         sub_tree = bpy.data.node_groups.new('Sverchok group', 'SvGroupTree')  # creating sub tree
+        sub_tree.use_fake_user = True
         context.node.group_tree = sub_tree  # link sub tree to group node
         sub_tree.nodes.new('NodeGroupInput').location = (-250, 0)  # create node for putting data into sub tree
         sub_tree.nodes.new('NodeGroupOutput').location = (250, 0)  # create node for getting data from sub tree
@@ -648,8 +712,17 @@ classes = [SvGroupTree, SvGroupTreeNode, AddGroupNode, AddGroupTree, EditGroupTr
            AddNodeOutputInput, AddGroupTreeFromSelected, SearchGroupTree, UngroupGroupTree]
 
 
+class BaseInOutNodes:
+    def pass_socket_data(self, inputs: bpy.types.NodeInputs, outputs: bpy.types.NodeOutputs):
+        """Should be used for passing data from/to group nodes to/from input/output nodes"""
+        for in_s, out_s in zip(inputs, outputs):
+            if out_s.identifier == '__extend__' or in_s.identifier == '__extend__':  # virtual socket
+                break
+            out_s.sv_set(in_s.sv_get(deepcopy=False))
+
+
 @extend_blender_class
-class NodeGroupOutput(BaseNode):
+class NodeGroupOutput(BaseInOutNodes, BaseNode):
     def process(self):
         # pass data to all parent group nodes
         for group_node in self.id_data.parent_nodes():
@@ -658,11 +731,17 @@ class NodeGroupOutput(BaseNode):
 
 
 @extend_blender_class
-class NodeGroupInput(BaseNode):
+class NodeGroupInput(BaseInOutNodes, BaseNode):
     def process(self):
         # should grab data from parent nodes when it is connected
         for group_node in self.id_data.parent_nodes():
             self.pass_socket_data(group_node.inputs, self.outputs)
+
+
+@extend_blender_class
+class NodeReroute(BaseNode):
+    def process(self):
+        self.outputs[0].sv_set(self.inputs[0].sv_get(deepcopy=False))
 
 
 register, unregister = bpy.utils.register_classes_factory(classes)

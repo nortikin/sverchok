@@ -218,6 +218,10 @@ class Socket:
         self._links = []
 
     @property
+    def bl_tween(self) -> bpy.types.NodeSocket:
+        return getattr(self._node.bl_tween, 'outputs' if self.is_output else 'inputs')[self.index]
+
+    @property
     def index(self) -> int:
         """Index of the node in inputs or outputs collection"""
         return getattr(self.node, 'outputs' if self.is_output else 'inputs').index(self)
