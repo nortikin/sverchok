@@ -34,8 +34,13 @@ class GroupEvent:
     GROUP_TREE_UPDATE = 'group_tree_update'
     NODES_UPDATE = 'nodes_update'
 
-    def __init__(self, event_type: str, updated_tree: str = None, updated_nodes: List[str] = None):
+    def __init__(self,
+                 event_type: str,
+                 call_paths: List[str],  # format -> ["tree_id.group_node1_id", "tree_id.group_node2_id", ...]
+                 updated_tree: str = None,
+                 updated_nodes: List[str] = None):
         self.type = event_type
+        self.call_paths = call_paths
         self.updated_tree = updated_tree
         self.updated_nodes = updated_nodes
 

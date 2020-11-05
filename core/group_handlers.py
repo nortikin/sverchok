@@ -101,7 +101,7 @@ def group_node_update(next_handler=None) -> Generator[None, GroupEvent, None]:
                         tree.nodes.active_input.is_updated = False
                     for node in tree.sorted_walk([tree.nodes.active_output] if tree.nodes.active_output else []):
                         if not node.is_updated:
-                            node.update()
+                            node.update(event.call_paths[0])
                             [setattr(n, 'is_updated', False) for n in node.next_nodes]
 
         else:
@@ -124,11 +124,19 @@ def group_tree_update(next_handler=None):
             with print_errors():
                 debug(event)
                 with NodesStatus.update_tree_nodes(event.bl_tree) as tree:
+                    from_input_nodes = {n for n in tree.bfs_walk(
+                        [n for n in tree.nodes if n.bl_tween.bl_idname == 'NodeGroupInput'])}
                     for node in tree.sorted_walk([tree.nodes.active_output] if tree.nodes.active_output else []):
                         if not node.is_updated:
                             if node.is_output:
                                 event.output_was_changed = True
-                            node.update()
+                            if node in from_input_nodes:
+                                # this nodes should be updated several times for each group node separately
+                                for path in event.call_paths:
+                                    node.update(path)
+                            else:
+                                # otherwise one update will be enough
+                                node.update()
                             [setattr(n, 'is_updated', False) for n in node.next_nodes]
 
         else:
@@ -150,11 +158,19 @@ def nodes_update(next_handler=None):
                 debug(event)
                 with NodesStatus.update_tree_nodes(event.bl_tree) as tree:
                     outdated_nodes = set(event.updated_nodes)
+                    from_input_nodes = {n for n in tree.bfs_walk(
+                        [n for n in tree.nodes if n.bl_tween.bl_idname == 'NodeGroupInput'])}
                     for node in tree.sorted_walk([tree.nodes.active_output] if tree.nodes.active_output else []):
                         if not node.is_updated or node.name in outdated_nodes:
                             if node.is_output:
                                 event.output_was_changed = True
-                            node.update()
+                            if node in from_input_nodes:
+                                # this nodes should be updated several times for each group node separately
+                                for path in event.call_paths:
+                                    node.update(path)
+                            else:
+                                # otherwise one update will be enough
+                                node.update()
                             [setattr(n, 'is_updated', False) for n in node.next_nodes]
 
         else:
