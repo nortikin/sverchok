@@ -152,7 +152,7 @@ COLOR_MODES_DICT = {
 
     "Overlay":     (overlay_func, 30),
     "Soft Light":  (soft_light_func, 31),
-    "Vivd Light":  (vivid_light_func, 32),
+    "Vivid Light":  (vivid_light_func, 32),
     "Pin Light":   (pin_light_func, 33),
     "Hard Mix":    (hard_mix_func, 34),
 
