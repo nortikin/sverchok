@@ -26,7 +26,7 @@ from bpy.types import Node, NodeTree
 from sverchok.utils.context_managers import sv_preferences
 
 if TYPE_CHECKING:
-    from sverchok.core.node_group import SvGroupTree
+    from sverchok.core.node_group import SvGroupTree, SvGroupTreeNode
 
 
 class GroupEvent:
@@ -36,11 +36,11 @@ class GroupEvent:
 
     def __init__(self,
                  event_type: str,
-                 call_paths: List[str],  # format -> ["tree_id.group_node1_id", "tree_id.group_node2_id", ...]
+                 group_node: SvGroupTreeNode,
                  updated_tree: str = None,
                  updated_nodes: List[str] = None):
         self.type = event_type
-        self.call_paths = call_paths
+        self.group_node = group_node
         self.updated_tree = updated_tree
         self.updated_nodes = updated_nodes
 

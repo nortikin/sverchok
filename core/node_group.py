@@ -29,6 +29,7 @@ class SvGroupTree(bpy.types.NodeTree):
 
     handler = MainHandler()
 
+    group_node_name: bpy.props.StringProperty()  # should be updated by "Go to edit group tree" operator
     tree_id_memory: bpy.props.StringProperty(default="")  # identifier of the tree, should be used via `tree_id`
 
     @property
@@ -81,8 +82,8 @@ class SvGroupTree(bpy.types.NodeTree):
 
         self.check_reroutes_sockets()
         self.update_sockets()  # probably more precise trigger could be found for calling this method
-        self.handler.send(GroupEvent(GroupEvent.GROUP_TREE_UPDATE, updated_tree=self.name,
-                                     call_paths=[n.id_data.tree_id + '.' + n.node_id for n in self.parent_nodes()]))
+        group_node = bpy.context.space_data.path[-2].node_tree.nodes[self.group_node_name]
+        self.handler.send(GroupEvent(GroupEvent.GROUP_TREE_UPDATE, group_node, updated_tree=self.name))
 
     def update_sockets(self):  # todo it lets simplify sockets API
         """Set properties of sockets of parent nodes and of output modes"""
@@ -158,9 +159,9 @@ class SvGroupTree(bpy.types.NodeTree):
 
     def update_nodes(self, nodes: list):
         """This method expect to get list of its nodes which should be updated"""
-        self.handler.send(
-            GroupEvent(GroupEvent.NODES_UPDATE, updated_tree=self.name, updated_nodes=[n.name for n in nodes],
-                       call_paths=[n.id_data.tree_id + '.' + n.node_id for n in self.parent_nodes()]))
+        group_node = bpy.context.space_data.path[-2].node_tree.nodes[self.group_node_name]
+        self.handler.send(GroupEvent(GroupEvent.NODES_UPDATE, group_node,
+                                     updated_tree=self.name, updated_nodes=[n.name for n in nodes]))
 
     def parent_nodes(self) -> Iterator['SvGroupTreeNode']:
         """Returns all parent nodes"""
@@ -276,8 +277,7 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
 
         self.node_tree: SvGroupTree
         self.node_tree.handler.send(
-            GroupEvent(GroupEvent.GROUP_NODE_UPDATE, call_paths=[self.id_data.tree_id + '.' + self.node_id],
-                       updated_tree=self.node_tree.name))
+            GroupEvent(GroupEvent.GROUP_NODE_UPDATE, self, updated_tree=self.node_tree.name))
 
 
 class PlacingNodeOperator:
@@ -457,6 +457,7 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
         group_node.select = False
         group_node.group_tree = sub_tree
         group_node.location = center
+        sub_tree.group_node_name = group_node.name
 
         # linking, linking should be ordered from first socket to last (in case like `join list` nodes)
         py_base_tree = Tree(base_tree)
@@ -648,6 +649,8 @@ class EditGroupTree(bpy.types.Operator):
 
     def execute(self, context):
         context.space_data.path.append(context.node.node_tree, node=context.node)
+        context.node.node_tree.group_node_name = context.node.name
+        # todo make protection from editing the same trees in more then one area
         return {'FINISHED'}
 
 
@@ -732,32 +735,16 @@ class BaseInOutNodes:
                 break
             out_s.sv_set(in_s.sv_get(deepcopy=False))
 
-    def search_parent_group_node(self) -> SvGroupTreeNode:
-        parsed_path = self.call_path.split('.')
-        if len(parsed_path) != 2:
-            raise TypeError(f'Wrong format of call_path "{self.call_path}" expecting "tree_id.group_node_id" '
-                            f'in NODE "{self.name}" of TREE "{self.id_data.name}"')
-        tree_id, group_node_id = parsed_path
-        for tree in bpy.data.node_groups:
-            if hasattr(tree, 'tree_id') and tree.tree_id == tree_id:
-                for node in tree.nodes:
-                    if node.node_id == group_node_id:
-                        return node
-        raise LookupError(f'Node "{self.name}" can not find context of its evaluation')
-
 
 @extend_blender_class
 class NodeGroupOutput(BaseInOutNodes, BaseNode):
-    def process(self):
-        group_node = self.search_parent_group_node()
-        # if socket was just linked it will have `is_linked` equal False https://developer.blender.org/T82318
+    def process(self, group_node: SvGroupTreeNode):
         self.pass_socket_data(self.inputs, group_node.outputs)
 
 
 @extend_blender_class
 class NodeGroupInput(BaseInOutNodes, BaseNode):
-    def process(self):
-        group_node = self.search_parent_group_node()
+    def process(self, group_node: SvGroupTreeNode):
         self.pass_socket_data(group_node.inputs, self.outputs)
 
 

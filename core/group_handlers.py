@@ -5,16 +5,21 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+"""
+Purpose of this module is calling `process` methods of nodes in appropriate order according their relations in a tree
+and keeping `updating` statistics.
+"""
+
 from __future__ import annotations
 
 import traceback
 from collections import defaultdict
 from contextlib import contextmanager
 from functools import wraps
-from typing import Generator, ContextManager, Dict, TYPE_CHECKING, Union, List
+from typing import Generator, Dict, TYPE_CHECKING, Union, List, NamedTuple
 
 from sverchok.core.events import GroupEvent
-from sverchok.utils.tree_structure import Tree
+from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.logging import debug
 
 if TYPE_CHECKING:
@@ -38,40 +43,93 @@ class MainHandler:
             pass_running(event.bl_tree)
 
 
-class NodesStatus:
-    _trees: Dict[str, Tree] = dict()
+class NodeStatistic(NamedTuple):
+    """
+    Statistic should be kept separately for each node
+    because each node can have 10 or even 100 of different statistic profiles according number of group nodes using it
+    """
+    is_update: bool = False
+    # has_error: bool = False
+    # update_time: int  # ns
 
-    @classmethod
-    @contextmanager
-    def update_tree_nodes(cls, bl_tree: SvGroupTree) -> ContextManager[Tree]:
+
+class ContextTree(Tree):
+    """
+    The same tree but nodes has statistic dependently on context evaluation
+    For example node can has is_updated=True for tree evaluated from one group node and False for another
+    """
+    _trees: Dict[str, Tree] = dict()
+    _nodes_statistic: Dict[str, NodeStatistic] = defaultdict(NodeStatistic)  # str - node_id
+
+    def __init__(self, bl_tree: SvGroupTree, group_node: SvGroupTreeNode):
         """
         It will create Python copy of the tree and tag already updated nodes
-        User should update nodes via node.update method in appropriate order
-        After all updated tree will be catch in memory
-        """
-        new_tree = Tree(bl_tree)
-        if bl_tree.tree_id in cls._trees:
-            # copy nodes status from previous tree
-            old_tree = cls._trees[bl_tree.tree_id]
-            [setattr(new_tree.nodes[on.name], 'is_updated', on.is_updated)
-             for on in old_tree.nodes if on in new_tree.nodes]
 
-            new_links = new_tree.links - old_tree.links
+
+        User should update nodes via node.update method in appropriate order
+        """
+        self.group_node = group_node
+
+        super().__init__(bl_tree)
+        self._trees[bl_tree.tree_id] = self
+        self._replace_nodes_id()
+        [setattr(n, atr, val) for n in self.nodes
+         for atr, val in zip(NodeStatistic.__annotations__, self._nodes_statistic[n.bl_tween.node_id])]
+        self._update_topology_status()
+
+    def update_node(self, node: Node):
+        bl_node = node.bl_tween
+        was_updated = False
+        has_error = False
+        try:
+            if bl_node.bl_idname in {'NodeGroupInput', 'NodeGroupOutput'}:
+                bl_node.process(self.group_node)
+            elif hasattr(bl_node, 'process'):
+                bl_node.process()
+            was_updated = True
+        except Exception:
+            has_error = True
+            traceback.print_exc()
+        finally:
+            self._nodes_statistic[bl_node.node_id] = NodeStatistic(was_updated)
+
+    def _update_topology_status(self):
+        """Copy nodes status from previous tree"""
+        if self.bl_tween.tree_id in self._trees:
+            old_tree = self._trees[self.bl_tween.tree_id]
+
+            new_links = self.links - old_tree.links
             for link in new_links:
                 link.from_node.is_updated = False
                 link.to_node.is_updated = False
 
-            removed_links = old_tree.links - new_tree.links
+            removed_links = old_tree.links - self.links
             for link in removed_links:
-                if link.from_node in new_tree.nodes:
-                    new_tree.nodes[link.from_node.name].is_updated = False
-                if link.to_node in new_tree.nodes:
-                    new_tree.nodes[link.to_node.name].is_updated = False
-        try:
-            yield new_tree
-        finally:
-            if new_tree is not None:
-                cls._trees[bl_tree.tree_id] = new_tree
+                if link.from_node in self.nodes:
+                    self.nodes[link.from_node.name].is_updated = False
+                if link.to_node in self.nodes:
+                    self.nodes[link.to_node.name].is_updated = False
+
+    def _replace_nodes_id(self):
+        """
+        The idea is to replace nodes ID before evaluating the tree
+        in this case sockets will get unique identifiers relative to base group node
+        format of new nodes ID -> "group_node_id.node_id" ("group_node_id." is replaceable part unlike "node_id")
+        but nodes which is not connected with input should not change their ID
+        because the result of their process method will be constant between different group nodes
+        """
+        from_input_nodes = {n for n in self.bfs_walk(
+            [n for n in self.nodes if n.bl_tween.bl_idname == 'NodeGroupInput'])}
+        for node in self.nodes:
+            parsed_id = node.bl_tween.node_id.split('.')
+            if len(parsed_id) > 2:
+                raise TypeError(f'Wrong format of node_di "{node.bl_tween.node_id}" expecting "tree_id.group_node_id" '
+                                f'in NODE "{node.name}" of TREE "{node.bl_tween.id_data.name}"')
+            constant_id = parsed_id[-1]
+            if node in from_input_nodes:
+                node.bl_tween.n_id = self.group_node.n_id + '.' + constant_id
+            else:
+                node.bl_tween.n_id = constant_id
 
 
 def coroutine(f):  # todo find appropriate module
@@ -96,13 +154,13 @@ def group_node_update(next_handler=None) -> Generator[None, GroupEvent, None]:
 
             with print_errors():
                 debug(event)
-                with NodesStatus.update_tree_nodes(event.bl_tree) as tree:
-                    if tree.nodes.active_input:
-                        tree.nodes.active_input.is_updated = False
-                    for node in tree.sorted_walk([tree.nodes.active_output] if tree.nodes.active_output else []):
-                        if not node.is_updated:
-                            node.update(event.call_paths[0])
-                            [setattr(n, 'is_updated', False) for n in node.next_nodes]
+                tree = ContextTree(event.bl_tree, event.group_node)
+                if tree.nodes.active_input:
+                    tree.nodes.active_input.is_updated = False
+                for node in tree.sorted_walk([tree.nodes.active_output] if tree.nodes.active_output else []):
+                    if not node.is_updated:
+                        tree.update_node(node)
+                        [setattr(n, 'is_updated', False) for n in node.next_nodes]
 
         else:
             if next_handler:
@@ -123,21 +181,13 @@ def group_tree_update(next_handler=None):
 
             with print_errors():
                 debug(event)
-                with NodesStatus.update_tree_nodes(event.bl_tree) as tree:
-                    from_input_nodes = {n for n in tree.bfs_walk(
-                        [n for n in tree.nodes if n.bl_tween.bl_idname == 'NodeGroupInput'])}
-                    for node in tree.sorted_walk([tree.nodes.active_output] if tree.nodes.active_output else []):
-                        if not node.is_updated:
-                            if node.is_output:
-                                event.output_was_changed = True
-                            if node in from_input_nodes:
-                                # this nodes should be updated several times for each group node separately
-                                for path in event.call_paths:
-                                    node.update(path)
-                            else:
-                                # otherwise one update will be enough
-                                node.update()
-                            [setattr(n, 'is_updated', False) for n in node.next_nodes]
+                tree = ContextTree(event.bl_tree, event.group_node)
+                for node in tree.sorted_walk([tree.nodes.active_output] if tree.nodes.active_output else []):
+                    if not node.is_updated:
+                        if node.is_output:
+                            event.output_was_changed = True
+                        tree.update_node(node)
+                        [setattr(n, 'is_updated', False) for n in node.next_nodes]
 
         else:
             if next_handler:
@@ -156,22 +206,14 @@ def nodes_update(next_handler=None):
 
             with print_errors():
                 debug(event)
-                with NodesStatus.update_tree_nodes(event.bl_tree) as tree:
-                    outdated_nodes = set(event.updated_nodes)
-                    from_input_nodes = {n for n in tree.bfs_walk(
-                        [n for n in tree.nodes if n.bl_tween.bl_idname == 'NodeGroupInput'])}
-                    for node in tree.sorted_walk([tree.nodes.active_output] if tree.nodes.active_output else []):
-                        if not node.is_updated or node.name in outdated_nodes:
-                            if node.is_output:
-                                event.output_was_changed = True
-                            if node in from_input_nodes:
-                                # this nodes should be updated several times for each group node separately
-                                for path in event.call_paths:
-                                    node.update(path)
-                            else:
-                                # otherwise one update will be enough
-                                node.update()
-                            [setattr(n, 'is_updated', False) for n in node.next_nodes]
+                tree = ContextTree(event.bl_tree, event.group_node)
+                outdated_nodes = set(event.updated_nodes)
+                for node in tree.sorted_walk([tree.nodes.active_output] if tree.nodes.active_output else []):
+                    if not node.is_updated or node.name in outdated_nodes:
+                        if node.is_output:
+                            event.output_was_changed = True
+                        tree.update_node(node)
+                        [setattr(n, 'is_updated', False) for n in node.next_nodes]
 
         else:
             if next_handler:

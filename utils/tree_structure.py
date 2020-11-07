@@ -8,7 +8,6 @@
 
 from __future__ import annotations
 
-import traceback
 from collections import Mapping
 from typing import List, Iterable, TypeVar, TYPE_CHECKING, Dict, Any, Generic, Optional, Union
 
@@ -26,12 +25,14 @@ class Node(tw.Node):
     def __init__(self, name: str, index: int, tree: Tree):
         self.name = name
         self.select = False  # todo consider to remove
-        self.is_updated = False
 
         self._inputs: List[Socket] = []
         self._outputs: List[Socket] = []
         self._index = index
         self._tree = tree
+
+        # statistics
+        self.is_updated = False
 
     @property
     def bl_tween(self) -> SvNode:
@@ -91,25 +92,6 @@ class Node(tw.Node):
         for out_socket in bl_node.outputs:
             node.outputs.append(Socket.from_bl_socket(node, out_socket))
         return node
-
-    def update(self, call_path: str = None):
-        """
-        group_node_id is optional because this information should be used for node 
-        which are connected to input group nodes
-        other nodes should be updated without this context variable otherwise it will cause useless recalculations
-        """
-        bl_node = self.bl_tween
-        try:
-            if hasattr(bl_node, 'process'):
-                if call_path and hasattr(bl_node, 'call_path'):  # todo hasattr check can be removed later
-                    bl_node.call_path = call_path
-                bl_node.process()
-            self.is_updated = True
-        except Exception:
-            traceback.print_exc()
-        finally:
-            if call_path and hasattr(bl_node, 'call_path'):
-                bl_node.call_path = ''
 
     def __repr__(self):
         return f'Node:"{self.name}"'
