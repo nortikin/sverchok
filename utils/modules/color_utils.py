@@ -107,7 +107,8 @@ def rgb_to_hsv(rgb_col):
 
     mask_s = max_comp == 0
     mask_other = np.invert(mask_s)
-    hsv_col[mask_s,1] = 0
+    hsv_col[mask_s, 0] = 0
+    hsv_col[mask_s, 1] = 0
     hsv_col[mask_other, 1] = 1 - min_comp[mask_other] / max_comp[mask_other]
     hsv_col[:, 2] = max_comp
     if rgb_col.shape[1] == 4:
