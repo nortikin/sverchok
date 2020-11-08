@@ -10,15 +10,17 @@ import time
 from collections import namedtuple
 from contextlib import contextmanager
 from functools import reduce
-from typing import Tuple, List, Set, Dict, Iterator
+from typing import Tuple, List, Set, Dict, Iterator, Optional
 
 import bpy
+from sverchok.core.socket_data import SvNoDataError
 from sverchok.data_structure import extend_blender_class
 from mathutils import Vector
 
 from sverchok.core.group_handlers import MainHandler
 from sverchok.core.events import GroupEvent
 from sverchok.utils.tree_structure import Tree
+from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 
 
 class SvGroupTree(bpy.types.NodeTree):
@@ -84,6 +86,7 @@ class SvGroupTree(bpy.types.NodeTree):
         self.update_sockets()  # probably more precise trigger could be found for calling this method
         group_node = bpy.context.space_data.path[-2].node_tree.nodes[self.group_node_name]
         self.handler.send(GroupEvent(GroupEvent.GROUP_TREE_UPDATE, group_node, updated_tree=self.name))
+        self.color_nodes(self.handler.get_error_nodes(group_node))
 
     def update_sockets(self):  # todo it lets simplify sockets API
         """Set properties of sockets of parent nodes and of output modes"""
@@ -162,6 +165,7 @@ class SvGroupTree(bpy.types.NodeTree):
         group_node = bpy.context.space_data.path[-2].node_tree.nodes[self.group_node_name]
         self.handler.send(GroupEvent(GroupEvent.NODES_UPDATE, group_node,
                                      updated_tree=self.name, updated_nodes=[n.name for n in nodes]))
+        self.color_nodes(self.handler.get_error_nodes(group_node))
 
     def parent_nodes(self) -> Iterator['SvGroupTreeNode']:
         """Returns all parent nodes"""
@@ -170,6 +174,17 @@ class SvGroupTree(bpy.types.NodeTree):
             for node in tree.nodes:
                 if hasattr(node, 'node_tree') and node.node_tree.name == self.name:
                     yield node
+
+    def color_nodes(self, nodes_errors: Iterator[Optional[Exception]]):
+        exception_color = (0.8, 0.0, 0)
+        no_data_color = (1, 0.3, 0)
+        for error, node in zip(nodes_errors, self.nodes):
+            if error is not None:
+                node.use_custom_color = True
+                node.color = no_data_color if isinstance(error, SvNoDataError) else exception_color
+            else:
+                node.use_custom_color = False
+                node.set_color()
 
 
 class BaseNode:
@@ -189,11 +204,20 @@ class BaseNode:
     def copy(self, context):
         self.n_id = ''
 
+    def set_color(self):
+        self.use_custom_color = False
+
+    @property
+    def absolute_location(self):
+        return recursive_framed_location_finder(self, self.location[:])
+
 
 class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
     """Node for keeping sub trees"""
     bl_idname = 'SvGroupTreeNode'
     bl_label = 'Group node (mockup)'
+
+    # todo add methods: switch_on_off
 
     def nested_tree_filter(self, context):
         """Define which tree we would like to use as nested trees."""
@@ -278,6 +302,8 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
         self.node_tree: SvGroupTree
         self.node_tree.handler.send(
             GroupEvent(GroupEvent.GROUP_NODE_UPDATE, self, updated_tree=self.node_tree.name))
+        if any(self.node_tree.handler.get_error_nodes(self)):
+            raise RuntimeError
 
 
 class PlacingNodeOperator:
@@ -383,8 +409,7 @@ class AddGroupTree(bpy.types.Operator):
         context.node.group_tree = sub_tree  # link sub tree to group node
         sub_tree.nodes.new('NodeGroupInput').location = (-250, 0)  # create node for putting data into sub tree
         sub_tree.nodes.new('NodeGroupOutput').location = (250, 0)  # create node for getting data from sub tree
-        context.space_data.path.append(sub_tree, node=context.node)  # notify window that to edit the sub tree
-        return {'FINISHED'}
+        return bpy.ops.node.edit_group_tree({'node': context.node})
 
 
 class AddGroupTreeFromSelected(bpy.types.Operator):
@@ -648,8 +673,11 @@ class EditGroupTree(bpy.types.Operator):
     bl_label = 'Edit group tree'
 
     def execute(self, context):
-        context.space_data.path.append(context.node.node_tree, node=context.node)
-        context.node.node_tree.group_node_name = context.node.name
+        group_node = context.node
+        sub_tree: SvGroupTree = context.node.node_tree
+        context.space_data.path.append(sub_tree, node=group_node)
+        sub_tree.group_node_name = group_node.name
+        sub_tree.color_nodes(sub_tree.handler.get_error_nodes(group_node))
         # todo make protection from editing the same trees in more then one area
         return {'FINISHED'}
 

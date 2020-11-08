@@ -25,6 +25,7 @@ class Node(tw.Node):
     def __init__(self, name: str, index: int, tree: Tree):
         self.name = name
         self.select = False  # todo consider to remove
+        self.is_input_linked = False  # True if node has straight connection or via other nodes to one of input nodes
 
         self._inputs: List[Socket] = []
         self._outputs: List[Socket] = []
@@ -33,6 +34,7 @@ class Node(tw.Node):
 
         # statistics
         self.is_updated = False
+        self.error = None
 
     @property
     def bl_tween(self) -> SvNode:
@@ -104,7 +106,7 @@ class Tree(tw.Tree[NodeType]):
     """
     Structure similar to blender node groups but is more efficient in searching neighbours
     Each time when nodes or links collections are changed the instance of the tree should be recreated
-    so it is immutable data structure
+    so it is immutable (topologically) data structure
     """
     def __init__(self, bl_tree: SvGroupTree):
         self._tree_id = bl_tree.tree_id
@@ -115,6 +117,10 @@ class Tree(tw.Tree[NodeType]):
             if tree.name == bl_tree.name:
                 self._index = i
                 break
+
+        # topology analyze
+        [setattr(n, 'is_input_linked', True) for n in self.bfs_walk(
+            [n for n in self.nodes if n.bl_tween.bl_idname == 'NodeGroupInput'])]
 
     @property
     def id(self) -> str:

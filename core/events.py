@@ -49,7 +49,7 @@ class GroupEvent:
         return bpy.data.node_groups[self.updated_tree]
 
     def __repr__(self):
-        return f'{self.type.upper()} event, TREE={self.updated_tree}' \
+        return f'{self.type.upper()} event, GROUP_NODE={self.group_node.name}, TREE={self.updated_tree}' \
                + (f', NODES={self.updated_nodes}' if self.updated_nodes else '')
 
 class BlenderEventsTypes(Enum):
