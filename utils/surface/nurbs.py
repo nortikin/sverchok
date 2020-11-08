@@ -903,6 +903,77 @@ def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', 
                 knots_u=knots_u, metric=metric,
                 implementation=implementation)
 
+def nurbs_birail(path1, path2, profiles, ts, min_profiles, knots_u = 'UNIFY', metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE):
+
+    n_profiles = len(profiles)
+    have_ts = ts is not None and len(ts) > 0
+    if have_ts and n_profiles != len(ts):
+        raise Exception(f"Number of profiles ({n_profiles}) is not equal to number of T values ({len(ts)})")
+
+    t_min_1, t_max_1 = path1.get_u_bounds()
+    t_min_2, t_max_2 = path2.get_u_bounds()
+    if not have_ts:
+        ts1 = np.linspace(t_min_1, t_max_1, num=n_profiles)
+        ts2 = np.linspace(t_min_2, t_max_2, num=n_profiles)
+
+    if n_profiles == 1:
+        p = profiles[0]
+        ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
+        ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
+        profiles = [p] * min_profiles
+    elif n_profiles == 2 and n_profiles < min_profiles:
+        coeffs = np.linspace(0.0, 1.0, num=min_profiles)
+        p0, p1 = profiles
+        profiles = [p0.lerp_to(p1, coeff) for coeff in coeffs]
+        ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
+        ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
+    elif n_profiles < min_profiles:
+        target_vs = np.linspace(0.0, 1.0, num=min_profiles)
+        max_degree = n_profiles - 1
+        profiles = interpolate_nurbs_curves(profiles, ts1, target_vs,
+                    degree_v = min(max_degree, path.get_degree()),
+                    knots_u = knots_u,
+                    implementation = implementation)
+        ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
+        ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
+    else:
+        profiles = repeat_last_for_length(profiles, min_profiles)
+
+    points1 = path1.evaluate_array(ts1)
+    points2 = path2.evaluate_array(ts2)
+
+    tangents1 = path1.tangent_array(ts1)
+    tangents2 = path2.tangent_array(ts2)
+    tangents = 0.5 * (tangents1 + tangents2)
+    tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+
+    binormals = points2 - points1
+    scales = np.linalg.norm(binormals, axis=1, keepdims=True)
+    binormals /= scales
+    normals = np.cross(tangents, binormals)
+
+    tangents = np.cross(binormals, normals)
+
+    matrices = np.dstack((normals, binormals, tangents))
+    matrices = np.transpose(matrices, axes=(0,2,1))
+    matrices = np.linalg.inv(matrices)
+
+    placed_profiles = []
+    for pt1, profile, scale, matrix in zip(points1, profiles, scales, matrices):
+        t_min, t_max = profile.get_u_bounds()
+        pr_start = profile.evaluate(t_min)
+        pr_end = profile.evaluate(t_max)
+        pr_length = np.linalg.norm(pr_end - pr_start)
+        cpts = [scale * (matrix @ (pt - pr_start)) / pr_length + pt1 for pt in profile.get_control_points()]
+        profile = profile.copy(control_points = cpts)
+        placed_profiles.append(profile)
+
+    unified_curves, v_curves, surface = simple_loft(placed_profiles, degree_v = path1.get_degree(),
+            knots_u = knots_u, metric = metric,
+            implementation = implementation)
+
+    return placed_profiles, unified_curves, v_curves, surface
+
 SvNurbsMaths.surface_classes[SvNurbsMaths.NATIVE] = SvNativeNurbsSurface
 if geomdl is not None:
     SvNurbsMaths.surface_classes[SvNurbsMaths.GEOMDL] = SvGeomdlSurface
