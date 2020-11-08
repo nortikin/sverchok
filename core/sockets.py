@@ -208,6 +208,7 @@ class SvSocketCommon(SvSocketProcessing):
     color = (1, 0, 0, 1)  # base color, other sockets should override the property, use FloatProperty for dynamic
     label: StringProperty()  # It will be drawn instead of name if given
     quick_link_to_node = str()  # sockets which often used with other nodes can fill its `bl_idname` here
+    link_menu_handler : StringProperty(default='', options={'SKIP_SAVE'}) # To specify additional entries in the socket link menu
 
     # set True to use default socket property if it has got it
     use_prop: BoolProperty(default=False, options={'SKIP_SAVE'})
@@ -1135,23 +1136,49 @@ class SvInputLinkMenuOp(bpy.types.Operator):
                     )
             i += 1
 
-        for name, node in tree.nodes.items():
-            if node.bl_idname == link_param_node:
-                item = ('PARAM_' + node.name, f"Link to parameter: {node.label or node.name}", "Link to existing input node", i)
+        for name, other_node in tree.nodes.items():
+            if other_node.bl_idname == link_param_node:
+                item = ('PARAM_' + other_node.name, f"Link to parameter: {other_node.label or other_node.name}", "Link to existing input node", i)
                 items.append(item)
                 i += 1
 
-        for name, node in tree.nodes.items():
-            if node.bl_idname == 'WifiInNode':
-                for input_idx, wifi_input in enumerate(node.inputs):
+        for name, other_node in tree.nodes.items():
+            if other_node.bl_idname == 'WifiInNode':
+                for input_idx, wifi_input in enumerate(other_node.inputs):
                     linked = get_other_socket(wifi_input)
                     if linked is None:
                         continue
                     if linked.bl_idname != socket.bl_idname:
                         continue
-                    item = (f"WIFI_{input_idx}_{node.var_name}", f"Link to WiFi: {node.label or node.name} - {node.var_name}[{input_idx}]", "Link to existing WiFi input node", i)
+                    item = (f"WIFI_{input_idx}_{other_node.var_name}", f"Link to WiFi: {other_node.label or other_node.name} - {other_node.var_name}[{input_idx}]", "Link to existing WiFi input node", i)
                     items.append(item)
                     i += 1
+
+        # In the node class, it is possible to define
+        # additional menu entries by specifying `link_menu_handler`
+        # property of the socket. It should be name of a class with
+        # two classmethods: get_items() and on_selected():
+        #
+        # class MyNode(...):
+        #   class MenuHandler:
+        #       @classmethod
+        #       def get_items(cls, context):
+        #           return [('MY_ENTRY', "My entry", "My entry description")]
+        #
+        #       @classmethod
+        #       def on_selected(cls, tree, node, item, context):
+        #           if item == 'MY_ENTRY':
+        #               print("Hello world!")
+        #
+        #   def sv_init(self):
+        #       self.inputs.new('SvVerticesSocket', 'Vertices').link_menu_handler = 'MenuHandler'
+        #
+        handler_name = socket.link_menu_handler
+        if handler_name:
+            handler = getattr(node, handler_name)
+            for id, title, description in handler.get_items(socket, context):
+                items.append((id, title, description, i))
+                i += 1
 
         return items
 
@@ -1243,6 +1270,10 @@ class SvInputLinkMenuOp(bpy.types.Operator):
                     new_node.location = new_node.absolute_location
 
                 new_node.process_node(context)
+
+        elif socket.link_menu_handler:
+            handler = getattr(node, socket.link_menu_handler)
+            handler.on_selected(tree, node, socket, self.option, context)
 
         return {'FINISHED'}
 
