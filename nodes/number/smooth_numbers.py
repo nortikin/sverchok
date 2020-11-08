@@ -16,15 +16,13 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import pi
 import bpy
 from bpy.props import IntProperty, EnumProperty, FloatProperty, BoolProperty
 
-from sverchok.ui.sv_icons import custom_icon
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, list_match_func, list_match_modes, numpy_list_match_modes, numpy_list_match_func
-from sverchok.utils.sv_itertools import (recurse_f_level_control)
-from sverchok.utils.geom import LinearSpline, CubicSpline
+from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes
+from sverchok.utils.sv_itertools import recurse_f_level_control
+
 import numpy as np
 
 def smooth_list(data_out, iteration, factor, cyclic):
@@ -44,7 +42,7 @@ def smooth_numbers(params, constants, matching_f):
     for props in zip(*params):
         data = np.array(props[0])
         iterations = max(props[1][0], 0)
-        factor = max(min(props[2][0], 1),-1)
+        factor = max(min(props[2][0], 1), -1)
         if iterations:
             smooth_list(data, iterations, factor, cyclic)
 
@@ -60,11 +58,6 @@ class SvSmoothNumbersNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSmoothNumbersNode'
     bl_label = 'Smooth Numbers'
     sv_icon = 'SV_OSCILLATOR'
-
-    def mode_change(self, context):
-        self.update_sockets()
-        updateNode(self, context)
-
 
 
     factor: FloatProperty(default=1.0, min=-1, max=1, name='Factor', update=updateNode)
