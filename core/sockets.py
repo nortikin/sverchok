@@ -34,6 +34,8 @@ from sverchok.data_structure import (
     SIMPLE_DATA_TYPES,
     flatten_data, graft_data, map_at_level, wrap_data)
 
+from sverchok.settings import get_params
+
 from sverchok.utils.field.scalar import SvScalarField, SvConstantScalarField
 from sverchok.utils.field.vector import SvVectorField, SvMatrixVectorField, SvConstantVectorField
 from sverchok.utils.curve import SvCurve
@@ -386,6 +388,8 @@ class SvSocketCommon(SvSocketProcessing):
             else:
                 layout.label(text=text)
 
+        menu_option = get_params({'show_input_menus': 'QUICKLINK'}).show_input_menus
+
         # just handle custom draw..be it input or output.
         if self.custom_draw:
             # does the node have the draw function referred to by
@@ -401,7 +405,8 @@ class SvSocketCommon(SvSocketProcessing):
 
         else:  # unlinked INPUT
             if self.get_prop_name():  # has property
-                self.draw_link_input_menu(context, layout, node)
+                if menu_option == 'ALL':
+                    self.draw_link_input_menu(context, layout, node)
                 self.draw_property(layout, prop_origin=node, prop_name=self.get_prop_name())
 
             elif self.node.bl_idname == 'SvGroupTreeNode' and hasattr(self, 'draw_group_property'):  # group node
@@ -415,12 +420,15 @@ class SvSocketCommon(SvSocketProcessing):
                     self.draw_group_property(layout, text, interface_socket)
 
             elif self.use_prop:  # no property but use default prop
-                self.draw_link_input_menu(context, layout, node)
+                if menu_option == 'ALL':
+                    self.draw_link_input_menu(context, layout, node)
                 self.draw_property(layout)
 
             else:  # no property and not use default prop
-                self.draw_link_input_menu(context, layout, node)
-                #self.draw_quick_link(context, layout, node)
+                if menu_option == 'QUICKLINK':
+                    self.draw_quick_link(context, layout, node)
+                elif menu_option == 'ALL':
+                    self.draw_link_input_menu(context, layout, node)
                 draw_label(self.label or text)
 
         if self.has_menu(context):
