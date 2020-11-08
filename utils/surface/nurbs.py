@@ -958,13 +958,30 @@ def nurbs_birail(path1, path2, profiles, ts, min_profiles, knots_u = 'UNIFY', me
     matrices = np.transpose(matrices, axes=(0,2,1))
     matrices = np.linalg.inv(matrices)
 
+    rotations = []
+    for profile in profiles:
+        t_min, t_max = profile.get_u_bounds()
+        pr_start = profile.evaluate(t_min)
+        pr_end = profile.evaluate(t_max)
+        pr_vector = pr_end - pr_start
+        pr_length = np.linalg.norm(pr_vector)
+        pr_dir = pr_vector / pr_length
+        pr_x, pr_y, _ = tuple(pr_dir)
+
+        matrix = np.array([
+                (pr_y, -pr_x, 0),
+                (pr_x, pr_y, 0),
+                (0, 0, 1)
+            ])
+        rotations.append(matrix)
+
     placed_profiles = []
-    for pt1, profile, scale, matrix in zip(points1, profiles, scales, matrices):
+    for pt1, profile, scale, rotation, matrix in zip(points1, profiles, scales, rotations, matrices):
         t_min, t_max = profile.get_u_bounds()
         pr_start = profile.evaluate(t_min)
         pr_end = profile.evaluate(t_max)
         pr_length = np.linalg.norm(pr_end - pr_start)
-        cpts = [scale * (matrix @ (pt - pr_start)) / pr_length + pt1 for pt in profile.get_control_points()]
+        cpts = [scale * (matrix @ rotation @ (pt - pr_start)) / pr_length + pt1 for pt in profile.get_control_points()]
         profile = profile.copy(control_points = cpts)
         placed_profiles.append(profile)
 
