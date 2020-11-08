@@ -903,12 +903,15 @@ def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', 
                 knots_u=knots_u, metric=metric,
                 implementation=implementation)
 
-def nurbs_birail(path1, path2, profiles, ts, min_profiles, knots_u = 'UNIFY', metric = 'DISTANCE', scale_uniform = True, implementation = SvNurbsSurface.NATIVE):
+def nurbs_birail(path1, path2, profiles, ts, min_profiles, knots_u = 'UNIFY', metric = 'DISTANCE', degree_v = None, scale_uniform = True, implementation = SvNurbsSurface.NATIVE):
 
     n_profiles = len(profiles)
     have_ts = ts is not None and len(ts) > 0
     if have_ts and n_profiles != len(ts):
         raise Exception(f"Number of profiles ({n_profiles}) is not equal to number of T values ({len(ts)})")
+
+    if degree_v is None:
+        degree_v = path1.get_degree()
 
     t_min_1, t_max_1 = path1.get_u_bounds()
     t_min_2, t_max_2 = path2.get_u_bounds()
@@ -919,23 +922,26 @@ def nurbs_birail(path1, path2, profiles, ts, min_profiles, knots_u = 'UNIFY', me
     if n_profiles == 1:
         p = profiles[0]
         profiles = [p] * min_profiles
-        ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
-        ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
+        if not have_ts:
+            ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
+            ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
     elif n_profiles == 2 and n_profiles < min_profiles:
         coeffs = np.linspace(0.0, 1.0, num=min_profiles)
         p0, p1 = profiles
         profiles = [p0.lerp_to(p1, coeff) for coeff in coeffs]
-        ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
-        ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
+        if not have_ts:
+            ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
+            ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
     elif n_profiles < min_profiles:
         target_vs = np.linspace(0.0, 1.0, num=min_profiles)
         max_degree = n_profiles - 1
         profiles = interpolate_nurbs_curves(profiles, ts1, target_vs,
-                    degree_v = min(max_degree, path.get_degree()),
+                    degree_v = min(max_degree, degree_v),
                     knots_u = knots_u,
                     implementation = implementation)
-        ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
-        ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
+        if not have_ts:
+            ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
+            ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
     else:
         profiles = repeat_last_for_length(profiles, min_profiles)
 
@@ -960,8 +966,9 @@ def nurbs_birail(path1, path2, profiles, ts, min_profiles, knots_u = 'UNIFY', me
     matrices = np.transpose(matrices, axes=(0,2,1))
     matrices = np.linalg.inv(matrices)
 
-    rotations = []
-    for profile in profiles:
+    scales = scales.flatten()
+    placed_profiles = []
+    for pt1, profile, scale, matrix in zip(points1, profiles, scales, matrices):
         t_min, t_max = profile.get_u_bounds()
         pr_start = profile.evaluate(t_min)
         pr_end = profile.evaluate(t_max)
@@ -970,20 +977,12 @@ def nurbs_birail(path1, path2, profiles, ts, min_profiles, knots_u = 'UNIFY', me
         pr_dir = pr_vector / pr_length
         pr_x, pr_y, _ = tuple(pr_dir)
 
-        matrix = np.array([
+        rotation = np.array([
                 (pr_y, -pr_x, 0),
                 (pr_x, pr_y, 0),
                 (0, 0, 1)
             ])
-        rotations.append(matrix)
 
-    scales = scales.flatten()
-    placed_profiles = []
-    for pt1, profile, scale, rotation, matrix in zip(points1, profiles, scales, rotations, matrices):
-        t_min, t_max = profile.get_u_bounds()
-        pr_start = profile.evaluate(t_min)
-        pr_end = profile.evaluate(t_max)
-        pr_length = np.linalg.norm(pr_end - pr_start)
         scale /= pr_length
         if scale_uniform:
             scale_m = np.array([
@@ -1002,7 +1001,7 @@ def nurbs_birail(path1, path2, profiles, ts, min_profiles, knots_u = 'UNIFY', me
         profile = profile.copy(control_points = cpts)
         placed_profiles.append(profile)
 
-    unified_curves, v_curves, surface = simple_loft(placed_profiles, degree_v = path1.get_degree(),
+    unified_curves, v_curves, surface = simple_loft(placed_profiles, degree_v = degree_v,
             knots_u = knots_u, metric = metric,
             implementation = implementation)
 
