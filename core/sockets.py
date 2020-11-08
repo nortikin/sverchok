@@ -34,6 +34,8 @@ from sverchok.data_structure import (
     SIMPLE_DATA_TYPES,
     flatten_data, graft_data, map_at_level, wrap_data)
 
+from sverchok.settings import get_params
+
 from sverchok.utils.field.scalar import SvScalarField, SvConstantScalarField
 from sverchok.utils.field.vector import SvVectorField, SvMatrixVectorField, SvConstantVectorField
 from sverchok.utils.curve import SvCurve
@@ -208,6 +210,7 @@ class SvSocketCommon(SvSocketProcessing):
     color = (1, 0, 0, 1)  # base color, other sockets should override the property, use FloatProperty for dynamic
     label: StringProperty()  # It will be drawn instead of name if given
     quick_link_to_node = str()  # sockets which often used with other nodes can fill its `bl_idname` here
+    link_menu_handler : StringProperty(default='', options={'SKIP_SAVE'}) # To specify additional entries in the socket link menu
 
     # set True to use default socket property if it has got it
     use_prop: BoolProperty(default=False, options={'SKIP_SAVE'})
@@ -220,6 +223,12 @@ class SvSocketCommon(SvSocketProcessing):
     objects_number: IntProperty(min=0, options={'SKIP_SAVE'})
 
     description : StringProperty()
+
+    def get_link_parameter_node(self):
+        return self.quick_link_to_node
+
+    def setup_parameter_node(self, param_node):
+        pass
 
     def get_prop_name(self):
         """
@@ -353,6 +362,21 @@ class SvSocketCommon(SvSocketProcessing):
         if self.quick_link_to_node:
             layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
 
+    def does_support_link_input_menu(self, context, layout, node):
+        param_node = self.get_link_parameter_node()
+        if not param_node:
+            return False
+        return True
+
+    def draw_link_input_menu(self, context, layout, node):
+        if not self.does_support_link_input_menu(context, layout, node):
+            return
+        op = layout.operator('node.sv_input_link_menu_popup', text="", icon="PLUGIN")
+        op.tree_name = node.id_data.name
+        op.node_name = node.name
+        op.input_name = self.name
+
+
     def draw(self, context, layout, node, text):
 
         def draw_label(text):
@@ -363,6 +387,8 @@ class SvSocketCommon(SvSocketProcessing):
                 layout.operator('node.sv_socket_show_help', text=text, emboss=False).text = self.description
             else:
                 layout.label(text=text)
+
+        menu_option = get_params({'show_input_menus': 'QUICKLINK'}).show_input_menus
 
         # just handle custom draw..be it input or output.
         if self.custom_draw:
@@ -379,6 +405,8 @@ class SvSocketCommon(SvSocketProcessing):
 
         else:  # unlinked INPUT
             if self.get_prop_name():  # has property
+                if menu_option == 'ALL':
+                    self.draw_link_input_menu(context, layout, node)
                 self.draw_property(layout, prop_origin=node, prop_name=self.get_prop_name())
 
             elif self.node.bl_idname == 'SvGroupTreeNode' and hasattr(self, 'draw_group_property'):  # group node
@@ -392,10 +420,15 @@ class SvSocketCommon(SvSocketProcessing):
                     self.draw_group_property(layout, text, interface_socket)
 
             elif self.use_prop:  # no property but use default prop
+                if menu_option == 'ALL':
+                    self.draw_link_input_menu(context, layout, node)
                 self.draw_property(layout)
 
             else:  # no property and not use default prop
-                self.draw_quick_link(context, layout, node)
+                if menu_option == 'QUICKLINK':
+                    self.draw_quick_link(context, layout, node)
+                elif menu_option == 'ALL':
+                    self.draw_link_input_menu(context, layout, node)
                 draw_label(self.label or text)
 
         if self.has_menu(context):
@@ -517,6 +550,14 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
     color = (0.9, 0.6, 0.2, 1.0)
     quick_link_to_node = 'GenVectorsNode'
 
+    def setup_parameter_node(self, param_node):
+        if self.use_prop or self.get_prop_name():
+            value = self.sv_get()[0][0]
+            param_node.x_ = value[0]
+            param_node.y_ = value[1]
+            param_node.z_ = value[2]
+        
+
     # this property is needed for back capability, after renaming prop to default_property
     # should be removed after https://github.com/nortikin/sverchok/issues/3514
     # using via default_property property
@@ -561,6 +602,11 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
         else:
             layout.label(text=text)
 
+    def does_support_link_input_menu(self, context, layout, node):
+        ok = super().does_support_link_input_menu(context, layout, node)
+        if not ok:
+            return False
+        return self.name not in {'Vertices', 'Verts'}
 
 class SvVerticesSocketInterface(bpy.types.NodeSocketInterface):
     """
@@ -714,6 +760,30 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
     default_property_type: bpy.props.EnumProperty(items=[(i, i, '') for i in ['float', 'int']])
     default_float_property: bpy.props.FloatProperty(update=process_from_socket)
     default_int_property: bpy.props.IntProperty(update=process_from_socket)
+
+    def get_link_parameter_node(self):
+        if self.quick_link_to_node:
+            return self.quick_link_to_node
+        else:
+            return 'SvNumberNode'
+
+    def does_support_link_input_menu(self, context, layout, node):
+        ok = super().does_support_link_input_menu(context, layout, node)
+        if not ok:
+            return False
+        return self.name not in {'Edges', 'Polygons', 'Edgs', 'Polys', 'Faces', 'EdgPol', 'Mask', 'EdgesMask', 'FaceMask'}
+
+    def setup_parameter_node(self, param_node):
+        if param_node.bl_idname == 'SvNumberNode':
+            if self.use_prop or self.get_prop_name():
+                value = self.sv_get()[0][0]
+                print("V", value)
+                if isinstance(value, int):
+                    param_node.selected_mode = 'int'
+                    param_node.int_ = value
+                elif isinstance(value, float):
+                    param_node.selected_mode = 'float'
+                    param_node.float_ = value
 
     @property
     def default_property(self):
@@ -959,6 +1029,7 @@ class SvCurveSocket(NodeSocket, SvSocketCommon):
 class SvScalarFieldSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvScalarFieldSocket"
     bl_label = "Scalar Field Socket"
+    quick_link_to_node = 'SvNumberNode'
 
     color = (0.9, 0.4, 0.1, 1.0)
     default_conversion_name = ConversionPolicies.FIELD.conversion_name
@@ -972,6 +1043,7 @@ class SvScalarFieldSocket(NodeSocket, SvSocketCommon):
 class SvVectorFieldSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvVectorFieldSocket"
     bl_label = "Vector Field Socket"
+    quick_link_to_node = 'GenVectorsNode'
 
     color = (0.1, 0.1, 0.9, 1.0)
     default_conversion_name = ConversionPolicies.FIELD.conversion_name
@@ -1039,6 +1111,186 @@ class SvSocketHelpOp(bpy.types.Operator):
         bpy.context.window_manager.popup_menu(draw, title="Socket description", icon='QUESTION')
         return {'FINISHED'}
 
+def setup_new_node_location(new_node, old_node):
+    links_number = len([s for s in old_node.inputs if s.is_linked])
+    new_node.location = (old_node.location[0] - 200, old_node.location[1] - 100 * links_number)
+    if old_node.parent:
+        new_node.parent = old_node.parent
+        new_node.location = new_node.absolute_location
+
+class SvInputLinkMenuOp(bpy.types.Operator):
+    "Opens a menu"
+    bl_idname = "node.sv_input_link_menu_popup"
+    bl_label = "Link to existing parameter or add a new one"
+    bl_options = {'INTERNAL', 'REGISTER'}
+    bl_property = "option"
+
+    def get_items(self, context):
+        tree = context.space_data.node_tree
+        node = tree.nodes[self.node_name]
+        socket = node.inputs[self.input_name]
+
+        items = []
+        link_param_node = socket.get_link_parameter_node()
+        i = 0
+        if link_param_node:
+            items.append(
+                    ('__SV_PARAM_CREATE__', "Create new parameter", "Create new parameter node", i)
+                )
+            i += 1
+
+            items.append(
+                        ('__SV_WIFI_CREATE__', "Create new parameter via WiFi", "Create new parameter node and link it via WiFi pair", 1)
+                    )
+            i += 1
+
+        for name, other_node in tree.nodes.items():
+            if other_node.bl_idname == link_param_node:
+                item = ('PARAM_' + other_node.name, f"Link to parameter: {other_node.label or other_node.name}", "Link to existing input node", i)
+                items.append(item)
+                i += 1
+
+        for name, other_node in tree.nodes.items():
+            if other_node.bl_idname == 'WifiInNode':
+                for input_idx, wifi_input in enumerate(other_node.inputs):
+                    linked = get_other_socket(wifi_input)
+                    if linked is None:
+                        continue
+                    if linked.bl_idname != socket.bl_idname:
+                        continue
+                    item = (f"WIFI_{input_idx}_{other_node.var_name}", f"Link to WiFi: {other_node.label or other_node.name} - {other_node.var_name}[{input_idx}]", "Link to existing WiFi input node", i)
+                    items.append(item)
+                    i += 1
+
+        # In the node class, it is possible to define
+        # additional menu entries by specifying `link_menu_handler`
+        # property of the socket. It should be name of a class with
+        # two classmethods: get_items() and on_selected():
+        #
+        # class MyNode(...):
+        #   class MenuHandler:
+        #       @classmethod
+        #       def get_items(cls, context):
+        #           return [('MY_ENTRY', "My entry", "My entry description")]
+        #
+        #       @classmethod
+        #       def on_selected(cls, tree, node, item, context):
+        #           if item == 'MY_ENTRY':
+        #               print("Hello world!")
+        #
+        #   def sv_init(self):
+        #       self.inputs.new('SvVerticesSocket', 'Vertices').link_menu_handler = 'MenuHandler'
+        #
+        handler_name = socket.link_menu_handler
+        if handler_name:
+            handler = getattr(node, handler_name)
+            for id, title, description in handler.get_items(socket, context):
+                items.append((id, title, description, i))
+                i += 1
+
+        return items
+
+    option : EnumProperty(name = "Action", description = "Action to be executed", items = get_items)
+    tree_name : StringProperty()
+    node_name : StringProperty()
+    input_name : StringProperty()
+
+    def execute(self, context):
+
+        tree = bpy.data.node_groups[self.tree_name]
+        node = tree.nodes[self.node_name]
+        socket = node.inputs[self.input_name]
+
+        def is_linked(node1, node2):
+            for link in tree.links:
+                if link.from_node == node1 and link.to_node == node2:
+                    return True
+            return False
+
+        if self.option == '__SV_PARAM_CREATE__':
+            with node.sv_throttle_tree_update():
+                new_node = tree.nodes.new(socket.get_link_parameter_node())
+                new_node.label = socket.label or socket.name
+                socket.setup_parameter_node(new_node)
+                links_number = len([s for s in node.inputs if s.is_linked])
+                new_node.location = (node.location[0] - 200, node.location[1] - 100 * links_number)
+                tree.links.new(new_node.outputs[0], socket)
+
+                if node.parent:
+                    new_node.parent = node.parent
+                    new_node.location = new_node.absolute_location
+
+            new_node.process_node(context)
+
+        elif self.option == '__SV_WIFI_CREATE__':
+            with node.sv_throttle_tree_update():
+                label = socket.label or socket.name
+                param_node = tree.nodes.new(socket.get_link_parameter_node())
+                param_node.label = label
+
+                wifi_in_node = tree.nodes.new('WifiInNode')
+                wifi_in_node.label = f"WiFi In - {label}"
+                wifi_in_node.gen_var_name()
+                wifi_var = wifi_in_node.var_name
+
+                wifi_out_node = tree.nodes.new('WifiOutNode')
+                wifi_out_node.label = f"WiFi Out - {label}"
+                wifi_out_node.var_name = wifi_var
+
+                socket.setup_parameter_node(param_node)
+
+                tree.links.new(param_node.outputs[0], wifi_in_node.inputs[0])
+                tree.links.new(wifi_out_node.outputs[0], socket)
+
+                setup_new_node_location(wifi_out_node, node)
+                setup_new_node_location(wifi_in_node, wifi_out_node)
+                setup_new_node_location(param_node, wifi_in_node)
+
+            param_node.process_node(context)
+
+        elif self.option.startswith('PARAM_'):
+            input_name = self.option[6:]
+            param_node = tree.nodes[input_name]
+            tree.links.new(param_node.outputs[0], socket)
+
+        elif self.option.startswith('WIFI_'):
+            prefix, socket_idx, wifi_var = self.option.split('_', maxsplit=2)
+            socket_idx = int(socket_idx)
+
+            found_existing = False
+            for name, wifi_node in tree.nodes.items():
+                if wifi_node.bl_idname == 'WifiOutNode' and is_linked(wifi_node, node):
+                    if wifi_node.var_name == wifi_var:
+                        tree.links.new(wifi_node.outputs[socket_idx], socket)
+                        found_existing = True
+                        break
+
+            if not found_existing:
+                new_node = tree.nodes.new('WifiOutNode')
+                new_node.var_name = wifi_var
+                new_node.set_var_name()
+                links_number = len([s for s in node.inputs if s.is_linked])
+                new_node.location = (node.location[0] - 200, node.location[1] - 100 * links_number)
+                tree.links.new(new_node.outputs[socket_idx], socket)
+
+                if node.parent:
+                    new_node.parent = node.parent
+                    new_node.location = new_node.absolute_location
+
+                new_node.process_node(context)
+
+        elif socket.link_menu_handler:
+            handler = getattr(node, socket.link_menu_handler)
+            handler.on_selected(tree, node, socket, self.option, context)
+
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        context.space_data.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
+        wm = context.window_manager
+        wm.invoke_search_popup(self)
+        return {'FINISHED'}
+
 classes = [
     SV_MT_SocketOptionsMenu,
     SvVerticesSocket, SvMatrixSocket, SvStringsSocket, SvFilePathSocket,
@@ -1047,7 +1299,7 @@ classes = [
     SvSurfaceSocket, SvCurveSocket, SvScalarFieldSocket, SvVectorFieldSocket,
     SvSolidSocket, SvSvgSocket, SvPulgaForceSocket, SvLinkNewNodeInput,
     SvStringsSocketInterface, SvVerticesSocketInterface,
-    SvSocketHelpOp
+    SvSocketHelpOp, SvInputLinkMenuOp
 ]
 
 def socket_interface_classes():

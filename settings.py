@@ -305,6 +305,21 @@ class SverchokPreferences(AddonPreferences):
             min = 0, max = 12
         )
 
+    input_links_options = [
+            ('NONE', "Do not show", "Do not show", 0),
+            ('QUICKLINK', "Show single option only",
+                "Show the button only for cases when there is only one node to be created can be suggested; do not show the menu", 1),
+            ('ALL', "Show `Create parameter' options",
+                "Show the button with a menu with options to create parameter nodes", 2)
+        ]
+
+    show_input_menus : EnumProperty(
+            name = "Show input menus",
+            description = "Wheter to display buttons near node socket inputs to automatically create parameter nodes",
+            items = input_links_options,
+            default = 'QUICKLINK'
+        )
+
     ##  BLF/BGL/GPU  scale and location props
 
     render_scale: FloatProperty(
@@ -406,6 +421,8 @@ class SverchokPreferences(AddonPreferences):
             toolbar_box.prop(self, "node_panels_icons_only")
             if self.node_panels_icons_only:
                 toolbar_box.prop(self, "node_panels_columns")
+
+        col1.prop(self, 'show_input_menus')
 
         col1.prop(self, "over_sized_buttons")
         col1.prop(self, "external_editor", text="Ext Editor")
