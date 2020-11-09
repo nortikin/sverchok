@@ -25,14 +25,12 @@ from sverchok.utils.sv_itertools import recurse_f_level_control
 
 import numpy as np
 
-def smooth_list(data_out, iteration, factor, cyclic):
+def smooth_list(data_out, factor, cyclic):
     data_out[1:] += (data_out[:-1] - data_out[1:]) * (0.5 * factor)
     data_out[:-1] += (data_out[1:] - data_out[:-1]) * (0.5 * factor)
     if cyclic:
         data_out[0] += (data_out[-1] - data_out[0]) * (0.5 * factor)
         data_out[-1] += (data_out[0] - data_out[-1]) * (0.5 * factor)
-    if iteration > 1:
-        smooth_list(data_out, iteration-1, factor, cyclic)
 
 def smooth_numbers(params, constants, matching_f):
     result = []
@@ -43,8 +41,8 @@ def smooth_numbers(params, constants, matching_f):
         data = np.array(props[0])
         iterations = max(props[1][0], 0)
         factor = max(min(props[2][0], 1), -1)
-        if iterations:
-            smooth_list(data, iterations, factor, cyclic)
+        for it in range(iterations):
+            smooth_list(data, factor, cyclic)
 
         result.append(data if out_numpy else data.tolist())
 
@@ -57,7 +55,7 @@ class SvSmoothNumbersNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvSmoothNumbersNode'
     bl_label = 'Smooth Numbers'
-    sv_icon = 'SV_OSCILLATOR'
+    bl_icon = 'SMOOTHCURVE'
 
 
     factor: FloatProperty(default=1.0, min=-1, max=1, name='Factor', update=updateNode)
