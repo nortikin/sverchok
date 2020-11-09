@@ -60,6 +60,21 @@ class SvNurbsCurve(SvCurve):
                 pass
         return None
 
+    def copy(self, implementation = None, knotvector = None, control_points = None, weights = None, normalize_knots=False):
+        if implementation is None:
+            implementation = self.get_nurbs_implementation()
+        if knotvector is None:
+            knotvector = self.get_knotvector()
+        if control_points is None:
+            control_points = self.get_control_points()
+        if weights is None:
+            weights = self.get_weights()
+
+        return SvNurbsCurve.build(implementation,
+                    self.get_degree(), knotvector,
+                    control_points, weights,
+                    normalize_knots = normalize_knots)
+
     @classmethod
     def interpolate(cls, degree, points, metric='DISTANCE'):
         return interpolate_nurbs_curve(cls, degree, points, metric)

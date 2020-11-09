@@ -1,5 +1,5 @@
-Socket Menus
-************
+Output Socket Menus
+*******************
 
 Most of output sockets in Sverchok's nodes have a button to call a dropdown menu:
 

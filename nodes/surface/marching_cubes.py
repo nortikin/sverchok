@@ -5,6 +5,7 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.core.sockets import setup_new_node_location
 from sverchok.data_structure import updateNode, throttle_and_update_node, match_long_repeat
 from sverchok.utils.logging import info, exception
 from sverchok.utils.marching_cubes import isosurface_np
@@ -119,9 +120,21 @@ class SvExMarchingCubesNode(DraftMode, bpy.types.Node, SverchCustomTreeNode):
             items = get_modes,
             update = update_sockets)
 
+    class BoundsMenuHandler():
+        @classmethod
+        def get_items(cls, socket, context):
+            return [("BOX", "Add Box node", "Add Box node")]
+
+        @classmethod
+        def on_selected(cls, tree, node, socket, item, context):
+            new_node = tree.nodes.new('SvBoxNodeMk2')
+            new_node.label = "Bounds"
+            tree.links.new(new_node.outputs[0], node.inputs['Bounds'])
+            setup_new_node_location(new_node, node)
+
     def sv_init(self, context):
         self.inputs.new('SvScalarFieldSocket', "Field")
-        self.inputs.new('SvVerticesSocket', "Bounds")
+        self.inputs.new('SvVerticesSocket', "Bounds").link_menu_handler = 'BoundsMenuHandler'
         self.inputs.new('SvStringsSocket', "Value").prop_name = 'iso_value'
         self.inputs.new('SvStringsSocket', "Samples").prop_name = 'sample_size'
         self.inputs.new('SvStringsSocket', "SamplesX").prop_name = 'samples_x'
