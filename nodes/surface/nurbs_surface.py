@@ -4,8 +4,9 @@ from itertools import zip_longest
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, fullList, fullList_deep_copy, repeat_last_for_length, ensure_nesting_level, split_by_count
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (updateNode, zip_long_repeat, throttle_and_update_node, fullList_deep_copy,
+                                     repeat_last_for_length, ensure_nesting_level, split_by_count)
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.curve import knotvector as sv_knotvector
@@ -27,7 +28,7 @@ class SvExNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             ('2D', "Separated lists", "List of lists of control points", 2)
         ]
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['USize'].hide_safe = self.input_mode == '2D'
         self.inputs['Weights'].hide_safe = self.surface_mode == 'BSPLINE'

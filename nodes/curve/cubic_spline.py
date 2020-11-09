@@ -2,7 +2,7 @@
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nesting_level, describe_data_shape
 from sverchok.utils.geom import LinearSpline, CubicSpline
 from sverchok.utils.math import supported_metrics

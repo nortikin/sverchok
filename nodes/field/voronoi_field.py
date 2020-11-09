@@ -5,7 +5,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, St
 from mathutils import kdtree
 from mathutils import bvhtree
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat
 from sverchok.utils.logging import info, exception
 

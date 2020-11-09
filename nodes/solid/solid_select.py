@@ -10,8 +10,9 @@ import numpy as np
 import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty, FloatProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode, get_data_nesting_level
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (zip_long_repeat, ensure_nesting_level, updateNode,
+                                     get_data_nesting_level, throttle_and_update_node)
 from sverchok.utils.geom import PlaneEquation, LineEquation, linear_approximation
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import FreeCAD
@@ -58,7 +59,7 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
             'FACES': {'SIDE', 'NORMAL', 'SPHERE', 'PLANE', 'CYLINDER', 'SOLID_DISTANCE', 'SOLID_INSIDE'}
         }
 
-    @throttled
+    @throttle_and_update_node
     def update_type(self, context):
         criteria = self.criteria_type
         available = SvSelectSolidNode.known_criteria[self.element_type]
@@ -81,7 +82,7 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
                 result.append(item)
         return result
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Direction'].hide_safe = self.criteria_type not in {'SIDE', 'NORMAL', 'PLANE', 'CYLINDER', 'DIRECTION'}
         self.inputs['Center'].hide_safe = self.criteria_type not in {'SPHERE', 'PLANE', 'CYLINDER'}

@@ -13,8 +13,8 @@ import mathutils
 from mathutils import Vector, Matrix
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import dataCorrect, updateNode
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import dataCorrect, updateNode, throttle_and_update_node
 
 
 def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
@@ -68,7 +68,7 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def replacement_nodes(self):
         return [('SvInstancerNodeMK3', None, None)]
 
-    @throttled
+    @throttle_and_update_node
     def updateNode_copy(self, context):
         # this means we should empty the collection, and let process repopulate
         objects = bpy.data.collections[self.basedata_name].objects

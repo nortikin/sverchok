@@ -8,8 +8,8 @@
 
 import bpy
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, throttle_and_update_node
 from sverchok.utils.geom_2d.merge_mesh import merge_mesh
 
 class SvMergeMesh2D(bpy.types.Node, SverchCustomTreeNode):
@@ -23,7 +23,7 @@ class SvMergeMesh2D(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Merge mesh 2D'
     bl_icon = 'AUTOMERGE_ON'
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
         [self.outputs.remove(sock) for sock in self.outputs[2:]]

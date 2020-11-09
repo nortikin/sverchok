@@ -4,7 +4,7 @@ from mathutils import Matrix
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 
 class SvCurveLengthNode(bpy.types.Node, SverchCustomTreeNode):

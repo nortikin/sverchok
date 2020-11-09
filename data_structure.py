@@ -1152,6 +1152,33 @@ def throttled(func):
     return wrapper_update
 
 
+def throttle_and_update_node(func):
+    """
+    use as a decorator
+
+        class YourNode
+
+            @throttle_and_update_node
+            def mode_update(self, context):
+                ...
+
+    When a node has changed, like a mode-change leading to a socket change (remove, new)
+    Blender will trigger node_tree.update. We want to ignore this trigger-event, and we do so by
+    - first throttling the update system.
+    - then We execute the code that makes changes to the node/node_tree
+    - then we end the throttle-state
+    - we are then ready to process
+    """
+    @wraps(func)
+    def wrapper_update(self, context):
+        tree = self.id_data
+        with tree.throttle_update():
+            func(self, context)
+        self.process_node(context)
+
+    return wrapper_update
+
+
 ##############################################################
 ##############################################################
 ############## changable type of socket magic ################

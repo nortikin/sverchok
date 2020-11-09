@@ -25,8 +25,8 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from mathutils import Vector
 from mathutils.geometry import intersect_line_line_2d
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
 from sverchok.utils.voronoi import Site, computeVoronoiDiagram, computeDelaunayTriangulation, BIG_FLOAT
 from sverchok.utils.geom import center, LineEquation2D, CircleEquation2D
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata
@@ -256,7 +256,7 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
         default = True,
         update = updateNode)
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         if 'Faces' in self.outputs:
             self.outputs['Faces'].hide_safe = not self.make_faces

@@ -4,8 +4,8 @@ import numpy as np
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match_long_repeat
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
 from sverchok.utils.logging import info, exception
 
 from sverchok.utils.field.scalar import SvScalarFieldPointDistance
@@ -21,7 +21,7 @@ class SvScalarFieldPointNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_POINT_DISTANCE_FIELD'
 
-    @throttled
+    @throttle_and_update_node
     def update_type(self, context):
         self.inputs['Amplitude'].hide_safe = (self.falloff_type != 'NONE')
         self.inputs['Coefficient'].hide_safe = (self.falloff_type not in ['NONE', 'inverse_exp', 'gauss'])

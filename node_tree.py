@@ -52,34 +52,6 @@ from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mappin
 from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_with_bgl
 
 
-def throttled(func):  # todo would be good to move it in data_structure module
-    """
-    use as a decorator
-
-        from sverchok.node_tree import SverchCustomTreeNode, throttled
-
-        class YourNode
-
-            @throttled
-            def mode_update(self, context):
-                ...
-
-    When a node has changed, like a mode-change leading to a socket change (remove, new)
-    Blender will trigger nodetree.update. We want to ignore this trigger-event, and we do so by
-    - first throttling the update system. 
-    - then We execute the code that makes changes to the node/nodetree
-    - then we end the throttle-state
-    - we are then ready to process
-
-    """
-    def wrapper_update(self, context):
-        with self.sv_throttle_tree_update():
-            func(self, context)
-        self.process_node(context)
-
-    return wrapper_update
-
-
 class SvNodeTreeCommon(object):
     '''
     Common methods shared between Sverchok node trees (normal and monad trees)

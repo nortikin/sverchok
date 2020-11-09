@@ -5,7 +5,7 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
 from mathutils import Vector, Matrix
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, describe_data_shape, describe_data_structure
 from sverchok.utils.logging import info, exception
 from sverchok.utils.field.scalar import SvScalarField

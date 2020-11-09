@@ -13,8 +13,9 @@ import bpy
 from mathutils import Matrix, Vector
 from bpy.props import StringProperty, BoolProperty, IntProperty, EnumProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import Matrix_generate, match_long_repeat, updateNode, get_data_nesting_level, ensure_nesting_level, describe_data_shape, zip_long_repeat, fullList
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (throttle_and_update_node, updateNode, ensure_nesting_level,
+                                     zip_long_repeat, fullList)
 from sverchok.utils.sv_obj_helper import SvObjHelper
 
 # from python 3.5 docs https://docs.python.org/3.5/library/itertools.html recipes
@@ -78,7 +79,7 @@ class SvNurbsSurfaceOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             ('2D', "Separated lists", "List of lists of control points", 2)
         ]
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['USize'].hide_safe = self.input_mode == '2D'
 
