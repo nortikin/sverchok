@@ -253,7 +253,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         clear_exception_drawing_with_bgl(self.nodes)
         if is_first_run():
             return
-        if self.skip_tree_update:
+        if self.skip_tree_update or not self.sv_process:
             return
 
         self.sv_update()
