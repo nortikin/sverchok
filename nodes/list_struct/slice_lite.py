@@ -60,9 +60,15 @@ def list_slices(node, data, slice_sizes):
 
 
 class SvListSliceLiteNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' ls slice incoming data /// yep'''
+    """
+    Triggers: ls slice incoming data
+    Tooltip:  modified list slice node
+    
+    A short description for reader of node code
+    """
+
     bl_idname = 'SvListSliceLiteNode'
-    bl_label = 'List Slice Lite '
+    bl_label = 'List Slice Lite'
     bl_icon = 'SEQ_LUMA_WAVEFORM'
 
     num_slices: IntProperty(default=1, min=0, name='Slice units', update=updateNode)
