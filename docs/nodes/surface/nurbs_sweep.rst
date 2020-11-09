@@ -17,7 +17,7 @@ This node generates a NURBS Surface object by sweeping (extruding) one NURBS
 curve (called "profile") along another NURBS curve (called "path").
 
 Several profile curves can be also used; in this case the resulting surface
-will be interpolaed between them.  
+will be interpolated between them.  
 If several profile curves are used, the user can provide specific values of
 path's curve T parameter, at which profile curves must be placed; otherwise,
 the node will place them automatically evenly along T parameter of the path
@@ -68,6 +68,9 @@ This node is similar to "Extrude Curve along Curve" node; differences are:
   node; later, nodes to save NURBS in some industry-used formats can appear).
 * "NURBS Sweep" supports several profile curves.
 
+Another similar node is "NURBS Birail", that one works with two path curves
+instead of one.
+
 At the moment, this node can effectively work with the following types of curves:
 
 * NURBS curves
@@ -79,7 +82,7 @@ At the moment, this node can effectively work with the following types of curves
 
 Some nodes, that output complex curves composed from simple curves (for
 example, "Rounded rectangle"), have **NURBS output** parameter; when it is
-checked, such nodes output NURBS curves, so "NURBS Loft" can work with them.
+checked, such nodes output NURBS curves, so "NURBS Sweep" can work with them.
 
 Inputs
 ------
@@ -146,7 +149,7 @@ This node has the following parameters:
 * **Explicit V Values**. If checked, then the user has the ability to provide
   values of path curve's parameter values, at which the provided path curves
   must be placed; otherwise, the node will calculate these parameters
-  automatically (evenly). This input has no meaning if there is only one
+  automatically (evenly). This parameter has no meaning if there is only one
   profile curve.
 * **U Knots**. This parameter is available in the N panel only. This defines
   how the node will modify input curves in order to make them use exactly the

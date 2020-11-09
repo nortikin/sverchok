@@ -954,29 +954,31 @@ def nurbs_birail(path1, path2, profiles, ts1 = None, ts2 = None, min_profiles = 
     if n_profiles == 1:
         p = profiles[0]
         profiles = [p] * min_profiles
-        if not have_ts1:
-            ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
-        if not have_ts2:
-            ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
+        #if not have_ts1:
+        ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
+        #if not have_ts2:
+        ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
     elif n_profiles == 2 and n_profiles < min_profiles:
         coeffs = np.linspace(0.0, 1.0, num=min_profiles)
         p0, p1 = profiles
         profiles = [p0.lerp_to(p1, coeff) for coeff in coeffs]
-        if not have_ts1:
-            ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
-        if not have_ts2:
-            ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
+        #if not have_ts1:
+        ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
+        #if not have_ts2:
+        ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
     elif n_profiles < min_profiles:
         target_vs = np.linspace(0.0, 1.0, num=min_profiles)
         max_degree = n_profiles - 1
+        if not have_ts1:
+            ts1 = np.linspace(t_min_1, t_max_1, num=n_profiles)
         profiles = interpolate_nurbs_curves(profiles, ts1, target_vs,
                     degree_v = min(max_degree, degree_v),
                     knots_u = knots_u,
                     implementation = implementation)
-        if not have_ts1:
-            ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
-        if not have_ts2:
-            ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
+        #if not have_ts1:
+        ts1 = np.linspace(t_min_1, t_max_1, num=min_profiles)
+        #if not have_ts2:
+        ts2 = np.linspace(t_min_2, t_max_2, num=min_profiles)
     else:
         profiles = repeat_last_for_length(profiles, min_profiles)
 
@@ -990,6 +992,8 @@ def nurbs_birail(path1, path2, profiles, ts1 = None, ts2 = None, min_profiles = 
 
     binormals = points2 - points1
     scales = np.linalg.norm(binormals, axis=1, keepdims=True)
+    if scales.min() < 1e-6:
+        raise Exception("Paths go too close")
     binormals /= scales
     normals = np.cross(tangents, binormals)
     normals /= np.linalg.norm(normals, axis=1, keepdims=True)
@@ -1009,6 +1013,8 @@ def nurbs_birail(path1, path2, profiles, ts1 = None, ts2 = None, min_profiles = 
         pr_end = profile.evaluate(t_max)
         pr_vector = pr_end - pr_start
         pr_length = np.linalg.norm(pr_vector)
+        if pr_length < 1e-6:
+            raise Exception("One of profiles is closed")
         pr_dir = pr_vector / pr_length
         pr_x, pr_y, _ = tuple(pr_dir)
 
