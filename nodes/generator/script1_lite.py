@@ -35,7 +35,7 @@ from sverchok.utils.snlite_utils import vectorize, ddir
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, throttled
 
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
@@ -196,7 +196,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         else:
             return self.bl_label
 
-
+    @throttled
     def add_or_update_sockets(self, k, v):
         '''
         'sockets' are either 'self.inputs' or 'self.outputs'
@@ -231,7 +231,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     def add_prop_to_socket(self, socket, default_value):
 
-        self.id_data.freeze(hard=True)
         try:
             self.halt_updates = True
 
@@ -256,8 +255,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             print('some failure in the add_props_to_sockets function. ouch.')
 
         self.halt_updates = False
-        self.id_data.unfreeze(hard=True)
-
 
     def flush_excess_sockets(self, k, v):
         sockets = getattr(self, k)

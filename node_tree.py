@@ -39,7 +39,6 @@ from sverchok.core.links import (
     SvLinks)
 from sverchok.core.node_id_dict import SvNodesDict
 
-from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
 from sverchok.core.events import CurrentEvents, BlenderEventsTypes
 
 from sverchok.utils import get_node_class_reference
@@ -102,26 +101,6 @@ class SvNodeTreeCommon(object):
         if not self.tree_id_memory:
             self.tree_id_memory = str(hash(self) ^ hash(time.monotonic()))
         return self.tree_id_memory
-
-    def freeze(self, hard=False):
-        """Temporary prevent tree from updating nodes"""
-        if hard:
-            self["DoNotUpdate"] = 1
-        elif not self.is_frozen():
-            self["DoNotUpdate"] = 0
-
-    def is_frozen(self):
-        """Nodes of the tree won't be updated during changes events"""
-        return "DoNotUpdate" in self
-
-    def unfreeze(self, hard=False):
-        """
-        Remove freeze mode from tree.
-        If freeze mode was in hard mode `hard` argument should be True to unfreeze tree
-        """
-        if self.is_frozen():
-            if hard or self["DoNotUpdate"] == 0:
-                del self["DoNotUpdate"]
 
     def get_groups(self):
         """
@@ -215,15 +194,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         # Here we trigger it manually.
 
         if draft_nodes:
-            try:
-                bpy.context.window.cursor_set("WAIT")
-                was_frozen = self.is_frozen()
-                self.unfreeze(hard=True)
-                process_from_nodes(draft_nodes)
-            finally:
-                if was_frozen:
-                    self.freeze(hard=True)
-                bpy.context.window.cursor_set("DEFAULT")
+            process_from_nodes(draft_nodes)
 
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
@@ -283,8 +254,6 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         if is_first_run():
             return
         if self.skip_tree_update:
-            return
-        if self.is_frozen() or not self.sv_process:
             return
 
         self.sv_update()
@@ -356,29 +325,22 @@ class UpdateNodes:
     def init(self, context):
         """
         this function is triggered upon node creation,
-        - freezes the node
+        - throttle the node
         - delegates further initialization information to sv_init
         - sets node color
-        - unfreezes the node
         """
         CurrentEvents.new_event(BlenderEventsTypes.add_node, self)
+
         ng = self.id_data
-
-        if ng.bl_idname == 'SvGroupTree':
-            self.sv_init(context)
-        else:
-            ng.freeze()
+        if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
             ng.nodes_dict.load_node(self)
-            if hasattr(self, "sv_init"):
-
-                try:
-                    self.sv_init(context)
-                except Exception as err:
-                    print('nodetree.node.sv_init failure - stare at the error message below')
-                    sys.stderr.write('ERROR: %s\n' % str(err))
-
+        with ng.throttle_update():
+            try:
+                self.sv_init(context)
+            except Exception as err:
+                print('nodetree.node.sv_init failure - stare at the error message below')
+                sys.stderr.write('ERROR: %s\n' % str(err))
             self.set_color()
-            ng.unfreeze()
 
     def free(self):
         """
@@ -433,7 +395,7 @@ class UpdateNodes:
         Still this is called from updateNode
         '''
         if self.id_data.bl_idname == "SverchCustomTreeType":
-            if self.id_data.is_frozen() or self.id_data.skip_tree_update:
+            if self.id_data.skip_tree_update:
                 return
 
             # self.id_data.has_changed = True

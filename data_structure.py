@@ -1136,6 +1136,22 @@ def throttle_tree_update(node):
         yield node
 
 
+def throttled(func):
+    """
+    It will prevent from redundant tree updates by changing tree topology (including changing node sockets)
+    inside nodes init methods and property changes methods
+
+    @throttled
+    def your_method(tree or node or socket, *args, **kwargs):
+    """
+    @wraps(func)
+    def wrapper_update(with_id_data, *args, **kwargs):
+        tree = with_id_data.id_data
+        with tree.throttle_update():
+            return func(with_id_data, *args, **kwargs)
+    return wrapper_update
+
+
 ##############################################################
 ##############################################################
 ############## changable type of socket magic ################
@@ -1144,6 +1160,7 @@ def throttle_tree_update(node):
 ##############################################################
 ##############################################################
 
+@throttled
 def changable_sockets(node, inputsocketname, outputsocketname):
     '''
     arguments: node, name of socket to follow, list of socket to change
@@ -1165,7 +1182,6 @@ def changable_sockets(node, inputsocketname, outputsocketname):
         if s_type == 'SvDummySocket':
             return #
         if outputs[outputsocketname[0]].bl_idname != s_type:
-            node.id_data.freeze(hard=True)
             to_links = {}
             for n in outputsocketname:
                 out_socket = outputs[n]
@@ -1175,9 +1191,9 @@ def changable_sockets(node, inputsocketname, outputsocketname):
                 new_out_socket = outputs.new(s_type, n)
                 for to_socket in to_links[n]:
                     ng.links.new(to_socket, new_out_socket)
-            node.id_data.unfreeze(hard=True)
 
 
+@throttled
 def replace_socket(socket, new_type, new_name=None, new_pos=None):
     '''
     Replace a socket with a socket of new_type and keep links
@@ -1186,8 +1202,6 @@ def replace_socket(socket, new_type, new_name=None, new_pos=None):
     socket_name = new_name or socket.name
     socket_pos = new_pos or socket.index
     ng = socket.id_data
-
-    ng.freeze()
 
     if socket.is_output:
         outputs = socket.node.outputs
@@ -1212,8 +1226,6 @@ def replace_socket(socket, new_type, new_name=None, new_pos=None):
         if from_socket:
             link = ng.links.new(from_socket, new_socket)
             link.is_valid = True
-
-    ng.unfreeze()
 
     return new_socket
 
@@ -1256,6 +1268,7 @@ def get_other_socket(socket):
 
 # the named argument min will be replaced soonish.
 
+@throttled
 def multi_socket(node, min=1, start=0, breck=False, out_count=None):
     '''
      min - integer, minimal number of sockets, at list 1 needed
@@ -1287,7 +1300,6 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
                 node.inputs.remove(node.inputs[-1])
     elif isinstance(out_count, int):
         lenod = len(node.outputs)
-        ng.freeze(True)
         if out_count > 30:
             out_count = 30
         if lenod < out_count:
@@ -1301,7 +1313,6 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
         else:
             while len(node.outputs) > out_count:
                 node.outputs.remove(node.outputs[-1])
-        ng.unfreeze(True)
 
 
 #####################################
