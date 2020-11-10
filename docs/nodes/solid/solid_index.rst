@@ -46,5 +46,7 @@ Solid
    is_closed
    refine
    validate
+   bound_box
    make_compound
    solid_viewer
+
