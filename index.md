@@ -477,6 +477,7 @@
     SvGenFibonacci
     SvGenExponential
     SvOscillatorNode
+    SvSmoothNumbersNode
 
 ## Vector
     GenVectorsNode
