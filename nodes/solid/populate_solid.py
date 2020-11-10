@@ -5,8 +5,8 @@ import bpy
 from bpy.props import FloatProperty, StringProperty, BoolProperty, EnumProperty, IntProperty
 
 from sverchok.core.socket_data import SvNoDataError
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, throttle_and_update_node
 from sverchok.utils.field.probe import field_random_probe
 from sverchok.utils.surface.populate import populate_surface
 from sverchok.utils.surface.freecad import SvSolidFaceSurface
@@ -29,7 +29,7 @@ class SvPopulateSolidNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     solid_catergory = "Operators"
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['FieldMin'].hide_safe = self.proportional != True
         self.inputs['FieldMax'].hide_safe = self.proportional != True

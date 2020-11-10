@@ -13,8 +13,8 @@ from bpy.props import EnumProperty, IntProperty, BoolProperty, FloatProperty
 from mathutils.kdtree import KDTree
 
 from sverchok.core.socket_data import SvNoDataError
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level, throttle_and_update_node
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.surface.populate import populate_surface
 from sverchok.utils.field.scalar import SvScalarField
@@ -52,7 +52,7 @@ class SvPopulateSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             min = 1,
             update = updateNode)
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['FieldMin'].hide_safe = self.proportional != True
         self.inputs['FieldMax'].hide_safe = self.proportional != True
