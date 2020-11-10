@@ -35,5 +35,6 @@ Nodes
    Object <nodes/object_nodes/object_nodes_index>
    Layout <nodes/layout/layout_index>
    Network <nodes/network/network_index>
+   Pulga Physics <nodes/pulga_physics>
    Exchange <nodes/exchange/exchange_index>
    SVG <nodes/svg/svg_index>
