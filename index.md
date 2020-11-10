@@ -227,6 +227,7 @@
    SvSolidFaceAreaNode
    SvSolidAreaNode
    SvSolidVolumeNode
+   SvSolidBoundBoxNode
 
 ## Solids
    SvBoxSolidNode
