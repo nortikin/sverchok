@@ -36,6 +36,7 @@ This node has the following outputs:
 
 * **Vertices**. Vertices of the bounding box.
 * **Center**. Center of the bounding box.
+* **Box**. Solid object, which represents bounding box.
 * **XMin**, **YMin**, **ZMin**. Minimum values of X, Y and Z.
 * **XMax**, **YMax**, **ZMax**. Maximum values of X, Y and Z.
 * **XSize**, **YSize**, **ZSize**. Sizes along X, Y and Z.

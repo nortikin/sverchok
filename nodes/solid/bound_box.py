@@ -67,6 +67,7 @@ class SvSolidBoundBoxNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvSolidSocket', 'Solid')
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvVerticesSocket', 'Center')
+        self.outputs.new('SvSolidSocket', 'Box')
 
         for key in ['Min','Max','Size']:
             for axis in ['X', 'Y', 'Z']:
@@ -93,6 +94,10 @@ class SvSolidBoundBoxNode(bpy.types.Node, SverchCustomTreeNode):
         def get_center(box):
             p = box.Center
             return (p.x, p.y, p.z)
+
+        def make_box(box):
+            origin = Base.Vector(box.XMin, box.YMin, box.ZMin)
+            return Part.makeBox(box.XLength, box.YLength, box.ZLength, origin)
         
         def to_dict(box):
             return dict(XMin=[box.XMin],
@@ -105,7 +110,8 @@ class SvSolidBoundBoxNode(bpy.types.Node, SverchCustomTreeNode):
                     ZMax=[box.ZMax],
                     ZSize=[box.ZLength],
                     Center=get_center(box),
-                    Vertices = get_verts(box))
+                    Vertices = get_verts(box),
+                    Box = make_box(box))
 
         results = map_recursive(calc_bbox, solids_in, data_types=(Part.Shape,))
         bboxes = unzip_dict_recursive(results, item_type=Base.BoundBox, to_dict=to_dict)
