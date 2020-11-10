@@ -10,8 +10,8 @@ import numpy as np
 import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, get_data_nesting_level, updateNode
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, throttle_and_update_node
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve
@@ -38,7 +38,7 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_PROJECT_CUT_FACE'
     solid_catergory = "Inputs"
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Point'].hide_safe = self.projection_type != 'PERSPECTIVE'
         self.inputs['Vector'].hide_safe = self.projection_type != 'PARALLEL'

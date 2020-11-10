@@ -127,9 +127,7 @@ class SvFilePathNode(bpy.types.Node, SverchCustomTreeNode):
             filenames = json.loads(strings_json)['filenames']
             directory = json.loads(strings_json)['directory']
 
-            self.id_data.freeze(hard=True)
             self.set_data(directory, filenames)
-            self.id_data.unfreeze(hard=True)
 
 
 classes = [SvFilePathNode, SvFilePathFinder]

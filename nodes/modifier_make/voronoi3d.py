@@ -7,8 +7,8 @@ import bmesh
 from mathutils import Matrix
 
 import sverchok
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, get_data_nesting_level
 from sverchok.utils.sv_mesh_utils import polygons_to_edges, mesh_join
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata
 from sverchok.utils.logging import info, exception
@@ -56,7 +56,7 @@ else:
             default = True,
             update = updateNode)
 
-        @throttled
+        @throttle_and_update_node
         def update_sockets(self, context):
             self.inputs['Clipping'].hide_safe = not self.do_clip
 

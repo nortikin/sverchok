@@ -192,8 +192,6 @@ class SverchokUpdateAll(bpy.types.Operator):
         try:
             bpy.context.window.cursor_set("WAIT")
             sv_ngs = filter(lambda ng: ng.bl_idname == 'SverchCustomTreeType', bpy.data.node_groups)
-            for ng in sv_ngs:
-                ng.unfreeze(hard=True)
             build_update_list()
             process_tree()
         finally:
@@ -238,7 +236,6 @@ class SverchokUpdateCurrent(bpy.types.Operator):
             bpy.context.window.cursor_set("WAIT")
             ng = bpy.data.node_groups.get(self.node_group)
             if ng:
-                ng.unfreeze(hard=True)
                 build_update_list(ng)
                 process_tree(ng)
         finally:

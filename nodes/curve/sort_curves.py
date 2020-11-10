@@ -8,7 +8,7 @@
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, map_at_level, unzip_dict_recursive
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.algorithms import sort_curves_for_concat, SvCurvesSortResult

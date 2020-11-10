@@ -6,8 +6,8 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 import sverchok
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
 
 BATCH_SIZE = 50
 MAX_ITERATIONS = 1000
@@ -45,7 +45,7 @@ class SvFieldRandomProbeNode(bpy.types.Node, SverchCustomTreeNode):
             min = 1,
             update = updateNode)
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['FieldMin'].hide_safe = self.proportional != True
         self.inputs['FieldMax'].hide_safe = self.proportional != True

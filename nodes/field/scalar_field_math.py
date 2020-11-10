@@ -4,8 +4,8 @@ import numpy as np
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match_long_repeat
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import zip_long_repeat, throttle_and_update_node
 from sverchok.utils.modules.eval_formula import get_variables, safe_eval
 from sverchok.utils.logging import info, exception
 
@@ -66,7 +66,7 @@ class SvScalarFieldMathNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_SCALAR_FIELD_MATH'
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['FieldB'].hide_safe = self.operation not in binary_ops
 

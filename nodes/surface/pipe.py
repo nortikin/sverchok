@@ -4,8 +4,8 @@ import numpy as np
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
 from sverchok.utils.logging import info, exception
 
 from sverchok.utils.curve import SvCurve
@@ -31,7 +31,7 @@ class SvPipeSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         (TRACK_NORMAL, "Track normal", "Try to maintain constant normal direction by tracking along curve", 5)
     ]
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Resolution'].hide_safe = self.algorithm not in {ZERO, TRACK_NORMAL}
 

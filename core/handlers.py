@@ -186,24 +186,20 @@ def sv_post_load(scene):
     sv_trees = list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
 
     for ng in sv_trees:
-        ng.freeze(True)
-        ng.sv_process = False
-        try:
-            old_nodes.load_old(ng)
-        except:
-            traceback.print_exc()
-        try:
-            dummy_nodes.load_dummy(ng)
-        except:
-            traceback.print_exc()
-        ng.freeze(True)
-        try:
-            upgrade_nodes.upgrade_nodes(ng)
-        except:
-            traceback.print_exc()
-        ng.unfreeze(True)
+        with ng.throttle_update():
+            try:
+                old_nodes.load_old(ng)
+            except:
+                traceback.print_exc()
+            try:
+                dummy_nodes.load_dummy(ng)
+            except:
+                traceback.print_exc()
+            try:
+                upgrade_nodes.upgrade_nodes(ng)
+            except:
+                traceback.print_exc()
 
-        ng.sv_process = True
     addon_name = data_structure.SVERCHOK_NAME
     addon = bpy.context.preferences.addons.get(addon_name)
     if addon and hasattr(addon, "preferences"):

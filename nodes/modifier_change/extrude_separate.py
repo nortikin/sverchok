@@ -23,8 +23,8 @@ import bmesh.ops
 from bpy.props import IntProperty, FloatProperty, EnumProperty
 from mathutils import Matrix, Vector
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, match_long_repeat, fullList, throttle_and_update_node
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, fill_faces_layer
 
 vsock, toposock = 'SvVerticesSocket', 'SvStringsSocket'
@@ -46,7 +46,7 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
             ("MATRIX", "Matrix", "Apply specified matrix", 1)
         ]
 
-    @throttled
+    @throttle_and_update_node
     def update_mode(self, context):
         self.inputs['Height'].hide_safe = self.extrude_mode != 'NORMAL'
         self.inputs['Scale'].hide_safe = self.extrude_mode != 'NORMAL'

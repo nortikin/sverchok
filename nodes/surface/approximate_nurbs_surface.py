@@ -2,8 +2,8 @@
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
 from sverchok.utils.logging import info, exception
 from sverchok.utils.surface.nurbs import SvGeomdlSurface
 from sverchok.utils.dummy_nodes import add_dummy
@@ -28,7 +28,7 @@ else:
                 ('2D', "Separated lists", "List of lists of control points", 2)
             ]
 
-        @throttled
+        @throttle_and_update_node
         def update_sockets(self, context):
             self.inputs['USize'].hide_safe = self.input_mode == '2D'
             self.inputs['PointsCntU'].hide_safe = not self.has_points_cnt

@@ -250,12 +250,9 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if import_version <= 0.08:
             strings_json = node_data['string_storage']
             lines_list = json.loads(strings_json)['lines']
-            self.id_data.freeze(hard=True)
             self.dynamic_strings.clear()
             for line in lines_list:
                 self.dynamic_strings.add().line = line
-
-            self.id_data.unfreeze(hard=True)
 
 
 def register():

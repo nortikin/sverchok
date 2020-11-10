@@ -24,8 +24,8 @@ from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorPro
 import json
 import io
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, match_long_repeat, zip_long_repeat
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, match_long_repeat, zip_long_repeat, throttle_and_update_node
 from sverchok.utils import logging
 from sverchok.utils.modules.eval_formula import get_variables, safe_eval
 
@@ -39,11 +39,11 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_FORMULA'
 
-    @throttled
+    @throttle_and_update_node
     def on_update(self, context):
         self.adjust_sockets()
 
-    @throttled
+    @throttle_and_update_node
     def on_update_dims(self, context):
         if self.dimensions < 4:
             self.formula4 = ""

@@ -2,8 +2,8 @@
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
 from sverchok.utils.logging import info, exception
 from sverchok.utils.curve.nurbs import SvGeomdlCurve
 from sverchok.dependencies import geomdl
@@ -34,7 +34,7 @@ else:
                 default = False,
                 update = updateNode)
 
-        @throttled
+        @throttle_and_update_node
         def update_sockets(self, context):
             self.inputs['PointsCnt'].hide_safe = not self.has_points_cnt
 

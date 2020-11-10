@@ -23,8 +23,8 @@ from mathutils import Matrix, Vector, Euler, Quaternion
 import bpy
 from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, match_long_repeat, throttle_and_update_node
 from sverchok.utils.sv_recursive import sv_recursive_transformations
 
 
@@ -76,7 +76,7 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     separate: BoolProperty(
         name='separate', description='Separate UV coords', default=False, update=updateNode)
 
-    @throttled
+    @throttle_and_update_node
     def mode_change(self, context):
         # just because click doesn't mean we need to change mode
         mode = self.mode

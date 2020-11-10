@@ -99,7 +99,6 @@ class SverchokUpdateContext(bpy.types.Operator):
             bpy.context.window.cursor_set("WAIT")
             ng = context.space_data.node_tree
             if ng:
-                ng.unfreeze(hard=True)
                 build_update_list(ng)
                 process_tree(ng)
         except:
@@ -128,7 +127,6 @@ class SverchokUpdateContextForced(bpy.types.Operator):
                 try:
                     prev_process_state = ng.sv_process
                     ng.sv_process = True
-                    ng.unfreeze(hard=True)
                     build_update_list(ng)
                     process_tree(ng)
                 finally:

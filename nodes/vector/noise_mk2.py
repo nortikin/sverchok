@@ -22,8 +22,8 @@ import bpy
 from bpy.props import EnumProperty, IntProperty, BoolProperty
 from mathutils import noise
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, throttle_and_update_node
 from sverchok.utils.sv_noise_utils import noise_options, PERLIN_ORIGINAL, noise_numpy_types
 import numpy as np
 
@@ -75,7 +75,7 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'FORCE_TURBULENCE'
     sv_icon = 'SV_VECTOR_NOISE'
 
-    @throttled
+    @throttle_and_update_node
     def changeMode(self, context):
         outputs = self.outputs
         if self.out_mode == 'SCALAR':

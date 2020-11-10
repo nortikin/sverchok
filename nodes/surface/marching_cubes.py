@@ -4,9 +4,9 @@ import numpy as np
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.core.sockets import setup_new_node_location
-from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat
+from sverchok.data_structure import updateNode, throttle_and_update_node, match_long_repeat
 from sverchok.utils.logging import info, exception
 from sverchok.utils.marching_cubes import isosurface_np
 from sverchok.dependencies import mcubes, skimage
@@ -80,7 +80,7 @@ class SvExMarchingCubesNode(DraftMode, bpy.types.Node, SverchCustomTreeNode):
             min = 4,
             update = updateNode)
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.outputs['VertexNormals'].hide_safe = self.implementation != 'skimage'
         self.inputs['Samples'].hide_safe = self.sample_mode != 'UNI'

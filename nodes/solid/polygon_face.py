@@ -9,7 +9,7 @@ import numpy as np
 
 import bpy
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode
 from sverchok.utils.surface.freecad import SvSolidFaceSurface
 from sverchok.utils.dummy_nodes import add_dummy
