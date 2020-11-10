@@ -27,7 +27,6 @@ from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.geom import multiply_vectors_deep
 from sverchok.utils.modules.geom_utils import obtain_normal3 as normal
-from sverchok.utils.context_managers import hard_freeze
 from sverchok.utils.sv_mesh_utils import mesh_join
 
 
@@ -523,14 +522,13 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             socket_acquired_attrs = self.inputs['attrs'].sv_get(default=[{'activate': False}])
 
             if socket_acquired_attrs:
-                try:
-                    with hard_freeze(self) as node:
+                with self.id_data.throttle_update():  # avoiding recursion
+                    try:
                         for k, new_value in socket_acquired_attrs[0].items():
                             print(f"setattr(node, {k}, {new_value})")
-                            setattr(node, k, new_value)
-                except Exception as err:
-                    print('error inside socket_acquired_attrs: ', err)
-                    self.id_data.unfreeze(hard=True)  # ensure this thing is unfrozen
+                            setattr(self, k, new_value)  # it will trigger process method again
+                    except Exception as err:
+                        print('error inside socket_acquired_attrs: ', err)
 
     def format_draw_data(self, func=None, args=None):
         return {

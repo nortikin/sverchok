@@ -229,7 +229,7 @@ class SvSvgMeshNode(bpy.types.Node, SverchCustomTreeNode):
         pols_in = self.inputs['Polygons / Edges'].sv_get(deepcopy=True)
         planes_in = self.inputs['Projection Plane'].sv_get(deepcopy=True, default=[Matrix()])
         offset_in = self.inputs['Offset'].sv_get(deepcopy=True, default=[Matrix()])
-        atts_in = self.inputs['Fill / Stroke'].sv_get(deepcopy=False, default=None)
+        atts_in = self.inputs['Fill / Stroke'].sv_get(deepcopy=False, default=[[None]])
 
         shapes = []
         verts_to_project = []

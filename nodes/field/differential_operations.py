@@ -4,8 +4,8 @@ import numpy as np
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
 from sverchok.utils.logging import info, exception
 
 from sverchok.utils.field.scalar import (SvScalarField,
@@ -67,7 +67,7 @@ class SvFieldDiffOpsNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'operation', text='')
         layout.prop(self, 'step')
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         actual_inputs, actual_outputs = get_sockets(self.operation)
         actual_inputs = dict(actual_inputs)

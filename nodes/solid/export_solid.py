@@ -2,7 +2,7 @@
 import bpy
 from bpy.props import StringProperty, EnumProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import flatten_data, map_recursive
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.surface.core import SvSurface

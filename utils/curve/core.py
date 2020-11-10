@@ -569,6 +569,53 @@ class SvReparametrizedCurve(SvCurve):
             k = k * self.scale
         return array
 
+class SvReparametrizeCurve(SvCurve):
+    def __init__(self, curve):
+        self.curve = curve
+        if hasattr(curve, 'tangent_delta'):
+            self.tangent_delta = curve.tangent_delta
+        else:
+            self.tangent_delta = 0.001
+        self.__description__ = "Reparametrize({})".format(curve)
+
+    def get_u_bounds(self):
+        return (0, 1)
+
+    def evaluate(self, t):
+        m, M = self.curve.get_u_bounds()
+        t = m + t*(M-m)
+        return self.curve.evaluate(t)
+
+    def evaluate_array(self, ts):
+        m, M = self.curve.get_u_bounds()
+        ts = m + ts*(M-m)
+        return self.curve.evaluate_array(ts)
+
+    def tangent(self, t):
+        m, M = self.curve.get_u_bounds()
+        t = m + t*(M-m)
+        return -self.curve.tangent(t)
+        
+    def tangent_array(self, ts):
+        m, M = self.curve.get_u_bounds()
+        ts = m + ts*(M-m)
+        return self.curve.tangent_array(ts)
+
+    def second_derivative_array(self, ts):
+        m, M = self.curve.get_u_bounds()
+        ts = m + ts*(M-m)
+        return self.curve.second_derivative_array(ts)
+
+    def third_derivative_array(self, ts):
+        m, M = self.curve.get_u_bounds()
+        ts = m + ts*(M-m)
+        return self.curve.third_derivative_array(ts)
+
+    def derivatives_array(self, ts):
+        m, M = self.curve.get_u_bounds()
+        ts = m + ts*(M-m)
+        return self.curve.derivatives_array(ts)
+
 class SvCurveSegment(SvCurve):
     def __init__(self, curve, u_min, u_max, rescale=False):
         self.curve = curve

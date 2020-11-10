@@ -112,6 +112,8 @@ def match_long_repeat(lsts):
     max_l = 0
     tmp = []
     for l in lsts:
+        if not hasattr(l, '__len__'):
+            raise TypeError(f"Cannot perform data matching: input of type {type(l)} is not a list or tuple, but an atomic object")
         max_l = max(max_l, len(l))
     for l in lsts:
         if len(l) == max_l:
@@ -515,11 +517,13 @@ def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
 
     return helper(data, 0)
 
-def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES):
+def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES, input_name=None):
     """
     data: number, or list of numbers, or list of lists, etc.
     target_level: data nesting level required for further processing.
     data_types: list or tuple of types.
+    input_name: name of input socket data was taken from. Optional. If specified,
+        used for error reporting.
 
     Wraps data in so many [] as required to achieve target nesting level.
     Raises an exception, if data already has too high nesting level.
@@ -534,7 +538,10 @@ def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES):
 
     current_level = get_data_nesting_level(data, data_types)
     if current_level > target_level:
-        raise TypeError("ensure_nesting_level: input data already has nesting level of {}. Required level was {}.".format(current_level, target_level))
+        if input_name is None:
+            raise TypeError("ensure_nesting_level: input data already has nesting level of {}. Required level was {}.".format(current_level, target_level))
+        else:
+            raise TypeError("Input data in socket {} already has nesting level of {}. Required level was {}.".format(input_name, current_level, target_level))
     result = data
     for i in range(target_level - current_level):
         result = [result]
@@ -556,6 +563,34 @@ def flatten_data(data, target_level=1, data_types=SIMPLE_DATA_TYPES):
         for item in data:
             result.extend(flatten_data(item, target_level=target_level, data_types=data_types))
         return result
+
+def graft_data(data, item_level=1, wrap_level=1, data_types=SIMPLE_DATA_TYPES):
+    """
+    For each nested item of the list, which has it's own nesting level of `target_level`,
+    wrap that item into a pair of [].
+    For example, with item_level==0, this means wrap each number in the nested list
+    (however deep this number is nested) into pair of [].
+    Refer to data_structure_tests.py for examples.
+    """
+    def wrap(item):
+        for i in range(wrap_level):
+            item = [item]
+        return item
+
+    def helper(data):
+        current_level = get_data_nesting_level(data, data_types)
+        if current_level == item_level:
+            return wrap(data)
+        else:
+            result = [helper(item) for item in data]
+            return result
+
+    return helper(data)
+
+def wrap_data(data, wrap_level=1):
+    for i in range(wrap_level):
+        data = [data]
+    return data
 
 def map_at_level(function, data, item_level=0, data_types=SIMPLE_DATA_TYPES):
     """
@@ -778,6 +813,15 @@ def unzip_dict_recursive(data, item_type=dict, to_dict=None):
             return result
 
     return helper(data)
+
+def is_ultimately(data, data_types):
+    """
+    Check if data is a nested list / tuple / array
+    which ultimately consists of items of data_types.
+    """
+    if isinstance(data, (list, tuple, ndarray)):
+        return is_ultimately(data[0], data_types)
+    return isinstance(data, data_types)
 
 #####################################################
 ################### matrix magic ####################
@@ -1108,6 +1152,49 @@ def throttle_tree_update(node):
         yield node
 
 
+def throttled(func):
+    """
+    It will prevent from redundant tree updates by changing tree topology (including changing node sockets)
+    inside nodes init methods and property changes methods
+
+    @throttled
+    def your_method(tree or node or socket, *args, **kwargs):
+    """
+    @wraps(func)
+    def wrapper_update(with_id_data, *args, **kwargs):
+        tree = with_id_data.id_data
+        with tree.throttle_update():
+            return func(with_id_data, *args, **kwargs)
+    return wrapper_update
+
+
+def throttle_and_update_node(func):
+    """
+    use as a decorator
+
+        class YourNode
+
+            @throttle_and_update_node
+            def mode_update(self, context):
+                ...
+
+    When a node has changed, like a mode-change leading to a socket change (remove, new)
+    Blender will trigger node_tree.update. We want to ignore this trigger-event, and we do so by
+    - first throttling the update system.
+    - then We execute the code that makes changes to the node/node_tree
+    - then we end the throttle-state
+    - we are then ready to process
+    """
+    @wraps(func)
+    def wrapper_update(self, context):
+        tree = self.id_data
+        with tree.throttle_update():
+            func(self, context)
+        self.process_node(context)
+
+    return wrapper_update
+
+
 ##############################################################
 ##############################################################
 ############## changable type of socket magic ################
@@ -1116,6 +1203,7 @@ def throttle_tree_update(node):
 ##############################################################
 ##############################################################
 
+@throttled
 def changable_sockets(node, inputsocketname, outputsocketname):
     '''
     arguments: node, name of socket to follow, list of socket to change
@@ -1137,7 +1225,6 @@ def changable_sockets(node, inputsocketname, outputsocketname):
         if s_type == 'SvDummySocket':
             return #
         if outputs[outputsocketname[0]].bl_idname != s_type:
-            node.id_data.freeze(hard=True)
             to_links = {}
             for n in outputsocketname:
                 out_socket = outputs[n]
@@ -1147,9 +1234,9 @@ def changable_sockets(node, inputsocketname, outputsocketname):
                 new_out_socket = outputs.new(s_type, n)
                 for to_socket in to_links[n]:
                     ng.links.new(to_socket, new_out_socket)
-            node.id_data.unfreeze(hard=True)
 
 
+@throttled
 def replace_socket(socket, new_type, new_name=None, new_pos=None):
     '''
     Replace a socket with a socket of new_type and keep links
@@ -1158,8 +1245,6 @@ def replace_socket(socket, new_type, new_name=None, new_pos=None):
     socket_name = new_name or socket.name
     socket_pos = new_pos or socket.index
     ng = socket.id_data
-
-    ng.freeze()
 
     if socket.is_output:
         outputs = socket.node.outputs
@@ -1184,8 +1269,6 @@ def replace_socket(socket, new_type, new_name=None, new_pos=None):
         if from_socket:
             link = ng.links.new(from_socket, new_socket)
             link.is_valid = True
-
-    ng.unfreeze()
 
     return new_socket
 
@@ -1228,6 +1311,7 @@ def get_other_socket(socket):
 
 # the named argument min will be replaced soonish.
 
+@throttled
 def multi_socket(node, min=1, start=0, breck=False, out_count=None):
     '''
      min - integer, minimal number of sockets, at list 1 needed
@@ -1259,7 +1343,6 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
                 node.inputs.remove(node.inputs[-1])
     elif isinstance(out_count, int):
         lenod = len(node.outputs)
-        ng.freeze(True)
         if out_count > 30:
             out_count = 30
         if lenod < out_count:
@@ -1273,7 +1356,6 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
         else:
             while len(node.outputs) > out_count:
                 node.outputs.remove(node.outputs[-1])
-        ng.unfreeze(True)
 
 
 #####################################

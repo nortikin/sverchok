@@ -10,9 +10,10 @@ import numpy as np
 import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty, FloatProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode, rotate_list
 from sverchok.utils.surface.core import SvSurface
+from sverchok.utils.curve.freecad import get_edge_endpoints
 from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface, SvFreeCadNurbsSurface
 from sverchok.utils.dummy_nodes import add_dummy
 
@@ -26,11 +27,9 @@ else:
 
 def calc_rho(edges1, edges2):
     s = 0
-    for e1, e2 in zip(edges1, edges2):
-        s1 = e1.Curve.StartPoint
-        s2 = e2.Curve.StartPoint
-        e1 = e1.Curve.EndPoint
-        e2 = e2.Curve.EndPoint
+    for edge1, edge2 in zip(edges1, edges2):
+        s1, e1 = get_edge_endpoints(edge1)
+        s2, e2 = get_edge_endpoints(edge2)
         s += s1.distanceToPoint(s2) + e1.distanceToPoint(e2)
     return s
 

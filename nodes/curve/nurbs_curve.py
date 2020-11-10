@@ -2,8 +2,8 @@
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, fullList
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat, fullList, throttle_and_update_node
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
@@ -20,7 +20,7 @@ class SvExNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Build NURBS Curve'
     bl_icon = 'CURVE_NCURVE'
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Weights'].hide_safe = self.surface_mode == 'BSPLINE'
         self.inputs['Knots'].hide_safe = self.knot_mode == 'AUTO'
@@ -122,8 +122,8 @@ class SvExNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):
             n_source = len(vertices)
             fullList(weights, n_source)
             if self.knot_mode == 'AUTO' and self.is_cyclic:
-                vertices = vertices + vertices[:degree+1]
-                weights = weights + weights[:degree+1]
+                vertices = vertices + vertices[:degree]
+                weights = weights + weights[:degree]
             n_total = len(vertices)
 
             # Set degree
@@ -151,7 +151,7 @@ class SvExNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):
             curve_knotvector = new_curve.get_knotvector().tolist()
             if self.knot_mode == 'AUTO' and self.is_cyclic:
                 u_min = curve_knotvector[degree]
-                u_max = curve_knotvector[-degree-2]
+                u_max = curve_knotvector[-degree-1]
                 new_curve.u_bounds = u_min, u_max
             else:
                 u_min = min(curve_knotvector)

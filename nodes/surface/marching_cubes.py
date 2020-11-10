@@ -4,8 +4,9 @@ import numpy as np
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.core.sockets import setup_new_node_location
+from sverchok.data_structure import updateNode, throttle_and_update_node, match_long_repeat
 from sverchok.utils.logging import info, exception
 from sverchok.utils.marching_cubes import isosurface_np
 from sverchok.dependencies import mcubes, skimage
@@ -79,7 +80,7 @@ class SvExMarchingCubesNode(DraftMode, bpy.types.Node, SverchCustomTreeNode):
             min = 4,
             update = updateNode)
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.outputs['VertexNormals'].hide_safe = self.implementation != 'skimage'
         self.inputs['Samples'].hide_safe = self.sample_mode != 'UNI'
@@ -119,9 +120,21 @@ class SvExMarchingCubesNode(DraftMode, bpy.types.Node, SverchCustomTreeNode):
             items = get_modes,
             update = update_sockets)
 
+    class BoundsMenuHandler():
+        @classmethod
+        def get_items(cls, socket, context):
+            return [("BOX", "Add Box node", "Add Box node")]
+
+        @classmethod
+        def on_selected(cls, tree, node, socket, item, context):
+            new_node = tree.nodes.new('SvBoxNodeMk2')
+            new_node.label = "Bounds"
+            tree.links.new(new_node.outputs[0], node.inputs['Bounds'])
+            setup_new_node_location(new_node, node)
+
     def sv_init(self, context):
         self.inputs.new('SvScalarFieldSocket', "Field")
-        self.inputs.new('SvVerticesSocket', "Bounds")
+        self.inputs.new('SvVerticesSocket', "Bounds").link_menu_handler = 'BoundsMenuHandler'
         self.inputs.new('SvStringsSocket', "Value").prop_name = 'iso_value'
         self.inputs.new('SvStringsSocket', "Samples").prop_name = 'sample_size'
         self.inputs.new('SvStringsSocket', "SamplesX").prop_name = 'samples_x'

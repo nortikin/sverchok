@@ -11,6 +11,7 @@
 
 import blf
 import time
+import textwrap
 
 import sverchok
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
@@ -75,6 +76,8 @@ def start_exception_drawing_with_bgl(ng, node_name, error_text, err):
         nx, ny = xyoffset(node)
         return nx * scale, ny * scale
 
+    show_stack = ng.sv_show_error_details
+
     ng_id = exception_nodetree_id(ng)
     draw_data = {
         'tree_name': ng.name[:],
@@ -82,7 +85,7 @@ def start_exception_drawing_with_bgl(ng, node_name, error_text, err):
         'loc': get_desired_xy,
         'mode': 'custom_function_context', 
         'custom_function': simple_exception_display,
-        'args': (text, config)
+        'args': (text, config, show_stack)
     }
     nvBGL2.callback_enable(ng_id, draw_data)
 
@@ -90,7 +93,7 @@ def simple_exception_display(context, args, xy):
     """
     a simple bgl/blf exception showing tool for nodeview
     """
-    text, config = args
+    text, config, show_stack = args
 
     x, y = xy
     x, y = int(x), int(y)
@@ -105,17 +108,22 @@ def simple_exception_display(context, args, xy):
     blf.color(font_id, r, g, b, 1.0)
     ypos = y
 
-    if isinstance(text.body, list):
-        for line in text.body:
+    if show_stack:
+        if isinstance(text.body, list):
+            for line in text.body:
+                blf.position(0, x, ypos, 0)
+                blf.draw(font_id, line)
+                ypos -= int(line_height * 1.3)
+        
+        elif isinstance(text.body, str):
             blf.position(0, x, ypos, 0)
-            blf.draw(font_id, line)
+            blf.draw(font_id, text.body)
             ypos -= int(line_height * 1.3)
-    
-    elif isinstance(text.body, str):
-        blf.position(0, x, ypos, 0)
-        blf.draw(font_id, text.body)
-        ypos -= int(line_height * 1.3)
 
     blf.color(font_id, 0.911393, 0.090249, 0.257536, 1.0)
     blf.position(0, x, ypos, 0)
-    blf.draw(font_id, text.final_error_message)
+    for line in textwrap.wrap(text.final_error_message):
+        blf.position(0, x, ypos, 0)
+        blf.draw(font_id, line)
+        ypos -= int(line_height * 1.3)
+

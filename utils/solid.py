@@ -15,6 +15,7 @@ from sverchok.data_structure import match_long_repeat as mlr
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.surface.core import SvSurface
 from sverchok.dependencies import FreeCAD
+from sverchok.utils.solid_conversion import to_solid, to_solid_recursive
 
 if FreeCAD is not None:
 
@@ -25,7 +26,7 @@ if FreeCAD is not None:
 
     from sverchok.nodes.solid.mesh_to_solid import ensure_triangles
     from sverchok.utils.curve.freecad import curve_to_freecad
-    from sverchok.utils.surface.freecad import surface_to_freecad
+    from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface
 
 class SvSolidTopology(object):
     class Item(object):
@@ -462,14 +463,4 @@ def svmesh_to_solid(verts, faces, precision, remove_splitter=True):
         shape = shape.removeSplitter() 
 
     return Part.makeSolid(shape)
-
-def to_solid(ob):
-    if isinstance(ob, Part.Shape):
-        return ob
-    elif isinstance(ob, SvCurve):
-        return [c.curve.toShape() for c in curve_to_freecad(ob)]
-    elif isinstance(ob, SvSurface):
-        return surface_to_freecad(ob, make_face=True).face
-    else:
-        raise Exception(f"Unknown data type in input: {ob}")
 

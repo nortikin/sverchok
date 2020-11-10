@@ -5,8 +5,8 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from mathutils import Vector
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nesting_level, ensure_nesting_level
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, ensure_nesting_level
 from sverchok.utils.surface import SvPlane
 
 class SvPlaneSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
@@ -23,7 +23,7 @@ class SvPlaneSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         ('NORM', "Point and normal", "Point and normal", 1)
     ]
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Point2'].hide_safe = self.mode != '3PT'
         self.inputs['Point3'].hide_safe = self.mode != '3PT'

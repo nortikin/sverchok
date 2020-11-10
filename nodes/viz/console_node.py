@@ -17,9 +17,9 @@ import gpu
 from gpu_extras.batch import batch_for_shader
 from mathutils import Vector, Matrix
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.settings import get_params
-from sverchok.data_structure import updateNode, node_id
+from sverchok.data_structure import updateNode, node_id, throttle_and_update_node
 
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.utils.sv_update_utils import sv_get_local_path
@@ -418,7 +418,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     bl_label = 'Console Node'
     bl_icon = 'CONSOLE'
 
-    @throttled
+    @throttle_and_update_node
     def local_updateNode(self, context):
         # self.process()
         ...

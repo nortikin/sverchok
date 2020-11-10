@@ -4,8 +4,8 @@ import numpy as np
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import throttle_and_update_node
 from sverchok.utils.logging import info, exception
 
 from sverchok.utils.math import coordinate_modes
@@ -21,7 +21,7 @@ class SvDecomposeVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VFIELD_OUT'
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         if self.output_mode == 'XYZ':
             self.outputs[0].name = 'X'

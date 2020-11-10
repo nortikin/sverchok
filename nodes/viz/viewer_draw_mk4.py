@@ -35,7 +35,6 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.utils.sv_shader_sources import dashed_vertex_shader, dashed_fragment_shader
-from sverchok.utils.context_managers import hard_freeze
 from sverchok.utils.geom import multiply_vectors_deep
 
 
@@ -735,14 +734,13 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
             socket_acquired_attrs = self.inputs['attrs'].sv_get(default=[{'activate': False}])
 
             if socket_acquired_attrs:
-                try:
-                    with hard_freeze(self) as node:
+                with self.id_data.throttle_update():  # avoiding recursion
+                    try:
                         for k, new_value in socket_acquired_attrs[0].items():
                             print(f"setattr(node, {k}, {new_value})")
-                            setattr(node, k, new_value)
-                except Exception as err:
-                    print('error inside socket_acquired_attrs: ', err)
-                    self.id_data.unfreeze(hard=True)  # ensure this thing is unfrozen
+                            setattr(self, k, new_value)  # it will trigger process method again
+                    except Exception as err:
+                        print('error inside socket_acquired_attrs: ', err)
 
     def get_data(self):
         verts_socket, edges_socket, faces_socket, matrix_socket = self.inputs[:4]

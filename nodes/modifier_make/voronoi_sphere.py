@@ -8,7 +8,7 @@ import bmesh
 from mathutils import Matrix
 
 import sverchok
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.math import to_spherical, from_spherical
 from sverchok.utils.sv_mesh_utils import polygons_to_edges

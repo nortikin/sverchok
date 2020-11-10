@@ -10,7 +10,7 @@ import numpy as np
 import bpy
 from bpy.props import BoolProperty, IntProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, get_data_nesting_level, updateNode
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.surface.freecad import curves_to_face

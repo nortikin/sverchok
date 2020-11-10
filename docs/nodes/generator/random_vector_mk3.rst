@@ -31,7 +31,7 @@ In the N-Panel (and on the right-click menu) you can find:
 
 **Match List**: Define how list with different lengths should be matched ('Short', 'Repeat Last' or 'Cycle')
 
-**Output NumPy**: Get NumPy arrays in stead of regular lists (makes the node faster).
+**Output NumPy**: Get NumPy arrays in stead of regular lists (makes the node faster). Available for Vertices, Edges and Pols
 
 Outputs
 -------

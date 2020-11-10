@@ -136,6 +136,7 @@
     SvExInterpolateNurbsSurfaceNode
     SvNurbsLoftNode
     SvNurbsSweepNode
+    SvNurbsBirailNode
     SvDeconstructSurfaceNode
     ---
     SvExQuadsToNurbsNode
@@ -234,6 +235,13 @@
    SvSphereSolidNode
    SvToursSolidNode
    @ Make Face
+   SvSolidFaceExtrudeNode
+   SvSolidFaceSolidifyNode
+   SvSolidFaceRevolveNode
+   SvSweepSolidFaceNode
+   SvRuledSolidNode
+   SvSolidFromFacesNode
+   ---
    SvTransformSolidNode
    SvChamferSolidNode
    SvFilletSolidNode
@@ -241,14 +249,9 @@
    SvSolidGeneralFuseNode
    SvMirrorSolidNode
    SvOffsetSolidNode
-   SvSolidFromFacesNode
-   SvRuledSolidNode
-   SvSolidFaceExtrudeNode
-   SvSolidFaceSolidifyNode
-   SvSolidFaceRevolveNode
-   SvSweepSolidFaceNode
    SvSplitSolidNode
    SvHollowSolidNode
+   ---
    SvIsInsideSolidNode
    SvSolidDistanceNode
    SvSliceSolidNode
@@ -474,6 +477,7 @@
     SvGenFibonacci
     SvGenExponential
     SvOscillatorNode
+    SvSmoothNumbersNode
 
 ## Vector
     GenVectorsNode
@@ -677,6 +681,7 @@
     SvFormulaColorNode
     SvTextureEvaluateNodeMk2
     SvColorRampNode
+    SvColorMixNode
     ---
     SvSculptMaskNode
     SvSelectMeshVerts
