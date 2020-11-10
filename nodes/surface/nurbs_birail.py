@@ -9,8 +9,8 @@ import numpy as np
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
 from sverchok.utils.logging import info, exception
 from sverchok.utils.math import supported_metrics
 from sverchok.utils.nurbs_common import SvNurbsMaths
@@ -69,7 +69,7 @@ class SvNurbsBirailNode(bpy.types.Node, SverchCustomTreeNode):
             items = get_implementations,
             update = updateNode)
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['V1'].hide_safe = not self.explicit_v
         self.inputs['V2'].hide_safe = not self.explicit_v
