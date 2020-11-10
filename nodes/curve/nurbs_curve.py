@@ -122,8 +122,8 @@ class SvExNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):
             n_source = len(vertices)
             fullList(weights, n_source)
             if self.knot_mode == 'AUTO' and self.is_cyclic:
-                vertices = vertices + vertices[:degree+1]
-                weights = weights + weights[:degree+1]
+                vertices = vertices + vertices[:degree]
+                weights = weights + weights[:degree]
             n_total = len(vertices)
 
             # Set degree
@@ -151,7 +151,7 @@ class SvExNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):
             curve_knotvector = new_curve.get_knotvector().tolist()
             if self.knot_mode == 'AUTO' and self.is_cyclic:
                 u_min = curve_knotvector[degree]
-                u_max = curve_knotvector[-degree-2]
+                u_max = curve_knotvector[-degree-1]
                 new_curve.u_bounds = u_min, u_max
             else:
                 u_min = min(curve_knotvector)
