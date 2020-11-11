@@ -41,47 +41,6 @@ id_mat = [[tuple(v) for v in Matrix()]]  # identity matrix
 EPSILON = 1e-10
 
 
-def projection_planar(verts_3D, m, d, perspective):
-    """
-    Project the 3D verts onto a PLANAR surface
-     verts_3D : vertices to project (perspective or ortographic)
-            m : transformation matrix of the projection plane (location & rotation)
-            d : distance between the projector point (focus) and the plane plane
-    """
-    ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection plane origin
-    nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection plane normal
-
-    # d = d if perspective else 1e10
-
-    vert_list = []
-    focus_list = []
-    for vert in verts_3D:
-        x, y, z = vert
-        # vertex vector relative to the projection point (OV = V - O)
-        dx = x - ox
-        dy = y - oy
-        dz = z - oz
-        # magnitude of the OV vector projected PARALLEL to the plane normal
-        l = dx * nx + dy * ny + dz * nz + EPSILON
-        # factor to scale the OV vector to touch the plane
-        s = d / (d + l)
-        # extended vector touching the plane
-        px = ox + s * (dx - l * nx)
-        py = oy + s * (dy - l * ny)
-        pz = oz + s * (dz - l * nz)
-
-        vert_list.append([px, py, pz])
-
-    # Focus location m * D:
-    #  Xx Yx Zx Tx        0     Tx - d * Zx
-    #  Xy Yy Zy Ty   *    0  =  Ty - d * Zy
-    #  Xz Yz Zz Tz      - d     Tz - d * Zz
-    #  0  0  0  1         1     1
-    focus_list = [[ox - d * nx, oy - d * ny, oz - d * nz]]
-
-    return vert_list, focus_list
-
-
 def projection_cylindrical(verts_3D, m, d, perspective):
     """
     Project the 3D verts onto a CYLINDRICAL screen
@@ -151,6 +110,47 @@ def projection_spherical(verts_3D, m, d, perspective):
         vert_list.append([xx, yy, zz])
 
     focus_list = [[ox, oy, oz]]
+
+    return vert_list, focus_list
+
+
+def projection_planar(verts_3D, m, d, perspective):
+    """
+    Project the 3D verts onto a PLANAR surface
+     verts_3D : vertices to project (perspective or ortographic)
+            m : transformation matrix of the projection plane (location & rotation)
+            d : distance between the projector point (focus) and the plane plane
+    """
+    ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection plane origin
+    nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection plane normal
+
+    # d = d if perspective else 1e10
+
+    vert_list = []
+    focus_list = []
+    for vert in verts_3D:
+        x, y, z = vert
+        # vertex vector relative to the projection point (OV = V - O)
+        dx = x - ox
+        dy = y - oy
+        dz = z - oz
+        # magnitude of the OV vector projected PARALLEL to the plane normal
+        l = dx * nx + dy * ny + dz * nz + EPSILON
+        # factor to scale the OV vector to touch the plane
+        s = d / (d + l)
+        # extended vector touching the plane
+        px = ox + s * (dx - l * nx)
+        py = oy + s * (dy - l * ny)
+        pz = oz + s * (dz - l * nz)
+
+        vert_list.append([px, py, pz])
+
+    # Focus location m * D:
+    #  Xx Yx Zx Tx        0     Tx - d * Zx
+    #  Xy Yy Zy Ty   *    0  =  Ty - d * Zy
+    #  Xz Yz Zz Tz      - d     Tz - d * Zz
+    #  0  0  0  1         1     1
+    focus_list = [[ox - d * nx, oy - d * ny, oz - d * nz]]
 
     return vert_list, focus_list
 
