@@ -12,6 +12,12 @@ class DataStructureTests(SverchokTestCase):
         expected_output = [[1,2,3,4,5], [10,11,11,11,11]]
         self.assertEquals(output, expected_output)
 
+    def test_match_long_repeat_2(self):
+        inputs = [[1], [2]]
+        output = match_long_repeat(inputs)
+        expected_output = [[1], [2]]
+        self.assertEquals(output, expected_output)
+
     def test_match_long_cycle(self):
         inputs = [[1,2,3,4,5] ,[10,11]]
         output = match_long_cycle(inputs)
