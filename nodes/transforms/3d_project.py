@@ -43,7 +43,7 @@ EPSILON = 1e-10
 
 def projection_planar(verts_3D, m, d, perspective):
     """
-    Project the 3D verts onto a planar screen
+    Project the 3D verts onto a PLANAR screen
      verts_3D : vertices to project (perspective or ortographic)
             m : transformation matrix of the projection plane (location & rotation)
             d : distance between the projection point (focus) and the projection plane
@@ -54,6 +54,7 @@ def projection_planar(verts_3D, m, d, perspective):
     # d = d if perspective else 1e10
 
     vert_list = []
+    focus_list = []
     for vert in verts_3D:
         x, y, z = vert
         # vector relative to the plane origin (V-O)
@@ -76,23 +77,23 @@ def projection_planar(verts_3D, m, d, perspective):
     #  Xy Yy Zy Ty   *    0  =  Ty - d * Zy
     #  Xz Yz Zz Tz      - d     Tz - d * Zz
     #  0  0  0  1         1     1
-    focus = [[ox - d * nx, oy - d * ny, oz - d * nz]]
+    focus_list = [[ox - d * nx, oy - d * ny, oz - d * nz]]
 
-    return vert_list, focus
+    return vert_list, focus_list
 
 
 def projection_cylindrical(verts_3D, m, d, perspective):
     """
-    Project the 3D verts onto a cylinderical screen
+    Project the 3D verts onto a CYLINDRICAL screen
      verts_3D : vertices to project (perspective)
             m : transformation matrix of the projection cylinder (location & rotation)
             d : distance between the projection point (focus) and the projection cylinder (cylinder radius)
-
     """
     ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection cylinder origin
     nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection cylinder axis
 
     vert_list = []
+    focus_list = []
     for vert in verts_3D:
         x, y, z = vert
         # vector relative to the cylinder origin (V-O)
@@ -116,14 +117,14 @@ def projection_cylindrical(verts_3D, m, d, perspective):
 
         vert_list.append([xx, yy, zz])
 
-    focus = [[ox, oy, oz]]
+    focus_list = [[ox, oy, oz]]
 
-    return vert_list, focus
+    return vert_list, focus_list
 
 
 def projection_spherical(verts_3D, m, d, perspective):
     """
-    Project the 3D verts onto a spherical screen
+    Project the 3D verts onto a SPHERICAL screen
      verts_3D : vertices to project (perspective)
             m : transformation matrix of the projection sphere (location & rotation)
             d : distance between the projection point (focus and the projection sphere (sphere radius)
@@ -131,6 +132,7 @@ def projection_spherical(verts_3D, m, d, perspective):
     ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection sphere origin
 
     vert_list = []
+    focus_list = []
     for vert in verts_3D:
         x, y, z = vert
         # vector relative to the sphere origin (V-O)
@@ -146,9 +148,9 @@ def projection_spherical(verts_3D, m, d, perspective):
 
         vert_list.append([xx, yy, zz])
 
-    focus = [[ox, oy, oz]]
+    focus_list = [[ox, oy, oz]]
 
-    return vert_list, focus
+    return vert_list, focus_list
 
 
 class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
