@@ -106,7 +106,7 @@ else:
             new_edges = []
             new_faces = []
 
-            for site_idx in faces_per_site.keys():
+            for site_idx in sorted(faces_per_site.keys()):
                 if self.closed_only and site_idx in open_sites:
                     continue
                 done_verts = dict()
