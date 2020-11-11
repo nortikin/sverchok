@@ -43,13 +43,13 @@ EPSILON = 1e-10
 
 def projection_cylindrical(verts_3D, m, d, perspective):
     """
-    Project the 3D verts onto a CYLINDRICAL screen
+    Project the 3D verts onto a CYLINDRICAL surface
      verts_3D : vertices to project (perspective)
             m : transformation matrix of the projection cylinder (location & rotation)
             d : distance between the projection point (focus) and the projection cylinder (cylinder radius)
     """
     ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection cylinder origin
-    nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection cylinder axis
+    nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection cylinder axis (Z)
 
     vert_list = []
     focus_list = []
@@ -83,10 +83,10 @@ def projection_cylindrical(verts_3D, m, d, perspective):
 
 def projection_spherical(verts_3D, m, d, perspective):
     """
-    Project the 3D verts onto a SPHERICAL screen
+    Project the 3D verts onto a SPHERICAL surface
      verts_3D : vertices to project (perspective)
             m : transformation matrix of the projection sphere (location & rotation)
-            d : distance between the projection point (focus and the projection sphere (sphere radius)
+            d : distance between the projection point (focus) and the projection sphere (sphere radius)
     """
     ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection sphere origin
 
@@ -120,6 +120,12 @@ def projection_planar(verts_3D, m, d, perspective):
      verts_3D : vertices to project (perspective or ortographic)
             m : transformation matrix of the projection plane (location & rotation)
             d : distance between the projector point (focus) and the plane plane
+
+    Projection point (focus) location is given by m * D:
+        Xx Yx Zx Tx        0     Tx - d * Zx
+        Xy Yy Zy Ty   *    0  =  Ty - d * Zy
+        Xz Yz Zz Tz      - d     Tz - d * Zz
+        0  0  0  1         1     1
     """
     ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection plane origin
     nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection plane normal
@@ -145,12 +151,7 @@ def projection_planar(verts_3D, m, d, perspective):
 
         vert_list.append([px, py, pz])
 
-    # Focus location m * D:
-    #  Xx Yx Zx Tx        0     Tx - d * Zx
-    #  Xy Yy Zy Ty   *    0  =  Ty - d * Zy
-    #  Xz Yz Zz Tz      - d     Tz - d * Zz
-    #  0  0  0  1         1     1
-    focus_list = [[ox - d * nx, oy - d * ny, oz - d * nz]]
+    focus_list = [[ox - d * nx, o   y - d * ny, oz - d * nz]]
 
     return vert_list, focus_list
 
