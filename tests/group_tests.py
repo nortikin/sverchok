@@ -9,7 +9,7 @@ from sverchok.utils.sv_json_import import JSONImporter
 
 class GroupingTest(SverchokTestCase):
 
-    @unittest.skip("On Travis it is lunched looks like without UI and it can't tests operators in this way")
+    @unittest.skipIf(bpy.app.background, "Blender should be lunched with UI")
     def test_grouping_nodes(self):
 
         examples_path = Path(sverchok.__file__).parent / 'json_examples'

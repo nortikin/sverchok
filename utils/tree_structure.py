@@ -24,7 +24,6 @@ if TYPE_CHECKING:
 class Node(tw.Node):
     def __init__(self, name: str, index: int, tree: Tree):
         self.name = name
-        self.select = False  # todo consider to remove
         self.is_input_linked = False  # True if node has straight connection or via other nodes to one of input nodes
 
         self._inputs: List[Socket] = []
@@ -88,7 +87,6 @@ class Node(tw.Node):
     def from_bl_node(cls, bl_node: bpy.types.Node, index: int, tree: Tree) -> Node:
         """Generate node and its sockets from Blender node instance"""
         node = cls(bl_node.name, index, tree)
-        node.select = bl_node.select
         for in_socket in bl_node.inputs:
             node.inputs.append(Socket.from_bl_socket(node, in_socket))
         for out_socket in bl_node.outputs:

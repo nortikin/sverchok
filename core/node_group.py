@@ -33,6 +33,10 @@ class SvGroupTree(bpy.types.NodeTree):
 
     group_node_name: bpy.props.StringProperty()  # should be updated by "Go to edit group tree" operator
     tree_id_memory: bpy.props.StringProperty(default="")  # identifier of the tree, should be used via `tree_id`
+    skip_tree_update: bpy.props.BoolProperty(default=False)  # usage only via throttle_update method
+
+    # Always False, does not have sense to have for nested trees, sine of draft mode refactoring
+    sv_draft: bpy.props.BoolProperty()
 
     @property
     def tree_id(self):
@@ -81,6 +85,11 @@ class SvGroupTree(bpy.types.NodeTree):
         """trigger on links or nodes collections changes"""
         # When group input or output nodes are connected some extra work should be done
         self.check_last_socket()  # Should not be too expensive to call it each update
+
+        if self.skip_tree_update:
+            return
+        if not bpy.data.node_groups:  # load new file event
+            return
 
         self.check_reroutes_sockets()
         self.update_sockets()  # probably more precise trigger could be found for calling this method
@@ -185,6 +194,21 @@ class SvGroupTree(bpy.types.NodeTree):
             else:
                 node.use_custom_color = False
                 node.set_color()
+
+    @contextmanager
+    def throttle_update(self):
+        """ usage  https://github.com/nortikin/sverchok/issues/2770#issuecomment-723549311
+        with tree.throttle_update():
+            tree.nodes.new(...)
+            tree.links.new(...)
+        tree should be updated manually if needed
+        """
+        previous_state = self.skip_tree_update
+        self.skip_tree_update = True
+        try:
+            yield self
+        finally:
+            self.skip_tree_update = previous_state
 
 
 class BaseNode:
@@ -425,7 +449,7 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
                 return bool(cls.filter_selected_nodes(path[-1].node_tree))
         return False
 
-    def execute(self, context):  # todo move main logic into separate method which could be tested
+    def execute(self, context):
         """
         Add group tree from selected:
         01. Deselect group Input and Output nodes
@@ -439,82 +463,88 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
         09. Link the node with appropriate sockets
         10. Cleaning
         """
-        # deselect group nodes if selected
         base_tree = context.space_data.path[-1].node_tree
         if not self.can_be_grouped(base_tree):
             self.report({'WARNING'}, 'Current selection can not be converted to group')
             return {'CANCELLED'}
-        [setattr(n, 'select', False) for n in base_tree.nodes
-         if n.select and n.bl_idname in {'NodeGroupInput', 'NodeGroupOutput'}]
-
-        # Frames can't be just copied because they does not have absolute location, but they can be recreated
-        frame_names = {n.name for n in base_tree.nodes if n.select and n.bl_idname == 'NodeFrame'}
-        [setattr(n, 'select', False) for n in base_tree.nodes if n.bl_idname == 'NodeFrame']
-
-        # copy and past nodes into group tree
-        bpy.ops.node.clipboard_copy()
         sub_tree: SvGroupTree = bpy.data.node_groups.new('Sverchok group', SvGroupTree.bl_idname)
-        context.space_data.path.append(sub_tree)
-        bpy.ops.node.clipboard_paste()
 
-        # move nodes in tree center
-        sub_tree_nodes = self.filter_selected_nodes(sub_tree)
-        center = reduce(lambda v1, v2: v1 + v2, [n.location for n in sub_tree_nodes]) / len(sub_tree_nodes)
-        [setattr(n, 'location', n.location - center) for n in sub_tree_nodes]
+        with base_tree.throttle_update(), sub_tree.throttle_update():
+            # deselect group nodes if selected
+            [setattr(n, 'select', False) for n in base_tree.nodes
+             if n.select and n.bl_idname in {'NodeGroupInput', 'NodeGroupOutput'}]
 
-        # recreate frames
-        node_name_mapping = {n.name: n.name for n in sub_tree.nodes}  # all nodes have the same name as in base tree
-        self.recreate_frames(base_tree, sub_tree, frame_names, node_name_mapping)
+            # Frames can't be just copied because they does not have absolute location, but they can be recreated
+            frame_names = {n.name for n in base_tree.nodes if n.select and n.bl_idname == 'NodeFrame'}
+            [setattr(n, 'select', False) for n in base_tree.nodes if n.bl_idname == 'NodeFrame']
 
-        # add group input and output nodes
-        min_x = min(n.location[0] for n in sub_tree_nodes)
-        max_x = max(n.location[0] for n in sub_tree_nodes)
-        input_node = sub_tree.nodes.new('NodeGroupInput')
-        input_node.location = (min_x - 250, 0)
-        output_node = sub_tree.nodes.new('NodeGroupOutput')
-        output_node.location = (max_x + 250, 0)
+            # copy and past nodes into group tree
+            bpy.ops.node.clipboard_copy()
+            context.space_data.path.append(sub_tree)
+            bpy.ops.node.clipboard_paste()
 
-        # add group tree node
-        initial_nodes = self.filter_selected_nodes(base_tree)
-        center = reduce(lambda v1, v2: v1 + v2,
-                        [Vector(n.absolute_location) for n in initial_nodes]) / len(initial_nodes)
-        group_node = base_tree.nodes.new(SvGroupTreeNode.bl_idname)
-        group_node.select = False
-        group_node.group_tree = sub_tree
-        group_node.location = center
-        sub_tree.group_node_name = group_node.name
+            # move nodes in tree center
+            sub_tree_nodes = self.filter_selected_nodes(sub_tree)
+            center = reduce(lambda v1, v2: v1 + v2, [n.location for n in sub_tree_nodes]) / len(sub_tree_nodes)
+            [setattr(n, 'location', n.location - center) for n in sub_tree_nodes]
 
-        # linking, linking should be ordered from first socket to last (in case like `join list` nodes)
-        py_base_tree = Tree(base_tree)
-        input_node['connected_sockets'] = dict()  # Dict[node.name + socket.identifier, socket index of input node]
-        for py_node in py_base_tree.nodes:  # is selected
-            if not py_node.select:
-                continue
-            for in_py_socket in py_node.inputs:
-                for out_py_socket in in_py_socket.linked_sockets:  # only one link always
-                    if out_py_socket.node.select:
-                        continue
-                    out_py_s_key = out_py_socket.node.name + out_py_socket.identifier
-                    if out_py_s_key in input_node['connected_sockets']:  # protect from creating extra input sockets
-                        input_out_s_index = input_node['connected_sockets'][out_py_s_key]
-                    else:
-                        input_out_s_index = len(input_node.outputs) - 1
-                        input_node['connected_sockets'][out_py_s_key] = input_out_s_index
-                    sub_tree.links.new(in_py_socket.get_bl_socket(sub_tree), input_node.outputs[input_out_s_index])
-                    base_tree.links.new(group_node.inputs[-1], out_py_socket.get_bl_socket(base_tree))
+            # recreate frames
+            node_name_mapping = {n.name: n.name for n in sub_tree.nodes}  # all nodes have the same name as in base tree
+            self.recreate_frames(base_tree, sub_tree, frame_names, node_name_mapping)
 
-            for out_py_socket in py_node.outputs:
-                if any(not s.node.select for s in out_py_socket.linked_sockets):
-                    sub_tree.links.new(output_node.inputs[-1], out_py_socket.get_bl_socket(sub_tree))
-                for in_py_socket in out_py_socket.linked_sockets:
-                    if not in_py_socket.node.select:
-                        base_tree.links.new(in_py_socket.get_bl_socket(base_tree), group_node.outputs[-1])
+            # add group input and output nodes
+            min_x = min(n.location[0] for n in sub_tree_nodes)
+            max_x = max(n.location[0] for n in sub_tree_nodes)
+            input_node = sub_tree.nodes.new('NodeGroupInput')
+            input_node.location = (min_x - 250, 0)
+            output_node = sub_tree.nodes.new('NodeGroupOutput')
+            output_node.location = (max_x + 250, 0)
 
-        # delete selected nodes and copied frames without children
-        [base_tree.nodes.remove(n) for n in self.filter_selected_nodes(base_tree)]
-        with_children_frames = {n.parent.name for n in base_tree.nodes if n.parent}
-        [base_tree.nodes.remove(n) for n in base_tree.nodes
-         if n.name in frame_names and n.name not in with_children_frames]
+            # add group tree node
+            initial_nodes = self.filter_selected_nodes(base_tree)
+            center = reduce(lambda v1, v2: v1 + v2,
+                            [Vector(n.absolute_location) for n in initial_nodes]) / len(initial_nodes)
+            group_node = base_tree.nodes.new(SvGroupTreeNode.bl_idname)
+            group_node.select = False
+            group_node.group_tree = sub_tree
+            group_node.location = center
+            sub_tree.group_node_name = group_node.name
+
+            # linking, linking should be ordered from first socket to last (in case like `join list` nodes)
+            py_base_tree = Tree(base_tree)
+            [setattr(py_base_tree.nodes[n.name], 'select', n.select) for n in base_tree.nodes]
+            input_node['connected_sockets'] = dict()  # Dict[node.name + socket.identifier, socket index of input node]
+            for py_node in py_base_tree.nodes:  # is selected
+                if not py_node.select:
+                    continue
+                for in_s in py_node.inputs:
+                    for out_s in in_s.linked_sockets:  # only one link always
+                        if out_s.node.select:
+                            continue
+                        out_s_key = out_s.node.name + out_s.identifier
+                        if out_s_key in input_node['connected_sockets']:  # protect from creating extra input sockets
+                            input_out_s_index = input_node['connected_sockets'][out_s_key]
+                            sub_tree.links.new(in_s.get_bl_socket(sub_tree), input_node.outputs[input_out_s_index])
+                        else:
+                            input_out_s_index = len(input_node.outputs) - 1
+                            input_node['connected_sockets'][out_s_key] = input_out_s_index
+                            sub_tree.links.new(in_s.get_bl_socket(sub_tree), input_node.outputs[input_out_s_index])
+                            base_tree.links.new(group_node.inputs[-1], out_s.get_bl_socket(base_tree))
+
+                for out_py_socket in py_node.outputs:
+                    if any(not s.node.select for s in out_py_socket.linked_sockets):
+                        sub_tree.links.new(output_node.inputs[-1], out_py_socket.get_bl_socket(sub_tree))
+                    for in_py_socket in out_py_socket.linked_sockets:
+                        if not in_py_socket.node.select:
+                            base_tree.links.new(in_py_socket.get_bl_socket(base_tree), group_node.outputs[-1])
+
+            # delete selected nodes and copied frames without children
+            [base_tree.nodes.remove(n) for n in self.filter_selected_nodes(base_tree)]
+            with_children_frames = {n.parent.name for n in base_tree.nodes if n.parent}
+            [base_tree.nodes.remove(n) for n in base_tree.nodes
+             if n.name in frame_names and n.name not in with_children_frames]
+
+        base_tree.update()
 
         return {'FINISHED'}
 
@@ -604,65 +634,68 @@ class UngroupGroupTree(bpy.types.Operator):
         frame_names = {n.name for n in sub_tree.nodes if n.select and n.bl_idname == 'NodeFrame'}
         [setattr(n, 'select', False) for n in sub_tree.nodes if n.bl_idname == 'NodeFrame']
 
-        if any(n for n in sub_tree.nodes if n.select):  # if no selection copy operator will raise error
-            # copy and past nodes into group tree
-            bpy.ops.node.clipboard_copy()
-            context.space_data.path.pop()
-            bpy.ops.node.clipboard_paste()  # this will deselect all and select only pasted nodes
+        with tree.throttle_update():
+            if any(n for n in sub_tree.nodes if n.select):  # if no selection copy operator will raise error
+                # copy and past nodes into group tree
+                bpy.ops.node.clipboard_copy()
+                context.space_data.path.pop()
+                bpy.ops.node.clipboard_paste()  # this will deselect all and select only pasted nodes
 
-            # move nodes in group node center
-            tree_select_nodes = [n for n in tree.nodes if n.select]
-            center = reduce(lambda v1, v2: v1 + v2,
-                            [Vector(n.absolute_location) for n in tree_select_nodes]) / len(tree_select_nodes)
-            [setattr(n, 'location', n.location - (center - group_node.location)) for n in tree_select_nodes]
+                # move nodes in group node center
+                tree_select_nodes = [n for n in tree.nodes if n.select]
+                center = reduce(lambda v1, v2: v1 + v2,
+                                [Vector(n.absolute_location) for n in tree_select_nodes]) / len(tree_select_nodes)
+                [setattr(n, 'location', n.location - (center - group_node.location)) for n in tree_select_nodes]
 
-            # recreate frames
-            node_name_mapping = {n['sub_node_name']: n.name for n in tree.nodes if 'sub_node_name' in n}
-            AddGroupTreeFromSelected.recreate_frames(sub_tree, tree, frame_names, node_name_mapping)
-        else:
-            context.space_data.path.pop()  # should exit from sub tree anywhere
+                # recreate frames
+                node_name_mapping = {n['sub_node_name']: n.name for n in tree.nodes if 'sub_node_name' in n}
+                AddGroupTreeFromSelected.recreate_frames(sub_tree, tree, frame_names, node_name_mapping)
+            else:
+                context.space_data.path.pop()  # should exit from sub tree anywhere
 
-        # recreate py tree structure
-        sub_py_tree = Tree(sub_tree)
-        [setattr(sub_py_tree.nodes[n.name], 'type', n.bl_idname) for n in sub_tree.nodes]
-        py_tree = Tree(tree)
-        [setattr(py_tree.nodes[n.name], 'select', n.select) for n in tree.nodes]
-        group_py_node = py_tree.nodes[group_node.name]
-        for node in tree.nodes:
-            if 'sub_node_name' in node:
-                sub_py_tree.nodes[node['sub_node_name']].twin = py_tree.nodes[node.name]
-                py_tree.nodes[node.name].twin = sub_py_tree.nodes[node['sub_node_name']]
+            # recreate py tree structure
+            sub_py_tree = Tree(sub_tree)
+            [setattr(sub_py_tree.nodes[n.name], 'type', n.bl_idname) for n in sub_tree.nodes]
+            py_tree = Tree(tree)
+            [setattr(py_tree.nodes[n.name], 'select', n.select) for n in tree.nodes]
+            group_py_node = py_tree.nodes[group_node.name]
+            for node in tree.nodes:
+                if 'sub_node_name' in node:
+                    sub_py_tree.nodes[node['sub_node_name']].twin = py_tree.nodes[node.name]
+                    py_tree.nodes[node.name].twin = sub_py_tree.nodes[node['sub_node_name']]
 
-        # create in links
-        for group_input_py_node in [n for n in sub_py_tree.nodes if n.type == 'NodeGroupInput']:
-            for group_in_s, input_out_s in zip(group_py_node.inputs, group_input_py_node.outputs):
-                if group_in_s.links and input_out_s.links:
-                    link_out_s = group_in_s.linked_sockets[0]
-                    for twin_in_s in input_out_s.linked_sockets:
-                        if twin_in_s.node.type == 'NodeGroupOutput':  # node should be searched in above tree
-                            group_out_s = group_py_node.outputs[twin_in_s.index]
-                            for link_in_s in group_out_s.linked_sockets:
+            # create in links
+            for group_input_py_node in [n for n in sub_py_tree.nodes if n.type == 'NodeGroupInput']:
+                for group_in_s, input_out_s in zip(group_py_node.inputs, group_input_py_node.outputs):
+                    if group_in_s.links and input_out_s.links:
+                        link_out_s = group_in_s.linked_sockets[0]
+                        for twin_in_s in input_out_s.linked_sockets:
+                            if twin_in_s.node.type == 'NodeGroupOutput':  # node should be searched in above tree
+                                group_out_s = group_py_node.outputs[twin_in_s.index]
+                                for link_in_s in group_out_s.linked_sockets:
+                                    tree.links.new(link_in_s.get_bl_socket(tree), link_out_s.get_bl_socket(tree))
+                            else:
+                                link_in_s = twin_in_s.node.twin.inputs[twin_in_s.index]
                                 tree.links.new(link_in_s.get_bl_socket(tree), link_out_s.get_bl_socket(tree))
-                        else:
-                            link_in_s = twin_in_s.node.twin.inputs[twin_in_s.index]
+
+            # create out links
+            for group_output_py_node in [n for n in sub_py_tree.nodes if n.type == 'NodeGroupOutput']:
+                for group_out_s, output_in_s in zip(group_py_node.outputs, group_output_py_node.inputs):
+                    if group_out_s.links and output_in_s.links:
+                        twin_out_s = output_in_s.linked_sockets[0]
+                        if twin_out_s.node.type == 'NodeGroupInput':
+                            continue  # we already added this link
+                        for link_in_s in group_out_s.linked_sockets:
+                            link_out_s = twin_out_s.node.twin.outputs[twin_out_s.index]
                             tree.links.new(link_in_s.get_bl_socket(tree), link_out_s.get_bl_socket(tree))
 
-        # create out links
-        for group_output_py_node in [n for n in sub_py_tree.nodes if n.type == 'NodeGroupOutput']:
-            for group_out_s, output_in_s in zip(group_py_node.outputs, group_output_py_node.inputs):
-                if group_out_s.links and output_in_s.links:
-                    twin_out_s = output_in_s.linked_sockets[0]
-                    if twin_out_s.node.type == 'NodeGroupInput':
-                        continue  # we already added this link
-                    for link_in_s in group_out_s.linked_sockets:
-                        link_out_s = twin_out_s.node.twin.outputs[twin_out_s.index]
-                        tree.links.new(link_in_s.get_bl_socket(tree), link_out_s.get_bl_socket(tree))
+            # delete group node
+            tree.nodes.remove(group_node)
+            for node in tree.nodes:
+                if 'sub_node_name' in node:
+                    del node['sub_node_name']
 
-        # delete group node
-        tree.nodes.remove(group_node)
-        for node in tree.nodes:
-            if 'sub_node_name' in node:
-                del node['sub_node_name']
+        tree.update()
 
         return {'FINISHED'}
 
