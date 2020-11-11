@@ -1,0 +1,62 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Sverchok CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+    - name: Install Blender
+      run: |
+        BLENDER_VERSION=2.82
+        BLENDER_URL=https://ftp.nluug.nl/pub/graphics/blender/release/Blender2.82/blender-2.82a-linux64.tar.xz
+        SVERCHOK_DIR=scripts/addons/sverchok
+        BLENDER_TAR=$(basename $BLENDER_URL)
+        BLENDER_DIR=$(basename $BLENDER_URL .tar.xz)
+        if [ ! -f installation/blender/blender ]
+        then 
+            mkdir -p installation
+            cd installation
+            wget $BLENDER_URL
+            tar xf $BLENDER_TAR
+            if [ -d blender ]
+            then rm -rf blender
+            fi
+            mv $BLENDER_DIR blender
+            rm $BLENDER_TAR
+
+            pushd blender/
+            PYTHON=${BLENDER_VERSION}/python/bin/python3.7m
+            $PYTHON -m ensurepip
+            $PYTHON -m pip install --upgrade pip setuptools wheel
+            $PYTHON -m pip install --upgrade scipy geomdl scikit-image
+            popd
+
+            echo "Current directory after downloading blender: $(pwd)"
+            cd ..
+        fi
+
+        #mkdir -p ${PWD}/installation/blender/${BLENDER_VERSION}/${SVERCHOK_DIR}
+        ln -s ${PWD} ${PWD}/installation/blender/${BLENDER_VERSION}/${SVERCHOK_DIR}
+        mkdir -p ~/.config/blender/${BLENDER_VERSION}/config/
+        ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/${BLENDER_VERSION}/config/
+        
+        BLENDER=${PWD}/installation/blender/blender-softwaregl
+
+    - name: Test it
+      run: |
+        bash ./run_tests.sh
