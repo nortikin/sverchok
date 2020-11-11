@@ -55,8 +55,10 @@ jobs:
         mkdir -p ~/.config/blender/${BLENDER_VERSION}/config/
         ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/${BLENDER_VERSION}/config/
         
-        BLENDER=${PWD}/installation/blender/blender-softwaregl
+    - env:
+        BLENDER: ${PWD}/installation/blender/blender-softwaregl
 
     - name: Test it
       run: |
         bash ./run_tests.sh
+
