@@ -43,10 +43,10 @@ EPSILON = 1e-10
 
 def projection_planar(verts_3D, m, d, perspective):
     """
-    Project the 3D verts onto a PLANAR screen
+    Project the 3D verts onto a PLANAR surface
      verts_3D : vertices to project (perspective or ortographic)
             m : transformation matrix of the projection plane (location & rotation)
-            d : distance between the projection point (focus) and the projection plane
+            d : distance between the projector point (focus) and the plane plane
     """
     ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection plane origin
     nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection plane normal
@@ -57,18 +57,18 @@ def projection_planar(verts_3D, m, d, perspective):
     focus_list = []
     for vert in verts_3D:
         x, y, z = vert
-        # vector relative to the plane origin (V-O)
+        # vertex vector relative to the projection point (OV = V - O)
         dx = x - ox
         dy = y - oy
         dz = z - oz
-        # magnitude of the vector projected parallel to the plane normal
-        an = dx * nx + dy * ny + dz * nz + EPSILON
-        # factor to scale the vector to touch the plane
-        s = d / (d + an)
+        # magnitude of the OV vector projected PARALLEL to the plane normal
+        l = dx * nx + dy * ny + dz * nz + EPSILON
+        # factor to scale the OV vector to touch the plane
+        s = d / (d + l)
         # extended vector touching the plane
-        px = ox + s * (dx - an * nx)
-        py = oy + s * (dy - an * ny)
-        pz = oz + s * (dz - an * nz)
+        px = ox + s * (dx - l * nx)
+        py = oy + s * (dy - l * ny)
+        pz = oz + s * (dz - l * nz)
 
         vert_list.append([px, py, pz])
 
@@ -96,19 +96,19 @@ def projection_cylindrical(verts_3D, m, d, perspective):
     focus_list = []
     for vert in verts_3D:
         x, y, z = vert
-        # vector relative to the cylinder origin (V-O)
+        # vertex vector relative to the center of the cylinder (OV = V - O)
         dx = x - ox
         dy = y - oy
         dz = z - oz
-        # magnitude of the vector projected parallel to the cylinder normal
+        # magnitude of the OV vector projected PARALLEL to the cylinder axis
         vn = dx * nx + dy * ny + dz * nz
-        # vector projected perpendicular to the cylinder normal
+        # vector OV projected PERPENDICULAR to the cylinder axis
         xn = dx - vn * nx
         yn = dy - vn * ny
         zn = dz - vn * nz
-        # magnitude of the perpendicular projection
+        # magnitude of the PERPENDICULAR projection
         r = sqrt(xn * xn + yn * yn + zn * zn) + EPSILON
-        # factor to scale the vector to touch the cylinder
+        # factor to scale the OV vector to touch the cylinder
         s = d / r
         # extended vector touching the cylinder
         xx = ox + dx * s
@@ -135,16 +135,18 @@ def projection_spherical(verts_3D, m, d, perspective):
     focus_list = []
     for vert in verts_3D:
         x, y, z = vert
-        # vector relative to the sphere origin (V-O)
+        # vertex vector relative to the sphere origin (OV = V - O)
         dx = x - ox
         dy = y - oy
         dz = z - oz
-
+        # magnitude of the OV vector
         r = sqrt(dx*dx + dy*dy + dz*dz) + EPSILON
-
-        xx = ox + dx * d/r
-        yy = oy + dy * d/r
-        zz = oz + dz * d/r
+        # factor to scale the OV vector to touch the sphere
+        s = d / r
+        # extended vector touching the sphere
+        xx = ox + dx * s
+        yy = oy + dy * s
+        zz = oz + dz * s
 
         vert_list.append([xx, yy, zz])
 
@@ -205,18 +207,9 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             return
 
-        if inputs["Edges"].is_linked:
-            input_e = inputs["Edges"].sv_get()
-        else:
-            input_e = [[]]
-
-        if inputs["Polys"].is_linked:
-            input_p = inputs["Polys"].sv_get()
-        else:
-            input_p = [[]]
-
+        input_e = inputs["Edges"].sv_get(default=[[]])
+        input_p = inputs["Polys"].sv_get(default=[[]])
         input_m = inputs["Matrix"].sv_get(default=id_mat)
-
         input_d = inputs["D"].sv_get()[0]
 
         params = match_long_repeat([input_v, input_e, input_p, input_m, input_d])
