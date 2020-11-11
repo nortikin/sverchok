@@ -60,5 +60,5 @@ jobs:
       run: |
         bash ./run_tests.sh
       env:
-        BLENDER: ${PWD}/installation/blender/blender-softwaregl
+        BLENDER: ./installation/blender/blender-softwaregl
 
