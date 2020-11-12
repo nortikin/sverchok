@@ -80,6 +80,12 @@ supported_metrics = [
         ('CENTRIPETAL', "Centripetal", "Centripetal distance - square root of Euclidian distance", 4)
     ]
 
+xyz_metrics = [
+        ('X', "X Axis", "Distance along X axis", 5),
+        ('Y', "Y Axis", "Distance along Y axis", 6),
+        ('Z', "Z Axis", "Distance along Z axis", 7)
+    ]
+
 def smooth(x):
     return 3*x*x - 2*x*x*x
 
