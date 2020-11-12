@@ -140,18 +140,18 @@ def projection_planar(verts_3D, m, d, perspective):
         dx = x - ox
         dy = y - oy
         dz = z - oz
-        # magnitude of the OV vector projected PARALLEL to the plane normal
+        # magnitude of the OV vector projected PARALLEL to the plane normal (OV * N)
         l = dx * nx + dy * ny + dz * nz + EPSILON
         # factor to scale the OV vector to touch the plane
         s = d / (d + l)
         # extended vector touching the plane
-        px = ox + s * (dx - l * nx)
-        py = oy + s * (dy - l * ny)
-        pz = oz + s * (dz - l * nz)
+        px = ox - dx + l * nx
+        py = oy - dy + l * ny
+        pz = oz - dz + l * nz
 
         vert_list.append([px, py, pz])
 
-    focus_list = [[ox - d * nx, o   y - d * ny, oz - d * nz]]
+    focus_list = [[ox - d * nx, oy - d * ny, oz - d * nz]]
 
     return vert_list, focus_list
 
@@ -177,7 +177,7 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
         self.width = 180
         self.inputs.new('SvVerticesSocket', "Verts")
         self.inputs.new('SvStringsSocket', "Edges")
-        self.inputs.new('SvStringsSocket', "Polys")
+        self.inputs.new('SvStringsSocket', "Faces")
         # projection screen location and orientation
         self.inputs.new('SvMatrixSocket', "Matrix")
         # distance from the projection point to the projection screen
@@ -185,8 +185,8 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs.new('SvVerticesSocket', "Verts")
         self.outputs.new('SvStringsSocket', "Edges")
-        self.outputs.new('SvStringsSocket', "Polys")
-        self.outputs.new('SvVerticesSocket', "Focus")
+        self.outputs.new('SvStringsSocket', "Faces")
+        self.outputs.new('SvVerticesSocket', "Projector")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "projection_screen", text="")
@@ -209,7 +209,7 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         input_e = inputs["Edges"].sv_get(default=[[]])
-        input_p = inputs["Polys"].sv_get(default=[[]])
+        input_p = inputs["Faces"].sv_get(default=[[]])
         input_m = inputs["Matrix"].sv_get(default=id_mat)
         input_d = inputs["D"].sv_get()[0]
 
@@ -226,23 +226,23 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
 
         vert_list = []
         edge_list = []
-        poly_list = []
+        face_list = []
         focus_list = []
         for v, e, p, m, d in zip(*params):
             verts, focus = projector(v, m, d, perspective)
             vert_list.append(verts)
             edge_list.append(e)
-            poly_list.append(p)
+            face_list.append(p)
             focus_list.append(focus)
 
         if outputs["Verts"].is_linked:
             outputs["Verts"].sv_set(vert_list)
         if outputs["Edges"].is_linked:
             outputs["Edges"].sv_set(edge_list)
-        if outputs["Polys"].is_linked:
-            outputs["Polys"].sv_set(poly_list)
-        if outputs["Focus"].is_linked:
-            outputs["Focus"].sv_set(focus_list)
+        if outputs["Faces"].is_linked:
+            outputs["Faces"].sv_set(face_list)
+        if outputs["Projector"].is_linked:
+            outputs["Projector"].sv_set(focus_list)
 
 
 def register():
