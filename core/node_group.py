@@ -82,18 +82,29 @@ class SvGroupTree(bpy.types.NodeTree):
         return not shared_trees
 
     def update(self):
-        """trigger on links or nodes collections changes"""
+        """trigger on links or nodes collections changes, on assigning tree to a group node"""
         # When group input or output nodes are connected some extra work should be done
         self.check_last_socket()  # Should not be too expensive to call it each update
 
         if self.skip_tree_update:
             return
-        if not bpy.data.node_groups:  # load new file event
+        if self.name not in bpy.data.node_groups:  # load new file event
+            return
+        if not hasattr(bpy.context.space_data, 'path'):  # 3D panel also can call update method O_o
+            return
+
+        group_node = None
+        # update tree can lead to calling update of previous tree too, so should find position tree in the path
+        for i, path in zip(range(-1, -1000, -1), reversed(bpy.context.space_data.path)):
+            if path.node_tree == self:
+                group_node = bpy.context.space_data.path[i - 1].node_tree.nodes[self.group_node_name]
+                break
+        if group_node is None:
+            # the tree was assigned to a group node, it does not have sense to update
             return
 
         self.check_reroutes_sockets()
         self.update_sockets()  # probably more precise trigger could be found for calling this method
-        group_node = bpy.context.space_data.path[-2].node_tree.nodes[self.group_node_name]
         self.handler.send(GroupEvent(GroupEvent.GROUP_TREE_UPDATE, group_node, updated_tree=self.name))
         self.color_nodes(self.handler.get_error_nodes(group_node))
 
@@ -181,7 +192,7 @@ class SvGroupTree(bpy.types.NodeTree):
         # todo optimisation?
         for tree in (t for t in bpy.data.node_groups if t.bl_idname in {'SverchCustomTreeType', 'SvGroupTree'}):
             for node in tree.nodes:
-                if hasattr(node, 'node_tree') and node.node_tree.name == self.name:
+                if hasattr(node, 'node_tree') and node.node_tree and node.node_tree.name == self.name:
                     yield node
 
     def color_nodes(self, nodes_errors: Iterator[Optional[Exception]]):
@@ -469,19 +480,20 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
             return {'CANCELLED'}
         sub_tree: SvGroupTree = bpy.data.node_groups.new('Sverchok group', SvGroupTree.bl_idname)
 
+        # deselect group nodes if selected
+        [setattr(n, 'select', False) for n in base_tree.nodes
+         if n.select and n.bl_idname in {'NodeGroupInput', 'NodeGroupOutput'}]
+
+        # Frames can't be just copied because they does not have absolute location, but they can be recreated
+        frame_names = {n.name for n in base_tree.nodes if n.select and n.bl_idname == 'NodeFrame'}
+        [setattr(n, 'select', False) for n in base_tree.nodes if n.bl_idname == 'NodeFrame']
+
         with base_tree.throttle_update(), sub_tree.throttle_update():
-            # deselect group nodes if selected
-            [setattr(n, 'select', False) for n in base_tree.nodes
-             if n.select and n.bl_idname in {'NodeGroupInput', 'NodeGroupOutput'}]
-
-            # Frames can't be just copied because they does not have absolute location, but they can be recreated
-            frame_names = {n.name for n in base_tree.nodes if n.select and n.bl_idname == 'NodeFrame'}
-            [setattr(n, 'select', False) for n in base_tree.nodes if n.bl_idname == 'NodeFrame']
-
             # copy and past nodes into group tree
             bpy.ops.node.clipboard_copy()
             context.space_data.path.append(sub_tree)
             bpy.ops.node.clipboard_paste()
+            context.space_data.path.pop()  # will enter later via operator
 
             # move nodes in tree center
             sub_tree_nodes = self.filter_selected_nodes(sub_tree)
@@ -545,6 +557,7 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
              if n.name in frame_names and n.name not in with_children_frames]
 
         base_tree.update()
+        bpy.ops.node.edit_group_tree({'node': group_node})
 
         return {'FINISHED'}
 
@@ -712,6 +725,7 @@ class EditGroupTree(bpy.types.Operator):
         sub_tree.group_node_name = group_node.name
         sub_tree.color_nodes(sub_tree.handler.get_error_nodes(group_node))
         # todo make protection from editing the same trees in more then one area
+        # todo update debuger nodes
         return {'FINISHED'}
 
 
@@ -813,7 +827,16 @@ class NodeGroupInput(BaseInOutNodes, BaseNode):
 class NodeReroute(BaseNode):
     # `copy` attribute can't be overridden for this class
     def process(self):
-        self.outputs[0].sv_set(self.inputs[0].sv_get(deepcopy=False))
+        try:
+            self.outputs[0].sv_set(self.inputs[0].sv_get(deepcopy=False))
+        except AttributeError:
+            pass  # in main tree reroutes still have color sockets
+
+
+@extend_blender_class
+class NodeFrame(BaseNode):
+    # for API consistency, it's much simpler way then create extra conditions everywhere
+    pass
 
 
 register, unregister = bpy.utils.register_classes_factory(classes)

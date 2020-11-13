@@ -29,16 +29,16 @@ if TYPE_CHECKING:
 
 
 class MainHandler:
-    def __init__(self):
-        self.handlers = group_node_update(group_tree_update(nodes_update()))
-
-    def send(self, event: GroupEvent):
+    @staticmethod
+    def send(event: GroupEvent):
+        # It can't be put into `init` method because group tree can have nested sub trees which also should be updated
+        handlers = group_node_update(group_tree_update(nodes_update()))
 
         # handler should override this if if output node was changed indeed
         # but not when update call was created by paren tree
         event.output_was_changed = False
 
-        self.handlers.send(event)
+        handlers.send(event)
         if event.output_was_changed:
             pass_running(event.bl_tree)
 
@@ -100,7 +100,9 @@ class ContextTree(Tree):
 
     @classmethod
     def get_statistic(cls, bl_tree: SvGroupTree, group_node: SvGroupTreeNode) -> Iterator[NodeStatistic]:
-        tree = cls._trees.get(bl_tree.tree_id)
+        # saved tree can't be used here because it can contain outdated nodes (especially node.index attribute)
+        # so called tree should be recreated, it should be done because node_id is dependent on tree topology
+        tree = Tree(bl_tree)
         if tree is None:
             return
         for bl_n in bl_tree.nodes:
@@ -137,18 +139,16 @@ class ContextTree(Tree):
         format of new nodes ID -> "group_node_id.node_id" ("group_node_id." is replaceable part unlike "node_id")
         but nodes which is not connected with input should not change their ID
         because the result of their process method will be constant between different group nodes
+
+        group_node_id also can consist several paths -> "base_group_id.current_group_id"
+        in case when the group is inside another group
+        max length of path should be no more then number of base trees of most nested group node + 1
         """
-        parsed_id = node.bl_tween.node_id.split('.')
-        if len(parsed_id) > 2:
-            raise TypeError(
-                f'Node has wrong format of node_di "{node.bl_tween.node_id}" expecting "tree_id.group_node_id" '
-                f'in NODE "{node.bl_tween.name}" of TREE "{node.bl_tween.id_data.name}" '
-                f'of GROUP NODE "{group_node.name}"')
-        constant_id = parsed_id[-1]
+        *previous_group_node_id, node_id = node.bl_tween.node_id.rsplit('.', 1)
         if node.bl_tween.bl_idname not in OUT_ID_NAMES and node.is_input_linked:
-            return group_node.node_id + '.' + constant_id
+            return group_node.node_id + '.' + node_id
         else:
-            return constant_id
+            return node_id
 
 
 def coroutine(f):  # todo find appropriate module
@@ -257,7 +257,7 @@ def pass_running(from_tree: SvGroupTree):
     thous nodes also should be update only if output data was changed
 
     this function can't be called from generator chain otherwise if in parent tree there is another group node
-    it will raise "ValueError: generator already executing"
+    it will raise "ValueError: generator already executing" <- outdated, now it possible to call
     """
     trees_to_nodes: Dict[SvTree, List[SvGroupTreeNode]] = defaultdict(list)
     for node in from_tree.parent_nodes():
