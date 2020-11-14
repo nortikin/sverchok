@@ -80,11 +80,10 @@ class SvPopulateSolidNode(bpy.types.Node, SverchCustomTreeNode):
             min = 0.0,
             update = updateNode)
 
-    tolerance: FloatProperty(
-        name="Tolerance",
-        default=1e-5,
-        min=1e-6,
-        precision=4,
+    accuracy: IntProperty(
+        name="Accuracy",
+        default=5,
+        min=1,
         update=updateNode)
 
     in_surface: BoolProperty(
@@ -96,7 +95,7 @@ class SvPopulateSolidNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "gen_mode", text='Mode')
         layout.prop(self, "proportional", toggle=True)
-        layout.prop(self, "tolerance")
+        layout.prop(self, "accuracy")
         if self.gen_mode == 'VOLUME':
             layout.prop(self, "in_surface")
 
@@ -111,10 +110,13 @@ class SvPopulateSolidNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', 'Seed').prop_name = 'seed'
         self.outputs.new('SvVerticesSocket', "Vertices")
 
+    def get_tolerance(self):
+        return 10**(-self.accuracy)
+
     def generate_volume(self, solid, field, count, min_r, threshold, field_min, field_max, seed):
         def check(vert):
             point = Base.Vector(vert)
-            return solid.isInside(point, self.tolerance, self.in_surface)
+            return solid.isInside(point, self.get_tolerance(), self.in_surface)
 
         box = solid.BoundBox
         bbox = ((box.XMin, box.YMin, box.ZMin), (box.XMax, box.YMax, box.ZMax))
@@ -135,7 +137,7 @@ class SvPopulateSolidNode(bpy.types.Node, SverchCustomTreeNode):
         for face, cnt in zip(solid.Faces, counts):
             def check(uv, vert):
                 point = Base.Vector(vert)
-                return face.isInside(point, self.tolerance, True)
+                return face.isInside(point, self.get_tolerance(), True)
 
             surface = SvSolidFaceSurface(face)
 

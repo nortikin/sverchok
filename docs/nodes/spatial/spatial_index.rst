@@ -11,3 +11,5 @@ Spatial
    random_points_on_mesh
    homogenous_vector_field
    field_random_probe
+   populate_solid
+   populate_surface
