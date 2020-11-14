@@ -15,11 +15,6 @@ Modifier Make
    adaptive_polygons_mk2
    solidify
    uv_connect
-   voronoi_2d
-   delaunay_2d
-   voronoi3d
-   delaunay3d
-   voronoi_sphere
    wafel
    join_tris
    framework
@@ -32,7 +27,5 @@ Modifier Make
    dual_mesh
    diamond_mesh
    clip_verts
-   random_points_on_mesh
-   delaunay_2d_cdt
    sweep_modulator
    csg_booleanMK2

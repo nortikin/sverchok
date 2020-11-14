@@ -11,6 +11,7 @@ Nodes
    Surfaces<nodes/surface/surface_index>
    Fields<nodes/field/field_index>
    Solids<nodes/solid/solid_index>
+   Spatial <nodes/spatial/spatial_index>
    Transforms <nodes/transforms/transforms_index>
    Analyzers <nodes/analyzer/analyzer_index>
    Modifier Change <nodes/modifier_change/modifier_change_index>
