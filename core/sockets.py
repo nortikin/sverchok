@@ -32,7 +32,7 @@ from sverchok.data_structure import (
     socket_id,
     replace_socket,
     SIMPLE_DATA_TYPES,
-    flatten_data, graft_data, map_at_level, wrap_data)
+    flatten_data, graft_data, map_at_level, wrap_data, unwrap_data)
 
 from sverchok.settings import get_params
 
@@ -73,6 +73,7 @@ class SvSocketProcessing(object):
     allow_flatten : BoolProperty(default = False)
     allow_simplify : BoolProperty(default = False)
     allow_graft : BoolProperty(default = False)
+    allow_unwrap : BoolProperty(default = False)
     allow_wrap : BoolProperty(default = False)
 
     # technical property
@@ -80,6 +81,11 @@ class SvSocketProcessing(object):
 
     use_graft : BoolProperty(
             name = "Graft",
+            default = False,
+            update = process_from_socket)
+
+    use_unwrap : BoolProperty(
+            name = "Unwrap",
             default = False,
             update = process_from_socket)
 
@@ -135,6 +141,8 @@ class SvSocketProcessing(object):
             flags.append('S')
         if self.use_graft:
             flags.append('G')
+        if self.use_unwrap:
+            flags.append('U')
         if self.use_wrap:
             flags.append('W')
         return flags
@@ -147,6 +155,9 @@ class SvSocketProcessing(object):
 
     def can_graft(self):
         return hasattr(self, 'do_graft') and (self.is_output or self.allow_graft)
+
+    def can_unwrap(self):
+        return self.is_output or self.allow_unwrap
 
     def can_wrap(self):
         return self.is_output or self.allow_wrap
@@ -165,6 +176,8 @@ class SvSocketProcessing(object):
             result = self.do_simplify(data)
         if self.use_graft:
             result = self.do_graft(result)
+        if self.use_unwrap:
+            result = unwrap_data(result, socket=self)
         if self.use_wrap:
             result = wrap_data(result)
         return result
@@ -177,6 +190,8 @@ class SvSocketProcessing(object):
             result = self.do_simplify(data)
         if self.use_graft:
             result = self.do_graft(result)
+        if self.use_unwrap:
+            result = unwrap_data(result, socket=self)
         if self.use_wrap:
             result = wrap_data(result)
         return result
@@ -196,6 +211,8 @@ class SvSocketProcessing(object):
         self.draw_simplify_modes(layout)
         if self.can_graft():
             layout.prop(self, 'use_graft')
+        if self.can_unwrap():
+            layout.prop(self, 'use_unwrap')
         if self.can_wrap():
             layout.prop(self, 'use_wrap')
 
@@ -818,6 +835,8 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
             layout.prop(self, 'use_graft')
             if not self.use_flatten:
                 layout.prop(self, 'use_graft_2')
+        if self.can_unwrap():
+            layout.prop(self, 'use_unwrap')
         if self.can_wrap():
             layout.prop(self, 'use_wrap')
 
@@ -849,6 +868,8 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
             result = self.do_graft(result)
         elif not self.use_flatten and self.use_graft_2:
             result = self.do_graft_2(result)
+        if self.use_unwrap:
+            result = unwrap_data(result, socket=self)
         if self.use_wrap:
             result = wrap_data(result)
         return result
@@ -863,6 +884,8 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
             result = self.do_graft(result)
         elif self.use_graft_2:
             result = self.do_graft_2(result)
+        if self.use_unwrap:
+            result = unwrap_data(result, socket=self)
         if self.use_wrap:
             result = wrap_data(result)
         return result
