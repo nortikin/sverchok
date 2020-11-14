@@ -311,6 +311,18 @@
     SvSelectSimilarNode
     SvChessSelection
 
+## Spatial
+    DelaunayTriangulation2DNode
+    SvDelaunay2DCdt
+    Voronoi2DNode
+    SvExVoronoi3DNode
+    SvExDelaunay3DNode
+    SvExVoronoiSphereNode
+    SvRandomPointsOnMesh
+    SvFieldRandomProbeMk2Node
+    SvPopulateSurfaceNode
+    SvHomogenousVectorField
+
 ## Transforms
     SvMoveNodeMk3
     SvRotationNodeMk3
@@ -370,15 +382,8 @@
     ---
     SvConvexHullNodeMK2
     SvSubdivideNodeMK2
-    DelaunayTriangulation2DNode
-    SvDelaunay2DCdt
-    Voronoi2DNode
     SvOffsetLineNode
-    SvExVoronoi3DNode
-    SvExDelaunay3DNode
-    SvExVoronoiSphereNode
     SvContourNode
-    SvRandomPointsOnMesh
     ---
     SvDualMeshNode
     SvDiamondMeshNode
@@ -503,9 +508,6 @@
     SvInterpolationNodeMK3
     SvInterpolationNodeMK2
     ---
-    SvHomogenousVectorField
-    SvFieldRandomProbeMk2Node
-    SvPopulateSurfaceNode
     SvNoiseNodeMK2
     SvTurbulenceNode
     SvLacunarityNode
