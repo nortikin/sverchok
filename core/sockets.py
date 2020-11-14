@@ -78,21 +78,50 @@ class SvSocketProcessing(object):
 
     # technical property
     skip_simplify_mode_update: BoolProperty(default=False)
+    skip_wrap_mode_update: BoolProperty(default=False)
 
     use_graft : BoolProperty(
             name = "Graft",
             default = False,
             update = process_from_socket)
 
+    def update_unwrap_flag(self, context):
+        if self.skip_wrap_mode_update:
+            return
+
+        with self.node.sv_throttle_tree_update():
+            try:
+                self.skip_wrap_mode_update = True
+                if self.use_unwrap:
+                    self.use_wrap = False
+            finally:
+                self.skip_wrap_mode_update = False
+                
+        process_from_socket(self, context)
+
+    def update_wrap_flag(self, context):
+        if self.skip_wrap_mode_update:
+            return
+
+        with self.node.sv_throttle_tree_update():
+            try:
+                self.skip_wrap_mode_update = True
+                if self.use_wrap:
+                    self.use_unwrap = False
+            finally:
+                self.skip_wrap_mode_update = False
+                
+        process_from_socket(self, context)
+
     use_unwrap : BoolProperty(
             name = "Unwrap",
             default = False,
-            update = process_from_socket)
+            update = update_unwrap_flag)
 
     use_wrap : BoolProperty(
             name = "Wrap",
             default = False,
-            update = process_from_socket)
+            update = update_wrap_flag)
 
     def update_flatten_flag(self, context):
         if self.skip_simplify_mode_update:
