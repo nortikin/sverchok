@@ -876,6 +876,25 @@ class Bounds(object):
     def __repr__(self):
         return f"Bounds[C: {self.center}, R: {self.r_max}, X: {self.x_min} - {self.x_max}, Y: {self.y_min} - {self.y_max}]"
 
+    def restrict(self, point):
+        raise Exception("not implemented")
+
+    def init_from_sites(self, sites):
+        self.x_max = -BIG_FLOAT
+        self.x_min = BIG_FLOAT
+        self.y_min = BIG_FLOAT
+        self.y_max = -BIG_FLOAT
+        x0, y0, z0 = center(sites)
+        self.center = (x0, y0)
+        # creates points in format for voronoi library, throwing away z
+        for x, y, z in sites:
+            r = sqrt((x-x0)**2 + (y-y0)**2)
+            self.r_max = max(r, self.r_max)
+            self.x_max = max(x, self.x_max)
+            self.x_min = min(x, self.x_min)
+            self.y_max = max(y, self.y_max)
+            self.y_min = min(y, self.y_min)
+
 class Mesh2D(object):
     def __init__(self):
         self.verts = []
@@ -1002,6 +1021,16 @@ class BoxBounds(Bounds):
                     result.append(intersection)
         return result
 
+    def restrict(self, point):
+        def chop(t, m, M):
+            return min(max(t, m), M)
+
+        x, y, z = tuple(point)
+        x = chop(x, self.x_min, self.x_max)
+        y = chop(y, self.y_min, self.y_max)
+
+        return x,y,z
+
 class CircleBounds(Bounds):
 
     @property
@@ -1041,24 +1070,21 @@ class CircleBounds(Bounds):
         intersection = self.circle.intersect_with_line(line)
         return intersection
 
+    def restrict(self, point):
+        pt2d = (point[0], point[1])
+        if self.contains(pt2d):
+            return point
+        else:
+            v = self.circle.projection_of_point(Vector(pt2d), nearest=True)
+            x,y = tuple(v)
+            return x,y,0
+
 def voronoi_bounded(sites, bound_mode='BOX', clip=True, draw_bounds=True, draw_hangs=False, make_faces=False, max_sides=10):
 
     bounds = Bounds.new(bound_mode)
+    bounds.init_from_sites(sites)
     source_sites = []
-    bounds.x_max = -BIG_FLOAT
-    bounds.x_min = BIG_FLOAT
-    bounds.y_min = BIG_FLOAT
-    bounds.y_max = -BIG_FLOAT
-    x0, y0, z0 = center(sites)
-    bounds.center = (x0, y0)
-    # creates points in format for voronoi library, throwing away z
     for x, y, z in sites:
-        r = sqrt((x-x0)**2 + (y-y0)**2)
-        bounds.r_max = max(r, bounds.r_max)
-        bounds.x_max = max(x, bounds.x_max)
-        bounds.x_min = min(x, bounds.x_min)
-        bounds.y_max = max(y, bounds.y_max)
-        bounds.y_min = min(y, bounds.y_min)
         source_sites.append(Site(x, y))
 
     delta = clip

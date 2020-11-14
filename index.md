@@ -318,6 +318,7 @@
     SvExVoronoi3DNode
     SvExDelaunay3DNode
     SvExVoronoiSphereNode
+    SvLloyd2dNode
     SvRandomPointsOnMesh
     SvFieldRandomProbeMk2Node
     SvPopulateSurfaceNode
