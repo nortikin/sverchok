@@ -2154,3 +2154,14 @@ def rotate_vector_around_vector_np(v, k, theta):
     s3 = p1 * p2 * k
     return s1 + s2 + s3
 
+def calc_bounds(vertices, allowance=0):
+    x_min = min(v[0] for v in vertices)
+    y_min = min(v[1] for v in vertices)
+    z_min = min(v[2] for v in vertices)
+    x_max = max(v[0] for v in vertices)
+    y_max = max(v[1] for v in vertices)
+    z_max = max(v[2] for v in vertices)
+    return (x_min - allowance, x_max + allowance,
+            y_min - allowance, y_max + allowance,
+            z_min - allowance, z_max + allowance)
+

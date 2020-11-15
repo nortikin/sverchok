@@ -772,3 +772,33 @@ def wave_markup_verts(bm, init_vert_mask, neighbour_by_edge = True, find_shortes
         wave_front = new_wave_front
 
     return [vert[index] for vert in bm.verts]
+
+def bmesh_bisect(bm, point, normal, fill):
+    bm.normal_update()
+    geom_in = bm.verts[:] + bm.edges[:] + bm.faces[:]
+    res = bmesh.ops.bisect_plane(
+        bm, geom=geom_in, dist=0.00001,
+        plane_co=point, plane_no=normal, use_snap_center=False,
+        clear_outer=True, clear_inner=False)
+    if fill:
+        fres = bmesh.ops.edgenet_prepare(
+            bm, edges=[e for e in res['geom_cut'] if isinstance(e, bmesh.types.BMEdge)]
+        )
+        bmesh.ops.edgeloop_fill(bm, edges=fres['edges'])
+    bm.verts.index_update()
+    bm.edges.index_update()
+    bm.faces.index_update()
+    return bm
+
+def bmesh_clip(bm, bounds, fill):
+    x_min, x_max, y_min, y_max, z_min, z_max = bounds
+
+    bmesh_bisect(bm, (x_min, 0, 0), (-1, 0, 0), fill)
+    bmesh_bisect(bm, (x_max, 0, 0), (1, 0, 0), fill)
+    bmesh_bisect(bm, (0, y_min, 0), (0, -1, 0), fill)
+    bmesh_bisect(bm, (0, y_max, 0), (0, 1, 0), fill)
+    bmesh_bisect(bm, (0, 0, z_min), (0, 0, -1), fill)
+    bmesh_bisect(bm, (0, 0, z_max), (0, 0, 1), fill)
+
+    return bm
+

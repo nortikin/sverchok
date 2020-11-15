@@ -948,7 +948,7 @@ class Mesh2D(object):
             i1 = lut.get(v1, None)
             i2 = lut.get(v2, None)
             #info("Get: %s (%s) => %s (%s)", v1, i1, v2, i2)
-            if i1 is not None and i2 is not None:
+            if i1 is not None and i2 is not None and i1 != i2:
                 edges.append((i1, i2))
 
         return verts, edges
@@ -1159,7 +1159,7 @@ def voronoi_bounded(sites, bound_mode='BOX', clip=True, draw_bounds=True, draw_h
     if draw_hangs or draw_bounds:
         sites_by_line = defaultdict(list)
 
-        for site_idx in sorted(voronoi_data.polygons.keys()):
+        for site_idx in voronoi_data.polygons.keys():
             for line_index, i1, i2 in voronoi_data.polygons[site_idx]:
                 if i1 == -1 or i2 == -1:
                     site = source_sites[site_idx]
@@ -1238,6 +1238,9 @@ def voronoi_bounded(sites, bound_mode='BOX', clip=True, draw_bounds=True, draw_h
     new_vertices = [(vert[0], vert[1], 0) for vert in verts]
 
     if make_faces:
+        for i,j in edges:
+            if i==j:
+                print(i,j)
         bm = bmesh_from_pydata(new_vertices, edges, [])
         bmesh.ops.holes_fill(bm, edges=bm.edges[:], sides=max_sides)
         new_vertices, edges, new_faces = pydata_from_bmesh(bm)
