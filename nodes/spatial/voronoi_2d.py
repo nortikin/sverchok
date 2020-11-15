@@ -109,7 +109,8 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
-        layout.prop(self, 'ordered_faces')
+        if self.make_faces:
+            layout.prop(self, 'ordered_faces')
 
     def process(self):
 
