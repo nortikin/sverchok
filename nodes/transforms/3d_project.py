@@ -143,15 +143,15 @@ def projection_planar(verts_3D, m, d, perspective):
         # magnitude of the OV vector projected PARALLEL to the plane normal (OV * N)
         l = dx * nx + dy * ny + dz * nz + EPSILON
         # factor to scale the OV vector to touch the plane
-        s = d / (d + l)
+        s = d / l
         # extended vector touching the plane
-        px = ox - dx + l * nx
-        py = oy - dy + l * ny
-        pz = oz - dz + l * nz
+        px = ox + dx * s
+        py = oy + dy * s
+        pz = oz + dz * s
 
         vert_list.append([px, py, pz])
 
-    focus_list = [[ox - d * nx, oy - d * ny, oz - d * nz]]
+    focus_list = [[ox, oy, oz]]
 
     return vert_list, focus_list
 
