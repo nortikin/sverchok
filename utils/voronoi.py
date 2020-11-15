@@ -111,6 +111,7 @@ from collections import defaultdict
 import bmesh
 from mathutils import Vector
 from mathutils.geometry import intersect_line_line_2d
+from mathutils.bvhtree import BVHTree
 
 from sverchok.utils.logging import debug, info, error
 from sverchok.utils.geom import center, LineEquation2D, CircleEquation2D
@@ -1079,7 +1080,7 @@ class CircleBounds(Bounds):
             x,y = tuple(v)
             return x,y,0
 
-def voronoi_bounded(sites, bound_mode='BOX', clip=True, draw_bounds=True, draw_hangs=False, make_faces=False, max_sides=10):
+def voronoi_bounded(sites, bound_mode='BOX', clip=True, draw_bounds=True, draw_hangs=False, make_faces=False, ordered_faces=False, max_sides=10):
 
     bounds = Bounds.new(bound_mode)
     bounds.init_from_sites(sites)
@@ -1138,7 +1139,7 @@ def voronoi_bounded(sites, bound_mode='BOX', clip=True, draw_bounds=True, draw_h
     if draw_hangs or draw_bounds:
         sites_by_line = defaultdict(list)
 
-        for site_idx in voronoi_data.polygons.keys():
+        for site_idx in sorted(voronoi_data.polygons.keys()):
             for line_index, i1, i2 in voronoi_data.polygons[site_idx]:
                 if i1 == -1 or i2 == -1:
                     site = source_sites[site_idx]
@@ -1221,6 +1222,14 @@ def voronoi_bounded(sites, bound_mode='BOX', clip=True, draw_bounds=True, draw_h
         bmesh.ops.holes_fill(bm, edges=bm.edges[:], sides=max_sides)
         new_vertices, edges, new_faces = pydata_from_bmesh(bm)
         bm.free()
+        if ordered_faces:
+            bvh = BVHTree.FromPolygons(new_vertices, new_faces)
+            face_by_site = dict()
+            for site_idx, site in enumerate(sites):
+                loc, normal, index, distance = bvh.find_nearest(site)
+                if index is not None:
+                    face_by_site[site_idx] = index
+            new_faces = [new_faces[face_by_site[i]] for i in range(len(sites))]
     else:
         new_faces = []
 

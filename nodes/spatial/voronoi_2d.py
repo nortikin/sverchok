@@ -78,6 +78,12 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
         default = False,
         update = update_sockets)
 
+    ordered_faces : BoolProperty(
+        name = "Ordered faces",
+        description = "Make sure that faces are generated in the same order as corresponding input vertices",
+        default = False,
+        update = updateNode)
+
     max_sides: IntProperty(
         name='Sides',
         description='Maximum number of polygon sides',
@@ -100,6 +106,10 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, "draw_hangs")
         layout.prop(self, "clip", text="Clipping")
         layout.prop(self, "make_faces")
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'ordered_faces')
 
     def process(self):
 
@@ -128,6 +138,7 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
                         draw_bounds = self.draw_bounds,
                         draw_hangs = self.draw_hangs,
                         make_faces = self.make_faces,
+                        ordered_faces = self.ordered_faces,
                         max_sides = max_sides)
 
             pts_out.append(new_vertices)

@@ -57,6 +57,9 @@ class SvLloyd2dNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "clip", text="Clipping")
 
     def lloyd2d(self, verts, n_iterations):
+        bounds = Bounds.new(self.bound_mode)
+        bounds.init_from_sites(verts)
+        
         def iteration(pts):
             voronoi_verts, _, voronoi_faces = voronoi_bounded(pts,
                         bound_mode = self.bound_mode,
@@ -64,6 +67,7 @@ class SvLloyd2dNode(bpy.types.Node, SverchCustomTreeNode):
                         draw_bounds = True,
                         draw_hangs = True,
                         make_faces = True,
+                        ordered_faces = True,
                         max_sides = 10)
             centers = []
             for face in voronoi_faces:
@@ -72,9 +76,6 @@ class SvLloyd2dNode(bpy.types.Node, SverchCustomTreeNode):
                 centers.append(new_pt)
             return centers
 
-        bounds = Bounds.new(self.bound_mode)
-        bounds.init_from_sites(verts)
-        
         def restrict(pts):
             return [bounds.restrict(pt) for pt in pts]
 
