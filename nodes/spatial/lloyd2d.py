@@ -59,9 +59,23 @@ class SvLloyd2dNode(bpy.types.Node, SverchCustomTreeNode):
     def lloyd2d(self, verts, n_iterations):
         bounds = Bounds.new(self.bound_mode)
         bounds.init_from_sites(verts)
+
+        def invert_points(pts):
+            result = []
+            for pt in pts:
+                pt2d = x0,y0 = (pt[0], pt[1])
+                if bounds.contains(pt2d):
+                    x1,y1,z1 = bounds.project(pt)
+                    x2 = x0 + 2*(x1-x0)
+                    y2 = y0 + 2*(y1-y0)
+                    out_pt = (x2, y2, z1)
+                    result.append(out_pt)
+            return result
         
         def iteration(pts):
-            voronoi_verts, _, voronoi_faces = voronoi_bounded(pts,
+            n = len(pts)
+            all_pts = pts + invert_points(pts)
+            voronoi_verts, _, voronoi_faces = voronoi_bounded(all_pts,
                         bound_mode = self.bound_mode,
                         clip = self.clip,
                         draw_bounds = True,
@@ -70,7 +84,7 @@ class SvLloyd2dNode(bpy.types.Node, SverchCustomTreeNode):
                         ordered_faces = True,
                         max_sides = 10)
             centers = []
-            for face in voronoi_faces:
+            for face in voronoi_faces[:n]:
                 face_verts = [voronoi_verts[i] for i in face]
                 new_pt = center(face_verts)
                 centers.append(new_pt)
@@ -79,7 +93,6 @@ class SvLloyd2dNode(bpy.types.Node, SverchCustomTreeNode):
         def restrict(pts):
             return [bounds.restrict(pt) for pt in pts]
 
-        #verts = [(x,y) for x,y,_ in verts]
         points = restrict(verts)
         for i in range(n_iterations):
             points = iteration(points)

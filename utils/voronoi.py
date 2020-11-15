@@ -1032,6 +1032,20 @@ class BoxBounds(Bounds):
 
         return x,y,z
 
+    def project(self, point):
+        x, y, z = tuple(point)
+        mid_x = 0.5*(self.x_min + self.x_max)
+        mid_y = 0.5*(self.y_min + self.y_max)
+        if x > mid_x:
+            x = self.x_max
+        else:
+            x = self.x_min
+        if y > mid_y:
+            y = self.y_max
+        else:
+            y = self.y_min
+        return x, y, z
+
 class CircleBounds(Bounds):
 
     @property
@@ -1079,6 +1093,12 @@ class CircleBounds(Bounds):
             v = self.circle.projection_of_point(Vector(pt2d), nearest=True)
             x,y = tuple(v)
             return x,y,0
+
+    def project(self, point):
+        pt2d = (point[0], point[1])
+        v = self.circle.projection_of_point(Vector(pt2d), nearest=True)
+        x,y = tuple(v)
+        return x,y,0
 
 def voronoi_bounded(sites, bound_mode='BOX', clip=True, draw_bounds=True, draw_hangs=False, make_faces=False, ordered_faces=False, max_sides=10):
 
