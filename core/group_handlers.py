@@ -15,9 +15,12 @@ from __future__ import annotations
 import traceback
 from collections import defaultdict
 from contextlib import contextmanager
-from functools import wraps
+from functools import wraps, partial
 from typing import Generator, Dict, TYPE_CHECKING, Union, List, NamedTuple, Optional, Iterator
 
+import bpy
+
+from sverchok.data_structure import post_load_call
 from sverchok.core.events import GroupEvent
 from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.logging import debug
@@ -29,24 +32,58 @@ if TYPE_CHECKING:
 
 
 class MainHandler:
-    @staticmethod
-    def send(event: GroupEvent):
-        # It can't be put into `init` method because group tree can have nested sub trees which also should be updated
-        handlers = group_node_update(group_tree_update(nodes_update()))
+    _events: List[GroupEvent] = []
 
-        # handler should override this if if output node was changed indeed
-        # but not when update call was created by paren tree
-        event.output_was_changed = False
-
-        handlers.send(event)
-        if event.output_was_changed:
-            pass_running(event.bl_tree)
+    @classmethod
+    def send(cls, event: GroupEvent):
+        if event.type == event.GROUP_NODE_UPDATE:
+            cls._get_handler().send(event)
+        else:
+            cls._events.append(event)
 
     @staticmethod
     def get_error_nodes(group_node: SvGroupTreeNode) -> Iterator[Optional[Exception]]:
         """Return map of bool values to group tree nodes where node has error if value is True"""
         for stat in ContextTree.get_statistic(group_node.node_tree, group_node):
             yield stat.error
+
+    @classmethod
+    def update_nodes(cls):
+        if not cls._events:
+            print('NOTHING HAPPENED')
+            return
+
+        # It can't be put into `init` method because group tree can have nested sub trees which also should be updated
+        handlers = group_node_update(group_tree_update(nodes_update()))
+
+        while cls._events:  # todo clean duplicates
+            event = cls._events.pop(0)
+            print(event)
+            # handler should override this if if output node was changed indeed
+            # but not when update call was created by paren tree
+            event.output_was_changed = False
+
+            handlers.send(event)
+            if event.output_was_changed:
+                pass_running(event.bl_tree)
+
+    @staticmethod
+    def _get_handler() -> Generator:
+        # It can't be put into `init` method because group tree can have nested sub trees which also should be updated
+        return group_node_update(group_tree_update(nodes_update()))
+
+
+@post_load_call
+def register_loop():
+    def group_event_loop(main_handler: MainHandler):
+        # this function won't be reload on script.reload event (F8)
+        delay = 1 / 1
+        with print_errors():
+            main_handler.update_nodes()
+
+        return delay
+
+    bpy.app.timers.register(partial(group_event_loop, MainHandler))
 
 
 class NodeStatistic(NamedTuple):

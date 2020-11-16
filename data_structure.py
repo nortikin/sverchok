@@ -1012,9 +1012,9 @@ def post_load_call(function):  # better place would be in handlers module but im
 
     @wraps(function)
     def wrapper():
-        function()
+        return function()
 
-    return wrapper()
+    return wrapper
 
 
 post_load_call.registered_functions = []

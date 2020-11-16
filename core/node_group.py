@@ -29,7 +29,7 @@ class SvGroupTree(bpy.types.NodeTree):
     bl_icon = 'NODETREE'
     bl_label = 'Group tree'
 
-    handler = MainHandler()
+    handler = MainHandler
 
     group_node_name: bpy.props.StringProperty()  # should be updated by "Go to edit group tree" operator
     tree_id_memory: bpy.props.StringProperty(default="")  # identifier of the tree, should be used via `tree_id`

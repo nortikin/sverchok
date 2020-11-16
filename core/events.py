@@ -40,13 +40,19 @@ class GroupEvent:
                  updated_tree: str = None,
                  updated_nodes: List[str] = None):
         self.type = event_type
-        self.group_node = group_node
-        self.updated_tree = updated_tree
+        self.updated_tree = updated_tree  # todo renaming issue
         self.updated_nodes = updated_nodes
+
+        self._tree_name = group_node.id_data.name  # todo renaming issue
+        self._group_node_name = group_node.name  # todo renaming issue
 
     @property
     def bl_tree(self) -> SvGroupTree:
         return bpy.data.node_groups[self.updated_tree]
+
+    @property
+    def group_node(self) -> SvGroupTreeNode:  # todo performance?
+        return bpy.data.node_groups[self._tree_name].nodes[self._group_node_name]
 
     def __repr__(self):
         return f'{self.type.upper()} event, GROUP_NODE={self.group_node.name}, TREE={self.updated_tree}' \
