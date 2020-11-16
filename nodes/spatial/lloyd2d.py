@@ -10,7 +10,7 @@ from bpy.props import FloatProperty, StringProperty, BoolProperty, EnumProperty,
 
 from sverchok.core.socket_data import SvNoDataError
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, throttle_and_update_node
+from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, throttle_and_update_node, get_data_nesting_level
 from sverchok.utils.geom import center
 from sverchok.utils.voronoi import voronoi_bounded, Bounds
 
@@ -107,8 +107,11 @@ class SvLloyd2dNode(bpy.types.Node, SverchCustomTreeNode):
         verts_in = self.inputs['Vertices'].sv_get()
         iterations_in = self.inputs['Iterations'].sv_get()
 
+        input_level = get_data_nesting_level(verts_in)
         verts_in = ensure_nesting_level(verts_in, 4)
         iterations_in = ensure_nesting_level(iterations_in, 2)
+
+        nested_output = input_level > 3
 
         verts_out = []
         for params in zip_long_repeat(verts_in, iterations_in):
@@ -116,7 +119,10 @@ class SvLloyd2dNode(bpy.types.Node, SverchCustomTreeNode):
             for verts, iterations in zip_long_repeat(*params):
                 iter_verts = self.lloyd2d(verts, iterations)
                 new_verts.append(iter_verts)
-            verts_out.append(new_verts)
+            if nested_output:
+                verts_out.append(new_verts)
+            else:
+                verts_out.extend(new_verts)
 
         self.outputs['Vertices'].sv_set(verts_out)
 
