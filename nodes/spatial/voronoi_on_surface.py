@@ -25,7 +25,7 @@ import bmesh
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, ensure_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.voronoi import voronoi_bounded
 from sverchok.utils.logging import debug, info
@@ -159,7 +159,6 @@ class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         n = len(uvpoints)
         clip = ((u_max - u_min) + (v_max - v_min)) / 4.0
         #all_sites = uvpoints + invert_points(uvpoints)
-        #print(uvpoints)
         uv_verts, edges, faces = voronoi_bounded(uvpoints,
                     bound_mode='BOX',
                     clip=clip,
@@ -168,7 +167,6 @@ class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                     make_faces = self.make_faces,
                     ordered_faces = self.ordered_faces,
                     max_sides = maxsides)
-        #print(uv_verts)
         us = np.array([p[0] for p in uv_verts])
         vs = np.array([p[1] for p in uv_verts])
         u_mask = np.logical_and(us >= u_min, us <= u_max)
@@ -268,7 +266,6 @@ class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             verts_n, edges_n, faces_n = [], [], []
             bounds = calc_bounds(surface_points.tolist(), clipping)
             for verts_i, edges_i, faces_i in zip(verts, edges, faces):
-                print(bounds)
                 bm = bmesh_from_pydata(verts_i, edges_i, faces_i)
                 bmesh_clip(bm, bounds, fill=True)
                 verts_i, edges_i, faces_i = pydata_from_bmesh(bm)
@@ -308,10 +305,13 @@ class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         clipping_in = self.inputs['Clipping'].sv_get()
 
         surface_in = ensure_nesting_level(surface_in, 2, data_types=(SvSurface,))
+        input_level = get_data_nesting_level(uvpoints_in)
         uvpoints_in = ensure_nesting_level(uvpoints_in, 4)
         maxsides_in = ensure_nesting_level(maxsides_in, 2)
         thickness_in = ensure_nesting_level(thickness_in, 2)
         clipping_in = ensure_nesting_level(clipping_in, 2)
+
+        nested_output = input_level > 3
 
         verts_out = []
         edges_out = []
@@ -336,11 +336,18 @@ class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 new_edges.append(edges)
                 new_faces.append(faces)
 
-            verts_out.append(new_verts)
-            edges_out.append(new_edges)
-            faces_out.append(new_faces)
-            if self.mode == 'UV':
-                uvverts_out.append(new_uvverts)
+            if nested_output:
+                verts_out.append(new_verts)
+                edges_out.append(new_edges)
+                faces_out.append(new_faces)
+                if self.mode == 'UV':
+                    uvverts_out.append(new_uvverts)
+            else:
+                verts_out.extend(new_verts)
+                edges_out.extend(new_edges)
+                faces_out.extend(new_faces)
+                if self.mode == 'UV':
+                    uvverts_out.extend(new_uvverts)
 
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Edges'].sv_set(edges_out)
