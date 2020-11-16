@@ -321,6 +321,7 @@
     SvVoronoiOnSurfaceNode
     SvLloyd2dNode
     SvLloydOnMeshNode
+    SvLloydSolidNode
     SvRandomPointsOnMesh
     SvFieldRandomProbeMk2Node
     SvPopulateSurfaceNode

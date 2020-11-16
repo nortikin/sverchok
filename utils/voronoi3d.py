@@ -27,10 +27,14 @@ from mathutils.bvhtree import BVHTree
 from sverchok.utils.sv_mesh_utils import mask_vertices, polygons_to_edges
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, bmesh_clip
 from sverchok.utils.geom import calc_bounds
-from sverchok.dependencies import scipy
+from sverchok.dependencies import scipy, FreeCAD
 
 if scipy is not None:
     from scipy.spatial import Voronoi
+
+if FreeCAD is not None:
+    from FreeCAD import Base
+    import Part
 
 def voronoi3d_layer(n_src_sites, all_sites, make_regions, do_clip, clipping):
     diagram = Voronoi(all_sites)
@@ -206,4 +210,49 @@ def lloyd_on_mesh(verts, faces, sites, thickness, n_iterations):
         points = calc_bvh_projections(bvh, points)
 
     return points.tolist()
+
+def lloyd_in_solid(solid, sites, n_iterations, tolerance=1e-4):
+    shell = solid.Shells[0]
+
+    def invert(pt):
+        src = Base.Vector(pt)
+        dist, vs, infos = shell.distToShape(Part.Vertex(src))
+        projection = vs[0][0]
+        dst = src + 2*(projection - src)
+        return (dst.x, dst.y, dst.z)
+        
+    def iteration(pts):
+        n = len(pts)
+        all_pts = pts
+        for pt in pts:
+            if solid.isInside(Base.Vector(pt), tolerance, False):
+                all_pts.append(invert(pt))
+
+        diagram = Voronoi(all_pts)
+        centers = []
+        for site_idx in range(n):
+            region_idx = diagram.point_region[site_idx]
+            region = diagram.regions[region_idx]
+            region_verts = np.array([diagram.vertices[i] for i in region])
+            center = np.mean(region_verts, axis=0)
+            centers.append(tuple(center))
+        return centers
+
+    def restrict(points):
+        result = []
+        for point in points:
+            v = Base.Vector(point)
+            if solid.isInside(v, tolerance, True):
+                result.append(point)
+            else:
+                dist, vs, infos = solid.distToShape(Part.Vertex(v))
+                v = vs[0][0]
+                result.append((v.x, v.y, v.z))
+        return result
+
+    points = restrict(sites)
+    for i in range(n_iterations):
+        points = iteration(points)
+        points = restrict(points)
+    return points
 

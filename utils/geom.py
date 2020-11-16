@@ -2165,3 +2165,13 @@ def calc_bounds(vertices, allowance=0):
             y_min - allowance, y_max + allowance,
             z_min - allowance, z_max + allowance)
 
+TRIVIAL='TRIVIAL'
+def bounding_sphere(vertices, algorithm=TRIVIAL):
+    if algorithm != TRIVIAL:
+        raise Exception("Unsupported algorithm")
+    c = center(vertices)
+    vertices = np.array(vertices) - np.array(c)
+    norms = np.linalg.norm(vertices, axis=1)
+    radius = norms.max()
+    return c, radius
+
