@@ -134,21 +134,27 @@ def voronoi_on_surface(surface, uvpoints, thickness, do_clip, clipping, make_reg
             do_clip = do_clip,
             clipping = clipping)
 
-def voronoi_on_mesh(verts, faces, sites, thickness, clip_inner=True, clip_outer=True, do_clip=True, clipping=1.0, make_regions=True):
+def calc_bvh_normals(bvh, sites):
+    normals = []
+    for site in sites:
+        loc, normal, index, distance = bvh.find_nearest(site)
+        if loc is not None:
+            normals.append(normal)
+    return np.array(normals)
+
+def calc_bvh_projections(bvh, sites):
+    projections = []
+    for site in sites:
+        loc, normal, index, distance = bvh.find_nearest(site)
+        if loc is not None:
+            projections.append(loc)
+    return np.array(projections)
+
+def voronoi_on_mesh_impl(bvh, sites, thickness, clip_inner=True, clip_outer=True, do_clip=True, clipping=1.0, make_regions=True):
     npoints = len(sites)
 
-    bvh = BVHTree.FromPolygons(verts, faces)
-
-    def calc_normals():
-        normals = []
-        for site in sites:
-            loc, normal, index, distance = bvh.find_nearest(site)
-            if loc is not None:
-                normals.append(normal)
-        return np.array(normals)
-
     if clip_inner or clip_outer:
-        normals = calc_normals()
+        normals = calc_bvh_normals(bvh, sites)
     k = 0.5*thickness
     sites = np.array(sites)
     all_points = sites.tolist()
@@ -163,4 +169,41 @@ def voronoi_on_mesh(verts, faces, sites, thickness, clip_inner=True, clip_outer=
             make_regions = make_regions,
             do_clip = do_clip,
             clipping = clipping)
+
+def voronoi_on_mesh(verts, faces, sites, thickness, clip_inner=True, clip_outer=True, do_clip=True, clipping=1.0, make_regions=True):
+    bvh = BVHTree.FromPolygons(verts, faces)
+    return voronoi_on_mesh_impl(bvh, sites, thickness,
+            clip_inner = clip_inner, clip_outer = clip_outer,
+            do_clip = do_clip, clipping = clipping,
+            make_regions = make_regions)
+
+def lloyd_on_mesh(verts, faces, sites, thickness, n_iterations):
+    bvh = BVHTree.FromPolygons(verts, faces)
+
+    def iteration(points):
+        n = len(points)
+
+        normals = calc_bvh_normals(bvh, points)
+        k = 0.5*thickness
+        points = np.array(points)
+        plus_points = points + k*normals
+        minus_points = points - k*normals
+        all_points = points.tolist() + plus_points.tolist() + minus_points.tolist()
+
+        diagram = Voronoi(all_points)
+        centers = []
+        for site_idx in range(n):
+            region_idx = diagram.point_region[site_idx]
+            region = diagram.regions[region_idx]
+            region_verts = np.array([diagram.vertices[i] for i in region])
+            center = np.mean(region_verts, axis=0)
+            centers.append(tuple(center))
+        return centers
+
+    points = calc_bvh_projections(bvh, sites)
+    for i in range(n_iterations):
+        points = iteration(points)
+        points = calc_bvh_projections(bvh, points)
+
+    return points.tolist()
 
