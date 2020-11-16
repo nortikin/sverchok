@@ -27,6 +27,7 @@ import bmesh
 from bmesh.types import BMVert, BMEdge, BMFace
 import mathutils
 
+from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.logging import debug
 
 
@@ -801,4 +802,20 @@ def bmesh_clip(bm, bounds, fill):
     bmesh_bisect(bm, (0, 0, z_max), (0, 0, 1), fill)
 
     return bm
+
+def recalc_normals(verts, edges, faces, loop=False):
+    if loop:
+        verts_out, edges_out, faces_out = [], [], []
+        for vs, es, fs in zip_long_repeat(verts, edges, faces):
+            vs, es, fs = recalc_normals(vs, es, fs, loop=False)
+            verts_out.append(vs)
+            edges_out.append(es)
+            faces_out.append(fs)
+        return verts_out, edges_out, faces_out
+    else:
+        bm = bmesh_from_pydata(verts, edges, faces)
+        bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+        verts, edges, faces = pydata_from_bmesh(bm)
+        bm.free()
+        return verts, edges, faces
 

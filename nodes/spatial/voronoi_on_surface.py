@@ -17,7 +17,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import numpy as np
-from collections import defaultdict
 
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
@@ -28,10 +27,8 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.voronoi import voronoi_bounded
-from sverchok.utils.logging import debug, info
-from sverchok.utils.sv_mesh_utils import mask_vertices, polygons_to_edges
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, bmesh_clip
-from sverchok.utils.geom import calc_bounds
+from sverchok.utils.sv_mesh_utils import mask_vertices
+from sverchok.utils.sv_bmesh_utils import recalc_normals
 from sverchok.utils.voronoi3d import voronoi_on_surface
 from sverchok.dependencies import scipy
 
@@ -178,22 +175,6 @@ class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
         return uv_verts, verts, edges, faces
 
-    def recalc_normals(self, verts, edges, faces, loop=False):
-        if loop:
-            verts_out, edges_out, faces_out = [], [], []
-            for vs, es, fs in zip_long_repeat(verts, edges, faces):
-                vs, es, fs = self.recalc_normals(vs, es, fs, loop=False)
-                verts_out.append(vs)
-                edges_out.append(es)
-                faces_out.append(fs)
-            return verts_out, edges_out, faces_out
-        else:
-            bm = bmesh_from_pydata(verts, edges, faces)
-            bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
-            verts, edges, faces = pydata_from_bmesh(bm)
-            bm.free()
-            return verts, edges, faces
-
     def process(self):
 
         if not any(socket.is_linked for socket in self.outputs):
@@ -231,7 +212,7 @@ class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                     verts, edges, faces = voronoi_on_surface(surface, uvpoints, thickness, self.do_clip, clipping, self.mode == 'REGIONS')
 
                 if (self.mode in {'RIDGES', 'REGIONS'} or self.make_faces) and self.normals:
-                    verts, edges, faces = self.recalc_normals(verts, edges, faces, loop = (self.mode in {'REGIONS', 'RIDGES'}))
+                    verts, edges, faces = recalc_normals(verts, edges, faces, loop = (self.mode in {'REGIONS', 'RIDGES'}))
 
                 new_verts.append(verts)
                 new_edges.append(edges)

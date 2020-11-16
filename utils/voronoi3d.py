@@ -22,6 +22,7 @@ from collections import defaultdict
 import bpy
 import bmesh
 from mathutils import Vector
+from mathutils.bvhtree import BVHTree
 
 from sverchok.utils.sv_mesh_utils import mask_vertices, polygons_to_edges
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, bmesh_clip
@@ -31,8 +32,78 @@ from sverchok.dependencies import scipy
 if scipy is not None:
     from scipy.spatial import Voronoi
 
+def voronoi3d_layer(n_src_sites, all_sites, make_regions, do_clip, clipping):
+    diagram = Voronoi(all_sites)
+    src_sites = all_sites[:n_src_sites]
+    
+    region_verts = dict()
+    region_verts_map = dict()
+    for site_idx in range(n_src_sites):
+        region_idx = diagram.point_region[site_idx]
+        region = diagram.regions[region_idx]
+        vertices = [tuple(diagram.vertices[i,:]) for i in region]
+        region_verts[site_idx] = vertices
+        region_verts_map[site_idx] = {vert_idx: i for i, vert_idx in enumerate(region)}
+    
+    open_sites = set()
+    region_faces = defaultdict(list)
+    for ridge_idx, sites in enumerate(diagram.ridge_points):
+        site_from, site_to = sites
+        ridge = diagram.ridge_vertices[ridge_idx]
+        if -1 in ridge:
+            open_sites.add(site_from)
+            open_sites.add(site_to)
+        
+        if make_regions:
+            if site_from < n_src_sites:
+                face_from = [region_verts_map[site_from][i] for i in ridge]
+                region_faces[site_from].append(face_from)
+           
+            if site_to < n_src_sites:
+                face_to = [region_verts_map[site_to][i] for i in ridge]
+                region_faces[site_to].append(face_to)
+        else:
+            if site_from < n_src_sites and site_to < n_src_sites:
+                face_from = [region_verts_map[site_from][i] for i in ridge]
+                region_faces[site_from].append(face_from)
+                face_to = [region_verts_map[site_to][i] for i in ridge]
+                region_faces[site_to].append(face_to)
+    
+    verts = [region_verts[i] for i in range(n_src_sites) if i not in open_sites]
+    faces = [region_faces[i] for i in range(n_src_sites) if i not in open_sites]
+
+    empty_faces = [len(f) == 0 for f in faces]
+    verts = [vs for vs, mask in zip(verts, empty_faces) if not mask]
+    faces = [fs for fs, mask in zip(faces, empty_faces) if not mask]
+    edges = polygons_to_edges(faces, True)
+
+    if not make_regions:
+        verts_n, edges_n, faces_n = [], [], []
+        for verts_i, edges_i, faces_i in zip(verts, edges, faces):
+            used_verts = set(sum(faces_i, []))
+            mask = [i in used_verts for i in range(len(verts_i))]
+            verts_i, edges_i, faces_i = mask_vertices(verts_i, edges_i, faces_i, mask)
+            verts_n.append(verts_i)
+            edges_n.append(edges_i)
+            faces_n.append(faces_i)
+        verts, edges, faces = verts_n, edges_n, faces_n
+
+    if do_clip:
+        verts_n, edges_n, faces_n = [], [], []
+        bounds = calc_bounds(src_sites, clipping)
+        for verts_i, edges_i, faces_i in zip(verts, edges, faces):
+            bm = bmesh_from_pydata(verts_i, edges_i, faces_i)
+            bmesh_clip(bm, bounds, fill=True)
+            verts_i, edges_i, faces_i = pydata_from_bmesh(bm)
+            bm.free()
+            verts_n.append(verts_i)
+            edges_n.append(edges_i)
+            faces_n.append(faces_i)
+        verts, edges, faces = verts_n, edges_n, faces_n
+
+    return verts, edges, faces
+
 def voronoi_on_surface(surface, uvpoints, thickness, do_clip, clipping, make_regions):
-    npoints = len(uvpoints)
     u_min, u_max, v_min, v_max = surface.get_domain()
     u_mid = 0.5*(u_min + u_max)
     v_mid = 0.5*(v_min + v_max)
@@ -57,74 +128,39 @@ def voronoi_on_surface(surface, uvpoints, thickness, do_clip, clipping, make_reg
     plus_points = surface_points + k*normals
     minus_points = surface_points - k*normals
     all_points = surface_points.tolist() + out_points.tolist() + plus_points.tolist() + minus_points.tolist()
-    diagram = Voronoi(all_points)
-    
-    region_verts = dict()
-    region_verts_map = dict()
-    for site_idx in range(npoints):
-        region_idx = diagram.point_region[site_idx]
-        region = diagram.regions[region_idx]
-        vertices = [tuple(diagram.vertices[i,:]) for i in region]
-        region_verts[site_idx] = vertices
-        region_verts_map[site_idx] = {vert_idx: i for i, vert_idx in enumerate(region)}
-    
-    open_sites = set()
-    region_faces = defaultdict(list)
-    for ridge_idx, sites in enumerate(diagram.ridge_points):
-        site_from, site_to = sites
-#             if site_from < 0 or site_to < 0:
-#                 print(ridge_idx, site_from, site_to)
-        ridge = diagram.ridge_vertices[ridge_idx]
-        if -1 in ridge:
-            open_sites.add(site_from)
-            open_sites.add(site_to)
-        
-        if make_regions:
-            if site_from < npoints:
-                face_from = [region_verts_map[site_from][i] for i in ridge]
-                region_faces[site_from].append(face_from)
-           
-            if site_to < npoints:
-                face_to = [region_verts_map[site_to][i] for i in ridge]
-                region_faces[site_to].append(face_to)
-        else:
-            if site_from < npoints and site_to < npoints:
-                face_from = [region_verts_map[site_from][i] for i in ridge]
-                region_faces[site_from].append(face_from)
-                face_to = [region_verts_map[site_to][i] for i in ridge]
-                region_faces[site_to].append(face_to)
-    
-    verts = [region_verts[i] for i in range(npoints) if i not in open_sites]
-    faces = [region_faces[i] for i in range(npoints) if i not in open_sites]
 
-    empty_faces = [len(f) == 0 for f in faces]
-    verts = [vs for vs, mask in zip(verts, empty_faces) if not mask]
-    faces = [fs for fs, mask in zip(faces, empty_faces) if not mask]
-    edges = polygons_to_edges(faces, True)
+    return voronoi3d_layer(len(uvpoints), all_points,
+            make_regions = make_regions,
+            do_clip = do_clip,
+            clipping = clipping)
 
-    if not make_regions:
-        verts_n, edges_n, faces_n = [], [], []
-        for verts_i, edges_i, faces_i in zip(verts, edges, faces):
-            used_verts = set(sum(faces_i, []))
-            mask = [i in used_verts for i in range(len(verts_i))]
-            verts_i, edges_i, faces_i = mask_vertices(verts_i, edges_i, faces_i, mask)
-            verts_n.append(verts_i)
-            edges_n.append(edges_i)
-            faces_n.append(faces_i)
-        verts, edges, faces = verts_n, edges_n, faces_n
+def voronoi_on_mesh(verts, faces, sites, thickness, clip_inner=True, clip_outer=True, do_clip=True, clipping=1.0, make_regions=True):
+    npoints = len(sites)
 
-    if do_clip:
-        verts_n, edges_n, faces_n = [], [], []
-        bounds = calc_bounds(surface_points.tolist(), clipping)
-        for verts_i, edges_i, faces_i in zip(verts, edges, faces):
-            bm = bmesh_from_pydata(verts_i, edges_i, faces_i)
-            bmesh_clip(bm, bounds, fill=True)
-            verts_i, edges_i, faces_i = pydata_from_bmesh(bm)
-            bm.free()
-            verts_n.append(verts_i)
-            edges_n.append(edges_i)
-            faces_n.append(faces_i)
-        verts, edges, faces = verts_n, edges_n, faces_n
+    bvh = BVHTree.FromPolygons(verts, faces)
 
-    return verts, edges, faces
+    def calc_normals():
+        normals = []
+        for site in sites:
+            loc, normal, index, distance = bvh.find_nearest(site)
+            if loc is not None:
+                normals.append(normal)
+        return np.array(normals)
+
+    if clip_inner or clip_outer:
+        normals = calc_normals()
+    k = 0.5*thickness
+    sites = np.array(sites)
+    all_points = sites.tolist()
+    if clip_outer:
+        plus_points = sites + k*normals
+        all_points.extend(plus_points.tolist())
+    if clip_inner:
+        minus_points = sites - k*normals
+        all_points.extend(minus_points.tolist())
+
+    return voronoi3d_layer(npoints, all_points,
+            make_regions = make_regions,
+            do_clip = do_clip,
+            clipping = clipping)
 
