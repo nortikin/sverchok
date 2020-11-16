@@ -31,28 +31,22 @@ projection_screen_items = [
     ("CYLINDRICAL", "Cylindrical", "Project onto a cylinder", 1),
     ("SPHERICAL", "Spherical", "Project onto a sphere", 2)]
 
-
-projection_type_items = [
-    ("PERSPECTIVE",  "Perspective",  "Perspective projection", 0),
-    ("ORTHOGRAPHIC", "Orthographic", "Orthographic projection", 1)]
-
 id_mat = [[tuple(v) for v in Matrix()]]  # identity matrix
 
 EPSILON = 1e-10
 
 
-def projection_cylindrical(verts_3D, m, d, perspective):
+def projection_cylindrical(verts_3D, m, d):
     """
-    Project the 3D verts onto a CYLINDRICAL surface
-     verts_3D : vertices to project (perspective)
+    Project the 3D verts onto a CYLINDRICAL screen
+     verts_3D : vertices to project
             m : transformation matrix of the projection cylinder (location & rotation)
-            d : distance between the projection point (focus) and the projection cylinder (cylinder radius)
+            d : distance between the projection point and the projection cylinder (cylinder radius)
     """
     ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection cylinder origin
     nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection cylinder axis (Z)
 
     vert_list = []
-    focus_list = []
     for vert in verts_3D:
         x, y, z = vert
         # vertex vector relative to the center of the cylinder (OV = V - O)
@@ -76,22 +70,19 @@ def projection_cylindrical(verts_3D, m, d, perspective):
 
         vert_list.append([xx, yy, zz])
 
-    focus_list = [[ox, oy, oz]]
-
-    return vert_list, focus_list
+    return vert_list
 
 
-def projection_spherical(verts_3D, m, d, perspective):
+def projection_spherical(verts_3D, m, d):
     """
-    Project the 3D verts onto a SPHERICAL surface
-     verts_3D : vertices to project (perspective)
+    Project the 3D verts onto a SPHERICAL screen
+     verts_3D : vertices to project
             m : transformation matrix of the projection sphere (location & rotation)
-            d : distance between the projection point (focus) and the projection sphere (sphere radius)
+            d : distance between the projection point and the projection sphere (sphere radius)
     """
     ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection sphere origin
 
     vert_list = []
-    focus_list = []
     for vert in verts_3D:
         x, y, z = vert
         # vertex vector relative to the sphere origin (OV = V - O)
@@ -109,19 +100,17 @@ def projection_spherical(verts_3D, m, d, perspective):
 
         vert_list.append([xx, yy, zz])
 
-    focus_list = [[ox, oy, oz]]
-
-    return vert_list, focus_list
+    return vert_list
 
 
-def projection_planar(verts_3D, m, d, perspective):
+def projection_planar(verts_3D, m, d):
     """
-    Project the 3D verts onto a PLANAR surface
-     verts_3D : vertices to project (perspective or ortographic)
+    Project the 3D verts onto a PLANAR screen
+     verts_3D : vertices to project
             m : transformation matrix of the projection plane (location & rotation)
-            d : distance between the projector point (focus) and the plane plane
+            d : distance between the projector point and the projection plane
 
-    Projection point (focus) location is given by m * D:
+    Projection point location is given by m * D:
         Xx Yx Zx Tx        0     Tx - d * Zx
         Xy Yy Zy Ty   *    0  =  Ty - d * Zy
         Xz Yz Zz Tz      - d     Tz - d * Zz
@@ -130,10 +119,7 @@ def projection_planar(verts_3D, m, d, perspective):
     ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection plane origin
     nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection plane normal
 
-    # d = d if perspective else 1e10
-
     vert_list = []
-    focus_list = []
     for vert in verts_3D:
         x, y, z = vert
         # vertex vector relative to the projection point (OV = V - O)
@@ -151,14 +137,12 @@ def projection_planar(verts_3D, m, d, perspective):
 
         vert_list.append([px, py, pz])
 
-    focus_list = [[ox, oy, oz]]
-
-    return vert_list, focus_list
+    return vert_list
 
 
 class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: 3D Projection, Perspective, Orthographic
+    Triggers: 3D Projection, Perspective
     Tooltips: Projection from 3D space to 2D space
     """
     bl_idname = 'Sv3DProjectNode'
@@ -166,9 +150,6 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
 
     projection_screen: EnumProperty(
         name="Screen", items=projection_screen_items, default="PLANAR", update=updateNode)
-
-    projection_type: EnumProperty(
-        name="Type", items=projection_type_items, default="PERSPECTIVE", update=updateNode)
 
     distance: FloatProperty(
         name="Distance", description="Projection Distance", default=2.0, update=updateNode)
@@ -186,13 +167,10 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', "Verts")
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "Faces")
-        self.outputs.new('SvVerticesSocket', "Projector")
+        # self.outputs.new('SvVerticesSocket', "Projector")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "projection_screen", text="")
-
-        if self.projection_screen == "PLANAR":
-            layout.prop(self, "projection_type", expand=True)
 
     @profile
     def process(self):
@@ -222,18 +200,14 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
         elif self.projection_screen == "SPHERICAL":
             projector = projection_spherical
 
-        perspective = self.projection_type == "PERSPECTIVE"
-
         vert_list = []
         edge_list = []
         face_list = []
-        focus_list = []
         for v, e, p, m, d in zip(*params):
-            verts, focus = projector(v, m, d, perspective)
+            verts = projector(v, m, d)
             vert_list.append(verts)
             edge_list.append(e)
             face_list.append(p)
-            focus_list.append(focus)
 
         if outputs["Verts"].is_linked:
             outputs["Verts"].sv_set(vert_list)
@@ -241,8 +215,8 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
             outputs["Edges"].sv_set(edge_list)
         if outputs["Faces"].is_linked:
             outputs["Faces"].sv_set(face_list)
-        if outputs["Projector"].is_linked:
-            outputs["Projector"].sv_set(focus_list)
+        # if outputs["Projector"].is_linked:
+        #     outputs["Projector"].sv_set(focus_list)
 
 
 def register():
