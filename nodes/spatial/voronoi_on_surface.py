@@ -32,10 +32,8 @@ from sverchok.utils.logging import debug, info
 from sverchok.utils.sv_mesh_utils import mask_vertices, polygons_to_edges
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, bmesh_clip
 from sverchok.utils.geom import calc_bounds
+from sverchok.utils.voronoi3d import voronoi_on_surface
 from sverchok.dependencies import scipy
-
-if scipy is not None:
-    from scipy.spatial import Voronoi
 
 class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -180,103 +178,6 @@ class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
         return uv_verts, verts, edges, faces
 
-    def voronoi_3d(self, surface, uvpoints, thickness, clipping, make_regions):
-        npoints = len(uvpoints)
-        u_min, u_max, v_min, v_max = surface.get_domain()
-        u_mid = 0.5*(u_min + u_max)
-        v_mid = 0.5*(v_min + v_max)
-
-        us = np.array([p[0] for p in uvpoints])
-        vs = np.array([p[1] for p in uvpoints])
-
-        us_edge = np.empty(us.shape)
-        us_edge[us > u_mid] = u_max
-        us_edge[us <= u_mid] = u_min
-
-        vs_edge = np.empty(vs.shape)
-        vs_edge[vs > v_mid] = v_max
-        vs_edge[vs <= v_mid] = v_min
-
-        surface_points = surface.evaluate_array(us, vs)
-        edge_points = surface.evaluate_array(us_edge, vs_edge)
-        out_points = surface_points + 2*(edge_points - surface_points)
-
-        normals = surface.normal_array(us, vs)
-        k = 0.5*thickness
-        plus_points = surface_points + k*normals
-        minus_points = surface_points - k*normals
-        all_points = surface_points.tolist() + out_points.tolist() + plus_points.tolist() + minus_points.tolist()
-        diagram = Voronoi(all_points)
-        
-        region_verts = dict()
-        region_verts_map = dict()
-        for site_idx in range(npoints):
-            region_idx = diagram.point_region[site_idx]
-            region = diagram.regions[region_idx]
-            vertices = [tuple(diagram.vertices[i,:]) for i in region]
-            region_verts[site_idx] = vertices
-            region_verts_map[site_idx] = {vert_idx: i for i, vert_idx in enumerate(region)}
-        
-        open_sites = set()
-        region_faces = defaultdict(list)
-        for ridge_idx, sites in enumerate(diagram.ridge_points):
-            site_from, site_to = sites
-#             if site_from < 0 or site_to < 0:
-#                 print(ridge_idx, site_from, site_to)
-            ridge = diagram.ridge_vertices[ridge_idx]
-            if -1 in ridge:
-                open_sites.add(site_from)
-                open_sites.add(site_to)
-            
-            if make_regions:
-                if site_from < npoints:
-                    face_from = [region_verts_map[site_from][i] for i in ridge]
-                    region_faces[site_from].append(face_from)
-               
-                if site_to < npoints:
-                    face_to = [region_verts_map[site_to][i] for i in ridge]
-                    region_faces[site_to].append(face_to)
-            else:
-                if site_from < npoints and site_to < npoints:
-                    face_from = [region_verts_map[site_from][i] for i in ridge]
-                    region_faces[site_from].append(face_from)
-                    face_to = [region_verts_map[site_to][i] for i in ridge]
-                    region_faces[site_to].append(face_to)
-        
-        verts = [region_verts[i] for i in range(npoints) if i not in open_sites]
-        faces = [region_faces[i] for i in range(npoints) if i not in open_sites]
-
-        empty_faces = [len(f) == 0 for f in faces]
-        verts = [vs for vs, mask in zip(verts, empty_faces) if not mask]
-        faces = [fs for fs, mask in zip(faces, empty_faces) if not mask]
-        edges = polygons_to_edges(faces, True)
-
-        if not make_regions:
-            verts_n, edges_n, faces_n = [], [], []
-            for verts_i, edges_i, faces_i in zip(verts, edges, faces):
-                used_verts = set(sum(faces_i, []))
-                mask = [i in used_verts for i in range(len(verts_i))]
-                verts_i, edges_i, faces_i = mask_vertices(verts_i, edges_i, faces_i, mask)
-                verts_n.append(verts_i)
-                edges_n.append(edges_i)
-                faces_n.append(faces_i)
-            verts, edges, faces = verts_n, edges_n, faces_n
-
-        if self.do_clip:
-            verts_n, edges_n, faces_n = [], [], []
-            bounds = calc_bounds(surface_points.tolist(), clipping)
-            for verts_i, edges_i, faces_i in zip(verts, edges, faces):
-                bm = bmesh_from_pydata(verts_i, edges_i, faces_i)
-                bmesh_clip(bm, bounds, fill=True)
-                verts_i, edges_i, faces_i = pydata_from_bmesh(bm)
-                bm.free()
-                verts_n.append(verts_i)
-                edges_n.append(edges_i)
-                faces_n.append(faces_i)
-            verts, edges, faces = verts_n, edges_n, faces_n
-
-        return verts, edges, faces
-
     def recalc_normals(self, verts, edges, faces, loop=False):
         if loop:
             verts_out, edges_out, faces_out = [], [], []
@@ -327,7 +228,7 @@ class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                     uvverts, verts, edges, faces = self.voronoi_uv(surface, uvpoints, maxsides)
                     new_uvverts.append(uvverts)
                 else:
-                    verts, edges, faces = self.voronoi_3d(surface, uvpoints, thickness, clipping, self.mode == 'REGIONS')
+                    verts, edges, faces = voronoi_on_surface(surface, uvpoints, thickness, self.do_clip, clipping, self.mode == 'REGIONS')
 
                 if (self.mode in {'RIDGES', 'REGIONS'} or self.make_faces) and self.normals:
                     verts, edges, faces = self.recalc_normals(verts, edges, faces, loop = (self.mode in {'REGIONS', 'RIDGES'}))
