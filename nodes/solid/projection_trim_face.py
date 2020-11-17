@@ -16,7 +16,7 @@ from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve
 from sverchok.utils.surface.core import SvSurface
-from sverchok.utils.surface.freecad import SvFreeCadNurbsSurface, surface_to_freecad
+from sverchok.utils.surface.freecad import SvFreeCadNurbsSurface, surface_to_freecad, is_solid_face_surface
 from sverchok.utils.dummy_nodes import add_dummy
 
 from sverchok.dependencies import FreeCAD
@@ -131,7 +131,10 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
             new_trim = []
             new_edges = []
             for surface, curves, point, vector in zip_long_repeat(surfaces, curves_i, points, vectors):
-                face_surface = surface_to_freecad(surface) # SvFreeCadNurbsSurface
+                if is_solid_face_surface(surface):
+                    face_surface = surface
+                else:
+                    face_surface = surface_to_freecad(surface) # SvFreeCadNurbsSurface
                 if curves:
                     face = self.cut(face_surface, curves, point, vector)
                 else:
