@@ -256,3 +256,55 @@ def lloyd_in_solid(solid, sites, n_iterations, tolerance=1e-4):
         points = restrict(points)
     return points
 
+def lloyd_on_solid_surface(solid, sites, thickness, n_iterations, tolerance=1e-4):
+    shell = solid.Shells[0]
+    
+    def add_normals(pts):
+        k = 0.5*thickness
+        result = []
+        for pt in pts:
+            dist, vs, infos = shell.distToShape(Part.Vertex(Base.Vector(pt)))
+            projection = vs[0][0]
+            info = infos[0]
+            if info[0] == b'Face':
+                face_idx = info[1]
+                u,v = info[2]
+                normal = shell.Faces[face_idx].normalAt(u,v)
+                plus_pt = projection + k*normal
+                minus_pt = projection - k*normal
+                result.append(tuple(plus_pt))
+                result.append(tuple(minus_pt))
+            #else:
+            #    result.append(pt)
+        return result
+    
+    def iteration(pts):
+        all_pts = pts + add_normals(pts)
+        diagram = Voronoi(all_pts)
+        centers = []
+        for site_idx in range(len(pts)):
+            region_idx = diagram.point_region[site_idx]
+            region = diagram.regions[region_idx]
+            region_verts = np.array([diagram.vertices[i] for i in region])
+            center = np.mean(region_verts, axis=0)
+            centers.append(tuple(center))
+        return centers
+
+    def restrict(points):
+        result = []
+        for point in points:
+            v = Base.Vector(point)
+            if any(face.isInside(v, tolerance, True) for face in shell.Faces):
+                result.append(point)
+            else:
+                dist, vs, infos = shell.distToShape(Part.Vertex(v))
+                v = vs[0][0]
+                result.append((v.x, v.y, v.z))
+        return result
+
+    points = restrict(sites)
+    for i in range(n_iterations):
+        points = iteration(points)
+        points = restrict(points)
+    return points
+
