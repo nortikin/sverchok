@@ -181,6 +181,40 @@ def voronoi_on_mesh(verts, faces, sites, thickness, clip_inner=True, clip_outer=
             do_clip = do_clip, clipping = clipping,
             make_regions = make_regions)
 
+def project_solid_normals(shell, pts, thickness, add_plus=True, add_minus=True):
+    k = 0.5*thickness
+    result = []
+    for pt in pts:
+        dist, vs, infos = shell.distToShape(Part.Vertex(Base.Vector(pt)))
+        projection = vs[0][0]
+        info = infos[0]
+        if info[0] == b'Face':
+            face_idx = info[1]
+            u,v = info[2]
+            normal = shell.Faces[face_idx].normalAt(u,v)
+            plus_pt = projection + k*normal
+            minus_pt = projection - k*normal
+            if add_plus:
+                result.append(tuple(plus_pt))
+            if add_minus:
+                result.append(tuple(minus_pt))
+    return result
+
+def voronoi_on_solid_surface(solid, sites, thickness, clip_inner=True, clip_outer=True, do_clip=True, clipping=1.0, make_regions=True): 
+
+    npoints = len(sites)
+    shell = solid.Shells[0]
+
+    all_points = sites
+    if clip_inner or clip_outer:
+        all_points.extend(project_solid_normals(shell, sites, thickness,
+                add_plus=clip_outer, add_minus=clip_inner))
+
+    return voronoi3d_layer(npoints, all_points,
+            make_regions = make_regions,
+            do_clip = do_clip,
+            clipping = clipping)
+
 def lloyd_on_mesh(verts, faces, sites, thickness, n_iterations):
     bvh = BVHTree.FromPolygons(verts, faces)
 
@@ -259,27 +293,8 @@ def lloyd_in_solid(solid, sites, n_iterations, tolerance=1e-4):
 def lloyd_on_solid_surface(solid, sites, thickness, n_iterations, tolerance=1e-4):
     shell = solid.Shells[0]
     
-    def add_normals(pts):
-        k = 0.5*thickness
-        result = []
-        for pt in pts:
-            dist, vs, infos = shell.distToShape(Part.Vertex(Base.Vector(pt)))
-            projection = vs[0][0]
-            info = infos[0]
-            if info[0] == b'Face':
-                face_idx = info[1]
-                u,v = info[2]
-                normal = shell.Faces[face_idx].normalAt(u,v)
-                plus_pt = projection + k*normal
-                minus_pt = projection - k*normal
-                result.append(tuple(plus_pt))
-                result.append(tuple(minus_pt))
-            #else:
-            #    result.append(pt)
-        return result
-    
     def iteration(pts):
-        all_pts = pts + add_normals(pts)
+        all_pts = pts + project_solid_normals(shell, pts, thickness)
         diagram = Voronoi(all_pts)
         centers = []
         for site_idx in range(len(pts)):
