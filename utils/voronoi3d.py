@@ -323,3 +323,38 @@ def lloyd_on_solid_surface(solid, sites, thickness, n_iterations, tolerance=1e-4
         points = restrict(points)
     return points
 
+def lloyd_on_fc_face(fc_face, sites, thickness, n_iterations):
+
+    def iteration(pts):
+        n = len(pts)
+        all_pts = pts + project_solid_normals(fc_face, pts, thickness)
+        diagram = Voronoi(all_pts)
+        centers = []
+        for site_idx in range(n):
+            region_idx = diagram.point_region[site_idx]
+            region = diagram.regions[region_idx]
+            region_verts = np.array([diagram.vertices[i] for i in region])
+            center = np.mean(region_verts, axis=0)
+            centers.append(tuple(center))
+        return centers
+    
+    def project(point):
+        fc_surface = fc_face.Surface
+        u, v = fc_surface.parameter(Base.Vector(point))
+        pt = fc_surface.value(u,v)
+        projection = (pt.x, pt.y, pt.z)
+        return u, v, projection
+
+    def restrict(points):
+        projections = [project(point) for point in points]
+        uvpoints = [(r[0], r[1], 0) for r in projections]
+        points = [r[2] for r in projections]
+        return uvpoints, points
+
+    uvpoints, points = restrict(sites)
+    for i in range(n_iterations):
+        points = iteration(points)
+        uvpoints, points = restrict(points)
+
+    return uvpoints, points
+

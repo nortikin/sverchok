@@ -264,7 +264,6 @@
    SvSolidEdgesNode
    SvSolidFacesNode
    SvSelectSolidNode
-   SvPopulateSolidNode
    SvCompoundSolidNode
    @ Analyze
    SvSolidViewerNode
@@ -312,20 +311,25 @@
     SvChessSelection
 
 ## Spatial
+    SvHomogenousVectorField
+    SvRandomPointsOnMesh
+    SvPopulateSurfaceNode
+    SvPopulateSolidNode
+    SvFieldRandomProbeMk2Node
+    ---
     DelaunayTriangulation2DNode
     SvDelaunay2DCdt
+    SvExDelaunay3DNode
+    ---
     Voronoi2DNode
     SvExVoronoi3DNode
-    SvExDelaunay3DNode
     SvExVoronoiSphereNode
     SvVoronoiOnSurfaceNode
+    ---
     SvLloyd2dNode
     SvLloydOnMeshNode
     SvLloydSolidNode
-    SvRandomPointsOnMesh
-    SvFieldRandomProbeMk2Node
-    SvPopulateSurfaceNode
-    SvHomogenousVectorField
+    SvLloydSolidFaceNode
 
 ## Transforms
     SvMoveNodeMk3
