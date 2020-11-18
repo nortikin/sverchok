@@ -274,6 +274,15 @@ def to_spherical_np(v, mode="degrees"):
         theta = np.degrees(theta)
     return rho, phi, theta
 
+def project_to_sphere(center, radius, v):
+    x,y,z = v
+    x0,y0,z0 = center
+    dv = x-x0, y-y0, z-z0
+    rho, phi, theta = to_spherical(dv, "radians")
+    x,y,z = from_spherical(radius, phi, theta, "radians")
+    result = x+x0, y+y0, z+z0
+    return result
+
 def binomial(n,k):
     if not 0<=k<=n:
         return 0

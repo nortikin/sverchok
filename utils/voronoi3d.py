@@ -27,10 +27,11 @@ from mathutils.bvhtree import BVHTree
 from sverchok.utils.sv_mesh_utils import mask_vertices, polygons_to_edges
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, bmesh_clip
 from sverchok.utils.geom import calc_bounds
+from sverchok.utils.math import project_to_sphere
 from sverchok.dependencies import scipy, FreeCAD
 
 if scipy is not None:
-    from scipy.spatial import Voronoi
+    from scipy.spatial import Voronoi, SphericalVoronoi
 
 if FreeCAD is not None:
     from FreeCAD import Base
@@ -357,4 +358,26 @@ def lloyd_on_fc_face(fc_face, sites, thickness, n_iterations):
         uvpoints, points = restrict(points)
 
     return uvpoints, points
+
+def lloyd_on_sphere(center, radius, sites, n_iterations):
+    def iteration(pts):
+        diagram = SphericalVoronoi(pts, radius=radius, center=np.array(center))
+        diagram.sort_vertices_of_regions()
+        centers = []
+        for region in diagram.regions:
+            verts = np.array([diagram.vertices[i] for i in region])
+            new_vert = np.mean(verts, axis=0) 
+            centers.append(tuple(new_vert))
+        return centers
+
+    def restrict(points):
+        projections = [project_to_sphere(center, radius, pt) for pt in points]
+        return projections
+
+    points = restrict(sites)
+    for i in range(n_iterations):
+        points = iteration(points)
+        points = restrict(points)
+
+    return points
 

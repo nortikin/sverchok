@@ -327,6 +327,7 @@
     SvVoronoiOnSurfaceNode
     ---
     SvLloyd2dNode
+    SvLloydOnSphereNode
     SvLloydOnMeshNode
     SvLloydSolidNode
     SvLloydSolidFaceNode
