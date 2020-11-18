@@ -204,7 +204,10 @@ def project_solid_normals(shell, pts, thickness, add_plus=True, add_minus=True):
 def voronoi_on_solid_surface(solid, sites, thickness, clip_inner=True, clip_outer=True, do_clip=True, clipping=1.0, make_regions=True): 
 
     npoints = len(sites)
-    shell = solid.Shells[0]
+    if solid.Shells:
+        shell = solid.Shells[0]
+    else:
+        shell = Part.Shell(solid.Faces)
 
     all_points = sites
     if clip_inner or clip_outer:
