@@ -348,6 +348,13 @@ def lloyd_on_fc_face(fc_face, sites, thickness, n_iterations):
         info = infos[0]
         if info[0] == b'Face':
             uv = info[2]
+        elif info[0] == b'Edge':
+            edge_idx = info[1]
+            edge = fc_face.Edges[edge_idx]
+            curve, m, M = fc_face.curveOnSurface(edge)
+            curve_param = info[2]
+            uvpt = curve.value(curve_param)
+            uv = uvpt.x, uvpt.y
         else:
             uv = None
         projection = (pt.x, pt.y, pt.z)
