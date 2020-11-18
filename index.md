@@ -319,7 +319,7 @@
     ---
     DelaunayTriangulation2DNode
     SvDelaunay2DCdt
-    SvExDelaunay3DNode
+    SvDelaunay3dMk2Node
     ---
     Voronoi2DNode
     SvExVoronoi3DNode
