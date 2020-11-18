@@ -26,7 +26,7 @@ from mathutils.bvhtree import BVHTree
 
 from sverchok.utils.sv_mesh_utils import mask_vertices, polygons_to_edges
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, bmesh_clip
-from sverchok.utils.geom import calc_bounds
+from sverchok.utils.geom import calc_bounds, bounding_sphere
 from sverchok.utils.math import project_to_sphere
 from sverchok.dependencies import scipy, FreeCAD
 
@@ -379,5 +379,142 @@ def lloyd_on_sphere(center, radius, sites, n_iterations):
         points = iteration(points)
         points = restrict(points)
 
+    return points
+
+class Bounds(object):
+    @staticmethod
+    def new(kind, points, clipping):
+        if kind == 'BOX':
+            return BoxBounds(points, clipping)
+        elif kind == 'SPHERE':
+            return SphereBounds(points, clipping)
+        else:
+            raise Exception("Unsupported bounds type")
+
+    def contains(self, point):
+        raise Exception("not implemented")
+
+    def invert(self, point):
+        raise Exception("not implemented")
+
+    def restrict(self, point):
+        raise Exception("not implemented")
+
+    def make_mesh(self, diagram):
+        raise Exception("not implemented")
+
+class BoxBounds(Bounds):
+    def __init__(self, points, clipping):
+        points = np.array(points)
+        xs = points[:,0]
+        ys = points[:,1]
+        zs = points[:,2]
+
+        self.min_x = xs.min() - clipping
+        self.max_x = xs.max() + clipping
+        self.min_y = ys.min() - clipping
+        self.max_y = ys.max() + clipping
+        self.min_z = zs.min() - clipping
+        self.max_z = zs.max() + clipping
+
+    def contains(self, point):
+        x, y, z = tuple(point)
+        return (self.min_x <= x <= self.max_x) and (self.min_y <= y <= self.max_y) and (self.min_z <= z <= self.max_z)
+
+    def restrict(self, point):
+        if self.contains(point):
+            return point
+        
+        mid_x = 0.5 * (self.min_x + self.max_x)
+        mid_y = 0.5 * (self.min_y + self.max_y)
+        mid_z = 0.5 * (self.min_z + self.max_z)
+
+        x, y, z = point
+
+        if x > mid_x:
+            x1 = self.max_x
+        else:
+            x1 = self.min_x
+
+        if y > mid_y:
+            y1 = self.max_y
+        else:
+            y1 = self.min_y
+
+        if z > mid_z:
+            z1 = self.max_z
+        else:
+            z1 = self.min_z
+
+        return np.array([x1, y1, z1])
+
+    def invert(self, point):
+        point = np.array(point)
+        projection = self.restrict(point)
+        result = projection + 2 * (projection - point)
+        return result
+
+class SphereBounds(Bounds):
+    def __init__(self, points, clipping):
+        self.center, self.radius = bounding_sphere(points)
+        self.center = np.array(self.center)
+        self.radius += clipping
+
+    def contains(self, point):
+        point = np.array(point)
+        dv = point - self.center
+        return np.linalg.norm(dv) <= self.radius
+
+    def restrict(self, point):
+        if self.contains(point):
+            return point
+        point = np.array(point)
+        dv = point - self.center
+        dv1 = self.radius * dv / np.linalg.norm(dv)
+        projection = self.center + dv1
+        return projection
+
+    def invert(self, point):
+        point = np.array(point)
+        projection = self.restrict(point)
+        return point + 2*(projection - point)
+
+def lloyd3d_bounded(bounds, sites, n_iterations):
+    def invert(points):
+        result = []
+        for pt in points:
+            if bounds.contains(pt):
+                r = bounds.invert(pt)
+                result.append(tuple(r))
+        return result
+
+    def restrict(points):
+        result = [tuple(bounds.restrict(point)) for point in points]
+        return result
+
+    def iteration(pts):
+        n = len(pts)
+        all_pts = pts + invert(pts)
+        diagram = Voronoi(all_pts)
+        vertices = restrict(diagram.vertices)
+        centers = []
+        for site_idx in range(n):
+            region_idx = diagram.point_region[site_idx]
+            region = diagram.regions[region_idx]
+
+            if -1 in region:
+                site = pts[site_idx]
+                centers.append(site)
+                continue
+
+            region_verts = np.array([vertices[i] for i in region])
+            center = np.mean(region_verts, axis=0)
+            centers.append(tuple(center))
+        return centers
+
+    points = restrict(sites)
+    for i in range(n_iterations):
+        points = iteration(points)
+        points = restrict(points)
     return points
 
