@@ -11,6 +11,7 @@ from bpy.props import FloatProperty, StringProperty, BoolProperty, EnumProperty,
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, throttle_and_update_node, get_data_nesting_level
 from sverchok.utils.voronoi3d import lloyd_in_solid, lloyd_on_solid_surface
+from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy, FreeCAD
 
 if scipy is None or FreeCAD is None:

@@ -13,6 +13,7 @@ from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_r
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.freecad import is_solid_face_surface, surface_to_freecad
 from sverchok.utils.voronoi3d import lloyd_on_fc_face
+from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy, FreeCAD
 
 if scipy is None or FreeCAD is None:
