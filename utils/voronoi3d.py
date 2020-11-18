@@ -292,7 +292,10 @@ def lloyd_in_solid(solid, sites, n_iterations, tolerance=1e-4):
     return points
 
 def lloyd_on_solid_surface(solid, sites, thickness, n_iterations, tolerance=1e-4):
-    shell = solid.Shells[0]
+    if solid.Shells:
+        shell = solid.Shells[0]
+    else:
+        shell = Part.Shell(solid.Faces)
     
     def iteration(pts):
         all_pts = pts + project_solid_normals(shell, pts, thickness)
@@ -340,16 +343,20 @@ def lloyd_on_fc_face(fc_face, sites, thickness, n_iterations):
         return centers
     
     def project(point):
-        fc_surface = fc_face.Surface
-        u, v = fc_surface.parameter(Base.Vector(point))
-        pt = fc_surface.value(u,v)
+        dist, vs, infos = fc_face.distToShape(Part.Vertex(Base.Vector(point)))
+        pt = vs[0][0]
+        info = infos[0]
+        if info[0] == b'Face':
+            uv = info[2]
+        else:
+            uv = None
         projection = (pt.x, pt.y, pt.z)
-        return u, v, projection
+        return uv, projection
 
     def restrict(points):
         projections = [project(point) for point in points]
-        uvpoints = [(r[0], r[1], 0) for r in projections]
-        points = [r[2] for r in projections]
+        uvpoints = [(uv[0], uv[1], 0) for uv,_ in projections if uv is not None]
+        points = [r[1] for r in projections]
         return uvpoints, points
 
     uvpoints, points = restrict(sites)
