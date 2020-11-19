@@ -331,6 +331,9 @@
     SvLloydOnMeshNode
     SvLloydSolidNode
     SvLloydSolidFaceNode
+    ---
+    SvConvexHullNodeMK2
+    SvConcaveHullNode
 
 ## Transforms
     SvMoveNodeMk3
@@ -389,7 +392,6 @@
 ## Modifier Make
     LineConnectNodeMK2
     ---
-    SvConvexHullNodeMK2
     SvSubdivideNodeMK2
     SvOffsetLineNode
     SvContourNode
