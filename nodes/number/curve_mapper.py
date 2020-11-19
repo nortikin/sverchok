@@ -137,6 +137,21 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         data_json_str = json.dumps(data)
         node_data['curve_data'] = data_json_str
 
+    def sv_copy_post(self, other):
+        ''' 
+        self: is the new node, other: is the old node 
+
+        all of this must happen after the new node receives a new ID
+        '''
+        new_curve_node_name = self._get_curve_node_name()
+        _ = get_evaluator(node_group_name, new_curve_node_name)
+
+        old_curve_node_name = other._get_curve_node_name()
+        data = get_rgb_curve(node_group_name, old_curve_node_name)
+        set_rgb_curve(data, new_curve_node_name)
+
+        refresh_node(self, None)
+
 
 def register():
     bpy.utils.register_class(SvCurveMapperNode)

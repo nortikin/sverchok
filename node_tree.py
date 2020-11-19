@@ -277,6 +277,13 @@ class UpdateNodes:
         """
         pass
 
+    def sv_copy_pos(self, original):
+        """
+        Override this method to do anything node-specific
+        after node is copied, potentially cleanup steps.
+        """
+        pass
+
     def sv_free(self):
         """
         Override this method to do anything node-specific upon node removal
@@ -346,6 +353,7 @@ class UpdateNodes:
             self.use_custom_color, self.color = settings
         self.sv_copy(original)
         self.n_id = ""
+        self.sv_copy_post(original)
         self.id_data.nodes_dict.load_node(self)
 
     def update(self):
