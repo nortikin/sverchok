@@ -1,0 +1,616 @@
+{
+  "export_version": "0.10",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        13.644500732421875,
+        -189.43092346191406
+      ],
+      "params": {
+        "float_": 5.301592826843262,
+        "float_min": 3.1415927410125732
+      },
+      "width": 140.0
+    },
+    "Component Analyzer": {
+      "bl_idname": "SvComponentAnalyzerNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        278.6624755859375,
+        -210.3332977294922
+      ],
+      "params": {
+        "edge_mode": "Normal",
+        "mode": "Edges"
+      },
+      "width": 140.0
+    },
+    "Component Analyzer.001": {
+      "bl_idname": "SvComponentAnalyzerNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        278.6624755859375,
+        -416.110107421875
+      ],
+      "params": {
+        "mode": "Edges"
+      },
+      "width": 140.0
+    },
+    "Component Analyzer.002": {
+      "bl_idname": "SvComponentAnalyzerNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        280.6166076660156,
+        251.8907470703125
+      ],
+      "params": {
+        "edge_mode": "Normal",
+        "mode": "Verts"
+      },
+      "width": 140.0
+    },
+    "Cylinder": {
+      "bl_idname": "SvCylinderNodeMK2",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "custom_socket_props": {},
+      "height": 2.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        506.48736572265625,
+        600.9154052734375
+      ],
+      "params": {
+        "height": 2.0,
+        "meridians": 12,
+        "twist": 1.5707963705062866
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Edge Boom": {
+      "bl_idname": "SvEdgeBoomNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        279.0209045410156,
+        22.27556037902832
+      ],
+      "params": {
+        "sort": false
+      },
+      "width": 140.0
+    },
+    "IcoSphere": {
+      "bl_idname": "SvIcosphereNode",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        16.115726470947266,
+        -29.24591064453125
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Matrix Track To": {
+      "bl_idname": "SvMatrixTrackToNode",
+      "custom_socket_props": {
+        "2": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        694.0173950195312,
+        32.1368408203125
+      ],
+      "params": {
+        "vA": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "width": 140.0
+    },
+    "Matrix normal": {
+      "bl_idname": "SvMatrixNormalNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        505.4169921875,
+        185.64349365234375
+      ],
+      "params": {
+        "track": "Z",
+        "up": "Y"
+      },
+      "width": 140.0
+    },
+    "Plane": {
+      "bl_idname": "SvPlaneNodeMk3",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        688.9325561523438,
+        -243.9642333984375
+      ],
+      "params": {
+        "center": true,
+        "direction": "YZ",
+        "sizex": 0.9100000262260437,
+        "sizey": 0.10000000149011612
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Scalar Math": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        488.09564208984375,
+        -600.0107421875
+      ],
+      "params": {
+        "current_op": "DIV",
+        "y_": 5.179999828338623
+      },
+      "width": 134.61572265625
+    },
+    "Scalar Math.001": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        489.94598388671875,
+        -334.8523864746094
+      ],
+      "params": {
+        "current_op": "SUB",
+        "y_": 0.10000000149011612
+      },
+      "width": 140.0
+    },
+    "Scalar Math.002": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        484.89935302734375,
+        -478.71905517578125
+      ],
+      "params": {
+        "current_op": "*2",
+        "y_": 5.179999828338623
+      },
+      "width": 140.0
+    },
+    "Solidify": {
+      "bl_idname": "SvSolidifyNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        866.5413818359375,
+        -153.5970458984375
+      ],
+      "params": {
+        "thickness": 0.04000000283122063
+      },
+      "width": 140.0
+    },
+    "Vector Lerp": {
+      "bl_idname": "SvVectorLerp",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        492.67718505859375,
+        0.027500152587890625
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Viewer Draw": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1074.0487060546875,
+        99.73703002929688
+      ],
+      "params": {
+        "display_verts": false,
+        "edge_color": [
+          0.17057925462722778,
+          0.6651750206947327,
+          1.0,
+          1.0
+        ],
+        "polygon_color": [
+          0.14000000059604645,
+          0.5400000214576721,
+          0.8100000023841858,
+          0.48649924993515015
+        ],
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw.001": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        287.94061279296875,
+        605.5104370117188
+      ],
+      "params": {
+        "display_faces": false,
+        "display_verts": false,
+        "edge_color": [
+          0.8999999761581421,
+          0.8999999761581421,
+          0.3499999940395355,
+          0.38765472173690796
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw.002": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        718.08740234375,
+        428.04571533203125
+      ],
+      "params": {
+        "display_verts": false,
+        "edge_color": [
+          0.15290451049804688,
+          0.5927301049232483,
+          0.8900054693222046,
+          1.0
+        ],
+        "polygon_color": [
+          0.14000000059604645,
+          0.5400000214576721,
+          0.8100000023841858,
+          0.4689202904701233
+        ],
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "IcoSphere",
+      0,
+      "Component Analyzer.001",
+      0
+    ],
+    [
+      "IcoSphere",
+      1,
+      "Component Analyzer.001",
+      1
+    ],
+    [
+      "IcoSphere",
+      2,
+      "Component Analyzer.001",
+      2
+    ],
+    [
+      "IcoSphere",
+      0,
+      "Viewer Draw.001",
+      0
+    ],
+    [
+      "IcoSphere",
+      1,
+      "Viewer Draw.001",
+      1
+    ],
+    [
+      "IcoSphere",
+      2,
+      "Viewer Draw.001",
+      2
+    ],
+    [
+      "IcoSphere",
+      0,
+      "Component Analyzer",
+      0
+    ],
+    [
+      "IcoSphere",
+      1,
+      "Component Analyzer",
+      1
+    ],
+    [
+      "IcoSphere",
+      2,
+      "Component Analyzer",
+      2
+    ],
+    [
+      "Edge Boom",
+      0,
+      "Vector Lerp",
+      1
+    ],
+    [
+      "Edge Boom",
+      1,
+      "Vector Lerp",
+      2
+    ],
+    [
+      "Component Analyzer.001",
+      0,
+      "Scalar Math.001",
+      0
+    ],
+    [
+      "Scalar Math.002",
+      0,
+      "Scalar Math.001",
+      1
+    ],
+    [
+      "IcoSphere",
+      0,
+      "Matrix normal",
+      0
+    ],
+    [
+      "Component Analyzer.002",
+      0,
+      "Matrix normal",
+      1
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Scalar Math.002",
+      0
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Cylinder",
+      0
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Cylinder",
+      1
+    ],
+    [
+      "Scalar Math.002",
+      0,
+      "Cylinder",
+      4
+    ],
+    [
+      "Component Analyzer.001",
+      0,
+      "Scalar Math",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Scalar Math",
+      1
+    ],
+    [
+      "Scalar Math.001",
+      0,
+      "Plane",
+      0
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Plane",
+      1
+    ],
+    [
+      "Plane",
+      0,
+      "Solidify",
+      1
+    ],
+    [
+      "Plane",
+      2,
+      "Solidify",
+      2
+    ],
+    [
+      "Solidify",
+      0,
+      "Viewer Draw",
+      0
+    ],
+    [
+      "Solidify",
+      1,
+      "Viewer Draw",
+      1
+    ],
+    [
+      "Solidify",
+      2,
+      "Viewer Draw",
+      2
+    ],
+    [
+      "Matrix Track To",
+      0,
+      "Viewer Draw",
+      3
+    ],
+    [
+      "Vector Lerp",
+      0,
+      "Matrix Track To",
+      0
+    ],
+    [
+      "Component Analyzer",
+      0,
+      "Matrix Track To",
+      2
+    ],
+    [
+      "Edge Boom",
+      1,
+      "Matrix Track To",
+      3
+    ],
+    [
+      "IcoSphere",
+      0,
+      "Edge Boom",
+      0
+    ],
+    [
+      "IcoSphere",
+      1,
+      "Edge Boom",
+      1
+    ],
+    [
+      "IcoSphere",
+      2,
+      "Edge Boom",
+      2
+    ],
+    [
+      "IcoSphere",
+      0,
+      "Component Analyzer.002",
+      0
+    ],
+    [
+      "IcoSphere",
+      1,
+      "Component Analyzer.002",
+      1
+    ],
+    [
+      "IcoSphere",
+      2,
+      "Component Analyzer.002",
+      2
+    ],
+    [
+      "Cylinder",
+      0,
+      "Viewer Draw.002",
+      0
+    ],
+    [
+      "Cylinder",
+      1,
+      "Viewer Draw.002",
+      1
+    ],
+    [
+      "Cylinder",
+      2,
+      "Viewer Draw.002",
+      2
+    ],
+    [
+      "Matrix normal",
+      0,
+      "Viewer Draw.002",
+      3
+    ]
+  ]
+}
