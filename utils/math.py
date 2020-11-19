@@ -304,3 +304,9 @@ def np_signed_angle(a, b, normal):
     alpha = asin(sin_alpha)
     return sign * alpha
 
+def np_vectors_angle(v1, v2):
+    v1 /= np.linalg.norm(v1)
+    v2 /= np.linalg.norm(v2)
+    dot = np.dot(v1, v2)
+    return np.arccos(dot)
+
