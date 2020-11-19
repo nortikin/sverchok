@@ -150,7 +150,7 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         data = get_rgb_curve(node_group_name, old_curve_node_name)
         set_rgb_curve(data, new_curve_node_name)
 
-        refresh_node(self, None)
+        self.refresh_node(None)
 
 
 def register():

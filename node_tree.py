@@ -277,7 +277,7 @@ class UpdateNodes:
         """
         pass
 
-    def sv_copy_pos(self, original):
+    def sv_copy_post(self, original):
         """
         Override this method to do anything node-specific
         after node is copied, potentially cleanup steps.
