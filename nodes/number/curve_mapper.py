@@ -72,7 +72,7 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.outputs.new('SvStringsSocket', "Value")
         self.outputs.new('SvCurveSocket', "Curve")
         _ = get_evaluator(node_group_name, self._get_curve_node_name())
-
+        print("i happen!")
 
     def draw_buttons(self, context, layout):
         m = bpy.data.node_groups.get(node_group_name)
@@ -137,20 +137,20 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         data_json_str = json.dumps(data)
         node_data['curve_data'] = data_json_str
 
-    # def sv_copy(self, other):
-    #     ''' self is the new node, other is the old noe '''
-    #     curve_dict = {}
-    #     other.save_to_json(other, curve_dict)
-    #     self.load_from_json(self, curve_dict)
-    #     updateNode(self, None)
-
     def sv_copy(self, other):
-        ''' self is the new node, other is the old noe '''
-        old_curve_node_name = other._get_curve_node_name()
-        data = get_rgb_curve(node_group_name, old_curve_node_name)
-
-        new_curve_node_name = self._get_curve_node_name()
-        set_rgb_curve(data, new_curve_node_name)
+        ''' 
+        self: is the new node
+        other: is the old node 
+        
+        [ ] get reference to the shader node used by old node
+        [ ] store curve data from old node
+        [ ] get reference to the shader node used by new node
+        [ ] apply curve data to new node
+        [ ] trigger node update
+         
+        '''
+        self.n_id = ""
+        _ = get_evaluator(node_group_name, self._get_curve_node_name())
 
         updateNode(self, None)
 
