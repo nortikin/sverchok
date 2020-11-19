@@ -10,7 +10,7 @@ import time
 from collections import namedtuple
 from contextlib import contextmanager
 from functools import reduce
-from typing import Tuple, List, Set, Dict, Iterator, Optional
+from typing import Tuple, List, Set, Dict, Iterator, Optional, Generator
 
 import bpy
 from sverchok.core.socket_data import SvNoDataError
@@ -33,7 +33,6 @@ class SvGroupTree(bpy.types.NodeTree):
 
     group_node_name: bpy.props.StringProperty()  # should be updated by "Go to edit group tree" operator
     tree_id_memory: bpy.props.StringProperty(default="")  # identifier of the tree, should be used via `tree_id`
-    skip_tree_update: bpy.props.BoolProperty(default=False)  # usage only via throttle_update method
 
     # Always False, does not have sense to have for nested trees, sine of draft mode refactoring
     sv_draft: bpy.props.BoolProperty()
@@ -86,14 +85,14 @@ class SvGroupTree(bpy.types.NodeTree):
         # When group input or output nodes are connected some extra work should be done
         self.check_last_socket()  # Should not be too expensive to call it each update
 
-        if self.skip_tree_update:
-            return
         if self.name not in bpy.data.node_groups:  # load new file event
             return
         if not hasattr(bpy.context.space_data, 'path'):  # 3D panel also can call update method O_o
             return
+        if not self.group_node_name:  # initialization tree
+            return
 
-        group_node = None
+        group_node: SvGroupTreeNode = None
         # update tree can lead to calling update of previous tree too, so should find position tree in the path
         for i, path in zip(range(-1, -1000, -1), reversed(bpy.context.space_data.path)):
             if path.node_tree == self:
@@ -105,8 +104,8 @@ class SvGroupTree(bpy.types.NodeTree):
 
         self.check_reroutes_sockets()
         self.update_sockets()  # probably more precise trigger could be found for calling this method
-        self.handler.send(GroupEvent(GroupEvent.GROUP_TREE_UPDATE, group_node, updated_tree=self.name))
-        self.color_nodes(self.handler.get_error_nodes(group_node))
+        self.handler.send(GroupEvent(GroupEvent.GROUP_TREE_UPDATE, group_node))
+        self.color_nodes(self.handler.get_error_nodes(group_node))  # todo if group node is not active?
 
     def update_sockets(self):  # todo it lets simplify sockets API
         """Set properties of sockets of parent nodes and of output modes"""
@@ -183,8 +182,7 @@ class SvGroupTree(bpy.types.NodeTree):
     def update_nodes(self, nodes: list):
         """This method expect to get list of its nodes which should be updated"""
         group_node = bpy.context.space_data.path[-2].node_tree.nodes[self.group_node_name]
-        self.handler.send(GroupEvent(GroupEvent.NODES_UPDATE, group_node,
-                                     updated_tree=self.name, updated_nodes=[n.name for n in nodes]))
+        self.handler.send(GroupEvent(GroupEvent.NODES_UPDATE, group_node, updated_nodes=[n for n in nodes]))
         self.color_nodes(self.handler.get_error_nodes(group_node))
 
     def parent_nodes(self) -> Iterator['SvGroupTreeNode']:
@@ -208,18 +206,8 @@ class SvGroupTree(bpy.types.NodeTree):
 
     @contextmanager
     def throttle_update(self):
-        """ usage  https://github.com/nortikin/sverchok/issues/2770#issuecomment-723549311
-        with tree.throttle_update():
-            tree.nodes.new(...)
-            tree.links.new(...)
-        tree should be updated manually if needed
-        """
-        previous_state = self.skip_tree_update
-        self.skip_tree_update = True
-        try:
-            yield self
-        finally:
-            self.skip_tree_update = previous_state
+        """useless, for API consistency here"""
+        yield self
 
 
 class BaseNode:
@@ -335,10 +323,13 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
             return
 
         self.node_tree: SvGroupTree
-        self.node_tree.handler.send(
-            GroupEvent(GroupEvent.GROUP_NODE_UPDATE, self, updated_tree=self.node_tree.name))
+        self.node_tree.handler.send(GroupEvent(GroupEvent.GROUP_NODE_UPDATE, self))
         if any(self.node_tree.handler.get_error_nodes(self)):
             raise RuntimeError
+
+    def updater(self) -> Generator:
+        self.node_tree: SvGroupTree
+        return self.node_tree.handler.update(GroupEvent(GroupEvent.GROUP_NODE_UPDATE, self))
 
 
 class PlacingNodeOperator:
@@ -488,7 +479,7 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
         frame_names = {n.name for n in base_tree.nodes if n.select and n.bl_idname == 'NodeFrame'}
         [setattr(n, 'select', False) for n in base_tree.nodes if n.bl_idname == 'NodeFrame']
 
-        with base_tree.throttle_update(), sub_tree.throttle_update():
+        with base_tree.throttle_update():
             # copy and past nodes into group tree
             bpy.ops.node.clipboard_copy()
             context.space_data.path.append(sub_tree)
@@ -556,7 +547,7 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
             [base_tree.nodes.remove(n) for n in base_tree.nodes
              if n.name in frame_names and n.name not in with_children_frames]
 
-        base_tree.update()
+        base_tree.update_nodes([group_node])
         bpy.ops.node.edit_group_tree({'node': group_node})
 
         return {'FINISHED'}
@@ -721,6 +712,7 @@ class EditGroupTree(bpy.types.Operator):
     def execute(self, context):
         group_node = context.node
         sub_tree: SvGroupTree = context.node.node_tree
+        sub_tree.handler.send(GroupEvent(GroupEvent.EDIT_GROUP_NODE, group_node))
         context.space_data.path.append(sub_tree, node=group_node)
         sub_tree.group_node_name = group_node.name
         sub_tree.color_nodes(sub_tree.handler.get_error_nodes(group_node))

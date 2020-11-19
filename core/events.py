@@ -20,7 +20,6 @@ from enum import Enum, auto
 from typing import NamedTuple, Union, List, TYPE_CHECKING
 from itertools import takewhile
 
-import bpy
 from bpy.types import Node, NodeTree
 
 from sverchok.utils.context_managers import sv_preferences
@@ -33,30 +32,25 @@ class GroupEvent:
     GROUP_NODE_UPDATE = 'group_node_update'
     GROUP_TREE_UPDATE = 'group_tree_update'
     NODES_UPDATE = 'nodes_update'
+    EDIT_GROUP_NODE = 'edit_group_node'  # upon pressing edit button or Tab
 
     def __init__(self,
                  event_type: str,
                  group_node: SvGroupTreeNode,
-                 updated_tree: str = None,
-                 updated_nodes: List[str] = None):
+                 updated_nodes: List[SvGroupTreeNode] = None):
         self.type = event_type
-        self.updated_tree = updated_tree  # todo renaming issue
+        self.group_node = group_node
         self.updated_nodes = updated_nodes
-
-        self._tree_name = group_node.id_data.name  # todo renaming issue
-        self._group_node_name = group_node.name  # todo renaming issue
+        self.to_update = group_node.is_active
 
     @property
-    def bl_tree(self) -> SvGroupTree:
-        return bpy.data.node_groups[self.updated_tree]
-
-    @property
-    def group_node(self) -> SvGroupTreeNode:  # todo performance?
-        return bpy.data.node_groups[self._tree_name].nodes[self._group_node_name]
+    def group_tree(self) -> SvGroupTree:
+        return self.group_node.node_tree
 
     def __repr__(self):
-        return f'{self.type.upper()} event, GROUP_NODE={self.group_node.name}, TREE={self.updated_tree}' \
+        return f'{self.type.upper()} event, GROUP_NODE={self.group_node.name}, TREE={self.group_tree.name}' \
                + (f', NODES={self.updated_nodes}' if self.updated_nodes else '')
+
 
 class BlenderEventsTypes(Enum):
     tree_update = auto()  # this updates is calling last with exception of creating new node

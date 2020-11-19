@@ -16,7 +16,8 @@ import traceback
 from collections import defaultdict
 from contextlib import contextmanager
 from functools import wraps, partial
-from typing import Generator, Dict, TYPE_CHECKING, Union, List, NamedTuple, Optional, Iterator
+from time import time
+from typing import Generator, Dict, TYPE_CHECKING, Union, List, NamedTuple, Optional, Iterator, Set
 
 import bpy
 
@@ -27,19 +28,43 @@ from sverchok.utils.logging import debug
 
 if TYPE_CHECKING:
     from sverchok.core.node_group import SvGroupTree, SvGroupTreeNode
-    from sverchok.node_tree import SverchCustomTree
+    from sverchok.node_tree import SverchCustomTree, SverchCustomTreeNode
     SvTree = Union[SvGroupTree, SverchCustomTree]
+    SvNode = Union[SverchCustomTreeNode, SvGroupTreeNode]
 
 
 class MainHandler:
-    _events: List[GroupEvent] = []
+    @classmethod
+    def update(cls, event: GroupEvent) -> Generator:
+        """
+        This method should be called by group nodes for updating their tree
+        Also in means that input data was changed
+        """
+
+        # this will update node_id(s) of group tree todo it se redundant
+        tree = ContextTree(event.group_node)
+        if tree.nodes.active_input:
+            ContextTree.mark_outdated_nodes([tree.nodes.active_input.bl_tween])
+        return group_tree_update_handler(event.group_node)
 
     @classmethod
     def send(cls, event: GroupEvent):
-        if event.type == event.GROUP_NODE_UPDATE:
-            cls._get_handler().send(event)
-        else:
-            cls._events.append(event)
+        if event.type == GroupEvent.GROUP_NODE_UPDATE:
+            if event.group_node.bl_idname != 'SvGroupTree':
+                group_node_update().send(event)
+            else:
+                raise TypeError(f'SvGroupTree should use update method instead of send')
+
+        elif event.type in {GroupEvent.NODES_UPDATE, GroupEvent.GROUP_TREE_UPDATE}:
+            if event.updated_nodes:
+                ContextTree.mark_outdated_nodes(event.updated_nodes)
+
+            # Add events which should be updated via timer (changes in node tree)
+            if event.to_update:
+                NodesUpdater.add_task(event.group_node)
+
+        elif event.type == GroupEvent.EDIT_GROUP_NODE:
+            ContextTree(event.group_node)  # this will update node_ids of grout tree
 
     @staticmethod
     def get_error_nodes(group_node: SvGroupTreeNode) -> Iterator[Optional[Exception]]:
@@ -47,43 +72,95 @@ class MainHandler:
         for stat in ContextTree.get_statistic(group_node.node_tree, group_node):
             yield stat.error
 
-    @classmethod
-    def update_nodes(cls):
-        if not cls._events:
-            print('NOTHING HAPPENED')
-            return
-
-        # It can't be put into `init` method because group tree can have nested sub trees which also should be updated
-        handlers = group_node_update(group_tree_update(nodes_update()))
-
-        while cls._events:  # todo clean duplicates
-            event = cls._events.pop(0)
-            print(event)
-            # handler should override this if if output node was changed indeed
-            # but not when update call was created by paren tree
-            event.output_was_changed = False
-
-            handlers.send(event)
-            if event.output_was_changed:
-                pass_running(event.bl_tree)
-
-    @staticmethod
-    def _get_handler() -> Generator:
-        # It can't be put into `init` method because group tree can have nested sub trees which also should be updated
-        return group_node_update(group_tree_update(nodes_update()))
-
 
 @post_load_call
 def register_loop():
-    def group_event_loop(main_handler: MainHandler):
-        # this function won't be reload on script.reload event (F8)
-        delay = 1 / 1
-        with print_errors():
-            main_handler.update_nodes()
 
+    # this function won't be reload on script.reload event (F8)
+    def group_event_loop(delay):
+        # if NodesUpdater.has_task() and not NodesUpdater.is_running():
+        #     bpy.ops.node.updating_group_nodes('INVOKE_DEFAULT')
+        if NodesUpdater.is_running():
+            NodesUpdater.run_task()
+        elif NodesUpdater.has_task():
+            NodesUpdater.start_task()
         return delay
 
-    bpy.app.timers.register(partial(group_event_loop, MainHandler))
+    bpy.app.timers.register(partial(group_event_loop, 0.01))
+
+
+class NodesUpdater:
+    """It can update only one tree at a time"""
+    _group_node: Optional[SvGroupTreeNode] = None
+    _handler: Optional[Generator] = None
+
+    _node_tree_area: Optional[bpy.types.Area] = None
+    _last_node: Optional[Node] = None
+
+    @classmethod
+    def add_task(cls, group_node: SvGroupTreeNode):
+        """It can handle ony one tree at a time, several task will override each other"""
+        cls._group_node = group_node
+
+    @classmethod
+    def start_task(cls):
+        if cls.is_running():
+            raise RuntimeError(f'Tree "{cls._group_node.node_tree.name}" already is being updated')
+        cls._handler = group_tree_update_handler(cls._group_node)
+
+        # searching appropriate area index for reporting update progress
+        for area in bpy.context.screen.areas:
+            if area.ui_type == 'SverchCustomTreeType':
+                if area.spaces[0].path[-1].node_tree.name == cls._group_node.node_tree.name:
+                    cls._node_tree_area = area
+                    break
+
+    @classmethod
+    def run_task(cls, event: str = 'TIMER') -> Set[str]:
+        if event != 'ESC':
+            try:
+                if cls._last_node:
+                    cls._last_node.bl_tween.use_custom_color = False
+                    cls._last_node.bl_tween.set_color()
+
+                start_time = time()
+                while (time() - start_time) < 0.1:
+                    node = next(cls._handler)
+
+                cls._last_node = node
+                node.bl_tween.use_custom_color = True
+                node.bl_tween.color = (0.7, 1.000000, 0.7)
+                cls._report_progress(f'Pres "ESC" to abort, updating node "{node.name}"')
+
+                return {'PASS_THROUGH'}
+            except StopIteration:
+                cls._report_progress()
+                cls.finish_task()
+                return {'FINISHED'}
+        else:
+            cls._handler.close()
+            cls._report_progress()
+            cls.finish_task()
+            return {'CANCELED'}
+
+    @classmethod
+    def finish_task(cls):
+        group_node = cls._group_node
+        cls._group_node, cls._handler, cls._node_tree_area, cls._last_node = [None] * 4
+        pass_running(group_node.node_tree)  # todo only if necessary
+
+    @classmethod
+    def has_task(cls) -> bool:
+        return bool(cls._group_node)
+
+    @classmethod
+    def is_running(cls) -> bool:
+        return bool(cls._handler)
+
+    @classmethod
+    def _report_progress(cls, text: str = None):
+        if cls._node_tree_area:
+            cls._node_tree_area.header_text_set(text)
 
 
 class NodeStatistic(NamedTuple):
@@ -104,7 +181,7 @@ class ContextTree(Tree):
     _trees: Dict[str, Tree] = dict()
     _nodes_statistic: Dict[str, NodeStatistic] = defaultdict(NodeStatistic)  # str - sub_node_id
 
-    def __init__(self, bl_tree: SvGroupTree, group_node: SvGroupTreeNode):
+    def __init__(self, group_node: SvGroupTreeNode):
         """
         It will create Python copy of the tree and tag already updated nodes
 
@@ -113,12 +190,12 @@ class ContextTree(Tree):
         """
         self.group_node = group_node
 
-        super().__init__(bl_tree)
+        super().__init__(group_node.node_tree)
         self._replace_nodes_id()  # this should be before copying context node status and nodes updates
         [setattr(n, atr, val) for n in self.nodes
          for atr, val in zip(NodeStatistic.__annotations__, self._nodes_statistic[n.bl_tween.node_id])]
         self._update_topology_status()  # this should be after copying context nodes status
-        self._trees[bl_tree.tree_id] = self  # this should be after topology changes chek
+        self._trees[group_node.node_tree.tree_id] = self  # this should be after topology changes chek
 
     def update_node(self, node: Node):
         bl_node = node.bl_tween
@@ -144,6 +221,17 @@ class ContextTree(Tree):
             return
         for bl_n in bl_tree.nodes:
             yield cls._nodes_statistic[cls._generate_sub_node_id(tree.nodes[bl_n.name], group_node)]
+
+    @classmethod
+    def mark_outdated_nodes(cls, bl_nodes: List[SvNode]):
+        """
+        Try find given nodes in statistic and if find mark them as outdated
+        it assumes that given nodes have correct node_id(s)
+        """
+        for bl_node in bl_nodes:
+            stats = cls._nodes_statistic.get(bl_node.node_id)
+            if stats is not None:
+                cls._nodes_statistic[bl_node.node_id] = NodeStatistic(False, stats.error)
 
     def _update_topology_status(self):
         """Copy nodes status from previous tree"""
@@ -214,7 +302,7 @@ def group_node_update(next_handler=None) -> Generator[None, GroupEvent, None]:
 
             with print_errors():
                 debug(event)
-                tree = ContextTree(event.bl_tree, event.group_node)
+                tree = ContextTree(event.group_node)
                 if tree.nodes.active_input:
                     tree.nodes.active_input.is_updated = False
                 for node in tree.sorted_walk([tree.nodes.active_output] if tree.nodes.active_output else []):
@@ -228,63 +316,26 @@ def group_node_update(next_handler=None) -> Generator[None, GroupEvent, None]:
                 next_handler.send(event)
 
 
-@coroutine
-def group_tree_update(next_handler=None):
-    """
-    Update tree if collection of links or nodes was changed
-    update should be done carefully only of outdated nodes
-    after tree update running should be passed to parent group nodes
-    """
-    while True:
-        event: GroupEvent
-        event = yield
-        if event.type == GroupEvent.GROUP_TREE_UPDATE:
+def group_tree_update_handler(group_node: SvGroupTreeNode) -> Generator[Node]:
+    tree = ContextTree(group_node)
+    out_nodes = [n for n in tree.nodes if n.bl_tween.bl_idname in OUT_ID_NAMES]
+    out_nodes.extend([tree.nodes.active_output] if tree.nodes.active_output else [])
+    try:
+        for node in tree.sorted_walk(out_nodes):
+            if not node.is_updated:
+                if hasattr(node.bl_tween, 'updater'):
+                    yield from node.bl_tween.updater()  # todo handling errors?
+                else:
+                    yield node
+                    tree.update_node(node)
 
-            with print_errors():
-                debug(event)
-                tree = ContextTree(event.bl_tree, event.group_node)
-                out_nodes = [n for n in tree.nodes if n.bl_tween.bl_idname in OUT_ID_NAMES]
-                out_nodes.extend([tree.nodes.active_output] if tree.nodes.active_output else [])
-                for node in tree.sorted_walk(out_nodes):
-                    if not node.is_updated:
-                        if node is tree.nodes.active_output:
-                            event.output_was_changed = True
-                        tree.update_node(node)
-                        if node.error is None:
-                            [setattr(n, 'is_updated', False) for n in node.next_nodes]
+                # if node is tree.nodes.active_output:  # todo move upper over call stuck
+                #     event.output_was_changed = True
 
-        else:
-            if next_handler:
-                next_handler.send(event)
-
-
-@coroutine
-def nodes_update(next_handler=None):
-    """
-    It will update given via event object nodes
-    """
-    while True:
-        event: GroupEvent
-        event = yield
-        if event.type == GroupEvent.NODES_UPDATE:
-
-            with print_errors():
-                debug(event)
-                tree = ContextTree(event.bl_tree, event.group_node)
-                outdated_nodes = set(event.updated_nodes)
-                out_nodes = [n for n in tree.nodes if n.bl_tween.bl_idname in OUT_ID_NAMES]
-                out_nodes.extend([tree.nodes.active_output] if tree.nodes.active_output else [])
-                for node in tree.sorted_walk(out_nodes):
-                    if not node.is_updated or node.name in outdated_nodes:
-                        if node is tree.nodes.active_output:
-                            event.output_was_changed = True
-                        tree.update_node(node)
-                        if node.error is None:
-                            [setattr(n, 'is_updated', False) for n in node.next_nodes]
-
-        else:
-            if next_handler:
-                next_handler.send(event)
+                if node.error is None:
+                    [setattr(n, 'is_updated', False) for n in node.next_nodes]
+    except GeneratorExit:
+        pass  # todo aborting update
 
 
 def pass_running(from_tree: SvGroupTree):
@@ -316,3 +367,20 @@ def print_errors():
         yield None
     except Exception:
         traceback.print_exc()
+
+
+class PressingEscape(bpy.types.Operator):
+    bl_idname = 'node.sv_abort_nodes_updating'
+    bl_label = 'Abort nodes updating'
+
+    def execute(self, context):
+        if NodesUpdater.is_running():
+            NodesUpdater.run_task('ESC')
+        return {'FINISHED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type in {'SverchCustomTreeType'}  # todo can work only when group tree in path
+
+
+register, unregister = bpy.utils.register_classes_factory([PressingEscape])
