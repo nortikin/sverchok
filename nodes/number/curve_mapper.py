@@ -139,18 +139,15 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     def sv_copy(self, other):
         ''' 
-        self: is the new node
-        other: is the old node 
-        
-        [ ] get reference to the shader node used by old node
-        [ ] store curve data from old node
-        [ ] get reference to the shader node used by new node
-        [ ] apply curve data to new node
-        [ ] trigger node update
-         
+        self: is the new node, other: is the old node 
         '''
         self.n_id = ""
-        _ = get_evaluator(node_group_name, self._get_curve_node_name())
+        with self.sv_throttle_tree_update():
+            new_curve_node_name = self._get_curve_node_name()
+            old_curve_node_name = other._get_curve_node_name()
+            _ = get_evaluator(node_group_name, new_curve_node_name)
+            data = get_rgb_curve(node_group_name, old_curve_node_name)
+            set_rgb_curve(data, new_curve_node_name)
 
         updateNode(self, None)
 
