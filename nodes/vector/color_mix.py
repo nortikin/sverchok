@@ -222,7 +222,7 @@ class SvColorMixNode(bpy.types.Node, SverchCustomTreeNode):
         description='Clamp result of the node to 0..1 range.',
         default=False, update=updateNode)
 
-    color_A = FloatVectorProperty(
+    color_A: FloatVectorProperty(
         name="Color A",
         subtype='COLOR',
         size=4,
@@ -231,7 +231,7 @@ class SvColorMixNode(bpy.types.Node, SverchCustomTreeNode):
         description="color picker",
         update=updateNode
         )
-    color_B = FloatVectorProperty(
+    color_B: FloatVectorProperty(
         name="Color B",
         subtype='COLOR',
         size=4,
