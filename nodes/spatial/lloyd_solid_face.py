@@ -11,6 +11,7 @@ from bpy.props import FloatProperty, StringProperty, BoolProperty, EnumProperty,
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, throttle_and_update_node, get_data_nesting_level
 from sverchok.utils.surface.core import SvSurface
+from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.surface.freecad import is_solid_face_surface, surface_to_freecad
 from sverchok.utils.voronoi3d import lloyd_on_fc_face
 from sverchok.utils.dummy_nodes import add_dummy
@@ -50,6 +51,7 @@ class SvLloydSolidFaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', "Sites")
         self.inputs.new('SvStringsSocket', 'Thickness').prop_name = 'thickness'
         self.inputs.new('SvStringsSocket', 'Iterations').prop_name = 'iterations'
+        self.inputs.new('SvScalarFieldSocket', 'Weights')
         self.outputs.new('SvVerticesSocket', "Sites")
         self.outputs.new('SvVerticesSocket', "UVPoints")
 
@@ -62,27 +64,30 @@ class SvLloydSolidFaceNode(bpy.types.Node, SverchCustomTreeNode):
         sites_in = self.inputs['Sites'].sv_get()
         iterations_in = self.inputs['Iterations'].sv_get()
         thickness_in = self.inputs['Thickness'].sv_get()
+        weights_in = self.inputs['Weights'].sv_get(default=[[None]])
 
         surface_in = ensure_nesting_level(surface_in, 2, data_types=(SvSurface,))
         input_level = get_data_nesting_level(sites_in)
         sites_in = ensure_nesting_level(sites_in, 4)
         iterations_in = ensure_nesting_level(iterations_in, 2)
         thickness_in = ensure_nesting_level(thickness_in, 2)
+        if self.inputs['Weights'].is_linked:
+            weights_in = ensure_nesting_level(weights_in, 2, data_types=(SvScalarField,))
 
         nested_output = input_level > 1
 
         verts_out = []
         uvpoints_out = []
-        for params in zip_long_repeat(surface_in, sites_in, iterations_in, thickness_in):
+        for params in zip_long_repeat(surface_in, sites_in, iterations_in, thickness_in, weights_in):
             new_verts = []
             new_uvpoints = []
-            for surface, sites, iterations, thickness in zip_long_repeat(*params):
+            for surface, sites, iterations, thickness, weights in zip_long_repeat(*params):
                 if is_solid_face_surface(surface):
                     fc_face = surface.face
                 else:
                     fc_face = surface_to_freecad(surface, make_face=True).face
 
-                uvpoints, sites = lloyd_on_fc_face(fc_face, sites, thickness, iterations)
+                uvpoints, sites = lloyd_on_fc_face(fc_face, sites, thickness, iterations, weight_field = weights)
 
                 new_verts.append(sites)
                 new_uvpoints.append(uvpoints)

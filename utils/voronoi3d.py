@@ -330,7 +330,7 @@ def lloyd_on_solid_surface(solid, sites, thickness, n_iterations, tolerance=1e-4
         points = restrict(points)
     return points
 
-def lloyd_on_fc_face(fc_face, sites, thickness, n_iterations):
+def lloyd_on_fc_face(fc_face, sites, thickness, n_iterations, weight_field = None):
 
     def iteration(pts):
         n = len(pts)
@@ -341,7 +341,7 @@ def lloyd_on_fc_face(fc_face, sites, thickness, n_iterations):
             region_idx = diagram.point_region[site_idx]
             region = diagram.regions[region_idx]
             region_verts = np.array([diagram.vertices[i] for i in region])
-            center = np.mean(region_verts, axis=0)
+            center = weighted_center(region_verts, weight_field)
             centers.append(tuple(center))
         return centers
     
