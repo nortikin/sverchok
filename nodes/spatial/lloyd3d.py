@@ -10,6 +10,7 @@ from bpy.props import FloatProperty, StringProperty, BoolProperty, EnumProperty,
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, throttle_and_update_node, get_data_nesting_level
+from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.voronoi3d import Bounds, lloyd3d_bounded
 from sverchok.dependencies import scipy
 
@@ -55,6 +56,7 @@ class SvLloyd3dNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', "Sites")
         self.inputs.new('SvStringsSocket', "Clipping").prop_name = 'clipping'
         self.inputs.new('SvStringsSocket', 'Iterations').prop_name = 'iterations'
+        self.inputs.new('SvScalarFieldSocket', 'Weights')
         self.outputs.new('SvVerticesSocket', "Sites")
 
     def draw_buttons(self, context, layout):
@@ -68,20 +70,23 @@ class SvLloyd3dNode(bpy.types.Node, SverchCustomTreeNode):
         sites_in = self.inputs['Sites'].sv_get()
         clipping_in = self.inputs['Clipping'].sv_get()
         iterations_in = self.inputs['Iterations'].sv_get()
+        weights_in = self.inputs['Weights'].sv_get(default=[[None]])
 
         input_level = get_data_nesting_level(sites_in)
         sites_in = ensure_nesting_level(sites_in, 4)
         clipping_in = ensure_nesting_level(clipping_in, 2)
         iterations_in = ensure_nesting_level(iterations_in, 2)
+        if self.inputs['Weights'].is_linked:
+            weights_in = ensure_nesting_level(weights_in, 2, data_types=(SvScalarField,))
 
         nested_output = input_level > 3
 
         verts_out = []
-        for params in zip_long_repeat(sites_in, iterations_in, clipping_in):
+        for params in zip_long_repeat(sites_in, iterations_in, clipping_in, weights_in):
             new_verts = []
-            for sites, iterations, clipping in zip_long_repeat(*params):
+            for sites, iterations, clipping, weights in zip_long_repeat(*params):
                 bounds = Bounds.new(self.bounds_mode, sites, clipping)
-                sites = lloyd3d_bounded(bounds, sites, iterations)
+                sites = lloyd3d_bounded(bounds, sites, iterations, weight_field = weights)
                 new_verts.append(sites)
             if nested_output:
                 verts_out.append(new_verts)
