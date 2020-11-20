@@ -10,6 +10,7 @@ from bpy.props import FloatProperty, StringProperty, BoolProperty, EnumProperty,
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, throttle_and_update_node, get_data_nesting_level
+from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.voronoi3d import lloyd_on_mesh
 from sverchok.dependencies import scipy
 
@@ -45,6 +46,7 @@ class SvLloydOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', "Sites")
         self.inputs.new('SvStringsSocket', 'Iterations').prop_name = 'iterations'
         self.inputs.new('SvStringsSocket', 'Thickness').prop_name = 'thickness'
+        self.inputs.new('SvScalarFieldSocket', 'Weights')
         self.outputs.new('SvVerticesSocket', "Sites")
 
     def process(self):
@@ -57,6 +59,7 @@ class SvLloydOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         sites_in = self.inputs['Sites'].sv_get()
         thickness_in = self.inputs['Thickness'].sv_get()
         iterations_in = self.inputs['Iterations'].sv_get()
+        weights_in = self.inputs['Weights'].sv_get(default=[[None]])
 
         verts_in = ensure_nesting_level(verts_in, 4)
         input_level = get_data_nesting_level(sites_in)
@@ -64,14 +67,16 @@ class SvLloydOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         faces_in = ensure_nesting_level(faces_in, 4)
         thickness_in = ensure_nesting_level(thickness_in, 2)
         iterations_in = ensure_nesting_level(iterations_in, 2)
+        if self.inputs['Weights'].is_linked:
+            weights_in = ensure_nesting_level(weights_in, 2, data_types=(SvScalarField,))
 
         nested_output = input_level > 3
 
         verts_out = []
-        for params in zip_long_repeat(verts_in, faces_in, sites_in, thickness_in, iterations_in):
+        for params in zip_long_repeat(verts_in, faces_in, sites_in, thickness_in, iterations_in, weights_in):
             new_verts = []
-            for verts, faces, sites, thickness, iterations in zip_long_repeat(*params):
-                sites = lloyd_on_mesh(verts, faces, sites, thickness, iterations)
+            for verts, faces, sites, thickness, iterations, weights in zip_long_repeat(*params):
+                sites = lloyd_on_mesh(verts, faces, sites, thickness, iterations, weight_field = weights)
                 new_verts.append(sites)
             if nested_output:
                 verts_out.append(new_verts)
