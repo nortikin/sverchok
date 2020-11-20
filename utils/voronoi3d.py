@@ -27,7 +27,7 @@ from mathutils.bvhtree import BVHTree
 from sverchok.utils.sv_mesh_utils import mask_vertices, polygons_to_edges
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, bmesh_clip
 from sverchok.utils.geom import calc_bounds, bounding_sphere
-from sverchok.utils.math import project_to_sphere
+from sverchok.utils.math import project_to_sphere, weighted_center
 from sverchok.dependencies import scipy, FreeCAD
 
 if scipy is not None:
@@ -218,18 +218,6 @@ def voronoi_on_solid_surface(solid, sites, thickness, clip_inner=True, clip_oute
             make_regions = make_regions,
             do_clip = do_clip,
             clipping = clipping)
-
-def weighted_center(verts, field=None):
-    if field is None:
-        return np.mean(verts, axis=0)
-    else:
-        xs = verts[:,0]
-        ys = verts[:,1]
-        zs = verts[:,2]
-        weights = field.evaluate_grid(xs, ys, zs)
-        wpoints = weights[:,np.newaxis] * verts
-        result = wpoints.sum(axis=0) / weights.sum()
-        return result
 
 def lloyd_on_mesh(verts, faces, sites, thickness, n_iterations, weight_field=None):
     bvh = BVHTree.FromPolygons(verts, faces)

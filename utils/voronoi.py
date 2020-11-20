@@ -104,6 +104,7 @@ Algorithmica 2, 153-174.
 import math
 import sys
 import getopt
+import numpy as np
 
 from math import sqrt, atan2
 from collections import defaultdict
@@ -112,9 +113,11 @@ import bmesh
 from mathutils import Vector
 from mathutils.geometry import intersect_line_line_2d
 from mathutils.bvhtree import BVHTree
+from mathutils.kdtree import KDTree
 
 from sverchok.utils.logging import debug, info, error
 from sverchok.utils.geom import center, LineEquation2D, CircleEquation2D
+from sverchok.utils.math import weighted_center
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata
 
 TOLERANCE = 1e-9
@@ -205,7 +208,7 @@ class Context(object):
                 print("%d" % sitenumR)
 
 #------------------------------------------------------------------
-def voronoi(siteList,context):
+def voronoi(siteList,context, raise_exception=False):
     try:
       edgeList  = EdgeList(siteList.xmin,siteList.xmax,len(siteList))
       priorityQ = PriorityQueue(siteList.ymin,siteList.ymax,len(siteList))
@@ -344,8 +347,11 @@ def voronoi(siteList,context):
           he = he.right
       Edge.EDGE_NUM = 0
     except Exception as err:
-      print("#Voronoi error#")
-      print(str(err))
+        if raise_exception:
+            raise err
+        else:
+          print("#Voronoi error#")
+          print(str(err))
 
 #------------------------------------------------------------------
 def isEqual(a,b,relativeError=TOLERANCE):
@@ -437,7 +443,15 @@ class Edge(object):
         
         # get the slope of the line
         newedge.c = float(s1.x * dx + s1.y * dy + (dx*dx + dy*dy)*0.5)  
-        if adx > ady :
+        if dx == 0 and dy == 0:
+            raise Exception(f"Can't build an edge: two points are coinciding: {s1.sitenum}, {s2.sitenum}")
+        if dx == 0:
+            newedge.a = 0.0
+            newedge.b = dy
+        elif dy == 0:
+            newedge.a = dx
+            newedge.b = 0.0
+        elif adx > ady :
             # set formula of line, with x fixed to 1
             newedge.a = 1.0
             newedge.b = dy/dx
@@ -780,7 +794,7 @@ class SiteList(object):
 
  
 #------------------------------------------------------------------
-def computeVoronoiDiagram(points):
+def computeVoronoiDiagram(points, raise_exception=False):
     """ Takes a list of point objects (which must have x and y fields).
         Returns a Context object.
 
@@ -798,7 +812,7 @@ def computeVoronoiDiagram(points):
     siteList = SiteList(points)
     context  = Context()
     context.triangulate = True
-    voronoi(siteList,context)
+    voronoi(siteList,context, raise_exception)
     return context
 
 #------------------------------------------------------------------
@@ -955,9 +969,12 @@ class Mesh2D(object):
 
 class BoxBounds(Bounds):
 
-    def contains(self, p):
+    def contains(self, p, edge_ok = True):
         x, y = tuple(p)
-        return (self.x_min <= x <= self.x_max) and (self.y_min <= y <= self.y_max)
+        if edge_ok:
+            return (self.x_min <= x <= self.x_max) and (self.y_min <= y <= self.y_max)
+        else:
+            return (self.x_min < x < self.x_max) and (self.y_min < y < self.y_max)
     
     @property
     def edges(self):
@@ -1052,8 +1069,8 @@ class CircleBounds(Bounds):
     def circle(self):
         return CircleEquation2D(self.center, self.r_max)
 
-    def contains(self, p):
-        return self.circle.contains(p)
+    def contains(self, p, edge_ok=True):
+        return self.circle.contains(p, include_bound=edge_ok)
 
     def segment_intersection(self, p1, p2):
         r = self.circle.intersect_with_segment(p1, p2)
@@ -1117,7 +1134,7 @@ def voronoi_bounded(sites, bound_mode='BOX', clip=True, draw_bounds=True, draw_h
 
     bounds.r_max = bounds.r_max + delta
 
-    voronoi_data = computeVoronoiDiagram(source_sites)
+    voronoi_data = computeVoronoiDiagram(source_sites, raise_exception=True)
     verts = voronoi_data.vertices
     lines = voronoi_data.lines
     all_edges = voronoi_data.edges
@@ -1211,8 +1228,12 @@ def voronoi_bounded(sites, bound_mode='BOX', clip=True, draw_bounds=True, draw_h
                 bounding_verts.append(new_vert_1_idx)
                 bounding_verts.append(new_vert_2_idx)
                 bm.new_edge(new_vert_1_idx, new_vert_2_idx)
+            elif len(intersections) == 1:
+                v = intersections[0]
+                new_vert_idx = bm.new_vert(tuple(v))
+                bounding_verts.append(new_vert_idx)
             else:
-                error("unexpected number of intersections of infinite line %s with area bounds: %s", eqn, intersections)
+                error("unexpected number of intersections of infinite line %s with area bounds %s: %s", eqn, bounds, intersections)
 
         # TODO: there could be (finite) edges, which have both ends
         # outside of the bounding line. We could detect such edges and
@@ -1252,9 +1273,93 @@ def voronoi_bounded(sites, bound_mode='BOX', clip=True, draw_bounds=True, draw_h
                 loc, normal, index, distance = bvh.find_nearest(site)
                 if index is not None:
                     face_by_site[site_idx] = index
-            new_faces = [new_faces[face_by_site[i]] for i in range(len(sites))]
+            r = []
+            for i in range(len(sites)):
+                if i not in face_by_site:
+                    raise Exception(f"Can't find a face for site #{i}")
+                face_idx = face_by_site[i]
+                face = new_faces[face_idx]
+                r.append(face)
+            new_faces = r
     else:
         new_faces = []
 
     return new_vertices, edges, new_faces
+
+def unique_points(points, eps=1e-4):
+    kdt = KDTree(len(points))
+    for i, p in enumerate(points):
+        kdt.insert(p, i)
+    kdt.balance()
+    unique = []
+    repeating = []
+    mask = []
+    for p in points:
+        found = kdt.find_n(p, 2)
+        if len(found) > 1:
+            loc, idx, distance = found[1]
+            ok = distance > eps
+            mask.append(ok)
+            if ok:
+                unique.append(p)
+            else:
+                repeating.append(p)
+    return mask, unique, repeating
+
+def lloyd2d(bound_mode, verts, n_iterations, clip=0.0, weight_field=None):
+    bounds = Bounds.new(bound_mode)
+    bounds.init_from_sites(verts)
+
+    def invert_points(pts):
+        result = []
+        for pt in pts:
+            pt2d = x0,y0 = (pt[0], pt[1])
+            if bounds.contains(pt2d, edge_ok=False):
+                x1,y1,z1 = bounds.project(pt)
+                if x1 == x0 and y1 == y0:
+                    continue
+                x2 = x0 + 2*(x1-x0)
+                y2 = y0 + 2*(y1-y0)
+                out_pt = (x2, y2, z1)
+                result.append(out_pt)
+        return result
+    
+    def iteration(pts):
+        mask, pts, repeating = unique_points(pts)
+        n = len(pts)
+        all_pts = pts + invert_points(pts)
+        voronoi_verts, _, voronoi_faces = voronoi_bounded(all_pts,
+                    bound_mode = bound_mode,
+                    clip = clip,
+                    draw_bounds = True,
+                    draw_hangs = True,
+                    make_faces = True,
+                    ordered_faces = True,
+                    max_sides = 20)
+        centers = []
+        for face in voronoi_faces[:n]:
+            face_verts = np.array([voronoi_verts[i] for i in face])
+            new_pt = weighted_center(face_verts, weight_field)
+            centers.append(tuple(new_pt))
+
+        result = []
+        i = 0
+        j = 0
+        for is_unique in mask:
+            if is_unique:
+                result.append(centers[i])
+                i += 1
+            else:
+                result.append(repeating[j])
+                j += 1
+        return result
+
+    def restrict(pts):
+        return [bounds.restrict(pt) for pt in pts]
+
+    points = restrict(verts)
+    for i in range(n_iterations):
+        points = iteration(points)
+        points = restrict(points)
+    return points
 

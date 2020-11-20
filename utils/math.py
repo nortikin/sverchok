@@ -310,3 +310,15 @@ def np_vectors_angle(v1, v2):
     dot = np.dot(v1, v2)
     return np.arccos(dot)
 
+def weighted_center(verts, field=None):
+    if field is None:
+        return np.mean(verts, axis=0)
+    else:
+        xs = verts[:,0]
+        ys = verts[:,1]
+        zs = verts[:,2]
+        weights = field.evaluate_grid(xs, ys, zs)
+        wpoints = weights[:,np.newaxis] * verts
+        result = wpoints.sum(axis=0) / weights.sum()
+        return result
+

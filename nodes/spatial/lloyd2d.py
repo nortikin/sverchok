@@ -11,7 +11,8 @@ from bpy.props import FloatProperty, StringProperty, BoolProperty, EnumProperty,
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, throttle_and_update_node, get_data_nesting_level
 from sverchok.utils.geom import center
-from sverchok.utils.voronoi import voronoi_bounded, Bounds
+from sverchok.utils.voronoi import lloyd2d
+from sverchok.utils.field.scalar import SvScalarField
 
 class SvLloyd2dNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -49,54 +50,15 @@ class SvLloyd2dNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', 'Iterations').prop_name = 'iterations'
+        self.inputs.new('SvScalarFieldSocket', 'Weights')
         self.outputs.new('SvVerticesSocket', "Vertices")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "bound_mode")
+    
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
         layout.prop(self, "clip", text="Clipping")
-
-    def lloyd2d(self, verts, n_iterations):
-        bounds = Bounds.new(self.bound_mode)
-        bounds.init_from_sites(verts)
-
-        def invert_points(pts):
-            result = []
-            for pt in pts:
-                pt2d = x0,y0 = (pt[0], pt[1])
-                if bounds.contains(pt2d):
-                    x1,y1,z1 = bounds.project(pt)
-                    x2 = x0 + 2*(x1-x0)
-                    y2 = y0 + 2*(y1-y0)
-                    out_pt = (x2, y2, z1)
-                    result.append(out_pt)
-            return result
-        
-        def iteration(pts):
-            n = len(pts)
-            all_pts = pts + invert_points(pts)
-            voronoi_verts, _, voronoi_faces = voronoi_bounded(all_pts,
-                        bound_mode = self.bound_mode,
-                        clip = self.clip,
-                        draw_bounds = True,
-                        draw_hangs = True,
-                        make_faces = True,
-                        ordered_faces = True,
-                        max_sides = 10)
-            centers = []
-            for face in voronoi_faces[:n]:
-                face_verts = [voronoi_verts[i] for i in face]
-                new_pt = center(face_verts)
-                centers.append(new_pt)
-            return centers
-
-        def restrict(pts):
-            return [bounds.restrict(pt) for pt in pts]
-
-        points = restrict(verts)
-        for i in range(n_iterations):
-            points = iteration(points)
-            points = restrict(points)
-        return points
 
     def process(self):
 
@@ -105,18 +67,22 @@ class SvLloyd2dNode(bpy.types.Node, SverchCustomTreeNode):
 
         verts_in = self.inputs['Vertices'].sv_get()
         iterations_in = self.inputs['Iterations'].sv_get()
+        weights_in = self.inputs['Weights'].sv_get(default=[[None]])
 
         input_level = get_data_nesting_level(verts_in)
         verts_in = ensure_nesting_level(verts_in, 4)
         iterations_in = ensure_nesting_level(iterations_in, 2)
+        if self.inputs['Weights'].is_linked:
+            weights_in = ensure_nesting_level(weights_in, 2, data_types=(SvScalarField,))
 
         nested_output = input_level > 3
 
         verts_out = []
-        for params in zip_long_repeat(verts_in, iterations_in):
+        for params in zip_long_repeat(verts_in, iterations_in, weights_in):
             new_verts = []
-            for verts, iterations in zip_long_repeat(*params):
-                iter_verts = self.lloyd2d(verts, iterations)
+            for verts, iterations, weights in zip_long_repeat(*params):
+                iter_verts = lloyd2d(self.bound_mode, verts, iterations,
+                                clip = self.clip, weight_field = weights)
                 new_verts.append(iter_verts)
             if nested_output:
                 verts_out.append(new_verts)
