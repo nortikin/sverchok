@@ -219,7 +219,19 @@ def voronoi_on_solid_surface(solid, sites, thickness, clip_inner=True, clip_oute
             do_clip = do_clip,
             clipping = clipping)
 
-def lloyd_on_mesh(verts, faces, sites, thickness, n_iterations):
+def weighted_center(verts, field=None):
+    if field is None:
+        return np.mean(verts, axis=0)
+    else:
+        xs = verts[:,0]
+        ys = verts[:,1]
+        zs = verts[:,2]
+        weights = field.evaluate_grid(xs, ys, zs)
+        wpoints = weights[:,np.newaxis] * verts
+        result = wpoints.sum(axis=0) / weights.sum()
+        return result
+
+def lloyd_on_mesh(verts, faces, sites, thickness, n_iterations, weight_field=None):
     bvh = BVHTree.FromPolygons(verts, faces)
 
     def iteration(points):
@@ -238,7 +250,7 @@ def lloyd_on_mesh(verts, faces, sites, thickness, n_iterations):
             region_idx = diagram.point_region[site_idx]
             region = diagram.regions[region_idx]
             region_verts = np.array([diagram.vertices[i] for i in region])
-            center = np.mean(region_verts, axis=0)
+            center = weighted_center(region_verts, weight_field)
             centers.append(tuple(center))
         return centers
 
@@ -249,7 +261,7 @@ def lloyd_on_mesh(verts, faces, sites, thickness, n_iterations):
 
     return points.tolist()
 
-def lloyd_in_solid(solid, sites, n_iterations, tolerance=1e-4):
+def lloyd_in_solid(solid, sites, n_iterations, tolerance=1e-4, weight_field=None):
     shell = solid.Shells[0]
 
     def invert(pt):
@@ -272,7 +284,7 @@ def lloyd_in_solid(solid, sites, n_iterations, tolerance=1e-4):
             region_idx = diagram.point_region[site_idx]
             region = diagram.regions[region_idx]
             region_verts = np.array([diagram.vertices[i] for i in region])
-            center = np.mean(region_verts, axis=0)
+            center = weighted_center(region_verts, weight_field)
             centers.append(tuple(center))
         return centers
 
@@ -294,7 +306,7 @@ def lloyd_in_solid(solid, sites, n_iterations, tolerance=1e-4):
         points = restrict(points)
     return points
 
-def lloyd_on_solid_surface(solid, sites, thickness, n_iterations, tolerance=1e-4):
+def lloyd_on_solid_surface(solid, sites, thickness, n_iterations, tolerance=1e-4, weight_field=None):
     if solid.Shells:
         shell = solid.Shells[0]
     else:
@@ -308,7 +320,7 @@ def lloyd_on_solid_surface(solid, sites, thickness, n_iterations, tolerance=1e-4
             region_idx = diagram.point_region[site_idx]
             region = diagram.regions[region_idx]
             region_verts = np.array([diagram.vertices[i] for i in region])
-            center = np.mean(region_verts, axis=0)
+            center = weighted_center(region_verts, weight_field)
             centers.append(tuple(center))
         return centers
 
@@ -376,14 +388,14 @@ def lloyd_on_fc_face(fc_face, sites, thickness, n_iterations):
 
     return uvpoints, points
 
-def lloyd_on_sphere(center, radius, sites, n_iterations):
+def lloyd_on_sphere(center, radius, sites, n_iterations, weight_field=None):
     def iteration(pts):
         diagram = SphericalVoronoi(pts, radius=radius, center=np.array(center))
         diagram.sort_vertices_of_regions()
         centers = []
         for region in diagram.regions:
             verts = np.array([diagram.vertices[i] for i in region])
-            new_vert = np.mean(verts, axis=0) 
+            new_vert = weighted_center(verts, weight_field)
             centers.append(tuple(new_vert))
         return centers
 
@@ -506,7 +518,7 @@ class SphereBounds(Bounds):
         projection = self.restrict(point)
         return point + 2*(projection - point)
 
-def lloyd3d_bounded(bounds, sites, n_iterations):
+def lloyd3d_bounded(bounds, sites, n_iterations, weight_field=None):
     def invert(points):
         result = []
         for pt in points:
@@ -535,7 +547,7 @@ def lloyd3d_bounded(bounds, sites, n_iterations):
                 continue
 
             region_verts = np.array([vertices[i] for i in region])
-            center = np.mean(region_verts, axis=0)
+            center = weighted_center(region_verts, weight_field)
             centers.append(tuple(center))
         return centers
 
