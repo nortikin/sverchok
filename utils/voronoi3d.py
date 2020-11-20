@@ -439,8 +439,8 @@ class BoxBounds(Bounds):
         return (self.min_x <= x <= self.max_x) and (self.min_y <= y <= self.max_y) and (self.min_z <= z <= self.max_z)
 
     def restrict(self, point):
-        if self.contains(point):
-            return point
+        #if self.contains(point):
+        #    return point
         
         mid_x = 0.5 * (self.min_x + self.max_x)
         mid_y = 0.5 * (self.min_y + self.max_y)
@@ -448,20 +448,29 @@ class BoxBounds(Bounds):
 
         x, y, z = point
 
-        if x > mid_x:
-            x1 = self.max_x
+        if self.min_x <= x <= self.max_x:
+            x1 = x
         else:
-            x1 = self.min_x
+            if x > mid_x:
+                x1 = self.max_x
+            else:
+                x1 = self.min_x
 
-        if y > mid_y:
-            y1 = self.max_y
+        if self.min_y <= y <= self.max_y:
+            y1 = y
         else:
-            y1 = self.min_y
+            if y > mid_y:
+                y1 = self.max_y
+            else:
+                y1 = self.min_y
 
-        if z > mid_z:
-            z1 = self.max_z
+        if self.min_z <= z <= self.max_z:
+            z1 = z
         else:
-            z1 = self.min_z
+            if z > mid_z:
+                z1 = self.max_z
+            else:
+                z1 = self.min_z
 
         return np.array([x1, y1, z1])
 
@@ -469,6 +478,7 @@ class BoxBounds(Bounds):
         point = np.array(point)
         projection = self.restrict(point)
         result = projection + 2 * (projection - point)
+        #print(f"I: {point} => {projection} => {result}")
         return result
 
 class SphereBounds(Bounds):
@@ -483,8 +493,8 @@ class SphereBounds(Bounds):
         return np.linalg.norm(dv) <= self.radius
 
     def restrict(self, point):
-        if self.contains(point):
-            return point
+        #if self.contains(point):
+        #    return point
         point = np.array(point)
         dv = point - self.center
         dv1 = self.radius * dv / np.linalg.norm(dv)
@@ -506,7 +516,7 @@ def lloyd3d_bounded(bounds, sites, n_iterations):
         return result
 
     def restrict(points):
-        result = [tuple(bounds.restrict(point)) for point in points]
+        result = [tuple(point if bounds.contains(point) else bounds.restrict(point)) for point in points]
         return result
 
     def iteration(pts):
