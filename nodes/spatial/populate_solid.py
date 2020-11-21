@@ -12,7 +12,7 @@ from bpy.props import FloatProperty, StringProperty, BoolProperty, EnumProperty,
 
 from sverchok.core.socket_data import SvNoDataError
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, throttle_and_update_node
+from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, throttle_and_update_node, repeat_last_for_length
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.field.probe import field_random_probe
 from sverchok.utils.surface.populate import populate_surface
@@ -40,6 +40,7 @@ class SvPopulateSolidNode(bpy.types.Node, SverchCustomTreeNode):
     def update_sockets(self, context):
         self.inputs['FieldMin'].hide_safe = self.proportional != True
         self.inputs['FieldMax'].hide_safe = self.proportional != True
+        self.inputs['FaceMask'].hide_safe = self.gen_mode != 'SURFACE'
 
     modes = [
             ('VOLUME', "Volume", "Generate points inside solid body", 0),
@@ -50,7 +51,7 @@ class SvPopulateSolidNode(bpy.types.Node, SverchCustomTreeNode):
             name = "Generation mode",
             items = modes,
             default = 'VOLUME',
-            update = updateNode)
+            update = update_sockets)
 
     threshold : FloatProperty(
             name = "Threshold",
@@ -114,6 +115,7 @@ class SvPopulateSolidNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Threshold").prop_name = 'threshold'
         self.inputs.new('SvStringsSocket', "FieldMin").prop_name = 'field_min'
         self.inputs.new('SvStringsSocket', "FieldMax").prop_name = 'field_max'
+        self.inputs.new('SvStringsSocket', 'FaceMask')
         self.inputs.new('SvStringsSocket', 'Seed').prop_name = 'seed'
         self.outputs.new('SvVerticesSocket', "Vertices")
 
@@ -138,10 +140,15 @@ class SvPopulateSolidNode(bpy.types.Node, SverchCustomTreeNode):
             points_per_face[i] += 1
         return points_per_face
 
-    def generate_surface(self, solid, field, count, min_r, threshold, field_min, field_max, seed):
+    def generate_surface(self, solid, field, count, min_r, threshold, field_min, field_max, mask, seed):
         counts = self.distribute_faces(solid.Faces, count)
         new_verts = []
-        for face, cnt in zip(solid.Faces, counts):
+        mask = repeat_last_for_length(mask, len(solid.Faces))
+        counts = repeat_last_for_length(counts, len(solid.Faces))
+        for face, ok, cnt in zip(solid.Faces, mask, counts):
+            if not ok:
+                continue
+
             def check(uv, vert):
                 point = Base.Vector(vert)
                 return face.isInside(point, self.get_tolerance(), True)
@@ -166,6 +173,7 @@ class SvPopulateSolidNode(bpy.types.Node, SverchCustomTreeNode):
         threshold_s = self.inputs['Threshold'].sv_get()
         field_min_s = self.inputs['FieldMin'].sv_get()
         field_max_s = self.inputs['FieldMax'].sv_get()
+        mask_s = self.inputs['FaceMask'].sv_get(default=[[[True]]])
         seed_s = self.inputs['Seed'].sv_get()
 
         solid_s = ensure_nesting_level(solid_s, 2, data_types=(Part.Shape,))
@@ -176,16 +184,17 @@ class SvPopulateSolidNode(bpy.types.Node, SverchCustomTreeNode):
         threshold_s = ensure_nesting_level(threshold_s, 2)
         field_min_s = ensure_nesting_level(field_min_s, 2)
         field_max_s = ensure_nesting_level(field_max_s, 2)
+        mask_s = ensure_nesting_level(mask_s, 3)
         seed_s = ensure_nesting_level(seed_s, 2)
 
         verts_out = []
-        inputs = zip_long_repeat(solid_s, fields_s, count_s, min_r_s, threshold_s, field_min_s, field_max_s, seed_s)
+        inputs = zip_long_repeat(solid_s, fields_s, count_s, min_r_s, threshold_s, field_min_s, field_max_s, mask_s, seed_s)
         for objects in inputs:
-            for solid, field, count, min_r, threshold, field_min, field_max, seed in zip_long_repeat(*objects):
+            for solid, field, count, min_r, threshold, field_min, field_max, mask, seed in zip_long_repeat(*objects):
                 if self.gen_mode == 'VOLUME':
                     new_verts = self.generate_volume(solid, field, count, min_r, threshold, field_min, field_max, seed)
                 else:
-                    new_verts = self.generate_surface(solid, field, count, min_r, threshold, field_min, field_max, seed)
+                    new_verts = self.generate_surface(solid, field, count, min_r, threshold, field_min, field_max, mask, seed)
                 verts_out.append(new_verts)
 
         self.outputs['Vertices'].sv_set(verts_out)
