@@ -119,8 +119,9 @@ class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "mode")
         if self.mode == 'UV':
             layout.prop(self, "make_faces")
-        if self.mode in {'RIDGES', 'REGIONS'} or self.make_faces:
+        if self.mode in {'RIDGES', 'REGIONS'}:
             layout.prop(self, 'do_clip')
+        if self.mode in {'RIDGES', 'REGIONS'} or self.make_faces:
             layout.prop(self, 'normals')
 
     def draw_buttons_ext(self, context, layout):
