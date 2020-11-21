@@ -41,13 +41,13 @@ class SvLloydOnSphereNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvVerticesSocket', "Sites")
+        self.inputs.new('SvVerticesSocket', "Sites").enable_input_link_menu = False
         d = self.inputs.new('SvVerticesSocket', "Center")
         d.use_prop = True
         d.default_property = (0.0, 0.0, 0.0)
         self.inputs.new('SvStringsSocket', "Radius").prop_name = "radius"
         self.inputs.new('SvStringsSocket', 'Iterations').prop_name = 'iterations'
-        self.inputs.new('SvScalarFieldSocket', 'Weights')
+        self.inputs.new('SvScalarFieldSocket', 'Weights').enable_input_link_menu = False
 
         self.outputs.new('SvVerticesSocket', "Sites")
 

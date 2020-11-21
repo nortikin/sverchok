@@ -105,7 +105,7 @@ class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', 'Surface')
-        self.inputs.new('SvVerticesSocket', "UVPoints")
+        self.inputs.new('SvVerticesSocket', "UVPoints").enable_input_link_menu = False
         self.inputs.new('SvStringsSocket', 'MaxSides').prop_name = 'max_sides'
         self.inputs.new('SvStringsSocket', 'Thickness').prop_name = 'thickness'
         self.inputs.new('SvStringsSocket', "Clipping").prop_name = 'clipping'

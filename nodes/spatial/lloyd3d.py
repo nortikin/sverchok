@@ -53,13 +53,14 @@ class SvLloyd3dNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvVerticesSocket', "Sites")
+        self.inputs.new('SvVerticesSocket', "Sites").enable_input_link_menu = False
         self.inputs.new('SvStringsSocket', "Clipping").prop_name = 'clipping'
         self.inputs.new('SvStringsSocket', 'Iterations').prop_name = 'iterations'
-        self.inputs.new('SvScalarFieldSocket', 'Weights')
+        self.inputs.new('SvScalarFieldSocket', 'Weights').enable_input_link_menu = False
         self.outputs.new('SvVerticesSocket', "Sites")
 
     def draw_buttons(self, context, layout):
+        layout.label(text="Bounds mode:")
         layout.prop(self, "bounds_mode", text='')
 
     def process(self):

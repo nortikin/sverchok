@@ -30,7 +30,7 @@ class SvLloyd2dNode(bpy.types.Node, SverchCustomTreeNode):
 
     bound_modes = [
             ('BOX', 'Bounding Box', "Bounding Box", 0),
-            ('CIRCLE', 'Circle', "Circle", 1)
+            ('CIRCLE', 'Bounding Circle', "Bounding Circle", 1)
         ]
 
     bound_mode: EnumProperty(
@@ -50,11 +50,12 @@ class SvLloyd2dNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', 'Iterations').prop_name = 'iterations'
-        self.inputs.new('SvScalarFieldSocket', 'Weights')
+        self.inputs.new('SvScalarFieldSocket', 'Weights').enable_input_link_menu = False
         self.outputs.new('SvVerticesSocket', "Vertices")
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "bound_mode")
+        layout.label(text="Bounds mode:")
+        layout.prop(self, "bound_mode", text='')
     
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)

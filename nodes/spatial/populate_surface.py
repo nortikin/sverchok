@@ -73,7 +73,7 @@ class SvPopulateSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "Surface")
-        self.inputs.new('SvScalarFieldSocket', "Field")
+        self.inputs.new('SvScalarFieldSocket', "Field").enable_input_link_menu = False
         self.inputs.new('SvStringsSocket', "Count").prop_name = 'count'
         self.inputs.new('SvStringsSocket', "MinDistance").prop_name = 'min_r'
         self.inputs.new('SvStringsSocket', "Threshold").prop_name = 'threshold'

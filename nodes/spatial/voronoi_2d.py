@@ -43,7 +43,7 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
 
     bound_modes = [
             ('BOX', 'Bounding Box', "Bounding Box", 0),
-            ('CIRCLE', 'Circle', "Circle", 1)
+            ('CIRCLE', 'Bounding Circle', "Bounding Circle", 1)
         ]
 
     bound_mode: EnumProperty(
@@ -100,7 +100,8 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "bound_mode")
+        layout.label(text="Bounds mode:")
+        layout.prop(self, "bound_mode", text='')
         layout.prop(self, "draw_bounds")
         if not self.draw_bounds:
             layout.prop(self, "draw_hangs")

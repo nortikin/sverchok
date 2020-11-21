@@ -43,10 +43,10 @@ class SvLloydOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "Faces")
-        self.inputs.new('SvVerticesSocket', "Sites")
+        self.inputs.new('SvVerticesSocket', "Sites").enable_input_link_menu = False
         self.inputs.new('SvStringsSocket', 'Iterations').prop_name = 'iterations'
         self.inputs.new('SvStringsSocket', 'Thickness').prop_name = 'thickness'
-        self.inputs.new('SvScalarFieldSocket', 'Weights')
+        self.inputs.new('SvScalarFieldSocket', 'Weights').enable_input_link_menu = False
         self.outputs.new('SvVerticesSocket', "Sites")
 
     def process(self):
