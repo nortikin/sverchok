@@ -33,3 +33,8 @@ Why add it if it's flawed?
 
 Because when we omit such a node purely because it has a set of unfavorable edge cases, then we ignore the much larger parameter space in which such a node is adequate and sufficient for our needs.
 
+Alternatives
+------------
+
+Consider booleans as "beta" in Sverchok. You might be interested in the FreeCAD implementation discussed here. https://github.com/nortikin/sverchok/issues/3430
+
