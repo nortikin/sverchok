@@ -356,7 +356,7 @@
     SvExtrudeRegionNode
     SvPokeFacesNode
     SvVertMaskNode
-    SvSplitEdgesNode
+    SvSplitEdgesMk2Node
     SvRigidOrigamiNode
     ---
     SvFollowActiveQuads
