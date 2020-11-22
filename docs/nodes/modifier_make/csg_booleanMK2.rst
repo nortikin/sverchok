@@ -19,7 +19,7 @@ This Boolean implementation is by no means fast, nor does it generate optimal ou
 - co planar faces will result in undetermined output
 - edges on one mesh should not be in the same 3d space as a face on the other mesh.
 
-You might get error reports from the node along the lines of "cannot divide by zero", in that scenario you should confirm that the state of your input meshes isn't in contradiction with the above mentioned bullet points.
+You might get error reports from the node along the lines of "float division by zero", in that scenario you should confirm that the state of your input meshes isn't in contradiction with the above mentioned bullet points.
 
 To perform calculations we use a library taken from Evan Wallace and ported to Python by Tim Knip. The original license of the library is this MIT::
 
