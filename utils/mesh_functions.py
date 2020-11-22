@@ -88,7 +88,6 @@ def apply_matrices(meshes: Iterator[Mesh], matrices: Iterator[List[Matrix]], *, 
 @pass_mesh_type
 def join_meshes(meshes: Iterator[PyMesh], *, _mesh_type) -> Iterator[PyMesh]:
     _vertices = []
-    # joined_vertices = []
     joined_edges = []
     joined_polygons = []
     vertexes_number = 0
@@ -98,7 +97,6 @@ def join_meshes(meshes: Iterator[PyMesh], *, _mesh_type) -> Iterator[PyMesh]:
         if polygons:
             joined_polygons.extend([[i + vertexes_number for i in p] for p in polygons])
         vertexes_number += len(vertices)
-        # joined_vertices.extend(vertices)
         _vertices.append(vertices)
     implementation = np.concatenate if _mesh_type == 'NP' else lambda vs: [v for _vs in vs for v in _vs]
     joined_vertices = implementation(_vertices)
