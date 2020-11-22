@@ -370,27 +370,6 @@ def simple_console_xy(context, args, loc):
     config.shader.uniform_int("image", act_tex)
     config.batch.draw(config.shader)
 
-# def simple_console_xy(x, y, args):
-#     texture, config = args
-#     act_tex = bgl.Buffer(bgl.GL_INT, 1)
-#     bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture.texture_dict['texture'])
-    
-#     config.shader.bind()
-    
-#     if not config.syntax_mode == "None":
-#         matrix = gpu.matrix.get_projection_matrix()
-#         config.shader.uniform_float("viewProjectionMatrix", matrix)
-    
-#     if config.syntax_mode == "Code":
-#         for color_name, color_value in config.colors.items():
-#             config.shader.uniform_float(color_name, color_value)
-
-#     print(x, y)
-#     config.shader.uniform_float("x_offset", x)
-#     config.shader.uniform_float("y_offset", y)
-#     config.shader.uniform_int("image", act_tex)
-#     config.batch.draw(config.shader)
-
 
 def process_grid_for_shader(grid):
     positions, poly_indices = grid
