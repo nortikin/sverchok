@@ -35,7 +35,7 @@ def get_lookup_dict(fnt_path):
 
     """
     fnt_path = os.path.join(bitmap_font_location, "consolas.fnt")
-    print(fnt_path)
+    # print(fnt_path)
     tree, root = get_xml(fnt_path)
     common = root.find("common")
     chars = root.find("chars")
