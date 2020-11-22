@@ -49,14 +49,16 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
             ('CYLINDER', "By Cylinder", "By cylinder defined by point, direction vector and radius", 4),
             ('DIRECTION', "By Direction", "By direction", 5),
             ('SOLID_DISTANCE', "By Distance to Solid", "By Distance to Solid", 6),
-            ('SOLID_INSIDE', "Inside Solid", "Select elements that are inside given solid", 7)
+            ('SOLID_INSIDE', "Inside Solid", "Select elements that are inside given solid", 7),
+            ('NORMAL_OUTSIDE', "Normal pointing outside", "Select faces, normals of which point outside the body", 8),
+            ('NORMAL_INSIDE', "Normal pointing inside", "Select faces, normals of which point inside the body", 9),
             #('BBOX', "By Bounding Box", "By bounding box", 6)
         ]
 
     known_criteria = {
             'VERTS': {'SIDE', 'SPHERE', 'PLANE', 'CYLINDER', 'SOLID_DISTANCE', 'SOLID_INSIDE'},
             'EDGES': {'SIDE', 'SPHERE', 'PLANE', 'CYLINDER', 'DIRECTION', 'SOLID_DISTANCE', 'SOLID_INSIDE'},
-            'FACES': {'SIDE', 'NORMAL', 'SPHERE', 'PLANE', 'CYLINDER', 'SOLID_DISTANCE', 'SOLID_INSIDE'}
+            'FACES': {'SIDE', 'NORMAL', 'SPHERE', 'PLANE', 'CYLINDER', 'SOLID_DISTANCE', 'SOLID_INSIDE', 'NORMAL_INSIDE', 'NORMAL_OUTSIDE'}
         }
 
     @throttle_and_update_node
@@ -86,7 +88,7 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
     def update_sockets(self, context):
         self.inputs['Direction'].hide_safe = self.criteria_type not in {'SIDE', 'NORMAL', 'PLANE', 'CYLINDER', 'DIRECTION'}
         self.inputs['Center'].hide_safe = self.criteria_type not in {'SPHERE', 'PLANE', 'CYLINDER'}
-        self.inputs['Percent'].hide_safe = self.criteria_type not in {'SIDE', 'NORMAL', 'DIRECTION'}
+        self.inputs['Percent'].hide_safe = self.criteria_type not in {'SIDE', 'NORMAL', 'DIRECTION', 'NORMAL_INSIDE', 'NORMAL_OUTSIDE'}
         self.inputs['Radius'].hide_safe = self.criteria_type not in {'SPHERE', 'PLANE', 'CYLINDER', 'SOLID_DISTANCE'}
         self.inputs['Tool'].hide_safe = self.criteria_type not in {'SOLID_DISTANCE', 'SOLID_INSIDE'}
         self.inputs['Precision'].hide_safe = self.element_type == 'VERTS' or self.criteria_type in {'SOLID_DISTANCE'}
@@ -320,6 +322,34 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
         threshold = self.map_percent(values, percent)
         return (values > threshold).tolist()
 
+    def _faces_by_normal_outside(self, solid, topo, percent):
+        c = solid.BoundBox.Center
+        body_center = np.array([c.x, c.y, c.z])
+
+        def calc_value(face):
+            to_center = body_center - topo.get_center_by_face(face)
+            to_center /= np.linalg.norm(to_center)
+            normal = topo.get_normal_by_face(face)
+            return - normal.dot(to_center)
+
+        values = np.array([calc_value(face) for face in topo.solid.Faces])
+        threshold = self.map_percent(values, percent)
+        return (values > threshold).tolist()
+
+    def _faces_by_normal_inside(self, solid, topo, percent):
+        c = solid.BoundBox.Center
+        body_center = np.array([c.x, c.y, c.z])
+
+        def calc_value(face):
+            to_center = body_center - topo.get_center_by_face(face)
+            to_center /= np.linalg.norm(to_center)
+            normal = topo.get_normal_by_face(face)
+            return normal.dot(to_center)
+
+        values = np.array([calc_value(face) for face in topo.solid.Faces])
+        threshold = self.map_percent(values, percent)
+        return (values > threshold).tolist()
+
     def _faces_by_sphere(self, topo, center, radius):
         center = np.array(center)
         def condition(points):
@@ -403,6 +433,14 @@ class SvSelectSolidNode(bpy.types.Node, SverchCustomTreeNode):
             elif self.criteria_type == 'NORMAL':
                 topo.calc_normals()
                 face_mask = self._faces_by_normal(topo, direction, percent)
+            elif self.criteria_type == 'NORMAL_INSIDE':
+                topo.calc_normals()
+                topo.calc_face_centers()
+                face_mask = self._faces_by_normal_inside(solid, topo, percent)
+            elif self.criteria_type == 'NORMAL_OUTSIDE':
+                topo.calc_normals()
+                topo.calc_face_centers()
+                face_mask = self._faces_by_normal_outside(solid, topo, percent)
             elif self.criteria_type == 'SPHERE':
                 face_mask = self._faces_by_sphere(topo, center, radius)
             elif self.criteria_type == 'PLANE':

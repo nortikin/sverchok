@@ -99,3 +99,7 @@ class SvSplitEdgesNode(bpy.types.Node, SverchCustomTreeNode):
 
         node.outputs.verts = new_verts
         node.outputs.edges = new_edges
+
+register = hn.register
+unregister = hn.unregister
+
