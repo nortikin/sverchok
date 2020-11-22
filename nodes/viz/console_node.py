@@ -364,7 +364,7 @@ def simple_console_xy(context, args, loc):
             config.shader.uniform_float(color_name, color_value)
 
     x, y = loc
-    print(x, y)
+
     config.shader.uniform_float("x_offset", x)
     config.shader.uniform_float("y_offset", y)
     config.shader.uniform_int("image", act_tex)
