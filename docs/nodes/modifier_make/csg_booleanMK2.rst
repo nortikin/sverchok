@@ -8,6 +8,8 @@ There are switches and modes.
 - Nested Accumulate (bool first two objects, then applies the rest to the result one by one.
 - Only final result (output only last iteration result)
 
+::|csg demo|
+
 warnings
 --------
 
@@ -31,10 +33,13 @@ To perform calculations we use a library taken from Evan Wallace and ported to P
 Why add it if it's flawed?
 --------------------------
 
-Because when we omit such a node purely because it has a set of unfavorable edge cases, then we ignore the much larger parameter space in which such a node is adequate and sufficient for our needs.
+Because when we omit such a node purely because it has a set of unfavorable edge cases, then we ignore the much larger parameter space in which such a node is adequate and sufficient for our needs. Here is the pullrequest that introduced this version of the node
+
+https://github.com/nortikin/sverchok/pull/1575
 
 Alternatives
 ------------
 
 Consider booleans as "beta" in Sverchok. You might be interested in the FreeCAD implementation discussed here. https://github.com/nortikin/sverchok/issues/3430
 
+.. |csg demo| image:: https://user-images.githubusercontent.com/619340/99914900-b7b0cf80-2d00-11eb-81a2-562d131e82a3.png
