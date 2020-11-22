@@ -22,7 +22,7 @@ node.props.factor = hn.NodeProperties(bpy.props.FloatProperty(
         default=0.5, min=0.0, soft_min=0.0, max=1.0))
 node.props.mirror = hn.NodeProperties(bpy.props.BoolProperty(
         name="Mirror", description="Mirror split",
-        default=False, update=updateNode))
+        default=False))
 
 node.inputs.verts = hn.SocketProperties(
     name='Vertices', socket_type=hn.SockTypes.VERTICES,
@@ -46,7 +46,10 @@ node.outputs.faces = hn.SocketProperties(name='Faces', socket_type=hn.SockTypes.
 
 @hn.initialize_node(node)
 class SvSplitEdgesMk2Node(bpy.types.Node, SverchCustomTreeNode):
-    ''' Split Edges '''
+    """
+    Triggers: Split Edges
+    Tooltip: Split each edge of a mesh in two
+    """
     bl_idname = 'SvSplitEdgesMk2Node'
     bl_label = 'Split Edges'
     sv_icon = 'SV_SPLIT_EDGES'
