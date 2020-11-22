@@ -445,13 +445,7 @@ class Edge(object):
         newedge.c = float(s1.x * dx + s1.y * dy + (dx*dx + dy*dy)*0.5)  
         if dx == 0 and dy == 0:
             raise Exception(f"Can't build an edge: two points are coinciding: {s1.sitenum}, {s2.sitenum}")
-        if dx == 0:
-            newedge.a = 0.0
-            newedge.b = dy
-        elif dy == 0:
-            newedge.a = dx
-            newedge.b = 0.0
-        elif adx > ady :
+        if adx > ady :
             # set formula of line, with x fixed to 1
             newedge.a = 1.0
             newedge.b = dy/dx
