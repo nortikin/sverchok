@@ -40,7 +40,7 @@ bitmap_font_location = os.path.join(sv_path, 'utils', 'modules', 'bitmap_font')
 lookup_dict_data = {}
 
 no_vertex_shader = '''
-    uniform mat4 ModelViewProjectionMatrix;
+    uniform mat4 viewProjectionMatrix;
 
     in vec2 texCoord;
     in vec2 pos;
@@ -51,7 +51,7 @@ no_vertex_shader = '''
 
     void main()
     {
-       gl_Position = ModelViewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
+       gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
        gl_Position.z = 1.0;
        texCoord_interp = texCoord;
     }
@@ -70,7 +70,7 @@ no_fragment_shader = '''
 '''
 
 vertex_shader = '''
-    uniform mat4 ModelViewProjectionMatrix;
+    uniform mat4 viewProjectionMatrix;
 
     in vec2 texCoord;
     in vec2 pos;
@@ -84,7 +84,7 @@ vertex_shader = '''
     void main()
     {
        v_lexer = lexer;
-       gl_Position = ModelViewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
+       gl_Position = viewProjectionMatrix * vec4(pos.x + x_offset, pos.y + y_offset, 0.0f, 1.0f);
        gl_Position.z = 1.0;
        texCoord_interp = texCoord;
     }
@@ -355,19 +355,42 @@ def simple_console_xy(context, args, loc):
     
     config.shader.bind()
     
-    if not config.syntax_mode == "None":
-        matrix = gpu.matrix.get_projection_matrix()
-        config.shader.uniform_float("ModelViewProjectionMatrix", matrix)
+    # if not config.syntax_mode == "None":
+    matrix = gpu.matrix.get_projection_matrix()
+    config.shader.uniform_float("viewProjectionMatrix", matrix)
     
     if config.syntax_mode == "Code":
         for color_name, color_value in config.colors.items():
             config.shader.uniform_float(color_name, color_value)
 
-    x, y = loc 
+    x, y = loc
+    print(x, y)
     config.shader.uniform_float("x_offset", x)
     config.shader.uniform_float("y_offset", y)
     config.shader.uniform_int("image", act_tex)
     config.batch.draw(config.shader)
+
+# def simple_console_xy(x, y, args):
+#     texture, config = args
+#     act_tex = bgl.Buffer(bgl.GL_INT, 1)
+#     bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture.texture_dict['texture'])
+    
+#     config.shader.bind()
+    
+#     if not config.syntax_mode == "None":
+#         matrix = gpu.matrix.get_projection_matrix()
+#         config.shader.uniform_float("viewProjectionMatrix", matrix)
+    
+#     if config.syntax_mode == "Code":
+#         for color_name, color_value in config.colors.items():
+#             config.shader.uniform_float(color_name, color_value)
+
+#     print(x, y)
+#     config.shader.uniform_float("x_offset", x)
+#     config.shader.uniform_float("y_offset", y)
+#     config.shader.uniform_int("image", act_tex)
+#     config.batch.draw(config.shader)
+
 
 def process_grid_for_shader(grid):
     positions, poly_indices = grid
@@ -432,7 +455,6 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     # for now all such nodes will use the same texture.
     texture_dict = {}
 
-    n_id: bpy.props.StringProperty(default='')
     local_scale: bpy.props.FloatProperty(default=1.0, min=0.2, name="scale", update=updateNode)
     show_me: bpy.props.BoolProperty(default=True, name="show me", update=updateNode)
 
