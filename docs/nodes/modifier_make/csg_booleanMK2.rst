@@ -3,7 +3,8 @@ csg boolean mk2
 
 This node implements the 3 boolean *3d Mesh* functions; Intersect, Join, Difference. 
 
-modes: 
+There are switches and modes.
+
 - Nested Accumulate (bool first two objects, then applies the rest to the result one by one.
 - Only final result (output only last iteration result)
 
