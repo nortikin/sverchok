@@ -87,6 +87,7 @@ class SvSplitEdgesMk2Node(bpy.types.Node, SverchCustomTreeNode):
         i = 0
         for edge, ok, factor in zip(*params):
             if not ok:
+                new_edges.append(edge)
                 continue
 
             i0 = edge[0]
