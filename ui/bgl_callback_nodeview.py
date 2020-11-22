@@ -161,12 +161,12 @@ def draw_callback_px(n_id, data):
         '''
         x, y = get_xy_from_data(data)
 
-        bgl.glEnable(bgl.GL_DEPTH_TEST)
+        # bgl.glEnable(bgl.GL_DEPTH_TEST)
         drawing_func = data.get('custom_function')
         args = data.get('args', (None,))
         drawing_func(bpy.context, args, (x, y))
         restore_opengl_defaults()
-        bgl.glDisable(bgl.GL_DEPTH_TEST)
+        # bgl.glDisable(bgl.GL_DEPTH_TEST)
         
         
 def unregister():
