@@ -16,16 +16,12 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from copy import copy
-from functools import reduce
-from itertools import cycle
-
 import bpy
 from bpy.props import BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
-import sverchok.utils.meshes as me
+from sverchok.data_structure import updateNode, repeat_last
+from sverchok.utils.mesh_functions import meshes_np, meshes_py, apply_matrix, apply_matrices, to_elements, repeat_meshes
 
 
 class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
@@ -60,32 +56,16 @@ class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
         vertices = self.inputs['Vectors'].sv_get(deepcopy=False)
         matrices = self.inputs['Matrixes'].sv_get(deepcopy=False, default=[])
 
-        out_vertices = []
+        is_py_input = isinstance(vertices[0], (list, tuple))
+        meshes = (meshes_py if is_py_input or not self.output_numpy else meshes_np)(vertices)
+        object_number = max([len(vertices), len(matrices)]) if vertices else 0
+        meshes = repeat_meshes(meshes, object_number)
         if matrices:
-            if isinstance(matrices[0][0][0], (int, float)):  # one level nesting
-                for v, m in zip(cycle(vertices), matrices):
-                    v = copy(v)
-                    mesh = me.to_mesh(v) if not self.output_numpy else me.NpMesh(v)
-                    mesh.apply_matrix(m)
-                    out_vertices.append(mesh.vertices.data)
+            is_flat = not isinstance(matrices[0], (list, tuple))
+            meshes = (apply_matrix if is_flat else apply_matrices)(meshes, repeat_last(matrices))
+        out_vertices, *_ = to_elements(meshes)
 
-            else:  # otherwise it expects two levels nesting
-                for v, ms in zip(cycle(vertices), matrices):
-                    meshes = []
-                    for m in ms:
-                        v = copy(v)
-                        mesh = me.to_mesh(v) if not self.output_numpy else me.NpMesh(v)
-                        mesh.apply_matrix(m)
-                        meshes.append(mesh)
-                    mesh = reduce(lambda m1, m2: m1.add_mesh(m2), meshes)
-                    out_vertices.append(mesh.vertices.data)
-
-        self.outputs['Vectors'].sv_set(out_vertices or vertices)
+        self.outputs['Vectors'].sv_set(out_vertices)
 
 
-def register():
-    bpy.utils.register_class(MatrixApplyNode)
-
-
-def unregister():
-    bpy.utils.unregister_class(MatrixApplyNode)
+register, unregister = bpy.utils.register_classes_factory([MatrixApplyNode])
