@@ -47,6 +47,35 @@ def to_mesh(vertices, edges=None, polygons=None) -> Union[PyMesh, NpMesh]:
         raise TypeError(f'Vertices type "{type(vertices).__name__}" is not in: list, tuple, np.ndarray')
 
 
+def join(meshes: List[Mesh], return_type: Type[Mesh] = None) -> Mesh:
+    """efficiently join data of given meshes into one"""
+    if return_type is None:
+        return_type = type(meshes[0])
+
+    out_mesh = return_type([], [], [])
+    added_vertices = 0
+    for mesh in meshes:
+        elements = [(out_mesh.vertices, mesh.vertices), (out_mesh.edges, mesh.edges),
+                    (out_mesh.polygons, mesh.polygons)]
+        for out_elem, elem in elements:
+            for attr in out_elem.attributes | elem.attributes:
+                out_data = out_elem.get_attribute(attr)
+                data = elem.get_attribute(attr)
+                if out_data is None:
+                    out_data = [data[0]] * len(out_elem)
+                else:
+                    out_data = fix_len(out_data, len(out_elem))
+                out_data.extend(data or [])
+                out_elem[attr] = out_data
+
+        out_mesh.vertices.data.extend(mesh.vertices.data)
+        out_mesh.edges.data.extend([i + added_vertices for i in e] for e in mesh.edges)
+        out_mesh.polygons.data.extend([i + added_vertices for i in p] for p in mesh.polygons)
+        added_vertices += len(mesh.vertices)
+
+    return out_mesh
+
+
 class Mesh(ABC):
 
     @property
@@ -69,6 +98,11 @@ class Mesh(ABC):
 
     @abstractmethod
     def apply_matrix(self, matrix) -> Mesh: ...
+
+    def __repr__(self):
+        return f'<MESH vertices={len(self.vertices)} [{", ".join(self.vertices.attributes)}], ' \
+               f'edges={len(self.edges)} [{", ".join(self.edges.attributes)}], ' \
+               f'polygons={len(self.polygons)} [{", ".join(self.polygons.attributes)}]>'
 
 
 def convert_mesh_type(method: Callable) -> Callable:
@@ -109,7 +143,7 @@ class PyMesh(Mesh):
 
     def apply_matrix(self, matrix: Matrix) -> PyMesh:
         """It will generate new vertices with given matrix applied"""
-        self.vertices.data = [tuple(matrix @ Vector(v)) for v in self.vertices]
+        self.vertices.data = [(matrix @ Vector(v)).to_tuple() for v in self.vertices]
         return self
 
     def cast(self, mesh_type: Type[Mesh]) -> Mesh:
@@ -211,6 +245,10 @@ class MeshElements(Collection):
         """Get elements attribute, using instead of polygons['attr']"""
         return self._attrs.get(attr, default)
 
+    @property
+    def attributes(self):
+        return self._attrs.keys()
+
     def __len__(self):
         return len(self.data)
 
@@ -231,3 +269,21 @@ class MeshElements(Collection):
 
     def __delitem__(self, key):
         del self._attrs[key]
+
+
+def fix_len(lst: list, length: int) -> list:
+    """
+    timeit('fix_len(l, 99999)', 'from __main__ import fix_len; l = list(range(100000))', number=1)
+    0.0011104999998678977
+    timeit('fix_len(l, 100000)', 'from __main__ import fix_len; l = list(range(100000))', number=1)
+    4.699999863078119e-06
+    timeit('fix_len(l, 100001)', 'from __main__ import fix_len; l = list(range(100000))', number=1)
+    5.7999995988211595e-06
+    """
+    if len(lst) == length:
+        return lst
+    elif len(lst) > length:
+        return lst[:length]
+    else:
+        lst.extend([lst[-1]] * (length - len(lst)))
+        return lst
