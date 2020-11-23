@@ -111,7 +111,7 @@ class SvAdaptivePlotCurveNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "T")
-        self.udpate_sockets(context)
+        self.update_sockets(context)
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):

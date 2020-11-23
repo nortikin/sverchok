@@ -55,7 +55,10 @@ class TotalCount(CurvePopulationController):
         self.factor_range = factor_range
         self.points_per_segment = [0 for _ in range(len(factors))]
         total_factor = sum(factors)
-        weights = [factor / total_factor for factor in factors]
+        if total_factor == 0:
+            weights = [1.0/len(factors) for factor in factors]
+        else:
+            weights = [factor / total_factor for factor in factors]
         self.points_per_segment = [floor(w * count) for w in weights]
         done = sum(self.points_per_segment)
         while done < count:
