@@ -37,13 +37,14 @@ if FreeCAD is not None:
     from FreeCAD import Base
     import Part
 
-def voronoi3d_layer(n_src_sites, all_sites, make_regions, do_clip, clipping):
+def voronoi3d_layer(n_src_sites, all_sites, make_regions, do_clip, clipping, skip_added=True):
     diagram = Voronoi(all_sites)
     src_sites = all_sites[:n_src_sites]
     
     region_verts = dict()
     region_verts_map = dict()
-    for site_idx in range(n_src_sites):
+    n_sites = n_src_sites if skip_added else len(all_sites)
+    for site_idx in range(n_sites):
         region_idx = diagram.point_region[site_idx]
         region = diagram.regions[region_idx]
         vertices = [tuple(diagram.vertices[i,:]) for i in region]
@@ -58,24 +59,27 @@ def voronoi3d_layer(n_src_sites, all_sites, make_regions, do_clip, clipping):
         if -1 in ridge:
             open_sites.add(site_from)
             open_sites.add(site_to)
+
+        site_from_ok = not skip_added or site_from < n_src_sites
+        site_to_ok = not skip_added or site_to < n_src_sites
         
         if make_regions:
-            if site_from < n_src_sites:
+            if site_from_ok:
                 face_from = [region_verts_map[site_from][i] for i in ridge]
                 region_faces[site_from].append(face_from)
            
-            if site_to < n_src_sites:
+            if site_to_ok:
                 face_to = [region_verts_map[site_to][i] for i in ridge]
                 region_faces[site_to].append(face_to)
         else:
-            if site_from < n_src_sites and site_to < n_src_sites:
+            if site_from_ok and site_to_ok:
                 face_from = [region_verts_map[site_from][i] for i in ridge]
                 region_faces[site_from].append(face_from)
                 face_to = [region_verts_map[site_to][i] for i in ridge]
                 region_faces[site_to].append(face_to)
     
-    verts = [region_verts[i] for i in range(n_src_sites) if i not in open_sites]
-    faces = [region_faces[i] for i in range(n_src_sites) if i not in open_sites]
+    verts = [region_verts[i] for i in range(n_sites) if i not in open_sites]
+    faces = [region_faces[i] for i in range(n_sites) if i not in open_sites]
 
     empty_faces = [len(f) == 0 for f in faces]
     verts = [vs for vs, mask in zip(verts, empty_faces) if not mask]
@@ -201,7 +205,11 @@ def project_solid_normals(shell, pts, thickness, add_plus=True, add_minus=True):
                 result.append(tuple(minus_pt))
     return result
 
-def voronoi_on_solid_surface(solid, sites, thickness, clip_inner=True, clip_outer=True, do_clip=True, clipping=1.0, make_regions=True): 
+def voronoi_on_solid_surface(solid, sites, thickness,
+        clip_inner=True, clip_outer=True,
+        skip_added = True,
+        do_clip=True, clipping=1.0,
+        make_regions=True): 
 
     npoints = len(sites)
     if solid.Shells:
@@ -216,6 +224,7 @@ def voronoi_on_solid_surface(solid, sites, thickness, clip_inner=True, clip_oute
 
     return voronoi3d_layer(npoints, all_points,
             make_regions = make_regions,
+            skip_added = skip_added,
             do_clip = do_clip,
             clipping = clipping)
 
