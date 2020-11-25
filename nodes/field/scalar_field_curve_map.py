@@ -18,7 +18,7 @@ class SvScalarFieldCurveMapNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Map scalar field by curve
     """
     bl_idname = 'SvScalarFieldCurveMapNode'
-    bl_label = 'Scalar Field Curve Map'
+    bl_label = 'Map Scalar Field by Curve'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VFIELD_IN'
 
