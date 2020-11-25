@@ -105,7 +105,7 @@ class SvGroupTree(bpy.types.NodeTree):
         self.check_reroutes_sockets()
         self.update_sockets()  # probably more precise trigger could be found for calling this method
         self.handler.send(GroupEvent(GroupEvent.GROUP_TREE_UPDATE, group_node))
-        self.color_nodes(self.handler.get_error_nodes(group_node))  # todo if group node is not active?
+        self.color_nodes(group_node)  # todo if group node is not active?
 
     def update_sockets(self):  # todo it lets simplify sockets API
         """Set properties of sockets of parent nodes and of output modes"""
@@ -183,7 +183,7 @@ class SvGroupTree(bpy.types.NodeTree):
         """This method expect to get list of its nodes which should be updated"""
         group_node = bpy.context.space_data.path[-2].node_tree.nodes[self.group_node_name]
         self.handler.send(GroupEvent(GroupEvent.NODES_UPDATE, group_node, updated_nodes=[n for n in nodes]))
-        self.color_nodes(self.handler.get_error_nodes(group_node))
+        self.color_nodes(group_node)
 
     def parent_nodes(self) -> Iterator['SvGroupTreeNode']:
         """Returns all parent nodes"""
@@ -193,9 +193,10 @@ class SvGroupTree(bpy.types.NodeTree):
                 if hasattr(node, 'node_tree') and node.node_tree and node.node_tree.name == self.name:
                     yield node
 
-    def color_nodes(self, nodes_errors: Iterator[Optional[Exception]]):
+    def color_nodes(self, group_node: 'SvGroupTreeNode'):
         exception_color = (0.8, 0.0, 0)
         no_data_color = (1, 0.3, 0)
+        nodes_errors = self.handler.get_error_nodes(group_node)
         for error, node in zip(nodes_errors, self.nodes):
             if error is not None:
                 node.use_custom_color = True
@@ -715,7 +716,7 @@ class EditGroupTree(bpy.types.Operator):
         sub_tree.handler.send(GroupEvent(GroupEvent.EDIT_GROUP_NODE, group_node))
         context.space_data.path.append(sub_tree, node=group_node)
         sub_tree.group_node_name = group_node.name
-        sub_tree.color_nodes(sub_tree.handler.get_error_nodes(group_node))
+        sub_tree.color_nodes(group_node)
         # todo make protection from editing the same trees in more then one area
         # todo update debuger nodes
         return {'FINISHED'}

@@ -78,8 +78,6 @@ def register_loop():
 
     # this function won't be reload on script.reload event (F8)
     def group_event_loop(delay):
-        # if NodesUpdater.has_task() and not NodesUpdater.is_running():
-        #     bpy.ops.node.updating_group_nodes('INVOKE_DEFAULT')
         if NodesUpdater.is_running():
             NodesUpdater.run_task()
         elif NodesUpdater.has_task():
@@ -116,36 +114,35 @@ class NodesUpdater:
                     break
 
     @classmethod
-    def run_task(cls, event: str = 'TIMER') -> Set[str]:
-        if event != 'ESC':
-            try:
-                if cls._last_node:
-                    cls._last_node.bl_tween.use_custom_color = False
-                    cls._last_node.bl_tween.set_color()
+    def run_task(cls):
+        try:
+            if cls._last_node:
+                cls._last_node.bl_tween.use_custom_color = False
+                cls._last_node.bl_tween.set_color()
 
-                start_time = time()
-                while (time() - start_time) < 0.1:
-                    node = next(cls._handler)
+            start_time = time()
+            while (time() - start_time) < 0.1:
+                node = next(cls._handler)
 
-                cls._last_node = node
-                node.bl_tween.use_custom_color = True
-                node.bl_tween.color = (0.7, 1.000000, 0.7)
-                cls._report_progress(f'Pres "ESC" to abort, updating node "{node.name}"')
+            cls._last_node = node
+            node.bl_tween.use_custom_color = True
+            node.bl_tween.color = (0.7, 1.000000, 0.7)
+            cls._report_progress(f'Pres "ESC" to abort, updating node "{node.name}"')
 
-                return {'PASS_THROUGH'}
-            except StopIteration:
-                cls._report_progress()
-                cls.finish_task()
-                return {'FINISHED'}
-        else:
-            cls._handler.close()
-            cls._report_progress()
+        except StopIteration:
             cls.finish_task()
-            return {'CANCELED'}
+
+    @classmethod
+    def cancel_task(cls):
+        # todo add cancel error to all nodes which should be processed next
+        cls._handler.close()
+        cls.finish_task()
 
     @classmethod
     def finish_task(cls):
+        cls._report_progress()
         group_node = cls._group_node
+        group_node.node_tree.color_nodes(group_node)
         cls._group_node, cls._handler, cls._node_tree_area, cls._last_node = [None] * 4
         pass_running(group_node.node_tree)  # todo only if necessary
 
@@ -355,8 +352,8 @@ def pass_running(from_tree: SvGroupTree):
         try:
             [n.toggle_active(False) for n in nodes]
             sv_tree.update_nodes(nodes)
-        except Exception as e:
-            print(e)
+        except Exception:
+            traceback.print_exc()
         finally:
             [n.toggle_active(True, to_update=False) for n in nodes]
 
@@ -375,7 +372,7 @@ class PressingEscape(bpy.types.Operator):
 
     def execute(self, context):
         if NodesUpdater.is_running():
-            NodesUpdater.run_task('ESC')
+            NodesUpdater.cancel_task()
         return {'FINISHED'}
 
     @classmethod
