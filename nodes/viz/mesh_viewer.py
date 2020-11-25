@@ -5,7 +5,6 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-from functools import reduce
 from itertools import cycle
 
 import bpy
@@ -136,7 +135,7 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
                 if matrix:
                     mesh.apply_matrix(matrix)
                 meshes.append(mesh)
-            base_mesh = reduce(lambda m1, m2: m1.add_mesh(m2), meshes)
+            base_mesh = me.join(meshes)
 
             verts, edges, faces = [base_mesh.vertices.data], [base_mesh.edges.data], [base_mesh.polygons.data]
             mat_indexes = [base_mesh.polygons.get_attribute('material', [])]
