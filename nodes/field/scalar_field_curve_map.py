@@ -20,7 +20,7 @@ class SvScalarFieldCurveMapNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvScalarFieldCurveMapNode'
     bl_label = 'Map Scalar Field by Curve'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_VFIELD_IN'
+    sv_icon = 'SV_SCALAR_FIELD_CURVE_MAP'
 
     modes = [
             ('VALUE', "Curve points", "Use radius-vector of points of the curve as values of the vector field", 0),
