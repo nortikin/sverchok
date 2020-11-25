@@ -21,6 +21,7 @@ Field
    decompose_vector_field
    scalar_field_math
    vector_field_math
+   scalar_field_curve_map
    differential_operations
    scalar_field_curvature
    merge_scalar_fields

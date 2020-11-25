@@ -198,10 +198,11 @@
     SvExNoiseVectorFieldNode
     ---
     SvExScalarFieldMathNode
-    SvExMergeScalarFieldsNode
     SvExVectorFieldMathNode
+    SvScalarFieldCurveMapNode
     SvExFieldDiffOpsNode
     SvScalarFieldCurvatureNode
+    SvExMergeScalarFieldsNode
     ---
     SvExBendAlongCurveFieldNode
     SvExBendAlongSurfaceFieldNode
