@@ -22,6 +22,23 @@ class SvScalarFieldCurveMapNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VFIELD_IN'
 
+    modes = [
+            ('VALUE', "Curve points", "Use radius-vector of points of the curve as values of the vector field", 0),
+            ('TANGENT', "Curve tangents", "Use curve tangents as values of the vector field", 1),
+            ('NORMAL', "Curve normals", "Use curve normals as values of the vector field", 2)
+        ]
+
+    mode : EnumProperty(
+        name = "Curve usage",
+        description = "How the curve is used",
+        items = modes,
+        default = 'VALUE',
+        update = updateNode)
+
+    def draw_buttons(self, context, layout):
+        layout.label(text='Curve usage:')
+        layout.prop(self, 'mode', text='')
+
     def sv_init(self, context):
         self.inputs.new('SvScalarFieldSocket', "Field")
         self.inputs.new('SvCurveSocket', 'Curve')
@@ -39,7 +56,7 @@ class SvScalarFieldCurveMapNode(bpy.types.Node, SverchCustomTreeNode):
         vfields_out = []
         for sfields, curves in zip_long_repeat(sfields_s, curves_s):
             for sfield, curve in zip_long_repeat(sfields, curves):
-                vfield = SvScalarFieldCurveMap(sfield, curve)
+                vfield = SvScalarFieldCurveMap(sfield, curve, mode=self.mode)
                 vfields_out.append(vfield)
 
         self.outputs['Field'].sv_set(vfields_out)
