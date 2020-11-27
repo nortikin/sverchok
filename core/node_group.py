@@ -109,13 +109,6 @@ class SvGroupTree(bpy.types.NodeTree):
 
     def update_sockets(self):  # todo it lets simplify sockets API
         """Set properties of sockets of parent nodes and of output modes"""
-        for node in self.parent_nodes():
-            for n_in_s, t_in_s in zip(node.inputs, self.inputs):
-                # also before getting data from socket `socket.use_prop` property should be set
-                if hasattr(n_in_s, 'default_property'):
-                    n_in_s.use_prop = not t_in_s.hide_value
-                if hasattr(t_in_s, 'default_type'):
-                    n_in_s.default_property_type = t_in_s.default_type
         for node in (n for n in self.nodes if n.bl_idname == 'NodeGroupOutput'):
             for n_in_s, t_out_s in zip(node.inputs, self.outputs):
                 n_in_s.use_prop = not t_out_s.hide_value
@@ -371,6 +364,16 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
         for node in reversed(self.node_tree.nodes):
             if node.bl_idname == 'NodeGroupInput':
                 return node
+
+    def update(self):
+        # it's better place for this code then in group_tree.update
+        # because new socket is being created after calling the method
+        for n_in_s, t_in_s in zip(self.inputs, self.node_tree.inputs):
+            # also before getting data from socket `socket.use_prop` property should be set
+            if hasattr(n_in_s, 'default_property'):
+                n_in_s.use_prop = not t_in_s.hide_value
+            if hasattr(t_in_s, 'default_type'):
+                n_in_s.default_property_type = t_in_s.default_type
 
 
 class PlacingNodeOperator:
