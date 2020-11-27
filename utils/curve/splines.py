@@ -14,6 +14,7 @@ from sverchok.utils.curve.bezier import SvBezierCurve, SvCubicBezierCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.algorithms import concatenate_curves, reparametrize_curve
+from sverchok.utils.curve.nurbs_algorithms import concatenate_nurbs_curves
 
 class SvSplineCurve(SvCurve):
     __description__ = "Spline"
@@ -61,7 +62,7 @@ class SvSplineCurve(SvCurve):
 #         pairs = [f"#{i}: {t_min}-{t_max}: {segment.evaluate(t_min)} -- {segment.evaluate(t_max)}" for i, (segment, (t_min, t_max)) in enumerate(zip(segments, t_segments))]
 #         pairs = ", ".join(pairs)
 #         print(f"S: {pairs}")
-        return concatenate_curves(segments, allow_generic=False)
+        return concatenate_nurbs_curves(segments)
 
     def to_bezier_segments(self):
         control_points = self.spline.get_control_points()
