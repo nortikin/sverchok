@@ -13,6 +13,7 @@ from bpy.props import BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, get_data_nesting_level, updateNode
 from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.primitives import SvLine
 from sverchok.utils.surface.freecad import curves_to_face
 from sverchok.utils.dummy_nodes import add_dummy
 
@@ -41,6 +42,12 @@ class SvSolidWireFaceNode(bpy.types.Node, SverchCustomTreeNode):
             default = True,
             update = updateNode)
 
+    close_wire : BoolProperty(
+            name = "Close wire",
+            description = "Add a linear segment to make the wire closed",
+            default = False,
+            update = updateNode)
+
     accuracy : IntProperty(
             name = "Accuracy",
             description = "Tolerance parameter for checking if ends of edges coincide",
@@ -49,7 +56,8 @@ class SvSolidWireFaceNode(bpy.types.Node, SverchCustomTreeNode):
             update = updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'planar', toggle=True)
+        layout.prop(self, 'planar')
+        layout.prop(self, 'close_wire')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -73,6 +81,14 @@ class SvSolidWireFaceNode(bpy.types.Node, SverchCustomTreeNode):
         for curves_i in curve_s:
             new_faces = []
             for curves in curves_i:
+                if self.close_wire:
+                    t1 = curves[0].get_u_bounds()[0]
+                    t2 = curves[-1].get_u_bounds()[-1]
+                    p1 = curves[0].evaluate(t1)
+                    p2 = curves[-1].evaluate(t2)
+                    if np.linalg.norm(p1 - p2) > tolerance:
+                        line = SvLine.from_two_points(p2, p1)
+                        curves = curves + [line]
                 face = curves_to_face(curves, planar=self.planar, force_nurbs=False, tolerance=tolerance)
                 new_faces.append(face)
             faces_out.append(new_faces)
