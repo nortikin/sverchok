@@ -10,7 +10,7 @@ import time
 from collections import namedtuple
 from contextlib import contextmanager
 from functools import reduce
-from typing import Tuple, List, Set, Dict, Iterator, Optional, Generator
+from typing import Tuple, List, Set, Dict, Iterator, Generator, Optional
 
 import bpy
 from sverchok.core.socket_data import SvNoDataError
@@ -19,7 +19,7 @@ from mathutils import Vector
 
 from sverchok.core.group_handlers import MainHandler
 from sverchok.core.events import GroupEvent
-from sverchok.utils.tree_structure import Tree
+from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 
 
@@ -104,7 +104,7 @@ class SvGroupTree(bpy.types.NodeTree):
 
         self.check_reroutes_sockets()
         self.update_sockets()  # probably more precise trigger could be found for calling this method
-        self.handler.send(GroupEvent(GroupEvent.GROUP_TREE_UPDATE, group_node))
+        self.handler.send(GroupEvent(GroupEvent.GROUP_TREE_UPDATE, self.get_update_path()))
         self.color_nodes(group_node)  # todo if group node is not active?
 
     def update_sockets(self):  # todo it lets simplify sockets API
@@ -182,7 +182,7 @@ class SvGroupTree(bpy.types.NodeTree):
     def update_nodes(self, nodes: list):
         """This method expect to get list of its nodes which should be updated"""
         group_node = bpy.context.space_data.path[-2].node_tree.nodes[self.group_node_name]
-        self.handler.send(GroupEvent(GroupEvent.NODES_UPDATE, group_node, updated_nodes=[n for n in nodes]))
+        self.handler.send(GroupEvent(GroupEvent.NODES_UPDATE, self.get_update_path(), updated_nodes=[n for n in nodes]))
         self.color_nodes(group_node)
 
     def parent_nodes(self) -> Iterator['SvGroupTreeNode']:
@@ -194,9 +194,10 @@ class SvGroupTree(bpy.types.NodeTree):
                     yield node
 
     def color_nodes(self, group_node: 'SvGroupTreeNode'):
+        return  # todo fix later, get error nodes instead?
         exception_color = (0.8, 0.0, 0)
         no_data_color = (1, 0.3, 0)
-        nodes_errors = self.handler.get_error_nodes(group_node)
+        nodes_errors = self.handler.get_error_nodes(self.get_update_path())
         for error, node in zip(nodes_errors, self.nodes):
             if error is not None:
                 node.use_custom_color = True
@@ -209,6 +210,17 @@ class SvGroupTree(bpy.types.NodeTree):
     def throttle_update(self):
         """useless, for API consistency here"""
         yield self
+
+    def get_update_path(self) -> List['SvGroupTreeNode']:
+        """
+        Should be called only during tree or node update events
+        returns list of group nodes in path of current screen
+        """
+        group_nodes = []
+        paths = bpy.context.space_data.path
+        for path, next_path in zip(paths[:-1], paths[1:]):
+            group_nodes.append(path.node_tree.nodes[next_path.node_tree.group_node_name])
+        return group_nodes
 
 
 class BaseNode:
@@ -320,17 +332,45 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
             row_search.operator('node.add_group_tree', text='New', icon='ADD')
 
     def process(self):
+        """
+        This method is going to be called only by update system of main tree
+        Calling this method means that input group node should fetch data from group node
+        (should be updated for current context)
+        """
         if not self.node_tree or not self.is_active:
             return
 
         self.node_tree: SvGroupTree
-        self.node_tree.handler.send(GroupEvent(GroupEvent.GROUP_NODE_UPDATE, self))
-        if any(self.node_tree.handler.get_error_nodes(self)):
-            raise RuntimeError
+        input_node = self._active_input()
+        updater = self.node_tree.handler.update(GroupEvent(GroupEvent.GROUP_NODE_UPDATE,
+                                                           group_nodes_path=[self],
+                                                           updated_nodes=[input_node] if input_node else []))
+        errors = [n.error for n in updater if n.error]
 
-    def updater(self) -> Generator:
+        if errors:
+            raise errors[0]
+
+    def updater(self, group_nodes_path: Optional[List['SvGroupTreeNode']] = None,
+                is_input_changed: bool = True) -> Iterator[Node]:
+        """
+        This method should be called by group tree handler
+        is_input_changed should be False if update is called just for inspection of inner changes
+        """
+        if group_nodes_path is None:
+            group_nodes_path = []
+        group_nodes_path.append(self)
+
         self.node_tree: SvGroupTree
-        return self.node_tree.handler.update(GroupEvent(GroupEvent.GROUP_NODE_UPDATE, self))
+        input_node = self._active_input() if is_input_changed else None
+        return self.node_tree.handler.update(GroupEvent(GroupEvent.GROUP_NODE_UPDATE,
+                                                        group_nodes_path,
+                                                        [input_node] if input_node else []))
+
+    def _active_input(self) -> Optional[bpy.types.Node]:
+        # https://developer.blender.org/T82350
+        for node in reversed(self.node_tree.nodes):
+            if node.bl_idname == 'NodeGroupInput':
+                return node
 
 
 class PlacingNodeOperator:
@@ -713,8 +753,8 @@ class EditGroupTree(bpy.types.Operator):
     def execute(self, context):
         group_node = context.node
         sub_tree: SvGroupTree = context.node.node_tree
-        sub_tree.handler.send(GroupEvent(GroupEvent.EDIT_GROUP_NODE, group_node))
         context.space_data.path.append(sub_tree, node=group_node)
+        sub_tree.handler.send(GroupEvent(GroupEvent.EDIT_GROUP_NODE, sub_tree.get_update_path()))
         sub_tree.group_node_name = group_node.name
         sub_tree.color_nodes(group_node)
         # todo make protection from editing the same trees in more then one area
@@ -817,7 +857,7 @@ class NodeGroupInput(BaseInOutNodes, BaseNode):
 
 
 @extend_blender_class
-class NodeReroute(BaseNode):
+class NodeReroute(BaseNode):  # todo copy node id problem
     # `copy` attribute can't be overridden for this class
     def process(self):
         try:

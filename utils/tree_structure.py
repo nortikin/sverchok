@@ -33,6 +33,7 @@ class Node(tw.Node):
 
         # statistics
         self.is_updated = False
+        self.link_changed = False
         self.error = None
 
     @property

@@ -26,6 +26,8 @@ from sverchok.utils.context_managers import sv_preferences
 
 if TYPE_CHECKING:
     from sverchok.core.node_group import SvGroupTree, SvGroupTreeNode
+    from sverchok.node_tree import SverchCustomTreeNode
+    SvNode = Union[SverchCustomTreeNode, SvGroupTreeNode, Node]
 
 
 class GroupEvent:
@@ -36,12 +38,13 @@ class GroupEvent:
 
     def __init__(self,
                  event_type: str,
-                 group_node: SvGroupTreeNode,
-                 updated_nodes: List[SvGroupTreeNode] = None):
+                 group_nodes_path: List[SvGroupTreeNode],
+                 updated_nodes: List[SvNode] = None):
         self.type = event_type
-        self.group_node = group_node
+        self.group_node = group_nodes_path[-1]
+        self.group_nodes_path = group_nodes_path
         self.updated_nodes = updated_nodes
-        self.to_update = group_node.is_active
+        self.to_update = group_nodes_path[-1].is_active
 
     @property
     def group_tree(self) -> SvGroupTree:
