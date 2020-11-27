@@ -7,7 +7,9 @@ Functionality
 This node generates a Solid Face object, i.e. a Surface trimmed with an edge,
 from a Surface and optional cutting curve. 
 
-To define where exactly the provided Curve must trim the Surface, it is projected onto the surface.
+To define where exactly the provided Curve must trim the Surface, it is
+projected onto the surface. Another option is to use trimming curve defined in
+U/V space of the Surface.
 
 Solid Face object can be later used for construction of Solids (by extrusion, for example).
 
@@ -41,6 +43,8 @@ This node has the following parameter:
   * **Parallel**. Parallel projection along a provided Vector. This option is the default one.
   * **Perspective**. Perspective projection from a provided origin point.
   * **Orthogonal**. Orthogonal projection (along surface's normals).
+  * **UV Trim**. Trim the surface by a curve(s) in U/V space of the surface. It
+    is supposed that trimming curve lies in XOY plane.
 
 Outputs
 -------
