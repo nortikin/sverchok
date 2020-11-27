@@ -46,7 +46,8 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
     projection_types = [
             ('PARALLEL', "Parallel", "Use parallel projection along given vector", 0),
             ('PERSPECTIVE', "Perspective", "Use perspective projection from given pont", 1),
-            ('ORTHO', "Orthogonal", "Use orthogonal projection", 2)
+            ('ORTHO', "Orthogonal", "Use orthogonal projection", 2),
+            ('UV', "UV Trim", "Trim surface by curve(s) in surface's UV space", 3)
         ]
     
     projection_type : EnumProperty(
@@ -79,7 +80,8 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
         nurbs = [SvNurbsCurve.to_nurbs(curve) for curve in sv_curves]
         if any(c is None for c in nurbs):
             raise Exception("One of curves is not a NURBS!")
-        fc_nurbs = [SvFreeCadNurbsCurve.from_any_nurbs(c).curve for c in nurbs]
+        fc_nurbs_curves = [SvFreeCadNurbsCurve.from_any_nurbs(c) for c in nurbs]
+        fc_nurbs = [c.curve for c in fc_nurbs_curves]
         fc_edges = [Part.Edge(c) for c in fc_nurbs]
         fc_face = Part.Face(face_surface.surface)
 
@@ -90,8 +92,11 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
         elif self.projection_type == 'PERSPECTIVE':
             point = Base.Vector(*point)
             projections = [fc_face.makePerspectiveProjection(edge, point).Edges for edge in fc_edges]
-        else: # ORTHO
+        elif self.projection_type == 'ORTHO':
             projections = [fc_face.project(fc_edges).Edges]
+        else: # UV
+            fc_nurbs_2d = [c.to_2d().curve for c in fc_nurbs_curves]
+            projections = [[c.toShape(face_surface.surface) for c in fc_nurbs_2d]]
 
         projections = sum(projections, [])
         if not projections:
