@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 
 class Node(tw.Node):
-    def __init__(self, name: str, index: int, tree: Tree):
+    def __init__(self, name: str, index: int, tree: Tree, bl_node):
         self.name = name
         self.is_input_linked = False  # True if node has straight connection or via other nodes to one of input nodes
 
@@ -36,9 +36,13 @@ class Node(tw.Node):
         self.link_changed = False
         self.error = None
 
-    @property
-    def bl_tween(self) -> SvNode:
-        return self._tree.bl_tween.nodes[self._index]
+        # cash
+        self.bl_tween = bl_node
+
+    # @property
+    # def bl_tween(self) -> SvNode:
+    #     """Quite expansive function, 1ms = 800 calls, it's better to cash, is potentially dangerous"""
+    #     return self._tree.bl_tween.nodes[self._index]
 
     @property
     def index(self):
@@ -87,7 +91,7 @@ class Node(tw.Node):
     @classmethod
     def from_bl_node(cls, bl_node: bpy.types.Node, index: int, tree: Tree) -> Node:
         """Generate node and its sockets from Blender node instance"""
-        node = cls(bl_node.name, index, tree)
+        node = cls(bl_node.name, index, tree, bl_node)
         for in_socket in bl_node.inputs:
             node.inputs.append(Socket.from_bl_socket(node, in_socket))
         for out_socket in bl_node.outputs:

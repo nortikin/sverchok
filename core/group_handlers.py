@@ -83,6 +83,7 @@ def register_loop():
             NodesUpdater.run_task()
         elif NodesUpdater.has_task():
             NodesUpdater.start_task()
+            NodesUpdater.run_task()
         return delay
 
     bpy.app.timers.register(partial(group_event_loop, 0.01))
