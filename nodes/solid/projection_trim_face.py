@@ -82,7 +82,11 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
             raise Exception("One of curves is not a NURBS!")
         fc_nurbs_curves = [SvFreeCadNurbsCurve.from_any_nurbs(c) for c in nurbs]
         fc_nurbs = [c.curve for c in fc_nurbs_curves]
-        fc_edges = [Part.Edge(c) for c in fc_nurbs]
+        if self.projection_type in {'PARALLEL', 'PERSPECTIVE', 'ORTHO'}:
+            try:
+                fc_edges = [Part.Edge(c) for c in fc_nurbs]
+            except Exception as e:
+                raise Exception(f"Can't build edges from {fc_nurbs}: {e}")
         fc_face = Part.Face(face_surface.surface)
 
         if self.projection_type == 'PARALLEL':
@@ -104,7 +108,7 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
             raise Exception(f"Projection {words} of {sv_curves} onto {face_surface} is empty for some reason")
         try:
             wire = Part.Wire(projections)
-        except Part.OCCError as e:
+        except Exception as e:
             ps = [SvFreeCadNurbsCurve(p.Curve) for p in projections]
             raise Exception(f"Can't make a valid Wire out of curves {sv_curves} projected onto {face_surface}:\n{e}\nProjections are: {ps}")
 

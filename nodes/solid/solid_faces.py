@@ -12,10 +12,13 @@ else:
     import bpy
     from bpy.props import BoolProperty
     from sverchok.node_tree import SverchCustomTreeNode
-    from sverchok.data_structure import updateNode
+    from sverchok.data_structure import updateNode, flatten_data, map_unzip_recursirve
+    from sverchok.utils.curve.core import SvCurve
     from sverchok.utils.surface.core import SvSurface
     from sverchok.utils.curve.freecad import SvSolidEdgeCurve
     from sverchok.utils.surface.freecad import SvSolidFaceSurface
+
+    import Part
 
     class SvSolidFacesNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -57,16 +60,12 @@ else:
             if not any(socket.is_linked for socket in self.outputs):
                 return
 
-            solids = self.inputs[0].sv_get()
+            solids = self.inputs['Solid'].sv_get()
 
-            faces = []
-            faces_add = faces.extend if self.flat_output else faces.append
-            wires =[]
-            wires_add = wires.extend if self.flat_output else wires.append
-            face_trims_out = []
-            for solid in solids:
+            def get_faces(solid):
                 face_surface = []
                 outer_wires = []
+                trims = []
                 for f in solid.Faces:
                     surface = SvSolidFaceSurface(f)
                     if self.nurbs_output:
@@ -94,20 +93,22 @@ else:
                             #trim = trim.trim(m, M)
                             trim = SvFreeCadCurve(trim, (m,M), ndim=2)
                         face_trims.append(trim)
-                    #face_trims = SvConcatCurve(face_trims)
-                    
+
                     outer_wires.append(outer_wire)
-                    face_trims_out.append(face_trims)
+                    trims.append(face_trims)
 
-                faces_add(face_surface)
-                wires_add(outer_wires)
+                return face_surface, outer_wires, trims
 
+            faces_out, wires_out, trims_out = map_unzip_recursirve(get_faces, solids, data_types=(Part.Shape,))
+            if self.flat_output:
+                faces_out = flatten_data(faces_out, data_types=(SvSurface,))
+                wires_out = flatten_data(wires_out, target_level=2, data_types=(SvCurve,))
+                trims_out = flatten_data(trims_out, target_level=2, data_types=(SvCurve,))
 
-            self.outputs['Solid Faces'].sv_set(faces)
-            self.outputs['Outer Wire'].sv_set(wires)
+            self.outputs['Solid Faces'].sv_set(faces_out)
+            self.outputs['Outer Wire'].sv_set(wires_out)
             if 'TrimCurves' in self.outputs:
-                self.outputs['TrimCurves'].sv_set(face_trims_out)
-
+                self.outputs['TrimCurves'].sv_set(trims_out)
 
 def register():
     if FreeCAD is not None:
