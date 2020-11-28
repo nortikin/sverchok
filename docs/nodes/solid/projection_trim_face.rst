@@ -49,9 +49,11 @@ This node has the following parameter:
 Outputs
 -------
 
-This node has the following output:
+This node has the following outputs:
 
 * **SolidFace**. The generated Solid Face object.
+* **Edges**. Curves in 3D space defining edges of the created face.
+* **UVCurves**. Curves in U/V space of the surface that are trimming curves of the face.
 
 Example of Usage
 ----------------
