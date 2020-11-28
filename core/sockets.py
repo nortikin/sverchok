@@ -101,7 +101,7 @@ class SvSocketProcessing(object):
                     self.use_wrap = False
             finally:
                 self.skip_wrap_mode_update = False
-                
+
         process_from_socket(self, context)
 
     def update_wrap_flag(self, context):
@@ -115,7 +115,7 @@ class SvSocketProcessing(object):
                     self.use_unwrap = False
             finally:
                 self.skip_wrap_mode_update = False
-                
+
         process_from_socket(self, context)
 
     use_unwrap : BoolProperty(
@@ -139,7 +139,7 @@ class SvSocketProcessing(object):
                     self.use_simplify = False
             finally:
                 self.skip_simplify_mode_update = False
-                
+
         process_from_socket(self, context)
 
     def update_simplify_flag(self, context):
@@ -153,7 +153,7 @@ class SvSocketProcessing(object):
                     self.use_flatten = False
             finally:
                 self.skip_simplify_mode_update = False
-                
+
         process_from_socket(self, context)
 
     # Only one of properties can be set to true: use_flatten or use_simplfy
@@ -610,7 +610,7 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
             param_node.x_ = value[0]
             param_node.y_ = value[1]
             param_node.z_ = value[2]
-        
+
 
     # this property is needed for back capability, after renaming prop to default_property
     # should be removed after https://github.com/nortikin/sverchok/issues/3514
@@ -664,7 +664,7 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
 
 class SvVerticesSocketInterface(bpy.types.NodeSocketInterface):
     """
-    This socket will be created in tree.inputs to tree.outputs collection 
+    This socket will be created in tree.inputs to tree.outputs collection
     when normal socket will be connected to input or output group nodes
     """
     # The only reason of existing this class
@@ -940,7 +940,7 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
 
 class SvStringsSocketInterface(bpy.types.NodeSocketInterface):
     """
-    This socket will be created in tree.inputs to tree.outputs collection 
+    This socket will be created in tree.inputs to tree.outputs collection
     when normal socket will be connected to input or output group nodes
     """
     bl_idname = "SvStringsSocketInterface"
@@ -999,6 +999,14 @@ class SvPulgaForceSocket(NodeSocket, SvSocketCommon):
     bl_label = "Pulga Force Socket"
 
     color = (0.4, 0.3, 0.6, 1.0)
+
+class SvLoopControlSocket(NodeSocket, SvSocketCommon):
+    '''For loop in-loop out node pair'''
+    bl_idname = "SvLoopControlSocket"
+    bl_label = "Loop Control Socket"
+
+    color = (0.1, 0.1, 0.1, 1.0)
+    quick_link_to_node = 'SvLoopInNode'
 
 class SvDictionarySocket(NodeSocket, SvSocketCommon):
     '''For dictionary data'''
@@ -1357,7 +1365,8 @@ classes = [
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
     SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket,
     SvSurfaceSocket, SvCurveSocket, SvScalarFieldSocket, SvVectorFieldSocket,
-    SvSolidSocket, SvSvgSocket, SvPulgaForceSocket, SvLinkNewNodeInput,
+    SvSolidSocket, SvSvgSocket, SvPulgaForceSocket, SvLoopControlSocket,
+    SvLinkNewNodeInput,
     SvStringsSocketInterface, SvVerticesSocketInterface,
     SvSocketHelpOp, SvInputLinkMenuOp
 ]
@@ -1400,4 +1409,3 @@ def socket_interface_classes():
 
 
 register, unregister = bpy.utils.register_classes_factory(classes + list(socket_interface_classes()))
-
