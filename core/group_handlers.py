@@ -54,7 +54,7 @@ class MainHandler:
 
             # Add events which should be updated via timer (changes in node tree)
             if event.to_update:  # todo cancel existing task?
-                NodesUpdater.add_task(event.group_node)
+                NodesUpdater.add_task(event.group_nodes_path)
 
         elif event.type == GroupEvent.EDIT_GROUP_NODE:
             path = NodeIdManager.generate_path(event.group_nodes_path)
@@ -91,7 +91,7 @@ def register_loop():
 
 class NodesUpdater:
     """It can update only one tree at a time"""
-    _group_node: Optional[SvGroupTreeNode] = None  # todo path instead?
+    _group_nodes_path: Optional[List[SvGroupTreeNode]] = None  # todo path instead?
     _handler: Optional[Generator] = None
 
     _node_tree_area: Optional[bpy.types.Area] = None
@@ -100,22 +100,23 @@ class NodesUpdater:
     _start_time: float = None
 
     @classmethod
-    def add_task(cls, group_node: SvGroupTreeNode):
+    def add_task(cls, group_nodes_path: List[SvGroupTreeNode]):
         """It can handle ony one tree at a time"""
         if not cls.is_running():  # ignoring for now
-            cls._group_node = group_node
+            cls._group_nodes_path = group_nodes_path
 
     @classmethod
     def start_task(cls):
+        changed_tree = cls._group_nodes_path[-1].node_tree
         if cls.is_running():
-            raise RuntimeError(f'Tree "{cls._group_node.node_tree.name}" already is being updated')
+            raise RuntimeError(f'Tree "{changed_tree.name}" already is being updated')
         cls._handler = group_global_handler()
 
         # searching appropriate area index for reporting update progress
         for area in bpy.context.screen.areas:
             if area.ui_type == 'SverchCustomTreeType':
                 path = area.spaces[0].path
-                if path and path[-1].node_tree.name == cls._group_node.node_tree.name:
+                if path and path[-1].node_tree.name == changed_tree.name:
                     cls._node_tree_area = area
                     break
 
@@ -150,13 +151,15 @@ class NodesUpdater:
     def finish_task(cls):
         debug(f'Global update - {int((time() - cls._start_time) * 1000)}ms')
         cls._report_progress()
-        group_node = cls._group_node
-        group_node.node_tree.color_nodes(group_node)
-        cls._group_node, cls._handler, cls._node_tree_area, cls._last_node, cls._start_time = [None] * 5
+        group_node = cls._group_nodes_path[-1]
+        path = NodeIdManager.generate_path(cls._group_nodes_path)
+        group_node.node_tree.color_nodes(NodesStatuses.get(n, path).error for n in group_node.node_tree.nodes)
+
+        cls._group_nodes_path, cls._handler, cls._node_tree_area, cls._last_node, cls._start_time = [None] * 5
 
     @classmethod
     def has_task(cls) -> bool:
-        return cls._group_node is not None
+        return cls._group_nodes_path is not None
 
     @classmethod
     def is_running(cls) -> bool:
@@ -341,7 +344,8 @@ def group_tree_handler(group_nodes_path: List[SvGroupTreeNode]) -> Generator[Nod
         should_be_updated = (not node.is_updated) or node.link_changed
 
         if hasattr(node.bl_tween, 'updater'):
-            sup_updater = node.bl_tween.updater(is_input_changed=should_be_updated)  # todo handling errors?
+            sup_updater = node.bl_tween.updater(group_nodes_path=group_nodes_path, is_input_changed=should_be_updated)
+            # todo handling errors?
             try:
                 while True:
                     yield next(sup_updater)

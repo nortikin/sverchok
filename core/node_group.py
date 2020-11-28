@@ -105,7 +105,6 @@ class SvGroupTree(bpy.types.NodeTree):
         self.check_reroutes_sockets()
         self.update_sockets()  # probably more precise trigger could be found for calling this method
         self.handler.send(GroupEvent(GroupEvent.GROUP_TREE_UPDATE, self.get_update_path()))
-        self.color_nodes(group_node)  # todo if group node is not active?
 
     def update_sockets(self):  # todo it lets simplify sockets API
         """Set properties of sockets of parent nodes and of output modes"""
@@ -173,10 +172,13 @@ class SvGroupTree(bpy.types.NodeTree):
                 self.outputs.new('SvStringsSocket', 'Value')
 
     def update_nodes(self, nodes: list):
-        """This method expect to get list of its nodes which should be updated"""
-        group_node = bpy.context.space_data.path[-2].node_tree.nodes[self.group_node_name]
+        """
+        This method expect to get list of its nodes which should be updated
+        Execution won't be immediately, use cases -
+        1. Node property of was changed
+        2. ???
+        """
         self.handler.send(GroupEvent(GroupEvent.NODES_UPDATE, self.get_update_path(), updated_nodes=[n for n in nodes]))
-        self.color_nodes(group_node)
 
     def parent_nodes(self) -> Iterator['SvGroupTreeNode']:
         """Returns all parent nodes"""
@@ -186,12 +188,10 @@ class SvGroupTree(bpy.types.NodeTree):
                 if hasattr(node, 'node_tree') and node.node_tree and node.node_tree.name == self.name:
                     yield node
 
-    def color_nodes(self, group_node: 'SvGroupTreeNode'):
-        return  # todo fix later, get error nodes instead?
+    def color_nodes(self, node_errors: Iterator[Optional[Exception]]):
         exception_color = (0.8, 0.0, 0)
         no_data_color = (1, 0.3, 0)
-        nodes_errors = self.handler.get_error_nodes(self.get_update_path())
-        for error, node in zip(nodes_errors, self.nodes):
+        for error, node in zip(node_errors, self.nodes):
             if error is not None:
                 node.use_custom_color = True
                 node.color = no_data_color if isinstance(error, SvNoDataError) else exception_color
@@ -338,10 +338,11 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
         updater = self.node_tree.handler.update(GroupEvent(GroupEvent.GROUP_NODE_UPDATE,
                                                            group_nodes_path=[self],
                                                            updated_nodes=[input_node] if input_node else []))
-        errors = [n.error for n in updater if n.error]
-
-        if errors:
-            raise errors[0]
+        list(updater)
+        errors = self.node_tree.handler.get_error_nodes([self])
+        for error in errors:
+            if error:
+                raise error
 
     def updater(self, group_nodes_path: Optional[List['SvGroupTreeNode']] = None,
                 is_input_changed: bool = True) -> Iterator[Node]:
@@ -368,12 +369,13 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
     def update(self):
         # it's better place for this code then in group_tree.update
         # because new socket is being created after calling the method
-        for n_in_s, t_in_s in zip(self.inputs, self.node_tree.inputs):
-            # also before getting data from socket `socket.use_prop` property should be set
-            if hasattr(n_in_s, 'default_property'):
-                n_in_s.use_prop = not t_in_s.hide_value
-            if hasattr(t_in_s, 'default_type'):
-                n_in_s.default_property_type = t_in_s.default_type
+        if self.node_tree:
+            for n_in_s, t_in_s in zip(self.inputs, self.node_tree.inputs):
+                # also before getting data from socket `socket.use_prop` property should be set
+                if hasattr(n_in_s, 'default_property'):
+                    n_in_s.use_prop = not t_in_s.hide_value
+                if hasattr(t_in_s, 'default_type'):
+                    n_in_s.default_property_type = t_in_s.default_type
 
 
 class PlacingNodeOperator:
@@ -757,9 +759,11 @@ class EditGroupTree(bpy.types.Operator):
         group_node = context.node
         sub_tree: SvGroupTree = context.node.node_tree
         context.space_data.path.append(sub_tree, node=group_node)
-        sub_tree.handler.send(GroupEvent(GroupEvent.EDIT_GROUP_NODE, sub_tree.get_update_path()))
+        group_nodes_path = sub_tree.get_update_path()
+        sub_tree.handler.send(GroupEvent(GroupEvent.EDIT_GROUP_NODE, group_nodes_path))
         sub_tree.group_node_name = group_node.name
-        sub_tree.color_nodes(group_node)
+        nodes_errors = sub_tree.handler.get_error_nodes(group_nodes_path)
+        sub_tree.color_nodes(nodes_errors)
         # todo make protection from editing the same trees in more then one area
         # todo update debuger nodes
         return {'FINISHED'}
