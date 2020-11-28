@@ -103,6 +103,11 @@ class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         min = 0.0,
         update = updateNode)
 
+    flat_output : BoolProperty(
+        name = "Flat output",
+        default = True,
+        update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', 'Surface')
         self.inputs.new('SvVerticesSocket', "UVPoints").enable_input_link_menu = False
@@ -120,6 +125,7 @@ class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         if self.mode == 'UV':
             layout.prop(self, "make_faces")
         if self.mode in {'RIDGES', 'REGIONS'}:
+            layout.prop(self, 'flat_output')
             layout.prop(self, 'do_clip')
         if self.mode in {'RIDGES', 'REGIONS'} or self.make_faces:
             layout.prop(self, 'normals')
@@ -218,6 +224,11 @@ class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 new_verts.append(verts)
                 new_edges.append(edges)
                 new_faces.append(faces)
+
+            if self.mode in {'RIDGES', 'REGIONS'} and self.flat_output:
+                new_verts = sum(new_verts, [])
+                new_edges = sum(new_edges, [])
+                new_faces = sum(new_faces, [])
 
             if nested_output:
                 verts_out.append(new_verts)
