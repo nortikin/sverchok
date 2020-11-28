@@ -57,7 +57,7 @@ class SvDelaunay3dMk2Node(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "join", toggle=True)
+        layout.prop(self, "join")
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")

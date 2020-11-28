@@ -13,6 +13,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from mathutils.kdtree import KDTree
 
 import sverchok
+from sverchok.core.sockets import setup_new_node_location
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, ensure_nesting_level, get_data_nesting_level
 from sverchok.core.socket_data import SvNoDataError
@@ -72,9 +73,21 @@ class SvFieldRandomProbeMk2Node(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "proportional", toggle=True)
 
+    class BoundsMenuHandler():
+        @classmethod
+        def get_items(cls, socket, context):
+            return [("BOX", "Add Box node", "Add Box node")]
+
+        @classmethod
+        def on_selected(cls, tree, node, socket, item, context):
+            new_node = tree.nodes.new('SvBoxNodeMk2')
+            new_node.label = "Bounds"
+            tree.links.new(new_node.outputs[0], node.inputs['Bounds'])
+            setup_new_node_location(new_node, node)
+
     def sv_init(self, context):
         self.inputs.new('SvScalarFieldSocket', "Field")
-        self.inputs.new('SvVerticesSocket', "Bounds")
+        self.inputs.new('SvVerticesSocket', "Bounds").link_menu_handler = 'BoundsMenuHandler'
         self.inputs.new('SvStringsSocket', "Count").prop_name = 'count'
         self.inputs.new('SvStringsSocket', "MinDistance").prop_name = 'min_r'
         self.inputs.new('SvStringsSocket', "Threshold").prop_name = 'threshold'
