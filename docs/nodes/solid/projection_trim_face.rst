@@ -35,7 +35,7 @@ This node has the following inputs:
 Parameters
 ----------
 
-This node has the following parameter:
+This node has the following parameters:
 
 * **Projection**. This defines what sort of projection will be used to
   calculate the trimming of the Surface. The available options are:
@@ -45,6 +45,14 @@ This node has the following parameter:
   * **Orthogonal**. Orthogonal projection (along surface's normals).
   * **UV Trim**. Trim the surface by a curve(s) in U/V space of the surface. It
     is supposed that trimming curve lies in XOY plane.
+    
+* **Close wire**. If checked, the node will automatically close the loop
+  defined by provided curves, in case it is not already closed. It is done by
+  adding a straight line segment to the list of curves. Unchecked by default.
+* **Accuracy**. This parameter is only available in the N panel. This defines
+  the tolerance for checking if ends of curves coincide. Bigger values mean
+  that ends of curves must coincide with better precision. The default value is
+  8.
 
 Outputs
 -------
