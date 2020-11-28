@@ -91,7 +91,7 @@ class SvLloydSolidNode(bpy.types.Node, SverchCustomTreeNode):
         if self.inputs['Weights'].is_linked:
             weights_in = ensure_nesting_level(weights_in, 2, data_types=(SvScalarField,))
 
-        nested_output = input_level > 1
+        nested_output = input_level > 3
 
         verts_out = []
         for params in zip_long_repeat(solid_in, sites_in, iterations_in, thickness_in, weights_in):
