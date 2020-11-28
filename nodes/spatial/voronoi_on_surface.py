@@ -132,7 +132,7 @@ class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
-        if self.make_faces:
+        if self.mode == 'UV' and self.make_faces:
             layout.prop(self, 'ordered_faces')
 
     def voronoi_uv(self, surface, uvpoints, maxsides):
