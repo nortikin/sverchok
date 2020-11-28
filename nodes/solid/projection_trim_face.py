@@ -8,11 +8,12 @@
 import numpy as np
 
 import bpy
-from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty
+from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, throttle_and_update_node
+from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, throttle_and_update_node, updateNode
 from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.primitives import SvLine
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve, SvFreeCadCurve, SvSolidEdgeCurve
 from sverchok.utils.surface.core import SvSurface
@@ -26,6 +27,8 @@ if FreeCAD is None:
 else:
     import Part
     from FreeCAD import Base
+
+    line2d = Part.Geom2d.Line2dSegment
 
 class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -57,6 +60,19 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
             default = 'PARALLEL',
             update = update_sockets)
 
+    close_wire : BoolProperty(
+            name = "Close wire",
+            description = "Add a linear segment to make the wire closed",
+            default = False,
+            update = updateNode)
+
+    accuracy : IntProperty(
+            name = "Accuracy",
+            description = "Tolerance parameter for checking if ends of edges coincide",
+            default = 8,
+            min = 1,
+            update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "Surface")
         # Named it "Cut", to do not confuse with "Trim" curves, which are
@@ -76,6 +92,11 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.label(text='Projection:')
         layout.prop(self, 'projection_type', text='')
+        layout.prop(self, 'close_wire')
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'accuracy')
 
     def cut(self, face_surface, sv_curves, point, vector):
         # face_surface : SvFreeCadNurbsSurface
@@ -145,6 +166,8 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
         vector_s = self.inputs['Vector'].sv_get()
         vector_s = ensure_nesting_level(vector_s, 3)
 
+        tolerance = 10 ** (-self.accuracy)
+
         faces_out = []
         trim_out = []
         edges_out = []
@@ -158,6 +181,19 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     face_surface = surface_to_freecad(surface) # SvFreeCadNurbsSurface
                 if curves:
+                    if self.close_wire:
+                        t1 = curves[0].get_u_bounds()[0]
+                        t2 = curves[-1].get_u_bounds()[-1]
+                        p1 = curves[0].evaluate(t1)
+                        p2 = curves[-1].evaluate(t2)
+                        if np.linalg.norm(p1 - p2) > tolerance:
+#                             if self.projection_type == 'UV':
+#                                 fc_line = line2d(Base.Vector2d(p2), Base.Vector2d(p1))
+#                                 line = SvFreeCadCurve(fc_line, (0,1), ndim=2)
+#                                 curves = curves + [line]
+#                             else:
+                            line = SvLine.from_two_points(p2, p1)
+                            curves = curves + [line]
                     trims, edges, face = self.cut(face_surface, curves, point, vector)
                 else:
                     face = face_surface
