@@ -52,8 +52,8 @@ class SvSplineCurve(SvCurve):
 
     def to_nurbs(self, implementation=SvNurbsCurve.NATIVE):
         control_points = self.spline.get_control_points()
-        degree = 3 if isinstance(self.spline, CubicSpline) else 1
-        n_points = 4 if isinstance(self.spline, CubicSpline) else 2
+        degree = self.spline.get_degree()
+        n_points = degree + 1
         knotvector = sv_knotvector.generate(degree, n_points)
         t_segments = self.spline.get_t_segments()
         segments = [SvNurbsCurve.build(implementation,

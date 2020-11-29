@@ -284,6 +284,9 @@ class CubicSpline(Spline):
         out = ax + t_r * (bx + t_r * (cx + t_r * dx))
         return out
 
+    def get_degree(self):
+        return 3
+
     def get_t_segments(self):
         N = len(self.pts)
         if self.is_cyclic:
@@ -383,6 +386,9 @@ class LinearSpline(Spline):
 
     def get_t_segments(self):
         return list(zip(self.tknots, self.tknots[1:]))
+
+    def get_degree(self):
+        return 1
 
     def get_control_points(self):
         starts = self.pts[:-1]
