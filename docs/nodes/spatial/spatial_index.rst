@@ -15,3 +15,4 @@ Spatial
    voronoi_sphere
    voronoi_on_surface
    lloyd2d
+   lloyd3d
