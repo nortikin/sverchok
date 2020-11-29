@@ -766,6 +766,7 @@ class EditGroupTree(bpy.types.Operator):
         sub_tree.color_nodes(nodes_errors)
         # todo make protection from editing the same trees in more then one area
         # todo update debuger nodes
+        # todo add the same logic to exit from tree operator
         return {'FINISHED'}
 
 

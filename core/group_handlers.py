@@ -16,7 +16,7 @@ import traceback
 from collections import defaultdict
 from functools import partial
 from time import time
-from typing import Generator, Dict, TYPE_CHECKING, Union, List, NamedTuple, Optional, Iterator, NewType
+from typing import Generator, Dict, TYPE_CHECKING, Union, List, NamedTuple, Optional, Iterator, NewType, Tuple
 
 import bpy
 
@@ -130,7 +130,7 @@ class NodesUpdater:
                 cls._last_node.bl_tween.set_color()
 
             start_time = time()
-            while (time() - start_time) < 0.1:
+            while (time() - start_time) < 0.15:  # 0.15 is max timer frequency
                 node = next(cls._handler)
 
             cls._last_node = node
@@ -201,6 +201,8 @@ class NodesStatuses:
                         del cls._statuses[node_id][path]
                 else:
                     del cls._statuses[node_id]
+            else:
+                del cls._statuses[node_id]
 
     @classmethod
     def get(cls, bl_node: SvNode, path: Path) -> NodeStatistic:
@@ -294,18 +296,16 @@ class ContextTree(Tree):
         Also this method will mark next nodes as outdated for current context
         """
         bl_node = node.bl_tween
-        node.error = None
         try:
             if bl_node.bl_idname in {'NodeGroupInput', 'NodeGroupOutput'}:
                 bl_node.process(self.group_node)
             elif hasattr(bl_node, 'process'):
                 bl_node.process()
+            node.is_updated = True
 
         except Exception as e:
             node.error = e
             traceback.print_exc()
-        finally:
-            NodesStatuses.set(bl_node, self.path, NodeStatistic(node.is_updated, node.error))
 
     def _update_topology_status(self):
         """Copy link node status by comparing with previous tree and save current"""
@@ -331,7 +331,8 @@ class ContextTree(Tree):
 OUT_ID_NAMES = {'SvDebugPrintNode', 'SvStethoscopeNodeMK2'}  # todo replace by checking of OutNode mixin class
 
 
-def group_tree_handler(group_nodes_path: List[SvGroupTreeNode]) -> Generator[Node, None, bool]:
+def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
+        -> Generator[Node, None, Tuple[bool, Optional[Exception]]]:
     group_node = group_nodes_path[-1]
     path = NodeIdManager.generate_path(group_nodes_path)
     tree = ContextTree(group_node, path)
@@ -340,37 +341,59 @@ def group_tree_handler(group_nodes_path: List[SvGroupTreeNode]) -> Generator[Nod
     out_nodes = [n for n in tree.nodes if n.bl_tween.bl_idname in OUT_ID_NAMES]
     out_nodes.extend([tree.nodes.active_output] if tree.nodes.active_output else [])
     output_was_changed = False
+    error = None
     for node in tree.sorted_walk(out_nodes):
-        should_be_updated = (not node.is_updated) or node.link_changed
+        can_be_updated = all(n.is_updated for n in node.last_nodes)
+        should_be_updated = can_be_updated and ((not node.is_updated) or node.link_changed)
+        is_output_changed = False
 
+        # reset current statistic
+        if should_be_updated:
+            node.is_updated, node.error = False, None
+
+        # update node with sub update system
         if hasattr(node.bl_tween, 'updater'):
-            sup_updater = node.bl_tween.updater(group_nodes_path=group_nodes_path, is_input_changed=should_be_updated)
-            # todo handling errors?
+            sub_updater = node.bl_tween.updater(group_nodes_path=group_nodes_path, is_input_changed=should_be_updated)
             try:
                 while True:
-                    yield next(sup_updater)
+                    yield next(sub_updater)
             except StopIteration as stop_error:
-                node_was_updated = stop_error.value
+                is_output_changed, node.error = stop_error.value
+                node.is_updated = not node.error
             except GeneratorExit:  # todo aborting update
                 return output_was_changed
 
+        # update regular node
         elif should_be_updated:
             yield node
             tree.update_node(node)
-            node_was_updated = node.error is None
-            if node.bl_tween.bl_idname == 'NodeGroupOutput':
-                output_was_changed = True
+            is_output_changed = node.error is None
 
-        if node_was_updated:
+        # update current node statistic if there was any updates
+        if should_be_updated:
+            node_path = Path('') if node.is_input_linked else path
+            NodesStatuses.set(node.bl_tween, node_path, NodeStatistic(node.is_updated, node.error))
+            error = node.error if node.error else error
+
+        # if update was successful
+        if is_output_changed:
+
+            # reset next nodes statistics (only for context nodes connected to global nodes)
             if not node.is_input_linked:
                 for next_node in node.next_nodes:
                     if next_node.is_input_linked:
                         # this should cause arising all next node statistic because input was changed by global node
                         NodesStatuses.set(next_node.bl_tween, Path(''), NodeStatistic(False))
-            for next_node in node.next_nodes:  # it will mark nodes as outdated according evaluation context
+
+            # next nodes should be update too then
+            for next_node in node.next_nodes:
                 next_node.is_updated = False
 
-    return output_was_changed
+            # output of group tree was changed
+            if node.bl_tween.bl_idname == 'NodeGroupOutput':
+                output_was_changed = True
+
+    return output_was_changed, error
 
 
 def group_global_handler() -> Generator[Node]:
