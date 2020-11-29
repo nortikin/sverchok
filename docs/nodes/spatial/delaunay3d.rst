@@ -25,10 +25,15 @@ Inputs
 This node has the following inputs:
 
 * **Vertices**. The vertices to generate Delaunay triangulation for. This input is mandatory.
-* **Threshold**. This defines the threshold used to filter "too flat"
+* **PlanarThreshold**. This defines the threshold used to filter "too flat"
   tetrahedrons out. Smaller values of threshold mean more "almost flat"
   tetrahedrons will be generated. Set this to 0 to skip this filtering step and
   allow to generate any tetrahedrons. The default value is 0.0001.
+* **EdgeThreshold**. This defines the threshold used to filter "too long"
+  tetrahedrons out. Tetrahedrons which have one of their edges longer than
+  value specified here will not be generated. Set this to 0 to skip this
+  filtering step and allow to generate any tetrahedrons. The default value is 0
+  (no filtering).
 
 Parameters
 ----------

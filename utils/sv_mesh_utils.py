@@ -100,3 +100,20 @@ def polygons_to_edges_np(obj, unique_edges=False, output_numpy=False):
                 else:
                     result.append(edges.tolist())
     return result
+
+def mask_vertices(verts, edges, faces, verts_mask):
+    if any(not m for m in verts_mask):
+        vert_indexes = [i for i, m in enumerate(verts_mask) if m]
+        index_set = set(vert_indexes)
+        vert_dict = {vert_idx: i for i, vert_idx in enumerate(vert_indexes)}
+
+        new_verts = [verts[i] for i in vert_indexes]
+        new_edges = [[vert_dict[n] for n in edge]
+                        for edge in edges if index_set.issuperset(edge)]
+        new_faces = [[vert_dict[n] for n in face]
+                        for face in faces if index_set.issuperset(face)]
+
+        return new_verts, new_edges, new_faces
+    else:
+        return verts, edges, faces
+

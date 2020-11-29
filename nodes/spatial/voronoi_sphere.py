@@ -10,20 +10,12 @@ from mathutils import Matrix
 import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
-from sverchok.utils.math import to_spherical, from_spherical
+from sverchok.utils.math import project_to_sphere
 from sverchok.utils.sv_mesh_utils import polygons_to_edges
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata
 from sverchok.utils.logging import info, exception
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
-
-def to_radius(r, v, c):
-    x,y,z = v
-    x0,y0,z0 = c
-    v = x-x0, y-y0, z-z0
-    rho, phi, theta = to_spherical(v, "radians")
-    x,y,z = from_spherical(r, phi, theta, "radians")
-    return x+x0, y+y0, z+z0
 
 if scipy is None:
     add_dummy('SvExVoronoiSphereNode', "Voronoi Sphere", 'scipy')
@@ -69,7 +61,7 @@ else:
                 if isinstance(radius, (list, tuple)):
                     radius = radius[0]
                 center = center[0]
-                sites = np.array([to_radius(radius, v, center) for v in sites])
+                sites = np.array([project_to_sphere(center, radius, v) for v in sites])
 
                 vor = SphericalVoronoi(sites, radius=radius, center=np.array(center))
                 vor.sort_vertices_of_regions()

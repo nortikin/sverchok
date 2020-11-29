@@ -67,6 +67,7 @@ UNITTEST_SKIPLIST = [
     "Genetic_algorithm.blend.json",  # looks like script node is trying to update via import_from_json method
     "Elfnor_topology_nodes.json",
     "l-systems.json",
+    "ABCnaming.json",
     "SverchokLogo.json" # Blender 2.90 has a crash in delaunay_2d_cdt on this file :/
 ]
 

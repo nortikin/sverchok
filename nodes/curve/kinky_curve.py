@@ -111,7 +111,10 @@ class SvKinkyCurveNode(bpy.types.Node, SverchCustomTreeNode):
                     else:
                         first_segment = segments[0]
                         segments = segments[1:]
-                        segments[-1].extend(first_segment)
+                        if segments:
+                            segments[-1].extend(first_segment)
+                        else:
+                            segments = [first_segment]
 
                 new_curves = [SvSplineCurve.from_points(segment, metric=self.metric) for segment in segments]
                 if self.make_nurbs:

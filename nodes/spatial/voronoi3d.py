@@ -1,3 +1,9 @@
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
 
 from collections import defaultdict
 
@@ -10,7 +16,8 @@ import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, get_data_nesting_level
 from sverchok.utils.sv_mesh_utils import polygons_to_edges, mesh_join
-from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata
+from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata, bmesh_clip
+from sverchok.utils.geom import calc_bounds
 from sverchok.utils.logging import info, exception
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
@@ -164,43 +171,6 @@ else:
                 result_faces.append(ridge_faces)
             return result_verts, result_edges, result_faces
 
-        def bisect(self, bm, point, normal, fill):
-            bm.normal_update()
-            geom_in = bm.verts[:] + bm.edges[:] + bm.faces[:]
-            res = bmesh.ops.bisect_plane(
-                bm, geom=geom_in, dist=0.00001,
-                plane_co=point, plane_no=normal, use_snap_center=False,
-                clear_outer=True, clear_inner=False)
-            if fill:
-                fres = bmesh.ops.edgenet_prepare(
-                    bm, edges=[e for e in res['geom_cut'] if isinstance(e, bmesh.types.BMEdge)]
-                )
-                bmesh.ops.edgeloop_fill(bm, edges=fres['edges'])
-            bm.verts.index_update()
-            bm.edges.index_update()
-            bm.faces.index_update()
-
-        def calc_bounds(self, vertices, clipping):
-            x_min = min(v[0] for v in vertices)
-            y_min = min(v[1] for v in vertices)
-            z_min = min(v[2] for v in vertices)
-            x_max = max(v[0] for v in vertices)
-            y_max = max(v[1] for v in vertices)
-            z_max = max(v[2] for v in vertices)
-            return (x_min - clipping, x_max + clipping,
-                    y_min - clipping, y_max + clipping,
-                    z_min - clipping, z_max + clipping)
-
-        def clip_bmesh(self, bm, bounds, fill):
-            x_min, x_max, y_min, y_max, z_min, z_max = bounds
-
-            self.bisect(bm, (x_min, 0, 0), (-1, 0, 0), fill)
-            self.bisect(bm, (x_max, 0, 0), (1, 0, 0), fill)
-            self.bisect(bm, (0, y_min, 0), (0, -1, 0), fill)
-            self.bisect(bm, (0, y_max, 0), (0, 1, 0), fill)
-            self.bisect(bm, (0, 0, z_min), (0, 0, -1), fill)
-            self.bisect(bm, (0, 0, z_max), (0, 0, 1), fill)
-
         def clip_mesh(self, bounds, vertices, edges, faces, fill=False, iterate=None):
             if iterate is None:
                 iterate = get_data_nesting_level(vertices) > 2
@@ -217,7 +187,7 @@ else:
                 return vertices_result, edges_result, faces_result
             else:
                 bm = bmesh_from_pydata(vertices, edges, faces)
-                self.clip_bmesh(bm, bounds, fill)
+                bmesh_clip(bm, bounds, fill)
                 vertices, edges, faces = pydata_from_bmesh(bm)
                 bm.free()
                 return vertices, edges, faces
@@ -238,7 +208,7 @@ else:
 
                 diagram = Voronoi(sites)
                 if self.do_clip:
-                    bounds = self.calc_bounds(sites, clipping)
+                    bounds = calc_bounds(sites, clipping)
 
                 if self.out_mode == 'RIDGES':
                     new_verts = diagram.vertices.tolist()

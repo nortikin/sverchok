@@ -284,6 +284,9 @@ class CubicSpline(Spline):
         out = ax + t_r * (bx + t_r * (cx + t_r * dx))
         return out
 
+    def get_degree(self):
+        return 3
+
     def get_t_segments(self):
         N = len(self.pts)
         if self.is_cyclic:
@@ -383,6 +386,9 @@ class LinearSpline(Spline):
 
     def get_t_segments(self):
         return list(zip(self.tknots, self.tknots[1:]))
+
+    def get_degree(self):
+        return 1
 
     def get_control_points(self):
         starts = self.pts[:-1]
@@ -2153,4 +2159,25 @@ def rotate_vector_around_vector_np(v, k, theta):
     p2 = np.apply_along_axis(lambda vi : k.dot(vi), 1, v)
     s3 = p1 * p2 * k
     return s1 + s2 + s3
+
+def calc_bounds(vertices, allowance=0):
+    x_min = min(v[0] for v in vertices)
+    y_min = min(v[1] for v in vertices)
+    z_min = min(v[2] for v in vertices)
+    x_max = max(v[0] for v in vertices)
+    y_max = max(v[1] for v in vertices)
+    z_max = max(v[2] for v in vertices)
+    return (x_min - allowance, x_max + allowance,
+            y_min - allowance, y_max + allowance,
+            z_min - allowance, z_max + allowance)
+
+TRIVIAL='TRIVIAL'
+def bounding_sphere(vertices, algorithm=TRIVIAL):
+    if algorithm != TRIVIAL:
+        raise Exception("Unsupported algorithm")
+    c = center(vertices)
+    vertices = np.array(vertices) - np.array(c)
+    norms = np.linalg.norm(vertices, axis=1)
+    radius = norms.max()
+    return c, radius
 

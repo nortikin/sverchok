@@ -63,5 +63,6 @@ Curves
    rbf_curve
    ortho_project
    project_curve_surface
+   adaptive_plot
    eval_curve
 
