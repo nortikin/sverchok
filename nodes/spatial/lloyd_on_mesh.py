@@ -12,6 +12,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, throttle_and_update_node, get_data_nesting_level
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.voronoi3d import lloyd_on_mesh
+from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 
 if scipy is None:

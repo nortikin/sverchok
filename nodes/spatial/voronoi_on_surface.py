@@ -140,32 +140,32 @@ class SvVoronoiOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         u_mid = 0.5*(u_min + u_max)
         v_mid = 0.5*(v_min + v_max)
 
-#         def invert_points(pts):
-#             result = []
-#             for pt in pts:
-#                 u,v,_ = pt
-#                 if u_min <= u <= u_max and v_min <= v <= v_max:
-#                     if u > u_mid:
-#                         u1 = u_max
-#                     else:
-#                         u1 = u_min
-#                     if v > v_mid:
-#                         v1 = v_max
-#                     else:
-#                         v1 = v_min
-#                     u2 = u + 2*(u1 - u)
-#                     v2 = v + 2*(v1 - v)
-#                     result.append((u2, v2, 0))
-#             return result
+        def invert_points(pts):
+            result = []
+            for pt in pts:
+                u,v,_ = pt
+                if u_min <= u <= u_max and v_min <= v <= v_max:
+                    if u > u_mid:
+                        u1 = u_max
+                    else:
+                        u1 = u_min
+                    if v > v_mid:
+                        v1 = v_max
+                    else:
+                        v1 = v_min
+                    u2 = u + 2*(u1 - u)
+                    v2 = v + 2*(v1 - v)
+                    result.append((u2, v2, 0))
+            return result
 
         n = len(uvpoints)
         clip = ((u_max - u_min) + (v_max - v_min)) / 4.0
-        #all_sites = uvpoints + invert_points(uvpoints)
-        uv_verts, edges, faces = voronoi_bounded(uvpoints,
+        all_sites = uvpoints + invert_points(uvpoints)
+        uv_verts, edges, faces = voronoi_bounded(all_sites,
                     bound_mode='BOX',
                     clip=clip,
-                    draw_bounds = False,
-                    draw_hangs = False,
+                    draw_bounds = True,
+                    draw_hangs = True,
                     make_faces = self.make_faces,
                     ordered_faces = self.ordered_faces,
                     max_sides = maxsides)
