@@ -616,6 +616,7 @@
     SvExportSolidNode
     SvReadFCStdNode
     SvWriteFCStdNode
+    SvReadFCStdSketchNode
 
 ## Network
     UdpClientNode
