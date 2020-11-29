@@ -74,19 +74,19 @@ class Node(tw.Node):
         """
         return tree.nodes[self.name]
 
-    def get_input_socket(self, identifier: str) -> Socket:
+    def get_input_socket(self, identifier: str, default=None) -> Optional[Socket]:
         """Search input socket by its identifier"""
         for socket in self._inputs:
             if socket.identifier == identifier:
                 return socket
-        raise LookupError(f'Socket "{identifier}" was not found in node"{self.name}" inputs{self._inputs}')
+        return default
 
-    def get_output_socket(self, identifier: str) -> Socket:
+    def get_output_socket(self, identifier: str, default=None) -> Optional[Socket]:
         """Search output socket by its identifier"""
         for socket in self._outputs:
             if socket.identifier == identifier:
                 return socket
-        raise LookupError(f'Socket "{identifier}" was not found in Node "{self.name}" outputs{self._outputs}')
+        return default
 
     @classmethod
     def from_bl_node(cls, bl_node: bpy.types.Node, index: int, tree: Tree) -> Node:
@@ -267,8 +267,8 @@ class Socket:
 
 class Link:
     def __init__(self, from_socket: Socket, to_socket: Socket, index: int):
-        self.from_socket = from_socket
-        self.to_socket = to_socket
+        self.from_socket: Socket = from_socket
+        self.to_socket: Socket = to_socket
         from_socket.links.append(self)
         to_socket.links.append(self)
 

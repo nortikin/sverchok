@@ -91,7 +91,7 @@ def register_loop():
 
 class NodesUpdater:
     """It can update only one tree at a time"""
-    _group_nodes_path: Optional[List[SvGroupTreeNode]] = None  # todo path instead?
+    _group_nodes_path: Optional[List[SvGroupTreeNode]] = None
     _handler: Optional[Generator] = None
 
     _node_tree_area: Optional[bpy.types.Area] = None
@@ -314,13 +314,20 @@ class ContextTree(Tree):
 
             new_links = self.links - old_tree.links
             for link in new_links:
-                link.from_node.link_changed = True  # todo check if socket was already linked
-                # link.to_node.is_updated = False  # it will be updated if "from_node" will updated without errors
+                if link.from_node.name in old_tree.nodes:
+                    from_old_node = old_tree.nodes[link.from_node.name]
+                    from_old_socket = from_old_node.get_output_socket(link.from_socket.identifier)
+                    update_last_node = not from_old_socket.links if from_old_socket is not None else True
+                else:
+                    update_last_node = True
+
+                if update_last_node:
+                    link.from_node.link_changed = True
+                else:
+                    link.to_node.link_changed = True
 
             removed_links = old_tree.links - self.links
             for link in removed_links:
-                if link.from_node in self.nodes:
-                    self.nodes[link.from_node.name].link_changed = True  # todo should we?
                 if link.to_node in self.nodes:
                     self.nodes[link.to_node.name].link_changed = True
 
@@ -329,6 +336,7 @@ class ContextTree(Tree):
 
 # also IDs for this nodes are unchanged for now
 OUT_ID_NAMES = {'SvDebugPrintNode', 'SvStethoscopeNodeMK2'}  # todo replace by checking of OutNode mixin class
+# todo add list of unsupported nodes
 
 
 def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
