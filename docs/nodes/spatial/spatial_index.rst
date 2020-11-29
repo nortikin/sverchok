@@ -17,3 +17,4 @@ Spatial
    lloyd2d
    lloyd3d
    lloyd_on_sphere
+   lloyd_on_mesh
