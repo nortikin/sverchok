@@ -23,7 +23,6 @@ Modifier Make
    bevel_curve
    contour2D
    fractal_curve
-   convex_hull_mk2
    dual_mesh
    diamond_mesh
    clip_verts
