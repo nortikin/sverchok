@@ -20,7 +20,7 @@ import bpy
 from bpy.props import IntProperty, EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, enum_item_4, list_match_func, numpy_list_match_modes
 from sverchok.utils.sv_node_utils import frame_adjust
 
 class SvCreateLoopOut(bpy.types.Operator):
@@ -68,7 +68,27 @@ class SvLoopInNode(bpy.types.Node, SverchCustomTreeNode):
         name='Max Iterations', description='Maximum allowed iterations',
         default=5, min=2, update=update_max_iterations)
 
-    node_dict = {}
+    def update_mode(self, context):
+        self.inputs['Iterations'].hide_safe = self.mode == "For_Each"
+        if self.mode == "For_Each":
+            self.outputs[1].label ='Item Number'
+            self.outputs[2].label ='Total Items'
+        else:
+            self.outputs[1].label ='Loop Number'
+            self.outputs[2].label ='Total Loops'
+        updateNode(self, context)
+
+    mode: EnumProperty(
+        name='Mode', description='Maximum allowed iterations',
+        items=enum_item_4(['Range', 'For Each']), default='Range',
+        update=update_mode)
+
+    list_match: EnumProperty(
+        name="List Match",
+        description="Behavior on different list lengths",
+        items=numpy_list_match_modes, default="REPEAT",
+        update=updateNode)
+
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'Iterations').prop_name = "iterations"
@@ -82,20 +102,26 @@ class SvLoopInNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self,ctx, layout):
         if not (self.outputs[0].is_linked and self.outputs[0].links[0].to_socket.node.bl_idname=='SvLoopOutNode'):
             self.wrapper_tracked_ui_draw_op(layout, "node.create_loop_out", icon='CON_FOLLOWPATH', text="Create Loop Out")
-
+        layout.prop(self, 'mode', expand=True)
     def draw_buttons_ext(self, ctx, layout):
-        layout.prop(self, "max_iterations")
+        layout.prop(self, 'mode', expand=True)
+        if self.mode == "Range":
+            layout.prop(self, "max_iterations")
+        else:
+            layout.prop(self, "list_match")
 
     def rclick_menu(self, context, layout):
-        layout.prop(self, "max_iterations")
+        layout.prop_menu_enum(self, 'mode')
+        if self.mode == "Range":
+            layout.prop(self, "max_iterations")
+        else:
+            layout.prop_menu_enum(self, 'list_match')
 
 
     def sv_update(self):
 
         # socket handling
-        print("updating loopin")
         if self.inputs[-1].links:
-            print("updating loopin adding inputs")
             name_input = 'Data '+str(len(self.inputs)-1)
             name_output = 'Data '+str(len(self.inputs)-2)
             self.inputs.new('SvStringsSocket', name_input)
@@ -122,10 +148,14 @@ class SvLoopInNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs[0].sv_set([["Link to Loop Out node"]])
         self.outputs[1].sv_set([[0]])
-        iterations = int(self.inputs['Iterations'].sv_get()[0][0])
-        self.outputs['Total Loops'].sv_set([[min(iterations, self.max_iterations)]])
-        for inp, outp in zip(self.inputs[1:-1], self.outputs[3:]):
-            outp.sv_set(inp.sv_get(deepcopy=False, default=[]))
+        if self.mode == 'Range':
+            iterations = int(self.inputs['Iterations'].sv_get()[0][0])
+            self.outputs['Total Loops'].sv_set([[min(iterations, self.max_iterations)]])
+            for inp, outp in zip(self.inputs[1:-1], self.outputs[3:]):
+                outp.sv_set(inp.sv_get(deepcopy=False, default=[]))
+        else:
+            for inp, outp in zip(self.inputs[1:-1], self.outputs[3:]):
+                outp.sv_set([inp.sv_get(deepcopy=False, default=[])[0]])
 
 
 
