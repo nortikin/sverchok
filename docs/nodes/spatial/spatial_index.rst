@@ -19,3 +19,5 @@ Spatial
    lloyd_on_sphere
    lloyd_on_mesh
    lloyd_solid
+   lloyd_solid_face
+

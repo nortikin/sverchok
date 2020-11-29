@@ -69,7 +69,7 @@ class SvPopulateSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             update = updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "proportional", toggle=True)
+        layout.prop(self, "proportional")
 
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "Surface")
