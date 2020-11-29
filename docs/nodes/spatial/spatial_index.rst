@@ -2,6 +2,11 @@
 Spatial
 *******
 
+   homogenous_vector_field
+   random_points_on_mesh
+   field_random_probe
+   populate_solid
+   populate_surface
    voronoi_2d
    delaunay_2d
    voronoi3d
@@ -9,8 +14,4 @@ Spatial
    delaunay_2d_cdt
    voronoi_sphere
    voronoi_on_surface
-   random_points_on_mesh
-   homogenous_vector_field
-   field_random_probe
-   populate_solid
-   populate_surface
+   lloyd2d
