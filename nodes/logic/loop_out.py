@@ -157,14 +157,16 @@ class SvLoopOutNode(bpy.types.Node, SverchCustomTreeNode):
 
             iterations = min(int(loop_in_node.inputs['Iterations'].sv_get()[0][0]), loop_in_node.max_iterations)
             do_update(intersection[:-1], self.id_data.nodes)
-
+            tree_nodes = self.id_data.nodes
             for i in range(iterations-1):
 
                 for j, socket in enumerate(self.inputs[1:]):
                     data = socket.sv_get(deepcopy=False, default=[])
                     loop_in_node.outputs[j+3].sv_set(data)
-                do_update(intersection[1:-1], self.id_data.nodes)
                 loop_in_node.outputs['Loop Number'].sv_set([[i+1]])
+                for node_name in intersection[1:-1]:
+                    tree_nodes[node_name].process()
+
 
             for inp, outp in zip(self.inputs[1:], self.outputs):
                 outp.sv_set(inp.sv_get(deepcopy=False, default=[]))
