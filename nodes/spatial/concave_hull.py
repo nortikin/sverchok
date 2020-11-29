@@ -26,6 +26,7 @@ class SvConcaveHullNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvConcaveHullNode'
     bl_label = 'Concave Hull'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_CONCAVE_HULL'
 
     volume_threshold : FloatProperty(
         name = "PlanarThreshold",

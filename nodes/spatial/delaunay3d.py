@@ -35,7 +35,7 @@ class SvDelaunay3dMk2Node(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvDelaunay3dMk2Node'
     bl_label = 'Delaunay 3D'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_VORONOI'
+    sv_icon = 'SV_DELAUNAY'
 
     join : BoolProperty(
         name = "Join",

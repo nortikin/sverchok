@@ -34,7 +34,7 @@ class SvPopulateSolidNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvPopulateSolidNode'
     bl_label = 'Populate Solid'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    solid_catergory = "Operators"
+    sv_icon = 'SV_POPULATE_SOLID'
 
     @throttle_and_update_node
     def update_sockets(self, context):

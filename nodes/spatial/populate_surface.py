@@ -27,7 +27,7 @@ class SvPopulateSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvPopulateSurfaceNode'
     bl_label = 'Populate Surface'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_FIELD_RANDOM_PROBE'
+    sv_icon = 'SV_POPULATE_SURFACE'
 
     threshold : FloatProperty(
             name = "Threshold",
