@@ -103,9 +103,12 @@ class SvPopulateSolidNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "gen_mode", text='Mode')
         layout.prop(self, "proportional", toggle=True)
-        layout.prop(self, "accuracy")
         if self.gen_mode == 'VOLUME':
             layout.prop(self, "in_surface")
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, "accuracy")
 
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', "Solid")

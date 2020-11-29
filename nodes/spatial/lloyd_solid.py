@@ -44,6 +44,12 @@ class SvLloydSolidNode(bpy.types.Node, SverchCustomTreeNode):
         min = 0.0,
         update=updateNode)
 
+    accuracy: IntProperty(
+        name="Accuracy",
+        default=5,
+        min=1,
+        update=updateNode)
+
     @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Thickness'].hide_safe = self.mode != 'SURFACE'
@@ -62,6 +68,10 @@ class SvLloydSolidNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", text='')
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, "accuracy")
 
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', "Solid")
@@ -92,15 +102,19 @@ class SvLloydSolidNode(bpy.types.Node, SverchCustomTreeNode):
             weights_in = ensure_nesting_level(weights_in, 2, data_types=(SvScalarField,))
 
         nested_output = input_level > 3
+        
+        tolerance = 10**(-self.accuracy)
 
         verts_out = []
         for params in zip_long_repeat(solid_in, sites_in, iterations_in, thickness_in, weights_in):
             new_verts = []
             for solid, sites, iterations, thickness, weights in zip_long_repeat(*params):
                 if self.mode == 'VOLUME':
-                    sites = lloyd_in_solid(solid, sites, iterations, weight_field = weights)
+                    sites = lloyd_in_solid(solid, sites, iterations,
+                                weight_field = weights, tolerance = tolerance)
                 else:
-                    sites = lloyd_on_solid_surface(solid, sites, thickness, iterations, weight_field = weights)
+                    sites = lloyd_on_solid_surface(solid, sites, thickness, iterations,
+                                weight_field = weights, tolerance = tolerance)
 
                 new_verts.append(sites)
             if nested_output:

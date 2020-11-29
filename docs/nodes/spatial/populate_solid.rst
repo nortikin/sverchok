@@ -66,13 +66,14 @@ This node has the following parameters:
   proportionally to the values of scalar field. Otherwise, the points will be
   uniformly distributed in the area where the value of scalar field exceeds
   threshold. Unchecked by default.
-* **Accuracy**. This defines the accuracy of defining whether the point lies on
-  the surface of the body. The higher the value, the more precise this process
-  is. The default value is 5.
 * **Accept in surface**. This parameter is only available when the **Generation
   mode** parameter is set to **Volume**. This defines whether it is acceptable
   to generate points on the surface of the body as well as inside it. Checked
   by default.
+* **Accuracy**. This parameter is available in the N panel only. This defines
+  the accuracy of defining whether the point lies on the surface of the body.
+  The higher the value, the more precise this process is. The default value is
+  5.
 
 When **Proportional** mode is enabled, then the probability of vertex
 appearance at the certain point is calculated as ``P = (V - FieldMin) /

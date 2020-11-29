@@ -18,3 +18,4 @@ Spatial
    lloyd3d
    lloyd_on_sphere
    lloyd_on_mesh
+   lloyd_solid
