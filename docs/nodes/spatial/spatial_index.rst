@@ -21,4 +21,5 @@ Spatial
    lloyd_solid
    lloyd_solid_face
    convex_hull_mk2
+   concave_hull
 
