@@ -79,7 +79,7 @@ def curves_to_face(sv_curves, planar=True, force_nurbs=True, tolerance=None):
     if planar:
         try:
             fc_face = Part.Face(wire)
-        except Part.OCCError as e:
+        except Exception as e:
             raise Exception(f"Can't create a Face from {sv_curves}: {e}\nProbably these curves are not all lying in the same plane?")
         surface = SvSolidFaceSurface(fc_face)
     else:
