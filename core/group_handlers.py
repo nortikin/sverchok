@@ -53,7 +53,10 @@ class MainHandler:
                 [NodesStatuses.mark_outdated(n) for n in event.updated_nodes]  # global updating
 
             # Add events which should be updated via timer (changes in node tree)
-            if event.to_update:  # todo cancel existing task?
+            if event.to_update:
+                if NodesUpdater.is_running():
+                    NodesUpdater.cancel_task()
+
                 NodesUpdater.add_task(event.group_nodes_path)
 
         elif event.type == GroupEvent.EDIT_GROUP_NODE:
@@ -81,7 +84,7 @@ def register_loop():
     def group_event_loop(delay):
         if NodesUpdater.is_running():
             NodesUpdater.run_task()
-        elif NodesUpdater.has_task():
+        elif NodesUpdater.has_task():  # task should be run via timer only https://developer.blender.org/T82318#1053877
             NodesUpdater.start_task()
             NodesUpdater.run_task()
         return delay
