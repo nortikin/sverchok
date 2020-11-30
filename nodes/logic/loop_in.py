@@ -154,8 +154,12 @@ class SvLoopInNode(bpy.types.Node, SverchCustomTreeNode):
             for inp, outp in zip(self.inputs[1:-1], self.outputs[3:]):
                 outp.sv_set(inp.sv_get(deepcopy=False, default=[]))
         else:
+            lens = []
             for inp, outp in zip(self.inputs[1:-1], self.outputs[3:]):
-                outp.sv_set([inp.sv_get(deepcopy=False, default=[])[0]])
+                data = inp.sv_get(deepcopy=False, default=[])
+                lens.append(len(data))
+                outp.sv_set([data[0]])
+            self.outputs[2].sv_set([[max(lens)]])
 
 
 
