@@ -24,12 +24,12 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.core.update_system import make_tree_from_nodes, do_update
 from sverchok.data_structure import list_match_func
 
-def process_looped_nodes(node_list, tree_nodes):
+def process_looped_nodes(node_list, tree_nodes, process_name, iteration):
     for node_name in node_list:
         try:
             tree_nodes[node_name].process()
         except Exception as e:
-            raise type(e)(str(e) + ' @ %s node' % node_name)
+            raise type(e)(str(e) + f' @ {node_name} node. {process_name} number: {iteration}')
 
 class SvLoopOutNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -179,7 +179,7 @@ class SvLoopOutNode(bpy.types.Node, SverchCustomTreeNode):
                     loop_in_node.outputs[j+3].sv_set([data])
                 loop_in_node.outputs['Loop Number'].sv_set([[idx]])
                 idx += 1
-                process_looped_nodes(intersection[1:-1], tree_nodes)
+                process_looped_nodes(intersection[1:-1], tree_nodes, 'Element', idx)
 
                 for inp, out in zip(self.inputs[1:], out_data):
                     out.append(inp.sv_get(deepcopy=False, default=[[]])[0])
@@ -216,7 +216,7 @@ class SvLoopOutNode(bpy.types.Node, SverchCustomTreeNode):
                     loop_in_node.outputs[j+3].sv_set(data)
                 loop_in_node.outputs['Loop Number'].sv_set([[i+1]])
 
-                process_looped_nodes(intersection[1:-1], tree_nodes)
+                process_looped_nodes(intersection[1:-1], tree_nodes, 'Iteration', i+1)
 
 
 
