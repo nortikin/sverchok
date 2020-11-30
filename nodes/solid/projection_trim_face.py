@@ -180,6 +180,7 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
                     face_surface = surface
                 else:
                     face_surface = surface_to_freecad(surface) # SvFreeCadNurbsSurface
+                self.info(f"Surface: {face_surface}, n curves: {len(curves)}")
                 if curves:
                     if self.close_wire:
                         t1 = curves[0].get_u_bounds()[0]
