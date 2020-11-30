@@ -143,8 +143,10 @@ class NodesUpdater:
 
     @classmethod
     def cancel_task(cls):
-        # todo add cancel error to all nodes which should be processed next
-        cls._handler.close()
+        try:
+            cls._handler.throw(CancelError)
+        except (StopIteration, RuntimeError):
+            pass
         cls.finish_task()
 
     @classmethod
@@ -348,6 +350,11 @@ def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
 
     out_nodes = [n for n in tree.nodes if n.bl_tween.bl_idname in OUT_ID_NAMES]
     out_nodes.extend([tree.nodes.active_output] if tree.nodes.active_output else [])
+
+    # input
+    cancel_updating = False
+
+    # output
     output_was_changed = False
     error = None
     for node in tree.sorted_walk(out_nodes):
@@ -368,13 +375,21 @@ def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
             except StopIteration as stop_error:
                 is_output_changed, node.error = stop_error.value
                 node.is_updated = not node.error
-            except GeneratorExit:  # todo aborting update
-                return output_was_changed
+            except CancelError:
+                sub_updater.throw(CancelError)
 
         # update regular node
         elif should_be_updated:
-            yield node
-            tree.update_node(node)
+            if not cancel_updating:
+                try:
+                    yield node
+                    tree.update_node(node)
+                except CancelError:
+                    cancel_updating = True
+                    node.error = CancelError()
+            else:
+                node.error = CancelError()
+
             is_output_changed = node.error is None
 
         # update current node statistic if there was any updates
@@ -421,9 +436,8 @@ def group_global_handler() -> Generator[Node]:
                     # it should return only nodes which should be updated
                     while True:
                         yield next(group_updater)
-                except GeneratorExit:
-                    group_updater.close()
-                    return
+                except CancelError:
+                    group_updater.throw(CancelError)
                 except StopIteration as stop_error:
                     sub_tree_changed = stop_error.value
                     if sub_tree_changed:
@@ -440,6 +454,10 @@ def group_global_handler() -> Generator[Node]:
                 traceback.print_exc()
             finally:
                 [n.toggle_active(s, to_update=False) for s, n in zip(active_states, outdated_group_nodes)]
+
+
+class CancelError(Exception):
+    """Aborting tree evaluation by user"""
 
 
 class PressingEscape(bpy.types.Operator):
