@@ -3,7 +3,7 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
+from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, get_data_nesting_level, ensure_nesting_level
 from sverchok.utils.logging import info, exception
 from sverchok.utils.curve.nurbs import SvGeomdlCurve
 from sverchok.dependencies import geomdl
@@ -69,26 +69,42 @@ else:
             degree_s = self.inputs['Degree'].sv_get()
             points_cnt_s = self.inputs['PointsCnt'].sv_get()
 
+            input_level = get_data_nesting_level(vertices_s)
+            vertices_s = ensure_nesting_level(vertices_s, 4)
+            degree_s = ensure_nesting_level(degree_s, 2)
+            points_cnt_s = ensure_nesting_level(points_cnt_s, 2)
+
+            nested_output = input_level > 3
+
             curves_out = []
             points_out = []
             knots_out = []
-            for vertices, degree, points_cnt in zip_long_repeat(vertices_s, degree_s, points_cnt_s):
-                if isinstance(degree, (tuple, list)):
-                    degree = degree[0]
-                if isinstance(points_cnt, (tuple, list)):
-                    points_cnt = points_cnt[0]
+            for params in zip_long_repeat(vertices_s, degree_s, points_cnt_s):
+                new_curves = []
+                new_points = []
+                new_knots = []
+                for vertices, degree, points_cnt in zip_long_repeat(*params):
 
-                kwargs = dict(centripetal = self.centripetal)
-                if self.has_points_cnt:
-                    kwargs['ctrlpts_size'] = points_cnt
+                    kwargs = dict(centripetal = self.centripetal)
+                    if self.has_points_cnt:
+                        kwargs['ctrlpts_size'] = points_cnt
 
-                curve = fitting.approximate_curve(vertices, degree, **kwargs)
+                    curve = fitting.approximate_curve(vertices, degree, **kwargs)
 
-                points_out.append(curve.ctrlpts)
-                knots_out.append(curve.knotvector)
+                    new_points.append(curve.ctrlpts)
+                    new_knots.append(curve.knotvector)
 
-                curve = SvGeomdlCurve(curve)
-                curves_out.append(curve)
+                    curve = SvGeomdlCurve(curve)
+                    new_curves.append(curve)
+
+                if nested_output:
+                    curves_out.append(new_curves)
+                    points_out.append(new_points)
+                    knots_out.append(new_knots)
+                else:
+                    curves_out.extend(new_curves)
+                    points_out.extend(new_points)
+                    knots_out.extend(new_knots)
 
             self.outputs['Curve'].sv_set(curves_out)
             self.outputs['ControlPoints'].sv_set(points_out)
