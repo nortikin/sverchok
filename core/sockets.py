@@ -41,7 +41,8 @@ from sverchok.utils.field.vector import SvVectorField, SvMatrixVectorField, SvCo
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.algorithms import reparametrize_curve
 from sverchok.utils.surface import SvSurface
-from sverchok.utils.logging import warning
+
+from sverchok.utils.logging import warning, debug
 from sverchok.dependencies import FreeCAD
 
 STANDARD_TYPES = SIMPLE_DATA_TYPES + (SvCurve, SvSurface)
@@ -501,7 +502,7 @@ class SvSocketCommon(SvSocketProcessing):
         if not self.needs_data_conversion():
             return source_data
         else:
-            self.node.debug(f"Trying to convert data for input socket {self.name} by {implicit_conversions}")
+            debug(f"Trying to convert data for input socket {self.name} by {implicit_conversions}")
             return implicit_conversions.convert(self, source_data)
 
     def update_objects_number(self):
@@ -950,7 +951,8 @@ class SvStringsSocketInterface(bpy.types.NodeSocketInterface):
 
     default_float_value: bpy.props.FloatProperty(name='Default value')
     default_int_value: bpy.props.IntProperty(name='Default value')
-    default_type: bpy.props.EnumProperty(items=[(i, i, '') for i in ['float', 'int']])
+    default_type: bpy.props.EnumProperty(items=[(i, i, '') for i in ['float', 'int']],
+                                         update=lambda s, c: s.id_data.update_sockets())
 
     @property
     def default_value(self):
@@ -1387,6 +1389,7 @@ def socket_interface_classes():
             prop_func, prop_args = socket_cls.__annotations__['default_property']
             prop_args = {k: prop_args[k] for k in prop_args if k not in {'update', 'name'}}
             prop_args['name'] = "Default value"
+            prop_args['update'] = lambda s, c: s.id_data.update_sockets()
             socket_interface_attributes['__annotations__'] = {}
             socket_interface_attributes['__annotations__']['default_value'] = (prop_func, prop_args)
 
