@@ -33,6 +33,7 @@ class SvGroupTree(bpy.types.NodeTree):
 
     group_node_name: bpy.props.StringProperty()  # should be updated by "Go to edit group tree" operator
     tree_id_memory: bpy.props.StringProperty(default="")  # identifier of the tree, should be used via `tree_id`
+    skip_tree_update: bpy.props.BoolProperty()  # useless for API consistency # todo should be removed later
 
     # Always False, does not have sense to have for nested trees, sine of draft mode refactoring
     sv_draft: bpy.props.BoolProperty()
@@ -49,7 +50,17 @@ class SvGroupTree(bpy.types.NodeTree):
         return False  # only for inner usage
 
     sv_show: bpy.props.BoolProperty(name="Show", default=True, description='Show group tree')
-    description: bpy.props.StringProperty(name="Tree description", default="Group nodes don`t work at the moment")
+    description: bpy.props.StringProperty(
+        name="Tree description",
+        default="Hover over question mark to read tooltip\n"
+                "It's alpha version of group nodes use with caution\n"
+                "At this moment only 3 output nodes are supported (Group output, Stethoscope, Debug print)\n"
+                "Any node connected to them will be evaluated\n"
+                "Viewer nodes are not supported\n"
+                "Import into JSON is not supported\n"
+                "but it is possible to import group trees via standard Blender append functionality\n"
+                "Group trees are using its own update system\n"
+                "This system supports canceling processing next nodes by pressing escape during group tree editing")
 
     def upstream_trees(self) -> List['SvGroupTree']:
         """
@@ -251,7 +262,7 @@ class BaseNode:
 class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
     """Node for keeping sub trees"""
     bl_idname = 'SvGroupTreeNode'
-    bl_label = 'Group node (mockup)'
+    bl_label = 'Group node (Alpha)'
 
     # todo add methods: switch_on_off
 
@@ -312,7 +323,7 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
             row.scale_x = 5
             row.alignment = 'RIGHT'
             row.prop(self, 'is_active', toggle=True)
-            row.prop(self, 'show', text="", icon=f'RESTRICT_VIEW_{"OFF" if self.show else "ON"}')
+            # row.prop(self, 'show', text="", icon=f'RESTRICT_VIEW_{"OFF" if self.show else "ON"}')
 
             add_description = row_description.operator('node.add_tree_description', text='', icon='QUESTION')
             add_description.tree_name = self.node_tree.name
