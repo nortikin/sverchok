@@ -38,8 +38,16 @@ class SvNestingLevelEntry(bpy.types.PropertyGroup):
             info("Node is not defined in this context, so will not update the node.")
 
     description : StringProperty(options = {'SKIP_SAVE'}, default="?")
-    flatten : BoolProperty(default=False, update=update_entry)
-    wrap : BoolProperty(default=False, update=update_entry)
+    flatten : BoolProperty(
+                name = "Flatten",
+                description = "Concatenate all child lists into one list",
+                default=False,
+                update=update_entry)
+    wrap : BoolProperty(
+                name = "Wrap",
+                description = "Wrap data into additional pair of square brackets []",
+                default=False,
+                update=update_entry)
 
 class SvListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
     '''
@@ -65,7 +73,12 @@ class SvListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
         n = len(self.levels_config)
         for i, entry in enumerate(self.levels_config):
             nesting = n-i-1
-            grid.label(text=str(i))
+            level_str = str(i)
+            if i == 0:
+                level_str += " (outermost)"
+            elif nesting == 0:
+                level_str += " (innermost)"
+            grid.label(text=level_str)
             grid.label(text=str(nesting))
             grid.label(text=entry.description)
             if nesting < 2:
@@ -87,8 +100,8 @@ class SvListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
             self.levels_config.clear()
             return
 
-        nesting, descriptions = describe_data_shape_by_level(data)
-        rebuild_list = not update_during_process or self.prev_nesting_level != nesting
+        nesting, descriptions = describe_data_shape_by_level(data, include_numpy_nesting=False)
+        rebuild_list = self.prev_nesting_level != nesting
         self.prev_nesting_level = nesting
 
         if rebuild_list:

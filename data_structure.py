@@ -619,7 +619,7 @@ class SvListLevelAdjustment(object):
         return f"<Flatten={self.flatten}, Wrap={self.wrap}>"
 
 def list_levels_adjust(data, instructions, data_types=SIMPLE_DATA_TYPES):
-    data_level = get_data_nesting_level(data, data_types)
+    data_level = get_data_nesting_level(data, data_types + (ndarray,))
     if len(instructions) < data_level+1:
         raise Exception(f"Number of instructions ({len(instructions)}) is less than data nesting level {data_level} + 1")
 
@@ -671,7 +671,7 @@ def split_by_count(iterable, n, fillvalue=None):
     args = [iter(iterable)] * n
     return list(map(list, zip_longest(*args, fillvalue=fillvalue)))
 
-def describe_data_shape_by_level(data):
+def describe_data_shape_by_level(data, include_numpy_nesting=True):
     """
     Describe shape of data in human-readable form.
     Returns tuple:
@@ -681,7 +681,11 @@ def describe_data_shape_by_level(data):
     def helper(data):
         if not isinstance(data, (list, tuple)):
             if isinstance(data, ndarray):
-                return len(data.shape), type(data).__name__ + " of " + str(data.dtype) + " with shape " + str(data.shape)
+                if include_numpy_nesting:
+                    nesting = len(data.shape)
+                else:
+                    nesting = 0
+                return nesting, [type(data).__name__ + " of " + str(data.dtype) + " with shape " + str(data.shape)]
             return 0, [type(data).__name__]
         else:
             result = [f"{type(data).__name__} [{len(data)}]"]
