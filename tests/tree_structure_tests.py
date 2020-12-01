@@ -2,6 +2,7 @@ import sverchok
 from sverchok.utils.testing import SverchokTestCase
 import sverchok.utils.tree_structure as ts
 from sverchok.utils.sv_json_import import JSONImporter
+from pathlib import Path
 
 
 class TreeStructureTest(SverchokTestCase):

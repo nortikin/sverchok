@@ -15,6 +15,7 @@ from __future__ import annotations
 import traceback
 from collections import defaultdict
 from functools import partial
+from itertools import chain
 from time import time
 from typing import Generator, Dict, TYPE_CHECKING, Union, List, NamedTuple, Optional, Iterator, NewType, Tuple
 
@@ -308,6 +309,10 @@ class ContextTree(Tree):
                 bl_node.process()
             node.is_updated = True
 
+            # probably it's not grate place for doing it
+            [s.update_objects_number() for s in chain(bl_node.inputs, bl_node.outputs)
+             if hasattr(s, 'update_objects_number')]
+
         except Exception as e:
             node.error = e
             traceback.print_exc()
@@ -397,7 +402,7 @@ def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
 
         # update current node statistic if there was any updates
         if should_be_updated:
-            node_path = Path('') if node.is_input_linked else path
+            node_path = Path('') if not node.is_input_linked else path
             NodesStatuses.set(node.bl_tween, node_path, NodeStatistic(node.is_updated, node.error))
             error = node.error if node.error else error
 
@@ -442,10 +447,9 @@ def group_global_handler() -> Generator[Node]:
                 except CancelError:
                     group_updater.throw(CancelError)
                 except StopIteration as stop_error:
-                    sub_tree_changed = stop_error.value
+                    sub_tree_changed, error = stop_error.value
                     if sub_tree_changed:
                         outdated_group_nodes.add(node.bl_tween)
-
         # passing running to update system of main tree
         if outdated_group_nodes:
             outdated_group_nodes = list(outdated_group_nodes)

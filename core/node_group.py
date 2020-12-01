@@ -108,6 +108,13 @@ class SvGroupTree(bpy.types.NodeTree):
 
     def update_sockets(self):  # todo it lets simplify sockets API
         """Set properties of sockets of parent nodes and of output modes"""
+        for node in self.parent_nodes():
+            for n_in_s, t_in_s in zip(node.inputs, self.inputs):
+                # also before getting data from socket `socket.use_prop` property should be set
+                if hasattr(n_in_s, 'default_property'):
+                    n_in_s.use_prop = not t_in_s.hide_value
+                if hasattr(t_in_s, 'default_type'):
+                    n_in_s.default_property_type = t_in_s.default_type
         for node in (n for n in self.nodes if n.bl_idname == 'NodeGroupOutput'):
             for n_in_s, t_out_s in zip(node.inputs, self.outputs):
                 n_in_s.use_prop = not t_out_s.hide_value
@@ -367,8 +374,7 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
                 return node
 
     def update(self):
-        # it's better place for this code then in group_tree.update
-        # because new socket is being created after calling the method
+        # this code should work only first time a socket was added
         if self.node_tree:
             for n_in_s, t_in_s in zip(self.inputs, self.node_tree.inputs):
                 # also before getting data from socket `socket.use_prop` property should be set
@@ -759,9 +765,9 @@ class EditGroupTree(bpy.types.Operator):
         group_node = context.node
         sub_tree: SvGroupTree = context.node.node_tree
         context.space_data.path.append(sub_tree, node=group_node)
+        sub_tree.group_node_name = group_node.name
         group_nodes_path = sub_tree.get_update_path()
         sub_tree.handler.send(GroupEvent(GroupEvent.EDIT_GROUP_NODE, group_nodes_path))
-        sub_tree.group_node_name = group_node.name
         nodes_errors = sub_tree.handler.get_error_nodes(group_nodes_path)
         sub_tree.color_nodes(nodes_errors)
         # todo make protection from editing the same trees in more then one area
@@ -853,7 +859,7 @@ class BaseInOutNodes:
 
 
 @extend_blender_class
-class NodeGroupOutput(BaseInOutNodes, BaseNode):
+class NodeGroupOutput(BaseInOutNodes, BaseNode):  # todo copy node id problem
     def process(self, group_node: SvGroupTreeNode):
         self.pass_socket_data(self.inputs, group_node.outputs)
 
@@ -865,13 +871,15 @@ class NodeGroupInput(BaseInOutNodes, BaseNode):
 
 
 @extend_blender_class
-class NodeReroute(BaseNode):  # todo copy node id problem
+class NodeReroute(BaseNode):
+    """Add sv logic"""
     # `copy` attribute can't be overridden for this class
-    def process(self):
-        try:
-            self.outputs[0].sv_set(self.inputs[0].sv_get(deepcopy=False))
-        except AttributeError:
-            pass  # in main tree reroutes still have color sockets
+    # current sv_get method of sockets jump from reroute to reroute until get to normal node to get data
+    # def process(self):
+    #     try:
+    #         self.outputs[0].sv_set(self.inputs[0].sv_get(deepcopy=False))
+    #     except AttributeError:
+    #         pass  # in main tree reroutes still have color sockets
 
 
 @extend_blender_class
