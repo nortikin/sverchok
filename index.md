@@ -453,6 +453,7 @@
     ListShuffleNode
     SvListSortNode
     ListFlipNode
+    SvListLevelsNode
 
 ## Dictionary
     SvDictionaryIn

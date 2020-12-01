@@ -1,0 +1,128 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+import bpy
+from bpy.props import BoolProperty, IntProperty, StringProperty, CollectionProperty
+
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, describe_data_shape_by_level, list_levels_adjust, throttle_and_update_node, SIMPLE_DATA_TYPES
+from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.surface.core import SvSurface
+from sverchok.dependencies import FreeCAD
+
+ALL_TYPES = SIMPLE_DATA_TYPES + (SvCurve, SvSurface)
+if FreeCAD is not None:
+    import Part
+    ALL_TYPES = ALL_TYPES + (Part.Shape,)
+
+class SvNestingLevelEntry(bpy.types.PropertyGroup):
+    def update_entry(self, context):
+        if hasattr(context, 'node'):
+            updateNode(context.node, context)
+        else:
+            info("Node is not defined in this context, so will not update the node.")
+
+    description : StringProperty(options = {'SKIP_SAVE'}, default="?")
+    flatten : BoolProperty(default=False, update=update_entry)
+    wrap : BoolProperty(default=False, update=update_entry)
+
+class SvListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
+    '''
+    Triggers: List Levels
+    Tooltip: List nesting levels manipulation
+    '''
+    bl_idname = 'SvListLevelsNode'
+    bl_label = 'List Levels'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+
+    levels_config : CollectionProperty(type=SvNestingLevelEntry)
+    prev_nesting_level : IntProperty(default = 0, options = {'SKIP_SAVE'})
+
+    def draw_buttons(self, context, layout):
+        grid = layout.grid_flow(row_major=True, columns=5, align=True)
+
+        grid.label(text='Depth')
+        grid.label(text='Nesting')
+        grid.label(text='Shape')
+        grid.label(text='Flatten')
+        grid.label(text='Wrap')
+
+        n = len(self.levels_config)
+        for i, entry in enumerate(self.levels_config):
+            nesting = n-i-1
+            grid.label(text=str(i))
+            grid.label(text=str(nesting))
+            grid.label(text=entry.description)
+            if nesting < 2:
+                grid.label(icon='X', text='')
+            else:
+                grid.prop(entry, 'flatten', text='')
+            grid.prop(entry, 'wrap', text='')
+
+    def sv_update(self):
+        self.update_ui(False)
+
+    #@throttle_and_update_node
+    def update_ui(self, update_during_process):
+        try:
+            data = self.inputs['Data'].sv_get(default=[])
+        except LookupError:
+            data = []
+        if not data:
+            self.levels_config.clear()
+            return
+
+        nesting, descriptions = describe_data_shape_by_level(data)
+        rebuild_list = not update_during_process or self.prev_nesting_level != nesting
+        self.prev_nesting_level = nesting
+
+        if rebuild_list:
+            self.levels_config.clear()
+            for descr in descriptions:
+                self.levels_config.add().description = descr
+        else:
+            for entry, descr in zip(self.levels_config, descriptions):
+                entry.description = descr
+
+    def sv_init(self, context):
+        self.width = 300
+        self.inputs.new('SvStringsSocket', 'Data')
+        self.outputs.new('SvStringsSocket', 'Data')
+
+    def process(self):
+        if not self.inputs['Data'].is_linked:
+            return
+        self.update_ui(True)
+        if not self.outputs['Data'].is_linked:
+            return
+
+        data = self.inputs['Data'].sv_get(default=[])
+        result = list_levels_adjust(data, self.levels_config, data_types=ALL_TYPES)
+
+        self.outputs['Data'].sv_set(result)
+
+classes = [SvNestingLevelEntry, SvListLevelsNode]
+
+def register():
+    for name in classes:
+        bpy.utils.register_class(name)
+
+def unregister():
+    for name in reversed(classes):
+        bpy.utils.unregister_class(name)
+
