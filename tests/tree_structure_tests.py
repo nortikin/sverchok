@@ -72,13 +72,6 @@ class TreeStructureTest(SverchokTestCase):
         self.assertCountEqual((n.name for n in tree.nodes['Inset faces.001'].next_nodes), ('Mesh viewer', 'Switch.001'))
         self.assertCountEqual((n.name for n in tree.nodes['Profile Parametric Mk3.001'].last_nodes),
                               ('Formula.001', 'Number Range.004', 'Number Range.003', 'Number Range.002', 'Formula'))
-        self.assertRaises(LookupError, tree.nodes['Inset faces.001'].get_input_socket, ('False name', ))
-        self.assertRaises(LookupError, tree.nodes['Inset faces.001'].get_output_socket, ('False name', ))
-
-        with self.subTest(msg="Test update method"):
-            self.assertEqual(tree.nodes['Frame'].is_updated, False)
-            tree.nodes['Frame'].update()
-            self.assertEqual(tree.nodes['Frame'].is_updated, True)
 
 
 if __name__ == '__main__':
