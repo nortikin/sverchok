@@ -597,11 +597,11 @@ class SvNativeNurbsSurface(SvNurbsSurface):
         surface = nurbs_divide(numerator, denominator)
         numerator_u, denominator_u = self.fraction(1, 0, us, vs)
         numerator_v, denominator_v = self.fraction(0, 1, us, vs)
-        surface_u = (numerator_u - surface*denominator_u) / denominator
-        surface_v = (numerator_v - surface*denominator_v) / denominator
+        surface_u = nurbs_divide(numerator_u - surface*denominator_u, denominator)
+        surface_v = nurbs_divide(numerator_v - surface*denominator_v, denominator)
         normal = np.cross(surface_u, surface_v)
         n = np.linalg.norm(normal, axis=1, keepdims=True)
-        normal = normal / n
+        normal = nurbs_divide(normal, n)
         return normal
 
     def iso_curve(self, fixed_direction, param, flip=False):

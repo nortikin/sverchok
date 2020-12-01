@@ -80,6 +80,12 @@ supported_metrics = [
         ('CENTRIPETAL', "Centripetal", "Centripetal distance - square root of Euclidian distance", 4)
     ]
 
+xyz_metrics = [
+        ('X', "X Axis", "Distance along X axis", 5),
+        ('Y', "Y Axis", "Distance along Y axis", 6),
+        ('Z', "Z Axis", "Distance along Z axis", 7)
+    ]
+
 def smooth(x):
     return 3*x*x - 2*x*x*x
 
@@ -268,6 +274,15 @@ def to_spherical_np(v, mode="degrees"):
         theta = np.degrees(theta)
     return rho, phi, theta
 
+def project_to_sphere(center, radius, v):
+    x,y,z = v
+    x0,y0,z0 = center
+    dv = x-x0, y-y0, z-z0
+    rho, phi, theta = to_spherical(dv, "radians")
+    x,y,z = from_spherical(radius, phi, theta, "radians")
+    result = x+x0, y+y0, z+z0
+    return result
+
 def binomial(n,k):
     if not 0<=k<=n:
         return 0
@@ -288,4 +303,22 @@ def np_signed_angle(a, b, normal):
     sin_alpha = np.linalg.norm(cross) / (np.linalg.norm(a) * np.linalg.norm(b))
     alpha = asin(sin_alpha)
     return sign * alpha
+
+def np_vectors_angle(v1, v2):
+    v1 /= np.linalg.norm(v1)
+    v2 /= np.linalg.norm(v2)
+    dot = np.dot(v1, v2)
+    return np.arccos(dot)
+
+def weighted_center(verts, field=None):
+    if field is None:
+        return np.mean(verts, axis=0)
+    else:
+        xs = verts[:,0]
+        ys = verts[:,1]
+        zs = verts[:,2]
+        weights = field.evaluate_grid(xs, ys, zs)
+        wpoints = weights[:,np.newaxis] * verts
+        result = wpoints.sum(axis=0) / weights.sum()
+        return result
 

@@ -125,7 +125,7 @@ class SvSteinerEllipseNode(bpy.types.Node, SverchCustomTreeNode):
                 b_out.append(ellipse.b)
                 c_out.append(ellipse.c)
                 e_out.append(ellipse.eccentricity)
-                normal_out.append(ellipse.normal())
+                normal_out.append(tuple(ellipse.normal()))
                 matrix_out.append(ellipse.get_matrix())
                 new_curves.append(curve)
             curve_out.append(new_curves)

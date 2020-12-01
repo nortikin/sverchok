@@ -102,8 +102,21 @@ class SvSolidTopology(object):
             sum_normal = sum_normal / np.linalg.norm(sum_normal)
             self._normals_by_face[SvSolidTopology.Item(face)] = sum_normal
 
+    def calc_face_centers(self):
+        self._centers_by_face = dict()
+        for face in self.solid.Faces:
+            sum_points = np.array([0.0,0.0,0.0])
+            for u,v in face.getUVNodes():
+                p = face.valueAt(u,v)
+                sum_points += np.array([p.x, p.y, p.z])
+            mean = sum_points / len(sum_points)
+            self._centers_by_face[SvSolidTopology.Item(face)] = mean
+
     def get_normal_by_face(self, face):
         return self._normals_by_face[SvSolidTopology.Item(face)]
+
+    def get_center_by_face(self, face):
+        return self._centers_by_face[SvSolidTopology.Item(face)]
 
     def get_vertices_by_location(self, condition):
         to_tuple = lambda v : (v.X, v.Y, v.Z)

@@ -49,7 +49,7 @@ def curves_to_face(sv_curves, planar=True, force_nurbs=True, tolerance=None):
         #wire = Part.Wire(edges)
         #for edge in edges:
         #    wire.add(edge)
-    except Part.OCCError as e:
+    except Exception as e:
         for edge in edges:
             print(f"Curve {edge.Curve}, endpoints: {get_edge_endpoints(edge)}")
         raise Exception(f"Can't build a Wire out of edges: {fc_curves}: {e}")
@@ -79,7 +79,7 @@ def curves_to_face(sv_curves, planar=True, force_nurbs=True, tolerance=None):
     if planar:
         try:
             fc_face = Part.Face(wire)
-        except Part.OCCError as e:
+        except Exception as e:
             raise Exception(f"Can't create a Face from {sv_curves}: {e}\nProbably these curves are not all lying in the same plane?")
         surface = SvSolidFaceSurface(fc_face)
     else:

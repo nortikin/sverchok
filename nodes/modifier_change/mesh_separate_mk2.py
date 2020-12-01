@@ -21,7 +21,7 @@ import collections
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-
+from sverchok.data_structure import updateNode
 
 class SvSeparateMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     '''Separate Loose mesh parts'''
@@ -29,6 +29,15 @@ class SvSeparateMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Separate Loose Parts MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_SEPARATE_LOOSE_PARTS'
+
+    join : bpy.props.BoolProperty(
+        name = "Flat output",
+        description = "If checked, generate one flat list of loose parts for all input meshes; otherwise, generate separate list of loose parts for each input mesh",
+        default = True,
+        update = updateNode)
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'join')
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
@@ -51,6 +60,11 @@ class SvSeparateMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         poly_edge_index = []
 
         for ve, pe in zip(verts, poly):
+            new_verts = []
+            new_polys = []
+            new_vert_indexes = []
+            new_poly_indexes = []
+
             # build links
             node_links = collections.defaultdict(set)
             for edge_face in pe:
@@ -89,15 +103,26 @@ class SvSeparateMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                               for fe in pe
                               if fe[0] in node_set]
 
-                    verts_out.append(new_vert)
-                    poly_edge_out.append(new_pe)
-                    vert_index.append([idx for i in range(len(new_vert))])
-                    poly_edge_index.append([idx for face in new_pe])
+                    new_verts.append(new_vert)
+                    new_polys.append(new_pe)
+                    new_vert_indexes.append([idx for i in range(len(new_vert))])
+                    new_poly_indexes.append([idx for face in new_pe])
             elif node_set_list:  # no reprocessing needed
-                verts_out.append(ve)
-                poly_edge_out.append(pe)
-                vert_index.append([0 for i in range(len(ve))])
-                poly_edge_index.append([0 for face in pe])
+                new_verts.append(ve)
+                new_polys.append(pe)
+                new_vert_indexes.append([0 for i in range(len(ve))])
+                new_poly_indexes.append([0 for face in pe])
+
+            if self.join:
+                verts_out.extend(new_verts)
+                poly_edge_out.extend(new_polys)
+                vert_index.extend(new_vert_indexes)
+                poly_edge_index.extend(new_poly_indexes)
+            else:
+                verts_out.append(new_verts)
+                poly_edge_out.append(new_polys)
+                vert_index.append(new_vert_indexes)
+                poly_edge_index.append(new_poly_indexes)
 
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Poly Egde'].sv_set(poly_edge_out)

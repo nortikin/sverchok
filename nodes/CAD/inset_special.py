@@ -26,7 +26,7 @@ from bpy.props import FloatProperty, FloatVectorProperty, IntProperty, EnumPrope
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
-    updateNode, Vector_generate,
+    updateNode, Vector_generate, zip_long_repeat,
     repeat_last, fullList)
 
 
@@ -262,7 +262,7 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         ignored_out = []
         inset_out = []
 
-        for v, p, inset_rates, distance_vals, ignores, make_inners in zip(*data):
+        for v, p, inset_rates, distance_vals, ignores, make_inners in zip_long_repeat(*data):
             fullList(inset_rates, len(p))
             fullList(distance_vals, len(p))
             fullList(ignores, len(p))

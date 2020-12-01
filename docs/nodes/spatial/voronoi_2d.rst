@@ -47,6 +47,11 @@ This node has the following parameters:
 - **Make Faces**. If checked, then "fill holes" function will be used to create
   polygons of the Voronoi diagram. Maximum number of polygon sides is
   controlled by the **MaxSides** input / parameter. Unchecked by default.
+- **Ordered faces**. This parameter is available in the N palen only, and only
+  if **Make Faces** parameter is checked. If enabled, the node will make sure
+  that generated faces are in the same order as input vertices. This procedure
+  can take additional time. If not checked, the order of faces will not be the
+  same as order of initial points.
 
 Outputs
 -------

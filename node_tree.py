@@ -344,8 +344,9 @@ class UpdateNodes:
         settings = get_original_node_color(self.id_data, original.name)
         if settings is not None:
             self.use_custom_color, self.color = settings
-        self.sv_copy(original)
+
         self.n_id = ""
+        self.sv_copy(original)
         self.id_data.nodes_dict.load_node(self)
 
     def update(self):
@@ -593,10 +594,10 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
         the nodeview scale and dpi differs between users and must be queried to get correct nodeview
         x,y and dpi scale info.
         """
-        print('get_and_set_gl_scale_info called from', origin or self.name)
+        # print('get_and_set_gl_scale_info called from', origin or self.name)
 
         try:
-            print('getting gl scale params')
+            # print('getting gl scale params')
             from sverchok.utils.context_managers import sv_preferences
             with sv_preferences() as prefs:
                 prefs.set_nodeview_render_params(None)

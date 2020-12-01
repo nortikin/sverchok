@@ -21,7 +21,7 @@ from itertools import cycle, chain
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-import sverchok.utils.meshes as me
+from sverchok.utils.mesh_functions import meshes_py, join_meshes, meshes_np, to_elements
 
 
 class SvMeshJoinNode(bpy.types.Node, SverchCustomTreeNode):
@@ -42,11 +42,11 @@ class SvMeshJoinNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.inputs['Vertices'].is_linked:
             return
 
-        vertices = self.inputs['Vertices'].sv_get(default=[])
+        vertices = self.inputs['Vertices'].sv_get(deepcopy=False)
         edges = []
         polygons = []
 
-        poly_edges = self.inputs['PolyEdge'].sv_get(default=[])
+        poly_edges = self.inputs['PolyEdge'].sv_get(deepcopy=False, default=[])
         first_elements = [obj[0] for obj in poly_edges]
         if first_elements:
             if all([len(el) == 2 for el in first_elements]):
@@ -56,13 +56,13 @@ class SvMeshJoinNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 raise TypeError('PoyEdge socket should consist either all edges or all faces')  # Sv architecture law
 
-        meshes = [me.to_mesh(*m) for m in zip(vertices, chain(edges, cycle([[]])), chain(polygons, cycle([[]])))]
-        joined_mesh = reduce(lambda m1, m2: m1.add_mesh(m2), meshes)
-        self.outputs['Vertices'].sv_set([joined_mesh.vertices.data])
-        if joined_mesh.edges:
-            self.outputs['PolyEdge'].sv_set([joined_mesh.edges.data])
-        if joined_mesh.polygons:
-            self.outputs['PolyEdge'].sv_set([joined_mesh.polygons.data])
+        is_py_input = isinstance(vertices[0], (list, tuple))
+        meshes = (meshes_py if is_py_input else meshes_np)(vertices, edges, polygons)
+        meshes = join_meshes(meshes)
+        out_vertices, out_edges, out_polygons = to_elements(meshes)
+
+        self.outputs['Vertices'].sv_set(out_vertices)
+        self.outputs['PolyEdge'].sv_set(out_edges or out_polygons)
 
 
 def register():

@@ -248,7 +248,7 @@ class NodeInputs:
         # get socket attribute, inside loop
         socket_props = self.sockets[socket_name]
         bl_socket = self.wrap_node.bl_node.inputs[socket_props.name]
-        socket_data = bl_socket.sv_get(deepcopy=False, default=socket_props.default)
+        socket_data = bl_socket.sv_get(deepcopy=socket_props.deep_copy, default=socket_props.default)
         try:
             layer_data = socket_data[self.wrap_node.layer_number]
         except IndexError:

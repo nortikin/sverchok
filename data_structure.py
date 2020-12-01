@@ -592,6 +592,24 @@ def wrap_data(data, wrap_level=1):
         data = [data]
     return data
 
+def unwrap_data(data, unwrap_level=1, socket=None):
+    socket_msg = "" if socket is None else f" in socket {socket.label or socket.name}"
+
+    def unwrap(lst, level):
+        if not isinstance(lst, (list, tuple, ndarray)):
+            raise Exception(f"Cannot unwrap data: Data at level {level} is an atomic object, not a list {socket_msg}")
+        n = len(lst)
+        if n == 0:
+            raise Exception(f"Cannot unwrap data: Data at level {level} is an empty list {socket_msg}")
+        elif n > 1:
+            raise Exception(f"Cannot unwrap data: Data at level {level} contains {n} objects instead of one {socket_msg}")
+        else:
+            return lst[0]
+
+    for level in range(unwrap_level):
+        data = unwrap(data, level)
+    return data
+
 def map_at_level(function, data, item_level=0, data_types=SIMPLE_DATA_TYPES):
     """
     Given a nested list of object, apply `function` to each sub-list of items.

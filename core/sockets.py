@@ -32,7 +32,7 @@ from sverchok.data_structure import (
     socket_id,
     replace_socket,
     SIMPLE_DATA_TYPES,
-    flatten_data, graft_data, map_at_level, wrap_data)
+    flatten_data, graft_data, map_at_level, wrap_data, unwrap_data)
 
 from sverchok.settings import get_params
 
@@ -41,8 +41,13 @@ from sverchok.utils.field.vector import SvVectorField, SvMatrixVectorField, SvCo
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.algorithms import reparametrize_curve
 from sverchok.utils.surface import SvSurface
-
 from sverchok.utils.logging import warning
+from sverchok.dependencies import FreeCAD
+
+STANDARD_TYPES = SIMPLE_DATA_TYPES + (SvCurve, SvSurface)
+if FreeCAD is not None:
+    import Part
+    STANDARD_TYPES = STANDARD_TYPES + (Part.Shape,)
 
 def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
@@ -73,20 +78,55 @@ class SvSocketProcessing(object):
     allow_flatten : BoolProperty(default = False)
     allow_simplify : BoolProperty(default = False)
     allow_graft : BoolProperty(default = False)
+    allow_unwrap : BoolProperty(default = False)
     allow_wrap : BoolProperty(default = False)
 
     # technical property
     skip_simplify_mode_update: BoolProperty(default=False)
+    skip_wrap_mode_update: BoolProperty(default=False)
 
     use_graft : BoolProperty(
             name = "Graft",
             default = False,
             update = process_from_socket)
 
+    def update_unwrap_flag(self, context):
+        if self.skip_wrap_mode_update:
+            return
+
+        with self.node.sv_throttle_tree_update():
+            try:
+                self.skip_wrap_mode_update = True
+                if self.use_unwrap:
+                    self.use_wrap = False
+            finally:
+                self.skip_wrap_mode_update = False
+                
+        process_from_socket(self, context)
+
+    def update_wrap_flag(self, context):
+        if self.skip_wrap_mode_update:
+            return
+
+        with self.node.sv_throttle_tree_update():
+            try:
+                self.skip_wrap_mode_update = True
+                if self.use_wrap:
+                    self.use_unwrap = False
+            finally:
+                self.skip_wrap_mode_update = False
+                
+        process_from_socket(self, context)
+
+    use_unwrap : BoolProperty(
+            name = "Unwrap",
+            default = False,
+            update = update_unwrap_flag)
+
     use_wrap : BoolProperty(
             name = "Wrap",
             default = False,
-            update = process_from_socket)
+            update = update_wrap_flag)
 
     def update_flatten_flag(self, context):
         if self.skip_simplify_mode_update:
@@ -135,6 +175,8 @@ class SvSocketProcessing(object):
             flags.append('S')
         if self.use_graft:
             flags.append('G')
+        if self.use_unwrap:
+            flags.append('U')
         if self.use_wrap:
             flags.append('W')
         return flags
@@ -147,6 +189,9 @@ class SvSocketProcessing(object):
 
     def can_graft(self):
         return hasattr(self, 'do_graft') and (self.is_output or self.allow_graft)
+
+    def can_unwrap(self):
+        return self.is_output or self.allow_unwrap
 
     def can_wrap(self):
         return self.is_output or self.allow_wrap
@@ -165,6 +210,8 @@ class SvSocketProcessing(object):
             result = self.do_simplify(data)
         if self.use_graft:
             result = self.do_graft(result)
+        if self.use_unwrap:
+            result = unwrap_data(result, socket=self)
         if self.use_wrap:
             result = wrap_data(result)
         return result
@@ -177,6 +224,8 @@ class SvSocketProcessing(object):
             result = self.do_simplify(data)
         if self.use_graft:
             result = self.do_graft(result)
+        if self.use_unwrap:
+            result = unwrap_data(result, socket=self)
         if self.use_wrap:
             result = wrap_data(result)
         return result
@@ -196,6 +245,8 @@ class SvSocketProcessing(object):
         self.draw_simplify_modes(layout)
         if self.can_graft():
             layout.prop(self, 'use_graft')
+        if self.can_unwrap():
+            layout.prop(self, 'use_unwrap')
         if self.can_wrap():
             layout.prop(self, 'use_wrap')
 
@@ -211,6 +262,7 @@ class SvSocketCommon(SvSocketProcessing):
     label: StringProperty()  # It will be drawn instead of name if given
     quick_link_to_node = str()  # sockets which often used with other nodes can fill its `bl_idname` here
     link_menu_handler : StringProperty(default='', options={'SKIP_SAVE'}) # To specify additional entries in the socket link menu
+    enable_input_link_menu : BoolProperty(default = True, options={'SKIP_SAVE'})
 
     # set True to use default socket property if it has got it
     use_prop: BoolProperty(default=False, options={'SKIP_SAVE'})
@@ -363,6 +415,8 @@ class SvSocketCommon(SvSocketProcessing):
             layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
 
     def does_support_link_input_menu(self, context, layout, node):
+        if not self.enable_input_link_menu:
+            return False
         param_node = self.get_link_parameter_node()
         if not param_node:
             return False
@@ -818,6 +872,8 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
             layout.prop(self, 'use_graft')
             if not self.use_flatten:
                 layout.prop(self, 'use_graft_2')
+        if self.can_unwrap():
+            layout.prop(self, 'use_unwrap')
         if self.can_wrap():
             layout.prop(self, 'use_wrap')
 
@@ -828,15 +884,15 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
         return flatten_data(data, 2)
 
     def do_graft(self, data):
-        return graft_data(data, item_level=0, data_types = SIMPLE_DATA_TYPES + (SvCurve, SvSurface))
+        return graft_data(data, item_level=0, data_types = STANDARD_TYPES)
 
     def do_graft_2(self, data):
         def to_zero_base(lst):
             m = min(lst)
             return [x - m for x in lst]
 
-        result = map_at_level(to_zero_base, data, item_level=1, data_types = SIMPLE_DATA_TYPES + (SvCurve, SvSurface))
-        result = graft_data(result, item_level=1, data_types = SIMPLE_DATA_TYPES + (SvCurve, SvSurface))
+        result = map_at_level(to_zero_base, data, item_level=1, data_types = STANDARD_TYPES)
+        result = graft_data(result, item_level=1, data_types = STANDARD_TYPES)
         return result
 
     def preprocess_input(self, data):
@@ -849,6 +905,8 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
             result = self.do_graft(result)
         elif not self.use_flatten and self.use_graft_2:
             result = self.do_graft_2(result)
+        if self.use_unwrap:
+            result = unwrap_data(result, socket=self)
         if self.use_wrap:
             result = wrap_data(result)
         return result
@@ -863,6 +921,8 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
             result = self.do_graft(result)
         elif self.use_graft_2:
             result = self.do_graft_2(result)
+        if self.use_unwrap:
+            result = unwrap_data(result, socket=self)
         if self.use_wrap:
             result = wrap_data(result)
         return result

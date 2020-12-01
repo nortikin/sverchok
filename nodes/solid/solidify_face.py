@@ -54,6 +54,15 @@ class SvSolidFaceSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
             precision=6,
             update=updateNode)
 
+    join : BoolProperty(
+            name = "Flat output",
+            description = "If checked, output one flat list of objects for all lists of input parameters",
+            default = True,
+            update=updateNode)
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'join')
+
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "SolidFace")
         self.inputs.new('SvStringsSocket', "Offset").prop_name = 'offset'
@@ -73,7 +82,7 @@ class SvSolidFaceSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
 
         solids_out = []
         for face_surfaces, offsets, tolerances in zip_long_repeat(face_surfaces_s, offset_s, tolerance_s):
-            #new_solids = []
+            new_solids = []
             for face_surface, offset, tolerance in zip_long_repeat(face_surfaces, offsets, tolerances):
                 if not is_solid_face_surface(face_surface):
                     # face_surface is an instance of SvSurface,
@@ -86,8 +95,11 @@ class SvSolidFaceSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
                     raise Exception("This node requires at least C1 continuity of the surface; only C0 is guaranteed by surface's knotvector")
                 fc_face = face_surface.face
                 shape = fc_face.makeOffsetShape(offset, tolerance, fill=True)
-                solids_out.append(shape)
-            #solids_out.append(new_solids)
+                new_solids.append(shape)
+            if self.join:
+                solids_out.extend(new_solids)
+            else:
+                solids_out.append(new_solids)
 
         self.outputs['Solid'].sv_set(solids_out)
 

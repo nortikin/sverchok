@@ -80,7 +80,7 @@ class SvNodeRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvVerticesSocket', 'auto_convert')
+        self.inputs.new('SvStringsSocket', 'auto_convert')
 
 
     def draw_buttons(self, context, layout):

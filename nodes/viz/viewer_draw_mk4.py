@@ -786,14 +786,14 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
             return
 
         if inputs['Vertices'].is_linked:
-            vecs = inputs['Vertices'].sv_get(default=[[]])
+            vecs = inputs['Vertices'].sv_get(deepcopy=False, default=[[]])
 
-            edges = inputs['Edges'].sv_get(default=[[]])
-            polygons = inputs['Polygons'].sv_get(default=[[]])
-            matrix = inputs['Matrix'].sv_get(default=[[]])
-            vector_color = inputs['Vector Color'].sv_get(default=[[self.vector_color]])
-            edge_color = inputs['Edge Color'].sv_get(default=[[self.edge_color]])
-            poly_color = inputs['Polygon Color'].sv_get(default=[[self.polygon_color]])
+            edges = inputs['Edges'].sv_get(deepcopy=False, default=[[]])
+            polygons = inputs['Polygons'].sv_get(deepcopy=False, default=[[]])
+            matrix = inputs['Matrix'].sv_get(deepcopy=False, default=[[]])
+            vector_color = inputs['Vector Color'].sv_get(deepcopy=False, default=[[self.vector_color]])
+            edge_color = inputs['Edge Color'].sv_get(deepcopy=False, default=[[self.edge_color]])
+            poly_color = inputs['Polygon Color'].sv_get(deepcopy=False, default=[[self.polygon_color]])
             seed_set(self.random_seed)
             config = self.create_config()
 

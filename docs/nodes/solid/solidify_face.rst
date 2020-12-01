@@ -28,6 +28,16 @@ This node has the following inputs:
 * **Offset**. Offset value. The default value is 0.1.
 * **Tolerance**. Calculation tolerance. The default value is 0.01.
 
+Parameters
+----------
+
+This node has the following parameter:
+
+* **Flat output**. If checked, the node will generate one flat list of Solid
+  objects for all lists of input faces. Otherwise, the node will generate a
+  separate list of Solid objects for each list of input faces. Checked by
+  default.
+
 Outputs
 -------
 

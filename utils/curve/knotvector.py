@@ -133,6 +133,14 @@ def from_multiplicity(pairs):
         result.extend([u] * count)
     return np.array(result)
 
+def is_clamped(knot_vector, degree, check_start=True, check_end=True, tolerance=1e-6):
+    pairs = to_multiplicity(knot_vector, tolerance)
+    m1 = pairs[0][1]
+    m2 = pairs[-1][1]
+    start_ok = not check_start or m1 == degree+1
+    end_ok = not check_end or m2 == degree+1
+    return start_ok and end_ok
+
 def concatenate(kv1, kv2, join_multiplicity):
     join_knot = kv1.max()
     kv2 = kv2 - kv2.min() + join_knot

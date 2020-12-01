@@ -128,6 +128,7 @@
     SvExCrossCurvePlaneNode
     SvExCrossCurveSurfaceNode
     ---
+    SvAdaptivePlotCurveNode
     SvExEvalCurveNode
 
 ## Surfaces @ NURBS
@@ -198,10 +199,11 @@
     SvExNoiseVectorFieldNode
     ---
     SvExScalarFieldMathNode
-    SvExMergeScalarFieldsNode
     SvExVectorFieldMathNode
+    SvScalarFieldCurveMapNode
     SvExFieldDiffOpsNode
     SvScalarFieldCurvatureNode
+    SvExMergeScalarFieldsNode
     ---
     SvExBendAlongCurveFieldNode
     SvExBendAlongSurfaceFieldNode
@@ -227,6 +229,7 @@
    SvSolidFaceAreaNode
    SvSolidAreaNode
    SvSolidVolumeNode
+   SvSolidBoundBoxNode
 
 ## Solids
    SvBoxSolidNode
@@ -307,6 +310,32 @@
     SvSelectSimilarNode
     SvChessSelection
 
+## Spatial
+    SvHomogenousVectorField
+    SvRandomPointsOnMesh
+    SvPopulateSurfaceNode
+    SvPopulateSolidNode
+    SvFieldRandomProbeMk2Node
+    ---
+    DelaunayTriangulation2DNode
+    SvDelaunay2DCdt
+    SvDelaunay3dMk2Node
+    ---
+    Voronoi2DNode
+    SvExVoronoi3DNode
+    SvExVoronoiSphereNode
+    SvVoronoiOnSurfaceNode
+    ---
+    SvLloyd2dNode
+    SvLloyd3dNode
+    SvLloydOnSphereNode
+    SvLloydOnMeshNode
+    SvLloydSolidNode
+    SvLloydSolidFaceNode
+    ---
+    SvConvexHullNodeMK2
+    SvConcaveHullNode
+
 ## Transforms
     SvMoveNodeMk3
     SvRotationNodeMk3
@@ -355,7 +384,7 @@
     SvExtrudeRegionNode
     SvPokeFacesNode
     SvVertMaskNode
-    SvSplitEdgesNode
+    SvSplitEdgesMk2Node
     SvRigidOrigamiNode
     ---
     SvFollowActiveQuads
@@ -364,17 +393,9 @@
 ## Modifier Make
     LineConnectNodeMK2
     ---
-    SvConvexHullNodeMK2
     SvSubdivideNodeMK2
-    DelaunayTriangulation2DNode
-    SvDelaunay2DCdt
-    Voronoi2DNode
     SvOffsetLineNode
-    SvExVoronoi3DNode
-    SvExDelaunay3DNode
-    SvExVoronoiSphereNode
     SvContourNode
-    SvRandomPointsOnMesh
     ---
     SvDualMeshNode
     SvDiamondMeshNode
@@ -499,8 +520,6 @@
     SvInterpolationNodeMK3
     SvInterpolationNodeMK2
     ---
-    SvHomogenousVectorField
-    SvFieldRandomProbeNode
     SvNoiseNodeMK2
     SvTurbulenceNode
     SvLacunarityNode
