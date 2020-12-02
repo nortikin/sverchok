@@ -315,7 +315,7 @@
     SvRandomPointsOnMesh
     SvPopulateSurfaceNode
     SvPopulateSolidNode
-    SvFieldRandomProbeMk2Node
+    SvFieldRandomProbeMk3Node
     ---
     DelaunayTriangulation2DNode
     SvDelaunay2DCdt
