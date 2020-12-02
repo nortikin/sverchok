@@ -139,7 +139,9 @@ def field_random_probe(field, bbox, count,
                     good_verts.append(candidate.tolist())
 
         if predicate is not None:
-            good_verts = [vert for vert in good_verts if predicate(vert)]
+            pairs = [(vert, r) for vert, r in zip(good_verts, good_radiuses) if predicate(vert)]
+            good_verts = [p[0] for p in pairs]
+            good_radiuses = [p[1] for p in pairs]
 
         generated_verts.extend(good_verts)
         generated_radiuses.extend(good_radiuses)

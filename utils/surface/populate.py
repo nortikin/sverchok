@@ -19,7 +19,7 @@ def random_point(min_x, max_x, min_y, max_y):
     y = random.uniform(min_y, max_y)
     return x,y
 
-def _check_all(v_new, vs_old, min_r):
+def _check_min_distance(v_new, vs_old, min_r):
     kdt = KDTree(len(vs_old))
     for i, v in enumerate(vs_old):
         kdt.insert(v, i)
@@ -35,10 +35,24 @@ def _check_all(v_new, vs_old, min_r):
 #             return False
 #    return True
 
+def _check_min_radius(point, old_points, old_radiuses, min_r):
+    if not old_points:
+        return True
+    old_points = np.array(old_points)
+    old_radiuses = np.array(old_radiuses)
+    point = np.array(point)
+    distances = np.linalg.norm(old_points - point, axis=1)
+    ok = (old_radiuses + min_r < distances).all()
+    return ok
+
 BATCH_SIZE = 100
 MAX_ITERATIONS = 1000
 
-def populate_surface(surface, field, count, threshold, proportional=False, field_min=None, field_max=None, min_r=0, seed=0, predicate=None):
+def populate_surface(surface, field, count, threshold,
+        proportional=False, field_min=None, field_max=None,
+        min_r=0, min_r_field = None,
+        random_radius = False,
+        seed=0, predicate=None):
     """
     Generate random points on the surface, with distribution controlled (optionally) by scalar field.
 
@@ -64,15 +78,20 @@ def populate_surface(surface, field, count, threshold, proportional=False, field
     * Coordinates of points in surface's UV space
     * Coordinates of points in 3D space.
     """
+    if min_r != 0 and min_r_field is not None:
+        raise Exception("min_r and min_r_field can not be specified simultaneously")
+
     u_min, u_max = surface.get_u_min(), surface.get_u_max()
     v_min, v_max = surface.get_v_min(), surface.get_v_max()
 
     if seed == 0:
         seed = 12345
-    random.seed(seed)
+    if seed is not None:
+        random.seed(seed)
     done = 0
-    new_verts = []
-    new_uv = []
+    generated_verts = []
+    generated_uv = []
+    generated_radiuses = []
     iterations = 0
 
     while done < count:
@@ -120,19 +139,44 @@ def populate_surface(surface, field, count, threshold, proportional=False, field
             candidates = batch_verts
             candidate_uvs = batch_uvs
 
+        good_radiuses = []
         if len(candidates) > 0:
-            good_verts = []
-            good_uvs = []
-            for candidate_uv, candidate in zip(candidate_uvs, candidates):
-                if min_r == 0 or _check_all(candidate, new_verts + good_verts, min_r):
-                    if predicate is not None:
-                        if not predicate(candidate_uv, candidate):
-                            continue
-                    good_verts.append(tuple(candidate))
-                    good_uvs.append(tuple(candidate_uv))
-                    done += 1
-            new_verts.extend(good_verts)
-            new_uv.extend(good_uvs)
+            if min_r == 0 and min_r_field is None:
+                good_verts = candidates
+                good_uvs = candidate_uvs
+            elif min_r_field is not None:
+                xs = np.array([p[0] for p in candidates])
+                ys = np.array([p[1] for p in candidates])
+                zs = np.array([p[2] for p in candidates])
+                min_rs = min_r_field.evaluate_grid(xs, ys, zs).tolist()
+                good_verts = []
+                good_uvs = []
+                for candidate_uv, candidate, min_r in zip(candidate_uvs, candidates, min_rs):
+                    if random_radius:
+                        min_r = random.uniform(0, min_r)
+                    if _check_min_radius(candidate, generated_verts + good_verts, generated_radiuses + good_radiuses, min_r):
+                        good_verts.append(candidate)
+                        good_uvs.append(candidate_uv)
+                        good_radiuses.append(min_r)
+            else: # min_r != 0
+                good_verts = []
+                good_uvs = []
+                for candidate_uv, candidate in zip(candidate_uvs, candidates):
+                    distance_ok = _check_min_distance(candidate, generated_verts + good_verts, min_r)
+                    if distance_ok:
+                        good_verts.append(tuple(candidate))
+                        good_uvs.append(tuple(candidate_uv))
 
-    return new_uv, new_verts
+            if predicate is not None:
+                results = [(uv, vert, radius) for uv, vert, radius in zip(good_uvs, good_verts, good_radiuses) if predicate(uv, vert)]
+                good_uvs = [r[0] for r in results]
+                good_verts = [r[1] for r in results]
+                good_radiuses = [r[2] for r in results]
+
+            generated_verts.extend(good_verts)
+            generated_uv.extend(good_uvs)
+            generated_radiuses.extend(good_radiuses)
+            done += len(good_verts)
+
+    return generated_uv, generated_verts, generated_radiuses
 

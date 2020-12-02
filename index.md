@@ -313,7 +313,7 @@
 ## Spatial
     SvHomogenousVectorField
     SvRandomPointsOnMesh
-    SvPopulateSurfaceNode
+    SvPopulateSurfaceMk2Node
     SvPopulateSolidNode
     SvFieldRandomProbeMk3Node
     ---
