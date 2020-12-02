@@ -248,7 +248,7 @@ class BaseNode:
         """update properties of socket of the node trigger this method"""
         self.id_data.update_nodes([self])
 
-    def copy(self, context):
+    def copy(self, original):
         self.n_id = ''
 
     def set_color(self):
@@ -393,6 +393,22 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
                     n_in_s.use_prop = not t_in_s.hide_value
                 if hasattr(t_in_s, 'default_type'):
                     n_in_s.default_property_type = t_in_s.default_type
+
+    def copy(self, original):
+        super().copy(original)
+        # this should be used by update system of main tree
+        if self.id_data.bl_idname == 'SverchCustomTreeType':
+            self.id_data.nodes_dict.load_node(self)
+
+    def free(self):
+        # this should be used by update system of main tree
+        if self.id_data.bl_idname == 'SverchCustomTreeType':
+            self.id_data.nodes_dict.forget_node(self)
+
+    def init(self, context):
+        # this should be used by update system of main tree
+        if self.id_data.bl_idname == 'SverchCustomTreeType':
+            self.id_data.nodes_dict.load_node(self)
 
 
 class PlacingNodeOperator:
