@@ -12,7 +12,7 @@ from bpy.props import FloatProperty, StringProperty, BoolProperty, EnumProperty,
 
 from sverchok.core.socket_data import SvNoDataError
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, throttle_and_update_node, repeat_last_for_length, get_data_nesting_level
+from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, throttle_and_update_node, repeat_last_for_length
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.field.probe import field_random_probe
 from sverchok.utils.surface.populate import populate_surface
@@ -21,17 +21,17 @@ from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
 
 if FreeCAD is None:
-    add_dummy('SvPopulateSolidMk2Node', 'Populate Solid', 'FreeCAD')
+    add_dummy('SvPopulateSolidNode', 'Populate Solid', 'FreeCAD')
 else:
     from FreeCAD import Base
     import Part
 
-class SvPopulateSolidMk2Node(bpy.types.Node, SverchCustomTreeNode):
+class SvPopulateSolidNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Populate Solid
     Tooltip: Generate random points within solid body
     """
-    bl_idname = 'SvPopulateSolidMk2Node'
+    bl_idname = 'SvPopulateSolidNode'
     bl_label = 'Populate Solid'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_POPULATE_SOLID'
@@ -41,9 +41,6 @@ class SvPopulateSolidMk2Node(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['FieldMin'].hide_safe = self.proportional != True
         self.inputs['FieldMax'].hide_safe = self.proportional != True
         self.inputs['FaceMask'].hide_safe = self.gen_mode != 'SURFACE'
-        self.inputs['RadiusField'].hide_safe = self.distance_mode != 'FIELD'
-        self.inputs['MinDistance'].hide_safe = self.distance_mode != 'CONST'
-        self.outputs['Radiuses'].hide_safe = self.distance_mode != 'FIELD'
 
     modes = [
             ('VOLUME', "Volume", "Generate points inside solid body", 0),
@@ -103,39 +100,11 @@ class SvPopulateSolidMk2Node(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         update=updateNode)
 
-    distance_modes = [
-            ('CONST', "Min. Distance", "Specify minimum distance between points", 0),
-            ('FIELD', "Radius Field", "Specify radius of empty sphere around each point by scalar field", 1)
-        ]
-
-    distance_mode : EnumProperty(
-            name = "Distance",
-            description = "How minimum distance between points is restricted",
-            items = distance_modes,
-            default = 'CONST',
-            update = update_sockets)
-
-    random_radius : BoolProperty(
-            name = "Random radius",
-            description = "Make sphere radiuses random, restricted by scalar field values",
-            default = False,
-            update = updateNode)
-
-    flat_output : BoolProperty(
-            name = "Flat output",
-            description = "If checked, generate one flat list of vertices for all input solids; otherwise, generate a separate list of vertices for each solid",
-            default = False,
-            update = updateNode)
-
     def draw_buttons(self, context, layout):
         layout.prop(self, "gen_mode", text='Mode')
-        layout.prop(self, 'distance_mode')
         layout.prop(self, "proportional")
         if self.gen_mode == 'VOLUME':
             layout.prop(self, "in_surface")
-        if self.distance_mode == 'FIELD':
-            layout.prop(self, 'random_radius')
-        layout.prop(self, "flat_output")
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -146,20 +115,17 @@ class SvPopulateSolidMk2Node(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvScalarFieldSocket', "Field").enable_input_link_menu = False
         self.inputs.new('SvStringsSocket', "Count").prop_name = 'count'
         self.inputs.new('SvStringsSocket', "MinDistance").prop_name = 'min_r'
-        self.inputs.new('SvScalarFieldSocket', "RadiusField")
         self.inputs.new('SvStringsSocket', "Threshold").prop_name = 'threshold'
         self.inputs.new('SvStringsSocket', "FieldMin").prop_name = 'field_min'
         self.inputs.new('SvStringsSocket', "FieldMax").prop_name = 'field_max'
         self.inputs.new('SvStringsSocket', 'FaceMask')
         self.inputs.new('SvStringsSocket', 'Seed').prop_name = 'seed'
         self.outputs.new('SvVerticesSocket', "Vertices")
-        self.outputs.new('SvStringsSocket', "Radiuses")
-        self.update_sockets(context)
 
     def get_tolerance(self):
         return 10**(-self.accuracy)
 
-    def generate_volume(self, solid, field, count, min_r, radius_field, threshold, field_min, field_max):
+    def generate_volume(self, solid, field, count, min_r, threshold, field_min, field_max, seed):
         def check(vert):
             point = Base.Vector(vert)
             return solid.isInside(point, self.get_tolerance(), self.in_surface)
@@ -167,11 +133,7 @@ class SvPopulateSolidMk2Node(bpy.types.Node, SverchCustomTreeNode):
         box = solid.BoundBox
         bbox = ((box.XMin, box.YMin, box.ZMin), (box.XMax, box.YMax, box.ZMax))
         
-        return field_random_probe(field, bbox, count, threshold,
-                    self.proportional, field_min, field_max,
-                    min_r = min_r, min_r_field = radius_field,
-                    random_radius = self.random_radius,
-                    seed = None, predicate=check)
+        return field_random_probe(field, bbox, count, threshold, self.proportional, field_min, field_max, min_r, seed, predicate=check)
 
     def distribute_faces(self, faces, total_count):
         points_per_face = [0 for _ in range(len(faces))]
@@ -181,13 +143,11 @@ class SvPopulateSolidMk2Node(bpy.types.Node, SverchCustomTreeNode):
             points_per_face[i] += 1
         return points_per_face
 
-    def generate_surface(self, solid, field, count, min_r, radius_field, threshold, field_min, field_max, mask):
+    def generate_surface(self, solid, field, count, min_r, threshold, field_min, field_max, mask, seed):
         counts = self.distribute_faces(solid.Faces, count)
         new_verts = []
-        new_radiuses = []
         mask = repeat_last_for_length(mask, len(solid.Faces))
         counts = repeat_last_for_length(counts, len(solid.Faces))
-        done_spheres = []
         for face, ok, cnt in zip(solid.Faces, mask, counts):
             if not ok:
                 continue
@@ -198,16 +158,9 @@ class SvPopulateSolidMk2Node(bpy.types.Node, SverchCustomTreeNode):
 
             surface = SvSolidFaceSurface(face)
 
-            _, face_verts, radiuses = populate_surface(surface, field, cnt, threshold,
-                    self.proportional, field_min, field_max,
-                    min_r = min_r, min_r_field = radius_field,
-                    random_radius = self.random_radius,
-                    avoid_spheres = done_spheres,
-                    seed = None, predicate=check)
-            done_spheres.extend(list(zip(face_verts, radiuses)))
+            _, face_verts = populate_surface(surface, field, cnt, threshold, self.proportional, field_min, field_max, min_r, seed, predicate=check)
             new_verts.extend(face_verts)
-            new_radiuses.extend(radiuses)
-        return new_verts, new_radiuses
+        return new_verts
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -225,26 +178,10 @@ class SvPopulateSolidMk2Node(bpy.types.Node, SverchCustomTreeNode):
         field_max_s = self.inputs['FieldMax'].sv_get()
         mask_s = self.inputs['FaceMask'].sv_get(default=[[[True]]])
         seed_s = self.inputs['Seed'].sv_get()
-        if self.distance_mode == 'FIELD':
-            radius_s = self.inputs['RadiusField'].sv_get()
-        else:
-            radius_s = [[None]]
 
-        input_level = get_data_nesting_level(solid_s, data_types=(Part.Shape,))
-        nested_solid = input_level > 1
         solid_s = ensure_nesting_level(solid_s, 2, data_types=(Part.Shape,))
         if self.inputs['Field'].is_linked:
-            input_level = get_data_nesting_level(fields_s, data_types=(SvScalarField,))
-            nested_field = input_level > 1
             fields_s = ensure_nesting_level(fields_s, 2, data_types=(SvScalarField,))
-        else:
-            nested_field = False
-        if self.distance_mode == 'FIELD':
-            input_level = get_data_nesting_level(radius_s, data_types=(SvScalarField,))
-            nested_radius = input_level > 1
-            radius_s = ensure_nesting_level(radius_s, 2, data_types=(SvScalarField,))
-        else:
-            nested_radius = False
         count_s = ensure_nesting_level(count_s, 2)
         min_r_s = ensure_nesting_level(min_r_s, 2)
         threshold_s = ensure_nesting_level(threshold_s, 2)
@@ -253,47 +190,23 @@ class SvPopulateSolidMk2Node(bpy.types.Node, SverchCustomTreeNode):
         mask_s = ensure_nesting_level(mask_s, 3)
         seed_s = ensure_nesting_level(seed_s, 2)
 
-        nested_output = nested_solid or nested_field or nested_radius
-
         verts_out = []
-        radius_out = []
-        inputs = zip_long_repeat(solid_s, fields_s, count_s, min_r_s, radius_s, threshold_s, field_min_s, field_max_s, mask_s, seed_s)
+        inputs = zip_long_repeat(solid_s, fields_s, count_s, min_r_s, threshold_s, field_min_s, field_max_s, mask_s, seed_s)
         for objects in inputs:
-            new_verts = []
-            new_radius = []
-            for solid, field, count, min_r, radius, threshold, field_min, field_max, mask, seed in zip_long_repeat(*objects):
-                if seed == 0:
-                    seed = 12345
-                random.seed(seed)
-                if self.distance_mode == 'FIELD':
-                    min_r = 0
+            for solid, field, count, min_r, threshold, field_min, field_max, mask, seed in zip_long_repeat(*objects):
                 if self.gen_mode == 'VOLUME':
-                    verts, radiuses = self.generate_volume(solid, field, count, min_r, radius, threshold, field_min, field_max)
+                    new_verts = self.generate_volume(solid, field, count, min_r, threshold, field_min, field_max, seed)
                 else:
-                    verts, radiuses = self.generate_surface(solid, field, count, min_r, radius, threshold, field_min, field_max, mask)
-
-                if self.flat_output:
-                    new_verts.extend(verts)
-                    new_radius.extend(radiuses)
-                else:
-                    new_verts.append(verts)
-                    new_radius.append(radiuses)
-
-            if nested_output:
+                    new_verts = self.generate_surface(solid, field, count, min_r, threshold, field_min, field_max, mask, seed)
                 verts_out.append(new_verts)
-                radius_out.append(new_radius)
-            else:
-                verts_out.extend(new_verts)
-                radius_out.extend(new_radius)
 
         self.outputs['Vertices'].sv_set(verts_out)
-        self.outputs['Radiuses'].sv_set(radius_out)
 
 def register():
     if FreeCAD is not None:
-        bpy.utils.register_class(SvPopulateSolidMk2Node)
+        bpy.utils.register_class(SvPopulateSolidNode)
 
 def unregister():
     if FreeCAD is not None:
-        bpy.utils.unregister_class(SvPopulateSolidMk2Node)
+        bpy.utils.unregister_class(SvPopulateSolidNode)
 

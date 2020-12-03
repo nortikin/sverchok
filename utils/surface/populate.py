@@ -52,6 +52,7 @@ def populate_surface(surface, field, count, threshold,
         proportional=False, field_min=None, field_max=None,
         min_r=0, min_r_field = None,
         random_radius = False,
+        avoid_spheres = None,
         seed=0, predicate=None):
     """
     Generate random points on the surface, with distribution controlled (optionally) by scalar field.
@@ -83,6 +84,13 @@ def populate_surface(surface, field, count, threshold,
 
     u_min, u_max = surface.get_u_min(), surface.get_u_max()
     v_min, v_max = surface.get_v_min(), surface.get_v_max()
+
+    if avoid_spheres is not None:
+        old_points = [s[0] for s in avoid_spheres]
+        old_radiuses = [s[1] for s in avoid_spheres]
+    else:
+        old_points = []
+        old_radiuses = []
 
     if seed == 0:
         seed = 12345
@@ -144,6 +152,7 @@ def populate_surface(surface, field, count, threshold,
             if min_r == 0 and min_r_field is None:
                 good_verts = candidates
                 good_uvs = candidate_uvs
+                good_radiuses = [0 for i in range(len(good_verts))]
             elif min_r_field is not None:
                 xs = np.array([p[0] for p in candidates])
                 ys = np.array([p[1] for p in candidates])
@@ -154,7 +163,7 @@ def populate_surface(surface, field, count, threshold,
                 for candidate_uv, candidate, min_r in zip(candidate_uvs, candidates, min_rs):
                     if random_radius:
                         min_r = random.uniform(0, min_r)
-                    if _check_min_radius(candidate, generated_verts + good_verts, generated_radiuses + good_radiuses, min_r):
+                    if _check_min_radius(candidate, old_points + generated_verts + good_verts, old_radiuses + generated_radiuses + good_radiuses, min_r):
                         good_verts.append(candidate)
                         good_uvs.append(candidate_uv)
                         good_radiuses.append(min_r)

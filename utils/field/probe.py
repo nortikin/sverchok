@@ -120,6 +120,7 @@ def field_random_probe(field, bbox, count,
         good_radiuses = []
         if min_r == 0 and min_r_field is None:
             good_verts = candidates
+            good_radiuses = [0 for i in range(len(good_verts))]
         elif min_r_field is not None:
             xs = np.array([p[0] for p in candidates])
             ys = np.array([p[1] for p in candidates])
