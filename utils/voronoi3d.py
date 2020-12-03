@@ -186,7 +186,7 @@ def voronoi_on_mesh(verts, faces, sites, thickness, clip_inner=True, clip_outer=
             do_clip = do_clip, clipping = clipping,
             make_regions = make_regions)
 
-def project_solid_normals(shell, pts, thickness, add_plus=True, add_minus=True):
+def project_solid_normals(shell, pts, thickness, add_plus=True, add_minus=True, predicate_plus=None, predicate_minus=None):
     k = 0.5*thickness
     result = []
     for pt in pts:
@@ -200,15 +200,18 @@ def project_solid_normals(shell, pts, thickness, add_plus=True, add_minus=True):
             plus_pt = projection + k*normal
             minus_pt = projection - k*normal
             if add_plus:
-                result.append(tuple(plus_pt))
+                if predicate_plus is None or predicate_plus(plus_pt):
+                    result.append(tuple(plus_pt))
             if add_minus:
-                result.append(tuple(minus_pt))
+                if predicate_minus is None or predicate_minus(minus_pt):
+                    result.append(tuple(minus_pt))
     return result
 
 def voronoi_on_solid_surface(solid, sites, thickness,
         clip_inner=True, clip_outer=True,
         skip_added = True,
         do_clip=True, clipping=1.0,
+        tolerance = 1e-4,
         make_regions=True): 
 
     npoints = len(sites)
@@ -217,10 +220,13 @@ def voronoi_on_solid_surface(solid, sites, thickness,
     else:
         shell = Part.Shell(solid.Faces)
 
+    def check(pt):
+        return solid.isInside(pt, tolerance, False)
+
     all_points = sites
     if clip_inner or clip_outer:
         all_points.extend(project_solid_normals(shell, sites, thickness,
-                add_plus=clip_outer, add_minus=clip_inner))
+                add_plus=clip_outer, add_minus=clip_inner, predicate_minus=check))
 
     return voronoi3d_layer(npoints, all_points,
             make_regions = make_regions,
