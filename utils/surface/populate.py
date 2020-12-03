@@ -150,8 +150,8 @@ def populate_surface(surface, field, count, threshold,
         good_radiuses = []
         if len(candidates) > 0:
             if min_r == 0 and min_r_field is None:
-                good_verts = candidates
-                good_uvs = candidate_uvs
+                good_verts = candidates.tolist()
+                good_uvs = candidate_uvs.tolist()
                 good_radiuses = [0 for i in range(len(good_verts))]
             elif min_r_field is not None:
                 xs = np.array([p[0] for p in candidates])
