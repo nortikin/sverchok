@@ -171,10 +171,11 @@ def populate_surface(surface, field, count, threshold,
                 good_verts = []
                 good_uvs = []
                 for candidate_uv, candidate in zip(candidate_uvs, candidates):
-                    distance_ok = _check_min_distance(candidate, generated_verts + good_verts, min_r)
+                    distance_ok = _check_min_distance(candidate, old_points + generated_verts + good_verts, min_r)
                     if distance_ok:
                         good_verts.append(tuple(candidate))
                         good_uvs.append(tuple(candidate_uv))
+                        good_radiuses.append(0)
 
             if predicate is not None:
                 results = [(uv, vert, radius) for uv, vert, radius in zip(good_uvs, good_verts, good_radiuses) if predicate(uv, vert)]
