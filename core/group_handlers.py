@@ -238,6 +238,11 @@ class NodesStatuses:
             else:
                 cls._statuses[node_id][path] = stat
 
+    @classmethod
+    def reset_data(cls):
+        """This method should be called before opening new file to free all statistic data"""
+        cls._statuses.clear()
+
 
 class NodeIdManager:
     """Responsible for handling node_ids, should be deleted in future refactorings"""
