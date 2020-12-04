@@ -349,7 +349,16 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
         Calling this method means that input group node should fetch data from group node
         (should be updated for current context)
         """
-        if not self.node_tree or not self.is_active:
+        # it's better process the node even if it is switched off in case when tree is just opened
+        # todo it requires socket API changes first
+        should_update_output_data = False
+        # if self.outputs:
+        #     try:
+        #         self.outputs[0].sv_get(deepcopy=False)
+        #     except LookupError:
+        #         should_update_output_data = True
+
+        if not self.node_tree or (not self.is_active and not should_update_output_data):
             return
 
         self.node_tree: SvGroupTree

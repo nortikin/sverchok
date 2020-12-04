@@ -293,7 +293,6 @@ class ContextTrees:
         """Return caught tree with filled `is_updated` attribute according last statistic"""
         tree = cls._trees.get(bl_tree.tree_id)
         if tree is None:
-            print('REBUILD TREE')
             tree = Tree(bl_tree)
             cls._trees[bl_tree.tree_id] = tree
         for node in tree.nodes:

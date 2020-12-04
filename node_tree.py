@@ -233,6 +233,10 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
     def update_nodes(self, nodes):
         """This method expects to get list of its nodes which should be updated"""
+        if len(nodes) == 1:
+            # this function actually doing something different unlike `process_from_nodes` function
+            # the difference is that process_from_nodes can also update other outdated nodes
+            process_from_node(nodes[0])
         process_from_nodes(nodes)
 
     def process_ani(self):
