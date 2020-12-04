@@ -280,6 +280,7 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
         self.node_tree: SvGroupTree = self.group_tree
         # also default values should be fixed
         if self.node_tree:
+            self.node_tree.use_fake_user = True
             for node_sock, interface_sock in zip(self.inputs, self.node_tree.inputs):
                 if hasattr(interface_sock, 'default_value') and hasattr(node_sock, 'default_property'):
                     node_sock.default_property = interface_sock.default_value
@@ -320,10 +321,10 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
             row_description = layout.row()
 
             row = row_description.row(align=True)
-            row.scale_x = 5
-            row.alignment = 'RIGHT'
             row.prop(self, 'is_active', toggle=True)
+            row = row.row(align=True)
             # row.prop(self, 'show', text="", icon=f'RESTRICT_VIEW_{"OFF" if self.show else "ON"}')
+            row.prop(self.node_tree, 'use_fake_user', text='')
 
             add_description = row_description.operator('node.add_tree_description', text='', icon='QUESTION')
             add_description.tree_name = self.node_tree.name
