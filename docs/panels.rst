@@ -118,6 +118,11 @@ categories are distinguished with a prefix "/Node/" in their titles. For
 example, a category with name "/Node/ Box" can contain only settings of the
 "Box" node. Such categories are created automatically.
 
+Among per-node presets, you can define a preset with special name ``Default``.
+Such preset will be automatically applied to the node of this type when you
+create it by selecting from Shift-A menu, from Search menu or from T panel (but
+not when it is created as a part of another preset being used).
+
 Presets are saved as `.json` files under Blender configuration directory, in
 `datafiles/sverchok/presets`. Preset categories are represented as directories
 under that one.

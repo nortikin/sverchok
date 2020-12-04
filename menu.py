@@ -34,6 +34,8 @@ from sverchok.ui.sv_icons import node_icon, icon
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.extra_categories import get_extra_categories
 from sverchok.core.update_system import set_first_run
+from sverchok.ui.presets import apply_default_preset
+from sverchok.utils.sv_json_import import JSONImporter
 
 class SverchNodeCategory(NodeCategory):
     @classmethod
@@ -241,7 +243,8 @@ class SverchNodeItem(object):
                 # SverchNodeItem instance.
                 operator.use_transform = True
                 operator.type = self.nodetype
-                operator.create_node(context)
+                node = operator.create_node(context)
+                apply_default_preset(node)
                 return {'FINISHED'}
 
         node_class = self.get_node_class()
