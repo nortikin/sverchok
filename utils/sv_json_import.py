@@ -264,6 +264,7 @@ class TreeGenerator:
         with self._fails_log.add_fail("Creating node", f'Tree: {self._tree_name}, Node: {node_name}'):
             if old_nodes.is_old(bl_type):  # old node classes are registered only by request
                 old_nodes.register_old(bl_type)
+            # import only here to do not create a cyclic import
             from sverchok.utils import dummy_nodes
             if dummy_nodes.is_dependent(bl_type):
                 # some node types are not registered if dependencies are not installed
