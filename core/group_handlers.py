@@ -280,7 +280,7 @@ class NodeIdManager:
         return node_id
 
 
-class ContextTree(Tree):
+class ContextTrees:
     """
     The same tree but nodes has statistic dependently on context evaluation
     For example node can has is_updated=True for tree evaluated from one group node and False for another
@@ -288,20 +288,20 @@ class ContextTree(Tree):
     """
     _trees: Dict[str, Tree] = dict()
 
-    def __init__(self, group_node: SvGroupTreeNode, path: Path):
-        """
-        It will create Python copy of the tree and tag already updated nodes
-        User should update nodes via node.update method in appropriate order
-        """
-        self.group_node = group_node
-        self.path = path
+    @classmethod
+    def get(cls, bl_tree: SvTree, path: Path):
+        """Return caught tree with filled `is_updated` attribute according last statistic"""
+        tree = cls._trees.get(bl_tree.tree_id)
+        if tree is None:
+            print('REBUILD TREE')
+            tree = Tree(bl_tree)
+            cls._trees[bl_tree.tree_id] = tree
+        for node in tree.nodes:
+            node.is_updated = NodesStatuses.get(node.bl_tween, path).is_updated  # good place to do this?
+        return tree
 
-        super().__init__(group_node.node_tree)
-        self._update_topology_status()
-        for node in self.nodes:
-            node.is_updated = NodesStatuses.get(node.bl_tween, path).is_updated
-
-    def update_node(self, node: Node):
+    @staticmethod
+    def update_node(node: Node, group_node: SvGroupTreeNode):
         """
         Group tree should have proper node_ids before calling this method
         Also this method will mark next nodes as outdated for current context
@@ -309,7 +309,7 @@ class ContextTree(Tree):
         bl_node = node.bl_tween
         try:
             if bl_node.bl_idname in {'NodeGroupInput', 'NodeGroupOutput'}:
-                bl_node.process(self.group_node)
+                bl_node.process(group_node)
             elif hasattr(bl_node, 'process'):
                 bl_node.process()
             node.is_updated = True
@@ -322,12 +322,30 @@ class ContextTree(Tree):
             node.error = e
             traceback.print_exc()
 
-    def _update_topology_status(self):
-        """Copy link node status by comparing with previous tree and save current"""
-        if self.bl_tween.tree_id in self._trees:
-            old_tree = self._trees[self.bl_tween.tree_id]
+    @classmethod
+    def update_tree(cls, bl_tree: SvTree):
+        """
+        This method will generate new tree and update 'link_changed' node attribute
+        according topological changes relatively previous call
+        """
+        cls._update_topology_status(Tree(bl_tree))
 
-            new_links = self.links - old_tree.links
+    @classmethod
+    def reset_data(cls):
+        """
+        Should be called upon loading new file, other wise it can lead to errors and even crash
+        Also according the fact that trees have links to real blender nodes
+        it is also important to call this method upon undo method otherwise errors and crashes
+        """
+        cls._trees.clear()
+
+    @classmethod
+    def _update_topology_status(cls, new_tree: Tree):
+        """Copy link node status by comparing with previous tree and save current"""
+        if new_tree.bl_tween.tree_id in cls._trees:
+            old_tree = cls._trees[new_tree.bl_tween.tree_id]
+
+            new_links = new_tree.links - old_tree.links
             for link in new_links:
                 if link.from_node.name in old_tree.nodes:
                     from_old_node = old_tree.nodes[link.from_node.name]
@@ -341,12 +359,12 @@ class ContextTree(Tree):
                 else:
                     link.to_node.link_changed = True
 
-            removed_links = old_tree.links - self.links
+            removed_links = old_tree.links - new_tree.links
             for link in removed_links:
-                if link.to_node in self.nodes:
-                    self.nodes[link.to_node.name].link_changed = True
+                if link.to_node in new_tree.nodes:
+                    new_tree.nodes[link.to_node.name].link_changed = True
 
-        self._trees[self.bl_tween.tree_id] = self
+        cls._trees[new_tree.bl_tween.tree_id] = new_tree
 
 
 # also IDs for this nodes are unchanged for now
@@ -358,7 +376,7 @@ def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
         -> Generator[Node, None, Tuple[bool, Optional[Exception]]]:
     group_node = group_nodes_path[-1]
     path = NodeIdManager.generate_path(group_nodes_path)
-    tree = ContextTree(group_node, path)
+    tree = ContextTrees.get(group_node.node_tree, path)
     NodeIdManager.replace_nodes_id(tree, path)
 
     out_nodes = [n for n in tree.nodes if n.bl_tween.bl_idname in OUT_ID_NAMES]
@@ -396,7 +414,7 @@ def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
             if not cancel_updating:
                 try:
                     yield node
-                    tree.update_node(node)
+                    ContextTrees.update_node(node, group_node)
                 except CancelError:
                     cancel_updating = True
                     node.error = CancelError()
@@ -438,6 +456,10 @@ def group_global_handler() -> Generator[Node]:
     After that update system of main trees should update themselves
     meanwhile group nodes should be switched off because they already was updated
     """
+    for bl_tree in (t for t in bpy.data.node_groups if t.bl_idname == 'SvGroupTree'):
+        # for now it always update all trees todo should be optimized later (keep in mind, trees can become outdated)
+        ContextTrees.update_tree(bl_tree)
+
     for bl_tree in (t for t in bpy.data.node_groups if t.bl_idname == 'SverchCustomTreeType'):
         outdated_group_nodes = set()
         tree = Tree(bl_tree)
