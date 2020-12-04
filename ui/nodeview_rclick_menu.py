@@ -9,7 +9,7 @@
 import bpy
 from sverchok.utils.sv_node_utils import frame_adjust
 from sverchok.menu import draw_add_node_operator
-from sverchok.ui.presets import node_supports_presets
+from sverchok.ui.presets import node_supports_presets, apply_default_preset
 from sverchok.core.sockets import SvCurveSocket, SvSurfaceSocket, SvStringsSocket, SvSolidSocket
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
@@ -110,6 +110,7 @@ def add_connection(tree, bl_idname_new_node, offset):
         # single new node..
 
         new_node = nodes.new(bl_idname_new_node)
+        apply_default_preset(new_node)
         offset_node_location(existing_node, new_node, offset)
         frame_adjust(existing_node, new_node)
 
@@ -146,6 +147,7 @@ def add_connection(tree, bl_idname_new_node, offset):
             elif 'curve' in output_map:
 
                 eval_node = nodes.new('SvExEvalCurveNode')
+                apply_default_preset(eval_node)
                 offset_node_location(existing_node, eval_node, offset)
                 frame_adjust(existing_node, eval_node)
                 offset_node_location(eval_node, new_node, offset)
@@ -156,6 +158,7 @@ def add_connection(tree, bl_idname_new_node, offset):
 
             elif 'surface' in output_map:
                 eval_node = nodes.new('SvExEvalSurfaceNode')
+                apply_default_preset(eval_node)
                 offset_node_location(existing_node, eval_node, offset)
                 frame_adjust(existing_node, eval_node)
                 offset_node_location(eval_node, new_node, offset)
@@ -167,6 +170,7 @@ def add_connection(tree, bl_idname_new_node, offset):
             elif 'solid' in output_map:
                 tree.nodes.remove(new_node)
                 new_node = nodes.new('SvSolidViewerNode')
+                apply_default_preset(new_node)
                 offset_node_location(existing_node, new_node, offset)
                 frame_adjust(existing_node, new_node)
                 links.new(outputs[output_map['solid']], new_node.inputs[0])

@@ -358,6 +358,23 @@ def get_presets(category=None, search=None, mkdir=True):
                 result.append(preset)
     return result
 
+def get_preset(category, name):
+    file_name = name + ".json"
+    user = get_presets_directory(category, standard=False)
+    standard = get_presets_directory(category, standard=True)
+
+    for is_standard, directory in [(False, user), (True, standard)]:
+        path = join(directory, file_name)
+        if os.path.exists(path):
+            preset = SvPreset(path = path, category=category, standard=is_standard)
+            return preset
+    return None
+
+def apply_default_preset(node):
+    preset = get_preset(node.bl_idname, "Default")
+    if preset is not None:
+        JSONImporter(preset.data).import_node_settings(node)
+
 class SvUserPresetsPanelProps(bpy.types.PropertyGroup):
     manage_mode: BoolProperty(
         name="Manage Presets",
