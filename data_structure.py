@@ -610,6 +610,39 @@ def unwrap_data(data, unwrap_level=1, socket=None):
         data = unwrap(data, level)
     return data
 
+class SvListLevelAdjustment(object):
+    def __init__(self, flatten=False, wrap=False):
+        self.flatten = flatten
+        self.wrap = wrap
+
+    def __repr__(self):
+        return f"<Flatten={self.flatten}, Wrap={self.wrap}>"
+
+def list_levels_adjust(data, instructions, data_types=SIMPLE_DATA_TYPES):
+    data_level = get_data_nesting_level(data, data_types + (ndarray,))
+    if len(instructions) < data_level+1:
+        raise Exception(f"Number of instructions ({len(instructions)}) is less than data nesting level {data_level} + 1")
+
+    def process(data, instruction, level):
+        result = data
+        if level + 1 < data_level and instruction.flatten:
+            result = sum(result, [])
+        if instruction.wrap:
+            result = [result]
+        #print(f"II: {level}/{data_level}, {instruction}, {data} => {result}")
+        return result
+
+    def helper(data, instructions, level):
+        if level == data_level:
+            items = process(data, instructions[0], level)
+        else:
+            sub_items = [helper(item, instructions[1:], level+1) for item in data]
+            items = process(sub_items, instructions[0], level)
+            #print(f"?? {level}/{data_level}, {data} => {sub_items} => {items}")
+        return items
+    
+    return helper(data, instructions, 0)
+
 def map_at_level(function, data, item_level=0, data_types=SIMPLE_DATA_TYPES):
     """
     Given a nested list of object, apply `function` to each sub-list of items.
@@ -638,6 +671,35 @@ def split_by_count(iterable, n, fillvalue=None):
     args = [iter(iterable)] * n
     return list(map(list, zip_longest(*args, fillvalue=fillvalue)))
 
+def describe_data_shape_by_level(data, include_numpy_nesting=True):
+    """
+    Describe shape of data in human-readable form.
+    Returns tuple:
+    * data nesting level
+    * list of descriptions of data shapes at each nesting level
+    """
+    def helper(data):
+        if not isinstance(data, (list, tuple)):
+            if isinstance(data, ndarray):
+                if include_numpy_nesting:
+                    nesting = len(data.shape)
+                else:
+                    nesting = 0
+                return nesting, [type(data).__name__ + " of " + str(data.dtype) + " with shape " + str(data.shape)]
+            return 0, [type(data).__name__]
+        else:
+            result = [f"{type(data).__name__} [{len(data)}]"]
+            if len(data) > 0:
+                child = data[0]
+                child_nesting, child_result = helper(child)
+                result = result + child_result
+            else:
+                child_nesting = 0
+            return (child_nesting + 1), result
+
+    nesting, result = helper(data)
+    return nesting, result
+
 def describe_data_shape(data):
     """
     Describe shape of data in human-readable form.
@@ -652,23 +714,9 @@ def describe_data_shape(data):
     describe_data_shape([1]) == 'Level 1: list [1] of int'
     describe_data_shape([[(1,2,3)]]) == 'Level 3: list [1] of list [1] of tuple [3] of int'
     """
-    def helper(data):
-        if not isinstance(data, (list, tuple)):
-            if isinstance(data, ndarray):
-                return len(data.shape), type(data).__name__ + " of " + str(data.dtype) + " with shape " + str(data.shape)
-            return 0, type(data).__name__
-        else:
-            result = type(data).__name__
-            result += " [{}]".format(len(data))
-            if len(data) > 0:
-                child = data[0]
-                child_nesting, child_result = helper(child)
-                result += " of " + child_result
-            else:
-                child_nesting = 0
-            return (child_nesting + 1), result
 
-    nesting, result = helper(data)
+    nesting, descriptions = describe_data_shape_by_level(data)
+    result = " of ".join(descriptions)
     return "Level {}: {}".format(nesting, result)
 
 def describe_data_structure(data, data_types=SIMPLE_DATA_TYPES):
@@ -1285,7 +1333,10 @@ def get_other_socket(socket):
     if not socket.is_linked:
         return None
     if not socket.is_output:
-        other = socket.links[0].from_socket
+        if socket.links:
+            other = socket.links[0].from_socket
+        else:
+            return None
     else:
         other = socket.links[0].to_socket
 

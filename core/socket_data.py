@@ -105,6 +105,8 @@ def SvGetSocket(socket, deepcopy=True):
     global socket_data_cache
     if socket.is_linked:
         other = socket.other
+        if other is None:
+            raise SvNoDataError(socket)
         s_id = other.socket_id
         s_ng = other.id_data.tree_id
         if s_ng not in socket_data_cache:

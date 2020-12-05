@@ -99,12 +99,89 @@ class DataStructureTests(SverchokTestCase):
         output = rotate_list(input, 2)
         self.assertEquals(output, expected_output)
 
-    def test_describe_data_shape(self):
+    def test_describe_data_shape_1(self):
         self.subtest_assert_equals(describe_data_shape(None), 'Level 0: NoneType')
         self.subtest_assert_equals(describe_data_shape(1), 'Level 0: int')
         self.subtest_assert_equals(describe_data_shape([]), 'Level 1: list [0]')
         self.subtest_assert_equals(describe_data_shape([1]), 'Level 1: list [1] of int')
         self.subtest_assert_equals(describe_data_shape([[(1,2,3)]]), 'Level 3: list [1] of list [1] of tuple [3] of int')
+
+    def test_describe_data_shape_2(self):
+        nesting, descriptions = describe_data_shape_by_level([[(1,2,3)]])
+        expected_nesting = 3
+        expected_descriptions = ["list [1]", "list [1]", "tuple [3]", "int"]
+        self.subtest_assert_equals(nesting, expected_nesting)
+        self.subtest_assert_equals(descriptions, expected_descriptions)
+
+    def test_adjust_1(self):
+        instructions = [SvListLevelAdjustment(wrap=True)]
+        input_data = 1
+        result = list_levels_adjust(input_data, instructions)
+        expected_result = [1]
+        self.assert_sverchok_data_equal(result, expected_result)
+
+    def test_adjust_2(self):
+        instructions = [SvListLevelAdjustment(wrap=True), SvListLevelAdjustment()]
+        input_data = [1]
+        result = list_levels_adjust(input_data, instructions)
+        expected_result = [[1]]
+        self.assert_sverchok_data_equal(result, expected_result)
+
+    def test_adjust_3(self):
+        instructions = [SvListLevelAdjustment(wrap=True), SvListLevelAdjustment()]
+        input_data = [1, 2]
+        result = list_levels_adjust(input_data, instructions)
+        expected_result = [[1, 2]]
+        self.assert_sverchok_data_equal(result, expected_result)
+
+    def test_adjust_4(self):
+        instructions = [SvListLevelAdjustment(), SvListLevelAdjustment(wrap=True)]
+        input_data = [1, 2]
+        result = list_levels_adjust(input_data, instructions)
+        expected_result = [[1], [2]]
+        self.assert_sverchok_data_equal(result, expected_result)
+
+    def test_adjust_5(self):
+        instructions = [SvListLevelAdjustment(flatten=True), SvListLevelAdjustment()]
+        input_data = [1]
+        result = list_levels_adjust(input_data, instructions)
+        expected_result = [1]
+        self.assert_sverchok_data_equal(result, expected_result)
+
+    def test_adjust_6(self):
+        instructions = [SvListLevelAdjustment(flatten=True), SvListLevelAdjustment(), SvListLevelAdjustment()]
+        input_data = [[1], [2]]
+        result = list_levels_adjust(input_data, instructions)
+        expected_result = [1, 2]
+        self.assert_sverchok_data_equal(result, expected_result)
+
+    def test_adjust_7(self):
+        instructions = [SvListLevelAdjustment(), SvListLevelAdjustment(wrap=True), SvListLevelAdjustment()]
+        input_data = [[1], [2]]
+        result = list_levels_adjust(input_data, instructions)
+        expected_result = [[[1]], [[2]]]
+        self.assert_sverchok_data_equal(result, expected_result)
+
+    def test_adjust_8(self):
+        instructions = [SvListLevelAdjustment(flatten=True), SvListLevelAdjustment(wrap=True), SvListLevelAdjustment()]
+        input_data = [[1], [2]]
+        result = list_levels_adjust(input_data, instructions)
+        expected_result = [[1], [2]]
+        self.assert_sverchok_data_equal(result, expected_result)
+
+    def test_adjust_9(self):
+        instructions = [SvListLevelAdjustment(flatten=True), SvListLevelAdjustment(), SvListLevelAdjustment()]
+        input_data = [[1,2], [3,4]]
+        result = list_levels_adjust(input_data, instructions)
+        expected_result = [1,2,3,4]
+        self.assert_sverchok_data_equal(result, expected_result)
+
+    def test_adjust_10(self):
+        instructions = [SvListLevelAdjustment(flatten=True, wrap=True), SvListLevelAdjustment(), SvListLevelAdjustment()]
+        input_data = [[1,2], [3,4]]
+        result = list_levels_adjust(input_data, instructions)
+        expected_result = [[1,2,3,4]]
+        self.assert_sverchok_data_equal(result, expected_result)
 
     def test_flatten_1(self):
         data = [[1,2], [3,4]]
