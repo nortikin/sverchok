@@ -56,12 +56,16 @@ class SvListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     bl_idname = 'SvListLevelsNode'
     bl_label = 'List Levels'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'OUTLINER'
 
     levels_config : CollectionProperty(type=SvNestingLevelEntry)
     prev_nesting_level : IntProperty(default = 0, options = {'SKIP_SAVE'})
 
     def draw_buttons(self, context, layout):
+        n = len(self.levels_config)
+        if not n:
+            layout.label(text="No data passed")
+            return
         grid = layout.grid_flow(row_major=True, columns=5, align=True)
 
         grid.label(text='Depth')
@@ -70,7 +74,6 @@ class SvListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
         grid.label(text='Flatten')
         grid.label(text='Wrap')
 
-        n = len(self.levels_config)
         for i, entry in enumerate(self.levels_config):
             nesting = n-i-1
             level_str = str(i)
