@@ -23,6 +23,8 @@ else:
         bl_label = 'Approximate NURBS Curve'
         bl_icon = 'CURVE_NCURVE'
 
+        replacement_nodes = [('SvApproxNurbsCurveMk2Node', None, None)]
+
         degree : IntProperty(
                 name = "Degree",
                 min = 2, max = 6,
