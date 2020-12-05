@@ -147,6 +147,7 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'Sv3DProjectNode'
     bl_label = '3D Projection'
+    bl_icon = 'EMPTY_DATA'
 
     projection_screen: EnumProperty(
         name="Screen", items=projection_screen_items, default="PLANAR", update=updateNode)
