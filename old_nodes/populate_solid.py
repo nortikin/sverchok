@@ -36,6 +36,8 @@ class SvPopulateSolidNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_POPULATE_SOLID'
 
+    replacement_nodes = [('SvPopulateSolidMk2Node', None, None)]
+
     @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['FieldMin'].hide_safe = self.proportional != True
