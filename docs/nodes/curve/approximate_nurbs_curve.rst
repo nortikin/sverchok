@@ -117,3 +117,7 @@ Take points from Greasepencil drawing and approximate them with a smooth curve:
 
 .. image:: https://user-images.githubusercontent.com/284644/74363000-7becef00-4deb-11ea-9963-e864dc3a3599.png
 
+Use SciPy implementation to make a closed curve:
+
+.. image:: https://user-images.githubusercontent.com/284644/101246890-d61ebe00-3737-11eb-942d-c31e02bf3c3d.png
+
