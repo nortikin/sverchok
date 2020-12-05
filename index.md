@@ -71,7 +71,7 @@
 
 ## Curves @ NURBS
     SvExNurbsCurveNode
-    SvExApproxNurbsCurveNode
+    SvApproxNurbsCurveMk2Node
     SvExInterpolateNurbsCurveNode
     SvDeconstructCurveNode
 
