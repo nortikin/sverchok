@@ -67,3 +67,38 @@ outermost levels, there will be more different options. You can also connect
 several "List Levels" nodes to do even more complex manipulations with data
 structure.
 
+Examples of Usage
+-----------------
+
+By default, all checkboxes are disabled, so the node does nothing:
+
+.. image:: https://user-images.githubusercontent.com/284644/101237916-558f9b80-36fe-11eb-9240-25c0cf25c0c3.png
+
+Let's wrap each number into a separate list (this is what "Graft" option of output socket menus does as well):
+
+.. image:: https://user-images.githubusercontent.com/284644/101237917-56c0c880-36fe-11eb-8b0f-2caed2f5bcdb.png
+
+By enabling "Wrap" at the next level, we put each vertex into a separate list:
+
+.. image:: https://user-images.githubusercontent.com/284644/101237918-57595f00-36fe-11eb-9ddf-a7d456f0f985.png
+
+The next level - put each list of vertices (object) into a separate list:
+
+.. image:: https://user-images.githubusercontent.com/284644/101237919-57f1f580-36fe-11eb-937c-362b336de9c3.png
+
+And the outermost level - put the whole data structure into additional pair of square brackets:
+
+.. image:: https://user-images.githubusercontent.com/284644/101237920-57f1f580-36fe-11eb-9f64-1c06d3831efe.png
+
+By enabling "Flatten" at the deepest available level, we concatenate vertices data into lists of numbers:
+
+.. image:: https://user-images.githubusercontent.com/284644/101237921-588a8c00-36fe-11eb-9dd5-cf30a7701ac7.png
+
+By flattening at the outermost level, we concatenate lists of vertices into a single list of vertices:
+
+.. image:: https://user-images.githubusercontent.com/284644/101237921-588a8c00-36fe-11eb-9dd5-cf30a7701ac7.png
+
+If we enable both Flatten flags, we concatenate lists of vertices into lists of numbers, AND we concatenate lists of numbers into a single list of numbers:
+
+.. image:: https://user-images.githubusercontent.com/284644/101238132-f0d54080-36ff-11eb-99aa-d351bfb7f31e.png
+
