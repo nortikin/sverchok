@@ -93,7 +93,22 @@ class SvApproxNurbsCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
 
     is_cyclic : BoolProperty(
             name = "Cyclic",
+            description = "Make the curve cyclic (closed)",
             default = False,
+            update = updateNode)
+
+    auto_cyclic : BoolProperty(
+            name = "Auto",
+            description = "Make the curve cyclic only if it's start and end points are close enough",
+            default = False,
+            update = updateNode)
+
+    cyclic_threshold : FloatProperty(
+            name = "Cyclic threshold",
+            description = "Maximum distance between start and end points to make the curve closed",
+            default = 0.0,
+            min = 0.0,
+            precision = 4,
             update = updateNode)
 
     remove_doubles : BoolProperty(
@@ -116,7 +131,12 @@ class SvApproxNurbsCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, 'centripetal')
             layout.prop(self, 'has_points_cnt')
         else:
-            layout.prop(self, 'is_cyclic')
+            row = layout.row(align=True)
+            row.prop(self, 'is_cyclic')
+            if self.is_cyclic:
+                row.prop(self, 'auto_cyclic')
+                if self.auto_cyclic:
+                    layout.prop(self, 'cyclic_threshold')
             layout.prop(self, 'metric')
             layout.prop(self, 'has_smoothing')
 
@@ -186,13 +206,23 @@ class SvApproxNurbsCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
                     if not self.has_smoothing:
                         smoothing = None
 
+                    if self.is_cyclic:
+                        if self.auto_cyclic: 
+                            dv = np.linalg.norm(points[0] - points[-1])
+                            is_cyclic = dv <= self.cyclic_threshold
+                            self.info("Dv %s, threshold %s => is_cyclic %s", dv, self.cyclic_threshold, is_cyclic)
+                        else:
+                            is_cyclic = True
+                    else:
+                        is_cyclic = False
+
                     curve = scipy_nurbs_approximate(points,
                                 weights = weights,
                                 metric = self.metric,
                                 degree = degree,
                                 filter_doubles = None if not self.remove_doubles else self.threshold,
                                 smoothing = smoothing,
-                                is_cyclic = self.is_cyclic)
+                                is_cyclic = is_cyclic)
 
                     control_points = curve.get_control_points().tolist()
                     knotvector = curve.get_knotvector().tolist()
