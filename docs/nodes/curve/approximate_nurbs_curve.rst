@@ -82,6 +82,19 @@ This node has the following parameters:
 * **Cyclic**. This parameter is available only when **Implementation**
   parameter is set to **SciPy**. Defines whether the generated curve will be
   cyclic (closed). Unchecked by default.
+* **Auto**. This parameter is available only when **Implementation** parameter
+  is set to **SciPy**, and **Cyclic** parameter is enabled. If checked, the
+  node will automatically decide if the curve should be cyclic (closed), based
+  on the distance between the first and last points being approximated: if the
+  points are close enough, the curve will be closed. If not checked, the curve
+  will be closed regardless of distance between points, just because **Cyclic**
+  parameter is checked. Unchecked by default.
+* **Cyclic threshold**. This parameter is available only when
+  **Implementation** parameter is set to **SciPy**, **Cyclic** parameter is
+  enabled, and **Auto** parameter is enabled as well. This defines maximum
+  distance between the first and the last points being approximated, for which
+  the node will make the curve cyclic. Default value is 0.0, i.e. the points
+  must exactly coincide in order for curve to be closed.
 * **Metric**. This parameter is available only when **Implementation**
   parameter is set to **SciPy**.Metric to be used for interpolation. The
   available values are:
