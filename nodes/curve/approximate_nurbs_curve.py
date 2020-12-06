@@ -96,6 +96,20 @@ class SvApproxNurbsCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
             default = False,
             update = updateNode)
 
+    remove_doubles : BoolProperty(
+            name = "Remove doubles",
+            description = "Remove consecutive points that go too close",
+            default = False,
+            update = updateNode)
+
+    threshold : FloatProperty(
+            name = "Threshold",
+            description = "Threshold for remove doubles function",
+            default = 0.0001,
+            precision = 5,
+            min = 0.0,
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'implementation', text='')
         if self.implementation == 'GEOMDL':
@@ -105,6 +119,13 @@ class SvApproxNurbsCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, 'is_cyclic')
             layout.prop(self, 'metric')
             layout.prop(self, 'has_smoothing')
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        if self.implementation == 'SCIPY':
+            layout.prop(self, 'remove_doubles')
+            if self.remove_doubles:
+                layout.prop(self, 'threshold')
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
@@ -169,6 +190,7 @@ class SvApproxNurbsCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
                                 weights = weights,
                                 metric = self.metric,
                                 degree = degree,
+                                filter_doubles = None if not self.remove_doubles else self.threshold,
                                 smoothing = smoothing,
                                 is_cyclic = self.is_cyclic)
 

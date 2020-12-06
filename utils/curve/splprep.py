@@ -14,10 +14,15 @@ from sverchok.dependencies import scipy
 if scipy is not None:
     from scipy import interpolate
 
-def scipy_nurbs_approximate(points, weights=None, metric='DISTANCE', degree=3, smoothing=None, is_cyclic=False):
+def scipy_nurbs_approximate(points, weights=None, metric='DISTANCE', degree=3, filter_doubles = None, smoothing=None, is_cyclic=False):
     points = np.asarray(points)
     if weights is not None and len(points) != len(weights):
         raise Exception("Number of weights must be equal to number of points")
+    if filter_doubles is not None:
+        good = np.where(np.linalg.norm(np.diff(points, axis=0), axis=1) > filter_doubles)
+        points = np.r_[points[good], points[-1][np.newaxis]]
+        if weights is not None:
+            weights = np.r_[weights[good], weights[-1]]
     if is_cyclic:
         points = np.vstack((points, points[0]))
         if weights is not None:
