@@ -256,8 +256,9 @@ class NODEVIEW_MT_AddPresetOps(bpy.types.Menu):
         layout = self.layout
         presets.draw_presets_ops(layout, context=context)
         for category in presets.get_category_names():
-            class_name = preset_category_menus[category].__name__
-            layout.menu(class_name)
+            if category in preset_category_menus:
+                class_name = preset_category_menus[category].__name__
+                layout.menu(class_name)
 
 
 class NODE_MT_category_SVERCHOK_GROUP(bpy.types.Menu):
