@@ -113,8 +113,8 @@ class SvApproxNurbsCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'implementation', text='')
         if self.implementation == 'GEOMDL':
-            layout.prop(self, 'centripetal', toggle=True)
-            layout.prop(self, 'has_points_cnt', toggle=True)
+            layout.prop(self, 'centripetal')
+            layout.prop(self, 'has_points_cnt')
         else:
             layout.prop(self, 'is_cyclic')
             layout.prop(self, 'metric')
