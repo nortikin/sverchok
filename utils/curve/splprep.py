@@ -24,9 +24,10 @@ def scipy_nurbs_approximate(points, weights=None, metric='DISTANCE', degree=3, f
         if weights is not None:
             weights = np.r_[weights[good], weights[-1]]
     if is_cyclic:
-        points = np.vstack((points, points[0]))
-        if weights is not None:
-            weights = np.insert(weights, -1, weights[0])
+        if (points[0] != points[-1]).any():
+            points = np.vstack((points, points[0]))
+            if weights is not None:
+                weights = np.insert(weights, -1, weights[0])
     points_orig = points
     points = points.T
 
