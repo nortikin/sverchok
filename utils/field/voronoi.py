@@ -26,11 +26,11 @@ class SvVoronoiFieldData(object):
             raise Exception("Unsupported metric")
 
         self.implementation = SvKdTree.best_available_implementation()
-        self.kdtree = SvKdTree.new(self.implementation, sites)
+        self.kdtree = SvKdTree.new(self.implementation, sites, power=self.power)
 
     def query(self, point):
         if self.implementation == SvKdTree.SCIPY or self.metric == 'DISTANCE':
-            locs, idxs, distances = self.kdtree.query(point, count=2, p=self.power)
+            locs, idxs, distances = self.kdtree.query(point, count=2)
             distance1 = distances[0]
             distance2 = distances[1]
             v1 = (locs[0] - point)
@@ -49,7 +49,7 @@ class SvVoronoiFieldData(object):
 
     def query_array(self, points):
         if self.implementation == SvKdTree.SCIPY or self.metric == 'DISTANCE':
-            locs, idxs, distances = self.kdtree.query_array(points, count=2, p=self.power)
+            locs, idxs, distances = self.kdtree.query_array(points, count=2)
             distances1 = distances[:,0]
             distances2 = distances[:,1]
             v1s = locs[:,0] - points
