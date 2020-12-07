@@ -23,6 +23,7 @@ from sverchok.utils.field.vector import (SvVectorFieldPointDistance,
             SvBvhAttractorVectorField,
             SvSelectVectorField)
 from sverchok.utils.math import all_falloff_types, falloff_array
+from sverchok.utils.kdtree import SvKdTree
 
 class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -93,6 +94,26 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             min = 0,
             update = updateNode)
 
+    metrics = [
+            ('DISTANCE', 'Euclidan', "Eudlcian distance metric", 0),
+            ('MANHATTAN', 'Manhattan', "Manhattan distance metric", 1),
+            ('CHEBYSHEV', 'Chebyshev', "Chebyshev distance", 2),
+            ('CUSTOM', "Custom", "Custom Minkowski metric defined by exponent factor", 3)
+        ]
+
+    metric : EnumProperty(
+            name = "Metric",
+            items = metrics,
+            default = 'DISTANCE',
+            update = updateNode)
+
+    power : FloatProperty(
+            name = "Exponent",
+            description = "Exponent for Minkowski metric",
+            min = 1.0,
+            default = 2,
+            update = updateNode)
+
     def sv_init(self, context):
         d = self.inputs.new('SvVerticesSocket', "Center")
         d.use_prop = True
@@ -118,29 +139,44 @@ class SvAttractorFieldNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, 'merge_mode')
         elif self.attractor_type == 'Mesh':
             layout.prop(self, 'signed', toggle=True)
+        if self.attractor_type == 'Point':
+            layout.prop(self, 'metric')
+            if self.metric == 'CUSTOM':
+                layout.prop(self, 'power')
         layout.prop(self, 'falloff_type')
         layout.prop(self, 'clamp')
 
+    def get_power(self):
+        if self.metric == 'DISTANCE':
+            return 2
+        elif self.metric == 'MANHATTAN':
+            return 1
+        elif self.metric == 'CHEBYSHEV':
+            return np.inf
+        else:
+            return self.power
+
     def to_point(self, centers, falloff):
+        if self.metric == 'DISTANCE':
+            metric_single = 'EUCLIDEAN'
+        else:
+            metric_single = self.metric
         n = len(centers)
         if n == 1:
-            sfield = SvScalarFieldPointDistance(centers[0], falloff=falloff)
-            vfield = SvVectorFieldPointDistance(centers[0], falloff=falloff)
+            sfield = SvScalarFieldPointDistance(centers[0], falloff=falloff, metric=metric_single, power=self.get_power())
+            vfield = SvVectorFieldPointDistance(centers[0], falloff=falloff, metric=metric_single, power=self.get_power())
         elif self.merge_mode == 'AVG':
-            sfields = [SvScalarFieldPointDistance(center, falloff=falloff) for center in centers]
+            sfields = [SvScalarFieldPointDistance(center, falloff=falloff, metric=metric_single, power=self.get_power()) for center in centers]
             sfield = SvMergedScalarField('AVG', sfields)
-            vfields = [SvVectorFieldPointDistance(center, falloff=falloff) for center in centers]
+            vfields = [SvVectorFieldPointDistance(center, falloff=falloff, metric=metric_single, power=self.get_power()) for center in centers]
             vfield = SvAverageVectorField(vfields)
         elif self.merge_mode == 'MIN':
-            kdt = kdtree.KDTree(len(centers))
-            for i, v in enumerate(centers):
-                kdt.insert(v, i)
-            kdt.balance()
+            kdt = SvKdTree.new(SvKdTree.best_available_implementation(), centers, power=self.get_power())
             vfield = SvKdtVectorField(kdt=kdt, falloff=falloff)
             sfield = SvKdtScalarField(kdt=kdt, falloff=falloff)
         else: # SEP
-            sfield = [SvScalarFieldPointDistance(center, falloff=falloff) for center in centers]
-            vfield = [SvVectorFieldPointDistance(center, falloff=falloff) for center in centers]
+            sfield = [SvScalarFieldPointDistance(center, falloff=falloff, metric=metric_single, power=self.get_power()) for center in centers]
+            vfield = [SvVectorFieldPointDistance(center, falloff=falloff, metric=metric_single, power=self.get_power()) for center in centers]
         return vfield, sfield
 
     def merge_fields(self, vfields, sfields):

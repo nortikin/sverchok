@@ -15,8 +15,8 @@ from mathutils import noise
 from sverchok.utils.curve import SvCurveLengthSolver, SvNormalTrack, MathutilsRotationCalculator
 from sverchok.utils.geom import LineEquation, CircleEquation3D
 from sverchok.utils.math import from_cylindrical, from_spherical
+from sverchok.utils.kdtree import SvKdTree
 from sverchok.utils.field.voronoi import SvVoronoiFieldData
-
 
 ##################
 #                #
@@ -283,23 +283,20 @@ class SvNoiseVectorField(SvVectorField):
 
 class SvKdtVectorField(SvVectorField):
 
-    def __init__(self, vertices=None, kdt=None, falloff=None, negate=False):
+    def __init__(self, vertices=None, kdt=None, falloff=None, negate=False, power=2):
         self.falloff = falloff
         self.negate = negate
         if kdt is not None:
             self.kdt = kdt
         elif vertices is not None:
-            self.kdt = kdtree.KDTree(len(vertices))
-            for i, v in enumerate(vertices):
-                self.kdt.insert(v, i)
-            self.kdt.balance()
+            self.kdt = SvKdTree.new(SvKdTree.best_available_implementation(), vertices, power=power)
         else:
             raise Exception("Either kdt or vertices must be provided")
         self.__description__ = "KDT Attractor"
 
     def evaluate(self, x, y, z):
-        nearest, i, distance = self.kdt.find((x, y, z))
-        vector = np.array(nearest) - np.array([x, y, z])
+        nearest, i, distance = self.kdt.query(np.array([x, y, z]))
+        vector = nearest - np.array([x, y, z])
         if self.falloff is not None:
             value = self.falloff(np.array([distance]))[0]
             if self.negate:
@@ -313,16 +310,11 @@ class SvKdtVectorField(SvVectorField):
                 return vector
 
     def evaluate_grid(self, xs, ys, zs):
-        def find(v):
-            nearest, i, distance = self.kdt.find(v)
-            dv = np.array(nearest) - np.array(v)
-            if self.negate:
-                return - dv
-            else:
-                return dv
-
         points = np.stack((xs, ys, zs)).T
-        vectors = np.vectorize(find, signature='(3)->(3)')(points)
+        locs, idxs, distances = self.kdt.query_array(points)
+        vectors = locs - points
+        if self.negate:
+            vectors = - vectors
         if self.falloff is not None:
             norms = np.linalg.norm(vectors, axis=1, keepdims=True)
             lens = self.falloff(norms)
@@ -336,10 +328,11 @@ class SvKdtVectorField(SvVectorField):
             return R[0], R[1], R[2]
 
 class SvVectorFieldPointDistance(SvVectorField):
-    def __init__(self, center, metric='EUCLIDEAN', falloff=None):
+    def __init__(self, center, metric='EUCLIDEAN', falloff=None, power=2):
         self.center = center
         self.falloff = falloff
         self.metric = metric
+        self.power = power
         self.__description__ = "Distance from {}".format(tuple(center))
 
     def evaluate_grid(self, xs, ys, zs):
@@ -354,6 +347,8 @@ class SvVectorFieldPointDistance(SvVectorField):
             norms = np.max(np.abs(vectors), axis=0)
         elif self.metric == 'MANHATTAN':
             norms = np.sum(np.abs(vectors), axis=0)
+        elif self.metric == 'CUSTOM':
+            norms = np.linalg.norm(vectors, axis=0, ord=self.power)
         else:
             raise Exception('Unknown metric')
         if self.falloff is not None:
@@ -371,6 +366,8 @@ class SvVectorFieldPointDistance(SvVectorField):
             norm = np.max(point)
         elif self.metric == 'MANHATTAN':
             norm = np.sum(np.abs(point))
+        elif self.metric == 'CUSTOM':
+            norm = np.linalg.norm(point, ord=self.power)
         else:
             raise Exception('Unknown metric')
         if self.falloff is not None:
