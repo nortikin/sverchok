@@ -93,6 +93,9 @@ class SvLoopOutNode(bpy.types.Node, SverchCustomTreeNode):
                     self.outputs.remove(self.outputs[socket.name])
                     self.outputs.new(socket.links[0].from_socket.bl_idname, socket.name)
                     self.outputs.move(len(self.outputs)-1, idx-1)
+        for inp, self_inp, self_outp in zip(loop_in_node.inputs[1:], self.inputs[2:], self.outputs):
+            self_outp.label = inp.label
+            self_inp.label = inp.label
 
     def bad_inner_loops(self, intersection):
         inner_loops_out, inner_loops_in = [],[]

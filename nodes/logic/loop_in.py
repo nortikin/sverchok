@@ -35,12 +35,33 @@ class SvCreateLoopOut(bpy.types.Operator):
         tree = bpy.data.node_groups[self.idtree]
         node = bpy.data.node_groups[self.idtree].nodes[self.idname]
 
-        new_node =tree.nodes.new('SvLoopOutNode')
+        new_node = tree.nodes.new('SvLoopOutNode')
         new_node.parent = None
         new_node.location = (node.location.x + node.width + 400, node.location.y)
         tree.links.new(node.outputs[0], new_node.inputs[0])
         frame_adjust(node, new_node)
         return {'FINISHED'}
+
+class SvUpdateLoopSocketLabels(bpy.types.Operator):
+    '''Update Loop socket Labels'''
+    bl_idname = "node.update_loop_socket_labels"
+    bl_label = "Update Loop Socket Labels"
+
+    idtree: bpy.props.StringProperty(default='')
+    idname: bpy.props.StringProperty(default='')
+
+    def execute(self, context):
+        node = bpy.data.node_groups[self.idtree].nodes[self.idname]
+        for inp, outp in zip(node.inputs[1:], node.outputs[3:]):
+            outp.label = inp.label
+        if node.outputs[0].is_linked:
+            if node.outputs[0].links[0].to_socket.node.bl_idname == 'SvLoopOutNode':
+                loop_out_node = node.outputs[0].links[0].to_socket.node
+                for inp, self_inp, self_outp in zip(node.inputs[1:], loop_out_node.inputs[2:], loop_out_node.outputs):
+                    self_outp.label = inp.label
+                    self_inp.label = inp.label
+        return {'FINISHED'}
+
 
 class SvLoopInNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -109,6 +130,12 @@ class SvLoopInNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, "max_iterations")
         else:
             layout.prop(self, "list_match")
+        socket_labels = layout.box()
+        socket_labels.label(text="Socket Labels")
+        for socket in self.inputs[1:]:
+            socket_labels.prop(socket, "label", text=socket.name)
+        self.wrapper_tracked_ui_draw_op(socket_labels, "node.update_loop_socket_labels", icon='CON_FOLLOWPATH', text="Update Socket Labels")
+
 
     def rclick_menu(self, context, layout):
         layout.prop_menu_enum(self, 'mode')
@@ -142,6 +169,8 @@ class SvLoopInNode(bpy.types.Node, SverchCustomTreeNode):
                     self.outputs.remove(self.outputs[socket.name])
                     self.outputs.new(socket.links[0].from_socket.bl_idname, socket.name)
                     self.outputs.move(len(self.outputs)-1, idx+3)
+        for inp, outp in zip(self.inputs[1:], self.outputs[3:]):
+            outp.label = inp.label
 
     def process(self):
 
@@ -165,9 +194,11 @@ class SvLoopInNode(bpy.types.Node, SverchCustomTreeNode):
 
 def register():
     bpy.utils.register_class(SvCreateLoopOut)
+    bpy.utils.register_class(SvUpdateLoopSocketLabels)
     bpy.utils.register_class(SvLoopInNode)
 
 
 def unregister():
     bpy.utils.unregister_class(SvLoopInNode)
+    bpy.utils.unregister_class(SvUpdateLoopSocketLabels)
     bpy.utils.unregister_class(SvCreateLoopOut)
