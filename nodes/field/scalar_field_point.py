@@ -41,7 +41,8 @@ class SvScalarFieldPointNode(bpy.types.Node, SverchCustomTreeNode):
     metrics = [
         ('EUCLIDEAN', "Euclidian", "Standard euclidian distance - sqrt(dx*dx + dy*dy + dz*dz)", 0),
         ('CHEBYSHEV', "Chebyshev", "Chebyshev distance - abs(dx, dy, dz)", 1),
-        ('MANHATTAN', "Manhattan", "Manhattan distance - abs(dx) + abs(dy) + abs(dz)", 2)
+        ('MANHATTAN', "Manhattan", "Manhattan distance - abs(dx) + abs(dy) + abs(dz)", 2),
+        ('CUSTOM', "Custom", "Custom Minkowski metric defined by exponent factor", 3)
     ]
 
     metric : EnumProperty(
@@ -49,6 +50,13 @@ class SvScalarFieldPointNode(bpy.types.Node, SverchCustomTreeNode):
         items = metrics,
         default = 'EUCLIDEAN',
         update = updateNode)
+
+    power : FloatProperty(
+            name = "Exponent",
+            description = "Exponent for Minkowski metric",
+            min = 1.0,
+            default = 2,
+            update = updateNode)
 
     def sv_init(self, context):
         d = self.inputs.new('SvVerticesSocket', "Center")
@@ -63,6 +71,8 @@ class SvScalarFieldPointNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'metric')
+        if self.metric == 'CUSTOM':
+            layout.prop(self, 'power')
         layout.prop(self, 'falloff_type')
         layout.prop(self, 'clamp')
 
@@ -81,7 +91,7 @@ class SvScalarFieldPointNode(bpy.types.Node, SverchCustomTreeNode):
                     falloff_func = None
                 else:
                     falloff_func = falloff_array(self.falloff_type, amplitude, coefficient, self.clamp)
-                field = SvScalarFieldPointDistance(np.array(center), metric=self.metric, falloff=falloff_func)
+                field = SvScalarFieldPointDistance(np.array(center), metric=self.metric, power=self.power, falloff=falloff_func)
                 fields_out.append(field)
 
         self.outputs['Field'].sv_set(fields_out)
