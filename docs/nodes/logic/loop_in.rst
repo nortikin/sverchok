@@ -48,6 +48,14 @@ Data0, Data1... output sockets will be created when the last input is linked
 Examples
 --------
 
+Range mode example, Break used to control the maximum vertices.
+
 .. image:: https://user-images.githubusercontent.com/10011941/101332093-22234d00-3875-11eb-819a-68e86ef8c2c2.png
 
+For Each mode example, Skip input used to mask the results.
+
 .. image:: https://user-images.githubusercontent.com/10011941/101334215-e047d600-3877-11eb-89df-cfaaf73dd427.png
+
+You can change socket the socket labels in the N-Panel
+
+.. image:: https://user-images.githubusercontent.com/10011941/101360702-519a7f80-389e-11eb-826d-0e1c5a7152d1.png
