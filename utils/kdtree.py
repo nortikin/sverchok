@@ -43,7 +43,7 @@ class SvKdTree(object):
 
 class SvBlenderKdTree(SvKdTree):
     def __init__(self, points):
-        self.kdtree = kdtree.KDTree()
+        self.kdtree = kdtree.KDTree(len(points))
         for i, v in enumerate(points):
             self.kdtree.insert(v, i)
         self.kdtree.balance()
@@ -63,7 +63,7 @@ class SvBlenderKdTree(SvKdTree):
 
             return locs, idxs, distances
 
-    def query_array(self, needle, count=1):
+    def query_array(self, needle, count=1, **kwargs):
         res = [self.query(item, count) for item in needle]
         locs = [loc for loc, idx, distance in res]
         idxs = [idx for loc, idx, distance in res]

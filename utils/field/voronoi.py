@@ -10,7 +10,7 @@ import numpy as np
 from sverchok.utils.kdtree import SvKdTree
 
 class SvVoronoiFieldData(object):
-    def __init__(self, sites, metric='DISTANCE'):
+    def __init__(self, sites, metric='DISTANCE', power=None):
         self.sites = np.asarray(sites)
         self.metric = metric
 
@@ -20,6 +20,8 @@ class SvVoronoiFieldData(object):
             self.power = 1
         elif metric == 'CHEBYSHEV':
             self.power = np.inf
+        elif metric == 'CUSTOM':
+            self.power = power
         else:
             raise Exception("Unsupported metric")
 
@@ -36,7 +38,7 @@ class SvVoronoiFieldData(object):
             delta = abs(distance1 - distance2)
             return delta, delta * v1
         else:
-            dvs = np.sites - point
+            dvs = self.sites - point
             distances = np.linalg.norm(dvs, axis=1, ord=self.power)
             idx1, idx2 = np.argsort(distances)[:2]
             v1 = (self.sites[idx1] - point)
@@ -55,5 +57,5 @@ class SvVoronoiFieldData(object):
             deltas = np.abs(distances1 - distances2)
             return deltas, deltas[np.newaxis].T * v1s
         else:
-            raise Exception("Not implemented yet")
+            return np.vectorize(self.query, signature='(3)->(),(3)')(points)
 
