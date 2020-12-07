@@ -32,9 +32,9 @@ class SvCreateLoopOut(bpy.types.Operator):
     idname: bpy.props.StringProperty(default='')
 
     def execute(self, context):
-        tree = bpy.data.node_groups[self.idtree]
-        node = bpy.data.node_groups[self.idtree].nodes[self.idname]
 
+        node = context.node
+        tree = node.id_data
         new_node = tree.nodes.new('SvLoopOutNode')
         new_node.parent = None
         new_node.location = (node.location.x + node.width + 400, node.location.y)
@@ -51,7 +51,7 @@ class SvUpdateLoopSocketLabels(bpy.types.Operator):
     idname: bpy.props.StringProperty(default='')
 
     def execute(self, context):
-        node = bpy.data.node_groups[self.idtree].nodes[self.idname]
+        node = context.node
         for inp, outp in zip(node.inputs[1:], node.outputs[3:]):
             outp.label = inp.label
         if node.outputs[0].is_linked:
@@ -63,7 +63,7 @@ class SvUpdateLoopSocketLabels(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvLoopInNode(bpy.types.Node, SverchCustomTreeNode):
+class SvLoopInNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: For Loop Start,
     Tooltip: Start node to define a nodes for-loop.
@@ -88,6 +88,10 @@ class SvLoopInNode(bpy.types.Node, SverchCustomTreeNode):
     max_iterations: IntProperty(
         name='Max Iterations', description='Maximum allowed iterations',
         default=5, min=2, update=update_max_iterations)
+        
+    linked_to_loop_out: BoolProperty(
+        name='linked_to_loop_out', description='Maximum allowed iterations',
+        default=False)
 
     def update_mode(self, context):
         self.inputs['Iterations'].hide_safe = self.mode == "For_Each"
@@ -121,7 +125,7 @@ class SvLoopInNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'Total Loops')
 
     def draw_buttons(self,ctx, layout):
-        if not (self.outputs[0].is_linked and self.outputs[0].links[0].to_socket.node.bl_idname=='SvLoopOutNode'):
+        if not self.linked_to_loop_out:
             self.wrapper_tracked_ui_draw_op(layout, "node.create_loop_out", icon='CON_FOLLOWPATH', text="Create Loop Out")
         layout.prop(self, 'mode', expand=True)
     def draw_buttons_ext(self, ctx, layout):
@@ -171,6 +175,10 @@ class SvLoopInNode(bpy.types.Node, SverchCustomTreeNode):
                     self.outputs.move(len(self.outputs)-1, idx+3)
         for inp, outp in zip(self.inputs[1:], self.outputs[3:]):
             outp.label = inp.label
+        if self.outputs[0].is_linked and self.outputs[0].links[0].to_socket.node.bl_idname=='SvLoopOutNode':
+            self.linked_to_loop_out = True
+        else:
+            self.linked_to_loop_out = False
 
     def process(self):
 

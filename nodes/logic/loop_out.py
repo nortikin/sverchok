@@ -33,7 +33,7 @@ def process_looped_nodes(node_list, tree_nodes, process_name, iteration):
 
 socket_labels = { 'Range': 'Break', 'For_Each': 'Skip'}
 
-class SvLoopOutNode(bpy.types.Node, SverchCustomTreeNode):
+class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: For Loop End,
     Tooltip: End node to define a nodes for-loop.
