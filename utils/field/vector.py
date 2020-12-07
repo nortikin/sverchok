@@ -15,6 +15,7 @@ from mathutils import noise
 from sverchok.utils.curve import SvCurveLengthSolver, SvNormalTrack, MathutilsRotationCalculator
 from sverchok.utils.geom import LineEquation, CircleEquation3D
 from sverchok.utils.math import from_cylindrical, from_spherical
+from sverchok.utils.field.voronoi import SvVoronoiFieldData
 
 
 ##################
@@ -1010,28 +1011,23 @@ class SvBendAlongSurfaceField(SvVectorField):
 
 class SvVoronoiVectorField(SvVectorField):
 
-    def __init__(self, vertices):
-        self.kdt = kdtree.KDTree(len(vertices))
-        for i, v in enumerate(vertices):
-            self.kdt.insert(v, i)
-        self.kdt.balance()
+    def __init__(self, vertices=None, voronoi=None, metric='DISTANCE'):
+        if vertices is None and voronoi is None:
+            raise Exception("Either vertices or voronoi must be specified")
+        if voronoi is not None:
+            self.voronoi = voronoi
+        else:
+            self.voronoi = SvVoronoiFieldData(vertices, metric=metric)
         self.__description__ = "Voronoi"
 
     def evaluate(self, x, y, z):
-        v = Vector((x,y,z))
-        vs = self.kdt.find_n(v, 2)
-        if len(vs) != 2:
-            raise Exception("Unexpected kdt result at (%s,%s,%s): %s" % (x, y, z, vs))
-        t1, t2 = vs
-        d1 = t1[2]
-        d2 = t2[2]
-        delta = abs(d1 - d2)
-        v1 = (t1[0] - v).normalized()
-        return delta * np.array(v1)
+        r = self.voronoi.query(np.array([x,y,z]))
+        return r[1]
 
     def evaluate_grid(self, xs, ys, zs):
-        points = np.vectorize(self.evaluate, signature='(),(),()->(3)')(xs,ys,zs).T
-        return points[0], points[1], points[2]
+        vs = np.stack((xs,ys,zs)).T
+        r = self.voronoi.query_array(vs)
+        return r[1]
 
 class SvScalarFieldCurveMap(SvVectorField):
     def __init__(self, scalar_field, curve, mode):

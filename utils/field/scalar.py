@@ -812,21 +812,20 @@ class SvScalarFieldPrincipalCurvature(SvScalarField):
 class SvVoronoiScalarField(SvScalarField):
     __description__ = "Voronoi"
 
-    def __init__(self, vertices):
-        self.kdt = kdtree.KDTree(len(vertices))
-        for i, v in enumerate(vertices):
-            self.kdt.insert(v, i)
-        self.kdt.balance()
+    def __init__(self, vertices=None, voronoi=None, metric='DISTANCE'):
+        if vertices is None and voronoi is None:
+            raise Exception("Either vertices or voronoi must be specified")
+        if voronoi is not None:
+            self.voronoi = voronoi
+        else:
+            self.voronoi = SvVoronoiFieldData(vertices, metric=metric)
 
     def evaluate(self, x, y, z):
-        vs = self.kdt.find_n((x,y,z), 2)
-        if len(vs) != 2:
-            raise Exception("Unexpected kdt result at (%s,%s,%s): %s" % (x, y, z, vs))
-        t1, t2 = vs
-        distance1 = t1[2]
-        distance2 = t2[2]
-        return abs(distance1 - distance2)
+        r = self.voronoi.query(np.array([x,y,z]))
+        return r[0]
 
     def evaluate_grid(self, xs, ys, zs):
-        return np.vectorize(self.evaluate, signature='(),(),()->()')(xs,ys,zs)
+        vs = np.stack((xs,ys,zs)).T
+        r = self.voronoi.query_array(vs)
+        return r[0]
 

@@ -11,6 +11,7 @@ from sverchok.utils.logging import info, exception
 
 from sverchok.utils.field.scalar import SvVoronoiScalarField
 from sverchok.utils.field.vector import SvVoronoiVectorField
+from sverchok.utils.field.voronoi import SvVoronoiFieldData
 
 class SvVoronoiFieldNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -21,6 +22,21 @@ class SvVoronoiFieldNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Voronoi Field'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VORONOI'
+
+    metrics = [
+            ('DISTANCE', 'Euclidan', "Eudlcian distance metric", 0),
+            ('MANHATTAN', 'Manhattan', "Manhattan distance metric", 1),
+            ('CHEBYSHEV', 'Chebyshev', "Chebyshev distance", 2)
+        ]
+
+    metric : EnumProperty(
+            name = "Metric",
+            items = metrics,
+            default = 'DISTANCE',
+            update = updateNode)
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'metric')
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
@@ -37,8 +53,9 @@ class SvVoronoiFieldNode(bpy.types.Node, SverchCustomTreeNode):
         sfields_out = []
         vfields_out = []
         for vertices in vertices_s:
-            sfield = SvVoronoiScalarField(vertices)
-            vfield = SvVoronoiVectorField(vertices)
+            data = SvVoronoiFieldData(vertices, metric=self.metric)
+            sfield = SvVoronoiScalarField(voronoi=data)
+            vfield = SvVoronoiVectorField(voronoi=data)
             sfields_out.append(sfield)
             vfields_out.append(vfield)
 
