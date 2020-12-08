@@ -554,6 +554,9 @@
     SvCustomSwitcher
     SvRangeSwitchNode
     ---
+    SvLoopInNode
+    SvLoopOutNode
+    ---
     SvEvolverNode
     SvGenesHolderNode
 
