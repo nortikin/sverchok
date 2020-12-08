@@ -31,7 +31,7 @@ def process_looped_nodes(node_list, tree_nodes, process_name, iteration):
         except Exception as e:
             raise type(e)(str(e) + f' @ {node_name} node. {process_name} number: {iteration}')
 
-socket_labels = { 'Range': 'Break', 'For_Each': 'Skip'}
+socket_labels = {'Range': 'Break', 'For_Each': 'Skip'}
 
 class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -113,8 +113,8 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
             if not inner_loop_in_node.name in inner_loops_in:
                 print("Inner Loop not well connected")
                 return True
-            else:
-                inner_loops_in.remove(inner_loop_in_node.name)
+            inner_loops_in.remove(inner_loop_in_node.name)
+
         if inner_loops_in:
             return True
 

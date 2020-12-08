@@ -28,9 +28,6 @@ class SvCreateLoopOut(bpy.types.Operator):
     bl_idname = "node.create_loop_out"
     bl_label = "Create Loop Out"
 
-    idtree: bpy.props.StringProperty(default='')
-    idname: bpy.props.StringProperty(default='')
-
     def execute(self, context):
 
         node = context.node
@@ -46,9 +43,6 @@ class SvUpdateLoopSocketLabels(bpy.types.Operator):
     '''Update Loop socket Labels'''
     bl_idname = "node.update_loop_socket_labels"
     bl_label = "Update Loop Socket Labels"
-
-    idtree: bpy.props.StringProperty(default='')
-    idname: bpy.props.StringProperty(default='')
 
     def execute(self, context):
         node = context.node
@@ -88,7 +82,7 @@ class SvLoopInNode(SverchCustomTreeNode, bpy.types.Node):
     max_iterations: IntProperty(
         name='Max Iterations', description='Maximum allowed iterations',
         default=5, min=2, update=update_max_iterations)
-        
+
     linked_to_loop_out: BoolProperty(
         name='linked_to_loop_out', description='Maximum allowed iterations',
         default=False)
@@ -126,7 +120,7 @@ class SvLoopInNode(SverchCustomTreeNode, bpy.types.Node):
 
     def draw_buttons(self,ctx, layout):
         if not self.linked_to_loop_out:
-            self.wrapper_tracked_ui_draw_op(layout, "node.create_loop_out", icon='CON_FOLLOWPATH', text="Create Loop Out")
+            layout.operator("node.create_loop_out", icon='CON_FOLLOWPATH', text="Create Loop Out")
         layout.prop(self, 'mode', expand=True)
     def draw_buttons_ext(self, ctx, layout):
         layout.prop(self, 'mode', expand=True)
@@ -138,8 +132,7 @@ class SvLoopInNode(SverchCustomTreeNode, bpy.types.Node):
         socket_labels.label(text="Socket Labels")
         for socket in self.inputs[1:]:
             socket_labels.prop(socket, "label", text=socket.name)
-        self.wrapper_tracked_ui_draw_op(socket_labels, "node.update_loop_socket_labels", icon='CON_FOLLOWPATH', text="Update Socket Labels")
-
+        socket_labels.operator("node.update_loop_socket_labels", icon='CON_FOLLOWPATH', text="Update Socket Labels")
 
     def rclick_menu(self, context, layout):
         layout.prop_menu_enum(self, 'mode')
