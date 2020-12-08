@@ -121,15 +121,15 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
         return False
 
     def get_affected_nodes(self, loop_in_node):
-        nodes_to_loop_out = make_tree_from_nodes([self.name], self.id_data, down=False)
-        nodes_from_loop_in = make_tree_from_nodes([loop_in_node.name], self.id_data, down=True)
-        nodes_from_loop_out = make_tree_from_nodes([self.name], self.id_data, down=True)
+        tree = self.id_data
+        nodes_to_loop_out = make_tree_from_nodes([self.name], tree, down=False)
+        nodes_from_loop_in = make_tree_from_nodes([loop_in_node.name], tree, down=True)
+        nodes_from_loop_out = make_tree_from_nodes([self.name], tree, down=True)
 
         set_nodes_from_loop_in = frozenset(nodes_from_loop_in)
         set_nodes_from_loop_out = frozenset(nodes_from_loop_out)
-        # set_nodes_to_loop_out = frozenset(nodes_to_loop_out)
 
-        intersection = [x for x in nodes_to_loop_out if x in set_nodes_from_loop_in]
+        intersection = [x for x in nodes_to_loop_out if x in set_nodes_from_loop_in and tree.nodes[x].bl_idname != 'NodeReroute']
         related_nodes = [x for x in nodes_from_loop_in if x not in set_nodes_from_loop_out and x not in intersection]
 
         return intersection, related_nodes
