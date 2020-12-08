@@ -362,7 +362,7 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
             return
 
         self.node_tree: SvGroupTree
-        input_node = self._active_input()
+        input_node = self.active_input()
         updater = self.node_tree.handler.update(GroupEvent(GroupEvent.GROUP_NODE_UPDATE,
                                                            group_nodes_path=[self],
                                                            updated_nodes=[input_node] if input_node else []))
@@ -383,12 +383,12 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
         group_nodes_path.append(self)
 
         self.node_tree: SvGroupTree
-        input_node = self._active_input() if is_input_changed else None
+        input_node = self.active_input() if is_input_changed else None
         return self.node_tree.handler.update(GroupEvent(GroupEvent.GROUP_NODE_UPDATE,
                                                         group_nodes_path,
                                                         [input_node] if input_node else []))
 
-    def _active_input(self) -> Optional[bpy.types.Node]:
+    def active_input(self) -> Optional[bpy.types.Node]:
         # https://developer.blender.org/T82350
         for node in reversed(self.node_tree.nodes):
             if node.bl_idname == 'NodeGroupInput':

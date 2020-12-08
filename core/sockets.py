@@ -54,6 +54,19 @@ def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
     self.node.process_node(context)
 
+
+def update_interface(self, context):
+    """Update group node sockets and update it"""
+    # For now I don't think that `hide value` property should call this function, but in some cases it could be useful
+    # if interface socket will get min and max value parameter then probably Sv sockets also should get it
+    self.id_data.update_sockets()
+    group_tree = self.id_data
+    group_node = group_tree.get_update_path()[-1]
+    input_node = group_node.active_input()
+    if input_node:
+        group_tree.update_nodes([input_node])
+
+
 class SV_MT_SocketOptionsMenu(bpy.types.Menu):
     bl_label = "Socket Options"
 
@@ -951,8 +964,7 @@ class SvStringsSocketInterface(bpy.types.NodeSocketInterface):
 
     default_float_value: bpy.props.FloatProperty(name='Default value')
     default_int_value: bpy.props.IntProperty(name='Default value')
-    default_type: bpy.props.EnumProperty(items=[(i, i, '') for i in ['float', 'int']],
-                                         update=lambda s, c: s.id_data.update_sockets())
+    default_type: bpy.props.EnumProperty(items=[(i, i, '') for i in ['float', 'int']], update=update_interface)
 
     @property
     def default_value(self):
