@@ -199,8 +199,10 @@ def splitted_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offs
 
     for pol, idx in zip(polygon_indices, original_idx):
         p_vertices.extend([v_path[c] for c in pol])
+
         vertex_colors.extend([cols[idx % len(cols)] for c in pol])
-        indices.append([c + idx_offset + total_p_verts for c in range(len(pol))])
+        pol_offset = idx_offset + total_p_verts
+        indices.append(list(range(pol_offset, pol_offset + len(pol))))
         total_p_verts += len(pol)
 
     return p_vertices, vertex_colors, indices, total_p_verts
@@ -214,14 +216,14 @@ def splitted_facet_polygons_geom(polygon_indices, original_idx, v_path, cols, id
     for pol, idx in zip(polygon_indices, original_idx):
         p_vertices.extend([v_path[c] for c in pol])
         factor = (normals[idx].dot(light))*0.5+0.5
-        colors = []
-
-        for c in pol:
-            col = cols[idx % len(cols)]
-            colors.append([col[0]*factor, col[1]*factor, col[2]*factor, col[3]])
+        col = cols[idx % len(cols)]
+        col_pol = [col[0] * factor, col[1] * factor, col[2] * factor, col[3]]
+        colors = [col_pol for c in pol]
 
         vertex_colors.extend(colors)
-        indices.append([c + idx_offset + total_p_verts for c in range(len(pol))])
+        pol_offset = idx_offset + total_p_verts
+        indices.append(list(range(pol_offset, pol_offset + len(pol))))
+
         total_p_verts += len(pol)
 
     return p_vertices, vertex_colors, indices, total_p_verts
@@ -243,7 +245,8 @@ def splitted_facet_polygons_geom_v_cols(polygon_indices, original_idx, v_path, c
             colors.append([col[0] * factor, col[1] * factor, col[2] * factor, col[3]])
 
         vertex_colors.extend(colors)
-        indices.append([c + idx_offset + total_p_verts for c in range(len(pol))])
+        pol_offset = idx_offset + total_p_verts
+        indices.append(list(range(pol_offset, pol_offset + len(pol))))
         total_p_verts += len(pol)
 
     return p_vertices, vertex_colors, indices, total_p_verts
@@ -258,14 +261,14 @@ def splitted_smooth_polygons_geom(polygon_indices, original_idx, v_path, cols, i
     for pol, idx in zip(polygon_indices, original_idx):
         p_vertices.extend([v_path[c] for c in pol])
         colors = []
-
+        col = cols[idx % len(cols)]
         for c in pol:
             factor = (normals[c].dot(light)) * 0.5 + 0.5
-            col = cols[idx % len(cols)]
             colors.append([col[0] * factor, col[1] * factor, col[2] * factor, col[3]])
 
         vertex_colors.extend(colors)
-        indices.append([c + idx_offset + total_p_verts for c in range(len(pol))])
+        pol_offset = idx_offset + total_p_verts
+        indices.append(list(range(pol_offset, pol_offset + len(pol))))
         total_p_verts += len(pol)
 
     return p_vertices, vertex_colors, indices, total_p_verts
@@ -321,7 +324,10 @@ def polygons_geom(config, vecs, polygons, p_vertices, p_vertex_colors, p_indices
             p_vertex_colors.extend(colors)
         else:
             p_vertex_colors.extend([p_cols for v in v_path])
-        p_indices.extend([[c + idx_p_offset[0] for c in p] for p in polygon_indices])
+        if idx_p_offset[0]:
+            p_indices.extend([[c + idx_p_offset[0] for c in p] for p in polygon_indices])
+        else:
+            p_indices.extend(polygon_indices)
         total_p_verts = len(vecs)
     idx_p_offset[0] += total_p_verts
 
@@ -337,7 +343,12 @@ def edges_geom(config, edges, e_col, v_path, e_vertices, e_vertex_colors, e_indi
     else:
         e_vertices.extend(v_path)
         e_vertex_colors.extend([e_col for v in v_path])
-        e_indices.extend([[c + idx_e_offset[0] for c in e] for e in edges])
+        if idx_e_offset[0]:
+            offset = idx_e_offset[0]
+            e_indices.extend([[c + offset for c in e] for e in edges])
+        else:
+            e_indices.extend(edges)
+
         idx_e_offset[0] += len(v_path)
 
 
