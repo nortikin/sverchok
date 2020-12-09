@@ -24,7 +24,6 @@ if TYPE_CHECKING:
 class Node(tw.Node):
     def __init__(self, name: str, index: int, tree: Tree, bl_node):
         self.name = name
-        self.is_input_linked = False  # True if node has straight connection or via other nodes to one of input nodes
 
         self._inputs: List[Socket] = []
         self._outputs: List[Socket] = []
@@ -121,17 +120,13 @@ class Tree(tw.Tree[NodeType]):
                 self._index = i
                 break
 
-        # topology analyze
-        [setattr(n, 'is_input_linked', True) for n in self.bfs_walk(
-            [n for n in self.nodes if n.bl_tween.bl_idname == 'NodeGroupInput'])]
-
     @property
     def id(self) -> str:
         return self._tree_id
 
     @property
     def bl_tween(self) -> SvGroupTree:
-        return bpy.data.node_groups[self._index]
+        return bpy.data.node_groups[self._index]  # todo should keep real tree object instead
 
     @property
     def nodes(self) -> NodesCollection:

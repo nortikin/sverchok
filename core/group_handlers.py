@@ -262,10 +262,14 @@ class NodeIdManager:
         """
         if hasattr(tree, 'bl_idname'):  # it's Blender tree
             tree = Tree(tree)
+
+        # todo should be cashed for optimization?
+        input_linked_nodes = {n for n in tree.bfs_walk([tree.nodes.active_input] if tree.nodes.active_output else [])}
+
         for node in tree.nodes:
             node_id = cls.extract_node_id(node.bl_tween)
 
-            if node.bl_tween.bl_idname not in OUT_ID_NAMES and node.is_input_linked:
+            if node.bl_tween.bl_idname not in OUT_ID_NAMES and node in input_linked_nodes:
                 node.bl_tween.n_id = path + '.' + node_id
             else:
                 node.bl_tween.n_id = node_id
@@ -381,6 +385,9 @@ def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
     out_nodes = [n for n in tree.nodes if n.bl_tween.bl_idname in OUT_ID_NAMES]
     out_nodes.extend([tree.nodes.active_output] if tree.nodes.active_output else [])
 
+    input_linked_nodes = {n for n in tree.bfs_walk([tree.nodes.active_input] if tree.nodes.active_output else [])}
+    output_linked_nodes = {n for n in tree.bfs_walk(out_nodes, direction='DOWNWARD')}
+
     # input
     cancel_updating = False
 
@@ -424,7 +431,7 @@ def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
 
         # update current node statistic if there was any updates
         if should_be_updated:
-            node_path = Path('') if not node.is_input_linked else path
+            node_path = Path('') if node not in input_linked_nodes else path
             NodesStatuses.set(node.bl_tween, node_path, NodeStatistic(node.is_updated, node.error))
             error = node.error if node.error else error
 
@@ -432,15 +439,19 @@ def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
         if is_output_changed:
 
             # reset next nodes statistics (only for context nodes connected to global nodes)
-            if not node.is_input_linked:
+            if node not in input_linked_nodes:
                 for next_node in node.next_nodes:
-                    if next_node.is_input_linked:
+                    if next_node in input_linked_nodes:
                         # this should cause arising all next node statistic because input was changed by global node
                         NodesStatuses.set(next_node.bl_tween, Path(''), NodeStatistic(False))
 
             # next nodes should be update too then
             for next_node in node.next_nodes:
                 next_node.is_updated = False
+                # statistic of below nodes should be set directly into NodesStatuses
+                # because they won't be updated with current task
+                if next_node not in output_linked_nodes:
+                    NodesStatuses.set(next_node.bl_tween, Path(''), NodeStatistic(False))
 
             # output of group tree was changed
             if node.bl_tween.bl_idname == 'NodeGroupOutput':
