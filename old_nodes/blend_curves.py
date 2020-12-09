@@ -14,7 +14,7 @@ class SvBlendCurvesNode(bpy.types.Node, SverchCustomTreeNode):
     Triggers: Blend curves
     Tooltip: Blend two or more curves by use of Bezier curve segment
     """
-    bl_idname = 'SvExBlendCurvesNode'
+    bl_idname = 'SvBlendCurvesNode'
     bl_label = 'Blend Curves'
     bl_icon = 'CURVE_NCURVE'
     sv_icon = 'SV_BLEND_CURVE'
