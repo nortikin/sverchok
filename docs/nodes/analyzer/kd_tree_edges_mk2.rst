@@ -6,9 +6,9 @@ KDT Closest Edges
 Functionality
 -------------
 
-On each update it takes an incoming pool of Vertices and places them in a K-dimensional Tree. 
-It will return the Edges it can make between those vertices pairs that satisfy the constraints 
-imposed by the 4 parameters. 
+On each update it takes an incoming pool of Vertices and places them in a K-dimensional Tree.
+It will return the Edges it can make between those vertices pairs that satisfy the constraints
+imposed by the 4 parameters.
 
 Inputs
 ------
@@ -19,9 +19,9 @@ Parameters
 ----------
 
 +------------+-------+-----------------------------------------------------------+
-| Parmameter | Type  | Description                                               |  
+| Parmameter | Type  | Description                                               |
 +============+=======+===========================================================+
-| mindist    | float | Minimum Distance to accept a pair                         |   
+| mindist    | float | Minimum Distance to accept a pair                         |
 +------------+-------+-----------------------------------------------------------+
 | maxdist    | float | Maximum Distance to accept a pair                         |
 +------------+-------+-----------------------------------------------------------+
@@ -29,6 +29,12 @@ Parameters
 +------------+-------+-----------------------------------------------------------+
 | Skip       | int   | Skip first n found matches if possible                    |
 +------------+-------+-----------------------------------------------------------+
+
+Fast Mode
+---------
+
+This mode requires Scipy and Cython dependencies. It can be from 3 to 10 times faster but lacks of 'maxNum' and 'Skip' properties 
+
 
 Outputs
 -------

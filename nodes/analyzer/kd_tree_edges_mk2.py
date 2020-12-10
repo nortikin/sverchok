@@ -17,12 +17,23 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import IntProperty, FloatProperty
+from bpy.props import IntProperty, FloatProperty, EnumProperty
 import mathutils
-
+import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, enum_item_4, list_match_func, list_match_modes
 from sverchok.utils.sv_KDT_utils import kdt_closest_edges
+from sverchok.dependencies import scipy, Cython
+
+def fast_mode():
+    return scipy is not None and Cython is not None
+
+def scipy_KDT_edges(vs, min_dist, max_dist):
+    new_tree = scipy.spatial.cKDTree
+    kd_tree = new_tree(np.array(vs))
+    indexes_max = kd_tree.query_pairs(r=max_dist)
+    indexes_min = kd_tree.query_pairs(r=min_dist)
+    return list(indexes_max ^ indexes_min)
 
 class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     '''
@@ -34,21 +45,34 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_KDT_EDGES'
 
-    mindist : FloatProperty(
+    mindist: FloatProperty(
         name='mindist', description='Minimum dist', min=0.0,
         default=0.1, update=updateNode)
 
-    maxdist : FloatProperty(
+    maxdist: FloatProperty(
         name='maxdist', description='Maximum dist', min=0.0,
         default=2.0, update=updateNode)
 
-    maxNum : IntProperty(
+    maxNum: IntProperty(
         name='maxNum', description='max edge count',
         default=4, min=1, update=updateNode)
 
-    skip : IntProperty(
+    skip: IntProperty(
         name='skip', description='skip first n',
         default=0, min=0, update=updateNode)
+    def update_sockets(self, context):
+        self.inputs['maxNum'].hide_safe = self.mode == 'Fast'
+        self.inputs['skip'].hide_safe = self.mode == 'Fast'
+        updateNode(self, context)
+    mode: EnumProperty(
+        name='Mode', description='Implementation used',
+        items=enum_item_4(['Fast', 'Complete']),
+        default='Fast', update=update_sockets)
+    list_match: EnumProperty(
+        name="List Match",
+        description="Behavior on different list lengths",
+        items=list_match_modes, default="REPEAT",
+        update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Verts')
@@ -59,34 +83,29 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs.new('SvStringsSocket', 'Edges')
 
+    def draw_buttons(self, context, layout):
+        if fast_mode():
+            layout.prop(self, 'mode')
+    def draw_buttons_ext(self, context, layout):
+        if fast_mode():
+            layout.prop(self, 'mode')
+        layout.prop(self, 'list_match')
+
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
 
-        try:
-            linked = outputs['Edges'].is_linked
-            if not linked:
-                return
-            verts = inputs['Verts'].sv_get(deepcopy=False)[0]
-        except (IndexError, KeyError) as e:
+        if not inputs['Verts'].is_linked or not outputs['Edges'].is_linked:
             return
-
-        optional_sockets = [
-            ['mindist', self.mindist, float],
-            ['maxdist', self.maxdist, float],
-            ['maxNum', self.maxNum, int],
-            ['skip', self.skip, int]]
-
-        socket_inputs = []
-        for s, s_default_value, dtype in optional_sockets:
-            if s in inputs and inputs[s].is_linked:
-                sock_input = dtype(inputs[s].sv_get()[0][0])
-            else:
-                sock_input = s_default_value
-            socket_inputs.append(sock_input)
-
-        kdt_closest_edges(verts, socket_inputs, outputs['Edges'])
-
+        params = [inputs['Verts'].sv_get(deepcopy=False)]
+        match = list_match_func[self.list_match]
+        if fast_mode() and self.mode == 'Fast':
+            params.extend([sk.sv_get(deepcopy=False)[0] for sk in self.inputs[1:3]])
+            result = [scipy_KDT_edges(vs, min_d, max_d) for vs, min_d, max_d  in zip(*match(params))]
+        else:
+            params.extend([sk.sv_get(deepcopy=False)[0] for sk in self.inputs[1:]])
+            result = [kdt_closest_edges(p[0], p[1:]) for p in zip(*match(params))]
+        outputs['Edges'].sv_set(result)
 
 def register():
     bpy.utils.register_class(SvKDTreeEdgesNodeMK2)
