@@ -73,7 +73,7 @@ class SvFourierCurve(SvCurve):
                 result = result + (j+1)*o* coeff*cost 
             else:
                 sint = np.cos((j+1)*o*ts)[np.newaxis].T
-                result = result + (j+1)*o* b*sint
+                result = result + (j+1)*o* coeff*sint
         return result
 
     def second_derivative(self, t):
@@ -170,7 +170,7 @@ class SvFourierCurve(SvCurve):
         if is_cyclic:
             point_idx = len(verts)
             row = ndim*point_idx
-            B[row:row+ndim] = np.array([[0, 0, 0]]).T
+            B[row:row+ndim] = np.array([[0,0,0]]).T
 
         #print(B)
 
@@ -183,5 +183,5 @@ class SvFourierCurve(SvCurve):
         coeffs = np.array(coeffs)
         #print(coeffs)
         
-        return SvFourierCurve(omega, np.array([0,0,0]), coeffs)
+        return SvFourierCurve(omega, np.array([0.0,0.0,0.0]), coeffs)
 
