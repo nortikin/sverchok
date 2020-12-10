@@ -8,6 +8,7 @@ if FreeCAD is None:
 else:
     F = FreeCAD
     import bpy
+    import numpy as np
     from bpy.props import StringProperty, IntProperty, BoolProperty, EnumProperty
     from sverchok.node_tree import SverchCustomTreeNode
     from sverchok.data_structure import updateNode
@@ -48,6 +49,7 @@ else:
 
             self.outputs.new('SvVerticesSocket', "Verts")
             self.outputs.new('SvVerticesSocket', "Edges")
+            self.outputs.new('SvCurveSocket', "Curve")
 
         def process(self):
 
@@ -70,15 +72,18 @@ else:
 
                 Verts = []
                 Edges = []
+                curves_out = []
                 for f in files:
                     S = LoadSketch(f,part_filter,self.max_points,self.inv_filter)
-                    for v_set in S[0]:
-                        Verts.append(v_set)
-                    for e_set in S[1]:
-                        Edges.append(e_set)
-                
+                    for i in S[0]:
+                        Verts.append(i)
+                    for i in S[1]:
+                        Edges.append(i)
+                    for i in S[2]:
+                        curves_out.append(i)                
                 self.outputs['Verts'].sv_set(Verts)
                 self.outputs['Edges'].sv_set(Edges)
+                self.outputs['Curve'].sv_set(curves_out)
             
             else:
                 return
@@ -144,84 +149,131 @@ def LoadSketch(fc_file,part_filter,max_points,inv_filter):
     sketches = []
     Verts = []
     Edges = []
+    Curves = []
 
+    #___________________GET FC FILE
     try:
         F.open(fc_file) 
         Fname = bpy.path.display_name_from_filepath(fc_file)
         F.setActiveDocument(Fname)
-        print (Fname)
-        for obj in F.ActiveDocument.Objects:
-
-            if obj.Module == 'Sketcher':
-                
-                if not inv_filter:
-
-                    if obj.Label in part_filter or len(part_filter)==0:
-                        sketches.append(obj)
-
-                else:
-                    if not obj.Label in part_filter:
-                        sketches.append(obj)
-
-        
-        #max_len = max([ g.length() for s in sketches for g in s.Geometry ])
-        max_len=set()
-        for s in sketches:
-            for g in s.Geometry:
-                if not isinstance(g, Part.Point ) :
-                    max_len.add( g.length() )
-        
-        max_len=max(max_len)
-
-        for s in sketches:
-            
-            #get sketch plane
-            s_placement = s.Placement
-
-            for geo in s.Geometry:
-                v_set=[]
-                e_set=[]
-                if isinstance(geo, Part.LineSegment ):
-                    geo_points = 2
-
-                elif isinstance(geo, Part.Point ):
-                    geo_points = 1
-
-                else:
-                    geo_points = int (max_points * geo.length() / max_len) + 1
-            
-                    if geo_points < 2:
-                        geo_points = 2
-
-                if geo_points!=1:
-                    verts = geo.discretize(Number= geo_points )
-                else:
-                    verts = [ (geo.X,geo.Y,geo.Z) ]
-
-                for v in verts:
-                    v_co = F.Vector( ( v[0], v[1], v[2] ) )
-                    
-                    v_placement = F.Placement()
-                    v_placement.Base = v_co
-
-                    abs_co = s_placement.multiply(v_placement)
-                    v_set.append ( ( abs_co.Base.x, abs_co.Base.y, abs_co.Base.z) )
-                
-                for i in range ( len(v_set)-1 ):
-                    e_set.append ( (i,i+1) )
-
-                Verts.append (v_set)
-                Edges.append (e_set)
-
 
     except:
         info('FCStd read error')
-
-    finally:
-        F.closeDocument(Fname)
-
-    return (Verts,Edges)
+        return (Verts,Edges)
     
+    #___________________SEARCH FOR SKETCHES
+
+    for obj in F.ActiveDocument.Objects:
+
+        if obj.Module == 'Sketcher':
+            
+            if not inv_filter:
+
+                if obj.Label in part_filter or len(part_filter)==0:
+                    sketches.append(obj)
+
+            else:
+                if not obj.Label in part_filter:
+                    sketches.append(obj)
+
+    if len(sketches)==0: 
+        return (Verts,Edges)
+
+    #__ search for max single perimeter in sketches geometry
+    #__ (to use as resampling reference)
+
+    max_len=set()
+    for s in sketches:
+        for g in s.Geometry:
+            if not isinstance(g, Part.Point ) :
+                max_len.add( g.length() )
+    
+    max_len=max(max_len)
+
+    #___________________CONVERT SKETCHES GEOMETRY
+
+    for s in sketches:
+        
+        #get sketch plane placement to local - global conversion
+        s_placement = s.Placement
+
+        for geo in s.Geometry:
+            v_set=[]
+            e_set=[]
+            
+            if isinstance(geo, Part.LineSegment ):
+                geo_points = 2
+
+            elif isinstance(geo, Part.Point ):
+                geo_points = 1
+
+            else:
+                geo_points = int (max_points * geo.length() / max_len) + 1
+        
+                if geo_points < 2:
+                    geo_points = 2
+
+            if geo_points!=1:
+                verts = geo.discretize(Number = geo_points )
+            else:
+                verts = [ (geo.X,geo.Y,geo.Z) ]
+
+            for v in verts:
+                v_co = F.Vector( ( v[0], v[1], v[2] ) )
+
+                abs_co = FreeCAD_abs_placement(s_placement,v_co).Base
+
+                v_set.append ( (abs_co.x, abs_co.y, abs_co.z) )
+
+            for i in range ( len(v_set)-1 ):
+                e_set.append ( (i,i+1) )
+
+            Verts.append (v_set)
+            Edges.append (e_set)
+
+            if isinstance(geo, Part.LineSegment ):
+                from sverchok.utils.curve import SvLine
+                point1 = np.array(v_set[0])
+                direction = np.array(v_set[1]) - point1
+                line = SvLine(point1, direction)
+                line.u_bounds = (0, 1)
+                Curves.append(line)
+
+            elif isinstance(geo, Part.Circle ) or isinstance(geo, Part.ArcOfCircle ):
+                from sverchok.utils.curve import SvCircle
+                from mathutils import Matrix
+                
+                center = F.Vector( (geo.Location.x,geo.Location.y,geo.Location.z) )
+
+                c_placement = FreeCAD_abs_placement(s_placement,center)
+
+                placement_mat = c_placement.toMatrix() 
+                b_mat = Matrix()
+                
+                r=0; c=0
+                for i in placement_mat.A:
+                    if c == 4: 
+                        r+=1; c=0
+                        
+                    b_mat[r][c]=i
+                    c+=1
+
+                curve = SvCircle(matrix=b_mat, radius=geo.Radius)
+                if isinstance(geo, Part.ArcOfCircle ):
+                    curve.u_bounds = (geo.FirstParameter, geo.LastParameter)
+
+                Curves.append(curve)
+
+
+    F.closeDocument(Fname)
+    return (Verts,Edges,Curves)
+
+def FreeCAD_abs_placement(sketch_placement,p_co):
+    p_co = F.Vector( ( p_co[0], p_co[1], p_co[2] ) )
+    local_placement = F.Placement()
+    local_placement.Base = p_co
+    return sketch_placement.multiply(local_placement)
+
 def register():
     bpy.utils.register_class(SvReadFCStdSketchNode)
     bpy.utils.register_class(SvShowFcstdSketchNamesOp)
