@@ -26,7 +26,7 @@ from mathutils.bvhtree import BVHTree
 
 from sverchok.utils.sv_mesh_utils import mask_vertices, polygons_to_edges
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, bmesh_clip
-from sverchok.utils.geom import calc_bounds, bounding_sphere
+from sverchok.utils.geom import calc_bounds, bounding_sphere, PlaneEquation
 from sverchok.utils.math import project_to_sphere, weighted_center
 from sverchok.dependencies import scipy, FreeCAD
 
@@ -159,32 +159,97 @@ def calc_bvh_projections(bvh, sites):
             projections.append(loc)
     return np.array(projections)
 
-def voronoi_on_mesh_impl(bvh, sites, thickness, clip_inner=True, clip_outer=True, do_clip=True, clipping=1.0, make_regions=True):
+def voronoi_on_mesh_bmesh(verts, faces, sites, spacing=0.0, fill=True):
+
+    def get_ridges_per_site(voronoi):
+        result = defaultdict(list)
+        for ridge_idx in range(len(voronoi.ridge_points)):
+            site1_idx, site2_idx = tuple(voronoi.ridge_points[ridge_idx])
+            site1 = voronoi.points[site1_idx]
+            site2 = voronoi.points[site2_idx]
+            middle = (site1 + site2) * 0.5
+            normal = site2 - site1
+            plane = PlaneEquation.from_normal_and_point(normal, middle)
+            result[site1_idx].append(plane)
+            result[site2_idx].append(plane)
+        return result
+
+    def cut_cell(verts, faces, planes, site):
+        src_mesh = bmesh_from_pydata(verts, [], faces, normal_update=True)
+        for plane in planes:
+            geom_in = src_mesh.verts[:] + src_mesh.edges[:] + src_mesh.faces[:]
+            
+            plane_co = plane.projection_of_point(site)
+            plane_no = plane.normal
+            if plane.side_of_point(site) > 0:
+                plane_no = - plane_no
+
+            plane_co = plane_co - 0.5 * spacing * plane_no.normalized()
+            #print(f"Plane co {plane_co}, no {plane_no}")
+            res = bmesh.ops.bisect_plane(
+                    src_mesh, geom=geom_in, dist=0.00001,
+                    plane_co = plane_co,
+                    plane_no = plane_no,
+                    use_snap_center = False,
+                    clear_outer = True,
+                    clear_inner = False
+                )
+                
+            if fill:
+                surround = [e for e in res['geom_cut'] if isinstance(e, bmesh.types.BMEdge)]
+                fres = bmesh.ops.edgenet_prepare(src_mesh, edges=surround)
+                bmesh.ops.edgeloop_fill(src_mesh, edges=fres['edges'])  
+        
+        return pydata_from_bmesh(src_mesh)
+
+    verts_out = []
+    edges_out = []
+    faces_out = []
+
+    voronoi = Voronoi(np.array(sites))
+    ridges_per_site = get_ridges_per_site(voronoi)
+    for site_idx in range(len(sites)):
+        new_verts, new_edges, new_faces = cut_cell(verts, faces, ridges_per_site[site_idx], sites[site_idx])
+        if new_verts:
+            verts_out.append(new_verts)
+            edges_out.append(new_edges)
+            faces_out.append(new_faces)
+
+    return verts_out, edges_out, faces_out
+
+def voronoi_on_mesh(verts, faces, sites, thickness,
+    spacing = 0.0,
+    clip_inner=True, clip_outer=True, do_clip=True,
+    clipping=1.0, mode = 'REGIONS'):
+    bvh = BVHTree.FromPolygons(verts, faces)
     npoints = len(sites)
 
-    if clip_inner or clip_outer:
-        normals = calc_bvh_normals(bvh, sites)
-    k = 0.5*thickness
-    sites = np.array(sites)
-    all_points = sites.tolist()
-    if clip_outer:
-        plus_points = sites + k*normals
-        all_points.extend(plus_points.tolist())
-    if clip_inner:
-        minus_points = sites - k*normals
-        all_points.extend(minus_points.tolist())
+    if mode in {'REGIONS', 'RIDGES'}:
+        if clip_inner or clip_outer:
+            normals = calc_bvh_normals(bvh, sites)
+        k = 0.5*thickness
+        sites = np.array(sites)
+        all_points = sites.tolist()
+        if clip_outer:
+            plus_points = sites + k*normals
+            all_points.extend(plus_points.tolist())
+        if clip_inner:
+            minus_points = sites - k*normals
+            all_points.extend(minus_points.tolist())
 
-    return voronoi3d_layer(npoints, all_points,
-            make_regions = make_regions,
-            do_clip = do_clip,
-            clipping = clipping)
+        return voronoi3d_layer(npoints, all_points,
+                make_regions = (mode == 'REGIONS'),
+                do_clip = do_clip,
+                clipping = clipping)
 
-def voronoi_on_mesh(verts, faces, sites, thickness, clip_inner=True, clip_outer=True, do_clip=True, clipping=1.0, make_regions=True):
-    bvh = BVHTree.FromPolygons(verts, faces)
-    return voronoi_on_mesh_impl(bvh, sites, thickness,
-            clip_inner = clip_inner, clip_outer = clip_outer,
-            do_clip = do_clip, clipping = clipping,
-            make_regions = make_regions)
+    else: # VOLUME, SURFACE
+        all_points = sites
+        if do_clip:
+            normals = calc_bvh_normals(bvh, sites)
+            plus_points = sites + clipping*normals
+            all_points.extend(plus_points.tolist())
+        return voronoi_on_mesh_bmesh(verts, faces, all_points,
+                spacing = spacing, fill = (mode == 'VOLUME'))
 
 def project_solid_normals(shell, pts, thickness, add_plus=True, add_minus=True, predicate_plus=None, predicate_minus=None):
     k = 0.5*thickness
