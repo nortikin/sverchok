@@ -22,18 +22,11 @@ import mathutils
 import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, enum_item_4, list_match_func, list_match_modes
-from sverchok.utils.sv_KDT_utils import kdt_closest_edges
-from sverchok.dependencies import scipy, Cython
+from sverchok.utils.sv_KDT_utils import kdt_closest_edges, scipy_kdt_closest_edges_fast, scipy_kdt_closest_max_queried, scipy_kdt_closest_edges_no_skip
+from sverchok.dependencies import scipy
 
 def fast_mode():
-    return scipy is not None and Cython is not None
-
-def scipy_KDT_edges(vs, min_dist, max_dist):
-    new_tree = scipy.spatial.cKDTree
-    kd_tree = new_tree(np.array(vs))
-    indexes_max = kd_tree.query_pairs(r=max_dist)
-    indexes_min = kd_tree.query_pairs(r=min_dist)
-    return list(indexes_max ^ indexes_min)
+    return scipy is not None
 
 class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     '''
@@ -60,13 +53,15 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     skip: IntProperty(
         name='skip', description='skip first n',
         default=0, min=0, update=updateNode)
+
     def update_sockets(self, context):
         self.inputs['maxNum'].hide_safe = self.mode == 'Fast'
-        self.inputs['skip'].hide_safe = self.mode == 'Fast'
+        self.inputs['skip'].hide_safe = self.mode in ['Fast', 'No_Skip']
+
         updateNode(self, context)
     mode: EnumProperty(
         name='Mode', description='Implementation used',
-        items=enum_item_4(['Fast', 'Complete']),
+        items=enum_item_4(['Fast', 'Max Queried', 'No Skip', 'Complete']),
         default='Fast', update=update_sockets)
     list_match: EnumProperty(
         name="List Match",
@@ -80,7 +75,8 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', 'maxdist').prop_name = 'maxdist'
         self.inputs.new('SvStringsSocket', 'maxNum').prop_name = 'maxNum'
         self.inputs.new('SvStringsSocket', 'skip').prop_name = 'skip'
-
+        self.inputs['maxNum'].hide_safe = True
+        self.inputs['skip'].hide_safe = True
         self.outputs.new('SvStringsSocket', 'Edges')
 
     def draw_buttons(self, context, layout):
@@ -99,9 +95,17 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             return
         params = [inputs['Verts'].sv_get(deepcopy=False)]
         match = list_match_func[self.list_match]
-        if fast_mode() and self.mode == 'Fast':
-            params.extend([sk.sv_get(deepcopy=False)[0] for sk in self.inputs[1:3]])
-            result = [scipy_KDT_edges(vs, min_d, max_d) for vs, min_d, max_d  in zip(*match(params))]
+        if fast_mode() and self.mode != 'Complete':
+            if self.mode == 'Fast':
+                params.extend([sk.sv_get(deepcopy=False)[0] for sk in self.inputs[1:3]])
+                result = [scipy_kdt_closest_edges_fast(vs, min_d, max_d) for vs, min_d, max_d  in zip(*match(params))]
+            elif self.mode == 'Max_Queried':
+                params.extend([sk.sv_get(deepcopy=False)[0] for sk in self.inputs[1:]])
+                result = [scipy_kdt_closest_max_queried(vs, min_d, max_d, max_num, skip) for vs, min_d, max_d, max_num, skip  in zip(*match(params))]
+            elif self.mode == 'No_Skip':
+                params.extend([sk.sv_get(deepcopy=False)[0] for sk in self.inputs[1:]])
+                result = [scipy_kdt_closest_edges_no_skip(vs, min_d, max_d, max_num, skip) for vs, min_d, max_d, max_num, skip  in zip(*match(params))]
+
         else:
             params.extend([sk.sv_get(deepcopy=False)[0] for sk in self.inputs[1:]])
             result = [kdt_closest_edges(p[0], p[1:]) for p in zip(*match(params))]
