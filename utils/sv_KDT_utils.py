@@ -82,31 +82,34 @@ def kdt_closest_edges(verts, socket_inputs):
     skip = max(skip, 0)
 
     # makes edges
-    e = set()
-
+    edges = set()
+    edges_add = edges.add
+    max_dist = abs(maxdist)
+    min_dist = abs(mindist)
     for i, vtx in enumerate(verts):
         num_edges = 0
 
         # this always returns closest first followed by next closest, etc.
         #              co  index  dist
-        for edge_idx, (_, index, dist) in enumerate(kd.find_range(vtx, abs(maxdist))):
+        for edge_idx, (_, index, dist) in enumerate(kd.find_range(vtx, max_dist)):
 
             if skip > 0:
                 if edge_idx < skip:
                     continue
 
-            if (dist <= abs(mindist)) or (i == index):
+            if (dist <= min_dist) or (i == index):
                 continue
 
             edge = tuple(sorted([i, index]))
-            if not edge in e:
-                e.add(edge)
+            if not edge in edges:
+                edges_add(edge)
                 num_edges += 1
 
             if num_edges == maxNum:
                 break
 
-    return list(e)
+    return list(edges)
+
 
 def scipy_kdt_closest_edges_fast(vs, min_dist, max_dist):
     new_tree = scipy.spatial.cKDTree
