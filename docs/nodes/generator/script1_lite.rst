@@ -109,9 +109,12 @@ see a working script that uses two enums here: https://github.com/nortikin/sverc
 Syntax
 ------
 
+To intialize a scriptnode you must provide a "directive", it's where you define sockets and other scriptnode specific properties. The directive is rigidly wrapped with
+a pair of tripple quote marks: **"""**, never single quotes like **'''**.
+
 The syntax looks like this::
 
-    """   (tripple """ quote marks to demark the header, not single quotes like ''' )
+    """   
     in socketname  type  default=x nested=n
     in socketname2 type  default=x nested=n
     out socketname type  # (optional)
