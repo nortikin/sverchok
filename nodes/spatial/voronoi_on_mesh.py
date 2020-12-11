@@ -134,7 +134,7 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
             row.prop(self, 'clip_outer', toggle=True)
         layout.prop(self, 'do_clip', toggle=True)
         layout.prop(self, 'normals')
-        layout.label(text='Output:')
+        layout.label(text='Output nesting:')
         layout.prop(self, 'join_mode', text='')
 
     def process(self):
