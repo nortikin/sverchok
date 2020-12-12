@@ -2181,3 +2181,12 @@ def bounding_sphere(vertices, algorithm=TRIVIAL):
     radius = norms.max()
     return c, radius
 
+def scale_relative(points, center, scale):
+    points = np.asarray(points)
+    center = np.asarray(center)
+    points -= center
+
+    points = points * scale
+
+    return (points + center).tolist()
+

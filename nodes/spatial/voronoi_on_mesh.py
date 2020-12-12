@@ -70,7 +70,6 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
 
     @throttle_and_update_node
     def update_sockets(self, context):
-        self.inputs['Clipping'].hide_safe = not self.do_clip
         #self.inputs['Thickness'].hide_safe = self.mode not in {'RIDGES', 'REGIONS'}
         self.inputs['Spacing'].hide_safe = self.mode not in {'VOLUME', 'SURFACE'}
 
@@ -80,11 +79,6 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         default = 'VOLUME',
         update = update_sockets)
     
-    do_clip : BoolProperty(
-        name = "Clip Box",
-        default = True,
-        update = update_sockets)
-
 #     clip_inner : BoolProperty(
 #         name = "Clip Inner",
 #         default = True,
@@ -94,12 +88,6 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
 #         name = "Clip Outer",
 #         default = True,
 #         update = updateNode)
-
-    clipping : FloatProperty(
-        name = "Clipping",
-        default = 1.0,
-        min = 0.0,
-        update = updateNode)
 
     join_modes = [
             ('FLAT', "Flat list", "Output a single flat list of mesh objects (Voronoi diagram ridges / regions) for all input meshes", 0),
@@ -119,7 +107,6 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', "Sites")
 #         self.inputs.new('SvStringsSocket', 'Thickness').prop_name = 'thickness'
         self.inputs.new('SvStringsSocket', 'Spacing').prop_name = 'spacing'
-        self.inputs.new('SvStringsSocket', "Clipping").prop_name = 'clipping'
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "Faces")
@@ -132,7 +119,6 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
 #             row = layout.row(align=True)
 #             row.prop(self, 'clip_inner', toggle=True)
 #             row.prop(self, 'clip_outer', toggle=True)
-        layout.prop(self, 'do_clip', toggle=True)
         layout.prop(self, 'normals')
         layout.label(text='Output nesting:')
         layout.prop(self, 'join_mode', text='')
@@ -147,7 +133,6 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         sites_in = self.inputs['Sites'].sv_get()
         #thickness_in = self.inputs['Thickness'].sv_get()
         spacing_in = self.inputs['Spacing'].sv_get()
-        clipping_in = self.inputs['Clipping'].sv_get()
 
         verts_in = ensure_nesting_level(verts_in, 4)
         input_level = get_data_nesting_level(sites_in)
@@ -155,22 +140,21 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         faces_in = ensure_nesting_level(faces_in, 4)
         #thickness_in = ensure_nesting_level(thickness_in, 2)
         spacing_in = ensure_nesting_level(spacing_in, 2)
-        clipping_in = ensure_nesting_level(clipping_in, 2)
 
         nested_output = input_level > 3
 
         verts_out = []
         edges_out = []
         faces_out = []
-        for params in zip_long_repeat(verts_in, faces_in, sites_in, spacing_in, clipping_in):
+        for params in zip_long_repeat(verts_in, faces_in, sites_in, spacing_in):
             new_verts = []
             new_edges = []
             new_faces = []
-            for verts, faces, sites, spacing, clipping in zip_long_repeat(*params):
+            for verts, faces, sites, spacing in zip_long_repeat(*params):
                 verts, edges, faces = voronoi_on_mesh(verts, faces, sites, thickness=0,
                             spacing = spacing,
                             #clip_inner = self.clip_inner, clip_outer = self.clip_outer,
-                            do_clip=self.do_clip, clipping=clipping,
+                            do_clip=True, clipping=None,
                             mode = self.mode)
                 if self.normals:
                     verts, edges, faces = recalc_normals(verts, edges, faces, loop=True)

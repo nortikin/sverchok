@@ -137,7 +137,7 @@ def field_random_probe(field, bbox, count,
             good_verts = []
             for candidate in candidates:
                 if _check_min_distance(candidate, generated_verts + good_verts, min_r):
-                    good_verts.append(candidate.tolist())
+                    good_verts.append(candidate)
 
         if predicate is not None:
             pairs = [(vert, r) for vert, r in zip(good_verts, good_radiuses) if predicate(vert)]
