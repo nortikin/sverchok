@@ -15,7 +15,7 @@ Generators
    image
    line_mk4
    ngon
-   plane_mk3
+   plane_mk4
    random_vector_mk3
    script1_lite
    sphere

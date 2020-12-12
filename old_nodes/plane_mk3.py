@@ -238,7 +238,7 @@ class SvPlaneNodeMk3(DraftMode, bpy.types.Node, SverchCustomTreeNode):
         ('FLAT', 'Flat Output', 'Flat to object level', 2),
     ]
 
-
+    replacement_nodes = [('SvPlaneNodeMk4', None, None)]
     def hide_socket(self, name, hide):
         if hide:
             self.inputs[name].hide_safe = True
@@ -421,7 +421,9 @@ class SvPlaneNodeMk3(DraftMode, bpy.types.Node, SverchCustomTreeNode):
 
     def rclick_menu(self, context, layout):
         '''right click sv_menu items'''
-        layout.prop_menu_enum(self, "center", text="Origin")
+        layout.label(text="Upgrade node:")
+        self.node_replacement_menu(context, layout)
+        layout.prop(self, "center", text="Origin")
         layout.prop_menu_enum(self, "correct_output", text="Simplify Output")
         layout.prop_menu_enum(self, "list_match_global", text="List Match Global")
         layout.prop_menu_enum(self, "list_match_local", text="List Match Local")
