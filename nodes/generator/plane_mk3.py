@@ -277,9 +277,26 @@ class SvPlaneNodeMk3(DraftMode, bpy.types.Node, SverchCustomTreeNode):
 
         updateNode(self, context)
 
+    def update_labels_and_update(self, context):
+        self.update_properties()
+        updateNode(self, context)
+
+    def update_properties(self):
+        first_axis = self.direction[0]
+        second_axis = self.direction[1]
+
+        self.inputs['Step X'].label = f'Step {first_axis}'
+        self.inputs['Step Y'].label = f'Step {second_axis}'
+
+        self.inputs['Size X'].label = f'Size {first_axis}'
+        self.inputs['Size Y'].label = f'Size {second_axis}'
+
+        self.inputs['Num X'].label = f'Num {first_axis}'
+        self.inputs['Num Y'].label = f'Num {second_axis}'
+
     direction: EnumProperty(
         name="Direction", items=directionItems,
-        default="XY", update=updateNode)
+        default="XY", update=update_labels_and_update)
     dimension_mode: EnumProperty(
         name="Mode", items=dimensionsItems,
         default="SIZE", update=update_sockets)
@@ -375,6 +392,10 @@ class SvPlaneNodeMk3(DraftMode, bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Num Y").prop_name = 'numy'
         self.inputs.new('SvStringsSocket', "Step X").prop_name = 'stepx'
         self.inputs.new('SvStringsSocket', "Step Y").prop_name = 'stepy'
+        for socket in self.inputs:
+            socket.custom_draw = 'draw_prop_socket'
+            socket.label = socket.name
+
         self.inputs['Step X'].hide_safe = True
         self.inputs['Step Y'].hide_safe = True
         self.inputs.new('SvMatrixSocket', "Matrix")
@@ -382,6 +403,14 @@ class SvPlaneNodeMk3(DraftMode, bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "Polygons")
+
+    def draw_prop_socket(self, socket, context, layout):
+        if socket.is_linked:
+            layout.label(text=socket.label + f". {socket.objects_number or ''}")
+        elif socket.prop_name:
+            layout.prop(self, socket.prop_name, text=socket.label)
+        else:
+            layout.label(text=socket.label)
 
     def migrate_props_pre_relink(self, old_node):
         if old_node.normalize:
