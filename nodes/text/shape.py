@@ -44,7 +44,7 @@ class SvDataShapeNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         if self.inputs['Data'].is_linked:
-            self.text = describe_data_shape(self.inputs['Data'].sv_get())
+            self.text = describe_data_shape(self.inputs['Data'].sv_get(deepcopy=False))
             self.outputs['Text Out'].sv_set(self.text)
         else:
             self.text = "No data"
