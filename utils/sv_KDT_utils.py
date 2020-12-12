@@ -34,41 +34,38 @@ def kdt_closest_verts_find_n(verts, v_find, nums, out):
     kd = create_kdt(verts)
     out.extend([kd.find_n(vert, num) for vert, num in zip(*mlr([v_find, nums]))])
 
-
 def kdt_closest_path(verts, radius, start_index, result, cycle):
     '''Creates path joining each vertice with the closest free neighbor'''
     kd = create_kdt(verts)
-    edges = [[]]
     edge_set = set()
-    seen = set()
-    seen_end = set()
+    free_ids = set(range(len(verts)))
     r = radius
 
     idx = start_index
-
+    free_ids.remove(idx)
     for id in range(len(verts)):
 
         n_list = kd.find_range(verts[idx], r[idx])
-        seen_end.add(idx)
+
         found = False
-        for co, index, dist in n_list:
-            if (index == idx) or (index in seen_end):
+        for _, index, _ in n_list:
+            if (index == idx) or (index not in free_ids):
                 continue
-            seen_end.add(index)
+            free_ids.remove(index)
             edge_set.add(tuple(sorted([idx, index])))
             idx = index
             found = True
             break
-        if not found and id <  len(verts):
-            for id_new in range(len(verts)):
-                if id_new not in seen_end:
-                    idx = id_new
-                    break
+
+        if not found:
+            for id_new in free_ids:
+                idx = id_new
+                free_ids.remove(idx)
+                break
     if cycle:
         edge_set.add(tuple(sorted([start_index, idx])))
 
     result.append(list(edge_set))
-
 
 def kdt_closest_edges(verts, socket_inputs):
     '''Join verts pairs by defining distance range and number of connections'''
