@@ -104,7 +104,7 @@ class SvListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
 
-        # changable_sockets(self, 'Data', ['Data', ])
+        changable_sockets(self, 'Data', ['Data', ])
         nesting, descriptions = describe_data_shape_by_level(data, include_numpy_nesting=False)
         rebuild_list = self.prev_nesting_level != nesting
         self.prev_nesting_level = nesting
