@@ -18,6 +18,7 @@
 
 import numpy as np
 from collections import defaultdict
+import itertools
 
 import bpy
 import bmesh
@@ -277,7 +278,7 @@ def voronoi_on_solid_surface(solid, sites, thickness,
         skip_added = True,
         do_clip=True, clipping=1.0,
         tolerance = 1e-4,
-        make_regions=True): 
+        mode = 'REGIONS'):
 
     npoints = len(sites)
     if solid.Shells:
@@ -289,15 +290,28 @@ def voronoi_on_solid_surface(solid, sites, thickness,
         return solid.isInside(pt, tolerance, False)
 
     all_points = sites
-    if clip_inner or clip_outer:
-        all_points.extend(project_solid_normals(shell, sites, thickness,
-                add_plus=clip_outer, add_minus=clip_inner, predicate_minus=check))
+    if mode == 'FACES':
+        if do_clip:
+            x_min, x_max, y_min, y_max, z_min, z_max = calc_bounds(sites, clipping)
+            bounds = list(itertools.product([x_min,x_max], [y_min, y_max], [z_min, z_max]))
+            all_points.extend(bounds)
+#             all_points.extend(project_solid_normals(shell, sites, clipping,
+#                     add_plus=True, add_minus=False))
+        return voronoi3d_layer(npoints, all_points,
+                make_regions = True,
+                skip_added = False,
+                do_clip = False,
+                clipping = 0)
+    else:
+        if clip_inner or clip_outer:
+            all_points.extend(project_solid_normals(shell, sites, thickness,
+                    add_plus=clip_outer, add_minus=clip_inner, predicate_minus=check))
 
-    return voronoi3d_layer(npoints, all_points,
-            make_regions = make_regions,
-            skip_added = skip_added,
-            do_clip = do_clip,
-            clipping = clipping)
+        return voronoi3d_layer(npoints, all_points,
+                make_regions = (mode in {'REGIONS', 'MESH'}),
+                skip_added = skip_added,
+                do_clip = do_clip,
+                clipping = clipping)
 
 def lloyd_on_mesh(verts, faces, sites, thickness, n_iterations, weight_field=None):
     bvh = BVHTree.FromPolygons(verts, faces)
