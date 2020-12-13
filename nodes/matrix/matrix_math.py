@@ -23,7 +23,7 @@ from mathutils import Matrix
 from functools import reduce
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, match_long_repeat)
+from sverchok.data_structure import (updateNode, match_long_repeat, list_match_func, numpy_list_match_modes)
 from sverchok.utils.sv_itertools import (recurse_f_level_control)
 
 operationItems = [
@@ -88,6 +88,12 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
         description="Filter out the scale component of the matrix",
         default=False, update=updateNode)
 
+    list_match: EnumProperty(
+        name="List Match",
+        description="Behavior on different list lengths",
+        items=numpy_list_match_modes, default="REPEAT",
+        update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvMatrixSocket', "A")
         self.inputs.new('SvMatrixSocket', "B")
@@ -132,6 +138,10 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
             row.prop(self, "filter_t", toggle=True, text="T")
             row.prop(self, "filter_r", toggle=True, text="R")
             row.prop(self, "filter_s", toggle=True, text="S")
+            
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, "list_match")
 
     def operation_filter(self, a):
         T, R, S = a.decompose()
@@ -206,7 +216,8 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
         if self.operation in {"MULTIPLY"}:  # multiple input operations
             desired_levels = [1 for i in I]
             ops = [operation, self.prePost]
-            result = recurse_f_level_control(I, ops, matrix_multiply, match_long_repeat, desired_levels)
+            list_match_f = list_match_func[self.list_match]
+            result = recurse_f_level_control(I, ops, matrix_multiply, list_match_f, desired_levels)
 
             outputs['C'].sv_set(result)
 
