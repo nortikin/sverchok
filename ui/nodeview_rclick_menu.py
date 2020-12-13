@@ -66,6 +66,9 @@ def get_output_sockets_map(node):
     # we can surely use regex for this, but for now this will work.
     for socket in node.outputs:
 
+        if socket.hide or socket.hide_safe:
+            continue
+
         socket_name = socket.name.lower()
 
         if not got_verts and ('ver' in socket_name or 'vec' in socket_name):
