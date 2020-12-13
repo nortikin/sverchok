@@ -24,6 +24,7 @@ from functools import reduce
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, match_long_repeat)
+from sverchok.utils.sv_itertools import (recurse_f_level_control)
 
 operationItems = [
     ("MULTIPLY", "Multiply", "Multiply two matrices", 0),
@@ -39,6 +40,15 @@ prePostItems = [
 
 id_mat = [Matrix.Identity(4)]
 ABC = tuple('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+
+def matrix_multiply(params, constant, matching_f):
+    operation, prePost = constant
+    if prePost == "PRE":  # A op B : keep input order
+        parameters = matching_f(params)
+    else:  # B op A : reverse input order
+        parameters = matching_f(params[::-1])
+
+    return [operation(params) for params in zip(*parameters)]
 
 
 class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
@@ -194,38 +204,60 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
         operation = self.get_operation()
 
         if self.operation in {"MULTIPLY"}:  # multiple input operations
-            if self.prePost == "PRE":  # A op B : keep input order
-                parameters = match_long_repeat(I)
-            else:  # B op A : reverse input order
-                parameters = match_long_repeat(I[::-1])
+            desired_levels = [1 for i in I]
+            ops = [operation, self.prePost]
+            result = recurse_f_level_control(I, ops, matrix_multiply, match_long_repeat, desired_levels)
 
-            matrixList = [operation(params) for params in zip(*parameters)]
-
-            outputs['C'].sv_set(matrixList)
+            outputs['C'].sv_set(result)
 
         else:  # single input operations
-            parameters = I[0]
-          #  print("parameters=", parameters)
+            mat_list = I[0]
 
             if self.operation == "BASIS":
-                xList = []
-                yList = []
-                zList = []
-                for a in parameters:
-                    Rx, Ry, Rz = operation(a)
-                    xList.append(Rx)
-                    yList.append(Ry)
-                    zList.append(Rz)
-                outputs['X'].sv_set(xList)
-                outputs['Y'].sv_set(yList)
-                outputs['Z'].sv_set(zList)
+                xList, yList, zList = basis_op(mat_list, operation)
 
-                outputs['C'].sv_set(parameters)
+                wrap = isinstance(xList[0][0],(list, tuple))
+                outputs['X'].sv_set(xList if wrap else [xList])
+                outputs['Y'].sv_set(yList if wrap else [yList])
+                outputs['Z'].sv_set(zList if wrap else [zList])
+
+                outputs['C'].sv_set(mat_list)
 
             else:  # INVERSE / FILTER
-                matrixList = [operation(a) for a in parameters]
+                outputs['C'].sv_set(general_op(mat_list, operation))
 
-                outputs['C'].sv_set(matrixList)
+def general_op(mat_list, operation):
+
+    if isinstance(mat_list[0], Matrix):
+
+        out_matrix_list = [operation(a) for a in mat_list]
+            # xList, yList, zList = basis_op(mat_list)
+    else:
+        out_matrix_list = []
+        for sublist in mat_list:
+             out_matrix_list.append(general_op(sublist, operation))
+
+    return out_matrix_list
+
+def basis_op(mat_list, operation):
+    xList = []
+    yList = []
+    zList = []
+    if isinstance(mat_list[0], Matrix):
+
+        for a in mat_list:
+            Rx, Ry, Rz = operation(a)
+            xList.append(Rx)
+            yList.append(Ry)
+            zList.append(Rz)
+            # xList, yList, zList = basis_op(mat_list)
+    else:
+        for sublist in mat_list:
+             sub_xList, sub_yList, sub_zList = basis_op(sublist, operation)
+             xList.append(sub_xList)
+             yList.append(sub_yList)
+             zList.append(sub_zList)
+    return xList, yList, zList
 
 
 def register():
