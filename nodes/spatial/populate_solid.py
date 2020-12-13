@@ -121,11 +121,11 @@ class SvPopulateSolidMk2Node(bpy.types.Node, SverchCustomTreeNode):
             default = False,
             update = updateNode)
 
-    flat_output : BoolProperty(
-            name = "Flat output",
-            description = "If checked, generate one flat list of vertices for all input solids; otherwise, generate a separate list of vertices for each solid",
-            default = False,
-            update = updateNode)
+#     flat_output : BoolProperty(
+#             name = "Flat output",
+#             description = "If checked, generate one flat list of vertices for all input solids; otherwise, generate a separate list of vertices for each solid",
+#             default = False,
+#             update = updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "gen_mode", text='Mode')
@@ -135,7 +135,7 @@ class SvPopulateSolidMk2Node(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, "in_surface")
         if self.distance_mode == 'FIELD':
             layout.prop(self, 'random_radius')
-        layout.prop(self, "flat_output")
+#         layout.prop(self, "flat_output")
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -272,12 +272,8 @@ class SvPopulateSolidMk2Node(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     verts, radiuses = self.generate_surface(solid, field, count, min_r, radius, threshold, field_min, field_max, mask)
 
-                if self.flat_output:
-                    new_verts.extend(verts)
-                    new_radius.extend(radiuses)
-                else:
-                    new_verts.append(verts)
-                    new_radius.append(radiuses)
+                new_verts.append(verts)
+                new_radius.append(radiuses)
 
             if nested_output:
                 verts_out.append(new_verts)
