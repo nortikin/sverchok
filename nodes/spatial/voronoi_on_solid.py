@@ -29,7 +29,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_up
 from sverchok.utils.sv_bmesh_utils import recalc_normals
 from sverchok.utils.voronoi3d import voronoi_on_solid
 from sverchok.utils.geom import scale_relative
-from sverchok.utils.solid import svmesh_to_solid, SvSolidTopology
+from sverchok.utils.solid import svmesh_to_solid, SvSolidTopology, SvGeneralFuse
 from sverchok.utils.surface.freecad import SvSolidFaceSurface
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy, FreeCAD
@@ -97,24 +97,14 @@ class SvVoronoiOnSolidNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_VORONOI'
 
     modes = [
-            ('FACES', "Surface - Inner", "Generate inner regions of Voronoi diagram on the surface of the solid", 0),
-            ('WIRE', "Surface - Outer", "Cut inner regions of Voronoi diagram from solid surface", 1),
-            ('REGIONS', "Volume", "Split volume of the solid body into regions of Voronoi diagram", 2),
-            ('NEGVOLUME', "Negative Volume", "Cut regions of Voronoi diagram from the volume of the solid object", 3),
-            ('MESH', "Mesh Faces", "Generate mesh", 4)
+            ('SURFACE', "Surface", "Generate regions of Voronoi diagram on the surface of the solid", 0),
+            ('VOLUME', "Volume", "Split volume of the solid body into regions of Voronoi diagram", 2)
         ]
-
-    @throttle_and_update_node
-    def update_sockets(self, context):
-        self.outputs['Vertices'].hide_safe = self.mode != 'MESH'
-        self.outputs['Edges'].hide_safe = self.mode != 'MESH'
-        self.outputs['Faces'].hide_safe = self.mode != 'MESH'
-        self.outputs['Solids'].hide_safe = self.mode not in {'FACES', 'WIRE', 'REGIONS', 'NEGVOLUME'}
 
     mode : EnumProperty(
         name = "Mode",
         items = modes,
-        update = update_sockets)
+        update = updateNode)
     
     accuracy : IntProperty(
             name = "Accuracy",
@@ -133,11 +123,8 @@ class SvVoronoiOnSolidNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvSolidSocket', 'Solid')
         self.inputs.new('SvVerticesSocket', "Sites")
         self.inputs.new('SvStringsSocket', "Inset").prop_name = 'inset'
-        self.outputs.new('SvVerticesSocket', "Vertices")
-        self.outputs.new('SvStringsSocket', "Edges")
-        self.outputs.new('SvStringsSocket', "Faces")
-        self.outputs.new('SvSolidSocket', "Solids")
-        self.update_sockets(context)
+        self.outputs.new('SvSolidSocket', "InnerSolid")
+        self.outputs.new('SvSolidSocket', "OuterSolid")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode")
@@ -161,18 +148,16 @@ class SvVoronoiOnSolidNode(bpy.types.Node, SverchCustomTreeNode):
         inset_in = ensure_nesting_level(inset_in, 2)
 
         nested_output = input_level > 3
+        need_inner = self.outputs['InnerSolid'].is_linked
+        need_outer = self.outputs['OuterSolid'].is_linked
 
         precision = 10 ** (-self.accuracy)
 
-        verts_out = []
-        edges_out = []
-        faces_out = []
-        fragment_faces_out = []
+        inner_fragments_out = []
+        outer_fragments_out = []
         for params in zip_long_repeat(solid_in, sites_in, inset_in):
-            new_verts = []
-            new_edges = []
-            new_faces = []
-            new_fragment_faces = []
+            new_inner_fragments = []
+            new_outer_fragments = []
             for solid, sites, inset in zip_long_repeat(*params):
                 verts, edges, faces = voronoi_on_solid(solid, sites,
                             do_clip=True, clipping=None)
@@ -183,46 +168,32 @@ class SvVoronoiOnSolidNode(bpy.types.Node, SverchCustomTreeNode):
 
                 fragments = [svmesh_to_solid(vs, fs, precision) for vs, fs in zip(verts, faces)]
 
-                if solid.Shells:
-                    shell = solid.Shells[0]
-                else:
-                    shell = Part.Shell(solid.Faces)
+                if self.mode == 'SURFACE':
+                    if solid.Shells:
+                        shell = solid.Shells[0]
+                    else:
+                        shell = Part.Shell(solid.Faces)
+                    src = shell
+                else: # VOLUME
+                    src = solid
 
-                if self.mode == 'FACES':
-                    fragments = [shell.common(fragment) for fragment in fragments]
-                elif self.mode == 'WIRE':
-                    fragments = [shell.cut(fragments)]
-                elif self.mode == 'REGIONS':
-                    fragments = [solid.common(fragment) for fragment in fragments]
-                elif self.mode == 'NEGVOLUME':
-                    fragments = [solid.cut(fragments)]
-                else: # MESH
-                    fragments = shell.common(fragments)
+                if need_inner:
+                    inner = [src.common(fragment) for fragment in fragments]
+                    new_inner_fragments.append(inner)
 
-                if self.mode in {'FACES', 'WIRE', 'REGIONS', 'NEGVOLUME'}:
-                    new_fragment_faces.append(fragments)
-                else: # MESH
-                    verts, edges, faces = mesh_from_faces(fragments)
-
-                new_verts.append(verts)
-                new_edges.append(edges)
-                new_faces.append(faces)
+                if need_outer:
+                    outer = [src.cut(fragments)]
+                    new_outer_fragments.append(outer)
 
             if nested_output:
-                verts_out.append(new_verts)
-                edges_out.append(new_edges)
-                faces_out.append(new_faces)
-                fragment_faces_out.append(new_fragment_faces)
+                inner_fragments_out.append(new_inner_fragments)
+                outer_fragments_out.append(new_outer_fragments)
             else:
-                verts_out.extend(new_verts)
-                edges_out.extend(new_edges)
-                faces_out.extend(new_faces)
-                fragment_faces_out.extend(new_fragment_faces)
+                inner_fragments_out.extend(new_inner_fragments)
+                outer_fragments_out.extend(new_outer_fragments)
 
-        self.outputs['Vertices'].sv_set(verts_out)
-        self.outputs['Edges'].sv_set(edges_out)
-        self.outputs['Faces'].sv_set(faces_out)
-        self.outputs['Solids'].sv_set(fragment_faces_out)
+        self.outputs['InnerSolid'].sv_set(inner_fragments_out)
+        self.outputs['OuterSolid'].sv_set(outer_fragments_out)
 
 def register():
     if scipy is not None and FreeCAD is not None:
