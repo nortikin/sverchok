@@ -8,20 +8,18 @@
 import random
 import numpy as np
 
-from mathutils.kdtree import KDTree
-
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.logging import error
+from sverchok.utils.kdtree import SvKdTree
 
 BATCH_SIZE = 50
 MAX_ITERATIONS = 1000
 
 def _check_min_distance(v_new, vs_old, min_r):
-    kdt = KDTree(len(vs_old))
-    for i, v in enumerate(vs_old):
-        kdt.insert(v, i)
-    kdt.balance()
-    nearest, idx, dist = kdt.find(v_new)
+    if not vs_old:
+        return True
+    kdt = SvKdTree.new(SvKdTree.BLENDER, vs_old)
+    nearest, idx, dist = kdt.query(v_new)
     if dist is None:
         return True
     return (dist >= min_r)
