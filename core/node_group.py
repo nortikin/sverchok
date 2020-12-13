@@ -10,6 +10,7 @@ import time
 from collections import namedtuple
 from contextlib import contextmanager
 from functools import reduce
+from itertools import chain
 from typing import Tuple, List, Set, Dict, Iterator, Generator, Optional
 
 import bpy
@@ -17,7 +18,7 @@ from sverchok.core.socket_data import SvNoDataError
 from sverchok.data_structure import extend_blender_class
 from mathutils import Vector
 
-from sverchok.core.group_handlers import MainHandler
+from sverchok.core.group_handlers import MainHandler, DEBUGGER_NODES, cut_mk_suffix
 from sverchok.core.events import GroupEvent
 from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
@@ -196,7 +197,7 @@ class SvGroupTree(bpy.types.NodeTree):
         1. Node property of was changed
         2. ???
         """
-        self.handler.send(GroupEvent(GroupEvent.NODES_UPDATE, self.get_update_path(), updated_nodes=[n for n in nodes]))
+        self.handler.send(GroupEvent(GroupEvent.NODES_UPDATE, self.get_update_path(), updated_nodes=nodes))
 
     def parent_nodes(self) -> Iterator['SvGroupTreeNode']:
         """Returns all parent nodes"""
@@ -206,16 +207,33 @@ class SvGroupTree(bpy.types.NodeTree):
                 if hasattr(node, 'node_tree') and node.node_tree and node.node_tree.name == self.name:
                     yield node
 
-    def color_nodes(self, node_errors: Iterator[Optional[Exception]]):
+    def update_ui(self, group_nodes_path: List['SvGroupTreeNode']):
+        """updating tree contextual information -> node colors, objects number in sockets, debugger nodes"""
+        self.handler.send(GroupEvent(GroupEvent.EDIT_GROUP_NODE, group_nodes_path))
+
+        nodes_errors = self.handler.get_error_nodes(group_nodes_path)
         exception_color = (0.8, 0.0, 0)
         no_data_color = (1, 0.3, 0)
-        for error, node in zip(node_errors, self.nodes):
+        for error, node in zip(nodes_errors, self.nodes):
+
+            # update error colors
             if error is not None:
                 node.use_custom_color = True
                 node.color = no_data_color if isinstance(error, SvNoDataError) else exception_color
             else:
                 node.use_custom_color = False
                 node.set_color()
+
+            # update object numbers
+            [s.update_objects_number() for s in chain(node.inputs, node.outputs)
+             if hasattr(s, 'update_objects_number')]
+
+            # update debug nodes
+            try:
+                if cut_mk_suffix(node.bl_idname) in DEBUGGER_NODES:  # todo should be replaced by isinstance
+                    node.process()
+            except:
+                pass
 
     @contextmanager
     def throttle_update(self):
@@ -380,6 +398,9 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
         """
         if group_nodes_path is None:
             group_nodes_path = []
+        else:
+            # copy the path otherwise if base tree has several group nodes second and next nodes will get wrong path
+            group_nodes_path = group_nodes_path.copy()
         group_nodes_path.append(self)
 
         self.node_tree: SvGroupTree
@@ -804,11 +825,8 @@ class EditGroupTree(bpy.types.Operator):
         context.space_data.path.append(sub_tree, node=group_node)
         sub_tree.group_node_name = group_node.name
         group_nodes_path = sub_tree.get_update_path()
-        sub_tree.handler.send(GroupEvent(GroupEvent.EDIT_GROUP_NODE, group_nodes_path))
-        nodes_errors = sub_tree.handler.get_error_nodes(group_nodes_path)
-        sub_tree.color_nodes(nodes_errors)
+        sub_tree.update_ui(group_nodes_path)
         # todo make protection from editing the same trees in more then one area
-        # todo update debuger nodes
         # todo add the same logic to exit from tree operator
         return {'FINISHED'}
 

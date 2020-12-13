@@ -530,6 +530,8 @@ class SvSocketCommon(SvSocketProcessing):
             else:
                 data = self.sv_get(deepcopy=False, default=[])
                 self.objects_number = len(data) if data else 0
+        except LookupError:
+            pass
         except Exception as e:
             warning(f"Socket='{self.name}' of node='{self.node.name}' can't update number of objects on the label. "
                     f"Cause is '{e}'")

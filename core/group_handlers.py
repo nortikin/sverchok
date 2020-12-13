@@ -158,8 +158,7 @@ class NodesUpdater:
         debug(f'Global update - {int((time() - cls._start_time) * 1000)}ms')
         cls._report_progress()
         group_node = cls._group_nodes_path[-1]
-        path = NodeIdManager.generate_path(cls._group_nodes_path)
-        group_node.node_tree.color_nodes(NodesStatuses.get(n, path).error for n in group_node.node_tree.nodes)
+        group_node.node_tree.update_ui(cls._group_nodes_path)
 
         cls._group_nodes_path, cls._handler, cls._node_tree_area, cls._last_node, cls._start_time = [None] * 5
 
@@ -269,7 +268,7 @@ class NodeIdManager:
         for node in tree.nodes:
             node_id = cls.extract_node_id(node.bl_tween)
 
-            if node.bl_tween.bl_idname not in OUT_ID_NAMES and node in input_linked_nodes:
+            if cut_mk_suffix(node.bl_tween.bl_idname) not in DEBUGGER_NODES and node in input_linked_nodes:
                 node.bl_tween.n_id = path + '.' + node_id
             else:
                 node.bl_tween.n_id = node_id
@@ -316,10 +315,6 @@ class ContextTrees:
             elif hasattr(bl_node, 'process'):
                 bl_node.process()
             node.is_updated = True
-
-            # probably it's not grate place for doing it
-            [s.update_objects_number() for s in chain(bl_node.inputs, bl_node.outputs)
-             if hasattr(s, 'update_objects_number')]
 
         except Exception as e:
             node.error = e
@@ -370,19 +365,21 @@ class ContextTrees:
         cls._trees[new_tree.bl_tween.tree_id] = new_tree
 
 
-# also IDs for this nodes are unchanged for now
-OUT_ID_NAMES = {'SvDebugPrintNode', 'SvStethoscopeNodeMK2'}  # todo replace by checking of OutNode mixin class
+# also node IDs for this nodes are unchanged for now
+# todo replace by checking of OutNode mixin class
+DEBUGGER_NODES = {'SvDebugPrintNode', 'SvStethoscopeNode'}  # those nodes should not have any outputs
 # todo add list of unsupported nodes
 
 
 def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
         -> Generator[Node, None, Tuple[bool, Optional[Exception]]]:
+    # The function is growing bigger and bigger. I wish I knew how to simplify it.
     group_node = group_nodes_path[-1]
     path = NodeIdManager.generate_path(group_nodes_path)
     tree = ContextTrees.get(group_node.node_tree, path)
     NodeIdManager.replace_nodes_id(tree, path)
 
-    out_nodes = [n for n in tree.nodes if n.bl_tween.bl_idname in OUT_ID_NAMES]
+    out_nodes = [n for n in tree.nodes if cut_mk_suffix(n.bl_tween.bl_idname) in DEBUGGER_NODES]
     out_nodes.extend([tree.nodes.active_output] if tree.nodes.active_output else [])
 
     input_linked_nodes = {n for n in tree.bfs_walk([tree.nodes.active_input] if tree.nodes.active_output else [])}
@@ -395,6 +392,9 @@ def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
     output_was_changed = False
     error = None
     for node in tree.sorted_walk(out_nodes):
+        if cut_mk_suffix(node.bl_tween.bl_idname) in DEBUGGER_NODES:
+            continue  # debug nodes will be updated after all by NodesUpdater only if necessary
+
         can_be_updated = all(n.is_updated for n in node.last_nodes)
         should_be_updated = can_be_updated and ((not node.is_updated) or node.link_changed)
         is_output_changed = False
@@ -502,6 +502,16 @@ def group_global_handler() -> Generator[Node]:
 
 class CancelError(Exception):
     """Aborting tree evaluation by user"""
+
+
+def cut_mk_suffix(name: str) -> str:
+    """SvStethoscopeNodeMK2 -> SvStethoscopeNode"""
+    id_name, _, version = name.partition('MK')
+    try:
+        int(version)
+    except ValueError:
+        return name
+    return id_name
 
 
 class PressingEscape(bpy.types.Operator):
