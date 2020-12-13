@@ -219,6 +219,10 @@ def add_keymap():
         kmi = km.keymap_items.new('node.sv_toggle_draft', 'F7', 'PRESS')
         nodeview_keymaps.append((km, kmi))
 
+        # Esc | Aborting nodes updating
+        kmi = km.keymap_items.new('node.sv_abort_nodes_updating', 'ESC', 'PRESS')
+        nodeview_keymaps.append((km, kmi))
+
         # Right Click   | show custom menu
         kmi = km.keymap_items.new('wm.call_menu', 'RIGHTMOUSE', 'RELEASE')
         kmi.properties.name = "NODEVIEW_MT_sv_rclick_menu"

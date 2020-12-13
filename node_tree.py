@@ -231,6 +231,14 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         self.sv_update()
         self.has_changed = False
 
+    def update_nodes(self, nodes):
+        """This method expects to get list of its nodes which should be updated"""
+        if len(nodes) == 1:
+            # this function actually doing something different unlike `process_from_nodes` function
+            # the difference is that process_from_nodes can also update other outdated nodes
+            process_from_node(nodes[0])
+        process_from_nodes(nodes)
+
     def process_ani(self):
         """
         Process the Sverchok node tree if animation layers show true.
@@ -319,16 +327,18 @@ class UpdateNodes:
         This method is not supposed to be overriden in specific nodes.
         Override sv_free() instead
         """
+        CurrentEvents.new_event(BlenderEventsTypes.free_node, self)
+
         self.sv_free()
 
         for s in self.outputs:
             s.sv_forget()
 
         node_tree = self.id_data
-        node_tree.nodes_dict.forget_node(self)
+        if node_tree.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
+            node_tree.nodes_dict.forget_node(self)
 
-        CurrentEvents.new_event(BlenderEventsTypes.free_node, self)
-        if hasattr(self, "has_3dview_props"):
+        if hasattr(self, "has_3dview_props"):  # todo remove
             print("about to remove this node's props from Sv3DProps")
             try:
                 bpy.ops.node.sv_remove_3dviewpropitem(node_name=self.name, tree_name=self.id_data.name)
@@ -347,7 +357,8 @@ class UpdateNodes:
 
         self.n_id = ""
         self.sv_copy(original)
-        self.id_data.nodes_dict.load_node(self)
+        if self.id_data.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
+            self.id_data.nodes_dict.load_node(self)
 
     def update(self):
         """
@@ -384,6 +395,8 @@ class UpdateNodes:
             monad = self.id_data
             for instance in monad.instances:
                 instance.process_node(context)
+        elif self.id_data.bl_idname == "SvGroupTree":
+            self.id_data.update_nodes([self])
         else:
             pass
 
@@ -485,7 +498,7 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
 
     @classmethod
     def poll(cls, ntree):
-        return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType']
+        return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType', 'SvGroupTree']
 
     @property
     def absolute_location(self):
@@ -615,12 +628,4 @@ def add_use_fake_user_to_trees():
                              notify=set_fake_user)
 
 
-def register():
-    bpy.utils.register_class(SverchCustomTree)
-    bpy.types.NodeReroute.absolute_location = property(
-        lambda self: recursive_framed_location_finder(self, self.location[:]))
-
-
-def unregister():
-    del bpy.types.NodeReroute.absolute_location
-    bpy.utils.unregister_class(SverchCustomTree)
+register, unregister = bpy.utils.register_classes_factory([SverchCustomTree])

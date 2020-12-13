@@ -14,14 +14,45 @@ during evaluation of Python code.
 Details: https://github.com/nortikin/sverchok/issues/3077
 """
 
+from __future__ import annotations
 
 from enum import Enum, auto
-from typing import NamedTuple, Union, List
+from typing import NamedTuple, Union, List, TYPE_CHECKING
 from itertools import takewhile
 
 from bpy.types import Node, NodeTree
 
 from sverchok.utils.context_managers import sv_preferences
+
+if TYPE_CHECKING:
+    from sverchok.core.node_group import SvGroupTree, SvGroupTreeNode
+    from sverchok.node_tree import SverchCustomTreeNode
+    SvNode = Union[SverchCustomTreeNode, SvGroupTreeNode, Node]
+
+
+class GroupEvent:
+    GROUP_NODE_UPDATE = 'group_node_update'
+    GROUP_TREE_UPDATE = 'group_tree_update'
+    NODES_UPDATE = 'nodes_update'
+    EDIT_GROUP_NODE = 'edit_group_node'  # upon pressing edit button or Tab
+
+    def __init__(self,
+                 event_type: str,
+                 group_nodes_path: List[SvGroupTreeNode],
+                 updated_nodes: List[SvNode] = None):
+        self.type = event_type
+        self.group_node = group_nodes_path[-1]
+        self.group_nodes_path = group_nodes_path
+        self.updated_nodes = updated_nodes
+        self.to_update = group_nodes_path[-1].is_active
+
+    @property
+    def group_tree(self) -> SvGroupTree:
+        return self.group_node.node_tree
+
+    def __repr__(self):
+        return f'{self.type.upper()} event, GROUP_NODE={self.group_node.name}, TREE={self.group_tree.name}' \
+               + (f', NODES={self.updated_nodes}' if self.updated_nodes else '')
 
 
 class BlenderEventsTypes(Enum):

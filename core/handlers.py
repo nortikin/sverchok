@@ -93,6 +93,9 @@ def sv_handler_undo_post(scene):
 
     undo_handler_node_count['sv_groups'] = 0
 
+    import sverchok.core.group_handlers as gh
+    gh.ContextTrees.reset_data()
+
 
 @persistent
 def sv_update_handler(scene):
@@ -162,6 +165,11 @@ def sv_clean(scene):
 def sv_pre_load(scene):
     clear_system_cache()
     sv_clean(scene)
+
+    import sverchok.core.group_handlers as gh
+    gh.NodesStatuses.reset_data()
+    gh.ContextTrees.reset_data()
+
     set_first_run(True)
 
 

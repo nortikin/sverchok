@@ -64,11 +64,8 @@ class SvNodesDict:
         tree_id = node_tree.tree_id
         self.sv_node_dict_cache[tree_id] = {}
         for node in node_tree.nodes:
-            try:
+            if node.bl_idname not in {'NodeReroute', 'NodeFrame'}:  # not reroute and frames hase their ID
                 self.sv_node_dict_cache[tree_id][node.node_id] = node
-            except AttributeError:
-                # it is a NodeReroute
-                pass
 
     def get(self, node_tree):
         if not node_tree.tree_id in self.sv_node_dict_cache:
