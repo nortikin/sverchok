@@ -231,7 +231,7 @@ def calc_bvh_projections(bvh, sites):
             projections.append(loc)
     return np.array(projections)
 
-def voronoi_on_mesh_bmesh(verts, faces, sites, spacing=0.0, fill=True):
+def voronoi_on_mesh_bmesh(verts, faces, sites, spacing=0.0, fill=True, precision=1e-8):
 
     def get_ridges_per_site(voronoi):
         result = defaultdict(list)
@@ -249,6 +249,8 @@ def voronoi_on_mesh_bmesh(verts, faces, sites, spacing=0.0, fill=True):
     def cut_cell(verts, faces, planes, site):
         src_mesh = bmesh_from_pydata(verts, [], faces, normal_update=True)
         for plane in planes:
+            if len(src_mesh.verts) == 0:
+                break
             geom_in = src_mesh.verts[:] + src_mesh.edges[:] + src_mesh.faces[:]
             
             plane_co = plane.projection_of_point(site)
@@ -257,9 +259,15 @@ def voronoi_on_mesh_bmesh(verts, faces, sites, spacing=0.0, fill=True):
                 plane_no = - plane_no
 
             plane_co = plane_co - 0.5 * spacing * plane_no.normalized()
+
+            current_verts = np.array([tuple(v.co) for v in src_mesh.verts])
+            signs = PlaneEquation.from_normal_and_point(plane_no, plane_co).side_of_points(current_verts)
+            if (signs < 0).all(): # or (signs < 0).all():
+                continue
+
             #print(f"Plane co {plane_co}, no {plane_no}")
             res = bmesh.ops.bisect_plane(
-                    src_mesh, geom=geom_in, dist=0.00001,
+                    src_mesh, geom=geom_in, dist=precision,
                     plane_co = plane_co,
                     plane_no = plane_no,
                     use_snap_center = False,
@@ -292,7 +300,8 @@ def voronoi_on_mesh_bmesh(verts, faces, sites, spacing=0.0, fill=True):
 def voronoi_on_mesh(verts, faces, sites, thickness,
     spacing = 0.0,
     clip_inner=True, clip_outer=True, do_clip=True,
-    clipping=1.0, mode = 'REGIONS'):
+    clipping=1.0, mode = 'REGIONS',
+    precision = 1e-8):
     bvh = BVHTree.FromPolygons(verts, faces)
     npoints = len(sites)
 
@@ -325,7 +334,8 @@ def voronoi_on_mesh(verts, faces, sites, thickness,
             plus_points = sites + clipping*normals
             all_points.extend(plus_points.tolist())
         return voronoi_on_mesh_bmesh(verts, faces, all_points,
-                spacing = spacing, fill = (mode == 'VOLUME'))
+                spacing = spacing, fill = (mode == 'VOLUME'),
+                precision = precision)
 
 def project_solid_normals(shell, pts, thickness, add_plus=True, add_minus=True, predicate_plus=None, predicate_minus=None):
     k = 0.5*thickness

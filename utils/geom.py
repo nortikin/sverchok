@@ -725,6 +725,8 @@ class PlaneEquation(object):
     @classmethod
     def from_normal_and_point(cls, normal, point):
         a, b, c = tuple(normal)
+        if (a*a + b*b + c*c) < 1e-8:
+            raise Exception("Plane normal is (almost) zero!")
         cx, cy, cz = tuple(point)
         d = - (a*cx + b*cy + c*cz)
         return PlaneEquation(a, b, c, d)

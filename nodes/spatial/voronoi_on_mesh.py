@@ -51,12 +51,6 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
             #('REGIONS', "Regions near Surface", "Generate regions of 3D Voronoi diagram near the surface of the mesh", 3)
         ]
 
-#     thickness : FloatProperty(
-#         name = "Thickness",
-#         default = 1.0,
-#         min = 0.0,
-#         update=updateNode)
-
     spacing : FloatProperty(
         name = "Spacing",
         default = 0.0,
@@ -70,7 +64,6 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
 
     @throttle_and_update_node
     def update_sockets(self, context):
-        #self.inputs['Thickness'].hide_safe = self.mode not in {'RIDGES', 'REGIONS'}
         self.inputs['Spacing'].hide_safe = self.mode not in {'VOLUME', 'SURFACE'}
 
     mode : EnumProperty(
@@ -79,16 +72,6 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         default = 'VOLUME',
         update = update_sockets)
     
-#     clip_inner : BoolProperty(
-#         name = "Clip Inner",
-#         default = True,
-#         update = updateNode)
-# 
-#     clip_outer : BoolProperty(
-#         name = "Clip Outer",
-#         default = True,
-#         update = updateNode)
-
     join_modes = [
             ('FLAT', "Flat list", "Output a single flat list of mesh objects (Voronoi diagram ridges / regions) for all input meshes", 0),
             ('SEPARATE', "Separate lists", "Output a separate list of mesh objects (Voronoi diagram ridges / regions) for each input mesh", 1),
@@ -100,6 +83,13 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         items = join_modes,
         default = 'FLAT',
         update = updateNode)
+
+    accuracy : IntProperty(
+            name = "Accuracy",
+            description = "Accuracy for mesh bisecting procedure",
+            default = 6,
+            min = 1,
+            update = updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
@@ -115,13 +105,13 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.label(text="Mode:")
         layout.prop(self, "mode", text='')
-#         if self.mode in {'REGIONS', 'RIDGES'}:
-#             row = layout.row(align=True)
-#             row.prop(self, 'clip_inner', toggle=True)
-#             row.prop(self, 'clip_outer', toggle=True)
         layout.prop(self, 'normals')
         layout.label(text='Output nesting:')
         layout.prop(self, 'join_mode', text='')
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'accuracy')
 
     def process(self):
 
@@ -143,6 +133,8 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
 
         nested_output = input_level > 3
 
+        precision = 10 ** (-self.accuracy)
+
         verts_out = []
         edges_out = []
         faces_out = []
@@ -155,7 +147,8 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
                             spacing = spacing,
                             #clip_inner = self.clip_inner, clip_outer = self.clip_outer,
                             do_clip=True, clipping=None,
-                            mode = self.mode)
+                            mode = self.mode,
+                            precision = precision)
                 if self.normals:
                     verts, edges, faces = recalc_normals(verts, edges, faces, loop=True)
 
