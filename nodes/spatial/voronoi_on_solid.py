@@ -119,6 +119,12 @@ class SvVoronoiOnSolidNode(bpy.types.Node, SverchCustomTreeNode):
         default = 0.0,
         update = updateNode)
 
+    flat_output : BoolProperty(
+        name = "Flat output",
+        description = "If checked, output single flat list of fragments for all input solids; otherwise, output a separate list of fragments for each solid.",
+        default = True,
+        update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', 'Solid')
         self.inputs.new('SvVerticesSocket', "Sites")
@@ -128,6 +134,7 @@ class SvVoronoiOnSolidNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode")
+        layout.prop(self, "flat_output")
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -179,11 +186,17 @@ class SvVoronoiOnSolidNode(bpy.types.Node, SverchCustomTreeNode):
 
                 if need_inner:
                     inner = [src.common(fragment) for fragment in fragments]
-                    new_inner_fragments.append(inner)
+                    if self.flat_output:
+                        new_inner_fragments.extend(inner)
+                    else:
+                        new_inner_fragments.append(inner)
 
                 if need_outer:
                     outer = [src.cut(fragments)]
-                    new_outer_fragments.append(outer)
+                    if self.flat_output:
+                        new_outer_fragments.extend(outer)
+                    else:
+                        new_outer_fragments.append(outer)
 
             if nested_output:
                 inner_fragments_out.append(new_inner_fragments)
