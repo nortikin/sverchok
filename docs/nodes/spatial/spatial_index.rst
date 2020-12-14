@@ -2,6 +2,9 @@
 Spatial
 *******
 
+.. toctree::
+   :maxdepth: 2
+
    homogenous_vector_field
    random_points_on_mesh
    field_random_probe
