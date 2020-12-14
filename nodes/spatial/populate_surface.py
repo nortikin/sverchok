@@ -89,18 +89,11 @@ class SvPopulateSurfaceMk2Node(bpy.types.Node, SverchCustomTreeNode):
             default = False,
             update = updateNode)
 
-    flat_output : BoolProperty(
-            name = "Flat output",
-            description = "If checked, generate one flat list of vertices for all input surfaces; otherwise, generate a separate list of vertices for each surface",
-            default = False,
-            update = updateNode)
-
     def draw_buttons(self, context, layout):
         layout.prop(self, 'distance_mode')
         layout.prop(self, "proportional")
         if self.distance_mode == 'FIELD':
             layout.prop(self, 'random_radius')
-        layout.prop(self, "flat_output")
 
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "Surface")
@@ -174,14 +167,9 @@ class SvPopulateSurfaceMk2Node(bpy.types.Node, SverchCustomTreeNode):
                                         min_r = min_r, min_r_field = radius,
                                         random_radius = self.random_radius,
                                         seed = seed)
-                if self.flat_output:
-                    new_verts.extend(verts)
-                    new_uv.extend(uvs)
-                    new_radius.extend(radiuses)
-                else:
-                    new_verts.append(verts)
-                    new_uv.append(uvs)
-                    new_radius.append(radiuses)
+                new_verts.append(verts)
+                new_uv.append(uvs)
+                new_radius.append(radiuses)
 
             if nested_output:
                 verts_out.append(new_verts)
