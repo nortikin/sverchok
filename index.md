@@ -422,6 +422,7 @@
 
 ## List Mutators
     SvListModifierNode
+    SvUniqueItemsNode
     SvFixEmptyObjectsNode
     SvDatetimeStrings
     SvVDAttrsNodeMk2
