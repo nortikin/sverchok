@@ -19,7 +19,7 @@
 import bpy
 import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, changable_sockets
 
 
 def recursive_unique_items(data, level, linked_outputs, output_numpy):
@@ -72,21 +72,21 @@ def numpy_unique(np_data, linked_outputs, output_numpy):
     unique_count = []
     if any(linked_outputs):
         arg = {
-            'return_index' : linked_outputs[1],
-            'return_inverse' : linked_outputs[2],
-            'return_counts' : linked_outputs[3],
+            'return_index' : linked_outputs[0],
+            'return_inverse' : linked_outputs[1],
+            'return_counts' : linked_outputs[2],
             'axis': 0
         }
         unique_data = np.unique(np_data, **arg)
-        unique = unique_data[0]
+        unique = unique_data[0] if output_numpy else unique_data[0].tolist()
         idx = 1
-        if linked_outputs[1]:
+        if linked_outputs[0]:
             unique_indices = unique_data[idx] if output_numpy else unique_data[idx].tolist()
             idx += 1
-        if linked_outputs[2]:
+        if linked_outputs[1]:
             unique_inverse = unique_data[idx] if output_numpy else unique_data[idx].tolist()
             idx += 1
-        if linked_outputs[3]:
+        if linked_outputs[2]:
             unique_count = unique_data[idx] if output_numpy else unique_data[idx].tolist()
     else:
         unique = np.unique(np_data, axis=0) if output_numpy else np.unique(np_data, axis=0).tolist()
@@ -102,17 +102,25 @@ class SvUniqueItemsNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvUniqueItemsNode'
     bl_label = 'Unique Items'
-    bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_FIX_EMPTY_OBJECTS'
-    level: bpy.props.IntProperty(name='Level', default=2, min=0, update=updateNode)
-    output_numpy: bpy.props.BoolProperty(name='Output Numpy', default=False, update=updateNode)
+    bl_icon = 'PIVOT_BOUNDBOX'
+    
+    level: bpy.props.IntProperty(
+        name='Level',
+        description="Level where seach should be performed",
+        default=2, min=0,
+        update=updateNode)
+    output_numpy: bpy.props.BoolProperty(
+        name='Output Numpy',
+        description="Output NumPy arrays (faster)",
+        default=False,
+        update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Data")
-        self.outputs.new('SvStringsSocket', "Unique")
+        self.outputs.new('SvStringsSocket', "Items")
         self.outputs.new('SvStringsSocket', "Indices")
-        self.outputs.new('SvStringsSocket', "Unique Inverse")
-        self.outputs.new('SvStringsSocket', "Unique Counts")
+        self.outputs.new('SvStringsSocket', "Inverse Indices")
+        self.outputs.new('SvStringsSocket', "Counts")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'level')
@@ -126,9 +134,16 @@ class SvUniqueItemsNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'level')
         layout.prop(self, 'output_numpy')
 
+    def sv_update(self):
+        '''adapt socket type to input type'''
+        if 'Data' in self.inputs and self.inputs['Data'].links:
+            inputsocketname = 'Data'
+            outputsocketname = ['Items']
+            changable_sockets(self, inputsocketname, outputsocketname)
+
     def process(self):
 
-        if (not self.inputs[0].is_linked) and any([s.is_linked for s in self.outputs]):
+        if not (self.inputs[0].is_linked and any([s.is_linked for s in self.outputs])):
             return
         data_in = self.inputs[0].sv_get(deepcopy=False)
         linked_outputs = [s.is_linked for s in self.outputs[1:]]
