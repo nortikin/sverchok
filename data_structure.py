@@ -1293,11 +1293,16 @@ def changable_sockets(node, inputsocketname, outputsocketname):
         if outputs[outputsocketname[0]].bl_idname != s_type:
             to_links = {}
             idx = {}
+            #gather info
             for n in outputsocketname:
                 out_socket = outputs[n]
                 idx[n] = out_socket.index
                 to_links[n] = [l.to_socket for l in out_socket.links]
+            #remove sockets
+            for n in outputsocketname:
+                out_socket = outputs[n]
                 outputs.remove(outputs[n])
+            #add sockets and place them
             for n in outputsocketname:
                 new_out_socket = outputs.new(s_type, n)
                 outputs.move(len(outputs)-1, idx[n])
