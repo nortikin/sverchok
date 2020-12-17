@@ -11,6 +11,7 @@ from sverchok.core import update_system
 from sverchok.utils import logging
 from sverchok.utils.sv_gist_tools import TOKEN_HELP_URL
 from sverchok.ui import color_def
+from sverchok.ui.utils import message_on_layout
 
 PYPATH = bpy.app.binary_path_python
 
@@ -553,6 +554,12 @@ class SverchokPreferences(AddonPreferences):
             row.operator('node.sv_select_freecad_path', text="Browse...").directory = self.FreeCAD_folder
             row.operator('node.sv_set_freecad_path', text=tx).FreeCAD_folder = self.FreeCAD_folder
             return row
+
+        message_on_layout(layout, """Sverchok can use several external libraries, that provide\
+some mathematical or other functions. We call such libraries "Dependencies".\
+When these libraries are available, you will be able to use much more nodes\
+in Sverchok. If you do not need all these features, you can skip installation of\
+dependencies, or install only some of them.""")
 
         box = layout.box()
         box.label(text="Dependencies:")
