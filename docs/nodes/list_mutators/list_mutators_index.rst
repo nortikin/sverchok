@@ -6,6 +6,7 @@ List Mutators
    :maxdepth: 2
 
    modifier
+   unique_items
    polygon_sort
    combinatorics
    filter_empty_lists

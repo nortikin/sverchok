@@ -640,7 +640,7 @@ def list_levels_adjust(data, instructions, data_types=SIMPLE_DATA_TYPES):
             items = process(sub_items, instructions[0], level)
             #print(f"?? {level}/{data_level}, {data} => {sub_items} => {items}")
         return items
-    
+
     return helper(data, instructions, 0)
 
 def map_at_level(function, data, item_level=0, data_types=SIMPLE_DATA_TYPES):
@@ -1292,12 +1292,20 @@ def changable_sockets(node, inputsocketname, outputsocketname):
             return #
         if outputs[outputsocketname[0]].bl_idname != s_type:
             to_links = {}
+            idx = {}
+            #gather info
             for n in outputsocketname:
                 out_socket = outputs[n]
+                idx[n] = out_socket.index
                 to_links[n] = [l.to_socket for l in out_socket.links]
+            #remove sockets
+            for n in outputsocketname:
+                out_socket = outputs[n]
                 outputs.remove(outputs[n])
+            #add sockets and place them
             for n in outputsocketname:
                 new_out_socket = outputs.new(s_type, n)
+                outputs.move(len(outputs)-1, idx[n])
                 for to_socket in to_links[n]:
                     ng.links.new(to_socket, new_out_socket)
 
