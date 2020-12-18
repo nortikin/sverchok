@@ -42,7 +42,7 @@ from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.algorithms import reparametrize_curve
 from sverchok.utils.surface import SvSurface
 
-from sverchok.utils.logging import warning, debug
+from sverchok.utils.logging import warning
 from sverchok.dependencies import FreeCAD
 
 STANDARD_TYPES = SIMPLE_DATA_TYPES + (SvCurve, SvSurface)
@@ -515,7 +515,6 @@ class SvSocketCommon(SvSocketProcessing):
         if not self.needs_data_conversion():
             return source_data
         else:
-            debug(f"Trying to convert data for input socket {self.name} by {implicit_conversions}")
             return implicit_conversions.convert(self, source_data)
 
     def update_objects_number(self):
