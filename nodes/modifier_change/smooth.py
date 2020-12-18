@@ -25,10 +25,14 @@ from sverchok.data_structure import updateNode, match_long_repeat, fullList
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 class SvSmoothNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Smooth vertices'''
+    """
+    Triggers: Smooth vertices
+    Tooltip: Smooth the mesh by flattering the angles between the faces/edges.
+    """
     bl_idname = 'SvSmoothNode'
     bl_label = 'Smooth Vertices'
-    bl_icon = 'SMOOTHCURVE'
+    bl_icon = 'MOD_SMOOTH'
+
 
     def update_mode(self, context):
         self.inputs['ClipDist'].hide_safe = self.laplacian

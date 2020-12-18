@@ -20,8 +20,9 @@ import bpy
 from bpy.props import (EnumProperty, FloatProperty, BoolProperty,
                        IntProperty, BoolVectorProperty)
 import numpy as np
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, numpy_list_match_func
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (updateNode, list_match_func, numpy_list_match_modes,
+                                     numpy_list_match_func, throttle_and_update_node)
 from sverchok.utils.sv_itertools import recurse_f_level_control
 
 
@@ -78,7 +79,7 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'NONE' #'LOGIC'
     sv_icon = 'SV_LOGIC'
 
-    @throttled
+    @throttle_and_update_node
     def change_type(self, context):
         signature = func_dict[self.items_][2]
         self.set_inputs(len(signature))

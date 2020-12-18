@@ -1,5 +1,5 @@
 {
-  "export_version": "0.079",
+  "export_version": "0.10",
   "framed_nodes": {},
   "groups": {},
   "nodes": {
@@ -10,6 +10,7 @@
         0.5,
         0.5
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -24,8 +25,39 @@
       "use_custom_color": true,
       "width": 140.0
     },
+    "Temporal Stethoscope": {
+      "bl_idname": "SvStethoscopeNodeMK2",
+      "color": [
+        0.3360449969768524,
+        0.3360449969768524,
+        0.6666539907455444
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "Temporal Stethoscope",
+      "location": [
+        -1330.464599609375,
+        354.68603515625
+      ],
+      "params": {
+        "activate": false,
+        "compact": true,
+        "line_width": 92,
+        "location_theta": 1.0,
+        "num_elements": 1,
+        "text_color": [
+          0.949999988079071,
+          0.949999988079071,
+          0.949999988079071
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
     "Vector Math": {
       "bl_idname": "SvVectorMathNodeMK3",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -40,12 +72,13 @@
     },
     "Vectors in": {
       "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1585.8079833984375,
-        86.33602905273438
+        -1586.6925048828125,
+        101.38939666748047
       ],
       "params": {
         "x_": -18.40999984741211,
@@ -61,6 +94,7 @@
         0.30000001192092896,
         0.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -69,7 +103,9 @@
         142.76254272460938
       ],
       "params": {
-        "activate": 1
+        "color_per_point": true,
+        "edges_use_vertex_color": true,
+        "vector_random_colors": true
       },
       "use_custom_color": true,
       "width": 140.0
@@ -81,39 +117,21 @@
         0.30000001192092896,
         0.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1058.7935791015625,
-        450.7249450683594
+        -919.0372314453125,
+        482.1073913574219
       ],
       "params": {},
       "use_custom_color": true,
       "width": 140.0
     },
-    "Viewer text mk3": {
-      "bl_idname": "ViewerNodeTextMK3",
-      "color": [
-        0.5,
-        0.5,
-        1.0
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -1346.7274169921875,
-        456.3681945800781
-      ],
-      "params": {
-        "frame": 0
-      },
-      "use_custom_color": true,
-      "width": 140.0
-    },
     "Voronoi": {
       "bl_idname": "Voronoi2DNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -142,12 +160,6 @@
       1
     ],
     [
-      "Vector Math",
-      0,
-      "Voronoi",
-      0
-    ],
-    [
       "Voronoi",
       0,
       "Viewer Draw Mk3",
@@ -160,15 +172,21 @@
       1
     ],
     [
-      "Random Vector",
+      "Vector Math",
       0,
-      "Viewer text mk3",
+      "Voronoi",
       0
     ],
     [
       "Vector Math",
       0,
       "Viewer Draw Mk3.001",
+      0
+    ],
+    [
+      "Random Vector",
+      0,
+      "Temporal Stethoscope",
       0
     ]
   ]

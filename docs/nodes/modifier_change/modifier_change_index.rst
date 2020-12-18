@@ -31,6 +31,7 @@ Modifier Change
    triangulate
    triangulate_heavy
    planar_faces
+   edge_split
    split_faces
    vertices_mask
    make_monotone

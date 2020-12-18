@@ -19,6 +19,7 @@ Pulga Physics
    pulga_random_force
    pulga_boundaries_force
    pulga_inflate_force
-   pulga_attractors_force
+   pulga_attractors_force_mk2
    pulga_angle_force
+   pulga_vortex_force
    pulga_physics_lite

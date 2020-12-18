@@ -8,8 +8,8 @@
 
 import bpy
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import throttle_and_update_node
 from sverchok.utils.geom_2d.dissolve_mesh import dissolve_faces
 
 
@@ -28,7 +28,7 @@ class SvDissolveFaces2D(bpy.types.Node, SverchCustomTreeNode):
     def replacement_nodes(self):
         return [('SvDissolveMeshElements', {'Face mask': 'Mask'}, None)]
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
         [self.outputs.remove(sock) for sock in self.outputs[2:]]

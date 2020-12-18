@@ -946,12 +946,10 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         new_text = texts.new(node_data['params']['filename'])
         new_text.from_string(node_data['path_file'])
         self.update()
-        
-        self.id_data.freeze(hard=True)
+
         self.SvLists.clear()
 
         strings_json = node_data['profile_sublist_storage']
-        
         out_points = json.loads(strings_json)['knots']
         self.SvLists.add().name = 'knots'
         for k in out_points:
@@ -963,8 +961,6 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         for k in out_names:
             item = self.SvLists['knotsnames'].SvSubLists.add()
             item.SvName = k
-
-        self.id_data.unfreeze(hard=True)
 
     def save_to_json(self, node_data: dict):
         local_storage = {'knots': [], 'knotsnames': []} 

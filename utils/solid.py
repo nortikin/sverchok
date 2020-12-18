@@ -12,7 +12,10 @@ import numpy as np
 from mathutils.kdtree import KDTree
 
 from sverchok.data_structure import match_long_repeat as mlr
+from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.surface.core import SvSurface
 from sverchok.dependencies import FreeCAD
+from sverchok.utils.solid_conversion import to_solid, to_solid_recursive
 
 if FreeCAD is not None:
 
@@ -20,7 +23,10 @@ if FreeCAD is not None:
     import Mesh
     import MeshPart
     from FreeCAD import Base
+
     from sverchok.nodes.solid.mesh_to_solid import ensure_triangles
+    from sverchok.utils.curve.freecad import curve_to_freecad
+    from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface
 
 class SvSolidTopology(object):
     class Item(object):
@@ -96,8 +102,21 @@ class SvSolidTopology(object):
             sum_normal = sum_normal / np.linalg.norm(sum_normal)
             self._normals_by_face[SvSolidTopology.Item(face)] = sum_normal
 
+    def calc_face_centers(self):
+        self._centers_by_face = dict()
+        for face in self.solid.Faces:
+            sum_points = np.array([0.0,0.0,0.0])
+            for u,v in face.getUVNodes():
+                p = face.valueAt(u,v)
+                sum_points += np.array([p.x, p.y, p.z])
+            mean = sum_points / len(sum_points)
+            self._centers_by_face[SvSolidTopology.Item(face)] = mean
+
     def get_normal_by_face(self, face):
         return self._normals_by_face[SvSolidTopology.Item(face)]
+
+    def get_center_by_face(self, face):
+        return self._centers_by_face[SvSolidTopology.Item(face)]
 
     def get_vertices_by_location(self, condition):
         to_tuple = lambda v : (v.X, v.Y, v.Z)
@@ -457,3 +476,4 @@ def svmesh_to_solid(verts, faces, precision, remove_splitter=True):
         shape = shape.removeSplitter() 
 
     return Part.makeSolid(shape)
+

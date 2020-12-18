@@ -10,8 +10,8 @@ from itertools import chain, cycle
 import bpy
 from mathutils import Vector
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, no_space
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, no_space, throttle_and_update_node
 from sverchok.utils.geom_2d.merge_mesh import crop_mesh, crop_edges, crop_mesh_delaunay
 from sverchok.utils.decorators import deprecated
 
@@ -40,7 +40,7 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Crop mesh 2D'
     bl_icon = 'MOD_BOOLEAN'
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         if self.alg_mode == 'Sweep_line':
             if self.inputs[1].name != self.input_mode:

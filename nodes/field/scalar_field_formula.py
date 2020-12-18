@@ -4,8 +4,8 @@ import numpy as np
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match_long_repeat
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, match_long_repeat
 from sverchok.utils.modules.eval_formula import get_variables, sv_compile, safe_eval_compiled
 from sverchok.utils.script_importhelper import safe_names_np
 from sverchok.utils.logging import info, exception
@@ -27,7 +27,7 @@ class SvScalarFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_SCALAR_FIELD'
 
-    @throttled
+    @throttle_and_update_node
     def on_update(self, context):
         self.adjust_sockets()
 

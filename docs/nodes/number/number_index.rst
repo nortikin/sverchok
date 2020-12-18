@@ -21,5 +21,6 @@ Number
    range_map
    numbers
    scalar_mk4
+   smooth_numbers
    oscillator
    easing

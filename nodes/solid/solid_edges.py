@@ -9,8 +9,10 @@ else:
     import bpy
     from bpy.props import BoolProperty
     from sverchok.node_tree import SverchCustomTreeNode
-    from sverchok.data_structure import updateNode
+    from sverchok.data_structure import updateNode, map_recursive, flatten_data
     from sverchok.utils.curve.freecad import SvSolidEdgeCurve
+
+    import Part
 
     class SvSolidEdgesNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -49,11 +51,9 @@ else:
             if not any(socket.is_linked for socket in self.outputs):
                 return
 
-            solids = self.inputs[0].sv_get()
+            solids = self.inputs['Solid'].sv_get()
 
-            edges = []
-            edges_add = edges.extend if self.flat_output else edges.append
-            for solid in solids:
+            def get_edges(solid):
                 edges_curves = []
                 for e in solid.Edges:
                     try:
@@ -63,10 +63,13 @@ else:
                         edges_curves.append(curve)
                     except TypeError:
                         pass
+                return edges_curves
 
-                edges_add(edges_curves)
+            edges_out = map_recursive(get_edges, solids, data_types=(Part.Shape,))
+            if self.flat_output:
+                edges_out = flatten_data(edges_out, data_types=(Part.Shape,))
 
-            self.outputs['Edges'].sv_set(edges)
+            self.outputs['Edges'].sv_set(edges_out)
 
 def register():
     if FreeCAD is not None:

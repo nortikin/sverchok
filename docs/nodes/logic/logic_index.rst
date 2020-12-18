@@ -13,3 +13,5 @@ Logic
    input_switch_mod
    custom_switcher
    range_switch
+   loop_in
+   loop_out

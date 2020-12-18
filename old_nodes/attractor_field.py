@@ -6,8 +6,8 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, St
 from mathutils import kdtree
 from mathutils import bvhtree
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match_long_repeat
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
 from sverchok.utils.logging import info, exception
 
 from sverchok.utils.field.scalar import (SvScalarFieldPointDistance,
@@ -32,7 +32,7 @@ class SvExAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
 
     replacement_nodes = [('SvAttractorFieldNodeMk2', None, None)]
 
-    @throttled
+    @throttle_and_update_node
     def update_type(self, context):
         self.inputs['Direction'].hide_safe = (self.attractor_type in ['Point', 'Mesh'])
         self.inputs['Amplitude'].hide_safe = (self.falloff_type == 'NONE')

@@ -83,6 +83,10 @@ def delete_data_block(data_block) -> None:
     def _(bl_obj: bpy.types.Light):
         bpy.data.lights.remove(bl_obj)
 
+    @del_object.register
+    def _(bl_obj: bpy.types.Curve):
+        bpy.data.curves.remove(bl_obj)
+
     try:
         del_object(data_block)
     except ReferenceError:

@@ -241,8 +241,8 @@ class SvSvgDimensionNode(bpy.types.Node, SverchCustomTreeNode):
             return
         params_in = [s.sv_get(deepcopy=False) for s in self.inputs[:6]]
         texts_out = []
-        params_in.append(self.inputs['Text Fill / Stroke'].sv_get(deepcopy=False, default=None))
-        params_in.append(self.inputs['Lines Fill / Stroke'].sv_get(deepcopy=False, default=None))
+        params_in.append(self.inputs['Text Fill / Stroke'].sv_get(deepcopy=False, default=[[None]]))
+        params_in.append(self.inputs['Lines Fill / Stroke'].sv_get(deepcopy=False, default=[[None]]))
         font_family = self.user_font if self.font_family == 'user' else self.font_family
 
         for params in zip(*mlr(params_in)):

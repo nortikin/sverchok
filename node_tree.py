@@ -20,13 +20,14 @@
 import sys
 import time
 import textwrap
+from contextlib import contextmanager
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import NodeTree
 
 from sverchok import data_structure
-from sverchok.data_structure import classproperty
+from sverchok.data_structure import classproperty, post_load_call
 
 from sverchok.core.update_system import (
     build_update_list,
@@ -38,7 +39,6 @@ from sverchok.core.links import (
     SvLinks)
 from sverchok.core.node_id_dict import SvNodesDict
 
-from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
 from sverchok.core.events import CurrentEvents, BlenderEventsTypes
 
 from sverchok.utils import get_node_class_reference
@@ -52,34 +52,6 @@ from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mappin
 from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_with_bgl
 
 
-def throttled(func):  # todo would be good to move it in data_structure module
-    """
-    use as a decorator
-
-        from sverchok.node_tree import SverchCustomTreeNode, throttled
-
-        class YourNode
-
-            @throttled
-            def mode_update(self, context):
-                ...
-
-    When a node has changed, like a mode-change leading to a socket change (remove, new)
-    Blender will trigger nodetree.update. We want to ignore this trigger-event, and we do so by
-    - first throttling the update system. 
-    - then We execute the code that makes changes to the node/nodetree
-    - then we end the throttle-state
-    - we are then ready to process
-
-    """
-    def wrapper_update(self, context):
-        with self.sv_throttle_tree_update():
-            func(self, context)
-        self.process_node(context)
-
-    return wrapper_update
-
-
 class SvNodeTreeCommon(object):
     '''
     Common methods shared between Sverchok node trees (normal and monad trees)
@@ -90,7 +62,7 @@ class SvNodeTreeCommon(object):
     has_changed: BoolProperty(default=False)  # "True if changes of links in tree was detected"
 
     # for throttle method usage when links are created in the tree via Python
-    skip_tree_update: BoolProperty(default=False)
+    skip_tree_update: BoolProperty(default=False)  # usage only via throttle_update method
     tree_id_memory: StringProperty(default="")  # identifier of the tree, should be used via `tree_id` property
     sv_links = SvLinks()  # cached Python links
     nodes_dict = SvNodesDict()  # cached Python nodes
@@ -101,26 +73,6 @@ class SvNodeTreeCommon(object):
         if not self.tree_id_memory:
             self.tree_id_memory = str(hash(self) ^ hash(time.monotonic()))
         return self.tree_id_memory
-
-    def freeze(self, hard=False):
-        """Temporary prevent tree from updating nodes"""
-        if hard:
-            self["DoNotUpdate"] = 1
-        elif not self.is_frozen():
-            self["DoNotUpdate"] = 0
-
-    def is_frozen(self):
-        """Nodes of the tree won't be updated during changes events"""
-        return "DoNotUpdate" in self
-
-    def unfreeze(self, hard=False):
-        """
-        Remove freeze mode from tree.
-        If freeze mode was in hard mode `hard` argument should be True to unfreeze tree
-        """
-        if self.is_frozen():
-            if hard or self["DoNotUpdate"] == 0:
-                del self["DoNotUpdate"]
 
     def get_groups(self):
         """
@@ -163,6 +115,21 @@ class SvNodeTreeCommon(object):
                     animated_nodes.append(node)
         process_from_nodes(animated_nodes)
 
+    @contextmanager
+    def throttle_update(self):
+        """ usage
+        with tree.throttle_update():
+            tree.nodes.new(...)
+            tree.links.new(...)
+        tree should be updated manually if needed
+        """
+        previous_state = self.skip_tree_update
+        self.skip_tree_update = True
+        try:
+            yield self
+        finally:
+            self.skip_tree_update = previous_state
+
 
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     ''' Sverchok - architectural node programming of geometry in low level '''
@@ -199,15 +166,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         # Here we trigger it manually.
 
         if draft_nodes:
-            try:
-                bpy.context.window.cursor_set("WAIT")
-                was_frozen = self.is_frozen()
-                self.unfreeze(hard=True)
-                process_from_nodes(draft_nodes)
-            finally:
-                if was_frozen:
-                    self.freeze(hard=True)
-                bpy.context.window.cursor_set("DEFAULT")
+            process_from_nodes(draft_nodes)
 
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
@@ -219,8 +178,21 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     # option whether error message of nodes should be shown in tree space or not
     # for showing error message all tree should be reevaluated what is not nice
     sv_show_error_in_tree: BoolProperty(
-        description="This will show Node Exceptions in the 3dview, right beside the node",
-        name="Show error in tree", default=False, update=lambda s, c: process_tree(s), options=set())
+        description="This will show Node Exceptions in the node view, right beside the node",
+        name="Show error in tree", default=True, update=lambda s, c: process_tree(s), options=set())
+
+    sv_show_error_details : BoolProperty(
+            name = "Show error details",
+            description = "Display exception stack in the node view as well",
+            default = False, 
+            update=lambda s, c: process_tree(s),
+            options=set())
+
+    sv_show_socket_menus : BoolProperty(
+        name = "Show socket menus",
+        description = "Display socket dropdown menu buttons. NOTE: options that are enabled in those menus will be effective regardless of this checkbox!",
+        default = False,
+        options=set())
 
     # if several nodes are disconnected this option determine order of their evaluation
     sv_subtree_evaluation_order: EnumProperty(
@@ -253,13 +225,19 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         clear_exception_drawing_with_bgl(self.nodes)
         if is_first_run():
             return
-        if self.skip_tree_update:
-            return
-        if self.is_frozen() or not self.sv_process:
+        if self.skip_tree_update or not self.sv_process:
             return
 
         self.sv_update()
         self.has_changed = False
+
+    def update_nodes(self, nodes):
+        """This method expects to get list of its nodes which should be updated"""
+        if len(nodes) == 1:
+            # this function actually doing something different unlike `process_from_nodes` function
+            # the difference is that process_from_nodes can also update other outdated nodes
+            process_from_node(nodes[0])
+        process_from_nodes(nodes)
 
     def process_ani(self):
         """
@@ -327,42 +305,40 @@ class UpdateNodes:
     def init(self, context):
         """
         this function is triggered upon node creation,
-        - freezes the node
+        - throttle the node
         - delegates further initialization information to sv_init
         - sets node color
-        - unfreezes the node
         """
         CurrentEvents.new_event(BlenderEventsTypes.add_node, self)
+
         ng = self.id_data
-
-        ng.freeze()
-        ng.nodes_dict.load_node(self)
-        if hasattr(self, "sv_init"):
-
+        if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
+            ng.nodes_dict.load_node(self)
+        with ng.throttle_update():
             try:
                 self.sv_init(context)
             except Exception as err:
                 print('nodetree.node.sv_init failure - stare at the error message below')
                 sys.stderr.write('ERROR: %s\n' % str(err))
-
-        self.set_color()
-        ng.unfreeze()
+            self.set_color()
 
     def free(self):
         """
         This method is not supposed to be overriden in specific nodes.
         Override sv_free() instead
         """
+        CurrentEvents.new_event(BlenderEventsTypes.free_node, self)
+
         self.sv_free()
 
         for s in self.outputs:
             s.sv_forget()
 
         node_tree = self.id_data
-        node_tree.nodes_dict.forget_node(self)
+        if node_tree.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
+            node_tree.nodes_dict.forget_node(self)
 
-        CurrentEvents.new_event(BlenderEventsTypes.free_node, self)
-        if hasattr(self, "has_3dview_props"):
+        if hasattr(self, "has_3dview_props"):  # todo remove
             print("about to remove this node's props from Sv3DProps")
             try:
                 bpy.ops.node.sv_remove_3dviewpropitem(node_name=self.name, tree_name=self.id_data.name)
@@ -378,9 +354,11 @@ class UpdateNodes:
         settings = get_original_node_color(self.id_data, original.name)
         if settings is not None:
             self.use_custom_color, self.color = settings
-        self.sv_copy(original)
+
         self.n_id = ""
-        self.id_data.nodes_dict.load_node(self)
+        self.sv_copy(original)
+        if self.id_data.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
+            self.id_data.nodes_dict.load_node(self)
 
     def update(self):
         """
@@ -401,7 +379,7 @@ class UpdateNodes:
         Still this is called from updateNode
         '''
         if self.id_data.bl_idname == "SverchCustomTreeType":
-            if self.id_data.is_frozen():
+            if self.id_data.skip_tree_update:
                 return
 
             # self.id_data.has_changed = True
@@ -417,6 +395,8 @@ class UpdateNodes:
             monad = self.id_data
             for instance in monad.instances:
                 instance.process_node(context)
+        elif self.id_data.bl_idname == "SvGroupTree":
+            self.id_data.update_nodes([self])
         else:
             pass
 
@@ -518,7 +498,7 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
 
     @classmethod
     def poll(cls, ntree):
-        return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType']
+        return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType', 'SvGroupTree']
 
     @property
     def absolute_location(self):
@@ -627,15 +607,25 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
         the nodeview scale and dpi differs between users and must be queried to get correct nodeview
         x,y and dpi scale info.
         """
-        print('get_and_set_gl_scale_info called from', origin or self.name)
+        # print('get_and_set_gl_scale_info called from', origin or self.name)
 
         try:
-            print('getting gl scale params')
+            # print('getting gl scale params')
             from sverchok.utils.context_managers import sv_preferences
             with sv_preferences() as prefs:
                 prefs.set_nodeview_render_params(None)
         except Exception as err:
             print('failed to get gl scale info', err)
+
+
+@post_load_call
+def add_use_fake_user_to_trees():
+    """When ever space node editor switches to another tree or creates new one,
+    this function will set True to `use_fake_user` of all Sverchok trees"""
+    def set_fake_user():
+        [setattr(t, 'use_fake_user', True) for t in bpy.data.node_groups if t.bl_idname == 'SverchCustomTreeType']
+    bpy.msgbus.subscribe_rna(key=(bpy.types.SpaceNodeEditor, 'node_tree'), owner=object(), args=(),
+                             notify=set_fake_user)
 
 
 register, unregister = bpy.utils.register_classes_factory([SverchCustomTree])

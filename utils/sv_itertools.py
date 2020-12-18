@@ -118,7 +118,7 @@ def recurse_f_multipar_const(params, const, f, matching_f):
     else:
         return f(params, const)
 
-def recurse_f_level_control(params, constant, main_func, matching_f, desired_levels):
+def recurse_f_level_control(params, constant, main_func, matching_f, desired_levels, concatenate="APPEND"):
     '''params will spread using the matching function (matching_f), the const is a constant
         parameter that you dont want to spread , the main_func is the function to apply
         and the desired_levels should be like [1, 2, 1, 3...] one level per parameter'''
@@ -127,6 +127,7 @@ def recurse_f_level_control(params, constant, main_func, matching_f, desired_lev
     if any(over_levels):
         p_temp = []
         result = []
+        result_add = result.extend if concatenate == 'EXTEND' else result.append
         for p, lv, dl in zip(params, input_levels, desired_levels):
             if lv <= dl:
                 p_temp.append([p])
@@ -134,7 +135,7 @@ def recurse_f_level_control(params, constant, main_func, matching_f, desired_lev
                 p_temp.append(p)
         params = matching_f(p_temp)
         for g in zip(*params):
-            result.append(recurse_f_level_control(matching_f(g), constant, main_func, matching_f, desired_levels))
+            result_add(recurse_f_level_control(matching_f(g), constant, main_func, matching_f, desired_levels, concatenate=concatenate))
     else:
         result = main_func(params, constant, matching_f)
     return result

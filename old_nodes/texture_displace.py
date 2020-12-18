@@ -21,10 +21,10 @@ import bpy
 from bpy.props import EnumProperty, FloatProperty, FloatVectorProperty, StringProperty
 from mathutils import Vector, Matrix, Color
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.core.socket_data import SvGetSocketInfo
-from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, iter_list_match_func
+from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, throttle_and_update_node
 from sverchok.utils.sv_itertools import recurse_f_level_control
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.modules.color_utils import color_channels
@@ -71,7 +71,7 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         ('Texture_Matrix', 'Texture Matrix', 'Matrix of texture (External Object matrix)', '', 3),
 
     ]
-    @throttled
+    @throttle_and_update_node
     def change_mode(self, context):
         inputs = self.inputs
         if self.tex_coord_type == 'Texture Matrix':
@@ -91,7 +91,7 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 inputs[4].hide_safe = False
                 inputs[4].replace_socket('SvVerticesSocket', 'UV Coordinates')
 
-    @throttled
+    @throttle_and_update_node
     def change_direction_sockets(self, context):
         inputs = self.inputs
         if self.out_mode == 'Custom Axis':

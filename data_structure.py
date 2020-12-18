@@ -89,7 +89,7 @@ def repeat_last(lst):
     and then keep repeating the last element,
     use with terminating input
     """
-    last = [lst[-1]] if lst else []
+    last = [lst[-1]] if len(lst) else []  # len(lst) in case of numpy arrays
     yield from chain(lst, cycle(last))
 
 
@@ -112,6 +112,8 @@ def match_long_repeat(lsts):
     max_l = 0
     tmp = []
     for l in lsts:
+        if not hasattr(l, '__len__'):
+            raise TypeError(f"Cannot perform data matching: input of type {type(l)} is not a list or tuple, but an atomic object")
         max_l = max(max_l, len(l))
     for l in lsts:
         if len(l) == max_l:
@@ -515,11 +517,13 @@ def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
 
     return helper(data, 0)
 
-def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES):
+def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES, input_name=None):
     """
     data: number, or list of numbers, or list of lists, etc.
     target_level: data nesting level required for further processing.
     data_types: list or tuple of types.
+    input_name: name of input socket data was taken from. Optional. If specified,
+        used for error reporting.
 
     Wraps data in so many [] as required to achieve target nesting level.
     Raises an exception, if data already has too high nesting level.
@@ -534,11 +538,110 @@ def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES):
 
     current_level = get_data_nesting_level(data, data_types)
     if current_level > target_level:
-        raise TypeError("ensure_nesting_level: input data already has nesting level of {}. Required level was {}.".format(current_level, target_level))
+        if input_name is None:
+            raise TypeError("ensure_nesting_level: input data already has nesting level of {}. Required level was {}.".format(current_level, target_level))
+        else:
+            raise TypeError("Input data in socket {} already has nesting level of {}. Required level was {}.".format(input_name, current_level, target_level))
     result = data
     for i in range(target_level - current_level):
         result = [result]
     return result
+
+def flatten_data(data, target_level=1, data_types=SIMPLE_DATA_TYPES):
+    """
+    Reduce nesting level of `data` to `target_level`, by concatenating nested sub-lists.
+    Raises an exception if nesting level is already less than `target_level`.
+    Refer to data_structure_tests.py for examples.
+    """
+    current_level = get_data_nesting_level(data, data_types)
+    if current_level < target_level:
+        raise TypeError(f"Can't flatten data to level {target_level}: data already have level {current_level}")
+    elif current_level == target_level:
+        return data
+    else:
+        result = []
+        for item in data:
+            result.extend(flatten_data(item, target_level=target_level, data_types=data_types))
+        return result
+
+def graft_data(data, item_level=1, wrap_level=1, data_types=SIMPLE_DATA_TYPES):
+    """
+    For each nested item of the list, which has it's own nesting level of `target_level`,
+    wrap that item into a pair of [].
+    For example, with item_level==0, this means wrap each number in the nested list
+    (however deep this number is nested) into pair of [].
+    Refer to data_structure_tests.py for examples.
+    """
+    def wrap(item):
+        for i in range(wrap_level):
+            item = [item]
+        return item
+
+    def helper(data):
+        current_level = get_data_nesting_level(data, data_types)
+        if current_level == item_level:
+            return wrap(data)
+        else:
+            result = [helper(item) for item in data]
+            return result
+
+    return helper(data)
+
+def wrap_data(data, wrap_level=1):
+    for i in range(wrap_level):
+        data = [data]
+    return data
+
+def unwrap_data(data, unwrap_level=1, socket=None):
+    socket_msg = "" if socket is None else f" in socket {socket.label or socket.name}"
+
+    def unwrap(lst, level):
+        if not isinstance(lst, (list, tuple, ndarray)):
+            raise Exception(f"Cannot unwrap data: Data at level {level} is an atomic object, not a list {socket_msg}")
+        n = len(lst)
+        if n == 0:
+            raise Exception(f"Cannot unwrap data: Data at level {level} is an empty list {socket_msg}")
+        elif n > 1:
+            raise Exception(f"Cannot unwrap data: Data at level {level} contains {n} objects instead of one {socket_msg}")
+        else:
+            return lst[0]
+
+    for level in range(unwrap_level):
+        data = unwrap(data, level)
+    return data
+
+class SvListLevelAdjustment(object):
+    def __init__(self, flatten=False, wrap=False):
+        self.flatten = flatten
+        self.wrap = wrap
+
+    def __repr__(self):
+        return f"<Flatten={self.flatten}, Wrap={self.wrap}>"
+
+def list_levels_adjust(data, instructions, data_types=SIMPLE_DATA_TYPES):
+    data_level = get_data_nesting_level(data, data_types + (ndarray,))
+    if len(instructions) < data_level+1:
+        raise Exception(f"Number of instructions ({len(instructions)}) is less than data nesting level {data_level} + 1")
+
+    def process(data, instruction, level):
+        result = data
+        if level + 1 < data_level and instruction.flatten:
+            result = sum(result, [])
+        if instruction.wrap:
+            result = [result]
+        #print(f"II: {level}/{data_level}, {instruction}, {data} => {result}")
+        return result
+
+    def helper(data, instructions, level):
+        if level == data_level:
+            items = process(data, instructions[0], level)
+        else:
+            sub_items = [helper(item, instructions[1:], level+1) for item in data]
+            items = process(sub_items, instructions[0], level)
+            #print(f"?? {level}/{data_level}, {data} => {sub_items} => {items}")
+        return items
+
+    return helper(data, instructions, 0)
 
 def map_at_level(function, data, item_level=0, data_types=SIMPLE_DATA_TYPES):
     """
@@ -568,6 +671,35 @@ def split_by_count(iterable, n, fillvalue=None):
     args = [iter(iterable)] * n
     return list(map(list, zip_longest(*args, fillvalue=fillvalue)))
 
+def describe_data_shape_by_level(data, include_numpy_nesting=True):
+    """
+    Describe shape of data in human-readable form.
+    Returns tuple:
+    * data nesting level
+    * list of descriptions of data shapes at each nesting level
+    """
+    def helper(data):
+        if not isinstance(data, (list, tuple)):
+            if isinstance(data, ndarray):
+                if include_numpy_nesting:
+                    nesting = len(data.shape)
+                else:
+                    nesting = 0
+                return nesting, [type(data).__name__ + " of " + str(data.dtype) + " with shape " + str(data.shape)]
+            return 0, [type(data).__name__]
+        else:
+            result = [f"{type(data).__name__} [{len(data)}]"]
+            if len(data) > 0:
+                child = data[0]
+                child_nesting, child_result = helper(child)
+                result = result + child_result
+            else:
+                child_nesting = 0
+            return (child_nesting + 1), result
+
+    nesting, result = helper(data)
+    return nesting, result
+
 def describe_data_shape(data):
     """
     Describe shape of data in human-readable form.
@@ -582,23 +714,9 @@ def describe_data_shape(data):
     describe_data_shape([1]) == 'Level 1: list [1] of int'
     describe_data_shape([[(1,2,3)]]) == 'Level 3: list [1] of list [1] of tuple [3] of int'
     """
-    def helper(data):
-        if not isinstance(data, (list, tuple)):
-            if isinstance(data, ndarray):
-                return len(data.shape), type(data).__name__ + " of " + str(data.dtype) + " with shape " + str(data.shape)
-            return 0, type(data).__name__
-        else:
-            result = type(data).__name__
-            result += " [{}]".format(len(data))
-            if len(data) > 0:
-                child = data[0]
-                child_nesting, child_result = helper(child)
-                result += " of " + child_result
-            else:
-                child_nesting = 0
-            return (child_nesting + 1), result
 
-    nesting, result = helper(data)
+    nesting, descriptions = describe_data_shape_by_level(data)
+    result = " of ".join(descriptions)
     return "Level {}: {}".format(nesting, result)
 
 def describe_data_structure(data, data_types=SIMPLE_DATA_TYPES):
@@ -761,6 +879,15 @@ def unzip_dict_recursive(data, item_type=dict, to_dict=None):
             return result
 
     return helper(data)
+
+def is_ultimately(data, data_types):
+    """
+    Check if data is a nested list / tuple / array
+    which ultimately consists of items of data_types.
+    """
+    if isinstance(data, (list, tuple, ndarray)):
+        return is_ultimately(data[0], data_types)
+    return isinstance(data, data_types)
 
 #####################################################
 ################### matrix magic ####################
@@ -941,6 +1068,40 @@ class classproperty:
         return self.fget(owner_cls)
 
 
+def post_load_call(function):  # better place would be in handlers module but import cyclic error
+    """
+    Usage: if you need function which should be called each time when blender is lunched
+    or new file is opened use this decorator
+    Limitation: the function should not get any properties because it will be called by handler
+    """
+    post_load_call.registered_functions.append(function)
+
+    @wraps(function)
+    def wrapper():
+        return function()
+
+    return wrapper
+
+
+post_load_call.registered_functions = []
+
+
+def extend_blender_class(cls):
+    """
+    It is class decorator for adding extra logic into base Blender classes
+    Decorated class should have the same name as Blender class
+    Take into account that this decorator does not delete anything onto reload event
+    """
+    bl_class = getattr(bpy.types, cls.__name__)
+    for base_cls in chain([cls], cls.__bases__[1:]):
+        if hasattr(base_cls, '__annotations__'):
+            for name, prop in base_cls.__annotations__.items():
+                setattr(bl_class, name, prop)
+        for key in (key for key in dir(base_cls) if not key.startswith('_')):
+            setattr(bl_class, key, getattr(base_cls, key))
+    return cls
+
+
 #####################################################
 ############### debug settings magic ################
 #####################################################
@@ -1053,11 +1214,51 @@ def throttle_tree_update(node):
     that's it.
 
     """
-    try:
-        node.id_data.skip_tree_update = True
+    with node.id_data.throttle_update():
         yield node
-    finally:
-        node.id_data.skip_tree_update = False
+
+
+def throttled(func):
+    """
+    It will prevent from redundant tree updates by changing tree topology (including changing node sockets)
+    inside nodes init methods and property changes methods
+
+    @throttled
+    def your_method(tree or node or socket, *args, **kwargs):
+    """
+    @wraps(func)
+    def wrapper_update(with_id_data, *args, **kwargs):
+        tree = with_id_data.id_data
+        with tree.throttle_update():
+            return func(with_id_data, *args, **kwargs)
+    return wrapper_update
+
+
+def throttle_and_update_node(func):
+    """
+    use as a decorator
+
+        class YourNode
+
+            @throttle_and_update_node
+            def mode_update(self, context):
+                ...
+
+    When a node has changed, like a mode-change leading to a socket change (remove, new)
+    Blender will trigger node_tree.update. We want to ignore this trigger-event, and we do so by
+    - first throttling the update system.
+    - then We execute the code that makes changes to the node/node_tree
+    - then we end the throttle-state
+    - we are then ready to process
+    """
+    @wraps(func)
+    def wrapper_update(self, context):
+        tree = self.id_data
+        with tree.throttle_update():
+            func(self, context)
+        self.process_node(context)
+
+    return wrapper_update
 
 
 ##############################################################
@@ -1068,6 +1269,7 @@ def throttle_tree_update(node):
 ##############################################################
 ##############################################################
 
+@throttled
 def changable_sockets(node, inputsocketname, outputsocketname):
     '''
     arguments: node, name of socket to follow, list of socket to change
@@ -1089,19 +1291,26 @@ def changable_sockets(node, inputsocketname, outputsocketname):
         if s_type == 'SvDummySocket':
             return #
         if outputs[outputsocketname[0]].bl_idname != s_type:
-            node.id_data.freeze(hard=True)
             to_links = {}
+            idx = {}
+            #gather info
             for n in outputsocketname:
                 out_socket = outputs[n]
+                idx[n] = out_socket.index
                 to_links[n] = [l.to_socket for l in out_socket.links]
+            #remove sockets
+            for n in outputsocketname:
+                out_socket = outputs[n]
                 outputs.remove(outputs[n])
+            #add sockets and place them
             for n in outputsocketname:
                 new_out_socket = outputs.new(s_type, n)
+                outputs.move(len(outputs)-1, idx[n])
                 for to_socket in to_links[n]:
                     ng.links.new(to_socket, new_out_socket)
-            node.id_data.unfreeze(hard=True)
 
 
+@throttled
 def replace_socket(socket, new_type, new_name=None, new_pos=None):
     '''
     Replace a socket with a socket of new_type and keep links
@@ -1110,8 +1319,6 @@ def replace_socket(socket, new_type, new_name=None, new_pos=None):
     socket_name = new_name or socket.name
     socket_pos = new_pos or socket.index
     ng = socket.id_data
-
-    ng.freeze()
 
     if socket.is_output:
         outputs = socket.node.outputs
@@ -1137,8 +1344,6 @@ def replace_socket(socket, new_type, new_name=None, new_pos=None):
             link = ng.links.new(from_socket, new_socket)
             link.is_valid = True
 
-    ng.unfreeze()
-
     return new_socket
 
 
@@ -1152,7 +1357,10 @@ def get_other_socket(socket):
     if not socket.is_linked:
         return None
     if not socket.is_output:
-        other = socket.links[0].from_socket
+        if socket.links:
+            other = socket.links[0].from_socket
+        else:
+            return None
     else:
         other = socket.links[0].to_socket
 
@@ -1180,6 +1388,7 @@ def get_other_socket(socket):
 
 # the named argument min will be replaced soonish.
 
+@throttled
 def multi_socket(node, min=1, start=0, breck=False, out_count=None):
     '''
      min - integer, minimal number of sockets, at list 1 needed
@@ -1211,8 +1420,6 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
                 node.inputs.remove(node.inputs[-1])
     elif isinstance(out_count, int):
         lenod = len(node.outputs)
-        ng.freeze(True)
-        print(out_count)
         if out_count > 30:
             out_count = 30
         if lenod < out_count:
@@ -1226,7 +1433,6 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
         else:
             while len(node.outputs) > out_count:
                 node.outputs.remove(node.outputs[-1])
-        ng.unfreeze(True)
 
 
 #####################################

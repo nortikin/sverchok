@@ -21,10 +21,11 @@ import numpy as np
 import bpy
 from bpy.props import IntProperty, BoolProperty, EnumProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 
-from sverchok.data_structure import updateNode, match_long_repeat, fullList, get_data_nesting_level, describe_data_shape
+from sverchok.data_structure import (updateNode, match_long_repeat, fullList, get_data_nesting_level,
+                                     describe_data_shape, throttle_and_update_node)
 
 class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     '''
@@ -36,10 +37,9 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode
     bl_label = "Set Material Index"
     bl_icon = 'MATERIAL'
 
-    @throttled
+    @throttle_and_update_node
     def update_all_faces(self, context):
         self.inputs['FaceIndex'].hide_safe = self.all_faces
-        updateNode(self, context)
 
     all_faces: BoolProperty(name = "All Faces",
             description = "Assign materials to all faces",

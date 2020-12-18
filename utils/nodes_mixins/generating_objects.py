@@ -15,7 +15,7 @@ import numpy as np
 import bpy
 from mathutils import Matrix
 
-from sverchok.data_structure import updateNode, update_with_kwargs
+from sverchok.data_structure import updateNode, update_with_kwargs, numpy_full_list, repeat_last
 from sverchok.utils.handle_blender_data import correct_collection_length, delete_data_block
 from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh
 
@@ -261,6 +261,67 @@ class SvLightData(bpy.types.PropertyGroup):
             delete_data_block(self.light)
 
 
+class SvCurveData(bpy.types.PropertyGroup):
+    """For now it is supporting only one spline per curve"""
+    curve: bpy.props.PointerProperty(type=bpy.types.Curve)
+
+    def regenerate_curve(self,
+                         curve_name: str,
+                         vertices: Union[List[list], List[np.ndarray]],
+                         spline_type: str = 'POLY',
+                         vertices_radius: Union[List[list], List[np.ndarray]] = None,
+                         close_spline: bool = False,
+                         use_smooth: bool = True,
+                         tilt: Union[List[list], List[np.ndarray]] = None):
+        # Be aware that curve consists multiple splines
+        if not self.curve:
+            self.curve = bpy.data.curves.new(name=curve_name, type='CURVE')  # type ['CURVE', 'SURFACE', 'FONT']
+        if len(self.curve.splines) != len(vertices) \
+                or any(len(s.points) != len(v) for s, v in zip(self.curve.splines, vertices)):
+            # if at least on spline has wrong number of points whole list of splines should be recreated
+            # thanks to Blender API
+            self.curve.splines.clear()
+            [self.curve.splines.new(spline_type) for _ in range(len(vertices))]
+            [s.points.add(len(v) - 1) for s, v in zip(self.curve.splines, vertices)]
+
+        for s, v, r, t in zip(self.curve.splines, vertices,
+                              repeat_last(vertices_radius or [None]), repeat_last(tilt or [None])):
+            v = np.asarray(v, dtype=np.float32)
+            if r is None:
+                r = np.ones(len(v), dtype=np.float32)
+            r = np.asarray(r, dtype=np.float32)
+            self._regenerate_spline(s, v, spline_type, r, t, close_spline, use_smooth)
+
+    def remove_data(self):
+        """
+        This method should be called before deleting the property
+        The mesh is belonged only to this property and should be deleted with it
+        """
+        if self.curve:
+            delete_data_block(self.curve)
+
+    @staticmethod
+    def _regenerate_spline(spline: bpy.types.Spline,
+                           vertices: np.ndarray,
+                           spline_type: str = 'POLY',
+                           vertices_radius: np.ndarray = None,
+                           tilt: np.ndarray = None,
+                           close_spline: bool = False,
+                           use_smooth: bool = True):
+        spline.type = spline_type
+        spline.use_cyclic_u = close_spline
+        spline.use_smooth = use_smooth
+
+        # flatten vertices array and add W component (X, Y, Z, W), W is responsible for drawing NURBS curves
+        w_vertices = np.concatenate((vertices, np.ones((len(vertices), 1), dtype=np.float32)), axis=1)
+        flatten_vertices = np.ravel(w_vertices)
+        spline.points.foreach_set('co', flatten_vertices)
+        if vertices_radius is not None:
+            spline.points.foreach_set('radius', numpy_full_list(vertices_radius, len(vertices)))
+        if tilt is not None:
+            spline.points.foreach_set('tilt', numpy_full_list(tilt, len(vertices)))
+
+
 class SvViewerNode(BlenderObjects):
     """
     Mixin for all nodes which displays any objects in viewport
@@ -334,6 +395,12 @@ class SvViewerNode(BlenderObjects):
                     bpy.context.collection.children.link(collection)
                 self.collection = collection
 
+    def draw_label(self):
+        if self.hide:
+            return f"{self.bl_label[:2]}V {self.base_data_name}"
+        else:
+            return self.bl_label
+
 
 class SvObjectNames(bpy.types.PropertyGroup):
     available_name_number: bpy.props.IntProperty(default=0, min=0, max=24)
@@ -404,7 +471,29 @@ class SvGenerateRandomObjectName(bpy.types.Operator):
         return hasattr(context.node, 'base_data_name')
 
 
-module_classes = [SvObjectData, SvMeshData, SvSelectObjects, SvObjectNames, SvGenerateRandomObjectName, SvLightData]
+class SvCreateMaterial(bpy.types.Operator):
+    """It creates and add new material to a node"""
+    bl_idname = 'node.sv_create_material'
+    bl_label = "Create material"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    @classmethod
+    def description(cls, context, properties):
+        return "Crate new material"
+
+    def execute(self, context):
+        mat = bpy.data.materials.new('sv_material')
+        mat.use_nodes = True
+        context.node.material = mat
+        return {'FINISHED'}
+
+    @classmethod
+    def poll(cls, context):
+        return hasattr(context.node, 'material')
+
+
+module_classes = [SvObjectData, SvMeshData, SvSelectObjects, SvObjectNames, SvGenerateRandomObjectName, SvLightData,
+                  SvCurveData, SvCreateMaterial]
 
 
 def register():

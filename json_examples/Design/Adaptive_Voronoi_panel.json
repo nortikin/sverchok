@@ -1,5 +1,5 @@
 {
-  "export_version": "0.079",
+  "export_version": "0.10",
   "framed_nodes": {
     "A Number": "Frame.003",
     "A Number.001": "Frame.003",
@@ -29,6 +29,7 @@
   "nodes": {
     "A Number": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "Noise Scale",
@@ -37,15 +38,13 @@
         267.6996898651123
       ],
       "params": {
-        "float_": 2.380000114440918,
-        "float_draft_": 0.0,
-        "int_": 0,
-        "int_draft_": 0
+        "float_": 2.380000114440918
       },
       "width": 140.0
     },
     "A Number.001": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "Noise Amplitude",
@@ -54,15 +53,13 @@
         183.97640800476074
       ],
       "params": {
-        "float_": 0.6699999570846558,
-        "float_draft_": 0.0,
-        "int_": 0,
-        "int_draft_": 0
+        "float_": 0.6699999570846558
       },
       "width": 140.0
     },
     "Adaptive Polygons Mk2": {
       "bl_idname": "SvAdaptivePolygonsNodeMk2",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -73,16 +70,17 @@
       "params": {
         "frame_mode": "ALWAYS",
         "frame_width": 1.0,
-        "join": 1,
+        "join": true,
         "map_mode": "QUADS",
         "matching_mode": "PERFACE",
-        "remove_doubles": 1,
-        "use_shell_factor": 1
+        "remove_doubles": true,
+        "use_shell_factor": true
       },
       "width": 140.0
     },
     "Fill Holes": {
       "bl_idname": "SvFillsHoleNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -97,6 +95,7 @@
     },
     "Flip normals": {
       "bl_idname": "SvFlipNormalsNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -104,13 +103,12 @@
         600.6196899414062,
         112.0316390991211
       ],
-      "params": {
-        "reverse": 0
-      },
+      "params": {},
       "width": 140.0
     },
     "Frame": {
       "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
       "height": 319.0199279785156,
       "hide": false,
       "label": "Donor",
@@ -123,6 +121,7 @@
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
       "height": 378.7057800292969,
       "hide": false,
       "label": "Donor parameters",
@@ -135,7 +134,8 @@
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "height": 732.6201171875,
+      "custom_socket_props": {},
+      "height": 759.6201171875,
       "hide": false,
       "label": "Recipient (Voronoi pattern)",
       "location": [
@@ -147,6 +147,7 @@
     },
     "Frame.003": {
       "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
       "height": 692.69970703125,
       "hide": false,
       "label": "Randomize",
@@ -159,6 +160,7 @@
     },
     "List Math": {
       "bl_idname": "ListFuncNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -173,6 +175,7 @@
     },
     "List Math.001": {
       "bl_idname": "ListFuncNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -187,6 +190,7 @@
     },
     "Map Range": {
       "bl_idname": "SvMapRangeNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -202,6 +206,7 @@
     },
     "Map Range.001": {
       "bl_idname": "SvMapRangeNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -210,14 +215,14 @@
         -58.20816659927368
       ],
       "params": {
-        "clamp": 0,
-        "new_max": 0.30000001192092896,
-        "new_min": 0.0
+        "clamp": false,
+        "new_max": 0.30000001192092896
       },
       "width": 140.0
     },
     "Merge by Distance": {
       "bl_idname": "SvMergeByDistanceNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -232,6 +237,7 @@
     },
     "Mesh Expression": {
       "bl_idname": "SvMeshEvalNode",
+      "custom_socket_props": {},
       "geom": "{\n  \"defaults\": {\n    \"Close\": 0.0\n  },\n  \"vertices\": [\n    [\n      0.0,\n      0.0,\n      0.0\n    ],\n    [\n      2.0,\n      0.0,\n      0.0\n    ],\n    [\n      0.0,\n      2.0,\n      0.0\n    ],\n    [\n      2.0,\n      2.0,\n      0.0\n    ],\n    [\n      0.0,\n      0.2,\n      0.0\n    ],\n    [\n      2.0,\n      0.2,\n      0.0\n    ],\n    [\n      2.0,\n      1.0,\n      0.0\n    ],\n    [\n      0.0,\n      1.0,\n      0.0\n    ],\n    [\n      0.0,\n      \"0.2 + Close\",\n      0.7,\n      [\n        \"Selected\"\n      ]\n    ],\n    [\n      2.0,\n      \"0.2 + Close\",\n      0.7,\n      [\n        \"Selected\"\n      ]\n    ],\n    [\n      2.0,\n      \"1.0 + Close\",\n      0.7,\n      [\n        \"Selected\"\n      ]\n    ],\n    [\n      0.0,\n      \"1.0 + Close\",\n      0.7,\n      [\n        \"Selected\"\n      ]\n    ]\n  ],\n  \"edges\": [\n    [\n      0,\n      4\n    ],\n    [\n      0,\n      1\n    ],\n    [\n      3,\n      6\n    ],\n    [\n      2,\n      3\n    ],\n    [\n      1,\n      5\n    ],\n    [\n      4,\n      5\n    ],\n    [\n      2,\n      7\n    ],\n    [\n      6,\n      7\n    ],\n    [\n      8,\n      11\n    ],\n    [\n      8,\n      9\n    ],\n    [\n      9,\n      10\n    ],\n    [\n      10,\n      11\n    ],\n    [\n      5,\n      9\n    ],\n    [\n      4,\n      8\n    ],\n    [\n      7,\n      11\n    ],\n    [\n      6,\n      10\n    ]\n  ],\n  \"faces\": [\n    [\n      7,\n      6,\n      3,\n      2\n    ],\n    [\n      0,\n      1,\n      5,\n      4\n    ],\n    [\n      4,\n      5,\n      9,\n      8\n    ],\n    [\n      8,\n      9,\n      10,\n      11\n    ],\n    [\n      6,\n      7,\n      11,\n      10\n    ]\n  ],\n  \"vertexdata\": [],\n  \"facedata\": [\n    0,\n    0,\n    0,\n    0,\n    0\n  ]\n}",
       "height": 100.0,
       "hide": false,
@@ -247,6 +253,7 @@
     },
     "Move.001": {
       "bl_idname": "SvMoveNodeMk3",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -254,9 +261,7 @@
         -254.34125900268555,
         190.09525871276855
       ],
-      "params": {
-        "strength": 1.0
-      },
+      "params": {},
       "width": 140.0
     },
     "Note": {
@@ -266,6 +271,7 @@
         0.5,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -274,6 +280,7 @@
         299.15601348876953
       ],
       "params": {
+        "n_id": "-8034980455338195246",
         "text": "\"Flip normals\" may be needed with some parameters, because \"Fill holes\" sometimes may calculate incorrect normals"
       },
       "use_custom_color": true,
@@ -286,6 +293,7 @@
         0.5,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -294,6 +302,7 @@
         -147.38931274414062
       ],
       "params": {
+        "n_id": "-8027588460831181262",
         "text": "Remove doubles to avoid too short edges"
       },
       "use_custom_color": true,
@@ -301,6 +310,7 @@
     },
     "Origins": {
       "bl_idname": "SvOrigins",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -320,6 +330,7 @@
         0.5,
         0.5
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -328,7 +339,7 @@
         -90.18882179260254
       ],
       "params": {
-        "center": 1,
+        "center": true,
         "dimension_mode": "NUMBER",
         "numx": 30,
         "numy": 20
@@ -338,6 +349,7 @@
     },
     "Reroute": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -350,6 +362,7 @@
     },
     "Reroute.001": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -362,6 +375,7 @@
     },
     "Vector Math": {
       "bl_idname": "SvVectorMathNodeMK3",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -377,6 +391,7 @@
     },
     "Vector Math.001": {
       "bl_idname": "SvVectorMathNodeMK3",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -392,6 +407,7 @@
     },
     "Vector Noise": {
       "bl_idname": "SvNoiseNodeMK2",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -406,6 +422,7 @@
     },
     "Vector Noise.001": {
       "bl_idname": "SvNoiseNodeMK2",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -420,6 +437,7 @@
     },
     "Vector Rewire": {
       "bl_idname": "SvVectorRewire",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -439,6 +457,7 @@
         0.30000001192092896,
         0.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -447,10 +466,9 @@
         307.5472412109375
       ],
       "params": {
-        "activate": 1,
-        "display_edges": 1,
-        "display_faces": 1,
-        "display_verts": 0,
+        "color_per_edge": true,
+        "display_edges": false,
+        "display_verts": false,
         "selected_draw_mode": "facet"
       },
       "use_custom_color": true,
@@ -463,6 +481,7 @@
         0.30000001192092896,
         0.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -471,7 +490,7 @@
         400.62012481689453
       ],
       "params": {
-        "activate": 0
+        "activate": false
       },
       "use_custom_color": true,
       "width": 140.0
@@ -483,6 +502,7 @@
         0.30000001192092896,
         0.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -491,13 +511,14 @@
         367.53076934814453
       ],
       "params": {
-        "activate": 0
+        "activate": false
       },
       "use_custom_color": true,
       "width": 140.0
     },
     "Voronoi 2D": {
       "bl_idname": "Voronoi2DNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -512,186 +533,6 @@
     }
   },
   "update_lists": [
-    [
-      "Plane",
-      0,
-      "Vector Math",
-      0
-    ],
-    [
-      "A Number",
-      0,
-      "Vector Math",
-      1
-    ],
-    [
-      "Vector Math",
-      0,
-      "Vector Noise.001",
-      0
-    ],
-    [
-      "Vector Noise.001",
-      0,
-      "Vector Math.001",
-      0
-    ],
-    [
-      "A Number",
-      0,
-      "Vector Math.001",
-      1
-    ],
-    [
-      "Vector Math.001",
-      0,
-      "Vector Rewire",
-      0
-    ],
-    [
-      "Plane",
-      0,
-      "Move.001",
-      0
-    ],
-    [
-      "Vector Rewire",
-      0,
-      "Move.001",
-      1
-    ],
-    [
-      "A Number.001",
-      0,
-      "Move.001",
-      2
-    ],
-    [
-      "Move.001",
-      0,
-      "Voronoi 2D",
-      0
-    ],
-    [
-      "Voronoi 2D",
-      0,
-      "Merge by Distance",
-      0
-    ],
-    [
-      "Voronoi 2D",
-      1,
-      "Merge by Distance",
-      1
-    ],
-    [
-      "Merge by Distance",
-      0,
-      "Fill Holes",
-      0
-    ],
-    [
-      "Merge by Distance",
-      1,
-      "Fill Holes",
-      1
-    ],
-    [
-      "Fill Holes",
-      0,
-      "Flip normals",
-      0
-    ],
-    [
-      "Fill Holes",
-      2,
-      "Flip normals",
-      2
-    ],
-    [
-      "Flip normals",
-      "Polygons",
-      "Reroute",
-      "Input"
-    ],
-    [
-      "Flip normals",
-      "Vertices",
-      "Reroute.001",
-      "Input"
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "Origins",
-      "Verts"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Origins",
-      "Faces"
-    ],
-    [
-      "Origins",
-      0,
-      "Vector Noise",
-      0
-    ],
-    [
-      "Vector Noise",
-      0,
-      "List Math.001",
-      0
-    ],
-    [
-      "Vector Noise",
-      0,
-      "List Math",
-      0
-    ],
-    [
-      "Vector Noise",
-      0,
-      "Map Range.001",
-      0
-    ],
-    [
-      "List Math",
-      0,
-      "Map Range.001",
-      1
-    ],
-    [
-      "List Math.001",
-      0,
-      "Map Range.001",
-      2
-    ],
-    [
-      "Map Range.001",
-      0,
-      "Mesh Expression",
-      0
-    ],
-    [
-      "Vector Noise",
-      0,
-      "Map Range",
-      0
-    ],
-    [
-      "List Math",
-      0,
-      "Map Range",
-      1
-    ],
-    [
-      "List Math.001",
-      0,
-      "Map Range",
-      2
-    ],
     [
       "Reroute.001",
       "Output",
@@ -723,16 +564,178 @@
       7
     ],
     [
-      "Adaptive Polygons Mk2",
+      "Merge by Distance",
       0,
-      "Viewer Draw Mk3",
+      "Fill Holes",
       0
     ],
     [
-      "Adaptive Polygons Mk2",
+      "Merge by Distance",
       1,
-      "Viewer Draw Mk3",
+      "Fill Holes",
+      1
+    ],
+    [
+      "Fill Holes",
+      0,
+      "Flip normals",
+      0
+    ],
+    [
+      "Fill Holes",
+      2,
+      "Flip normals",
       2
+    ],
+    [
+      "Vector Noise",
+      0,
+      "List Math",
+      0
+    ],
+    [
+      "Vector Noise",
+      0,
+      "List Math.001",
+      0
+    ],
+    [
+      "Vector Noise",
+      0,
+      "Map Range",
+      0
+    ],
+    [
+      "List Math",
+      0,
+      "Map Range",
+      1
+    ],
+    [
+      "List Math.001",
+      0,
+      "Map Range",
+      2
+    ],
+    [
+      "Vector Noise",
+      0,
+      "Map Range.001",
+      0
+    ],
+    [
+      "List Math",
+      0,
+      "Map Range.001",
+      1
+    ],
+    [
+      "List Math.001",
+      0,
+      "Map Range.001",
+      2
+    ],
+    [
+      "Voronoi 2D",
+      0,
+      "Merge by Distance",
+      0
+    ],
+    [
+      "Voronoi 2D",
+      1,
+      "Merge by Distance",
+      1
+    ],
+    [
+      "Map Range.001",
+      0,
+      "Mesh Expression",
+      0
+    ],
+    [
+      "Plane",
+      0,
+      "Move.001",
+      0
+    ],
+    [
+      "Vector Rewire",
+      0,
+      "Move.001",
+      1
+    ],
+    [
+      "A Number.001",
+      0,
+      "Move.001",
+      2
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Origins",
+      "Verts"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Origins",
+      "Faces"
+    ],
+    [
+      "Flip normals",
+      "Polygons",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Flip normals",
+      "Vertices",
+      "Reroute.001",
+      "Input"
+    ],
+    [
+      "Plane",
+      0,
+      "Vector Math",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Vector Math",
+      1
+    ],
+    [
+      "Vector Noise.001",
+      0,
+      "Vector Math.001",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Vector Math.001",
+      1
+    ],
+    [
+      "Origins",
+      0,
+      "Vector Noise",
+      0
+    ],
+    [
+      "Vector Math",
+      0,
+      "Vector Noise.001",
+      0
+    ],
+    [
+      "Vector Math.001",
+      0,
+      "Vector Rewire",
+      0
     ],
     [
       "Voronoi 2D",
@@ -757,6 +760,24 @@
       1,
       "Viewer Draw Mk3.002",
       1
+    ],
+    [
+      "Move.001",
+      0,
+      "Voronoi 2D",
+      0
+    ],
+    [
+      "Adaptive Polygons Mk2",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "Adaptive Polygons Mk2",
+      1,
+      "Viewer Draw Mk3",
+      2
     ]
   ]
 }

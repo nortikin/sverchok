@@ -17,11 +17,35 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import IntProperty, FloatProperty, BoolProperty
+from bpy.props import EnumProperty, IntProperty, FloatProperty, BoolProperty
 import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes
+from sverchok.utils.sv_itertools import recurse_f_level_control
 
+def random_vector(params, constant, matching_f):
+    '''
+    params are count, seed and  scale as Level 1 list [float, float, float]
+    desired_levels = [1, 1, 1]
+    constant are the function options (data that does not need to be matched)
+    matching_f stands for list matching formula to use
+    '''
+    result = []
+    output_numpy = constant
+    params = matching_f(params)
+
+    for count, seed, scale in zip(*params):
+        int_seed = int(round(seed))
+
+        np.random.seed(int_seed)
+        rand_v = np.random.uniform(low=-1, high=1, size=[int(max(1, count)), 3])
+        rand_v_mag = np.linalg.norm(rand_v, axis=1)
+        if output_numpy:
+            result.append(scale * rand_v/rand_v_mag[:, np.newaxis])
+        else:
+            result.append((scale * rand_v/rand_v_mag[:, np.newaxis]).tolist())
+
+    return result
 
 class RandomVectorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -44,6 +68,21 @@ class RandomVectorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         name='Seed', description='random seed', default=1,
         options={'ANIMATABLE'}, update=updateNode)
 
+    list_match: EnumProperty(
+        name="List Match",
+        description="Behavior on different list lengths",
+        items=numpy_list_match_modes, default="REPEAT",
+        update=updateNode)
+
+    correct_output_modes = [
+        ('NONE', 'None', 'Leave at multi-object level (Advanced)', 0),
+        ('FLAT', 'Flat Output', 'Flat to object level', 2),
+    ]
+    correct_output: EnumProperty(
+        name="Simplify Output",
+        description="Behavior on different list lengths, object level",
+        items=correct_output_modes, default="FLAT",
+        update=updateNode)
     output_numpy: BoolProperty(
         name='Output NumPy',
         description='Output NumPy arrays',
@@ -56,42 +95,32 @@ class RandomVectorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', "Random")
 
     def rclick_menu(self, context, layout):
-        layout.prop(self, "output_numpy", toggle=True)
+        layout.prop_menu_enum(self, 'list_match')
+        layout.prop(self, 'output_numpy', toggle=True)
+        layout.prop_menu_enum(self, 'correct_output')
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
+        layout.prop(self, 'list_match')
         layout.prop(self, 'output_numpy')
+        layout.prop(self, 'correct_output')
 
     def process(self):
 
-        count_socket = self.inputs['Count']
-        seed_socket = self.inputs['Seed']
-        scale_socket = self.inputs['Scale']
-        random_socket = self.outputs['Random']
-        if not random_socket.is_linked:
+        if not self.outputs['Random'].is_linked:
             return
-        # inputs
-        count = count_socket.sv_get(deepcopy=False)[0]
-        seed = seed_socket.sv_get(deepcopy=False)[0]
-        scale = scale_socket.sv_get(deepcopy=False, default=[])[0]
 
-        # outputs
+        params = [si.sv_get(default=[[]], deepcopy=False) for si in self.inputs]
 
-        random_out = []
-        params = match_long_repeat([count, seed, scale])
+        matching_f = list_match_func[self.list_match]
+        desired_levels = [1, 1, 1]
+        ops = self.output_numpy
+        concatenate = 'APPEND' if self.correct_output == 'NONE' else "EXTEND"
 
-        for c, s, sc in zip(*params):
-            int_seed = int(round(s))
+        result = recurse_f_level_control(params, ops, random_vector, matching_f, desired_levels, concatenate=concatenate)
 
-            np.random.seed(int_seed)
-            rand_v = np.random.uniform(low=-1, high=1, size=[int(max(1, c)), 3])
-            rand_v_mag = np.linalg.norm(rand_v, axis=1)
-            if self.output_numpy:
-                random_out.append(sc * rand_v/rand_v_mag[:, np.newaxis])
-            else:
-                random_out.append((sc * rand_v/rand_v_mag[:, np.newaxis]).tolist())
+        self.outputs[0].sv_set(result)
 
-        random_socket.sv_set(random_out)
 
 
 

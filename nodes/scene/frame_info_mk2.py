@@ -79,7 +79,7 @@ class SvFrameInfoNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
         outputs['Current Frame'].sv_set([[frame_current]])
         outputs['Start Frame'].sv_set([[frame_start]])
         outputs['End Frame'].sv_set([[frame_end]])
-        outputs['Evaluate'].sv_set([[frame_current / num_frames]])
+        outputs['Evaluate'].sv_set([[(frame_current - frame_start) / num_frames]])
 
 
 def register():

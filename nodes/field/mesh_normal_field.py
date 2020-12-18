@@ -5,7 +5,7 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from mathutils import bvhtree
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match_long_repeat
 from sverchok.utils.logging import info, exception
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata

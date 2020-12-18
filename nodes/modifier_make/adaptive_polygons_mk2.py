@@ -25,8 +25,8 @@ import bmesh
 from mathutils import Vector, Matrix
 from mathutils.geometry import barycentric_transform
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import (updateNode, Vector_generate,
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (updateNode, throttle_and_update_node,
                                      Vector_degenerate, match_long_repeat,
                                      zip_long_repeat,
                                      fullList, cycle_for_length,
@@ -242,7 +242,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         items = ngon_modes, default = "QUADS",
         update = updateNode)
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         show_width = self.frame_mode != 'NEVER'
         if 'FrameWidth' in self.inputs:

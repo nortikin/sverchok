@@ -3,7 +3,7 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, StringProperty
 from mathutils import Vector
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
 from sverchok.utils.curve import knotvector as sv_knotvector

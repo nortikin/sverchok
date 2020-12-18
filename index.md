@@ -71,7 +71,7 @@
 
 ## Curves @ NURBS
     SvExNurbsCurveNode
-    SvExApproxNurbsCurveNode
+    SvApproxNurbsCurveMk2Node
     SvExInterpolateNurbsCurveNode
     SvDeconstructCurveNode
 
@@ -128,6 +128,7 @@
     SvExCrossCurvePlaneNode
     SvExCrossCurveSurfaceNode
     ---
+    SvAdaptivePlotCurveNode
     SvExEvalCurveNode
 
 ## Surfaces @ NURBS
@@ -136,6 +137,7 @@
     SvExInterpolateNurbsSurfaceNode
     SvNurbsLoftNode
     SvNurbsSweepNode
+    SvNurbsBirailNode
     SvDeconstructSurfaceNode
     ---
     SvExQuadsToNurbsNode
@@ -197,10 +199,11 @@
     SvExNoiseVectorFieldNode
     ---
     SvExScalarFieldMathNode
-    SvExMergeScalarFieldsNode
     SvExVectorFieldMathNode
+    SvScalarFieldCurveMapNode
     SvExFieldDiffOpsNode
     SvScalarFieldCurvatureNode
+    SvExMergeScalarFieldsNode
     ---
     SvExBendAlongCurveFieldNode
     SvExBendAlongSurfaceFieldNode
@@ -226,6 +229,7 @@
    SvSolidFaceAreaNode
    SvSolidAreaNode
    SvSolidVolumeNode
+   SvSolidBoundBoxNode
 
 ## Solids
    SvBoxSolidNode
@@ -234,6 +238,13 @@
    SvSphereSolidNode
    SvToursSolidNode
    @ Make Face
+   SvSolidFaceExtrudeNode
+   SvSolidFaceSolidifyNode
+   SvSolidFaceRevolveNode
+   SvSweepSolidFaceNode
+   SvRuledSolidNode
+   SvSolidFromFacesNode
+   ---
    SvTransformSolidNode
    SvChamferSolidNode
    SvFilletSolidNode
@@ -241,14 +252,9 @@
    SvSolidGeneralFuseNode
    SvMirrorSolidNode
    SvOffsetSolidNode
-   SvSolidFromFacesNode
-   SvRuledSolidNode
-   SvSolidFaceExtrudeNode
-   SvSolidFaceSolidifyNode
-   SvSolidFaceRevolveNode
-   SvSweepSolidFaceNode
    SvSplitSolidNode
    SvHollowSolidNode
+   ---
    SvIsInsideSolidNode
    SvSolidDistanceNode
    SvSliceSolidNode
@@ -258,6 +264,7 @@
    SvSolidEdgesNode
    SvSolidFacesNode
    SvSelectSolidNode
+   SvCompoundSolidNode
    @ Analyze
    SvSolidViewerNode
 
@@ -302,6 +309,32 @@
     SvMeshSelectNode
     SvSelectSimilarNode
     SvChessSelection
+
+## Spatial
+    SvHomogenousVectorField
+    SvRandomPointsOnMesh
+    SvPopulateSurfaceNode
+    SvPopulateSolidNode
+    SvFieldRandomProbeMk2Node
+    ---
+    DelaunayTriangulation2DNode
+    SvDelaunay2DCdt
+    SvDelaunay3dMk2Node
+    ---
+    Voronoi2DNode
+    SvExVoronoi3DNode
+    SvExVoronoiSphereNode
+    SvVoronoiOnSurfaceNode
+    ---
+    SvLloyd2dNode
+    SvLloyd3dNode
+    SvLloydOnSphereNode
+    SvLloydOnMeshNode
+    SvLloydSolidNode
+    SvLloydSolidFaceNode
+    ---
+    SvConvexHullNodeMK2
+    SvConcaveHullNode
 
 ## Transforms
     SvMoveNodeMk3
@@ -351,7 +384,7 @@
     SvExtrudeRegionNode
     SvPokeFacesNode
     SvVertMaskNode
-    SvSplitEdgesNode
+    SvSplitEdgesMk2Node
     SvRigidOrigamiNode
     ---
     SvFollowActiveQuads
@@ -360,17 +393,9 @@
 ## Modifier Make
     LineConnectNodeMK2
     ---
-    SvConvexHullNodeMK2
     SvSubdivideNodeMK2
-    DelaunayTriangulation2DNode
-    SvDelaunay2DCdt
-    Voronoi2DNode
     SvOffsetLineNode
-    SvExVoronoi3DNode
-    SvExDelaunay3DNode
-    SvExVoronoiSphereNode
     SvContourNode
-    SvRandomPointsOnMesh
     ---
     SvDualMeshNode
     SvDiamondMeshNode
@@ -397,6 +422,7 @@
 
 ## List Mutators
     SvListModifierNode
+    SvUniqueItemsNode
     SvFixEmptyObjectsNode
     SvDatetimeStrings
     SvVDAttrsNodeMk2
@@ -428,6 +454,7 @@
     ListShuffleNode
     SvListSortNode
     ListFlipNode
+    SvListLevelsNode
 
 ## Dictionary
     SvDictionaryIn
@@ -473,6 +500,7 @@
     SvGenFibonacci
     SvGenExponential
     SvOscillatorNode
+    SvSmoothNumbersNode
 
 ## Vector
     GenVectorsNode
@@ -494,8 +522,6 @@
     SvInterpolationNodeMK3
     SvInterpolationNodeMK2
     ---
-    SvHomogenousVectorField
-    SvFieldRandomProbeNode
     SvNoiseNodeMK2
     SvTurbulenceNode
     SvLacunarityNode
@@ -529,6 +555,9 @@
     SvCustomSwitcher
     SvRangeSwitchNode
     ---
+    SvLoopInNode
+    SvLoopOutNode
+    ---
     SvEvolverNode
     SvGenesHolderNode
 
@@ -542,7 +571,7 @@
     ---
     SvMeshViewer
     SvCurveViewerNodeV28
-    SvPolylineViewerNodeV28
+    SvPolylineViewerNode
     SvTypeViewerNodeV28
     SvSkinViewerNodeV28
     SvMetaballOutNode
@@ -640,8 +669,9 @@
     SvPulgaRandomForceNode
     SvPulgaBoundingBoxForceNode
     SvPulgaInflateForceNode
-    SvPulgaAttractorsForceNode
+    SvPulgaAttractorsForceNodeMk2
     SvPulgaAngleForceNode
+    SvPulgaVortexForceNode
     SvPulgaPhysicsNode
 
 ## SVG
@@ -675,6 +705,7 @@
     SvFormulaColorNode
     SvTextureEvaluateNodeMk2
     SvColorRampNode
+    SvColorMixNode
     ---
     SvSculptMaskNode
     SvSelectMeshVerts

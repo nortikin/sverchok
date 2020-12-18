@@ -9,7 +9,7 @@ import numpy as np
 
 import bpy
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode
 from sverchok.utils.surface.freecad import SvSolidFaceSurface
 from sverchok.utils.dummy_nodes import add_dummy
@@ -41,6 +41,7 @@ class SvSolidPolygonFaceNode(bpy.types.Node, SverchCustomTreeNode):
     def make_faces(self, verts, face_idxs):
         result = []
         for face_i in face_idxs:
+            face_i = list(face_i)
             face_i.append(face_i[0])
             verts = [verts[idx] for idx in face_i]
             verts = [Base.Vector(*vert) for vert in verts]

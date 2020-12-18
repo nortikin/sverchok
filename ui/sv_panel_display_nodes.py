@@ -21,7 +21,7 @@ from bpy.props import IntProperty, StringProperty, BoolProperty, FloatProperty, 
 
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.menu import make_node_cats
-
+from sverchok.utils.dummy_nodes import is_dependent
 from pprint import pprint
 
 DEBUG = False
@@ -215,74 +215,75 @@ class SvDisplayNodePanelProperties(bpy.types.PropertyGroup):
             max_node_height = 0
             max_node_area = 0
             for node in nodes:
-                w = node.dimensions[0]
-                h = node.dimensions[1]
-                max_node_width = max(max_node_width, w)
-                max_node_height = max(max_node_height, h)
-                max_node_area = max(max_node_height, w * h)
-
-            if self.constrain_layout == "HEIGHT":
-                bins = binpack(nodes, self.grid_height)
-
-            elif self.constrain_layout == "WIDTH":
-                # find the height that has total width less than max width
-                found = False
-                height = 100
-                while not found:
-                    bins = binpack(nodes, height)
-                    # find max width for current layout
-                    totalWidth = 0
-                    for bin in bins:
-                        totalWidth = totalWidth + bin.width
-
-                    if DEBUG:
-                        print("For height= %d total width = %d" % (height, totalWidth))
-
-                    if totalWidth > max(max_node_width, self.grid_width):
-                        height = height + 10
-                        # try again with larger height
-                    else:  # found it
-                        found = True
-            else:
-                # find the height and width closest to the user aspect ratio
-                target_aspect = self.grid_width / self.grid_height
-
-                found = False
-                height = 100
-                while not found:
-                    bins = binpack(nodes, height)
-                    # find max width for current layout
-                    totalWidth = 0
-                    for bin in bins:
-                        totalWidth = totalWidth + bin.width
-
-                    if DEBUG:
-                        print("For height= %d total width = %d" % (height, totalWidth))
-
-                    current_aspect = totalWidth / height
-
-                    if current_aspect > target_aspect:
-                        height = height + 10
-                        # try again with larger height
-                    else:  # found it
-                        found = True
+                # w = node.dimensions[0]
+                print(node,node.dimensions)
+                # h = node.dimensions[1]
+                # max_node_width = max(max_node_width, w)
+                # max_node_height = max(max_node_height, h)
+                # max_node_area = max(max_node_height, w * h)
+            #
+            # if self.constrain_layout == "HEIGHT":
+            #     bins = binpack(nodes, self.grid_height)
+            #
+            # elif self.constrain_layout == "WIDTH":
+            #     # find the height that has total width less than max width
+            #     found = False
+            #     height = 100
+            #     while not found:
+            #         bins = binpack(nodes, height)
+            #         # find max width for current layout
+            #         totalWidth = 0
+            #         for bin in bins:
+            #             totalWidth = totalWidth + bin.width
+            #
+            #         if DEBUG:
+            #             print("For height= %d total width = %d" % (height, totalWidth))
+            #
+            #         if totalWidth > max(max_node_width, self.grid_width):
+            #             height = height + 10
+            #             # try again with larger height
+            #         else:  # found it
+            #             found = True
+            # else:
+            #     # find the height and width closest to the user aspect ratio
+            #     target_aspect = self.grid_width / self.grid_height
+            #
+            #     found = False
+            #     height = 100
+                # while not found:
+                #     bins = binpack(nodes, height)
+                #     # find max width for current layout
+                #     totalWidth = 0
+                #     for bin in bins:
+                #         totalWidth = totalWidth + bin.width
+                #
+                #     if DEBUG:
+                #         print("For height= %d total width = %d" % (height, totalWidth))
+                #
+                #     current_aspect = totalWidth / height
+                #
+                #     if current_aspect > target_aspect:
+                #         height = height + 10
+                #         # try again with larger height
+                #     else:  # found it
+                #         found = True
 
             # arrange the nodes in the bins on the grid
-            x = 0
-            for bin in bins:
-                max_x_width = max([item[0][0] for item in bin.items])
-                y = 0
-                for item in bin.items:
-                    node_width = item[0][0]
-                    node_height = item[0][1]
-                    node_name = item[1]
-                    node = item[2]
-                    if DEBUG:
-                        print("node = ", node_name, " : ", node_width, " x ", node_height)
-                    node.location[0] = x + 0.5 * (max_x_width - node_width)
-                    node.location[1] = y
-                    y = y - node_height - self.grid_y_space
-                x = x + max_x_width + self.grid_x_space
+            # x = 0
+            # for bin in bins:
+            #     max_x_width = max([item[0][0] for item in bin.items])
+            #     y = 0
+            #     for item in bin.items:
+            #         node_width = item[0][0]
+            #         node_height = item[0][1]
+            #         node_name = item[1]
+            #         node = item[2]
+            #         if DEBUG:
+            #             print("node = ", node_name, " : ", node_width, " x ", node_height)
+            #         node.location[0] = x + 0.5 * (max_x_width - node_width)
+            #         node.location[1] = y
+            #         y = y - node_height - self.grid_y_space
+            #     x = x + max_x_width + self.grid_x_space
         except Exception as e:
             print('well.. some exception occurred:', str(e))
 
@@ -306,7 +307,10 @@ class SvDisplayNodePanelProperties(bpy.types.PropertyGroup):
             name = node_name
             if name == "separator":
                 continue
-
+            if is_dependent(name):
+                continue
+            if '@' in name:
+                continue
             if DEBUG:
                 print("Spawning Node %d : %s" % (i, name))
 

@@ -19,8 +19,9 @@
 import bpy
 from bpy.props import FloatProperty, IntProperty, EnumProperty, BoolProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import zip_long_repeat, updateNode, ensure_nesting_level
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import zip_long_repeat, updateNode, ensure_nesting_level, throttle_and_update_node
+
 
 class SvConstantListNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -37,7 +38,7 @@ class SvConstantListNode(bpy.types.Node, SverchCustomTreeNode):
         ('FLOAT', "Float", "Floating-point number", 1)
     ]
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['IntValue'].hide_safe = self.mode != 'INT'
         self.inputs['FloatValue'].hide_safe = self.mode != 'FLOAT'

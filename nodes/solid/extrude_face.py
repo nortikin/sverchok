@@ -10,7 +10,7 @@ import numpy as np
 import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface

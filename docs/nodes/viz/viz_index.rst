@@ -19,3 +19,4 @@ Viz
    light_viewer
    vd_matrix
    instancer
+   polyline_viewer

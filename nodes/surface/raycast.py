@@ -6,8 +6,9 @@ from mathutils import Matrix
 from mathutils.bvhtree import BVHTree
 
 import sverchok
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level, repeat_last_for_length
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (updateNode, zip_long_repeat, ensure_nesting_level,
+                                     throttle_and_update_node, repeat_last_for_length)
 from sverchok.utils.logging import info, exception
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.manifolds import raycast_surface
@@ -39,7 +40,7 @@ else:
             default = True,
             update = updateNode)
 
-        @throttled
+        @throttle_and_update_node
         def update_sockets(self, context):
             self.inputs['Source'].hide_safe = self.project_mode != 'CONIC'
             self.inputs['Direction'].hide_safe = self.project_mode != 'PARALLEL'

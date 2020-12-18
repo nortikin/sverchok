@@ -99,7 +99,6 @@ class SverchokUpdateContext(bpy.types.Operator):
             bpy.context.window.cursor_set("WAIT")
             ng = context.space_data.node_tree
             if ng:
-                ng.unfreeze(hard=True)
                 build_update_list(ng)
                 process_tree(ng)
         except:
@@ -128,7 +127,6 @@ class SverchokUpdateContextForced(bpy.types.Operator):
                 try:
                     prev_process_state = ng.sv_process
                     ng.sv_process = True
-                    ng.unfreeze(hard=True)
                     build_update_list(ng)
                     process_tree(ng)
                 finally:
@@ -139,6 +137,28 @@ class SverchokUpdateContextForced(bpy.types.Operator):
             bpy.context.window.cursor_set("DEFAULT")
 
         return {'FINISHED'}
+
+
+class EnterExitGroupNodes(bpy.types.Operator):
+    bl_idname = 'node.enter_exit_group_nodes'
+    bl_label = "Enter exit from group nodes"
+
+    def execute(self, context):
+        node = context.active_node
+        if node and hasattr(node, 'monad'):
+            bpy.ops.node.sv_monad_enter()
+        elif node and hasattr(node, 'node_tree'):
+            bpy.ops.node.edit_group_tree({'node': node})
+        elif len(context.space_data.path) > 1:
+            context.space_data.path.pop()
+        return {'FINISHED'}
+
+    @classmethod
+    def poll(cls, context):
+        if context.space_data.tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType', 'SvGroupTree'}:
+            return True
+        else:
+            return False
 
 
 nodeview_keymaps = []
@@ -162,7 +182,7 @@ def add_keymap():
         nodeview_keymaps.append((km, kmi))
 
         # TAB           | enter or exit monad depending on selection and edit_tree type
-        kmi = km.keymap_items.new('node.sv_monad_enter', 'TAB', 'PRESS')
+        kmi = km.keymap_items.new('node.enter_exit_group_nodes', 'TAB', 'PRESS')
         nodeview_keymaps.append((km, kmi))
 
         # alt + G       | expand current monad into original state
@@ -197,6 +217,10 @@ def add_keymap():
 
         # F7 | Toggle draft mode for the active node tree
         kmi = km.keymap_items.new('node.sv_toggle_draft', 'F7', 'PRESS')
+        nodeview_keymaps.append((km, kmi))
+
+        # Esc | Aborting nodes updating
+        kmi = km.keymap_items.new('node.sv_abort_nodes_updating', 'ESC', 'PRESS')
         nodeview_keymaps.append((km, kmi))
 
         # Right Click   | show custom menu
@@ -251,7 +275,7 @@ def remove_keymap():
     nodeview_keymaps.clear()
 
 
-classes = [SvToggleProcess, SvToggleDraft, SverchokUpdateContext, SverchokUpdateContextForced]
+classes = [SvToggleProcess, SvToggleDraft, SverchokUpdateContext, SverchokUpdateContextForced, EnterExitGroupNodes]
 
 
 def register():

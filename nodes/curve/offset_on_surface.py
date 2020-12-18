@@ -5,8 +5,8 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.core.socket_data import SvNoDataError
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
 from sverchok.utils.curve import SvCurve, SvCurveOffsetOnSurface
 from sverchok.utils.surface import SvSurface
 
@@ -55,7 +55,7 @@ class SvCurveOffsetOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             (SvCurveOffsetOnSurface.BY_LENGTH, "Curve length", "Use offset curve value according to curve's length", 1)
         ]
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['OffsetCurve'].hide_safe = self.offset_type == 'CONST'
         self.inputs['Offset'].hide_safe = self.offset_type != 'CONST'

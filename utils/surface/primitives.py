@@ -76,6 +76,8 @@ class SvPlane(SvSurface):
         weights = np.array([[1,1], [1, 1]])
         degree_u = degree_v = 1
         knotvector_u = knotvector_v = sv_knotvector.generate(1, 2)
+        knotvector_u = u_min + (u_max - u_min) * knotvector_u
+        knotvector_v = v_min + (v_max - v_min) * knotvector_v
 
         return SvNurbsMaths.build_surface(implementation,
                 degree_u, degree_v,

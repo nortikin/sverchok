@@ -16,15 +16,14 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from functools import reduce
-
 import bpy
 from bpy.props import BoolProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.data_structure import repeat_last
-import sverchok.utils.meshes as me
+from sverchok.utils.mesh_functions import join_meshes, apply_matrix, meshes_py, to_elements, repeat_meshes, \
+    apply_matrices, meshes_np
 
 
 class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
@@ -80,37 +79,20 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
         matrices = self.inputs['Matrices'].sv_get(default=[], deepcopy=False)
 
         object_number = max([len(vertices), len(matrices)]) if vertices else 0
-        meshes = []
-        for i, *elements, matrix in zip(
-                range(object_number),
-                repeat_last(vertices),
-                repeat_last(edges or [[]]),
-                repeat_last(faces or [[]]),
-                repeat_last(matrices or [[]])):
+        meshes = (meshes_py if self.implementation == 'Python' else meshes_np)(vertices, edges, faces)
+        meshes = repeat_meshes(meshes, object_number)
 
-            if matrix:
-                if not isinstance(matrix, (list, tuple)):
-                    # most likely it is Matrix or np.ndarray
-                    # but the node expects list of list of matrices as input
-                    matrix = [matrix]
+        if matrices:
+            is_flat_list = not isinstance(matrices[0], (list, tuple))
+            meshes = (apply_matrix if is_flat_list else apply_matrices)(meshes, repeat_last(matrices))
 
-                sub_meshes = []
-                for mat in matrix:
-                    mesh = me.to_mesh(*elements) if self.implementation != 'NumPy' else me.NpMesh(*elements)
-                    mesh.apply_matrix(mat)
-                    sub_meshes.append(mesh)
+        if self.do_join:
+            meshes = join_meshes(meshes)
 
-                sub_mesh = reduce(lambda m1, m2: m1.add_mesh(m2), sub_meshes)
-            else:
-                sub_mesh = me.to_mesh(*elements) if self.implementation != 'NumPy' else me.NpMesh(*elements)
-            meshes.append(sub_mesh)
-
-        if self.do_join and meshes:
-            meshes = [reduce(lambda m1, m2: m1.add_mesh(m2), meshes)]
-
-        self.outputs['Vertices'].sv_set([m.vertices.data for m in meshes])
-        self.outputs['Edges'].sv_set([m.edges.data for m in meshes])
-        self.outputs['Faces'].sv_set([m.polygons.data for m in meshes])
+        out_vertices, out_edges, out_polygons = to_elements(meshes)
+        self.outputs['Vertices'].sv_set(out_vertices)
+        self.outputs['Edges'].sv_set(out_edges)
+        self.outputs['Faces'].sv_set(out_polygons)
 
 
 def register():

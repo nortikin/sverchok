@@ -26,8 +26,8 @@ from mathutils.kdtree import KDTree
 from mathutils.bvhtree import BVHTree
 from mathutils.noise import seed_set, random_unit_vector
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, list_match_func, list_match_modes
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, list_match_func, list_match_modes, throttle_and_update_node
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 
@@ -151,7 +151,7 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
     mode_options = [(k[0], k[1], '', i) for i, k in enumerate([("algo_1", "Regular"), ("algo_2", "Multisample")])]
     dimension_options = [(k, k, '', i) for i, k in enumerate(["2D", "3D"])]
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         if self.dimensions_mode == '2D' and len(self.inputs) < 4:
             self.inputs.new('SvVerticesSocket', 'Plane Normal').prop_name = 'normal'

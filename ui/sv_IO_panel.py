@@ -21,6 +21,7 @@ import os
 import json
 from os.path import basename, dirname
 from time import localtime, strftime
+from typing import Tuple
 
 import bpy
 
@@ -101,10 +102,21 @@ class SvIOPanelProperties(bpy.types.PropertyGroup):
     import_tree: bpy.props.PointerProperty(type=bpy.types.NodeTree, poll=sv_tree_filter)
 
 
-class SvNodeTreeExporter(bpy.types.Operator):
+class ExportToJSONOperator:
+    selected_only: bpy.props.BoolProperty(name="Selected only")
 
+    def can_be_exported(self, tree: bpy.types.NodeTree) -> Tuple[bool, str]:
+        for node in tree.nodes:
+            if self.selected_only and not node.select:
+                continue
+            if hasattr(node, 'node_tree'):  # looks like it is group node
+                return False, f'Tree has at least one group node "{node.name}". ' \
+                              f'Importing group nodes is not supported at the present'
+        return True, ''
+
+
+class SvNodeTreeExporter(ExportToJSONOperator, bpy.types.Operator):
     '''Export will let you pick a .json file name'''
-
     bl_idname = "node.tree_exporter"
     bl_label = "sv NodeTree Export Operator"
 
@@ -119,7 +131,6 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
     id_tree: bpy.props.StringProperty()
     compress: bpy.props.BoolProperty()
-    only_selected_nodes: bpy.props.BoolProperty(description="Only selected nodes will be imported")
 
     @classmethod
     def poll(cls, context):
@@ -128,13 +139,18 @@ class SvNodeTreeExporter(bpy.types.Operator):
     def execute(self, context):
         ng = bpy.data.node_groups[self.id_tree]
 
+        is_tree_exportable, msg = self.can_be_exported(ng)
+        if not is_tree_exportable:
+            self.report({'ERROR'}, msg)
+            return {'CANCELLED'}
+
         destination_path = self.filepath
         if not destination_path.lower().endswith('.json'):
             destination_path += '.json'
 
         # future: should check if filepath is a folder or ends in \
 
-        if self.only_selected_nodes:
+        if self.selected_only:
             layout_dict = JSONExporter.get_nodes_structure([node for node in ng.nodes if node.select])
         else:
             layout_dict = JSONExporter.get_tree_structure(ng)
@@ -183,7 +199,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
             col = self.layout.column()  # old syntax in <= 2.83
 
         col.use_property_split = True
-        col.prop(self, 'only_selected_nodes')
+        col.prop(self, 'selected_only')
         col.prop(self, 'compress', text="Create ZIP archive")
 
 
@@ -267,7 +283,7 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvNodeTreeExportToGist(bpy.types.Operator):
+class SvNodeTreeExportToGist(ExportToJSONOperator, bpy.types.Operator):
     """Export to anonymous gist and copy id to clipboard"""
     bl_idname = "node.tree_export_to_gist"
     bl_label = "Export to GIST (github account)"
@@ -280,6 +296,12 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
 
     def execute(self, context):
         ng = context.space_data.node_tree
+
+        is_tree_exportable, msg = self.can_be_exported(ng)
+        if not is_tree_exportable:
+            self.report({'ERROR'}, msg)
+            return {'CANCELLED'}
+
         gist_filename = ng.name
 
         app_version = bpy.app.version_string.replace(" ", "")

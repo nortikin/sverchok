@@ -23,8 +23,8 @@ import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 import bmesh.ops
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, match_long_repeat, fullList, Matrix_generate
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, match_long_repeat, fullList, throttle_and_update_node
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, fill_faces_layer
 
 is_290 = bpy.app.version >= (2, 90, 0)
@@ -67,7 +67,7 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
             ("Normal", "Along normal", "Extrude vertices along normal", 1)
         ]
 
-    @throttled
+    @throttle_and_update_node
     def update_mode(self, context):
         self.inputs['Matrices'].hide_safe = (self.transform_mode != "Matrix")
         self.inputs['Height'].hide_safe = (self.transform_mode != "Normal")

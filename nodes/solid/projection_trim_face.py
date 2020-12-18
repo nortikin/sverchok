@@ -8,15 +8,16 @@
 import numpy as np
 
 import bpy
-from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty
+from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty, IntProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, get_data_nesting_level, updateNode
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, throttle_and_update_node, updateNode
 from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.primitives import SvLine
 from sverchok.utils.curve.nurbs import SvNurbsCurve
-from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve
+from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve, SvFreeCadCurve, SvSolidEdgeCurve
 from sverchok.utils.surface.core import SvSurface
-from sverchok.utils.surface.freecad import SvFreeCadNurbsSurface, surface_to_freecad
+from sverchok.utils.surface.freecad import SvFreeCadNurbsSurface, surface_to_freecad, is_solid_face_surface
 from sverchok.utils.dummy_nodes import add_dummy
 
 from sverchok.dependencies import FreeCAD
@@ -26,6 +27,8 @@ if FreeCAD is None:
 else:
     import Part
     from FreeCAD import Base
+
+    line2d = Part.Geom2d.Line2dSegment
 
 class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -38,7 +41,7 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_PROJECT_CUT_FACE'
     solid_catergory = "Inputs"
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Point'].hide_safe = self.projection_type != 'PERSPECTIVE'
         self.inputs['Vector'].hide_safe = self.projection_type != 'PARALLEL'
@@ -46,7 +49,8 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
     projection_types = [
             ('PARALLEL', "Parallel", "Use parallel projection along given vector", 0),
             ('PERSPECTIVE', "Perspective", "Use perspective projection from given pont", 1),
-            ('ORTHO', "Orthogonal", "Use orthogonal projection", 2)
+            ('ORTHO', "Orthogonal", "Use orthogonal projection", 2),
+            ('UV', "UV Trim", "Trim surface by curve(s) in surface's UV space", 3)
         ]
     
     projection_type : EnumProperty(
@@ -55,6 +59,19 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
             items = projection_types,
             default = 'PARALLEL',
             update = update_sockets)
+
+    close_wire : BoolProperty(
+            name = "Close wire",
+            description = "Add a linear segment to make the wire closed",
+            default = False,
+            update = updateNode)
+
+    accuracy : IntProperty(
+            name = "Accuracy",
+            description = "Tolerance parameter for checking if ends of edges coincide",
+            default = 8,
+            min = 1,
+            update = updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "Surface")
@@ -68,19 +85,31 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
         p.use_prop = True
         p.prop = (0.0, 0.0, 0.0)
         self.outputs.new('SvSurfaceSocket', "SolidFace")
+        self.outputs.new('SvCurveSocket', "Edges")
+        self.outputs.new('SvCurveSocket', "UVCurves")
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
         layout.label(text='Projection:')
         layout.prop(self, 'projection_type', text='')
+        layout.prop(self, 'close_wire')
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'accuracy')
 
     def cut(self, face_surface, sv_curves, point, vector):
         # face_surface : SvFreeCadNurbsSurface
         nurbs = [SvNurbsCurve.to_nurbs(curve) for curve in sv_curves]
         if any(c is None for c in nurbs):
             raise Exception("One of curves is not a NURBS!")
-        fc_nurbs = [SvFreeCadNurbsCurve.from_any_nurbs(c).curve for c in nurbs]
-        fc_edges = [Part.Edge(c) for c in fc_nurbs]
+        fc_nurbs_curves = [SvFreeCadNurbsCurve.from_any_nurbs(c) for c in nurbs]
+        fc_nurbs = [c.curve for c in fc_nurbs_curves]
+        if self.projection_type in {'PARALLEL', 'PERSPECTIVE', 'ORTHO'}:
+            try:
+                fc_edges = [Part.Edge(c) for c in fc_nurbs]
+            except Exception as e:
+                raise Exception(f"Can't build edges from {fc_nurbs}: {e}")
         fc_face = Part.Face(face_surface.surface)
 
         if self.projection_type == 'PARALLEL':
@@ -90,8 +119,12 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
         elif self.projection_type == 'PERSPECTIVE':
             point = Base.Vector(*point)
             projections = [fc_face.makePerspectiveProjection(edge, point).Edges for edge in fc_edges]
-        else: # ORTHO
+        elif self.projection_type == 'ORTHO':
             projections = [fc_face.project(fc_edges).Edges]
+        else: # UV
+            uv_curves = [c.to_2d() for c in fc_nurbs_curves]
+            fc_nurbs_2d = [c.curve for c in uv_curves]
+            projections = [[c.toShape(face_surface.surface) for c in fc_nurbs_2d]]
 
         projections = sum(projections, [])
         if not projections:
@@ -99,14 +132,22 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
             raise Exception(f"Projection {words} of {sv_curves} onto {face_surface} is empty for some reason")
         try:
             wire = Part.Wire(projections)
-        except Part.OCCError as e:
+        except Exception as e:
             ps = [SvFreeCadNurbsCurve(p.Curve) for p in projections]
             raise Exception(f"Can't make a valid Wire out of curves {sv_curves} projected onto {face_surface}:\n{e}\nProjections are: {ps}")
 
         cut_fc_face = Part.Face(face_surface.surface, wire)
         cut_face_surface = SvFreeCadNurbsSurface(face_surface.surface, face=cut_fc_face) 
 
-        return cut_face_surface
+        if self.projection_type != 'UV':
+            uv_curves = []
+            for edge in cut_fc_face.OuterWire.Edges:
+                trim,m,M = cut_fc_face.curveOnSurface(edge)
+                trim = SvFreeCadCurve(trim, (m,M), ndim=2)
+                uv_curves.append(trim)
+
+        projections = [SvSolidEdgeCurve(p) for p in projections]
+        return uv_curves, projections, cut_face_surface
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -125,21 +166,53 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
         vector_s = self.inputs['Vector'].sv_get()
         vector_s = ensure_nesting_level(vector_s, 3)
 
+        tolerance = 10 ** (-self.accuracy)
+
         faces_out = []
+        trim_out = []
+        edges_out = []
         for surfaces, curves_i, points, vectors in zip_long_repeat(surface_s, curve_s, point_s, vector_s):
             new_faces = []
             new_trim = []
             new_edges = []
             for surface, curves, point, vector in zip_long_repeat(surfaces, curves_i, points, vectors):
-                face_surface = surface_to_freecad(surface) # SvFreeCadNurbsSurface
+                if is_solid_face_surface(surface):
+                    face_surface = surface
+                else:
+                    face_surface = surface_to_freecad(surface) # SvFreeCadNurbsSurface
+                self.info(f"Surface: {face_surface}, n curves: {len(curves)}")
                 if curves:
-                    face = self.cut(face_surface, curves, point, vector)
+                    if self.close_wire:
+                        t1 = curves[0].get_u_bounds()[0]
+                        t2 = curves[-1].get_u_bounds()[-1]
+                        p1 = curves[0].evaluate(t1)
+                        p2 = curves[-1].evaluate(t2)
+                        if np.linalg.norm(p1 - p2) > tolerance:
+#                             if self.projection_type == 'UV':
+#                                 fc_line = line2d(Base.Vector2d(p2), Base.Vector2d(p1))
+#                                 line = SvFreeCadCurve(fc_line, (0,1), ndim=2)
+#                                 curves = curves + [line]
+#                             else:
+                            line = SvLine.from_two_points(p2, p1)
+                            curves = curves + [line]
+                    trims, edges, face = self.cut(face_surface, curves, point, vector)
                 else:
                     face = face_surface
+                    trims = []
+                    edges = []
                 new_faces.append(face)
+                new_trim.append(trims)
+                new_edges.append(edges)
+
             faces_out.append(new_faces)
+            trim_out.append(new_trim)
+            edges_out.append(new_edges)
 
         self.outputs['SolidFace'].sv_set(faces_out)
+        if 'UVCurves' in self.outputs:
+            self.outputs['UVCurves'].sv_set(trim_out)
+        if 'Edges' in self.outputs:
+            self.outputs['Edges'].sv_set(edges_out)
 
 def register():
     if FreeCAD is not None:

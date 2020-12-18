@@ -107,7 +107,7 @@ def monad_make_unique(node):
     pre_nodes = set(nodes)
 
     # place new empty version of the monad node
-    JSONImporter(layout_json).import_into_tree(node_tree)
+    JSONImporter(layout_json).import_into_tree(node_tree, print_log=False)
 
     """
     notions..:

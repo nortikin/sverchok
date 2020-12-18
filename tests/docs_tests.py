@@ -126,7 +126,6 @@ blenddata_to_svdata2.py
 obj_edit.py
 BMOperatorsMK2.py
 uv_texture.py
-csg_booleanMK2.py
 vertex_colors_mk3.py
 sort_blenddata.py
 object_raycast2.py
@@ -138,7 +137,6 @@ points_from_uv_to_mesh.py
 custom_mesh_normals.py
 color_uv_texture.py
 filter_blenddata.py
-edge_split.py
 interpolation_mk2.py
 numpy_array.py
 bmesh_obj_in.py

@@ -214,8 +214,6 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
             attrs_dict = json.loads(strings_json)['attrs']
             state_dict = json.loads(strings_json)['state']
 
-            self.id_data.freeze(hard=True)
-
             # repopulate vd_items_group
             for item in self.vd_items_group:
                 attr_details = attrs_dict[item.attr_name]
@@ -228,8 +226,6 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
             # repopulate vd_items_props
             for item, value in state_dict.items():
                 setattr(self.vd_items_props[0], item, value)
-
-            self.id_data.unfreeze(hard=True)
 
 
 classes = [SvVDMK3Item, SvVDMK3Properties, SV_UL_VDMK3ItemList, SvVDAttrsNode]

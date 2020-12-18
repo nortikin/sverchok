@@ -55,6 +55,7 @@ menu_structure = [
     ["NODEVIEW_MT_AddSurfaces", 'SURFACE_DATA'],
     ["NODEVIEW_MT_AddFields", 'OUTLINER_OB_FORCE_FIELD'],
     ["NODEVIEW_MT_AddSolids", 'MESH_CUBE'],
+    ["NODEVIEW_MT_AddSpatial", 'POINTCLOUD_DATA'],
     ["NODEVIEW_MT_AddTransforms", 'ORIENTATION_LOCAL'],
     ["NODEVIEW_MT_AddAnalyzers", 'VIEWZOOM'],
     ["NODEVIEW_MT_AddModifiers", 'MODIFIER'],
@@ -81,7 +82,8 @@ menu_structure = [
     ["NODEVIEW_MT_AddBetas", "SV_BETA"],
     ["NODEVIEW_MT_AddAlphas", "SV_ALPHA"],
     ["separator"],
-    ["NODE_MT_category_SVERCHOK_GROUPS", "RNA"],
+    ["NODE_MT_category_SVERCHOK_MONAD", "RNA"],
+    ["NODE_MT_category_SVERCHOK_GROUP", "NODETREE"],
     ["NODEVIEW_MT_AddPresetOps", "SETTINGS"],
 ]
 def layout_draw_categories(layout, category_name, node_details):
@@ -254,8 +256,21 @@ class NODEVIEW_MT_AddPresetOps(bpy.types.Menu):
         layout = self.layout
         presets.draw_presets_ops(layout, context=context)
         for category in presets.get_category_names():
-            class_name = preset_category_menus[category].__name__
-            layout.menu(class_name)
+            if category in preset_category_menus:
+                class_name = preset_category_menus[category].__name__
+                layout.menu(class_name)
+
+
+class NODE_MT_category_SVERCHOK_GROUP(bpy.types.Menu):
+    bl_label = "Group"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator('node.add_group_node')
+        layout.operator('node.add_node_output_input', text="Group input").node_type = 'input'
+        layout.operator('node.add_node_output_input', text="Group output").node_type = 'output'
+        layout.operator('node.add_group_tree_from_selected')
+
 
 extra_category_menu_classes = dict()
 
@@ -289,6 +304,7 @@ classes = [
     NODEVIEW_MT_AddModifiers,
     NODEVIEW_MT_AddGenerators,
     NODEVIEW_MT_AddPresetOps,
+    NODE_MT_category_SVERCHOK_GROUP,
     # like magic.
     # make | NODEVIEW_MT_Add + class name , menu name
     make_class('GeneratorsExt', "Generators Extended"),
@@ -303,6 +319,7 @@ classes = [
     make_class('AnalyzeSolid', "Solids @ Analyze"),
     make_class('Solids', "Solids"),
     make_class('Transforms', "Transforms"),
+    make_class('Spatial', "Spatial"),
     make_class('Analyzers', "Analyzers"),
     make_class('Viz', "Viz"),
     make_class('Text', "Text"),

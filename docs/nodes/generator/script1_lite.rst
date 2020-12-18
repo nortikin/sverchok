@@ -15,15 +15,15 @@ The script node implementation is intended for quick, non serious, experimentati
 Features
 --------
 
-- easy template importing directly to node, or to text block (the latter is useful for making changes to a template before loading... 
-as is needed with the ``custom_draw_complex`` example )
+- A small amount of boilerplate (called a directive) at the top of your scripts used to define what sockets and ui elements you want. More about this in the Syntax segment below.
+- We provide example scripts to get you up an running quickly. These come in the form of templates and they can be imported directly into the node from the N panel. They can be imported directly into **node**, or to a **text block**.
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/25421401/ff29eed2-2a5c-11e7-9594-f85295178f57.png
 
-- doesn't force an output socket, but an input socket is expected (else how does it update?!)
-- does allow you to set some defaults : numbers, and lists of stuff
-- does allow you to set the level of nestedness; means you don't need to unwrap/index stuff via code
-- does allow you to declare an override to the node's draw_button function, well... think of it more like an ``append`` to the draw code. There's an example of how you might make a light weight Curve mapping node by using the ui component of a RGB curve from a material node tree. it's a little convoluted, but it's usefulness musn't be dismissed.
+- You must declare an input socket, but outputs are optional.
+- You can set defaults for input numbers, vectors, and list sockets.
+- You can set the level of nestedness; means you don't need to unwrap/index stuff via code
+- You can append a UI drawing funcion to the default drawing function of SNLite, in case you want to display a variety of UI elements from anywhere in Blender in one place.
 - has the option to **auto inject** the list of variable references as **parameters** much like javascript does for **arguments** inside a function. In essence implemented like this ::
 
     parameters = eval("[" + ", ".join([i.name for i in self.inputs]) + "]")
@@ -109,9 +109,12 @@ see a working script that uses two enums here: https://github.com/nortikin/sverc
 Syntax
 ------
 
-The syntax might look something like this::
+To intialize a scriptnode you must provide a "directive", it's where you define sockets and other scriptnode specific properties. The directive is rigidly wrapped with
+a pair of tripple quote marks: **"""**, never single quotes like **'''**.
 
-    """   (tripple quote marks to demark the header)
+The syntax looks like this::
+
+    """   
     in socketname  type  default=x nested=n
     in socketname2 type  default=x nested=n
     out socketname type  # (optional)

@@ -15,8 +15,6 @@ Vector
    noise_mk2
    fractal
    lerp
-   homogenous_vector_field
-   field_random_probe
    vector_rewire
    vector_in
    vector_out
@@ -31,5 +29,6 @@ Vector
    color_in_mk1
    color_out_mk1
    color_ramp
+   color_mix
    formula_color
    texture_evaluate_mk2

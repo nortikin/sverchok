@@ -16,23 +16,24 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from functools import reduce
 import bpy
-from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
+from bpy.props import BoolProperty, EnumProperty
 
 from mathutils import Matrix
-from functools import reduce
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, match_long_repeat)
+from sverchok.data_structure import (updateNode, list_match_func, numpy_list_match_modes)
+from sverchok.utils.sv_itertools import (recurse_f_level_control)
 
-operationItems = [
+OPERATION_ITEMS = [
     ("MULTIPLY", "Multiply", "Multiply two matrices", 0),
     ("INVERT", "Invert", "Invert matrix", 1),
     ("FILTER", "Filter", "Filter matrix components", 2),
     ("BASIS", "Basis", "Extract Basis vectors", 3)
 ]
 
-prePostItems = [
+PRE_POST_ITEMS = [
     ("PRE", "Pre", "Calculate A op B", 0),
     ("POST", "Post", "Calculate B op A", 1)
 ]
@@ -40,6 +41,58 @@ prePostItems = [
 id_mat = [Matrix.Identity(4)]
 ABC = tuple('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
 
+def matrix_multiply(params, constant, matching_f):
+    operation, pre_post = constant
+    if pre_post == "PRE":  # A op B : keep input order
+        parameters = matching_f(params)
+    else:  # B op A : reverse input order
+        parameters = matching_f(params[::-1])
+
+    return [operation(params) for params in zip(*parameters)]
+
+def operation_basis(matrix):
+    _, rotation, _ = matrix.decompose()
+
+    rot_mat = rotation.to_matrix().to_4x4()
+    x_axis = (rot_mat[0][0], rot_mat[1][0], rot_mat[2][0])
+    y_axis = (rot_mat[0][1], rot_mat[1][1], rot_mat[2][1])
+    z_axis = (rot_mat[0][2], rot_mat[1][2], rot_mat[2][2])
+
+    return x_axis, y_axis, z_axis
+
+def recursive_basis_op(mat_list):
+    x_list = []
+    y_list = []
+    z_list = []
+    if isinstance(mat_list[0], Matrix):
+
+        for mat in mat_list:
+            x_axis, y_axis, z_axis = operation_basis(mat)
+            x_list.append(x_axis)
+            y_list.append(y_axis)
+            z_list.append(z_axis)
+    else:
+        for sublist in mat_list:
+            sub_x_list, sub_y_list, sub_z_list = recursive_basis_op(sublist)
+            x_list.append(sub_x_list)
+            y_list.append(sub_y_list)
+            z_list.append(sub_z_list)
+
+    return x_list, y_list, z_list
+
+
+def general_op(mat_list, operation):
+
+    if isinstance(mat_list[0], Matrix):
+
+        out_matrix_list = [operation(a) for a in mat_list]
+
+    else:
+        out_matrix_list = []
+        for sublist in mat_list:
+            out_matrix_list.append(general_op(sublist, operation))
+
+    return out_matrix_list
 
 class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Math operation on matrices '''
@@ -56,12 +109,12 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
     prePost: EnumProperty(
         name='Pre Post',
         description='Order of operations PRE = A op B vs POST = B op A)',
-        items=prePostItems, default="PRE", update=updateNode)
+        items=PRE_POST_ITEMS, default="PRE", update=updateNode)
 
     operation: EnumProperty(
         name="Operation",
         description="Operation to apply on the given matrices",
-        items=operationItems, default="MULTIPLY", update=update_operation)
+        items=OPERATION_ITEMS, default="MULTIPLY", update=update_operation)
 
     filter_t: BoolProperty(
         name="Filter Translation",
@@ -77,6 +130,12 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
         name="Filter Scale",
         description="Filter out the scale component of the matrix",
         default=False, update=updateNode)
+
+    list_match: EnumProperty(
+        name="List Match",
+        description="Behavior on different list lengths",
+        items=numpy_list_match_modes, default="REPEAT",
+        update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvMatrixSocket', "A")
@@ -123,8 +182,12 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
             row.prop(self, "filter_r", toggle=True, text="R")
             row.prop(self, "filter_s", toggle=True, text="S")
 
-    def operation_filter(self, a):
-        T, R, S = a.decompose()
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, "list_match")
+
+    def operation_filter(self, matix_in):
+        T, R, S = matix_in.decompose()
 
         if self.filter_t:
             mat_t = Matrix().Identity(4)
@@ -144,29 +207,19 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
             mat_s[1][1] = S[1]
             mat_s[2][2] = S[2]
 
-        m = mat_t @ mat_r @ mat_s
+        mat_out = mat_t @ mat_r @ mat_s
 
-        return m
-
-    def operation_basis(self, a):
-        T, R, S = a.decompose()
-
-        rot = R.to_matrix().to_4x4()
-        Rx = (rot[0][0], rot[1][0], rot[2][0])
-        Ry = (rot[0][1], rot[1][1], rot[2][1])
-        Rz = (rot[0][2], rot[1][2], rot[2][2])
-
-        return Rx, Ry, Rz
+        return mat_out
 
     def get_operation(self):
         if self.operation == "MULTIPLY":
             return lambda l: reduce((lambda a, b: a @ b), l)
-        elif self.operation == "FILTER":
+        if self.operation == "FILTER":
             return self.operation_filter
-        elif self.operation == "INVERT":
+        if self.operation == "INVERT":
             return lambda a: a.inverted()
-        elif self.operation == "BASIS":
-            return self.operation_basis
+
+        return operation_basis
 
     def sv_update(self):
         # sigle input operation ? => no need to update sockets
@@ -187,45 +240,34 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
         if not any(s.is_linked for s in outputs):
             return
 
-        I = []  # collect the inputs from the connected sockets
+        data_in = []  # collect the inputs from the connected sockets
         for s in filter(lambda s: s.is_linked, self.inputs):
-            I.append(s.sv_get(default=id_mat))
+            data_in.append(s.sv_get(default=id_mat))
 
         operation = self.get_operation()
 
         if self.operation in {"MULTIPLY"}:  # multiple input operations
-            if self.prePost == "PRE":  # A op B : keep input order
-                parameters = match_long_repeat(I)
-            else:  # B op A : reverse input order
-                parameters = match_long_repeat(I[::-1])
+            desired_levels = [1 for i in data_in]
+            ops = [operation, self.prePost]
+            list_match_f = list_match_func[self.list_match]
+            result = recurse_f_level_control(data_in, ops, matrix_multiply, list_match_f, desired_levels)
 
-            matrixList = [operation(params) for params in zip(*parameters)]
-
-            outputs['C'].sv_set(matrixList)
+            outputs['C'].sv_set(result)
 
         else:  # single input operations
-            parameters = I[0]
-          #  print("parameters=", parameters)
+            mat_list = data_in[0]
 
             if self.operation == "BASIS":
-                xList = []
-                yList = []
-                zList = []
-                for a in parameters:
-                    Rx, Ry, Rz = operation(a)
-                    xList.append(Rx)
-                    yList.append(Ry)
-                    zList.append(Rz)
-                outputs['X'].sv_set(xList)
-                outputs['Y'].sv_set(yList)
-                outputs['Z'].sv_set(zList)
+                x_list, y_list, z_list = recursive_basis_op(mat_list)
 
-                outputs['C'].sv_set(parameters)
+                wrap = isinstance(x_list[0][0], (list, tuple))
+                outputs['X'].sv_set(x_list if wrap else [x_list])
+                outputs['Y'].sv_set(y_list if wrap else [y_list])
+                outputs['Z'].sv_set(z_list if wrap else [z_list])
+                outputs['C'].sv_set(mat_list)
 
             else:  # INVERSE / FILTER
-                matrixList = [operation(a) for a in parameters]
-
-                outputs['C'].sv_set(matrixList)
+                outputs['C'].sv_set(general_op(mat_list, operation))
 
 
 def register():

@@ -24,6 +24,9 @@ Sum                 sum of all the elements of the list
 Average             average of element at selected level
 Maximum             Maximum value of the list
 Minimum             Minimum value of the list
+Cumulative Sum      Cumulative sum of elements in the list
+Logical OR          Return True if any value in the list is logical True
+Logical AND         Return True if all values in the list are logical True
 =================== ======================================
 
 **Warp:** Adds one level of warping (output becomes [output])

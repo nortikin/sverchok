@@ -21,8 +21,8 @@ import bpy
 from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 import bmesh.ops
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, match_long_repeat, fullList, throttle_and_update_node
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 
@@ -58,7 +58,7 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Bevel'
     bl_icon = 'MOD_BEVEL'
 
-    @throttled
+    @throttle_and_update_node
     def mode_change(self, context):
         self.inputs[5].name = 'BevelEdges' if not self.vertexOnly else 'VerticesMask'
         if 'Spread' in self.inputs:

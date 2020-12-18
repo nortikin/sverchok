@@ -72,7 +72,7 @@ def curve_to_freecad_nurbs(sv_curve):
     """
     nurbs = SvNurbsCurve.to_nurbs(sv_curve)
     if nurbs is None:
-        raise Exception(f"{sv_curve} is not a NURBS curve")
+        raise TypeError(f"{sv_curve} is not a NURBS curve")
     fc_curve = SvNurbsMaths.build_curve(SvNurbsMaths.FREECAD,
                 nurbs.get_degree(),
                 nurbs.get_knotvector(),
@@ -139,11 +139,13 @@ class SvSolidEdgeCurve(SvCurve):
         return curve
 
 class SvFreeCadCurve(SvCurve):
-    __description__ = "FreeCAD"
     def __init__(self, curve, bounds, ndim=3):
         self.curve = curve
         self.u_bounds = bounds
         self.ndim = ndim
+    
+    def __repr__(self):
+        return f"<FreeCAD {self.ndim}D curve, {type(self.curve).__name__}>"
 
     def _convert(self, p):
         if self.ndim == 2:
@@ -171,10 +173,40 @@ class SvFreeCadCurve(SvCurve):
     #def get_u_bounds(self):
     #    return (self.curve.FirstParameter, self.curve.LastParameter)
 
+    def reverse(self):
+        result = self.to_nurbs().reverse()
+        if self.ndim == 2:
+            result = result.to_2d()
+        return result
+        #curve = self.curve.copy()
+        #curve.reverse()
+        #return SvFreeCadCurve(curve, self.u_bounds, self.ndim)
+
+    def concatenate(self, curve2, tolerance=1e-6):
+        if isinstance(curve2, SvFreeCadCurve) and self.ndim == curve2.ndim == 2:
+            curve1 = self.curve.toBSpline(*self.u_bounds)
+            curve2 = curve2.curve.toBSpline()
+            curve1.join(curve2)
+            return SvFreeCadNurbsCurve(curve1, self.ndim)
+        elif isinstance(curve2, SvFreeCadNurbsCurve) and self.ndim == curve2.ndim == 2:
+            curve1 = self.curve.toBSpline(*self.u_bounds)
+            curve2 = curve2.curve
+            curve1.join(curve2)
+            return SvFreeCadNurbsCurve(curve1, self.ndim)
+        return self.to_nurbs().concatenate(curve2, tolerance)
+
     def to_nurbs(self, implementation = SvNurbsMaths.FREECAD):
         curve = self.curve.toBSpline(*self.u_bounds)
+
+        if implementation == SvNurbsMaths.FREECAD:
+            return SvFreeCadNurbsCurve(curve, self.ndim)
+
         #curve.transform(self.edge.Matrix)
-        control_points = np.array(curve.getPoles())
+        if self.ndim == 2:
+            control_points = [(p.x, p.y, 0) for p in curve.getPoles()]
+        else:
+            control_points = [(p.x, p.y, p.z) for p in curve.getPoles()]
+        control_points = np.array(control_points)
         weights = np.array(curve.getWeights())
         knotvector = np.array(curve.KnotSequence)
 
@@ -190,7 +222,7 @@ class SvFreeCadNurbsCurve(SvNurbsCurve):
         self.curve = curve
         self.ndim = ndim
         self.u_bounds = None # from FreeCAD data
-        self.__description__ = f"FreeCAD NURBS (degree={curve.Degree}, pts={curve.NbPoles})"
+        self.__description__ = f"FreeCAD {ndim}D NURBS (degree={curve.Degree}, pts={curve.NbPoles})"
 
     @classmethod
     def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
@@ -224,6 +256,10 @@ class SvFreeCadNurbsCurve(SvNurbsCurve):
         curve = Geom2d.BSplineCurve2d()
         curve.buildFromPolesMultsKnots(pts, mults, knots, False, degree, weights)
         return SvFreeCadNurbsCurve(curve, ndim=2)
+
+    def to_2d(self):
+        return SvFreeCadNurbsCurve.build_2d(self.get_degree(), self.get_knotvector(),
+                    self.get_control_points(), self.get_weights())
     
     @classmethod
     def from_any_nurbs(cls, curve):
@@ -258,7 +294,9 @@ class SvFreeCadNurbsCurve(SvNurbsCurve):
     
     def tangent(self, t):
         v = self.curve.tangent(t)
-        return np.array(self._convert(v))
+        if not isinstance(v, tuple):
+            v = self._convert(v)
+        return np.array(v)
     
     def tangent_array(self, ts):
         return np.vectorize(self.tangent, signature='()->(3)')(ts)    
@@ -308,4 +346,24 @@ def curve_to_freecad(sv_curve):
             info(f"Can't convert {sv_curve} to native FreeCAD curve: {e}")
             pass
     return [curve_to_freecad_nurbs(sv_curve)]
+
+def get_curve_endpoints(fc_curve):
+    if hasattr(fc_curve, 'StartPoint'):
+        p1, p2 = fc_curve.StartPoint, fc_curve.EndPoint
+    else:
+        t1, t2 = fc_curve.FirstParameter, fc_curve.LastParameter
+        if hasattr(fc_curve, 'valueAt'):
+            p1, p2 = fc_curve.valueAt(t1), fc_curve.valueAt(t2)
+        else:
+            p1, p2 = fc_curve.value(t1), fc_curve.value(t2)
+    return p1, p2
+
+def get_edge_endpoints(fc_edge):
+    t1, t2 = fc_edge.ParameterRange
+    fc_curve = fc_edge.Curve
+    if hasattr(fc_curve, 'valueAt'):
+        p1, p2 = fc_curve.valueAt(t1), fc_curve.valueAt(t2)
+    else:
+        p1, p2 = fc_curve.value(t1), fc_curve.value(t2)
+    return p1, p2
 
