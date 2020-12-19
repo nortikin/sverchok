@@ -117,3 +117,12 @@ def mask_vertices(verts, edges, faces, verts_mask):
     else:
         return verts, edges, faces
 
+def get_unique_faces(faces):
+    uniq_faces = []
+    for face in faces:
+        if set(face) in [set(f) for f in uniq_faces]:
+            print(face)
+        else:
+            uniq_faces.append(face)
+    return uniq_faces
+
