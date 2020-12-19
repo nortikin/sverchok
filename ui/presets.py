@@ -81,7 +81,7 @@ def get_category_items(self, context):
     node_category_items = []
     for idx, category in enumerate(get_category_names()):
         node_class = get_node_class_reference(category)
-        if node_class:
+        if node_class and hasattr(node_class, 'bl_label'):
             title = "/Node/ {}".format(node_class.bl_label)
             node_category_items.append((category, title, category, idx+1))
         else:
