@@ -477,3 +477,49 @@ def svmesh_to_solid(verts, faces, precision, remove_splitter=True):
 
     return Part.makeSolid(shape)
 
+def mesh_from_solid_faces(solid):
+    verts = [(v.X, v.Y, v.Z) for v in solid.Vertexes]
+
+    all_fc_verts = {SvSolidTopology.Item(v) : i for i, v in enumerate(solid.Vertexes)}
+    def find_vertex(v):
+        #for i, fc_vert in enumerate(solid.Vertexes):
+        #    if v.isSame(fc_vert):
+        #        return i
+        #return None
+        return all_fc_verts[SvSolidTopology.Item(v)]
+
+    edges = []
+    for fc_edge in solid.Edges:
+        edge = [find_vertex(v) for v in fc_edge.Vertexes]
+        if len(edge) == 2:
+            edges.append(edge)
+
+    faces = []
+    for fc_face in solid.Faces:
+        incident_verts = defaultdict(set)
+        for fc_edge in fc_face.Edges:
+            edge = [find_vertex(v) for v in fc_edge.Vertexes]
+            if len(edge) == 2:
+                i, j = edge
+                incident_verts[i].add(j)
+                incident_verts[j].add(i)
+
+        face = [find_vertex(v) for v in fc_face.Vertexes]
+
+        vert_idx = face[0]
+        correct_face = [vert_idx]
+
+        for i in range(len(face)):
+            incident = list(incident_verts[vert_idx])
+            other_verts = [i for i in incident if i not in correct_face]
+            if not other_verts:
+                break
+            other_vert_idx = other_verts[0]
+            correct_face.append(other_vert_idx)
+            vert_idx = other_vert_idx
+
+        if len(correct_face) > 2:
+            faces.append(correct_face)
+
+    return verts, edges, faces
+
