@@ -84,11 +84,7 @@ def SvForgetSocket(socket):
 def SvSetSocket(socket, out):
     """sets socket data for socket"""
     global socket_data_cache
-    if data_structure.DEBUG_MODE:
-        if not socket.is_output:
-            warning(f"{socket.node.name} setting input socket: {socket.name}")
-        if not socket.is_linked:
-            warning(f"{socket.node.name} setting unconncted socket: {socket.name}")
+
     s_id = socket.socket_id
     s_ng = socket.id_data.tree_id
     if s_ng not in socket_data_cache:
@@ -96,37 +92,30 @@ def SvSetSocket(socket, out):
     socket_data_cache[s_ng][s_id] = out
 
 
-def SvGetSocket(socket, deepcopy=True):
+def SvGetSocket(socket, other=None, deepcopy=True):
     """gets socket data from socket,
     if deep copy is True a deep copy is make_dep_dict,
     to increase performance if the node doesn't mutate input
     set to False and increase performance substanstilly
     """
     global socket_data_cache
-    if socket.is_linked:
-        other = socket.other
-        if other is None:
-            raise SvNoDataError(socket)
+    try:
         s_id = other.socket_id
         s_ng = other.id_data.tree_id
-        if s_ng not in socket_data_cache:
-            raise LookupError
-        if s_id in socket_data_cache[s_ng]:
-            out = socket_data_cache[s_ng][s_id]
-            if deepcopy:
-                return sv_deep_copy(out)
-            else:
-                return out
-        else:
-            if data_structure.DEBUG_MODE:
-                debug(f"cache miss: {socket.node.name} -> {socket.name} from: {other.node.name} -> {other.name}")
-            raise SvNoDataError(socket, msg="not found in socket_data_cache")
-    # not linked
-    raise SvNoDataError(socket)
+        out = socket_data_cache[s_ng][s_id]
+        if deepcopy:
+            return sv_deep_copy(out)
+        return out
+        
+    except Exception as e:
+        if data_structure.DEBUG_MODE:
+            debug(f"cache miss: {socket.node.name} -> {socket.name} from: {other.node.name} -> {other.name}")
+        raise SvNoDataError(socket, msg="not found in socket_data_cache " + str(e))
+
 
 class SvNoDataError(LookupError):
     def __init__(self, socket=None, node=None, msg=None):
-        
+
         self.extra_message = msg if msg else ""
 
         if node is None and socket is not None:
@@ -143,16 +132,16 @@ class SvNoDataError(LookupError):
             return "SvNoDataError"
         else:
             return f"No data passed into socket '{self.socket.name}'"
-    
+
     def __repr__(self):
         return self.get_message()
-    
+
     def __str__(self):
         return repr(self)
 
     def __unicode__(self):
         return repr(self)
-    
+
     def __format__(self, spec):
         return repr(self)
 
