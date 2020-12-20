@@ -9,14 +9,17 @@
 from typing import NamedTuple, Any, List, Tuple
 import random
 from itertools import chain, repeat
+import numpy as np
 
 import bpy
 from mathutils import Vector
+from mathutils.bvhtree import BVHTree
 from mathutils.geometry import tessellate_polygon, area_tri
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-
+from sverchok.utils.geom import calc_bounds
+from sverchok.utils.sv_mesh_utils import point_inside_mesh
 
 class SocketProperties(NamedTuple):
     name: str
@@ -46,16 +49,43 @@ INPUT_CONFIG = [
 
 class NodeProperties(NamedTuple):
     proportional: bool
+    mode : str
 
+MAX_ITERATIONS = 1000
+
+def populate_mesh(verts, faces, count, seed):
+    bvh = BVHTree.FromPolygons(verts, faces)
+    np.random.seed(seed)
+    x_min, x_max, y_min, y_max, z_min, z_max = calc_bounds(verts)
+    low = np.array([x_min, y_min, z_min])
+    high = np.array([x_max, y_max, z_max])
+    result = []
+    done = 0
+    iterations = 0
+    while True:
+        if iterations > MAX_ITERATIONS:
+            raise Exception("Iterations limit is reached")
+        max_pts = max(count, count-done)
+        points = np.random.uniform(low, high, size=(max_pts,3)).tolist()
+        points = [p for p in points if point_inside_mesh(bvh, p)]
+        n = len(points)
+        result.extend(points)
+        done += n
+        iterations += 1
+        if done >= count:
+            break
+    return result, []
 
 def node_process(inputs: InputData, properties: NodeProperties):
-    me = TriangulatedMesh([Vector(co) for co in inputs.verts], inputs.faces)
-    if properties.proportional:
-        me.use_even_points_distribution()
-    if inputs.face_weight:
-        me.set_custom_face_weights(inputs.face_weight)
-    return me.generate_random_points(inputs.number[0], inputs.seed[0])  # todo [0] <-- ?!
-
+    if properties.mode == 'SURFACE':
+        me = TriangulatedMesh([Vector(co) for co in inputs.verts], inputs.faces)
+        if properties.proportional:
+            me.use_even_points_distribution()
+        if inputs.face_weight:
+            me.set_custom_face_weights(inputs.face_weight)
+        return me.generate_random_points(inputs.number[0], inputs.seed[0])  # todo [0] <-- ?!
+    else:
+        return populate_mesh(inputs.verts, inputs.faces, inputs.number[0], inputs.seed[0])
 
 class TriangulatedMesh:
     def __init__(self, verts: List[Vector], faces: List[List[int]]):
@@ -154,9 +184,22 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
             description="If checked, then number of points at each face is proportional to the area of the face",
             default=True,
             update=updateNode)
+
+    modes = [
+            ('SURFACE', "Surface", "Surface", 0),
+            ('VOLUME', "Volume", "Volume", 1)
+        ]
+
+    mode : bpy.props.EnumProperty(
+            name = "Mode",
+            items = modes,
+            default = 'SURFACE',
+            update=updateNode)
     
     def draw_buttons(self, context, layout):
-        layout.prop(self, "proportional", toggle=True)
+        layout.prop(self, "mode")
+        if self.mode == 'SURFACE':
+            layout.prop(self, "proportional")
 
     def sv_init(self, context):
         [self.inputs.new(p.socket_type, p.name) for p in INPUT_CONFIG]
@@ -169,7 +212,7 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
         if not all([self.inputs['Verts'].is_linked, self.inputs['Faces'].is_linked]):
             return
 
-        props = NodeProperties(self.proportional)
+        props = NodeProperties(self.proportional, self.mode)
         out = [node_process(inputs, props) for inputs in self.get_input_data_iterator(INPUT_CONFIG)]
         [s.sv_set(data) for s, data in zip(self.outputs, zip(*out))]
 

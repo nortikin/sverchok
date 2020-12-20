@@ -19,7 +19,9 @@
 from sverchok.data_structure import fullList_deep_copy
 from numpy import array, empty, concatenate, unique, sort, int32, ndarray, vectorize
 
+from mathutils import Vector
 
+from sverchok.data_structure import fullList_deep_copy
 
 def mesh_join(vertices_s, edges_s, faces_s):
     '''Given list of meshes represented by lists of vertices, edges and faces,
@@ -142,3 +144,19 @@ def get_unique_faces(faces):
         else:
             uniq_faces.append(face)
     return uniq_faces
+
+def point_inside_mesh(bvh, point):
+    point = Vector(point)
+    axis = Vector((1, 0, 0))
+    outside = False
+    count = 0
+    while True:
+        location, normal, index, distance = bvh.ray_cast(point, axis)
+        if index is None:
+            break
+        count += 1
+        point = location + axis * 0.00001
+    if count % 2 == 0:
+        outside = True
+    return not outside
+
