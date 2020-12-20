@@ -140,6 +140,28 @@ def numbers_to_sfield(data):
     else:
         raise TypeError("Unexpected data type from String socket: %s" % type(data))
 
+def vectors_to_matrices(socket, source_data):
+    # this means we're going to get a flat list of the incoming
+    # locations and convert those into matrices proper.
+    out = get_matrices_from_locs(source_data)
+    socket.num_matrices = len(out)
+    return out
+
+def matrices_to_vectors(socket, source_data):
+    return get_locs_from_matrices(source_data)
+
+def quaternions_to_matrices(socket, source_data):
+    out = get_matrices_from_quaternions(source_data)
+    socket.num_matrices = len(out)
+    return out
+
+def matrices_to_quaternions(socket, source_data):
+    return get_quaternions_from_matrices(source_data)
+
+def string_to_vector(socket, source_data):
+    # it can be so that socket is string but data their are already vectors
+    return [[(v, v, v) if isinstance(v, (float, int)) else v for v in obj] for obj in source_data]
+
 class ImplicitConversionProhibited(Exception):
     def __init__(self, socket, msg=None):
         super().__init__()
@@ -184,16 +206,17 @@ class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
     """
     Default implicit conversion policy.
     """
+    tests = [
+        ['v', 'm', vectors_to_matrices],
+        ['m', 'v', matrices_to_vectors],
+        ['q', 'm', quaternions_to_matrices],
+        ['m', 'q', matrices_to_quaternions],
+        ['s', 'v', string_to_vector]]
 
     @classmethod
     def convert(cls, socket, other, source_data):
-        test = [
-            ['v', 'm', cls.vectors_to_matrices],
-            ['m', 'v', cls.matrices_to_vectors],
-            ['q', 'm', cls.quaternions_to_matrices],
-            ['m', 'q', cls.matrices_to_quaternions],
-            ['s', 'v', cls.string_to_vector]]
-        for t in test:
+
+        for t in cls.tests:
             if test_socket_type(socket, other, t[0], t[1]):
                 return t[2](socket, source_data)
         if socket.bl_idname in cls.get_lenient_socket_types():
@@ -231,33 +254,6 @@ class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
         if not other.bl_idname in cls.get_arbitrary_type_socket_types():
             return False
         return is_ultimately(source_data, expected_type)
-
-    @classmethod
-    def vectors_to_matrices(cls, socket, source_data):
-        # this means we're going to get a flat list of the incoming
-        # locations and convert those into matrices proper.
-        out = get_matrices_from_locs(source_data)
-        socket.num_matrices = len(out)
-        return out
-
-    @classmethod
-    def matrices_to_vectors(cls, socket, source_data):
-        return get_locs_from_matrices(source_data)
-
-    @classmethod
-    def quaternions_to_matrices(cls, socket, source_data):
-        out = get_matrices_from_quaternions(source_data)
-        socket.num_matrices = len(out)
-        return out
-
-    @classmethod
-    def matrices_to_quaternions(cls, socket, source_data):
-        return get_quaternions_from_matrices(source_data)
-
-    @classmethod
-    def string_to_vector(cls, socket, source_data):
-        # it can be so that socket is string but data their are already vectors
-        return [[(v, v, v) if isinstance(v, (float, int)) else v for v in obj] for obj in source_data]
 
 
 class FieldImplicitConversionPolicy(DefaultImplicitConversionPolicy):
