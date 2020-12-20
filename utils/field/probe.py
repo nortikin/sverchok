@@ -22,7 +22,10 @@ def _check_min_distance(v_new, vs_old, min_r):
     nearest, idx, dist = kdt.query(v_new)
     if dist is None:
         return True
-    return (dist >= min_r)
+    ok = (dist >= min_r)
+    if not ok:
+        print(f"V {v_new} => {nearest}, {dist} >= {min_r}")
+    return ok
 
 def _check_min_radius(point, old_points, old_radiuses, min_r):
     if not old_points:
@@ -136,6 +139,7 @@ def field_random_probe(field, bbox, count,
             for candidate in candidates:
                 if _check_min_distance(candidate, generated_verts + good_verts, min_r):
                     good_verts.append(candidate)
+            good_radiuses = [1 for c in good_verts]
 
         if predicate is not None:
             pairs = [(vert, r) for vert, r in zip(good_verts, good_radiuses) if predicate(vert)]
