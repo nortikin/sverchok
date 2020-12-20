@@ -100,6 +100,7 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "Faces")
+        self.outputs.new('SvVerticesSocket', "AllSites")
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
@@ -138,12 +139,14 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         verts_out = []
         edges_out = []
         faces_out = []
+        sites_out = []
         for params in zip_long_repeat(verts_in, faces_in, sites_in, spacing_in):
             new_verts = []
             new_edges = []
             new_faces = []
+            new_sites = []
             for verts, faces, sites, spacing in zip_long_repeat(*params):
-                verts, edges, faces = voronoi_on_mesh(verts, faces, sites, thickness=0,
+                verts, edges, faces, sites = voronoi_on_mesh(verts, faces, sites, thickness=0,
                             spacing = spacing,
                             #clip_inner = self.clip_inner, clip_outer = self.clip_outer,
                             do_clip=True, clipping=None,
@@ -156,28 +159,34 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
                     new_verts.extend(verts)
                     new_edges.extend(edges)
                     new_faces.extend(faces)
+                    new_sites.extend(sites)
                 elif self.join_mode == 'SEPARATE':
                     new_verts.append(verts)
                     new_edges.append(edges)
                     new_faces.append(faces)
+                    new_sites.append(sites)
                 else: # JOIN
                     verts, edges, faces = mesh_join(verts, edges, faces)
                     new_verts.append(verts)
                     new_edges.append(edges)
                     new_faces.append(faces)
+                    new_sites.append(sites)
 
             if nested_output:
                 verts_out.append(new_verts)
                 edges_out.append(new_edges)
                 faces_out.append(new_faces)
+                sites_out.append(new_sites)
             else:
                 verts_out.extend(new_verts)
                 edges_out.extend(new_edges)
                 faces_out.extend(new_faces)
+                sites_out.extend(new_sites)
 
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Edges'].sv_set(edges_out)
         self.outputs['Faces'].sv_set(faces_out)
+        self.outputs['AllSites'].sv_set(sites_out)
 
 def register():
     if scipy is not None:
