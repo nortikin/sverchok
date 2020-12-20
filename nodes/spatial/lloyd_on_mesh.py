@@ -11,7 +11,7 @@ from bpy.props import FloatProperty, StringProperty, BoolProperty, EnumProperty,
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, throttle_and_update_node, get_data_nesting_level
 from sverchok.utils.field.scalar import SvScalarField
-from sverchok.utils.voronoi3d import lloyd_on_mesh
+from sverchok.utils.voronoi3d import lloyd_on_mesh, lloyd_in_mesh
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 
@@ -41,6 +41,20 @@ class SvLloydOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         min = 0.0,
         update=updateNode)
 
+    modes = [
+            ('SURFACE', "Surface", "Surface", 0),
+            ('VOLUME', "Volume", "Volume", 1)
+        ]
+
+    mode : bpy.props.EnumProperty(
+            name = "Mode",
+            items = modes,
+            default = 'SURFACE',
+            update=updateNode)
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "mode")
+    
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "Faces")
@@ -77,7 +91,10 @@ class SvLloydOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         for params in zip_long_repeat(verts_in, faces_in, sites_in, thickness_in, iterations_in, weights_in):
             new_verts = []
             for verts, faces, sites, thickness, iterations, weights in zip_long_repeat(*params):
-                sites = lloyd_on_mesh(verts, faces, sites, thickness, iterations, weight_field = weights)
+                if self.mode == 'SURFACE':
+                    sites = lloyd_on_mesh(verts, faces, sites, thickness, iterations, weight_field = weights)
+                else:
+                    sites = lloyd_in_mesh(verts, faces, sites, iterations, thickness=thickness, weight_field = weights)
                 new_verts.append(sites)
             if nested_output:
                 verts_out.append(new_verts)

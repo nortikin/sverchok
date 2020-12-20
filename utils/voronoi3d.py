@@ -25,7 +25,7 @@ import bmesh
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 
-from sverchok.utils.sv_mesh_utils import mask_vertices, polygons_to_edges
+from sverchok.utils.sv_mesh_utils import mask_vertices, polygons_to_edges, point_inside_mesh
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, bmesh_clip
 from sverchok.utils.geom import calc_bounds, bounding_sphere, PlaneEquation
 from sverchok.utils.math import project_to_sphere, weighted_center
@@ -402,6 +402,50 @@ def lloyd_on_mesh(verts, faces, sites, thickness, n_iterations, weight_field=Non
         points = calc_bvh_projections(bvh, points)
 
     return points.tolist()
+
+def lloyd_in_mesh(verts, faces, sites, n_iterations, thickness=None, weight_field=None):
+    bvh = BVHTree.FromPolygons(verts, faces)
+
+    if thickness is None:
+        x_min, x_max, y_min, y_max, z_min, z_max = calc_bounds(verts)
+        thickness = max(x_max - x_min, y_max - y_min, z_max - z_min) / 4.0
+
+    def iteration(points):
+        n = len(points)
+
+        normals = calc_bvh_normals(bvh, points)
+        k = 0.5*thickness
+        points = np.array(points)
+        plus_points = points + k*normals
+        all_points = points.tolist() + plus_points.tolist()
+
+        diagram = Voronoi(all_points)
+        centers = []
+        for site_idx in range(n):
+            region_idx = diagram.point_region[site_idx]
+            region = diagram.regions[region_idx]
+            region_verts = np.array([diagram.vertices[i] for i in region])
+            center = weighted_center(region_verts, weight_field)
+            centers.append(tuple(center))
+        return centers
+
+    def restrict(points):
+        result = []
+        for p in points:
+            if point_inside_mesh(bvh, p):
+                result.append(p)
+            else:
+                loc, normal, index, distance = bvh.find_nearest(p)
+                if loc is not None:
+                    result.append(tuple(loc))
+        return result
+
+    points = restrict(sites)
+    for i in range(n_iterations):
+        points = iteration(points)
+        points = restrict(points)
+
+    return points
 
 def lloyd_in_solid(solid, sites, n_iterations, tolerance=1e-4, weight_field=None):
     shell = solid.Shells[0]
