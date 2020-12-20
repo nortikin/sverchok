@@ -87,9 +87,11 @@ def SvSetSocket(socket, out):
 
     s_id = socket.socket_id
     s_ng = socket.id_data.tree_id
-    if s_ng not in socket_data_cache:
+    try:
+        socket_data_cache[s_ng][s_id] = out
+    except KeyError:
         socket_data_cache[s_ng] = {}
-    socket_data_cache[s_ng][s_id] = out
+        socket_data_cache[s_ng][s_id] = out
 
 
 def SvGetSocket(socket, other=None, deepcopy=True):
@@ -106,7 +108,7 @@ def SvGetSocket(socket, other=None, deepcopy=True):
         if deepcopy:
             return sv_deep_copy(out)
         return out
-        
+
     except Exception as e:
         if data_structure.DEBUG_MODE:
             debug(f"cache miss: {socket.node.name} -> {socket.name} from: {other.node.name} -> {other.name}")
