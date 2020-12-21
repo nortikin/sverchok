@@ -35,6 +35,7 @@ from sverchok.data_structure import (
 
 from sverchok.settings import get_params
 
+from sverchok.utils.socket_utils import format_bpy_property, setup_new_node_location
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.field.vector import SvVectorField
 from sverchok.utils.curve import SvCurve
@@ -265,14 +266,6 @@ class SvSocketProcessing():
         if self.can_wrap():
             layout.prop(self, 'use_wrap')
 
-def format_property(prop):
-    if isinstance(prop, (str, int, float)):
-        return [[prop]]
-    if hasattr(prop, '__len__'):
-        # it looks like as some BLender property array - convert to tuple
-        return [[prop[:]]]
-
-    return [prop]
 
 class SvSocketCommon(SvSocketProcessing):
     """
@@ -388,12 +381,12 @@ class SvSocketCommon(SvSocketProcessing):
         prop_name = self.get_prop_name()
         if prop_name:
             prop = getattr(self.node, prop_name)
-            return format_property(prop)
+            return format_bpy_property(prop)
 
         if self.use_prop and hasattr(self, 'default_property') and self.default_property is not None:
             default_property = self.default_property
-            return format_property(default_property)
-            
+            return format_bpy_property(default_property)
+
         if default is not sentinel:
             return default
 
@@ -1193,13 +1186,6 @@ class SvSocketHelpOp(bpy.types.Operator):
                 col.label(text=line)
         bpy.context.window_manager.popup_menu(draw, title="Socket description", icon='QUESTION')
         return {'FINISHED'}
-
-def setup_new_node_location(new_node, old_node):
-    links_number = len([s for s in old_node.inputs if s.is_linked])
-    new_node.location = (old_node.location[0] - 200, old_node.location[1] - 100 * links_number)
-    if old_node.parent:
-        new_node.parent = old_node.parent
-        new_node.location = new_node.absolute_location
 
 class SvInputLinkMenuOp(bpy.types.Operator):
     "Opens a menu"
