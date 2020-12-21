@@ -82,7 +82,7 @@ class ListFlipNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         if self.inputs['data'].is_linked and self.outputs['data'].is_linked:
-            outEval = self.inputs['data'].sv_get()
+            outEval = self.inputs['data'].sv_get(deepcopy=False)
             #outCorr = dataCorrect(outEval)  # this is bullshit, as max 3 in levels
             levels = self.level - 1
             out = flip(outEval, levels)

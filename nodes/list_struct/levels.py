@@ -132,7 +132,7 @@ class SvListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.outputs['Data'].is_linked:
             return
 
-        data = self.inputs['Data'].sv_get(default=[])
+        data = self.inputs['Data'].sv_get(default=[], deepcopy=False)
         result = list_levels_adjust(data, self.levels_config, data_types=ALL_TYPES)
 
         self.outputs['Data'].sv_set(result)

@@ -69,8 +69,8 @@ class SvListItemNode(bpy.types.Node, SverchCustomTreeNode):
         '''main node function called every update'''
         if self.inputs['Data'].is_linked:
             out_item, out_other = self.outputs
-            data = self.inputs['Data'].sv_get()
-            indexes = self.inputs['Index'].sv_get([[self.index]])
+            data = self.inputs['Data'].sv_get(deepcopy=False)
+            indexes = self.inputs['Index'].sv_get(default=[[self.index]], deepcopy=False)
 
             if out_item.is_linked:
                 if self.level-1:

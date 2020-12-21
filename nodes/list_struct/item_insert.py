@@ -86,19 +86,19 @@ class SvListItemInsertNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         out_socket = self.outputs[0]
         si = self.inputs
-        if si['Data'].is_linked and self.inputs['Item'].is_linked and out_socket.is_linked:
+        if not (si['Data'].is_linked and si['Item'].is_linked and out_socket.is_linked):
+            return
 
-            data = si['Data'].sv_get()
-            if si['Item'].is_linked:
-                new_item = si['Item'].sv_get()
-                indexes = si['Index'].sv_get([[self.index]])
-                if self.level-1:
-                    out = self.get(data, new_item, self.level-1, indexes, self.set_items)
-                else:
-                    out = self.set_items(data, new_item, indexes[0])
-                out_socket.sv_set(out)
-            else:
-                out_socket.sv_set(data)
+        data = si['Data'].sv_get(deepcopy=False)
+
+        new_item = si['Item'].sv_get(deepcopy=False)
+        indexes = si['Index'].sv_get(default=[[self.index]], deepcopy=False)
+        if self.level-1:
+            out = self.get(data, new_item, self.level-1, indexes, self.set_items)
+        else:
+            out = self.set_items(data, new_item, indexes[0])
+        out_socket.sv_set(out)
+
 
     def set_items(self, data, new_items, indexes):
         if type(data) in [list, tuple]:
