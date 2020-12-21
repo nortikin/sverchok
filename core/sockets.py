@@ -22,22 +22,22 @@ import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, FloatProperty, EnumProperty
 from bpy.types import NodeTree, NodeSocket
 
-from sverchok.core.socket_conversions import ConversionPolicies, is_vector_to_matrix, FieldImplicitConversionPolicy
+from sverchok.core.socket_conversions import ConversionPolicies
 from sverchok.core.socket_data import (
     SvGetSocketInfo, SvGetSocket, SvSetSocket, SvForgetSocket,
     SvNoDataError, sentinel)
 
 from sverchok.data_structure import (
     get_other_socket,
-    socket_id,
     replace_socket,
     SIMPLE_DATA_TYPES,
     flatten_data, graft_data, map_at_level, wrap_data, unwrap_data)
 
 from sverchok.settings import get_params
 
-from sverchok.utils.field.scalar import SvScalarField, SvConstantScalarField
-from sverchok.utils.field.vector import SvVectorField, SvMatrixVectorField, SvConstantVectorField
+from sverchok.utils.socket_utils import format_bpy_property, setup_new_node_location
+from sverchok.utils.field.scalar import SvScalarField
+from sverchok.utils.field.vector import SvVectorField
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.algorithms import reparametrize_curve
 from sverchok.utils.surface import SvSurface
@@ -49,6 +49,8 @@ STANDARD_TYPES = SIMPLE_DATA_TYPES + (SvCurve, SvSurface)
 if FreeCAD is not None:
     import Part
     STANDARD_TYPES = STANDARD_TYPES + (Part.Shape,)
+
+DEFAULT_CONVERSION = ConversionPolicies.DEFAULT.conversion
 
 def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
@@ -82,7 +84,7 @@ class SV_MT_SocketOptionsMenu(bpy.types.Menu):
         if hasattr(context.socket, 'draw_menu_items'):
             context.socket.draw_menu_items(context, layout)
 
-class SvSocketProcessing(object):
+class SvSocketProcessing():
     """
     Mixin class for data processing logic of a socket.
     """
@@ -264,6 +266,7 @@ class SvSocketProcessing(object):
         if self.can_wrap():
             layout.prop(self, 'use_wrap')
 
+
 class SvSocketCommon(SvSocketProcessing):
     """
     Base class for all Sockets
@@ -302,16 +305,16 @@ class SvSocketCommon(SvSocketProcessing):
         Name can be replaced by twin property name in draft mode of a tree
         If does not have 'missing_dependecy' attribute it can return empty list, reasons unknown
         """
-        if hasattr(self.node, 'missing_dependecy'):
+        node = self.node
+        if hasattr(node, 'missing_dependecy'):
             return []
-        if self.node and hasattr(self.node, 'does_support_draft_mode') and self.node.does_support_draft_mode() and hasattr(self.node.id_data, 'sv_draft') and self.node.id_data.sv_draft:
+        if node and hasattr(node, 'does_support_draft_mode') and node.does_support_draft_mode() and hasattr(node.id_data, 'sv_draft') and node.id_data.sv_draft:
             prop_name_draft = self.node.draft_properties_mapping.get(self.prop_name, None)
             if prop_name_draft:
                 return prop_name_draft
-            else:
-                return self.prop_name
-        else:
             return self.prop_name
+
+        return self.prop_name
 
     @property
     def other(self):
@@ -364,36 +367,30 @@ class SvSocketCommon(SvSocketProcessing):
         :param implicit_conversions: if needed automatic conversion data from one socket type to another
         :return: data bound to the socket
         """
-        if implicit_conversions is None:
-            if hasattr(self, 'default_conversion_name'):
-                implicit_conversions = ConversionPolicies.get_conversion(self.default_conversion_name)
-            else:
-                implicit_conversions = ConversionPolicies.DEFAULT.conversion
 
         if self.is_linked and not self.is_output:
-            return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
-        elif self.get_prop_name():
-            prop = getattr(self.node, self.get_prop_name())
-            if isinstance(prop, (str, int, float)):
-                return [[prop]]
-            elif hasattr(prop, '__len__'):
-                # it looks like as some BLender property array - convert to tuple
-                return [[prop[:]]]
-            else:
-                return [prop]
-        elif self.use_prop and hasattr(self, 'default_property') and self.default_property is not None:
+            other = self.other
+            if implicit_conversions is None:
+                if hasattr(self, 'default_conversion_name'):
+                    implicit_conversions = ConversionPolicies.get_conversion(self.default_conversion_name)
+                else:
+                    implicit_conversions = DEFAULT_CONVERSION
+
+            return self.convert_data(SvGetSocket(self, other, deepcopy), implicit_conversions, other)
+
+        prop_name = self.get_prop_name()
+        if prop_name:
+            prop = getattr(self.node, prop_name)
+            return format_bpy_property(prop)
+
+        if self.use_prop and hasattr(self, 'default_property') and self.default_property is not None:
             default_property = self.default_property
-            if isinstance(default_property, (str, int, float)):
-                return [[default_property]]
-            elif hasattr(default_property, '__len__'):
-                # it looks like as some BLender property array - convert to tuple
-                return [[default_property[:]]]
-            else:
-                return [default_property]
-        elif default is not sentinel:
+            return format_bpy_property(default_property)
+
+        if default is not sentinel:
             return default
-        else:
-            raise SvNoDataError(self)
+
+        raise SvNoDataError(self)
 
     def sv_set(self, data):
         """Set output data"""
@@ -472,19 +469,20 @@ class SvSocketCommon(SvSocketProcessing):
             draw_label(self.label or text)
 
         else:  # unlinked INPUT
-            if self.get_prop_name():  # has property
+            prop_name = self.get_prop_name()
+            if prop_name:  # has property
                 if menu_option == 'ALL':
                     self.draw_link_input_menu(context, layout, node)
-                self.draw_property(layout, prop_origin=node, prop_name=self.get_prop_name())
+                self.draw_property(layout, prop_origin=node, prop_name=prop_name)
 
-            elif self.node.bl_idname == 'SvGroupTreeNode' and hasattr(self, 'draw_group_property'):  # group node
-                if self.node.node_tree:  # when tree is removed from node sockets still exist
-                    interface_socket = self.node.node_tree.inputs[self.index]
+            elif node.bl_idname == 'SvGroupTreeNode' and hasattr(self, 'draw_group_property'):  # group node
+                if node.node_tree:  # when tree is removed from node sockets still exist
+                    interface_socket = node.node_tree.inputs[self.index]
                     self.draw_group_property(layout, text, interface_socket)
 
-            elif self.node.bl_idname == 'NodeGroupOutput' and hasattr(self, 'draw_group_property'):  # group out node
-                if self.index < len(self.id_data.outputs):  # in case of last socket of the node which is virtual
-                    interface_socket = self.id_data.outputs[self.index]
+            elif node.bl_idname == 'NodeGroupOutput' and hasattr(self, 'draw_group_property'):  # group out node
+                if self.index < len(node.outputs):  # in case of last socket of the node which is virtual
+                    interface_socket = node.outputs[self.index]
                     self.draw_group_property(layout, text, interface_socket)
 
             elif self.use_prop:  # no property but use default prop
@@ -505,17 +503,12 @@ class SvSocketCommon(SvSocketProcessing):
     def draw_color(self, context, node):
         return self.color
 
-    def needs_data_conversion(self):
-        """True if other socket has got different type"""
-        if not self.is_linked:
-            return False
-        return self.other.bl_idname != self.bl_idname
+    def convert_data(self, source_data, implicit_conversions=DEFAULT_CONVERSION, other=None):
 
-    def convert_data(self, source_data, implicit_conversions=ConversionPolicies.DEFAULT.conversion):
-        if not self.needs_data_conversion():
+        if other.bl_idname == self.bl_idname:
             return source_data
-        else:
-            return implicit_conversions.convert(self, source_data)
+
+        return implicit_conversions.convert(self, other, source_data)
 
     def update_objects_number(self):
         """
@@ -541,7 +534,7 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvObjectSocket"
     bl_label = "Object Socket"
 
-    def filter_kinds(self, object):
+    def filter_kinds(self, objs):
         """
         object_kinds could be any of these:
          [‘MESH’, ‘CURVE’, ‘SURFACE’, ‘META’, ‘FONT’, ‘VOLUME’, ‘ARMATURE’, ‘LATTICE’,
@@ -560,9 +553,9 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
         kind = self.object_kinds
         if "," in kind:
             kinds = kind.split(',')
-            if object.type in set(kinds):
+            if objs.type in set(kinds):
                 return True
-        if object.type == kind:
+        if objs.type == kind:
             return True
 
     color = (0.69, 0.74, 0.73, 1.0)
@@ -804,10 +797,10 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
 
     color = (0.6, 1.0, 0.6, 1.0)
 
-    use_graft_2 : BoolProperty(
-            name = "Graft Topology",
-            default = False,
-            update = process_from_socket)
+    use_graft_2: BoolProperty(
+        name="Graft Topology",
+        default=False,
+        update=process_from_socket)
 
     def get_mode_flags(self):
         flags = super().get_mode_flags()
@@ -816,8 +809,9 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
         return flags
 
     def get_prop_data(self):
-        if self.get_prop_name():
-            return {"prop_name": self.get_prop_name()}
+        prop_name = self.get_prop_name()
+        if prop_name:
+            return {"prop_name": prop_name}
         elif self.prop_type:
             return {"prop_type": self.prop_type,
                     "prop_index": self.prop_index}
@@ -833,8 +827,7 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
     def get_link_parameter_node(self):
         if self.quick_link_to_node:
             return self.quick_link_to_node
-        else:
-            return 'SvNumberNode'
+        return 'SvNumberNode'
 
     def does_support_link_input_menu(self, context, layout, node):
         ok = super().does_support_link_input_menu(context, layout, node)
@@ -1002,10 +995,10 @@ class SvSvgSocket(NodeSocket, SvSocketCommon):
     def quick_link_to_node(self):
         if "Fill / Stroke" in self.name:
             return "SvSvgFillStrokeNodeMk2"
-        elif "Pattern" in self.name:
+        if "Pattern" in self.name:
             return "SvSvgPatternNode"
-        else:
-            return
+
+        return
 
 
 class SvPulgaForceSocket(NodeSocket, SvSocketCommon):
@@ -1193,13 +1186,6 @@ class SvSocketHelpOp(bpy.types.Operator):
                 col.label(text=line)
         bpy.context.window_manager.popup_menu(draw, title="Socket description", icon='QUESTION')
         return {'FINISHED'}
-
-def setup_new_node_location(new_node, old_node):
-    links_number = len([s for s in old_node.inputs if s.is_linked])
-    new_node.location = (old_node.location[0] - 200, old_node.location[1] - 100 * links_number)
-    if old_node.parent:
-        new_node.parent = old_node.parent
-        new_node.location = new_node.absolute_location
 
 class SvInputLinkMenuOp(bpy.types.Operator):
     "Opens a menu"
