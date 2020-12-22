@@ -324,6 +324,9 @@ class SvBezierCurve(SvCurve):
     def to_bezier_segments(self):
         return [self]
 
+    def reverse(self):
+        return SvBezierCurve(self.points[::-1])
+
 class SvCubicBezierCurve(SvCurve):
     __description__ = "Bezier[3*]"
     def __init__(self, p0, p1, p2, p3):
@@ -464,4 +467,7 @@ class SvCubicBezierCurve(SvCurve):
 
     def to_bezier_segments(self):
         return [self]
+
+    def reverse(self):
+        return SvCubicBezierCurve(self.p3, self.p2, self.p1, self.p0)
 
