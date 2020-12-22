@@ -127,7 +127,7 @@ class SvVoronoiOnSolidNode(bpy.types.Node, SverchCustomTreeNode):
                     scale = 1.0 - inset
                     verts = [scale_relative(vs, site, scale) for vs, site in zip(verts, sites)]
 
-                fragments = [svmesh_to_solid(vs, fs, precision) for vs, fs in zip(verts, faces)]
+                fragments = [svmesh_to_solid(vs, fs, precision, method=BMESH, remove_splitter=False) for vs, fs in zip(verts, faces)]
 
                 if self.mode == 'SURFACE':
                     if solid.Shells:
