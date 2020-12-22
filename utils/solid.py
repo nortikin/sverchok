@@ -454,7 +454,10 @@ def mefisto_mesher(solids, max_edge_length):
 
     return verts, faces
 
-def svmesh_to_solid(verts, faces, precision, remove_splitter=True):
+FCMESH = 'FCMESH'
+BMESH = 'BMESH'
+
+def svmesh_to_solid(verts, faces, precision=1e-6, remove_splitter=True, method=FCMESH):
     """
     input:
         verts: list of 3element iterables, [vector, vector...]
@@ -465,17 +468,33 @@ def svmesh_to_solid(verts, faces, precision, remove_splitter=True):
         a FreeCAD solid
 
     """
-    tri_faces = ensure_triangles(verts, faces, True)
-    faces_t = [[verts[c] for c in f] for f in tri_faces]
-    mesh = Mesh.Mesh(faces_t)
-    shape = Part.Shape()
-    shape.makeShapeFromMesh(mesh.Topology, precision)
+    if method == FCMESH:
+        tri_faces = ensure_triangles(verts, faces, True)
+        faces_t = [[verts[c] for c in f] for f in tri_faces]
+        mesh = Mesh.Mesh(faces_t)
+        shape = Part.Shape()
+        shape.makeShapeFromMesh(mesh.Topology, precision)
 
-    if remove_splitter:
-        # may slow it down, or be totally necessary
-        shape = shape.removeSplitter() 
+        if remove_splitter:
+            # may slow it down, or be totally necessary
+            shape = shape.removeSplitter() 
 
-    return Part.makeSolid(shape)
+        return Part.makeSolid(shape)
+    elif method == BMESH:
+        fc_faces = []
+        for face in faces:
+            face_i = list(face) + [face[0]]
+            face_verts = [Base.Vector(verts[i]) for i in face_i]
+            wire = Part.makePolygon(face_verts)
+            fc_face = Part.Face(wire)
+            fc_faces.append(fc_face)
+        shell = Part.makeShell(fc_faces)
+        solid = Part.makeSolid(shell)
+        if remove_splitter:
+            solid = solid.removeSplitter()
+        return solid
+    else:
+        raise Exception("Unsupported method")
 
 def mesh_from_solid_faces(solid):
     verts = [(v.X, v.Y, v.Z) for v in solid.Vertexes]

@@ -43,9 +43,9 @@ class SvSolidPolygonFaceNode(bpy.types.Node, SverchCustomTreeNode):
         for face_i in face_idxs:
             face_i = list(face_i)
             face_i.append(face_i[0])
-            verts = [verts[idx] for idx in face_i]
-            verts = [Base.Vector(*vert) for vert in verts]
-            wire = Part.makePolygon(verts)
+            fc_verts = [verts[idx] for idx in face_i]
+            fc_verts = [Base.Vector(*vert) for vert in fc_verts]
+            wire = Part.makePolygon(fc_verts)
             face = Part.Face(wire)
             surface = SvSolidFaceSurface(face)#.to_nurbs()
             result.append(surface)

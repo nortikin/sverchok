@@ -29,7 +29,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_up
 from sverchok.utils.sv_bmesh_utils import recalc_normals
 from sverchok.utils.voronoi3d import voronoi_on_solid
 from sverchok.utils.geom import scale_relative
-from sverchok.utils.solid import svmesh_to_solid, SvSolidTopology, SvGeneralFuse
+from sverchok.utils.solid import BMESH, svmesh_to_solid, SvSolidTopology, SvGeneralFuse
 from sverchok.utils.surface.freecad import SvSolidFaceSurface
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy, FreeCAD
