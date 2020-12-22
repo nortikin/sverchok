@@ -23,8 +23,8 @@ def _check_min_distance(v_new, vs_old, min_r):
     if dist is None:
         return True
     ok = (dist >= min_r)
-    if not ok:
-        print(f"V {v_new} => {nearest}, {dist} >= {min_r}")
+    #if not ok:
+    #    print(f"V {v_new} => {nearest}, {dist} >= {min_r}")
     return ok
 
 def _check_min_radius(point, old_points, old_radiuses, min_r):
