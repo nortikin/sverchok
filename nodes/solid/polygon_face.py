@@ -8,6 +8,7 @@
 import numpy as np
 
 import bpy
+from bpy.props import BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode
@@ -38,7 +39,19 @@ class SvSolidPolygonFaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Faces")
         self.outputs.new('SvSurfaceSocket', "SolidFaces")
 
+    accuracy : IntProperty(
+            name = "Accuracy",
+            description = "Tolerance parameter for checking if ends of edges coincide",
+            default = 8,
+            min = 1,
+            update = updateNode)
+
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'accuracy')
+
     def make_faces(self, verts, face_idxs):
+        tolerance = 10 ** (-self.accuracy)
+
         result = []
         for face_i in face_idxs:
             face_i = list(face_i)
@@ -46,6 +59,7 @@ class SvSolidPolygonFaceNode(bpy.types.Node, SverchCustomTreeNode):
             fc_verts = [verts[idx] for idx in face_i]
             fc_verts = [Base.Vector(*vert) for vert in fc_verts]
             wire = Part.makePolygon(fc_verts)
+            wire.fixTolerance(tolerance)
             face = Part.Face(wire)
             surface = SvSolidFaceSurface(face)#.to_nurbs()
             result.append(surface)
