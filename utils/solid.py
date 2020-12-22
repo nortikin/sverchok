@@ -486,7 +486,13 @@ def svmesh_to_solid(verts, faces, precision=1e-6, remove_splitter=True, method=F
             face_i = list(face) + [face[0]]
             face_verts = [Base.Vector(verts[i]) for i in face_i]
             wire = Part.makePolygon(face_verts)
-            fc_face = Part.Face(wire)
+            wire.fixTolerance(precision)
+            try:
+                fc_face = Part.Face(wire)
+                #fc_face = Part.makeFilledFace(wire.Edges)
+            except Exception as e:
+                print(f"Face idxs: {face_i}, verts: {face_verts}")
+                raise Exception("Maybe face is not planar?") from e
             fc_faces.append(fc_face)
         shell = Part.makeShell(fc_faces)
         solid = Part.makeSolid(shell)
