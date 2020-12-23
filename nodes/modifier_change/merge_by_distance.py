@@ -119,10 +119,10 @@ class SvMergeByDistanceNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.inputs['Vertices'].is_linked:
             return
 
-        verts = Vector_generate(self.inputs['Vertices'].sv_get())
-        polys = self.inputs['PolyEdge'].sv_get(default=[[]])
-        face_data = self.inputs['FaceData'].sv_get(default=[[]])
-        distance = self.inputs['Distance'].sv_get(default=[self.distance])[0]
+        verts = Vector_generate(self.inputs['Vertices'].sv_get(deepcopy=False))
+        polys = self.inputs['PolyEdge'].sv_get(default=[[]], deepcopy=False)
+        face_data = self.inputs['FaceData'].sv_get(default=[[]], deepcopy=False)
+        distance = self.inputs['Distance'].sv_get(default=[self.distance], deepcopy=False)[0]
         has_double_out = self.outputs['Doubles'].is_linked
         mask_s = self.inputs['Mask'].sv_get(default=[[]], deepcopy=False)
         has_mask_out = self.inputs['Mask'].is_linked, self.outputs['Mask'].is_linked
