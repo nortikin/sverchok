@@ -24,7 +24,7 @@ from bpy.props import IntProperty, FloatProperty, EnumProperty
 from mathutils import Matrix, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, throttle_and_update_node, make_repeaters
+from sverchok.data_structure import updateNode, match_long_repeat, throttle_and_update_node, make_repeaters, repeat_last_for_length
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, fill_faces_layer
 
 vsock, toposock = 'SvVerticesSocket', 'SvStringsSocket'
@@ -195,13 +195,13 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
 
         meshes = match_long_repeat([vertices_s, edges_s, faces_s, masks_s, heights_s, scales_s, matrixes_s, face_data_s])
 
-        for vertices, edges, faces, masks_, heights_, scales_, matrixes_, face_data_ in zip(*meshes):
+        for vertices, edges, faces, masks_, heights_, scales_, matrixes_, face_data in zip(*meshes):
 
             new_extruded_faces = []
             new_extruded_faces_append = new_extruded_faces.append
             heights, scales, matrixes, masks = make_repeaters([heights_, scales_, matrixes_, masks_])
-            if face_data_:
-                face_data = make_repeaters([face_data_])[0]
+            if face_data:
+                face_data_matched = repeat_last_for_length(face_data, len(faces))
 
             bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True, normal_update=True)
             mask_layer = bm.faces.layers.int.new('mask')
@@ -249,8 +249,8 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
                 if linked_extruded_polygons or linked_other_polygons:
                     new_extruded_faces_append([v.index for v in face.verts])
 
-            if face_data_:
-                new_vertices, new_edges, new_faces, new_face_data = pydata_from_bmesh(bm, face_data)
+            if face_data:
+                new_vertices, new_edges, new_faces, new_face_data = pydata_from_bmesh(bm, face_data_matched)
             else:
                 new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
                 new_face_data = []
