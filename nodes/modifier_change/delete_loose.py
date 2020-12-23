@@ -20,11 +20,12 @@ from itertools import chain
 
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import zip_long_repeat
 
 
 class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
     '''Delete vertices not used in face or edge'''
-    ''' Not vectorised yet? '''
+
     bl_idname = 'SvDeleteLooseNode'
     bl_label = 'Delete Loose'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -39,40 +40,19 @@ class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'VertsMask')
 
     def process(self):
-
-        verts = self.inputs['Vertices'].sv_get()
-        poly_edge = self.inputs['PolyEdge'].sv_get()
+        if not (all([s.is_linked for s in self.inputs]) and any([s.is_linked for s in self.outputs])):
+            return
+        verts = self.inputs['Vertices'].sv_get(deepcopy=False)
+        poly_edge = self.inputs['PolyEdge'].sv_get(deepcopy=False)
         verts_out = []
         verts_mask_out = []
         poly_edge_out = []
-        for ve, pe in zip(verts, poly_edge):
-            """
-            Okay so honestly this still upsets me, I will comment it out
-            for now. If somebody wants this to work please give it a go,
-            but dump broken codde into master with a comment,
-            like below...
+        if len(poly_edge[0][0]) == 2:
+            self.outputs['PolyEdge'].label = "Edges"
+        else:
+            self.outputs['PolyEdge'].label = "Polygons"
+        for ve, pe in zip_long_repeat(verts, poly_edge):
 
-            # trying to remove indeces of polygons that more that length of
-            # vertices list. But it doing wrong, ideces not mutch vertices...
-            # what am i doing wrong?
-            # i guess, i didn't understood this iterations at all
-
-            delp = []
-            for p in pe:
-                deli = []
-                for i in p:
-                    if i >= len(ve):
-                        deli.append(i)
-                if deli and (len(p)-len(deli)) >= 2:
-                    print(deli)
-                    for k in deli:
-                        p.remove(k)
-                elif (len(p)-len(deli)) <= 1:
-                    delp.append(p)
-            if delp:
-                for d in delp:
-                    pe.remove(d)
-            """
             indx = set(chain.from_iterable(pe))
             verts_out.append([v for i, v in enumerate(ve) if i in indx])
             verts_mask_out.append([True if i in indx else False for i, v in enumerate(ve)])
