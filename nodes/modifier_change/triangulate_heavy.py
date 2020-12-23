@@ -59,8 +59,8 @@ class SvHeavyTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
         if not (any(outputs[name].is_linked for name in named)):
             return
 
-        vertices_s = inputs['Vertices'].sv_get(default=[[]])
-        faces_s = inputs['Polygons'].sv_get(default=[[]])
+        vertices_s = inputs['Vertices'].sv_get(default=[[]], deepcopy=False)
+        faces_s = inputs['Polygons'].sv_get(default=[[]], deepcopy=False)
 
         result_vertices = []
         result_edges = []
