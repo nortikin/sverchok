@@ -166,8 +166,8 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
             return
         InVert, InEdge, InEdSel = self.inputs
         OutVert, OutEdg, OutFace, ONVert, ONEdg, ONFace, OOVert, OOEdg, OOFace = self.outputs
-        vertices_s = InVert.sv_get()
-        topo = InEdge.sv_get()
+        vertices_s = InVert.sv_get(deepcopy=False)
+        topo = InEdge.sv_get(deepcopy=False)
         if len(topo[0][0]) == 2:
             bmlist= [bmesh_from_pydata(v, e, [], normal_update=True) for v,e in zip(vertices_s,topo)]
         else:
@@ -175,12 +175,12 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
         rev, ree, ref, riv, rie, rif, rsv, rse, rsf = [],[],[],[],[],[],[],[],[]
         if InEdSel.is_linked:
             if self.sel_mode == "index":
-                useedges = [np.array(bm.edges[:])[idxs] for bm, idxs in zip(bmlist, InEdSel.sv_get())]
+                useedges = [np.array(bm.edges[:])[idxs] for bm, idxs in zip(bmlist, InEdSel.sv_get(deepcopy=False))]
             elif self.sel_mode == "mask":
-                useedges = [np.extract(mask, bm.edges[:]) for bm, mask in zip(bmlist, InEdSel.sv_get())]
+                useedges = [np.extract(mask, bm.edges[:]) for bm, mask in zip(bmlist, InEdSel.sv_get(deepcopy=False))]
         else:
             useedges = [bm.edges for bm in bmlist]
-        for bm,ind in zip(bmlist,useedges):
+        for bm, ind in zip(bmlist, useedges):
             geom = subdivide_edges(bm, edges=ind,
                     smooth=self.smooth,
                     smooth_falloff=self.falloff_type,
