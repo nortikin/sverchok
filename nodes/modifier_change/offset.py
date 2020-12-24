@@ -27,7 +27,7 @@ from mathutils import Matrix
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
-    fullList, updateNode, Vector_generate
+    repeat_last_for_length, updateNode, Vector_generate
 )
 
 
@@ -67,11 +67,11 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
         if not (self.outputs['Vers'].is_linked and self.inputs['Vers'].is_linked):
             return
 
-        vertices = Vector_generate(self.inputs['Vers'].sv_get())
-        faces = self.inputs['Pols'].sv_get()
-        offset = self.inputs['Offset'].sv_get()[0]
-        nsides = self.inputs['N sides'].sv_get()[0][0]
-        radius = self.inputs['Radius'].sv_get()[0]
+        vertices = Vector_generate(self.inputs['Vers'].sv_get(deepcopy=False))
+        faces = self.inputs['Pols'].sv_get(deepcopy=False)
+        offset = self.inputs['Offset'].sv_get(deepcopy=False)[0]
+        nsides = self.inputs['N sides'].sv_get(deepcopy=False)[0][0]
+        radius = self.inputs['Radius'].sv_get(deepcopy=False)[0]
 
         outv = []
         oute = []
@@ -80,12 +80,12 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
 
         # for each object
         for verts_obj, faces_obj in zip(vertices, faces):
-            fullList(offset, len(faces_obj))
-            fullList(radius, len(faces_obj))
+            offset_m = repeat_last_for_length(offset, len(faces_obj))
+            radius_m = repeat_last_for_length(radius, len(faces_obj))
             verlen = set(range(len(verts_obj)))
 
             bm = bmesh_from_pydata(verts_obj, [], faces_obj, normal_update=True)
-            result = self.Offset_pols(bm, offset, radius, nsides, verlen)
+            result = self.Offset_pols(bm, offset_m, radius_m, nsides, verlen)
             outv.append(result[0])
             oute.append(result[1])
             outo.append(result[2])

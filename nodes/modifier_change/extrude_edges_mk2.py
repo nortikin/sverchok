@@ -87,7 +87,7 @@ class SvExtrudeEdgesNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             if not matrices:
                 matrices = [Matrix()]
             if face_data:
-                fullList(face_data, len(faces))
+                face_data_matched = repeat_last_for_length(face_data, len(faces))
 
             bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True, markup_edge_data=True)
             if edge_mask:
@@ -111,7 +111,7 @@ class SvExtrudeEdgesNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             extruded_faces = [[v.index for v in edge.verts] for edge in extruded_faces]
 
             if face_data:
-                new_vertices, new_edges, new_faces, new_face_data = pydata_from_bmesh(bm, face_data)
+                new_vertices, new_edges, new_faces, new_face_data = pydata_from_bmesh(bm, face_data_matched)
             else:
                 new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
                 new_face_data = []
@@ -140,4 +140,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvExtrudeEdgesNodeMk2)
-

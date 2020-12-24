@@ -21,7 +21,7 @@ import collections
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, zip_long_repeat
 
 class SvSeparateMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     '''Separate Loose mesh parts'''
@@ -51,15 +51,15 @@ class SvSeparateMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not any(s.is_linked for s in self.outputs):
             return
-        verts = self.inputs['Vertices'].sv_get()
-        poly = self.inputs['Poly Egde'].sv_get()
+        verts = self.inputs['Vertices'].sv_get(deepcopy=False)
+        poly = self.inputs['Poly Egde'].sv_get(deepcopy=False)
         verts_out = []
         poly_edge_out = []
 
         vert_index = []
         poly_edge_index = []
 
-        for ve, pe in zip(verts, poly):
+        for ve, pe in zip_long_repeat(verts, poly):
             new_verts = []
             new_polys = []
             new_vert_indexes = []
