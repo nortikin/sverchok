@@ -24,18 +24,18 @@ from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
+from sverchok.data_structure import (match_long_repeat, updateNode)
 
 """
 The grid is represented by following structure:
- 
+
  V axis
 
  ^
  |
  |  ----------o-------------------o----------------o----------  <-- ULine
  |            |                   |                |
- |          VEdge              VEdge            VEdge   
+ |          VEdge              VEdge            VEdge
  |            |                   |                |
  |  ----o-----o---------o---------o------o---------o------o---  <-- ULine
  |      |               |                |                |
@@ -75,16 +75,16 @@ class Vertex(object):
 
     def __repr__(self):
         return str(self)
-    
+
     def __lt__(self, other):
         return self.u < other.u
 
 # #     def __eq__(self, other):
 #         return self.u == other.u and self.v == other.v
-# 
+#
 #     def __hash__(self):
 #         return hash(self.u) + hash(self.v)
-    
+
 # #     def vector(self):
 #         return Vector((self.u, self.v, 0.0))
 
@@ -96,7 +96,7 @@ class VEdge(object):
     def __init__(self, v1, v2):
         self.v1 = v1
         self.v2 = v2
-    
+
     def __str__(self):
         return str(self.v1) + " - " + str(self.v2)
 
@@ -111,7 +111,7 @@ class ULine(object):
 
     def __str__(self):
         return str(self.list)
-    
+
     def iter(self):
         return self.list.iter()
 
@@ -202,7 +202,7 @@ class ULine(object):
 
     def get_greater_u(self, u):
         return [v.u for v in self.get_greater(u)]
-    
+
     def get_less_u(self, u):
         return [v.u for v in self.get_less(u)]
 
@@ -372,7 +372,7 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
                 uline.remove_by_index(-1)
 
         return ulines, vedges
-    
+
     def build_vertices(self, ulines):
         vertex_idx = 0
         vertices = collections.OrderedDict()

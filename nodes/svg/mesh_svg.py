@@ -22,7 +22,7 @@ import bpy
 from bpy.props import EnumProperty, BoolProperty, IntProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
+from sverchok.data_structure import (match_long_repeat, updateNode)
 from sverchok.data_structure import match_long_repeat as mlr, enum_item_4
 
 z_func_dict = {

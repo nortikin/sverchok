@@ -23,7 +23,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, match_long_repeat, updateNode, rotate_list)
+from sverchok.data_structure import (match_long_repeat, updateNode, rotate_list)
 
 def make_verts(nsides, radius, rand_r, rand_phi, rand_seed, divs):
     if rand_r or rand_phi:
@@ -105,7 +105,7 @@ class SvNGonNode(bpy.types.Node, SverchCustomTreeNode):
                         update=updateNode)
     shift_: IntProperty(name='Shift', description='Edges bind shift (star factor)',
                         default=0, min=0,
-                        update=updateNode)             
+                        update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Radius").prop_name = 'rad_'

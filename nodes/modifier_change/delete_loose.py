@@ -51,6 +51,7 @@ class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs['PolyEdge'].label = "Edges"
         else:
             self.outputs['PolyEdge'].label = "Polygons"
+
         for ve, pe in zip_long_repeat(verts, poly_edge):
 
             indx = set(chain.from_iterable(pe))

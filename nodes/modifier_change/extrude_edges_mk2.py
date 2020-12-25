@@ -23,7 +23,7 @@ from bpy.props import IntProperty, FloatProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList, Matrix_generate
+from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, bmesh_edges_from_edge_mask
 
 def is_matrix(lst):

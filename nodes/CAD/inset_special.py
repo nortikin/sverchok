@@ -27,7 +27,7 @@ from bpy.props import FloatProperty, FloatVectorProperty, IntProperty, EnumPrope
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
     updateNode, Vector_generate, zip_long_repeat, make_repeaters,
-    repeat_last, fullList)
+    repeat_last)
 
 
 ''' very non optimal routines. beware. I know this '''

@@ -22,7 +22,7 @@ import mathutils
 from mathutils.geometry import tessellate_polygon as tessellate
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 

@@ -23,7 +23,7 @@ from mathutils import Color
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.core.socket_data import SvGetSocketInfo
-from sverchok.data_structure import updateNode, fullList, dataCorrect, dataCorrect_np
+from sverchok.data_structure import updateNode, dataCorrect, dataCorrect_np
 from sverchok.utils.sv_itertools import sv_zip_longest
 from sverchok.utils.modules.color_utils import rgb_to_hsv, rgb_to_hsl
 from numpy import ndarray, array

@@ -5,7 +5,7 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, fullList
+from sverchok.data_structure import updateNode, zip_long_repeat
 
 class SvCurveCurvatureNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -83,4 +83,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvCurveCurvatureNode)
-

@@ -9,7 +9,7 @@ else:
     from sverchok.node_tree import SverchCustomTreeNode
     from bpy.props import FloatProperty, StringProperty, BoolProperty
     from sverchok.data_structure import updateNode
-    from sverchok.data_structure import match_long_repeat as mlr, fullList
+    from sverchok.data_structure import match_long_repeat as mlr
     from FreeCAD import Base
 
     class SvIsInsideSolidNode(bpy.types.Node, SverchCustomTreeNode):
