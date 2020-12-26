@@ -24,7 +24,7 @@ from bpy.props import StringProperty, IntProperty, CollectionProperty, PointerPr
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 
-from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.logging import info, debug
 
 class SvMaterialEntry(bpy.types.PropertyGroup):
@@ -62,7 +62,7 @@ class UI_UL_SvMaterialUiList(bpy.types.UIList):
         remove.nodename = data.name
         remove.treename = data.id_data.name
         remove.item_index = index
-    
+
     def draw_filter(self, context, layout):
         pass
 
@@ -187,4 +187,3 @@ def register():
 def unregister():
     for name in reversed(classes):
         bpy.utils.unregister_class(name)
-

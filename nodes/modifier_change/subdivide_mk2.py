@@ -22,7 +22,7 @@ from bmesh.ops import subdivide_edges
 
 from numpy import ndarray
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList, Matrix_generate, numpy_full_list
+from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length, Matrix_generate, numpy_full_list
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, numpy_data_from_bmesh, get_partial_result_pydata
 from sverchok.utils.nodes_mixins.draft_mode import DraftMode
 
@@ -30,11 +30,11 @@ socket_names = ['Vertices', 'Edges', 'Faces', 'FaceData']
 def get_selected_edges(use_mask, masks, bm_edges):
     if use_mask:
         if isinstance(masks, ndarray):
-            masks = numpy_full_list(masks, len(bm_edges)).tolist()
+            mask_matched = numpy_full_list(masks, len(bm_edges)).tolist()
         else:
-            fullList(masks, len(bm_edges))
+            mask_matched = repeat_last_for_length(masks, len(bm_edges))
         edge_id = bm_edges.layers.int.get("initial_index")
-        return  [edge for edge in bm_edges if masks[edge[edge_id]]]
+        return  [edge for edge in bm_edges if mask_matched[edge[edge_id]]]
 
 
     return bm_edges
@@ -251,8 +251,8 @@ class SvSubdivideNodeMK2(DraftMode, bpy.types.Node, SverchCustomTreeNode):
         edges_s = inputs['Edges'].sv_get(default=[[]], deepcopy=False)
         faces_s = inputs['Faces'].sv_get(default=[[]], deepcopy=False)
 
-        masks_s = inputs['EdgeMask'].sv_get(default=[[1]], deepcopy=True)
-        face_data_s = inputs['FaceData'].sv_get(default=[[]], deepcopy=True)
+        masks_s = inputs['EdgeMask'].sv_get(default=[[1]], deepcopy=False)
+        face_data_s = inputs['FaceData'].sv_get(default=[[]], deepcopy=False)
 
         cuts_s = inputs['Cuts'].sv_get(deepcopy=False)[0]
         smooth_s = inputs['Smooth'].sv_get(deepcopy=False)[0]
@@ -300,9 +300,9 @@ class SvSubdivideNodeMK2(DraftMode, bpy.types.Node, SverchCustomTreeNode):
 
             if use_face_data and len(face_data) > 0:
                 if isinstance(face_data, ndarray):
-                    face_data = numpy_full_list(face_data, len(faces)).tolist()
+                    face_data_matched = numpy_full_list(face_data, len(faces)).tolist()
                 else:
-                    fullList(face_data, len(faces))
+                    face_data_matched = repeat_last_for_length(face_data, len(faces))
 
             bm = bmesh_from_pydata(
                 vertices, edges, faces,
@@ -328,10 +328,10 @@ class SvSubdivideNodeMK2(DraftMode, bpy.types.Node, SverchCustomTreeNode):
                 use_smooth_even=self.smooth_even)
 
             if output_numpy:
-                new_verts, new_edges, new_faces, new_face_data = numpy_data_from_bmesh(bm, self.out_np, face_data)
+                new_verts, new_edges, new_faces, new_face_data = numpy_data_from_bmesh(bm, self.out_np, face_data_matched)
             else:
                 if use_face_data and len(face_data) > 0:
-                    new_verts, new_edges, new_faces, new_face_data = pydata_from_bmesh(bm, face_data)
+                    new_verts, new_edges, new_faces, new_face_data = pydata_from_bmesh(bm, face_data_matched)
                 else:
                     new_verts, new_edges, new_faces = pydata_from_bmesh(bm)
                     new_face_data = []

@@ -26,8 +26,8 @@ from bpy.props import FloatProperty, FloatVectorProperty, IntProperty, EnumPrope
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
-    updateNode, Vector_generate, zip_long_repeat,
-    repeat_last, fullList)
+    updateNode, Vector_generate, zip_long_repeat, make_repeaters,
+    repeat_last)
 
 
 ''' very non optimal routines. beware. I know this '''
@@ -137,12 +137,11 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners,
         new_faces_prime = get_faces_prime(face, tail_idx, make_inner)
         new_faces.extend(new_faces_prime)
 
-    for idx, face in enumerate(faces):
-        inset_by = inset_rates[idx]
+    for face, inset_by, ignore, dist, inner in zip(faces, inset_rates, ignores, distances, make_inners):
 
         good_inset = (inset_by > 0) or (zero_mode == 'FAN')
-        if good_inset and (not ignores[idx]):
-            new_inner_from(face, inset_by, distances[idx], make_inners[idx])
+        if good_inset and (not ignore):
+            new_inner_from(face, inset_by, dist, inner)
         else:
             new_faces.append(face)
             new_ignores.append(face)
@@ -241,19 +240,19 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         if not o['vertices'].is_linked:
             return
 
-        all_verts = Vector_generate(i['vertices'].sv_get())
-        all_polys = i['polygons'].sv_get()
+        all_verts = Vector_generate(i['vertices'].sv_get(deepcopy=False))
+        all_polys = i['polygons'].sv_get(deepcopy=False)
 
-        all_inset_rates = i['inset'].sv_get()
-        all_distance_vals = i['distance'].sv_get()
+        all_inset_rates = i['inset'].sv_get(deepcopy=False)
+        all_distance_vals = i['distance'].sv_get(deepcopy=False)
 
         # silly auto ugrade.
         if not i['ignore'].prop_name:
             i['ignore'].prop_name = 'ignore'
             i['make_inner'].prop_name = 'make_inner'
 
-        all_ignores = i['ignore'].sv_get()
-        all_make_inners = i['make_inner'].sv_get()
+        all_ignores = i['ignore'].sv_get(deepcopy=False)
+        all_make_inners = i['make_inner'].sv_get(deepcopy=False)
 
         data = all_verts, all_polys, all_inset_rates, all_distance_vals, all_ignores, all_make_inners
 
@@ -262,11 +261,9 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         ignored_out = []
         inset_out = []
 
-        for v, p, inset_rates, distance_vals, ignores, make_inners in zip_long_repeat(*data):
-            fullList(inset_rates, len(p))
-            fullList(distance_vals, len(p))
-            fullList(ignores, len(p))
-            fullList(make_inners, len(p))
+        for v, p, inset_rates_s, distance_vals_s, ignores_s, make_inners_s in zip_long_repeat(*data):
+            inset_rates, distance_vals, ignores, make_inners = make_repeaters([inset_rates_s, distance_vals_s, ignores_s, make_inners_s])
+
 
             func_args = {
                 'vertices': v,

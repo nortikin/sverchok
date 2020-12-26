@@ -20,7 +20,7 @@ import bpy
 import bmesh
 from bmesh.ops import unsubdivide
 import numpy as np
-from bpy.props import IntProperty
+from bpy.props import IntProperty, BoolProperty
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
@@ -33,7 +33,12 @@ class SvUnsubdivideNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_UNSUBDIVIDE'
 
-    iter: IntProperty(name='itr', default=1, min=1, update=updateNode)
+    def update_sockets(self, context):
+        self.inputs['bmesh_list'].hide_safe = not self.show_bmesh_list
+        self.outputs['bmesh_list'].hide_safe = not self.show_bmesh_list
+    iter: IntProperty(name='Iterations', default=1, min=1, update=updateNode)
+
+    show_bmesh_list: BoolProperty(name='Show bmesh socket', default=False, update=updateNode)
 
     def sv_init(self, context):
         si, so = self.inputs.new, self.outputs.new
@@ -46,20 +51,24 @@ class SvUnsubdivideNode(bpy.types.Node, SverchCustomTreeNode):
         so('SvStringsSocket', 'Edges')
         so('SvStringsSocket', 'Faces')
         so('SvStringsSocket', 'bmesh_list')
+        self.inputs['bmesh_list'].hide_safe = True
+        self.outputs['bmesh_list'].hide_safe = True
 
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'show_bmesh_list')
     def process(self):
         bmL, V, P, mask, Iterate = self.inputs
         Val = bmL.sv_get([])
-        out2 = []
-        o1,o2,o3,o4 = self.outputs
+
+        o1, o2, o3, o4 = self.outputs
         if V.is_linked:
-            for v, f in zip(V.sv_get(), P.sv_get()):
+            for v, f in zip(V.sv_get(deepcopy=False), P.sv_get(deepcopy=False)):
                 Val.append(bmesh_from_pydata(v, [], f))
         if mask.is_linked:
-            seleg = [np.array(bm.verts[:])[ma] for bm,ma in zip(Val,mask.sv_get())]
+            seleg = [np.array(bm.verts[:])[ma] for bm, ma in zip(Val, mask.sv_get(deepcopy=False))]
         else:
             seleg = [bm.verts for bm in Val]
-        for bm,se,itera in zip(Val, seleg, safc(Val, Iterate.sv_get()[0])):
+        for bm, se, itera in zip(Val, seleg, safc(Val, Iterate.sv_get(deepcopy=False)[0])):
             unsubdivide(bm, verts=se, iterations=itera)
         if o1.is_linked:
             o1.sv_set([[v.co[:] for v in bm.verts]for bm in Val])

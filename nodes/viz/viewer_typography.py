@@ -30,7 +30,7 @@ from bpy.props import (
 )
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import dataCorrect, fullList, updateNode
+from sverchok.data_structure import dataCorrect, updateNode
 from sverchok.utils.sv_obj_helper import SvObjHelper, enum_from_list
 
 mode_options_x = enum_from_list('LEFT', 'CENTER', 'RIGHT', 'JUSTIFY', 'FLUSH')
@@ -133,7 +133,7 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             font_datablock = self.get_bpy_data_from_name(self.fontname, bpy.data.fonts)
             if font_datablock:
                 self.font_pointer = font_datablock
-                updateNode(self, context)    
+                updateNode(self, context)
 
     def pointer_update(self, context):
         self.updating_name_from_pointer = True
@@ -146,7 +146,7 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         self.updating_name_from_pointer = False
         updateNode(self, context)
 
-    
+
     grouping: BoolProperty(default=False, update=SvObjHelper.group_state_update_handler)
     data_kind: StringProperty(name='data kind', default='FONT')
 
@@ -173,7 +173,7 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     bevel_depth: FloatProperty(default=0.0, update=updateNode)
     bevel_resolution: IntProperty(default=0, update=updateNode)
 
-    # orientation x | y 
+    # orientation x | y
     align_x: bpy.props.EnumProperty(
         items=mode_options_x, description="Horizontal Alignment",
         default="LEFT", update=updateNode)
@@ -181,7 +181,7 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     align_y: bpy.props.EnumProperty(
         items=mode_options_y, description="Vertical Alignment",
         default="TOP_BASELINE", update=updateNode)
-    
+
 
     def sv_init(self, context):
         self.sv_init_helper_basedata_name()
@@ -260,7 +260,7 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             if self.parent_to_empty:
                 mtname = 'Empty_' + self.basedata_name
                 self.parent_name = mtname
-                
+
                 scene = bpy.context.scene
                 collection = scene.collection
 

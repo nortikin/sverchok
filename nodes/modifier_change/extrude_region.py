@@ -24,7 +24,7 @@ from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList, throttle_and_update_node
+from sverchok.data_structure import updateNode, match_long_repeat, throttle_and_update_node, repeat_last_for_length
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, fill_faces_layer
 
 is_290 = bpy.app.version >= (2, 90, 0)
@@ -165,20 +165,20 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.inputs['Vertices'].is_linked:
             return
 
-        vertices_s = self.inputs['Vertices'].sv_get()
-        edges_s = self.inputs['Edges'].sv_get(default=[[]])
-        faces_s = self.inputs['Polygons'].sv_get(default=[[]])
-        masks_s = self.inputs['Mask'].sv_get(default=[[1]])
+        vertices_s = self.inputs['Vertices'].sv_get(deepcopy=False)
+        edges_s = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)
+        faces_s = self.inputs['Polygons'].sv_get(default=[[]], deepcopy=False)
+        masks_s = self.inputs['Mask'].sv_get(default=[[1]], deepcopy=False)
         if self.transform_mode == "Matrix":
-            matrices_s = [self.inputs['Matrices'].sv_get(Matrix())]
+            matrices_s = [self.inputs['Matrices'].sv_get(default=[Matrix()], deepcopy=False)]
             heights_s = [0.0]
             scales_s = [1.0]
         else:
             matrices_s = [[]]
-            heights_s = self.inputs['Height'].sv_get()
-            scales_s  = self.inputs['Scale'].sv_get()
+            heights_s = self.inputs['Height'].sv_get(deepcopy=False)
+            scales_s  = self.inputs['Scale'].sv_get(deepcopy=False)
         if 'FaceData' in self.inputs:
-            face_data_s = self.inputs['FaceData'].sv_get(default=[[]])
+            face_data_s = self.inputs['FaceData'].sv_get(default=[[]], deepcopy=False)
         else:
             face_data_s = [[]]
 
@@ -205,15 +205,15 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
                     n_iterations = len(matrix_per_iteration)
                 else:
                     n_iterations = max(len(height_per_iteration), len(scale_per_iteration))
-                    fullList(height_per_iteration, n_iterations)
-                    fullList(scale_per_iteration, n_iterations)
+                    height_per_iteration_matched = repeat_last_for_length(height_per_iteration, n_iterations)
+                    scale_per_iteration_matched = repeat_last_for_length(scale_per_iteration, n_iterations)
             else:
                 n_iterations = 1
                 matrix_per_iteration = [matrix_per_iteration]
 
-            fullList(masks,  len(faces))
+            mask_matched = repeat_last_for_length(masks,  len(faces))
             if face_data:
-                fullList(face_data, len(faces))
+                face_data_matched = repeat_last_for_length(face_data, len(faces))
 
             bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True, markup_face_data=True)
             mask_layer = bm.faces.layers.int.new('mask')
@@ -223,7 +223,7 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
             b_faces = []
             b_edges = set()
             b_verts = set()
-            for mask, face in zip(masks, bm.faces):
+            for mask, face in zip(mask_matched, bm.faces):
                 if mask:
                     b_faces.append(face)
                     for edge in face.edges:
@@ -265,13 +265,13 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
                     matrices = matrix_per_iteration[idx]
                     if isinstance(matrices, Matrix):
                         matrices = [matrices]
-                    fullList(matrix_spaces, len(extruded_verts))
+                    matrix_spaces_matched = repeat_last_for_length(matrix_spaces, len(extruded_verts))
                     for vertex_idx, (vertex, matrix) in enumerate(zip(*match_long_repeat([extruded_verts, matrices]))):
-                        bmesh.ops.transform(bm, verts=[vertex], matrix=matrix, space=matrix_spaces[vertex_idx])
-                        matrix_spaces[vertex_idx] = matrix.inverted() @ matrix_spaces[vertex_idx]
+                        bmesh.ops.transform(bm, verts=[vertex], matrix=matrix, space=matrix_spaces_matched[vertex_idx])
+                        matrix_spaces_matched[vertex_idx] = matrix.inverted() @ matrix_spaces_matched[vertex_idx]
                 else:
-                    height = height_per_iteration[idx]
-                    scale = scale_per_iteration[idx]
+                    height = height_per_iteration_matched[idx]
+                    scale = scale_per_iteration_matched[idx]
 
                     normal = get_avg_normal(extruded_faces)
                     dr = normal * height
@@ -294,7 +294,7 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
                 extrude_geom = new_geom
 
             if face_data:
-                new_vertices, new_edges, new_faces, new_face_data = pydata_from_bmesh(bm, face_data)
+                new_vertices, new_edges, new_faces, new_face_data = pydata_from_bmesh(bm, face_data_matched)
             else:
                 new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
                 new_face_data = []

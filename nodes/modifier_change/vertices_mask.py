@@ -43,8 +43,8 @@ class SvVertMaskNode(bpy.types.Node, SverchCustomTreeNode):
         if not any(s.is_linked for s in self.outputs):
             return
         if self.inputs['Vertices'].is_linked and self.inputs['Poly Egde'].is_linked:
-            verts = self.inputs['Vertices'].sv_get()
-            poly = self.inputs['Poly Egde'].sv_get()
+            verts = self.inputs['Vertices'].sv_get(deepcopy=False)
+            poly = self.inputs['Poly Egde'].sv_get(deepcopy=False)
             verts = dataCorrect(verts)
             poly = dataCorrect(poly)
             self.inputs['Mask'].sv_get(default=[[1, 0]])
@@ -53,7 +53,7 @@ class SvVertMaskNode(bpy.types.Node, SverchCustomTreeNode):
             poly_edge_out = []
 
             if self.inputs['Mask'].is_linked:
-                mask = self.inputs['Mask'].sv_get()
+                mask = self.inputs['Mask'].sv_get(deepcopy=False)
             else:
                 mask = [[1, 0]]
 

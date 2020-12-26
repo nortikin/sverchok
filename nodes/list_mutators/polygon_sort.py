@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, fullList, match_long_repeat
+from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.sv_operator_mixins import SvGenericCallbackWithParams
 from mathutils import Vector
 from math import acos, pi, sqrt

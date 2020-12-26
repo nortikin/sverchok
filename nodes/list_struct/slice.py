@@ -60,9 +60,9 @@ class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-        data = self.inputs['Data'].sv_get()
-        start = self.inputs['Start'].sv_get()[0]
-        stop = self.inputs['Stop'].sv_get()[0]
+        data = self.inputs['Data'].sv_get(deepcopy=False)
+        start = self.inputs['Start'].sv_get(deepcopy=False)[0]
+        stop = self.inputs['Stop'].sv_get(deepcopy=False)[0]
 
         if self.outputs['Slice'].is_linked:
             if self.level:

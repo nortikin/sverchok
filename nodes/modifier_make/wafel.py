@@ -26,7 +26,7 @@ from mathutils.geometry import intersect_line_line as IL2L
 from mathutils.geometry import intersect_line_plane as IL2P
 from mathutils.geometry import normal as NM
 from mathutils import kdtree as KDT
-from sverchok.data_structure import (Vector_generate, Vector_degenerate, fullList,
+from sverchok.data_structure import (Vector_generate, Vector_degenerate,
                                      dataCorrect,
                                      updateNode)
 from math import sin, atan, cos, degrees, radians

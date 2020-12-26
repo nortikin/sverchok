@@ -104,8 +104,8 @@ class SvFlatGeometryNode(bpy.types.Node, SverchCustomTreeNode):
         if not any(s.is_linked for s in self.outputs):
             return
         if self.inputs['Vertices'].is_linked:
-            verts_in = self.inputs['Vertices'].sv_get()
-            plane_in = self.inputs['Plane Matrix'].sv_get()
+            verts_in = self.inputs['Vertices'].sv_get(deepcopy=False)
+            plane_in = self.inputs['Plane Matrix'].sv_get(deepcopy=False)
             if self.projection_mode == 'Orthogrphic':
                 verts_out, z_coord_out = ortho_proyection(verts_in, plane_in)
             else:

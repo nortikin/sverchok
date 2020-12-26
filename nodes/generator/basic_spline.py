@@ -24,7 +24,7 @@ from mathutils.geometry import interpolate_bezier as bezlerp
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, fullList
+from sverchok.data_structure import updateNode
 
 
 def generate_bezier(verts=None, num_verts=20):
