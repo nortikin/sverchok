@@ -32,7 +32,7 @@ from cmath import exp
 
 
 class SvNeuroElman:
-    """ A set of functions for working with a neuron """
+    """ A set of functions for working with teachable neuron """
 
     def init_w(self, number, ext, treshold):
         out = []
@@ -165,7 +165,12 @@ class SvNeuroElman:
 
 
 class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
-    ''' Neuro Elman 1 Layer '''
+    ''' 
+        Neuro Elman 1 Layer 
+        Teachable node getting data with etalon example to learn
+        Than after animated learning can output result without
+            etalon values
+    '''
 
     bl_idname = 'SvNeuroElman1LNode'
     bl_label = '*Neuro Elman 1 Layer'
