@@ -53,11 +53,12 @@ class SvSolidPolygonFaceNode(bpy.types.Node, SverchCustomTreeNode):
         tolerance = 10 ** (-self.accuracy)
 
         result = []
+        fc_vector = Base.Vector
         for face_i in face_idxs:
             face_i = list(face_i)
             face_i.append(face_i[0])
             fc_verts = [verts[idx] for idx in face_i]
-            fc_verts = [Base.Vector(*vert) for vert in fc_verts]
+            fc_verts = [fc_vector(*vert) for vert in fc_verts]
             wire = Part.makePolygon(fc_verts)
             wire.fixTolerance(tolerance)
             face = Part.Face(wire)
