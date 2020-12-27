@@ -13,7 +13,8 @@ This node generates random points, which are distributed according to the provid
   probability of the vertex appearence at some point is proportional to the
   value of the scalar field at that point.
 
-This node can make sure that generated points are not too close to one another. This can be controlled in one of two ways:
+This node can make sure that generated points are not too close to one another.
+This can be controlled in one of two ways:
 
 * By specifying minimum distance between any two different points;
 * Or by specifying a radius around each generated points, which should be free.
@@ -57,12 +58,29 @@ This node has the following inputs:
 Parameters
 ----------
 
-This node has the following parameter:
+This node has the following parameters:
+
+* **Distance**. This defines how minimum distance between generated points is
+  defined. The available options are:
+
+   * **Min. Distance**. The user provides minimum distance between any two
+     points in the **MinDistance** input.
+   * **RadiusField**. The user defines a radius of a shpere that should be
+     empty around each generated point, by providing a scalar field in the
+     **RadiusField** input. The node makes sure that these spheres will not
+     intersect.
+
+   The default value is **Min. Distance**.
 
 * **Proportional**. If checked, then the points density will be distributed
   proportionally to the values of scalar field. Otherwise, the points will be
   uniformly distributed in the area where the value of scalar field exceeds
   threshold. Unchecked by default.
+* **Random Radius**. This parameter is available only when **Distance**
+  parameter is set to **RadiusField**. If checked, then radiuses of empty
+  spheres will be generated randomly, by using uniform distribution between 0
+  (zero) and the value defined by the scalar field provided in the
+  **RadiusField** input. Unchecked by default.
 
 When **Proportional** mode is enabled, then the probability of vertex
 appearance at the certain point is calculated as ``P = (V - FieldMin) /
