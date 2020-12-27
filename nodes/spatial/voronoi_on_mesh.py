@@ -120,11 +120,11 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         if not any(socket.is_linked for socket in self.outputs):
             return
 
-        verts_in = self.inputs['Vertices'].sv_get()
-        faces_in = self.inputs['Faces'].sv_get()
-        sites_in = self.inputs['Sites'].sv_get()
+        verts_in = self.inputs['Vertices'].sv_get(deepcopy=False)
+        faces_in = self.inputs['Faces'].sv_get(deepcopy=False)
+        sites_in = self.inputs['Sites'].sv_get(deepcopy=False)
         #thickness_in = self.inputs['Thickness'].sv_get()
-        spacing_in = self.inputs['Spacing'].sv_get()
+        spacing_in = self.inputs['Spacing'].sv_get(deepcopy=False)
 
         verts_in = ensure_nesting_level(verts_in, 4)
         input_level = get_data_nesting_level(sites_in)
