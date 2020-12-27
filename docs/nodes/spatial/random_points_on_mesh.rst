@@ -26,8 +26,17 @@ Parameters
 
 This node has the following parameters:
 
-- **Proportional**. If checked, then the number of points on each face will be
-  proportional to the area of the face (and to the weight provided in the
+- **Mode**. The available options are:
+
+  * **Surface**. Generate points on the surface of the mesh.
+  * **Volume**. Generate points inside the volume of the mesh. The mesh is
+    expected to represent a closed volume in this case.
+
+  The default option is **Surface**.
+
+- **Proportional**. This parameter is available only when **Mode** parameter is
+  set to **Surface**. If checked, then the number of points on each face will
+  be proportional to the area of the face (and to the weight provided in the
   **Face weight** input). If not checked, then the number of points on each
   face will be only defined by **Face weight** input. Checked by default.
 
@@ -35,7 +44,8 @@ Outputs
 -------
 
 - **Verts** - random vertices on mesh
-- **Face index** - indexes of faces to which random vertices lays
+- **Face index** - indexes of faces to which random vertices lays. This input
+  is available only when **Mode** parameter is set to **Surface**.
 
 Examples
 --------

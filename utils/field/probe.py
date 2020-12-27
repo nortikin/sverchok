@@ -8,25 +8,40 @@
 import random
 import numpy as np
 
-from mathutils.kdtree import KDTree
-
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.logging import error
+from sverchok.utils.kdtree import SvKdTree
 
 BATCH_SIZE = 50
 MAX_ITERATIONS = 1000
 
-def _check_all(v_new, vs_old, min_r):
-    kdt = KDTree(len(vs_old))
-    for i, v in enumerate(vs_old):
-        kdt.insert(v, i)
-    kdt.balance()
-    nearest, idx, dist = kdt.find(v_new)
+def _check_min_distance(v_new, vs_old, min_r):
+    if not vs_old:
+        return True
+    kdt = SvKdTree.new(SvKdTree.BLENDER, vs_old)
+    nearest, idx, dist = kdt.query(v_new)
     if dist is None:
         return True
-    return (dist >= min_r)
+    ok = (dist >= min_r)
+    #if not ok:
+    #    print(f"V {v_new} => {nearest}, {dist} >= {min_r}")
+    return ok
 
-def field_random_probe(field, bbox, count, threshold=0, proportional=False, field_min=None, field_max=None, min_r=0, seed=0, predicate=None):
+def _check_min_radius(point, old_points, old_radiuses, min_r):
+    if not old_points:
+        return True
+    old_points = np.array(old_points)
+    old_radiuses = np.array(old_radiuses)
+    point = np.array(point)
+    distances = np.linalg.norm(old_points - point, axis=1)
+    ok = (old_radiuses + min_r < distances).all()
+    return ok
+
+def field_random_probe(field, bbox, count,
+        threshold=0, proportional=False, field_min=None, field_max=None,
+        min_r=0, min_r_field=None,
+        random_radius = False,
+        seed=0, predicate=None):
     """
     Generate random points within bounding box, with distribution controlled (optionally) by a scalar field.
 
@@ -50,16 +65,20 @@ def field_random_probe(field, bbox, count, threshold=0, proportional=False, fiel
     outputs:
         list of vertices.
     """
+    if min_r != 0 and min_r_field is not None:
+        raise Exception("min_r and min_r_field can not be specified simultaneously")
     if seed == 0:
         seed = 12345
-    random.seed(seed)
+    if seed is not None:
+        random.seed(seed)
 
     b1, b2 = bbox
     x_min, y_min, z_min = b1
     x_max, y_max, z_max = b2
 
     done = 0
-    new_verts = []
+    generated_verts = []
+    generated_radiuses = []
     iterations = 0
     while done < count:
         iterations += 1
@@ -99,19 +118,37 @@ def field_random_probe(field, bbox, count, threshold=0, proportional=False, fiel
                     if probe <= value:
                         candidates.append(vert)
 
-        if min_r == 0:
+        good_radiuses = []
+        if min_r == 0 and min_r_field is None:
             good_verts = candidates
-        else:
+            good_radiuses = [0 for i in range(len(good_verts))]
+        elif min_r_field is not None:
+            xs = np.array([p[0] for p in candidates])
+            ys = np.array([p[1] for p in candidates])
+            zs = np.array([p[2] for p in candidates])
+            min_rs = min_r_field.evaluate_grid(xs, ys, zs).tolist()
+            good_verts = []
+            for candidate, min_r in zip(candidates, min_rs):
+                if random_radius:
+                    min_r = random.uniform(0, min_r)
+                if _check_min_radius(candidate, generated_verts + good_verts, generated_radiuses + good_radiuses, min_r):
+                    good_verts.append(candidate)
+                    good_radiuses.append(min_r)
+        else: # min_r != 0
             good_verts = []
             for candidate in candidates:
-                if _check_all(candidate, new_verts + good_verts, min_r):
+                if _check_min_distance(candidate, generated_verts + good_verts, min_r):
                     good_verts.append(candidate)
+            good_radiuses = [1 for c in good_verts]
 
         if predicate is not None:
-            good_verts = [vert for vert in good_verts if predicate(vert)]
+            pairs = [(vert, r) for vert, r in zip(good_verts, good_radiuses) if predicate(vert)]
+            good_verts = [p[0] for p in pairs]
+            good_radiuses = [p[1] for p in pairs]
 
-        new_verts.extend(good_verts)
+        generated_verts.extend(good_verts)
+        generated_radiuses.extend(good_radiuses)
         done += len(good_verts)
 
-    return new_verts
+    return generated_verts, generated_radiuses
 

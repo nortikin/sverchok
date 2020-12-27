@@ -18,15 +18,16 @@
 
 import numpy as np
 from collections import defaultdict
+import itertools
 
 import bpy
 import bmesh
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 
-from sverchok.utils.sv_mesh_utils import mask_vertices, polygons_to_edges
+from sverchok.utils.sv_mesh_utils import mask_vertices, polygons_to_edges, point_inside_mesh
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, bmesh_clip
-from sverchok.utils.geom import calc_bounds, bounding_sphere
+from sverchok.utils.geom import calc_bounds, bounding_sphere, PlaneEquation
 from sverchok.utils.math import project_to_sphere, weighted_center
 from sverchok.dependencies import scipy, FreeCAD
 
@@ -36,6 +37,77 @@ if scipy is not None:
 if FreeCAD is not None:
     from FreeCAD import Base
     import Part
+
+def voronoi3d_regions(sites, closed_only=True, recalc_normals=True, do_clip=False, clipping=1.0):
+    diagram = Voronoi(sites)
+    faces_per_site = defaultdict(list)
+    nsites = len(diagram.point_region)
+    nridges = len(diagram.ridge_points)
+    open_sites = set()
+    for ridge_idx in range(nridges):
+        site_idx_1, site_idx_2 = diagram.ridge_points[ridge_idx]
+        face = diagram.ridge_vertices[ridge_idx]
+        if -1 in face:
+            open_sites.add(site_idx_1)
+            open_sites.add(site_idx_2)
+            continue
+        faces_per_site[site_idx_1].append(face)
+        faces_per_site[site_idx_2].append(face)
+
+    new_verts = []
+    new_edges = []
+    new_faces = []
+
+    for site_idx in sorted(faces_per_site.keys()):
+        if closed_only and site_idx in open_sites:
+            continue
+        done_verts = dict()
+        bm = bmesh.new()
+        for face in faces_per_site[site_idx]:
+            face_bm_verts = []
+            for vertex_idx in face:
+                if vertex_idx not in done_verts:
+                    bm_vert = bm.verts.new(diagram.vertices[vertex_idx])
+                    done_verts[vertex_idx] = bm_vert
+                else:
+                    bm_vert = done_verts[vertex_idx]
+                face_bm_verts.append(bm_vert)
+            bm.faces.new(face_bm_verts)
+        bm.verts.index_update()
+        bm.verts.ensure_lookup_table()
+        bm.faces.index_update()
+        bm.edges.index_update()
+
+        if closed_only and any (v.is_boundary for v in bm.verts):
+            bm.free()
+            continue
+
+        if recalc_normals:
+            bm.normal_update()
+            bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+
+        region_verts, region_edges, region_faces = pydata_from_bmesh(bm)
+        bm.free()
+        new_verts.append(region_verts)
+        new_edges.append(region_edges)
+        new_faces.append(region_faces)
+
+    if do_clip:
+        verts_n, edges_n, faces_n = [], [], []
+        bounds = calc_bounds(sites, clipping)
+        for verts_i, edges_i, faces_i in zip(new_verts, new_edges, new_faces):
+            bm = bmesh_from_pydata(verts_i, edges_i, faces_i)
+            bmesh_clip(bm, bounds, fill=True)
+            bm.normal_update()
+            bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+            verts_i, edges_i, faces_i = pydata_from_bmesh(bm)
+            bm.free()
+            verts_n.append(verts_i)
+            edges_n.append(edges_i)
+            faces_n.append(faces_i)
+        new_verts, new_edges, new_faces = verts_n, edges_n, faces_n
+
+    return new_verts, new_edges, new_faces
 
 def voronoi3d_layer(n_src_sites, all_sites, make_regions, do_clip, clipping, skip_added=True):
     diagram = Voronoi(all_sites)
@@ -148,7 +220,7 @@ def calc_bvh_normals(bvh, sites):
     for site in sites:
         loc, normal, index, distance = bvh.find_nearest(site)
         if loc is not None:
-            normals.append(normal)
+            normals.append(normal.normalized())
     return np.array(normals)
 
 def calc_bvh_projections(bvh, sites):
@@ -159,34 +231,125 @@ def calc_bvh_projections(bvh, sites):
             projections.append(loc)
     return np.array(projections)
 
-def voronoi_on_mesh_impl(bvh, sites, thickness, clip_inner=True, clip_outer=True, do_clip=True, clipping=1.0, make_regions=True):
+def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=True, precision=1e-8):
+
+    def get_ridges_per_site(voronoi):
+        result = defaultdict(list)
+        for ridge_idx in range(len(voronoi.ridge_points)):
+            site1_idx, site2_idx = tuple(voronoi.ridge_points[ridge_idx])
+            site1 = voronoi.points[site1_idx]
+            site2 = voronoi.points[site2_idx]
+            middle = (site1 + site2) * 0.5
+            normal = site2 - site1
+            plane = PlaneEquation.from_normal_and_point(normal, middle)
+            result[site1_idx].append(plane)
+            result[site2_idx].append(plane)
+        return result
+
+    def cut_cell(verts, faces, planes, site):
+        src_mesh = bmesh_from_pydata(verts, [], faces, normal_update=True)
+        n_cuts = 0
+        for plane in planes:
+            if len(src_mesh.verts) == 0:
+                break
+            geom_in = src_mesh.verts[:] + src_mesh.edges[:] + src_mesh.faces[:]
+            
+            plane_co = plane.projection_of_point(site)
+            plane_no = plane.normal.normalized()
+            if plane.side_of_point(site) > 0:
+                plane_no = - plane_no
+
+            plane_co = plane_co - 0.5 * spacing * plane_no
+
+            current_verts = np.array([tuple(v.co) for v in src_mesh.verts])
+            signs = PlaneEquation.from_normal_and_point(plane_no, plane_co).side_of_points(current_verts)
+            #print(f"Plane co {plane_co}, no {plane_no}, signs {signs}")
+            if (signs <= 0).all():# or (signs <= 0).all():
+                continue
+
+            res = bmesh.ops.bisect_plane(
+                    src_mesh, geom=geom_in, dist=precision,
+                    plane_co = plane_co,
+                    plane_no = plane_no,
+                    use_snap_center = False,
+                    clear_outer = True,
+                    clear_inner = False
+                )
+            n_cuts += 1
+                
+            if fill:
+                surround = [e for e in res['geom_cut'] if isinstance(e, bmesh.types.BMEdge)]
+                if surround:
+                    fres = bmesh.ops.edgenet_prepare(src_mesh, edges=surround)
+                    if fres['edges']:
+                        bmesh.ops.edgeloop_fill(src_mesh, edges=fres['edges'])  
+
+        if n_cuts == 0:
+            return None
+        
+        return pydata_from_bmesh(src_mesh)
+
+    verts_out = []
+    edges_out = []
+    faces_out = []
+
+    voronoi = Voronoi(np.array(sites))
+    ridges_per_site = get_ridges_per_site(voronoi)
+    for site_idx in range(len(sites)):
+        cell = cut_cell(verts, faces, ridges_per_site[site_idx], sites[site_idx])
+        if cell is not None:
+            new_verts, new_edges, new_faces = cell
+            if new_verts:
+                verts_out.append(new_verts)
+                edges_out.append(new_edges)
+                faces_out.append(new_faces)
+
+    return verts_out, edges_out, faces_out
+
+def voronoi_on_mesh(verts, faces, sites, thickness,
+    spacing = 0.0,
+    clip_inner=True, clip_outer=True, do_clip=True,
+    clipping=1.0, mode = 'REGIONS',
+    precision = 1e-8):
+    bvh = BVHTree.FromPolygons(verts, faces)
     npoints = len(sites)
 
-    if clip_inner or clip_outer:
-        normals = calc_bvh_normals(bvh, sites)
-    k = 0.5*thickness
-    sites = np.array(sites)
-    all_points = sites.tolist()
-    if clip_outer:
-        plus_points = sites + k*normals
-        all_points.extend(plus_points.tolist())
-    if clip_inner:
-        minus_points = sites - k*normals
-        all_points.extend(minus_points.tolist())
+    if clipping is None:
+        x_min, x_max, y_min, y_max, z_min, z_max = calc_bounds(verts)
+        clipping = max(x_max - x_min, y_max - y_min, z_max - z_min) / 2.0
 
-    return voronoi3d_layer(npoints, all_points,
-            make_regions = make_regions,
-            do_clip = do_clip,
-            clipping = clipping)
+    if mode in {'REGIONS', 'RIDGES'}:
+        if clip_inner or clip_outer:
+            normals = calc_bvh_normals(bvh, sites)
+        k = 0.5*thickness
+        sites = np.array(sites)
+        all_points = sites.tolist()
+        if clip_outer:
+            plus_points = sites + k*normals
+            all_points.extend(plus_points.tolist())
+        if clip_inner:
+            minus_points = sites - k*normals
+            all_points.extend(minus_points.tolist())
 
-def voronoi_on_mesh(verts, faces, sites, thickness, clip_inner=True, clip_outer=True, do_clip=True, clipping=1.0, make_regions=True):
-    bvh = BVHTree.FromPolygons(verts, faces)
-    return voronoi_on_mesh_impl(bvh, sites, thickness,
-            clip_inner = clip_inner, clip_outer = clip_outer,
-            do_clip = do_clip, clipping = clipping,
-            make_regions = make_regions)
+        return voronoi3d_layer(npoints, all_points,
+                make_regions = (mode == 'REGIONS'),
+                do_clip = do_clip,
+                clipping = clipping)
 
-def project_solid_normals(shell, pts, thickness, add_plus=True, add_minus=True):
+    else: # VOLUME, SURFACE
+        all_points = sites[:]
+        if do_clip:
+            for site in sites:
+                loc, normal, index, distance = bvh.find_nearest(site)
+                if loc is not None:
+                    p1 = loc + clipping * normal
+                    all_points.append(p1)
+        verts, edges, faces = voronoi_on_mesh_bmesh(verts, faces, len(sites), all_points,
+                spacing = spacing, fill = (mode == 'VOLUME'),
+                precision = precision)
+        return verts, edges, faces, all_points
+
+def project_solid_normals(shell, pts, thickness, add_plus=True, add_minus=True, predicate_plus=None, predicate_minus=None):
     k = 0.5*thickness
     result = []
     for pt in pts:
@@ -200,33 +363,27 @@ def project_solid_normals(shell, pts, thickness, add_plus=True, add_minus=True):
             plus_pt = projection + k*normal
             minus_pt = projection - k*normal
             if add_plus:
-                result.append(tuple(plus_pt))
+                if predicate_plus is None or predicate_plus(plus_pt):
+                    result.append(tuple(plus_pt))
             if add_minus:
-                result.append(tuple(minus_pt))
+                if predicate_minus is None or predicate_minus(minus_pt):
+                    result.append(tuple(minus_pt))
     return result
 
-def voronoi_on_solid_surface(solid, sites, thickness,
-        clip_inner=True, clip_outer=True,
-        skip_added = True,
-        do_clip=True, clipping=1.0,
-        make_regions=True): 
-
-    npoints = len(sites)
-    if solid.Shells:
-        shell = solid.Shells[0]
-    else:
-        shell = Part.Shell(solid.Faces)
+def voronoi_on_solid(solid, sites,
+        do_clip=True, clipping=1.0):
 
     all_points = sites
-    if clip_inner or clip_outer:
-        all_points.extend(project_solid_normals(shell, sites, thickness,
-                add_plus=clip_outer, add_minus=clip_inner))
-
-    return voronoi3d_layer(npoints, all_points,
-            make_regions = make_regions,
-            skip_added = skip_added,
-            do_clip = do_clip,
-            clipping = clipping)
+    if do_clip:
+        box = solid.BoundBox
+        if clipping is None:
+            clipping = max(box.XLength, box.YLength, box.ZLength)/2.0
+        x_min, x_max = box.XMin - clipping, box.XMax + clipping
+        y_min, y_max = box.YMin - clipping, box.YMax + clipping
+        z_min, z_max = box.ZMin - clipping, box.ZMax + clipping
+        bounds = list(itertools.product([x_min,x_max], [y_min, y_max], [z_min, z_max]))
+        all_points.extend(bounds)
+    return voronoi3d_regions(all_points, closed_only=True, do_clip=do_clip, clipping=clipping)
 
 def lloyd_on_mesh(verts, faces, sites, thickness, n_iterations, weight_field=None):
     bvh = BVHTree.FromPolygons(verts, faces)
@@ -257,6 +414,55 @@ def lloyd_on_mesh(verts, faces, sites, thickness, n_iterations, weight_field=Non
         points = calc_bvh_projections(bvh, points)
 
     return points.tolist()
+
+def lloyd_in_mesh(verts, faces, sites, n_iterations, thickness=None, weight_field=None):
+    bvh = BVHTree.FromPolygons(verts, faces)
+
+    if thickness is None:
+        x_min, x_max, y_min, y_max, z_min, z_max = calc_bounds(verts)
+        thickness = max(x_max - x_min, y_max - y_min, z_max - z_min) / 4.0
+
+    epsilon = 1e-8
+
+    def iteration(points):
+        n = len(points)
+
+        all_points = points[:]
+        k = 0.5*thickness
+        for p in points:
+            p = Vector(p)
+            loc, normal, index, distance = bvh.find_nearest(p)
+            if distance <= epsilon:
+                p1 = p + k * normal
+                all_points.append(tuple(p1))
+
+        diagram = Voronoi(all_points)
+        centers = []
+        for site_idx in range(n):
+            region_idx = diagram.point_region[site_idx]
+            region = diagram.regions[region_idx]
+            region_verts = np.array([diagram.vertices[i] for i in region])
+            center = weighted_center(region_verts, weight_field)
+            centers.append(tuple(center))
+        return centers
+
+    def restrict(points):
+        result = []
+        for p in points:
+            if point_inside_mesh(bvh, p):
+                result.append(p)
+            else:
+                loc, normal, index, distance = bvh.find_nearest(p)
+                if loc is not None:
+                    result.append(tuple(loc))
+        return result
+
+    points = restrict(sites)
+    for i in range(n_iterations):
+        points = iteration(points)
+        points = restrict(points)
+
+    return points
 
 def lloyd_in_solid(solid, sites, n_iterations, tolerance=1e-4, weight_field=None):
     shell = solid.Shells[0]
