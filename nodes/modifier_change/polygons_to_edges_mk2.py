@@ -23,20 +23,15 @@ from bpy.props import BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect_np, updateNode
 from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
-from sverchok.utils.decorators import deprecated
 
 
-@deprecated("Please use sverchok.utils.sv_mesh_utils.polygons_to_edges_np instead")
-def pols_edges(obj, unique_edges=False):
-    return polygons_to_edges_np(obj, unique_edges)
-
-class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPols2EdgsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Edges from Faces
     Tooltip: Get edges lists from polygons lists.
     """
 
-    bl_idname = 'Pols2EdgsNode'
+    bl_idname = 'SvPols2EdgsNodeMk2'
     bl_label = 'Polygons to Edges'
     bl_icon = 'EDGESEL'
     sv_icon = 'SV_POLYGONS_TO_EDGES'
@@ -63,8 +58,8 @@ class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "output_numpy")
 
     def sv_init(self, context):
-        self.inputs.new('SvStringsSocket', "pols")
-        self.outputs.new('SvStringsSocket', "edgs")
+        self.inputs.new('SvStringsSocket', "pols").label = 'Polygons'
+        self.outputs.new('SvStringsSocket', "edgs").label = 'Edges'
 
     def process(self):
         if not self.outputs[0].is_linked:
@@ -80,8 +75,8 @@ class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(Pols2EdgsNode)
+    bpy.utils.register_class(SvPols2EdgsNodeMk2)
 
 
 def unregister():
-    bpy.utils.unregister_class(Pols2EdgsNode)
+    bpy.utils.unregister_class(SvPols2EdgsNodeMk2)
