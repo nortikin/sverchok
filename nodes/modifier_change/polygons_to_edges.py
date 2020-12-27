@@ -44,18 +44,12 @@ class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
     unique_edges: BoolProperty(
         name="Unique Edges", default=False, update=updateNode)
 
-    regular_pols: BoolProperty(
-        name='Regular polygons',
-        description='Makes the node faster if all the incoming polygons have the same number of sides',
-        default=False, update=updateNode)
-
     output_numpy: BoolProperty(
         name='Output NumPy',
         description='Output NumPy arrays',
         default=False, update=updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "regular_pols")
         layout.prop(self, "unique_edges")
 
     def draw_buttons_ext(self, context, layout):
@@ -79,12 +73,7 @@ class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
         polygons_ = self.inputs['pols'].sv_get(deepcopy=False)
         polygons = dataCorrect_np(polygons_)
 
-        if self.output_numpy or isinstance(polygons[0], ndarray) or self.regular_pols:
-            result = polygons_to_edges_np(polygons, self.unique_edges, self.output_numpy)
-        else:
-            result = polygons_to_edges(polygons, self.unique_edges)
-
-        self.outputs['edgs'].sv_set(result)
+        self.outputs['edgs'].sv_set(polygons_to_edges_np(polygons, self.unique_edges, self.output_numpy))
 
     def draw_label(self):
         return (self.label or self.name) if not self.hide else "P to E"

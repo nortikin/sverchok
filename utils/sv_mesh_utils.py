@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from sverchok.data_structure import fullList_deep_copy
-from numpy import array, empty, concatenate, unique, sort, int32, ndarray
+from numpy import array, empty, concatenate, unique, sort, int32, ndarray, vectorize
 
 
 
@@ -66,6 +66,28 @@ def pol_to_edges(pol):
 
     return edges
 
+def pols_to_edges_irregular_mesh(pols, unique_edges):
+    np_pols = array(pols)
+    np_len = vectorize(len)
+    lens = np_len(np_pols)
+    pol_types = unique(lens)
+
+    edges = []
+    for p in pol_types:
+        mask = lens == p
+        np_pols_g = array(np_pols[mask].tolist())
+        edges_g = empty(list(np_pols_g.shape)+[2], 'i')
+        edges_g[:, :, 0] = np_pols_g
+        edges_g[:, 1:, 1] = np_pols_g[:, :-1]
+        edges_g[:, 0, 1] = np_pols_g[:, -1]
+
+        edges_g = edges_g.reshape(-1, 2)
+        edges.append(edges_g)
+    if unique_edges:
+        return unique(sort(concatenate([eds for eds in edges])), axis=0)
+    else:
+        return concatenate([eds for eds in edges])
+
 def polygons_to_edges_np(obj, unique_edges=False, output_numpy=False):
     result = []
 
@@ -78,9 +100,10 @@ def polygons_to_edges_np(obj, unique_edges=False, output_numpy=False):
 
         if not regular_mesh:
             if output_numpy:
-                result.append(concatenate([pol_to_edges(p) for p in pols]))
+                result.append(pols_to_edges_irregular_mesh(pols, unique_edges))
             else:
-                result.append(polygons_to_edges([pols], unique_edges)[0])
+                result.append(pols_to_edges_irregular_mesh(pols, unique_edges).tolist())
+
         else:
 
             edges = empty(list(np_pols.shape)+[2], 'i')
@@ -125,4 +148,3 @@ def get_unique_faces(faces):
         else:
             uniq_faces.append(face)
     return uniq_faces
-
