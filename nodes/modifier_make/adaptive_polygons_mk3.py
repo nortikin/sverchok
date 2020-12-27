@@ -147,11 +147,11 @@ class DonorData():
 
 class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Adaptive Polygons Tessellate Tissue
+    Triggers: Tessellate Tissue
     Tooltip: Generate an adapted copy of donor object along each face of recipient object.
     """
     bl_idname = 'SvAdaptivePolygonsNodeMk3'
-    bl_label = 'Adaptive Polygons Mk2'
+    bl_label = 'Adaptive Polygons'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_ADAPTATIVE_POLS'
 
