@@ -57,15 +57,6 @@ def polygons_to_edges(obj, unique_edges=False):
     return out
 
 
-def pol_to_edges(pol):
-
-    edges = empty([len(pol), 2], 'i')
-    edges[:, 0] = pol
-    edges[1:, 1] = pol[:-1]
-    edges[0, 1] = pol[-1]
-
-    return edges
-
 def pols_to_edges_irregular_mesh(pols, unique_edges):
     np_pols = array(pols)
     np_len = vectorize(len)
@@ -73,8 +64,8 @@ def pols_to_edges_irregular_mesh(pols, unique_edges):
     pol_types = unique(lens)
 
     edges = []
-    for p in pol_types:
-        mask = lens == p
+    for sides_number in pol_types:
+        mask = lens == sides_number
         np_pols_g = array(np_pols[mask].tolist())
         edges_g = empty(list(np_pols_g.shape)+[2], 'i')
         edges_g[:, :, 0] = np_pols_g
@@ -85,8 +76,8 @@ def pols_to_edges_irregular_mesh(pols, unique_edges):
         edges.append(edges_g)
     if unique_edges:
         return unique(sort(concatenate([eds for eds in edges])), axis=0)
-    else:
-        return concatenate([eds for eds in edges])
+
+    return concatenate([eds for eds in edges])
 
 def polygons_to_edges_np(obj, unique_edges=False, output_numpy=False):
     result = []

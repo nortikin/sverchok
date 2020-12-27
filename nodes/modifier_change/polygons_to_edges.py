@@ -18,17 +18,17 @@
 
 import bpy
 from bpy.props import BoolProperty
-from numpy import array, empty, concatenate, unique, sort, int32, ndarray
+
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect_np, updateNode
-from sverchok.utils.sv_mesh_utils import polygons_to_edges, polygons_to_edges_np
+from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
 from sverchok.utils.decorators import deprecated
 
 
-@deprecated("Please use sverchok.utils.sv_mesh_utils.polygons_to_edges instead")
+@deprecated("Please use sverchok.utils.sv_mesh_utils.polygons_to_edges_np instead")
 def pols_edges(obj, unique_edges=False):
-    return polygons_to_edges(obj, unique_edges)
+    return polygons_to_edges_np(obj, unique_edges)
 
 class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
     """
