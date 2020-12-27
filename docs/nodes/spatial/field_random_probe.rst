@@ -13,6 +13,15 @@ This node generates random points, which are distributed according to the provid
   probability of the vertex appearence at some point is proportional to the
   value of the scalar field at that point.
 
+This node can make sure that generated points are not too close to one another. This can be controlled in one of two ways:
+
+* By specifying minimum distance between any two different points;
+* Or by specifying a radius around each generated points, which should be free.
+  More precisely, the node makes sure that if you place a sphere of specified
+  radius at each point as a center, these spheres will never intersect. The
+  radiuses of such spheres are provided as a scalar field: it defines a radius
+  value for any point in the space.
+
 Inputs
 ------
 
@@ -25,9 +34,13 @@ This node has the following inputs:
   generated. Only bounding box of these vertices will be used. This input is
   mandatory.
 * **Count**. The number of points to be generated. The default value is 50.
-* **MinDistance**. Minimum allowable distance between generated points. If set
-  to zero, there will be no restriction on distance between points. Default
-  value is 0.
+* **MinDistance**. This input is avaliable only when **Distance** parameter is
+  set to **Min. Distance**. Minimum allowable distance between generated
+  points. If set to zero, there will be no restriction on distance between
+  points. Default value is 0.
+* **RadiusField**. This input is available and mandatory only when **Distance**
+  parameter is set to **Radius Field**. The scalar field, which defines radius
+  of free sphere around any generated point.
 * **Threshold**. Threshold value: the node will not generate points in areas
   where the value of scalar field is less than this value. The default value is
   0.5.
@@ -73,4 +86,12 @@ Generate cubes near the cyllinder:
 Generate cubes according to the scalar field defined by some formula:
 
 .. image:: https://user-images.githubusercontent.com/284644/81504488-f94cd080-9302-11ea-9da5-f27f633f2191.png
+
+Example of "Radius Field** mode usage:
+
+.. image:: https://user-images.githubusercontent.com/284644/102390341-1ca4d000-3ff6-11eb-90f5-dfa07646f941.png
+
+Here we are placing spheres of different radiuses at each generated point.
+Since radiuses of the sphere are defined by the same scalar field which is used
+for RadiusField input, these spheres do never intersect.
 
