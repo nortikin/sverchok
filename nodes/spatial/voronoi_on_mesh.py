@@ -100,13 +100,14 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "Faces")
-        self.outputs.new('SvVerticesSocket', "AllSites")
+        #self.outputs.new('SvVerticesSocket', "AllSites")
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
         layout.label(text="Mode:")
         layout.prop(self, "mode", text='')
-        layout.prop(self, 'normals')
+        if self.mode == 'VOLUME':
+            layout.prop(self, 'normals')
         layout.label(text='Output nesting:')
         layout.prop(self, 'join_mode', text='')
 
@@ -152,7 +153,7 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
                             do_clip=True, clipping=None,
                             mode = self.mode,
                             precision = precision)
-                if self.normals:
+                if self.mode == 'VOLUME' and self.normals:
                     verts, edges, faces = recalc_normals(verts, edges, faces, loop=True)
 
                 if self.join_mode == 'FLAT':
@@ -186,7 +187,7 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Edges'].sv_set(edges_out)
         self.outputs['Faces'].sv_set(faces_out)
-        self.outputs['AllSites'].sv_set(sites_out)
+        #self.outputs['AllSites'].sv_set(sites_out)
 
 def register():
     if scipy is not None:
