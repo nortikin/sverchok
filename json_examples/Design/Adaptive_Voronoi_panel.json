@@ -58,7 +58,7 @@
       "width": 140.0
     },
     "Adaptive Polygons Mk2": {
-      "bl_idname": "SvAdaptivePolygonsNodeMk2",
+      "bl_idname": "SvAdaptivePolygonsNodeMk3",
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,

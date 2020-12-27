@@ -12,7 +12,7 @@ Modifier Make
    lathe
    matrix_tube
    pipe_tubes
-   adaptive_polygons_mk2
+   adaptive_polygons_mk3
    solidify
    uv_connect
    wafel

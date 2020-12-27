@@ -36,7 +36,7 @@ This node has the following inputs:
 - **PolsR**. Faces of the recipient object. Please have in mind that order of
   indices in each face affect donor object rotation; for example, `[0, 1, 2,
   3]` is one rotation, `[3, 0, 1, 2]` is the same turned by 90 degrees. This
-  input is mandatory. 
+  input is mandatory.
 - **VersD**. Vertices of the donor object. This input is mandatory.
 - **PolsD**. Faces of the donor object.
 - **FaceDataD**. List containing an arbitrary data item for each face of donor
@@ -68,6 +68,9 @@ This node has the following inputs:
 - **Threshold**. Merging threshold for "remove doubles" / "merge by distance"
   function. The default value is 0.0001. This input is only visible if **Remove
   doubles** parameter is checked.
+- **Donor Index**. Determine which donor to use for each face. This input is
+  only visible if **Matching Mode** is set to **Donor per face** and **Donor
+  Matching** is set to **By Index** (see below).
 
 Parameters
 ----------
@@ -82,7 +85,7 @@ This node has some number of parameters, and most of them are accessible only in
   controlled by **Threshold** input / paramter. This parameter is only visible
   if **Join** parameter is checked. Unchecked by default.
 - **Matching mode**. This defines how the list of donor objects is matched with list of recipient objects. Available values are:
-  
+
    - **Match longest**. Each pair of recipient and donor objects will be
      processed. For example, if there are 2 recipient objects and 2 donor
      objects, you will have two outputs: `recipient[1] + donor[1]` and
@@ -95,6 +98,17 @@ This node has some number of parameters, and most of them are accessible only in
      by number of recipient objects.
 
    The default value is **Match longest**.
+
+- **Donor Matching**. This defines how the list of donor objects is matched with
+  list of recipient faces Is only available when *Matching Mode* is set to **Donor per face**.
+  Available values are:
+
+   - **Repeat Last**. The last donor object will be repeated if there are more
+     faces than donors. [1,2] --> [1,2,2,2,..]
+   - **Cycle**.  Cycle the donors list if there are more faces than donors. [1,2] --> [1,2,1,2,..]
+   - **By Index**. Use a supplied list to define the donor that will be used for each face.
+
+   The default value is **Repeat Last**.
 
 - **Normal axis**. Axis of the donor object to be aligned with recipient object
   face normal. Available values are X, Y, and Z. Default value is Z.
@@ -158,7 +172,7 @@ This node has some number of parameters, and most of them are accessible only in
       other axis according to **Normal axis** parameter). The triangle can be
       defined as either equilateral or rectangular, depending on **Bounding
       triangle** parameter.
-  
+
   - **As Is**. The source area is defined as follows:
 
     - For Quad faces, the `[-1/2; 1/2] x [-1/2; 1/2]` unit square is taken.
@@ -188,7 +202,7 @@ This node has some number of parameters, and most of them are accessible only in
     Is**, this will be a triangle with center of it's hypotenuse at `(0, 0, 0)`
     and length of hypotenuse equal to 2. In **Bounds** mode, this will be the
     bounding triangle.
-  
+
   Please see below for the illustrations of bounding triangles.
   The default value is **Equilateral**.
 
@@ -239,13 +253,20 @@ This node has some number of parameters, and most of them are accessible only in
 
   - **As Quads**. Such faces will be processed as if they were quads; only
     first three and the last vertex of the NGon will be used to form a Quad.
-    This can give weird results for such faces. 
+    This can give weird results for such faces.
   - **Skip**. Such faces will be skipped completely, i.e. will not produce any
     vertices and faces.
   - **As Is**. Such faces will be output as they were, i.e. one face will be
     output for each recipient face.
 
   The default value is **As Quads**.
+
+- **Implementation. This defines which algorithm should be used.
+
+ - **NumPy**: Faster when donor has more than 50 vertices for tris or 12 verts for quads.
+ - **Mathutils**: Faster when donor has less than 50 vertices for tris or 12 verts for quads.
+ - **Auto**: Switched between Mathutils and NumPy implementation depending on donor vert count.
+
 
 Base area illustrations
 -----------------------
@@ -331,4 +352,3 @@ Use materials from the recipient object faces for the resulting object:
 .. image:: https://user-images.githubusercontent.com/284644/71734153-0d705500-2e6d-11ea-87aa-8d9a01085645.png
 
 You can also find some more examples `in the development thread <https://github.com/nortikin/sverchok/pull/2651>`_.
-

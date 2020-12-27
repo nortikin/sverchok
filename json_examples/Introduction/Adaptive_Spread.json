@@ -7,7 +7,7 @@
   "groups": {},
   "nodes": {
     "Adaptive Polygons Mk2": {
-      "bl_idname": "SvAdaptivePolygonsNodeMk2",
+      "bl_idname": "SvAdaptivePolygonsNodeMk3",
       "height": 100.0,
       "hide": false,
       "label": "",

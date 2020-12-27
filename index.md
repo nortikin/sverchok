@@ -405,7 +405,7 @@
     ---
     SvBevelCurveNode
     SvAdaptiveEdgeNode
-    SvAdaptivePolygonsNodeMk2
+    SvAdaptivePolygonsNodeMk3
     SvDuplicateAlongEdgeNode
     SvFractalCurveNode
     SvFrameworkNode
