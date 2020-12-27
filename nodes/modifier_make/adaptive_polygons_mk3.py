@@ -853,7 +853,7 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
                 if self.xy_mode == 'BOUNDS':
                     print(X)
                     verts[:, X] = self.map_bounds(donor.min_x, donor.max_x, verts[:, X])
-                    verts[:, Y] = self.map_bounds(donor.min_x, donor.max_x, verts[:, Y])
+                    verts[:, Y] = self.map_bounds(donor.min_y, donor.max_y, verts[:, Y])
                 new_verts = self.interpolate_quad_3d_np(recpt_face_data, verts,
                                                         wcoef, zcoef, zoffset,
                                                         [i0, i1, i2, i3])
@@ -884,11 +884,11 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
 
             if is_fan:
                 tri_faces = [(recpt_face_data.vertices_co[i],
-                                recpt_face_data.vertices_co[i+1],
-                                recpt_face_data.center) for i in range(n-1)]
+                              recpt_face_data.vertices_co[i+1],
+                              recpt_face_data.center) for i in range(n-1)]
                 tri_faces.append((recpt_face_data.vertices_co[-1],
-                                    recpt_face_data.vertices_co[0],
-                                    recpt_face_data.center))
+                                  recpt_face_data.vertices_co[0],
+                                  recpt_face_data.center))
 
                 if self.use_shell_factor:
                     face_normal = sum(recpt_face_data.vertices_normal, Vector()) / n
@@ -909,29 +909,29 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
                     self._process_face(sub_map_mode, output, sub_recpt, donor, zcoef, zoffset, angle, wcoef, facerot)
             else:
                 inner_verts = [vert.lerp(recpt_face_data.center, recpt_face_data.frame_width)
-                                    for vert in recpt_face_data.vertices_co]
+                               for vert in recpt_face_data.vertices_co]
                 if self.use_shell_factor:
                     inner_normals = [normal.lerp(recpt_face_data.normal, recpt_face_data.frame_width)
-                                        for normal in recpt_face_data.vertices_normal]
+                                     for normal in recpt_face_data.vertices_normal]
                 else:
                     face_normal = sum(recpt_face_data.vertices_normal, Vector()) / n
                     inner_normals = [normal.lerp(face_normal, recpt_face_data.frame_width)
-                                        for normal in recpt_face_data.vertices_normal]
+                                     for normal in recpt_face_data.vertices_normal]
 
                 quad_faces = [(recpt_face_data.vertices_co[i],
-                                recpt_face_data.vertices_co[i+1],
-                                inner_verts[i+1], inner_verts[i])
-                                    for i in range(n-1)]
+                               recpt_face_data.vertices_co[i+1],
+                               inner_verts[i+1], inner_verts[i])
+                              for i in range(n-1)]
                 quad_faces.append((recpt_face_data.vertices_co[-1],
-                                    recpt_face_data.vertices_co[0],
-                                    inner_verts[0], inner_verts[-1]))
+                                   recpt_face_data.vertices_co[0],
+                                   inner_verts[0], inner_verts[-1]))
                 quad_normals = [(recpt_face_data.vertices_normal[i],
-                                recpt_face_data.vertices_normal[i+1],
-                                inner_normals[i+1], inner_normals[i])
-                                    for i in range(n-1)]
+                                 recpt_face_data.vertices_normal[i+1],
+                                 inner_normals[i+1], inner_normals[i])
+                                for i in range(n-1)]
                 quad_normals.append((recpt_face_data.vertices_normal[-1],
-                                    recpt_face_data.vertices_normal[0],
-                                    inner_normals[0], inner_normals[-1]))
+                                     recpt_face_data.vertices_normal[0],
+                                     inner_normals[0], inner_normals[-1]))
 
                 for quad_face, quad_normal in zip(quad_faces, quad_normals):
                     sub_recpt = recpt_face_data.copy()
@@ -972,8 +972,6 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         bm_verts = bm.verts
         bm_verts.ensure_lookup_table()
 
-        # single_donor = self.matching_mode == 'LONG'
-        # frame_level = get_data_nesting_level(frame_widths)
         if single_donor:
             # Original (unrotated) donor vertices
             donor_verts_o = [Vector(v) for v in verts_donor]
@@ -1037,7 +1035,9 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
 
             donor.faces_i = donor_faces_i
             donor.face_data_i = donor_face_data_i
+
             map_mode = self.get_map_mode(len(recpt_face), m)
+
             if self.implementation == 'Auto':
                 is_fan = abs(frame_width - 1.0) < 1e-6
                 numpy_candidate = len(donor_verts_i) > (50 if map_mode == "TRIS" or (map_mode=='FRAME' and is_fan) else 12)
@@ -1076,39 +1076,6 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     zcoef = zcoef / z_size
 
-            # Define TRI/QUAD mode based on node settings.
-
-
-            # if not m:
-            #     map_mode = self.mask_mode
-            # else:
-            #     if n == 3:
-            #         if self.frame_mode == 'ALWAYS':
-            #             map_mode = 'FRAME'
-            #         else:
-            #             if self.map_mode == 'QUADTRI':
-            #                 map_mode = 'TRI'
-            #             else: # self.map_mode == 'QUADS':
-            #                 map_mode = 'QUAD'
-            #     elif n == 4:
-            #         if self.frame_mode in ['ALWAYS', 'NGONQUAD']:
-            #             map_mode = 'FRAME'
-            #         else:
-            #             map_mode = 'QUAD'
-            #     else:
-            #         if self.frame_mode in ['ALWAYS', 'NGONQUAD', 'NGONS']:
-            #             map_mode = 'FRAME'
-            #         else:
-            #             if self.ngon_mode == 'QUADS':
-            #                 map_mode = 'QUAD'
-            #             elif self.ngon_mode == 'ASIS':
-            #                 map_mode = 'ASIS'
-            #             else:
-            #                 map_mode = 'SKIP'
-            #
-            # if map_mode == 'SKIP':
-            #     # Skip this recipient's face - do not produce any vertices/faces for it
-            #     continue
 
             self._process_face(map_mode, output, recpt_face_data, donor, zcoef, zoffset, angle, wcoef, facerot)
             recpt_face_idx += 1
