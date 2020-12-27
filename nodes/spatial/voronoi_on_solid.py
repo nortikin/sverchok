@@ -70,7 +70,7 @@ class SvVoronoiOnSolidNode(bpy.types.Node, SverchCustomTreeNode):
     inset : FloatProperty(
         name = "Inset",
         min = 0.0, max = 1.0,
-        default = 0.0,
+        default = 0.1,
         update = updateNode)
 
     flat_output : BoolProperty(
