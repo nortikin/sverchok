@@ -83,6 +83,9 @@ def polygons_to_edges_np(obj, unique_edges=False, output_numpy=False):
     result = []
 
     for pols in obj:
+        if len(pols) == 0:
+            result.append([])
+            continue
         regular_mesh = True
         try:
             np_pols = array(pols, dtype=int32)
