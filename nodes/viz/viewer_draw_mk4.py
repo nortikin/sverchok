@@ -28,7 +28,7 @@ import gpu
 from gpu_extras.batch import batch_for_shader
 import sverchok
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.utils.sv_mesh_utils import polygons_to_edges
+from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
 from sverchok.core.socket_data import SvGetSocketInfo
 from sverchok.data_structure import updateNode, node_id, match_long_repeat, enum_item_5
 from sverchok.node_tree import SverchCustomTreeNode
@@ -858,7 +858,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
             config.polygons = polygons
             config.matrix = matrix
             if not inputs['Edges'].is_linked and self.display_edges:
-                config.edges = polygons_to_edges(polygons, unique_edges=True)
+                config.edges = polygons_to_edges_np(polygons, unique_edges=True)
 
             geom = generate_mesh_geom(config, vecs)
 
