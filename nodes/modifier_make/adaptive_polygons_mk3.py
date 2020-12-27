@@ -847,13 +847,10 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
                             ) * zcoef
 
             new_verts = []
-            #self.info("Donor: %s", len(donor.=))
+
             if self.implementation == 'NumPy' or (self.implementation == 'Auto' and len(donor.verts_v) > 12):
                 verts = donor.verts_v
-                if self.xy_mode == 'BOUNDS':
-                    print(X)
-                    verts[:, X] = self.map_bounds(donor.min_x, donor.max_x, verts[:, X])
-                    verts[:, Y] = self.map_bounds(donor.min_y, donor.max_y, verts[:, Y])
+
                 new_verts = self.interpolate_quad_3d_np(recpt_face_data, verts,
                                                         wcoef, zcoef, zoffset,
                                                         [i0, i1, i2, i3])
@@ -1036,13 +1033,14 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
             donor.faces_i = donor_faces_i
             donor.face_data_i = donor_face_data_i
 
-            map_mode = self.get_map_mode(len(recpt_face), m)
-
+            map_mode = self.get_map_mode(m, len(recpt_face))
+            is_fan = abs(frame_width - 1.0) < 1e-6
+            is_tri = map_mode == "TRIS" or (map_mode == 'FRAME' and is_fan)
             if self.implementation == 'Auto':
-                is_fan = abs(frame_width - 1.0) < 1e-6
-                numpy_candidate = len(donor_verts_i) > (50 if map_mode == "TRIS" or (map_mode=='FRAME' and is_fan) else 12)
+                numpy_candidate = len(donor_verts_i) > (50 if is_tri else 12)
             else:
                 numpy_candidate = False
+            numpy_mode = self.implementation == 'NumPy' or (numpy_candidate)
             if not single_donor:
                 # Original (unrotated) donor vertices
                 donor_verts_o = [Vector(v) for v in donor_verts_i]
@@ -1053,7 +1051,7 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
             if prev_angle is None or angle != prev_angle or not single_donor:
                 verts_v = self.rotate_z(donor_verts_o, angle)
                 np_verts = np_array(verts_v)
-                if self.implementation == 'NumPy' or (numpy_candidate):
+                if numpy_mode:
                     donor.verts_v = np_verts
                 else:
                     donor.verts_v = verts_v
@@ -1066,8 +1064,12 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
                     donor.min_y = np_min(np_verts[:, Y])
 
                 if self.xy_mode == 'BOUNDS':
-                    donor.tri_vert_1, donor.tri_vert_2, donor.tri_vert_3 = self.bounding_triangle(verts_v)
-
+                    if is_tri:
+                        donor.tri_vert_1, donor.tri_vert_2, donor.tri_vert_3 = self.bounding_triangle(verts_v)
+                    else:
+                        if numpy_mode:
+                            np_verts[:, X] = self.map_bounds(donor.min_x, donor.max_x, np_verts[:, X])
+                            np_verts[:, Y] = self.map_bounds(donor.min_y, donor.max_y, np_verts[:, Y])
             prev_angle = angle
 
             if self.z_scale == 'CONST':
