@@ -22,7 +22,7 @@ from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList, throttle_and_update_node
+from sverchok.data_structure import updateNode, match_long_repeat, throttle_and_update_node, repeat_last_for_length
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 
@@ -122,7 +122,7 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         items = miter_types,
         default = 'SHARP',
         update = mode_change)
-    
+
     spread : FloatProperty(
         name = "Spread",
         description = "Amount to offset beveled edge",
@@ -165,26 +165,26 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'miter_outer')
 
     def get_socket_data(self):
-        vertices = self.inputs['Vertices'].sv_get(default=[[]])
-        edges = self.inputs['Edges'].sv_get(default=[[]])
-        faces = self.inputs['Polygons'].sv_get(default=[[]])
+        vertices = self.inputs['Vertices'].sv_get(default=[[]], deepcopy=False)
+        edges = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)
+        faces = self.inputs['Polygons'].sv_get(default=[[]], deepcopy=False)
         if 'FaceData' in self.inputs:
-            face_data = self.inputs['FaceData'].sv_get(default=[[]])
+            face_data = self.inputs['FaceData'].sv_get(default=[[]], deepcopy=False)
         else:
             face_data = [[]]
         if 'BevelFaceData' in self.inputs:
-            bevel_face_data = self.inputs['BevelFaceData'].sv_get(default=[[]])
+            bevel_face_data = self.inputs['BevelFaceData'].sv_get(default=[[]], deepcopy=False)
         else:
             bevel_face_data = [[]]
         if self.vertexOnly:
-            mask = self.inputs['VerticesMask'].sv_get(default=[[]])
+            mask = self.inputs['VerticesMask'].sv_get(default=[[]], deepcopy=False)
         else:
-            mask = self.inputs['BevelEdges'].sv_get(default=[[]])
-        offsets = self.inputs['Offset'].sv_get()[0]
-        segments = self.inputs['Segments'].sv_get()[0]
-        profiles = self.inputs['Profile'].sv_get()[0]
+            mask = self.inputs['BevelEdges'].sv_get(default=[[]], deepcopy=False)
+        offsets = self.inputs['Offset'].sv_get(deepcopy=False)[0]
+        segments = self.inputs['Segments'].sv_get(deepcopy=False)[0]
+        profiles = self.inputs['Profile'].sv_get(deepcopy=False)[0]
         if 'Spread' in self.inputs:
-            spreads = self.inputs['Spread'].sv_get()[0]
+            spreads = self.inputs['Spread'].sv_get(deepcopy=False)[0]
         else:
             spreads = [0.0]
         return vertices, edges, faces, face_data, mask, offsets, segments, profiles, bevel_face_data, spreads
@@ -220,7 +220,7 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
 
         for vertices, edges, faces, face_data, mask, offset, segments, profile, bevel_face_data, spread in zip(*meshes):
             if face_data:
-                fullList(face_data, len(faces))
+                face_data_matched = repeat_last_for_length(face_data, len(faces))
             if bevel_face_data and isinstance(bevel_face_data, (list, tuple)):
                 bevel_face_data = bevel_face_data[0]
             bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True, normal_update=True)
@@ -248,7 +248,7 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
 
                 # if the "try" failed, we try the new form of bmesh.ops.bevel arguments..
                 affect_geom = 'VERTICES' if self.vertexOnly else 'EDGES'
-                
+
                 bevel_faces = bmesh.ops.bevel(bm,
                     geom=geom,
                     offset=offset,
@@ -284,7 +284,7 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     face_data_out.append([])
             else:
-                verts, edges, faces, new_face_data = pydata_from_bmesh(bm, face_data)
+                verts, edges, faces, new_face_data = pydata_from_bmesh(bm, face_data_matched)
                 verts_out.append(verts)
                 edges_out.append(edges)
                 faces_out.append(faces)

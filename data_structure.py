@@ -229,11 +229,13 @@ def repeat_last_for_length(lst, count, deepcopy=False):
     n = len(lst)
     x = lst[-1]
     result = lst[:]
-    for i in range(count - n):
-        if deepcopy:
+    if deepcopy:
+        for i in range(count - n):
             result.append(copy.deepcopy(x))
-        else:
+    else:
+        for i in range(count - n):
             result.append(x)
+            
     return result
 
 def sv_zip(*iterables):

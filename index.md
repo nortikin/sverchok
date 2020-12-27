@@ -313,9 +313,9 @@
 ## Spatial
     SvHomogenousVectorField
     SvRandomPointsOnMesh
-    SvPopulateSurfaceNode
-    SvPopulateSolidNode
-    SvFieldRandomProbeMk2Node
+    SvPopulateSurfaceMk2Node
+    SvPopulateSolidMk2Node
+    SvFieldRandomProbeMk3Node
     ---
     DelaunayTriangulation2DNode
     SvDelaunay2DCdt
@@ -325,6 +325,8 @@
     SvExVoronoi3DNode
     SvExVoronoiSphereNode
     SvVoronoiOnSurfaceNode
+    SvVoronoiOnMeshNode
+    SvVoronoiOnSolidNode
     ---
     SvLloyd2dNode
     SvLloyd3dNode
@@ -372,7 +374,7 @@
     PolygonBoomNode
     SvEdgeBoomNode
     SvDissolveMeshElements
-    Pols2EdgsNode
+    SvPols2EdgsNodeMk2
     SvMeshJoinNode
     ---
     SvFillsHoleNode

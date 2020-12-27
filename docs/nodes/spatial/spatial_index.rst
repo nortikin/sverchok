@@ -17,6 +17,8 @@ Spatial
    delaunay_2d_cdt
    voronoi_sphere
    voronoi_on_surface
+   voronoi_on_mesh
+   voronoi_on_solid
    lloyd2d
    lloyd3d
    lloyd_on_sphere

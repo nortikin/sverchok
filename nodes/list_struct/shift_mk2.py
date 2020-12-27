@@ -65,8 +65,8 @@ class ShiftNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if not self.outputs["data"].is_linked:
             return
 
-        data = self.inputs['data'].sv_get()
-        number = self.inputs["shift"].sv_get()[0][0]
+        data = self.inputs['data'].sv_get(deepcopy=False)
+        number = self.inputs["shift"].sv_get(deepcopy=False)[0][0]
 
         if self.selected_mode == 'np':
             dat = np.array(data)

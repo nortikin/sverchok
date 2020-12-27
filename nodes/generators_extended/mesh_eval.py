@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -21,7 +21,7 @@ import io
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.utils.sv_node_utils import sync_pointer_and_stored_name
-from sverchok.data_structure import fullList, updateNode, dataCorrect, match_long_repeat
+from sverchok.data_structure import updateNode, dataCorrect, match_long_repeat
 from sverchok.utils.script_importhelper import safe_names
 from sverchok.utils.logging import exception, info
 
@@ -110,7 +110,7 @@ def evaluate(json, variables):
         else:
             result['vertexdata'].append(item)
             continue
-        
+
         v = eval_list(coords)
         result['vertexdata'].append(v)
 
@@ -120,7 +120,7 @@ def evaluate(json, variables):
         else:
             result['facedata'].append(item)
             continue
-        
+
         v = eval_list(coords)
         result['facedata'].append(v)
 

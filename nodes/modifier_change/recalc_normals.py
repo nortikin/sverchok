@@ -21,7 +21,7 @@ from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 
@@ -54,10 +54,10 @@ class SvRecalcNormalsNode(bpy.types.Node, SverchCustomTreeNode):
         if not (any(self.outputs[name].is_linked for name in ['Vertices', 'Edges', 'Polygons'])):
             return
 
-        vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
-        edges_s = self.inputs['Edges'].sv_get(default=[[]])
-        faces_s = self.inputs['Polygons'].sv_get(default=[[]])
-        mask_s = self.inputs['Mask'].sv_get(default=[[True]])
+        vertices_s = self.inputs['Vertices'].sv_get(default=[[]], deepcopy=False)
+        edges_s = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)
+        faces_s = self.inputs['Polygons'].sv_get(default=[[]], deepcopy=False)
+        mask_s = self.inputs['Mask'].sv_get(default=[[True]], deepcopy=False)
 
         result_vertices = []
         result_edges = []
@@ -68,10 +68,10 @@ class SvRecalcNormalsNode(bpy.types.Node, SverchCustomTreeNode):
         for vertices, edges, faces, mask in zip(*meshes):
 
             bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-            fullList(mask, len(faces))
+            mask_matched = repeat_last_for_length(mask, len(faces))
 
             b_faces = []
-            for m, face in zip(mask, bm.faces):
+            for m, face in zip(mask_matched, bm.faces):
                 if m:
                     b_faces.append(face)
 

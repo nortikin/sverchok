@@ -57,9 +57,9 @@ class SvNumpyArrayNode(bpy.types.Node, SverchCustomTreeNode):
             Mod = self.Mod
             string = self.Cust if Mod == 'Custom' else Mod
             if X.is_linked and Y.is_linked:
-                out.sv_set(eval("["+string+" for x,y in zip(X.sv_get(),Y.sv_get())]"))
+                out.sv_set(eval("["+string+" for x,y in zip(X.sv_get(deepcopy=False),Y.sv_get(deepcopy=False))]"))
             elif X.is_linked:
-                out.sv_set(eval("["+string+" for x in X.sv_get()]"))
+                out.sv_set(eval("["+string+" for x in X.sv_get(deepcopy=False)]"))
             else:
                 out.sv_set([eval(string)])
 

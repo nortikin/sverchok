@@ -21,7 +21,7 @@ from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 
@@ -81,14 +81,14 @@ class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
         if not (any(self.outputs[name].is_linked for name in ['Vertices', 'Edges', 'Polygons', 'NewEdges', 'NewPolys'])):
             return
 
-        vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
-        edges_s = self.inputs['Edges'].sv_get(default=[[]])
-        faces_s = self.inputs['Polygons'].sv_get(default=[[]])
+        vertices_s = self.inputs['Vertices'].sv_get(default=[[]], deepcopy=False)
+        edges_s = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)
+        faces_s = self.inputs['Polygons'].sv_get(default=[[]], deepcopy=False)
         if 'FaceData' in self.inputs:
-            face_data_s = self.inputs['FaceData'].sv_get(default=[[]])
+            face_data_s = self.inputs['FaceData'].sv_get(default=[[]], deepcopy=False)
         else:
             face_data_s = [[]]
-        mask_s = self.inputs['Mask'].sv_get(default=[[True]])
+        mask_s = self.inputs['Mask'].sv_get(default=[[True]], deepcopy=False)
 
         result_vertices = []
         result_edges = []
@@ -100,15 +100,14 @@ class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
         meshes = match_long_repeat([vertices_s, edges_s, faces_s, face_data_s, mask_s])
 
         for vertices, edges, faces, face_data, mask in zip(*meshes):
-
             if face_data:
-                fullList(face_data, len(faces))
+                face_data_matched = repeat_last_for_length(face_data, len(faces))
 
             bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True)
-            fullList(mask, len(faces))
+            mask_matched = repeat_last_for_length(mask, len(faces))
 
             b_faces = []
-            for m, face in zip(mask, bm.faces):
+            for m, face in zip(mask_matched, bm.faces):
                 if m:
                     b_faces.append(face)
 
@@ -120,7 +119,7 @@ class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
             b_new_faces = [[v.index for v in face.verts] for face in res['faces']]
 
             if face_data:
-                new_vertices, new_edges, new_faces, new_face_data = pydata_from_bmesh(bm, face_data)
+                new_vertices, new_edges, new_faces, new_face_data = pydata_from_bmesh(bm, face_data_matched)
             else:
                 new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
                 new_face_data = []

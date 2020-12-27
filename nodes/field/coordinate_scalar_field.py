@@ -5,7 +5,7 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match_long_repeat
+from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat
 from sverchok.utils.logging import info, exception
 
 from sverchok.utils.field.scalar import SvCoordinateScalarField
@@ -54,4 +54,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvCoordScalarFieldNode)
-

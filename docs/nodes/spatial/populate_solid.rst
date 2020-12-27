@@ -21,6 +21,16 @@ object according to the provided Scalar Field. It has two modes:
   probability of the vertex appearence at some point is proportional to the
   value of the scalar field at that point.
 
+This node can make sure that generated points are not too close to one another.
+This can be controlled in one of two ways:
+
+* By specifying minimum distance between any two different points;
+* Or by specifying a radius around each generated points, which should be free.
+  More precisely, the node makes sure that if you place a sphere of specified
+  radius at each point as a center, these spheres will never intersect. The
+  radiuses of such spheres are provided as a scalar field: it defines a radius
+  value for any point in the space.
+
 The node can generate points either inside the Solid body, or on it's surface.
 
 Inputs
@@ -34,9 +44,13 @@ This node has the following inputs:
   this input is not connected, the node will generate evenly distributed
   points. This input is mandatory, if **Proportional** parameter is checked.
 * **Count**. The number of points to be generated. The default value is 50.
-* **MinDistance**. Minimum allowable distance between generated points. If set
-  to zero, there will be no restriction on distance between points. Default
-  value is 0.
+* **MinDistance**. This input is avaliable only when **Distance** parameter is
+  set to **Min. Distance**. Minimum allowable distance between generated
+  points. If set to zero, there will be no restriction on distance between
+  points. Default value is 0.
+* **RadiusField**. This input is available and mandatory only when **Distance**
+  parameter is set to **Radius Field**. The scalar field, which defines radius
+  of free sphere around any generated point.
 * **Threshold**. Threshold value: the node will not generate points in areas
   where the value of scalar field is less than this value. The default value is
   0.5.
@@ -62,10 +76,27 @@ This node has the following parameters:
 
   The default value is **Volume**
 
+* **Distance**. This defines how minimum distance between generated points is
+  defined. The available options are:
+
+   * **Min. Distance**. The user provides minimum distance between any two
+     points in the **MinDistance** input.
+   * **RadiusField**. The user defines a radius of a shpere that should be
+     empty around each generated point, by providing a scalar field in the
+     **RadiusField** input. The node makes sure that these spheres will not
+     intersect.
+
+   The default value is **Min. Distance**.
+
 * **Proportional**. If checked, then the points density will be distributed
   proportionally to the values of scalar field. Otherwise, the points will be
   uniformly distributed in the area where the value of scalar field exceeds
   threshold. Unchecked by default.
+* **Random Radius**. This parameter is available only when **Distance**
+  parameter is set to **RadiusField**. If checked, then radiuses of empty
+  spheres will be generated randomly, by using uniform distribution between 0
+  (zero) and the value defined by the scalar field provided in the
+  **RadiusField** input. Unchecked by default.
 * **Accept in surface**. This parameter is only available when the **Generation
   mode** parameter is set to **Volume**. This defines whether it is acceptable
   to generate points on the surface of the body as well as inside it. Checked
@@ -91,4 +122,8 @@ Example of Usage
 ----------------
 
 .. image:: https://user-images.githubusercontent.com/284644/99146273-5b163a80-2698-11eb-8f1d-a41978cc96ea.png
+
+Example of "Radius Field" mode usage:
+
+.. image:: https://user-images.githubusercontent.com/284644/102390349-1dd5fd00-3ff6-11eb-98d1-6143b5312380.png
 

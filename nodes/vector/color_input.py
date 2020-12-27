@@ -21,7 +21,7 @@ import bpy
 from bpy.props import FloatProperty, BoolProperty, FloatVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, fullList
+from sverchok.data_structure import updateNode
 from sverchok.utils.sv_itertools import sv_zip_longest
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 

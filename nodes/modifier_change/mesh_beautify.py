@@ -44,8 +44,8 @@ class SvMeshBeautify(bpy.types.Node, SverchCustomTreeNode):
         if not any(s.is_linked for s in self.outputs):
             return
 
-        in_verts = self.inputs['Verts'].sv_get()
-        in_faces = self.inputs['Faces'].sv_get()
+        in_verts = self.inputs['Verts'].sv_get(deepcopy=False)
+        in_faces = self.inputs['Faces'].sv_get(deepcopy=False)
 
         out_verts, out_faces = [], []
 

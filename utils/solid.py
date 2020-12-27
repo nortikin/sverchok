@@ -454,7 +454,10 @@ def mefisto_mesher(solids, max_edge_length):
 
     return verts, faces
 
-def svmesh_to_solid(verts, faces, precision, remove_splitter=True):
+FCMESH = 'FCMESH'
+BMESH = 'BMESH'
+
+def svmesh_to_solid(verts, faces, precision=1e-6, remove_splitter=True, method=FCMESH):
     """
     input:
         verts: list of 3element iterables, [vector, vector...]
@@ -465,15 +468,83 @@ def svmesh_to_solid(verts, faces, precision, remove_splitter=True):
         a FreeCAD solid
 
     """
-    tri_faces = ensure_triangles(verts, faces, True)
-    faces_t = [[verts[c] for c in f] for f in tri_faces]
-    mesh = Mesh.Mesh(faces_t)
-    shape = Part.Shape()
-    shape.makeShapeFromMesh(mesh.Topology, precision)
+    if method == FCMESH:
+        tri_faces = ensure_triangles(verts, faces, True)
+        faces_t = [[verts[c] for c in f] for f in tri_faces]
+        mesh = Mesh.Mesh(faces_t)
+        shape = Part.Shape()
+        shape.makeShapeFromMesh(mesh.Topology, precision)
 
-    if remove_splitter:
-        # may slow it down, or be totally necessary
-        shape = shape.removeSplitter() 
+        if remove_splitter:
+            # may slow it down, or be totally necessary
+            shape = shape.removeSplitter() 
 
-    return Part.makeSolid(shape)
+        return Part.makeSolid(shape)
+    elif method == BMESH:
+        fc_faces = []
+        for face in faces:
+            face_i = list(face) + [face[0]]
+            face_verts = [Base.Vector(verts[i]) for i in face_i]
+            wire = Part.makePolygon(face_verts)
+            wire.fixTolerance(precision)
+            try:
+                fc_face = Part.Face(wire)
+                #fc_face = Part.makeFilledFace(wire.Edges)
+            except Exception as e:
+                print(f"Face idxs: {face_i}, verts: {face_verts}")
+                raise Exception("Maybe face is not planar?") from e
+            fc_faces.append(fc_face)
+        shell = Part.makeShell(fc_faces)
+        solid = Part.makeSolid(shell)
+        if remove_splitter:
+            solid = solid.removeSplitter()
+        return solid
+    else:
+        raise Exception("Unsupported method")
+
+def mesh_from_solid_faces(solid):
+    verts = [(v.X, v.Y, v.Z) for v in solid.Vertexes]
+
+    all_fc_verts = {SvSolidTopology.Item(v) : i for i, v in enumerate(solid.Vertexes)}
+    def find_vertex(v):
+        #for i, fc_vert in enumerate(solid.Vertexes):
+        #    if v.isSame(fc_vert):
+        #        return i
+        #return None
+        return all_fc_verts[SvSolidTopology.Item(v)]
+
+    edges = []
+    for fc_edge in solid.Edges:
+        edge = [find_vertex(v) for v in fc_edge.Vertexes]
+        if len(edge) == 2:
+            edges.append(edge)
+
+    faces = []
+    for fc_face in solid.Faces:
+        incident_verts = defaultdict(set)
+        for fc_edge in fc_face.Edges:
+            edge = [find_vertex(v) for v in fc_edge.Vertexes]
+            if len(edge) == 2:
+                i, j = edge
+                incident_verts[i].add(j)
+                incident_verts[j].add(i)
+
+        face = [find_vertex(v) for v in fc_face.Vertexes]
+
+        vert_idx = face[0]
+        correct_face = [vert_idx]
+
+        for i in range(len(face)):
+            incident = list(incident_verts[vert_idx])
+            other_verts = [i for i in incident if i not in correct_face]
+            if not other_verts:
+                break
+            other_vert_idx = other_verts[0]
+            correct_face.append(other_vert_idx)
+            vert_idx = other_vert_idx
+
+        if len(correct_face) > 2:
+            faces.append(correct_face)
+
+    return verts, edges, faces
 

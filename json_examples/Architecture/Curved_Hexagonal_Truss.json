@@ -313,7 +313,7 @@
       "width": 170.0
     },
     "Polygons to Edges": {
-      "bl_idname": "Pols2EdgsNode",
+      "bl_idname": "SvPols2EdgsNodeMk2",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -322,7 +322,7 @@
         -1403.2000579833984
       ],
       "params": {
-        "regular_pols": 1
+        "unique_edges": 1
       },
       "width": 140.0
     },

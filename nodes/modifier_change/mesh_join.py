@@ -51,8 +51,10 @@ class SvMeshJoinNode(bpy.types.Node, SverchCustomTreeNode):
         if first_elements:
             if all([len(el) == 2 for el in first_elements]):
                 edges = poly_edges
+                self.outputs['PolyEdge'].label = "Edges"
             elif all([len(el) != 2 for el in first_elements]):
                 polygons = poly_edges
+                self.outputs['PolyEdge'].label = "Polygons"
             else:
                 raise TypeError('PoyEdge socket should consist either all edges or all faces')  # Sv architecture law
 

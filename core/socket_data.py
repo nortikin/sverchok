@@ -112,7 +112,7 @@ def SvGetSocket(socket, other=None, deepcopy=True):
     except Exception as e:
         if data_structure.DEBUG_MODE:
             debug(f"cache miss: {socket.node.name} -> {socket.name} from: {other.node.name} -> {other.name}")
-        raise SvNoDataError(socket, msg="not found in socket_data_cache " + str(e))
+        raise SvNoDataError(socket)
 
 
 class SvNoDataError(LookupError):

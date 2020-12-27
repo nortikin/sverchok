@@ -21,7 +21,7 @@ import bpy
 from bpy.props import EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, fullList
+from sverchok.data_structure import updateNode, repeat_last_for_length
 from sverchok.data_structure import match_long_repeat as mlrepeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
@@ -32,9 +32,9 @@ def flip_from_mask(mask, geom, reverse):
     this mode expects a mask list with an element corresponding to each polygon
     """
     verts, edges, faces = geom
-    fullList(mask, len(faces))
+    mask_matched = repeat_last_for_length(mask, len(faces))
     b_faces = []
-    for m, face in zip(mask, faces):
+    for m, face in zip(mask_matched, faces):
         mask_val = bool(m) if not reverse else not bool(m)
         b_faces.append(face if mask_val else face[::-1])
 
@@ -98,14 +98,14 @@ class SvFlipNormalsNode(bpy.types.Node, SverchCustomTreeNode):
         if not any(self.outputs[idx].is_linked for idx in range(3)):
             return
 
-        vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
-        edges_s = self.inputs['Edges'].sv_get(default=[[]])
-        faces_s = self.inputs['Polygons'].sv_get(default=[[]])
+        vertices_s = self.inputs['Vertices'].sv_get(default=[[]], deepcopy=False)
+        edges_s = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)
+        faces_s = self.inputs['Polygons'].sv_get(default=[[]], deepcopy=False)
 
         geom = [[], [], []]
 
         if self.selected_mode == 'mask':
-            mask_s = self.inputs['Mask'].sv_get(default=[[True]])
+            mask_s = self.inputs['Mask'].sv_get(default=[[True]], deepcopy=False)
             for *single_geom, mask in zip(*mlrepeat([vertices_s, edges_s, faces_s, mask_s])):
                 for idx, d in enumerate(flip_from_mask(mask, single_geom, self.reverse)):
                     geom[idx].append(d)

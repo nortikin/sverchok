@@ -462,22 +462,22 @@ class SvPlaneNodeMk3(DraftMode, bpy.types.Node, SverchCustomTreeNode):
     def get_data(self):
         inputs = self.inputs
         if self.dimension_mode == 'SIZE':
-            params = [inputs['Size X'].sv_get(), inputs['Size Y'].sv_get()]
+            params = [inputs['Size X'].sv_get(deepcopy=False), inputs['Size Y'].sv_get(deepcopy=False)]
         elif self.dimension_mode == 'NUMBER':
-            params = [inputs['Step X'].sv_get(), inputs['Step Y'].sv_get()]
+            params = [inputs['Step X'].sv_get(deepcopy=False), inputs['Step Y'].sv_get(deepcopy=False)]
         elif self.dimension_mode == 'STEPS':
-            params = [inputs['Step X'].sv_get(default=[[1.0]]), inputs['Step Y'].sv_get(default=[[1.0]])]
+            params = [inputs['Step X'].sv_get(default=[[1.0]], deepcopy=False), inputs['Step Y'].sv_get(default=[[1.0]], deepcopy=False)]
         else:
-            params=[inputs['Step X'].sv_get(default=[[1.0]])]
-            params.append(inputs['Step Y'].sv_get(default=[[1.0]]))
-            params.append(inputs['Size X'].sv_get())
-            params.append(inputs['Size Y'].sv_get())
+            params=[inputs['Step X'].sv_get(default=[[1.0]], deepcopy=False)]
+            params.append(inputs['Step Y'].sv_get(default=[[1.0]], deepcopy=False))
+            params.append(inputs['Size X'].sv_get(deepcopy=False))
+            params.append(inputs['Size Y'].sv_get(deepcopy=False))
 
         if self.dimension_mode in ('SIZE', 'NUMBER'):
             for socket in inputs[2: 4]:
-                params.append([[int(v) for v in l] for l in socket.sv_get()])
+                params.append([[int(v) for v in l] for l in socket.sv_get(deepcopy=False)])
 
-        mat_input = inputs['Matrix'].sv_get(default=[[Matrix()]])
+        mat_input = inputs['Matrix'].sv_get(default=[[Matrix()]], deepcopy=False)
         if type(mat_input[0]) == Matrix:
             params.append([[m] for m in mat_input])
         else:
