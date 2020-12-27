@@ -26,7 +26,7 @@ Modifier Change
    offset
    polygons_boom
    edge_boom
-   polygons_to_edges
+   polygons_to_edges_mk2
    recalc_normals
    triangulate
    triangulate_heavy

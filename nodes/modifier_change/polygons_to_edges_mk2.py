@@ -18,25 +18,20 @@
 
 import bpy
 from bpy.props import BoolProperty
-from numpy import array, empty, concatenate, unique, sort, int32, ndarray
+
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect_np, updateNode
-from sverchok.utils.sv_mesh_utils import polygons_to_edges, polygons_to_edges_np
-from sverchok.utils.decorators import deprecated
+from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
 
 
-@deprecated("Please use sverchok.utils.sv_mesh_utils.polygons_to_edges instead")
-def pols_edges(obj, unique_edges=False):
-    return polygons_to_edges(obj, unique_edges)
-
-class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPols2EdgsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Edges from Faces
     Tooltip: Get edges lists from polygons lists.
     """
 
-    bl_idname = 'Pols2EdgsNode'
+    bl_idname = 'SvPols2EdgsNodeMk2'
     bl_label = 'Polygons to Edges'
     bl_icon = 'EDGESEL'
     sv_icon = 'SV_POLYGONS_TO_EDGES'
@@ -44,18 +39,12 @@ class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
     unique_edges: BoolProperty(
         name="Unique Edges", default=False, update=updateNode)
 
-    regular_pols: BoolProperty(
-        name='Regular polygons',
-        description='Makes the node faster if all the incoming polygons have the same number of sides',
-        default=False, update=updateNode)
-
     output_numpy: BoolProperty(
         name='Output NumPy',
         description='Output NumPy arrays',
         default=False, update=updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "regular_pols")
         layout.prop(self, "unique_edges")
 
     def draw_buttons_ext(self, context, layout):
@@ -69,8 +58,8 @@ class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "output_numpy")
 
     def sv_init(self, context):
-        self.inputs.new('SvStringsSocket', "pols")
-        self.outputs.new('SvStringsSocket', "edgs")
+        self.inputs.new('SvStringsSocket', "pols").label = 'Polygons'
+        self.outputs.new('SvStringsSocket', "edgs").label = 'Edges'
 
     def process(self):
         if not self.outputs[0].is_linked:
@@ -79,20 +68,15 @@ class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
         polygons_ = self.inputs['pols'].sv_get(deepcopy=False)
         polygons = dataCorrect_np(polygons_)
 
-        if self.output_numpy or isinstance(polygons[0], ndarray) or self.regular_pols:
-            result = polygons_to_edges_np(polygons, self.unique_edges, self.output_numpy)
-        else:
-            result = polygons_to_edges(polygons, self.unique_edges)
-
-        self.outputs['edgs'].sv_set(result)
+        self.outputs['edgs'].sv_set(polygons_to_edges_np(polygons, self.unique_edges, self.output_numpy))
 
     def draw_label(self):
         return (self.label or self.name) if not self.hide else "P to E"
 
 
 def register():
-    bpy.utils.register_class(Pols2EdgsNode)
+    bpy.utils.register_class(SvPols2EdgsNodeMk2)
 
 
 def unregister():
-    bpy.utils.unregister_class(Pols2EdgsNode)
+    bpy.utils.unregister_class(SvPols2EdgsNodeMk2)

@@ -33,7 +33,7 @@ from sverchok.core.socket_data import SvGetSocketInfo
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL
-from sverchok.utils.sv_mesh_utils import polygons_to_edges
+from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
 
 
 
@@ -811,7 +811,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         else:
             config.polygons = polygons
             if not inputs['Edges'].is_linked and self.edge_toggle:
-                config.edges = polygons_to_edges(polygons, unique_edges=True)
+                config.edges = polygons_to_edges_np(polygons, unique_edges=True)
 
             geom = generate_mesh_geom(config, vecs)
 

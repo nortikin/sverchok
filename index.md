@@ -372,7 +372,7 @@
     PolygonBoomNode
     SvEdgeBoomNode
     SvDissolveMeshElements
-    Pols2EdgsNode
+    SvPols2EdgsNodeMk2
     SvMeshJoinNode
     ---
     SvFillsHoleNode
