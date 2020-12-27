@@ -17,7 +17,7 @@ from mathutils.bvhtree import BVHTree
 from mathutils.geometry import tessellate_polygon, area_tri
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, throttle_and_update_node
 from sverchok.utils.geom import calc_bounds
 from sverchok.utils.sv_mesh_utils import point_inside_mesh
 
@@ -185,6 +185,10 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
             default=True,
             update=updateNode)
 
+    @throttle_and_update_node
+    def update_sockets(self, context):
+        self.outputs['Face index'].hide_safe = self.mode != 'SURFACE'
+
     modes = [
             ('SURFACE', "Surface", "Surface", 0),
             ('VOLUME', "Volume", "Volume", 1)
@@ -194,10 +198,10 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
             name = "Mode",
             items = modes,
             default = 'SURFACE',
-            update=updateNode)
+            update=update_sockets)
     
     def draw_buttons(self, context, layout):
-        layout.prop(self, "mode")
+        layout.prop(self, "mode", text='')
         if self.mode == 'SURFACE':
             layout.prop(self, "proportional")
 
