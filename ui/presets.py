@@ -358,6 +358,10 @@ def get_presets(category=None, search=None, mkdir=True):
                 result.append(preset)
     return result
 
+def check_category(category):
+    presets = get_presets(category, mkdir=False)
+    return len(presets) != 0
+
 def get_preset(category, name):
     file_name = name + ".json"
     user = get_presets_directory(category, standard=False)

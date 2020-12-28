@@ -234,6 +234,8 @@ def make_preset_category_menu(category):
     global preset_category_menus
     if category in preset_category_menus:
         return preset_category_menus[category]
+    if not presets.check_category(category):
+        return None
 
     class SvPresetCategorySubmenu(bpy.types.Menu):
         bl_label = category
@@ -257,8 +259,9 @@ class NODEVIEW_MT_AddPresetOps(bpy.types.Menu):
         presets.draw_presets_ops(layout, context=context)
         for category in presets.get_category_names():
             if category in preset_category_menus:
-                class_name = preset_category_menus[category].__name__
-                layout.menu(class_name)
+                if category in preset_category_menus:
+                    class_name = preset_category_menus[category].__name__
+                    layout.menu(class_name)
 
 
 class NODE_MT_category_SVERCHOK_GROUP(bpy.types.Menu):
