@@ -363,7 +363,7 @@ def unregister():
     for class_name in classes:
         bpy.utils.unregister_class(class_name)
     for category in presets.get_category_names():
-        if category in preset_category_menus[category]:
+        if category in preset_category_menus:
             bpy.utils.unregister_class(preset_category_menus[category])
 
     menu_class_by_title = dict()
