@@ -7,6 +7,7 @@
 
 [![Build Status](https://travis-ci.org/nortikin/sverchok.svg?branch=master)](https://travis-ci.org/nortikin/sverchok)
 <img src="https://img.shields.io/discord/745273148018262158">
+<iframe src="https://discord.com/widget?id=745273148018262158&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
 
 ## English
 
