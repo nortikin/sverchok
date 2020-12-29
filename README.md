@@ -6,7 +6,7 @@
 <h1 align="center">Sverchok</h1>
 
 [![Build Status](https://travis-ci.org/nortikin/sverchok.svg?branch=master)](https://travis-ci.org/nortikin/sverchok)
-[!Discord](https://img.shields.io/discord/745273148018262158)
+<img src="https://img.shields.io/discord/745273148018262158">
 
 ## English
 
