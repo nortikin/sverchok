@@ -617,6 +617,7 @@
     SvReadFCStdNode
     SvWriteFCStdNode
     SvReadFCStdSketchNode
+    SvFCStdSpreadsheetNode
 
 ## Network
     UdpClientNode
