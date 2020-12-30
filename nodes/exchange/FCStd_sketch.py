@@ -81,8 +81,8 @@ else:
                         Edges.append(i)
                     for i in S[2]:
                         curves_out.append(i)                
-                self.outputs['Verts'].sv_set(Verts)
-                self.outputs['Edges'].sv_set(Edges)
+                self.outputs['Verts'].sv_set([Verts])
+                self.outputs['Edges'].sv_set([Edges])
                 self.outputs['Curve'].sv_set(curves_out)
             
             else:
@@ -159,7 +159,7 @@ def LoadSketch(fc_file,part_filter,max_points,inv_filter):
 
     except:
         info('FCStd read error')
-        return (Verts,Edges)
+        return (Verts,Edges,Curves)
     
     #___________________SEARCH FOR SKETCHES
 
@@ -196,6 +196,8 @@ def LoadSketch(fc_file,part_filter,max_points,inv_filter):
         
         #get sketch plane placement to local - global conversion
         s_placement = s.Placement
+        if len(s.InList) > 0:
+            s_placement = s.InList[0].Placement.multiply( s_placement )
 
         for geo in s.Geometry:
             v_set=[]
@@ -222,14 +224,14 @@ def LoadSketch(fc_file,part_filter,max_points,inv_filter):
                 v_co = F.Vector( ( v[0], v[1], v[2] ) )
 
                 abs_co = FreeCAD_abs_placement(s_placement,v_co).Base
-
                 v_set.append ( (abs_co.x, abs_co.y, abs_co.z) )
 
             for i in range ( len(v_set)-1 ):
-                e_set.append ( (i,i+1) )
+                v_count = len(Verts)
+                e_set.append ( (v_count+i,v_count+i+1) )
 
-            Verts.append (v_set)
-            Edges.append (e_set)
+            Verts.extend (v_set)
+            Edges.extend (e_set)
 
             if isinstance(geo, Part.LineSegment ):
                 from sverchok.utils.curve import SvLine
