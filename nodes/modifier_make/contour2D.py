@@ -21,13 +21,13 @@ from math import sin, cos, pi, atan2, asin, ceil
 
 import bpy
 
-from bpy.props import IntProperty, FloatProperty, EnumProperty
+from bpy.props import IntProperty, FloatProperty, EnumProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (match_long_repeat, updateNode, match_long_cycle)
 from sverchok.utils.modules.geom_utils import (pt_in_triangle, length_v2)
+from sverchok.utils.modules.vertex_utils import adjacent_edg_pol_num
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.nodes.modifier_change.edges_intersect_mk2 import (remove_doubles_from_edgenet, intersect_edges_2d)
-
 
 mode_items = [
     ("Constant", "Constant", "Many contours on many distances", 0),
@@ -334,7 +334,7 @@ def ciruclar_intersections(net2, verts, edges_in, v_len, radius):
             net2[e0][2].append([normal_angle(an1b), r[0], 1])
             net2[e1][2].append([normal_angle(an2), r[1], 1])
             net2[e1][2].append([normal_angle(an2b), r[1], 1])
-        
+
     return net2
 
 
@@ -455,6 +455,12 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
         items=intersec_mode_items, default="Circular",
         update=updateNode)
 
+    remove_caps: BoolProperty(
+        name="Remove Caps",
+        description="Remove arcs in the vertices with only one edge",
+        default=False,
+        update=updateNode)
+
     rad_: FloatProperty(
         name='Distance', description='Contour distance',
         default=1.0, min=1.0e-5, update=updateNode)
@@ -482,6 +488,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'mask_t')
         layout.prop(self, "intersecction_handle", expand=True)
         layout.prop(self, "list_match", expand=True)
+        layout.prop(self, "remove_caps")
 
 
     def build_net(self, verts_in, edges_in, v_len, radius, poligonal_inter):
@@ -643,7 +650,11 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
 
             net, parameters = self.adjust_parameters(params, v_len, actual_radius[i], poligonal_inter, edges_in)
             verts_in, _, actual_radius[i], net = parameters
-            start_geometry = [self.make_verts(vi, v, r, n) for vi, v, r, n in zip(*parameters)]
+            if is_edges_in_linked and self.remove_caps:
+                edges_num = adjacent_edg_pol_num(verts_in, edges_in)
+                start_geometry = [self.make_verts(vi, v, r, n) for en, vi, v, r, n in zip(edges_num, *parameters) if en > 1]
+            else:
+                start_geometry = [self.make_verts(vi, v, r, n) for vi, v, r, n in zip(*parameters)]
             edg = [p[1] for p in start_geometry]
             points = [p[0] for p in start_geometry]
 

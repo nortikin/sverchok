@@ -5,7 +5,8 @@
 </p>
 <h1 align="center">СВеРЧОК (Система векторного рабочего черчения и объёмного конструирования)</h1>
 
-[![Статус строительства](https://travis-ci.org/nortikin/sverchok.svg?branch=master)](https://travis-ci.org/nortikin/sverchok)
+[![Статус строительства](https://travis-ci.org/nortikin/sverchok.svg?branch=master)](https://travis-ci.org/nortikin/sverchok)  
+<img src="https://img.shields.io/discord/745273148018262158">  
 
 ## По-русски
 
