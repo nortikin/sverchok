@@ -44,9 +44,11 @@ from sverchok.data_structure import (updateNode, throttle_and_update_node,
                                      rotate_list)
 
 from sverchok.ui.sv_icons import custom_icon
+from sverchok.ui.utils import enum_split
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, remove_doubles
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.geom import diameter, LineEquation2D, center
+from sverchok.utils.math import np_normalize_vectors
 
 # "coauthor": "Alessandro Zomparelli (sketchesofcode)"
 
@@ -56,14 +58,6 @@ sqrt_3 = sqrt(3)
 sqrt_3_6 = sqrt_3/6
 sqrt_3_3 = sqrt_3/3
 sqrt_3_2 = sqrt_3/2
-
-def normalize_v3(arr):
-    ''' Normalize a numpy array of 3 component vectors shape=(n,3) '''
-    lens = np_sqrt( arr[:,0]**2 + arr[:,1]**2 + arr[:,2]**2 )
-    arr[:,0] /= lens
-    arr[:,1] /= lens
-    arr[:,2] /= lens
-    return arr
 
 def matrix_def(triangle):
     '''Creation of Transform matrix from triangle'''
@@ -295,7 +289,7 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
                        ("ASIS", "As Is", "Output the reciever face", 1),
                        ("TRI", "Tris", "Perform Tris Transfrom", 2),
                        ("QUAD", "Quads", "Perform Quad Transfrom", 3),
-                       ("FAN", "Fan", "Perform Quad Transfrom", 4),
+                       ("FAN", "Fan", "Perform Fan Transfrom", 4),
                        ("SUB_QUADS", "SubQuads", "Divides the face in 4 + Quad Transfrom", 5),
                        ("FRAME", "Frame", "Perform Frame Transfrom", 6),
                        ("FRAME_FAN", "Auto Frame Fan", "Perform Frame transform if Frame With is lower than 1 otherwise perform Fan", 7),
@@ -312,6 +306,21 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
                             '8 = Auto Frame Sub Quads\n9 = Fan (Quad)\n'\
                             '10 = Frame (Tri)\n11 = Sub Quads (Tri)'
     td = ''.join([f'{p[3]} = {p[1]} ({p[2]})\n' for p in transform_modes])
+    transform_dict = {p[0]: p[3] for p in transform_modes}
+
+    @throttle_and_update_node
+    def update_sockets(self, context):
+        show_width = self.mask_mode == 'TRANSFORM' or 'FRAME' in self.quads_as or 'FRAME'in self.tris_as or 'FRAME'in self.ngons_as
+        self.inputs['FrameWidth'].hide_safe = not show_width
+        self.inputs['Threshold'].hide_safe = not self.join or not self.remove_doubles
+        self.inputs['Donor Index'].hide_safe = self.donor_matching_mode != "INDEX"
+        if self.mask_mode == 'TRANSFORM':
+            self.inputs['PolyMask'].prop_name = 'transform_mask'
+            self.inputs['PolyMask'].label ='Transform Mode'
+        else:
+            self.inputs['PolyMask'].prop_name = ''
+            self.inputs['PolyMask'].label ='Polygon Mask'
+
     skip_modes = [
             ("SKIP", "Skip", "Do not output anything", 0),
             ("ASIS", "As Is", "Output these faces as is", 1),
@@ -322,17 +331,7 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         name="Mask mode",
         description="What to do with masked out faces",
         items=skip_modes, default="SKIP",
-        update=updateNode)
-
-
-
-    @throttle_and_update_node
-    def update_sockets(self, context):
-        show_width = self.mask_mode == 'TRANSFORM' or 'FRAME' in self.quads_as or 'FRAME'in self.tris_as or 'FRAME'in self.ngons_as
-        self.inputs['FrameWidth'].hide_safe = not show_width
-        self.inputs['Threshold'].hide_safe = not self.join or not self.remove_doubles
-        self.inputs['Donor Index'].hide_safe = self.donor_matching_mode != "INDEX"
-
+        update=update_sockets)
 
     matching_modes = [
             ("LONG", "Match longest", "Make an iteration for each donor or recipient object - depending on which list is longer", 0),
@@ -371,6 +370,13 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         items=transform_modes, default="QUAD",
         update=update_sockets
     )
+
+    transform_mask: EnumProperty(
+        name="Transform",
+        description="Transform method:\n"+ td + 'Selected',
+        items=transform_modes, default="QUAD",
+        update=update_sockets
+    )
     join: BoolProperty(
         name="Join",
         description="Output one joined mesh",
@@ -400,21 +406,27 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     quad_vert_idxs = [0, 1, 2, -1]
 
     def sv_init(self, context):
-        self.inputs.new('SvVerticesSocket', "VersR")
-        self.inputs.new('SvStringsSocket', "PolsR")
-        self.inputs.new('SvVerticesSocket', "VersD")
-        self.inputs.new('SvStringsSocket', "PolsD")
-        self.inputs.new('SvStringsSocket', "FaceDataD")
+        self.width = 200
+        self.inputs.new('SvVerticesSocket', "Vertices Recipient")
+        self.inputs.new('SvStringsSocket', "Polygons Recipient")
+        self.inputs.new('SvVerticesSocket', "Vertices Donor")
+        self.inputs.new('SvStringsSocket', "Polygons Donor")
+        self.inputs.new('SvStringsSocket', "FaceData Donor")
         self.inputs.new('SvStringsSocket', "W_Coef").prop_name = 'width_coef'
         self.inputs.new('SvStringsSocket', "FrameWidth").prop_name = 'frame_width'
         self.inputs.new('SvStringsSocket', "Z_Coef").prop_name = 'z_coef'
         self.inputs.new('SvStringsSocket', "Z_Offset").prop_name = 'z_offset'
         self.inputs.new('SvStringsSocket', "Z_Rotation").prop_name = 'z_rotation'
         self.inputs.new('SvStringsSocket', "PolyRotation").prop_name = 'poly_rotation'
-        self.inputs.new('SvStringsSocket', "PolyMask")
+        mask = self.inputs.new('SvStringsSocket', "PolyMask")
+        mask.label = 'Polygon Mask'
+        mask.custom_draw = 'draw_enum_socket'
         self.inputs.new('SvStringsSocket', "Threshold").prop_name = 'threshold'
         self.inputs.new('SvStringsSocket', "Donor Index").prop_name = 'donor_index'
-        self.inputs.new('SvStringsSocket', "Normal Mode").prop_name = 'normal_mode'
+        nm = self.inputs.new('SvStringsSocket', "Normal Mode")
+        nm.prop_name = 'normal_mode'
+        nm.label = 'Normal Mode'
+        nm.custom_draw = 'draw_enum_socket'
 
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Polygons")
@@ -424,13 +436,25 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
 
         self.update_sockets(context)
 
+    def draw_enum_socket(self, socket, context, layout):
+
+        if socket.is_linked:
+            layout.label(text=socket.label + f". {socket.objects_number or ''}")
+        elif socket.prop_name:
+            enum_split(layout, self, socket.prop_name, socket.label, 0.45)
+
+        else:
+            layout.label(text=socket.label)
+
     def draw_buttons(self, context, layout):
-        layout.prop(self, "join")
+        join_row = layout.split(factor=0.45)
+        join_row.prop(self, "join")
         if self.join:
-            layout.prop(self, "remove_doubles")
-        layout.prop(self, "matching_mode")
+            join_row.prop(self, "remove_doubles", text='Merge Doubles')
+        enum_split(layout, self, 'matching_mode', 'Matching Mode', 0.45)
+        # layout.prop(self, "matching_mode")
         if self.matching_mode == 'PERFACE':
-            layout.prop(self, "donor_matching_mode")
+            enum_split(layout, self, 'donor_matching_mode', 'Donor Matching', 0.45)
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -444,14 +468,42 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         layout.label(text="Bounding triangle:")
         layout.prop(self, "tri_bound_mode", expand=True)
         layout.prop(self, "mask_mode")
-        b = layout.box()
-        b.label(text="Transform:")
-        b.prop(self, 'tris_as', text="Tris as")
-        b.prop(self, 'quads_as', text="Quads as")
-        b.prop(self, 'ngons_as', text="NGons as")
+        if self.mask_mode != 'TRANSFORM':
+            b = layout.box()
+            b.label(text="Transform:")
+            b.prop(self, 'tris_as', text="Tris as")
+            b.prop(self, 'quads_as', text="Quads as")
+            b.prop(self, 'ngons_as', text="NGons as")
         layout.prop(self, "implementation")
         if not self.join:
             layout.prop(self, "output_numpy")
+
+    def migrate_from(self, old_node):
+        if old_node.map_mode == 'QUADTRI':
+            self.tris_as = 'TRI'
+            self.quads_as = 'QUAD'
+        else:
+            self.tris_as = 'QUAD'
+            self.quads_as = 'QUAD'
+        if old_node.frame_mode == 'ALWAYS':
+            self.tris_as = 'FRAME'
+            self.quads_as = 'FRAME'
+            self.ngons_as = 'FRAME'
+        elif old_node.frame_mode == 'NGONQUAD':
+            self.quads_as = 'FRAME'
+            self.ngons_as = 'FRAME'
+        elif old_node.frame_mode == 'NGONS':
+            self.ngons_as = 'FRAME'
+        else:
+            if old_node.ngon_mode == 'QUADS':
+                self.ngons_as = 'QUAD'
+            elif old_node.ngon_mode == 'ASIS':
+                self.ngons_as = 'ASIS'
+            else:
+                self.ngons_as = 'SKIP'
+
+
+
 
     def get_triangle_directions(self):
         """
@@ -605,7 +657,7 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         if recpt_face_data.normal_mode:
             if self.normal_interp_mode == 'SMOOTH':
                 normal = self.interpolate_quad_2d_np(dst_normals, verts, x_coef, y_coef)
-                normalize_v3(normal)
+                np_normalize_vectors(normal)
             else:
                 normal = self.interpolate_quad_2d_np(dst_verts + dst_normals, verts, x_coef, y_coef)
                 normal = normal - loc
@@ -687,7 +739,7 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
                 normal = self.interpolate_tri_2d_np(dst_normals,
                                                     src_verts,
                                                     vecs)
-                normalize_v3(normal)
+                np_normalize_vectors(normal)
             else:
                 normal = self.interpolate_tri_2d_np(dst_verts + dst_normals,
                                                     src_verts,
@@ -1168,11 +1220,11 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         if not any(output.is_linked for output in self.outputs):
             return
 
-        verts_recpt_s = self.inputs['VersR'].sv_get(deepcopy=False)
-        faces_recpt_s = self.inputs['PolsR'].sv_get(default=[[]], deepcopy=False)
-        verts_donor_s = self.inputs['VersD'].sv_get(deepcopy=False)
-        faces_donor_s = self.inputs['PolsD'].sv_get(deepcopy=False)
-        face_data_donor_s = self.inputs['FaceDataD'].sv_get(default=[[]], deepcopy=False)
+        verts_recpt_s = self.inputs['Vertices Recipient'].sv_get(deepcopy=False)
+        faces_recpt_s = self.inputs['Polygons Recipient'].sv_get(default=[[]], deepcopy=False)
+        verts_donor_s = self.inputs['Vertices Donor'].sv_get(deepcopy=False)
+        faces_donor_s = self.inputs['Polygons Donor'].sv_get(deepcopy=False)
+        face_data_donor_s = self.inputs['FaceData Donor'].sv_get(default=[[]], deepcopy=False)
         zcoefs_s = self.inputs['Z_Coef'].sv_get(deepcopy=False)
         zoffsets_s = self.inputs['Z_Offset'].sv_get(deepcopy=False)
         zrotations_s = self.inputs['Z_Rotation'].sv_get(deepcopy=False)
@@ -1180,10 +1232,13 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         frame_widths_s = self.inputs['FrameWidth'].sv_get(deepcopy=False)
         facerots_s = self.inputs['PolyRotation'].sv_get(default=[[0]], deepcopy=False)
         mask_s = self.inputs['PolyMask'].sv_get(default=[[1]], deepcopy=False)
+        if isinstance(mask_s[0][0], str):
+            mask_s = [[self.transform_dict[mask_s[0][0]]]]
+
         thresholds_s = self.inputs['Threshold'].sv_get(deepcopy=False)
         donor_index_s = self.inputs['Donor Index'].sv_get(deepcopy=False)
         normal_mode_s = self.inputs['Normal Mode'].sv_get(deepcopy=False, default=[[1 if self.normal_mode == 'MAP' else 0]])
-        print('normal_mode_s', normal_mode_s)
+
         if isinstance(normal_mode_s[0][0], str):
             normal_mode_s=[[1 if self.normal_mode == 'MAP' else 0]]
         output = OutputData()

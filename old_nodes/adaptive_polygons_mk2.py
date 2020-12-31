@@ -98,7 +98,12 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Adaptive Polygons Mk2'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_ADAPTATIVE_POLS'
-    replacement_nodes = [('SvAdaptivePolygonsNodeMk3', None, None)]
+    replacement_nodes = [('SvAdaptivePolygonsNodeMk3',
+                        dict(VersR='Vertices Recipient',
+                             PolsR='Polygons Recipient',
+                             VersD='Vertices Donor',
+                             PolsD='Polygons Donor',
+                             FaceDataD='FaceData Donor'), None)]
     axes = [
             ("X", "X", "Orient donor's X axis along normal", 0),
             ("Y", "Y", "Orient donor's Y axis along normal", 1),
