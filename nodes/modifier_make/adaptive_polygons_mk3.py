@@ -286,26 +286,20 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     transform_modes = [("SKIP", "Skip", "Don't Output Anything", 0),
-                       ("ASIS", "As Is", "Output the reciever face", 1),
-                       ("TRI", "Tris", "Perform Tris Transfrom", 2),
-                       ("QUAD", "Quads", "Perform Quad Transfrom", 3),
-                       ("FAN", "Fan", "Perform Fan Transfrom", 4),
-                       ("SUB_QUADS", "SubQuads", "Divides the face in 4 + Quad Transfrom", 5),
-                       ("FRAME", "Frame", "Perform Frame Transfrom", 6),
+                       ("ASIS", "As Is", "Output the receiver face", 1),
+                       ("TRI", "Tris", "Perform Tris Transform", 2),
+                       ("QUAD", "Quads", "Perform Quad Transform", 3),
+                       ("FAN", "Fan", "Perform Fan Transform", 4),
+                       ("SUB_QUADS", "SubQuads", "Divides the face in 4 + Quad Transform", 5),
+                       ("FRAME", "Frame", "Perform Frame Transform", 6),
                        ("FRAME_FAN", "Auto Frame Fan", "Perform Frame transform if Frame With is lower than 1 otherwise perform Fan", 7),
                        ("FRAME_QUADS", "Auto Frame Sub Quads", "Frame transform if Frame With is lower than 1 otherwise perform Sub Quads transform", 8),
-                       ("FAN_QUAD", "Fan (Quad)", "Fan Subdividision + Quad Transform", 9),
-                       ("FRAME_TRI", "Frame (Tri)", "Frame Subdividision + Tri Transform", 10),
-                       ("SUB_QUADS_TRI", "Sub Quads (Tri)", "Quads Subdividision + Tri Transform", 11),
+                       ("FAN_QUAD", "Fan (Quad)", "Fan Subdivision + Quad Transform", 9),
+                       ("FRAME_TRI", "Frame (Tri)", "Frame Subdivision + Tri Transform", 10),
+                       ("SUB_QUADS_TRI", "Sub Quads (Tri)", "Quads Subdivision + Tri Transform", 11),
                        ]
-    transform_description = 'Use the mask to control how transformation is done\n' \
-                            '0 = Skip\n1 = As Is\n'\
-                            '2 = Tris\n3 = Quads\n'\
-                            '4 = Fan\n5 = SubQuads\n'\
-                            '6 = Frame\n7 = Auto Frame Fan\n'\
-                            '8 = Auto Frame Sub Quads\n9 = Fan (Quad)\n'\
-                            '10 = Frame (Tri)\n11 = Sub Quads (Tri)'
-    td = ''.join([f'{p[3]} = {p[1]} ({p[2]})\n' for p in transform_modes])
+
+    transform_description = ''.join([f'{p[3]} = {p[1]} ({p[2]})\n' for p in transform_modes])
     transform_dict = {p[0]: p[3] for p in transform_modes}
 
     @throttle_and_update_node
@@ -324,7 +318,7 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     skip_modes = [
             ("SKIP", "Skip", "Do not output anything", 0),
             ("ASIS", "As Is", "Output these faces as is", 1),
-            ("TRANSFORM", "Transform Control", td, 2)
+            ("TRANSFORM", "Transform Control", transform_description, 2)
         ]
 
     mask_mode: EnumProperty(
@@ -373,7 +367,7 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
 
     transform_mask: EnumProperty(
         name="Transform",
-        description="Transform method:\n"+ td + 'Selected',
+        description="Transform method:\n"+ transform_description + 'Selected',
         items=transform_modes, default="QUAD",
         update=update_sockets
     )
