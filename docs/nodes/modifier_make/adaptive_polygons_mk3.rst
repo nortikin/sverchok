@@ -250,11 +250,11 @@ This node has some number of parameters, and most of them are accessible only in
   The default value is Tris for Triangular faces, Quads for Quad faces and Frame for NGons.
 
 
-- **Implementation. This defines which algorithm should be used.
+- **Implementation**. This defines which algorithm should be used.
 
- - **NumPy**: Faster when donor has more than 50 vertices for tris or 12 verts for quads.
- - **Mathutils**: Faster when donor has less than 50 vertices for tris or 12 verts for quads.
- - **Auto**: Switched between Mathutils and NumPy implementation depending on donor vert count.
+  - **NumPy**: Faster when donor has more than 50 vertices for tris or 12 verts for quads.
+  - **Mathutils**: Faster when donor has less than 50 vertices for tris or 12 verts for quads.
+  - **Auto**: Switched between Mathutils and NumPy implementation depending on donor vert count.
 
 
 Base area illustrations
