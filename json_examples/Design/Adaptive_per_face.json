@@ -1,5 +1,5 @@
 {
-  "export_version": "0.079",
+  "export_version": "0.10",
   "framed_nodes": {
     "A Number.002": "Frame.003",
     "A Number.003": "Frame.003",
@@ -30,6 +30,7 @@
   "nodes": {
     "A Number.002": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -38,15 +39,13 @@
         209.67471313476562
       ],
       "params": {
-        "float_": 0.06000000238418579,
-        "float_draft_": 0.0,
-        "int_": 0,
-        "int_draft_": 0
+        "float_": 0.06000000238418579
       },
       "width": 140.0
     },
     "A Number.003": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -55,15 +54,20 @@
         111.21734619140625
       ],
       "params": {
-        "float_": 0.20000000298023224,
-        "float_draft_": 0.0,
-        "int_": 0,
-        "int_draft_": 0
+        "float_": 0.20000000298023224
       },
       "width": 140.0
     },
     "Adaptive Polygons Mk2": {
       "bl_idname": "SvAdaptivePolygonsNodeMk3",
+      "custom_socket_props": {
+        "11": {
+          "label": "Polygon Mask"
+        },
+        "14": {
+          "label": "Normal Mode"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -72,15 +76,16 @@
         821.8199462890625
       ],
       "params": {
-        "join": 1,
+        "join": true,
         "matching_mode": "PERFACE",
-        "remove_doubles": 1,
+        "remove_doubles": true,
         "z_coef": 0.4000000059604645
       },
       "width": 140.0
     },
     "Assign Materials List": {
       "bl_idname": "SvAssignMaterialListNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -88,16 +93,22 @@
         3180.467041015625,
         956.2824096679688
       ],
-      "materials": [
-        "Edges",
-        "Base"
-      ],
-      "params": {},
+      "params": {
+        "materials": [
+          {
+            "material": "Edges"
+          },
+          {
+            "material": "Base"
+          }
+        ]
+      },
       "width": 200.0
     },
     "Frame": {
       "bl_idname": "NodeFrame",
-      "height": 383.8218994140625,
+      "custom_socket_props": {},
+      "height": 387.03704833984375,
       "hide": false,
       "label": "Buckle Up",
       "location": [
@@ -105,11 +116,12 @@
         1530.1674537658691
       ],
       "params": {},
-      "width": 654.9917602539062
+      "width": 654.8399047851562
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
-      "height": 384.38909912109375,
+      "custom_socket_props": {},
+      "height": 387.49041748046875,
       "hide": false,
       "label": "Buckle Down",
       "location": [
@@ -117,11 +129,12 @@
         1521.6208229064941
       ],
       "params": {},
-      "width": 654.99169921875
+      "width": 654.83984375
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "height": 648.3975830078125,
+      "custom_socket_props": {},
+      "height": 651.4228515625,
       "hide": false,
       "label": "Recipient",
       "location": [
@@ -129,11 +142,12 @@
         35.03232192993164
       ],
       "params": {},
-      "width": 1689.3768310546875
+      "width": 1689.933837890625
     },
     "Frame.003": {
       "bl_idname": "NodeFrame",
-      "height": 663.3550415039062,
+      "custom_socket_props": {},
+      "height": 688.2750854492188,
       "hide": false,
       "label": "Donor",
       "location": [
@@ -141,11 +155,12 @@
         519.9917602539062
       ],
       "params": {},
-      "width": 959.7452392578125
+      "width": 960.30224609375
     },
     "Frame.004": {
       "bl_idname": "NodeFrame",
-      "height": 280.3594055175781,
+      "custom_socket_props": {},
+      "height": 282.80242919921875,
       "hide": false,
       "label": "Donor Parameters",
       "location": [
@@ -153,10 +168,11 @@
         123.02684020996094
       ],
       "params": {},
-      "width": 587.983154296875
+      "width": 587.831298828125
     },
     "Map Range": {
       "bl_idname": "SvMapRangeNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -165,7 +181,7 @@
         491.8024139404297
       ],
       "params": {
-        "clamp": 0,
+        "clamp": false,
         "new_max": 0.08999999612569809,
         "new_min": 0.679999828338623,
         "old_max": 1.5,
@@ -175,6 +191,7 @@
     },
     "Matrix In": {
       "bl_idname": "SvMatrixInNodeMK4",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -183,27 +200,13 @@
         143.91238403320312
       ],
       "params": {
-        "angle": 45.0,
-        "axis": [
-          0.0,
-          0.0,
-          1.0
-        ],
-        "location_": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          1.0,
-          1.0,
-          1.0
-        ]
+        "angle": 45.0
       },
       "width": 140.0
     },
     "Mesh Expression": {
       "bl_idname": "SvMeshEvalNode",
+      "custom_socket_props": {},
       "geom": "{\n  \"defaults\": {\n    \"CenterClose\": 0.0,\n    \"CenterDown\": 0.0,\n    \"PeriferalDown\": 0.0,\n    \"BaseZ\": 0.1\n  },\n  \"vertices\": [\n    [\n      -1.0,\n      -1.0,\n      \"BaseZ\"\n    ],\n    [\n      1.0,\n      -1.0,\n      \"BaseZ\"\n    ],\n    [\n      0.92176223,\n      -0.92176223,\n      \"BaseZ\"\n    ],\n    [\n      0.0,\n      0.0,\n      \"BaseZ\"\n    ],\n    [\n      -0.75676525,\n      -0.75676525,\n      \"BaseZ\"\n    ],\n    [\n      \"-1.0 + CenterClose\",\n      \"-1.0 + CenterClose\",\n      \"1.0 - CenterDown\",\n      [\n        \"MovingCenter\"\n      ]\n    ],\n    [\n      \"-0.75676525 + CenterClose\",\n      \"-0.75676525 + CenterClose\",\n      \"1.0 - CenterDown\",\n      [\n        \"MovingCenter\"\n      ]\n    ],\n    [\n      0.9,\n      -0.9,\n      \"1.0 - PeriferalDown\",\n      [\n        \"MovingPeriferal\"\n      ]\n    ],\n    [\n      0.8,\n      -0.8,\n      \"1.0 - PeriferalDown\",\n      [\n        \"MovingPeriferal\"\n      ]\n    ],\n    [\n      0.0,\n      0.0,\n      0.0\n    ],\n    [\n      -1.0,\n      -1.0,\n      0.0\n    ],\n    [\n      1.0,\n      -1.0,\n      0.0\n    ]\n  ],\n  \"edges\": [  ],\n  \"faces\": [\n    [\n      4,\n      2,\n      3\n    ],\n    [\n      5,\n      7,\n      8,\n      6\n    ],\n    [\n      1,\n      5,\n      0\n    ],\n    [\n      1,\n      7,\n      5\n    ],\n    [\n      8,\n      2,\n      6\n    ],\n    [\n      2,\n      4,\n      6\n    ],\n    [9, 11, 10]\n  ],\n  \"vertexdata\": [],\n  \"facedata\": [\n    1,\n    0,\n    0,\n    0,\n    0,\n    0,\n    1\n  ]\n}",
       "height": 100.0,
       "hide": false,
@@ -213,18 +216,19 @@
         483.1649169921875
       ],
       "params": {
+        "file_pointer": "Mesh Expression",
         "filename": "Mesh Expression"
       },
       "width": 140.0
     },
     "Mesh viewer": {
       "bl_idname": "SvMeshViewer",
-      "collection": "",
       "color": [
         1.0,
         0.5889999866485596,
         0.21400000154972076
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -232,14 +236,13 @@
         2981.73095703125,
         944.799072265625
       ],
-      "params": {
-        "base_data_name": "Alpha"
-      },
+      "params": {},
       "use_custom_color": true,
       "width": 140.0
     },
     "Move": {
       "bl_idname": "SvMoveNodeMk3",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -247,13 +250,12 @@
         679.4505615234375,
         746.8767433166504
       ],
-      "params": {
-        "strength": 1.0
-      },
+      "params": {},
       "width": 140.0
     },
     "Move.002": {
       "bl_idname": "SvMoveNodeMk3",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -261,13 +263,12 @@
         -47.5662841796875,
         772.3497047424316
       ],
-      "params": {
-        "strength": 1.0
-      },
+      "params": {},
       "width": 140.0
     },
     "Origins": {
       "bl_idname": "SvOrigins",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -287,6 +288,26 @@
         0.5,
         0.5
       ],
+      "custom_socket_props": {
+        "0": {
+          "label": "Size X"
+        },
+        "1": {
+          "label": "Size Y"
+        },
+        "2": {
+          "label": "Num X"
+        },
+        "3": {
+          "label": "Num Y"
+        },
+        "4": {
+          "label": "Step X"
+        },
+        "5": {
+          "label": "Step Y"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -295,8 +316,7 @@
         1018.4228858947754
       ],
       "params": {
-        "center": 1,
-        "dimension_mode": "SIZE",
+        "center": true,
         "numx": 20,
         "numy": 20
       },
@@ -305,6 +325,7 @@
     },
     "Proportional Edit Falloff": {
       "bl_idname": "SvProportionalEditNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -319,6 +340,7 @@
     },
     "Proportional Edit Falloff.001": {
       "bl_idname": "SvProportionalEditNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -333,6 +355,7 @@
     },
     "Reroute": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -345,6 +368,7 @@
     },
     "Reroute.001": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -357,6 +381,7 @@
     },
     "Reroute.002": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -376,8 +401,7 @@
             0.0,
             0.0,
             1.0
-          ],
-          "use_prop": true
+          ]
         },
         "4": {
           "expanded": true,
@@ -385,8 +409,7 @@
             2.4600000381469727,
             1.709999918937683,
             0.0
-          ],
-          "use_prop": true
+          ]
         }
       },
       "height": 100.0,
@@ -411,8 +434,7 @@
             0.0,
             0.0,
             1.0
-          ],
-          "use_prop": true
+          ]
         },
         "4": {
           "expanded": true,
@@ -420,8 +442,7 @@
             -1.3799999952316284,
             -1.7999999523162842,
             0.0
-          ],
-          "use_prop": true
+          ]
         }
       },
       "height": 100.0,
@@ -439,6 +460,7 @@
     },
     "Symmetrize Mesh": {
       "bl_idname": "SvSymmetrizeNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -453,6 +475,7 @@
     },
     "Symmetrize Mesh.001": {
       "bl_idname": "SvSymmetrizeNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -467,6 +490,7 @@
     },
     "Vector in": {
       "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -481,6 +505,7 @@
     },
     "Vector in.001": {
       "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -495,6 +520,7 @@
     },
     "Vector out": {
       "bl_idname": "VectorsOutNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -512,6 +538,7 @@
         0.30000001192092896,
         0.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -520,7 +547,7 @@
         112.16677856445312
       ],
       "params": {
-        "activate": 0,
+        "activate": false,
         "selected_draw_mode": "facet"
       },
       "use_custom_color": true,
@@ -533,6 +560,7 @@
         0.30000001192092896,
         0.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -541,7 +569,7 @@
         1050.5684814453125
       ],
       "params": {
-        "activate": 0,
+        "activate": false,
         "selected_draw_mode": "smooth"
       },
       "use_custom_color": true,
@@ -550,76 +578,82 @@
   },
   "update_lists": [
     [
-      "Plane",
-      0,
-      "Select mesh elements by location",
-      0
+      "Reroute",
+      "Output",
+      "Adaptive Polygons Mk2",
+      "Vertices Recipient"
     ],
     [
-      "Plane",
-      2,
-      "Select mesh elements by location",
-      2
-    ],
-    [
-      "Plane",
-      "Polygons",
       "Reroute.002",
-      "Input"
+      "Output",
+      "Adaptive Polygons Mk2",
+      "Polygons Recipient"
     ],
     [
-      "Plane",
+      "Symmetrize Mesh.001",
       0,
-      "Proportional Edit Falloff",
-      0
-    ],
-    [
-      "Select mesh elements by location",
-      0,
-      "Proportional Edit Falloff",
-      1
-    ],
-    [
-      "Plane",
-      0,
-      "Move.002",
-      0
-    ],
-    [
-      "Vector in",
-      0,
-      "Move.002",
-      1
-    ],
-    [
-      "Proportional Edit Falloff",
-      0,
-      "Move.002",
+      "Adaptive Polygons Mk2",
       2
     ],
     [
-      "Move.002",
-      0,
-      "Select mesh elements by location.001",
-      0
-    ],
-    [
-      "Plane",
+      "Symmetrize Mesh.001",
       2,
-      "Select mesh elements by location.001",
-      2
+      "Adaptive Polygons Mk2",
+      3
     ],
     [
-      "Move.002",
+      "Symmetrize Mesh.001",
+      3,
+      "Adaptive Polygons Mk2",
+      4
+    ],
+    [
+      "Mesh viewer",
       0,
-      "Proportional Edit Falloff.001",
+      "Assign Materials List",
       0
     ],
     [
-      "Select mesh elements by location.001",
+      "Vector out",
+      2,
+      "Map Range",
+      0
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Mesh Expression",
+      "CenterClose"
+    ],
+    [
+      "A Number.002",
       0,
-      "Proportional Edit Falloff.001",
-      1
+      "Mesh Expression",
+      2
+    ],
+    [
+      "A Number.003",
+      0,
+      "Mesh Expression",
+      3
+    ],
+    [
+      "Adaptive Polygons Mk2",
+      0,
+      "Mesh viewer",
+      0
+    ],
+    [
+      "Adaptive Polygons Mk2",
+      1,
+      "Mesh viewer",
+      2
+    ],
+    [
+      "Adaptive Polygons Mk2",
+      2,
+      "Mesh viewer",
+      3
     ],
     [
       "Move.002",
@@ -640,10 +674,22 @@
       2
     ],
     [
-      "Move",
-      "Vertices",
-      "Reroute",
-      "Input"
+      "Plane",
+      0,
+      "Move.002",
+      0
+    ],
+    [
+      "Vector in",
+      0,
+      "Move.002",
+      1
+    ],
+    [
+      "Proportional Edit Falloff",
+      0,
+      "Move.002",
+      2
     ],
     [
       "Reroute",
@@ -658,16 +704,34 @@
       "Faces"
     ],
     [
-      "Origins",
+      "Plane",
       0,
-      "Vector out",
+      "Proportional Edit Falloff",
       0
     ],
     [
-      "Vector out",
-      2,
-      "Map Range",
+      "Select mesh elements by location",
+      0,
+      "Proportional Edit Falloff",
+      1
+    ],
+    [
+      "Move.002",
+      0,
+      "Proportional Edit Falloff.001",
       0
+    ],
+    [
+      "Select mesh elements by location.001",
+      0,
+      "Proportional Edit Falloff.001",
+      1
+    ],
+    [
+      "Move",
+      "Vertices",
+      "Reroute",
+      "Input"
     ],
     [
       "Map Range",
@@ -676,22 +740,34 @@
       "Input"
     ],
     [
-      "Reroute.001",
-      "Output",
-      "Mesh Expression",
-      "CenterClose"
+      "Plane",
+      "Polygons",
+      "Reroute.002",
+      "Input"
     ],
     [
-      "A Number.002",
+      "Plane",
       0,
-      "Mesh Expression",
+      "Select mesh elements by location",
+      0
+    ],
+    [
+      "Plane",
+      2,
+      "Select mesh elements by location",
       2
     ],
     [
-      "A Number.003",
+      "Move.002",
       0,
-      "Mesh Expression",
-      3
+      "Select mesh elements by location.001",
+      0
+    ],
+    [
+      "Plane",
+      2,
+      "Select mesh elements by location.001",
+      2
     ],
     [
       "Mesh Expression",
@@ -742,57 +818,9 @@
       4
     ],
     [
-      "Reroute",
-      "Output",
-      "Adaptive Polygons Mk2",
-      "VersR"
-    ],
-    [
-      "Reroute.002",
-      "Output",
-      "Adaptive Polygons Mk2",
-      "PolsR"
-    ],
-    [
-      "Symmetrize Mesh.001",
+      "Origins",
       0,
-      "Adaptive Polygons Mk2",
-      2
-    ],
-    [
-      "Symmetrize Mesh.001",
-      2,
-      "Adaptive Polygons Mk2",
-      3
-    ],
-    [
-      "Symmetrize Mesh.001",
-      3,
-      "Adaptive Polygons Mk2",
-      4
-    ],
-    [
-      "Adaptive Polygons Mk2",
-      0,
-      "Mesh viewer",
-      0
-    ],
-    [
-      "Adaptive Polygons Mk2",
-      1,
-      "Mesh viewer",
-      2
-    ],
-    [
-      "Adaptive Polygons Mk2",
-      2,
-      "Mesh viewer",
-      3
-    ],
-    [
-      "Mesh viewer",
-      0,
-      "Assign Materials List",
+      "Vector out",
       0
     ],
     [
