@@ -470,6 +470,7 @@
     SvInsetFaces
     SvLatheNode
     SvSmoothNode
+    SvRelaxMeshNode
     SvSmoothLines
     ---
     CrossSectionNode
