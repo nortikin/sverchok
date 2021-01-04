@@ -76,7 +76,6 @@ def matrix_def(triangle):
 
 def prepare_source_data(src_verts):
     '''Create the inverted Transformation Matrix and 4th point of the tetrahedron'''
-
     matrix_trasform_s, tri3_src = matrix_def(src_verts)
     inverted_matrix_s = np_inv(matrix_trasform_s).T
 
@@ -85,9 +84,7 @@ def prepare_source_data(src_verts):
 
 def prepare_dest_data(dst_verts):
     '''Create Transformation Matrix and 4th point of the tetrahedron'''
-
     matrix_trasform, tri3_dest = matrix_def(dst_verts)
-
 
     return matrix_trasform, tri3_dest
 
@@ -361,7 +358,7 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     ngons_as: EnumProperty(
         name="Ngons Transform",
         description="How to transform on triangular faces",
-        items=transform_modes, default="QUAD",
+        items=transform_modes, default="FRAME",
         update=update_sockets
     )
 
