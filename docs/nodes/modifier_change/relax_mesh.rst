@@ -74,4 +74,8 @@ This node has the following output:
 
 The node does not modify edges or faces of the original mesh, it only moves the vertexes.
 
+Example of Usage
+----------------
+
+.. image:: https://user-images.githubusercontent.com/284644/103518798-323f4400-4e96-11eb-8980-39cbac4a5a40.png
 
