@@ -40,8 +40,8 @@ class SvRelaxMeshNode(bpy.types.Node, SverchCustomTreeNode):
 
     algorithms = [
             ('LLOYD', "Lloyd", "Lloyd", 0),
-            ('EDGES', "Edges", "Edges", 1),
-            ('FACES', "Faces", "Faces", 2)
+            ('EDGES', "Edge Lengths", "Try to make all edges of the same length", 1),
+            ('FACES', "Face Areas", "Try to make all faces of the same area", 2)
         ]
 
     algorithm : EnumProperty(
@@ -52,8 +52,7 @@ class SvRelaxMeshNode(bpy.types.Node, SverchCustomTreeNode):
 
     def get_available_methods(self, context):
         items = []
-        if self.algorithm in {'EDGES', 'FACES'}:
-            items.append((NONE, "Do not use", "Do not use", 0))
+        items.append((NONE, "Do not use", "Do not use", 0))
         if self.algorithm == 'LLOYD':
             items.append((LINEAR, "Linear", "Linear", 1))
         items.append((NORMAL, "Normal", "Move points along mesh tangent only", 2))
@@ -83,6 +82,18 @@ class SvRelaxMeshNode(bpy.types.Node, SverchCustomTreeNode):
             default = AVERAGE,
             update = updateNode)
 
+    use_x: BoolProperty(
+        name="X", description="smooth vertices along X axis",
+        default=True, update=updateNode)
+
+    use_y: BoolProperty(
+        name="Y", description="smooth vertices along Y axis",
+        default=True, update=updateNode)
+
+    use_z: BoolProperty(
+        name="Z", description="smooth vertices along Z axis",
+        default=True, update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', 'Edges')
@@ -103,6 +114,10 @@ class SvRelaxMeshNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, 'target')
         layout.prop(self, 'preserve_shape')
         layout.prop(self, 'skip_bounds')
+        row = layout.row(align=True)
+        row.prop(self, "use_x", toggle=True)
+        row.prop(self, "use_y", toggle=True)
+        row.prop(self, "use_z", toggle=True)
 
     def process(self):
         if not any(output.is_linked for output in self.outputs):
@@ -110,7 +125,7 @@ class SvRelaxMeshNode(bpy.types.Node, SverchCustomTreeNode):
 
         vertices_s = self.inputs['Vertices'].sv_get(deepcopy=False)
         edges_s = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)
-        faces_s = self.inputs['Faces'].sv_get(default=[[]], deepcopy=False)
+        faces_s = self.inputs['Faces'].sv_get(deepcopy=False)
         masks_s = self.inputs['VertMask'].sv_get(default=[[1]], deepcopy=False)
         iterations_s = self.inputs['Iterations'].sv_get(deepcopy=False)
         factor_s = self.inputs['Factor'].sv_get(deepcopy=False)
@@ -125,6 +140,14 @@ class SvRelaxMeshNode(bpy.types.Node, SverchCustomTreeNode):
 
         nested_output = input_level > 3
 
+        used_axes = set()
+        if self.use_x:
+            used_axes.add(0)
+        if self.use_y:
+            used_axes.add(1)
+        if self.use_z:
+            used_axes.add(2)
+
         verts_out = []
         for params in zip_long_repeat(vertices_s, edges_s, faces_s, masks_s, iterations_s, factor_s):
             for vertices, edges, faces, mask, iterations, factor in zip_long_repeat(*params):
@@ -132,21 +155,24 @@ class SvRelaxMeshNode(bpy.types.Node, SverchCustomTreeNode):
                     vertices = lloyd_relax(vertices, faces, iterations,
                                     mask = mask,
                                     method = self.preserve_shape,
-                                    skip_boundary = self.skip_bounds)
+                                    skip_boundary = self.skip_bounds,
+                                    use_axes = used_axes)
                 elif self.algorithm == 'EDGES':
                     vertices = edges_relax(vertices, edges, faces, iterations,
                                     k = factor,
                                     mask = mask,
                                     method = self.preserve_shape,
                                     target = self.target,
-                                    skip_boundary = self.skip_bounds)
+                                    skip_boundary = self.skip_bounds,
+                                    use_axes = used_axes)
                 elif self.algorithm == 'FACES':
                     vertices = faces_relax(vertices, edges, faces, iterations,
                                     k = factor,
                                     mask = mask,
                                     method = self.preserve_shape,
                                     target = self.target,
-                                    skip_boundary = self.skip_bounds)
+                                    skip_boundary = self.skip_bounds,
+                                    use_axes = used_axes)
                 else:
                     raise Exception("Unsupported algorithm")
 

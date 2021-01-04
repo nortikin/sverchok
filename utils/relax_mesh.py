@@ -27,9 +27,30 @@ MINIMUM = 'MIN'
 MAXIMUM = 'MAX'
 AVERAGE = 'MEAN'
 
-def lloyd_relax(vertices, faces, iterations, mask=None, method=NORMAL, skip_boundary=True):
+def mask_axes(src_vert, dst_vert, axes):
+    if axes == {0,1,2}:
+        return dst_vert
+    result = []
+    for axis in range(3):
+        if axis in axes:
+            result.append(dst_vert[axis])
+        else:
+            result.append(src_vert[axis])
+    return result
+
+def map_mask_axes(src_verts, dst_verts, axes):
+    if axes == {0,1,2}:
+        return dst_verts
+    result = np.asarray(src_verts).copy()
+    dst = np.asarray(dst_verts)
+    for i in range(3):
+        if i in axes:
+            result[:,i] = dst[:,i]
+    return result.tolist()
+
+def lloyd_relax(vertices, faces, iterations, mask=None, method=NORMAL, skip_boundary=True, use_axes={0,1,2}):
     """
-    supported shape preservation methods: NORMAL, LINEAR, BVH
+    supported shape preservation methods: NONE, NORMAL, LINEAR, BVH
     """
 
     def do_iteration(bvh, bm):
@@ -43,7 +64,9 @@ def lloyd_relax(vertices, faces, iterations, mask=None, method=NORMAL, skip_boun
                 normal = bm_vert.normal
                 cs = np.array([face_centers[face.index] for face in bm_vert.link_faces])
                 
-                if method == NORMAL:
+                if method == NONE:
+                    new_vert = cs.mean(axis=0)
+                elif method == NORMAL:
                     median = mathutils.Vector(cs.mean(axis=0))
                     dv = median - co
                     dv = dv - dv.project(normal)
@@ -61,6 +84,7 @@ def lloyd_relax(vertices, faces, iterations, mask=None, method=NORMAL, skip_boun
                     raise Exception("Unsupported volume preservation method")
                 
                 new_vert = tuple(new_vert)
+                new_vert = mask_axes(tuple(co), new_vert, use_axes)
                 
             verts_out.append(new_vert)
 
@@ -77,7 +101,7 @@ def lloyd_relax(vertices, faces, iterations, mask=None, method=NORMAL, skip_boun
 
     return vertices
 
-def edges_relax(vertices, edges, faces, iterations, k, mask=None, method=NONE, target=AVERAGE, skip_boundary=True):
+def edges_relax(vertices, edges, faces, iterations, k, mask=None, method=NONE, target=AVERAGE, skip_boundary=True, use_axes={0,1,2}):
     """
     supported shape preservation methods: NONE, NORMAL, BVH
     """
@@ -140,9 +164,9 @@ def edges_relax(vertices, edges, faces, iterations, k, mask=None, method=NONE, t
         else:
             raise Exception("Unsupported shape preservation method")
         
-        return verts_out
+        return map_mask_axes(verts, verts_out, use_axes)
 
-    if not edges:
+    if not edges or not edges[0]:
         edges = polygons_to_edges([faces], unique_edges=True)[0]
     edges = np.array(edges)
     if mask is not None:
@@ -155,7 +179,7 @@ def edges_relax(vertices, edges, faces, iterations, k, mask=None, method=NONE, t
 
     return vertices
 
-def faces_relax(vertices, edges, faces, iterations, k, mask=None, method=NONE, target=AVERAGE, skip_boundary=True):
+def faces_relax(vertices, edges, faces, iterations, k, mask=None, method=NONE, target=AVERAGE, skip_boundary=True, use_axes={0,1,2}):
     """
     supported shape preservation methods: NONE, NORMAL, BVH
     """
@@ -220,10 +244,12 @@ def faces_relax(vertices, edges, faces, iterations, k, mask=None, method=NONE, t
         else:
             raise Exception("Unsupported shape preservation method")
 
-        return verts_out
+        return map_mask_axes(vert_cos, verts_out, use_axes)
 
     if mask is not None:
         mask = repeat_last_for_length(mask, len(vertices))
+    if not edges or not edges[0]:
+        edges = polygons_to_edges([faces], unique_edges=True)[0]
 
     bvh = BVHTree.FromPolygons(vertices, faces)
     for i in range(iterations):
