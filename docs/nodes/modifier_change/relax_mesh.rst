@@ -59,6 +59,10 @@ This node has the following parameters:
   algorithms. This defines which value of edge length or face area is to be
   used as the target value for the algorithm. The available options are
   **Average**, **Minimum** and **Maximum**. The default option is **Average**.
+* **Preserve shape**. This defines the method to be used in order to preserve
+  the shape of the original mesh at least partially. The available options are
+  **Do not use**, **Linear** (for Lloyd algorithm only), **Tangent** and
+  **BVH**. The default option is **Do not use**.
 * **Skip bounds**. If checked, the node will not move boundary vertexes of the
   original mesh. Checked by default.
 * **X**, **Y**, **Z**. These parameters define the coordinate axes along which
