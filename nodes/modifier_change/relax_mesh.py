@@ -55,7 +55,7 @@ class SvRelaxMeshNode(bpy.types.Node, SverchCustomTreeNode):
         items.append((NONE, "Do not use", "Do not use", 0))
         if self.algorithm == 'LLOYD':
             items.append((LINEAR, "Linear", "Linear", 1))
-        items.append((NORMAL, "Normal", "Move points along mesh tangent only", 2))
+        items.append((NORMAL, "Tangent", "Move points along mesh tangent only", 2))
         items.append((BVH, "BVH", "Use BVH Tree", 3))
         return items
 
@@ -98,7 +98,7 @@ class SvRelaxMeshNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', 'Edges')
         self.inputs.new('SvStringsSocket', 'Faces')
-        self.inputs.new('SvStringsSocket', 'VertMask')
+        self.inputs.new('SvStringsSocket', 'VertMask').enable_input_link_menu = False
         self.inputs.new('SvStringsSocket', 'Iterations').prop_name = "iterations"
         self.inputs.new('SvStringsSocket', 'Factor').prop_name = "factor"
 
