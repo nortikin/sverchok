@@ -192,6 +192,7 @@
     SvExScalarFieldPointNode
     SvAttractorFieldNodeMk2
     SvExImageFieldNode
+    SvMeshSurfaceFieldNode
     SvExMeshNormalFieldNode
     SvExVoronoiFieldNode
     SvExMinimalScalarFieldNode
