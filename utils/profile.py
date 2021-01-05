@@ -16,6 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import sys
 import cProfile
 import pstats
 from io import StringIO
@@ -59,6 +60,8 @@ def is_profiling_enabled_in_settings():
     Check if profiling is not set to NONE in addon preferences.
     """
     with sv_preferences() as prefs:
+        if prefs is None:
+            return True
         return prefs.profile_mode != "NONE"
 
 def profile(function = None, section = "MANUAL"):
@@ -112,7 +115,7 @@ def profile(function = None, section = "MANUAL"):
     else:
         return profiling_decorator
 
-def dump_stats(sort = "tottime", strip_dirs = False):
+def dump_stats(sort = "tottime", strip_dirs = False, file_path=None):
     """
     Dump profiling statistics to the log.
     """
@@ -121,14 +124,23 @@ def dump_stats(sort = "tottime", strip_dirs = False):
         info("There are no profiling results yet")
         return
 
-    stream = StringIO()
-    stats = pstats.Stats(profile, stream=stream)
-    if strip_dirs:
-        stats.strip_dirs()
-    stats = stats.sort_stats(sort)
-    stats.print_stats()
-    info("Profiling results:\n" + stream.getvalue())
-    info("---------------------------")
+    if file_path is None:
+        stream = StringIO()
+        stats = pstats.Stats(profile, stream=stream)
+        if strip_dirs:
+            stats.strip_dirs()
+        stats = stats.sort_stats(sort)
+        stats.print_stats()
+        info("Profiling results:\n" + stream.getvalue())
+        info("---------------------------")
+    else:
+        with open(file_path, 'w') as stream:
+            stats = pstats.Stats(profile, stream=stream)
+            if strip_dirs:
+                stats.strip_dirs()
+            stats = stats.sort_stats(sort)
+            stats.print_stats()
+            info("Profiling results are written to %s", file_path)
 
 def save_stats(path):
     """
@@ -171,6 +183,26 @@ def profiling_enabled():
             _profile_nesting -= 1
             if _profile_nesting == 0 and profile is not None:
                 profile.disable()
+    else:
+        yield None
+
+@contextmanager
+def profiling_startup():
+    if "--profile-sverchok-startup" in sys.argv:
+        global _profile_nesting
+        profile = None
+        try:
+            profile = get_global_profile()
+            _profile_nesting += 1
+            if _profile_nesting == 1:
+                profile.enable()
+            yield profile
+        finally:
+            _profile_nesting -= 1
+            if _profile_nesting == 0 and profile is not None:
+                profile.disable()
+            dump_stats(file_path="sverchok_profile.txt")
+            save_stats("sverchok_profile.prof")
     else:
         yield None
 

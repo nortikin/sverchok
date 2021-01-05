@@ -69,6 +69,7 @@ from sverchok.core import sv_registration_utils, init_architecture, make_node_li
 from sverchok.core import reload_event, handle_reload_event
 from sverchok.utils import utils_modules
 from sverchok.ui import ui_modules
+from sverchok.utils.profile import profiling_startup
 
 imported_modules = init_architecture(__name__, utils_modules, ui_modules)
 node_list = make_node_list(nodes)
@@ -81,16 +82,15 @@ if "bpy" in locals():
 import bpy
 import sverchok
 
-
 def register():
-    sv_registration_utils.register_all(imported_modules + node_list)
-    sverchok.core.init_bookkeeping(__name__)
+    with profiling_startup():
+        sv_registration_utils.register_all(imported_modules + node_list)
+        sverchok.core.init_bookkeeping(__name__)
 
-    menu.register()
-    if reload_event:
-        data_structure.RELOAD_EVENT = True
-        menu.reload_menu()
-
+        menu.register()
+        if reload_event:
+            data_structure.RELOAD_EVENT = True
+            menu.reload_menu()
 
 def unregister():
     sverchok.utils.clear_node_classes()

@@ -198,7 +198,17 @@ def setLevel(level):
     for handler in logging.getLogger().handlers:
         handler.setLevel(level)
 
+def inject_logger(name):
+    logger = getLogger(name)
+    globals()["debug"] = logger.debug
+    globals()["info"] = logger.info
+    globals()["warning"] = logger.warning
+    globals()["error"] = logger.error
+    globals()["exception"] = logger.exception
+
 consoleHandler = None
+
+logger = logging.getLogger("logging")
 
 def register():
     global consoleHandler
@@ -212,7 +222,7 @@ def register():
     logging.captureWarnings(True)
     # info("Registering Sverchok addon. Messages issued during registration will be only available in the console and in file (if configured).")
     print("sv: enable internal debug logging.")
-    info(f"log level, {level}")
+    logger.info(f"log level, {level}")
 
 def unregister():
     logging.shutdown()

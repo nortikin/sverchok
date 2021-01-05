@@ -313,8 +313,8 @@ class SvPreset(object):
 
             preset_add_operators[(self.category, self.name)] = SverchPresetAddOperator
             bpy.utils.register_class(SverchPresetAddOperator)
-            debug("Registered: %s",
-                "node.sv_preset_" + get_preset_idname_for_operator(self.name, self.category))
+            #debug("Registered: %s",
+            #    "node.sv_preset_" + get_preset_idname_for_operator(self.name, self.category))
 
     def draw_operator(self, layout, id_tree, category=None):
         if not category:
