@@ -16,8 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import pi, e
-from fractions import gcd
+from math import pi, e, gcd
 
 import bpy
 from bpy.props import EnumProperty, FloatProperty, IntProperty, BoolProperty
