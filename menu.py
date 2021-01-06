@@ -28,7 +28,7 @@ import bl_operators
 
 import sverchok
 from sverchok.utils import get_node_class_reference
-from sverchok.utils.logging import info, error, exception
+from sverchok.utils.logging import getLogger
 from sverchok.utils.sv_help import build_help_remap
 from sverchok.ui.sv_icons import node_icon, icon
 from sverchok.utils.context_managers import sv_preferences
@@ -215,7 +215,7 @@ class SverchNodeItem(object):
     def search_match(self, needle):
         needle = needle.upper()
         label, shorthand, tooltip = self.get_node_strings()
-        #info("shorthand: %s, tooltip: %s, label: %s, needle: %s", shorthand, tooltip, label, needle)
+        #logger.info("shorthand: %s, tooltip: %s, label: %s, needle: %s", shorthand, tooltip, label, needle)
         return (needle in label.upper()) or (needle in shorthand.upper()) or (needle in tooltip.upper())
 
     def get_idname(self):
@@ -376,7 +376,7 @@ def draw_add_node_operator(layout, nodetype, label=None, icon_name=None, params=
     default_context = bpy.app.translations.contexts.default
     node_class = get_node_class_reference(nodetype)
     if node_class is None:
-        info("cannot locate node class: %s", nodetype)
+        logger.info("cannot locate node class: %s", nodetype)
         return
     node_rna = node_class.bl_rna
 
@@ -471,7 +471,7 @@ def make_categories():
                 continue
             rna = get_node_class_reference(nodetype)
             if not rna and not nodetype == 'separator':
-                info("Node `%s' is not available (probably due to missing dependencies).", nodetype)
+                logger.info("Node `%s' is not available (probably due to missing dependencies).", nodetype)
             else:
                 node_item = SverchNodeItem.new(nodetype)
                 node_items.append(node_item)
@@ -628,6 +628,8 @@ def get_all_categories(std_categories):
     return generate
 
 def register():
+    global logger
+    logger = getLogger("menu")
     menu, node_count, original_categories = make_categories()
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         unregister_node_panels()
