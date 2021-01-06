@@ -837,7 +837,9 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
 
         if inputs['Vertices'].is_linked:
             vecs = inputs['Vertices'].sv_get(deepcopy=False, default=[[]])
-
+            total_verts = sum(map(len, vecs))
+            if not total_verts:
+                raise LookupError("Empty vertices list")    
             edges = inputs['Edges'].sv_get(deepcopy=False, default=[[]])
             polygons = inputs['Polygons'].sv_get(deepcopy=False, default=[[]])
             matrix = inputs['Matrix'].sv_get(deepcopy=False, default=[[]])

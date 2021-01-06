@@ -1697,23 +1697,23 @@ def linear_approximation(data):
     input: list of 3-tuples.
     output: an instance of LinearApproximationData class.
     """
-    result = LinearApproximationData()
 
-    result.center = cx,cy,cz = center(data)
+    data = np.asarray(data)
+    n = data.shape[-2]
+    center = data.sum(axis=0) / n
+    data0 = data - center
     
-    xs = [x[0]-cx for x in data]
-    ys = [x[1]-cy for x in data]
-    zs = [x[2]-cz for x in data]
+    xs = data0[:,0]
+    ys = data0[:,1]
+    zs = data0[:,2]
     
-    sx2 = sum(x**2 for x in xs)
-    sy2 = sum(y**2 for y in ys)
-    sz2 = sum(z**2 for z in zs)
-    
-    sxy = sum(x*y for (x,y) in zip(xs,ys))
-    sxz = sum(x*z for (x,z) in zip(xs,zs))
-    syz = sum(y*z for (y,z) in zip(ys,zs))
-    
-    n = len(data)
+    sx2 = (xs**2).sum(axis=0)
+    sy2 = (ys**2).sum(axis=0)
+    sz2 = (zs**2).sum(axis=0)
+
+    sxy = (xs*ys).sum(axis=0)
+    sxz = (xs*zs).sum(axis=0)
+    syz = (ys*zs).sum(axis=0)
 
     # This is not that trivial, one can show that
     # eigenvalues and eigenvectors of a matrix composed
@@ -1733,8 +1733,61 @@ def linear_approximation(data):
         [sxz, syz, sz2]
         ])
     
+    result = LinearApproximationData()
+    result.center = tuple(center)
     result.eigenvalues, result.eigenvectors = linalg.eig(matrix)
     return result
+
+def linear_approximation_array(data):
+    data = np.asarray(data)
+    n = data.shape[-2]
+    center = data.mean(axis=1)
+    data0 = data - np.transpose(center[np.newaxis], axes=(1,0,2))
+
+    ndim = data.ndim
+    xs = data0.take(indices=0, axis=ndim-1)
+    ys = data0.take(indices=1, axis=ndim-1)
+    zs = data0.take(indices=2, axis=ndim-1)
+    
+    sx2 = (xs**2).sum(axis=ndim-2)
+    sy2 = (ys**2).sum(axis=ndim-2)
+    sz2 = (zs**2).sum(axis=ndim-2)
+
+    sxy = (xs*ys).sum(axis=ndim-2)
+    sxz = (xs*zs).sum(axis=ndim-2)
+    syz = (ys*zs).sum(axis=ndim-2)
+
+    # This is not that trivial, one can show that
+    # eigenvalues and eigenvectors of a matrix composed
+    # this way will provide exactly the solutions of
+    # least squares problem for input vertices.
+    # The nice part is that by calculating these values
+    # we obtain both approximations - by line and by plane -
+    # at the same time. The eigenvector which corresponds to
+    # the minimal of eigenvalues will provide a normal for
+    # the approximating plane. The eigenvector which corresponds
+    # to the maximal of eigenvalues will provide a direction
+    # for the approximating line.
+    
+    matrix = np.array([
+        [sx2, sxy, sxz],
+        [sxy, sy2, syz],
+        [sxz, syz, sz2]
+        ])
+
+    axes = (ndim-1,) + tuple(range(ndim-1))
+    matrix = np.transpose(matrix, axes=axes)
+
+    eigvals, eigvecs = linalg.eig(matrix)
+
+    results = []
+    for vals, vecs, ct in zip(eigvals, eigvecs, center):
+        result = LinearApproximationData()
+        result.center = tuple(ct)
+        result.eigenvalues = vals
+        result.eigenvectors = vecs
+        results.append(result)
+    return results
 
 class SphericalApproximationData(object):
     """

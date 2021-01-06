@@ -22,7 +22,7 @@ from math import radians, ceil
 import itertools
 import ast
 import copy
-from itertools import zip_longest, chain, cycle
+from itertools import zip_longest, chain, cycle, islice
 import bpy
 from mathutils import Vector, Matrix
 from numpy import (
@@ -237,6 +237,9 @@ def repeat_last_for_length(lst, count, deepcopy=False):
             result.append(x)
             
     return result
+
+def cycle_for_length(lst, count):
+    return list(islice(cycle(lst), count))
 
 def sv_zip(*iterables):
     """zip('ABCD', 'xy') --> Ax By

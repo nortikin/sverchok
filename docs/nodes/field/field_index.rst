@@ -12,6 +12,7 @@ Field
    noise_vfield
    voronoi_field
    image_field
+   mesh_surface_field
    mesh_normal_field
    minimal_sfield
    minimal_vfield

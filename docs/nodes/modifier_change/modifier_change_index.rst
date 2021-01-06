@@ -10,6 +10,7 @@ Modifier Change
    subdivide_lite
    unsubdivide
    smooth
+   relax_mesh
    delete_loose
    edges_intersect_mk2
    poke

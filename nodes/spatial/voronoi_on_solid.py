@@ -28,7 +28,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.sv_bmesh_utils import recalc_normals
 from sverchok.utils.voronoi3d import voronoi_on_solid
-from sverchok.utils.geom import scale_relative
+from sverchok.utils.geom import scale_relative, center
 from sverchok.utils.solid import BMESH, svmesh_to_solid, SvSolidTopology, SvGeneralFuse
 from sverchok.utils.surface.freecad import SvSolidFaceSurface
 from sverchok.utils.dummy_nodes import add_dummy
@@ -73,6 +73,18 @@ class SvVoronoiOnSolidNode(bpy.types.Node, SverchCustomTreeNode):
         default = 0.1,
         update = updateNode)
 
+    scale_types = [
+            ('SITE', "Site", "Scale each region relative to corresponding site location", 0),
+            ('MEAN', "Barycenter", "Scale each region relative to it's barycenter, i.e. average location of it's vertices", 1)
+        ]
+
+    scale_center : EnumProperty(
+            name = "Scale around",
+            description = "Defines the center, along which the regions of Voronoi diagram are to be scaled in order to make inset",
+            items = scale_types,
+            default = 'SITE',
+            update = updateNode)
+
     flat_output : BoolProperty(
         name = "Flat output",
         description = "If checked, output single flat list of fragments for all input solids; otherwise, output a separate list of fragments for each solid.",
@@ -92,6 +104,7 @@ class SvVoronoiOnSolidNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
+        layout.prop(self, 'scale_center')
         layout.prop(self, 'accuracy')
 
     def process(self):
@@ -125,7 +138,10 @@ class SvVoronoiOnSolidNode(bpy.types.Node, SverchCustomTreeNode):
 
                 if inset != 0.0:
                     scale = 1.0 - inset
-                    verts = [scale_relative(vs, site, scale) for vs, site in zip(verts, sites)]
+                    if self.scale_center == 'SITE':
+                        verts = [scale_relative(vs, site, scale) for vs, site in zip(verts, sites)]
+                    else:
+                        verts = [scale_relative(vs, center(vs), scale) for vs, site in zip(verts, sites)]
 
                 fragments = [svmesh_to_solid(vs, fs, precision, method=BMESH, remove_splitter=False) for vs, fs in zip(verts, faces)]
 
