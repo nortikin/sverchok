@@ -34,7 +34,7 @@
       "hide": false,
       "label": "Noise Scale",
       "location": [
-        -1697.4852905273438,
+        -1697.4854125976562,
         337.40972900390625
       ],
       "params": {
@@ -49,7 +49,7 @@
       "hide": false,
       "label": "Noise Amplitude",
       "location": [
-        -1700.8305053710938,
+        -1700.8306274414062,
         253.6864471435547
       ],
       "params": {
@@ -63,7 +63,13 @@
         "11": {
           "label": "Polygon Mask"
         },
+        "12": {
+          "label": "Polygon Mask"
+        },
         "14": {
+          "label": "Normal Mode"
+        },
+        "15": {
           "label": "Normal Mode"
         }
       },
@@ -78,8 +84,9 @@
         "frame_width": 1.0,
         "join": true,
         "matching_mode": "PERFACE",
-        "ngons_as": "FRAME",
+        "quads_as": "FRAME",
         "remove_doubles": true,
+        "tris_as": "FRAME",
         "use_shell_factor": true
       },
       "width": 140.0
@@ -253,6 +260,7 @@
         56.73006057739258
       ],
       "params": {
+        "file_pointer": "Donor.json",
         "filename": "Donor.json"
       },
       "width": 140.0
@@ -452,8 +460,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1296.5253295898438,
-        262.7353973388672
+        -1296.525390625,
+        262.73541259765625
       ],
       "params": {
         "seed": 4
@@ -740,7 +748,7 @@
     ],
     [
       "Adaptive Polygons Mk2",
-      1,
+      2,
       "Viewer Draw Mk3",
       2
     ],
@@ -796,7 +804,7 @@
       "Mesh Expression",
       2,
       "Adaptive Polygons Mk2",
-      3
+      4
     ],
     [
       "Map Range",

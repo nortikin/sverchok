@@ -32,14 +32,15 @@ Inputs
 
 This node has the following inputs:
 
-- **VersR**. Vertices of the recipient object. This input is mandatory.
-- **PolsR**. Faces of the recipient object. Please have in mind that order of
+- **Vertices Recipient**. Vertices of the recipient object. This input is mandatory.
+- **Polygons Recipient**. Faces of the recipient object. Please have in mind that order of
   indices in each face affect donor object rotation; for example, `[0, 1, 2,
   3]` is one rotation, `[3, 0, 1, 2]` is the same turned by 90 degrees. This
   input is mandatory.
-- **VersD**. Vertices of the donor object. This input is mandatory.
-- **PolsD**. Faces of the donor object.
-- **FaceDataD**. List containing an arbitrary data item for each face of donor
+- **Vertices Donor**. Vertices of the donor object. This input is mandatory.
+- **Edges Donor**. Vertices of the donor object. This input is mandatory.
+- **Pols Donor**. Faces of the donor object.
+- **FaceData Donor**. List containing an arbitrary data item for each face of donor
   object. For example, this may be used to provide material indexes of donor
   object faces. Optional input.
 - **Width coeff**. Coefficient for donor object width (size along X,Y axis,
@@ -58,11 +59,11 @@ This node has the following inputs:
 - **Z Rotation**. Rotation of donor objects along the normal of recipient
   object face, in radians. Default value is 0.0. The input expects one number
   per each recipient object face.
-- **PolyRotation**. Rotation of each recipient object face indexes. The default
+- **Polygon Rotation**. Rotation of each recipient object face indexes. The default
   value is 0. For example, if recipient face definition is `[3, 4, 5, 6]`, and
-  *PolyRotation* is set to 1, then the face will be interpreted as `[4, 5, 6,
+  *Polygon Rotation* is set to 1, then the face will be interpreted as `[4, 5, 6,
   3]`. This will affect the orientation of donor object.
-- **PolyMask**. Mask for recipient object faces processing. What exactly will
+- **Polygon Mask**. Mask for recipient object faces processing. What exactly will
   be done with faces which are masked out is defined by **Mask Mode** parameter
   (see below).
 - **Threshold**. Merging threshold for "remove doubles" / "merge by distance"
@@ -83,6 +84,11 @@ This node has the following inputs:
     between copies.
 
   The default value is **Map**.
+
+- **Custom Normal**. This vector input will replace the normals of the recipient
+  meshes. It will only work if **Custom Normals** is set to **Normal per Vertex** or
+  **Normal per Face** (see below)
+
 
 Parameters
 ----------
@@ -129,7 +135,7 @@ This node has some number of parameters, and most of them are accessible only in
 
   - **Proportional**. Donor object size along recipient face normal is
     calculated by it's size along Z axis (or other one, defined by **Normal
-    axis** parameter) multiplyed by value from **Z coeff** input.
+    axis** parameter) multiplied by value from **Z coeff** input.
   - **Constant**. Donor object size along recipient face normal is taken from
     **Z Coeff** input.
   - **Auto**. Calculate donor object scale along normal automatically, based on
@@ -138,10 +144,21 @@ This node has some number of parameters, and most of them are accessible only in
 
   The default value is **Proportional**.
 
+- **Custom Normals**: This options allows to rewrite recipient normals before
+  processing them. Available values are:
 
-- **Interpolate normals**. This parameter is available only if **Use normals**
-  is set to **Map**. This defines the method of interpolation between recipient
-  object's vertex normals. Available values are:
+  - **None**: Use recipient normals
+  - **Normal per Vertex**: Overwrite Vertex Normals. It will affect to the faces
+    where **Normal Mode**  is set to **Map* (or 1)
+  - **Normal per Faces**: Overwrite Faces Normals. It will affect to the faces
+    where **Normal Mode**  is set to **Face* (or 0)
+
+  The default value is **None**.
+
+
+- **Interpolate normals**. This parameter will only work in the faces Where
+  **Normal Mode**  is set to **Map** (or 1). This defines the method of interpolation
+  between recipient object's vertex normals. Available values are:
 
   - **Linear**. Linear interpolation will be used.
   - **Unit length**. Linear interpolation will be used, but the resulting
@@ -238,7 +255,7 @@ This node has some number of parameters, and most of them are accessible only in
   -  **As Is**: Output the receiver face
   -  **Tris**: Perform Tris Transform. Barycentric transformation with the first 3 vertices of the face
   -  **Quads**: Perform Quad Transform. Uses first 4 vertices, if the face has less vertices the last one will be repeated
-  -  **Fan**: Perform Fan Transform. Subdivides the face in triangles and performs a barycentric transformation to each
+  -  **Fan**: Perform Fan Transform. Subdivides the face in triangles (Poke) and performs a barycentric transformation to each
   -  **SubQuads**: Divides the face in 4 + Quad Transform
   -  **Frame**: Perform Frame Transform
   -  **Auto Frame Fan**: Perform Frame transform if Frame With is lower than 1 otherwise perform Fan

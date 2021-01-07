@@ -1,5 +1,5 @@
 {
-  "export_version": "0.079",
+  "export_version": "0.10",
   "framed_nodes": {
     "Objects in": "Frame",
     "Objects in.001": "Frame.001"
@@ -8,6 +8,14 @@
   "nodes": {
     "Adaptive Polygons Mk2": {
       "bl_idname": "SvAdaptivePolygonsNodeMk3",
+      "custom_socket_props": {
+        "12": {
+          "label": "Polygon Mask"
+        },
+        "15": {
+          "label": "Normal Mode"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -16,14 +24,15 @@
         162.041748046875
       ],
       "params": {
-        "join": 1,
-        "remove_doubles": 1
+        "join": true,
+        "remove_doubles": true
       },
       "width": 140.0
     },
     "Frame": {
       "bl_idname": "NodeFrame",
-      "height": 298.25439453125,
+      "custom_socket_props": {},
+      "height": 322.3343811035156,
       "hide": false,
       "label": "RECIPIENT",
       "location": [
@@ -31,11 +40,12 @@
         184.05665588378906
       ],
       "params": {},
-      "width": 200.47998046875
+      "width": 200.0
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
-      "height": 295.2027587890625,
+      "custom_socket_props": {},
+      "height": 319.2827453613281,
       "hide": false,
       "label": "DONOR",
       "location": [
@@ -43,7 +53,7 @@
         60.0
       ],
       "params": {},
-      "width": 200.47998046875
+      "width": 200.0
     },
     "Objects in": {
       "bl_idname": "SvObjectsNodeMK3",
@@ -52,6 +62,7 @@
         0.5,
         0.20000000298023224
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "recepient",
@@ -71,6 +82,7 @@
         0.5,
         0.20000000298023224
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "donor",
@@ -91,6 +103,7 @@
         1.0
       ],
       "current_text": "Cube",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -99,6 +112,9 @@
         -85.90300750732422
       ],
       "params": {
+        "current_text": "Cube",
+        "is_animatable": false,
+        "n_id": "-8575430288870586118",
         "text": "Cube",
         "textmode": "JSON"
       },
@@ -208,6 +224,7 @@
         1.0
       ],
       "current_text": "Plane",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -216,6 +233,9 @@
         165.29104614257812
       ],
       "params": {
+        "current_text": "Plane",
+        "is_animatable": false,
+        "n_id": "-8575430288870582472",
         "text": "Plane",
         "textmode": "JSON"
       },
@@ -3736,6 +3756,7 @@
         0.30000001192092896,
         0.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -3773,7 +3794,7 @@
       "Text in+",
       0,
       "Adaptive Polygons Mk2",
-      3
+      4
     ],
     [
       "Adaptive Polygons Mk2",
@@ -3783,7 +3804,7 @@
     ],
     [
       "Adaptive Polygons Mk2",
-      1,
+      2,
       "Viewer Draw Mk3",
       2
     ]

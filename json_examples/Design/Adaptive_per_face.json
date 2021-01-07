@@ -64,7 +64,13 @@
         "11": {
           "label": "Polygon Mask"
         },
+        "12": {
+          "label": "Polygon Mask"
+        },
         "14": {
+          "label": "Normal Mode"
+        },
+        "15": {
           "label": "Normal Mode"
         }
       },
@@ -90,20 +96,27 @@
       "hide": false,
       "label": "",
       "location": [
-        3180.467041015625,
-        956.2824096679688
+        3304.39892578125,
+        960.8161010742188
+      ],
+      "params": {},
+      "width": 200.0
+    },
+    "Color in": {
+      "bl_idname": "SvColorsInNodeMK1",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2923.100341796875,
+        420.44476318359375
       ],
       "params": {
-        "materials": [
-          {
-            "material": "Edges"
-          },
-          {
-            "material": "Base"
-          }
-        ]
+        "b_": 1.0,
+        "g_": 0.7300000190734863
       },
-      "width": 200.0
+      "width": 110.0
     },
     "Frame": {
       "bl_idname": "NodeFrame",
@@ -233,10 +246,13 @@
       "hide": false,
       "label": "",
       "location": [
-        2981.73095703125,
-        944.799072265625
+        3084.503662109375,
+        949.332763671875
       ],
-      "params": {},
+      "params": {
+        "selectable_objects": false,
+        "show_objects": false
+      },
       "use_custom_color": true,
       "width": 140.0
     },
@@ -531,6 +547,30 @@
       "params": {},
       "width": 140.0
     },
+    "Viewer Draw": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        1.0,
+        0.5889999866485596,
+        0.21400000154972076
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        3080.2822265625,
+        601.79150390625
+      ],
+      "params": {
+        "color_per_polygon": true,
+        "display_edges": false,
+        "display_verts": false,
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
     "Viewer Draw Mk3": {
       "bl_idname": "SvViewerDrawMk4",
       "color": [
@@ -578,42 +618,6 @@
   },
   "update_lists": [
     [
-      "Reroute",
-      "Output",
-      "Adaptive Polygons Mk2",
-      "Vertices Recipient"
-    ],
-    [
-      "Reroute.002",
-      "Output",
-      "Adaptive Polygons Mk2",
-      "Polygons Recipient"
-    ],
-    [
-      "Symmetrize Mesh.001",
-      0,
-      "Adaptive Polygons Mk2",
-      2
-    ],
-    [
-      "Symmetrize Mesh.001",
-      2,
-      "Adaptive Polygons Mk2",
-      3
-    ],
-    [
-      "Symmetrize Mesh.001",
-      3,
-      "Adaptive Polygons Mk2",
-      4
-    ],
-    [
-      "Mesh viewer",
-      0,
-      "Assign Materials List",
-      0
-    ],
-    [
       "Vector out",
       2,
       "Map Range",
@@ -635,24 +639,6 @@
       "A Number.003",
       0,
       "Mesh Expression",
-      3
-    ],
-    [
-      "Adaptive Polygons Mk2",
-      0,
-      "Mesh viewer",
-      0
-    ],
-    [
-      "Adaptive Polygons Mk2",
-      1,
-      "Mesh viewer",
-      2
-    ],
-    [
-      "Adaptive Polygons Mk2",
-      2,
-      "Mesh viewer",
       3
     ],
     [
@@ -834,6 +820,84 @@
       "Output",
       "Viewer Draw Mk3.001",
       "Polygons"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Adaptive Polygons Mk2",
+      "Vertices Recipient"
+    ],
+    [
+      "Reroute.002",
+      "Output",
+      "Adaptive Polygons Mk2",
+      "Polygons Recipient"
+    ],
+    [
+      "Symmetrize Mesh.001",
+      0,
+      "Adaptive Polygons Mk2",
+      2
+    ],
+    [
+      "Symmetrize Mesh.001",
+      2,
+      "Adaptive Polygons Mk2",
+      4
+    ],
+    [
+      "Symmetrize Mesh.001",
+      3,
+      "Adaptive Polygons Mk2",
+      5
+    ],
+    [
+      "Adaptive Polygons Mk2",
+      0,
+      "Viewer Draw",
+      0
+    ],
+    [
+      "Adaptive Polygons Mk2",
+      2,
+      "Viewer Draw",
+      2
+    ],
+    [
+      "Color in",
+      0,
+      "Viewer Draw",
+      6
+    ],
+    [
+      "Adaptive Polygons Mk2",
+      3,
+      "Color in",
+      0
+    ],
+    [
+      "Adaptive Polygons Mk2",
+      0,
+      "Mesh viewer",
+      0
+    ],
+    [
+      "Adaptive Polygons Mk2",
+      2,
+      "Mesh viewer",
+      2
+    ],
+    [
+      "Adaptive Polygons Mk2",
+      3,
+      "Mesh viewer",
+      3
+    ],
+    [
+      "Mesh viewer",
+      0,
+      "Assign Materials List",
+      0
     ]
   ]
 }
