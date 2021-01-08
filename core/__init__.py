@@ -29,7 +29,12 @@ def sv_unregister_modules(modules):
     for m in reversed(modules):
         if hasattr(m, "unregister"):
             # print("Unregistering module: {}".format(m.__name__))
-            m.unregister()
+            try:
+                m.unregister()
+            except RuntimeError as e:
+                print("Error unregistering module: {}".format(m.__name__))
+                print(str(e))
+
 
 def sv_registration_utils():
     """ this is a faux module for syntactic sugar on the imports in __init__ """
