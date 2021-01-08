@@ -181,11 +181,14 @@ def joiner(list_all, level, level2=1):
 
     if level == level2:
         if type(list_all) in [list, tuple, ndarray]:
-            for list_a in list_all:
-                if type(list_a) in [list, tuple, ndarray]:
-                    list_tmp.extend(list_a)
-                else:
-                    list_tmp.append(list_a)
+            if isinstance(list_all[0], str):
+                list_tmp = ''.join(list_all)
+            else:
+                for list_a in list_all:
+                    if type(list_a) in [list, tuple, ndarray]:
+                        list_tmp.extend(list_a)
+                    else:
+                        list_tmp.append(list_a)
         else:
             list_tmp.append(list_all)
 
