@@ -31,163 +31,173 @@ from copy import deepcopy
 from cmath import exp
 
 
-class SvNeuro_Elman:
-
+class SvNeuroElman:
+    """ A set of functions for working with teachable neuron """
 
     def init_w(self, number, ext, treshold):
         out = []
-        for n in range(number):
-            tmp = []
-            for e in range(ext):
-                tmp.append(uniform(-treshold, treshold))
+        for _ in range(number):
+            tmp = [uniform(-treshold, treshold) for _ in range(ext)]
             out.append(tmp)
 
         return out
 
+    def sigmoida(self, signal):
+        result = (exp(signal).real - exp(-signal).real) / (exp(signal).real + exp(-signal).real + 1e-8)
+        return result
 
-    def sigmoida(self, x, a):
-        if a==0:
-            b=1
-        else:
-            b = 1/a
-        return 1/(1+exp(-b*x).real+1e-8)
+    def neuro(self, list_in, etalon, maxim, is_learning, prop):
+        """ The function calculates the output values depending on the input """
 
-    def neuro(self, list_in, etalon, maxim, learning, prop):
-        outA = self.layerA(list_in, prop)
-        outB = self.layerB(outA, prop)
-        outC = self.layerC(outB, prop)
+        _list_in = [signal_a/maxim for signal_a in list_in]
+        out_a = self.layer_a(_list_in, prop)
+        out_b = self.layer_b(out_a, prop)
+        out_c = self.layer_c(out_b, prop)
 
-        if learning:
-            lin = len(etalon)
-            if lin<prop['InC']:
-                d = prop['InC']-lin
-                etalon = etalon+[0]*d
-            etalon_ = list(map(lambda x: x/maxim, etalon))
-            self.learning(outA, outB, outC, etalon_, maxim, prop)
-        outC_ = list(map(lambda x: x*maxim, outC))
-        return outC_
+        if is_learning:
+            len_etalon = len(etalon)
+            if len_etalon < prop['InC']:
+                d = prop['InC'] - len_etalon
+                etalon = etalon + [0] * d
+            _etalon = list(map(lambda x: x / maxim, etalon))
+            self.learning(out_a, out_b, out_c, _etalon, maxim, prop)
 
+        _out_c = list(map(lambda x: x * maxim, out_c))
+        return _out_c
 
-    def layerA(self, list_in, prop):
-        lin = len(list_in)
-        if lin<prop['InA']:
-            d = prop['InA']-lin
-            list_in = list_in+[1]*d
+    def layer_a(self, list_in, prop):
+        out_a = deepcopy(list_in)
+        len_outa = len(out_a)
+        if len_outa < prop['InA']:
+            ext_list_in = prop['InA'] - len_outa
+            out_a.extend([1] * ext_list_in)
+        return out_a
 
-        outA = deepcopy(list_in)
-        return outA
+    def layer_b(self, outA, prop):
+        out_b = [0] * prop['InB']
+        for idx_a, weights_a in enumerate(prop['wA']):
+            for idx_b, wa in enumerate(weights_a):
+                signal_a = wa * outA[idx_a]
+                out_b[idx_b] += signal_a
 
+        _out_b = [self.sigmoida(signal_b) for signal_b in out_b]
+        return _out_b
 
-    def layerB(self, outA, prop):
-        outB = [0]*prop['InB']
-        for ida,la in enumerate(prop['wA']):
-            for idb, lb in enumerate(la):
-                t1 = lb*outA[ida]
-                outB[idb] += t1
+    def layer_c(self, outB, prop):
+        out_c = [0] * prop['InC']
+        for idx_b, weights_b in enumerate(prop['wB']):
+            for idx_c, wb in enumerate(weights_b):
+                signal_b = wb * outB[idx_b]
+                out_c[idx_c] += signal_b
+        return out_c
 
-        outB_ = [self.sigmoida(p,prop['InB']) for p in outB]
-        return outB_
+    # **********************
+    @staticmethod
+    def sigma(ej, f_vj):
+        return ej * f_vj
 
-    def layerC(self, outB, prop):
-        outC = [0]*prop['InC']
-        for idb,lb in enumerate(prop['wB']):
-            for idc, lc in enumerate(lb):
-                t1 = lc*outB[idb]
-                outC[idc] += t1
-        return outC
-
-
-
-# **********************
-    def sigma(self, ej, f_vj):
-        return ej*f_vj
-
-    def f_vj_sigmoida(self, a, yj):
-        if a==0:
+    @staticmethod
+    def f_vj_sigmoida(a, yj):
+        if a == 0:
             b = 1
         else:
-            b = 1/a
-        return b*yj*(1-yj)
+            b = 1 / a
+        return b * yj * (1 - yj)
 
-    def func_ej_last(self, dj, yj):
-        return dj-yj
+    @staticmethod
+    def func_ej_last(dj, yj):
+        return dj - yj
 
-    def func_ej_inner(self, Esigmak, wkj):
-        return Esigmak*wkj
+    @staticmethod
+    def func_ej_inner(e_sigma_k, wkj):
+        return e_sigma_k * wkj
 
-    def delta_wji(self, sigmaj, yi, prop):
-        return prop['k_learning']*sigmaj*yi
+    @staticmethod
+    def delta_wji(sigma_j, yi, prop):
+        return prop['k_learning'] * sigma_j * yi
 
-    def func_w(self, w, dw, prop):
-        return (1-prop['k_lambda'])*w + dw
+    @staticmethod
+    def func_w(w, dw, prop):
+        return (1 - prop['k_lambda']) * w + dw
 
-    def learning(self, outA, outB, outC, etalon, maxim, prop):
-        list_wA = deepcopy(prop['wA'])
-        list_wB = deepcopy(prop['wB'])
-        list_x = deepcopy(outA)
-        for idx, x in enumerate(outA):
-            step = 0
+    def learning(self, out_a, out_b, out_c, etalon, maxim, prop):
+        weights_a = deepcopy(prop['wA'])
+        weights_b = deepcopy(prop['wB'])
+        _out_a = deepcopy(out_a)
+        for idx, native_signal_a in enumerate(out_a):
+            processed_signal_a = deepcopy(native_signal_a)
+            _out_b = deepcopy(out_b)
+            _out_c = deepcopy(out_c)
+            for _ in range(prop['cycles']):
+                in_b = [0] * prop['InB']
+                in_a = [0] * prop['InA']
+                for idc, signal_c in enumerate(_out_c):
+                    c_ = self.sigmoida(signal_c)
+                    e_c = self.func_ej_last(etalon[idc], signal_c)
+                    f_vc = self.f_vj_sigmoida(prop['InC'], c_)
+                    sigma_c = self.sigma(e_c, f_vc)
 
-            xi = deepcopy(x)
-            outB_ = deepcopy(outB)
-            outC_ = deepcopy(outC)
-            while step<prop['cycles']:
-                step += 1
-                eB = [0]*prop['InB']
-                eA = [0]*prop['InA']
-                for idc, c in enumerate(outC_):
-                    c_ = self.sigmoida(c, prop['InC'])
-                    eC = self.func_ej_last(etalon[idc], c)
-                    f_vC = self.f_vj_sigmoida(prop['InC'], c_)
-                    sigmaC = self.sigma(eC, f_vC)
+                    for idb, signal_b in enumerate(_out_b):
+                        dwji = self.delta_wji(sigma_c, signal_b, prop)
+                        weights_b[idb][idc] = self.func_w(weights_b[idb][idc], dwji, prop)
+                        in_b[idb] += sigma_c * dwji
 
-                    for idb, b in enumerate(outB_):
-                        dwji = self.delta_wji(sigmaC, b, prop)
-                        list_wB[idb][idc] = self.func_w(list_wB[idb][idc], dwji, prop)
-                        eB[idb] += sigmaC*dwji
+                for idb, signal_b in enumerate(_out_b):
+                    f_vb = self.f_vj_sigmoida(prop['InB'], signal_b)
+                    sigma_b = self.sigma(in_b[idb], f_vb)
 
-                for idb, b in enumerate(outB_):
-                    f_vB = self.f_vj_sigmoida(prop['InB'], b)
-                    sigmaB = self.sigma(eB[idb], f_vB)
+                    for ida, signal_a in enumerate(out_a):
+                        dwji = self.delta_wji(sigma_b, signal_a, prop)
+                        weights_a[ida][idb] = self.func_w(weights_a[ida][idb], dwji, prop)
+                        in_a[ida] += sigma_b * dwji
 
-                    for ida, a in enumerate(outA):
-                        dwji = self.delta_wji(sigmaB, a, prop)
-                        list_wA[ida][idb] = self.func_w(list_wA[ida][idb], dwji, prop)
-                        eA[ida] += sigmaB*dwji
+                processed_signal_a -= prop['epsilon'] * processed_signal_a * (maxim - processed_signal_a)
+                absdx = abs(native_signal_a - processed_signal_a)
+                if absdx <= prop['trashold'] or absdx > abs(maxim / 2):
+                    break
+                _out_a[idx] = processed_signal_a
 
-                xi = xi - prop['epsilon'] * xi*(maxim-xi)
-                absdx = abs(x-xi)
-                if absdx<= prop['trashold'] or absdx>abs(maxim/2): break
-                list_x[idx] = xi
+                _out_b = self.layer_b(_out_a, prop)
+                _out_c = self.layer_c(out_b, prop)
 
-                outB_ = self.layerB(list_x, prop)
-                outC_ = self.layerC(outB, prop)
-
-        prop['wA'] = list_wA
-        prop['wB'] = list_wB
-
+        prop['wA'] = weights_a
+        prop['wB'] = weights_b
 
 
 class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
-    ''' Neuro Elman 1 Layer '''
+    ''' 
+        Neuro Elman 1 Layer 
+        Teachable node getting data with etalon example to learn
+        Than after animated learning can output result without
+            etalon values
+    '''
+
     bl_idname = 'SvNeuroElman1LNode'
     bl_label = '*Neuro Elman 1 Layer'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_NEURO'
 
-    Elman = SvNeuro_Elman()
+    elman = None
 
-    k_learning: FloatProperty(name='k_learning', default=0.1, update=updateNode)
-    gisterezis: FloatProperty(name='gisterezis', default=0.1, min=0.0, update=updateNode)
-    maximum: FloatProperty(name='maximum', default=3.0, update=updateNode)
-    menushka: BoolProperty(name='menushka', default=False)
-    epsilon: FloatProperty(name='epsilon', default=1.0, update=updateNode)
-    treshold: FloatProperty(name='treshold', default=0.01, update=updateNode)
-    k_lambda: FloatProperty(name='k_lambda', default=0.001, max=0.1, update=updateNode)
-    cycles: IntProperty(name='cycles', default=3, min = 1, update=updateNode)
-    lA: IntProperty(name='lA', default=1, min = 0, update=updateNode)
-    lB: IntProperty(name='lB', default=5, min = 0, update=updateNode)
-    lC: IntProperty(name='lC', default=1, min = 0, update=updateNode)
+    k_learning: FloatProperty(name='k_learning', default=0.1, update=updateNode, description="Learning rate")
+    gisterezis: FloatProperty(name='gisterezis', default=0.1, min=0.0, update=updateNode,
+                              description="Sets the threshold of values inside the learning algorithm (in plans)")
+    maximum: FloatProperty(name='maximum', default=3.0, update=updateNode,
+                           description="The maximum value of the input and output layer")
+    menushka: BoolProperty(name='menushka', default=False, description="Extra options")
+    epsilon: FloatProperty(name='epsilon', default=1.0, update=updateNode,
+                           description="The coefficient participates in the learning assessment function")
+    treshold: FloatProperty(name='treshold', default=0.01, update=updateNode,
+                            description="Participates in learning assessment")
+    k_lambda: FloatProperty(name='k_lambda', default=0.0001, max=0.1, update=updateNode,
+                            description="Weight change step during training")
+    cycles: IntProperty(name='cycles', default=3, min=1, update=updateNode, description="Internal Learning Loops")
+    lA: IntProperty(name='lA', default=1, min=0, update=updateNode,
+                    description="Input layer (must match the number of elements in the input)")
+    lB: IntProperty(name='lB', default=5, min=0, update=updateNode,
+                    description="Inner layer (more nodes - more accurate calculations)")
+    lC: IntProperty(name='lC', default=1, min=0, update=updateNode,
+                    description="Output layer (must match the number of elements in the output)")
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "data")
@@ -197,22 +207,24 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
         handle_name = self.name + self.id_data.name
-        layout.prop(self, "k_learning", text="koeff learning")
-        layout.prop(self, "gisterezis", text="gisterezis")
+
+        col_top = layout.column(align=True)
+        row = col_top.row(align=True)
+        row.prop(self, "lA", text="A layer")
+        row = col_top.row(align=True)
+        row.prop(self, "lB", text="B layer")
+        row = col_top.row(align=True)
+        row.prop(self, "lC", text="C layer")
+
         layout.prop(self, "maximum", text="maximum")
-        layout.prop(self, "cycles", text="cycles")
-        op_start = layout.operator('node.sverchok_neuro', text='Restart')
-        op_start.typ=1
+        op_start = layout.operator('node.sverchok_neuro', text='Reset')
+        op_start.typ = 1
         op_start.handle_name = handle_name
         layout.prop(self, "menushka", text="extend sets:")
         if self.menushka:
-            col_top = layout.column(align=True)
-            row = col_top.row(align=True)
-            row.prop(self, "lA", text="A layer")
-            row = col_top.row(align=True)
-            row.prop(self, "lB", text="B layer")
-            row = col_top.row(align=True)
-            row.prop(self, "lC", text="C layer")
+            layout.prop(self, "k_learning", text="koeff learning")
+            layout.prop(self, "gisterezis", text="gisterezis")
+            layout.prop(self, "cycles", text="cycles")
             col = layout.column(align=True)
             col.prop(self, "epsilon", text="epsilon")
             col = layout.column(align=True)
@@ -220,47 +232,43 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
             col = layout.column(align=True)
             col.prop(self, "treshold", text="treshold")
 
-
     def process(self):
         handle_name = self.name + self.id_data.name
         handle = handle_read(handle_name)
         props = handle[1]
         if not handle[0]:
-            props = {'InA':2,
-                     'InB':5,
-                     'InC':1,
-                     'wA':[],
-                     'wB':[],
-                     'gister':0.01,
-                     'k_learning':0.1,
-                     'epsilon':1.3,
-                     'cycles':3,
-                     'trashold':0.01,
-                     'k_lambda':0.0001}
+            elman = SvNeuroElman()
+            props = {'InA': 2,
+                     'InB': 5,
+                     'InC': 1,
+                     'wA': [],
+                     'wB': [],
+                     'gister': 0.01,
+                     'k_learning': 0.1,
+                     'epsilon': 1.3,
+                     'cycles': 3,
+                     'trashold': 0.01,
+                     'k_lambda': 0.0001,
+                     'Elman': elman,
+                     }
 
-            props['wA'] = self.Elman.init_w(props['InA'], props['InB'], props['trashold'])
-            props['wB'] = self.Elman.init_w(props['InB'], props['InC'], props['trashold'])
-
-
-        self.Elman.gister = abs(self.gisterezis)
-        self.Elman.k_learning = self.k_learning
-
+        self.elman = props['Elman']
         result = []
         if self.outputs['result'].is_linked and self.inputs['data'].is_linked:
 
             if self.inputs['etalon'].is_linked:
-                etalon = self.inputs['etalon'].sv_get()[0]
-                flag = True
+                input_etalon = self.inputs['etalon'].sv_get()
+                is_learning = True
             else:
-                flag = False
-                etalon = [[0]]
+                input_etalon = [[0]]
+                is_learning = False
 
-            if (props['InA']!=self.lA+1) or props['InB']!=self.lB or props['InC']!=self.lC:
-                props['InA'] = self.lA+1
+            if (props['InA'] != self.lA + 1) or props['InB'] != self.lB or props['InC'] != self.lC:
+                props['InA'] = self.lA + 1
                 props['InB'] = self.lB
                 props['InC'] = self.lC
-                props['wA'] = self.Elman.init_w(props['InA'], props['InB'])
-                props['wB'] = self.Elman.init_w(props['InB'], props['InC'])
+                props['wA'] = self.elman.init_w(props['InA'], props['InB'], props['trashold'])
+                props['wB'] = self.elman.init_w(props['InB'], props['InC'], props['trashold'])
 
             props['gister'] = self.gisterezis
             props['k_learning'] = self.k_learning
@@ -269,29 +277,32 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
             props['cycles'] = self.cycles
             props['trashold'] = self.treshold
 
-            data_ = self.inputs['data'].sv_get()[0]
-            if type(etalon[0]) not in [list, tuple]: etalon = [etalon]
-            if type(data_[0]) not in [list, tuple]: data_ = [data_]
-            for idx, data in enumerate(data_):
-                let = len(etalon)-1
-                eta = etalon[min(idx,let)]
-                data2 = [1.0]+data
-                if type(eta) not in [list, tuple]: eta = [eta]
-                result.append([self.Elman.neuro(data2, eta, self.maximum, flag, props)])
+            input_data = self.inputs['data'].sv_get()
 
+            if type(input_etalon[0]) not in [list, tuple]:
+                input_etalon = [input_etalon]
+            if type(input_data[0]) not in [list, tuple]:
+                input_data = [input_data]
+
+            for idx, data in enumerate(input_data):
+                let = len(input_etalon) - 1
+                eta = input_etalon[min(idx, let)]
+                data2 = [1.0] + data
+                if type(eta) not in [list, tuple]:
+                    eta = [eta]
+
+                result.append(self.elman.neuro(data2, eta, self.maximum, is_learning, props))
         else:
-            result = [[[]]]
+            result = [[]]
 
         handle_write(handle_name, props)
         self.outputs['result'].sv_set(result)
 
 
-
-
-#*********************************
+# *********************************
 
 class SvNeuroOps(bpy.types.Operator):
-    """ Neuro operators """
+    """ Resetting weights """
     bl_idname = "node.sverchok_neuro"
     bl_label = "Sverchok Neuro operators"
     bl_options = {'REGISTER', 'UNDO'}
@@ -303,10 +314,10 @@ class SvNeuroOps(bpy.types.Operator):
         if self.typ == 1:
             handle = handle_read(self.handle_name)
             prop = handle[1]
-            Elman = SvNeuro_Elman()
             if handle[0]:
-                prop['wA']=Elman.init_w(prop['InA'], prop['InB'], prop['trashold'])
-                prop['wB']=Elman.init_w(prop['InB'], prop['InC'], prop['trashold'])
+                elman = prop['Elman']
+                prop['wA'] = elman.init_w(prop['InA'], prop['InB'], prop['trashold'])
+                prop['wB'] = elman.init_w(prop['InB'], prop['InC'], prop['trashold'])
                 handle_write(self.handle_name, prop)
 
         return {'FINISHED'}

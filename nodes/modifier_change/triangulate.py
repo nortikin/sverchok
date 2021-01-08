@@ -22,6 +22,7 @@ import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length
+from sverchok.utils.sv_mesh_utils import get_unique_faces
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 
@@ -124,6 +125,8 @@ class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
                 new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
                 new_face_data = []
             bm.free()
+
+            new_faces = get_unique_faces(new_faces)
 
             result_vertices.append(new_vertices)
             result_edges.append(new_edges)

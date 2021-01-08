@@ -192,6 +192,7 @@
     SvExScalarFieldPointNode
     SvAttractorFieldNodeMk2
     SvExImageFieldNode
+    SvMeshSurfaceFieldNode
     SvExMeshNormalFieldNode
     SvExVoronoiFieldNode
     SvExMinimalScalarFieldNode
@@ -470,6 +471,7 @@
     SvInsetFaces
     SvLatheNode
     SvSmoothNode
+    SvRelaxMeshNode
     SvSmoothLines
     ---
     CrossSectionNode
