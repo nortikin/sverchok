@@ -357,4 +357,13 @@ Use materials from the recipient object faces for the resulting object:
 
 .. image:: https://user-images.githubusercontent.com/284644/71734153-0d705500-2e6d-11ea-87aa-8d9a01085645.png
 
-You can also find some more examples `in the development thread <https://github.com/nortikin/sverchok/pull/2651>`_.
+Using custom normals to control the z axis of the donors:
+
+.. image:: https://user-images.githubusercontent.com/10011941/103927917-611a1c00-511b-11eb-94f5-55930829ce29.png
+
+Using edges to create adaptive curves:
+
+.. image:: https://user-images.githubusercontent.com/10011941/103927917-611a1c00-511b-11eb-94f5-55930829ce29.png
+
+You can also find some more examples `in the development thread 1 <https://github.com/nortikin/sverchok/pull/2651>`_
+and `in the development thread 2 <https://github.com/nortikin/sverchok/pull/3798>`_.
