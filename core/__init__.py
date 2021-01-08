@@ -28,7 +28,7 @@ def sv_unregister_modules(modules):
     clear_system_cache()
     for m in reversed(modules):
         if hasattr(m, "unregister"):
-            # print("Unregistering module: {}".format(m.__name__))
+            print("Unregistering module: {}".format(m.__name__))
             m.unregister()
 
 def sv_registration_utils():
