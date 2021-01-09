@@ -106,7 +106,7 @@ def barycentric_transform_np(verts, src_verts, dst_verts):
 
 
 def donor_by_index(verts_donor, edges_donor, faces_donor, face_data_donor, donor_index, n_faces_recpt):
-    verts_donor_m, edges_donor_m, faces_donor_m, face_data_m = [], [], []
+    verts_donor_m, edges_donor_m, faces_donor_m, face_data_m = [], [], [], []
     if not face_data_donor[0]:
         face_data_m = cycle([[]])
     for i, idx in zip(range(n_faces_recpt), cycle(donor_index)):
@@ -199,7 +199,9 @@ class OutputData():
         else:
             self.face_recpt_idx_out = None
         if rem_doubles:
-            doubles_res = remove_doubles(self.verts_out[0], self.edges_out[0], self.faces_out[0],
+            doubles_res = remove_doubles(self.verts_out[0],
+                                         self.edges_out[0] if self.edges_out else [],
+                                         self.faces_out[0] if self.faces_out else [],
                                          threshold,
                                          face_data=self.face_data_out,
                                          vert_data=self.vert_recpt_idx_out,
@@ -1397,7 +1399,6 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
 
         objects, single_donor = self.get_data()
         output = OutputData(self)
-
 
         for verts_recpt, faces_recpt, verts_donor,\
             edges_donor, faces_donor, face_data_donor,\
