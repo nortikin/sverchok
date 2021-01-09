@@ -381,7 +381,10 @@ def remove_doubles(vertices, edges, faces, d, face_data=None, vert_data=None, ed
     has_vert_data = bool(vert_data)
     has_edge_data = bool(edge_data)
     has_face_data = bool(face_data)
-    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True, markup_face_data=True, markup_edge_data=True, markup_vert_data=True)
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True,
+                           markup_face_data=has_face_data, 
+                           markup_edge_data=has_edge_data,
+                           markup_vert_data=has_vert_data)
     bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=d)
     bm.verts.index_update()
     bm.edges.index_update()

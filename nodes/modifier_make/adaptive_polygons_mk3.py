@@ -27,7 +27,8 @@ from numpy import (array as np_array,
                    float64 as np_float64,
                    dot as np_dot,
                    max as np_max,
-                   min as np_min)
+                   min as np_min,
+                   concatenate as np_concatenate)
 from numpy.linalg import (norm as np_norm,
                           inv as np_inv)
 import bpy
@@ -49,7 +50,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, remove_doubles
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.geom import diameter, LineEquation2D, center
 from sverchok.utils.math import np_normalize_vectors
-
+from sverchok.utils.mesh_functions import join_meshes, meshes_py, to_elements, meshes_np
 # "coauthor": "Alessandro Zomparelli (sketchesofcode)"
 
 cos_pi_6 = cos(pi/6)
@@ -58,6 +59,10 @@ sqrt_3 = sqrt(3)
 sqrt_3_6 = sqrt_3/6
 sqrt_3_3 = sqrt_3/3
 sqrt_3_2 = sqrt_3/2
+
+def join(vertices, edges, faces):
+    meshes = join_meshes(meshes_py(vertices, edges, faces))
+    return to_elements(meshes)
 
 def matrix_def(triangle):
     '''Creation of Transform matrix from triangle'''
@@ -115,30 +120,58 @@ def donor_by_index(verts_donor, edges_donor, faces_donor, face_data_donor, donor
 
 
 class OutputData():
-    def __init__(self):
+    def __init__(self, node):
         self.verts_out = []
         self.edges_out = []
         self.faces_out = []
         self.face_data_out = []
         self.vert_recpt_idx_out = []
-        self.face_recpt_idx_out = []
         self.edge_recpt_idx_out = []
+        self.face_recpt_idx_out = []
+
+        self.get_edges = node.outputs['Edges'].is_linked
+        self.get_faces = node.outputs['Polygons'].is_linked
+        self.get_face_data = node.outputs['FaceData'].is_linked
+        self.get_vert_recpt_idx = node.outputs['VertRecptIdx'].is_linked
+        self.get_edge_recpt_idx = node.outputs['EdgeRecptIdx'].is_linked
+        self.get_face_recpt_idx = node.outputs['FaceRecptIdx'].is_linked
+
+        self.verts_add = self.verts_out.append
+        self.edges_add = self.edges_out.append
+        self.faces_add = self.faces_out.append
+        self.face_data_add = self.face_data_out.append
+        self.vert_idx_add = self.vert_recpt_idx_out.append
+        self.edge_idx_add = self.edge_recpt_idx_out.append
+        self.face_idx_add = self.face_recpt_idx_out.append
 
     def set_topology_data(self, donor, idx):
-        self.edges_out.append(donor.edges_i)
-        self.faces_out.append(donor.faces_i)
-        self.face_data_out.append(donor.face_data_i)
-        self.vert_recpt_idx_out.append([idx for i in donor.verts_v])
-        self.edge_recpt_idx_out.append([idx for i in donor.edges_i])
-        self.face_recpt_idx_out.append([idx for i in donor.faces_i])
+        if self.get_edges:
+            self.edges_add(donor.edges_i)
+        if self.get_faces:
+            self.faces_add(donor.faces_i)
+        if self.get_face_data:
+            self.face_data_add(donor.face_data_i)
+        if self.get_vert_recpt_idx:
+            self.vert_idx_add([idx for i in donor.verts_v])
+        if self.get_edge_recpt_idx:
+            self.edge_idx_add([idx for i in donor.edges_i])
+        if self.get_face_recpt_idx:
+            self.face_idx_add([idx for i in donor.faces_i])
 
     def add_sigle_face(self, verts, sides_n, recpt_face_idx):
-        self.verts_out.append(verts)
-        self.edges_out.append([(i, (i+1)%sides_n) for i in range(sides_n)])
-        self.faces_out.append([list(range(sides_n))])
-        self.vert_recpt_idx_out.append([recpt_face_idx for i in verts])
-        self.edge_recpt_idx_out.append([recpt_face_idx for i in range(sides_n)])
-        self.face_recpt_idx_out.append([recpt_face_idx])
+        self.verts_add(verts)
+        if self.get_edges:
+            self.edges_add([(i, (i + 1)%sides_n) for i in range(sides_n)])
+        if self.get_faces:
+            self.faces_add([list(range(sides_n))])
+        if self.get_face_data:
+            self.face_data_add([recpt_face_idx])
+        if self.get_vert_recpt_idx:
+            self.vert_idx_add([recpt_face_idx for i in verts])
+        if self.get_edge_recpt_idx:
+            self.edge_idx_add([recpt_face_idx for i in range(sides_n)])
+        if self.get_face_recpt_idx:
+            self.face_idx_add([recpt_face_idx])
 
     def extend(self, new):
         self.verts_out.extend(new.verts_out)
@@ -150,29 +183,44 @@ class OutputData():
         self.face_recpt_idx_out.extend(new.face_recpt_idx_out)
 
     def join(self, rem_doubles, threshold):
-        self.verts_out, self.edges_out, self.faces_out = mesh_join(self.verts_out, self.edges_out, self.faces_out)
+
+        self.verts_out, self.edges_out, self.faces_out = join(self.verts_out, self.edges_out, self.faces_out)
         self.face_data_out = sum(self.face_data_out, [])
-        self.vert_recpt_idx_out = sum(self.vert_recpt_idx_out, [])
-        self.edge_recpt_idx_out = sum(self.edge_recpt_idx_out, [])
-        self.face_recpt_idx_out = sum(self.face_recpt_idx_out, [])
+        if self.get_vert_recpt_idx:
+            self.vert_recpt_idx_out = sum(self.vert_recpt_idx_out, [])
+        else:
+            self.vert_recpt_idx_out = None
+        if self.get_face_recpt_idx:
+            self.edge_recpt_idx_out = sum(self.edge_recpt_idx_out, [])
+        else:
+            self.edge_recpt_idx_out = None
+        if self.get_edge_recpt_idx:
+            self.face_recpt_idx_out = sum(self.face_recpt_idx_out, [])
+        else:
+            self.face_recpt_idx_out = None
         if rem_doubles:
-            doubles_res = remove_doubles(self.verts_out, self.edges_out, self.faces_out, threshold, face_data=self.face_data_out, vert_data=self.vert_recpt_idx_out)
+            doubles_res = remove_doubles(self.verts_out[0], self.edges_out[0], self.faces_out[0],
+                                         threshold,
+                                         face_data=self.face_data_out,
+                                         vert_data=self.vert_recpt_idx_out,
+                                         edge_data=self.vert_recpt_idx_out)
 
             if len(doubles_res) == 4:
                 self.verts_out, self.edges_out, self.faces_out, data_out = doubles_res
             else:
                 self.verts_out, self.edges_out, self.faces_out = doubles_res
                 data_out = dict()
+
             self.vert_recpt_idx_out = data_out.get('verts', [])
             self.edge_recpt_idx_out = data_out.get('edges', [])
             self.face_data_out = data_out.get('faces', [])
             if self.face_recpt_idx_out:
                 self.face_recpt_idx_out = [self.face_recpt_idx_out[idx] for idx in data_out['face_init_index']]
 
-        self.verts_out = [self.verts_out]
-        self.edges_out = [self.edges_out]
-        self.faces_out = [self.faces_out]
-        self.face_data_out = [self.face_data_out]
+            self.verts_out = [self.verts_out]
+            self.edges_out = [self.edges_out]
+            self.faces_out = [self.faces_out]
+            self.face_data_out = [self.face_data_out]
         self.vert_recpt_idx_out = [self.vert_recpt_idx_out]
         self.edge_recpt_idx_out = [self.edge_recpt_idx_out]
         self.face_recpt_idx_out = [self.face_recpt_idx_out]
@@ -533,7 +581,7 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         if self.join:
             join_row.prop(self, "remove_doubles", text='Merge Doubles')
         enum_split(layout, self, 'matching_mode', 'Matching Mode', 0.45)
-        # layout.prop(self, "matching_mode")
+
         if self.matching_mode == 'PERFACE':
             enum_split(layout, self, 'donor_matching_mode', 'Donor Matching', 0.45)
 
@@ -1055,12 +1103,12 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
                 new_verts = self.interpolate_tri_3d_np(recpt_face_data, donor,
                                                        w_coef, z_coef, z_offset,
                                                        [i0, i1, i2])
-                output.verts_out.append(new_verts if output_numpy else new_verts.tolist())
+                output.verts_add(new_verts if output_numpy else new_verts.tolist())
             else:
                 new_verts = self.interpolate_tris(recpt_face_data, donor,
                                                   w_coef, z_coef, z_offset,
                                                   i0, i1, i2)
-                output.verts_out.append(np_array(new_verts) if output_numpy else new_verts)
+                output.verts_add(np_array(new_verts) if output_numpy else new_verts)
             output.set_topology_data(donor, recpt_face_data.index)
 
 
@@ -1098,13 +1146,13 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
                                                         w_coef, z_coef, z_offset,
                                                         [i0, i1, i2, i3])
 
-                output.verts_out.append(new_verts if output_numpy else new_verts.tolist())
+                output.verts_add(new_verts if output_numpy else new_verts.tolist())
             else:
                 new_verts = self.interpolate_quads(recpt_face_data, donor,
                                                    w_coef, z_coef, z_offset,
                                                    X, Y, Z,
                                                    i0, i1, i2, i3)
-                output.verts_out.append(np_array(new_verts) if output_numpy else new_verts)
+                output.verts_add(np_array(new_verts) if output_numpy else new_verts)
 
             output.set_topology_data(donor, recpt_face_data.index)
 
@@ -1160,14 +1208,16 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
                  face_rots, mask, single_donor, donor_index,
                  normal_mode, custom_normals):
 
-        bm = bmesh_from_pydata(verts_recpt, [], faces_recpt, normal_update=True,  markup_face_data=True)
+        bm = bmesh_from_pydata(verts_recpt, [], faces_recpt,
+                               normal_update=True,
+                               markup_face_data=self.custom_normal == 'FACE')
         bm_verts = bm.verts
         bm_verts.ensure_lookup_table()
         if self.custom_normal == 'VERTEX':
+            for vert, norm in zip(bm_verts, cycle(custom_normals)):
+                vert.normal = norm
 
-            for vert,norm in zip(bm_verts, cycle(custom_normals)):
-                vert.normal= norm
-        if self.custom_normal == 'FACE':
+        elif self.custom_normal == 'FACE':
             custom_normals = cycle_for_length(custom_normals, len(faces_recpt))
             face_layer = bm.faces.layers.int.get("initial_index")
             for face in bm.faces:
@@ -1202,7 +1252,7 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
             # so it's size along Z is not going to change.
             z_size = diameter(donor_verts_o, Z)
 
-        output = OutputData()
+        output = OutputData(self)
 
         prev_angle = None
         face_data = zip(faces_recpt, bm.faces, frame_widths, verts_donor_m, edges_donor_m, faces_donor_m, face_data_m, z_coefs, z_offsets, z_rotations, w_coefs, face_rots, mask, normal_mode)
@@ -1346,7 +1396,8 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
             return
 
         objects, single_donor = self.get_data()
-        output = OutputData()
+        output = OutputData(self)
+
 
         for verts_recpt, faces_recpt, verts_donor,\
             edges_donor, faces_donor, face_data_donor,\
