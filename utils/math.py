@@ -310,6 +310,20 @@ def np_vectors_angle(v1, v2):
     dot = np.dot(v1, v2)
     return np.arccos(dot)
 
+def np_normalized_vectors(vecs):
+    '''Returns new array with normalized vectors'''
+    result = np.zeros(vecs.shape)
+    norms = np.linalg.norm(vecs, axis=1)
+    nonzero = (norms > 0)
+    result[nonzero] = vecs[nonzero] / norms[nonzero][:,np.newaxis]
+    return result
+
+def np_normalize_vectors(vecs):
+    '''Does normalization in-place'''
+    norms = np.linalg.norm(vecs, axis=1)
+    nonzero = (norms > 0)
+    vecs[nonzero] = vecs[nonzero] / norms[nonzero][:,np.newaxis]
+
 def weighted_center(verts, field=None):
     if field is None:
         return np.mean(verts, axis=0)
@@ -321,4 +335,3 @@ def weighted_center(verts, field=None):
         wpoints = weights[:,np.newaxis] * verts
         result = wpoints.sum(axis=0) / weights.sum()
         return result
-

@@ -356,7 +356,7 @@ def bmesh_join(list_of_bmeshes, normal_update=False):
 
     return bm
 
-def remove_doubles(vertices, edges, faces, d, face_data=None, vert_data=None):
+def remove_doubles(vertices, edges, faces, d, face_data=None, vert_data=None, edge_data=None):
     """
     This is a wrapper for bmesh.ops.remove_doubles.
 
@@ -366,41 +366,54 @@ def remove_doubles(vertices, edges, faces, d, face_data=None, vert_data=None):
     vert_data: arbitrary data per mesh vertex.
 
     output:
-        if face_data or vert_data was specified, this outputs 4-tuple:
+        if face_data, vert_data or edge_data was specified, this outputs 4-tuple:
             * vertices
             * edges
             * faces
             * data: a dictionary with following keys:
                 * 'vert_init_index': indexes of the output vertices in the original mesh
+                * 'edge_init_index': indexes of the output edges in the original mesh
                 * 'face_init_index': indexes of the output faces in the original mesh
-                * 'faces': correctly reordered face_data (if present)
                 * 'verts': correclty reordered vert_data (if present)
+                * 'edges': correctly reordered edge_data (if present)
+                * 'faces': correctly reordered face_data (if present)
     """
-    has_face_data = bool(face_data)
     has_vert_data = bool(vert_data)
-    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True, markup_face_data = True, markup_vert_data = True)
+    has_edge_data = bool(edge_data)
+    has_face_data = bool(face_data)
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True,
+                           markup_face_data=has_face_data, 
+                           markup_edge_data=has_edge_data,
+                           markup_vert_data=has_vert_data)
     bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=d)
     bm.verts.index_update()
     bm.edges.index_update()
     bm.faces.index_update()
     verts, edges, faces = pydata_from_bmesh(bm)
-    if has_face_data or has_vert_data:
-        data = dict()
-        vert_layer = bm.verts.layers.int.get("initial_index")
-        face_layer = bm.faces.layers.int.get("initial_index")
-        if vert_layer:
-            data['vert_init_index'] = [vert[vert_layer] for vert in bm.verts]
-        if face_layer:
-            data['face_init_index'] = [face[face_layer] for face in bm.faces]
-        if has_face_data:
-            data['faces'] = face_data_from_bmesh_faces(bm, face_data)
-        if has_vert_data:
-            data['verts'] = vert_data_from_bmesh_verts(bm, vert_data)
-        bm.free()
-        return verts, edges, faces, data
-    else:
+    if not (has_face_data or has_vert_data or has_edge_data):
         bm.free()
         return verts, edges, faces
+
+    data = dict()
+    vert_layer = bm.verts.layers.int.get("initial_index")
+    edge_layer = bm.edges.layers.int.get("initial_index")
+    face_layer = bm.faces.layers.int.get("initial_index")
+    if vert_layer:
+        data['vert_init_index'] = [vert[vert_layer] for vert in bm.verts]
+    if edge_layer:
+        data['edge_init_index'] = [edge[edge_layer] for edge in bm.edges]
+    if face_layer:
+        data['face_init_index'] = [face[face_layer] for face in bm.faces]
+    if has_vert_data:
+        data['verts'] = vert_data_from_bmesh_verts(bm, vert_data)
+    if has_edge_data:
+        data['edges'] = edge_data_from_bmesh_edges(bm, vert_data)
+    if has_face_data:
+        data['faces'] = face_data_from_bmesh_faces(bm, face_data)
+    bm.free()
+    return verts, edges, faces, data
+
+
 
 def dual_mesh(bm, recalc_normals=True):
     # Make vertices of dual mesh by finding
@@ -818,4 +831,3 @@ def recalc_normals(verts, edges, faces, loop=False):
         verts, edges, faces = pydata_from_bmesh(bm)
         bm.free()
         return verts, edges, faces
-

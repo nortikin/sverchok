@@ -34,8 +34,8 @@
       "hide": false,
       "label": "Noise Scale",
       "location": [
-        -1222.5360221862793,
-        267.6996898651123
+        -1697.4854125976562,
+        337.40972900390625
       ],
       "params": {
         "float_": 2.380000114440918
@@ -49,8 +49,8 @@
       "hide": false,
       "label": "Noise Amplitude",
       "location": [
-        -1225.8812370300293,
-        183.97640800476074
+        -1700.8306274414062,
+        253.6864471435547
       ],
       "params": {
         "float_": 0.6699999570846558
@@ -58,25 +58,38 @@
       "width": 140.0
     },
     "Adaptive Polygons Mk2": {
-      "bl_idname": "SvAdaptivePolygonsNodeMk2",
-      "custom_socket_props": {},
+      "bl_idname": "SvAdaptivePolygonsNodeMk3",
+      "custom_socket_props": {
+        "11": {
+          "label": "Polygon Mask"
+        },
+        "12": {
+          "label": "Polygon Mask"
+        },
+        "14": {
+          "label": "Normal Mode"
+        },
+        "15": {
+          "label": "Normal Mode"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        2397.441162109375,
-        318.2692565917969
+        1841.3275146484375,
+        387.9793701171875
       ],
       "params": {
-        "frame_mode": "ALWAYS",
         "frame_width": 1.0,
         "join": true,
-        "map_mode": "QUADS",
         "matching_mode": "PERFACE",
+        "quads_as": "FRAME",
         "remove_doubles": true,
+        "tris_as": "FRAME",
         "use_shell_factor": true
       },
-      "width": 140.0
+      "width": 200
     },
     "Fill Holes": {
       "bl_idname": "SvFillsHoleNode",
@@ -85,8 +98,8 @@
       "hide": false,
       "label": "",
       "location": [
-        380.61968994140625,
-        76.4851303100586
+        -94.32958984375,
+        146.19520568847656
       ],
       "params": {
         "sides": 15
@@ -100,8 +113,8 @@
       "hide": false,
       "label": "",
       "location": [
-        600.6196899414062,
-        112.0316390991211
+        125.67041015625,
+        181.74171447753906
       ],
       "params": {},
       "width": 140.0
@@ -109,12 +122,12 @@
     "Frame": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 319.0199279785156,
+      "height": 321.73004150390625,
       "hide": false,
       "label": "Donor",
       "location": [
-        -38.67843246459961,
-        4.045716762542725
+        -513.6277465820312,
+        73.755859375
       ],
       "params": {},
       "width": 397.815673828125
@@ -122,12 +135,12 @@
     "Frame.001": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 378.7057800292969,
+      "height": 378.4159240722656,
       "hide": false,
       "label": "Donor parameters",
       "location": [
-        -65.60948944091797,
-        110.06001281738281
+        -540.5587768554688,
+        179.7701416015625
       ],
       "params": {},
       "width": 824.3370361328125
@@ -135,12 +148,12 @@
     "Frame.002": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 759.6201171875,
+      "height": 759.3302001953125,
       "hide": false,
       "label": "Recipient (Voronoi pattern)",
       "location": [
-        -307.9476318359375,
-        -91.50511932373047
+        -782.8969116210938,
+        -21.7950439453125
       ],
       "params": {},
       "width": 926.2797241210938
@@ -148,15 +161,15 @@
     "Frame.003": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 692.69970703125,
+      "height": 692.4097290039062,
       "hide": false,
       "label": "Randomize",
       "location": [
-        -30.240001678466797,
-        10.079999923706055
+        -505.18927001953125,
+        79.7900390625
       ],
       "params": {},
-      "width": 1171.5399169921875
+      "width": 1171.5400390625
     },
     "List Math": {
       "bl_idname": "ListFuncNode",
@@ -165,8 +178,8 @@
       "hide": false,
       "label": "",
       "location": [
-        1376.0278396606445,
-        -166.29420471191406
+        901.0785522460938,
+        -96.58407592773438
       ],
       "params": {
         "func_": "MIN"
@@ -180,8 +193,8 @@
       "hide": false,
       "label": "",
       "location": [
-        1374.119758605957,
-        -330.58189392089844
+        899.1704711914062,
+        -260.87176513671875
       ],
       "params": {
         "func_": "MAX"
@@ -195,8 +208,8 @@
       "hide": false,
       "label": "",
       "location": [
-        1602.180305480957,
-        -211.00209045410156
+        1127.2310180664062,
+        -141.29196166992188
       ],
       "params": {
         "new_max": 2.0,
@@ -211,8 +224,8 @@
       "hide": false,
       "label": "",
       "location": [
-        1841.9021339416504,
-        -58.20816659927368
+        1366.9528198242188,
+        11.501976013183594
       ],
       "params": {
         "clamp": false,
@@ -227,8 +240,8 @@
       "hide": false,
       "label": "",
       "location": [
-        184.88937377929688,
-        143.97623443603516
+        -290.0599060058594,
+        213.68630981445312
       ],
       "params": {
         "distance": 0.10000000149011612
@@ -243,10 +256,11 @@
       "hide": false,
       "label": "",
       "location": [
-        2039.7178077697754,
-        -12.980082035064697
+        1564.7684936523438,
+        56.73006057739258
       ],
       "params": {
+        "file_pointer": "Donor.json",
         "filename": "Donor.json"
       },
       "width": 140.0
@@ -258,8 +272,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -254.34125900268555,
-        190.09525871276855
+        -729.29052734375,
+        259.8052978515625
       ],
       "params": {},
       "width": 140.0
@@ -276,8 +290,8 @@
       "hide": false,
       "label": "",
       "location": [
-        426.72821044921875,
-        299.15601348876953
+        -48.2210693359375,
+        368.8660888671875
       ],
       "params": {
         "n_id": "-8034980455338195246",
@@ -298,8 +312,8 @@
       "hide": false,
       "label": "",
       "location": [
-        112.27020263671875,
-        -147.38931274414062
+        -362.6790771484375,
+        -77.67923736572266
       ],
       "params": {
         "n_id": "-8027588460831181262",
@@ -315,8 +329,8 @@
       "hide": false,
       "label": "",
       "location": [
-        977.8432693481445,
-        -174.8916473388672
+        502.89398193359375,
+        -105.1815185546875
       ],
       "params": {
         "mode": "Faces"
@@ -330,13 +344,32 @@
         0.5,
         0.5
       ],
-      "custom_socket_props": {},
+      "custom_socket_props": {
+        "0": {
+          "label": "Size X"
+        },
+        "1": {
+          "label": "Size Y"
+        },
+        "2": {
+          "label": "Num X"
+        },
+        "3": {
+          "label": "Num Y"
+        },
+        "4": {
+          "label": "Step X"
+        },
+        "5": {
+          "label": "Step Y"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1216.6936149597168,
-        -90.18882179260254
+        -1691.6428833007812,
+        -20.478782653808594
       ],
       "params": {
         "center": true,
@@ -354,8 +387,8 @@
       "hide": false,
       "label": "",
       "location": [
-        787.5957641601562,
-        28.217140197753906
+        312.64642333984375,
+        97.92724609375
       ],
       "params": {},
       "width": 16.0
@@ -367,8 +400,8 @@
       "hide": false,
       "label": "",
       "location": [
-        788.040771484375,
-        71.43331909179688
+        313.09149169921875,
+        141.1434326171875
       ],
       "params": {},
       "width": 16.0
@@ -380,8 +413,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1003.7809562683105,
-        124.49604606628418
+        -1478.730224609375,
+        194.20608520507812
       ],
       "params": {
         "current_op": "SCALAR",
@@ -396,8 +429,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -638.191478729248,
-        148.20922660827637
+        -1113.1407470703125,
+        217.9192657470703
       ],
       "params": {
         "current_op": "SCALAR",
@@ -412,8 +445,8 @@
       "hide": false,
       "label": "",
       "location": [
-        1151.4094314575195,
-        -204.02647399902344
+        676.4601440429688,
+        -134.31634521484375
       ],
       "params": {
         "out_mode": "SCALAR"
@@ -427,8 +460,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -821.5760612487793,
-        193.02535820007324
+        -1296.525390625,
+        262.73541259765625
       ],
       "params": {
         "seed": 4
@@ -442,8 +475,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -429.8031120300293,
-        150.78661918640137
+        -904.7523803710938,
+        220.4966583251953
       ],
       "params": {
         "selected_mode_from": "Scalar"
@@ -462,8 +495,8 @@
       "hide": false,
       "label": "",
       "location": [
-        2595.7626953125,
-        307.5472412109375
+        2120.813232421875,
+        377.25732421875
       ],
       "params": {
         "color_per_edge": true,
@@ -486,8 +519,8 @@
       "hide": false,
       "label": "",
       "location": [
-        198.6109619140625,
-        400.62012481689453
+        -276.33831787109375,
+        470.3302001953125
       ],
       "params": {
         "activate": false
@@ -507,8 +540,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -23.064361572265625,
-        367.53076934814453
+        -498.0136413574219,
+        437.2408447265625
       ],
       "params": {
         "activate": false
@@ -523,8 +556,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -39.55157470703125,
-        51.605140686035156
+        -514.5008544921875,
+        121.31521606445312
       ],
       "params": {
         "clip": 0.3700000047683716
@@ -534,36 +567,6 @@
   },
   "update_lists": [
     [
-      "Reroute.001",
-      "Output",
-      "Adaptive Polygons Mk2",
-      "VersR"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Adaptive Polygons Mk2",
-      "PolsR"
-    ],
-    [
-      "Mesh Expression",
-      0,
-      "Adaptive Polygons Mk2",
-      2
-    ],
-    [
-      "Mesh Expression",
-      2,
-      "Adaptive Polygons Mk2",
-      3
-    ],
-    [
-      "Map Range",
-      0,
-      "Adaptive Polygons Mk2",
-      7
-    ],
-    [
       "Merge by Distance",
       0,
       "Fill Holes",
@@ -646,12 +649,6 @@
       1,
       "Merge by Distance",
       1
-    ],
-    [
-      "Map Range.001",
-      0,
-      "Mesh Expression",
-      0
     ],
     [
       "Plane",
@@ -738,6 +735,24 @@
       0
     ],
     [
+      "Adaptive Polygons Mk2",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "Adaptive Polygons Mk2",
+      1,
+      "Viewer Draw Mk3",
+      1
+    ],
+    [
+      "Adaptive Polygons Mk2",
+      2,
+      "Viewer Draw Mk3",
+      2
+    ],
+    [
       "Voronoi 2D",
       0,
       "Viewer Draw Mk3.001",
@@ -768,16 +783,46 @@
       0
     ],
     [
-      "Adaptive Polygons Mk2",
+      "Map Range.001",
       0,
-      "Viewer Draw Mk3",
+      "Mesh Expression",
       0
     ],
     [
+      "Reroute.001",
+      "Output",
       "Adaptive Polygons Mk2",
-      1,
-      "Viewer Draw Mk3",
+      "Vertices Recipient"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Adaptive Polygons Mk2",
+      "Polygons Recipient"
+    ],
+    [
+      "Mesh Expression",
+      0,
+      "Adaptive Polygons Mk2",
       2
+    ],
+    [
+      "Mesh Expression",
+      1,
+      "Adaptive Polygons Mk2",
+      3
+    ],
+    [
+      "Mesh Expression",
+      2,
+      "Adaptive Polygons Mk2",
+      4
+    ],
+    [
+      "Map Range",
+      0,
+      "Adaptive Polygons Mk2",
+      8
     ]
   ]
 }

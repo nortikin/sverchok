@@ -98,7 +98,12 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Adaptive Polygons Mk2'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_ADAPTATIVE_POLS'
-
+    replacement_nodes = [('SvAdaptivePolygonsNodeMk3',
+                        dict(VersR='Vertices Recipient',
+                             PolsR='Polygons Recipient',
+                             VersD='Vertices Donor',
+                             PolsD='Polygons Donor',
+                             FaceDataD='FaceData Donor'), None)]
     axes = [
             ("X", "X", "Orient donor's X axis along normal", 0),
             ("Y", "Y", "Orient donor's Y axis along normal", 1),
@@ -116,12 +121,12 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         name='Width coeff',
         description = "Donor object width coefficient",
         default=1.0, max=3.0, min=0.5, update=updateNode)
-    
+
     frame_width: FloatProperty(
         name='Frame width',
         description = "Frame width coefficient for Frame / Fan mode",
         default=0.5, max=1.0, min=0.0, update=updateNode)
-    
+
     z_coef: FloatProperty(
         name='Z coeff',
         default=1.0, max=3.0, min=0.0, update=updateNode)
@@ -158,7 +163,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         description = "Use shell factor to make shell thickness constant",
         default = False,
         update = updateNode)
-    
+
     z_scale_modes = [
             ("PROP", "Proportional", "Scale along normal proportionally with the donor object", 0),
             ("CONST", "Constant", "Constant scale along normal", 1),
@@ -176,7 +181,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         description = "Rotate donor object around recipient's face normal",
         min = 0, max = 2*pi, default = 0,
         update = updateNode)
-    
+
     poly_rotation: IntProperty(
         name = "Polygons rotation",
         description = "Rotate indexes in polygons definition",
@@ -256,7 +261,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             ("NGONQUAD", "NGons and Quads", "Use Frame / Fan mode for NGons and Quads (n >= 4)", 2),
             ("ALWAYS", "Always", "Use Frame / Fan mode for all faces", 3)
         ]
-    
+
     frame_mode: EnumProperty(
         name = "Frame mode",
         description = "When to use Frame / Fan mode",
@@ -945,4 +950,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvAdaptivePolygonsNodeMk2)
-

@@ -25,3 +25,7 @@ def message_on_layout(layout, text, width=140, **kwargs):
         box.label(text=line)
     return box
 
+def enum_split(layout, node, prop_name, label, factor):
+    enum_row = layout.split(factor=factor, align=False)
+    enum_row.label(text=label)
+    enum_row.prop(node, prop_name, text="")
