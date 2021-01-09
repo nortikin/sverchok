@@ -99,7 +99,16 @@
         3304.39892578125,
         960.8161010742188
       ],
-      "params": {},
+      "params": {
+        "materials": [
+          {
+            "material": "edges"
+          },
+          {
+            "material": "base"
+          }
+        ]
+      },
       "width": 200.0
     },
     "Color in": {
@@ -250,8 +259,7 @@
         949.332763671875
       ],
       "params": {
-        "selectable_objects": false,
-        "show_objects": false
+        "base_data_name": "Beta"
       },
       "use_custom_color": true,
       "width": 140.0
@@ -618,27 +626,69 @@
   },
   "update_lists": [
     [
+      "Reroute",
+      "Output",
+      "Adaptive Polygons Mk2",
+      "Vertices Recipient"
+    ],
+    [
+      "Reroute.002",
+      "Output",
+      "Adaptive Polygons Mk2",
+      "Polygons Recipient"
+    ],
+    [
+      "Symmetrize Mesh.001",
+      0,
+      "Adaptive Polygons Mk2",
+      2
+    ],
+    [
+      "Symmetrize Mesh.001",
+      2,
+      "Adaptive Polygons Mk2",
+      4
+    ],
+    [
+      "Symmetrize Mesh.001",
+      3,
+      "Adaptive Polygons Mk2",
+      5
+    ],
+    [
+      "Mesh viewer",
+      0,
+      "Assign Materials List",
+      0
+    ],
+    [
+      "Adaptive Polygons Mk2",
+      3,
+      "Color in",
+      0
+    ],
+    [
       "Vector out",
       2,
       "Map Range",
       0
     ],
     [
-      "Reroute.001",
-      "Output",
-      "Mesh Expression",
-      "CenterClose"
+      "Adaptive Polygons Mk2",
+      0,
+      "Mesh viewer",
+      0
     ],
     [
-      "A Number.002",
-      0,
-      "Mesh Expression",
+      "Adaptive Polygons Mk2",
+      2,
+      "Mesh viewer",
       2
     ],
     [
-      "A Number.003",
-      0,
-      "Mesh Expression",
+      "Adaptive Polygons Mk2",
+      3,
+      "Mesh viewer",
       3
     ],
     [
@@ -810,48 +860,6 @@
       0
     ],
     [
-      "Reroute",
-      "Output",
-      "Viewer Draw Mk3.001",
-      "Vertices"
-    ],
-    [
-      "Reroute.002",
-      "Output",
-      "Viewer Draw Mk3.001",
-      "Polygons"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Adaptive Polygons Mk2",
-      "Vertices Recipient"
-    ],
-    [
-      "Reroute.002",
-      "Output",
-      "Adaptive Polygons Mk2",
-      "Polygons Recipient"
-    ],
-    [
-      "Symmetrize Mesh.001",
-      0,
-      "Adaptive Polygons Mk2",
-      2
-    ],
-    [
-      "Symmetrize Mesh.001",
-      2,
-      "Adaptive Polygons Mk2",
-      4
-    ],
-    [
-      "Symmetrize Mesh.001",
-      3,
-      "Adaptive Polygons Mk2",
-      5
-    ],
-    [
       "Adaptive Polygons Mk2",
       0,
       "Viewer Draw",
@@ -870,34 +878,34 @@
       6
     ],
     [
-      "Adaptive Polygons Mk2",
-      3,
-      "Color in",
-      0
+      "Reroute",
+      "Output",
+      "Viewer Draw Mk3.001",
+      "Vertices"
     ],
     [
-      "Adaptive Polygons Mk2",
+      "Reroute.002",
+      "Output",
+      "Viewer Draw Mk3.001",
+      "Polygons"
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Mesh Expression",
+      "CenterClose"
+    ],
+    [
+      "A Number.002",
       0,
-      "Mesh viewer",
-      0
-    ],
-    [
-      "Adaptive Polygons Mk2",
-      2,
-      "Mesh viewer",
+      "Mesh Expression",
       2
     ],
     [
-      "Adaptive Polygons Mk2",
-      3,
-      "Mesh viewer",
-      3
-    ],
-    [
-      "Mesh viewer",
+      "A Number.003",
       0,
-      "Assign Materials List",
-      0
+      "Mesh Expression",
+      3
     ]
   ]
 }
