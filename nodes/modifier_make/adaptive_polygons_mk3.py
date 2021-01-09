@@ -27,8 +27,7 @@ from numpy import (array as np_array,
                    float64 as np_float64,
                    dot as np_dot,
                    max as np_max,
-                   min as np_min,
-                   concatenate as np_concatenate)
+                   min as np_min)
 from numpy.linalg import (norm as np_norm,
                           inv as np_inv)
 import bpy
@@ -47,10 +46,9 @@ from sverchok.data_structure import (updateNode, throttle_and_update_node,
 from sverchok.ui.sv_icons import custom_icon
 from sverchok.ui.utils import enum_split
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, remove_doubles
-from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.geom import diameter, LineEquation2D, center
 from sverchok.utils.math import np_normalize_vectors
-from sverchok.utils.mesh_functions import join_meshes, meshes_py, to_elements, meshes_np
+from sverchok.utils.mesh_functions import join_meshes, meshes_py, to_elements
 # "coauthor": "Alessandro Zomparelli (sketchesofcode)"
 
 cos_pi_6 = cos(pi/6)
