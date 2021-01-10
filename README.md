@@ -7,6 +7,8 @@
 
 [![Build Status](https://travis-ci.org/nortikin/sverchok.svg?branch=master)](https://travis-ci.org/nortikin/sverchok)  
 <img src="https://img.shields.io/discord/745273148018262158">  
+<img alt="Discord" src="https://img.shields.io/discord/745273148018262158">
+.. image:: https://img.shields.io/discord/745273148018262158   :alt: Discord
 
 ## English
 
