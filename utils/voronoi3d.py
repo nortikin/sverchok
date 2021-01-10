@@ -63,16 +63,18 @@ def voronoi3d_regions(sites, closed_only=True, recalc_normals=True, do_clip=Fals
             continue
         done_verts = dict()
         bm = bmesh.new()
+        add_vert = bm.verts.new
+        add_face = bm.faces.new
         for face in faces_per_site[site_idx]:
             face_bm_verts = []
             for vertex_idx in face:
                 if vertex_idx not in done_verts:
-                    bm_vert = bm.verts.new(diagram.vertices[vertex_idx])
+                    bm_vert = add_vert(diagram.vertices[vertex_idx])
                     done_verts[vertex_idx] = bm_vert
                 else:
                     bm_vert = done_verts[vertex_idx]
                 face_bm_verts.append(bm_vert)
-            bm.faces.new(face_bm_verts)
+            add_face(face_bm_verts)
         bm.verts.index_update()
         bm.verts.ensure_lookup_table()
         bm.faces.index_update()
@@ -112,7 +114,7 @@ def voronoi3d_regions(sites, closed_only=True, recalc_normals=True, do_clip=Fals
 def voronoi3d_layer(n_src_sites, all_sites, make_regions, do_clip, clipping, skip_added=True):
     diagram = Voronoi(all_sites)
     src_sites = all_sites[:n_src_sites]
-    
+
     region_verts = dict()
     region_verts_map = dict()
     n_sites = n_src_sites if skip_added else len(all_sites)
@@ -122,7 +124,7 @@ def voronoi3d_layer(n_src_sites, all_sites, make_regions, do_clip, clipping, ski
         vertices = [tuple(diagram.vertices[i,:]) for i in region]
         region_verts[site_idx] = vertices
         region_verts_map[site_idx] = {vert_idx: i for i, vert_idx in enumerate(region)}
-    
+
     open_sites = set()
     region_faces = defaultdict(list)
     for ridge_idx, sites in enumerate(diagram.ridge_points):
@@ -134,12 +136,12 @@ def voronoi3d_layer(n_src_sites, all_sites, make_regions, do_clip, clipping, ski
 
         site_from_ok = not skip_added or site_from < n_src_sites
         site_to_ok = not skip_added or site_to < n_src_sites
-        
+
         if make_regions:
             if site_from_ok:
                 face_from = [region_verts_map[site_from][i] for i in ridge]
                 region_faces[site_from].append(face_from)
-           
+
             if site_to_ok:
                 face_to = [region_verts_map[site_to][i] for i in ridge]
                 region_faces[site_to].append(face_to)
@@ -149,7 +151,7 @@ def voronoi3d_layer(n_src_sites, all_sites, make_regions, do_clip, clipping, ski
                 region_faces[site_from].append(face_from)
                 face_to = [region_verts_map[site_to][i] for i in ridge]
                 region_faces[site_to].append(face_to)
-    
+
     verts = [region_verts[i] for i in range(n_sites) if i not in open_sites]
     faces = [region_faces[i] for i in range(n_sites) if i not in open_sites]
 
@@ -253,7 +255,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
             if len(src_mesh.verts) == 0:
                 break
             geom_in = src_mesh.verts[:] + src_mesh.edges[:] + src_mesh.faces[:]
-            
+
             plane_co = plane.projection_of_point(site)
             plane_no = plane.normal.normalized()
             if plane.side_of_point(site) > 0:
@@ -276,17 +278,17 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
                     clear_inner = False
                 )
             n_cuts += 1
-                
+
             if fill:
                 surround = [e for e in res['geom_cut'] if isinstance(e, bmesh.types.BMEdge)]
                 if surround:
                     fres = bmesh.ops.edgenet_prepare(src_mesh, edges=surround)
                     if fres['edges']:
-                        bmesh.ops.edgeloop_fill(src_mesh, edges=fres['edges'])  
+                        bmesh.ops.edgeloop_fill(src_mesh, edges=fres['edges'])
 
         if n_cuts == 0:
             return None
-        
+
         return pydata_from_bmesh(src_mesh)
 
     verts_out = []
@@ -473,7 +475,7 @@ def lloyd_in_solid(solid, sites, n_iterations, tolerance=1e-4, weight_field=None
         projection = vs[0][0]
         dst = src + 2*(projection - src)
         return (dst.x, dst.y, dst.z)
-        
+
     def iteration(pts):
         n = len(pts)
         all_pts = pts
@@ -514,7 +516,7 @@ def lloyd_on_solid_surface(solid, sites, thickness, n_iterations, tolerance=1e-4
         shell = solid.Shells[0]
     else:
         shell = Part.Shell(solid.Faces)
-    
+
     def iteration(pts):
         all_pts = pts + project_solid_normals(shell, pts, thickness)
         diagram = Voronoi(all_pts)
@@ -559,7 +561,7 @@ def lloyd_on_fc_face(fc_face, sites, thickness, n_iterations, weight_field = Non
             center = weighted_center(region_verts, weight_field)
             centers.append(tuple(center))
         return centers
-    
+
     def project(point):
         dist, vs, infos = fc_face.distToShape(Part.Vertex(Base.Vector(point)))
         pt = vs[0][0]
@@ -656,7 +658,7 @@ class BoxBounds(Bounds):
     def restrict(self, point):
         #if self.contains(point):
         #    return point
-        
+
         mid_x = 0.5 * (self.min_x + self.max_x)
         mid_y = 0.5 * (self.min_y + self.max_y)
         mid_z = 0.5 * (self.min_z + self.max_z)
@@ -759,4 +761,3 @@ def lloyd3d_bounded(bounds, sites, n_iterations, weight_field=None):
         points = iteration(points)
         points = restrict(points)
     return points
-

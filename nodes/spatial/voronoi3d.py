@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -118,16 +118,18 @@ else:
                     continue
                 done_verts = dict()
                 bm = bmesh.new()
+                new_vert = bm.verts.new
+                new_face = bm.faces.new
                 for face in faces_per_site[site_idx]:
                     face_bm_verts = []
                     for vertex_idx in face:
                         if vertex_idx not in done_verts:
-                            bm_vert = bm.verts.new(diagram.vertices[vertex_idx])
+                            bm_vert = new_vert(diagram.vertices[vertex_idx])
                             done_verts[vertex_idx] = bm_vert
                         else:
                             bm_vert = done_verts[vertex_idx]
                         face_bm_verts.append(bm_vert)
-                    bm.faces.new(face_bm_verts)
+                    new_face(face_bm_verts)
                 bm.verts.index_update()
                 bm.verts.ensure_lookup_table()
                 bm.faces.index_update()
@@ -155,12 +157,14 @@ else:
             result_faces = []
             for face in faces:
                 bm = bmesh.new()
+                new_vert = bm.verts.new
+                new_face = bm.faces.new
                 face_bm_verts = []
                 for vertex_idx in face:
                     vertex = vertices[vertex_idx]
-                    bm_vert = bm.verts.new(vertex)
+                    bm_vert = new_vert(vertex)
                     face_bm_verts.append(bm_vert)
-                bm.faces.new(face_bm_verts)
+                new_face(face_bm_verts)
                 bm.verts.index_update()
                 bm.verts.ensure_lookup_table()
                 bm.faces.index_update()
@@ -251,4 +255,3 @@ def register():
 def unregister():
     if scipy is not None:
         bpy.utils.unregister_class(SvExVoronoi3DNode)
-

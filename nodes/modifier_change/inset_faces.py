@@ -90,16 +90,19 @@ def bmesh_from_sv(verts, faces, edges=None, face_int_layers=None):
     if face_int_layers is None:
         face_int_layers = dict()
     bm = bmesh.new()
+    new_vert = bm.verts.new
+    new_face = bm.faces.new
     [bm.faces.layers.int.new(key) for key in face_int_layers]
     for i, co in enumerate(verts):
-        v = bm.verts.new(co)
+        v = new_vert(co)
         v.index = i
     bm.verts.ensure_lookup_table()
     if edges:
+        new_edge = bm.edges.new
         for e in edges:
-            bm.edges.new([bm.verts[i] for i in e])
+            new_edge([bm.verts[i] for i in e])
     for f in faces:
-        bm.faces.new([bm.verts[i] for i in f])
+        new_face([bm.verts[i] for i in f])
     for key in face_int_layers:
         if face_int_layers[key] is not None:
             for v, f in zip(face_int_layers[key], bm.faces):

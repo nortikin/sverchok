@@ -41,13 +41,16 @@ def bisect(cut_me_vertices, cut_me_edges, pp, pno, outer, inner, fill):
         cut_me_edges = []
 
     bm = bmesh.new()
-    bm_verts = [bm.verts.new(v) for v in cut_me_vertices]
+    new_vert = bm.verts.new
+    new_edge = bm.edges.new
+    new_face = bm.faces.new
+    bm_verts = [new_vert(v) for v in cut_me_vertices]
     if cut_me_edges:
         for edge in cut_me_edges:
-            bm.edges.new((bm_verts[edge[0]], bm_verts[edge[1]]))
+            new_edge((bm_verts[edge[0]], bm_verts[edge[1]]))
     else:
         for face in cut_me_polygons:
-            bm.faces.new([bm_verts[i] for i in face])
+            new_face([bm_verts[i] for i in face])
 
     geom_in = bm.verts[:] + bm.edges[:] + bm.faces[:]
     res = bmesh.ops.bisect_plane(

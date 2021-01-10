@@ -460,17 +460,19 @@ def dual_mesh(bm, recalc_normals=True):
 
 def diamond_mesh(bm):
     new_bm = bmesh.new()
+    new_bm_add_vert = new_bm.verts.new
+    new_bm_add_face = new_bm.faces.new
     copied_verts = dict()
     for vert in bm.verts:
         co = vert.co
-        copied_verts[vert.index] = new_bm.verts.new(co)
+        copied_verts[vert.index] = new_bm_add_vert(co)
 
     # Make vertices of dual mesh by finding
     # centers of original mesh faces.
     center_verts = dict()
     for face in bm.faces:
         co = face.calc_center_median()
-        center_verts[face.index] = new_bm.verts.new(co)
+        center_verts[face.index] = new_bm_add_vert(co)
 
     for edge in bm.edges:
         edge_faces = edge.link_faces
@@ -487,7 +489,7 @@ def diamond_mesh(bm):
             old_normal = face.normal
             if new_normal.dot(old_normal) < 0:
                 face_verts = list(reversed(face_verts))
-            new_bm.faces.new(face_verts)
+            new_bm_add_face(face_verts)
         else: # n_faces == 2
             face1, face2 = edge_faces
             ev1, ev2 = edge.verts
@@ -496,7 +498,7 @@ def diamond_mesh(bm):
             old_normal = face1.normal + face2.normal
             if new_normal.dot(old_normal) < 0:
                 face_verts = list(reversed(face_verts))
-            new_bm.faces.new(face_verts)
+            new_bm_add_face(face_verts)
     new_bm.verts.index_update()
     new_bm.edges.index_update()
     new_bm.faces.index_update()
@@ -512,17 +514,19 @@ def truncate_vertices(bm):
         return math.atan2(dy, dx)
 
     new_bm = bmesh.new()
+    new_bm_add_vert = new_bm.verts.new
+    new_bm_add_face = new_bm.faces.new
     edge_centers = dict()
     for edge in bm.edges:
         center_co = (edge.verts[0].co + edge.verts[1].co) / 2.0
-        edge_centers[edge.index] = new_bm.verts.new(center_co)
+        edge_centers[edge.index] = new_bm_add_vert(center_co)
     for face in bm.faces:
         new_face = [edge_centers[edge.index] for edge in face.edges]
         old_normal = face.normal
         new_normal = mathutils.geometry.normal(*[vert.co for vert in new_face])
         if new_normal.dot(old_normal) < 0:
             new_face = list(reversed(new_face))
-        new_bm.faces.new(new_face)
+        new_bm_add_face(new_face)
     for vertex in bm.verts:
         new_face = [edge_centers[edge.index] for edge in vertex.link_edges]
         if len(new_face) > 2:
@@ -531,7 +535,7 @@ def truncate_vertices(bm):
             co_orth = old_normal.cross(orth)
             new_face = sorted(new_face, key = lambda edge_center : calc_angle(vertex.co, orth, co_orth, edge_center))
             new_face = list(new_face)
-            new_bm.faces.new(new_face)
+            new_bm_add_face(new_face)
 
     new_bm.verts.index_update()
     new_bm.edges.index_update()
