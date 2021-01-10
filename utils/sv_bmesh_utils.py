@@ -113,9 +113,12 @@ def bmesh_from_pydata(verts=None, edges=[], faces=[], markup_face_data=False, ma
 
 
 def add_mesh_to_bmesh(bm, verts, edges=None, faces=None, sv_index_name=None, update_indexes=True, update_normals=True):
-    bm_verts = [bm.verts.new(co) for co in verts]
-    [bm.edges.new((bm_verts[i1], bm_verts[i2])) for i1, i2 in edges or []]
-    [bm.faces.new([bm_verts[i] for i in face]) for face in faces or []]
+    new_vert = bm.verts.new
+    new_edge = bm.edges.new
+    new_face = bm.faces.new
+    bm_verts = [new_vert(co) for co in verts]
+    [new_edge((bm_verts[i1], bm_verts[i2])) for i1, i2 in edges or []]
+    [new_face([bm_verts[i] for i in face]) for face in faces or []]
 
     if update_normals:
         bm.normal_update()
@@ -382,7 +385,7 @@ def remove_doubles(vertices, edges, faces, d, face_data=None, vert_data=None, ed
     has_edge_data = bool(edge_data)
     has_face_data = bool(face_data)
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True,
-                           markup_face_data=has_face_data, 
+                           markup_face_data=has_face_data,
                            markup_edge_data=has_edge_data,
                            markup_vert_data=has_vert_data)
     bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=d)
