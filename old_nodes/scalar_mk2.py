@@ -17,7 +17,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from math import *
-from fractions import gcd
 from itertools import zip_longest
 
 import bpy
@@ -27,6 +26,7 @@ from sverchok.ui.sv_icons import custom_icon
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_itertools import (recurse_fx, recurse_fxy)
+from sverchok.utils.math import gcd
 # pylint: disable=C0326
 
 # Rules for modification:
