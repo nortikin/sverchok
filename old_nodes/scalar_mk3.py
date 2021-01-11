@@ -17,7 +17,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from math import *
-from fractions import gcd
 
 import bpy
 from bpy.props import EnumProperty, FloatProperty, IntProperty, BoolProperty
@@ -26,6 +25,7 @@ from sverchok.ui.sv_icons import custom_icon
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_itertools import (recurse_fx, recurse_fxy)
+from sverchok.utils.math import gcd
 # pylint: disable=C0326
 
 # Rules for modification:
@@ -117,9 +117,9 @@ class SvScalarMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvScalarMathNodeMK3'
     bl_label = 'Scalar Math'
     sv_icon = 'SV_SCALAR_MATH'
-    
+
     replacement_nodes = [('SvScalarMathNodeMK4', None, None)]
-    
+
     def mode_change(self, context):
         self.update_sockets()
         updateNode(self, context)
@@ -178,7 +178,7 @@ class SvScalarMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         layout.prop_menu_enum(self, "input_mode_one", text="Input 1 number type")
         if len(self.inputs) == 2:
             layout.prop_menu_enum(self, "input_mode_two", text="Input 2 number type")
-    
+
     def migrate_from(self, old_node):
         self.current_op = old_node.current_op
 

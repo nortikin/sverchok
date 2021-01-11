@@ -335,3 +335,24 @@ def weighted_center(verts, field=None):
         wpoints = weights[:,np.newaxis] * verts
         result = wpoints.sum(axis=0) / weights.sum()
         return result
+
+def gcd(a, b):
+
+    """Calculate the Greatest Common Divisor of a and b.
+
+    Unless b==0, the result will have the same sign as b (so that when
+    b is divided by it, the result comes out positive).
+    Taken from fractions.py to override depreciation
+    """
+
+    if type(a) is int is type(b):
+        if (b or a) < 0:
+            return -math.gcd(a, b)
+        return math.gcd(a, b)
+    return _gcd(a, b)
+
+def _gcd(a, b):
+    # Supports non-integers for backward compatibility.
+    while b:
+        a, b = b, a%b
+    return a
