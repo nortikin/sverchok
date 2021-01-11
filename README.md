@@ -5,9 +5,9 @@
 </p>
 <h1 align="center">Sverchok</h1>
 
-[![Build Status](https://travis-ci.org/nortikin/sverchok.svg?branch=master)](https://travis-ci.org/nortikin/sverchok)  
-
-<a href="https://discord.gg/pjHHhjJz8Z"><img alt="Discord" src="https://img.shields.io/discord/745273148018262158"></a>   
+[![Build Status](https://travis-ci.org/nortikin/sverchok.svg?branch=master)](https://travis-ci.org/nortikin/sverchok)
+<a href="https://discord.gg/pjHHhjJz8Z"><img alt="Discord" src="https://img.shields.io/discord/745273148018262158"></a>
+[![Stack Exchange questions](https://img.shields.io/stackexchange/blender/t/sverchok)](https://blender.stackexchange.com/questions/tagged/sverchok)
 
 
 ## English
