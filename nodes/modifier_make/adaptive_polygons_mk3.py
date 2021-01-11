@@ -188,11 +188,11 @@ class OutputData():
             self.vert_recpt_idx_out = sum(self.vert_recpt_idx_out, [])
         else:
             self.vert_recpt_idx_out = None
-        if self.get_face_recpt_idx:
+        if self.get_edge_recpt_idx:
             self.edge_recpt_idx_out = sum(self.edge_recpt_idx_out, [])
         else:
             self.edge_recpt_idx_out = None
-        if self.get_edge_recpt_idx:
+        if self.get_face_recpt_idx:
             self.face_recpt_idx_out = sum(self.face_recpt_idx_out, [])
         else:
             self.face_recpt_idx_out = None
@@ -201,7 +201,7 @@ class OutputData():
                                          self.edges_out[0] if self.edges_out else [],
                                          self.faces_out[0] if self.faces_out else [],
                                          threshold,
-                                         face_data=self.face_data_out,
+                                         face_data=self.face_data_out if self.face_data_out else self.face_recpt_idx_out,
                                          vert_data=self.vert_recpt_idx_out,
                                          edge_data=self.vert_recpt_idx_out)
 
@@ -213,14 +213,16 @@ class OutputData():
 
             self.vert_recpt_idx_out = data_out.get('verts', [])
             self.edge_recpt_idx_out = data_out.get('edges', [])
-            self.face_data_out = data_out.get('faces', [])
-            if self.face_recpt_idx_out:
-                self.face_recpt_idx_out = [self.face_recpt_idx_out[idx] for idx in data_out['face_init_index']]
-
+            if self.face_data_out:
+                self.face_data_out = data_out.get('faces', [])
+                if self.face_recpt_idx_out:
+                    self.face_recpt_idx_out = [self.face_recpt_idx_out[idx] for idx in data_out['face_init_index']]
+            elif self.face_recpt_idx_out:
+                self.face_recpt_idx_out = data_out.get('faces', [])
             self.verts_out = [self.verts_out]
             self.edges_out = [self.edges_out]
             self.faces_out = [self.faces_out]
-            self.face_data_out = [self.face_data_out]
+        self.face_data_out = [self.face_data_out]
         self.vert_recpt_idx_out = [self.vert_recpt_idx_out]
         self.edge_recpt_idx_out = [self.edge_recpt_idx_out]
         self.face_recpt_idx_out = [self.face_recpt_idx_out]
@@ -1284,10 +1286,6 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
                 raise Exception(f"Unexpected data type for frame_width: {frame_width}")
             recpt_face_data.frame_width = frame_width
 
-            donor.faces_i = donor_faces_i
-            donor.edges_i = donor_edges_i
-            donor.face_data_i = donor_face_data_i
-
 
             is_fan = abs(frame_width - 1.0) < 1e-6
             is_tri = map_mode in ['TRI', 'FAN', 'SUB_QUADS_TRI', 'FRAME_TRI'] or (map_mode == 'FRAME_FAN' and is_fan)
@@ -1301,9 +1299,12 @@ class SvAdaptivePolygonsNodeMk3(bpy.types.Node, SverchCustomTreeNode):
                 donor_verts_o = [Vector(vert) for vert in donor_verts_i]
                 z_size = diameter(donor_verts_o, Z)
 
-            # We have to recalculate rotated vertices only if
-            # the rotation angle have changed.
+            # We have to recalculate rotated vertices and copy topology only if
+            # the rotation angle have changed or f we have multiple donors.
             if prev_angle is None or angle != prev_angle or not single_donor:
+                donor.faces_i = donor_faces_i
+                donor.edges_i = donor_edges_i
+                donor.face_data_i = cycle_for_length(donor_face_data_i, len(donor_faces_i))
                 verts_v = self.rotate_z(donor_verts_o, angle)
                 np_verts = np_array(verts_v)
                 if numpy_mode:
