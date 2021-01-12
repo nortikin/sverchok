@@ -142,7 +142,6 @@ class SvNodeRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 # https://github.com/nomelif/Audionodes
                 named_input.value_prop = data[0][0]
             elif 'objects_number' in named_input:
-                print('sv hint')
                 # sverchok test
                 setattr(named_input.node, named_input.get_prop_name(), data[0][0])
 
