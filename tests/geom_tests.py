@@ -113,3 +113,9 @@ class GeometryTests(SverchokTestCase):
         expected = np.array([0, 5, 0])
         self.assert_numpy_arrays_equal(dv, expected, precision=8)
 
+    def test_plane_uv_projection(self):
+        plane = PlaneEquation.from_coordinate_plane('XY')
+        point = (1,1,1)
+        uv = tuple(plane.point_uv_projection(point))
+        self.assertEquals(uv, (1,1))
+

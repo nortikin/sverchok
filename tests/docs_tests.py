@@ -71,7 +71,9 @@ class DocumentationTests(SverchokTestCase):
                             continue
                         doc_name = line + ".rst"
                         doc_path = join(directory, doc_name)
-                        if not exists(doc_path):
+                        doc_name2 = line + ".md"
+                        doc_path2 = join(directory, doc_name2)
+                        if not (exists(doc_path) or exists(doc_path2)):
                             bad_files.append(doc_name)
 
                 if bad_files:

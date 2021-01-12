@@ -7,6 +7,7 @@ Logic
 
    logic_node
    neuro_elman
+   neuro_elman_ru
    evolver
    genes_holder
    switch_MK2

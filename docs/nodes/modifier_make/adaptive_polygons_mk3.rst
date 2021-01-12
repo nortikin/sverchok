@@ -32,14 +32,15 @@ Inputs
 
 This node has the following inputs:
 
-- **VersR**. Vertices of the recipient object. This input is mandatory.
-- **PolsR**. Faces of the recipient object. Please have in mind that order of
+- **Vertices Recipient**. Vertices of the recipient object. This input is mandatory.
+- **Polygons Recipient**. Faces of the recipient object. Please have in mind that order of
   indices in each face affect donor object rotation; for example, `[0, 1, 2,
   3]` is one rotation, `[3, 0, 1, 2]` is the same turned by 90 degrees. This
-  input is mandatory. 
-- **VersD**. Vertices of the donor object. This input is mandatory.
-- **PolsD**. Faces of the donor object.
-- **FaceDataD**. List containing an arbitrary data item for each face of donor
+  input is mandatory.
+- **Vertices Donor**. Vertices of the donor object. This input is mandatory.
+- **Edges Donor**. Vertices of the donor object. This input is mandatory.
+- **Pols Donor**. Faces of the donor object.
+- **FaceData Donor**. List containing an arbitrary data item for each face of donor
   object. For example, this may be used to provide material indexes of donor
   object faces. Optional input.
 - **Width coeff**. Coefficient for donor object width (size along X,Y axis,
@@ -58,16 +59,36 @@ This node has the following inputs:
 - **Z Rotation**. Rotation of donor objects along the normal of recipient
   object face, in radians. Default value is 0.0. The input expects one number
   per each recipient object face.
-- **PolyRotation**. Rotation of each recipient object face indexes. The default
+- **Polygon Rotation**. Rotation of each recipient object face indexes. The default
   value is 0. For example, if recipient face definition is `[3, 4, 5, 6]`, and
-  *PolyRotation* is set to 1, then the face will be interpreted as `[4, 5, 6,
+  *Polygon Rotation* is set to 1, then the face will be interpreted as `[4, 5, 6,
   3]`. This will affect the orientation of donor object.
-- **PolyMask**. Mask for recipient object faces processing. What exactly will
+- **Polygon Mask**. Mask for recipient object faces processing. What exactly will
   be done with faces which are masked out is defined by **Mask Mode** parameter
   (see below).
 - **Threshold**. Merging threshold for "remove doubles" / "merge by distance"
   function. The default value is 0.0001. This input is only visible if **Remove
   doubles** parameter is checked.
+- **Donor Index**. Determine which donor to use for each face. This input is
+  only visible if **Matching Mode** is set to **Donor per face** and **Donor
+  Matching** is set to **By Index** (see below).
+
+- **Use normals**. This defines how recipient object normals will be used to
+  transform the donor objects. Available values are:
+
+  - **Map**. Interpolation between recipient object's vertex normals will be
+    used to deform the donor object. While this procuces smoother results, this
+    gives more deformation of donor object.
+  - **Face**. Recipient object's face normal will be used to orient the donor
+    object. While this gives less deformation of donor object, it can give gaps
+    between copies.
+
+  The default value is **Map**.
+
+- **Custom Normal**. This vector input will replace the normals of the recipient
+  meshes. It will only work if **Custom Normals** is set to **Normal per Vertex** or
+  **Normal per Face** (see below)
+
 
 Parameters
 ----------
@@ -82,19 +103,30 @@ This node has some number of parameters, and most of them are accessible only in
   controlled by **Threshold** input / paramter. This parameter is only visible
   if **Join** parameter is checked. Unchecked by default.
 - **Matching mode**. This defines how the list of donor objects is matched with list of recipient objects. Available values are:
-  
-   - **Match longest**. Each pair of recipient and donor objects will be
-     processed. For example, if there are 2 recipient objects and 2 donor
-     objects, you will have two outputs: `recipient[1] + donor[1]` and
-     `recipient[2] + donor[2]`. If one of lists is shorter than another, the
-     last object will be repeated as many times as necessary. For example, if
-     there is 1 recipient object and 2 donor objects, you will have two
-     outputs: `recipient[1] + donor[1]` and `recipient[1] + donor[2]`.
-   - **Donor per face**. The list of donor objects will be treated as "one
-     donor object per recipient object face". Number of outputs will be defined
-     by number of recipient objects.
 
-   The default value is **Match longest**.
+  - **Match longest**. Each pair of recipient and donor objects will be
+    processed. For example, if there are 2 recipient objects and 2 donor
+    objects, you will have two outputs: `recipient[1] + donor[1]` and
+    `recipient[2] + donor[2]`. If one of lists is shorter than another, the
+    last object will be repeated as many times as necessary. For example, if
+    there is 1 recipient object and 2 donor objects, you will have two
+    outputs: `recipient[1] + donor[1]` and `recipient[1] + donor[2]`.
+  - **Donor per face**. The list of donor objects will be treated as "one
+    donor object per recipient object face". Number of outputs will be defined
+    by number of recipient objects.
+
+  The default value is **Match longest**.
+
+- **Donor Matching**. This defines how the list of donor objects is matched with
+  list of recipient faces Is only available when *Matching Mode* is set to **Donor per face**.
+  Available values are:
+
+  - **Repeat Last**. The last donor object will be repeated if there are more
+    faces than donors. [1,2] --> [1,2,2,2,..]
+  - **Cycle**.  Cycle the donors list if there are more faces than donors. [1,2] --> [1,2,1,2,..]
+  - **By Index**. Use a supplied list to define the donor that will be used for each face.
+
+  The default value is **Repeat Last**.
 
 - **Normal axis**. Axis of the donor object to be aligned with recipient object
   face normal. Available values are X, Y, and Z. Default value is Z.
@@ -103,7 +135,7 @@ This node has some number of parameters, and most of them are accessible only in
 
   - **Proportional**. Donor object size along recipient face normal is
     calculated by it's size along Z axis (or other one, defined by **Normal
-    axis** parameter) multiplyed by value from **Z coeff** input.
+    axis** parameter) multiplied by value from **Z coeff** input.
   - **Constant**. Donor object size along recipient face normal is taken from
     **Z Coeff** input.
   - **Auto**. Calculate donor object scale along normal automatically, based on
@@ -112,21 +144,21 @@ This node has some number of parameters, and most of them are accessible only in
 
   The default value is **Proportional**.
 
-- **Use normals**. This defines how recipient object normals will be used to
-  transform the donor objects. Available values are:
+- **Custom Normals**: This options allows to rewrite recipient normals before
+  processing them. Available values are:
 
-  - **Map**. Interpolation between recipient object's vertex normals will be
-    used to deform the donor object. While this procuces smoother results, this
-    gives more deformation of donor object.
-  - **Face**. Recipient object's face normal will be used to orient the donor
-    object. While this gives less deformation of donor object, it can give gaps
-    between copies.
+  - **None**: Use recipient normals
+  - **Normal per Vertex**: Overwrite Vertex Normals. It will affect to the faces
+    where **Normal Mode**  is set to **Map* (or 1)
+  - **Normal per Faces**: Overwrite Faces Normals. It will affect to the faces
+    where **Normal Mode**  is set to **Face* (or 0)
 
-  The default value is **Map**.
+  The default value is **None**.
 
-- **Interpolate normals**. This parameter is available only if **Use normals**
-  is set to **Map**. This defines the method of interpolation between recipient
-  object's vertex normals. Available values are:
+
+- **Interpolate normals**. This parameter will only work in the faces Where
+  **Normal Mode**  is set to **Map** (or 1). This defines the method of interpolation
+  between recipient object's vertex normals. Available values are:
 
   - **Linear**. Linear interpolation will be used.
   - **Unit length**. Linear interpolation will be used, but the resulting
@@ -158,7 +190,7 @@ This node has some number of parameters, and most of them are accessible only in
       other axis according to **Normal axis** parameter). The triangle can be
       defined as either equilateral or rectangular, depending on **Bounding
       triangle** parameter.
-  
+
   - **As Is**. The source area is defined as follows:
 
     - For Quad faces, the `[-1/2; 1/2] x [-1/2; 1/2]` unit square is taken.
@@ -188,41 +220,9 @@ This node has some number of parameters, and most of them are accessible only in
     Is**, this will be a triangle with center of it's hypotenuse at `(0, 0, 0)`
     and length of hypotenuse equal to 2. In **Bounds** mode, this will be the
     bounding triangle.
-  
+
   Please see below for the illustrations of bounding triangles.
   The default value is **Equilateral**.
-
-- **Frame mode**. This defines when to apply "Frame / Fan" mode. The available values are:
-
-  - **Do not use**. Frame / fan mode will not be used.
-  - **NGons only**. Frame / fan mode will be used for NGons (n > 4) only. Other
-    faces will be processed in simple replacement mode.
-  - **NGons and Quads**. Frame / fan mode will be used for NGons and Quads
-    (i.e. n >= 4) only. Tris will be processed in simple replacement mode.
-  - **Always**. Frame / fan mode will be used for all faces.
-
-  The default value is **Do not use**.
-
-  Note that "Frame / Fan" mode makes either several Quads (when FrameWidth <
-  1.0) or several Tris (when FrameWidth == 1.0) out of each recipient face. How
-  exactly these Quads and Tris will be processed is defined by **Faces mode**
-  parameter.
-
-- **Faces mode**. This defines how deformations of donor object will be
-  calculated for Quad and Tris recipient faces. Available values are:
-
-  - **Quads / Tris Auto**. For Quad faces, the linear transformation will be
-    used. For Tris faces, the barycentric transformation will be used to
-    transform source triangle into the recipient triangle. This method gives
-    good and smooth results for both Quads and Tris.
-  - **Quads Always**. In this mode, Tris faces are processed as if they were
-    (degenerated) Quads with third and fourth vertices coinciding. Such
-    transformation can make one corner of donor object sharper than others, and
-    in some cases produce weird results for Tris. But such results can be
-    interesting in some cases. Note that at the moment the Tissue addon always
-    uses this mode.
-
-  The default value is **Quads / Tris Auto**.
 
 - **Mask mode**. This defines what to do with recipient objectfaces excluded by the
   **PolyMask** input. Available values are:
@@ -231,21 +231,48 @@ This node has some number of parameters, and most of them are accessible only in
     vertices and faces.
   - **As Is**. Such faces will be output as they were, i.e. one face will be
     output for each recipient face.
+  - **Transform Control**. In this mode the **PolyMask** input will be used to
+    control the transformation method per face:
+      0 = Skip
+      1 = As Is
+      2 = Tris
+      3 = Quads
+      4 = Fan
+      5 = SubQuads
+      6 = Frame
+      7 = Auto Frame Fan
+      8 = Auto Frame Sub Quads
+      9 = Fan (Quad)
+      10 = Frame (Tri)
+      11 = Sub Quads (Tri)
 
   The default value is **Skip**.
 
-- **NGons**. This defines what to do with NGon recipient object faces (i.e.
-  faces with number of vertices more than 4). Available values are:
+- **Transform**. This defines what method to use in the transformation. In can
+  be different for triangular faces, Quads and Ngons. Available values are:
 
-  - **As Quads**. Such faces will be processed as if they were quads; only
-    first three and the last vertex of the NGon will be used to form a Quad.
-    This can give weird results for such faces. 
-  - **Skip**. Such faces will be skipped completely, i.e. will not produce any
-    vertices and faces.
-  - **As Is**. Such faces will be output as they were, i.e. one face will be
-    output for each recipient face.
+  -  **Skip**: Don't Output Anything
+  -  **As Is**: Output the receiver face
+  -  **Tris**: Perform Tris Transform. Barycentric transformation with the first 3 vertices of the face
+  -  **Quads**: Perform Quad Transform. Uses first 4 vertices, if the face has less vertices the last one will be repeated
+  -  **Fan**: Perform Fan Transform. Subdivides the face in triangles (Poke) and performs a barycentric transformation to each
+  -  **SubQuads**: Divides the face in 4 + Quad Transform
+  -  **Frame**: Perform Frame Transform
+  -  **Auto Frame Fan**: Perform Frame transform if Frame With is lower than 1 otherwise perform Fan
+  -  **Auto Frame Sub Quads**: Frame transform if Frame With is lower than 1 otherwise perform Sub Quads transform
+  -  **Fan (Quad)**: Fan Subdivision + Quad Transform (produces weird but interesting results)
+  -  **Frame (Tri)**: Frame Subdivision + Tri Transform (produces weird but interesting results)
+  -  **Sub Quads (Tri)**: Quads Subdivision + Tri Transform (produces weird but interesting results)
 
-  The default value is **As Quads**.
+  The default value is Tris for Triangular faces, Quads for Quad faces and Frame for NGons.
+
+
+- **Implementation**. This defines which algorithm should be used.
+
+  - **NumPy**: Faster when donor has more than 50 vertices for tris or 12 verts for quads.
+  - **Mathutils**: Faster when donor has less than 50 vertices for tris or 12 verts for quads.
+  - **Auto**: Switched between Mathutils and NumPy implementation depending on donor vert count.
+
 
 Base area illustrations
 -----------------------
@@ -330,5 +357,13 @@ Use materials from the recipient object faces for the resulting object:
 
 .. image:: https://user-images.githubusercontent.com/284644/71734153-0d705500-2e6d-11ea-87aa-8d9a01085645.png
 
-You can also find some more examples `in the development thread <https://github.com/nortikin/sverchok/pull/2651>`_.
+Using custom normals to control the z axis of the donors:
 
+.. image:: https://user-images.githubusercontent.com/10011941/103927917-611a1c00-511b-11eb-94f5-55930829ce29.png
+
+Using edges to create adaptive curves:
+
+.. image:: https://user-images.githubusercontent.com/10011941/103927917-611a1c00-511b-11eb-94f5-55930829ce29.png
+
+You can also find some more examples `in the development thread 1 <https://github.com/nortikin/sverchok/pull/2651>`_
+and `in the development thread 2 <https://github.com/nortikin/sverchok/pull/3798>`_.

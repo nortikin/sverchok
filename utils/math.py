@@ -310,6 +310,20 @@ def np_vectors_angle(v1, v2):
     dot = np.dot(v1, v2)
     return np.arccos(dot)
 
+def np_normalized_vectors(vecs):
+    '''Returns new array with normalized vectors'''
+    result = np.zeros(vecs.shape)
+    norms = np.linalg.norm(vecs, axis=1)
+    nonzero = (norms > 0)
+    result[nonzero] = vecs[nonzero] / norms[nonzero][:,np.newaxis]
+    return result
+
+def np_normalize_vectors(vecs):
+    '''Does normalization in-place'''
+    norms = np.linalg.norm(vecs, axis=1)
+    nonzero = (norms > 0)
+    vecs[nonzero] = vecs[nonzero] / norms[nonzero][:,np.newaxis]
+
 def weighted_center(verts, field=None):
     if field is None:
         return np.mean(verts, axis=0)
@@ -322,3 +336,23 @@ def weighted_center(verts, field=None):
         result = wpoints.sum(axis=0) / weights.sum()
         return result
 
+def gcd(a, b):
+
+    """Calculate the Greatest Common Divisor of a and b.
+
+    Unless b==0, the result will have the same sign as b (so that when
+    b is divided by it, the result comes out positive).
+    Taken from fractions.py to override depreciation
+    """
+
+    if type(a) is int is type(b):
+        if (b or a) < 0:
+            return -math.gcd(a, b)
+        return math.gcd(a, b)
+    return _gcd(a, b)
+
+def _gcd(a, b):
+    # Supports non-integers for backward compatibility.
+    while b:
+        a, b = b, a%b
+    return a

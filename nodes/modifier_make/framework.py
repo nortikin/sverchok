@@ -112,10 +112,10 @@ def process_edge(bm, z_idx, verts1_bm, verts2_bm, step1, step2, conn1, conn2, ma
         step1, step2 = step2, step1
 
     bm.verts.index_update()
-    
+
     for i, v in enumerate(verts1_bm):
         connect_verts(bm, z_idx, v, verts2_bm, conn1, max_rho1)
-    
+
 class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Framework / carcass / ferme
@@ -146,7 +146,7 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
             description = "Maximum generated edge length",
             min = 0, default = 1,
             update = updateNode)
-    
+
     count : IntProperty(name = "Count",
             description = "How many vertices to generate",
             min = 1, default = 10,
@@ -300,10 +300,10 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
 
             if curves:
                 curves = cycle_for_length(curves, nverts)
-            
+
             bm = bmesh.new()
             bm.verts.ensure_lookup_table()
-            
+
             verts_bm = []
             for i, v in enumerate(verts):
                 if self.z_mode == 'AXIS':
@@ -312,15 +312,17 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
                     verts_line = make_verts_curve(v, curves[i])
                 verts_line_bm = []
                 prev_bm_vert = None
+                new_vert = bm.verts.new
+                new_edge = bm.edges.new
                 for v in verts_line:
-                    bm_vert = bm.verts.new(v)
+                    bm_vert = new_vert(v)
                     verts_line_bm.append(bm_vert)
                     bm.verts.ensure_lookup_table()
                     if prev_bm_vert is not None:
-                        bm.edges.new((prev_bm_vert, bm_vert))
+                        new_edge((prev_bm_vert, bm_vert))
                     prev_bm_vert = bm_vert
                 verts_bm.append(verts_line_bm)
-            
+
             for i, j in edges:
                 process_edge(bm, z_idx, verts_bm[i], verts_bm[j], steps[i], steps[j], n_connections[i], n_connections[j], max_rhos[i], max_rhos[j])
 
@@ -358,7 +360,7 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
                 bm.free()
             else:
                 faces_new = []
-            
+
             verts_out.append(verts_new)
             edges_out.append(edges_new)
             faces_out.append(faces_new)
@@ -372,4 +374,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvFrameworkNode)
-

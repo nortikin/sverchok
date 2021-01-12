@@ -30,9 +30,12 @@ def mark_mesh(verts, edges=None, faces=None):
     ind_v = bm.verts.layers.int.new('SV index')
     ind_e = bm.edges.layers.int.new('SV index')
     ind_f = bm.faces.layers.int.new('SV index')
-    bm_verts = [bm.verts.new(co) for co in verts]
-    bm_edges = [bm.edges.new((bm_verts[i1], bm_verts[i2])) for i1, i2 in edges] if edges else None
-    bm_faces = [bm.faces.new([bm_verts[i] for i in face]) for face in faces] if faces else None
+    new_vert = bm.verts.new
+    new_edge = bm.edges.new
+    new_face = bm.faces.new
+    bm_verts = [new_vert(co) for co in verts]
+    bm_edges = [new_edge((bm_verts[i1], bm_verts[i2])) for i1, i2 in edges] if edges else None
+    bm_faces = [new_face([bm_verts[i] for i in face]) for face in faces] if faces else None
     if bm_edges:
         mark_edges(bm_edges, ind_e)
     if bm_faces:

@@ -35,8 +35,10 @@ def unwrap_mesh(verts, faces, active_indexes, uv_verts=None, uv_faces=None, face
     bm = bmesh.new()
     # create layer for marking unwrapped faces for protection from re unwrapping, should be done before mesh generation
     used_layer = bm.faces.layers.int.new('uv done')
-    bm_verts = [bm.verts.new(co) for co in verts]
-    bm_faces = [bm.faces.new([bm_verts[i] for i in face]) for face in faces]
+    new_verts = bm.verts.new
+    new_faces = bm.faces.new
+    bm_verts = [new_verts(co) for co in verts]
+    bm_faces = [new_faces([bm_verts[i] for i in face]) for face in faces]
 
     # get active faces
     f_acts = []
