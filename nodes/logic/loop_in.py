@@ -39,16 +39,16 @@ class SvCreateLoopOut(bpy.types.Operator):
         frame_adjust(node, new_node)
         return {'FINISHED'}
 
-class SvUpdateLoopSocketLabels(bpy.types.Operator):
-    '''Update Loop socket Labels'''
-    bl_idname = "node.update_loop_socket_labels"
-    bl_label = "Update Loop Socket Labels"
+class SvUpdateLoopInSocketLabels(bpy.types.Operator):
+    '''Update Loop In socket Labels'''
+    bl_idname = "node.update_loop_in_socket_labels"
+    bl_label = "Update Loop In Socket Labels"
 
     def execute(self, context):
         node = context.node
         for inp, outp in zip(node.inputs[1:], node.outputs[3:]):
             outp.label = inp.label
-        if node.outputs[0].is_linked:
+        if node.mode == 'Range' and node.outputs[0].is_linked:
             if node.outputs[0].links[0].to_socket.node.bl_idname == 'SvLoopOutNode':
                 loop_out_node = node.outputs[0].links[0].to_socket.node
                 for inp, self_inp, self_outp in zip(node.inputs[1:], loop_out_node.inputs[2:], loop_out_node.outputs):
@@ -85,6 +85,10 @@ class SvLoopInNode(SverchCustomTreeNode, bpy.types.Node):
 
     linked_to_loop_out: BoolProperty(
         name='linked_to_loop_out', description='Maximum allowed iterations',
+        default=False)
+
+    print_to_console: BoolProperty(
+        name='Print progress in console', description='Maximum allowed iterations',
         default=False)
 
     def update_mode(self, context):
@@ -129,11 +133,12 @@ class SvLoopInNode(SverchCustomTreeNode, bpy.types.Node):
             layout.prop(self, "max_iterations")
         else:
             layout.prop(self, "list_match")
+        layout.prop(self, 'print_to_console')
         socket_labels = layout.box()
         socket_labels.label(text="Socket Labels")
         for socket in self.inputs[1:]:
             socket_labels.prop(socket, "label", text=socket.name)
-        socket_labels.operator("node.update_loop_socket_labels", icon='CON_FOLLOWPATH', text="Update Socket Labels")
+        socket_labels.operator("node.update_loop_in_socket_labels", icon='CON_FOLLOWPATH', text="Update Socket Labels")
 
     def rclick_menu(self, context, layout):
         layout.prop_menu_enum(self, 'mode')
@@ -149,6 +154,9 @@ class SvLoopInNode(SverchCustomTreeNode, bpy.types.Node):
         if self.inputs[-1].links:
             name_input = 'Data '+str(len(self.inputs)-1)
             name_output = 'Data '+str(len(self.inputs)-2)
+            other_socket = self.inputs[-1].other
+            new_label = other_socket.label if other_socket.label else other_socket.name
+            self.inputs[-1].label = new_label
             self.inputs.new('SvStringsSocket', name_input)
             self.outputs.new('SvStringsSocket', name_output)
         else:
@@ -166,10 +174,11 @@ class SvLoopInNode(SverchCustomTreeNode, bpy.types.Node):
                     self.outputs.move(len(self.outputs)-1, idx+3)
         for inp, outp in zip(self.inputs[1:], self.outputs[3:]):
             outp.label = inp.label
-        if self.outputs[0].is_linked and self.outputs[0].links[0].to_socket.node.bl_idname == 'SvLoopOutNode':
-            self.linked_to_loop_out = True
-        else:
-            self.linked_to_loop_out = False
+        if self.outputs:
+            if self.outputs[0].is_linked and self.outputs[0].links[0].to_socket.node.bl_idname == 'SvLoopOutNode':
+                self.linked_to_loop_out = True
+            else:
+                self.linked_to_loop_out = False
 
     def process(self):
 
@@ -193,11 +202,11 @@ class SvLoopInNode(SverchCustomTreeNode, bpy.types.Node):
 
 def register():
     bpy.utils.register_class(SvCreateLoopOut)
-    bpy.utils.register_class(SvUpdateLoopSocketLabels)
+    bpy.utils.register_class(SvUpdateLoopInSocketLabels)
     bpy.utils.register_class(SvLoopInNode)
 
 
 def unregister():
     bpy.utils.unregister_class(SvLoopInNode)
-    bpy.utils.unregister_class(SvUpdateLoopSocketLabels)
+    bpy.utils.unregister_class(SvUpdateLoopInSocketLabels)
     bpy.utils.unregister_class(SvCreateLoopOut)
