@@ -20,8 +20,13 @@ from sverchok.data_structure import fullList_deep_copy
 from numpy import array, empty, concatenate, unique, sort, int32, ndarray, vectorize
 
 from mathutils import Vector
+try:
+    from mathutils.geometry import delaunay_2d_cdt
+except ImportError:
+    pass
 
 from sverchok.data_structure import fullList_deep_copy
+from sverchok.utils.geom import linear_approximation
 
 def mesh_join(vertices_s, edges_s, faces_s):
     '''Given list of meshes represented by lists of vertices, edges and faces,

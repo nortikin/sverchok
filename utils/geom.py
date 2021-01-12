@@ -807,7 +807,7 @@ class PlaneEquation(object):
             raise Exception("plane normal is (almost) zero")
         return v
 
-    def two_vectors(self):
+    def two_vectors(self, normalize=False):
         """
         Return two vectors that are parallel two this plane.
         Note: the two vectors returned are orthogonal.
@@ -817,15 +817,26 @@ class PlaneEquation(object):
         """
         v1 = self.second_vector()
         v2 = v1.cross(self.normal)
+        if normalize:
+            v1.normalize()
+            v2.normalize()
         return v1, v2
 
-    def get_matrix(self):
+    def get_matrix(self, invert_y=False):
         x = self.second_vector().normalized()
         z = self.normal.normalized()
         y = z.cross(x)
+        if invert_y:
+            y = - y
         return Matrix([x, y, z]).transposed()
 
-    def evaluate(self, u, v):
+    def point_uv_projection(self, point):
+        point = Vector(point) - self.nearest_point_to_origin()
+        matrix = self.get_matrix(invert_y=True).inverted()
+        uvw = matrix @ point
+        return uvw.xy
+
+    def evaluate(self, u, v, normalize=False):
         """
         Return a point on the plane by it's UV coordinates.
         UV coordinates origin is self.point.
@@ -838,7 +849,7 @@ class PlaneEquation(object):
         output: Vector.
         """
         p0 = self.nearest_point_to_origin()
-        v1, v2 = self.two_vectors()
+        v1, v2 = self.two_vectors(normalize)
         return p0 + u*v1 + v*v2
 
     @property

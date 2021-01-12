@@ -30,7 +30,6 @@ import mathutils
 from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.logging import debug
 
-
 @contextmanager
 def empty_bmesh(use_operators=True):
     """
@@ -838,3 +837,4 @@ def recalc_normals(verts, edges, faces, loop=False):
         verts, edges, faces = pydata_from_bmesh(bm)
         bm.free()
         return verts, edges, faces
+
