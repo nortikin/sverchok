@@ -319,4 +319,4 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvLoopOutNode)
-    bpy.utils.register_class(SvUpdateLoopOutSocketLabels)
+    bpy.utils.unregister_class(SvUpdateLoopOutSocketLabels)
