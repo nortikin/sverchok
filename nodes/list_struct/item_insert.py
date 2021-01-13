@@ -40,8 +40,8 @@ class SvListItemInsertNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_LIST_ITEM_INSERT'
 
-    level: IntProperty(name='level_to_count', default=2, min=0, update=updateNode)
-    index: IntProperty(name='index', default=1, min=1, update=updateNode)
+    level: IntProperty(name='level_to_count', default=2, min=1, update=updateNode)
+    index: IntProperty(name='index', default=1, update=updateNode)
     replace: BoolProperty(name='Replace', default=False, update=updateNode)
     list_match_local: EnumProperty(
         name="Match Local",
