@@ -17,12 +17,13 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+from bpy.props import EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 
 
 from sverchok.core.update_system import make_tree_from_nodes, do_update
-from sverchok.data_structure import list_match_func
+from sverchok.data_structure import list_match_func, enum_item_4, updateNode
 
 def process_looped_nodes(node_list, tree_nodes, process_name, iteration):
     for node_name in node_list:
@@ -33,6 +34,18 @@ def process_looped_nodes(node_list, tree_nodes, process_name, iteration):
 
 socket_labels = {'Range': 'Break', 'For_Each': 'Skip'}
 
+class SvUpdateLoopOutSocketLabels(bpy.types.Operator):
+    '''Update Loop Out socket Labels'''
+    bl_idname = "node.update_loop_out_socket_labels"
+    bl_label = "Update Loop Out Socket Labels"
+
+    def execute(self, context):
+        node = context.node
+        for inp, outp in zip(node.inputs[2:], node.outputs):
+            outp.label = inp.label
+
+        return {'FINISHED'}
+
 class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: For Loop End,
@@ -42,37 +55,32 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Loop Out'
     bl_icon = 'CON_FOLLOWPATH'
 
-
+    mode: EnumProperty(
+        name='Mode', description='Maximum allowed iterations',
+        items=enum_item_4(['Range', 'For Each']), default='Range',
+        )
 
     def sv_init(self, context):
         self.inputs.new('SvLoopControlSocket', 'Loop In')
         self.inputs.new('SvStringsSocket', 'Break')
         self.inputs.new('SvStringsSocket', 'Data 0')
-        self.inputs.new('SvStringsSocket', 'Data 1')
+
         self.outputs.new('SvStringsSocket', 'Data 0')
-        self.outputs.new('SvStringsSocket', 'Data 1')
 
+    def draw_buttons_ext(self, context, layout):
+        if self.mode == 'For_Each':
+            socket_labels_box = layout.box()
+            socket_labels_box.label(text="Socket Labels")
+            for socket in self.inputs[2:]:
+                socket_labels_box.prop(socket, "label", text=socket.name)
+            socket_labels_box.operator("node.update_loop_out_socket_labels", icon='CON_FOLLOWPATH', text="Update Socket Labels")
 
-    def sv_update(self):
-
-
-        if not self.inputs[0].is_linked:
-            return
-
-        loop_in_node = self.inputs[0].links[0].from_socket.node
-        if not loop_in_node.bl_idname == 'SvLoopInNode':
-            return
-
-
-
+    def update_sockets_range_mode(self, loop_in_node):
         while len(loop_in_node.inputs) > len(self.inputs):
-            print("updating loopout adding inputs")
             name = 'Data '+str(len(self.inputs)-2)
-
             self.inputs.new('SvStringsSocket', name)
             self.outputs.new('SvStringsSocket', name)
         while len(loop_in_node.inputs) < len(self.inputs):
-            print("updating loopout removing inputs")
             self.inputs.remove(self.inputs[-1])
             self.outputs.remove(self.outputs[-1])
 
@@ -84,6 +92,8 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
 
         # dynamic sockets
         for idx, socket in enumerate(loop_in_node.inputs):
+            if idx==0:
+                continue
 
             if socket.links:
                 if type(socket.links[0].from_socket) != type(self.outputs[socket.name]):
@@ -96,6 +106,60 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
         for inp, self_inp, self_outp in zip(loop_in_node.inputs[1:], self.inputs[2:], self.outputs):
             self_outp.label = inp.label
             self_inp.label = inp.label
+
+
+    def update_sockets_for_each_mode(self):
+        # socket handling
+        if len(self.outputs)+3 > len(self.inputs):
+            self.outputs.remove(self.outputs[-1])
+        if self.inputs[-1].links:
+            name_input = 'Data '+str(len(self.inputs)-2)
+            name_output = 'Data '+str(len(self.inputs)-3)
+            other_socket = self.inputs[-1].other
+            new_label = other_socket.label if other_socket.label else other_socket.name
+            self.inputs[-1].label = new_label
+            self.inputs.new('SvStringsSocket', name_input)
+            self.outputs.new('SvStringsSocket', name_output)
+        else:
+            while len(self.inputs) > 3 and not self.inputs[-2].links:
+                self.inputs.remove(self.inputs[-1])
+                self.outputs.remove(self.outputs[-1])
+
+
+        # match input socket n with output socket n
+        for idx, socket in enumerate(self.inputs[2:]):
+
+            if socket.links:
+
+                if type(socket.links[0].from_socket) != type(self.outputs[socket.name]):
+                    self.outputs.remove(self.outputs[socket.name])
+                    self.outputs.new(socket.links[0].from_socket.bl_idname, socket.name)
+                    self.outputs.move(len(self.outputs)-1, idx)
+        for inp, outp in zip(self.inputs[2:-1], self.outputs):
+            outp.label = inp.label
+
+    def change_mode(self, loop_in_node):
+        if loop_in_node.mode == 'For_Each':
+            name = 'Data '+str(len(self.inputs)-2)
+            self.inputs.new('SvStringsSocket', name)
+        self.mode = loop_in_node.mode
+
+    def sv_update(self):
+
+        if not self.inputs[0].is_linked:
+            return
+
+        loop_in_node = self.inputs[0].links[0].from_socket.node
+        if not loop_in_node.bl_idname == 'SvLoopInNode':
+            return
+
+        if loop_in_node.mode != self.mode:
+            self.change_mode(loop_in_node)
+
+        if loop_in_node.mode == 'Range':
+            self.update_sockets_range_mode(loop_in_node)
+        else:
+            self.update_sockets_for_each_mode()
 
     def bad_inner_loops(self, intersection):
         inner_loops_out, inner_loops_in = [],[]
@@ -149,7 +213,9 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not self.ready():
             return
+
         loop_in_node = self.inputs[0].links[0].from_socket.node
+
         self.inputs[1].label = socket_labels[loop_in_node.mode]
         if loop_in_node.mode == 'Range':
             self.range_mode(loop_in_node)
@@ -162,7 +228,7 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
 
     def append_data(self, out_data):
         if not self.break_loop():
-            for inp, out in zip(self.inputs[2:], out_data):
+            for inp, out in zip(self.inputs[2:len(self.outputs)+2], out_data):
                 out.append(inp.sv_get(deepcopy=False, default=[[]])[0])
 
     def for_each_mode(self, loop_in_node):
@@ -183,6 +249,7 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
                 raise Exception("Loops inside not well connected")
 
             tree_nodes = self.id_data.nodes
+            do_print = loop_in_node.print_to_console
             idx = 0
             out_data = [[] for inp in self.inputs[2:]]
             do_update(intersection[:-1], tree_nodes)
@@ -195,6 +262,8 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
                     loop_in_node.outputs[j+3].sv_set([data])
                 loop_in_node.outputs['Loop Number'].sv_set([[idx]])
                 idx += 1
+                if do_print:
+                    print(f"Looping Object Number {idx}")
                 process_looped_nodes(intersection[1:-1], tree_nodes, 'Element', idx)
                 self.append_data(out_data)
 
@@ -218,7 +287,7 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
             if self.bad_inner_loops(intersection):
                 raise Exception("Loops inside not well connected")
 
-
+            do_print = loop_in_node.print_to_console
             iterations = min(int(loop_in_node.inputs['Iterations'].sv_get()[0][0]), loop_in_node.max_iterations)
             tree_nodes = self.id_data.nodes
             do_update(intersection[:-1], tree_nodes)
@@ -230,7 +299,8 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
                     data = socket.sv_get(deepcopy=False, default=[])
                     loop_in_node.outputs[j+3].sv_set(data)
                 loop_in_node.outputs['Loop Number'].sv_set([[i+1]])
-
+                if do_print:
+                    print(f"Looping iteration Number {i+1}")
                 process_looped_nodes(intersection[1:-1], tree_nodes, 'Iteration', i+1)
 
 
@@ -243,8 +313,10 @@ class SvLoopOutNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
+    bpy.utils.register_class(SvUpdateLoopOutSocketLabels)
     bpy.utils.register_class(SvLoopOutNode)
 
 
 def unregister():
     bpy.utils.unregister_class(SvLoopOutNode)
+    bpy.utils.unregister_class(SvUpdateLoopOutSocketLabels)
