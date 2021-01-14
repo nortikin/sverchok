@@ -44,6 +44,9 @@ class SvKdTree(object):
     def query_array(self, needle, count=1):
         raise Exception("Not implemented")
 
+    def query_range(self, needle, radius, **kwargs):
+        raise Exception("Not implemented")
+
 class SvBlenderKdTree(SvKdTree):
     def __init__(self, points):
         self.kdtree = kdtree.KDTree(len(points))
@@ -74,6 +77,12 @@ class SvBlenderKdTree(SvKdTree):
 
         return np.array(locs), np.array(idxs), np.array(distances)
 
+    def query_range(self, needle, radius, **kwargs):
+        res = self.kdtree.find_range(needle, radius)
+        idxs = [r[1] for r in res]
+        res = [tuple(r[0]) for r in res]
+        return  idxs, np.array(res)
+
 class SvSciPyKdTree(SvKdTree):
     def __init__(self, points, power=2):
         self.points = np.asarray(points)
@@ -89,6 +98,10 @@ class SvSciPyKdTree(SvKdTree):
         distances, idxs = self.kdtree.query(needle, k=count, p=self.power, **kwargs)
         locs = self.points[idxs]
         return locs, idxs, distances
+
+    def query_range(self, needle, radius, **kwargs):
+        idxs = self.kdtree.query_ball_point(needle, radius, p=self.power, **kwargs)
+        return idxs, self.points[idxs]
 
 class SvBruteforceKdTree(SvKdTree):
     def __init__(self, points, power=2):
