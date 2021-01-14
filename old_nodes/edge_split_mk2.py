@@ -55,6 +55,8 @@ class SvSplitEdgesMk2Node(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_SPLIT_EDGES'
     # sv_icon = 'SV_EDGE_SPLIT'
 
+    replacement_nodes = [('SvSplitEdgesMk3Node', None, None)]
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'mirror')
 
