@@ -30,7 +30,7 @@ import bpy
 from bpy.props import BoolProperty, EnumProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import node_id, multi_socket, updateNode
+from sverchok.data_structure import node_id, multi_socket, updateNode, levels_of_list_or_np
 
 from sverchok.utils.sv_text_io_common import (
     FAIL_COLOR, READY_COLOR, TEXT_IO_CALLBACK,
@@ -56,7 +56,7 @@ def get_csv_data(node):
     for row in zip(*data_out):
         writer.writerow(row)
 
-    return csv_str.getvalue()    
+    return csv_str.getvalue()
 
 
 def get_json_data(node):
@@ -87,6 +87,23 @@ def get_json_data(node):
 
     return out
 
+def format_to_text(data):
+    deptl = levels_of_list_or_np(data)
+    out = ''
+    if deptl > 1:
+        for i, sub_data in enumerate(data):
+            if i> 0:
+                out += '\n'
+            sub_data_len = len(sub_data)-1
+            for i, d in enumerate(sub_data):
+                out += str(d)
+                if i< sub_data_len:
+                    out += '\n'
+
+    else:
+        for d in data:
+            out += str(d)+'\n'
+    return out
 
 def get_sv_data(node):
     out = []
@@ -94,6 +111,8 @@ def get_sv_data(node):
         data = node.inputs['Data'].sv_get(deepcopy=False)
         if node.sv_mode == 'pretty':
             out = pprint.pformat(data)
+        elif node.sv_mode == 'text':
+            out = format_to_text(data)
         else:
             out = str(data)
 
@@ -111,7 +130,8 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     sv_modes = [
         ('compact',     'Compact',      'Using str()',        1),
-        ('pretty',      'Pretty',       'Using pretty print', 2)]
+        ('pretty',      'Pretty',       'Using pretty print', 2),
+        ('text',        'Text',       'Using pretty print', 3)]
 
     json_modes = [
         ('compact',     'Compact',      'Minimal',            1),
@@ -154,6 +174,7 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     multi_socket_type: StringProperty(name='multi_socket_type', default='SvStringsSocket')
 
     autodump: BoolProperty(default=False, description="autodump", name="auto dump")
+    unwrap: BoolProperty(default=True, description="unwrap", name="unwrap")
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'Col 0')

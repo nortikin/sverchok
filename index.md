@@ -603,6 +603,8 @@
     ---
     NoteNode
     SvGTextNode
+    ---
+    SvStringsToolsNode
 
 ## BPY Data
     SvGetPropNode
