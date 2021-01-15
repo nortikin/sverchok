@@ -83,7 +83,7 @@ func_dict = {
     "find_all":   (24,  find_all,                            ('tc s'),   "Find All",         ('Character', 'Start', 'End')),
     "find_all_sl":(25,  find_all_slice,                      ('tcsn s'), "Find All Slice",   ('Character', 'Start', 'End')),
     "count":      (30,  lambda x, c: x.count(c),             ('tt s'),   "Count"),
-    "replace":    (40,  lambda x, c, c2: x.replace(c, c2),   ('tcd t'),  "Replace",          ('Find', 'Replace')),
+    "replace":    (40,  lambda x, c, c2, n: x.replace(c, c2, n),('tcds t'),  "Replace",          ('Find', 'Replace', 'Count')),
 
     "lower":      (50,  lambda x: x.lower(),                 ('t t'),    "Lower"),
     "upper":      (51,  lambda x: x.upper(),                 ('t t'),    "Upper"),

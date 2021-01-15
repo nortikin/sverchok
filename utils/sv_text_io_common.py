@@ -30,7 +30,8 @@ READY_COLOR = (0.5, 0.7, 1)
 text_modes = [
     ("CSV",         "Csv",          "Csv data",           1),
     ("SV",          "Sverchok",     "Python data",        2),
-    ("JSON",        "JSON",         "Sverchok JSON",      3)]
+    ("JSON",        "JSON",         "Sverchok JSON",      3),
+    ("TEXT",        "Text",         "Sverchok JSON",      4)]
 
 name_dict = {'m': 'Matrix', 's': 'Data', 'v': 'Vertices'}
 

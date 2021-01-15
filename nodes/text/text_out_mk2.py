@@ -105,14 +105,20 @@ def format_to_text(data):
             out += str(d)+'\n'
     return out
 
+def get_text_data(node):
+    out = []
+    if node.inputs['Text'].links:
+        data = node.inputs['Text'].sv_get(deepcopy=False)
+        out = format_to_text(data)
+
+    return out
+
 def get_sv_data(node):
     out = []
     if node.inputs['Data'].links:
         data = node.inputs['Data'].sv_get(deepcopy=False)
         if node.sv_mode == 'pretty':
             out = pprint.pformat(data)
-        elif node.sv_mode == 'text':
-            out = format_to_text(data)
         else:
             out = str(data)
 
@@ -130,8 +136,7 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     sv_modes = [
         ('compact',     'Compact',      'Using str()',        1),
-        ('pretty',      'Pretty',       'Using pretty print', 2),
-        ('text',        'Text',       'Using pretty print', 3)]
+        ('pretty',      'Pretty',       'Using pretty print', 2)]
 
     json_modes = [
         ('compact',     'Compact',      'Minimal',            1),
@@ -153,6 +158,8 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             self.base_name = 'Data '
         elif self.text_mode == 'SV':
             self.inputs.new('SvStringsSocket', 'Data')
+        elif self.text_mode == 'TEXT':
+            self.inputs.new('SvStringsSocket', 'Text')
 
     def pointer_update(self, context):
         if self.file_pointer:
@@ -241,6 +248,8 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             out = get_json_data(node=self)
         elif self.text_mode == 'SV':
             out = get_sv_data(node=self)
+        elif self.text_mode == 'TEXT':
+            out = get_text_data(node=self)
         return out
 
     def set_pointer_from_filename(self):
