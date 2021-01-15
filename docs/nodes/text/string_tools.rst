@@ -66,8 +66,8 @@ This node has the following parameters:
 |**Count**           | Returns the number of times a specified value occurs in a   |                       | Number      |
 |                    | string                                                      |                       |             |
 +--------------------+-------------------------------------------------------------+-----------------------+-------------+
-|**Replace**         | Returns a string where a specified value is replaced with a |                       | String      |
-|                    | specified value                                             |                       |             |
+|**Replace**         | Returns a string where a specified value is replaced with a | 'Find', 'Replace'     | String      |
+|                    | specified value                                             | 'Count': -1 = all     |             |
 +--------------------+-------------------------------------------------------------+-----------------------+-------------+
 |**Lower**           | Converts a string into lower case                           |                       | String      |
 +--------------------+-------------------------------------------------------------+-----------------------+-------------+
