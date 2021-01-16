@@ -24,7 +24,7 @@ This node has the following parameters:
 +====================+=============================================================+=======================+=============+
 | Function           | Description                                                 | Options               | Output      |
 +--------------------+-------------------------------------------------------------+-----------------------+-------------+
-|**To String**       | Transforms inputs to strings.                               |                       | String      |
+|**To String**       | Transforms inputs to strings.                               | 'Level'               | String      |
 +--------------------+-------------------------------------------------------------+-----------------------+-------------+
 |**To Number**       | Transforms strings to numbers.                              |                       | Number      |
 +--------------------+-------------------------------------------------------------+-----------------------+-------------+
@@ -124,3 +124,14 @@ Outputs
 -------
 
 This node has only one output: it can output Strings or numbers
+
+Examples
+--------
+
+Placing measures:
+
+.. image:: https://user-images.githubusercontent.com/10011941/104808380-0e5cf600-57e6-11eb-9240-3f80df8c21c7.png
+
+Splitting Text:
+
+.. image:: https://user-images.githubusercontent.com/10011941/104808922-98f32480-57e9-11eb-9b43-672a60c5a898.png

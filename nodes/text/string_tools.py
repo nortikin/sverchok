@@ -16,16 +16,14 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import pi, e
 
 import bpy
-from bpy.props import EnumProperty, FloatProperty, IntProperty, BoolProperty, StringProperty
+from bpy.props import EnumProperty, IntProperty, BoolProperty, StringProperty
 
 from sverchok.ui.sv_icons import custom_icon
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, numpy_list_match_func, no_space
-from sverchok.utils.sv_itertools import (recurse_fx, recurse_fxy, recurse_f_level_control)
-import numpy as np
+from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, levels_of_list_or_np
+from sverchok.utils.sv_itertools import recurse_f_level_control
 # pylint: disable=C0326
 
 # Rules for modification:
@@ -163,6 +161,12 @@ class SvStringsToolsNode(bpy.types.Node, SverchCustomTreeNode):
         description="Behavior on different list lengths",
         items=numpy_list_match_modes, default="REPEAT",
         update=updateNode)
+    level: IntProperty(
+        name="Level",
+        description="Level to convert to string",
+        default=1,
+        min=1,
+        update=updateNode)
 
     text: StringProperty(
         name='Text',
@@ -194,7 +198,6 @@ class SvStringsToolsNode(bpy.types.Node, SverchCustomTreeNode):
         )
 
     def draw_label(self):
-        num_inputs = len(self.inputs)
         label = [self.current_op]
         if self.hide:
             return " ".join(label).title()
@@ -204,6 +207,8 @@ class SvStringsToolsNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, ctx, layout):
         row = layout.row(align=True)
         row.prop(self, "current_op", text="", icon_value=custom_icon("SV_FUNCTION"))
+        if self.current_op == 'to_string':
+            layout.prop(self,'level')
 
     def rclick_menu(self, context, layout):
         layout.prop_menu_enum(self, "current_op", text="Function")
@@ -279,6 +284,9 @@ class SvStringsToolsNode(bpy.types.Node, SverchCustomTreeNode):
             desired_levels = [2 if self.current_op=='join_all' else 1]*len(params)
             inputs_signature = self.sockets_signature.split(' ')[0]
             ops = [current_func, inputs_signature]
+            if self.current_op  == 'to_string':
+                depth = levels_of_list_or_np(params[0])
+                desired_levels= [max(depth-self.level + 1, 1)]
             result = recurse_f_level_control(params, ops, string_tools, matching_f, desired_levels)
 
             self.outputs[0].sv_set(result)
