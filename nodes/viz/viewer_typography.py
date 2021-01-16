@@ -18,7 +18,7 @@
 
 # pylint: disable=E1121
 
-
+from mathutils import Matrix
 import bpy
 from bpy.props import (
     BoolProperty,
@@ -65,10 +65,10 @@ def font_set_props(f, node, txt):
     f.align_y = node.align_y
 
 def get_obj_and_fontcurve(context, name):
-    collection = context.collection
+    collection = context.scene.collection
     curves = bpy.data.curves
     objects = bpy.data.objects
-
+    
     # CURVES
     if not name in curves:
         f = curves.new(name, 'FONT')
@@ -237,15 +237,11 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         row.prop_search(self, 'font_pointer', bpy.data, 'fonts', text='', icon='FONT_DATA')
         row.operator(shf, text='', icon='ZOOM_IN')
 
-        box = col.box()
-        if box:
-            box.label(text="Beta options")
-            box.prop(self, 'layer_choice', text='layer')
 
         row = layout.row()
         row.prop(self, 'parent_to_empty', text='parented')
         if self.parent_to_empty:
-            row.label(self.parent_name)
+            row.label(text=self.parent_name)
 
     def process(self):
 
@@ -254,7 +250,7 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
         # no autorepeat yet.
         text = self.inputs['text'].sv_get(default=[['sv_text']])[0]
-        matrices = self.inputs['matrix'].sv_get(default=[[]])
+        matrices = self.inputs['matrix'].sv_get(default=[Matrix()])
 
         with self.sv_throttle_tree_update():
             if self.parent_to_empty:
@@ -264,14 +260,16 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
                 scene = bpy.context.scene
                 collection = scene.collection
 
+
                 if not mtname in bpy.data.objects:
                     empty = bpy.data.objects.new(mtname, None)
                     collection.objects.link(empty)
-                    scene.update()
+                    bpy.context.view_layer.update()
+
 
             last_index = 0
             for obj_index, txt_content in enumerate(text):
-                matrix = matrices[obj_index]
+                matrix = matrices[obj_index % len(matrices)]
                 if isinstance(txt_content, list) and (len(txt_content) == 1):
                     txt_content = txt_content[0]
                 else:

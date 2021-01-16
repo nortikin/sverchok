@@ -124,8 +124,11 @@ mode_items = generate_node_items()
 
 def string_tools(params, constant, matching_f):
     result = []
-    func = constant
+    func, inputs_signature = constant
     params = matching_f(params)
+    for idx, signature in enumerate(inputs_signature):
+        if signature in 'tcd' and type(params[idx][0]) != str:
+            params[idx]=[str(p) for p in params[idx]]
 
     for props in zip(*params):
         result.append(func(*props))
@@ -274,8 +277,9 @@ class SvStringsToolsNode(bpy.types.Node, SverchCustomTreeNode):
             params = [si.sv_get(default=[[]], deepcopy=False) for si in self.inputs]
             matching_f = list_match_func[self.list_match]
             desired_levels = [2 if self.current_op=='join_all' else 1]*len(params)
-
-            result = recurse_f_level_control(params, current_func, string_tools, matching_f, desired_levels)
+            inputs_signature = self.sockets_signature.split(' ')[0]
+            ops = [current_func, inputs_signature]
+            result = recurse_f_level_control(params, ops, string_tools, matching_f, desired_levels)
 
             self.outputs[0].sv_set(result)
 
