@@ -1,29 +1,19 @@
-Color Mix
-=========
+Strings Tools
+=============
 
 Functionality
 -------------
 
-This node allows you mix colors using many standard methods.
-
-Inputs
-------
-
-**Fac**: Amount of mixture to be applied.
-
-**Color A**: Base color.
-
-**Color B**: Top color.
-
+This node allows operating with strings with many common methods.
 
 Parameters
 ----------
 
 This node has the following parameters:
 
-+====================+=============================================================+=======================+=============+
-| Function           | Description                                                 | Options               | Output      |
 +--------------------+-------------------------------------------------------------+-----------------------+-------------+
+| Function           | Description                                                 | Options               | Output      |
++====================+=============================================================+=======================+=============+
 |**To String**       | Transforms inputs to strings.                               | 'Level'               | String      |
 +--------------------+-------------------------------------------------------------+-----------------------+-------------+
 |**To Number**       | Transforms strings to numbers.                              |                       | Number      |
@@ -97,7 +87,7 @@ This node has the following parameters:
 |                    | the beginning                                               |                       |             |
 +--------------------+-------------------------------------------------------------+-----------------------+-------------+
 
-+====================+=============================================================+
++--------------------+-------------------------------------------------------------+
 | **Booleans**       |                                                             |
 +====================+=============================================================+
 |**Starts With**     | Returns True if the string starts with defined character    |
@@ -123,7 +113,7 @@ This node has the following parameters:
 Outputs
 -------
 
-This node has only one output: it can output Strings or numbers
+This node has only one output: it can output Strings or Numbers or Booleans
 
 Examples
 --------
