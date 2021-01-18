@@ -93,9 +93,9 @@ func_dict = {
     "strip":      (60,  lambda x, c: x.strip(c),             ('tc t'),   "Strip"),
     "lstrip":     (61,  lambda x, c: x.lstrip(c),            ('tc t'),   "Left Strip"),
     "rstrip":     (62,  lambda x, c: x.rstrip(c),            ('tc t'),   "Right Strip"),
-    "ljust":      (63,  lambda x, l, c: x.ljust(l, c),       ('tsc t'),  "Left Just"),
+    "ljust":      (63,  lambda x, l, c: x.ljust(l, c),       ('tsc t'),  "Left Justify"),
     "center":     (64,  lambda x,l,c: x.center(l, c),        ('tst t'),  "Center",          ('Length', 'Character')),
-    "rjust":      (65,  lambda x, l, c: x.rjust(l, c),       ('tsc t'),  "Right Just"),
+    "rjust":      (65,  lambda x, l, c: x.rjust(l, c),       ('tsc t'),  "Right Justify"),
     "zfill":      (66,  lambda x,l: x.zfill(l),              ('ts t'),   "Zeros Fill"),
 
     "startswith": (70,  lambda x, c: x.startswith(c),        ('tc s'),   "Starts With"),

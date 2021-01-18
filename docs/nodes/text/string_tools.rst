@@ -77,11 +77,11 @@ This node has the following parameters:
 +--------------------+-------------------------------------------------------------+-----------------------+-------------+
 |**Right Strip**     | Returns a right trim version of the string                  |                       | String      |
 +--------------------+-------------------------------------------------------------+-----------------------+-------------+
-|**Left Just**       | Returns a left justified version of the string              | 'Length': Line Length | String      |
+|**Left Justify**    | Returns a left justified version of the string              | 'Length': Line Length | String      |
 +--------------------+-------------------------------------------------------------+-----------------------+-------------+
 |**Center**          | Returns a centered string                                   | 'Length': Line Length | String      |
 +--------------------+-------------------------------------------------------------+-----------------------+-------------+
-|**Right Just**      | Returns a right justified version of the string             | 'Length': Line Length | String      |
+|**Right Justify**   | Returns a right justified version of the string             | 'Length': Line Length | String      |
 +--------------------+-------------------------------------------------------------+-----------------------+-------------+
 |**Zeros Fill**      | Fills the string with a specified number of 0 values at     | 'Length': Line Length | String      |
 |                    | the beginning                                               |                       |             |
