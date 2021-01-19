@@ -34,7 +34,7 @@ def enum_from_list(*item_list):
     """
     usage:   var = enum_from_list('TOP_BASELINE', 'TOP')
     produces:  [('TOP_BASELINE', 'TOP_BASELINE', '', 0), ('TOP', 'TOP', '', 1)]
-    """    
+    """
     return [(item, item, "", idx) for idx, item in enumerate(item_list)]
 
 def enum_from_list_idx(*item_list):
@@ -65,7 +65,7 @@ def get_random_init_v3():
 def tracked_operator(node, layout_element, fn_name='', text='', icon=None):
     """
     this is a wrapper around the layout.operator(CALLBACK_OP....), it allows
-    us to track the nodetree and nodename origins of the callback. 
+    us to track the nodetree and nodename origins of the callback.
 
     // Without treename and nodename it's not possible to tell where the button press comes from
     // and now you can just press the button, without first making a node selected or active.
@@ -78,7 +78,7 @@ def tracked_operator(node, layout_element, fn_name='', text='', icon=None):
     button = layout_element.operator(CALLBACK_OP, **operator_props)
     button.fn_name = fn_name
     button.node_name = node.name
-    button.tree_name = node.id_data.name    
+    button.tree_name = node.id_data.name
 
 
 class SvObjectsHelperCallback(bpy.types.Operator):
@@ -214,14 +214,14 @@ class SvObjHelper():
             if not self.parent_name in bpy.data.objects:
                 empty = bpy.data.objects.new(self.parent_name, None)
                 collection.objects.link(empty)
-                scene.update()        
+                scene.update()
 
     def to_parent(self, objs):
         for obj in objs:
             if self.parent_to_empty:
                 obj.parent = bpy.data.objects[self.parent_name]
             elif obj.parent:
-                obj.parent = None        
+                obj.parent = None
 
     layer_choice: BoolVectorProperty(
         subtype='LAYER', size=20, name="Layer Choice",
@@ -240,7 +240,7 @@ class SvObjHelper():
         default='Alpha',
         description="which base name the object and data will use",
         update=updateNode
-    )    
+    )
 
     # most importantly, what kind of base data are we making?
     data_kind: StringProperty(name='data kind', default='MESH')
@@ -261,19 +261,19 @@ class SvObjHelper():
     use_smooth: BoolProperty(name='use smooth', default=True, update=updateNode)
 
     parent_to_empty: BoolProperty(name='parent to empty', default=False, update=updateNode)
-    parent_name: StringProperty(name='parent name')  # calling updateNode would recurse.    
-    
+    parent_name: StringProperty(name='parent name')  # calling updateNode would recurse.
+
     custom_collection_name: StringProperty(
         name='collection name', update=updateNode,
         description='custom collection name, will default to the basename of the node first')
 
     def sv_init_helper_basedata_name(self):
-        """ 
+        """
         this is to be used in sv_init, at the top
         """
-        dname = get_random_init_v3()
+        dname = bpy.context.scene.sv_object_names.get_available_name()
         self.basedata_name = dname
-        self.use_custom_color = True        
+        self.use_custom_color = True
 
 
     def icons(self, TYPE):
@@ -290,7 +290,7 @@ class SvObjHelper():
         row = col.row(align=True)
         row.column().prop(self, "activate", text="LIVE", toggle=True)
 
-        for op_name in common_ops: 
+        for op_name in common_ops:
             tracked_operator(self, row, fn_name=op_name, icon=self.icons(op_name))
 
     def draw_object_buttons(self, context, layout):
@@ -333,6 +333,9 @@ class SvObjHelper():
             kinds = bpy.data.curves
         elif self.data_kind == 'META':
             kinds = bpy.data.metaballs
+        elif self.data_kind == 'FONT':
+            kinds = bpy.data.curves
+
 
         objects = bpy.data.objects
         collection = bpy.context.scene.collection
@@ -353,7 +356,7 @@ class SvObjHelper():
 
         # delete associated meshes/curves etc
         for object_name in obj_names:
-            kinds.remove(kinds[object_name])        
+            kinds.remove(kinds[object_name])
 
     def create_object(self, object_name, obj_index, data):
         """
@@ -408,10 +411,10 @@ class SvObjHelper():
 
     def push_custom_matrix_if_present(self, sv_object, matrix):
         if matrix:
-            # matrix = matrix_sanitizer(matrix)    
+            # matrix = matrix_sanitizer(matrix)
             sv_object.matrix_local = matrix
         else:
-            sv_object.matrix_local = Matrix.Identity(4)    
+            sv_object.matrix_local = Matrix.Identity(4)
 
 
 def register():

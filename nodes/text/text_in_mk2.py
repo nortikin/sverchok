@@ -163,7 +163,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     # Sverchok list options
     # choose which socket to interpret data as
     socket_type: EnumProperty(items=socket_types, default='s')
-    
+
     def set_animatable(self, context):
         self.is_animatable = self.autoreload
     #interesting but dangerous, TODO
@@ -173,7 +173,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     one_sock: BoolProperty(name='one socket', default=False)
     def sv_init(self, context):
         self.is_animatable = False
-        
+
     def draw_buttons_ext(self, context, layout):
         if self.textmode == 'CSV':
             layout.prop(self, 'force_input')
@@ -206,7 +206,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             row.prop(self, 'textmode', expand=True)
             col.prop(self, 'one_sock')
             if self.textmode == 'CSV':
-                
+
                 row = col.row(align=True)
                 row.prop(self, 'csv_header', toggle=True)
                 row.prop(self, 'csv_skip_header_lines', text='Skip n')
@@ -246,7 +246,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.current_text = ''
         pop_all_data(self, n_id)
 
-    
+
     def reload(self):
         # reload should ONLY be called from operator on ui change
         if self.textmode == 'CSV':
@@ -261,16 +261,18 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
 
     def process(self):  # dispatch based on mode
-
+        print(self.textmode, self.current_text, 5)
         if not self.current_text:
             return
-
+        print(self.textmode)
         if self.textmode == 'CSV':
             self.update_csv()
         elif self.textmode == 'SV':
             self.update_sv()
         elif self.textmode == 'JSON':
             self.update_json()
+        elif self.textmode == 'TEXT':
+            self.update_text()
 
 
     def load(self):
@@ -280,6 +282,8 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             self.load_sv()
         elif self.textmode == 'JSON':
             self.load_json()
+        elif self.textmode == 'TEXT':
+            self.load_text()
 
 
     #
@@ -564,6 +568,59 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             if item in self.outputs and self.outputs[item].is_linked:
                 out = json_data[item][1]
                 self.outputs[item].sv_set(out)
+
+
+    def load_text(self):
+        n_id = node_id(self)
+        self.load_text_data()
+
+        if n_id in self.list_data:
+            new_output_socket(self, 'Text', 'SvTextSocket')
+
+    def reload_text(self):
+        self.load_text_data()
+
+    def load_text_data(self):
+        data = None
+        n_id = node_id(self)
+
+        if n_id in self.list_data:
+            del self.list_data[n_id]
+
+        data = [bpy.data.texts[self.text].as_string()]
+
+        # try:
+        #     data = ast.literal_eval(f)
+        # except Exception as err:
+        #     sys.stderr.write('ERROR: %s\n' % str(err))
+        #     print(sys.exc_info()[-1].tb_frame.f_code)
+        #     pass
+
+        self.use_custom_color = True
+        self.list_data[n_id] = data
+        self.color = READY_COLOR
+        self.current_text = self.text
+        # else:
+        #     self.color = FAIL_COLOR
+
+    def update_text(self):
+        n_id = node_id(self)
+
+        if self.autoreload:
+            self.reload_text()
+
+        # nothing loaded, try to load and if it doesn't *work* -- then fail it.
+        if n_id not in self.list_data and self.current_text:
+            self.reload_text()
+
+        if n_id not in self.list_data:
+            self.use_custom_color = True
+            self.color = FAIL_COLOR
+            return
+
+        # load data into selected socket
+        print(self.list_data[n_id])
+        self.outputs[0].sv_set(self.list_data[n_id])
 
     def set_pointer_from_filename(self):
         """ this function upgrades older versions of ProfileMK3 to the version that has self.file_pointer """

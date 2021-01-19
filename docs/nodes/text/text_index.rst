@@ -14,3 +14,4 @@ Text
    viewer_text_mk3
    stethoscope_v28
    gtext
+   string_tools

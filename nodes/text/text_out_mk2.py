@@ -30,7 +30,7 @@ import bpy
 from bpy.props import BoolProperty, EnumProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import node_id, multi_socket, updateNode
+from sverchok.data_structure import node_id, multi_socket, updateNode, levels_of_list_or_np
 
 from sverchok.utils.sv_text_io_common import (
     FAIL_COLOR, READY_COLOR, TEXT_IO_CALLBACK,
@@ -56,7 +56,7 @@ def get_csv_data(node):
     for row in zip(*data_out):
         writer.writerow(row)
 
-    return csv_str.getvalue()    
+    return csv_str.getvalue()
 
 
 def get_json_data(node):
@@ -87,6 +87,31 @@ def get_json_data(node):
 
     return out
 
+def format_to_text(data):
+    deptl = levels_of_list_or_np(data)
+    out = ''
+    if deptl > 1:
+        for i, sub_data in enumerate(data):
+            if i> 0:
+                out += '\n'
+            sub_data_len = len(sub_data)-1
+            for i, d in enumerate(sub_data):
+                out += str(d)
+                if i< sub_data_len:
+                    out += '\n'
+
+    else:
+        for d in data:
+            out += str(d)+'\n'
+    return out
+
+def get_text_data(node):
+    out = []
+    if node.inputs['Text'].links:
+        data = node.inputs['Text'].sv_get(deepcopy=False)
+        out = format_to_text(data)
+
+    return out
 
 def get_sv_data(node):
     out = []
@@ -133,6 +158,8 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             self.base_name = 'Data '
         elif self.text_mode == 'SV':
             self.inputs.new('SvStringsSocket', 'Data')
+        elif self.text_mode == 'TEXT':
+            self.inputs.new('SvStringsSocket', 'Text')
 
     def pointer_update(self, context):
         if self.file_pointer:
@@ -154,6 +181,7 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     multi_socket_type: StringProperty(name='multi_socket_type', default='SvStringsSocket')
 
     autodump: BoolProperty(default=False, description="autodump", name="auto dump")
+    unwrap: BoolProperty(default=True, description="unwrap", name="unwrap")
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'Col 0')
@@ -220,6 +248,8 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             out = get_json_data(node=self)
         elif self.text_mode == 'SV':
             out = get_sv_data(node=self)
+        elif self.text_mode == 'TEXT':
+            out = get_text_data(node=self)
         return out
 
     def set_pointer_from_filename(self):
