@@ -148,3 +148,4 @@ class SvSplitEdgesMk2Node(bpy.types.Node, SverchCustomTreeNode):
         node.outputs.edges = new_edges
         node.outputs.faces = new_faces
 
+register, unregister = bpy.utils.register_classes_factory([SvSplitEdgesMk2Node])
