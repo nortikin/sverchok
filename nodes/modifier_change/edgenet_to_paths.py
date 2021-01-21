@@ -22,10 +22,6 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
 
-def pop_lower_level(data, index):
-    for subdata in data:
-        subdata.pop(index)
-
 class Limit(NamedTuple):
     v_index: int
     edge_side: int

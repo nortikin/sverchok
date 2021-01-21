@@ -32,4 +32,7 @@ Examples of usage
 
 Simple:
 
-.. image:: https://cloud.githubusercontent.com/assets/5783432/18611195/3b47ce74-7d43-11e6-8d05-335919636b2b.png
+.. image:: https://user-images.githubusercontent.com/10011941/105373980-83299900-5c07-11eb-94ea-a90c621f4cb7.png
+
+
+.. image:: https://user-images.githubusercontent.com/10011941/105376026-96d5ff00-5c09-11eb-9fb8-7430085004c5.png
