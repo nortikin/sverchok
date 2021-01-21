@@ -25,6 +25,7 @@ Options
 -------
 
 - **Close Loops**: When checked, if the first and last vertices are identical they will merge; otherwise, this wont be checked
+- **Join**: If checked, generate one flat list of paths for all input meshes; otherwise, generate separate list of loose parts for each input mesh
 
 
 Examples of usage
