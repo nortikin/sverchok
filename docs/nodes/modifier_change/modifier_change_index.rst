@@ -44,3 +44,4 @@ Modifier Change
    dissolve_mesh_elements
    rigid_origami
    flat_geometry
+   edgenet_to_paths
