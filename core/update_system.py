@@ -42,6 +42,7 @@ no_data_color = (1, 0.3, 0)
 exception_color = (0.8, 0.0, 0)
 
 sv_first_run = True
+sv_completed_post_load_handler = False
 
 def set_first_run(value):
     global sv_first_run
@@ -50,6 +51,14 @@ def set_first_run(value):
 def is_first_run():
     global sv_first_run
     return sv_first_run
+
+def set_postload_completion_state(value):
+    global sv_completed_post_load_handler
+    sv_completed_post_load_handler = value
+
+def is_postload_complete():
+    global sv_completed_post_load_handler
+    return sv_completed_post_load_handler
 
 def clear_system_cache():
     print("cleaning Sverchok cache")
