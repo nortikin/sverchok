@@ -365,6 +365,7 @@
     SvMergeByDistanceNode
     SvSeparateMeshNode
     SvSeparatePartsToIndexes
+    SvEdgenetToPathsNode
     SvLimitedDissolve
     SvPlanarFacesNode
     SvSplitFacesNode
