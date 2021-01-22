@@ -551,6 +551,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         bpy.data.texts.new(filename)
         bpy.data.texts[filename].clear()
         bpy.data.texts[filename].write(geom)
+        self.file_pointer = bpy.data.texts[filename]
 
     def save_to_json(self, node_data: dict):
         if self.filename and self.filename in bpy.data.texts:
