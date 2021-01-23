@@ -33,6 +33,7 @@ SOCKET_TYPES = {
     's': 'SvStringsSocket',
     'm': 'SvMatrixSocket',
     'q': 'SvQuaternionSocket',
+    'c': 'SvColorSocket',
     'vf': "SvVectorFieldSocket",
     'sf': 'SvScalarFieldSocket'
     }
@@ -159,8 +160,23 @@ def matrices_to_quaternions(socket, source_data):
     return get_quaternions_from_matrices(source_data)
 
 def string_to_vector(socket, source_data):
-    # it can be so that socket is string but data their are already vectors
-    return [[(v, v, v) if isinstance(v, (float, int)) else v for v in obj] for obj in source_data]
+    # it can be so that socket is string but data their are already vectors, performace-wise we check only first item
+    if isinstance(source_data[0][0], (float, int)):
+        return [[(v, v, v) for v in obj] for obj in source_data]
+    return source_data
+
+
+def string_to_color(socket, source_data):
+    # it can be so that socket is string but data their are already colors, performace-wise we check only first item
+    if isinstance(source_data[0][0], (float, int)):
+        return [[(v, v, v, 1) for v in obj] for obj in source_data]
+    if len(source_data[0][0]) == 3:
+        return vector_to_color(socket, source_data)
+    return source_data
+
+def vector_to_color(socket, source_data):
+
+    return [[(v[0], v[1], v[2], 1) for v in obj] for obj in source_data]
 
 class ImplicitConversionProhibited(Exception):
     def __init__(self, socket, msg=None):
@@ -211,7 +227,9 @@ class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
         ['m', 'v', matrices_to_vectors],
         ['q', 'm', quaternions_to_matrices],
         ['m', 'q', matrices_to_quaternions],
-        ['s', 'v', string_to_vector]]
+        ['s', 'v', string_to_vector],
+        ['s', 'c', string_to_color],
+        ['v', 'c', vector_to_color]]
 
     @classmethod
     def convert(cls, socket, other, source_data):

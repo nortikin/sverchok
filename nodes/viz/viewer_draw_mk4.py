@@ -751,7 +751,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         config.random_colors = self.vector_random_colors
         config.color_per_point = self.color_per_point and (inputs['Vector Color'].is_linked or self.vector_random_colors)
         config.color_per_edge = self.color_per_edge and (inputs['Edge Color'].is_linked or self.edges_use_vertex_color)
-        config.color_per_polygon = self.color_per_polygon and (inputs['Polygon Color'].is_linked or self.edges_use_vertex_color)
+        config.color_per_polygon = self.color_per_polygon and (inputs['Polygon Color'].is_linked or self.polygon_use_vertex_color)
         config.polygon_use_vertex_color = self.polygon_use_vertex_color
         config.edges_use_vertex_color = self.edges_use_vertex_color
 
@@ -839,7 +839,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
             vecs = inputs['Vertices'].sv_get(deepcopy=False, default=[[]])
             total_verts = sum(map(len, vecs))
             if not total_verts:
-                raise LookupError("Empty vertices list")    
+                raise LookupError("Empty vertices list")
             edges = inputs['Edges'].sv_get(deepcopy=False, default=[[]])
             polygons = inputs['Polygons'].sv_get(deepcopy=False, default=[[]])
             matrix = inputs['Matrix'].sv_get(deepcopy=False, default=[[]])
