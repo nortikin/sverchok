@@ -39,7 +39,11 @@ def map_range(params, constant, matching_f):
         res = new_min + (val - old_min) * ((new_max - new_min)/(old_max - old_min))
 
         if clamp and not auto_limits:
-            res = np.clip(res, new_min, new_max)
+            mask = new_min < new_max
+            invert_mask = np.invert(mask)
+            res[mask] = np.clip(res[mask], new_min[mask], new_max[mask])
+            res[invert_mask] = np.clip(res[invert_mask], new_max[invert_mask], new_min[invert_mask])
+
         result.append(res if out_numpy else res.tolist())
 
     return result
