@@ -93,7 +93,7 @@ class SvNoiseNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     """
 
     bl_idname = 'SvNoiseNodeMK3'
-    bl_label = 'Vector Noisess'
+    bl_label = 'Vector Noise'
     bl_icon = 'FORCE_TURBULENCE'
     sv_icon = 'SV_VECTOR_NOISE'
 
