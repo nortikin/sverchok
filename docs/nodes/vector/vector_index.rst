@@ -12,7 +12,7 @@ Vector
    interpolation_stripes
    interpolation_mk3
    math_mk3
-   noise_mk2
+   noise_mk3
    fractal
    lerp
    vector_rewire

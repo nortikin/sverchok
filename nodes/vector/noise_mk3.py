@@ -20,11 +20,13 @@
 
 import bpy
 from bpy.props import EnumProperty, IntProperty, BoolProperty
-from mathutils import noise
+from mathutils import noise, Matrix, Vector
+from itertools import cycle
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, throttle_and_update_node
+from sverchok.data_structure import updateNode, throttle_and_update_node, zip_long_repeat
 from sverchok.utils.sv_noise_utils import noise_options, PERLIN_ORIGINAL, noise_numpy_types
+from sverchok.utils.modules.matrix_utils import matrix_apply_np
 import numpy as np
 
 
@@ -55,6 +57,26 @@ def mathulis_noise(vecs, out, out_mode, noise_type, noise_function, output_numpy
         noise_output = np.linalg.norm(vecs, axis=1)*0.5
         out.append(noise_output if output_numpy else noise_output.tolist())
 
+def preprocess_verts(noise_matrix, verts, numpy_mode):
+    if isinstance(noise_matrix[0], Matrix):
+        if numpy_mode:
+            verts = [
+                matrix_apply_np(
+                    vs if isinstance(vs, np.ndarray) else np.array(vs),
+                    m.inverted())
+                for vs, m in zip_long_repeat(verts, noise_matrix)
+                ]
+        else:
+            verts = [
+                matrix_apply_np(
+                    vs if isinstance(vs, np.ndarray) else np.array(vs),
+                    m.inverted()).tolist()
+                for vs, m in zip_long_repeat(verts, noise_matrix)
+                ]
+    else:
+        verts = [[m.inverted() @ Vector(v) for v, m in zip(vs, cycle(ms))] for vs, ms in zip_long_repeat(verts, noise_matrix)]
+
+    return verts
 
 avail_noise = [(t[0], t[0].title().replace('_', ' '), t[0].title(), '', t[1]) for t in noise_options]
 
@@ -62,7 +84,7 @@ for idx, new_type in enumerate(noise_numpy_types.keys()):
     avail_noise.append((new_type, new_type.title().replace('_', ' '), new_type.title(), '', 100 + idx))
 
 
-class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvNoiseNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Vector Noise
     Tooltip: Affect input verts with a noise function.
@@ -70,7 +92,7 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     A short description for reader of node code
     """
 
-    bl_idname = 'SvNoiseNodeMK2'
+    bl_idname = 'SvNoiseNodeMK3'
     bl_label = 'Vector Noise'
     bl_icon = 'FORCE_TURBULENCE'
     sv_icon = 'SV_VECTOR_NOISE'
@@ -123,6 +145,8 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
         self.inputs.new('SvStringsSocket', 'Seed').prop_name = 'seed'
+        self.inputs.new('SvMatrixSocket', 'Noise Matrix')
+
         self.outputs.new('SvVerticesSocket', 'Noise V')
 
     def draw_buttons(self, context, layout):
@@ -154,15 +178,20 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         out = []
         verts = inputs['Vertices'].sv_get(deepcopy=False)
+        noise_matrix = inputs['Noise Matrix'].sv_get(deepcopy=False, default=[])
+
         seeds = inputs['Seed'].sv_get()[0]
+        noise_type = self.noise_type
+        numpy_mode = noise_type in noise_numpy_types.keys()
+        if noise_matrix:
+            verts = preprocess_verts(noise_matrix, verts, numpy_mode)
 
         max_len = max(map(len, (seeds, verts)))
-        noise_type = self.noise_type
 
         out_mode = self.out_mode
         output_numpy = self.output_numpy
 
-        if noise_type in noise_numpy_types.keys():
+        if numpy_mode:
 
             noise_function = noise_numpy_types[noise_type][self.interpolate]
             smooth = self.smooth
@@ -196,5 +225,5 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         else:
             return self.label or self.name
 
-classes = [SvNoiseNodeMK2]
+classes = [SvNoiseNodeMK3]
 register, unregister = bpy.utils.register_classes_factory(classes)
