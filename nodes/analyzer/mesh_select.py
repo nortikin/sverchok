@@ -64,7 +64,7 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
             default=False,
             update=updateNode)
 
-    percent: FloatProperty(name="Percent", 
+    percent: FloatProperty(name="Percent",
             default=1.0,
             min=0.0, max=100.0,
             update=updateNode)
@@ -113,7 +113,8 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
         return maxv - percent * (maxv - minv) * 0.01
 
     def select_verts_by_faces(self, faces, verts):
-        return [any(v in face for face in faces) for v in range(len(verts))]
+        flat_index_list = {idx for face in faces for idx in face}
+        return [v in flat_index_list for v in range(len(verts))]
 
     def select_edges_by_verts(self, verts_mask, edges):
         result = []
@@ -148,7 +149,7 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
         out_edges_mask = self.select_edges_by_verts(out_verts_mask, edges)
 
         return out_verts_mask, out_edges_mask, out_face_mask
-    
+
     def by_side(self, vertices, edges, faces):
         percent = self.inputs['Percent'].sv_get(default=[1.0])[0][0]
         direction = self.inputs['Direction'].sv_get()[0][0]
@@ -239,7 +240,7 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
                 value = 0
             values.append(value)
         threshold = self.map_percent(values, percent)
-    
+
         out_edges_mask = [(value >= threshold) for value in values]
         out_edges = [edge for (edge, mask) in zip (edges, out_edges_mask) if mask]
         out_verts_mask = self.select_verts_by_faces(out_edges, vertices)
@@ -362,9 +363,9 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
         if not any(output.is_linked for output in self.outputs):
             return
 
-        vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
-        edges_s = self.inputs['Edges'].sv_get(default=[[]])
-        faces_s = self.inputs['Polygons'].sv_get(default=[[]])
+        vertices_s = self.inputs['Vertices'].sv_get(default=[[]], deepcopy=False)
+        edges_s = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)
+        faces_s = self.inputs['Polygons'].sv_get(default=[[]], deepcopy=False)
 
         meshes = match_long_repeat([vertices_s, edges_s, faces_s])
         out_vertices, out_edges, out_faces = self._process_recursive(self.level, meshes)
