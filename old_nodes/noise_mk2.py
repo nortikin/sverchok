@@ -75,6 +75,7 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'FORCE_TURBULENCE'
     sv_icon = 'SV_VECTOR_NOISE'
 
+    replacement_nodes = [('SvNoiseNodeMK3', None, None)]
     @throttle_and_update_node
     def changeMode(self, context):
         outputs = self.outputs

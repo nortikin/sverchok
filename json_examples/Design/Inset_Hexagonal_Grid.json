@@ -215,7 +215,7 @@
       "width": 140.0
     },
     "Vector Noise MK2": {
-      "bl_idname": "SvNoiseNodeMK2",
+      "bl_idname": "SvNoiseNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -229,7 +229,7 @@
       "width": 140.0
     },
     "Vector Noise MK2.001": {
-      "bl_idname": "SvNoiseNodeMK2",
+      "bl_idname": "SvNoiseNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",

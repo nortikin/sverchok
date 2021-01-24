@@ -527,7 +527,7 @@
     SvInterpolationNodeMK3
     SvInterpolationNodeMK2
     ---
-    SvNoiseNodeMK2
+    SvNoiseNodeMK3
     SvTurbulenceNode
     SvLacunarityNode
     SvVectorFractal

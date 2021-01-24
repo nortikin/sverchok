@@ -44,6 +44,8 @@ Inputs & Parameters
 |                | constant to allow all seed input to generate repeatable output.         |
 |                | (Seed=0 would otherwise generate random values based on system time)    |
 +----------------+-------------------------------------------------------------------------+
+| Noise Matrix   | Matrix input to determinate noise origin, scale and rotation            |
++----------------+-------------------------------------------------------------------------+
 
 Advanced Parameters
 -------------------
