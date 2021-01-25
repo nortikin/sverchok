@@ -20,8 +20,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -274.1788024902344,
-        -199.6656036376953
+        -272.632230758667,
+        -198.11730289459229
       ],
       "params": {
         "sample_size": 200
@@ -35,8 +35,8 @@
       "hide": false,
       "label": "",
       "location": [
-        542.0409736633301,
-        -174.8642578125
+        543.5875453948975,
+        -173.31595611572266
       ],
       "params": {
         "formula1": "x if y>-7 else 1.5-abs(y)**1.8/40"
@@ -50,8 +50,8 @@
       "hide": false,
       "label": "",
       "location": [
-        167.59436416625977,
-        -182.6143798828125
+        169.14093589782715,
+        -181.06607818603516
       ],
       "params": {
         "formula1": "abs(z)/10"
@@ -61,12 +61,12 @@
     "Frame": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 252.3343963623047,
+      "height": 252.88270568847656,
       "hide": false,
       "label": "generator",
       "location": [
-        -30.0,
-        10.0
+        -28.453428268432617,
+        11.548300743103027
       ],
       "params": {},
       "width": 807.350341796875
@@ -74,12 +74,12 @@
     "Frame.001": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 210.1357421875,
+      "height": 210.68405151367188,
       "hide": false,
       "label": "twist",
       "location": [
-        20.784564971923828,
-        84.29751586914062
+        22.33113670349121,
+        85.84581756591797
       ],
       "params": {},
       "width": 859.5928344726562
@@ -87,12 +87,12 @@
     "Frame.002": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 464.89044189453125,
+      "height": 464.438720703125,
       "hide": false,
       "label": "bevel object",
       "location": [
-        86.11196899414062,
-        -1.1232242584228516
+        87.65853881835938,
+        0.4250762462615967
       ],
       "params": {},
       "width": 389.03125
@@ -109,13 +109,13 @@
       "hide": false,
       "label": "",
       "location": [
-        -882.0178833007812,
-        -16.087749481201172
+        -880.4713134765625,
+        -14.539448738098145
       ],
       "params": {
         "n_id": "-8503949147017359024",
         "show_text": false,
-        "text": "Nikitron 2020 | Toe revange from radiation dust . SNL implemented generator. Input letters l r t as in this example and create new toes. Schema was taken from Russian magazine 'Nauka i gizn''."
+        "text": "Nikitron 2020 | Tie revange from radiation dust . SNL implemented generator. Input letters l r t as in this example and create new toes. Schema was taken from Russian magazine 'Nauka i gizn''."
       },
       "use_custom_color": true,
       "width": 400.0
@@ -132,8 +132,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -881.5291748046875,
-        -205.29336547851562
+        -879.9826030731201,
+        -203.7450647354126
       ],
       "params": {
         "n_id": "-8503949147017355483",
@@ -155,8 +155,8 @@
       "hide": false,
       "label": "",
       "location": [
-        441.4773254394531,
-        -436.4497318267822
+        443.0238952636719,
+        -434.9014313220978
       ],
       "params": {
         "currently_storing": true,
@@ -187,10 +187,11 @@
       "hide": false,
       "label": "",
       "location": [
-        874.505859375,
-        22.590808868408203
+        876.0524291992188,
+        24.139108657836914
       ],
       "params": {
+        "base_data_name": "Omicron",
         "bevel_depth": 0.8299999833106995,
         "is_lock_origin": false
       },
@@ -205,6 +206,9 @@
         0.21400000154972076
       ],
       "custom_socket_props": {
+        "2": {
+          "default_float_property": 0.20000000298023224
+        },
         "4": {
           "object_kinds": "CURVE"
         }
@@ -213,8 +217,8 @@
       "hide": false,
       "label": "",
       "location": [
-        630.5085754394531,
-        -434.10955238342285
+        632.0551452636719,
+        -432.5612518787384
       ],
       "params": {
         "base_data_name": "Gamma",
@@ -233,8 +237,8 @@
       "hide": false,
       "label": "",
       "location": [
-        365.76933670043945,
-        -177.04129028320312
+        367.31590843200684,
+        -175.49298858642578
       ],
       "params": {
         "current_op": "MAX",
@@ -254,8 +258,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -448.7362060546875,
-        -205.78904724121094
+        -447.1896343231201,
+        -204.2407464981079
       ],
       "params": {
         "n_id": "-8503949147017355656",
@@ -272,8 +276,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -26.14376449584961,
-        -182.49008178710938
+        -24.597192764282227,
+        -180.94178009033203
       ],
       "params": {},
       "width": 140.0
@@ -281,33 +285,9 @@
   },
   "update_lists": [
     [
-      "Vector out",
-      2,
-      "Formula.001",
-      0
-    ],
-    [
-      "Formula.001",
-      0,
-      "Scalar Math",
-      0
-    ],
-    [
-      "Evaluate Curve",
-      0,
-      "Vector out",
-      0
-    ],
-    [
       "Scripted Node Lite",
       0,
       "Evaluate Curve",
-      0
-    ],
-    [
-      "Note.001",
-      0,
-      "Scripted Node Lite",
       0
     ],
     [
@@ -323,9 +303,9 @@
       1
     ],
     [
-      "Objects in Lite",
-      0,
-      "Polyline Viewer.003",
+      "Vector out",
+      2,
+      "Formula.001",
       0
     ],
     [
@@ -345,6 +325,30 @@
       0,
       "Polyline Viewer.002",
       4
+    ],
+    [
+      "Objects in Lite",
+      0,
+      "Polyline Viewer.003",
+      0
+    ],
+    [
+      "Formula.001",
+      0,
+      "Scalar Math",
+      0
+    ],
+    [
+      "Note.001",
+      0,
+      "Scripted Node Lite",
+      0
+    ],
+    [
+      "Evaluate Curve",
+      0,
+      "Vector out",
+      0
     ]
   ]
 }

@@ -1,0 +1,1157 @@
+{
+  "export_version": "0.10",
+  "framed_nodes": {
+    "A Number": "Frame.002",
+    "A Number.001": "Frame.002",
+    "A Number.002": "Frame.002",
+    "A Number.003": "Frame.002",
+    "Circle.001": "Frame.004",
+    "Color in": "Frame.001",
+    "File Path": "Frame.007",
+    "Fill / Stroke SVG": "Frame.006",
+    "Fill / Stroke SVG.002": "Frame.008",
+    "Fill / Stroke SVG.003": "Frame.009",
+    "List Flip": "Frame.001",
+    "List Join": "Frame.007",
+    "List Join.001": "Frame.001",
+    "List Length": "Frame.001",
+    "List Split": "Frame.001",
+    "Mesh SVG": "Frame.008",
+    "Mesh SVG.001": "Frame.009",
+    "Move": "Frame",
+    "Move.001": "Frame.004",
+    "Move.003": "Frame.005",
+    "Move.004": "Frame.010",
+    "Number Range": "Frame.001",
+    "Path SVG": "Frame.006",
+    "Ring": "Frame",
+    "SVG Document": "Frame.007",
+    "Scalar Math": "Frame.003",
+    "Scalar Math.001": "Frame.003",
+    "Vector Turbulence": "Frame.010",
+    "Vector in": "Frame.002",
+    "Vector in.001": "Frame.010",
+    "Vector out": "Frame.010",
+    "Viewer Draw": "Frame.004",
+    "Viewer Draw.002": "Frame.007",
+    "Viewer Draw.003": "Frame",
+    "Viewer Draw.004": "Frame.005",
+    "Voronoi 2D": "Frame.005"
+  },
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "n2",
+      "location": [
+        -2509.3775634765625,
+        -86.8511962890625
+      ],
+      "params": {
+        "draw_3dpanel": true,
+        "int_": 10,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "A Number.001": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "R",
+      "location": [
+        -2507.9774169921875,
+        -194.04962158203125
+      ],
+      "params": {
+        "draw_3dpanel": true,
+        "float_": 2.319999933242798
+      },
+      "width": 140.0
+    },
+    "A Number.002": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "r",
+      "location": [
+        -2512.8184814453125,
+        -284.88385009765625
+      ],
+      "params": {
+        "draw_3dpanel": true,
+        "float_": 1.2310001850128174
+      },
+      "width": 140.0
+    },
+    "A Number.003": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "n1",
+      "location": [
+        -2509.1527099609375,
+        -1.02825927734375
+      ],
+      "params": {
+        "draw_3dpanel": true,
+        "int_": 10,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "Circle.001": {
+      "bl_idname": "SvCircleNode",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1021.2531433105469,
+        484.7640838623047
+      ],
+      "params": {
+        "vert_": 8
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Color in": {
+      "bl_idname": "SvColorsInNodeMK1",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -923.1646957397461,
+        -825.101676940918
+      ],
+      "params": {
+        "selected_mode": "HSV"
+      },
+      "width": 110.0
+    },
+    "File Path": {
+      "bl_idname": "SvFilePathNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "Folder Path",
+      "location": [
+        193.42092895507812,
+        222.02261352539062
+      ],
+      "params": {
+        "directory": "/"
+      },
+      "width": 140.0
+    },
+    "Fill / Stroke SVG": {
+      "bl_idname": "SvSvgFillStrokeNodeMk2",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -439.6923065185547,
+        408.78784942626953
+      ],
+      "params": {
+        "fill_mode": "NONE",
+        "stroke_color": [
+          1.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "stroke_mode": "FLAT",
+        "stroke_width": 0.019999999552965164
+      },
+      "width": 140.0
+    },
+    "Fill / Stroke SVG.002": {
+      "bl_idname": "SvSvgFillStrokeNodeMk2",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -398.9602737426758,
+        -348.399169921875
+      ],
+      "params": {
+        "fill_color": [
+          0.1971377432346344,
+          0.1971377432346344,
+          0.1971377432346344,
+          1.0
+        ],
+        "stroke_color": [
+          1.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "stroke_width": 0.10000000149011612
+      },
+      "width": 140.0
+    },
+    "Fill / Stroke SVG.003": {
+      "bl_idname": "SvSvgFillStrokeNodeMk2",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -399.90892028808594,
+        49.52525329589844
+      ],
+      "params": {
+        "fill_mode": "NONE",
+        "stroke_color": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ],
+        "stroke_mode": "FLAT",
+        "stroke_width": 0.019999999552965164
+      },
+      "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 372.56134033203125,
+      "hide": false,
+      "label": "raster engrave",
+      "location": [
+        -530.4838256835938,
+        315.33538818359375
+      ],
+      "params": {},
+      "width": 1650.1942138671875
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 257.07562255859375,
+      "hide": false,
+      "label": "color graving",
+      "location": [
+        -67.33077239990234,
+        7.604316711425781
+      ],
+      "params": {},
+      "width": 1084.78955078125
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 560.9717407226562,
+      "hide": false,
+      "label": "input",
+      "location": [
+        -244.3355712890625,
+        510.719970703125
+      ],
+      "params": {},
+      "width": 219.3623046875
+    },
+    "Frame.003": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 210.95501708984375,
+      "hide": false,
+      "label": "radiuses",
+      "location": [
+        467.6865234375,
+        629.9666748046875
+      ],
+      "params": {},
+      "width": 381.9881591796875
+    },
+    "Frame.004": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 380.0945129394531,
+      "hide": false,
+      "label": "cut path",
+      "location": [
+        372.0846252441406,
+        341.32879638671875
+      ],
+      "params": {},
+      "width": 558.875
+    },
+    "Frame.005": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 372.8710021972656,
+      "hide": false,
+      "label": "vector engrave path",
+      "location": [
+        433.2557678222656,
+        -124.24813842773438
+      ],
+      "params": {},
+      "width": 583.3564453125
+    },
+    "Frame.006": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 306.5570373535156,
+      "hide": false,
+      "label": "cutting",
+      "location": [
+        -92.94776916503906,
+        367.75103759765625
+      ],
+      "params": {},
+      "width": 483.66455078125
+    },
+    "Frame.007": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 435.0226135253906,
+      "hide": false,
+      "label": "output_change filepath & name",
+      "location": [
+        -30.0,
+        10.0
+      ],
+      "params": {},
+      "width": 640.0875244140625
+    },
+    "Frame.008": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 298.3418884277344,
+      "hide": false,
+      "label": "raster engraving",
+      "location": [
+        -86.30619049072266,
+        108.20797729492188
+      ],
+      "params": {},
+      "width": 393.3552551269531
+    },
+    "Frame.009": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 321.9045104980469,
+      "hide": false,
+      "label": "vector engraving",
+      "location": [
+        -42.51115417480469,
+        287.17291259765625
+      ],
+      "params": {},
+      "width": 420.0
+    },
+    "Frame.010": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 327.3939514160156,
+      "hide": false,
+      "label": "noising",
+      "location": [
+        214.0364532470703,
+        397.3246154785156
+      ],
+      "params": {},
+      "width": 560.474365234375
+    },
+    "List Flip": {
+      "bl_idname": "ListFlipNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1290.6647567749023,
+        -829.184928894043
+      ],
+      "params": {
+        "level": 1
+      },
+      "width": 140.0
+    },
+    "List Join": {
+      "bl_idname": "ListJoinNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        194.5347900390625,
+        86.98985290527344
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Join.001": {
+      "bl_idname": "ListJoinNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1104.1682968139648,
+        -825.3742599487305
+      ],
+      "params": {
+        "JoinLevel": 2
+      },
+      "width": 140.0
+    },
+    "List Length": {
+      "bl_idname": "ListLengthNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1837.9543075561523,
+        -820.924430847168
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Split": {
+      "bl_idname": "SvListSplitNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1467.3072128295898,
+        -828.762565612793
+      ],
+      "params": {
+        "split": 16
+      },
+      "width": 140.0
+    },
+    "Mesh SVG": {
+      "bl_idname": "SvSvgMeshNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -205.6050033569336,
+        -338.65814208984375
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Mesh SVG.001": {
+      "bl_idname": "SvSvgMeshNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -179.908935546875,
+        73.30450439453125
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Move": {
+      "bl_idname": "SvMoveNodeMk3",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -848.1756591796875,
+        -412.06854248046875
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Move.001": {
+      "bl_idname": "SvMoveNodeMk3",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -831.9873962402344,
+        496.49452209472656
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Move.003": {
+      "bl_idname": "SvMoveNodeMk3",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -830.6253356933594,
+        67.66722106933594
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Move.004": {
+      "bl_idname": "SvMoveNodeMk3",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1269.5446014404297,
+        42.39398193359375
+      ],
+      "params": {
+        "strength": -0.25999999046325684
+      },
+      "width": 140.0
+    },
+    "Note": {
+      "bl_idname": "NoteNode",
+      "color": [
+        1.0,
+        0.8993440270423889,
+        0.9742509722709656
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2511.71826171875,
+        329.5435791015625
+      ],
+      "params": {
+        "n_id": "-7440297405681156180",
+        "text": "nikitron 2021 | CNC K40Whisperer template. change filepath, name, press write and open server. use your mesh to define parts and change paper size also. "
+      },
+      "use_custom_color": true,
+      "width": 400.0
+    },
+    "Number Range": {
+      "bl_idname": "SvGenNumberRange",
+      "custom_socket_props": {
+        "1": {
+          "label": "stop"
+        },
+        "2": {
+          "label": "count"
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1649.4120712280273,
+        -828.307243347168
+      ],
+      "params": {
+        "current_mode": "RANGE_COUNT",
+        "range_mode": "RANGE_COUNT",
+        "stop_float": 0.800000011920929
+      },
+      "width": 140.0
+    },
+    "Path SVG": {
+      "bl_idname": "SvSvgPathNodeMk2",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -177.52276611328125,
+        415.9570426940918
+      ],
+      "params": {
+        "cyclic": true
+      },
+      "width": 161.4949951171875
+    },
+    "Ring": {
+      "bl_idname": "SvRingNodeMK2",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2087.6986694335938,
+        -401.60552978515625
+      ],
+      "params": {},
+      "width": 160.0
+    },
+    "SVG Document": {
+      "bl_idname": "SvSvgDocumentNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        397.00140380859375,
+        221.0880584716797
+      ],
+      "params": {
+        "doc_height": 100.0,
+        "doc_width": 100.0,
+        "file_name": "cutter voro"
+      },
+      "width": 200.0
+    },
+    "Scalar Math": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1492.0413818359375,
+        436.6731872558594
+      ],
+      "params": {
+        "current_op": "ADD"
+      },
+      "width": 140.0
+    },
+    "Scalar Math.001": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1310.05322265625,
+        459.9550018310547
+      ],
+      "params": {
+        "current_op": "ADD",
+        "y_": 0.9020000100135803
+      },
+      "width": 140.0
+    },
+    "Vector Turbulence": {
+      "bl_idname": "SvTurbulenceNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1630.0189666748047,
+        41.73974609375
+      ],
+      "params": {
+        "freq": 0.5,
+        "hard": false,
+        "noise_type": "BLENDER"
+      },
+      "width": 140.0
+    },
+    "Vector in": {
+      "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "Movement Vectors",
+      "location": [
+        -2525.2784423828125,
+        -375.2462158203125
+      ],
+      "params": {
+        "x_": 5.0,
+        "y_": 5.0
+      },
+      "width": 159.3623046875
+    },
+    "Vector in.001": {
+      "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1423.7550506591797,
+        -98.7579345703125
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Vector out": {
+      "bl_idname": "VectorsOutNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1444.9396209716797,
+        26.92962646484375
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Viewer Draw": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -662.3781433105469,
+        495.82086181640625
+      ],
+      "params": {
+        "display_faces": false,
+        "display_verts": false,
+        "edge_color": [
+          1.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "line_width": 2,
+        "vector_color": [
+          1.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw.002": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        633.5084228515625,
+        214.21571350097656
+      ],
+      "params": {
+        "display_faces": false,
+        "display_verts": false
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw.003": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -637.5044555664062,
+        -401.03857421875
+      ],
+      "params": {
+        "color_per_polygon": true,
+        "display_edges": false,
+        "display_verts": false,
+        "vector_random_colors": true
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw.004": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -643.3818054199219,
+        71.27099609375
+      ],
+      "params": {
+        "display_faces": false,
+        "display_verts": false,
+        "edge_color": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ],
+        "line_width": 2,
+        "vector_color": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Voronoi 2D": {
+      "bl_idname": "Voronoi2DNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1026.7382507324219,
+        55.33937072753906
+      ],
+      "params": {
+        "bound_mode": "CIRCLE",
+        "clip": 0.0,
+        "draw_bounds": false,
+        "draw_hangs": false
+      },
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Move.003",
+      0,
+      "Viewer Draw.004",
+      0
+    ],
+    [
+      "Voronoi 2D",
+      1,
+      "Viewer Draw.004",
+      1
+    ],
+    [
+      "Voronoi 2D",
+      0,
+      "Move.003",
+      0
+    ],
+    [
+      "Vector in",
+      0,
+      "Move.003",
+      1
+    ],
+    [
+      "Move.004",
+      0,
+      "Voronoi 2D",
+      0
+    ],
+    [
+      "Move.001",
+      0,
+      "Viewer Draw",
+      0
+    ],
+    [
+      "Circle.001",
+      1,
+      "Viewer Draw",
+      1
+    ],
+    [
+      "Circle.001",
+      2,
+      "Viewer Draw",
+      2
+    ],
+    [
+      "Scalar Math.001",
+      0,
+      "Circle.001",
+      0
+    ],
+    [
+      "Circle.001",
+      0,
+      "Move.001",
+      0
+    ],
+    [
+      "Vector in",
+      0,
+      "Move.001",
+      1
+    ],
+    [
+      "Color in",
+      0,
+      "Fill / Stroke SVG.002",
+      0
+    ],
+    [
+      "Move",
+      0,
+      "Mesh SVG",
+      0
+    ],
+    [
+      "Ring",
+      2,
+      "Mesh SVG",
+      1
+    ],
+    [
+      "Fill / Stroke SVG.002",
+      0,
+      "Mesh SVG",
+      4
+    ],
+    [
+      "Move.003",
+      0,
+      "Mesh SVG.001",
+      0
+    ],
+    [
+      "Voronoi 2D",
+      1,
+      "Mesh SVG.001",
+      1
+    ],
+    [
+      "Fill / Stroke SVG.003",
+      0,
+      "Mesh SVG.001",
+      4
+    ],
+    [
+      "A Number.001",
+      0,
+      "Scalar Math",
+      0
+    ],
+    [
+      "A Number.002",
+      0,
+      "Scalar Math",
+      1
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Scalar Math.001",
+      0
+    ],
+    [
+      "Move",
+      0,
+      "Viewer Draw.003",
+      0
+    ],
+    [
+      "Ring",
+      2,
+      "Viewer Draw.003",
+      2
+    ],
+    [
+      "Color in",
+      0,
+      "Viewer Draw.003",
+      6
+    ],
+    [
+      "Ring",
+      0,
+      "Move",
+      0
+    ],
+    [
+      "Vector in",
+      0,
+      "Move",
+      1
+    ],
+    [
+      "A Number.001",
+      0,
+      "Ring",
+      0
+    ],
+    [
+      "A Number.002",
+      0,
+      "Ring",
+      1
+    ],
+    [
+      "A Number.003",
+      0,
+      "Ring",
+      2
+    ],
+    [
+      "A Number",
+      0,
+      "Ring",
+      3
+    ],
+    [
+      "Ring",
+      0,
+      "Vector Turbulence",
+      0
+    ],
+    [
+      "Vector Turbulence",
+      0,
+      "Vector out",
+      0
+    ],
+    [
+      "Vector out",
+      0,
+      "Vector in.001",
+      0
+    ],
+    [
+      "Vector out",
+      1,
+      "Vector in.001",
+      1
+    ],
+    [
+      "Ring",
+      0,
+      "Move.004",
+      0
+    ],
+    [
+      "Vector in.001",
+      0,
+      "Move.004",
+      1
+    ],
+    [
+      "List Join.001",
+      0,
+      "Color in",
+      2
+    ],
+    [
+      "Ring",
+      2,
+      "List Length",
+      0
+    ],
+    [
+      "List Length",
+      0,
+      "Number Range",
+      2
+    ],
+    [
+      "Number Range",
+      0,
+      "List Split",
+      0
+    ],
+    [
+      "A Number.003",
+      0,
+      "List Split",
+      1
+    ],
+    [
+      "List Split",
+      0,
+      "List Flip",
+      0
+    ],
+    [
+      "List Flip",
+      0,
+      "List Join.001",
+      0
+    ],
+    [
+      "Path SVG",
+      0,
+      "List Join",
+      0
+    ],
+    [
+      "Mesh SVG",
+      0,
+      "List Join",
+      2
+    ],
+    [
+      "Mesh SVG.001",
+      0,
+      "List Join",
+      3
+    ],
+    [
+      "SVG Document",
+      0,
+      "Viewer Draw.002",
+      0
+    ],
+    [
+      "SVG Document",
+      1,
+      "Viewer Draw.002",
+      1
+    ],
+    [
+      "File Path",
+      0,
+      "SVG Document",
+      0
+    ],
+    [
+      "List Join",
+      0,
+      "SVG Document",
+      2
+    ],
+    [
+      "Move.001",
+      0,
+      "Path SVG",
+      0
+    ],
+    [
+      "Fill / Stroke SVG",
+      0,
+      "Path SVG",
+      3
+    ]
+  ]
+}
