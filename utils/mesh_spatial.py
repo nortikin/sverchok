@@ -22,6 +22,8 @@ try:
     from mathutils.geometry import delaunay_2d_cdt
 except ImportError:
     pass
+from mathutils.bvhtree import BVHTree
+import bmesh
 
 from sverchok.data_structure import rotate_list
 from sverchok.utils.geom import linear_approximation
@@ -55,16 +57,21 @@ def single_face_delaunay(face_verts, add_verts, epsilon=1e-6, exclude_boundary=T
     new_add_verts = [tuple(plane.evaluate(p[0], p[1], normalize=True)) for p in new_verts_2d[n:]]
     return face_verts + new_add_verts, new_edges, new_faces
 
-def mesh_insert_verts(verts, faces, add_verts_by_face, epsilon=1e-6, exclude_boundary=True):
+def mesh_insert_verts(verts, faces, add_verts_by_face, epsilon=1e-6, exclude_boundary=True, recalc_normals=True):
     bm = bmesh_from_pydata(verts, [], [])
     for face_idx, face in enumerate(faces):
-        add_verts = add_verts_by_face.get(face_idx)
-        if not add_verts:
-            continue
         n = len(face)
+        add_verts = add_verts_by_face.get(face_idx)
+
+        if not add_verts:
+            bm_verts = [bm.verts[idx] for idx in face]
+            bm.faces.new(bm_verts)
+            bm.faces.index_update()
+            continue
+
+        done_verts = dict((i, bm.verts[face[i]]) for i in range(n))
         face_verts = [verts[i] for i in face]
         new_face_verts, edges, new_faces = single_face_delaunay(face_verts, add_verts, epsilon, exclude_boundary)
-        done_verts = dict((i, bm.verts[face[i]]) for i in range(n))
         for new_face in new_faces:
             bm_verts = []
             for i in new_face:
@@ -79,7 +86,18 @@ def mesh_insert_verts(verts, faces, add_verts_by_face, epsilon=1e-6, exclude_bou
             bm.faces.new(bm_verts)
             bm.faces.index_update()
 
+    if recalc_normals:
+        bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+
     verts, edges, faces = pydata_from_bmesh(bm)
     bm.free()
     return verts, edges, faces
+
+def find_nearest_idxs(verts, faces, add_verts):
+    bvh = BVHTree.FromPolygons(verts, faces)
+    idxs = []
+    for vert in add_verts:
+        loc, normal, idx, distance = bvh.find_nearest(vert)
+        idxs.append(idx)
+    return idxs
 
