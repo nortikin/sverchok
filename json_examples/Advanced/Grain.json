@@ -1,0 +1,1722 @@
+{
+  "export_version": "0.10",
+  "framed_nodes": {
+    "A Number": "Frame.003",
+    "A Number.001": "Frame.003",
+    "A Number.002": "Frame.003",
+    "A Number.003": "Frame.003",
+    "A Number.004": "Frame.003",
+    "A Number.005": "Frame.003",
+    "A Number.006": "Frame.003",
+    "Arc 3pt (Curve)": "Frame.007",
+    "Bevel": "Frame.004",
+    "Curve Viewer": "Frame.005",
+    "Evaluate Curve": "Frame.007",
+    "Frame.008": "Frame.007",
+    "IcoSphere": "Frame.002",
+    "Line": "Frame.002",
+    "List Item": "Frame.001",
+    "List Item.001": "Frame.007",
+    "List Item.002": "Frame.007",
+    "List Join": "Frame.008",
+    "List Join.001": "Frame.008",
+    "List Split": "Frame.004",
+    "Matrix Apply": "Frame.004",
+    "Matrix In": "Frame",
+    "Matrix In.001": "Frame.007",
+    "Mesh viewer": "Frame.005",
+    "Move": "Frame.001",
+    "Move.001": "Frame.004",
+    "Move.002": "Frame.004",
+    "Move.003": "Frame.001",
+    "Move.004": "Frame.006",
+    "Move.005": "Frame.006",
+    "Move.006": "Frame.008",
+    "Number Range": "Frame.001",
+    "Number Range.001": "Frame.004",
+    "Number Range.002": "Frame",
+    "Plane": "Frame.002",
+    "Polyline Viewer": "Frame.005",
+    "Randomize": "Frame.006",
+    "Randomize.001": "Frame.006",
+    "Randomize.002": "Frame.006",
+    "Rotate": "Frame.001",
+    "Rotation difference": "Frame",
+    "Rotation difference.001": "Frame.007",
+    "Scalar Math": "Frame.002",
+    "Scalar Math.001": "Frame.004",
+    "Scalar Math.002": "Frame.006",
+    "Scalar Math.003": "Frame.006",
+    "Scale": "Frame.001",
+    "Spiral": "Frame.002",
+    "UV Connection": "Frame.001",
+    "Vector Math": "Frame",
+    "Vector Math.001": "Frame.007",
+    "Vector Math.002": "Frame.008",
+    "Vector in": "Frame.007",
+    "Vector in.001": "Frame.004",
+    "Vector in.002": "Frame.004",
+    "Vector in.003": "Frame",
+    "Vector in.004": "Frame.006",
+    "Vector in.005": "Frame.006"
+  },
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "columns grains",
+      "location": [
+        -126.56172180175781,
+        -13.555767059326172
+      ],
+      "params": {
+        "draw_3dpanel": true,
+        "int_": 10,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "A Number.001": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "raes grains",
+      "location": [
+        -126.56172180175781,
+        -103.77494812011719
+      ],
+      "params": {
+        "draw_3dpanel": true,
+        "int_": 5,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "A Number.002": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "U",
+      "location": [
+        -124.87278747558594,
+        -379.70372009277344
+      ],
+      "params": {
+        "draw_3dpanel": true,
+        "int_": 6,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "A Number.003": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "V",
+      "location": [
+        -124.87278747558594,
+        -459.97947692871094
+      ],
+      "params": {
+        "draw_3dpanel": true,
+        "int_": 20,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "A Number.004": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "V size",
+      "location": [
+        -124.87278747558594,
+        -296.36399841308594
+      ],
+      "params": {
+        "draw_3dpanel": true,
+        "float_": 50.0,
+        "int_": 6
+      },
+      "width": 140.0
+    },
+    "A Number.005": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "U size",
+      "location": [
+        -124.87278747558594,
+        -213.6370849609375
+      ],
+      "params": {
+        "draw_3dpanel": true,
+        "float_": 20.0,
+        "int_": 6
+      },
+      "width": 140.0
+    },
+    "A Number.006": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "rnd",
+      "location": [
+        -124.87278747558594,
+        -580.6528167724609
+      ],
+      "params": {
+        "draw_3dpanel": true,
+        "float_": 20.0,
+        "int_": 1,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "Arc 3pt (Curve)": {
+      "bl_idname": "SvArc3ptCurveNode",
+      "custom_socket_props": {
+        "0": {
+          "expanded": true,
+          "prop": [
+            1.0,
+            0.0,
+            -10.0
+          ]
+        },
+        "1": {
+          "expanded": true,
+          "prop": [
+            0.26999998092651367,
+            0.0,
+            -5.0
+          ]
+        },
+        "2": {
+          "expanded": true,
+          "prop": [
+            0.0,
+            0.0,
+            0.05999999865889549
+          ]
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1095.5528564453125,
+        -649.9764404296875
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Bevel": {
+      "bl_idname": "SvBevelNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2445.7374877929688,
+        283.6202926635742
+      ],
+      "params": {
+        "offsetType": "PERCENT",
+        "offset_": 50.0,
+        "vertexOnly": true
+      },
+      "width": 140.0
+    },
+    "Curve Viewer": {
+      "bl_idname": "SvCurveViewerNodeV28",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2732.5145263671875,
+        268.8622131347656
+      ],
+      "params": {
+        "depth": 0.004000000189989805
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Evaluate Curve": {
+      "bl_idname": "SvExEvalCurveNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1360.3734130859375,
+        -654.4740600585938
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 384.99383544921875,
+      "hide": false,
+      "label": "grains matrix",
+      "location": [
+        -68.12700653076172,
+        105.09782409667969
+      ],
+      "params": {},
+      "width": 584.41552734375
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 424.5817565917969,
+      "hide": false,
+      "label": "hairs",
+      "location": [
+        92.88101196289062,
+        48.689971923828125
+      ],
+      "params": {},
+      "width": 877.0682373046875
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 1228.6201171875,
+      "hide": false,
+      "label": "spir+line",
+      "location": [
+        64.19740295410156,
+        44.5216064453125
+      ],
+      "params": {},
+      "width": 230.00003051757812
+    },
+    "Frame.003": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 701.4442138671875,
+      "hide": false,
+      "label": "input",
+      "location": [
+        221.50608825683594,
+        4.7161407470703125
+      ],
+      "params": {},
+      "width": 201.68893432617188
+    },
+    "Frame.004": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 499.2203063964844,
+      "hide": false,
+      "label": "grains",
+      "location": [
+        -279.37896728515625,
+        116.55547332763672
+      ],
+      "params": {},
+      "width": 1248.64111328125
+    },
+    "Frame.005": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 1207.8623046875,
+      "hide": false,
+      "label": "",
+      "location": [
+        -403.2969970703125,
+        -346.2261047363281
+      ],
+      "params": {},
+      "width": 200.0
+    },
+    "Frame.006": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 837.53271484375,
+      "hide": false,
+      "label": "prearc",
+      "location": [
+        -1707.396484375,
+        -105.94404602050781
+      ],
+      "params": {},
+      "width": 375.209228515625
+    },
+    "Frame.007": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 869.0236206054688,
+      "hide": false,
+      "label": "stern",
+      "location": [
+        -1617.9874267578125,
+        -325.92071533203125
+      ],
+      "params": {},
+      "width": 1369.080810546875
+    },
+    "Frame.008": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 686.740234375,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1799.8361511230469,
+        -319.11405658721924
+      ],
+      "params": {},
+      "width": 201.37451171875
+    },
+    "IcoSphere": {
+      "bl_idname": "SvIcosphereNode",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        197.37159729003906,
+        -454.9209289550781
+      ],
+      "params": {
+        "radius": 0.10000000149011612,
+        "subdivisions": 1
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Line": {
+      "bl_idname": "SvLineNodeMK4",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        189.24798583984375,
+        -245.23110961914062
+      ],
+      "params": {
+        "direction": "Z",
+        "num": 120,
+        "size": 3.0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "List Item": {
+      "bl_idname": "SvListItemNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        486.3791809082031,
+        281.1335754394531
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Item.001": {
+      "bl_idname": "SvListItemNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1692.8265380859375,
+        -818.9320983886719
+      ],
+      "params": {
+        "index": -1
+      },
+      "width": 140.0
+    },
+    "List Item.002": {
+      "bl_idname": "SvListItemNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1691.5350341796875,
+        -650.3017272949219
+      ],
+      "params": {
+        "index": -1
+      },
+      "width": 140.0
+    },
+    "List Join": {
+      "bl_idname": "ListJoinNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2085.620147705078,
+        -689.2598390579224
+      ],
+      "params": {
+        "JoinLevel": 2
+      },
+      "width": 140.0
+    },
+    "List Join.001": {
+      "bl_idname": "ListJoinNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2084.245391845703,
+        -880.5680360794067
+      ],
+      "params": {
+        "JoinLevel": 2
+      },
+      "width": 140.0
+    },
+    "List Split": {
+      "bl_idname": "SvListSplitNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1725.2391967773438,
+        107.02372360229492
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Matrix Apply": {
+      "bl_idname": "SvMatrixApplyJoinNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2091.0792846679688,
+        104.60121154785156
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Matrix In": {
+      "bl_idname": "SvMatrixInNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1774.3031692504883,
+        -241.59629821777344
+      ],
+      "params": {
+        "rotation_mode": "QUATERNION"
+      },
+      "width": 140.0
+    },
+    "Matrix In.001": {
+      "bl_idname": "SvMatrixInNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2264.6336669921875,
+        -658.4017028808594
+      ],
+      "params": {
+        "rotation_mode": "QUATERNION"
+      },
+      "width": 140.0
+    },
+    "Mesh viewer": {
+      "bl_idname": "SvMeshViewer",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2732.5145263671875,
+        -95.72705078125
+      ],
+      "params": {
+        "apply_matrices_to": "mesh",
+        "base_data_name": "Beta",
+        "is_smooth_mesh": true
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Move": {
+      "bl_idname": "SvMoveNodeMk3",
+      "custom_socket_props": {
+        "1": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        835.1291809082031,
+        77.00452041625977
+      ],
+      "params": {
+        "movement_vectors": [
+          0.0,
+          0.0,
+          0.10000000149011612
+        ]
+      },
+      "width": 140.0
+    },
+    "Move.001": {
+      "bl_idname": "SvMoveNodeMk3",
+      "custom_socket_props": {
+        "1": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1904.1781616210938,
+        105.13787460327148
+      ],
+      "params": {
+        "movement_vectors": [
+          0.0,
+          0.0,
+          0.5699999928474426
+        ]
+      },
+      "width": 140.0
+    },
+    "Move.002": {
+      "bl_idname": "SvMoveNodeMk3",
+      "custom_socket_props": {
+        "1": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2261.8104858398438,
+        104.78055572509766
+      ],
+      "params": {
+        "movement_vectors": [
+          0.0,
+          0.0,
+          -0.6000000238418579
+        ]
+      },
+      "width": 140.0
+    },
+    "Move.003": {
+      "bl_idname": "SvMoveNodeMk3",
+      "custom_socket_props": {
+        "1": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        996.8885803222656,
+        277.71661376953125
+      ],
+      "params": {
+        "movement_vectors": [
+          0.0,
+          0.0,
+          2.0
+        ]
+      },
+      "width": 140.0
+    },
+    "Move.004": {
+      "bl_idname": "SvMoveNodeMk3",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        800.597900390625,
+        -668.5411529541016
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Move.005": {
+      "bl_idname": "SvMoveNodeMk3",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        800.597900390625,
+        -964.2691802978516
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Move.006": {
+      "bl_idname": "SvMoveNodeMk3",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2084.245391845703,
+        -1199.8258485794067
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Note": {
+      "bl_idname": "NoteNode",
+      "color": [
+        1.0,
+        0.8993440270423889,
+        0.9742509722709656
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -301.7197265625,
+        254.6451416015625
+      ],
+      "params": {
+        "n_id": "-7016668828072155079",
+        "text": "nikitron 2020 | grain generator"
+      },
+      "use_custom_color": true,
+      "width": 400.0
+    },
+    "Number Range": {
+      "bl_idname": "SvGenNumberRange",
+      "custom_socket_props": {
+        "1": {
+          "label": "stop"
+        },
+        "2": {
+          "label": "count"
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        494.2620544433594,
+        112.8975830078125
+      ],
+      "params": {
+        "count_": 120,
+        "current_mode": "RANGE_COUNT",
+        "range_mode": "RANGE_COUNT",
+        "stop_float": 153.6099853515625
+      },
+      "width": 140.0
+    },
+    "Number Range.001": {
+      "bl_idname": "SvGenNumberRange",
+      "custom_socket_props": {
+        "1": {
+          "label": "stop"
+        },
+        "2": {
+          "label": "count"
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1397.0963745117188,
+        120.57611846923828
+      ],
+      "params": {
+        "current_mode": "RANGE_COUNT",
+        "range_mode": "RANGE_COUNT",
+        "start_float": 0.11000000685453415,
+        "stop_float": 0.04099997878074646
+      },
+      "width": 140.0
+    },
+    "Number Range.002": {
+      "bl_idname": "SvGenNumberRange",
+      "custom_socket_props": {
+        "1": {
+          "label": "stop"
+        },
+        "2": {
+          "label": "count"
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1397.3551712036133,
+        -390.1431121826172
+      ],
+      "params": {
+        "current_mode": "RANGE_COUNT",
+        "range_mode": "RANGE_COUNT",
+        "start_float": 0.699999988079071,
+        "stop_float": 0.5
+      },
+      "width": 140.0
+    },
+    "Plane": {
+      "bl_idname": "SvPlaneNodeMk3",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        193.59671020507812,
+        -616.5287475585938
+      ],
+      "params": {
+        "numx": 6,
+        "numy": 6,
+        "sizex": 20.0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Polyline Viewer": {
+      "bl_idname": "SvPolylineViewerNode",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {
+        "2": {
+          "default_float_property": 0.20000000298023224
+        },
+        "4": {
+          "object_kinds": "CURVE"
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2732.5145263671875,
+        -474.9476013183594
+      ],
+      "params": {
+        "apply_matrices_to": "mesh",
+        "base_data_name": "Delta",
+        "curve_type": "POLY"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Randomize": {
+      "bl_idname": "SvRandomizeVerticesNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        798.211669921875,
+        -1112.1153106689453
+      ],
+      "params": {
+        "random_x_": 0.5,
+        "random_y_": 0.5,
+        "random_z_": 2.0
+      },
+      "width": 140.0
+    },
+    "Randomize.001": {
+      "bl_idname": "SvRandomizeVerticesNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        804.4462890625,
+        -793.7011260986328
+      ],
+      "params": {
+        "random_seed_": 1,
+        "random_x_": 0.20000000298023224,
+        "random_y_": 0.20000000298023224
+      },
+      "width": 140.0
+    },
+    "Randomize.002": {
+      "bl_idname": "SvRandomizeVerticesNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        798.211669921875,
+        -1285.2960968017578
+      ],
+      "params": {
+        "random_seed_": 2,
+        "random_x_": 0.5,
+        "random_y_": 0.5,
+        "random_z_": 2.0
+      },
+      "width": 140.0
+    },
+    "Rotate": {
+      "bl_idname": "SvRotationNodeMk3",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        662.0845642089844,
+        283.5817565917969
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Rotation difference": {
+      "bl_idname": "SvRotationDifference",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1579.1917190551758,
+        -241.20118713378906
+      ],
+      "params": {
+        "vec1": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "width": 140.0
+    },
+    "Rotation difference.001": {
+      "bl_idname": "SvRotationDifference",
+      "custom_socket_props": {
+        "0": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2093.8709716796875,
+        -1363.0125122070312
+      ],
+      "params": {
+        "vec1": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "width": 140.0
+    },
+    "Scalar Math": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        184.96116638183594,
+        -101.60787963867188
+      ],
+      "params": {
+        "input_mode_one": "Int",
+        "input_mode_two": "Int"
+      },
+      "width": 164.69212341308594
+    },
+    "Scalar Math.001": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1580.3464965820312,
+        251.37882232666016
+      ],
+      "params": {
+        "current_op": "NEG"
+      },
+      "width": 140.0
+    },
+    "Scalar Math.002": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        629.237060546875,
+        -1124.063491821289
+      ],
+      "params": {
+        "current_op": "ADD",
+        "input_mode_one": "Int",
+        "input_mode_two": "Int"
+      },
+      "width": 140.0
+    },
+    "Scalar Math.003": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        629.237060546875,
+        -1258.5280303955078
+      ],
+      "params": {
+        "current_op": "ADD",
+        "input_mode_one": "Int",
+        "input_mode_two": "Int",
+        "yi_": 2
+      },
+      "width": 140.0
+    },
+    "Scale": {
+      "bl_idname": "SvScaleNodeMk3",
+      "custom_socket_props": {
+        "2": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        827.3905334472656,
+        276.7656707763672
+      ],
+      "params": {
+        "scale": [
+          1.0,
+          1.0,
+          0.75
+        ]
+      },
+      "width": 140.0
+    },
+    "Spiral": {
+      "bl_idname": "SvSpiralNodeMK2",
+      "custom_socket_props": {},
+      "height": 4.050000190734863,
+      "hide": false,
+      "label": "",
+      "location": [
+        183.6427459716797,
+        277.6201934814453
+      ],
+      "params": {
+        "eRadius": 1.0,
+        "exponent": 1.9299999475479126,
+        "height": 4.050000190734863,
+        "iRadius": 0.32999998331069946,
+        "presets": " ",
+        "resolution": 12,
+        "turns": 10
+      },
+      "width": 170.0
+    },
+    "UV Connection": {
+      "bl_idname": "LineConnectNodeMK2",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1163.4474182128906,
+        278.9694366455078
+      ],
+      "params": {
+        "dir_check": "V_dir",
+        "polygons": "Edges"
+      },
+      "width": 140.0
+    },
+    "Vector Math": {
+      "bl_idname": "SvVectorMathNodeMK3",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1389.8876419067383,
+        -237.0061798095703
+      ],
+      "params": {
+        "current_op": "SUB"
+      },
+      "width": 140.0
+    },
+    "Vector Math.001": {
+      "bl_idname": "SvVectorMathNodeMK3",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1693.1043701171875,
+        -972.0864868164062
+      ],
+      "params": {
+        "current_op": "NORMALIZE",
+        "socket_info": "v v"
+      },
+      "width": 140.0
+    },
+    "Vector Math.002": {
+      "bl_idname": "SvVectorMathNodeMK3",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2084.245391845703,
+        -1059.7739686965942
+      ],
+      "params": {
+        "amount": -0.30000001192092896,
+        "current_op": "SCALAR",
+        "socket_info": "vs v"
+      },
+      "width": 140.0
+    },
+    "Vector in": {
+      "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1704.4744873046875,
+        -1126.6396484375
+      ],
+      "params": {
+        "z_": 1.0
+      },
+      "width": 100.0
+    },
+    "Vector in.001": {
+      "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1781.6161499023438,
+        252.81403350830078
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Vector in.002": {
+      "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1585.2055053710938,
+        105.9453010559082
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Vector in.003": {
+      "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1618.7177200317383,
+        -374.7517852783203
+      ],
+      "params": {
+        "x_": 1.0,
+        "y_": 1.0,
+        "z_": 2.003000020980835
+      },
+      "width": 100.0
+    },
+    "Vector in.004": {
+      "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        653.023681640625,
+        -666.4672393798828
+      ],
+      "params": {
+        "z_": -10.0
+      },
+      "width": 100.0
+    },
+    "Vector in.005": {
+      "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        650.31201171875,
+        -957.6709747314453
+      ],
+      "params": {
+        "y_": -0.029999999329447746,
+        "z_": -5.0
+      },
+      "width": 100.0
+    }
+  },
+  "update_lists": [
+    [
+      "A Number",
+      0,
+      "Spiral",
+      3
+    ],
+    [
+      "A Number.001",
+      0,
+      "Spiral",
+      4
+    ],
+    [
+      "A Number",
+      0,
+      "Scalar Math",
+      0
+    ],
+    [
+      "A Number.001",
+      0,
+      "Scalar Math",
+      1
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Line",
+      0
+    ],
+    [
+      "A Number.005",
+      0,
+      "Plane",
+      0
+    ],
+    [
+      "A Number.004",
+      0,
+      "Plane",
+      1
+    ],
+    [
+      "A Number.002",
+      0,
+      "Plane",
+      2
+    ],
+    [
+      "A Number.003",
+      0,
+      "Plane",
+      3
+    ],
+    [
+      "Plane",
+      0,
+      "Move.004",
+      0
+    ],
+    [
+      "Vector in.004",
+      0,
+      "Move.004",
+      1
+    ],
+    [
+      "Move.005",
+      0,
+      "Randomize",
+      0
+    ],
+    [
+      "A Number.006",
+      0,
+      "Randomize",
+      4
+    ],
+    [
+      "Plane",
+      0,
+      "Move.005",
+      0
+    ],
+    [
+      "Vector in.005",
+      0,
+      "Move.005",
+      1
+    ],
+    [
+      "Move.004",
+      0,
+      "Randomize.001",
+      0
+    ],
+    [
+      "Scalar Math.002",
+      0,
+      "Randomize.001",
+      4
+    ],
+    [
+      "A Number.006",
+      0,
+      "Scalar Math.003",
+      0
+    ],
+    [
+      "A Number.006",
+      0,
+      "Scalar Math.002",
+      0
+    ],
+    [
+      "Move.003",
+      0,
+      "Vector Math",
+      0
+    ],
+    [
+      "Move",
+      0,
+      "Vector Math",
+      1
+    ],
+    [
+      "Move",
+      0,
+      "Matrix In",
+      0
+    ],
+    [
+      "Vector in.003",
+      0,
+      "Matrix In",
+      1
+    ],
+    [
+      "Rotation difference",
+      0,
+      "Matrix In",
+      2
+    ],
+    [
+      "Move",
+      0,
+      "Rotation difference",
+      0
+    ],
+    [
+      "Vector Math",
+      0,
+      "Rotation difference",
+      1
+    ],
+    [
+      "Number Range.002",
+      0,
+      "Vector in.003",
+      0
+    ],
+    [
+      "Number Range.002",
+      0,
+      "Vector in.003",
+      1
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Number Range.002",
+      2
+    ],
+    [
+      "Number Range.001",
+      0,
+      "Scalar Math.001",
+      0
+    ],
+    [
+      "Scalar Math.001",
+      0,
+      "Vector in.001",
+      2
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Number Range.001",
+      2
+    ],
+    [
+      "Number Range.001",
+      0,
+      "Vector in.002",
+      2
+    ],
+    [
+      "Vector in.002",
+      0,
+      "List Split",
+      0
+    ],
+    [
+      "IcoSphere",
+      0,
+      "Move.001",
+      0
+    ],
+    [
+      "List Split",
+      0,
+      "Move.001",
+      1
+    ],
+    [
+      "Move.001",
+      0,
+      "Matrix Apply",
+      0
+    ],
+    [
+      "IcoSphere",
+      1,
+      "Matrix Apply",
+      1
+    ],
+    [
+      "IcoSphere",
+      2,
+      "Matrix Apply",
+      2
+    ],
+    [
+      "Matrix In",
+      0,
+      "Matrix Apply",
+      3
+    ],
+    [
+      "Matrix Apply",
+      0,
+      "Move.002",
+      0
+    ],
+    [
+      "Vector in.001",
+      0,
+      "Move.002",
+      1
+    ],
+    [
+      "Move.002",
+      0,
+      "Bevel",
+      0
+    ],
+    [
+      "Matrix Apply",
+      1,
+      "Bevel",
+      1
+    ],
+    [
+      "Matrix Apply",
+      2,
+      "Bevel",
+      2
+    ],
+    [
+      "Move.003",
+      0,
+      "UV Connection",
+      0
+    ],
+    [
+      "Move",
+      0,
+      "UV Connection",
+      1
+    ],
+    [
+      "Scale",
+      0,
+      "Move.003",
+      0
+    ],
+    [
+      "Rotate",
+      0,
+      "Scale",
+      0
+    ],
+    [
+      "List Item",
+      1,
+      "Rotate",
+      0
+    ],
+    [
+      "Number Range",
+      0,
+      "Rotate",
+      3
+    ],
+    [
+      "Spiral",
+      0,
+      "List Item",
+      0
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Number Range",
+      2
+    ],
+    [
+      "Line",
+      0,
+      "Move",
+      0
+    ],
+    [
+      "Plane",
+      0,
+      "Randomize.002",
+      0
+    ],
+    [
+      "Scalar Math.003",
+      0,
+      "Randomize.002",
+      4
+    ],
+    [
+      "Randomize.001",
+      0,
+      "Arc 3pt (Curve)",
+      0
+    ],
+    [
+      "Randomize",
+      0,
+      "Arc 3pt (Curve)",
+      1
+    ],
+    [
+      "Randomize.002",
+      0,
+      "Arc 3pt (Curve)",
+      2
+    ],
+    [
+      "Evaluate Curve",
+      0,
+      "List Item.002",
+      0
+    ],
+    [
+      "Vector in",
+      0,
+      "Rotation difference.001",
+      0
+    ],
+    [
+      "Vector Math.001",
+      0,
+      "Rotation difference.001",
+      1
+    ],
+    [
+      "List Item.002",
+      0,
+      "List Join",
+      0
+    ],
+    [
+      "Vector Math.001",
+      0,
+      "List Join.001",
+      0
+    ],
+    [
+      "List Join.001",
+      0,
+      "Vector Math.002",
+      0
+    ],
+    [
+      "List Item.001",
+      0,
+      "Vector Math.001",
+      0
+    ],
+    [
+      "Evaluate Curve",
+      2,
+      "List Item.001",
+      0
+    ],
+    [
+      "Arc 3pt (Curve)",
+      0,
+      "Evaluate Curve",
+      0
+    ],
+    [
+      "Move.006",
+      0,
+      "Matrix In.001",
+      0
+    ],
+    [
+      "Rotation difference.001",
+      0,
+      "Matrix In.001",
+      2
+    ],
+    [
+      "List Join",
+      0,
+      "Move.006",
+      0
+    ],
+    [
+      "Vector Math.002",
+      0,
+      "Move.006",
+      1
+    ],
+    [
+      "UV Connection",
+      0,
+      "Curve Viewer",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "Curve Viewer",
+      1
+    ],
+    [
+      "Matrix In.001",
+      0,
+      "Curve Viewer",
+      2
+    ],
+    [
+      "Evaluate Curve",
+      0,
+      "Polyline Viewer",
+      0
+    ],
+    [
+      "Bevel",
+      0,
+      "Mesh viewer",
+      0
+    ],
+    [
+      "Bevel",
+      1,
+      "Mesh viewer",
+      1
+    ],
+    [
+      "Bevel",
+      2,
+      "Mesh viewer",
+      2
+    ],
+    [
+      "Matrix In.001",
+      0,
+      "Mesh viewer",
+      4
+    ]
+  ]
+}
