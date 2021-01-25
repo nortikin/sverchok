@@ -57,7 +57,9 @@ def single_face_delaunay(face_verts, add_verts, epsilon=1e-6, exclude_boundary=T
     new_add_verts = [tuple(plane.evaluate(p[0], p[1], normalize=True)) for p in new_verts_2d[n:]]
     return face_verts + new_add_verts, new_edges, new_faces
 
-def mesh_insert_verts(verts, faces, add_verts_by_face, epsilon=1e-6, exclude_boundary=True, recalc_normals=True):
+def mesh_insert_verts(verts, faces, add_verts_by_face, epsilon=1e-6, exclude_boundary=True, recalc_normals=True, preserve_shape=False):
+    if preserve_shape:
+        bvh = BVHTree.FromPolygons(verts, faces)
     bm = bmesh_from_pydata(verts, [], [])
     for face_idx, face in enumerate(faces):
         n = len(face)
@@ -72,6 +74,8 @@ def mesh_insert_verts(verts, faces, add_verts_by_face, epsilon=1e-6, exclude_bou
         done_verts = dict((i, bm.verts[face[i]]) for i in range(n))
         face_verts = [verts[i] for i in face]
         new_face_verts, edges, new_faces = single_face_delaunay(face_verts, add_verts, epsilon, exclude_boundary)
+        if preserve_shape:
+            new_face_verts = find_nearest_points(bvh, new_face_verts)
         for new_face in new_faces:
             bm_verts = []
             for i in new_face:
@@ -92,6 +96,13 @@ def mesh_insert_verts(verts, faces, add_verts_by_face, epsilon=1e-6, exclude_bou
     verts, edges, faces = pydata_from_bmesh(bm)
     bm.free()
     return verts, edges, faces
+
+def find_nearest_points(bvh, verts):
+    locs = []
+    for vert in verts:
+        loc, normal, idx, distance = bvh.find_nearest(vert)
+        locs.append(tuple(loc))
+    return locs
 
 def find_nearest_idxs(verts, faces, add_verts):
     bvh = BVHTree.FromPolygons(verts, faces)
