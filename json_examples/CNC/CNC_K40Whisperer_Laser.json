@@ -64,7 +64,7 @@
       "hide": false,
       "label": "R",
       "location": [
-        -2507.9774169921875,
+        -2507.9776611328125,
         -194.04962158203125
       ],
       "params": {
@@ -96,7 +96,7 @@
       "hide": false,
       "label": "n1",
       "location": [
-        -2509.1527099609375,
+        -2509.1529541015625,
         -1.02825927734375
       ],
       "params": {
@@ -119,7 +119,7 @@
       "label": "",
       "location": [
         -1021.2531433105469,
-        484.7640838623047
+        484.76409912109375
       ],
       "params": {
         "vert_": 8
@@ -134,8 +134,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -923.1646957397461,
-        -825.101676940918
+        -935.6572952270508,
+        -433.7032165527344
       ],
       "params": {
         "selected_mode": "HSV"
@@ -153,7 +153,7 @@
         222.02261352539062
       ],
       "params": {
-        "directory": "/"
+        "directory": "E:\\SverchokDev\\Examples\\"
       },
       "width": 140.0
     },
@@ -164,8 +164,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -439.6923065185547,
-        408.78784942626953
+        -439.6923370361328,
+        408.787841796875
       ],
       "params": {
         "fill_mode": "NONE",
@@ -187,8 +187,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -398.9602737426758,
-        -348.399169921875
+        -411.45287322998047,
+        42.999298095703125
       ],
       "params": {
         "fill_color": [
@@ -214,8 +214,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -399.90892028808594,
-        49.52525329589844
+        -620.6114501953125,
+        -741.5992584228516
       ],
       "params": {
         "fill_mode": "NONE",
@@ -233,25 +233,25 @@
     "Frame": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 372.56134033203125,
+      "height": 358.35992431640625,
       "hide": false,
       "label": "raster engrave",
       "location": [
-        -530.4838256835938,
-        315.33538818359375
+        -542.9764404296875,
+        706.73388671875
       ],
       "params": {},
-      "width": 1650.1942138671875
+      "width": 1650.1943359375
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 257.07562255859375,
+      "height": 256.47406005859375,
       "hide": false,
       "label": "color graving",
       "location": [
-        -67.33077239990234,
-        7.604316711425781
+        -79.82337188720703,
+        399.0027770996094
       ],
       "params": {},
       "width": 1084.78955078125
@@ -285,7 +285,7 @@
     "Frame.004": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 380.0945129394531,
+      "height": 320.0945129394531,
       "hide": false,
       "label": "cut path",
       "location": [
@@ -298,12 +298,12 @@
     "Frame.005": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 372.8710021972656,
+      "height": 328.7464599609375,
       "hide": false,
       "label": "vector engrave path",
       "location": [
-        433.2557678222656,
-        -124.24813842773438
+        212.55322265625,
+        -915.3726806640625
       ],
       "params": {},
       "width": 583.3564453125
@@ -324,7 +324,7 @@
     "Frame.007": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 435.0226135253906,
+      "height": 414.0226135253906,
       "hide": false,
       "label": "output_change filepath & name",
       "location": [
@@ -337,12 +337,12 @@
     "Frame.008": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 298.3418884277344,
+      "height": 300.7403259277344,
       "hide": false,
       "label": "raster engraving",
       "location": [
-        -86.30619049072266,
-        108.20797729492188
+        -98.79878997802734,
+        499.6064453125
       ],
       "params": {},
       "width": 393.3552551269531
@@ -350,12 +350,12 @@
     "Frame.009": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 321.9045104980469,
+      "height": 320.77996826171875,
       "hide": false,
       "label": "vector engraving",
       "location": [
-        -42.51115417480469,
-        287.17291259765625
+        -263.21368408203125,
+        -503.95159912109375
       ],
       "params": {},
       "width": 420.0
@@ -363,12 +363,12 @@
     "Frame.010": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 327.3939514160156,
+      "height": 327.2694091796875,
       "hide": false,
       "label": "noising",
       "location": [
-        214.0364532470703,
-        397.3246154785156
+        -6.6660919189453125,
+        -393.7999267578125
       ],
       "params": {},
       "width": 560.474365234375
@@ -380,8 +380,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1290.6647567749023,
-        -829.184928894043
+        -1303.157356262207,
+        -437.7864685058594
       ],
       "params": {
         "level": 1
@@ -408,8 +408,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1104.1682968139648,
-        -825.3742599487305
+        -1116.6608963012695,
+        -433.9757995605469
       ],
       "params": {
         "JoinLevel": 2
@@ -423,8 +423,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1837.9543075561523,
-        -820.924430847168
+        -1850.446907043457,
+        -429.5259704589844
       ],
       "params": {},
       "width": 140.0
@@ -436,8 +436,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1467.3072128295898,
-        -828.762565612793
+        -1479.7998123168945,
+        -437.3641052246094
       ],
       "params": {
         "split": 16
@@ -451,8 +451,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -205.6050033569336,
-        -338.65814208984375
+        -218.0976104736328,
+        52.740325927734375
       ],
       "params": {},
       "width": 140.0
@@ -464,8 +464,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -179.908935546875,
-        73.30450439453125
+        -400.61146545410156,
+        -717.8200073242188
       ],
       "params": {},
       "width": 140.0
@@ -477,8 +477,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -848.1756591796875,
-        -412.06854248046875
+        -860.6682739257812,
+        -20.6700439453125
       ],
       "params": {},
       "width": 140.0
@@ -491,7 +491,7 @@
       "label": "",
       "location": [
         -831.9873962402344,
-        496.49452209472656
+        496.4945068359375
       ],
       "params": {},
       "width": 140.0
@@ -503,8 +503,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -830.6253356933594,
-        67.66722106933594
+        -1051.327880859375,
+        -723.4573211669922
       ],
       "params": {},
       "width": 140.0
@@ -516,8 +516,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1269.5446014404297,
-        42.39398193359375
+        -1490.2471466064453,
+        -748.7305603027344
       ],
       "params": {
         "strength": -0.25999999046325684
@@ -560,8 +560,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1649.4120712280273,
-        -828.307243347168
+        -1661.904670715332,
+        -436.9087829589844
       ],
       "params": {
         "current_mode": "RANGE_COUNT",
@@ -578,7 +578,7 @@
       "label": "",
       "location": [
         -177.52276611328125,
-        415.9570426940918
+        415.95703125
       ],
       "params": {
         "cyclic": true
@@ -592,8 +592,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -2087.6986694335938,
-        -401.60552978515625
+        -2100.1912841796875,
+        -10.20703125
       ],
       "params": {},
       "width": 160.0
@@ -638,7 +638,7 @@
       "label": "",
       "location": [
         -1310.05322265625,
-        459.9550018310547
+        459.95501708984375
       ],
       "params": {
         "current_op": "ADD",
@@ -653,8 +653,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1630.0189666748047,
-        41.73974609375
+        -1850.7215118408203,
+        -749.3847961425781
       ],
       "params": {
         "freq": 0.5,
@@ -686,8 +686,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1423.7550506591797,
-        -98.7579345703125
+        -1644.4575958251953,
+        -889.8824768066406
       ],
       "params": {},
       "width": 100.0
@@ -699,8 +699,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1444.9396209716797,
-        26.92962646484375
+        -1665.6421661376953,
+        -764.1949157714844
       ],
       "params": {},
       "width": 140.0
@@ -774,8 +774,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -637.5044555664062,
-        -401.03857421875
+        -649.9970703125,
+        -9.64007568359375
       ],
       "params": {
         "color_per_polygon": true,
@@ -798,8 +798,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -643.3818054199219,
-        71.27099609375
+        -864.0843505859375,
+        -719.8535461425781
       ],
       "params": {
         "display_faces": false,
@@ -828,8 +828,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1026.7382507324219,
-        55.33937072753906
+        -1247.4407958984375,
+        -735.7851715087891
       ],
       "params": {
         "bound_mode": "CIRCLE",
@@ -842,60 +842,30 @@
   },
   "update_lists": [
     [
-      "Move.003",
-      0,
-      "Viewer Draw.004",
-      0
-    ],
-    [
-      "Voronoi 2D",
-      1,
-      "Viewer Draw.004",
-      1
-    ],
-    [
-      "Voronoi 2D",
-      0,
-      "Move.003",
-      0
-    ],
-    [
-      "Vector in",
-      0,
-      "Move.003",
-      1
-    ],
-    [
-      "Move.004",
-      0,
-      "Voronoi 2D",
-      0
-    ],
-    [
-      "Move.001",
-      0,
-      "Viewer Draw",
-      0
-    ],
-    [
-      "Circle.001",
-      1,
-      "Viewer Draw",
-      1
-    ],
-    [
-      "Circle.001",
-      2,
-      "Viewer Draw",
-      2
-    ],
-    [
       "Scalar Math.001",
       0,
       "Circle.001",
       0
     ],
     [
+      "Path SVG",
+      0,
+      "List Join",
+      0
+    ],
+    [
+      "Mesh SVG",
+      0,
+      "List Join",
+      1
+    ],
+    [
+      "Mesh SVG.001",
+      0,
+      "List Join",
+      2
+    ],
+    [
       "Circle.001",
       0,
       "Move.001",
@@ -908,46 +878,28 @@
       1
     ],
     [
-      "Color in",
+      "Move.001",
       0,
-      "Fill / Stroke SVG.002",
+      "Path SVG",
       0
     ],
     [
-      "Move",
+      "Fill / Stroke SVG",
       0,
-      "Mesh SVG",
+      "Path SVG",
+      3
+    ],
+    [
+      "File Path",
+      0,
+      "SVG Document",
       0
     ],
     [
-      "Ring",
-      2,
-      "Mesh SVG",
-      1
-    ],
-    [
-      "Fill / Stroke SVG.002",
+      "List Join",
       0,
-      "Mesh SVG",
-      4
-    ],
-    [
-      "Move.003",
-      0,
-      "Mesh SVG.001",
-      0
-    ],
-    [
-      "Voronoi 2D",
-      1,
-      "Mesh SVG.001",
-      1
-    ],
-    [
-      "Fill / Stroke SVG.003",
-      0,
-      "Mesh SVG.001",
-      4
+      "SVG Document",
+      2
     ],
     [
       "A Number.001",
@@ -968,33 +920,33 @@
       0
     ],
     [
-      "Move",
+      "Move.001",
       0,
-      "Viewer Draw.003",
+      "Viewer Draw",
       0
     ],
     [
-      "Ring",
+      "Circle.001",
+      1,
+      "Viewer Draw",
+      1
+    ],
+    [
+      "Circle.001",
       2,
-      "Viewer Draw.003",
+      "Viewer Draw",
       2
     ],
     [
-      "Color in",
+      "SVG Document",
       0,
-      "Viewer Draw.003",
-      6
-    ],
-    [
-      "Ring",
-      0,
-      "Move",
+      "Viewer Draw.002",
       0
     ],
     [
-      "Vector in",
-      0,
-      "Move",
+      "SVG Document",
+      1,
+      "Viewer Draw.002",
       1
     ],
     [
@@ -1024,13 +976,49 @@
     [
       "Ring",
       0,
-      "Vector Turbulence",
+      "Move",
       0
     ],
     [
-      "Vector Turbulence",
+      "Vector in",
       0,
-      "Vector out",
+      "Move",
+      1
+    ],
+    [
+      "Move",
+      0,
+      "Viewer Draw.003",
+      0
+    ],
+    [
+      "Ring",
+      2,
+      "Viewer Draw.003",
+      2
+    ],
+    [
+      "Color in",
+      0,
+      "Viewer Draw.003",
+      6
+    ],
+    [
+      "Ring",
+      0,
+      "Move.004",
+      0
+    ],
+    [
+      "Vector in.001",
+      0,
+      "Move.004",
+      1
+    ],
+    [
+      "Ring",
+      0,
+      "Vector Turbulence",
       0
     ],
     [
@@ -1046,34 +1034,40 @@
       1
     ],
     [
-      "Ring",
+      "Vector Turbulence",
       0,
-      "Move.004",
+      "Vector out",
       0
     ],
     [
-      "Vector in.001",
+      "Voronoi 2D",
       0,
-      "Move.004",
+      "Move.003",
+      0
+    ],
+    [
+      "Vector in",
+      0,
+      "Move.003",
       1
     ],
     [
-      "List Join.001",
+      "Move.003",
       0,
-      "Color in",
-      2
-    ],
-    [
-      "Ring",
-      2,
-      "List Length",
+      "Viewer Draw.004",
       0
     ],
     [
-      "List Length",
+      "Voronoi 2D",
+      1,
+      "Viewer Draw.004",
+      1
+    ],
+    [
+      "Move.004",
       0,
-      "Number Range",
-      2
+      "Voronoi 2D",
+      0
     ],
     [
       "Number Range",
@@ -1088,70 +1082,76 @@
       1
     ],
     [
-      "List Split",
-      0,
-      "List Flip",
-      0
-    ],
-    [
       "List Flip",
       0,
       "List Join.001",
       0
     ],
     [
-      "Path SVG",
+      "List Split",
       0,
-      "List Join",
+      "List Flip",
       0
     ],
     [
-      "Mesh SVG",
+      "List Join.001",
       0,
-      "List Join",
+      "Color in",
       2
     ],
     [
-      "Mesh SVG.001",
+      "List Length",
       0,
-      "List Join",
-      3
+      "Number Range",
+      2
     ],
     [
-      "SVG Document",
-      0,
-      "Viewer Draw.002",
+      "Ring",
+      2,
+      "List Length",
       0
     ],
     [
-      "SVG Document",
-      1,
-      "Viewer Draw.002",
+      "Move",
+      0,
+      "Mesh SVG",
+      0
+    ],
+    [
+      "Ring",
+      2,
+      "Mesh SVG",
       1
     ],
     [
-      "File Path",
+      "Fill / Stroke SVG.002",
       0,
-      "SVG Document",
+      "Mesh SVG",
+      4
+    ],
+    [
+      "Color in",
+      0,
+      "Fill / Stroke SVG.002",
       0
     ],
     [
-      "List Join",
+      "Move.003",
       0,
-      "SVG Document",
-      2
-    ],
-    [
-      "Move.001",
-      0,
-      "Path SVG",
+      "Mesh SVG.001",
       0
     ],
     [
-      "Fill / Stroke SVG",
+      "Voronoi 2D",
+      1,
+      "Mesh SVG.001",
+      1
+    ],
+    [
+      "Fill / Stroke SVG.003",
       0,
-      "Path SVG",
-      3
+      "Mesh SVG.001",
+      4
     ]
   ]
 }
