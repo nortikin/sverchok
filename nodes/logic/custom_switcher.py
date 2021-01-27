@@ -6,7 +6,6 @@
 # License-Filename: LICENSE
 
 import bpy
-
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
@@ -46,6 +45,7 @@ class SvCustomSwitcher(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
     string_values: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup, description='Storage of items names')
     user_list: bpy.props.BoolVectorProperty(name="User selection", size=32, update=updateNode, set=set_user_list,
                                              get=get_user_list, description='Selection status of items')
+    previous_user_list: bpy.props.BoolVectorProperty(size=32)
 
     def sv_init(self, context):
         self['user_list'] = [False for _ in range(32)]
@@ -103,6 +103,13 @@ class SvCustomSwitcher(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
             self.string_values.clear()
 
         self.outputs['Item'].sv_set([[i for i, b in enumerate(self.user_list) if b]])
+
+    def load_from_json(self, node_dict: dict, import_version: float):
+        '''function to get data when importing from json'''
+        data_list = node_dict.get('params')
+        ul = data_list.get('user_list')
+        self['user_list'] = ul
+        self['previous_user_list'] = ul
 
 
 def register():
