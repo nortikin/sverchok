@@ -411,7 +411,7 @@
     SvDuplicateAlongEdgeNode
     SvFractalCurveNode
     SvFrameworkNode
-    SvSolidifyNode
+    SvSolidifyNodeMk2
     SvWireframeNode
     SvPipeNode
     SvMatrixTubeNode
