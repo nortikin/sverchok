@@ -41,7 +41,7 @@ Inputs & Parameters
 +----------------+-------------------------------------------------------------------------+
 | Seed           | Accepts float values, they are hashed into *Integers* internally.       |
 |                | Seed values of 0 will internally be replaced with a randomly picked     |
-|                | constant to allow all seed input to generate repeatable output.         |
+|                | constant to allow all seed input to generate repeatable output.         |  
 |                | (Seed=0 would otherwise generate random values based on system time)    |
 +----------------+-------------------------------------------------------------------------+
 | Noise Matrix   | Matrix input to determinate noise origin, scale and rotation.           |
@@ -73,17 +73,20 @@ Adding noise transformations:
 
 Using noise to filter a 3d grid:
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/noise/noise_sverchok_blender_example_6.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/noise/noise_sverchok_blender_example_6.png 
 
 Custom noises:
 
 - Random Cells:
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/noise/noise_sverchok_blender_example_5.png
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/noise/noise_sverchok_blender_example_5.png  
 
 - Random Gradients:
+
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/noise/noise_sverchok_blender_example_7.png
 
 - Ortho Gradients:
+
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/noise/noise_sverchok_blender_example_8.png
 
 - Numpy Perlin:

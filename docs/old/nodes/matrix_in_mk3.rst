@@ -90,11 +90,11 @@ These parameters do not receive external input.
 
 NOTES:
 [1] : When the flag is enabled the node will join the first level list of
-      matrices in the output and generate a list of matrices: [M, M, ... , M].
+      matrices in the output and generate a list of matrices: [M, M, . . . , M].
       When the flag is disabled the node will keep the structure matching the
       input structure and generate the output as a list of list of matrices:
-      [[M, M, ... , M], ..., [M, M, ... , M]].
-[2] : The "Flat Output" option can be toggle via the right-click menu as well.
+      [[M, M, . . . , M], . . ., [M, M, . . . , M]].    
+[2] : The "Flat Output" option can be toggle via the right-click menu as well.  
 
 
 Outputs
