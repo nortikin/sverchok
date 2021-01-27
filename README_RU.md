@@ -1,5 +1,5 @@
 <p align="center">
-<a href="http://nikitron.cc.ua/sverchok_ru.html">
+<a href="http://nortikin.github.io/sverchok/">
 <img src="ui/logo/png/sverchock_icon_t.png" width="150" title="Логотип от Виктора Доваля">
 </a>
 </p>
@@ -89,7 +89,7 @@
 Также если вы обновляете Сверчка с кнопкой автообновления, будьте осторожны, в связи с названием папки, блендер может не подхватить её, следуйте указаниям [здесь](https://github.com/nortikin/sverchok/issues/669)   
 
 ### Контакты и разработчики
-Домашняя страница: [Домой](http://nikitron.cc.ua/sverchok_ru.html)  
+Домашняя страница: [Домой](http://nortikin.github.io/sverchok/)  
 Разработчики: 
 -  Недовизин Александр;  
 -  Городецкий Никита;  
