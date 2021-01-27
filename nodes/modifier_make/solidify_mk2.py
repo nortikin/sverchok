@@ -49,19 +49,19 @@ def solidify(vertices, faces, thickness, offset=[-1], even=True):
 
     if len(offset) == 1 and offset == -1:
         if even:
-            new_verts = [(Vector(v.co)+ v.normal * t * v.calc_shell_factor())[:] for v, t in zip(bm.verts, cycle(thickness))]
+            new_verts = [(v.co+ v.normal * t * v.calc_shell_factor())[:] for v, t in zip(bm.verts, cycle(thickness))]
         else:
-            new_verts = [(Vector(v.co)+ v.normal*t)[:] for v, t in zip(bm.verts, cycle(thickness))]
+            new_verts = [(v.co+ v.normal*t)[:] for v, t in zip(bm.verts, cycle(thickness))]
 
         vertices_out = vertices +  new_verts
     else:
         if even:
-            new_verts=[(Vector(v.co) + v.normal * t * v.calc_shell_factor() *((-o/2)+0.5))[:] for v, t, o in zip(bm.verts, cycle(thickness), cycle(offset))]
-            old_verts=[(Vector(v.co) - v.normal * t * v.calc_shell_factor() * ((o/2)+0.5))[:] for v, t, o in zip(bm.verts, cycle(thickness), cycle(offset))]
+            new_verts=[(v.co + v.normal * t * v.calc_shell_factor() *((-o/2)+0.5))[:] for v, t, o in zip(bm.verts, cycle(thickness), cycle(offset))]
+            old_verts=[(v.co - v.normal * t * v.calc_shell_factor() * ((o/2)+0.5))[:] for v, t, o in zip(bm.verts, cycle(thickness), cycle(offset))]
 
         else:
-            new_verts=[(Vector(v.co) + v.normal * t * ((-o/2) + 0.5))[:] for v, t, o in zip(bm.verts, cycle(thickness), cycle(offset))]
-            old_verts=[(Vector(v.co) - v.normal * t * ((o/2) + 0.5))[:] for v, t, o in zip(bm.verts, cycle(thickness), cycle(offset))]
+            new_verts=[(v.co + v.normal * t * ((-o/2) + 0.5))[:] for v, t, o in zip(bm.verts, cycle(thickness), cycle(offset))]
+            old_verts=[(v.co - v.normal * t * ((o/2) + 0.5))[:] for v, t, o in zip(bm.verts, cycle(thickness), cycle(offset))]
 
         vertices_out = old_verts +  new_verts
 
