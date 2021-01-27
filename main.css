@@ -1,0 +1,248 @@
+
+
+#display {
+  /*overflow:scroll;*/
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
+  background: #051025; /*#DBDADB;*/
+}
+
+img {padding: 0; margin:0;}
+
+div.content_main { 
+  font-size: 0.7em;
+  line-height: 0.95em;
+  width: 100%;
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;  
+}
+
+.sv_maindiv {
+  margin: 40px 0px 0px 40px;
+  width: 800px;
+  
+}
+
+.sv_header {
+  font-family: 'PT Sans', sans-serif;
+  background: #051025;/*#fffaf9;*/
+  width: 100%;
+  height: 300px;
+  margin-top: 20px;
+}
+
+.sv_header text {
+  color: #e8e9e6;
+  font-size: 7em
+}
+
+.sv_menu {
+  font-family: 'PT Sans', sans-serif;
+  display: inline-block;
+  background: #c51;
+  float: left;
+  width: 12%;
+  height: 100%;
+  padding-top: 20px;
+}
+
+div {
+  padding: 0;
+  margin: 0;
+}
+
+.sv_content {
+  color: #edfbed;
+  font-family: 'PT Sans', sans-serif;
+  float: left;
+  background: #36a;/*#82c5ed;*/
+  height: auto;
+  width: 88%;
+  padding: 0;
+  margin: 0;
+}
+
+.sv_html {
+  padding: 20px 52px 16px 28px;
+  margin: 0;
+}
+
+.item {
+  cursor: pointer; cursor: hand;
+  text-align: right;
+  padding-top: 10px;
+  padding-right: 10px;
+  padding-bottom: 8px;
+  background: #fdfafe;
+  /*border: 1px solid;*/
+  /*border-right: thick #234;*/
+  border-right: thick solid #fdfafe;
+}
+
+.item:hover {
+  background: #fefefe;
+  border-right: thick solid #f5fbfe;
+}
+
+.item:hover text{
+  color: #73c6f6;
+}
+
+
+.item text {
+  color: #7f7f7f;
+  font-size: 1.2em;
+}
+
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+
+/* unvisited link */
+a:link {
+  color: #111;
+  /* background: #eee; */
+}
+
+a:visited {
+  color: #111;
+  /* background: #eee; */
+}
+
+
+
+.sv_table {
+  color: #444;
+  background: #eee;
+  border: 1px solid #82c5ed;
+  border-spacing: 0;
+}
+
+.sv_table-elem {
+  color: #848484;
+  padding: 5px;
+  border: 2px solid #82c5ed;
+}
+
+/* Content parsed as html from markdown */
+
+.sv_html blockquote {
+  color: #FCFCFC;
+  margin-left: 1.1em;
+  line-height: 2em;
+  margin-bottom: 1.7em;
+  padding-left: 0.6em;
+  border-left: 0.6em solid #edfbed;  
+}
+
+.sv_html p {
+  color: #FCFCFC;
+  font-size: 1.22em;
+  margin-bottom: 1.7em;
+  line-height: 1.48em;
+}
+
+.sv_html li {
+  color: #FCFCFC;
+  font-size: 1.28em;
+  line-height: 1.78em;
+}
+
+.sv_html h1 {
+  color: #FCFCFC;
+  font-size: 1.6em;
+}
+
+.sv_html h2 {
+  color: #FCFCFC;
+  font-size: 1.52em;
+}
+
+.sv_html h3 {
+  color: #FCFCFC;
+  font-size: 1.36em;
+}
+
+.sv_html h4 {
+  color: #FCFCFC;
+  font-size: 1.3em;
+}
+
+.sv_table_download {
+  font-weight: lighter;
+  margin-bottom: 2.5em;
+  width: 100%;
+}
+
+.sv_table_download tr {
+  color: #FCFCFC;
+  font-size: 3em;
+}
+
+.sv_table_download a:link{
+  color: #FCFCFC;
+  text-decoration:none;
+}
+
+.sv_table_download a:visited{
+  color: #F4F4F4;
+  text-decoration:none;
+}
+
+svg.github {
+  background-color: #333;
+  height: 2em;
+  width: 2em;
+}
+
+svg.archive {
+  background-color: #333;
+  height: 2em;
+  width: 2em;
+}
+
+ /* 
+ el-icon-github
+ el-icon-download
+ el-icon-download-alt
+ */
+
+ img.gh {
+    fill: #eee;
+    stroke: none;
+    margin-left: 0.5em;
+ }
+
+/* ... lessons specific formatting  ...*/
+
+.sv_table2 {
+  padding: 12px;
+  background: #f1f2f3;
+  color: #aaa;  
+}
+
+.tofu {
+  color: #eeaa33;
+  padding-left: 9px;
+}
+
+.sv_elem2 {
+  vertical-align: top;
+  width: 50%;
+  padding: 15px;
+}
+
+.sv_table2 h3 {
+  color: #333333;
+}

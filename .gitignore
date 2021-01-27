@@ -1,11 +1,9 @@
 #Blender's cache folder
 __pycache__
 
-#Blender's backup files
-*.blend1
-*.blend.gz1
 
 *.py[cod]
+*.pyc
 
 # C extensions
 *.so
@@ -24,7 +22,6 @@ develop-eggs
 .installed.cfg
 lib
 lib64
-__pycache__
 
 # Installer logs
 pip-log.txt
@@ -33,7 +30,6 @@ pip-log.txt
 .coverage
 .tox
 nosetests.xml
-tests/sverchok_tests.log
 
 # Translations
 *.mo
@@ -51,29 +47,11 @@ __MACOSX
 *.kdev4
 
 #Ignore KDE's backup files
-#thanks, i have trouobles
 #with this sometimes in gedit
 *~
 
-
-#Ignore sphinx build folder
-docs/404_custom.html
-docs/_build
-docs/_sources
-docs/.make.bat.swp
-
-nodes/generator/meta_balls.py
-
-# IDE
-.idea
-.DS_Store
-
-# vim swap files
-*.swp
-
-# files that are meant to be edited locally only
-local_test.py
-htmlcov/
-utils/sv_svg_custom_server.htm
-node_scripts/SNLite_templates/local/
+#Ignore folders
+./nodes/
+json_examples/
+node_scripts/
 
