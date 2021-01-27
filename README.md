@@ -1,5 +1,5 @@
 <p align="center">
-<a href="http://nikitron.cc.ua/sverchok_en.html">
+<a href="http://nortikin.github.io/sverchok/">
 <img src="ui/logo/png/sverchock_icon_t.png" width="150" title="hover text">
 </a>
 </p>
@@ -102,7 +102,7 @@ In case Sverchok still fails to install, we've compiled a list of reasons and kn
 If you update with update button in sverchok panel it can raise an error if you renamed a folder, so follow [this](https://github.com/nortikin/sverchok/issues/669) (a bootstrap script you can run from TextEditor)  
 
 ### Contact and Credit
-Homepage: [Home](http://nikitron.cc.ua/sverchok_en.html)  
+Homepage: [Home](http://nortikin.github.io/sverchok/)  
 Authors: 
 -  Alexander Nedovizin,  
 -  Nikita Gorodetskiy,  
