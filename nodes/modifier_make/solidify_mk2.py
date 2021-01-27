@@ -25,6 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, get_partial_result_pydata
 # by Linus Yng
+
 def create_edges(bm, v_len):
     edges =[]
     for edge in bm.edges[:]:
@@ -34,14 +35,15 @@ def create_edges(bm, v_len):
     side_edges = [[v.index, v.index+v_len] for v in bm.verts if v.is_boundary]
     return edges + edges_new +side_edges
 
-def solidify(vertices, faces, thickness, offset=[-1], even=True):
+def solidify(vertices, faces, thickness, offset=None, even=True):
 
     if not faces or not vertices:
         return False
 
     if len(faces[0]) == 2:
         return False
-
+    if offset is None:
+        offset = [-1]
     verlen = set(range(len(vertices)))
 
     bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
@@ -73,8 +75,8 @@ def solidify(vertices, faces, thickness, offset=[-1], even=True):
             rim_pols.append([
                 e.verts[0].index,
                 e.verts[1].index,
-                e.verts[1].index+v_len,
-                e.verts[0].index+v_len])
+                e.verts[1].index + v_len,
+                e.verts[0].index + v_len])
 
     faces_out = [f[::-1] for f in faces] + new_pols + rim_pols
     pol_group = [0]*len(faces) + [1]*len(new_pols) + [2]*len(rim_pols)
