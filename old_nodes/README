@@ -1,9 +1,0 @@
-When a node has been deprecated we want to keep it around to permit old files to load the node.
-
-All you do is:
-- move the old node into this directory
-- remove the old node's classname from `index.md`
-
-Sverchok will do the rest.
-
-

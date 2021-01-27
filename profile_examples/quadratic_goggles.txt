@@ -1,9 +1,0 @@
-Q {size/2},C size,0
-t size,0
-t size,0
-t 0,-size
-t -size,0
-t -size,0
-t -size,0
-t 0,size
-X

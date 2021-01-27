@@ -1,2 +1,0 @@
-L d,rad {len-d},rad len,0
-
