@@ -1,0 +1,463 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Adaptive Tessellate Surface &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
+        <link rel="up" title="Surface" href="surface_index.html"/>
+        <link rel="next" title="Tessellate &amp; Trim Surface" href="tessellate_trim.html"/>
+        <link rel="prev" title="Marching Cubes" href="marching_cubes.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../curves.html">Curve</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html">Surface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../surfaces.html#implcit-surfaces">Implcit Surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nurbs.html">NURBS: Curves and Surfaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#terminology">Terminology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#workflow">Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../nurbs.html#blender-nurbs-compatibility">Blender NURBS compatibility</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../fields.html">Scalar Fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fields.html#vector-fields">Vector Fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../solids.html">Solid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#nodes-toolbar">Nodes Toolbar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#presets-panel">Presets Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-s-n-panel">Node’s N panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="surface_index.html">Surfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../solid/solid_index.html">Solids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../script/script_index.html">Script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#general-guidelines">General guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../shortcuts.html">Shortcuts</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../main.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
+      
+          <li><a href="surface_index.html">Surface</a> &raquo;</li>
+      
+    <li>Adaptive Tessellate Surface</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/nodes/surface/adaptive_tessellate.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="adaptive-tessellate-surface">
+<h1>Adaptive Tessellate Surface<a class="headerlink" href="#adaptive-tessellate-surface" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<p>This node generates an adaptive tessellation for the given surface, i.e. the
+mesh which represents the surface, and has smaller amount of subdivisions in
+places where the mesh is nearly flat and more subdivisions where the surface
+behaivour is more interesting.</p>
+<p>In most cases, one converts a Surface object into a mesh by use of “Evaluate
+Surface” node. That node generates a subdivision by cartesian (rectangular)
+grid.
+However, in some cases a cartesian grid is not suitable. When the surface has
+some “almost flat” places and others, that are much more “bent” or even
+“sharp”, a naive cartesian grid approach:</p>
+<ul class="simple">
+<li>generates too many points on flat areas</li>
+<li>and generates too few points in the curvy areas.</li>
+</ul>
+<p>This node generates points on the surface by following algorithm:</p>
+<ul>
+<li><p class="first">Start with a cartesian grid.</p>
+</li>
+<li><p class="first">Then add more points into “most interesting” grid cells. “Interesting” cells may be defined as:</p>
+<ul class="simple">
+<li>Having larger area (more precisely, area stretching factor)</li>
+<li>Having bigger curvature value. Curvature may be defined as Gaussian
+curvature, mean curvature or as bigger one of the principal curvatures.</li>
+</ul>
+<blockquote>
+<div><p>Number of vertices, which is to be added into each cell of the grid, is
+calculated proportionally to this “subdivision factor”.</p>
+</div></blockquote>
+</li>
+<li><p class="first">Make a Delaunay triangulation of all these points.</p>
+</li>
+<li><p class="first">And then map this triangluated thing onto the surface.</p>
+</li>
+</ul>
+<p>This approach can not automatically handle cases where the surface should have
+sharp edges. However, if we just happen to know where these sharp edges are, we
+can manually add points on these edges before building a Delaunay
+triangluation.</p>
+<p>Also, this node can trim (cut) the surface by a trimming curve, similar to
+“Tessellate &amp; Trim Surface” node.
+The provided trimming curve is supposed to be planar (flat), and be defined in
+the surface’s U/V coordinates frame.</p>
+<p>Since the node uses Delaunay triangulation, it is enough to just apply “Dual
+Mesh” node after it to have a Voronoi subdivision.</p>
+<p><strong>Assumptions and Limitations</strong>:</p>
+<p>This node uses a relatively simple algorithm without any “AI” or too complex
+computations involved. Thus, the node can not handle all cases. Especially,</p>
+<ul>
+<li><p class="first">The node can not generate very good subdivision if the surface has places
+where it is much more stretched along one direction compared to another. For
+example, if at some place a <cite>[0; 1] x [0; 1]</cite> square of U/V space is mapped
+onto a rectangular part of the surface with side lengths of 10 and 100 - the
+generated faces will appear stretched in one direction. However,</p>
+<blockquote>
+<div><ul class="simple">
+<li>It will be okay if the rectangle will have sides of 100 and 130.</li>
+<li>It will be okay if not only one part of the surface, but the whole surface
+is much more stretched in one direction than in another.</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">The node may not generate too good subdivision near the edges of the surface.
+Especially this is noticeable when the surface is supposed to be closed.</p>
+</li>
+<li><p class="first">The node can not automatically detect where the surface is supposed to have
+“sharp edges” (if any). If you happen to know where such edges should be (in
+terms of surface’s U/V coordinates), use the “AddUVPoints” input.</p>
+</li>
+<li><p class="first">When surface curvature values are used, the node may not handle very well
+so-called “signular points” of the surface (if it happens to have any) -
+places where different values of U/V coordinates are mapped into one point in
+space. For example, a sphere with usual polar parametrisation has such points
+at the poles.</p>
+</li>
+<li><p class="first">Surface curvature values are calculated numerically, so they can be not very
+precise, especially with very “noisy” surfaces.</p>
+</li>
+<li><p class="first">With high number of points to be generated, the node may be slow, especially
+when surface curvature values are considered.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<p>This node has the following inputs:</p>
+<ul class="simple">
+<li><strong>Surface</strong>. The surface to be tessellated. This input is mandatory.</li>
+<li><strong>TrimCurve</strong>. The curve used to trim the surface. The curve is supposed to
+be flat and lying in the XOY plane. This input is optional.</li>
+<li><strong>SamplesU</strong>, <strong>SamplesV</strong>. Number of initial subdivisions in U and V
+directions (for the first step of the algorithm). The default value is 25.</li>
+<li><strong>SamplesT</strong>. The number of points to evaluate the trimming curve at. The default value is 100.</li>
+<li><strong>Min per cell</strong>. Minimal number of additional vertices, which is to be added
+into grid cells which have the least value of subdivision factor (area and/or
+curvature). The default value is 0 - do not add any vertices to such cells.</li>
+<li><strong>Max per cell</strong>. Maximum number of additional vertices, which is to be added
+into grid cells which have the greatest value of subdivision factor (area
+and/or curvature). The default value is 5.</li>
+<li><strong>Seed</strong>. Random seed value. The default value is 0.</li>
+<li><strong>AddUVPoints</strong>. Additional points in the surface’s UV space, which are to be
+added into subdivision before calculating Delaunay triangulation. For
+example, this may be useful to explicitly add vertices in places where the
+surface should have sharp edges. Only X and Y coordinates of provided
+vertices will be used. This input is optional.</li>
+</ul>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<p>This node has the following parameters:</p>
+<ul>
+<li><p class="first"><strong>By Curvature</strong>. Use surface curvature value to distribute additional points
+on the surface: places with greater curvatuer value will receive more points.
+The exact meaning of “curvature” is defined by <strong>Curvature</strong> parameter.
+Checked by default.</p>
+</li>
+<li><p class="first"><strong>By Area</strong>. Use area stretching factor to distribute additional points on
+the surface. Area stretching factor is defined as area of rectangular grid
+cell mapped onto the surface divided by area of that cell in surface’s UV
+space. I.e., places where the surface is more stretched, will receive more
+vertices. Unchecked by default.</p>
+</li>
+<li><p class="first"><strong>Curvature type</strong>. This parameter is available only when <strong>By Curvature</strong>
+parameter is enabled. This defines which exactly curvature value of the
+surface will be used. The available options are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>Maximum</strong>. Use the greater of absolute values of two principal curvature
+values. This option is the default one.</li>
+<li><strong>Gauss</strong>. Use the absolute value of Gaussian curvature.</li>
+<li><strong>Mean</strong>. Use the absolute value of mean curvature.</li>
+</ul>
+</div></blockquote>
+<p>Please refer to <a class="reference external" href="https://en.wikipedia.org/wiki/Differential_geometry_of_surfaces">Wikipedia</a> for more information about these terms.</p>
+</li>
+<li><p class="first"><strong>Trimming mode</strong>. This defines which part of the surface will be generated,
+when the trimming curve is used. The available options are <strong>Inner</strong> and
+<strong>Outer</strong>. The default value is <strong>Inner</strong>.</p>
+</li>
+<li><p class="first"><strong>Curvature Clip</strong>. This parameter is available only in the N panel of the
+node, only when the <strong>By Curvature</strong> parameter is enabled. The calculated
+values of surface curvature will be restricted to do not exceed this number.
+This is used to ignore places on the surface where it has too high values of
+curvature (sharp points) - otherwise the algorithm would be placing all the
+additional points to such places. The default value is 100. Usually you do
+not have to change this value. Set the parameter to 0 (zero) to disable this
+part of the algorithm.</p>
+</li>
+<li><p class="first"><strong>Trim Accuracy</strong>. This parameter is available in the node’s N panel only.
+This defines the precision of the trimming operation. The default value is 5.
+Usually you do not have to change this value.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<p>This node has the following outputs:</p>
+<ul class="simple">
+<li><strong>Vertices</strong>. Generated vertices on the surface.</li>
+<li><strong>Faces</strong>. Generated faces (they are all triangles).</li>
+<li><strong>UVPoints</strong>. Points represenging U/V coordinates of all generated vertices
+on the surface. Z coordinates of these points is always zero.</li>
+</ul>
+</div>
+<div class="section" id="examples-of-usage">
+<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<p>Motivating example. Let’s consider a surface which is made out of plane with
+several bumps. On the left: a surface evaluated with cartesian grid; on the
+right: the same surface with adaptive tessellation. Each of these meshes has
+(nearly) the same count of triangles - 41K.</p>
+<img alt="https://user-images.githubusercontent.com/284644/80983371-eb500900-8e45-11ea-93ad-50ccee371bb3.png" src="https://user-images.githubusercontent.com/284644/80983371-eb500900-8e45-11ea-93ad-50ccee371bb3.png" />
+<p>Notice how much smoother the bumps are on the right mesh. Also notice the sharp
+edges around the bumps - they are made by explicitly defining the points where
+they should be (by use of <strong>AddUVPoints</strong> input).</p>
+<p>The same pictue with wireframe display enabled:</p>
+<img alt="https://user-images.githubusercontent.com/284644/80921813-14af5d00-8d92-11ea-9038-b504a176b7fe.png" src="https://user-images.githubusercontent.com/284644/80921813-14af5d00-8d92-11ea-9038-b504a176b7fe.png" />
+<p>Notice that on the left, the mesh has a lot of subdivisions in the flat part,
+where they are not at all necessary. The right mesh has much less subdivisions
+in flat parts, and much more on the bumps.</p>
+<p>A simpler example, with one bump and no additional points used:</p>
+<img alt="https://user-images.githubusercontent.com/284644/80983350-e68b5500-8e45-11ea-8c91-50f56adbc0fe.png" src="https://user-images.githubusercontent.com/284644/80983350-e68b5500-8e45-11ea-8c91-50f56adbc0fe.png" />
+<p>Use of the node with formula-defined surface, with only <strong>By Curvature</strong>
+parameter enabled. Notice that there are more subdivisions in the places where
+the surface is bent:</p>
+<img alt="https://user-images.githubusercontent.com/284644/80983355-e7bc8200-8e45-11ea-8007-d3b6469d4f61.png" src="https://user-images.githubusercontent.com/284644/80983355-e7bc8200-8e45-11ea-8007-d3b6469d4f61.png" />
+<p>The same surface with only <strong>By Area</strong> parameter enabled. Here there are more
+subdivisions in places where the surface is stretched (but it is almost flat at
+these places):</p>
+<img alt="https://user-images.githubusercontent.com/284644/80983357-e8551880-8e45-11ea-8f2c-881beebe8d39.png" src="https://user-images.githubusercontent.com/284644/80983357-e8551880-8e45-11ea-8f2c-881beebe8d39.png" />
+<p>And with both parameters enabled at the same time:</p>
+<img alt="https://user-images.githubusercontent.com/284644/80983360-e8edaf00-8e45-11ea-8af5-8f86334ef066.png" src="https://user-images.githubusercontent.com/284644/80983360-e8edaf00-8e45-11ea-8af5-8f86334ef066.png" />
+<p>An example of the <strong>TrimCurve</strong> input usage:</p>
+<img alt="https://user-images.githubusercontent.com/284644/80983363-e9864580-8e45-11ea-8dc9-f656108177a4.png" src="https://user-images.githubusercontent.com/284644/80983363-e9864580-8e45-11ea-8dc9-f656108177a4.png" />
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tessellate_trim.html" class="btn btn-neutral float-right" title="Tessellate &amp; Trim Surface">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="marching_cubes.html" class="btn btn-neutral" title="Marching Cubes"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014...2020, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
