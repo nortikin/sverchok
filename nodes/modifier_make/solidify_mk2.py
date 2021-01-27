@@ -17,13 +17,12 @@
 # ##### END GPL LICENSE BLOCK #####
 from mathutils import Vector
 import bpy
-from bmesh.types import BMVert, BMEdge, BMFace
-from bpy.props import FloatProperty, BoolProperty
+from bpy.props import FloatProperty, BoolProperty, EnumProperty
 import bmesh
 from itertools import cycle
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, get_partial_result_pydata
+from sverchok.data_structure import updateNode, zip_long_repeat, enum_item_4
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 # by Linus Yng
 
 def create_edges(bm, v_len):
@@ -42,8 +41,10 @@ def solidify(vertices, faces, thickness, offset=None, even=True):
 
     if len(faces[0]) == 2:
         return False
+
     if offset is None:
         offset = [-1]
+
     verlen = set(range(len(vertices)))
 
     bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
@@ -80,10 +81,53 @@ def solidify(vertices, faces, thickness, offset=None, even=True):
 
     faces_out = [f[::-1] for f in faces] + new_pols + rim_pols
     pol_group = [0]*len(faces) + [1]*len(new_pols) + [2]*len(rim_pols)
-    new_verts_mask = [0]*len(vertices)+ [1]*len(new_verts)
+    new_verts_mask = [False]*len(vertices)+ [True]*len(new_verts)
 
     edges_out = create_edges(bm, v_len)
     return (vertices_out, edges_out, faces_out, new_pols, rim_pols, pol_group, new_verts_mask)
+
+def solidify_blender(vertices, faces, t, offset=None, even=True):
+
+    if not faces or not vertices:
+        return False
+
+    if len(faces[0]) == 2:
+        return False
+
+    verlen = set(range(len(vertices)))
+
+    bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
+    geom_in = bm.verts[:] + bm.edges[:] + bm.faces[:]
+    bmesh.ops.solidify(bm, geom=geom_in, thickness=t[0])
+
+    edges = []
+    faces = []
+    newpols = []
+    rim_pols = []
+    pol_group = []
+    bm.verts.index_update()
+    bm.edges.index_update()
+    bm.faces.index_update()
+    for edge in bm.edges[:]:
+        edges.append([v.index for v in edge.verts[:]])
+    verts = [vert.co[:] for vert in bm.verts[:]]
+    for face in bm.faces:
+        indexes = [v.index for v in face.verts[:]]
+        faces.append(indexes)
+        intersect = verlen.intersection(indexes)
+        if not intersect:
+            newpols.append(indexes)
+            pol_group.append(1)
+        elif len(intersect) < len(indexes):
+            rim_pols.append(indexes)
+            pol_group.append(2)
+        else:
+            pol_group.append(0)
+    flat_faces = {c for f in newpols for c in f}
+    new_verts_mask = [i in flat_faces for i in range(len(verts))]
+    bm.clear()
+    bm.free()
+    return (verts, edges, faces, newpols, rim_pols, pol_group, new_verts_mask)
 
 class SvSolidifyNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -104,6 +148,13 @@ class SvSolidifyNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     even: BoolProperty(
         name='Even Thickness', description='Mantain Thinkness by adjusting sharp corners',
         default=True, update=updateNode)
+    def update_sockets(self, context):
+        self.inputs['Offset'].hide_safe = self.implementation == 'Blender'
+        updateNode(self, context)
+    implementation: EnumProperty(
+        name='Implementation', items=enum_item_4(['Sverchok', 'Blender']),
+        description='Mantain Thinkness by adjusting sharp corners',
+        default='Sverchok', update=update_sockets)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
@@ -120,7 +171,12 @@ class SvSolidifyNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'New Verts Mask')
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'even')
+        if self.implementation == 'Sverchok':
+            layout.prop(self, 'even')
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'implementation')
+        self.draw_buttons(context, layout)
+
     def process(self):
         if not any((s.is_linked for s in self.outputs)):
             return
@@ -140,9 +196,13 @@ class SvSolidifyNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         rim_pols = []
         pols_groups = []
         new_verts_mask = []
+        if self.implementation == 'Blender':
+            func = solidify_blender
+        else:
+            func = solidify
 
         for v, p, t, o in zip_long_repeat(verts, polys, thickness, offset):
-            res = solidify(v, p, t, o, self.even)
+            res = func(v, p, t, o, self.even)
 
             if not res:
                 return
