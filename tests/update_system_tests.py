@@ -14,9 +14,9 @@ class UpdateSystemTests(ReferenceTreeTestCase):
     def test_make_dep_dict(self):
         tree = get_node_tree()
         result = make_dep_dict(tree)
-        #info(result)
+        # info(result)
 
-        expected_result = {'Bevel': {'Box'}, 'VD Experimental': {'Bevel'}, 'Extrude Separate Faces': {'Box'}, 'Bevel.001': {'Extrude Separate Faces'}, 'Move': {'Bevel.001', 'Vector in'}, 'VD Experimental.001': {'Move', 'Bevel.001'}}
+        expected_result = {'Bevel': {'Box'}, 'Move': {'Vector in', 'Bevel.001'}, 'Viewer Draw': {'Move', 'Bevel.001'}, 'Extrude Separate Faces.002': {'Box'}, 'Bevel.001': {'Extrude Separate Faces.002'}, 'Viewer Draw.001': {'Bevel'}}
 
         #info("Dict: %s", result)
         self.assertEqual(result, expected_result)
@@ -35,4 +35,3 @@ class UpdateSystemTests(ReferenceTreeTestCase):
             for dep in deps:
                 dep_idx = result.index(dep)
                 self.assertTrue(dep_idx < node_idx)
-
