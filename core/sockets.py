@@ -774,7 +774,7 @@ class SvDummySocket(NodeSocket, SvSocketCommon):
 
     color = (0.8, 0.8, 0.8, 0.3)
 
-    def sv_get(self):
+    def sv_get(self, deepcopy=False, default=[]):
         if self.is_linked:
             return self.links[0].bl_idname
 
