@@ -1,5 +1,5 @@
 <p align="center">
-<a href="http://nikitron.cc.ua/sverchok_en.html">
+<a href="http://nortikin.github.io/sverchok/">
 <img src="ui/logo/png/sverchock_icon_t.png" width="150" title="hover text">
 </a>
 </p>
@@ -18,7 +18,7 @@
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
 **Prerequisites**: While sverchok is fundamentally self contained, it does require Python 3.6+, and `numpy`. Both of these are included in recent versions of Blender (precompiled binaries are convenient for this), and do not require any additional steps by the user to obtain. We have added optional nodes that make use of additional libraries; if you have them, Please refer to [wiki page](https://github.com/nortikin/sverchok/wiki/Dependencies) for list of such dependencies and instructions for their installation.
 
-**Manual**: [In English](http://nikitron.cc.ua/sverch/html/main.html) - This is an introduction to Sverchok and contains 3 lessons, and documentation on almost all nodes. If anything isn't clear (or missing) in this document please ask about it on the [Issue Tracker](https://github.com/nortikin/sverchok/issues), we want to get these lessons right and you can help us! 
+**Manual**: [In English](http://nortikin.github.io/sverchok/docs/main.html) - This is an introduction to Sverchok and contains 3 lessons, and documentation on almost all nodes. If anything isn't clear (or missing) in this document please ask about it on the [Issue Tracker](https://github.com/nortikin/sverchok/issues), we want to get these lessons right and you can help us! 
 
   
 ### Description
@@ -97,12 +97,12 @@ then exit Blender and restart Blender. This time also activate Sverchok by check
 
 ##### Other reasons for failing:
 
-In case Sverchok still fails to install, we've compiled a list of reasons and known resolutions [here](http://nikitron.cc.ua/sverch/html/installation.html). Please let us know if you encounter other installation issues.   
+In case Sverchok still fails to install, we've compiled a list of reasons and known resolutions [here](http://nortikin.github.io/sverchok/docs/installation.html). Please let us know if you encounter other installation issues.   
 
 If you update with update button in sverchok panel it can raise an error if you renamed a folder, so follow [this](https://github.com/nortikin/sverchok/issues/669) (a bootstrap script you can run from TextEditor)  
 
 ### Contact and Credit
-Homepage: [Home](http://nikitron.cc.ua/sverchok_en.html)  
+Homepage: [Home](http://nortikin.github.io/sverchok/)  
 Authors: 
 -  Alexander Nedovizin,  
 -  Nikita Gorodetskiy,  

@@ -24,11 +24,11 @@ Input and Output
 ========= ==========================================================
 socket    description
 ========= ==========================================================
-inputs    Expect a Vector and Scalar (v,s), or two Vectors (u, v)
+inputs    Expect a Vector and Scalar (v,s), or two Vectors (u, v)  
 outputs   Will output a Scalar (s), or a Vector (w).
 ========= ==========================================================
 
-Depending on the mode you choose the sockets are automatically changed to
+Depending on the mode you choose the sockets are automatically changed to   
 accommodate the expected inputs and outputs types
 
 
@@ -40,7 +40,7 @@ but in case they aren't then here is a quick overview:
 
 =================== ========= ========= =========================================
 Tables              inputs    outputs   description
-=================== ========= ========= ========================================
+=================== ========= ========= =========================================
 Scale YZ             v, s     w         scale vector by amount
 Scale XZ             v, s     w         scale vector by amount
 Scale XY             v, s     w         scale vector by amount
