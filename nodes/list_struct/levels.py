@@ -17,14 +17,14 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty, IntProperty, StringProperty, CollectionProperty
+from bpy.props import BoolProperty, IntProperty, StringProperty, CollectionProperty, BoolVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, describe_data_shape_by_level, list_levels_adjust, throttle_and_update_node, SIMPLE_DATA_TYPES, changable_sockets
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.surface.core import SvSurface
 from sverchok.dependencies import FreeCAD
-
+from sverchok.utils.logging import info
 ALL_TYPES = SIMPLE_DATA_TYPES + (SvCurve, SvSurface)
 if FreeCAD is not None:
     import Part
@@ -60,6 +60,8 @@ class SvListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
 
     levels_config : CollectionProperty(type=SvNestingLevelEntry)
     prev_nesting_level : IntProperty(default = 0, options = {'SKIP_SAVE'})
+    flatten_mem: BoolVectorProperty(size=32, default=[False for i in range(32)])
+    wrap_mem: BoolVectorProperty(size=32, default=[False for i in range(32)])
 
     def draw_buttons(self, context, layout):
         n = len(self.levels_config)
@@ -100,6 +102,11 @@ class SvListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
         except LookupError:
             data = []
         if not data:
+            self.prev_nesting_level = 0
+            for i, l in enumerate(self.levels_config):
+                self.flatten_mem[i] = l.flatten
+                self.wrap_mem[i] = l.wrap
+
             self.levels_config.clear()
             return
 
@@ -111,8 +118,12 @@ class SvListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
 
         if rebuild_list:
             self.levels_config.clear()
-            for descr in descriptions:
-                self.levels_config.add().description = descr
+            for i, descr in enumerate(descriptions):
+                l = self.levels_config.add()
+                l.description = descr
+                l.flatten = self.flatten_mem[i]
+                l.wrap = self.wrap_mem[i]
+
         else:
             for entry, descr in zip(self.levels_config, descriptions):
                 entry.description = descr
