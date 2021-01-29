@@ -35,5 +35,5 @@ def make_sorcar_logo():
 
     verts_3d = [(v[0], v[1], 0.05) for v in verts_2d]
     face = list(range(len(verts_3d)))
-    verts, edges, faces, _ , _, _, _= solidify(verts_3d, [face], [0.1])
+    verts, edges, faces, _ , _, _, _= solidify(verts_3d, [], [face], [0.1])
     return verts, edges, faces
