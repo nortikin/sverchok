@@ -169,7 +169,26 @@
         0.9200000166893005,
         0.9200000166893005
       ],
-      "custom_socket_props": {},
+      "custom_socket_props": {
+        "0": {
+          "label": "Size Y"
+        },
+        "1": {
+          "label": "Size Z"
+        },
+        "2": {
+          "label": "Num Y"
+        },
+        "3": {
+          "label": "Num Z"
+        },
+        "4": {
+          "label": "Step Y"
+        },
+        "5": {
+          "label": "Step Z"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -234,8 +253,8 @@
       },
       "width": 140.0
     },
-    "Solidify": {
-      "bl_idname": "SvSolidifyNode",
+    "Solidify.001": {
+      "bl_idname": "SvSolidifyNodeMk2",
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
@@ -363,6 +382,24 @@
     [
       "IcoSphere",
       0,
+      "Component Analyzer",
+      0
+    ],
+    [
+      "IcoSphere",
+      1,
+      "Component Analyzer",
+      1
+    ],
+    [
+      "IcoSphere",
+      2,
+      "Component Analyzer",
+      2
+    ],
+    [
+      "IcoSphere",
+      0,
       "Component Analyzer.001",
       0
     ],
@@ -381,80 +418,20 @@
     [
       "IcoSphere",
       0,
-      "Viewer Draw.001",
-      0
-    ],
-    [
-      "IcoSphere",
-      1,
-      "Viewer Draw.001",
-      1
-    ],
-    [
-      "IcoSphere",
-      2,
-      "Viewer Draw.001",
-      2
-    ],
-    [
-      "IcoSphere",
-      0,
-      "Component Analyzer",
-      0
-    ],
-    [
-      "IcoSphere",
-      1,
-      "Component Analyzer",
-      1
-    ],
-    [
-      "IcoSphere",
-      2,
-      "Component Analyzer",
-      2
-    ],
-    [
-      "Edge Boom",
-      0,
-      "Vector Lerp",
-      1
-    ],
-    [
-      "Edge Boom",
-      1,
-      "Vector Lerp",
-      2
-    ],
-    [
-      "Component Analyzer.001",
-      0,
-      "Scalar Math.001",
-      0
-    ],
-    [
-      "Scalar Math.002",
-      0,
-      "Scalar Math.001",
-      1
-    ],
-    [
-      "IcoSphere",
-      0,
-      "Matrix normal",
-      0
-    ],
-    [
       "Component Analyzer.002",
-      0,
-      "Matrix normal",
+      0
+    ],
+    [
+      "IcoSphere",
+      1,
+      "Component Analyzer.002",
       1
     ],
     [
-      "Scalar Math",
-      0,
-      "Scalar Math.002",
-      0
+      "IcoSphere",
+      2,
+      "Component Analyzer.002",
+      2
     ],
     [
       "Scalar Math",
@@ -475,64 +452,22 @@
       4
     ],
     [
-      "Component Analyzer.001",
+      "IcoSphere",
       0,
-      "Scalar Math",
+      "Edge Boom",
       0
     ],
     [
-      "A Number",
-      0,
-      "Scalar Math",
-      1
-    ],
-    [
-      "Scalar Math.001",
-      0,
-      "Plane",
-      0
-    ],
-    [
-      "Scalar Math",
-      0,
-      "Plane",
-      1
-    ],
-    [
-      "Plane",
-      0,
-      "Solidify",
-      1
-    ],
-    [
-      "Plane",
-      2,
-      "Solidify",
-      2
-    ],
-    [
-      "Solidify",
-      0,
-      "Viewer Draw",
-      0
-    ],
-    [
-      "Solidify",
+      "IcoSphere",
       1,
-      "Viewer Draw",
+      "Edge Boom",
       1
     ],
     [
-      "Solidify",
+      "IcoSphere",
       2,
-      "Viewer Draw",
+      "Edge Boom",
       2
-    ],
-    [
-      "Matrix Track To",
-      0,
-      "Viewer Draw",
-      3
     ],
     [
       "Vector Lerp",
@@ -555,37 +490,109 @@
     [
       "IcoSphere",
       0,
-      "Edge Boom",
+      "Matrix normal",
       0
     ],
     [
-      "IcoSphere",
-      1,
-      "Edge Boom",
+      "Component Analyzer.002",
+      0,
+      "Matrix normal",
       1
     ],
     [
-      "IcoSphere",
-      2,
+      "Scalar Math.001",
+      0,
+      "Plane",
+      0
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Plane",
+      1
+    ],
+    [
+      "Component Analyzer.001",
+      0,
+      "Scalar Math",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Scalar Math",
+      1
+    ],
+    [
+      "Component Analyzer.001",
+      0,
+      "Scalar Math.001",
+      0
+    ],
+    [
+      "Scalar Math.002",
+      0,
+      "Scalar Math.001",
+      1
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Scalar Math.002",
+      0
+    ],
+    [
       "Edge Boom",
+      0,
+      "Vector Lerp",
+      1
+    ],
+    [
+      "Edge Boom",
+      1,
+      "Vector Lerp",
       2
+    ],
+    [
+      "Solidify.001",
+      0,
+      "Viewer Draw",
+      0
+    ],
+    [
+      "Solidify.001",
+      1,
+      "Viewer Draw",
+      1
+    ],
+    [
+      "Solidify.001",
+      2,
+      "Viewer Draw",
+      2
+    ],
+    [
+      "Matrix Track To",
+      0,
+      "Viewer Draw",
+      3
     ],
     [
       "IcoSphere",
       0,
-      "Component Analyzer.002",
+      "Viewer Draw.001",
       0
     ],
     [
       "IcoSphere",
       1,
-      "Component Analyzer.002",
+      "Viewer Draw.001",
       1
     ],
     [
       "IcoSphere",
       2,
-      "Component Analyzer.002",
+      "Viewer Draw.001",
       2
     ],
     [
@@ -611,6 +618,18 @@
       0,
       "Viewer Draw.002",
       3
+    ],
+    [
+      "Plane",
+      0,
+      "Solidify.001",
+      0
+    ],
+    [
+      "Plane",
+      2,
+      "Solidify.001",
+      2
     ]
   ]
 }

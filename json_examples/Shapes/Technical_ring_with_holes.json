@@ -1,5 +1,5 @@
 {
-  "export_version": "0.079",
+  "export_version": "0.10",
   "framed_nodes": {
     "Circle": "Frame",
     "Circle.001": "Frame",
@@ -17,6 +17,7 @@
   "nodes": {
     "A Number": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -25,16 +26,13 @@
         -108.62287139892578
       ],
       "params": {
-        "float_": 2.180000066757202,
-        "float_draft_": 0.0,
-        "int_": 0,
-        "int_draft_": 0,
-        "selected_mode": "float"
+        "float_": 2.180000066757202
       },
       "width": 140.0
     },
     "A Number.001": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -43,11 +41,7 @@
         38.979434967041016
       ],
       "params": {
-        "float_": 0.30000001192092896,
-        "float_draft_": 0.0,
-        "int_": 0,
-        "int_draft_": 0,
-        "selected_mode": "float"
+        "float_": 0.30000001192092896
       },
       "width": 140.0
     },
@@ -58,6 +52,7 @@
         0.5,
         0.5
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -79,6 +74,7 @@
         0.5,
         0.5
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -95,6 +91,7 @@
     },
     "Crop mesh 2D": {
       "bl_idname": "SvCropMesh2D",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -103,14 +100,14 @@
         33.44805908203125
       ],
       "params": {
-        "alg_mode": "Sweep_line",
         "mode": "outer"
       },
       "width": 140.0
     },
     "Frame": {
       "bl_idname": "NodeFrame",
-      "height": 817.3739624023438,
+      "custom_socket_props": {},
+      "height": 837.2139282226562,
       "hide": false,
       "label": "Base Ring with holes",
       "location": [
@@ -118,11 +115,12 @@
         10.079999923706055
       ],
       "params": {},
-      "width": 831.5574951171875
+      "width": 831.0774536132812
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
-      "height": 559.2898559570312,
+      "custom_socket_props": {},
+      "height": 558.8897705078125,
       "hide": false,
       "label": "Select outer rim",
       "location": [
@@ -130,11 +128,12 @@
         -123.00218963623047
       ],
       "params": {},
-      "width": 756.7841186523438
+      "width": 756.3040161132812
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "height": 400.10150146484375,
+      "custom_socket_props": {},
+      "height": 399.6214904785156,
       "hide": false,
       "label": "Extrude outer rim",
       "location": [
@@ -142,19 +141,17 @@
         10.079999923706055
       ],
       "params": {},
-      "width": 413.444091796875
+      "width": 412.9639892578125
     },
     "Inset faces": {
       "bl_idname": "SvInsetFaces",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
         1425.3887825012207,
         151.90373039245605
-      ],
-      "mask_type": [
-        "out"
       ],
       "params": {
         "depth": 0.5699999928474426,
@@ -165,15 +162,13 @@
     },
     "Inset faces.001": {
       "bl_idname": "SvInsetFaces",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
         1638.3527717590332,
         171.621488571167
-      ],
-      "mask_type": [
-        "out"
       ],
       "params": {
         "depth": 0.35999998450279236,
@@ -184,6 +179,7 @@
     },
     "Logic functions": {
       "bl_idname": "SvLogicNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": true,
       "label": "",
@@ -192,16 +188,13 @@
         -246.79991149902344
       ],
       "params": {
-        "items_": "NOT",
-        "prop_types": [
-          false,
-          false
-        ]
+        "items_": "NOT"
       },
       "width": 140.0
     },
     "Matrix Apply": {
       "bl_idname": "SvMatrixApplyJoinNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -214,6 +207,7 @@
     },
     "Reroute": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -226,6 +220,7 @@
     },
     "Ring": {
       "bl_idname": "SvRingNodeMK2",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -235,16 +230,12 @@
       ],
       "params": {
         "angle_units": "RAD",
-        "inhibit_updates": 0,
         "last_angle_units": "RAD",
-        "mode": "MAJOR_MINOR",
-        "ring_a1": 0.0,
         "ring_a2": 6.2831854820251465,
         "ring_er": 2.5399999618530273,
         "ring_ir": 1.440000057220459,
         "ring_n1": 48,
         "ring_n2": 6,
-        "ring_p": 0.0,
         "ring_r1": 1.9900000095367432,
         "ring_r2": 0.550000011920929
       },
@@ -252,6 +243,7 @@
     },
     "Scalar Math": {
       "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -267,6 +259,7 @@
     },
     "Scalar Math.001": {
       "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -282,6 +275,7 @@
     },
     "Scalar Math.002": {
       "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": true,
       "label": "",
@@ -290,8 +284,7 @@
         41.59259796142578
       ],
       "params": {
-        "current_op": "*2",
-        "input_mode_two": "Float"
+        "current_op": "*2"
       },
       "width": 140.0
     },
@@ -305,13 +298,6 @@
             0.0,
             1.0
           ]
-        },
-        "4": {
-          "prop": [
-            0.0,
-            0.0,
-            0.0
-          ]
         }
       },
       "height": 100.0,
@@ -322,19 +308,20 @@
         -103.11019134521484
       ],
       "params": {
-        "include_partial": 1,
+        "include_partial": true,
         "mode": "ByCylinder"
       },
       "width": 140.0
     },
-    "Solidify": {
-      "bl_idname": "SvSolidifyNode",
+    "Solidify.001": {
+      "bl_idname": "SvSolidifyNodeMk2",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        730.5525512695312,
-        181.73666381835938
+        698.0570678710938,
+        275.30023193359375
       ],
       "params": {
         "thickness": 0.6700000762939453
@@ -348,6 +335,7 @@
         0.30000001192092896,
         0.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -356,8 +344,6 @@
         135.4547119140625
       ],
       "params": {
-        "activate": 1,
-        "draw_gl_polygonoffset": 1,
         "selected_draw_mode": "facet"
       },
       "use_custom_color": true,
@@ -366,54 +352,12 @@
   },
   "update_lists": [
     [
-      "A Number",
-      "Float",
-      "Reroute",
-      "Input"
-    ],
-    [
       "Reroute",
       "Output",
       "Circle.001",
       "Radius"
     ],
     [
-      "A Number.001",
-      0,
-      "Scalar Math.002",
-      0
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Ring",
-      "R"
-    ],
-    [
-      "Scalar Math.002",
-      0,
-      "Ring",
-      1
-    ],
-    [
-      "Circle",
-      0,
-      "Matrix Apply",
-      0
-    ],
-    [
-      "Circle",
-      2,
-      "Matrix Apply",
-      2
-    ],
-    [
-      "Circle.001",
-      0,
-      "Matrix Apply",
-      3
-    ],
-    [
       "Ring",
       0,
       "Crop mesh 2D",
@@ -438,67 +382,13 @@
       3
     ],
     [
-      "Crop mesh 2D",
-      0,
-      "Solidify",
-      1
-    ],
-    [
-      "Crop mesh 2D",
-      1,
-      "Solidify",
-      2
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Scalar Math.001",
-      "x"
-    ],
-    [
-      "Scalar Math.002",
-      0,
-      "Scalar Math.001",
-      1
-    ],
-    [
-      "Scalar Math.001",
-      0,
-      "Scalar Math",
-      0
-    ],
-    [
-      "Solidify",
-      0,
-      "Select mesh elements by location",
-      0
-    ],
-    [
-      "Solidify",
-      2,
-      "Select mesh elements by location",
-      2
-    ],
-    [
-      "Scalar Math",
-      0,
-      "Select mesh elements by location",
-      6
-    ],
-    [
-      "Select mesh elements by location",
-      2,
-      "Logic functions",
-      0
-    ],
-    [
-      "Solidify",
+      "Solidify.001",
       0,
       "Inset faces",
       0
     ],
     [
-      "Solidify",
+      "Solidify.001",
       2,
       "Inset faces",
       2
@@ -528,6 +418,90 @@
       4
     ],
     [
+      "Select mesh elements by location",
+      2,
+      "Logic functions",
+      0
+    ],
+    [
+      "Circle",
+      0,
+      "Matrix Apply",
+      0
+    ],
+    [
+      "Circle",
+      2,
+      "Matrix Apply",
+      2
+    ],
+    [
+      "Circle.001",
+      0,
+      "Matrix Apply",
+      3
+    ],
+    [
+      "A Number",
+      "Float",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Ring",
+      "R"
+    ],
+    [
+      "Scalar Math.002",
+      0,
+      "Ring",
+      1
+    ],
+    [
+      "Scalar Math.001",
+      0,
+      "Scalar Math",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Scalar Math.001",
+      "x"
+    ],
+    [
+      "Scalar Math.002",
+      0,
+      "Scalar Math.001",
+      1
+    ],
+    [
+      "A Number.001",
+      0,
+      "Scalar Math.002",
+      0
+    ],
+    [
+      "Solidify.001",
+      0,
+      "Select mesh elements by location",
+      0
+    ],
+    [
+      "Solidify.001",
+      2,
+      "Select mesh elements by location",
+      2
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Select mesh elements by location",
+      6
+    ],
+    [
       "Inset faces.001",
       0,
       "Viewer Draw Mk3",
@@ -537,6 +511,18 @@
       "Inset faces.001",
       2,
       "Viewer Draw Mk3",
+      2
+    ],
+    [
+      "Crop mesh 2D",
+      0,
+      "Solidify.001",
+      0
+    ],
+    [
+      "Crop mesh 2D",
+      1,
+      "Solidify.001",
       2
     ]
   ]

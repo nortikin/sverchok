@@ -1,5 +1,5 @@
 {
-  "export_version": "0.079",
+  "export_version": "0.10",
   "framed_nodes": {},
   "groups": {},
   "nodes": {
@@ -10,11 +10,7 @@
         0.5,
         0.5
       ],
-      "custom_socket_props": {
-        "1": {
-          "use_expander": false
-        }
-      },
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -30,6 +26,7 @@
     },
     "A Number": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -38,10 +35,7 @@
         -906.98291015625
       ],
       "params": {
-        "float_": 1.0099999904632568,
-        "float_draft_": 0.0,
-        "int_": 0,
-        "int_draft_": 0
+        "float_": 1.0099999904632568
       },
       "width": 140.0
     },
@@ -52,6 +46,7 @@
         0.30000001192092896,
         0.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -62,7 +57,7 @@
       "params": {
         "basedata_name": "Tensors",
         "depth": 0.10000000149011612,
-        "object_select": 0
+        "object_select": false
       },
       "use_custom_color": true,
       "width": 140.0
@@ -74,6 +69,7 @@
         0.5,
         0.5
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -89,6 +85,7 @@
     },
     "List Input": {
       "bl_idname": "SvListInputNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "Pin List",
@@ -137,6 +134,7 @@
     },
     "List Input.001": {
       "bl_idname": "SvListInputNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "Pin split",
@@ -185,6 +183,7 @@
     },
     "List Input.002": {
       "bl_idname": "SvListInputNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -233,6 +232,7 @@
     },
     "List Input.003": {
       "bl_idname": "SvListInputNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -281,6 +281,7 @@
     },
     "List Item": {
       "bl_idname": "SvListItemNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -288,13 +289,12 @@
         609.845703125,
         -766.492919921875
       ],
-      "params": {
-        "index": 0
-      },
+      "params": {},
       "width": 140.0
     },
     "List Item.002": {
       "bl_idname": "SvListItemNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -302,13 +302,12 @@
         16.375446319580078,
         -278.7489318847656
       ],
-      "params": {
-        "index": 0
-      },
+      "params": {},
       "width": 140.0
     },
     "List Item.003": {
       "bl_idname": "SvListItemNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -316,13 +315,12 @@
         393.3372497558594,
         472.56988525390625
       ],
-      "params": {
-        "index": 0
-      },
+      "params": {},
       "width": 140.0
     },
     "List Mask (out).001": {
       "bl_idname": "MaskListNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": true,
       "label": "",
@@ -337,6 +335,7 @@
     },
     "List Mask (out).002": {
       "bl_idname": "MaskListNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": true,
       "label": "",
@@ -351,6 +350,7 @@
     },
     "Math MK2": {
       "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -365,6 +365,7 @@
     },
     "Math MK2.001": {
       "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -373,13 +374,13 @@
         -60.17683410644531
       ],
       "params": {
-        "current_op": "SINE",
-        "input_mode_two": "Float"
+        "current_op": "SINE"
       },
       "width": 140.0
     },
     "Math MK2.002": {
       "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -388,8 +389,7 @@
         -106.64553833007812
       ],
       "params": {
-        "current_op": "DIV",
-        "input_mode_two": "Float"
+        "current_op": "DIV"
       },
       "width": 140.0
     },
@@ -408,27 +408,17 @@
         -723.6800537109375
       ],
       "params": {
-        "angle": 0.0,
-        "axis": [
-          0.0,
-          0.0,
-          1.0
-        ],
         "location_": [
           0.0,
           0.0,
           10.0
-        ],
-        "scale": [
-          1.0,
-          1.0,
-          1.0
         ]
       },
       "width": 140.0
     },
     "Matrix In.001": {
       "bl_idname": "SvMatrixInNodeMK4",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": true,
       "label": "",
@@ -436,28 +426,12 @@
         229.70703125,
         -572.1517944335938
       ],
-      "params": {
-        "angle": 0.0,
-        "axis": [
-          0.0,
-          0.0,
-          1.0
-        ],
-        "location_": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          1.0,
-          1.0,
-          1.0
-        ]
-      },
+      "params": {},
       "width": 140.0
     },
     "Matrix In.002": {
       "bl_idname": "SvMatrixInNodeMK4",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": true,
       "label": "",
@@ -466,33 +440,18 @@
         -894.1826171875
       ],
       "params": {
-        "angle": 90.0,
-        "axis": [
-          0.0,
-          0.0,
-          1.0
-        ],
-        "location_": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          1.0,
-          1.0,
-          1.0
-        ]
+        "angle": 90.0
       },
       "width": 140.0
     },
     "Mesh viewer": {
       "bl_idname": "SvMeshViewer",
-      "collection": "",
       "color": [
         1.0,
         0.5889999866485596,
         0.21400000154972076
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -508,12 +467,12 @@
     },
     "Mesh viewer.001": {
       "bl_idname": "SvMeshViewer",
-      "collection": "",
       "color": [
         1.0,
-        0.5889999866485596,
-        0.21400000154972076
+        0.30000001192092896,
+        0.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -529,6 +488,7 @@
     },
     "Path Length Mk2": {
       "bl_idname": "SvPathLengthMk2Node",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -541,6 +501,7 @@
     },
     "Polygon Grid": {
       "bl_idname": "SvPolygonGridNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "Base Polygon Grid",
@@ -558,6 +519,7 @@
     },
     "Pulga Physics.001": {
       "bl_idname": "SvPulgaPhysicsNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -566,19 +528,21 @@
         281.56048583984375
       ],
       "params": {
-        "drag_M": 1,
+        "drag_M": true,
         "drag_force": 0.029999999329447746,
-        "is_animatable": 0,
+        "is_animatable": false,
         "iterations": 224,
         "max_vel": 0.0,
-        "pins_M": 1,
+        "n_id": "-8252612226580586797",
+        "pins_M": true,
         "spring_k": 0.019999999552965164,
-        "springs_M": 1
+        "springs_M": true
       },
       "width": 200.0
     },
     "Reroute": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -591,6 +555,7 @@
     },
     "Reroute.002": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -603,6 +568,7 @@
     },
     "Reroute.003": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -613,20 +579,22 @@
       "params": {},
       "width": 16.0
     },
-    "Solidify": {
-      "bl_idname": "SvSolidifyNode",
+    "Solidify.001": {
+      "bl_idname": "SvSolidifyNodeMk2",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        1281.2813720703125,
-        -624.90869140625
+        1323.2630615234375,
+        -566.1970825195312
       ],
       "params": {},
       "width": 140.0
     },
     "Subdivide": {
       "bl_idname": "SvSubdivideNodeMK2",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -641,6 +609,7 @@
     },
     "Transform Select": {
       "bl_idname": "SvTransformSelectNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -648,13 +617,12 @@
         356.117919921875,
         -162.89027404785156
       ],
-      "params": {
-        "maskType": "VERTICES"
-      },
+      "params": {},
       "width": 140.0
     },
     "UV Connection": {
       "bl_idname": "LineConnectNodeMK2",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -664,12 +632,13 @@
       ],
       "params": {
         "dir_check": "V_dir",
-        "slice_check": 0
+        "slice_check": false
       },
       "width": 140.0
     },
     "Vector Math": {
       "bl_idname": "SvVectorMathNodeMK3",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -685,6 +654,7 @@
     },
     "Vector Math.001": {
       "bl_idname": "SvVectorMathNodeMK3",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": true,
       "label": "",
@@ -701,6 +671,7 @@
     },
     "Vector Rewire": {
       "bl_idname": "SvVectorRewire",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -716,6 +687,7 @@
     },
     "Vector Rewire.001": {
       "bl_idname": "SvVectorRewire",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -724,13 +696,13 @@
         -176.45098876953125
       ],
       "params": {
-        "scalar": 0.0,
         "selected_mode_from": "Scalar"
       },
       "width": 140.0
     },
     "Vector out": {
       "bl_idname": "VectorsOutNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -744,45 +716,39 @@
   },
   "update_lists": [
     [
-      "Polygon Grid",
+      "List Item",
+      0,
+      "3pt Arc",
+      1
+    ],
+    [
+      "Line",
+      0,
+      "Curve Viewer",
+      0
+    ],
+    [
+      "Line",
       1,
-      "List Item.002",
-      0
-    ],
-    [
-      "List Input",
-      0,
-      "List Item.002",
+      "Curve Viewer",
       1
     ],
     [
-      "List Input.001",
+      "Math MK2.002",
       0,
-      "Transform Select",
-      0
-    ],
-    [
-      "List Item.002",
-      0,
-      "Transform Select",
-      1
-    ],
-    [
-      "Polygon Grid",
-      3,
-      "Transform Select",
+      "Line",
       2
     ],
     [
-      "Matrix In",
-      0,
-      "Transform Select",
+      "List Mask (out).001",
+      3,
+      "Line",
       3
     ],
     [
-      "Matrix In.001",
+      "Vector Rewire",
       0,
-      "Transform Select",
+      "Line",
       4
     ],
     [
@@ -798,76 +764,118 @@
       1
     ],
     [
-      "List Item",
-      0,
-      "3pt Arc",
-      1
-    ],
-    [
-      "3pt Arc",
-      0,
-      "Vector Math.001",
-      0
-    ],
-    [
-      "A Number",
-      0,
-      "Vector Math.001",
-      1
-    ],
-    [
       "Polygon Grid",
       1,
-      "Subdivide",
+      "List Item.002",
       0
     ],
     [
-      "Polygon Grid",
-      2,
-      "Subdivide",
-      1
-    ],
-    [
-      "Polygon Grid",
-      3,
-      "Subdivide",
-      2
-    ],
-    [
-      "Subdivide",
+      "List Input",
       0,
-      "Path Length Mk2",
-      0
-    ],
-    [
-      "Subdivide",
-      1,
-      "Path Length Mk2",
+      "List Item.002",
       1
-    ],
-    [
-      "Subdivide",
-      "Faces",
-      "Reroute.003",
-      "Input"
-    ],
-    [
-      "Reroute.003",
-      "Output",
-      "Reroute.002",
-      "Input"
     ],
     [
       "Path Length Mk2",
       0,
       "List Item.003",
       0
+    ],
+    [
+      "Transform Select",
+      0,
+      "List Mask (out).001",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List Mask (out).001",
+      "mask"
+    ],
+    [
+      "Pulga Physics.001",
+      3,
+      "List Mask (out).002",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List Mask (out).002",
+      "mask"
     ],
     [
       "List Item.003",
       0,
       "Math MK2",
       0
+    ],
+    [
+      "Vector Math",
+      0,
+      "Math MK2.001",
+      0
+    ],
+    [
+      "Vector out",
+      2,
+      "Math MK2.002",
+      0
+    ],
+    [
+      "Math MK2.001",
+      0,
+      "Math MK2.002",
+      1
+    ],
+    [
+      "List Input.003",
+      0,
+      "Matrix In.002",
+      7
+    ],
+    [
+      "Pulga Physics.001",
+      0,
+      "Mesh viewer",
+      0
+    ],
+    [
+      "Reroute.002",
+      "Output",
+      "Mesh viewer",
+      "faces"
+    ],
+    [
+      "Solidify.001",
+      0,
+      "Mesh viewer.001",
+      0
+    ],
+    [
+      "Solidify.001",
+      2,
+      "Mesh viewer.001",
+      2
+    ],
+    [
+      "Matrix In.002",
+      0,
+      "Mesh viewer.001",
+      4
+    ],
+    [
+      "Subdivide",
+      0,
+      "Path Length Mk2",
+      0
+    ],
+    [
+      "Subdivide",
+      1,
+      "Path Length Mk2",
+      1
     ],
     [
       "Subdivide",
@@ -900,70 +908,70 @@
       6
     ],
     [
-      "Pulga Physics.001",
-      0,
-      "Mesh viewer",
-      0
-    ],
-    [
-      "Reroute.002",
-      "Output",
-      "Mesh viewer",
-      "faces"
-    ],
-    [
       "List Input.001",
       "List",
       "Reroute",
       "Input"
     ],
     [
-      "Pulga Physics.001",
-      3,
-      "List Mask (out).002",
-      0
-    ],
-    [
-      "Reroute",
+      "Reroute.003",
       "Output",
-      "List Mask (out).002",
-      "mask"
+      "Reroute.002",
+      "Input"
     ],
     [
-      "List Mask (out).002",
-      3,
-      "Vector Rewire",
+      "Subdivide",
+      "Faces",
+      "Reroute.003",
+      "Input"
+    ],
+    [
+      "Polygon Grid",
+      1,
+      "Subdivide",
       0
     ],
     [
-      "List Mask (out).002",
-      3,
-      "Vector Rewire.001",
-      0
-    ],
-    [
-      "Vector Rewire",
-      0,
-      "Vector Math",
-      0
-    ],
-    [
-      "Vector Rewire.001",
-      0,
-      "Vector Math",
+      "Polygon Grid",
+      2,
+      "Subdivide",
       1
     ],
     [
-      "Vector Math",
+      "Polygon Grid",
+      3,
+      "Subdivide",
+      2
+    ],
+    [
+      "List Input.001",
       0,
-      "Math MK2.001",
+      "Transform Select",
       0
     ],
     [
-      "List Input.003",
+      "List Item.002",
       0,
-      "Matrix In.002",
-      7
+      "Transform Select",
+      1
+    ],
+    [
+      "Polygon Grid",
+      3,
+      "Transform Select",
+      2
+    ],
+    [
+      "Matrix In",
+      0,
+      "Transform Select",
+      3
+    ],
+    [
+      "Matrix In.001",
+      0,
+      "Transform Select",
+      4
     ],
     [
       "3pt Arc",
@@ -978,94 +986,58 @@
       1
     ],
     [
-      "UV Connection",
-      0,
-      "Solidify",
-      1
-    ],
-    [
-      "UV Connection",
-      1,
-      "Solidify",
-      2
-    ],
-    [
-      "Solidify",
-      0,
-      "Mesh viewer.001",
-      0
-    ],
-    [
-      "Solidify",
-      2,
-      "Mesh viewer.001",
-      2
-    ],
-    [
-      "Matrix In.002",
-      0,
-      "Mesh viewer.001",
-      4
-    ],
-    [
-      "Transform Select",
-      0,
-      "List Mask (out).001",
-      0
-    ],
-    [
-      "Reroute",
-      "Output",
-      "List Mask (out).001",
-      "mask"
-    ],
-    [
-      "List Mask (out).001",
-      3,
-      "Vector out",
-      0
-    ],
-    [
-      "Vector out",
-      2,
-      "Math MK2.002",
-      0
-    ],
-    [
-      "Math MK2.001",
-      0,
-      "Math MK2.002",
-      1
-    ],
-    [
-      "Math MK2.002",
-      0,
-      "Line",
-      2
-    ],
-    [
-      "List Mask (out).001",
-      3,
-      "Line",
-      3
-    ],
-    [
       "Vector Rewire",
       0,
-      "Line",
-      4
-    ],
-    [
-      "Line",
-      0,
-      "Curve Viewer",
+      "Vector Math",
       0
     ],
     [
-      "Line",
-      1,
-      "Curve Viewer",
+      "Vector Rewire.001",
+      0,
+      "Vector Math",
       1
+    ],
+    [
+      "3pt Arc",
+      0,
+      "Vector Math.001",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Vector Math.001",
+      1
+    ],
+    [
+      "List Mask (out).002",
+      3,
+      "Vector Rewire",
+      0
+    ],
+    [
+      "List Mask (out).002",
+      3,
+      "Vector Rewire.001",
+      0
+    ],
+    [
+      "List Mask (out).001",
+      3,
+      "Vector out",
+      0
+    ],
+    [
+      "UV Connection",
+      0,
+      "Solidify.001",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "Solidify.001",
+      2
     ]
   ]
 }

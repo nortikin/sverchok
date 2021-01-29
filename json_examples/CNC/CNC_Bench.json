@@ -30,7 +30,7 @@
     "Profile Parametric Mk3": "Frame.001",
     "SVG Document": "Frame.002",
     "Scalar Math.001": "Frame",
-    "Solidify.001": "Frame.003",
+    "Solidify": "Frame.003",
     "Viewer Draw.002": "Frame",
     "Viewer Draw.003": "Frame.002"
   },
@@ -43,7 +43,7 @@
       "hide": false,
       "label": "Noise Matrix Scale",
       "location": [
-        -445.43797302246094,
+        -445.43800354003906,
         894.14599609375
       ],
       "params": {
@@ -74,7 +74,7 @@
       "hide": false,
       "label": "Material Thikness",
       "location": [
-        1074.8826293945312,
+        1074.882568359375,
         937.3634796142578
       ],
       "params": {
@@ -105,7 +105,7 @@
       "hide": false,
       "label": "Thickness",
       "location": [
-        -243.71842193603516,
+        -243.7184066772461,
         -488.6092109680176
       ],
       "params": {
@@ -137,7 +137,7 @@
       "hide": false,
       "label": "",
       "location": [
-        1250.7611694335938,
+        1250.76123046875,
         811.9464263916016
       ],
       "params": {
@@ -153,7 +153,7 @@
       "hide": false,
       "label": "",
       "location": [
-        1014.6371765136719,
+        1014.6372375488281,
         34.813323974609375
       ],
       "params": {},
@@ -198,7 +198,7 @@
       "hide": false,
       "label": "",
       "location": [
-        1073.7179565429688,
+        1073.718017578125,
         818.5982208251953
       ],
       "params": {
@@ -248,7 +248,7 @@
     "Frame.003": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 586.8427734375,
+      "height": 593.09130859375,
       "hide": false,
       "label": "Mesh",
       "location": [
@@ -301,7 +301,7 @@
       "hide": false,
       "label": "",
       "location": [
-        651.9615783691406,
+        651.9615478515625,
         -396.40582275390625
       ],
       "params": {
@@ -331,7 +331,7 @@
       "label": "",
       "location": [
         -213.41180419921875,
-        1057.2955932617188
+        1057.295654296875
       ],
       "params": {},
       "width": 140.0
@@ -364,8 +364,8 @@
       "bl_idname": "SvMeshViewer",
       "color": [
         1.0,
-        0.5889999866485596,
-        0.21400000154972076
+        0.30000001192092896,
+        0.0
       ],
       "custom_socket_props": {},
       "height": 100.0,
@@ -376,6 +376,7 @@
         958.2131500244141
       ],
       "params": {
+        "base_data_name": "Iota",
         "is_merge": true
       },
       "use_custom_color": true,
@@ -439,7 +440,7 @@
       "label": "",
       "location": [
         85.06230163574219,
-        1102.7485961914062
+        1102.74853515625
       ],
       "params": {
         "scale_out_v": [
@@ -632,15 +633,15 @@
       },
       "width": 140.0
     },
-    "Solidify.001": {
-      "bl_idname": "SvSolidifyNode",
+    "Solidify": {
+      "bl_idname": "SvSolidifyNodeMk2",
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        1446.20166015625,
-        959.8427886962891
+        1470.060791015625,
+        966.0913238525391
       ],
       "params": {
         "thickness": 0.05000000074505806
@@ -659,8 +660,8 @@
       "hide": false,
       "label": "",
       "location": [
-        307.8510284423828,
-        1046.9872436523438
+        307.8509979248047,
+        1046.9873046875
       ],
       "params": {},
       "use_custom_color": true,
@@ -678,7 +679,7 @@
       "hide": false,
       "label": "",
       "location": [
-        1049.7787780761719,
+        1049.7788391113281,
         -204.331787109375
       ],
       "params": {
@@ -689,6 +690,162 @@
     }
   },
   "update_lists": [
+    [
+      "Fill Holes",
+      0,
+      "Duplicate objects along edge",
+      0
+    ],
+    [
+      "Fill Holes",
+      1,
+      "Duplicate objects along edge",
+      1
+    ],
+    [
+      "Fill Holes",
+      2,
+      "Duplicate objects along edge",
+      2
+    ],
+    [
+      "Noise Displace",
+      0,
+      "Duplicate objects along edge",
+      5
+    ],
+    [
+      "Line",
+      1,
+      "Duplicate objects along edge",
+      6
+    ],
+    [
+      "Matrix Apply",
+      0,
+      "Edgenet to Paths",
+      0
+    ],
+    [
+      "Matrix Apply",
+      1,
+      "Edgenet to Paths",
+      1
+    ],
+    [
+      "Move.001",
+      0,
+      "Fill Holes",
+      0
+    ],
+    [
+      "Profile Parametric Mk3",
+      1,
+      "Fill Holes",
+      1
+    ],
+    [
+      "Scalar Math.001",
+      0,
+      "Line",
+      0
+    ],
+    [
+      "Profile Parametric Mk3",
+      0,
+      "List Length",
+      0
+    ],
+    [
+      "Matrix In.001",
+      0,
+      "List Slice",
+      0
+    ],
+    [
+      "List Length",
+      0,
+      "List Slice",
+      2
+    ],
+    [
+      "Profile Parametric Mk3",
+      0,
+      "Matrix Apply",
+      0
+    ],
+    [
+      "Profile Parametric Mk3",
+      1,
+      "Matrix Apply",
+      1
+    ],
+    [
+      "List Slice",
+      0,
+      "Matrix Apply",
+      3
+    ],
+    [
+      "A Number",
+      0,
+      "Matrix In",
+      1
+    ],
+    [
+      "Plane",
+      0,
+      "Matrix In.001",
+      0
+    ],
+    [
+      "Solidify",
+      0,
+      "Mesh viewer",
+      0
+    ],
+    [
+      "Solidify",
+      1,
+      "Mesh viewer",
+      1
+    ],
+    [
+      "Solidify",
+      2,
+      "Mesh viewer",
+      2
+    ],
+    [
+      "Edgenet to Paths",
+      0,
+      "Move",
+      0
+    ],
+    [
+      "Profile Parametric Mk3",
+      0,
+      "Move.001",
+      0
+    ],
+    [
+      "Line",
+      0,
+      "Noise Displace",
+      0
+    ],
+    [
+      "Matrix In",
+      0,
+      "Noise Displace",
+      4
+    ],
+    [
+      "A Number.001",
+      0,
+      "Number Range",
+      2
+    ],
     [
       "Number Range",
       0,
@@ -706,6 +863,18 @@
       0,
       "Oscillator.002",
       0
+    ],
+    [
+      "Move",
+      0,
+      "Path SVG",
+      0
+    ],
+    [
+      "Fill / Stroke SVG",
+      0,
+      "Path SVG",
+      3
     ],
     [
       "Oscillator",
@@ -744,22 +913,16 @@
       5
     ],
     [
-      "A Number.001",
+      "File Path",
       0,
-      "Number Range",
-      2
-    ],
-    [
-      "A Number",
-      0,
-      "Matrix In",
-      1
-    ],
-    [
-      "Scalar Math.001",
-      0,
-      "Line",
+      "SVG Document",
       0
+    ],
+    [
+      "Path SVG",
+      0,
+      "SVG Document",
+      2
     ],
     [
       "A Number.001",
@@ -774,196 +937,34 @@
       0
     ],
     [
-      "Line",
+      "Matrix Apply",
       0,
-      "Noise Displace",
+      "Viewer Draw.003",
       0
     ],
     [
-      "Matrix In",
-      0,
-      "Noise Displace",
-      4
-    ],
-    [
-      "Solidify.001",
-      0,
-      "Mesh viewer",
-      0
-    ],
-    [
-      "Solidify.001",
+      "Matrix Apply",
       1,
-      "Mesh viewer",
+      "Viewer Draw.003",
       1
     ],
     [
-      "Solidify.001",
+      "Duplicate objects along edge",
+      0,
+      "Solidify",
+      0
+    ],
+    [
+      "Duplicate objects along edge",
       2,
-      "Mesh viewer",
+      "Solidify",
       2
     ],
     [
       "A Number.002",
       0,
-      "Solidify.001",
-      0
-    ],
-    [
-      "Duplicate objects along edge",
-      0,
-      "Solidify.001",
-      1
-    ],
-    [
-      "Duplicate objects along edge",
-      2,
-      "Solidify.001",
-      2
-    ],
-    [
-      "Profile Parametric Mk3",
-      0,
-      "Move.001",
-      0
-    ],
-    [
-      "Move.001",
-      0,
-      "Fill Holes",
-      0
-    ],
-    [
-      "Profile Parametric Mk3",
-      1,
-      "Fill Holes",
-      1
-    ],
-    [
-      "Fill Holes",
-      0,
-      "Duplicate objects along edge",
-      0
-    ],
-    [
-      "Fill Holes",
-      1,
-      "Duplicate objects along edge",
-      1
-    ],
-    [
-      "Fill Holes",
-      2,
-      "Duplicate objects along edge",
-      2
-    ],
-    [
-      "Noise Displace",
-      0,
-      "Duplicate objects along edge",
-      5
-    ],
-    [
-      "Line",
-      1,
-      "Duplicate objects along edge",
-      6
-    ],
-    [
-      "Matrix Apply",
-      0,
-      "Viewer Draw.003",
-      0
-    ],
-    [
-      "Matrix Apply",
-      1,
-      "Viewer Draw.003",
-      1
-    ],
-    [
-      "Edgenet to Paths",
-      0,
-      "Move",
-      0
-    ],
-    [
-      "File Path",
-      0,
-      "SVG Document",
-      0
-    ],
-    [
-      "Path SVG",
-      0,
-      "SVG Document",
-      2
-    ],
-    [
-      "Move",
-      0,
-      "Path SVG",
-      0
-    ],
-    [
-      "Fill / Stroke SVG",
-      0,
-      "Path SVG",
+      "Solidify",
       3
-    ],
-    [
-      "Profile Parametric Mk3",
-      0,
-      "Matrix Apply",
-      0
-    ],
-    [
-      "Profile Parametric Mk3",
-      1,
-      "Matrix Apply",
-      1
-    ],
-    [
-      "List Slice",
-      0,
-      "Matrix Apply",
-      3
-    ],
-    [
-      "Matrix Apply",
-      0,
-      "Edgenet to Paths",
-      0
-    ],
-    [
-      "Matrix Apply",
-      1,
-      "Edgenet to Paths",
-      1
-    ],
-    [
-      "Plane",
-      0,
-      "Matrix In.001",
-      0
-    ],
-    [
-      "Matrix In.001",
-      0,
-      "List Slice",
-      0
-    ],
-    [
-      "List Length",
-      0,
-      "List Slice",
-      2
-    ],
-    [
-      "Profile Parametric Mk3",
-      0,
-      "List Length",
-      0
     ]
   ]
 }

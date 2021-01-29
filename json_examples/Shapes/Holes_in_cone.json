@@ -1,5 +1,5 @@
 {
-  "export_version": "0.079",
+  "export_version": "0.10",
   "framed_nodes": {
     "Circle": "Frame.001",
     "Crop mesh 2D": "Frame.001",
@@ -18,6 +18,7 @@
         0.5,
         0.5
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -34,6 +35,7 @@
     },
     "Crop mesh 2D": {
       "bl_idname": "SvCropMesh2D",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -42,8 +44,6 @@
         187.14275932312012
       ],
       "params": {
-        "alg_mode": "Sweep_line",
-        "input_mode": "faces",
         "mode": "outer"
       },
       "width": 140.0
@@ -55,6 +55,7 @@
         0.5,
         0.5
       ],
+      "custom_socket_props": {},
       "height": 1.100000023841858,
       "hide": false,
       "label": "",
@@ -73,6 +74,7 @@
     },
     "Frame": {
       "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
       "height": 274.2661437988281,
       "hide": false,
       "label": "Take each face and put it into XOY plane",
@@ -85,7 +87,8 @@
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
-      "height": 587.1427612304688,
+      "custom_socket_props": {},
+      "height": 608.1427612304688,
       "hide": false,
       "label": "Cut a hole in each face",
       "location": [
@@ -97,6 +100,7 @@
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
       "height": 335.32904052734375,
       "hide": false,
       "label": "Put faces back in their places",
@@ -109,6 +113,7 @@
     },
     "Matrix Apply.001": {
       "bl_idname": "SvMatrixApplyJoinNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -116,13 +121,12 @@
         1350.6568489074707,
         48.16956901550293
       ],
-      "params": {
-        "do_join": 1
-      },
+      "params": {},
       "width": 141.03147888183594
     },
     "Merge by Distance": {
       "bl_idname": "SvMergeByDistanceNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -135,6 +139,7 @@
     },
     "Origins": {
       "bl_idname": "SvOrigins",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -143,13 +148,13 @@
         153.2661418914795
       ],
       "params": {
-        "flat_matrix": 1,
         "mode": "Faces"
       },
       "width": 140.0
     },
     "Polygon Boom": {
       "bl_idname": "PolygonBoomNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -160,8 +165,9 @@
       "params": {},
       "width": 140.0
     },
-    "Solidify": {
-      "bl_idname": "SvSolidifyNode",
+    "Solidify.001": {
+      "bl_idname": "SvSolidifyNodeMk2",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -176,6 +182,7 @@
     },
     "Vector Drop": {
       "bl_idname": "VectorDropNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -193,6 +200,7 @@
         0.30000001192092896,
         0.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -201,9 +209,6 @@
         216.9752197265625
       ],
       "params": {
-        "activate": 1,
-        "draw_gl_wireframe": 0,
-        "handle_concave_quads": 0,
         "selected_draw_mode": "facet"
       },
       "use_custom_color": true,
@@ -212,42 +217,6 @@
   },
   "update_lists": [
     [
-      "Cylinder",
-      0,
-      "Polygon Boom",
-      0
-    ],
-    [
-      "Cylinder",
-      2,
-      "Polygon Boom",
-      1
-    ],
-    [
-      "Polygon Boom",
-      0,
-      "Origins",
-      0
-    ],
-    [
-      "Polygon Boom",
-      1,
-      "Origins",
-      2
-    ],
-    [
-      "Polygon Boom",
-      0,
-      "Vector Drop",
-      0
-    ],
-    [
-      "Origins",
-      3,
-      "Vector Drop",
-      1
-    ],
-    [
       "Vector Drop",
       0,
       "Crop mesh 2D",
@@ -302,27 +271,63 @@
       1
     ],
     [
-      "Merge by Distance",
+      "Polygon Boom",
       0,
-      "Solidify",
-      1
+      "Origins",
+      0
     ],
     [
-      "Merge by Distance",
-      2,
-      "Solidify",
+      "Polygon Boom",
+      1,
+      "Origins",
       2
     ],
     [
-      "Solidify",
+      "Cylinder",
+      0,
+      "Polygon Boom",
+      0
+    ],
+    [
+      "Cylinder",
+      2,
+      "Polygon Boom",
+      1
+    ],
+    [
+      "Polygon Boom",
+      0,
+      "Vector Drop",
+      0
+    ],
+    [
+      "Origins",
+      3,
+      "Vector Drop",
+      1
+    ],
+    [
+      "Solidify.001",
       0,
       "Viewer Draw Mk3",
       0
     ],
     [
-      "Solidify",
+      "Solidify.001",
       2,
       "Viewer Draw Mk3",
+      2
+    ],
+    [
+      "Merge by Distance",
+      0,
+      "Solidify.001",
+      0
+    ],
+    [
+      "Merge by Distance",
+      2,
+      "Solidify.001",
       2
     ]
   ]

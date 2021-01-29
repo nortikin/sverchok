@@ -34,7 +34,7 @@
     "Scalar Math.005": "Frame.002",
     "Scalar Math.006": "Frame.002",
     "Select mesh elements by location": "Frame",
-    "Solidify": "Frame.005",
+    "Solidify.001": "Frame.005",
     "UV Connection": "Frame",
     "Viewer Index+": "Frame.004"
   },
@@ -48,7 +48,7 @@
       "label": "",
       "location": [
         635.1006469726562,
-        537.7419891357422
+        537.7420043945312
       ],
       "params": {
         "float_max": 5.0,
@@ -183,8 +183,8 @@
       "hide": false,
       "label": "",
       "location": [
-        1155.4586791992188,
-        643.9779663085938
+        1155.458740234375,
+        641.2557373046875
       ],
       "params": {
         "rad_": 50.0
@@ -200,7 +200,7 @@
       "label": "",
       "location": [
         2266.3912963867188,
-        656.8449401855469
+        651.7540283203125
       ],
       "params": {
         "face_mode": "Area"
@@ -235,7 +235,7 @@
     "Frame": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 538.4449462890625,
+      "height": 533.35400390625,
       "hide": false,
       "label": "",
       "location": [
@@ -287,7 +287,7 @@
     "Frame.004": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 746.9779663085938,
+      "height": 744.2557373046875,
       "hide": false,
       "label": "",
       "location": [
@@ -300,7 +300,7 @@
     "Frame.005": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 812.3032836914062,
+      "height": 833.2828369140625,
       "hide": false,
       "label": "",
       "location": [
@@ -332,8 +332,8 @@
       "hide": false,
       "label": "",
       "location": [
-        3321.5125427246094,
-        148.83238220214844
+        3332.0726013183594,
+        148.83241271972656
       ],
       "params": {
         "Level": 2
@@ -363,7 +363,7 @@
       "label": "",
       "location": [
         2612.2433471679688,
-        646.6630859375
+        651.7540283203125
       ],
       "params": {},
       "width": 140.0
@@ -376,7 +376,7 @@
       "label": "",
       "location": [
         2435.0656127929688,
-        654.31884765625
+        651.7540283203125
       ],
       "params": {
         "i_y": 8.869999885559082,
@@ -396,7 +396,7 @@
       "label": "",
       "location": [
         2786.0250854492188,
-        650.0099487304688
+        651.7540283203125
       ],
       "params": {
         "items_": "NOT"
@@ -410,7 +410,7 @@
       "hide": false,
       "label": "",
       "location": [
-        1852.0498657226562,
+        1852.0497436523438,
         580.0905151367188
       ],
       "params": {},
@@ -423,7 +423,7 @@
       "hide": false,
       "label": "Matrix",
       "location": [
-        3334.7117614746094,
+        3481.6656188964844,
         353.4037628173828
       ],
       "params": {
@@ -445,8 +445,8 @@
       "hide": false,
       "label": "",
       "location": [
-        1347.6676635742188,
-        638.5335388183594
+        1350.0777587890625,
+        641.2557373046875
       ],
       "params": {
         "tu_mapping": "-A_B",
@@ -475,12 +475,11 @@
       "hide": false,
       "label": "",
       "location": [
-        3689.5557556152344,
+        3694.9996032714844,
         330.6203155517578
       ],
       "params": {
-        "is_smooth_mesh": true,
-        "material": "sv_material"
+        "is_smooth_mesh": true
       },
       "use_custom_color": true,
       "width": 140.0
@@ -497,12 +496,11 @@
       "hide": false,
       "label": "",
       "location": [
-        3700.4439392089844,
+        3694.9996032714844,
         686.3032989501953
       ],
       "params": {
-        "base_data_name": "Beta",
-        "material": "sv_material.001"
+        "base_data_name": "Beta"
       },
       "use_custom_color": true,
       "width": 140.0
@@ -560,8 +558,8 @@
       "hide": false,
       "label": "",
       "location": [
-        1352.4878540039062,
-        312.3649444580078
+        1350.0777587890625,
+        312.36492919921875
       ],
       "params": {
         "addnodes": true,
@@ -627,7 +625,7 @@
       "label": "",
       "location": [
         449.7464294433594,
-        525.4894256591797
+        525.4894409179688
       ],
       "params": {
         "y_": 5.0
@@ -642,7 +640,7 @@
       "label": "",
       "location": [
         969.4014282226562,
-        640.22802734375
+        641.2557373046875
       ],
       "params": {
         "current_op": "-1",
@@ -707,15 +705,15 @@
       },
       "width": 140.0
     },
-    "Solidify": {
-      "bl_idname": "SvSolidifyNode",
+    "Solidify.001": {
+      "bl_idname": "SvSolidifyNodeMk2",
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        3529.1397399902344,
-        682.9377593994141
+        3332.0726013183594,
+        707.2828521728516
       ],
       "params": {
         "thickness": 0.19900000095367432
@@ -730,7 +728,7 @@
       "label": "",
       "location": [
         2030.2401733398438,
-        592.4913024902344
+        592.4913330078125
       ],
       "params": {
         "cicl_check_U": true,
@@ -763,75 +761,39 @@
   },
   "update_lists": [
     [
-      "Logic functions.001",
+      "Scalar Math.003",
       0,
-      "Logic functions.003",
+      "A Number",
       0
     ],
     [
-      "Logic functions.002",
+      "Scalar Math.005",
       0,
-      "Logic functions.001",
+      "A Number.001",
       0
     ],
     [
-      "Logic functions",
+      "Scalar Math.006",
       0,
-      "Logic functions.001",
-      1
-    ],
-    [
-      "Select mesh elements by location",
-      2,
-      "Logic functions",
+      "A Number.003",
       0
     ],
     [
-      "Component Analyzer",
+      "Scalar Math.002",
       0,
-      "Logic functions.002",
+      "A Number.004",
       0
     ],
     [
-      "UV Connection",
-      0,
-      "Select mesh elements by location",
+      "Inset Special",
+      3,
+      "Calculate Mask",
       0
     ],
     [
-      "UV Connection",
+      "Inset Special",
       1,
-      "Select mesh elements by location",
-      2
-    ],
-    [
-      "UV Connection",
-      0,
-      "Component Analyzer",
-      0
-    ],
-    [
-      "UV Connection",
-      1,
-      "Component Analyzer",
-      2
-    ],
-    [
-      "Matrix Apply (verts)",
-      0,
-      "UV Connection",
-      0
-    ],
-    [
-      "Profile Parametric Mk3",
-      0,
-      "Matrix Apply (verts)",
-      0
-    ],
-    [
-      "Matrix Track To",
-      0,
-      "Matrix Apply (verts)",
+      "Calculate Mask",
       1
     ],
     [
@@ -853,22 +815,196 @@
       4
     ],
     [
-      "Scalar Math.004",
-      0,
-      "Circle",
-      1
-    ],
-    [
-      "Circle",
-      0,
-      "Matrix Track To",
+      "Select mesh elements by location",
+      2,
+      "Logic functions",
       0
     ],
     [
-      "Circle",
+      "Profile Parametric Mk3",
       0,
+      "Matrix Apply (verts)",
+      0
+    ],
+    [
       "Matrix Track To",
+      0,
+      "Matrix Apply (verts)",
+      1
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Number Range",
+      1
+    ],
+    [
+      "A Number.002",
+      0,
+      "Number Range",
       2
+    ],
+    [
+      "A Number.005",
+      0,
+      "Scalar Math",
+      0
+    ],
+    [
+      "Number Range",
+      0,
+      "Scalar Math.001",
+      0
+    ],
+    [
+      "Scalar Math.001",
+      1,
+      "Scalar Math.002",
+      0
+    ],
+    [
+      "Scalar Math.001",
+      0,
+      "Scalar Math.003",
+      0
+    ],
+    [
+      "Scalar Math.001",
+      1,
+      "Scalar Math.005",
+      0
+    ],
+    [
+      "Scalar Math.001",
+      0,
+      "Scalar Math.006",
+      0
+    ],
+    [
+      "UV Connection",
+      0,
+      "Select mesh elements by location",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "Select mesh elements by location",
+      2
+    ],
+    [
+      "Matrix Apply (verts)",
+      0,
+      "UV Connection",
+      0
+    ],
+    [
+      "Profile Parametric Mk3",
+      2,
+      "Viewer Index+",
+      0
+    ],
+    [
+      "Profile Parametric Mk3",
+      3,
+      "Viewer Index+",
+      4
+    ],
+    [
+      "Mesh viewer",
+      0,
+      "Exec Node Mod.002",
+      0
+    ],
+    [
+      "Inset Special",
+      0,
+      "Mesh viewer",
+      0
+    ],
+    [
+      "List Mask (out)",
+      4,
+      "Mesh viewer",
+      2
+    ],
+    [
+      "Matrix In",
+      0,
+      "Mesh viewer",
+      4
+    ],
+    [
+      "Inset Special",
+      1,
+      "List Mask (out)",
+      0
+    ],
+    [
+      "Calculate Mask",
+      0,
+      "List Mask (out)",
+      1
+    ],
+    [
+      "Inset Special",
+      0,
+      "Solidify.001",
+      0
+    ],
+    [
+      "Inset Special",
+      3,
+      "Solidify.001",
+      2
+    ],
+    [
+      "Solidify.001",
+      0,
+      "Mesh viewer.001",
+      0
+    ],
+    [
+      "Solidify.001",
+      3,
+      "Mesh viewer.001",
+      2
+    ],
+    [
+      "Matrix In",
+      0,
+      "Mesh viewer.001",
+      4
+    ],
+    [
+      "UV Connection",
+      0,
+      "Component Analyzer",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "Component Analyzer",
+      2
+    ],
+    [
+      "Component Analyzer",
+      0,
+      "Logic functions.002",
+      0
+    ],
+    [
+      "Logic functions.002",
+      0,
+      "Logic functions.001",
+      0
+    ],
+    [
+      "Logic functions",
+      0,
+      "Logic functions.001",
+      1
     ],
     [
       "A Number",
@@ -901,16 +1037,16 @@
       4
     ],
     [
-      "Profile Parametric Mk3",
-      2,
-      "Viewer Index+",
+      "Logic functions.001",
+      0,
+      "Logic functions.003",
       0
     ],
     [
-      "Profile Parametric Mk3",
-      3,
-      "Viewer Index+",
-      4
+      "Scalar Math.004",
+      0,
+      "Circle",
+      1
     ],
     [
       "A Number.002",
@@ -919,154 +1055,16 @@
       0
     ],
     [
-      "Scalar Math.003",
+      "Circle",
       0,
-      "A Number",
+      "Matrix Track To",
       0
     ],
     [
-      "Scalar Math.002",
+      "Circle",
       0,
-      "A Number.004",
-      0
-    ],
-    [
-      "Scalar Math.006",
-      0,
-      "A Number.003",
-      0
-    ],
-    [
-      "Scalar Math.005",
-      0,
-      "A Number.001",
-      0
-    ],
-    [
-      "Scalar Math.001",
-      1,
-      "Scalar Math.002",
-      0
-    ],
-    [
-      "Scalar Math.001",
-      0,
-      "Scalar Math.006",
-      0
-    ],
-    [
-      "Scalar Math.001",
-      1,
-      "Scalar Math.005",
-      0
-    ],
-    [
-      "Scalar Math.001",
-      0,
-      "Scalar Math.003",
-      0
-    ],
-    [
-      "A Number.005",
-      0,
-      "Scalar Math",
-      0
-    ],
-    [
-      "Scalar Math",
-      0,
-      "Number Range",
-      1
-    ],
-    [
-      "A Number.002",
-      0,
-      "Number Range",
+      "Matrix Track To",
       2
-    ],
-    [
-      "Number Range",
-      0,
-      "Scalar Math.001",
-      0
-    ],
-    [
-      "Solidify",
-      0,
-      "Mesh viewer.001",
-      0
-    ],
-    [
-      "Solidify",
-      3,
-      "Mesh viewer.001",
-      2
-    ],
-    [
-      "Matrix In",
-      0,
-      "Mesh viewer.001",
-      4
-    ],
-    [
-      "Inset Special",
-      0,
-      "Mesh viewer",
-      0
-    ],
-    [
-      "List Mask (out)",
-      4,
-      "Mesh viewer",
-      2
-    ],
-    [
-      "Matrix In",
-      0,
-      "Mesh viewer",
-      4
-    ],
-    [
-      "Mesh viewer",
-      0,
-      "Exec Node Mod.002",
-      0
-    ],
-    [
-      "Inset Special",
-      0,
-      "Solidify",
-      1
-    ],
-    [
-      "Inset Special",
-      3,
-      "Solidify",
-      2
-    ],
-    [
-      "Inset Special",
-      1,
-      "List Mask (out)",
-      0
-    ],
-    [
-      "Calculate Mask",
-      0,
-      "List Mask (out)",
-      1
-    ],
-    [
-      "Inset Special",
-      3,
-      "Calculate Mask",
-      0
-    ],
-    [
-      "Inset Special",
-      1,
-      "Calculate Mask",
-      1
     ]
   ]
 }
