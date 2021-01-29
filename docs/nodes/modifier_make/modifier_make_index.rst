@@ -13,7 +13,7 @@ Modifier Make
    matrix_tube
    pipe_tubes
    adaptive_polygons_mk3
-   solidify
+   solidify_mk2
    uv_connect
    wafel
    join_tris

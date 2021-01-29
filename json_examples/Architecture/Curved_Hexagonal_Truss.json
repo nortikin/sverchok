@@ -1,5 +1,5 @@
 {
-  "export_version": "0.079",
+  "export_version": "0.10",
   "framed_nodes": {
     "A Number": "Frame",
     "Bend object along surface": "Frame",
@@ -18,7 +18,7 @@
     "Polygons to Edges": "Frame.002",
     "Randomize": "Frame",
     "Segment": "Frame.002",
-    "Solidify": "Frame.001",
+    "Solidify.001": "Frame.001",
     "Vector Math": "Frame.002",
     "Viewer Draw Mk3.001": "Frame.001"
   },
@@ -26,6 +26,7 @@
   "nodes": {
     "A Number": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -34,16 +35,14 @@
         -800.5147476196289
       ],
       "params": {
-        "float_": 0.0,
-        "float_draft_": 0.0,
         "int_": 3,
-        "int_draft_": 0,
         "selected_mode": "int"
       },
       "width": 140.0
     },
     "Bend object along surface": {
       "bl_idname": "SvBendAlongSurfaceNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -52,12 +51,13 @@
         -564.7157974243164
       ],
       "params": {
-        "grouped": 0
+        "grouped": false
       },
       "width": 140.0
     },
     "Component Analyzer": {
       "bl_idname": "SvComponentAnalyzerNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -77,6 +77,7 @@
         0.30000001192092896,
         0.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -98,6 +99,7 @@
         0.30000001192092896,
         0.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -114,6 +116,7 @@
     },
     "Dual Mesh": {
       "bl_idname": "SvDualMeshNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -126,7 +129,8 @@
     },
     "Frame": {
       "bl_idname": "NodeFrame",
-      "height": 452.06829833984375,
+      "custom_socket_props": {},
+      "height": 452.89105224609375,
       "hide": false,
       "label": "Control Surface",
       "location": [
@@ -134,11 +138,12 @@
         107.1540756225586
       ],
       "params": {},
-      "width": 1252.7852783203125
+      "width": 1252.63330078125
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
-      "height": 422.86370849609375,
+      "custom_socket_props": {},
+      "height": 627.8680419921875,
       "hide": false,
       "label": "Cover",
       "location": [
@@ -146,11 +151,12 @@
         56.54072189331055
       ],
       "params": {},
-      "width": 806.859619140625
+      "width": 806.707763671875
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "height": 729.35498046875,
+      "custom_socket_props": {},
+      "height": 732.0890502929688,
       "hide": false,
       "label": "Structure",
       "location": [
@@ -158,10 +164,11 @@
         -95.03233337402344
       ],
       "params": {},
-      "width": 1550.9158935546875
+      "width": 1550.7640380859375
     },
     "Inset Special": {
       "bl_idname": "SvInsetSpecial",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -177,6 +184,7 @@
     },
     "List Split": {
       "bl_idname": "SvListSplitNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -191,6 +199,7 @@
     },
     "List Split.001": {
       "bl_idname": "SvListSplitNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -198,13 +207,12 @@
         1040.7282409667969,
         -1097.4737396240234
       ],
-      "params": {
-        "split": 1
-      },
+      "params": {},
       "width": 140.0
     },
     "Mesh Join": {
       "bl_idname": "SvMeshJoinNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -217,12 +225,12 @@
     },
     "Mesh viewer": {
       "bl_idname": "SvMeshViewer",
-      "collection": "",
       "color": [
         1.0,
         0.5889999866485596,
         0.21400000154972076
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -230,9 +238,7 @@
         1369.1665115356445,
         -456.61589431762695
       ],
-      "params": {
-        "base_data_name": "Alpha"
-      },
+      "params": {},
       "use_custom_color": true,
       "width": 140.0
     },
@@ -267,6 +273,26 @@
         0.5,
         0.5
       ],
+      "custom_socket_props": {
+        "0": {
+          "label": "Size X"
+        },
+        "1": {
+          "label": "Size Y"
+        },
+        "2": {
+          "label": "Num X"
+        },
+        "3": {
+          "label": "Num Y"
+        },
+        "4": {
+          "label": "Step X"
+        },
+        "5": {
+          "label": "Step Y"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -285,6 +311,7 @@
     },
     "Polygon Boom": {
       "bl_idname": "PolygonBoomNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -297,6 +324,7 @@
     },
     "Polygon Grid": {
       "bl_idname": "SvPolygonGridNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -305,15 +333,18 @@
         -1049.250732421875
       ],
       "params": {
-        "gridType": "HEXAGON",
         "numx": 10,
-        "numy": 10,
-        "separate": 0
+        "numy": 10
       },
       "width": 170.0
     },
     "Polygons to Edges": {
       "bl_idname": "SvPols2EdgsNodeMk2",
+      "custom_socket_props": {
+        "0": {
+          "label": "Polygons"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -322,12 +353,13 @@
         -1403.2000579833984
       ],
       "params": {
-        "unique_edges": 1
+        "unique_edges": true
       },
       "width": 140.0
     },
     "Randomize": {
       "bl_idname": "SvRandomizeVerticesNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -348,6 +380,7 @@
         0.5,
         0.5
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -356,19 +389,20 @@
         -976.4100799560547
       ],
       "params": {
-        "split": 0
+        "split": false
       },
       "use_custom_color": true,
       "width": 140.0
     },
-    "Solidify": {
-      "bl_idname": "SvSolidifyNode",
+    "Solidify.001": {
+      "bl_idname": "SvSolidifyNodeMk2",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        973.722297668457,
-        -414.70586013793945
+        968.4492263793945,
+        -417.33220291137695
       ],
       "params": {
         "thickness": -0.25999999046325684
@@ -406,52 +440,22 @@
         0.30000001192092896,
         0.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        1193.722297668457,
-        -422.68693923950195
+        1204.044563293457,
+        -212.13191604614258
       ],
       "params": {
-        "display_verts": 0,
-        "draw_gl_polygonoffset": 1
+        "display_verts": false
       },
       "use_custom_color": true,
       "width": 140.0
     }
   },
   "update_lists": [
-    [
-      "A Number",
-      0,
-      "Plane",
-      2
-    ],
-    [
-      "Plane",
-      0,
-      "Randomize",
-      0
-    ],
-    [
-      "Randomize",
-      0,
-      "Move",
-      0
-    ],
-    [
-      "Move",
-      0,
-      "List Split",
-      0
-    ],
-    [
-      "A Number",
-      0,
-      "List Split",
-      1
-    ],
     [
       "Polygon Grid",
       1,
@@ -477,16 +481,46 @@
       2
     ],
     [
-      "Bend object along surface",
+      "Mesh Join",
       0,
-      "Polygon Boom",
+      "Curve Viewer",
+      0
+    ],
+    [
+      "Mesh Join",
+      1,
+      "Curve Viewer",
+      1
+    ],
+    [
+      "Vector Math",
+      0,
+      "Curve Viewer.001",
+      0
+    ],
+    [
+      "Polygons to Edges",
+      0,
+      "Curve Viewer.001",
+      1
+    ],
+    [
+      "Polygon Grid",
+      1,
+      "Dual Mesh",
       0
     ],
     [
       "Polygon Grid",
-      3,
-      "Polygon Boom",
+      2,
+      "Dual Mesh",
       1
+    ],
+    [
+      "Polygon Grid",
+      3,
+      "Dual Mesh",
+      2
     ],
     [
       "Bend object along surface",
@@ -501,39 +535,81 @@
       3
     ],
     [
-      "Inset Special",
+      "Move",
       0,
-      "Solidify",
+      "List Split",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "List Split",
       1
-    ],
-    [
-      "Inset Special",
-      1,
-      "Solidify",
-      2
-    ],
-    [
-      "Solidify",
-      0,
-      "Mesh viewer",
-      0
-    ],
-    [
-      "Solidify",
-      2,
-      "Mesh viewer",
-      2
-    ],
-    [
-      "Component Analyzer",
-      0,
-      "Vector Math",
-      0
     ],
     [
       "Vector Math",
       0,
       "List Split.001",
+      0
+    ],
+    [
+      "Segment",
+      0,
+      "Mesh Join",
+      0
+    ],
+    [
+      "Segment",
+      1,
+      "Mesh Join",
+      1
+    ],
+    [
+      "Solidify.001",
+      0,
+      "Mesh viewer",
+      0
+    ],
+    [
+      "Solidify.001",
+      2,
+      "Mesh viewer",
+      2
+    ],
+    [
+      "Randomize",
+      0,
+      "Move",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Plane",
+      2
+    ],
+    [
+      "Bend object along surface",
+      0,
+      "Polygon Boom",
+      0
+    ],
+    [
+      "Polygon Grid",
+      3,
+      "Polygon Boom",
+      1
+    ],
+    [
+      "Dual Mesh",
+      1,
+      "Polygons to Edges",
+      0
+    ],
+    [
+      "Plane",
+      0,
+      "Randomize",
       0
     ],
     [
@@ -549,73 +625,31 @@
       1
     ],
     [
-      "Segment",
+      "Component Analyzer",
       0,
-      "Mesh Join",
+      "Vector Math",
       0
     ],
     [
-      "Segment",
-      1,
-      "Mesh Join",
-      1
-    ],
-    [
-      "Polygon Grid",
-      1,
-      "Dual Mesh",
+      "Inset Special",
+      0,
+      "Solidify.001",
       0
     ],
     [
-      "Polygon Grid",
-      2,
-      "Dual Mesh",
-      1
-    ],
-    [
-      "Polygon Grid",
-      3,
-      "Dual Mesh",
+      "Inset Special",
+      1,
+      "Solidify.001",
       2
     ],
     [
-      "Dual Mesh",
-      1,
-      "Polygons to Edges",
-      0
-    ],
-    [
-      "Vector Math",
-      0,
-      "Curve Viewer.001",
-      0
-    ],
-    [
-      "Polygons to Edges",
-      0,
-      "Curve Viewer.001",
-      1
-    ],
-    [
-      "Mesh Join",
-      0,
-      "Curve Viewer",
-      0
-    ],
-    [
-      "Mesh Join",
-      1,
-      "Curve Viewer",
-      1
-    ],
-    [
-      "Solidify",
+      "Solidify.001",
       0,
       "Viewer Draw Mk3.001",
       0
     ],
     [
-      "Solidify",
+      "Solidify.001",
       2,
       "Viewer Draw Mk3.001",
       2
