@@ -35,7 +35,7 @@ Outputs
 
 **Rim Pols**: Side Polygons created in the boundaries of the mesh
 
-**Pols Group**: Outputs a list to mask poligons from the modified mesh,
+**Pols Group**: Outputs a list to mask polygons from the modified mesh,
   0 = Original Polygon
   1 = New Polygon
   2 = Rim Polygon
@@ -46,7 +46,11 @@ Outputs
 Examples
 --------
 
+Using variable thickness:
 
 .. image:: https://user-images.githubusercontent.com/10011941/105902112-80bbaa80-601e-11eb-902b-5bd3797f257d.png
+
+
+Splitting Data: New Vertices in white, Old vertices in black, New Polys in grey, Rim Polys in white...
 
 .. image:: https://user-images.githubusercontent.com/10011941/106249827-1fa8f800-6213-11eb-9e77-770f12d65e03.png
