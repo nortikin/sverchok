@@ -95,7 +95,7 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'Face index')
 
     def process(self):
-        if not all([sock.is_linked for sock in self.inputs]):
+        if not all([sock.is_linked for sock in self.inputs]) and any([sock.is_linked for sock in self.outputs]):
             return
         if self.alg_mode == "Blender" and not crop_mesh_delaunay:
             return
