@@ -40,6 +40,7 @@
     "Index To Mask.002": "Frame.008",
     "Inset faces": "Frame.004",
     "Inset faces.001": "Frame.003",
+    "List Del Levels": "Frame.002",
     "List Flip": "Frame.012",
     "List Input": "Frame.016",
     "List Item": "Frame.002",
@@ -51,7 +52,6 @@
     "List Length": "Frame.001",
     "List Length.001": "Frame.001",
     "List Length.002": "Frame.012",
-    "List Levels": "Frame.002",
     "List Mask (out)": "Frame.005",
     "List Mask (out).001": "Frame.004",
     "List Mask (out).002": "Frame.006",
@@ -171,7 +171,7 @@
       "hide": false,
       "label": "Data",
       "location": [
-        5040.2331466674805,
+        5040.2329025268555,
         554.8023529052734
       ],
       "params": {
@@ -186,7 +186,7 @@
       "hide": false,
       "label": "Data",
       "location": [
-        5040.2331466674805,
+        5040.2329025268555,
         471.47789001464844
       ],
       "params": {
@@ -202,7 +202,7 @@
       "hide": false,
       "label": "Data",
       "location": [
-        5040.2331466674805,
+        5040.2329025268555,
         386.2863006591797
       ],
       "params": {
@@ -218,7 +218,7 @@
       "label": "Data",
       "location": [
         5041.076852798462,
-        -520.2805328369141
+        -520.2805023193359
       ],
       "params": {
         "int_": 1,
@@ -234,7 +234,7 @@
       "label": "Data",
       "location": [
         5041.076852798462,
-        -603.6049957275391
+        -603.6049652099609
       ],
       "params": {
         "selected_mode": "int"
@@ -249,7 +249,7 @@
       "label": "Data",
       "location": [
         5041.076852798462,
-        -688.7965850830078
+        -688.7965545654297
       ],
       "params": {
         "selected_mode": "int"
@@ -294,7 +294,7 @@
       "label": "Data",
       "location": [
         5044.7899169921875,
-        1602.7572631835938
+        1602.75732421875
       ],
       "params": {
         "int_": 1,
@@ -363,7 +363,7 @@
       "label": "",
       "location": [
         4069.9522399902344,
-        820.8000717163086
+        820.8000411987305
       ],
       "params": {
         "face_mode": "Center"
@@ -416,12 +416,12 @@
     "Frame": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 381.7705078125,
+      "height": 340.77044677734375,
       "hide": false,
       "label": "basic shape",
       "location": [
         686.6393432617188,
-        1088.9426803588867
+        1088.9426193237305
       ],
       "params": {},
       "width": 652.737060546875
@@ -429,12 +429,12 @@
     "Frame.001": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 465.80010986328125,
+      "height": 465.800048828125,
       "hide": false,
       "label": "numbers",
       "location": [
         713.7002868652344,
-        1136.9806442260742
+        1136.980583190918
       ],
       "params": {},
       "width": 562.62451171875
@@ -442,12 +442,12 @@
     "Frame.002": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 593.435791015625,
+      "height": 593.19482421875,
       "hide": false,
       "label": "horisontal filter",
       "location": [
-        59.34062957763672,
-        97.53718566894531
+        54.06293487548828,
+        99.29624938964844
       ],
       "params": {},
       "width": 1559.24365234375
@@ -468,7 +468,7 @@
     "Frame.004": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 713.0535278320312,
+      "height": 656.0535278320312,
       "hide": false,
       "label": "positive",
       "location": [
@@ -476,7 +476,7 @@
         360.8414764404297
       ],
       "params": {},
-      "width": 1009.552734375
+      "width": 1009.55322265625
     },
     "Frame.005": {
       "bl_idname": "NodeFrame",
@@ -489,7 +489,7 @@
         1159.823226928711
       ],
       "params": {},
-      "width": 562.35546875
+      "width": 562.35595703125
     },
     "Frame.006": {
       "bl_idname": "NodeFrame",
@@ -499,7 +499,7 @@
       "label": "",
       "location": [
         364.4562473297119,
-        257.4678192138672
+        257.4678497314453
       ],
       "params": {},
       "width": 560.18359375
@@ -528,17 +528,17 @@
         2542.759765625
       ],
       "params": {},
-      "width": 554.9794921875
+      "width": 554.98046875
     },
     "Frame.009": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 331.14996337890625,
+      "height": 331.14990234375,
       "hide": false,
       "label": "vertical filter",
       "location": [
         368.1693115234375,
-        2549.0216674804688
+        2549.021728515625
       ],
       "params": {},
       "width": 560.18359375
@@ -546,7 +546,7 @@
     "Frame.010": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 835.4715576171875,
+      "height": 793.87158203125,
       "hide": false,
       "label": "top",
       "location": [
@@ -585,7 +585,7 @@
     "Frame.013": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 1230.645751953125,
+      "height": 1173.645751953125,
       "hide": false,
       "label": "middle",
       "location": [
@@ -593,12 +593,12 @@
         -84.40174865722656
       ],
       "params": {},
-      "width": 3357.24951171875
+      "width": 3357.25
     },
     "Frame.014": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 379.0611572265625,
+      "height": 319.0611572265625,
       "hide": false,
       "label": "negate",
       "location": [
@@ -611,7 +611,7 @@
     "Frame.015": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 390.4715576171875,
+      "height": 387.87158203125,
       "hide": false,
       "label": "positive",
       "location": [
@@ -671,7 +671,7 @@
         873.7948532104492
       ],
       "params": {},
-      "width": 859.5078125
+      "width": 859.508056640625
     },
     "Frame.020": {
       "bl_idname": "NodeFrame",
@@ -709,8 +709,8 @@
       "hide": false,
       "label": "",
       "location": [
-        6338.625785827637,
-        554.3304595947266
+        6333.348579406738,
+        556.0894927978516
       ],
       "params": {
         "data_to_mask": true
@@ -724,8 +724,8 @@
       "hide": false,
       "label": "",
       "location": [
-        5826.5518798828125,
-        1748.6154174804688
+        5826.5513916015625,
+        1748.615478515625
       ],
       "params": {
         "data_to_mask": true,
@@ -740,7 +740,7 @@
       "hide": false,
       "label": "",
       "location": [
-        7665.048210144043,
+        7665.048698425293,
         332.88255310058594
       ],
       "params": {
@@ -763,6 +763,21 @@
       },
       "width": 140.0
     },
+    "List Del Levels": {
+      "bl_idname": "ListLevelsNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        6778.907661437988,
+        524.4311981201172
+      ],
+      "params": {
+        "Sverch_LisLev": "1"
+      },
+      "width": 140.0
+    },
     "List Flip": {
       "bl_idname": "ListFlipNode",
       "custom_socket_props": {},
@@ -771,7 +786,7 @@
       "label": "",
       "location": [
         5527.50634765625,
-        2391.348602294922
+        2391.3486328125
       ],
       "params": {
         "level": 1
@@ -834,8 +849,8 @@
       "hide": false,
       "label": "",
       "location": [
-        6520.751274108887,
-        549.7208404541016
+        6515.474067687988,
+        551.4798736572266
       ],
       "params": {
         "level": 4
@@ -850,7 +865,7 @@
       "label": "",
       "location": [
         5689.61083984375,
-        2393.6143188476562
+        2393.6142578125
       ],
       "params": {
         "index": -2,
@@ -865,8 +880,8 @@
       "hide": false,
       "label": "",
       "location": [
-        2585.4883728027344,
-        818.009407043457
+        2585.488250732422,
+        818.009391784668
       ],
       "params": {},
       "width": 140.0
@@ -893,8 +908,8 @@
       "hide": false,
       "label": "",
       "location": [
-        2924.4766540527344,
-        541.0867538452148
+        2924.476531982422,
+        541.0867233276367
       ],
       "params": {
         "JoinLevel": 2
@@ -949,36 +964,11 @@
       "hide": false,
       "label": "",
       "location": [
-        5014.951416015625,
-        2394.9627685546875
+        5014.951171875,
+        2394.962890625
       ],
       "params": {},
       "width": 140.0
-    },
-    "List Levels": {
-      "bl_idname": "SvListLevelsNode",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        6706.209281921387,
-        550.7877349853516
-      ],
-      "params": {
-        "levels_config": [
-          {},
-          {
-            "flatten": true
-          },
-          {
-            "flatten": true
-          },
-          {},
-          {}
-        ]
-      },
-      "width": 300.0
     },
     "List Mask (out)": {
       "bl_idname": "MaskListNode",
@@ -1002,7 +992,7 @@
       "hide": false,
       "label": "",
       "location": [
-        7869.769889831543,
+        7869.770378112793,
         333.2524871826172
       ],
       "params": {
@@ -1018,7 +1008,7 @@
       "label": "",
       "location": [
         5401.260446548462,
-        -517.4038848876953
+        -517.4038543701172
       ],
       "params": {
         "Level": 2
@@ -1047,8 +1037,8 @@
       "hide": false,
       "label": "",
       "location": [
-        7052.909965515137,
-        547.1596221923828
+        7047.632759094238,
+        548.9186553955078
       ],
       "params": {
         "Level": 2
@@ -1078,7 +1068,7 @@
       "label": "",
       "location": [
         5404.9735107421875,
-        1774.1499633789062
+        1774.14990234375
       ],
       "params": {
         "Level": 2
@@ -1107,8 +1097,8 @@
       "hide": false,
       "label": "",
       "location": [
-        2761.5279235839844,
-        542.0640487670898
+        2761.527801513672,
+        542.0640182495117
       ],
       "params": {
         "level": 2,
@@ -1139,8 +1129,8 @@
       "hide": false,
       "label": "",
       "location": [
-        5693.666313171387,
-        550.0078277587891
+        5688.389106750488,
+        551.7668609619141
       ],
       "params": {
         "split": 3,
@@ -1156,7 +1146,7 @@
       "label": "",
       "location": [
         5365.4013671875,
-        2390.6419372558594
+        2390.641845703125
       ],
       "params": {},
       "width": 140.0
@@ -1169,7 +1159,7 @@
       "label": "",
       "location": [
         5016.09912109375,
-        2271.1101989746094
+        2271.110107421875
       ],
       "params": {},
       "width": 140.0
@@ -1181,7 +1171,7 @@
       "hide": false,
       "label": "",
       "location": [
-        2433.3929138183594,
+        2433.392791748047,
         542.7631759643555
       ],
       "params": {
@@ -1229,7 +1219,17 @@
               "min": 1,
               "name": "number"
             },
+            "ints_1_split": {
+              "default": 1,
+              "min": 1,
+              "name": "Split size"
+            },
             "ints_2_number": {
+              "default": 1,
+              "min": 1,
+              "name": "number"
+            },
+            "ints_4_number": {
               "default": 1,
               "min": 1,
               "name": "number"
@@ -1259,14 +1259,14 @@
               "Number",
               "SvStringsSocket",
               {
-                "prop_name": "ints_1_number"
+                "prop_name": "ints_4_number"
               }
             ],
             [
               "Number",
               "SvStringsSocket",
               {
-                "prop_name": "ints_2_number"
+                "prop_name": "ints_1_split"
               }
             ]
           ],
@@ -1295,7 +1295,7 @@
       "label": "",
       "location": [
         5227.327341079712,
-        -519.8006744384766
+        -519.8006439208984
       ],
       "params": {
         "all_props": {
@@ -1307,7 +1307,17 @@
               "min": 1,
               "name": "number"
             },
+            "ints_1_split": {
+              "default": 1,
+              "min": 1,
+              "name": "Split size"
+            },
             "ints_2_number": {
+              "default": 1,
+              "min": 1,
+              "name": "number"
+            },
+            "ints_4_number": {
               "default": 1,
               "min": 1,
               "name": "number"
@@ -1337,14 +1347,14 @@
               "Number",
               "SvStringsSocket",
               {
-                "prop_name": "ints_1_number"
+                "prop_name": "ints_4_number"
               }
             ],
             [
               "Number",
               "SvStringsSocket",
               {
-                "prop_name": "ints_2_number"
+                "prop_name": "ints_1_split"
               }
             ]
           ],
@@ -1385,7 +1395,17 @@
               "min": 1,
               "name": "number"
             },
+            "ints_1_split": {
+              "default": 1,
+              "min": 1,
+              "name": "Split size"
+            },
             "ints_2_number": {
+              "default": 1,
+              "min": 1,
+              "name": "number"
+            },
+            "ints_4_number": {
               "default": 1,
               "min": 1,
               "name": "number"
@@ -1415,14 +1435,14 @@
               "Number",
               "SvStringsSocket",
               {
-                "prop_name": "ints_1_number"
+                "prop_name": "ints_4_number"
               }
             ],
             [
               "Number",
               "SvStringsSocket",
               {
-                "prop_name": "ints_2_number"
+                "prop_name": "ints_1_split"
               }
             ]
           ],
@@ -1478,7 +1498,7 @@
       ],
       "params": {
         "currently_storing": true,
-        "obj_name": "BezierCircle"
+        "obj_name": "BezierCircle.002"
       },
       "use_custom_color": true,
       "width": 183.8294677734375
@@ -1501,7 +1521,7 @@
       ],
       "params": {
         "currently_storing": true,
-        "obj_name": "BezierCircle.001"
+        "obj_name": "BezierCircle.003"
       },
       "use_custom_color": true,
       "width": 183.8294677734375
@@ -1513,7 +1533,7 @@
       "hide": false,
       "label": "",
       "location": [
-        2264.9685974121094,
+        2264.968475341797,
         546.8745651245117
       ],
       "params": {},
@@ -1551,7 +1571,7 @@
       "label": "",
       "location": [
         3173.1356811523438,
-        801.2329940795898
+        801.2329635620117
       ],
       "params": {
         "dimension_mode": "STEPS"
@@ -1566,7 +1586,7 @@
       "hide": false,
       "label": "",
       "location": [
-        2750.2220153808594,
+        2750.221893310547,
         818.7404098510742
       ],
       "params": {
@@ -1581,7 +1601,7 @@
       "hide": false,
       "label": "",
       "location": [
-        7477.001823425293,
+        7477.002311706543,
         261.79307556152344
       ],
       "params": {},
@@ -1659,7 +1679,7 @@
       "hide": false,
       "label": "",
       "location": [
-        2597.5625915527344,
+        2597.562469482422,
         542.9900436401367
       ],
       "params": {
@@ -1675,7 +1695,7 @@
       "hide": false,
       "label": "",
       "location": [
-        2244.9502868652344,
+        2244.950164794922,
         242.42949676513672
       ],
       "params": {
@@ -1706,7 +1726,7 @@
       "hide": false,
       "label": "",
       "location": [
-        4242.478851318359,
+        4242.479095458984,
         572.6422653198242
       ],
       "params": {
@@ -1722,8 +1742,8 @@
       "hide": false,
       "label": "",
       "location": [
-        5187.328369140625,
-        2388.452362060547
+        5187.328125,
+        2388.452392578125
       ],
       "params": {
         "current_op": "INTDIV"
@@ -1774,11 +1794,10 @@
       "hide": false,
       "label": "",
       "location": [
-        4063.5574645996094,
+        4063.5572204589844,
         601.704216003418
       ],
       "params": {
-        "custom_enum": "Orig",
         "n_id": "-8992762871978720413",
         "script_name": "ABC_numering.py",
         "script_str": "'''\nin U_nums s d=2 n=2\nin V_char s d=2 n=2\nenum = Orig Flip\nout numeration s\n'''\n\nfrom functools import reduce\n\n\ndef ui(self, context, layout):\n    layout.prop(self, 'custom_enum',expand=True)\n    cb_str = 'node.scriptlite_custom_callback'\n#ND = self.node_dict.get(hash(self))               #\n#if ND:                                            #\n#    callbacks = ND['sockets']['callbacks']        #    this will be hidden in the node eventually \n#    if not 'my_operator' in callbacks:            #\n#        callbacks['my_operator'] = my_operator    #\n\n\nnumeration = [[]]\ncharz = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']\ncharth = [charz] + [[i+k for k in charz] for i in charz]\ncharth = reduce(lambda x,y: x+y, charth)\n\nif self.custom_enum == 'Orig':\n    chars = charth[:V_char]\n    for i in range(U_nums):\n        num_ = []\n        for ch in chars:\n            num_.append([ch+str(i)])\n        numeration[0].extend(num_)\nelif self.custom_enum == 'Flip':\n    U_nums, V_char = V_char, U_nums\n    chars = charth[:V_char]\n    for ch in chars:\n        num_ = []\n        for i in range(U_nums):\n            num_.append([str(ch)+str(i)])\n        numeration[0].extend(num_)"
@@ -1836,8 +1855,8 @@
       "hide": false,
       "label": "",
       "location": [
-        7296.947624206543,
-        256.7710876464844
+        7296.948112487793,
+        256.77110290527344
       ],
       "params": {
         "n_id": "-8162419328395755405",
@@ -1989,10 +2008,11 @@
       "hide": false,
       "label": "",
       "location": [
-        6335.356742858887,
-        295.07969665527344
+        6330.079536437988,
+        296.83876037597656
       ],
       "params": {
+        "activate": false,
         "location_theta": 1.0,
         "num_elements": 1,
         "text_color": [
@@ -2017,7 +2037,7 @@
       "label": "",
       "location": [
         5829.7066650390625,
-        1580.6897583007812
+        1580.689697265625
       ],
       "params": {
         "compact": true,
@@ -2094,8 +2114,8 @@
       "hide": false,
       "label": "",
       "location": [
-        2912.2247009277344,
-        821.8358535766602
+        2912.224578857422,
+        821.8358688354492
       ],
       "params": {},
       "width": 140.0
@@ -2254,8 +2274,8 @@
       "hide": false,
       "label": "",
       "location": [
-        5877.526664733887,
-        557.4358062744141
+        5872.249458312988,
+        559.1948394775391
       ],
       "params": {
         "string_values": [
@@ -2401,8 +2421,8 @@
       "hide": false,
       "label": "",
       "location": [
-        5647.9825439453125,
-        1756.4917602539062
+        5647.9820556640625,
+        1756.49169921875
       ],
       "params": {
         "string_values": [
@@ -2579,7 +2599,7 @@
       "hide": false,
       "label": "",
       "location": [
-        8098.895378112793,
+        8098.895866394043,
         222.46275329589844
       ],
       "params": {
@@ -2643,7 +2663,7 @@
       "hide": false,
       "label": "",
       "location": [
-        8106.500846862793,
+        8106.501335144043,
         560.4535369873047
       ],
       "params": {
@@ -2887,7 +2907,7 @@
       "label": "",
       "location": [
         4244.353118896484,
-        820.5454940795898
+        820.5454635620117
       ],
       "params": {
         "activate": false
@@ -2898,76 +2918,184 @@
   },
   "update_lists": [
     [
-      "Scripted Node Lite.002",
+      "List Join.001",
       0,
-      "Recalc normals",
+      "Bounding box",
       0
     ],
     [
-      "Scripted Node Lite.002",
-      1,
+      "Delete Loose",
+      0,
+      "Bounding box.001",
+      0
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Component Analyzer",
+      "Vertices"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Component Analyzer",
+      "Faces"
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Delete Loose",
+      "Vertices"
+    ],
+    [
+      "List Mask (out).005",
+      3,
+      "Delete Loose",
+      1
+    ],
+    [
+      "Surface from Curves",
+      0,
+      "Evaluate Surface",
+      0
+    ],
+    [
+      "Plane",
+      0,
+      "Evaluate Surface",
+      3
+    ],
+    [
+      "Scalar Math.001",
+      0,
+      "Float to Int",
+      0
+    ],
+    [
+      "Switcher.001",
+      0,
+      "Index To Mask",
+      0
+    ],
+    [
+      "List Mask (out).002",
+      3,
+      "Index To Mask",
+      2
+    ],
+    [
+      "Switcher.003",
+      0,
+      "Index To Mask.002",
+      0
+    ],
+    [
+      "List Mask (out).006",
+      3,
+      "Index To Mask.002",
+      2
+    ],
+    [
       "Recalc normals",
+      0,
+      "Inset faces",
+      0
+    ],
+    [
+      "Recalc normals",
+      2,
+      "Inset faces",
       2
     ],
     [
       "Reroute.001",
       "Output",
-      "Scripted Node Lite.002",
-      "vers_in"
+      "Inset faces.001",
+      "Verts"
     ],
     [
-      "List Mask (out).004",
-      3,
-      "Scripted Node Lite.002",
+      "Scripted Node Lite.001",
+      0,
+      "Inset faces.001",
+      2
+    ],
+    [
+      "List Split.001",
+      0,
+      "List Flip",
+      0
+    ],
+    [
+      "List Flip",
+      0,
+      "List Item.001",
+      0
+    ],
+    [
+      "Reroute.003",
+      "Output",
+      "List Join",
+      "data"
+    ],
+    [
+      "Reroute.004",
+      "Output",
+      "List Join",
+      "data 1"
+    ],
+    [
+      "Reroute.004",
+      "Output",
+      "List Join.001",
+      "data"
+    ],
+    [
+      "Reroute.003",
+      "Output",
+      "List Join.001",
+      "data 1"
+    ],
+    [
+      "List Repeater",
+      0,
+      "List Join.002",
+      0
+    ],
+    [
+      "A Number.002",
+      0,
+      "List Join.003",
+      0
+    ],
+    [
+      "List Repeater.001",
+      0,
+      "List Join.003",
       1
     ],
     [
-      "Recalc normals",
+      "A Number",
       0,
-      "Inset faces",
-      0
-    ],
-    [
-      "Recalc normals",
-      2,
-      "Inset faces",
+      "List Join.003",
       2
     ],
     [
-      "Inset faces",
-      2,
-      "List Mask (out).001",
-      0
-    ],
-    [
-      "Inset faces",
-      4,
-      "List Mask (out).001",
-      1
-    ],
-    [
-      "Inset faces",
+      "Map Range.001",
       0,
-      "Viewer Draw",
+      "List Length",
       0
     ],
     [
-      "List Mask (out).001",
-      3,
-      "Viewer Draw",
-      2
-    ],
-    [
-      "Inset faces",
+      "List Join.002",
       0,
-      "Viewer Draw.002",
+      "List Length.001",
       0
     ],
     [
-      "List Mask (out).001",
-      4,
-      "Viewer Draw.002",
-      2
+      "Reroute.001",
+      "Output",
+      "List Length.002",
+      "Data"
     ],
     [
       "Reroute",
@@ -2982,10 +3110,142 @@
       1
     ],
     [
-      "Monad.001",
-      0,
-      "Stethoscope MK2",
+      "Inset faces",
+      2,
+      "List Mask (out).001",
       0
+    ],
+    [
+      "Inset faces",
+      4,
+      "List Mask (out).001",
+      1
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List Mask (out).002",
+      "data"
+    ],
+    [
+      "Monad.002",
+      0,
+      "List Mask (out).002",
+      1
+    ],
+    [
+      "List Mask (out).002",
+      3,
+      "List Mask (out).003",
+      0
+    ],
+    [
+      "Index To Mask",
+      0,
+      "List Mask (out).003",
+      1
+    ],
+    [
+      "List Mask (out).006",
+      3,
+      "List Mask (out).005",
+      0
+    ],
+    [
+      "Index To Mask.002",
+      0,
+      "List Mask (out).005",
+      1
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List Mask (out).006",
+      "data"
+    ],
+    [
+      "Monad.003",
+      0,
+      "List Mask (out).006",
+      1
+    ],
+    [
+      "Inset faces.001",
+      2,
+      "List Mask (out).007",
+      0
+    ],
+    [
+      "Inset faces.001",
+      4,
+      "List Mask (out).007",
+      1
+    ],
+    [
+      "Scalar Math",
+      0,
+      "List Repeater",
+      0
+    ],
+    [
+      "List Input",
+      0,
+      "List Repeater",
+      1
+    ],
+    [
+      "A Number.001",
+      0,
+      "List Repeater.001",
+      0
+    ],
+    [
+      "Float to Int",
+      0,
+      "List Repeater.001",
+      1
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "List Split.001",
+      "Data"
+    ],
+    [
+      "Scalar Math.004",
+      0,
+      "List Split.001",
+      1
+    ],
+    [
+      "List Input",
+      0,
+      "List Sum",
+      0
+    ],
+    [
+      "Path Length",
+      0,
+      "Map Range",
+      0
+    ],
+    [
+      "Path Length",
+      1,
+      "Map Range",
+      2
+    ],
+    [
+      "List Join.003",
+      0,
+      "Map Range.001",
+      0
+    ],
+    [
+      "Bounding box",
+      12,
+      "Map Range.001",
+      2
     ],
     [
       "A Number.003",
@@ -3018,408 +3278,6 @@
       4
     ],
     [
-      "List Split",
-      0,
-      "Switcher.002",
-      0
-    ],
-    [
-      "Switcher.002",
-      0,
-      "Index To Mask.001",
-      0
-    ],
-    [
-      "List Split",
-      0,
-      "Index To Mask.001",
-      2
-    ],
-    [
-      "Index To Mask.001",
-      0,
-      "List Item",
-      0
-    ],
-    [
-      "List Mask (out)",
-      3,
-      "List Mask (out).004",
-      0
-    ],
-    [
-      "List Levels",
-      0,
-      "List Mask (out).004",
-      1
-    ],
-    [
-      "List Split",
-      0,
-      "Stethoscope MK2.003",
-      0
-    ],
-    [
-      "List Item",
-      0,
-      "List Levels",
-      0
-    ],
-    [
-      "List Mask (out).002",
-      3,
-      "List Mask (out).003",
-      0
-    ],
-    [
-      "Index To Mask",
-      0,
-      "List Mask (out).003",
-      1
-    ],
-    [
-      "List Mask (out).003",
-      3,
-      "Stethoscope MK2.001",
-      0
-    ],
-    [
-      "Switcher.001",
-      0,
-      "Stethoscope MK2.002",
-      0
-    ],
-    [
-      "Switcher.001",
-      0,
-      "Index To Mask",
-      0
-    ],
-    [
-      "List Mask (out).002",
-      3,
-      "Index To Mask",
-      2
-    ],
-    [
-      "List Mask (out).002",
-      3,
-      "Switcher.001",
-      0
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "Viewer Draw.003",
-      "Vertices"
-    ],
-    [
-      "List Mask (out).003",
-      3,
-      "Viewer Draw.003",
-      2
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "Viewer Draw.004",
-      "Vertices"
-    ],
-    [
-      "List Mask (out).003",
-      4,
-      "Viewer Draw.004",
-      2
-    ],
-    [
-      "List Input",
-      0,
-      "List Sum",
-      0
-    ],
-    [
-      "UV Connection",
-      0,
-      "Viewer Draw.008",
-      0
-    ],
-    [
-      "UV Connection",
-      1,
-      "Viewer Draw.008",
-      2
-    ],
-    [
-      "Scalar Math",
-      0,
-      "List Repeater",
-      0
-    ],
-    [
-      "List Input",
-      0,
-      "List Repeater",
-      1
-    ],
-    [
-      "A Number.001",
-      0,
-      "List Repeater.001",
-      0
-    ],
-    [
-      "Float to Int",
-      0,
-      "List Repeater.001",
-      1
-    ],
-    [
-      "A Number.002",
-      0,
-      "List Join.003",
-      0
-    ],
-    [
-      "List Repeater.001",
-      0,
-      "List Join.003",
-      1
-    ],
-    [
-      "A Number",
-      0,
-      "List Join.003",
-      2
-    ],
-    [
-      "Scalar Math.001",
-      0,
-      "Float to Int",
-      0
-    ],
-    [
-      "Scalar Math.002",
-      0,
-      "Scalar Math.001",
-      0
-    ],
-    [
-      "A Number.001",
-      0,
-      "Scalar Math.001",
-      1
-    ],
-    [
-      "Bounding box",
-      12,
-      "Scalar Math.002",
-      0
-    ],
-    [
-      "A Number.002",
-      0,
-      "Scalar Math.002",
-      1
-    ],
-    [
-      "List Join.001",
-      0,
-      "Bounding box",
-      0
-    ],
-    [
-      "Reroute.004",
-      "Output",
-      "List Join.001",
-      "data"
-    ],
-    [
-      "Reroute.003",
-      "Output",
-      "List Join.001",
-      "data 1"
-    ],
-    [
-      "List Join.003",
-      0,
-      "Map Range.001",
-      0
-    ],
-    [
-      "Bounding box",
-      12,
-      "Map Range.001",
-      2
-    ],
-    [
-      "List Repeater",
-      0,
-      "List Join.002",
-      0
-    ],
-    [
-      "Reroute.003",
-      "Output",
-      "Path Length",
-      "Vertices"
-    ],
-    [
-      "Reroute.002",
-      "Output",
-      "Path Length",
-      "Edges"
-    ],
-    [
-      "Path Length",
-      0,
-      "Map Range",
-      0
-    ],
-    [
-      "Path Length",
-      1,
-      "Map Range",
-      2
-    ],
-    [
-      "Map Range",
-      0,
-      "Scalar Math",
-      0
-    ],
-    [
-      "List Input",
-      0,
-      "Scalar Math",
-      1
-    ],
-    [
-      "Reroute.003",
-      "Output",
-      "List Join",
-      "data"
-    ],
-    [
-      "Reroute.004",
-      "Output",
-      "List Join",
-      "data 1"
-    ],
-    [
-      "List Join",
-      0,
-      "Polyline",
-      0
-    ],
-    [
-      "Polyline",
-      0,
-      "Surface from Curves",
-      0
-    ],
-    [
-      "Surface from Curves",
-      0,
-      "Evaluate Surface",
-      0
-    ],
-    [
-      "Plane",
-      0,
-      "Evaluate Surface",
-      3
-    ],
-    [
-      "Evaluate Surface",
-      0,
-      "Viewer Draw.001",
-      0
-    ],
-    [
-      "Plane",
-      2,
-      "Viewer Draw.001",
-      2
-    ],
-    [
-      "Map Range.001",
-      0,
-      "Plane",
-      4
-    ],
-    [
-      "List Join.002",
-      0,
-      "Plane",
-      5
-    ],
-    [
-      "Plane",
-      "Polygons",
-      "Reroute",
-      "Input"
-    ],
-    [
-      "Evaluate Surface",
-      "Vertices",
-      "Reroute.001",
-      "Input"
-    ],
-    [
-      "Component Analyzer",
-      0,
-      "Viewer Index+",
-      0
-    ],
-    [
-      "Scripted Node Lite",
-      0,
-      "Viewer Index+",
-      4
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "Component Analyzer",
-      "Vertices"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Component Analyzer",
-      "Faces"
-    ],
-    [
-      "List Length.001",
-      0,
-      "Scripted Node Lite",
-      0
-    ],
-    [
-      "List Length",
-      0,
-      "Scripted Node Lite",
-      1
-    ],
-    [
-      "List Join.002",
-      0,
-      "List Length.001",
-      0
-    ],
-    [
-      "Map Range.001",
-      0,
-      "List Length",
-      0
-    ],
-    [
-      "List Length",
-      0,
-      "Scalar Math.003",
-      0
-    ],
-    [
       "A Number.006",
       0,
       "Monad.002",
@@ -3448,114 +3306,6 @@
       0,
       "Monad.002",
       4
-    ],
-    [
-      "Reroute",
-      "Output",
-      "List Mask (out).002",
-      "data"
-    ],
-    [
-      "Monad.002",
-      0,
-      "List Mask (out).002",
-      1
-    ],
-    [
-      "List Mask (out)",
-      3,
-      "List Split",
-      0
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "List Length.002",
-      "Data"
-    ],
-    [
-      "List Length.002",
-      0,
-      "Scalar Math.004",
-      0
-    ],
-    [
-      "List Sum",
-      0,
-      "Scalar Math.004",
-      1
-    ],
-    [
-      "Scalar Math.004",
-      0,
-      "Stethoscope MK2.005",
-      0
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "List Split.001",
-      "Data"
-    ],
-    [
-      "Scalar Math.004",
-      0,
-      "List Split.001",
-      1
-    ],
-    [
-      "List Split.001",
-      0,
-      "List Flip",
-      0
-    ],
-    [
-      "List Flip",
-      0,
-      "List Item.001",
-      0
-    ],
-    [
-      "List Item.001",
-      0,
-      "UV Connection",
-      0
-    ],
-    [
-      "List Mask (out).006",
-      3,
-      "Switcher.003",
-      0
-    ],
-    [
-      "Switcher.003",
-      0,
-      "Index To Mask.002",
-      0
-    ],
-    [
-      "List Mask (out).006",
-      3,
-      "Index To Mask.002",
-      2
-    ],
-    [
-      "Switcher.003",
-      0,
-      "Stethoscope MK2.004",
-      0
-    ],
-    [
-      "List Mask (out).006",
-      3,
-      "List Mask (out).005",
-      0
-    ],
-    [
-      "Index To Mask.002",
-      0,
-      "List Mask (out).005",
-      1
     ],
     [
       "A Number.009",
@@ -3588,27 +3338,189 @@
       4
     ],
     [
-      "Reroute",
+      "Reroute.003",
       "Output",
-      "List Mask (out).006",
-      "data"
+      "Path Length",
+      "Vertices"
     ],
     [
-      "Monad.003",
-      0,
-      "List Mask (out).006",
-      1
+      "Reroute.002",
+      "Output",
+      "Path Length",
+      "Edges"
     ],
     [
-      "Solidify.001",
+      "Map Range.001",
       0,
-      "Viewer Draw.006",
+      "Plane",
+      4
+    ],
+    [
+      "List Join.002",
+      0,
+      "Plane",
+      5
+    ],
+    [
+      "List Join",
+      0,
+      "Polyline",
       0
     ],
     [
-      "Solidify.001",
-      2,
-      "Viewer Draw.006",
+      "Scripted Node Lite.002",
+      0,
+      "Recalc normals",
+      0
+    ],
+    [
+      "Scripted Node Lite.002",
+      1,
+      "Recalc normals",
+      2
+    ],
+    [
+      "Plane",
+      "Polygons",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Evaluate Surface",
+      "Vertices",
+      "Reroute.001",
+      "Input"
+    ],
+    [
+      "Objects in Lite",
+      "Edges",
+      "Reroute.002",
+      "Input"
+    ],
+    [
+      "Objects in Lite",
+      "Vertices",
+      "Reroute.003",
+      "Input"
+    ],
+    [
+      "Objects in Lite.001",
+      "Vertices",
+      "Reroute.004",
+      "Input"
+    ],
+    [
+      "Map Range",
+      0,
+      "Scalar Math",
+      0
+    ],
+    [
+      "List Input",
+      0,
+      "Scalar Math",
+      1
+    ],
+    [
+      "Scalar Math.002",
+      0,
+      "Scalar Math.001",
+      0
+    ],
+    [
+      "A Number.001",
+      0,
+      "Scalar Math.001",
+      1
+    ],
+    [
+      "Bounding box",
+      12,
+      "Scalar Math.002",
+      0
+    ],
+    [
+      "A Number.002",
+      0,
+      "Scalar Math.002",
+      1
+    ],
+    [
+      "List Length",
+      0,
+      "Scalar Math.003",
+      0
+    ],
+    [
+      "List Length.002",
+      0,
+      "Scalar Math.004",
+      0
+    ],
+    [
+      "List Sum",
+      0,
+      "Scalar Math.004",
+      1
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Scale",
+      "Vertices"
+    ],
+    [
+      "Vector in",
+      0,
+      "Scale",
+      1
+    ],
+    [
+      "List Length.001",
+      0,
+      "Scripted Node Lite",
+      0
+    ],
+    [
+      "List Length",
+      0,
+      "Scripted Node Lite",
+      1
+    ],
+    [
+      "List Mask (out).004",
+      4,
+      "Scripted Node Lite.001",
+      0
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Scripted Node Lite.002",
+      "vers_in"
+    ],
+    [
+      "List Mask (out).004",
+      3,
+      "Scripted Node Lite.002",
+      1
+    ],
+    [
+      "A Number.012",
+      0,
+      "Solidify",
+      0
+    ],
+    [
+      "Scale",
+      0,
+      "Solidify",
+      1
+    ],
+    [
+      "List Mask (out).005",
+      3,
+      "Solidify",
       2
     ],
     [
@@ -3630,21 +3542,45 @@
       2
     ],
     [
-      "Reroute.001",
-      "Output",
-      "Delete Loose",
-      "Vertices"
-    ],
-    [
-      "List Mask (out).005",
-      3,
-      "Delete Loose",
+      "Inset faces.001",
+      0,
+      "Solidify.002",
       1
     ],
     [
-      "Delete Loose",
+      "List Mask (out).007",
+      3,
+      "Solidify.002",
+      2
+    ],
+    [
+      "Monad.001",
       0,
-      "Bounding box.001",
+      "Stethoscope MK2",
+      0
+    ],
+    [
+      "List Mask (out).003",
+      3,
+      "Stethoscope MK2.001",
+      0
+    ],
+    [
+      "Switcher.001",
+      0,
+      "Stethoscope MK2.002",
+      0
+    ],
+    [
+      "Switcher.003",
+      0,
+      "Stethoscope MK2.004",
+      0
+    ],
+    [
+      "Scalar Math.004",
+      0,
+      "Stethoscope MK2.005",
       0
     ],
     [
@@ -3654,46 +3590,28 @@
       0
     ],
     [
-      "Reroute.001",
-      "Output",
-      "Scale",
-      "Vertices"
-    ],
-    [
-      "Vector in",
+      "Polyline",
       0,
-      "Scale",
-      1
-    ],
-    [
-      "A Number.012",
-      0,
-      "Solidify",
+      "Surface from Curves",
       0
     ],
     [
-      "Scale",
-      0,
-      "Solidify",
-      1
-    ],
-    [
-      "List Mask (out).005",
+      "List Mask (out).002",
       3,
-      "Solidify",
-      2
-    ],
-    [
-      "Solidify",
-      0,
-      "Viewer Draw.007",
+      "Switcher.001",
       0
     ],
     [
-      "Solidify",
-      2,
-      "Viewer Draw.007",
-      2
+      "List Mask (out).006",
+      3,
+      "Switcher.003",
+      0
+    ],
+    [
+      "List Item.001",
+      0,
+      "UV Connection",
+      0
     ],
     [
       "Bounding box.001",
@@ -3702,16 +3620,112 @@
       2
     ],
     [
-      "Inset faces.001",
-      2,
-      "List Mask (out).007",
+      "Inset faces",
+      0,
+      "Viewer Draw",
       0
     ],
     [
-      "Inset faces.001",
+      "List Mask (out).001",
+      3,
+      "Viewer Draw",
+      2
+    ],
+    [
+      "Evaluate Surface",
+      0,
+      "Viewer Draw.001",
+      0
+    ],
+    [
+      "Plane",
+      2,
+      "Viewer Draw.001",
+      2
+    ],
+    [
+      "Inset faces",
+      0,
+      "Viewer Draw.002",
+      0
+    ],
+    [
+      "List Mask (out).001",
       4,
-      "List Mask (out).007",
-      1
+      "Viewer Draw.002",
+      2
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Viewer Draw.003",
+      "Vertices"
+    ],
+    [
+      "List Mask (out).003",
+      3,
+      "Viewer Draw.003",
+      2
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Viewer Draw.004",
+      "Vertices"
+    ],
+    [
+      "List Mask (out).003",
+      4,
+      "Viewer Draw.004",
+      2
+    ],
+    [
+      "Solidify.002",
+      0,
+      "Viewer Draw.005",
+      0
+    ],
+    [
+      "Solidify.002",
+      2,
+      "Viewer Draw.005",
+      2
+    ],
+    [
+      "Solidify.001",
+      0,
+      "Viewer Draw.006",
+      0
+    ],
+    [
+      "Solidify.001",
+      2,
+      "Viewer Draw.006",
+      2
+    ],
+    [
+      "Solidify",
+      0,
+      "Viewer Draw.007",
+      0
+    ],
+    [
+      "Solidify",
+      2,
+      "Viewer Draw.007",
+      2
+    ],
+    [
+      "UV Connection",
+      0,
+      "Viewer Draw.008",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "Viewer Draw.008",
+      2
     ],
     [
       "Inset faces.001",
@@ -3732,64 +3746,70 @@
       2
     ],
     [
-      "Solidify.002",
+      "Component Analyzer",
       0,
-      "Viewer Draw.005",
+      "Viewer Index+",
       0
     ],
     [
-      "Solidify.002",
-      2,
-      "Viewer Draw.005",
-      2
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "Inset faces.001",
-      "Verts"
-    ],
-    [
-      "Scripted Node Lite.001",
+      "Scripted Node Lite",
       0,
-      "Inset faces.001",
+      "Viewer Index+",
+      4
+    ],
+    [
+      "Switcher.002",
+      0,
+      "Index To Mask.001",
+      0
+    ],
+    [
+      "List Split",
+      0,
+      "Index To Mask.001",
       2
     ],
     [
+      "Index To Mask.001",
+      0,
+      "List Item",
+      0
+    ],
+    [
+      "List Mask (out)",
+      3,
       "List Mask (out).004",
-      4,
-      "Scripted Node Lite.001",
       0
     ],
     [
-      "Inset faces.001",
+      "List Del Levels",
       0,
-      "Solidify.002",
+      "List Mask (out).004",
       1
     ],
     [
-      "List Mask (out).007",
+      "List Mask (out)",
       3,
-      "Solidify.002",
-      2
+      "List Split",
+      0
     ],
     [
-      "Objects in Lite",
-      "Edges",
-      "Reroute.002",
-      "Input"
+      "List Split",
+      0,
+      "Stethoscope MK2.003",
+      0
     ],
     [
-      "Objects in Lite",
-      "Vertices",
-      "Reroute.003",
-      "Input"
+      "List Split",
+      0,
+      "Switcher.002",
+      0
     ],
     [
-      "Objects in Lite.001",
-      "Vertices",
-      "Reroute.004",
-      "Input"
+      "List Item",
+      0,
+      "List Del Levels",
+      0
     ]
   ]
 }
