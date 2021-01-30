@@ -30,25 +30,37 @@ else:
         selected_label : StringProperty(default='Select FC Part')
         selected_part : StringProperty(default='',update = updateNode) 
 
+        read_mode : EnumProperty(
+                    name='mode',
+                    description='read geometry / construction',
+                    items=[
+                    ('geometry', 'geometry', 'geometry'),
+                    ('construction', 'construction', 'construction'),
+                    ('BOTH', 'BOTH', 'BOTH')],
+                    default='geometry',
+                    update = updateNode )
+
         def draw_buttons(self, context, layout):
 
             col = layout.column(align=True)
+            col.prop(self, 'read_mode')  
+
             if self.inputs['File Path'].is_linked:
                 self.wrapper_tracked_ui_draw_op(
                     col, SvShowFcstdSketchNamesOp.bl_idname, 
                     icon= 'TRIA_DOWN',
                     text= self.selected_label )
-                    
+                  
             col.prop(self, 'max_points')   
             col.prop(self, 'read_update')   
             col.prop(self, 'inv_filter')
 
         def sv_init(self, context):
             self.inputs.new('SvFilePathSocket', "File Path")
-            self.inputs.new('SvStringsSocket', "Part Filter")   
+            self.inputs.new('SvStringsSocket', "Sketch Filter")   
 
             self.outputs.new('SvVerticesSocket', "Verts")
-            self.outputs.new('SvVerticesSocket', "Edges")
+            self.outputs.new('SvStringsSocket', "Edges")
             self.outputs.new('SvCurveSocket', "Curve")
 
         def process(self):
@@ -63,18 +75,18 @@ else:
                 
                 files = self.inputs['File Path'].sv_get()[0]
 
-                part_filter = []
-                if self.inputs['Part Filter'].is_linked:
-                    part_filter = self.inputs['Part Filter'].sv_get()[0]
+                sketch_filter = []
+                if self.inputs['Sketch Filter'].is_linked:
+                    sketch_filter = self.inputs['Sketch Filter'].sv_get()[0]
                 
-                if self.selected_part != '' and not self.selected_part in part_filter:
-                    part_filter.append(self.selected_part)
+                if self.selected_part != '' and not self.selected_part in sketch_filter:
+                    sketch_filter.append(self.selected_part)
 
                 Verts = []
                 Edges = []
                 curves_out = []
                 for f in files:
-                    S = LoadSketch(f,part_filter,self.max_points,self.inv_filter)
+                    S = LoadSketch(f, sketch_filter, self.max_points, self.inv_filter, self.read_mode)
                     for i in S[0]:
                         Verts.append(i)
                     for i in S[1]:
@@ -141,7 +153,7 @@ else:
             return {'FINISHED'}
    
 
-def LoadSketch(fc_file,part_filter,max_points,inv_filter):
+def LoadSketch(fc_file, sketch_filter, max_points, inv_filter, read_mode):
     import Part
     sketches = []
     Verts = []
@@ -166,11 +178,11 @@ def LoadSketch(fc_file,part_filter,max_points,inv_filter):
             
             if not inv_filter:
 
-                if obj.Label in part_filter or len(part_filter)==0:
+                if obj.Label in sketch_filter or len(sketch_filter)==0:
                     sketches.append(obj)
 
             else:
-                if not obj.Label in part_filter:
+                if not obj.Label in sketch_filter:
                     sketches.append(obj)
 
     if len(sketches)==0: 
@@ -199,6 +211,13 @@ def LoadSketch(fc_file,part_filter,max_points,inv_filter):
 
         #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> EVALUATE CURVE START
         for geo in s.Geometry:
+            
+            if read_mode == 'geometry':
+                if geo.Construction : continue
+
+            elif read_mode == 'construction':
+                if not geo.Construction : continue
+
             v_set=[]
             e_set=[]
             
