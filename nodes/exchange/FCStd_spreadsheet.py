@@ -80,7 +80,7 @@ else:
                         self.inputs['cell_in'].sv_get()[0][0], 
                         self.write_parameter)
 
-                print ('DDDDDDDDDDDDDDDDDIOOOOOOOOOOOOOOOOOOOOOOOOOOO,', cell_out)
+                
                 if cell_out != None:
                     
                     self.outputs['cell_out'].sv_set( [ [[cell_out]] ] )
