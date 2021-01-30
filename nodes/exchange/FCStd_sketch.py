@@ -1,6 +1,6 @@
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
-
+import mathutils
 
 if FreeCAD is None:
     add_dummy('SvReadFCStdSketchNode', 'SvReadFCStdSketchNode', 'FreeCAD')
@@ -89,7 +89,6 @@ else:
                 return
 
 
-
     class SvShowFcstdSketchNamesOp(bpy.types.Operator):
         bl_idname = "node.sv_show_fcstd_sketch_names"
         bl_label = "Show parts list"
@@ -121,11 +120,9 @@ else:
             
             return labels
             
-            
         option : EnumProperty(items=LabelReader)
         idtree : StringProperty()
         idname : StringProperty() 
-
 
         def execute(self, context):
 
@@ -199,13 +196,17 @@ def LoadSketch(fc_file,part_filter,max_points,inv_filter):
         if len(s.InList) > 0:
             s_placement = s.InList[0].Placement.multiply( s_placement )
 
+
+        #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> EVALUATE CURVE START
         for geo in s.Geometry:
             v_set=[]
             e_set=[]
             
+            #LINE CASE
             if isinstance(geo, Part.LineSegment ):
                 geo_points = 2
 
+            #POINT CASE
             elif isinstance(geo, Part.Point ):
                 geo_points = 1
 
@@ -214,7 +215,7 @@ def LoadSketch(fc_file,part_filter,max_points,inv_filter):
         
                 if geo_points < 2:
                     geo_points = 2
-
+            
             if geo_points!=1:
                 verts = geo.discretize(Number = geo_points )
             else:
@@ -232,7 +233,10 @@ def LoadSketch(fc_file,part_filter,max_points,inv_filter):
 
             Verts.extend (v_set)
             Edges.extend (e_set)
-
+            #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< EVALUATE CURVE END
+            #-------------------------------------------------------------
+            #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> FC CURVE TO SV CURVE
+            #LINE
             if isinstance(geo, Part.LineSegment ):
                 from sverchok.utils.curve import SvLine
                 point1 = np.array(v_set[0])
@@ -241,14 +245,13 @@ def LoadSketch(fc_file,part_filter,max_points,inv_filter):
                 line.u_bounds = (0, 1)
                 Curves.append(line)
 
+            #CIRCLE
             elif isinstance(geo, Part.Circle ) or isinstance(geo, Part.ArcOfCircle ):
                 from sverchok.utils.curve import SvCircle
                 from mathutils import Matrix
                 
                 center = F.Vector( (geo.Location.x,geo.Location.y,geo.Location.z) )
-
                 c_placement = FreeCAD_abs_placement(s_placement,center)
-
                 placement_mat = c_placement.toMatrix() 
                 b_mat = Matrix()
                 
@@ -256,7 +259,6 @@ def LoadSketch(fc_file,part_filter,max_points,inv_filter):
                 for i in placement_mat.A:
                     if c == 4: 
                         r+=1; c=0
-                        
                     b_mat[r][c]=i
                     c+=1
 
@@ -266,9 +268,34 @@ def LoadSketch(fc_file,part_filter,max_points,inv_filter):
 
                 Curves.append(curve)
 
+            elif geo_points!=1:
+                geo = geo.toNurbs()
+                from sverchok.utils.nurbs_common import SvNurbsMaths
+                from sverchok.utils.curve import SvNurbsCurve
+
+                abs_poles = []
+
+                for vec in geo.getPoles():
+                    abs_co = FreeCAD_abs_placement(s_placement,vec).Base
+                    abs_poles.append ( (abs_co.x, abs_co.y, abs_co.z) )
+
+                new_curve = SvNurbsCurve.build( SvNurbsMaths.FREECAD, geo.Degree, geo.KnotSequence, abs_poles, geo.getWeights() )
+
+                Curves.append(new_curve)
 
     F.closeDocument(Fname)
     return (Verts,Edges,Curves)
+
+def FC_matrix_to_mathutils_format(fc_matrix):
+    row=0
+    col=0
+    b_matrix = mathutils.Matrix()
+    for i in fc_matrix.A:
+        if col == 4: 
+            row += 1; col = 0
+        b_matrix[row][col] = i
+        col += 1
+    return b_matrix
 
 def FreeCAD_abs_placement(sketch_placement,p_co):
     p_co = F.Vector( ( p_co[0], p_co[1], p_co[2] ) )
