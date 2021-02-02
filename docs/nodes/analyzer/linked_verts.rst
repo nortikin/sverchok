@@ -10,9 +10,9 @@ Inputs
 ------
 
 - **Vertices**: Vertex list (optional).
-- **Edges**: Edge data. 
-- **Selection**: Desired index list or mask list. 
-- **Distance**: Distance to input (measured in number of edges in between).
+- **Edge_Pol**: Edge or Polygon data.
+- **Selection**: Desired index list or mask list.
+- **Distance**: Distance to input (measured in number of edges/polygons in between).
 
 Parameters
 ----------
@@ -25,7 +25,7 @@ Outputs
 
 - **Verts Id**: Index of the linked vertices, referring to the **Vertices** input list.
 - **Verts**: Linked verts list.
-- **Mask**: mask of the linked vertices, referring to the **Vertices** input list. 
+- **Mask**: mask of the linked vertices, referring to the **Vertices** input list.
 
 
 Example of usage

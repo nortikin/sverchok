@@ -51,7 +51,7 @@ def calc_connexions(meshes, gates, result):
     for vertices, edges, item_n, distance in zip(*meshes):
         if gates[3]:
             item_n = [i for i, m in enumerate(item_n) if m]
-            print(item_n)
+
         connexions_dict = {}
         connexions_dict[0] = item_n
         d_max = max(distance)
@@ -73,7 +73,7 @@ def calc_connexions(meshes, gates, result):
             result[1].append(connected_v)
 
         if gates[2]:
-            mask = [True if i in out_index else False for i in range(len(vertices))]
+            mask = [i in out_index for i in range(len(vertices))]
             result[2].append(mask)
 
     return result
@@ -81,8 +81,8 @@ def calc_connexions(meshes, gates, result):
 
 class SvLinkedVertsNode(bpy.types.Node, SverchCustomTreeNode):
     '''
-    Triggers: Measure deformation
-    Tooltip: Deformation between to states, edge elong a area variation
+    Triggers: Connected Vertices
+    Tooltip: Get the vertices connected to input vertices
     '''
     bl_idname = 'SvLinkedVertsNode'
     bl_label = 'Linked Verts'
@@ -113,7 +113,8 @@ class SvLinkedVertsNode(bpy.types.Node, SverchCustomTreeNode):
         sinw = self.inputs.new
         sonw = self.outputs.new
         sinw('SvVerticesSocket', "Verts")
-        sinw('SvStringsSocket', "Edges")
+        e_p = sinw('SvStringsSocket', "Edges")
+        e_p.label = 'Edge_Pol'
         sinw('SvStringsSocket', "Item").prop_name = 'item'
         sinw('SvStringsSocket', "Distance").prop_name = 'distance'
 
@@ -124,10 +125,10 @@ class SvLinkedVertsNode(bpy.types.Node, SverchCustomTreeNode):
     def get_data(self):
         '''get all data from sockets'''
         si = self.inputs
-        vertices_s = si['Verts'].sv_get(default=[[]])
-        edges_in = si['Edges'].sv_get(default=[[]])
-        item_n = si['Item'].sv_get(default=[[]])
-        distance = si['Distance'].sv_get(default=[[]])
+        vertices_s = si['Verts'].sv_get(default=[[]], deepcopy=False)
+        edges_in = si['Edges'].sv_get(default=[[]], deepcopy=False)
+        item_n = si['Item'].sv_get(default=[[]], deepcopy=False)
+        distance = si['Distance'].sv_get(default=[[]], deepcopy=False)
 
         return match_long_repeat([vertices_s, edges_in, item_n, distance])
 
