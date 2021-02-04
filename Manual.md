@@ -5,24 +5,14 @@ The manual is an essential reference for new and existing users. Each node has a
 <table class="sv_table">
   <tr>
     <td class="sv_table-elem">
-        <a href="http://nikitron.cc.ua/sverch/docs.tar">
-            Download without images</a></td>
-    <td class="sv_table-elem">size 1.2 mb</td>
-  </tr>
-  <tr>
-    <td class="sv_table-elem">Download with images</td>
-    <td class="sv_table-elem">size 8.4 mb</td>
-  </tr>
-  <tr>
-    <td class="sv_table-elem">
-        <a href="http://sverchok.readthedocs.io/en/latest/nodes.html">
+        <a href="http://nikitron.cc.ua/sverch/html/main.html">
             Read Online</a></td>
     <td class="sv_table-elem"></td>
   </tr>
   <tr>
     <td class="sv_table-elem">
         <a href="docs/main.html">
-            Online for 2.8x</a></td>
+            Online for 2.9x</a></td>
     <td class="sv_table-elem"></td>
   </tr>
 </table>
