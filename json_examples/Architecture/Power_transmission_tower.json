@@ -18,24 +18,20 @@
       },
       "width": 140.0
     },
-    "Formula.001": {
+    "Formula": {
       "bl_idname": "SvFormulaNodeMk5",
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        233.84564208984375,
-        376.1167907714844
+        220.1787109375,
+        383.2130126953125
       ],
       "params": {
-        "dimensions": [
-          140.0,
-          174.11679077148438
-        ],
         "formula1": "rho * base ** (-z)"
       },
-      "width": 140.0
+      "width": 230.0
     },
     "Framework": {
       "bl_idname": "SvFrameworkNode",
@@ -83,8 +79,8 @@
       "hide": false,
       "label": "",
       "location": [
-        420.53961181640625,
-        262.8136291503906
+        478.768310546875,
+        247.07760620117188
       ],
       "params": {},
       "width": 100.0
@@ -161,30 +157,6 @@
       1
     ],
     [
-      "Formula.001",
-      0,
-      "Vector polar input",
-      0
-    ],
-    [
-      "Vector polar output",
-      1,
-      "Vector polar input",
-      1
-    ],
-    [
-      "Vector polar output",
-      2,
-      "Vector polar input",
-      2
-    ],
-    [
-      "Framework",
-      0,
-      "Vector polar output",
-      0
-    ],
-    [
       "Wireframe",
       0,
       "Viewer Draw Mk3",
@@ -209,21 +181,45 @@
       3
     ],
     [
-      "A Number",
+      "Framework",
       0,
-      "Formula.001",
+      "Vector polar output",
+      0
+    ],
+    [
+      "Formula",
+      0,
+      "Vector polar input",
       0
     ],
     [
       "Vector polar output",
-      0,
-      "Formula.001",
+      1,
+      "Vector polar input",
       1
     ],
     [
       "Vector polar output",
       2,
-      "Formula.001",
+      "Vector polar input",
+      2
+    ],
+    [
+      "A Number",
+      0,
+      "Formula",
+      0
+    ],
+    [
+      "Vector polar output",
+      0,
+      "Formula",
+      1
+    ],
+    [
+      "Vector polar output",
+      2,
+      "Formula",
       2
     ]
   ]
