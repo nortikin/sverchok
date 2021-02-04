@@ -25,10 +25,16 @@ from sverchok.data_structure import updateNode, list_match_func, list_match_mode
 from sverchok.utils.sv_itertools import (recurse_f_level_control)
 
 def transform_data(data, transform):
+    if transform == 'As_is':
+        return data
     if transform == 'Vector':
         return Vector(data)
     if transform == 'Array':
         return np.array(data)
+    if transform == 'Set':
+        return set(data)
+    if transform == 'String':
+        return str(data)
     return data
 def ensure_list(value):
     if isinstance(value, (int, float, str)):
@@ -141,14 +147,9 @@ class SvFormulaNodeMk5(bpy.types.Node, SverchCustomTreeNode):
     output_type: EnumProperty(
         name="Output",
         description="Behavior on different list lengths",
-        # items=enum_item_4(["Number", "Vector", "Color", "Matrix"]), default="Number",
         items=enum_item_4(socket_dict.keys()), default="Number/Generic",
         update=update_output_socket)
 
-    output_numpy: BoolProperty(
-        name='Output NumPy',
-        description='Output NumPy arrays',
-        default=False, update=updateNode)
     def formulas(self):
         return [self.formula1, self.formula2, self.formula3, self.formula4]
 
@@ -180,7 +181,7 @@ class SvFormulaNodeMk5(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "as_list")
 
         layout.prop(self, "output_type")
-        layout.prop(self, "output_numpy")
+
 
         self.draw_buttons(context, layout)
 
