@@ -91,7 +91,7 @@ class SvFormulaNodeMk5(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Calculate by custom formula.
     """
     bl_idname = 'SvFormulaNodeMk5'
-    bl_label = 'Formula++'
+    bl_label = 'Formula'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_FORMULA'
 

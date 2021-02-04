@@ -1,10 +1,10 @@
 {
   "export_version": "0.10",
   "framed_nodes": {
-    "Formula": "Frame.002",
     "Formula.001": "Frame.002",
-    "Formula.002": "Frame",
+    "Formula.002": "Frame.002",
     "Formula.003": "Frame",
+    "Formula.004": "Frame",
     "Gen Vectors.001": "Frame.002",
     "Gen Vectors.003": "Frame",
     "List Zip": "Frame.001",
@@ -19,60 +19,60 @@
   },
   "groups": {},
   "nodes": {
-    "Formula": {
-      "bl_idname": "SvFormulaNodeMk3",
+    "Formula.001": {
+      "bl_idname": "SvFormulaNodeMk5",
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -613.7801895141602,
-        -1064.2400970458984
+        -598.4060440063477,
+        -1060.5203704833984
       ],
       "params": {
         "formula1": "cos(x*pi/90)*n"
       },
       "width": 196.7825927734375
     },
-    "Formula.001": {
-      "bl_idname": "SvFormulaNodeMk3",
+    "Formula.002": {
+      "bl_idname": "SvFormulaNodeMk5",
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -606.3495864868164,
-        -908.2494964599609
+        -592.2209854125977,
+        -877.1304779052734
       ],
       "params": {
         "formula1": "sin(x*pi/90)*n"
       },
       "width": 189.837158203125
     },
-    "Formula.002": {
-      "bl_idname": "SvFormulaNodeMk3",
+    "Formula.003": {
+      "bl_idname": "SvFormulaNodeMk5",
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -595.9663391113281,
-        -231.9815902709961
+        -600.1828002929688,
+        -194.8088607788086
       ],
       "params": {
         "formula1": "cos(x*pi/180)"
       },
       "width": 140.0
     },
-    "Formula.003": {
-      "bl_idname": "SvFormulaNodeMk3",
+    "Formula.004": {
+      "bl_idname": "SvFormulaNodeMk5",
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -592.0486145019531,
-        -81.92662811279297
+        -605.8565063476562,
+        -53.278831481933594
       ],
       "params": {
         "formula1": "sin(x*pi/180)"
@@ -82,7 +82,7 @@
     "Frame": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 339.0733642578125,
+      "height": 333.7211608886719,
       "hide": false,
       "label": "verts",
       "location": [
@@ -108,7 +108,7 @@
     "Frame.002": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 486.19549560546875,
+      "height": 489.8695068359375,
       "hide": false,
       "label": "matrix",
       "location": [
@@ -139,7 +139,7 @@
       "label": "",
       "location": [
         -411.399169921875,
-        -151.96063995361328
+        -151.96062469482422
       ],
       "params": {},
       "width": 140.0
@@ -376,28 +376,16 @@
   },
   "update_lists": [
     [
-      "Number Range",
-      0,
       "Formula.002",
+      0,
+      "Gen Vectors.001",
       0
     ],
     [
-      "Number Range",
+      "Formula.001",
       0,
-      "Formula.003",
-      0
-    ],
-    [
-      "Formula.003",
-      0,
-      "Gen Vectors.003",
+      "Gen Vectors.001",
       1
-    ],
-    [
-      "Formula.002",
-      0,
-      "Gen Vectors.003",
-      2
     ],
     [
       "Number Range.002",
@@ -409,60 +397,6 @@
       "Number Range.003",
       0,
       "List Zip",
-      1
-    ],
-    [
-      "Gen Vectors.003",
-      0,
-      "Viewer Draw Mk3",
-      0
-    ],
-    [
-      "List Zip",
-      0,
-      "Viewer Draw Mk3",
-      1
-    ],
-    [
-      "Matrix Deform",
-      0,
-      "Viewer Draw Mk3",
-      3
-    ],
-    [
-      "Number Range.004",
-      0,
-      "Formula.001",
-      0
-    ],
-    [
-      "Number Range.005",
-      0,
-      "Formula.001",
-      1
-    ],
-    [
-      "Number Range.004",
-      0,
-      "Formula",
-      0
-    ],
-    [
-      "Number Range.005",
-      0,
-      "Formula",
-      1
-    ],
-    [
-      "Formula.001",
-      0,
-      "Gen Vectors.001",
-      0
-    ],
-    [
-      "Formula",
-      0,
-      "Gen Vectors.001",
       1
     ],
     [
@@ -490,6 +424,24 @@
       0
     ],
     [
+      "Gen Vectors.003",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "List Zip",
+      0,
+      "Viewer Draw Mk3",
+      1
+    ],
+    [
+      "Matrix Deform",
+      0,
+      "Viewer Draw Mk3",
+      3
+    ],
+    [
       "UV Connection",
       0,
       "Viewer Draw Mk3.001",
@@ -499,6 +451,54 @@
       "UV Connection",
       1,
       "Viewer Draw Mk3.001",
+      1
+    ],
+    [
+      "Formula.004",
+      0,
+      "Gen Vectors.003",
+      1
+    ],
+    [
+      "Formula.003",
+      0,
+      "Gen Vectors.003",
+      2
+    ],
+    [
+      "Number Range",
+      0,
+      "Formula.004",
+      0
+    ],
+    [
+      "Number Range",
+      0,
+      "Formula.003",
+      0
+    ],
+    [
+      "Number Range.005",
+      0,
+      "Formula.002",
+      0
+    ],
+    [
+      "Number Range.004",
+      0,
+      "Formula.002",
+      1
+    ],
+    [
+      "Number Range.005",
+      0,
+      "Formula.001",
+      0
+    ],
+    [
+      "Number Range.004",
+      0,
+      "Formula.001",
       1
     ]
   ]

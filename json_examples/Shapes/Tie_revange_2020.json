@@ -3,7 +3,6 @@
   "framed_nodes": {
     "Evaluate Curve": "Frame",
     "Formula": "Frame.001",
-    "Formula.001": "Frame.001",
     "Note.001": "Frame",
     "Objects in Lite": "Frame.002",
     "Polyline Viewer.003": "Frame.002",
@@ -29,34 +28,34 @@
       "width": 140.0
     },
     "Formula": {
-      "bl_idname": "SvFormulaNodeMk3",
+      "bl_idname": "SvFormulaNodeMk5",
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        543.5875453948975,
-        -173.31595611572266
-      ],
-      "params": {
-        "formula1": "x if y>-7 else 1.5-abs(y)**1.8/40"
-      },
-      "width": 231.4080810546875
-    },
-    "Formula.001": {
-      "bl_idname": "SvFormulaNodeMk3",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        169.14093589782715,
-        -181.06607818603516
+        166.39598655700684,
+        -168.99005889892578
       ],
       "params": {
         "formula1": "abs(z)/10"
       },
       "width": 140.0
+    },
+    "Formula.002": {
+      "bl_idname": "SvFormulaNodeMk5",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        567.3414916992188,
+        -143.33697509765625
+      ],
+      "params": {
+        "formula1": "x if y>-7 else 1.5-abs(y)**1.8/40"
+      },
+      "width": 231.4080810546875
     },
     "Frame": {
       "bl_idname": "NodeFrame",
@@ -74,7 +73,7 @@
     "Frame.001": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 210.68405151367188,
+      "height": 192.00994873046875,
       "hide": false,
       "label": "twist",
       "location": [
@@ -82,12 +81,12 @@
         85.84581756591797
       ],
       "params": {},
-      "width": 859.5928344726562
+      "width": 591.9131469726562
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 464.438720703125,
+      "height": 485.438720703125,
       "hide": false,
       "label": "bevel object",
       "location": [
@@ -150,7 +149,6 @@
         0.883421003818512
       ],
       "custom_socket_props": {},
-      "geom": "{\"Vertices\": [-1.2019426822662354, 0.0, 0.0, -1.0447529554367065, 0.1184345930814743, 0.0, -0.8746780753135681, 0.22233791649341583, 0.0, -0.6932308077812195, 0.3096092939376831, 0.0, -0.5019239187240601, 0.37814801931381226, 0.0, -0.30227020382881165, 0.4258534014225006, 0.0, -0.09578245878219604, 0.4506247639656067, 0.0, 0.11602653563022614, 0.450361430644989, 0.0, 0.3316439986228943, 0.4229626953601837, 0.0, 0.549557089805603, 0.36632785201072693, 0.0, 0.7682530879974365, 0.2783562242984772, 0.0, 0.9862191677093506, 0.15694713592529297, 0.0, 1.2019426822662354, 0.0, 0.0], \"Edges\": [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12], \"Polygons\": [], \"MaterialIdx\": [], \"Matrix\": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]}",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -263,7 +261,7 @@
       ],
       "params": {
         "n_id": "-8503949147017355656",
-        "script_name": "Text",
+        "script_name": "Text.001",
         "script_str": "from sverchok.utils.geom import LinearSpline, CubicSpline\nfrom sverchok.utils.math import supported_metrics\nfrom sverchok.utils.curve import SvSplineCurve\n\n\"\"\"\nin numbr s d=[[]] n=0\nout splin C\nout verts v\n\"\"\"\n\n# '''use note node to define toe\n# l - left, r - right, t - top,\n# bake, convert to curve and\n# extrude 0.3\n# Start always from l finish with t\n# and finish inside out\n# use live_curve script \n# to materialize curve to tie\n# Nikitron, 2014'''\n\n\nout = [ \n        (0, 0.2, -5),\n        (0, 0.2, -3),\n        (0, 0.2, 0),\n        (1, 0.2, 1),\n        (3, 5, 2),\n        (0, 7, 2),\n        (-3, 5, 2),\n        (-1, 0.5, 1) ]\nfront = True\n\nvecs = [(0.8660254037844386, 0.0, -0.5),\n        (0,0,1),\n        (-0.8660254037844386, 0.0, -0.5)]\nif numbr:\n    n_ = numbr[0][0].split(' ')\n    print('default letters:  ',n_)\n    for k, i in enumerate(n_):\n        if i[0] == 'l':\n            i = 0\n        elif i[0] == 't':\n            i = 1\n        elif i[0] == 'r':\n            i = 2\n        v = vecs[i]\n        if front:\n            front = False\n            y1 = -0.015\n            y2 = 0.015\n        else:\n            front = True\n            y1 = 0.015\n            y2 = -0.015\n        out.append([v[0]*k*0.05+v[0],\n                    y1*(k+1),\n                    v[2]*k*0.05+v[2]])\n        out.append([v[0]*k*0.05+v[0],\n                    y2*(k+1),\n                    v[2]*k*0.05+v[2]])\n    out.extend([\n            (0, -0.4,-1),\n            (0, -0.2,-3),\n            (0, 0,-10)])\n\nspline = CubicSpline(out, metric = 'CHEBYSHEV', is_cyclic = False)\ncurve = SvSplineCurve(spline)\nverts=[out]\n\nsplin = [curve]\n"
       },
       "use_custom_color": true,
@@ -291,31 +289,13 @@
       0
     ],
     [
-      "Scalar Math",
-      0,
-      "Formula",
-      0
-    ],
-    [
-      "Vector out",
-      2,
-      "Formula",
-      1
-    ],
-    [
-      "Vector out",
-      2,
-      "Formula.001",
-      0
-    ],
-    [
       "Evaluate Curve",
       0,
       "Polyline Viewer.002",
       0
     ],
     [
-      "Formula",
+      "Formula.002",
       0,
       "Polyline Viewer.002",
       2
@@ -333,21 +313,39 @@
       0
     ],
     [
-      "Formula.001",
-      0,
-      "Scalar Math",
-      0
-    ],
-    [
       "Note.001",
       0,
       "Scripted Node Lite",
       0
     ],
     [
+      "Scalar Math",
+      0,
+      "Formula.002",
+      0
+    ],
+    [
+      "Vector out",
+      2,
+      "Formula.002",
+      1
+    ],
+    [
+      "Formula",
+      0,
+      "Scalar Math",
+      0
+    ],
+    [
       "Evaluate Curve",
       0,
       "Vector out",
+      0
+    ],
+    [
+      "Vector out",
+      2,
+      "Formula",
       0
     ]
   ]
