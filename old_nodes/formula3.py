@@ -38,7 +38,7 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Formula'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_FORMULA'
-
+    replacement_nodes = [('SvFormulaNodeMk5', None, None)]
     @throttle_and_update_node
     def on_update(self, context):
         self.adjust_sockets()

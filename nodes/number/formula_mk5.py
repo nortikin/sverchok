@@ -70,7 +70,7 @@ def formula_func(parameters, constant, matching_f):
 
 
 socket_dict = {
-    "Number/Generic": "SvStringsSocket",
+    "Number / Generic": "SvStringsSocket",
     "Vector": "SvVerticesSocket",
     "Color":   "SvColorSocket",
     "Matrix":   "SvMaatrixSocket",
@@ -147,7 +147,7 @@ class SvFormulaNodeMk5(bpy.types.Node, SverchCustomTreeNode):
     output_type: EnumProperty(
         name="Output",
         description="Behavior on different list lengths",
-        items=enum_item_4(socket_dict.keys()), default="Number/Generic",
+        items=enum_item_4(socket_dict.keys()), default="Number_/_Generic",
         update=update_output_socket)
 
     def formulas(self):
@@ -295,7 +295,8 @@ class SvFormulaNodeMk5(bpy.types.Node, SverchCustomTreeNode):
             return all([socket.is_linked for socket in self.inputs])
         return True
 
-
+    def migrate_from(self, old_node):
+        self.output_dimensions = old_node.dimensions
     def process(self):
 
         if not self.outputs[0].is_linked:

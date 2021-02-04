@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -28,7 +28,7 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Formula+'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_FORMULA'
-
+    replacement_nodes = [('SvFormulaNodeMk5', None, None)]
     @throttle_and_update_node
     def on_update(self, context):
         self.adjust_sockets()
@@ -127,19 +127,19 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
     def hot_reload_sockets(self):
         """
         function hoisted from functorb, with deletions and edits
-        
+
          - store current input socket links by name/origin
          - wipe all inputs
          - recreate new sockets from variables
          - relink former links by name on this socket, but by index from their origin.
-        
+
         """
-        
+
         self.info('handling input wipe and relink')
         nodes = self.id_data.nodes
         node_tree = self.id_data
 
-        # if any current connections... gather them 
+        # if any current connections... gather them
         reconnections = []
         for i in (i for i in self.inputs if i.is_linked):
             for L in i.links:
@@ -161,7 +161,7 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
                 str_from = f'nodes[{link.from_node}].outputs[{link.from_socket}]'
                 str_to = f'nodes[{self}].inputs[{link.to_socket}]'
                 self.exception(f'failed: {str_from} -> {str_to}')
-                self.exception(err)        
+                self.exception(err)
 
     def sv_update(self):
         '''
