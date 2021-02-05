@@ -6,23 +6,20 @@
 # License-Filename: LICENSE
 
 import ast
-from math import *
-from numpy import *
+
 from mathutils import Vector
-from collections import defaultdict
 import numpy as np
 import bpy
-from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorProperty, IntProperty, IntVectorProperty, BoolVectorProperty
-import json
-import io
+from bpy.props import BoolProperty, StringProperty, EnumProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.core.socket_data import SvGetSocketInfo
-from sverchok.data_structure import updateNode, match_long_repeat, zip_long_repeat, throttle_and_update_node
-from sverchok.utils import logging
+
+from sverchok.data_structure import (updateNode, throttle_and_update_node,
+                                     list_match_func, numpy_list_match_modes,
+                                     enum_item_4)
+
 from sverchok.utils.modules.eval_formula import get_variables, safe_eval
-from sverchok.data_structure import updateNode, list_match_func, list_match_modes, numpy_list_match_modes, numpy_list_match_func, levels_of_list_or_np, enum_item_4
-from sverchok.utils.sv_itertools import (recurse_f_level_control)
+from sverchok.utils.sv_itertools import recurse_f_level_control
 
 def transform_data(data, transform):
     if transform == 'As_is':
@@ -36,8 +33,9 @@ def transform_data(data, transform):
     if transform == 'String':
         return str(data)
     return data
+
 def ensure_list(value):
-    if isinstance(value, (int, float, str)):
+    if isinstance(value, (int, float, str, list)):
         return value
     if isinstance(value, np.ndarray):
         return value.tolist()
@@ -45,10 +43,10 @@ def ensure_list(value):
 
 def formula_func(parameters, constant, matching_f):
 
-    formulas, separate, var_names, match_mode, transformations, as_list = constant
+    formulas, separate, var_names, transformations, as_list = constant
 
     object_results = []
-    for values in zip_long_repeat(*parameters):
+    for values in zip(*matching_f(parameters)):
         vals = [transform_data(d, tr) for d, tr in zip(values, transformations)]
         variables = dict(zip(var_names, vals))
         vector = []
@@ -68,7 +66,6 @@ def formula_func(parameters, constant, matching_f):
     return object_results
 
 
-
 socket_dict = {
     "Number / Generic": "SvStringsSocket",
     "Vector": "SvVerticesSocket",
@@ -84,6 +81,7 @@ socket_dict = {
     "Solid": "SvSolidSocket",
     "File Path": "SvFilePathSocket",
     }
+
 
 class SvFormulaNodeMk5(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -110,7 +108,7 @@ class SvFormulaNodeMk5(bpy.types.Node, SverchCustomTreeNode):
 
         self.adjust_sockets()
 
-    output_dimensions : IntProperty(name="Dimensions", default=1, min=1, max=4, update=on_update_dims)
+    output_dimensions: IntProperty(name="Dimensions", default=1, min=1, max=4, update=on_update_dims)
 
     formula1: StringProperty(default="x+y", update=on_update)
     formula2: StringProperty(update=on_update)
@@ -123,12 +121,7 @@ class SvFormulaNodeMk5(bpy.types.Node, SverchCustomTreeNode):
         description="+1: adds a set of square brackets around the output\n 0: Keeps result unchanged\n-1: Removes a set of outer square brackets",
         default="0", update=updateNode
     )
-    defaults_depth = [1 for i in range(32)]
-    defaults_vector = [False for i in range(32)]
-    exposed_depth: IntVectorProperty(
-        name='Depth', description="Integer list", default=defaults_depth, size=32,update=updateNode)
-    to_vector: BoolVectorProperty(
-        name='as Vector', description="Integer list", default=defaults_vector, size=32,update=updateNode)
+
     use_ast: BoolProperty(name="AST", description="uses the ast.literal_eval module", update=updateNode)
     as_list: BoolProperty(name="List output", description="Forces a regular list output", update=updateNode)
     ui_message: StringProperty(name="ui message")
@@ -247,16 +240,16 @@ class SvFormulaNodeMk5(bpy.types.Node, SverchCustomTreeNode):
                 reconnections.append(link)
         depths = {}
         transform = {}
-        for idx, input in enumerate(self.inputs):
-            depths[input.name]= input.depth
-            transform[input.name]= input.transform
+        for node_input in self.inputs:
+            depths[node_input.name] = node_input.depth
+            transform[node_input.name] = node_input.transform
 
         self.clear_and_repopulate_sockets_from_variables()
 
-        for idx, input in enumerate(self.inputs):
-            if input.name in depths:
-                input.depth = depths[input.name]
-                input.transform = transform[input.name]
+        for node_input in self.inputs:
+            if node_input.name in depths:
+                node_input.depth = depths[node_input.name]
+                node_input.transform = transform[node_input.name]
         # restore connections where applicable (by socket name), if no links.. this is a no op.
         for link in reconnections:
             try:
@@ -307,17 +300,17 @@ class SvFormulaNodeMk5(bpy.types.Node, SverchCustomTreeNode):
         if not self.all_inputs_connected():
             self.ui_message = "node not fully connected"
             return
-        print([socket.is_linked for socket in self.inputs], self.all_inputs_connected())
+
         var_names = self.get_variables()
         inputs = self.get_input()
         results = []
 
         if var_names:
             input_values = [inputs.get(name) for name in var_names]
-            parameters = match_long_repeat(input_values)
             matching_f = list_match_func[self.list_match]
+            parameters = matching_f(input_values)
             desired_levels = [s.depth for s in self.inputs]
-            ops = [self.formulas(), self.separate, var_names, self.list_match, [s.transform for s in self.inputs], self.as_list]
+            ops = [self.formulas(), self.separate, var_names, [s.transform for s in self.inputs], self.as_list]
 
             results = recurse_f_level_control(parameters, ops, formula_func, matching_f, desired_levels)
 
