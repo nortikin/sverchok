@@ -270,7 +270,7 @@
    SvSolidViewerNode
 
 ## Analyzers
-    SvBBoxNodeMk2
+    SvBBoxNodeMk3
     SvComponentAnalyzerNode
     SvDiameterNode
     SvVolumeNode

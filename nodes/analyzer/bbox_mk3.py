@@ -26,15 +26,18 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode
 
 
-class SvBBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
-    '''Bounding box'''
-    bl_idname = 'SvBBoxNodeMk2'
+class SvBBoxNodeMk3(bpy.types.Node, SverchCustomTreeNode):
+    """
+    Triggers: Bbox 2D or 3D
+    Tooltip: Get vertices bounding box (vertices, sizes, center)
+    """
+    bl_idname = 'SvBBoxNodeMk3'
     bl_label = 'Bounding box'
     bl_icon = 'NONE'
     sv_icon = 'SV_BOUNDING_BOX'
     def update_sockets(self, context):
         bools = [self.min_list, self.max_list, self.size_list]
-        dims = int(self.dimensions[0])
+        dims = int(self.box_dimensions[0])
         for i in range(3):
             for j in range(3):
                 out_index = 4 + j + 3*i
@@ -56,7 +59,7 @@ class SvBBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     implentation_modes = [
         ("2D", "2D", "Outputs Rectangle over XY plane", 0),
         ("3D", "3D", "Outputs standard bounding box", 1)]
-    dimensions: EnumProperty(
+    box_dimensions: EnumProperty(
         name='Implementation', items=implentation_modes,
         description='Choose calculation method',
         default="3D", update=update_sockets)
@@ -64,11 +67,11 @@ class SvBBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_buttons(self, context, layout):
-        layout .prop(self, 'dimensions', expand=True)
+        layout .prop(self, 'box_dimensions', expand=True)
         col = layout.column(align=True)
         titles = ["Min", "Max", "Size"]
         prop = ['min_list', 'max_list', 'size_list']
-        dims = int(self.dimensions[0])
+        dims = int(self.box_dimensions[0])
         for i in range(3):
             row = col.row(align=True)
             row.label(text=titles[i])
@@ -90,6 +93,9 @@ class SvBBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                 son('SvStringsSocket', titles[j] + ' ' + 'XYZ'[i])
 
         self.update_sockets(context)
+
+    def migrate_from(self, old_node):
+        self.box_dimensions = old_node.dimensions
 
     def generate_matrix(self, maxmin, dims, to_2d):
         center = [(u+v)*.5 for u, v in maxmin[:dims]]
@@ -135,8 +141,8 @@ class SvBBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             min_vals = [[], [], []]
             max_vals = [[], [], []]
             size_vals = [[], [], []]
-            to_2d = self.dimensions == '2D'
-            dims = int(self.dimensions[0])
+            to_2d = self.box_dimensions == '2D'
+            dims = int(self.box_dimensions[0])
 
             for vec in verts:
                 if has_mat_out or has_vert_out or has_limits:
@@ -183,8 +189,8 @@ class SvBBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvBBoxNodeMk2)
+    bpy.utils.register_class(SvBBoxNodeMk3)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvBBoxNodeMk2)
+    bpy.utils.unregister_class(SvBBoxNodeMk3)
