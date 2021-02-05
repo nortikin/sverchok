@@ -28,8 +28,8 @@ from sverchok.core.socket_data import (
     SvNoDataError, sentinel)
 
 from sverchok.data_structure import (
-    get_other_socket,
-    replace_socket,
+    enum_item_4,
+    get_other_socket, replace_socket,
     SIMPLE_DATA_TYPES,
     flatten_data, graft_data, map_at_level, wrap_data, unwrap_data)
 
@@ -580,6 +580,35 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
         else:
             layout.prop_search(self, 'object_ref_pointer', bpy.data, 'objects', text=self.name)
 
+
+class SvFormulaSocket(NodeSocket, SvSocketCommon):
+    bl_idname = "SvFormulaSocket"
+    bl_label = "Formula Socket"
+
+    color = (0.68, 0.85, 0.90, 1)
+
+    depth: IntProperty(
+        description="Depth exposed to the formula",
+        update=process_from_socket,
+        default=1,
+        min=1)
+
+    def update_depth(self, context):
+        if self.transform == 'Vector' and self.depth < 2:
+            self.depth = 2
+        else:
+            process_from_socket(self, context)
+
+    transform: EnumProperty(
+        description='Transform before exposing to the formula',
+        items=enum_item_4(['As is', 'Vector', 'Array', 'Set', 'String']),
+        update=update_depth)
+    default_conversion_name = ConversionPolicies.LENIENT.conversion_name
+
+    def draw(self, context, layout, node, text):
+        layout.label(text=self.name+ '. ' + SvGetSocketInfo(self))
+        layout.prop(self,'depth',text='Depth')
+        layout.prop(self,'transform',text='')
 
 class SvTextSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvTextSocket"
@@ -1367,8 +1396,8 @@ classes = [
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
     SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket,
     SvSurfaceSocket, SvCurveSocket, SvScalarFieldSocket, SvVectorFieldSocket,
-    SvSolidSocket, SvSvgSocket, SvPulgaForceSocket, SvLoopControlSocket,
-    SvLinkNewNodeInput,
+    SvSolidSocket, SvSvgSocket, SvPulgaForceSocket, SvFormulaSocket,
+    SvLoopControlSocket, SvLinkNewNodeInput,
     SvStringsSocketInterface, SvVerticesSocketInterface,
     SvSocketHelpOp, SvInputLinkMenuOp
 ]

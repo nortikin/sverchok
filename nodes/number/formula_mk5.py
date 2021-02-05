@@ -1,31 +1,95 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
 import ast
-from math import *
-from collections import defaultdict
 
+from mathutils import Vector
+import numpy as np
 import bpy
-from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorProperty, IntProperty
-import json
-import io
+from bpy.props import BoolProperty, StringProperty, EnumProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, zip_long_repeat, throttle_and_update_node
-from sverchok.utils import logging
-from sverchok.utils.modules.eval_formula import get_variables, safe_eval
 
-class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
+from sverchok.data_structure import (updateNode, throttle_and_update_node,
+                                     list_match_func, numpy_list_match_modes,
+                                     enum_item_4)
+
+from sverchok.utils.modules.eval_formula import get_variables, safe_eval
+from sverchok.utils.sv_itertools import recurse_f_level_control
+
+def transform_data(data, transform):
+    if transform == 'As_is':
+        return data
+    if transform == 'Vector':
+        return Vector(data)
+    if transform == 'Array':
+        return np.array(data)
+    if transform == 'Set':
+        return set(data)
+    if transform == 'String':
+        return str(data)
+    return data
+
+def ensure_list(value):
+    if isinstance(value, (int, float, str, list)):
+        return value
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    return list(value)
+
+def formula_func(parameters, constant, matching_f):
+
+    formulas, separate, var_names, transformations, as_list = constant
+
+    object_results = []
+    for values in zip(*matching_f(parameters)):
+        vals = [transform_data(d, tr) for d, tr in zip(values, transformations)]
+        variables = dict(zip(var_names, vals))
+        vector = []
+        for formula in formulas:
+            if formula:
+                value = safe_eval(formula, variables)
+                if as_list:
+                    vector.append(ensure_list(value))
+                else:
+                    vector.append(value)
+        if separate:
+            object_results.append(vector)
+        else:
+            object_results.extend(vector)
+
+
+    return object_results
+
+
+socket_dict = {
+    "Number / Generic": "SvStringsSocket",
+    "Vector": "SvVerticesSocket",
+    "Color":   "SvColorSocket",
+    "Matrix":   "SvMaatrixSocket",
+    "Quaternion": "SvQuaternionSocket",
+    "Object": "SvObjectSocket",
+    "Dictionary": "SvDictionarySocket",
+    "Surface": "SvSurfaceSocket",
+    "Curve": "SvCurveSocket",
+    "Scalar Field": "SvScalarFieldSocket",
+    "Vector Field": "SvVectorFieldSocket",
+    "Solid": "SvSolidSocket",
+    "File Path": "SvFilePathSocket",
+    }
+
+
+class SvFormulaNodeMk5(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Formula
     Tooltip: Calculate by custom formula.
     """
-    bl_idname = 'SvFormulaNodeMk4'
-    bl_label = 'Formula+'
+    bl_idname = 'SvFormulaNodeMk5'
+    bl_label = 'Formula'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_FORMULA'
 
@@ -35,16 +99,16 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
 
     @throttle_and_update_node
     def on_update_dims(self, context):
-        if self.dimensions < 4:
+        if self.output_dimensions < 4:
             self.formula4 = ""
-        if self.dimensions < 3:
+        if self.output_dimensions < 3:
             self.formula3 = ""
-        if self.dimensions < 2:
+        if self.output_dimensions < 2:
             self.formula2 = ""
 
         self.adjust_sockets()
 
-    dimensions : IntProperty(name="Dimensions", default=1, min=1, max=4, update=on_update_dims)
+    output_dimensions: IntProperty(name="Dimensions", default=1, min=1, max=4, update=on_update_dims)
 
     formula1: StringProperty(default="x+y", update=on_update)
     formula2: StringProperty(update=on_update)
@@ -59,7 +123,25 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
     )
 
     use_ast: BoolProperty(name="AST", description="uses the ast.literal_eval module", update=updateNode)
+    as_list: BoolProperty(name="List output", description="Forces a regular list output", update=updateNode)
     ui_message: StringProperty(name="ui message")
+    list_match: EnumProperty(
+        name="List Match",
+        description="Behavior on different list lengths",
+        items=numpy_list_match_modes, default="REPEAT",
+        update=updateNode)
+
+    def update_output_socket(self, context):
+        if self.outputs[0].bl_idname != socket_dict[self.output_type]:
+            self.outputs.remove(self.outputs[0])
+            self.outputs.new(socket_dict[self.output_type], 'Result')
+            updateNode(self, context)
+
+    output_type: EnumProperty(
+        name="Output",
+        description="Behavior on different list lengths",
+        items=enum_item_4(socket_dict.keys()), default="Number_/_Generic",
+        update=update_output_socket)
 
     def formulas(self):
         return [self.formula1, self.formula2, self.formula3, self.formula4]
@@ -73,11 +155,11 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
             r.alert = True
             r.label(text=self.ui_message, icon='INFO')
         layout.prop(self, "formula1", text="")
-        if self.dimensions > 1:
+        if self.output_dimensions > 1:
             layout.prop(self, "formula2", text="")
-        if self.dimensions > 2:
+        if self.output_dimensions > 2:
             layout.prop(self, "formula3", text="")
-        if self.dimensions > 3:
+        if self.output_dimensions > 3:
             layout.prop(self, "formula4", text="")
         row = layout.row()
         if self.inputs:
@@ -87,13 +169,21 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "wrapping", expand=True)
 
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, "dimensions")
+        layout.prop(self, "output_dimensions")
+        layout.prop(self, "list_match")
+        layout.prop(self, "as_list")
+
+        layout.prop(self, "output_type")
+
+
         self.draw_buttons(context, layout)
 
     def sv_init(self, context):
-        self.inputs.new('SvStringsSocket', "x")
+        self.width = 230
+        self.inputs.new('SvFormulaSocket', "x")
 
         self.outputs.new('SvStringsSocket', "Result")
+
 
     def get_variables(self):
         variables = set()
@@ -122,24 +212,24 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
             self.inputs.clear()
             variables = self.get_variables()
             for v in variables:
-                self.inputs.new('SvStringsSocket', v)
+                self.inputs.new('SvFormulaSocket', v)
 
     def hot_reload_sockets(self):
         """
         function hoisted from functorb, with deletions and edits
-        
+
          - store current input socket links by name/origin
          - wipe all inputs
          - recreate new sockets from variables
          - relink former links by name on this socket, but by index from their origin.
-        
+
         """
-        
+
         self.info('handling input wipe and relink')
         nodes = self.id_data.nodes
         node_tree = self.id_data
 
-        # if any current connections... gather them 
+        # if any current connections... gather them
         reconnections = []
         for i in (i for i in self.inputs if i.is_linked):
             for L in i.links:
@@ -148,9 +238,18 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
                 link.from_socket = L.from_socket.index   # index used here because these can come from reroute
                 link.to_socket = L.to_socket.name        # this node will always have unique socket names
                 reconnections.append(link)
+        depths = {}
+        transform = {}
+        for node_input in self.inputs:
+            depths[node_input.name] = node_input.depth
+            transform[node_input.name] = node_input.transform
 
         self.clear_and_repopulate_sockets_from_variables()
 
+        for node_input in self.inputs:
+            if node_input.name in depths:
+                node_input.depth = depths[node_input.name]
+                node_input.transform = transform[node_input.name]
         # restore connections where applicable (by socket name), if no links.. this is a no op.
         for link in reconnections:
             try:
@@ -161,7 +260,7 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
                 str_from = f'nodes[{link.from_node}].outputs[{link.from_socket}]'
                 str_to = f'nodes[{self}].inputs[{link.to_socket}]'
                 self.exception(f'failed: {str_from} -> {str_to}')
-                self.exception(err)        
+                self.exception(err)
 
     def sv_update(self):
         '''
@@ -186,11 +285,11 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
 
     def all_inputs_connected(self):
         if self.inputs:
-            if not all(socket.is_linked for socket in self.inputs):
-                return False
+            return all([socket.is_linked for socket in self.inputs])
         return True
 
-
+    def migrate_from(self, old_node):
+        self.output_dimensions = old_node.dimensions
     def process(self):
 
         if not self.outputs[0].is_linked:
@@ -208,22 +307,12 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
 
         if var_names:
             input_values = [inputs.get(name) for name in var_names]
-            parameters = match_long_repeat(input_values)
+            matching_f = list_match_func[self.list_match]
+            parameters = matching_f(input_values)
+            desired_levels = [s.depth for s in self.inputs]
+            ops = [self.formulas(), self.separate, var_names, [s.transform for s in self.inputs], self.as_list]
 
-            for objects in zip(*parameters):
-                object_results = []
-                for values in zip_long_repeat(*objects):
-                    variables = dict(zip(var_names, values))
-                    vector = []
-                    for formula in self.formulas():
-                        if formula:
-                            value = safe_eval(formula, variables)
-                            vector.append(value)
-                    if self.separate:
-                        object_results.append(vector)
-                    else:
-                        object_results.extend(vector)
-                results.append(object_results)
+            results = recurse_f_level_control(parameters, ops, formula_func, matching_f, desired_levels)
 
         else:
             def joined_formulas(f1, f2, f3, f4):
@@ -252,5 +341,5 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs['Result'].sv_set(results)
 
-classes = [SvFormulaNodeMk4]
+classes = [SvFormulaNodeMk5]
 register, unregister = bpy.utils.register_classes_factory(classes)

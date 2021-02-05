@@ -500,6 +500,7 @@
     SvMixNumbersNode
     SvMixInputsNode
     SvFormulaNodeMk3
+    SvFormulaNodeMk5
     SvFormulaInterpolateNode
     ---
     SvGenFibonacci

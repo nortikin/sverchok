@@ -71,7 +71,7 @@ class TreeStructureTest(SverchokTestCase):
         self.assertTrue('Inset faces.001' in tree.nodes)
         self.assertCountEqual((n.name for n in tree.nodes['Inset faces.001'].next_nodes), ('Mesh viewer', 'Switch.001'))
         self.assertCountEqual((n.name for n in tree.nodes['Profile Parametric Mk3.001'].last_nodes),
-                              ('Formula.001', 'Number Range.004', 'Number Range.003', 'Number Range.002', 'Formula'))
+                              ('Formula.002', 'Number Range.004', 'Number Range.003', 'Number Range.002', 'Formula'))
 
 
 if __name__ == '__main__':
