@@ -270,7 +270,7 @@
    SvSolidViewerNode
 
 ## Analyzers
-    SvBBoxNodeMk2
+    SvBBoxNodeMk3
     SvComponentAnalyzerNode
     SvDiameterNode
     SvVolumeNode
@@ -499,7 +499,6 @@
     SvCurveMapperNode
     SvMixNumbersNode
     SvMixInputsNode
-    SvFormulaNodeMk3
     SvFormulaNodeMk5
     SvFormulaInterpolateNode
     ---
@@ -719,8 +718,7 @@
     SvSelectMeshVerts
     SvSetCustomMeshNormals
     ---
-    SvCombinatoricsNode
-    SvFormulaNodeMk4    
+    SvCombinatoricsNode    
 
 ## Alpha Nodes
     SvBManalyzinNode

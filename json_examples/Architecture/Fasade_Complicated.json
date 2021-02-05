@@ -318,7 +318,7 @@
       "width": 140.0
     },
     "Bounding box": {
-      "bl_idname": "SvBBoxNodeMk2",
+      "bl_idname": "SvBBoxNodeMk3",
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
@@ -337,7 +337,7 @@
       "width": 140.0
     },
     "Bounding box.001": {
-      "bl_idname": "SvBBoxNodeMk2",
+      "bl_idname": "SvBBoxNodeMk3",
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
