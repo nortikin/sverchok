@@ -552,6 +552,16 @@
     SvQuaternionMathNode
     SvRotationDifference
 
+## Color
+    SvColorInputNode
+    SvColorsInNodeMK1
+    SvColorsOutNodeMK1
+    SvColorMixNode
+    SvFormulaColorNode
+    SvColorRampNode
+    ---
+    SvTextureEvaluateNodeMk2
+
 ## Logic
     SvLogicNode
     SvSwitchNodeMK2
@@ -705,14 +715,6 @@
     SvLimitedDissolveMK2
     SvArmaturePropsNode
     SvLatticePropsNode
-    ---
-    SvColorsInNodeMK1
-    SvColorInputNode
-    SvColorsOutNodeMK1
-    SvFormulaColorNode
-    SvTextureEvaluateNodeMk2
-    SvColorRampNode
-    SvColorMixNode
     ---
     SvSculptMaskNode
     SvSelectMeshVerts
