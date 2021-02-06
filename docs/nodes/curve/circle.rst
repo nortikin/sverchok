@@ -39,6 +39,10 @@ This node has the following parameter:
 
   The default value is **Rad**.
 
+* **Output NURBS**. Outputs a NURBS curve.
+
+  The default is False.
+
 Outputs
 -------
 
@@ -56,4 +60,3 @@ Simple use:
 Use together with Extrude node to create a surafce:
 
 .. image:: https://user-images.githubusercontent.com/284644/77347798-344a7300-6d5a-11ea-88c2-e25e12be74b9.png
-
