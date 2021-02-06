@@ -270,7 +270,7 @@ class SvTorusNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         description='Separate UV coords',
         default=False,
         update=updateNode)
-        
+
     list_match: EnumProperty(
         name="List Match",
         description="Behavior on different list lengths, object level",
@@ -330,7 +330,7 @@ class SvTorusNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         if self.mode == 'EXT_INT':
             # convert radii from EXTERIOR/INTERIOR to MAJOR/MINOR
             # (extend radii lists to a matching length before conversion)
-            input_RR, input_rr = match_long_repeat([input_RR, input_rr])
+            input_RR, input_rr = list_match_func[self.list_match]([input_RR, input_rr])
             input_R = list(map(lambda x, y: (x + y) * 0.5, input_RR, input_rr))
             input_r = list(map(lambda x, y: (x - y) * 0.5, input_RR, input_rr))
         else:  # values already given as MAJOR/MINOR radii
