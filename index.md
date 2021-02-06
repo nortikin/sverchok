@@ -26,8 +26,6 @@
     SvQuadraticSplineNode
     svBasicArcNode
     RandomVectorNodeMK3
-    SvScriptNodeLite
-    SvSNFunctorB
     ImageNode
 
 ## Generators Extended
@@ -493,14 +491,11 @@
     RandomNode
     Float2IntNode
     ---
-    SvExecNodeMod
     SvMapRangeNode
     SvEasingNode
     SvCurveMapperNode
     SvMixNumbersNode
     SvMixInputsNode
-    SvFormulaNodeMk5
-    SvFormulaInterpolateNode
     ---
     SvGenFibonacci
     SvGenExponential
@@ -661,6 +656,14 @@
     SvImportSolidNode
     SvExportSolidNode
 
+## Script
+    SvFormulaNodeMk5
+    SvFormulaInterpolateNode
+    SvExecNodeMod
+    SvScriptNodeLite
+    SvSNFunctorB
+    SvTopologySimple
+
 ## Network
     UdpClientNode
     SvFilePathNode
@@ -739,7 +742,6 @@
     SvSeparateMeshNodeMK2
     SvMultiExtrudeAlt
     SvPlanarEdgenetToPolygons
-    SvTopologySimple
     SvSweepModulator
     ---
     SvGetPropNodeMK2
