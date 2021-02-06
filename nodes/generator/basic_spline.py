@@ -24,7 +24,7 @@ from mathutils.geometry import interpolate_bezier as bezlerp
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, list_match_modes, list_match_func
 
 
 def generate_bezier(verts=None, num_verts=20):
@@ -56,6 +56,12 @@ class BasicSplineNode(bpy.types.Node, SverchCustomTreeNode):
     ctrl_2: FloatVectorProperty(size=3, name='ctrl_2', description="ctrl2", update=updateNode)
     knot_2: FloatVectorProperty(size=3, name='knot_2', description="k2", update=updateNode)
 
+    list_match: bpy.props.EnumProperty(
+        name="List Match",
+        description="Behavior on different list lengths, object level",
+        items=list_match_modes, default="REPEAT",
+        update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "num_verts").prop_name = 'num_verts'
 
@@ -71,6 +77,9 @@ class BasicSplineNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         pass
+
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "list_match")
 
     def process(self):
         outputs = self.outputs
@@ -93,43 +102,25 @@ class BasicSplineNode(bpy.types.Node, SverchCustomTreeNode):
         '''
 
         inputs = self.inputs
-        handle_names = ['knot_1', 'ctrl_1', 'ctrl_2', 'knot_2']
 
-        # assume they all match, reduce cycles used for checking.
-        handle_sockets = (inputs[handle_names[i]] for i in range(4))
-        handle_data = []
-        for socket in handle_sockets:
-            v = socket.sv_get(deepcopy=False)[0]
-            handle_data.append(v)
+        params = list_match_func[self.list_match]([sk.sv_get(deepcopy=False)[0] for sk in self.inputs])
 
-        knots_1, ctrls_1, ctrls_2, knots_2 = handle_data
-        if not (len(knots_1) == len(ctrls_1) == len(ctrls_2) == len(knots_2)):
-            raise Exception("Number of items in all knots and control inputs must match exactly. You probably want to use ListMatch node.")
-
-        # get vert_nums, or pad till matching quantity
-        nv = []
-        nv = inputs['num_verts'].sv_get(deepcopy=False)[0]
-
-        if nv and (len(nv) < len(knots_1)):
-            pad_num = len(knots_1) - len(nv)
-            for i in range(pad_num):
-                nv.append(nv[-1])
 
         # iterate over them
         verts_out = []
         edges_out = []
         h_verts_out = []
         h_edges_out = []
-        for idx, handle_set in enumerate(zip(knots_1, ctrls_1, ctrls_2, knots_2)):
+        for div, knot_1, ctrl_1, ctrl_2, knot_2 in zip(*params):
 
-            divisions = nv[idx] if idx < len(nv) else 3
 
-            v, e = generate_bezier(handle_set, divisions)
+
+            v, e = generate_bezier([knot_1, ctrl_1, ctrl_2, knot_2], div)
             verts_out.append(v)
             edges_out.append(e)
 
             # for visual
-            h_verts_out.append(handle_set)
+            h_verts_out.append([knot_1, ctrl_1, ctrl_2, knot_2])
             h_edges_out.append([(0, 1), (2, 3)])
 
         # reaches here if we got usable data.

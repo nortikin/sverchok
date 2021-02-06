@@ -20,10 +20,10 @@ import bpy
 import mathutils
 from mathutils import Vector
 
-from bpy.props import IntProperty, FloatProperty, FloatVectorProperty
+from bpy.props import IntProperty, FloatProperty, FloatVectorProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.data_structure import updateNode, list_match_modes, list_match_func
 from sverchok.utils.geom import interpolate_quadratic_bezier
 
 class SvQuadraticSplineNode(bpy.types.Node, SverchCustomTreeNode):
@@ -62,7 +62,18 @@ class SvQuadraticSplineNode(bpy.types.Node, SverchCustomTreeNode):
             description = "The control point for the curve",
             default = (0, +1, 0),
             update=updateNode)
-
+            
+    list_match_global: EnumProperty(
+        name="List Match Gobal",
+        description="Behavior on different list lengths, multiple objects level",
+        items=list_match_modes, default="REPEAT",
+        update=updateNode)
+    list_match_local: EnumProperty(
+        name="List Match Local",
+        description="Behavior on different list lengths, object level",
+        items=list_match_modes, default="REPEAT",
+        update=updateNode)
+        
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "NumVerts").prop_name = 'num_verts'
 
@@ -74,7 +85,13 @@ class SvQuadraticSplineNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvVerticesSocket', "ControlVerts")
         self.outputs.new('SvStringsSocket', "ControlEdges")
-
+        
+    def draw_buttons_ext(self, context, layout):
+        list_match = layout.box()
+        list_match.label(text='List Match:')
+        list_match.prop(self, "list_match_global", text='Global')
+        list_match.prop(self, "list_match_local", text='Local')
+        
     def process(self):
         if not any(output.is_linked for output in self.outputs):
             return
@@ -89,9 +106,9 @@ class SvQuadraticSplineNode(bpy.types.Node, SverchCustomTreeNode):
         out_control_verts = []
         out_control_edges = []
 
-        parameters = match_long_repeat([num_verts_s, knot1_s, knot2_s, handle_s])
+        parameters = list_match_func[self.list_match_global]([num_verts_s, knot1_s, knot2_s, handle_s])
         for num_verts, knot1, knot2, handle in zip(*parameters):
-            objects = match_long_repeat([num_verts, knot1, knot2, handle])
+            objects = list_match_func[self.list_match_local]([num_verts, knot1, knot2, handle])
             for num_verts, knot1, knot2, handle in zip(*objects):
                 verts = interpolate_quadratic_bezier(knot1, handle, knot2, num_verts)
                 verts = [tuple(vert) for vert in verts]

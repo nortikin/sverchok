@@ -24,7 +24,7 @@ import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty, FloatVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, numpy_list_match_modes, iter_list_match_func
 
 
 Directions = namedtuple('Directions', ['x', 'y', 'z', 'op', 'od'])
@@ -43,7 +43,7 @@ length_items = [(i, i, '') for i in LENGTH]
 
 
 def make_line(numbers=None, steps=None, sizes=None, verts_or=None, verts_dir=None,
-              dir_mode=DIRECTION.x, size_mode=LENGTH.size, center=False):
+              dir_mode=DIRECTION.x, size_mode=LENGTH.size, center=False, list_match_mode="REPEAT"):
     """
     Generate lines
     :param numbers: list of values, number of generated vertices
@@ -57,19 +57,16 @@ def make_line(numbers=None, steps=None, sizes=None, verts_or=None, verts_dir=Non
     :return: np.array of vertices, np.array of edges
     """
     line_number = max(len(numbers), len(sizes), len(steps), len(verts_or), len(verts_dir))
+    list_match_f = iter_list_match_func[list_match_mode]
+    params = list_match_f([numbers, steps, sizes, verts_or, verts_dir])
     vert_number = sum([v_number if v_number > 1 else 2 for _, v_number in
-                             zip(range(line_number), chain(numbers, cycle([numbers[-1]])))])
-    numbers = cycle([None]) if numbers is None else chain(numbers, cycle([numbers[-1]]))
-    steps = cycle([None]) if steps is None else chain(steps, cycle([steps[-1]]))
-    sizes = cycle([None]) if sizes is None else chain(sizes, cycle([sizes[-1]]))
-    verts_or = cycle([None]) if verts_or is None else chain(verts_or, cycle([verts_or[-1]]))
-    verts_dir = cycle([None]) if verts_dir is None else chain(verts_dir, cycle([verts_dir[-1]]))
+                       zip(range(line_number), params[0])])
     verts_lines = np.empty((vert_number, 3))
     edges_lines = []
     num_added_verts = 0
     indexes = iter(range(int(1e+100)))
 
-    for i_line, n, st, size, vor, vdir in zip(range(line_number), numbers, steps, sizes, verts_or, verts_dir):
+    for i_line, n, st, size, vor, vdir in zip(range(line_number), *params):
         vor, vdir = get_corner_points(dir_mode, center, vor, vdir, get_len_line(size_mode, n, size, st))
         line_verts = generate_verts(vor, vdir, n)
         edges_lines.extend([(i, i + 1) for i, _ in zip(indexes, line_verts[:-1])])
@@ -113,7 +110,7 @@ def make_line_multiple_steps(steps, sizes=None, verts_a=None, verts_b=None,
     :param verts_a: list of tuple(float, float, float), origin of a line, only for 'OD' mode
     :param verts_b: list of tuple(float, float, float), direction of a line, only for 'OD' mode
     :param dir_mode: 'X', 'Y', 'Z', 'OP' or 'OD', 'OP' and 'OD' mode for custom origin and direction
-    :param len_mode: step or step size modes, 
+    :param len_mode: step or step size modes,
     :param center: if True center of a line is moved to origin
     :return: numpy array with shape(number of vertices, 3), list of tuple(int, int)
     """
@@ -256,13 +253,23 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
     step: FloatProperty(name='Step', description='Step length', default=1.0, update=updateNode)
     center: BoolProperty(name='Center', description='Center the line', default=False, update=updateNode)
     size: FloatProperty(name='Size', description='Size of line', default=10.0, update=updateNode)
-    split: BoolProperty(name="Split to objects", description="Each object in separate object", default=True, 
+    split: BoolProperty(name="Split to objects", description="Each object in separate object", default=True,
                         update=updateNode)
     as_numpy: BoolProperty(name="Numpy output", description="Format of output data", update=updateNode)
     length_mode: EnumProperty(items=length_items, update=update_sockets)
     v3_dir: FloatVectorProperty(name='Direction', description='Direction', size=3, default=(1, 1, 1), update=updateNode)
     v3_origin: FloatVectorProperty(name='Origin', description='Origin of line', size=3, default=(0, 0, 0),
                                    update=updateNode)
+    list_match_global: EnumProperty(
+        name="List Match Gobal",
+        description="Behavior on different list lengths, multiple objects level",
+        items=numpy_list_match_modes, default="REPEAT",
+        update=updateNode)
+    list_match_local: EnumProperty(
+        name="List Match Local",
+        description="Behavior on different list lengths, object level",
+        items=numpy_list_match_modes, default="REPEAT",
+        update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Num").prop_name = 'num'
@@ -293,10 +300,17 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.prop(self, "length_mode", expand=True)
         layout.prop(self, "center", text="Center to origin")
+        list_match = layout.box()
+        list_match.label(text='List Match:')
+        list_match.prop(self, "list_match_global", text='Global')
+        list_match.prop(self, "list_match_local", text='Local')
         layout.prop(self, 'split')
         layout.prop(self, 'as_numpy')
 
     def rclick_menu(self, context, layout):
+        layout.prop_menu_enum(self, "list_match_global")
+        layout.prop_menu_enum(self, "list_match_local")
+
         layout.prop(self, 'split')
         layout.prop(self, 'as_numpy')
 
@@ -304,19 +318,18 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
         if self.length_mode == LENGTH.step and not self.inputs['Steps'].is_linked:
             return
 
-        number, step, size, ors, dirs = [sock.sv_get(deepcopy=False, default=[None]) for sock in self.inputs]
+        number, step, size, ors, dirs = [sock.sv_get(deepcopy=False, default=[[None]]) for sock in self.inputs]
         num_objects = max([len(item) for item in [number, step, size, ors, dirs]])
-        number = chain(number, cycle([number[-1]]))
-        step = chain(step, cycle([step[-1]]))
-        size = chain(size, cycle([size[-1]]))
-        ors = chain(ors, cycle([ors[-1]]))
-        dirs = chain(dirs, cycle([dirs[-1]]))
+
+        list_match_f = iter_list_match_func[self.list_match_global]
+        params = list_match_f([number, step, size, ors, dirs])
+
         out = []
-        for i, n, st, si, va, d in zip(range(num_objects), number, step, size, ors, dirs):
+        for i, n, st, si, va, d in zip(range(num_objects), *params):
             if self.length_mode in (LENGTH.step, LENGTH.step_size):
-                out.append(make_line_multiple_steps(st, si, va, d, self.direction, self.length_mode, self.center))
+                out.append(make_line_multiple_steps(st, si, va, d, self.direction, self.length_mode, self.center, self.list_match_local))
             else:
-                out.append(make_line(n, st, si, va, d, self.direction, self.length_mode, self.center))
+                out.append(make_line(n, st, si, va, d, self.direction, self.length_mode, self.center, self.list_match_local))
         if self.split:
             temp = [split_lines_to_objects(*data) for data in out]
             out = [v for res in temp for v in zip(*res)]
