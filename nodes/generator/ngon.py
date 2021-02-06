@@ -20,10 +20,10 @@ from math import sin, cos, pi, degrees, radians
 import random
 
 import bpy
-from bpy.props import BoolProperty, IntProperty, FloatProperty
+from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (match_long_repeat, updateNode, rotate_list)
+from sverchok.data_structure import (updateNode, rotate_list, list_match_modes, list_match_func)
 
 def make_verts(nsides, radius, rand_r, rand_phi, rand_seed, divs):
     if rand_r or rand_phi:
@@ -106,6 +106,11 @@ class SvNGonNode(bpy.types.Node, SverchCustomTreeNode):
     shift_: IntProperty(name='Shift', description='Edges bind shift (star factor)',
                         default=0, min=0,
                         update=updateNode)
+    list_match: EnumProperty(
+        name="List Match",
+        description="Behavior on different list lengths, object level",
+        items=list_match_modes, default="REPEAT",
+        update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Radius").prop_name = 'rad_'
@@ -119,6 +124,9 @@ class SvNGonNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "Polygons")
+
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "list_match")
 
     def process(self):
         # inputs
@@ -139,7 +147,7 @@ class SvNGonNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             divisions = [1]
 
-        parameters = match_long_repeat([radius, nsides, seed, rand_r, rand_phi, shift, divisions])
+        parameters = list_match_func[self.list_match]([radius, nsides, seed, rand_r, rand_phi, shift, divisions])
 
         # outputs
         if self.outputs['Vertices'].is_linked:

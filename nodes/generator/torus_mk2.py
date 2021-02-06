@@ -22,7 +22,7 @@ from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 from math import sin, cos, pi
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.data_structure import updateNode, list_match_modes, list_match_func
 from sverchok.utils.sv_transform_helper import AngleUnits, SvAngleHelper
 
 def sign(x): return 1 if x >= 0 else -1
@@ -270,6 +270,12 @@ class SvTorusNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         description='Separate UV coords',
         default=False,
         update=updateNode)
+        
+    list_match: EnumProperty(
+        name="List Match",
+        description="Behavior on different list lengths, object level",
+        items=list_match_modes, default="REPEAT",
+        update=updateNode)
 
     def sv_init(self, context):
         self.width = 175
@@ -294,6 +300,7 @@ class SvTorusNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
 
     def draw_buttons_ext(self, context, layout):
         self.draw_angle_units_buttons(context, layout)
+        layout.prop(self, "list_match")
 
     def process(self):
         # return if no outputs are connected
@@ -330,7 +337,7 @@ class SvTorusNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
             input_R = input_RR
             input_r = input_rr
 
-        parameters = match_long_repeat([input_R, input_r,
+        parameters = list_match_func[self.list_match]([input_R, input_r,
                                         input_n1, input_n2,
                                         input_rP, input_sP,
                                         input_rE, input_sE,

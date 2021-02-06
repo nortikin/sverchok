@@ -9,10 +9,10 @@
 from math import sin, cos, radians
 
 import bpy
-from bpy.props import IntProperty, FloatProperty, BoolProperty
+from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.data_structure import updateNode, list_match_modes, list_match_func
 
 
 def sphere_verts(U, V, Radius, Separate):
@@ -91,6 +91,11 @@ class SphereNode(bpy.types.Node, SverchCustomTreeNode):
     Separate: BoolProperty(name='Separate', description='Separate UV coords',
                             default=False,
                             update=updateNode)
+    list_match: EnumProperty(
+        name="List Match",
+        description="Behavior on different list lengths, object level",
+        items=list_match_modes, default="REPEAT",
+        update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Radius").prop_name = 'rad_'
@@ -103,6 +108,10 @@ class SphereNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "Separate", text="Separate")
+        
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "Separate", text="Separate")
+        layout.prop(self, "list_match")
 
     def process(self):
         # inputs
@@ -113,7 +122,7 @@ class SphereNode(bpy.types.Node, SverchCustomTreeNode):
         U = [max(int(u), 3) for u in self.inputs['U'].sv_get()[0]]
         V = [max(int(v), 3) for v in self.inputs['V'].sv_get()[0]]
 
-        params = match_long_repeat([U, V, Radius])
+        params = list_match_func[self.list_match]([U, V, Radius])
 
         # outputs
         if self.outputs['Vertices'].is_linked:

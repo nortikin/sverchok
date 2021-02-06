@@ -19,11 +19,11 @@
 from math import pi, sqrt
 import bpy
 import bmesh
-from bpy.props import IntProperty, FloatProperty
+from bpy.props import IntProperty, FloatProperty, EnumProperty
 from mathutils import Matrix, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.data_structure import updateNode, list_match_modes, list_match_func
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.math import from_cylindrical
 
@@ -113,7 +113,13 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode):
         name = "Radius",
         default=1.0, min=0.0,
         update=updateNode)
-
+        
+    list_match: EnumProperty(
+        name="List Match",
+        description="Behavior on different list lengths, object level",
+        items=list_match_modes, default="REPEAT",
+        update=updateNode)
+        
     def sv_init(self, context):
         self['subdivisions'] = 2
 
@@ -126,6 +132,7 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "subdivisions_max")
+        layout.prop(self, "list_match")
 
     def process(self):
         # return if no outputs are connected
@@ -139,7 +146,7 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode):
         out_edges = []
         out_faces = []
 
-        objects = match_long_repeat([subdivisions_s, radius_s])
+        objects = list_match_func[self.list_match]([subdivisions_s, radius_s])
 
         for subdivisions, radius in zip(*objects):
             if subdivisions == 0:
