@@ -46,6 +46,12 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         name="Last Angle Units", description="Angle units (Radians/Degrees/Unities)",
         default=AngleUnits.RADIANS, items=AngleUnits.get_blender_enum())
 
+    make_nurbs: BoolProperty(
+        name="NURBS output",
+        description="Generate a NURBS curve",
+        default=False,
+        update=updateNode)
+
     def update_angles(self, context, au):
         ''' Update all the angles to preserve their values in the new units '''
         self.t_min = self.t_min * au
@@ -53,6 +59,10 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
 
     def draw_buttons(self, context, layout):
         self.draw_angle_units_buttons(context, layout)
+        
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'make_nurbs')
 
     def sv_init(self, context):
         self.inputs.new('SvMatrixSocket', "Center")
@@ -81,7 +91,7 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
                 t_min, t_max = t_min*au, t_max*au
                 curve = SvCircle(matrix=center, radius=radius)
                 curve.u_bounds = (t_min, t_max)
-                curves_out.append(curve)
+                curves_out.append(curve.to_nurbs() if self.make_nurbs else curve)
 
         self.outputs['Curve'].sv_set(curves_out)
 
@@ -90,4 +100,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvCircleNode)
-
