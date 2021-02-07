@@ -35,10 +35,7 @@
     HilbertNode
     Hilbert3dNode
     HilbertImageNode
-    SvProfileNodeMK3
-    SvMeshEvalNode
     SvReceiveFromSorcarNode
-    SvGenerativeArtNode
     SvImageComponentsNode
     SvWFCTextureNode
     SvTorusKnotNodeMK2
@@ -662,6 +659,9 @@
     SvExecNodeMod
     SvScriptNodeLite
     SvSNFunctorB
+    SvProfileNodeMK3
+    SvMeshEvalNode
+    SvGenerativeArtNode
     SvTopologySimple
 
 ## Network
