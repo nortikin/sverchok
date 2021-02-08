@@ -245,6 +245,8 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
                     # layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw + IDX").fn="vdmk2 + idxv"
             if len(node.outputs):
                 layout.operator("node.sv_deligate_operator", text="Connect stethoscope").fn = "stethoscope"
+                layout.menu('SV_MT_AllSocketsOptionsMenu', text='Output post-process')
+
 
             layout.separator()
 
