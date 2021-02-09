@@ -310,6 +310,10 @@ def np_vectors_angle(v1, v2):
     dot = np.dot(v1, v2)
     return np.arccos(dot)
 
+def np_dot(u, v, axis=1):
+    'conveniece function to calculate dot vector between vector arrays'
+    return np.sum(u * v, axis=axis)
+
 def np_normalized_vectors(vecs):
     '''Returns new array with normalized vectors'''
     result = np.zeros(vecs.shape)
