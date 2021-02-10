@@ -327,7 +327,7 @@ def register():
         bpy.utils.register_class(SvReadFCStdSketchNode)
         bpy.utils.register_class(SvShowFcstdSketchNamesOp)
 
-def unregister()
+def unregister():
     if FreeCAD is not None:
         bpy.utils.unregister_class(SvReadFCStdSketchNode)
         bpy.utils.register_class(SvShowFcstdSketchNamesOp)
