@@ -658,7 +658,6 @@
     SvFormulaInterpolateNode
     SvExecNodeMod
     SvScriptNodeLite
-    SvSNFunctorB
     SvProfileNodeMK3
     SvMeshEvalNode
     SvGenerativeArtNode
@@ -734,6 +733,7 @@
     ---
     SvCSGBooleanNodeMK2
     SvNumpyArrayNode
+    SvSNFunctorB
     SvParticlesMK2Node
     SvJoinTrianglesNode
     SvListSliceLiteNode
