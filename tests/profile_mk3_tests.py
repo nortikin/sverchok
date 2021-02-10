@@ -7,7 +7,7 @@ from sverchok.utils.testing import *
 from sverchok.utils.parsec import parse
 from sverchok.utils.modules.profile_mk3.interpreter import *
 from sverchok.utils.modules.profile_mk3.parser import *
-from sverchok.nodes.generators_extended.profile_mk3 import profile_template_path
+from sverchok.nodes.script.profile_mk3 import profile_template_path
 
 class SimpleTests(SverchokTestCase):
     def test_identifier(self):
@@ -118,4 +118,3 @@ class ExamplesParseTests(SverchokTestCase):
                     profile_text = f.read()
                     with self.assert_logs_no_errors():
                         parse_profile(profile_text)
-

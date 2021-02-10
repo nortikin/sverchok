@@ -9,8 +9,6 @@ Number
    exponential
    fibonacci
    float_to_int
-   formula_mk5
-   formula_interpolate
    list_input
    mix_numbers
    mix_inputs
