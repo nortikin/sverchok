@@ -22,8 +22,9 @@ from mathutils import Matrix, Vector, Euler, Quaternion
 import bpy
 from bpy.props import EnumProperty, FloatProperty, FloatVectorProperty, BoolProperty, StringProperty
 import numpy as np
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, numpy_list_match_func
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (updateNode, list_match_func, numpy_list_match_modes,
+                                     numpy_list_match_func, throttle_and_update_node)
 from sverchok.utils.sv_itertools import recurse_f_level_control
 from sverchok.utils.modules.matrix_utils import matrix_apply_np
 
@@ -211,7 +212,7 @@ class SvRotationNodeMk3(bpy.types.Node, SverchCustomTreeNode):
 
         self.actual_mode = mode
 
-    @throttled
+    @throttle_and_update_node
     def mode_change(self, context):
         self.update_sockets()
 

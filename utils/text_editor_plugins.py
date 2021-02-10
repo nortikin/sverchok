@@ -7,8 +7,7 @@
 
 import re
 import bpy
-from sverchok.utils.logging import debug, info, error
-
+from sverchok.utils.logging import getLogger, inject_logger
 
 def has_selection(self, text):
     return not (text.select_end_line == text.current_line and
@@ -117,7 +116,7 @@ def add_keymap():
     kc = wm.keyconfigs.addon
 
     if not kc:
-        debug('no keyconfig path found. that\'s ok')
+        logger.debug('no keyconfig path found. that\'s ok')
         return
 
     km = kc.keymaps.new(name='Text', space_type='TEXT_EDITOR')
@@ -130,7 +129,7 @@ def add_keymap():
             new_shortcut = keymaps.new(ident_str, 'RET', 'PRESS', ctrl=1, head=0)
             addon_keymaps.append((km, new_shortcut))
 
-        debug('Sverchok added keyboard items to Text Editor.')
+        logger.debug('Sverchok added keyboard items to Text Editor.')
 
 
 def remove_keymap():
@@ -141,10 +140,12 @@ def remove_keymap():
 
 
 def register():
+    global logger
     bpy.utils.register_class(SvNodeRefreshFromTextEditor)
+    logger = getLogger("text_editor_plugins")
     add_keymap()
-
 
 def unregister():
     remove_keymap()
     bpy.utils.unregister_class(SvNodeRefreshFromTextEditor)
+

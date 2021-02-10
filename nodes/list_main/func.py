@@ -9,7 +9,7 @@ import bpy
 from bpy.props import EnumProperty, IntProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, SIMPLE_DATA_TYPES
 import numpy as np
 
 def avr(data):
@@ -42,18 +42,31 @@ def numpy_min(data):
         return data[0]
     return np.min(data)
 
+def accumulate(data):
+    x = data[0]
+    result = [x]
+    for d in data[1:]:
+        x = x + d
+        result.append(x)
+    return result
 
 func_dict = {
     "MIN": min,
     "MAX": max,
     "AVR": avr,
-    "SUM": sum
+    "SUM": sum,
+    "ACC": accumulate,
+    "OR": any,
+    "AND": all
 }
 numpy_func_dict = {
     "MIN": numpy_min,
     "MAX": numpy_max,
     "AVR": numpy_average,
-    "SUM": lambda x: np.sum(x, axis=0)
+    "SUM": lambda x: np.sum(x, axis=0),
+    "ACC": lambda x: np.cumsum(x, axis=0),
+    "OR": lambda x: np.any(x, axis=0),
+    "AND": lambda x: np.all(x, axis=0)
 }
 class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
     '''
@@ -69,8 +82,10 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
         ("MIN",         "Minimum",        "", 1),
         ("MAX",         "Maximum",        "", 2),
         ("AVR",         "Average",        "", 3),
-        ("SUM",         "Sum",            "", 4)
-        #("ACC",         "Accumulate",     "", 5),
+        ("SUM",         "Sum",            "", 4),
+        ("ACC",         "Cumulative Sum", "", 5),
+        ("OR",          "Logical OR",     "", 6),
+        ("AND",         "Logical AND",    "", 7)
     ]
 
     func_: EnumProperty(

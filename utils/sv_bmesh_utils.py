@@ -27,8 +27,8 @@ import bmesh
 from bmesh.types import BMVert, BMEdge, BMFace
 import mathutils
 
+from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.logging import debug
-
 
 @contextmanager
 def empty_bmesh(use_operators=True):
@@ -112,9 +112,12 @@ def bmesh_from_pydata(verts=None, edges=[], faces=[], markup_face_data=False, ma
 
 
 def add_mesh_to_bmesh(bm, verts, edges=None, faces=None, sv_index_name=None, update_indexes=True, update_normals=True):
-    bm_verts = [bm.verts.new(co) for co in verts]
-    [bm.edges.new((bm_verts[i1], bm_verts[i2])) for i1, i2 in edges or []]
-    [bm.faces.new([bm_verts[i] for i in face]) for face in faces or []]
+    new_vert = bm.verts.new
+    new_edge = bm.edges.new
+    new_face = bm.faces.new
+    bm_verts = [new_vert(co) for co in verts]
+    [new_edge((bm_verts[i1], bm_verts[i2])) for i1, i2 in edges or []]
+    [new_face([bm_verts[i] for i in face]) for face in faces or []]
 
     if update_normals:
         bm.normal_update()
@@ -355,7 +358,7 @@ def bmesh_join(list_of_bmeshes, normal_update=False):
 
     return bm
 
-def remove_doubles(vertices, edges, faces, d, face_data=None, vert_data=None):
+def remove_doubles(vertices, edges, faces, d, face_data=None, vert_data=None, edge_data=None):
     """
     This is a wrapper for bmesh.ops.remove_doubles.
 
@@ -365,41 +368,54 @@ def remove_doubles(vertices, edges, faces, d, face_data=None, vert_data=None):
     vert_data: arbitrary data per mesh vertex.
 
     output:
-        if face_data or vert_data was specified, this outputs 4-tuple:
+        if face_data, vert_data or edge_data was specified, this outputs 4-tuple:
             * vertices
             * edges
             * faces
             * data: a dictionary with following keys:
                 * 'vert_init_index': indexes of the output vertices in the original mesh
+                * 'edge_init_index': indexes of the output edges in the original mesh
                 * 'face_init_index': indexes of the output faces in the original mesh
-                * 'faces': correctly reordered face_data (if present)
                 * 'verts': correclty reordered vert_data (if present)
+                * 'edges': correctly reordered edge_data (if present)
+                * 'faces': correctly reordered face_data (if present)
     """
-    has_face_data = bool(face_data)
     has_vert_data = bool(vert_data)
-    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True, markup_face_data = True, markup_vert_data = True)
+    has_edge_data = bool(edge_data)
+    has_face_data = bool(face_data)
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True,
+                           markup_face_data=has_face_data,
+                           markup_edge_data=has_edge_data,
+                           markup_vert_data=has_vert_data)
     bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=d)
     bm.verts.index_update()
     bm.edges.index_update()
     bm.faces.index_update()
     verts, edges, faces = pydata_from_bmesh(bm)
-    if has_face_data or has_vert_data:
-        data = dict()
-        vert_layer = bm.verts.layers.int.get("initial_index")
-        face_layer = bm.faces.layers.int.get("initial_index")
-        if vert_layer:
-            data['vert_init_index'] = [vert[vert_layer] for vert in bm.verts]
-        if face_layer:
-            data['face_init_index'] = [face[face_layer] for face in bm.faces]
-        if has_face_data:
-            data['faces'] = face_data_from_bmesh_faces(bm, face_data)
-        if has_vert_data:
-            data['verts'] = vert_data_from_bmesh_verts(bm, vert_data)
-        bm.free()
-        return verts, edges, faces, data
-    else:
+    if not (has_face_data or has_vert_data or has_edge_data):
         bm.free()
         return verts, edges, faces
+
+    data = dict()
+    vert_layer = bm.verts.layers.int.get("initial_index")
+    edge_layer = bm.edges.layers.int.get("initial_index")
+    face_layer = bm.faces.layers.int.get("initial_index")
+    if vert_layer:
+        data['vert_init_index'] = [vert[vert_layer] for vert in bm.verts]
+    if edge_layer:
+        data['edge_init_index'] = [edge[edge_layer] for edge in bm.edges]
+    if face_layer:
+        data['face_init_index'] = [face[face_layer] for face in bm.faces]
+    if has_vert_data:
+        data['verts'] = vert_data_from_bmesh_verts(bm, vert_data)
+    if has_edge_data:
+        data['edges'] = edge_data_from_bmesh_edges(bm, vert_data)
+    if has_face_data:
+        data['faces'] = face_data_from_bmesh_faces(bm, face_data)
+    bm.free()
+    return verts, edges, faces, data
+
+
 
 def dual_mesh(bm, recalc_normals=True):
     # Make vertices of dual mesh by finding
@@ -443,17 +459,19 @@ def dual_mesh(bm, recalc_normals=True):
 
 def diamond_mesh(bm):
     new_bm = bmesh.new()
+    new_bm_add_vert = new_bm.verts.new
+    new_bm_add_face = new_bm.faces.new
     copied_verts = dict()
     for vert in bm.verts:
         co = vert.co
-        copied_verts[vert.index] = new_bm.verts.new(co)
+        copied_verts[vert.index] = new_bm_add_vert(co)
 
     # Make vertices of dual mesh by finding
     # centers of original mesh faces.
     center_verts = dict()
     for face in bm.faces:
         co = face.calc_center_median()
-        center_verts[face.index] = new_bm.verts.new(co)
+        center_verts[face.index] = new_bm_add_vert(co)
 
     for edge in bm.edges:
         edge_faces = edge.link_faces
@@ -470,7 +488,7 @@ def diamond_mesh(bm):
             old_normal = face.normal
             if new_normal.dot(old_normal) < 0:
                 face_verts = list(reversed(face_verts))
-            new_bm.faces.new(face_verts)
+            new_bm_add_face(face_verts)
         else: # n_faces == 2
             face1, face2 = edge_faces
             ev1, ev2 = edge.verts
@@ -479,7 +497,7 @@ def diamond_mesh(bm):
             old_normal = face1.normal + face2.normal
             if new_normal.dot(old_normal) < 0:
                 face_verts = list(reversed(face_verts))
-            new_bm.faces.new(face_verts)
+            new_bm_add_face(face_verts)
     new_bm.verts.index_update()
     new_bm.edges.index_update()
     new_bm.faces.index_update()
@@ -495,17 +513,19 @@ def truncate_vertices(bm):
         return math.atan2(dy, dx)
 
     new_bm = bmesh.new()
+    new_bm_add_vert = new_bm.verts.new
+    new_bm_add_face = new_bm.faces.new
     edge_centers = dict()
     for edge in bm.edges:
         center_co = (edge.verts[0].co + edge.verts[1].co) / 2.0
-        edge_centers[edge.index] = new_bm.verts.new(center_co)
+        edge_centers[edge.index] = new_bm_add_vert(center_co)
     for face in bm.faces:
         new_face = [edge_centers[edge.index] for edge in face.edges]
         old_normal = face.normal
         new_normal = mathutils.geometry.normal(*[vert.co for vert in new_face])
         if new_normal.dot(old_normal) < 0:
             new_face = list(reversed(new_face))
-        new_bm.faces.new(new_face)
+        new_bm_add_face(new_face)
     for vertex in bm.verts:
         new_face = [edge_centers[edge.index] for edge in vertex.link_edges]
         if len(new_face) > 2:
@@ -514,7 +534,7 @@ def truncate_vertices(bm):
             co_orth = old_normal.cross(orth)
             new_face = sorted(new_face, key = lambda edge_center : calc_angle(vertex.co, orth, co_orth, edge_center))
             new_face = list(new_face)
-            new_bm.faces.new(new_face)
+            new_bm_add_face(new_face)
 
     new_bm.verts.index_update()
     new_bm.edges.index_update()
@@ -772,3 +792,49 @@ def wave_markup_verts(bm, init_vert_mask, neighbour_by_edge = True, find_shortes
         wave_front = new_wave_front
 
     return [vert[index] for vert in bm.verts]
+
+def bmesh_bisect(bm, point, normal, fill):
+    bm.normal_update()
+    geom_in = bm.verts[:] + bm.edges[:] + bm.faces[:]
+    res = bmesh.ops.bisect_plane(
+        bm, geom=geom_in, dist=0.00001,
+        plane_co=point, plane_no=normal, use_snap_center=False,
+        clear_outer=True, clear_inner=False)
+    if fill:
+        fres = bmesh.ops.edgenet_prepare(
+            bm, edges=[e for e in res['geom_cut'] if isinstance(e, bmesh.types.BMEdge)]
+        )
+        bmesh.ops.edgeloop_fill(bm, edges=fres['edges'])
+    bm.verts.index_update()
+    bm.edges.index_update()
+    bm.faces.index_update()
+    return bm
+
+def bmesh_clip(bm, bounds, fill):
+    x_min, x_max, y_min, y_max, z_min, z_max = bounds
+
+    bmesh_bisect(bm, (x_min, 0, 0), (-1, 0, 0), fill)
+    bmesh_bisect(bm, (x_max, 0, 0), (1, 0, 0), fill)
+    bmesh_bisect(bm, (0, y_min, 0), (0, -1, 0), fill)
+    bmesh_bisect(bm, (0, y_max, 0), (0, 1, 0), fill)
+    bmesh_bisect(bm, (0, 0, z_min), (0, 0, -1), fill)
+    bmesh_bisect(bm, (0, 0, z_max), (0, 0, 1), fill)
+
+    return bm
+
+def recalc_normals(verts, edges, faces, loop=False):
+    if loop:
+        verts_out, edges_out, faces_out = [], [], []
+        for vs, es, fs in zip_long_repeat(verts, edges, faces):
+            vs, es, fs = recalc_normals(vs, es, fs, loop=False)
+            verts_out.append(vs)
+            edges_out.append(es)
+            faces_out.append(fs)
+        return verts_out, edges_out, faces_out
+    else:
+        bm = bmesh_from_pydata(verts, edges, faces)
+        bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+        verts, edges, faces = pydata_from_bmesh(bm)
+        bm.free()
+        return verts, edges, faces
+

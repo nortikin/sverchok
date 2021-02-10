@@ -21,7 +21,7 @@ from bpy.props import IntProperty
 import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, repeat_last, dataCorrect
+from sverchok.data_structure import updateNode, repeat_last, dataCorrect, zip_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 
@@ -65,14 +65,14 @@ class SvFillHolesNode(bpy.types.Node, SverchCustomTreeNode):
         if not (self.inputs['vertices'].is_linked and self.inputs['edges'].is_linked):
             return
 
-        verts = dataCorrect(self.inputs['vertices'].sv_get())
-        edges = dataCorrect(self.inputs['edges'].sv_get())
-        sides = repeat_last(self.inputs['Sides'].sv_get()[0])
+        verts = dataCorrect(self.inputs['vertices'].sv_get(deepcopy=False))
+        edges = dataCorrect(self.inputs['edges'].sv_get(deepcopy=False))
+        sides = self.inputs['Sides'].sv_get(deepcopy=False)[0]
         verts_out = []
         edges_out = []
         polys_out = []
 
-        for v, e, s in zip(verts, edges, sides):
+        for v, e, s in zip_long_repeat(verts, edges, sides):
             res = fill_holes(v, e, int(s))
             if not res:
                 return

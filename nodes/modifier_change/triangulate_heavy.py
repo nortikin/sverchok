@@ -22,7 +22,7 @@ import mathutils
 from mathutils.geometry import tessellate_polygon as tessellate
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 
@@ -59,8 +59,8 @@ class SvHeavyTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
         if not (any(outputs[name].is_linked for name in named)):
             return
 
-        vertices_s = inputs['Vertices'].sv_get(default=[[]])
-        faces_s = inputs['Polygons'].sv_get(default=[[]])
+        vertices_s = inputs['Vertices'].sv_get(default=[[]], deepcopy=False)
+        faces_s = inputs['Polygons'].sv_get(default=[[]], deepcopy=False)
 
         result_vertices = []
         result_edges = []

@@ -18,63 +18,31 @@
 from copy import deepcopy
 from enum import Enum
 
-from sverchok.data_structure import get_other_socket, get_data_nesting_level
+from sverchok.data_structure import get_data_nesting_level, is_ultimately
 from sverchok.utils.field.vector import SvVectorField, SvMatrixVectorField, SvConstantVectorField
 from sverchok.utils.field.scalar import SvScalarField, SvConstantScalarField
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface import SvSurface
+from sverchok.utils.solid_conversion import to_solid_recursive
 
 from mathutils import Matrix, Quaternion
 from numpy import ndarray
 
-# conversion tests, to be used in sv_get!
+SOCKET_TYPES = {
+    'v': 'SvVerticesSocket',
+    's': 'SvStringsSocket',
+    'm': 'SvMatrixSocket',
+    'q': 'SvQuaternionSocket',
+    'c': 'SvColorSocket',
+    'vf': "SvVectorFieldSocket",
+    'sf': 'SvScalarFieldSocket'
+    }
 
-def cross_test_socket(self, A, B):
+def test_socket_type(self, other, A, B):
     """ A is origin type, B is destination type """
-    other = get_other_socket(self)
-    get_type = {'v': 'SvVerticesSocket', 'm': 'SvMatrixSocket', 'q': "SvQuaternionSocket"}
-    return other.bl_idname == get_type[A] and self.bl_idname == get_type[B]
-
-
-def is_vector_to_matrix(self):
-    return cross_test_socket(self, 'v', 'm')
-
-
-def is_matrix_to_vector(self):
-    return cross_test_socket(self, 'm', 'v')
-
-
-def is_matrix_to_quaternion(self):
-    return cross_test_socket(self, 'm', 'q')
-
-
-def is_quaternion_to_matrix(self):
-    return cross_test_socket(self, 'q', 'm')
-
-def is_matrix_to_vfield(socket):
-    other = get_other_socket(socket)
-    return other.bl_idname == 'SvMatrixSocket' and socket.bl_idname == 'SvVectorFieldSocket'
-
-def is_vertex_to_vfield(socket):
-    other = get_other_socket(socket)
-    return other.bl_idname == 'SvVerticesSocket' and socket.bl_idname == 'SvVectorFieldSocket'
-
-def is_string_to_sfield(socket):
-    other = get_other_socket(socket)
-    return other.bl_idname == 'SvStringsSocket' and socket.bl_idname == 'SvScalarFieldSocket'
-
-def is_ultimately(data, data_type):
-    if isinstance(data, (list, tuple)):
-        return is_ultimately(data[0], data_type)
-    return isinstance(data, data_type)
-
-
-def is_string_to_vector(socket):
-    other = get_other_socket(socket)
-    return other.bl_idname == 'SvStringsSocket' and socket.bl_idname == 'SvVerticesSocket'
+    return other.bl_idname == SOCKET_TYPES[A] and self.bl_idname == SOCKET_TYPES[B]
 
 # ---
-
 
 def get_matrices_from_locs(data):
     location_matrices = []
@@ -151,10 +119,10 @@ def matrices_to_vfield(data):
     if isinstance(data, Matrix):
         data = deepcopy(data)
         return SvMatrixVectorField(data)
-    elif isinstance(data, (list, tuple)):
+    if isinstance(data, (list, tuple)):
         return [matrices_to_vfield(item) for item in data]
-    else:
-        raise TypeError("Unexpected data type from Matrix socket: %s" % type(data))
+
+    raise TypeError("Unexpected data type from Matrix socket: %s" % type(data))
 
 def vertices_to_vfield(data):
     if isinstance(data, (tuple, list)) and len(data) == 3 and isinstance(data[0], (float, int)):
@@ -173,28 +141,70 @@ def numbers_to_sfield(data):
     else:
         raise TypeError("Unexpected data type from String socket: %s" % type(data))
 
+def vectors_to_matrices(socket, source_data):
+    # this means we're going to get a flat list of the incoming
+    # locations and convert those into matrices proper.
+    out = get_matrices_from_locs(source_data)
+    socket.num_matrices = len(out)
+    return out
+
+def matrices_to_vectors(socket, source_data):
+    return get_locs_from_matrices(source_data)
+
+def quaternions_to_matrices(socket, source_data):
+    out = get_matrices_from_quaternions(source_data)
+    socket.num_matrices = len(out)
+    return out
+
+def matrices_to_quaternions(socket, source_data):
+    return get_quaternions_from_matrices(source_data)
+
+def string_to_vector(socket, source_data):
+    # it can be so that socket is string but data their are already vectors, performace-wise we check only first item
+    if isinstance(source_data[0][0], (float, int)):
+        return [[(v, v, v) for v in obj] for obj in source_data]
+    return source_data
+
+
+def string_to_color(socket, source_data):
+    # it can be so that socket is string but data their are already colors, performace-wise we check only first item
+    if isinstance(source_data[0][0], (float, int)):
+        return [[(v, v, v, 1) for v in obj] for obj in source_data]
+    if len(source_data[0][0]) == 3:
+        return vector_to_color(socket, source_data)
+    return source_data
+
+def vector_to_color(socket, source_data):
+
+    return [[(v[0], v[1], v[2], 1) for v in obj] for obj in source_data]
+
 class ImplicitConversionProhibited(Exception):
-    def __init__(self, socket):
+    def __init__(self, socket, msg=None):
         super().__init__()
         self.socket = socket
         self.node = socket.node
         self.from_socket_type = socket.other.bl_idname
         self.to_socket_type = socket.bl_idname
-        self.message = "Implicit conversion from socket type {} to socket type {} is not supported for socket {} of node {}. Please use explicit conversion nodes.".format(self.from_socket_type, self.to_socket_type, socket.name, socket.node.name)
+        if msg is None:
+            self.message = "Implicit conversion from socket type {} to socket type {} is not supported for socket {} of node {}. Please use explicit conversion nodes.".format(self.from_socket_type, self.to_socket_type, socket.name, socket.node.name)
+        else:
+            self.message = msg
 
     def __str__(self):
         return self.message
 
-class NoImplicitConversionPolicy(object):
+
+class NoImplicitConversionPolicy():
     """
     Base (empty) implicit conversion policy.
     This prohibits any implicit conversions.
     """
     @classmethod
-    def convert(cls, socket, source_data):
+    def convert(cls, socket, other, source_data):
         raise ImplicitConversionProhibited(socket)
 
-class LenientImplicitConversionPolicy(object):
+
+class LenientImplicitConversionPolicy():
     """
     Lenient implicit conversion policy.
     Does not actually convert anything, but passes any
@@ -204,32 +214,35 @@ class LenientImplicitConversionPolicy(object):
     nodes).
     """
     @classmethod
-    def convert(cls, socket, source_data):
+    def convert(cls, socket, other, source_data):
         return source_data
+
 
 class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
     """
     Default implicit conversion policy.
     """
+    tests = [
+        ['v', 'm', vectors_to_matrices],
+        ['m', 'v', matrices_to_vectors],
+        ['q', 'm', quaternions_to_matrices],
+        ['m', 'q', matrices_to_quaternions],
+        ['s', 'v', string_to_vector],
+        ['s', 'c', string_to_color],
+        ['v', 'c', vector_to_color]]
+
     @classmethod
-    def convert(cls, socket, source_data):
-        # let policy to decide if deep copy of data is needed
-        if is_vector_to_matrix(socket):
-            return cls.vectors_to_matrices(socket, source_data)
-        elif is_matrix_to_vector(socket):
-            return cls.matrices_to_vectors(socket, source_data)
-        elif is_quaternion_to_matrix(socket):
-            return cls.quaternions_to_matrices(socket, source_data)
-        elif is_matrix_to_quaternion(socket):
-            return cls.matrices_to_quaternions(socket, source_data)
-        elif is_string_to_vector(socket):
-            return cls.string_to_vector(socket, source_data)
-        elif socket.bl_idname in cls.get_lenient_socket_types():
+    def convert(cls, socket, other, source_data):
+
+        for t in cls.tests:
+            if test_socket_type(socket, other, t[0], t[1]):
+                return t[2](socket, source_data)
+        if socket.bl_idname in cls.get_lenient_socket_types():
             return source_data
-        elif cls.data_type_check(socket, source_data):
+        if cls.data_type_check(socket, other, source_data):
             return source_data
-        else:
-            super().convert(socket, source_data)
+
+        return super().convert(socket, other, source_data)
 
     @classmethod
     def get_lenient_socket_types(cls):
@@ -251,64 +264,48 @@ class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
         return ['SvStringsSocket']
 
     @classmethod
-    def data_type_check(cls, socket, source_data):
+    def data_type_check(cls, socket, other, source_data):
         checking_sockets = cls.get_data_type_checking_socket_types()
         expected_type = checking_sockets.get(socket.bl_idname)
         if expected_type is None:
             return False
-        if not get_other_socket(socket).bl_idname in cls.get_arbitrary_type_socket_types():
+        if not other.bl_idname in cls.get_arbitrary_type_socket_types():
             return False
         return is_ultimately(source_data, expected_type)
-
-    @classmethod
-    def vectors_to_matrices(cls, socket, source_data):
-        # this means we're going to get a flat list of the incoming
-        # locations and convert those into matrices proper.
-        out = get_matrices_from_locs(source_data)
-        socket.num_matrices = len(out)
-        return out
-
-    @classmethod
-    def matrices_to_vectors(cls, socket, source_data):
-        return get_locs_from_matrices(source_data)
-
-    @classmethod
-    def quaternions_to_matrices(cls, socket, source_data):
-        out = get_matrices_from_quaternions(source_data)
-        socket.num_matrices = len(out)
-        return out
-
-    @classmethod
-    def matrices_to_quaternions(cls, socket, source_data):
-        return get_quaternions_from_matrices(source_data)
-
-    @classmethod
-    def string_to_vector(cls, socket, source_data):
-        # it can be so that socket is string but data their are already vectors
-        return [[(v, v, v) if isinstance(v, (float, int)) else v for v in obj] for obj in source_data]
 
 
 class FieldImplicitConversionPolicy(DefaultImplicitConversionPolicy):
     @classmethod
-    def convert(cls, socket, source_data):
+    def convert(cls, socket, other, source_data):
         # let policy to decide if deep copy of data is needed
-        if is_matrix_to_vfield(socket):
-            return matrices_to_vfield(source_data) 
-        elif is_vertex_to_vfield(socket):
+        if test_socket_type(socket, other, 'm', 'vf'):
+            return matrices_to_vfield(source_data)
+        if test_socket_type(socket, other, 'v', 'vf'):
             return vertices_to_vfield(source_data)
-        elif is_string_to_sfield(socket):
+        if test_socket_type(socket, other, 's', 'sf'):
             level = get_data_nesting_level(source_data)
             if level > 2:
                 raise TypeError("Too high data nesting level for Number -> Scalar Field conversion: %s" % level)
             return numbers_to_sfield(source_data)
-        else:
-            super().convert(socket, source_data)
+
+        return super().convert(socket, other, source_data)
+
+
+class SolidImplicitConversionPolicy(NoImplicitConversionPolicy):
+    @classmethod
+    def convert(cls, socket, other, source_data):
+        try:
+            return to_solid_recursive(source_data)
+        except TypeError as e:
+            raise ImplicitConversionProhibited(socket, msg=f"Cannot perform implicit socket conversion for socket {socket.name}: {e}")
 
 
 class ConversionPolicies(Enum):
     """It should keeps all policy classes"""
     DEFAULT = DefaultImplicitConversionPolicy
     FIELD = FieldImplicitConversionPolicy
+    LENIENT = LenientImplicitConversionPolicy
+    SOLID = SolidImplicitConversionPolicy
 
     @property
     def conversion(self):

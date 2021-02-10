@@ -42,19 +42,6 @@ class MeshExprImportTest(SverchokTestCase):
             if importer.has_fails:
                 raise (ImportError(importer.fail_massage))
 
-
-class MonadImportTest(SverchokTestCase):
-
-    def test_monad_import(self):
-        with self.temporary_node_tree("ImportedTree") as new_tree:
-            importer = JSONImporter.init_from_path(self.get_reference_file_path("monad_1.json"))
-            importer.import_into_tree(new_tree, print_log=False)
-            if importer.has_fails:
-                raise (ImportError(importer.fail_massage))
-
-            self.assert_node_input_equals("ImportedTree", "Monad", "Num X", [[4]])
-
-
 # to keep automated tests from breaking, i've collected a list of examples that need to be skipped
 # because they
 #  1) require .blend data (greasepencil strokes) or
@@ -67,6 +54,7 @@ UNITTEST_SKIPLIST = [
     "Genetic_algorithm.blend.json",  # looks like script node is trying to update via import_from_json method
     "Elfnor_topology_nodes.json",
     "l-systems.json",
+    "ABCnaming.json",
     "SverchokLogo.json" # Blender 2.90 has a crash in delaunay_2d_cdt on this file :/
 ]
 

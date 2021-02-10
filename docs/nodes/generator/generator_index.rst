@@ -17,7 +17,6 @@ Generators
    ngon
    plane_mk3
    random_vector_mk3
-   script1_lite
    sphere
    icosphere
    suzanne

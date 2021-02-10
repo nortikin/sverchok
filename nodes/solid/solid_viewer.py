@@ -266,7 +266,7 @@ else:
                 self.process_node(context)
 
 
-        n_id: StringProperty(default='')
+        #n_id: StringProperty(default='')
         activate: BoolProperty(name='Show', description='Activate', default=True, update=updateNode)
 
         vert_color: FloatVectorProperty(

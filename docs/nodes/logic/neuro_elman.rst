@@ -1,18 +1,128 @@
-Elman neuro node layer 1
-========================
+Neuro Elman 1 Layer
+===================
 
- Neuro network node
-  This node teachable. You may teach him rules, that he understand himself. Just put data and correct answer. When displace answer, he will find right answer himself.
-  Input data. Inserting many objects - output many objects. Inserting one object with many parameters - output one object.
-  Always insert constant numbers count of parameters, otherwise it will reset neuro data and start every time from beginning. Keep constant numbers count.
+.. image:: ../../assets/nodes/logic/neuro.png
 
-- coef_learning - learning speed coeffitient, accuracy influence (less - more accuracy);
-- gisterezis - spread of input and etalon data;
-- maximum - maximum number input (better define little overhang number);
-- cycles - passes on one object;
-- A layer - input layer cores (and it is number of objects);
-- B layer - inner layer cores - more - smarter (overlearning is bad too);
-- C layer - output layer cores - numbers quantity in output;
-- epsilon - inner variable - argument offset in passes 'cycles' (not much influence totally);
-- lambda - holding coefficient, to preserve data flooding;
-- threshold - inner variable - defines reasonability limit in passes 'cycles' (not much influence totally).
+.. _`Russian translation here`: ./neuro_elman_ru.md
+
+Functionality 
+-------------
+
+
+Layer 1 neuron network with studying. With Inputs and Outputs.
+You should study network on data. After studying use node on your tree.
+
+.. _`Algorythm description`: https://kpfu.ru/staff_files/F1493580427/NejronGafGal.pdf  
+
+
+Tune node before use. Mandatory props first. Additional props can be passed. 
+After tuning and connecting links go to study. 
+Every update will teach your node. 
+You can press update and wait some time. 
+
+
+Data shape:
+-----------
+
+::
+
+    [obj1, obj2, obj3, ...]  
+    obj = [...]  
+    [[...], [...], [...], ...]  
+
+Object levels 2 levels. Every object contain data for one step of srudying. 
+Prepare data that way and link to input. To <b>etalon</b> send same objects count. Output will contain same objects count.
+
+
+Category
+--------
+
+Logic -> Neuro Elman 1 Layer
+
+Inputs
+------
+
+* **data** - input data
+* **etalon** - expected data
+
+
+Outputs
+-------
+
+* **result** - resulting data
+
+
+Parameters
+----------
+
++--------------------+--------+--------------------------------------------------------------------------------+
+| Parameters         | Type   | Description                                                                    |
++====================+========+================================================================================+
+| **A layer**        | int    | First layer neurons count, same as object count                                |
++--------------------+--------+--------------------------------------------------------------------------------+
+| **B layer**        | int    | Second layer neurons count, inner layer                                        |
++--------------------+--------+--------------------------------------------------------------------------------+
+| **C layer**        | int    | Third layer neurons count, Equal to objects count on output                    |
++--------------------+--------+--------------------------------------------------------------------------------+
+| **maximum**        | float  | Maximum possible values, meaning to be used on node                            |
++--------------------+--------+--------------------------------------------------------------------------------+
+| **koeff learning** | float  | node learning tempo (change w/o fear)                                          |
++--------------------+--------+--------------------------------------------------------------------------------+
+| **gisterezis**     | float  | scheduled to set thresholds for signal processing (not in use yet)             |
++--------------------+--------+--------------------------------------------------------------------------------+
+| **cycles**         | int    | Loops count to study by one pass                                               |
++--------------------+--------+--------------------------------------------------------------------------------+
+| **epsilon**        | float  | the susceptibility of the node study                                           |
++--------------------+--------+--------------------------------------------------------------------------------+
+| **lambda**         | float  | weight coefficients changing's step                                            |
++--------------------+--------+--------------------------------------------------------------------------------+
+| **treshold**       | float  | Threshold preserve retraining                                                  |
++--------------------+--------+--------------------------------------------------------------------------------+
+| **Reset**          | Button | reset all coeffitients                                                         |
++--------------------+--------+--------------------------------------------------------------------------------+
+
+
+Usage
+-----
+
+**Task statement**
+~~~~~~~~~~~~~~~~~~
+
+Please, study for XOR operation:
+
+::
+
+    [1, 1] = [1]  
+    [1, 0] = [1]  
+    [0, 1] = [1]  
+    [0, 0] = [0]  
+
+**Preparations**
+~~~~~~~~~~~~~~~~
+
+.. image:: ../../assets/nodes/logic/neuro_data_in.png
+.. image:: ../../assets/nodes/logic/neuro_data_in_text.png
+
+Same with expected data:
+""""""""""""""""""""""""
+
+.. image::  ../../assets/nodes/logic/neuro_etalon.png
+
+**Node preparations**
+~~~~~~~~~~~~~~~~~~~~~
+
+* **A layer** - Set value 2, because inputs are pairs
+* **B layer** - Let it be 5, but can be any (experiment here)
+* **C layer** - Setting 1, because output have to be one number
+
+.. image:: ../../assets/nodes/logic/neuro_ansumble.png
+
+Running learning and waiting. Interrupt Studying. I had have that result:
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+.. image:: ../../assets/nodes/logic/neuro_training_result.png
+
+Compare result:
+"""""""""""""""
+
+.. image:: ../../assets/nodes/logic/neuro_result.png

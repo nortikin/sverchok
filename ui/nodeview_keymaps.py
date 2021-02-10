@@ -99,7 +99,6 @@ class SverchokUpdateContext(bpy.types.Operator):
             bpy.context.window.cursor_set("WAIT")
             ng = context.space_data.node_tree
             if ng:
-                ng.unfreeze(hard=True)
                 build_update_list(ng)
                 process_tree(ng)
         except:
@@ -128,7 +127,6 @@ class SverchokUpdateContextForced(bpy.types.Operator):
                 try:
                     prev_process_state = ng.sv_process
                     ng.sv_process = True
-                    ng.unfreeze(hard=True)
                     build_update_list(ng)
                     process_tree(ng)
                 finally:
@@ -219,6 +217,10 @@ def add_keymap():
 
         # F7 | Toggle draft mode for the active node tree
         kmi = km.keymap_items.new('node.sv_toggle_draft', 'F7', 'PRESS')
+        nodeview_keymaps.append((km, kmi))
+
+        # Esc | Aborting nodes updating
+        kmi = km.keymap_items.new('node.sv_abort_nodes_updating', 'ESC', 'PRESS')
         nodeview_keymaps.append((km, kmi))
 
         # Right Click   | show custom menu

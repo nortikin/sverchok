@@ -4,8 +4,8 @@ import numpy as np
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match_long_repeat
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat
 from sverchok.utils.modules.eval_formula import get_variables, safe_eval
 from sverchok.utils.logging import info, exception
 from sverchok.utils.sv_noise_utils import noise_options, PERLIN_ORIGINAL
@@ -61,4 +61,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvNoiseVectorFieldNode)
-

@@ -5,7 +5,7 @@ import bpy
 from bpy.props import EnumProperty, IntProperty
 
 import sverchok
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.logging import info, exception
 from sverchok.utils.geom_2d.merge_mesh import crop_mesh_delaunay
@@ -18,7 +18,7 @@ from sverchok.utils.surface import SvSurface
 # since Blender 2.81 only. So the node will not be available in
 # Blender 2.80.
 
-class SvTessellateTrimSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvExTessellateTrimSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Tessellate Trim Surface
     Tooltip: Tessellate a surface with trimming curve
@@ -184,8 +184,7 @@ class SvTessellateTrimSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Faces'].sv_set(faces_out)
 
 def register():
-    bpy.utils.register_class(SvTessellateTrimSurfaceNode)
+    bpy.utils.register_class(SvExTessellateTrimSurfaceNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvTessellateTrimSurfaceNode)
-
+    bpy.utils.unregister_class(SvExTessellateTrimSurfaceNode)

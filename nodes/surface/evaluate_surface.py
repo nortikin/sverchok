@@ -5,8 +5,8 @@ import bpy
 from bpy.props import EnumProperty, IntProperty, FloatProperty
 
 import sverchok
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
 from sverchok.utils.logging import info, exception
 from sverchok.utils.surface import SvSurface
 
@@ -23,7 +23,7 @@ class SvEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_EVAL_SURFACE'
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs[U_SOCKET].hide_safe = self.eval_mode == 'GRID' or self.input_mode == 'VERTICES'
         self.inputs[V_SOCKET].hide_safe = self.eval_mode == 'GRID' or self.input_mode == 'VERTICES'

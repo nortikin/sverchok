@@ -1,0 +1,451 @@
+{
+  "export_version": "0.10",
+  "framed_nodes": {
+    "UV Connect": "Frame",
+    "Vectors in.001": "Frame",
+    "Vectors out": "Frame",
+    "Viewer Draw Mk3": "Frame",
+    "Viewer Draw Mk3.001": "Frame"
+  },
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -398.7955322265625,
+        -322.9222412109375
+      ],
+      "params": {
+        "float_": 7.0
+      },
+      "width": 140.0
+    },
+    "Fill Holes": {
+      "bl_idname": "SvFillsHoleNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        781.2543334960938,
+        198.69227600097656
+      ],
+      "params": {
+        "sides": 10
+      },
+      "width": 140.0
+    },
+    "Formula": {
+      "bl_idname": "SvFormulaNodeMk5",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -119.38566589355469,
+        -72.75924682617188
+      ],
+      "params": {
+        "formula1": "sin(x)*x/2"
+      },
+      "width": 160.3349609375
+    },
+    "Formula.002": {
+      "bl_idname": "SvFormulaNodeMk5",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -119.38566589355469,
+        64.25051879882812
+      ],
+      "params": {
+        "formula1": "cos(x)*x/2"
+      },
+      "width": 159.13876342773438
+    },
+    "Formula.003": {
+      "bl_idname": "SvFormulaNodeMk5",
+      "custom_socket_props": {
+        "1": {
+          "depth": 2
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -119.38566589355469,
+        -227.47671508789062
+      ],
+      "params": {
+        "formula1": "tuple(Vector(x)*n0)"
+      },
+      "width": 154.35409545898438
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 594.8271484375,
+      "hide": false,
+      "label": "",
+      "location": [
+        1600.9453125,
+        422.55010986328125
+      ],
+      "params": {},
+      "width": 561.1376953125
+    },
+    "List Join": {
+      "bl_idname": "ListJoinNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        328.55596923828125,
+        174.20065307617188
+      ],
+      "params": {
+        "JoinLevel": 2
+      },
+      "width": 140.0
+    },
+    "Note": {
+      "bl_idname": "NoteNode",
+      "color": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -314.17523193359375,
+        303.664794921875
+      ],
+      "params": {
+        "n_id": "-7927488201404177430",
+        "text": "Nikitron 2014 petri cap series | spiral"
+      },
+      "use_custom_color": true,
+      "width": 320.0
+    },
+    "Number Range": {
+      "bl_idname": "SvGenNumberRange",
+      "custom_socket_props": {
+        "1": {
+          "label": "stop"
+        },
+        "2": {
+          "label": "step"
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -332.5755310058594,
+        -0.4100341796875
+      ],
+      "params": {
+        "current_mode": "RANGE",
+        "start_float": 0.10000000149011612,
+        "step_float": 0.029999999329447746,
+        "stop_float": 20.0
+      },
+      "width": 140.0
+    },
+    "Random Vector": {
+      "bl_idname": "RandomVectorNodeMK3",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -311.66302490234375,
+        -183.65676879882812
+      ],
+      "params": {
+        "count_inner": 100
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "UV Connect": {
+      "bl_idname": "LineConnectNodeMK2",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        623.0308837890625,
+        -148.77288818359375
+      ],
+      "params": {
+        "polygons": "Edges",
+        "slice_check": false
+      },
+      "width": 140.0
+    },
+    "Vectors in": {
+      "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        128.75160217285156,
+        16.49582290649414
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Vectors in.001": {
+      "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        779.66162109375,
+        -431.31573486328125
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Vectors out": {
+      "bl_idname": "VectorsOutNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        580.087890625,
+        -430.1993408203125
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Viewer Draw Mk3": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        941.2255859375,
+        -184.49627685546875
+      ],
+      "params": {
+        "activate": false
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw Mk3.001": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        939.66162109375,
+        -431.31573486328125
+      ],
+      "params": {
+        "activate": false
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw Mk3.003": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        986.0245361328125,
+        221.61676025390625
+      ],
+      "params": {
+        "polygon_color": [
+          0.8100000619888306,
+          0.45176514983177185,
+          0.3069685399532318,
+          1.0
+        ],
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Voronoi": {
+      "bl_idname": "Voronoi2DNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        551.878662109375,
+        192.26123046875
+      ],
+      "params": {
+        "clip": 0.0,
+        "draw_bounds": false,
+        "draw_hangs": false
+      },
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Voronoi",
+      0,
+      "Fill Holes",
+      0
+    ],
+    [
+      "Voronoi",
+      1,
+      "Fill Holes",
+      1
+    ],
+    [
+      "Vectors in",
+      0,
+      "List Join",
+      0
+    ],
+    [
+      "Formula.003",
+      0,
+      "List Join",
+      1
+    ],
+    [
+      "Vectors in",
+      0,
+      "UV Connect",
+      0
+    ],
+    [
+      "Formula.002",
+      0,
+      "Vectors in",
+      0
+    ],
+    [
+      "Formula",
+      0,
+      "Vectors in",
+      1
+    ],
+    [
+      "Vectors out",
+      0,
+      "Vectors in.001",
+      0
+    ],
+    [
+      "Vectors out",
+      1,
+      "Vectors in.001",
+      1
+    ],
+    [
+      "Formula.003",
+      0,
+      "Vectors out",
+      0
+    ],
+    [
+      "UV Connect",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "Vectors in.001",
+      0,
+      "Viewer Draw Mk3.001",
+      0
+    ],
+    [
+      "Fill Holes",
+      0,
+      "Viewer Draw Mk3.003",
+      0
+    ],
+    [
+      "Fill Holes",
+      1,
+      "Viewer Draw Mk3.003",
+      1
+    ],
+    [
+      "Fill Holes",
+      2,
+      "Viewer Draw Mk3.003",
+      2
+    ],
+    [
+      "List Join",
+      0,
+      "Voronoi",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Formula.003",
+      0
+    ],
+    [
+      "Random Vector",
+      0,
+      "Formula.003",
+      1
+    ],
+    [
+      "Number Range",
+      0,
+      "Formula",
+      0
+    ],
+    [
+      "Number Range",
+      0,
+      "Formula.002",
+      0
+    ]
+  ]
+}

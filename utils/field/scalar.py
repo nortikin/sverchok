@@ -14,6 +14,7 @@ from mathutils import bvhtree
 
 from sverchok.utils.math import from_cylindrical, from_spherical, to_cylindrical, to_spherical
 from sverchok.utils.geom import LineEquation, CircleEquation3D
+from sverchok.utils.kdtree import SvKdTree
 
 ##################
 #                #
@@ -135,10 +136,11 @@ class SvScalarFieldLambda(SvScalarField):
         return self.function(x, y, z, V)
 
 class SvScalarFieldPointDistance(SvScalarField):
-    def __init__(self, center, metric='EUCLIDEAN', falloff=None):
+    def __init__(self, center, metric='EUCLIDEAN', falloff=None, power=2):
         self.center = center
         self.falloff = falloff
         self.metric = metric
+        self.power = power
         self.__description__ = "Distance from {}".format(tuple(center))
 
     def evaluate_grid(self, xs, ys, zs):
@@ -153,6 +155,8 @@ class SvScalarFieldPointDistance(SvScalarField):
             norms = np.max(np.abs(points), axis=0)
         elif self.metric == 'MANHATTAN':
             norms = np.sum(np.abs(points), axis=0)
+        elif self.metric == 'CUSTOM':
+            norms = np.linalg.norm(points, axis=0, ord=self.power)
         else:
             raise Exception('Unknown metric')
         if self.falloff is not None:
@@ -169,6 +173,8 @@ class SvScalarFieldPointDistance(SvScalarField):
             norm = np.max(np.abs(point))
         elif self.metric == 'MANHATTAN':
             norm = np.sum(np.abs(point))
+        elif self.metric == 'CUSTOM':
+            norm = np.linalg.norm(point, ord=self.power)
         else:
             raise Exception('Unknown metric')
         if self.falloff is not None:
@@ -348,20 +354,17 @@ class SvMergedScalarField(SvScalarField):
 class SvKdtScalarField(SvScalarField):
     __description__ = "KDT"
 
-    def __init__(self, vertices=None, kdt=None, falloff=None):
+    def __init__(self, vertices=None, kdt=None, falloff=None, power=2):
         self.falloff = falloff
         if kdt is not None:
             self.kdt = kdt
         elif vertices is not None:
-            self.kdt = kdtree.KDTree(len(vertices))
-            for i, v in enumerate(vertices):
-                self.kdt.insert(v, i)
-            self.kdt.balance()
+            self.kdt = SvKdTree.new(SvKdTree.best_available_implementation(), vertices, power=power)
         else:
             raise Exception("Either kdt or vertices must be provided")
 
     def evaluate(self, x, y, z):
-        nearest, i, distance = self.kdt.find((x, y, z))
+        nearest, i, distance = self.kdt.query(np.array([x,y,z]))
         if self.falloff is not None:
             value = self.falloff(np.array([distance]))[0]
             return value
@@ -369,17 +372,13 @@ class SvKdtScalarField(SvScalarField):
             return distance
 
     def evaluate_grid(self, xs, ys, zs):
-        def find(v):
-            nearest, i, distance = self.kdt.find(v)
-            return distance
-
         points = np.stack((xs, ys, zs)).T
-        norms = np.vectorize(find, signature='(3)->()')(points)
+        locs, idxs, distances = self.kdt.query_array(points)
         if self.falloff is not None:
-            result = self.falloff(norms)
+            result = self.falloff(distances)
             return result
         else:
-            return norms
+            return distances
 
 class SvLineAttractorScalarField(SvScalarField):
     __description__ = "Line Attractor"
@@ -812,21 +811,20 @@ class SvScalarFieldPrincipalCurvature(SvScalarField):
 class SvVoronoiScalarField(SvScalarField):
     __description__ = "Voronoi"
 
-    def __init__(self, vertices):
-        self.kdt = kdtree.KDTree(len(vertices))
-        for i, v in enumerate(vertices):
-            self.kdt.insert(v, i)
-        self.kdt.balance()
+    def __init__(self, vertices=None, voronoi=None, metric='DISTANCE'):
+        if vertices is None and voronoi is None:
+            raise Exception("Either vertices or voronoi must be specified")
+        if voronoi is not None:
+            self.voronoi = voronoi
+        else:
+            self.voronoi = SvVoronoiFieldData(vertices, metric=metric)
 
     def evaluate(self, x, y, z):
-        vs = self.kdt.find_n((x,y,z), 2)
-        if len(vs) != 2:
-            raise Exception("Unexpected kdt result at (%s,%s,%s): %s" % (x, y, z, vs))
-        t1, t2 = vs
-        distance1 = t1[2]
-        distance2 = t2[2]
-        return abs(distance1 - distance2)
+        r = self.voronoi.query(np.array([x,y,z]))
+        return r[0]
 
     def evaluate_grid(self, xs, ys, zs):
-        return np.vectorize(self.evaluate, signature='(),(),()->()')(xs,ys,zs)
+        vs = np.stack((xs,ys,zs)).T
+        r = self.voronoi.query_array(vs)
+        return r[0]
 

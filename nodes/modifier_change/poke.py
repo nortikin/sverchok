@@ -20,7 +20,7 @@ import bpy
 from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 import bmesh.ops
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, repeat_last_for_length
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, face_data_from_bmesh_faces
 
@@ -40,24 +40,30 @@ class SvPokeFacesNode(bpy.types.Node, SverchCustomTreeNode):
         ('BOUNDS', "Bounds", "Uses center of bounding box", 2)
     ]
 
-    mode : EnumProperty(
-        name = "Poke Center",
-        description = "Defines how to compute the center of a face",
-        items = modes,
-        default = 'MEAN_WEIGHTED',
-        update = updateNode)
+    mode: EnumProperty(
+        name="Poke Center",
+        description="Defines how to compute the center of a face",
+        items=modes,
+        default='MEAN_WEIGHTED',
+        update=updateNode)
 
-    offset_relative : BoolProperty(
-        name = "Offset Relative",
-        description = "Multiply the Offset by the average length from the center to the face vertices",
-        default = False,
-        update = updateNode)
+    offset_relative: BoolProperty(
+        name="Offset Relative",
+        description="Multiply the Offset by the average length from the center to the face vertices",
+        default=False,
+        update=updateNode)
 
-    offset : FloatProperty(
-        name = "Poke Offset",
-        description = "Offset the new center vertex along the face normal",
-        default = 0.0,
-        update = updateNode)
+    offset: FloatProperty(
+        name="Poke Offset",
+        description="Offset the new center vertex along the face normal",
+        default=0.0,
+        update=updateNode)
+    iterations: IntProperty(
+        name="Iterations",
+        description="Number of iterations of the operation",
+        default=1,
+        min=1,
+        update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
@@ -66,6 +72,7 @@ class SvPokeFacesNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', 'Offset').prop_name = 'offset'
         self.inputs.new('SvStringsSocket', 'FaceMask')
         self.inputs.new('SvStringsSocket', 'FaceData')
+        self.inputs.new('SvStringsSocket', 'Iterations').prop_name = 'iterations'
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Edges')
         self.outputs.new('SvStringsSocket', 'Faces')
@@ -80,20 +87,23 @@ class SvPokeFacesNode(bpy.types.Node, SverchCustomTreeNode):
         if not any (socket.is_linked for socket in self.outputs):
             return
 
-        vertices_s = self.inputs['Vertices'].sv_get()
-        edges_s = self.inputs['Edges'].sv_get(default=[[]])
-        faces_s = self.inputs['Faces'].sv_get(default=[[]])
-        masks_s = self.inputs['FaceMask'].sv_get(default=[[1]])
-        face_data_s = self.inputs['FaceData'].sv_get(default=[[]])
-        offset_s = self.inputs['Offset'].sv_get()
-
+        vertices_s = self.inputs['Vertices'].sv_get(deepcopy=False)
+        edges_s = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)
+        faces_s = self.inputs['Faces'].sv_get(default=[[]], deepcopy=False)
+        masks_s = self.inputs['FaceMask'].sv_get(default=[[1]], deepcopy=False)
+        face_data_s = self.inputs['FaceData'].sv_get(default=[[]], deepcopy=False)
+        offset_s = self.inputs['Offset'].sv_get(deepcopy=False)
+        if 'Iterations' in self.inputs:
+            iterations_s = self.inputs['Iterations'].sv_get(default=[[]], deepcopy=False)[0]
+        else:
+            iterations_s = [1]
         verts_out = []
         edges_out = []
         faces_out = []
         face_data_out = []
 
-        meshes = zip_long_repeat(vertices_s, edges_s, faces_s, offset_s, masks_s, face_data_s)
-        for vertices, edges, faces, offset, masks, face_data in meshes:
+        meshes = zip_long_repeat(vertices_s, edges_s, faces_s, offset_s, masks_s, face_data_s, iterations_s)
+        for vertices, edges, faces, offset, masks, face_data, iterations in meshes:
             if isinstance(offset, (list, tuple)):
                 offset = offset[0]
             masks = repeat_last_for_length(masks, len(faces))
@@ -102,10 +112,12 @@ class SvPokeFacesNode(bpy.types.Node, SverchCustomTreeNode):
 
             bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True, markup_face_data=True)
             bm_faces = [face for mask, face in zip(masks, bm.faces[:]) if mask]
+            for i in range(iterations):
+                geom = bmesh.ops.poke(bm, faces=bm_faces, offset=offset,
+                            center_mode = self.mode,
+                            use_relative_offset = self.offset_relative)
 
-            bmesh.ops.poke(bm, faces=bm_faces, offset=offset,
-                        center_mode = self.mode,
-                        use_relative_offset = self.offset_relative)
+                bm_faces = geom['faces']
 
             new_verts, new_edges, new_faces = pydata_from_bmesh(bm)
             if not face_data:
@@ -129,4 +141,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvPokeFacesNode)
-

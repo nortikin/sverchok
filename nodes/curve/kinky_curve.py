@@ -5,7 +5,7 @@ from mathutils import Vector
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvSplineCurve
 from sverchok.utils.curve.algorithms import concatenate_curves
@@ -111,7 +111,10 @@ class SvKinkyCurveNode(bpy.types.Node, SverchCustomTreeNode):
                     else:
                         first_segment = segments[0]
                         segments = segments[1:]
-                        segments[-1].extend(first_segment)
+                        if segments:
+                            segments[-1].extend(first_segment)
+                        else:
+                            segments = [first_segment]
 
                 new_curves = [SvSplineCurve.from_points(segment, metric=self.metric) for segment in segments]
                 if self.make_nurbs:

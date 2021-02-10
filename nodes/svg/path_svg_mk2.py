@@ -194,7 +194,7 @@ If command Letter is not in the list [L, C, S, Q, T] it will be interpreted as L
             return
         if self.mode == "CURVE":
             curves_in = self.inputs['Curve'].sv_get(deepcopy=False)
-            atts_in = self.inputs['Fill / Stroke'].sv_get(deepcopy=False, default=None)
+            atts_in = self.inputs['Fill / Stroke'].sv_get(deepcopy=False, default=[[None]])
             if isinstance(curves_in[0], SvCurve):
                 curves_in = [curves_in]
 
@@ -209,7 +209,7 @@ If command Letter is not in the list [L, C, S, Q, T] it will be interpreted as L
             verts_in = self.inputs['Vertices'].sv_get(deepcopy=True)
             commands_in = self.inputs['Commands'].sv_get(deepcopy=True)
             shapes = []
-            atts_in = self.inputs['Fill / Stroke'].sv_get(deepcopy=False, default=None)
+            atts_in = self.inputs['Fill / Stroke'].sv_get(deepcopy=False, default=[[None]])
             for verts, commands, atts in zip(*mlr([verts_in, commands_in, atts_in])):
                 shapes.append(SvgPath(verts, commands, atts, self))
             self.outputs[0].sv_set(shapes)

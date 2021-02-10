@@ -69,8 +69,8 @@ class SvListItemNode(bpy.types.Node, SverchCustomTreeNode):
         '''main node function called every update'''
         if self.inputs['Data'].is_linked:
             out_item, out_other = self.outputs
-            data = self.inputs['Data'].sv_get()
-            indexes = self.inputs['Index'].sv_get([[self.index]])
+            data = self.inputs['Data'].sv_get(deepcopy=False)
+            indexes = self.inputs['Index'].sv_get(default=[[self.index]], deepcopy=False)
 
             if out_item.is_linked:
                 if self.level-1:
@@ -90,6 +90,8 @@ class SvListItemNode(bpy.types.Node, SverchCustomTreeNode):
         '''extract the indexes from the list'''
         if type(data) in [list, tuple]:
             return [data[index] for index in indexes if -len(data) <= index < len(data)]
+        if type(data) == str:
+            return ''.join([data[index] for index in indexes if -len(data) <= index < len(data)])
         elif type(data) == np.ndarray:
             return data[indexes]
         else:
@@ -106,17 +108,20 @@ class SvListItemNode(bpy.types.Node, SverchCustomTreeNode):
             data = list(data)
             is_tuple = True
         if type(data) == list:
+            out_data = data.copy()
             m_indexes = indexes.copy()
             for idx, index in enumerate(indexes):
                 if index < 0:
-                    m_indexes[idx] = len(data)-abs(index)
+                    m_indexes[idx] = len(out_data)-abs(index)
             for i in sorted(set(m_indexes), reverse=True):
-                if -1 < i < len(data):
-                    del data[i]
+                if -1 < i < len(out_data):
+                    del out_data[i]
             if is_tuple:
-                return tuple(data)
+                return tuple(out_data)
             else:
-                return data
+                return out_data
+        if type(data) == str:
+            return ''.join([d for idx, d in enumerate(data) if idx not in indexes])
         else:
             return None
 

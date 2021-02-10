@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from math import pi, e
-from fractions import gcd
+
 
 import bpy
 from bpy.props import EnumProperty, FloatProperty, IntProperty, BoolProperty
@@ -25,6 +25,7 @@ from bpy.props import EnumProperty, FloatProperty, IntProperty, BoolProperty
 from sverchok.ui.sv_icons import custom_icon
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, numpy_list_match_func, no_space
+from sverchok.utils.math import gcd
 from sverchok.utils.sv_itertools import (recurse_fx, recurse_fxy, recurse_f_level_control)
 import numpy as np
 # pylint: disable=C0326

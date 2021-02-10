@@ -284,6 +284,9 @@ class CubicSpline(Spline):
         out = ax + t_r * (bx + t_r * (cx + t_r * dx))
         return out
 
+    def get_degree(self):
+        return 3
+
     def get_t_segments(self):
         N = len(self.pts)
         if self.is_cyclic:
@@ -383,6 +386,9 @@ class LinearSpline(Spline):
 
     def get_t_segments(self):
         return list(zip(self.tknots, self.tknots[1:]))
+
+    def get_degree(self):
+        return 1
 
     def get_control_points(self):
         starts = self.pts[:-1]
@@ -719,6 +725,8 @@ class PlaneEquation(object):
     @classmethod
     def from_normal_and_point(cls, normal, point):
         a, b, c = tuple(normal)
+        if (a*a + b*b + c*c) < 1e-8:
+            raise Exception("Plane normal is (almost) zero!")
         cx, cy, cz = tuple(point)
         d = - (a*cx + b*cy + c*cz)
         return PlaneEquation(a, b, c, d)
@@ -799,7 +807,7 @@ class PlaneEquation(object):
             raise Exception("plane normal is (almost) zero")
         return v
 
-    def two_vectors(self):
+    def two_vectors(self, normalize=False):
         """
         Return two vectors that are parallel two this plane.
         Note: the two vectors returned are orthogonal.
@@ -809,15 +817,26 @@ class PlaneEquation(object):
         """
         v1 = self.second_vector()
         v2 = v1.cross(self.normal)
+        if normalize:
+            v1.normalize()
+            v2.normalize()
         return v1, v2
 
-    def get_matrix(self):
+    def get_matrix(self, invert_y=False):
         x = self.second_vector().normalized()
         z = self.normal.normalized()
         y = z.cross(x)
+        if invert_y:
+            y = - y
         return Matrix([x, y, z]).transposed()
 
-    def evaluate(self, u, v):
+    def point_uv_projection(self, point):
+        point = Vector(point) - self.nearest_point_to_origin()
+        matrix = self.get_matrix(invert_y=True).inverted()
+        uvw = matrix @ point
+        return uvw.xy
+
+    def evaluate(self, u, v, normalize=False):
         """
         Return a point on the plane by it's UV coordinates.
         UV coordinates origin is self.point.
@@ -830,7 +849,7 @@ class PlaneEquation(object):
         output: Vector.
         """
         p0 = self.nearest_point_to_origin()
-        v1, v2 = self.two_vectors()
+        v1, v2 = self.two_vectors(normalize)
         return p0 + u*v1 + v*v2
 
     @property
@@ -1689,23 +1708,23 @@ def linear_approximation(data):
     input: list of 3-tuples.
     output: an instance of LinearApproximationData class.
     """
-    result = LinearApproximationData()
 
-    result.center = cx,cy,cz = center(data)
+    data = np.asarray(data)
+    n = data.shape[-2]
+    center = data.sum(axis=0) / n
+    data0 = data - center
     
-    xs = [x[0]-cx for x in data]
-    ys = [x[1]-cy for x in data]
-    zs = [x[2]-cz for x in data]
+    xs = data0[:,0]
+    ys = data0[:,1]
+    zs = data0[:,2]
     
-    sx2 = sum(x**2 for x in xs)
-    sy2 = sum(y**2 for y in ys)
-    sz2 = sum(z**2 for z in zs)
-    
-    sxy = sum(x*y for (x,y) in zip(xs,ys))
-    sxz = sum(x*z for (x,z) in zip(xs,zs))
-    syz = sum(y*z for (y,z) in zip(ys,zs))
-    
-    n = len(data)
+    sx2 = (xs**2).sum(axis=0)
+    sy2 = (ys**2).sum(axis=0)
+    sz2 = (zs**2).sum(axis=0)
+
+    sxy = (xs*ys).sum(axis=0)
+    sxz = (xs*zs).sum(axis=0)
+    syz = (ys*zs).sum(axis=0)
 
     # This is not that trivial, one can show that
     # eigenvalues and eigenvectors of a matrix composed
@@ -1725,8 +1744,61 @@ def linear_approximation(data):
         [sxz, syz, sz2]
         ])
     
+    result = LinearApproximationData()
+    result.center = tuple(center)
     result.eigenvalues, result.eigenvectors = linalg.eig(matrix)
     return result
+
+def linear_approximation_array(data):
+    data = np.asarray(data)
+    n = data.shape[-2]
+    center = data.mean(axis=1)
+    data0 = data - np.transpose(center[np.newaxis], axes=(1,0,2))
+
+    ndim = data.ndim
+    xs = data0.take(indices=0, axis=ndim-1)
+    ys = data0.take(indices=1, axis=ndim-1)
+    zs = data0.take(indices=2, axis=ndim-1)
+    
+    sx2 = (xs**2).sum(axis=ndim-2)
+    sy2 = (ys**2).sum(axis=ndim-2)
+    sz2 = (zs**2).sum(axis=ndim-2)
+
+    sxy = (xs*ys).sum(axis=ndim-2)
+    sxz = (xs*zs).sum(axis=ndim-2)
+    syz = (ys*zs).sum(axis=ndim-2)
+
+    # This is not that trivial, one can show that
+    # eigenvalues and eigenvectors of a matrix composed
+    # this way will provide exactly the solutions of
+    # least squares problem for input vertices.
+    # The nice part is that by calculating these values
+    # we obtain both approximations - by line and by plane -
+    # at the same time. The eigenvector which corresponds to
+    # the minimal of eigenvalues will provide a normal for
+    # the approximating plane. The eigenvector which corresponds
+    # to the maximal of eigenvalues will provide a direction
+    # for the approximating line.
+    
+    matrix = np.array([
+        [sx2, sxy, sxz],
+        [sxy, sy2, syz],
+        [sxz, syz, sz2]
+        ])
+
+    axes = (ndim-1,) + tuple(range(ndim-1))
+    matrix = np.transpose(matrix, axes=axes)
+
+    eigvals, eigvecs = linalg.eig(matrix)
+
+    results = []
+    for vals, vecs, ct in zip(eigvals, eigvecs, center):
+        result = LinearApproximationData()
+        result.center = tuple(ct)
+        result.eigenvalues = vals
+        result.eigenvectors = vecs
+        results.append(result)
+    return results
 
 class SphericalApproximationData(object):
     """
@@ -2153,4 +2225,34 @@ def rotate_vector_around_vector_np(v, k, theta):
     p2 = np.apply_along_axis(lambda vi : k.dot(vi), 1, v)
     s3 = p1 * p2 * k
     return s1 + s2 + s3
+
+def calc_bounds(vertices, allowance=0):
+    x_min = min(v[0] for v in vertices)
+    y_min = min(v[1] for v in vertices)
+    z_min = min(v[2] for v in vertices)
+    x_max = max(v[0] for v in vertices)
+    y_max = max(v[1] for v in vertices)
+    z_max = max(v[2] for v in vertices)
+    return (x_min - allowance, x_max + allowance,
+            y_min - allowance, y_max + allowance,
+            z_min - allowance, z_max + allowance)
+
+TRIVIAL='TRIVIAL'
+def bounding_sphere(vertices, algorithm=TRIVIAL):
+    if algorithm != TRIVIAL:
+        raise Exception("Unsupported algorithm")
+    c = center(vertices)
+    vertices = np.array(vertices) - np.array(c)
+    norms = np.linalg.norm(vertices, axis=1)
+    radius = norms.max()
+    return c, radius
+
+def scale_relative(points, center, scale):
+    points = np.asarray(points)
+    center = np.asarray(center)
+    points -= center
+
+    points = points * scale
+
+    return (points + center).tolist()
 

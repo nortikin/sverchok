@@ -6,7 +6,7 @@ Analyzers
    :maxdepth: 2
 
    area
-   bbox_mk2
+   bbox_mk3
    component_analyzer
    diameter
    distance_pp
@@ -43,4 +43,3 @@ Analyzers
    sphere_approx
    inscribed_circle
    steiner_ellipse
-

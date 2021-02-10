@@ -35,8 +35,8 @@ class PolygonBoomNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # inputs
-        vertices = self.inputs['vertices'].sv_get()
-        edgs_pols = self.inputs['edg_pol'].sv_get()
+        vertices = self.inputs['vertices'].sv_get(deepcopy=False)
+        edgs_pols = self.inputs['edg_pol'].sv_get(deepcopy=False)
         vert_out = []
         edpo_out = []
         for k, ob in enumerate(edgs_pols):

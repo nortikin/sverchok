@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import BoolProperty, EnumProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList, calc_mask
+from sverchok.data_structure import updateNode, match_long_repeat, calc_mask
 
 class SvCalcMaskNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -34,7 +34,7 @@ class SvCalcMaskNode(bpy.types.Node, SverchCustomTreeNode):
     level : IntProperty(name = 'Level',
                 description = "List level to operate on",
                 min = 0, default = 0, update=updateNode)
-    
+
     negate : BoolProperty(name = 'Negate',
                 description = 'Negate mask', update=updateNode)
 
@@ -73,4 +73,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvCalcMaskNode)
-

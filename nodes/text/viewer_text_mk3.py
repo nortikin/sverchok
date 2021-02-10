@@ -77,7 +77,7 @@ def readFORviewer_sockets_data(data, dept, le, num_lines):
             if k >= num_lines-1: break
     return cache + output
 
-def readFORviewer_sockets_data_small(data, dept, le):
+def readFORviewer_sockets_data_small(data, dept, le, num_lines):
     cache = ''
     output = ''
     deptl = dept - 1
@@ -87,10 +87,11 @@ def readFORviewer_sockets_data_small(data, dept, le):
     if deptl > 0:
         for i, object in enumerate(data):
             cache += ('\n' + '=' + str(i) + '=   (' + str(len(object)) + ')')
-            cache += str(readFORviewer_sockets_data_small(object, deptl, False))
+            cache += str(readFORviewer_sockets_data_small(object, deptl, False, num_lines))
     else:
         for k, val in enumerate(data):
             output += ('\n' + str(val))
+            if k >= num_lines-1: break
     return cache + output
 
 def do_text(node, out_string):
@@ -128,7 +129,7 @@ def prep_text(node, num_lines):
             if deptl and deptl > 2:
                 a = readFORviewer_sockets_data(eva, deptl, len(eva), num_lines)
             elif deptl:
-                a = readFORviewer_sockets_data_small(eva, deptl, len(eva))
+                a = readFORviewer_sockets_data_small(eva, deptl, len(eva), num_lines)
             else:
                 a = 'None'
             outs += itype+str(a)+'\n'

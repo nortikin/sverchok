@@ -12,14 +12,9 @@ Modifier Make
    lathe
    matrix_tube
    pipe_tubes
-   adaptive_polygons_mk2
-   solidify
+   adaptive_polygons_mk3
+   solidify_mk2
    uv_connect
-   voronoi_2d
-   delaunay_2d
-   voronoi3d
-   delaunay3d
-   voronoi_sphere
    wafel
    join_tris
    framework
@@ -28,10 +23,8 @@ Modifier Make
    bevel_curve
    contour2D
    fractal_curve
-   convex_hull_mk2
    dual_mesh
    diamond_mesh
    clip_verts
-   random_points_on_mesh
-   delaunay_2d_cdt
    sweep_modulator
+   csg_booleanMK2

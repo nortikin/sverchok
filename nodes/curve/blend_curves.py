@@ -4,8 +4,9 @@ import numpy as np
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, repeat_last_for_length
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (updateNode, zip_long_repeat, ensure_nesting_level,
+                                     repeat_last_for_length, throttle_and_update_node)
 from sverchok.utils.curve import SvCurve, SvCubicBezierCurve, SvBezierCurve, SvLine
 from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve.biarc import SvBiArc
@@ -38,7 +39,7 @@ class SvBlendCurvesMk2Node(bpy.types.Node, SverchCustomTreeNode):
         default = 1.0,
         update = updateNode)
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['Curve1'].hide_safe = self.mode != 'TWO'
         self.inputs['Curve2'].hide_safe = self.mode != 'TWO'

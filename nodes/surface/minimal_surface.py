@@ -6,8 +6,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from mathutils import Matrix
 
 import sverchok
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (updateNode, zip_long_repeat, ensure_nesting_level,
+                                     get_data_nesting_level, throttle_and_update_node)
 from sverchok.utils.logging import info, exception
 from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
@@ -28,7 +29,7 @@ else:
         bl_icon = 'OUTLINER_OB_EMPTY'
         sv_icon = 'SV_EX_MINSURFACE'
 
-        @throttled
+        @throttle_and_update_node
         def update_sockets(self, context):
             self.inputs['Matrix'].hide_safe = self.coord_mode == 'UV'
             self.inputs['SrcU'].hide_safe = self.coord_mode != 'UV' or not self.explicit_src_uv

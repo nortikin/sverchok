@@ -270,7 +270,7 @@ class SvCurveData(bpy.types.PropertyGroup):
                          vertices: Union[List[list], List[np.ndarray]],
                          spline_type: str = 'POLY',
                          vertices_radius: Union[List[list], List[np.ndarray]] = None,
-                         close_spline: bool = False,
+                         close_spline: Union[List[bool], List[int]] = None,
                          use_smooth: bool = True,
                          tilt: Union[List[list], List[np.ndarray]] = None):
         # Be aware that curve consists multiple splines
@@ -284,13 +284,15 @@ class SvCurveData(bpy.types.PropertyGroup):
             [self.curve.splines.new(spline_type) for _ in range(len(vertices))]
             [s.points.add(len(v) - 1) for s, v in zip(self.curve.splines, vertices)]
 
-        for s, v, r, t in zip(self.curve.splines, vertices,
-                              repeat_last(vertices_radius or [None]), repeat_last(tilt or [None])):
+        for s, v, r, t, c in zip(self.curve.splines, vertices,
+                              repeat_last(vertices_radius or [None]),
+                              repeat_last(tilt or [None]),
+                              repeat_last(close_spline)):
             v = np.asarray(v, dtype=np.float32)
             if r is None:
                 r = np.ones(len(v), dtype=np.float32)
             r = np.asarray(r, dtype=np.float32)
-            self._regenerate_spline(s, v, spline_type, r, t, close_spline, use_smooth)
+            self._regenerate_spline(s, v, spline_type, r, t, c, use_smooth)
 
     def remove_data(self):
         """

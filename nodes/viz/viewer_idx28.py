@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -13,7 +13,7 @@ from bpy.props import (BoolProperty, FloatVectorProperty, StringProperty, FloatP
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
-    dataCorrect, node_id, updateNode, fullList, Vector_generate, Matrix_generate)
+    dataCorrect, node_id, updateNode, Vector_generate, Matrix_generate)
 
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.context_managers import sv_preferences
@@ -113,7 +113,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             row.prop(self, f"display_{item}_index", toggle=True, icon=item_icon, text='')
             row.prop(self, f"numid_{item}s_col", text="")
             if self.draw_bg:
-                row.prop(self, f"bg_{item}s_col", text="") 
+                row.prop(self, f"bg_{item}s_col", text="")
 
     def get_settings_dict(self):
         '''Produce a dict of settings for the callback'''
@@ -168,9 +168,9 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         face_medians = []
         face_normals = []
         for obj_index, faces in enumerate(geom.faces):
-            
+
             verts = geom.verts[obj_index]
-            
+
             medians = []
             normals = []
             concat_median = medians.append
@@ -180,10 +180,10 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
                 poly_verts = [verts[idx] for idx in face]
                 concat_normal(normal(poly_verts))
                 concat_median(calc_median(poly_verts))
-            
+
             face_medians.append(medians)
             face_normals.append(normals)
-        
+
         return face_medians, face_normals
 
 
@@ -194,10 +194,10 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         for socket in ['matrix', 'verts', 'edges', 'faces', 'text']:
             input_stream = inputs[socket].sv_get(default=[])
             if socket == 'verts' and input_stream:
-                
+
                 # ensure they are Vector()
                 input_stream = Vector_generate(input_stream)
-                
+
                 # ensure they are Matrix() multiplied
                 for obj_index, verts in enumerate(input_stream):
                     if obj_index < len(geom.matrix):
@@ -225,7 +225,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
 
             prefix_if_needed = lambda obj_index, chars: (f'{obj_index}: {chars}') if self.draw_obj_idx else chars
 
-            
+
             for obj_index, final_verts in enumerate(geom.verts):
 
                 # can't display vert idx and text simultaneously - ...
@@ -233,9 +233,9 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
                     for idx, vpos in enumerate(final_verts):
                         chars = prefix_if_needed(obj_index, idx)
                         concat_vert((chars, vpos))
-                    
-                    if geom.text:    
-                        text_items = self.get_text_of_correct_length(obj_index, geom, len(final_verts))                        
+
+                    if geom.text:
+                        text_items = self.get_text_of_correct_length(obj_index, geom, len(final_verts))
                         for text_item, vpos in zip(text_items, final_verts):
 
                             # yikes, don't feed this function nonsense :)
@@ -274,7 +274,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             text_items = geom.text[len(geom.text)-1]
 
         if not (len(text_items) == num_elements_to_fill):
-            
+
             # ---- this doesn't touch the data, but returns a copy, or a modified copy -----
             if len(text_items) < num_elements_to_fill:
                 return text_items + [text_items[-1], ] * (num_elements_to_fill - len(text_items))
@@ -307,7 +307,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         draw_data = {
             'tree_name': self.id_data.name[:],
             'custom_function': draw_indices_2D_wbg if self.draw_bg else draw_indices_2D,
-            'args': (geom, config)} 
+            'args': (geom, config)}
 
         callback_enable(n_id, draw_data, overlay='POST_PIXEL')
 

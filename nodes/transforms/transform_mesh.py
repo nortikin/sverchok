@@ -126,9 +126,12 @@ def get_bmesh(verts, edges=None, faces=None, update_normals=False, update_indexe
     bm = bmesh.new(use_operators=use_operators)
     try:
         # create mesh
-        bm_verts = [bm.verts.new(co) for co in verts]
-        [bm.edges.new((bm_verts[i1], bm_verts[i2])) for i1, i2 in edges or []]
-        [bm.faces.new([bm_verts[i] for i in face]) for face in faces or []]
+        new_vert = bm.verts.new
+        new_edge = bm.edges.new
+        new_face = bm.faces.new
+        bm_verts = [new_vert(co) for co in verts]
+        [new_edge((bm_verts[i1], bm_verts[i2])) for i1, i2 in edges or []]
+        [new_face([bm_verts[i] for i in face]) for face in faces or []]
 
         # update mesh
         bm.verts.ensure_lookup_table()

@@ -7,7 +7,7 @@ from glob import glob
 import sverchok
 from sverchok.utils.testing import *
 from sverchok.utils.logging import debug, info, error
-from sverchok.nodes.number.formula_interpolate import ControlPoint, split_points
+from sverchok.nodes.script.formula_interpolate import ControlPoint, split_points
 
 class DocumentationTests(SverchokTestCase):
     def test_empty(self):
@@ -80,4 +80,3 @@ class DocumentationTests(SverchokTestCase):
                 [ControlPoint(4, 2, True), ControlPoint(5, 1, False)]
             ]
         self.assertEquals(result, expected_result)
-

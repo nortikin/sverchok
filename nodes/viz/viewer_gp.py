@@ -13,7 +13,6 @@ import bpy
 # from bpy.props import FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fullList
-from sverchok.utils.context_managers import new_input
 
 
 def msg_box(message="", title="Message Box", icon='INFO'):

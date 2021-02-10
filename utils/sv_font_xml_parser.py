@@ -5,8 +5,13 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+import os
 
 import xml.etree.ElementTree as ET
+from sverchok.utils.sv_update_utils import sv_get_local_path
+
+sv_path = os.path.dirname(sv_get_local_path()[0])
+bitmap_font_location = os.path.join(sv_path, 'utils', 'modules', 'bitmap_font')
 
 def get_xml(path):
     tree = ET.parse(path)
@@ -29,7 +34,9 @@ def get_lookup_dict(fnt_path):
        ]
 
     """
-    tree, root = get_xml(r"C:\Users\zeffi\Desktop\GITHUB\sverchok\utils\modules\bitmap_font\consolas.fnt")
+    fnt_path = os.path.join(bitmap_font_location, "consolas.fnt")
+    # print(fnt_path)
+    tree, root = get_xml(fnt_path)
     common = root.find("common")
     chars = root.find("chars")
     scale_w = int(common.get('scaleW'))

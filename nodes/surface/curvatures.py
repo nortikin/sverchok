@@ -5,8 +5,9 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 import sverchok
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level, repeat_last_for_length
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (updateNode, zip_long_repeat, ensure_nesting_level,
+                                     throttle_and_update_node, repeat_last_for_length)
 from sverchok.utils.logging import info, exception
 from sverchok.utils.surface import SvSurface
 
@@ -20,7 +21,7 @@ class SvSurfaceCurvaturesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_SURFACE_CURVATURE'
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['U'].hide_safe = self.input_mode == 'VERTICES'
         self.inputs['V'].hide_safe = self.input_mode == 'VERTICES'

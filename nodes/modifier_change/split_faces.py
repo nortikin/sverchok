@@ -23,7 +23,7 @@ from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, face_data_from_bmesh_faces
 
 def get_bm_geom(geom):
@@ -87,12 +87,12 @@ class SvSplitFacesNode(bpy.types.Node, SverchCustomTreeNode):
         if not any (socket.is_linked for socket in self.outputs):
             return
 
-        vertices_s = self.inputs['Vertices'].sv_get()
-        edges_s = self.inputs['Edges'].sv_get(default=[[]])
-        faces_s = self.inputs['Faces'].sv_get(default=[[]])
-        masks_s = self.inputs['FaceMask'].sv_get(default=[[1]])
-        max_angle_s = self.inputs['MaxAngle'].sv_get()
-        face_data_s = self.inputs['FaceData'].sv_get(default=[[]])
+        vertices_s = self.inputs['Vertices'].sv_get(deepcopy=False)
+        edges_s = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)
+        faces_s = self.inputs['Faces'].sv_get(default=[[]], deepcopy=False)
+        masks_s = self.inputs['FaceMask'].sv_get(default=[[1]], deepcopy=False)
+        max_angle_s = self.inputs['MaxAngle'].sv_get(deepcopy=False)
+        face_data_s = self.inputs['FaceData'].sv_get(default=[[]], deepcopy=False)
 
         verts_out = []
         edges_out = []
@@ -105,12 +105,14 @@ class SvSplitFacesNode(bpy.types.Node, SverchCustomTreeNode):
                 if isinstance(max_angle, (list, tuple)):
                     max_angle = max_angle[0]
 
-            fullList(masks, len(faces))
+
+            masks_matched = repeat_last_for_length(masks, len(faces))
             if face_data:
-                fullList(face_data, len(faces))
+                face_data_matched = repeat_last_for_length(face_data, len(faces))
+
 
             bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True, markup_face_data=True)
-            bm_faces = [face for mask, face in zip(masks, bm.faces[:]) if mask]
+            bm_faces = [face for mask, face in zip(masks_matched, bm.faces[:]) if mask]
 
             if self.split_mode == 'NONPLANAR':
                 new_geom = bmesh.ops.connect_verts_nonplanar(bm,
@@ -125,7 +127,7 @@ class SvSplitFacesNode(bpy.types.Node, SverchCustomTreeNode):
             if not face_data:
                 new_face_data = []
             else:
-                new_face_data = face_data_from_bmesh_faces(bm, face_data)
+                new_face_data = face_data_from_bmesh_faces(bm, face_data_matched)
 
             verts_out.append(new_verts)
             edges_out.append(new_edges)
@@ -143,4 +145,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvSplitFacesNode)
-

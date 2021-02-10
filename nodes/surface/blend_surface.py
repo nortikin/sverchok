@@ -10,8 +10,8 @@ import numpy as np
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
 from sverchok.utils.curve import SvCurve, SvLine
 from sverchok.utils.curve.algorithms import reverse_curve
 from sverchok.utils.surface import SvSurface
@@ -35,7 +35,7 @@ class SvBlendSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             ('USER', "Custom", "Use user-defined curve in surface's U/V space", 4)
         ]
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.inputs['UVCurve1'].hide_safe = self.curve1_mode != 'USER'
         self.inputs['UVCurve2'].hide_safe = self.curve2_mode != 'USER'

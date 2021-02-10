@@ -85,7 +85,7 @@ class SocketConversionTests(EmptyTreeTestCase):
                 'SvListSortNode': ['data'],
                 'SvListSplitNode': ['Data'],
                 'ListFLNode': ['Data'],
-                'SvFormulaNodeMk3': ["x", "y"],
+                'SvFormulaNodeMk5': ["x", "y"],
                 'SvSetDataObjectNodeMK2': ["Objects"]
             }
         info("starting socket conversion tests")

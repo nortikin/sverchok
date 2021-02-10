@@ -23,7 +23,10 @@ Inputs
 
 This node has the following inputs:
 
-* **Field**. Scalar field to build iso-curves for. This input is mandatory.
+* **Field**. Scalar field to build iso-curves for. This input can consume a
+  list of scalar fields, or a list of lists of scalar fields. Nesting level of
+  outputs will correspond to nesting level of data in this input. This input is
+  mandatory.
 * **Value**. The value, for which the iso-curves should be built. The default
   value is 1.0.
 * **Samples**. Number of samples along X and Y axes. This defines the
@@ -45,6 +48,9 @@ Parameters
 
 This node has the following parameters:
 
+* **Flat output**. If checked, the node will generate a single flat list of
+  objects (iso-curves) for all provided iso-values. Otherwise, the node will
+  generate a separate list of objects for each iso-value. Checked by default.
 * **Make faces**. If checked, the node will generate Faces for iso-curves that
   are closed within specified X/Y bounds. Unchecked by default.
 * **Counnect boundary**. If checked, the node will connect pieces of the same

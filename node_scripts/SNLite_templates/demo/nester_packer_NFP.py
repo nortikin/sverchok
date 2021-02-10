@@ -33,7 +33,7 @@ out  Opols   s
 
 
 #from __future__ import print_function
-from utils.sv_bmesh_utils import bmesh_from_pydata as BFPD
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata as BFPD
 import math, mathutils #FreeCAD, Part, DraftGeomUtils, WorkingPlane, DraftVecUtils, math, Draft
 from datetime import datetime
 import numpy as np
@@ -557,7 +557,7 @@ class Nester:
 
 def test():
     "runs a test with selected shapes, container selected last"
-    container = BFPD(cont_ver, [], cont_pol, normal_update=True)
+    container = BFPD(cont_ver[0], [], cont_pol[0], normal_update=True)
     shapes = [BFPD(v,[],p,True) for v,p in zip(*vers,pols)]
     n = Nester(container,shapes)
     result = n.run()

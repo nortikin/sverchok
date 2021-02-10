@@ -93,6 +93,9 @@ def sv_handler_undo_post(scene):
 
     undo_handler_node_count['sv_groups'] = 0
 
+    import sverchok.core.group_handlers as gh
+    gh.ContextTrees.reset_data()
+
 
 @persistent
 def sv_update_handler(scene):
@@ -162,6 +165,11 @@ def sv_clean(scene):
 def sv_pre_load(scene):
     clear_system_cache()
     sv_clean(scene)
+
+    import sverchok.core.group_handlers as gh
+    gh.NodesStatuses.reset_data()
+    gh.ContextTrees.reset_data()
+
     set_first_run(True)
 
 
@@ -186,24 +194,20 @@ def sv_post_load(scene):
     sv_trees = list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
 
     for ng in sv_trees:
-        ng.freeze(True)
-        ng.sv_process = False
-        try:
-            old_nodes.load_old(ng)
-        except:
-            traceback.print_exc()
-        try:
-            dummy_nodes.load_dummy(ng)
-        except:
-            traceback.print_exc()
-        ng.freeze(True)
-        try:
-            upgrade_nodes.upgrade_nodes(ng)
-        except:
-            traceback.print_exc()
-        ng.unfreeze(True)
+        with ng.throttle_update():
+            try:
+                old_nodes.load_old(ng)
+            except:
+                traceback.print_exc()
+            try:
+                dummy_nodes.load_dummy(ng)
+            except:
+                traceback.print_exc()
+            try:
+                upgrade_nodes.upgrade_nodes(ng)
+            except:
+                traceback.print_exc()
 
-        ng.sv_process = True
     addon_name = data_structure.SVERCHOK_NAME
     addon = bpy.context.preferences.addons.get(addon_name)
     if addon and hasattr(addon, "preferences"):

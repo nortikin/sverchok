@@ -21,7 +21,7 @@ from bpy.props import IntProperty, StringProperty, BoolProperty, FloatProperty, 
 
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.menu import make_node_cats
-
+from sverchok.utils.dummy_nodes import is_dependent
 from pprint import pprint
 
 DEBUG = False
@@ -306,7 +306,10 @@ class SvDisplayNodePanelProperties(bpy.types.PropertyGroup):
             name = node_name
             if name == "separator":
                 continue
-
+            if is_dependent(name):
+                continue
+            if '@' in name:
+                continue
             if DEBUG:
                 print("Spawning Node %d : %s" % (i, name))
 

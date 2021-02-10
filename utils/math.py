@@ -80,6 +80,12 @@ supported_metrics = [
         ('CENTRIPETAL', "Centripetal", "Centripetal distance - square root of Euclidian distance", 4)
     ]
 
+xyz_metrics = [
+        ('X', "X Axis", "Distance along X axis", 5),
+        ('Y', "Y Axis", "Distance along Y axis", 6),
+        ('Z', "Z Axis", "Distance along Z axis", 7)
+    ]
+
 def smooth(x):
     return 3*x*x - 2*x*x*x
 
@@ -268,6 +274,15 @@ def to_spherical_np(v, mode="degrees"):
         theta = np.degrees(theta)
     return rho, phi, theta
 
+def project_to_sphere(center, radius, v):
+    x,y,z = v
+    x0,y0,z0 = center
+    dv = x-x0, y-y0, z-z0
+    rho, phi, theta = to_spherical(dv, "radians")
+    x,y,z = from_spherical(radius, phi, theta, "radians")
+    result = x+x0, y+y0, z+z0
+    return result
+
 def binomial(n,k):
     if not 0<=k<=n:
         return 0
@@ -289,3 +304,55 @@ def np_signed_angle(a, b, normal):
     alpha = asin(sin_alpha)
     return sign * alpha
 
+def np_vectors_angle(v1, v2):
+    v1 /= np.linalg.norm(v1)
+    v2 /= np.linalg.norm(v2)
+    dot = np.dot(v1, v2)
+    return np.arccos(dot)
+
+def np_normalized_vectors(vecs):
+    '''Returns new array with normalized vectors'''
+    result = np.zeros(vecs.shape)
+    norms = np.linalg.norm(vecs, axis=1)
+    nonzero = (norms > 0)
+    result[nonzero] = vecs[nonzero] / norms[nonzero][:,np.newaxis]
+    return result
+
+def np_normalize_vectors(vecs):
+    '''Does normalization in-place'''
+    norms = np.linalg.norm(vecs, axis=1)
+    nonzero = (norms > 0)
+    vecs[nonzero] = vecs[nonzero] / norms[nonzero][:,np.newaxis]
+
+def weighted_center(verts, field=None):
+    if field is None:
+        return np.mean(verts, axis=0)
+    else:
+        xs = verts[:,0]
+        ys = verts[:,1]
+        zs = verts[:,2]
+        weights = field.evaluate_grid(xs, ys, zs)
+        wpoints = weights[:,np.newaxis] * verts
+        result = wpoints.sum(axis=0) / weights.sum()
+        return result
+
+def gcd(a, b):
+
+    """Calculate the Greatest Common Divisor of a and b.
+
+    Unless b==0, the result will have the same sign as b (so that when
+    b is divided by it, the result comes out positive).
+    Taken from fractions.py to override depreciation
+    """
+
+    if type(a) is int is type(b):
+        if (b or a) < 0:
+            return -math.gcd(a, b)
+        return math.gcd(a, b)
+    return _gcd(a, b)
+
+def _gcd(a, b):
+    # Supports non-integers for backward compatibility.
+    while b:
+        a, b = b, a%b
+    return a

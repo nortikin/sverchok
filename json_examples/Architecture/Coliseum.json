@@ -1,0 +1,1070 @@
+{
+  "export_version": "0.10",
+  "framed_nodes": {
+    "A Number": "Frame.002",
+    "A Number.001": "Frame.002",
+    "A Number.002": "Frame.003",
+    "A Number.003": "Frame.002",
+    "A Number.004": "Frame.002",
+    "A Number.005": "Frame.003",
+    "A Number.006": "Frame.003",
+    "Calculate Mask": "Frame.005",
+    "Circle": "Frame.004",
+    "Component Analyzer": "Frame",
+    "Exec Node Mod.002": "Frame.005",
+    "Frame.001": "Frame.002",
+    "Inset Special": "Frame",
+    "List Mask (out)": "Frame.005",
+    "Logic functions": "Frame",
+    "Logic functions.001": "Frame",
+    "Logic functions.002": "Frame",
+    "Logic functions.003": "Frame",
+    "Matrix Apply (verts)": "Frame",
+    "Matrix In": "Frame.005",
+    "Matrix Track To": "Frame.004",
+    "Mesh viewer": "Frame.005",
+    "Mesh viewer.001": "Frame.005",
+    "Number Range": "Frame.001",
+    "Profile Parametric Mk3": "Frame.004",
+    "Scalar Math": "Frame.001",
+    "Scalar Math.001": "Frame.001",
+    "Scalar Math.002": "Frame.002",
+    "Scalar Math.003": "Frame.002",
+    "Scalar Math.004": "Frame.004",
+    "Scalar Math.005": "Frame.002",
+    "Scalar Math.006": "Frame.002",
+    "Select mesh elements by location": "Frame",
+    "Solidify.001": "Frame.005",
+    "UV Connection": "Frame",
+    "Viewer Index+": "Frame.004"
+  },
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        635.1006469726562,
+        537.7420043945312
+      ],
+      "params": {
+        "float_max": 5.0,
+        "float_min": -5.0,
+        "show_limits": true
+      },
+      "width": 140.0
+    },
+    "A Number.001": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "b",
+      "location": [
+        635.1006469726562,
+        407.1652526855469
+      ],
+      "params": {
+        "float_max": 1.0,
+        "float_min": -2.0,
+        "show_limits": true
+      },
+      "width": 140.0
+    },
+    "A Number.002": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -708.79541015625,
+        178.85382080078125
+      ],
+      "params": {
+        "int_": 100,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "A Number.003": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "c",
+      "location": [
+        635.1006469726562,
+        291.2461853027344
+      ],
+      "params": {
+        "float_max": 1.0,
+        "float_min": -2.0,
+        "show_limits": true
+      },
+      "width": 140.0
+    },
+    "A Number.004": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "d",
+      "location": [
+        635.1006469726562,
+        160.9677734375
+      ],
+      "params": {
+        "float_max": 2.0,
+        "float_min": -2.0,
+        "show_limits": true
+      },
+      "width": 140.0
+    },
+    "A Number.005": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "stop",
+      "location": [
+        -712.8272705078125,
+        272.64361572265625
+      ],
+      "params": {
+        "float_": 6.2831854820251465,
+        "int_": 8,
+        "int_max": 10,
+        "int_min": 1,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "A Number.006": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "f",
+      "location": [
+        -709.9915771484375,
+        85.75244140625
+      ],
+      "params": {
+        "float_": 4.0
+      },
+      "width": 140.0
+    },
+    "Calculate Mask": {
+      "bl_idname": "SvCalcMaskNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        3138.9363708496094,
+        147.66038513183594
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Circle": {
+      "bl_idname": "SvCircleNode",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1155.458740234375,
+        641.2557373046875
+      ],
+      "params": {
+        "rad_": 50.0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Component Analyzer": {
+      "bl_idname": "SvComponentAnalyzerNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2266.3912963867188,
+        651.7540283203125
+      ],
+      "params": {
+        "face_mode": "Area"
+      },
+      "width": 140.0
+    },
+    "Exec Node Mod.002": {
+      "bl_idname": "SvExecNodeMod",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        3871.7559509277344,
+        335.2248077392578
+      ],
+      "params": {
+        "dynamic_strings": [
+          {
+            "line": "for i in V1:"
+          },
+          {
+            "line": "    if not ('EdgeSplit' in i.modifiers):"
+          },
+          {
+            "line": "        i.modifiers.new('EdgeSplit','EDGE_SPLIT')"
+          }
+        ]
+      },
+      "width": 408.0882568359375
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 533.35400390625,
+      "hide": false,
+      "label": "",
+      "location": [
+        414.88983154296875,
+        280.7985534667969
+      ],
+      "params": {},
+      "width": 1133.975341796875
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 234.26303100585938,
+      "hide": false,
+      "label": "",
+      "location": [
+        822.6964111328125,
+        680.6246337890625
+      ],
+      "params": {},
+      "width": 569.4169311523438
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 629.7420043945312,
+      "hide": false,
+      "label": "",
+      "location": [
+        822.6964111328125,
+        680.6246337890625
+      ],
+      "params": {},
+      "width": 1149.4169921875
+    },
+    "Frame.003": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 322.64361572265625,
+      "hide": false,
+      "label": "",
+      "location": [
+        718.9549560546875,
+        577.9109497070312
+      ],
+      "params": {},
+      "width": 204.0318603515625
+    },
+    "Frame.004": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 744.2557373046875,
+      "hide": false,
+      "label": "",
+      "location": [
+        682.9677124023438,
+        305.2475891113281
+      ],
+      "params": {},
+      "width": 795.5655517578125
+    },
+    "Frame.005": {
+      "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
+      "height": 833.2828369140625,
+      "hide": false,
+      "label": "",
+      "location": [
+        -418.2127990722656,
+        -188.07749938964844
+      ],
+      "params": {},
+      "width": 1200.907958984375
+    },
+    "Inset Special": {
+      "bl_idname": "SvInsetSpecial",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2782.7352905273438,
+        495.6429443359375
+      ],
+      "params": {
+        "inset": 0.800000011920929
+      },
+      "width": 140.0
+    },
+    "List Mask (out)": {
+      "bl_idname": "MaskListNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        3332.0726013183594,
+        148.83241271972656
+      ],
+      "params": {
+        "Level": 2
+      },
+      "width": 140.0
+    },
+    "Logic functions": {
+      "bl_idname": "SvLogicNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2435.0656127929688,
+        491.28619384765625
+      ],
+      "params": {
+        "items_": "NOT"
+      },
+      "width": 140.0
+    },
+    "Logic functions.001": {
+      "bl_idname": "SvLogicNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2612.2433471679688,
+        651.7540283203125
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Logic functions.002": {
+      "bl_idname": "SvLogicNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2435.0656127929688,
+        651.7540283203125
+      ],
+      "params": {
+        "i_y": 8.869999885559082,
+        "items_": "BIG",
+        "prop_types": [
+          true,
+          true
+        ]
+      },
+      "width": 140.0
+    },
+    "Logic functions.003": {
+      "bl_idname": "SvLogicNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2786.0250854492188,
+        651.7540283203125
+      ],
+      "params": {
+        "items_": "NOT"
+      },
+      "width": 140.0
+    },
+    "Matrix Apply (verts)": {
+      "bl_idname": "MatrixApplyNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1852.0497436523438,
+        580.0905151367188
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Matrix In": {
+      "bl_idname": "SvMatrixInNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "Matrix",
+      "location": [
+        3481.6656188964844,
+        353.4037628173828
+      ],
+      "params": {
+        "angle": -22.5
+      },
+      "width": 140.0
+    },
+    "Matrix Track To": {
+      "bl_idname": "SvMatrixTrackToNode",
+      "custom_socket_props": {
+        "2": {
+          "expanded": true
+        },
+        "3": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1350.0777587890625,
+        641.2557373046875
+      ],
+      "params": {
+        "tu_mapping": "-A_B",
+        "vA": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "vB": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "width": 140.0
+    },
+    "Mesh viewer": {
+      "bl_idname": "SvMeshViewer",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        3694.9996032714844,
+        330.6203155517578
+      ],
+      "params": {
+        "is_smooth_mesh": true
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Mesh viewer.001": {
+      "bl_idname": "SvMeshViewer",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        3694.9996032714844,
+        686.3032989501953
+      ],
+      "params": {
+        "base_data_name": "Beta"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Note": {
+      "bl_idname": "NoteNode",
+      "color": [
+        1.0,
+        0.8993440270423889,
+        0.9742509722709656
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -811.765625,
+        508.6253967285156
+      ],
+      "params": {
+        "n_id": "-9035355129213349951",
+        "text": "nikitron 2020 | coliseum"
+      },
+      "use_custom_color": true,
+      "width": 400.0
+    },
+    "Number Range": {
+      "bl_idname": "SvGenNumberRange",
+      "custom_socket_props": {
+        "1": {
+          "label": "stop"
+        },
+        "2": {
+          "label": "count"
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -92.4332275390625,
+        309.2630310058594
+      ],
+      "params": {
+        "current_mode": "RANGE_COUNT",
+        "range_mode": "RANGE_COUNT",
+        "stop_float": 6.2831854820251465
+      },
+      "width": 140.0
+    },
+    "Profile Parametric Mk3": {
+      "bl_idname": "SvProfileNodeMK3",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1350.0777587890625,
+        312.36492919921875
+      ],
+      "params": {
+        "addnodes": true,
+        "file_pointer": "Profile Parametric Mk3",
+        "filename": "Profile Parametric Mk3",
+        "precision": 2,
+        "y": false
+      },
+      "profile": "# Here is autogenerated values, \n# Please, rename text to avoid data loose.\n# Objects are: \n# \"'BezierCurve\".\n# Object origin should be at 0,0,0. \n# Property panel has precision 2 \n# and curve subdivision 20.\n\n# Spline 0\n\nM {-12.0+a},{0.0} \n#L.1...\nL {-12.0+a},{3.0} {-12.0+a},{3.25} {-11.0+a+b},{3.25} {-11.0+a+b},{5.75} {-12.0+a},{5.75} {-12.0+a},{6.0} {-12.0+a},{6.25} {-11.0+a+c},{6.25} {-11.0+a+c},{8.75} {-12.0+a},{8.75} {-12.0+a},{9.0} {-12.0+a},{12.0+d} {-11.6+a},{12.0+d} {-11.6+a},{11.5+d} {-8.0+a},{12.5+d} {-4.4+a},{11.5+d} {-4.4+a},{12.0+d} {-4.0+a},{12.0+d} {-4.0+a},{0.1} {4.0},{0.1} {4.0},{12.0+f} {4.4},{12.0+f} {4.4},{11.5+f} {8.0},{12.5+f} {11.6},{11.5+f} {11.6},{12.0+f} {12.0},{12.0+f} 12.0,9.0 13.0,9.0 13.0,6.0 14.0,6.0 14.0,3.0 15.0,3.0 15.0,0.0 # expression (#+a) added because \n# you selected knots in curve",
+      "width": 140.0
+    },
+    "Scalar Math": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -284.3162841796875,
+        308.1435546875
+      ],
+      "params": {
+        "y_": 3.1415927410125732
+      },
+      "width": 140.0
+    },
+    "Scalar Math.001": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        85.10064697265625,
+        308.0911865234375
+      ],
+      "params": {
+        "current_op": "SINCOS",
+        "y_": 3.1415927410125732
+      },
+      "width": 140.0
+    },
+    "Scalar Math.002": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        449.7464294433594,
+        94.29962158203125
+      ],
+      "params": {
+        "y_": 2.0
+      },
+      "width": 140.0
+    },
+    "Scalar Math.003": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        449.7464294433594,
+        525.4894409179688
+      ],
+      "params": {
+        "y_": 5.0
+      },
+      "width": 140.0
+    },
+    "Scalar Math.004": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        969.4014282226562,
+        641.2557373046875
+      ],
+      "params": {
+        "current_op": "-1",
+        "input_mode_one": "Int",
+        "y_": 2.0,
+        "yi_": 0
+      },
+      "width": 140.0
+    },
+    "Scalar Math.005": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        449.7464294433594,
+        383.7632751464844
+      ],
+      "params": {
+        "current_op": "ADD",
+        "y_": -1.0
+      },
+      "width": 140.0
+    },
+    "Scalar Math.006": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        449.7464294433594,
+        239.71963500976562
+      ],
+      "params": {
+        "current_op": "ADD",
+        "y_": -1.0
+      },
+      "width": 140.0
+    },
+    "Select mesh elements by location": {
+      "bl_idname": "SvMeshSelectNode",
+      "custom_socket_props": {
+        "3": {
+          "prop": [
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2263.5956420898438,
+        442.1592102050781
+      ],
+      "params": {
+        "percent": 49.70000076293945
+      },
+      "width": 140.0
+    },
+    "Solidify.001": {
+      "bl_idname": "SvSolidifyNodeMk2",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        3332.0726013183594,
+        707.2828521728516
+      ],
+      "params": {
+        "thickness": 0.19900000095367432
+      },
+      "width": 140.0
+    },
+    "UV Connection": {
+      "bl_idname": "LineConnectNodeMK2",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2030.2401733398438,
+        592.4913330078125
+      ],
+      "params": {
+        "cicl_check_U": true,
+        "slice_check": false
+      },
+      "width": 140.0
+    },
+    "Viewer Index+": {
+      "bl_idname": "SvIDXViewer28",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1564.967041015625,
+        280.6804504394531
+      ],
+      "params": {
+        "activate": false,
+        "draw_bg": true
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Scalar Math.003",
+      0,
+      "A Number",
+      0
+    ],
+    [
+      "Scalar Math.005",
+      0,
+      "A Number.001",
+      0
+    ],
+    [
+      "Scalar Math.006",
+      0,
+      "A Number.003",
+      0
+    ],
+    [
+      "Scalar Math.002",
+      0,
+      "A Number.004",
+      0
+    ],
+    [
+      "Inset Special",
+      3,
+      "Calculate Mask",
+      0
+    ],
+    [
+      "Inset Special",
+      1,
+      "Calculate Mask",
+      1
+    ],
+    [
+      "UV Connection",
+      0,
+      "Inset Special",
+      2
+    ],
+    [
+      "UV Connection",
+      1,
+      "Inset Special",
+      3
+    ],
+    [
+      "Logic functions.003",
+      0,
+      "Inset Special",
+      4
+    ],
+    [
+      "Select mesh elements by location",
+      2,
+      "Logic functions",
+      0
+    ],
+    [
+      "Profile Parametric Mk3",
+      0,
+      "Matrix Apply (verts)",
+      0
+    ],
+    [
+      "Matrix Track To",
+      0,
+      "Matrix Apply (verts)",
+      1
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Number Range",
+      1
+    ],
+    [
+      "A Number.002",
+      0,
+      "Number Range",
+      2
+    ],
+    [
+      "A Number.005",
+      0,
+      "Scalar Math",
+      0
+    ],
+    [
+      "Number Range",
+      0,
+      "Scalar Math.001",
+      0
+    ],
+    [
+      "Scalar Math.001",
+      1,
+      "Scalar Math.002",
+      0
+    ],
+    [
+      "Scalar Math.001",
+      0,
+      "Scalar Math.003",
+      0
+    ],
+    [
+      "Scalar Math.001",
+      1,
+      "Scalar Math.005",
+      0
+    ],
+    [
+      "Scalar Math.001",
+      0,
+      "Scalar Math.006",
+      0
+    ],
+    [
+      "UV Connection",
+      0,
+      "Select mesh elements by location",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "Select mesh elements by location",
+      2
+    ],
+    [
+      "Matrix Apply (verts)",
+      0,
+      "UV Connection",
+      0
+    ],
+    [
+      "Profile Parametric Mk3",
+      2,
+      "Viewer Index+",
+      0
+    ],
+    [
+      "Profile Parametric Mk3",
+      3,
+      "Viewer Index+",
+      4
+    ],
+    [
+      "Mesh viewer",
+      0,
+      "Exec Node Mod.002",
+      0
+    ],
+    [
+      "Inset Special",
+      0,
+      "Mesh viewer",
+      0
+    ],
+    [
+      "List Mask (out)",
+      4,
+      "Mesh viewer",
+      2
+    ],
+    [
+      "Matrix In",
+      0,
+      "Mesh viewer",
+      4
+    ],
+    [
+      "Inset Special",
+      1,
+      "List Mask (out)",
+      0
+    ],
+    [
+      "Calculate Mask",
+      0,
+      "List Mask (out)",
+      1
+    ],
+    [
+      "Inset Special",
+      0,
+      "Solidify.001",
+      0
+    ],
+    [
+      "Inset Special",
+      3,
+      "Solidify.001",
+      2
+    ],
+    [
+      "Solidify.001",
+      0,
+      "Mesh viewer.001",
+      0
+    ],
+    [
+      "Solidify.001",
+      3,
+      "Mesh viewer.001",
+      2
+    ],
+    [
+      "Matrix In",
+      0,
+      "Mesh viewer.001",
+      4
+    ],
+    [
+      "UV Connection",
+      0,
+      "Component Analyzer",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "Component Analyzer",
+      2
+    ],
+    [
+      "Component Analyzer",
+      0,
+      "Logic functions.002",
+      0
+    ],
+    [
+      "Logic functions.002",
+      0,
+      "Logic functions.001",
+      0
+    ],
+    [
+      "Logic functions",
+      0,
+      "Logic functions.001",
+      1
+    ],
+    [
+      "A Number",
+      0,
+      "Profile Parametric Mk3",
+      0
+    ],
+    [
+      "A Number.001",
+      0,
+      "Profile Parametric Mk3",
+      1
+    ],
+    [
+      "A Number.003",
+      0,
+      "Profile Parametric Mk3",
+      2
+    ],
+    [
+      "A Number.004",
+      0,
+      "Profile Parametric Mk3",
+      3
+    ],
+    [
+      "A Number.006",
+      0,
+      "Profile Parametric Mk3",
+      4
+    ],
+    [
+      "Logic functions.001",
+      0,
+      "Logic functions.003",
+      0
+    ],
+    [
+      "Scalar Math.004",
+      0,
+      "Circle",
+      1
+    ],
+    [
+      "A Number.002",
+      0,
+      "Scalar Math.004",
+      0
+    ],
+    [
+      "Circle",
+      0,
+      "Matrix Track To",
+      0
+    ],
+    [
+      "Circle",
+      0,
+      "Matrix Track To",
+      2
+    ]
+  ]
+}

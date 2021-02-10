@@ -77,7 +77,7 @@ class SvListSortNode(bpy.types.Node, SverchCustomTreeNode):
             return
         self.newsock = False
 
-        data_ = self.inputs['data'].sv_get()
+        data_ = self.inputs['data'].sv_get(deepcopy=False)
         out = []
 
         input_level = levelsOflist(data_)
@@ -85,7 +85,7 @@ class SvListSortNode(bpy.types.Node, SverchCustomTreeNode):
 
             out = sv_sort(data_, min(self.level, input_level))
         else:
-            keys_ = self.inputs['keys'].sv_get()
+            keys_ = self.inputs['keys'].sv_get(deepcopy=False)
             out = key_sort(data_, keys_, min(self.level, input_level), 0)
 
         self.outputs['data'].sv_set(out)

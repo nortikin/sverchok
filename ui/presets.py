@@ -81,7 +81,7 @@ def get_category_items(self, context):
     node_category_items = []
     for idx, category in enumerate(get_category_names()):
         node_class = get_node_class_reference(category)
-        if node_class:
+        if node_class and hasattr(node_class, 'bl_label'):
             title = "/Node/ {}".format(node_class.bl_label)
             node_category_items.append((category, title, category, idx+1))
         else:
@@ -313,8 +313,8 @@ class SvPreset(object):
 
             preset_add_operators[(self.category, self.name)] = SverchPresetAddOperator
             bpy.utils.register_class(SverchPresetAddOperator)
-            debug("Registered: %s",
-                "node.sv_preset_" + get_preset_idname_for_operator(self.name, self.category))
+            #debug("Registered: %s",
+            #    "node.sv_preset_" + get_preset_idname_for_operator(self.name, self.category))
 
     def draw_operator(self, layout, id_tree, category=None):
         if not category:
@@ -357,6 +357,27 @@ def get_presets(category=None, search=None, mkdir=True):
             if preset.matches(search):
                 result.append(preset)
     return result
+
+def check_category(category):
+    presets = get_presets(category, mkdir=False)
+    return len(presets) != 0
+
+def get_preset(category, name):
+    file_name = name + ".json"
+    user = get_presets_directory(category, standard=False)
+    standard = get_presets_directory(category, standard=True)
+
+    for is_standard, directory in [(False, user), (True, standard)]:
+        path = join(directory, file_name)
+        if os.path.exists(path):
+            preset = SvPreset(path = path, category=category, standard=is_standard)
+            return preset
+    return None
+
+def apply_default_preset(node):
+    preset = get_preset(node.bl_idname, "Default")
+    if preset is not None:
+        JSONImporter(preset.data).import_node_settings(node)
 
 class SvUserPresetsPanelProps(bpy.types.PropertyGroup):
     manage_mode: BoolProperty(

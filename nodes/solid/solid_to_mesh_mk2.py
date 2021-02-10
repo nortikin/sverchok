@@ -12,6 +12,8 @@ else:
 
     from sverchok.node_tree import SverchCustomTreeNode
     from sverchok.data_structure import updateNode, match_long_repeat as mlr
+    from sverchok.utils.solid import mesh_from_solid_faces
+    from sverchok.utils.sv_bmesh_utils import recalc_normals
 
     import MeshPart
 
@@ -31,6 +33,7 @@ else:
             ('Standard', 'Standard', '', 1),
             ('Mefisto', 'Mefisto', '', 2),
             # ('NetGen', 'NetGen', '', 3),
+            ('Trivial', 'Trivial', '', 10)
         ]
         shape_types = [
             ('Solid', 'Solid', '', 0),
@@ -66,9 +69,12 @@ else:
                 self.inputs['Surface Deviation'].hide_safe = True
                 self.inputs['Angle Deviation'].hide_safe = True
                 self.inputs['Max Edge Length'].hide_safe = False
-
-
-
+            
+            elif self.mode == 'Trivial':
+                self.inputs['Precision'].hide_safe = True
+                self.inputs['Surface Deviation'].hide_safe = True
+                self.inputs['Angle Deviation'].hide_safe = True
+                self.inputs['Max Edge Length'].hide_safe = True
 
         precision: FloatProperty(
             name="Precision",
@@ -197,6 +203,23 @@ else:
 
             return verts, faces
 
+        def trivial_mesher(self):
+            solids = self.inputs[self["shape_type"]].sv_get()
+
+            verts = []
+            faces = []
+            for solid in solids:
+                if self.shape_type == 'Solid':
+                    shape = solid
+                else:
+                    shape = solid.face
+                new_verts, new_edges, new_faces = mesh_from_solid_faces(shape)
+                new_verts, new_edges, new_faces = recalc_normals(new_verts, new_edges, new_faces)
+
+                verts.append(new_verts)
+                faces.append(new_faces)
+
+            return verts, faces
 
         def process(self):
             if not any(socket.is_linked for socket in self.outputs):
@@ -206,8 +229,10 @@ else:
                 verts, faces = self.basic_mesher()
             elif self.mode == 'Standard':
                 verts, faces = self.standard_mesher()
-            else:
+            elif self.mode == 'Mefisto':
                 verts, faces = self.mefisto_mesher()
+            else: # Trivial
+                verts, faces = self.trivial_mesher()
 
             self.outputs['Verts'].sv_set(verts)
             self.outputs['Faces'].sv_set(faces)

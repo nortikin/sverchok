@@ -80,7 +80,7 @@ class SvNodeRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvVerticesSocket', 'auto_convert')
+        self.inputs.new('SvStringsSocket', 'auto_convert')
 
 
     def draw_buttons(self, context, layout):
@@ -141,6 +141,9 @@ class SvNodeRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 # for audio nodes for example
                 # https://github.com/nomelif/Audionodes
                 named_input.value_prop = data[0][0]
+            elif 'objects_number' in named_input:
+                # sverchok test
+                setattr(named_input.node, named_input.get_prop_name(), data[0][0])
 
 
 classes = [SvNodePickupMK2, SvNodeRemoteNodeMK2]

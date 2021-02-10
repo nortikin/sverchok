@@ -22,7 +22,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
+from sverchok.data_structure import (match_long_repeat, updateNode)
 from sverchok.data_structure import match_long_repeat as mlr
 from sverchok.utils.svg import SvgGroup
 from sverchok.utils.curve import SvCircle
@@ -107,7 +107,7 @@ class SvSvgCircleNode(bpy.types.Node, SverchCustomTreeNode):
         if not any(s.is_linked for s in self.outputs):
             return
         params_in = [s.sv_get(deepcopy=False) for s in self.inputs[:4]]
-        params_in.append(self.inputs['Fill / Stroke'].sv_get(deepcopy=False, default=None))
+        params_in.append(self.inputs['Fill / Stroke'].sv_get(deepcopy=False, default=[[None]]))
         get_curves = self.outputs['Curves'].is_linked
         shapes_out = []
         curves_out = []

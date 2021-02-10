@@ -18,7 +18,7 @@
 
 # pylint: disable=E1121
 
-
+from mathutils import Matrix
 import bpy
 from bpy.props import (
     BoolProperty,
@@ -30,7 +30,7 @@ from bpy.props import (
 )
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import dataCorrect, fullList, updateNode
+from sverchok.data_structure import dataCorrect, updateNode
 from sverchok.utils.sv_obj_helper import SvObjHelper, enum_from_list
 
 mode_options_x = enum_from_list('LEFT', 'CENTER', 'RIGHT', 'JUSTIFY', 'FLUSH')
@@ -65,10 +65,10 @@ def font_set_props(f, node, txt):
     f.align_y = node.align_y
 
 def get_obj_and_fontcurve(context, name):
-    collection = context.collection
+    collection = context.scene.collection
     curves = bpy.data.curves
     objects = bpy.data.objects
-
+    
     # CURVES
     if not name in curves:
         f = curves.new(name, 'FONT')
@@ -133,7 +133,7 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             font_datablock = self.get_bpy_data_from_name(self.fontname, bpy.data.fonts)
             if font_datablock:
                 self.font_pointer = font_datablock
-                updateNode(self, context)    
+                updateNode(self, context)
 
     def pointer_update(self, context):
         self.updating_name_from_pointer = True
@@ -146,7 +146,7 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         self.updating_name_from_pointer = False
         updateNode(self, context)
 
-    
+
     grouping: BoolProperty(default=False, update=SvObjHelper.group_state_update_handler)
     data_kind: StringProperty(name='data kind', default='FONT')
 
@@ -173,7 +173,7 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     bevel_depth: FloatProperty(default=0.0, update=updateNode)
     bevel_resolution: IntProperty(default=0, update=updateNode)
 
-    # orientation x | y 
+    # orientation x | y
     align_x: bpy.props.EnumProperty(
         items=mode_options_x, description="Horizontal Alignment",
         default="LEFT", update=updateNode)
@@ -181,7 +181,7 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     align_y: bpy.props.EnumProperty(
         items=mode_options_y, description="Vertical Alignment",
         default="TOP_BASELINE", update=updateNode)
-    
+
 
     def sv_init(self, context):
         self.sv_init_helper_basedata_name()
@@ -237,15 +237,11 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         row.prop_search(self, 'font_pointer', bpy.data, 'fonts', text='', icon='FONT_DATA')
         row.operator(shf, text='', icon='ZOOM_IN')
 
-        box = col.box()
-        if box:
-            box.label(text="Beta options")
-            box.prop(self, 'layer_choice', text='layer')
 
         row = layout.row()
         row.prop(self, 'parent_to_empty', text='parented')
         if self.parent_to_empty:
-            row.label(self.parent_name)
+            row.label(text=self.parent_name)
 
     def process(self):
 
@@ -254,24 +250,26 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
         # no autorepeat yet.
         text = self.inputs['text'].sv_get(default=[['sv_text']])[0]
-        matrices = self.inputs['matrix'].sv_get(default=[[]])
+        matrices = self.inputs['matrix'].sv_get(default=[Matrix()])
 
         with self.sv_throttle_tree_update():
             if self.parent_to_empty:
                 mtname = 'Empty_' + self.basedata_name
                 self.parent_name = mtname
-                
+
                 scene = bpy.context.scene
                 collection = scene.collection
+
 
                 if not mtname in bpy.data.objects:
                     empty = bpy.data.objects.new(mtname, None)
                     collection.objects.link(empty)
-                    scene.update()
+                    bpy.context.view_layer.update()
+
 
             last_index = 0
             for obj_index, txt_content in enumerate(text):
-                matrix = matrices[obj_index]
+                matrix = matrices[obj_index % len(matrices)]
                 if isinstance(txt_content, list) and (len(txt_content) == 1):
                     txt_content = txt_content[0]
                 else:

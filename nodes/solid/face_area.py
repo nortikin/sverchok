@@ -8,7 +8,7 @@
 import bpy
 from bpy.props import BoolProperty, FloatProperty, EnumProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, map_recursive
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface

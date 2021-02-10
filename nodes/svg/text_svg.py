@@ -138,7 +138,7 @@ class SvSvgTextNode(bpy.types.Node, SverchCustomTreeNode):
             return
         params_in = [s.sv_get(deepcopy=False) for s in self.inputs[:4]]
         texts_out = []
-        params_in.append(self.inputs['Fill / Stroke'].sv_get(deepcopy=False, default=None))
+        params_in.append(self.inputs['Fill / Stroke'].sv_get(deepcopy=False, default=[[None]]))
 
         font_family = self.user_font if self.font_family == 'user' else self.font_family
         print("process")

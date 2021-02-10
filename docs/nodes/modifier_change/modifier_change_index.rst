@@ -10,6 +10,7 @@ Modifier Change
    subdivide_lite
    unsubdivide
    smooth
+   relax_mesh
    delete_loose
    edges_intersect_mk2
    poke
@@ -26,11 +27,12 @@ Modifier Change
    offset
    polygons_boom
    edge_boom
-   polygons_to_edges
+   polygons_to_edges_mk2
    recalc_normals
    triangulate
    triangulate_heavy
    planar_faces
+   edge_split
    split_faces
    vertices_mask
    make_monotone
@@ -42,3 +44,4 @@ Modifier Change
    dissolve_mesh_elements
    rigid_origami
    flat_geometry
+   edgenet_to_paths

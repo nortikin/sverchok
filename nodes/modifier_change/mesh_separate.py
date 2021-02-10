@@ -21,6 +21,7 @@ import collections
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import zip_long_repeat
 
 
 class SvSeparateMeshNode(bpy.types.Node, SverchCustomTreeNode):
@@ -40,11 +41,11 @@ class SvSeparateMeshNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not any(s.is_linked for s in self.outputs):
             return
-        verts = self.inputs['Vertices'].sv_get()
-        poly = self.inputs['Poly Egde'].sv_get()
+        verts = self.inputs['Vertices'].sv_get(deepcopy=False)
+        poly = self.inputs['Poly Egde'].sv_get(deepcopy=False)
         verts_out = []
         poly_edge_out = []
-        for ve, pe in zip(verts, poly):
+        for ve, pe in zip_long_repeat(verts, poly):
             # build links
             node_links = {}
             for edge_face in pe:

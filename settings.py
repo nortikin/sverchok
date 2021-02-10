@@ -11,6 +11,7 @@ from sverchok.core import update_system
 from sverchok.utils import logging
 from sverchok.utils.sv_gist_tools import TOKEN_HELP_URL
 from sverchok.ui import color_def
+from sverchok.ui.utils import message_on_layout
 
 PYPATH = bpy.app.binary_path_python
 
@@ -305,6 +306,21 @@ class SverchokPreferences(AddonPreferences):
             min = 0, max = 12
         )
 
+    input_links_options = [
+            ('NONE', "Do not show", "Do not show", 0),
+            ('QUICKLINK', "Show single option only",
+                "Show the button only for cases when there is only one node to be created can be suggested; do not show the menu", 1),
+            ('ALL', "Show `Create parameter' options",
+                "Show the button with a menu with options to create parameter nodes", 2)
+        ]
+
+    show_input_menus : EnumProperty(
+            name = "Show input menus",
+            description = "Wheter to display buttons near node socket inputs to automatically create parameter nodes",
+            items = input_links_options,
+            default = 'QUICKLINK'
+        )
+
     ##  BLF/BGL/GPU  scale and location props
 
     render_scale: FloatProperty(
@@ -328,8 +344,8 @@ class SverchokPreferences(AddonPreferences):
         # i think these are both the same..
         self.render_scale = get_dpi_factor()
         self.render_location_xy_multiplier = get_dpi_factor()
-        print(f'set render_scale to: {self.render_scale}')
-        print(f'set render_location_xy_multiplier to: {self.render_location_xy_multiplier}')
+        # print(f'set render_scale to: {self.render_scale}')
+        # print(f'set render_location_xy_multiplier to: {self.render_location_xy_multiplier}')
 
     ##
 
@@ -406,6 +422,8 @@ class SverchokPreferences(AddonPreferences):
             toolbar_box.prop(self, "node_panels_icons_only")
             if self.node_panels_icons_only:
                 toolbar_box.prop(self, "node_panels_columns")
+
+        col1.prop(self, 'show_input_menus')
 
         col1.prop(self, "over_sized_buttons")
         col1.prop(self, "external_editor", text="Ext Editor")
@@ -536,6 +554,12 @@ class SverchokPreferences(AddonPreferences):
             row.operator('node.sv_select_freecad_path', text="Browse...").directory = self.FreeCAD_folder
             row.operator('node.sv_set_freecad_path', text=tx).FreeCAD_folder = self.FreeCAD_folder
             return row
+
+        message_on_layout(layout, """Sverchok can use several external libraries, that provide \
+some mathematical or other functions. We call such libraries "Dependencies". \
+When these libraries are available, you will be able to use much more nodes \
+in Sverchok. If you do not need all these features, you can skip installation of \
+dependencies, or install only some of them.""")
 
         box = layout.box()
         box.label(text="Dependencies:")

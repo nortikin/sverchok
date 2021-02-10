@@ -1,55 +1,51 @@
 {
-  "export_version": "0.079",
+  "export_version": "0.10",
   "framed_nodes": {},
   "groups": {},
   "nodes": {
     "A Number": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        15.998117446899414,
-        354.1291198730469
+        14.651593208312988,
+        329.8939208984375
       ],
       "params": {
-        "float_": 1.1899998188018799,
-        "int_": 0
+        "float_": 1.1899998188018799
       },
       "width": 140.0
     },
     "Formula": {
-      "bl_idname": "SvFormulaNodeMk3",
+      "bl_idname": "SvFormulaNodeMk5",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        209.60821533203125,
-        357.2672119140625
+        220.1787109375,
+        383.2130126953125
       ],
       "params": {
-        "dimensions": 1,
-        "formula1": "rho * base ** (-z)",
-        "formula2": "",
-        "formula3": "",
-        "formula4": ""
+        "formula1": "rho * base ** (-z)"
       },
-      "width": 140.0
+      "width": 230.0
     },
     "Framework": {
       "bl_idname": "SvFrameworkNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -182.53016662597656,
-        134.69235229492188
+        -183.87669372558594,
+        110.45716857910156
       ],
       "params": {
-        "make_basis": 0,
         "max_rho": 2.9600000381469727,
-        "n_connections": 3,
-        "z_mode": "AXIS"
+        "n_connections": 3
       },
       "width": 140.0
     },
@@ -60,12 +56,13 @@
         0.5,
         0.5
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -395.3817443847656,
-        12.887941360473633
+        -396.728271484375,
+        -11.347244262695312
       ],
       "params": {
         "divisions": 2,
@@ -77,24 +74,26 @@
     },
     "Vector polar input": {
       "bl_idname": "VectorPolarInNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        421.8861389160156,
-        287.048828125
+        478.768310546875,
+        247.07760620117188
       ],
       "params": {},
       "width": 100.0
     },
     "Vector polar output": {
       "bl_idname": "VectorPolarOutNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        51.93073272705078,
-        257.8312072753906
+        50.58420944213867,
+        233.5960235595703
       ],
       "params": {},
       "width": 100.0
@@ -106,15 +105,15 @@
         0.30000001192092896,
         0.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        852.43603515625,
-        245.92530822753906
+        851.0895385742188,
+        221.69012451171875
       ],
       "params": {
-        "activate": 1,
         "polygon_color": [
           0.3890626132488251,
           0.762140154838562,
@@ -128,17 +127,17 @@
     },
     "Wireframe": {
       "bl_idname": "SvWireframeNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        632.43603515625,
-        299.7569885253906
+        631.0895385742188,
+        275.52178955078125
       ],
       "params": {
-        "boundary": 1,
         "offset": 0.0,
-        "relative_offset": 1,
+        "relative_offset": true,
         "thickness": 0.10000000149011612
       },
       "width": 140.0
@@ -158,28 +157,34 @@
       1
     ],
     [
+      "Wireframe",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "Wireframe",
+      2,
+      "Viewer Draw Mk3",
+      2
+    ],
+    [
+      "Vector polar input",
+      0,
+      "Wireframe",
+      2
+    ],
+    [
+      "Framework",
+      2,
+      "Wireframe",
+      3
+    ],
+    [
       "Framework",
       0,
       "Vector polar output",
       0
-    ],
-    [
-      "A Number",
-      0,
-      "Formula",
-      0
-    ],
-    [
-      "Vector polar output",
-      0,
-      "Formula",
-      1
-    ],
-    [
-      "Vector polar output",
-      2,
-      "Formula",
-      2
     ],
     [
       "Formula",
@@ -200,27 +205,21 @@
       2
     ],
     [
-      "Vector polar input",
+      "A Number",
       0,
-      "Wireframe",
-      2
-    ],
-    [
-      "Framework",
-      2,
-      "Wireframe",
-      3
-    ],
-    [
-      "Wireframe",
-      0,
-      "Viewer Draw Mk3",
+      "Formula",
       0
     ],
     [
-      "Wireframe",
+      "Vector polar output",
+      0,
+      "Formula",
+      1
+    ],
+    [
+      "Vector polar output",
       2,
-      "Viewer Draw Mk3",
+      "Formula",
       2
     ]
   ]

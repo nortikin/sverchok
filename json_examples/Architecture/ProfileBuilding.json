@@ -1,11 +1,11 @@
 {
-  "export_version": "0.079",
+  "export_version": "0.10",
   "framed_nodes": {
     "A Number": "Frame.004",
     "A Number.001": "Frame.004",
     "Assign Materials List": "Frame.004",
     "Formula": "Frame",
-    "Formula.001": "Frame",
+    "Formula.002": "Frame",
     "Inset faces": "Frame.003",
     "Inset faces.001": "Frame.003",
     "Logic functions.001": "Frame.002",
@@ -33,6 +33,7 @@
   "nodes": {
     "A Number": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -41,16 +42,13 @@
         93.64347076416016
       ],
       "params": {
-        "float_": 0.0,
-        "float_draft_": 0.0,
-        "int_": 0,
-        "int_draft_": 0,
         "selected_mode": "int"
       },
       "width": 140.0
     },
     "A Number.001": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -59,16 +57,14 @@
         -11.558486938476562
       ],
       "params": {
-        "float_": 0.0,
-        "float_draft_": 0.0,
         "int_": 1,
-        "int_draft_": 0,
         "selected_mode": "int"
       },
       "width": 140.0
     },
     "Assign Materials List": {
       "bl_idname": "SvAssignMaterialListNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -76,46 +72,52 @@
         2535.243392944336,
         488.1202392578125
       ],
-      "materials": [
-        "Concrete",
-        "Glass"
-      ],
-      "params": {},
+      "params": {
+        "materials": [
+          {
+            "material": "Concrete"
+          },
+          {
+            "material": "Glass"
+          }
+        ]
+      },
       "width": 200.0
     },
     "Formula": {
-      "bl_idname": "SvFormulaNodeMk3",
+      "bl_idname": "SvFormulaNodeMk5",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -867.5493092536926,
-        -20.066322326660156
+        -884.2107472419739,
+        459.65465545654297
       ],
       "params": {
-        "formula1": "1 + 0.5*sin(x)",
-        "wrap": 0
+        "formula1": "5 + sin(x)"
       },
       "width": 140.0
     },
-    "Formula.001": {
-      "bl_idname": "SvFormulaNodeMk3",
+    "Formula.002": {
+      "bl_idname": "SvFormulaNodeMk5",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -904.1743092536926,
-        445.27953338623047
+        -838.0163502693176,
+        -30.808570861816406
       ],
       "params": {
-        "formula1": "5 + sin(x)",
-        "wrap": 0
+        "formula1": "1 + 0.5*sin(x)"
       },
       "width": 140.0
     },
     "Frame": {
       "bl_idname": "NodeFrame",
-      "height": 920.628662109375,
+      "custom_socket_props": {},
+      "height": 922.8565673828125,
       "hide": false,
       "label": "Profile",
       "location": [
@@ -123,11 +125,12 @@
         111.21172332763672
       ],
       "params": {},
-      "width": 706.9644165039062
+      "width": 706.8125
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
-      "height": 555.8921508789062,
+      "custom_socket_props": {},
+      "height": 584.1832885742188,
       "hide": false,
       "label": "Base Form",
       "location": [
@@ -135,11 +138,12 @@
         190.14381408691406
       ],
       "params": {},
-      "width": 790.8900756835938
+      "width": 790.7381591796875
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "height": 892.1141967773438,
+      "custom_socket_props": {},
+      "height": 921.0508422851562,
       "hide": false,
       "label": "Mask Top & Bottom",
       "location": [
@@ -147,11 +151,12 @@
         -151.44383239746094
       ],
       "params": {},
-      "width": 816.3535766601562
+      "width": 816.9105834960938
     },
     "Frame.003": {
       "bl_idname": "NodeFrame",
-      "height": 382.66766357421875,
+      "custom_socket_props": {},
+      "height": 385.41448974609375,
       "hide": false,
       "label": "Inset",
       "location": [
@@ -159,11 +164,12 @@
         10.079999923706055
       ],
       "params": {},
-      "width": 396.933837890625
+      "width": 396.781982421875
     },
     "Frame.004": {
       "bl_idname": "NodeFrame",
-      "height": 633.0316162109375,
+      "custom_socket_props": {},
+      "height": 634.1202392578125,
       "hide": false,
       "label": "Assign Materials",
       "location": [
@@ -171,10 +177,11 @@
         148.50210571289062
       ],
       "params": {},
-      "width": 821.2734375
+      "width": 821.12158203125
     },
     "Inset faces": {
       "bl_idname": "SvInsetFaces",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -182,16 +189,17 @@
         1481.3184700012207,
         281.4618663787842
       ],
-      "mask_type": [
-        "in"
-      ],
       "params": {
+        "mask_type": [
+          "in"
+        ],
         "thickness": 0.1499999761581421
       },
       "width": 140.0
     },
     "Inset faces.001": {
       "bl_idname": "SvInsetFaces",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -199,17 +207,18 @@
         1678.1004524230957,
         282.41447257995605
       ],
-      "mask_type": [
-        "in"
-      ],
       "params": {
         "depth": -0.29999998211860657,
+        "mask_type": [
+          "in"
+        ],
         "thickness": 0.0
       },
       "width": 140.0
     },
     "Logic functions.001": {
       "bl_idname": "SvLogicNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": true,
       "label": "",
@@ -218,16 +227,13 @@
         157.33985900878906
       ],
       "params": {
-        "items_": "OR",
-        "prop_types": [
-          false,
-          false
-        ]
+        "items_": "OR"
       },
       "width": 140.0
     },
     "Logic functions.002": {
       "bl_idname": "SvLogicNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": true,
       "label": "",
@@ -236,16 +242,13 @@
         138.02403259277344
       ],
       "params": {
-        "items_": "NOT",
-        "prop_types": [
-          false,
-          false
-        ]
+        "items_": "NOT"
       },
       "width": 140.0
     },
     "Matrix Apply.001": {
       "bl_idname": "SvMatrixApplyJoinNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -254,18 +257,18 @@
         330.08673095703125
       ],
       "params": {
-        "do_join": 0
+        "do_join": false
       },
       "width": 140.0
     },
     "Mesh viewer": {
       "bl_idname": "SvMeshViewer",
-      "collection": "",
       "color": [
         1.0,
         0.5889999866485596,
         0.21400000154972076
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -273,9 +276,7 @@
         2365.52880859375,
         456.7216491699219
       ],
-      "params": {
-        "base_data_name": "Alpha"
-      },
+      "params": {},
       "use_custom_color": true,
       "width": 140.0
     },
@@ -286,6 +287,7 @@
         0.5,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -294,6 +296,7 @@
         -179.68054962158203
       ],
       "params": {
+        "n_id": "-8646911185629083307",
         "text": "Generate a profile for each floor"
       },
       "use_custom_color": true,
@@ -306,6 +309,7 @@
         0.5,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -314,6 +318,7 @@
         67.3342056274414
       ],
       "params": {
+        "n_id": "-8646911185629083028",
         "text": "Put each floor on correct height, and connect them all with UV surface into the base form of the building"
       },
       "use_custom_color": true,
@@ -326,6 +331,7 @@
         0.5,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -334,6 +340,7 @@
         -94.69935607910156
       ],
       "params": {
+        "n_id": "-8646911185629083338",
         "text": "Exclude top and bottom faces from inset process"
       },
       "use_custom_color": true,
@@ -341,6 +348,14 @@
     },
     "Number Range": {
       "bl_idname": "SvGenNumberRange",
+      "custom_socket_props": {
+        "1": {
+          "label": "stop"
+        },
+        "2": {
+          "label": "count"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -349,17 +364,22 @@
         94.8656997680664
       ],
       "params": {
-        "count_": 10,
-        "number_mode": "float",
+        "current_mode": "RANGE_COUNT",
         "range_mode": "RANGE_COUNT",
-        "start_float": 0.0,
-        "step_float": 1.0,
         "stop_float": 13.960000038146973
       },
       "width": 140.0
     },
     "Number Range.001": {
       "bl_idname": "SvGenNumberRange",
+      "custom_socket_props": {
+        "1": {
+          "label": "stop"
+        },
+        "2": {
+          "label": "count"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -368,17 +388,22 @@
         -184.98499298095703
       ],
       "params": {
-        "count_": 10,
-        "number_mode": "float",
+        "current_mode": "RANGE_COUNT",
         "range_mode": "RANGE_COUNT",
-        "start_float": 0.0,
-        "step_float": 1.0,
         "stop_float": 6.2831854820251465
       },
       "width": 140.0
     },
     "Number Range.002": {
       "bl_idname": "SvGenNumberRange",
+      "custom_socket_props": {
+        "1": {
+          "label": "stop"
+        },
+        "2": {
+          "label": "count"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -387,17 +412,23 @@
         -6.932823181152344
       ],
       "params": {
-        "count_": 10,
-        "number_mode": "float",
+        "current_mode": "RANGE_COUNT",
         "range_mode": "RANGE_COUNT",
         "start_float": 11.0,
-        "step_float": 1.0,
         "stop_float": 12.0
       },
       "width": 140.0
     },
     "Number Range.003": {
       "bl_idname": "SvGenNumberRange",
+      "custom_socket_props": {
+        "1": {
+          "label": "stop"
+        },
+        "2": {
+          "label": "count"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -406,17 +437,23 @@
         153.06954956054688
       ],
       "params": {
-        "count_": 10,
-        "number_mode": "float",
+        "current_mode": "RANGE_COUNT",
         "range_mode": "RANGE_COUNT",
         "start_float": 5.0,
-        "step_float": 1.0,
         "stop_float": 3.5
       },
       "width": 140.0
     },
     "Number Range.004": {
       "bl_idname": "SvGenNumberRange",
+      "custom_socket_props": {
+        "1": {
+          "label": "stop"
+        },
+        "2": {
+          "label": "count"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -425,17 +462,23 @@
         311.47985076904297
       ],
       "params": {
-        "count_": 10,
-        "number_mode": "float",
+        "current_mode": "RANGE_COUNT",
         "range_mode": "RANGE_COUNT",
         "start_float": 5.829999923706055,
-        "step_float": 1.0,
         "stop_float": 1.239999771118164
       },
       "width": 140.0
     },
     "Number Range.005": {
       "bl_idname": "SvGenNumberRange",
+      "custom_socket_props": {
+        "1": {
+          "label": "stop"
+        },
+        "2": {
+          "label": "count"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -444,17 +487,15 @@
         506.85652923583984
       ],
       "params": {
-        "count_": 10,
-        "number_mode": "float",
+        "current_mode": "RANGE_COUNT",
         "range_mode": "RANGE_COUNT",
-        "start_float": 0.0,
-        "step_float": 1.0,
         "stop_float": 6.2831854820251465
       },
       "width": 140.0
     },
     "Profile Parametric Mk3.001": {
       "bl_idname": "SvProfileNodeMK3",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -463,6 +504,7 @@
         406.81966400146484
       ],
       "params": {
+        "file_pointer": "Text",
         "filename": "Text"
       },
       "profile": "default width = 10\ndefault height = 8\ndefault b_width = 4\ndefault b_height = 2\ndefault r = 1\n\nlet dw = {(width - b_width - 2*r)/2}\n\nM {-width/2+r},{-height/2}\nh {width - 2*r} n=4;\nl r,r\nv {height-2*r};\nl -r,r\nh -dw;\nv {b_height - r};\nl -r,r\nh {-(b_width - 2*r)} ;\nl -r,-r\nv {-(b_height - r)};\nh -dw;\nl -r,-r\nv {-(height - 2*r)};\nX\n#l r,-r",
@@ -470,6 +512,7 @@
     },
     "Reroute": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -482,6 +525,7 @@
     },
     "Reroute.001": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -501,16 +545,7 @@
             0.0,
             0.0,
             -1.0
-          ],
-          "use_prop": true
-        },
-        "4": {
-          "prop": [
-            0.0,
-            0.0,
-            0.0
-          ],
-          "use_prop": true
+          ]
         }
       },
       "height": 100.0,
@@ -521,9 +556,7 @@
         253.05860900878906
       ],
       "params": {
-        "include_partial": 0,
-        "mode": "BySide",
-        "percent": 1.0
+        "mode": "BySide"
       },
       "width": 140.0
     },
@@ -536,16 +569,7 @@
             0.0,
             0.0,
             1.0
-          ],
-          "use_prop": true
-        },
-        "4": {
-          "prop": [
-            0.0,
-            0.0,
-            0.0
-          ],
-          "use_prop": true
+          ]
         }
       },
       "height": 100.0,
@@ -556,13 +580,13 @@
         615.0508575439453
       ],
       "params": {
-        "include_partial": 0,
         "mode": "BySide"
       },
       "width": 140.0
     },
     "Switch.001": {
       "bl_idname": "SvSwitchNodeMK2",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -575,6 +599,7 @@
     },
     "UV Connection.001": {
       "bl_idname": "LineConnectNodeMK2",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -583,16 +608,16 @@
         419.18328857421875
       ],
       "params": {
-        "cap_U": 0,
-        "cap_V": 1,
-        "cicl_check_V": 1,
+        "cap_V": true,
+        "cicl_check_V": true,
         "dir_check": "V_dir",
-        "slice_check": 0
+        "slice_check": false
       },
       "width": 140.0
     },
     "Vector in.001": {
       "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -606,129 +631,9 @@
   },
   "update_lists": [
     [
-      "Number Range.005",
+      "Mesh viewer",
       0,
-      "Formula.001",
-      0
-    ],
-    [
-      "Number Range.001",
-      0,
-      "Formula",
-      0
-    ],
-    [
-      "Number Range.004",
-      0,
-      "Profile Parametric Mk3.001",
-      0
-    ],
-    [
-      "Formula.001",
-      0,
-      "Profile Parametric Mk3.001",
-      1
-    ],
-    [
-      "Number Range.003",
-      0,
-      "Profile Parametric Mk3.001",
-      2
-    ],
-    [
-      "Formula",
-      0,
-      "Profile Parametric Mk3.001",
-      3
-    ],
-    [
-      "Number Range.002",
-      0,
-      "Profile Parametric Mk3.001",
-      4
-    ],
-    [
-      "Number Range",
-      0,
-      "Vector in.001",
-      2
-    ],
-    [
-      "Profile Parametric Mk3.001",
-      0,
-      "Matrix Apply.001",
-      0
-    ],
-    [
-      "Profile Parametric Mk3.001",
-      1,
-      "Matrix Apply.001",
-      1
-    ],
-    [
-      "Vector in.001",
-      0,
-      "Matrix Apply.001",
-      3
-    ],
-    [
-      "Matrix Apply.001",
-      0,
-      "UV Connection.001",
-      0
-    ],
-    [
-      "UV Connection.001",
-      "vertices",
-      "Reroute",
-      "Input"
-    ],
-    [
-      "UV Connection.001",
-      "data",
-      "Reroute.001",
-      "Input"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Select mesh elements by location",
-      "Vertices"
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "Select mesh elements by location",
-      "Polygons"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Select mesh elements by location.002",
-      "Vertices"
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "Select mesh elements by location.002",
-      "Polygons"
-    ],
-    [
-      "Select mesh elements by location.002",
-      2,
-      "Logic functions.001",
-      0
-    ],
-    [
-      "Select mesh elements by location",
-      2,
-      "Logic functions.001",
-      1
-    ],
-    [
-      "Logic functions.001",
-      0,
-      "Logic functions.002",
+      "Assign Materials List",
       0
     ],
     [
@@ -768,22 +673,40 @@
       4
     ],
     [
-      "Inset faces.001",
-      4,
-      "Switch.001",
+      "Select mesh elements by location.002",
+      2,
+      "Logic functions.001",
       0
     ],
     [
-      "A Number.001",
-      0,
-      "Switch.001",
+      "Select mesh elements by location",
+      2,
+      "Logic functions.001",
       1
     ],
     [
-      "A Number",
+      "Logic functions.001",
       0,
-      "Switch.001",
-      2
+      "Logic functions.002",
+      0
+    ],
+    [
+      "Profile Parametric Mk3.001",
+      0,
+      "Matrix Apply.001",
+      0
+    ],
+    [
+      "Profile Parametric Mk3.001",
+      1,
+      "Matrix Apply.001",
+      1
+    ],
+    [
+      "Vector in.001",
+      0,
+      "Matrix Apply.001",
+      3
     ],
     [
       "Inset faces.001",
@@ -804,9 +727,111 @@
       3
     ],
     [
-      "Mesh viewer",
+      "UV Connection.001",
+      "vertices",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "UV Connection.001",
+      "data",
+      "Reroute.001",
+      "Input"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Select mesh elements by location",
+      "Vertices"
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Select mesh elements by location",
+      "Polygons"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Select mesh elements by location.002",
+      "Vertices"
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Select mesh elements by location.002",
+      "Polygons"
+    ],
+    [
+      "Inset faces.001",
+      4,
+      "Switch.001",
+      0
+    ],
+    [
+      "A Number.001",
       0,
-      "Assign Materials List",
+      "Switch.001",
+      1
+    ],
+    [
+      "A Number",
+      0,
+      "Switch.001",
+      2
+    ],
+    [
+      "Matrix Apply.001",
+      0,
+      "UV Connection.001",
+      0
+    ],
+    [
+      "Number Range",
+      0,
+      "Vector in.001",
+      2
+    ],
+    [
+      "Number Range.004",
+      0,
+      "Profile Parametric Mk3.001",
+      0
+    ],
+    [
+      "Formula",
+      0,
+      "Profile Parametric Mk3.001",
+      1
+    ],
+    [
+      "Number Range.003",
+      0,
+      "Profile Parametric Mk3.001",
+      2
+    ],
+    [
+      "Formula.002",
+      0,
+      "Profile Parametric Mk3.001",
+      3
+    ],
+    [
+      "Number Range.002",
+      0,
+      "Profile Parametric Mk3.001",
+      4
+    ],
+    [
+      "Number Range.001",
+      0,
+      "Formula.002",
+      0
+    ],
+    [
+      "Number Range.005",
+      0,
+      "Formula",
       0
     ]
   ]

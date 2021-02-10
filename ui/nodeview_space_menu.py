@@ -55,6 +55,7 @@ menu_structure = [
     ["NODEVIEW_MT_AddSurfaces", 'SURFACE_DATA'],
     ["NODEVIEW_MT_AddFields", 'OUTLINER_OB_FORCE_FIELD'],
     ["NODEVIEW_MT_AddSolids", 'MESH_CUBE'],
+    ["NODEVIEW_MT_AddSpatial", 'POINTCLOUD_DATA'],
     ["NODEVIEW_MT_AddTransforms", 'ORIENTATION_LOCAL'],
     ["NODEVIEW_MT_AddAnalyzers", 'VIEWZOOM'],
     ["NODEVIEW_MT_AddModifiers", 'MODIFIER'],
@@ -64,6 +65,7 @@ menu_structure = [
     ["NODEVIEW_MT_AddVector", "SV_VECTOR"],
     ["NODEVIEW_MT_AddMatrix", 'EMPTY_AXIS'],
     ["NODEVIEW_MT_AddQuaternion", 'SV_QUATERNION'],
+    ["NODEVIEW_MT_AddColor", 'COLOR'],
     ["NODEVIEW_MT_AddLogic", "SV_LOGIC"],
     ["NODEVIEW_MT_AddListOps", 'NLA'],
     ["NODEVIEW_MT_AddDictionary", 'OUTLINER_OB_FONT'],
@@ -75,6 +77,7 @@ menu_structure = [
     ["NODEVIEW_MT_AddLayout", 'NODETREE'],
     ["NODE_MT_category_SVERCHOK_BPY_Data", "BLENDER"],
     ["separator"],
+    ["NODEVIEW_MT_AddScript", "WORDWRAP_ON"],
     ["NODEVIEW_MT_AddNetwork", "SYSTEM"],
     ["NODEVIEW_MT_AddPulgaPhysics", "MOD_PHYSICS"],
     ["NODEVIEW_MT_AddSVG", "SV_SVG"],
@@ -233,6 +236,8 @@ def make_preset_category_menu(category):
     global preset_category_menus
     if category in preset_category_menus:
         return preset_category_menus[category]
+    if not presets.check_category(category):
+        return None
 
     class SvPresetCategorySubmenu(bpy.types.Menu):
         bl_label = category
@@ -255,8 +260,10 @@ class NODEVIEW_MT_AddPresetOps(bpy.types.Menu):
         layout = self.layout
         presets.draw_presets_ops(layout, context=context)
         for category in presets.get_category_names():
-            class_name = preset_category_menus[category].__name__
-            layout.menu(class_name)
+            if category in preset_category_menus:
+                if category in preset_category_menus:
+                    class_name = preset_category_menus[category].__name__
+                    layout.menu(class_name)
 
 
 class NODE_MT_category_SVERCHOK_GROUP(bpy.types.Menu):
@@ -317,6 +324,7 @@ classes = [
     make_class('AnalyzeSolid', "Solids @ Analyze"),
     make_class('Solids', "Solids"),
     make_class('Transforms', "Transforms"),
+    make_class('Spatial', "Spatial"),
     make_class('Analyzers', "Analyzers"),
     make_class('Viz', "Viz"),
     make_class('Text', "Text"),
@@ -329,10 +337,12 @@ classes = [
     make_class('Vector', "Vector"),
     make_class('Matrix', "Matrix"),
     make_class('Quaternion', "Quaternion"),
+    make_class('Color', "Color"),
     make_class('CAD', "CAD"),
     make_class('ModifierChange', "Modifier Change"),
     make_class('ModifierMake', "Modifier Make"),
     make_class('Logic', "Logic"),
+    make_class('Script', "Script"),
     make_class('Network', "Network"),
     make_class('Exchange', "Exchange"),
     make_class('PulgaPhysics', "Pulga Physics"),
@@ -357,6 +367,7 @@ def unregister():
     for class_name in classes:
         bpy.utils.unregister_class(class_name)
     for category in presets.get_category_names():
-        bpy.utils.unregister_class(preset_category_menus[category])
+        if category in preset_category_menus:
+            bpy.utils.unregister_class(preset_category_menus[category])
 
     menu_class_by_title = dict()

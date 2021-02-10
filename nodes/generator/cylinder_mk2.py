@@ -20,7 +20,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (match_long_repeat, updateNode, get_edge_loop)
+from sverchok.data_structure import (updateNode, get_edge_loop, list_match_modes, list_match_func)
 from sverchok.utils.geom import CubicSpline
 
 from math import sin, cos, pi
@@ -281,6 +281,12 @@ class SvCylinderNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     updating: BoolProperty(
         name="Updating", description="Flag to inhibit updating", default=False)
+    
+    list_match: EnumProperty(
+        name="List Match",
+        description="Behavior on different list lengths, object level",
+        items=list_match_modes, default="REPEAT",
+        update=updateNode)
 
     def migrate_from(self, old_node):
         self.separate = old_node.Separate
@@ -318,6 +324,7 @@ class SvCylinderNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "cyclic", toggle=True)
+        layout.prop(self, "list_match")
 
     def process(self):
         if not any(s.is_linked for s in self.outputs):
@@ -342,7 +349,7 @@ class SvCylinderNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         input_np = list(map(lambda n: max(2, n), input_np))
         input_nm = list(map(lambda m: max(3, m), input_nm))
 
-        params = match_long_repeat([input_rt, input_rb,
+        params = list_match_func[self.list_match]([input_rt, input_rb,
                                     input_np, input_nm,
                                     input_h, input_t,
                                     input_ph, input_s])

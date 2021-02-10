@@ -29,6 +29,7 @@ class UiTests(SverchokTestCase):
                     'SvMonadInfoNode',
                     'SvExMinimalScalarFieldNode',
                     'SvExScalarFieldGraphNode',
+                    'SvMeshSurfaceFieldNode',
                     'SvExMeshNormalFieldNode',
                     'SvExMinimalVectorFieldNode',
                     'SvSolidCenterOfMassNode',

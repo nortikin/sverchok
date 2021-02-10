@@ -11,6 +11,7 @@ Nodes
    Surfaces<nodes/surface/surface_index>
    Fields<nodes/field/field_index>
    Solids<nodes/solid/solid_index>
+   Spatial <nodes/spatial/spatial_index>
    Transforms <nodes/transforms/transforms_index>
    Analyzers <nodes/analyzer/analyzer_index>
    Modifier Change <nodes/modifier_change/modifier_change_index>
@@ -21,6 +22,7 @@ Nodes
    Vector <nodes/vector/vector_index>
    Matrix <nodes/matrix/matrix_index>
    Quaternion <nodes/quaternion/quaternion_index>
+   Color <nodes/color/color_index>
    Logic <nodes/logic/logic_index>
    List Main <nodes/list_main/list_main_index>
    List Structure <nodes/list_struct/list_struct_index>
@@ -35,5 +37,6 @@ Nodes
    Object <nodes/object_nodes/object_nodes_index>
    Layout <nodes/layout/layout_index>
    Network <nodes/network/network_index>
+   Pulga Physics <nodes/pulga_physics/pulga_physics_index>
    Exchange <nodes/exchange/exchange_index>
    SVG <nodes/svg/svg_index>

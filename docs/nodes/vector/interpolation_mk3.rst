@@ -24,10 +24,12 @@ Examples
 --------
 .. image:: https://cloud.githubusercontent.com/assets/619340/4185874/ca99927c-375b-11e4-8cc8-451456bfb194.png
    :alt: interpol-simple.png
+
 Sine interpolated from 5 points. The input points are shown with numbers. 
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/4185875/ca9f56ee-375b-11e4-83fd-a746c8cc690b.png
    :alt: interpol-surface.png
+
 An interpolated surface between sine and cosine.
 
 Notes

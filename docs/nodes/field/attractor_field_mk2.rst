@@ -87,6 +87,23 @@ This node has the following parameters:
   side of the mesh. Otherwise, the scalar field will have positive values
   everywhere. This flag does not affect the calculated vector field. Unchecked
   by default.
+* **Metric**. This parameter is available only when **Attractor type**
+  parameter is set to **Point**. The metric to be used to calculate distances.
+  The available options are:
+
+  * **Euclidian**
+  * **Manhattan**
+  * **Chebyshev**
+  * **Custom**. A generic Minkowski metric defined by formula
+    ``sum(abs(dx_i)**P)**(1.0/P)``, where P is defined in the Exponent
+    parameter.
+   
+  The default value is **Euclidian**.
+
+* **Exponent**. This parameter is available only when **Attractor** parameter
+  is set to **Point**, and **Metric** parameter is set to **Custom**. Exponent
+  for generic Minkowski distance. The available values are from 1.0 to
+  infinity. The default value is 2.0, which defines Euclidian metric.
 * **Falloff type**. The force falloff type to be used. The available values are:
 
    * **None - R**. Do not use falloff: the force amplitude is proportional to the distance from the attractor object (grows with the distance).

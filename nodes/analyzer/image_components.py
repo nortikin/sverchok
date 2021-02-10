@@ -22,7 +22,7 @@ import bpy
 from bpy.props import (IntProperty, FloatProperty, StringProperty, BoolProperty)
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, fullList
+from sverchok.data_structure import updateNode
 
 '''
 by dealga mcardle sept 2014
@@ -300,7 +300,7 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         outputs = self.outputs
-        
+
         if not self.loaded:
             return
         if not outputs['xya'].is_linked:

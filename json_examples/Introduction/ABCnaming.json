@@ -1,0 +1,264 @@
+{
+  "export_version": "0.10",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "Parallels",
+      "location": [
+        -240.1060791015625,
+        30.252456665039062
+      ],
+      "params": {
+        "int_": 4,
+        "int_max": 20,
+        "int_min": 2,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "A Number.001": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "Meridians",
+      "location": [
+        -252.82513427734375,
+        -70.32206726074219
+      ],
+      "params": {
+        "int_": 10,
+        "int_max": 50,
+        "int_min": 3,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "Cylinder": {
+      "bl_idname": "SvCylinderNodeMK2",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "custom_socket_props": {},
+      "height": 2.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        54.789154052734375,
+        205.7797393798828
+      ],
+      "params": {
+        "cap_bottom": false,
+        "cap_top": false,
+        "parallels": 8
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Origins": {
+      "bl_idname": "SvOrigins",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        302.7168884277344,
+        116.16021728515625
+      ],
+      "params": {
+        "mode": "Faces"
+      },
+      "width": 140.0
+    },
+    "Scalar Math": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        49.79540252685547,
+        -193.5400848388672
+      ],
+      "params": {
+        "current_op": "-1"
+      },
+      "width": 140.0
+    },
+    "Scripted Node Lite": {
+      "bl_idname": "SvScriptNodeLite",
+      "color": [
+        0.0,
+        0.800000011920929,
+        0.949999988079071
+      ],
+      "custom_socket_props": {
+        "0": {
+          "default_int_property": 8,
+          "default_property_type": "int"
+        },
+        "1": {
+          "default_int_property": 32,
+          "default_property_type": "int"
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        299.06072998046875,
+        -148.86288452148438
+      ],
+      "params": {
+        "custom_enum": "Flip",
+        "n_id": "-7358495040399039981",
+        "script_name": "ABC_numering.py",
+        "script_str": "'''\nin U_nums s d=2 n=2\nin V_char s d=2 n=2\nenum = Orig Flip\nout numeration s\n'''\n\nfrom functools import reduce\n\n\ndef ui(self, context, layout):\n    layout.prop(self, 'custom_enum',expand=True)\n    cb_str = 'node.scriptlite_custom_callback'\n#ND = self.node_dict.get(hash(self))               #\n#if ND:                                            #\n#    callbacks = ND['sockets']['callbacks']        #    this will be hidden in the node eventually \n#    if not 'my_operator' in callbacks:            #\n#        callbacks['my_operator'] = my_operator    #\n\n\nnumeration = [[]]\ncharz = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']\ncharth = [charz] + [[i+k for k in charz] for i in charz]\ncharth = reduce(lambda x,y: x+y, charth)\n\nif self.custom_enum == 'Orig':\n    chars = charth[:V_char]\n    for i in range(U_nums):\n        num_ = []\n        for ch in chars:\n            num_.append([ch+str(i)])\n        numeration[0].extend(num_)\nelif self.custom_enum == 'Flip':\n    U_nums, V_char = V_char, U_nums\n    chars = charth[:V_char]\n    for ch in chars:\n        num_ = []\n        for i in range(U_nums):\n            num_.append([str(ch)+str(i)])\n        numeration[0].extend(num_)"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        546.9487915039062,
+        249.6246337890625
+      ],
+      "params": {
+        "display_faces": false,
+        "display_verts": false,
+        "edge_color": [
+          0.1379198431968689,
+          0.4701138734817505,
+          1.0,
+          0.5048537254333496
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Index+": {
+      "bl_idname": "SvIDXViewer28",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        549.343017578125,
+        -97.71658325195312
+      ],
+      "params": {
+        "bg_verts_col": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "draw_bg": true,
+        "numid_verts_col": [
+          0.3165699243545532,
+          0.5225216746330261,
+          0.16097527742385864,
+          1.0
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "A Number",
+      0,
+      "Cylinder",
+      2
+    ],
+    [
+      "A Number.001",
+      0,
+      "Cylinder",
+      3
+    ],
+    [
+      "Cylinder",
+      0,
+      "Origins",
+      0
+    ],
+    [
+      "Cylinder",
+      1,
+      "Origins",
+      1
+    ],
+    [
+      "Cylinder",
+      2,
+      "Origins",
+      2
+    ],
+    [
+      "Origins",
+      0,
+      "Viewer Index+",
+      0
+    ],
+    [
+      "Scripted Node Lite",
+      0,
+      "Viewer Index+",
+      4
+    ],
+    [
+      "Cylinder",
+      0,
+      "Viewer Draw",
+      0
+    ],
+    [
+      "Cylinder",
+      1,
+      "Viewer Draw",
+      1
+    ],
+    [
+      "A Number",
+      0,
+      "Scalar Math",
+      0
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Scripted Node Lite",
+      0
+    ],
+    [
+      "A Number.001",
+      0,
+      "Scripted Node Lite",
+      1
+    ]
+  ]
+}

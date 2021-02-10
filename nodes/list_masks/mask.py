@@ -35,13 +35,15 @@ def mask_list(list_a, mask, flags):
             ind_true = id_t[mask_out].tolist()
         if flags[2]:
             ind_false = id_t[np.invert(mask_out)].tolist()
-    mask_iter = cycle(mask) if any(flags[3:]) else []
     if flags[3]:
+        mask_iter = cycle(mask)
         result_t = [item for item, m in zip(list_a, mask_iter) if m]
     if flags[4]:
+        mask_iter = cycle(mask)
         result_f = [item for item, m in zip(list_a, mask_iter) if not m]
+    mask_out = mask_out.tolist() if flags[0] else []
 
-    return mask_out.tolist() if flags[0] else [], ind_true, ind_false, result_t, result_f
+    return mask_out, ind_true, ind_false, result_t, result_f
 
 def mask_array(list_a, mask, flags):
     id_t, f_mask = [], []

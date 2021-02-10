@@ -511,3 +511,11 @@ class SvEllipse(SvCurve):
         vs = np.apply_along_axis(lambda v : self.matrix @ v, 1, vs)
         return vs
 
+    def to_nurbs(self, implementation=SvNurbsMaths.NATIVE):
+        scale = Matrix([[1,0,0], [0, self.b/self.a, 0], [0, 0, 1]]).to_4x4()
+        matrix = Matrix(self.matrix).to_4x4()
+        matrix.translation = Vector(self.get_center())
+        circle = SvCircle(matrix = matrix @ scale, radius = self.a,
+                    center = self.get_center())
+        return circle.to_nurbs(implementation)
+

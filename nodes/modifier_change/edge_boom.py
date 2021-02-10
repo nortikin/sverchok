@@ -19,8 +19,8 @@
 import bpy
 from bpy.props import EnumProperty, BoolProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import zip_long_repeat, updateNode
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import zip_long_repeat, updateNode, throttle_and_update_node
 from sverchok.utils.sv_mesh_utils import polygons_to_edges
 
 class SvEdgeBoomNode(bpy.types.Node, SverchCustomTreeNode):
@@ -38,7 +38,7 @@ class SvEdgeBoomNode(bpy.types.Node, SverchCustomTreeNode):
         ('OBJ', "Objects", "Output list of objects, each consisting of a single edge", 1)
     ]
 
-    @throttled
+    @throttle_and_update_node
     def update_sockets(self, context):
         self.outputs['Vertex1'].hide_safe = self.out_mode != 'VER'
         self.outputs['Vertex2'].hide_safe = self.out_mode != 'VER'
@@ -86,9 +86,9 @@ class SvEdgeBoomNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.inputs['Vertices'].is_linked:
             return
 
-        vertices_s = self.inputs['Vertices'].sv_get()
-        edges_s = self.inputs['Edges'].sv_get(default=[[]])
-        faces_s = self.inputs['Faces'].sv_get(default=[[]])
+        vertices_s = self.inputs['Vertices'].sv_get(deepcopy=False)
+        edges_s = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)
+        faces_s = self.inputs['Faces'].sv_get(default=[[]], deepcopy=False)
 
         verts1_out = []
         verts2_out = []
@@ -135,4 +135,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvEdgeBoomNode)
-

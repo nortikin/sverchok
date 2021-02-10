@@ -1,5 +1,5 @@
-Surface Boundary
-================
+Surface's Boundary
+==================
 
 Functionality
 -------------
@@ -23,13 +23,18 @@ This node has the following input:
 Parameters
 ----------
 
-This node has the following parameter:
+This node has the following parameters:
 
 * **Cyclic**. This defines whether the surface is closed in some directions. The available options are:
 
   * **Plain**. The surface is not closed in any direction, so it has single closed curve as a boundary.
   * **U Cyclic**. The surface is closed along the U direction. It has two closed curves as boundary.
   * **V Cyclic**. The surface is closed along the V direction.
+
+* **Concatenate**. This parameter is available only if **Cyclic** parameter is
+  set to **Plain**. If checked, then four edges of the surface will be
+  concatenated into one Curve object. Otherwise, the node will output four
+  separate Curve objects. Checked by default.
 
 Outputs
 -------

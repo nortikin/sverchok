@@ -22,7 +22,7 @@ import bpy
 from bpy.props import EnumProperty, BoolProperty, IntProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
+from sverchok.data_structure import (match_long_repeat, updateNode)
 from sverchok.data_structure import match_long_repeat as mlr, enum_item_4
 
 z_func_dict = {
@@ -229,7 +229,7 @@ class SvSvgMeshNode(bpy.types.Node, SverchCustomTreeNode):
         pols_in = self.inputs['Polygons / Edges'].sv_get(deepcopy=True)
         planes_in = self.inputs['Projection Plane'].sv_get(deepcopy=True, default=[Matrix()])
         offset_in = self.inputs['Offset'].sv_get(deepcopy=True, default=[Matrix()])
-        atts_in = self.inputs['Fill / Stroke'].sv_get(deepcopy=False, default=None)
+        atts_in = self.inputs['Fill / Stroke'].sv_get(deepcopy=False, default=[[None]])
 
         shapes = []
         verts_to_project = []

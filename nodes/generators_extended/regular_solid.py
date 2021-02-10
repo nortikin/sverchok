@@ -22,7 +22,7 @@ from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty, Fl
 from add_mesh_extra_objects.add_mesh_solid import createSolid
 from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, fullList, match_long_repeat
+from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.modules.geom_utils import interp_v3_v3v3, normalize, add_v3_v3v3, sub_v3_v3v3
 from sverchok.utils.sv_mesh_utils import polygons_to_edges
 ## This node is a port to the  add_mesh_extra_objects.add_mesh_solid createSolid

@@ -22,7 +22,7 @@ from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 class SvPlanarFacesNode(bpy.types.Node, SverchCustomTreeNode):
@@ -62,12 +62,12 @@ class SvPlanarFacesNode(bpy.types.Node, SverchCustomTreeNode):
         if not any (socket.is_linked for socket in self.outputs):
             return
 
-        vertices_s = self.inputs['Vertices'].sv_get()
-        edges_s = self.inputs['Edges'].sv_get(default=[[]])
-        faces_s = self.inputs['Faces'].sv_get(default=[[]])
-        masks_s = self.inputs['FaceMask'].sv_get(default=[[1]])
-        factors_s = self.inputs['Factor'].sv_get()
-        iterations_s = self.inputs['Iterations'].sv_get()
+        vertices_s = self.inputs['Vertices'].sv_get(deepcopy=False)
+        edges_s = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)
+        faces_s = self.inputs['Faces'].sv_get(default=[[]], deepcopy=False)
+        masks_s = self.inputs['FaceMask'].sv_get(default=[[1]], deepcopy=False)
+        factors_s = self.inputs['Factor'].sv_get(deepcopy=False)
+        iterations_s = self.inputs['Iterations'].sv_get(deepcopy=False)
 
         verts_out = []
         edges_out = []
@@ -79,10 +79,11 @@ class SvPlanarFacesNode(bpy.types.Node, SverchCustomTreeNode):
                 iterations = iterations[0]
             if isinstance(factor, (list, tuple)):
                 factor = factor[0]
-            fullList(masks, len(faces))
+
+            masks_matched = repeat_last_for_length(masks, len(faces))
 
             bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-            bm_faces = [face for mask, face in zip(masks, bm.faces[:]) if mask]
+            bm_faces = [face for mask, face in zip(masks_matched, bm.faces[:]) if mask]
 
             bmesh.ops.planar_faces(bm,
                     faces = bm_faces,
@@ -106,4 +107,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvPlanarFacesNode)
-

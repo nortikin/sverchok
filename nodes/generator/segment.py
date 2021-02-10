@@ -13,14 +13,14 @@ import numpy as np
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, numpy_list_match_modes, iter_list_match_func
 
 
 SplitModes = namedtuple('SplitModes', ['cuts', 'steps'])
 SPLIT_MODE = SplitModes('Cuts', 'Steps')
 
 
-def split_by_cuts(verts_a, verts_b, cuts):
+def split_by_cuts(verts_a, verts_b, cuts, list_match_mode='REPEAT'):
     """
     Generate lines between two given points
     :param verts_a: list of tuple(float, float, float)
@@ -29,17 +29,18 @@ def split_by_cuts(verts_a, verts_b, cuts):
     :return: numpy array with shape (number of vertices, 3), list of tuple(int, int)
     """
     line_number = max(len(cuts), len(verts_a), len(verts_b))
+    list_match_f = iter_list_match_func[list_match_mode]
+    params = list_match_f([cuts, verts_a, verts_b])
     verts_number = sum([cuts + 2 if cuts >= 0 else 2 for _, cuts in
-                        zip(range(line_number), chain(cuts, cycle([cuts[-1]])))])
-    cuts = chain(cuts, cycle([cuts[-1]]))
-    verts_a = chain(verts_a, cycle([verts_a[-1]]))
-    verts_b = chain(verts_b, cycle([verts_b[-1]]))
+                        zip(range(line_number), params[0])])
+
+
     verts_lines = np.empty((verts_number, 3))
     edges_lines = []
     num_added_verts = 0
     indexes = iter(range(int(1e+100)))
 
-    for i, c, va, vb in zip(range(line_number), cuts, verts_a, verts_b):
+    for i, c, va, vb in zip(range(line_number), *params):
         va, vb = np.array(va), np.array(vb)
         verts_line = generate_verts(va, vb, c)
         edges_lines.extend([(i, i + 1) for i, _ in zip(indexes, verts_line[:-1])])
@@ -49,7 +50,7 @@ def split_by_cuts(verts_a, verts_b, cuts):
     return verts_lines, edges_lines
 
 
-def split_by_steps(verts_a, verts_b, steps=None):
+def split_by_steps(verts_a, verts_b, steps=None, list_match_mode='REPEAT'):
     """
     Generate one line between given points, steps subdivide line proportionally
     Multiple lines can be generated
@@ -67,7 +68,9 @@ def split_by_steps(verts_a, verts_b, steps=None):
     edges_lines = []
     num_added_verts = 0
     indexes = iter(range(int(1e+100)))
-    for i_line, va, vb in zip(range(line_number), iter_last(verts_a), iter_last(verts_b)):
+    list_match_f = iter_list_match_func[list_match_mode]
+    params = list_match_f([verts_a, verts_b])
+    for i_line, va, vb in zip(range(line_number), *params):
         va, vb = np.array(va), np.array(vb)
         size = np.linalg.norm(vb - va)
         norm_factor = sum(steps) / size
@@ -149,15 +152,31 @@ class SvSegmentGenerator(bpy.types.Node, SverchCustomTreeNode):
     as_numpy: bpy.props.BoolProperty(name="Numpy output", description="Format of output data", update=updateNode)
     split: bpy.props.BoolProperty(name="Split to objects", description="Each object in separate object",
                                    update=updateNode, default=True)
+    list_match_global: bpy.props.EnumProperty(
+        name="List Match Gobal",
+        description="Behavior on different list lengths, multiple objects level",
+        items=numpy_list_match_modes, default="REPEAT",
+        update=updateNode)
+    list_match_local: bpy.props.EnumProperty(
+        name="List Match Local",
+        description="Behavior on different list lengths, object level",
+        items=numpy_list_match_modes, default="REPEAT",
+        update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'split_mode', expand=True)
 
     def draw_buttons_ext(self, context, layout):
+        list_match = layout.box()
+        list_match.label(text='List Match:')
+        list_match.prop(self, "list_match_global", text='Global')
+        list_match.prop(self, "list_match_local", text='Local')
         layout.prop(self, 'as_numpy')
         layout.prop(self, 'split')
 
     def rclick_menu(self, context, layout):
+        layout.prop_menu_enum(self, "list_match_global")
+        layout.prop_menu_enum(self, "list_match_local")
         layout.prop(self, 'split')
         layout.prop(self, 'as_numpy')
 
@@ -172,13 +191,13 @@ class SvSegmentGenerator(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         num_objects = max([len(sock.sv_get(deepcopy=False, default=[])) for sock in self.inputs])
         out = []
-        for i, a, b, c, st in zip(
-                range(num_objects),
-                *[iter_last(sock.sv_get(deepcopy=False, default=[None])) for sock in self.inputs]):
+        list_match_f = iter_list_match_func[self.list_match_global]
+        params = list_match_f([sock.sv_get(deepcopy=False, default=[[None]]) for sock in self.inputs])
+        for i, a, b, c, st in zip(range(num_objects), *params):
             if self.split_mode == SPLIT_MODE.cuts:
-                out.append(split_by_cuts(a, b, c))
+                out.append(split_by_cuts(a, b, c, self.list_match_local))
             elif self.split_mode == SPLIT_MODE.steps:
-                out.append(split_by_steps(a, b, st))
+                out.append(split_by_steps(a, b, st, self.list_match_local))
         if self.split:
             temp = [split_lines_to_objects(*data) for data in out]
             out = [v for res in temp for v in zip(*res)]

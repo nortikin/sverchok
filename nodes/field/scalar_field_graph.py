@@ -5,8 +5,8 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
 from mathutils import Vector, Matrix
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match_long_repeat
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node
 from sverchok.utils.logging import info, exception
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.marching_squares import make_contours
@@ -50,7 +50,7 @@ else:
             default = True,
             update = updateNode)
 
-        @throttled
+        @throttle_and_update_node
         def update_sockets(self, context):
             self.outputs['Faces'].hide_safe = not self.make_faces
 

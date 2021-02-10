@@ -5,8 +5,8 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
 from mathutils import Vector, Matrix
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat, ensure_nesting_level
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.logging import info, exception
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.dependencies import skimage
@@ -64,7 +64,7 @@ else:
                 default = 1.0,
                 update = updateNode)
 
-        @throttled
+        @throttle_and_update_node
         def update_sockets(self, context):
             self.outputs['Faces'].hide_safe = not self.make_faces
 
@@ -75,6 +75,12 @@ else:
 
         connect_bounds : BoolProperty(
                 name = "Connect boundary",
+                default = True,
+                update = updateNode)
+
+        join : BoolProperty(
+                name = "Flat output",
+                description = "If checked, generate one flat list of objects for all input iso values. Otherwise, generate a separate list of objects for each input iso value.",
                 default = True,
                 update = updateNode)
 
@@ -94,8 +100,9 @@ else:
             self.update_sockets(context)
 
         def draw_buttons(self, context, layout):
-            layout.prop(self, 'make_faces', toggle=True)
-            layout.prop(self, 'connect_bounds', toggle=True)
+            layout.prop(self, 'join')
+            layout.prop(self, 'make_faces')
+            layout.prop(self, 'connect_bounds')
 
         def apply_matrix(self, matrix, xs, ys, zs):
             matrix = matrix.inverted()
@@ -130,6 +137,8 @@ else:
 
             value_s = ensure_nesting_level(value_s, 2)
             z_value_s = ensure_nesting_level(z_value_s, 2)
+            input_level = get_data_nesting_level(fields_s, data_types=(SvScalarField,))
+            nested_output = input_level > 1
             fields_s = ensure_nesting_level(fields_s, 2, data_types=(SvScalarField,))
             matrix_s = ensure_nesting_level(matrix_s, 2, data_types=(Matrix,))
 
@@ -139,6 +148,9 @@ else:
             edges_out = []
             faces_out = []
             for field_i, matrix_i, min_x_i, max_x_i, min_y_i, max_y_i, z_value_i, value_i, samples_i in parameters:
+                new_verts = []
+                new_edges = []
+                new_faces = []
                 objects = zip_long_repeat(field_i, matrix_i, min_x_i, max_x_i,
                                 min_y_i, max_y_i, z_value_i, value_i, samples_i)
                 for field, matrix, min_x, max_x, min_y, max_y, z_value, value, samples in objects:
@@ -160,9 +172,24 @@ else:
                     x_size = (max_x - min_x)/samples
                     y_size = (max_y - min_y)/samples
 
-                    new_verts, new_edges, new_faces = make_contours(samples, samples, min_x, x_size, min_y, y_size, z_value, contours, make_faces=self.make_faces, connect_bounds = self.connect_bounds)
+                    value_verts, value_edges, value_faces = make_contours(samples, samples, min_x, x_size, min_y, y_size, z_value, contours, make_faces=self.make_faces, connect_bounds = self.connect_bounds)
                     if has_matrix:
                         new_verts = self.unapply_matrix(matrix, new_verts)
+
+                    if self.join:
+                        new_verts.extend(value_verts)
+                        new_edges.extend(value_edges)
+                        new_faces.extend(value_faces)
+                    else:
+                        new_verts.append(value_verts)
+                        new_edges.append(value_edges)
+                        new_faces.append(value_faces)
+
+                if nested_output:
+                    verts_out.append(new_verts)
+                    edges_out.append(new_edges)
+                    faces_out.append(new_faces)
+                else:
                     verts_out.extend(new_verts)
                     edges_out.extend(new_edges)
                     faces_out.extend(new_faces)

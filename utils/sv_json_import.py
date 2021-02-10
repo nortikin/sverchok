@@ -18,7 +18,6 @@ from sverchok.core.update_system import build_update_list, process_tree
 from sverchok import old_nodes
 from sverchok.utils.sv_IO_panel_tools import get_file_obj_from_zip
 from sverchok.utils.logging import info, warning, getLogger, logging
-from sverchok.utils import dummy_nodes
 from sverchok.utils.handle_blender_data import BPYProperty, BPYNode
 from sverchok.utils.sv_IO_monad_helpers import unpack_monad
 
@@ -265,6 +264,8 @@ class TreeGenerator:
         with self._fails_log.add_fail("Creating node", f'Tree: {self._tree_name}, Node: {node_name}'):
             if old_nodes.is_old(bl_type):  # old node classes are registered only by request
                 old_nodes.register_old(bl_type)
+            # import only here to do not create a cyclic import
+            from sverchok.utils import dummy_nodes
             if dummy_nodes.is_dependent(bl_type):
                 # some node types are not registered if dependencies are not installed
                 # in this case such nodes are registered as dummies

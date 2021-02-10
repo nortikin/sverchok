@@ -71,7 +71,9 @@ class DocumentationTests(SverchokTestCase):
                             continue
                         doc_name = line + ".rst"
                         doc_path = join(directory, doc_name)
-                        if not exists(doc_path):
+                        doc_name2 = line + ".md"
+                        doc_path2 = join(directory, doc_name2)
+                        if not (exists(doc_path) or exists(doc_path2)):
                             bad_files.append(doc_name)
 
                 if bad_files:
@@ -126,7 +128,6 @@ blenddata_to_svdata2.py
 obj_edit.py
 BMOperatorsMK2.py
 uv_texture.py
-csg_booleanMK2.py
 vertex_colors_mk3.py
 sort_blenddata.py
 object_raycast2.py
@@ -138,7 +139,6 @@ points_from_uv_to_mesh.py
 custom_mesh_normals.py
 color_uv_texture.py
 filter_blenddata.py
-edge_split.py
 interpolation_mk2.py
 numpy_array.py
 bmesh_obj_in.py

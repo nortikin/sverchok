@@ -113,6 +113,8 @@ class SvViewHelpForNode(bpy.types.Operator):
             string_dir = 'list_mutators'
         elif string_dir == 'analyzers':
             string_dir = 'analyzer'
+        elif string_dir == 'cad':
+            string_dir = 'CAD'
 
         help_url = string_dir + '/' + filename
         # first let's find if this is a valid doc file, by inspecting locally for the rst file.
@@ -194,7 +196,7 @@ class SvViewSourceForNode(bpy.types.Operator):
             return {'FINISHED'}
 
         return {'CANCELLED'}
-        
+
     def view_source_internal(self, areas, fpath):
         block_name = os.path.basename(fpath)
         repeated = False
@@ -217,9 +219,9 @@ class SvViewSourceForNode(bpy.types.Operator):
             bpy.ops.screen.area_split(direction='VERTICAL', factor=0.5)
             areas[-1].type = 'TEXT_EDITOR'
             areas[-1].spaces[0].text = bpy.data.texts[block_name]
-            
+
         return {'FINISHED'}
-    
+
     def view_source_external(self, prefs, fpath):
         app_name = prefs.external_editor
         if not app_name:
@@ -227,7 +229,7 @@ class SvViewSourceForNode(bpy.types.Operator):
             return {'CANCELLED'}
         subprocess.Popen([app_name, fpath])
         return {'FINISHED'}
-    
+
     def get_filepath_from_node(self, n):
         """ get full filepath on disk for a given node reference """
         import inspect
@@ -358,4 +360,3 @@ def unregister():
     bpy.utils.unregister_class(SvCopyIDName)
     bpy.utils.unregister_class(SvViewHelpForNode)
     bpy.utils.unregister_class(SvViewSourceForNode)
-

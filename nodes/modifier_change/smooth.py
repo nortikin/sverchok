@@ -21,14 +21,18 @@ from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 class SvSmoothNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Smooth vertices'''
+    """
+    Triggers: Smooth vertices
+    Tooltip: Smooth the mesh by flattering the angles between the faces/edges.
+    """
     bl_idname = 'SvSmoothNode'
     bl_label = 'Smooth Vertices'
-    bl_icon = 'SMOOTHCURVE'
+    bl_icon = 'MOD_SMOOTH'
+
 
     def update_mode(self, context):
         self.inputs['ClipDist'].hide_safe = self.laplacian
@@ -119,18 +123,18 @@ class SvSmoothNode(bpy.types.Node, SverchCustomTreeNode):
         if not any(output.is_linked for output in self.outputs):
             return
 
-        vertices_s = self.inputs['Vertices'].sv_get()
-        edges_s = self.inputs['Edges'].sv_get(default=[[]])
-        faces_s = self.inputs['Faces'].sv_get(default=[[]])
-        masks_s = self.inputs['VertMask'].sv_get(default=[[1]])
-        iterations_s = self.inputs['Iterations'].sv_get()[0]
+        vertices_s = self.inputs['Vertices'].sv_get(deepcopy=False)
+        edges_s = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)
+        faces_s = self.inputs['Faces'].sv_get(default=[[]], deepcopy=False)
+        masks_s = self.inputs['VertMask'].sv_get(default=[[1]], deepcopy=False)
+        iterations_s = self.inputs['Iterations'].sv_get(deepcopy=False)[0]
         if not self.laplacian:
-            clip_dist_s = self.inputs['ClipDist'].sv_get()[0]
+            clip_dist_s = self.inputs['ClipDist'].sv_get(deepcopy=False)[0]
         else:
             clip_dist_s = [0.0]
-        factor_s = self.inputs['Factor'].sv_get()[0]
+        factor_s = self.inputs['Factor'].sv_get(deepcopy=False)[0]
         if self.laplacian:
-            border_factor_s = self.inputs['BorderFactor'].sv_get()[0]
+            border_factor_s = self.inputs['BorderFactor'].sv_get(deepcopy=False)[0]
         else:
             border_factor_s = [0.0]
 
@@ -140,13 +144,13 @@ class SvSmoothNode(bpy.types.Node, SverchCustomTreeNode):
 
         meshes = match_long_repeat([vertices_s, edges_s, faces_s, masks_s, clip_dist_s, factor_s, border_factor_s, iterations_s])
         for vertices, edges, faces, masks, clip_dist, factor, border_factor, iterations in zip(*meshes):
-            fullList(masks,  len(vertices))
+            masks_matched = repeat_last_for_length(masks, len(vertices))
 
             bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
             bm.verts.ensure_lookup_table()
             bm.edges.ensure_lookup_table()
             bm.faces.ensure_lookup_table()
-            selected_verts = [vert for mask, vert in zip(masks, bm.verts) if mask]
+            selected_verts = [vert for mask, vert in zip(masks_matched, bm.verts) if mask]
 
             for i in range(iterations):
                 if self.laplacian:

@@ -12,7 +12,7 @@ import bmesh
 from bmesh.ops import inset_individual, remove_doubles, inset_region
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, make_repeaters
 
 
 def inset_faces(verts, faces, thickness, depth, edges=None, face_data=None, face_mask=None, inset_type=None,
@@ -90,16 +90,19 @@ def bmesh_from_sv(verts, faces, edges=None, face_int_layers=None):
     if face_int_layers is None:
         face_int_layers = dict()
     bm = bmesh.new()
+    new_vert = bm.verts.new
+    new_face = bm.faces.new
     [bm.faces.layers.int.new(key) for key in face_int_layers]
     for i, co in enumerate(verts):
-        v = bm.verts.new(co)
+        v = new_vert(co)
         v.index = i
     bm.verts.ensure_lookup_table()
     if edges:
+        new_edge = bm.edges.new
         for e in edges:
-            bm.edges.new([bm.verts[i] for i in e])
+            new_edge([bm.verts[i] for i in e])
     for f in faces:
-        bm.faces.new([bm.verts[i] for i in f])
+        new_face([bm.verts[i] for i in f])
     for key in face_int_layers:
         if face_int_layers[key] is not None:
             for v, f in zip(face_int_layers[key], bm.faces):
@@ -112,7 +115,7 @@ def inset_faces_individual_one_value(verts, faces, thickness, depth, edges=None,
     # It calling Bmesh function with one value of thickness and depth for all faces
     if props is None:
         props = set('use_even_offset')
-    if face_mask is None:
+    if not face_mask:
         face_mask = cycle([True])
     else:
         face_mask = [m for m, _ in zip(chain(face_mask, cycle([face_mask[-1]])), range(len(faces)))]
@@ -139,7 +142,7 @@ def inset_faces_individual_multiple_values(verts, faces, thicknesses, depths, ed
     # It generate Bmesh per one face, inset face into it and merge the Bmesh to output Bmesh
     if props is None:
         props = set('use_even_offset')
-    if face_mask is None:
+    if not face_mask:
         iter_face_mask = cycle([True])
     else:
         iter_face_mask = chain(face_mask, cycle([face_mask[-1]]))
@@ -174,7 +177,7 @@ def inset_faces_region_one_value(verts, faces, thickness, depth, edges=None, fac
     # It inserts faces in region mode with one value of thickness and depth for all mesh
     if props is None:
         props = {'use_even_offset', 'use_boundary'}
-    if face_mask is None:
+    if not face_mask:
         face_mask = cycle([True])
     else:
         face_mask = chain(face_mask, cycle([face_mask[-1]]))
@@ -201,7 +204,7 @@ def inset_faces_region_multiple_values(verts, faces, thicknesses, depths, edges=
     # inserts faces into island and merge mesh into output mesh
     if props is None:
         props = {'use_even_offset', 'use_boundary'}
-    if face_mask is None:
+    if not face_mask:
         iter_face_mask = cycle([True])
     else:
         iter_face_mask = chain(face_mask, cycle([face_mask[-1]]))
@@ -372,21 +375,28 @@ class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not all([sock.is_linked for sock in [self.inputs['Verts'], self.inputs['Faces']]]):
             return
-
-        verts = self.inputs['Verts'].sv_get()
-        edges = self.inputs['Edges'].sv_get() if self.inputs['Edges'].is_linked else cycle([None])
-        faces = self.inputs['Faces'].sv_get()
-        face_data = chain(self.inputs['Face data'].sv_get(), cycle([self.inputs['Face data'].sv_get()[-1]]))\
-                    if self.inputs['Face data'].is_linked else cycle([None])
-        face_mask = chain(self.inputs['Face mask'].sv_get(), cycle([self.inputs['Face mask'].sv_get()[-1]]))\
-                    if self.inputs['Face mask'].is_linked else cycle([None])
-        thickness = chain(self.inputs['Thickness'].sv_get(), cycle([self.inputs['Thickness'].sv_get()[-1]]))
-        depth = chain(self.inputs['Depth'].sv_get(), cycle([self.inputs['Depth'].sv_get()[-1]]))
-
+        inputs = self.inputs
+        params = [s.sv_get(deepcopy=False, default=[[]]) for s in self.inputs]
+        max_len = max(map(len, params))
         out = []
-        for v, e, f, t, d, fd, m in zip(verts, edges, faces, thickness, depth, face_data, face_mask):
+        for i, v, e, f, fd, m, t, d  in zip(range(max_len), *make_repeaters(params)):
             out.append(inset_faces(v, f, t, d, e, fd, m, self.inset_type, self.mask_type,
                                    set(prop for prop in self.bool_properties if getattr(self, prop))))
+
+        # verts = inputs['Verts'].sv_get()
+        # edges = inputs['Edges'].sv_get() if inputs['Edges'].is_linked else cycle([None])
+        # faces = inputs['Faces'].sv_get()
+        # face_data = chain(inputs['Face data'].sv_get(), cycle([inputs['Face data'].sv_get()[-1]]))\
+        #             if inputs['Face data'].is_linked else cycle([None])
+        # face_mask = chain(inputs['Face mask'].sv_get(), cycle([inputs['Face mask'].sv_get()[-1]]))\
+        #             if inputs['Face mask'].is_linked else cycle([None])
+        # thickness = chain(inputs['Thickness'].sv_get(), cycle([inputs['Thickness'].sv_get()[-1]]))
+        # depth = chain(inputs['Depth'].sv_get(), cycle([inputs['Depth'].sv_get()[-1]]))
+        #
+        # out = []
+        # for v, e, f, t, d, fd, m in zip(verts, edges, faces, thickness, depth, face_data, face_mask):
+        #     out.append(inset_faces(v, f, t, d, e, fd, m, self.inset_type, self.mask_type,
+        #                            set(prop for prop in self.bool_properties if getattr(self, prop))))
 
         out_verts, out_edges, out_faces, out_face_data, out_mask = zip(*out)
         self.outputs['Verts'].sv_set(out_verts)

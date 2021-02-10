@@ -70,8 +70,8 @@ class SvListSplitNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         if self.outputs['Split'].is_linked:
-            data = self.inputs['Data'].sv_get()
-            sizes = self.inputs['Split'].sv_get()[0]
+            data = self.inputs['Data'].sv_get(deepcopy=False)
+            sizes = self.inputs['Split'].sv_get(deepcopy=False)[0]
             if self.unwrap:
                 out = self.get(data, self.level_unwrap, sizes)
             elif self.level:
@@ -83,7 +83,7 @@ class SvListSplitNode(bpy.types.Node, SverchCustomTreeNode):
     def get(self, data, level, size):
         if not isinstance(data, (list, tuple)):
             return data
-        if not isinstance(data[0], (list, tuple, np.ndarray)):
+        if not isinstance(data[0], (list, tuple, np.ndarray, str)):
             return data
         if level > 1:  # find level to work on
             return [self.get(d, level - 1, size) for d in data]

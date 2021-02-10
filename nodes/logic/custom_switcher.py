@@ -27,7 +27,7 @@ class SvCustomSwitcher(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
         # Select only one item in non multiple selection mode
         if not self.multiple_selection:
             self['previous_user_list'] = [False for _ in range(32)]
-            self.user_list = [True] + [False for _ in range(31)]
+            self.user_list = [False for _ in range(32)]
 
     def get_user_list(self):
         return self['user_list']

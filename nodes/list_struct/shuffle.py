@@ -60,11 +60,11 @@ class ListShuffleNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if self.outputs[0].is_linked and self.inputs[0].is_linked:
 
-            seed = self.inputs['seed'].sv_get()[0][0]
+            seed = self.inputs['seed'].sv_get(deepcopy=False)[0][0]
 
             random.seed(seed)
             np_random.seed(seed)
-            data = self.inputs['data'].sv_get()
+            data = self.inputs['data'].sv_get(deepcopy=False)
             output = self.shuffle(data, self.level)
             self.outputs['data'].sv_set(output)
 

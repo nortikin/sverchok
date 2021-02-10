@@ -22,8 +22,8 @@ from mathutils import Vector, Matrix
 from mathutils.kdtree import KDTree
 import math
 
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, match_long_repeat, fullList, throttle_and_update_node
 from sverchok.utils.math import inverse, inverse_square, inverse_cubic, inverse_exp, gauss
 
 def get_avg_vector(vectors):
@@ -53,7 +53,7 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
             ("gauss", "Gauss - Exp(-R^2/2)", "", 4)
         ]
 
-    @throttled
+    @throttle_and_update_node
     def update_type(self, context):
         self.inputs['Direction'].hide_safe = (self.attractor_type == 'Point')
         self.inputs['Coefficient'].hide_safe = (self.falloff_type not in ['inverse_exp', 'gauss'])

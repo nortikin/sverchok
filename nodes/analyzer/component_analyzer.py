@@ -18,8 +18,8 @@
 
 import bpy
 from bpy.props import BoolProperty, EnumProperty
-from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, match_long_repeat,throttle_and_update_node
 from sverchok.utils.listutils import lists_flat
 
 from sverchok.utils.modules.polygon_utils import faces_modes_dict, pols_origin_modes_dict, tangent_modes_dict
@@ -100,7 +100,7 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
     ]
 
 
-    @throttled
+    @throttle_and_update_node
     def update_mode(self, context):
         # for mode in self.modes:
         info = modes_dicts[self.mode][self.actual_mode().replace("_", " ")]
