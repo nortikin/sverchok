@@ -323,9 +323,11 @@ def FreeCAD_abs_placement(sketch_placement,p_co):
     return sketch_placement.multiply(local_placement)
 
 def register():
-    bpy.utils.register_class(SvReadFCStdSketchNode)
-    bpy.utils.register_class(SvShowFcstdSketchNamesOp)
+    if FreeCAD is not None:
+        bpy.utils.register_class(SvReadFCStdSketchNode)
+        bpy.utils.register_class(SvShowFcstdSketchNamesOp)
 
-def unregister():
-    bpy.utils.unregister_class(SvReadFCStdSketchNode)
-    bpy.utils.register_class(SvShowFcstdSketchNamesOp)
+def unregister()
+    if FreeCAD is not None:
+        bpy.utils.unregister_class(SvReadFCStdSketchNode)
+        bpy.utils.register_class(SvShowFcstdSketchNamesOp)

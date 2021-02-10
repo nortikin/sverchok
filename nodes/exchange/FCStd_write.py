@@ -1,4 +1,3 @@
-
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
 
@@ -176,7 +175,9 @@ def fc_write_parts(fc_file, verts, faces, part_name, solid, mod):
 
 
 def register():
-    bpy.utils.register_class(SvWriteFCStdNode)
+    if FreeCAD is not None:
+        bpy.utils.register_class(SvWriteFCStdNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvWriteFCStdNode)
+    if FreeCAD is not None:
+        bpy.utils.unregister_class(SvWriteFCStdNode)

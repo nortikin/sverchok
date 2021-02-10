@@ -233,11 +233,13 @@ def WriteParameter(fc_file,spreadsheet,alias,par_write,write):
 
 
 def register():
-    bpy.utils.register_class(SvFCStdSpreadsheetNode)
-    bpy.utils.register_class(SvShowFcstdSpreadsheetsOp)
-    bpy.utils.register_class(SvShowFcstdParNamesOp)
+    if FreeCAD is not None:
+        bpy.utils.register_class(SvFCStdSpreadsheetNode)
+        bpy.utils.register_class(SvShowFcstdSpreadsheetsOp)
+        bpy.utils.register_class(SvShowFcstdParNamesOp)
 
 def unregister():
-    bpy.utils.unregister_class(SvFCStdSpreadsheetNode)
-    bpy.utils.register_class(SvShowFcstdSpreadsheetsOp)
-    bpy.utils.register_class(SvShowFcstdParNamesOp)
+    if FreeCAD is not None:
+        bpy.utils.unregister_class(SvFCStdSpreadsheetNode)
+        bpy.utils.register_class(SvShowFcstdSpreadsheetsOp)
+        bpy.utils.register_class(SvShowFcstdParNamesOp)

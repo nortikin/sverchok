@@ -1,3 +1,4 @@
+
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
 
@@ -206,9 +207,11 @@ def open_fc_file(fc_file):
     F.setActiveDocument(Fname)  
 
 def register():
-    bpy.utils.register_class(SvReadFCStdNode)
-    bpy.utils.register_class(SvShowFcstdNamesOp)
+    if FreeCAD is not None:
+        bpy.utils.register_class(SvReadFCStdNode)
+        bpy.utils.register_class(SvShowFcstdNamesOp)
 
 def unregister():
-    bpy.utils.unregister_class(SvReadFCStdNode)
-    bpy.utils.register_class(SvShowFcstdNamesOp)
+    if FreeCAD is not None:
+        bpy.utils.unregister_class(SvReadFCStdNode)
+        bpy.utils.register_class(SvShowFcstdNamesOp)
