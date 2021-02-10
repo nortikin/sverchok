@@ -35,7 +35,6 @@
     HilbertNode
     Hilbert3dNode
     HilbertImageNode
-    SvReceiveFromSorcarNode
     SvImageComponentsNode
     SvWFCTextureNode
     SvTorusKnotNodeMK2
@@ -652,6 +651,7 @@
     SvExJsonToNurbsNode
     SvImportSolidNode
     SvExportSolidNode
+    SvReceiveFromSorcarNode
 
 ## Script
     SvFormulaNodeMk5

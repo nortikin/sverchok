@@ -12,7 +12,6 @@ Generators Extended
    pentagon_tiler
    polygon_grid
    regular_solid
-   receive_from_sorcar
    ring_mk2
    smooth_lines
    ellipse_mk2
