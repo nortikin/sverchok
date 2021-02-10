@@ -11,8 +11,8 @@ from sverchok.utils.math import all_falloff_types, falloff_array
 
 class SvRotationFieldNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Rotation Field
-    Tooltip: Generate scalar and vector attraction fields
+    Triggers: Spin Field
+    Tooltip: Generate vector rotation field
     """
     bl_idname = 'SvRotationFieldNode'
     bl_label = 'Rotation Field'
