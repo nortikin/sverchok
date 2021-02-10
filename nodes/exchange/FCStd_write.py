@@ -8,7 +8,7 @@ else:
     F = FreeCAD
     import bpy
     from bpy.props import StringProperty, BoolProperty,EnumProperty
-    from sverchok.node_tree import SverchCustomTreeNode, throttled
+    from sverchok.node_tree import SverchCustomTreeNode #,throttled
     from sverchok.data_structure import updateNode, match_long_repeat
     from sverchok.utils.logging import info
 
@@ -31,7 +31,7 @@ else:
             name="part_name", 
             default="part_name")
 
-        @throttled
+        #@throttled
         def changeMode(self, context):
 
             if self.obj_format == 'mesh':
