@@ -8,8 +8,8 @@ else:
     F = FreeCAD
     import bpy
     from bpy.props import StringProperty, BoolProperty,EnumProperty
-    from sverchok.node_tree import SverchCustomTreeNode #,throttled
-    from sverchok.data_structure import updateNode, match_long_repeat
+    from sverchok.node_tree import SverchCustomTreeNode # OLD throttled
+    from sverchok.data_structure import updateNode, match_long_repeat # NEW throttle_and_update_node
     from sverchok.utils.logging import info
 
     class SvWriteFCStdNode(bpy.types.Node, SverchCustomTreeNode):
