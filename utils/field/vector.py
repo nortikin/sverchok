@@ -1024,7 +1024,8 @@ class SvVoronoiVectorField(SvVectorField):
     def evaluate_grid(self, xs, ys, zs):
         vs = np.stack((xs,ys,zs)).T
         r = self.voronoi.query_array(vs)
-        return r[1]
+        vs = r[1]
+        return vs[:,0], vs[:,1], vs[:,2]
 
 class SvScalarFieldCurveMap(SvVectorField):
     def __init__(self, scalar_field, curve, mode):
