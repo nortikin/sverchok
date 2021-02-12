@@ -85,8 +85,10 @@ class SV_MT_AllSocketsOptionsMenu(bpy.types.Menu):
 
         for s in node.outputs:
             if hasattr(s, 'draw_menu_items'):
-                layout.label(text=s.name)
-                s.draw_menu_items(context, layout)
+                layout.context_pointer_set("socket", s)
+                layout.context_pointer_set("node", node)
+                layout.menu('SV_MT_SocketOptionsMenu', text=s.name)
+
 
 class SV_MT_SocketOptionsMenu(bpy.types.Menu):
     bl_label = "Socket Options"
