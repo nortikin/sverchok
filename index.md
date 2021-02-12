@@ -185,6 +185,7 @@
     SvExDecomposeVectorFieldNode
     SvExScalarFieldPointNode
     SvAttractorFieldNodeMk2
+    SvRotationFieldNode
     SvExImageFieldNode
     SvMeshSurfaceFieldNode
     SvExMeshNormalFieldNode
