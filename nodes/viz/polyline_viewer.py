@@ -234,9 +234,12 @@ class SvPolylineViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
             cu_data.curve.bevel_depth = self.bevel_depth
             cu_data.curve.bevel_resolution = self.resolution
             cu_data.curve.resolution_u = self.preview_resolution_u
-            cu_data.curve.bevel_object = bevel_object
+            if bevel_object:
+                cu_data.curve.bevel_mode = 'OBJECT'
+                cu_data.curve.bevel_object = bevel_object
+            else:
+                cu_data.curve.bevel_mode = 'ROUND'
             cu_data.curve.use_fill_caps = self.caps
-            print(type(cu_data.curve), )
             for spline in cu_data.curve.splines:
                 spline.use_endpoint_u = self.last_point
 
