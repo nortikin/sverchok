@@ -17,7 +17,7 @@ class SvRotationFieldNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvRotationFieldNode'
     bl_label = 'Rotation Field'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_EX_ATTRACT'
+    sv_icon = 'SV_ROTATION_FIELD'
 
     @throttle_and_update_node
     def update_type(self, context):
