@@ -42,10 +42,19 @@ class SvFindClosestValue(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'mode', expand=True)
 
     def process(self):
+        if not all([node.inputs.values, node.inputs.data]):
+            # it would be better to place such checking into class decorator but too lazy
+            node.outputs.closest_values, node.outputs.closest_indexes = [], []
+            return
+
         extended_data = np.array(node.inputs.data + [-np.inf, np.inf])
         sorting_indexes = np.argsort(extended_data)
 
         if node.props.mode == 'range':
+            if not node.inputs.range:
+                node.outputs.closest_values, node.outputs.closest_indexes = [], []
+                return
+
             len_input = max([len(node.inputs.values), len(node.inputs.range)])
             values = np.fromiter(repeat_last(node.inputs.values), float, count=len_input)
             range_values = np.fromiter(repeat_last(node.inputs.range), float, count=len_input)
