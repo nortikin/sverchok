@@ -166,10 +166,8 @@ class SvNeuroElman:
 
 class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     ''' 
-        Neuro Elman 1 Layer 
-        Teachable node getting data with etalon example to learn
-        Than after animated learning can output result without
-            etalon values
+        Triggers: Neuro Elman 1 Layer 
+        Tooltip: Join ETALON data - after animation learning - disconnect ETALON
     '''
 
     bl_idname = 'SvNeuroElman1LNode'
