@@ -236,7 +236,9 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
             if hasattr(node, "rclick_menu"):
                 node.rclick_menu(context, layout)
                 layout.separator()
-
+            if len(node.outputs):
+                layout.menu('SV_MT_AllSocketsOptionsMenu', text='Outputs post-process')
+                layout.separator()
             if node.bl_idname in {'ViewerNode2', 'SvBmeshViewerNodeMK2'}:
                 layout.operator("node.sv_deligate_operator", text="Connect IDXViewer").fn = "+idxv"
             else:
@@ -245,6 +247,8 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
                     # layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw + IDX").fn="vdmk2 + idxv"
             if len(node.outputs):
                 layout.operator("node.sv_deligate_operator", text="Connect stethoscope").fn = "stethoscope"
+
+
 
             layout.separator()
 

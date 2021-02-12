@@ -68,6 +68,27 @@ def update_interface(self, context):
     if input_node:
         group_tree.update_nodes([input_node])
 
+class SV_MT_AllSocketsOptionsMenu(bpy.types.Menu):
+    bl_label = "Sockets Options"
+
+    @classmethod
+    def poll(cls, context):
+        return hasattr(context, 'node')# and hasattr(context, 'socket')
+
+    def draw(self, context):
+        print(dir(context))
+        node = context.active_node
+
+        if not node:
+            return
+        layout = self.layout
+
+        for s in node.outputs:
+            if hasattr(s, 'draw_menu_items'):
+                layout.context_pointer_set("socket", s)
+                layout.context_pointer_set("node", node)
+                layout.menu('SV_MT_SocketOptionsMenu', text=s.name)
+
 
 class SV_MT_SocketOptionsMenu(bpy.types.Menu):
     bl_label = "Socket Options"
@@ -1391,7 +1412,7 @@ class SvInputLinkMenuOp(bpy.types.Operator):
         return {'FINISHED'}
 
 classes = [
-    SV_MT_SocketOptionsMenu,
+    SV_MT_SocketOptionsMenu, SV_MT_AllSocketsOptionsMenu,
     SvVerticesSocket, SvMatrixSocket, SvStringsSocket, SvFilePathSocket,
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
     SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket,
