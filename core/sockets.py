@@ -76,7 +76,6 @@ class SV_MT_AllSocketsOptionsMenu(bpy.types.Menu):
         return hasattr(context, 'node')# and hasattr(context, 'socket')
 
     def draw(self, context):
-        print(dir(context))
         node = context.active_node
 
         if not node:
