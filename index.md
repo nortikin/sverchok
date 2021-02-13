@@ -440,6 +440,7 @@
     ListFuncNode
     SvListDecomposeNode
     SvListStatisticsNode
+    SvIndexListNode
 
 ## List Struct
     ShiftNodeMK2
