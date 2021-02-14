@@ -9,6 +9,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.handle_blender_data import BPYPointers
+from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode
 
 
@@ -56,9 +57,14 @@ class SvDataBlockListOptions(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
+        node = context.node
 
         op = layout.operator(SvEditDataBlockList.bl_idname, text='Clear the list')
         op.operation = 'clear'
+
+        layout.separator()
+        layout.prop(node, 'is_animatable')
+        layout.prop(node, 'refresh', toggle=False, icon='FILE_REFRESH')
 
 
 class UI_UL_SvBlenderDataList(bpy.types.UIList):
@@ -86,7 +92,7 @@ class UI_UL_SvBlenderDataList(bpy.types.UIList):
         pass
 
 
-class SvBlenderDataListNode(SverchCustomTreeNode, bpy.types.Node):
+class SvBlenderDataListNode(SvAnimatableNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: list
     Tooltip:
