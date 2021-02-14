@@ -9,13 +9,10 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.handle_blender_data import BPYPointers
-from sverchok.data_structure import fixed_iter, repeat_last, throttle_tree_update, updateNode
+from sverchok.data_structure import updateNode
 
 
 class SvBlenderDataPointers(bpy.types.PropertyGroup):
-
-    def update(self, context):
-        pass
 
     __annotations__ = dict()
     for enum in BPYPointers:
@@ -23,47 +20,45 @@ class SvBlenderDataPointers(bpy.types.PropertyGroup):
             type=enum.value, update=lambda s, c: updateNode(c.node, c))
 
 
-class SvAddDataBlock(bpy.types.Operator):
-    bl_label = "Add data block"
-    bl_idname = "sverchok.add_data_block"
+class SvEditDataBlockList(bpy.types.Operator):
+    bl_label = "Edit data block list"
+    bl_idname = "sverchok.edit_data_block_list"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    operations = ['add', 'remove', 'move_up', 'move_down', 'clear']
+    operation: bpy.props.EnumProperty(items=[(i, i, '') for i in operations])
+
+    item_index: bpy.props.IntProperty()  # required for some operations
 
     def execute(self, context):
         node = context.node
-        node.blender_data.add()
-        return {'FINISHED'}
 
+        if self.operation == 'add':
+            node.blender_data.add()
+        elif self.operation == 'remove':
+            node.blender_data.remove(self.item_index)
+        elif self.operation == 'move_up':
+            next_index = max(0, self.item_index - 1)
+            node.blender_data.move(self.item_index, next_index)
+        elif self.operation == 'move_down':
+            next_index = min(self.item_index + 1, len(node.blender_data) - 1)
+            node.blender_data.move(self.item_index, next_index)
+        elif self.operation == 'clear':
+            node.blender_data.clear()
 
-class SvRemoveDataBlock(bpy.types.Operator):
-    bl_label = "Remove data block"
-    bl_idname = "sverchok.remove_data_block"
-    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
-
-    item_index: bpy.props.IntProperty()
-
-    def execute(self, context):
-        node = context.node
-        node.blender_data.remove(self.item_index)
         updateNode(node, context)
         return {'FINISHED'}
 
 
-class SvMoveDataBlock(bpy.types.Operator):
-    bl_label = "Move data block"
-    bl_idname = "sverchok.move_data_block"
-    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+class SvDataBlockListOptions(bpy.types.Menu):
+    bl_idname = "OBJECT_MT_data_block_list_options"
+    bl_label = "Options"
 
-    item_index: bpy.props.IntProperty()
-    up_direction: bpy.props.BoolProperty()
+    def draw(self, context):
+        layout = self.layout
 
-    def execute(self, context):
-        node = context.node
-        next_index = self.item_index + (-1 if self.up_direction else 1)
-        next_index = min(next_index, len(node.blender_data) - 1)
-        next_index = max(0, next_index)
-        node.blender_data.move(self.item_index, next_index)
-        updateNode(node, context)
-        return {'FINISHED'}
+        op = layout.operator(SvEditDataBlockList.bl_idname, text='Clear the list')
+        op.operation = 'clear'
 
 
 class UI_UL_SvBlenderDataList(bpy.types.UIList):
@@ -75,15 +70,16 @@ class UI_UL_SvBlenderDataList(bpy.types.UIList):
 
         if node.edit_mode:
 
-            up = row.operator(SvMoveDataBlock.bl_idname, text='', icon='TRIA_UP')
+            up = row.operator(SvEditDataBlockList.bl_idname, text='', icon='TRIA_UP')
+            up.operation = 'move_up'
             up.item_index = index
-            up.up_direction = True
 
-            down = row.operator(SvMoveDataBlock.bl_idname, text='', icon='TRIA_DOWN')
+            down = row.operator(SvEditDataBlockList.bl_idname, text='', icon='TRIA_DOWN')
+            down.operation = 'move_down'
             down.item_index = index
-            down.up_direction = False
 
-            remove = row.operator(SvRemoveDataBlock.bl_idname, text='', icon='REMOVE')
+            remove = row.operator(SvEditDataBlockList.bl_idname, text='', icon='REMOVE')
+            remove.operation = 'remove'
             remove.item_index = index
 
     def draw_filter(self, context, layout):
@@ -96,7 +92,7 @@ class SvBlenderDataListNode(SverchCustomTreeNode, bpy.types.Node):
     Tooltip:
     """
     bl_idname = 'SvBlenderDataListNode'
-    bl_label = 'Blender data'
+    bl_label = 'Blender data list'
     bl_icon = 'ALIGN_TOP'
 
     data_type: bpy.props.EnumProperty(items=[(e.name.lower(), e.name, '') for e in BPYPointers], name='Type',
@@ -114,7 +110,9 @@ class SvBlenderDataListNode(SverchCustomTreeNode, bpy.types.Node):
         col.prop(self, 'data_type')
         row = col.row(align=True)
         row.prop(self, 'edit_mode')
-        row.operator(SvAddDataBlock.bl_idname, text='+')
+        op = row.operator(SvEditDataBlockList.bl_idname, text='+')
+        op.operation = 'add'
+        row.menu(SvDataBlockListOptions.bl_idname, icon='DOWNARROW_HLT', text="")
         layout.template_list(UI_UL_SvBlenderDataList.__name__, "blender_data", self, "blender_data", self, "selected")
 
     def process(self):
@@ -124,7 +122,8 @@ class SvBlenderDataListNode(SverchCustomTreeNode, bpy.types.Node):
 
 classes = [
     SvBlenderDataPointers,
-    SvAddDataBlock, SvRemoveDataBlock, SvMoveDataBlock,  # operators
+    SvEditDataBlockList,
+    SvDataBlockListOptions,
     UI_UL_SvBlenderDataList,
     SvBlenderDataListNode]
 
