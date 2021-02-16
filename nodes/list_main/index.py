@@ -60,11 +60,13 @@ class SvIndexListNode(SverchCustomTreeNode, bpy.types.Node):
         start_indexes = self.inputs['Start index'].sv_get(deepcopy=False)
         end_indexes = self.inputs['End index'].sv_get(deepcopy=False)
 
-        max_len = max(len(data), len(items), len(start_indexes), len(end_indexes))
+        unpack_data = list(list_level_iter(data, self.level))
+
+        max_len = max(len(unpack_data), len(items), len(start_indexes), len(end_indexes))
 
         out_indexes = []
         for lst, its, starts, ends in zip(
-                repeat_last(list(list_level_iter(data, self.level))),
+                repeat_last(unpack_data),
                 fixed_iter(items, max_len),
                 fixed_iter(start_indexes, max_len),
                 fixed_iter(end_indexes, max_len)):
