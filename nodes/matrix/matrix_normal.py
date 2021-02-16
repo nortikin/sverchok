@@ -30,7 +30,7 @@ from sverchok.data_structure import (
 def matrix_normal(params, T, U, match_mode):
     loc, nor = params
     out = []
-    matched_params = list_match_func[match_mode](loc, nor)
+    matched_params = list_match_func[match_mode]([loc, nor])
     for V, N in zip(*matched_params):
         n = N.to_track_quat(T, U)
         m = Matrix.Translation(V) @ n.to_matrix().to_4x4()
