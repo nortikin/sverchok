@@ -21,13 +21,17 @@ from bpy.props import EnumProperty, BoolProperty
 import mathutils
 from mathutils import Vector, Matrix
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, second_as_first_cycle as safc, enum_item as e,Vector_generate, match_long_repeat)
+from sverchok.data_structure import (
+    updateNode,
+    enum_item as e,
+    Vector_generate,
+    list_match_modes, list_match_func)
 
-def matrix_normal(params, T, U):
+def matrix_normal(params, T, U, match_mode):
     loc, nor = params
     out = []
-    nor = safc(loc, nor)
-    for V, N in zip(loc, nor):
+    matched_params = list_match_func[match_mode]([loc, nor])
+    for V, N in zip(*matched_params):
         n = N.to_track_quat(T, U)
         m = Matrix.Translation(V) @ n.to_matrix().to_4x4()
         out.append(m)
@@ -55,7 +59,16 @@ class SvMatrixNormalNode(bpy.types.Node, SverchCustomTreeNode):
         description="Flatten output by list-joining level 1",
         default=True,
         update=updateNode)
-
+    list_match_global: EnumProperty(
+        name="Match Global",
+        description="Behavior on different list lengths, multiple objects level",
+        items=list_match_modes, default="REPEAT",
+        update=updateNode)
+    list_match_local: EnumProperty(
+        name="Match Local",
+        description="Behavior on different list lengths, object level",
+        items=list_match_modes, default="CYCLE",
+        update=updateNode)
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Location").use_prop = True
         self.inputs.new('SvVerticesSocket', "Normal").use_prop = True
@@ -66,14 +79,18 @@ class SvMatrixNormalNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "up", text="up")
 
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, "track", text="track")
-        layout.prop(self, "up", text="up")
         self.draw_buttons(context, layout)
         layout.prop(self, "flat_output", text="Flat Output", expand=False)
+        layout.separator()
+        layout.label(text="List Match:")
+        layout.prop(self, "list_match_global", text="Global Match", expand=False)
+        layout.prop(self, "list_match_local", text="Local Match", expand=False)
 
     def rclick_menu(self, context, layout):
         layout.prop_menu_enum(self, "track", text="Track:")
         layout.prop_menu_enum(self, "up", text="Up:")
+        layout.prop_menu_enum(self, "list_match_global", text="List Match Global")
+        layout.prop_menu_enum(self, "list_match_local", text="List Match Local")
         layout.prop(self, "flat_output", text="Flat Output", expand=False)
 
     def process(self):
@@ -86,10 +103,10 @@ class SvMatrixNormalNode(bpy.types.Node, SverchCustomTreeNode):
         nor = Vector_generate(N.sv_get())
         out = []
         m_add = out.extend if  self.flat_output else out.append
-        params = match_long_repeat([loc, nor])
+        params = list_match_func[self.list_match_global]([loc, nor])
 
         for par in zip(*params):
-            matrixes = matrix_normal(par, T, U)
+            matrixes = matrix_normal(par, T, U, self.list_match_local)
             m_add(matrixes)
         Ma.sv_set(out)
 
