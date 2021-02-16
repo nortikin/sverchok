@@ -84,7 +84,7 @@ class SvMatrixNormalNode(bpy.types.Node, SverchCustomTreeNode):
         layout.separator()
         layout.label(text="List Match:")
         layout.prop(self, "list_match_global", text="Global Match", expand=False)
-        layout.prop(self, "list_match_local", text="Global Match", expand=False)
+        layout.prop(self, "list_match_local", text="Local Match", expand=False)
 
     def rclick_menu(self, context, layout):
         layout.prop_menu_enum(self, "track", text="Track:")
