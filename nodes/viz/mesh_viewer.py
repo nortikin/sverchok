@@ -117,7 +117,7 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
         mat_indexes = self.inputs['material_idx'].sv_get(deepcopy=False, default=[[]])
         matrices = self.inputs['matrix'].sv_get(deepcopy=False, default=[])
 
-        #this node does not accept numpy arrays so everylthing has to be converted to lists
+        #this node does not accept numpy arrays so everything has to be converted to lists
         if any([not isinstance(vs, list) for vs in verts]):
             verts = [ensure_list(vs) for vs in verts]
         if any([not isinstance(es, list) for es in edges]):
