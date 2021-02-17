@@ -235,7 +235,7 @@ def repeat_last_for_length(lst, count, deepcopy=False):
     else:
         for i in range(count - n):
             result.append(x)
-            
+
     return result
 
 def cycle_for_length(lst, count):
@@ -485,6 +485,16 @@ def levels_of_list_or_np(lst):
     return 0
 
 SIMPLE_DATA_TYPES = (float, int, float64, int32, int64, str)
+
+def ensure_list(lst):
+    if isinstance(lst, list):
+        return lst
+    if isinstance(lst, ndarray):
+        return lst.tolist()
+    if isinstance(lst, SIMPLE_DATA_TYPES):
+        return [lst]
+
+    return list(lst)
 
 def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
     """
