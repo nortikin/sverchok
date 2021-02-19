@@ -38,7 +38,8 @@ falloff_types = [
         ("inverse_square", "Inverse square - 1/R^2", "Similar to gravitation or electromagnetizm", 2),
         ("inverse_cubic", "Inverse cubic - 1/R^3", "", 3),
         ("inverse_exp", "Inverse exponent - Exp(-R)", "", 4),
-        ("gauss", "Gauss - Exp(-R^2/2)", "", 5)
+        ("gauss", "Gauss - Exp(-R^2/2)", "", 5),
+        ("rotation", "Rotation 1/R^(3/2)", "", 6)
     ]
 
 proportional_falloff_types = [
@@ -131,6 +132,9 @@ def gauss(c, x):
 def inverse_exp_np(c, x):
     return np.exp(-c*x)
 
+def rotation_fallof_np(c, x):
+    return np.power(x, -3/2)
+
 def gauss_np(c, x):
     return np.exp(-c*x*x/2.0)
 
@@ -161,6 +165,7 @@ def falloff_array(falloff_type, amplitude, coefficient, clamp=False):
             'inverse_cubic': inverse_cubic,
             'inverse_exp': inverse_exp_np,
             'gauss': gauss_np,
+            'rotation': rotation_fallof_np,
             'smooth': wrap_falloff(smooth),
             'sphere': wrap_falloff(sphere_np),
             'root': wrap_falloff(root_np),
@@ -309,6 +314,10 @@ def np_vectors_angle(v1, v2):
     v2 /= np.linalg.norm(v2)
     dot = np.dot(v1, v2)
     return np.arccos(dot)
+
+def np_dot(u, v, axis=1):
+    'conveniece function to calculate dot vector between vector arrays'
+    return np.sum(u * v, axis=axis)
 
 def np_normalized_vectors(vecs):
     '''Returns new array with normalized vectors'''

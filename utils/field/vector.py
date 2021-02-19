@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -14,7 +14,7 @@ from mathutils import kdtree
 from mathutils import noise
 from sverchok.utils.curve import SvCurveLengthSolver, SvNormalTrack, MathutilsRotationCalculator
 from sverchok.utils.geom import LineEquation, CircleEquation3D
-from sverchok.utils.math import from_cylindrical, from_spherical
+from sverchok.utils.math import from_cylindrical, from_spherical, np_dot
 from sverchok.utils.kdtree import SvKdTree
 from sverchok.utils.field.voronoi import SvVoronoiFieldData
 
@@ -64,7 +64,7 @@ class SvConstantVectorField(SvVectorField):
 
     def evaluate(self, x, y, z):
         return self.vector
-    
+
     def evaluate_grid(self, xs, ys, zs):
         x, y, z = self.vector
         rx = np.full_like(xs, x)
@@ -114,7 +114,7 @@ class SvAbsoluteVectorField(SvVectorField):
     def evaluate(self, x, y, z):
         r = self.field.evaluate(x, y, z)
         return r + np.array([x, y, z])
-    
+
     def evaluate_grid(self, xs, ys, zs):
         rxs, rys, rzs = self.field.evaluate_grid(xs, ys, zs)
         return rxs + xs, rys + ys, rzs + zs
@@ -127,7 +127,7 @@ class SvRelativeVectorField(SvVectorField):
     def evaluate(self, x, y, z):
         r = self.field.evaluate(x, y, z)
         return r - np.array([x, y, z])
-    
+
     def evaluate_grid(self, xs, ys, zs):
         rxs, rys, rzs = self.field.evaluate_grid(xs, ys, zs)
         return rxs - xs, rys - ys, rzs - zs
@@ -419,7 +419,7 @@ class SvLineAttractorVectorField(SvVectorField):
             return R[0], R[1], R[2]
 
 class SvPlaneAttractorVectorField(SvVectorField):
-    
+
     def __init__(self, center, direction, falloff=None):
         self.center = center
         self.direction = direction
@@ -498,7 +498,7 @@ class SvEdgeAttractorVectorField(SvVectorField):
         self.falloff = falloff
         self.v1 = Vector(v1)
         self.v2 = Vector(v2)
-    
+
     def evaluate(self, x, y, z):
         v = Vector([x,y,z])
         dv1 = (v - self.v1).length
@@ -527,12 +527,12 @@ class SvEdgeAttractorVectorField(SvVectorField):
             return self.falloff(distance) * vector / distance
         else:
             return vector
-    
+
     def evaluate_grid(self, xs, ys, zs):
         n = len(xs)
         vs = np.stack((xs, ys, zs)).T
         v1 = np.array(self.v1)
-        v2 = np.array(self.v2)    
+        v2 = np.array(self.v2)
         dv1s = np.linalg.norm(vs - v1, axis=1)
         dv2s = np.linalg.norm(vs - v2, axis=1)
         v1_is_nearest = (dv1s < dv2s)
@@ -543,9 +543,9 @@ class SvEdgeAttractorVectorField(SvVectorField):
         nearest_verts[v2_is_nearest] = v2
         other_verts[v1_is_nearest] = v2
         other_verts[v2_is_nearest] = v1
-        
+
         to_nearest = vs - nearest_verts
-        
+
         edges = other_verts - nearest_verts
         dot = (to_nearest * edges).sum(axis=1)
         at_edge = (dot > 0)
@@ -554,7 +554,7 @@ class SvEdgeAttractorVectorField(SvVectorField):
         at_v2 = np.logical_and(at_vertex, v2_is_nearest)
 
         line = LineEquation.from_two_points(self.v1, self.v2)
-        
+
         vectors = np.empty((n,3))
         vectors[at_edge] = line.projection_of_points(vs[at_edge]) - vs[at_edge]
         vectors[at_v1] = v1 - vs[at_v1]
@@ -570,7 +570,7 @@ class SvEdgeAttractorVectorField(SvVectorField):
         else:
             R = vectors.T
             return R[0], R[1], R[2]
-        
+
 class SvBvhAttractorVectorField(SvVectorField):
 
     def __init__(self, bvh=None, verts=None, faces=None, falloff=None, use_normal=False, signed_normal=False):
@@ -633,6 +633,46 @@ class SvBvhAttractorVectorField(SvVectorField):
             R = vectors.T
             return R[0], R[1], R[2]
 
+class SvRotationVectorField(SvVectorField):
+
+    def __init__(self, center, direction, falloff=None):
+        self.center = center
+        self.direction = direction
+        self.falloff = falloff
+        self.__description__ = "Rotation Field"
+
+    def evaluate(self, x, y, z):
+        vertex = np.array([x,y,z])
+        direction = self.direction
+        to_center = self.center - vertex
+        projection = np.dot(to_center, direction) * direction / np.dot(direction, direction)
+        dv = np.cross(to_center - projection, direction)
+
+        if self.falloff is not None:
+            norm = np.linalg.norm(dv)
+            dv = self.falloff(norm) * dv / norm
+        return dv
+
+    def evaluate_grid(self, xs, ys, zs):
+        direction = self.direction
+        direction2 = np.dot(direction, direction)
+        points = np.stack((xs, ys, zs)).T
+        to_center = self.center[np.newaxis, :] - points
+        proyection = direction[np.newaxis, :] * (np_dot(to_center, direction[np.newaxis,:]) / direction2)[:, np.newaxis]
+        vectors = np.cross(to_center - proyection, direction)
+
+        if self.falloff is not None:
+            norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+            nonzero = (norms > 0)[:,0]
+            lens = self.falloff(norms)
+            vectors[nonzero] = vectors[nonzero] / norms[nonzero][:, 0][np.newaxis].T
+            R = (lens * vectors).T
+            return R[0], R[1], R[2]
+        else:
+            R = vectors.T
+            return R[0], R[1], R[2]
+
+
 class SvSelectVectorField(SvVectorField):
     def __init__(self, fields, mode):
         self.fields = fields
@@ -661,7 +701,8 @@ class SvSelectVectorField(SvVectorField):
             selected = np.argmax(norms, axis=1)
         all_points = list(range(n))
         vectors = vectors[all_points, selected, :]
-        return vectors
+        print(vectors.shape)
+        return vectors.T
 
 class SvVectorFieldTangent(SvVectorField):
 
@@ -675,7 +716,7 @@ class SvVectorFieldTangent(SvVectorField):
         v2 = self.field2.evaluate(x,y,z)
         projection = np.dot(v1, v2) * v2 / np.dot(v2, v2)
         return projection
-    
+
     def evaluate_grid(self, xs, ys, zs):
         vx1, vy1, vz1 = self.field1.evaluate_grid(xs, ys, zs)
         vx2, vy2, vz2 = self.field2.evaluate_grid(xs, ys, zs)
@@ -701,7 +742,7 @@ class SvVectorFieldCotangent(SvVectorField):
         v2 = self.field2.evaluate(x,y,z)
         projection = np.dot(v1, v2) * v2 / np.dot(v2, v2)
         return v1 - projection
-    
+
     def evaluate_grid(self, xs, ys, zs):
         vx1, vy1, vz1 = self.field1.evaluate_grid(xs, ys, zs)
         vx2, vy2, vz2 = self.field2.evaluate_grid(xs, ys, zs)
@@ -727,7 +768,7 @@ class SvVectorFieldComposition(SvVectorField):
         x1, y1, z1 = self.field1.evaluate(x,y,z)
         v2 = self.field2.evaluate(x1,y1,z1)
         return v2
-    
+
     def evaluate_grid(self, xs, ys, zs):
         r = self.field1.evaluate_grid(xs, ys, zs)
         vx1, vy1, vz1 = r
@@ -741,7 +782,7 @@ class SvScalarFieldGradient(SvVectorField):
 
     def evaluate(self, x, y, z):
         return self.field.gradient([x, y, z], step=self.step)
-    
+
     def evaluate_grid(self, xs, ys, zs):
         return self.field.gradient_grid(xs, ys, zs, step=self.step)
 
@@ -946,7 +987,7 @@ class SvBendAlongSurfaceField(SvVectorField):
         else:
             u_index, v_index = 1,0
         return u_index, v_index
-        
+
     def get_uv(self, vertices):
         """
         Translate source vertices to UV space of future spline.
@@ -1024,7 +1065,8 @@ class SvVoronoiVectorField(SvVectorField):
     def evaluate_grid(self, xs, ys, zs):
         vs = np.stack((xs,ys,zs)).T
         r = self.voronoi.query_array(vs)
-        return r[1]
+        vs = r[1]
+        return vs[:,0], vs[:,1], vs[:,2]
 
 class SvScalarFieldCurveMap(SvVectorField):
     def __init__(self, scalar_field, curve, mode):
@@ -1040,7 +1082,7 @@ class SvScalarFieldCurveMap(SvVectorField):
             return self.curve.tangent(t)
         else: # NORMAL
             return self.curve.main_normal(t)
-    
+
     def evaluate_grid(self, xs, ys, zs):
         ts = self.scalar_field.evaluate_grid(xs, ys, zs)
         if self.mode == 'VALUE':
@@ -1050,4 +1092,3 @@ class SvScalarFieldCurveMap(SvVectorField):
         else: # NORMAL
             vectors = self.curve.main_normal_array(ts)
         return vectors[:,0], vectors[:,1], vectors[:,2]
-
