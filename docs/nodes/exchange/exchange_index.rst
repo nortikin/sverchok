@@ -10,7 +10,7 @@ Exchange
    bezier_in
    nurbs_in
    receive_from_sorcar
-   FCStd_sketch.rst
-   FCStd_spreadsheet.rst
-   FCStd_write.rst
-   FCStd_read.rst
+   FCStd_sketch
+   FCStd_spreadsheet
+   FCStd_write
+   FCStd_read
