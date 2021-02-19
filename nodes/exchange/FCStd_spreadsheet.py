@@ -241,5 +241,5 @@ def register():
 def unregister():
     if FreeCAD is not None:
         bpy.utils.unregister_class(SvFCStdSpreadsheetNode)
-        bpy.utils.register_class(SvShowFcstdSpreadsheetsOp)
-        bpy.utils.register_class(SvShowFcstdParNamesOp)
+        bpy.utils.unregister_class(SvShowFcstdSpreadsheetsOp)
+        bpy.utils.unregister_class(SvShowFcstdParNamesOp)
