@@ -14,7 +14,7 @@ from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, repeat_last
 
 
 def set_custom_map(obj, verts=None, faces=None, uv_name='SVMap', matrix=None):
@@ -36,8 +36,16 @@ def set_custom_map(obj, verts=None, faces=None, uv_name='SVMap', matrix=None):
 def set_uv(verts, faces, obj, uv_name, matrix=None):
     # Apply coordinates to UV layer
     unpack_uv = np.zeros((len(obj.data.loops) * 2), dtype=float)
+
+    in_loops = []
+    # it requires checking whether given faces have the same number of loops as in the object
+    # otherwise loops array of one polygon will shift to another what makes it difficult to debug
+    for face, obj_face in zip(faces or [], obj.data.polygons):
+        for i, _ in zip(repeat_last(face), obj_face.vertices):
+            in_loops.append(verts[i])
+
     if verts and faces:
-        for i, co in zip(range(0, len(obj.data.loops) * 2, 2), (verts[i] for face in faces for i in face)):
+        for i, co in zip(range(0, len(obj.data.loops) * 2, 2), in_loops):
             uv = Vector(co[:2]) if matrix is None else (matrix @ Vector(co))[:2]
             unpack_uv[i: i+2] = uv
     obj.data.uv_layers[uv_name].data.foreach_set("uv", unpack_uv)
