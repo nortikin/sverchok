@@ -158,8 +158,8 @@ class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             color_socket.replace_socket('SvColorSocket')
 
         objects = self.inputs["Object"].sv_get()
-        color_data = color_socket.sv_get(deepcopy=False, default=[None])
-        index_data = index_socket.sv_get(deepcopy=False, default=[None])
+        color_data = color_socket.sv_get(default=[None])
+        index_data = index_socket.sv_get(default=[None])
 
         num_components = int(len(self.vcol_size))
 
