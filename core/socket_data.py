@@ -72,8 +72,6 @@ def SvForgetSocket(socket):
     if data_structure.DEBUG_MODE:
         if not socket.is_output:
             warning(f"{socket.node.name} forgetting input socket: {socket.name}")
-        if not socket.is_linked:
-            warning(f"{socket.node.name} forgetting unconncted socket: {socket.name}")
     s_id = socket.socket_id
     s_ng = socket.id_data.tree_id
     try:

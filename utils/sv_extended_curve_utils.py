@@ -55,7 +55,6 @@ def get_points_bezier(spline, clean=True, calc_radii=False):
     if not cyclic:
         segments -= 1
 
-    print("segments:", segments)
     master_point_list = []
     for i in range(segments):
         inext = (i + 1) % len(knots)

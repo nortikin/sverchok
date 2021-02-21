@@ -46,7 +46,9 @@ class SvAlignMeshByMesh(bpy.types.Node, SverchCustomTreeNode):
     align_moved_mesh: bpy.props.EnumProperty(items=align_enum, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvVerticesSocket', 'Base').custom_draw = 'draw_base_sock'
+        s = self.inputs.new('SvVerticesSocket', 'Base')
+        s.use_prop = True
+        s.custom_draw = 'draw_base_sock'
         self.inputs.new('SvVerticesSocket', 'Move mesh').custom_draw = 'draw_move_sock'
         self.outputs.new('SvVerticesSocket', 'Verts')
         self.outputs.new('SvVerticesSocket', "Move vector")
@@ -56,15 +58,23 @@ class SvAlignMeshByMesh(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, 'axis', expand=True)
 
     def draw_base_sock(self, socket, context, layout):
-        layout.label(text=socket.name)
-        layout.prop(self, 'align_base_mesh', expand=True)
+        row = layout.row()
+        col = row.column()
+        col.ui_units_x = 1.6
+        col.label(text=socket.name)
+        if socket.is_linked or not socket.use_prop:  # last condition for backward compatibility
+            row = row.row()
+            row.prop(self, 'align_base_mesh', expand=True)
+        else:
+            col = row.column()
+            col.template_component_menu(socket, 'prop', name=socket.name)
 
     def draw_move_sock(self, socket, context, layout):
         layout.label(text=socket.name)
         layout.prop(self, 'align_moved_mesh', expand=True)
 
     def process(self):
-        if not all([sock.is_linked for sock in self.inputs]):
+        if not self.inputs['Move mesh'].is_linked:
             return
         if not self.axis:
             self.outputs['Verts'].sv_set(self.inputs['Move mesh'].sv_get())
