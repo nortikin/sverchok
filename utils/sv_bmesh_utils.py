@@ -20,6 +20,7 @@ from contextlib import contextmanager
 import math
 from operator import setitem, getitem
 from itertools import count
+from typing import ContextManager
 
 import numpy as np
 
@@ -49,6 +50,18 @@ def empty_bmesh(use_operators=True):
         bm.free()
     if error:
         raise error
+
+
+@contextmanager
+def bmesh_from_edit_mesh(mesh) -> ContextManager[bmesh.types.BMesh]:
+    """Returns bmesh from given mesh in edit mode. All bmesh changes will effect the mesh"""
+    bm = bmesh.from_edit_mesh(mesh)
+    try:
+        yield bm
+    except Exception:
+        raise
+    finally:
+        bmesh.update_edit_mesh(mesh)
 
 
 def bmesh_from_pydata(verts=None, edges=[], faces=[], markup_face_data=False, markup_edge_data=False,
