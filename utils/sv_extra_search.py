@@ -99,6 +99,8 @@ def gather_extra_nodes(idx, datastorage, context):
     extra_categories = get_extra_categories()
     for cat in extra_categories:
         for node in cat.items(context):
+            if node.nodetype == 'separator':
+                continue
             description = SvDocstring(node.get_node_class().__doc__).get_shorthand()
             showstring = node.label + ensure_short_description(description)
             datastorage.append((str(idx), showstring,'',idx))
