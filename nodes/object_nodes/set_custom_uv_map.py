@@ -7,18 +7,15 @@
 
 
 from itertools import cycle, chain
-from contextlib import contextmanager
-from typing import ContextManager
 import numpy as np
 
 import bpy
 from mathutils import Vector
-import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode, repeat_last
-from utils.sv_bmesh_utils import bmesh_from_edit_mesh
+from sverchok.utils.sv_bmesh_utils import bmesh_from_edit_mesh
 
 
 def set_custom_map(obj, verts=None, faces=None, uv_name='SVMap', matrix=None):
