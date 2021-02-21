@@ -17,7 +17,7 @@ from mathutils import Matrix
 
 from sverchok.data_structure import updateNode, update_with_kwargs, numpy_full_list, repeat_last
 from sverchok.utils.handle_blender_data import correct_collection_length, delete_data_block
-from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh
+from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh, bmesh_from_edit_mesh
 
 
 class SvObjectData(bpy.types.PropertyGroup):
@@ -187,16 +187,36 @@ class SvMeshData(bpy.types.PropertyGroup):
         if not self.mesh:
             # new mesh should be created
             self.mesh = bpy.data.meshes.new(name=mesh_name)
+
         if not make_changes_test or self.is_topology_changed(verts, edges, faces):
-            with empty_bmesh(False) as bm:
-                add_mesh_to_bmesh(bm, verts, edges, faces, update_indexes=False, update_normals=False)
-                if matrix:
-                    bm.transform(matrix)
-                bm.to_mesh(self.mesh)
+
+            if self.mesh.is_editmode:
+                with bmesh_from_edit_mesh(self.mesh) as bm:
+                    bm.clear()
+                    add_mesh_to_bmesh(bm, verts, edges, faces, update_indexes=False, update_normals=False)
+                    bm.normal_update()
+                    if matrix:
+                        bm.transform(matrix)
+            else:
+                with empty_bmesh(False) as bm:
+                    add_mesh_to_bmesh(bm, verts, edges, faces, update_indexes=False, update_normals=False)
+                    if matrix:
+                        bm.transform(matrix)
+                    bm.to_mesh(self.mesh)
+
         else:
-            self.update_vertices(verts)
-            if matrix:
-                self.mesh.transform(matrix)
+
+            if self.mesh.is_editmode:
+                with bmesh_from_edit_mesh(self.mesh) as bm:
+                    for bv, v in zip(bm.verts, verts):
+                        bv.co = v
+                    if matrix:
+                        bm.transform(matrix)
+            else:
+                self.update_vertices(verts)
+                if matrix:
+                    self.mesh.transform(matrix)
+
         self.mesh.update()
 
     def set_smooth(self, is_smooth_mesh):
