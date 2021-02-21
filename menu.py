@@ -277,6 +277,7 @@ class SverchNodeItem(object):
             ops.value = setting[1]
 
 class SverchSeparator(object):
+    nodetype = 'separator'
     @staticmethod
     def draw(self, layout, context):
         layout.separator()
