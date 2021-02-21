@@ -48,7 +48,7 @@ def to_mesh(vertices, edges=None, polygons=None) -> Union[PyMesh, NpMesh]:
 
 
 def join(meshes: List[Mesh], return_type: Type[Mesh] = None) -> Mesh:
-    """efficiently join data of given meshes into one"""
+    """efficiently join data of given meshes into one"""  # todo it's better to split it into class method of Meshes
     if return_type is None:
         return_type = type(meshes[0])
 
@@ -68,10 +68,17 @@ def join(meshes: List[Mesh], return_type: Type[Mesh] = None) -> Mesh:
                 out_data.extend(data or [])
                 out_elem[attr] = out_data
 
-        out_mesh.vertices.data.extend(mesh.vertices.data)
+        if return_type == NpMesh:
+            pass
+        else:
+            out_mesh.vertices.data.extend(mesh.vertices.data)
+
         out_mesh.edges.data.extend([i + added_vertices for i in e] for e in mesh.edges)
         out_mesh.polygons.data.extend([i + added_vertices for i in p] for p in mesh.polygons)
         added_vertices += len(mesh.vertices)
+
+    if return_type == NpMesh:
+        out_mesh.vertices.data = np.concatenate([m.vertices.data for m in meshes])
 
     return out_mesh
 
