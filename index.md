@@ -623,6 +623,7 @@
     SvPointOnMeshNodeMK2
     SvOBJRayCastNodeMK2
     SvSCNRayCastNodeMK2
+    SvSetCollection
 
 ## Scene
     SvObjectsNodeMK3
