@@ -622,7 +622,6 @@
     SvPointOnMeshNodeMK2
     SvOBJRayCastNodeMK2
     SvSCNRayCastNodeMK2
-    SvBlenderDataListNode
 
 ## Scene
     SvObjectsNodeMK3
@@ -640,6 +639,7 @@
     SvTimerNode
     ---
     SvDupliInstancesMK4
+    SvBlenderDataListNode
 
 ## Objects
     SvVertexGroupNodeMK2
