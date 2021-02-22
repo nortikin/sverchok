@@ -68,7 +68,11 @@ class SvObjectData(bpy.types.PropertyGroup):
                 except RuntimeError:
                     pass
             else:
-                self.collection.objects.unlink(self.obj)
+                try:
+                    self.collection.objects.unlink(self.obj)
+                except RuntimeError:
+                    # collection was already unliked by user or another node
+                    pass
 
             self.collection = collection
 
