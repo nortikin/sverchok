@@ -49,7 +49,7 @@ import bpy
 from bpy.types import Node
 
 from sverchok.data_structure import updateNode
-
+from sverchok.utils.handle_beldner_data import get_func_and_args
 
 class WrapNode:
     # instancing the class for crating properties and sockets
@@ -380,10 +380,7 @@ class NodeProps:
                 updateNode(node, context)
 
         for name, prop in self.properties.items():
-
-            bpy_prop = prop.bpy_props.function
-            bpy_prop_arguments = prop.bpy_props.keywords
-
+            bpy_prop, bpy_prop_arguments = get_func_and_args(prop.bpy_props)
             bpy_prop_arguments['update'] = update_node
             rebuild_bpy_prop = blender_properties[bpy_prop](**bpy_prop_arguments)
 
