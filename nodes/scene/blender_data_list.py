@@ -26,7 +26,7 @@ class SvEditDataBlockList(bpy.types.Operator):
     bl_idname = "sverchok.edit_data_block_list"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
-    operations = ['add', 'remove', 'move_up', 'move_down', 'clear']
+    operations = ['add', 'remove', 'move_up', 'move_down', 'clear', 'get_selected', 'add_selected']
     operation: bpy.props.EnumProperty(items=[(i, i, '') for i in operations])
 
     item_index: bpy.props.IntProperty()  # required for some operations
@@ -46,9 +46,23 @@ class SvEditDataBlockList(bpy.types.Operator):
             node.blender_data.move(self.item_index, next_index)
         elif self.operation == 'clear':
             node.blender_data.clear()
+        elif self.operation == 'get_selected':
+            node.blender_data.clear()
+            self.add_selected(context, node.blender_data)
+        elif self.operation == 'add_selected':
+            self.add_selected(context, node.blender_data)
 
         updateNode(node, context)
         return {'FINISHED'}
+
+    def add_selected(self, context, collection):
+        depsgraph = context.evaluated_depsgraph_get()
+        for obj in context.editable_objects:
+            object_eval = obj.evaluated_get(depsgraph)
+            obj = object_eval.original
+            if obj.select_get():
+                item = collection.add()
+                item.object = obj
 
 
 class SvDataBlockListOptions(bpy.types.Menu):
@@ -114,6 +128,11 @@ class SvBlenderDataListNode(SvAnimatableNode, SverchCustomTreeNode, bpy.types.No
     def draw_buttons(self, context, layout):
         col = layout.column()
         col.prop(self, 'data_type')
+        if self.data_type == 'object':
+            row = col.row(align=True)
+            row.label(text='Selected:')
+            row.operator(SvEditDataBlockList.bl_idname, text='Get').operation = 'get_selected'
+            row.operator(SvEditDataBlockList.bl_idname, text='Add').operation = 'add_selected'
         row = col.row(align=True)
         row.prop(self, 'edit_mode')
         op = row.operator(SvEditDataBlockList.bl_idname, text='+')
