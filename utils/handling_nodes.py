@@ -390,16 +390,16 @@ class NodeProps:
 blender_properties = {
     # properties are functions which return tuples with themselves as first argument
     # it should help to rebuild properties with new arguments
-    bpy.props.BoolProperty().function: bpy.props.BoolProperty,
-    bpy.props.BoolVectorProperty().function: bpy.props.BoolVectorProperty,
-    bpy.props.CollectionProperty().function: bpy.props.CollectionProperty,
-    bpy.props.EnumProperty().function: bpy.props.EnumProperty,
-    bpy.props.FloatProperty().function: bpy.props.FloatProperty,
-    bpy.props.FloatVectorProperty().function: bpy.props.FloatVectorProperty,
-    bpy.props.IntProperty().function: bpy.props.IntProperty,
-    bpy.props.IntVectorProperty().function: bpy.props.IntVectorProperty,
-    bpy.props.PointerProperty().function: bpy.props.PointerProperty,
-    bpy.props.StringProperty().function: bpy.props.StringProperty
+    get_func_and_args(bpy.props.BoolProperty())[0]: bpy.props.BoolProperty,
+    get_func_and_args(bpy.props.BoolVectorProperty())[0]: bpy.props.BoolVectorProperty,
+    get_func_and_args(bpy.props.CollectionProperty())[0]: bpy.props.CollectionProperty,
+    get_func_and_args(bpy.props.EnumProperty())[0]: bpy.props.EnumProperty,
+    get_func_and_args(bpy.props.FloatProperty())[0]: bpy.props.FloatProperty,
+    get_func_and_args(bpy.props.FloatVectorProperty())[0]: bpy.props.FloatVectorProperty,
+    get_func_and_args(bpy.props.IntProperty())[0]: bpy.props.IntProperty,
+    get_func_and_args(bpy.props.IntVectorProperty())[0]: bpy.props.IntVectorProperty,
+    get_func_and_args(bpy.props.PointerProperty())[0]: bpy.props.PointerProperty,
+    get_func_and_args(bpy.props.StringProperty())[0]: bpy.props.StringProperty
 }
 
 
