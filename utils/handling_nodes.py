@@ -386,20 +386,21 @@ class NodeProps:
 
             node_annotations[name] = rebuild_bpy_prop
 
+get_func = lambda prop: get_func_and_args(prop)[0]
 
 blender_properties = {
     # properties are functions which return tuples with themselves as first argument
     # it should help to rebuild properties with new arguments
-    get_func_and_args(bpy.props.BoolProperty())[0]: bpy.props.BoolProperty,
-    get_func_and_args(bpy.props.BoolVectorProperty())[0]: bpy.props.BoolVectorProperty,
-    get_func_and_args(bpy.props.CollectionProperty())[0]: bpy.props.CollectionProperty,
-    get_func_and_args(bpy.props.EnumProperty())[0]: bpy.props.EnumProperty,
-    get_func_and_args(bpy.props.FloatProperty())[0]: bpy.props.FloatProperty,
-    get_func_and_args(bpy.props.FloatVectorProperty())[0]: bpy.props.FloatVectorProperty,
-    get_func_and_args(bpy.props.IntProperty())[0]: bpy.props.IntProperty,
-    get_func_and_args(bpy.props.IntVectorProperty())[0]: bpy.props.IntVectorProperty,
-    get_func_and_args(bpy.props.PointerProperty())[0]: bpy.props.PointerProperty,
-    get_func_and_args(bpy.props.StringProperty())[0]: bpy.props.StringProperty
+    get_func(bpy.props.BoolProperty()): bpy.props.BoolProperty,
+    get_func(bpy.props.BoolVectorProperty()): bpy.props.BoolVectorProperty,
+    get_func(bpy.props.CollectionProperty()): bpy.props.CollectionProperty,
+    get_func(bpy.props.EnumProperty()): bpy.props.EnumProperty,
+    get_func(bpy.props.FloatProperty()): bpy.props.FloatProperty,
+    get_func(bpy.props.FloatVectorProperty()): bpy.props.FloatVectorProperty,
+    get_func(bpy.props.IntProperty()): bpy.props.IntProperty,
+    get_func(bpy.props.IntVectorProperty()): bpy.props.IntVectorProperty,
+    get_func(bpy.props.PointerProperty()): bpy.props.PointerProperty,
+    get_func(bpy.props.StringProperty()): bpy.props.StringProperty
 }
 
 
