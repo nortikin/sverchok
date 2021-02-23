@@ -13,7 +13,7 @@ from bpy.props import BoolProperty, StringProperty, IntProperty, CollectionPrope
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, enum_item_5
 from sverchok.nodes.viz.viewer_draw_mk4 import SvViewerDrawMk4
-
+from sverchok.utils.handle_blender_data import get_func_and_args
 
 sock_str = {
     'enum': "SvStringsSocket",
@@ -81,7 +81,7 @@ class SvVDMK4Properties(bpy.types.PropertyGroup):
     # this populates a property-group using VDExperimental.__annotations__ as the source -
     __annotations__ = {}
     for key, v in maximum_spec_vd_dict.items():
-        prop_func, kw_args = SvViewerDrawMk4.__annotations__[key]
+        prop_func, kw_args = get_func_and_args(SvViewerDrawMk4.__annotations__[key])
         copy_kw_args = copy.deepcopy(kw_args)
         copy_kw_args.pop('update', None)
         __annotations__[key] = prop_func(**copy_kw_args)

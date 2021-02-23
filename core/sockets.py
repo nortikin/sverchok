@@ -35,6 +35,7 @@ from sverchok.data_structure import (
 
 from sverchok.settings import get_params
 
+from sverchok.utils.handle_blender_data import get_func_and_args
 from sverchok.utils.socket_utils import format_bpy_property, setup_new_node_location
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.field.vector import SvVectorField
@@ -1444,7 +1445,7 @@ def socket_interface_classes():
             'draw_color': lambda self, context: self.color
         }
         if 'default_property' in socket_cls.__annotations__:
-            prop_func, prop_args = socket_cls.__annotations__['default_property']
+            prop_func, prop_args = get_func_and_args(socket_cls.__annotations__['default_property'])
             prop_args = {k: prop_args[k] for k in prop_args if k not in {'update', 'name'}}
             prop_args['name'] = "Default value"
             prop_args['update'] = lambda s, c: s.id_data.update_sockets()
