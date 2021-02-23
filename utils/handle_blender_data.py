@@ -344,4 +344,4 @@ def get_func_and_args(prop):
     if hasattr(prop, "keywords"):
         return prop.function, prop.keywords
     else:
-        return *prop
+        return prop[:]

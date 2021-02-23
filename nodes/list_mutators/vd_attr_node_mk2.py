@@ -13,7 +13,7 @@ from bpy.props import BoolProperty, StringProperty, IntProperty, CollectionPrope
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, enum_item_5
 from sverchok.nodes.viz.viewer_draw_mk4 import SvViewerDrawMk4
-from sverchok.utils.handle_beldner_data import get_func_and_args
+from sverchok.utils.handle_blender_data import get_func_and_args
 
 sock_str = {
     'enum': "SvStringsSocket",

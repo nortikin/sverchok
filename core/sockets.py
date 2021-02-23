@@ -35,7 +35,7 @@ from sverchok.data_structure import (
 
 from sverchok.settings import get_params
 
-from sverchok.utils.handle_beldner_data import get_func_and_args
+from sverchok.utils.handle_blender_data import get_func_and_args
 from sverchok.utils.socket_utils import format_bpy_property, setup_new_node_location
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.field.vector import SvVectorField

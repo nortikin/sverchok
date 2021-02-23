@@ -49,7 +49,7 @@ import bpy
 from bpy.types import Node
 
 from sverchok.data_structure import updateNode
-from sverchok.utils.handle_beldner_data import get_func_and_args
+from sverchok.utils.handle_blender_data import get_func_and_args
 
 class WrapNode:
     # instancing the class for crating properties and sockets
