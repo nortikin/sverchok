@@ -381,7 +381,9 @@ class NodeProps:
 
         for name, prop in self.properties.items():
 
-            bpy_prop, bpy_prop_arguments = prop.bpy_props
+            bpy_prop = prop.bpy_props.function
+            bpy_prop_arguments = prop.bpy_props.keywords
+
             bpy_prop_arguments['update'] = update_node
             rebuild_bpy_prop = blender_properties[bpy_prop](**bpy_prop_arguments)
 
@@ -391,16 +393,16 @@ class NodeProps:
 blender_properties = {
     # properties are functions which return tuples with themselves as first argument
     # it should help to rebuild properties with new arguments
-    bpy.props.BoolProperty()[0]: bpy.props.BoolProperty,
-    bpy.props.BoolVectorProperty()[0]: bpy.props.BoolVectorProperty,
-    bpy.props.CollectionProperty()[0]: bpy.props.CollectionProperty,
-    bpy.props.EnumProperty()[0]: bpy.props.EnumProperty,
-    bpy.props.FloatProperty()[0]: bpy.props.FloatProperty,
-    bpy.props.FloatVectorProperty()[0]: bpy.props.FloatVectorProperty,
-    bpy.props.IntProperty()[0]: bpy.props.IntProperty,
-    bpy.props.IntVectorProperty()[0]: bpy.props.IntVectorProperty,
-    bpy.props.PointerProperty()[0]: bpy.props.PointerProperty,
-    bpy.props.StringProperty()[0]: bpy.props.StringProperty
+    bpy.props.BoolProperty().function: bpy.props.BoolProperty,
+    bpy.props.BoolVectorProperty().function: bpy.props.BoolVectorProperty,
+    bpy.props.CollectionProperty().function: bpy.props.CollectionProperty,
+    bpy.props.EnumProperty().function: bpy.props.EnumProperty,
+    bpy.props.FloatProperty().function: bpy.props.FloatProperty,
+    bpy.props.FloatVectorProperty().function: bpy.props.FloatVectorProperty,
+    bpy.props.IntProperty().function: bpy.props.IntProperty,
+    bpy.props.IntVectorProperty().function: bpy.props.IntVectorProperty,
+    bpy.props.PointerProperty().function: bpy.props.PointerProperty,
+    bpy.props.StringProperty().function: bpy.props.StringProperty
 }
 
 
