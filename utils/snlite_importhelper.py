@@ -121,6 +121,9 @@ def parse_sockets(node):
     if not directive:
 
         print(node.script_name, 'failed to find a directive in this script: SNLITE Error 1 (please see docs for more info)')
+        print("start --->")
+        print(node,script_str)
+        print("<--- end")
         return snlite_info
 
     for line in directive.split('\n'):
