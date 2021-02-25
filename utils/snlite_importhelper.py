@@ -89,15 +89,20 @@ def parse_ui_line(L):
 
 def extract_directive_as_multiline_string(lines):
     pattern = '\"{3}([\s\S]*?)\"{3}|\'{3}([\s\S]*?)\'{3}'
-    p = re.compile(pattern)
-    g = p.match(lines)
+    try:
+        p = re.compile(pattern)
+        g = p.match(lines)
 
-    types = "double qoutes", "single qoutes"
-    matches = g.groups()
-    for idx, m in enumerate(matches):
-        if m:
-            print("using:", types[idx])
-            return m
+        types = "double qoutes", "single qoutes"
+        matches = g.groups()
+        for idx, m in enumerate(matches):
+            if m:
+                print("using:", types[idx])
+                return m
+    except Exception as err:
+        print("SNLITE ERROR:", err)
+        return 
+
     return
 
 def parse_sockets(node):
