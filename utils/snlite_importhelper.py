@@ -120,7 +120,7 @@ def parse_sockets(node):
     for line in directive.split('\n'):
         L = line.strip()
 
-        elif L.startswith('in ') or L.startswith('out '):
+        if L.startswith('in ') or L.startswith('out '):
             socket_dir = L.split(' ')[0] + 'puts'
             snlite_info[socket_dir].append(parse_socket_line(L))
 
