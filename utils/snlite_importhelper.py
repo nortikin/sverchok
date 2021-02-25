@@ -16,7 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-
+import re
 import bpy
 import ast
 
@@ -87,6 +87,19 @@ def parse_ui_line(L):
         return dict(mat_name=items[0], node_name=items[1], bl_idname=items[2])
 
 
+def extract_directive_as_multiline_string(lines):
+    pattern = '\"{3}([\s\S]*?)\"{3}|\'{3}([\s\S]*?)\'{3}'
+    p = re.compile(pattern)
+    g = p.match(lines)
+
+    types = "double qoutes", "single qoutes"
+    matches = g.groups()
+    for idx, m in enumerate(matches):
+        if m:
+            print("using:", types[idx])
+            return m
+    return
+
 def parse_sockets(node):
 
     if hasattr(node, 'inject_params'):
@@ -99,14 +112,13 @@ def parse_sockets(node):
         'callbacks': {}
     }
 
-    quotes = 0
-    for line in node.script_str.split('\n'):
-        L = line.strip()
+    directive = extract_directive_as_multiline_string(node.script_str)
+    if not directive:
+        print('failed to find a directive in this script: SNLITE Error 1 (please see docs for more info)')
+        return snlite_info
 
-        if L.startswith(TRIPPLE_QUOTES):
-            quotes += 1
-            if quotes == 2:
-                break
+    for line in directive.split('\n'):
+        L = line.strip()
 
         elif L.startswith('in ') or L.startswith('out '):
             socket_dir = L.split(' ')[0] + 'puts'
