@@ -91,7 +91,7 @@ def extract_directive_as_multiline_string(lines):
     pattern = '\"{3}([\s\S]*?)\"{3}|\'{3}([\s\S]*?)\'{3}'
     try:
         p = re.compile(pattern)
-        g = p.match(lines)
+        g = p.match(lines.strip())
 
         types = "double qoutes", "single qoutes"
         matches = g.groups()
