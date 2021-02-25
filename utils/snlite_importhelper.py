@@ -97,7 +97,7 @@ def extract_directive_as_multiline_string(lines):
         matches = g.groups()
         for idx, m in enumerate(matches):
             if m:
-                print("using:", types[idx])
+                # print("using:", types[idx])
                 return m
     except Exception as err:
         print("SNLITE ERROR:", err)
