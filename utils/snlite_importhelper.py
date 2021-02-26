@@ -88,10 +88,11 @@ def parse_ui_line(L):
 
 
 def extract_directive_as_multiline_string(lines):
-    pattern = '\"{3}([\s\S]*?)\"{3}|\'{3}([\s\S]*?)\'{3}'
+    pattern = '\"{3}(.*?)\"{3}|\'{3}(.*?)\'{3}'
+
     try:
-        p = re.compile(pattern)
-        g = p.match(lines.strip())
+        p = re.compile(pattern, re.MULTILINE|re.DOTALL)
+        g = p.search(lines.strip())
 
         types = "double qoutes", "single qoutes"
         matches = g.groups()
