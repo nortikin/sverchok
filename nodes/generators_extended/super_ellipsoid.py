@@ -224,7 +224,7 @@ class SvSuperEllipsoidNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "Polygons")
 
-        self.presets = "ROUNDED CUBE"
+        self.presets = "ROUNDED_CUBE"
 
     def draw_buttons(self, context, layout):
         if not self.inputs["XP"].is_linked and not self.inputs["XM"].is_linked:
