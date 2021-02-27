@@ -55,14 +55,12 @@ class SvEditDataBlockList(bpy.types.Operator):
         updateNode(node, context)
         return {'FINISHED'}
 
-    def add_selected(self, context, collection):
-        depsgraph = context.evaluated_depsgraph_get()
-        for obj in context.editable_objects:
-            object_eval = obj.evaluated_get(depsgraph)
-            obj = object_eval.original
-            if obj.select_get():
-                item = collection.add()
-                item.object = obj
+    @staticmethod
+    def add_selected(context, collection):
+        # if any bugs then you have probably using depsgraph here
+        for obj in context.selected_objects:
+            item = collection.add()
+            item.object = obj
 
 
 class SvDataBlockListOptions(bpy.types.Menu):
