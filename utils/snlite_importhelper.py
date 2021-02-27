@@ -88,17 +88,19 @@ def parse_ui_line(L):
 
 
 def extract_directive_as_multiline_string(lines):
-    pattern = '\"{3}(.*?)\"{3}|\'{3}(.*?)\'{3}'
+    pattern = """
+    \"{3}(.*?)\"{3}   # double quote enclosure
+    |                 # or
+    \'{3}(.*?)\'{3}   # single quote enclosure
+    """
 
     try:
-        p = re.compile(pattern, re.MULTILINE|re.DOTALL)
+        p = re.compile(pattern, re.MULTILINE|re.DOTALL|re.VERBOSE)
         g = p.search(lines.strip())
 
-        types = "double qoutes", "single qoutes"
         matches = g.groups()
         for idx, m in enumerate(matches):
             if m:
-                # print("using:", types[idx])
                 return m
     except Exception as err:
         print("SNLITE ERROR:", err)
