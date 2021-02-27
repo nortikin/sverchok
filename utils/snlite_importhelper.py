@@ -16,7 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-
+import re
 import bpy
 import ast
 
@@ -87,6 +87,35 @@ def parse_ui_line(L):
         return dict(mat_name=items[0], node_name=items[1], bl_idname=items[2])
 
 
+def extract_directive_as_multiline_string(lines):
+    pattern = """
+    \"{3}(.*?)\"{3}   # double quote enclosure
+    |                 # or
+    \'{3}(.*?)\'{3}   # single quote enclosure
+    """
+
+    try:
+        p = re.compile(pattern, re.MULTILINE|re.DOTALL|re.VERBOSE)
+        g = p.search(lines.strip())
+
+        matches = g.groups()
+        for idx, m in enumerate(matches):
+            if m:
+                return m
+    except Exception as err:
+        print("SNLITE ERROR:", err)
+        return 
+
+    return
+
+def print_node_script(node):
+    err_message = 'failed to find a directive in this script: SNLITE Error 1 (see docs for more info)'
+    print(node.script_name, err_message)
+    print("start --->")
+    print(node.script_str)
+    print("<--- end")
+
+
 def parse_sockets(node):
 
     if hasattr(node, 'inject_params'):
@@ -99,16 +128,15 @@ def parse_sockets(node):
         'callbacks': {}
     }
 
-    quotes = 0
-    for line in node.script_str.split('\n'):
+    directive = extract_directive_as_multiline_string(node.script_str)
+    if not directive:
+        print_node_script(node)
+        return snlite_info
+
+    for line in directive.split('\n'):
         L = line.strip()
 
-        if L.startswith(TRIPPLE_QUOTES):
-            quotes += 1
-            if quotes == 2:
-                break
-
-        elif L.startswith('in ') or L.startswith('out '):
+        if L.startswith('in ') or L.startswith('out '):
             socket_dir = L.split(' ')[0] + 'puts'
             snlite_info[socket_dir].append(parse_socket_line(L))
 
@@ -135,10 +163,6 @@ def parse_sockets(node):
 
         elif L in {'fh', 'filehandler'}:
             snlite_info['display_file_handler'] = True
-
-        # elif L.startswith('cb '):
-        #     cb_name = L[3:].strip()
-        #     snlite_info['callbacks'].append(cb_name)
 
     return snlite_info
 
