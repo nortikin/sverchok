@@ -2,12 +2,11 @@
 import numpy as np
 
 import bpy
-from bpy.props import EnumProperty, IntProperty, FloatProperty
+from bpy.props import EnumProperty, IntProperty, FloatProperty, BoolProperty
 
 import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
-from sverchok.utils.logging import info, exception
 from sverchok.utils.surface import SvSurface
 
 U_SOCKET = 1
@@ -15,7 +14,7 @@ V_SOCKET = 2
 
 class SvEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Evaluate Surface
+    Triggers: Surface to mesh
     Tooltip: Evaluate Surface
     """
     bl_idname = 'SvExEvalSurfaceNode'
@@ -40,22 +39,22 @@ class SvEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         ('EXPLICIT', "Explicit", "Evaluate the surface in the specified points", 1)
     ]
 
-    eval_mode : EnumProperty(
-        name = "Evaluation mode",
-        items = eval_modes,
-        default = 'GRID',
-        update = update_sockets)
+    eval_mode: EnumProperty(
+        name="Evaluation mode",
+        items=eval_modes,
+        default='GRID',
+        update=update_sockets)
 
     input_modes = [
         ('PAIRS', "Separate", "Separate U V (or X Y) sockets", 0),
         ('VERTICES', "Vertices", "Single socket for vertices", 1)
     ]
 
-    input_mode : EnumProperty(
-        name = "Input mode",
-        items = input_modes,
-        default = 'PAIRS',
-        update = update_sockets)
+    input_mode: EnumProperty(
+        name="Input mode",
+        items=input_modes,
+        default='PAIRS',
+        update=update_sockets)
 
     axes = [
         ('XY', "X Y", "XOY plane", 0),
@@ -63,35 +62,35 @@ class SvEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         ('XZ', "X Z", "XOZ plane", 2)
     ]
 
-    orientation : EnumProperty(
-            name = "Orientation",
-            items = axes,
-            default = 'XY',
-            update = updateNode)
+    orientation: EnumProperty(
+        name="Orientation",
+        items=axes,
+        default='XY',
+        update=updateNode)
 
-    samples_u : IntProperty(
-            name = "Samples U",
-            description = "Number of samples along U direction",
-            default = 25, min = 3,
-            update = updateNode)
+    samples_u: IntProperty(
+        name="Samples U",
+        description="Number of samples along U direction",
+        default=25, min=3,
+        update=updateNode)
 
-    samples_v : IntProperty(
-            name = "Samples V",
-            description = "Number of samples along V direction",
-            default = 25, min = 3,
-            update = updateNode)
+    samples_v: IntProperty(
+        name="Samples V",
+        description="Number of samples along V direction",
+        default=25, min=3,
+        update=updateNode)
 
-    u_value : FloatProperty(
-            name = "U",
-            description = "Surface U parameter",
-            default = 0.5,
-            update = updateNode)
+    u_value: FloatProperty(
+        name="U",
+        description="Surface U parameter",
+        default=0.5,
+        update=updateNode)
 
-    v_value : FloatProperty(
-            name = "V",
-            description = "Surface V parameter",
-            default = 0.5,
-            update = updateNode)
+    v_value: FloatProperty(
+        name="V",
+        description="Surface V parameter",
+        default=0.5,
+        update=updateNode)
 
     clamp_modes = [
         ('NO', "As is", "Do not clamp input values - try to process them as is (you will get either error or extrapolation on out-of-bounds values, depending on specific surface type", 0),
@@ -99,11 +98,17 @@ class SvEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         ('WRAP', "Wrap", "Wrap input values into bounds - for example, turn -0.1 into 0.9", 2)
     ]
 
-    clamp_mode : EnumProperty(
-            name = "Clamp",
-            items = clamp_modes,
-            default = 'NO',
-            update = updateNode)
+    clamp_mode: EnumProperty(
+        name="Clamp",
+        items=clamp_modes,
+        default='NO',
+        update=updateNode)
+
+    output_numpy: BoolProperty(
+        name="Ouput Numpy",
+        description="Output NumPy arrays",
+        default=False,
+        update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.label(text="Evaluate:")
@@ -115,6 +120,10 @@ class SvEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 layout.label(text="Input orientation:")
                 layout.prop(self, "orientation", expand=True)
             layout.prop(self, 'clamp_mode', expand=True)
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'output_numpy')
 
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "Surface")
@@ -253,7 +262,8 @@ class SvEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 new_verts = surface.evaluate_array(target_us, target_vs)
 
                 new_verts = self.build_output(surface, new_verts)
-                new_verts = new_verts.tolist()
+                if not self.output_numpy:
+                    new_verts = new_verts.tolist()
                 verts_out.append(new_verts)
                 edges_out.append(new_edges)
                 faces_out.append(new_faces)
@@ -267,4 +277,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvEvalSurfaceNode)
-
