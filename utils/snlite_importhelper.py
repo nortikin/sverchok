@@ -108,6 +108,13 @@ def extract_directive_as_multiline_string(lines):
 
     return
 
+def print_node_script(node):
+    print(node.script_name, 'failed to find a directive in this script: SNLITE Error 1 (please see docs for more info)')
+    print("start --->")
+    print(node.script_str)
+    print("<--- end")
+
+
 def parse_sockets(node):
 
     if hasattr(node, 'inject_params'):
@@ -122,11 +129,7 @@ def parse_sockets(node):
 
     directive = extract_directive_as_multiline_string(node.script_str)
     if not directive:
-
-        print(node.script_name, 'failed to find a directive in this script: SNLITE Error 1 (please see docs for more info)')
-        print("start --->")
-        print(node.script_str)
-        print("<--- end")
+        print_node_script(node)
         return snlite_info
 
     for line in directive.split('\n'):
