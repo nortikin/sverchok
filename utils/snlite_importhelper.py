@@ -109,7 +109,8 @@ def extract_directive_as_multiline_string(lines):
     return
 
 def print_node_script(node):
-    print(node.script_name, 'failed to find a directive in this script: SNLITE Error 1 (please see docs for more info)')
+    err_message = 'failed to find a directive in this script: SNLITE Error 1 (see docs for more info)'
+    print(node.script_name, err_message)
     print("start --->")
     print(node.script_str)
     print("<--- end")
