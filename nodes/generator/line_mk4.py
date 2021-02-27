@@ -327,7 +327,7 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
         out = []
         for i, n, st, si, va, d in zip(range(num_objects), *params):
             if self.length_mode in (LENGTH.step, LENGTH.step_size):
-                out.append(make_line_multiple_steps(st, si, va, d, self.direction, self.length_mode, self.center, self.list_match_local))
+                out.append(make_line_multiple_steps(st, si, va, d, self.direction, self.length_mode, self.center))
             else:
                 out.append(make_line(n, st, si, va, d, self.direction, self.length_mode, self.center, self.list_match_local))
         if self.split:
