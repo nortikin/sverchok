@@ -368,6 +368,7 @@
     SvTriangulateNode
     SvMakeMonotone
     ---
+    SvSplitMeshElements
     PolygonBoomNode
     SvEdgeBoomNode
     SvDissolveMeshElements
