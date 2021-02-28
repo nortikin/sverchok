@@ -7,9 +7,10 @@
 
 
 import bpy
+from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, repeat_last, fixed_iter
+from sverchok.data_structure import updateNode, repeat_last
 
 
 class SvSetLoopNormalsNode(SverchCustomTreeNode, bpy.types.Node):
@@ -22,35 +23,33 @@ class SvSetLoopNormalsNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Set loop normals'
     bl_icon = 'NORMALS_VERTEX'
 
-    mode: bpy.props.EnumProperty(items=[(i, i, '') for i in ['vertex', 'face']], update=updateNode)
+    normalize: bpy.props.BoolProperty(name="Normalize", default=True, description="Normalize input normals",
+                                      update=updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'mode', expand=True)
+        layout.prop(self, 'normalize')
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Object')
-        self.inputs.new('SvVerticesSocket', 'Normals')
         self.outputs.new('SvObjectSocket', "Object")
+        self.inputs.new('SvVerticesSocket', "Vert normals")
+        self.inputs.new('SvStringsSocket', "Faces")
 
     def process(self):
-        if not self.inputs['Object'].is_linked:
-            return
+        objects = self.inputs['Object'].sv_get(deepcopy=False, default=[])
 
-        objects = self.inputs['Object'].sv_get(deepcopy=False)
-        normals = self.inputs['Normals'].sv_get(deepcopy=False, default=[])
+        v_normals = self.inputs['Vert normals'].sv_get(deepcopy=False, default=[])
+        faces = self.inputs['Faces'].sv_get(deepcopy=False, default=[])
 
-        for obj, norms in zip(objects, repeat_last(normals)):
+        for obj, v_ns, fs in zip(objects, repeat_last(v_normals), repeat_last(faces)):
+            obj.data.use_auto_smooth = True
 
-            if self.mode == 'face':
-                n_per_loop = [(0, 0, 0) for _ in range(len(obj.data.loops))]
-                for p, n in zip(obj.data.polygons, repeat_last(norms)):
-                    for i in range(p.loop_start, p.loop_start + p.loop_total):
-                        n_per_loop[i] = n
-                obj.data.normals_split_custom_set(n_per_loop)
-            else:
-                obj.data.normals_split_custom_set_from_vertices(list(fixed_iter(norms, len(obj.data.vertices))))
-
-            obj.data.update()
+            n_per_loop = [(0, 0, 0) for _ in range(len(obj.data.loops))]
+            for me_p, f in zip(obj.data.polygons, fs):
+                for l_i, f_i in zip(range(me_p.loop_start, me_p.loop_start + me_p.loop_total), repeat_last(f)):
+                    normal = v_ns[f_i]
+                    n_per_loop[l_i] = Vector(normal).normalized() if self.normalize else normal
+            obj.data.normals_split_custom_set(n_per_loop)
 
         self.outputs['Object'].sv_set(objects)
 
