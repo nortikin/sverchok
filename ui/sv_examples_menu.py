@@ -39,7 +39,7 @@ class SV_MT_LayoutsExamples(bpy.types.Menu):
 
     def draw(self, context):
         for path, category_name in example_categories_names():
-            self.layout.menu("SV_MT_PyMenu_" + category_name)
+            self.layout.menu("SV_MT_PyMenu_" + category_name.replace(' ', '_'))
 
 
 def make_submenu_classes(path, category_name):
@@ -49,7 +49,8 @@ def make_submenu_classes(path, category_name):
         category_path = path / category_name
         self.path_menu(searchpaths=[str(category_path)], operator='node.tree_importer_silent')
 
-    class_name = "SV_MT_PyMenu_" + category_name
+    class_name = "SV_MT_PyMenu_" + category_name.replace(' ', '_')
+
     return type(class_name, (bpy.types.Menu,), {'bl_label': category_name, 'draw': draw_submenu,
                                                'bl_idname': class_name})
 
