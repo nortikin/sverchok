@@ -5,11 +5,37 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+from typing import List, Dict
 
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, repeat_last
+from sverchok.data_structure import updateNode, repeat_last, fixed_iter
+
+
+def split_by_vertices(verts, edges=None, faces=None, selected_verts: List[bool] = None):
+    edges = edges or []
+    faces = faces or []
+    selected_verts = selected_verts or [True] * len(verts)
+
+    out_verts = []
+    out_faces = []
+    old_new_verts: Dict[int, int] = dict()
+    for face in faces:
+        new_face = []
+        for i in face:
+            if selected_verts[i]:
+                out_verts.append(verts[i])
+                new_face.append(len(out_verts) - 1)
+            else:
+                if i in old_new_verts:
+                    new_face.append(old_new_verts[i])
+                else:
+                    out_verts.append(verts[i])
+                    old_new_verts[i] = len(out_verts) - 1
+                    new_face.append(len(out_verts) - 1)
+        out_faces.append(new_face)
+    return out_verts, [], out_faces
 
 
 class SvSplitMeshElements(SverchCustomTreeNode, bpy.types.Node):
@@ -47,7 +73,23 @@ class SvSplitMeshElements(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', 'Faces')
 
     def process(self):
-        pass
+        vertices = self.inputs['Vertices'].sv_get(deepcopy=False, default=[])
+        edges = self.inputs['Edges'].sv_get(deepcopy=False, default=[])
+        faces = self.inputs['Faces'].sv_get(deepcopy=False, default=[])
+        mask = self.inputs['Mask'].sv_get(deepcopy=False, default=[])
+
+        obj_n = max(map(len, (vertices, edges, faces, mask)))
+
+        out = []
+        for v, e, f, m in zip(fixed_iter(vertices, obj_n), fixed_iter(edges, obj_n, None),
+                              fixed_iter(faces, obj_n, None), fixed_iter(mask, obj_n, None)):
+            if self.split_type == 'verts':
+                out.append(split_by_vertices(v, e, f, m))
+
+        v, e, f = zip(*out) if out else ([], [], [])
+        self.outputs['Vertices'].sv_set(v)
+        self.outputs['Edges'].sv_set(e)
+        self.outputs['Faces'].sv_set(f)
 
 
 register, unregister = bpy.utils.register_classes_factory([SvSplitMeshElements])
