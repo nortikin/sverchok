@@ -28,6 +28,7 @@ colors_cache = {}
 
 themes = [("default_theme", "Default", "Default"),
           ("nipon_blossom", "Nipon Blossom", "Nipon Blossom"),
+          ("grey", "Grey", "Grey"),
           ("darker", "Darker", "Darker")]
 
 
@@ -54,6 +55,15 @@ darker = {
     "Layout": (0.29, 0.91, 0.48),
     "Generator": (0.92, 0.32, 0.18),
 }
+
+grey = {
+    "Viz": (0.0, 0.0, 0.0),
+    "Text": (0.3, 0.3, 0.3),
+    "Scene": (0.50, 0.50, 0.50),
+    "Layout": (0.7, 0.7, 0.7),
+    "Generator": (0.1, 0.1, 0.1),
+}
+
 
 
 #  self referes to the preferences, SverchokPreferences
