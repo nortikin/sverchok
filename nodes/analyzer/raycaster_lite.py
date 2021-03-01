@@ -40,9 +40,9 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
 
         si('SvVerticesSocket', 'Verts')
         si('SvStringsSocket', 'Faces')
+        si('SvStringsSocket', 'MaxDistance') #添加输入最大距离接口
         si('SvVerticesSocket', 'Start').prop_name = 'start'
         si('SvVerticesSocket', 'Direction').prop_name = 'direction'
-        si('SvStringsSocket', 'MaxDistance').prop_name ='max distance'  #添加输入最大距离接口
 
         so('SvVerticesSocket', 'Location')
         so('SvVerticesSocket', 'Normal')
@@ -59,11 +59,11 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
         L, N, I, D, S = self.outputs
         RL = []
         # 添加max_distance-md-m
-        vert_in, face_in, start_in, direction_in ,max_distance = C([sock.sv_get() for sock in self.inputs])
+        vert_in, face_in,max_distance, start_in, direction_in  = C([sock.sv_get() for sock in self.inputs])
 
         for bvh, st, di ,md in zip(*[self.svmesh_to_bvh_lists(vert_in, face_in), start_in, direction_in,max_distance]):
             st, di, md = C([st, di,md])
-            RL.append([bvh.ray_cast(i, i2,m) for i, i2,m in zip(st, di , md)])
+            RL.append([bvh.ray_cast(i, i2, m) for i, i2, m in zip(st, di , md)])
 
         if L.is_linked:
             L.sv_set([[r[0][:] if r[0] else (0, 0, 0) for r in L] for L in RL])
