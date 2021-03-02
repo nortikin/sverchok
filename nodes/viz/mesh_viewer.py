@@ -12,7 +12,7 @@ from bpy.props import BoolProperty
 from mathutils import Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, repeat_last, ensure_list
+from sverchok.data_structure import updateNode, repeat_last
 from sverchok.utils.nodes_mixins.generating_objects import SvMeshData, SvViewerNode
 from sverchok.utils.handle_blender_data import correct_collection_length
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
@@ -116,14 +116,6 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
         faces = self.inputs['faces'].sv_get(deepcopy=False, default=[[]])
         mat_indexes = self.inputs['material_idx'].sv_get(deepcopy=False, default=[[]])
         matrices = self.inputs['matrix'].sv_get(deepcopy=False, default=[])
-
-        #this node does not accept numpy arrays so everything has to be converted to lists
-        if any([not isinstance(vs, list) for vs in verts]):
-            verts = [ensure_list(vs) for vs in verts]
-        if any([not isinstance(es, list) for es in edges]):
-            edges = [ensure_list(es) for es in edges]
-        if any([not isinstance(fs, list) for fs in faces]):
-            faces = [ensure_list(fs) for fs in faces]
 
         # first step is merge everything if the option
         if self.is_merge:
