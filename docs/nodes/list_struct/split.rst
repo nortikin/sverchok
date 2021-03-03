@@ -28,6 +28,7 @@ It is essentially how many chained element look-ups you do on a list. If ``SomeL
 
 Unrwap the list if possible, this generally what you want.
 [[1, 2, 3, 4]] size 2.
+
 +--------+-------------------+
 | Unwrap | Result            |
 +========+===================+
