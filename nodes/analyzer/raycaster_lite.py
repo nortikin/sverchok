@@ -31,7 +31,7 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_RAYCASTER'
     
-    MaxDistance: bpy.props.FloatProperty(name='MaxDistance', description='MaxDistance', default=1.0, update=updateNode)
+    max_distance: bpy.props.FloatProperty(name='MaxDistance', description='MaxDistance', default=1.0, update=updateNode)
     start: bpy.props.FloatVectorProperty(default=(0,0,0), size=3, update=updateNode)
     direction: bpy.props.FloatVectorProperty(default=(0,0,-1), size=3, update=updateNode)
 
