@@ -30,7 +30,8 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Raycaster'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_RAYCASTER'
-
+    
+    MaxDistance: bpy.props.FloatProperty(name='MaxDistance', description='MaxDistance', default=1.0, update=updateNode)
     start: bpy.props.FloatVectorProperty(default=(0,0,0), size=3, update=updateNode)
     direction: bpy.props.FloatVectorProperty(default=(0,0,-1), size=3, update=updateNode)
 
@@ -40,6 +41,7 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
 
         si('SvVerticesSocket', 'Verts')
         si('SvStringsSocket', 'Faces')
+        si('SvStringsSocket', 'MaxDistance').prop_name = 'MaxDistance' #添加输入最大距离接口
         si('SvVerticesSocket', 'Start').prop_name = 'start'
         si('SvVerticesSocket', 'Direction').prop_name = 'direction'
 
@@ -57,12 +59,12 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         L, N, I, D, S = self.outputs
         RL = []
+        # 添加max_distance-md-m
+        vert_in, face_in, max_distance ,start_in, direction_in = C([sock.sv_get() for sock in self.inputs])
 
-        vert_in, face_in, start_in, direction_in = C([sock.sv_get() for sock in self.inputs])
-
-        for bvh, st, di in zip(*[self.svmesh_to_bvh_lists(vert_in, face_in), start_in, direction_in]):
-            st, di = C([st, di])
-            RL.append([bvh.ray_cast(i, i2) for i, i2 in zip(st, di)])
+        for bvh, st, di ,md in zip(*[self.svmesh_to_bvh_lists(vert_in, face_in), start_in, direction_in,max_distance]):
+            st, di, md = C([st, di,md])
+            RL.append([bvh.ray_cast(i, i2,m) for i, i2,m in zip(st, di , md)])
 
         if L.is_linked:
             L.sv_set([[r[0][:] if r[0] else (0, 0, 0) for r in L] for L in RL])
