@@ -41,7 +41,7 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
 
         si('SvVerticesSocket', 'Verts')
         si('SvStringsSocket', 'Faces')
-        si('SvStringsSocket', 'MaxDistance').prop_name = 'MaxDistance' #添加输入最大距离接口
+        si('SvStringsSocket', 'MaxDistance').prop_name = 'MaxDistance' 
         si('SvVerticesSocket', 'Start').prop_name = 'start'
         si('SvVerticesSocket', 'Direction').prop_name = 'direction'
 
@@ -59,7 +59,7 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         L, N, I, D, S = self.outputs
         RL = []
-        # 添加max_distance-md-m
+        
         vert_in, face_in, max_distance ,start_in, direction_in = C([sock.sv_get() for sock in self.inputs])
 
         for bvh, st, di ,md in zip(*[self.svmesh_to_bvh_lists(vert_in, face_in), start_in, direction_in,max_distance]):
