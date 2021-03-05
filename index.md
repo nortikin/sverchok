@@ -277,6 +277,7 @@
     SvPathLengthMk2Node
     SvOrigins
     GetNormalsNode
+    SvGetNormalsNode
     VectorNormalNode
     SvIntersectLineSphereNode
     SvIntersectCircleCircleNode
@@ -358,6 +359,7 @@
 ## Modifier Change
     SvDeleteLooseNode
     SvMergeByDistanceNode
+    SvMergeByDistanceNodeMk2
     SvSeparateMeshNode
     SvSeparatePartsToIndexes
     SvEdgenetToPathsNode
@@ -373,6 +375,7 @@
     SvDissolveMeshElements
     SvPols2EdgsNodeMk2
     SvMeshJoinNode
+    SvMeshJoinNodeMk2
     ---
     SvFillsHoleNode
     SvRecalcNormalsNode
@@ -513,6 +516,7 @@
     VectorDropNode
     VectorPolarInNode
     VectorPolarOutNode
+    VectorPolarOutNodeMk2
     SvAttractorNode
     ---
     SvVectorLerp
