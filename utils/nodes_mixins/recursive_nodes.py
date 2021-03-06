@@ -69,7 +69,7 @@ class SvRecursiveNode():
         self.outputs.new('SvStringsSocket', "Res2")
 
     def pre_setup(self):
-        if option == 'SOME_OPTION':
+        if self.option == 'SOME_OPTION':
             self.inputs[0].nesting_level = 2
 
     def process_data(self, params):

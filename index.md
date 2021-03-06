@@ -277,7 +277,6 @@
     SvPathLengthMk2Node
     SvOrigins
     GetNormalsNode
-    SvGetNormalsNode
     VectorNormalNode
     SvIntersectLineSphereNode
     SvIntersectCircleCircleNode
@@ -516,7 +515,6 @@
     VectorDropNode
     VectorPolarInNode
     VectorPolarOutNode
-    VectorPolarOutNodeMk2
     SvAttractorNode
     ---
     SvVectorLerp
