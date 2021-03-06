@@ -553,6 +553,33 @@ def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES, input
         result = [result]
     return result
 
+def ensure_min_nesting(data, target_level, data_types=SIMPLE_DATA_TYPES, input_name=None):
+    """
+    data: number, or list of numbers, or list of lists, etc.
+    target_level: minimum data nesting level required for further processing.
+    data_types: list or tuple of types.
+    input_name: name of input socket data was taken from. Optional. If specified,
+        used for error reporting.
+
+    Wraps data in so many [] as required to achieve target nesting level.
+    If data already has too high nesting level the same data will be returned
+
+    ensure_nesting_level(17, 0) == 17
+    ensure_nesting_level(17, 1) == [17]
+    ensure_nesting_level([17], 1) == [17]
+    ensure_nesting_level([17], 2) == [[17]]
+    ensure_nesting_level([(1,2,3)], 3) == [[(1,2,3)]]
+    ensure_nesting_level([[[17]]], 1) => [[[17]]]
+    """
+
+    current_level = get_data_nesting_level(data, data_types)
+    if current_level >= target_level:
+        return data
+    result = data
+    for i in range(target_level - current_level):
+        result = [result]
+    return result
+
 def flatten_data(data, target_level=1, data_types=SIMPLE_DATA_TYPES):
     """
     Reduce nesting level of `data` to `target_level`, by concatenating nested sub-lists.

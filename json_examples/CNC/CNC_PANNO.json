@@ -1,5 +1,5 @@
 {
-  "export_version": "0.079",
+  "export_version": "0.10",
   "framed_nodes": {
     "A Number": "Frame",
     "A Number.001": "Frame.003",
@@ -32,7 +32,7 @@
     "Matrix In.001": "Frame.006",
     "Matrix Math": "Frame.007",
     "Merge by Distance": "Frame.004",
-    "Mesh Join": "Frame.004",
+    "Mesh Join.001": "Frame.004",
     "Mesh viewer": "Frame.006",
     "Move": "Frame.002",
     "Move.001": "Frame.007",
@@ -81,6 +81,7 @@
   "nodes": {
     "A Number": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "REL height",
@@ -89,40 +90,34 @@
         116.40043640136719
       ],
       "params": {
-        "draw_3dpanel": 1,
+        "draw_3dpanel": true,
         "float_": 0.019999999552965164,
-        "float_draft_": 0.0,
         "float_max": 0.15000000596046448,
-        "float_min": 0.004999999888241291,
-        "int_": 0,
-        "int_draft_": 0,
-        "show_limits": 0
+        "float_min": 0.004999999888241291
       },
       "width": 140.0
     },
     "A Number.001": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "thick",
       "location": [
-        645.2703552246094,
-        -90.9722785949707
+        645.2704162597656,
+        -90.97227478027344
       ],
       "params": {
-        "draw_3dpanel": 1,
+        "draw_3dpanel": true,
         "float_": -0.15000000596046448,
-        "float_draft_": 0.0,
         "float_max": 0.10000000149011612,
-        "float_min": -0.30000001192092896,
-        "int_": 0,
-        "int_draft_": 0,
-        "show_limits": 0
+        "float_min": -0.30000001192092896
       },
       "width": 140.0
     },
     "A Number.002": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "A rotate",
@@ -131,19 +126,16 @@
         -572.9952392578125
       ],
       "params": {
-        "draw_3dpanel": 1,
+        "draw_3dpanel": true,
         "float_": 8.0,
-        "float_draft_": 0.0,
         "float_max": 15.0,
-        "float_min": -15.0,
-        "int_": 0,
-        "int_draft_": 0,
-        "show_limits": 0
+        "float_min": -15.0
       },
       "width": 140.0
     },
     "A Number.003": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "N slices",
@@ -152,20 +144,17 @@
         -310.6238708496094
       ],
       "params": {
-        "draw_3dpanel": 1,
-        "float_": 0.0,
-        "float_draft_": 0.0,
+        "draw_3dpanel": true,
         "int_": 100,
-        "int_draft_": 0,
         "int_max": 100,
         "int_min": 3,
-        "selected_mode": "int",
-        "show_limits": 0
+        "selected_mode": "int"
       },
       "width": 140.0
     },
     "A Number.004": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "dencity",
@@ -174,20 +163,17 @@
         -418.3865203857422
       ],
       "params": {
-        "draw_3dpanel": 1,
-        "float_": 0.0,
-        "float_draft_": 0.0,
+        "draw_3dpanel": true,
         "int_": 50,
-        "int_draft_": 0,
         "int_max": 300,
         "int_min": 50,
-        "selected_mode": "int",
-        "show_limits": 0
+        "selected_mode": "int"
       },
       "width": 140.0
     },
     "A Number.005": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "freq",
@@ -196,19 +182,16 @@
         103.84981536865234
       ],
       "params": {
-        "draw_3dpanel": 1,
+        "draw_3dpanel": true,
         "float_": 50.0,
-        "float_draft_": 0.0,
         "float_max": 100.0,
-        "float_min": 20.0,
-        "int_": 0,
-        "int_draft_": 0,
-        "show_limits": 0
+        "float_min": 20.0
       },
       "width": 140.0
     },
     "A Number.006": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "min slices",
@@ -217,22 +200,19 @@
         -399.0807800292969
       ],
       "params": {
-        "draw_3dpanel": 1,
+        "draw_3dpanel": true,
         "float_": -0.800000011920929,
-        "float_draft_": 0.0,
         "float_max": 3.0,
         "float_min": -3.0,
         "int_": 100,
-        "int_draft_": 0,
         "int_max": 100,
-        "int_min": 3,
-        "selected_mode": "float",
-        "show_limits": 0
+        "int_min": 3
       },
       "width": 140.0
     },
     "A Number.007": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "max slices",
@@ -241,17 +221,13 @@
         -483.4424743652344
       ],
       "params": {
-        "draw_3dpanel": 1,
+        "draw_3dpanel": true,
         "float_": 1.600000023841858,
-        "float_draft_": 0.0,
         "float_max": 3.0,
         "float_min": -3.0,
         "int_": 100,
-        "int_draft_": 0,
         "int_max": 100,
-        "int_min": 3,
-        "selected_mode": "float",
-        "show_limits": 0
+        "int_min": 3
       },
       "width": 140.0
     },
@@ -279,12 +255,10 @@
       "label": "",
       "location": [
         -1984.0442504882812,
-        392.60438537597656
+        392.6043701171875
       ],
       "params": {
         "amplitude": 70.0,
-        "attractor_type": "Point",
-        "clamp": 0,
         "coefficient": 3.0,
         "falloff_type": "sharp",
         "merge_mode": "SEP"
@@ -293,6 +267,7 @@
     },
     "Bisect": {
       "bl_idname": "SvBisectNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -301,14 +276,15 @@
         103.89547729492188
       ],
       "params": {
-        "fill": 1,
-        "inner": 1,
-        "outer": 1
+        "fill": true,
+        "inner": true,
+        "outer": true
       },
       "width": 140.0
     },
     "Component Analyzer": {
       "bl_idname": "SvComponentAnalyzerNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -324,6 +300,7 @@
     },
     "Delete Loose": {
       "bl_idname": "SvDeleteLooseNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -336,6 +313,7 @@
     },
     "Evaluate Curve": {
       "bl_idname": "SvExEvalCurveNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -350,15 +328,7 @@
     },
     "Evaluate Scalar Field": {
       "bl_idname": "SvExScalarFieldEvaluateNode",
-      "custom_socket_props": {
-        "1": {
-          "prop": [
-            0.0,
-            0.0,
-            0.0
-          ]
-        }
-      },
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -371,11 +341,12 @@
     },
     "Evaluate Surface": {
       "bl_idname": "SvExEvalSurfaceNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1208.6990356445312,
+        -1208.698974609375,
         -109.19140625
       ],
       "params": {
@@ -386,6 +357,7 @@
     },
     "Flip Curve": {
       "bl_idname": "SvExFlipCurveNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -403,6 +375,7 @@
         0.6079999804496765,
         0.28917115926742554
       ],
+      "custom_socket_props": {},
       "height": 429.68743896484375,
       "hide": false,
       "label": "field",
@@ -421,6 +394,7 @@
         1.0,
         0.005243335384875536
       ],
+      "custom_socket_props": {},
       "height": 465.98681640625,
       "hide": false,
       "label": "initial surface",
@@ -439,7 +413,8 @@
         1.0,
         0.17137445509433746
       ],
-      "height": 289.6919860839844,
+      "custom_socket_props": {},
+      "height": 312.6919860839844,
       "hide": false,
       "label": "making top",
       "location": [
@@ -457,7 +432,8 @@
         0.3427368700504303,
         0.1721658557653427
       ],
-      "height": 564.1180419921875,
+      "custom_socket_props": {},
+      "height": 582.7180786132812,
       "hide": false,
       "label": "making bottom",
       "location": [
@@ -475,6 +451,7 @@
         0.622276782989502,
         0.21033097803592682
       ],
+      "custom_socket_props": {},
       "height": 510.314697265625,
       "hide": false,
       "label": "total mesh",
@@ -493,6 +470,7 @@
         0.5360068678855896,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 413.59735107421875,
       "hide": false,
       "label": "matrix for bisect",
@@ -511,6 +489,7 @@
         0.33185961842536926,
         0.5301591753959656
       ],
+      "custom_socket_props": {},
       "height": 1042.3671875,
       "hide": false,
       "label": "panno",
@@ -529,6 +508,7 @@
         0.13382810354232788,
         0.8102812767028809
       ],
+      "custom_socket_props": {},
       "height": 786.4954223632812,
       "hide": false,
       "label": "2d",
@@ -547,6 +527,7 @@
         1.0,
         0.8164726495742798
       ],
+      "custom_socket_props": {},
       "height": 598.0702514648438,
       "hide": false,
       "label": "curve shape",
@@ -584,7 +565,6 @@
         "direction": "OP",
         "length_mode": "Num",
         "num": 100,
-        "size": 10.0,
         "step": -0.25,
         "v3_dir": [
           -2.0,
@@ -602,12 +582,13 @@
     },
     "List Decompose": {
       "bl_idname": "SvListDecomposeNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
         -1802.0708618164062,
-        282.6427459716797
+        282.64276123046875
       ],
       "params": {
         "count": 2,
@@ -618,6 +599,7 @@
     },
     "List First & Last": {
       "bl_idname": "ListFLNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -630,6 +612,7 @@
     },
     "List Input.002": {
       "bl_idname": "SvListInputNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -706,25 +689,26 @@
           0,
           0,
           0
-        ],
-        "mode": "int_list"
+        ]
       },
       "width": 140.0
     },
     "List Join": {
       "bl_idname": "ListJoinNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
         1438.6233520507812,
-        257.31468200683594
+        257.314697265625
       ],
       "params": {},
       "width": 140.0
     },
     "List Join.001": {
       "bl_idname": "ListJoinNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -737,6 +721,7 @@
     },
     "List Mask (out)": {
       "bl_idname": "MaskListNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -749,6 +734,7 @@
     },
     "List Mask Join (in)": {
       "bl_idname": "SvMaskJoinNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -756,13 +742,12 @@
         -1620.6425476074219,
         -99.06690979003906
       ],
-      "params": {
-        "choice": 0
-      },
+      "params": {},
       "width": 140.0
     },
     "List Split": {
       "bl_idname": "SvListSplitNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -775,6 +760,7 @@
     },
     "Matrix Apply": {
       "bl_idname": "SvMatrixApplyJoinNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -783,18 +769,19 @@
         162.49545288085938
       ],
       "params": {
-        "do_join": 0
+        "do_join": false
       },
       "width": 140.0
     },
     "Matrix Deform": {
       "bl_idname": "MatrixDeformNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
         1923.835693359375,
-        -307.42466735839844
+        -307.4246826171875
       ],
       "params": {},
       "width": 140.0
@@ -814,7 +801,7 @@
       "label": "",
       "location": [
         1703.835693359375,
-        -367.0863800048828
+        -367.08636474609375
       ],
       "params": {
         "angle": 90.0,
@@ -822,8 +809,7 @@
           0.0,
           1.0,
           0.0
-        ],
-        "flat_output": 1
+        ]
       },
       "width": 140.0
     },
@@ -852,6 +838,7 @@
     },
     "Matrix Math": {
       "bl_idname": "SvMatrixMathNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "Matrix Invert",
@@ -866,6 +853,19 @@
     },
     "Merge by Distance": {
       "bl_idname": "SvMergeByDistanceNode",
+      "custom_socket_props": {
+        "0": {
+          "default_mode": "NONE",
+          "is_mandatory": true
+        },
+        "1": {
+          "nesting_level": 3
+        },
+        "4": {
+          "nesting_level": 1,
+          "pre_processing": "ONE_ITEM"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -873,31 +873,41 @@
         1884.4851684570312,
         196.85275268554688
       ],
-      "params": {
-        "distance": 0.0010000000474974513
-      },
+      "params": {},
       "width": 140.0
     },
-    "Mesh Join": {
-      "bl_idname": "SvMeshJoinNode",
+    "Mesh Join.001": {
+      "bl_idname": "SvMeshJoinNodeMk2",
+      "custom_socket_props": {
+        "0": {
+          "default_mode": "NONE",
+          "is_mandatory": true
+        },
+        "1": {
+          "nesting_level": 3
+        },
+        "2": {
+          "nesting_level": 3
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        1664.4852905273438,
-        151.89405822753906
+        1647.1758422851562,
+        162.31610107421875
       ],
       "params": {},
       "width": 140.0
     },
     "Mesh viewer": {
       "bl_idname": "SvMeshViewer",
-      "collection": "",
       "color": [
         0.6284880042076111,
         0.931007981300354,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -906,8 +916,7 @@
         -80.81017684936523
       ],
       "params": {
-        "base_data_name": "Alpha",
-        "is_merge": 1
+        "is_merge": true
       },
       "use_custom_color": true,
       "width": 140.0
@@ -965,6 +974,7 @@
         0.8993440270423889,
         0.9742509722709656
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -973,7 +983,8 @@
         261.693359375
       ],
       "params": {
-        "show_text": 0,
+        "n_id": "-7062797074008118892",
+        "show_text": false,
         "text": "2020 | Nikitron fields+surface+bisect+layout2d"
       },
       "use_custom_color": true,
@@ -981,15 +992,24 @@
     },
     "Number Range": {
       "bl_idname": "SvGenNumberRange",
+      "custom_socket_props": {
+        "1": {
+          "label": "stop"
+        },
+        "2": {
+          "label": "count"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
         1303.8355712890625,
-        -328.7969207763672
+        -328.79693603515625
       ],
       "params": {
         "count_": 100,
+        "current_mode": "RANGE_COUNT",
         "range_mode": "RANGE_COUNT",
         "start_float": -0.800000011920929,
         "stop_float": 1.600000023841858
@@ -998,6 +1018,14 @@
     },
     "Number Range.001": {
       "bl_idname": "SvGenNumberRange",
+      "custom_socket_props": {
+        "1": {
+          "label": "stop"
+        },
+        "2": {
+          "label": "step"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1006,6 +1034,7 @@
         467.15776443481445
       ],
       "params": {
+        "current_mode": "RANGE",
         "number_mode": "int",
         "start_int": 1,
         "stop_int": 101
@@ -1019,6 +1048,7 @@
         1.0,
         0.883421003818512
       ],
+      "custom_socket_props": {},
       "geom": "{\"Vertices\": [-1.0, -1.0, 0.0, 1.5607727766036987, -1.0, 0.0, -0.7221888303756714, 1.496375560760498, 0.0, 1.8916836977005005, 1.496375560760498, 0.0, -0.7395520210266113, 1.3403520584106445, 0.0, -0.7569152116775513, 1.184328556060791, 0.0, -0.7742784023284912, 1.0283050537109375, 0.0, -0.7916415929794312, 0.872281551361084, 0.0, -0.8090047836303711, 0.7162580490112305, 0.0, -0.826367974281311, 0.5602346062660217, 0.0, -0.843731164932251, 0.404211163520813, 0.0, -0.8610943555831909, 0.24818770587444305, 0.0, -0.8784575462341309, 0.09216424822807312, 0.0, -0.8958207368850708, -0.06385922431945801, 0.0, -0.9131839275360107, -0.21988269686698914, 0.0, -0.9305471181869507, -0.37590616941452026, 0.0, -0.9479103088378906, -0.531929612159729, 0.0, -0.9652735590934753, -0.6879531145095825, 0.0, -0.9826368093490601, -0.8439765572547913, 0.0, -0.8399516940116882, -1.0, 0.0, -0.6799033880233765, -1.0, 0.0, -0.5198550820350647, -1.0, 0.0, -0.35980677604675293, -1.0, 0.0, -0.19975847005844116, -1.0, 0.0, -0.03971017897129059, -1.0, 0.0, 0.12033811211585999, -1.0, 0.0, 0.28038641810417175, -1.0, 0.0, 0.44043469429016113, -1.0, 0.0, 0.6004830002784729, -1.0, 0.0, 0.7605313062667847, -1.0, 0.0, 0.9205796122550964, -1.0, 0.0, 1.0806279182434082, -1.0, 0.0, 1.2406761646270752, -1.0, 0.0, 1.4007244110107422, -1.0, 0.0, 1.5814547538757324, -0.8439764976501465, 0.0, 1.6021367311477661, -0.687952995300293, 0.0, 1.6228187084197998, -0.5319294929504395, 0.0, 1.6435006856918335, -0.3759060204029083, 0.0, 1.6641826629638672, -0.2198825478553772, 0.0, 1.6848645210266113, -0.06385909020900726, 0.0, 1.7055463790893555, 0.09216438233852386, 0.0, 1.7262283563613892, 0.2481878399848938, 0.0, 1.7469103336334229, 0.4042113125324249, 0.0, 1.767592191696167, 0.560234785079956, 0.0, 1.7882740497589111, 0.7162582874298096, 0.0, 1.8089560270309448, 0.8722817301750183, 0.0, 1.8296380043029785, 1.028305172920227, 0.0, 1.8503198623657227, 1.1843286752700806, 0.0, 1.8710017204284668, 1.3403520584106445, 0.0, 1.7283166646957397, 1.496375560760498, 0.0, 1.564949631690979, 1.496375560760498, 0.0, 1.4015825986862183, 1.496375560760498, 0.0, 1.2382155656814575, 1.496375560760498, 0.0, 1.0748485326766968, 1.496375560760498, 0.0, 0.911481499671936, 1.496375560760498, 0.0, 0.7481144666671753, 1.496375560760498, 0.0, 0.5847474336624146, 1.496375560760498, 0.0, 0.4213804006576538, 1.496375560760498, 0.0, 0.25801336765289307, 1.496375560760498, 0.0, 0.09464633464813232, 1.496375560760498, 0.0, -0.06872069835662842, 1.496375560760498, 0.0, -0.23208773136138916, 1.496375560760498, 0.0, -0.3954547643661499, 1.496375560760498, 0.0, -0.5588217973709106, 1.496375560760498, 0.0], \"Edges\": [0, 18, 1, 33, 3, 48, 2, 63, 2, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 0, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31, 32, 32, 33, 1, 34, 34, 35, 35, 36, 36, 37, 37, 38, 38, 39, 39, 40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47, 48, 3, 49, 49, 50, 50, 51, 51, 52, 52, 53, 53, 54, 54, 55, 55, 56, 56, 57, 57, 58, 58, 59, 59, 60, 60, 61, 61, 62, 62, 63], \"Polygons\": [], \"MaterialIdx\": [], \"Matrix\": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]}",
       "height": 100.0,
       "hide": false,
@@ -1028,7 +1058,7 @@
         -88.92974853515625
       ],
       "params": {
-        "currently_storing": 1,
+        "currently_storing": true,
         "obj_name": "Plane"
       },
       "use_custom_color": true,
@@ -1041,6 +1071,26 @@
         0.9200000166893005,
         0.9200000166893005
       ],
+      "custom_socket_props": {
+        "0": {
+          "label": "Size X"
+        },
+        "1": {
+          "label": "Size Y"
+        },
+        "2": {
+          "label": "Num X"
+        },
+        "3": {
+          "label": "Num Y"
+        },
+        "4": {
+          "label": "Step X"
+        },
+        "5": {
+          "label": "Step Y"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1060,6 +1110,7 @@
     },
     "Polyline": {
       "bl_idname": "SvExPolylineNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1068,12 +1119,13 @@
         -299.46104431152344
       ],
       "params": {
-        "is_cyclic": 1
+        "is_cyclic": true
       },
       "width": 140.0
     },
     "Reroute": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1086,6 +1138,7 @@
     },
     "Reroute.001": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1098,6 +1151,7 @@
     },
     "Reroute.002": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1110,12 +1164,13 @@
     },
     "Scalar Field Math": {
       "bl_idname": "SvExScalarFieldMathNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
         -1804.1694946289062,
-        397.6874237060547
+        397.68743896484375
       ],
       "params": {
         "operation": "SIN"
@@ -1124,6 +1179,7 @@
     },
     "Scalar Field Math.001": {
       "bl_idname": "SvExScalarFieldMathNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1138,12 +1194,13 @@
     },
     "Scalar Field Math.002": {
       "bl_idname": "SvExScalarFieldMathNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1374.8375854492188,
-        279.14893341064453
+        -1374.837646484375,
+        279.14892578125
       ],
       "params": {
         "operation": "MUL"
@@ -1152,6 +1209,7 @@
     },
     "Scalar Field Math.003": {
       "bl_idname": "SvExScalarFieldMathNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1166,6 +1224,7 @@
     },
     "Scalar Math": {
       "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1174,13 +1233,13 @@
         578.3672065734863
       ],
       "params": {
-        "current_op": "+1",
-        "input_mode_two": "Float"
+        "current_op": "+1"
       },
       "width": 140.0
     },
     "Scalar Math.001": {
       "bl_idname": "SvScalarMathNodeMK4",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1201,6 +1260,7 @@
         0.800000011920929,
         0.949999988079071
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1209,13 +1269,10 @@
         48.56747817993164
       ],
       "params": {
-        "halt_updates": 0,
-        "inject_params": 0,
-        "injected_state": 0,
+        "n_id": "-7025903710277676402",
         "script_name": "topo_sort_for_profile.py",
         "script_str": "\"\"\"\nin in_verts v\nin in_edges s\nout vout v\nout eout s\n\"\"\"\n\n\ndef dodo(verts, edges, verts_o,k):\n    for i in edges:\n        if k in i:\n            # this is awesome !!\n            k = i[int(not i.index(k))]\n            verts_o.append(verts[k])\n            return k, i\n    return False, False\n\nif in_verts:\n    for edges, verts in zip(in_edges, in_verts):\n        ed = 1\n        edges_o = []\n        verts_o = []\n        k = 0\n        while True:\n            k, ed = dodo(verts, edges, verts_o,k)\n            if ed:\n                edges.remove(ed)\n            if not ed:\n                break\n        edges_o = [[k,k+1] for k in range(len(verts_o)-1)]\n        edges_o.append([0, len(verts_o)-1])\n        eout.append(edges_o)\n        vout.append(verts_o)\n"
       },
-      "snlite_ui": [],
       "use_custom_color": true,
       "width": 140.0
     },
@@ -1226,6 +1283,7 @@
         0.800000011920929,
         0.949999988079071
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1234,13 +1292,10 @@
         -99.88166809082031
       ],
       "params": {
-        "halt_updates": 0,
-        "inject_params": 0,
-        "injected_state": 0,
+        "n_id": "-7025903710277676503",
         "script_name": "topo_sort_for_profile.py",
         "script_str": "\"\"\"\nin in_verts v\nin in_edges s\nout vout v\nout eout s\n\"\"\"\n\n\ndef dodo(verts, edges, verts_o,k):\n    for i in edges:\n        if k in i:\n            # this is awesome !!\n            k = i[int(not i.index(k))]\n            verts_o.append(verts[k])\n            return k, i\n    return False, False\n\nif in_verts:\n    for edges, verts in zip(in_edges, in_verts):\n        ed = 1\n        edges_o = []\n        verts_o = []\n        k = 0\n        while True:\n            k, ed = dodo(verts, edges, verts_o,k)\n            if ed:\n                edges.remove(ed)\n            if not ed:\n                break\n        edges_o = [[k,k+1] for k in range(len(verts_o)-1)]\n        edges_o.append([0, len(verts_o)-1])\n        eout.append(edges_o)\n        vout.append(verts_o)\n"
       },
-      "snlite_ui": [],
       "use_custom_color": true,
       "width": 140.0
     },
@@ -1264,7 +1319,7 @@
       "label": "",
       "location": [
         -2216.1895141601562,
-        392.9670867919922
+        392.96710205078125
       ],
       "params": {
         "a": [
@@ -1276,14 +1331,14 @@
           1.0,
           1.0,
           0.0
-        ],
-        "cuts_number": 0
+        ]
       },
       "use_custom_color": true,
       "width": 140.0
     },
     "Split Curve": {
       "bl_idname": "SvSplitCurveNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1292,9 +1347,8 @@
         -108.17326354980469
       ],
       "params": {
-        "join": 1,
-        "mode": "MANUAL",
-        "rescale": 1,
+        "join": true,
+        "rescale": true,
         "segments": 2
       },
       "width": 140.0
@@ -1306,6 +1360,7 @@
         0.8993440270423889,
         0.9742509722709656
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1314,7 +1369,6 @@
         271.1140251159668
       ],
       "params": {
-        "activate": 1,
         "location_theta": 1.0,
         "num_elements": 1,
         "text_color": [
@@ -1333,11 +1387,12 @@
         0.8993440270423889,
         0.9742509722709656
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1393.0630493164062,
+        -1393.06298828125,
         -310.74072265625
       ],
       "params": {
@@ -1359,6 +1414,7 @@
         0.8993440270423889,
         0.9742509722709656
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1380,21 +1436,22 @@
     },
     "Surface from Curves": {
       "bl_idname": "SvInterpolatingSurfaceNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1389.2628784179688,
+        -1389.262939453125,
         -126.90286254882812
       ],
       "params": {
-        "interp_mode": "LIN",
-        "is_cyclic": 0
+        "interp_mode": "LIN"
       },
       "width": 140.0
     },
     "UV Connection": {
       "bl_idname": "LineConnectNodeMK2",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1403,17 +1460,14 @@
         45.30693435668945
       ],
       "params": {
-        "cap_U": 0,
-        "cap_V": 0,
-        "cicl_check_U": 0,
-        "cicl_check_V": 1,
-        "dir_check": "U_dir",
-        "slice_check": 0
+        "cicl_check_V": true,
+        "slice_check": false
       },
       "width": 140.0
     },
     "UV Connection.001": {
       "bl_idname": "LineConnectNodeMK2",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1422,17 +1476,13 @@
         291.8104362487793
       ],
       "params": {
-        "cap_U": 0,
-        "cap_V": 0,
-        "cicl_check_U": 0,
-        "cicl_check_V": 1,
-        "dir_check": "U_dir",
-        "slice_check": 1
+        "cicl_check_V": true
       },
       "width": 140.0
     },
     "Vector in": {
       "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1447,38 +1497,40 @@
     },
     "Vector in.001": {
       "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
         1324.8321533203125,
-        -529.8260192871094
+        -529.8260498046875
       ],
       "params": {
-        "x_": 1.0,
-        "z_": 0.0
+        "x_": 1.0
       },
       "width": 100.0
     },
     "Vector in.002": {
       "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
         1523.835693359375,
-        -356.06092834472656
+        -356.0609130859375
       ],
       "params": {},
       "width": 100.0
     },
     "Vector out": {
       "bl_idname": "VectorsOutNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        639.6380310058594,
+        639.6380920410156,
         42.76828384399414
       ],
       "params": {},
@@ -1491,6 +1543,7 @@
         0.931007981300354,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1499,9 +1552,9 @@
         31.077220916748047
       ],
       "params": {
-        "activate": 0,
-        "display_edges": 0,
-        "display_verts": 0,
+        "activate": false,
+        "display_edges": false,
+        "display_verts": false,
         "selected_draw_mode": "facet"
       },
       "use_custom_color": true,
@@ -1514,6 +1567,7 @@
         0.931007981300354,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1522,9 +1576,9 @@
         84.09198379516602
       ],
       "params": {
-        "activate": 0,
-        "display_edges": 0,
-        "display_verts": 0,
+        "activate": false,
+        "display_edges": false,
+        "display_verts": false,
         "selected_draw_mode": "facet"
       },
       "use_custom_color": true,
@@ -1537,6 +1591,7 @@
         0.931007981300354,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1545,9 +1600,9 @@
         277.5806999206543
       ],
       "params": {
-        "activate": 0,
-        "display_edges": 0,
-        "display_verts": 0,
+        "activate": false,
+        "display_edges": false,
+        "display_verts": false,
         "selected_draw_mode": "facet"
       },
       "use_custom_color": true,
@@ -1560,6 +1615,7 @@
         0.931007981300354,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1568,9 +1624,9 @@
         160.32252502441406
       ],
       "params": {
-        "activate": 0,
-        "display_edges": 0,
-        "display_verts": 0,
+        "activate": false,
+        "display_edges": false,
+        "display_verts": false,
         "selected_draw_mode": "facet"
       },
       "use_custom_color": true,
@@ -1583,6 +1639,7 @@
         0.931007981300354,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1591,7 +1648,7 @@
         -233.52207946777344
       ],
       "params": {
-        "activate": 0
+        "activate": false
       },
       "use_custom_color": true,
       "width": 140.0
@@ -1603,17 +1660,17 @@
         0.931007981300354,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1032.8525695800781,
+        -1032.8525390625,
         -104.01318359375
       ],
       "params": {
-        "activate": 0,
-        "display_edges": 1,
-        "display_verts": 0
+        "activate": false,
+        "display_verts": false
       },
       "use_custom_color": true,
       "width": 140.0
@@ -1625,6 +1682,7 @@
         0.931007981300354,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1633,7 +1691,7 @@
         -302.40264892578125
       ],
       "params": {
-        "activate": 0
+        "activate": false
       },
       "use_custom_color": true,
       "width": 140.0
@@ -1645,6 +1703,7 @@
         0.931007981300354,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1653,15 +1712,7 @@
         165.93457412719727
       ],
       "params": {
-        "activate": 1,
-        "display_faces": 1,
-        "display_verts": 0,
-        "face_color": [
-          0.22794818878173828,
-          0.44798845052719116,
-          0.22794818878173828,
-          1.0
-        ]
+        "display_verts": false
       },
       "use_custom_color": true,
       "width": 140.0
@@ -1673,6 +1724,7 @@
         0.931007981300354,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1681,8 +1733,8 @@
         162.49545288085938
       ],
       "params": {
-        "display_faces": 0,
-        "display_verts": 0,
+        "display_faces": false,
+        "display_verts": false,
         "edge_color": [
           0.17057925462722778,
           0.6651744842529297,
@@ -1700,6 +1752,7 @@
         0.931007981300354,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1708,7 +1761,7 @@
         301.1180534362793
       ],
       "params": {
-        "activate": 0
+        "activate": false
       },
       "use_custom_color": true,
       "width": 140.0
@@ -1720,6 +1773,7 @@
         0.931007981300354,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1734,7 +1788,7 @@
           0.015115766786038876,
           1.0
         ],
-        "draw_bg": 1
+        "draw_bg": true
       },
       "use_custom_color": true,
       "width": 140.0
@@ -1746,6 +1800,7 @@
         0.931007981300354,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -1754,14 +1809,13 @@
         153.97206115722656
       ],
       "params": {
-        "activate": 1,
         "bg_verts_col": [
           0.02388177067041397,
           0.0349343903362751,
           0.1999998390674591,
           1.0
         ],
-        "draw_bg": 1,
+        "draw_bg": true,
         "numid_verts_col": [
           0.0892091616988182,
           0.8693810701370239,
@@ -1775,102 +1829,6 @@
   },
   "update_lists": [
     [
-      "Objects in Lite",
-      0,
-      "Scripted Node Lite.001",
-      0
-    ],
-    [
-      "Objects in Lite",
-      1,
-      "Scripted Node Lite.001",
-      1
-    ],
-    [
-      "Scripted Node Lite.001",
-      0,
-      "Polyline",
-      0
-    ],
-    [
-      "Polyline",
-      0,
-      "Split Curve",
-      0
-    ],
-    [
-      "Split Curve",
-      0,
-      "List Mask (out)",
-      0
-    ],
-    [
-      "List Input.002",
-      0,
-      "List Mask (out)",
-      1
-    ],
-    [
-      "List Mask (out)",
-      3,
-      "Flip Curve",
-      0
-    ],
-    [
-      "List Input.002",
-      0,
-      "List Mask Join (in)",
-      0
-    ],
-    [
-      "Flip Curve",
-      0,
-      "List Mask Join (in)",
-      1
-    ],
-    [
-      "List Mask (out)",
-      4,
-      "List Mask Join (in)",
-      2
-    ],
-    [
-      "List Mask Join (in)",
-      0,
-      "Surface from Curves",
-      0
-    ],
-    [
-      "Surface from Curves",
-      0,
-      "Evaluate Surface",
-      0
-    ],
-    [
-      "A Number.004",
-      0,
-      "Evaluate Surface",
-      4
-    ],
-    [
-      "A Number.004",
-      0,
-      "Evaluate Surface",
-      5
-    ],
-    [
-      "Evaluate Surface",
-      "Faces",
-      "Reroute",
-      "Input"
-    ],
-    [
-      "Evaluate Surface",
-      "Vertices",
-      "Reroute.001",
-      "Input"
-    ],
-    [
       "Segment",
       0,
       "Attractor Field",
@@ -1883,76 +1841,22 @@
       5
     ],
     [
-      "Attractor Field",
-      1,
-      "Scalar Field Math",
-      0
-    ],
-    [
-      "Scalar Field Math",
+      "Merge by Distance",
       0,
-      "List Decompose",
+      "Bisect",
       0
     ],
     [
-      "List Decompose",
-      1,
-      "Scalar Field Math.003",
-      0
-    ],
-    [
-      "List Decompose",
-      0,
-      "Scalar Field Math.002",
-      0
-    ],
-    [
-      "Scalar Field Math.003",
-      0,
-      "Scalar Field Math.002",
+      "Merge by Distance",
+      2,
+      "Bisect",
       1
     ],
     [
-      "Scalar Field Math.002",
+      "Matrix Deform",
       0,
-      "Scalar Field Math.001",
-      0
-    ],
-    [
-      "A Number",
-      0,
-      "Scalar Field Math.001",
-      1
-    ],
-    [
-      "Scalar Field Math.001",
-      0,
-      "Evaluate Scalar Field",
-      0
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "Evaluate Scalar Field",
-      "Vertices"
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "Move",
-      "Vertices"
-    ],
-    [
-      "Evaluate Scalar Field",
-      0,
-      "Move",
+      "Bisect",
       2
-    ],
-    [
-      "Evaluate Surface",
-      "Edges",
-      "Reroute.002",
-      "Input"
     ],
     [
       "Move",
@@ -1985,58 +1889,154 @@
       1
     ],
     [
-      "Delete Loose",
+      "Polyline",
       0,
-      "Scripted Node Lite",
+      "Evaluate Curve",
       0
     ],
     [
-      "Delete Loose",
-      1,
-      "Scripted Node Lite",
-      1
-    ],
-    [
-      "Scripted Node Lite",
+      "Scalar Field Math.001",
       0,
-      "Viewer Draw Mk3.009",
+      "Evaluate Scalar Field",
       0
     ],
     [
-      "Scripted Node Lite",
-      1,
-      "Viewer Draw Mk3.009",
-      1
+      "Reroute.001",
+      "Output",
+      "Evaluate Scalar Field",
+      "Vertices"
     ],
     [
-      "A Number.006",
+      "Surface from Curves",
       0,
-      "Number Range",
+      "Evaluate Surface",
       0
     ],
     [
-      "A Number.007",
+      "A Number.004",
       0,
-      "Number Range",
+      "Evaluate Surface",
+      4
+    ],
+    [
+      "A Number.004",
+      0,
+      "Evaluate Surface",
+      5
+    ],
+    [
+      "List Mask (out)",
+      3,
+      "Flip Curve",
+      0
+    ],
+    [
+      "Scalar Field Math",
+      0,
+      "List Decompose",
+      0
+    ],
+    [
+      "Bisect",
+      0,
+      "List First & Last",
+      0
+    ],
+    [
+      "Move",
+      0,
+      "List Join",
+      0
+    ],
+    [
+      "UV Connection.001",
+      0,
+      "List Join",
       1
     ],
     [
-      "A Number.003",
+      "UV Connection",
       0,
-      "Number Range",
+      "List Join",
       2
     ],
     [
-      "Number Range",
+      "Reroute",
+      "Output",
+      "List Join.001",
+      "data"
+    ],
+    [
+      "UV Connection.001",
+      1,
+      "List Join.001",
+      1
+    ],
+    [
+      "UV Connection",
+      1,
+      "List Join.001",
+      2
+    ],
+    [
+      "Split Curve",
       0,
-      "Vector in.002",
+      "List Mask (out)",
       0
     ],
     [
-      "Vector in.002",
+      "List Input.002",
       0,
-      "Matrix In",
+      "List Mask (out)",
+      1
+    ],
+    [
+      "List Input.002",
+      0,
+      "List Mask Join (in)",
       0
+    ],
+    [
+      "Flip Curve",
+      0,
+      "List Mask Join (in)",
+      1
+    ],
+    [
+      "List Mask (out)",
+      4,
+      "List Mask Join (in)",
+      2
+    ],
+    [
+      "Number Range.001",
+      0,
+      "List Split",
+      0
+    ],
+    [
+      "Bisect",
+      0,
+      "Matrix Apply",
+      0
+    ],
+    [
+      "Bisect",
+      1,
+      "Matrix Apply",
+      1
+    ],
+    [
+      "Bisect",
+      2,
+      "Matrix Apply",
+      2
+    ],
+    [
+      "Matrix Math",
+      0,
+      "Matrix Apply",
+      3
     ],
     [
       "Matrix In",
@@ -2057,15 +2057,231 @@
       4
     ],
     [
+      "Vector in.002",
+      0,
+      "Matrix In",
+      0
+    ],
+    [
       "Matrix Deform",
       0,
       "Matrix Math",
       0
     ],
     [
+      "Mesh Join.001",
+      0,
+      "Merge by Distance",
+      0
+    ],
+    [
+      "Mesh Join.001",
+      2,
+      "Merge by Distance",
+      1
+    ],
+    [
+      "Bisect",
+      0,
+      "Mesh viewer",
+      0
+    ],
+    [
+      "Bisect",
+      2,
+      "Mesh viewer",
+      2
+    ],
+    [
+      "Matrix In.001",
+      0,
+      "Mesh viewer",
+      4
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Move",
+      "Vertices"
+    ],
+    [
+      "Evaluate Scalar Field",
+      0,
+      "Move",
+      2
+    ],
+    [
+      "Plane",
+      0,
+      "Move.001",
+      0
+    ],
+    [
+      "A Number.006",
+      0,
+      "Number Range",
+      0
+    ],
+    [
+      "A Number.007",
+      0,
+      "Number Range",
+      1
+    ],
+    [
+      "A Number.003",
+      0,
+      "Number Range",
+      2
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Number Range.001",
+      1
+    ],
+    [
+      "Scalar Math.001",
+      0,
+      "Plane",
+      2
+    ],
+    [
+      "Scripted Node Lite.001",
+      0,
+      "Polyline",
+      0
+    ],
+    [
+      "Evaluate Surface",
+      "Faces",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Evaluate Surface",
+      "Vertices",
+      "Reroute.001",
+      "Input"
+    ],
+    [
+      "Evaluate Surface",
+      "Edges",
+      "Reroute.002",
+      "Input"
+    ],
+    [
+      "Attractor Field",
+      1,
+      "Scalar Field Math",
+      0
+    ],
+    [
+      "Scalar Field Math.002",
+      0,
+      "Scalar Field Math.001",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Scalar Field Math.001",
+      1
+    ],
+    [
+      "List Decompose",
+      0,
+      "Scalar Field Math.002",
+      0
+    ],
+    [
+      "Scalar Field Math.003",
+      0,
+      "Scalar Field Math.002",
+      1
+    ],
+    [
+      "List Decompose",
+      1,
+      "Scalar Field Math.003",
+      0
+    ],
+    [
+      "A Number.003",
+      0,
+      "Scalar Math",
+      0
+    ],
+    [
+      "A Number.003",
+      0,
+      "Scalar Math.001",
+      0
+    ],
+    [
+      "Delete Loose",
+      0,
+      "Scripted Node Lite",
+      0
+    ],
+    [
+      "Delete Loose",
+      1,
+      "Scripted Node Lite",
+      1
+    ],
+    [
+      "Objects in Lite",
+      0,
+      "Scripted Node Lite.001",
+      0
+    ],
+    [
+      "Objects in Lite",
+      1,
+      "Scripted Node Lite.001",
+      1
+    ],
+    [
+      "Polyline",
+      0,
+      "Split Curve",
+      0
+    ],
+    [
+      "Vector in",
+      0,
+      "Stethoscope MK2",
+      0
+    ],
+    [
+      "List Mask Join (in)",
+      0,
+      "Stethoscope MK2.001",
+      0
+    ],
+    [
+      "List Mask Join (in)",
+      0,
+      "Surface from Curves",
+      0
+    ],
+    [
+      "Vector in",
+      0,
+      "UV Connection",
+      0
+    ],
+    [
       "Scripted Node Lite",
       0,
-      "Vector out",
+      "UV Connection",
+      1
+    ],
+    [
+      "Vector in",
+      0,
+      "UV Connection.001",
       0
     ],
     [
@@ -2087,322 +2303,16 @@
       2
     ],
     [
-      "Vector in",
+      "Number Range",
       0,
-      "UV Connection",
+      "Vector in.002",
       0
     ],
     [
       "Scripted Node Lite",
       0,
-      "UV Connection",
-      1
-    ],
-    [
-      "Vector in",
-      0,
-      "UV Connection.001",
+      "Vector out",
       0
-    ],
-    [
-      "Reroute",
-      "Output",
-      "List Join.001",
-      "data"
-    ],
-    [
-      "UV Connection.001",
-      1,
-      "List Join.001",
-      1
-    ],
-    [
-      "UV Connection",
-      1,
-      "List Join.001",
-      2
-    ],
-    [
-      "Move",
-      0,
-      "List Join",
-      0
-    ],
-    [
-      "UV Connection.001",
-      0,
-      "List Join",
-      1
-    ],
-    [
-      "UV Connection",
-      0,
-      "List Join",
-      2
-    ],
-    [
-      "List Join",
-      0,
-      "Mesh Join",
-      0
-    ],
-    [
-      "List Join.001",
-      0,
-      "Mesh Join",
-      1
-    ],
-    [
-      "Mesh Join",
-      0,
-      "Merge by Distance",
-      0
-    ],
-    [
-      "Mesh Join",
-      1,
-      "Merge by Distance",
-      1
-    ],
-    [
-      "Merge by Distance",
-      0,
-      "Bisect",
-      0
-    ],
-    [
-      "Merge by Distance",
-      2,
-      "Bisect",
-      1
-    ],
-    [
-      "Matrix Deform",
-      0,
-      "Bisect",
-      2
-    ],
-    [
-      "Bisect",
-      0,
-      "Matrix Apply",
-      0
-    ],
-    [
-      "Bisect",
-      1,
-      "Matrix Apply",
-      1
-    ],
-    [
-      "Bisect",
-      2,
-      "Matrix Apply",
-      2
-    ],
-    [
-      "Matrix Math",
-      0,
-      "Matrix Apply",
-      3
-    ],
-    [
-      "Bisect",
-      0,
-      "Viewer Draw Mk3.007",
-      0
-    ],
-    [
-      "Bisect",
-      1,
-      "Viewer Draw Mk3.007",
-      1
-    ],
-    [
-      "Bisect",
-      2,
-      "Viewer Draw Mk3.007",
-      2
-    ],
-    [
-      "Bisect",
-      0,
-      "List First & Last",
-      0
-    ],
-    [
-      "A Number.003",
-      0,
-      "Scalar Math",
-      0
-    ],
-    [
-      "Scalar Math",
-      0,
-      "Number Range.001",
-      1
-    ],
-    [
-      "Number Range.001",
-      0,
-      "List Split",
-      0
-    ],
-    [
-      "List First & Last",
-      2,
-      "Viewer Index+",
-      0
-    ],
-    [
-      "List Split",
-      0,
-      "Viewer Index+",
-      4
-    ],
-    [
-      "UV Connection.001",
-      0,
-      "Viewer Draw Mk3.002",
-      0
-    ],
-    [
-      "UV Connection.001",
-      1,
-      "Viewer Draw Mk3.002",
-      2
-    ],
-    [
-      "Evaluate Surface",
-      0,
-      "Viewer Draw Mk3.005",
-      0
-    ],
-    [
-      "Evaluate Surface",
-      1,
-      "Viewer Draw Mk3.005",
-      1
-    ],
-    [
-      "Evaluate Surface",
-      2,
-      "Viewer Draw Mk3.005",
-      2
-    ],
-    [
-      "Bisect",
-      0,
-      "Mesh viewer",
-      0
-    ],
-    [
-      "Bisect",
-      2,
-      "Mesh viewer",
-      2
-    ],
-    [
-      "Matrix In.001",
-      0,
-      "Mesh viewer",
-      4
-    ],
-    [
-      "A Number.003",
-      0,
-      "Scalar Math.001",
-      0
-    ],
-    [
-      "Scalar Math.001",
-      0,
-      "Plane",
-      2
-    ],
-    [
-      "Plane",
-      0,
-      "Move.001",
-      0
-    ],
-    [
-      "Move.001",
-      0,
-      "Viewer Index+.001",
-      0
-    ],
-    [
-      "Number Range.001",
-      0,
-      "Viewer Index+.001",
-      4
-    ],
-    [
-      "Merge by Distance",
-      0,
-      "Viewer Draw Mk3.003",
-      0
-    ],
-    [
-      "Merge by Distance",
-      2,
-      "Viewer Draw Mk3.003",
-      2
-    ],
-    [
-      "Polyline",
-      0,
-      "Evaluate Curve",
-      0
-    ],
-    [
-      "Evaluate Curve",
-      0,
-      "Viewer Draw Mk3.004",
-      0
-    ],
-    [
-      "Evaluate Curve",
-      1,
-      "Viewer Draw Mk3.004",
-      1
-    ],
-    [
-      "List Mask Join (in)",
-      0,
-      "Stethoscope MK2.001",
-      0
-    ],
-    [
-      "Matrix Deform",
-      0,
-      "Viewer Draw Mk3.006",
-      3
-    ],
-    [
-      "Matrix Apply",
-      0,
-      "Viewer Draw Mk3.008",
-      0
-    ],
-    [
-      "Matrix Apply",
-      1,
-      "Viewer Draw Mk3.008",
-      1
-    ],
-    [
-      "Matrix Apply",
-      2,
-      "Viewer Draw Mk3.008",
-      2
-    ],
-    [
-      "Move.001",
-      0,
-      "Viewer Draw Mk3.008",
-      3
     ],
     [
       "UV Connection",
@@ -2415,12 +2325,6 @@
       1,
       "Viewer Draw Mk3",
       2
-    ],
-    [
-      "Vector in",
-      0,
-      "Stethoscope MK2",
-      0
     ],
     [
       "Move",
@@ -2433,6 +2337,156 @@
       "Output",
       "Viewer Draw Mk3.001",
       "Polygons"
+    ],
+    [
+      "UV Connection.001",
+      0,
+      "Viewer Draw Mk3.002",
+      0
+    ],
+    [
+      "UV Connection.001",
+      1,
+      "Viewer Draw Mk3.002",
+      2
+    ],
+    [
+      "Merge by Distance",
+      0,
+      "Viewer Draw Mk3.003",
+      0
+    ],
+    [
+      "Merge by Distance",
+      2,
+      "Viewer Draw Mk3.003",
+      2
+    ],
+    [
+      "Evaluate Curve",
+      0,
+      "Viewer Draw Mk3.004",
+      0
+    ],
+    [
+      "Evaluate Curve",
+      1,
+      "Viewer Draw Mk3.004",
+      1
+    ],
+    [
+      "Evaluate Surface",
+      0,
+      "Viewer Draw Mk3.005",
+      0
+    ],
+    [
+      "Evaluate Surface",
+      1,
+      "Viewer Draw Mk3.005",
+      1
+    ],
+    [
+      "Evaluate Surface",
+      2,
+      "Viewer Draw Mk3.005",
+      2
+    ],
+    [
+      "Matrix Deform",
+      0,
+      "Viewer Draw Mk3.006",
+      3
+    ],
+    [
+      "Bisect",
+      0,
+      "Viewer Draw Mk3.007",
+      0
+    ],
+    [
+      "Bisect",
+      1,
+      "Viewer Draw Mk3.007",
+      1
+    ],
+    [
+      "Bisect",
+      2,
+      "Viewer Draw Mk3.007",
+      2
+    ],
+    [
+      "Matrix Apply",
+      0,
+      "Viewer Draw Mk3.008",
+      0
+    ],
+    [
+      "Matrix Apply",
+      1,
+      "Viewer Draw Mk3.008",
+      1
+    ],
+    [
+      "Matrix Apply",
+      2,
+      "Viewer Draw Mk3.008",
+      2
+    ],
+    [
+      "Move.001",
+      0,
+      "Viewer Draw Mk3.008",
+      3
+    ],
+    [
+      "Scripted Node Lite",
+      0,
+      "Viewer Draw Mk3.009",
+      0
+    ],
+    [
+      "Scripted Node Lite",
+      1,
+      "Viewer Draw Mk3.009",
+      1
+    ],
+    [
+      "List First & Last",
+      2,
+      "Viewer Index+",
+      0
+    ],
+    [
+      "List Split",
+      0,
+      "Viewer Index+",
+      4
+    ],
+    [
+      "Move.001",
+      0,
+      "Viewer Index+.001",
+      0
+    ],
+    [
+      "Number Range.001",
+      0,
+      "Viewer Index+.001",
+      4
+    ],
+    [
+      "List Join",
+      0,
+      "Mesh Join.001",
+      0
+    ],
+    [
+      "List Join.001",
+      0,
+      "Mesh Join.001",
+      2
     ]
   ]
 }
