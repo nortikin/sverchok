@@ -1,5 +1,5 @@
 from itertools import chain, repeat, zip_longest
-from sverchok.data_structure import levels_of_list_or_np
+from sverchok.data_structure import levels_of_list_or_np, list_match_func
 
 # the class based should be slower but kept until tested
 class SvZipExhausted(Exception):
@@ -139,6 +139,52 @@ def recurse_f_level_control(params, constant, main_func, matching_f, desired_lev
     else:
         result = main_func(params, constant, matching_f)
     return result
+
+def process_matched(params, main_func, matching_mode, input_nesting, outputs_num):
+    '''params will spread using the matching fmode,
+       the main_func is the function to apply
+       the input_nesting should be like an Integer List like [1, 2, 1, 3...] one level per parameter
+       outputs_num: number of outputs (Integer)
+       '''
+    input_levels = [levels_of_list_or_np(p) for p in params]
+
+    over_levels = [lv > dl for lv, dl in zip(input_levels, input_nesting)]
+    one_output = outputs_num == 1
+    matching_f = list_match_func[matching_mode]
+    if one_output:
+        result = []
+    else:
+        result = [[] for l in range(outputs_num)]
+    if any(over_levels):
+        p_temp = []
+        for p, lv, dl in zip(params, input_levels, input_nesting):
+            print(lv,dl)
+            if lv <= dl:
+                p_temp.append([p])
+            else:
+                p_temp.append(p)
+
+        params = matching_f(p_temp)
+        for g in zip(*params):
+            local_result = process_matched(g, main_func, matching_mode, input_nesting, outputs_num)
+            append_result(result, local_result, one_output)
+
+    else:
+        result = main_func(matching_f(params))
+
+    return result
+def append_result(result, local_result, one_output):
+    if one_output:
+        result.append(local_result)
+    else:
+        for r, r_local in zip(result, local_result):
+            r.append(r_local)
+def extend_result(result, local_result, one_output):
+    if one_output:
+        result.extend(local_result)
+    else:
+        for r, r_local in zip(result, local_result):
+            r.extend(r_local)
 
 def extend_if_needed(vl, wl, default=0.5):
     # match wl to correspond with vl

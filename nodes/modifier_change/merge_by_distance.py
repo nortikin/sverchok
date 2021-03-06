@@ -24,10 +24,9 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, Vector_generate, repeat_last, zip_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, face_data_from_bmesh_faces, vert_data_from_bmesh_verts
 from sverchok.utils.logging import info, debug
-
+from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 
 def remove_doubles(vertices, faces, distance, face_data=None, find_doubles=False, mask=[], output_mask=False):
-
     if faces:
         edge_mode = (len(faces[0]) == 2)
     else:
@@ -80,7 +79,7 @@ def remove_doubles(vertices, faces, distance, face_data=None, find_doubles=False
     return (verts, edges, faces, face_data_out, doubles, mask_out)
 
 
-class SvMergeByDistanceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMergeByDistanceNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     """
     Triggers: Remove Doubles
     Tooltip: Merge Vertices that are closer than a distance.
@@ -101,6 +100,8 @@ class SvMergeByDistanceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', 'Mask')
         self.inputs.new('SvStringsSocket', 'Distance').prop_name = 'distance'
 
+
+
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Edges')
         self.outputs.new('SvStringsSocket', 'Polygons')
@@ -112,49 +113,50 @@ class SvMergeByDistanceNode(bpy.types.Node, SverchCustomTreeNode):
         #layout.prop(self, 'distance', text="Distance")
         pass
 
-    def process(self):
-        if not any(s.is_linked for s in self.outputs):
-            return
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'list_match')
 
-        if not self.inputs['Vertices'].is_linked:
-            return
+    def rclick_menu(self, context, layout):
+        layout.prop_menu_enum(self, "list_match", text="List Match")
 
-        verts = Vector_generate(self.inputs['Vertices'].sv_get(deepcopy=False))
-        polys = self.inputs['PolyEdge'].sv_get(default=[[]], deepcopy=False)
-        face_data = self.inputs['FaceData'].sv_get(default=[[]], deepcopy=False)
-        distance = self.inputs['Distance'].sv_get(default=[self.distance], deepcopy=False)[0]
+    def pre_setup(self):
+        verts = self.inputs['Vertices']
+        verts.is_mandatory = True
+        verts.nesting_level = 3
+        verts.default_mode = 'NONE'
+
+        poly_edge = self.inputs['PolyEdge']
+        poly_edge.nesting_level = 3
+        poly_edge.default_mode = 'EMPTY_LIST'
+
+        face_data = self.inputs['FaceData']
+        face_data.nesting_level = 2
+        face_data.default_mode = 'EMPTY_LIST'
+
+        mask = self.inputs['Mask']
+        mask.nesting_level = 2
+        mask.default_mode = 'EMPTY_LIST'
+
+        distance = self.inputs['Distance']
+        distance.nesting_level = 1
+        distance.default_mode = 'EMPTY_LIST'
+        distance.pre_processing = 'ONE_ITEM'
+
+    def process_data(self, params):
+        vertices, faces, face_data, mask, distance = params
+        has_mask_out = self.inputs['Mask'].is_linked and self.outputs['Mask'].is_linked
         has_double_out = self.outputs['Doubles'].is_linked
-        mask_s = self.inputs['Mask'].sv_get(default=[[]], deepcopy=False)
-        has_mask_out = self.inputs['Mask'].is_linked, self.outputs['Mask'].is_linked
-        verts_out = []
-        edges_out = []
-        polys_out = []
-        face_data_out = []
-        d_out = []
-        mask_out = []
+        result = [[] for s in self.outputs]
+        for vertices, faces, face_data, mask, distance in zip(*params):
+            res = remove_doubles(vertices, faces, distance,
+                                 face_data=face_data,
+                                 find_doubles=has_double_out,
+                                 mask=mask,
+                                 output_mask=has_mask_out)
+            [r.append(rl) for r, rl in zip(result, res)]
 
-        for v, p, ms, d, mask in zip_long_repeat(verts, polys, face_data, distance, mask_s):
-            res = remove_doubles(v, p, d, ms, has_double_out, mask=mask, output_mask=has_mask_out)
-            if not res:
-                return
-            verts_out.append(res[0])
-            edges_out.append(res[1])
-            polys_out.append(res[2])
-            face_data_out.append(res[3])
-            d_out.append(res[4])
-            mask_out.append(res[5])
+        return result
 
-        self.outputs['Vertices'].sv_set(verts_out)
-
-        # restrict setting this output when there is no such input
-        if self.inputs['PolyEdge'].is_linked:
-            self.outputs['Edges'].sv_set(edges_out)
-            self.outputs['Polygons'].sv_set(polys_out)
-
-        self.outputs['FaceData'].sv_set(face_data_out)
-        self.outputs['Doubles'].sv_set(d_out)
-
-        self.outputs['Mask'].sv_set(mask_out)
 
 
 def register():

@@ -10,7 +10,7 @@
     "Inset Special": "Frame.001",
     "List Split": "Frame",
     "List Split.001": "Frame.002",
-    "Mesh Join": "Frame.002",
+    "Mesh Join.001": "Frame.002",
     "Mesh viewer": "Frame.001",
     "Move": "Frame",
     "Plane": "Frame",
@@ -210,15 +210,26 @@
       "params": {},
       "width": 140.0
     },
-    "Mesh Join": {
-      "bl_idname": "SvMeshJoinNode",
-      "custom_socket_props": {},
+    "Mesh Join.001": {
+      "bl_idname": "SvMeshJoinNodeMk2",
+      "custom_socket_props": {
+        "0": {
+          "default_mode": "NONE",
+          "is_mandatory": true
+        },
+        "1": {
+          "nesting_level": 3
+        },
+        "2": {
+          "nesting_level": 3
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        1457.0633239746094,
-        -1038.811508178711
+        1460.3860778808594,
+        -1012.3106536865234
       ],
       "params": {},
       "width": 140.0
@@ -238,7 +249,9 @@
         1369.1665115356445,
         -456.61589431762695
       ],
-      "params": {},
+      "params": {
+        "base_data_name": "Gamma"
+      },
       "use_custom_color": true,
       "width": 140.0
     },
@@ -481,13 +494,13 @@
       2
     ],
     [
-      "Mesh Join",
+      "Mesh Join.001",
       0,
       "Curve Viewer",
       0
     ],
     [
-      "Mesh Join",
+      "Mesh Join.001",
       1,
       "Curve Viewer",
       1
@@ -553,18 +566,6 @@
       0
     ],
     [
-      "Segment",
-      0,
-      "Mesh Join",
-      0
-    ],
-    [
-      "Segment",
-      1,
-      "Mesh Join",
-      1
-    ],
-    [
       "Solidify.001",
       0,
       "Mesh viewer",
@@ -625,12 +626,6 @@
       1
     ],
     [
-      "Component Analyzer",
-      0,
-      "Vector Math",
-      0
-    ],
-    [
       "Inset Special",
       0,
       "Solidify.001",
@@ -643,6 +638,12 @@
       2
     ],
     [
+      "Component Analyzer",
+      0,
+      "Vector Math",
+      0
+    ],
+    [
       "Solidify.001",
       0,
       "Viewer Draw Mk3.001",
@@ -653,6 +654,18 @@
       2,
       "Viewer Draw Mk3.001",
       2
+    ],
+    [
+      "Segment",
+      0,
+      "Mesh Join.001",
+      0
+    ],
+    [
+      "Segment",
+      1,
+      "Mesh Join.001",
+      1
     ]
   ]
 }
