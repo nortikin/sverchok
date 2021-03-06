@@ -62,7 +62,7 @@ class GetNormalsNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     def rclick_menu(self, context, layout):
         layout.prop_menu_enum(self, "list_match", text="List Match")
 
-    def pre_setup(self, params):
+    def pre_setup(self):
         vs = self.inputs["Vertices"]
         vs.is_mandatory = True
         vs.nesting_level = 3
