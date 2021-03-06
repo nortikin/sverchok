@@ -38,7 +38,10 @@ def mask_converter_node(*,
     edges = edges or []
     faces = faces or []
 
-    len_verts = max(len(vertices), max(i for e in edges for i in e) + 1, max(i for f in faces for i in f) + 1)
+    len_verts = len(vertices)
+    len_edges_verts = (max(i for e in edges for i in e) + 1) if edges else 0
+    len_faces_verts = (max(i for f in faces for i in f) + 1) if faces else 0
+    len_verts = max(len_verts, len_edges_verts, len_faces_verts)
 
     vertices_mask = list(fixed_iter(vertices_mask, len_verts))
     edges_mask = list(fixed_iter(edges_mask, len(edges)))
