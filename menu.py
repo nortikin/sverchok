@@ -485,7 +485,7 @@ def make_categories():
                     items=node_items))
             node_count += len(nodes)
     node_categories.append(SverchNodeCategory("SVERCHOK_MONAD", "Monad", items=sv_group_items))
-
+    SverchNodeItem.new('SvMonadInfoNode')
     return node_categories, node_count, original_categories
 
 def register_node_panels(identifier, std_menu):
@@ -637,6 +637,9 @@ def sv_draw_menu(self, context):
     layout = self.layout
     layout.operator_context = "INVOKE_DEFAULT"
 
+    if not any([(g.bl_idname in sv_tree_types) for g in bpy.data.node_groups]):
+        layout.operator("node.new_node_tree", text="New Sverchok Node Tree", icon="RNA_ADD")
+        return
 
     layout.operator("node.sv_extra_search", text="Search", icon='OUTLINER_DATA_FONT')
     NODEVIEW_MT_Dynamic_Menu.draw(self, context)
@@ -650,7 +653,7 @@ def register():
         unregister_node_panels()
         nodeitems_utils.unregister_node_categories("SVERCHOK")
     # nodeitems_utils.register_node_categories("SVERCHOK", menu)
-    bpy.types.NODE_MT_add.append(sv_draw_menu)
+    # bpy.types.NODE_MT_add.append(sv_draw_menu)
     categories = [(category.identifier, category.name, category.name, i) for i, category in enumerate(menu)]
     bpy.types.Scene.sv_selected_category = bpy.props.EnumProperty(
                         name = "Category",
