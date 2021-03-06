@@ -19,7 +19,95 @@
 import bpy
 from bpy.props import BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.data_structure import updateNode, fixed_iter
+from sverchok.utils.handling_nodes import vectorize
+
+
+def mask_converter_node(*,
+                        vertices=None,
+                        edges=None,
+                        faces=None,
+                        vertices_mask=None,
+                        edges_mask=None,
+                        faces_mask=None,
+                        mode='BY_VERTEX',
+                        include_partial=False):
+    out = {'vertices_mask': [], 'edges_mask': [], 'faces_mask': []}
+
+    vertices = vertices or []
+    edges = edges or []
+    faces = faces or []
+
+    len_verts = max(len(vertices), max(i for e in edges for i in e) + 1, max(i for f in faces for i in f) + 1)
+
+    vertices_mask = list(fixed_iter(vertices_mask, len_verts))
+    edges_mask = list(fixed_iter(edges_mask, len(edges)))
+    faces_mask = list(fixed_iter(faces_mask, len(faces)))
+
+    if mode == 'BY_VERTEX':
+        out_edges_mask, out_faces_mask = by_vertex(vertices_mask, edges, faces, include_partial)
+        out_verts_mask = vertices_mask
+    elif mode == 'BY_EDGE':
+        out_verts_mask, out_faces_mask = by_edge(edges_mask, vertices, edges, faces, include_partial)
+        out_edges_mask = edges_mask
+    elif mode == 'BY_FACE':
+        out_verts_mask, out_edges_mask = by_face(faces_mask, vertices, edges, faces, include_partial)
+        out_faces_mask = faces_mask
+    else:
+        raise ValueError("Unknown mode: " + mode)
+
+    out['vertices_mask'] = out_verts_mask
+    out['edges_mask'] = out_edges_mask
+    out['faces_mask'] = out_faces_mask
+    return out
+
+
+def by_vertex(verts_mask, edges, faces, include_partial):
+    indicies = set(i for (i, m) in enumerate(verts_mask) if m)
+    if include_partial:
+        edges_mask = [any(v in indicies for v in edge) for edge in edges]
+        faces_mask = [any(v in indicies for v in face) for face in faces]
+    else:
+        edges_mask = [all(v in indicies for v in edge) for edge in edges]
+        faces_mask = [all(v in indicies for v in face) for face in faces]
+
+    return edges_mask, faces_mask
+
+
+def by_edge(edge_mask, verts, edges, faces, include_partial):
+    indicies = set()
+    for m, (u,v) in zip(edge_mask, edges):
+        if m:
+            indicies.add(u)
+            indicies.add(v)
+
+    verts_mask = [i in indicies for i in range(len(verts))]
+    if include_partial:
+        faces_mask = [any(v in indicies for v in face) for face in faces]
+    else:
+        faces_mask = [all(v in indicies for v in face) for face in faces]
+
+    return verts_mask, faces_mask
+
+
+def by_face(faces_mask, verts, edges, faces, include_partial):
+    indicies = set()
+    for m, face in zip(faces_mask, faces):
+        if m:
+            indicies.update(set(face))
+    verts_mask = [i in indicies for i in range(len(verts))]
+
+    if include_partial:
+        edges_mask = [any(v in indicies for v in edge) for edge in edges]
+    else:
+        selected_edges = set()
+        for is_selected_face, face in zip(faces_mask, faces):
+            if is_selected_face:
+                for face_edge in walk_face(face):
+                    selected_edges.add(face_edge)
+        edges_mask = [tuple(sorted(edge)) in selected_edges for edge in edges]
+
+    return verts_mask, edges_mask
 
 
 def walk_face(face, from_edge=None, return_sorted=True):
@@ -47,26 +135,25 @@ class SvMaskConvertNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_MASK_CONVERTER'
 
     modes = [
-            ('ByVertex', "Vertices", "Get edges and faces masks by vertex mask", 0),
-            ('ByEdge', "Edges", "Get vertex and faces masks by edges mask", 1),
-            ('ByFace', "Faces", "Get vertex and edge masks by faces mask", 2)
+            ('BY_VERTEX', "Vertices", "Get edges and faces masks by vertex mask", 0),
+            ('BY_EDGE', "Edges", "Get vertex and faces masks by edges mask", 1),
+            ('BY_FACE', "Faces", "Get vertex and edge masks by faces mask", 2)
         ]
 
     def update_mode(self, context):
-        self.inputs['Vertices'].hide_safe = (self.mode == 'ByVertex')
+        self.inputs['Vertices'].hide_safe = (self.mode == 'BY_VERTEX')
 
-        self.inputs['VerticesMask'].hide_safe = (self.mode != 'ByVertex')
-        self.inputs['EdgesMask'].hide_safe = (self.mode != 'ByEdge')
-        self.inputs['FacesMask'].hide_safe = (self.mode != 'ByFace')
+        self.inputs['VerticesMask'].hide_safe = (self.mode != 'BY_VERTEX')
+        self.inputs['EdgesMask'].hide_safe = (self.mode != 'BY_EDGE')
+        self.inputs['FacesMask'].hide_safe = (self.mode != 'BY_FACE')
 
-        self.outputs['VerticesMask'].hide_safe = (self.mode == 'ByVertex')
-        self.outputs['EdgesMask'].hide_safe = (self.mode == 'ByEdge')
-        self.outputs['FacesMask'].hide_safe = (self.mode == 'ByFace')
+        self.outputs['VerticesMask'].hide_safe = (self.mode == 'BY_VERTEX')
+        self.outputs['EdgesMask'].hide_safe = (self.mode == 'BY_EDGE')
+        self.outputs['FacesMask'].hide_safe = (self.mode == 'BY_FACE')
 
         updateNode(self, context)
 
-    mode: EnumProperty(
-            name="Mode", default='ByVertex', items=modes, update=update_mode)
+    mode: EnumProperty(name="Mode", items=modes, update=update_mode)
 
     include_partial: BoolProperty(name="Include partial selection",
             description="Include partially selected edges/faces",
@@ -94,94 +181,33 @@ class SvMaskConvertNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.update_mode(context)
 
-    def by_vertex(self, verts_mask, edges, faces):
-        indicies = set(i for (i, m) in enumerate(verts_mask) if m)
-        if self.include_partial:
-            edges_mask = [any(v in indicies for v in edge) for edge in edges]
-            faces_mask = [any(v in indicies for v in face) for face in faces]
-        else:
-            edges_mask = [all(v in indicies for v in edge) for edge in edges]
-            faces_mask = [all(v in indicies for v in face) for face in faces]
-
-        return edges_mask, faces_mask
-
-    def by_edge(self, edge_mask, verts, edges, faces):
-        indicies = set()
-        for m, (u,v) in zip(edge_mask, edges):
-            if m:
-                indicies.add(u)
-                indicies.add(v)
-
-        verts_mask = [i in indicies for i in range(len(verts))]
-        if self.include_partial:
-            faces_mask = [any(v in indicies for v in face) for face in faces]
-        else:
-            faces_mask = [all(v in indicies for v in face) for face in faces]
-
-        return verts_mask, faces_mask
-
-    def by_face(self, faces_mask, verts, edges, faces):
-        indicies = set()
-        for m, face in zip(faces_mask, faces):
-            if m:
-                indicies.update(set(face))
-        verts_mask = [i in indicies for i in range(len(verts))]
-
-        if self.include_partial:
-            edges_mask = [any(v in indicies for v in edge) for edge in edges]
-        else:
-            selected_edges = set()
-            for is_selected_face, face in zip(faces_mask, faces):
-                if is_selected_face:
-                    for face_edge in walk_face(face):
-                        selected_edges.add(face_edge)
-            edges_mask = [tuple(sorted(edge)) in selected_edges for edge in edges]
-
-        return verts_mask, edges_mask
-
     def process(self):
 
         if not any(output.is_linked for output in self.outputs):
             return
 
-        vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
-        edges_s = self.inputs['Edges'].sv_get(default=[[]])
-        faces_s = self.inputs['Faces'].sv_get(default=[[]])
+        vertices_s = self.inputs['Vertices'].sv_get(deepcopy=False, default=[[]])
+        edges_s = self.inputs['Edges'].sv_get(deepcopy=False, default=[[]])
+        faces_s = self.inputs['Faces'].sv_get(deepcopy=False, default=[[]])
 
-        verts_mask_s = self.inputs['VerticesMask'].sv_get(default=[[True]])
-        edge_mask_s = self.inputs['EdgesMask'].sv_get(default=[[True]])
-        face_mask_s = self.inputs['FacesMask'].sv_get(default=[[True]])
+        verts_mask_s = self.inputs['VerticesMask'].sv_get(deepcopy=False, default=[[True]])
+        edge_mask_s = self.inputs['EdgesMask'].sv_get(deepcopy=False, default=[[True]])
+        face_mask_s = self.inputs['FacesMask'].sv_get(deepcopy=False, default=[[True]])
 
-        out_verts_masks = []
-        out_edges_masks = []
-        out_faces_masks = []
+        result = vectorize(mask_converter_node)(
+            vertices=vertices_s,
+            edges=edges_s,
+            faces=faces_s,
+            vertices_mask=verts_mask_s,
+            edges_mask=edge_mask_s,
+            faces_mask=face_mask_s,
+            mode=[self.mode],
+            include_partial=[self.include_partial])
 
-        meshes = match_long_repeat([vertices_s, edges_s, faces_s, verts_mask_s, edge_mask_s, face_mask_s])
-        for vertices, edges, faces, verts_mask, edges_mask, faces_mask in zip(*meshes):
+        self.outputs['VerticesMask'].sv_set(result['vertices_mask'])
+        self.outputs['EdgesMask'].sv_set(result['edges_mask'])
+        self.outputs['FacesMask'].sv_set(result['faces_mask'])
 
-            fullList(verts_mask, len(vertices))
-            fullList(edges_mask, len(edges))
-            fullList(faces_mask, len(faces))
-
-            if self.mode == 'ByVertex':
-                out_edges_mask, out_faces_mask = self.by_vertex(verts_mask, edges, faces)
-                out_verts_mask = verts_mask
-            elif self.mode == 'ByEdge':
-                out_verts_mask, out_faces_mask = self.by_edge(edges_mask, vertices, edges, faces)
-                out_edges_mask = edges_mask
-            elif self.mode == 'ByFace':
-                out_verts_mask, out_edges_mask = self.by_face(faces_mask, vertices, edges, faces)
-                out_faces_mask = faces_mask
-            else:
-                raise ValueError("Unknown mode: " + self.mode)
-
-            out_verts_masks.append(out_verts_mask)
-            out_edges_masks.append(out_edges_mask)
-            out_faces_masks.append(out_faces_mask)
-
-        self.outputs['VerticesMask'].sv_set(out_verts_masks)
-        self.outputs['EdgesMask'].sv_set(out_edges_masks)
-        self.outputs['FacesMask'].sv_set(out_faces_masks)
 
 def register():
     bpy.utils.register_class(SvMaskConvertNode)
