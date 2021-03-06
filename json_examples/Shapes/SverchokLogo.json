@@ -27,7 +27,7 @@
     "Logic functions": "Frame.005",
     "Merge by Distance": "Frame.012",
     "Merge mesh 2D": "Frame.005",
-    "Mesh Join": "Frame.006",
+    "Mesh Join.001": "Frame.006",
     "Select mesh elements by location": "Frame.006",
     "Viewer Draw": "Frame.006",
     "Viewer Draw.001": "Frame.001",
@@ -198,7 +198,7 @@
       "label": "",
       "location": [
         2240.6177673339844,
-        -1158.0242309570312
+        -1158.0241088867188
       ],
       "params": {},
       "width": 140.0
@@ -264,7 +264,7 @@
     "Frame.001": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 374.647216796875,
+      "height": 314.647216796875,
       "hide": false,
       "label": "circle",
       "location": [
@@ -342,7 +342,7 @@
     "Frame.017": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 1294.5880126953125,
+      "height": 1234.5880126953125,
       "hide": false,
       "label": "inputs",
       "location": [
@@ -553,7 +553,7 @@
       "label": "",
       "location": [
         2063.6055603027344,
-        -1158.5354614257812
+        -1158.5353393554688
       ],
       "params": {
         "Level": 2
@@ -611,7 +611,19 @@
     },
     "Merge by Distance": {
       "bl_idname": "SvMergeByDistanceNode",
-      "custom_socket_props": {},
+      "custom_socket_props": {
+        "0": {
+          "default_mode": "NONE",
+          "is_mandatory": true
+        },
+        "1": {
+          "nesting_level": 3
+        },
+        "4": {
+          "nesting_level": 1,
+          "pre_processing": "ONE_ITEM"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -637,15 +649,26 @@
       "params": {},
       "width": 140.0
     },
-    "Mesh Join": {
-      "bl_idname": "SvMeshJoinNode",
-      "custom_socket_props": {},
+    "Mesh Join.001": {
+      "bl_idname": "SvMeshJoinNodeMk2",
+      "custom_socket_props": {
+        "0": {
+          "default_mode": "NONE",
+          "is_mandatory": true
+        },
+        "1": {
+          "nesting_level": 3
+        },
+        "2": {
+          "nesting_level": 3
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        1325.4621276855469,
-        -1158.0665893554688
+        1324.4762878417969,
+        -1195.3109741210938
       ],
       "params": {},
       "width": 140.0
@@ -710,7 +733,7 @@
       "label": "",
       "location": [
         2417.7124938964844,
-        -1156.5745239257812
+        -1156.5744018554688
       ],
       "params": {
         "activate": false,
@@ -870,177 +893,15 @@
   },
   "update_lists": [
     [
-      "Evaluate Curve.002",
+      "Edges to faces 2D.001",
       0,
-      "Viewer Draw.001",
+      "Area",
       0
     ],
     [
-      "Evaluate Curve.002",
+      "Edges to faces 2D.001",
       1,
-      "Viewer Draw.001",
-      1
-    ],
-    [
-      "Circle (Curve)",
-      0,
-      "Evaluate Curve.002",
-      0
-    ],
-    [
-      "Bezier Spline (Curve)",
-      0,
-      "Evaluate Curve",
-      0
-    ],
-    [
-      "Evaluate Curve",
-      0,
-      "Viewer Draw.003",
-      0
-    ],
-    [
-      "Evaluate Curve",
-      1,
-      "Viewer Draw.003",
-      1
-    ],
-    [
-      "Bezier Spline (Curve).001",
-      0,
-      "Evaluate Curve.001",
-      0
-    ],
-    [
-      "Evaluate Curve.001",
-      0,
-      "Viewer Draw.002",
-      0
-    ],
-    [
-      "Evaluate Curve.001",
-      1,
-      "Viewer Draw.002",
-      1
-    ],
-    [
-      "Contour 2D",
-      0,
-      "Edges to faces 2D",
-      0
-    ],
-    [
-      "List Mask (out)",
-      3,
-      "Edges to faces 2D",
-      1
-    ],
-    [
-      "Contour 2D",
-      1,
-      "List Mask (out)",
-      0
-    ],
-    [
-      "Select mesh elements by location",
-      1,
-      "List Mask (out)",
-      1
-    ],
-    [
-      "Contour 2D",
-      0,
-      "Select mesh elements by location",
-      0
-    ],
-    [
-      "Contour 2D",
-      1,
-      "Select mesh elements by location",
-      1
-    ],
-    [
-      "Intersect Edges",
-      0,
-      "Contour 2D",
-      2
-    ],
-    [
-      "Intersect Edges",
-      1,
-      "Contour 2D",
-      3
-    ],
-    [
-      "Mesh Join",
-      0,
-      "Intersect Edges",
-      0
-    ],
-    [
-      "Mesh Join",
-      1,
-      "Intersect Edges",
-      1
-    ],
-    [
-      "List Join",
-      0,
-      "Mesh Join",
-      0
-    ],
-    [
-      "List Join.001",
-      0,
-      "Mesh Join",
-      1
-    ],
-    [
-      "Evaluate Curve",
-      0,
-      "List Join",
-      0
-    ],
-    [
-      "Evaluate Curve.001",
-      0,
-      "List Join",
-      1
-    ],
-    [
-      "Evaluate Curve.002",
-      0,
-      "List Join",
-      2
-    ],
-    [
-      "Evaluate Curve",
-      1,
-      "List Join.001",
-      0
-    ],
-    [
-      "Evaluate Curve.001",
-      1,
-      "List Join.001",
-      1
-    ],
-    [
-      "Evaluate Curve.002",
-      1,
-      "List Join.001",
-      2
-    ],
-    [
-      "Edges to faces 2D",
-      0,
-      "Merge by Distance",
-      0
-    ],
-    [
-      "Edges to faces 2D",
-      1,
-      "Merge by Distance",
+      "Area",
       1
     ],
     [
@@ -1062,24 +923,6 @@
       2
     ],
     [
-      "Merge by Distance",
-      0,
-      "Viewer Draw.004",
-      0
-    ],
-    [
-      "Merge by Distance",
-      2,
-      "Viewer Draw.004",
-      2
-    ],
-    [
-      "Color in",
-      0,
-      "Viewer Draw.004",
-      6
-    ],
-    [
       "Contour 2D",
       0,
       "Edges to faces 2D.001",
@@ -1092,33 +935,63 @@
       1
     ],
     [
-      "Area",
+      "Bezier Spline (Curve)",
       0,
-      "Logic functions",
+      "Evaluate Curve",
       0
     ],
     [
-      "Edges to faces 2D.001",
+      "Bezier Spline (Curve).001",
       0,
-      "Area",
+      "Evaluate Curve.001",
+      0
+    ],
+    [
+      "Circle (Curve)",
+      0,
+      "Evaluate Curve.002",
       0
     ],
     [
       "Edges to faces 2D.001",
       1,
-      "Area",
+      "List Mask (out).001",
+      0
+    ],
+    [
+      "Logic functions",
+      0,
+      "List Mask (out).001",
       1
     ],
     [
-      "Edges to faces 2D.001",
+      "Merge mesh 2D",
       1,
-      "List Mask (out).001",
+      "List Mask (out).002",
       0
     ],
     [
-      "Logic functions",
+      "Merge mesh 2D",
+      3,
+      "List Mask (out).002",
+      1
+    ],
+    [
+      "Area",
       0,
-      "List Mask (out).001",
+      "Logic functions",
+      0
+    ],
+    [
+      "Edges to faces 2D",
+      0,
+      "Merge by Distance",
+      0
+    ],
+    [
+      "Edges to faces 2D",
+      1,
+      "Merge by Distance",
       1
     ],
     [
@@ -1146,16 +1019,58 @@
       3
     ],
     [
-      "Merge mesh 2D",
-      1,
-      "List Mask (out).002",
+      "Evaluate Curve.002",
+      0,
+      "Viewer Draw.001",
       0
     ],
     [
-      "Merge mesh 2D",
-      3,
-      "List Mask (out).002",
+      "Evaluate Curve.002",
+      1,
+      "Viewer Draw.001",
       1
+    ],
+    [
+      "Evaluate Curve.001",
+      0,
+      "Viewer Draw.002",
+      0
+    ],
+    [
+      "Evaluate Curve.001",
+      1,
+      "Viewer Draw.002",
+      1
+    ],
+    [
+      "Evaluate Curve",
+      0,
+      "Viewer Draw.003",
+      0
+    ],
+    [
+      "Evaluate Curve",
+      1,
+      "Viewer Draw.003",
+      1
+    ],
+    [
+      "Merge by Distance",
+      0,
+      "Viewer Draw.004",
+      0
+    ],
+    [
+      "Merge by Distance",
+      2,
+      "Viewer Draw.004",
+      2
+    ],
+    [
+      "Color in",
+      0,
+      "Viewer Draw.004",
+      6
     ],
     [
       "Merge mesh 2D",
@@ -1170,6 +1085,102 @@
       2
     ],
     [
+      "Intersect Edges",
+      0,
+      "Contour 2D",
+      2
+    ],
+    [
+      "Intersect Edges",
+      1,
+      "Contour 2D",
+      3
+    ],
+    [
+      "Contour 2D",
+      0,
+      "Edges to faces 2D",
+      0
+    ],
+    [
+      "List Mask (out)",
+      3,
+      "Edges to faces 2D",
+      1
+    ],
+    [
+      "Mesh Join.001",
+      0,
+      "Intersect Edges",
+      0
+    ],
+    [
+      "Mesh Join.001",
+      1,
+      "Intersect Edges",
+      1
+    ],
+    [
+      "Evaluate Curve",
+      0,
+      "List Join",
+      0
+    ],
+    [
+      "Evaluate Curve.001",
+      0,
+      "List Join",
+      1
+    ],
+    [
+      "Evaluate Curve.002",
+      0,
+      "List Join",
+      2
+    ],
+    [
+      "Evaluate Curve",
+      1,
+      "List Join.001",
+      0
+    ],
+    [
+      "Evaluate Curve.001",
+      1,
+      "List Join.001",
+      1
+    ],
+    [
+      "Evaluate Curve.002",
+      1,
+      "List Join.001",
+      2
+    ],
+    [
+      "Contour 2D",
+      1,
+      "List Mask (out)",
+      0
+    ],
+    [
+      "Select mesh elements by location",
+      1,
+      "List Mask (out)",
+      1
+    ],
+    [
+      "Contour 2D",
+      0,
+      "Select mesh elements by location",
+      0
+    ],
+    [
+      "Contour 2D",
+      1,
+      "Select mesh elements by location",
+      1
+    ],
+    [
       "Edges to faces 2D",
       0,
       "Viewer Draw",
@@ -1180,6 +1191,18 @@
       1,
       "Viewer Draw",
       2
+    ],
+    [
+      "List Join",
+      0,
+      "Mesh Join.001",
+      0
+    ],
+    [
+      "List Join.001",
+      0,
+      "Mesh Join.001",
+      1
     ]
   ]
 }

@@ -372,7 +372,6 @@
     SvEdgeBoomNode
     SvDissolveMeshElements
     SvPols2EdgsNodeMk2
-    SvMeshJoinNode
     SvMeshJoinNodeMk2
     ---
     SvFillsHoleNode

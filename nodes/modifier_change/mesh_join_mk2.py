@@ -25,9 +25,13 @@ from sverchok.utils.mesh_functions import meshes_py, join_meshes, meshes_np, to_
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 
 class SvMeshJoinNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
-    '''MeshJoin, join many mesh into on mesh object'''
+    '''
+    Triggers: Join Meshes
+    Tooltip: Join many mesh into on mesh object
+    '''
+    
     bl_idname = 'SvMeshJoinNodeMk2'
-    bl_label = 'Mesh Join2'
+    bl_label = 'Mesh Join'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MESH_JOIN'
 
@@ -48,6 +52,19 @@ class SvMeshJoinNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Edges')
         self.outputs.new('SvStringsSocket', 'Polygons')
+
+    def migrate_from(self, old_node):
+        verts = self.inputs['Vertices']
+        verts.is_mandatory = True
+        verts.default_mode = 'NONE'
+
+        edges = self.inputs['Edges']
+        edges.nesting_level = 3
+        edges.default_mode = 'EMPTY_LIST'
+
+        pols = self.inputs['Polygons']
+        pols.nesting_level = 3
+        pols.default_mode = 'EMPTY_LIST'
 
     def process_data(self, params):
         vertices, edges, polygons = params
