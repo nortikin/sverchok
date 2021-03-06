@@ -34,7 +34,7 @@ def split_mesh_elements_node(*,
 
     edges = edges or []
     faces = faces or []
-    face_data = face_data or []
+    face_data = list(fixed_iter(face_data, len(faces))) if face_data else None
     mask = mask or []
 
     if split_type == 'VERTS':
@@ -85,7 +85,7 @@ def split_by_edges(verts, edges=None, faces=None, face_data=None, selected_edges
     with empty_bmesh() as bm:
         add_mesh_to_bmesh(bm, verts, edges, faces, 'initial_index')
         split_edges(bm, edges=[e for e, b in zip(bm.edges, selected_edges) if b])
-        v, e, f, fd = pydata_from_bmesh(bm, face_data=face_data)
+        v, e, f, *fd = pydata_from_bmesh(bm, face_data=face_data)
         return v, e, f, fd
 
 
