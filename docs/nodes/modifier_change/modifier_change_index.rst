@@ -21,7 +21,7 @@ Modifier Change
    holes_fill
    flip_normals
    merge_by_distance
-   mesh_join
+   mesh_join_mk2
    mesh_separate
    objects_along_edge
    offset

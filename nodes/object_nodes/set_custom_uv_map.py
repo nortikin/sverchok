@@ -28,6 +28,9 @@ def set_custom_map(obj, verts=None, faces=None, uv_name='SVMap', matrix=None):
     :param matrix: mathutils Matrix if deformation is needed
     :return: None
     """
+    verts = [] if verts is None else verts
+    faces = [] if faces is None else faces
+
     if uv_name not in obj.data.uv_layers:
         obj.data.uv_layers.new(name=uv_name)
     if obj.mode == 'EDIT':
@@ -55,10 +58,10 @@ def set_uv(verts, faces, obj, uv_name, matrix=None):
     obj.data.uv_layers[uv_name].data.foreach_set("uv", unpack_uv)
 
 
-def set_uv_edit_mode(verts, faces, mesh, uv_name, matrix=None):
+def set_uv_edit_mode(verts: list, faces: list, mesh: bpy.types.Mesh, uv_name: str, matrix=None):
     with bmesh_from_edit_mesh(mesh) as bm:
         uv_layer = bm.loops.layers.uv.get(uv_name)
-        for f, bmf in zip(faces, bm.faces):
+        for f, bmf in zip(repeat_last(faces), bm.faces):
             for i, bml in zip(repeat_last(f), bmf.loops):
                 co = verts[i]
                 uv = Vector(co[:2]) if matrix is None else (matrix @ Vector(co))[:2]

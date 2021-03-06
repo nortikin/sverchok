@@ -486,15 +486,6 @@ def levels_of_list_or_np(lst):
 
 SIMPLE_DATA_TYPES = (float, int, float64, int32, int64, str)
 
-def ensure_list(lst):
-    if isinstance(lst, list):
-        return lst
-    if isinstance(lst, ndarray):
-        return lst.tolist()
-    if isinstance(lst, SIMPLE_DATA_TYPES):
-        return [lst]
-
-    return list(lst)
 
 def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
     """
@@ -528,7 +519,8 @@ def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
         elif data is None:
             raise TypeError("get_data_nesting_level: encountered None at nesting level {}".format(recursion_depth))
         else:
-            raise TypeError("get_data_nesting_level: unexpected type `{}' of element `{}' at nesting level {}".format(type(data), data, recursion_depth))
+            #unknown class. Return 0 level
+            return 0
 
     return helper(data, 0)
 
@@ -557,6 +549,33 @@ def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES, input
             raise TypeError("ensure_nesting_level: input data already has nesting level of {}. Required level was {}.".format(current_level, target_level))
         else:
             raise TypeError("Input data in socket {} already has nesting level of {}. Required level was {}.".format(input_name, current_level, target_level))
+    result = data
+    for i in range(target_level - current_level):
+        result = [result]
+    return result
+
+def ensure_min_nesting(data, target_level, data_types=SIMPLE_DATA_TYPES, input_name=None):
+    """
+    data: number, or list of numbers, or list of lists, etc.
+    target_level: minimum data nesting level required for further processing.
+    data_types: list or tuple of types.
+    input_name: name of input socket data was taken from. Optional. If specified,
+        used for error reporting.
+
+    Wraps data in so many [] as required to achieve target nesting level.
+    If data already has too high nesting level the same data will be returned
+
+    ensure_min_nesting(17, 0) == 17
+    ensure_min_nesting(17, 1) == [17]
+    ensure_min_nesting([17], 1) == [17]
+    ensure_min_nesting([17], 2) == [[17]]
+    ensure_min_nesting([(1,2,3)], 3) == [[(1,2,3)]]
+    ensure_min_nesting([[[17]]], 1) => [[[17]]]
+    """
+
+    current_level = get_data_nesting_level(data, data_types)
+    if current_level >= target_level:
+        return data
     result = data
     for i in range(target_level - current_level):
         result = [result]

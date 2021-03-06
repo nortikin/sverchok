@@ -92,7 +92,7 @@ def register():
         if reload_event:
             data_structure.RELOAD_EVENT = True
             menu.reload_menu()
-        perform_menu_monkey_patch()
+        # perform_menu_monkey_patch()  <-- this hijacks other custom node trees
 
 def unregister():
     sverchok.utils.clear_node_classes()

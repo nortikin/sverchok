@@ -113,6 +113,7 @@ class SvSocketProcessing():
     # for input sockets, if the node knows it can handle simplified data.
     # For outputs, these properties are not used.
     allow_flatten : BoolProperty(default = False)
+    allow_flatten_topology : BoolProperty(default = False)
     allow_simplify : BoolProperty(default = False)
     allow_graft : BoolProperty(default = False)
     allow_unwrap : BoolProperty(default = False)
@@ -193,6 +194,10 @@ class SvSocketProcessing():
 
         process_from_socket(self, context)
 
+    use_flatten_topology : BoolProperty(
+        name = "Flatten Topology",
+        default = False,
+        update = process_from_socket)
     # Only one of properties can be set to true: use_flatten or use_simplfy
     use_flatten : BoolProperty(
             name = "Flatten",
@@ -208,6 +213,8 @@ class SvSocketProcessing():
         flags = []
         if self.use_flatten:
             flags.append('F')
+        if self.use_flatten_topology:
+            flags.append('FT')
         if self.use_simplify:
             flags.append('S')
         if self.use_graft:
@@ -220,6 +227,9 @@ class SvSocketProcessing():
 
     def can_flatten(self):
         return hasattr(self, 'do_flatten') and (self.allow_flatten or self.is_output)
+
+    def can_flatten_topology(self):
+        return hasattr(self, 'do_flat_topology') and (self.allow_flatten_topology or self.is_output)
 
     def can_simplify(self):
         return hasattr(self, 'do_simplify') and (self.allow_simplify or self.is_output)
@@ -255,6 +265,8 @@ class SvSocketProcessing():
 
     def postprocess_output(self, data):
         result = data
+        if self.use_flatten_topology:
+            result = self.do_flat_topology(data)
         if self.use_flatten:
             result = self.do_flatten(data)
         elif self.use_simplify:
@@ -279,6 +291,8 @@ class SvSocketProcessing():
                 layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
 
     def draw_menu_items(self, context, layout):
+        if self.can_flatten_topology():
+            layout.prop(self, 'use_flatten_topology')
         self.draw_simplify_modes(layout)
         if self.can_graft():
             layout.prop(self, 'use_graft')
@@ -313,6 +327,10 @@ class SvSocketCommon(SvSocketProcessing):
     objects_number: IntProperty(min=0, options={'SKIP_SAVE'})
 
     description : StringProperty()
+    is_mandatory: BoolProperty(default=False)
+    nesting_level: IntProperty(default=2)
+    default_mode: EnumProperty(items=enum_item_4(['NONE', 'EMPTY_LIST', 'MATRIX', 'MASK']), default='EMPTY_LIST')
+    pre_processing: EnumProperty(items=enum_item_4(['NONE', 'ONE_ITEM']), default='NONE')
 
     def get_link_parameter_node(self):
         return self.quick_link_to_node
@@ -662,7 +680,7 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
 
     color = (0.9, 0.6, 0.2, 1.0)
     quick_link_to_node = 'GenVectorsNode'
-
+    nesting_level: IntProperty(default=3)
     def setup_parameter_node(self, param_node):
         if self.use_prop or self.get_prop_name():
             value = self.sv_get()[0][0]
@@ -680,6 +698,9 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
 
     def do_simplify(self, data):
         return flatten_data(data, 2)
+
+    def do_flat_topology(self, data):
+        return flatten_data(data, 3)
 
     @property
     def default_property(self):
@@ -927,6 +948,8 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
 
     def draw_menu_items(self, context, layout):
         self.draw_simplify_modes(layout)
+        if self.can_flatten_topology():
+            layout.prop(self, 'use_flatten_topology')
         if self.can_graft():
             layout.prop(self, 'use_graft')
             if not self.use_flatten:
@@ -935,6 +958,9 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
             layout.prop(self, 'use_unwrap')
         if self.can_wrap():
             layout.prop(self, 'use_wrap')
+
+    def do_flat_topology(self, data):
+        return flatten_data(data, 3)
 
     def do_flatten(self, data):
         return flatten_data(data, 1)
@@ -972,6 +998,9 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
 
     def postprocess_output(self, data):
         result = data
+
+        if self.use_flatten_topology:
+            result = self.do_flat_topology(data)
         if self.use_flatten:
             result = self.do_flatten(data)
         elif self.use_simplify:

@@ -42,10 +42,10 @@ The inner workings go something like::
     print(mesh_join(verts_nested, keys_nested))
 
     # result
-    [(0.2, 1.5, 0.1), (1.2, 0.5, 0.1), (1.2, 1.5, 0.1), 
-    (0.2, 2.5, 5.1), (0.2, 0.5, 2.1), (0.2, 2.5, 0.1), 
-    (0.2, 1.4, 0.1), (1.2, 0.2, 0.3), (1.2, 4.5, 4.1), 
-    (0.2, 1.5, 3.4), (5.2, 6.5, 2.1), (0.2, 5.5, 2.1)] 
+    [(0.2, 1.5, 0.1), (1.2, 0.5, 0.1), (1.2, 1.5, 0.1),
+    (0.2, 2.5, 5.1), (0.2, 0.5, 2.1), (0.2, 2.5, 0.1),
+    (0.2, 1.4, 0.1), (1.2, 0.2, 0.3), (1.2, 4.5, 4.1),
+    (0.2, 1.5, 3.4), (5.2, 6.5, 2.1), (0.2, 5.5, 2.1)]
 
     [[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]
 
@@ -55,7 +55,7 @@ The inner workings go something like::
 Inputs & Outputs
 ----------------
 
-The inputs and outputs are *vertices* and *polygons / edges*.
+The inputs and outputs are *vertices*, edges and *polygons*.
 
 Expects a nested collection of vertex lists. Each nested list represents an object which can itself have many vertices and key lists.
 

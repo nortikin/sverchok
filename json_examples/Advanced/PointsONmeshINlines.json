@@ -1,5 +1,5 @@
 {
-  "export_version": "0.079",
+  "export_version": "0.10",
   "framed_nodes": {
     "A Number": "Frame.001",
     "A Number.001": "Frame.001",
@@ -20,7 +20,7 @@
     "Matrix Math.001": "Frame.007",
     "Matrix normal": "Frame.006",
     "Merge by Distance": "Frame.005",
-    "Mesh Join": "Frame.005",
+    "Mesh Join.001": "Frame.005",
     "Note": "Frame",
     "Random points on mesh": "Frame.002",
     "Reroute.001": "Frame",
@@ -39,6 +39,7 @@
   "nodes": {
     "A Number": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "\u0422\u041e\u0427\u041d\u041e\u0421\u0422\u042c",
@@ -47,18 +48,14 @@
         -32.343231201171875
       ],
       "params": {
-        "float_": 0.0,
-        "float_draft_": 0.0,
         "int_": 5,
-        "int_draft_": 0,
-        "selected_mode": "int",
-        "show_limits": 0,
-        "to3d": 1
+        "selected_mode": "int"
       },
       "width": 214.7891845703125
     },
     "A Number.001": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "\u0427\u0418\u0421\u041b\u041e \u0422\u041e\u0427\u0415\u041a",
@@ -67,20 +64,16 @@
         -109.59457397460938
       ],
       "params": {
-        "float_": 0.0,
-        "float_draft_": 0.0,
-        "int_": 5000,
-        "int_draft_": 0,
+        "int_": 1024,
         "int_max": 5000,
         "int_min": 1,
-        "selected_mode": "int",
-        "show_limits": 0,
-        "to3d": 1
+        "selected_mode": "int"
       },
       "width": 214.7891845703125
     },
     "Delete Loose": {
       "bl_idname": "SvDeleteLooseNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -93,6 +86,7 @@
     },
     "Exec Node Mod": {
       "bl_idname": "SvExecNodeMod",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -100,12 +94,42 @@
         637.322021484375,
         275.2369689941406
       ],
-      "params": {},
-      "string_storage": "{\"lines\": [\"k={}\", \"for i1, i2 in zip(V1[0], V2[0]):\", \"    if not round(i2*V3[0][0]) in k:\", \"        k[round(i2*V3[0][0])] = []\", \"    k[round(i2*V3[0][0])].append(i1)\", \"# print(k)\", \"for j in k.values():\", \"    j.sort(key=lambda x:x[2])\", \"    out.append(j)\"]}",
+      "params": {
+        "dynamic_strings": [
+          {
+            "line": "k={}"
+          },
+          {
+            "line": "for i1, i2 in zip(V1[0], V2[0]):"
+          },
+          {
+            "line": "    if not round(i2*V3[0][0]) in k:"
+          },
+          {
+            "line": "        k[round(i2*V3[0][0])] = []"
+          },
+          {
+            "line": "    k[round(i2*V3[0][0])].append(i1)"
+          },
+          {
+            "line": "# print(k)"
+          },
+          {
+            "line": "for j in k.values():"
+          },
+          {
+            "line": "    j.sort(key=lambda x:x[2])"
+          },
+          {
+            "line": "    out.append(j)"
+          }
+        ]
+      },
       "width": 289.0
     },
     "Exec Node Mod.001": {
       "bl_idname": "SvExecNodeMod",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -113,8 +137,22 @@
         1112.902099609375,
         77.5428466796875
       ],
-      "params": {},
-      "string_storage": "{\"lines\": [\"from sverchok.data_structure import match_long_repeat as mlr\", \"out_ = mlr(V1)\", \"extend(out_)\", \"\", \"\", \"\"]}",
+      "params": {
+        "dynamic_strings": [
+          {
+            "line": "from sverchok.data_structure import match_long_repeat as mlr"
+          },
+          {
+            "line": "out_ = mlr(V1)"
+          },
+          {
+            "line": "extend(out_)"
+          },
+          {},
+          {},
+          {}
+        ]
+      },
       "width": 516.3656005859375
     },
     "Frame": {
@@ -124,6 +162,7 @@
         0.3135945796966553,
         0.4822174906730652
       ],
+      "custom_socket_props": {},
       "height": 716.8154296875,
       "hide": false,
       "label": "Sverchok_viewer",
@@ -142,6 +181,7 @@
         0.6080000996589661,
         0.37504634261131287
       ],
+      "custom_socket_props": {},
       "height": 476.3712158203125,
       "hide": false,
       "label": "\u0432\u0432\u043e\u0434",
@@ -160,6 +200,7 @@
         0.5022671818733215,
         0.28525370359420776
       ],
+      "custom_socket_props": {},
       "height": 444.4069519042969,
       "hide": false,
       "label": "\u0441\u043e\u0437\u0434\u0430\u043d\u0438\u0435 \u0441\u043b\u0443\u0447\u0430\u0439\u043d\u044b\u0445 \u0442\u043e\u0447\u0435\u043a \u043d\u0430 \u043f\u043e\u043b\u0438\u0433",
@@ -178,6 +219,7 @@
         0.4377041757106781,
         0.2951887249946594
       ],
+      "custom_socket_props": {},
       "height": 427.2369689941406,
       "hide": false,
       "label": "\u0441\u043e\u0440\u0442\u0438\u0440\u043e\u0432\u043a\u0430 \u043f\u043e \u0433\u0440\u0430\u0434\u0443\u0441\u0443 \u0438 \u0432\u044b\u0441\u043e\u0442\u0435",
@@ -196,7 +238,8 @@
         0.49698448181152344,
         0.48075783252716064
       ],
-      "height": 604.9473876953125,
+      "custom_socket_props": {},
+      "height": 654.0831298828125,
       "hide": false,
       "label": "\u0432\u044b\u0440\u0430\u0432\u043d\u044f\u0442\u044c \u0441\u043f\u0438\u0441\u043a\u0438 \u043f\u043e \u043d\u0430\u0438\u0431\u043e\u043b\u044c\u0448\u0435\u043c\u0443",
       "location": [
@@ -205,7 +248,7 @@
       ],
       "params": {},
       "use_custom_color": true,
-      "width": 582.6617431640625
+      "width": 589.2779541015625
     },
     "Frame.005": {
       "bl_idname": "NodeFrame",
@@ -214,7 +257,8 @@
         0.3966374695301056,
         0.4414104223251343
       ],
-      "height": 343.6339416503906,
+      "custom_socket_props": {},
+      "height": 357.23394775390625,
       "hide": false,
       "label": "\u0412\u042b\u0412\u041e\u0414",
       "location": [
@@ -232,7 +276,8 @@
         0.6080000996589661,
         0.4174765944480896
       ],
-      "height": 292.843017578125,
+      "custom_socket_props": {},
+      "height": 315.4429931640625,
       "hide": false,
       "label": "\u0432\u0440\u0430\u0449\u044f\u0435\u043c \u0434\u043b\u044f \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0435\u043d\u0438\u044f \u043d\u0430\u043f\u0440\u0430\u0432\u043b\u0435\u043d",
       "location": [
@@ -250,6 +295,7 @@
         0.4784124195575714,
         0.5489460229873657
       ],
+      "custom_socket_props": {},
       "height": 164.3023681640625,
       "hide": false,
       "label": "\u0432\u0440\u0430\u0449\u0430\u0435\u043c \u043e\u0431\u0440\u0430\u0442\u043d\u043e",
@@ -263,6 +309,7 @@
     },
     "Frame.009": {
       "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
       "height": 234.91159057617188,
       "hide": false,
       "label": "\u0438\u0437\u0432\u043b\u0435\u0447\u0435\u043d\u0438\u0435 \u0433\u0440\u0430\u0434\u0443\u0441\u0430 \u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u044f",
@@ -275,6 +322,7 @@
     },
     "Frame.010": {
       "bl_idname": "NodeFrame",
+      "custom_socket_props": {},
       "height": 384.4069519042969,
       "hide": false,
       "label": "\u041f\u041e\u041d\u0418\u041c\u0410\u0415\u0422 \u0422\u0420\u0415\u0423\u0413\u041e\u041b\u042c\u041d\u0418\u041a\u0418",
@@ -287,6 +335,7 @@
     },
     "List Match": {
       "bl_idname": "ListMatchNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -301,6 +350,7 @@
     },
     "Matrix Apply (verts)": {
       "bl_idname": "MatrixApplyNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -308,13 +358,12 @@
         -537.9342041015625,
         146.843017578125
       ],
-      "params": {
-        "output_numpy": 0
-      },
+      "params": {},
       "width": 125.66911315917969
     },
     "Matrix Math.001": {
       "bl_idname": "SvMatrixMathNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "Matrix Invert",
@@ -329,24 +378,7 @@
     },
     "Matrix normal": {
       "bl_idname": "SvMatrixNormalNode",
-      "custom_socket_props": {
-        "0": {
-          "prop": [
-            0.0,
-            0.0,
-            0.0
-          ],
-          "use_prop": true
-        },
-        "1": {
-          "prop": [
-            0.0,
-            0.0,
-            0.0
-          ],
-          "use_prop": true
-        }
-      },
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -362,6 +394,19 @@
     },
     "Merge by Distance": {
       "bl_idname": "SvMergeByDistanceNode",
+      "custom_socket_props": {
+        "0": {
+          "default_mode": "NONE",
+          "is_mandatory": true
+        },
+        "1": {
+          "nesting_level": 3
+        },
+        "4": {
+          "nesting_level": 1,
+          "pre_processing": "ONE_ITEM"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -372,14 +417,26 @@
       "params": {},
       "width": 140.0
     },
-    "Mesh Join": {
-      "bl_idname": "SvMeshJoinNode",
+    "Mesh Join.001": {
+      "bl_idname": "SvMeshJoinNodeMk2",
+      "custom_socket_props": {
+        "0": {
+          "default_mode": "NONE",
+          "is_mandatory": true
+        },
+        "1": {
+          "nesting_level": 3
+        },
+        "2": {
+          "nesting_level": 3
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        2322.828857421875,
-        304.6231994628906
+        2332.531982421875,
+        327.8066101074219
       ],
       "params": {},
       "width": 140.0
@@ -391,6 +448,7 @@
         0.8993440270423889,
         0.9742509722709656
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -399,7 +457,8 @@
         396.8154296875
       ],
       "params": {
-        "show_text": 0,
+        "n_id": "-6954422562052253765",
+        "show_text": false,
         "text": "\u041d\u0418\u041a\u0418\u0422\u0420\u041e\u041d 2018 - \u0421\u041e\u0417\u0414\u0410\u041d\u0418\u0415 \u0418 \u0421\u041e\u0415\u0414\u0418\u041d\u0415\u041d\u0418\u0415 \u0422\u041e\u0427\u0415\u041a \u041d\u0410 \u041f\u041e\u0412\u0415\u0420\u0425\u041d\u041e\u0421\u0422\u0418, \u041e\u0411\u041d\u041e\u0412\u041b\u0415\u041d\u0418\u0415 2020 "
       },
       "use_custom_color": true,
@@ -407,6 +466,7 @@
     },
     "Random points on mesh": {
       "bl_idname": "SvRandomPointsOnMesh",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -415,13 +475,13 @@
         90.1514892578125
       ],
       "params": {
-        "points_number": 20,
-        "proportional": 1
+        "points_number": 20
       },
       "width": 140.0
     },
     "Reroute.001": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "\u0422\u041e\u0427\u041d\u041e\u0421\u0422\u042c",
@@ -434,6 +494,7 @@
     },
     "Reroute.002": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "\u041f\u041e\u041b\u0418\u0413\u041e\u041d\u042b",
@@ -446,6 +507,7 @@
     },
     "Reroute.003": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "\u0422\u041e\u0427\u041a\u0418 \u0425\u0410\u041e\u0421",
@@ -463,12 +525,13 @@
         0.6740000247955322,
         0.5642769932746887
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        1477.625244140625,
-        241.49856567382812
+        1495.884033203125,
+        364.0831298828125
       ],
       "params": {},
       "use_custom_color": true,
@@ -481,6 +544,7 @@
         0.9200000166893005,
         0.9200000166893005
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -494,6 +558,7 @@
     },
     "Triangulate mesh": {
       "bl_idname": "SvTriangulateNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -506,6 +571,7 @@
     },
     "UV Connection": {
       "bl_idname": "LineConnectNodeMK2",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -514,14 +580,14 @@
         279.4111328125
       ],
       "params": {
-        "dir_check": "U_dir",
         "polygons": "Edges",
-        "slice_check": 0
+        "slice_check": false
       },
       "width": 140.0
     },
     "Vector in": {
       "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -537,6 +603,12 @@
     },
     "Vector polar output": {
       "bl_idname": "VectorPolarOutNode",
+      "custom_socket_props": {
+        "0": {
+          "default_mode": "NONE",
+          "is_mandatory": true
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -554,6 +626,7 @@
         0.931007981300354,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -562,7 +635,7 @@
         146.84304809570312
       ],
       "params": {
-        "activate": 0
+        "activate": false
       },
       "use_custom_color": true,
       "width": 140.0
@@ -574,6 +647,7 @@
         0.931007981300354,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -582,7 +656,7 @@
         304.6231994628906
       ],
       "params": {
-        "display_verts": 0
+        "display_verts": false
       },
       "use_custom_color": true,
       "width": 140.0
@@ -590,94 +664,16 @@
   },
   "update_lists": [
     [
-      "Vector in",
+      "Merge by Distance",
       0,
-      "Matrix normal",
+      "Delete Loose",
+      0
+    ],
+    [
+      "Merge by Distance",
+      1,
+      "Delete Loose",
       1
-    ],
-    [
-      "Suzanne",
-      0,
-      "Matrix Apply (verts)",
-      0
-    ],
-    [
-      "Matrix normal",
-      0,
-      "Matrix Apply (verts)",
-      1
-    ],
-    [
-      "Suzanne",
-      "Faces",
-      "Reroute.002",
-      "Input"
-    ],
-    [
-      "Matrix Apply (verts)",
-      0,
-      "Viewer Draw Mk3",
-      0
-    ],
-    [
-      "Reroute.002",
-      "Output",
-      "Viewer Draw Mk3",
-      "Polygons"
-    ],
-    [
-      "Matrix normal",
-      0,
-      "Matrix Math.001",
-      0
-    ],
-    [
-      "A Number",
-      "Int",
-      "Reroute.001",
-      "Input"
-    ],
-    [
-      "Matrix Apply (verts)",
-      0,
-      "Triangulate mesh",
-      0
-    ],
-    [
-      "Reroute.002",
-      "Output",
-      "Triangulate mesh",
-      "Polygons"
-    ],
-    [
-      "Triangulate mesh",
-      0,
-      "Random points on mesh",
-      0
-    ],
-    [
-      "Triangulate mesh",
-      2,
-      "Random points on mesh",
-      1
-    ],
-    [
-      "A Number.001",
-      0,
-      "Random points on mesh",
-      3
-    ],
-    [
-      "Random points on mesh",
-      "Verts",
-      "Reroute.003",
-      "Input"
-    ],
-    [
-      "Reroute.003",
-      "Output",
-      "Vector polar output",
-      "Vectors"
     ],
     [
       "Reroute.003",
@@ -704,61 +700,121 @@
       0
     ],
     [
-      "Exec Node Mod.001",
+      "Suzanne",
       0,
+      "Matrix Apply (verts)",
+      0
+    ],
+    [
+      "Matrix normal",
+      0,
+      "Matrix Apply (verts)",
+      1
+    ],
+    [
+      "Matrix normal",
+      0,
+      "Matrix Math.001",
+      0
+    ],
+    [
+      "Vector in",
+      0,
+      "Matrix normal",
+      1
+    ],
+    [
+      "UV Connection",
+      0,
+      "Merge by Distance",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "Merge by Distance",
+      1
+    ],
+    [
+      "Triangulate mesh",
+      0,
+      "Random points on mesh",
+      0
+    ],
+    [
+      "Triangulate mesh",
+      2,
+      "Random points on mesh",
+      1
+    ],
+    [
+      "A Number.001",
+      0,
+      "Random points on mesh",
+      3
+    ],
+    [
+      "A Number",
+      "Int",
+      "Reroute.001",
+      "Input"
+    ],
+    [
+      "Suzanne",
+      "Faces",
+      "Reroute.002",
+      "Input"
+    ],
+    [
+      "Random points on mesh",
+      "Verts",
+      "Reroute.003",
+      "Input"
+    ],
+    [
+      "Matrix Apply (verts)",
+      0,
+      "Triangulate mesh",
+      0
+    ],
+    [
+      "Reroute.002",
+      "Output",
+      "Triangulate mesh",
+      "Polygons"
+    ],
+    [
       "Socket Converter",
-      0
-    ],
-    [
-      "Socket Converter",
       0,
       "UV Connection",
       0
     ],
     [
-      "UV Connection",
+      "Reroute.003",
+      "Output",
+      "Vector polar output",
+      "Vectors"
+    ],
+    [
+      "Matrix Apply (verts)",
       0,
-      "Merge by Distance",
+      "Viewer Draw Mk3",
       0
     ],
     [
-      "UV Connection",
-      1,
-      "Merge by Distance",
-      1
+      "Reroute.002",
+      "Output",
+      "Viewer Draw Mk3",
+      "Polygons"
     ],
     [
-      "Merge by Distance",
-      0,
-      "Delete Loose",
-      0
-    ],
-    [
-      "Merge by Distance",
-      1,
-      "Delete Loose",
-      1
-    ],
-    [
-      "Delete Loose",
-      0,
-      "Mesh Join",
-      0
-    ],
-    [
-      "Delete Loose",
-      1,
-      "Mesh Join",
-      1
-    ],
-    [
-      "Mesh Join",
+      "Mesh Join.001",
       0,
       "Viewer Draw Mk3.001",
       0
     ],
     [
-      "Mesh Join",
+      "Mesh Join.001",
       1,
       "Viewer Draw Mk3.001",
       1
@@ -768,6 +824,24 @@
       0,
       "Viewer Draw Mk3.001",
       3
+    ],
+    [
+      "Delete Loose",
+      0,
+      "Mesh Join.001",
+      0
+    ],
+    [
+      "Delete Loose",
+      1,
+      "Mesh Join.001",
+      1
+    ],
+    [
+      "Exec Node Mod.001",
+      0,
+      "Socket Converter",
+      0
     ]
   ]
 }
