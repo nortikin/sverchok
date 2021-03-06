@@ -24,12 +24,20 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.mesh_functions import meshes_py, join_meshes, meshes_np, to_elements
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 
+def mesh_join(vertices, edges, polygons):
+    is_py_input = isinstance(vertices[0], (list, tuple))
+    meshes = (meshes_py if is_py_input else meshes_np)(vertices, edges, polygons)
+    meshes = join_meshes(meshes)
+    out_vertices, out_edges, out_polygons = to_elements(meshes)
+
+    return out_vertices, out_edges, out_polygons
+
 class SvMeshJoinNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     '''
     Triggers: Join Meshes
     Tooltip: Join many mesh into on mesh object
     '''
-    
+
     bl_idname = 'SvMeshJoinNodeMk2'
     bl_label = 'Mesh Join'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -67,13 +75,7 @@ class SvMeshJoinNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
         pols.default_mode = 'EMPTY_LIST'
 
     def process_data(self, params):
-        vertices, edges, polygons = params
-        is_py_input = isinstance(vertices[0], (list, tuple))
-        meshes = (meshes_py if is_py_input else meshes_np)(vertices, edges, polygons)
-        meshes = join_meshes(meshes)
-        out_vertices, out_edges, out_polygons = to_elements(meshes)
-        print('len(out_vertices)', len(out_vertices))
-        return out_vertices, out_edges, out_polygons
+        return mesh_join(*params)
 
 
 def register():
