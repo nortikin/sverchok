@@ -628,6 +628,20 @@ def get_all_categories(std_categories):
         return all_categories
     return generate
 
+def sv_draw_menu(self, context):
+    from sverchok.ui.nodeview_space_menu import NODEVIEW_MT_Dynamic_Menu, sv_tree_types
+
+    tree_type = context.space_data.tree_type
+    if not tree_type in sv_tree_types:
+        return
+    layout = self.layout
+    layout.operator_context = "INVOKE_DEFAULT"
+
+
+    layout.operator("node.sv_extra_search", text="Search", icon='OUTLINER_DATA_FONT')
+    NODEVIEW_MT_Dynamic_Menu.draw(self, context)
+
+
 def register():
     global logger
     logger = getLogger("menu")
@@ -635,8 +649,8 @@ def register():
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         unregister_node_panels()
         nodeitems_utils.unregister_node_categories("SVERCHOK")
-    nodeitems_utils.register_node_categories("SVERCHOK", menu)
-
+    # nodeitems_utils.register_node_categories("SVERCHOK", menu)
+    bpy.types.NODE_MT_add.append(sv_draw_menu)
     categories = [(category.identifier, category.name, category.name, i) for i, category in enumerate(menu)]
     bpy.types.Scene.sv_selected_category = bpy.props.EnumProperty(
                         name = "Category",
