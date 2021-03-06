@@ -519,7 +519,8 @@ def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
         elif data is None:
             raise TypeError("get_data_nesting_level: encountered None at nesting level {}".format(recursion_depth))
         else:
-            raise TypeError("get_data_nesting_level: unexpected type `{}' of element `{}' at nesting level {}".format(type(data), data, recursion_depth))
+            #unknown class. Return 0 level
+            return 0
 
     return helper(data, 0)
 
@@ -564,12 +565,12 @@ def ensure_min_nesting(data, target_level, data_types=SIMPLE_DATA_TYPES, input_n
     Wraps data in so many [] as required to achieve target nesting level.
     If data already has too high nesting level the same data will be returned
 
-    ensure_nesting_level(17, 0) == 17
-    ensure_nesting_level(17, 1) == [17]
-    ensure_nesting_level([17], 1) == [17]
-    ensure_nesting_level([17], 2) == [[17]]
-    ensure_nesting_level([(1,2,3)], 3) == [[(1,2,3)]]
-    ensure_nesting_level([[[17]]], 1) => [[[17]]]
+    ensure_min_nesting(17, 0) == 17
+    ensure_min_nesting(17, 1) == [17]
+    ensure_min_nesting([17], 1) == [17]
+    ensure_min_nesting([17], 2) == [[17]]
+    ensure_min_nesting([(1,2,3)], 3) == [[(1,2,3)]]
+    ensure_min_nesting([[[17]]], 1) => [[[17]]]
     """
 
     current_level = get_data_nesting_level(data, data_types)
