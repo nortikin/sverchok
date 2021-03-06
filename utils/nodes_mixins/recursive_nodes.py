@@ -94,14 +94,6 @@ class SvRecursiveNode():
         items=numpy_list_match_modes, default="REPEAT",
         update=updateNode)
 
-    # def draw_buttons_ext(self, context, layout):
-    #     if hasattr(self, 'add_buttons_ext'):
-    #         self.add_buttons_ext(context, layout)
-    #     layout.prop(self, 'list_match')
-    #
-    # def rclick_menu(self, context, layout):
-    #     layout.prop_menu_enum(self, "list_match", text="List Match")
-
     def process(self):
         if hasattr(self, 'pre_setup'):
             self.pre_setup()
