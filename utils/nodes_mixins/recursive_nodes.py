@@ -30,6 +30,8 @@ class SvRecursiveNode():
     '''
     This mixin is used to vectorize any node.
     In the init function some socket properties have to be defined in order to work properly
+    They can also be defined in the pre_setup function that will be called before getting the input data
+
     for every input socket(s):
         if socket is mandatory:
             s.is_mandatory = True (Default value is False)
@@ -56,14 +58,26 @@ class SvRecursiveNode():
     ...
     class SvAwesomeNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     ...
+    def sv_init(self, context):
+        p1 = self.inputs.new('SvVerticesSocket', "Param1")
+        p1.is_mandatory = True
+        p1.nesting_level = 3
+        p1.default_mode = 'NONE'
+        p2 = self.inputs.new('SvStringsSocket', "Param2")
+        p2.nesting_level = 3
+        self.outputs.new('SvStringsSocket', "Res1")
+        self.outputs.new('SvStringsSocket', "Res2")
+
+    def pre_setup(self):
+        if option == 'SOME_OPTION':
+            self.inputs[0].nesting_level = 2
+
     def process_data(self, params):
         param1, param2 = params
-        or
-        parm1 = params[0]
-        res = awesome_func(param1)
-        return res
+        res1, res2 = awesome_func(param1)
+        return res1, res2
 
-    this mixing also adds the list_match property to let the user choose among repeat_last, cylce and match short
+    this mixing also adds the list_match property to let the user choose among repeat_last, cycle and match short and so on
 
     to add this property to the layout:
         def draw_buttons_ext(self, context, layout):
@@ -89,6 +103,9 @@ class SvRecursiveNode():
     #     layout.prop_menu_enum(self, "list_match", text="List Match")
 
     def process(self):
+        if hasattr(self, 'pre_setup'):
+            self.pre_setup()
+
         if not all([s.is_linked for s in self.inputs if s.is_mandatory]):
             return
 
