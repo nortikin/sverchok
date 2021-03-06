@@ -5,12 +5,46 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
 import bpy
+from bmesh.ops import split_edges
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, repeat_last, fixed_iter
+from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh, pydata_from_bmesh
+from sverchok.utils.handling_nodes import vectorize
+
+
+# my guess is that any of such functions should not modifier input data
+def split_mesh_elements_node(*,
+                             vertices=None,
+                             edges=None,
+                             faces=None,
+                             mask=None,
+                             mask_mode='VERTS',
+                             split_type='VERTS'):
+
+    out = {'vertices': [], 'edges': [], 'faces': []}
+
+    if not vertices:
+        return out
+
+    edges = edges or []
+    faces = faces or []
+    mask = mask or []
+
+    if split_type == 'VERTS':
+        result = split_by_vertices(vertices, edges, faces, mask)
+    elif split_type == 'EDGES':
+        result = split_by_edges(vertices, edges, faces, mask)
+    else:
+        raise TypeError(f'Unknown "split_typ" mode = {split_type}')
+
+    for k, r in zip(out, result):
+        out[k] = r
+
+    return out
 
 
 def split_by_vertices(verts, edges=None, faces=None, selected_verts: List[bool] = None):
@@ -38,6 +72,14 @@ def split_by_vertices(verts, edges=None, faces=None, selected_verts: List[bool] 
     return out_verts, [], out_faces
 
 
+def split_by_edges(verts, edges=None, faces=None, selected_edges: List[bool] = None):
+    with empty_bmesh() as bm:
+        add_mesh_to_bmesh(bm, verts, edges, faces, 'old_i')
+        split_edges(bm, edges=[e for e, b in zip(bm.edges, selected_edges) if b])
+        v, e, f = pydata_from_bmesh(bm)
+        return v, e, f
+
+
 class SvSplitMeshElements(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers:
@@ -48,11 +90,11 @@ class SvSplitMeshElements(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Split mesh elements'
     bl_icon = 'MOD_EDGESPLIT'
 
-    select_mode_items = [(n, n, '', ic, i) for i, (n, ic) in enumerate(zip(
+    select_mode_items = [(n.upper(), n, '', ic, i) for i, (n, ic) in enumerate(zip(
         ('Verts', 'Edges', 'Faces'), ('VERTEXSEL', 'EDGESEL', 'FACESEL')))]
 
     mask_mode = bpy.props.EnumProperty(items=select_mode_items, update=updateNode)
-    split_type = bpy.props.EnumProperty(items=[(i, i, '') for i in ['verts', 'edges']], update=updateNode)
+    split_type = bpy.props.EnumProperty(items=[(i.upper(), i, '') for i in ['verts', 'edges']], update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'split_type', expand=True)
@@ -78,18 +120,12 @@ class SvSplitMeshElements(SverchCustomTreeNode, bpy.types.Node):
         faces = self.inputs['Faces'].sv_get(deepcopy=False, default=[])
         mask = self.inputs['Mask'].sv_get(deepcopy=False, default=[])
 
-        obj_n = max(map(len, (vertices, edges, faces, mask)))
+        result = vectorize(split_mesh_elements_node)(vertices=vertices, edges=edges, faces=faces, mask=mask,
+                                                     mask_mode=[self.mask_mode], split_type=[self.split_type])
 
-        out = []
-        for v, e, f, m in zip(fixed_iter(vertices, obj_n), fixed_iter(edges, obj_n, None),
-                              fixed_iter(faces, obj_n, None), fixed_iter(mask, obj_n, None)):
-            if self.split_type == 'verts':
-                out.append(split_by_vertices(v, e, f, m))
-
-        v, e, f = zip(*out) if out else ([], [], [])
-        self.outputs['Vertices'].sv_set(v)
-        self.outputs['Edges'].sv_set(e)
-        self.outputs['Faces'].sv_set(f)
+        self.outputs['Vertices'].sv_set(result['vertices'])
+        self.outputs['Edges'].sv_set(result['edges'])
+        self.outputs['Faces'].sv_set(result['faces'])
 
 
 register, unregister = bpy.utils.register_classes_factory([SvSplitMeshElements])
