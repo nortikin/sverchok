@@ -26,11 +26,19 @@ but massively condensed for sanity.
 
 import bpy
 
-from sverchok.menu import make_node_cats, draw_add_node_operator, is_submenu_call, get_submenu_call_name, compose_submenu_name
+from sverchok.menu import (
+    make_node_cats,
+    draw_add_node_operator,
+    is_submenu_call,
+    get_submenu_call_name,
+    compose_submenu_name,
+    draw_node_ops as monad_node_ops)
+
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.extra_categories import get_extra_categories
 from sverchok.ui.sv_icons import node_icon, icon, get_icon_switch, custom_icon
 from sverchok.ui import presets
+import nodeitems_utils
 # from nodeitems_utils import _node_categories
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
@@ -75,7 +83,7 @@ menu_structure = [
     ["NODEVIEW_MT_AddScene", 'SCENE_DATA'],
     ["NODEVIEW_MT_AddExchange", 'SCENE_DATA'],
     ["NODEVIEW_MT_AddLayout", 'NODETREE'],
-    ["NODE_MT_category_SVERCHOK_BPY_Data", "BLENDER"],
+    ["NODEVIEW_MT_AddBPYData", "BLENDER"],
     ["separator"],
     ["NODEVIEW_MT_AddScript", "WORDWRAP_ON"],
     ["NODEVIEW_MT_AddNetwork", "SYSTEM"],
@@ -163,8 +171,8 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        if self.bl_idname == 'NODEVIEW_MT_Dynamic_Menu':
-            layout.operator("node.sv_extra_search", text="Search", icon='OUTLINER_DATA_FONT')
+        # if self.bl_idname == 'NODEVIEW_MT_Dynamic_Menu':
+        layout.operator("node.sv_extra_search", text="Search", icon='OUTLINER_DATA_FONT')
 
         for item in menu_structure:
             if item[0] == 'separator':
@@ -210,6 +218,14 @@ class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
         layout = self.layout
         layout_draw_categories(self.layout, self.bl_label, node_cats[self.bl_label])
         layout.menu("NODEVIEW_MT_AddGeneratorsExt", **icon('PLUGIN'))
+
+class NODEVIEW_MT_AddBPYData(bpy.types.Menu):
+    bl_label = "BPY Data"
+
+    def draw(self, context):
+        layout = self.layout
+        layout_draw_categories(self.layout, self.bl_label, node_cats['BPY Data'])
+        layout_draw_categories(self.layout, self.bl_label, node_cats['Objects'])
 
 class NODEVIEW_MT_AddModifiers(bpy.types.Menu):
     bl_label = "Modifiers"
@@ -276,6 +292,41 @@ class NODE_MT_category_SVERCHOK_GROUP(bpy.types.Menu):
         layout.operator('node.add_node_output_input', text="Group output").node_type = 'output'
         layout.operator('node.add_group_tree_from_selected')
 
+class NODE_MT_category_SVERCHOK_MONAD(bpy.types.Menu):
+    bl_label = "Monad"
+    label =  'Monad'
+
+    def draw(self, context):
+
+        if context is None:
+            return
+        space = context.space_data
+        if not space:
+            return
+        ntree = space.edit_tree
+        if not ntree:
+            return
+        layout = self.layout
+
+        monad_node_ops(self, layout, context)
+
+        if ntree.bl_idname == "SverchGroupTreeType":
+            draw_add_node_operator(layout, "SvMonadInfoNode")
+            layout.separator()
+
+        for monad in context.blend_data.node_groups:
+            if monad.bl_idname != "SverchGroupTreeType":
+                continue
+            if monad.name == ntree.name:
+                continue
+            # make sure class exists
+            cls_ref = get_node_class_reference(monad.cls_bl_idname)
+
+            if cls_ref and monad.cls_bl_idname and monad.cls_bl_idname:
+                op = layout.operator('node.add_node', text=monad.name)
+                op.type = monad.cls_bl_idname
+                op.use_transform = True
+
 
 extra_category_menu_classes = dict()
 
@@ -308,8 +359,10 @@ classes = [
     NODEVIEW_MT_AddListOps,
     NODEVIEW_MT_AddModifiers,
     NODEVIEW_MT_AddGenerators,
+    NODEVIEW_MT_AddBPYData,
     NODEVIEW_MT_AddPresetOps,
     NODE_MT_category_SVERCHOK_GROUP,
+    NODE_MT_category_SVERCHOK_MONAD,
     # like magic.
     # make | NODEVIEW_MT_Add + class name , menu name
     make_class('GeneratorsExt', "Generators Extended"),
@@ -351,15 +404,27 @@ classes = [
     make_class('Alphas', "Alpha Nodes"),
     # NODEVIEW_MT_Solids_Special_Menu
 ]
+def sv_draw_menu(self, context):
+
+    tree_type = context.space_data.tree_type
+    if not tree_type in sv_tree_types:
+        return
+    layout = self.layout
+    layout.operator_context = "INVOKE_DEFAULT"
+
+    if not any([(g.bl_idname in sv_tree_types) for g in bpy.data.node_groups]):
+        layout.operator("node.new_node_tree", text="New Sverchok Node Tree", icon="RNA_ADD")
+        return
+
+    NODEVIEW_MT_Dynamic_Menu.draw(self, context)
 
 def register():
-    #global menu_class_by_title
-    #menu_class_by_title = dict()
 
     for category in presets.get_category_names():
         make_preset_category_menu(category)
     for class_name in classes:
         bpy.utils.register_class(class_name)
+    bpy.types.NODE_MT_add.append(sv_draw_menu)
 
 def unregister():
     global menu_class_by_title
@@ -369,5 +434,5 @@ def unregister():
     for category in presets.get_category_names():
         if category in preset_category_menus:
             bpy.utils.unregister_class(preset_category_menus[category])
-
+    bpy.types.NODE_MT_add.remove(sv_draw_menu)
     menu_class_by_title = dict()
