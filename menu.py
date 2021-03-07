@@ -485,7 +485,7 @@ def make_categories():
                     items=node_items))
             node_count += len(nodes)
     node_categories.append(SverchNodeCategory("SVERCHOK_MONAD", "Monad", items=sv_group_items))
-
+    SverchNodeItem.new('SvMonadInfoNode')
     return node_categories, node_count, original_categories
 
 def register_node_panels(identifier, std_menu):
@@ -593,11 +593,10 @@ def unregister_node_panels():
 
 def reload_menu():
     menu, node_count, original_categories = make_categories()
-    if 'SVERCHOK' in nodeitems_utils._node_categories:
+    if hasattr(bpy.types, "SV_PT_NodesTPanel"):
         unregister_node_panels()
-        nodeitems_utils.unregister_node_categories("SVERCHOK")
         unregister_node_add_operators()
-    nodeitems_utils.register_node_categories("SVERCHOK", menu)
+
     register_node_panels("SVERCHOK", menu)
     register_node_add_operators()
 
@@ -632,10 +631,8 @@ def register():
     global logger
     logger = getLogger("menu")
     menu, node_count, original_categories = make_categories()
-    if 'SVERCHOK' in nodeitems_utils._node_categories:
+    if hasattr(bpy.types, "SV_PT_NodesTPanel"):
         unregister_node_panels()
-        nodeitems_utils.unregister_node_categories("SVERCHOK")
-    nodeitems_utils.register_node_categories("SVERCHOK", menu)
 
     categories = [(category.identifier, category.name, category.name, i) for i, category in enumerate(menu)]
     bpy.types.Scene.sv_selected_category = bpy.props.EnumProperty(
@@ -656,9 +653,7 @@ def register():
     print(f"sv: {node_count} nodes.")
 
 def unregister():
-    if 'SVERCHOK' in nodeitems_utils._node_categories:
-        unregister_node_panels()
-        nodeitems_utils.unregister_node_categories("SVERCHOK")
+    unregister_node_panels()
     unregister_node_add_operators()
     bpy.utils.unregister_class(SvResetNodeSearchOperator)
     del bpy.types.Scene.sv_selected_category
