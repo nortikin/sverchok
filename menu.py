@@ -654,8 +654,6 @@ def register():
 
 def unregister():
     unregister_node_panels()
-    # if 'SVERCHOK' in nodeitems_utils._node_categories:
-    #     nodeitems_utils.unregister_node_categories("SVERCHOK")
     unregister_node_add_operators()
     bpy.utils.unregister_class(SvResetNodeSearchOperator)
     del bpy.types.Scene.sv_selected_category

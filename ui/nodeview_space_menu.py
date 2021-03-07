@@ -171,8 +171,8 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        if self.bl_idname == 'NODEVIEW_MT_Dynamic_Menu':
-            layout.operator("node.sv_extra_search", text="Search", icon='OUTLINER_DATA_FONT')
+        # if self.bl_idname == 'NODEVIEW_MT_Dynamic_Menu':
+        layout.operator("node.sv_extra_search", text="Search", icon='OUTLINER_DATA_FONT')
 
         for item in menu_structure:
             if item[0] == 'separator':
@@ -309,7 +309,7 @@ class NODE_MT_category_SVERCHOK_MONAD(bpy.types.Menu):
         layout = self.layout
 
         monad_node_ops(self, layout, context)
-        
+
         if ntree.bl_idname == "SverchGroupTreeType":
             draw_add_node_operator(layout, "SvMonadInfoNode")
             layout.separator()
@@ -412,12 +412,11 @@ def sv_draw_menu(self, context):
         return
     layout = self.layout
     layout.operator_context = "INVOKE_DEFAULT"
-    print('trees',[g.bl_idname  for g in bpy.data.node_groups])
+
     if not any([(g.bl_idname in sv_tree_types) for g in bpy.data.node_groups]):
         layout.operator("node.new_node_tree", text="New Sverchok Node Tree", icon="RNA_ADD")
         return
 
-    layout.operator("node.sv_extra_search", text="Search", icon='OUTLINER_DATA_FONT')
     NODEVIEW_MT_Dynamic_Menu.draw(self, context)
 
 def register():
