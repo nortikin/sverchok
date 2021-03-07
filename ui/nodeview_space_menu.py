@@ -405,7 +405,6 @@ classes = [
     # NODEVIEW_MT_Solids_Special_Menu
 ]
 def sv_draw_menu(self, context):
-    # from sverchok.ui.nodeview_space_menu import NODEVIEW_MT_Dynamic_Menu, sv_tree_types
 
     tree_type = context.space_data.tree_type
     if not tree_type in sv_tree_types:
@@ -420,10 +419,6 @@ def sv_draw_menu(self, context):
     NODEVIEW_MT_Dynamic_Menu.draw(self, context)
 
 def register():
-    #global menu_class_by_title
-    #menu_class_by_title = dict()
-
-
 
     for category in presets.get_category_names():
         make_preset_category_menu(category)
