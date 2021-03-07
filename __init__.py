@@ -69,7 +69,7 @@ from sverchok.core import sv_registration_utils, init_architecture, make_node_li
 from sverchok.core import reload_event, handle_reload_event
 from sverchok.utils import utils_modules
 from sverchok.ui import ui_modules
-from sverchok.ui.nodeview_add_menu import perform_menu_monkey_patch
+
 from sverchok.utils.profile import profiling_startup
 
 imported_modules = init_architecture(__name__, utils_modules, ui_modules)
