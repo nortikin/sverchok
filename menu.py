@@ -593,11 +593,10 @@ def unregister_node_panels():
 
 def reload_menu():
     menu, node_count, original_categories = make_categories()
-    if 'SVERCHOK' in nodeitems_utils._node_categories:
+    if hasattr(bpy.types, "SV_PT_NodesTPanel"):
         unregister_node_panels()
-        nodeitems_utils.unregister_node_categories("SVERCHOK")
         unregister_node_add_operators()
-    nodeitems_utils.register_node_categories("SVERCHOK", menu)
+
     register_node_panels("SVERCHOK", menu)
     register_node_add_operators()
 
@@ -628,32 +627,13 @@ def get_all_categories(std_categories):
         return all_categories
     return generate
 
-def sv_draw_menu(self, context):
-    from sverchok.ui.nodeview_space_menu import NODEVIEW_MT_Dynamic_Menu, sv_tree_types
-
-    tree_type = context.space_data.tree_type
-    if not tree_type in sv_tree_types:
-        return
-    layout = self.layout
-    layout.operator_context = "INVOKE_DEFAULT"
-
-    if not any([(g.bl_idname in sv_tree_types) for g in bpy.data.node_groups]):
-        layout.operator("node.new_node_tree", text="New Sverchok Node Tree", icon="RNA_ADD")
-        return
-
-    layout.operator("node.sv_extra_search", text="Search", icon='OUTLINER_DATA_FONT')
-    NODEVIEW_MT_Dynamic_Menu.draw(self, context)
-
-
 def register():
     global logger
     logger = getLogger("menu")
     menu, node_count, original_categories = make_categories()
-    if 'SVERCHOK' in nodeitems_utils._node_categories:
+    if hasattr(bpy.types, "SV_PT_NodesTPanel"):
         unregister_node_panels()
-        nodeitems_utils.unregister_node_categories("SVERCHOK")
-    # nodeitems_utils.register_node_categories("SVERCHOK", menu)
-    # bpy.types.NODE_MT_add.append(sv_draw_menu)
+
     categories = [(category.identifier, category.name, category.name, i) for i, category in enumerate(menu)]
     bpy.types.Scene.sv_selected_category = bpy.props.EnumProperty(
                         name = "Category",
@@ -673,9 +653,9 @@ def register():
     print(f"sv: {node_count} nodes.")
 
 def unregister():
-    if 'SVERCHOK' in nodeitems_utils._node_categories:
-        unregister_node_panels()
-        nodeitems_utils.unregister_node_categories("SVERCHOK")
+    unregister_node_panels()
+    # if 'SVERCHOK' in nodeitems_utils._node_categories:
+    #     nodeitems_utils.unregister_node_categories("SVERCHOK")
     unregister_node_add_operators()
     bpy.utils.unregister_class(SvResetNodeSearchOperator)
     del bpy.types.Scene.sv_selected_category

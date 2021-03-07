@@ -26,7 +26,14 @@ but massively condensed for sanity.
 
 import bpy
 
-from sverchok.menu import make_node_cats, draw_add_node_operator, is_submenu_call, get_submenu_call_name, compose_submenu_name,sv_group_items, node_add_operators, SverchNodeItem
+from sverchok.menu import (
+    make_node_cats,
+    draw_add_node_operator,
+    is_submenu_call,
+    get_submenu_call_name,
+    compose_submenu_name,
+    draw_node_ops as monad_node_ops)
+
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.extra_categories import get_extra_categories
 from sverchok.ui.sv_icons import node_icon, icon, get_icon_switch, custom_icon
@@ -299,28 +306,26 @@ class NODE_MT_category_SVERCHOK_MONAD(bpy.types.Menu):
         ntree = space.edit_tree
         if not ntree:
             return
+        layout = self.layout
+
+        monad_node_ops(self, layout, context)
+        
         if ntree.bl_idname == "SverchGroupTreeType":
-            draw_add_node_operator(self.layout, "SvMonadInfoNode")
-            # layout_draw_categories(self.layout, "Monad", [["SvMonadInfoNode"]])
-        for i, item in enumerate(sv_group_items(context)):
-            if i ==0:
-                item.draw(self, self.layout, context)
-        # for monad in context.blend_data.node_groups:
-        #     if monad.bl_idname != "SverchGroupTreeType":
-        #         continue
-        #     # make sure class exists
-        #     cls_ref = get_node_class_reference(monad.cls_bl_idname)
-        #
-        #     if cls_ref and monad.cls_bl_idname and monad.cls_bl_idname in node_add_operators:
-        #         draw_add_node_operator(self.layout, monad.cls_bl_idname, monad.name)
-        #     elif cls_ref and monad.cls_bl_idname:
-        #         SverchNodeItem.new(monad.cls_bl_idname)
-        #         draw_add_node_operator(self.layout, monad.cls_bl_idname, monad.name)
-            # elif monad.cls_bl_idname:
-            #     monad_cls_template_dict = {"cls_bl_idname": "str('{}')".format(monad.cls_bl_idname)}
-            #     yield NodeItem("SvMonadGenericNode", monad.name, monad_cls_template_dict)
-        # layout_draw_categories(self.layout, "Monad", sv_group_items(context))
-        # sv_group_items(context)
+            draw_add_node_operator(layout, "SvMonadInfoNode")
+            layout.separator()
+
+        for monad in context.blend_data.node_groups:
+            if monad.bl_idname != "SverchGroupTreeType":
+                continue
+            if monad.name == ntree.name:
+                continue
+            # make sure class exists
+            cls_ref = get_node_class_reference(monad.cls_bl_idname)
+
+            if cls_ref and monad.cls_bl_idname and monad.cls_bl_idname:
+                op = layout.operator('node.add_node', text=monad.name)
+                op.type = monad.cls_bl_idname
+                op.use_transform = True
 
 
 extra_category_menu_classes = dict()
@@ -420,7 +425,7 @@ def register():
     #menu_class_by_title = dict()
 
 
-    
+
     for category in presets.get_category_names():
         make_preset_category_menu(category)
     for class_name in classes:
@@ -435,5 +440,5 @@ def unregister():
     for category in presets.get_category_names():
         if category in preset_category_menus:
             bpy.utils.unregister_class(preset_category_menus[category])
-
+    bpy.types.NODE_MT_add.remove(sv_draw_menu)
     menu_class_by_title = dict()
