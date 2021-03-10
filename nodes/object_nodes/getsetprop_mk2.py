@@ -158,7 +158,7 @@ aliases = {
     "meshes": "bpy.data.meshes",
     "texts": "bpy.data.texts",
     "ng": "bpy.data.node_groups"
-    # nodes: <current_nodetree>.nodes  <-- handled in the alias function
+    # "nodes": None
 }
 
 types = {
