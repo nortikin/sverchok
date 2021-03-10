@@ -169,10 +169,7 @@ class SvPropNodeMixin():
     @property
     def obj(self):
         eval_str = apply_alias(self.prop_name)
-        ast_path = ast.parse(eval_str) # , mode='exec|func_type|eval')
-
-        # print("SvPropNodeMixin:obj - parsing : ", eval_str)
-
+        ast_path = ast.parse(eval_str)
         path = parse_to_path(ast_path.body[0].value)
         return get_object(path)
     
