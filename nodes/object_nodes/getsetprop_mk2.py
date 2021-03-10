@@ -282,6 +282,9 @@ class SvSetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
 
     def process(self):
 
+        if len(self.inputs) == 0:
+            return
+
         data = self.inputs[0].sv_get()
         eval_str = apply_alias(self.prop_name)
         ast_path = ast.parse(eval_str)
