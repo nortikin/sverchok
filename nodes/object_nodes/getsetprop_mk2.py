@@ -85,13 +85,15 @@ def apply_alias(eval_str, nodetree=None):
     - will raise error if it isn't an bpy path
     '''
     if not eval_str.startswith("bpy."):
+
+        # special case for the nodes alias, end early
+        if eval_str.startswith("nodes") and nodetree:
+            string_path_to_current_tree = f'bpy.data.node_groups["{nodetree.name}"].nodes'
+            eval_str = eval_str.replace("nodes", string_path_to_current_tree, 1)
+            return eval_str
+
+        # all other aliases
         for alias, expanded in aliases.items():
-
-            if eval_str.startswith("nodes") and nodetree:
-                string_path_to_current_tree = f'bpy.data.node_groups["{nodetree.name}"].nodes'
-                eval_str = eval_str.replace("nodes", string_path_to_current_tree, 1)
-                break
-
             if eval_str.startswith(alias):
                 eval_str = eval_str.replace(alias, expanded, 1)
                 break
