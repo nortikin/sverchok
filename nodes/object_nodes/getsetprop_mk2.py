@@ -160,7 +160,7 @@ aliases = {
     "meshes": "bpy.data.meshes",
     "texts": "bpy.data.texts",
     "ng": "bpy.data.node_groups"
-    # "nodes": None
+    # "nodes": None , this is directly handled in the apply_alias function
 }
 
 types = {
