@@ -22,18 +22,32 @@ There are also convenience aliases. Instead of writing ``bpy.data.objects['Cube'
         "mats": "bpy.data.materials",
         "M": "bpy.data.materials",
         "meshes": "bpy.data.meshes",
-        "texts": "bpy.data.texts"
+        "texts": "bpy.data.texts",
+        "nodes": node_tree.nodes,
+        "ng": "bpy.data.node_groups"
     }  
 
 useful info for path lookups:
 
     Many properties can be right-clicked and have the option to "copy data path" (to your clipboard for pasting), this can help reduce some console probing / documentation reading. 
     
-Usually, however, you will need to provide the start of the path yourself. For example: if you copy the path to one of the Color properties in a ColorRamp of a shader, then following will be be copied to the clipboard: 
+Usually, however, you will need to provide the start of the path yourself. You must provide an explicit path to a distinct node tree. For example: if you copy the path to one of the Color properties in a ColorRamp of a shader, then following will be be copied to the clipboard: 
 
 ``node_tree.nodes["ColorRamp"].color_ramp.elements[0].color`` , 
 
 this is not the full path, you will need to add the path to the ``node_tree``, something like: ``bpy.data.materials['Material'].node_tree.nodes["ColorRamp"].color_ramp.elements[0].color``, then the node will know what your intention is.
+
+Alias ``nodes``
+---------------
+
+The alias ``nodes`` allows you to reference nodes in the current node tree (ie, a sverchok node tree) by writing::
+   
+   nodes["your node"].inputs[0].default_int_property
+
+Alias ``ng``
+------------
+
+If you are referencing a different sverchok nodetree, you write ``ng["NodeTreeName"].nodes["NodeName]..etc``
 
 
 Input
