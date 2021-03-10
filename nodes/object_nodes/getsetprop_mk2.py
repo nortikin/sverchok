@@ -84,7 +84,6 @@ def apply_alias(eval_str):
     - apply standard aliases
     - will raise error if it isn't an bpy path
     '''
-    print(globals())
     if not eval_str.startswith("bpy."):
         for alias, expanded in aliases.items():
             if eval_str.startswith(alias):
