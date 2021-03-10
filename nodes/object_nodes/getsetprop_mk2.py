@@ -47,14 +47,22 @@ def parse_to_path(p):
     '''
 
     if isinstance(p, ast.Attribute):
-        return parse_to_path(p.value)+[("attr", p.attr)] 
+        return parse_to_path(p.value) + [("attr", p.attr)]
+
     elif isinstance(p, ast.Subscript):
+ 
         if isinstance(p.slice.value, ast.Num):
-            return  parse_to_path(p.value) + [("key", p.slice.value.n)]
+            return parse_to_path(p.value) + [("key", p.slice.value.n)]
+        elif isinstance(p.slice.value, (float, int)):
+            return parse_to_path(p.value) + [("key", p.slice.value)]
         elif isinstance(p.slice.value, ast.Str):
             return parse_to_path(p.value) + [("key", p.slice.value.s)]
+        elif isinstance(p.slice.value, str):
+            return parse_to_path(p.value) + [("key", p.slice.value)]
+
     elif isinstance(p, ast.Name):
         return [("name", p.id)]
+
     else:
         raise NameError
 
@@ -76,6 +84,7 @@ def apply_alias(eval_str):
     - apply standard aliases
     - will raise error if it isn't an bpy path
     '''
+    print(globals())
     if not eval_str.startswith("bpy."):
         for alias, expanded in aliases.items():
             if eval_str.startswith(alias):
@@ -141,7 +150,8 @@ aliases = {
     "mats": "bpy.data.materials",
     "M": "bpy.data.materials",
     "meshes": "bpy.data.meshes",
-    "texts": "bpy.data.texts"
+    "texts": "bpy.data.texts",
+    "ng": "bpy.data.node_groups"
 }
 
 types = {
@@ -160,7 +170,10 @@ class SvPropNodeMixin():
     @property
     def obj(self):
         eval_str = apply_alias(self.prop_name)
-        ast_path = ast.parse(eval_str)
+        ast_path = ast.parse(eval_str) # , mode='exec|func_type|eval')
+
+        # print("SvPropNodeMixin:obj - parsing : ", eval_str)
+
         path = parse_to_path(ast_path.body[0].value)
         return get_object(path)
     
@@ -281,6 +294,7 @@ class SvSetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
 
         try:
             if isinstance(obj, (int, float, bpy_prop_array)):
+
                 obj = get_object(path[:-1])
                 p_type, value = path[-1]
                 if p_type == "attr":
