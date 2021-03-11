@@ -10,6 +10,7 @@ from sverchok.core import handlers
 from sverchok.core import update_system
 from sverchok.utils import logging
 from sverchok.utils.sv_gist_tools import TOKEN_HELP_URL
+from sverchok.utils.sv_extra_addons import draw_extra_addons
 from sverchok.ui import color_def
 from sverchok.ui.utils import message_on_layout
 
@@ -402,6 +403,7 @@ class SverchokPreferences(AddonPreferences):
     # updating sverchok
     dload_archive_name: StringProperty(name="archive name", default="master") # default = "master"
     dload_archive_path: StringProperty(name="archive path", default="https://github.com/nortikin/sverchok/archive/")
+    available_new_version: bpy.props.BoolProperty(default=False)
 
     FreeCAD_folder: StringProperty(
             name="FreeCAD python 3.7 folder",
@@ -584,6 +586,7 @@ dependencies, or install only some of them.""")
 
         if any(package.module is None for package in sv_dependencies.values()):
             box.operator('wm.url_open', text="Read installation instructions for missing dependencies").url = "https://github.com/nortikin/sverchok/wiki/Dependencies"
+        draw_extra_addons(layout)
 
     def draw(self, context):
 
@@ -613,7 +616,7 @@ dependencies, or install only some of them.""")
         row1.operator('wm.url_open', text='Sverchok home page').url = 'http://nikitron.cc.ua/blend_scripts.html'
         row1.operator('wm.url_open', text='Documentation').url = 'http://nikitron.cc.ua/sverch/html/main.html'
 
-        if context.scene.sv_new_version:
+        if self.available_new_version:
             row1.operator('node.sverchok_update_addon', text='Upgrade Sverchok addon')
         else:
             row1.operator('node.sverchok_check_for_upgrades_wsha', text='Check for new version')
