@@ -82,6 +82,8 @@ def draw_extra_addons(layout):
             addon_name = addon['name'].replace('_', '-')
         elif addon['name']+'-'+ addon['branch'] in ADDON_LIST:
             addon_name = addon['name']+'-'+ addon['branch']
+        elif addon['name'].replace('_', '-')+'-'+ addon['branch'] in ADDON_LIST:
+            addon_name = addon['name'].replace('_', '-')+'-'+ addon['branch']
         else:
             addon_name = False
         print(addon_name)
@@ -105,13 +107,13 @@ def draw_extra_addons(layout):
                 op.module = addon_name
         if not addon_name:
             b.label(text=addon['description'])
-            op = b.operator('node.sverchok_update_addon', text=f'Download {pretty_name}')
+            op = b.operator('node.sverchok_download_addon', text=f'Download {pretty_name}')
             op.master_branch_name = addon['branch']
             op.archive_link = addon['archive_link']
 
 class SverchokDownloadExtraAddon(bpy.types.Operator):
     """ Download Sverchok Extra Addon. After completion press F8 to reload addons or restart Blender """
-    bl_idname = "node.sverchok_update_addon"
+    bl_idname = "node.sverchok_download_addon"
     bl_label = "Sverchok update addon"
     bl_options = {'REGISTER'}
 
@@ -119,7 +121,7 @@ class SverchokDownloadExtraAddon(bpy.types.Operator):
     archive_link: bpy.props.StringProperty(default=ARCHIVE_LINK)
 
     def execute(self, context):
-
+        global ADDON_LIST
         os.curdir = bl_addons_path
         os.chdir(os.curdir)
 
@@ -158,6 +160,8 @@ class SverchokDownloadExtraAddon(bpy.types.Operator):
             err = 2
             wm.progress_update(100)
             wm.progress_end()
+            bpy.ops.preferences.addon_refresh()
+            ADDON_LIST = get_addons_folder()
             self.report({'INFO'}, "Unzipped, reload addons with F8 button, maybe restart Blender")
         except:
             self.report({'ERROR'}, "Cannot extract files errno {0}".format(str(err)))
