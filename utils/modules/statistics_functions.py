@@ -21,6 +21,10 @@ from math import sqrt, floor
 import sys
 
 
+def get_count(values):
+    return len(values)
+
+
 def get_sum(values):
     return sum(values)
 
@@ -30,7 +34,10 @@ def get_sum_of_squares(values):
 
 
 def get_sum_of_inversions(values):
-    return sum([1.0 / v for v in values])
+    try:
+        return sum([1.0 / v for v in values])
+    except ZeroDivisionError:
+        return 0
 
 
 def get_product(values):
@@ -46,12 +53,23 @@ def get_geometric_mean(values):
 
 
 def get_harmonic_mean(values):
-    return len(values) / get_sum_of_inversions(values)
+    try:
+        return len(values) / get_sum_of_inversions(values)
+    except ZeroDivisionError:
+        return 0
+
+
+def get_variance(values):
+    a = get_average(values)
+    return sum([(v - a)**2 for v in values]) / len(values)
 
 
 def get_standard_deviation(values):
-    a = get_average(values)
-    return sqrt(sum([(v - a)**2 for v in values]))
+    return sqrt(get_variance(values))
+
+
+def get_standard_error(values):
+    return get_standard_deviation(values) / sqrt(len(values))
 
 
 def get_root_mean_square(values):
@@ -62,14 +80,20 @@ def get_skewness(values):
     a = get_average(values)
     n = len(values)
     s = get_standard_deviation(values)
-    return sum([(v - a)**3 for v in values]) / n / pow(s, 3)
+    try:
+        return sum([(v - a)**3 for v in values]) / n / pow(s, 3)
+    except ZeroDivisionError:
+        return 0
 
 
 def get_kurtosis(values):
     a = get_average(values)
     n = len(values)
     s = get_standard_deviation(values)
-    return sum([(v - a)**4 for v in values]) / n / pow(s, 4)
+    try:
+        return sum([(v - a)**4 for v in values]) / n / pow(s, 4)
+    except ZeroDivisionError:
+        return 0
 
 
 def get_minimum(values):
@@ -80,10 +104,13 @@ def get_maximum(values):
     return max(values)
 
 
+def get_range(values):
+    return max(values) - min(values)
+
+
 def get_median(values):
     sortedValues = sorted(values)
     index = int(floor(len(values) / 2))
-    print("index=", index)
     if len(values) % 2 == 0:  # even number of values ? => take the average of central values
         median = (sortedValues[index - 1] + sortedValues[index]) / 2
     else:  # odd number of values ? => take the central value
