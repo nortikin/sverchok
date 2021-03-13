@@ -99,10 +99,15 @@ def fixed_iter(data, iter_number, fill_value=0):
     If data is shorter then iter_number last element will be cycled
     If data is empty [fill_value] list will be used instead
     """
-    if not data:
-        data = [fill_value]
-    for i, item in zip(range(iter_number), chain(data, cycle([data[-1]]))):
+    last_index = -1
+    for i, item in zip(range(iter_number), data):
         yield item
+        last_index = i
+        fill_value = item
+
+    if last_index + 1 < iter_number:
+        for i, item in zip(range(iter_number - (last_index + 1)), cycle([fill_value])):
+            yield item
 
 
 def match_long_repeat(lsts):
