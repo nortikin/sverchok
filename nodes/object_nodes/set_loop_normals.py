@@ -47,7 +47,10 @@ class SvSetLoopNormalsNode(SverchCustomTreeNode, bpy.types.Node):
             n_per_loop = [(0, 0, 0) for _ in range(len(obj.data.loops))]
             for me_p, f in zip(obj.data.polygons, fs):
                 for l_i, f_i in zip(range(me_p.loop_start, me_p.loop_start + me_p.loop_total), repeat_last(f)):
-                    normal = v_ns[f_i]
+                    try:
+                        normal = v_ns[f_i]
+                    except IndexError:
+                        normal = v_ns[-1]
                     n_per_loop[l_i] = Vector(normal).normalized() if self.normalize else normal
             obj.data.normals_split_custom_set(n_per_loop)
 
