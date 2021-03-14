@@ -15,9 +15,10 @@ from sverchok.data_structure import updateNode, repeat_last
 
 class SvSetLoopNormalsNode(SverchCustomTreeNode, bpy.types.Node):
     """
-    Triggers: # todo
+    Triggers: set loops normals
 
-
+    Adding custom normals for input object
+    Should be used together with Origins node
     """
     bl_idname = 'SvSetLoopNormalsNode'
     bl_label = 'Set loop normals'
