@@ -36,6 +36,11 @@ def select_verts_by_faces(faces, verts):
     return [v in flat_index_list for v in range(len(verts))]
 
 def select_edges_by_verts(verts_mask, edges, include_partial):
+    if isinstance(verts_mask, np.ndarray):
+        return select_edges_by_verts_numpy(verts_mask, edges, include_partial)
+    return select_edges_by_verts_python(verts_mask, edges, include_partial)
+
+def select_edges_by_verts_python(verts_mask, edges, include_partial):
     result = []
     for u,v in edges:
         if include_partial:
@@ -44,6 +49,14 @@ def select_edges_by_verts(verts_mask, edges, include_partial):
             ok = verts_mask[u] and verts_mask[v]
         result.append(ok)
     return result
+
+def select_edges_by_verts_numpy(verts_mask, edges, include_partial):
+    if include_partial:
+        result = np.any(verts_mask[np.array(edges)], axis=1)
+    else:
+        result = np.all(verts_mask[np.array(edges)], axis=1)
+
+    return result.tolist()
 
 def select_faces_by_verts(verts_mask, faces, include_partial):
     result = []
@@ -88,7 +101,6 @@ def by_sphere(vertices, centers, radius):
     if len(centers) == 1:
         center = centers[0]
         out_verts_mask = np.linalg.norm(np.array(vertices)-np.array(center)[np.newaxis,:], axis=1)<= radius[0]
-        # out_verts_mask = [((Vector(v) - Vector(center)).length <= radius[0]) for v in vertices]
     else:
         # build KDTree
         tree = kdtree.KDTree(len(centers))
