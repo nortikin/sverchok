@@ -23,7 +23,7 @@ Analyzers
    kd_tree_path
    linked_verts
    mesh_filter
-   mesh_select
+   mesh_select_mk2
    select_similar
    proportional
    normals
