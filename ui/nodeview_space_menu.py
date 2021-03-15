@@ -35,7 +35,7 @@ from sverchok.menu import (
     draw_node_ops as monad_node_ops)
 
 from sverchok.utils import get_node_class_reference
-from sverchok.utils.extra_categories import get_extra_categories
+from sverchok.utils.extra_categories import get_extra_categories, extra_category_providers
 from sverchok.ui.sv_icons import node_icon, icon, get_icon_switch, custom_icon
 from sverchok.ui import presets
 import nodeitems_utils
@@ -195,6 +195,10 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
             layout.separator()
             for category in extra_categories:
                 layout.menu("NODEVIEW_MT_EX_" + category.identifier)
+        if extra_category_providers:
+            for provider in extra_category_providers:
+                if hasattr(provider, 'use_custom_menu') and provider.use_custom_menu:
+                    layout.menu(provider.custom_menu)
 
 class NODEVIEW_MT_Solids_Special_Menu(bpy.types.Menu):
     bl_label = "Solids"
@@ -402,7 +406,6 @@ classes = [
     make_class('SVG', "SVG"),
     make_class('Betas', "Beta Nodes"),
     make_class('Alphas', "Alpha Nodes"),
-    # NODEVIEW_MT_Solids_Special_Menu
 ]
 def sv_draw_menu(self, context):
 
