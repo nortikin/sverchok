@@ -302,7 +302,7 @@
     SvInscribedCircleNode
     SvSteinerEllipseNode
     ---
-    SvMeshSelectNode
+    SvMeshSelectNodeMk2
     SvSelectSimilarNode
     SvChessSelection
 

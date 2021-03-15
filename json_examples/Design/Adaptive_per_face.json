@@ -417,7 +417,7 @@
       "width": 16.0
     },
     "Select mesh elements by location": {
-      "bl_idname": "SvMeshSelectNode",
+      "bl_idname": "SvMeshSelectNodeMk2",
       "custom_socket_props": {
         "3": {
           "expanded": true,
@@ -450,7 +450,7 @@
       "width": 140.0
     },
     "Select mesh elements by location.001": {
-      "bl_idname": "SvMeshSelectNode",
+      "bl_idname": "SvMeshSelectNodeMk2",
       "custom_socket_props": {
         "3": {
           "expanded": true,
