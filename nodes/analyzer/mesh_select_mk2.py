@@ -152,7 +152,7 @@ def by_cylinder(vertices, center, radius, direction):
     return out_verts_mask
 
 def by_normal(vertices, edges, faces, percent, direction):
-    vertex_normals, face_normals = calc_mesh_normals(vertices, edges, faces)
+    face_normals, _ = calc_mesh_normals(vertices, edges, faces)
     np_verts = np.array(face_normals)
     np_dir = np.array(direction)
     np_dir, np_percent = numpy_match_long_repeat([np_dir, np.array(percent)])
@@ -163,7 +163,7 @@ def by_normal(vertices, edges, faces, percent, direction):
     return out_face_mask
 
 def by_outside(vertices, edges, faces, percent, center):
-    vertex_normals, face_normals = calc_mesh_normals(vertices, edges, faces)
+    face_normals, _ = calc_mesh_normals(vertices, edges, faces)
     center = Vector(center[0])
 
     def get_center(face):
