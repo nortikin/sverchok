@@ -1232,6 +1232,10 @@ class SvLinkNewNodeInput(bpy.types.Operator):
     bl_idname = "node.sv_quicklink_new_node_input"
     bl_label = "Add a new node to the left"
 
+    @classmethod
+    def poll(cls, context):
+        return hasattr(context, 'socket')    
+
     def execute(self, context):
         tree, node, socket = context.node.id_data, context.node, context.socket
 
