@@ -527,7 +527,7 @@
 
 ## Matrix
     SvMatrixInNodeMK4
-    MatrixOutNode
+    SvMatrixOutNodeMK2
     SvMatrixApplyJoinNode
     SvIterateNode
     MatrixDeformNode
@@ -725,7 +725,7 @@
     SvSelectMeshVerts
     SvSetCustomMeshNormals
     ---
-    SvCombinatoricsNode    
+    SvCombinatoricsNode
 
 ## Alpha Nodes
     SvBManalyzinNode
