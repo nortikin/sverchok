@@ -462,7 +462,6 @@ class SvSocketCommon(SvSocketProcessing):
         The socket should have `bl_idname` of other node in `quick_link_to_node` attribute for using this UI
         """
         if self.quick_link_to_node:
-            print(self.name)
             op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
             op.input_name = self.name
 
