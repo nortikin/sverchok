@@ -284,6 +284,7 @@
     SvKDTreeNodeMK2
     SvKDTreeEdgesNodeMK2
     SvKDTreePathNode
+    SvNearestPointOnMeshNode
     SvBvhOverlapNodeNew
     SvMeshFilterNode
     SvEdgeAnglesNode
@@ -715,7 +716,6 @@
     SvSampleUVColorNode
     SvSubdivideLiteNode
     SvExtrudeSeparateLiteNode
-    SvBVHnearNewNode
     SvUnsubdivideNode
     SvLimitedDissolveMK2
     SvArmaturePropsNode
