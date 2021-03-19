@@ -462,7 +462,9 @@ class SvSocketCommon(SvSocketProcessing):
         The socket should have `bl_idname` of other node in `quick_link_to_node` attribute for using this UI
         """
         if self.quick_link_to_node:
-            layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
+            print(self.name)
+            op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
+            op.input_name = self.name
 
     def does_support_link_input_menu(self, context, layout, node):
         if not self.enable_input_link_menu:
@@ -1232,13 +1234,13 @@ class SvLinkNewNodeInput(bpy.types.Operator):
     bl_idname = "node.sv_quicklink_new_node_input"
     bl_label = "Add a new node to the left"
 
-    @classmethod
-    def poll(cls, context):
-        return hasattr(context, 'socket')    
+    input_name: StringProperty()
 
     def execute(self, context):
-        tree, node, socket = context.node.id_data, context.node, context.socket
-
+        # tree, node, socket = context.node.id_data, context.node, context.socket
+        tree, node = context.node.id_data, context.node
+        socket = node.inputs[self.input_name]
+        
         new_node = tree.nodes.new(socket.quick_link_to_node)
         links_number = len([s for s in node.inputs if s.is_linked])
         new_node.location = (node.location[0] - 200, node.location[1] - 100 * links_number)
