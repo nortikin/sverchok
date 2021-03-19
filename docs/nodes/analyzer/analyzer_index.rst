@@ -27,6 +27,7 @@ Analyzers
    select_similar
    proportional
    normals
+   nearest_point_on_mesh
    bvh_overlap_polys
    object_insolation
    path_length_2

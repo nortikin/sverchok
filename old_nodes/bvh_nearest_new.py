@@ -29,7 +29,7 @@ class SvBVHnearNewNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'bvh_nearest'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_POINT_ON_MESH'
-
+    replacement_nodes =[('SvNearestPointOnMeshNode', None, None)]
     modes = [
             ("find_nearest", "nearest", "", 0),
             ("find_nearest_range", "nearest in range", "", 1),
