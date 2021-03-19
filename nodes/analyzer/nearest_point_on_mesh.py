@@ -19,10 +19,9 @@ from itertools import cycle
 import bpy
 from bpy.props import EnumProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, match_long_cycle as C)
+from sverchok.data_structure import updateNode
 from sverchok.utils.bvh_tree import bvh_tree_from_polygons
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
-from mathutils.bvhtree import BVHTree
 
 def take_third(elem):
     return elem[2]
@@ -43,7 +42,7 @@ def svmesh_to_bvh_lists(vsock, fsock, safe_check):
         yield bvh_tree_from_polygons(vertices, polygons, all_triangles=False, epsilon=0.0, safe_check=safe_check)
 
 def nearest_point_in_mesh(verts, faces, points, safe_check=True):
-
+    '''Expects multiple objects lists (level of nesting 3)'''
     output = [[] for i in range(4)]
     for bvh, pts in zip(svmesh_to_bvh_lists(verts, faces, safe_check), points):
         res_local = list(zip(*[translate_data(bvh.find_nearest(P)) for P in pts]))
@@ -52,13 +51,18 @@ def nearest_point_in_mesh(verts, faces, points, safe_check=True):
     return output
 
 def nearest_in_range(verts, faces, points, distance, safe_check=True, flat_output=True):
-
+    '''
+    verts, faces and points: Expects multiple objects lists (level of nesting 3)
+    distace: expects a list with level of nesting of 2
+    '''
     output = [[] for i in range(4)]
     for bvh, pts, dist in zip(svmesh_to_bvh_lists(verts, faces, safe_check), points, distance):
+
         res_local = [[] for i in range(4)]
+
         for pt, d in zip(pts, cycle(dist)):
             res = bvh.find_nearest_range(pt, d)
-
+            #claning results:
             res = sorted(res, key=take_third)
             unique = []
             if flat_output:
@@ -75,7 +79,6 @@ def nearest_in_range(verts, faces, points, distance, safe_check=True, flat_outpu
                         append_multiple(sub_res_local, translate_data(r))
 
                 append_multiple(res_local, sub_res_local)
-
 
         append_multiple(output, res_local)
 
@@ -100,11 +103,17 @@ class SvNearestPointOnMeshNode(bpy.types.Node, SverchCustomTreeNode, SvRecursive
     def update_sockets(self, context):
         self.inputs['Distance'].hide_safe = self.mode == 'find_nearest'
         updateNode(self, context)
-    mode: EnumProperty(name="Mode", items=modes, default='find_nearest', update=update_sockets)
+
+    mode: EnumProperty(
+        name="Mode", items=modes,
+        default='find_nearest',
+        update=update_sockets)
+
     safe_check: BoolProperty(
         name='Safe Check',
         description='When disabled polygon indices refering to unexisting points will crash Blender but makes node faster',
         default=True)
+
     flat_output: BoolProperty(
         name='Flat Output',
         description='Ouput a single list for every list in stead of a list of lists',
