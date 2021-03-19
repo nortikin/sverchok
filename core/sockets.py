@@ -1236,7 +1236,6 @@ class SvLinkNewNodeInput(bpy.types.Operator):
     input_name: StringProperty()
 
     def execute(self, context):
-        # tree, node, socket = context.node.id_data, context.node, context.socket
         tree, node = context.node.id_data, context.node
         socket = node.inputs[self.input_name]
         
