@@ -117,6 +117,7 @@ class SvNearestPointOnMeshNode(bpy.types.Node, SverchCustomTreeNode, SvRecursive
             layout.prop(self, 'flat_output')
 
     def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'list_match')
         layout.prop(self, 'mode')
         layout.prop(self, 'safe_check')
 
@@ -128,8 +129,10 @@ class SvNearestPointOnMeshNode(bpy.types.Node, SverchCustomTreeNode, SvRecursive
         for s in self.inputs[:2]:
             s.is_mandatory = True
         si('SvVerticesSocket', 'Points').use_prop = True
-        si('SvStringsSocket', 'Distance').use_prop = True
-        self.inputs['Distance'].hide_safe = True
+        d = si('SvStringsSocket', 'Distance')
+        d.use_prop = True
+        d.default_property = 10.0
+        d.hide_safe = True
 
         so('SvVerticesSocket', 'Location')
         so('SvVerticesSocket', 'Normal')
