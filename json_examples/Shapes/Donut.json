@@ -5,7 +5,7 @@
     "Matrix In": "Tangent Move",
     "Matrix Math": "Tangent Move",
     "Matrix Track To": "Tangent Move",
-    "Matrix out": "Tangent Move",
+    "Matrix Out": "Tangent Move",
     "Mesh viewer": "Output",
     "Move": "Bottom Flat",
     "Move.002": "Tangent Move",
@@ -139,8 +139,8 @@
       },
       "width": 140.0
     },
-    "Matrix out": {
-      "bl_idname": "MatrixOutNode",
+    "Matrix Out": {
+      "bl_idname": "SvMatrixOutNodeMK2",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -860,7 +860,7 @@
     [
       "Matrix Math",
       0,
-      "Matrix out",
+      "Matrix Out",
       0
     ],
     [
