@@ -32,12 +32,20 @@ node.props.data_to_mask = NodeProperties(
         name="Data masking",
         description="Use data to define mask length",
         default=False))
+
 node.props.is_topo_mask = NodeProperties(
     bpy_props=BoolProperty(
         name="Topo mask",
         description="data consists of verts or polygons / edges. "
                     "Otherwise the two vertices will be masked as [[[T, T, T], [F, F, F]]] instead of [[T, F]]",
         default=False))
+
+node.props.output_numpy = NodeProperties(
+    bpy_props=BoolProperty(
+        name="Output NumPy",
+        description="Output Numpy arrays in stead of regular python lists",
+        default=False))
+
 node.props.index = NodeProperties(bpy_props=IntProperty(name="Index"))
 node.props.mask_size = NodeProperties(bpy_props=IntProperty(name='Mask Length', default=10, min=2))
 
@@ -76,6 +84,13 @@ class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
         if self.data_to_mask:
             col.prop(self, "is_topo_mask", toggle=True)
 
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'output_numpy')
+
+    def rclick_menu(self, context, layout):
+        layout.prop(self, 'output_numpy')
+
     def process(self):
         if not node.props.data_to_mask:
             mask = np.zeros(node.inputs.mask_size[0], dtype=bool)
@@ -87,4 +102,7 @@ class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
                 mask = np.zeros_like(node.inputs.data_to_mask, dtype=bool)
 
         mask[node.inputs.index] = True
-        node.outputs.mask = mask.tolist()
+        if node.props.output_numpy:
+            node.outputs.mask = mask
+        else:
+            node.outputs.mask = mask.tolist()
