@@ -199,7 +199,8 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
 
             new_extruded_faces = []
             new_extruded_faces_append = new_extruded_faces.append
-            heights, scales, matrixes, masks = make_repeaters([heights_, scales_, matrixes_, masks_])
+            heights, scales, matrixes = make_repeaters([heights_, scales_, matrixes_])
+            masks = repeat_last_for_length(masks_, len(faces))
             if face_data:
                 face_data_matched = repeat_last_for_length(face_data, len(faces))
 

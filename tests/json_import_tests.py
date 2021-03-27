@@ -62,9 +62,7 @@ UNITTEST_SKIPLIST = [
 class ExamplesImportTest(SverchokTestCase):
     def test_import_examples(self):
 
-        examples_path = Path(sverchok.__file__).parent / 'json_examples'
-
-        for category_name in example_categories_names():
+        for examples_path, category_name in example_categories_names():
 
             info("Opening Dir named: %s", category_name)
 

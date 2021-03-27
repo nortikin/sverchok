@@ -37,6 +37,7 @@ class ConverterNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvSurfaceSocket', 'surface')
         self.outputs.new('SvSolidSocket', 'solid')
         self.outputs.new('SvColorSocket', 'color')
+        self.outputs.new('SvDictionarySocket', 'dict')
 
     def process(self):
         if self.inputs[0].is_linked:

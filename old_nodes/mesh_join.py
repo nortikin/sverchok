@@ -30,7 +30,9 @@ class SvMeshJoinNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Mesh Join'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MESH_JOIN'
-
+    replacement_nodes = [('SvMeshJoinNodeMk2',
+                          dict(PolyEdge='Polygons'),
+                          dict(PolyEdge='Polygons'))]
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
         self.inputs.new('SvStringsSocket', 'PolyEdge')

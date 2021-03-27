@@ -34,7 +34,7 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMeshSelectNode'
     bl_label = 'Select mesh elements by location'
     bl_icon = 'UV_SYNC_SELECT'
-
+    replacement_nodes = [('SvMeshSelectNodeMk2', None, None)]
     modes = [
             ("BySide", "By side", "Select specified side of mesh", 0),
             ("ByNormal", "By normal direction", "Select faces with normal in specified direction", 1),

@@ -161,7 +161,6 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
         y_list = []  # ortho-normal Y vector list
         z_list = []  # ortho-normal Z vector list
         matrix_list = []
-        print(len(params))
         for L, S, A, B in zip(*params):
             T = eval(mT)  # map T to one of A, B or its negative
             U = eval(mU)  # map U to one of A, B or its negative

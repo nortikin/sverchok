@@ -110,8 +110,8 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
         'TRUE':      True,
         }
 
-    x: IntProperty(default=1, name='x', max=1, min=0, update=updateNode)
-    y: IntProperty(default=1, name='y', max=1, min=0, update=updateNode)
+    x: IntProperty(default=1, name='x', update=updateNode)
+    y: IntProperty(default=1, name='y', update=updateNode)
 
     i_x: FloatProperty(default=1, name='x', update=updateNode)
     i_y: FloatProperty(default=1, name='y', update=updateNode)

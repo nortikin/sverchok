@@ -28,16 +28,16 @@ class DataStructureTests(SverchokTestCase):
         data = [1,2,3]
         fullList(data, 7)
         self.assertEquals(data, [1, 2, 3, 3, 3, 3, 3])
-        
+
     def test_full_list_2(self):
         data = [[1], [2], [3]]
         fullList(data, 7)
         self.assertEquals(data, [[1], [2], [3], [3], [3], [3], [3]])
-        
+
     def test_full_list_deep_copy(self):
         data = [[3], [2], [1]]
         fullList_deep_copy(data, 7)
-        self.assertEquals(data, [[3], [2], [1], [1], [1], [1], [1]])    
+        self.assertEquals(data, [[3], [2], [1], [1], [1], [1], [1]])
 
     def test_repeat_last_for_length_1(self):
         data = None
@@ -66,10 +66,8 @@ class DataStructureTests(SverchokTestCase):
         self.subtest_assert_equals(get_data_nesting_level([[(1,2,3)]]), 3)
 
     def test_get_data_nesting_level_2(self):
-        with self.assertRaises(TypeError):
-            data = [dict(), 3]
-            level = get_data_nesting_level(data)
-            error("get_data_nesting_level() returned %s", level)
+        data = [dict(), 3]
+        self.subtest_assert_equals(get_data_nesting_level(data), 1)
 
     def test_ensure_nesting_level_1(self):
         self.subtest_assert_equals(ensure_nesting_level(17, 0), 17)
@@ -83,7 +81,7 @@ class DataStructureTests(SverchokTestCase):
             data = [[[17]]]
             result = ensure_nesting_level(data, 1)
             error("ensure_nesting_level() returned %s", result)
-     
+
     def test_transpose_list(self):
         self.subtest_assert_equals(transpose_list([[1,2], [3,4]]), [[1,3], [2, 4]])
 
@@ -200,7 +198,7 @@ class DataStructureTests(SverchokTestCase):
         result = flatten_data(data, target_level=1)
         expected = [1,2, 3,4, 5,6, 7,8]
         self.assert_sverchok_data_equal(result, expected)
-    
+
     def test_graft_1(self):
         data = [1,2,3]
         result = graft_data(data, item_level=0)

@@ -17,7 +17,7 @@ def unregister_node_class(class_ref):
 def register_node_classes_factory(node_class_references, ops_class_references=None):
     """
 
-    
+
     !!!! Unless you are testing/developing a node, you do not need to use this. ever. !!!!
 
 
@@ -53,16 +53,16 @@ def register_node_classes_factory(node_class_references, ops_class_references=No
 
         def unregister():
             for cls in reversed(ops_class_references):
-                bpy.utils.unregister_class(cls)            
+                bpy.utils.unregister_class(cls)
             for cls in reversed(node_class_references):
                 unregister_node_class(cls)
 
         return register, unregister
 
 def auto_gather_node_classes(start_module = None):
-    """ 
-    this produces a dict with mapping from bl_idname to class reference at runtime 
-    f.ex   
+    """
+    this produces a dict with mapping from bl_idname to class reference at runtime
+    f.ex
           node_classes = {SvBMeshViewerMk2: <class svechok.nodes.viz ......> , .... }
     """
 
@@ -109,12 +109,12 @@ def app_handler_ops(append=None, remove=None):
     (operation, handler_dict) = ('append', append) if append else ('remove', remove)
     for handler_name, handler_function in handler_dict.items():
         handler = getattr(bpy.app.handlers, handler_name)
-        
+
         # bpy.app.handlers.<handler>.<append or remove>(function_name)
         getattr(handler, operation)(handler_function)
 
     # try:
-    #     names = lambda d: [f"    {k} -> {v.__name__}" for k, v in d.items()] 
+    #     names = lambda d: [f"    {k} -> {v.__name__}" for k, v in d.items()]
     #     listed = "\n".join(names(handler_dict))
     # except Exception as err:
     #     print('error while listing event handlers', err)
@@ -146,5 +146,8 @@ utils_modules = [
     # geom 2d tools
     "geom_2d.lin_alg", "geom_2d.dcel", "geom_2d.dissolve_mesh", "geom_2d.merge_mesh", "geom_2d.intersections",
     "geom_2d.make_monotone", "geom_2d.sort_mesh", "geom_2d.dcel_debugger",
-    "quad_grid"
+    "quad_grid",
+    # extra addons
+    "sv_extra_addons"
+
 ]

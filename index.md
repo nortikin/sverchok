@@ -284,6 +284,7 @@
     SvKDTreeNodeMK2
     SvKDTreeEdgesNodeMK2
     SvKDTreePathNode
+    SvNearestPointOnMeshNode
     SvBvhOverlapNodeNew
     SvMeshFilterNode
     SvEdgeAnglesNode
@@ -302,7 +303,7 @@
     SvInscribedCircleNode
     SvSteinerEllipseNode
     ---
-    SvMeshSelectNode
+    SvMeshSelectNodeMk2
     SvSelectSimilarNode
     SvChessSelection
 
@@ -372,7 +373,7 @@
     SvEdgeBoomNode
     SvDissolveMeshElements
     SvPols2EdgsNodeMk2
-    SvMeshJoinNode
+    SvMeshJoinNodeMk2
     ---
     SvFillsHoleNode
     SvRecalcNormalsNode
@@ -440,6 +441,7 @@
     ListFuncNode
     SvListDecomposeNode
     SvListStatisticsNode
+    SvIndexListNode
 
 ## List Struct
     ShiftNodeMK2
@@ -526,7 +528,7 @@
 
 ## Matrix
     SvMatrixInNodeMK4
-    MatrixOutNode
+    SvMatrixOutNodeMK2
     SvMatrixApplyJoinNode
     SvIterateNode
     MatrixDeformNode
@@ -622,6 +624,7 @@
     SvPointOnMeshNodeMK2
     SvOBJRayCastNodeMK2
     SvSCNRayCastNodeMK2
+    SvSetLoopNormalsNode
 
 ## Scene
     SvObjectsNodeMK3
@@ -706,7 +709,6 @@
     SvSampleUVColorNode
     SvSubdivideLiteNode
     SvExtrudeSeparateLiteNode
-    SvBVHnearNewNode
     SvUnsubdivideNode
     SvLimitedDissolveMK2
     SvArmaturePropsNode
@@ -716,7 +718,7 @@
     SvSelectMeshVerts
     SvSetCustomMeshNormals
     ---
-    SvCombinatoricsNode    
+    SvCombinatoricsNode
 
 ## Alpha Nodes
     SvBManalyzinNode

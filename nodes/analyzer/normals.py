@@ -26,6 +26,7 @@ from bpy.props import BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 
 def calc_mesh_normals(vertices, edges, faces):
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
@@ -36,10 +37,13 @@ def calc_mesh_normals(vertices, edges, faces):
     for face in bm.faces:
         face_normals.append(tuple(face.normal.normalized()))
     bm.free()
-    return vertex_normals, face_normals
+    return face_normals, vertex_normals
 
-class GetNormalsNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Calculate normals of faces and vertices '''
+class GetNormalsNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+    '''
+    Triggers: Face & Vertex Normals
+    Tooltip: Calculate normals of faces and vertices
+    '''
     bl_idname = 'GetNormalsNode'
     bl_label = 'Calculate normals'
     bl_icon = 'SNAP_NORMAL'
@@ -52,28 +56,32 @@ class GetNormalsNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', "FaceNormals")
         self.outputs.new('SvVerticesSocket', "VertexNormals")
 
-    def process(self):
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'list_match')
 
-        if not (self.outputs['VertexNormals'].is_linked or self.outputs['FaceNormals'].is_linked):
-            return
+    def rclick_menu(self, context, layout):
+        layout.prop_menu_enum(self, "list_match", text="List Match")
 
-        vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
-        edges_s = self.inputs['Edges'].sv_get(default=[[]])
-        faces_s = self.inputs['Polygons'].sv_get(default=[[]])
+    def pre_setup(self):
+        vs = self.inputs["Vertices"]
+        vs.is_mandatory = True
+        vs.nesting_level = 3
+        vs.default_mode = 'NONE'
 
-        result_vertex_normals = []
-        result_face_normals = []
+        eds = self.inputs["Edges"]
+        eds.nesting_level = 3
 
-        meshes = match_long_repeat([vertices_s, edges_s, faces_s])
-        for vertices, edges, faces in zip(*meshes):
-            vertex_normals, face_normals = calc_mesh_normals(vertices, edges, faces)
-            result_vertex_normals.append(vertex_normals)
-            result_face_normals.append(face_normals)
+        pols = self.inputs["Polygons"]
+        pols.nesting_level = 3
 
-        if self.outputs['FaceNormals'].is_linked:
-            self.outputs['FaceNormals'].sv_set(result_face_normals)
-        if self.outputs['VertexNormals'].is_linked:
-            self.outputs['VertexNormals'].sv_set(result_vertex_normals)
+    def process_data(self, params):
+        vertices, edges, faces = params
+        verts_normal, faces_normal = [], []
+        for v, e, p in zip(vertices, edges, faces):
+            f_nor, v_nor = calc_mesh_normals(v, e, p)
+            verts_normal.append(v_nor)
+            faces_normal.append(f_nor)
+        return faces_normal, verts_normal
 
 def register():
     bpy.utils.register_class(GetNormalsNode)
@@ -81,4 +89,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(GetNormalsNode)
-

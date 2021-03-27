@@ -131,15 +131,15 @@ class SV_PT_SverchokUtilsPanel(SverchokPanels, bpy.types.Panel):
     def draw(self, context):
         col = self.layout.column()
         col.operator('node.sv_show_latest_commits')
-
-        if context.scene.sv_new_version:
-            col_alert = self.layout.column()
-            col_alert.alert = True
-            col_alert.operator("node.sverchok_update_addon", text='Upgrade Sverchok addon')
-        else:
-            col.operator("node.sverchok_check_for_upgrades_wsha", text='Check for updates')
-
         with sv_preferences() as prefs:
+            if prefs.available_new_version:
+                col_alert = self.layout.column()
+                col_alert.alert = True
+                col_alert.operator("node.sverchok_update_addon", text='Upgrade Sverchok addon')
+            else:
+                col.operator("node.sverchok_check_for_upgrades_wsha", text='Check for updates')
+
+        # with sv_preferences() as prefs:
             if prefs.developer_mode:
                 col.operator("node.sv_run_pydoc")
 
@@ -319,7 +319,6 @@ def register():
         bpy.utils.register_class(class_name)
 
     bpy.types.Scene.ui_list_selected_tree = bpy.props.IntProperty()  # Pointer to selected item in list of trees
-    bpy.types.Scene.sv_new_version = bpy.props.BoolProperty(default=False)
 
     bpy.types.NODE_HT_header.append(node_show_tree_mode)
     bpy.types.VIEW3D_HT_header.append(view3d_show_live_mode)
@@ -327,7 +326,6 @@ def register():
 
 def unregister():
     del bpy.types.Scene.ui_list_selected_tree
-    del bpy.types.Scene.sv_new_version
 
     for class_name in reversed(sv_tools_classes):
         bpy.utils.unregister_class(class_name)
