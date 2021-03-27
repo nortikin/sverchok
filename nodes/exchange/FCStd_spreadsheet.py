@@ -83,7 +83,7 @@ else:
                 
                 if cell_out != None:
                     
-                    self.outputs['cell_out'].sv_set( [ [[cell_out]] ] )
+                    self.outputs['cell_out'].sv_set( [[cell_out]] )
 
             else:
                 self.outputs['cell_out'].sv_set( [ ] )
