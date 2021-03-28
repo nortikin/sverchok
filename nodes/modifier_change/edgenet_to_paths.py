@@ -196,10 +196,10 @@ class SvEdgenetToPathsNode(bpy.types.Node, SverchCustomTreeNode):
         self.draw_buttons_ext(context, layout)
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
-        self.inputs.new('SvStringsSocket', 'Egdes')
+        self.inputs.new('SvStringsSocket', 'Edges')
 
         self.outputs.new('SvVerticesSocket', 'Vertices')
-        self.outputs.new('SvStringsSocket', 'Egdes')
+        self.outputs.new('SvStringsSocket', 'Edges')
         self.outputs.new('SvStringsSocket', 'Vert Indexes')
         self.outputs.new('SvStringsSocket', 'Edge Indexes')
         self.outputs.new('SvStringsSocket', 'Cyclic')
@@ -208,8 +208,8 @@ class SvEdgenetToPathsNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not any(s.is_linked for s in self.outputs):
             return
-        verts = self.inputs['Vertices'].sv_get(deepcopy=False)
-        edges = self.inputs['Egdes'].sv_get(deepcopy=False)
+        verts = self.inputs[0].sv_get(deepcopy=False)
+        edges = self.inputs[1].sv_get(deepcopy=False)
         verts_out = []
         edge_out = []
         v_index_out = []
@@ -237,7 +237,7 @@ class SvEdgenetToPathsNode(bpy.types.Node, SverchCustomTreeNode):
             new_cyclic(cyclic)
 
         self.outputs['Vertices'].sv_set(verts_out)
-        self.outputs['Egdes'].sv_set(edge_out)
+        self.outputs['Edges'].sv_set(edge_out)
         self.outputs['Vert Indexes'].sv_set(v_index_out)
         self.outputs['Edge Indexes'].sv_set(e_index_out)
         self.outputs['Cyclic'].sv_set([cyclic_out] if self.join else cyclic_out)
