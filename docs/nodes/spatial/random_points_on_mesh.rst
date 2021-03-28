@@ -40,6 +40,22 @@ This node has the following parameters:
   **Face weight** input). If not checked, then the number of points on each
   face will be only defined by **Face weight** input. Checked by default.
 
+- **All Triangles**. Enable if the input mesh is made only of triangles
+  (makes node faster) (in N-Panel)
+
+- **Safe Check**. Disabling it will make node faster but polygon indices
+  referring to unexisting points will crash Blender. Only available in Volume Mode.
+  (in N-Panel)
+
+- **Implementation**. Offers two implementations:
+  * **Numpy**. Faster
+  * **Mathutils**. Old implementation. Slower.
+  Only available in Surface Mode (in N-Panel)
+
+- **Ouput Numpy**. Output NumPy arrays in stead of regular list (makes node faster)
+  Only available in Surface Mode (in N-Panel)
+
+
 Outputs
 -------
 
