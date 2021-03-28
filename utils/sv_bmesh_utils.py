@@ -155,7 +155,7 @@ def add_mesh_to_bmesh(bm, verts, edges=None, faces=None, sv_index_name=None, upd
 
 def numpy_data_from_bmesh(bm, out_np, face_data=None):
     if out_np[0]:
-        verts = np.array([v.co[:] for v in bm.verts])
+        verts = np.array([v.co for v in bm.verts])
     else:
         verts = [v.co[:] for v in bm.verts]
     if out_np[1]:
@@ -850,4 +850,3 @@ def recalc_normals(verts, edges, faces, loop=False):
         verts, edges, faces = pydata_from_bmesh(bm)
         bm.free()
         return verts, edges, faces
-
