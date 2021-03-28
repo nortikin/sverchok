@@ -236,8 +236,8 @@ class SvEdgenetToPathsNode(bpy.types.Node, SverchCustomTreeNode):
             new_e_index(ed_index)
             new_cyclic(cyclic)
 
-        self.outputs['Vertices'].sv_set(verts_out)
-        self.outputs['Edges'].sv_set(edge_out)
+        self.outputs[0].sv_set(verts_out)
+        self.outputs[1].sv_set(edge_out)
         self.outputs['Vert Indexes'].sv_set(v_index_out)
         self.outputs['Edge Indexes'].sv_set(e_index_out)
         self.outputs['Cyclic'].sv_set([cyclic_out] if self.join else cyclic_out)
