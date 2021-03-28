@@ -51,6 +51,7 @@ def find_all(text, chars):
             out.append(f)
             index=f+1
     return out
+
 def find_all_slice(text, chars, start, end):
     out =[]
     index=start
@@ -64,10 +65,14 @@ def find_all_slice(text, chars, start, end):
             index=f+1
     return out
 
+def number_to_string(data, precision):
+    return ("{:." + str(precision) + "f}").format(float(data))
+
 func_dict = {
     "---------------OPS" : "#---------------------------------------------------#",
     "to_string":  (0,   str,                                 ('t t'),    "To String"),
     "to_number":  (1,   eval,                                ('t s'),    "To Number"),
+    "num_to_str": (3,   number_to_string ,                   ('ss t'),    "Number To String", ('Precision',)),
     "join":       (5,   lambda x, y: ''.join([x,y]),         ('tt t'),   "Join"),
     "join_all":   (6,   join,                                ('tb t'),   "Join All",         ('Add Break Lines',)),
     "split":      (10,  split,                               ('tcs t'),  "Split",            ('Spliter', 'Max Split')),
