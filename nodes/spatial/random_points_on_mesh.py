@@ -16,7 +16,7 @@ from mathutils import Vector
 from mathutils.geometry import tessellate_polygon, area_tri
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, throttle_and_update_node
+from sverchok.data_structure import updateNode, throttle_and_update_node, numpy_full_list
 from sverchok.utils.bvh_tree import bvh_tree_from_polygons
 from sverchok.utils.geom import calc_bounds
 from sverchok.utils.sv_mesh_utils import point_inside_mesh
@@ -96,8 +96,75 @@ def node_process(inputs: InputData, properties: NodeProperties):
         if properties.implementation == 'NUMPY':
             return me.generate_random_points_np(inputs.number[0], inputs.seed[0], properties.out_np)
         return me.generate_random_points(inputs.number[0], inputs.seed[0])
+
+    elif properties.mode == 'VOLUME':
+        return populate_mesh(inputs.verts, inputs.faces,
+                             inputs.number[0], inputs.seed[0],
+                             properties.all_triangles, properties.safe_check)
+    else: # 'EDGES'
+        return random_points_on_edges(inputs.verts, inputs.faces, inputs.face_weight,
+                                      inputs.number[0], inputs.seed[0],
+                                      properties.proportional, properties.out_np)
+
+def verts_edges(verts, edges):
+    if isinstance(verts, np.ndarray):
+        np_verts = verts
     else:
-        return populate_mesh(inputs.verts, inputs.faces, inputs.number[0], inputs.seed[0], properties.all_triangles, properties.safe_check)
+        np_verts = np.array(verts)
+    if isinstance(edges, np.ndarray):
+        np_edges = edges
+    else:
+        np_edges = np.array(edges)
+
+    return np_verts[np_edges]
+
+def get_weights(edges_dir, input_weights, proportional):
+    if proportional:
+        edge_length = np.linalg.norm(edges_dir, axis=1)
+        if len(input_weights) > 0:
+            edges_weights = numpy_full_list(input_weights, len(edges_dir)) * edge_length
+            weights = edges_weights/np.sum(edges_weights)
+        else:
+            weights = edge_length/np.sum(edge_length)
+
+    else:
+        if len(input_weights) > 0:
+            edges_weights = numpy_full_list(input_weights, len(edges_dir))
+            weights = edges_weights/np.sum(edges_weights)
+        else:
+            weights = None
+
+    return weights
+
+def random_points_on_edges(verts: List[List[float]],
+                           edges: List[List[int]],
+                           input_weights: List[float],
+                           random_points_total: int,
+                           seed: int,
+                           proportional: bool,
+                           out_np: List[bool]):
+
+    v_edges = verts_edges(verts, edges)
+    edges_dir = v_edges[:, 1] - v_edges[:, 0]
+    weights = get_weights(edges_dir, input_weights, proportional)
+    np.random.seed(seed)
+
+    chosen_edges = np.random.choice(np.arange(len(edges)),
+                                    random_points_total,
+                                    replace=True,
+                                    p=weights)
+
+    edges_with_points, points_total_per_edge = np.unique(chosen_edges, return_counts=True)
+
+    t_s = np.random.uniform(low=0, high=1, size=random_points_total)
+    direc = np.repeat(edges_dir[edges_with_points], points_total_per_edge, axis=0)
+    orig = np.repeat(v_edges[edges_with_points, 0], points_total_per_edge, axis=0)
+
+    random_points = orig + direc * t_s[:, np.newaxis]
+
+    return (random_points if out_np[0] else random_points.tolist(),
+            chosen_edges if out_np[1] else chosen_edges.tolist())
+
 
 class TriangulatedMesh:
     def __init__(self, verts: List[List[float]], faces: List[List[int]], all_triangles: bool, implementation: str):
@@ -253,6 +320,12 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Random points on mesh'
     sv_icon = 'SV_RANDOM_NUM_GEN'
 
+    viewer_map = [
+        ("SvViewerDrawMk4", [60, 0])
+        ], [
+        ([0, 0], [1, 0])
+        ]
+
     points_number: bpy.props.IntProperty(
         name='Number',
         default=10,
@@ -271,10 +344,14 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
 
     @throttle_and_update_node
     def update_sockets(self, context):
-        self.outputs['Face index'].hide_safe = self.mode != 'SURFACE'
+        self.outputs['Face index'].hide_safe = self.mode == 'VOLUME'
+        self.outputs[1].label = 'Face index'  if self.mode == 'SURFACE' else 'Edge index'
+        self.inputs[1].label = 'Faces'  if self.mode == 'SURFACE' else 'Edges'
+        self.inputs[2].label = 'Faces Weight'  if self.mode == 'SURFACE' else 'Edges Weight'
 
     modes = [('SURFACE', "Surface", "Surface", 0),
-             ('VOLUME', "Volume", "Volume", 1)
+             ('VOLUME', "Volume", "Volume", 1),
+             ('EDGES', "Edges", "Edges", 2),
             ]
 
     mode: bpy.props.EnumProperty(
@@ -312,7 +389,7 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", text='')
-        if self.mode == 'SURFACE':
+        if self.mode != 'VOLUME':
             layout.prop(self, "proportional")
 
     def draw_buttons_ext(self, context, layout):
@@ -327,9 +404,16 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
                 r = b.row()
                 r.prop(self, "out_np", index=0, text='Verts', toggle=True)
                 r.prop(self, "out_np", index=1, text='Face index', toggle=True)
-        else:
+        elif self.mode == 'VOLUME':
             layout.prop(self, "all_triangles")
             layout.prop(self, "safe_check")
+        else:
+            layout.prop(self, "proportional")
+            b = layout.box()
+            b.label(text='Output Numpy')
+            r = b.row()
+            r.prop(self, "out_np", index=0, text='Verts', toggle=True)
+            r.prop(self, "out_np", index=1, text='Edge index', toggle=True)
 
     def rclick_menu(self, context, layout):
         layout.prop_menu_enum(self, "mode")
