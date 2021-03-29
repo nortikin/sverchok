@@ -125,13 +125,17 @@ def view_node(tree):
             ], [
             ([0, 0], [1, 0])
             ]
-            
+
     '''
     nodes = tree.nodes
     links = tree.links
     existing_node = nodes.active
     node_list = [existing_node]
     output_map = existing_node.viewer_map
+    
+    previous_state = tree.sv_process
+    tree.sv_process = False
+
     for node in output_map[0]:
         bl_idname_new_node, offset = node
         new_node = nodes.new(bl_idname_new_node)
@@ -143,6 +147,8 @@ def view_node(tree):
         output_s, input_s = link
         links.new(node_list[output_s[0]].outputs[output_s[1]],
                   node_list[input_s[0]].inputs[input_s[1]])
+    tree.sv_process = previous_state
+    tree.update()
 
 def add_connection(tree, bl_idname_new_node, offset):
 
@@ -244,9 +250,8 @@ class SvGenericDeligationOperator(bpy.types.Operator):
         tree = context.space_data.edit_tree
 
         if self.fn == 'vdmk2':
-            print('vmk2')
             conect_to_3d_viewer(tree)
-            # add_connection(tree, bl_idname_new_node="SvViewerDrawMk4", offset=[60, 0])
+
         elif self.fn == 'vdmk2 + idxv':
             add_connection(tree, bl_idname_new_node=["SvViewerDrawMk4", "IndexViewerNode"], offset=[180, 0])
         elif self.fn == '+idxv':
