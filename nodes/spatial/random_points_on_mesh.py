@@ -345,9 +345,10 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
     @throttle_and_update_node
     def update_sockets(self, context):
         self.outputs['Face index'].hide_safe = self.mode == 'VOLUME'
-        self.outputs[1].label = 'Face index'  if self.mode == 'SURFACE' else 'Edge index'
-        self.inputs[1].label = 'Faces'  if self.mode == 'SURFACE' else 'Edges'
-        self.inputs[2].label = 'Faces Weight'  if self.mode == 'SURFACE' else 'Edges Weight'
+        self.inputs['Face weight'].hide_safe = self.mode == 'VOLUME'
+        self.outputs[1].label = 'Edge index'  if self.mode == 'EDGES' else 'Face index'
+        self.inputs[1].label = 'Edges'  if self.mode == 'EDGES' else 'Faces'
+        self.inputs[2].label = 'Edge Weight'  if self.mode == 'EDGES' else 'Face Weight'
 
     modes = [('SURFACE', "Surface", "Surface", 0),
              ('VOLUME', "Volume", "Volume", 1),
@@ -425,7 +426,13 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
                 layout.label(text='Output Numpy')
                 layout.prop(self, "out_np", index=0, text='Verts')
                 layout.prop(self, "out_np", index=1, text='Face index')
-
+        elif self.mode == 'EDGES':
+            layout.prop(self, "proportional")
+            layout.label(text='Output Numpy')
+            layout.prop(self, "out_np", index=0, text='Verts')
+            layout.prop(self, "out_np", index=1, text='Edge index')
+        else:
+            layout.prop(self, "all_triangles")
 
     def sv_init(self, context):
         [self.inputs.new(p.socket_type, p.name) for p in INPUT_CONFIG]
