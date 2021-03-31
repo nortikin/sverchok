@@ -322,7 +322,7 @@ class UpdateNodes:
                 sys.stderr.write('ERROR: %s\n' % str(err))
             self.set_color()
 
-    def sv_new_input(self, socket_type, name, attrib_dict):
+    def sv_new_input(self, socket_type, name, **attrib_dict):
         socket = self.inputs.new(socket_type, name)
         for att in attrib_dict:
             setattr(socket, att, attrib_dict[att])

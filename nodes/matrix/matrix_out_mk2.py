@@ -85,7 +85,7 @@ class SvMatrixOutNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper, Sv
         items=mode_items, default="AXISANGLE", update=update_mode)
 
     def sv_init(self, context):
-        self.sv_new_input('SvMatrixSocket', "Matrix", dict(is_mandatory=True, nesting_level=2))
+        self.sv_new_input('SvMatrixSocket', "Matrix", is_mandatory=True, nesting_level=2)
         # translation and scale outputs
         self.outputs.new('SvVerticesSocket', "Location")
         self.outputs.new('SvVerticesSocket', "Scale")
@@ -140,7 +140,6 @@ class SvMatrixOutNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper, Sv
             elif self.mode == "AXISANGLE":
                 if outputs['Axis'].is_linked:
                     axis_list = [tuple(q.axis) for q in quaternion_list]
-
 
                 if outputs['Angle'].is_linked:
                     # conversion factor from radians to the current angle units
