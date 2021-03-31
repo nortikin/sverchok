@@ -184,7 +184,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_show_error_details : BoolProperty(
             name = "Show error details",
             description = "Display exception stack in the node view as well",
-            default = False, 
+            default = False,
             update=lambda s, c: process_tree(s),
             options=set())
 
@@ -321,6 +321,11 @@ class UpdateNodes:
                 print('nodetree.node.sv_init failure - stare at the error message below')
                 sys.stderr.write('ERROR: %s\n' % str(err))
             self.set_color()
+
+    def sv_new_input(self, socket_type, name, attrib_dict):
+        socket = self.inputs.new(socket_type, name)
+        for att in attrib_dict:
+            setattr(socket, att, attrib_dict[att])
 
     def free(self):
         """
@@ -603,7 +608,7 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
 
     def get_and_set_gl_scale_info(self, origin=None):  # todo, probably openGL viewers should have its own mixin class
         """
-        This function is called in sv_init in nodes that draw GL instructions to the nodeview, 
+        This function is called in sv_init in nodes that draw GL instructions to the nodeview,
         the nodeview scale and dpi differs between users and must be queried to get correct nodeview
         x,y and dpi scale info.
         """
