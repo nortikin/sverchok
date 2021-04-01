@@ -36,6 +36,7 @@ from sverchok.menu import (
 
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.extra_categories import get_extra_categories, extra_category_providers
+from sverchok.utils.context_managers import sv_preferences
 from sverchok.ui.sv_icons import node_icon, icon, get_icon_switch, custom_icon
 from sverchok.ui import presets
 import nodeitems_utils
@@ -81,7 +82,7 @@ menu_structure = [
     ["NODEVIEW_MT_AddViz", 'RESTRICT_VIEW_OFF'],
     ["NODEVIEW_MT_AddText", 'TEXT'],
     ["NODEVIEW_MT_AddScene", 'SCENE_DATA'],
-    ["NODEVIEW_MT_AddExchange", 'SCENE_DATA'],
+    ["NODEVIEW_MT_AddExchange", 'ARROW_LEFTRIGHT'],
     ["NODEVIEW_MT_AddLayout", 'NODETREE'],
     ["NODEVIEW_MT_AddBPYData", "BLENDER"],
     ["separator"],
@@ -190,30 +191,30 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
                 # print('AA', globals()[item[0]].bl_label)
                     layout.menu(item[0], **icon(item[1]))
 
-        extra_categories = get_extra_categories()
-        if extra_categories:
-            layout.separator()
-            for category in extra_categories:
-                layout.menu("NODEVIEW_MT_EX_" + category.identifier)
         if extra_category_providers:
             for provider in extra_category_providers:
                 if hasattr(provider, 'use_custom_menu') and provider.use_custom_menu:
                     layout.menu(provider.custom_menu)
+                else:
+                    for category in provider.get_categories():
+                        layout.menu("NODEVIEW_MT_EX_" + category.identifier)
 
-class NODEVIEW_MT_Solids_Special_Menu(bpy.types.Menu):
-    bl_label = "Solids"
-    @classmethod
-    def poll(cls, context):
-        tree_type = context.space_data.tree_type
-        if tree_type in sv_tree_types:
-            #menu_prefs['show_icons'] = get_icon_switch()
-            # print('showing', menu_prefs['show_icons'])
-            return True
+
+class NodePatialMenuTemplate(bpy.types.Menu):
+    bl_label = ""
+    items = []
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout_draw_categories(self.layout, self.bl_label, node_cats[self.bl_label])
+        for i in self.items:
+            item = menu_structure[i]
+            layout.menu(item[0], **icon(item[1]))
 
+# quick class factory.
+def make_partial_menu_class(name, bl_label, items):
+    name = f'NODEVIEW_MT_{name}_Partial_Menu'
+    clazz = type(name, (NodePatialMenuTemplate,), {'bl_label': bl_label, 'items':items})
+    return clazz
 
 class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
     bl_label = "Generator"
@@ -406,6 +407,14 @@ classes = [
     make_class('SVG', "SVG"),
     make_class('Betas', "Beta Nodes"),
     make_class('Alphas', "Alpha Nodes"),
+
+    # make | NODEVIEW_MT_ + class name +_Partial_Menu , menu name, menu items
+    make_partial_menu_class('Basic_Data', 'Basic Data Types (1)', range(12, 20)),
+    make_partial_menu_class('Mesh', 'Mesh (2)', [1, 7, 8, 9, 10]),
+    make_partial_menu_class('Advanced_Objects', 'Advanced Objects (3)', [2, 3, 4, 5, 6, 28, 30, 32, 33]),
+    make_partial_menu_class('Connection', 'Connection (4)', [21, 22, 23, 24, 26, 29, 31]),
+    make_partial_menu_class('UI_tools', 'SV Interface (5)', [25, 35, 36, 37])
+
 ]
 def sv_draw_menu(self, context):
 
