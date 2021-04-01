@@ -9,9 +9,9 @@ Export file with G-code discribing the generated shape
 Inputs
 ------
 
-**Layer Height** - List of coefficients for layer height    
-**Flow Mult** - List of coefficients for Print speed    
-**Vertices** - Main thing The Geometry (can be one or severat pathes)    
+**Layer Height** - List of coefficients for layer height        
+**Flow Mult** - List of coefficients for Print speed        
+**Vertices** - Main thing The Geometry (can be one or severat pathes)        
 
 Outputs
 -------
