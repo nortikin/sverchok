@@ -109,7 +109,7 @@ def get_rgb_curve(group_name, node_name):
 
 def set_rgb_curve(data_dict, curve_node_name):
     '''
-    stores RGB Curves data into json 
+    stores RGB Curves data into json
     '''
 
     group_name = data_dict['group_name']
@@ -130,3 +130,18 @@ def set_rgb_curve(data_dict, curve_node_name):
             curve.points[pidx].handle_type = handle_type
             curve.points[pidx].location = location
     node.mapping.update()
+
+def get_points_from_curve(group_name, node_name):
+    '''
+    get control points from curve
+    '''
+    node_groups = bpy.data.node_groups
+    group = node_groups.get(group_name)
+    node = group.nodes.get(node_name)
+
+    out_list = []
+
+    points = node.mapping.curves[-1].points
+    out_list.append([[p.location[0], p.location[1], 0] for p in points])
+
+    return out_list

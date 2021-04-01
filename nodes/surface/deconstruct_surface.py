@@ -71,9 +71,9 @@ class SvDeconstructSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         if hasattr(nurbs, 'get_weights'):
             weights = nurbs.get_weights()
             if self.split_points:
-                weights = weights.flatten().tolist()
-            else:
                 weights = weights.tolist()
+            else:
+                weights = weights.flatten().tolist()
         else:
             weights = []
 
@@ -160,4 +160,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvDeconstructSurfaceNode)
-

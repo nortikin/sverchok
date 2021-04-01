@@ -30,6 +30,12 @@ class MatrixOutNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MATRIX_OUT'
 
+    replacement_nodes = [('SvMatrixOutNodeMK2', None, dict(Rotation="Axis"))]
+
+    def rclick_menu(self, context, layout):
+        layout.prop(self, "flat_output", text="Flat Output", expand=False)
+        self.node_replacement_menu(context, layout)
+
     def sv_init(self, context):
         self.outputs.new('SvVerticesSocket', "Location")
         self.outputs.new('SvVerticesSocket', "Scale")

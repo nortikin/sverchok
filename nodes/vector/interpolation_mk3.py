@@ -22,19 +22,24 @@ import bpy
 from bpy.props import EnumProperty, FloatProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
+
 from sverchok.data_structure import updateNode, dataCorrect, repeat_last
 from sverchok.utils.geom import LinearSpline, CubicSpline
 
 
-def make_range(number):
+def make_range(number, end_point):
     if number in {0, 1, 2} or number < 0:
         return [0.0]
-    return np.linspace(0.0, 1.0, num=number, endpoint=True).tolist()
+    return np.linspace(0.0, 1.0, num=number, endpoint=end_point).tolist()
 
 
 
-class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
-    '''Advanced Vect. Interpolation'''
+class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+    """
+    Triggers: Interp. Vector List
+    Tooltip: Interpolate a list of vertices in a linear or cubic fashion
+    """
     bl_idname = 'SvInterpolationNodeMK3'
     bl_label = 'Vector Interpolation'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -44,9 +49,21 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Interval'].prop_name = 'int_in' if self.infer_from_integer_input else 't_in'
         self.process_node(context)
 
-    t_in: FloatProperty(name="t", default=.5, min=0, max=1, precision=5, update=updateNode)
-    int_in: IntProperty(name="int in", default=10, min=3, update=updateNode)
-    h: FloatProperty(default=.001, precision=5, update=updateNode)
+    t_in: FloatProperty(
+        name="t",
+        default=.5,
+        min=0, max=1,
+        precision=5,
+        update=updateNode)
+    int_in: IntProperty(
+        name="int in",
+        default=10,
+        min=3,
+        update=updateNode)
+    h: FloatProperty(
+        default=.001,
+        precision=5,
+        update=updateNode)
 
     modes = [('SPL', 'Cubic', "Cubic Spline", 0),
              ('LIN', 'Linear', "Linear Interpolation", 1)]
@@ -58,10 +75,30 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                   ('CHEBYSHEV', 'Chebyshev', "Chebyshev distance", 3)]
 
     knot_mode: EnumProperty(
-        name='Knot Mode', default="DISTANCE", items=knot_modes, update=updateNode)
+        name='Knot Mode',
+        default="DISTANCE",
+        items=knot_modes,
+        update=updateNode)
 
-    is_cyclic: BoolProperty(name="Cyclic", default=False, update=updateNode)
-    infer_from_integer_input: BoolProperty(name="IntRange", default=False, update=wrapped_updateNode)
+    is_cyclic: BoolProperty(
+        name="Cyclic",
+        default=False,
+        update=updateNode)
+
+    infer_from_integer_input: BoolProperty(
+        name="Int Range",
+        default=False,
+        update=wrapped_updateNode)
+
+    end_point: BoolProperty(
+        name="End Point",
+        default=True,
+        update=updateNode)
+
+    output_numpy: BoolProperty(
+        name='Output NumPy',
+        description='Output NumPy arrays',
+        default=False, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
@@ -74,70 +111,63 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'mode', expand=True)
         row = layout.row(align=True)
         row.prop(self, 'is_cyclic', toggle=True)
-        row.prop(self, 'infer_from_integer_input',toggle=True)
+        row.prop(self, 'infer_from_integer_input', toggle=True)
+        if self.infer_from_integer_input:
+            layout.prop(self, 'end_point')
 
+    def rclick_menu(self, context, layout):
+        layout.prop_menu_enum(self, "list_match", text="List Match")
 
     def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'list_match')
+        self.draw_buttons(context, layout)
         layout.prop(self, 'h')
         layout.prop(self, 'knot_mode')
+        layout.prop(self, 'output_numpy')
 
-    def process(self):
+    def pre_setup(self):
+        self.inputs['Vertices'].is_mandatory = True
+        if self.infer_from_integer_input:
+            self.inputs['Interval'].nesting_level = 1
+            self.inputs['Interval'].pre_processing = 'ONE_ITEM'
+        else:
+            self.inputs['Interval'].nesting_level = 2
+            self.inputs['Interval'].pre_processing = 'NONE'
 
-        if not any((s.is_linked for s in self.outputs)):
-            return
+    def process_data(self, params):
+        verts, t_ins = params
 
         calc_tanget = self.outputs['Tanget'].is_linked or self.outputs['Unit Tanget'].is_linked
         norm_tanget = self.outputs['Unit Tanget'].is_linked
-
         h = self.h
-
-        if self.inputs['Vertices'].is_linked:
-            verts = self.inputs['Vertices'].sv_get()
-            verts = dataCorrect(verts)
-            t_ins = self.inputs['Interval'].sv_get()
-
+        verts_out, tanget_out, norm_tanget_out = [], [], []
+        for v, t_in in zip(verts, t_ins):
             if self.infer_from_integer_input:
-                t_ins = [make_range(int(value)) for value in t_ins[0]]
-
-                if len(t_ins) > len(verts):
-                    new_verts = verts[:]
-                    for i in range(len(t_ins) - len(verts)):
-                        new_verts.append(verts[-1])
-                    verts = new_verts
-
-            verts_out = []
-            tanget_out = []
-            norm_tanget_out = []
-            for v, t_in in zip(verts, repeat_last(t_ins)):
-
+                t_corr = make_range(int(t_in), self.end_point)
+            else:
                 t_corr = np.array(t_in).clip(0, 1)
 
-                if self.mode == 'LIN':
-                    spline = LinearSpline(v, metric = self.knot_mode, is_cyclic = self.is_cyclic)
-                    out = spline.eval(t_corr)
-                    verts_out.append(out.tolist())
+            if self.mode == 'LIN':
+                spline = LinearSpline(v, metric=self.knot_mode, is_cyclic=self.is_cyclic)
+                out = spline.eval(t_corr)
+                verts_out.append(out if self.output_numpy else out.tolist())
 
-                    if calc_tanget:
-                        tanget_out.append(spline.tangent(t_corr).tolist())
+                if calc_tanget:
+                    tanget_out.append(spline.tangent(t_corr) if self.output_numpy else spline.tangent(t_corr).tolist())
 
-                else:  # SPL
-                    spline = CubicSpline(v, metric = self.knot_mode, is_cyclic = self.is_cyclic)
-                    out = spline.eval(t_corr)
-                    verts_out.append(out.tolist())
-                    if calc_tanget:
-                        tangent = spline.tangent(t_corr, h)
-                        if norm_tanget:
-                            norm = np.linalg.norm(tangent, axis=1)
-                            norm_tanget_out.append((tangent / norm[:, np.newaxis]).tolist())
-                        tanget_out.append(tangent.tolist())
+            else:  # SPL
+                spline = CubicSpline(v, metric=self.knot_mode, is_cyclic=self.is_cyclic)
+                out = spline.eval(t_corr)
+                verts_out.append(out if self.output_numpy else out.tolist())
+                if calc_tanget:
+                    tangent = spline.tangent(t_corr, h)
+                    if norm_tanget:
+                        norm = np.linalg.norm(tangent, axis=1)
+                        tangent_norm = tangent / norm[:, np.newaxis]
+                        norm_tanget_out.append(tangent_norm if self.output_numpy else tangent_norm.tolist())
+                    tanget_out.append(tangent if self.output_numpy else tangent.tolist())
 
-            outputs = self.outputs
-            if outputs['Vertices'].is_linked:
-                outputs['Vertices'].sv_set(verts_out)
-            if outputs['Tanget'].is_linked:
-                outputs['Tanget'].sv_set(tanget_out)
-            if outputs['Unit Tanget'].is_linked:
-                outputs['Unit Tanget'].sv_set(norm_tanget_out)
+        return verts_out, tanget_out, norm_tanget_out
 
 
 def register():

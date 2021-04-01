@@ -18,7 +18,10 @@ class SvIconProviderRecord(object):
         if self.provider_inited:
             return
         for icon_id, path in self.provider.get_icons():
-            custom_icons.load(icon_id, path, "IMAGE")
+            try:
+                custom_icons.load(icon_id, path, "IMAGE")
+            except KeyError:
+                pass
 
 _icon_providers = dict()
 

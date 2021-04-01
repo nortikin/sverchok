@@ -24,7 +24,7 @@ import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty, FloatVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, numpy_list_match_modes, iter_list_match_func
+from sverchok.data_structure import updateNode, numpy_list_match_modes, iter_list_match_func, list_match_func
 
 
 Directions = namedtuple('Directions', ['x', 'y', 'z', 'op', 'od'])
@@ -57,16 +57,18 @@ def make_line(numbers=None, steps=None, sizes=None, verts_or=None, verts_dir=Non
     :return: np.array of vertices, np.array of edges
     """
     line_number = max(len(numbers), len(sizes), len(steps), len(verts_or), len(verts_dir))
-    list_match_f = iter_list_match_func[list_match_mode]
+    list_match_f = list_match_func[list_match_mode]
     params = list_match_f([numbers, steps, sizes, verts_or, verts_dir])
+
     vert_number = sum([v_number if v_number > 1 else 2 for _, v_number in
                        zip(range(line_number), params[0])])
+
     verts_lines = np.empty((vert_number, 3))
     edges_lines = []
     num_added_verts = 0
     indexes = iter(range(int(1e+100)))
 
-    for i_line, n, st, size, vor, vdir in zip(range(line_number), *params):
+    for n, st, size, vor, vdir in zip(*params):
         vor, vdir = get_corner_points(dir_mode, center, vor, vdir, get_len_line(size_mode, n, size, st))
         line_verts = generate_verts(vor, vdir, n)
         edges_lines.extend([(i, i + 1) for i, _ in zip(indexes, line_verts[:-1])])
