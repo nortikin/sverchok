@@ -656,6 +656,7 @@
     SvImportSolidNode
     SvExportSolidNode
     SvReceiveFromSorcarNode
+    SvExportGcodeNode
 
 ## Script
     SvFormulaNodeMk5

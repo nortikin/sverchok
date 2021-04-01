@@ -10,3 +10,4 @@ Exchange
    bezier_in
    nurbs_in
    receive_from_sorcar
+   gcode_exporter
