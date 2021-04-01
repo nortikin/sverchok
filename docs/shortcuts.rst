@@ -8,6 +8,14 @@ This is a collection of shortcuts useful in the Sverchok node tree, some are Ble
 
 **Shift + A** - Add node menu
 
+**Numbers 1 to 5** - Partial add node menus
+
+  - 1: Basic Data Types: Number, Vector, Matrix, Color, List and Dictionary
+  - 2: Mesh: Generators, Transforms, Modifiers and CAD
+  - 3: Advanced Objects: Curve, Surface, Field, Spatial, Pulga Physics, Alpha and Beta
+  - 4: Connection: Viz, Text, Scene, Exchange, BPY Data, Network and SVG
+  - 5: Sv Interface: Layout, Monad, Group and Presets
+
 **Shift + S** - Add solids node menu (needs FreeCad)
 
 **Alt + Space** - Add node search menu
