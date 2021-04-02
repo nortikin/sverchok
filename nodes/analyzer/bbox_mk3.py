@@ -124,13 +124,13 @@ def bounding_box(verts,
                 max_vals[i].append([maxmin[i][0]])
                 size_vals[i].append([maxmin[i][0] - maxmin[i][1]])
 
-        return (verts_out,
-                edges_out,
-                mean_out,
-                mat_out,
-                *min_vals,
-                *max_vals,
-                *size_vals)
+    return (verts_out,
+            edges_out,
+            mean_out,
+            mat_out,
+            *min_vals,
+            *max_vals,
+            *size_vals)
 
 
 class SvBBoxNodeMk3(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
@@ -208,6 +208,7 @@ class SvBBoxNodeMk3(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     def process_data(self, params):
 
         verts = params[0]
+
         output_mat = self.outputs['Center'].is_linked
         output_mean = self.outputs['Mean'].is_linked
         output_verts = self.outputs['Vertices'].is_linked
