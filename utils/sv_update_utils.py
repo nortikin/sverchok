@@ -229,11 +229,12 @@ class SvPrintCommits(bpy.types.Operator):
 
         rewrite_date = lambda date: f'{date[:10]}' #  @ {date[11:16]}'
 
-        # some table printing for github markdown
-        print("author | commit details")
-        print("--- | ---")
+        # table boilerplate for github markdown
+        print("author | commit details\n--- | ---")
 
+        # intro message for Info printing
         messages = [f"The {self.num_commits} most recent commits to Sverchok (master)"]
+
         for i in range(self.num_commits):
             commit = json_obj[i]['commit']
             sha = os.path.basename(commit['url'])[:7]
