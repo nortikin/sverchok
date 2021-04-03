@@ -231,6 +231,7 @@ class SvPrintCommits(bpy.types.Operator):
         print("author | commit details")
         print("--- | ---")
 
+        messages = [f"The {self.num_commits} most recent commits to Sverchok (master)"]
         for i in range(self.num_commits):
             commit = json_obj[i]['commit']
             sha = os.path.basename(commit['url'])[:7]
@@ -241,7 +242,10 @@ class SvPrintCommits(bpy.types.Operator):
 
             message = f'{author} | {comment} sha: {sha}'
             print(message)
-            self.report({'INFO'}, message)
+            messages.append(message)
+
+        multiline_string_of_messages = "\n".join(messages)
+        self.report({'INFO'}, multiline_string_of_messages)
 
         return {'FINISHED'}
 
