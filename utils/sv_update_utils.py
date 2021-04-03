@@ -231,7 +231,6 @@ class SvPrintCommits(bpy.types.Operator):
         print("author | commit details")
         print("--- | ---")
 
-
         for i in range(self.num_commits):
             commit = json_obj[i]['commit']
             sha = os.path.basename(commit['url'])[:7]
