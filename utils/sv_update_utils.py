@@ -237,6 +237,7 @@ class SvPrintCommits(bpy.types.Operator):
             sha = os.path.basename(commit['url'])[:7]
 
             author = commit['author']['name']
+            ## date = commit['author']['date'] #  format : '2021-04-03T10:44:59Z'
             comments = commit['message'].split('\n')
             comment = comments[0] + '...' if len(comments) else ''
 
