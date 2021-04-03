@@ -6,15 +6,18 @@
 # License-Filename: LICENSE
 from bpy.props import EnumProperty
 from mathutils import Matrix
-from bpy.props import BoolProperty
+from bpy.props import BoolProperty, IntVectorProperty
 from sverchok.utils.sv_itertools import process_matched
 from sverchok.core.socket_data import sentinel
-from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, ensure_nesting_level, ensure_min_nesting
+from sverchok.data_structure import (updateNode,
+                                    list_match_func, numpy_list_match_modes,
+                                    ensure_nesting_level, ensure_min_nesting)
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 DEFAULT_TYPES = {
     'NONE': sentinel,
     'EMPTY_LIST': [[]],
-    'MATRIX': Matrix(),
+    'MATRIX': [Matrix()],
     'MASK': [[True]]
     }
 def one_item_list(data):
@@ -25,7 +28,14 @@ def one_item_list(data):
         return data
     return [d[0] for d in data]
 
+def create_bms(params):
+    if len(params) ==2:
+        if len(params[1][0]) ==2:
+            return bmesh_from_pydata(verts=params[0], edges=params[1])
 
+        return bmesh_from_pydata(verts=params[0], faces=params[1])
+
+    return bmesh_from_pydata(*params)
 class SvRecursiveNode():
     '''
     This mixin is used to vectorize any node.
@@ -77,14 +87,25 @@ class SvRecursiveNode():
         res1, res2 = awesome_func(param1)
         return res1, res2
 
-    this mixing also adds the list_match property to let the user choose among repeat_last, cycle and match short and so on
-
+    This mixing also adds the list_match property to let the user choose among repeat_last, cycle and match short and so on
     to add this property to the layout:
         def draw_buttons_ext(self, context, layout):
             layout.prop(self, 'list_match')
 
         def rclick_menu(self, context, layout):
             layout.prop_menu_enum(self, "list_match", text="List Match")
+
+    in case of needing to generate bmesh geometry you can
+
+        set self.build_bmesh = True
+        define base sockets indices (verts, edges and faces) or (verts, edg_pol) in self.bmesh_inputs
+
+        then process_data will recive a list with bmesh mesh as first item
+            def process_data(self, params)
+                bmesh_list, other_param1, other_param2 = params
+
+        creating the bmesh_list before matching improves performace a lot, but if
+        you are modifiying the bm in your function do it over a copy  -> bm.copy()
 
 
     '''
@@ -94,9 +115,29 @@ class SvRecursiveNode():
         items=numpy_list_match_modes, default="REPEAT",
         update=updateNode)
 
+    build_bmesh = False
+    bmesh_inputs = [0, 1, 2]
+
+    def update_params_to_bmesh(self, params, input_nesting):
+        bms = process_matched([p for i, p in enumerate(params) if i in self.bmesh_inputs],
+                              create_bms,
+                              self.list_match,
+                              [2 for n in self.bmesh_inputs],
+                              1)
+        params = [bms, *[p for i, p in enumerate(params) if i not in self.bmesh_inputs]]
+        input_nesting = [1, *[n for i, n in enumerate(input_nesting) if i not in self.bmesh_inputs]]
+        return params, input_nesting
+
+    def pre_setup(self):
+        '''
+        function to be overriden in the node in case something has to change
+        before getting input data
+        '''
+        # pass
+
     def process(self):
-        if hasattr(self, 'pre_setup'):
-            self.pre_setup()
+
+        self.pre_setup()
 
         if not all([s.is_linked for s in self.inputs if s.is_mandatory]):
             return
@@ -112,15 +153,14 @@ class SvRecursiveNode():
             if s.pre_processing == 'ONE_ITEM':
                 p = one_item_list(ensure_min_nesting(s.sv_get(deepcopy=False, default=default), 2))
             else:
-                if s.is_linked:
-                    p = ensure_min_nesting(s.sv_get(deepcopy=False, default=default), s.nesting_level)
-                else:
-                    p = s.sv_get(deepcopy=False, default=default)
-            # params.append(ensure_nesting_level(p, s.nesting_level))
+                p = ensure_min_nesting(s.sv_get(deepcopy=False, default=default), s.nesting_level)
+
             params.append(p)
 
-
         one_output = len(self.outputs) == 1
+
+        if self.build_bmesh:
+            params, input_nesting = self.update_params_to_bmesh(params, input_nesting)
 
         result = process_matched(params, self.process_data, self.list_match, input_nesting, len(self.outputs))
 

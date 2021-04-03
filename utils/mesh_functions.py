@@ -125,3 +125,15 @@ def repeat_meshes(meshes: Iterator[Mesh], number: int = -1) -> Iterator[Mesh]:
 
 def apply_matrix_to_vertices_py(vertices: List[Vertex], matrix: Matrix) -> List[Vertex]:
     return [(matrix @ Vector(v)).to_tuple() for v in vertices]
+
+def mesh_join(vertices: List[List[Vertex]],
+              edges: List[List[Edge]],
+              polygons: List[List[Polygon]]) -> Tuple[List[List[Vertex]],
+                                                      List[List[Edge]],
+                                                      List[List[Polygon]]]:
+    is_py_input = isinstance(vertices[0], (list, tuple))
+    meshes = (meshes_py if is_py_input else meshes_np)(vertices, edges, polygons)
+    meshes = join_meshes(meshes)
+    out_vertices, out_edges, out_polygons = to_elements(meshes)
+
+    return out_vertices, out_edges, out_polygons
