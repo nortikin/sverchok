@@ -16,17 +16,13 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from sverchok.data_structure import fullList_deep_copy
-from numpy import array, empty, concatenate, unique, sort, int32, ndarray, vectorize
-
+from itertools import chain
+from sverchok.data_structure import invert_index_list
+from numpy import (array, empty, concatenate, unique, sort, int32, vectorize,
+                   arange as np_arange,
+                   ndarray as np_ndarray)
 from mathutils import Vector
-try:
-    from mathutils.geometry import delaunay_2d_cdt
-except ImportError:
-    pass
 
-from sverchok.data_structure import fullList_deep_copy
-from sverchok.utils.geom import linear_approximation
 
 def mesh_join(vertices_s, edges_s, faces_s):
     '''Given list of meshes represented by lists of vertices, edges and faces,
@@ -138,17 +134,227 @@ def mask_vertices(verts, edges, faces, verts_mask):
                         for face in faces if index_set.issuperset(face)]
 
         return new_verts, new_edges, new_faces
-    else:
-        return verts, edges, faces
+
+    return verts, edges, faces
 
 def get_unique_faces(faces):
-    uniq_faces = []
-    for face in faces:
-        if set(face) in [set(f) for f in uniq_faces]:
-            print(face)
+    return get_unique_topology(faces)[0]
+
+def get_unique_topology(edg_pol):
+    '''
+    Removes doubled items
+    edg_pol: list of edges or polygons List[List[Int]]
+    returns Tuple (List of unique items, Boolean List with preserved items marked as True)
+    '''
+    uniq_edg_pols = []
+    unique_sets = []
+    preseved_mask = []
+    for e_p in edg_pol:
+        e_p_set = set(e_p)
+        if not e_p_set in unique_sets:
+            uniq_edg_pols.append(e_p)
+            unique_sets.append(e_p_set)
+            preseved_mask.append(True)
         else:
-            uniq_faces.append(face)
-    return uniq_faces
+            preseved_mask.append(False)
+    return uniq_edg_pols, preseved_mask
+
+def remove_unreferenced_verts(verts, edges, faces):
+    '''
+    Removes unreferenced vertices
+    verts: list of vertices List[List[float]]
+    edges: list of edges List[List[Int]]
+    faces: list of polygons List[List[Int]]
+    returns Tuple (List used verts,
+                   List with updated edges,
+                   List with updated polyogn
+                   List with removed items marked as True)
+    '''
+    e_indx = set(chain.from_iterable(edges))
+    f_indx = set(chain.from_iterable(faces))
+    indx = set.union(e_indx, f_indx)
+    verts_out = [v for i, v in enumerate(verts) if i in indx]
+
+    v_index = {j: i for i, j in enumerate(sorted(indx))}
+    edges_out = [list(map(lambda n: v_index[n], e)) for e in edges]
+    faces_out = [list(map(lambda n: v_index[n], f)) for f in faces]
+    return verts_out, edges_out, faces_out, list(set(range(len(verts)))-indx)
+
+def remove_unreferenced_topology(edge_pol, verts_length):
+    '''
+    Removes elements that point to unexisitng vertices
+    edg_pol: list of edges or polygons - List[List[Int]]
+    returns Tuple (referenced items - List[List[Int]],
+                   Boolean List with preserved items marked as True - List[bool])
+    '''
+    edge_pol_out = []
+    preseved_mask = []
+    for ep in edge_pol:
+        if all([c < verts_length for c in ep]):
+            edge_pol_out.append(ep)
+            preseved_mask.append(True)
+        else:
+            preseved_mask.append(False)
+    return edge_pol_out, preseved_mask
+
+def non_coincident_edges(edges):
+    '''
+    Removes edges with repeated indices
+    edges: list of edges - List[List[Int]] or Numpy array with shape (n,2)
+    returns Tuple (valid edges - List[List[Int]] or similar Numpy array,
+                   Boolean List with preserved items marked as True - List[bool] or similar numpy array)
+    '''
+
+    if isinstance(edges, np_ndarray):
+        preseved_mask = edges[:, 0] != edges[:, 1]
+        edges_out = edges[preseved_mask]
+    else:
+        edges_out = []
+        preseved_mask = []
+        for e in edges:
+            if e[0] == e[1]:
+                preseved_mask.append(False)
+            else:
+                edges_out.append(e)
+                preseved_mask.append(True)
+    return edges_out, preseved_mask
+
+def non_redundant_faces_indices(faces):
+    '''
+    Removes repeated indices from faces and removes faces with less than three indices
+    faces: list of faces - List[List[Int]]
+    returns Tuple (valid faces - List[List[Int]],
+                   Boolean List with preserved items marked as True - List[bool])
+    '''
+    faces_out = []
+    preseved_mask = []
+    for f in faces:
+        new_face = []
+        for idx, c in enumerate(f):
+            if c != f[idx-1]:
+                new_face.append(c)
+        if len(new_face) > 2:
+            faces_out.append(new_face)
+            preseved_mask.append(True)
+        else:
+            preseved_mask.append(False)
+
+    return faces_out, preseved_mask
+
+def clean_meshes(vertices, edges, faces,
+                 remove_unreferenced_edges=False,
+                 remove_unreferenced_faces=False,
+                 remove_duplicated_edges=False,
+                 remove_duplicated_faces=False,
+                 remove_degenerated_edges=False,
+                 remove_degenerated_faces=False,
+                 remove_loose_verts=False,
+                 calc_verts_idx=False,
+                 calc_edges_idx=False,
+                 calc_faces_idx=False):
+    '''
+    Cleans a group of meshes using different routines.
+    Returs Clened meshes and removed items indexes
+    '''
+    verts_out, edges_out, faces_out = [], [], []
+    verts_removed_out, edges_removed_out, faces_removed_out = [], [], []
+
+    for verts_original, edges_original, faces_original in zip(vertices, edges, faces):
+        verts_changed, edges_changed, faces_changed = False, False, False
+
+        preserved_edges_idx = []
+        preserved_faces_idx = []
+        if remove_unreferenced_edges:
+            edges, preserved_edges_mask = remove_unreferenced_topology(edges_original, len(verts_original))
+            preserved_edges_idx = np_arange(len(edges_original))[preserved_edges_mask]
+            edges_changed = True
+
+        if remove_unreferenced_faces:
+            faces, preserved_faces_mask = remove_unreferenced_topology(faces_original, len(verts_original))
+            preserved_faces_idx = np_arange(len(faces_original))[preserved_faces_mask]
+            faces_changed = True
+
+        if remove_duplicated_edges:
+            if edges_changed:
+                edges, unique_edges_mask = get_unique_topology(edges)
+                preserved_edges_idx = preserved_edges_idx[unique_edges_mask]
+            else:
+                edges, unique_edges_mask = get_unique_topology(edges_original)
+                preserved_edges_idx = np_arange(len(edges_original))[unique_edges_mask]
+            edges_changed = True
+
+        if remove_duplicated_faces:
+            if faces_changed:
+                faces, unique_faces_mask = get_unique_topology(faces)
+                preserved_faces_idx = preserved_faces_idx[unique_faces_mask]
+            else:
+                faces, unique_faces_mask = get_unique_topology(faces_original)
+                preserved_faces_idx = np_arange(len(faces_original))[unique_faces_mask]
+            faces_changed = True
+
+        if remove_degenerated_edges:
+            if edges_changed:
+                edges, non_coincident_mask = non_coincident_edges(edges)
+                preserved_edges_idx = preserved_edges_idx[non_coincident_mask]
+            else:
+                edges, non_coincident_mask = non_coincident_edges(edges_original)
+                preserved_edges_idx = np_arange(len(edges_original))[non_coincident_mask]
+            edges_changed = True
+        if remove_degenerated_faces:
+            if faces_changed:
+                faces, non_redundant_mask = non_redundant_faces_indices(faces)
+                preserved_faces_idx = preserved_faces_idx[non_redundant_mask]
+            else:
+                faces, non_redundant_mask = non_redundant_faces_indices(faces_original)
+                preserved_faces_idx = np_arange(len(faces_original))[non_redundant_mask]
+            faces_changed = True
+
+        if remove_loose_verts:
+            verts, edges, faces, removed_verts_idx = remove_unreferenced_verts(
+                verts_original,
+                edges if edges_changed else edges_original,
+                faces if faces_changed else faces_original)
+            verts_changed = True
+            edges_changed = True
+            faces_changed = True
+
+
+        if verts_changed:
+            verts_out.append(verts)
+            if calc_verts_idx:
+                verts_removed_out.append(removed_verts_idx)
+            else:
+                verts_removed_out.append([])
+
+        else:
+            verts_out.append(verts_original)
+            verts_removed_out.append([])
+
+        if edges_changed:
+            edges_out.append(edges)
+            if calc_edges_idx and len(preserved_edges_idx) > 0:
+                edges_removed_out.append(invert_index_list(preserved_edges_idx, len(edges_original)).tolist())
+
+            else:
+                edges_removed_out.append([])
+
+        else:
+            edges_out.append(edges_original)
+            edges_removed_out.append([])
+
+        if faces_changed:
+            faces_out.append(faces)
+            if calc_faces_idx and len(preserved_faces_idx) > 0:
+                faces_removed_out.append(invert_index_list(preserved_faces_idx, len(faces_original)).tolist())
+
+            else:
+                faces_removed_out.append([])
+
+        else:
+            faces_out.append(faces_original)
+            faces_removed_out.append([])
+
+    return verts_out, edges_out, faces_out, verts_removed_out, edges_removed_out, faces_removed_out
 
 def point_inside_mesh(bvh, point):
     point = Vector(point)
@@ -164,4 +370,3 @@ def point_inside_mesh(bvh, point):
     if count % 2 == 0:
         outside = True
     return not outside
-

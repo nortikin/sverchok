@@ -359,6 +359,7 @@
 ## Modifier Change
     SvDeleteLooseNode
     SvMergeByDistanceNode
+    SvMeshCleanNode
     SvSeparateMeshNode
     SvSeparatePartsToIndexes
     SvEdgenetToPathsNode

@@ -29,6 +29,8 @@ from numpy import (
     array as np_array,
     newaxis as np_newaxis,
     ndarray,
+    ones as np_ones,
+    arange as np_arange,
     repeat as np_repeat,
     concatenate as np_concatenate,
     tile as np_tile,
@@ -813,6 +815,17 @@ def apply_mask(mask, lst):
         else:
             bad.append(item)
     return good, bad
+
+def invert_index_list(indexes, length):
+    '''
+    Inverts indexes list
+    indexes: List[Int] of Ndarray flat numpy array
+    length: Int. Length of the base list
+    '''
+    mask = np_ones(length, dtype='bool')
+    mask[indexes] = False
+    inverted_indexes = np_arange(length)[mask]
+    return inverted_indexes
 
 def rotate_list(l, y=1):
     """
