@@ -29,7 +29,7 @@ class SvExtrudeEdgesNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNod
     Tooltip: Extrude some edges of the mesh
     '''
     bl_idname = 'SvExtrudeEdgesNodeMk2'
-    bl_label = 'Extrude Edges Mk2'
+    bl_label = 'Extrude Edges'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_EXTRUDE_EDGES'
     implentation_items = [
