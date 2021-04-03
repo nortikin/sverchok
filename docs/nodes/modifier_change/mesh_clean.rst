@@ -9,20 +9,25 @@ Cleans input mesh by removing doubled, unreferenced or bad formed elements.
 Options
 -------
 
-**Unreferenced Edges**: Remove the edges that point to un-existing vertices.
-
-**Unreferenced Faces**: Remove the faces that point to un-existing vertices.
-
-**Duplicated Edges**: Remove duplicated edges. Note that edges as (0,1) and (1,0) will be considered identical.
-
-**Duplicated Faces**: Remove duplicated faces. Note that faces as (0,1,2,3) and (1,0,3,2) will be considered identical.
-
-**Degenerated Edges**: Check for edges with repeated indices and remove them.
-
-**Degenerated Faces**: Check for repeated indices on every face and remove them, if it has less than 3 vertices then the face will be removed
-
-**Unused Vertices**: Removes the vertices not used to create any edge or face.
-
++---------------------+-------------------------------------------------------------------------------------------------------------------------+
+| option              | explanation                                                                                                             |
++---------------------+-------------------------------------------------------------------------------------------------------------------------+
+| Unreferenced Edges  | Remove the edges that point to un-existing vertices.                                                                    |
++---------------------+-------------------------------------------------------------------------------------------------------------------------+
+| Unreferenced Edges  | Remove the edges that point to un-existing vertices.                                                                    |
++---------------------+-------------------------------------------------------------------------------------------------------------------------+
+| Unreferenced Faces  | Remove the faces that point to un-existing vertices.                                                                    |
++---------------------+-------------------------------------------------------------------------------------------------------------------------+
+| Duplicated Edges    | Remove duplicated edges. Note that edges as ``(0,1)`` and ``(1,0)`` will be considered identical.                       |
++---------------------+-------------------------------------------------------------------------------------------------------------------------+
+| Duplicated Faces    | Remove duplicated faces. Note that faces as ``(0,1,2,3)`` and ``(1,0,3,2)`` will be considered identical.               |
++---------------------+-------------------------------------------------------------------------------------------------------------------------+
+| Degenerated Edges   | Check for edges with repeated indices and remove them.                                                                  |
++---------------------+-------------------------------------------------------------------------------------------------------------------------+
+| Degenerated Faces   | Check for repeated indices on every face and remove them, if it has less than 3 vertices then the face will be removed  |
++---------------------+-------------------------------------------------------------------------------------------------------------------------+
+| Unused Vertices     | Removes the vertices not used to create any edge or face.                                                               |
++---------------------+-------------------------------------------------------------------------------------------------------------------------+
 
 Inputs
 ------
