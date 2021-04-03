@@ -221,27 +221,28 @@ class SvPrintCommits(bpy.types.Operator):
     bl_idname = "node.sv_show_latest_commits"
     bl_label = "Show latest commits"
     commits_link: bpy.props.StringProperty(default=COMMITS_LINK)
+    num_commits: bpy.props.IntProperty(default=30)
 
     def execute(self, context):
         r = requests.get(self.commits_link)
         json_obj = r.json()
-        for i in range(5):
+
+        # some table printing for github markdown
+        print("author | commit details")
+        print("--- | ---")
+
+
+        for i in range(self.num_commits):
             commit = json_obj[i]['commit']
-            comment = commit['message'].split('\n')
+            sha = os.path.basename(commit['url'])[:7]
 
-            # display on report window
-            message_dict = {
-                'sha': os.path.basename(json_obj[i]['commit']['url'])[:7],
-                'user': commit['committer']['name'],
-                'comment': comment[0] + '...' if len(comment) else ''
-            }
+            author = commit['author']['name']
+            comments = commit['message'].split('\n')
+            comment = comments[0] + '...' if len(comments) else ''
 
-            self.report({'INFO'}, '{sha} : by {user}  :  {comment}'.format(**message_dict))
-
-            # display on terminal
-            print('{sha} : by {user}'.format(**message_dict))
-            for line in comment:
-                print('    ' + line)
+            message = f'{author} | {comment} sha: {sha}'
+            print(message)
+            self.report({'INFO'}, message)
 
         return {'FINISHED'}
 
