@@ -29,13 +29,18 @@ def one_item_list(data):
     return [d[0] for d in data]
 
 def create_bms(params):
-    if len(params) ==2:
-        if len(params[1][0]) ==2:
-            return bmesh_from_pydata(verts=params[0], edges=params[1])
+    bmesh_list = []
+    for p in zip(*params):
+        if len(params) == 2:
+            if len(p[1][0]) == 2:
+                bmesh_list.append(bmesh_from_pydata(verts=p[0], edges=p[1]))
 
-        return bmesh_from_pydata(verts=params[0], faces=params[1])
+            else:
+                bmesh_list.append(bmesh_from_pydata(verts=p[0], faces=p[1]))
+        else:
 
-    return bmesh_from_pydata(*params)
+            bmesh_list.append(bmesh_from_pydata(*p))
+    return bmesh_list
 class SvRecursiveNode():
     '''
     This mixin is used to vectorize any node.
@@ -122,7 +127,7 @@ class SvRecursiveNode():
         bms = process_matched([p for i, p in enumerate(params) if i in self.bmesh_inputs],
                               create_bms,
                               self.list_match,
-                              [2 for n in self.bmesh_inputs],
+                              [3 for n in self.bmesh_inputs],
                               1)
         params = [bms, *[p for i, p in enumerate(params) if i not in self.bmesh_inputs]]
         input_nesting = [1, *[n for i, n in enumerate(input_nesting) if i not in self.bmesh_inputs]]

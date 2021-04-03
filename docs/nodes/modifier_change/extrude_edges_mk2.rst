@@ -26,7 +26,8 @@ This node has the following inputs:
 Parameters
 ----------
 
-This node does not have parameters.
+Implementation: (in N-panel) Offers Numpy (Faster) and Bmesh (Legacy. Slower)
+List Match: (in N-panel) Chose how list length should be matched
 
 Outputs
 -------
@@ -68,4 +69,3 @@ Extrude only top edges of the cube:
 Extrude only boundary edges of the plane; this also is an example of FaceData socket usage:
 
 .. image:: https://user-images.githubusercontent.com/284644/71553528-ca5c4f00-2a32-11ea-95c4-80c1d85129f1.png
-
