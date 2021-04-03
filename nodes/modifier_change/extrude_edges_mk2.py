@@ -16,20 +16,14 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from mathutils import Matrix, Vector
-
 import bpy
-from bpy.props import IntProperty, FloatProperty
-import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, bmesh_edges_from_edge_mask
+from sverchok.data_structure import updateNode
+from sverchok.utils.mesh.extrude_edges import extrude_edges, extrude_edges_bmesh
+from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 
-def is_matrix(lst):
-    return len(lst) == 4 and len(lst[0]) == 4
-
-class SvExtrudeEdgesNodeMk2(bpy.types.Node, SverchCustomTreeNode):
+class SvExtrudeEdgesNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     '''
     Triggers: Extrude edges
     Tooltip: Extrude some edges of the mesh
@@ -38,6 +32,18 @@ class SvExtrudeEdgesNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Extrude Edges Mk2'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_EXTRUDE_EDGES'
+    implentation_items = [
+        ('BMESH', 'Bmesh', 'Slower (Legacy. Face data is not transfered identically)', 0),
+        ('NUMPY', 'Numpy', 'Faster', 1)]
+    implentation: bpy.props.EnumProperty(
+        name='Implementation',
+        items=implentation_items,
+        default='NUMPY',
+        update=updateNode
+    )
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'implentation')
+        layout.prop(self, 'list_match')
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
@@ -55,83 +61,24 @@ class SvExtrudeEdgesNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'NewFaces')
         self.outputs.new('SvStringsSocket', 'FaceData')
 
-    def process(self):
-        if not (self.inputs['Vertices'].is_linked):
-            return
+    def pre_setup(self):
+        self.inputs[0].is_mandatory = True
+        self.inputs[1].nesting_level = 3
+        self.inputs[2].nesting_level = 3
+        self.inputs[5].nesting_level = 2
+        self.inputs[5].default_mode = 'MATRIX'
 
-        if not any(output.is_linked for output in self.outputs):
-            return
+    def process_data(self, params):
 
-        vertices_s = self.inputs['Vertices'].sv_get()
-        edges_s = self.inputs['Edges'].sv_get(default=[[]])
-        faces_s = self.inputs['Faces'].sv_get(default=[[]])
-        matrices_s = self.inputs['Matrices'].sv_get(default=[[]])
-        if is_matrix(matrices_s[0]):
-            matrices_s = [Matrix_generate(matrices_s)]
-        else:
-            matrices_s = [Matrix_generate(matrices) for matrices in matrices_s]
-        edge_masks_s = self.inputs['EdgeMask'].sv_get(default=[[]])
-        face_data_s = self.inputs['FaceData'].sv_get(default=[[]])
+        output_data = [[] for s in self.outputs]
+        extrude = extrude_edges if self.implentation == 'NUMPY' else extrude_edges_bmesh
+        for vertices, edges, faces, edge_mask, face_data, matrices in zip(*params):
+            res = extrude(vertices, edges, faces, edge_mask, face_data, matrices)
+            for o, r in zip(output_data, res):
+                o.append(r)
 
-        result_vertices = []
-        result_edges = []
-        result_faces = []
-        result_face_data = []
-        result_ext_vertices = []
-        result_ext_edges = []
-        result_ext_faces = []
+        return output_data
 
-        meshes = match_long_repeat([vertices_s, edges_s, faces_s, edge_masks_s, face_data_s, matrices_s])
-
-        for vertices, edges, faces, edge_mask, face_data, matrices in zip(*meshes):
-            if not matrices:
-                matrices = [Matrix()]
-            if face_data:
-                face_data_matched = repeat_last_for_length(face_data, len(faces))
-
-            bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True, markup_edge_data=True)
-            if edge_mask:
-                b_edges = bmesh_edges_from_edge_mask(bm, edge_mask)
-            else:
-                b_edges = bm.edges
-
-            new_geom = bmesh.ops.extrude_edge_only(bm, edges=b_edges, use_select_history=False)['geom']
-
-            extruded_verts = [v for v in new_geom if isinstance(v, bmesh.types.BMVert)]
-
-            for vertex, matrix in zip(*match_long_repeat([extruded_verts, matrices])):
-                bmesh.ops.transform(bm, verts=[vertex], matrix=matrix, space=Matrix())
-
-            extruded_verts = [tuple(v.co) for v in extruded_verts]
-
-            extruded_edges = [e for e in new_geom if isinstance(e, bmesh.types.BMEdge)]
-            extruded_edges = [tuple(v.index for v in edge.verts) for edge in extruded_edges]
-
-            extruded_faces = [f for f in new_geom if isinstance(f, bmesh.types.BMFace)]
-            extruded_faces = [[v.index for v in edge.verts] for edge in extruded_faces]
-
-            if face_data:
-                new_vertices, new_edges, new_faces, new_face_data = pydata_from_bmesh(bm, face_data_matched)
-            else:
-                new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
-                new_face_data = []
-            bm.free()
-
-            result_vertices.append(new_vertices)
-            result_edges.append(new_edges)
-            result_faces.append(new_faces)
-            result_face_data.append(new_face_data)
-            result_ext_vertices.append(extruded_verts)
-            result_ext_edges.append(extruded_edges)
-            result_ext_faces.append(extruded_faces)
-
-        self.outputs['Vertices'].sv_set(result_vertices)
-        self.outputs['Edges'].sv_set(result_edges)
-        self.outputs['Faces'].sv_set(result_faces)
-        self.outputs['FaceData'].sv_set(result_face_data)
-        self.outputs['NewVertices'].sv_set(result_ext_vertices)
-        self.outputs['NewEdges'].sv_set(result_ext_edges)
-        self.outputs['NewFaces'].sv_set(result_ext_faces)
 
 
 def register():
