@@ -227,6 +227,8 @@ class SvPrintCommits(bpy.types.Operator):
         r = requests.get(self.commits_link)
         json_obj = r.json()
 
+        rewrite_date = lambda date: f'{date[:10]}' #  @ {date[11:16]}'
+
         # some table printing for github markdown
         print("author | commit details")
         print("--- | ---")
@@ -237,11 +239,11 @@ class SvPrintCommits(bpy.types.Operator):
             sha = os.path.basename(commit['url'])[:7]
 
             author = commit['author']['name']
-            ## date = commit['author']['date'] #  format : '2021-04-03T10:44:59Z'
+            date = commit['author']['date'] #  format : '2021-04-03T10:44:59Z'
             comments = commit['message'].split('\n')
             comment = comments[0] + '...' if len(comments) else ''
 
-            message = f'{author} | {comment} sha: {sha}'
+            message = f'{author} | {comment} {sha} on {rewrite_date(date)}'
             print(message)
             messages.append(message)
 
