@@ -31,7 +31,8 @@ from sverchok.utils.sv_manual_curves_utils import (
     get_valid_node,
     CURVE_NODE_TYPE,
     set_rgb_curve,
-    get_rgb_curve)
+    get_rgb_curve,
+    get_points_from_curve)
 
 from sverchok.utils.curve import SvScalarFunctionCurve
 
@@ -71,6 +72,7 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         self.outputs.new('SvStringsSocket', "Value")
         self.outputs.new('SvCurveSocket', "Curve")
+        self.outputs.new('SvVerticesSocket', "Control Points")
         _ = get_evaluator(node_group_name, self._get_curve_node_name())
 
 
@@ -111,6 +113,9 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             curve = SvScalarFunctionCurve(evaluate)
             curve.u_bounds = (curve_node.mapping.clip_min_x, curve_node.mapping.clip_max_x)
             self.outputs['Curve'].sv_set([curve])
+        if 'Control Points' in self.outputs:
+            points = get_points_from_curve(node_group_name, curve_node_name)
+            self.outputs['Control Points'].sv_set(points)
 
         # no outputs, end early.
         if not outputs['Value'].is_linked:
@@ -138,8 +143,8 @@ class SvCurveMapperNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         node_data['curve_data'] = data_json_str
 
     def sv_copy(self, other):
-        ''' 
-        self: is the new node, other: is the old node 
+        '''
+        self: is the new node, other: is the old node
         by the time this function is called the new node has a new empty n_id
         a new n_id will be generated as a side effect of _get_curve_node_name
         '''

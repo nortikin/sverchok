@@ -21,6 +21,7 @@ from bpy.props import EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_transform_helper import AngleUnits, SvAngleHelper
+from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 from mathutils import Matrix
 
 
@@ -37,7 +38,7 @@ output_sockets = {
 }
 
 
-class SvMatrixOutNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
+class SvMatrixOutNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper, SvRecursiveNode):
     """
     Triggers: Matrix, Out
     Tooltip: Convert a matrix into its location, scale & rotation components
@@ -46,6 +47,11 @@ class SvMatrixOutNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     bl_label = 'Matrix Out'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MATRIX_OUT'
+
+    flat_output: bpy.props.BoolProperty(
+        name="Flat Quaternions output",
+        description="Flatten Quaternions output by list-joining level 1",
+        default=True, update=updateNode)
 
     def migrate_from(self, old_node):
         ''' Migration from old nodes (attributes mapping) '''
@@ -79,7 +85,7 @@ class SvMatrixOutNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         items=mode_items, default="AXISANGLE", update=update_mode)
 
     def sv_init(self, context):
-        self.inputs.new('SvMatrixSocket', "Matrix")
+        self.sv_new_input('SvMatrixSocket', "Matrix", is_mandatory=True, nesting_level=2)
         # translation and scale outputs
         self.outputs.new('SvVerticesSocket', "Location")
         self.outputs.new('SvVerticesSocket', "Scale")
@@ -104,48 +110,53 @@ class SvMatrixOutNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     def draw_buttons_ext(self, context, layout):
         if self.mode in {"EULER", "AXISANGLE"}:
             self.draw_angle_units_buttons(context, layout)
+        elif self.mode == 'QUATERNION':
+            layout.prop(self, 'flat_output')
 
-    def process(self):
+    def process_data(self, params):
+        input_M = params[0]
         outputs = self.outputs
-        if not any(s.is_linked for s in outputs):
-            return
-
-        input_M = self.inputs['Matrix'].sv_get()
-
         # decompose matrices into: Translation, Rotation (quaternion) and Scale
-        location_list = []
-        quaternion_list = [] # rotations (as quaternions)
-        scale_list = []
-        for m in input_M:
-            T, R, S = m.decompose()
-            location_list.append(list(T))
-            quaternion_list.append(R)
-            scale_list.append(list(S))
+        result = []
+        for mat_list in input_M:
+            location_list = []
+            quaternion_list = [] # rotations (as quaternions)
+            scale_list = []
+            angles = [[], [], []]
+            axis_list, angle_list = [], []
+            for m in mat_list:
+                T, R, S = m.decompose()
+                location_list.append(list(T))
+                quaternion_list.append(R)
+                scale_list.append(list(S))
 
-        outputs["Location"].sv_set(location_list)
-        outputs["Scale"].sv_set(scale_list)
-
-        if self.mode == "QUATERNION":
-            self.outputs['Quaternion'].sv_set(quaternion_list)
-
-        elif self.mode == "EULER":
-            # conversion factor from radians to the current angle units
-            au = self.angle_conversion_factor(AngleUnits.RADIANS, self.angle_units)
-            for i, name in enumerate("XYZ"):
-                if outputs["Angle " + name].is_linked:
-                    angles = [q.to_euler(self.euler_order)[i] * au for q in quaternion_list]
-                    outputs["Angle " + name].sv_set([angles])
-
-        elif self.mode == "AXISANGLE":
-            if outputs['Axis'].is_linked:
-                axis_list = [tuple(q.axis) for q in quaternion_list]
-                outputs['Axis'].sv_set([axis_list])
-
-            if outputs['Angle'].is_linked:
+            if self.mode == "EULER":
                 # conversion factor from radians to the current angle units
                 au = self.angle_conversion_factor(AngleUnits.RADIANS, self.angle_units)
-                angle_list = [q.angle * au for q in quaternion_list]
-                outputs['Angle'].sv_set([angle_list])
+
+                for i, name in enumerate("XYZ"):
+                    if outputs["Angle " + name].is_linked:
+                        angles[i] = [q.to_euler(self.euler_order)[i] * au for q in quaternion_list]
+            elif self.mode == "AXISANGLE":
+                if outputs['Axis'].is_linked:
+                    axis_list = [tuple(q.axis) for q in quaternion_list]
+
+                if outputs['Angle'].is_linked:
+                    # conversion factor from radians to the current angle units
+                    au = self.angle_conversion_factor(AngleUnits.RADIANS, self.angle_units)
+                    angle_list = [q.angle * au for q in quaternion_list]
+
+            result.append([location_list, scale_list, quaternion_list, *angles, axis_list, angle_list])
+
+        if self.mode == 'QUATERNION':
+            output_data = list(zip(*result))
+            if len(output_data[2]) == 1 and self.flat_output:
+                output_data[2] = output_data[2][0]
+            return output_data
+
+        return list(zip(*result))
+
+
 
 
 def register():

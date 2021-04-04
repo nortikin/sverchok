@@ -359,6 +359,7 @@
 ## Modifier Change
     SvDeleteLooseNode
     SvMergeByDistanceNode
+    SvMeshCleanNode
     SvSeparateMeshNode
     SvSeparatePartsToIndexes
     SvEdgenetToPathsNode
@@ -659,6 +660,18 @@
     SvWriteFCStdNode
     SvReadFCStdSketchNode
     SvFCStdSpreadsheetNode
+    SvReceiveFromSorcarNode
+    SvExportGcodeNode
+
+## Script
+    SvFormulaNodeMk5
+    SvFormulaInterpolateNode
+    SvExecNodeMod
+    SvScriptNodeLite
+    SvProfileNodeMK3
+    SvMeshEvalNode
+    SvGenerativeArtNode
+    SvTopologySimple
 
 ## Network
     UdpClientNode

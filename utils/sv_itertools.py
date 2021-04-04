@@ -135,7 +135,7 @@ def recurse_f_level_control(params, constant, main_func, matching_f, desired_lev
                 p_temp.append(p)
         params = matching_f(p_temp)
         for g in zip(*params):
-            result_add(recurse_f_level_control(matching_f(g), constant, main_func, matching_f, desired_levels, concatenate=concatenate))
+            result_add(recurse_f_level_control(g, constant, main_func, matching_f, desired_levels, concatenate=concatenate))
     else:
         result = main_func(params, constant, matching_f)
     return result
@@ -158,7 +158,7 @@ def process_matched(params, main_func, matching_mode, input_nesting, outputs_num
     if any(over_levels):
         p_temp = []
         for p, lv, dl in zip(params, input_levels, input_nesting):
-            print(lv,dl)
+
             if lv <= dl:
                 p_temp.append([p])
             else:

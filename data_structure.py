@@ -29,6 +29,8 @@ from numpy import (
     array as np_array,
     newaxis as np_newaxis,
     ndarray,
+    ones as np_ones,
+    arange as np_arange,
     repeat as np_repeat,
     concatenate as np_concatenate,
     tile as np_tile,
@@ -484,7 +486,7 @@ def levels_of_list_or_np(lst):
         return level
     return 0
 
-SIMPLE_DATA_TYPES = (float, int, float64, int32, int64, str)
+SIMPLE_DATA_TYPES = (float, int, float64, int32, int64, str, Matrix)
 
 
 def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
@@ -813,6 +815,17 @@ def apply_mask(mask, lst):
         else:
             bad.append(item)
     return good, bad
+
+def invert_index_list(indexes, length):
+    '''
+    Inverts indexes list
+    indexes: List[Int] of Ndarray flat numpy array
+    length: Int. Length of the base list
+    '''
+    mask = np_ones(length, dtype='bool')
+    mask[indexes] = False
+    inverted_indexes = np_arange(length)[mask]
+    return inverted_indexes
 
 def rotate_list(l, y=1):
     """
