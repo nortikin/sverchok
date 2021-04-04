@@ -4,14 +4,14 @@ Mesh Clean
 Functionality
 -------------
 
-Cleans input mesh by removing doubled, unreferenced or bad formed elements.
+Cleans input mesh by removing doubled, unreferenced or malformed elements.
 
 Options
 -------
 
 +---------------------+-------------------------------------------------------------------------------------------------------------------------+
 | option              | explanation                                                                                                             |
-+---------------------+-------------------------------------------------------------------------------------------------------------------------+
++=====================+=========================================================================================================================+
 | Unreferenced Edges  | Remove the edges that point to un-existing vertices.                                                                    |
 +---------------------+-------------------------------------------------------------------------------------------------------------------------+
 | Unreferenced Edges  | Remove the edges that point to un-existing vertices.                                                                    |
@@ -37,13 +37,17 @@ Vertices, Edges and Faces
 Outputs
 -------
 
-Vertices, Edges and Faces: Cleaned Mesh Data
-
-Removed Vertices Idx: the index of the removed vertices
-
-Removed Edges Idx: the index of the removed edges
-
-Removed Faces Idx: the index of the removed faces
++----------------------------+------------------------------------+
+| sockets                    |  kind of data                      |
++============================+====================================+
+| Vertices, Edges and Faces  | Cleaned Mesh Data                  |
++----------------------------+------------------------------------+
+| Removed Vertices Idx       | The index of the removed vertices  |
++----------------------------+------------------------------------+
+| Removed Edges Idx          | The index of the removed edges     |
++----------------------------+------------------------------------+
+| Removed Faces Idx          | The index of the removed faces     | 
++----------------------------+------------------------------------+
 
 Examples
 --------
