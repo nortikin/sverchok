@@ -32,17 +32,17 @@ class SvExtrudeEdgesNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNod
     bl_label = 'Extrude Edges'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_EXTRUDE_EDGES'
-    implentation_items = [
+    implementation_items = [
         ('BMESH', 'Bmesh', 'Slower (Legacy. Face data is not transfered identically)', 0),
         ('NUMPY', 'Numpy', 'Faster', 1)]
-    implentation: bpy.props.EnumProperty(
+    implementation: bpy.props.EnumProperty(
         name='Implementation',
-        items=implentation_items,
+        items=implementation_items,
         default='NUMPY',
         update=updateNode
     )
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, 'implentation')
+        layout.prop(self, 'implementation')
         layout.prop(self, 'list_match')
 
     def sv_init(self, context):
@@ -71,14 +71,13 @@ class SvExtrudeEdgesNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNod
     def process_data(self, params):
 
         output_data = [[] for s in self.outputs]
-        extrude = extrude_edges if self.implentation == 'NUMPY' else extrude_edges_bmesh
+        extrude = extrude_edges if self.implementation == 'NUMPY' else extrude_edges_bmesh
         for vertices, edges, faces, edge_mask, face_data, matrices in zip(*params):
             res = extrude(vertices, edges, faces, edge_mask, face_data, matrices)
             for o, r in zip(output_data, res):
                 o.append(r)
 
         return output_data
-
 
 
 def register():
