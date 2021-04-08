@@ -55,9 +55,4 @@ class SvObjectInfoNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 socket.sv_set(data)
 
 
-def register():
-    bpy.utils.register_class(SvObjectInfoNode)
-
-
-def unregister():
-    bpy.utils.unregister_class(SvObjectInfoNode)
+register, unregister = bpy.utils.register_classes_factory([SvObjectInfoNode])
