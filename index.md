@@ -630,6 +630,7 @@
 ## Scene
     SvObjectsNodeMK3
     SvObjInLite
+    SvObjectInfoNode
     SvCurveInputNode
     SvFCurveInNodeMK1
     SvCollectionPicker
