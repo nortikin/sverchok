@@ -96,6 +96,7 @@ By enabling "Flatten" at the deepest available level, we concatenate vertices da
 
 By flattening at the outermost level, we concatenate lists of vertices into a single list of vertices:
 
+-- this image is duplicate with above image, should be changed.
 .. image:: https://user-images.githubusercontent.com/284644/101237921-588a8c00-36fe-11eb-9dd5-cf30a7701ac7.png
 
 If we enable both Flatten flags, we concatenate lists of vertices into lists of numbers, AND we concatenate lists of numbers into a single list of numbers:
