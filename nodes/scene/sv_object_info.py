@@ -11,7 +11,12 @@ from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 
 
 class SvObjectInfoNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
-    '''SvObjectInfoNode'''
+
+    """
+    Triggers: obj info
+    Tooltip:  Object Info (Location, Rotation, Scale)
+    """
+
     bl_idname = 'SvObjectInfoNode'
     bl_label = 'Object Info'
     bl_icon = 'OUTLINER_OB_EMPTY'
