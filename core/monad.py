@@ -32,9 +32,10 @@ from sverchok.data_structure import get_other_socket, updateNode, match_long_rep
 from sverchok.core.update_system import make_tree_from_nodes, do_update
 from sverchok.core.monad_properties import SvIntPropertySettingsGroup, SvFloatPropertySettingsGroup, ensure_unique
 from sverchok.core.events import CurrentEvents, BlenderEventsTypes
-from sverchok.utils.handle_blender_data import get_sv_trees
+from sverchok.utils.handle_blender_data import get_sv_trees, get_func_and_args
 from sverchok.utils.sv_json_export import JSONExporter
 from sverchok.utils.sv_json_import import JSONImporter
+
 
 MONAD_COLOR = (0.830819, 0.911391, 0.754562)
 
@@ -211,7 +212,12 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         if other.prop_name:
 
             prop_name = other.prop_name
-            prop_func, prop_dict = other.node.__annotations__.get(prop_name, ("", {}))
+
+            try:
+                prop_func, prop_dict = get_func_and_args(other.node.__annotations__[prop_name])
+            except:
+                prop_func, prop_dict = ("", {})
+
 
             if 'attr' in prop_dict:
                 prop_dict.pop('attr')  # this we store in prop_name anyway
