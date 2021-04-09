@@ -462,7 +462,7 @@ def strformated_tree(nodes):
     lstr = []
     for cat, nodes in nodes.items():
         lstr.append(cat + "\n")
-        for node in nodes:
+        for node in sorted(nodes):
             lstr.append("   " + node + "\n")
     return "".join(lstr)
 
