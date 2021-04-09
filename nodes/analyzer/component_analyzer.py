@@ -45,7 +45,7 @@ socket_dict = {
     "s":"SvStringsSocket",
     "m": "SvMatrixSocket"
 }
-op_dict = {
+op_dict = { #signature : (prop_name, e for enum and b for boolean)
     'c': ('center_mode', 'e'),
     's': ('sum_items', 'b'),
     'o': ('origin_mode', 'e'),
@@ -54,6 +54,7 @@ op_dict = {
     'u': ('matrix_normal_up', 'e'),
     'n': ('matrix_normal', 'e'),
     't': ('tangent_mode', 'e'),
+    'a': ('output_numpy', 'b'),
 }
 
 
@@ -210,6 +211,10 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
         items=matrix_normal_modes,
         default="X",
         update=update_mode)
+    output_numpy: BoolProperty(
+        name='Output NumPy',
+        description='Output NumPy arrays',
+        default=False, update=updateNode)
 
     def actual_mode(self):
         if self.mode == 'Verts':
@@ -239,7 +244,8 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
 
         for option in local_ops:
             if option in op_dict:
-                layout.prop(self, op_dict[option][0])
+                if option != 'a':
+                    layout.prop(self, op_dict[option][0])
 
         if not 'u' in out_ops:
             layout.prop(self, 'split')
@@ -322,6 +328,7 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
                 'u': self.matrix_normal_up,
                 'n': self.matrix_normal,
                 't': self.tangent_mode,
+                'a': self.output_numpy
             }
             special_op = []
             for option in local_ops:

@@ -4,10 +4,11 @@
 #
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
-
+import numpy as np
 from mathutils import Vector
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.modules.matrix_utils import matrix_normal
+from sverchok.utils.math import np_normalize_vectors
 
 def center(verts):
     '''
@@ -73,11 +74,67 @@ edges: list as [edge, edge,..], being each edge [int, int].
 faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
 returns value of each vertex as [value, value,...]
 '''
-def vertex_normal(vertices, edges, faces):
-    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-    vals = [tuple(v.normal) for v in bm.verts]
-    bm.free()
-    return vals
+def vertex_normal(vertices, edges, faces, output_numpy=True):
+    if len(faces) == 0:
+        bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+        vals = [tuple(v.normal) for v in bm.verts]
+        bm.free()
+        return vals
+
+    return np_vertex_normals(vertices, faces, output_numpy=output_numpy)
+
+def np_faces_normals(v_pols):
+    pol_sides = v_pols.shape[1]
+    if pol_sides > 3:
+        f_normals = np.zeros((len(v_pols), 3), dtype=np.float64)
+        for i in range(pol_sides - 2):
+            f_normals += np.cross(v_pols[::, (1+i)%pol_sides] - v_pols[::, 0], v_pols[::, (2+i)%pol_sides] - v_pols[::, 0])
+    else:
+        f_normals = np.cross(v_pols[::, 1] - v_pols[::, 0], v_pols[::, 2] - v_pols[::, 0])
+    np_normalize_vectors(f_normals)
+
+    return f_normals
+
+def np_vertex_normals(vertices, faces, output_numpy=False):
+
+    if isinstance(vertices, np.ndarray):
+        np_verts = vertices
+    else:
+        np_verts = np.array(vertices)
+
+    if isinstance(faces, np.ndarray):
+        np_faces = faces
+    else:
+        np_faces = np.array(faces)
+
+    v_normals = np.zeros(np_verts.shape, dtype=np_verts.dtype)
+
+    if np_faces.dtype == object:
+        np_len = np.vectorize(len)
+        lens = np_len(np_faces)
+        pol_types = np.unique(lens)
+        for p in pol_types:
+            mask = lens == p
+            np_faces_g = np.array(np_faces[mask].tolist())
+            v_pols = np_verts[np_faces_g]
+            f_normal_g = np_normalize_vectors(np_faces_normals(v_pols))
+
+
+            for i in range(p):
+                v_normals[np_faces_g[:, i]] += f_normal_g
+
+    else:
+        pol_sides = np_faces.shape[1]
+        v_pols = np_verts[np_faces]
+        f_normal_g = np_normalize_vectors(np_faces_normals(v_pols))
+
+        for i in range(pol_sides):
+            v_normals[np_faces[:, i]] += f_normal_g
+
+    if output_numpy:
+        return np_normalize_vectors(v_normals)
+    return np_normalize_vectors(v_normals).tolist()
+
 
 def vertex_shell_factor(vertices, edges, faces):
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
@@ -87,7 +144,10 @@ def vertex_shell_factor(vertices, edges, faces):
 
 def vertex_calc_angle(vertices, edges, faces):
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-    vals = [v.calc_edge_angle() for v in bm.verts]
+    num_edges = adjacent_edg_pol_num(vertices, edges)
+
+
+    vals = [v.calc_edge_angle() if n == 2 else -1 for v, n in zip(bm.verts, num_edges) ]
     bm.free()
     return vals
 
@@ -133,7 +193,7 @@ def vertex_matrix(vertices, edges, faces, orientation):
 
 # Name: (index, input_sockets, func_options, output_options, function, output_sockets, output_sockets_names, description)
 vertex_modes_dict = {
-    'Normal':             (0,  'vep', '',   '',  vertex_normal,        'v', 'Normal', 'Vertex normal'),
+    'Normal':             (0,  'vep', 'a',  '',  vertex_normal,        'v', 'Normal', 'Vertex normal'),
     'Matrix':             (10, 'vep', 'mu', 'u', vertex_matrix,        'm', 'Matrix', 'Matrix aligned with normal'),
     'Sharpness':          (20, 'vep', '',   '',  vertex_shell_factor,  's', 'Sharpness', 'Curvature of mesh in vertex'),
     'Adjacent edges':     (30, 've',  '',   'u', adjacent_edg_pol,     's', 'Edges', 'Adjacent edges'),
