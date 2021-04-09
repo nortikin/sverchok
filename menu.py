@@ -456,6 +456,17 @@ def draw_node_ops(self,layout, context):
     layout.operator(update_import, text='update appended/linked', icon='RNA')
     layout.separator()
 
+def strformated_tree(nodes):
+    
+    spacer = lambda nodename: "   " + nodename + "\n"
+    lstr = []
+    for cat, nodes in nodes.items():
+        lstr.append(cat + "\n")
+        for node in nodes:
+            lstr.append("   " + node + "\n")
+    return "".join(lstr)
+
+
 def make_categories():
     original_categories = make_node_cats()
 
@@ -475,10 +486,7 @@ def make_categories():
                 continue
             rna = get_node_class_reference(nodetype)
             if not rna and not nodetype == 'separator':
-                
-                ## logger.info("Node `%s' is not available (probably due to missing dependencies).", nodetype)
                 nodes_not_enabled[category].append(nodetype)
-
             else:
                 node_item = SverchNodeItem.new(nodetype)
                 node_items.append(node_item)
@@ -491,7 +499,7 @@ def make_categories():
                     items=node_items))
             node_count += len(nodes)
 
-    logger.info(f"The following nodes are not enabled (probably due to missing dependancies)\n{nodes_not_enabled}")
+    logger.info(f"The following nodes are not enabled (probably due to missing dependancies)\n{strformated_tree(nodes_not_enabled)}")
 
     node_categories.append(SverchNodeCategory("SVERCHOK_MONAD", "Monad", items=sv_group_items))
     SverchNodeItem.new('SvMonadInfoNode')
