@@ -63,6 +63,12 @@ def bmesh_from_edit_mesh(mesh) -> ContextManager[bmesh.types.BMesh]:
     finally:
         bmesh.update_edit_mesh(mesh)
 
+def has_element(pol_edge):
+    if pol_edge is None:
+        return False
+    if len(pol_edge) > 0 and len(pol_edge[0]) > 0:
+        return True
+    return False
 
 def bmesh_from_pydata(verts=None, edges=[], faces=[], markup_face_data=False, markup_edge_data=False,
                       markup_vert_data=False, normal_update=False):
@@ -82,7 +88,7 @@ def bmesh_from_pydata(verts=None, edges=[], faces=[], markup_face_data=False, ma
     bm_verts.index_update()
     bm_verts.ensure_lookup_table()
 
-    if len(faces) > 0:
+    if has_element(faces):
         add_face = bm.faces.new
         py_faces = faces.tolist() if type(faces) == np.ndarray else faces
         for face in py_faces:
@@ -90,7 +96,7 @@ def bmesh_from_pydata(verts=None, edges=[], faces=[], markup_face_data=False, ma
 
         bm.faces.index_update()
 
-    if len(edges) > 0:
+    if has_element(edges):
         if markup_edge_data:
             initial_index_layer = bm.edges.layers.int.new("initial_index")
 
