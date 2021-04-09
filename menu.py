@@ -463,6 +463,9 @@ def make_categories():
     node_cats = include_submenus(node_cats)
     node_categories = []
     node_count = 0
+
+    nodes_not_enabled = defaultdict(list)
+
     for category, nodes in node_cats.items():
         name_big = "SVERCHOK_" + category.replace(' ', '_')
         node_items = []
@@ -472,7 +475,10 @@ def make_categories():
                 continue
             rna = get_node_class_reference(nodetype)
             if not rna and not nodetype == 'separator':
-                logger.info("Node `%s' is not available (probably due to missing dependencies).", nodetype)
+                
+                ## logger.info("Node `%s' is not available (probably due to missing dependencies).", nodetype)
+                nodes_not_enabled[category].append(nodetype)
+
             else:
                 node_item = SverchNodeItem.new(nodetype)
                 node_items.append(node_item)
@@ -484,6 +490,9 @@ def make_categories():
                     category,
                     items=node_items))
             node_count += len(nodes)
+
+    logger.info(f"The following nodes are not enabled (probably due to missing dependancies)\n{nodes_not_enabled}")
+
     node_categories.append(SverchNodeCategory("SVERCHOK_MONAD", "Monad", items=sv_group_items))
     SverchNodeItem.new('SvMonadInfoNode')
     return node_categories, node_count, original_categories
