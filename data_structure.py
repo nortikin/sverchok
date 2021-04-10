@@ -1078,10 +1078,10 @@ def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
 def has_element(pol_edge):
     if pol_edge is None:
         return False
-    if len(pol_edge) > 0 and len(pol_edge[0]) > 0:
+    if len(pol_edge) > 0 and hasattr(pol_edge[0], '__len__') and len(pol_edge[0]) > 0:
         return True
     return False
-    
+
 def no_space(s):
     return s.replace(' ', '_')
 
