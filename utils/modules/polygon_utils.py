@@ -13,7 +13,7 @@ from sverchok.data_structure import has_element
 from sverchok.utils.math import np_normalize_vectors
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.modules.matrix_utils import vectors_center_axis_to_matrix
-from sverchok.utils.modules.vertex_utils import vertex_shell_factor, adjacent_edg_pol
+from sverchok.utils.modules.vertex_utils import vertex_shell_factor, adjacent_edg_pol, adjacent_edg_pol_idx
 from sverchok.nodes.analyzer.mesh_filter import Faces
 
 
@@ -145,6 +145,39 @@ def pols_adjacent(pols):
 
     return vals
 
+def pols_adjacent_idx(pols):
+    '''
+    returns the polygons that share a vertex with each polygon [[pol, pol,..], [pol,..]]
+    pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    '''
+    vals = []
+    edges = []
+    pols_eds = []
+    for pol in pols:
+        pol_edgs = []
+        for edge in zip(pol, pol[1:] + [pol[0]]):
+            e_s = tuple(sorted(edge))
+            pol_edgs.append(e_s)
+            edges.append(e_s)
+        pols_eds.append(pol_edgs)
+    edges = list(set(edges))
+
+    ad_faces = [[] for e in edges]
+    for pol_idx, eds in zip(range(len(pols)), pols_eds):
+        for edge in eds:
+            idx = edges.index(edge)
+            ad_faces[idx] += [pol_idx]
+
+    for pol_idx, edgs in zip(range(len(pols)), pols_eds):
+        col_pol = []
+        for edge in edgs:
+            idx = edges.index(edge)
+            col_pol.extend(ad_faces[idx])
+            col_pol.remove(pol_idx)
+        vals.append(col_pol)
+
+    return vals
+
 def pols_adjacent_num(pols):
     '''
     returns the number polygons that share a vertex with each polygon [int, int,..]]
@@ -167,6 +200,24 @@ def pols_neighbor(verts, pols):
                     pol_adj.append(related_pol)
 
         pol_adj.remove(pol)
+        vals.append(pol_adj)
+
+    return vals
+def pols_neighbor_idx(verts, pols):
+    '''
+    returns the polygons that share one edges with each polygon [[pol, pol,..], [pol,..]]
+    pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    '''
+    v_adj = adjacent_edg_pol_idx(verts, pols)
+    vals = []
+    for idx, pol in enumerate(pols):
+        pol_adj = []
+        for v_id in pol:
+            for related_pol in v_adj[v_id]:
+                if not related_pol in pol_adj:
+                    pol_adj.append(related_pol)
+
+        pol_adj.remove(idx)
         vals.append(pol_adj)
 
     return vals
@@ -474,5 +525,7 @@ faces_modes_dict = {
     'Edges':              (61, 'p',  '',   'u', pols_edges,            's',   'Edges', 'Face Edges'),
     'Adjacent Faces':     (62, 'p',  '',   'u', pols_adjacent,         's',   'Faces', 'Faces that share a edge with face'),
     'Neighbor Faces':     (63, 'vp', '',   'u', pols_neighbor,         's',   'Faces', 'Faces that share a vertex with face'),
+    'Adjacent Faces Idx': (64, 'p',  '',   'u', pols_adjacent_idx,     's',   'Faces Idx', 'Index of faces that share a edge with face'),
+    'Neighbor Faces Idx': (65, 'vp', '',   'u', pols_neighbor_idx,     's',   'Faces Idx', 'Index of faces that share a vertex with face'),
     'Is Boundary':        (70, 'vp', '',   '',  pols_is_boundary,      'sss', 'Mask, Boundary, Interior', 'Is the face boundary'),
     }
