@@ -457,13 +457,18 @@ def draw_node_ops(self,layout, context):
     layout.separator()
 
 def strformated_tree(nodes):
+
+    lookup = sverchok.utils.dummy_nodes.dummy_nodes_dict
     
-    spacer = lambda nodename: "   " + nodename + "\n"
     lstr = []
-    for cat, nodes in nodes.items():
-        lstr.append(cat + "\n")
-        for node in sorted(nodes):
-            lstr.append("   " + node + "\n")
+    for category, nodes_in_category in nodes.items():
+        lstr.append(category + "\n")
+        for node_bl_idname in sorted(nodes_in_category):
+            item = lookup.get(node_bl_idname)
+            if item:
+                node_bl_label, dependencies_listed = item
+                lstr.append(f"   {node_bl_label} ({dependencies_listed})\n")
+
     return "".join(lstr)
 
 
