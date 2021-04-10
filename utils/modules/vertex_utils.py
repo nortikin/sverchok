@@ -108,7 +108,7 @@ def np_faces_normals(v_pols):
     np_normalize_vectors(f_normals)
 
     return f_normals
-
+# based in this article https://www.researchgate.net/publication/220067106_A_comparison_of_algorithms_for_vertex_normal_computation
 def add_faces_normals(v_pols, np_faces_g, algorithm, pol_sides, v_normals):
     if algorithm in ('MWE', 'MWAT'):
         if algorithm == 'MWE': #weighted equally
