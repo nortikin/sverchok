@@ -21,7 +21,7 @@ from bpy.props import BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat,throttle_and_update_node
 from sverchok.utils.listutils import lists_flat
-
+from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 from sverchok.utils.modules.polygon_utils import faces_modes_dict, pols_origin_modes_dict, tangent_modes_dict
 
 from sverchok.utils.modules.edge_utils import edges_modes_dict
@@ -45,7 +45,7 @@ socket_dict = {
     "s":"SvStringsSocket",
     "m": "SvMatrixSocket"
 }
-op_dict = {
+op_dict = { #signature : (prop_name, e for enum and b for boolean)
     'c': ('center_mode', 'e'),
     's': ('sum_items', 'b'),
     'o': ('origin_mode', 'e'),
@@ -54,10 +54,11 @@ op_dict = {
     'u': ('matrix_normal_up', 'e'),
     'n': ('matrix_normal', 'e'),
     't': ('tangent_mode', 'e'),
+    'a': ('output_numpy', 'b'),
 }
 
 
-class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
+class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     """
     Triggers: Center/Matrix/Length
     Tooltip: Data from vertices/edges/faces as Orientation, Location, Length, Normal, Center...
@@ -210,6 +211,10 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
         items=matrix_normal_modes,
         default="X",
         update=update_mode)
+    output_numpy: BoolProperty(
+        name='Output NumPy',
+        description='Output NumPy arrays',
+        default=False, update=updateNode)
 
     def actual_mode(self):
         if self.mode == 'Verts':
@@ -221,8 +226,11 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
         return component_mode
 
     def draw_label(self):
-        text = "CA: " + self.mode + " "+ self.actual_mode()
-        return text
+        if self.hide:
+            text = "CA: " + self.mode + " "+ self.actual_mode()
+            return self.label if self.label else text
+
+        return  self.label if self.label else self.name
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)
@@ -239,14 +247,25 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
 
         for option in local_ops:
             if option in op_dict:
-                layout.prop(self, op_dict[option][0])
+                if option != 'a':
+                    layout.prop(self, op_dict[option][0])
 
         if not 'u' in out_ops:
             layout.prop(self, 'split')
         else:
             layout.prop(self, 'wrap')
 
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'list_match')
+        self.draw_buttons(context, layout)
+        info = modes_dicts[self.mode][self.actual_mode().replace("_", " ")]
+        local_ops = info[2]
+        if 'a' in local_ops:
+            layout.prop(self, 'output_numpy')
+
+
     def rclick_menu(self, context, layout):
+        layout.prop_menu_enum(self, "list_match", text="List Match")
         layout.prop_menu_enum(self, "mode", text=self.mode)
         if self.mode == 'Verts':
             layout.prop_menu_enum(self, "vertex_mode", text=self.vertex_mode)
@@ -282,6 +301,15 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.update_mode(context)
 
+    def post_process(self, result_vals, unwrap):
+        if unwrap:
+            if not self.wrap:
+                return [v for r in result_vals for v in r]
+        else:
+            if self.split:
+                return [[v] for r in result_vals for v in r]
+        return result_vals
+
     def output(self, result_vals, socket, unwrap):
         if unwrap:
             if not self.wrap:
@@ -291,24 +319,36 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
                 result_vals = [[v] for r in result_vals for v in r]
 
         socket.sv_set(result_vals)
+    def pre_setup(self):
+        for s in self.inputs:
+            s.nesting_level = 3
+            s.is_mandatory = False
+        modes_dict = modes_dicts[self.mode]
+        component_mode = self.actual_mode().replace("_", " ")
+        func_inputs = modes_dict[component_mode][1]
+        if "v" in func_inputs:
+            self.inputs[0].is_mandatory = True
+        if "e" in func_inputs:
+            self.inputs[1].is_mandatory = True
+        if "p" in func_inputs:
+            self.inputs[2].is_mandatory = True
 
-    def process(self):
-        if not any(output.is_linked for output in self.outputs):
-            return
+    def process_data(self, params):
+        verts, edges, pols = params
+
         modes_dict = modes_dicts[self.mode]
         component_mode = self.actual_mode().replace("_", " ")
         func_inputs, local_ops, output_ops, func, output_sockets = modes_dict[component_mode][1:6]
         params = []
         if "v" in func_inputs:
-            params.append(self.inputs['Vertices'].sv_get(deepcopy=False))
+            params.append(verts)
         if "e" in func_inputs:
-            params.append(self.inputs['Edges'].sv_get(default=[[]], deepcopy=False))
+            params.append(edges)
         if "p" in func_inputs:
-            params.append(self.inputs['Faces'].sv_get(default=[[]], deepcopy=False))
+            params.append(pols)
 
         result_vals = []
 
-        meshes = match_long_repeat(params)
 
         special = False
         if local_ops:
@@ -322,30 +362,28 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
                 'u': self.matrix_normal_up,
                 'n': self.matrix_normal,
                 't': self.tangent_mode,
+                'a': self.output_numpy
             }
             special_op = []
             for option in local_ops:
                 option_val = options_dict[option]
                 special_op.append(option_val if type(option_val) == bool else option_val.replace("_", " "))
             special = True
-            if len(local_ops) == 1:
-                special_op = special_op[0]
 
-        for param in zip(*meshes):
+        for param in zip(*params):
             if special:
-                vals = func(*param, special_op)
+                vals = func(*param, *special_op)
             else:
                 vals = func(*param)
+
             result_vals.append(vals)
-
         unwrap = 'u' in output_ops
-        if len(output_sockets) > 1:
-            results = list(zip(*result_vals))
-            for res, socket in zip(results, self.outputs):
-                self.output(res, socket, unwrap)
-        else:
-            self.output(result_vals, self.outputs[0], unwrap)
+        if len(output_sockets) == 1:
+            return self.post_process(result_vals, unwrap), [], []
+        if len(output_sockets) == 2:
+            return (*[self.post_process(l, unwrap) for l in zip(*result_vals)], [])
 
+        return [self.post_process(l, unwrap) for l in zip(*result_vals)]
 
 
 def register():
