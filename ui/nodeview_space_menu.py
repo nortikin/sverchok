@@ -143,6 +143,18 @@ class NodeViewMenuTemplate(bpy.types.Menu):
         layout_draw_categories(self.layout, self.bl_label, node_cats[self.bl_label])
         # prop_menu_enum(data, property, text="", text_ctxt="", icon='NONE')
 
+
+class SV_NodeTree_Poll():
+    """
+    mixin to detect if the current nodetree is a Sverchok type nodetree, if not poll returns False
+    """
+    @classmethod
+    def poll(cls, context):
+        tree_type = context.space_data.tree_type
+        if tree_type in sv_tree_types:
+            return True
+
+
 # quick class factory.
 def make_class(name, bl_label):
     global menu_class_by_title
@@ -151,7 +163,7 @@ def make_class(name, bl_label):
     menu_class_by_title[bl_label] = clazz
     return clazz
 
-class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
+class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu, SV_NodeTree_Poll):
     bl_label = "Sverchok Nodes"
 
     @classmethod
@@ -200,9 +212,11 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
                         layout.menu("NODEVIEW_MT_EX_" + category.identifier)
 
 
-class NodePatialMenuTemplate(bpy.types.Menu):
+class NodePatialMenuTemplate(bpy.types.Menu, SV_NodeTree_Poll):
+
     bl_label = ""
     items = []
+
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
