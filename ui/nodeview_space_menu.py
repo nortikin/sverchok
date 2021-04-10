@@ -163,16 +163,9 @@ def make_class(name, bl_label):
     menu_class_by_title[bl_label] = clazz
     return clazz
 
+
 class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu, SV_NodeTree_Poll):
     bl_label = "Sverchok Nodes"
-
-    @classmethod
-    def poll(cls, context):
-        tree_type = context.space_data.tree_type
-        if tree_type in sv_tree_types:
-            #menu_prefs['show_icons'] = get_icon_switch()
-            # print('showing', menu_prefs['show_icons'])
-            return True
 
     def draw(self, context):
 
@@ -213,7 +206,6 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu, SV_NodeTree_Poll):
 
 
 class NodePatialMenuTemplate(bpy.types.Menu, SV_NodeTree_Poll):
-
     bl_label = ""
     items = []
 
