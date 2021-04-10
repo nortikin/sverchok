@@ -27,14 +27,9 @@ from sverchok.utils.logging import info, debug
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 
 def remove_doubles(vertices, faces, distance, face_data=None, find_doubles=False, mask=[], output_mask=False):
-    if faces:
-        edge_mode = (len(faces[0]) == 2)
-    else:
-        edge_mode = False
-    if face_data:
-        mark_face_data = True
-    else:
-        mark_face_data = False
+
+    edge_mode      = (len(faces[0]) == 2) if faces else False
+    mark_face_data = True if face_data else False
 
     bm = bmesh_from_pydata(
         vertices,
@@ -42,6 +37,7 @@ def remove_doubles(vertices, faces, distance, face_data=None, find_doubles=False
         [] if edge_mode else faces,
         markup_face_data=mark_face_data,
         markup_vert_data=output_mask)
+
     bm_verts = bm.verts
 
     if mask:
@@ -100,8 +96,6 @@ class SvMergeByDistanceNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNod
         self.inputs.new('SvStringsSocket', 'Mask')
         self.inputs.new('SvStringsSocket', 'Distance').prop_name = 'distance'
 
-
-
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Edges')
         self.outputs.new('SvStringsSocket', 'Polygons')
@@ -110,7 +104,6 @@ class SvMergeByDistanceNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNod
         self.outputs.new('SvStringsSocket', 'Mask')
 
     def draw_buttons(self, context, layout):
-        #layout.prop(self, 'distance', text="Distance")
         pass
 
     def draw_buttons_ext(self, context, layout):
@@ -126,7 +119,7 @@ class SvMergeByDistanceNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNod
         verts.default_mode = 'NONE'
 
         poly_edge = self.inputs['PolyEdge']
-        poly_edge.nesting_level = 3
+        poly_edge.nesting_level = 2
         poly_edge.default_mode = 'EMPTY_LIST'
 
         face_data = self.inputs['FaceData']
@@ -147,12 +140,20 @@ class SvMergeByDistanceNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNod
         has_mask_out = self.inputs['Mask'].is_linked and self.outputs['Mask'].is_linked
         has_double_out = self.outputs['Doubles'].is_linked
         result = [[] for s in self.outputs]
+
+        # faces here means "some kind of topology: edges or faces"
         for vertices, faces, face_data, mask, distance in zip(*params):
-            res = remove_doubles(vertices, faces, distance,
-                                 face_data=face_data,
-                                 find_doubles=has_double_out,
-                                 mask=mask,
-                                 output_mask=has_mask_out)
+
+            res = remove_doubles(
+                    vertices,
+                    faces,
+                    distance,
+                    face_data=face_data,
+                    find_doubles=has_double_out,
+                    mask=mask,
+                    output_mask=has_mask_out
+                )
+
             [r.append(rl) for r, rl in zip(result, res)]
 
         return result
