@@ -88,14 +88,14 @@ edges: list as [edge, edge,..], being each edge [int, int].
 faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
 returns value of each vertex as [value, value,...]
 '''
-def vertex_normal(vertices, edges, faces, output_numpy=True):
-    if len(faces) == 0:
-        bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+def vertex_normal(vertices, faces, algorithm='MWE', output_numpy=True):
+    if len(faces) == 0 or algorithm == 'BMESH':
+        bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
         vals = [tuple(v.normal) for v in bm.verts]
         bm.free()
         return vals
 
-    return np_vertex_normals(vertices, faces, output_numpy=output_numpy)
+    return np_vertex_normals(vertices, faces, algorithm, output_numpy=output_numpy)
 
 def np_faces_normals(v_pols):
     pol_sides = v_pols.shape[1]
@@ -109,7 +109,26 @@ def np_faces_normals(v_pols):
 
     return f_normals
 
-def np_vertex_normals(vertices, faces, output_numpy=False):
+def add_faces_normals(v_pols, np_faces_g, algorithm, pol_sides, v_normals):
+    if algorithm in ('MWE', 'MWAT'):
+        if algorithm == 'MWE': #weighted equally
+            f_normal_g = np_normalize_vectors(np_faces_normals(v_pols))
+        else: #weighted by area of triangle
+            f_normal_g = np_faces_normals(v_pols)
+        for i in range(pol_sides):
+            np.add.at(v_normals, np_faces_g[:, i], f_normal_g)
+    else:
+        if algorithm == 'MWELR':  #weighted edge length reciprocal
+            f_normal_g = np_normalize_vectors(np_faces_normals(v_pols))
+        else:  # algorithm == 'MWS': #weighted by sine
+            f_normal_g = np_faces_normals(v_pols)
+        edges_length = np.linalg.norm(v_pols - np.roll(v_pols, 1, axis=1), axis=2)
+        factor = edges_length * np.roll(edges_length, -1, axis=1)
+
+        for i in range(pol_sides):
+            np.add.at(v_normals, np_faces_g[:, i], f_normal_g * factor[:, i, np.newaxis])
+
+def np_vertex_normals(vertices, faces, algorithm='MWE', output_numpy=False):
 
     if isinstance(vertices, np.ndarray):
         np_verts = vertices
@@ -131,17 +150,13 @@ def np_vertex_normals(vertices, faces, output_numpy=False):
             mask = lens == pol_sides
             np_faces_g = np.array(np_faces[mask].tolist())
             v_pols = np_verts[np_faces_g]
-            f_normal_g = np_normalize_vectors(np_faces_normals(v_pols))
-
-            for i in range(pol_sides):
-                np.add.at(v_normals, np_faces_g[:, i], f_normal_g)
+            add_faces_normals(v_pols, np_faces_g, algorithm, pol_sides, v_normals)
 
     else:
         pol_sides = np_faces.shape[1]
         v_pols = np_verts[np_faces]
-        f_normal_g = np_normalize_vectors(np_faces_normals(v_pols))
-        for i in range(pol_sides):
-            np.add.at(v_normals, np_faces[:, i], f_normal_g)
+        add_faces_normals(v_pols, np_faces, algorithm, pol_sides, v_normals)
+
 
     if output_numpy:
         return np_normalize_vectors(v_normals)
@@ -205,7 +220,7 @@ def vertex_matrix(vertices, edges, faces, track, up):
 
 # Name: (index, input_sockets, func_options, output_options, function, output_sockets, output_sockets_names, description)
 vertex_modes_dict = {
-    'Normal':             (0,  'vep', 'a',  '',  vertex_normal,        'v', 'Normal', 'Vertex normal'),
+    'Normal':             (0,  'vp', 'va',  '',  vertex_normal,        'v', 'Normal', 'Vertex normal'),
     'Matrix':             (10, 'vep', 'mu', 'u', vertex_matrix,        'm', 'Matrix', 'Matrix aligned with normal'),
     'Sharpness':          (20, 'vep', '',   '',  vertex_shell_factor,  's', 'Sharpness', 'Curvature of mesh in vertex'),
     'Adjacent edges':     (30, 've',  '',   'u', adjacent_edg_pol,     's', 'Edges', 'Adjacent edges'),
