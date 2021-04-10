@@ -226,8 +226,10 @@ def repeat_last_for_length(lst, count, deepcopy=False):
     repeat_last_for_length([], n) = []
     repeat_last_for_length([1,2], 4) = [1, 2, 2, 2]
     """
-    if not lst or len(lst) >= count:
+    if not lst:
         return lst
+    if len(lst) >= count:
+        return lst[:count]
     n = len(lst)
     x = lst[-1]
     result = lst[:]
@@ -1073,6 +1075,13 @@ def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
 #### random stuff
 ####
 
+def has_element(pol_edge):
+    if pol_edge is None:
+        return False
+    if len(pol_edge) > 0 and len(pol_edge[0]) > 0:
+        return True
+    return False
+    
 def no_space(s):
     return s.replace(' ', '_')
 

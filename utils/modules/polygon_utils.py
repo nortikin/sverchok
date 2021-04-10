@@ -9,6 +9,7 @@ import numpy as np
 from mathutils import Vector
 from mathutils.geometry import area_tri as area
 from mathutils.geometry import tessellate_polygon as tessellate
+from sverchok.data_structure import has_element
 from sverchok.utils.math import np_normalize_vectors
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.modules.matrix_utils import vectors_center_axis_to_matrix
@@ -49,14 +50,13 @@ def areas_from_polygons(verts, polygons, sum_faces=False):
     return areas
 
 
-def pols_perimeters(verts, polygons, options):
+def pols_perimeters(verts, polygons, sum_perimeters=False, output_numpy=False):
     '''
     returns pols perimeter as [float, float,...]
     vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
     faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
     sum_perimeters if True it will return the sum of the perimenters as [float]
     '''
-    sum_perimeters, output_numpy = options
     vals = np_process_polygons(verts, polygons, func=np_faces_perimeters, dims=1, output_numpy=True)
 
     if sum_perimeters:
@@ -243,6 +243,7 @@ def np_center_median(v_pols):
     return np.sum(v_pols, axis=1) / v_pols.shape[1]
 
 def np_center_bbox(v_pols):
+
     return (np.amin(v_pols, axis=1) + np.amax(v_pols, axis=1))/2
 
 def np_center_weighted(v_pols):
@@ -268,6 +269,8 @@ def np_tangent_center_orig(v_pols):
 
 def np_process_polygons(verts, faces, func=None, dims=3, output_numpy=False):
     if not func:
+        return
+    if not (has_element(verts) and has_element(faces)):
         return
     if isinstance(verts, np.ndarray):
         np_verts = verts
@@ -303,7 +306,7 @@ def np_process_polygons(verts, faces, func=None, dims=3, output_numpy=False):
         return vals
     return vals.tolist()
 
-def pols_center(vertices, faces, options):
+def pols_center(vertices, faces, origin, output_numpy):
     '''
     Cemter of faces
     vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
@@ -312,7 +315,7 @@ def pols_center(vertices, faces, options):
     origin: String  that can be any key of pols_origin_modes_dict
     returns vals as [float, float,...]
     '''
-    origin, output_numpy = options
+
     if origin == 'Median Center':
         centers_func = np_center_median
     elif origin == 'Bounds Center':
@@ -417,7 +420,7 @@ def pols_inverted(faces):
     vals = [list(reversed(f)) for f in faces]
     return vals
 
-def pols_matrix(vertices, faces, orientation):
+def pols_matrix(vertices, faces, origin, direc):
     '''
     Matrix aligned with faces
     vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
@@ -427,7 +430,7 @@ def pols_matrix(vertices, faces, orientation):
     direction: String  that can be  any key of tangent_modes_dict
     outputs each polygon matrix [matrix, matrix, matrix]
     '''
-    origin, direc = orientation
+
     bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
     normals = [Vector(face.normal) for face in bm.faces]
     centers = pols_origin_modes_dict[origin][1](bm.faces)

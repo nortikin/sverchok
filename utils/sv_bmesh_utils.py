@@ -28,7 +28,7 @@ import bmesh
 from bmesh.types import BMVert, BMEdge, BMFace
 import mathutils
 
-from sverchok.data_structure import zip_long_repeat
+from sverchok.data_structure import zip_long_repeat, has_element
 from sverchok.utils.logging import debug
 
 @contextmanager
@@ -63,12 +63,6 @@ def bmesh_from_edit_mesh(mesh) -> ContextManager[bmesh.types.BMesh]:
     finally:
         bmesh.update_edit_mesh(mesh)
 
-def has_element(pol_edge):
-    if pol_edge is None:
-        return False
-    if len(pol_edge) > 0 and len(pol_edge[0]) > 0:
-        return True
-    return False
 
 def bmesh_from_pydata(verts=None, edges=[], faces=[], markup_face_data=False, markup_edge_data=False,
                       markup_vert_data=False, normal_update=False):

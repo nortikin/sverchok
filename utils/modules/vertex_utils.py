@@ -67,6 +67,20 @@ def adjacent_edg_pol_num(verts, edgs_pols):
             adj_edgs_pols[v_id] += 1
 
     return adj_edgs_pols
+
+def adjacent_edg_pol_idx(verts, edgs_pols):
+    '''
+    calculate the number of adjacent faces  or edges as [int, int,...]
+    verts: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edg_pol: list as [edge, edge,..], being each edge [int, int].
+                  or [polygon, polygon,...] being each polygon [int, int, int, ...].
+    '''
+    adj_edgs_pols = [[] for v in verts]
+    for idx, edg_pol in enumerate(edgs_pols):
+        for v_id in edg_pol:
+            adj_edgs_pols[v_id] += [idx]
+
+    return adj_edgs_pols
 '''
 The functions bellow expect:
 vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
@@ -113,23 +127,21 @@ def np_vertex_normals(vertices, faces, output_numpy=False):
         np_len = np.vectorize(len)
         lens = np_len(np_faces)
         pol_types = np.unique(lens)
-        for p in pol_types:
-            mask = lens == p
+        for pol_sides in pol_types:
+            mask = lens == pol_sides
             np_faces_g = np.array(np_faces[mask].tolist())
             v_pols = np_verts[np_faces_g]
             f_normal_g = np_normalize_vectors(np_faces_normals(v_pols))
 
-
-            for i in range(p):
-                v_normals[np_faces_g[:, i]] += f_normal_g
+            for i in range(pol_sides):
+                np.add.at(v_normals, np_faces_g[:, i], f_normal_g)
 
     else:
         pol_sides = np_faces.shape[1]
         v_pols = np_verts[np_faces]
         f_normal_g = np_normalize_vectors(np_faces_normals(v_pols))
-
         for i in range(pol_sides):
-            v_normals[np_faces[:, i]] += f_normal_g
+            np.add.at(v_normals, np_faces[:, i], f_normal_g)
 
     if output_numpy:
         return np_normalize_vectors(v_normals)
@@ -175,7 +187,7 @@ def vertex_is_wire(vertices, edges, faces):
     bm.free()
     return vals
 
-def vertex_matrix(vertices, edges, faces, orientation):
+def vertex_matrix(vertices, edges, faces, track, up):
     '''
     orientation: contains origin track and up
     origin: String  that can be First, Center, Last
@@ -183,7 +195,7 @@ def vertex_matrix(vertices, edges, faces, orientation):
     up: String  that can be X, Y, Z, -X, -Y or -Z
     outputs each vertex matrix [matrix, matrix, matrix]
     '''
-    track, up = orientation
+
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
     loc = [Vector(v) for v in vertices]
     normal = [v.normal for v in bm.verts]
@@ -200,6 +212,8 @@ vertex_modes_dict = {
     'Adjacent faces ':    (31, 'vp',  '',   'u', adjacent_edg_pol,     's', 'Faces ', 'Adjacent faces'),
     'Adjacent edges num': (40, 've',  '',   '',  adjacent_edg_pol_num, 's', 'Number', 'Number of Adjacent edges'),
     'Adjacent faces num': (41, 'vp',  '',   '',  adjacent_edg_pol_num, 's', 'Number', 'Number of adjacent faces'),
+    'Adjacent edges Idx': (42, 've',  '',   '',  adjacent_edg_pol_idx, 's', 'Number', 'Number of Adjacent edges'),
+    'Adjacent faces Idx': (43, 'vp',  '',   '',  adjacent_edg_pol_idx, 's', 'Number', 'Number of adjacent faces'),
     'Edges Angle':        (50, 'vep', '',   '',  vertex_calc_angle,    's', 'Angle', 'angle between this vert’s two connected edges.'),
     'Is Boundary ':       (60, 'vep', '',   '',  vertex_is_boundary,   's', 'Is Boundary ', 'Is Vertex on mesh borders'),
     'Is Interior ':       (63, 'vep', '',   '',  vertex_is_interior,   's', 'Is Interior ', 'Is Vertex on mesh interiors'),
