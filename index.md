@@ -276,8 +276,7 @@
     SvDistancetLineLineNode
     SvPathLengthMk2Node
     SvOrigins
-    GetNormalsNode
-    VectorNormalNode
+    SvGetNormalsNodeMk2
     SvIntersectLineSphereNode
     SvIntersectCircleCircleNode
     SvIntersectPlanePlaneNode

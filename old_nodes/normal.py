@@ -30,6 +30,7 @@ class VectorNormalNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VERTEX_NORMALS'
 
+    replacement_nodes = [('SvGetNormalsNodeMk2', None, dict(Normals='Vertex Normals'))]
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "Polygons")
