@@ -18,18 +18,16 @@
 
 import math
 
-from mathutils import Vector, Matrix, kdtree
+from mathutils import Vector, kdtree
 
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, describe_data_shape, numpy_match_long_repeat, repeat_last_for_length
-from sverchok.utils.logging import info, debug
 from sverchok.utils.math import np_dot
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
-from sverchok.nodes.analyzer.normals import calc_mesh_normals
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
+from sverchok.utils.modules.polygon_utils import pols_normals
 
 def select_verts_by_faces(faces, verts):
     flat_index_list = {idx for face in faces for idx in face}
@@ -152,11 +150,9 @@ def by_cylinder(vertices, center, radius, direction):
     return out_verts_mask
 
 def by_normal(vertices, edges, faces, percent, direction):
-    face_normals, _ = calc_mesh_normals(vertices, edges, faces)
-    np_verts = np.array(face_normals)
-    np_dir = np.array(direction)
-    np_dir, np_percent = numpy_match_long_repeat([np_dir, np.array(percent)])
-    values = np_dot(np_verts[:, np.newaxis], np_dir[np.newaxis,:], axis=2)
+    face_normals = pols_normals(vertices, faces, output_numpy=True)
+    np_dir, np_percent = numpy_match_long_repeat([np.array(direction), np.array(percent)])
+    values = np_dot(face_normals[:, np.newaxis], np_dir[np.newaxis,:], axis=2)
     threshold = map_percent(values, np_percent)
     out_face_mask = np.any(values >= threshold, axis=1)
 
