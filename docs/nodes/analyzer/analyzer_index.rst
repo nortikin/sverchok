@@ -26,7 +26,7 @@ Analyzers
    mesh_select_mk2
    select_similar
    proportional
-   normals
+   normals_mk2
    nearest_point_on_mesh
    bvh_overlap_polys
    object_insolation
