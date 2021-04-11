@@ -25,7 +25,9 @@ This node has the following parameters:
 
   * For **Vertices** supported criteria are:
 
-    * **Normal**. Vertices normal vector.
+    * **Normal**. Vertices normal vector. Offers different calculation methods:
+        Bmesh (standard Blender),Mean Weighted Equally (Faster), Mean Weighted Based on Triangle Area
+        Mean Weighted Edge Length Reciprocal and Mean Weighted by Sine
     * **Matrix ZY**: Matrix aligned with normal.
     * **Sharpness**: Curvature of mesh in vertex.
     * **Adjacent Edges**: Adjacent edges.

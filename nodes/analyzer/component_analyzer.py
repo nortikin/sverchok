@@ -55,6 +55,7 @@ op_dict = { #signature : (prop_name, e for enum and b for boolean)
     'n': ('matrix_normal', 'e'),
     't': ('tangent_mode', 'e'),
     'a': ('output_numpy', 'b'),
+    'v': ('vertex_normal_mode', 'e'),
 }
 
 
@@ -99,7 +100,13 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveN
         ("X", "X", "Aligned with X", 0),
         ("Z", "Z", "Aligned with Z", 2),
     ]
-
+    vertex_normal_modes = [
+        ('BMESH', 'Bmesh', 'Slower (Legacy)', 0),
+        ('MWE', 'Mean Weighted Equally', 'Faster', 1),
+        ('MWELR','Mean Weighted Edge Length Reciprocal', '', 2),
+        ('MWAT', 'Mean Weighted Area Triangle', '', 3),
+        ('MWS', 'Mean Weighted by Sine', '', 4)
+    ]
 
     @throttle_and_update_node
     def update_mode(self, context):
@@ -192,6 +199,12 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveN
         name="Origin",
         items=pols_origin_modes,
         default="Median_Center",
+        update=update_mode)
+
+    vertex_normal_mode: EnumProperty(
+        name="Method",
+        items=vertex_normal_modes,
+        default="MWE",
         update=update_mode)
 
     matrix_track: EnumProperty(
@@ -362,6 +375,7 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveN
                 'u': self.matrix_normal_up,
                 'n': self.matrix_normal,
                 't': self.tangent_mode,
+                'v': self.vertex_normal_mode,
                 'a': self.output_numpy
             }
             special_op = []
