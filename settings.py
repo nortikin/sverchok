@@ -1,3 +1,4 @@
+import sys
 import os
 import subprocess
 
@@ -14,7 +15,10 @@ from sverchok.utils.sv_extra_addons import draw_extra_addons
 from sverchok.ui import color_def
 from sverchok.ui.utils import message_on_layout
 
-PYPATH = bpy.app.binary_path_python
+if bpy.app.version >= (2, 91, 0):
+    PYPATH = sys.executable
+else:
+    PYPATH = bpy.app.binary_path_python
 
 def get_params(settings_and_fallbacks):
     """
