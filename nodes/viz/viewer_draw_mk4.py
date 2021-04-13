@@ -36,7 +36,9 @@ from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.utils.sv_shader_sources import dashed_vertex_shader, dashed_fragment_shader
 from sverchok.utils.geom import multiply_vectors_deep
-
+from sverchok.utils.modules.polygon_utils import pols_normals
+from sverchok.utils.modules.vertex_utils import np_vertex_normals
+from sverchok.utils.math import np_dot
 
 socket_dict = {
     'vector_color': ('display_verts', 'UV_VERTEXSEL', 'color_per_point', 'vector_random_colors', 'random_seed'),
@@ -212,107 +214,131 @@ def splitted_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offs
     '''geometry of the splitted polygons (splitted to assign colors)'''
     total_p_verts = 0
     p_vertices, vertex_colors, indices = [], [], []
-
+    cols_len = len(cols)
+    indices_append = indices.append
+    p_vertices_extend = p_vertices.extend
+    vertex_colors_extend = vertex_colors.extend
     for pol, idx in zip(polygon_indices, original_idx):
-        p_vertices.extend([v_path[c] for c in pol])
-
-        vertex_colors.extend([cols[idx % len(cols)] for c in pol])
+        p_vertices_extend([v_path[c] for c in pol])
+        color = cols[idx % cols_len]
+        # vertex_colors.extend([cols[idx % cols_len] for c in pol])
+        vertex_colors_extend([color, color, color])
         pol_offset = idx_offset + total_p_verts
-        indices.append(list(range(pol_offset, pol_offset + len(pol))))
-        total_p_verts += len(pol)
+        indices_append([pol_offset, pol_offset + 1, pol_offset + 2])
+        total_p_verts += 3
 
     return p_vertices, vertex_colors, indices, total_p_verts
 
 
-def splitted_facet_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offset, normals, light):
+def splitted_facet_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offset, light_factor):
     '''geometry of the splitted polygons (splitted to assign colors* normals)'''
     total_p_verts = 0
     p_vertices, vertex_colors, indices = [], [], []
-
+    cols_len = len(cols)
+    indices_append = indices.append
+    p_vertices_extend = p_vertices.extend
+    vertex_colors_extend = vertex_colors.extend
     for pol, idx in zip(polygon_indices, original_idx):
-        p_vertices.extend([v_path[c] for c in pol])
-        factor = (normals[idx].dot(light))*0.5+0.5
-        col = cols[idx % len(cols)]
+        p_vertices_extend([v_path[c] for c in pol])
+        factor = light_factor[idx]
+
+        col = cols[idx % cols_len]
         col_pol = [col[0] * factor, col[1] * factor, col[2] * factor, col[3]]
-        colors = [col_pol for c in pol]
 
-        vertex_colors.extend(colors)
+        vertex_colors_extend([col_pol, col_pol, col_pol])
         pol_offset = idx_offset + total_p_verts
-        indices.append(list(range(pol_offset, pol_offset + len(pol))))
 
-        total_p_verts += len(pol)
+        indices_append([pol_offset, pol_offset + 1, pol_offset + 2])
+        total_p_verts += 3
 
     return p_vertices, vertex_colors, indices, total_p_verts
 
 
-def splitted_facet_polygons_geom_v_cols(polygon_indices, original_idx, v_path, cols, idx_offset, normals, light):
+def splitted_facet_polygons_geom_v_cols(polygon_indices, original_idx, v_path, cols, idx_offset, light_factor):
     '''geometry of the splitted polygons (splitted to assign vertex_colors * face_normals)'''
 
     total_p_verts = 0
     p_vertices, vertex_colors, indices = [], [], []
+    cols_len = len(cols)
+    indices_append = indices.append
+    p_vertices_extend = p_vertices.extend
+    vertex_colors_extend = vertex_colors.extend
 
     for pol, idx in zip(polygon_indices, original_idx):
-        p_vertices.extend([v_path[c] for c in pol])
-        factor = (normals[idx].dot(light)) * 0.5 + 0.5
+        p_vertices_extend([v_path[c] for c in pol])
+        factor = light_factor[idx]
         colors = []
 
         for c in pol:
-            col = cols[c % len(cols)]
+            col = cols[c % cols_len]
             colors.append([col[0] * factor, col[1] * factor, col[2] * factor, col[3]])
 
-        vertex_colors.extend(colors)
+        vertex_colors_extend(colors)
         pol_offset = idx_offset + total_p_verts
-        indices.append(list(range(pol_offset, pol_offset + len(pol))))
-        total_p_verts += len(pol)
+        indices_append([pol_offset, pol_offset + 1, pol_offset + 2])
+        total_p_verts += 3
 
     return p_vertices, vertex_colors, indices, total_p_verts
 
 
-def splitted_smooth_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offset, normals, light):
+def splitted_smooth_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offset, light_factor):
     '''geometry of the splitted polygons (splitted to assign face_colors * vertex_normals)'''
 
     total_p_verts = 0
     p_vertices, vertex_colors, indices = [], [], []
+    cols_len = len(cols)
+    indices_append = indices.append
+    p_vertices_extend = p_vertices.extend
+    vertex_colors_extend = vertex_colors.extend
 
     for pol, idx in zip(polygon_indices, original_idx):
-        p_vertices.extend([v_path[c] for c in pol])
+        p_vertices_extend([v_path[c] for c in pol])
         colors = []
-        col = cols[idx % len(cols)]
+        col = cols[idx % cols_len]
         for c in pol:
-            factor = (normals[c].dot(light)) * 0.5 + 0.5
+
+            factor = light_factor[c]
             colors.append([col[0] * factor, col[1] * factor, col[2] * factor, col[3]])
 
-        vertex_colors.extend(colors)
+        vertex_colors_extend(colors)
         pol_offset = idx_offset + total_p_verts
-        indices.append(list(range(pol_offset, pol_offset + len(pol))))
-        total_p_verts += len(pol)
+        indices_append([pol_offset, pol_offset + 1, pol_offset + 2])
+        total_p_verts += 3
+
 
     return p_vertices, vertex_colors, indices, total_p_verts
 
 
-def get_vertex_normals(vecs, polygons):
-    mesh = bmesh_from_pydata(vecs, [], polygons, normal_update=True)
-    return [Vector(vert.normal) for vert in mesh.verts]
 
+def face_light_factor(vecs, polygons, light):
+    return (np_dot(pols_normals(vecs, polygons, output_numpy=True), light)*0.5+0.5).tolist()
+
+def vert_light_factor(vecs, polygons, light):
+    return (np_dot(np_vertex_normals(vecs, polygons, output_numpy=True), light)*0.5+0.5).tolist()
 
 def polygons_geom(config, vecs, polygons, p_vertices, p_vertex_colors, p_indices, v_path, p_cols, idx_p_offset, points_colors):
     '''generates polygons geometry'''
 
     if (config.color_per_polygon and not config.polygon_use_vertex_color) or config.shade_mode == 'facet':
+        if config.all_triangles:
+            polygon_indices = polygons
+            original_idx = list(range(len(polygons)))
+        else:
+            polygon_indices, original_idx = ensure_triangles(vecs, polygons, config.handle_concave_quads)
 
-        polygon_indices, original_idx = ensure_triangles(vecs, polygons, config.handle_concave_quads)
 
         if config.shade_mode == 'facet':
-            normals = [normal(*[Vector(vecs[c]) for c in p]) for p in polygons]
+            light_factor = face_light_factor(vecs, polygons, config.vector_light)
 
             if config.polygon_use_vertex_color:
-                p_v, v_c, idx, total_p_verts = splitted_facet_polygons_geom_v_cols(polygon_indices, original_idx, v_path, points_colors, idx_p_offset[0], normals, config.vector_light)
+                p_v, v_c, idx, total_p_verts = splitted_facet_polygons_geom_v_cols(polygon_indices, original_idx, v_path, points_colors, idx_p_offset[0], light_factor)
             else:
-                p_v, v_c, idx, total_p_verts = splitted_facet_polygons_geom(polygon_indices, original_idx, v_path, p_cols, idx_p_offset[0], normals, config.vector_light)
+                p_v, v_c, idx, total_p_verts = splitted_facet_polygons_geom(polygon_indices, original_idx, v_path, p_cols, idx_p_offset[0], light_factor)
 
         elif config.shade_mode == 'smooth':
-            normals = get_vertex_normals(vecs, polygons)
-            p_v, v_c, idx, total_p_verts = splitted_smooth_polygons_geom(polygon_indices, original_idx, v_path, p_cols, idx_p_offset[0], normals, config.vector_light)
+
+            light_factor = vert_light_factor(vecs, polygons, config.vector_light)
+            p_v, v_c, idx, total_p_verts = splitted_smooth_polygons_geom(polygon_indices, original_idx, v_path, p_cols, idx_p_offset[0], light_factor)
 
         else:
             p_v, v_c, idx, total_p_verts = splitted_polygons_geom(polygon_indices, original_idx, v_path, p_cols, idx_p_offset[0])
@@ -321,22 +347,25 @@ def polygons_geom(config, vecs, polygons, p_vertices, p_vertex_colors, p_indices
         p_vertex_colors.extend(v_c)
         p_indices.extend(idx)
     else:
-        polygon_indices, original_idx = ensure_triangles(vecs, polygons, config.handle_concave_quads)
+        if config.all_triangles:
+            polygon_indices = polygons
+            original_idx = list(range(len(polygons)))
+        else:
+            polygon_indices, original_idx = ensure_triangles(vecs, polygons, config.handle_concave_quads)
         p_vertices.extend(v_path)
 
         if config.shade_mode == 'smooth':
-            normals = get_vertex_normals(v_path, polygons)
+
+            light_factor = vert_light_factor(vecs, polygons, config.vector_light)
             colors = []
             if config.polygon_use_vertex_color:
-                for normal_v, col in zip(normals, points_colors):
-
-                    factor = normal_v.dot(config.vector_light)*0.5+0.5
-                    colors.append([col[0]*factor, col[1]*factor, col[2]*factor, col[3]])
+                for l_factor, col in zip(light_factor, points_colors):
+                    colors.append([col[0]*l_factor, col[1]*l_factor, col[2]*l_factor, col[3]])
             else:
                 col = p_cols
-                for normal_v in normals:
-                    factor = normal_v.dot(config.vector_light)*0.5+0.5
-                    colors.append([col[0]*factor, col[1]*factor, col[2]*factor, col[3]])
+                for l_factor in light_factor:
+                    # factor = normal_v.dot(config.vector_light)*0.5+0.5
+                    colors.append([col[0]*l_factor, col[1]*l_factor, col[2]*l_factor, col[3]])
             p_vertex_colors.extend(colors)
         else:
             if not config.uniform_pols:
@@ -352,10 +381,12 @@ def polygons_geom(config, vecs, polygons, p_vertices, p_vertex_colors, p_indices
 def edges_geom(config, edges, e_col, v_path, e_vertices, e_vertex_colors, e_indices, idx_e_offset):
     '''generates edges geometry'''
     if config.color_per_edge and not config.edges_use_vertex_color:
+        start_idx = len(e_vertices)
         for (idx0, idx1), col in zip(edges, cycle(e_col)):
             e_vertices.extend([v_path[idx0], v_path[idx1]])
             e_vertex_colors.extend([col, col])
-            e_indices.append([len(e_vertices)-2, len(e_vertices)-1])
+            e_indices.append([start_idx, start_idx+1])
+            start_idx +=2
 
     else:
         e_vertices.extend(v_path)
@@ -597,6 +628,10 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
     display_faces: BoolProperty(
         update=updateNode, name='Display Polygons', default=True
         )
+    all_triangles: BoolProperty(
+        update=updateNode, name='All Triangles', default=False,
+        description='Enable if all the incoming faces are Tris (makes node faster)'
+        )
 
     matrix_draw_scale: FloatProperty(default=1, min=0.0001, name="Drawing matrix scale", update=updateNode)
 
@@ -677,6 +712,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'node_ui_show_attrs_socket')
         layout.prop(self, 'matrix_draw_scale')
         layout.prop(self, "use_dashed")
+        layout.prop(self, "all_triangles")
 
     def rclick_menu(self, context, layout):
         self.draw_additional_props(context, layout)
@@ -760,6 +796,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         config.draw_gl_polygonoffset = self.draw_gl_polygonoffset
         config.draw_gl_wireframe = self.draw_gl_wireframe
         config.handle_concave_quads = self.handle_concave_quads
+        config.all_triangles = self.all_triangles
 
         config.draw_dashed = self.use_dashed
         config.u_dash_size = self.u_dash_size
