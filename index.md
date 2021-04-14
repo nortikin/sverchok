@@ -218,51 +218,51 @@
     SvProjectTrimFaceNode
 
 ## Solids @ Analyze
-   SvSolidValidateNode
-   SvRefineSolidNode
-   SvIsSolidClosedNode
-   SvSolidCenterOfMassNode
-   SvSolidFaceAreaNode
-   SvSolidAreaNode
-   SvSolidVolumeNode
-   SvSolidBoundBoxNode
+    SvSolidValidateNode
+    SvRefineSolidNode
+    SvIsSolidClosedNode
+    SvSolidCenterOfMassNode
+    SvSolidFaceAreaNode
+    SvSolidAreaNode
+    SvSolidVolumeNode
+    SvSolidBoundBoxNode
 
 ## Solids
-   SvBoxSolidNode
-   SvCylinderSolidNode
-   SvConeSolidNode
-   SvSphereSolidNode
-   SvToursSolidNode
-   @ Make Face
-   SvSolidFaceExtrudeNode
-   SvSolidFaceSolidifyNode
-   SvSolidFaceRevolveNode
-   SvSweepSolidFaceNode
-   SvRuledSolidNode
-   SvSolidFromFacesNode
-   ---
-   SvTransformSolidNode
-   SvChamferSolidNode
-   SvFilletSolidNode
-   SvSolidBooleanNode
-   SvSolidGeneralFuseNode
-   SvMirrorSolidNode
-   SvOffsetSolidNode
-   SvSplitSolidNode
-   SvHollowSolidNode
-   ---
-   SvIsInsideSolidNode
-   SvSolidDistanceNode
-   SvSliceSolidNode
-   SvMeshToSolidNode
-   SvSolidToMeshNodeMk2
-   SvSolidVerticesNode
-   SvSolidEdgesNode
-   SvSolidFacesNode
-   SvSelectSolidNode
-   SvCompoundSolidNode
-   @ Analyze
-   SvSolidViewerNode
+    SvBoxSolidNode
+    SvCylinderSolidNode
+    SvConeSolidNode
+    SvSphereSolidNode
+    SvToursSolidNode
+    @ Make Face
+    SvSolidFaceExtrudeNode
+    SvSolidFaceSolidifyNode
+    SvSolidFaceRevolveNode
+    SvSweepSolidFaceNode
+    SvRuledSolidNode
+    SvSolidFromFacesNode
+    ---
+    SvTransformSolidNode
+    SvChamferSolidNode
+    SvFilletSolidNode
+    SvSolidBooleanNode
+    SvSolidGeneralFuseNode
+    SvMirrorSolidNode
+    SvOffsetSolidNode
+    SvSplitSolidNode
+    SvHollowSolidNode
+    ---
+    SvIsInsideSolidNode
+    SvSolidDistanceNode
+    SvSliceSolidNode
+    SvMeshToSolidNode
+    SvSolidToMeshNodeMk2
+    SvSolidVerticesNode
+    SvSolidEdgesNode
+    SvSolidFacesNode
+    SvSelectSolidNode
+    SvCompoundSolidNode
+    @ Analyze
+    SvSolidViewerNode
 
 ## Analyzers
     SvBBoxNodeMk3
