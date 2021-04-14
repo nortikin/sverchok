@@ -59,6 +59,10 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         description='Apply modifier geometry to import (original untouched)',
         name='Modifiers', default=False, update=updateNode)
 
+    do_not_add_obj_to_scene: BoolProperty(
+        default=False,
+        description="Do not add the object to the scene if this node is imported from elsewhere") 
+    
     currently_storing: BoolProperty()
     obj_name: StringProperty(update=updateNode)
     node_dict = {}
@@ -129,6 +133,7 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
 
         row.prop(self, 'modifiers', text='', icon='MODIFIER')
         layout.label(text=display_text)
+        layout.row().prop(self, "do_not_add_obj_to_scene", text="do not add to scene")
 
 
     def pass_data_to_sockets(self):
@@ -167,6 +172,9 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         materials = unrolled_geom.get('MaterialIdx', [])
         matrix = unrolled_geom['Matrix']
 
+        if self.do_not_add_obj_to_scene:
+            return
+
         with self.sv_throttle_tree_update():
             bm = bmesh_from_pydata(verts, edges, polygons)
             if materials:
@@ -188,7 +196,9 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
             self.error('failed to obtain local geometry, can not add to json')
             return
 
-        node_data['geom'] = json.dumps(flatten(obj))
+       self. nodo_not_add_obj_to_scene:
+        return
+        de_data['geom'] = json.dumps(flatten(obj))
 
 
 def register():
