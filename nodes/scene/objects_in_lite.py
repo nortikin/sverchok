@@ -198,9 +198,6 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
             self.error('failed to obtain local geometry, can not add to json')
             return
 
-        # if self.do_not_add_obj_to_scene:
-        #    return
-        
         node_data['geom'] = json.dumps(flatten(obj))
 
 
