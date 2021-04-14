@@ -174,7 +174,7 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
 
         if self.do_not_add_obj_to_scene:
             self.node_dict[hash(self)] = unrolled_geom
-            self.obj_name = "placeholder"
+            self.obj_name = name
             return
 
         with self.sv_throttle_tree_update():
