@@ -173,6 +173,8 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         matrix = unrolled_geom['Matrix']
 
         if self.do_not_add_obj_to_scene:
+            self.node_dict[has(self)] = geom
+            self.obj_name = "placeholder"
             return
 
         with self.sv_throttle_tree_update():
