@@ -118,6 +118,7 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
         border_height = self.height * 3
 
         # op2 = row.operator("view2d.zoom_border", text="", icon="TRACKER_DATA")
+        # row.operator_context = 'INVOKE_DEFAULT'
         op2 = row.operator("view2d.smoothview", text="", icon="TRACKER_DATA")
         op2.xmin = node_x - border_width / 2
         op2.xmax = node_x + border_width / 2
