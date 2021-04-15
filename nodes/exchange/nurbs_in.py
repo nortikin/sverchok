@@ -23,7 +23,7 @@ class SvExNurbsInCallbackOp(bpy.types.Operator):
     bl_options = {'INTERNAL'}
 
     fn_name: StringProperty(default='')
-    idnode: StringProperty(default='')
+    idname: StringProperty(default='')
     idtree: StringProperty(default='')
 
     def execute(self, context):
@@ -31,9 +31,9 @@ class SvExNurbsInCallbackOp(bpy.types.Operator):
         returns the operator's 'self' too to allow the code being called to
         print from self.report.
         """
-        if self.idtree and self.idnode:
+        if self.idtree and self.idname:
             ng = bpy.data.node_groups[self.idtree]
-            node = ng.nodes[self.idnode]
+            node = ng.nodes[self.idname]
         else:
             node = context.node
 
