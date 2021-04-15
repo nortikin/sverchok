@@ -11,11 +11,10 @@ from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
+from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
 from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve.bezier import SvCubicBezierCurve
-from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
-
 
 
 class SvBezierInCallbackOp(bpy.types.Operator):

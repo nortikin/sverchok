@@ -5,6 +5,7 @@ from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
+from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs import SvNurbsCurve
@@ -22,24 +23,24 @@ class SvExNurbsInCallbackOp(bpy.types.Operator):
     bl_options = {'INTERNAL'}
 
     fn_name: StringProperty(default='')
-    node_name: StringProperty(default='')
-    tree_name: StringProperty(default='')
+    idnode: StringProperty(default='')
+    idtree: StringProperty(default='')
 
     def execute(self, context):
         """
         returns the operator's 'self' too to allow the code being called to
         print from self.report.
         """
-        if self.tree_name and self.node_name:
-            ng = bpy.data.node_groups[self.tree_name]
-            node = ng.nodes[self.node_name]
+        if self.idtree and self.idnode:
+            ng = bpy.data.node_groups[self.idtree]
+            node = ng.nodes[self.idnode]
         else:
             node = context.node
 
         getattr(node, self.fn_name)(self)
         return {'FINISHED'}
 
-class SvExNurbsInNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvExNurbsInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """
     Triggers: Input NURBS
     Tooltip: Get NURBS curve or surface objects from scene
@@ -118,6 +119,9 @@ class SvExNurbsInNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             items = get_implementations,
             update = updateNode)
 
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "draw_3dpanel")
+
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
         layout.prop(self, 'implementation', text='')
@@ -137,12 +141,18 @@ class SvExNurbsInNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             pass
 
         callback = 'node.sv_ex_nurbs_in_callback'
-        row.operator(callback, text=op_text).fn_name = 'get_objects_from_scene'
+        self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'
 
         layout.prop(self, 'sort', text='Sort', toggle=True)
         layout.prop(self, 'apply_matrix', toggle=True)
 
         self.draw_obj_names(layout)
+
+    def draw_buttons_3dpanel(self, layout):
+        row = layout.row(align=True)
+        row.label(text=self.label if self.label else self.name)
+        callback = 'node.sv_ex_nurbs_in_callback'
+        self.wrapper_tracked_ui_draw_op(row, callback, text='GET').fn_name = 'get_objects_from_scene'
 
     def get_surface(self, spline, matrix):
         surface_degree_u = spline.order_u - 1
