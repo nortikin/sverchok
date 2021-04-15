@@ -12,33 +12,30 @@ from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
+from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
 from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
 from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve.bezier import SvCubicBezierCurve
 
 
-class SvBezierInCallbackOp(bpy.types.Operator):
+class SvBezierInCallbackOp(bpy.types.Operator, SvGenericNodeLocator):
 
     bl_idname = "node.sv_bezier_in_callback"
     bl_label = "Bezier In Callback"
     bl_options = {'INTERNAL'}
-
-    idname: StringProperty(default='')
-    idtree: StringProperty(default='')
 
     def execute(self, context):
         """
         returns the operator's 'self' too to allow the code being called to
         print from self.report.
         """
-        if self.idtree and self.idname:
-            ng = bpy.data.node_groups[self.idtree]
-            node = ng.nodes[self.idname]
-        else:
-            node = context.node
+        node = self.get_node(context)
+        if node:
+            node.get_objects_from_scene(self)
+            return {'FINISHED'}
 
-        node.get_objects_from_scene(self)
-        return {'FINISHED'}
+        return {'CANCELLED'}
+
 
 class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """

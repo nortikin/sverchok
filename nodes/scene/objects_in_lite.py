@@ -22,30 +22,30 @@ from bpy.props import BoolProperty, StringProperty, EnumProperty
 import sverchok
 from sverchok.utils.mesh_repr_utils import flatten, unflatten, generate_object
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
 import json
 
-class SvObjLiteCallback(bpy.types.Operator):
+class SvObjLiteCallback(bpy.types.Operator, SvGenericNodeLocator):
     """ GET / Reject object callback"""
     bl_idname = "node.sverchok_objectinlite_cb"
     bl_label = "Sverchok object in lite callback"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     cmd: StringProperty()
-    idname: StringProperty()
-    idtree: StringProperty()
-
-    def get_node(self):
-        return bpy.data.node_groups[self.idtree].nodes[self.idname]    
 
     def execute(self, context):
-        node = self.get_node()
-        getattr(node, self.cmd)()
-        node.process_node(context)
-        return {'FINISHED'}
+
+        node = self.get_node(context)
+        if node:        
+            getattr(node, self.cmd)()
+            node.process_node(context)
+            return {'FINISHED'}
+
+        return {'CANCELLED'}
 
 
 class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):

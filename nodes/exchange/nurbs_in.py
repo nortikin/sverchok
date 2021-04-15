@@ -6,6 +6,7 @@ from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
+from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
 from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs import SvNurbsCurve
@@ -16,29 +17,25 @@ from sverchok.dependencies import geomdl
 if geomdl is not None:
     from geomdl import NURBS
 
-class SvExNurbsInCallbackOp(bpy.types.Operator):
+class SvExNurbsInCallbackOp(bpy.types.Operator, SvGenericNodeLocator):
 
     bl_idname = "node.sv_ex_nurbs_in_callback"
     bl_label = "Nurbs In Callback"
     bl_options = {'INTERNAL'}
 
     fn_name: StringProperty(default='')
-    idname: StringProperty(default='')
-    idtree: StringProperty(default='')
 
     def execute(self, context):
         """
         returns the operator's 'self' too to allow the code being called to
         print from self.report.
         """
-        if self.idtree and self.idname:
-            ng = bpy.data.node_groups[self.idtree]
-            node = ng.nodes[self.idname]
-        else:
-            node = context.node
+        node = self.get_node(context)
+        if node:        
+            getattr(node, self.fn_name)(self)
+            return {'FINISHED'}
 
-        getattr(node, self.fn_name)(self)
-        return {'FINISHED'}
+        return {'CANCELLED'}
 
 class SvExNurbsInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """

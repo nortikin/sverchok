@@ -19,6 +19,22 @@
 import bpy
 from bpy.props import StringProperty
 
+class SvGenericNodeLocator():
+    idtree: StringProperty(default='')
+    idname: StringProperty(default='')
+
+    def get_node(self, context):
+        """ context.node is usually provided, else tree_name/node_name must be passed """
+        if self.idtree and self.idname:
+            return bpy.data.node_groups[self.idtree].nodes[self.idname]
+
+        if hasattr(context, "node"):
+            return context.node
+
+        print("treename and nodename not supplied, or node not found in nodetree")
+        return None
+
+
 class SvGenericCallbackOldOp(bpy.types.Operator):
     """ 
     This operator is generic and will call .fn_name on the instance of the caller node
