@@ -16,6 +16,52 @@ from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve.bezier import SvCubicBezierCurve
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
+class SvNodeViewZoomBorder(bpy.types.Operator):
+
+    bl_idname = "node.sv_nodeview_zoom_border"
+    bl_label = "NodeView Zoom Border Operator"
+    bl_options = {'INTERNAL'}
+
+    mode: StringProperty(default="SMOOTH")
+    idname: StringProperty(default='')
+    idtree: StringProperty(default='')
+
+    def execute(self, context):
+        """
+        - [ ] locate the first nodeview window / area of the invoking node
+
+        """
+        if self.idtree and self.idname:
+            ng = bpy.data.node_groups[self.idtree]
+            node = ng.nodes[self.idname]
+        else:
+            try:
+                node = context.node
+            except:
+                print("SvNodeViewZoomBorder -> context.node : not available")
+                return {"CANCELLED"}
+
+        if self.mode == "SMOOTH":
+            op_name = bpy.ops.view2d.smoothview
+        elif self.mode == "ZOOM_BORDER":
+            op_name = bpy.ops.view2d.zoom_border
+        else:
+            return {"CANCELLED"}
+
+        node_x, node_y = node.absolute_location
+        border_width = node.width * 4
+        border_height = node.height * 3
+        xmin = node_x - border_width / 2
+        xmax = node_x + border_width / 2
+        ymin = node_y - border_height / 2
+        ymax = node_y + border_height / 2
+        wait_for_input = False
+        
+
+        return {'FINISHED'}
+
+
+
 class SvBezierInCallbackOp(bpy.types.Operator):
 
     bl_idname = "node.sv_bezier_in_callback"
@@ -111,21 +157,8 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
         row.label(text=self.label if self.label else self.name)
 
         self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOp.bl_idname, text='GET')
+        self.wrapper_tracked_ui_draw_op(row, SvNodeViewZoomBorder.bl_idname, text="", icon="TRACKER_DATA")
 
-        # this can maybe be cached...
-        node_x, node_y = self.absolute_location
-        border_width = self.width * 4
-        border_height = self.height * 3
-
-        # op2 = row.operator("view2d.zoom_border", text="", icon="TRACKER_DATA")
-        # row.operator_context = 'INVOKE_DEFAULT'
-        op2 = row.operator("view2d.smoothview", text="", icon="TRACKER_DATA")
-        op2.xmin = node_x - border_width / 2
-        op2.xmax = node_x + border_width / 2
-        op2.ymin = node_y - border_height / 2
-        op2.ymax = node_y + border_height / 2
-        op2.wait_for_input = False
-        # xmin=0, xmax=0, ymin=0, ymax=0, wait_for_input=True, zoom_out=False)
 
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
@@ -202,11 +235,5 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
         self.outputs['ControlPoints'].sv_set(controls_out)
         self.outputs['Matrices'].sv_set(matrices_out)
 
-
-def register():
-    bpy.utils.register_class(SvBezierInCallbackOp)
-    bpy.utils.register_class(SvBezierInNode)
-
-def unregister():
-    bpy.utils.unregister_class(SvBezierInNode)
-    bpy.utils.unregister_class(SvBezierInCallbackOp)
+classes = [SvNodeViewZoomBorder, SvBezierInCallbackOp, SvCubicBezierCurve]
+register, unregister = bpy.utils.register_classes_factory(classes)
