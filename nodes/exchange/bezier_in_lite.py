@@ -15,7 +15,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
 from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve.bezier import SvCubicBezierCurve
 
-class SvBezierInCallbackOp(bpy.types.Operator):
+class SvBezierInLiteCallbackOp(bpy.types.Operator):
 
     bl_idname = "node.sv_bezier_in_lite_callback"
     bl_label = "Bezier In Lite Callback"
@@ -38,7 +38,7 @@ class SvBezierInCallbackOp(bpy.types.Operator):
         node.get_objects_from_scene(self)
         return {'FINISHED'}
 
-class SvBezierInNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvBezierInLiteNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """
     Triggers: Input Bezier
     Tooltip: Get Bezier Curve objects from scene
@@ -178,9 +178,9 @@ class SvBezierInNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
 
 def register():
-    bpy.utils.register_class(SvBezierInCallbackOp)
-    bpy.utils.register_class(SvBezierInNode)
+    bpy.utils.register_class(SvBezierInLiteCallbackOp)
+    bpy.utils.register_class(SvBezierInLiteNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvBezierInNode)
-    bpy.utils.unregister_class(SvBezierInCallbackOp)
+    bpy.utils.unregister_class(SvBezierInLiteNode)
+    bpy.utils.unregister_class(SvBezierInLiteCallbackOp)
