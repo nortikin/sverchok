@@ -43,7 +43,8 @@ class SvNodeViewZoomBorder(bpy.types.Operator):
             xmax = node_x + border_width / 2,
             ymin = node_y - border_height / 2,
             ymax = node_y + border_height / 2,
-            wait_for_input = False
+            wait_for_input = False,
+            zoom_out = True
         )
         
         print("Reached the override section", params, node, ng)
