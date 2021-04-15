@@ -143,7 +143,7 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
         except:
             pass
 
-        self.wrapper_tracked_ui_draw_op(layout, SvBezierInCallbackOp.bl_idname, text='GET')
+        self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOp.bl_idname, text='GET')
 
         layout.prop(self, 'sort', text='Sort', toggle=True)
         layout.prop(self, 'apply_matrix', toggle=True)
