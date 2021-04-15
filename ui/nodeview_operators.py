@@ -44,7 +44,7 @@ class SvNodeViewZoomBorder(bpy.types.Operator):
             ymin = node_y - border_height / 2,
             ymax = node_y + border_height / 2,
             wait_for_input = False,
-            zoom_out = True
+            # zoom_out = True
         )
         
         print("Reached the override section", params, node, ng)
@@ -54,10 +54,11 @@ class SvNodeViewZoomBorder(bpy.types.Operator):
             screen = window.screen
     
             for area in screen.areas:        
-                if area.type == 'NODE_EDITOR':
+                if area.type == 'NODE_EDITOR':  # and nodeeditor is Sverchok and nodetree is nodetree.
                     for region in area.regions:
-                        if region.type == 'WINDOW':
+                        if region.type == 'WINDOW': 
                             override = {'window': window, 'screen': screen, 'area': area, 'region': region}
+                            bpy.ops.node.view_all(override)
                             bpy.ops.view2d.zoom_border(override, **params)
                             break
 
