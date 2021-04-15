@@ -22,17 +22,17 @@ class SvBezierInCallbackOp(bpy.types.Operator):
     bl_label = "Bezier In Callback"
     bl_options = {'INTERNAL'}
 
-    node_name: StringProperty(default='')
-    tree_name: StringProperty(default='')
+    idname: StringProperty(default='')
+    idtree: StringProperty(default='')
 
     def execute(self, context):
         """
         returns the operator's 'self' too to allow the code being called to
         print from self.report.
         """
-        if self.tree_name and self.node_name:
-            ng = bpy.data.node_groups[self.tree_name]
-            node = ng.nodes[self.node_name]
+        if self.idtree and self.idname:
+            ng = bpy.data.node_groups[self.idtree]
+            node = ng.nodes[self.idname]
         else:
             node = context.node
 
@@ -109,14 +109,13 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)
         row.label(text=self.label if self.label else self.name)
-        op = row.operator(SvBezierInCallbackOp.bl_idname, text='GET')
-        op.tree_name = self.id_data.name
-        op.node_name = self.name
+
+        self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOp.bl_idname, text='GET')
 
         # this can maybe be cached...
-        node_x, node_y = node.absolute_location
-        border_width = node.width * 4
-        border_height = node.height * 3
+        node_x, node_y = self.absolute_location
+        border_width = self.width * 4
+        border_height = self.height * 3
 
         # op2 = row.operator("view2d.zoom_border", text="", icon="TRACKER_DATA")
         op2 = row.operator("view2d.smoothview", text="", icon="TRACKER_DATA")
@@ -143,7 +142,7 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
         except:
             pass
 
-        row.operator(SvBezierInCallbackOp.bl_idname, text=op_text)
+        self.wrapper_tracked_ui_draw_op(layout, SvBezierInCallbackOp.bl_idname, text='GET')
 
         layout.prop(self, 'sort', text='Sort', toggle=True)
         layout.prop(self, 'apply_matrix', toggle=True)
