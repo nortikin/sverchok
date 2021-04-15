@@ -48,21 +48,7 @@ class SvNodeViewZoomBorder(bpy.types.Operator):
         
         print("Reached the override section", params, node, ng)
 
-        # win      = bpy.context.window
-        # scr      = win.screen
-        # areas2d  = [area for area in scr.areas if area.type == 'NODE_EDITOR']
-        # region   = [region for region in areas2d[-1].regions if region.type == 'WINDOW']
-
-        # override = {
-        #     'window':win,
-        #     'screen':scr,
-        #     'area'  :areas2d[0],
-        #     'region':region,
-        #     # 'scene' :bpy.context.scene,
-        # }
-
-        # bpy.ops.view2d.zoom_border(override, "INVOKE_DEFAULT", **params)
-
+        # https://docs.blender.org/api/current/bpy.ops.html#execution-context
         for window in bpy.context.window_manager.windows:
             screen = window.screen
     
@@ -71,7 +57,7 @@ class SvNodeViewZoomBorder(bpy.types.Operator):
                     for region in area.regions:
                         if region.type == 'WINDOW':
                             override = {'window': window, 'screen': screen, 'area': area, 'region': region}
-                            bpy.ops.view2d.zoom_border(override, "INVOKE_DEFAULT", **params)
+                            bpy.ops.view2d.zoom_border(override, **params)
                             break
 
         return {'FINISHED'}
