@@ -58,7 +58,7 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
         description='sorting inserted objects by names',
         default=True, update=updateNode)
 
-    apply_matrix : BoolProperty(
+    apply_matrix: BoolProperty(
         name = "Apply matrices",
         description = "Apply object matrices to control points",
         default = True,
@@ -111,10 +111,7 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)
         row.label(text=self.label if self.label else self.name)
-
         self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOp.bl_idname, text='GET')
-        self.wrapper_tracked_ui_draw_op(row, "node.sv_nodeview_zoom_border", text="", icon="TRACKER_DATA")
-
 
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
