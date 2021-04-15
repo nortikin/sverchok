@@ -14,6 +14,7 @@ from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
 from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve.bezier import SvCubicBezierCurve
+from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
 class SvBezierInCallbackOp(bpy.types.Operator):
 
@@ -38,7 +39,7 @@ class SvBezierInCallbackOp(bpy.types.Operator):
         node.get_objects_from_scene(self)
         return {'FINISHED'}
 
-class SvBezierInNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """
     Triggers: Input Bezier
     Tooltip: Get Bezier Curve objects from scene
@@ -60,6 +61,7 @@ class SvBezierInNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         description = "Apply object matrices to control points",
         default = True,
         update = updateNode)
+
 
     def sv_init(self, context):
         self.outputs.new('SvCurveSocket', 'Curves')
@@ -100,6 +102,18 @@ class SvBezierInNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                     break
         else:
             layout.label(text='--None--')
+
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "draw_3dpanel")
+
+    def draw_buttons_3dpanel(self, layout):
+        row = layout.row(align=True)
+        row.label(text=self.label if self.label else self.name)
+        op = row.operator(SvBezierInCallbackOp.bl_idname, text='GET')
+        op.tree_name = self.id_data.name
+        op.node_name = self.name
+        
+        # row.prop(self, 'color_data', text='')
 
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
