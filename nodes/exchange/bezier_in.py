@@ -112,8 +112,20 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
         op = row.operator(SvBezierInCallbackOp.bl_idname, text='GET')
         op.tree_name = self.id_data.name
         op.node_name = self.name
-        
-        # row.prop(self, 'color_data', text='')
+
+        # this can maybe be cached...
+        node_x, node_y = node.absolute_location
+        border_width = node.width * 4
+        border_height = node.height * 3
+
+        # op2 = row.operator("view2d.zoom_border", text="", icon="TRACKER_DATA")
+        op2 = row.operator("view2d.smoothview", text="", icon="TRACKER_DATA")
+        op2.xmin = node_x - border_width / 2
+        op2.xmax = node_x + border_width / 2
+        op2.ymin = node_y - border_height / 2
+        op2.ymax = node_y + border_height / 2
+        op2.wait_for_input = False
+        # xmin=0, xmax=0, ymin=0, ymax=0, wait_for_input=True, zoom_out=False)
 
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
