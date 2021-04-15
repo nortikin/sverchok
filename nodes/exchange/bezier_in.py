@@ -25,7 +25,7 @@ class SvNodeViewZoomBorder(bpy.types.Operator):
     bl_label = "NodeView Zoom Border Operator"
     bl_options = {'INTERNAL'}
 
-    mode: StringProperty(default="SMOOTH")
+    zoom_mode: StringProperty(default="SMOOTH")
     idname: StringProperty(default='')
     idtree: StringProperty(default='')
 
@@ -42,14 +42,14 @@ class SvNodeViewZoomBorder(bpy.types.Operator):
                 node = context.node
             except:
                 print("SvNodeViewZoomBorder -> context.node : not available")
-                return {"CANCELLED"}
+                return {'CANCELLED'}
 
-        if self.mode == "SMOOTH":
+        if self.zoom_mode == "SMOOTH":
             op_name = bpy.ops.view2d.smoothview
-        elif self.mode == "ZOOM_BORDER":
+        elif self.zoom_mode == "ZOOM_BORDER":
             op_name = bpy.ops.view2d.zoom_border
         else:
-            return {"CANCELLED"}
+            return {'CANCELLED'}
 
         node_x, node_y = node.absolute_location
         border_width = node.width * 4
@@ -165,7 +165,7 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
         row.label(text=self.label if self.label else self.name)
 
         self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOp.bl_idname, text='GET')
-        self.wrapper_tracked_ui_draw_op(row, SvNodeViewZoomBorder.bl_idname, text="", icon="TRACKER_DATA")
+        # self.wrapper_tracked_ui_draw_op(row, SvNodeViewZoomBorder.bl_idname, text="", icon="TRACKER_DATA")
 
 
     def draw_buttons(self, context, layout):
@@ -242,6 +242,7 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
         self.outputs['Curves'].sv_set(curves_out)
         self.outputs['ControlPoints'].sv_set(controls_out)
         self.outputs['Matrices'].sv_set(matrices_out)
+
 
 classes = [SvNodeViewZoomBorder, SvBezierInCallbackOp, SvCubicBezierCurve]
 register, unregister = bpy.utils.register_classes_factory(classes)
