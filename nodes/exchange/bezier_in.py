@@ -54,12 +54,17 @@ class SvNodeViewZoomBorder(bpy.types.Operator):
         node_x, node_y = node.absolute_location
         border_width = node.width * 4
         border_height = node.height * 3
-        xmin = node_x - border_width / 2
-        xmax = node_x + border_width / 2
-        ymin = node_y - border_height / 2
-        ymax = node_y + border_height / 2
-        wait_for_input = False
+        params = dict(
+            xmin = node_x - border_width / 2,
+            xmax = node_x + border_width / 2,
+            ymin = node_y - border_height / 2,
+            ymax = node_y + border_height / 2,
+            wait_for_input = False
+        )
         
+        # override = {}  <-- get first nodetree associated with the node
+        # "INVOKE_DEFAULT"
+        # op_name(override, "INVOKE_DEFAULT, **params)
 
         return {'FINISHED'}
 
