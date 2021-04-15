@@ -5,6 +5,8 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+import bpy
+
 class SvNodeViewZoomBorder(bpy.types.Operator):
     """
     this is to be called from anywhere.
@@ -14,8 +16,8 @@ class SvNodeViewZoomBorder(bpy.types.Operator):
     bl_label = "NodeView Zoom Border Operator"
     bl_options = {'INTERNAL'}
 
-    idname: StringProperty(default='')
-    idtree: StringProperty(default='')
+    idname: bpy.props.StringProperty(default='')
+    idtree: bpy.props.StringProperty(default='')
 
     def execute(self, context):
         """
