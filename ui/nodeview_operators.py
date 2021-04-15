@@ -57,7 +57,12 @@ class SvNodeViewZoomBorder(bpy.types.Operator):
                 if area.type == 'NODE_EDITOR':  # and nodeeditor is Sverchok and nodetree is nodetree.
                     for region in area.regions:
                         if region.type == 'WINDOW': 
-                            override = {'window': window, 'screen': screen, 'area': area, 'region': region}
+                            override = {
+                                'window': window,
+                                'screen': screen,
+                                'area': area,
+                                'region': region
+                            }
                             bpy.ops.node.view_all(override)
                             bpy.ops.view2d.zoom_border(override, **params)
                             break
