@@ -165,7 +165,7 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
         row.label(text=self.label if self.label else self.name)
 
         self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOp.bl_idname, text='GET')
-        # self.wrapper_tracked_ui_draw_op(row, SvNodeViewZoomBorder.bl_idname, text="", icon="TRACKER_DATA")
+        self.wrapper_tracked_ui_draw_op(row, SvNodeViewZoomBorder.bl_idname, text="", icon="TRACKER_DATA")
 
 
     def draw_buttons(self, context, layout):
