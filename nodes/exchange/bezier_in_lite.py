@@ -46,7 +46,7 @@ class SvBezierInLiteNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
     bl_idname = 'SvBezierInLiteNode'
     bl_label = 'Bezier In Lite'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_OBJECTS_IN'
+    sv_icon = 'SV_OBJECTS_IN_LITE'
 
     object_names: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
 
