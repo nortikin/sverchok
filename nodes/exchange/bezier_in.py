@@ -67,18 +67,18 @@ class SvNodeViewZoomBorder(bpy.types.Operator):
         win      = bpy.context.window
         scr      = win.screen
         areas2d  = [area for area in scr.areas if area.type == 'NODE_EDITOR']
-        region   = [region for region in areas2d[0].regions if region.type == 'WINDOW']
+        region   = [region for region in areas2d[-1].regions if region.type == 'WINDOW']
 
         override = {
             'window':win,
             'screen':scr,
-            'area'  :areas2d[-1],
+            'area'  :areas2d[0],
             'region':region,
             # 'scene' :bpy.context.scene,
         }
 
-        # op_name(override, "INVOKE_DEFAULT", **params)
-        op_name(override, **params)
+        op_name(override, "INVOKE_DEFAULT", **params)
+        # op_name(override, **params)
         return {'FINISHED'}
 
 
