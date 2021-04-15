@@ -16,57 +16,57 @@ from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve.bezier import SvCubicBezierCurve
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
-# class SvNodeViewZoomBorder(bpy.types.Operator):
-#     """
-#     this will go into node utils if it works...
-#     """
+class SvNodeViewZoomBorder(bpy.types.Operator):
+    """
+    this will go into node utils if it works...
+    """
 
-#     bl_idname = "node.sv_nodeview_zoom_border"
-#     bl_label = "NodeView Zoom Border Operator"
-#     bl_options = {'INTERNAL'}
+    bl_idname = "node.sv_nodeview_zoom_border"
+    bl_label = "NodeView Zoom Border Operator"
+    bl_options = {'INTERNAL'}
 
-#     zoom_mode: StringProperty(default="SMOOTH")
-#     idname: StringProperty(default='')
-#     idtree: StringProperty(default='')
+    zoom_mode: StringProperty(default="SMOOTH")
+    idname: StringProperty(default='')
+    idtree: StringProperty(default='')
 
-#     def execute(self, context):
-#         """
-#         - [ ] locate the first nodeview window / area of the invoking node
+    def execute(self, context):
+        """
+        - [ ] locate the first nodeview window / area of the invoking node
 
-#         """
-#         if self.idtree and self.idname:
-#             ng = bpy.data.node_groups[self.idtree]
-#             node = ng.nodes[self.idname]
-#         else:
-#             try:
-#                 node = context.node
-#             except:
-#                 print("SvNodeViewZoomBorder -> context.node : not available")
-#                 return {'CANCELLED'}
+        """
+        if self.idtree and self.idname:
+            ng = bpy.data.node_groups[self.idtree]
+            node = ng.nodes[self.idname]
+        else:
+            try:
+                node = context.node
+            except:
+                print("SvNodeViewZoomBorder -> context.node : not available")
+                return {'CANCELLED'}
 
-#         if self.zoom_mode == "SMOOTH":
-#             op_name = bpy.ops.view2d.smoothview
-#         elif self.zoom_mode == "ZOOM_BORDER":
-#             op_name = bpy.ops.view2d.zoom_border
-#         else:
-#             return {'CANCELLED'}
+        if self.zoom_mode == "SMOOTH":
+            op_name = bpy.ops.view2d.smoothview
+        elif self.zoom_mode == "ZOOM_BORDER":
+            op_name = bpy.ops.view2d.zoom_border
+        else:
+            return {'CANCELLED'}
 
-#         node_x, node_y = node.absolute_location
-#         border_width = node.width * 4
-#         border_height = node.height * 3
-#         params = dict(
-#             xmin = node_x - border_width / 2,
-#             xmax = node_x + border_width / 2,
-#             ymin = node_y - border_height / 2,
-#             ymax = node_y + border_height / 2,
-#             wait_for_input = False
-#         )
+        node_x, node_y = node.absolute_location
+        border_width = node.width * 4
+        border_height = node.height * 3
+        params = dict(
+            xmin = node_x - border_width / 2,
+            xmax = node_x + border_width / 2,
+            ymin = node_y - border_height / 2,
+            ymax = node_y + border_height / 2,
+            wait_for_input = False
+        )
         
-#         # override = {}  <-- get first nodetree associated with the node
-#         # "INVOKE_DEFAULT"
-#         # op_name(override, "INVOKE_DEFAULT, **params)
+        # override = {}  <-- get first nodetree associated with the node
+        # "INVOKE_DEFAULT"
+        # op_name(override, "INVOKE_DEFAULT, **params)
 
-#         return {'FINISHED'}
+        return {'FINISHED'}
 
 
 
@@ -244,8 +244,12 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
         self.outputs['Matrices'].sv_set(matrices_out)
 
 
-classes = [
-    #SvNodeViewZoomBorder, 
-    SvBezierInCallbackOp, SvCubicBezierCurve
-]
-register, unregister = bpy.utils.register_classes_factory(classes)
+def register():
+    bpy.utils.register_class(SvBezierInCallbackOp)
+    bpy.utils.register_class(SvNodeViewZoomBorder)
+    bpy.utils.register_class(SvBezierInNode)
+
+def unregister():
+    bpy.utils.unregister_class(SvBezierInNode)
+    bpy.utils.unregister_class(SvNodeViewZoomBorder)
+    bpy.utils.unregister_class(SvBezierInCallbackOp)
