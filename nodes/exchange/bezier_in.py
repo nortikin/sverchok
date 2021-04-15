@@ -17,6 +17,9 @@ from sverchok.utils.curve.bezier import SvCubicBezierCurve
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
 class SvNodeViewZoomBorder(bpy.types.Operator):
+    """
+    this will go into node utils if it works...
+    """
 
     bl_idname = "node.sv_nodeview_zoom_border"
     bl_label = "NodeView Zoom Border Operator"
