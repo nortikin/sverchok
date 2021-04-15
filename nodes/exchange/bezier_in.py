@@ -16,71 +16,6 @@ from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve.bezier import SvCubicBezierCurve
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
-class SvNodeViewZoomBorder(bpy.types.Operator):
-    """
-    this will go into node utils if it works...
-    """
-
-    bl_idname = "node.sv_nodeview_zoom_border"
-    bl_label = "NodeView Zoom Border Operator"
-    bl_options = {'INTERNAL'}
-
-    zoom_mode: StringProperty(default="SMOOTH")
-    idname: StringProperty(default='')
-    idtree: StringProperty(default='')
-
-    def execute(self, context):
-        """
-        - [ ] locate the first nodeview window / area of the invoking node
-
-        """
-        if self.idtree and self.idname:
-            ng = bpy.data.node_groups[self.idtree]
-            node = ng.nodes[self.idname]
-        else:
-            try:
-                node = context.node
-            except:
-                print("SvNodeViewZoomBorder -> context.node : not available")
-                return {'CANCELLED'}
-
-        if self.zoom_mode == "SMOOTH":
-            op_name = bpy.ops.view2d.smoothview
-        elif self.zoom_mode == "ZOOM_BORDER":
-            op_name = bpy.ops.view2d.zoom_border
-        else:
-            return {'CANCELLED'}
-
-        node_x, node_y = node.absolute_location
-        border_width = node.width * 4
-        border_height = node.height * 3
-        params = dict(
-            xmin = node_x - border_width / 2,
-            xmax = node_x + border_width / 2,
-            ymin = node_y - border_height / 2,
-            ymax = node_y + border_height / 2,
-            wait_for_input = False
-        )
-        
-        print("Reached the override section", params, node, ng)
-
-        win      = bpy.context.window
-        scr      = win.screen
-        areas2d  = [area for area in scr.areas if area.type == 'NODE_EDITOR']
-        region   = [region for region in areas2d[-1].regions if region.type == 'WINDOW']
-
-        override = {
-            'window':win,
-            'screen':scr,
-            'area'  :areas2d[0],
-            'region':region,
-            # 'scene' :bpy.context.scene,
-        }
-
-        op_name(override, "INVOKE_DEFAULT", **params)
-        # op_name(override, **params)
-        return {'FINISHED'}
-
 
 
 class SvBezierInCallbackOp(bpy.types.Operator):
@@ -259,10 +194,8 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
 
 def register():
     bpy.utils.register_class(SvBezierInCallbackOp)
-    bpy.utils.register_class(SvNodeViewZoomBorder)
     bpy.utils.register_class(SvBezierInNode)
 
 def unregister():
     bpy.utils.unregister_class(SvBezierInNode)
-    bpy.utils.unregister_class(SvNodeViewZoomBorder)
     bpy.utils.unregister_class(SvBezierInCallbackOp)
