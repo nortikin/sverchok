@@ -117,7 +117,7 @@ class SvBezierInLiteNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
         except:
             pass
 
-        row.operator(SvBezierInCallbackOp.bl_idname, text=op_text)
+        row.operator(SvBezierInLiteCallbackOp.bl_idname, text=op_text)
 
         layout.prop(self, 'sort', text='Sort', toggle=True)
         layout.prop(self, 'apply_matrix', toggle=True)
