@@ -39,7 +39,7 @@ class SvNodeViewZoomBorder(bpy.types.Operator, SvGenericNodeLocator):
                                     treenode.select = False
                                 
                                 # set active, and select to get the thicker border around the node
-                                ng_view.nodes.active = node
+                                ng.nodes.active = node
                                 node.select = True
                             else:
                                 continue
