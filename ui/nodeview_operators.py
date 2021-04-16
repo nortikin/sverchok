@@ -10,7 +10,8 @@ import bpy
 
 class SvNodeViewZoomBorder(bpy.types.Operator, SvGenericNodeLocator):
     """
-    this is to be called from anywhere.
+    This operator takes a tree name and a node name and scans through the open nodeviews to find 
+    the node and select it and set active, and then executes the view_selected operator
     """
 
     bl_idname = "node.sv_nodeview_zoom_border"
@@ -18,31 +19,31 @@ class SvNodeViewZoomBorder(bpy.types.Operator, SvGenericNodeLocator):
     bl_options = {'INTERNAL'}
 
     def execute(self, context):
-        """
-        - [ ] locate the first nodeview window / area of the invoking node
 
-        """
         node = self.get_node(context)
         if not node:
             print("SvNodeViewZoomBorder was not able to locate the node")
             return {'CANCELLED'}
 
-        """
-        ng_view = space.edit_tree
-
-        # ng_view can be None
-        if not ng_view:
-            return
-
-        ng_name = space.edit_tree.name
-        """
-
-        # https://docs.blender.org/api/current/bpy.ops.html#execution-context
         for window in bpy.context.window_manager.windows:
             screen = window.screen
     
             for area in screen.areas:        
-                if area.type == 'NODE_EDITOR':  # and nodeeditor is Sverchok and nodetree is nodetree.
+                if area.type == 'NODE_EDITOR':
+                    for space in area.spaces:
+                        if hasattr(space, "edit_tree"):
+                            ng = space.edit_tree
+                            if ng and ng.name == self.idtree:
+                                # unselect all first.
+                                for treenode in ng.nodes:
+                                    treenode.select = False
+                                
+                                # set active, and select to get the thicker border around the node
+                                ng_view.nodes.active = node
+                                node.select = True
+                            else:
+                                continue
+
                     for region in area.regions:
                         if region.type == 'WINDOW': 
                             override = {
@@ -51,8 +52,6 @@ class SvNodeViewZoomBorder(bpy.types.Operator, SvGenericNodeLocator):
                                 'area': area,
                                 'region': region
                             }
-                            # bpy.ops.node.view_all(override)
-                            # bpy.ops.view2d.zoom_border(override, **params)
                             bpy.ops.node.view_selected(override)
                             break
 
