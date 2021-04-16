@@ -5,9 +5,10 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
 import bpy
 
-class SvNodeViewZoomBorder(bpy.types.Operator):
+class SvNodeViewZoomBorder(bpy.types.Operator, SvGenericNodeLocator):
     """
     this is to be called from anywhere.
     """
@@ -16,38 +17,25 @@ class SvNodeViewZoomBorder(bpy.types.Operator):
     bl_label = "NodeView Zoom Border Operator"
     bl_options = {'INTERNAL'}
 
-    idname: bpy.props.StringProperty(default='')
-    idtree: bpy.props.StringProperty(default='')
-
     def execute(self, context):
         """
         - [ ] locate the first nodeview window / area of the invoking node
 
         """
-        if self.idtree and self.idname:
-            ng = bpy.data.node_groups[self.idtree]
-            node = ng.nodes[self.idname]
-        else:
-            try:
-                node = context.node
-            except:
-                print("SvNodeViewZoomBorder -> context.node : not available")
-                return {'CANCELLED'}
+        node = self.get_node(context)
+        if not node:
+            print("SvNodeViewZoomBorder was not able to locate the node")
+            return {'CANCELLED'}
 
+        """
+        ng_view = space.edit_tree
 
-        node_x, node_y = node.absolute_location
-        border_width = node.width * 4
-        border_height = node.height * 3
-        params = dict(
-            xmin = node_x - border_width / 2,
-            xmax = node_x + border_width / 2,
-            ymin = node_y - border_height / 2,
-            ymax = node_y + border_height / 2,
-            wait_for_input = False,
-            # zoom_out = True
-        )
-        
-        print("Reached the override section", params, node, ng)
+        # ng_view can be None
+        if not ng_view:
+            return
+
+        ng_name = space.edit_tree.name
+        """
 
         # https://docs.blender.org/api/current/bpy.ops.html#execution-context
         for window in bpy.context.window_manager.windows:
@@ -63,8 +51,9 @@ class SvNodeViewZoomBorder(bpy.types.Operator):
                                 'area': area,
                                 'region': region
                             }
-                            bpy.ops.node.view_all(override)
-                            bpy.ops.view2d.zoom_border(override, **params)
+                            # bpy.ops.node.view_all(override)
+                            # bpy.ops.view2d.zoom_border(override, **params)
+                            bpy.ops.node.view_selected(override)
                             break
 
         return {'FINISHED'}
