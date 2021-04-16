@@ -1,5 +1,5 @@
 ui_modules = [
-    "color_def", "sv_IO_panel", "sv_examples_menu", 'sv_3d_panel',
+    "color_def", "sv_IO_panel", "sv_examples_menu", 'sv_3d_panel', 'nodeview_operators',
     "sv_panels", "nodeview_rclick_menu", "nodeview_space_menu","nodeview_solids_menu",
     "monad", "sv_icons", "presets", "nodes_replacement", "sv_panel_display_nodes",
     "sv_temporal_viewers", "sv_vep_connector",
