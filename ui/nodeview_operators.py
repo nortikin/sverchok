@@ -33,7 +33,7 @@ class SvNodeViewZoomBorder(bpy.types.Operator, SvGenericNodeLocator):
                     for space in area.spaces:
                         if hasattr(space, "edit_tree"):
                             ng = space.edit_tree
-                            if ng and ng.name == self.idtree:
+                            if ng and ng.name == self.get_tree():
                                 # unselect all first.
                                 for treenode in ng.nodes:
                                     treenode.select = False

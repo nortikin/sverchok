@@ -34,6 +34,9 @@ class SvGenericNodeLocator():
         print("treename and nodename not supplied, or node not found in nodetree")
         return None
 
+    def get_tree(self):
+        return bpy.data.node_groups.get(self.idtree)
+
 
 class SvGenericCallbackOldOp(bpy.types.Operator):
     """ 
@@ -56,7 +59,6 @@ class SvGenericCallbackOldOp(bpy.types.Operator):
             return bpy.data.node_groups[self.tree_name].nodes[self.node_name]
 
         return context.node
-
 
     def execute(self, context):
         n = self.get_node(context)
