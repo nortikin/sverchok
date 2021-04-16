@@ -149,8 +149,9 @@ class SvExNurbsInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, Sv
         row = layout.row(align=True)
         row.label(text=self.label if self.label else self.name)
         callback = 'node.sv_ex_nurbs_in_callback'
-        self.wrapper_tracked_ui_draw_op(row, callback, text='GET').fn_name = 'get_objects_from_scene'
         row.prop(self, 'implementation', text='')
+        self.wrapper_tracked_ui_draw_op(row, callback, text='GET').fn_name = 'get_objects_from_scene'
+        self.wrapper_tracked_ui_draw_op(row, "node.sv_nodeview_zoom_border", text="", icon="TRACKER_DATA")
 
     def get_surface(self, spline, matrix):
         surface_degree_u = spline.order_u - 1
