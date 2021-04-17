@@ -175,7 +175,16 @@ class SvBezierInLiteNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
         self.outputs['Curves'].sv_set(curves_out)
         self.outputs['ControlPoints'].sv_set(controls_out)
         self.outputs['Matrices'].sv_set(matrices_out)
+        
+    def save_to_json(self, node_data: dict):
+        # generate flat data, and inject into incoming storage variable
+        cur = self.node_dict.get(hash(self))
+        print(cur)
+        if not cur:
+            self.error('failed to obtain local geometry, can not add to json')
+            return
 
+        node_data['curv'] = json.dumps(flatten(cur))
 
 def register():
     bpy.utils.register_class(SvBezierInLiteCallbackOp)
