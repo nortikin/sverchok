@@ -343,8 +343,8 @@ class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
         ('SvExtrudeSeparateLiteNode',
             dict(Verts='Vertices', Faces='Polygons'),
             dict(Verts='Vertices', Faces='Polygons')),
-        ('SvInsetSpecial',
-            dict(Verts='vertices', Faces='polygons'),
+        ('SvInsetSpecialMk2',
+            dict(Verts='Vertices', Faces='Polygons'),
             dict(Verts='vertices', Faces='polygons')),
     ]
 
