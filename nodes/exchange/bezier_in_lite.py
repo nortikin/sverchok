@@ -60,6 +60,7 @@ class SvBezierInLiteNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode)
         description = "Apply object matrices to control points",
         default = True,
         update = updateNode)
+        node_dict = {}
 
     def sv_init(self, context):
         self.outputs.new('SvCurveSocket', 'Curves')
