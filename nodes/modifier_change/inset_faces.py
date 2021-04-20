@@ -337,15 +337,15 @@ class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
                                        description="Switch between inserting type")
 
     replacement_nodes = [
+        ('SvInsetSpecialMk2',
+            dict(Verts='Vertices', Faces='Polygons', Depth='Distance'),
+            dict(Verts='Vertices', Faces='Polygons')),
         ('SvExtrudeSeparateNode',
             dict(Verts='Vertices', Faces='Polygons'),
             dict(Verts='Vertices', Faces='Polygons')),
         ('SvExtrudeSeparateLiteNode',
             dict(Verts='Vertices', Faces='Polygons'),
             dict(Verts='Vertices', Faces='Polygons')),
-        ('SvInsetSpecialMk2',
-            dict(Verts='Vertices', Faces='Polygons'),
-            dict(Verts='vertices', Faces='polygons')),
     ]
 
     def draw_buttons(self, context, layout):

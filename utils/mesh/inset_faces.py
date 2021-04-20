@@ -7,6 +7,7 @@
 
 import mathutils
 from mathutils import Vector
+
 import numpy as np
 from numpy import(
     arange as np_arange,
@@ -17,118 +18,28 @@ from numpy import(
     roll as np_roll,
     vectorize as np_vectorize,
 )
-from sverchok.utils.math import np_dot
-
+from sverchok.utils.math import np_dot, np_normalize_vectors as normalize_v3
+from sverchok.utils.modules.polygon_utils import np_faces_normals, np_faces_perimeters as face_perimeter
 from sverchok.data_structure import numpy_full_list, has_element
-
+IDENTITY_MATRIX = np.eye(4, dtype=float)
+INVERSE_IDENTITY_MATRIX = np.array([[-1, 0,  0, 0],
+                                    [0, -1,  0, 0],
+                                    [0,  0, -1, 0],
+                                    [0,  0,  0, 1]], dtype=float)
 def vector_length(arr):
     return np.sqrt(arr[:, 0]**2 + arr[:, 1]**2 + arr[:, 2]**2)
 
-def normalize_v3(arr):
-    ''' Normalize a numpy array of 3 component vectors shape=(n,3) '''
-    lens = vector_length(arr)
-    mask = lens!= 0
-    arr[mask, 0] /= lens
-    arr[mask, 1] /= lens
-    arr[mask, 2] /= lens
-    return arr
-
-def face_normals(v_pols, non_planar=True):
-    sides = v_pols.shape[1]
-    if v_pols.shape[1] != 3 and non_planar:
-        normals = np.zeros((len(v_pols), 3), dtype=float)
-        for i in range(sides-2):
-            normals += normalize_v3(np.cross(v_pols[::, 1] - v_pols[::, 0], v_pols[::, (2 + i) % sides] - v_pols[::, 0] ))
-    else:
-        normals = np.cross(v_pols[::, 1] - v_pols[::, 0], v_pols[::, 2] - v_pols[::, 0] )
-    normalize_v3(normals)
-    return normals
-
-def face_perimeter(v_pols):
-    sides = v_pols.shape[1]
-    perimeter = np.zeros((len(v_pols)), dtype=float)
-    for i in range(sides-2):
-        perimeter += vector_length(v_pols[:, i,:] - v_pols[:, i-1,:])
-    return perimeter
-
-def prepare_data(faces, distances, ignores, make_inners, zero_mode='SKIP', output_old_face_id=False):
-    invert_face_mask = numpy_full_list(np_array(ignores, dtype=bool), len(faces))
-    np_faces_mask = np.invert(invert_face_mask)
-    # np_faces_mask = numpy_full_list(np.invert(np_array(ignores, dtype=bool)), len(faces))
-
-    if not any(np_faces_mask):
-        return
-
-    np_faces = np_array(faces)
-    if output_old_face_id:
-        np_faces_id = np.arange(len(faces))
-
-    np_inset_rate = numpy_full_list(inset_rates, len(faces))
-    zero_inset = np_inset_rate == 0
-    inset_faces_id, fan_faces_id = [],[]
-    if zero_mode == 'SKIP':
-        np_faces_mask[zero_inset] = False
-        invert_face_mask[zero_inset] = True
-        new_ignores = np_faces[invert_face_mask].tolist()
-        if output_old_face_id:
-            ignores_id = np_faces_id[invert_face_mask].tolist()
-            new_ignores = np_faces[invert_face_mask].tolist()
-        else:
-            new_ignores = np_faces[invert_face_mask].tolist()
-
-        np_distances = numpy_full_list(distances, len(faces))[np_faces_mask]
-        if output_old_face_id:
-            inset_faces_id = np_faces_id[np_faces_mask]
-    else: # FAN
-        if output_old_face_id:
-            ignores_maks = np.invert(np_faces_mask)
-            ignores_id = np_faces_id[ignores_maks].tolist()
-            new_ignores = np_faces[ignores_maks].tolist()
-        else:
-            new_ignores = np_faces[np.invert(np_faces_mask)].tolist()
-        np_faces_mask[zero_inset] = False
-
-        np_all_distances = numpy_full_list(distances, len(faces))
-        np_distances = np_all_distances[np_faces_mask]
-
-        fan_faces = np_faces[zero_inset]
-        fan_distances = np_all_distances[zero_inset]
-        if output_old_face_id:
-            inset_faces_id = np_faces_id[np_faces_mask]
-            fan_faces_id = np_faces_id[zero_inset]
-
-
-
-    np_inset_rate = np_inset_rate[np_faces_mask]
-    # np_inset_rate = numpy_full_list(inset_rates, len(faces))[np_faces_mask]
-    np_make_inners = numpy_full_list(make_inners, len(faces)).astype(bool)[np_faces_mask]
-    np_pols = np_faces[np_faces_mask]
-
-    return np_pols, np_make_inners, np_inset_rate, np_distances, fan_faces, fan_distances
-
-def sides_mode_prepare_data(np_faces, np_faces_mask, invert_face_mask, distances, np_inset_rate, make_inners, np_faces_id):
-    inset_pols = np_faces[np_faces_mask]
-    np_distances = numpy_full_list(distances, len(np_faces))[np_faces_mask]
-    np_inset_rate = np_inset_rate[np_faces_mask]
-    np_make_inners = numpy_full_list(make_inners, len(np_faces)).astype(bool)[np_faces_mask]
-    new_ignores = np_faces[invert_face_mask].tolist()
-    if output_old_face_id:
-        ignores_id = np_faces_id[invert_face_mask].tolist()
-        inset_faces_id = np_faces_id[np_faces_mask]
-    else:
-        ignores_id = []
-    return inset_pols, np_inset_rate, np_distances, np_make_inners, new_ignores, ignores_id, inset_faces_id
-
-def inset_special_np(vertices, faces, inset_rates, distances, ignores, make_inners, custom_normals,
+def inset_special_np(vertices, faces, inset_rates, distances, ignores, make_inners, custom_normals, matrices,
                      zero_mode="SKIP", offset_mode='CENTER', proportional=False, concave_support=True,
                      output_old_face_id=False, output_old_v_id=False,
                      output_pols_groups=False, output_new_verts_mask=False):
 
-    if len(faces) == 0:
+    if not has_element(faces):
         return
     new_faces, new_ignores, new_insets = [], [], []
     original_face_ids, original_vertex_id, new_pols_groups, new_verts_mask = [], [], [], []
     inset_faces_id, fan_faces_id, ignores_id, fan_faces = [], [], [], []
+    np_distances, np_matrices = [], []
 
     np_verts = vertices if isinstance(vertices, np.ndarray) else np.array(vertices)
 
@@ -186,14 +97,23 @@ def inset_special_np(vertices, faces, inset_rates, distances, ignores, make_inne
                 fan_faces_id = np_faces_id[zero_inset]
     else: #SIDES mode
         inset_pols = np_faces[np_faces_mask]
-        np_distances = numpy_full_list(distances, len(faces))[np_faces_mask]
-        np_inset_rate = np_inset_rate[np_faces_mask]
+        if offset_mode == 'SIDES':
+            np_distances = numpy_full_list(distances, len(faces))[np_faces_mask]
+            np_inset_rate = np_inset_rate[np_faces_mask]
+        else: #MATRIX
+            if len(matrices) == len(faces):
+                np_matrices = np.array(matrices)[np_faces_mask]
+            else:
+                np_matrices = numpy_full_list(matrices, len(inset_pols))
+
         np_make_inners = numpy_full_list(make_inners, len(faces)).astype(bool)[np_faces_mask]
         new_ignores = np_faces[invert_face_mask].tolist()
         fan_faces = []
         if output_old_face_id:
             ignores_id = np_faces_id[invert_face_mask].tolist()
             inset_faces_id = np_faces_id[np_faces_mask]
+
+
 
 
     common_args = {
@@ -226,11 +146,12 @@ def inset_special_np(vertices, faces, inset_rates, distances, ignores, make_inne
                 mask = lens == pol_sides
                 pols_group = np_array(inset_pols[mask].tolist(), dtype=int)
                 res = inset_regular_pols(np_verts, pols_group,
-                                         np_distances[mask],
-                                         np_inset_rate[mask],
+                                         np_distances[mask] if offset_mode != 'MATRIX' else [],
+                                         np_inset_rate[mask] if offset_mode != 'MATRIX' else [],
                                          np_make_inners[mask],
                                          inset_faces_id[mask] if output_old_face_id else [],
                                          np_custom_normals[mask] if use_custom_normals else [],
+                                         np_matrices[mask] if offset_mode == 'MATRIX' else [],
                                          offset_mode=offset_mode, proportional=proportional,
                                          concave_support=concave_support,
                                          index_offset=index_offset,
@@ -243,6 +164,7 @@ def inset_special_np(vertices, faces, inset_rates, distances, ignores, make_inne
                                          np_make_inners,
                                          inset_faces_id if output_old_face_id else [],
                                          np_custom_normals if use_custom_normals else [],
+                                         np_matrices,
                                          offset_mode=offset_mode, proportional=proportional,
                                          concave_support=concave_support,
                                          index_offset=index_offset,
@@ -319,7 +241,7 @@ def sides_mode_inset(v_pols, np_inset_rate, np_distances,
     dirs = np.zeros(v_pols.shape, dtype=float)
 
     if concave_support:
-        normals = custom_normals if use_custom_normals else face_normals(v_pols)
+        normals = custom_normals if use_custom_normals else np_faces_normals(v_pols)
         for i in range(pol_sides):
             side1 = normalize_v3(v_pols[:, (i+1)%pol_sides]- v_pols[:, i])
             side2 = normalize_v3(v_pols[:, i-1]- v_pols[:, i])
@@ -334,10 +256,9 @@ def sides_mode_inset(v_pols, np_inset_rate, np_distances,
         for i in range(pol_sides):
             side1 = normalize_v3(v_pols[:, (i+1)%pol_sides]- v_pols[:, i])
             side2 = normalize_v3(v_pols[:, i-1]- v_pols[:, i])
-            dirs[:, i] = normalize_v3(
-                                    normalize_v3(v_pols[:, (i+1)%pol_sides]- v_pols[:, i]) +
-                                    normalize_v3(v_pols[:, i-1]- v_pols[:, i])
-                                    )
+            dirs[:, i] = normalize_v3(normalize_v3(v_pols[:, (i+1)%pol_sides]- v_pols[:, i]) +
+                                      normalize_v3(v_pols[:, i-1]- v_pols[:, i])
+                                      )
 
             dirs[:, i] *= (np_inset_rate/(np.sqrt(1-np.clip(np_dot(side1, dirs[:, i]), -1.0, 1.0)**2)))[:, np_newaxis]
 
@@ -345,17 +266,59 @@ def sides_mode_inset(v_pols, np_inset_rate, np_distances,
         dirs *= face_perimeter(v_pols)[:, np_newaxis, np_newaxis]
     if any(np_distances != 0):
         if  not concave_support:
-            normals = custom_normals if use_custom_normals else face_normals(v_pols)
+            normals = custom_normals if use_custom_normals else np_faces_normals(v_pols)
         z_offset = normals * np_distances[:, np_newaxis]
         inner_points = dirs + v_pols + z_offset[:, np_newaxis, :]
     else:
         inner_points = dirs + v_pols
     return inner_points
 
+def apply_matrices_to_v_pols(verts, matrices):
+
+    verts_co_4d = np.ones(shape=(verts.shape[0], verts.shape[1], 4), dtype=np.float)
+    verts_co_4d[:, :, :-1] = verts  # cos v (x,y,z,1) - point,   v(x,y,z,0)- vector
+    return np.einsum('aij,akj->aki', matrices, verts_co_4d)[:, :, :-1]
+
+
+def matrix_mode_inset(v_pols, matrices, use_custom_normals, custom_normals):
+    pol_sides = v_pols.shape[1]
+    average = np.sum(v_pols, axis=1)/pol_sides
+    if use_custom_normals:
+        normals = custom_normals
+    else:
+        normals = np_faces_normals(v_pols)
+
+    pol_matrix = np.repeat(IDENTITY_MATRIX[np.newaxis, :, :], len(v_pols), axis=0)
+
+    mask = np.all([normals[:, 0] == 0, normals[:, 1] == 0], axis=0)
+    mask2 = normals[:, 2] <= 0
+    mask4 = mask*mask2
+    r_mask = np.invert(mask)
+
+    x_axis = np.zeros(normals.shape, dtype=float)
+    x_axis[:, 0] = normals[:, 1] * -1
+    x_axis[:, 1] = normals[:, 0]
+    y_axis = np.cross(normals, x_axis, axis=1)
+
+    pol_matrix[r_mask, :3, 2] = normals[r_mask, :]
+    pol_matrix[r_mask, :3, 1] = y_axis[r_mask, :]
+    pol_matrix[r_mask, :3, 0] = x_axis[r_mask, :]
+    pol_matrix[mask4, :, :] = INVERSE_IDENTITY_MATRIX[np.newaxis, :]
+    pol_matrix[:, :3, 3] = average
+
+
+    inverted_mat = np.linalg.inv(pol_matrix)
+
+    matrices = np.matmul(matrices, inverted_mat)
+    matrices = np.matmul(pol_matrix, matrices)
+
+    return apply_matrices_to_v_pols(v_pols, matrices)
+    # verts_out =[v_pols_transformed.reshape(-1,3)]
 
 def inset_regular_pols(np_verts, np_pols,
                        np_distances, np_inset_rate, np_make_inners,
                        np_faces_id, custom_normals,
+                       matrices,
                        offset_mode='CENTER',
                        proportional=False,
                        concave_support=True,
@@ -372,12 +335,15 @@ def inset_regular_pols(np_verts, np_pols,
         inner_points = sides_mode_inset(v_pols, np_inset_rate, np_distances,
                                         concave_support, proportional,
                                         use_custom_normals, custom_normals)
+    elif offset_mode == 'MATRIX':
+        inner_points = matrix_mode_inset(v_pols, matrices,
+                                         use_custom_normals, custom_normals)
     else:
         if any(np_distances != 0):
             if use_custom_normals:
                 normals = custom_normals
             else:
-                normals = face_normals(v_pols)
+                normals = np_faces_normals(v_pols)
             average = np.sum(v_pols, axis=1)/pol_sides #+ normals*np_distances[:, np_newaxis] #shape [num_pols, 3]
             inner_points = average[:, np_newaxis, :] + (v_pols - average[:, np_newaxis, :]) * np_inset_rate[:, np_newaxis, np_newaxis] + normals[:, np_newaxis, :]*np_distances[:, np_newaxis, np_newaxis]
         else:
@@ -438,11 +404,11 @@ def fan_regular_pols(np_verts, np_pols,
     pol_sides = np_pols.shape[1]
     v_pols = np_verts[np_pols] #shape [num_pols, num_corners, 3]
 
-    if (len(np_distances)>1 and np.any(np_distances != 0)) or np_distances != 0:
+    if (len(np_distances) > 1 and np.any(np_distances != 0)) or np_distances != 0:
         if use_custom_normals:
             normals = custom_normals
         else:
-            normals = face_normals(v_pols)
+            normals = np_faces_normals(v_pols)
         average = np.sum(v_pols, axis=1)/pol_sides + normals*np_distances[:, np_newaxis] #shape [num_pols, 3]
     else:
         average = np.sum(v_pols, axis=1)/pol_sides
@@ -565,7 +531,6 @@ def inset_special_mathutils(vertices, faces, inset_rates, distances, ignores, ma
             new_vertex = avg_vec.lerp(avg_vec + normal, distance)
             vertices.append(new_vertex)
             new_vertex_idx = current_verts_idx
-            new_faces
             for i, j in zip(face, face[1:]):
                 new_faces.append([i, j, new_vertex_idx])
             new_faces.append([face[-1], face[0], new_vertex_idx])

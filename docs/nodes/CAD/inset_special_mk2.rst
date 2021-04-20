@@ -12,13 +12,17 @@ Inputs
 
 This node has the following inputs:
 
+Base Meshes:
+
 - **Vertices** - Vertices of objects
 
 - **Polygons** - polygons of objects
 
-- **Inset** - Proportional offset values meaning 0 in the center and 1 in the edges. Vectorized for every polygon as [[f,f,f,f,f]]
+Transformation definition. Vectorized for every polygon:
 
-- **Distance** - Offset distance along normal. Vectorized for every polygon as [[f,f,f,f,f]]
+- **Inset** - Proportional offset values meaning 0 in the center and 1 in the edges.
+
+- **Distance** - Offset distance along normal.
 
 - **ignore** - mask of affected polygons
 
@@ -26,12 +30,15 @@ This node has the following inputs:
 
 - **Custom Normals** - custom normals for inset displacement
 
+- **Offset Matrix** - Matrix transformation for inset displacement (only if 'Offset Mode' is set to 'Matrix')
+
 Options
 -------
 
 - **Offset Mode** - How to interpret inset distance:
   Center: Inset is measured as a proportion between the corners and the center of the polygon
   Sides: Inset is measured as a constant distance to the sides of the polygon
+  Matrix: Inset is computed based on a offset Matrix
 
 - **Proportional** - Multiply distance by polygon perimeter (only if 'Offset Mode' is set to 'Sides')
 
@@ -64,7 +71,7 @@ This node has the following outputs:
 - **Original Face Idx** - the index of the original face. Can be used to pass Face Data to new faces
 - **Pols Group** - Outputs a list to mask polygons from the modified mesh,
   0 = Original Polygon
-  1 = Side poligon
+  1 = Side polygon
   2 = Inset Polygon.
 - **New Verts Mask** - Mask of the new vertices
 
@@ -72,8 +79,20 @@ This node has the following outputs:
 Examples of usage
 -----------------
 
-.. image:: https://raw.githubusercontent.com/vDicdoval/sverchok/docs_images/images_for_docs/CAD/Inset_special/inset_special_example.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/CAD/Inset_special/inset_special_example.png
   :alt: procedural_Inset_example_blender_sverchok_1.png
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/CAD/Inset_special/inset_special_example2.png
   :alt: procedural_Inset_example_blender_sverchok_2.png
+
+Original Face idx and Original Vert Idx
+.. image:: https://user-images.githubusercontent.com/10011941/115357139-9b846200-a1bc-11eb-9c32-529c820a1a36.png
+
+Custom Normal Example
+.. image:: https://user-images.githubusercontent.com/10011941/115118493-af08b080-9fa3-11eb-88a2-3252eea02a33.png
+
+New verts mask used to bevel only inset vertices
+.. image:: https://user-images.githubusercontent.com/10011941/115415530-46b20d00-a1f7-11eb-8d6f-48bcc941bcfd.png
+
+Pol groups output to filter the output polygons
+.. image:: https://user-images.githubusercontent.com/10011941/115419634-c7263d00-a1fa-11eb-8730-d6ca1dc5511b.png

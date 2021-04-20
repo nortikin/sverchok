@@ -16,18 +16,14 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import random
-from mathutils import Vector
+
 import bpy
-
-
+from bpy.props import BoolProperty, FloatProperty, IntProperty, EnumProperty
 from mathutils import Vector
-from bpy.props import BoolProperty, FloatProperty, FloatVectorProperty, IntProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
-    updateNode, Vector_generate, zip_long_repeat, make_repeaters,repeat_last_for_length,
-    repeat_last)
+    updateNode, zip_long_repeat, make_repeaters)
 from sverchok.utils.mesh.inset_faces import inset_special_np, inset_special_mathutils
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 
@@ -56,7 +52,7 @@ class SvInsetSpecialMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     inset: FloatProperty(
         name='Inset',
         description='inset amount',
-        min = 0.0,
+        min=0.0,
         default=0.1, update=updateNode)
     distance: FloatProperty(
         name='Distance',
@@ -79,14 +75,21 @@ class SvInsetSpecialMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
         update=updateNode)
     offset_modes = [
         ("CENTER", "Center", "Inset is measured as a proportion between the corners and the center of the polygon", 0),
-        ("SIDES", "Sides", "Inset is measured as a constant distance to the sides of the polygon", 1)
+        ("SIDES", "Sides", "Inset is measured as a constant distance to the sides of the polygon", 1),
+        ("MATRIX", "Matrix", "Inset controled by offset matrix", 2)
         ]
+    def update_sockets(self, context):
+        self.inputs['Inset'].hide_safe = self.offset_mode == 'MATRIX'
+        self.inputs['Distance'].hide_safe = self.offset_mode == 'MATRIX'
+        self.inputs['Offset Matrix'].hide_safe = self.offset_mode != 'MATRIX'
+        updateNode(self, context)
+
     offset_mode: EnumProperty(
-        name="Offset Mode",
+        name="Mode",
         description="How to interpret inset distance",
         default="CENTER",
         items=offset_modes,
-        update=updateNode)
+        update=update_sockets)
     proportional: BoolProperty(
         name='Proportional',
         description='Multiply Inset by face perimeter',
@@ -102,35 +105,39 @@ class SvInsetSpecialMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
 
     replacement_nodes = [
         ('SvExtrudeSeparateNode',
-            dict(Vertices='Vertices', Polygons='Polygons'),
-            dict(vertices='Vertices', polygons='Polygons')),
+            dict(Vertices='Vertices', Polygons='Polygons', Distance='Height'),
+            dict(Vertices='Vertices', Polygons='Polygons')),
         ('SvExtrudeSeparateLiteNode',
             dict(Vertices='Vertices', Polygons='Polygons'),
-            dict(vertices='Vertices', polygons='Polygons')),
+            dict(vertices='Vertices', Polygons='Polygons')),
         ('SvInsetFaces',
-            dict(Vertices='Verts', Polygons='Faces'),
-            dict(vertices='Verts', polygons='Faces'))
+            dict(Vertices='Verts', Polygons='Faces', Distance='Depth'),
+            dict(Vertices='Verts', Polygons='Faces'))
     ]
 
     def sv_init(self, context):
         i = self.inputs
         self.sv_new_input('SvVerticesSocket', "Vertices", is_mandatory=True, nesting_level=3)
         self.sv_new_input('SvStringsSocket', "Polygons", is_mandatory=True, nesting_level=3)
-        i.new('SvStringsSocket', 'inset').prop_name = 'inset'
-        i.new('SvStringsSocket', 'distance').prop_name = 'distance'
-        i.new('SvStringsSocket', 'ignore').prop_name = 'ignore'
-        i.new('SvStringsSocket', 'make_inner').prop_name = 'make_inner'
+        i.new('SvStringsSocket', 'Inset').prop_name = 'inset'
+        i.new('SvStringsSocket', 'Distance').prop_name = 'distance'
+        i.new('SvStringsSocket', 'Ignore').prop_name = 'ignore'
+        i.new('SvStringsSocket', 'Make Inner').prop_name = 'make_inner'
         i.new('SvVerticesSocket', 'Custom normal')
+        self.sv_new_input('SvMatrixSocket', 'Offset Matrix',
+                          nesting_level=2,
+                          default_mode='MATRIX',
+                          hide_safe=True)
 
         o = self.outputs
-        o.new('SvVerticesSocket', 'vertices')
-        o.new('SvStringsSocket', 'polygons')
-        o.new('SvStringsSocket', 'ignored')
-        o.new('SvStringsSocket', 'inset')
-        o.new('SvStringsSocket', 'original verts idx')
-        o.new('SvStringsSocket', 'original face idx')
-        o.new('SvStringsSocket', 'pols group')
-        o.new('SvStringsSocket', 'new verts mask')
+        o.new('SvVerticesSocket', 'Vertices')
+        o.new('SvStringsSocket', 'Polygons')
+        o.new('SvStringsSocket', 'Ignored')
+        o.new('SvStringsSocket', 'Inset')
+        o.new('SvStringsSocket', 'Original verts idx')
+        o.new('SvStringsSocket', 'Original face idx')
+        o.new('SvStringsSocket', 'Pols group')
+        o.new('SvStringsSocket', 'New verts mask')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'offset_mode')
@@ -144,22 +151,22 @@ class SvInsetSpecialMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
         layout.prop(self, "concave_support")
 
     def process_data(self, params):
-        i = self.inputs
+
         o = self.outputs
 
         output = [[] for s in self.outputs]
-        output_old_face_id = o['original face idx'].is_linked
-        output_old_vert_id = o['original verts idx'].is_linked
-        output_pols_groups = o['pols group'].is_linked
-        output_new_verts_mask = o['new verts mask'].is_linked
-        for v, p, inset_rates_s, distance_vals_s, ignores_s, make_inners_s, custom_normals in zip_long_repeat(*params):
+        output_old_face_id = o['Original face idx'].is_linked
+        output_old_vert_id = o['Original verts idx'].is_linked
+        output_pols_groups = o['Pols group'].is_linked
+        output_new_verts_mask = o['New verts mask'].is_linked
+        for verts, pols, inset_rates_s, distance_vals_s, ignores_s, make_inners_s, custom_normals, matrices in zip_long_repeat(*params):
             if self.implementation == 'mathutils':
 
                 inset_rates, distance_vals, ignores, make_inners = make_repeaters([inset_rates_s, distance_vals_s, ignores_s, make_inners_s])
 
                 func_args = {
-                    'vertices': [Vector(vec) for vec in v],
-                    'faces': p,
+                    'vertices': [Vector(vec) for vec in verts],
+                    'faces': pols,
                     'inset_rates': inset_rates,
                     'distances': distance_vals,
                     'ignores': ignores,
@@ -169,13 +176,14 @@ class SvInsetSpecialMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
                 res = inset_special_mathutils(**func_args)
             else:
                 func_args = {
-                    'vertices': v,
-                    'faces': p,
+                    'vertices': verts,
+                    'faces': pols,
                     'inset_rates': inset_rates_s,
                     'distances': distance_vals_s,
                     'ignores': ignores_s,
                     'make_inners': make_inners_s,
                     'custom_normals': custom_normals,
+                    'matrices': matrices,
                     'zero_mode': self.zero_mode,
                     'offset_mode': self.offset_mode,
                     'proportional':self.proportional,
@@ -187,10 +195,10 @@ class SvInsetSpecialMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
                 }
                 res = inset_special_np(**func_args)
             if not res:
-                res = v, p, [], [], [], [], [], []
+                res = verts, pols, [], [], [], [], [], []
 
-            for r, so in zip(res, output):
-                so.append(r)
+            for sub_res, socket in zip(res, output):
+                socket.append(sub_res)
 
         return output
 
