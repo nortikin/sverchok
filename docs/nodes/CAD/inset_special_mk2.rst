@@ -86,13 +86,17 @@ Examples of usage
   :alt: procedural_Inset_example_blender_sverchok_2.png
 
 Original Face idx and Original Vert Idx
+
 .. image:: https://user-images.githubusercontent.com/10011941/115357139-9b846200-a1bc-11eb-9c32-529c820a1a36.png
 
 Custom Normal Example
+
 .. image:: https://user-images.githubusercontent.com/10011941/115118493-af08b080-9fa3-11eb-88a2-3252eea02a33.png
 
 New verts mask used to bevel only inset vertices
+
 .. image:: https://user-images.githubusercontent.com/10011941/115415530-46b20d00-a1f7-11eb-8d6f-48bcc941bcfd.png
 
 Pol groups output to filter the output polygons
+
 .. image:: https://user-images.githubusercontent.com/10011941/115419634-c7263d00-a1fa-11eb-8730-d6ca1dc5511b.png
