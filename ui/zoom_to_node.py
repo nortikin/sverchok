@@ -32,11 +32,18 @@ class ZoomToNodeOperator(bpy.types.Operator):
     def execute(self, context):
         if context.scene.zoomed_in:
             bpy.ops.node.view_all()
+            for i in range(5):
+                bpy.ops.view2d.zoom_in()
             context.scene.zoomed_in = False
         else:
             context.scene.zoomed_in = True
             bpy.ops.view2d.zoom_border()
             bpy.ops.node.view_selected()
+            node_selected = context.selected_nodes
+            if len(node_selected) > 1:
+                for i in range(3):
+                    bpy.ops.view2d.zoom_in()
+
 
         return {'FINISHED'}
 
