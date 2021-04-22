@@ -465,7 +465,7 @@
     SvBevelNode
     SvIntersectEdgesNodeMK2
     SvOffsetNode
-    SvInsetSpecial
+    SvInsetSpecialMk2
     SvInsetFaces
     SvLatheNode
     SvSmoothNode
