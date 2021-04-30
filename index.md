@@ -465,7 +465,7 @@
     SvBevelNode
     SvIntersectEdgesNodeMK2
     SvOffsetNode
-    SvInsetSpecial
+    SvInsetSpecialMk2
     SvInsetFaces
     SvLatheNode
     SvSmoothNode
@@ -633,6 +633,7 @@
     SvFCurveInNodeMK1
     SvCollectionPicker
     SvBezierInNode
+	SvBezierInLiteNode
     SvExNurbsInNode
     ---
     SvSelectionGrabberLite
