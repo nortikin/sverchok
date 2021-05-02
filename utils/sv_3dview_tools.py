@@ -12,6 +12,7 @@ from mathutils import Matrix, Vector
 
 from sverchok.core.socket_conversions import is_matrix
 from sverchok.utils.modules import geom_utils
+from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
 
 
 def get_matrix(socket):
@@ -34,10 +35,7 @@ def get_center(self, context):
 
     try:
 
-        # we must now pass the origin node/tree in 2.80  ( this code does not interpret that yet )
-
-        node_group = bpy.data.node_groups[self.idtree]
-        node = node_group.nodes[self.idname]
+        node = self.get_node(context)
         print('node:', node)
 
         inputs = node.inputs
@@ -65,7 +63,7 @@ def get_center(self, context):
                     location = (Matrix(matrix) @ Vector(location))[:]
 
         else:
-            self.report({'INFO'}, 'viewer has no get_center function')
+            self.report({'INFO'}, 'viewer has no get_center function, or node not found')
 
     except Exception as err:
         self.report({'INFO'}, 'no active node found')
@@ -79,22 +77,12 @@ def get_center(self, context):
 
 
 
-class Sv3DviewAlign(bpy.types.Operator):
+class Sv3DviewAlign(bpy.types.Operator, SvGenericNodeLocator):
     """ Zoom to viewer output """
     bl_idname = "node.view3d_align_from"
     bl_label = "Align 3dview to Viewer"
 
     fn_name: bpy.props.StringProperty(default='')
-
-    idname: bpy.props.StringProperty(
-        name='idname',
-        description='name of parent node',
-        default='')
-
-    idtree: bpy.props.StringProperty(
-        name='idtree',
-        description='name of parent tree',
-        default='')
 
     def execute(self, context):
 
