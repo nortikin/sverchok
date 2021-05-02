@@ -26,6 +26,7 @@ from sverchok.core.socket_conversions import ConversionPolicies
 from sverchok.core.socket_data import (
     SvGetSocketInfo, SvGetSocket, SvSetSocket, SvForgetSocket,
     SvNoDataError, sentinel)
+from sverchok.core.socket_data_containers import ObjectSocketData
 
 from sverchok.data_structure import (
     enum_item_4,
@@ -264,6 +265,9 @@ class SvSocketProcessing():
         return result
 
     def postprocess_output(self, data):
+        if not isinstance(data, (list, tuple)) \
+                and any([self.use_flatten, self.use_simplify, self.use_graft, self.use_unwrap, self.use_wrap]):
+            raise NotImplementedError(f'Post processing is not supported for "{type(data).__name__}" class')
         result = data
         if self.use_flatten_topology:
             result = self.do_flat_topology(data)
@@ -415,7 +419,13 @@ class SvSocketCommon(SvSocketProcessing):
                 else:
                     implicit_conversions = DEFAULT_CONVERSION
 
-            return self.convert_data(SvGetSocket(self, other, deepcopy), implicit_conversions, other)
+            data = self.convert_data(SvGetSocket(self, other, deepcopy), implicit_conversions, other)
+
+            # in case if socket is using custom container
+            try:
+                return data.get_data()
+            except AttributeError:
+                return data
 
         prop_name = self.get_prop_name()
         if prop_name:
@@ -618,6 +628,15 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
             layout.prop(prop_origin, prop_name)  # need for consistency, probably will never be used
         else:
             layout.prop_search(self, 'object_ref_pointer', bpy.data, 'objects', text=self.name)
+
+    def sv_set(self, data):
+        """
+        This should solve problem of keeping references in valid state
+        The problem is that references to Blender data blocks can be outdated
+        The solution is refresh references if needed
+        For this reason some meta information should be stored in this method
+        """
+        super().sv_set(ObjectSocketData(data))
 
 
 class SvFormulaSocket(NodeSocket, SvSocketCommon):

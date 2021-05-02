@@ -642,6 +642,7 @@
     SvTimerNode
     ---
     SvDupliInstancesMK4
+    SvBlenderDataListNode
 
 ## Objects
     SvVertexGroupNodeMK2

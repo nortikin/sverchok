@@ -318,6 +318,24 @@ class BPYPointers(Enum):
         return collections[self]
 
     @property
+    def collection_name(self) -> str:
+        """Returns name of collection of current pointer"""
+        names = {
+            BPYPointers.OBJECT: 'objects',
+            BPYPointers.MESH: 'meshes',
+            BPYPointers.NODE_TREE: 'node_groups',
+            BPYPointers.MATERIAL: 'materials',
+            BPYPointers.COLLECTION: 'collections',
+            BPYPointers.TEXT: 'texts',
+            BPYPointers.LIGHT: 'lights',
+            BPYPointers.IMAGE: 'images',
+            BPYPointers.TEXTURE: 'textures',
+            BPYPointers.VECTOR_FONT: 'curves',
+            BPYPointers.GREASE_PENCIL: 'grease_pencils'
+        }
+        return names[self]
+
+    @property
     def type(self):
         """Return Blender type of the pointer"""
         return self.value
