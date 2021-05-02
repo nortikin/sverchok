@@ -43,7 +43,7 @@ class SVOB3B_UL_NamesList(bpy.types.UIList):
 class SvOB3BItemOperator(bpy.types.Operator, SvGenericNodeLocator):
 
     bl_idname = "node.sv_ob3b_collection_operator"
-    bl_label = "bladibla"
+    bl_label = "generic bladibla"
 
     fn_name: StringProperty(default='')
     idx: IntProperty()
