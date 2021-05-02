@@ -206,14 +206,10 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
         op_text = "Get selection"  # fallback
         callback = 'node.ob3_callback'
 
-        try:
-            addon = context.preferences.addons.get(sverchok.__name__)
-            if addon.preferences.over_sized_buttons:
-                row.scale_y = 4.0
-                op_text = "G E T"
-        except:
-            pass
-
+        if self.prefs_over_sized_buttons:
+            row.scale_y = 4.0
+            op_text = "G E T"
+        
         self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'
 
         col = layout.column(align=True)

@@ -183,9 +183,6 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     def draw_buttons(self, context, layout):
 
-        addon = context.preferences.addons.get(sverchok.__name__)
-        over_sized_buttons = addon.preferences.over_sized_buttons
-
         col = layout.column(align=True)
         col.prop(self, 'autoreload', toggle=True)  # reload() not work properly somehow 2016.10.07 | really? 2017.12.21
         if self.current_text:
@@ -193,7 +190,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             row = col.row(align=True)
 
             if not self.autoreload:
-                row.scale_y = 4.0 if over_sized_buttons else 1
+                row.scale_y = 4.0 if self.prefs_over_sized_buttons else 1
                 row.operator(TEXT_IO_CALLBACK, text='R E L O A D').fn_name = 'reload'
             col.operator(TEXT_IO_CALLBACK, text='R E S E T').fn_name = 'reset'
 

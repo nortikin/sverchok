@@ -121,21 +121,16 @@ class SvExNurbsInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, Sv
 
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
-        layout.prop(self, 'implementation', text='')
 
+        layout.prop(self, 'implementation', text='')
         col = layout.column(align=True)
         row = col.row(align=True)
-
         row = col.row()
-        op_text = "Get selection"  # fallback
 
-        try:
-            addon = context.preferences.addons.get(sverchok.__name__)
-            if addon.preferences.over_sized_buttons:
-                row.scale_y = 4.0
-                op_text = "G E T"
-        except:
-            pass
+        op_text = "Get selection"  # fallback
+        if self.prefs_over_sized_buttons:
+            row.scale_y = 4.0
+            op_text = "G E T"
 
         callback = 'node.sv_ex_nurbs_in_callback'
         self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'

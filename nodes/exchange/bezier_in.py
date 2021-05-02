@@ -118,13 +118,9 @@ class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvA
         row = col.row()
         op_text = "Get selection"  # fallback
 
-        try:
-            addon = context.preferences.addons.get(sverchok.__name__)
-            if addon.preferences.over_sized_buttons:
-                row.scale_y = 4.0
-                op_text = "G E T"
-        except:
-            pass
+        if self.prefs_over_sized_buttons:
+            row.scale_y = 4.0
+            op_text = "G E T"
 
         self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOp.bl_idname, text=op_text)
 

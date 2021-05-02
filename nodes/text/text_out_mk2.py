@@ -188,9 +188,6 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
 
-        addon = context.preferences.addons.get(sverchok.__name__)
-        over_sized_buttons = addon.preferences.over_sized_buttons
-
         col = layout.column(align=True)
         col.prop(self, 'autodump', toggle=True)
         row = col.row(align=True)
@@ -211,7 +208,7 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if not self.autodump:
             col2 = col.column(align=True)
             row = col2.row(align=True)
-            row.scale_y = 4.0 if over_sized_buttons else 1
+            row.scale_y = 4.0 if self.prefs_over_sized_buttons else 1
             row.operator(TEXT_IO_CALLBACK, text='D U M P').fn_name = 'dump'
             col2.prop(self, 'append', text="Append")
 

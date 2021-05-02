@@ -116,13 +116,12 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         out('SvMatrixSocket', 'Matrix')
 
     def draw_buttons(self, context, layout):
-        addon = context.preferences.addons.get(sverchok.__name__)
-        prefs = addon.preferences
         callback = 'node.sverchok_objectinlite_cb'
+        scale_y = 4.0 if self.prefs_over_sized_buttons else 1
 
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.scale_y = 4.0 if prefs.over_sized_buttons else 1
+        row.scale_y = scale_y
 
         cb_text, cmd, display_text = [
             ("G E T", "dget", "--None--"),
