@@ -24,8 +24,7 @@ class SvGenesHolderReset(bpy.types.Operator, SvGenericNodeLocator):
 
     def execute(self, context):
         node = self.get_node(context)
-        if not node:
-            return {'CANCELLED'}
+        if not node: return {'CANCELLED'}
 
         if node.number_type == 'vector':
             input_name = 'Vertices'
