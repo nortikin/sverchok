@@ -40,10 +40,11 @@ class SvFilePathFinder(bpy.types.Operator, SvGenericNodeLocator):
 
     def execute(self, context):
         node = self.get_node(context)
-        if node:
-            node.set_data(self.directory, self.files)
-            return {'FINISHED'}
-        return {'CANCELLED'}
+        if not node:
+            return {'CANCELLED'}
+
+        node.set_data(self.directory, self.files)
+        return {'FINISHED'}
 
     def invoke(self, context, event):
         wm = context.window_manager
