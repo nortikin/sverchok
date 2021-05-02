@@ -20,10 +20,10 @@ from gpu_extras.batch import batch_for_shader
 from mathutils import Vector
 
 from sverchok.utils.context_managers import sv_preferences
+from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, node_id
 from sverchok.ui import bgl_callback_nodeview as nvBGL
-
 
 DATA_SOCKET = 'SvStringsSocket'
 
@@ -134,16 +134,8 @@ def advanced_grid_xy(context, args, xy):
     config.line_shader.uniform_float("y_offset", y)
     config.line_batch.draw(config.line_shader)
 
-class NodeTreeGetter():
-    __annotations__ = {}
-    __annotations__['idname'] = bpy.props.StringProperty(default='')
-    __annotations__['idtree'] = bpy.props.StringProperty(default='')
 
-    def get_node(self):
-        return bpy.data.node_groups[self.idtree].nodes[self.idname]
-
-
-class SvWaveformViewerOperator(bpy.types.Operator, NodeTreeGetter):
+class SvWaveformViewerOperator(bpy.types.Operator, SvGenericNodeLocator):
     bl_idname = "node.waveform_viewer_callback"
     bl_label = "Waveform Viewer Operator"
 
@@ -151,11 +143,13 @@ class SvWaveformViewerOperator(bpy.types.Operator, NodeTreeGetter):
 
     def execute(self, context):
         node = self.get_node()
+        if not node: return {'CANCELLED'}
+        
         getattr(node, self.fn_name)()
         return {'FINISHED'}
 
 
-class SvWaveformViewerOperatorDP(bpy.types.Operator, NodeTreeGetter):
+class SvWaveformViewerOperatorDP(bpy.types.Operator, SvGenericNodeLocator):
     bl_idname = "node.waveform_viewer_dirpick"
     bl_label = "Waveform Viewer Directory Picker"
 
@@ -165,6 +159,8 @@ class SvWaveformViewerOperatorDP(bpy.types.Operator, NodeTreeGetter):
 
     def execute(self, context):
         node = self.get_node()
+        if not node: return {'CANCELLED'}
+
         node.set_dir(self.filepath)
         return {'FINISHED'}
 
