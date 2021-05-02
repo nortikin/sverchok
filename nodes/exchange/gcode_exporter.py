@@ -106,6 +106,7 @@ class SvExportGcodeNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
 
         # over_sized_buttons = self.prefs_over_sized_buttons
+        # unused property.
 
         col = layout.column(align=True)
         row = col.row()
