@@ -142,9 +142,9 @@ class SvWaveformViewerOperator(bpy.types.Operator, SvGenericNodeLocator):
     fn_name: bpy.props.StringProperty(default='')
 
     def execute(self, context):
-        node = self.get_node()
+        node = self.get_node(context)
         if not node: return {'CANCELLED'}
-        
+
         getattr(node, self.fn_name)()
         return {'FINISHED'}
 
@@ -158,7 +158,7 @@ class SvWaveformViewerOperatorDP(bpy.types.Operator, SvGenericNodeLocator):
         maxlen=1024, default="", subtype='FILE_PATH')
 
     def execute(self, context):
-        node = self.get_node()
+        node = self.get_node(context)
         if not node: return {'CANCELLED'}
 
         node.set_dir(self.filepath)
