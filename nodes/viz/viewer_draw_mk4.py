@@ -676,8 +676,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
     node_ui_show_attrs_socket: BoolProperty(default=False, name='Show attributes socket', update=configureAttrSocket)
 
     def draw_buttons(self, context, layout):
-        addon = context.preferences.addons.get(sverchok.__name__)
-        over_sized_buttons = addon.preferences.over_sized_buttons
+
         r0 = layout.row()
         r0.prop(self, "activate", text="", icon="HIDE_" + ("OFF" if self.activate else "ON"))
         r0.separator()
@@ -689,7 +688,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "point_size")
         row.prop(self, "line_width")
         row = layout.row(align=True)
-        row.scale_y = 4.0 if over_sized_buttons else 1
+        row.scale_y = 4.0 if self.prefs_over_sized_buttons else 1
         self.wrapper_tracked_ui_draw_op(row, "node.sverchok_mesh_baker_mk3", icon='OUTLINER_OB_MESH', text="B A K E")
         row.separator()
         self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', text='')
