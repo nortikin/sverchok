@@ -33,8 +33,7 @@ else:
 
         def execute(self, context):
             node = self.get_node(context)
-            if not node:
-                return {'CANCELLED'}
+            if not node: return {'CANCELLED'}
 
             if not node.inputs['Folder Path'].is_linked:
                 self.report({'WARNING'}, "Folder path is not specified")
