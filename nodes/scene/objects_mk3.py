@@ -268,8 +268,9 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
             mtrx = []
             materials = []
 
-            # events inside this function can trigger dependancy graph updates, 
-            # it is necessary to call throttle here to prevent recursive sverchok tree updates.
+            # code inside this context can trigger dependancy graph update events, 
+            # it is necessary to call throttle here to prevent Sverchok from responding to these updates:
+            # not doing so would trigger recursive updates and Blender would likely become unresponsive.
             with self.sv_throttle_tree_update():
 
                 mtrx = obj.matrix_world
