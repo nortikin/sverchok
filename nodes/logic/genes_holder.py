@@ -1,42 +1,32 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
 
 import ast
 from itertools import product
+
 from mathutils.noise import seed_set, random
 import bpy
 from bpy.props import FloatVectorProperty, IntVectorProperty, IntProperty, BoolProperty, StringProperty, EnumProperty
 
-
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode
+from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
 
 
-class SvGenesHolderReset(bpy.types.Operator):
+class SvGenesHolderReset(bpy.types.Operator, SvGenericNodeLocator):
 
     bl_idname = "node.number_genes_reset"
     bl_label = "Number Genes Reset"
 
-    idtree: bpy.props.StringProperty(default='')
-    idname: bpy.props.StringProperty(default='')
-
     def execute(self, context):
-        node = bpy.data.node_groups[self.idtree].nodes[self.idname]
+        node = self.get_node(context)
+        if not node:
+            return {'CANCELLED'}
+
         if node.number_type == 'vector':
             input_name = 'Vertices'
         else:
@@ -151,7 +141,6 @@ class SvGenesHolderNode(bpy.types.Node, SverchCustomTreeNode):
                     row2 .prop(self, prop[i], index=j, text='XYZ'[j])
 
     def draw_buttons(self, context, layout):
-
 
         col = layout.column(align=True)
         row = col.row(align=True)
