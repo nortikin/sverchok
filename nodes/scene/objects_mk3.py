@@ -12,11 +12,11 @@ import bmesh
 import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
+from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
-
 
 class SvOB3BDataCollection(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty()
@@ -41,18 +41,18 @@ class SVOB3B_UL_NamesList(bpy.types.UIList):
 
 
 
-class SvOB3BItemOperator(bpy.types.Operator):
+class SvOB3BItemOperator(bpy.types.Operator, SvGenericNodeLocator):
 
     bl_idname = "node.sv_ob3b_collection_operator"
     bl_label = "bladibla"
 
-    idname: bpy.props.StringProperty(name="node name", default='')
-    idtree: bpy.props.StringProperty(name="tree name", default='')
     fn_name: bpy.props.StringProperty(default='')
     idx: bpy.props.IntProperty()
 
     def execute(self, context):
-        node = bpy.data.node_groups[self.idtree].nodes[self.idname]
+        node = self.get_node(context)
+        if not node:
+            return {'CANCELLED'}
 
         if self.fn_name == 'REMOVE':
             node.object_names.remove(self.idx)
@@ -61,26 +61,22 @@ class SvOB3BItemOperator(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvOB3Callback(bpy.types.Operator):
+class SvOB3Callback(bpy.types.Operator, SvGenericNodeLocator):
 
     bl_idname = "node.ob3_callback"
     bl_label = "Object In mk3 callback"
     bl_options = {'INTERNAL'}
 
     fn_name: StringProperty(default='')
-    idname: StringProperty(name="node name", default='')
-    idtree: StringProperty(name="tree name", default='')
 
     def execute(self, context):
         """
         returns the operator's 'self' too to allow the code being called to
         print from self.report.
         """
-        if self.idtree and self.idname:
-            ng = bpy.data.node_groups[self.idtree]
-            node = ng.nodes[self.idname]
-        else:
-            node = context.node
+        node = self.get_node(context)
+        if not node:
+            return {'CANCELLED'}
 
         getattr(node, self.fn_name)(self)
         return {'FINISHED'}
@@ -291,11 +287,9 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
                     else:
 
                         """
-                        this is where the magic happens.
-                        because we are in throttled tree update state at this point, we can aquire a depsgraph if
+                        in a throttled tree update state we can aquire a depsgraph if
                         - modifiers
                         - or vertex groups are desired
-
                         """
 
                         if self.modifiers:
