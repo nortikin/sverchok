@@ -50,8 +50,7 @@ class SvOB3BItemOperator(bpy.types.Operator, SvGenericNodeLocator):
 
     def execute(self, context):
         node = self.get_node(context)
-        if not node:
-            return {'CANCELLED'}
+        if not node: return {'CANCELLED'}
 
         if self.fn_name == 'REMOVE':
             node.object_names.remove(self.idx)
@@ -74,8 +73,7 @@ class SvOB3Callback(bpy.types.Operator, SvGenericNodeLocator):
         print from self.report.
         """
         node = self.get_node(context)
-        if not node:
-            return {'CANCELLED'}
+        if not node: return {'CANCELLED'}
 
         getattr(node, self.fn_name)(self)
         return {'FINISHED'}
