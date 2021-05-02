@@ -287,7 +287,7 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
                     else:
 
                         """
-                        in a throttled tree update state we can aquire a depsgraph if
+                        in a throttled tree update state we can acquire a depsgraph if
                         - modifiers
                         - or vertex groups are desired
                         """
