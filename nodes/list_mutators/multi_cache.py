@@ -25,8 +25,7 @@ class SvvMultiCacheReset(bpy.types.Operator, SvGenericNodeLocator):
 
     def execute(self, context):
         node = self.get_node(context)
-        if not node:
-            return {'CANCELLED'}
+        if not node: return {'CANCELLED'}
         
         node.fill_empty_dict()
         updateNode(node, context)
