@@ -8,6 +8,7 @@ Modifier Change
    bevel
    subdivide_mk2
    subdivide_lite
+   subdivide_to_quads
    unsubdivide
    smooth
    relax_mesh
