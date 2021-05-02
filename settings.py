@@ -420,6 +420,7 @@ class SverchokPreferences(AddonPreferences):
         col1 = col_split.column()
         col1.label(text="UI:")
         col1.prop(self, "show_icons")
+        col1.prop(self, "over_sized_buttons")
 
         toolbar_box = col1.box()
         toolbar_box.label(text="Node toolbars")
@@ -430,8 +431,6 @@ class SverchokPreferences(AddonPreferences):
                 toolbar_box.prop(self, "node_panels_columns")
 
         col1.prop(self, 'show_input_menus')
-
-        col1.prop(self, "over_sized_buttons")
         col1.prop(self, "external_editor", text="Ext Editor")
         col1.prop(self, "real_sverchok_path", text="Src Directory")
 

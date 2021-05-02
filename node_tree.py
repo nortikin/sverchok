@@ -604,6 +604,16 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
         """
         pass
 
+    @property
+    def prefs_over_sized_buttons(self):
+        try:
+            addon = bpy.context.preferences.addons.get(sverchok.__name__)
+            prefs = addon.preferences
+        except Exception as err:
+            print('failed to access addon preferences for button size', err)
+            return False
+        return prefs.over_sized_buttons
+
     # Methods for OpenGL viewers
 
     def get_and_set_gl_scale_info(self, origin=None):  # todo, probably openGL viewers should have its own mixin class

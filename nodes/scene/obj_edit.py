@@ -67,13 +67,11 @@ class SvObjEdit(bpy.types.Node, SverchCustomTreeNode):
         if not (self.inputs and self.inputs[0]):
             return
 
-        addon = context.preferences.addons.get(sverchok.__name__)
-        prefs = addon.preferences
         callback = 'node.sverchok_objectedit_cb'
 
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.scale_y = 4.0 if prefs.over_sized_buttons else 1
+        row.scale_y = 4.0 if self.prefs_over_sized_buttons else 1
 
         objects = bpy.data.objects
         if self.obj_passed_in or self.inputs[0].object_ref:

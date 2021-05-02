@@ -104,9 +104,9 @@ class SvExportGcodeNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'Travel Edges',)
 
     def draw_buttons(self, context, layout):
-        with sv_preferences() as prefs:
-            #addon = context.user_preferences.addons.get(sverchok.__name__)
-            over_sized_buttons = prefs.over_sized_buttons #addon.preferences.over_sized_buttons
+
+        # over_sized_buttons = self.prefs_over_sized_buttons
+
         col = layout.column(align=True)
         row = col.row()
         row.prop(self, 'folder', toggle=True, text='')
