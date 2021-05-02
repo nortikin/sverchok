@@ -289,7 +289,6 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
                     else:
 
                         if self.modifiers:
-
                             obj = sv_depsgraph.objects[obj.name]
                             obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
                         else:
