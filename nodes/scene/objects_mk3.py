@@ -268,6 +268,8 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
             mtrx = []
             materials = []
 
+            # events inside this function can trigger dependancy graph updates, 
+            # it is necessary to call throttle here to prevent recursive sverchok tree updates.
             with self.sv_throttle_tree_update():
 
                 mtrx = obj.matrix_world
@@ -284,12 +286,6 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
                         materials = self.get_materials_from_bmesh(bm)
                         del bm
                     else:
-
-                        """
-                        in a throttled tree update state we can acquire a depsgraph if
-                        - modifiers
-                        - or vertex groups are desired
-                        """
 
                         if self.modifiers:
 
