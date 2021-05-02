@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import BoolProperty, StringProperty
+from bpy.props import BoolProperty, StringProperty, IntProperty
 import bmesh
 
 import sverchok
@@ -40,14 +40,13 @@ class SVOB3B_UL_NamesList(bpy.types.UIList):
         action.idx = index
 
 
-
 class SvOB3BItemOperator(bpy.types.Operator, SvGenericNodeLocator):
 
     bl_idname = "node.sv_ob3b_collection_operator"
     bl_label = "bladibla"
 
-    fn_name: bpy.props.StringProperty(default='')
-    idx: bpy.props.IntProperty()
+    fn_name: StringProperty(default='')
+    idx: IntProperty()
 
     def execute(self, context):
         node = self.get_node(context)
