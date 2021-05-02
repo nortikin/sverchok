@@ -51,9 +51,10 @@ class SvObjEdit(bpy.types.Node, SverchCustomTreeNode):
     def set_edit(self, ops, mode):
         try:
             obj_name = self.obj_passed_in or self.inputs[0].object_ref
-            # attribute "active" not found  
-            bpy.context.scene.objects.active = bpy.data.objects.get(obj_name)
+
+            bpy.context.view_layer.objects.active = bpy.data.objects.get(obj_name)
             bpy.ops.object.mode_set(mode=mode)
+
         except Exception as err:
             ops.report({'WARNING'}, 'No object selected / active')
             print(err)
