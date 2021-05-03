@@ -55,18 +55,18 @@ if the input values (verts, polygons, vert and face attributes..) are NumPy arra
 Examples of usage
 -----------------
 
-The simplest example, subdivide a cube:
+Use of Vert Map output:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/25096716/476682dc-23c3-11e7-8788-624be2573d3b.png
+.. image:: https://user-images.githubusercontent.com/10011941/116845901-7560b800-abe7-11eb-9a20-9a53ddeb8c5f.png
 
-Subdivide one face of a cube, with smoothing:
+Use of Vert Data Dict:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/25096718/47976654-23c3-11e7-8da8-87ea420d8355.png
+.. image:: https://user-images.githubusercontent.com/10011941/116822473-3434bd80-ab7f-11eb-8c2a-d228b4168d17.png
 
-Subdivide a cube, with smooth falloff type = Smooth:
+Use of Face Data Dict:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/25096717/4794fed2-23c3-11e7-8c53-28fb1d18b69d.png
+.. image:: https://user-images.githubusercontent.com/10011941/116846820-81e61000-abe9-11eb-9ce1-c323c1e1915f.png
 
-Subdivide a torus, with smooth falloff type = Sphere:
+Rock from a Tetrahedron:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/25096721/479a2c72-23c3-11e7-9012-612ce3fd1039.png
+.. image:: https://user-images.githubusercontent.com/10011941/116846820-81e61000-abe9-11eb-9ce1-c323c1e1915f.png

@@ -119,16 +119,16 @@ class SvSubdivideToQuadsNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNo
             output = subdiv_mesh_to_quads_np(*sub_params,
                                              output_edges=output_edges,
                                              output_vert_map=ouput_vert_map)
-            print(output)
-            if isinstance(sub_params[8], SvDict):
-                vert_data = SvDict(check_numpy(output[3], sub_params[8]))
-                vert_data.inputs = sub_params[8].inputs.copy()
-                result[3].append(vert_data)
 
+            if isinstance(sub_params[8], SvDict):
+                vert_data = SvDict(check_numpy(output[4], sub_params[8]))
+                vert_data.inputs = sub_params[8].inputs.copy()
+                result[4].append(vert_data)
+            print(sub_params[9])
             if isinstance(sub_params[9], SvDict):
-                face_data = SvDict(output[4])
+                face_data = SvDict(output[5])
                 face_data.inputs = sub_params[9].inputs.copy()
-                result[4].append(face_data)
+                result[5].append(face_data)
 
             for o, s, keep_numpy in zip(output[:4], result, self.out_np):
                 s.append(o if keep_numpy else o.tolist())

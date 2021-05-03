@@ -838,7 +838,7 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
             layout.prop(self, 'default_property', text=text)
         else:
             layout.label(text=text)
-            
+
     def do_flat_topology(self, data):
         return flatten_data(data, 3)
 
@@ -1106,6 +1106,7 @@ class SvDictionarySocket(NodeSocket, SvSocketCommon):
     bl_label = "Dictionary Socket"
 
     color = (1.0, 1.0, 1.0, 1.0)
+    quick_link_to_node = 'SvDictionaryIn'
 
     def do_flatten(self, data):
         return flatten_data(data, 1, data_types=(dict,))

@@ -7,6 +7,7 @@
 
 import numpy as np
 from numpy.random import random
+from sverchok.data_structure import numpy_full_list, repeat_last_for_length
 from sverchok.utils.modules.polygon_utils import np_faces_normals, np_faces_perimeters as face_perimeter
 
 
@@ -233,7 +234,22 @@ def subdiv_mesh_to_quads_np(vertices, polygons,
     if output_vert_map:
         vert_map = np.zeros(np_verts.shape[0], dtype=int)
     else:
-        vert_map = np.array([],dtype=int)
+        vert_map = np.array([], dtype=int)
+
+    matched_vert_data = dict()
+    if vert_data:
+        for key in vert_data:
+            matched_vert_data[key] = numpy_full_list(vert_data[key], np_verts.shape[0])
+
+    matched_face_data = dict()
+    if face_data:
+        for key in face_data:
+            data = face_data[key]
+            if isinstance(data, np.ndarray):
+                matched_face_data[key] = numpy_full_list(data, len(polygons))
+            else:
+                matched_face_data[key] = repeat_last_for_length(data, len(polygons))
+
 
     flat_pols, pol_len, pol_end = np_pols(polygons)
     edges, unique_edges, eds_inverse_idx = pols_to_edges(flat_pols, pol_len, pol_end)
@@ -244,7 +260,7 @@ def subdiv_mesh_to_quads_np(vertices, polygons,
         iterations, normal_displace,
         random_f, random_normal,
         smooth_f,
-        vert_map, vert_data, face_data,
+        vert_map, matched_vert_data, matched_face_data,
         output_edges=output_edges,
         max_iterations=iterations)
 
