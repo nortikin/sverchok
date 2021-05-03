@@ -70,7 +70,7 @@ class SvSvgServer(bpy.types.Operator, SvGenericNodeLocator):
 
         save_path = node.inputs[0].sv_get()[0][0]
         file_name = node.file_name
-        bpy.ops.node.svg_write(idtree=self.idtree, idname=self.idname)
+        bpy.ops.node.svg_write(tree_name=self.tree_name, node_name=self.node_name)
         spawn_server(save_path, file_name)
 
         return {'FINISHED'}
@@ -233,7 +233,7 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Canvas Vertices'].sv_set([verts])
         self.outputs['Canvas Edges'].sv_set([[(0, 1),(1, 2), (2, 3), (3, 0)]])
         if self.live_update:
-            bpy.ops.node.svg_write(idtree=self.id_data.name, idname=self.name)
+            bpy.ops.node.svg_write(tree_name=self.id_data.name, node_name=self.name)
 
 
 classes = [SvSvgServer, SvSVGWrite, SvSvgDocumentNode]

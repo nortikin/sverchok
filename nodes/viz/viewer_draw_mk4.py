@@ -710,7 +710,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
     def bake(self):
         with self.sv_throttle_tree_update():
             bpy.ops.node.sverchok_mesh_baker_mk3(
-                idname=self.name, idtree=self.id_data.name
+                node_name=self.name, tree_name=self.id_data.name
             )
 
     def sv_init(self, context):

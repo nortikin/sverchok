@@ -20,13 +20,13 @@ import bpy
 from bpy.props import StringProperty
 
 class SvGenericNodeLocator():
-    idtree: StringProperty(default='')
-    idname: StringProperty(default='')
+    tree_name: StringProperty(default='', description="name of the node tree")
+    node_name: StringProperty(default='', description="name of the node")
 
     def get_node(self, context):
         """ context.node is usually provided, else tree_name/node_name must be passed """
-        if self.idtree and self.idname:
-            return bpy.data.node_groups[self.idtree].nodes[self.idname]
+        if self.tree_name and self.node_name:
+            return bpy.data.node_groups[self.tree_name].nodes[self.node_name]
 
         if hasattr(context, "node"):
             return context.node
@@ -35,7 +35,7 @@ class SvGenericNodeLocator():
         return None
 
     def get_tree(self):
-        return bpy.data.node_groups.get(self.idtree)
+        return bpy.data.node_groups.get(self.tree_name)
 
 
 class SvGenericCallbackOldOp(bpy.types.Operator):
