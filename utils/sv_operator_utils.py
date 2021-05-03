@@ -31,7 +31,8 @@ class SvGenericNodeLocator():
         if hasattr(context, "node"):
             return context.node
 
-        print("treename and nodename not supplied, or node not found in nodetree")
+        print("treename or nodename not supplied, node not found in available trees")
+        print(f"received tree_name: {tree_name} and node_name: {node_name}")
         return None
 
     def get_tree(self):
