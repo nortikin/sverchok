@@ -124,7 +124,7 @@ class SvSubdivideToQuadsNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNo
                 vert_data = SvDict(check_numpy(output[4], sub_params[8]))
                 vert_data.inputs = sub_params[8].inputs.copy()
                 result[4].append(vert_data)
-            print(sub_params[9])
+
             if isinstance(sub_params[9], SvDict):
                 face_data = SvDict(output[5])
                 face_data.inputs = sub_params[9].inputs.copy()
