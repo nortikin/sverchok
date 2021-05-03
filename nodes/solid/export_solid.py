@@ -1,9 +1,16 @@
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
 
 import bpy
 from bpy.props import StringProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import flatten_data, map_recursive
+from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.logging import debug
@@ -18,18 +25,15 @@ else:
 
     from sverchok.utils.solid import to_solid
 
-    class SvExportSolidOperator(bpy.types.Operator):
+    class SvExportSolidOperator(bpy.types.Operator, SvGenericNodeLocator):
 
         bl_idname = "node.sv_export_solid_mk2"
         bl_label = "Export Solid"
         bl_options = {'INTERNAL', 'REGISTER'}
 
-        idtree: StringProperty(default='')
-        idname: StringProperty(default='')
-
         def execute(self, context):
-            tree = bpy.data.node_groups[self.idtree]
-            node = bpy.data.node_groups[self.idtree].nodes[self.idname]
+            node = self.get_node(context)
+            if not node: return {'CANCELLED'}
 
             if not node.inputs['Folder Path'].is_linked:
                 self.report({'WARNING'}, "Folder path is not specified")

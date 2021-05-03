@@ -17,14 +17,16 @@
 # ##### END GPL LICENSE BLOCK #####
 import os
 import webbrowser
-import sverchok
+
 import bpy
 from bpy.props import (
     BoolProperty, StringProperty, EnumProperty, FloatProperty
     )
 
+import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
 
 evolver_mem = {}
 
@@ -51,27 +53,24 @@ def spawn_server(save_path, file_name):
     webbrowser.open(path2)
 
 
-class SvSvgServer(bpy.types.Operator):
+class SvSvgServer(bpy.types.Operator, SvGenericNodeLocator):
     """
     Opens in web browser a html file that updates frecuently showing the changes in the SVG file
     """
     bl_idname = "node.sv_svg_server"
     bl_label = "Append"
 
-    idtree: bpy.props.StringProperty(default='')
-    idname: bpy.props.StringProperty(default='')
-
     def execute(self, context):
-        tree = bpy.data.node_groups[self.idtree]
-        node = bpy.data.node_groups[self.idtree].nodes[self.idname]
+        node = self.get_node(context)
+        if not node: return {'CANCELLED'}
+
         inputs = node.inputs
         if not (inputs['Folder Path'].is_linked and inputs['SVG Objects'].is_linked):
-
             return {'FINISHED'}
 
         save_path = node.inputs[0].sv_get()[0][0]
         file_name = node.file_name
-        bpy.ops.node.svg_write(idtree=self.idtree, idname=self.idname)
+        bpy.ops.node.svg_write(tree_name=self.tree_name, node_name=self.node_name)
         spawn_server(save_path, file_name)
 
         return {'FINISHED'}
@@ -104,20 +103,17 @@ def draw_svg_defs(document, defs_list, all_defs_list):
         svg_defs += draw_svg_defs(document, new_def_list, all_defs_list)
     return svg_defs
 
-class SvSVGWrite(bpy.types.Operator):
+class SvSVGWrite(bpy.types.Operator, SvGenericNodeLocator):
 
     bl_idname = "node.svg_write"
     bl_label = "Write"
 
-    idtree: bpy.props.StringProperty(default='')
-    idname: bpy.props.StringProperty(default='')
-
     def execute(self, context):
-        node = bpy.data.node_groups[self.idtree].nodes[self.idname]
+        node = self.get_node(context)
+        if not node: return {'CANCELLED'}
 
         inputs = node.inputs
         if not (inputs['Folder Path'].is_linked and inputs['SVG Objects'].is_linked):
-
             return {'FINISHED'}
 
         save_path = inputs[0].sv_get()[0][0]
@@ -157,7 +153,7 @@ class SvSVGWrite(bpy.types.Operator):
         file_name = node.file_name
         complete_name = os.path.join(save_path, file_name+".svg")
         svg_file = open(complete_name, "w")
-        svg = svg_head + svg_defs +svg_shapes + svg_end
+        svg = svg_head + svg_defs + svg_shapes + svg_end
         svg_file.write(svg)
 
         svg_file.close()
@@ -224,20 +220,20 @@ class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
-        x = self.doc_width/(self.doc_scale)
-        y = self.doc_height/(self.doc_scale)
+        x = self.doc_width / (self.doc_scale)
+        y = self.doc_height / (self.doc_scale)
+
         verts =[
             (0, 0, 0),
             (x, 0, 0),
             (x, y, 0),
-            (0, y, 0),
-
-
+            (0, y, 0)
         ]
+
         self.outputs['Canvas Vertices'].sv_set([verts])
         self.outputs['Canvas Edges'].sv_set([[(0, 1),(1, 2), (2, 3), (3, 0)]])
         if self.live_update:
-            bpy.ops.node.svg_write(idtree=self.id_data.name, idname=self.name)
+            bpy.ops.node.svg_write(tree_name=self.id_data.name, node_name=self.name)
 
 
 classes = [SvSvgServer, SvSVGWrite, SvSvgDocumentNode]

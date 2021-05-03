@@ -1,41 +1,32 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
 
 import bpy
 from bpy.props import StringProperty
 
 class SvGenericNodeLocator():
-    idtree: StringProperty(default='')
-    idname: StringProperty(default='')
+    tree_name: StringProperty(default='', description="name of the node tree")
+    node_name: StringProperty(default='', description="name of the node")
 
     def get_node(self, context):
         """ context.node is usually provided, else tree_name/node_name must be passed """
-        if self.idtree and self.idname:
-            return bpy.data.node_groups[self.idtree].nodes[self.idname]
+        if self.tree_name and self.node_name:
+            return bpy.data.node_groups[self.tree_name].nodes[self.node_name]
 
         if hasattr(context, "node"):
             return context.node
 
-        print("treename and nodename not supplied, or node not found in nodetree")
+        print("treename or nodename not supplied, node not found in available trees")
+        print(f"received tree_name: {tree_name} and node_name: {node_name}")
         return None
 
     def get_tree(self):
-        return bpy.data.node_groups.get(self.idtree)
+        return bpy.data.node_groups.get(self.tree_name)
 
 
 class SvGenericCallbackOldOp(bpy.types.Operator):

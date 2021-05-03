@@ -441,7 +441,7 @@ class NodeUtils:
     def wrapper_tracked_ui_draw_op(self, layout_element, operator_idname, **keywords):
         """
         this wrapper allows you to track the origin of a clicked operator, by automatically passing
-        the idname and idtree of the tree.
+        the node_name and tree_name to the operator.
 
         example usage:
 
@@ -450,8 +450,8 @@ class NodeUtils:
 
         """
         op = layout_element.operator(operator_idname, **keywords)
-        op.idname = self.name
-        op.idtree = self.id_data.name
+        op.node_name = self.name
+        op.tree_name = self.id_data.name
         return op
 
     def get_bpy_data_from_name(self, identifier, bpy_data_kind):  # todo, method which have nothing related with nodes

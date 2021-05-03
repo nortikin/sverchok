@@ -1,46 +1,36 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
 
 import ast
 import inspect
 from itertools import product
-from mathutils.noise import seed_set, random
+
 import bpy
 from bpy.props import FloatVectorProperty, IntVectorProperty, IntProperty, BoolProperty, StringProperty, EnumProperty
-
+from mathutils.noise import seed_set, random
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import changable_sockets, dataCorrect, updateNode, zip_long_repeat
+from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
 
 
-class SvvMultiCacheReset(bpy.types.Operator):
+class SvvMultiCacheReset(bpy.types.Operator, SvGenericNodeLocator):
     '''Clear Cache'''
     bl_idname = "node.multy_cache_reset"
     bl_label = "Multi Cache Reset"
 
-    idtree: bpy.props.StringProperty(default='')
-    idname: bpy.props.StringProperty(default='')
-
     def execute(self, context):
-        node = bpy.data.node_groups[self.idtree].nodes[self.idname]
+        node = self.get_node(context)
+        if not node: return {'CANCELLED'}
+        
         node.fill_empty_dict()
         updateNode(node, context)
         return {'FINISHED'}
+
 
 class SvMultiCacheNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -80,11 +70,9 @@ class SvMultiCacheNode(bpy.types.Node, SverchCustomTreeNode):
     memory: StringProperty(default="")
 
     def draw_buttons(self, context, layout):
-
         layout.prop(self, 'pause_recording')
         layout.prop(self, 'unwrap')
         self.wrapper_tracked_ui_draw_op(layout, "node.multy_cache_reset", icon='X', text="RESET")
-
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'Data')
@@ -92,7 +80,6 @@ class SvMultiCacheNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', 'Out Bucket').prop_name = 'out_bucket'
         self.outputs.new('SvStringsSocket', 'Data')
         self.fill_empty_dict()
-
 
     def write_memory_prop(self, data):
         '''write values to string property'''
@@ -117,6 +104,7 @@ class SvMultiCacheNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not self.outputs['Data'].is_linked:
             return
+
         in_bucket_s = self.inputs['In Bucket'].sv_get()[0]
         out_bucket_s = self.inputs['Out Bucket'].sv_get()[0]
         if not self.node_id in self.node_mem:

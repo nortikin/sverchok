@@ -1,33 +1,22 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
 
 import bpy
-from bpy.props import BoolProperty, StringProperty
+from bpy.props import BoolProperty, StringProperty, IntProperty
 import bmesh
 
 import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
+from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
-
 
 class SvOB3BDataCollection(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty()
@@ -51,19 +40,17 @@ class SVOB3B_UL_NamesList(bpy.types.UIList):
         action.idx = index
 
 
-
-class SvOB3BItemOperator(bpy.types.Operator):
+class SvOB3BItemOperator(bpy.types.Operator, SvGenericNodeLocator):
 
     bl_idname = "node.sv_ob3b_collection_operator"
-    bl_label = "bladibla"
+    bl_label = "generic bladibla"
 
-    idname: bpy.props.StringProperty(name="node name", default='')
-    idtree: bpy.props.StringProperty(name="tree name", default='')
-    fn_name: bpy.props.StringProperty(default='')
-    idx: bpy.props.IntProperty()
+    fn_name: StringProperty(default='')
+    idx: IntProperty()
 
     def execute(self, context):
-        node = bpy.data.node_groups[self.idtree].nodes[self.idname]
+        node = self.get_node(context)
+        if not node: return {'CANCELLED'}
 
         if self.fn_name == 'REMOVE':
             node.object_names.remove(self.idx)
@@ -72,26 +59,21 @@ class SvOB3BItemOperator(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvOB3Callback(bpy.types.Operator):
+class SvOB3Callback(bpy.types.Operator, SvGenericNodeLocator):
 
     bl_idname = "node.ob3_callback"
     bl_label = "Object In mk3 callback"
     bl_options = {'INTERNAL'}
 
     fn_name: StringProperty(default='')
-    idname: StringProperty(name="node name", default='')
-    idtree: StringProperty(name="tree name", default='')
 
     def execute(self, context):
         """
         returns the operator's 'self' too to allow the code being called to
         print from self.report.
         """
-        if self.idtree and self.idname:
-            ng = bpy.data.node_groups[self.idtree]
-            node = ng.nodes[self.idname]
-        else:
-            node = context.node
+        node = self.get_node(context)
+        if not node: return {'CANCELLED'}
 
         getattr(node, self.fn_name)(self)
         return {'FINISHED'}
@@ -284,6 +266,9 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
             mtrx = []
             materials = []
 
+            # code inside this context can trigger dependancy graph update events, 
+            # it is necessary to call throttle here to prevent Sverchok from responding to these updates:
+            # not doing so would trigger recursive updates and Blender would likely become unresponsive.
             with self.sv_throttle_tree_update():
 
                 mtrx = obj.matrix_world
@@ -301,16 +286,7 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
                         del bm
                     else:
 
-                        """
-                        this is where the magic happens.
-                        because we are in throttled tree update state at this point, we can aquire a depsgraph if
-                        - modifiers
-                        - or vertex groups are desired
-
-                        """
-
                         if self.modifiers:
-
                             obj = sv_depsgraph.objects[obj.name]
                             obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
                         else:
