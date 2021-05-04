@@ -394,6 +394,7 @@
     LineConnectNodeMK2
     ---
     SvSubdivideNodeMK2
+    SvSubdivideToQuadsNode
     SvOffsetLineNode
     SvContourNode
     ---
