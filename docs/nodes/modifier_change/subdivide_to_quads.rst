@@ -11,7 +11,7 @@ Inputs
 
 This node has the following inputs:
 
-- **Vertrices**
+- **Vertices**
 - **Polygons**.
 - **Iterations**. Subdivision levels.
 - **Normal Displace**. Displacement along normal (value per iteration)
@@ -57,15 +57,15 @@ Examples of usage
 
 Use of Vert Map output:
 
-.. image:: https://user-images.githubusercontent.com/10011941/116845901-7560b800-abe7-11eb-9a20-9a53ddeb8c5f.png
+.. image:: https://user-images.githubusercontent.com/10011941/116822057-19614980-ab7d-11eb-8e97-4b2b3c453656.png
 
 Use of Vert Data Dict:
 
-.. image:: https://user-images.githubusercontent.com/10011941/116822473-3434bd80-ab7f-11eb-8c2a-d228b4168d17.png
+.. image:: https://user-images.githubusercontent.com/10011941/116845901-7560b800-abe7-11eb-9a20-9a53ddeb8c5f.png
 
 Use of Face Data Dict:
 
-.. image:: https://user-images.githubusercontent.com/10011941/116846820-81e61000-abe9-11eb-9ce1-c323c1e1915f.png
+.. image:: https://user-images.githubusercontent.com/10011941/116822473-3434bd80-ab7f-11eb-8c2a-d228b4168d17.png
 
 Rock from a Tetrahedron:
 
