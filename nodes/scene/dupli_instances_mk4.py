@@ -92,6 +92,13 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
                 row4.enabled = ob.use_instance_faces_scale
                 row4.prop(ob, "instance_faces_scale", text="Factor")  #float
 
+                """
+                to hide the child object from the viewport only, use
+                >>> bpy.data.objects['AFUWCR'].hide_set(True)  # toggle bool
+                
+                the child is hidden by default during render
+                """
+
         finally:
             pass
 
@@ -148,6 +155,8 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
             ob.instance_type = self.mode
             ob.use_instance_faces_scale = self.scale
             child.parent = ob
+            # bpy.data.objects["parent"].show_instancer_for_viewport
+            # bpy.data.objects["parent"].show_instancer_for_render
 
 
 def register():
