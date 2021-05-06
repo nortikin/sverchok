@@ -3,7 +3,7 @@
 Here is album with artworks and screenshots of Sverchok from all of the Internet:    
 (Make Smart tiles view and watch)    
 
-[![images](./images/Gallery_thumb.png)](https://disk.yandex.ru/a/PK8LcF0zcKW4Hg)    
+[<img src='./images/Gallery_thumb.png' width=100% />](https://disk.yandex.ru/a/PK8LcF0zcKW4Hg)    
 
 <!--
 Here is a collection of instructional layouts intended to get you started, clicking on any image will start to download the `.blend` file so you can load the layout in Blender and experiment:-->
