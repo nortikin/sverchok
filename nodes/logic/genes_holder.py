@@ -14,7 +14,7 @@ from bpy.props import FloatVectorProperty, IntVectorProperty, IntProperty, BoolP
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode
-from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
 
 class SvGenesHolderReset(bpy.types.Operator, SvGenericNodeLocator):

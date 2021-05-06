@@ -23,7 +23,7 @@ from bpy.types import (
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.modules import sv_bmesh
-from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
 
 class SvFilePathFinder(bpy.types.Operator, SvGenericNodeLocator):

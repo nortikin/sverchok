@@ -11,7 +11,7 @@ from bpy.props import BoolProperty, StringProperty, EnumProperty
 import sverchok
 from sverchok.utils.mesh_repr_utils import flatten, unflatten, generate_object
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 

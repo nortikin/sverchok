@@ -84,12 +84,9 @@ def auto_gather_node_classes(start_module = None):
 
 
 def get_node_class_reference(bl_idname):
-    # formerly stuff like:
-    #   cls = getattr(bpy.types, self.cls_bl_idname, None)
-
     if bl_idname == "NodeReroute":
         return getattr(bpy.types, bl_idname)
-    # this will also return a Nonetype if the ref isn't found, and the class ref if found
+
     return node_classes.get(bl_idname)
 
 
@@ -138,7 +135,7 @@ utils_modules = [
     "text_editor_submenu", "text_editor_plugins",
     # UI operators and tools
     "sv_IO_pointer_helpers",
-    "sv_IO_monad_helpers", "sv_operator_utils",
+    "sv_IO_monad_helpers", "sv_operator_mixins",
     "sv_gist_tools", "sv_IO_panel_tools", "sv_load_archived_blend",
     "monad", "sv_help", "sv_default_macros", "sv_macro_utils", "sv_extra_search", "sv_3dview_tools",
     "sv_update_utils", "sv_obj_helper", "sv_batch_primitives", "sv_idx_viewer28_draw",
