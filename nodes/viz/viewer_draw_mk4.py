@@ -707,6 +707,8 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
             )
 
     def sv_init(self, context):
+
+        # geometry and transforms
         self.sv_new_input('SvVerticesSocket', "Vertices",
             custom_draw="draw_property_socket")
 
@@ -716,6 +718,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         self.sv_new_input('SvStringsSocket', "Polygons")
         self.sv_new_input('SvMatrixSocket', 'Matrix')
 
+        # colors and attributes
         self.sv_new_input('SvColorSocket', "Vector Color",
             prop_name='vector_color',
             custom_draw='draw_color_socket')
