@@ -16,6 +16,11 @@ class SvGenericNodeLocator():
     of a click.
 
     see at the bottom of this file in " class SvGenericCallbackOldOp " how to use it.
+    you can then use the "node.wrapper_tracked_ui_draw_op", in the UI draw function..
+
+    f.ex:
+        callback = "node.sverchok_mesh_baker_mk3"
+        self.wrapper_tracked_ui_draw_op(row, callback, icon='', text='')
 
     """
     tree_name: StringProperty(default='', description="name of the node tree")
@@ -196,7 +201,7 @@ class SvGenericCallbackOldOp(bpy.types.Operator, SvGenericNodeLocator):
 
         f = getattr(n, self.fn_name, None)
         if not f:
-            msg = "{0} has no function named '{1}'".format(n.name, self.fn_name)
+            msg = f"{n.name} has no function named '{self.fn_name}'"
             self.report({"WARNING"}, msg)
             return {'CANCELLED'}
         f()
