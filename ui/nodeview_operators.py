@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 import bpy
 
 class SvNodeViewZoomBorder(bpy.types.Operator, SvGenericNodeLocator):

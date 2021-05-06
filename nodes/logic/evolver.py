@@ -21,7 +21,7 @@ from bpy.props import (
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.core.update_system import make_tree_from_nodes, do_update
-from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.utils.listutils import (
     listinput_getI,
     listinput_getF,

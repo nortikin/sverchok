@@ -15,7 +15,7 @@ from mathutils.noise import seed_set, random
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import changable_sockets, dataCorrect, updateNode, zip_long_repeat
-from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
 
 class SvvMultiCacheReset(bpy.types.Operator, SvGenericNodeLocator):

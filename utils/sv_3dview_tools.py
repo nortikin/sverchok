@@ -12,7 +12,7 @@ from mathutils import Matrix, Vector
 
 from sverchok.core.socket_conversions import is_matrix
 from sverchok.utils.modules import geom_utils
-from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
 
 def get_matrix(socket):

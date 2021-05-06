@@ -20,7 +20,7 @@ from gpu_extras.batch import batch_for_shader
 from mathutils import Vector
 
 from sverchok.utils.context_managers import sv_preferences
-from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, node_id
 from sverchok.ui import bgl_callback_nodeview as nvBGL

@@ -12,7 +12,7 @@ import bmesh
 import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
-from sverchok.utils.sv_operator_utils import SvGenericNodeLocator
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
