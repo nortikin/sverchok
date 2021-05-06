@@ -326,6 +326,7 @@ class UpdateNodes:
         socket = self.inputs.new(socket_type, name)
         for att in attrib_dict:
             setattr(socket, att, attrib_dict[att])
+        return socket
 
     def free(self):
         """

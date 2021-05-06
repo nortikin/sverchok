@@ -676,9 +676,6 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, "custom_shader_location", icon='TEXT', text='')
 
         row = layout.row(align=True)
-        row.prop(self, "point_size")
-        row.prop(self, "line_width")
-        row = layout.row(align=True)
         row.scale_y = 4.0 if self.prefs_over_sized_buttons else 1
         self.wrapper_tracked_ui_draw_op(row, "node.sverchok_mesh_baker_mk3", icon='OUTLINER_OB_MESH', text="B A K E")
         row.separator()
@@ -687,6 +684,9 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
+        row = layout.row(align=True)
+        row.prop(self, "point_size")
+        row.prop(self, "line_width")
         layout.label(text='Light Direction')
         layout.prop(self, 'vector_light', text='')
         self.draw_additional_props(context, layout)
@@ -714,25 +714,35 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
             )
 
     def sv_init(self, context):
-        new_input = self.inputs.new
-        new_input('SvVerticesSocket', "Vertices")
-        new_input('SvStringsSocket', "Edges")
-        new_input('SvStringsSocket', "Polygons")
-        new_input('SvMatrixSocket', 'Matrix')
+        
+        self.sv_new_input('SvVerticesSocket', "Vertices",
+            custom_draw="draw_sizes")
 
-        v_col = new_input('SvColorSocket', "Vector Color")
-        v_col.prop_name = 'vector_color'
-        v_col.custom_draw = 'draw_color_socket'
-        e_col = new_input('SvColorSocket', "Edge Color")
-        e_col.prop_name = 'edge_color'
-        e_col.custom_draw = 'draw_color_socket'
-        p_col = new_input('SvColorSocket', "Polygon Color")
-        p_col.prop_name = 'polygon_color'
-        p_col.custom_draw = 'draw_color_socket'
+        self.sv_new_input('SvStringsSocket', "Edges",
+            custom_draw="draw_sizes")
 
-        attr_socket = new_input('SvStringsSocket', 'attrs')
-        attr_socket.hide = True
-        attr_socket.quick_link_to_node = "SvVDAttrsNodeMk2"
+        self.sv_new_input('SvStringsSocket', "Polygons")
+        self.sv_new_input('SvMatrixSocket', 'Matrix')
+
+        self.sv_new_input('SvColorSocket', "Vector Color",
+            prop_name='vector_color',
+            custom_draw='draw_color_socket')
+
+        self.sv_new_input('SvColorSocket', "Edge Color",
+            prop_name='edge_color',
+            custom_draw='draw_color_socket')
+
+        self.sv_new_input('SvColorSocket', "Polygon Color",
+            prop_name='polygon_color',
+            custom_draw='draw_color_socket')
+
+        # attr_socket = self.sv_new_input('SvStringsSocket', 'attrs')
+        # attr_socket.hide = True
+        # attr_socket.quick_link_to_node = "SvVDAttrsNodeMk2"
+        self.sv_new_input('SvStringsSocket', 'attrs',
+            hide=True,
+            quick_link_to_node="SvVDAttrsNodeMk2")
+
 
 
     def migrate_from(self, old_node):
