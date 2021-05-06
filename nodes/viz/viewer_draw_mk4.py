@@ -529,25 +529,24 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
     selected_draw_mode: EnumProperty(
         items=enum_item_5(["flat", "facet", "smooth", "fragment"], ['SNAP_VOLUME', 'ALIASED', 'ANTIALIASED', 'SCRIPTPLUGINS']),
         description="pick how the node will draw faces",
-        default="flat", update=updateNode
-    )
+        default="flat", update=updateNode)
 
     activate: BoolProperty(
         name='Show', description='Activate drawing',
-        default=True, update=updateNode
-        )
+        default=True, update=updateNode)
+
     draw_gl_polygonoffset: BoolProperty(
         name="Draw gl polygon offset",
-        default=True,
-        update=updateNode
-        )
+        default=True, update=updateNode)
+
     draw_gl_wireframe: BoolProperty(
         name="Draw gl wireframe",
-        default=False,
-        update=updateNode)
+        default=False, update=updateNode)
+
     vector_light: FloatVectorProperty(
         name='vector light', subtype='DIRECTION', min=0, max=1, size=3,
         default=(0.2, 0.6, 0.4), update=updateNode)
+
     extended_matrix: BoolProperty(
         default=False,
         description='Allows mesh.transform(matrix) operation, quite fast!')
@@ -558,71 +557,67 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
 
     point_size: IntProperty(
         min=1, default=4, name='Verts Size',
-        description='Point Size', update=updateNode
-    )
+        description='Point Size', update=updateNode)
+
     line_width: IntProperty(
         min=1, default=1, name='Edge Width',
-        description='Edge Width', update=updateNode
-    )
+        description='Edge Width', update=updateNode)
 
     curve_samples: IntProperty(
         min=2, default=25, name='Samples',
-        description='Curve Resolution', update=updateNode
-    )
+        description='Curve Resolution', update=updateNode)
+
     vector_color: FloatVectorProperty(
         update=updateNode, name='Vertices Color', default=(.9, .9, .95, 1.0),
-        size=4, min=0.0, max=1.0, subtype='COLOR'
-        )
+        size=4, min=0.0, max=1.0, subtype='COLOR')
+
     display_verts: BoolProperty(
-        update=updateNode, name='Display Vertices', default=True
-        )
+        update=updateNode, name='Display Vertices', default=True)
+
     vector_random_colors: BoolProperty(
-        update=updateNode, name='Random Vertices Color', default=False
-        )
+        update=updateNode, name='Random Vertices Color', default=False)
+
     random_seed: IntProperty(
         min=1, default=1, name='Random Seed',
-        description='Seed of random colors', update=updateNode
-    )
+        description='Seed of random colors', update=updateNode)
+
     color_per_point: BoolProperty(
         update=updateNode, name='Color per point', default=False,
-        description='Toggle between color per point or per object'
-        )
+        description='Toggle between color per point or per object')
+
     color_per_edge: BoolProperty(
         update=updateNode, name='Color per edge', default=False,
-        description='Toggle between color per edge or per object'
-        )
+        description='Toggle between color per edge or per object')
+
     color_per_polygon: BoolProperty(
         update=updateNode, name='Color per polygon', default=False,
-        description='Toggle between color per polygon or per object'
-        )
+        description='Toggle between color per polygon or per object')
+
     polygon_use_vertex_color: BoolProperty(
         update=updateNode, name='Polys Vertex Color', default=False,
-        description='Colorize polygons using vertices color'
-        )
+        description='Colorize polygons using vertices color')
+
     edges_use_vertex_color: BoolProperty(
         update=updateNode, name='Edges Vertex Color', default=False,
-        description='Colorize edges using vertices color'
-        )
+        description='Colorize edges using vertices color')
 
     edge_color: FloatVectorProperty(
         update=updateNode, name='Edges Color', default=(.9, .9, .35, 1.0),
-        size=4, min=0.0, max=1.0, subtype='COLOR'
-        )
+        size=4, min=0.0, max=1.0, subtype='COLOR')
+
     display_edges: BoolProperty(
-        update=updateNode, name='Display Edges', default=True
-        )
+        update=updateNode, name='Display Edges', default=True)
 
     polygon_color: FloatVectorProperty(
         update=updateNode, name='Ploygons Color', default=(0.14, 0.54, 0.81, 1.0),
-        size=4, min=0.0, max=1.0, subtype='COLOR'
-        )
+        size=4, min=0.0, max=1.0, subtype='COLOR')
+
     display_faces: BoolProperty(
-        update=updateNode, name='Display Polygons', default=True
-        )
+        update=updateNode, name='Display Polygons', default=True)
+
     all_triangles: BoolProperty(
         update=updateNode, name='All Triangles', default=False,
-        description='Enable if all the incoming faces are Tris (makes node faster)'
-        )
+        description='Enable if all the incoming faces are Tris (makes node faster)')
 
     matrix_draw_scale: FloatProperty(default=1, min=0.0001, name="Drawing matrix scale", update=updateNode)
 
@@ -716,10 +711,10 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         
         self.sv_new_input('SvVerticesSocket', "Vertices",
-            custom_draw="draw_sizes")
+            custom_draw="draw_property_socket")
 
         self.sv_new_input('SvStringsSocket', "Edges",
-            custom_draw="draw_sizes")
+            custom_draw="draw_property_socket")
 
         self.sv_new_input('SvStringsSocket', "Polygons")
         self.sv_new_input('SvMatrixSocket', 'Matrix')
@@ -736,18 +731,20 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
             prop_name='polygon_color',
             custom_draw='draw_color_socket')
 
-        # attr_socket = self.sv_new_input('SvStringsSocket', 'attrs')
-        # attr_socket.hide = True
-        # attr_socket.quick_link_to_node = "SvVDAttrsNodeMk2"
         self.sv_new_input('SvStringsSocket', 'attrs',
             hide=True,
             quick_link_to_node="SvVDAttrsNodeMk2")
 
-
-
     def migrate_from(self, old_node):
         self.vector_color = old_node.vert_color
         self.polygon_color = old_node.face_color
+
+    def draw_property_socket(self, socket, context, layout):
+        drawing_verts = socket.name == "Vertices"
+        prop_to_show = "point_size" if drawing_verts else "line_width"
+        text = f"{socket.name}. {SvGetSocketInfo(socket)}"
+        layout.label(text=text)
+        layout.prop(self, prop_to_show, text="px")
 
     def draw_color_socket(self, socket, context, layout):
         socket_info = socket_dict[socket.prop_name]
