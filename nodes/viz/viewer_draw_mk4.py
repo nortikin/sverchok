@@ -844,6 +844,14 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
             verts = coords
         return match_long_repeat([coords, edge_indices, face_indices, verts, matrix])
 
+    # def hot_update_ui(self):
+    #     # this scenario happens if you load a blend that contains any vdmk4 already,
+    #     # their sv_init will not be called, and those nodes will not know about the custom
+    #     # draw function. This tries to atleast show these two props in that case.
+    #     for idx in range(2):
+    #         if self.inputs and not self.inputs[idx].custom_draw:
+    #             self.inputs[idx].custom_draw = "draw_property_socket"
+
     def process(self):
         if bpy.app.background:
             return
@@ -858,6 +866,8 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         # end early
         if not self.activate:
             return
+
+        # self.hot_update_ui()
 
         if not any([inputs['Vertices'].is_linked, inputs['Matrix'].is_linked]):
             return
