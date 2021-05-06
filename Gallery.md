@@ -1,7 +1,13 @@
 ## Gallery
+ 
+Here is album with artworks and screenshots of Sverchok from all of the Internet:    
+(Make Smart tiles view and watch)    
 
-Here is a collection of instructional layouts intended to get you started, clicking on any image will start to download the `.blend` file so you can load the layout in Blender and experiment.
+[![images](./images/Gallery_thumb.png)](https://disk.yandex.ru/a/PK8LcF0zcKW4Hg)    
 
+<!--
+Here is a collection of instructional layouts intended to get you started, clicking on any image will start to download the `.blend` file so you can load the layout in Blender and experiment:-->
+<!--
 <table class="sv_table_images">
   <tr>
     <td class="sv_table_img-elem">
@@ -37,3 +43,4 @@ Here is a collection of instructional layouts intended to get you started, click
             <img width=205 src='images/proj.jpg' /></a></td>
   </tr>
 </table>
+-->
