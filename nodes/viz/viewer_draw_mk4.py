@@ -735,8 +735,16 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
             hide=True, quick_link_to_node="SvVDAttrsNodeMk2")
 
     def migrate_from(self, old_node):
-        self.vector_color = old_node.vert_color
-        self.polygon_color = old_node.face_color
+        try:
+            self.vector_color = old_node.vert_color
+            self.polygon_color = old_node.face_color
+        except Exception as err:
+            print(err)
+
+        try:
+            self.hot_update_ui()
+        except:
+            ...
 
     def draw_property_socket(self, socket, context, layout):
         drawing_verts = socket.name == "Vertices"
@@ -847,13 +855,13 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
             verts = coords
         return match_long_repeat([coords, edge_indices, face_indices, verts, matrix])
 
-    # def hot_update_ui(self):
-    #     # this scenario happens if you load a blend that contains any vdmk4 already,
-    #     # their sv_init will not be called, and those nodes will not know about the custom
-    #     # draw function. This tries to atleast show these two props in that case.
-    #     for idx in range(2):
-    #         if self.inputs and not self.inputs[idx].custom_draw:
-    #             self.inputs[idx].custom_draw = "draw_property_socket"
+    def hot_update_ui(self):
+        # this scenario happens if you load a blend that contains any vdmk4 already,
+        # their sv_init will not be called, and those nodes will not know about the custom
+        # draw function. This tries to atleast show these two props in that case.
+        for idx in range(2):
+            if self.inputs and not self.inputs[idx].custom_draw:
+                self.inputs[idx].custom_draw = "draw_property_socket"
 
     def process(self):
         if bpy.app.background:
@@ -869,8 +877,6 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         # end early
         if not self.activate:
             return
-
-        # self.hot_update_ui()
 
         if not any([inputs['Vertices'].is_linked, inputs['Matrix'].is_linked]):
             return
