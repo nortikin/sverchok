@@ -437,8 +437,6 @@ def generate_mesh_geom(config, vecs_in):
         mats_in = cycle(config.matrix)
         use_matrix = False
 
-
-
     if (config.draw_verts and not config.uniform_verts) or (config.draw_edges and config.edges_use_vertex_color) or (config.draw_polys and config.polygon_use_vertex_color):
         points_color = fill_points_colors(config.vector_color, vecs_in, config.color_per_point, config.random_colors)
     else:
@@ -748,11 +746,11 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         socket_info = socket_dict[socket.prop_name]
         layout.prop(self, socket_info[0], text="", icon=socket_info[1])
         layout.prop(self, socket_info[2], text="", icon='COLOR')
+
         display_color = not socket.is_linked
         draw_name = True
         if len(socket_info) < 5:
             layout.prop(self, socket_info[3], text="", icon='VPAINT_HLT')
-
         else:
             layout.prop(self, socket_info[3], text="", icon='MOD_NOISE')
             if socket_info[3] in self and self[socket_info[3]]:
@@ -762,14 +760,12 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         if socket_info[3] in self:
             display_color = display_color and  not self[socket_info[3]]
 
-
         if display_color:
             layout.prop(self, socket.prop_name, text="")
         else:
             if draw_name:
                 reduced_name = socket.name[:2] + ". Col"
                 layout.label(text=reduced_name+ '. ' + SvGetSocketInfo(socket))
-
 
     def create_config(self):
         config = lambda: None
@@ -811,7 +807,6 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
             [  {attr: attr_vale, attr2: attr2_value } ]
 
         """
-
         if self.node_ui_show_attrs_socket and not self.inputs['attrs'].hide and self.inputs['attrs'].is_linked:
             socket_acquired_attrs = self.inputs['attrs'].sv_get(default=[{'activate': False}])
 
@@ -859,10 +854,10 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
         n_id = node_id(self)
         callback_disable(n_id)
         inputs = self.inputs
+
         # end early
         if not self.activate:
             return
-
 
         if not any([inputs['Vertices'].is_linked, inputs['Matrix'].is_linked]):
             return
