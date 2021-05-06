@@ -721,19 +721,17 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
 
         # colors and attributes
         new_input('SvColorSocket', "Vector Color",
-            prop_name='vector_color',
-            custom_draw='draw_color_socket')
+            custom_draw='draw_color_socket', prop_name='vector_color')
 
         new_input('SvColorSocket', "Edge Color",
-            prop_name='edge_color',
-            custom_draw='draw_color_socket')
+            custom_draw='draw_color_socket', prop_name='edge_color')
 
         new_input('SvColorSocket', "Polygon Color",
-            prop_name='polygon_color',
-            custom_draw='draw_color_socket')
+            custom_draw='draw_color_socket', prop_name='polygon_color')
 
         new_input('SvStringsSocket', 'attrs',
             quick_link_to_node="SvVDAttrsNodeMk2", hide=True)
+
 
     def migrate_from(self, old_node):
         try:
