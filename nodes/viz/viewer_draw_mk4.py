@@ -707,32 +707,33 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
             )
 
     def sv_init(self, context):
+        new_input = self.sv_new_input
 
         # geometry and transforms
-        self.sv_new_input('SvVerticesSocket', "Vertices",
+        new_input('SvVerticesSocket', "Vertices",
             custom_draw="draw_property_socket")
 
-        self.sv_new_input('SvStringsSocket', "Edges",
+        new_input('SvStringsSocket', "Edges",
             custom_draw="draw_property_socket")
 
-        self.sv_new_input('SvStringsSocket', "Polygons")
-        self.sv_new_input('SvMatrixSocket', 'Matrix')
+        new_input('SvStringsSocket', "Polygons")
+        new_input('SvMatrixSocket', 'Matrix')
 
         # colors and attributes
-        self.sv_new_input('SvColorSocket', "Vector Color",
+        new_input('SvColorSocket', "Vector Color",
             prop_name='vector_color',
             custom_draw='draw_color_socket')
 
-        self.sv_new_input('SvColorSocket', "Edge Color",
+        new_input('SvColorSocket', "Edge Color",
             prop_name='edge_color',
             custom_draw='draw_color_socket')
 
-        self.sv_new_input('SvColorSocket', "Polygon Color",
+        new_input('SvColorSocket', "Polygon Color",
             prop_name='polygon_color',
             custom_draw='draw_color_socket')
 
-        self.sv_new_input('SvStringsSocket', 'attrs',
-            hide=True, quick_link_to_node="SvVDAttrsNodeMk2")
+        new_input('SvStringsSocket', 'attrs',
+            quick_link_to_node="SvVDAttrsNodeMk2", hide=True)
 
     def migrate_from(self, old_node):
         try:
