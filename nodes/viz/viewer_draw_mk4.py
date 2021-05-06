@@ -709,7 +709,6 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
             )
 
     def sv_init(self, context):
-        
         self.sv_new_input('SvVerticesSocket', "Vertices",
             custom_draw="draw_property_socket")
 
@@ -732,8 +731,7 @@ class SvViewerDrawMk4(bpy.types.Node, SverchCustomTreeNode):
             custom_draw='draw_color_socket')
 
         self.sv_new_input('SvStringsSocket', 'attrs',
-            hide=True,
-            quick_link_to_node="SvVDAttrsNodeMk2")
+            hide=True, quick_link_to_node="SvVDAttrsNodeMk2")
 
     def migrate_from(self, old_node):
         self.vector_color = old_node.vert_color
