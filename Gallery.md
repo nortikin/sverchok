@@ -3,7 +3,7 @@
 Here is album with artworks and screenshots of Sverchok from all of the Internet:    
 (Make Smart tiles view and watch)    
 
-[<img src='./images/Gallery_thumb.jpg' width=100% />](https://disk.yandex.ru/a/PK8LcF0zcKW4Hg)    
+[<img src='./images/Gallery_thumb.jpg' width=100% />](https://disk.yandex.ru/d/0Jv-NQjKy400EA?w=1)    
 
 
 ## Divercity of authors   
