@@ -91,6 +91,8 @@ def SvSetSocket(socket, out):
         socket_data_cache[s_ng] = {}
         socket_data_cache[s_ng][s_id] = out
 
+def cache_miss_message(socket):
+    return f"cache miss: from {other.node.name} -> {other.name} to {socket.node.name} -> {socket.name}"
 
 def SvGetSocket(socket, other=None, deepcopy=True):
     """gets socket data from socket,
@@ -104,7 +106,11 @@ def SvGetSocket(socket, other=None, deepcopy=True):
         s_ng = other.id_data.tree_id
 
         tree_cache = socket_data_cache.get(s_ng)
-        socket_cache = tree_cache.get(s_id, [[]])
+        socket_cache = tree_cache.get(s_id, sentinel)
+
+        if socket_cache == sentinel:  # and sverchok.is_currently_in_load_handler
+            print(cache_miss_message(socket))
+            socket_cache = [[]]
 
         if deepcopy:
             return sv_deep_copy(socket_cache)
@@ -112,7 +118,7 @@ def SvGetSocket(socket, other=None, deepcopy=True):
 
     except Exception as e:
         if data_structure.DEBUG_MODE:
-            debug(f"cache miss: {socket.node.name} -> {socket.name} from: {other.node.name} -> {other.name}")
+            debug(cache_miss_message(socket))
         raise SvNoDataError(socket)
 
 
