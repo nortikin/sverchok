@@ -209,7 +209,7 @@ def sv_post_load(scene):
 
             for node in ng.nodes:
                 if hasattr(node, "is_animatable"):
-                    node.refresh = True  # this reverts back to False afterwards.
+                    node.process()
 
     addon_name = data_structure.SVERCHOK_NAME
     addon = bpy.context.preferences.addons.get(addon_name)
