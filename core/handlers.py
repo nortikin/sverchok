@@ -207,7 +207,7 @@ def sv_post_load(scene):
             except:
                 traceback.print_exc()
 
-            for node in nd.nodes:
+            for node in ng.nodes:
                 if hasattr(node, "is_animatable"):
                     node.refresh = True  # this reverts back to False afterwards.
 
