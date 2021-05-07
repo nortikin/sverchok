@@ -208,6 +208,16 @@ def sv_post_load(scene):
             except:
                 traceback.print_exc()
 
+            # try:
+            #     for node in ng.nodes:
+            #         # if hasattr(node, "is_animatable"):
+            #         #     node.refresh = True
+            #         if node.bl_idname == "SvObjectsNodeMK3":
+            #             node.process_node(None)
+            # except:
+            #     print("post load event handler, node preload configuration stage error:")
+            #     traceback.print_exc()
+
     addon_name = data_structure.SVERCHOK_NAME
     addon = bpy.context.preferences.addons.get(addon_name)
     if addon and hasattr(addon, "preferences"):
