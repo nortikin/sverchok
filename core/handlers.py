@@ -207,6 +207,10 @@ def sv_post_load(scene):
             except:
                 traceback.print_exc()
 
+            for node in nd.nodes:
+                if hasattr(node, "is_animatable"):
+                    node.refresh = True  # this reverts back to False afterwards.
+
     addon_name = data_structure.SVERCHOK_NAME
     addon = bpy.context.preferences.addons.get(addon_name)
     if addon and hasattr(addon, "preferences"):
