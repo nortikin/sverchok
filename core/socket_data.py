@@ -110,8 +110,8 @@ def SvGetSocket(socket, other=None, deepcopy=True):
         tree_cache = socket_data_cache.get(s_ng)
         socket_cache = tree_cache.get(s_id, sentinel)
 
-        if socket_cache == sentinel:
-            socket_cache = [[]]
+        # if socket_cache == sentinel:
+        #     socket_cache = [[]]
 
         if deepcopy:
             return sv_deep_copy(socket_cache)
