@@ -47,6 +47,20 @@ def has_frame_changed(scene):
     _state['frame'] = scene.frame_current
     return not last_frame == scene.frame_current
 
+def update_monads():
+    for monad in (ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchGroupTreeType'):
+        if monad.input_node and monad.output_node:
+            monad.update_cls()
+
+def apply_theme():
+    addon_name = data_structure.SVERCHOK_NAME
+    addon = bpy.context.preferences.addons.get(addon_name)
+    if addon and hasattr(addon, "preferences"):
+        pref = addon.preferences
+        if pref.apply_theme_on_open:
+            color_def.apply_theme()
+
+
 #
 #  app.handlers.undo_post and app.handlers.undo_pre are necessary to help remove stale
 #  draw callbacks (bgl / gpu / blf). F.ex the rightlick menu item "attache viewer draw"
@@ -174,10 +188,7 @@ def sv_post_load(scene):
     from sverchok import node_tree
     node_tree.SverchCustomTreeNode.get_and_set_gl_scale_info(None, "sv_post_load")
 
-
-    for monad in (ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchGroupTreeType'):
-        if monad.input_node and monad.output_node:
-            monad.update_cls()
+    update_monads()
 
     sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
     sv_trees = list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
@@ -197,12 +208,7 @@ def sv_post_load(scene):
             except:
                 traceback.print_exc()
 
-    addon_name = data_structure.SVERCHOK_NAME
-    addon = bpy.context.preferences.addons.get(addon_name)
-    if addon and hasattr(addon, "preferences"):
-        pref = addon.preferences
-        if pref.apply_theme_on_open:
-            color_def.apply_theme()
+    apply_theme()
 
     for ng in sv_trees:
         if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
