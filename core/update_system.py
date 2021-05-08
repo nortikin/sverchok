@@ -363,6 +363,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
     """
     General update function for node set
     """
+    print('do update general was called!')
     global graphs
     timings = []
     graph = []
