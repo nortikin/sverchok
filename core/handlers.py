@@ -15,6 +15,7 @@ from sverchok.utils import dummy_nodes
 
 _state = {'frame': None}
 
+
 pre_running = False
 sv_depsgraph = []
 depsgraph_need = False
@@ -112,27 +113,12 @@ def sv_update_handler(scene):
         except Exception as e:
             print('Failed to update:', str(e))  # name,
 
-
-@persistent
-def sv_scene_handler(scene):
-    """
-    Avoid using this.
-    Update sverchok node groups on scene update events.
-    Not used yet.
-    """
-    # print('sv_scene_handler')
-    for ng in sverchok_trees():
-        try:
-            ng.process_ani()
-        except Exception as e:
-            print('Failed to update:', ng, str(e))
-
-
 @persistent
 def sv_main_handler(scene):
     """
     On depsgraph update (pre)
     """
+    print("handler: sv_main: start")
     global pre_running
     global sv_depsgraph
     global depsgraph_need
@@ -147,21 +133,24 @@ def sv_main_handler(scene):
         sv_depsgraph = bpy.context.evaluated_depsgraph_get()
 
     pre_running = False
-
+    print("handler: sv_main: end")
 
 @persistent
 def sv_clean(scene):
     """
     Cleanup callbacks, clean dicts.
     """
+    print("handler: sv_clean: start")
     bgl_callback_nodeview.callback_disable_all()
     bgl_callback_3dview.callback_disable_all()
 
     data_structure.sv_Vars = {}
     data_structure.temp_handle = {}
+    print("handler: sv_clean: end")
 
 @persistent
 def sv_pre_load(scene):
+    print("handler: pre load: start")
     clear_system_cache()
     sv_clean(scene)
 
@@ -170,6 +159,7 @@ def sv_pre_load(scene):
     gh.ContextTrees.reset_data()
 
     set_first_run(True)
+    print("handler: pre load: end")
 
 
 @persistent
@@ -177,7 +167,7 @@ def sv_post_load(scene):
     """
     Upgrade nodes, apply preferences and do an update.
     """
-
+    print("handler: post load: start")
     set_first_run(False)
 
     # ensure current nodeview view scale / location parameters reflect users' system settings
@@ -216,26 +206,19 @@ def sv_post_load(scene):
 
     for ng in sv_trees:
         if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
-
-            for node in ng.nodes:
-                if hasattr(node, "is_animatable"):
-                    node.process()
-
             ng.update()
 
+    print("handler: post load: end")
 
 def set_frame_change(mode):
     post = bpy.app.handlers.frame_change_post
     pre = bpy.app.handlers.frame_change_pre
 
-    # scene = bpy.app.handlers.scene_update_post
     # remove all
     if sv_update_handler in post:
         post.remove(sv_update_handler)
     if sv_update_handler in pre:
         pre.remove(sv_update_handler)
-    #if sv_scene_handler in scene:
-    #    scene.remove(sv_scene_handler)
 
     # apply the right one
     if mode == "POST":

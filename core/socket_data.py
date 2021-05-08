@@ -110,17 +110,21 @@ def SvGetSocket(socket, other=None, deepcopy=True):
         tree_cache = socket_data_cache.get(s_ng)
         socket_cache = tree_cache.get(s_id, sentinel)
 
-        if socket_cache == sentinel:  # and sverchok.is_currently_in_load_handler
-            print(cache_miss_message(socket, other))
+        if socket_cache == sentinel:
             socket_cache = [[]]
 
         if deepcopy:
             return sv_deep_copy(socket_cache)
+
         return socket_cache
 
     except Exception as e:
         if data_structure.DEBUG_MODE:
-            debug(cache_miss_message(socket, other))
+            from sverchok.core.update_system import is_first_run
+            if not is_first_run():
+                debug("pre first run:: " + cache_miss_message(socket, other))
+            else:
+                debug(cache_miss_message(socket, other))
         raise SvNoDataError(socket)
 
 
