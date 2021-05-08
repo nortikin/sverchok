@@ -60,6 +60,11 @@ def apply_theme():
         if pref.apply_theme_on_open:
             color_def.apply_theme()
 
+def configure_gl_scale(origin=None):
+    # ensure current nodeview view scale / location parameters reflect users' system settings
+    from sverchok import node_tree
+    node_tree.SverchCustomTreeNode.get_and_set_gl_scale_info(None, origin)
+
 
 #
 #  app.handlers.undo_post and app.handlers.undo_pre are necessary to help remove stale
@@ -184,10 +189,7 @@ def sv_post_load(scene):
     print("handler: post load: start")
     set_first_run(False)
 
-    # ensure current nodeview view scale / location parameters reflect users' system settings
-    from sverchok import node_tree
-    node_tree.SverchCustomTreeNode.get_and_set_gl_scale_info(None, "sv_post_load")
-
+    configure_gl_scale(origin="sv_post_load")
     update_monads()
 
     sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
