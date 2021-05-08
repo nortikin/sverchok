@@ -15,7 +15,6 @@ from sverchok.utils import dummy_nodes
 
 _state = {'frame': None}
 
-
 pre_running = False
 sv_depsgraph = []
 depsgraph_need = False
@@ -154,6 +153,7 @@ def sv_main_handler(scene):
     pre_running = False
     print("handler: sv_main: end")
 
+
 @persistent
 def sv_clean(scene):
     """
@@ -179,7 +179,6 @@ def sv_pre_load(scene):
 
     set_first_run(True)
     print("handler: pre load: end")
-
 
 @persistent
 def sv_post_load(scene):
