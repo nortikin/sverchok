@@ -116,11 +116,7 @@ def SvGetSocket(socket, other=None, deepcopy=True):
 
     except Exception as e:
         if data_structure.DEBUG_MODE:
-            from sverchok.core.update_system import is_first_run
-            if not is_first_run():
-                debug("pre first run:: " + cache_miss_message(socket, other))
-            else:
-                debug(cache_miss_message(socket, other))
+            debug(cache_miss_message(socket, other))
         raise SvNoDataError(socket)
 
 
