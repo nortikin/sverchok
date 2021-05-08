@@ -306,7 +306,8 @@ class SvNodeTreeExportToGist(ExportToJSONOperator, bpy.types.Operator):
 
         app_version = bpy.app.version_string.replace(" ", "")
         time_stamp = strftime("%Y.%m.%d | %H:%M", localtime())
-        gist_description = f"Sverchok.{version_and_sha} | Blender.{app_version} | {ng.name} | {time_stamp}"
+        license = 'license: CC BY-SA'
+        gist_description = f"Sverchok.{version_and_sha} | Blender.{app_version} | {ng.name} | {time_stamp} | {license}"
 
         # layout_dict = create_dict_of_tree(ng, skip_set={}, selected=self.selected_only)
         if self.selected_only:

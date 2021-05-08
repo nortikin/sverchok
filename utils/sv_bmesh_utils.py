@@ -28,7 +28,7 @@ import bmesh
 from bmesh.types import BMVert, BMEdge, BMFace
 import mathutils
 
-from sverchok.data_structure import zip_long_repeat
+from sverchok.data_structure import zip_long_repeat, has_element
 from sverchok.utils.logging import debug
 
 @contextmanager
@@ -82,7 +82,7 @@ def bmesh_from_pydata(verts=None, edges=[], faces=[], markup_face_data=False, ma
     bm_verts.index_update()
     bm_verts.ensure_lookup_table()
 
-    if len(faces) > 0:
+    if has_element(faces):
         add_face = bm.faces.new
         py_faces = faces.tolist() if type(faces) == np.ndarray else faces
         for face in py_faces:
@@ -90,7 +90,7 @@ def bmesh_from_pydata(verts=None, edges=[], faces=[], markup_face_data=False, ma
 
         bm.faces.index_update()
 
-    if len(edges) > 0:
+    if has_element(edges):
         if markup_edge_data:
             initial_index_layer = bm.edges.layers.int.new("initial_index")
 

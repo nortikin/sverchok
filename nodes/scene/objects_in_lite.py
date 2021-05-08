@@ -1,20 +1,9 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
 
 import bpy
 from bpy.props import BoolProperty, StringProperty, EnumProperty
@@ -22,30 +11,30 @@ from bpy.props import BoolProperty, StringProperty, EnumProperty
 import sverchok
 from sverchok.utils.mesh_repr_utils import flatten, unflatten, generate_object
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
 import json
 
-class SvObjLiteCallback(bpy.types.Operator):
+class SvObjLiteCallback(bpy.types.Operator, SvGenericNodeLocator):
     """ GET / Reject object callback"""
     bl_idname = "node.sverchok_objectinlite_cb"
     bl_label = "Sverchok object in lite callback"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     cmd: StringProperty()
-    idname: StringProperty()
-    idtree: StringProperty()
-
-    def get_node(self):
-        return bpy.data.node_groups[self.idtree].nodes[self.idname]    
 
     def execute(self, context):
-        node = self.get_node()
-        getattr(node, self.cmd)()
-        node.process_node(context)
-        return {'FINISHED'}
+
+        node = self.get_node(context)
+        if node:        
+            getattr(node, self.cmd)()
+            node.process_node(context)
+            return {'FINISHED'}
+
+        return {'CANCELLED'}
 
 
 class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
@@ -59,6 +48,10 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         description='Apply modifier geometry to import (original untouched)',
         name='Modifiers', default=False, update=updateNode)
 
+    do_not_add_obj_to_scene: BoolProperty(
+        default=False,
+        description="Do not add the object to the scene if this node is imported from elsewhere") 
+    
     currently_storing: BoolProperty()
     obj_name: StringProperty(update=updateNode)
     node_dict = {}
@@ -112,13 +105,12 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         out('SvMatrixSocket', 'Matrix')
 
     def draw_buttons(self, context, layout):
-        addon = context.preferences.addons.get(sverchok.__name__)
-        prefs = addon.preferences
         callback = 'node.sverchok_objectinlite_cb'
+        scale_y = 4.0 if self.prefs_over_sized_buttons else 1
 
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.scale_y = 4.0 if prefs.over_sized_buttons else 1
+        row.scale_y = scale_y
 
         cb_text, cmd, display_text = [
             ("G E T", "dget", "--None--"),
@@ -129,6 +121,7 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
 
         row.prop(self, 'modifiers', text='', icon='MODIFIER')
         layout.label(text=display_text)
+        layout.row().prop(self, "do_not_add_obj_to_scene", text="do not add to scene")
 
 
     def pass_data_to_sockets(self):
@@ -166,6 +159,11 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         polygons = unrolled_geom['Polygons']
         materials = unrolled_geom.get('MaterialIdx', [])
         matrix = unrolled_geom['Matrix']
+
+        if self.do_not_add_obj_to_scene:
+            self.node_dict[hash(self)] = unrolled_geom
+            self.obj_name = name
+            return
 
         with self.sv_throttle_tree_update():
             bm = bmesh_from_pydata(verts, edges, polygons)

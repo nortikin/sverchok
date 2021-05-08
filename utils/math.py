@@ -332,6 +332,7 @@ def np_normalize_vectors(vecs):
     norms = np.linalg.norm(vecs, axis=1)
     nonzero = (norms > 0)
     vecs[nonzero] = vecs[nonzero] / norms[nonzero][:,np.newaxis]
+    return vecs
 
 def weighted_center(verts, field=None):
     if field is None:

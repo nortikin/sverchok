@@ -32,6 +32,8 @@ This is a collection of shortcuts useful in the Sverchok node tree, some are Ble
 
 **Numpad .** - Frame selected
 
+**Alt + Z** - Toggle between 'Zoom Selected' and 'View All'
+
 **F** - Links (connects) the selected nodes from left to right using the first output socket with the first empty input socket.
 
 **V** - Vectors - Edges - Faces connector: the same of the F key but connecting vertices to vertices, edges to edges and faces (or polygons) to faces (or polygons) if possible.

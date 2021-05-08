@@ -47,6 +47,7 @@ class GetNormalsNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     bl_idname = 'GetNormalsNode'
     bl_label = 'Calculate normals'
     bl_icon = 'SNAP_NORMAL'
+    replacement_nodes = [('SvGetNormalsNodeMk2', None, dict(VertexNormals='Vertex Normals',FaceNormals='Face Normals'))]
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")

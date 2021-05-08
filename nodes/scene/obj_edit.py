@@ -1,20 +1,9 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
 
 import bpy
 from bpy.props import BoolProperty, StringProperty, EnumProperty
@@ -31,7 +20,6 @@ class SvObjEditCallback(bpy.types.Operator):
     bl_idname = "node.sverchok_objectedit_cb"
     bl_label = "Sverchok object in lite callback"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
-
 
     cmd: StringProperty()
     mode: StringProperty()
@@ -52,10 +40,13 @@ class SvObjEdit(bpy.types.Node, SverchCustomTreeNode):
     def set_edit(self, ops, mode):
         try:
             obj_name = self.obj_passed_in or self.inputs[0].object_ref
-            bpy.context.scene.objects.active = bpy.data.objects.get(obj_name)
+
+            bpy.context.view_layer.objects.active = bpy.data.objects.get(obj_name)
             bpy.ops.object.mode_set(mode=mode)
-        except:
+
+        except Exception as err:
             ops.report({'WARNING'}, 'No object selected / active')
+            print(err)
 
 
     def sv_init(self, context):
@@ -67,13 +58,11 @@ class SvObjEdit(bpy.types.Node, SverchCustomTreeNode):
         if not (self.inputs and self.inputs[0]):
             return
 
-        addon = context.preferences.addons.get(sverchok.__name__)
-        prefs = addon.preferences
         callback = 'node.sverchok_objectedit_cb'
 
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.scale_y = 4.0 if prefs.over_sized_buttons else 1
+        row.scale_y = 4.0 if self.prefs_over_sized_buttons else 1
 
         objects = bpy.data.objects
         if self.obj_passed_in or self.inputs[0].object_ref:

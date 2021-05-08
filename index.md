@@ -218,51 +218,51 @@
     SvProjectTrimFaceNode
 
 ## Solids @ Analyze
-   SvSolidValidateNode
-   SvRefineSolidNode
-   SvIsSolidClosedNode
-   SvSolidCenterOfMassNode
-   SvSolidFaceAreaNode
-   SvSolidAreaNode
-   SvSolidVolumeNode
-   SvSolidBoundBoxNode
+    SvSolidValidateNode
+    SvRefineSolidNode
+    SvIsSolidClosedNode
+    SvSolidCenterOfMassNode
+    SvSolidFaceAreaNode
+    SvSolidAreaNode
+    SvSolidVolumeNode
+    SvSolidBoundBoxNode
 
 ## Solids
-   SvBoxSolidNode
-   SvCylinderSolidNode
-   SvConeSolidNode
-   SvSphereSolidNode
-   SvToursSolidNode
-   @ Make Face
-   SvSolidFaceExtrudeNode
-   SvSolidFaceSolidifyNode
-   SvSolidFaceRevolveNode
-   SvSweepSolidFaceNode
-   SvRuledSolidNode
-   SvSolidFromFacesNode
-   ---
-   SvTransformSolidNode
-   SvChamferSolidNode
-   SvFilletSolidNode
-   SvSolidBooleanNode
-   SvSolidGeneralFuseNode
-   SvMirrorSolidNode
-   SvOffsetSolidNode
-   SvSplitSolidNode
-   SvHollowSolidNode
-   ---
-   SvIsInsideSolidNode
-   SvSolidDistanceNode
-   SvSliceSolidNode
-   SvMeshToSolidNode
-   SvSolidToMeshNodeMk2
-   SvSolidVerticesNode
-   SvSolidEdgesNode
-   SvSolidFacesNode
-   SvSelectSolidNode
-   SvCompoundSolidNode
-   @ Analyze
-   SvSolidViewerNode
+    SvBoxSolidNode
+    SvCylinderSolidNode
+    SvConeSolidNode
+    SvSphereSolidNode
+    SvToursSolidNode
+    @ Make Face
+    SvSolidFaceExtrudeNode
+    SvSolidFaceSolidifyNode
+    SvSolidFaceRevolveNode
+    SvSweepSolidFaceNode
+    SvRuledSolidNode
+    SvSolidFromFacesNode
+    ---
+    SvTransformSolidNode
+    SvChamferSolidNode
+    SvFilletSolidNode
+    SvSolidBooleanNode
+    SvSolidGeneralFuseNode
+    SvMirrorSolidNode
+    SvOffsetSolidNode
+    SvSplitSolidNode
+    SvHollowSolidNode
+    ---
+    SvIsInsideSolidNode
+    SvSolidDistanceNode
+    SvSliceSolidNode
+    SvMeshToSolidNode
+    SvSolidToMeshNodeMk2
+    SvSolidVerticesNode
+    SvSolidEdgesNode
+    SvSolidFacesNode
+    SvSelectSolidNode
+    SvCompoundSolidNode
+    @ Analyze
+    SvSolidViewerNode
 
 ## Analyzers
     SvBBoxNodeMk3
@@ -276,8 +276,7 @@
     SvDistancetLineLineNode
     SvPathLengthMk2Node
     SvOrigins
-    GetNormalsNode
-    VectorNormalNode
+    SvGetNormalsNodeMk2
     SvIntersectLineSphereNode
     SvIntersectCircleCircleNode
     SvIntersectPlanePlaneNode
@@ -395,6 +394,7 @@
     LineConnectNodeMK2
     ---
     SvSubdivideNodeMK2
+    SvSubdivideToQuadsNode
     SvOffsetLineNode
     SvContourNode
     ---
@@ -466,7 +466,7 @@
     SvBevelNode
     SvIntersectEdgesNodeMK2
     SvOffsetNode
-    SvInsetSpecial
+    SvInsetSpecialMk2
     SvInsetFaces
     SvLatheNode
     SvSmoothNode
