@@ -235,7 +235,7 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
 
     def process(self):
 
-        print("starts obj in process function")
+        print("starts      : obj in process function")
         if not self.object_names:
             return
 
@@ -325,7 +325,7 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
         outputs['Matrixes'].sv_set(mtrx_out)
         outputs['Object'].sv_set([data_objects.get(o.name) for o in self.object_names])
 
-        print("completes obj in process function")
+        print("completes   : obj in process function")
 
     def save_to_json(self, node_data: dict):
         node_data['object_names'] = [o.name for o in self.object_names]

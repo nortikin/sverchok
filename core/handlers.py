@@ -207,10 +207,6 @@ def sv_post_load(scene):
             except:
                 traceback.print_exc()
 
-            for node in ng.nodes:
-                if hasattr(node, "is_animatable"):
-                    node.process()
-
     addon_name = data_structure.SVERCHOK_NAME
     addon = bpy.context.preferences.addons.get(addon_name)
     if addon and hasattr(addon, "preferences"):
@@ -220,6 +216,11 @@ def sv_post_load(scene):
 
     for ng in sv_trees:
         if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
+
+            for node in ng.nodes:
+                if hasattr(node, "is_animatable"):
+                    node.process()
+
             ng.update()
 
 

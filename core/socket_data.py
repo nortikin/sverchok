@@ -92,7 +92,9 @@ def SvSetSocket(socket, out):
         socket_data_cache[s_ng][s_id] = out
 
 def cache_miss_message(socket, other):
-    return f"cache miss: from {other.node.name} -> {other.name} to {socket.node.name} -> {socket.name}"
+    from_socket = f"nodes['{other.node.name}'].outputs['{other.name}']"
+    into_socket = f"nodes['{socket.node.name}'].inputs['{socket.name}']"
+    return f"cache miss  : {from_socket} -> {into_socket}"
 
 def SvGetSocket(socket, other=None, deepcopy=True):
     """gets socket data from socket,
