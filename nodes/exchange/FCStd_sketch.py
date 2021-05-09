@@ -110,8 +110,8 @@ else:
         def LabelReader(self,context):
             labels=[('','','')]
 
-            tree = bpy.data.node_groups[self.idtree]
-            node = tree.nodes[self.idname]
+            tree = bpy.data.node_groups[self.tree_name]
+            node = tree.nodes[self.node_name]
             fc_file_list = node.inputs['File Path'].sv_get()[0]
 
             try:
@@ -133,13 +133,13 @@ else:
             return labels
             
         option : EnumProperty(items=LabelReader)
-        idtree : StringProperty()
-        idname : StringProperty() 
+        tree_name : StringProperty()
+        node_name : StringProperty() 
 
         def execute(self, context):
 
-            tree = bpy.data.node_groups[self.idtree]
-            node = tree.nodes[self.idname]
+            tree = bpy.data.node_groups[self.tree_name]
+            node = tree.nodes[self.node_name]
             node.name_filter = self.option
             node.selected_label = self.option
             node.selected_part = self.option
@@ -210,13 +210,15 @@ def LoadSketch(fc_file, sketch_filter, max_points, inv_filter, read_mode):
 
 
         #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> EVALUATE CURVE START
-        for geo in s.Geometry:
-            
+        for i,geo in enumerate(s.Geometry):
+
             if read_mode == 'geometry':
-                if geo.Construction : continue
+                if s.getConstruction(i) : continue
+                #FREECAD 0.18 #if geo.Construction : continue
 
             elif read_mode == 'construction':
-                if not geo.Construction : continue
+                if not s.getConstruction(i) : continue
+                #FREECAD 0.18 #if not geo.Construction : continue
 
             v_set=[]
             e_set=[]

@@ -1,7 +1,7 @@
 
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
-
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
 if FreeCAD is None:
     add_dummy('SvReadFCStdNode', 'SvReadFCStdNode', 'FreeCAD')
@@ -100,7 +100,8 @@ else:
                 return
 
 
-    class SvShowFcstdNamesOp(bpy.types.Operator):
+    class SvShowFcstdNamesOp(bpy.types.Operator, SvGenericNodeLocator):
+
         bl_idname = "node.sv_show_fcstd_names"
         bl_label = "Show parts list"
         bl_options = {'INTERNAL', 'REGISTER'}
@@ -109,8 +110,8 @@ else:
         def LabelReader(self,context):
             labels=[('','','')]
 
-            tree = bpy.data.node_groups[self.idtree]
-            node = tree.nodes[self.idname]
+            tree = bpy.data.node_groups[self.tree_name]
+            node = tree.nodes[self.node_name]
             fc_file_list = node.inputs['File Path'].sv_get()[0]
             obj_mask = []
             if  node.read_features: 
@@ -125,7 +126,7 @@ else:
                     F.open(f) 
                     Fname = bpy.path.display_name_from_filepath(f)
                     F.setActiveDocument(Fname)
-
+                    
                     for obj in F.ActiveDocument.Objects:
                         if obj.Module in obj_mask or obj.TypeId in obj_mask:
                             labels.append( (obj.Label, obj.Label, obj.Label) )
@@ -139,14 +140,14 @@ else:
             
             
         option : EnumProperty(items=LabelReader)
-        idtree : StringProperty()
-        idname : StringProperty() 
+        tree_name : StringProperty()
+        node_name : StringProperty() 
 
 
         def execute(self, context):
 
-            tree = bpy.data.node_groups[self.idtree]
-            node = tree.nodes[self.idname]
+            tree = bpy.data.node_groups[self.tree_name]
+            node = tree.nodes[self.node_name]
             node.name_filter = self.option
             node.selected_label = self.option
             node.selected_part = self.option

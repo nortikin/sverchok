@@ -1,5 +1,6 @@
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
 if FreeCAD is None:
     add_dummy('SvFCStdSpreadsheetNode', 'SvFCStdSpreadsheetNode', 'FreeCAD')
@@ -18,7 +19,7 @@ else:
         Tooltip: Read/write FCStd Spreadsheets from a .FCStd file 
         """
         bl_idname = 'SvFCStdSpreadsheetNode'
-        bl_label = 'Read/write FCStd Spreadsheets'
+        bl_label = 'Read/write Spreadsheets'
         bl_icon = 'IMPORT'
         solid_catergory = "Outputs"
         
@@ -89,7 +90,7 @@ else:
                 self.outputs['cell_out'].sv_set( [ ] )
                 return
 
-    class SvShowFcstdSpreadsheetsOp(bpy.types.Operator):
+    class SvShowFcstdSpreadsheetsOp(bpy.types.Operator, SvGenericNodeLocator):
         bl_idname = "node.sv_show_fcstd_spreadsheets"
         bl_label = "Show spreadsheet list"
         bl_options = {'INTERNAL', 'REGISTER'}
@@ -98,8 +99,8 @@ else:
         def LabelReader(self,context):
             labels=[('','','')]
 
-            tree = bpy.data.node_groups[self.idtree]
-            node = tree.nodes[self.idname]
+            tree = bpy.data.node_groups[self.tree_name]
+            node = tree.nodes[self.node_name]
             fc_file_list = node.inputs['File Path'].sv_get()[0]
 
             try:
@@ -120,13 +121,13 @@ else:
             return labels
               
         option : EnumProperty(items=LabelReader)
-        idtree : StringProperty()
-        idname : StringProperty() 
+        tree_name : StringProperty()
+        node_name : StringProperty() 
 
         def execute(self, context):
 
-            tree = bpy.data.node_groups[self.idtree]
-            node = tree.nodes[self.idname]
+            tree = bpy.data.node_groups[self.tree_name]
+            node = tree.nodes[self.node_name]
             node.name_filter = self.option
             node.selected_label = self.option
             node.selected_sheet = self.option
@@ -139,7 +140,7 @@ else:
             wm.invoke_search_popup(self)
             return {'FINISHED'}
    
-    class SvShowFcstdParNamesOp(bpy.types.Operator):
+    class SvShowFcstdParNamesOp(bpy.types.Operator, SvGenericNodeLocator):
         bl_idname = "node.sv_show_fcstd_par_names"
         bl_label = "Show parameter list"
         bl_options = {'INTERNAL', 'REGISTER'}
@@ -148,8 +149,8 @@ else:
         def LabelReader(self,context):
             labels=[('','','')]
 
-            tree = bpy.data.node_groups[self.idtree]
-            node = tree.nodes[self.idname]
+            tree = bpy.data.node_groups[self.tree_name]
+            node = tree.nodes[self.node_name]
             fc_file_list = node.inputs['File Path'].sv_get()[0]
 
             try:
@@ -177,13 +178,13 @@ else:
             return labels
 
         option : EnumProperty(items=LabelReader)
-        idtree : StringProperty()
-        idname : StringProperty() 
+        tree_name : StringProperty()
+        node_name : StringProperty() 
 
         def execute(self, context):
 
-            tree = bpy.data.node_groups[self.idtree]
-            node = tree.nodes[self.idname]
+            tree = bpy.data.node_groups[self.tree_name]
+            node = tree.nodes[self.node_name]
             node.name_filter = self.option
             node.selected_par_label = self.option
             node.selected_par = self.option
