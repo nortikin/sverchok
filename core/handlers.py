@@ -170,6 +170,7 @@ def sv_clean(scene):
 @persistent
 def sv_pre_load(scene):
     print("handler: pre load: start")
+    print("loading: ", bpy.context.blend_data.filepath)
     clear_system_cache()
     sv_clean(scene)
 
