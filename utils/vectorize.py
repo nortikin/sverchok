@@ -13,15 +13,20 @@ def vectorize(func=None, *, match_mode="REPEAT"):
 
     @wraps(func)
     def wrap(*args, **kwargs):
+
+        # it's better not to use positional arguments for backward compatibility
+        # in this case a function can get new arguments
+        if args:
+            raise TypeError(f'Vectorized function {func.__name__} should not have positional arguments')
+
         walkers = []
-        for data, a_name in zip(args, func.__annotations__):  # todo should not the decorator support positional args?
-            annotation = func.__annotations__[a_name]  # todo replace with more reliable method
-            walkers.append(
-                DataWalker(data, output_nesting=_get_nesting_level(annotation), mode=match_mode, data_name=a_name))
         for key, data in zip(kwargs, kwargs.values()):
-            annotation = func.__annotations__[key]
-            walkers.append(
-                DataWalker(data, output_nesting=_get_nesting_level(annotation), mode=match_mode, data_name=key))
+            if data is None or data == []:
+                walkers.append(EmptyDataWalker(data, key))
+            else:
+                annotation = func.__annotations__[key]
+                walkers.append(
+                    DataWalker(data, output_nesting=_get_nesting_level(annotation), mode=match_mode, data_name=key))
 
         # this is corner case, it can't be handled via walk data iterator
         if all([w.what_is_next() == DataWalker.VALUE for w in walkers]):
@@ -155,6 +160,38 @@ class DataWalker:
 
     def __repr__(self):
         return f"<DataWalker {self._name if self._name else 'data'}: {self._stack}>"
+
+
+class EmptyDataWalker:
+    """Use this if a channel does not has any data
+    It is needed not to overcomplicate logic of DataWalker"""
+
+    def __init__(self, data=None, data_name=None):
+        self._data = data
+        self._name = data_name
+
+    def step_down_matching(self, *_, **__):
+        pass
+
+    def step_up(self):
+        pass
+
+    def pop_next_value(self):
+        return self._data
+
+    def what_is_next(self):
+        return DataWalker.VALUE
+
+    @property
+    def next_values_number(self):
+        return 0
+
+    @property
+    def is_exhausted(self):
+        return True
+
+    def __repr__(self):
+        return f"<EmptyDataWalker {self._name if self._name else 'data'}: {self._data}>"
 
 
 class ListTreeGenerator:

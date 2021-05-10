@@ -66,7 +66,8 @@ def apply_matrices(
     new_meshes = join_meshes(new_meshes)
     out_vertices, out_edges, out_polygons = to_elements(new_meshes)
 
-    return out_vertices[0], out_edges[0], out_polygons[0]  # todo is using 0 index not ugly?
+    return out_vertices[0] if out_vertices else out_vertices, out_edges[0] if out_edges else out_edges,\
+           out_polygons[0] if out_polygons else out_polygons  # todo is using 0 index not ugly?
 
 
 class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
@@ -121,7 +122,7 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
         faces = self.inputs['Faces'].sv_get(default=[], deepcopy=False)
         matrices = self.inputs['Matrices'].sv_get(default=[], deepcopy=False)
 
-        # fixing matrices nesting level if necessary
+        # fixing matrices nesting level if necessary, this is for back capability, can be removed later on
         if matrices:
             is_flat_list = not isinstance(matrices[0], (list, tuple))
             if is_flat_list:
