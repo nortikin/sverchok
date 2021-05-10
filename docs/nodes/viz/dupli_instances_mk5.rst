@@ -75,9 +75,6 @@ It's worth mentioning that because the faces duplication relies on the area of t
 Examples
 --------
 
-More info: https://github.com/nortikin/sverchok/issues/740
+Setting 1.000.000 icospheres (whole node-tree update 0.069 secs)
 
-
-.. image:: https://cloud.githubusercontent.com/assets/619340/11168561/25c27244-8b94-11e5-832f-a763f4362670.png
-
-.. image:: https://cloud.githubusercontent.com/assets/619340/11168569/869f0b7c-8b94-11e5-831b-48acb70ee00d.png
+.. image:: https://user-images.githubusercontent.com/10011941/117689137-c0fffc80-b1b9-11eb-9a00-2a57f7e49976.png
