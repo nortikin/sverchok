@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -34,6 +34,8 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_DUPLI_INSTANCER'
 
+    replacement_nodes= [('SvDupliInstancesMK5', None, None)]
+    
     def set_child_quota(self, context):
         # was used for string child property
         updateNode(self, context)

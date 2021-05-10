@@ -19,4 +19,5 @@ Viz
    light_viewer
    vd_matrix
    instancer
+   dupli_instances_mk5
    polyline_viewer
