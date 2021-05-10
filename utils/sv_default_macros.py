@@ -27,6 +27,7 @@ from sverchok.utils.macros.math_macros import math_macros
 from sverchok.utils.macros.join_macros import join_macros
 from sverchok.utils.macros.switch_macros import switch_macros
 from sverchok.utils.macros.gp_macros import gp_macro_one, gp_macro_two
+from sverchok.utils.macros.hotswap_macros import swap_vd_mv
 
 # pylint: disable=c0301
 
@@ -108,6 +109,10 @@ macros = {
         'display_name': "grease pencil setup",
         'file': 'macro',
         'ident': ['verbose_macro_handler', 'gp + 2']},
+    "> hotswap vd mv": {
+        'display_name': "hotswap vd->meshviewer",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'hotswap']},    
     "> url": {
         'display_name': "download archive from url",
         'file': 'macro',
@@ -192,6 +197,10 @@ class DefaultMacros():
             links.new(obj_in_node.outputs[2], vd_node.inputs[2])
             links.new(obj_in_node.outputs[4], vd_node.inputs[3])
 
+        elif 'hotswap' in term:
+            swap_vd_mv(context, operator, term, nodes, links)
+            return
+
         elif term == 'zen':
             full_url_term = 'https://gist.github.com/zeffii/d843b985b0db97af56dfa9c30cd54712'
             webbrowser.open(full_url_term)
@@ -212,11 +221,11 @@ class DefaultMacros():
 
         elif "math" in term:
             math_macros(context, operator, term, nodes, links)
-            return {'FINISHED'}
+            return
 
         elif "switch" in term:
             switch_macros(context, operator, term, nodes, links)
-            return {'FINISHED'}
+            return
 
         elif 'output numpy' in term:
             #stop processing to avoid one update per property
