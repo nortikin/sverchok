@@ -16,14 +16,57 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from typing import List, Tuple
+
+import numpy as np
+
 import bpy
 from bpy.props import BoolProperty, EnumProperty
+from mathutils import Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.data_structure import repeat_last
-from sverchok.utils.mesh_functions import join_meshes, apply_matrix, meshes_py, to_elements, repeat_meshes, \
-    apply_matrices, meshes_np
+from sverchok.utils.mesh_functions import join_meshes, meshes_py, to_elements, meshes_np, \
+    apply_matrix_to_vertices_py
+from sverchok.utils.vectorize import vectorize
+from sverchok.utils.modules.matrix_utils import matrix_apply_np
+
+
+# todo move to another module?
+SvVerts = List[Tuple[float, float, float]]
+SvEdges = List[Tuple[int, int]]
+SvPolys = List[List[int]]
+
+
+def apply_matrices(
+        *,
+        vertices: SvVerts,
+        edges: SvEdges,
+        polygons: SvPolys,
+        matrices: List[Matrix],
+        implementation: str = 'Python') -> Tuple[SvVerts, SvEdges, SvPolys]:
+    """several matrices can be applied to a mesh
+    in this case each matrix will populate geometry inside object"""
+
+    if not matrices:
+        return vertices, edges, polygons
+
+    if implementation == 'NumPy':
+        vertices = np.asarray(vertices, dtype=np.float32)
+
+    _apply_matrices = matrix_apply_np if implementation == 'NumPy' else apply_matrix_to_vertices_py
+
+    sub_vertices = []
+    sub_edges = [edges] * len(matrices) if edges else None
+    sub_polygons = [polygons] * len(matrices) if polygons else None
+    for matrix in matrices:
+        sub_vertices.append(_apply_matrices(vertices, matrix))
+
+    new_meshes = (meshes_py if implementation == 'Python' else meshes_np)(sub_vertices, sub_edges, sub_polygons)
+    new_meshes = join_meshes(new_meshes)
+    out_vertices, out_edges, out_polygons = to_elements(new_meshes)
+
+    return out_vertices[0], out_edges[0], out_polygons[0]  # todo is using 0 index not ugly?
 
 
 class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
@@ -78,18 +121,19 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
         faces = self.inputs['Faces'].sv_get(default=[], deepcopy=False)
         matrices = self.inputs['Matrices'].sv_get(default=[], deepcopy=False)
 
-        object_number = max([len(vertices), len(matrices)]) if vertices else 0
-        meshes = (meshes_py if self.implementation == 'Python' else meshes_np)(vertices, edges, faces)
-        meshes = repeat_meshes(meshes, object_number)
-
+        # fixing matrices nesting level if necessary
         if matrices:
             is_flat_list = not isinstance(matrices[0], (list, tuple))
-            meshes = (apply_matrix if is_flat_list else apply_matrices)(meshes, repeat_last(matrices))
+            if is_flat_list:
+                matrices = [[m] for m in matrices]
 
-        if self.do_join:
-            meshes = join_meshes(meshes)
+        _apply_matrix = vectorize(apply_matrices, match_mode="REPEAT")
+        out_vertices, out_edges, out_polygons = _apply_matrix(
+            vertices=vertices, edges=edges, polygons=faces, matrices=matrices, implementation=self.implementation)
 
-        out_vertices, out_edges, out_polygons = to_elements(meshes)
+        # todo add separate implementations for applying single matrix?
+        # todo join meshes
+
         self.outputs['Vertices'].sv_set(out_vertices)
         self.outputs['Edges'].sv_set(out_edges)
         self.outputs['Faces'].sv_set(out_polygons)
