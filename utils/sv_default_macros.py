@@ -180,7 +180,7 @@ class DefaultMacros():
 
             links.new(obj_in_node.outputs[0], vd_node.inputs[0])
             links.new(obj_in_node.outputs[2], vd_node.inputs[2])
-            links.new(obj_in_node.outputs[3], vd_node.inputs[3])
+            links.new(obj_in_node.outputs[4], vd_node.inputs[3])
 
         elif term == 'objs vd':
             obj_in_node = nodes.new('SvObjectsNodeMK3')
@@ -190,7 +190,7 @@ class DefaultMacros():
 
             links.new(obj_in_node.outputs[0], vd_node.inputs[0])
             links.new(obj_in_node.outputs[2], vd_node.inputs[2])
-            links.new(obj_in_node.outputs[3], vd_node.inputs[3])
+            links.new(obj_in_node.outputs[4], vd_node.inputs[3])
 
         elif term == 'zen':
             full_url_term = 'https://gist.github.com/zeffii/d843b985b0db97af56dfa9c30cd54712'
