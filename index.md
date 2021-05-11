@@ -587,7 +587,10 @@
     SvMetaballOutNode
     SvNurbsCurveOutNode
     SvNurbsSurfaceOutNode
+    ---
     SvInstancerNodeMK3
+    SvDupliInstancesMK5
+    ---
     SvLightViewerNode
     ---
     SvGreasePencilStrokes
@@ -641,8 +644,6 @@
     ---
     SvFrameInfoNodeMK2
     SvTimerNode
-    ---
-    SvDupliInstancesMK4
 
 ## Objects
     SvVertexGroupNodeMK2
