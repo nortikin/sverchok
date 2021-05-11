@@ -1258,7 +1258,7 @@ def update_with_kwargs(update_function, **kwargs):
 @contextmanager
 def throttle_tree_update(node):
     """ usage
-    from sverchok.node_tree import throttle_tree_update
+    from sverchok.data_structure import throttle_tree_update
 
     inside your node, f.ex inside a wrapped_update that creates a socket
 
