@@ -26,16 +26,9 @@ from mathutils import Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils.mesh_functions import join_meshes, meshes_py, to_elements, meshes_np, \
-    apply_matrix_to_vertices_py
-from sverchok.utils.vectorize import vectorize
+from sverchok.utils.mesh_functions import apply_matrix_to_vertices_py
+from sverchok.utils.vectorize import vectorize, devectorize, SvVerts, SvEdges, SvPolys
 from sverchok.utils.modules.matrix_utils import matrix_apply_np
-
-
-# todo move to another module?
-SvVerts = List[Tuple[float, float, float]]
-SvEdges = List[Tuple[int, int]]
-SvPolys = List[List[int]]
 
 
 def apply_matrices(
@@ -48,7 +41,7 @@ def apply_matrices(
     """several matrices can be applied to a mesh
     in this case each matrix will populate geometry inside object"""
 
-    if not matrices:
+    if not matrices or not vertices:
         return vertices, edges, polygons
 
     if implementation == 'NumPy':
@@ -62,12 +55,44 @@ def apply_matrices(
     for matrix in matrices:
         sub_vertices.append(_apply_matrices(vertices, matrix))
 
-    new_meshes = (meshes_py if implementation == 'Python' else meshes_np)(sub_vertices, sub_edges, sub_polygons)
-    new_meshes = join_meshes(new_meshes)
-    out_vertices, out_edges, out_polygons = to_elements(new_meshes)
+    out_vertices, out_edges, out_polygons = join_meshes(vertices=sub_vertices, edges=sub_edges, polygons=sub_polygons)
+    return out_vertices, out_edges, out_polygons
 
-    return out_vertices[0] if out_vertices else out_vertices, out_edges[0] if out_edges else out_edges,\
-           out_polygons[0] if out_polygons else out_polygons  # todo is using 0 index not ugly?
+
+def join_meshes(*, vertices: List[SvVerts], edges: List[SvEdges], polygons: List[SvPolys]):
+    joined_vertices = []
+    joined_edges = []
+    joined_polygons = []
+
+    if not vertices:
+        return joined_vertices, joined_edges, joined_polygons
+    else:
+        if isinstance(vertices[0], np.ndarray):
+            joined_vertices = np.concatenate(vertices)
+        else:
+            joined_vertices = [v for vs in vertices for v in vs]
+
+    if edges:
+        vertexes_number = 0
+        for i, es in enumerate(edges):
+            if es:
+                if isinstance(es, np.ndarray):
+                    joined_edges.extend((es + vertexes_number).tolist())
+                else:
+                    joined_edges.extend([(e[0] + vertexes_number, e[1] + vertexes_number) for e in es])
+                vertexes_number += len(vertices[i])
+
+    if polygons:
+        vertexes_number = 0
+        for i, ps in enumerate(polygons):
+            if ps:
+                if isinstance(ps, np.ndarray):
+                    joined_polygons.extend((ps + vertexes_number).tolist())
+                else:
+                    joined_polygons.extend([[i + vertexes_number for i in p] for p in ps])
+                vertexes_number += len(vertices[i])
+
+    return joined_vertices, joined_edges, joined_polygons
 
 
 class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
@@ -130,10 +155,19 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
 
         _apply_matrix = vectorize(apply_matrices, match_mode="REPEAT")
         out_vertices, out_edges, out_polygons = _apply_matrix(
-            vertices=vertices, edges=edges, polygons=faces, matrices=matrices, implementation=self.implementation)
+            vertices=vertices or None, edges=edges or None, polygons=faces or None, matrices=matrices or None,
+            implementation=self.implementation)
 
-        # todo add separate implementations for applying single matrix?
-        # todo join meshes
+        # todo I would prefer to change logic of the node later so each matrix could be applied only to one mesh
+        # in this case meshes still could be copied by vectorization system
+
+        if self.do_join:
+            _join_mesh = devectorize(join_meshes, match_mode="REPEAT")
+            out_vertices, out_edges, out_polygons = _join_mesh(
+                vertices=out_vertices, edges=out_edges, polygons=out_polygons)
+            out_vertices, out_edges, out_polygons = [out_vertices] if out_vertices else out_vertices, \
+                                                    [out_edges] if out_edges else out_edges, \
+                                                    [out_polygons] if out_polygons else out_polygons
 
         self.outputs['Vertices'].sv_set(out_vertices)
         self.outputs['Edges'].sv_set(out_edges)

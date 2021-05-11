@@ -1,8 +1,13 @@
 from functools import wraps
 
-from typing import List
+from typing import List, Tuple
 
 from mathutils import Matrix
+
+
+SvVerts = List[Tuple[float, float, float]]
+SvEdges = List[Tuple[int, int]]
+SvPolys = List[List[int]]
 
 
 def vectorize(func=None, *, match_mode="REPEAT"):
@@ -37,8 +42,41 @@ def vectorize(func=None, *, match_mode="REPEAT"):
             match_args, match_kwargs = match_args[:len(args)], match_args[len(args):]
             match_kwargs = {n: d for n, d in zip(kwargs, match_kwargs)}
             func_out = func(*match_args, **match_kwargs)
-            [r.append(out) for r, out in zip(result, func_out)]
+            [r.append(out) for r, out in zip(result, func_out) if out]
         return out_lists
+
+    return wrap
+
+
+def devectorize(func=None, *, match_mode="REPEAT"):
+
+    # this condition only works when used via "@" syntax
+    if func is None:
+        return lambda f: vectorize(f, match_mode=match_mode)
+
+    @wraps(func)
+    def wrap(*args, **kwargs):
+
+        # it's better not to use positional arguments for backward compatibility
+        # in this case a function can get new arguments
+        if args:
+            raise TypeError(f'Vectorized function {func.__name__} should not have positional arguments')
+
+        walkers = []
+        for key, data in zip(kwargs, kwargs.values()):
+            if data is None or data == []:
+                walkers.append(EmptyDataWalker(data, key))
+            else:
+                annotation = func.__annotations__[key]
+                walkers.append(
+                    DataWalker(data, output_nesting=_get_nesting_level(annotation) - 1, mode=match_mode, data_name=key))
+
+        flat_data = {key: [] for key in kwargs}
+        for match_args, _ in walk_data(walkers, []):
+            match_args, match_kwargs = match_args[:len(args)], match_args[len(args):]
+            [container.append(data) for container, data in zip(flat_data.values(), match_kwargs)]
+
+        return func(**flat_data)
 
     return wrap
 
@@ -144,9 +182,6 @@ class DataWalker:
     def is_exhausted(self):
         return not bool(self._stack)
 
-    def _fix_data(self, data):
-        """Ensure that all values in data have nesting level >= output_nesting"""
-
     @staticmethod
     def _match_values(data, match_len, match_mode):
         if len(data) > match_len:
@@ -200,13 +235,14 @@ class ListTreeGenerator:
         self._stack = [root_list]
 
     def step_down(self):
-        current_node = self._stack[-1]
         new_node = []
-        current_node.append(new_node)
         self._stack.append(new_node)
 
     def step_up(self):
-        self._stack.pop()
+        last_node = self._stack.pop()
+        if last_node and self._stack:
+            current_node = self._stack[-1]
+            current_node.append(last_node)
 
     @property
     def current_list(self):
