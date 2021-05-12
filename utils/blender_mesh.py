@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import numpy as np
-
+# taken from here https://blenderartists.org/t/efficient-copying-of-vertex-coords-to-and-from-numpy-arrays/661467/3
 def read_verts(blender_mesh, output_numpy=False):
     mverts_co = np.zeros((len(blender_mesh.vertices)*3), dtype=np.float)
     blender_mesh.vertices.foreach_get("co", mverts_co)
