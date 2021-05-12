@@ -15,13 +15,13 @@ Parameters
 ----------
 
 +-----------------+---------------+--------------------------------------------------------------------------+
-| Param           | Type          | Description                                                              |  
+| Param           | Type          | Description                                                              |
 +=================+===============+==========================================================================+
-| **G E T**       | Button        | Button to get selected objects from scene.                               | 
+| **G E T**       | Button        | Button to get selected objects from scene.                               |
 +-----------------+---------------+--------------------------------------------------------------------------+
-| **group**       | String        | Name of group to import every object from group to Sverchok              |  
+| **group**       | String        | Name of group to import every object from group to Sverchok              |
 +-----------------+---------------+--------------------------------------------------------------------------+
-| **sorting**     | Bool, toggle  | Sorting inserted objects by name                                         | 
+| **sorting**     | Bool, toggle  | Sorting inserted objects by name                                         |
 +-----------------+---------------+--------------------------------------------------------------------------+
 | **post**        | Bool, toggle  | Postprocessing, if activated, modifiers applyed to mesh before importing |
 +-----------------+---------------+--------------------------------------------------------------------------+
@@ -31,7 +31,7 @@ Parameters
 3D panel
 --------
 
-The node can show its properties on 3D panel. 
+The node can show its properties on 3D panel.
 For this parameter `to 3d` should be enabled, output should be linked.
 After that you can press `scan for props` button on 3D panel for showing the node properties on 3D panel.
 
@@ -41,7 +41,7 @@ Outputs
 +-----------------+--------------------------------------------------------------------------+
 | Output          | Description                                                              |
 +=================+==========================================================================+
-| Vertices        | Vertices of objects                                                      | 
+| Vertices        | Vertices of objects                                                      |
 +-----------------+--------------------------------------------------------------------------+
 | Edges           | Edges of objects                                                         |
 +-----------------+--------------------------------------------------------------------------+
@@ -53,6 +53,9 @@ Outputs
 +-----------------+--------------------------------------------------------------------------+
 | _Vers_grouped_  | Vertex groups' indeces from all vertex groups                            |
 +-----------------+--------------------------------------------------------------------------+
+
+
+It can output Numpy arrays of vertices and edges if enabled on N-panel properties (makes node faster)
 
 Examples
 --------

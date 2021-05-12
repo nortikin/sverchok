@@ -6,6 +6,7 @@ Objects
    :maxdepth: 2
 
    get_asset_properties_mk2
+   blenddata_to_svdata2
    lattice_analyzer
    armature_analyzer
    sample_uv_color
