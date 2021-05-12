@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -17,6 +17,7 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
+from sverchok.utils.blender_mesh import read_verts, read_edges
 
 class SvOB3BDataCollection(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty()
@@ -78,6 +79,8 @@ class SvOB3Callback(bpy.types.Operator, SvGenericNodeLocator):
         getattr(node, self.fn_name)(self)
         return {'FINISHED'}
 
+def get_vertgroups(mesh):
+    return [k for k,v in enumerate(mesh.vertices) if v.groups.values()]
 
 class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """
@@ -125,6 +128,12 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
     object_names: bpy.props.CollectionProperty(type=SvOB3BDataCollection, options={'SKIP_SAVE'})
 
     active_obj_index: bpy.props.IntProperty()
+
+    out_np: bpy.props.BoolVectorProperty(
+        name="Ouput Numpy",
+        description="Output NumPy arrays (makes node faster)",
+        default=(False, False),
+        size=2, update=updateNode)
 
     def sv_init(self, context):
         new = self.outputs.new
@@ -191,7 +200,7 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
         if self.prefs_over_sized_buttons:
             row.scale_y = 4.0
             op_text = "G E T"
-        
+
         self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'
 
         col = layout.column(align=True)
@@ -202,9 +211,18 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
         self.draw_obj_names(layout)
 
     def draw_buttons_ext(self, context, layout):
+        layout.label(text="Ouput Numpy:")
+        r = layout.row(align=True)
+        for i in range(2):
+            r.prop(self, "out_np", index=i, text=self.outputs[i].name, toggle=True)
         layout.prop(self, 'draw_3dpanel', text="To Control panel")
         self.draw_animatable_buttons(layout)
 
+    def rclick_menu(self, context, layout):
+        '''right click sv_menu items'''
+        layout.label(text="Ouput Numpy:")
+        for i in range(2):
+            layout.prop(self, "out_np", index=i, text=self.outputs[i].name, toggle=True)
     def draw_buttons_3dpanel(self, layout):
         callback = 'node.ob3_callback'
         row = layout.row(align=True)
@@ -214,15 +232,6 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
 
         self.wrapper_tracked_ui_draw_op(colo, callback, text='Get').fn_name = 'get_objects_from_scene'
 
-
-    def get_verts_and_vertgroups(self, obj_data):
-        vers = []
-        vers_grouped = []
-        for k, v in enumerate(obj_data.vertices):
-            if self.vergroups and v.groups.values():
-                vers_grouped.append(k)
-            vers.append(list(v.co))
-        return vers, vers_grouped
 
     def get_materials_from_bmesh(self, bm):
         return [face.material_index for face in bm.faces[:]]
@@ -266,7 +275,7 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
             mtrx = []
             materials = []
 
-            # code inside this context can trigger dependancy graph update events, 
+            # code inside this context can trigger dependancy graph update events,
             # it is necessary to call throttle here to prevent Sverchok from responding to these updates:
             # not doing so would trigger recursive updates and Blender would likely become unresponsive.
             with self.sv_throttle_tree_update():
@@ -292,12 +301,25 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
                         else:
                             obj_data = obj.to_mesh()
 
-                        if obj_data.polygons:
+                        if obj_data.polygons and self.outputs['Polygons'].is_linked:
                             pols = [list(p.vertices) for p in obj_data.polygons]
-                        vers, vers_grouped = self.get_verts_and_vertgroups(obj_data)
-                        materials = self.get_materials_from_mesh(obj_data)
-                        edgs = obj_data.edge_keys
+                        if self.vergroups:
+                            vers_grouped = get_vertgroups(obj_data)
 
+                        else:
+                            vers_grouped = []
+                        if self.outputs['Vertices'].is_linked:
+                            vers = read_verts(obj_data, self.out_np[0])
+                        else:
+                            vers = []
+                        if self.outputs['MaterialIdx'].is_linked:
+                            materials = self.get_materials_from_mesh(obj_data)
+                        else:
+                            materials = []
+                        if self.outputs['Edges'].is_linked:
+                            edgs = read_edges(obj_data, self.out_np[1])
+                        else:
+                            edgs = []
                         obj.to_mesh_clear()
 
 
@@ -311,13 +333,16 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
             materials_out.append(materials)
             vers_out_grouped.append(vers_grouped)
 
-        if vers_out and vers_out[0]:
+        if vers_out and len(vers_out[0]) > 0:
             outputs['Vertices'].sv_set(vers_out)
+        if edgs_out and len(edgs_out[0]) > 0:
             outputs['Edges'].sv_set(edgs_out)
+        if pols_out and pols_out[0]:
             outputs['Polygons'].sv_set(pols_out)
+        if materials_out and materials_out[0]:
             if 'MaterialIdx' in outputs:
                 outputs['MaterialIdx'].sv_set(materials_out)
-
+        if vers_out_grouped and vers_out_grouped[0]:
             if 'Vers_grouped' in outputs and self.vergroups:
                 outputs['Vers_grouped'].sv_set(vers_out_grouped)
 

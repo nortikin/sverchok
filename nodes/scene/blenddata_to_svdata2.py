@@ -23,7 +23,11 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import (updateNode)
 from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
+from sverchok.utils.blender_mesh import (
+    read_verts, read_edges, read_verts_normal,
+    read_face_normal, read_face_center, read_face_area)
 
+socket_names = ['Vertices', 'Vertex Normals', 'Edges', 'Polygon Areas', 'Polygon Centers', 'Polygon Normals']
 class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     '''Get Object Data'''
     bl_idname = 'SvObjectToMeshNodeMK2'
@@ -36,6 +40,11 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
         updateNode(self, context)
 
     modifiers: BoolProperty(name='Modifiers', default=False, update=modifiers_handle)
+
+    out_np: bpy.props.BoolVectorProperty(
+        name="Ouput Numpy",
+        description="Output NumPy arrays (makes node faster)",
+        size=6, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', "Objects")
@@ -52,6 +61,12 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
         self.draw_animatable_buttons(layout, icon_only=True)
         row = layout.row()
         row.prop(self, "modifiers", text="Post modifiers")
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context,layout)
+        layout.label(text="Ouput Numpy:")
+        r = layout.column(align=True)
+        for i in range(6):
+            r.prop(self, "out_np", index=i, text=socket_names[i], toggle=True)
 
     def sv_free(self):
         set_sv_depsgraph_need(False)
@@ -61,9 +76,9 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
         if isinstance(objs[0], list):
             objs = objs[0]
 
-        o1,o2,o3,o4,o5,o6,o7,o8 = self.outputs
-        vs,vn,es,ps,pa,pc,pn,ms = [],[],[],[],[],[],[],[]
-        
+        o1, o2, o3, o4, o5, o6, o7, o8 = self.outputs
+        vs, vn, es, ps, pa, pc, pn, ms = [], [], [], [], [], [], [], []
+        out_np = self.out_np
         if self.modifiers:
             sv_depsgraph = get_sv_depsgraph()
 
@@ -81,25 +96,31 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
                         obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
                     else:
                         obj_data = obj.to_mesh()
-                    
+
                     if o1.is_linked:
-                        vs.append([v.co[:] for v in obj_data.vertices])
+                        vs.append(read_verts(obj_data, out_np[0]))
                     if o2.is_linked:
-                        vn.append([v.normal[:] for v in obj_data.vertices])
+                        vn.append(read_verts_normal(obj_data, out_np[1]))
                     if o3.is_linked:
-                        es.append(obj_data.edge_keys)
+                        es.append(read_edges(obj_data, out_np[2]))
                     if o4.is_linked:
                         ps.append([p.vertices[:] for p in obj_data.polygons])
                     if o5.is_linked:
-                        pa.append([p.area for p in obj_data.polygons])
+                        pa.append(read_face_area(obj_data, out_np[3]))
                     if o6.is_linked:
-                        pc.append([p.center[:] for p in obj_data.polygons])
+                        if out_np[4]:
+                            pc.append(read_face_center(obj_data, output_numpy=True))
+                        else:
+                            pc.append([p.center[:] for p in obj_data.polygons])
                     if o7.is_linked:
-                        pn.append([p.normal[:] for p in obj_data.polygons])
-                    
+                        if out_np[5]:
+                            pn.append(read_face_normal(obj_data, True))
+                        else:
+                            pn.append([p.normal[:] for p in obj_data.polygons])
+
                     obj.to_mesh_clear()
 
-        for i,i2 in zip(self.outputs, [vs,vn,es,ps,pa,pc,pn,ms]):
+        for i, i2 in zip(self.outputs, [vs, vn, es, ps, pa, pc, pn, ms]):
             if i.is_linked:
                 i.sv_set(i2)
 
