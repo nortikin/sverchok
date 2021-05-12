@@ -27,11 +27,15 @@ from sverchok.utils.blender_mesh import (
     read_verts, read_edges, read_verts_normal,
     read_face_normal, read_face_center, read_face_area)
 
-socket_names = ['Vertices', 'Vertex Normals', 'Edges', 'Polygon Areas', 'Polygon Centers', 'Polygon Normals']
+numpy_socket_names = ['Vertices', 'Vertex Normals', 'Edges', 'Polygon Areas', 'Polygon Centers', 'Polygon Normals']
+
 class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
-    '''Get Object Data'''
+    """
+    Triggers: Input Scene Objects pydata
+    Tooltip: Get Scene Objects by name (ID) into Sverchok Tree
+    """
     bl_idname = 'SvObjectToMeshNodeMK2'
-    bl_label = 'Object ID Out MK2'
+    bl_label = 'Object ID Out'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECT_ID_OUT'
 
@@ -66,7 +70,7 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
         layout.label(text="Ouput Numpy:")
         r = layout.column(align=True)
         for i in range(6):
-            r.prop(self, "out_np", index=i, text=socket_names[i], toggle=True)
+            r.prop(self, "out_np", index=i, text=numpy_socket_names[i], toggle=True)
 
     def sv_free(self):
         set_sv_depsgraph_need(False)
