@@ -102,15 +102,28 @@ def _get_nesting_level(annotation):
 
 def _get_output_number(function):
     annotation = function.__annotations__.get('return')
-    if annotation:
+    if annotation:  # todo if only tuple
         if hasattr(annotation, '__args__'):
             return len(annotation.__args__)
     return 1
 
 
+def _what_is_next_catch(func):
+
+    @wraps(func)
+    def what_is_next_catcher(self):
+        next_val_id = id(self._stack[-1])
+        if next_val_id not in self._catch:
+            # this should not conflict with float, string, integer and other values
+            self._catch[next_val_id] = func(self)
+        return self._catch[next_val_id]
+
+    return what_is_next_catcher
+
+
 class DataWalker:
     """Input data can be a value or list
-    the list should include either values or other lists and not both simultaneously
+    the list should include either values or other lists but not both simultaneously
     because there is no way of handling such data structure efficiently
     the value itself can be just a number, list of numbers, list of list of numbers etc."""
 
@@ -128,6 +141,8 @@ class DataWalker:
         self._stack = [data]
         self._output_nesting = output_nesting
         self._name = data_name
+
+        self._catch = dict()  # for optimization
 
     def step_down_matching(self, match_len, match_mode):
         # todo protection from little nesting
@@ -149,6 +164,8 @@ class DataWalker:
     def pop_next_value(self):
         return self._stack.pop()
 
+    # this method is used most extensively
+    @_what_is_next_catch
     def what_is_next(self):
         if self._stack[-1] is DataWalker.EXIT_VALUE:
             return DataWalker.END
@@ -254,15 +271,15 @@ def walk_data(walkers: List[DataWalker], out_list: List[list]):
     [w.step_down_matching(max_value_len, match_mode) for w in walkers]
 
     while any(not w.is_exhausted for w in walkers):
-        if any(w.what_is_next() == DataWalker.END for w in walkers):
+        if all(w.what_is_next() == DataWalker.VALUE for w in walkers):
+            yield [w.pop_next_value() for w in walkers], [t.current_list for t in result_data]
+        elif any(w.what_is_next() == DataWalker.END for w in walkers):
             [w.step_up() for w in walkers]
             [t.step_up() for t in result_data]
         elif any(w.what_is_next() == DataWalker.SUB_TREE for w in walkers):
             max_value_len = max(w.next_values_number for w in walkers)
             [w.step_down_matching(max_value_len, match_mode) for w in walkers]
             [t.step_down() for t in result_data]
-        else:
-            yield [w.pop_next_value() for w in walkers], [t.current_list for t in result_data]
 
 
 if __name__ == '__main__':

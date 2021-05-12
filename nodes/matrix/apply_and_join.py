@@ -59,6 +59,29 @@ def apply_matrices(
     return out_vertices, out_edges, out_polygons
 
 
+def apply_matrix(
+        *,
+        vertices: SvVerts,
+        edges: SvEdges,
+        polygons: SvPolys,
+        matrix: Matrix,
+        implementation: str = 'Python') -> Tuple[SvVerts, SvEdges, SvPolys]:
+    """several matrices can be applied to a mesh
+    in this case each matrix will populate geometry inside object"""
+
+    if not matrix or (vertices is None or not len(vertices)):
+        return vertices, edges, polygons
+
+    if implementation == 'NumPy':
+        vertices = np.asarray(vertices, dtype=np.float32)
+
+    _apply_matrices = matrix_apply_np if isinstance(vertices, np.ndarray) else apply_matrix_to_vertices_py
+
+    new_vertices = _apply_matrices(vertices, matrix)
+
+    return new_vertices, edges, polygons
+
+
 def join_meshes(*, vertices: List[SvVerts], edges: List[SvEdges], polygons: List[SvPolys]):
     joined_vertices = []
     joined_edges = []
@@ -151,15 +174,16 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
         if matrices:
             is_flat_list = not isinstance(matrices[0], (list, tuple))
             if is_flat_list:
-                matrices = [[m] for m in matrices]
-
-        _apply_matrix = vectorize(apply_matrices, match_mode="REPEAT")
-        out_vertices, out_edges, out_polygons = _apply_matrix(
-            vertices=vertices or None, edges=edges or None, polygons=faces or None, matrices=matrices or None,
-            implementation=self.implementation)
-
-        # todo I would prefer to change logic of the node later so each matrix could be applied only to one mesh
-        # in this case meshes still could be copied by vectorization system
+                _apply_matrix = vectorize(apply_matrix, match_mode='REPEAT')
+                out_vertices, out_edges, out_polygons = _apply_matrix(
+                    vertices=vertices, edges=edges, polygons=faces, matrix=matrices, implementation=self.implementation)
+            else:
+                _apply_matrix = vectorize(apply_matrices, match_mode="REPEAT")
+                out_vertices, out_edges, out_polygons = _apply_matrix(
+                    vertices=vertices or None, edges=edges or None, polygons=faces or None, matrices=matrices or None,
+                    implementation=self.implementation)
+        else:
+            out_vertices, out_edges, out_polygons = vertices, edges, faces
 
         if self.do_join:
             _join_mesh = devectorize(join_meshes, match_mode="REPEAT")
