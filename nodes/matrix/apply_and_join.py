@@ -41,13 +41,13 @@ def apply_matrices(
     """several matrices can be applied to a mesh
     in this case each matrix will populate geometry inside object"""
 
-    if not matrices or not vertices:
+    if not matrices or (vertices is None or not len(vertices)):
         return vertices, edges, polygons
 
     if implementation == 'NumPy':
         vertices = np.asarray(vertices, dtype=np.float32)
 
-    _apply_matrices = matrix_apply_np if implementation == 'NumPy' else apply_matrix_to_vertices_py
+    _apply_matrices = matrix_apply_np if isinstance(vertices, np.ndarray) else apply_matrix_to_vertices_py
 
     sub_vertices = []
     sub_edges = [edges] * len(matrices) if edges else None
@@ -165,9 +165,10 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
             _join_mesh = devectorize(join_meshes, match_mode="REPEAT")
             out_vertices, out_edges, out_polygons = _join_mesh(
                 vertices=out_vertices, edges=out_edges, polygons=out_polygons)
-            out_vertices, out_edges, out_polygons = [out_vertices] if out_vertices else out_vertices, \
-                                                    [out_edges] if out_edges else out_edges, \
-                                                    [out_polygons] if out_polygons else out_polygons
+            out_vertices, out_edges, out_polygons = (
+                [out_vertices] if out_vertices is not None and len(out_vertices) else out_vertices,
+                [out_edges] if out_edges is not None and len(out_edges) else out_edges,
+                [out_polygons] if out_polygons is not None and len(out_polygons) else out_polygons)
 
         self.outputs['Vertices'].sv_set(out_vertices)
         self.outputs['Edges'].sv_set(out_edges)

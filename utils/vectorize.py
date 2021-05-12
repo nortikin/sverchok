@@ -1,8 +1,11 @@
 from functools import wraps
-
 from typing import List, Tuple
 
+import numpy as np
+
 from mathutils import Matrix
+
+from sverchok.data_structure import levels_of_list_or_np
 
 
 SvVerts = List[Tuple[float, float, float]]
@@ -42,7 +45,7 @@ def vectorize(func=None, *, match_mode="REPEAT"):
             match_args, match_kwargs = match_args[:len(args)], match_args[len(args):]
             match_kwargs = {n: d for n, d in zip(kwargs, match_kwargs)}
             func_out = func(*match_args, **match_kwargs)
-            [r.append(out) for r, out in zip(result, func_out) if out]
+            [r.append(out) for r, out in zip(result, func_out) if out is not None and len(out)]
         return out_lists
 
     return wrap
@@ -105,16 +108,6 @@ def _get_output_number(function):
     return 1
 
 
-def levelsOflist(lst):  # todo to remove
-    """calc list nesting only in countainment level integer"""
-    level = 1
-    for n in lst:
-        if n and isinstance(n, (list, tuple)):
-            level += levelsOflist(n)
-        return level
-    return 0
-
-
 class DataWalker:
     """Input data can be a value or list
     the list should include either values or other lists and not both simultaneously
@@ -159,8 +152,8 @@ class DataWalker:
     def what_is_next(self):
         if self._stack[-1] is DataWalker.EXIT_VALUE:
             return DataWalker.END
-        if isinstance(self._stack[-1], (list, tuple)):  # todo add numpy arrays or more general solution?
-            nesting = levelsOflist(self._stack[-1])
+        if isinstance(self._stack[-1], (list, tuple, np.ndarray)):
+            nesting = levels_of_list_or_np(self._stack[-1])
         else:
             nesting = 0
         if nesting == self._output_nesting:
@@ -174,7 +167,7 @@ class DataWalker:
             if self.what_is_next() == DataWalker.VALUE:
                 return 1
             last = self._stack[-1]
-            return 0 if isinstance(last, str) else len(last)  # todo other types??
+            return len(last)
         except (IndexError, TypeError):
             return 0
 
@@ -270,23 +263,6 @@ def walk_data(walkers: List[DataWalker], out_list: List[list]):
             [t.step_down() for t in result_data]
         else:
             yield [w.pop_next_value() for w in walkers], [t.current_list for t in result_data]
-
-
-def flat_walk_data(*walkers):
-    match_mode = DataWalker.REPEAT  # todo should be determined by modes of input walkers
-
-    # first step is always step down because walkers create extra wrapping list
-    max_value_len = max(w.next_values_number for w in walkers)
-    [w.step_down_matching(max_value_len, match_mode) for w in walkers]
-
-    while any(not w.is_exhausted for w in walkers):
-        if any(w.what_is_next() == DataWalker.END for w in walkers):
-            [w.step_up() for w in walkers]
-        elif any(w.what_is_next() == DataWalker.SUB_TREE for w in walkers):
-            max_value_len = max(w.next_values_number for w in walkers)
-            [w.step_down_matching(max_value_len, match_mode) for w in walkers]
-        else:
-            yield [w.pop_next_value() for w in walkers]
 
 
 if __name__ == '__main__':
