@@ -124,10 +124,13 @@ def _get_nesting_level(annotation):
 
 
 def _get_output_number(function):
+    """Returns number of arguments returning by given function
+    the function should have returning annotation with Tuple value - Tuple[list, list]"""
     annotation = function.__annotations__.get('return')
-    if annotation:  # todo if only tuple
-        if hasattr(annotation, '__args__'):
-            return len(annotation.__args__)
+    if annotation:
+        if hasattr(annotation, '__origin__') and annotation.__origin__ == tuple:
+            if hasattr(annotation, '__args__'):
+                return len(annotation.__args__)
     return 1
 
 

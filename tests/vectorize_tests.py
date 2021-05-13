@@ -81,11 +81,11 @@ class VectorizeTest(SverchokTestCase):
         zeros1 = vectorize(zeros, match_mode='REPEAT')
         self.assertEqual(zeros1(length=lengths), [[0, 0, 0, 0], [[[0, 0, 0]], [0]], [0, 0, 0, 0, 0]])
 
-        # def vector() -> List[float, float, float]:
-        #     return [0.1, 0.2, 0.3]
-        # 
-        # vector1 = vectorize(vector, match_mode='REPEAT')
-        # print(vector1())
+        def vector(*, length) -> List[int]:
+            return list(range(length))
+
+        vector1 = vectorize(vector, match_mode='REPEAT')
+        self.assertEqual(vector1(length=lengths), [[0, 1, 2, 3], [[[0, 1, 2]], [0]], [0, 1, 2, 3, 4]])
 
 
 if __name__ == '__main__':
