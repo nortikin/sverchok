@@ -32,21 +32,44 @@ def vectorize(func=None, *, match_mode="REPEAT"):
             if data is None or data == []:
                 walkers.append(EmptyDataWalker(data, key))
             else:
-                annotation = func.__annotations__[key]
-                walkers.append(
-                    DataWalker(data, output_nesting=_get_nesting_level(annotation), mode=match_mode, data_name=key))
+                annotation = func.__annotations__.get(key)
+                nesting_level = _get_nesting_level(annotation) if annotation else 0
+                walkers.append(DataWalker(data, output_nesting=nesting_level, mode=match_mode, data_name=key))
 
         # this is corner case, it can't be handled via walk data iterator
         if all([w.what_is_next() == DataWalker.VALUE for w in walkers]):
             return func(*args, **kwargs)
 
-        out_lists = [[] for _ in range(_get_output_number(func))]
-        for match_args, result in walk_data(walkers, out_lists):
-            match_args, match_kwargs = match_args[:len(args)], match_args[len(args):]
-            match_kwargs = {n: d for n, d in zip(kwargs, match_kwargs)}
-            func_out = func(*match_args, **match_kwargs)
-            [r.append(out) for r, out in zip(result, func_out) if out is not None and len(out)]
-        return out_lists
+        out_number = _get_output_number(func)
+
+        # handle case when return value of decorated function is simple one value
+        if out_number == 1:
+            out_list = []
+            for match_args, result in walk_data(walkers, [out_list]):
+                match_args, match_kwargs = match_args[:len(args)], match_args[len(args):]
+                match_kwargs = {n: d for n, d in zip(kwargs, match_kwargs)}
+                func_out = func(*match_args, **match_kwargs)
+                if not is_empty_out(func_out):
+                    result[0].append(func_out)
+            return out_list
+
+        # the case when return value is tuple of multiple values
+        else:
+            out_lists = [[] for _ in range(out_number)]
+            for match_args, result in walk_data(walkers, out_lists):
+                match_args, match_kwargs = match_args[:len(args)], match_args[len(args):]
+                match_kwargs = {n: d for n, d in zip(kwargs, match_kwargs)}
+                func_out = func(*match_args, **match_kwargs)
+                [r.append(out) for r, out in zip(result, func_out) if not is_empty_out(out)]
+            return out_lists
+
+    def is_empty_out(value):
+        if value is None:
+            return True
+        try:
+            return not bool(len(value))
+        except TypeError:
+            return False
 
     return wrap
 
@@ -70,9 +93,9 @@ def devectorize(func=None, *, match_mode="REPEAT"):
             if data is None or data == []:
                 walkers.append(EmptyDataWalker(data, key))
             else:
-                annotation = func.__annotations__[key]
-                walkers.append(
-                    DataWalker(data, output_nesting=_get_nesting_level(annotation) - 1, mode=match_mode, data_name=key))
+                annotation = func.__annotations__.get(key)
+                nesting_level = _get_nesting_level(annotation) if annotation else 0
+                walkers.append(DataWalker(data, output_nesting=nesting_level - 1, mode=match_mode, data_name=key))
 
         flat_data = {key: [] for key in kwargs}
         for match_args, _ in walk_data(walkers, []):
@@ -123,9 +146,11 @@ def _what_is_next_catch(func):
 
 class DataWalker:
     """Input data can be a value or list
-    the list should include either values or other lists but not both simultaneously
-    because there is no way of handling such data structure efficiently
-    the value itself can be just a number, list of numbers, list of list of numbers etc."""
+    the list can include values and / or other lists
+    the value itself can be just a number, list of numbers, list of list of numbers etc.
+    values should be consistent and should not include other values
+    for example inside list of vertices there should be other lists of vertices or any thing else
+    there is no way of handling such data structure efficiently"""
 
     # match modes
     SHORT, CYCLE, REPEAT, XREF, XREF2 = "SHORT", "CYCLE", "REPEAT", "XREF", "XREF2"
@@ -280,65 +305,3 @@ def walk_data(walkers: List[DataWalker], out_list: List[list]):
             max_value_len = max(w.next_values_number for w in walkers)
             [w.step_down_matching(max_value_len, match_mode) for w in walkers]
             [t.step_down() for t in result_data]
-
-
-if __name__ == '__main__':
-    wa = DataWalker(1)
-    wb = DataWalker([1, 2, 3])
-
-    walker = flat_walk_data(wa, wb)
-    assert [v for v in walker] == [[1, 1], [1, 2], [1, 3]]
-
-    wa = DataWalker([[1, 2], 3])
-    wb = DataWalker([1, [2, 3], 4])
-
-    walker = flat_walk_data(wa, wb)
-    assert [v for v in walker] == [[1, 1], [2, 1], [3, 2], [3, 3], [3, 4]]
-
-    wa = DataWalker([[1, 2], [3, 4, 5]])
-    wb = DataWalker([1, [2, 3], 4])
-
-    walker = flat_walk_data(wa, wb)
-    assert [v for v in walker] == [[1, 1], [2, 1], [3, 2], [4, 3], [5, 3], [3, 4], [4, 4], [5, 4]]
-
-    wa = DataWalker(1)
-    wb = DataWalker([1, 2, 3])
-
-    out = []
-    walker = walk_data(wa, wb, out_list=out)
-    [l.append((a, b)) for (a, b), l in walker]
-    assert out == [(1, 1), (1, 2), (1, 3)]
-
-    wa = DataWalker([[1, 2], 3])
-    wb = DataWalker([1, [2, 3], 4])
-
-    out = []
-    walker = walk_data(wa, wb, out_list=out)
-    [l.append((a, b)) for (a, b), l in walker]
-    assert out == [[(1, 1), (2, 1)], [(3, 2), (3, 3)], (3, 4)]
-
-    wa = DataWalker([[1, 2], [3, 4, 5]])
-    wb = DataWalker([1, [2, 3], 4])
-
-    out = []
-    walker = walk_data(wa, wb, out_list=out)
-    [l.append((a, b)) for (a, b), l in walker]
-    assert out == [[(1, 1), (2, 1)], [(3, 2), (4, 3), (5, 3)], [(3, 4), (4, 4), (5, 4)]]
-
-    def math(a: float, b: float, *, mode='SUM'):
-        if mode == 'SUM':
-            return a + b
-        elif mode == 'MUL':
-            return a * b
-
-    a_values = [[1, 2], [3, 4, 5]]
-    b_values = [1, [2, 3], 4]
-
-    math1 = vectorize(math, match_mode="REPEAT")
-    assert math1(a_values, b_values, mode='SUM') == [[2, 3], [5, 7, 8], [7, 8, 9]]
-
-    a_values = 10
-    b_values = [1, [2, 3], 4]
-
-    math2 = vectorize(math, match_mode="REPEAT")
-    assert math2(a_values, b_values, mode='SUM') == [11, [12, 13], 14]
