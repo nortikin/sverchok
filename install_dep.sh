@@ -1,9 +1,10 @@
+# move this script to [blender directory]/[version]/
 # blender configs
-_blender_path=blender-2.93.0-ded9484925ed-linux64
-_blender_version=2.93
+_blender_path=.
+_blender_version=.
 # paths
-_blender_python=./$_blender_path/$_blender_version/python/bin/python3.7m
-_blender_python_libs=$_blender_path/$_blender_version/python/include/python3.7m
+_blender_python=./$_blender_path/$_blender_version/$(find python/bin -type f | grep python)
+_blender_python_libs=$_blender_path/$_blender_version/$(find python/include/* -type d | grep python)
 # download and install pip
 wget -4 --unlink https://bootstrap.pypa.io/get-pip.py
 $_blender_python ./get-pip.py
