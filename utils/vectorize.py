@@ -14,6 +14,32 @@ SvPolys = List[List[int]]
 
 
 def vectorize(func=None, *, match_mode="REPEAT"):
+    """
+    If there is function which takes some values
+    with this decorator it's possible to call the function by passing list of values of any shape
+    Take care of properly annotating of decorated function
+    Use Tuple[] in return annotation only if you want the decorator splits the return values into different lists
+
+    ++ Example ++
+
+    from sverchok.utils import vectorize
+
+    def main_node_logic(*, prop_a: List[float], prop_b: Matrix, mode_a: str) -> Tuple[list, list]:
+        ...
+        return data1, data2
+
+    class MyNode:
+        ...
+        def process(self):
+            input_a = self.inputs[0].sv_get(default=None)
+            input_b = self.inputs[1].sv_get(default=None)
+
+            main_node_logic = vectorize(main_node_logic, match_mode=self.match_mode)
+            out1, out2 = main_node_logic(input_a, input_b, mode_a = self.mode_a)
+
+            self.outputs[0].sv_set(out1)
+            self.outputs[1].sv_set(out2)
+    """
 
     # this condition only works when used via "@" syntax
     if func is None:
@@ -75,6 +101,9 @@ def vectorize(func=None, *, match_mode="REPEAT"):
 
 
 def devectorize(func=None, *, match_mode="REPEAT"):
+    """It takes list of values of arbitrary shape, flatten it
+    and call the decorated function once with flattened data
+    This needs for functions (nodes) which breaks vectorization"""
 
     # this condition only works when used via "@" syntax
     if func is None:
@@ -107,7 +136,11 @@ def devectorize(func=None, *, match_mode="REPEAT"):
     return wrap
 
 
-def _get_nesting_level(annotation):
+def _get_nesting_level(annotation) -> int:
+    """It measures how many nested types the annotation has
+    simple annotations like string, float have 0 level
+    list without arguments gives 1 level
+    List[list] such thing returns 2 level"""
     if not hasattr(annotation, '__origin__'):
         if annotation in [list, tuple]:
             return 1
@@ -135,6 +168,7 @@ def _get_output_number(function):
 
 
 def _what_is_next_catch(func):
+    """It's exclusively for using in DataWalker class for optimization performance"""
 
     @wraps(func)
     def what_is_next_catcher(self):
@@ -148,7 +182,8 @@ def _what_is_next_catch(func):
 
 
 class DataWalker:
-    """Input data can be a value or list
+    """This class allows walk over a list of arbitrary shape like over a tree data structure
+    Input data can be a value or list
     the list can include values and / or other lists
     the value itself can be just a number, list of numbers, list of list of numbers etc.
     values should be consistent and should not include other values
@@ -236,7 +271,7 @@ class DataWalker:
 
 
 class EmptyDataWalker:
-    """Use this if a channel does not has any data
+    """Use this (instead of DataWalker) if a channel does not has any data
     It is needed not to overcomplicate logic of DataWalker"""
 
     def __init__(self, data=None, data_name=None):
@@ -268,6 +303,7 @@ class EmptyDataWalker:
 
 
 class ListTreeGenerator:
+    """Generates tree from nested lists with step up/down interface"""
     def __init__(self, root_list):
         self.data = root_list
         self._stack = [root_list]
@@ -290,7 +326,10 @@ class ListTreeGenerator:
         return f'<TreeGen data: {self.data}>'
 
 
-def walk_data(walkers: List[DataWalker], out_list: List[list]):
+def walk_data(walkers: List[DataWalker], out_list: List[list]) -> Tuple[list, List[list]]:
+    """It walks over data in given walkers in proper order
+    match data between each other if necessary
+    and gives output containers where to put result of handled data"""
     match_mode = DataWalker.REPEAT  # todo should be determined by modes of input walkers
     result_data = [ListTreeGenerator(l) for l in out_list]
 
