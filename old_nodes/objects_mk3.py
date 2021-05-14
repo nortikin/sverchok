@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -90,6 +90,10 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
 
+    replacement_nodes = [('SvGetObjectsData',
+                          None,
+                          dict(Matrixes='Matrix',
+                               MaterialIdx='Material Idx'))]
     def hide_show_versgroups(self, context):
         outs = self.outputs
         showing_vg = 'Vers_grouped' in outs
@@ -191,7 +195,7 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
         if self.prefs_over_sized_buttons:
             row.scale_y = 4.0
             op_text = "G E T"
-        
+
         self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'
 
         col = layout.column(align=True)
@@ -266,7 +270,7 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
             mtrx = []
             materials = []
 
-            # code inside this context can trigger dependancy graph update events, 
+            # code inside this context can trigger dependancy graph update events,
             # it is necessary to call throttle here to prevent Sverchok from responding to these updates:
             # not doing so would trigger recursive updates and Blender would likely become unresponsive.
             with self.sv_throttle_tree_update():
