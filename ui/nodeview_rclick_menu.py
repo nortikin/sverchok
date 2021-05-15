@@ -100,6 +100,56 @@ def get_output_sockets_map(node):
 def offset_node_location(existing_node, new_node, offset):
     new_node.location = existing_node.location.x + offset[0] + existing_node.width, existing_node.location.y  + offset[1]
 
+
+def conect_to_3d_viewer(tree):
+    if hasattr(tree.nodes.active, 'viewer_map'):
+        view_node(tree)
+    else:
+        add_connection(tree, bl_idname_new_node="SvViewerDrawMk4", offset=[60, 0])
+
+def view_node(tree):
+    '''viewer map is a node attribute to inform to the operator how to visualize
+    the node data
+    it is a list with two items.
+    The first item is a list with tuples, every tuple need to have the node bl_idanme and offset to the previous node
+    The second item is a list with tuples, every tuple indicates a link.
+    The link is defined by two pairs of numbers, refering to output and input
+    The first number of every pair indicates the node being 0 the active node 1 the first needed node and so on
+    The second nmber of every pair indicates de socket index.
+
+    So to say: create a Viewer Draw with a offset of 60,0 and connect the first output to the vertices input
+    the node would need to have this:
+
+        viewer_map = [
+            ("SvViewerDrawMk4", [60, 0])
+            ], [
+            ([0, 0], [1, 0])
+            ]
+
+    '''
+    nodes = tree.nodes
+    links = tree.links
+    existing_node = nodes.active
+    node_list = [existing_node]
+    output_map = existing_node.viewer_map
+    
+    previous_state = tree.sv_process
+    tree.sv_process = False
+
+    for node in output_map[0]:
+        bl_idname_new_node, offset = node
+        new_node = nodes.new(bl_idname_new_node)
+        apply_default_preset(new_node)
+        offset_node_location(node_list[-1], new_node, offset)
+        frame_adjust(node_list[-1], new_node)
+        node_list.append(new_node)
+    for link in output_map[1]:
+        output_s, input_s = link
+        links.new(node_list[output_s[0]].outputs[output_s[1]],
+                  node_list[input_s[0]].inputs[input_s[1]])
+    tree.sv_process = previous_state
+    tree.update()
+
 def add_connection(tree, bl_idname_new_node, offset):
 
     nodes = tree.nodes
@@ -200,7 +250,8 @@ class SvGenericDeligationOperator(bpy.types.Operator):
         tree = context.space_data.edit_tree
 
         if self.fn == 'vdmk2':
-            add_connection(tree, bl_idname_new_node="SvViewerDrawMk4", offset=[60, 0])
+            conect_to_3d_viewer(tree)
+
         elif self.fn == 'vdmk2 + idxv':
             add_connection(tree, bl_idname_new_node=["SvViewerDrawMk4", "IndexViewerNode"], offset=[180, 0])
         elif self.fn == '+idxv':

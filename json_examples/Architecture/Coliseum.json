@@ -13,7 +13,7 @@
     "Component Analyzer": "Frame",
     "Exec Node Mod.002": "Frame.005",
     "Frame.001": "Frame.002",
-    "Inset Special": "Frame",
+    "Inset Special.001": "Frame",
     "List Mask (out)": "Frame.005",
     "Logic functions": "Frame",
     "Logic functions.001": "Frame",
@@ -194,7 +194,18 @@
     },
     "Component Analyzer": {
       "bl_idname": "SvComponentAnalyzerNode",
-      "custom_socket_props": {},
+      "custom_socket_props": {
+        "0": {
+          "is_mandatory": true
+        },
+        "1": {
+          "nesting_level": 3
+        },
+        "2": {
+          "is_mandatory": true,
+          "nesting_level": 3
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -235,7 +246,7 @@
     "Frame": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 533.35400390625,
+      "height": 592.7540283203125,
       "hide": false,
       "label": "",
       "location": [
@@ -243,7 +254,7 @@
         280.7985534667969
       ],
       "params": {},
-      "width": 1133.975341796875
+      "width": 1137.3447265625
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
@@ -310,15 +321,23 @@
       "params": {},
       "width": 1200.907958984375
     },
-    "Inset Special": {
-      "bl_idname": "SvInsetSpecial",
-      "custom_socket_props": {},
+    "Inset Special.001": {
+      "bl_idname": "SvInsetSpecialMk2",
+      "custom_socket_props": {
+        "0": {
+          "is_mandatory": true
+        },
+        "1": {
+          "is_mandatory": true,
+          "nesting_level": 3
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        2782.7352905273438,
-        495.6429443359375
+        2789.3944702148438,
+        510.554931640625
       ],
       "params": {
         "inset": 0.800000011920929
@@ -683,8 +702,17 @@
       "width": 140.0
     },
     "Select mesh elements by location": {
-      "bl_idname": "SvMeshSelectNode",
+      "bl_idname": "SvMeshSelectNodeMk2",
       "custom_socket_props": {
+        "0": {
+          "is_mandatory": true
+        },
+        "1": {
+          "nesting_level": 3
+        },
+        "2": {
+          "nesting_level": 3
+        },
         "3": {
           "prop": [
             0.0,
@@ -785,39 +813,81 @@
       0
     ],
     [
-      "Inset Special",
+      "Inset Special.001",
       3,
       "Calculate Mask",
       0
     ],
     [
-      "Inset Special",
+      "Inset Special.001",
       1,
       "Calculate Mask",
       1
     ],
     [
+      "Scalar Math.004",
+      0,
+      "Circle",
+      1
+    ],
+    [
       "UV Connection",
       0,
-      "Inset Special",
-      2
+      "Component Analyzer",
+      0
     ],
     [
       "UV Connection",
       1,
-      "Inset Special",
-      3
+      "Component Analyzer",
+      2
     ],
     [
-      "Logic functions.003",
+      "Mesh viewer",
       0,
-      "Inset Special",
-      4
+      "Exec Node Mod.002",
+      0
+    ],
+    [
+      "Inset Special.001",
+      1,
+      "List Mask (out)",
+      0
+    ],
+    [
+      "Calculate Mask",
+      0,
+      "List Mask (out)",
+      1
     ],
     [
       "Select mesh elements by location",
       2,
       "Logic functions",
+      0
+    ],
+    [
+      "Logic functions.002",
+      0,
+      "Logic functions.001",
+      0
+    ],
+    [
+      "Logic functions",
+      0,
+      "Logic functions.001",
+      1
+    ],
+    [
+      "Component Analyzer",
+      0,
+      "Logic functions.002",
+      0
+    ],
+    [
+      "Logic functions.001",
+      0,
+      "Logic functions.003",
       0
     ],
     [
@@ -833,91 +903,19 @@
       1
     ],
     [
-      "Scalar Math",
+      "Circle",
       0,
-      "Number Range",
-      1
+      "Matrix Track To",
+      0
     ],
     [
-      "A Number.002",
+      "Circle",
       0,
-      "Number Range",
+      "Matrix Track To",
       2
     ],
     [
-      "A Number.005",
-      0,
-      "Scalar Math",
-      0
-    ],
-    [
-      "Number Range",
-      0,
-      "Scalar Math.001",
-      0
-    ],
-    [
-      "Scalar Math.001",
-      1,
-      "Scalar Math.002",
-      0
-    ],
-    [
-      "Scalar Math.001",
-      0,
-      "Scalar Math.003",
-      0
-    ],
-    [
-      "Scalar Math.001",
-      1,
-      "Scalar Math.005",
-      0
-    ],
-    [
-      "Scalar Math.001",
-      0,
-      "Scalar Math.006",
-      0
-    ],
-    [
-      "UV Connection",
-      0,
-      "Select mesh elements by location",
-      0
-    ],
-    [
-      "UV Connection",
-      1,
-      "Select mesh elements by location",
-      2
-    ],
-    [
-      "Matrix Apply (verts)",
-      0,
-      "UV Connection",
-      0
-    ],
-    [
-      "Profile Parametric Mk3",
-      2,
-      "Viewer Index+",
-      0
-    ],
-    [
-      "Profile Parametric Mk3",
-      3,
-      "Viewer Index+",
-      4
-    ],
-    [
-      "Mesh viewer",
-      0,
-      "Exec Node Mod.002",
-      0
-    ],
-    [
-      "Inset Special",
+      "Inset Special.001",
       0,
       "Mesh viewer",
       0
@@ -935,30 +933,6 @@
       4
     ],
     [
-      "Inset Special",
-      1,
-      "List Mask (out)",
-      0
-    ],
-    [
-      "Calculate Mask",
-      0,
-      "List Mask (out)",
-      1
-    ],
-    [
-      "Inset Special",
-      0,
-      "Solidify.001",
-      0
-    ],
-    [
-      "Inset Special",
-      3,
-      "Solidify.001",
-      2
-    ],
-    [
       "Solidify.001",
       0,
       "Mesh viewer.001",
@@ -977,34 +951,16 @@
       4
     ],
     [
-      "UV Connection",
+      "Scalar Math",
       0,
-      "Component Analyzer",
-      0
-    ],
-    [
-      "UV Connection",
-      1,
-      "Component Analyzer",
-      2
-    ],
-    [
-      "Component Analyzer",
-      0,
-      "Logic functions.002",
-      0
-    ],
-    [
-      "Logic functions.002",
-      0,
-      "Logic functions.001",
-      0
-    ],
-    [
-      "Logic functions",
-      0,
-      "Logic functions.001",
+      "Number Range",
       1
+    ],
+    [
+      "A Number.002",
+      0,
+      "Number Range",
+      2
     ],
     [
       "A Number",
@@ -1037,16 +993,28 @@
       4
     ],
     [
-      "Logic functions.001",
+      "A Number.005",
       0,
-      "Logic functions.003",
+      "Scalar Math",
       0
     ],
     [
-      "Scalar Math.004",
+      "Number Range",
       0,
-      "Circle",
-      1
+      "Scalar Math.001",
+      0
+    ],
+    [
+      "Scalar Math.001",
+      1,
+      "Scalar Math.002",
+      0
+    ],
+    [
+      "Scalar Math.001",
+      0,
+      "Scalar Math.003",
+      0
     ],
     [
       "A Number.002",
@@ -1055,16 +1023,76 @@
       0
     ],
     [
-      "Circle",
-      0,
-      "Matrix Track To",
+      "Scalar Math.001",
+      1,
+      "Scalar Math.005",
       0
     ],
     [
-      "Circle",
+      "Scalar Math.001",
       0,
-      "Matrix Track To",
+      "Scalar Math.006",
+      0
+    ],
+    [
+      "UV Connection",
+      0,
+      "Select mesh elements by location",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "Select mesh elements by location",
       2
+    ],
+    [
+      "Inset Special.001",
+      0,
+      "Solidify.001",
+      0
+    ],
+    [
+      "Inset Special.001",
+      3,
+      "Solidify.001",
+      2
+    ],
+    [
+      "Matrix Apply (verts)",
+      0,
+      "UV Connection",
+      0
+    ],
+    [
+      "Profile Parametric Mk3",
+      2,
+      "Viewer Index+",
+      0
+    ],
+    [
+      "Profile Parametric Mk3",
+      3,
+      "Viewer Index+",
+      4
+    ],
+    [
+      "UV Connection",
+      0,
+      "Inset Special.001",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "Inset Special.001",
+      1
+    ],
+    [
+      "Logic functions.003",
+      0,
+      "Inset Special.001",
+      4
     ]
   ]
 }

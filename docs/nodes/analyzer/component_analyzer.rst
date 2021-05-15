@@ -25,13 +25,17 @@ This node has the following parameters:
 
   * For **Vertices** supported criteria are:
 
-    * **Normal**. Vertices normal vector.
+    * **Normal**. Vertices normal vector. Offers different calculation methods:
+        Bmesh (standard Blender),Mean Weighted Equally (Faster), Mean Weighted Based on Triangle Area
+        Mean Weighted Edge Length Reciprocal and Mean Weighted by Sine
     * **Matrix ZY**: Matrix aligned with normal.
     * **Sharpness**: Curvature of mesh in vertex.
     * **Adjacent Edges**: Adjacent edges.
     * **Adjacent Faces**: Adjacent faces.
     * **Adjacent Edges num**: Number of Adjacent edges.
     * **Adjacent Faces num**: Number of adjacent faces.
+    * **Adjacent Edges Idx**: Index of Adjacent edges.
+    * **Adjacent Faces Idx**: Index of adjacent faces.
     * **Is Boundary**: Is Vertex on mesh borders.
     * **Is Interior**: Is Vertex on mesh interior.
     * **Is Manifold**: Is Vertex part of the Manifold.
@@ -54,6 +58,10 @@ This node has the following parameters:
     * **Inverted**. Reversed edges.
     * **Adjacent faces**. Adjacent faces.
     * **Adjacent faces Num**. Adjacent faces number.
+    * **Adjacent faces Idx**. Adjacent faces Index.
+    * **Connected edges**. Edges connected to each edge.
+    * **Connected edges Num**. Connected edges number.
+    * **Connected edges Idx**. Connected edges Index.
     * **Is Boundary**.  Is Edge on mesh borders.
     * **Is Contiguous**. Is Edge contiguous.
     * **Is Convex**. Is Edge Convex.
@@ -78,13 +86,15 @@ This node has the following parameters:
     * **Area**. Area of faces
     * **Perimeter**. Perimeter of faces
     * **Sides**. Sides of faces
+    * **Adjacent Faces**. Faces that share a edge with face.
+    * **Neighbor Faces**. Faces that share a vertex with face.
     * **Neighbor Faces Num**. Number of Faces that share a edge with face
     * **Adjacent Faces Num**. Number of Faces that share a vertex with face.
+    * **Neighbor Faces Idx**. Index of Faces that share a edge with face
+    * **Adjacent Faces Idx**. Index of Faces that share a vertex with face.
     * **Sharpness**. Average of curvature of mesh in faces vertices
     * **Inverse**. Reversed Polygons (Flipped).
     * **Edges**. Face Edges.
-    * **Adjacent Faces**. Faces that share a edge with face.
-    * **Neighbor Faces**. Faces that share a vertex with face.
     * **Is Boundary**. Is the face boundary or interior
 
 
@@ -92,6 +102,8 @@ This node has the following parameters:
 
   * **Split Output**. Split the result to get one object per result *[[0, 1], [2]] --> [[0], [1], [2]]*
   * **Wrap Output**. Keeps original data shape *[Matrix, Matrix, Matrix] --> [[Matrix, Matrix], [Matrix]]*
+
+- Some routines offer *Output Numpy* property to output numpy arrays in stead of regular python lists (making the node faster)
 
 
 Example of usage

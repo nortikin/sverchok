@@ -8,10 +8,12 @@ Modifier Change
    bevel
    subdivide_mk2
    subdivide_lite
+   subdivide_to_quads
    unsubdivide
    smooth
    relax_mesh
    delete_loose
+   mesh_clean
    edges_intersect_mk2
    poke
    extrude_edges_mk2
@@ -21,7 +23,7 @@ Modifier Change
    holes_fill
    flip_normals
    merge_by_distance
-   mesh_join
+   mesh_join_mk2
    mesh_separate
    objects_along_edge
    offset

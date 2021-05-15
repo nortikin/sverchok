@@ -20,8 +20,8 @@ parts, one application of "Solid General Fuse" will give you better performance
 compared to many "Solid Boolean" applications.
 
 To illustrate what exactly this node does, it's simpler to draw some 2D
-pictures first. Let's say we have a circle (object number 0), a square (object
-number 1) and a triangle (object number 2):
+pictures first. Let's say we have a circle (object number 0), a triangle (object
+number 1) and a square (object number 2):
 
 .. image:: https://user-images.githubusercontent.com/284644/94195404-65079280-fecc-11ea-8ec7-73b8b357c063.png
 (Figure 1)
@@ -47,8 +47,8 @@ and 1, i.e. we remove the intersection of the circle and the triangle:
 .. image:: https://user-images.githubusercontent.com/284644/94196223-7f8e3b80-fecd-11ea-975e-b20b193f4e62.png
 (Figure 3)
 
-Or, let's leave only parts, for which the set of source objects is ``[0,1]``,
-``[1,2]``, or ``[0,1,2]``:
+Or, let's leave only parts, for which the set of source objects is ``[0,2]``,
+``[0,1,2]``, and ``[1,2]``:
 
 .. image:: https://user-images.githubusercontent.com/284644/94196342-a482ae80-fecd-11ea-91ef-6d564e325491.png
 (Figure 4)

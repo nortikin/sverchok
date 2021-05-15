@@ -49,7 +49,7 @@ import bpy
 from bpy.types import Node
 
 from sverchok.data_structure import updateNode
-
+from sverchok.utils.handle_blender_data import get_func_and_args
 
 class WrapNode:
     # instancing the class for crating properties and sockets
@@ -380,27 +380,27 @@ class NodeProps:
                 updateNode(node, context)
 
         for name, prop in self.properties.items():
-
-            bpy_prop, bpy_prop_arguments = prop.bpy_props
+            bpy_prop, bpy_prop_arguments = get_func_and_args(prop.bpy_props)
             bpy_prop_arguments['update'] = update_node
             rebuild_bpy_prop = blender_properties[bpy_prop](**bpy_prop_arguments)
 
             node_annotations[name] = rebuild_bpy_prop
 
+get_func = lambda prop: get_func_and_args(prop)[0]
 
 blender_properties = {
     # properties are functions which return tuples with themselves as first argument
     # it should help to rebuild properties with new arguments
-    bpy.props.BoolProperty()[0]: bpy.props.BoolProperty,
-    bpy.props.BoolVectorProperty()[0]: bpy.props.BoolVectorProperty,
-    bpy.props.CollectionProperty()[0]: bpy.props.CollectionProperty,
-    bpy.props.EnumProperty()[0]: bpy.props.EnumProperty,
-    bpy.props.FloatProperty()[0]: bpy.props.FloatProperty,
-    bpy.props.FloatVectorProperty()[0]: bpy.props.FloatVectorProperty,
-    bpy.props.IntProperty()[0]: bpy.props.IntProperty,
-    bpy.props.IntVectorProperty()[0]: bpy.props.IntVectorProperty,
-    bpy.props.PointerProperty()[0]: bpy.props.PointerProperty,
-    bpy.props.StringProperty()[0]: bpy.props.StringProperty
+    get_func(bpy.props.BoolProperty()): bpy.props.BoolProperty,
+    get_func(bpy.props.BoolVectorProperty()): bpy.props.BoolVectorProperty,
+    get_func(bpy.props.CollectionProperty()): bpy.props.CollectionProperty,
+    get_func(bpy.props.EnumProperty()): bpy.props.EnumProperty,
+    get_func(bpy.props.FloatProperty()): bpy.props.FloatProperty,
+    get_func(bpy.props.FloatVectorProperty()): bpy.props.FloatVectorProperty,
+    get_func(bpy.props.IntProperty()): bpy.props.IntProperty,
+    get_func(bpy.props.IntVectorProperty()): bpy.props.IntVectorProperty,
+    get_func(bpy.props.PointerProperty()): bpy.props.PointerProperty,
+    get_func(bpy.props.StringProperty()): bpy.props.StringProperty
 }
 
 

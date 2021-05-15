@@ -329,3 +329,19 @@ class BPYPointers(Enum):
             if pointer.type.bl_rna == bl_rna:
                 return pointer
         raise TypeError(f'Type: "{bl_rna}" was not found in: {[t.type.bl_rna for t in BPYPointers]}')
+
+
+def get_func_and_args(prop):
+    """
+    usage:   
+        - formerly
+        prop_func, prop_args = some_class.__annotations__[some_prop_name]
+        - new
+        prop_to_decompose = some_class.__annotations__[some_prop_name]
+        prop_func, prop_args = get_func_and_args(prop_to_decompose)
+        
+    """
+    if hasattr(prop, "keywords"):
+        return prop.function, prop.keywords
+    else:
+        return prop

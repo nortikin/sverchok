@@ -11,6 +11,7 @@ from bpy.props import StringProperty
 from mathutils import Vector, Matrix
 
 from sverchok.data_structure import node_id, dataCorrect, dataCorrect_np
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
 cache_viewer_baker = {}
 
@@ -28,26 +29,17 @@ def fill_cache_from_node_reference(node):
     cache_viewer_baker[matrix_ref] = data[4]
 
 
-class SvObjBakeMK3(bpy.types.Operator):
+class SvObjBakeMK3(bpy.types.Operator, SvGenericNodeLocator):
     """ B A K E   OBJECTS """
     bl_idname = "node.sverchok_mesh_baker_mk3"
     bl_label = "Sverchok mesh baker mk3"
     bl_options = {'REGISTER', 'UNDO'}
 
-    idname: StringProperty(
-        name='idname',
-        description='name of parent node',
-        default='')
-
-    idtree: StringProperty(
-        name='idtree',
-        description='name of parent tree',
-        default='')
-
     def execute(self, context):
+        node = self.get_node(context)
+        if not node:
+            return {'CANCELLED'}
 
-        node_group = bpy.data.node_groups[self.idtree]
-        node = node_group.nodes[self.idname]
         nid = node_id(node)
 
         if not node.inputs[0].is_linked:
@@ -141,26 +133,17 @@ if FreeCAD is not None:
         cache_viewer_baker[matrix_ref] = []
 
 
-    class SvSolidBake(bpy.types.Operator):
+    class SvSolidBake(bpy.types.Operator, SvGenericNodeLocator):
         """ B A K E   OBJECTS """
         bl_idname = "node.sverchok_solid_baker_mk3"
         bl_label = "Sverchok solid baker mk3"
         bl_options = {'REGISTER', 'UNDO'}
 
-        idname: StringProperty(
-            name='idname',
-            description='name of parent node',
-            default='')
-
-        idtree: StringProperty(
-            name='idtree',
-            description='name of parent tree',
-            default='')
-
         def execute(self, context):
+            node = self.get_node(context)
+            if not node:
+                return {'CANCELLED'}
 
-            node_group = bpy.data.node_groups[self.idtree]
-            node = node_group.nodes[self.idname]
             nid = node_id(node)
 
             if not node.inputs[0].is_linked:

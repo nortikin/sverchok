@@ -7,10 +7,10 @@
     "Curve Viewer": "Frame.002",
     "Curve Viewer.001": "Frame.002",
     "Dual Mesh": "Frame.002",
-    "Inset Special": "Frame.001",
+    "Inset Special.001": "Frame.001",
     "List Split": "Frame",
     "List Split.001": "Frame.002",
-    "Mesh Join": "Frame.002",
+    "Mesh Join.001": "Frame.002",
     "Mesh viewer": "Frame.001",
     "Move": "Frame",
     "Plane": "Frame",
@@ -31,7 +31,7 @@
       "hide": false,
       "label": "",
       "location": [
-        -878.9776306152344,
+        -886.5869064331055,
         -800.5147476196289
       ],
       "params": {
@@ -47,7 +47,7 @@
       "hide": false,
       "label": "",
       "location": [
-        173.6556396484375,
+        166.0463638305664,
         -564.7157974243164
       ],
       "params": {
@@ -57,12 +57,23 @@
     },
     "Component Analyzer": {
       "bl_idname": "SvComponentAnalyzerNode",
-      "custom_socket_props": {},
+      "custom_socket_props": {
+        "0": {
+          "is_mandatory": true
+        },
+        "1": {
+          "nesting_level": 3
+        },
+        "2": {
+          "is_mandatory": true,
+          "nesting_level": 3
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        594.536376953125,
+        586.9271011352539,
         -1177.153793334961
       ],
       "params": {
@@ -82,7 +93,7 @@
       "hide": false,
       "label": "",
       "location": [
-        1724.8819274902344,
+        1717.2726516723633,
         -923.9109344482422
       ],
       "params": {
@@ -104,7 +115,7 @@
       "hide": false,
       "label": "",
       "location": [
-        1722.6996765136719,
+        1715.0904006958008,
         -1273.923080444336
       ],
       "params": {
@@ -121,7 +132,7 @@
       "hide": false,
       "label": "",
       "location": [
-        374.117919921875,
+        366.5086441040039,
         -1410.1214447021484
       ],
       "params": {},
@@ -134,7 +145,7 @@
       "hide": false,
       "label": "Control Surface",
       "location": [
-        -88.71127319335938,
+        -96.32054901123047,
         107.1540756225586
       ],
       "params": {},
@@ -147,11 +158,11 @@
       "hide": false,
       "label": "Cover",
       "location": [
-        68.99597930908203,
+        61.3867073059082,
         56.54072189331055
       ],
       "params": {},
-      "width": 806.707763671875
+      "width": 792.0017700195312
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
@@ -160,21 +171,29 @@
       "hide": false,
       "label": "Structure",
       "location": [
-        85.90573120117188,
+        78.29645538330078,
         -95.03233337402344
       ],
       "params": {},
       "width": 1550.7640380859375
     },
-    "Inset Special": {
-      "bl_idname": "SvInsetSpecial",
-      "custom_socket_props": {},
+    "Inset Special.001": {
+      "bl_idname": "SvInsetSpecialMk2",
+      "custom_socket_props": {
+        "0": {
+          "is_mandatory": true
+        },
+        "1": {
+          "is_mandatory": true,
+          "nesting_level": 3
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        762.4587478637695,
-        -431.1054573059082
+        769.5554695129395,
+        -379.6045112609863
       ],
       "params": {
         "inset": 0.550000011920929,
@@ -189,7 +208,7 @@
       "hide": false,
       "label": "",
       "location": [
-        -50.175506591796875,
+        -57.78478240966797,
         -557.3967056274414
       ],
       "params": {
@@ -204,21 +223,32 @@
       "hide": false,
       "label": "",
       "location": [
-        1040.7282409667969,
+        1033.1189651489258,
         -1097.4737396240234
       ],
       "params": {},
       "width": 140.0
     },
-    "Mesh Join": {
-      "bl_idname": "SvMeshJoinNode",
-      "custom_socket_props": {},
+    "Mesh Join.001": {
+      "bl_idname": "SvMeshJoinNodeMk2",
+      "custom_socket_props": {
+        "0": {
+          "default_mode": "NONE",
+          "is_mandatory": true
+        },
+        "1": {
+          "nesting_level": 3
+        },
+        "2": {
+          "nesting_level": 3
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        1457.0633239746094,
-        -1038.811508178711
+        1452.7768020629883,
+        -1012.3106536865234
       ],
       "params": {},
       "width": 140.0
@@ -235,10 +265,12 @@
       "hide": false,
       "label": "",
       "location": [
-        1369.1665115356445,
+        1361.5572395324707,
         -456.61589431762695
       ],
-      "params": {},
+      "params": {
+        "base_data_name": "Gamma"
+      },
       "use_custom_color": true,
       "width": 140.0
     },
@@ -253,7 +285,7 @@
       "hide": false,
       "label": "",
       "location": [
-        -270.1755065917969,
+        -277.78478240966797,
         -568.8144302368164
       ],
       "params": {
@@ -297,7 +329,7 @@
       "hide": false,
       "label": "",
       "location": [
-        -677.8556823730469,
+        -685.464958190918,
         -482.10892486572266
       ],
       "params": {
@@ -316,7 +348,7 @@
       "hide": false,
       "label": "",
       "location": [
-        1042.3290710449219,
+        1034.7197952270508,
         -949.3807220458984
       ],
       "params": {},
@@ -329,7 +361,7 @@
       "hide": false,
       "label": "",
       "location": [
-        -435.03851318359375,
+        -442.6477966308594,
         -1049.250732421875
       ],
       "params": {
@@ -349,7 +381,7 @@
       "hide": false,
       "label": "",
       "location": [
-        591.927001953125,
+        584.3177261352539,
         -1403.2000579833984
       ],
       "params": {
@@ -364,7 +396,7 @@
       "hide": false,
       "label": "",
       "location": [
-        -490.1755065917969,
+        -497.78478240966797,
         -488.76749420166016
       ],
       "params": {
@@ -385,7 +417,7 @@
       "hide": false,
       "label": "",
       "location": [
-        1237.0633239746094,
+        1229.4540481567383,
         -976.4100799560547
       ],
       "params": {
@@ -401,7 +433,7 @@
       "hide": false,
       "label": "",
       "location": [
-        968.4492263793945,
+        960.8399543762207,
         -417.33220291137695
       ],
       "params": {
@@ -420,7 +452,7 @@
       "hide": false,
       "label": "",
       "location": [
-        829.8252868652344,
+        822.2160110473633,
         -1280.355209350586
       ],
       "params": {
@@ -445,7 +477,7 @@
       "hide": false,
       "label": "",
       "location": [
-        1204.044563293457,
+        1196.4352912902832,
         -212.13191604614258
       ],
       "params": {
@@ -481,13 +513,13 @@
       2
     ],
     [
-      "Mesh Join",
+      "Mesh Join.001",
       0,
       "Curve Viewer",
       0
     ],
     [
-      "Mesh Join",
+      "Mesh Join.001",
       1,
       "Curve Viewer",
       1
@@ -523,18 +555,6 @@
       2
     ],
     [
-      "Bend object along surface",
-      0,
-      "Inset Special",
-      2
-    ],
-    [
-      "Polygon Grid",
-      3,
-      "Inset Special",
-      3
-    ],
-    [
       "Move",
       0,
       "List Split",
@@ -555,13 +575,13 @@
     [
       "Segment",
       0,
-      "Mesh Join",
+      "Mesh Join.001",
       0
     ],
     [
       "Segment",
       1,
-      "Mesh Join",
+      "Mesh Join.001",
       1
     ],
     [
@@ -623,6 +643,18 @@
       0,
       "Segment",
       1
+    ],
+    [
+      "Inset Special.001",
+      0,
+      "Solidify.001",
+      0
+    ],
+    [
+      "Inset Special.001",
+      1,
+      "Solidify.001",
+      2
     ],
     [
       "Component Analyzer",
@@ -631,18 +663,6 @@
       0
     ],
     [
-      "Inset Special",
-      0,
-      "Solidify.001",
-      0
-    ],
-    [
-      "Inset Special",
-      1,
-      "Solidify.001",
-      2
-    ],
-    [
       "Solidify.001",
       0,
       "Viewer Draw Mk3.001",
@@ -653,6 +673,18 @@
       2,
       "Viewer Draw Mk3.001",
       2
+    ],
+    [
+      "Bend object along surface",
+      0,
+      "Inset Special.001",
+      0
+    ],
+    [
+      "Polygon Grid",
+      3,
+      "Inset Special.001",
+      1
     ]
   ]
 }

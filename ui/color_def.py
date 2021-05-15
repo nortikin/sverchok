@@ -27,7 +27,9 @@ import sverchok
 colors_cache = {}
 
 themes = [("default_theme", "Default", "Default"),
-          ("nipon_blossom", "Nipon Blossom", "Nipon Blossom")]
+          ("nipon_blossom", "Nipon Blossom", "Nipon Blossom"),
+          ("grey", "Grey", "Grey"),
+          ("darker", "Darker", "Darker")]
 
 
 default_theme = {
@@ -45,6 +47,23 @@ nipon_blossom = {
     "Layout": (0.602957, 0.674000, 0.564277),
     "Generator": (0.92, 0.92, 0.92),
 }
+
+darker = {
+    "Viz": (0.05, 0.21, 0.61),
+    "Text": (0.15, 1.00, 0.86),
+    "Scene": (1.00, 0.29, 0.46),
+    "Layout": (0.29, 0.91, 0.48),
+    "Generator": (0.92, 0.32, 0.18),
+}
+
+grey = {
+    "Viz": (0.0, 0.0, 0.0),
+    "Text": (0.3, 0.3, 0.3),
+    "Scene": (0.50, 0.50, 0.50),
+    "Layout": (0.7, 0.7, 0.7),
+    "Generator": (0.1, 0.1, 0.1),
+}
+
 
 
 #  self referes to the preferences, SverchokPreferences

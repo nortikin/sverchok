@@ -218,51 +218,51 @@
     SvProjectTrimFaceNode
 
 ## Solids @ Analyze
-   SvSolidValidateNode
-   SvRefineSolidNode
-   SvIsSolidClosedNode
-   SvSolidCenterOfMassNode
-   SvSolidFaceAreaNode
-   SvSolidAreaNode
-   SvSolidVolumeNode
-   SvSolidBoundBoxNode
+    SvSolidValidateNode
+    SvRefineSolidNode
+    SvIsSolidClosedNode
+    SvSolidCenterOfMassNode
+    SvSolidFaceAreaNode
+    SvSolidAreaNode
+    SvSolidVolumeNode
+    SvSolidBoundBoxNode
 
 ## Solids
-   SvBoxSolidNode
-   SvCylinderSolidNode
-   SvConeSolidNode
-   SvSphereSolidNode
-   SvToursSolidNode
-   @ Make Face
-   SvSolidFaceExtrudeNode
-   SvSolidFaceSolidifyNode
-   SvSolidFaceRevolveNode
-   SvSweepSolidFaceNode
-   SvRuledSolidNode
-   SvSolidFromFacesNode
-   ---
-   SvTransformSolidNode
-   SvChamferSolidNode
-   SvFilletSolidNode
-   SvSolidBooleanNode
-   SvSolidGeneralFuseNode
-   SvMirrorSolidNode
-   SvOffsetSolidNode
-   SvSplitSolidNode
-   SvHollowSolidNode
-   ---
-   SvIsInsideSolidNode
-   SvSolidDistanceNode
-   SvSliceSolidNode
-   SvMeshToSolidNode
-   SvSolidToMeshNodeMk2
-   SvSolidVerticesNode
-   SvSolidEdgesNode
-   SvSolidFacesNode
-   SvSelectSolidNode
-   SvCompoundSolidNode
-   @ Analyze
-   SvSolidViewerNode
+    SvBoxSolidNode
+    SvCylinderSolidNode
+    SvConeSolidNode
+    SvSphereSolidNode
+    SvToursSolidNode
+    @ Make Face
+    SvSolidFaceExtrudeNode
+    SvSolidFaceSolidifyNode
+    SvSolidFaceRevolveNode
+    SvSweepSolidFaceNode
+    SvRuledSolidNode
+    SvSolidFromFacesNode
+    ---
+    SvTransformSolidNode
+    SvChamferSolidNode
+    SvFilletSolidNode
+    SvSolidBooleanNode
+    SvSolidGeneralFuseNode
+    SvMirrorSolidNode
+    SvOffsetSolidNode
+    SvSplitSolidNode
+    SvHollowSolidNode
+    ---
+    SvIsInsideSolidNode
+    SvSolidDistanceNode
+    SvSliceSolidNode
+    SvMeshToSolidNode
+    SvSolidToMeshNodeMk2
+    SvSolidVerticesNode
+    SvSolidEdgesNode
+    SvSolidFacesNode
+    SvSelectSolidNode
+    SvCompoundSolidNode
+    @ Analyze
+    SvSolidViewerNode
 
 ## Analyzers
     SvBBoxNodeMk3
@@ -276,14 +276,14 @@
     SvDistancetLineLineNode
     SvPathLengthMk2Node
     SvOrigins
-    GetNormalsNode
-    VectorNormalNode
+    SvGetNormalsNodeMk2
     SvIntersectLineSphereNode
     SvIntersectCircleCircleNode
     SvIntersectPlanePlaneNode
     SvKDTreeNodeMK2
     SvKDTreeEdgesNodeMK2
     SvKDTreePathNode
+    SvNearestPointOnMeshNode
     SvBvhOverlapNodeNew
     SvMeshFilterNode
     SvEdgeAnglesNode
@@ -302,7 +302,7 @@
     SvInscribedCircleNode
     SvSteinerEllipseNode
     ---
-    SvMeshSelectNode
+    SvMeshSelectNodeMk2
     SvSelectSimilarNode
     SvChessSelection
 
@@ -358,6 +358,7 @@
 ## Modifier Change
     SvDeleteLooseNode
     SvMergeByDistanceNode
+    SvMeshCleanNode
     SvSeparateMeshNode
     SvSeparatePartsToIndexes
     SvEdgenetToPathsNode
@@ -372,7 +373,7 @@
     SvEdgeBoomNode
     SvDissolveMeshElements
     SvPols2EdgsNodeMk2
-    SvMeshJoinNode
+    SvMeshJoinNodeMk2
     ---
     SvFillsHoleNode
     SvRecalcNormalsNode
@@ -393,6 +394,7 @@
     LineConnectNodeMK2
     ---
     SvSubdivideNodeMK2
+    SvSubdivideToQuadsNode
     SvOffsetLineNode
     SvContourNode
     ---
@@ -464,7 +466,7 @@
     SvBevelNode
     SvIntersectEdgesNodeMK2
     SvOffsetNode
-    SvInsetSpecial
+    SvInsetSpecialMk2
     SvInsetFaces
     SvLatheNode
     SvSmoothNode
@@ -527,7 +529,7 @@
 
 ## Matrix
     SvMatrixInNodeMK4
-    MatrixOutNode
+    SvMatrixOutNodeMK2
     SvMatrixApplyJoinNode
     SvIterateNode
     MatrixDeformNode
@@ -585,7 +587,10 @@
     SvMetaballOutNode
     SvNurbsCurveOutNode
     SvNurbsSurfaceOutNode
+    ---
     SvInstancerNodeMK3
+    SvDupliInstancesMK5
+    ---
     SvLightViewerNode
     ---
     SvGreasePencilStrokes
@@ -623,6 +628,7 @@
     SvPointOnMeshNodeMK2
     SvOBJRayCastNodeMK2
     SvSCNRayCastNodeMK2
+    SvSetLoopNormalsNode
     SvSetCollection
 
 ## Scene
@@ -639,8 +645,6 @@
     ---
     SvFrameInfoNodeMK2
     SvTimerNode
-    ---
-    SvDupliInstancesMK4
 
 ## Objects
     SvVertexGroupNodeMK2
@@ -655,6 +659,7 @@
     SvImportSolidNode
     SvExportSolidNode
     SvReceiveFromSorcarNode
+    SvExportGcodeNode
 
 ## Script
     SvFormulaNodeMk5
@@ -715,7 +720,6 @@
     SvSampleUVColorNode
     SvSubdivideLiteNode
     SvExtrudeSeparateLiteNode
-    SvBVHnearNewNode
     SvUnsubdivideNode
     SvLimitedDissolveMK2
     SvArmaturePropsNode
@@ -725,7 +729,7 @@
     SvSelectMeshVerts
     SvSetCustomMeshNormals
     ---
-    SvCombinatoricsNode    
+    SvCombinatoricsNode
 
 ## Alpha Nodes
     SvBManalyzinNode

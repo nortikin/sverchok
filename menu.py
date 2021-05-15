@@ -456,6 +456,22 @@ def draw_node_ops(self,layout, context):
     layout.operator(update_import, text='update appended/linked', icon='RNA')
     layout.separator()
 
+def strformated_tree(nodes):
+
+    lookup = sverchok.utils.dummy_nodes.dummy_nodes_dict
+    
+    lstr = []
+    for category, nodes_in_category in nodes.items():
+        lstr.append(category + "\n")
+        for node_bl_idname in sorted(nodes_in_category):
+            item = lookup.get(node_bl_idname)
+            if item:
+                node_bl_label, dependencies_listed = item
+                lstr.append(f"   {node_bl_label} ({dependencies_listed})\n")
+
+    return "".join(lstr)
+
+
 def make_categories():
     original_categories = make_node_cats()
 
@@ -463,6 +479,9 @@ def make_categories():
     node_cats = include_submenus(node_cats)
     node_categories = []
     node_count = 0
+
+    nodes_not_enabled = defaultdict(list)
+
     for category, nodes in node_cats.items():
         name_big = "SVERCHOK_" + category.replace(' ', '_')
         node_items = []
@@ -472,7 +491,7 @@ def make_categories():
                 continue
             rna = get_node_class_reference(nodetype)
             if not rna and not nodetype == 'separator':
-                logger.info("Node `%s' is not available (probably due to missing dependencies).", nodetype)
+                nodes_not_enabled[category].append(nodetype)
             else:
                 node_item = SverchNodeItem.new(nodetype)
                 node_items.append(node_item)
@@ -484,8 +503,11 @@ def make_categories():
                     category,
                     items=node_items))
             node_count += len(nodes)
-    node_categories.append(SverchNodeCategory("SVERCHOK_MONAD", "Monad", items=sv_group_items))
 
+    logger.info(f"The following nodes are not enabled (probably due to missing dependancies)\n{strformated_tree(nodes_not_enabled)}")
+
+    node_categories.append(SverchNodeCategory("SVERCHOK_MONAD", "Monad", items=sv_group_items))
+    SverchNodeItem.new('SvMonadInfoNode')
     return node_categories, node_count, original_categories
 
 def register_node_panels(identifier, std_menu):
@@ -593,11 +615,10 @@ def unregister_node_panels():
 
 def reload_menu():
     menu, node_count, original_categories = make_categories()
-    if 'SVERCHOK' in nodeitems_utils._node_categories:
+    if hasattr(bpy.types, "SV_PT_NodesTPanel"):
         unregister_node_panels()
-        nodeitems_utils.unregister_node_categories("SVERCHOK")
         unregister_node_add_operators()
-    nodeitems_utils.register_node_categories("SVERCHOK", menu)
+
     register_node_panels("SVERCHOK", menu)
     register_node_add_operators()
 
@@ -632,10 +653,8 @@ def register():
     global logger
     logger = getLogger("menu")
     menu, node_count, original_categories = make_categories()
-    if 'SVERCHOK' in nodeitems_utils._node_categories:
+    if hasattr(bpy.types, "SV_PT_NodesTPanel"):
         unregister_node_panels()
-        nodeitems_utils.unregister_node_categories("SVERCHOK")
-    nodeitems_utils.register_node_categories("SVERCHOK", menu)
 
     categories = [(category.identifier, category.name, category.name, i) for i, category in enumerate(menu)]
     bpy.types.Scene.sv_selected_category = bpy.props.EnumProperty(
@@ -656,9 +675,7 @@ def register():
     print(f"sv: {node_count} nodes.")
 
 def unregister():
-    if 'SVERCHOK' in nodeitems_utils._node_categories:
-        unregister_node_panels()
-        nodeitems_utils.unregister_node_categories("SVERCHOK")
+    unregister_node_panels()
     unregister_node_add_operators()
     bpy.utils.unregister_class(SvResetNodeSearchOperator)
     del bpy.types.Scene.sv_selected_category

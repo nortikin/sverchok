@@ -17,24 +17,132 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from itertools import product
-
+import numpy as np
 import bpy
 from bpy.props import BoolVectorProperty, EnumProperty
 from mathutils import Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
+
 from sverchok.data_structure import dataCorrect, updateNode
 
+EDGES = [
+    (0, 1), (1, 3), (3, 2), (2, 0),  # bottom edges
+    (4, 5), (5, 7), (7, 6), (6, 4),  # top edges
+    (0, 4), (1, 5), (2, 6), (3, 7)  # sides
+]
+def generate_matrix(maxmin, dims, to_2d):
+    center = [(u+v)*.5 for u, v in maxmin[:dims]]
+    scale = [(u-v) for u, v in maxmin[:dims]]
+    if to_2d:
+        center += [0]
+        scale += [1]
+    mat = Matrix.Translation(center)
+    for i, sca in enumerate(scale):
+        mat[i][i] = sca
+    return mat
 
-class SvBBoxNodeMk3(bpy.types.Node, SverchCustomTreeNode):
+def generate_mean_np(verts, dims, to_2d):
+    avr = (np.sum(verts[:, :dims], axis=0)/len(verts)).tolist()
+    if to_2d:
+        avr += [0]
+    return [avr]
+
+def generate_mean(verts, dims, to_2d):
+    avr = list(map(sum, zip(*verts)))
+    avr = [n/len(verts) for n in avr[:dims]]
+    if to_2d:
+        avr += [0]
+    return [avr]
+
+def bounding_box(verts,
+                 box_dimensions='2D',
+                 output_verts=True,
+                 output_mat=True,
+                 output_mean=True,
+                 output_limits=True):
+    '''
+    verts expects a list of level 3 [[[0,0,0],[1,1,1]..],[]]
+    returns per sublist:
+        verts_out: vertices of the bounding box
+        edges_out: edges of the bounding box
+        mean_out: mean of all vertcies
+        mat_out: Matrix that would transform a box of 1 unit into the bbox
+        *min_vals, Min X, Y and Z of the bounding box
+        *max_vals, Max X, Y and Z of the bounding box
+        *size_vals Size X, Y and Z of the bounding box
+    '''
+    verts_out = []
+    edges_out = []
+    edges = EDGES
+
+    mat_out = []
+    mean_out = []
+    min_vals = [[], [], []]
+    max_vals = [[], [], []]
+    size_vals = [[], [], []]
+    to_2d = box_dimensions == '2D'
+    dims = int(box_dimensions[0])
+    calc_maxmin = output_mat or output_verts or output_limits
+
+    for vec in verts:
+        if calc_maxmin:
+            if isinstance(vec, np.ndarray):
+                np_vec = vec
+            else:
+                np_vec = np.array(vec)
+            bbox_max = np.amax(np_vec, axis=0)
+            bbox_min = np.amin(np_vec, axis=0)
+            maxmin = np.concatenate([bbox_max, bbox_min]).reshape(2,3).T.tolist()
+
+        if output_verts:
+            out = list(product(*reversed(maxmin)))
+            v_out = [l[::-1] for l in out[::-1]]
+            if to_2d:
+                verts_out.append([[v[0], v[1], 0] for v in v_out[:4]])
+                edges = edges[:4]
+            else:
+                verts_out.append(v_out)
+            edges_out.append(edges)
+
+        if output_mat:
+            mat_out.append(generate_matrix(maxmin, dims, to_2d))
+
+        if output_mean:
+            if calc_maxmin:
+                mean_out.append(generate_mean_np(np_vec, dims, to_2d))
+            else:
+                if isinstance(vec, np.ndarray):
+                    mean_out.append(generate_mean_np(vec, dims, to_2d))
+                else:
+                    mean_out.append(generate_mean(vec, dims, to_2d))
+
+        if output_limits:
+            for i in range(dims):
+                min_vals[i].append([maxmin[i][1]])
+                max_vals[i].append([maxmin[i][0]])
+                size_vals[i].append([maxmin[i][0] - maxmin[i][1]])
+
+    return (verts_out,
+            edges_out,
+            mean_out,
+            mat_out,
+            *min_vals,
+            *max_vals,
+            *size_vals)
+
+
+class SvBBoxNodeMk3(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
     """
     Triggers: Bbox 2D or 3D
     Tooltip: Get vertices bounding box (vertices, sizes, center)
     """
     bl_idname = 'SvBBoxNodeMk3'
     bl_label = 'Bounding box'
-    bl_icon = 'NONE'
+    bl_icon = 'SHADING_BBOX'
     sv_icon = 'SV_BOUNDING_BOX'
+
     def update_sockets(self, context):
         bools = [self.min_list, self.max_list, self.size_list]
         dims = int(self.box_dimensions[0])
@@ -81,7 +189,7 @@ class SvBBoxNodeMk3(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         son = self.outputs.new
-        self.inputs.new('SvVerticesSocket', 'Vertices')
+        self.inputs.new('SvVerticesSocket', 'Vertices').is_mandatory = True
 
         son('SvVerticesSocket', 'Vertices')
         son('SvStringsSocket', 'Edges')
@@ -97,95 +205,21 @@ class SvBBoxNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     def migrate_from(self, old_node):
         self.box_dimensions = old_node.dimensions
 
-    def generate_matrix(self, maxmin, dims, to_2d):
-        center = [(u+v)*.5 for u, v in maxmin[:dims]]
-        scale = [(u-v) for u, v in maxmin[:dims]]
-        if to_2d:
-            center += [0]
-            scale += [1]
-        mat = Matrix.Translation(center)
-        for i, sca in enumerate(scale):
-            mat[i][i] = sca
-        return mat
+    def process_data(self, params):
 
-    def generate_mean(self, verts, dims, to_2d):
-        avr = list(map(sum, zip(*verts)))
-        avr = [n/len(verts) for n in avr[:dims]]
-        if to_2d:
-            avr += [0]
-        return [avr]
+        verts = params[0]
 
-    def process(self):
-        if not self.inputs['Vertices'].is_linked:
-            return
-        if not any(s.is_linked for s in self.outputs):
-            return
-        has_mat_out = bool(self.outputs['Center'].is_linked)
-        has_mean = bool(self.outputs['Mean'].is_linked)
-        has_vert_out = bool(self.outputs['Vertices'].is_linked)
+        output_mat = self.outputs['Center'].is_linked
+        output_mean = self.outputs['Mean'].is_linked
+        output_verts = self.outputs['Vertices'].is_linked
+        output_limits = any(s.is_linked for s in self.outputs[4:])
+        return bounding_box(verts,
+                            box_dimensions=self.box_dimensions,
+                            output_verts=output_verts,
+                            output_mat=output_mat,
+                            output_mean=output_mean,
+                            output_limits=output_limits)
 
-        verts = self.inputs['Vertices'].sv_get(deepcopy=False)
-        verts = dataCorrect(verts, nominal_dept=2)
-        has_limits = any(s.is_linked for s in self.outputs[4:])
-        if verts:
-            verts_out = []
-            edges_out = []
-            edges = [
-                (0, 1), (1, 3), (3, 2), (2, 0),  # bottom edges
-                (4, 5), (5, 7), (7, 6), (6, 4),  # top edges
-                (0, 4), (1, 5), (2, 6), (3, 7)  # sides
-            ]
-
-            mat_out = []
-            mean_out = []
-            min_vals = [[], [], []]
-            max_vals = [[], [], []]
-            size_vals = [[], [], []]
-            to_2d = self.box_dimensions == '2D'
-            dims = int(self.box_dimensions[0])
-
-            for vec in verts:
-                if has_mat_out or has_vert_out or has_limits:
-                    maxmin = list(zip(map(max, *vec), map(min, *vec)))
-                if has_vert_out:
-                    out = list(product(*reversed(maxmin)))
-                    v_out = [l[::-1] for l in out[::-1]]
-                    if to_2d:
-                        verts_out.append([[v[0], v[1], 0] for v in v_out[:4]])
-                        edges = edges[:4]
-                    else:
-                        verts_out.append(v_out)
-                    edges_out.append(edges)
-
-                if has_mat_out:
-                    mat_out.append(self.generate_matrix(maxmin, dims, to_2d))
-
-                if has_mean:
-                    mean_out.append(self.generate_mean(vec, dims, to_2d))
-
-                if has_limits:
-                    for i in range(dims):
-                        min_vals[i].append([maxmin[i][1]])
-                        max_vals[i].append([maxmin[i][0]])
-                        size_vals[i].append([maxmin[i][0] - maxmin[i][1]])
-
-            if has_vert_out:
-                self.outputs['Vertices'].sv_set(verts_out)
-
-            if self.outputs['Edges'].is_linked:
-                self.outputs['Edges'].sv_set(edges_out)
-
-            if has_mean:
-                self.outputs['Mean'].sv_set(mean_out)
-
-            if self.outputs['Center'].is_linked:
-                self.outputs['Center'].sv_set(mat_out)
-
-            vals = [min_vals, max_vals, size_vals]
-            for j in range(3):
-                for i, socket in enumerate(self.outputs[4+3*j:7+3*j]):
-                    if socket.is_linked:
-                        socket.sv_set(vals[j][i])
 
 
 def register():

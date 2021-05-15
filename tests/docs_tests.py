@@ -153,7 +153,6 @@ mesh_separate_mk2.py
 symmetrize.py
 vd_attr_node_mk2.py
 scalar_field_point.py
-bvh_nearest_new.py
 quads_to_nurbs.py
 location.py
 sun_position.py""".split("\n")

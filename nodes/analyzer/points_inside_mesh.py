@@ -37,6 +37,7 @@ def generate_random_unitvectors():
     seed_set(140230)
     return [random_unit_vector() for i in range(6)]
 
+
 directions = generate_random_unitvectors()
 
 
@@ -118,6 +119,7 @@ def get_points_in_mesh_2D(verts, faces, points, normal, eps=0.0):
         mask_totals.append(inside)
     return mask_totals
 
+
 def get_points_in_mesh_2D_clip(verts, faces, points, normal, clip_distance, eps=0.0, matchig_method='REPEAT'):
     mask_totals = []
     bvh = BVHTree.FromPolygons(verts, faces, all_triangles=False, epsilon=eps)
@@ -138,11 +140,11 @@ def get_points_in_mesh_2D_clip(verts, faces, points, normal, clip_distance, eps=
         mask_totals.append(inside)
     return mask_totals
 
+
 class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Mask verts with geom
     Tooltip:  Mask points inside geometry in 2D or 3D
-
     """
     bl_idname = 'SvPointInside'
     bl_label = 'Points Inside Mesh'
@@ -159,7 +161,7 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
             self.inputs.remove(self.inputs['Plane Normal'])
         if self.dimensions_mode == '2D' and self.limit_max_dist and len(self.inputs) < 5:
             self.inputs.new('SvStringsSocket', 'Max Dist').prop_name = 'max_dist'
-        elif self.dimensions_mode == '3D' or  not self.limit_max_dist:
+        elif self.dimensions_mode == '3D' or not self.limit_max_dist:
             if 'Max Dist' in self.inputs:
                 self.inputs.remove(self.inputs['Max Dist'])
 
@@ -172,9 +174,11 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
         name='Normal', description='Plane Normal',
         size=3, default=(0, 0, 1),
         update=updateNode)
+
     max_dist: FloatProperty(
         name='Max Distance', description='Maximum valid distance',
         default=10.0, update=updateNode)
+
     limit_max_dist: BoolProperty(
         name='Limit Proyection', description='Limit projection distance',
         default=False, update=update_sockets)
@@ -208,11 +212,15 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def sv_init(self, context):
+        self.width = 160
         self.inputs.new('SvVerticesSocket', 'verts')
         self.inputs.new('SvStringsSocket', 'faces')
         self.inputs.new('SvVerticesSocket', 'points')
         self.outputs.new('SvStringsSocket', 'mask')
-        self.outputs.new('SvVerticesSocket', 'verts')
+        # self.outputs.new('SvVerticesSocket', 'Inside Vertices') # to be used in MK2
+        s = self.outputs.new('SvVerticesSocket', 'verts') # to be removed in MK2
+        s.label = "Inside Vertices" # to be removed in MK2
+        self.outputs.new('SvVerticesSocket', 'Outside Vertices')
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
@@ -251,6 +259,7 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
         # general options
         params.append(cycle([self.epsilon_bvh]))
         # special options and main_func
+
         if self.dimensions_mode == '3D':
             if self.selected_algo == 'algo_1':
                 main_func = are_inside
@@ -280,10 +289,19 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['mask'].sv_set(mask)
 
         if self.outputs['verts'].is_linked:
-            out_verts = []
+        # if self.outputs['Inside Vertices'].is_linked: # to be used in MK2
+            verts = []
             for masked, pts_in in zip(mask, params[2]):
-                out_verts.append([p for m, p in zip(masked, pts_in) if m])
-            self.outputs['verts'].sv_set(out_verts)
+                verts.append([p for m, p in zip(masked, pts_in) if m])
+            self.outputs['verts'].sv_set(verts) # to be removed in MK2
+            # self.outputs['Inside Vertices'].sv_set(verts) # to be used in MK2
+
+        if 'Outside Vertices' in self.outputs: # to be removed in MK2
+            if self.outputs['Outside Vertices'].is_linked:
+                verts = []
+                for masked, pts_in in zip(mask, params[2]):
+                    verts.append([p for m, p in zip(masked, pts_in) if not m])
+                self.outputs['Outside Vertices'].sv_set(verts)
 
 
 def register():

@@ -29,13 +29,15 @@ from numpy import (
     array as np_array,
     newaxis as np_newaxis,
     ndarray,
+    ones as np_ones,
+    arange as np_arange,
     repeat as np_repeat,
     concatenate as np_concatenate,
     tile as np_tile,
     float64,
     int32, int64)
 from sverchok.utils.logging import info
-from sverchok.core.events import CurrentEvents, BlenderEventsTypes
+
 
 DEBUG_MODE = False
 HEAT_MAP = False
@@ -224,8 +226,10 @@ def repeat_last_for_length(lst, count, deepcopy=False):
     repeat_last_for_length([], n) = []
     repeat_last_for_length([1,2], 4) = [1, 2, 2, 2]
     """
-    if not lst or len(lst) >= count:
+    if not lst:
         return lst
+    if len(lst) >= count:
+        return lst[:count]
     n = len(lst)
     x = lst[-1]
     result = lst[:]
@@ -484,17 +488,8 @@ def levels_of_list_or_np(lst):
         return level
     return 0
 
-SIMPLE_DATA_TYPES = (float, int, float64, int32, int64, str)
+SIMPLE_DATA_TYPES = (float, int, float64, int32, int64, str, Matrix)
 
-def ensure_list(lst):
-    if isinstance(lst, list):
-        return lst
-    if isinstance(lst, ndarray):
-        return lst.tolist()
-    if isinstance(lst, SIMPLE_DATA_TYPES):
-        return [lst]
-
-    return list(lst)
 
 def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
     """
@@ -528,7 +523,8 @@ def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
         elif data is None:
             raise TypeError("get_data_nesting_level: encountered None at nesting level {}".format(recursion_depth))
         else:
-            raise TypeError("get_data_nesting_level: unexpected type `{}' of element `{}' at nesting level {}".format(type(data), data, recursion_depth))
+            #unknown class. Return 0 level
+            return 0
 
     return helper(data, 0)
 
@@ -557,6 +553,33 @@ def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES, input
             raise TypeError("ensure_nesting_level: input data already has nesting level of {}. Required level was {}.".format(current_level, target_level))
         else:
             raise TypeError("Input data in socket {} already has nesting level of {}. Required level was {}.".format(input_name, current_level, target_level))
+    result = data
+    for i in range(target_level - current_level):
+        result = [result]
+    return result
+
+def ensure_min_nesting(data, target_level, data_types=SIMPLE_DATA_TYPES, input_name=None):
+    """
+    data: number, or list of numbers, or list of lists, etc.
+    target_level: minimum data nesting level required for further processing.
+    data_types: list or tuple of types.
+    input_name: name of input socket data was taken from. Optional. If specified,
+        used for error reporting.
+
+    Wraps data in so many [] as required to achieve target nesting level.
+    If data already has too high nesting level the same data will be returned
+
+    ensure_min_nesting(17, 0) == 17
+    ensure_min_nesting(17, 1) == [17]
+    ensure_min_nesting([17], 1) == [17]
+    ensure_min_nesting([17], 2) == [[17]]
+    ensure_min_nesting([(1,2,3)], 3) == [[(1,2,3)]]
+    ensure_min_nesting([[[17]]], 1) => [[[17]]]
+    """
+
+    current_level = get_data_nesting_level(data, data_types)
+    if current_level >= target_level:
+        return data
     result = data
     for i in range(target_level - current_level):
         result = [result]
@@ -794,6 +817,17 @@ def apply_mask(mask, lst):
         else:
             bad.append(item)
     return good, bad
+
+def invert_index_list(indexes, length):
+    '''
+    Inverts indexes list
+    indexes: List[Int] of Ndarray flat numpy array
+    length: Int. Length of the base list
+    '''
+    mask = np_ones(length, dtype='bool')
+    mask[indexes] = False
+    inverted_indexes = np_arange(length)[mask]
+    return inverted_indexes
 
 def rotate_list(l, y=1):
     """
@@ -1041,6 +1075,13 @@ def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
 #### random stuff
 ####
 
+def has_element(pol_edge):
+    if pol_edge is None:
+        return False
+    if len(pol_edge) > 0 and hasattr(pol_edge[0], '__len__') and len(pol_edge[0]) > 0:
+        return True
+    return False
+
 def no_space(s):
     return s.replace(' ', '_')
 
@@ -1188,7 +1229,6 @@ def updateNode(self, context):
     When a node has changed state and need to call a partial update.
     For example a user exposed bpy.prop
     """
-    CurrentEvents.new_event(BlenderEventsTypes.node_property_update, self)
     self.process_node(context)
 
 
@@ -1217,7 +1257,7 @@ def update_with_kwargs(update_function, **kwargs):
 @contextmanager
 def throttle_tree_update(node):
     """ usage
-    from sverchok.node_tree import throttle_tree_update
+    from sverchok.data_structure import throttle_tree_update
 
     inside your node, f.ex inside a wrapped_update that creates a socket
 

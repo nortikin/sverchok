@@ -12,16 +12,25 @@ Inputs
 This node has the following inputs:
 
 - **Vertices**
-- **Edges**
 - **Polygons**
+
+Options
+-------
+
+Offers different calculation methods:
+    Bmesh (standard Blender, slowest),
+    Mean Weighted Equally (Fastest),
+    Mean Weighted Based on Triangle Area
+    Mean Weighted Edge Length Reciprocal
+    Mean Weighted by Sine
 
 Outputs
 -------
 
 This node has the following outputs:
 
-- **FaceNormals**. Normals of faces. This output will be empty if **Polygons** input is empty.
-- **VertexNormals**. Normals of vertices.
+- **Face Normals**. Normals of faces. This output will be empty if **Polygons** input is empty.
+- **Vertex Normals**. Normals of vertices.
 
 Examples of usage
 -----------------
@@ -37,4 +46,3 @@ Visualization of vertex normals for bezier curve:
 Normals can be also calculated for closed curves:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/5989202/f8632a44-a9a0-11e4-8745-19065eb13bcd.png
-

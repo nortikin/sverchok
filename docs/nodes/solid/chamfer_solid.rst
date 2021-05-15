@@ -33,4 +33,4 @@ Notes
 
 - The Distance A and Distance B depends on the orientation of the edge.
 
-- If Distance A or Distance B are to big the node will became in Error state and will not perform the operation.
+- If Distance A or Distance B are too big the node will became in Error state and will not perform the operation.

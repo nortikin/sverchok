@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -38,27 +38,39 @@ class SV_MT_LayoutsExamples(bpy.types.Menu):
             return False
 
     def draw(self, context):
-        for category_name in example_categories_names():
-            self.layout.menu("SV_MT_PyMenu_" + category_name)
+        for path, category_name in example_categories_names():
+            self.layout.menu("SV_MT_PyMenu_" + category_name.replace(' ', '_'))
 
 
-def make_submenu_classes(category_name):
+def make_submenu_classes(path, category_name):
     """Generator of submenus classes"""
     def draw_submenu(self, context):
         """Draw Svershok template submenu"""
-        category_path = Path(sverchok.__file__).parent / 'json_examples' / category_name
+        category_path = path / category_name
         self.path_menu(searchpaths=[str(category_path)], operator='node.tree_importer_silent')
 
-    class_name = "SV_MT_PyMenu_" + category_name
+    class_name = "SV_MT_PyMenu_" + category_name.replace(' ', '_')
+
     return type(class_name, (bpy.types.Menu,), {'bl_label': category_name, 'draw': draw_submenu,
                                                'bl_idname': class_name})
 
+extra_examples= dict()
+def add_extra_examples(provider, path):
+    global extra_examples
+    extra_examples[provider] = path
 
 def example_categories_names():
     examples_path = Path(sverchok.__file__).parent / 'json_examples'
+    names = []
     for category_path in examples_path.iterdir():
         if category_path.is_dir():
-            yield category_path.name
+            names.append((examples_path, category_path.name))
+    for c in extra_examples:
+        for category_path in extra_examples[c].iterdir():
+            if category_path.is_dir():
+                names.append((extra_examples[c], category_path.name))
+    for name in names:
+        yield name
 
 
 class SvNodeTreeImporterSilent(bpy.types.Operator):
@@ -88,7 +100,7 @@ classes = [SV_MT_LayoutsExamples, SvNodeTreeImporterSilent]
 
 
 def register():
-    submenu_classes = (make_submenu_classes(category_name) for category_name in example_categories_names())
+    submenu_classes = (make_submenu_classes(path, category_name) for path, category_name in example_categories_names())
     _ = [bpy.utils.register_class(cls) for cls in chain(classes, submenu_classes)]
     bpy.types.NODE_HT_header.append(node_examples_pulldown)
 

@@ -84,6 +84,13 @@ def apply_matrices(meshes: Iterator[Mesh], matrices: Iterator[List[Matrix]], *, 
 
         yield from join_meshes(meshes_py(sub_vertices, sub_edges, sub_polygons))
 
+def has_element(pol_edge):
+    if pol_edge is None:
+        return False
+    if len(pol_edge) > 0 and len(pol_edge[0]) > 0:
+        return True
+    return False
+
 
 @pass_mesh_type
 def join_meshes(meshes: Iterator[PyMesh], *, _mesh_type) -> Iterator[PyMesh]:
@@ -92,10 +99,16 @@ def join_meshes(meshes: Iterator[PyMesh], *, _mesh_type) -> Iterator[PyMesh]:
     joined_polygons = []
     vertexes_number = 0
     for vertices, edges, polygons in meshes:
-        if edges:
-            joined_edges.extend([(e[0] + vertexes_number, e[1] + vertexes_number) for e in edges])
-        if polygons:
-            joined_polygons.extend([[i + vertexes_number for i in p] for p in polygons])
+        if has_element(edges):
+            if isinstance(edges, np.ndarray):
+                joined_edges.extend((edges + vertexes_number).tolist())
+            else:
+                joined_edges.extend([(e[0] + vertexes_number, e[1] + vertexes_number) for e in edges])
+        if has_element(polygons):
+            if isinstance(edges, np.ndarray):
+                joined_polygons.extend((polygons + vertexes_number).tolist())
+            else:
+                joined_polygons.extend([[i + vertexes_number for i in p] for p in polygons])
         vertexes_number += len(vertices)
         _vertices.append(vertices)
     implementation = np.concatenate if _mesh_type == 'NP' else lambda vs: [v for _vs in vs for v in _vs]
@@ -125,3 +138,15 @@ def repeat_meshes(meshes: Iterator[Mesh], number: int = -1) -> Iterator[Mesh]:
 
 def apply_matrix_to_vertices_py(vertices: List[Vertex], matrix: Matrix) -> List[Vertex]:
     return [(matrix @ Vector(v)).to_tuple() for v in vertices]
+
+def mesh_join(vertices: List[List[Vertex]],
+              edges: List[List[Edge]],
+              polygons: List[List[Polygon]]) -> Tuple[List[List[Vertex]],
+                                                      List[List[Edge]],
+                                                      List[List[Polygon]]]:
+    is_py_input = isinstance(vertices[0], (list, tuple))
+    meshes = (meshes_py if is_py_input else meshes_np)(vertices, edges, polygons)
+    meshes = join_meshes(meshes)
+    out_vertices, out_edges, out_polygons = to_elements(meshes)
+
+    return out_vertices, out_edges, out_polygons

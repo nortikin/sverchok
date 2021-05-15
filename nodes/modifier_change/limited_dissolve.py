@@ -23,7 +23,6 @@ from bmesh.ops import dissolve_limit
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
-from sverchok.utils.sv_mesh_utils import get_unique_faces
 
 
 class SvLimitedDissolve(bpy.types.Node, SverchCustomTreeNode):
@@ -68,7 +67,6 @@ class SvLimitedDissolve(bpy.types.Node, SverchCustomTreeNode):
                 use_dissolve_boundaries=self.use_dissolve_boundaries,
                 verts=bm.verts, edges=bm.edges)
             new_verts, new_edges, new_faces = pydata_from_bmesh(bm)
-            new_faces = get_unique_faces(new_faces)
             bm.free()
 
             r_verts.append(new_verts)
