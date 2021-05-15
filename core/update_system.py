@@ -423,7 +423,6 @@ def do_update(node_list, nodes):
     else:
         do_update_general(node_list, nodes)
 
-
 def build_update_list(ng=None):
     """
     Makes a complete update list for the tree,
