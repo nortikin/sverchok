@@ -4,13 +4,14 @@
 #
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
-
+from itertools import chain, cycle
 
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fixed_iter, throttle_and_update_node
 from sverchok.utils.handling_nodes import vectorize
+from sverchok.utils.handle_blender_data import correct_collection_length
 
 
 def set_attribute_node(*, obj=None, values=None, attr_name=None, domain='POINT', value_type='FLOAT'):
@@ -33,7 +34,7 @@ def set_attribute_node(*, obj=None, values=None, attr_name=None, domain='POINT',
         amount = len(obj.data.edges)
     elif domain == 'CORNER':
         amount = len(obj.data.loops)
-    elif domain == 'POLYGON':
+    elif domain == 'FACE':
         amount = len(obj.data.polygons)
     else:
         raise TypeError(f'Unsupported domain {domain}')
@@ -68,6 +69,21 @@ def flat_iter(data):  # todo move to data structure
         yield data
 
 
+class SvObjectsWithAttributes(bpy.types.PropertyGroup):
+    obj: bpy.props.PointerProperty(type=bpy.types.Object)  # this can be None if object was deleted
+    attr: bpy.props.StringProperty()
+
+    def add_attr(self, obj, attr):
+        self.obj = obj
+        self.attr = attr
+
+    def remove_attr(self):
+        if self.obj is not None:
+            attr = self.obj.data.attributes.get(self.attr)
+            if attr:
+                self.obj.data.attributes.remove(attr)
+
+
 class SvSetAttributeNode(SverchCustomTreeNode, bpy.types.Node):  # todo MESH attribute
     """
     Triggers: todo
@@ -84,11 +100,12 @@ class SvSetAttributeNode(SverchCustomTreeNode, bpy.types.Node):  # todo MESH att
         self.inputs['Color'].hide_safe = self.value_type != 'FLOAT_COLOR'
         updateNode(self, context)
 
-    domains = ['POINT', 'EDGE', 'CORNER', 'POLYGON']
+    domains = ['POINT', 'EDGE', 'CORNER', 'FACE']
     value_types = ['FLOAT', 'INT', 'FLOAT_VECTOR', 'FLOAT_COLOR', 'BOOLEAN']
 
     domain: bpy.props.EnumProperty(items=[(i, i.capitalize(), '') for i in domains], update=updateNode)
     value_type: bpy.props.EnumProperty(items=[(i, i.capitalize(), '') for i in value_types], update=update_type)
+    last_objects: bpy.props.CollectionProperty(type=SvObjectsWithAttributes)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'domain', text='Domain')
@@ -106,19 +123,30 @@ class SvSetAttributeNode(SverchCustomTreeNode, bpy.types.Node):  # todo MESH att
         s.use_prop = True
         self.outputs.new('SvObjectSocket', "Object")
 
+    def sv_copy(self, original):
+        self.last_objects.clear()
+
     def process(self):
-        obj = self.inputs['Object'].sv_get(deepcopy=False, default=[])
+        objects = self.inputs['Object'].sv_get(deepcopy=False, default=[])
         attr_name = self.inputs['Attr name'].sv_get(deepcopy=False, default=[])
         sock_name = 'Value' if self.value_type in ['FLOAT', 'INT', 'BOOLEAN'] else \
             'Vector' if self.value_type == 'FLOAT_VECTOR' else 'Color'
         values = self.inputs[sock_name].sv_get(deepcopy=False, default=[])
 
-        attr_name = flat_iter(attr_name)
+        # first step remove attributes from previous update if necessary
+        iter_attr_names = chain(flat_iter(attr_name), cycle([None]))
+        for last, obj, attr in zip(self.last_objects, chain(objects, cycle([None])), iter_attr_names):
+            if last.obj != obj or last.attr != attr:
+                last.remove_attr()
+        correct_collection_length(self.last_objects, len(objects))
 
-        result = vectorize(set_attribute_node, iter_number=len(obj))(obj=obj, values=values, attr_name=attr_name,
-                                                                     domain=[self.domain], value_type=[self.value_type])
+        # assign new attribute
+        iter_attr_names = fixed_iter(flat_iter(attr_name), len(objects))
+        for last, obj, attr, val in zip(self.last_objects, objects, iter_attr_names, fixed_iter(values, len(objects))):
+            last.add_attr(obj, attr)
+            set_attribute_node(obj=obj, values=val, attr_name=attr, domain=self.domain, value_type=self.value_type)
 
-        self.outputs['Object'].sv_set(result['obj'])
+        self.outputs['Object'].sv_set(objects)
 
 
-register, unregister = bpy.utils.register_classes_factory([SvSetAttributeNode])
+register, unregister = bpy.utils.register_classes_factory([SvObjectsWithAttributes, SvSetAttributeNode])
