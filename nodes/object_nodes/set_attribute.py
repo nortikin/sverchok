@@ -43,12 +43,14 @@ def set_attribute_node(*, obj=None, values=None, attr_name=None, domain='POINT',
         data = list(fixed_iter(values, amount))
     elif value_type in ['FLOAT_VECTOR', 'FLOAT_COLOR']:
         data = [co for v in fixed_iter(values, amount) for co in v]
+    elif value_type == 'FLOAT2':
+        data = [co for v in fixed_iter(values, amount) for co in v[:2]]
     else:
         raise TypeError(f'Unsupported type {value_type}')
 
     if value_type in ["FLOAT", "INT", "BOOLEAN"]:
         attr.data.foreach_set("value", data)
-    elif value_type == "FLOAT_VECTOR":
+    elif value_type in ["FLOAT_VECTOR", "FLOAT2"]:
         attr.data.foreach_set("vector", data)
     else:
         attr.data.foreach_set("color", data)
@@ -96,12 +98,12 @@ class SvSetAttributeNode(SverchCustomTreeNode, bpy.types.Node):  # todo MESH att
     def update_type(self, context):
         self.inputs['Value'].hide_safe = self.value_type not in ['FLOAT', 'INT', 'BOOLEAN']
         self.inputs['Value'].default_property_type = 'float' if self.value_type == 'FLOAT' else 'int'
-        self.inputs['Vector'].hide_safe = self.value_type != 'FLOAT_VECTOR'
+        self.inputs['Vector'].hide_safe = self.value_type not in ['FLOAT_VECTOR', 'FLOAT2']
         self.inputs['Color'].hide_safe = self.value_type != 'FLOAT_COLOR'
         updateNode(self, context)
 
     domains = ['POINT', 'EDGE', 'CORNER', 'FACE']
-    value_types = ['FLOAT', 'INT', 'FLOAT_VECTOR', 'FLOAT_COLOR', 'BOOLEAN']
+    value_types = ['FLOAT', 'INT', 'FLOAT_VECTOR', 'FLOAT_COLOR', 'BOOLEAN', 'FLOAT2']
 
     domain: bpy.props.EnumProperty(items=[(i, i.capitalize(), '') for i in domains], update=updateNode)
     value_type: bpy.props.EnumProperty(items=[(i, i.capitalize(), '') for i in value_types], update=update_type)
@@ -130,7 +132,7 @@ class SvSetAttributeNode(SverchCustomTreeNode, bpy.types.Node):  # todo MESH att
         objects = self.inputs['Object'].sv_get(deepcopy=False, default=[])
         attr_name = self.inputs['Attr name'].sv_get(deepcopy=False, default=[])
         sock_name = 'Value' if self.value_type in ['FLOAT', 'INT', 'BOOLEAN'] else \
-            'Vector' if self.value_type == 'FLOAT_VECTOR' else 'Color'
+            'Vector' if self.value_type in ['FLOAT_VECTOR', 'FLOAT2'] else 'Color'
         values = self.inputs[sock_name].sv_get(deepcopy=False, default=[])
 
         # first step remove attributes from previous update if necessary
