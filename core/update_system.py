@@ -36,6 +36,7 @@ import sverchok
 import traceback
 import ast
 
+global_timings = {}
 graphs = []
 
 no_data_color = (1, 0.3, 0)
@@ -421,7 +422,9 @@ def do_update(node_list, nodes):
     if data_structure.HEAT_MAP:
         do_update_heat_map(node_list, nodes)
     else:
-        do_update_general(node_list, nodes)
+        times = do_update_general(node_list, nodes)
+        if times:
+            global_timings['tree'] = times
 
 def build_update_list(ng=None):
     """
