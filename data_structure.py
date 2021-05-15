@@ -110,6 +110,18 @@ def fixed_iter(data, iter_number, fill_value=0):
             yield item
 
 
+def flat_iter(data):
+    """[1, [2, 3, [4]], 5] -> 1, 2, 3, 4, 5 """
+    if isinstance(data, str):
+        yield data
+        return
+    try:
+        for v in data:
+            yield from flat_iter(v)
+    except TypeError:
+        yield data
+
+
 def match_long_repeat(lsts):
     """return matched list, using the last value to fill lists as needed
     longest list matching [[1,2,3,4,5], [10,11]] -> [[1,2,3,4,5], [10,11,11,11,11]]

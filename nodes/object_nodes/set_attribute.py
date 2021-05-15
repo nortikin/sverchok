@@ -9,8 +9,7 @@ from itertools import chain, cycle
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, fixed_iter, throttle_and_update_node
-from sverchok.utils.handling_nodes import vectorize
+from sverchok.data_structure import updateNode, fixed_iter, throttle_and_update_node, flat_iter
 from sverchok.utils.handle_blender_data import correct_collection_length
 
 
@@ -57,18 +56,6 @@ def set_attribute_node(*, obj=None, values=None, attr_name=None, domain='POINT',
 
     attr.data.update()
     return out
-
-
-def flat_iter(data):  # todo move to data structure
-    """[1, [2, 3, [4]], 5] -> 1, 2, 3, 4, 5 """
-    if isinstance(data, str):
-        yield data
-        return
-    try:
-        for v in data:
-            yield from flat_iter(v)
-    except TypeError:
-        yield data
 
 
 class SvObjectsWithAttributes(bpy.types.PropertyGroup):

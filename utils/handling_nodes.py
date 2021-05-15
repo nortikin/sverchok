@@ -48,28 +48,8 @@ from typing import NamedTuple, Any, Type, Dict, Union, ValuesView, Callable
 import bpy
 from bpy.types import Node
 
-from sverchok.data_structure import updateNode, fixed_iter
+from sverchok.data_structure import updateNode
 from sverchok.utils.handle_blender_data import get_func_and_args
-
-
-def vectorize(f, *, iter_number: int = None):
-    """All input parameters of iterable function should be either list ot tuple"""
-    @wraps(f)
-    def inner(**kwargs):
-
-        obj_n = max(map(len, kwargs.values())) if iter_number is None else iter_number
-        if not obj_n:
-            return f(**kwargs)
-
-        out = []
-        for sock_params in zip(*[fixed_iter(d, obj_n, None) for d in kwargs.values()]):
-            out.append(f(**{n: d for n, d in zip(kwargs.keys(), sock_params)}))
-
-        out_dict = {n: [] for n in out[0].keys()}
-        [out_dict[n].append(d) for layer in out for n, d in layer.items()]
-        return out_dict
-
-    return inner
 
 
 # ================= Below is outdated code ===============
