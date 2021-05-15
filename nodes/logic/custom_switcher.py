@@ -110,7 +110,7 @@ class SvCustomSwitcher(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
             self.string_values.clear()
 
         self.ensure_user_list_sync()
-        self.outputs['Item'].sv_set([[i for i, b in enumerate(self.user_list) if b]])
+        self.outputs['Item'].sv_set([[i for i, b in enumerate(self.user_list[:len(self.string_values)]) if b]])
 
     def ensure_user_list_sync(self):
         # set all excess user_list values to False
