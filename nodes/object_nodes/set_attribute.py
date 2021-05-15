@@ -73,12 +73,13 @@ class SvObjectsWithAttributes(bpy.types.PropertyGroup):
                 self.obj.data.attributes.remove(attr)
 
 
-class SvSetAttributeNode(SverchCustomTreeNode, bpy.types.Node):  # todo MESH attribute
+class SvSetMeshAttributeNode(SverchCustomTreeNode, bpy.types.Node):
     """
-    Triggers: todo
+    Triggers: set mesh attribute
+    Tooltip: It adds an attribute to a mesh
     """
-    bl_idname = 'SvSetAttributeNode'
-    bl_label = 'Set attribute'
+    bl_idname = 'SvSetMeshAttributeNode'
+    bl_label = 'Set mesh attribute'
     bl_icon = 'SORTALPHA'
 
     @throttle_and_update_node
@@ -87,7 +88,6 @@ class SvSetAttributeNode(SverchCustomTreeNode, bpy.types.Node):  # todo MESH att
         self.inputs['Value'].default_property_type = 'float' if self.value_type == 'FLOAT' else 'int'
         self.inputs['Vector'].hide_safe = self.value_type not in ['FLOAT_VECTOR', 'FLOAT2']
         self.inputs['Color'].hide_safe = self.value_type != 'FLOAT_COLOR'
-        updateNode(self, context)
 
     domains = ['POINT', 'EDGE', 'CORNER', 'FACE']
     value_types = ['FLOAT', 'INT', 'FLOAT_VECTOR', 'FLOAT_COLOR', 'BOOLEAN', 'FLOAT2']
@@ -138,4 +138,4 @@ class SvSetAttributeNode(SverchCustomTreeNode, bpy.types.Node):  # todo MESH att
         self.outputs['Object'].sv_set(objects)
 
 
-register, unregister = bpy.utils.register_classes_factory([SvObjectsWithAttributes, SvSetAttributeNode])
+register, unregister = bpy.utils.register_classes_factory([SvObjectsWithAttributes, SvSetMeshAttributeNode])
