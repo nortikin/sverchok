@@ -16,3 +16,4 @@ Objects
    assign_materials
    material_index
    set_custom_uv_map
+   set_mesh_attribute
