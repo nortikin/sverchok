@@ -13,11 +13,11 @@ class ShaderLib2D():
         self.vectors = []
         self.vertex_colors = []
         self.indices = []
+        self.addv = self.vectors.extend
+        self.addc = self.vertex_colors.extend
+        self.addi = self.indices.extend
 
     def add_rect(self, x, y, w, h, color):
-        addv = self.vectors.extend
-        addc = self.vertex_colors.extend
-        addi = self.indices.extend
         """
         b - c
         | / |
@@ -28,9 +28,9 @@ class ShaderLib2D():
         c = (x + w, y - h)
         d = (x + w, y)
         offset = len(self.vectors)
-        addv([a, b, c, d])
-        addc([color for _ in range(4)])
-        addi([[offset + i for i in tri] for tri in [[0, 1, 2], [0, 2, 3]]])
+        self.addv([a, b, c, d])
+        self.addc([color for _ in range(4)])
+        self.addi([[offset + i for i in tri] for tri in [[0, 1, 2], [0, 2, 3]]])
 
     def compile(self):
         geom = lambda: None
