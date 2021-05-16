@@ -7,6 +7,9 @@
 
 class ShaderLib2D():
     def __init__(self):
+        """
+        docstring ?
+        """
         self.vectors = []
         self.vertex_colors = []
         self.indices = []
