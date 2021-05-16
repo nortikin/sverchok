@@ -23,12 +23,12 @@ import bpy
 from bpy.props import StringProperty, EnumProperty, BoolProperty, FloatVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, repeat_last, fullList)
+from sverchok.data_structure import (updateNode, repeat_last, numpy_full_list)
 
 # pylint: disable=E1101
 # pylint: disable=W0613
 
-# modified (kosvor, zeffii) 2017 end november. When Blender changed VertexColor map to rgb+a
+# modified (kosvor, zeffii, vicdoval) 2021
 
 vcol_options = [(k, k, '', i) for i, k in enumerate(["RGB", "RGBA"])]
 
@@ -41,14 +41,16 @@ def set_vertices(loop_count, obj, index_socket, indices, input_colors, colors):
         idx_lookup = collections.defaultdict(list)
         for idx, v_idx in enumerate(vertex_index):
             idx_lookup[v_idx].append(idx)
-
         for idx, col in zip(indices, input_colors):
             colors[idx_lookup[idx]] = col
     else:
         if len(obj.data.vertices) > len(input_colors):
-            fullList(input_colors, len(obj.data.vertices))
-        for idx, v_idx in enumerate(vertex_index):
-            colors[idx] = input_colors[v_idx]
+            colors[:] = numpy_full_list(input_colors, len(obj.data.vertices))[vertex_index]
+        else:
+            if isinstance(input_colors, np.ndarray):
+                colors[:] = input_colors[vertex_index]
+            else:
+                colors[:] = np.array(input_colors)[vertex_index]
 
 def set_polygons(polygon_count, obj, index_socket, indices, input_colors, colors):
     p_start = np.empty(polygon_count, dtype=int)
@@ -61,13 +63,9 @@ def set_polygons(polygon_count, obj, index_socket, indices, input_colors, colors
             stop_slice = start_slice + p_total[idx]
             colors[start_slice:stop_slice] = color
     else:
-        if len(input_colors) < polygon_count:
-            fullList(input_colors, polygon_count)
-        for idx in range(polygon_count):
-            color = input_colors[idx]
-            start_slice = p_start[idx]
-            stop_slice = start_slice + p_total[idx]
-            colors[start_slice:stop_slice] = color
+        for start_slice, total_slice, color in zip(p_start, p_total, repeat_last(input_colors)):
+            colors[start_slice: start_slice + total_slice] = color
+
 
 def set_loops(loop_count, obj, index_socket, indices, input_colors, colors):
     if index_socket.is_linked:
@@ -75,11 +73,9 @@ def set_loops(loop_count, obj, index_socket, indices, input_colors, colors):
             colors[idx] = color
     else:
         if len(input_colors) < loop_count:
-            fullList(input_colors, loop_count)
-        elif len(input_colors) > loop_count:
-            input_colors = input_colors[:loop_count]
-        colors[:] = input_colors
-
+            colors[:] = numpy_full_list(input_colors, loop_count)
+        elif len(input_colors) >= loop_count:
+            colors[:] = input_colors[:loop_count]
 
 
 class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
@@ -157,9 +153,9 @@ class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         if color_socket.bl_idname == 'SvStringsSocket':
             color_socket.replace_socket('SvColorSocket')
 
-        objects = self.inputs["Object"].sv_get()
-        color_data = color_socket.sv_get(default=[None])
-        index_data = index_socket.sv_get(default=[None])
+        objects = self.inputs["Object"].sv_get(deepcopy=False)
+        color_data = color_socket.sv_get(deepcopy=False, default=[None])
+        index_data = index_socket.sv_get(deepcopy=False, default=[None])
 
         num_components = int(len(self.vcol_size))
 

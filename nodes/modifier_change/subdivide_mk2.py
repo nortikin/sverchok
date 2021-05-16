@@ -303,6 +303,8 @@ class SvSubdivideNodeMK2(DraftMode, bpy.types.Node, SverchCustomTreeNode):
                     face_data_matched = numpy_full_list(face_data, len(faces)).tolist()
                 else:
                     face_data_matched = repeat_last_for_length(face_data, len(faces))
+            else:
+                face_data_matched =[]
 
             bm = bmesh_from_pydata(
                 vertices, edges, faces,

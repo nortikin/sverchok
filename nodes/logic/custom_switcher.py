@@ -40,12 +40,19 @@ class SvCustomSwitcher(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
             self['previous_user_list'] = values
         self['user_list'] = values
 
-    multiple_selection: bpy.props.BoolProperty(name='Multiple selection', default=True, update=update_mode,
-                                                description='Selection several items simultaneously')
-    ui_scale: bpy.props.FloatProperty(name='Size of buttons', default=1.0, min=0.5, max=5)
-    string_values: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup, description='Storage of items names')
-    user_list: bpy.props.BoolVectorProperty(name="User selection", size=32, update=updateNode, set=set_user_list,
-                                             get=get_user_list, description='Selection status of items')
+    multiple_selection: bpy.props.BoolProperty(
+        name='Multiple selection', default=True, update=update_mode,
+        description='Selection several items simultaneously')
+
+    ui_scale: bpy.props.FloatProperty(
+        name='Size of buttons', default=1.0, min=0.5, max=5)
+
+    string_values: bpy.props.CollectionProperty(
+        type=bpy.types.PropertyGroup, description='Storage of items names')
+
+    user_list: bpy.props.BoolVectorProperty(
+        name="User selection", size=32, update=updateNode, set=set_user_list,
+        get=get_user_list, description='Selection status of items')
 
     def sv_init(self, context):
         self['user_list'] = [False for _ in range(32)]
@@ -102,7 +109,7 @@ class SvCustomSwitcher(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
         else:
             self.string_values.clear()
 
-        self.outputs['Item'].sv_set([[i for i, b in enumerate(self.user_list) if b]])
+        self.outputs['Item'].sv_set([[i for i, b in enumerate(self.user_list[:len(self.string_values)]) if b]])
 
 
 def register():

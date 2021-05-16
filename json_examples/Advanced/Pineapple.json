@@ -20,7 +20,7 @@
     "Frame.002": "Frame.010",
     "Frame.007": "Frame.010",
     "IcoSphere": "Frame.001",
-    "Inset Special": "Frame.001",
+    "Inset Special.001": "Frame.001",
     "Line": "Frame.003",
     "List Join": "Frame.003",
     "List Length": "Frame.008",
@@ -64,7 +64,7 @@
     "Vertex color mk3.001": "Frame.006"
   },
   "groups": {
-    "Monad": "{\"export_version\": \"0.10\", \"framed_nodes\": {}, \"groups\": {}, \"nodes\": {\"Group Inputs Exp\": {\"bl_idname\": \"SvGroupInputsNodeExp\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [1028.47900390625, -0.3426551818847656], \"params\": {\"node_kind\": \"outputs\"}, \"custom_socket_props\": {}, \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true, \"outputs\": [[\"Vertices\", \"SvVerticesSocket\"], [\"Movement Vectors\", \"SvVerticesSocket\"], [\"Polygons\", \"SvStringsSocket\"], [\"Center\", \"SvVerticesSocket\"], [\"Radius\", \"SvStringsSocket\"]]}, \"Group Outputs Exp\": {\"bl_idname\": \"SvGroupOutputsNodeExp\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [1871.47509765625, -0.3426551818847656], \"params\": {\"node_kind\": \"inputs\"}, \"custom_socket_props\": {}, \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true, \"inputs\": [[\"Vertices\", \"SvVerticesSocket\"]]}, \"Move\": {\"bl_idname\": \"SvMoveNodeMk3\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [1691.47509765625, -18.33763885498047], \"params\": {\"movement_vectors\": [0.0, 0.0, 0.20000000298023224]}, \"custom_socket_props\": {\"1\": {\"expanded\": true}}}, \"Select mesh elements by location\": {\"bl_idname\": \"SvMeshSelectNode\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [1238.47900390625, 17.652328491210938], \"params\": {\"mode\": \"BySphere\", \"radius\": 0.6000000238418579, \"include_partial\": true}, \"custom_socket_props\": {\"3\": {\"prop\": [0.0, 0.0, 1.0]}, \"4\": {\"prop\": [0.0, 0.0, -1.0], \"expanded\": true}}}, \"Proportional Edit Falloff\": {\"bl_idname\": \"SvProportionalEditNode\", \"height\": 100.0, \"width\": 166.3173828125, \"label\": \"\", \"hide\": false, \"location\": [1466.7452392578125, -14.141777992248535], \"params\": {\"radius\": 0.699999988079071, \"falloff_type\": \"sharp\"}, \"custom_socket_props\": {}}}, \"update_lists\": [[\"Move\", 0, \"Group Outputs Exp\", 0], [\"Group Inputs Exp\", 0, \"Move\", 0], [\"Group Inputs Exp\", 1, \"Move\", 1], [\"Proportional Edit Falloff\", 0, \"Move\", 2], [\"Group Inputs Exp\", 0, \"Select mesh elements by location\", 0], [\"Group Inputs Exp\", 2, \"Select mesh elements by location\", 2], [\"Group Inputs Exp\", 3, \"Select mesh elements by location\", 4], [\"Group Inputs Exp\", 4, \"Select mesh elements by location\", 6], [\"Group Inputs Exp\", 0, \"Proportional Edit Falloff\", 0], [\"Select mesh elements by location\", 0, \"Proportional Edit Falloff\", 1]], \"bl_idname\": \"SverchGroupTreeType\", \"cls_bl_idname\": \"SvGroupNodeMonad_140486095450048\"}"
+    "Monad": "{\"export_version\": \"0.10\", \"framed_nodes\": {}, \"groups\": {}, \"nodes\": {\"Group Inputs Exp\": {\"bl_idname\": \"SvGroupInputsNodeExp\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [1028.47900390625, -0.3426551818847656], \"params\": {\"node_kind\": \"outputs\"}, \"custom_socket_props\": {}, \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true, \"outputs\": [[\"Vertices\", \"SvVerticesSocket\"], [\"Movement Vectors\", \"SvVerticesSocket\"], [\"Polygons\", \"SvStringsSocket\"], [\"Center\", \"SvVerticesSocket\"], [\"Radius\", \"SvStringsSocket\"]]}, \"Group Outputs Exp\": {\"bl_idname\": \"SvGroupOutputsNodeExp\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [1871.47509765625, -0.3426551818847656], \"params\": {\"node_kind\": \"inputs\"}, \"custom_socket_props\": {}, \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true, \"inputs\": [[\"Vertices\", \"SvVerticesSocket\"]]}, \"Move\": {\"bl_idname\": \"SvMoveNodeMk3\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [1691.47509765625, -18.33763885498047], \"params\": {\"movement_vectors\": [0.0, 0.0, 0.20000000298023224]}, \"custom_socket_props\": {\"1\": {\"expanded\": true}}}, \"Select mesh elements by location\": {\"bl_idname\": \"SvMeshSelectNodeMk2\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [1238.47900390625, 17.652328491210938], \"params\": {\"mode\": \"BySphere\", \"radius\": 0.6000000238418579, \"include_partial\": true}, \"custom_socket_props\": {\"0\": {\"is_mandatory\": true}, \"1\": {\"nesting_level\": 3}, \"2\": {\"nesting_level\": 3}, \"3\": {\"prop\": [0.0, 0.0, 1.0]}, \"4\": {\"prop\": [0.0, 0.0, -1.0], \"expanded\": true}}}, \"Proportional Edit Falloff\": {\"bl_idname\": \"SvProportionalEditNode\", \"height\": 100.0, \"width\": 166.3173828125, \"label\": \"\", \"hide\": false, \"location\": [1466.7452392578125, -14.141777992248535], \"params\": {\"radius\": 0.699999988079071, \"falloff_type\": \"sharp\"}, \"custom_socket_props\": {}}}, \"update_lists\": [[\"Move\", 0, \"Group Outputs Exp\", 0], [\"Group Inputs Exp\", 0, \"Move\", 0], [\"Group Inputs Exp\", 1, \"Move\", 1], [\"Proportional Edit Falloff\", 0, \"Move\", 2], [\"Group Inputs Exp\", 0, \"Select mesh elements by location\", 0], [\"Group Inputs Exp\", 2, \"Select mesh elements by location\", 2], [\"Group Inputs Exp\", 3, \"Select mesh elements by location\", 4], [\"Group Inputs Exp\", 4, \"Select mesh elements by location\", 6], [\"Group Inputs Exp\", 0, \"Proportional Edit Falloff\", 0], [\"Select mesh elements by location\", 0, \"Proportional Edit Falloff\", 1]], \"bl_idname\": \"SverchGroupTreeType\", \"cls_bl_idname\": \"SvGroupNodeMonad_140486095450048\"}"
   },
   "nodes": {
     "3pt Arc": {
@@ -110,7 +110,7 @@
       "label": "",
       "location": [
         826.978271484375,
-        -297.2085723876953
+        -297.2085418701172
       ],
       "params": {
         "selected_mode": "int"
@@ -212,7 +212,7 @@
       "label": "",
       "location": [
         3151.761474609375,
-        1608.2613830566406
+        1608.2613525390625
       ],
       "params": {},
       "width": 140.0
@@ -237,8 +237,8 @@
       "hide": false,
       "label": "",
       "location": [
-        2913.38623046875,
-        558.7441329956055
+        2919.780397415161,
+        609.8927307128906
       ],
       "params": {
         "g_": 0.699999988079071
@@ -263,13 +263,24 @@
     },
     "Component Analyzer": {
       "bl_idname": "SvComponentAnalyzerNode",
-      "custom_socket_props": {},
+      "custom_socket_props": {
+        "0": {
+          "is_mandatory": true
+        },
+        "1": {
+          "nesting_level": 3
+        },
+        "2": {
+          "is_mandatory": true,
+          "nesting_level": 3
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        2429.56982421875,
-        1000.0673065185547
+        2435.963991165161,
+        1051.2159118652344
       ],
       "params": {
         "face_mode": "Perimeter"
@@ -284,8 +295,8 @@
       "hide": false,
       "label": "",
       "location": [
-        2604.19677734375,
-        1000.0673027038574
+        2610.590944290161,
+        1051.2159118652344
       ],
       "params": {},
       "width": 200.0
@@ -298,8 +309,8 @@
       "hide": false,
       "label": "",
       "location": [
-        2496.1422805786133,
-        561.019889831543
+        2502.5364475250244,
+        612.1684875488281
       ],
       "params": {},
       "width": 200.0
@@ -348,7 +359,7 @@
     "Frame.001": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 311.9542236328125,
+      "height": 451.6605529785156,
       "hide": false,
       "label": "init",
       "location": [
@@ -356,7 +367,7 @@
         270.9542236328125
       ],
       "params": {},
-      "width": 720.0
+      "width": 708.5906982421875
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
@@ -366,12 +377,12 @@
         0.12654002010822296
       ],
       "custom_socket_props": {},
-      "height": 402.0673828125,
+      "height": 424.2159423828125,
       "hide": false,
       "label": "rad",
       "location": [
-        1948.903564453125,
-        994.7980880737305
+        1955.2977313995361,
+        1045.9466857910156
       ],
       "params": {},
       "use_custom_color": true,
@@ -399,7 +410,7 @@
     "Frame.004": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 469.9317626953125,
+      "height": 513.9317626953125,
       "hide": false,
       "label": "shape",
       "location": [
@@ -412,7 +423,7 @@
     "Frame.005": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 475.2294921875,
+      "height": 519.2294921875,
       "hide": false,
       "label": "leafs",
       "location": [
@@ -443,12 +454,12 @@
         0.21782340109348297
       ],
       "custom_socket_props": {},
-      "height": 433.0198974609375,
+      "height": 433.1684875488281,
       "hide": false,
       "label": "green",
       "location": [
-        27.87104034423828,
-        -219.90485382080078
+        34.265207290649414,
+        -168.75625610351562
       ],
       "params": {},
       "use_custom_color": true,
@@ -494,12 +505,12 @@
         0.6079999804496765
       ],
       "custom_socket_props": {},
-      "height": 932.0673828125,
+      "height": 932.2159423828125,
       "hide": false,
       "label": "color",
       "location": [
-        -30.0,
-        75.53160858154297
+        -23.605833053588867,
+        126.68020629882812
       ],
       "params": {},
       "use_custom_color": true,
@@ -525,7 +536,16 @@
         0.9200000166893005,
         0.9200000166893005
       ],
-      "custom_socket_props": {},
+      "custom_socket_props": {
+        "0": {
+          "nesting_level": 1,
+          "pre_processing": "ONE_ITEM"
+        },
+        "1": {
+          "nesting_level": 1,
+          "pre_processing": "ONE_ITEM"
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -539,15 +559,23 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Inset Special": {
-      "bl_idname": "SvInsetSpecial",
-      "custom_socket_props": {},
+    "Inset Special.001": {
+      "bl_idname": "SvInsetSpecialMk2",
+      "custom_socket_props": {
+        "0": {
+          "is_mandatory": true
+        },
+        "1": {
+          "is_mandatory": true,
+          "nesting_level": 3
+        }
+      },
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        1324.1441650390625,
-        360.9542236328125
+        1312.73486328125,
+        399.6605529785156
       ],
       "params": {
         "distance": 0.019999999552965164,
@@ -585,7 +613,7 @@
       "hide": false,
       "label": "",
       "location": [
-        4178.937225341797,
+        4178.936981201172,
         164.03279781341553
       ],
       "params": {
@@ -627,8 +655,8 @@
       "hide": false,
       "label": "",
       "location": [
-        2733.0851516723633,
-        372.2207565307617
+        2739.4793186187744,
+        423.3693542480469
       ],
       "params": {
         "func_": "MAX"
@@ -643,7 +671,7 @@
       "label": "",
       "location": [
         3345.673828125,
-        1073.1985473632812
+        1073.198486328125
       ],
       "params": {},
       "width": 140.0
@@ -655,7 +683,7 @@
       "hide": false,
       "label": "",
       "location": [
-        982.6369934082031,
+        982.636962890625,
         -70.78495788574219
       ],
       "params": {
@@ -675,8 +703,8 @@
       "hide": false,
       "label": "",
       "location": [
-        2321.5238723754883,
-        436.73082733154297
+        2327.9180393218994,
+        487.8794250488281
       ],
       "params": {
         "new_max": 1.0,
@@ -692,7 +720,7 @@
       "hide": false,
       "label": "",
       "location": [
-        1339.6885070800781,
+        1339.6884765625,
         -70.78495788574219
       ],
       "params": {},
@@ -730,7 +758,7 @@
       "label": "",
       "location": [
         4346.8465576171875,
-        1101.6138000488281
+        1101.6137390136719
       ],
       "params": {
         "base_data_name": "Delta",
@@ -958,7 +986,7 @@
       "label": "",
       "location": [
         1633.909740447998,
-        289.8028144836426
+        289.80282974243164
       ],
       "params": {
         "nrotx": 10.0,
@@ -1056,7 +1084,7 @@
       "label": "",
       "location": [
         4346.6141357421875,
-        755.6145324707031
+        755.614501953125
       ],
       "params": {
         "count_": 8325,
@@ -1082,7 +1110,7 @@
       "label": "",
       "location": [
         3128.7529296875,
-        1076.2294311523438
+        1076.2294921875
       ],
       "params": {
         "count_": 20,
@@ -1101,7 +1129,7 @@
       "label": "",
       "location": [
         3985.8509521484375,
-        922.4450378417969
+        922.445068359375
       ],
       "params": {
         "modifiers": true
@@ -1115,8 +1143,8 @@
       "hide": false,
       "label": "",
       "location": [
-        1962.7212600708008,
-        403.50341033935547
+        1969.115427017212,
+        454.6520080566406
       ],
       "params": {
         "mode": "Faces"
@@ -1330,7 +1358,7 @@
       "hide": false,
       "label": "",
       "location": [
-        1157.6025085449219,
+        1157.6025390625,
         -70.78495788574219
       ],
       "params": {},
@@ -1403,8 +1431,8 @@
       "hide": false,
       "label": "",
       "location": [
-        2144.1171340942383,
-        342.7903366088867
+        2150.5113010406494,
+        393.9389343261719
       ],
       "params": {},
       "width": 100.0
@@ -1442,10 +1470,40 @@
   },
   "update_lists": [
     [
-      "Evaluate Curve",
+      "List Join",
       0,
-      "Polyline Viewer.001",
+      "3pt Arc",
+      1
+    ],
+    [
+      "Inset Special.001",
+      0,
+      "Area",
       0
+    ],
+    [
+      "Inset Special.001",
+      1,
+      "Area",
+      1
+    ],
+    [
+      "Number Range.002",
+      0,
+      "Color in.001",
+      0
+    ],
+    [
+      "Scale",
+      0,
+      "Dual Mesh",
+      0
+    ],
+    [
+      "IcoSphere",
+      2,
+      "Dual Mesh",
+      2
     ],
     [
       "Arc 3pt (Curve)",
@@ -1454,82 +1512,40 @@
       0
     ],
     [
-      "Polyline Viewer",
+      "Scalar Math.002",
       0,
-      "Object ID Out MK2",
+      "Line",
       0
     ],
     [
-      "Object ID Out MK2",
-      3,
-      "List Length.001",
+      "Move.001",
+      0,
+      "List Join",
       0
     ],
     [
-      "Object ID Out MK2",
+      "Move",
       0,
-      "Mesh viewer.001",
-      0
-    ],
-    [
-      "Object ID Out MK2",
-      3,
-      "Mesh viewer.001",
-      2
-    ],
-    [
-      "List Length.001",
-      0,
-      "Number Range.002",
-      2
-    ],
-    [
-      "Number Range.002",
-      0,
-      "Color in.001",
-      0
-    ],
-    [
-      "Mesh viewer.001",
-      0,
-      "Vertex color mk3.001",
-      0
-    ],
-    [
-      "Color in.001",
-      0,
-      "Vertex color mk3.001",
-      2
-    ],
-    [
-      "3pt Arc",
-      0,
-      "Polyline Viewer",
-      0
-    ],
-    [
-      "Scalar Math.001",
-      0,
-      "Polyline Viewer",
-      2
-    ],
-    [
-      "Polyline Viewer.001",
-      0,
-      "Polyline Viewer",
-      4
-    ],
-    [
-      "Scalar Math",
-      0,
-      "Scalar Math.001",
-      0
-    ],
-    [
-      "List Split",
-      0,
-      "Scalar Math.001",
+      "List Join",
       1
+    ],
+    [
+      "Move.002",
+      0,
+      "List Join",
+      2
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "List Length",
+      "Data"
+    ],
+    [
+      "Object ID Out MK2",
+      3,
+      "List Length.001",
+      0
     ],
     [
       "Number Range.003",
@@ -1538,39 +1554,9 @@
       0
     ],
     [
-      "Number Range.001",
+      "Area",
       0,
-      "Scalar Math",
-      0
-    ],
-    [
-      "Scale",
-      0,
-      "Dual Mesh",
-      0
-    ],
-    [
-      "IcoSphere",
-      2,
-      "Dual Mesh",
-      2
-    ],
-    [
-      "Dual Mesh",
-      0,
-      "Inset Special",
-      2
-    ],
-    [
-      "Dual Mesh",
-      1,
-      "Inset Special",
-      3
-    ],
-    [
-      "IcoSphere",
-      0,
-      "Scale",
+      "Logic functions",
       0
     ],
     [
@@ -1578,210 +1564,6 @@
       0,
       "Mask to Index",
       0
-    ],
-    [
-      "Logic functions",
-      0,
-      "Switch",
-      0
-    ],
-    [
-      "A Number",
-      0,
-      "Switch",
-      1
-    ],
-    [
-      "A Number.001",
-      0,
-      "Switch",
-      2
-    ],
-    [
-      "Area",
-      0,
-      "Logic functions",
-      0
-    ],
-    [
-      "Inset Special",
-      0,
-      "Area",
-      0
-    ],
-    [
-      "Inset Special",
-      1,
-      "Area",
-      1
-    ],
-    [
-      "Inset Special",
-      0,
-      "MultiExtrude Alt from addons",
-      0
-    ],
-    [
-      "Inset Special",
-      1,
-      "MultiExtrude Alt from addons",
-      1
-    ],
-    [
-      "Mask to Index",
-      0,
-      "MultiExtrude Alt from addons",
-      2
-    ],
-    [
-      "A Number.002",
-      0,
-      "Spiral",
-      3
-    ],
-    [
-      "A Number.005",
-      0,
-      "Spiral",
-      4
-    ],
-    [
-      "A Number.002",
-      0,
-      "Spiral.001",
-      3
-    ],
-    [
-      "A Number.005",
-      0,
-      "Spiral.001",
-      4
-    ],
-    [
-      "Spiral.001",
-      0,
-      "Move",
-      0
-    ],
-    [
-      "A Number.002",
-      0,
-      "Scalar Math.002",
-      0
-    ],
-    [
-      "A Number.005",
-      0,
-      "Scalar Math.002",
-      1
-    ],
-    [
-      "Scalar Math.002",
-      0,
-      "Line",
-      0
-    ],
-    [
-      "Line",
-      0,
-      "Move.002",
-      0
-    ],
-    [
-      "Spiral",
-      0,
-      "Move.001",
-      0
-    ],
-    [
-      "Move.001",
-      0,
-      "List Join",
-      0
-    ],
-    [
-      "Move",
-      0,
-      "List Join",
-      1
-    ],
-    [
-      "Move.002",
-      0,
-      "List Join",
-      2
-    ],
-    [
-      "List Join",
-      0,
-      "3pt Arc",
-      1
-    ],
-    [
-      "Curve Mapper",
-      0,
-      "Color in",
-      0
-    ],
-    [
-      "Curve Mapper.001",
-      0,
-      "Color in",
-      1
-    ],
-    [
-      "MultiExtrude Alt from addons",
-      0,
-      "Component Analyzer",
-      0
-    ],
-    [
-      "MultiExtrude Alt from addons",
-      1,
-      "Component Analyzer",
-      2
-    ],
-    [
-      "Component Analyzer",
-      0,
-      "Curve Mapper",
-      0
-    ],
-    [
-      "Map Range",
-      0,
-      "Curve Mapper.001",
-      0
-    ],
-    [
-      "Vector out",
-      2,
-      "Map Range",
-      0
-    ],
-    [
-      "Vector out",
-      2,
-      "List Math",
-      0
-    ],
-    [
-      "Origins",
-      0,
-      "Vector out",
-      0
-    ],
-    [
-      "MultiExtrude Alt from addons",
-      0,
-      "Origins",
-      0
-    ],
-    [
-      "MultiExtrude Alt from addons",
-      1,
-      "Origins",
-      2
     ],
     [
       "Reroute.002",
@@ -1796,46 +1578,46 @@
       "faces"
     ],
     [
-      "Mesh viewer",
+      "Object ID Out MK2",
       0,
-      "Vertex color mk3",
+      "Mesh viewer.001",
       0
     ],
     [
-      "Number Range",
-      0,
-      "Vertex color mk3",
-      1
-    ],
-    [
-      "Color in",
-      0,
-      "Vertex color mk3",
-      2
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "List Length",
-      "Data"
-    ],
-    [
-      "List Length",
-      0,
-      "Number Range",
+      "Object ID Out MK2",
+      3,
+      "Mesh viewer.001",
       2
     ],
     [
       "MultiExtrude Alt from addons",
-      "faces",
-      "Reroute.001",
-      "Input"
+      0,
+      "Monad",
+      0
     ],
     [
-      "Monad.001",
-      "Vertices",
-      "Reroute.002",
-      "Input"
+      "Vector in.001",
+      0,
+      "Monad",
+      1
+    ],
+    [
+      "MultiExtrude Alt from addons",
+      1,
+      "Monad",
+      2
+    ],
+    [
+      "Vector in",
+      0,
+      "Monad",
+      3
+    ],
+    [
+      "A Number.003",
+      0,
+      "Monad",
+      4
     ],
     [
       "Monad",
@@ -1868,34 +1650,280 @@
       4
     ],
     [
-      "MultiExtrude Alt from addons",
+      "Spiral.001",
       0,
-      "Monad",
+      "Move",
       0
     ],
     [
-      "Vector in.001",
+      "Spiral",
       0,
-      "Monad",
+      "Move.001",
+      0
+    ],
+    [
+      "Line",
+      0,
+      "Move.002",
+      0
+    ],
+    [
+      "Inset Special.001",
+      0,
+      "MultiExtrude Alt from addons",
+      0
+    ],
+    [
+      "Inset Special.001",
+      1,
+      "MultiExtrude Alt from addons",
+      1
+    ],
+    [
+      "Mask to Index",
+      0,
+      "MultiExtrude Alt from addons",
+      2
+    ],
+    [
+      "List Length",
+      0,
+      "Number Range",
+      2
+    ],
+    [
+      "List Length.001",
+      0,
+      "Number Range.002",
+      2
+    ],
+    [
+      "Polyline Viewer",
+      0,
+      "Object ID Out MK2",
+      0
+    ],
+    [
+      "3pt Arc",
+      0,
+      "Polyline Viewer",
+      0
+    ],
+    [
+      "Scalar Math.001",
+      0,
+      "Polyline Viewer",
+      2
+    ],
+    [
+      "Polyline Viewer.001",
+      0,
+      "Polyline Viewer",
+      4
+    ],
+    [
+      "Evaluate Curve",
+      0,
+      "Polyline Viewer.001",
+      0
+    ],
+    [
+      "MultiExtrude Alt from addons",
+      "faces",
+      "Reroute.001",
+      "Input"
+    ],
+    [
+      "Monad.001",
+      "Vertices",
+      "Reroute.002",
+      "Input"
+    ],
+    [
+      "Number Range.001",
+      0,
+      "Scalar Math",
+      0
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Scalar Math.001",
+      0
+    ],
+    [
+      "List Split",
+      0,
+      "Scalar Math.001",
+      1
+    ],
+    [
+      "A Number.002",
+      0,
+      "Scalar Math.002",
+      0
+    ],
+    [
+      "A Number.005",
+      0,
+      "Scalar Math.002",
+      1
+    ],
+    [
+      "IcoSphere",
+      0,
+      "Scale",
+      0
+    ],
+    [
+      "A Number.002",
+      0,
+      "Spiral",
+      3
+    ],
+    [
+      "A Number.005",
+      0,
+      "Spiral",
+      4
+    ],
+    [
+      "A Number.002",
+      0,
+      "Spiral.001",
+      3
+    ],
+    [
+      "A Number.005",
+      0,
+      "Spiral.001",
+      4
+    ],
+    [
+      "Logic functions",
+      0,
+      "Switch",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Switch",
+      1
+    ],
+    [
+      "A Number.001",
+      0,
+      "Switch",
+      2
+    ],
+    [
+      "Mesh viewer",
+      0,
+      "Vertex color mk3",
+      0
+    ],
+    [
+      "Number Range",
+      0,
+      "Vertex color mk3",
+      1
+    ],
+    [
+      "Color in",
+      0,
+      "Vertex color mk3",
+      2
+    ],
+    [
+      "Mesh viewer.001",
+      0,
+      "Vertex color mk3.001",
+      0
+    ],
+    [
+      "Color in.001",
+      0,
+      "Vertex color mk3.001",
+      2
+    ],
+    [
+      "Dual Mesh",
+      0,
+      "Inset Special.001",
+      0
+    ],
+    [
+      "Dual Mesh",
+      1,
+      "Inset Special.001",
+      1
+    ],
+    [
+      "Curve Mapper",
+      0,
+      "Color in",
+      0
+    ],
+    [
+      "Curve Mapper.001",
+      0,
+      "Color in",
       1
     ],
     [
       "MultiExtrude Alt from addons",
+      0,
+      "Component Analyzer",
+      0
+    ],
+    [
+      "MultiExtrude Alt from addons",
       1,
-      "Monad",
+      "Component Analyzer",
       2
     ],
     [
-      "Vector in",
+      "Component Analyzer",
       0,
-      "Monad",
-      3
+      "Curve Mapper",
+      0
     ],
     [
-      "A Number.003",
+      "Map Range",
       0,
-      "Monad",
-      4
+      "Curve Mapper.001",
+      0
+    ],
+    [
+      "Vector out",
+      2,
+      "List Math",
+      0
+    ],
+    [
+      "Vector out",
+      2,
+      "Map Range",
+      0
+    ],
+    [
+      "MultiExtrude Alt from addons",
+      0,
+      "Origins",
+      0
+    ],
+    [
+      "MultiExtrude Alt from addons",
+      1,
+      "Origins",
+      2
+    ],
+    [
+      "Origins",
+      0,
+      "Vector out",
+      0
     ]
   ]
 }

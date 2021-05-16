@@ -17,6 +17,11 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import os
+from os.path import exists, isfile
+import inspect
+import webbrowser
+
 extra_category_providers = []
 
 def register_extra_category_provider(provider):
@@ -40,3 +45,29 @@ def get_extra_categories():
         result.extend(provider.get_categories())
     return result
 
+def external_node_docs(operator, node, kind):
+
+    node_file_path = inspect.getfile(node.__class__)
+    separator = node_file_path.rfind('nodes')
+    local_file_path = os.path.join(node_file_path[0:separator], 'docs', node_file_path[separator:-2]+'rst')
+
+    valid = exists(local_file_path) and isfile(local_file_path)
+
+    if valid:
+        if kind == 'offline':
+            webbrowser.open(local_file_path)
+        else:
+            f_direc = node.__module__.split('.')
+
+            extra_cats = extra_category_providers
+            for cat in extra_cats:
+
+                if f_direc[0] in cat.identifier.lower():
+                    if hasattr(cat, 'docs'):
+                        link = cat.docs+'/'+ f_direc[1]+'/'+ f_direc[2]+'/'+ f_direc[3] + '.rst'
+                        print('Docs found ', cat.identifier, cat.docs)
+                        webbrowser.open(link)
+                        break
+        return {'FINISHED'}
+    operator.report({'ERROR'}, "Not available documentation")
+    return {'CANCELLED'}

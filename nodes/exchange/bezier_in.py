@@ -11,34 +11,33 @@ from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
+from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
 from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve.bezier import SvCubicBezierCurve
 
-class SvBezierInCallbackOp(bpy.types.Operator):
+
+class SvBezierInCallbackOp(bpy.types.Operator, SvGenericNodeLocator):
 
     bl_idname = "node.sv_bezier_in_callback"
     bl_label = "Bezier In Callback"
     bl_options = {'INTERNAL'}
-
-    node_name: StringProperty(default='')
-    tree_name: StringProperty(default='')
 
     def execute(self, context):
         """
         returns the operator's 'self' too to allow the code being called to
         print from self.report.
         """
-        if self.tree_name and self.node_name:
-            ng = bpy.data.node_groups[self.tree_name]
-            node = ng.nodes[self.node_name]
-        else:
-            node = context.node
+        node = self.get_node(context)
+        if node:
+            node.get_objects_from_scene(self)
+            return {'FINISHED'}
 
-        node.get_objects_from_scene(self)
-        return {'FINISHED'}
+        return {'CANCELLED'}
 
-class SvBezierInNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+
+class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """
     Triggers: Input Bezier
     Tooltip: Get Bezier Curve objects from scene
@@ -55,11 +54,12 @@ class SvBezierInNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         description='sorting inserted objects by names',
         default=True, update=updateNode)
 
-    apply_matrix : BoolProperty(
+    apply_matrix: BoolProperty(
         name = "Apply matrices",
         description = "Apply object matrices to control points",
         default = True,
         update = updateNode)
+
 
     def sv_init(self, context):
         self.outputs.new('SvCurveSocket', 'Curves')
@@ -101,6 +101,15 @@ class SvBezierInNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         else:
             layout.label(text='--None--')
 
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "draw_3dpanel")
+
+    def draw_buttons_3dpanel(self, layout):
+        row = layout.row(align=True)
+        row.label(text=self.label if self.label else self.name)
+        self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOp.bl_idname, text='GET')
+        self.wrapper_tracked_ui_draw_op(row, "node.sv_nodeview_zoom_border", text="", icon="TRACKER_DATA")
+
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
         col = layout.column(align=True)
@@ -109,15 +118,11 @@ class SvBezierInNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         row = col.row()
         op_text = "Get selection"  # fallback
 
-        try:
-            addon = context.preferences.addons.get(sverchok.__name__)
-            if addon.preferences.over_sized_buttons:
-                row.scale_y = 4.0
-                op_text = "G E T"
-        except:
-            pass
+        if self.prefs_over_sized_buttons:
+            row.scale_y = 4.0
+            op_text = "G E T"
 
-        row.operator(SvBezierInCallbackOp.bl_idname, text=op_text)
+        self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOp.bl_idname, text=op_text)
 
         layout.prop(self, 'sort', text='Sort', toggle=True)
         layout.prop(self, 'apply_matrix', toggle=True)

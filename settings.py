@@ -1,3 +1,4 @@
+import sys
 import os
 import subprocess
 
@@ -10,10 +11,14 @@ from sverchok.core import handlers
 from sverchok.core import update_system
 from sverchok.utils import logging
 from sverchok.utils.sv_gist_tools import TOKEN_HELP_URL
+from sverchok.utils.sv_extra_addons import draw_extra_addons
 from sverchok.ui import color_def
 from sverchok.ui.utils import message_on_layout
 
-PYPATH = bpy.app.binary_path_python
+if bpy.app.version >= (2, 91, 0):
+    PYPATH = sys.executable
+else:
+    PYPATH = bpy.app.binary_path_python
 
 def get_params(settings_and_fallbacks):
     """
@@ -377,11 +382,6 @@ class SverchokPreferences(AddonPreferences):
             update = update_log_level,
             default = "INFO")
 
-    log_update_events: BoolProperty(
-        name="Log update events",
-        description="Print name of methods which are triggered upon changes in BLender",
-        default=False)
-
     log_to_buffer: BoolProperty(name = "Log to text buffer",
             description = "Enable log output to internal Blender's text buffer",
             default = True)
@@ -402,6 +402,7 @@ class SverchokPreferences(AddonPreferences):
     # updating sverchok
     dload_archive_name: StringProperty(name="archive name", default="master") # default = "master"
     dload_archive_path: StringProperty(name="archive path", default="https://github.com/nortikin/sverchok/archive/")
+    available_new_version: bpy.props.BoolProperty(default=False)
 
     FreeCAD_folder: StringProperty(
             name="FreeCAD python 3.7 folder",
@@ -414,6 +415,7 @@ class SverchokPreferences(AddonPreferences):
         col1 = col_split.column()
         col1.label(text="UI:")
         col1.prop(self, "show_icons")
+        col1.prop(self, "over_sized_buttons")
 
         toolbar_box = col1.box()
         toolbar_box.label(text="Node toolbars")
@@ -424,8 +426,6 @@ class SverchokPreferences(AddonPreferences):
                 toolbar_box.prop(self, "node_panels_columns")
 
         col1.prop(self, 'show_input_menus')
-
-        col1.prop(self, "over_sized_buttons")
         col1.prop(self, "external_editor", text="Ext Editor")
         col1.prop(self, "real_sverchok_path", text="Src Directory")
 
@@ -450,9 +450,6 @@ class SverchokPreferences(AddonPreferences):
         log_box = col2.box()
         log_box.label(text="Logging:")
         log_box.prop(self, "log_level")
-
-        if self.log_level == "DEBUG":
-            log_box.prop(self, "log_update_events")
 
         buff_row = log_box.row()
         buff_row.prop(self, "log_to_buffer")
@@ -584,6 +581,7 @@ dependencies, or install only some of them.""")
 
         if any(package.module is None for package in sv_dependencies.values()):
             box.operator('wm.url_open', text="Read installation instructions for missing dependencies").url = "https://github.com/nortikin/sverchok/wiki/Dependencies"
+        draw_extra_addons(layout)
 
     def draw(self, context):
 
@@ -613,7 +611,7 @@ dependencies, or install only some of them.""")
         row1.operator('wm.url_open', text='Sverchok home page').url = 'http://nikitron.cc.ua/blend_scripts.html'
         row1.operator('wm.url_open', text='Documentation').url = 'http://nikitron.cc.ua/sverch/html/main.html'
 
-        if context.scene.sv_new_version:
+        if self.available_new_version:
             row1.operator('node.sverchok_update_addon', text='Upgrade Sverchok addon')
         else:
             row1.operator('node.sverchok_check_for_upgrades_wsha', text='Check for new version')

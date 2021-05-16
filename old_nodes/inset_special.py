@@ -203,15 +203,9 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
     #   default=(0,0,1), update=updateNode)
 
     replacement_nodes = [
-        ('SvExtrudeSeparateNode',
+        ('SvInsetSpecialMk2',
             dict(vertices='Vertices', polygons='Polygons'),
-            dict(vertices='Vertices', polygons='Polygons')),
-        ('SvExtrudeSeparateLiteNode',
-            dict(vertices='Vertices', polygons='Polygons'),
-            dict(vertices='Vertices', polygons='Polygons')),
-        ('SvInsetFaces',
-            dict(vertices='Verts', polygons='Faces'),
-            dict(vertices='Verts', polygons='Faces'))
+            dict(vertices='vertices', polygons='polygons')),
     ]
 
     def sv_init(self, context):

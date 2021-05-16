@@ -666,6 +666,7 @@ class SvMatrixSocket(NodeSocket, SvSocketCommon):
 
     color = (0.2, 0.8, 0.8, 1.0)
     quick_link_to_node = 'SvMatrixInNodeMK4'
+    nesting_level: IntProperty(default=1)
 
     def do_flatten(self, data):
         return flatten_data(data, 1, data_types=(Matrix,))
@@ -814,7 +815,7 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
     default_property: FloatVectorProperty(default=(0, 0, 0, 1), size=4, subtype='COLOR', min=0, max=1,
                                           update=process_from_socket)
     expanded: BoolProperty(default=False)  # for minimizing showing socket property
-
+    nesting_level: IntProperty(default=3)
     def draw_property(self, layout, prop_origin=None, prop_name='default_property'):
         if prop_origin is None:
             prop_origin = self
@@ -837,6 +838,9 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
             layout.prop(self, 'default_property', text=text)
         else:
             layout.label(text=text)
+
+    def do_flat_topology(self, data):
+        return flatten_data(data, 3)
 
 class SvDummySocket(NodeSocket, SvSocketCommon):
     '''Dummy Socket for sockets awaiting assignment of type'''
@@ -1102,6 +1106,7 @@ class SvDictionarySocket(NodeSocket, SvSocketCommon):
     bl_label = "Dictionary Socket"
 
     color = (1.0, 1.0, 1.0, 1.0)
+    quick_link_to_node = 'SvDictionaryIn'
 
     def do_flatten(self, data):
         return flatten_data(data, 1, data_types=(dict,))
@@ -1231,6 +1236,10 @@ class SvLinkNewNodeInput(bpy.types.Operator):
     ''' Spawn and link new node to the left of the caller node'''
     bl_idname = "node.sv_quicklink_new_node_input"
     bl_label = "Add a new node to the left"
+
+    @classmethod
+    def poll(cls, context):
+        return hasattr(context, 'socket')
 
     def execute(self, context):
         tree, node, socket = context.node.id_data, context.node, context.socket

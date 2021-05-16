@@ -29,13 +29,15 @@ from numpy import (
     array as np_array,
     newaxis as np_newaxis,
     ndarray,
+    ones as np_ones,
+    arange as np_arange,
     repeat as np_repeat,
     concatenate as np_concatenate,
     tile as np_tile,
     float64,
     int32, int64)
 from sverchok.utils.logging import info
-from sverchok.core.events import CurrentEvents, BlenderEventsTypes
+
 
 DEBUG_MODE = False
 HEAT_MAP = False
@@ -241,8 +243,10 @@ def repeat_last_for_length(lst, count, deepcopy=False):
     repeat_last_for_length([], n) = []
     repeat_last_for_length([1,2], 4) = [1, 2, 2, 2]
     """
-    if not lst or len(lst) >= count:
+    if not lst:
         return lst
+    if len(lst) >= count:
+        return lst[:count]
     n = len(lst)
     x = lst[-1]
     result = lst[:]
@@ -501,7 +505,7 @@ def levels_of_list_or_np(lst):
         return level
     return 0
 
-SIMPLE_DATA_TYPES = (float, int, float64, int32, int64, str)
+SIMPLE_DATA_TYPES = (float, int, float64, int32, int64, str, Matrix)
 
 
 def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
@@ -831,6 +835,17 @@ def apply_mask(mask, lst):
             bad.append(item)
     return good, bad
 
+def invert_index_list(indexes, length):
+    '''
+    Inverts indexes list
+    indexes: List[Int] of Ndarray flat numpy array
+    length: Int. Length of the base list
+    '''
+    mask = np_ones(length, dtype='bool')
+    mask[indexes] = False
+    inverted_indexes = np_arange(length)[mask]
+    return inverted_indexes
+
 def rotate_list(l, y=1):
     """
     "Rotate" list by shifting it's items towards the end and putting last items to the beginning.
@@ -1077,6 +1092,13 @@ def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
 #### random stuff
 ####
 
+def has_element(pol_edge):
+    if pol_edge is None:
+        return False
+    if len(pol_edge) > 0 and hasattr(pol_edge[0], '__len__') and len(pol_edge[0]) > 0:
+        return True
+    return False
+
 def no_space(s):
     return s.replace(' ', '_')
 
@@ -1224,7 +1246,6 @@ def updateNode(self, context):
     When a node has changed state and need to call a partial update.
     For example a user exposed bpy.prop
     """
-    CurrentEvents.new_event(BlenderEventsTypes.node_property_update, self)
     self.process_node(context)
 
 
@@ -1253,7 +1274,7 @@ def update_with_kwargs(update_function, **kwargs):
 @contextmanager
 def throttle_tree_update(node):
     """ usage
-    from sverchok.node_tree import throttle_tree_update
+    from sverchok.data_structure import throttle_tree_update
 
     inside your node, f.ex inside a wrapped_update that creates a socket
 

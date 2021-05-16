@@ -27,14 +27,14 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, describe_data_shape
 from sverchok.utils.logging import info, debug
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
-from sverchok.nodes.analyzer.normals import calc_mesh_normals
+from sverchok.utils.sv_mesh_utils import calc_mesh_normals_bmesh as calc_mesh_normals
 
 class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
     '''Select vertices, edges, faces by geometric criteria'''
     bl_idname = 'SvMeshSelectNode'
     bl_label = 'Select mesh elements by location'
     bl_icon = 'UV_SYNC_SELECT'
-
+    replacement_nodes = [('SvMeshSelectNodeMk2', None, None)]
     modes = [
             ("BySide", "By side", "Select specified side of mesh", 0),
             ("ByNormal", "By normal direction", "Select faces with normal in specified direction", 1),

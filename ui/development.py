@@ -21,7 +21,7 @@ from os.path import exists, isfile
 import subprocess
 import webbrowser
 import socket
-
+import inspect
 import bpy
 from bpy.props import StringProperty, CollectionProperty, BoolProperty, FloatProperty
 
@@ -35,6 +35,8 @@ from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mappin
 from sverchok.ui.presets import get_presets, SverchPresetReplaceOperator, SvSaveSelected, node_supports_presets
 from sverchok.nodes.__init__ import nodes_dict
 from sverchok.settings import PYPATH
+from sverchok.utils.extra_categories import external_node_docs
+
 
 def displaying_sverchok_nodes(context):
     return context.space_data.tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}
@@ -95,6 +97,7 @@ def get_docs_filepath(string_dir, filename):
         )
     return filepath
 
+
 class SvViewHelpForNode(bpy.types.Operator):
     """ Open docs on site, on local PC or on github """
     bl_idname = "node.view_node_help"
@@ -106,6 +109,10 @@ class SvViewHelpForNode(bpy.types.Operator):
         n = context.active_node
 
         string_dir = remapper.get(n.bl_idname)
+        if not string_dir: #external node
+            print('external_node')
+            return external_node_docs(self, n, self.kind)
+
         filename = n.__module__.split('.')[-1]
         if filename in ('mask','mask_convert','mask_join'):
             string_dir = 'list_masks'
@@ -232,7 +239,6 @@ class SvViewSourceForNode(bpy.types.Operator):
 
     def get_filepath_from_node(self, n):
         """ get full filepath on disk for a given node reference """
-        import inspect
         return inspect.getfile(n.__class__)
 
 class SV_MT_LoadPresetMenu(bpy.types.Menu):

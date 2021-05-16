@@ -1,11 +1,12 @@
 {
-  "export_version": "0.079",
+  "export_version": "0.10",
   "framed_nodes": {
     "Assign Materials List": "Output",
+    "Calculate normals": "Tangent Move",
     "Matrix In": "Tangent Move",
     "Matrix Math": "Tangent Move",
+    "Matrix Out": "Tangent Move",
     "Matrix Track To": "Tangent Move",
-    "Matrix out": "Tangent Move",
     "Mesh viewer": "Output",
     "Move": "Bottom Flat",
     "Move.002": "Tangent Move",
@@ -19,13 +20,13 @@
     "Scale.002": "Fractal",
     "Select mesh elements by location.001": "Bottom Flat",
     "Vector Noise": "Fractal",
-    "Vector in": "Bottom Flat",
-    "Vertex Normal": "Tangent Move"
+    "Vector in": "Bottom Flat"
   },
   "groups": {},
   "nodes": {
     "Assign Materials List": {
       "bl_idname": "SvAssignMaterialListNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -33,16 +34,22 @@
         3726.103015899658,
         447.9947032928467
       ],
-      "materials": [
-        "Donut",
-        "Cream"
-      ],
-      "params": {},
+      "params": {
+        "materials": [
+          {
+            "material": "Donut"
+          },
+          {
+            "material": "Cream"
+          }
+        ]
+      },
       "width": 200.0
     },
     "Bottom Flat": {
       "bl_idname": "NodeFrame",
-      "height": 603.775390625,
+      "custom_socket_props": {},
+      "height": 605.8386840820312,
       "hide": false,
       "label": "Make Bottom Flat",
       "location": [
@@ -50,11 +57,32 @@
         10.079999923706055
       ],
       "params": {},
-      "width": 599.55126953125
+      "width": 599.3994140625
+    },
+    "Calculate normals": {
+      "bl_idname": "SvGetNormalsNodeMk2",
+      "custom_socket_props": {
+        "0": {
+          "is_mandatory": true
+        },
+        "1": {
+          "nesting_level": 3
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        574.5914192199707,
+        35.43051528930664
+      ],
+      "params": {},
+      "width": 140.0
     },
     "Fractal": {
       "bl_idname": "NodeFrame",
-      "height": 399.04327392578125,
+      "custom_socket_props": {},
+      "height": 428.1192626953125,
       "hide": false,
       "label": "Fractal vectors",
       "location": [
@@ -62,10 +90,11 @@
         193.4789276123047
       ],
       "params": {},
-      "width": 607.144287109375
+      "width": 606.992431640625
     },
     "Inset faces": {
       "bl_idname": "SvInsetFaces",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -73,16 +102,17 @@
         2257.6279296875,
         607.4078979492188
       ],
-      "mask_type": [],
       "params": {
         "depth": 0.029999995604157448,
         "inset_type": "region",
+        "mask_type": [],
         "thickness": 0.0
       },
       "width": 140.0
     },
     "Matrix In": {
       "bl_idname": "SvMatrixInNodeMK4",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -90,28 +120,12 @@
         1410.7752571105957,
         108.26798057556152
       ],
-      "params": {
-        "angle": 0.0,
-        "axis": [
-          0.0,
-          0.0,
-          1.0
-        ],
-        "location_": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "scale": [
-          1.0,
-          1.0,
-          1.0
-        ]
-      },
+      "params": {},
       "width": 140.0
     },
     "Matrix Math": {
       "bl_idname": "SvMatrixMathNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "Matrix Multiply",
@@ -119,14 +133,30 @@
         1668.8109016418457,
         84.34956932067871
       ],
-      "params": {
-        "operation": "MULTIPLY",
-        "prePost": "PRE"
+      "params": {},
+      "width": 140.0
+    },
+    "Matrix Out": {
+      "bl_idname": "SvMatrixOutNodeMK2",
+      "custom_socket_props": {
+        "0": {
+          "is_mandatory": true,
+          "nesting_level": 2
+        }
       },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1874.8292121887207,
+        19.41971206665039
+      ],
+      "params": {},
       "width": 140.0
     },
     "Matrix Track To": {
       "bl_idname": "SvMatrixTrackToNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -139,26 +169,14 @@
       },
       "width": 140.0
     },
-    "Matrix out": {
-      "bl_idname": "MatrixOutNode",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        1874.8292121887207,
-        19.41971206665039
-      ],
-      "params": {},
-      "width": 140.0
-    },
     "Mesh viewer": {
       "bl_idname": "SvMeshViewer",
-      "collection": "",
       "color": [
         1.0,
         0.5889999866485596,
         0.21400000154972076
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -166,14 +184,13 @@
         3502.428943634033,
         437.2855052947998
       ],
-      "params": {
-        "base_data_name": "Alpha"
-      },
+      "params": {},
       "use_custom_color": true,
       "width": 140.0
     },
     "Move": {
       "bl_idname": "SvMoveNodeMk3",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -181,13 +198,12 @@
         2974.266345977783,
         914.8750438690186
       ],
-      "params": {
-        "strength": 1.0
-      },
+      "params": {},
       "width": 140.0
     },
     "Move.002": {
       "bl_idname": "SvMoveNodeMk3",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -195,9 +211,7 @@
         2058.213367462158,
         192.87377738952637
       ],
-      "params": {
-        "strength": 1.0
-      },
+      "params": {},
       "width": 140.0
     },
     "Note": {
@@ -207,6 +221,7 @@
         0.5,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -215,6 +230,7 @@
         725.6976318359375
       ],
       "params": {
+        "n_id": "-8720698396325214450",
         "text": "Select faces that are in the topmost part of the donut"
       },
       "use_custom_color": true,
@@ -227,6 +243,7 @@
         0.5,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -235,6 +252,7 @@
         -129.8543872833252
       ],
       "params": {
+        "n_id": "-8720698396325214264",
         "text": "For each donut vertex, make a matrix, Z axis of which looks along vertex's normal"
       },
       "use_custom_color": true,
@@ -247,6 +265,7 @@
         0.5,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -255,6 +274,7 @@
         484.1577453613281
       ],
       "params": {
+        "n_id": "-8720698396362193251",
         "text": "Make the donut itself"
       },
       "use_custom_color": true,
@@ -267,6 +287,7 @@
         0.5,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -275,6 +296,7 @@
         665.8267059326172
       ],
       "params": {
+        "n_id": "-8720698396325429967",
         "text": "For each donut vertex, make a random vector by some fractal pattern"
       },
       "use_custom_color": true,
@@ -287,6 +309,7 @@
         0.5,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -295,6 +318,7 @@
         890.351318359375
       ],
       "params": {
+        "n_id": "-8720698396325429998",
         "text": "Zero the Z axis of those random vectors: we are not going to move vertices along normals."
       },
       "use_custom_color": true,
@@ -307,6 +331,7 @@
         0.5,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -315,6 +340,7 @@
         -138.70433235168457
       ],
       "params": {
+        "n_id": "-8720698396325430215",
         "text": "Use matrix multiplication to make random vectors in the plane orthogonal to the vertex normals (i.e. in the tangent plane); move faces along such vectors."
       },
       "use_custom_color": true,
@@ -327,6 +353,7 @@
         0.5,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -335,6 +362,7 @@
         784.1973876953125
       ],
       "params": {
+        "n_id": "-8720698396325429773",
         "text": "Inset the selected (topmost) faces of the donut; note the passing of selected faces mask to the \"Face data\" socket - we will use this mask to assign materials"
       },
       "use_custom_color": true,
@@ -347,6 +375,7 @@
         0.5,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -355,6 +384,7 @@
         620.9617748260498
       ],
       "params": {
+        "n_id": "-8720698396325429796",
         "text": "Output the data and assign correct materials"
       },
       "use_custom_color": true,
@@ -367,6 +397,7 @@
         0.5,
         1.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -375,6 +406,7 @@
         1168.8386669158936
       ],
       "params": {
+        "n_id": "-8720698396325429579",
         "text": "Select the faces at the bottom of donut, and move them up a bit (using proportional editing falloff), to make bottom part of the donut look more flat."
       },
       "use_custom_color": true,
@@ -382,7 +414,8 @@
     },
     "Output": {
       "bl_idname": "NodeFrame",
-      "height": 569.0123901367188,
+      "custom_socket_props": {},
+      "height": 571.9617919921875,
       "hide": false,
       "label": "Output",
       "location": [
@@ -390,10 +423,11 @@
         10.079999923706055
       ],
       "params": {},
-      "width": 483.826171875
+      "width": 483.674072265625
     },
     "Proportional Edit Falloff": {
       "bl_idname": "SvProportionalEditNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -408,6 +442,7 @@
     },
     "Reroute": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -420,6 +455,7 @@
     },
     "Reroute.001": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -432,6 +468,7 @@
     },
     "Reroute.002": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -444,6 +481,7 @@
     },
     "Reroute.003": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -456,6 +494,7 @@
     },
     "Reroute.004": {
       "bl_idname": "NodeReroute",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -468,6 +507,7 @@
     },
     "Scale": {
       "bl_idname": "SvScaleNodeMk3",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -482,6 +522,7 @@
     },
     "Scale.002": {
       "bl_idname": "SvScaleNodeMk3",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -495,23 +536,23 @@
       "width": 140.0
     },
     "Select mesh elements by location": {
-      "bl_idname": "SvMeshSelectNode",
+      "bl_idname": "SvMeshSelectNodeMk2",
       "custom_socket_props": {
+        "0": {
+          "is_mandatory": true
+        },
+        "1": {
+          "nesting_level": 3
+        },
+        "2": {
+          "nesting_level": 3
+        },
         "3": {
           "prop": [
             0.0,
             0.0,
             1.0
-          ],
-          "use_prop": true
-        },
-        "4": {
-          "prop": [
-            0.0,
-            0.0,
-            0.0
-          ],
-          "use_prop": true
+          ]
         }
       },
       "height": 100.0,
@@ -527,24 +568,24 @@
       "width": 140.0
     },
     "Select mesh elements by location.001": {
-      "bl_idname": "SvMeshSelectNode",
+      "bl_idname": "SvMeshSelectNodeMk2",
       "custom_socket_props": {
+        "0": {
+          "is_mandatory": true
+        },
+        "1": {
+          "nesting_level": 3
+        },
+        "2": {
+          "nesting_level": 3
+        },
         "3": {
           "expanded": true,
           "prop": [
             0.0,
             0.0,
             -1.0
-          ],
-          "use_prop": true
-        },
-        "4": {
-          "prop": [
-            0.0,
-            0.0,
-            0.0
-          ],
-          "use_prop": true
+          ]
         }
       },
       "height": 100.0,
@@ -559,7 +600,8 @@
     },
     "Tangent Move": {
       "bl_idname": "NodeFrame",
-      "height": 534.6459350585938,
+      "custom_socket_props": {},
+      "height": 562.873779296875,
       "hide": false,
       "label": "Move along Tangents",
       "location": [
@@ -567,7 +609,7 @@
         10.079999923706055
       ],
       "params": {},
-      "width": 1703.3831787109375
+      "width": 1703.2313232421875
     },
     "Torus": {
       "bl_idname": "SvTorusNodeMK2",
@@ -576,6 +618,7 @@
         0.5,
         0.5
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -595,6 +638,7 @@
     },
     "Vector Noise": {
       "bl_idname": "SvNoiseNodeMK3",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -607,6 +651,7 @@
     },
     "Vector Rewire": {
       "bl_idname": "SvVectorRewire",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -621,6 +666,7 @@
     },
     "Vector in": {
       "bl_idname": "GenVectorsNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -632,128 +678,14 @@
         "z_": 0.2199999988079071
       },
       "width": 100.0
-    },
-    "Vertex Normal": {
-      "bl_idname": "VectorNormalNode",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        557.7187385559082,
-        14.959519386291504
-      ],
-      "params": {},
-      "width": 140.0
     }
   },
   "update_lists": [
     [
-      "Torus",
-      "Vertices",
-      "Reroute",
-      "Input"
-    ],
-    [
-      "Torus",
-      "Polygons",
-      "Reroute.001",
-      "Input"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Vertex Normal",
-      "Vertices"
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "Vertex Normal",
-      "Polygons"
-    ],
-    [
-      "Vertex Normal",
+      "Mesh viewer",
       0,
-      "Matrix Track To",
-      3
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Scale.002",
-      "Vertices"
-    ],
-    [
-      "Scale.002",
-      0,
-      "Vector Noise",
+      "Assign Materials List",
       0
-    ],
-    [
-      "Vector Noise",
-      0,
-      "Scale",
-      0
-    ],
-    [
-      "Scale",
-      0,
-      "Vector Rewire",
-      0
-    ],
-    [
-      "Vector Rewire",
-      0,
-      "Matrix In",
-      0
-    ],
-    [
-      "Matrix Track To",
-      0,
-      "Matrix Math",
-      0
-    ],
-    [
-      "Matrix In",
-      0,
-      "Matrix Math",
-      1
-    ],
-    [
-      "Torus",
-      0,
-      "Select mesh elements by location",
-      0
-    ],
-    [
-      "Torus",
-      1,
-      "Select mesh elements by location",
-      1
-    ],
-    [
-      "Torus",
-      2,
-      "Select mesh elements by location",
-      2
-    ],
-    [
-      "Torus",
-      "Edges",
-      "Reroute.002",
-      "Input"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Move.002",
-      "Vertices"
-    ],
-    [
-      "Matrix Math",
-      0,
-      "Move.002",
-      1
     ],
     [
       "Move.002",
@@ -786,58 +718,34 @@
       4
     ],
     [
-      "Inset faces",
+      "Vector Rewire",
       0,
-      "Select mesh elements by location.001",
+      "Matrix In",
       0
     ],
     [
-      "Inset faces",
-      2,
-      "Select mesh elements by location.001",
-      2
-    ],
-    [
-      "Inset faces",
+      "Matrix Track To",
       0,
-      "Proportional Edit Falloff",
+      "Matrix Math",
       0
     ],
     [
-      "Select mesh elements by location.001",
+      "Matrix In",
       0,
-      "Proportional Edit Falloff",
+      "Matrix Math",
       1
     ],
     [
-      "Inset faces",
+      "Calculate normals",
+      1,
+      "Matrix Track To",
+      3
+    ],
+    [
+      "Matrix Math",
       0,
-      "Move",
+      "Matrix Out",
       0
-    ],
-    [
-      "Vector in",
-      0,
-      "Move",
-      1
-    ],
-    [
-      "Proportional Edit Falloff",
-      0,
-      "Move",
-      2
-    ],
-    [
-      "Move",
-      "Vertices",
-      "Reroute.003",
-      "Input"
-    ],
-    [
-      "Inset faces",
-      "Faces",
-      "Reroute.004",
-      "Input"
     ],
     [
       "Reroute.003",
@@ -858,16 +766,142 @@
       3
     ],
     [
-      "Matrix Math",
+      "Inset faces",
       0,
-      "Matrix out",
+      "Move",
       0
     ],
     [
-      "Mesh viewer",
+      "Vector in",
       0,
-      "Assign Materials List",
+      "Move",
+      1
+    ],
+    [
+      "Proportional Edit Falloff",
+      0,
+      "Move",
+      2
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Move.002",
+      "Vertices"
+    ],
+    [
+      "Matrix Math",
+      0,
+      "Move.002",
+      1
+    ],
+    [
+      "Inset faces",
+      0,
+      "Proportional Edit Falloff",
       0
+    ],
+    [
+      "Select mesh elements by location.001",
+      0,
+      "Proportional Edit Falloff",
+      1
+    ],
+    [
+      "Torus",
+      "Vertices",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Torus",
+      "Polygons",
+      "Reroute.001",
+      "Input"
+    ],
+    [
+      "Torus",
+      "Edges",
+      "Reroute.002",
+      "Input"
+    ],
+    [
+      "Move",
+      "Vertices",
+      "Reroute.003",
+      "Input"
+    ],
+    [
+      "Inset faces",
+      "Faces",
+      "Reroute.004",
+      "Input"
+    ],
+    [
+      "Vector Noise",
+      0,
+      "Scale",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Scale.002",
+      "Vertices"
+    ],
+    [
+      "Torus",
+      0,
+      "Select mesh elements by location",
+      0
+    ],
+    [
+      "Torus",
+      1,
+      "Select mesh elements by location",
+      1
+    ],
+    [
+      "Torus",
+      2,
+      "Select mesh elements by location",
+      2
+    ],
+    [
+      "Inset faces",
+      0,
+      "Select mesh elements by location.001",
+      0
+    ],
+    [
+      "Inset faces",
+      2,
+      "Select mesh elements by location.001",
+      2
+    ],
+    [
+      "Scale.002",
+      0,
+      "Vector Noise",
+      0
+    ],
+    [
+      "Scale",
+      0,
+      "Vector Rewire",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Calculate normals",
+      "Vertices"
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Calculate normals",
+      "Polygons"
     ]
   ]
 }

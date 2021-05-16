@@ -1,21 +1,21 @@
 {
-  "export_version": "0.079",
+  "export_version": "0.10",
   "framed_nodes": {},
   "groups": {
-    "Monad": "{\"nodes\": {\"Group Inputs Exp\": {\"params\": {\"node_kind\": \"outputs\"}, \"bl_idname\": \"SvGroupInputsNodeExp\", \"outputs\": [[\"Num X\", \"SvStringsSocket\"]], \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [-19.0225830078125, 252.48233032226562], \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true}, \"Group Outputs Exp\": {\"params\": {\"node_kind\": \"inputs\"}, \"bl_idname\": \"SvGroupOutputsNodeExp\", \"inputs\": [[\"vertices\", \"SvVerticesSocket\"], [\"polygons\", \"SvStringsSocket\"]], \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [590.9774169921875, 252.48233032226562], \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true}, \"Plane MK2\": {\"params\": {\"center\": 1, \"numx\": 3, \"numy\": 3}, \"bl_idname\": \"SvPlaneNodeMK2\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [190.9774169921875, 234.9845428466797], \"color\": [0.0, 0.5, 0.5], \"use_custom_color\": true}, \"Inset Special\": {\"params\": {\"distance\": 1.46999990940094, \"inset\": 0.6700000166893005, \"make_inner\": 0}, \"bl_idname\": \"SvInsetSpecial\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [410.9774169921875, 269.9801025390625]}}, \"groups\": {}, \"framed_nodes\": {}, \"update_lists\": [[\"Group Inputs Exp\", 0, \"Plane MK2\", 0], [\"Group Inputs Exp\", 0, \"Plane MK2\", 1], [\"Plane MK2\", 0, \"Inset Special\", 2], [\"Plane MK2\", 2, \"Inset Special\", 3], [\"Inset Special\", 0, \"Group Outputs Exp\", 0], [\"Inset Special\", 1, \"Group Outputs Exp\", 1]], \"export_version\": \"0.079\", \"bl_idname\": \"SverchGroupTreeType\", \"cls_bl_idname\": \"SvGroupNodeMonad_140482759202207\"}"
+    "Monad": "{\"export_version\": \"0.10\", \"framed_nodes\": {}, \"groups\": {}, \"nodes\": {\"Group Inputs Exp\": {\"bl_idname\": \"SvGroupInputsNodeExp\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [-25.839576721191406, 252.48233032226562], \"params\": {\"node_kind\": \"outputs\"}, \"custom_socket_props\": {}, \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true, \"outputs\": [[\"Num X\", \"SvStringsSocket\"]]}, \"Group Outputs Exp\": {\"bl_idname\": \"SvGroupOutputsNodeExp\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [584.160400390625, 252.48233032226562], \"params\": {\"node_kind\": \"inputs\"}, \"custom_socket_props\": {}, \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true, \"inputs\": [[\"vertices\", \"SvVerticesSocket\"], [\"polygons\", \"SvStringsSocket\"]]}, \"Plane MK2\": {\"bl_idname\": \"SvPlaneNodeMK2\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [184.16041564941406, 234.9845428466797], \"params\": {\"center\": true, \"numx\": 3, \"numy\": 3}, \"custom_socket_props\": {}, \"color\": [0.0, 0.5, 0.5], \"use_custom_color\": true}, \"Inset Special.001\": {\"bl_idname\": \"SvInsetSpecialMk2\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [404.1604309082031, 269.9801025390625], \"params\": {\"distance\": 1.46999990940094, \"inset\": 0.6700000166893005, \"make_inner\": 0}, \"custom_socket_props\": {\"0\": {\"is_mandatory\": true}, \"1\": {\"is_mandatory\": true, \"nesting_level\": 3}}}}, \"update_lists\": [[\"Inset Special.001\", 0, \"Group Outputs Exp\", 0], [\"Inset Special.001\", 1, \"Group Outputs Exp\", 1], [\"Group Inputs Exp\", 0, \"Plane MK2\", 0], [\"Group Inputs Exp\", 0, \"Plane MK2\", 1], [\"Plane MK2\", 0, \"Inset Special.001\", 0], [\"Plane MK2\", 2, \"Inset Special.001\", 1]], \"bl_idname\": \"SverchGroupTreeType\", \"cls_bl_idname\": \"SvGroupNodeMonad_140482759202207\"}"
   },
   "nodes": {
     "A Number": {
       "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -17.99714469909668,
-        125.99751281738281
+        55.772071838378906,
+        134.84036254882812
       ],
       "params": {
-        "float_": 0.0,
         "int_": 4,
         "selected_mode": "int"
       },
@@ -28,18 +28,25 @@
         0.911391019821167,
         0.7545620203018188
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        300.9774169921875,
-        252.48233032226562
+        374.74664306640625,
+        261.3251953125
       ],
       "params": {
         "all_props": {
           "cls_bl_idname": "SvGroupNodeMonad_140482759202207",
           "float_props": {},
           "int_props": {
+            "ints_1_numx": {
+              "default": 3,
+              "description": "Number of vertices along X",
+              "min": 2,
+              "name": "N Verts X"
+            },
             "numx": {
               "default": 3,
               "description": "Number of vertices along X",
@@ -56,7 +63,7 @@
               "Num X",
               "SvStringsSocket",
               {
-                "prop_name": "numx"
+                "prop_name": "ints_1_numx"
               }
             ]
           ],
@@ -71,7 +78,6 @@
             ]
           ]
         },
-        "loops": 0,
         "monad": "Monad"
       },
       "use_custom_color": true,
@@ -84,12 +90,13 @@
         0.30000001192092896,
         0.0
       ],
+      "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        630.9774169921875,
-        281.08734130859375
+        704.7466430664062,
+        289.9302062988281
       ],
       "params": {
         "selected_draw_mode": "facet"

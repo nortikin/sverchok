@@ -1,20 +1,10 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
 
 import ast
 import random
@@ -22,15 +12,16 @@ import time
 from collections import namedtuple
 from typing import NamedTuple
 import numpy as np
-import bpy
-from bpy.props import (
-    BoolProperty, StringProperty, EnumProperty, IntProperty, FloatProperty
-    )
 
+import bpy
 from mathutils.noise import seed_set, random
+from bpy.props import (
+    BoolProperty, StringProperty, EnumProperty, IntProperty, FloatProperty)
+
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.core.update_system import make_tree_from_nodes, do_update
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.utils.listutils import (
     listinput_getI,
     listinput_getF,
@@ -537,17 +528,14 @@ class Population:
         self.node.info_label = info
 
 
-class SvEvolverRun(bpy.types.Operator):
+class SvEvolverRun(bpy.types.Operator, SvGenericNodeLocator):
 
     bl_idname = "node.evolver_run"
     bl_label = "Evolver Run"
 
-    idtree: bpy.props.StringProperty(default='')
-    idname: bpy.props.StringProperty(default='')
-
     def execute(self, context):
-        tree = bpy.data.node_groups[self.idtree]
-        node = bpy.data.node_groups[self.idtree].nodes[self.idname]
+        node = self.get_node(context)
+        if not node: return {'CANCELLED'}
 
         if not node.inputs[0].is_linked:
             node.info_label = "Stopped - Fitness not linked"
@@ -577,17 +565,15 @@ def set_fittest(tree, genes, agent, update_list):
     finally:
         tree.sv_process = True
 
-class SvEvolverSetFittest(bpy.types.Operator):
+class SvEvolverSetFittest(bpy.types.Operator, SvGenericNodeLocator):
 
     bl_idname = "node.evolver_set_fittest"
     bl_label = "Evolver Run"
 
-    idtree: bpy.props.StringProperty(default='')
-    idname: bpy.props.StringProperty(default='')
-
     def execute(self, context):
-        tree = bpy.data.node_groups[self.idtree]
-        node = bpy.data.node_groups[self.idtree].nodes[self.idname]
+        node = self.get_node(context)
+        if not node: return {'CANCELLED'}
+
         data = evolver_mem[node.node_id]
         genes = data["genes"]
         population = data["population"]
@@ -778,10 +764,6 @@ class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
             self.info_label = "Not Executed"
             for s in self.outputs:
                 s.sv_set([])
-
-
-
-
 
 
 classes = [SvEvolverRun, SvEvolverSetFittest, SvEvolverNode]
