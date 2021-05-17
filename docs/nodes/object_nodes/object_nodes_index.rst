@@ -17,3 +17,4 @@ Objects
    material_index
    set_custom_uv_map
    set_loop_normals
+   set_mesh_attribute
