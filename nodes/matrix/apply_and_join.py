@@ -16,14 +16,106 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from typing import List, Tuple
+
+import numpy as np
+
 import bpy
 from bpy.props import BoolProperty, EnumProperty
+from mathutils import Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.data_structure import repeat_last
-from sverchok.utils.mesh_functions import join_meshes, apply_matrix, meshes_py, to_elements, repeat_meshes, \
-    apply_matrices, meshes_np
+from sverchok.utils.mesh_functions import apply_matrix_to_vertices_py
+from sverchok.utils.vectorize import vectorize, devectorize, SvVerts, SvEdges, SvPolys
+from sverchok.utils.modules.matrix_utils import matrix_apply_np
+
+
+def apply_matrices(
+        *,
+        vertices: SvVerts,
+        edges: SvEdges,
+        polygons: SvPolys,
+        matrices: List[Matrix],
+        implementation: str = 'Python') -> Tuple[SvVerts, SvEdges, SvPolys]:
+    """several matrices can be applied to a mesh
+    in this case each matrix will populate geometry inside object"""
+
+    if not matrices or (vertices is None or not len(vertices)):
+        return vertices, edges, polygons
+
+    if implementation == 'NumPy':
+        vertices = np.asarray(vertices, dtype=np.float32)
+
+    _apply_matrices = matrix_apply_np if isinstance(vertices, np.ndarray) else apply_matrix_to_vertices_py
+
+    sub_vertices = []
+    sub_edges = [edges] * len(matrices) if edges else None
+    sub_polygons = [polygons] * len(matrices) if polygons else None
+    for matrix in matrices:
+        sub_vertices.append(_apply_matrices(vertices, matrix))
+
+    out_vertices, out_edges, out_polygons = join_meshes(vertices=sub_vertices, edges=sub_edges, polygons=sub_polygons)
+    return out_vertices, out_edges, out_polygons
+
+
+def apply_matrix(
+        *,
+        vertices: SvVerts,
+        edges: SvEdges,
+        polygons: SvPolys,
+        matrix: Matrix,
+        implementation: str = 'Python') -> Tuple[SvVerts, SvEdges, SvPolys]:
+    """several matrices can be applied to a mesh
+    in this case each matrix will populate geometry inside object"""
+
+    if not matrix or (vertices is None or not len(vertices)):
+        return vertices, edges, polygons
+
+    if implementation == 'NumPy':
+        vertices = np.asarray(vertices, dtype=np.float32)
+
+    _apply_matrices = matrix_apply_np if isinstance(vertices, np.ndarray) else apply_matrix_to_vertices_py
+
+    new_vertices = _apply_matrices(vertices, matrix)
+
+    return new_vertices, edges, polygons
+
+
+def join_meshes(*, vertices: List[SvVerts], edges: List[SvEdges], polygons: List[SvPolys]):
+    joined_vertices = []
+    joined_edges = []
+    joined_polygons = []
+
+    if not vertices:
+        return joined_vertices, joined_edges, joined_polygons
+    else:
+        if isinstance(vertices[0], np.ndarray):
+            joined_vertices = np.concatenate(vertices)
+        else:
+            joined_vertices = [v for vs in vertices for v in vs]
+
+    if edges:
+        vertexes_number = 0
+        for i, es in enumerate(edges):
+            if es:
+                if isinstance(es, np.ndarray):
+                    joined_edges.extend((es + vertexes_number).tolist())
+                else:
+                    joined_edges.extend([(e[0] + vertexes_number, e[1] + vertexes_number) for e in es])
+                vertexes_number += len(vertices[i])
+
+    if polygons:
+        vertexes_number = 0
+        for i, ps in enumerate(polygons):
+            if ps:
+                if isinstance(ps, np.ndarray):
+                    joined_polygons.extend((ps + vertexes_number).tolist())
+                else:
+                    joined_polygons.extend([[i + vertexes_number for i in p] for p in ps])
+                vertexes_number += len(vertices[i])
+
+    return joined_vertices, joined_edges, joined_polygons
 
 
 class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
@@ -78,18 +170,30 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
         faces = self.inputs['Faces'].sv_get(default=[], deepcopy=False)
         matrices = self.inputs['Matrices'].sv_get(default=[], deepcopy=False)
 
-        object_number = max([len(vertices), len(matrices)]) if vertices else 0
-        meshes = (meshes_py if self.implementation == 'Python' else meshes_np)(vertices, edges, faces)
-        meshes = repeat_meshes(meshes, object_number)
-
+        # fixing matrices nesting level if necessary, this is for back capability, can be removed later on
         if matrices:
             is_flat_list = not isinstance(matrices[0], (list, tuple))
-            meshes = (apply_matrix if is_flat_list else apply_matrices)(meshes, repeat_last(matrices))
+            if is_flat_list:
+                _apply_matrix = vectorize(apply_matrix, match_mode='REPEAT')
+                out_vertices, out_edges, out_polygons = _apply_matrix(
+                    vertices=vertices, edges=edges, polygons=faces, matrix=matrices, implementation=self.implementation)
+            else:
+                _apply_matrix = vectorize(apply_matrices, match_mode="REPEAT")
+                out_vertices, out_edges, out_polygons = _apply_matrix(
+                    vertices=vertices or None, edges=edges or None, polygons=faces or None, matrices=matrices or None,
+                    implementation=self.implementation)
+        else:
+            out_vertices, out_edges, out_polygons = vertices, edges, faces
 
         if self.do_join:
-            meshes = join_meshes(meshes)
+            _join_mesh = devectorize(join_meshes, match_mode="REPEAT")
+            out_vertices, out_edges, out_polygons = _join_mesh(
+                vertices=out_vertices, edges=out_edges, polygons=out_polygons)
+            out_vertices, out_edges, out_polygons = (
+                [out_vertices] if out_vertices is not None and len(out_vertices) else out_vertices,
+                [out_edges] if out_edges is not None and len(out_edges) else out_edges,
+                [out_polygons] if out_polygons is not None and len(out_polygons) else out_polygons)
 
-        out_vertices, out_edges, out_polygons = to_elements(meshes)
         self.outputs['Vertices'].sv_set(out_vertices)
         self.outputs['Edges'].sv_set(out_edges)
         self.outputs['Faces'].sv_set(out_polygons)

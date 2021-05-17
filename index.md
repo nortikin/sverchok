@@ -624,6 +624,7 @@
     SvSetDataObjectNodeMK2
     SvSortObjsNode
     SvFilterObjsNode
+    SvSetMeshAttributeNode
     SvObjectToMeshNodeMK2
     SvPointOnMeshNodeMK2
     SvOBJRayCastNodeMK2
