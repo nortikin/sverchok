@@ -18,3 +18,4 @@ Objects
    set_custom_uv_map
    set_loop_normals
    set_mesh_attribute
+   set_collection
