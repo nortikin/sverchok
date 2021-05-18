@@ -1,0 +1,227 @@
+{
+  "export_version": "0.10",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        120.0,
+        -120.0
+      ],
+      "params": {
+        "float_": 1.5
+      },
+      "width": 140.0
+    },
+    "Cell.Prism": {
+      "bl_idname": "SvCellPrism",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -180.0,
+        380.0
+      ],
+      "params": {
+        "originLocation": "LowerLeft"
+      },
+      "width": 140.0
+    },
+    "Cell.Prism.001": {
+      "bl_idname": "SvCellPrism",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -180.0,
+        100.0
+      ],
+      "params": {
+        "originLocation": "LowerLeft"
+      },
+      "width": 140.0
+    },
+    "Temporal Viewer": {
+      "bl_idname": "SvViewerDrawMk4",
+      "color": [
+        0.6661409735679626,
+        0.20302200317382812,
+        0.0
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "Temporal Viewer",
+      "location": [
+        720.0,
+        140.0
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Topology.Boolean": {
+      "bl_idname": "SvTopologyBoolean",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        40.0,
+        280.0
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Topology.Explode": {
+      "bl_idname": "SvTopologyExplode",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        360.0,
+        60.0
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Topology.Geometry": {
+      "bl_idname": "SvTopologyGeometry",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        540.0,
+        60.0
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Topology.TypeID": {
+      "bl_idname": "SvTopologyTypeID",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        120.0,
+        -240.0
+      ],
+      "params": {
+        "TypeID": "Cell"
+      },
+      "width": 140.0
+    },
+    "Vertex.ByCoordinates": {
+      "bl_idname": "SvVertexByCoordinates",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -360.0,
+        0.0
+      ],
+      "params": {
+        "X": 0.5,
+        "Y": 0.5,
+        "Z": 0.5
+      },
+      "width": 140.0
+    },
+    "Vertex.ByCoordinates.001": {
+      "bl_idname": "SvVertexByCoordinates",
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        120.0,
+        40.0
+      ],
+      "params": {
+        "X": 0.75,
+        "Y": 0.75,
+        "Z": 0.75
+      },
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Vertex.ByCoordinates",
+      0,
+      "Cell.Prism.001",
+      0
+    ],
+    [
+      "Topology.Explode",
+      0,
+      "Topology.Geometry",
+      0
+    ],
+    [
+      "Cell.Prism",
+      0,
+      "Topology.Boolean",
+      0
+    ],
+    [
+      "Cell.Prism.001",
+      0,
+      "Topology.Boolean",
+      1
+    ],
+    [
+      "Topology.Boolean",
+      0,
+      "Topology.Explode",
+      0
+    ],
+    [
+      "Vertex.ByCoordinates.001",
+      0,
+      "Topology.Explode",
+      1
+    ],
+    [
+      "A Number",
+      0,
+      "Topology.Explode",
+      2
+    ],
+    [
+      "Topology.TypeID",
+      0,
+      "Topology.Explode",
+      3
+    ],
+    [
+      "Topology.Geometry",
+      0,
+      "Temporal Viewer",
+      0
+    ],
+    [
+      "Topology.Geometry",
+      1,
+      "Temporal Viewer",
+      1
+    ],
+    [
+      "Topology.Geometry",
+      2,
+      "Temporal Viewer",
+      2
+    ]
+  ]
+}
