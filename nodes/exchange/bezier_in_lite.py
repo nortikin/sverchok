@@ -62,27 +62,41 @@ class SvBezierInLiteNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode,
     obj_name: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
     node_dict = {}
     
+    def drop(self):
+        self.obj_name = ""
+        self.currently_storing = False
+        self.node_dict[hash(self)] = {}    
+        
     def get_objects_from_scene(self, ops):
         """
         Collect selected objects
         """
-        self.obj_name.clear()
 
         names = [obj.name for obj in bpy.data.objects if (obj.select_get() and len(obj.users_scene) > 0 and len(obj.users_collection) > 0)]
-
+        
         for name in names:
-            self.obj_name.add().name = name
+           self.obj_name.add().name = name
 
         if not self.obj_name:
             ops.report({'WARNING'}, "Warning, no selected objects in the scene")
             return
-
+            
         self.process_node(None)
+            
+        if names:
+            with self.sv_throttle_tree_update():
+
+                self.node_dict[hash(self)] = {
+                    'Curves': list([v.co[:] for v in names.obj_name]),
+                    'ControlPoints': [list(p.curve) for p in names.controls],
+                    'Matrices': self.apply_matrix
+                }
+                self.obj_name.clear()
+                self.currently_storing = True
+
+        else:
+            self.error("No object selected")
     
-    def drop(self):
-        self.obj_name = ""
-        self.currently_storing = False
-        self.node_dict[hash(self)] = {}
         
     def get_curve(self, spline, matrix):
         segments = []
