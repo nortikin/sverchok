@@ -125,7 +125,7 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
         description='sorting inserted objects by names',
         default=True, update=updateNode)
 
-    object_names: bpy.props.CollectionProperty(type=SvOB3BDataCollection, options={'SKIP_SAVE'})
+    object_names: bpy.props.CollectionProperty(type=SvOB3BDataCollection)
 
     active_obj_index: bpy.props.IntProperty()
 
@@ -380,14 +380,6 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
                 outputs['Object'].sv_set(objs)
             else:
                 outputs['Object'].sv_set([data_objects.get(o.name) for o in self.object_names])
-
-
-    def save_to_json(self, node_data: dict):
-        node_data['object_names'] = [o.name for o in self.object_names]
-
-    def load_from_json(self, node_data: dict, import_version: float):
-        for named_object in node_data.get('object_names', []):
-            self.object_names.add().name = named_object
 
 
 classes = [SvOB3BItemOperator, SvOB3BDataCollection, SVOB3B_UL_NamesList, SvOB3Callback, SvGetObjectsData]
