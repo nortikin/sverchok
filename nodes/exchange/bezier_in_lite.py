@@ -87,7 +87,7 @@ class SvBezierInLiteNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode,
             with self.sv_throttle_tree_update():
 
                 self.node_dict[hash(self)] = {
-                    'Curves': list([v.co[:] for v in names.obj_name]),
+                    'Curves': list([v.co[:] for v in names.curve]),
                     'ControlPoints': [list(p.curve) for p in names.controls],
                     'Matrices': self.apply_matrix
                 }
