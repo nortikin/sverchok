@@ -39,8 +39,6 @@ from sverchok.core.links import (
     SvLinks)
 from sverchok.core.node_id_dict import SvNodesDict
 
-from sverchok.core.events import CurrentEvents, BlenderEventsTypes
-
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.docstring import SvDocstring
@@ -218,9 +216,6 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         This method is called if collection of nodes or links of the tree was changed
         First of all it checks is it worth bothering and then gives initiative to `update system`
         """
-
-        CurrentEvents.new_event(BlenderEventsTypes.tree_update, self)
-
         # this is a no-op if there's no drawing
         clear_exception_drawing_with_bgl(self.nodes)
         if is_first_run():
@@ -309,8 +304,6 @@ class UpdateNodes:
         - delegates further initialization information to sv_init
         - sets node color
         """
-        CurrentEvents.new_event(BlenderEventsTypes.add_node, self)
-
         ng = self.id_data
         if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
             ng.nodes_dict.load_node(self)
@@ -333,8 +326,6 @@ class UpdateNodes:
         This method is not supposed to be overriden in specific nodes.
         Override sv_free() instead
         """
-        CurrentEvents.new_event(BlenderEventsTypes.free_node, self)
-
         self.sv_free()
 
         for s in self.outputs:
@@ -356,7 +347,6 @@ class UpdateNodes:
         This method is not supposed to be overriden in specific nodes.
         Override sv_copy() instead.
         """
-        CurrentEvents.new_event(BlenderEventsTypes.copy_node, self)
         settings = get_original_node_color(self.id_data, original.name)
         if settings is not None:
             self.use_custom_color, self.color = settings
@@ -371,12 +361,10 @@ class UpdateNodes:
         The method will be triggered upon editor changes, typically before node tree update method.
         It is better to avoid using this trigger.
         """
-        CurrentEvents.new_event(BlenderEventsTypes.node_update, self)
         self.sv_update()
 
     def insert_link(self, link):
         """It will be triggered only if one socket is connected with another by user"""
-        CurrentEvents.new_event(BlenderEventsTypes.add_link_to_node, self)
 
     def process_node(self, context):
         '''

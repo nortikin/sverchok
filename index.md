@@ -624,10 +624,12 @@
     SvSetDataObjectNodeMK2
     SvSortObjsNode
     SvFilterObjsNode
+    SvSetMeshAttributeNode
     SvPointOnMeshNodeMK2
     SvOBJRayCastNodeMK2
     SvSCNRayCastNodeMK2
     SvSetLoopNormalsNode
+    SvSetCollection
 
 ## Scene
     SvGetObjectsData

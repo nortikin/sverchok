@@ -37,7 +37,7 @@ from numpy import (
     float64,
     int32, int64)
 from sverchok.utils.logging import info
-from sverchok.core.events import CurrentEvents, BlenderEventsTypes
+
 
 DEBUG_MODE = False
 HEAT_MAP = False
@@ -101,10 +101,27 @@ def fixed_iter(data, iter_number, fill_value=0):
     If data is shorter then iter_number last element will be cycled
     If data is empty [fill_value] list will be used instead
     """
-    if not data:
-        data = [fill_value]
-    for i, item in zip(range(iter_number), chain(data, cycle([data[-1]]))):
+    last_index = -1
+    for i, item in zip(range(iter_number), data):
         yield item
+        last_index = i
+        fill_value = item
+
+    if last_index + 1 < iter_number:
+        for i, item in zip(range(iter_number - (last_index + 1)), cycle([fill_value])):
+            yield item
+
+
+def flat_iter(data):
+    """[1, [2, 3, [4]], 5] -> 1, 2, 3, 4, 5 """
+    if isinstance(data, str):
+        yield data
+        return
+    try:
+        for v in data:
+            yield from flat_iter(v)
+    except TypeError:
+        yield data
 
 
 def match_long_repeat(lsts):
@@ -1229,7 +1246,6 @@ def updateNode(self, context):
     When a node has changed state and need to call a partial update.
     For example a user exposed bpy.prop
     """
-    CurrentEvents.new_event(BlenderEventsTypes.node_property_update, self)
     self.process_node(context)
 
 
@@ -1258,7 +1274,7 @@ def update_with_kwargs(update_function, **kwargs):
 @contextmanager
 def throttle_tree_update(node):
     """ usage
-    from sverchok.node_tree import throttle_tree_update
+    from sverchok.data_structure import throttle_tree_update
 
     inside your node, f.ex inside a wrapped_update that creates a socket
 
