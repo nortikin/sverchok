@@ -7,6 +7,7 @@ Scene
 
    frame_info_mk2
    cache
+   get_objects_data
    objects_in_lite
    FCurve_in
    curve_in
