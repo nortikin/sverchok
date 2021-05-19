@@ -77,7 +77,8 @@ def draw_text(font_id, location, text, color):
 
 def draw_node_time_infos(*data):
 
-    data_tree = write_time_graph() # data[0] 
+    print(data)
+    data_tree = write_time_graph() # data[0]
     location_theta = data[1]
     node_tree = bpy.data.node_groups.get(data[2])
     
@@ -215,7 +216,7 @@ def configure_time_graph(ng):
     data_time_infos = (get_sv_times(named_tree), get_preferences(), named_tree)
     config_node_info = {
         'tree_name': named_tree,
-        'mode': 'custom_function_context', 
+        'mode': 'LEAN_AND_MEAN', 
         'custom_function': draw_node_time_infos,
         'args': data_time_infos
     }
@@ -223,7 +224,7 @@ def configure_time_graph(ng):
     data_overlay = (get_sv_times(named_tree), named_tree, shader)
     config_graph_overlay = {
         'tree_name': named_tree,
-        'mode': 'custom_function_context', 
+        'mode': 'LEAN_AND_MEAN', 
         'custom_function': draw_overlay,
         'args': data_overlay
     }
