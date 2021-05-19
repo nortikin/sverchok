@@ -24,9 +24,9 @@ class ShaderLib2D():
 
             new_vectors:    a list of 2d vectors as lists
             new_colors:     a list of colors of the same length as new_vectors
-            new_indices:    a list of indices to make up tri-face toplogy
+            new_indices:    a list of indices to make up tri-face topology
                             this function automatically offsets the new_indices, so you only have to write
-                            topology and such for one instance of your object
+                            topology for one instance of your object
         """
         offset = len(self.vectors)
         self.addv(new_vectors)
