@@ -77,7 +77,6 @@ def draw_text(font_id, location, text, color):
 
 def draw_node_time_infos(*data):
 
-    print(data)
     data_tree = write_time_graph() # data[0]
     location_theta = data[1]
     node_tree = bpy.data.node_groups.get(data[2])

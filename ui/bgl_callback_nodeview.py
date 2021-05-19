@@ -137,7 +137,6 @@ def draw_callback_px(n_id, data):
     elif data.get('mode') == 'LEAN_AND_MEAN':
         drawing_func = data.get('custom_function')
         args = data.get('args', (None,))
-        print("number of args", len(args))
         drawing_func(*args)
         restore_opengl_defaults()
     elif data.get('mode') == 'custom_function_context':
