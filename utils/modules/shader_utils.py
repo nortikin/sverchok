@@ -50,6 +50,24 @@ class ShaderLib2D():
             new_indices=[[0, 1, 2], [0, 2, 3]]
         )
 
+    def add_rect_rounded(self, x, y, w, h, color, radius=0, precision=5):
+        ...
+
+    def add_line(self, x1, y1, x2, y2, width, color):
+        ...
+
+    def add_polyline(self, path, width, color):
+        ...
+
+    def add_bezier(self, controls, width, color, samples=20, resampled=False):
+        ...
+
+    def add_circle(self, x, y, radius, color, precision=32):
+        ...
+
+    def add_arc(self, x, y, start_angle, end_angle, radius, width, color, precision=32):
+        ...
+
     def compile(self):
         geom = lambda: None
         geom.vectors = self.vectors
