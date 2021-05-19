@@ -156,8 +156,11 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             process_from_nodes(draft_nodes)
 
     def set_ng_time_graph_drawing_state(self, context):
-        identifier = self.tree_id()
-        ...
+        identifier = self.tree_id() # + some token?
+        if self.sv_show_time_graph:
+            ... # add callback using identifier if thats enough
+        else:
+            ... # remove callback
 
 
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
