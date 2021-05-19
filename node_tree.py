@@ -1,21 +1,10 @@
-# -*- coding: utf-8 -*-
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
 
 import sys
 import time
@@ -34,9 +23,9 @@ from sverchok.core.update_system import (
     process_from_node, process_from_nodes,
     process_tree,
     get_original_node_color,
-    is_first_run,)
-from sverchok.core.links import (
-    SvLinks)
+    is_first_run)
+
+from sverchok.core.links import SvLinks
 from sverchok.core.node_id_dict import SvNodesDict
 
 from sverchok.utils import get_node_class_reference
@@ -166,8 +155,14 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         if draft_nodes:
             process_from_nodes(draft_nodes)
 
+    def set_ng_time_graph_drawing_state(self, context):
+        identifier = self.tree_id()
+        ...
+
+
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
+    sv_show_time_graph: BoolProperty(name="Show Time Graph", default=False, update=set_ng_time_graph_drawing_state)
 
     # something related with heat map feature
     # looks like it keeps dictionary of nodes and their user defined colors in string format
@@ -497,8 +492,10 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
     @property
     def absolute_location(self):
         """
-        It can be useful in case if a node is in a frame node
-        does not return a vactor, it returns a:  tuple(x, y)
+        When a node is inside a frame (and parented to it) then node.location is relative to its parent's location.
+        This function returns the location in absolute screen terms whether the node is framed or not.
+
+        The return type is a tuple (x, y)  (not a Vector)
         """
         return recursive_framed_location_finder(self, self.location[:])
 
@@ -510,8 +507,7 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
 
     def rclick_menu(self, context, layout):
         """
-        Override this method to add specific items into
-        node's right-click menu.
+        Override this method to add specific items into the node's right-click menu.
         Default implementation calls `node_replacement_menu'.
         """
         self.node_replacement_menu(context, layout)
