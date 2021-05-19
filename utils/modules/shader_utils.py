@@ -17,6 +17,22 @@ class ShaderLib2D():
         self.addc = self.vertex_colors.extend
         self.addi = self.indices.extend
 
+    def add_data(self, new_vectors=None, new_colors=None, new_indices=None):
+        """
+        input
+            see `add_rect` for a reference implementation
+
+            new_vectors:    a list of 2d vectors as lists
+            new_colors:     a list of colors of the same length as new_vectors
+            new_indices:    a list of indices to make up tri-face toplogy
+                            this function automatically offsets the new_indices, so you only have to write
+                            topology and such for one instance of your object
+        """
+        offset = len(self.vectors)
+        self.addv(new_vectors)
+        self.addc(new_colors)
+        self.addi([[offset + i for i in tri] for tri in new_indices])
+
     def add_rect(self, x, y, w, h, color):
         """
         b - c
@@ -27,10 +43,12 @@ class ShaderLib2D():
         b = (x, y - h)
         c = (x + w, y - h)
         d = (x + w, y)
-        offset = len(self.vectors)
-        self.addv([a, b, c, d])
-        self.addc([color for _ in range(4)])
-        self.addi([[offset + i for i in tri] for tri in [[0, 1, 2], [0, 2, 3]]])
+
+        self.add_data(
+            new_vectors=[a, b, c, d], 
+            new_colors=[color for _ in range(4)],
+            new_indices=[[0, 1, 2], [0, 2, 3]]
+        )
 
     def compile(self):
         geom = lambda: None
