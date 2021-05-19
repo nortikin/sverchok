@@ -14,8 +14,6 @@ from gpu_extras.batch import batch_for_shader
 from bpy.types import SpaceNodeEditor
 
 import sverchok
-from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.settings import get_params
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.utils.modules.shader_utils import ShaderLib2D
 
@@ -36,6 +34,7 @@ def string_from_duration(duration):
     return f"{duration:.3f} {postfix}"
 
 def get_preferences():
+    from sverchok.settings import get_params
     props = get_params({'render_location_xy_multiplier': 1.0})
     return props.render_location_xy_multiplier
 
@@ -208,21 +207,21 @@ def draw_overlay(*data):
 
 def configure_time_graph(ng):
     named_tree = ng.name
-    ng.get_and_set_gl_scale_info(None, origin="time graph")
+    from sverchok.node_tree import SverchCustomTreeNode
+    SverchCustomTreeNode.get_and_set_gl_scale_info(None, origin="time graph")
 
     shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
  
     data_time_infos = (get_sv_times(named_tree), get_preferences(), named_tree)
-    data_overlay = (get_sv_times(named_tree), named_tree, shader)
-
-    draw_data = {
+    config_node_info = {
         'tree_name': named_tree,
         'mode': 'custom_function_context', 
         'custom_function': draw_node_time_infos,
         'args': data_time_infos
     }
 
-    draw_overlay = {
+    data_overlay = (get_sv_times(named_tree), named_tree, shader)
+    config_graph_overlay = {
         'tree_name': named_tree,
         'mode': 'custom_function_context', 
         'custom_function': draw_overlay,
@@ -230,8 +229,8 @@ def configure_time_graph(ng):
     }
 
     ng_id = ng.tree_id
-    nvBGL2.callback_enable(f"{ng_id}_node_time_info", draw_data)
-    nvBGL2.callback_enable(f"{ng_id}_time_graph_overlay", draw_data_overlay, overlay="POST_PIXEL")
+    nvBGL2.callback_enable(f"{ng_id}_node_time_info", config_node_info)
+    nvBGL2.callback_enable(f"{ng_id}_time_graph_overlay", config_graph_overlay, overlay="POST_PIXEL")
 
 def disable_time_graph(ng):
     ng_id = ng.tree_id
