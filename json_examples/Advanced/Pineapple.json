@@ -19,6 +19,7 @@
     "Evaluate Curve": "Frame.004",
     "Frame.002": "Frame.010",
     "Frame.007": "Frame.010",
+    "Get Objects Data": "Frame.006",
     "IcoSphere": "Frame.001",
     "Inset Special.001": "Frame.001",
     "Line": "Frame.003",
@@ -42,7 +43,6 @@
     "Number Range.001": "Frame.005",
     "Number Range.002": "Frame.006",
     "Number Range.003": "Frame.005",
-    "Object ID Out MK2": "Frame.006",
     "Origins": "Frame.007",
     "Polyline Viewer": "Frame.005",
     "Polyline Viewer.001": "Frame.004",
@@ -238,7 +238,7 @@
       "label": "",
       "location": [
         2919.780397415161,
-        609.8927307128906
+        609.8927001953125
       ],
       "params": {
         "g_": 0.699999988079071
@@ -279,8 +279,8 @@
       "hide": false,
       "label": "",
       "location": [
-        2435.963991165161,
-        1051.2159118652344
+        2435.9641132354736,
+        1051.2159729003906
       ],
       "params": {
         "face_mode": "Perimeter"
@@ -295,8 +295,8 @@
       "hide": false,
       "label": "",
       "location": [
-        2610.590944290161,
-        1051.2159118652344
+        2610.5910663604736,
+        1051.2159729003906
       ],
       "params": {},
       "width": 200.0
@@ -310,7 +310,7 @@
       "label": "",
       "location": [
         2502.5364475250244,
-        612.1684875488281
+        612.1684265136719
       ],
       "params": {},
       "width": 200.0
@@ -359,7 +359,7 @@
     "Frame.001": {
       "bl_idname": "NodeFrame",
       "custom_socket_props": {},
-      "height": 451.6605529785156,
+      "height": 453.26055908203125,
       "hide": false,
       "label": "init",
       "location": [
@@ -444,7 +444,7 @@
         470.0436706542969
       ],
       "params": {},
-      "width": 913.2109375
+      "width": 888.6298828125
     },
     "Frame.007": {
       "bl_idname": "NodeFrame",
@@ -463,7 +463,7 @@
       ],
       "params": {},
       "use_custom_color": true,
-      "width": 970.3638916015625
+      "width": 970.3636474609375
     },
     "Frame.008": {
       "bl_idname": "NodeFrame",
@@ -529,6 +529,29 @@
       "params": {},
       "width": 200.0
     },
+    "Get Objects Data": {
+      "bl_idname": "SvGetObjectsData",
+      "color": [
+        0.0,
+        0.5,
+        0.20000000298023224
+      ],
+      "custom_socket_props": {},
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        4010.4320068359375,
+        985.0729675292969
+      ],
+      "object_names": [],
+      "params": {
+        "modifiers": true,
+        "output_np_all": true
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
     "IcoSphere": {
       "bl_idname": "SvIcosphereNode",
       "color": [
@@ -568,6 +591,10 @@
         "1": {
           "is_mandatory": true,
           "nesting_level": 3
+        },
+        "7": {
+          "default_mode": "MATRIX",
+          "nesting_level": 2
         }
       },
       "height": 100.0,
@@ -655,7 +682,7 @@
       "hide": false,
       "label": "",
       "location": [
-        2739.4793186187744,
+        2739.4790744781494,
         423.3693542480469
       ],
       "params": {
@@ -703,7 +730,7 @@
       "hide": false,
       "label": "",
       "location": [
-        2327.9180393218994,
+        2327.9177951812744,
         487.8794250488281
       ],
       "params": {
@@ -1121,21 +1148,6 @@
       },
       "width": 140.0
     },
-    "Object ID Out MK2": {
-      "bl_idname": "SvObjectToMeshNodeMK2",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        3985.8509521484375,
-        922.445068359375
-      ],
-      "params": {
-        "modifiers": true
-      },
-      "width": 140.0
-    },
     "Origins": {
       "bl_idname": "SvOrigins",
       "custom_socket_props": {},
@@ -1431,7 +1443,7 @@
       "hide": false,
       "label": "",
       "location": [
-        2150.5113010406494,
+        2150.5110569000244,
         393.9389343261719
       ],
       "params": {},
@@ -1488,9 +1500,45 @@
       1
     ],
     [
+      "Curve Mapper",
+      0,
+      "Color in",
+      0
+    ],
+    [
+      "Curve Mapper.001",
+      0,
+      "Color in",
+      1
+    ],
+    [
       "Number Range.002",
       0,
       "Color in.001",
+      0
+    ],
+    [
+      "MultiExtrude Alt from addons",
+      0,
+      "Component Analyzer",
+      0
+    ],
+    [
+      "MultiExtrude Alt from addons",
+      1,
+      "Component Analyzer",
+      2
+    ],
+    [
+      "Component Analyzer",
+      0,
+      "Curve Mapper",
+      0
+    ],
+    [
+      "Map Range",
+      0,
+      "Curve Mapper.001",
       0
     ],
     [
@@ -1510,6 +1558,18 @@
       0,
       "Evaluate Curve",
       0
+    ],
+    [
+      "Dual Mesh",
+      0,
+      "Inset Special.001",
+      0
+    ],
+    [
+      "Dual Mesh",
+      1,
+      "Inset Special.001",
+      1
     ],
     [
       "Scalar Math.002",
@@ -1542,9 +1602,15 @@
       "Data"
     ],
     [
-      "Object ID Out MK2",
-      3,
+      "Get Objects Data",
+      2,
       "List Length.001",
+      0
+    ],
+    [
+      "Vector out",
+      2,
+      "List Math",
       0
     ],
     [
@@ -1557,6 +1623,12 @@
       "Area",
       0,
       "Logic functions",
+      0
+    ],
+    [
+      "Vector out",
+      2,
+      "Map Range",
       0
     ],
     [
@@ -1578,14 +1650,14 @@
       "faces"
     ],
     [
-      "Object ID Out MK2",
+      "Get Objects Data",
       0,
       "Mesh viewer.001",
       0
     ],
     [
-      "Object ID Out MK2",
-      3,
+      "Get Objects Data",
+      2,
       "Mesh viewer.001",
       2
     ],
@@ -1698,10 +1770,16 @@
       2
     ],
     [
-      "Polyline Viewer",
+      "MultiExtrude Alt from addons",
       0,
-      "Object ID Out MK2",
+      "Origins",
       0
+    ],
+    [
+      "MultiExtrude Alt from addons",
+      1,
+      "Origins",
+      2
     ],
     [
       "3pt Arc",
@@ -1818,6 +1896,12 @@
       2
     ],
     [
+      "Origins",
+      0,
+      "Vector out",
+      0
+    ],
+    [
       "Mesh viewer",
       0,
       "Vertex color mk3",
@@ -1848,81 +1932,9 @@
       2
     ],
     [
-      "Dual Mesh",
+      "Polyline Viewer",
       0,
-      "Inset Special.001",
-      0
-    ],
-    [
-      "Dual Mesh",
-      1,
-      "Inset Special.001",
-      1
-    ],
-    [
-      "Curve Mapper",
-      0,
-      "Color in",
-      0
-    ],
-    [
-      "Curve Mapper.001",
-      0,
-      "Color in",
-      1
-    ],
-    [
-      "MultiExtrude Alt from addons",
-      0,
-      "Component Analyzer",
-      0
-    ],
-    [
-      "MultiExtrude Alt from addons",
-      1,
-      "Component Analyzer",
-      2
-    ],
-    [
-      "Component Analyzer",
-      0,
-      "Curve Mapper",
-      0
-    ],
-    [
-      "Map Range",
-      0,
-      "Curve Mapper.001",
-      0
-    ],
-    [
-      "Vector out",
-      2,
-      "List Math",
-      0
-    ],
-    [
-      "Vector out",
-      2,
-      "Map Range",
-      0
-    ],
-    [
-      "MultiExtrude Alt from addons",
-      0,
-      "Origins",
-      0
-    ],
-    [
-      "MultiExtrude Alt from addons",
-      1,
-      "Origins",
-      2
-    ],
-    [
-      "Origins",
-      0,
-      "Vector out",
+      "Get Objects Data",
       0
     ]
   ]

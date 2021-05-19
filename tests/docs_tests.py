@@ -124,7 +124,6 @@ viewer_curves.py
 viewer_gp.py
 vd_draw_experimental.py
 viewer_polyline.py
-blenddata_to_svdata2.py
 obj_edit.py
 BMOperatorsMK2.py
 uv_texture.py

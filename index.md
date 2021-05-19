@@ -625,7 +625,6 @@
     SvSortObjsNode
     SvFilterObjsNode
     SvSetMeshAttributeNode
-    SvObjectToMeshNodeMK2
     SvPointOnMeshNodeMK2
     SvOBJRayCastNodeMK2
     SvSCNRayCastNodeMK2
@@ -633,7 +632,7 @@
     SvSetCollection
 
 ## Scene
-    SvObjectsNodeMK3
+    SvGetObjectsData
     SvObjInLite
     SvCurveInputNode
     SvFCurveInNodeMK1
