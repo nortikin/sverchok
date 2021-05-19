@@ -115,16 +115,6 @@ def draw_overlay(*data):
     # bpy.context.area.height
 
     data_tree = write_time_graph() # data[0]
-    
-    # dev_mode = False
-    # if dev_mode:
-    
-    #     for k, v in data_tree.items():
-    #         if v['name'] == "Scripted Node Lite":
-    #             if hasattr(sverchok, "time_pause"):
-    #                 data_tree[k]['duration'] = abs(sverchok.time_pause)
-    #                 break
-    
     node_tree = bpy.data.node_groups.get(data[1])
     shader = data[2]
 
@@ -240,10 +230,10 @@ def configure_time_graph(ng):
     }
 
     ng_id = ng.tree_id
-    nvBGL2.callback_enable(f"{ng_id}_node_time_info", draw_data)  # POST_VIEW
-    nvBGL2.callback_enable(f"{ng_id} time_graph_overlay", draw_data_overlay)  # POST_PIXEL
+    nvBGL2.callback_enable(f"{ng_id}_node_time_info", draw_data)
+    nvBGL2.callback_enable(f"{ng_id}_time_graph_overlay", draw_data_overlay, overlay="POST_PIXEL")
 
 def disable_time_graph(ng):
     ng_id = ng.tree_id
     nvBGL2.callback_disable(f"{ng_id}_node_time_info")
-    nvBGL2.callback_disable(f"{ng_id} time_graph_overlay"
+    nvBGL2.callback_disable(f"{ng_id}_time_graph_overlay")

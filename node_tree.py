@@ -37,6 +37,7 @@ from sverchok.utils.logging import debug
 from sverchok.ui import color_def
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
 from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_with_bgl
+from sverchok.utils.nodeview_time_graph_drawing import configure_time_graph, disable_time_graph
 
 
 class SvNodeTreeCommon(object):
@@ -156,11 +157,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             process_from_nodes(draft_nodes)
 
     def set_ng_time_graph_drawing_state(self, context):
-        identifier = self.tree_id() # + some token?
-        if self.sv_show_time_graph:
-            ... # add callback using identifier if thats enough
-        else:
-            ... # remove callback
+        configure_time_graph(self) if self.sv_show_time_graph else disable_time_graph(self)
 
 
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
