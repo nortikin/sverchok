@@ -27,11 +27,8 @@ def tick_display(i, whole_milliseconds):
             return i % filter == 0
         filter += 1
 
-
 def string_from_duration(duration):
-    postfix = "ms"
-    duration *= 1000
-    return f"{duration:.3f} {postfix}"
+    return f"{(1000*duration):.3f} ms"
 
 def get_preferences():
     from sverchok.settings import get_params
@@ -110,8 +107,11 @@ def draw_node_time_infos(*data):
 
 def draw_overlay(*data):
 
-    area_width = bpy.context.area.width
-    # bpy.context.area.height
+    # bpy.context.area.height  & area.width  = total
+    region = bpy.context.region
+    
+    # visible width ( T panel is not included, only N panel)
+    region_width = region.width   
 
     data_tree = write_time_graph() # data[0]
     node_tree = bpy.data.node_groups.get(data[1])
@@ -120,7 +120,7 @@ def draw_overlay(*data):
     white = (1.0, 1.0, 1.0, 1.0)
     left_offset = 140
     right_padding = 50
-    time_domain_px = area_width - left_offset - right_padding
+    time_domain_px = region_width - left_offset - right_padding
     
     r, g, b = (0.9, 0.9, 0.95)
     font_id = 0
@@ -146,12 +146,12 @@ def draw_overlay(*data):
         y += line_height
         used_idx += 1
     
+    if cumsum == 0.0:
+        return
+
     y = 26
     cum_duration = string_from_duration(cumsum)
     draw_text(font_id, (20, y), f"total: {cum_duration}", (r, g, b))    
-    
-    if cumsum == 0.0:
-        return
     
     px_per_ms = time_domain_px / cumsum
 
