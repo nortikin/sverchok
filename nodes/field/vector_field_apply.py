@@ -32,7 +32,7 @@ class SvVectorFieldApplyNode(bpy.types.Node, SverchCustomTreeNode):
 
     output_numpy: BoolProperty(
         name='Output NumPy',
-        description='output NumPy arrays (improves performance)',
+        description='Output NumPy arrays (improves performance)',
         default=False,
         update=updateNode)
 
@@ -44,8 +44,11 @@ class SvVectorFieldApplyNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Coefficient").prop_name = 'coefficient'
         self.inputs.new('SvStringsSocket', "Iterations").prop_name = 'iterations'
         self.outputs.new('SvVerticesSocket', 'Vertices')
+
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'output_numpy')
+    def rclick_menu(self, context, layout):
+        layout.prop(self, "output_numpy")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
