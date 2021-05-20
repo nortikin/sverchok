@@ -86,6 +86,12 @@ class SV_PT_ActiveTreePanel(SverchokPanels, bpy.types.Panel):
             col.prop(ng, "sv_show_error_details")
         col.prop(ng, "sv_show_socket_menus")
 
+        addon = context.preferences.addons.get(sverchok.__name__)
+        if addon.preferences.show_debug:
+            col.label(text="Time graph update controls")
+            col.prop(ng, "sv_show_time_nodes")
+            col.prop(ng, "sv_show_time_graph")
+
 
 class SV_PT_ProfilingPanel(SverchokPanels, bpy.types.Panel):
     bl_idname = "SV_PT_ProfilingPanel"
