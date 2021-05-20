@@ -6,7 +6,8 @@ from bpy.app.handlers import persistent
 from sverchok import old_nodes
 from sverchok import data_structure
 from sverchok.core import upgrade_nodes, undo_handler_node_count
-from sverchok.core.update_system import set_first_run, clear_system_cache
+from sverchok.core.update_system import (
+    set_first_run, clear_system_cache, reset_timing_graphs)
 from sverchok.ui import color_def, bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
 from sverchok.utils.logging import debug
@@ -95,6 +96,7 @@ def sv_handler_undo_post(scene):
     gh.ContextTrees.reset_data()
 
 
+
 @persistent
 def sv_update_handler(scene):
     """
@@ -102,6 +104,8 @@ def sv_update_handler(scene):
     """
     if not has_frame_changed(scene):
         return
+
+    reset_timing_graphs()
 
     for ng in sverchok_trees():
         try:

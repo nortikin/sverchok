@@ -10,12 +10,17 @@ class ShaderLib2D():
         """
         docstring ?
         """
+        self.can_use_cache = False
         self.vectors = []
         self.vertex_colors = []
         self.indices = []
         self.addv = self.vectors.extend
         self.addc = self.vertex_colors.extend
         self.addi = self.indices.extend
+
+    def use_cached_canvas(self, geom):
+        self.add_data(geom.vectors, geom.vertex_colors, geom.indices)
+        self.can_use_cache = True
 
     def add_data(self, new_vectors=None, new_colors=None, new_indices=None):
         """
@@ -39,6 +44,8 @@ class ShaderLib2D():
         | / |
         a - d
         """
+        if self.can_use_cache: return
+
         a = (x, y)
         b = (x, y - h)
         c = (x + w, y - h)

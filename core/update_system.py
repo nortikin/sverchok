@@ -63,6 +63,10 @@ def update_error_colors(self, context):
     no_data_color = self.no_data_color[:]
     exception_color = self.exception_color[:]
 
+def reset_timing_graphs():
+    global graphs
+    graphs = []
+
 # cache node group update trees
 update_cache = {}
 # cache for partial update lists
