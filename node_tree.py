@@ -192,7 +192,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         default = False,
         options=set())
 
-    # if several nodes are disconnected this option determine order of their evaluation
+    # if a nodetree consists of several disjoint graphs this option determines the order of their evaluation.
     sv_subtree_evaluation_order: EnumProperty(
         name="Subtree eval order",
         items=[(k, k, '', i) for i, k in enumerate(["X", "Y", "None"])],
@@ -204,7 +204,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         default="None", update=lambda s, c: process_tree(s), options=set()
     )
 
-    # this mode will replace properties of some nodes so they could have lesser values for draft mode
+    # draft mode replaces selected properties of certain nodes with smaller values to lighten cpu load.
     sv_draft: BoolProperty(
         name="Draft",
         description="Draft (simplified processing) mode",
