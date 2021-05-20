@@ -969,13 +969,14 @@ class SvBendAlongCurveField(SvVectorField):
         return R[0], R[1], R[2]
 
 class SvBendAlongSurfaceField(SvVectorField):
-    def __init__(self, surface, axis, autoscale=False, flip=False):
+    def __init__(self, surface, axis, autoscale=False, flip=False, only_2D=False):
         self.surface = surface
         self.orient_axis = axis
         self.autoscale = autoscale
         self.flip = flip
         self.u_bounds = (0, 1)
         self.v_bounds = (0, 1)
+        self.only_2D = only_2D
         self.__description__ = "Bend along {}".format(surface)
 
     def get_other_axes(self):
@@ -1027,6 +1028,9 @@ class SvBendAlongSurfaceField(SvVectorField):
                 scale_z = 1.0
         if self.flip:
             scale_z = - scale_z
+
+        if self.only_2D:
+            return self.surface.evaluate_array(us, vs)
 
         surf_vertices = self.surface.evaluate_array(us, vs)
         spline_normals = self.surface.normal_array(us, vs)
