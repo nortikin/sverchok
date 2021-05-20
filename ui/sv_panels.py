@@ -89,8 +89,8 @@ class SV_PT_ActiveTreePanel(SverchokPanels, bpy.types.Panel):
         addon = context.preferences.addons.get(sverchok.__name__)
         if addon.preferences.show_debug:
             col.label(text="Time graph update controls")
-            col.prop(ng, "sv_show_time_graph")
             col.prop(ng, "sv_show_time_nodes")
+            col.prop(ng, "sv_show_time_graph")
 
 
 class SV_PT_ProfilingPanel(SverchokPanels, bpy.types.Panel):
