@@ -39,7 +39,7 @@ This node has the following output:
 Performance Notes
 -----------------
 
-This node works faster when the vertices list are NumPy Arrays
+This node works faster when the vertices list are NumPy arrays
 
 Examples of usage
 -----------------
