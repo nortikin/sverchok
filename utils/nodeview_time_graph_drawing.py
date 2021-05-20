@@ -9,6 +9,7 @@
 import bgl
 import blf
 import bpy
+from mathutils import Vector
 import gpu
 from gpu_extras.batch import batch_for_shader
 
@@ -95,6 +96,11 @@ def draw_node_time_infos(*data):
         
         x, y = get_xy_for_bgl_drawing(node)
         x, y = int(x), int(y)
+
+        if node.hide and isinstance(node.dimensions, Vector):
+            # just in case we are still overriding node.dimensions anywhere.
+            # this is not exact, but it's better than the alternative
+            y += (node.dimensions[1] / 2) - 10
 
         show_str = string_from_duration(node_data['duration'])
         draw_text(font_id, (x, y), show_str, (r, g, b))
