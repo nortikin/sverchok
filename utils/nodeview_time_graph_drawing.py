@@ -11,7 +11,6 @@ import blf
 import bpy
 import gpu
 from gpu_extras.batch import batch_for_shader
-from bpy.types import SpaceNodeEditor
 
 import sverchok
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
