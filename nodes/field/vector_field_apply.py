@@ -19,16 +19,22 @@ class SvVectorFieldApplyNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_APPLY_VFIELD'
 
-    coefficient : FloatProperty(
-            name = "Coefficient",
-            default = 1.0,
-            update = updateNode)
+    coefficient: FloatProperty(
+        name="Coefficient",
+        default=1.0,
+        update=updateNode)
 
-    iterations : IntProperty(
-            name = "Iterations",
-            default = 1,
-            min = 1,
-            update = updateNode)
+    iterations: IntProperty(
+        name="Iterations",
+        default=1,
+        min=1,
+        update=updateNode)
+
+    output_numpy: BoolProperty(
+        name='Output NumPy',
+        description='output NumPy arrays (improves performance)',
+        default=False,
+        update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVectorFieldSocket', "Field")
@@ -38,6 +44,8 @@ class SvVectorFieldApplyNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Coefficient").prop_name = 'coefficient'
         self.inputs.new('SvStringsSocket', "Iterations").prop_name = 'iterations'
         self.outputs.new('SvVerticesSocket', 'Vertices')
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'output_numpy')
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -81,7 +89,7 @@ class SvVectorFieldApplyNode(bpy.types.Node, SverchCustomTreeNode):
                         new_vectors = np.dstack((new_xs[:], new_ys[:], new_zs[:]))
                         new_vectors = np.array(coeffs)[np.newaxis].T * new_vectors[0]
                         vertices = vertices + new_vectors
-                    new_verts = vertices.tolist()
+                    new_verts = vertices if self.output_numpy else vertices.tolist()
 
                 verts_out.append(new_verts)
 
@@ -92,4 +100,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvVectorFieldApplyNode)
-
