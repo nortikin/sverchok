@@ -37,8 +37,9 @@ from sverchok.utils.logging import debug
 from sverchok.ui import color_def
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
 from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_with_bgl
-from sverchok.utils.nodeview_time_graph_drawing import configure_time_graph, disable_time_graph
-from sverchok.utils.nodeview_time_graph_drawing import configure_node_times, disable_node_times
+from sverchok.utils.nodeview_time_graph_drawing import (
+    configure_time_graph, disable_time_graph,
+    configure_node_times, disable_node_times)
 
 
 class SvNodeTreeCommon(object):
