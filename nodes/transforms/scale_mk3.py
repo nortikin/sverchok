@@ -56,7 +56,7 @@ class SvScaleNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvScaleNodeMk3'
     bl_label = 'Scale'
     bl_icon = 'ORIENTATION_VIEW'
-    sv_icon = 'SV_MOVE'
+    sv_icon = 'SV_SCALE'
 
 
     centers: FloatVectorProperty(
