@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import EnumProperty, FloatProperty, BoolProperty, StringProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.data_structure import updateNode, match_long_repeat, make_repeaters
 from sverchok.utils.sv_transform_helper import AngleUnits, SvAngleHelper
 from mathutils import Quaternion, Matrix, Euler
 
@@ -38,6 +38,71 @@ input_sockets = {
 mat_t = Matrix().Identity(4)  # pre-allocate once for performance (translation)
 mat_s = Matrix().Identity(4)  # pre-allocate once for performance (scale)
 
+def quaternion_matrices(params):
+    matrices = []
+    mat_num = max(map(len, params))
+    params2 = make_repeaters(params)
+    for i, location, quaternion, scale in zip(range(mat_num), *params2):
+        # translation
+        mat_t[0][3] = location[0]
+        mat_t[1][3] = location[1]
+        mat_t[2][3] = location[2]
+        # rotation
+        mat_r = quaternion.to_matrix().to_4x4()
+        # scale
+        mat_s[0][0] = scale[0]
+        mat_s[1][1] = scale[1]
+        mat_s[2][2] = scale[2]
+        # composite matrix
+        m = mat_t @ mat_r @ mat_s
+        matrices.append(m)
+    return matrices
+def euler_matrices(params, euler_order, angle_units):
+    mat_num = max(map(len, params))
+    params2 = make_repeaters(params)
+    matrices = []
+    for i, location, angleX, angleY, angleZ, scale in zip(range(mat_num), *params2):
+        # translation
+        mat_t[0][3] = location[0]
+        mat_t[1][3] = location[1]
+        mat_t[2][3] = location[2]
+        # rotation
+        angles = (angleX * angle_units, angleY * angle_units, angleZ * angle_units)
+        euler = Euler(angles, euler_order)
+        # mat_r = euler.to_quaternion().to_matrix().to_4x4()
+        mat_r = euler.to_matrix().to_4x4()
+
+        # scale
+        mat_s[0][0] = scale[0]
+        mat_s[1][1] = scale[1]
+        mat_s[2][2] = scale[2]
+        # composite matrix
+        m = mat_t @ mat_r @ mat_s
+        matrices.append(m)
+    return matrices
+
+def axis_angle_matrices(params, angle_units):
+    max_len = max(map(len, params))
+
+    params2 = make_repeaters(params)
+    # params2 = match_long_repeat([ll, xl, al, sl])
+    matrices = []
+    for i, location, axis, angle, scale in zip(range(max_len), *params2):
+    # for location, axis, angle, scale in zip(*params2):
+        # translation
+        mat_t[0][3] = location[0]
+        mat_t[1][3] = location[1]
+        mat_t[2][3] = location[2]
+        # rotation
+        mat_r = Quaternion(axis, angle * angle_units).to_matrix().to_4x4()
+        # scale
+        mat_s[0][0] = scale[0]
+        mat_s[1][1] = scale[1]
+        mat_s[2][2] = scale[2]
+        # composite matrix
+        m = mat_t @ mat_r @ mat_s
+        matrices.append(m)
+    return matrices
 
 class SvMatrixInNodeMK4(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     """
@@ -61,12 +126,12 @@ class SvMatrixInNodeMK4(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
 
         updateNode(self, context)
 
-    def update_angles(self, context, au):
+    def update_angles(self, context, angle_units):
         ''' Update all the angles to preserve their values in the new units '''
-        self.angle = self.angle * au
-        self.angle_x = self.angle_x * au
-        self.angle_y = self.angle_y * au
-        self.angle_z = self.angle_z * au
+        self.angle = self.angle * angle_units
+        self.angle_x = self.angle_x * angle_units
+        self.angle_y = self.angle_y * angle_units
+        self.angle_z = self.angle_z * angle_units
 
     rotation_mode: EnumProperty(
         name='Rotation Mode', description='The rotation component format of the matrix',
@@ -172,76 +237,26 @@ class SvMatrixInNodeMK4(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
                 input_q = [[Quaternion(input_q[0][0])]]
             I = [input_l, input_q, input_s]
             params1 = match_long_repeat(I)
-            for ll, ql, sl in zip(*params1):
-                params2 = match_long_repeat([ll, ql, sl])
-                matrices = []
-                for location, quaternion, scale in zip(*params2):
-                    # translation
-                    mat_t[0][3] = location[0]
-                    mat_t[1][3] = location[1]
-                    mat_t[2][3] = location[2]
-                    # rotation
-                    mat_r = quaternion.to_matrix().to_4x4()
-                    # scale
-                    mat_s[0][0] = scale[0]
-                    mat_s[1][1] = scale[1]
-                    mat_s[2][2] = scale[2]
-                    # composite matrix
-                    m = mat_t @ mat_r @ mat_s
-                    matrices.append(m)
-                add_matrix(matrices)
+            for p in zip(*params1):
+                add_matrix(quaternion_matrices(p))
 
         elif self.rotation_mode == "EULER":
             socket_names = ["Location", "Angle X", "Angle Y", "Angle Z", "Scale"]
             I = [inputs[name].sv_get(deepcopy=False) for name in socket_names]
             params1 = match_long_repeat(I)
             # conversion factor from the current angle units to radians
-            au = self.radians_conversion_factor()
-            for ll, axl, ayl, azl, sl in zip(*params1):
-                params2 = match_long_repeat([ll, axl, ayl, azl, sl])
-                matrices = []
-                for location, angleX, angleY, angleZ, scale in zip(*params2):
-                    # translation
-                    mat_t[0][3] = location[0]
-                    mat_t[1][3] = location[1]
-                    mat_t[2][3] = location[2]
-                    # rotation
-                    angles = (angleX * au, angleY * au, angleZ * au)
-                    euler = Euler(angles, self.euler_order)
-                    mat_r = euler.to_quaternion().to_matrix().to_4x4()
-                    # scale
-                    mat_s[0][0] = scale[0]
-                    mat_s[1][1] = scale[1]
-                    mat_s[2][2] = scale[2]
-                    # composite matrix
-                    m = mat_t @ mat_r @ mat_s
-                    matrices.append(m)
-                add_matrix(matrices)
+            angle_units = self.radians_conversion_factor()
+            for p in zip(*params1):
+                add_matrix(euler_matrices(p, self.euler_order, angle_units))
 
         elif self.rotation_mode == "AXISANGLE":
             socket_names = ["Location", "Axis", "Angle", "Scale"]
             I = [inputs[name].sv_get(deepcopy=False) for name in socket_names]
             params1 = match_long_repeat(I)
             # conversion factor from the current angle units to radians
-            au = self.radians_conversion_factor()
-            for ll, xl, al, sl in zip(*params1):
-                params2 = match_long_repeat([ll, xl, al, sl])
-                matrices = []
-                for location, axis, angle, scale in zip(*params2):
-                    # translation
-                    mat_t[0][3] = location[0]
-                    mat_t[1][3] = location[1]
-                    mat_t[2][3] = location[2]
-                    # rotation
-                    mat_r = Quaternion(axis, angle * au).to_matrix().to_4x4()
-                    # scale
-                    mat_s[0][0] = scale[0]
-                    mat_s[1][1] = scale[1]
-                    mat_s[2][2] = scale[2]
-                    # composite matrix
-                    m = mat_t @ mat_r @ mat_s
-                    matrices.append(m)
-                add_matrix(matrices)
+            angle_units = self.radians_conversion_factor()
+            for p in zip(*params1):
+                add_matrix(axis_angle_matrices(p, angle_units))
 
         self.outputs['Matrices'].sv_set(matrix_list)
 
