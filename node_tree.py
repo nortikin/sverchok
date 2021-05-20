@@ -180,14 +180,14 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         description="This will show Node Exceptions in the node view, right beside the node",
         name="Show error in tree", default=True, update=lambda s, c: process_tree(s), options=set())
 
-    sv_show_error_details : BoolProperty(
+    sv_show_error_details: BoolProperty(
             name = "Show error details",
             description = "Display exception stack in the node view as well",
             default = False,
             update=lambda s, c: process_tree(s),
             options=set())
 
-    sv_show_socket_menus : BoolProperty(
+    sv_show_socket_menus: BoolProperty(
         name = "Show socket menus",
         description = "Display socket dropdown menu buttons. NOTE: options that are enabled in those menus will be effective regardless of this checkbox!",
         default = False,
