@@ -205,34 +205,39 @@ def draw_overlay(*data):
         duration_as_str = string_from_duration(node_data['duration'])
         draw_text(font_id, (xpos + 3, y), duration_as_str, (r, g, b))
 
-def configure_time_graph(ng):
+def configure_node_times(ng):
     named_tree = ng.name
-    from sverchok.node_tree import SverchCustomTreeNode
-    SverchCustomTreeNode.get_and_set_gl_scale_info(None, origin="time graph")
-
-    shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
- 
     data_time_infos = (get_sv_times(named_tree), get_preferences(), named_tree)
+
     config_node_info = {
         'tree_name': named_tree,
         'mode': 'LEAN_AND_MEAN', 
         'custom_function': draw_node_time_infos,
         'args': data_time_infos
     }
+    nvBGL2.callback_enable(f"{ng.tree_id}_node_time_info", config_node_info)
 
+def configure_time_graph(ng):
+    # ensure most recent gl scale.
+    from sverchok.node_tree import SverchCustomTreeNode
+    SverchCustomTreeNode.get_and_set_gl_scale_info(None, origin="time graph")
+
+    named_tree = ng.name
+    shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
     data_overlay = (get_sv_times(named_tree), named_tree, shader)
+
     config_graph_overlay = {
         'tree_name': named_tree,
         'mode': 'LEAN_AND_MEAN', 
         'custom_function': draw_overlay,
         'args': data_overlay
     }
-
-    ng_id = ng.tree_id
-    nvBGL2.callback_enable(f"{ng_id}_node_time_info", config_node_info)
-    nvBGL2.callback_enable(f"{ng_id}_time_graph_overlay", config_graph_overlay, overlay="POST_PIXEL")
+    nvBGL2.callback_enable(f"{ng.tree_id}_time_graph_overlay", config_graph_overlay, overlay="POST_PIXEL")
 
 def disable_time_graph(ng):
-    ng_id = ng.tree_id
-    nvBGL2.callback_disable(f"{ng_id}_node_time_info")
-    nvBGL2.callback_disable(f"{ng_id}_time_graph_overlay")
+    nvBGL2.callback_disable(f"{ng.tree_id}_time_graph_overlay")
+
+def disable_node_times(ng):
+    nvBGL2.callback_disable(f"{ng.tree_id}_node_time_info")
+
+
