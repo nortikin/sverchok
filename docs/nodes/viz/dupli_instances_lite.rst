@@ -48,10 +48,12 @@ Limitations
 -----------
 
 This node can work without being connected to any other nodes but due the logic
-behind Sverchok update system the node will not work if there is not any link in the whole node-tree
+behind Sverchok update system the node will not work if there is not any link in
+the whole node-tree
+
 Examples
 --------
 
-Setting 1.000.000 icospheres (whole node-tree update 0.069 secs)
+Basic usage
 
-.. image:: https://user-images.githubusercontent.com/10011941/117689137-c0fffc80-b1b9-11eb-9a00-2a57f7e49976.png
+.. image:: https://user-images.githubusercontent.com/10011941/119203629-ce5b9780-ba93-11eb-87c0-6905ee79fcc6.png
