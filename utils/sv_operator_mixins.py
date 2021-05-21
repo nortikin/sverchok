@@ -41,6 +41,20 @@ class SvGenericNodeLocator():
     def get_tree(self):
         return bpy.data.node_groups.get(self.tree_name)
 
+    def sv_execute(self, context, node):
+        # you overwrite this, this is the code you want to execute if the locator finds a node
+        ...
+
+    def execute(self, context)
+        node = self.get_node(context)
+        if node:
+            response = self.sv_execute(context, node)
+            # we could add something like  ..  if response: return response
+            return {'FINISHED'}
+
+        msg = f'{self.bl_idname} was unable to locate the node <{self.tree_name}|{self.node_name}>'
+        self.report({'ERROR'}, msg)
+        return {'CANCELLED'}
 
 class SvGenericCallbackWithParams():
 

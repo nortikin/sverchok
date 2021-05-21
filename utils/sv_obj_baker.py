@@ -35,16 +35,12 @@ class SvObjBakeMK3(bpy.types.Operator, SvGenericNodeLocator):
     bl_label = "Sverchok mesh baker mk3"
     bl_options = {'REGISTER', 'UNDO'}
 
-    def execute(self, context):
-        node = self.get_node(context)
-        if not node:
-            return {'CANCELLED'}
+    def sv_execute(self, context, node):
 
         nid = node_id(node)
-
         if not node.inputs[0].is_linked:
             self.report({"WARNING"}, "Vertex socket of Draw node must be connected")
-            return {'CANCELLED'}
+            return
 
         fill_cache_from_node_reference(node)
         matrix_cache = cache_viewer_baker[nid + 'm']
@@ -53,7 +49,7 @@ class SvObjBakeMK3(bpy.types.Operator, SvGenericNodeLocator):
         pol_cache = cache_viewer_baker[nid + 'p']
 
         if matrix_cache and not vertex_cache:
-            return {'CANCELLED'}
+            return
 
         v = dataCorrect_np(vertex_cache)
         e = self.dataCorrect3(edg_cache)
@@ -61,7 +57,7 @@ class SvObjBakeMK3(bpy.types.Operator, SvGenericNodeLocator):
         m = self.dataCorrect2(matrix_cache, v)
         self.config = node
         self.makeobjects(v, e, p, m)
-        return {'FINISHED'}
+        return
 
     def dataCorrect2(self, destination, obj):
         if destination:
@@ -139,16 +135,11 @@ if FreeCAD is not None:
         bl_label = "Sverchok solid baker mk3"
         bl_options = {'REGISTER', 'UNDO'}
 
-        def execute(self, context):
-            node = self.get_node(context)
-            if not node:
-                return {'CANCELLED'}
-
+        def sv_execute(self, context, node):
             nid = node_id(node)
-
             if not node.inputs[0].is_linked:
                 self.report({"WARNING"}, "Solid socket of Viewer node must be connected")
-                return {'CANCELLED'}
+                return
 
             fill_cache_from_solid_node_reference(node)
             matrix_cache = cache_viewer_baker[nid + 'm']
@@ -156,14 +147,14 @@ if FreeCAD is not None:
             pol_cache = cache_viewer_baker[nid + 'p']
 
             if matrix_cache and not vertex_cache:
-                return {'CANCELLED'}
+                return
 
             v = vertex_cache
             p = pol_cache
             m = self.dataCorrect2(matrix_cache, v)
             self.config = node
             self.makeobjects(v, p, m)
-            return {'FINISHED'}
+            return
 
         def dataCorrect2(self, destination, obj):
             if destination:

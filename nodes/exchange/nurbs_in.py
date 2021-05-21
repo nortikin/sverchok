@@ -31,17 +31,13 @@ class SvExNurbsInCallbackOp(bpy.types.Operator, SvGenericNodeLocator):
 
     fn_name: StringProperty(default='')
 
-    def execute(self, context):
+    def sv_execute(self, context, node):
         """
         returns the operator's 'self' too to allow the code being called to
         print from self.report.
         """
-        node = self.get_node(context)
-        if node:        
-            getattr(node, self.fn_name)(self)
-            return {'FINISHED'}
+        getattr(node, self.fn_name)(self)
 
-        return {'CANCELLED'}
 
 class SvExNurbsInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """

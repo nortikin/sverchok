@@ -22,10 +22,7 @@ class SvGenesHolderReset(bpy.types.Operator, SvGenericNodeLocator):
     bl_idname = "node.number_genes_reset"
     bl_label = "Number Genes Reset"
 
-    def execute(self, context):
-        node = self.get_node(context)
-        if not node: return {'CANCELLED'}
-
+    def sv_execute(self, context, node):
         if node.number_type == 'vector':
             input_name = 'Vertices'
         else:
@@ -37,7 +34,6 @@ class SvGenesHolderReset(bpy.types.Operator, SvGenericNodeLocator):
             seed_set(node.r_seed)
             node.fill_empty_dict()
         updateNode(node, context)
-        return {'FINISHED'}
 
 class SvGenesHolderNode(bpy.types.Node, SverchCustomTreeNode):
     """

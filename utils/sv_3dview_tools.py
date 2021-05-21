@@ -28,7 +28,7 @@ def get_matrix(socket):
         print(repr(err))
 
 
-def get_center(self, context):
+def get_center(self, context, node):
 
     location = (0, 0, 0)
     matrix = None
@@ -84,12 +84,12 @@ class Sv3DviewAlign(bpy.types.Operator, SvGenericNodeLocator):
 
     fn_name: bpy.props.StringProperty(default='')
 
-    def execute(self, context):
+    def sv_execute(self, context, node):
 
-        vector_3d = get_center(self, context)
+        vector_3d = get_center(self, context, node)
         if not vector_3d:
             print(vector_3d)
-            return {'CANCELLED'}
+            return
 
         print(vector_3d)
         context.scene.cursor.location = vector_3d[:]
@@ -101,16 +101,6 @@ class Sv3DviewAlign(bpy.types.Operator, SvGenericNodeLocator):
                 ctx['region'] = area.regions[-1]
                 bpy.ops.view3d.view_center_cursor(ctx)
 
-        return {'FINISHED'}
-
-
 
 classes = [Sv3DviewAlign,]
-
-
-def register():
-    _ = [bpy.utils.register_class(cls) for cls in classes]
-
-
-def unregister():
-    _ = [bpy.utils.unregister_class(cls) for cls in classes[::-1]]
+register, unregister = bpy.utils.register_classes_factory(classes)

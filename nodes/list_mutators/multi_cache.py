@@ -23,13 +23,9 @@ class SvvMultiCacheReset(bpy.types.Operator, SvGenericNodeLocator):
     bl_idname = "node.multy_cache_reset"
     bl_label = "Multi Cache Reset"
 
-    def execute(self, context):
-        node = self.get_node(context)
-        if not node: return {'CANCELLED'}
-        
+    def sv_execute(self, context, node):
         node.fill_empty_dict()
         updateNode(node, context)
-        return {'FINISHED'}
 
 
 class SvMultiCacheNode(bpy.types.Node, SverchCustomTreeNode):
