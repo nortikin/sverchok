@@ -43,6 +43,8 @@ class SvGenericNodeLocator():
 
     def sv_execute(self, context, node):
         # you overwrite this, this is the code you want to execute if the locator finds a node
+        # - if you return (False) early, it is considered 'FINISHED'
+        # - you can explicitely return {'CANCELLED', ..'FINISHED', etc }
         ...
 
     def execute(self, context):
@@ -50,7 +52,6 @@ class SvGenericNodeLocator():
         if node:
             response = self.sv_execute(context, node)
             if response:
-                # you can explicitely return {'CANCELLED', ..'FINISHED', etc } from sv_execute
                 return response
             return {'FINISHED'}
 
