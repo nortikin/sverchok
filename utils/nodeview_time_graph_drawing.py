@@ -35,8 +35,14 @@ def get_preferences():
     props = get_params({'render_location_xy_multiplier': 1.0})
     return props.render_location_xy_multiplier
 
-def write_time_graph():
-    m = sverchok.core.update_system.graphs
+def write_time_graph(tree_name=None):
+    m = sverchok.core.update_system.graph_dicts.get(tree_name)
+    if not m:
+        print("tree_name not found in graph_dicts:", tree_name)
+        # print(sverchok.core.update_system.graph_dicts)
+        return
+    print("found", m)
+    m = [m]
     if len(m) == 1:
         return {idx: event for idx, event in enumerate(m[0])}
     else:
@@ -74,7 +80,9 @@ def draw_text(font_id, location, text, color):
 
 def draw_node_time_infos(*data):
 
-    data_tree = write_time_graph() # data[0]
+    data_tree = write_time_graph(tree_name=data[2]) # data[0]
+    if not data_tree:
+        return
     location_theta = data[1]
     node_tree = bpy.data.node_groups.get(data[2])
     
@@ -118,7 +126,10 @@ def draw_overlay(*data):
     # visible width ( T panel is not included, only N panel)
     region_width = region.width   
 
-    data_tree = write_time_graph() # data[0]
+    data_tree = write_time_graph(tree_name=data[1]) # data[0]
+    if not data_tree:
+        return
+
     node_tree = bpy.data.node_groups.get(data[1])
     shader = data[2]
 
