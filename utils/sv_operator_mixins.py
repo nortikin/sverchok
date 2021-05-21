@@ -45,7 +45,7 @@ class SvGenericNodeLocator():
         # you overwrite this, this is the code you want to execute if the locator finds a node
         ...
 
-    def execute(self, context)
+    def execute(self, context):
         node = self.get_node(context)
         if node:
             response = self.sv_execute(context, node)
