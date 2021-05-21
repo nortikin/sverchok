@@ -48,15 +48,11 @@ class SvOB3BItemOperator(bpy.types.Operator, SvGenericNodeLocator):
     fn_name: StringProperty(default='')
     idx: IntProperty()
 
-    def execute(self, context):
-        node = self.get_node(context)
-        if not node: return {'CANCELLED'}
-
+    def sv_execute(self, context, node):
         if self.fn_name == 'REMOVE':
             node.object_names.remove(self.idx)
 
         node.process_node(None)
-        return {'FINISHED'}
 
 
 class SvOB3Callback(bpy.types.Operator, SvGenericNodeLocator):
@@ -67,16 +63,12 @@ class SvOB3Callback(bpy.types.Operator, SvGenericNodeLocator):
 
     fn_name: StringProperty(default='')
 
-    def execute(self, context):
+    def sv_execute(self, context, node):
         """
         returns the operator's 'self' too to allow the code being called to
         print from self.report.
         """
-        node = self.get_node(context)
-        if not node: return {'CANCELLED'}
-
         getattr(node, self.fn_name)(self)
-        return {'FINISHED'}
 
 
 class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):

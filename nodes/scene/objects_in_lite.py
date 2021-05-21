@@ -26,15 +26,9 @@ class SvObjLiteCallback(bpy.types.Operator, SvGenericNodeLocator):
 
     cmd: StringProperty()
 
-    def execute(self, context):
-
-        node = self.get_node(context)
-        if node:        
-            getattr(node, self.cmd)()
-            node.process_node(context)
-            return {'FINISHED'}
-
-        return {'CANCELLED'}
+    def sv_execute(self, context, node):
+        getattr(node, self.cmd)()
+        node.process_node(context)
 
 
 class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):

@@ -38,12 +38,8 @@ class SvFilePathFinder(bpy.types.Operator, SvGenericNodeLocator):
         name="File Path", description="Filepath used for writing waveform files",
         maxlen=1024, default="", subtype='FILE_PATH')
 
-    def execute(self, context):
-        node = self.get_node(context)
-        if not node: return {'CANCELLED'}
-
+    def sv_execute(self, context, node):
         node.set_data(self.directory, self.files)
-        return {'FINISHED'}
 
     def invoke(self, context, event):
         wm = context.window_manager
