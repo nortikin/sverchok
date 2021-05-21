@@ -154,7 +154,7 @@ if FreeCAD is not None:
             m = self.dataCorrect2(matrix_cache, v)
             self.config = node
             self.makeobjects(v, p, m)
-            return
+
 
         def dataCorrect2(self, destination, obj):
             if destination:
