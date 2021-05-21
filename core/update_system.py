@@ -16,8 +16,10 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import collections
+import ast
 import time
+import traceback
+import collections
 from itertools import chain
 
 import bpy
@@ -27,14 +29,13 @@ from sverchok import data_structure
 from sverchok.core.socket_data import SvNoDataError, reset_socket_cache
 from sverchok.utils.logging import debug, info, warning, error, exception
 from sverchok.utils.profile import profile
-from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_with_bgl, start_exception_drawing_with_bgl
+from sverchok.utils.exception_drawing_with_bgl import (
+    clear_exception_drawing_with_bgl, start_exception_drawing_with_bgl)
 from sverchok.core.socket_data import clear_all_socket_cache
 from sverchok.core.node_id_dict import clear_nodes_id_dict
 from sverchok.core.links import clear_link_memory
 import sverchok
 
-import traceback
-import ast
 
 graphs = []
 graph_dicts = {}
@@ -286,23 +287,25 @@ def do_update_heat_map(node_list, nodes):
         nodes.id_data.sv_user_colors = str(color_data)
 
     times = do_update_general(node_list, nodes)
-    if not times:
-        return
+    
+    if not times: return
+
     t_max = max(times)
     addon_name = data_structure.SVERCHOK_NAME
     addon = bpy.context.preferences.addons.get(addon_name)
+
     if addon:
-        # to use Vector.lerp
         cold = Vector(addon.preferences.heat_map_cold)
         hot = addon.preferences.heat_map_hot
     else:
         error("Cannot find preferences")
         cold = Vector((1, 1, 1))
         hot = (.8, 0, 0)
+
     for name, t in zip(node_list, times):
         nodes[name].use_custom_color = True
-        # linear scale.
         nodes[name].color = cold.lerp(hot, t / t_max)
+
 
 def update_error_nodes(ng, name, err=Exception):
     if ng.bl_idname == "SverchGroupTreeType":
@@ -439,8 +442,6 @@ def build_update_list(ng=None):
     global update_cache
     global partial_update_cache
 
-    # global graphs
-    # graphs = []
     reset_timing_graphs()
     graph_dicts = {}
 
@@ -460,10 +461,7 @@ def process_to_node(node):
     """
     Process nodes upstream until node
     """
-    # global graphs
-    # graphs = []
     ng = node.id_data
-    
     reset_timing_graphs()
     graph_dicts[ng.name] = {}
 
@@ -535,8 +533,6 @@ def process_tree(ng=None):
     global update_cache
     global partial_update_cache
     
-    # global graphs
-    # graphs = []
     reset_timing_graphs()
     graph_dicts[ng.name] = {}
 
