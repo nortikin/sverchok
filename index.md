@@ -590,6 +590,7 @@
     ---
     SvInstancerNodeMK3
     SvDupliInstancesMK5
+    SvDupliInstancesLite
     ---
     SvLightViewerNode
     ---
