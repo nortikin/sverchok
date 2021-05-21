@@ -37,6 +37,7 @@ import traceback
 import ast
 
 graphs = []
+graph_dicts = {}
 
 no_data_color = (1, 0.3, 0)
 exception_color = (0.8, 0.0, 0)
@@ -415,6 +416,8 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             return None
 
     graphs.append(graph)
+    graph_dicts[nodes.id_data.name] = graph
+
     if data_structure.DEBUG_MODE:
         debug("Node set updated in: %.4f seconds", total_time)
     
@@ -435,8 +438,12 @@ def build_update_list(ng=None):
     """
     global update_cache
     global partial_update_cache
-    global graphs
-    graphs = []
+
+    # global graphs
+    # graphs = []
+    reset_timing_graphs()
+    graph_dicts = {}
+
     if not ng:
         for ng in sverchok_trees():
             build_update_list(ng)
@@ -453,10 +460,13 @@ def process_to_node(node):
     """
     Process nodes upstream until node
     """
-    global graphs
-    graphs = []
-
+    # global graphs
+    # graphs = []
     ng = node.id_data
+    
+    reset_timing_graphs()
+    graph_dicts[ng.name] = {}
+
     reset_error_nodes(ng)
 
     if data_structure.RELOAD_EVENT:
@@ -491,9 +501,11 @@ def process_from_node(node):
     """
     global update_cache
     global partial_update_cache
-    global graphs
-    graphs = []
     ng = node.id_data
+
+    reset_timing_graphs()
+
+    graph_dicts[ng.name] = {}
     reset_error_nodes(ng)
 
     if data_structure.RELOAD_EVENT:
@@ -522,8 +534,11 @@ def sverchok_trees():
 def process_tree(ng=None):
     global update_cache
     global partial_update_cache
-    global graphs
-    graphs = []
+    
+    # global graphs
+    # graphs = []
+    reset_timing_graphs()
+    graph_dicts[ng.name] = {}
 
     if data_structure.RELOAD_EVENT:
         reload_sverchok()
