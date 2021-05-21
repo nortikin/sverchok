@@ -40,7 +40,7 @@ class SvObjBakeMK3(bpy.types.Operator, SvGenericNodeLocator):
         nid = node_id(node)
         if not node.inputs[0].is_linked:
             self.report({"WARNING"}, "Vertex socket of Draw node must be connected")
-            return
+            return {'CANCELLED'}
 
         fill_cache_from_node_reference(node)
         matrix_cache = cache_viewer_baker[nid + 'm']
@@ -49,7 +49,7 @@ class SvObjBakeMK3(bpy.types.Operator, SvGenericNodeLocator):
         pol_cache = cache_viewer_baker[nid + 'p']
 
         if matrix_cache and not vertex_cache:
-            return
+            return {'CANCELLED'}
 
         v = dataCorrect_np(vertex_cache)
         e = self.dataCorrect3(edg_cache)
@@ -57,7 +57,7 @@ class SvObjBakeMK3(bpy.types.Operator, SvGenericNodeLocator):
         m = self.dataCorrect2(matrix_cache, v)
         self.config = node
         self.makeobjects(v, e, p, m)
-        return
+
 
     def dataCorrect2(self, destination, obj):
         if destination:
@@ -139,7 +139,7 @@ if FreeCAD is not None:
             nid = node_id(node)
             if not node.inputs[0].is_linked:
                 self.report({"WARNING"}, "Solid socket of Viewer node must be connected")
-                return
+                return {'CANCELLED'}
 
             fill_cache_from_solid_node_reference(node)
             matrix_cache = cache_viewer_baker[nid + 'm']
@@ -147,7 +147,7 @@ if FreeCAD is not None:
             pol_cache = cache_viewer_baker[nid + 'p']
 
             if matrix_cache and not vertex_cache:
-                return
+                return {'CANCELLED'}
 
             v = vertex_cache
             p = pol_cache

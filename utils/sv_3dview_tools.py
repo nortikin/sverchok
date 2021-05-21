@@ -85,7 +85,7 @@ class Sv3DviewAlign(bpy.types.Operator, SvGenericNodeLocator):
         vector_3d = get_center(self, context, node)
         if not vector_3d:
             print(vector_3d)
-            return
+            return {'CANCELLED'}
 
         print(vector_3d)
         context.scene.cursor.location = vector_3d[:]
