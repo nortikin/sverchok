@@ -32,12 +32,9 @@ def get_center(self, context, node):
 
     location = (0, 0, 0)
     matrix = None
+    print('node:', node)
 
     try:
-
-        node = self.get_node(context)
-        print('node:', node)
-
         inputs = node.inputs
 
         if node.bl_idname in {'SvViewerDrawMk4'}:
@@ -71,7 +68,6 @@ def get_center(self, context, node):
         sys.stderr.write('ERROR: %s\n' % str(err))
         print(sys.exc_info()[-1].tb_frame.f_code)
         print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
-
 
     return location
 
