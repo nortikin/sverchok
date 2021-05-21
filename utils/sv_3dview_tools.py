@@ -32,7 +32,7 @@ def get_center(self, context, node):
 
     location = (0, 0, 0)
     matrix = None
-    print('node:', node)
+    print('node:', node.name)
 
     try:
         inputs = node.inputs
