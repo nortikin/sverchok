@@ -49,7 +49,9 @@ class SvGenericNodeLocator():
         node = self.get_node(context)
         if node:
             response = self.sv_execute(context, node)
-            # we could add something like  ..  if response: return response
+            if response:
+                # you can explicitely return {'CANCELLED', ..'FINISHED', etc } from sv_execute
+                return response
             return {'FINISHED'}
 
         msg = f'{self.bl_idname} was unable to locate the node <{self.tree_name}|{self.node_name}>'
