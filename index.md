@@ -587,7 +587,11 @@
     SvMetaballOutNode
     SvNurbsCurveOutNode
     SvNurbsSurfaceOutNode
+    ---
     SvInstancerNodeMK3
+    SvDupliInstancesMK5
+    SvDupliInstancesLite
+    ---
     SvLightViewerNode
     ---
     SvGreasePencilStrokes
@@ -621,14 +625,15 @@
     SvSetDataObjectNodeMK2
     SvSortObjsNode
     SvFilterObjsNode
-    SvObjectToMeshNodeMK2
+    SvSetMeshAttributeNode
     SvPointOnMeshNodeMK2
     SvOBJRayCastNodeMK2
     SvSCNRayCastNodeMK2
     SvSetLoopNormalsNode
+    SvSetCollection
 
 ## Scene
-    SvObjectsNodeMK3
+    SvGetObjectsData
     SvObjInLite
     SvCurveInputNode
     SvFCurveInNodeMK1
@@ -641,8 +646,6 @@
     ---
     SvFrameInfoNodeMK2
     SvTimerNode
-    ---
-    SvDupliInstancesMK4
 
 ## Objects
     SvVertexGroupNodeMK2

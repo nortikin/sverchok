@@ -24,17 +24,11 @@ class SvBezierInCallbackOp(bpy.types.Operator, SvGenericNodeLocator):
     bl_label = "Bezier In Callback"
     bl_options = {'INTERNAL'}
 
-    def execute(self, context):
+    def sv_execute(self, context, node):
         """
-        returns the operator's 'self' too to allow the code being called to
-        print from self.report.
+        passes the operator's 'self' too to allow calling self.report()
         """
-        node = self.get_node(context)
-        if node:
-            node.get_objects_from_scene(self)
-            return {'FINISHED'}
-
-        return {'CANCELLED'}
+        node.get_objects_from_scene(self)
 
 
 class SvBezierInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):

@@ -31,6 +31,13 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECT_ID_OUT'
 
+    replacement_nodes = [('SvGetObjectsData',
+                          None,
+                          dict(VertexNormals='Vertex Normals',
+                               PolygonAreas='Polygon Areas',
+                               PolygonCenters='Polygon Centers',
+                               PolygonNormals='Polygon Normals'))]
+
     def modifiers_handle(self, context):
         set_sv_depsgraph_need(self.modifiers)
         updateNode(self, context)
@@ -63,7 +70,7 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
 
         o1,o2,o3,o4,o5,o6,o7,o8 = self.outputs
         vs,vn,es,ps,pa,pc,pn,ms = [],[],[],[],[],[],[],[]
-        
+
         if self.modifiers:
             sv_depsgraph = get_sv_depsgraph()
 
@@ -81,7 +88,7 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
                         obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
                     else:
                         obj_data = obj.to_mesh()
-                    
+
                     if o1.is_linked:
                         vs.append([v.co[:] for v in obj_data.vertices])
                     if o2.is_linked:
@@ -96,7 +103,7 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNo
                         pc.append([p.center[:] for p in obj_data.polygons])
                     if o7.is_linked:
                         pn.append([p.normal[:] for p in obj_data.polygons])
-                    
+
                     obj.to_mesh_clear()
 
         for i,i2 in zip(self.outputs, [vs,vn,es,ps,pa,pc,pn,ms]):

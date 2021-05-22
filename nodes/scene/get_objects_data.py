@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -17,6 +17,9 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
+from sverchok.utils.blender_mesh import (
+    read_verts, read_edges, read_verts_normal,
+    read_face_normal, read_face_center, read_face_area, read_materials_idx)
 
 class SvOB3BDataCollection(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty()
@@ -48,15 +51,10 @@ class SvOB3BItemOperator(bpy.types.Operator, SvGenericNodeLocator):
     fn_name: StringProperty(default='')
     idx: IntProperty()
 
-    def execute(self, context):
-        node = self.get_node(context)
-        if not node: return {'CANCELLED'}
-
+    def sv_execute(self, context, node):
         if self.fn_name == 'REMOVE':
             node.object_names.remove(self.idx)
-
         node.process_node(None)
-        return {'FINISHED'}
 
 
 class SvOB3Callback(bpy.types.Operator, SvGenericNodeLocator):
@@ -67,26 +65,27 @@ class SvOB3Callback(bpy.types.Operator, SvGenericNodeLocator):
 
     fn_name: StringProperty(default='')
 
-    def execute(self, context):
+    def sv_execute(self, context, node):
         """
         returns the operator's 'self' too to allow the code being called to
         print from self.report.
         """
-        node = self.get_node(context)
-        if not node: return {'CANCELLED'}
-
         getattr(node, self.fn_name)(self)
-        return {'FINISHED'}
 
 
-class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
+def get_vertgroups(mesh):
+    return [k for k,v in enumerate(mesh.vertices) if v.groups.values()]
+
+numpy_socket_names = ['Vertices', 'Edges', 'Vertex Normals', 'Material Idx', 'Polygon Areas', 'Polygon Centers', 'Polygon Normals']
+
+class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     """
-    Triggers: obj Input Scene Objects pydata
+    Triggers: Object Info
     Tooltip: Get Scene Objects into Sverchok Tree
     """
 
-    bl_idname = 'SvObjectsNodeMK3'
-    bl_label = 'Objects in'
+    bl_idname = 'SvGetObjectsData'
+    bl_label = 'Get Objects Data'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
 
@@ -103,10 +102,6 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
         set_sv_depsgraph_need(self.modifiers)
         updateNode(self, context)
 
-    groupname: StringProperty(
-        name='groupname', description='group of objects (green outline CTRL+G)',
-        default='', update=updateNode)
-
     modifiers: BoolProperty(
         name='Modifiers',
         description='Apply modifier geometry to import (original untouched)',
@@ -122,17 +117,32 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
         description='sorting inserted objects by names',
         default=True, update=updateNode)
 
-    object_names: bpy.props.CollectionProperty(type=SvOB3BDataCollection, options={'SKIP_SAVE'})
+    object_names: bpy.props.CollectionProperty(type=SvOB3BDataCollection)
 
     active_obj_index: bpy.props.IntProperty()
 
+    out_np: bpy.props.BoolVectorProperty(
+        name="Ouput Numpy",
+        description="Output NumPy arrays (makes node faster)",
+        size=7, update=updateNode)
+    output_np_all: BoolProperty(
+        name='Output all numpy',
+        description='Output numpy arrays if possible',
+        default=False, update=updateNode)
+
     def sv_init(self, context):
         new = self.outputs.new
+        self.width = 150
+        self.inputs.new('SvObjectSocket', "Objects")
         new('SvVerticesSocket', "Vertices")
         new('SvStringsSocket', "Edges")
         new('SvStringsSocket', "Polygons")
-        new('SvStringsSocket', "MaterialIdx")
-        new('SvMatrixSocket', "Matrixes")
+        new('SvVerticesSocket', "Vertex Normals")
+        new('SvStringsSocket', "Material Idx")
+        new('SvStringsSocket', "Polygon Areas")
+        new('SvVerticesSocket', "Polygon Centers")
+        new('SvVerticesSocket', "Polygon Normals")
+        new('SvMatrixSocket', "Matrix")
         new('SvObjectSocket', "Object")
 
 
@@ -142,11 +152,7 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
         """
         self.object_names.clear()
 
-        if self.groupname and groups[self.groupname].objects:
-            groups = bpy.data.groups
-            names = [obj.name for obj in groups[self.groupname].objects]
-        else:
-            names = [obj.name for obj in bpy.data.objects if (obj.select_get() and len(obj.users_scene) > 0 and len(obj.users_collection) > 0)]
+        names = [obj.name for obj in bpy.data.objects if (obj.select_get() and len(obj.users_scene) > 0 and len(obj.users_collection) > 0)]
 
         if self.sort:
             names.sort()
@@ -178,102 +184,113 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
         else:
             layout.label(text='--None--')
 
-
+    @property
+    def by_input(self):
+        return self.inputs[0].object_ref_pointer is not None or self.inputs[0].is_linked
 
     def draw_buttons(self, context, layout):
         self.draw_animatable_buttons(layout, icon_only=True)
         col = layout.column(align=True)
-        row = col.row()
+        by_input = self.by_input
+        if not by_input:
+            row = col.row()
 
-        op_text = "Get selection"  # fallback
-        callback = 'node.ob3_callback'
+            op_text = "Get selection"  # fallback
+            callback = 'node.ob3_callback'
 
-        if self.prefs_over_sized_buttons:
-            row.scale_y = 4.0
-            op_text = "G E T"
-        
-        self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'
+            if self.prefs_over_sized_buttons:
+                row.scale_y = 4.0
+                op_text = "G E T"
+
+            self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'
 
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.prop(self, 'sort', text='Sort', toggle=True)
+        if not by_input:
+            row.prop(self, 'sort', text='Sort', toggle=True)
         row.prop(self, "modifiers", text="Post", toggle=True)
         row.prop(self, "vergroups", text="VeGr", toggle=True)
-        self.draw_obj_names(layout)
+        if not by_input:
+            self.draw_obj_names(layout)
 
     def draw_buttons_ext(self, context, layout):
+        r = layout.column(align=True)
+        row = r.row(align=True)
+        row.label(text="Ouput Numpy:")
+        row.prop(self, 'output_np_all', text='If possible', toggle=True)
+        if not self.output_np_all:
+            for i in range(7):
+                r.prop(self, "out_np", index=i, text=numpy_socket_names[i], toggle=True)
+
         layout.prop(self, 'draw_3dpanel', text="To Control panel")
         self.draw_animatable_buttons(layout)
 
+    def rclick_menu(self, context, layout):
+        '''right click sv_menu items'''
+        layout.label(text="Ouput Numpy:")
+        layout.prop(self, 'output_np_all', text='All', toggle=True)
+        if not self.output_np_all:
+            for i in range(7):
+                layout.prop(self, "out_np", index=i, text=numpy_socket_names[i], toggle=True)
+
     def draw_buttons_3dpanel(self, layout):
-        callback = 'node.ob3_callback'
-        row = layout.row(align=True)
-        row.label(text=self.label if self.label else self.name)
-        colo = row.row(align=True)
-        colo.scale_x = 1.6
+        if not self.by_input:
+            callback = 'node.ob3_callback'
+            row = layout.row(align=True)
+            row.label(text=self.label if self.label else self.name)
+            colo = row.row(align=True)
+            colo.scale_x = 1.6
 
-        self.wrapper_tracked_ui_draw_op(colo, callback, text='Get').fn_name = 'get_objects_from_scene'
-
-
-    def get_verts_and_vertgroups(self, obj_data):
-        vers = []
-        vers_grouped = []
-        for k, v in enumerate(obj_data.vertices):
-            if self.vergroups and v.groups.values():
-                vers_grouped.append(k)
-            vers.append(list(v.co))
-        return vers, vers_grouped
+            self.wrapper_tracked_ui_draw_op(colo, callback, text='Get').fn_name = 'get_objects_from_scene'
+        else:
+            row = layout.row(align=True)
+            row.label(text=self.label if self.label else self.name)
+            self.draw_animatable_buttons(row, icon_only=True)
 
     def get_materials_from_bmesh(self, bm):
         return [face.material_index for face in bm.faces[:]]
-
-    def get_materials_from_mesh(self, mesh):
-        return [face.material_index for face in mesh.polygons[:]]
 
     def sv_free(self):
         set_sv_depsgraph_need(False)
 
     def process(self):
 
-        if not self.object_names:
-            return
+        objs = self.inputs[0].sv_get(default=[[]])
+        if not self.object_names and not objs[0]:
 
-        scene = bpy.context.scene
+            return
         data_objects = bpy.data.objects
         outputs = self.outputs
 
-
-        edgs_out = []
-        vers_out = []
         vers_out_grouped = []
-        pols_out = []
-        mtrx_out = []
-        materials_out = []
 
+        o_vs, o_es, o_ps, o_vn, o_mi, o_pa, o_pc, o_pn, o_ms, o_ob = [s.is_linked for s in self.outputs[:10]]
+        vs, es, ps, vn, mi, pa, pc, pn, ms = [[] for s in self.outputs[:9]]
         if self.modifiers:
             sv_depsgraph = get_sv_depsgraph()
 
+
+        out_np = self.out_np if not self.output_np_all else [True for i in range(7)]
+        if isinstance(objs[0], list):
+            objs = objs[0]
+        if not objs:
+            objs = (data_objects.get(o.name) for o in self.object_names)
+
         # iterate through references
-        for obj in (data_objects.get(o.name) for o in self.object_names):
+        for obj in objs:
 
             if not obj:
                 continue
 
-            edgs = []
-            vers = []
-            vers_grouped = []
-            pols = []
-            mtrx = []
-            materials = []
-
-            # code inside this context can trigger dependancy graph update events, 
+            # code inside this context can trigger dependancy graph update events,
             # it is necessary to call throttle here to prevent Sverchok from responding to these updates:
             # not doing so would trigger recursive updates and Blender would likely become unresponsive.
             with self.sv_throttle_tree_update():
 
                 mtrx = obj.matrix_world
                 if obj.type in {'EMPTY', 'CAMERA', 'LAMP' }:
-                    mtrx_out.append(mtrx)
+                    if o_ms:
+                        ms.append(mtrx)
                     continue
                 try:
                     if obj.mode == 'EDIT' and obj.type == 'MESH':
@@ -282,7 +299,24 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
                         me = obj.data
                         bm = bmesh.from_edit_mesh(me)
                         vers, edgs, pols = pydata_from_bmesh(bm)
-                        materials = self.get_materials_from_bmesh(bm)
+
+                        if o_vs:
+                            vs.append(vers)
+                        if o_es:
+                            es.append(edgs)
+                        if o_ps:
+                            ps.append(pols)
+                        if o_vn:
+                            vn.append([v.normal[:] for v in bm.verts])
+                        if o_mi:
+                            mi.append(self.get_materials_from_bmesh(bm))
+                        if o_pa:
+                            pa.append([p.calc_area() for p in bm.faces])
+                        if o_pc:
+                            pc.append([p.calc_center_median()[:] for p in bm.faces])
+                        if o_pn:
+                            pn.append([p.normal[:] for p in bm.faces])
+
                         del bm
                     else:
 
@@ -292,45 +326,53 @@ class SvObjectsNodeMK3(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
                         else:
                             obj_data = obj.to_mesh()
 
-                        if obj_data.polygons:
-                            pols = [list(p.vertices) for p in obj_data.polygons]
-                        vers, vers_grouped = self.get_verts_and_vertgroups(obj_data)
-                        materials = self.get_materials_from_mesh(obj_data)
-                        edgs = obj_data.edge_keys
+                        if o_vs:
+                            vs.append(read_verts(obj_data, out_np[0]))
+                        if o_es:
+                            es.append(read_edges(obj_data, out_np[1]))
+                        if o_ps:
+                            ps.append([list(p.vertices) for p in obj_data.polygons])
+                        if self.vergroups:
+                            vers_out_grouped.append(get_vertgroups(obj_data))
+                        if o_vn:
+                            vn.append(read_verts_normal(obj_data, out_np[2]))
+                        if o_mi:
+                            mi.append(read_materials_idx(obj_data, out_np[3]))
+                        if o_pa:
+                            pa.append(read_face_area(obj_data, out_np[4]))
+                        if o_pc:
+                            if out_np[5]:
+                                pc.append(read_face_center(obj_data, output_numpy=True))
+                            else:
+                                pc.append([p.center[:] for p in obj_data.polygons])
+                        if o_pn:
+                            if out_np[6]:
+                                pn.append(read_face_normal(obj_data, True))
+                            else:
+                                pn.append([p.normal[:] for p in obj_data.polygons])
 
                         obj.to_mesh_clear()
-
 
                 except Exception as err:
                     print('failure in process between frozen area', self.name, err)
 
-            vers_out.append(vers)
-            edgs_out.append(edgs)
-            pols_out.append(pols)
-            mtrx_out.append(mtrx)
-            materials_out.append(materials)
-            vers_out_grouped.append(vers_grouped)
+            if o_ms:
+                ms.append(mtrx)
 
-        if vers_out and vers_out[0]:
-            outputs['Vertices'].sv_set(vers_out)
-            outputs['Edges'].sv_set(edgs_out)
-            outputs['Polygons'].sv_set(pols_out)
-            if 'MaterialIdx' in outputs:
-                outputs['MaterialIdx'].sv_set(materials_out)
 
+        for i, i2 in zip(self.outputs, [vs, es, ps, vn, mi, pa, pc, pn, ms]):
+            if i.is_linked:
+                i.sv_set(i2)
+
+        if vers_out_grouped and vers_out_grouped[0]:
             if 'Vers_grouped' in outputs and self.vergroups:
                 outputs['Vers_grouped'].sv_set(vers_out_grouped)
-
-        outputs['Matrixes'].sv_set(mtrx_out)
-        outputs['Object'].sv_set([data_objects.get(o.name) for o in self.object_names])
-
-    def save_to_json(self, node_data: dict):
-        node_data['object_names'] = [o.name for o in self.object_names]
-
-    def load_from_json(self, node_data: dict, import_version: float):
-        for named_object in node_data.get('object_names', []):
-            self.object_names.add().name = named_object
+        if o_ob:
+            if self.by_input:
+                outputs['Object'].sv_set(objs)
+            else:
+                outputs['Object'].sv_set([data_objects.get(o.name) for o in self.object_names])
 
 
-classes = [SvOB3BItemOperator, SvOB3BDataCollection, SVOB3B_UL_NamesList, SvOB3Callback, SvObjectsNodeMK3]
+classes = [SvOB3BItemOperator, SvOB3BDataCollection, SVOB3B_UL_NamesList, SvOB3Callback, SvGetObjectsData]
 register, unregister = bpy.utils.register_classes_factory(classes)

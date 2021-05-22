@@ -18,12 +18,7 @@ class SvNodeViewZoomBorder(bpy.types.Operator, SvGenericNodeLocator):
     bl_label = "NodeView Zoom Border Operator"
     bl_options = {'INTERNAL'}
 
-    def execute(self, context):
-
-        node = self.get_node(context)
-        if not node:
-            print("SvNodeViewZoomBorder was not able to locate the node")
-            return {'CANCELLED'}
+    def sv_execute(self, context, node):
 
         for window in bpy.context.window_manager.windows:
             screen = window.screen
@@ -54,8 +49,6 @@ class SvNodeViewZoomBorder(bpy.types.Operator, SvGenericNodeLocator):
                             }
                             bpy.ops.node.view_selected(override)
                             break
-
-        return {'FINISHED'}
 
 def register():
     bpy.utils.register_class(SvNodeViewZoomBorder)

@@ -18,12 +18,23 @@ class SvVectorFieldEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_EVAL_VECTOR_FIELD'
 
+    output_numpy: BoolProperty(
+        name='Output NumPy',
+        description='Output NumPy arrays (improves performance)',
+        default=False,
+        update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvVectorFieldSocket', "Field")
         d = self.inputs.new('SvVerticesSocket', "Vertices")
         d.use_prop = True
         d.default_property = (0.0, 0.0, 0.0)
         self.outputs.new('SvVerticesSocket', 'Vectors')
+
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'output_numpy')
+    def rclick_menu(self, context, layout):
+        layout.prop(self, "output_numpy")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -41,13 +52,13 @@ class SvVectorFieldEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
                 value = field.evaluate(*vertex)
                 new_values = [tuple(value)]
             else:
-                XYZ = np.array(vertices)
+                XYZ = vertices if isinstance(vertices, np.ndarray) else np.array(vertices)
                 xs = XYZ[:,0]
                 ys = XYZ[:,1]
                 zs = XYZ[:,2]
                 new_xs, new_ys, new_zs = field.evaluate_grid(xs, ys, zs)
                 new_vectors = np.dstack((new_xs[:], new_ys[:], new_zs[:]))
-                new_values = new_vectors[0].tolist()
+                new_values = new_vectors if self.output_numpy else new_vectors[0].tolist()
 
             values_out.append(new_values)
 
