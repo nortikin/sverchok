@@ -125,7 +125,7 @@ class SvNodeTreeCommon(object):
         the nodeview scale and dpi differs between users and must be queried to get correct nodeview
         x,y and dpi scale info.
         """
-        debug('get_and_set_gl_scale_info called from', origin or self.name)
+        debug('update_gl_scale_info called from', origin or self.name)
         try:
             from sverchok.utils.context_managers import sv_preferences
             with sv_preferences() as prefs:

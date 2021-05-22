@@ -183,7 +183,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Float").prop_name = 'in_float'
         self.outputs.new('SvStringsSocket', "Float").custom_draw = 'custom_draw_socket'
-        self.get_and_set_gl_scale_info()
+        self.id_data.update_gl_scale_info()
 
     def get_offset(self):
         return [int(j) for j in (Vector(self.absolute_location) + Vector((self.width + 20, 0)))[:]]

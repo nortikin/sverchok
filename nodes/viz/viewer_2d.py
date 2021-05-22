@@ -686,7 +686,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         vc2 = self.inputs.new('SvColorSocket', "Polygon Color")
         vc2.prop_name = 'polygon_color'
         vc2.custom_draw = 'draw_color_socket'
-        self.get_and_set_gl_scale_info()
+        self.id_data.update_gl_scale_info()
         self.update_sockets()
 
     def draw_color_socket(self, socket, context, layout):

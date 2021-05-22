@@ -484,7 +484,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
     def sv_init(self, context):
         self.inputs.new("SvStringsSocket", "text")
-        self.get_and_set_gl_scale_info()
+        self.id_data.update_gl_scale_info()
         
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)

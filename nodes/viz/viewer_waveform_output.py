@@ -327,7 +327,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new(DATA_SOCKET, 'channel 0')
         self.inputs.new(DATA_SOCKET, 'channel 1')
-        self.get_and_set_gl_scale_info()
+        self.id_data.update_gl_scale_info()
 
     def draw_buttons(self, context, layout):
 
