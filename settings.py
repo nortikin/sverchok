@@ -346,11 +346,8 @@ class SverchokPreferences(AddonPreferences):
         description="Auto update angle values when angle units are changed to preserve the angle")
 
     def set_nodeview_render_params(self, context):
-        # i think these are both the same..
-        self.render_scale = get_dpi_factor()
+        self.render_scale = get_dpi_factor()   # this was intended as a general draw scale multiplier, not location but size.
         self.render_location_xy_multiplier = get_dpi_factor()
-        # print(f'set render_scale to: {self.render_scale}')
-        # print(f'set render_location_xy_multiplier to: {self.render_location_xy_multiplier}')
 
     ##
 
@@ -472,10 +469,7 @@ class SverchokPreferences(AddonPreferences):
         box_sub1_col = box_sub1.column(align=True)
 
         box_sub1_col.label(text='Render Scale & Location')
-        # box_sub1_col.prop(self, 'render_location_xy_multiplier', text='xy multiplier')
-        # box_sub1_col.prop(self, 'render_scale', text='scale')
         box_sub1_col.label(text=f'xy multiplier: {self.render_location_xy_multiplier}')
-        box_sub1_col.label(text=f'render_scale : {self.render_scale}')
 
         box_sub1_col.label(text='Stethoscope')
         box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')

@@ -184,7 +184,7 @@ def sv_post_load(scene):
 
     # ensure current nodeview view scale / location parameters reflect users' system settings
     from sverchok import node_tree
-    node_tree.SverchCustomTreeNode.get_and_set_gl_scale_info(None, "sv_post_load")
+    node_tree.SverchCustomTree.update_gl_scale_info(None, "sv_post_load")
 
 
     for monad in (ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchGroupTreeType'):

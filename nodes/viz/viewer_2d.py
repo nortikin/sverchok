@@ -686,7 +686,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         vc2 = self.inputs.new('SvColorSocket', "Polygon Color")
         vc2.prop_name = 'polygon_color'
         vc2.custom_draw = 'draw_color_socket'
-        self.get_and_set_gl_scale_info()
+        self.id_data.update_gl_scale_info()
         self.update_sockets()
 
     def draw_color_socket(self, socket, context, layout):
@@ -715,21 +715,13 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
                 layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
 
     def get_drawing_attributes(self):
-        """
-        adjust render location based on preference multiplier setting
-        """
-        try:
-            with sv_preferences() as prefs:
-                multiplier = prefs.render_location_xy_multiplier
-                scale = prefs.render_scale
-        except:
-            # print('did not find preferences - you need to save user preferences')
-            multiplier = 1.0
-            scale = 1.0
-
-        # cache this.
-        self.location_theta = multiplier
-        return scale
+        """ obtain the dpi adjusted xy and scale factors, cache location_theta """
+        from sverchok.settings import get_params
+        props = get_params({
+            'render_scale': 1.0, 
+            'render_location_xy_multiplier': 1.0})
+        self.location_theta = props.render_location_xy_multiplier
+        return props.render_scale
 
     def get_offset(self):
         return [int(j) for j in (Vector(self.absolute_location) + Vector((self.width + 20, 0)))[:]]

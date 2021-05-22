@@ -145,7 +145,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'Data')
         self.get_theme_colors_for_contrast()
-        self.get_and_set_gl_scale_info()
+        self.id_data.update_gl_scale_info()
 
     def sv_copy(self, node):
         # reset n_id on copy
