@@ -28,7 +28,6 @@ import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 
-from sverchok.utils.context_managers import sv_preferences
 from sverchok.core.socket_data import SvGetSocketInfo
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode

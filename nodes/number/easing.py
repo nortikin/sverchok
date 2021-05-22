@@ -25,7 +25,6 @@ import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 
-from sverchok.utils.context_managers import sv_preferences
 from sverchok.data_structure import updateNode, node_id, enum_item_4
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL
@@ -192,14 +191,8 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         """
         adjust render location based on preference multiplier setting
         """
-        try:
-            with sv_preferences() as prefs:
-                multiplier = prefs.render_location_xy_multiplier
-        except:
-            multiplier = 1.0
-
-        # cache this.
-        self.location_theta = multiplier
+        from sverchok.settings import get_param
+        self.location_theta = get_param('render_location_xy_multiplier', 1.0)
 
     def generate_graph_geom(self, config):
 
