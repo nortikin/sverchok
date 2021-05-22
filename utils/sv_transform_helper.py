@@ -20,7 +20,7 @@ import bpy
 from bpy.props import (EnumProperty, BoolProperty)
 
 from sverchok.data_structure import updateNode, throttle_and_update_node
-from sverchok.settings import get_params
+from sverchok.settings import get_param
 
 from math import pi
 
@@ -62,10 +62,8 @@ angle_remap_options = {
 class SvAngleHelper():
 
     def get_preferences(self):
-        props = get_params({
-            'auto_update_angle_values': False,
-        })
-        return props.auto_update_angle_values
+        return get_param('auto_update_angle_values', False)
+
 
     def angle_conversion_factor(self, from_angle_units, to_angle_units):
         if from_angle_units == to_angle_units:
