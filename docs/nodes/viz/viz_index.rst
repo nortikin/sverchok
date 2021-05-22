@@ -20,4 +20,5 @@ Viz
    vd_matrix
    instancer
    dupli_instances_mk5
+   dupli_instances_lite
    polyline_viewer
