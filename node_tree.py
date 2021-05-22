@@ -124,7 +124,10 @@ class SvNodeTreeCommon(object):
         """
         the nodeview scale and dpi differs between users and must be queried to get correct nodeview
         x,y and dpi scale info.
+
+        this is instead of calling `get_dpi_factor` on every redraw.
         """
+
         debug('update_gl_scale_info called from', origin or self.name)
         try:
             from sverchok.utils.context_managers import sv_preferences
