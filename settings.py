@@ -45,6 +45,25 @@ def get_params(settings_and_fallbacks):
             setattr(props, k, value)
     return props
 
+def get_param(prop_name, fallback):
+    """
+    for getting a single parameter from sv preferences
+    example usage:
+
+        from sverchok.settings import get_params
+        prop = get_param("render_scale", 1.0)
+        # prop = 1.0 if settings wasn't available, or else the current value
+    """
+    from sverchok.utils.context_managers import sv_preferences
+    with sv_preferences() as prefs:
+        try:
+            value = getattr(prefs, prop_name)
+        except:
+            print(f'returning a default for {prop_name}')
+            value = v
+        return value
+
+
 # getDpiFactor and getDpi are lifted from Animation Nodes :)
 
 def get_dpi_factor():

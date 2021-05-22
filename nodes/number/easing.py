@@ -191,9 +191,8 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         """
         adjust render location based on preference multiplier setting
         """
-        from sverchok.settings import get_params
-        props = get_params({'render_location_xy_multiplier': 1.0})
-        self.location_theta = props.render_location_xy_multiplier
+        from sverchok.settings import get_param
+        self.location_theta = get_param('render_location_xy_multiplier', 1.0)
 
     def generate_graph_geom(self, config):
 
