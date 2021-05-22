@@ -1,6 +1,7 @@
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
 import mathutils
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
 if FreeCAD is None:
     add_dummy('SvReadFCStdSketchNode', 'SvReadFCStdSketchNode', 'FreeCAD')
@@ -13,6 +14,22 @@ else:
     from sverchok.node_tree import SverchCustomTreeNode
     from sverchok.data_structure import updateNode
     from sverchok.utils.logging import info
+
+    class SvReadFCStdSketchOperator(bpy.types.Operator, SvGenericNodeLocator):
+
+        bl_idname = "node.sv_read_fcstd_sketch_operator"
+        bl_label = "read freecad sketch"
+        bl_options = {'INTERNAL', 'REGISTER'}
+
+        def execute(self, context):
+            node = self.get_node(context)
+
+            if not node: return {'CANCELLED'}     
+
+            node.read_sketch(node)
+            updateNode(node,context)
+
+            return {'FINISHED'}
 
     class SvReadFCStdSketchNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -54,6 +71,7 @@ else:
             col.prop(self, 'max_points')   
             col.prop(self, 'read_update')   
             col.prop(self, 'inv_filter')
+            self.wrapper_tracked_ui_draw_op(layout, SvReadFCStdSketchOperator.bl_idname, icon='FILE_REFRESH', text="UPDATE")  
 
         def sv_init(self, context):
             self.inputs.new('SvFilePathSocket', "File Path")
@@ -63,43 +81,45 @@ else:
             self.outputs.new('SvStringsSocket', "Edges")
             self.outputs.new('SvCurveSocket', "Curve")
 
-        def process(self):
+        def read_sketch(self,node):
 
-            if not any(socket.is_linked for socket in self.outputs):
+            if not any(socket.is_linked for socket in node.outputs):
                 return
 
-            if not self.inputs['File Path'].is_linked:
+            if not node.inputs['File Path'].is_linked:
                 return            
 
-            if self.read_update:
+            if node.read_update:
                 
-                files = self.inputs['File Path'].sv_get()[0]
+                files = node.inputs['File Path'].sv_get()[0]
 
                 sketch_filter = []
-                if self.inputs['Sketch Filter'].is_linked:
-                    sketch_filter = self.inputs['Sketch Filter'].sv_get()[0]
+                if node.inputs['Sketch Filter'].is_linked:
+                    sketch_filter = node.inputs['Sketch Filter'].sv_get()[0]
                 
-                if self.selected_part != '' and not self.selected_part in sketch_filter:
-                    sketch_filter.append(self.selected_part)
+                if node.selected_part != '' and not node.selected_part in sketch_filter:
+                    sketch_filter.append(node.selected_part)
 
                 Verts = []
                 Edges = []
                 curves_out = []
                 for f in files:
-                    S = LoadSketch(f, sketch_filter, self.max_points, self.inv_filter, self.read_mode)
+                    S = LoadSketch(f, sketch_filter, node.max_points, node.inv_filter, node.read_mode)
                     for i in S[0]:
                         Verts.append(i)
                     for i in S[1]:
                         Edges.append(i)
                     for i in S[2]:
                         curves_out.append(i)                
-                self.outputs['Verts'].sv_set([Verts])
-                self.outputs['Edges'].sv_set([Edges])
-                self.outputs['Curve'].sv_set(curves_out)
+                node.outputs['Verts'].sv_set([Verts])
+                node.outputs['Edges'].sv_set([Edges])
+                node.outputs['Curve'].sv_set(curves_out)
             
             else:
                 return
 
+        def process(self):
+            self.read_sketch(self)
 
     class SvShowFcstdSketchNamesOp(bpy.types.Operator):
         bl_idname = "node.sv_show_fcstd_sketch_names"
@@ -328,8 +348,10 @@ def register():
     if FreeCAD is not None:
         bpy.utils.register_class(SvReadFCStdSketchNode)
         bpy.utils.register_class(SvShowFcstdSketchNamesOp)
+        bpy.utils.register_class(SvReadFCStdSketchOperator)
 
 def unregister():
     if FreeCAD is not None:
         bpy.utils.unregister_class(SvReadFCStdSketchNode)
         bpy.utils.unregister_class(SvShowFcstdSketchNamesOp)
+        bpy.utils.unregister_class(SvReadFCStdSketchOperator)

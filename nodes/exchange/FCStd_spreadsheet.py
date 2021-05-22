@@ -13,6 +13,23 @@ else:
     from sverchok.data_structure import updateNode
     from sverchok.utils.logging import info
 
+    class SvFCStdSpreadsheetOperator(bpy.types.Operator, SvGenericNodeLocator):
+
+        bl_idname = "node.sv_fcstd_spreadsheet_operator"
+        bl_label = "read/write freecad spreadsheet"
+        bl_options = {'INTERNAL', 'REGISTER'}
+
+        def execute(self, context):
+            node = self.get_node(context)
+
+            if not node: return {'CANCELLED'}     
+
+            node.edit_spreadsheet(node)
+            updateNode(node,context)
+
+            return {'FINISHED'}
+
+
     class SvFCStdSpreadsheetNode(bpy.types.Node, SverchCustomTreeNode):
         """
         Triggers: Read FreeCAD file
@@ -23,7 +40,8 @@ else:
         bl_icon = 'IMPORT'
         solid_catergory = "Outputs"
         
-
+        auto_update : BoolProperty(name="auto_update", default=True)
+        write_update : BoolProperty(name="read_update", default=True)
         write_parameter : BoolProperty(name="write_parameter", default=False)
   
         selected_label : StringProperty(default='Spreadsheet')
@@ -50,8 +68,9 @@ else:
                     icon= 'TRIA_DOWN',
                     text= self.selected_par_label )
 
+            col.prop(self, 'auto_update') 
             col.prop(self, 'write_parameter')   
-
+            self.wrapper_tracked_ui_draw_op(layout, SvFCStdSpreadsheetOperator.bl_idname, icon='FILE_REFRESH', text="UPDATE") 
 
         def sv_init(self, context):
             self.inputs.new('SvFilePathSocket', "File Path")
@@ -59,36 +78,38 @@ else:
 
             self.outputs.new('SvStringsSocket', "cell_out")   
 
-        def process(self):
 
-            #if not any(socket.is_linked for socket in self.outputs):
-                #return
+        def edit_spreadsheet(self,node):
 
-            if not self.inputs['File Path'].is_linked:
+            if not node.inputs['File Path'].is_linked:
                 return 
 
-            if self.selected_par != '' :
+            if node.selected_par != '' :
 
-                files = self.inputs['File Path'].sv_get()[0]
+                files = node.inputs['File Path'].sv_get()[0]
 
                 cell_out=None
 
                 for f in files:
                     cell_out = WriteParameter( 
                         f, 
-                        self.selected_sheet, 
-                        self.selected_par, 
-                        self.inputs['cell_in'].sv_get()[0][0], 
-                        self.write_parameter)
+                        node.selected_sheet, 
+                        node.selected_par, 
+                        node.inputs['cell_in'].sv_get()[0][0], 
+                        node.write_parameter)
 
-                
                 if cell_out != None:
                     
-                    self.outputs['cell_out'].sv_set( [[cell_out]] )
+                    node.outputs['cell_out'].sv_set( [[cell_out]] )
 
             else:
-                self.outputs['cell_out'].sv_set( [ ] )
+                node.outputs['cell_out'].sv_set( [ ] )
                 return
+
+        def process(self):
+            if self.auto_update:
+                self.edit_spreadsheet(self)
+
 
     class SvShowFcstdSpreadsheetsOp(bpy.types.Operator, SvGenericNodeLocator):
         bl_idname = "node.sv_show_fcstd_spreadsheets"
@@ -238,9 +259,11 @@ def register():
         bpy.utils.register_class(SvFCStdSpreadsheetNode)
         bpy.utils.register_class(SvShowFcstdSpreadsheetsOp)
         bpy.utils.register_class(SvShowFcstdParNamesOp)
+        bpy.utils.register_class(SvFCStdSpreadsheetOperator)
 
 def unregister():
     if FreeCAD is not None:
         bpy.utils.unregister_class(SvFCStdSpreadsheetNode)
         bpy.utils.unregister_class(SvShowFcstdSpreadsheetsOp)
         bpy.utils.unregister_class(SvShowFcstdParNamesOp)
+        bpy.utils.unregister_class(SvFCStdSpreadsheetOperator)

@@ -14,6 +14,27 @@ else:
     from sverchok.data_structure import updateNode
     from sverchok.utils.logging import info
 
+    class SvReadFCStdOperator(bpy.types.Operator, SvGenericNodeLocator):
+
+        bl_idname = "node.sv_read_fcstd_operator"
+        bl_label = "read freecad file"
+        bl_options = {'INTERNAL', 'REGISTER'}
+
+        def execute(self, context):
+            node = self.get_node(context)
+
+            if not node: return {'CANCELLED'}
+
+            if not any(socket.is_linked for socket in node.outputs):
+                return {'CANCELLED'}
+            if not node.inputs['File Path'].is_linked:
+                return {'CANCELLED'}        
+
+            node.read_FCStd(node)
+            updateNode(node,context)
+
+            return {'FINISHED'}
+
     class SvReadFCStdNode(bpy.types.Node, SverchCustomTreeNode):
         """
         Triggers: Read FreeCAD file
@@ -34,8 +55,8 @@ else:
         inv_filter : BoolProperty(name="inv_filter", default=False, update = updateNode)
         
         selected_label : StringProperty( default= 'Select FC Part')
-        selected_part : StringProperty( default='', update = updateNode) 
-
+        selected_part : StringProperty( default='', update = updateNode)
+    
         def draw_buttons(self, context, layout):
 
             col = layout.column(align=True)
@@ -43,59 +64,60 @@ else:
                 self.wrapper_tracked_ui_draw_op(
                     col, SvShowFcstdNamesOp.bl_idname, 
                     icon= 'TRIA_DOWN',
-                    text= self.selected_label )
-
-            col.prop(self, 'read_update')
+                    text= self.selected_label )    
+            col.prop(self, 'read_update', text = 'global update') 
             col.prop(self, 'read_body')
             col.prop(self, 'read_part')
             col.prop(self, 'tool_parts')
             if self.tool_parts:
                 col.prop(self, 'read_features')
             col.prop(self, 'inv_filter')
+            self.wrapper_tracked_ui_draw_op(layout, SvReadFCStdOperator.bl_idname, icon='FILE_REFRESH', text="UPDATE")  
 
         def sv_init(self, context):
+
             self.inputs.new('SvFilePathSocket', "File Path")
             self.inputs.new('SvStringsSocket', "Part Filter")   
-
-
             self.outputs.new('SvSolidSocket', "Solid")
+
+        def read_FCStd(self,node):
+            
+            files = node.inputs['File Path'].sv_get()[0]
+
+            part_filter = []
+            if node.inputs['Part Filter'].is_linked:
+                part_filter = node.inputs['Part Filter'].sv_get()[0]
+            
+            if node.selected_part != '' and not node.selected_part in part_filter:
+                part_filter.append(node.selected_part)
+
+            solids = []
+            obj_mask = []
+
+            if node.read_features:
+                obj_mask.append('PartDesign')
+            if node.read_part:
+                obj_mask.append('Part')
+            if node.read_body: 
+                obj_mask.append('PartDesign::Body')
+
+            for f in files:
+                S = LoadSolid(f, part_filter, obj_mask, node.tool_parts, node.inv_filter)
+
+                for s in S:
+                    solids.append(s)
+            
+            node.outputs['Solid'].sv_set(solids)
+
 
         def process(self):
             if not any(socket.is_linked for socket in self.outputs):
                 return
-
             if not self.inputs['File Path'].is_linked:
                 return            
 
             if self.read_update:
-                
-                files = self.inputs['File Path'].sv_get()[0]
-
-                part_filter = []
-                if self.inputs['Part Filter'].is_linked:
-                    part_filter = self.inputs['Part Filter'].sv_get()[0]
-                
-                if self.selected_part != '' and not self.selected_part in part_filter:
-                    part_filter.append(self.selected_part)
-
-                solids = []
-                obj_mask = []
-
-                if self.read_features:
-                    obj_mask.append('PartDesign')
-                if self.read_part:
-                    obj_mask.append('Part')
-                if self.read_body: 
-                    obj_mask.append('PartDesign::Body')
-
-                for f in files:
-                    S = LoadSolid(f, part_filter, obj_mask, self.tool_parts, self.inv_filter)
-
-                    for s in S:
-                        solids.append(s)
-                
-                self.outputs['Solid'].sv_set(solids)
-            
+                self.read_FCStd(self)   
             else:
                 return
 
@@ -205,14 +227,16 @@ def LoadSolid(fc_file,part_filter,obj_mask,tool_parts, inv_filter):
 def open_fc_file(fc_file):
     F.open(fc_file) 
     Fname = bpy.path.display_name_from_filepath(fc_file)
-    F.setActiveDocument(Fname)  
+    F.setActiveDocument(Fname)
 
 def register():
     if FreeCAD is not None:
         bpy.utils.register_class(SvReadFCStdNode)
         bpy.utils.register_class(SvShowFcstdNamesOp)
+        bpy.utils.register_class(SvReadFCStdOperator)
 
 def unregister():
     if FreeCAD is not None:
         bpy.utils.unregister_class(SvReadFCStdNode)
         bpy.utils.unregister_class(SvShowFcstdNamesOp)
+        bpy.utils.register_class(SvReadFCStdOperator)

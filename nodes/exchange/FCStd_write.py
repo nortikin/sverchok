@@ -1,5 +1,6 @@
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.dummy_nodes import add_dummy
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
 if FreeCAD is None:
     add_dummy('SvWriteFCStdNode', 'SvWriteFCStdNode', 'FreeCAD')
@@ -11,6 +12,24 @@ else:
     from sverchok.node_tree import SverchCustomTreeNode # OLD throttled
     from sverchok.data_structure import updateNode, match_long_repeat # NEW throttle_and_update_node
     from sverchok.utils.logging import info
+
+
+    class SvWriteFCStdOperator(bpy.types.Operator, SvGenericNodeLocator):
+
+        bl_idname = "node.sv_write_fcstd_operator"
+        bl_label = "write freecad file"
+        bl_options = {'INTERNAL', 'REGISTER'}
+
+        def execute(self, context):
+            node = self.get_node(context)
+
+            if not node: return {'CANCELLED'}     
+
+            node.write_FCStd(node)
+            updateNode(node,context)
+
+            return {'FINISHED'}
+
 
     class SvWriteFCStdNode(bpy.types.Node, SverchCustomTreeNode):
         """
@@ -25,7 +44,7 @@ else:
         
         write_update : BoolProperty(
             name="write_update", 
-            default=True)
+            default=False)
 
         part_name : StringProperty(
             name="part_name", 
@@ -66,6 +85,7 @@ else:
             col.prop(self, 'write_update')
             if self.obj_format == 'mesh':
                 col.label(text="need triangle meshes")
+            self.wrapper_tracked_ui_draw_op(layout, SvWriteFCStdOperator.bl_idname, icon='FILE_REFRESH', text="UPDATE")  
 
 
         def sv_init(self, context):
@@ -78,13 +98,12 @@ else:
             else:
                 self.inputs.new('SvSolidSocket', 'Solid')
            
+        def write_FCStd(self,node):
 
-        def process(self):
-
-            if not self.inputs['File Path'].is_linked:
+            if not node.inputs['File Path'].is_linked:
                 return
             
-            files = self.inputs['File Path'].sv_get()
+            files = node.inputs['File Path'].sv_get()
 
             if  not len(files[0]) == 1:
                 print ('FCStd write node support just 1 file at once')
@@ -92,23 +111,32 @@ else:
 
             fc_file=files[0][0]
 
-            if self.obj_format == 'mesh':
+            if node.obj_format == 'mesh':
 
-                if any((self.inputs['Verts'].is_linked,self.inputs['Faces'].is_linked,self.write_update)):
+                if any((node.inputs['Verts'].is_linked,node.inputs['Faces'].is_linked)):
 
-                    verts_in = self.inputs['Verts'].sv_get(deepcopy=False)
-                    pols_in = self.inputs['Faces'].sv_get(deepcopy=False)
+                    verts_in = node.inputs['Verts'].sv_get(deepcopy=False)
+                    pols_in = node.inputs['Faces'].sv_get(deepcopy=False)
                     verts, pols = match_long_repeat([verts_in, pols_in])
-                    fc_write_parts(fc_file, verts, pols, self.part_name, None, self.obj_format)
+                    fc_write_parts(fc_file, verts, pols, node.part_name, None, node.obj_format)
 
-            elif self.obj_format == 'solid':
+            elif node.obj_format == 'solid':
 
-                if self.inputs['Solid'].is_linked and self.write_update:
-                    solid=self.inputs['Solid'].sv_get()
-                    fc_write_parts(fc_file, None, None, self.part_name, solid, self.obj_format)
+                if node.inputs['Solid'].is_linked:
+                    solid=node.inputs['Solid'].sv_get()
+                    fc_write_parts(fc_file, None, None, node.part_name, solid, node.obj_format)
 
             else:
-                return             
+                return
+
+        def process(self):
+
+            if self.write_update:
+                self.write_FCStd(self)   
+            else:
+                return
+
+          
             
 
 def fc_write_parts(fc_file, verts, faces, part_name, solid, mod):
@@ -119,7 +147,6 @@ def fc_write_parts(fc_file, verts, faces, part_name, solid, mod):
     except:
         info ('FCStd open error')
         return
-
 
     F.setActiveDocument(Fname)
     fc_root = F.getDocument(Fname)
@@ -177,7 +204,9 @@ def fc_write_parts(fc_file, verts, faces, part_name, solid, mod):
 def register():
     if FreeCAD is not None:
         bpy.utils.register_class(SvWriteFCStdNode)
+        bpy.utils.register_class(SvWriteFCStdOperator)
 
 def unregister():
     if FreeCAD is not None:
         bpy.utils.unregister_class(SvWriteFCStdNode)
+        bpy.utils.unregister_class(SvWriteFCStdOperator)
