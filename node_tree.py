@@ -120,6 +120,19 @@ class SvNodeTreeCommon(object):
         finally:
             self.skip_tree_update = previous_state
 
+    def update_gl_scale_info(self, origin=None):
+        """
+        the nodeview scale and dpi differs between users and must be queried to get correct nodeview
+        x,y and dpi scale info.
+        """
+        debug('get_and_set_gl_scale_info called from', origin or self.name)
+        try:
+            from sverchok.utils.context_managers import sv_preferences
+            with sv_preferences() as prefs:
+                prefs.set_nodeview_render_params(None)
+        except Exception as err:
+            debug('failed to get gl scale info', err)
+
 
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     ''' Sverchok - architectural node programming of geometry in low level '''
@@ -607,21 +620,11 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
 
     # Methods for OpenGL viewers
 
-    def get_and_set_gl_scale_info(self, origin=None):  # todo, probably openGL viewers should have its own mixin class
+    def get_and_set_gl_scale_info(self, origin=None):
         """
         This function is called in sv_init in nodes that draw GL instructions to the nodeview,
-        the nodeview scale and dpi differs between users and must be queried to get correct nodeview
-        x,y and dpi scale info.
         """
-        # print('get_and_set_gl_scale_info called from', origin or self.name)
-
-        try:
-            # print('getting gl scale params')
-            from sverchok.utils.context_managers import sv_preferences
-            with sv_preferences() as prefs:
-                prefs.set_nodeview_render_params(None)
-        except Exception as err:
-            print('failed to get gl scale info', err)
+        self.id_data.update_gl_scale_info(origin)
 
 
 @post_load_call

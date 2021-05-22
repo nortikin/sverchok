@@ -48,16 +48,6 @@ def write_time_graph():
                 counter += 1
         return cumulative_dict
 
-def get_sv_times(named_group):
-    ng = bpy.data.node_groups
-    upd = bpy.ops.node.sverchok_update_current
-
-    for g in ng:
-        if g.bl_idname == 'SverchCustomTreeType':
-            if g.name == named_group:
-                upd(node_group=named_group)
-                return write_time_graph()
-
 def draw_text(font_id, location, text, color):
 
     x, y = location
@@ -212,7 +202,7 @@ def draw_overlay(*data):
 
 def configure_node_times(ng):
     named_tree = ng.name
-    data_time_infos = (get_sv_times(named_tree), get_preferences(), named_tree)
+    data_time_infos = (None, get_preferences(), named_tree)
 
     config_node_info = {
         'tree_name': named_tree,
@@ -223,13 +213,11 @@ def configure_node_times(ng):
     nvBGL2.callback_enable(f"{ng.tree_id}_node_time_info", config_node_info)
 
 def configure_time_graph(ng):
-    # ensure most recent gl scale.
-    from sverchok.node_tree import SverchCustomTreeNode
-    SverchCustomTreeNode.get_and_set_gl_scale_info(None, origin="time graph")
+    ng.update_gl_scale_info(origin=f"configure_time_graph, tree: {ng.name}")
 
     named_tree = ng.name
     shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
-    data_overlay = (get_sv_times(named_tree), named_tree, shader)
+    data_overlay = (None, named_tree, shader)
 
     config_graph_overlay = {
         'tree_name': named_tree,
