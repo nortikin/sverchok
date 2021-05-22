@@ -20,7 +20,7 @@ if bpy.app.version >= (2, 91, 0):
 else:
     PYPATH = bpy.app.binary_path_python
 
-def get_params(prop_names_and_fallbacks):
+def get_params(prop_names_and_fallbacks, direct=False):
     """
     This function returns an object which you can use the . op on.
     example usage:
@@ -28,8 +28,13 @@ def get_params(prop_names_and_fallbacks):
         from sverchok.settings import get_params
 
         props = get_params({'prop_name_1': 20, 'prop_name_2': 30})
-        # 20 = props.prop_name_1
-        # 30 = props.prop_name_2
+        # props.prop_name_1    20
+        # props.prop_name_2    30
+
+    example usage using direct=True
+        props = get_params({'prop_name_1': 20, 'prop_name_2': 30})
+        # props[0]   20
+        # props[1]   30 
     """
     from sverchok.utils.context_managers import sv_preferences
 
@@ -43,6 +48,10 @@ def get_params(prop_names_and_fallbacks):
                 print(f'returning a default for {k}')
                 value = v
             setattr(props, k, value)
+
+    if direct:
+        return [getattr(props, k) for k in prop_names_and_fallbacks.keys()]
+
     return props
 
 def get_param(prop_name, fallback):
