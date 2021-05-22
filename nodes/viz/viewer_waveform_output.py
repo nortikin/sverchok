@@ -269,21 +269,12 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         ... # if self.num_channels < MAX_SOCKETS
 
     def get_drawing_attributes(self):
-        """
-        adjust render location based on preference multiplier setting
-        """
-        try:
-            with sv_preferences() as prefs:
-                multiplier = prefs.render_location_xy_multiplier
-                scale = prefs.render_scale
-        except:
-            # print('did not find preferences - you need to save user preferences')
-            multiplier = 1.0
-            scale = 1.0
-        self.location_theta = multiplier
-        # x, y = [x * multiplier, y * multiplier]
-
-        return scale
+        from sverchok.settings import get_params
+        props = get_params({
+            'render_scale': 1.0, 
+            'render_location_xy_multiplier': 1.0})
+        self.location_theta = props.render_location_xy_multiplier
+        return props.render_scale
 
 
     activate: bpy.props.BoolProperty(name="show graph", update=updateNode)
