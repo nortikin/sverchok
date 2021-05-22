@@ -23,8 +23,8 @@ def exception_nodetree_id(ng):
 
 def get_preferences():
     """ obtain the dpi adjusted xy and scale factors """
-    from sverchok.settings import get_param
-    return get_param('render_scale', 1.0), get_param('render_location_xy_multiplier', 1.0)
+    from sverchok.settings import get_params
+    return get_params({'render_scale': 1.0, 'render_location_xy_multiplier': 1.0}, direct=True)
 
 
 def adjust_position_and_dimensions(node, loc):
