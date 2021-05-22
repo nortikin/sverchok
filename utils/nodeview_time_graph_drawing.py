@@ -231,5 +231,3 @@ def disable_time_graph(ng):
 
 def disable_node_times(ng):
     nvBGL2.callback_disable(f"{ng.tree_id}_node_time_info")
-
-

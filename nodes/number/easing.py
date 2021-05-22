@@ -195,20 +195,17 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         try:
             with sv_preferences() as prefs:
                 multiplier = prefs.render_location_xy_multiplier
-                scale = prefs.render_scale
         except:
             multiplier = 1.0
-            scale = 1.0
 
         # cache this.
         self.location_theta = multiplier
-        return scale
 
     def generate_graph_geom(self, config):
 
         geom = lambda: None
         x, y = config.loc
-        size = 140 * config.scale
+        size = 140
         back_color, grid_color, line_color = config.palette
         easing_func = config.easing_func
 
@@ -282,12 +279,10 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
 
         if self.activate and self.inputs[0].is_linked:
 
+            self.get_drawing_attributes()
             config = lambda: None
-            scale = self.get_drawing_attributes()
-
             config.loc = (0, 0)
             config.palette = palette_dict.get(self.selected_theme_mode)[:]
-            config.scale = scale
             config.easing_func = easing_func
 
             geom = self.generate_graph_geom(config)
