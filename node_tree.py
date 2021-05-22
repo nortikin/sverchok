@@ -618,14 +618,6 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
             return False
         return prefs.over_sized_buttons
 
-    # Methods for OpenGL viewers
-
-    def get_and_set_gl_scale_info(self, origin=None):
-        """
-        This function is called in sv_init in nodes that draw GL instructions to the nodeview,
-        """
-        self.id_data.update_gl_scale_info(origin)
-
 
 @post_load_call
 def add_use_fake_user_to_trees():
