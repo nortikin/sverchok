@@ -32,7 +32,7 @@ def get_params(prop_names_and_fallbacks, direct=False):
         # props.prop_name_2    30
 
     example usage using direct=True
-        props = get_params({'prop_name_1': 20, 'prop_name_2': 30})
+        props = get_params({'prop_name_1': 20, 'prop_name_2': 30}, direct=True)
         # props[0]   20
         # props[1]   30 
     """
