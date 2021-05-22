@@ -180,11 +180,8 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'font_id')
 
     def get_preferences(self):
-        # supplied with default, forces at least one value :)
-        props = get_params({
-            'stethoscope_view_scale': 1.0, 
-            'render_location_xy_multiplier': 1.0})
-        return props.stethoscope_view_scale, props.render_location_xy_multiplier
+        return get_params({
+            'stethoscope_view_scale': 1.0, 'render_location_xy_multiplier': 1.0}, direct=True)
 
     def process(self):
         inputs = self.inputs
