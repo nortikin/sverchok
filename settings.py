@@ -20,7 +20,7 @@ if bpy.app.version >= (2, 91, 0):
 else:
     PYPATH = bpy.app.binary_path_python
 
-def get_params(settings_and_fallbacks):
+def get_params(prop_names_and_fallbacks):
     """
     This function returns an object which you can use the . op on.
     example usage:
@@ -36,7 +36,7 @@ def get_params(settings_and_fallbacks):
     props = lambda: None
 
     with sv_preferences() as prefs:
-        for k, v in settings_and_fallbacks.items():
+        for k, v in prop_names_and_fallbacks.items():
             try:
                 value = getattr(prefs, k)
             except:
@@ -60,7 +60,7 @@ def get_param(prop_name, fallback):
             value = getattr(prefs, prop_name)
         except:
             print(f'returning a default for {prop_name}')
-            value = v
+            value = fallback
         return value
 
 
