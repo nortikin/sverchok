@@ -31,9 +31,8 @@ def string_from_duration(duration):
     return f"{(1000*duration):.3f} ms"
 
 def get_preferences():
-    from sverchok.settings import get_params
-    props = get_params({'render_location_xy_multiplier': 1.0})
-    return props.render_location_xy_multiplier
+    from sverchok.settings import get_dpi_factor
+    return get_dpi_factor()
 
 def write_time_graph():
     m = sverchok.core.update_system.graphs

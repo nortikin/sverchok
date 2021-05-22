@@ -197,7 +197,6 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
                 multiplier = prefs.render_location_xy_multiplier
                 scale = prefs.render_scale
         except:
-            # print('did not find preferences - you need to save user preferences')
             multiplier = 1.0
             scale = 1.0
 
