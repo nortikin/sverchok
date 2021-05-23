@@ -36,8 +36,7 @@ def get_preferences():
 
 def get_time_graph(tree_name):
     m = sverchok.core.update_system.graph_dicts.get(tree_name)
-    if not m: return {}
-    return {idx: event for idx, event in enumerate(m)}
+    return {idx: event for idx, event in enumerate(m)} if m else {}
 
 def draw_text(font_id, location, text, color):
 

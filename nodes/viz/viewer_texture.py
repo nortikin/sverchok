@@ -320,8 +320,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def get_preferences(self):
         return get_params({
-            'render_scale': 1.0,
-            'render_location_xy_multiplier': 1.0}, direct=True)
+            'render_scale': 1.0, 'render_location_xy_multiplier': 1.0}, direct=True)
 
     def get_dimensions(self, width, height):
         """
