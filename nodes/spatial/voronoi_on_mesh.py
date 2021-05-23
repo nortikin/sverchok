@@ -24,7 +24,7 @@ import bmesh
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, ensure_nesting_level, get_data_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat, throttle_and_update_node, ensure_nesting_level, get_data_nesting_level, ensure_min_nesting
 from sverchok.utils.sv_bmesh_utils import recalc_normals
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.voronoi3d import voronoi_on_mesh
@@ -131,7 +131,7 @@ class SvVoronoiOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
         sites_in = ensure_nesting_level(sites_in, 4)
         faces_in = ensure_nesting_level(faces_in, 4)
         #thickness_in = ensure_nesting_level(thickness_in, 2)
-        spacing_in = ensure_nesting_level(spacing_in, 2)
+        spacing_in = ensure_min_nesting(spacing_in, 2)
 
         nested_output = input_level > 3
 

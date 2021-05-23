@@ -31,7 +31,9 @@ This node has the following inputs:
   necessary. This input is mandatory.
 * **Spacing**. Percent of space to leave between generated fragment meshes.
   Zero means do not leave any space, i.e. regions will fully cover initial
-  mesh. The default value is 0.
+  mesh. The default value is 0. This input can consume either a single value
+  per object, or a list of values per object - one value per site. In the later
+  case, each value will be used for corresponding cell.
 
 Parameters
 ----------

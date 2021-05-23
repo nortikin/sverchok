@@ -33,7 +33,9 @@ This node has the following inputs:
   input is mandatory.
 * **Inset**. Percentage of space to leave between generated Voronoi regions.
   Zero means the object will be fully covered by generated regions. Maximum
-  value is 1.0. The default value is 0.1.
+  value is 1.0. The default value is 0.1. This input can consume either a
+  single value per object, or a list of values per object - one value per site.
+  In the later case, each value will be used for corresponding cell.  
 
 Parameters
 ----------

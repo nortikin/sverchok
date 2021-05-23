@@ -25,6 +25,7 @@ import bmesh
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 
+from sverchok.data_structure import repeat_last_for_length
 from sverchok.utils.sv_mesh_utils import mask_vertices, polygons_to_edges, point_inside_mesh
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, bmesh_clip
 from sverchok.utils.geom import calc_bounds, bounding_sphere, PlaneEquation
@@ -248,7 +249,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
             result[site2_idx].append(plane)
         return result
 
-    def cut_cell(verts, faces, planes, site):
+    def cut_cell(verts, faces, planes, site, spacing):
         src_mesh = bmesh_from_pydata(verts, [], faces, normal_update=True)
         n_cuts = 0
         for plane in planes:
@@ -297,8 +298,12 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
 
     voronoi = Voronoi(np.array(sites))
     ridges_per_site = get_ridges_per_site(voronoi)
+    if isinstance(spacing, list):
+        spacing = repeat_last_for_length(spacing, len(sites))
+    else:
+        spacing = [spacing for i in range(len(sites))]
     for site_idx in range(len(sites)):
-        cell = cut_cell(verts, faces, ridges_per_site[site_idx], sites[site_idx])
+        cell = cut_cell(verts, faces, ridges_per_site[site_idx], sites[site_idx], spacing[site_idx])
         if cell is not None:
             new_verts, new_edges, new_faces = cell
             if new_verts:
