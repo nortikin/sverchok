@@ -372,7 +372,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
     ng = nodes.id_data
 
     global graphs
-    graph_dicts[ng.name] = []
+    # graph_dicts[ng.name] = []
     timings = []
     graph = []
     gather = graph.append
@@ -421,7 +421,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
     if data_structure.DEBUG_MODE:
         debug("Node set updated in: %.4f seconds", total_time)
 
-    graph_dicts[nodes.id_data.name] = graph
+    # graph_dicts[nodes.id_data.name] = graph
     return timings
 
 
