@@ -37,6 +37,7 @@ import traceback
 import ast
 
 graphs = []
+graph_dicts = {}
 
 no_data_color = (1, 0.3, 0)
 exception_color = (0.8, 0.0, 0)
@@ -66,6 +67,7 @@ def update_error_colors(self, context):
 def reset_timing_graphs():
     global graphs
     graphs = []
+    graph_dicts = {}
 
 # cache node group update trees
 update_cache = {}
@@ -367,7 +369,10 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
     """
     General update function for node set
     """
+    ng = nodes.id_data
+
     global graphs
+    graph_dicts[ng.name] = []
     timings = []
     graph = []
     gather = graph.append
@@ -396,11 +401,10 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             timings.append(delta)
             gather({"name" : node_name, "bl_idname": node.bl_idname, "start": start, "duration": delta})
 
-            # probably it's not great place for doing this, node can be of kind ReRoute
+            # probably it's not great place for doing this, the node can be a ReRoute
             [s.update_objects_number() for s in chain(node.inputs, node.outputs) if hasattr(s, 'update_objects_number')]
 
         except Exception as err:
-            ng = nodes.id_data
             update_error_nodes(ng, node_name, err)
             #traceback.print_tb(err.__traceback__)
             exception("Node %s had exception: %s", node_name, err)
@@ -416,7 +420,8 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
     graphs.append(graph)
     if data_structure.DEBUG_MODE:
         debug("Node set updated in: %.4f seconds", total_time)
-    
+
+    graph_dicts[nodes.id_data.name] = graph
     return timings
 
 
