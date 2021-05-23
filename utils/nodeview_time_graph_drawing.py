@@ -34,7 +34,9 @@ def get_preferences():
     from sverchok.settings import get_dpi_factor
     return get_dpi_factor()
 
-def write_time_graph():
+def get_time_graph(): # tree_name):
+    # m = sverchok.core.update_system.graph_dicts.get(tree_name)
+    # return {idx: event for idx, event in enumerate(m)} if m else {}
     m = sverchok.core.update_system.graphs
     if len(m) == 1:
         return {idx: event for idx, event in enumerate(m[0])}
@@ -63,9 +65,10 @@ def draw_text(font_id, location, text, color):
 
 def draw_node_time_infos(*data):
 
-    data_tree = write_time_graph() # data[0]
     location_theta = data[1]
-    node_tree = bpy.data.node_groups.get(data[2])
+    tree_name = data[2]
+    data_tree = get_time_graph() # tree_name)
+    node_tree = bpy.data.node_groups.get(tree_name)
     
     r, g, b = (0.9, 0.9, 0.9)
     index_color = (0.98, 0.6, 0.6)
@@ -82,6 +85,7 @@ def draw_node_time_infos(*data):
     for idx, node_data in data_tree.items():
         node = node_tree.nodes.get(node_data['name'])
         if not node: continue
+        if not tree_name == node_data['tree_name']: continue
         
         x, y = get_xy_for_bgl_drawing(node)
         x, y = int(x), int(y)
@@ -107,9 +111,10 @@ def draw_overlay(*data):
     # visible width ( T panel is not included, only N panel)
     region_width = region.width   
 
-    data_tree = write_time_graph() # data[0]
-    node_tree = bpy.data.node_groups.get(data[1])
-    shader = data[2]
+    shader = data[1]
+    tree_name = data[2]
+    data_tree = get_time_graph() # tree_name)
+    node_tree = bpy.data.node_groups.get(tree_name)
 
     white = (1.0, 1.0, 1.0, 1.0)
     left_offset = 140
@@ -132,7 +137,9 @@ def draw_overlay(*data):
     for idx in sorted(data_tree, key=lambda value: data_tree.get(value).get("start")):
         node_data = data_tree.get(idx)
         node = node_tree.nodes.get(node_data['name'])
+
         if not node: continue
+        if not tree_name == node_data['tree_name']: continue
 
         cumsum += node_data['duration']
         txt_width, txt_height = blf.dimensions(font_id, node_data['name'])
@@ -216,7 +223,7 @@ def configure_time_graph(ng):
 
     named_tree = ng.name
     shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
-    data_overlay = (None, named_tree, shader)
+    data_overlay = (None, shader, named_tree)
 
     config_graph_overlay = {
         'tree_name': named_tree,

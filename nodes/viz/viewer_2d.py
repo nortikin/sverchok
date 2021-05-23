@@ -33,7 +33,7 @@ from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL
 from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
-
+from sverchok.settings import get_params
 
 
 socket_dict = {
@@ -715,12 +715,10 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
 
     def get_drawing_attributes(self):
         """ obtain the dpi adjusted xy and scale factors, cache location_theta """
-        from sverchok.settings import get_params
-        props = get_params({
-            'render_scale': 1.0, 
-            'render_location_xy_multiplier': 1.0})
-        self.location_theta = props.render_location_xy_multiplier
-        return props.render_scale
+        scale, multiplier = get_params({
+            'render_scale': 1.0, 'render_location_xy_multiplier': 1.0}, direct=True)
+        self.location_theta = multiplier
+        return scale
 
     def get_offset(self):
         return [int(j) for j in (Vector(self.absolute_location) + Vector((self.width + 20, 0)))[:]]

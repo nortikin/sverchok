@@ -183,8 +183,8 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
-    sv_show_time_graph: BoolProperty(name="Time Graph", default=False, update=set_ng_time_graph_drawing_state)
-    sv_show_time_nodes: BoolProperty(name="Node times", default=False, update=set_ng_time_info_drawing_state)
+    sv_show_time_graph: BoolProperty(name="Time Graph", default=False, update=set_ng_time_graph_drawing_state, options=set())
+    sv_show_time_nodes: BoolProperty(name="Node times", default=False, update=set_ng_time_info_drawing_state, options=set())
 
     # something related with heat map feature
     # looks like it keeps dictionary of nodes and their user defined colors in string format
