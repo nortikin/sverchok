@@ -136,7 +136,9 @@ def draw_overlay(*data):
     for idx in sorted(data_tree, key=lambda value: data_tree.get(value).get("start")):
         node_data = data_tree.get(idx)
         node = node_tree.nodes.get(node_data['name'])
+
         if not node: continue
+        if not tree_name == node_data['tree_name']: continue
 
         cumsum += node_data['duration']
         txt_width, txt_height = blf.dimensions(font_id, node_data['name'])

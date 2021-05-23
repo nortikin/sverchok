@@ -363,6 +363,8 @@ def reset_error_nodes(ng):
                 node.color = data[1]
         del ng["error nodes"]
 
+def node_info(ng_name, node, start, delta):
+    return {"name" : node.name, "bl_idname": node.bl_idname, "start": start, "duration": delta, "tree_name": ng_name}
 
 @profile(section="UPDATE")
 def do_update_general(node_list, nodes, procesed_nodes=set()):
@@ -399,7 +401,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
                 debug("Processed  %s in: %.4f", node_name, delta)
 
             timings.append(delta)
-            gather({"name" : node_name, "bl_idname": node.bl_idname, "start": start, "duration": delta})
+            gather(node_info(ng.name, node, start, delta))
 
             # probably it's not great place for doing this, the node can be a ReRoute
             [s.update_objects_number() for s in chain(node.inputs, node.outputs) if hasattr(s, 'update_objects_number')]
