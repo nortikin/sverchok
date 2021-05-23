@@ -195,10 +195,10 @@ class FileStruct(Struct):
 
     def _data_blocks_reader(self):  # todo add logger?
         struct_type: StrTypes
-        for struct_type, structures in self._struct.items():
-            if struct_type in (it.name for it in StrTypes):
+        for struct_type_name, structures in self._struct.items():
+            if struct_type_name in (it.name for it in StrTypes):
                 for block_name, block_struct in structures.items():
-                    yield struct_type, block_name, block_struct
+                    yield StrTypes[struct_type_name], block_name, block_struct
 
 
 class TreeStruct(Struct):
@@ -211,7 +211,7 @@ class TreeStruct(Struct):
             "bl_idname": "",
         }
         self._struct = structure or default_structure
-        self._name = name
+        self.name = name
         self.logger = logger
 
     def export(self, tree, factories: StructFactory, dependencies) -> dict:
@@ -259,7 +259,7 @@ class TreeStruct(Struct):
             node_struct.build(node, factories, imported_structs)
 
         for raw_struct in links:
-            factories.link(None, self.logger, raw_struct).build(tree, imported_structs)
+            factories.link(None, self.logger, raw_struct).build(tree, factories, imported_structs)
 
     def read(self):
         with self.logger.add_fail("Reading nodes"):
@@ -342,7 +342,7 @@ class NodeStruct(Struct):
         for prop_name, prop_value in properties:
             with self.logger.add_fail("Setting node property",
                                       f'Tree: {node.id_data.name}, Node: {node.name}, prop: {prop_name}'):
-                factories.prop(prop_name, self.logger, prop_value)
+                factories.prop(prop_name, self.logger, prop_value).build(node, factories, imported_data)
 
         # this block is before applying socket properties because some nodes can generate them in load method
         if hasattr(node, 'load_from_json'):
@@ -389,11 +389,11 @@ class LinkStruct(Struct):
         self._struct["to_socket"] = link.to_socket.identifier
         return self._struct
 
-    def build(self, tree, imported_structs: OldNewNames):
+    def build(self, tree, factories: StructFactory, imported_structs: OldNewNames):
         from_node_name, from_sock_identifier, to_node_name, to_sock_identifier = self.read()
-        from_node_new_name = imported_structs[(self.type, from_node_name)]
+        from_node_new_name = imported_structs[(factories.node.type, from_node_name)]
         from_socket = self._search_socket(tree, from_node_new_name, from_sock_identifier, "OUTPUT")
-        to_node_new_name = imported_structs[(self.type, to_node_name)]
+        to_node_new_name = imported_structs[(factories.node.type, to_node_name)]
         to_socket = self._search_socket(tree, to_node_new_name, to_sock_identifier, "INPUT")
         if from_socket and to_socket:
             tree.links.new(to_socket, from_socket)
@@ -421,7 +421,7 @@ class PropertyStruct(Struct):
             "type": "",
             "value": ""
         }
-        self._struct = structure or default_struct
+        self._struct = structure if structure is not None else default_struct
         self.name = name
         self.logger = logger
 
@@ -459,7 +459,7 @@ class PropertyStruct(Struct):
                 setattr(obj, self.name, self._struct)
 
     def read(self) -> Tuple[StrTypes, str]:
-        with self.logger.add_fail("Reading property (value)"):
+        with self.logger.add_fail(f"Reading property (value): {self.name}"):
             struct_type = StrTypes[self._struct["type"]]
             old_obj_name = self._struct["name"]
             return struct_type, old_obj_name
@@ -474,7 +474,7 @@ class PropertyStruct(Struct):
         return collection
 
 
-class OldNewNames:
+class OldNewNames:  # todo can't this be regular dictionary?
     """This class should solve problem of old new names, when created object with one name get another one"""
     Old, New = str, str
 
