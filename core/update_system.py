@@ -306,12 +306,12 @@ def do_update_heat_map(node_list, nodes):
 def update_error_nodes(ng, name, err=Exception):
     if ng.bl_idname == "SverchGroupTreeType":
         return # ignore error color inside of monad
+    
     if "error nodes" in ng:
         error_nodes = ast.literal_eval(ng["error nodes"])
     else:
         error_nodes = {}
-    if ng.bl_idname == "SverchGroupTreeType":
-        return
+
     node = ng.nodes.get(name)
     if not node:
         return
@@ -396,8 +396,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             timings.append(delta)
             gather({"name" : node_name, "bl_idname": node.bl_idname, "start": start, "duration": delta})
 
-            # probably it's not grate place for doing it
-            # reroute nodes can be in node variable
+            # probably it's not great place for doing this, node can be of kind ReRoute
             [s.update_objects_number() for s in chain(node.inputs, node.outputs) if hasattr(s, 'update_objects_number')]
 
         except Exception as err:
