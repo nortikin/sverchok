@@ -34,18 +34,10 @@ def get_preferences():
     from sverchok.settings import get_dpi_factor
     return get_dpi_factor()
 
-def write_time_graph():
-    m = sverchok.core.update_system.graphs
-    if len(m) == 1:
-        return {idx: event for idx, event in enumerate(m[0])}
-    else:
-        cumulative_dict = {}
-        counter = 0
-        for graph in m:
-            for event in graph:
-                cumulative_dict[counter] = event
-                counter += 1
-        return cumulative_dict
+def get_time_graph(tree_name):
+    m = sverchok.core.update_system.graph_dicts.get(tree_name)
+    if not m: return {}
+    return {idx: event for idx, event in enumerate(m)}
 
 def draw_text(font_id, location, text, color):
 
@@ -63,9 +55,10 @@ def draw_text(font_id, location, text, color):
 
 def draw_node_time_infos(*data):
 
-    data_tree = write_time_graph() # data[0]
     location_theta = data[1]
-    node_tree = bpy.data.node_groups.get(data[2])
+    tree_name = data[2]
+    data_tree = get_time_graph(tree_name)
+    node_tree = bpy.data.node_groups.get(tree_name)
     
     r, g, b = (0.9, 0.9, 0.9)
     index_color = (0.98, 0.6, 0.6)
@@ -107,9 +100,10 @@ def draw_overlay(*data):
     # visible width ( T panel is not included, only N panel)
     region_width = region.width   
 
-    data_tree = write_time_graph() # data[0]
-    node_tree = bpy.data.node_groups.get(data[1])
+    tree_name = data[1]
     shader = data[2]
+    data_tree = get_time_graph(tree_name)
+    node_tree = bpy.data.node_groups.get(tree_name)
 
     white = (1.0, 1.0, 1.0, 1.0)
     left_offset = 140
