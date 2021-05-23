@@ -110,8 +110,8 @@ def draw_overlay(*data):
     # visible width ( T panel is not included, only N panel)
     region_width = region.width   
 
-    tree_name = data[1]
-    shader = data[2]
+    shader = data[1]
+    tree_name = data[2]
     data_tree = get_time_graph() # tree_name)
     node_tree = bpy.data.node_groups.get(tree_name)
 
@@ -220,7 +220,7 @@ def configure_time_graph(ng):
 
     named_tree = ng.name
     shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
-    data_overlay = (None, named_tree, shader)
+    data_overlay = (None, shader, named_tree)
 
     config_graph_overlay = {
         'tree_name': named_tree,
