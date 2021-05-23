@@ -85,6 +85,7 @@ def draw_node_time_infos(*data):
     for idx, node_data in data_tree.items():
         node = node_tree.nodes.get(node_data['name'])
         if not node: continue
+        if not tree_name == node_data['tree_name']: continue
         
         x, y = get_xy_for_bgl_drawing(node)
         x, y = int(x), int(y)
