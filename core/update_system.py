@@ -37,7 +37,7 @@ import traceback
 import ast
 
 graphs = []
-graph_dicts = {}
+# graph_dicts = {}
 
 no_data_color = (1, 0.3, 0)
 exception_color = (0.8, 0.0, 0)
@@ -67,7 +67,7 @@ def update_error_colors(self, context):
 def reset_timing_graphs():
     global graphs
     graphs = []
-    graph_dicts = {}
+    # graph_dicts = {}
 
 # cache node group update trees
 update_cache = {}
