@@ -551,7 +551,10 @@ def reload_sverchok():
     data_structure.RELOAD_EVENT = False
     from sverchok.core import handlers
     handlers.sv_post_load([])
+
     reset_timing_graphs()
+    # for ng in sverchok_trees():
+    #    ng.sv_timing_callbacks_activated = False
 
 def get_update_lists(ng):
     """
