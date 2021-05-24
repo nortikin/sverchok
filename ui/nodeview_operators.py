@@ -27,8 +27,8 @@ class SvNodeViewZoomBorder(bpy.types.Operator, SvGenericNodeLocator):
 
         for window in bpy.context.window_manager.windows:
             screen = window.screen
-    
-            for area in screen.areas:        
+
+            for area in screen.areas:
                 if area.type == 'NODE_EDITOR':
                     for space in area.spaces:
                         if hasattr(space, "edit_tree"):
@@ -37,7 +37,7 @@ class SvNodeViewZoomBorder(bpy.types.Operator, SvGenericNodeLocator):
                                 # unselect all first.
                                 for treenode in ng.nodes:
                                     treenode.select = False
-                                
+
                                 # set active, and select to get the thicker border around the node
                                 ng.nodes.active = node
                                 node.select = True
@@ -59,7 +59,7 @@ class SvNodeViewShowTimeInfo(bpy.types.Operator):
 
     bl_idname = "node.nodeview_timeinfo_callback"
     bl_label = "Start/Stop info display"
-    bl_options = {'INTERNAL'}    
+    bl_options = {'INTERNAL'}
 
     tree_name: bpy.props.StringProperty(default='')
     fn_name: bpy.props.StringProperty(default='')
@@ -85,11 +85,9 @@ class SvNodeViewShowTimeInfo(bpy.types.Operator):
                 print("not found!")
         else:
             self.disable_callbacks()
-        
-        return {'FINISHED'}
 
+        return {'FINISHED'}
 
 
 classes = [SvNodeViewZoomBorder, SvNodeViewShowTimeInfo]
 register, unregister = bpy.utils.register_classes_factory(classes)
-
