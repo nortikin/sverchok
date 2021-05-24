@@ -45,6 +45,10 @@ macros = {
         'display_name': "zen of Sverchok",
         'file': 'macro',
         'ident': ['verbose_macro_handler', 'zen']},
+    "> nuke python++": {
+        'display_name': "like f8",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'nuke python++']},        
     "> sn petal": {
         'display_name': "load snlite w/ petalsine",
         'file': 'macro',
@@ -200,6 +204,12 @@ class DefaultMacros():
         elif 'hotswap' in term:
             swap_vd_mv(context, operator, term, nodes, links)
             return
+
+        elif term == 'nuke python++':
+            from sverchok.core.update_system import sverchok_trees
+            for ng in sverchok_trees():
+                ng.sv_timing_callbacks_activated = False            
+            bpy.ops.script.reload()
 
         elif term == 'zen':
             full_url_term = 'https://gist.github.com/zeffii/d843b985b0db97af56dfa9c30cd54712'
