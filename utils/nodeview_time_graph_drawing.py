@@ -69,6 +69,9 @@ def draw_node_time_infos(*data):
     tree_name = data[2]
     data_tree = get_time_graph() # tree_name)
     node_tree = bpy.data.node_groups.get(tree_name)
+
+    if not node_tree.sv_show_time_nodes:
+        return
     
     r, g, b = (0.9, 0.9, 0.9)
     index_color = (0.98, 0.6, 0.6)
@@ -116,11 +119,6 @@ def draw_overlay(*data):
     data_tree = get_time_graph() # tree_name)
     node_tree = bpy.data.node_groups.get(tree_name)
 
-    white = (1.0, 1.0, 1.0, 1.0)
-    left_offset = 140
-    right_padding = 50
-    time_domain_px = region_width - left_offset - right_padding
-    
     r, g, b = (0.9, 0.9, 0.95)
     font_id = 0
     text_height = 10
@@ -128,6 +126,25 @@ def draw_overlay(*data):
 
     blf.size(font_id, int(text_height), 72)
     blf.color(font_id, r, g, b, 1.0)
+
+    if not node_tree.sv_show_time_graph:
+        # in this case only draw the total time and return early
+        cumsum = 0.0
+        for idx, node_data in data_tree.items():
+            node = node_tree.nodes.get(node_data['name'])
+            if not node: continue
+            if not tree_name == node_data['tree_name']: continue
+            cumsum += node_data['duration']
+
+        y = 26
+        cum_duration = string_from_duration(cumsum)
+        draw_text(font_id, (20, y), f"total: {cum_duration}", (r, g, b))
+        return
+
+    white = (1.0, 1.0, 1.0, 1.0)
+    left_offset = 140
+    right_padding = 50
+    time_domain_px = region_width - left_offset - right_padding
 
     x, y = 20, 50
     cumsum = 0.0
@@ -152,7 +169,7 @@ def draw_overlay(*data):
 
     y = 26
     cum_duration = string_from_duration(cumsum)
-    draw_text(font_id, (20, y), f"total: {cum_duration}", (r, g, b))    
+    draw_text(font_id, (20, y), f"total: {cum_duration}", (r, g, b))
     
     px_per_ms = time_domain_px / cumsum
 
@@ -206,7 +223,7 @@ def draw_overlay(*data):
         duration_as_str = string_from_duration(node_data['duration'])
         draw_text(font_id, (xpos + 3, y), duration_as_str, (r, g, b))
 
-def configure_node_times(ng):
+def start_node_times(ng):
     named_tree = ng.name
     data_time_infos = (None, get_preferences(), named_tree)
 
@@ -216,9 +233,10 @@ def configure_node_times(ng):
         'custom_function': draw_node_time_infos,
         'args': data_time_infos
     }
+    print("i am here")
     nvBGL2.callback_enable(f"{ng.tree_id}_node_time_info", config_node_info)
 
-def configure_time_graph(ng):
+def start_time_graph(ng):
     ng.update_gl_scale_info(origin=f"configure_time_graph, tree: {ng.name}")
 
     named_tree = ng.name
@@ -231,10 +249,5 @@ def configure_time_graph(ng):
         'custom_function': draw_overlay,
         'args': data_overlay
     }
+    print("i am here too")
     nvBGL2.callback_enable(f"{ng.tree_id}_time_graph_overlay", config_graph_overlay, overlay="POST_PIXEL")
-
-def disable_time_graph(ng):
-    nvBGL2.callback_disable(f"{ng.tree_id}_time_graph_overlay")
-
-def disable_node_times(ng):
-    nvBGL2.callback_disable(f"{ng.tree_id}_node_time_info")

@@ -5,8 +5,13 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 import bpy
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
+from sverchok.ui.bgl_callback_nodeview import callback_disable_filtered
+
+from sverchok.utils.nodeview_time_graph_drawing import (
+    start_time_graph, start_node_times)
+
 
 class SvNodeViewZoomBorder(bpy.types.Operator, SvGenericNodeLocator):
     """
@@ -50,8 +55,41 @@ class SvNodeViewZoomBorder(bpy.types.Operator, SvGenericNodeLocator):
                             bpy.ops.node.view_selected(override)
                             break
 
-def register():
-    bpy.utils.register_class(SvNodeViewZoomBorder)
+class SvNodeViewShowTimeInfo(bpy.types.Operator):
 
-def unregister():
-    bpy.utils.unregister_class(SvNodeViewZoomBorder)
+    bl_idname = "node.nodeview_timeinfo_callback"
+    bl_label = "Start/Stop info display"
+    bl_options = {'INTERNAL'}    
+
+    tree_name: bpy.props.StringProperty(default='')
+    fn_name: bpy.props.StringProperty(default='')
+
+    def disable_callbacks(self):
+        callback_disable_filtered("_time_graph_overlay")
+        callback_disable_filtered("_node_time_info")
+
+    def execute(self, context):
+        """
+        set bgl callback for the timing graph + node info in following ways
+        - (initialize and start) 
+        - (stop)
+        """
+        ng = bpy.data.node_groups.get(self.tree_name)
+        if self.fn_name == "start":
+            # remove currently drawing graph and time info, just in case.
+            # self.disable_callbacks()
+            if ng:
+                start_time_graph(ng)
+                start_node_times(ng)
+            else:
+                print("not found!")
+        else:
+            self.disable_callbacks()
+        
+        return {'FINISHED'}
+
+
+
+classes = [SvNodeViewZoomBorder, SvNodeViewShowTimeInfo]
+register, unregister = bpy.utils.register_classes_factory(classes)
+

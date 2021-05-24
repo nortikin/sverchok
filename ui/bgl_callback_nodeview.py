@@ -70,8 +70,11 @@ def callback_disable_all():
         if n_id:
             callback_disable(n_id)
 
-
-
+def callback_disable_filtered(pattern):
+    temp_list = list(callback_dict.keys())
+    for ident in temp_list:
+        if ident.endswith(pattern):
+            callback_disable(ident)
 
 
 def restore_opengl_defaults():
