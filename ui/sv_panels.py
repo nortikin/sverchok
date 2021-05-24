@@ -89,6 +89,18 @@ class SV_PT_ActiveTreePanel(SverchokPanels, bpy.types.Panel):
         addon = context.preferences.addons.get(sverchok.__name__)
         if addon.preferences.show_debug:
             col.label(text="Time graph update controls")
+
+            row = col.row()
+            cb = "node.nodeview_timeinfo_callback"
+
+            op_start = row.operator(cb, text="start", icon="PREVIEW_RANGE")
+            op_start.fn_name = "start"
+            op_start.tree_name = ng.name
+
+            op_end = row.operator(cb, text="end", icon="CANCEL")
+            op_end.fn_name = "end"
+            op_end.tree_name = ng.name            
+
             col.prop(ng, "sv_show_time_nodes")
             col.prop(ng, "sv_show_time_graph")
 

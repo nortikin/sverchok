@@ -55,8 +55,8 @@ def draw_text(font_id, location, text, color):
     r, g, b = color
     blf.position(font_id, x, y, 0)
     level = 5 # 3, 5 or 0
-    
-    blf.color(font_id, r, g, b, 1.0)    
+
+    blf.color(font_id, r, g, b, 1.0)
     blf.enable(font_id, blf.SHADOW)
     blf.shadow(font_id, level, 0, 0, 0, 1)
     blf.shadow_offset(font_id, 1, -1)
@@ -69,12 +69,15 @@ def draw_node_time_infos(*data):
     tree_name = data[2]
     data_tree = get_time_graph() # tree_name)
     node_tree = bpy.data.node_groups.get(tree_name)
-    
+
+    if not node_tree.sv_show_time_nodes:
+        return
+
     r, g, b = (0.9, 0.9, 0.9)
     index_color = (0.98, 0.6, 0.6)
     font_id = 0
     text_height = 20
-    
+
     def get_xy_for_bgl_drawing(node):
         _x, _y = node.absolute_location
         _x, _y = _x, _y + (text_height - 9)
@@ -86,7 +89,7 @@ def draw_node_time_infos(*data):
         node = node_tree.nodes.get(node_data['name'])
         if not node: continue
         if not tree_name == node_data['tree_name']: continue
-        
+
         x, y = get_xy_for_bgl_drawing(node)
         x, y = int(x), int(y)
 
@@ -97,7 +100,7 @@ def draw_node_time_infos(*data):
 
         show_str = string_from_duration(node_data['duration'])
         draw_text(font_id, (x, y), show_str, (r, g, b))
-        
+
         process_index = str(idx)
         index_width, _ = blf.dimensions(font_id, process_index)
         padding = 9
@@ -107,20 +110,15 @@ def draw_overlay(*data):
 
     # bpy.context.area.height  & area.width  = total
     region = bpy.context.region
-    
+
     # visible width ( T panel is not included, only N panel)
-    region_width = region.width   
+    region_width = region.width
 
     shader = data[1]
     tree_name = data[2]
     data_tree = get_time_graph() # tree_name)
     node_tree = bpy.data.node_groups.get(tree_name)
 
-    white = (1.0, 1.0, 1.0, 1.0)
-    left_offset = 140
-    right_padding = 50
-    time_domain_px = region_width - left_offset - right_padding
-    
     r, g, b = (0.9, 0.9, 0.95)
     font_id = 0
     text_height = 10
@@ -128,6 +126,25 @@ def draw_overlay(*data):
 
     blf.size(font_id, int(text_height), 72)
     blf.color(font_id, r, g, b, 1.0)
+
+    if not node_tree.sv_show_time_graph:
+        # in this case only draw the total time and return early
+        cumsum = 0.0
+        for idx, node_data in data_tree.items():
+            node = node_tree.nodes.get(node_data['name'])
+            if not node: continue
+            if not tree_name == node_data['tree_name']: continue
+            cumsum += node_data['duration']
+
+        y = 26
+        cum_duration = string_from_duration(cumsum)
+        draw_text(font_id, (20, y), f"total: {cum_duration}", (r, g, b))
+        return
+
+    white = (1.0, 1.0, 1.0, 1.0)
+    left_offset = 140
+    right_padding = 50
+    time_domain_px = region_width - left_offset - right_padding
 
     x, y = 20, 50
     cumsum = 0.0
@@ -146,14 +163,14 @@ def draw_overlay(*data):
         display_info[used_idx] = (x, y, node_data, txt_width)
         y += line_height
         used_idx += 1
-    
+
     if cumsum == 0.0:
         return
 
     y = 26
     cum_duration = string_from_duration(cumsum)
-    draw_text(font_id, (20, y), f"total: {cum_duration}", (r, g, b))    
-    
+    draw_text(font_id, (20, y), f"total: {cum_duration}", (r, g, b))
+
     px_per_ms = time_domain_px / cumsum
 
     canvas = ShaderLib2D()
@@ -171,7 +188,7 @@ def draw_overlay(*data):
 
     # draw time axis
     canvas.add_rect(left_offset, 40, time_domain_px, 1, white)
-    
+
     # draw time ticks
     milliseconds = cumsum * 1000
     whole_milliseconds = int(milliseconds)
@@ -179,7 +196,7 @@ def draw_overlay(*data):
     for i in range(whole_milliseconds + 1):
         tick_location = px_per_ms * i/1000
         final_tick_x = left_offset + tick_location
-        
+
         # this is where we skip ticks if they get too dense.
         if tick_display(i, whole_milliseconds):
             canvas.add_rect(final_tick_x, 42, 1, 5, white)
@@ -188,11 +205,11 @@ def draw_overlay(*data):
             time_width, _ = blf.dimensions(font_id, str(i))
             time_str_offset = final_tick_x - (time_width/2)
             draw_text(font_id, (time_str_offset, 26), str(i), (r, g, b))
-    
+
     geom = canvas.compile()
-        
-    batch = batch_for_shader(shader, 'TRIS', 
-        {"pos": geom.vectors, 
+
+    batch = batch_for_shader(shader, 'TRIS',
+        {"pos": geom.vectors,
         "color": geom.vertex_colors},
         indices=geom.indices
     )
@@ -206,19 +223,19 @@ def draw_overlay(*data):
         duration_as_str = string_from_duration(node_data['duration'])
         draw_text(font_id, (xpos + 3, y), duration_as_str, (r, g, b))
 
-def configure_node_times(ng):
+def start_node_times(ng):
     named_tree = ng.name
     data_time_infos = (None, get_preferences(), named_tree)
 
     config_node_info = {
         'tree_name': named_tree,
-        'mode': 'LEAN_AND_MEAN', 
+        'mode': 'LEAN_AND_MEAN',
         'custom_function': draw_node_time_infos,
         'args': data_time_infos
     }
     nvBGL2.callback_enable(f"{ng.tree_id}_node_time_info", config_node_info)
 
-def configure_time_graph(ng):
+def start_time_graph(ng):
     ng.update_gl_scale_info(origin=f"configure_time_graph, tree: {ng.name}")
 
     named_tree = ng.name
@@ -227,14 +244,8 @@ def configure_time_graph(ng):
 
     config_graph_overlay = {
         'tree_name': named_tree,
-        'mode': 'LEAN_AND_MEAN', 
+        'mode': 'LEAN_AND_MEAN',
         'custom_function': draw_overlay,
         'args': data_overlay
     }
     nvBGL2.callback_enable(f"{ng.tree_id}_time_graph_overlay", config_graph_overlay, overlay="POST_PIXEL")
-
-def disable_time_graph(ng):
-    nvBGL2.callback_disable(f"{ng.tree_id}_time_graph_overlay")
-
-def disable_node_times(ng):
-    nvBGL2.callback_disable(f"{ng.tree_id}_node_time_info")

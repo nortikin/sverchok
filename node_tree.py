@@ -37,10 +37,6 @@ from sverchok.utils.logging import debug
 from sverchok.ui import color_def
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
 from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_with_bgl
-from sverchok.utils.nodeview_time_graph_drawing import (
-    configure_time_graph, disable_time_graph,
-    configure_node_times, disable_node_times)
-
 
 class SvNodeTreeCommon(object):
     '''
@@ -174,17 +170,10 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         if draft_nodes:
             process_from_nodes(draft_nodes)
 
-    def set_ng_time_graph_drawing_state(self, context):
-        configure_time_graph(self) if self.sv_show_time_graph else disable_time_graph(self)
-
-    def set_ng_time_info_drawing_state(self, context):
-        configure_node_times(self) if self.sv_show_time_nodes else disable_node_times(self)
-
-
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
-    sv_show_time_graph: BoolProperty(name="Time Graph", default=False, update=set_ng_time_graph_drawing_state, options=set())
-    sv_show_time_nodes: BoolProperty(name="Node times", default=False, update=set_ng_time_info_drawing_state, options=set())
+    sv_show_time_graph: BoolProperty(name="Time Graph", default=False, options=set())
+    sv_show_time_nodes: BoolProperty(name="Node times", default=False, options=set())
 
     # something related with heat map feature
     # looks like it keeps dictionary of nodes and their user defined colors in string format
