@@ -442,8 +442,8 @@ def build_update_list(ng=None):
     """
     global update_cache
     global partial_update_cache
-    global graphs
-    graphs = []
+    reset_timing_graphs()
+
     if not ng:
         for ng in sverchok_trees():
             build_update_list(ng)
@@ -460,10 +460,8 @@ def process_to_node(node):
     """
     Process nodes upstream until node
     """
-    global graphs
-    graphs = []
-
     ng = node.id_data
+    reset_timing_graphs()
     reset_error_nodes(ng)
 
     if data_structure.RELOAD_EVENT:
@@ -498,9 +496,9 @@ def process_from_node(node):
     """
     global update_cache
     global partial_update_cache
-    global graphs
-    graphs = []
+
     ng = node.id_data
+    reset_timing_graphs()
     reset_error_nodes(ng)
 
     if data_structure.RELOAD_EVENT:
@@ -529,8 +527,7 @@ def sverchok_trees():
 def process_tree(ng=None):
     global update_cache
     global partial_update_cache
-    global graphs
-    graphs = []
+    reset_timing_graphs()
 
     if data_structure.RELOAD_EVENT:
         reload_sverchok()
@@ -554,6 +551,7 @@ def reload_sverchok():
     data_structure.RELOAD_EVENT = False
     from sverchok.core import handlers
     handlers.sv_post_load([])
+    reset_timing_graphs()
 
 def get_update_lists(ng):
     """
