@@ -69,6 +69,7 @@ def reset_timing_graphs():
     graphs = []
     # graph_dicts = {}
 
+
 # cache node group update trees
 update_cache = {}
 # cache for partial update lists
