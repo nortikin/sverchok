@@ -233,7 +233,6 @@ def start_node_times(ng):
         'custom_function': draw_node_time_infos,
         'args': data_time_infos
     }
-    print("i am here")
     nvBGL2.callback_enable(f"{ng.tree_id}_node_time_info", config_node_info)
 
 def start_time_graph(ng):
@@ -249,5 +248,4 @@ def start_time_graph(ng):
         'custom_function': draw_overlay,
         'args': data_overlay
     }
-    print("i am here too")
     nvBGL2.callback_enable(f"{ng.tree_id}_time_graph_overlay", config_graph_overlay, overlay="POST_PIXEL")

@@ -76,9 +76,9 @@ class SvNodeViewShowTimeInfo(bpy.types.Operator):
         """
         ng = bpy.data.node_groups.get(self.tree_name)
         if self.fn_name == "start":
-            # remove currently drawing graph and time info, just in case.
-            # self.disable_callbacks()
             if ng:
+                self.disable_callbacks()
+                bpy.ops.node.sverchok_update_current(node_group=self.tree_name)
                 start_time_graph(ng)
                 start_node_times(ng)
             else:
