@@ -28,6 +28,7 @@ class StructFactory:
         self._factory_names = {
             StrTypes.TREE: 'tree',
             StrTypes.NODE: 'node',
+            StrTypes.SOCK: 'sock',
             StrTypes.LINK: 'link',
             StrTypes.PROP: 'prop'
         }
@@ -35,6 +36,7 @@ class StructFactory:
         # optional for fast access of main structures
         self.tree: Optional[Type[Struct]] = None
         self.node: Optional[Type[Struct]] = None
+        self.sock: Optional[Type[Struct]] = None
         self.link: Optional[Type[Struct]] = None
         self.prop: Optional[Type[Struct]] = None
 
@@ -67,6 +69,7 @@ class StrTypes(Enum):
     FILE = auto()
     TREE = auto()
     NODE = auto()
+    SOCK = auto()
     LINK = auto()
     PROP = auto()
 
@@ -128,7 +131,7 @@ class FileStruct(Struct):
         self.logger: FailsLog = logger
 
     def export(self, tree):
-        struct_factories = StructFactory([TreeStruct, NodeStruct, LinkStruct, PropertyStruct])  # todo to args?
+        struct_factories = StructFactory([TreeStruct, NodeStruct, SocketStruct, LinkStruct, PropertyStruct])  # todo to args?
         dependencies: List[Tuple[BPYPointers, str]] = [(BPYPointers.NODE_TREE, tree.name)]
         # it looks good place for exporting dependent data blocks because probably we do not always want to export them
         # from this place we have more control over it
@@ -150,14 +153,14 @@ class FileStruct(Struct):
     def build(self, *_):
         raise NotImplementedError
 
-    def build_into_tree(self, tree):
+    def build_into_tree(self, tree):  # todo add protection from exporting inside node groups
         # it looks that recursive import should be avoided by any cost, it's too difficult to pass data
         # luckily it's possible to create all data block first
         # and then they will be available for assigning to pointer properties
         # with tree data blocks it can be a beat trickier,
         # all trees should be created and only after that field with content
 
-        factories = StructFactory([TreeStruct, NodeStruct, LinkStruct, PropertyStruct])
+        factories = StructFactory([TreeStruct, NodeStruct, SocketStruct, LinkStruct, PropertyStruct])
         imported_structs = OldNewNames()
         trees_to_build = []
         version, data_blocks = self.read()
@@ -324,7 +327,15 @@ class NodeStruct(Struct):
                 raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
                 self._struct["properties"][prop.name] = raw_struct
 
-                # todo add sockets
+        # all sockets should be kept in a file because it's possible to create UI
+        # where sockets would be defined by pressing buttons for example like in the node group interface
+        for socket in node.inputs:
+            raw_struct = factories.sock(socket.identifier, self.logger).export(socket, factories, dependencies)
+            self._struct["inputs"][socket.identifier] = raw_struct
+
+        for socket in node.outputs:
+            raw_struct = factories.sock(socket.identifier, self.logger).export(socket, factories, dependencies)
+            self._struct["outputs"][socket.identifier] = raw_struct
 
         if hasattr(node, 'save_to_json'):
             node.save_to_json(self._struct)
@@ -332,8 +343,8 @@ class NodeStruct(Struct):
         return self._struct
 
     def build(self, node, factories: StructFactory, imported_data: OldNewNames):
-
-        attributes, properties = self.read()
+        # todo it would be nice? to add context to logger of what is currently is being created (not only here)
+        attributes, properties, inputs, outputs = self.read()
         for attr_name, attr_value in attributes:
             with self.logger.add_fail("Setting node attribute",
                                       f'Tree: {node.id_data.name}, Node: {node.name}, attr: {attr_name}'):
@@ -344,13 +355,21 @@ class NodeStruct(Struct):
                                       f'Tree: {node.id_data.name}, Node: {node.name}, prop: {prop_name}'):
                 factories.prop(prop_name, self.logger, prop_value).build(node, factories, imported_data)
 
-        # this block is before applying socket properties because some nodes can generate them in load method
+        # does not trust to correctness of socket collections created by an init method
+        node.inputs.clear()
+        for sock_name, raw_struct in inputs:
+            with self.logger.add_fail(f"Add socket: {sock_name} to node {node.name}"):
+                factories.sock(sock_name, self.logger, raw_struct).build(node.inputs, factories, imported_data)
+
+        node.outputs.clear()
+        for sock_name, raw_struct in outputs:
+            with self.logger.add_fail(f"Add socket: {sock_name} ot node {node.name}"):
+                factories.sock(sock_name, self.logger, raw_struct).build(node.outputs, factories, imported_data)
+
         if hasattr(node, 'load_from_json'):
             with self.logger.add_fail("Setting advance node properties",
                                       f'Tree: {node.id_data.name}, Node: {node.name}'):
                 node.load_from_json(self._struct, self.version)
-
-        # todo can we generate sockets now?
 
     def read(self):
         """Reads node attributes from node structure, returns (attr_name, value)"""
@@ -362,12 +381,80 @@ class NodeStruct(Struct):
             props_struct = self._struct["properties"]
             properties = self.read_collection(props_struct)
 
-        # todo read sockets
+        with self.logger.add_fail("Reading input sockets"):
+            input_struct = self._struct["inputs"]
+            inputs = self.read_collection(input_struct)
 
-        return attributes, properties
+        with self.logger.add_fail("Reading output sockets"):
+            output_struct = self._struct["outputs"]
+            outputs = self.read_collection(output_struct)
+
+        return attributes, properties, inputs, outputs
 
     def read_bl_type(self):
         return self._struct['bl_idname']
+
+
+class SocketStruct(Struct):
+    type = StrTypes.SOCK
+
+    def __init__(self, name, logger: FailsLog, structure: dict = None):
+        default_struct = {
+            "bl_idname": "",
+            "identifier": "",
+            "properties": dict(),
+            "attributes": dict()
+        }
+        self.name = name
+        self.logger = logger
+        self._struct = structure or default_struct
+
+    def export(self, socket, factories, dependencies):
+        self._struct['bl_idname'] = socket.bl_idname
+        self._struct['identifier'] = socket.identifier
+        self._struct['attributes']['hide'] = socket.hide
+
+        for prop_name in socket.keys():
+            prop = BPYProperty(socket, prop_name)
+            if prop.is_valid and prop.is_to_save:
+                raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
+                self._struct["properties"][prop.name] = raw_struct
+
+        return self._struct
+
+    def build(self, sockets, factories, imported_structs):
+        attributes, identifier, properties = self.read()
+
+        # create the socket in the method because identifier is hidden is shown only inside the class
+        socket = sockets.new(self.read_bl_type(), self.name, identifier=identifier)
+
+        for attr_name, attr_value in attributes:
+            with self.logger.add_fail(
+                    "Setting socket attribute",
+                    f'Tree: {socket.id_data.name}, Node: {socket.node.name}, socket: {socket.name}, attr: {attr_name}'):
+                factories.prop(attr_name, self.logger, attr_value).build(socket, factories, imported_structs)
+
+        for prop_name, prop_value in properties:
+            with self.logger.add_fail(
+                    "Setting socket property",
+                    f'Tree: {socket.id_data.name}, Node: {socket.node.name}, socket: {socket.name}, prop: {prop_name}'):
+                factories.prop(prop_name, self.logger, prop_value).build(socket, factories, imported_structs)
+
+    def read(self):
+        with self.logger.add_fail("Reading socket attributes"):
+            attrs_struct = self._struct["attributes"]
+            attributes = self.read_collection(attrs_struct)
+            identifier = self._struct['identifier']
+
+        with self.logger.add_fail("Reading socket properties"):
+            props_struct = self._struct["properties"]
+            properties = self.read_collection(props_struct)
+
+        return attributes, identifier, properties
+
+    def read_bl_type(self) -> str:
+        with self.logger.add_fail("Reading socket bl_idname"):
+            return self._struct['bl_idname']
 
 
 class LinkStruct(Struct):
