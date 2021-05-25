@@ -47,7 +47,23 @@ def sverchok_trees():
 
 def get_all_sverchok_affiliated_trees():
     sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType', 'SvGroupTree'}
-    return list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)    
+    return list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
+
+def ensure_non_standard_nodes_are_valid(sv_trees):
+    for ng in sv_trees:
+        with ng.throttle_update():
+            try:
+                old_nodes.load_old(ng)
+            except:
+                traceback.print_exc()
+            try:
+                dummy_nodes.load_dummy(ng)
+            except:
+                traceback.print_exc()
+            try:
+                upgrade_nodes.upgrade_nodes(ng)
+            except:
+                traceback.print_exc()
 
 def has_frame_changed(scene):
     last_frame = _state['frame']
@@ -179,23 +195,9 @@ def sv_post_load(scene):
     node_tree.SverchCustomTree.update_gl_scale_info(None, "sv_post_load")
 
     update_all_monads_found()
-    sv_trees = get_all_sverchok_affiliated_trees()
 
-    # ensure_non_standard_nodes_are_valid(sv_trees)
-    for ng in sv_trees:
-        with ng.throttle_update():
-            try:
-                old_nodes.load_old(ng)
-            except:
-                traceback.print_exc()
-            try:
-                dummy_nodes.load_dummy(ng)
-            except:
-                traceback.print_exc()
-            try:
-                upgrade_nodes.upgrade_nodes(ng)
-            except:
-                traceback.print_exc()
+    sv_trees = get_all_sverchok_affiliated_trees()
+    ensure_non_standard_nodes_are_valid(sv_trees)
 
     settings.apply_theme_if_necessary()
 
