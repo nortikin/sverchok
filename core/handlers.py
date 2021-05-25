@@ -181,6 +181,7 @@ def sv_post_load(scene):
     update_all_monads_found()
     sv_trees = get_all_sverchok_affiliated_trees()
 
+    # ensure_non_standard_nodes_are_valid(sv_trees)
     for ng in sv_trees:
         with ng.throttle_update():
             try:
