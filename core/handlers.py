@@ -50,7 +50,7 @@ def update_all_monads_found():
         if monad.input_node and monad.output_node:
             monad.update_cls()    
 
-def ensure_non_standard_nodes_are_valid(sv_trees):
+def ensure_all_encountered_nodes_are_valid(sv_trees):
     for ng in sv_trees:
         with ng.throttle_update():
             try:
@@ -198,7 +198,7 @@ def sv_post_load(scene):
     update_all_monads_found()
 
     sv_trees = get_all_sverchok_affiliated_trees()
-    ensure_non_standard_nodes_are_valid(sv_trees)
+    ensure_all_encountered_nodes_are_valid(sv_trees)
 
     settings.apply_theme_if_necessary()
 
