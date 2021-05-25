@@ -72,6 +72,10 @@ def get_param(prop_name, fallback):
             value = fallback
         return value
 
+def apply_theme_if_necessary():
+    if get_param("apply_theme_on_open", False):
+        color_def.apply_theme()    
+        print("applied theme.")
 
 # getDpiFactor and getDpi are lifted from Animation Nodes :)
 
