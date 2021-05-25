@@ -24,7 +24,6 @@ def get_sv_depsgraph():
     global depsgraph_need
 
     if not depsgraph_need:
-
         sv_depsgraph = bpy.context.evaluated_depsgraph_get()
         depsgraph_need = True
     elif not sv_depsgraph:
@@ -40,6 +39,33 @@ def sverchok_trees():
     for ng in bpy.data.node_groups:
         if ng.bl_idname == 'SverchCustomTreeType':
             yield ng
+
+def update_monad_trees():
+    for monad in (ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchGroupTreeType'):
+        if monad.input_node and monad.output_node:
+            monad.update_cls()
+
+def handle_upgradenodes_oldnodes_dummynodes(sv_trees):
+    for ng in sv_trees:
+        with ng.throttle_update():
+            try:
+                old_nodes.load_old(ng)
+            except:
+                traceback.print_exc()
+            try:
+                dummy_nodes.load_dummy(ng)
+            except:
+                traceback.print_exc()
+            try:
+                upgrade_nodes.upgrade_nodes(ng)
+            except:
+                traceback.print_exc()
+
+
+def apply_theme():
+    from sverchok.settings import get_param
+    if get_param("apply_theme_on_open", False):
+        color_def.apply_theme()
 
 
 def has_frame_changed(scene):
@@ -116,21 +142,6 @@ def sv_update_handler(scene):
 
 
 @persistent
-def sv_scene_handler(scene):
-    """
-    Avoid using this.
-    Update sverchok node groups on scene update events.
-    Not used yet.
-    """
-    # print('sv_scene_handler')
-    for ng in sverchok_trees():
-        try:
-            ng.process_ani()
-        except Exception as e:
-            print('Failed to update:', ng, str(e))
-
-
-@persistent
 def sv_main_handler(scene):
     """
     On depsgraph update (pre)
@@ -179,42 +190,19 @@ def sv_post_load(scene):
     """
     Upgrade nodes, apply preferences and do an update.
     """
-
     set_first_run(False)
 
     # ensure current nodeview view scale / location parameters reflect users' system settings
     from sverchok import node_tree
     node_tree.SverchCustomTree.update_gl_scale_info(None, "sv_post_load")
 
-
-    for monad in (ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchGroupTreeType'):
-        if monad.input_node and monad.output_node:
-            monad.update_cls()
+    update_monad_trees()
 
     sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType', 'SvGroupTree'}
     sv_trees = list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
 
-    for ng in sv_trees:
-        with ng.throttle_update():
-            try:
-                old_nodes.load_old(ng)
-            except:
-                traceback.print_exc()
-            try:
-                dummy_nodes.load_dummy(ng)
-            except:
-                traceback.print_exc()
-            try:
-                upgrade_nodes.upgrade_nodes(ng)
-            except:
-                traceback.print_exc()
-
-    addon_name = data_structure.SVERCHOK_NAME
-    addon = bpy.context.preferences.addons.get(addon_name)
-    if addon and hasattr(addon, "preferences"):
-        pref = addon.preferences
-        if pref.apply_theme_on_open:
-            color_def.apply_theme()
+    handle_upgradenodes_oldnodes_dummynodes(sv_trees)
+    apply_theme()
 
     for ng in sv_trees:
         if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
@@ -225,14 +213,11 @@ def set_frame_change(mode):
     post = bpy.app.handlers.frame_change_post
     pre = bpy.app.handlers.frame_change_pre
 
-    # scene = bpy.app.handlers.scene_update_post
     # remove all
     if sv_update_handler in post:
         post.remove(sv_update_handler)
     if sv_update_handler in pre:
         pre.remove(sv_update_handler)
-    #if sv_scene_handler in scene:
-    #    scene.remove(sv_scene_handler)
 
     # apply the right one
     if mode == "POST":
