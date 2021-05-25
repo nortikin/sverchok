@@ -152,6 +152,7 @@ class DefaultMacros():
             vd_node = nodes.new('SvViewerDrawMk4')
             vd_node.location = obj_in_node.location.x + 180, obj_in_node.location.y
 
+            # this macro could detect specifically if the node found edges or faces or both... 
             links.new(obj_in_node.outputs[0], vd_node.inputs[0])
             links.new(obj_in_node.outputs[2], vd_node.inputs[2])
             links.new(obj_in_node.outputs[8], vd_node.inputs[3])
