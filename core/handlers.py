@@ -173,9 +173,9 @@ def sv_post_load(scene):
     """
 
     set_first_run(False)
-
+    from sverchok import node_tree, settings
+    
     # ensure current nodeview view scale / location parameters reflect users' system settings
-    from sverchok import node_tree
     node_tree.SverchCustomTree.update_gl_scale_info(None, "sv_post_load")
 
     update_all_monads_found()
@@ -196,7 +196,6 @@ def sv_post_load(scene):
             except:
                 traceback.print_exc()
 
-    from sverchok import settings
     settings.apply_theme_if_necessary()
 
     for ng in sv_trees:
