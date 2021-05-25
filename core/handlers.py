@@ -41,14 +41,14 @@ def sverchok_trees():
         if ng.bl_idname == 'SverchCustomTreeType':
             yield ng
 
+def get_all_sverchok_affiliated_trees():
+    sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType', 'SvGroupTree'}
+    return list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
+
 def update_all_monads_found():
     for monad in (ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchGroupTreeType'):
         if monad.input_node and monad.output_node:
             monad.update_cls()    
-
-def get_all_sverchok_affiliated_trees():
-    sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType', 'SvGroupTree'}
-    return list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
 
 def ensure_non_standard_nodes_are_valid(sv_trees):
     for ng in sv_trees:
