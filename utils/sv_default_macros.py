@@ -31,108 +31,63 @@ from sverchok.utils.macros.hotswap_macros import swap_vd_mv
 
 # pylint: disable=c0301
 
+def simple_macro(description="", term=""):
+    return {
+        'display_name': description,
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', term]}    
 
 macros = {
-    "> obj vd": {
-        'display_name': "active_obj into objlite + vdmk2",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'obj vd']},
-    "> objs vd": {
-        'display_name': "multi obj in + vdmk2",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'objs vd']},
-    "> zen": {
-        'display_name': "zen of Sverchok",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'zen']},
-    "> nuke python++": {
-        'display_name': "like f8",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'nuke python++']},        
-    "> sn petal": {
-        'display_name': "load snlite w/ petalsine",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'snl demo/petal_sine.py']},
-    "> Subdiv to quads": {
-        'display_name': "snlite w/ subdiv to quads",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'snl demo/subidivide_to_quads.py']},
-    "> monad info": {
-        'display_name': "output current idx / total",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'monad info']},
-    "> multiply *": {
-        'display_name': "multiply selected nodes",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'mathMUL']},
-    "> add +": {
-        'display_name': "add selected nodes",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'mathADD']},
-    "> sub -": {
-        'display_name': "subtract selected nodes",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'mathSUB']},
-    "> join1": {
-        'display_name': "selected nodes to List Join",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'join1']},
-    "> join123": {
-        'display_name': "selected nodes to List Join",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'join123']},
-    "> join12": {
-        'display_name': "selected nodes to List Join",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'join12']},
-    "> join13": {
-        'display_name': "selected nodes to List Join",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'join13']},
-    "> sw1": {
-        'display_name': "connect nodes to switch",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'switch1']},
-    "> sw12": {
-        'display_name': "connect nodes to switch",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'switch12']},
-    "> sw13": {
-        'display_name': "connect nodes to switch",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'switch13']},
-    "> sw123": {
-        'display_name': "connect nodes to switch",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'switch123']},
-    "> gp +": {
-        'display_name': "grease pencil setup",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'gp +']},
-    "> gp + 2": {
-        'display_name': "grease pencil setup",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'gp + 2']},
-    "> hotswap vd mv": {
-        'display_name': "hotswap vd->meshviewer",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'hotswap']},    
-    "> url": {
-        'display_name': "download archive from url",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'url']},
-    "> blend 2 zip": {
-        'display_name': "archive blend as zip",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'blend 2 zip']},
-    "> all numpy True": {
-        'display_name': "existing nodes to numpy",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'output numpy True']},
-    "> all numpy False": {
-        'display_name': "existing nodes to python",
-        'file': 'macro',
-        'ident': ['verbose_macro_handler', 'output numpy False']}
+    "> obj vd": simple_macro(
+        description="active_obj into objlite + vdmk2", term='obj vd'),
+    "> objs vd": simple_macro(
+        description="multi obj in + vdmk2", term='objs vd'),
+    "> zen": simple_macro(
+        description="zen of Sverchok", term='zen'),
+    "> nuke python++": simple_macro(
+        description="like f8", term='nuke python++'),        
+    "> sn petal": simple_macro(
+        description="load snlite w/ petalsine", term='snl demo/petal_sine.py'),
+    "> Subdiv to quads": simple_macro(
+        description="snlite w/ subdiv to quads", term='snl demo/subidivide_to_quads.py'),
+    "> monad info": simple_macro(
+        description="output current idx / total", term='monad info'),
+    "> multiply *": simple_macro(
+        description="multiply selected nodes", term='mathMUL'),
+    "> add +": simple_macro(
+        description="add selected nodes", term='mathADD'),
+    "> sub -": simple_macro(
+        description="subtract selected nodes", term='mathSUB'),
+    "> join1": simple_macro(
+        description="selected nodes to List Join", term='join1'),
+    "> join123": simple_macro(
+        description="selected nodes to List Join", term='join123'),
+    "> join12": simple_macro(
+        description="selected nodes to List Join", term='join12'),
+    "> join13": simple_macro(
+        description="selected nodes to List Join", term='join13'),
+    "> sw1": simple_macro(
+        description="connect nodes to switch", term='switch1'),
+    "> sw12": simple_macro(
+        description="connect nodes to switch", term='switch12'),
+    "> sw13": simple_macro(
+        description="connect nodes to switch", term='switch13'),
+    "> sw123": simple_macro(
+        description="connect nodes to switch", term='switch123'),
+    "> gp +": simple_macro(
+        description="grease pencil setup", term='gp +'),
+    "> gp + 2": simple_macro(
+        description="grease pencil setup", term='gp + 2'),
+    "> hotswap vd mv": simple_macro(
+        description="hotswap vd->meshviewer", term='hotswap'),    
+    "> url": simple_macro(
+        description="download archive from url", term='url'),
+    "> blend 2 zip": simple_macro(
+        description="archive blend as zip", term='blend 2 zip'),
+    "> all numpy True": simple_macro(
+        description="existing nodes to numpy", term='output numpy True'),
+    "> all numpy False": simple_macro(
+        description="existing nodes to python", term='output numpy False')
 }
 
 
