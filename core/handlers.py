@@ -223,6 +223,11 @@ def set_frame_change(mode):
     elif mode == "PRE":
         pre.append(sv_update_handler)
 
+def update_frame_change_mode():
+    from sverchok import settings
+    mode = settings.get_param("frame_change_mode", "POST")
+    set_frame_change(mode)
+
 
 handler_dict = {
     'undo_pre': sv_handler_undo_pre,
@@ -240,17 +245,10 @@ def call_user_functions_on_post_load_event(scene):
 
 
 def register():
-
     app_handler_ops(append=handler_dict)
-
     data_structure.setup_init()
-    addon_name = data_structure.SVERCHOK_NAME
-    addon = bpy.context.preferences.addons.get(addon_name)
-    if addon and hasattr(addon, "preferences"):
-        set_frame_change(addon.preferences.frame_change_mode)
-    else:
-        print("Couldn't setup Sverchok frame change handler")
 
+    update_frame_change_mode()
     bpy.app.handlers.load_post.append(call_user_functions_on_post_load_event)
 
 
