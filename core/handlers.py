@@ -35,11 +35,19 @@ def set_sv_depsgraph_need(val):
     global depsgraph_need
     depsgraph_need = val
 
+def update_all_monads_found():
+    for monad in (ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchGroupTreeType'):
+        if monad.input_node and monad.output_node:
+            monad.update_cls()    
+
 def sverchok_trees():
     for ng in bpy.data.node_groups:
         if ng.bl_idname == 'SverchCustomTreeType':
             yield ng
 
+def get_all_sverchok_affiliated_trees():
+    sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType', 'SvGroupTree'}
+    return list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)    
 
 def has_frame_changed(scene):
     last_frame = _state['frame']
@@ -170,12 +178,8 @@ def sv_post_load(scene):
     from sverchok import node_tree
     node_tree.SverchCustomTree.update_gl_scale_info(None, "sv_post_load")
 
-    for monad in (ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchGroupTreeType'):
-        if monad.input_node and monad.output_node:
-            monad.update_cls()
-
-    sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType', 'SvGroupTree'}
-    sv_trees = list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
+    update_all_monads_found()
+    sv_trees = get_all_sverchok_affiliated_trees()
 
     for ng in sv_trees:
         with ng.throttle_update():
