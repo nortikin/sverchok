@@ -31,11 +31,11 @@ from sverchok.utils.macros.hotswap_macros import swap_vd_mv
 
 # pylint: disable=c0301
 
-def simple_macro(description="", term=""):
+def simple_macro(description="", term="", macro_handler="verbose_macro_handler"):
     return {
         'display_name': description,
         'file': 'macro',
-        'ident': ['verbose_macro_handler', term]}    
+        'ident': [macro_handler, term]}    
 
 macros = {
     "> obj vd": simple_macro(
