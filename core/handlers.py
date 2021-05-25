@@ -35,15 +35,16 @@ def set_sv_depsgraph_need(val):
     global depsgraph_need
     depsgraph_need = val
 
-def update_all_monads_found():
-    for monad in (ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchGroupTreeType'):
-        if monad.input_node and monad.output_node:
-            monad.update_cls()    
 
 def sverchok_trees():
     for ng in bpy.data.node_groups:
         if ng.bl_idname == 'SverchCustomTreeType':
             yield ng
+
+def update_all_monads_found():
+    for monad in (ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchGroupTreeType'):
+        if monad.input_node and monad.output_node:
+            monad.update_cls()    
 
 def get_all_sverchok_affiliated_trees():
     sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType', 'SvGroupTree'}
