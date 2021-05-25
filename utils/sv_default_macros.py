@@ -147,14 +147,14 @@ class DefaultMacros():
             links.new(obj_in_node.outputs[4], vd_node.inputs[3])
 
         elif term == 'objs vd':
-            obj_in_node = nodes.new('SvObjectsNodeMK3')
+            obj_in_node = nodes.new('SvGetObjectsData')
             obj_in_node.get_objects_from_scene(operator)
             vd_node = nodes.new('SvViewerDrawMk4')
             vd_node.location = obj_in_node.location.x + 180, obj_in_node.location.y
 
             links.new(obj_in_node.outputs[0], vd_node.inputs[0])
             links.new(obj_in_node.outputs[2], vd_node.inputs[2])
-            links.new(obj_in_node.outputs[4], vd_node.inputs[3])
+            links.new(obj_in_node.outputs[8], vd_node.inputs[3])
 
         elif 'hotswap' in term:
             swap_vd_mv(context, operator, term, nodes, links)
