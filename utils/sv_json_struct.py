@@ -14,6 +14,7 @@ from enum import Enum, auto
 from typing import Type, Generator, TYPE_CHECKING, Dict, Tuple, Optional, List, Any
 
 import bpy
+from sverchok.core.update_system import build_update_list, process_tree
 from sverchok.utils.handle_blender_data import BPYPointers, BPYProperty
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 
@@ -75,7 +76,8 @@ class StrTypes(Enum):
 
     def get_bpy_pointer(self) -> BPYPointers:
         mapping = {
-            StrTypes.TREE: BPYPointers.NODE_TREE
+            StrTypes.TREE: BPYPointers.NODE_TREE,
+            StrTypes.NODE: BPYPointers.NODE,
         }
         if self not in mapping:
             raise TypeError(f'Given StrType: {self} is not a data block')
@@ -84,7 +86,8 @@ class StrTypes(Enum):
     @classmethod
     def get_type(cls, block_type: BPYPointers) -> StrTypes:
         mapping = {
-            BPYPointers.NODE_TREE: StrTypes.TREE
+            BPYPointers.NODE_TREE: StrTypes.TREE,
+            BPYPointers.NODE: StrTypes.NODE,
         }
         if block_type not in mapping:
             raise TypeError(f'Given block type: {block_type} is not among supported: {mapping.keys()}')
@@ -160,35 +163,38 @@ class FileStruct(Struct):
         # with tree data blocks it can be a beat trickier,
         # all trees should be created and only after that field with content
 
-        factories = StructFactory([TreeStruct, NodeStruct, SocketStruct, LinkStruct, PropertyStruct])
-        imported_structs = OldNewNames()
-        trees_to_build = []
-        version, data_blocks = self.read()
-        for struct_type, block_name, raw_struct in data_blocks:
-            if struct_type == StrTypes.TREE:
-                tree_struct = factories.tree(block_name, self.logger, raw_struct)
-                if not trees_to_build:
-                    # this is first tree and it should be main, does not need create anything
-                    data_block = tree
+        with tree.throttle_update():  # todo it is required only for current update system can be deleted later
+            factories = StructFactory([TreeStruct, NodeStruct, SocketStruct, LinkStruct, PropertyStruct])
+            imported_structs = OldNewNames()
+            trees_to_build = []
+            version, data_blocks = self.read()
+            for struct_type, block_name, raw_struct in data_blocks:
+                if struct_type == StrTypes.TREE:
+                    tree_struct = factories.tree(block_name, self.logger, raw_struct)
+                    if not trees_to_build:
+                        # this is first tree and it should be main, does not need create anything
+                        data_block = tree
+                    else:
+                        # this tree should be created
+                        data_block = bpy.data.node_groups.new(block_name, tree_struct.read_bl_type())
+                    imported_structs[(struct_type, block_name)] = data_block
+                    trees_to_build.append(tree_struct)
                 else:
-                    # this tree should be created
-                    data_block = bpy.data.node_groups.new(block_name, tree_struct.read_bl_type())
-                imported_structs[(struct_type, block_name)] = data_block
-                trees_to_build.append(tree_struct)
-            else:
-                # all data block except node trees
-                block_type = struct_type.get_bpy_pointer()
-                data_block = block_type.collection.new(block_name)
-                imported_structs[(struct_type, block_name)] = data_block
-                factories.get_factory(struct_type)(block_name, self.logger, raw_struct).build()
+                    # all data block except node trees
+                    block_type = struct_type.get_bpy_pointer()
+                    data_block = block_type.collection.new(block_name)
+                    imported_structs[(struct_type, block_name)] = data_block
+                    factories.get_factory(struct_type)(block_name, self.logger, raw_struct).build()
 
-        # todo before building trees should be registered old and dummy nodes if necessary
+            # todo before building trees should be registered old and dummy nodes if necessary
 
-        for tree_struct in trees_to_build:
-            # build all trees
-            new_name = imported_structs[StrTypes.TREE, tree_struct.name]
-            data_block = bpy.data.node_groups[new_name]
-            tree_struct.build(data_block, factories, imported_structs)  # todo add throttling tree
+            for tree_struct in trees_to_build:
+                # build all trees
+                new_name = imported_structs[StrTypes.TREE, tree_struct.name]
+                data_block = bpy.data.node_groups[new_name]
+                tree_struct.build(data_block, factories, imported_structs)  # todo add throttling tree
+        build_update_list(tree)
+        process_tree(tree)
 
     def read(self):
         with self.logger.add_fail("Reading version of the file"):
@@ -318,14 +324,17 @@ class NodeStruct(Struct):
             self._struct["attributes"]['color'] = node.color[:]
             self._struct["attributes"]['use_custom_color'] = True
         if node.parent:  # the node is inside of a frame node
-            self._struct["attributes"]["parent"] = node.parent.name
+            prop = BPYProperty(node, "parent")
+            raw_struct = factories.prop("parent", self.logger).export(prop, factories, dependencies)
+            self._struct["attributes"]["parent"] = raw_struct
 
         # add non default node properties
         for prop_name in node.keys():
             prop = BPYProperty(node, prop_name)
             if prop.is_valid and prop.is_to_save:
                 raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
-                self._struct["properties"][prop.name] = raw_struct
+                if raw_struct is not None:  # todo check every where
+                    self._struct["properties"][prop.name] = raw_struct
 
         # all sockets should be kept in a file because it's possible to create UI
         # where sockets would be defined by pressing buttons for example like in the node group interface
@@ -430,8 +439,8 @@ class SocketStruct(Struct):
 
         for attr_name, attr_value in attributes:
             with self.logger.add_fail(
-                    "Setting socket attribute",
-                    f'Tree: {socket.id_data.name}, Node: {socket.node.name}, socket: {socket.name}, attr: {attr_name}'):
+                    "Setting socket attribute",  # socket.node can be None sometimes 0_o
+                    f'Tree: {socket.id_data.name}, socket: {socket.name}, attr: {attr_name}'):
                 factories.prop(attr_name, self.logger, attr_value).build(socket, factories, imported_structs)
 
         for prop_name, prop_value in properties:
@@ -520,21 +529,26 @@ class PropertyStruct(Struct):
             if prop.type == 'POINTER' and prop.value is not None:  # skip empty pointers
                 self._struct["type"] = prop.pointer_type.name
                 self._struct["value"] = prop.value
-                dependencies.append((prop.pointer_type, prop.value))
+                if prop.data_collection is not None:  # skipping nodes
+                    dependencies.append((prop.pointer_type, prop.value))
                 return self._struct
             else:
                 return prop.value
-    
+
     def build(self, obj, factories: StructFactory, imported_structs: OldNewNames):
         with self.logger.add_fail("Assigning value"):
             prop = BPYProperty(obj, self.name)
 
             # this is structure (pointer property)
             if isinstance(self._struct, dict):
-                struct_type, old_obj_name = self.read()
-                new_name = imported_structs[(struct_type, old_obj_name)]
-                data_block_type = struct_type.get_bpy_pointer()
-                data_block = data_block_type.collection[new_name]
+                pointer_type, old_obj_name = self.read()
+                new_name = imported_structs[(StrTypes.get_type(pointer_type), old_obj_name)]
+                if pointer_type == BPYPointers.NODE:
+                    # this should work in case obj is a node or socket
+                    # but in other cases probably extra information should be kept in the property structure
+                    data_block = obj.id_data.nodes[new_name]
+                else:
+                    data_block = pointer_type.collection[new_name]
                 setattr(obj, self.name, data_block)
 
             # this is property
@@ -545,11 +559,11 @@ class PropertyStruct(Struct):
             else:
                 setattr(obj, self.name, self._struct)
 
-    def read(self) -> Tuple[StrTypes, str]:
+    def read(self) -> Tuple[BPYPointers, str]:
         with self.logger.add_fail(f"Reading property (value): {self.name}"):
-            struct_type = StrTypes[self._struct["type"]]
-            old_obj_name = self._struct["name"]
-            return struct_type, old_obj_name
+            pointer_type = BPYPointers[self._struct["type"]]
+            old_obj_name = self._struct["value"]
+            return pointer_type, old_obj_name
 
     def _handle_collection_prop(self, col_prop, dependencies):
         collection = []

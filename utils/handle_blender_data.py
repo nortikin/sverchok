@@ -290,6 +290,7 @@ class BPYPointers(Enum):
     OBJECT = bpy.types.Object
     MESH = bpy.types.Mesh
     NODE_TREE = bpy.types.NodeTree
+    NODE = bpy.types.Node  # there is pointers to nodes in Blender like node.parent property
     MATERIAL = bpy.types.Material
     COLLECTION = bpy.types.Collection
     TEXT = bpy.types.Text
@@ -306,6 +307,7 @@ class BPYPointers(Enum):
             BPYPointers.OBJECT: bpy.data.objects,
             BPYPointers.MESH: bpy.data.meshes,
             BPYPointers.NODE_TREE: bpy.data.node_groups,
+            BPYPointers.NODE: None,
             BPYPointers.MATERIAL:  bpy.data.materials,
             BPYPointers.COLLECTION: bpy.data.collections,
             BPYPointers.TEXT: bpy.data.texts,
@@ -326,7 +328,7 @@ class BPYPointers(Enum):
     def get_type(cls, bl_rna) -> Union[BPYPointers, None]:
         """Return Python pointer corresponding to given Blender pointer class (bpy.types.Mesh.bl_rna)"""
         for pointer in BPYPointers:
-            if pointer.type.bl_rna == bl_rna:
+            if pointer.type.bl_rna == bl_rna or pointer.type.bl_rna == bl_rna.base:
                 return pointer
         raise TypeError(f'Type: "{bl_rna}" was not found in: {[t.type.bl_rna for t in BPYPointers]}')
 
