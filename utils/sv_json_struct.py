@@ -484,9 +484,9 @@ class SocketStruct(Struct):
                 factories.prop(attr_name, self.logger, attr_value).build(socket, factories, imported_structs)
 
         for prop_name, prop_value in properties:
-            with self.logger.add_fail(
+            with self.logger.add_fail(  # I think when socket is just created socket.node is None due Blender limitation
                     "Setting socket property",
-                    f'Tree: {socket.id_data.name}, Node: {socket.node.name}, socket: {socket.name}, prop: {prop_name}'):
+                    f'Tree: {socket.id_data.name}, socket: {socket.name}, prop: {prop_name}'):
                 factories.prop(prop_name, self.logger, prop_value).build(socket, factories, imported_structs)
 
     def read(self):
@@ -671,7 +671,9 @@ class PropertyStruct(Struct):
         for item in col_prop.collection_to_list():
             item_props = dict()
             for prop in item:
-                item_props[prop.name] = PropertyStruct(prop.name, self.logger).export(prop, None, dependencies)
+                raw_struct = PropertyStruct(prop.name, self.logger).export(prop, None, dependencies)
+                if raw_struct is not None:
+                    item_props[prop.name] = raw_struct 
             collection.append(item_props)
         return collection
 
