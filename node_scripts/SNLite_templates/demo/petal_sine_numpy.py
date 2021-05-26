@@ -14,8 +14,8 @@ N = n_petals * vp_petal
 pi_vals = np.linspace(0, TAU, vp_petal, endpoint=False)
 pi_vals = np.tile(pi_vals, n_petals)
 amps = np.cos(pi_vals) * amp
-unit_circle = np.linspace(0, TAU, N, endpoint=False)
-circle_coords = np.array([np.sin(unit_circle), np.cos(unit_circle), np.zeros(N)])
+theta = np.linspace(0, TAU, N, endpoint=False)
+circle_coords = np.array([np.sin(theta), np.cos(theta), np.zeros(N)])
 coords = circle_coords.T* (profile_radius + amps.reshape((-1, 1)))
 verts.append(coords.tolist())
 
