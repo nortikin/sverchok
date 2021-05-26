@@ -666,11 +666,12 @@
     SvFormulaNodeMk5
     SvFormulaInterpolateNode
     SvExecNodeMod
-    SvScriptNodeLite
     SvProfileNodeMK3
     SvMeshEvalNode
     SvGenerativeArtNode
     SvTopologySimple
+    ---
+    SvScriptNodeLite
 
 ## Network
     UdpClientNode
