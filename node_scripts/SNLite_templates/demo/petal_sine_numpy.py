@@ -7,19 +7,21 @@ in   origin v          defautt=(0,0,0) n=2
 out  verts v
 out  edges s
 """
+from sverchok.data_structure import get_edge_loop
 
 TAU = np.pi * 2
 N = n_petals * vp_petal
 
-pi_vals = np.linspace(0, TAU, vp_petal, endpoint=False)
-pi_vals = np.tile(pi_vals, n_petals)
+pi_vals = np.tile(np.linspace(0, TAU, vp_petal, endpoint=False), n_petals)
 amps = np.cos(pi_vals) * amp
 theta = np.linspace(0, TAU, N, endpoint=False)
 circle_coords = np.array([np.sin(theta), np.cos(theta), np.zeros(N)])
-coords = circle_coords.T* (profile_radius + amps.reshape((-1, 1)))
+coords = circle_coords.T * (profile_radius + amps.reshape((-1, 1)))
+
+# apply origin location translation
+coords += np.array(origin)
 verts.append(coords.tolist())
 
-edge_indices_a = np.arange(0, N)
-edge_indices_b = np.roll(edge_indices_a, -1)
-final_edges = np.array([edge_indices_a, edge_indices_b]).T.tolist()
+# use optimized edge loop function (cyclic.. )
+final_edges = get_edge_loop(N)
 edges.append(final_edges)
