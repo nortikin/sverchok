@@ -169,6 +169,12 @@ class BPYProperty:
         return self._data.bl_rna.properties[self.name].type
 
     @property
+    def pointer_type(self) -> BPYPointers:
+        if self.type != 'POINTER':
+            raise TypeError(f'This property is only valid for "POINTER" types, {self.type} type is given')
+        return BPYPointers.get_type(self._data.bl_rna)
+
+    @property
     def default_value(self) -> Any:
         """Returns default value, None for pointers, list of dicts of default values for collections"""
         if not self.is_valid:
@@ -249,6 +255,26 @@ class BPYProperty:
                     item_props[prop.name] = prop.filter_collection_values(skip_default, skip_save)
             items.append(item_props)
         return items
+
+    def collection_to_list(self):
+        """Returns data structure like this [[p1, p2, p3], [p4, p5, p6]]
+        in this example the collection has two items, each item has 3 properties"""
+        if self.type != 'COLLECTION':
+            raise TypeError(f'Method supported only "collection" types, "{self.type}" was given')
+        if not self.is_valid:
+            raise TypeError(f'Can not read "non default collection values" of invalid property "{self.name}"')
+
+        collection = []
+        for item in getattr(self._data, self.name):
+            prop_list = []
+            # in some nodes collections are getting just PropertyGroup type instead of its subclasses
+            # PropertyGroup itself does not have any properties
+            item_properties = item.__annotations__ if hasattr(item, '__annotations__') else []
+            for prop_name in chain(['name'], item_properties):  # item.items() will return only changed values
+                prop = BPYProperty(item, prop_name)
+                prop_list.append(prop)
+            collection.append(prop_list)
+        return collection
 
     def _extract_collection_values(self, default_value: bool = False):
         """returns something like this: [{"name": "", "my_prop": 1.0}, {"name": "", "my_prop": 2.0}, ...]"""
