@@ -13,7 +13,7 @@ from sverchok.ui.presets import node_supports_presets, apply_default_preset
 from sverchok.core.sockets import SvCurveSocket, SvSurfaceSocket, SvStringsSocket, SvSolidSocket
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
-supported_mesh_viewers = {'SvBmeshViewerNodeMK2', 'ViewerNode2'}
+supported_mesh_viewers = {'SvMeshViewer', 'SvViewerDrawMk4'}
 
 # for rclick i want convenience..
 common_nodes = [
@@ -171,7 +171,7 @@ def add_connection(tree, bl_idname_new_node, offset):
         inputs = new_node.inputs
 
         # first scenario not handelled in b28 yet.
-        if existing_node.bl_idname in supported_mesh_viewers and bl_idname_new_node == 'IndexViewerNode':
+        if existing_node.bl_idname in supported_mesh_viewers and bl_idname_new_node == 'SvIDXViewer28':
             new_node.draw_bg = True
             connect_idx_viewer(tree, existing_node, new_node)
 
@@ -253,9 +253,9 @@ class SvGenericDeligationOperator(bpy.types.Operator):
             conect_to_3d_viewer(tree)
 
         elif self.fn == 'vdmk2 + idxv':
-            add_connection(tree, bl_idname_new_node=["SvViewerDrawMk4", "IndexViewerNode"], offset=[180, 0])
+            add_connection(tree, bl_idname_new_node=["SvViewerDrawMk4", "SvIDXViewer28"], offset=[180, 0])
         elif self.fn == '+idxv':
-            add_connection(tree, bl_idname_new_node="IndexViewerNode", offset=[180, 0])
+            add_connection(tree, bl_idname_new_node="SvIDXViewer28", offset=[180, 0])
         elif self.fn == 'stethoscope':
             add_connection(tree, bl_idname_new_node="SvStethoscopeNodeMK2", offset=[60, 0])
 
@@ -290,7 +290,7 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
             if len(node.outputs):
                 layout.menu('SV_MT_AllSocketsOptionsMenu', text='Outputs post-process')
                 layout.separator()
-            if node.bl_idname in {'ViewerNode2', 'SvBmeshViewerNodeMK2'}:
+            if node.bl_idname in {'SvViewerDrawMk4', 'SvBmeshViewerNodeMK2'}:
                 layout.operator("node.sv_deligate_operator", text="Connect IDXViewer").fn = "+idxv"
             else:
                 if has_outputs(node):
