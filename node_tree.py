@@ -177,7 +177,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     
     # downside is these are not reset during f8. and not during post save. or post load.
     sv_timing_callbacks_activated: BoolProperty(
-        default=False, description="internal property used to remember drwing state")
+        default=False, description="internal property used to remember drwing state", options={'SKIP_SAVE'})
 
     # something related with heat map feature
     # looks like it keeps dictionary of nodes and their user defined colors in string format
