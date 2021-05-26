@@ -170,7 +170,6 @@ def add_connection(tree, bl_idname_new_node, offset):
         outputs = existing_node.outputs
         inputs = new_node.inputs
 
-        # first scenario not handelled in b28 yet.
         if existing_node.bl_idname in supported_mesh_viewers and bl_idname_new_node == 'SvIDXViewer28':
             new_node.draw_bg = True
             connect_idx_viewer(tree, existing_node, new_node)
@@ -295,10 +294,8 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
             else:
                 if has_outputs(node):
                     layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw").fn = "vdmk2"
-                    # layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw + IDX").fn="vdmk2 + idxv"
             if len(node.outputs):
                 layout.operator("node.sv_deligate_operator", text="Connect stethoscope").fn = "stethoscope"
-
 
 
             layout.separator()
