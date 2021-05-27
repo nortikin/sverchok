@@ -11,6 +11,7 @@ import inspect
 import sys
 from abc import abstractmethod, ABC
 from enum import Enum, auto
+from itertools import chain
 from typing import Type, Generator, TYPE_CHECKING, Dict, Tuple, Optional, List, Any
 
 import bpy
@@ -135,10 +136,27 @@ class FileStruct(Struct):
         self._struct: Dict[str, Any] = struct or {"export_version": str(self.version)}
         self.logger: FailsLog = logger
 
-    def export(self, tree):
+    def export(self):
+        # I would expect this method import the whole Sverchok data in a file
+        raise NotImplementedError
+
+    def export_tree(self, tree, use_selection=False):
+        if tree.bl_idname != 'SverchCustomTreeType':
+            raise TypeError(f'Only exporting main trees is supported, {tree.bl_label} is given')
+        self._struct["main_tree"] = dict()
         struct_factories = StructFactory(
             [TreeStruct, NodeStruct, SocketStruct, InterfaceStruct, LinkStruct, PropertyStruct])  # todo to args?
-        dependencies: List[Tuple[BPYPointers, str]] = [(BPYPointers.NODE_TREE, tree.name)]
+        dependencies: List[Tuple[BPYPointers, str]] = []
+
+        # export main tree first
+        factory = struct_factories.get_factory(StrTypes.TREE)
+        struct = factory(tree.name, self.logger)
+        if use_selection:
+            raw_struct = struct.export_nodes([n for n in tree.nodes if n.select], struct_factories, dependencies)
+        else:
+            raw_struct = struct.export(tree, struct_factories, dependencies)
+        self._struct["main_tree"][tree.name] = raw_struct
+
         # it looks good place for exporting dependent data blocks because probably we do not always want to export them
         # from this place we have more control over it
         while dependencies:
@@ -154,8 +172,6 @@ class FileStruct(Struct):
 
         return self._struct
 
-    # todo export selected nodes here?
-
     def build(self, *_):
         raise NotImplementedError
 
@@ -166,14 +182,16 @@ class FileStruct(Struct):
         # with tree data blocks it can be a beat trickier,
         # all trees should be created and only after that field with content
 
-        with tree.throttle_update():  # todo it is required only for current update system can be deleted later
+        with tree.throttle_update():  # todo it is required only for current update system can be deleted later??
 
             factories = StructFactory(
                 [TreeStruct, NodeStruct, SocketStruct, InterfaceStruct, LinkStruct, PropertyStruct])
             imported_structs = OldNewNames()
             trees_to_build = []
-            version, data_blocks = self.read()
-            for struct_type, block_name, raw_struct in data_blocks:
+            version, main_tree, data_blocks = self.read()
+
+            # initialize trees and build other data block types
+            for struct_type, block_name, raw_struct in chain(main_tree, data_blocks):
                 if struct_type == StrTypes.TREE:
                     tree_struct = factories.tree(block_name, self.logger, raw_struct)
                     if not trees_to_build:
@@ -199,7 +217,8 @@ class FileStruct(Struct):
                 # build all trees
                 new_name = imported_structs[StrTypes.TREE, tree_struct.name]
                 data_block = bpy.data.node_groups[new_name]
-                tree_struct.build(data_block, factories, imported_structs)  # todo add throttling tree
+                tree_struct.build(data_block, factories, imported_structs)
+
         build_update_list(tree)
         process_tree(tree)
 
@@ -207,7 +226,10 @@ class FileStruct(Struct):
         with self.logger.add_fail("Reading version of the file"):
             version = float(self._struct["export_version"])
 
-        return version, self._data_blocks_reader()
+        main_tree_struct = self._struct.get("main_tree")
+        main_tree_reader = ((StrTypes.TREE, name, raw_struct) for name, raw_struct in main_tree_struct.items())
+
+        return version, main_tree_reader, self._data_blocks_reader()
 
     def _data_blocks_reader(self):  # todo add logger?
         struct_type: StrTypes
@@ -251,18 +273,26 @@ class TreeStruct(Struct):
         self._struct["bl_idname"] = tree.bl_idname
         return self._struct
 
-    def export_nodes(self, nodes, factories: StructFactory, dependencies) -> dict:  # todo check whether all nodes from the same tree?
-        tree = nodes[0].bl_idname
+    def export_nodes(self, nodes, factories: StructFactory, dependencies) -> dict:
+        tree = nodes[0].id_data
         for node in nodes:
+            if node.id_data != tree:
+                raise TypeError(f"Given node from different trees: {tree.name} and {node.id_data.name}")
             raw_struct = factories.node(node.name, self.logger).export(node, factories, dependencies)
             self._struct["nodes"][node.name] = raw_struct
 
         input_node_names = {node.name for node in nodes}
         for link in _ordered_links(tree):
             if link.from_node.name in input_node_names and link.to_node.name in input_node_names:
-                self._struct["links"].append(factories.link(None, self.logger).export(link, None, None))
+                self._struct["links"].append(factories.link(None, self.logger).export(link, factories, dependencies))
 
-        # todo add tree sockets
+        for socket in tree.inputs:
+            raw_struct = factories.interface(socket.name, self.logger).export(socket, factories, dependencies)
+            self._struct["inputs"][socket.name] = raw_struct
+
+        for socket in tree.outputs:
+            raw_struct = factories.interface(socket.name, self.logger).export(socket, factories, dependencies)
+            self._struct["outputs"][socket.name] = raw_struct
 
         self._struct["bl_idname"] = tree.bl_idname
         return self._struct

@@ -430,7 +430,7 @@ class SvSaveSelected(bpy.types.Operator):
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
-        layout_dict = JSONExporter.get_nodes_structure([n for n in ng.nodes if n.select])
+        layout_dict = JSONExporter.get_tree_structure(ng, True)
         preset = SvPreset(name=self.preset_name, category = self.category)
         preset.make_add_operator()
         destination_path = preset.path
