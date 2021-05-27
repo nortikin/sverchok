@@ -5,6 +5,8 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+from mathutils import Vector
+
 class ShaderLib2D():
     def __init__(self):
         """
@@ -61,7 +63,23 @@ class ShaderLib2D():
         ...
 
     def add_line(self, x1, y1, x2, y2, width, color):
-        ...
+
+        p1 = Vector((x1, y1))
+        p2 = Vector((x2, y2))
+        v = (p2 - p1)
+        v.normalize()
+        vp = v.orthogonal()
+
+        a = p1 + (width/2 * vp)
+        b = p1 - (width/2 * vp)
+        c = p2 - (width/2 * vp)
+        d = p2 + (width/2 * vp)
+
+        self.add_data(
+            new_vectors=[a, b, c, d], 
+            new_colors=[color for _ in range(4)],
+            new_indices=[[0, 1, 2], [0, 2, 3]]
+        )
 
     def add_polyline(self, path, width, color):
         ...
