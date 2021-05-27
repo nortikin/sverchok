@@ -90,6 +90,7 @@ class ShaderLib2D():
         ...
 
     def add_arc(self, x, y, start_angle, end_angle, radius, width, color, precision=32):
+        # should return the midpoint if the arc's area.
         ...
 
     def compile(self):
