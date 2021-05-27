@@ -66,14 +66,13 @@ class ShaderLib2D():
 
         p1 = Vector((x1, y1))
         p2 = Vector((x2, y2))
-        v = (p2 - p1)
-        v.normalize()
+        v = (p2 - p1).normalized()
         vp = v.orthogonal()
-
-        a = p1 + (width/2 * vp)
-        b = p1 - (width/2 * vp)
-        c = p2 - (width/2 * vp)
-        d = p2 + (width/2 * vp)
+        offset = (width / 2 * vp)
+        a = p1 + offset
+        b = p1 - offset
+        c = p2 - offset
+        d = p2 + offset
 
         self.add_data(
             new_vectors=[a, b, c, d], 
