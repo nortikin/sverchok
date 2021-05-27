@@ -59,8 +59,26 @@ class ShaderLib2D():
             new_indices=[[0, 1, 2], [0, 2, 3]]
         )
 
-    def add_rect_rounded(self, x, y, w, h, color, radius=0, precision=5):
-        ...
+    def add_rect_rounded(self, x, y, w, h, color, r=0, precision=5):
+        xa = x - r       ;   ya = y + h
+        xb = x           ;   yb = y + h - r
+        xc = x + w - r   ;   yc = y
+        xd = x + w       ;   yd = y - r
+
+        # the core, when all dimensions are supported by input
+        points = [
+            (xb, yd), (xb, yc), (xa, yc), (xa, yb), (xb, yb), (xb, ya),
+            (xc, ya), (xc, yb), (xd, yb), (xd, yc), (xc, yc), (xc, yd)
+        ]
+        indices = [
+            [0, 10, 11], [0, 1, 10], [1, 7, 10], [1, 4, 7], [4, 6, 7],
+            [4, 5, 6], [2, 3, 4], [2, 4, 1], [10, 7, 8], [10, 8, 9]
+        ]
+        self.add_data(
+            new_vectors=points, 
+            new_colors=[color for _ in range(len(points))],
+            new_indices=indices
+        )
 
     def add_line(self, x1, y1, x2, y2, width, color):
 
@@ -80,7 +98,7 @@ class ShaderLib2D():
             new_indices=[[0, 1, 2], [0, 2, 3]]
         )
 
-    def add_polyline(self, path, width, color):
+    def add_polyline(self, path, width, color, closed=False):
         ...
 
     def add_bezier(self, controls, width, color, samples=20, resampled=False):
@@ -90,7 +108,7 @@ class ShaderLib2D():
         ...
 
     def add_arc(self, x, y, start_angle, end_angle, radius, width, color, precision=32):
-        # should return the midpoint if the arc's area.
+        # should return the midpoint of the arc's area.
         ...
 
     def compile(self):
