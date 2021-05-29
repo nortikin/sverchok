@@ -35,6 +35,11 @@ def set_other_trees_to_false(ng):
         if ng.tree_id == key: continue
         display_dict[key] = False
 
+timer_config = lambda: None
+timer_config.get_drawing_state = get_drawing_state
+timer_config.set_drawing_state = set_drawing_state
+timer_config.set_other_trees_to_false = set_other_trees_to_false
+
 def tick_display(i, whole_milliseconds):
     if whole_milliseconds < 10:
         return True

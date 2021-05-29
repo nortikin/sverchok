@@ -24,7 +24,7 @@ from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.ui.development import displaying_sverchok_nodes
 from sverchok.core.update_system import process_tree, build_update_list
 from sverchok.utils.context_managers import sv_preferences
-from sverchok.utils.nodeview_time_graph_drawing import get_drawing_state
+from sverchok.utils.nodeview_time_graph_drawing import timer_config
 
 class SvRemoveStaleDrawCallbacks(bpy.types.Operator):
     """This will clear the opengl drawing if Sverchok didn't manage to correctly clear it on its own"""
@@ -93,7 +93,7 @@ class SV_PT_ActiveTreePanel(SverchokPanels, bpy.types.Panel):
             row = col.row()
             cb = "node.nodeview_timeinfo_callback"
 
-            if get_drawing_state(ng):
+            if timer_config.get_drawing_state(ng):
                 op_end = row.operator(cb, text="end", icon="CANCEL")
                 op_end.fn_name = "end"
                 op_end.tree_name = ng.name            

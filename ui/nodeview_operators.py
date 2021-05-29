@@ -10,8 +10,7 @@ from sverchok.core.update_system import reset_timing_graphs
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.ui.bgl_callback_nodeview import callback_disable_filtered
 from sverchok.utils.nodeview_time_graph_drawing import (
-    start_time_graph, start_node_times, get_drawing_state,
-    set_drawing_state, set_other_trees_to_false)
+    start_time_graph, start_node_times, timer_config)
 
 
 class SvNodeViewZoomBorder(bpy.types.Operator, SvGenericNodeLocator):
@@ -83,12 +82,12 @@ class SvNodeViewShowTimeInfo(bpy.types.Operator):
                 bpy.ops.node.sverchok_update_current(node_group=self.tree_name)
                 start_time_graph(ng)
                 start_node_times(ng)
-                set_drawing_state(ng, True)
-                set_other_trees_to_false(ng)
+                timer_config.set_drawing_state(ng, True)
+                timer_config.set_other_trees_to_false(ng)
             else:
                 print("not found!")
         else:
-            set_drawing_state(ng, False)
+            timer_config.set_drawing_state(ng, False)
             self.disable_callbacks()
             reset_timing_graphs()
 
