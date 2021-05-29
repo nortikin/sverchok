@@ -20,6 +20,7 @@ from sverchok.utils.sv_IO_panel_tools import get_file_obj_from_zip
 from sverchok.utils.logging import info, warning, getLogger, logging
 from sverchok.utils.handle_blender_data import BPYProperty, BPYNode
 from sverchok.utils.sv_IO_monad_helpers import unpack_monad
+from sverchok.utils.sv_json_struct import FileStruct
 
 if TYPE_CHECKING:
     from sverchok.node_tree import SverchCustomTree, SverchCustomTreeNode
@@ -48,8 +49,13 @@ class JSONImporter:
 
     def import_into_tree(self, tree: SverchCustomTree, print_log: bool = True):
         """Import json structure into given tree and update it"""
-        root_tree_builder = TreeImporter01(tree, self._structure, self._fails_log)
-        root_tree_builder.import_tree()
+        if self.structure_version < 0.1001:
+            root_tree_builder = TreeImporter01(tree, self._structure, self._fails_log)
+            root_tree_builder.import_tree()
+        else:
+            importer = FileStruct(logger=self._fails_log, struct=self._structure)
+            importer.build_into_tree(tree)
+
         if print_log:
             self._fails_log.report_log_result()
 
@@ -57,7 +63,7 @@ class JSONImporter:
         build_update_list(tree)
         process_tree(tree)
 
-    def import_node_settings(self, node: SverchCustomTreeNode):
+    def import_node_settings(self, node: SverchCustomTreeNode):  # todo should be done something for new importer
         """
         It takes first node from file and apply its settings to given node
         It is strange but it is how it was originally implemented
@@ -82,6 +88,10 @@ class JSONImporter:
     def fail_massage(self) -> str:
         """Brief information about fails if their was"""
         return self._fails_log.fail_message
+
+    @property
+    def structure_version(self):
+        return float(self._structure["export_version"])
 
 
 class TreeImporter01:

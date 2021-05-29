@@ -227,9 +227,6 @@ class FileStruct(Struct):
                 data_block = bpy.data.node_groups[new_name]
                 tree_struct.build(data_block, factories, imported_structs)
 
-        build_update_list(tree)
-        process_tree(tree)
-
     def read(self):
         with self.logger.add_fail("Reading version of the file"):
             version = float(self._struct["export_version"])

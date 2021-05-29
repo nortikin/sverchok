@@ -141,7 +141,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
             warning(msg)
             return {'CANCELLED'}
 
-        json.dump(layout_dict, open(destination_path, 'w'), sort_keys=True, indent=2)
+        json.dump(layout_dict, open(destination_path, 'w'), indent=2)  # json_struct does not expect sort_keys = True
         msg = 'exported to: ' + destination_path
         self.report({"INFO"}, msg)
         info(msg)
@@ -292,7 +292,7 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
         layout_dict = JSONExporter.get_tree_structure(ng, self.selected_only)
 
         try:
-            gist_body = json.dumps(layout_dict, sort_keys=True, indent=2)
+            gist_body = json.dumps(layout_dict, indent=2)  # json_struct does not expect sort_keys = True
         except Exception as err:
             if 'not JSON serializable' in repr(err):
                 error(layout_dict)
