@@ -121,19 +121,30 @@ class ShaderLib2D():
             new_vectors=verts, 
             new_colors=[color for _ in range(len(verts))],
             new_indices=indices
-        )        
+        )
 
     def add_arc(self, x, y, start_angle, end_angle, radius, width, color, precision=32):
         # angle is in radians.
         # pecision can be an int or the word "adaptive"
         # should return the midpoint of the arc's area.
         N = precision
-        theta = np.linspace(start_angle, end_angle, N, endpoint=False)
-        circle_coords = np.array([np.sin(theta), np.cos(theta)])
+        theta = np.linspace(start_angle, end_angle, N, endpoint=True)
+        arc_coords = np.array([np.sin(theta), np.cos(theta)])
         offset = (width / 2)
-        outer_coords = circle_coords.T * (radius + offset)
-        inner_coords = circle_coords.T * (radius - offset)
-        ...
+        outer_coords = arc_coords.T * (radius + offset)
+        inner_coords = arc_coords.T * (radius - offset)
+        coords = np.vstack([outer_coords, inner_coords])
+
+        verts = coords.tolist()
+        indices = []
+        add_indices = indices.extend
+        _ = [add_indices([[i, i+1, N+i], [i+N, i+N+1, i+1]]) for i in range(N-1)]
+        self.add_data(
+            new_vectors=verts, 
+            new_colors=[color for _ in range(len(verts))],
+            new_indices=indices
+        )
+
 
     def compile(self):
         geom = lambda: None
