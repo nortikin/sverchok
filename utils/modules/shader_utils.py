@@ -124,7 +124,15 @@ class ShaderLib2D():
         )        
 
     def add_arc(self, x, y, start_angle, end_angle, radius, width, color, precision=32):
+        # angle is in radians.
+        # pecision can be an int or the word "adaptive"
         # should return the midpoint of the arc's area.
+        N = precision
+        theta = np.linspace(start_angle, end_angle, N, endpoint=False)
+        circle_coords = np.array([np.sin(theta), np.cos(theta)])
+        offset = (width / 2)
+        outer_coords = circle_coords.T * (radius + offset)
+        inner_coords = circle_coords.T * (radius - offset)
         ...
 
     def compile(self):
