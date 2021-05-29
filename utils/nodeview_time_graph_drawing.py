@@ -17,6 +17,8 @@ import sverchok
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.utils.modules.shader_utils import ShaderLib2D
 
+is_displaying_timing_data = {'sverchok': None}
+
 def tick_display(i, whole_milliseconds):
     if whole_milliseconds < 10:
         return True
