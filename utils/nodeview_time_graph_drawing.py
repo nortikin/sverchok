@@ -22,7 +22,7 @@ display_dict = {'sverchok': None}
 def get_drawing_state(ng):
     return display_dict.get('sverchok') and display_dict.get(ng.name)
 
-def set_drawing_state(ng, state=False)
+def set_drawing_state(ng, state=False):
     display_dict['sverchok'] = state
     display_dict[ng.name] = state
 
