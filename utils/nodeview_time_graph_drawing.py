@@ -17,7 +17,7 @@ import sverchok
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.utils.modules.shader_utils import ShaderLib2D
 
-display_dict = {'sverchok': None}
+display_dict = {} # 'sverchok': None}
 
 def get_drawing_state(ng):
     if not ng.tree_id_memory:
@@ -25,10 +25,11 @@ def get_drawing_state(ng):
         # of a new tree, it does not yet have a tree_id. We are not allowed to write to ng.tree_id
         # from inside a draw function of sv_panels. (a sane bpy limitation!)
         return
-    return display_dict.get('sverchok') and display_dict.get(ng.tree_id)
+    # return display_dict.get('sverchok') and display_dict.get(ng.tree_id)
+    return display_dict.get(ng.tree_id)
 
 def set_drawing_state(ng, state=False):
-    display_dict['sverchok'] = state
+    # display_dict['sverchok'] = state
     display_dict[ng.tree_id] = state
 
 def tick_display(i, whole_milliseconds):
