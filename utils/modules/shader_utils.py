@@ -6,6 +6,7 @@
 # License-Filename: LICENSE
 
 from mathutils import Vector
+import numpy as np
 
 class ShaderLib2D():
     def __init__(self):
@@ -65,6 +66,7 @@ class ShaderLib2D():
         xc = x + w - r   ;   yc = y
         xd = x + w       ;   yd = y - r
 
+        # https://user-images.githubusercontent.com/619340/120084214-b8bb2300-c0ce-11eb-8d83-d86078f42d55.png
         # the core, when all dimensions are supported by input
         points = [
             (xb, yd), (xb, yc), (xa, yc), (xa, yb), (xb, yb), (xb, ya),
@@ -74,6 +76,7 @@ class ShaderLib2D():
             [0, 10, 11], [0, 1, 10], [1, 7, 10], [1, 4, 7], [4, 6, 7],
             [4, 5, 6], [2, 3, 4], [2, 4, 1], [10, 7, 8], [10, 8, 9]
         ]
+
         self.add_data(
             new_vectors=points, 
             new_colors=[color for _ in range(len(points))],
@@ -105,7 +108,20 @@ class ShaderLib2D():
         ...
 
     def add_circle(self, x, y, radius, color, precision=32):
-        ...
+        N = precision
+        theta = np.linspace(0, np.pi * 2, N, endpoint=False)
+        circle_coords = np.array([np.sin(theta), np.cos(theta)])
+        coords = circle_coords.T * radius
+        coords += np.array([[x, y]])
+        coords = np.vstack([coords, [x, y]])
+        verts = coords.tolist()
+        last_idx = len(verts) - 1
+        indices = [[i, i+1, last_idx] for i in range(N)] + [[N-1, 0, last_idx]]
+        self.add_data(
+            new_vectors=verts, 
+            new_colors=[color for _ in range(len(verts))],
+            new_indices=indices
+        )        
 
     def add_arc(self, x, y, start_angle, end_angle, radius, width, color, precision=32):
         # should return the midpoint of the arc's area.
