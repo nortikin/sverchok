@@ -20,11 +20,11 @@ from sverchok.utils.modules.shader_utils import ShaderLib2D
 display_dict = {'sverchok': None}
 
 def get_drawing_state(ng):
-    return display_dict.get('sverchok') and display_dict.get(ng.name)
+    return display_dict.get('sverchok') and display_dict.get(ng.tree_id)
 
 def set_drawing_state(ng, state=False):
     display_dict['sverchok'] = state
-    display_dict[ng.name] = state
+    display_dict[ng.tree_id] = state
 
 def tick_display(i, whole_milliseconds):
     if whole_milliseconds < 10:
