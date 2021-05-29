@@ -19,6 +19,7 @@
 import bpy
 
 import sverchok
+from sverchok import data_structure
 from sverchok.utils import profile
 from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.ui.development import displaying_sverchok_nodes
@@ -104,6 +105,8 @@ class SV_PT_ActiveTreePanel(SverchokPanels, bpy.types.Panel):
 
             col.prop(ng, "sv_show_time_nodes")
             col.prop(ng, "sv_show_time_graph")
+            if data_structure.DEBUG_MODE:
+                col.prop(ng, "sv_show_debug_time_prints")
 
 
 class SV_PT_ProfilingPanel(SverchokPanels, bpy.types.Panel):

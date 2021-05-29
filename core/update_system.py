@@ -398,7 +398,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             delta = time.perf_counter() - start
             total_time += delta
 
-            if data_structure.DEBUG_MODE: # and ng.show_debug_time_prints
+            if data_structure.DEBUG_MODE and ng.sv_show_debug_time_prints:
                 debug("Processed  %s in: %.4f", node_name, delta)
 
             timings.append(delta)
@@ -421,7 +421,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             return None
 
     graphs.append(graph)
-    if data_structure.DEBUG_MODE: # and ng.show_debug_time_prints
+    if data_structure.DEBUG_MODE and ng.sv_show_debug_time_prints:
         debug("Node set updated in: %.4f seconds", total_time)
 
     # graph_dicts[nodes.id_data.name] = graph

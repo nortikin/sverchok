@@ -174,6 +174,9 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
     sv_show_time_graph: BoolProperty(name="Time Graph", default=False, options=set())
     sv_show_time_nodes: BoolProperty(name="Node times", default=False, options=set())
+    sv_show_debug_time_prints: BoolProperty(
+        name="Debug Prints", default=True, options=set(),
+        description="setting this to False will suppress debug node times printing to console")
     
     # something related with heat map feature
     # looks like it keeps dictionary of nodes and their user defined colors in string format
