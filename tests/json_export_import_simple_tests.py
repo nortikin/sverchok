@@ -1,5 +1,5 @@
 from sverchok.utils.testing import *
-from sverchok.utils.sv_json_export import JSONExporter
+from sverchok.utils.sv_json_export import TreeExporter01
 from sverchok.utils.sv_json_import import FailsLog
 from sverchok.utils.sv_json_struct import FileStruct
 from sverchok.utils.modules_inspection import iter_classes_from_module
@@ -19,7 +19,7 @@ class ExportImportEachNode(EmptyTreeTestCase):
             else:
                 tree_structure = None
                 with self.subTest(type='EXPORT', node=node_class.bl_idname):
-                    tree_structure = JSONExporter.get_tree_structure(self.tree)
+                    tree_structure = TreeExporter01().export_tree(self.tree)
                 if tree_structure is not None:
                     with self.subTest(type='IMPORT', node=node_class.bl_idname):
                         importer = JSONImporter(tree_structure)
@@ -47,7 +47,7 @@ class ExportImportEachNode(EmptyTreeTestCase):
                 structure = None
                 with self.subTest(type='NEW EXPORT', node=node_class.bl_idname):
                     with self.assert_logs_no_errors():
-                        structure = FileStruct().export(self.tree)
+                        structure = FileStruct().export_tree(self.tree)
                 if structure is not None:
                     with self.subTest(type='NEW IMPORT', node=node_class.bl_idname):
                         with self.assert_logs_no_errors():

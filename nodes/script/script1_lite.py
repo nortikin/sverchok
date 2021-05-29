@@ -551,7 +551,11 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         If you have files that work differently but have the same name, stop.
 
         '''
-        params = node_data.get('params')
+        if import_version < 1.0:
+            params = node_data.get('params')
+        else:
+            # really not good thing to do, the import should not relay on structure of the importer module
+            params = node_data.get('properties')
         if params:
 
             script_name = params.get('script_name')

@@ -108,7 +108,7 @@ class StrTypes(Enum):
 class Struct(ABC):
     # I was trying to make API of all abstract method the same between child classes but it looks it's not possible
     # for example to build a node we can send to method a tree where the node should be duilded
-    version = 0.2  # override the property if necessary
+    version = 1.0  # override the property if necessary
     type: StrTypes = None  # should be overridden
 
     @abstractmethod
@@ -169,15 +169,14 @@ class FileStruct(Struct):
         # from this place we have more control over it
         while dependencies:
             block_type, block_name = dependencies.pop()
-            if StrTypes.is_supported_block(block_type):
-                struct_type = StrTypes.get_type(block_type)
-                if struct_type.name not in self._struct:
-                    self._struct[struct_type.name] = dict()
-                if block_name not in self._struct[struct_type.name]:
-                    factory = struct_factories.get_factory(struct_type)
-                    data_block = block_type.collection[block_name]
-                    structure = factory(block_name, self.logger).export(data_block, struct_factories, dependencies)
-                    self._struct[struct_type.name][block_name] = structure
+            struct_type = StrTypes.get_type(block_type)
+            if struct_type.name not in self._struct:
+                self._struct[struct_type.name] = dict()
+            if block_name not in self._struct[struct_type.name]:
+                factory = struct_factories.get_factory(struct_type)
+                data_block = block_type.collection[block_name]
+                structure = factory(block_name, self.logger).export(data_block, struct_factories, dependencies)
+                self._struct[struct_type.name][block_name] = structure
 
         return self._struct
 
@@ -718,17 +717,21 @@ class PropertyStruct(Struct):
         if prop.is_valid and prop.is_to_save:
             if prop.type == 'COLLECTION':
                 return self._handle_collection_prop(prop, dependencies)
-            if prop.type == 'POINTER' and prop.value is not None:  # skip empty pointers
-                self._struct["type"] = prop.pointer_type.name
-                self._struct["value"] = prop.value
-                if prop.data_collection is not None:  # skipping nodes
-                    dependencies.append((prop.pointer_type, prop.value))
-                return self._struct
+            if prop.type == 'POINTER':
+                # skip empty and unsupported pointers
+                if prop.value is not None and StrTypes.is_supported_block(prop.pointer_type):
+                    self._struct["type"] = prop.pointer_type.name
+                    self._struct["value"] = prop.value
+                    if prop.data_collection is not None:  # skipping nodes
+                        dependencies.append((prop.pointer_type, prop.value))
+                    return self._struct
+                else:
+                    return None
             else:
                 return prop.value
 
     def build(self, obj, factories: StructFactory, imported_structs: OldNewNames):
-        with self.logger.add_fail("Assigning value"):
+        with self.logger.add_fail("Assigning value", f"Name: {self.name}"):
             prop = BPYProperty(obj, self.name)
 
             # this is structure (pointer property)
