@@ -25,12 +25,15 @@ def get_drawing_state(ng):
         # of a new tree, it does not yet have a tree_id. We are not allowed to write to ng.tree_id
         # from inside a draw function of sv_panels. (a sane bpy limitation!)
         return
-    # return display_dict.get('sverchok') and display_dict.get(ng.tree_id)
     return display_dict.get(ng.tree_id)
 
 def set_drawing_state(ng, state=False):
-    # display_dict['sverchok'] = state
     display_dict[ng.tree_id] = state
+
+def set_other_trees_to_false(ng):
+    for key in list(display_dict.keys()):
+        if ng.tree_id == key: continue
+        display_dict[key] = False
 
 def tick_display(i, whole_milliseconds):
     if whole_milliseconds < 10:
