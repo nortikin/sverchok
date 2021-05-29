@@ -134,7 +134,7 @@ class ShaderLib2D():
         outer_coords = arc_coords.T * (radius + offset)
         inner_coords = arc_coords.T * (radius - offset)
         coords = np.vstack([outer_coords, inner_coords])
-
+        coords += np.array([[x, y]])
         verts = coords.tolist()
         indices = []
         add_indices = indices.extend
