@@ -20,6 +20,11 @@ from sverchok.utils.modules.shader_utils import ShaderLib2D
 display_dict = {'sverchok': None}
 
 def get_drawing_state(ng):
+    if not ng.tree_id_memory:
+        # because this function is called inside sv_panels, it happens early on in the life
+        # of a new tree, it does not yet have a tree_id. We are not allowed to write to ng.tree_id
+        # from inside a draw function of sv_panels. (a sane bpy limitation!)
+        return
     return display_dict.get('sverchok') and display_dict.get(ng.tree_id)
 
 def set_drawing_state(ng, state=False):
@@ -245,6 +250,8 @@ def start_node_times(ng):
     nvBGL2.callback_enable(f"{ng.tree_id}_node_time_info", config_node_info)
 
 def start_time_graph(ng):
+    if not ng:
+        return
     ng.update_gl_scale_info(origin=f"configure_time_graph, tree: {ng.name}")
 
     named_tree = ng.name

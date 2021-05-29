@@ -124,7 +124,7 @@ class SvNodeTreeCommon(object):
         this is instead of calling `get_dpi_factor` on every redraw.
         """
 
-        debug('update_gl_scale_info called from', origin or self.name)
+        debug(f"update_gl_scale_info called from {origin or self.name}")
         try:
             from sverchok.utils.context_managers import sv_preferences
             with sv_preferences() as prefs:
