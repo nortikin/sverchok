@@ -17,7 +17,14 @@ import sverchok
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.utils.modules.shader_utils import ShaderLib2D
 
-is_displaying_timing_data = {'sverchok': None}
+display_dict = {'sverchok': None}
+
+def get_drawing_state(ng):
+    return display_dict.get('sverchok') and display_dict.get(ng.name)
+
+def set_drawing_state(ng, state=False)
+    display_dict['sverchok'] = state
+    display_dict[ng.name] = state
 
 def tick_display(i, whole_milliseconds):
     if whole_milliseconds < 10:
