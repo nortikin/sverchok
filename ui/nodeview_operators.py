@@ -83,6 +83,7 @@ class SvNodeViewShowTimeInfo(bpy.types.Operator):
                 start_time_graph(ng)
                 start_node_times(ng)
                 set_drawing_state(ng, True)
+                # [ ] set to false for all other elements of display_dict 
             else:
                 print("not found!")
         else:
