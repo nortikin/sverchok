@@ -36,6 +36,7 @@ class StructFactory:
             StrTypes.LINK: 'link',
             StrTypes.PROP: 'prop',
             StrTypes.MATERIAL: 'material',
+            StrTypes.COLLECTION: 'collection'
         }
 
         self.tree: Optional[Type[Struct]] = None
@@ -45,6 +46,7 @@ class StructFactory:
         self.link: Optional[Type[Struct]] = None
         self.prop: Optional[Type[Struct]] = None
         self.material: Optional[Type[Struct]] = None
+        self.collection: Optional[Type[Struct]] = None
 
         for factory in factories:
             if factory.type in self._factory_names:
@@ -85,12 +87,14 @@ class StrTypes(Enum):
     LINK = auto()
     PROP = auto()
     MATERIAL = auto()
+    COLLECTION = auto()
 
     def get_bpy_pointer(self) -> BPYPointers:
         mapping = {
             StrTypes.TREE: BPYPointers.NODE_TREE,
             StrTypes.NODE: BPYPointers.NODE,
             StrTypes.MATERIAL: BPYPointers.MATERIAL,
+            StrTypes.COLLECTION: BPYPointers.COLLECTION,
         }
         if self not in mapping:
             raise TypeError(f'Given StrType: {self} is not a data block')
@@ -102,6 +106,7 @@ class StrTypes(Enum):
             BPYPointers.NODE_TREE: StrTypes.TREE,
             BPYPointers.NODE: StrTypes.NODE,
             BPYPointers.MATERIAL: StrTypes.MATERIAL,
+            BPYPointers.COLLECTION: StrTypes.COLLECTION,
         }
         if block_type not in mapping:
             raise TypeError(f'Given block type: {block_type} is not among supported: {mapping.keys()}')
@@ -818,6 +823,27 @@ class MaterialStruct(Struct):
             if material is None:
                 material = bpy.data.materials.new(self.name)
             imported_structs[(StrTypes.MATERIAL, '', self.name)] = material.name
+
+
+class CollectionStruct(Struct):
+    type = StrTypes.COLLECTION
+
+    def __init__(self, name, logger=None, struct=None):
+        default_struct = {}
+        self.name = name
+        self.logger = logger
+        self._struct = struct or default_struct
+
+    def export(self, collection, factories, dependencies):
+        return self._struct
+
+    def build(self, factories, imported_structs):
+        with self.logger.add_fail("Build collection", f"Name: {self.name}"):
+            collection = bpy.data.collections.get(self.name)
+            if collection is None:
+                collection = bpy.data.collections.new(self.name)
+                bpy.context.scene.collection.children.link(collection)
+            imported_structs[(StrTypes.COLLECTION, '', self.name)] = collection.name
 
 
 class OldNewNames:  # todo can't this be regular dictionary?
