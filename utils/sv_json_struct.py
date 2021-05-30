@@ -34,7 +34,8 @@ class StructFactory:
             StrTypes.SOCK: 'sock',
             StrTypes.INTERFACE: 'interface',
             StrTypes.LINK: 'link',
-            StrTypes.PROP: 'prop'
+            StrTypes.PROP: 'prop',
+            StrTypes.MATERIAL: 'material',
         }
 
         self.tree: Optional[Type[Struct]] = None
@@ -43,11 +44,15 @@ class StructFactory:
         self.interface: Optional[Type[Struct]] = None
         self.link: Optional[Type[Struct]] = None
         self.prop: Optional[Type[Struct]] = None
+        self.material: Optional[Type[Struct]] = None
 
         for factory in factories:
             if factory.type in self._factory_names:
                 factory_name = self._factory_names[factory.type]
                 setattr(self, factory_name, factory)
+            # probably we would never want using file structure from inside others
+            elif factory.type == StrTypes.FILE:
+                continue
             else:
                 raise TypeError(f'Factory with type: {factory.type}'
                                 f' is not among supported: {self._factory_names.keys()}')
@@ -60,13 +65,15 @@ class StructFactory:
             raise TypeError(f'Given struct type: {struct_type} is not among supported {self._factory_names.keys()}')
 
     @classmethod
-    def __match_factories(cls, version: float) -> StructFactory:  # todo for future automatization?
-        """Choose factories which are most appropriate for given version"""
-        struct_factories = cls([])
+    def gram_from_module(cls) -> StructFactory:
+        """Grab all factories in the module"""
+        factory_classes = []
         module_classes = inspect.getmembers(sys.modules[__name__],
                                             lambda member: inspect.isclass(member) and member.__module__ == __name__)
-        for module_class in module_classes:
-            pass
+        for class_name, module_class in module_classes:
+            if hasattr(module_class, 'type') and module_class.type in StrTypes:
+                factory_classes.append(module_class)
+        return cls(factory_classes)
 
 
 class StrTypes(Enum):
@@ -77,11 +84,13 @@ class StrTypes(Enum):
     INTERFACE = auto()  # node groups sockets
     LINK = auto()
     PROP = auto()
+    MATERIAL = auto()
 
     def get_bpy_pointer(self) -> BPYPointers:
         mapping = {
             StrTypes.TREE: BPYPointers.NODE_TREE,
             StrTypes.NODE: BPYPointers.NODE,
+            StrTypes.MATERIAL: BPYPointers.MATERIAL,
         }
         if self not in mapping:
             raise TypeError(f'Given StrType: {self} is not a data block')
@@ -92,6 +101,7 @@ class StrTypes(Enum):
         mapping = {
             BPYPointers.NODE_TREE: StrTypes.TREE,
             BPYPointers.NODE: StrTypes.NODE,
+            BPYPointers.MATERIAL: StrTypes.MATERIAL,
         }
         if block_type not in mapping:
             raise TypeError(f'Given block type: {block_type} is not among supported: {mapping.keys()}')
@@ -124,10 +134,6 @@ class Struct(ABC):
     def build(self, *args):
         ...
 
-    @abstractmethod
-    def read(self):
-        ...
-
     def read_bl_type(self) -> str:
         """typically should return bl_idname of the structure"""
         return None
@@ -152,9 +158,9 @@ class FileStruct(Struct):
     def export_tree(self, tree, use_selection=False):
         if tree.bl_idname != 'SverchCustomTreeType':
             raise TypeError(f'Only exporting main trees is supported, {tree.bl_label} is given')
+
         self._struct["main_tree"] = dict()
-        struct_factories = StructFactory(
-            [TreeStruct, NodeStruct, SocketStruct, InterfaceStruct, LinkStruct, PropertyStruct])  # todo to args?
+        struct_factories = StructFactory.gram_from_module()  # todo to args?
         dependencies: List[Tuple[BPYPointers, str]] = []
 
         # export main tree first
@@ -193,8 +199,7 @@ class FileStruct(Struct):
 
         with tree.throttle_update():  # todo it is required only for current update system can be deleted later??
 
-            factories = StructFactory(
-                [TreeStruct, NodeStruct, SocketStruct, InterfaceStruct, LinkStruct, PropertyStruct])
+            factories = StructFactory.gram_from_module()
             imported_structs = OldNewNames()
             trees_to_build = []
             version, main_tree, data_blocks = self.read()
@@ -215,12 +220,8 @@ class FileStruct(Struct):
                     trees_to_build.append(tree_struct)
                 else:
                     # all data block except node trees
-                    block_type = struct_type.get_bpy_pointer()
-                    data_block = block_type.collection.new(block_name)
-                    imported_structs[(struct_type, '', block_name)] = data_block.name
-                    factories.get_factory(struct_type)(block_name, self.logger, raw_struct).build()
-
-            # todo before building trees should be registered old and dummy nodes if necessary
+                    block_struct = factories.get_factory(struct_type)(block_name, self.logger, raw_struct)
+                    block_struct.build(factories, imported_structs)
 
             for tree_struct in trees_to_build:
                 # build all trees
@@ -723,7 +724,7 @@ class PropertyStruct(Struct):
         """It can return just value like float, bool etc or a structure"""
         if prop.is_valid and prop.is_to_save:
             if prop.type == 'COLLECTION':
-                return self._handle_collection_prop(prop, dependencies)
+                return self._export_collection_values(prop, dependencies)
             if prop.type == 'POINTER':
                 # skip empty and unsupported pointers
                 if prop.value is not None and StrTypes.is_supported_block(prop.pointer_type):
@@ -754,6 +755,10 @@ class PropertyStruct(Struct):
                     data_block = pointer_type.collection[new_name]
                 setattr(obj, self.name, data_block)
 
+            # this is collection property
+            elif prop.type == 'COLLECTION':
+                self._set_collection_values(obj, factories, imported_structs)
+
             # this is property
             elif prop.is_valid:
                 prop.value = self._struct
@@ -768,7 +773,7 @@ class PropertyStruct(Struct):
             old_obj_name = self._struct["value"]
             return pointer_type, old_obj_name
 
-    def _handle_collection_prop(self, col_prop, dependencies):
+    def _export_collection_values(self, col_prop, dependencies):
         collection = []
         for item in col_prop.collection_to_list():
             item_props = dict()
@@ -778,6 +783,43 @@ class PropertyStruct(Struct):
                     item_props[prop.name] = raw_struct 
             collection.append(item_props)
         return collection
+
+    def _set_collection_values(self, obj, factories, imported_structs):
+        """Assign Python data to collection property"""
+        collection = getattr(obj, self.name)
+        for item_index, item_values in enumerate(self._struct):
+            # Some collections can be empty, in this case they should be expanded to be able to get new values
+            if item_index == len(collection):
+                item = collection.add()
+            else:
+                item = collection[item_index]
+
+            for prop_name, prop_value in item_values.items():
+                factories.prop(prop_name, self.logger, prop_value).build(item, factories, imported_structs)
+
+
+class MaterialStruct(Struct):
+    # this structure can be more complex if we want to save state of the material tree
+    type = StrTypes.MATERIAL
+
+    def __init__(self, name, logger=None, structure=None):
+        default_struct = {
+            "name": "",
+        }
+        self.name = name
+        self.logger = logger
+        self._struct = structure or default_struct
+
+    def export(self, mat, factories, dependencies):
+        self._struct["name"] = mat.name
+        return self._struct
+
+    def build(self, factories, imported_structs):
+        with self.logger.add_fail("Build material", f"Name: {self.name}"):
+            material = bpy.data.materials.get(self._struct["name"])
+            if material is None:
+                material = bpy.data.materials.new(self._struct["name"])
+            imported_structs[(StrTypes.MATERIAL, '', self._struct["name"])] = material.name
 
 
 class OldNewNames:  # todo can't this be regular dictionary?
