@@ -15,7 +15,8 @@ from itertools import chain
 from typing import Type, Generator, TYPE_CHECKING, Dict, Tuple, Optional, List, Any
 
 import bpy
-from sverchok.core.update_system import build_update_list, process_tree
+from sverchok import old_nodes
+from sverchok.utils import dummy_nodes
 from sverchok.utils.handle_blender_data import BPYPointers, BPYProperty
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 
@@ -310,8 +311,16 @@ class TreeStruct(Struct):
         # first all nodes should be created without applying their inner data
         # because some nodes can have `parent` property which points into another node
         node_structs = []
-        for node_name, raw_structure in nodes:  # todo probably here is convenient place for registering node classes
+        for node_name, raw_structure in nodes:
             node_struct = factories.node(node_name, self.logger, raw_structure)
+
+            # register optional node classes
+            if old_nodes.is_old(node_struct.read_bl_type()):
+                old_nodes.register_old(node_struct.read_bl_type())
+            if dummy_nodes.is_dependent(node_struct.read_bl_type()):
+                dummy_nodes.register_dummy(node_struct.read_bl_type())
+
+            # add node an save its new name
             node = tree.nodes.new(node_struct.read_bl_type())
             node.name = node_name
             imported_structs[(StrTypes.NODE, tree.name, node_name)] = node.name
@@ -519,7 +528,8 @@ class SocketStruct(Struct):
             prop = BPYProperty(socket, prop_name)
             if prop.is_valid and prop.is_to_save:
                 raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
-                self._struct["properties"][prop.name] = raw_struct
+                if raw_struct is not None:
+                    self._struct["properties"][prop.name] = raw_struct
 
         return self._struct
 

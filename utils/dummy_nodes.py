@@ -15,7 +15,6 @@ import bpy
 from bpy.props import StringProperty
 
 
-from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_oldnodes_parser import get_old_node_bl_idnames
 from sverchok.utils.logging import error, exception
 
@@ -97,6 +96,7 @@ def reload_dummy(ng=False):
             load_dummy(ng)
 
 def create_dummy_class(bl_id):
+    from sverchok.node_tree import SverchCustomTreeNode
     node = dummy_nodes_dict[bl_id]
     cls = type(bl_id,
               (bpy.types.Node, SverchCustomTreeNode, SvDummyNode),
