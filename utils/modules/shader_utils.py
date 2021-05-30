@@ -78,10 +78,31 @@ class ShaderLib2D():
         ]
 
         self.add_data(
-            new_vectors=points, 
-            new_colors=[color for _ in range(len(points))],
-            new_indices=indices
+            new_vectors=points, new_indices=indices,
+            new_colors=[color for _ in range(len(points))]
         )
+
+        N = precision
+        half_pi = np.pi / 2.0
+        theta = np.linspace(0, half_pi, N, endpoint=True)
+
+        #            SW        NW        NE        SE 
+        quarters = [[xb, yc], [xb, yb], [xc, yb], [xc, yc]]
+        offsets = [np.pi, half_pi, 0, -half_pi]
+
+        for quarter, offset in zip(quarters, offsets):
+            arc_coords = np.array([np.sin(theta-offset), np.cos(theta-offset)])
+            coords = arc_coords.T * r
+            coords += np.array([quarter])
+            coords = np.vstack([coords, quarter])
+            points = coords.tolist()
+            last_idx = len(points) - 1
+            indices = [[i, i+1, last_idx] for i in range(len(points)-1)]
+            self.add_data(
+                new_vectors=points, new_indices=indices,
+                new_colors=[color for _ in range(len(points))]
+            )
+
 
     def add_line(self, x1, y1, x2, y2, width, color):
 
