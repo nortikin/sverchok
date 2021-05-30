@@ -803,23 +803,21 @@ class MaterialStruct(Struct):
     type = StrTypes.MATERIAL
 
     def __init__(self, name, logger=None, structure=None):
-        default_struct = {
-            "name": "",
-        }
+        default_struct = {}
         self.name = name
         self.logger = logger
         self._struct = structure or default_struct
 
     def export(self, mat, factories, dependencies):
-        self._struct["name"] = mat.name
+        # probably something will be added here in the future
         return self._struct
 
     def build(self, factories, imported_structs):
         with self.logger.add_fail("Build material", f"Name: {self.name}"):
-            material = bpy.data.materials.get(self._struct["name"])
+            material = bpy.data.materials.get(self.name)
             if material is None:
-                material = bpy.data.materials.new(self._struct["name"])
-            imported_structs[(StrTypes.MATERIAL, '', self._struct["name"])] = material.name
+                material = bpy.data.materials.new(self.name)
+            imported_structs[(StrTypes.MATERIAL, '', self.name)] = material.name
 
 
 class OldNewNames:  # todo can't this be regular dictionary?
