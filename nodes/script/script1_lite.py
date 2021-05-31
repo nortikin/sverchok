@@ -296,8 +296,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             return
 
         text = self.get_bpy_data_from_name(self.script_name, bpy.data.texts)
-        if text:
+        if text and hasattr(text, "as_string"):
             self.script_str = text.as_string()
+            # if isinstance(text, str):
+            #     self.script_str = text
         else:
             print(f'bpy.data.texts not read yet, self.script_name="{self.script_name}"')
             if self.script_str:
