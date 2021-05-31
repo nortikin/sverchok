@@ -14,7 +14,7 @@ import bpy
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.handle_blender_data import BPYProperty
 from sverchok.utils.sv_IO_monad_helpers import pack_monad
-from sverchok.utils.sv_json_struct import FileStruct
+from sverchok.utils.sv_json_struct import FileStruct, NodePresetFileStruct
 
 if TYPE_CHECKING:
     from sverchok.node_tree import SverchCustomTree, SverchCustomTreeNode
@@ -35,6 +35,11 @@ class JSONExporter:
                 return TreeExporter01().export_tree(tree)
         else:
             return FileStruct().export_tree(tree, use_selection)
+
+    @staticmethod
+    def get_node_structure(node) -> dict:
+        """For exporting node properties"""
+        return NodePresetFileStruct().export(node)
 
     @staticmethod
     def _get_nodes_structure(nodes: List[SverchCustomTreeNode]) -> dict:

@@ -20,7 +20,7 @@ from sverchok.utils.sv_IO_panel_tools import get_file_obj_from_zip
 from sverchok.utils.logging import info, warning, getLogger, logging
 from sverchok.utils.handle_blender_data import BPYProperty, BPYNode
 from sverchok.utils.sv_IO_monad_helpers import unpack_monad
-from sverchok.utils.sv_json_struct import FileStruct
+from sverchok.utils.sv_json_struct import FileStruct, NodePresetFileStruct
 
 if TYPE_CHECKING:
     from sverchok.node_tree import SverchCustomTree, SverchCustomTreeNode
@@ -63,7 +63,13 @@ class JSONImporter:
         build_update_list(tree)
         process_tree(tree)
 
-    def import_node_settings(self, node: SverchCustomTreeNode):  # todo should be done something for new importer
+    def import_node_settings(self, node: SverchCustomTreeNode):
+        if self.structure_version < 1.0:
+            self._old_import_node_settings(node)
+        else:
+            NodePresetFileStruct(logger=self._fails_log, structure=self._structure).build(node)
+
+    def _old_import_node_settings(self, node: SverchCustomTreeNode):
         """
         It takes first node from file and apply its settings to given node
         It is strange but it is how it was originally implemented

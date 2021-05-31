@@ -52,9 +52,6 @@ class StructFactory:
             if factory.type in self._factory_names:
                 factory_name = self._factory_names[factory.type]
                 setattr(self, factory_name, factory)
-            # probably we would never want using file structure from inside others
-            elif factory.type == StrTypes.FILE:
-                continue
             else:
                 raise TypeError(f'Factory with type: {factory.type}'
                                 f' is not among supported: {self._factory_names.keys()}')
@@ -67,7 +64,7 @@ class StructFactory:
             raise TypeError(f'Given struct type: {struct_type} is not among supported {self._factory_names.keys()}')
 
     @classmethod
-    def gram_from_module(cls) -> StructFactory:
+    def grab_from_module(cls) -> StructFactory:
         """Grab all factories in the module"""
         factory_classes = []
         module_classes = inspect.getmembers(sys.modules[__name__],
@@ -79,7 +76,6 @@ class StructFactory:
 
 
 class StrTypes(Enum):
-    FILE = auto()
     TREE = auto()
     NODE = auto()
     SOCK = auto()
@@ -150,8 +146,6 @@ class Struct(ABC):
 
 
 class FileStruct(Struct):
-    type = StrTypes.FILE
-
     def __init__(self, name=None, logger: FailsLog = None, struct: dict = None):
         self._struct: Dict[str, Any] = struct or {"export_version": str(self.version)}
         self.logger: FailsLog = logger
@@ -165,7 +159,7 @@ class FileStruct(Struct):
             raise TypeError(f'Only exporting main trees is supported, {tree.bl_label} is given')
 
         self._struct["main_tree"] = dict()
-        struct_factories = StructFactory.gram_from_module()  # todo to args?
+        struct_factories = StructFactory.grab_from_module()  # todo to args?
         dependencies: List[Tuple[BPYPointers, str]] = []
 
         # export main tree first
@@ -204,7 +198,7 @@ class FileStruct(Struct):
 
         with tree.throttle_update():  # todo it is required only for current update system can be deleted later??
 
-            factories = StructFactory.gram_from_module()
+            factories = StructFactory.grab_from_module()
             imported_structs = OldNewNames()
             trees_to_build = []
             version, main_tree, data_blocks = self.read()
@@ -242,6 +236,113 @@ class FileStruct(Struct):
         main_tree_reader = ((StrTypes.TREE, name, raw_struct) for name, raw_struct in main_tree_struct.items())
 
         return version, main_tree_reader, self._data_blocks_reader()
+
+    def _data_blocks_reader(self):  # todo add logger?
+        struct_type: StrTypes
+        for struct_type_name, structures in self._struct.items():
+            if struct_type_name in (it.name for it in StrTypes):
+                for block_name, block_struct in structures.items():
+                    yield StrTypes[struct_type_name], block_name, block_struct
+
+
+class NodePresetFileStruct(Struct):
+    def __init__(self, name=None, logger=None, structure=None):
+        default_struct = {
+            "export_version": str(self.version),
+            "node": dict(),
+        }
+        self.logger = logger
+        self._struct = structure or default_struct
+
+    def export(self, node):
+        factories = StructFactory.grab_from_module()
+        dependencies: List[Tuple[BPYPointers, str]] = []
+
+        struct = factories.node(node.name, self.logger)
+        self._struct["node"][node.name] = struct.export(node, factories, dependencies)
+
+        while dependencies:
+            block_type, block_name = dependencies.pop()
+            struct_type = StrTypes.get_type(block_type)
+            if struct_type.name not in self._struct:
+                self._struct[struct_type.name] = dict()
+            if block_name not in self._struct[struct_type.name]:
+                factory = factories.get_factory(struct_type)
+                data_block = block_type.collection[block_name]
+                structure = factory(block_name, self.logger).export(data_block, factories, dependencies)
+                self._struct[struct_type.name][block_name] = structure
+
+        return self._struct
+
+    def build(self, node):
+        tree = node.id_data
+        with tree.throttle_update(), tree.init_tree():  # todo throttle can be deleted later
+
+            factories = StructFactory.grab_from_module()
+            imported_structs = OldNewNames()
+            version, data_blocks = self.read()
+            trees_to_build = []
+
+            # initialize trees and build other data block types
+            for struct_type, block_name, raw_struct in data_blocks:
+                if struct_type == StrTypes.TREE:  # in case it was group node
+                    tree_struct = factories.tree(block_name, self.logger, raw_struct)
+                    data_block = bpy.data.node_groups.new(block_name, tree_struct.read_bl_type())
+                    tree_struct.build_interface(data_block, factories, imported_structs)
+                    imported_structs[(struct_type, '', block_name)] = data_block.name
+                    trees_to_build.append(tree_struct)
+                else:
+                    # all data block except node trees
+                    block_struct = factories.get_factory(struct_type)(block_name, self.logger, raw_struct)
+                    block_struct.build(factories, imported_structs)
+
+            for tree_struct in trees_to_build:
+                new_name = imported_structs[StrTypes.TREE, '', tree_struct.name]
+                data_block = bpy.data.node_groups[new_name]
+                tree_struct.build(data_block, factories, imported_structs)
+
+            # now it's time to update the node, we have to save its links first because they will be removed
+            links = []
+            for link in _ordered_links(tree):
+                if link.from_node.name == node.name or link.to_node.name == node.name:
+                    link_struct = factories.link(None, self.logger)
+                    link_struct.export(link, factories, [])
+                    links.append(link_struct)
+
+            # recreate node from scratch, this need for resetting all its properties to default
+            node_name, raw_struct = next(iter(self._struct["node"].items()))
+            node_struct = factories.node(node_name, self.logger, raw_struct)
+            location = node.location[:]  # without copying it looks like gives straight references to memory
+            tree.nodes.remove(node)
+            node = tree.nodes.new(node_struct.read_bl_type())
+            node.name = node_name
+            node.select = True
+            tree.nodes.active = node
+            imported_structs[StrTypes.NODE, tree.name, node_name] = node.name
+
+            # all nodes should be as if they was imported with new names before linking
+            for node in tree.nodes:
+                imported_structs[StrTypes.NODE, tree.name, node.name] = node.name
+
+            # import the node and rebuild the links if possible
+            node_struct.build(node, factories, imported_structs)
+            node.location = location  # return to initial position, it has to be after node build
+            for link_struct in links:
+                try:
+                    link_struct.build(tree, factories, imported_structs)
+                except LookupError:  # the node seems has different sockets
+                    pass
+            # how it should work with group node links is not clear
+            # because they are bound to identifiers of the group tree input outputs
+            # for now breaking links will be considered as desired behaviour
+
+        node.process_node(bpy.context)
+
+    def read(self):
+        with self.logger.add_fail("Reading version of the file"):
+            version = float(self._struct["export_version"])
+
+        return version, self._data_blocks_reader()
 
     def _data_blocks_reader(self):  # todo add logger?
         struct_type: StrTypes
