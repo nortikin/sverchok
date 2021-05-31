@@ -398,7 +398,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             delta = time.perf_counter() - start
             total_time += delta
 
-            if data_structure.DEBUG_MODE:
+            if data_structure.DEBUG_MODE and ng.sv_show_debug_time_prints:
                 debug("Processed  %s in: %.4f", node_name, delta)
 
             timings.append(delta)
@@ -421,7 +421,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             return None
 
     graphs.append(graph)
-    if data_structure.DEBUG_MODE:
+    if data_structure.DEBUG_MODE and ng.sv_show_debug_time_prints:
         debug("Node set updated in: %.4f seconds", total_time)
 
     # graph_dicts[nodes.id_data.name] = graph
@@ -551,10 +551,8 @@ def reload_sverchok():
     data_structure.RELOAD_EVENT = False
     from sverchok.core import handlers
     handlers.sv_post_load([])
-
     reset_timing_graphs()
-    # for ng in sverchok_trees():
-    #    ng.sv_timing_callbacks_activated = False
+
 
 def get_update_lists(ng):
     """

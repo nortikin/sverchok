@@ -162,9 +162,6 @@ class DefaultMacros():
             return
 
         elif term == 'nuke python++':
-            from sverchok.core.update_system import sverchok_trees
-            for ng in sverchok_trees():
-                ng.sv_timing_callbacks_activated = False            
             bpy.ops.script.reload()
 
         elif term == 'zen':

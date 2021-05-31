@@ -124,7 +124,7 @@ class SvNodeTreeCommon(object):
         this is instead of calling `get_dpi_factor` on every redraw.
         """
 
-        debug('update_gl_scale_info called from', origin or self.name)
+        debug(f"update_gl_scale_info called from {origin or self.name}")
         try:
             from sverchok.utils.context_managers import sv_preferences
             with sv_preferences() as prefs:
@@ -174,11 +174,10 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
     sv_show_time_graph: BoolProperty(name="Time Graph", default=False, options=set())
     sv_show_time_nodes: BoolProperty(name="Node times", default=False, options=set())
+    sv_show_debug_time_prints: BoolProperty(
+        name="Debug Prints", default=True, options=set(),
+        description="setting this to False will suppress debug node times printing to console")
     
-    # downside is these are not reset during f8. and not during post save. or post load.
-    sv_timing_callbacks_activated: BoolProperty(
-        default=False, description="internal property used to remember drwing state", options={'SKIP_SAVE'})
-
     # something related with heat map feature
     # looks like it keeps dictionary of nodes and their user defined colors in string format
     sv_user_colors: StringProperty(default="")
