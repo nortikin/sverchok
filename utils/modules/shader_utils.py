@@ -5,8 +5,23 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+from mathutils.geometry import interpolate_bezier as bezlerp
 from mathutils import Vector
 import numpy as np
+
+def get_offset(vec1, vec2, width):
+    p1 = Vector(vec1[:2])
+    p2 = Vector(vec2[:2])
+    vp = (p2 - p1).normalized().orthogonal()
+    return (width / 2 * vp)
+
+def get_all_offsets(controls, points, samples, thickness):
+    offsets = []
+    offsets.append(get_offset(controls[0], controls[1], thickness))
+    for r1, r2 in [[i, i+2] for i in range(samples-2)]:
+        offsets.append(get_offset(points[r1], points[r2], thickness))
+    offsets.append(get_offset(controls[2], controls[3], thickness))
+    return offsets
 
 class ShaderLib2D():
     def __init__(self):
@@ -126,7 +141,23 @@ class ShaderLib2D():
         ...
 
     def add_bezier(self, controls, width, color, samples=20, resampled=False):
-        ...
+        # knot1, ctrl_1, ctrl_2, knot2 = controls 
+
+        N = samples
+        bezier_points = bezlerp(*controls, samples)
+        offsets = get_all_offsets(controls, bezier_points, samples, width)
+        verts = [(b.to_2d() + offset)[:] for b, offset in zip(bezier_points, offsets)]
+        verts.extend([(b.to_2d() - offset)[:] for b, offset in zip(bezier_points, offsets)])
+
+        indices = []
+        add_indices = indices.extend
+        _ = [add_indices([[i, i+1, N+i], [i+N, i+N+1, i+1]]) for i in range(N-1)]
+        self.add_data(
+            new_vectors=verts, 
+            new_colors=[color for _ in range(len(verts))],
+            new_indices=indices
+        )        
+
 
     def add_circle(self, x, y, radius, color, precision=32):
         N = precision
