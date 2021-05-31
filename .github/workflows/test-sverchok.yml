@@ -16,7 +16,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.9
+    - name: Set up Python 3.7
       uses: actions/setup-python@v2
       with:
         python-version: 3.9
@@ -46,7 +46,7 @@ jobs:
             rm $BLENDER_TAR
 
             pushd blender/
-            PYTHON=${BLENDER_VERSION}/python/bin/python3.9m
+            PYTHON=${BLENDER_VERSION}/python/bin/python3.7m
             $PYTHON -m ensurepip
             $PYTHON -m pip install --upgrade pip setuptools wheel
             $PYTHON -m pip install --upgrade scipy geomdl scikit-image
