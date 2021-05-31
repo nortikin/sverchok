@@ -11,8 +11,8 @@ install:
     #set -x
     #set -e
     if [ $TRAVIS_BRANCH = "master" ]
-    then BLENDER_VERSION=2.82
-         BLENDER_URL=https://ftp.nluug.nl/pub/graphics/blender/release/Blender2.82/blender-2.82a-linux64.tar.xz
+    then BLENDER_VERSION=2.92
+         BLENDER_URL=https://ftp.nluug.nl/pub/graphics/blender/release/Blender2.92/blender-2.92.0-linux64.tar.xz
          SVERCHOK_DIR=scripts/addons/sverchok
          BLENDER_TAR=$(basename $BLENDER_URL)
          BLENDER_DIR=$(basename $BLENDER_URL .tar.xz)
@@ -36,7 +36,7 @@ install:
         rm $BLENDER_TAR
 
         pushd blender/
-        PYTHON=${BLENDER_VERSION}/python/bin/python3.7m
+        PYTHON=${BLENDER_VERSION}/python/bin/python3.9m
         $PYTHON -m ensurepip
         $PYTHON -m pip install --upgrade pip setuptools wheel
         $PYTHON -m pip install --upgrade scipy geomdl scikit-image
