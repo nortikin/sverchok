@@ -539,12 +539,13 @@ class SvEvolverRun(bpy.types.Operator, SvGenericNodeLocator):
             node.info_label = "Stopped - Fitness not linked"
             return
 
+        tree = node.id_data
+        
         genotype_frame = node.genotype
         evolver_mem[node.node_id] = {}
-
+        
         seed_set(node.r_seed)
         np.random.seed(node.r_seed)
-
         population = Population(genotype_frame, node, tree)
         population.evolve()
         update_list = make_tree_from_nodes([node.name], tree)
@@ -569,6 +570,8 @@ class SvEvolverSetFittest(bpy.types.Operator, SvGenericNodeLocator):
     bl_label = "Evolver Run"
 
     def sv_execute(self, context, node):
+        tree = node.id_data
+        
         data = evolver_mem[node.node_id]
         genes = data["genes"]
         population = data["population"]
