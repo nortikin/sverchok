@@ -11,7 +11,6 @@ import inspect
 import sys
 from abc import abstractmethod, ABC
 from enum import Enum, auto
-from itertools import chain
 from typing import Type, Generator, TYPE_CHECKING, Dict, Tuple, Optional, List, Any
 
 import bpy
@@ -147,7 +146,14 @@ class Struct(ABC):
 
 class FileStruct(Struct):
     def __init__(self, name=None, logger: FailsLog = None, struct: dict = None):
-        self._struct: Dict[str, Any] = struct or {"export_version": str(self.version)}
+        default_struct = {
+            "export_version": str(self.version),
+            "main_tree": {
+                "nodes": dict(),
+                "links": []
+            }
+        }
+        self._struct: Dict[str, Any] = struct or default_struct
         self.logger: FailsLog = logger
 
     def export(self):
@@ -158,18 +164,11 @@ class FileStruct(Struct):
         if tree.bl_idname != 'SverchCustomTreeType':
             raise TypeError(f'Only exporting main trees is supported, {tree.bl_label} is given')
 
-        self._struct["main_tree"] = dict()
         struct_factories = StructFactory.grab_from_module()  # todo to args?
         dependencies: List[Tuple[BPYPointers, str]] = []
 
         # export main tree first
-        factory = struct_factories.get_factory(StrTypes.TREE)
-        struct = factory(tree.name, self.logger)
-        if use_selection:
-            raw_struct = struct.export_nodes([n for n in tree.nodes if n.select], struct_factories, dependencies)
-        else:
-            raw_struct = struct.export(tree, struct_factories, dependencies)
-        self._struct["main_tree"][tree.name] = raw_struct
+        self._export_nodes(tree, struct_factories, dependencies, use_selection)
 
         # it looks good place for exporting dependent data blocks because probably we do not always want to export them
         # from this place we have more control over it
@@ -186,6 +185,19 @@ class FileStruct(Struct):
 
         return self._struct
 
+    def _export_nodes(self, tree, factories, dependencies, use_selection=False):
+        """Structure of main tree"""
+        nodes = tree.nodes if not use_selection else [n for n in tree.nodes if n.select]
+        for node in nodes:
+            raw_struct = factories.node(node.name, self.logger).export(node, factories, dependencies)
+            self._struct["main_tree"]["nodes"][node.name] = raw_struct
+
+        input_node_names = {node.name for node in nodes}
+        for link in _ordered_links(tree):
+            if link.from_node.name in input_node_names and link.to_node.name in input_node_names:
+                raw_struct = factories.link(None, self.logger).export(link, factories, dependencies)
+                self._struct["main_tree"]["links"].append(raw_struct)
+
     def build(self, *_):
         raise NotImplementedError
 
@@ -200,42 +212,65 @@ class FileStruct(Struct):
 
             factories = StructFactory.grab_from_module()
             imported_structs = OldNewNames()
-            trees_to_build = []
-            version, main_tree, data_blocks = self.read()
+            version, data_blocks = self.read()
 
             # initialize trees and build other data block types
-            for struct_type, block_name, raw_struct in chain(main_tree, data_blocks):
+            trees_to_build = []
+            for struct_type, block_name, raw_struct in data_blocks:
                 if struct_type == StrTypes.TREE:
                     tree_struct = factories.tree(block_name, self.logger, raw_struct)
-                    if not trees_to_build:
-                        # this is first tree and it should be main, does not need create anything
-                        data_block = tree
-                    else:
-                        # this is node group tree, should be created?
-                        data_block = bpy.data.node_groups.new(block_name, tree_struct.read_bl_type())
-                        # interface should be created before building all trees
-                        tree_struct.build_interface(data_block, factories, imported_structs)
+                    data_block = bpy.data.node_groups.new(block_name, tree_struct.read_bl_type())
+                    # interface should be created before building all trees
+                    tree_struct.build_interface(data_block, factories, imported_structs)
                     imported_structs[(struct_type, '', block_name)] = data_block.name
                     trees_to_build.append(tree_struct)
                 else:
-                    # all data block except node trees
                     block_struct = factories.get_factory(struct_type)(block_name, self.logger, raw_struct)
                     block_struct.build(factories, imported_structs)
 
+            # build main tree nodes
+            self._build_nodes(tree, factories, imported_structs)
+
+            # build group trees
             for tree_struct in trees_to_build:
                 # build all trees
                 new_name = imported_structs[StrTypes.TREE, '', tree_struct.name]
                 data_block = bpy.data.node_groups[new_name]
                 tree_struct.build(data_block, factories, imported_structs)
 
+    def _build_nodes(self, tree, factories, imported_structs):
+        """Build nodes of the main tree, other dependencies should be already initialized"""
+        with tree.init_tree():
+            # first all nodes should be created without applying their inner data
+            # because some nodes can have `parent` property which points into another node
+            node_structs = []
+            for node_name, raw_structure in self._struct["main_tree"]["nodes"].items():
+                node_struct = factories.node(node_name, self.logger, raw_structure)
+
+                # register optional node classes
+                if old_nodes.is_old(node_struct.read_bl_type()):
+                    old_nodes.register_old(node_struct.read_bl_type())
+                if dummy_nodes.is_dependent(node_struct.read_bl_type()):
+                    dummy_nodes.register_dummy(node_struct.read_bl_type())
+
+                # add node an save its new name
+                node = tree.nodes.new(node_struct.read_bl_type())
+                node.name = node_name
+                imported_structs[(StrTypes.NODE, tree.name, node_name)] = node.name
+                node_structs.append(node_struct)
+
+            for node_struct in node_structs:
+                new_name = imported_structs[(StrTypes.NODE, tree.name, node_struct.name)]
+                node = tree.nodes[new_name]
+                node_struct.build(node, factories, imported_structs)
+
+            for raw_struct in self._struct["main_tree"]["links"]:
+                factories.link(None, self.logger, raw_struct).build(tree, factories, imported_structs)
+
     def read(self):
         with self.logger.add_fail("Reading version of the file"):
             version = float(self._struct["export_version"])
-
-        main_tree_struct = self._struct.get("main_tree")
-        main_tree_reader = ((StrTypes.TREE, name, raw_struct) for name, raw_struct in main_tree_struct.items())
-
-        return version, main_tree_reader, self._data_blocks_reader()
+        return version, self._data_blocks_reader()
 
     def _data_blocks_reader(self):  # todo add logger?
         struct_type: StrTypes
@@ -361,6 +396,7 @@ class TreeStruct(Struct):
             "links": [],
             "inputs": dict(),
             "outputs": dict(),
+            "properties": dict(),
             "bl_idname": "",
         }
         self._struct = structure or default_structure
@@ -368,7 +404,6 @@ class TreeStruct(Struct):
         self.logger = logger
 
     def export(self, tree, factories: StructFactory, dependencies) -> dict:
-        # todo export tree properties, for all trees? only for group trees?
         for node in tree.nodes:
             raw_struct = factories.node(node.name, self.logger).export(node, factories, dependencies)
             self._struct['nodes'][node.name] = raw_struct
@@ -384,36 +419,19 @@ class TreeStruct(Struct):
             raw_struct = factories.interface(socket.name, self.logger).export(socket, factories, dependencies)
             self._struct["outputs"][socket.identifier] = raw_struct
 
-        self._struct["bl_idname"] = tree.bl_idname
-        return self._struct
-
-    def export_nodes(self, nodes, factories: StructFactory, dependencies) -> dict:
-        tree = nodes[0].id_data
-        for node in nodes:
-            if node.id_data != tree:
-                raise TypeError(f"Given node from different trees: {tree.name} and {node.id_data.name}")
-            raw_struct = factories.node(node.name, self.logger).export(node, factories, dependencies)
-            self._struct["nodes"][node.name] = raw_struct
-
-        input_node_names = {node.name for node in nodes}
-        for link in _ordered_links(tree):
-            if link.from_node.name in input_node_names and link.to_node.name in input_node_names:
-                self._struct["links"].append(factories.link(None, self.logger).export(link, factories, dependencies))
-
-        for socket in tree.inputs:
-            raw_struct = factories.interface(socket.name, self.logger).export(socket, factories, dependencies)
-            self._struct["inputs"][socket.identifier] = raw_struct
-
-        for socket in tree.outputs:
-            raw_struct = factories.interface(socket.name, self.logger).export(socket, factories, dependencies)
-            self._struct["outputs"][socket.identifier] = raw_struct
+        for prop_name in tree.keys():
+            prop = BPYProperty(tree, prop_name)
+            if prop.is_valid and prop.is_to_save:
+                raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
+                if raw_struct is not None:
+                    self._struct["properties"][prop.name] = raw_struct
 
         self._struct["bl_idname"] = tree.bl_idname
         return self._struct
 
     def build(self, tree, factories: StructFactory, imported_structs: OldNewNames):
         """Reads and generates nodes, links, dependent data blocks"""
-        nodes, links = self.read()
+        nodes, links, props = self.read()
 
         # first all nodes should be created without applying their inner data
         # because some nodes can have `parent` property which points into another node
@@ -441,6 +459,10 @@ class TreeStruct(Struct):
         for raw_struct in links:
             factories.link(None, self.logger, raw_struct).build(tree, factories, imported_structs)
 
+        for prop_name, prop_value in props:
+            with self.logger.add_fail("Setting tree property", f'Tree: {node.id_data.name}, prop: {prop_name}'):
+                factories.prop(prop_name, self.logger, prop_value).build(tree, factories, imported_structs)
+
     def read(self):
         with self.logger.add_fail("Reading nodes"):
             nodes_struct = self._struct["nodes"]
@@ -450,7 +472,11 @@ class TreeStruct(Struct):
             links_struct = self._struct["links"]
             links_reader = (link_struct for link_struct in links_struct)
 
-        return nodes_reader, links_reader
+        with self.logger.add_fail("Reading properties"):
+            prop_struct = self._struct["properties"]
+            prop_reader = self.read_collection(prop_struct)
+
+        return nodes_reader, links_reader, prop_reader
 
     def build_interface(self, tree, factories, imported_structs):
         inputs, outputs = self.read_interface_data()

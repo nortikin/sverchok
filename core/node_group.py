@@ -32,12 +32,17 @@ class SvGroupTree(bpy.types.NodeTree):
 
     handler = MainHandler
 
-    group_node_name: bpy.props.StringProperty()  # should be updated by "Go to edit group tree" operator
-    tree_id_memory: bpy.props.StringProperty(default="")  # identifier of the tree, should be used via `tree_id`
-    skip_tree_update: bpy.props.BoolProperty()  # useless for API consistency # todo should be removed later
+    # should be updated by "Go to edit group tree" operator
+    group_node_name: bpy.props.StringProperty(options={'SKIP_SAVE'})
+
+    # identifier of the tree, should be used via `tree_id`
+    tree_id_memory: bpy.props.StringProperty(default="", options={'SKIP_SAVE'})
+
+    # useless for API consistency # todo should be removed later
+    skip_tree_update: bpy.props.BoolProperty(options={'SKIP_SAVE'})
 
     # Always False, does not have sense to have for nested trees, sine of draft mode refactoring
-    sv_draft: bpy.props.BoolProperty()
+    sv_draft: bpy.props.BoolProperty(options={'SKIP_SAVE'})
 
     @property
     def tree_id(self):
