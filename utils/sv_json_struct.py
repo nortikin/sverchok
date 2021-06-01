@@ -119,7 +119,7 @@ class StrTypes(Enum):
 class Struct(ABC):
     # I was trying to make API of all abstract method the same between child classes but it looks it's not possible
     # for example to build a node we can send to method a tree where the node should be duilded
-    version = 1.0  # override the property if necessary
+    version = 1.0
     type: StrTypes = None  # should be overridden
 
     @abstractmethod
@@ -137,11 +137,6 @@ class Struct(ABC):
     def read_bl_type(self) -> str:
         """typically should return bl_idname of the structure"""
         return None
-
-    def read_collection(self, collection: dict):
-        for name, structure in collection.items():
-            with self.logger.add_fail("Reading collection"):
-                yield name, structure
 
 
 class FileStruct(Struct):
@@ -212,31 +207,32 @@ class FileStruct(Struct):
 
             factories = StructFactory.grab_from_module()
             imported_structs = OldNewNames()
-            version, data_blocks = self.read()
+            data_blocks = self._data_blocks_reader()
 
             # initialize trees and build other data block types
             trees_to_build = []
             for struct_type, block_name, raw_struct in data_blocks:
-                if struct_type == StrTypes.TREE:
-                    tree_struct = factories.tree(block_name, self.logger, raw_struct)
-                    data_block = bpy.data.node_groups.new(block_name, tree_struct.read_bl_type())
-                    # interface should be created before building all trees
-                    tree_struct.build_interface(data_block, factories, imported_structs)
-                    imported_structs[(struct_type, '', block_name)] = data_block.name
-                    trees_to_build.append(tree_struct)
-                else:
-                    block_struct = factories.get_factory(struct_type)(block_name, self.logger, raw_struct)
-                    block_struct.build(factories, imported_structs)
+                with self.logger.add_fail("Initialize data block", f"Type: {struct_type.name}, Name: {block_name}"):
+                    if struct_type == StrTypes.TREE:
+                        tree_struct = factories.tree(block_name, self.logger, raw_struct)
+                        data_block = bpy.data.node_groups.new(block_name, tree_struct.read_bl_type())
+                        # interface should be created before building all trees
+                        tree_struct.build_interface(data_block, factories, imported_structs)
+                        imported_structs[(struct_type, '', block_name)] = data_block.name
+                        trees_to_build.append(tree_struct)
+                    else:
+                        block_struct = factories.get_factory(struct_type)(block_name, self.logger, raw_struct)
+                        block_struct.build(factories, imported_structs)
 
             # build main tree nodes
             self._build_nodes(tree, factories, imported_structs)
 
             # build group trees
             for tree_struct in trees_to_build:
-                # build all trees
-                new_name = imported_structs[StrTypes.TREE, '', tree_struct.name]
-                data_block = bpy.data.node_groups[new_name]
-                tree_struct.build(data_block, factories, imported_structs)
+                with self.logger.add_fail("Build node group", f"Name: {tree_struct.name}"):
+                    new_name = imported_structs[StrTypes.TREE, '', tree_struct.name]
+                    data_block = bpy.data.node_groups[new_name]
+                    tree_struct.build(data_block, factories, imported_structs)
 
     def _build_nodes(self, tree, factories, imported_structs):
         """Build nodes of the main tree, other dependencies should be already initialized"""
@@ -245,39 +241,38 @@ class FileStruct(Struct):
             # because some nodes can have `parent` property which points into another node
             node_structs = []
             for node_name, raw_structure in self._struct["main_tree"]["nodes"].items():
-                node_struct = factories.node(node_name, self.logger, raw_structure)
+                with self.logger.add_fail("Init node (main tree)", f"Name: {node_name}"):
+                    node_struct = factories.node(node_name, self.logger, raw_structure)
 
-                # register optional node classes
-                if old_nodes.is_old(node_struct.read_bl_type()):
-                    old_nodes.register_old(node_struct.read_bl_type())
-                if dummy_nodes.is_dependent(node_struct.read_bl_type()):
-                    dummy_nodes.register_dummy(node_struct.read_bl_type())
+                    # register optional node classes
+                    if old_nodes.is_old(node_struct.read_bl_type()):
+                        old_nodes.register_old(node_struct.read_bl_type())
+                    if dummy_nodes.is_dependent(node_struct.read_bl_type()):
+                        dummy_nodes.register_dummy(node_struct.read_bl_type())
 
-                # add node an save its new name
-                node = tree.nodes.new(node_struct.read_bl_type())
-                node.name = node_name
-                imported_structs[(StrTypes.NODE, tree.name, node_name)] = node.name
-                node_structs.append(node_struct)
+                    # add node an save its new name
+                    node = tree.nodes.new(node_struct.read_bl_type())
+                    node.name = node_name
+                    imported_structs[(StrTypes.NODE, tree.name, node_name)] = node.name
+                    node_structs.append(node_struct)
 
             for node_struct in node_structs:
-                new_name = imported_structs[(StrTypes.NODE, tree.name, node_struct.name)]
-                node = tree.nodes[new_name]
-                node_struct.build(node, factories, imported_structs)
+                with self.logger.add_fail("Build node (main tree)", f"Name {node_struct.name}"):
+                    new_name = imported_structs[(StrTypes.NODE, tree.name, node_struct.name)]
+                    node = tree.nodes[new_name]
+                    node_struct.build(node, factories, imported_structs)
 
             for raw_struct in self._struct["main_tree"]["links"]:
-                factories.link(None, self.logger, raw_struct).build(tree, factories, imported_structs)
+                with self.logger.add_fail("Build link (main tree)", f"Struct: {raw_struct}"):
+                    factories.link(None, self.logger, raw_struct).build(tree, factories, imported_structs)
 
-    def read(self):
-        with self.logger.add_fail("Reading version of the file"):
-            version = float(self._struct["export_version"])
-        return version, self._data_blocks_reader()
-
-    def _data_blocks_reader(self):  # todo add logger?
+    def _data_blocks_reader(self):
         struct_type: StrTypes
         for struct_type_name, structures in self._struct.items():
             if struct_type_name in (it.name for it in StrTypes):
-                for block_name, block_struct in structures.items():
-                    yield StrTypes[struct_type_name], block_name, block_struct
+                with self.logger.add_fail("Reading data blocks", f"Type: {struct_type_name}"):
+                    for block_name, block_struct in structures.items():
+                        yield StrTypes[struct_type_name], block_name, block_struct
 
 
 class NodePresetFileStruct(Struct):
@@ -315,11 +310,10 @@ class NodePresetFileStruct(Struct):
 
             factories = StructFactory.grab_from_module()
             imported_structs = OldNewNames()
-            version, data_blocks = self.read()
             trees_to_build = []
 
             # initialize trees and build other data block types
-            for struct_type, block_name, raw_struct in data_blocks:
+            for struct_type, block_name, raw_struct in self._data_blocks_reader():
                 if struct_type == StrTypes.TREE:  # in case it was group node
                     tree_struct = factories.tree(block_name, self.logger, raw_struct)
                     data_block = bpy.data.node_groups.new(block_name, tree_struct.read_bl_type())
@@ -373,18 +367,13 @@ class NodePresetFileStruct(Struct):
 
         node.process_node(bpy.context)
 
-    def read(self):
-        with self.logger.add_fail("Reading version of the file"):
-            version = float(self._struct["export_version"])
-
-        return version, self._data_blocks_reader()
-
-    def _data_blocks_reader(self):  # todo add logger?
+    def _data_blocks_reader(self):
         struct_type: StrTypes
         for struct_type_name, structures in self._struct.items():
             if struct_type_name in (it.name for it in StrTypes):
-                for block_name, block_struct in structures.items():
-                    yield StrTypes[struct_type_name], block_name, block_struct
+                with self.logger.add_fail("Reading data blocks", f"Type: {struct_type_name}"):
+                    for block_name, block_struct in structures.items():
+                        yield StrTypes[struct_type_name], block_name, block_struct
 
 
 class TreeStruct(Struct):
@@ -427,77 +416,56 @@ class TreeStruct(Struct):
                     self._struct["properties"][prop.name] = raw_struct
 
         self._struct["bl_idname"] = tree.bl_idname
+
+        if not self._struct["properties"]:
+            del self._struct["properties"]
+
         return self._struct
 
     def build(self, tree, factories: StructFactory, imported_structs: OldNewNames):
         """Reads and generates nodes, links, dependent data blocks"""
-        nodes, links, props = self.read()
+        with tree.init_tree():
+            # first all nodes should be created without applying their inner data
+            # because some nodes can have `parent` property which points into another node
+            node_structs = []
+            for node_name, raw_structure in self._struct["nodes"].items():
+                with self.logger.add_fail("Init node", f"Tree: {tree.name}, Node: {node_name}"):
+                    node_struct = factories.node(node_name, self.logger, raw_structure)
 
-        # first all nodes should be created without applying their inner data
-        # because some nodes can have `parent` property which points into another node
-        node_structs = []
-        for node_name, raw_structure in nodes:
-            node_struct = factories.node(node_name, self.logger, raw_structure)
+                    # register optional node classes
+                    if old_nodes.is_old(node_struct.read_bl_type()):
+                        old_nodes.register_old(node_struct.read_bl_type())
+                    if dummy_nodes.is_dependent(node_struct.read_bl_type()):
+                        dummy_nodes.register_dummy(node_struct.read_bl_type())
 
-            # register optional node classes
-            if old_nodes.is_old(node_struct.read_bl_type()):
-                old_nodes.register_old(node_struct.read_bl_type())
-            if dummy_nodes.is_dependent(node_struct.read_bl_type()):
-                dummy_nodes.register_dummy(node_struct.read_bl_type())
+                    # add node an save its new name
+                    node = tree.nodes.new(node_struct.read_bl_type())
+                    node.name = node_name
+                    imported_structs[(StrTypes.NODE, tree.name, node_name)] = node.name
+                    node_structs.append(node_struct)
 
-            # add node an save its new name
-            node = tree.nodes.new(node_struct.read_bl_type())
-            node.name = node_name
-            imported_structs[(StrTypes.NODE, tree.name, node_name)] = node.name
-            node_structs.append(node_struct)
+            for node_struct in node_structs:
+                with self.logger.add_fail("Build node", f"Tree: {tree.name}, Node: {node_struct.name}"):
+                    new_name = imported_structs[(StrTypes.NODE, tree.name, node_struct.name)]
+                    node = tree.nodes[new_name]
+                    node_struct.build(node, factories, imported_structs)
 
-        for node_struct in node_structs:
-            new_name = imported_structs[(StrTypes.NODE, tree.name, node_struct.name)]
-            node = tree.nodes[new_name]
-            node_struct.build(node, factories, imported_structs)
+            for raw_struct in self._struct["links"]:
+                with self.logger.add_fail("Build link", f"Tree: {tree.name}, Struct: {raw_struct}"):
+                    factories.link(None, self.logger, raw_struct).build(tree, factories, imported_structs)
 
-        for raw_struct in links:
-            factories.link(None, self.logger, raw_struct).build(tree, factories, imported_structs)
-
-        for prop_name, prop_value in props:
-            with self.logger.add_fail("Setting tree property", f'Tree: {node.id_data.name}, prop: {prop_name}'):
-                factories.prop(prop_name, self.logger, prop_value).build(tree, factories, imported_structs)
-
-    def read(self):
-        with self.logger.add_fail("Reading nodes"):
-            nodes_struct = self._struct["nodes"]
-            nodes_reader = self.read_collection(nodes_struct)
-
-        with self.logger.add_fail("Reading links"):
-            links_struct = self._struct["links"]
-            links_reader = (link_struct for link_struct in links_struct)
-
-        with self.logger.add_fail("Reading properties"):
-            prop_struct = self._struct["properties"]
-            prop_reader = self.read_collection(prop_struct)
-
-        return nodes_reader, links_reader, prop_reader
+            for prop_name, prop_value in self._struct.get("properties", []):
+                with self.logger.add_fail("Setting tree property", f'Tree: {node.id_data.name}, prop: {prop_name}'):
+                    factories.prop(prop_name, self.logger, prop_value).build(tree, factories, imported_structs)
 
     def build_interface(self, tree, factories, imported_structs):
-        inputs, outputs = self.read_interface_data()
-        # create tree sockets
-        with self.logger.add_fail("Create tree socket"):
-            for sock_name, raw_struct in inputs:
+        for sock_name, raw_struct in self._struct["inputs"].items():
+            with self.logger.add_fail("Create tree in socket", f"Tree: {tree.name}, Sock: {sock_name}"):
                 factories.interface(sock_name, self.logger, raw_struct).build(tree.inputs, factories, imported_structs)
 
-        with self.logger.add_fail("Create tree socket"):
-            for sock_name, raw_struct in outputs:
+        for sock_name, raw_struct in self._struct["outputs"].items():
+            with self.logger.add_fail("Create tree out socket", f"Tree: {tree.name}, Sock: {sock_name}"):
                 factories.interface(sock_name, self.logger, raw_struct).build(tree.outputs, factories, imported_structs)
-
-    def read_interface_data(self):
-        with self.logger.add_fail("Reading inputs"):
-            input_struct = self._struct["inputs"]
-            input_reader = self.read_collection(input_struct)
-
-        with self.logger.add_fail("Reading outpus"):
-            outputs_struct = self._struct["outputs"]
-            output_reader = self.read_collection(outputs_struct)
-        return input_reader, output_reader
 
     def read_bl_type(self):
         return self._struct["bl_idname"]
@@ -508,7 +476,16 @@ class NodeStruct(Struct):
 
     def __init__(self, name: str, logger: FailsLog, structure: dict = None):
         default_structure = {
-            "attributes": dict(),
+            "attributes": {
+                "location": (0, 0),
+                "height": None,
+                "width": None,
+                "label": '',
+                "hide": False,
+                "color": (0, 0, 0),
+                "use_custom_color": False,
+                "parent": None,
+            },
             "properties": dict(),
             "inputs": dict(),
             "outputs": dict(),
@@ -517,34 +494,24 @@ class NodeStruct(Struct):
         self._struct = structure or default_structure
         self.name = name
         self.logger = logger
-        self._attributes = {
-            "height": None,
-            "width": None,
-            "label": '',
-            "hide": False,
-            "location": (0, 0),
-            "color": (0, 0, 0),
-            "use_custom_color": False,
-            "parent": None
-        }
 
     def export(self, node, factories: StructFactory, dependencies) -> dict:
         # add_mandatory_attributes
         self._struct['bl_idname'] = node.bl_idname
-        self._struct["attributes"]['height'] = node.height
-        self._struct["attributes"]['width'] = node.width
-        self._struct["attributes"]['label'] = node.label
-        self._struct["attributes"]['hide'] = node.hide
         self._struct["attributes"]['location'] = recursive_framed_location_finder(node, node.location[:])
 
-        # optional attributes
-        if node.use_custom_color:
-            self._struct["attributes"]['color'] = node.color[:]
-            self._struct["attributes"]['use_custom_color'] = True
+        _set_optional(self._struct["attributes"], 'height', node.height, node.height != 100.0)
+        _set_optional(self._struct["attributes"], 'width', node.width, node.width != 140.0)
+        _set_optional(self._struct["attributes"], "label", node.label)
+        _set_optional(self._struct["attributes"], "hide", node.hide)
+        _set_optional(self._struct["attributes"], "use_custom_color", node.use_custom_color)
+        _set_optional(self._struct["attributes"], "color", node.color[:], node.use_custom_color)
         if node.parent:  # the node is inside of a frame node
             prop = BPYProperty(node, "parent")
             raw_struct = factories.prop("parent", self.logger).export(prop, factories, dependencies)
             self._struct["attributes"]["parent"] = raw_struct
+        else:
+            del self._struct["attributes"]["parent"]
 
         # add non default node properties
         for prop_name in node.keys():
@@ -553,6 +520,8 @@ class NodeStruct(Struct):
                 raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
                 if raw_struct is not None:  # todo check every where
                     self._struct["properties"][prop.name] = raw_struct
+
+        _set_optional(self._struct, "properties", self._struct["properties"])
 
         # all sockets should be kept in a file because it's possible to create UI
         # where sockets would be defined by pressing buttons for example like in the node group interface.
@@ -567,20 +536,21 @@ class NodeStruct(Struct):
                 raw_struct = factories.sock(socket.identifier, self.logger).export(socket, factories, dependencies)
                 self._struct["outputs"][socket.identifier] = raw_struct
 
-        if hasattr(node, 'save_to_json'):
+        _set_optional(self._struct, "inputs", self._struct["inputs"])
+        _set_optional(self._struct, "outputs", self._struct["outputs"])
+
+        if hasattr(node, 'save_to_json'):  # todo pass empty dictionary?
             node.save_to_json(self._struct)
 
         return self._struct
 
     def build(self, node, factories: StructFactory, imported_data: OldNewNames):
-        # todo it would be nice? to add context to logger of what is currently is being created (not only here)
-        attributes, properties, inputs, outputs = self.read()
-        for attr_name, attr_value in attributes:
+        for attr_name, attr_value in self._struct["attributes"].items():
             with self.logger.add_fail("Setting node attribute",
                                       f'Tree: {node.id_data.name}, Node: {node.name}, attr: {attr_name}'):
                 factories.prop(attr_name, self.logger, attr_value).build(node, factories, imported_data)
 
-        for prop_name, prop_value in properties:
+        for prop_name, prop_value in self._struct.get("properties", dict()).items():
             with self.logger.add_fail("Setting node property",
                                       f'Tree: {node.id_data.name}, Node: {node.name}, prop: {prop_name}'):
                 factories.prop(prop_name, self.logger, prop_value).build(node, factories, imported_data)
@@ -594,39 +564,21 @@ class NodeStruct(Struct):
         # clearing and adding sockets of Group input and Group output nodes
         # immediately cause their rebuilding by Blender, so JSON file does not save information about their sockets.
         node.inputs.clear()
-        for sock_identifier, raw_struct in inputs:
-            with self.logger.add_fail(f"Add socket: {sock_identifier} to node {node.name}"):
+        for sock_identifier, raw_struct in self._struct.get("inputs", dict()).items():
+            with self.logger.add_fail("Add in socket",
+                                      f"Tree: {node.id_data.name}, Node {node.name}, Sock: {sock_identifier}"):
                 factories.sock(sock_identifier, self.logger, raw_struct).build(node.inputs, factories, imported_data)
 
         node.outputs.clear()
-        for sock_identifier, raw_struct in outputs:
-            with self.logger.add_fail(f"Add socket: {sock_identifier} ot node {node.name}"):
+        for sock_identifier, raw_struct in self._struct.get("outputs", dict()).items():
+            with self.logger.add_fail("Add out socket",
+                                      f"Tree: {node.id_data.name}, Node {node.name}, Sock: {sock_identifier}"):
                 factories.sock(sock_identifier, self.logger, raw_struct).build(node.outputs, factories, imported_data)
 
         if hasattr(node, 'load_from_json'):
             with self.logger.add_fail("Setting advance node properties",
                                       f'Tree: {node.id_data.name}, Node: {node.name}'):
                 node.load_from_json(self._struct, self.version)
-
-    def read(self):
-        """Reads node attributes from node structure, returns (attr_name, value)"""
-        with self.logger.add_fail("Reading node attributes"):
-            attrs_struct = self._struct["attributes"]
-            attributes = self.read_collection(attrs_struct)
-
-        with self.logger.add_fail("Reading node properties"):
-            props_struct = self._struct["properties"]
-            properties = self.read_collection(props_struct)
-
-        with self.logger.add_fail("Reading input sockets"):
-            input_struct = self._struct["inputs"]
-            inputs = self.read_collection(input_struct)
-
-        with self.logger.add_fail("Reading output sockets"):
-            output_struct = self._struct["outputs"]
-            outputs = self.read_collection(output_struct)
-
-        return attributes, properties, inputs, outputs
 
     def read_bl_type(self):
         return self._struct['bl_idname']
@@ -641,7 +593,9 @@ class SocketStruct(Struct):
             "bl_idname": "",
             "name": "",
             "tree": "",  # util information for group nodes about the name of their node tree
-            "attributes": dict(),
+            "attributes": {
+                "hide": False,
+            },
             "properties": dict(),
         }
         self.identifier = identifier
@@ -651,11 +605,10 @@ class SocketStruct(Struct):
     def export(self, socket, factories, dependencies):
         self._struct['bl_idname'] = socket.bl_idname
         self._struct['name'] = socket.name
-        if hasattr(socket.node, 'node_tree'):
-            self._struct['tree'] = socket.node.node_tree.name
-        else:
-            del self._struct['tree']
-        self._struct['attributes']['hide'] = socket.hide
+
+        _set_optional(self._struct, 'tree', socket.node.node_tree.name if hasattr(socket.node, 'node_tree') else '')
+        _set_optional(self._struct["attributes"], 'hide', socket.hide)
+        _set_optional(self._struct, "attributes", self._struct["attributes"])
 
         for prop_name in socket.keys():
             prop = BPYProperty(socket, prop_name)
@@ -663,11 +616,13 @@ class SocketStruct(Struct):
                 raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
                 if raw_struct is not None:
                     self._struct["properties"][prop.name] = raw_struct
+        _set_optional(self._struct, "properties", self._struct["properties"])
 
         return self._struct
 
     def build(self, sockets, factories, imported_structs):
-        name, group_tree_name, attributes, properties = self.read()
+        name = self._struct['name']
+        group_tree_name = self._struct.get('tree')
 
         # check whether the socket is of group tree
         if group_tree_name is not None:
@@ -678,33 +633,20 @@ class SocketStruct(Struct):
         else:
             identifier = self.identifier
 
-        # create the socket in the method because identifier is hidden is shown only inside the class
+        # create the socket in the method because identifier(name) is hidden is shown only inside the class
         socket = sockets.new(self.read_bl_type(), name, identifier=identifier)
 
-        for attr_name, attr_value in attributes:
+        for attr_name, attr_value in self._struct.get("attributes", dict()).items():
             with self.logger.add_fail(
                     "Setting socket attribute",  # socket.node can be None sometimes 0_o
                     f'Tree: {socket.id_data.name}, socket: {socket.name}, attr: {attr_name}'):
                 factories.prop(attr_name, self.logger, attr_value).build(socket, factories, imported_structs)
 
-        for prop_name, prop_value in properties:
+        for prop_name, prop_value in self._struct.get("properties", dict()).items():
             with self.logger.add_fail(  # I think when socket is just created socket.node is None due Blender limitation
                     "Setting socket property",
                     f'Tree: {socket.id_data.name}, socket: {socket.name}, prop: {prop_name}'):
                 factories.prop(prop_name, self.logger, prop_value).build(socket, factories, imported_structs)
-
-    def read(self):
-        with self.logger.add_fail("Reading socket attributes"):
-            attrs_struct = self._struct["attributes"]
-            attributes = self.read_collection(attrs_struct)
-            name = self._struct['name']
-            tree = self._struct.get('tree')
-
-        with self.logger.add_fail("Reading socket properties"):
-            props_struct = self._struct["properties"]
-            properties = self.read_collection(props_struct)
-
-        return name, tree, attributes, properties
 
     def read_bl_type(self) -> str:
         with self.logger.add_fail("Reading socket bl_idname"):
@@ -719,7 +661,6 @@ class InterfaceStruct(Struct):
             "bl_idname": "",
             "name": "",
             "properties": dict(),
-            "attributes": dict()
         }
         self.identifier = identifier
         self.logger = logger
@@ -733,43 +674,25 @@ class InterfaceStruct(Struct):
             prop = BPYProperty(socket, prop_name)
             if prop.is_valid and prop.is_to_save:
                 raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
-                self._struct["properties"][prop.name] = raw_struct
+                if raw_struct is not None:
+                    self._struct["properties"][prop.name] = raw_struct
+        _set_optional(self._struct, "properties", self._struct["properties"])
 
         return self._struct
 
     def build(self, sockets, factories, imported_structs):
-        attributes, properties, name = self.read()
-
+        name = self._struct["name"]
         # create the socket in the method because identifier is hidden is shown only inside the class
-        with self.logger.add_fail("Create interface socket"):
-            interface_class = bpy.types.NodeSocketInterface.bl_rna_get_subclass_py(self.read_bl_type())
-            socket_type = interface_class.bl_socket_idname
-            socket = sockets.new(socket_type, name)  # the method gives its own identifier
-            imported_structs[self.type, socket.id_data.name, self.identifier] = socket.identifier
+        interface_class = bpy.types.NodeSocketInterface.bl_rna_get_subclass_py(self.read_bl_type())
+        socket_type = interface_class.bl_socket_idname
+        socket = sockets.new(socket_type, name)  # the method gives its own identifier
+        imported_structs[self.type, socket.id_data.name, self.identifier] = socket.identifier
 
-        for attr_name, attr_value in attributes:
-            with self.logger.add_fail(
-                    "Setting interface socket attribute",  # socket.node can be None sometimes 0_o
-                    f'Tree: {socket.id_data.name}, socket: {socket.name}, attr: {attr_name}'):
-                factories.prop(attr_name, self.logger, attr_value).build(socket, factories, imported_structs)
-
-        for prop_name, prop_value in properties:
+        for prop_name, prop_value in self._struct.get("properties", dict()).items():
             with self.logger.add_fail(
                     "Setting interface socket property",
                     f'Tree: {socket.id_data.name}, socket: {socket.name}, prop: {prop_name}'):
                 factories.prop(prop_name, self.logger, prop_value).build(socket, factories, imported_structs)
-
-    def read(self):
-        with self.logger.add_fail("Reading interface socket attributes"):
-            attrs_struct = self._struct["attributes"]
-            attributes = self.read_collection(attrs_struct)
-            name = self._struct["name"]
-
-        with self.logger.add_fail("Reading interface socket properties"):
-            props_struct = self._struct["properties"]
-            properties = self.read_collection(props_struct)
-
-        return attributes, properties, name
 
     def read_bl_type(self) -> str:
         with self.logger.add_fail("Reading interface socket bl_idname"):
@@ -783,8 +706,11 @@ class LinkStruct(Struct):
         default_struct = {
             "from_node": "",
             "from_socket": "",  # identifier
+            "from_tree": "",
             "to_node": "",
-            "to_socket": ""}  # identifier
+            "to_socket": "",   # identifier
+            "to_tree": "",
+        }
         self._struct = structure or default_struct
         self.logger = logger
 
@@ -792,19 +718,28 @@ class LinkStruct(Struct):
         self._struct["from_node"] = link.from_node.name
         self._struct["from_socket"] = link.from_socket.identifier
         if hasattr(link.from_node, 'node_tree'):
-            self._struct["from_tree"] = link.from_node.node_tree.name
+            _set_optional(self._struct, 'from_tree', link.from_node.node_tree.name)
         elif link.from_node.bl_idname == 'NodeGroupInput':
-            self._struct["from_tree"] = link.id_data.name
+            _set_optional(self._struct, "from_tree", link.id_data.name)
+        else:
+            _set_optional(self._struct, "from_tree", "")
         self._struct["to_node"] = link.to_node.name
         self._struct["to_socket"] = link.to_socket.identifier
         if hasattr(link.to_node, 'node_tree'):
-            self._struct["to_tree"] = link.to_node.node_tree.name
+            _set_optional(self._struct, "to_tree", link.to_node.node_tree.name)
         elif link.to_node.bl_idname == 'NodeGroupOutput':
-            self._struct["to_tree"] = link.id_data.name
+            _set_optional(self._struct, "to_tree", link.id_data.name)
+        else:
+            _set_optional(self._struct, "to_tree", "")
         return self._struct
 
     def build(self, tree, factories: StructFactory, imported_structs: OldNewNames):
-        from_node_name, from_sock_identifier, from_tree, to_node_name, to_sock_identifier, to_tree = self.read()
+        from_node_name = self._struct["from_node"]
+        from_sock_identifier = self._struct["from_socket"]
+        from_tree = self._struct.get("from_tree")
+        to_node_name = self._struct["to_node"]
+        to_sock_identifier = self._struct["to_socket"]
+        to_tree = self._struct.get("to_tree")
 
         # all nodes can has different names
         from_node_new_name = imported_structs[(factories.node.type, tree.name, from_node_name)]
@@ -826,11 +761,6 @@ class LinkStruct(Struct):
         to_socket = self._search_socket(to_node, to_sock_identifier, "INPUT")
         if from_socket and to_socket:
             tree.links.new(to_socket, from_socket)
-
-    def read(self):
-        with self.logger.add_fail("Read socket data"):
-            return self._struct["from_node"], self._struct["from_socket"], self._struct.get("from_tree"), \
-                   self._struct["to_node"], self._struct["to_socket"], self._struct.get("to_tree")
 
     def _search_socket(self, node, socket_identifier: str, sock_type):
         with self.logger.add_fail(f"Building link, trying to find socket {socket_identifier}"):
@@ -868,42 +798,40 @@ class PropertyStruct(Struct):
                 else:
                     return None
             else:
-                return prop.value
+                # default values should be persistent per Sverchok releases - no need to save
+                if prop.value != prop.default_value:
+                    return prop.value
+                else:
+                    return None
 
     def build(self, obj, factories: StructFactory, imported_structs: OldNewNames):
-        with self.logger.add_fail("Assigning value", f"Name: {self.name}"):
-            prop = BPYProperty(obj, self.name)
+        prop = BPYProperty(obj, self.name)
 
-            # this is structure (pointer property)
-            if isinstance(self._struct, dict):
-                pointer_type, old_obj_name = self.read()
-                if pointer_type == BPYPointers.NODE:
-                    new_name = imported_structs[(StrTypes.get_type(pointer_type), obj.id_data.name, old_obj_name)]
-                    # this should work in case obj is a node or socket
-                    # but in other cases probably extra information should be kept in the property structure
-                    data_block = obj.id_data.nodes[new_name]
-                else:
-                    new_name = imported_structs[(StrTypes.get_type(pointer_type), '', old_obj_name)]
-                    data_block = pointer_type.collection[new_name]
-                setattr(obj, self.name, data_block)
-
-            # this is collection property
-            elif prop.type == 'COLLECTION':
-                self._set_collection_values(obj, factories, imported_structs)
-
-            # this is property
-            elif prop.is_valid:
-                prop.value = self._struct
-
-            # this is attribute
-            else:
-                setattr(obj, self.name, self._struct)
-
-    def read(self) -> Tuple[BPYPointers, str]:
-        with self.logger.add_fail(f"Reading property (value): {self.name}"):
+        # this is structure (pointer property)
+        if isinstance(self._struct, dict):
             pointer_type = BPYPointers[self._struct["type"]]
             old_obj_name = self._struct["value"]
-            return pointer_type, old_obj_name
+            if pointer_type == BPYPointers.NODE:
+                new_name = imported_structs[(StrTypes.get_type(pointer_type), obj.id_data.name, old_obj_name)]
+                # this should work in case obj is a node or socket
+                # but in other cases probably extra information should be kept in the property structure
+                data_block = obj.id_data.nodes[new_name]
+            else:
+                new_name = imported_structs[(StrTypes.get_type(pointer_type), '', old_obj_name)]
+                data_block = pointer_type.collection[new_name]
+            setattr(obj, self.name, data_block)
+
+        # this is collection property
+        elif prop.type == 'COLLECTION':
+            self._set_collection_values(obj, factories, imported_structs)
+
+        # this is property
+        elif prop.is_valid:
+            prop.value = self._struct
+
+        # this is attribute
+        else:
+            setattr(obj, self.name, self._struct)
 
     def _export_collection_values(self, col_prop, dependencies):
         collection = []
@@ -945,11 +873,10 @@ class MaterialStruct(Struct):
         return self._struct
 
     def build(self, factories, imported_structs):
-        with self.logger.add_fail("Build material", f"Name: {self.name}"):
-            material = bpy.data.materials.get(self.name)
-            if material is None:
-                material = bpy.data.materials.new(self.name)
-            imported_structs[(StrTypes.MATERIAL, '', self.name)] = material.name
+        material = bpy.data.materials.get(self.name)
+        if material is None:
+            material = bpy.data.materials.new(self.name)
+        imported_structs[(StrTypes.MATERIAL, '', self.name)] = material.name
 
 
 class CollectionStruct(Struct):
@@ -965,12 +892,11 @@ class CollectionStruct(Struct):
         return self._struct
 
     def build(self, factories, imported_structs):
-        with self.logger.add_fail("Build collection", f"Name: {self.name}"):
-            collection = bpy.data.collections.get(self.name)
-            if collection is None:
-                collection = bpy.data.collections.new(self.name)
-                bpy.context.scene.collection.children.link(collection)
-            imported_structs[(StrTypes.COLLECTION, '', self.name)] = collection.name
+        collection = bpy.data.collections.get(self.name)
+        if collection is None:
+            collection = bpy.data.collections.new(self.name)
+            bpy.context.scene.collection.children.link(collection)
+        imported_structs[(StrTypes.COLLECTION, '', self.name)] = collection.name
 
 
 class OldNewNames:  # todo can't this be regular dictionary?
@@ -996,3 +922,10 @@ def _ordered_links(tree) -> Generator[bpy.types.NodeLink]:
         for input_socket in node.inputs:
             for link in input_socket.links:
                 yield link
+
+
+def _set_optional(data: dict, key, value, condition=None):
+    if condition if condition is not None else value:
+        data[key] = value
+    else:
+        del data[key]
