@@ -117,6 +117,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
         options={'HIDDEN'})
 
     id_tree: bpy.props.StringProperty()
+    compact: bpy.props.BoolProperty(default=True, description="Compact representation of the JSON file")
     compress: bpy.props.BoolProperty()
     selected_only: bpy.props.BoolProperty(name="Selected only")
 
@@ -141,7 +142,8 @@ class SvNodeTreeExporter(bpy.types.Operator):
             warning(msg)
             return {'CANCELLED'}
 
-        json.dump(layout_dict, open(destination_path, 'w'), indent=2)  # json_struct does not expect sort_keys = True
+        indent = None if self.compact else 2
+        json.dump(layout_dict, open(destination_path, 'w'), indent=indent)  # json_struct doesnt expect sort_keys = True
         msg = 'exported to: ' + destination_path
         self.report({"INFO"}, msg)
         info(msg)
@@ -179,6 +181,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
             col = self.layout.column()  # old syntax in <= 2.83
 
         col.use_property_split = True
+        col.prop(self, 'compact')
         col.prop(self, 'selected_only')
         col.prop(self, 'compress', text="Create ZIP archive")
 
