@@ -146,11 +146,14 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         if 'geom' not in node_data:
             return  # looks like a node was empty when it was imported
         geom = node_data['geom']
-        name = node_data['params']["obj_name"]
+        if import_version < 1.0:
+            name = node_data['params']["obj_name"]
+        else:
+            name = self.obj_name
         geom_dict = json.loads(geom)
 
         if not geom_dict:
-            print(self.name, 'contains no flatten geom')
+            self.debug(f'{self.name}, contains no flatten geom')
             return
 
         unrolled_geom = unflatten(geom_dict)

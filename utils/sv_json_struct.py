@@ -660,6 +660,9 @@ class InterfaceStruct(Struct):
         default_struct = {
             "bl_idname": "",
             "name": "",
+            "attributes": {
+                "hide_value": False,
+            },
             "properties": dict(),
         }
         self.identifier = identifier
@@ -669,6 +672,9 @@ class InterfaceStruct(Struct):
     def export(self, socket, factories, dependencies):
         self._struct['bl_idname'] = socket.bl_idname
         self._struct['name'] = socket.name
+
+        _set_optional(self._struct["attributes"], 'hide_value', socket.hide_value)
+        _set_optional(self._struct, "attributes", self._struct["attributes"])
 
         for prop_name in socket.keys():
             prop = BPYProperty(socket, prop_name)
@@ -687,6 +693,12 @@ class InterfaceStruct(Struct):
         socket_type = interface_class.bl_socket_idname
         socket = sockets.new(socket_type, name)  # the method gives its own identifier
         imported_structs[self.type, socket.id_data.name, self.identifier] = socket.identifier
+
+        for attr_name, attr_value in self._struct.get("attributes", dict()).items():
+            with self.logger.add_fail(
+                    "Setting interface socket attribute",
+                    f'Tree: {socket.id_data.name}, socket: {socket.name}, attr: {attr_name}'):
+                factories.prop(attr_name, self.logger, attr_value).build(socket, factories, imported_structs)
 
         for prop_name, prop_value in self._struct.get("properties", dict()).items():
             with self.logger.add_fail(
