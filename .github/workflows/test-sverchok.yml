@@ -46,7 +46,7 @@ jobs:
             rm $BLENDER_TAR
 
             pushd blender/
-            PYTHON=${BLENDER_VERSION}/python/bin/python3.9m
+            PYTHON=${BLENDER_VERSION}/python/bin/python3.9
             $PYTHON -m ensurepip
             $PYTHON -m pip install --upgrade pip setuptools wheel
             $PYTHON -m pip install --upgrade scipy geomdl scikit-image
