@@ -16,10 +16,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.7
+    - name: Set up Python 3.9
       uses: actions/setup-python@v2
       with:
-        python-version: 3.7
+        python-version: 3.9
     - name: Cache
       uses: actions/cache@v2
       with:
@@ -28,8 +28,8 @@ jobs:
         key: empty
     - name: Install Blender
       run: |
-        BLENDER_VERSION=2.92
-        BLENDER_URL=https://ftp.nluug.nl/pub/graphics/blender/release/Blender2.92/blender-2.92.0-linux64.tar.xz
+        BLENDER_VERSION=2.93
+        BLENDER_URL=https://ftp.nluug.nl/pub/graphics/blender/release/Blender2.93/blender-2.93.0-linux-x64.tar.xz
         SVERCHOK_DIR=scripts/addons/sverchok
         BLENDER_TAR=$(basename $BLENDER_URL)
         BLENDER_DIR=$(basename $BLENDER_URL .tar.xz)
@@ -46,7 +46,7 @@ jobs:
             rm $BLENDER_TAR
 
             pushd blender/
-            PYTHON=${BLENDER_VERSION}/python/bin/python3.7m
+            PYTHON=${BLENDER_VERSION}/python/bin/python3.9m
             $PYTHON -m ensurepip
             $PYTHON -m pip install --upgrade pip setuptools wheel
             $PYTHON -m pip install --upgrade scipy geomdl scikit-image
