@@ -553,14 +553,13 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         '''
         if import_version < 1.0:
             params = node_data.get('params')
-        else:
-            # really not good thing to do, the import should not relay on structure of the importer module
-            params = node_data.get('properties')
-        if params:
-
             script_name = params.get('script_name')
             script_content = params.get('script_str')
+        else:
+            script_name = self.script_name
+            script_content = self.script_str
 
+        if script_name:
             with self.sv_throttle_tree_update():
                 texts = bpy.data.texts
                 if script_name and not (script_name in texts):

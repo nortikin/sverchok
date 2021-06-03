@@ -178,13 +178,13 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
 
             # rename if obj existed
             if not obj.name == name:
-                node_data['params']["obj_name"] = obj.name
                 self.obj_name = obj.name
+                if import_version < 1.0:
+                    node_data['params']["obj_name"] = obj.name  # I guess the name was used for further importing
 
     def save_to_json(self, node_data: dict):
         # generate flat data, and inject into incoming storage variable
         obj = self.node_dict.get(hash(self))
-        print(obj)
         if not obj:
             self.error('failed to obtain local geometry, can not add to json')
             return

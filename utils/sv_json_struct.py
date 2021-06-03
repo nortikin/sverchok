@@ -35,7 +35,9 @@ class StructFactory:
             StrTypes.LINK: 'link',
             StrTypes.PROP: 'prop',
             StrTypes.MATERIAL: 'material',
-            StrTypes.COLLECTION: 'collection'
+            StrTypes.COLLECTION: 'collection',
+            StrTypes.IMAGE: 'image',
+            StrTypes.TEXTURE: 'texture',
         }
 
         self.tree: Optional[Type[Struct]] = None
@@ -46,6 +48,8 @@ class StructFactory:
         self.prop: Optional[Type[Struct]] = None
         self.material: Optional[Type[Struct]] = None
         self.collection: Optional[Type[Struct]] = None
+        self.image: Optional[Type[Struct]] = None
+        self.texture: Optional[Type[Struct]] = None
 
         for factory in factories:
             if factory.type in self._factory_names:
@@ -83,6 +87,8 @@ class StrTypes(Enum):
     PROP = auto()
     MATERIAL = auto()
     COLLECTION = auto()
+    IMAGE = auto()
+    TEXTURE = auto()
 
     def get_bpy_pointer(self) -> BPYPointers:
         mapping = {
@@ -90,6 +96,8 @@ class StrTypes(Enum):
             StrTypes.NODE: BPYPointers.NODE,
             StrTypes.MATERIAL: BPYPointers.MATERIAL,
             StrTypes.COLLECTION: BPYPointers.COLLECTION,
+            StrTypes.IMAGE: BPYPointers.IMAGE,
+            StrTypes.TEXTURE: BPYPointers.TEXTURE,
         }
         if self not in mapping:
             raise TypeError(f'Given StrType: {self} is not a data block')
@@ -102,6 +110,8 @@ class StrTypes(Enum):
             BPYPointers.NODE: StrTypes.NODE,
             BPYPointers.MATERIAL: StrTypes.MATERIAL,
             BPYPointers.COLLECTION: StrTypes.COLLECTION,
+            BPYPointers.IMAGE: StrTypes.IMAGE,
+            BPYPointers.TEXTURE: StrTypes.TEXTURE,
         }
         if block_type not in mapping:
             raise TypeError(f'Given block type: {block_type} is not among supported: {mapping.keys()}')
@@ -487,6 +497,7 @@ class NodeStruct(Struct):
                 "parent": None,
             },
             "properties": dict(),
+            "advance_properties": dict(),
             "inputs": dict(),
             "outputs": dict(),
             "bl_idname": ""
@@ -540,7 +551,9 @@ class NodeStruct(Struct):
         _set_optional(self._struct, "outputs", self._struct["outputs"])
 
         if hasattr(node, 'save_to_json'):  # todo pass empty dictionary?
-            node.save_to_json(self._struct)
+            node.save_to_json(self._struct["advance_properties"])
+
+        _set_optional(self._struct, "advance_properties", self._struct["advance_properties"])
 
         return self._struct
 
@@ -578,7 +591,7 @@ class NodeStruct(Struct):
         if hasattr(node, 'load_from_json'):
             with self.logger.add_fail("Setting advance node properties",
                                       f'Tree: {node.id_data.name}, Node: {node.name}'):
-                node.load_from_json(self._struct, self.version)
+                node.load_from_json(self._struct.get("advance_properties", dict()), self.version)
 
     def read_bl_type(self):
         return self._struct['bl_idname']
@@ -859,6 +872,9 @@ class PropertyStruct(Struct):
     def _set_collection_values(self, obj, factories, imported_structs):
         """Assign Python data to collection property"""
         collection = getattr(obj, self.name)
+        # it is possible that collection is not empty in case a node added something into it during initialization
+        # but the property always consider the collection property to be empty
+        collection.clear()
         for item_index, item_values in enumerate(self._struct):
             # Some collections can be empty, in this case they should be expanded to be able to get new values
             if item_index == len(collection):
@@ -909,6 +925,45 @@ class CollectionStruct(Struct):
             collection = bpy.data.collections.new(self.name)
             bpy.context.scene.collection.children.link(collection)
         imported_structs[(StrTypes.COLLECTION, '', self.name)] = collection.name
+
+
+class ImageStruct(Struct):
+    type = StrTypes.IMAGE
+
+    def __init__(self, name, logger=None, struct=None):
+        default_struct = {}
+        self.name = name
+        self.logger = logger
+        self._struct = struct or default_struct
+
+    def export(self, image, factories, dependencies):
+        return self._struct
+
+    def build(self, factories, imported_structs):
+        # the file should have the image already
+        # it could be convenient if importer could generate empty images if necessary
+        image = bpy.data.images.get(self.name)
+        if image is not None:
+            imported_structs[(StrTypes.IMAGE, '', self.name)] = image.name
+
+
+class TextureStruct(Struct):
+    type = StrTypes.TEXTURE
+
+    def __init__(self, name, logger=None, struct=None):
+        default_struct = {}
+        self.name = name
+        self.logger = logger
+        self._struct = struct or default_struct
+
+    def export(self, texture, factories, dependencies):
+        return self._struct
+
+    def build(self, factories, imported_structs):
+        # it could be convenient if importer could generate empty textures if necessary
+        texture = bpy.data.textures.get(self.name)
+        if texture is not None:
+            imported_structs[(StrTypes.TEXTURE, '', self.name)] = texture.name
 
 
 class OldNewNames:  # todo can't this be regular dictionary?
