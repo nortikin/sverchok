@@ -36,9 +36,10 @@ jobs:
         BLENDER_TAR=$(basename $BLENDER_URL)
         BLENDER_DIR=$(basename $BLENDER_URL .tar.xz)
         echo "blender dir ${BLENDER_DIR}"
-        if [ ! -f installation/blender/blender-2.93.0-linux-x64 ]
+        mv "installation/blender/$BLENDER_DIR" installation/blender/blender
+        if [ ! -f installation/blender/blender ]
         then
-            echo " ! -f installation/blender/blender-2.93.0-linux-x64 ?...currently in the then clause "
+            echo " ! -f installation/blender/blender ?...currently in the then clause "
             mkdir -p installation
             cd installation
             wget $BLENDER_URL
