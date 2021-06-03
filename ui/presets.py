@@ -336,7 +336,7 @@ class SverchPresetReplaceOperator(bpy.types.Operator):
         return "Load node settings from the preset `{}' (overwrite current settings)".format(properties.preset_name)
 
     def execute(self, context):
-        ntree = context.space_data.node_tree
+        ntree = context.space_data.path[-1].node_tree  # in case if the node in a node group
         node = ntree.nodes[self.node_name]
         id_tree = ntree.name
         ng = bpy.data.node_groups[id_tree]

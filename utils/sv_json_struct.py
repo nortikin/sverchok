@@ -11,6 +11,7 @@ import inspect
 import sys
 from abc import abstractmethod, ABC
 from enum import Enum, auto
+from itertools import chain
 from typing import Type, Generator, TYPE_CHECKING, Dict, Tuple, Optional, List, Any
 
 import bpy
@@ -73,7 +74,7 @@ class StructFactory:
         module_classes = inspect.getmembers(sys.modules[__name__],
                                             lambda member: inspect.isclass(member) and member.__module__ == __name__)
         for class_name, module_class in module_classes:
-            if hasattr(module_class, 'type') and module_class.type in StrTypes:
+            if hasattr(module_class, 'type') and isinstance(module_class.type, StrTypes):
                 factory_classes.append(module_class)
         return cls(factory_classes)
 
@@ -362,6 +363,12 @@ class NodePresetFileStruct(Struct):
             # all nodes should be as if they was imported with new names before linking
             for node in tree.nodes:
                 imported_structs[StrTypes.NODE, tree.name, node.name] = node.name
+
+            # in case the node is inside group tree it should be also imported with its sockets
+            # to be able connect links to group out/in nodes
+            imported_structs[StrTypes.TREE, '', tree.name] = tree.name
+            for sock in chain(tree.inputs, tree.outputs):
+                imported_structs[StrTypes.INTERFACE, tree.name, sock.identifier] = sock.identifier
 
             # import the node and rebuild the links if possible
             node_struct.build(node, factories, imported_structs)
