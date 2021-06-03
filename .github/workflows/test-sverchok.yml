@@ -28,11 +28,14 @@ jobs:
         key: empty
     - name: Install Blender
       run: |
+        echo "start"
         BLENDER_VERSION=2.93
         BLENDER_URL=https://ftp.nluug.nl/pub/graphics/blender/release/Blender2.93/blender-2.93.0-linux-x64.tar.xz
         SVERCHOK_DIR=scripts/addons/sverchok
+        echo "sverchok dir ${SVERCHOK_DIR}"
         BLENDER_TAR=$(basename $BLENDER_URL)
         BLENDER_DIR=$(basename $BLENDER_URL .tar.xz)
+        echo "blender dir ${BLENDER_DIR}"
         if [ ! -f installation/blender/blender ]
         then 
             mkdir -p installation
