@@ -43,8 +43,8 @@ jobs:
             cd installation
             wget $BLENDER_URL
             tar xf $BLENDER_TAR
-            if [ -d blender ]
-            then rm -rf blender
+            if [ -d {$BLENDER_DIR} ]
+            then rm -rf {$BLENDER_DIR}
             fi
             mv $BLENDER_DIR blender
             rm $BLENDER_TAR
