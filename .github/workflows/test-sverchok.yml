@@ -54,13 +54,11 @@ jobs:
             #   exho "removed ${BLENDER_DIR}"
             # fi
             
-            echo "content of installation/blender"
-            cd blender
-            ls
-            cd ..
-
-            mv $BLENDER_DIR blender
             rm $BLENDER_TAR
+            rm blender
+            mkdir -p blender
+
+            mv blender-2.93.0-stable+blender-v293-release.84da05a8b806-linux.x86_64-release blender
 
             pushd blender/
             PYTHON=${BLENDER_VERSION}/python/bin/python3.9
