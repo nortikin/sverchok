@@ -55,13 +55,16 @@ DEFAULT_CONVERSION = ConversionPolicies.DEFAULT.conversion
 
 def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
-    self.node.process_node(context)
+    if self.node is not None:  # https://developer.blender.org/T88587
+        self.node.process_node(context)
 
 
 def update_interface(self, context):
     """Update group node sockets and update it"""
     # For now I don't think that `hide value` property should call this function, but in some cases it could be useful
     # if interface socket will get min and max value parameter then probably Sv sockets also should get it
+    if not self.id_data.group_node_name:  # initialization tree
+        return
     self.id_data.update_sockets()
     group_tree = self.id_data
     group_node = group_tree.get_update_path()[-1]

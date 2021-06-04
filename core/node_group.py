@@ -100,6 +100,9 @@ class SvGroupTree(bpy.types.NodeTree):
     def update(self):
         """trigger on links or nodes collections changes, on assigning tree to a group node"""
         # When group input or output nodes are connected some extra work should be done
+        if 'init_tree' in self.id_data:  # tree is building by a script - let it do this
+            return
+
         self.check_last_socket()  # Should not be too expensive to call it each update
 
         if self.name not in bpy.data.node_groups:  # load new file event
@@ -202,6 +205,11 @@ class SvGroupTree(bpy.types.NodeTree):
         1. Node property of was changed
         2. ???
         """
+        # the method can be called during tree reconstruction from JSON file
+        # in this case we does not intend doing any updates
+        if not self.group_node_name:  # initialization tree
+            return
+
         self.handler.send(GroupEvent(GroupEvent.NODES_UPDATE, self.get_update_path(), updated_nodes=nodes))
 
     def parent_nodes(self) -> Iterator['SvGroupTreeNode']:
@@ -244,6 +252,20 @@ class SvGroupTree(bpy.types.NodeTree):
     def throttle_update(self):
         """useless, for API consistency here"""
         yield self
+
+    @contextmanager
+    def init_tree(self):
+        """It suppresses calling the update method of nodes,
+        main usage of it is during generating tree with python (JSON import)"""
+        is_already_initializing = 'init_tree' in self
+        if is_already_initializing:
+            yield self
+        else:
+            self['init_tree'] = ''
+            try:
+                yield self
+            finally:
+                del self['init_tree']
 
     def get_update_path(self) -> List['SvGroupTreeNode']:
         """
@@ -421,6 +443,9 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
                 return node
 
     def update(self):
+        if 'init_tree' in self.id_data:  # tree is building by a script - let it do this
+            return
+
         # this code should work only first time a socket was added
         if self.node_tree:
             for n_in_s, t_in_s in zip(self.inputs, self.node_tree.inputs):

@@ -62,7 +62,6 @@ class ExportImportEachNode(EmptyTreeTestCase):
     @property
     def new_known_troubles(self) -> set:
         return {'SvGroupInputsNodeExp', 'SvGroupOutputsNodeExp',  # todo this two can be removed with monads
-                'SvInputSwitchNodeMOD',  # sv_update method of this node is beyond my ability to understand such code
                 'SvObjInLite',  # this one just unable to save empty object
                 }
 
