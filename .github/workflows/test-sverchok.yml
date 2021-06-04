@@ -34,6 +34,8 @@ jobs:
         SVERCHOK_DIR=scripts/addons/sverchok
         BLENDER_TAR=$(basename $BLENDER_URL)
         BLENDER_DIR=$(basename $BLENDER_URL .tar.xz)
+        RELEASE=blender-2.93.0-stable+blender-v293-release.84da05a8b806-linux.x86_64-release
+
         echo "blender basename from blender url: ${BLENDER_DIR}"
 
         if [ ! -f installation/blender/$BLENDER_DIR ]
@@ -45,10 +47,6 @@ jobs:
             wget -nv $BLENDER_URL  #not verbose, but not quiet.
             tar xf $BLENDER_TAR
             
-            echo "ls start"
-            ls
-            echo "ls end"
-
             # if [ -d $BLENDER_DIR ]
             #   then rm -rf $BLENDER_DIR
             #   exho "removed ${BLENDER_DIR}"
@@ -59,16 +57,7 @@ jobs:
             # mkdir -p blender
             echo "removing content of blender dir"
             rm -r blender/*
-
-            RELEASE=blender-2.93.0-stable+blender-v293-release.84da05a8b806-linux.x86_64-release
-
             mv $RELEASE blender
-
-            # echo "peak inside blender dir now!"
-            # ls blender/$RELEASE
-            # echo "------"
-            # ls blender/$RELEASE/2.93/python/bin/*
-            # echo "end peak"
 
             pushd blender/$RELEASE/
             PYTHON=${BLENDER_VERSION}/python/bin/python3.9
@@ -89,5 +78,5 @@ jobs:
       run: |
         bash ./run_tests.sh
       env:
-        BLENDER: ./installation/blender/blender-softwaregl
+        BLENDER: ./installation/blender/$RELEASE/blender-softwaregl
 
