@@ -24,7 +24,29 @@ if TYPE_CHECKING:
     from sverchok.utils.sv_json_import import FailsLog
 
 
+"""
+Terminology:
+
+Structure - anything more complex than just a value,
+for example pointer type can keep several values like its type and name.
+Also structures can include other ones.
+Similar to Blender struct object
+https://docs.blender.org/api/current/bpy.types.bpy_struct.html#bpy.types.bpy_struct
+
+Data block ro block - this is top structures in their hierarchy,
+for example a node tree is a data block but all inner structures (nodes, links, sockets) are not.
+https://docs.blender.org/api/current/bpy.types.ID.html#bpy.types.ID.copy
+"""
+
+
 class StructFactory:
+    """This is collection of struct classes
+    The idea is to put all structs into the class which should be used during import/export of a tree
+    other structures can use other ones to include their in the process
+    For example there could be several classes which can build a node differently
+    before starting of the serialization process we should choose which node struct to use
+    then a tree structure can use the node structure that we chose"""
+
     # it's possible to use version factory in the code to make the code more specific
     # if struct_factories.link.version == 0.2:
     def __init__(self, factories: List[Type[Struct]]):
@@ -80,6 +102,10 @@ class StructFactory:
 
 
 class StrTypes(Enum):
+    """All structures should have their type (except file structures =D)
+    the type helps to identify their purpose
+    for example for exporting nodes only structures with NODE type can be used"""
+
     TREE = auto()
     NODE = auto()
     SOCK = auto()
@@ -132,6 +158,31 @@ OldNewNames = Dict[Tuple[StrTypes, OwnerName, OldName], NewName]
 
 
 class Struct(ABC):
+    """All structures should include a dictionary with description of the structure organization,
+    methods for exporting and importing related to their purpose data
+    It's possible to override version inside children classes but
+    in this case its version should be kept in its dictionary
+    And the way to figure it out which structure should be used is not implemented for such case.
+    So if new version is required it should be changed in this class
+    this information can be used in a file structure to find appropriate other structures
+
+    Example:
+    class FileStruct:
+        def build(tree):
+            if self._struct["export_version"] < 1.1:
+                factories.node = NodeStruct
+            else:
+                factories.node = NewNodeStruct
+
+    Or version can be used like this:
+    class NodeStruct:
+        def build(node, factories, imported):
+            if self.version < 1.1:
+                node.load_from_json(self._struct["advance_properties"]
+            else:
+                pass
+    but in this case FileStruct should implement this - Struct.version = self._struct["export_version"] (hmm... )
+    """
     # I was trying to make API of all abstract method the same between child classes but it looks it's not possible
     # for example to build a node we can send to method a tree where the node should be duilded
     version = 1.0
@@ -155,6 +206,7 @@ class Struct(ABC):
 
 
 class FileStruct(Struct):
+    """Export/import of all or only select nodes of a tree"""
     def __init__(self, name=None, logger: FailsLog = None, struct: dict = None):
         default_struct = {
             "export_version": str(self.version),
@@ -291,6 +343,7 @@ class FileStruct(Struct):
 
 
 class NodePresetFileStruct(Struct):
+    """Export/import one node properties and sockets"""
     def __init__(self, name=None, logger=None, structure=None):
         default_struct = {
             "export_version": str(self.version),
@@ -398,6 +451,7 @@ class NodePresetFileStruct(Struct):
 
 
 class TreeStruct(Struct):
+    """Export/import node, links, tree properties, tree sockets"""
     type = StrTypes.TREE
 
     def __init__(self, name: str, logger: FailsLog, structure: dict = None):
@@ -493,6 +547,9 @@ class TreeStruct(Struct):
 
 
 class NodeStruct(Struct):
+    """Export/import node properties, attributes, sockets. 
+    It can call save_to_json and load_from_json methods of a node if one has them
+    The methods will get empty dictionary for storing advanced properties"""
     type = StrTypes.NODE
 
     def __init__(self, name: str, logger: FailsLog, structure: dict = None):
@@ -609,6 +666,7 @@ class NodeStruct(Struct):
 
 
 class SocketStruct(Struct):
+    """Export/import socket properties, attributes"""
     type = StrTypes.SOCK
 
     def __init__(self, identifier, logger: FailsLog, structure: dict = None):
@@ -678,6 +736,7 @@ class SocketStruct(Struct):
 
 
 class InterfaceStruct(Struct):
+    """Export/import interface socket properties, attributes"""
     type = StrTypes.INTERFACE
 
     def __init__(self, identifier, logger: FailsLog, structure=None):
@@ -736,6 +795,7 @@ class InterfaceStruct(Struct):
 
 
 class LinkStruct(Struct):
+    """Export/import link relationships"""
     type = StrTypes.LINK
 
     def __init__(self, name=None, logger: FailsLog = None, structure: dict = None):
@@ -807,6 +867,9 @@ class LinkStruct(Struct):
 
 
 class PropertyStruct(Struct):
+    """Export/import properties. It includes specific about managing of Blender properties
+    All properties are supported.
+    Structure of the class can be just a value or usual dictionary (in case of a pointer property)"""
     type = StrTypes.PROP
 
     def __init__(self, name: str, logger: FailsLog, structure: dict = None):
@@ -898,6 +961,8 @@ class PropertyStruct(Struct):
 
 
 class MaterialStruct(Struct):
+    """Default structure for materials. Include only its name for now.
+    If a Blender file does not posses the material the empty material will be generated"""
     # this structure can be more complex if we want to save state of the material tree
     type = StrTypes.MATERIAL
 
@@ -919,6 +984,8 @@ class MaterialStruct(Struct):
 
 
 class CollectionStruct(Struct):
+    """Default structure for collections. It includes only its name for now.
+    If a Blender file does not posses the collection the empty collection will be generated"""
     type = StrTypes.COLLECTION
 
     def __init__(self, name, logger=None, struct=None):
@@ -939,6 +1006,7 @@ class CollectionStruct(Struct):
 
 
 class ImageStruct(Struct):
+    """Default image structure. It will only try to find whether the image in a Blender file"""
     type = StrTypes.IMAGE
 
     def __init__(self, name, logger=None, struct=None):
@@ -959,6 +1027,7 @@ class ImageStruct(Struct):
 
 
 class TextureStruct(Struct):
+    """Default texture structure. It will try to find existing texture in a Blender file"""
     type = StrTypes.TEXTURE
 
     def __init__(self, name, logger=None, struct=None):
