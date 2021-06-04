@@ -38,7 +38,7 @@ jobs:
 
         echo "blender basename from blender url: ${BLENDER_DIR}"
 
-        if [ ! -f installation/blender/$BLENDER_DIR ]
+        if [ ! -f installation/blender/$RELEASE ]
         then
             mkdir -p installation
             cd installation
@@ -78,7 +78,7 @@ jobs:
       run: |
         bash ./run_tests.sh
       env:
-        BLENDER:
-            RELEASE=blender-2.93.0-stable+blender-v293-release.84da05a8b806-linux.x86_64-release
-            ./installation/blender/$RELEASE/blender-softwaregl
+        BLENDER: |
+          RELEASE=blender-2.93.0-stable+blender-v293-release.84da05a8b806-linux.x86_64-release
+          ./installation/blender/$RELEASE/blender-softwaregl
 
