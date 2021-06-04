@@ -27,10 +27,13 @@ from mathutils.geometry import (
     intersect_line_line_2d)
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, cross_indices_np
 from sverchok.utils.cad_module_class import CAD_ops
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.geom_2d.intersections import intersect_sv_edges
+from sverchok.utils.math import np_dot
+import numpy as np
+
 
 def order_points(edge, point_list):
     ''' order these edges from distance to v1, then
@@ -182,7 +185,7 @@ def edges_from_ed_inter(ed_inter):
     for e in ed_inter:
         # sort by first element of tuple (distances)
         e_s = sorted(e)
-        e_s = [e for i,e in enumerate(e_s) if e[1]!= e_s[i-1][1]] 
+        e_s = [e for i,e in enumerate(e_s) if e[1]!= e_s[i-1][1]]
         for i in range(1, len(e_s)):
             # if e_s[i-1][1] != e_s[i][1]:
             if(e_s[i-1][1], e_s[i][1])not in edges_out:
@@ -233,7 +236,7 @@ def intersect_edges_2d(verts, edges, epsilon):
                         new_id = e2[1]
                     if new_id == len(verts_out):
                         verts_out.append((vx.x, vx.y, v1.z))
-                
+
                 # first item stores distance to origin, second the vertex id
                 ed_inter[i].append([d_to_1, new_id])
                 ed_inter[j].append([d_to_2, new_id])
@@ -243,6 +246,151 @@ def intersect_edges_2d(verts, edges, epsilon):
 
     return verts_out, edges_out
 
+# adapted from https://stackoverflow.com/a/3252222/16039380
+def perp( a ) :
+    b = np.empty_like(a)
+    b[:,0] = -a[:,1]
+    b[:,1] = a[:,0]
+    return b
+def perp_single( a ) :
+    b = np.empty_like(a)
+    b[0] = -a[1]
+    b[1] = a[0]
+    return b
+def intersect_edges_2d_np(verts, edges):
+    '''Brute force Numpy implementation of edges intersections'''
+    indices = cross_indices_np(len(edges))
+    np_verts = verts if isinstance(verts, np.ndarray) else np.array(verts)
+    np_edges = edges if isinstance(edges, np.ndarray) else np.array(edges)
+    eds = np_edges[indices].reshape(-1, 4)
+    mask = np.invert(np.any([eds[:, 0] == eds[:, 2],
+                             eds[:, 0] == eds[:, 3],
+                             eds[:, 1] == eds[:, 2],
+                             eds[:, 1] == eds[:, 3]],
+                            axis=0))
+    eds2 = eds[mask]
+    indices_m = indices[mask]
+
+    seg_v = np_verts[eds2]
+
+    da = seg_v[:, 1] - seg_v[:, 0]
+    db = seg_v[:, 3] - seg_v[:, 2]
+    dp = seg_v[:, 0] - seg_v[:, 2]
+    # dp2 = seg_v[:,2]- seg_v[:,0]
+    dap = perp(da)
+    denom_a = np_dot(dap, db)
+    num_a = np_dot(dap, dp )
+    n_a = (num_a / denom_a.astype(float))
+    dbp = perp(db)
+    denom_b = np_dot(dbp, da)
+    num_b = np_dot(dbp, -dp )
+    n_b = (num_b / denom_b.astype(float))
+    inter = n_a[:, np.newaxis] * db + seg_v[:, 2]
+    valid_inter = np.all([n_a > 0, n_a < 1, n_b > 0, n_b < 1], axis=0)
+    n_a_m = n_a[valid_inter]
+    n_b_m = n_b[valid_inter]
+    ns = np.concatenate([[n_b_m], [n_a_m]], axis=0).T.ravel()
+
+    indices_m2 = indices_m[valid_inter]
+    i_ravel = indices_m2.ravel()
+
+    inters = inter[valid_inter]
+    new_idx = np.repeat(np.arange(len(inters)) + len(np_verts), 2)
+
+    new_edges = []
+    for i in range(len(edges)):
+        ma = i_ravel == i
+        coef = ns[ma]
+        n_i = new_idx[ma]
+        iid = np.argsort(coef)
+        n_i_sorted = n_i[iid]
+        new_eds = np.concatenate([[np_edges[i, 0]],
+                                  np.repeat(n_i_sorted, 2),
+                                  [np_edges[i,1]]]).reshape(-1,2)
+        new_edges.append(new_eds)
+
+    return np.concatenate([np_verts, inters]).tolist(), np.concatenate(new_edges).tolist()
+def intersect_edges_2d_np_big(verts, edges):
+    '''Brute force Numpy implementation of edges intersections. Avoids to do to it all at once to prevent stack overflow'''
+    np_verts = verts if isinstance(verts, np.ndarray) else np.array(verts)
+    np_edges = edges if isinstance(edges, np.ndarray) else np.array(edges)
+    n = len(edges)
+    n_as, n_bs, indices_m2s, inters_s = [], [], [], []
+    for i in range(n-1):
+
+        np_j = np.arange(i+1, n, dtype=np.int32)
+        edgs_i = np_edges[i]
+        eds_j = np_edges[np_j]
+        mask = np.invert(np.any([edgs_i[np.newaxis, 0] == eds_j[:, 0],
+                                 edgs_i[np.newaxis, 0] == eds_j[:, 1],
+                                 edgs_i[np.newaxis, 1] == eds_j[:, 0],
+                                 edgs_i[np.newaxis, 1] == eds_j[:, 1]],
+                                axis=0))
+        eds_j2 = eds_j[mask]
+        indices_j_m = np_j[mask]
+        seg_j = np_verts[eds_j2]
+        direc_b = seg_j[:, 1] - seg_j[:, 0]
+
+
+        np_i = np.full(len(indices_j_m), i, dtype=np.int32)
+        indices_m = np.stack((np_i, indices_j_m), axis=-1)
+
+        seg_a = np_verts[edgs_i]
+        direc_a = seg_a[1, :]- seg_a[0, :]
+        perp_a = perp_single(direc_a)
+
+        dp = seg_a[np.newaxis, 0, :] - seg_j[:, 0]
+
+        denom_a = np_dot(perp_a[np.newaxis, :], direc_b)
+        dbp = perp(direc_b)
+        denom_b = np_dot(dbp, direc_a[np.newaxis, :])
+        parallel_mask = np.all([denom_a != 0, denom_b != 0], axis=0)
+
+        dp = dp[parallel_mask]
+        denom_a = denom_a[parallel_mask]
+        direc_b = direc_b[parallel_mask]
+        num_a = np_dot(perp_a[np.newaxis, :], dp)
+
+        n_a = (num_a / denom_a.astype(float))
+        dbp = dbp[parallel_mask]
+        denom_b = denom_b[parallel_mask]
+        num_b = np_dot(dbp, -dp )
+        n_b = (num_b / denom_b.astype(float))
+        inter = n_a[:, np.newaxis] * direc_b + seg_j[parallel_mask, 0]
+        valid_inter = np.all([n_a > 0, n_a < 1, n_b > 0, n_b < 1], axis=0)
+        n_a_m = n_a[valid_inter]
+        n_b_m = n_b[valid_inter]
+        indices_m2 = indices_m[parallel_mask][valid_inter]
+        inters = inter[valid_inter]
+        n_as.append(n_a_m)
+        n_bs.append(n_b_m)
+        indices_m2s.append(indices_m2)
+        inters_s.append(inters)
+
+    c_n_as = np.concatenate(n_as)
+    c_n_bs = np.concatenate(n_bs)
+    c_indices_m2s = np.concatenate(indices_m2s)
+    c_inters_s = np.concatenate(inters_s)
+    ns = np.concatenate([[c_n_bs], [c_n_as]], axis=0).T.ravel()
+    i_ravel = c_indices_m2s.ravel()
+
+    new_idx = np.repeat(np.arange(len(c_inters_s)) + len(np_verts), 2)
+
+    new_edges = []
+    for i in range(len(edges)):
+        ma = i_ravel == i
+        coef = ns[ma]
+        n_i = new_idx[ma]
+        iid = np.argsort(coef)
+        n_i_sorted = n_i[iid]
+        new_eds = np.concatenate([[np_edges[i, 0]],
+                                  np.repeat(n_i_sorted, 2),
+                                  [np_edges[i, 1]]]).reshape(-1, 2)
+        new_edges.append(new_eds)
+
+    return np.concatenate([np_verts, c_inters_s]).tolist(), np.concatenate(new_edges).tolist()
+
+
 def remove_doubles_from_edgenet(verts_in, edges_in, distance):
     bm = bmesh_from_pydata(verts_in, edges_in, [])
     bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=distance)
@@ -250,4 +398,3 @@ def remove_doubles_from_edgenet(verts_in, edges_in, distance):
     edges_out = [[j.index for j in i.verts] for i in bm.edges]
 
     return verts_out, edges_out
-
