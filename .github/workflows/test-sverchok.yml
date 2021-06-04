@@ -45,10 +45,13 @@ jobs:
             wget -nv $BLENDER_URL  #not verbose, but not quiet.
             tar xf $BLENDER_TAR
             
+            echo "ls start"
             ls
+            echo "ls end"
 
             if [ -d $BLENDER_DIR ]
                then rm -rf $BLENDER_DIR
+               exho "removed ${BLENDER_DIR}"
             fi
             
             mv $BLENDER_DIR blender
