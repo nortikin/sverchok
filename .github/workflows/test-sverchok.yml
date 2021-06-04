@@ -38,7 +38,9 @@ jobs:
 
         echo "blender basename from blender url: ${BLENDER_DIR}"
 
-        if [ ! -f installation/blender/$RELEASE ]
+        # if [ ! -f installation/blender/$RELEASE ]
+
+        if [ ! -d ${PWD}/installation/blender/$RELEASE ]
         then
             mkdir -p installation
             cd installation
