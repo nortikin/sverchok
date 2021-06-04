@@ -884,6 +884,9 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
+        if len(context.space_data.path) > 1:
+            layout.label(text="Is not supported inside node groups")
+            return
         ntree = context.space_data.node_tree
         panel_props = ntree.preset_panel_properties
 

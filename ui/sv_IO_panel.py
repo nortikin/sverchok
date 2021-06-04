@@ -126,6 +126,10 @@ class SvNodeTreeExporter(bpy.types.Operator):
         return bool(context.space_data.node_tree)
 
     def execute(self, context):
+        if len(context.space_data.path) > 1:
+            self.report({"WARNING"}, "Export is not supported inside node groups")
+            return {'CANCELLED'}
+
         ng = bpy.data.node_groups[self.id_tree]
 
         destination_path = self.filepath
@@ -206,6 +210,10 @@ class SvNodeTreeImporter(bpy.types.Operator):
     new_nodetree_name: bpy.props.StringProperty()
 
     def execute(self, context):
+        if len(context.space_data.path) > 1:
+            self.report({"WARNING"}, "Import is not supported inside node groups")
+            return {'CANCELLED'}
+
         ng = context.scene.io_panel_properties.import_tree
         if not ng:
             self.report(type={'WARNING'}, message="The tree was not chosen, have a look at property (N) panel")
@@ -244,6 +252,10 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
     gist_id: bpy.props.StringProperty()
 
     def execute(self, context):
+        if len(context.space_data.path) > 1:
+            self.report({"WARNING"}, "Import is not supported inside node groups")
+            return {'CANCELLED'}
+
         if not self.id_tree:
             ng_name = self.new_nodetree_name
             ng_params = {
@@ -278,6 +290,10 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
         return bool(context.space_data.node_tree)
 
     def execute(self, context):
+        if len(context.space_data.path) > 1:
+            self.report({"WARNING"}, "Export is not supported inside node groups")
+            return {'CANCELLED'}
+
         ng = context.space_data.node_tree
 
         is_tree_exportable, msg = self.can_be_exported(ng)
