@@ -36,13 +36,18 @@ jobs:
         BLENDER_TAR=$(basename $BLENDER_URL)
         BLENDER_DIR=$(basename $BLENDER_URL .tar.xz)
         echo "blender dir ${BLENDER_DIR}"
+        echo "Current directory after before installing blender: $(pwd)"
         if [ ! -f installation/blender/$BLENDER_DIR ]
         then
             echo " ! -f installation/blender/$BLENDER_DIR ?...currently in the then clause "
             mkdir -p installation
             cd installation
+            echo "Current directory after installing blender: $(pwd)"
+
             wget $BLENDER_URL
             tar xf $BLENDER_TAR
+            echo "Current directory after downloading blender (end if): $(pwd)"
+
             # if [ -d $BLENDER_DIR ]
             # then rm -rf $BLENDER_DIR
             # fi
@@ -56,7 +61,6 @@ jobs:
             $PYTHON -m pip install --upgrade scipy geomdl scikit-image
             popd
 
-            echo "Current directory after downloading blender: $(pwd)"
             cd ..
         fi
 
