@@ -67,11 +67,13 @@ Benchmark of 2D algorithms
 Three different test to determine the efficiency of the algorithms.
 - Random Segments: Segments between random vectors
 - Star Segments: Rotated segments from a center point (every segments intersects with the rest of segments in the center)
-- Spine Segments: Parallel Segments intersected with a middle segment that cuts them in the center
+- Spine Segments: Parallel Segments intersected with a middle segment that cuts them in the center.
+
+.. image:: https://user-images.githubusercontent.com/10011941/120835106-30bc9980-c564-11eb-93c5-bdbabd1a63fe.png
 
 +----------+----------------------------------------+--------------------------------+-----------------------------------+
 |Test      | Random Segments                        | Star segments                  | Spine Segments                    |
-+----------+----------------------------------------+--------------------------------+-----------------------------------+
++----------+-----------+-------------+--------------+---------+----------+-----------+-----------+-----------+-----------+
 |Algorithm | 100 eds   | 1000 eds    |10000 eds     | 100 eds | 1000 eds | 10000 eds | 100 eds.  | 1000 eds. | 10000 eds |
 |          | 1299 ints | 127892 ints |12355630 ints | 1 ints. | 1 ints.  | 1 ints.   | 100 ints. | 1000 ints.| 10000 ints|
 +----------+-----------+-------------+--------------+---------+----------+-----------+-----------+-----------+-----------+
