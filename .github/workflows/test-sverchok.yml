@@ -60,10 +60,12 @@ jobs:
             echo "removing content of blender dir"
             rm -r blender/*
 
-            mv blender-2.93.0-stable+blender-v293-release.84da05a8b806-linux.x86_64-release blender
+            $RELEASE=blender-2.93.0-stable+blender-v293-release.84da05a8b806-linux.x86_64-release
+
+            mv $RELEASE blender
 
             echo "peak inside blender dir now!"
-            ls blender
+            ls blender/$RELEASE
             echo "end peak"
 
             pushd blender/
