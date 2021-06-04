@@ -43,7 +43,7 @@ jobs:
             cd installation
             echo "Current directory before downloading and installing blender: $(pwd)"
 
-            wget $BLENDER_URL
+            wget -nv $BLENDER_URL  #not verbose, but not quiet.
             tar xf $BLENDER_TAR
             echo "Current directory after unpacking {$BLENDER_DIR}.tar.xz: $(pwd)"
 
