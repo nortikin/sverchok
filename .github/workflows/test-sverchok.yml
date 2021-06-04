@@ -62,6 +62,10 @@ jobs:
 
             mv blender-2.93.0-stable+blender-v293-release.84da05a8b806-linux.x86_64-release blender
 
+            echo "peak inside blender dir now!"
+            ls blender
+            echo "end peak"
+
             pushd blender/
             PYTHON=${BLENDER_VERSION}/python/bin/python3.9
             $PYTHON -m ensurepip
