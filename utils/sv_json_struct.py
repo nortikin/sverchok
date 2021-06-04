@@ -565,7 +565,7 @@ class NodeStruct(Struct):
                 "parent": None,
             },
             "properties": dict(),
-            "advance_properties": dict(),
+            "advanced_properties": dict(),
             "inputs": dict(),
             "outputs": dict(),
             "bl_idname": ""
@@ -619,9 +619,9 @@ class NodeStruct(Struct):
         _set_optional(self._struct, "outputs", self._struct["outputs"])
 
         if hasattr(node, 'save_to_json'):
-            node.save_to_json(self._struct["advance_properties"])
+            node.save_to_json(self._struct["advanced_properties"])
 
-        _set_optional(self._struct, "advance_properties", self._struct["advance_properties"])
+        _set_optional(self._struct, "advanced_properties", self._struct["advanced_properties"])
 
         return self._struct
 
@@ -659,7 +659,7 @@ class NodeStruct(Struct):
         if hasattr(node, 'load_from_json'):
             with self.logger.add_fail("Setting advance node properties",
                                       f'Tree: {node.id_data.name}, Node: {node.name}'):
-                node.load_from_json(self._struct.get("advance_properties", dict()), self.version)
+                node.load_from_json(self._struct.get("advanced_properties", dict()), self.version)
 
     def read_bl_type(self):
         return self._struct['bl_idname']
