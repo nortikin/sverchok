@@ -64,11 +64,11 @@ jobs:
 
             mv $RELEASE blender
 
-            echo "peak inside blender dir now!"
-            ls blender/$RELEASE
-            echo "------"
-            ls blender/$RELEASE/2.93/python/bin/*
-            echo "end peak"
+            # echo "peak inside blender dir now!"
+            # ls blender/$RELEASE
+            # echo "------"
+            # ls blender/$RELEASE/2.93/python/bin/*
+            # echo "end peak"
 
             pushd blender/$RELEASE/
             PYTHON=${BLENDER_VERSION}/python/bin/python3.9
@@ -81,7 +81,7 @@ jobs:
         fi
 
         #mkdir -p ${PWD}/installation/blender/${BLENDER_VERSION}/${SVERCHOK_DIR}
-        ln -s ${PWD} ${PWD}/installation/blender/${BLENDER_VERSION}/${SVERCHOK_DIR}
+        ln -s ${PWD} ${PWD}/installation/blender/$RELEASE/${BLENDER_VERSION}/${SVERCHOK_DIR}
         mkdir -p ~/.config/blender/${BLENDER_VERSION}/config/
         ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/${BLENDER_VERSION}/config/
         
