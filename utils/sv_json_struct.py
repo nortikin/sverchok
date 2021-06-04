@@ -127,6 +127,10 @@ class StrTypes(Enum):
             return False
 
 
+OldName, NewName, OwnerName = str, str, str
+OldNewNames = Dict[Tuple[StrTypes, OwnerName, OldName], NewName]
+
+
 class Struct(ABC):
     # I was trying to make API of all abstract method the same between child classes but it looks it's not possible
     # for example to build a node we can send to method a tree where the node should be duilded
@@ -142,7 +146,7 @@ class Struct(ABC):
         ...
 
     @abstractmethod
-    def build(self, *args):
+    def build(self, obj, factories: StructFactory, imported_structs: OldNewNames):
         ...
 
     def read_bl_type(self) -> str:
@@ -207,7 +211,7 @@ class FileStruct(Struct):
     def build(self, *_):
         raise NotImplementedError
 
-    def build_into_tree(self, tree):  # todo add protection from exporting inside node groups
+    def build_into_tree(self, tree):
         # it looks that recursive import should be avoided by any cost, it's too difficult to pass data
         # luckily it's possible to create all data block first
         # and then they will be available for assigning to pointer properties
@@ -217,7 +221,7 @@ class FileStruct(Struct):
         with tree.throttle_update():  # todo it is required only for current update system can be deleted later??
 
             factories = StructFactory.grab_from_module()
-            imported_structs = OldNewNames()
+            imported_structs: OldNewNames = dict()
             data_blocks = self._data_blocks_reader()
 
             # initialize trees and build other data block types
@@ -320,7 +324,7 @@ class NodePresetFileStruct(Struct):
         with tree.throttle_update(), tree.init_tree():  # todo throttle can be deleted later
 
             factories = StructFactory.grab_from_module()
-            imported_structs = OldNewNames()
+            imported_structs: OldNewNames = dict()
             trees_to_build = []
 
             # initialize trees and build other data block types
@@ -536,7 +540,7 @@ class NodeStruct(Struct):
             prop = BPYProperty(node, prop_name)
             if prop.is_valid and prop.is_to_save:
                 raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
-                if raw_struct is not None:  # todo check every where
+                if raw_struct is not None:
                     self._struct["properties"][prop.name] = raw_struct
 
         _set_optional(self._struct, "properties", self._struct["properties"])
@@ -557,7 +561,7 @@ class NodeStruct(Struct):
         _set_optional(self._struct, "inputs", self._struct["inputs"])
         _set_optional(self._struct, "outputs", self._struct["outputs"])
 
-        if hasattr(node, 'save_to_json'):  # todo pass empty dictionary?
+        if hasattr(node, 'save_to_json'):
             node.save_to_json(self._struct["advance_properties"])
 
         _set_optional(self._struct, "advance_properties", self._struct["advance_properties"])
@@ -971,23 +975,6 @@ class TextureStruct(Struct):
         texture = bpy.data.textures.get(self.name)
         if texture is not None:
             imported_structs[(StrTypes.TEXTURE, '', self.name)] = texture.name
-
-
-class OldNewNames:  # todo can't this be regular dictionary?
-    """This class should solve problem of old new names, when created object with one name get another one"""
-    Old, New, Owner = str, str, str
-
-    def __init__(self):
-        self._old_new_names: Dict[Tuple[StrTypes, OldNewNames.Owner, OldNewNames.Old], OldNewNames.New] = dict()
-
-    def __contains__(self, type_old_name: Tuple[StrTypes, OldNewNames.Owner, OldNewNames.Old]):
-        return type_old_name in self._old_new_names
-
-    def __getitem__(self, type_old_name: Tuple[StrTypes, OldNewNames.Owner, OldNewNames.Old]):
-        return self._old_new_names[type_old_name]
-
-    def __setitem__(self, type_old_name: Tuple[StrTypes, OldNewNames.Owner, OldNewNames.Old], name: OldNewNames.New):
-        self._old_new_names[type_old_name] = name
 
 
 def _ordered_links(tree) -> Generator[bpy.types.NodeLink]:
