@@ -60,7 +60,7 @@ jobs:
             echo "removing content of blender dir"
             rm -r blender/*
 
-            $RELEASE=blender-2.93.0-stable+blender-v293-release.84da05a8b806-linux.x86_64-release
+            RELEASE=blender-2.93.0-stable+blender-v293-release.84da05a8b806-linux.x86_64-release
 
             mv $RELEASE blender
 
