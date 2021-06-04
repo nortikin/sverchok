@@ -34,25 +34,25 @@ jobs:
         SVERCHOK_DIR=scripts/addons/sverchok
         BLENDER_TAR=$(basename $BLENDER_URL)
         BLENDER_DIR=$(basename $BLENDER_URL .tar.xz)
-        STABLE_RELEASE=blender-2.93.0-stable
+        RELEASE=blender-2.93.0-stable+blender-v293-release.84da05a8b806-linux.x86_64-release
 
         echo "blender basename from blender url: ${BLENDER_DIR}"
 
-        if [ ! -f installation/blender/$STABLE_RELEASE ]
+        if [ ! -f installation/blender/$RELEASE ]
         then
             mkdir -p installation
             cd installation
             echo "Current directory before downloading and installing blender: $(pwd)"
 
             wget -nv $BLENDER_URL  #not verbose, but not quiet.
-            tar xf $BLENDER_TAR $STABLE_RELEASE
-            
+            tar xf $BLENDER_TAR
+
             rm $BLENDER_TAR
             echo "removing content of blender dir"
             rm -r blender/*
-            mv $STABLE_RELEASE blender
+            mv $RELEASE blender
 
-            pushd blender/$STABLE_RELEASE/
+            pushd blender/$RELEASE/
             PYTHON=${BLENDER_VERSION}/python/bin/python3.9
             $PYTHON -m ensurepip
             $PYTHON -m pip install --upgrade pip setuptools wheel
@@ -63,7 +63,7 @@ jobs:
         fi
 
         #mkdir -p ${PWD}/installation/blender/${BLENDER_VERSION}/${SVERCHOK_DIR}
-        ln -s ${PWD} ${PWD}/installation/blender/$STABLE_RELEASE/${BLENDER_VERSION}/${SVERCHOK_DIR}
+        ln -s ${PWD} ${PWD}/installation/blender/$RELEASE/${BLENDER_VERSION}/${SVERCHOK_DIR}
         mkdir -p ~/.config/blender/${BLENDER_VERSION}/config/
         ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/${BLENDER_VERSION}/config/
         
@@ -72,5 +72,4 @@ jobs:
         bash ./run_tests.sh
       env:
         BLENDER: |
-          ./installation/blender/blender-2.93.0-stable/blender-softwaregl
-
+          ./installation/blender/blender-2.93.0-stable+blender-v293-release.84da05a8b806-linux.x86_64-release/blender-softwaregl
