@@ -38,14 +38,14 @@ jobs:
 
         if [ ! -f installation/blender/$BLENDER_DIR ]
         then
-            echo "installation/blender/$BLENDER_DIR does not exist yet"
             mkdir -p installation
             cd installation
             echo "Current directory before downloading and installing blender: $(pwd)"
 
             wget -nv $BLENDER_URL  #not verbose, but not quiet.
             tar xf $BLENDER_TAR
-            echo "Current directory after unpacking {$BLENDER_DIR}.tar.xz: $(pwd)"
+            
+            ls
 
             if [ -d $BLENDER_DIR ]
                then rm -rf $BLENDER_DIR
