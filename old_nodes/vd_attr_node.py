@@ -77,7 +77,7 @@ class SvVDMK3Properties(bpy.types.PropertyGroup):
     # this populates a property-group using VDExperimental.__annotations__ as the source -
     __annotations__ = {}
     for key, v in maximum_spec_vd_dict.items():
-        prop_func, kw_args = get_func_and_args(SvViewerDrawMk4.__annotations__[key])
+        prop_func, kw_args = get_func_and_args(SvVDExperimental.__annotations__[key])
         copy_kw_args = copy.deepcopy(kw_args)
         copy_kw_args.pop('update', None)
         __annotations__[key] = prop_func(**copy_kw_args)
