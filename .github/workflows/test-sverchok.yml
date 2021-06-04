@@ -70,7 +70,7 @@ jobs:
             ls blender/$RELEASE/2.93/python/bin/*
             echo "end peak"
 
-            pushd blender/
+            pushd blender/$RELEASE/
             PYTHON=${BLENDER_VERSION}/python/bin/python3.9
             $PYTHON -m ensurepip
             $PYTHON -m pip install --upgrade pip setuptools wheel
