@@ -66,6 +66,8 @@ jobs:
 
             echo "peak inside blender dir now!"
             ls blender/$RELEASE
+            ls "------"
+            ls blender/$RELEASE/2.93/python/bin/*
             echo "end peak"
 
             pushd blender/
