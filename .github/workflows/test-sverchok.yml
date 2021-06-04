@@ -28,29 +28,29 @@ jobs:
         key: empty
     - name: Install Blender
       run: |
-        echo "start"
+        echo "starting run"
         BLENDER_VERSION=2.93
         BLENDER_URL=https://ftp.nluug.nl/pub/graphics/blender/release/Blender2.93/blender-2.93.0-linux-x64.tar.xz
         SVERCHOK_DIR=scripts/addons/sverchok
-        echo "sverchok dir ${SVERCHOK_DIR}"
         BLENDER_TAR=$(basename $BLENDER_URL)
         BLENDER_DIR=$(basename $BLENDER_URL .tar.xz)
-        echo "blender dir ${BLENDER_DIR}"
-        echo "Current directory after before installing blender: $(pwd)"
+        echo "blender basename from blender url: ${BLENDER_DIR}"
+
         if [ ! -f installation/blender/$BLENDER_DIR ]
         then
-            echo " ! -f installation/blender/$BLENDER_DIR ?...currently in the then clause "
+            echo "installation/blender/$BLENDER_DIR does not exist yet"
             mkdir -p installation
             cd installation
-            echo "Current directory after installing blender: $(pwd)"
+            echo "Current directory before downloading and installing blender: $(pwd)"
 
             wget $BLENDER_URL
             tar xf $BLENDER_TAR
-            echo "Current directory after downloading blender (end if): $(pwd)"
+            echo "Current directory after unpacking {$BLENDER_DIR}.tar.xz: $(pwd)"
 
-            # if [ -d $BLENDER_DIR ]
-            # then rm -rf $BLENDER_DIR
-            # fi
+            if [ -d $BLENDER_DIR ]
+               then rm -rf $BLENDER_DIR
+            fi
+            
             mv $BLENDER_DIR blender
             rm $BLENDER_TAR
 
