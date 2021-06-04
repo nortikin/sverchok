@@ -39,10 +39,10 @@ jobs:
         echo "blender basename from blender url: ${BLENDER_DIR}"
         echo "current working dir ${PWD}"
 
-        echo "dir content of installation/*"
-        ls installation/*
-        echo "dir content of -d installation/blender/*"
-        ls -d installation/blender/*
+        # echo "dir content of installation/*"
+        # ls installation/*
+        # echo "dir content of -d installation/blender/*"
+        # ls -d installation/blender/*
 
         if [ ! -f installation/blender/$RELEASE ]
         then
