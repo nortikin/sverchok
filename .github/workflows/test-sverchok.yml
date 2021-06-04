@@ -55,8 +55,9 @@ jobs:
             # fi
             
             rm $BLENDER_TAR
-            rm blender
-            mkdir -p blender
+            # rm blender
+            # mkdir -p blender
+            rm -r /blender/*
 
             mv blender-2.93.0-stable+blender-v293-release.84da05a8b806-linux.x86_64-release blender
 
