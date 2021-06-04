@@ -38,6 +38,7 @@ jobs:
 
         echo "blender basename from blender url: ${BLENDER_DIR}"
         echo "current working dir ${PWD}"
+        ls
 
         if [ ! -f installation/blender/$RELEASE ]
         then
