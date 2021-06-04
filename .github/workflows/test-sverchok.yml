@@ -41,6 +41,8 @@ jobs:
 
         echo "dir content of installation/*"
         ls installation/*
+        echo "dir content of installation/blender/*"
+        ls installation/blender/*
 
         if [ ! -f installation/blender/$RELEASE ]
         then
