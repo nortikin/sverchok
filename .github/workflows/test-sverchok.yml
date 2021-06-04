@@ -38,6 +38,10 @@ jobs:
 
         echo "blender basename from blender url: ${BLENDER_DIR}"
 
+        echo "ls installation/blender/*..."
+        ls installation/blender/*
+        echo "...end ls"
+
         if [ ! -f installation/blender/$RELEASE ]
         then
             mkdir -p installation
