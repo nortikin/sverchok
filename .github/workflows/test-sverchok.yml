@@ -24,6 +24,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: |
+          ./installation/blender/$RELEASE/
           ./installation
         key: empty
     - name: Install Blender
