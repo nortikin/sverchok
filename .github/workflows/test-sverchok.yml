@@ -39,17 +39,7 @@ jobs:
         echo "blender basename from blender url: ${BLENDER_DIR}"
         echo "current working dir ${PWD}"
 
-        # echo "dir content of installation/*"
-        # ls installation/*
-        # echo "dir content of -d installation/blender/*"
-        # ls installation/blender/*
-
-        if [ ${PWD}/installation/blender/$RELEASE ]
-        then
-            echo "well.. it seems to exists!" 
-        fi
-
-        if [ ! -f installation/blender/$RELEASE ]
+        if [ ! ${PWD}/installation/blender/$RELEASE ]
         then
             mkdir -p installation
             cd installation
