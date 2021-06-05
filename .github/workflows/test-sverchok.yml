@@ -41,8 +41,13 @@ jobs:
 
         # echo "dir content of installation/*"
         # ls installation/*
-        echo "dir content of -d installation/blender/blender*"
-        ls installation/blender/blender/*
+        # echo "dir content of -d installation/blender/*"
+        # ls installation/blender/*
+
+        if [ ${PWD}/installation/blender/$RELEASE ]
+        then
+            echo "well.. it seems to exists!" 
+        fi
 
         if [ ! -f installation/blender/$RELEASE ]
         then
