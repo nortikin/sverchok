@@ -51,8 +51,8 @@ jobs:
             tar xf $BLENDER_TAR -C $RELEASE --strip-components 1
 
             rm $BLENDER_TAR
-            echo "removing content of blender dir"
-            rm -r blender/*
+            # echo "removing content of blender dir"
+            # rm -r blender/*
             mv $RELEASE blender
 
             pushd blender/$RELEASE/
