@@ -37,7 +37,6 @@ jobs:
         RELEASE=blender293_LTS
 
         echo "current working dir ${PWD}"
-        ls installation/*
 
         if [ ! -f installation/blender/$RELEASE/blender ]
         then
