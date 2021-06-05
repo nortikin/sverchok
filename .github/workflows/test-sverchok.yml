@@ -34,20 +34,9 @@ jobs:
         SVERCHOK_DIR=scripts/addons/sverchok
         BLENDER_TAR=$(basename $BLENDER_URL)
         BLENDER_DIR=$(basename $BLENDER_URL .tar.xz)
-        RELEASE=blender-2.93.0-stable+blender-v293-release.84da05a8b806-linux.x86_64-release
+        RELEASE=blender293_LTS
 
-        echo "blender basename from blender url: ${BLENDER_DIR}"
         echo "current working dir ${PWD}"
-
-        # echo "dir content of installation/*"
-        # ls installation/*
-        # echo "dir content of -d installation/blender/*"
-        # ls installation/blender/*
-
-        if [ ${PWD}/installation/blender/$RELEASE ]
-        then
-            echo "well.. it seems to exists!" 
-        fi
 
         if [ ! -f installation/blender/$RELEASE ]
         then
@@ -56,7 +45,10 @@ jobs:
             echo "Current directory before downloading and installing blender: $(pwd)"
 
             wget -nv $BLENDER_URL  #not verbose, but not quiet.
-            tar xf $BLENDER_TAR
+            mkdir $RELEASE
+
+            # unpack this tar to a known name
+            tar xf BLENDER_TAR -C $RELEASE --strip-components 1
 
             rm $BLENDER_TAR
             echo "removing content of blender dir"
