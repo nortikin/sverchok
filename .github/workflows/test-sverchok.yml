@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-
+    blender_version: "2.93"
     runs-on: ubuntu-latest
 
     steps:
@@ -23,9 +23,8 @@ jobs:
     - name: Cache
       uses: actions/cache@v2
       with:
-        path: |
-          ./installation
-        key: empty
+        path: ./installation
+        key: blender-${{ env.blender_version }}-${{ hashFiles('.github/workflows/test-sverchok.yml') }}
     - name: Install Blender
       run: |
         echo "starting run"
