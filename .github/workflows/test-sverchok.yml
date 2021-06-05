@@ -37,6 +37,10 @@ jobs:
         RELEASE=blender293_LTS
 
         echo "current working dir ${PWD}"
+        echo "does installation/blender/$RELEASE/ exist?"
+        if [ -d ${PWD}/installation/blender/$RELEASE/ ]; then
+            echo "     apparently, so!"
+        fi
 
         if [ ! -f installation/blender/$RELEASE/blender ]
         then
