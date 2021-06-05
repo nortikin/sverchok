@@ -25,7 +25,6 @@ jobs:
       with:
         path: |
           ./installation
-          installation/blender/$RELEASE/
         key: empty
     - name: Install Blender
       run: |
