@@ -75,4 +75,4 @@ jobs:
         bash ./run_tests.sh
       env:
         BLENDER: |
-          ./installation/blender/blender-2.93.0-stable+blender-v293-release.84da05a8b806-linux.x86_64-release/blender-softwaregl
+          ./installation/blender/blender293_LTS/blender-softwaregl
