@@ -76,3 +76,9 @@ jobs:
       env:
         BLENDER: |
           ./installation/blender/blender293_LTS/blender-softwaregl
+    - name: Cache Final
+      uses: actions/cache@v2
+      with:
+        path: |
+          ./installation/blender/blender293_LTS/
+        key: empty
