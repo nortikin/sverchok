@@ -38,7 +38,7 @@ jobs:
 
         echo "current working dir ${PWD}"
 
-        if [ ! -f installation/blender/$RELEASE ]
+        if [ ! -f installation/blender/$RELEASE/blender ]
         then
             mkdir -p installation
             cd installation
