@@ -39,10 +39,9 @@ jobs:
         echo "blender basename from blender url: ${BLENDER_DIR}"
         echo "current working dir ${PWD}"
 
-        if [ ${PWD}/installation/blender/$RELEASE ]
-        then
+        if [ -d ${PWD}/installation/blender/$RELEASE ]; then
             echo "well.. it seems to exists!" 
-            ls ${PWD}/installation/blender/$RELEASE 
+            ls ${PWD}/installation/blender/$RELEASE/* 
         fi
 
         if [ ! ${PWD}/installation/blender/$RELEASE ]
