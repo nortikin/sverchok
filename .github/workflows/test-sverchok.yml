@@ -12,7 +12,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    blender_version: "2.93"
+    env:
+      blender_version: "2.93"
 
     steps:
     - uses: actions/checkout@v2
