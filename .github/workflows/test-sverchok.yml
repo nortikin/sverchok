@@ -28,7 +28,7 @@ jobs:
         key: blender-${{ env.blender_version }}-${{ hashFiles('.github/workflows/test-sverchok.yml') }}
     - name: Install Blender
       run: |
-        echo "starting run"
+        # echo "starting run"
         BLENDER_VERSION=2.93
         BLENDER_URL=https://ftp.nluug.nl/pub/graphics/blender/release/Blender2.93/blender-2.93.0-linux-x64.tar.xz
         SVERCHOK_DIR=scripts/addons/sverchok
@@ -36,13 +36,13 @@ jobs:
         BLENDER_DIR=$(basename $BLENDER_URL .tar.xz)
         RELEASE=blender293_LTS
 
-        echo "current working dir ${PWD}"
+        # echo "current working dir ${PWD}"
 
         if [ ! -f installation/blender/$RELEASE/blender ]
         then
             mkdir -p installation
             cd installation
-            echo "Current directory before downloading and installing blender: $(pwd)"
+            # echo "Current directory before downloading and installing blender: $(pwd)"
 
             wget -nv $BLENDER_URL  #not verbose, but not quiet.
             mkdir $RELEASE
