@@ -55,11 +55,7 @@ jobs:
             # rm -r blender/*
             mv $RELEASE blender
 
-            echo "ls after: mv $RELEASE blender"
-            ls
-            echo "end ls"
-
-            pushd blender/$RELEASE/
+            pushd blender/
             PYTHON=${BLENDER_VERSION}/python/bin/python3.9
             $PYTHON -m ensurepip
             $PYTHON -m pip install --upgrade pip setuptools wheel
@@ -70,7 +66,7 @@ jobs:
         fi
 
         #mkdir -p ${PWD}/installation/blender/${BLENDER_VERSION}/${SVERCHOK_DIR}
-        ln -s ${PWD} ${PWD}/installation/blender/$RELEASE/${BLENDER_VERSION}/${SVERCHOK_DIR}
+        ln -s ${PWD} ${PWD}/installation/blender/${BLENDER_VERSION}/${SVERCHOK_DIR}
         mkdir -p ~/.config/blender/${BLENDER_VERSION}/config/
         ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/${BLENDER_VERSION}/config/
         
@@ -79,7 +75,7 @@ jobs:
         bash ./run_tests.sh
       env:
         BLENDER: |
-          ./installation/blender/blender293_LTS/blender-softwaregl
+          ./installation/blender/blender-softwaregl
     # - name: Cache Final
     #   uses: actions/cache@v2
     #   with:
