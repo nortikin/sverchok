@@ -36,23 +36,19 @@ jobs:
         BLENDER_DIR=$(basename $BLENDER_URL .tar.xz)
         RELEASE=blender293_LTS
 
-        # echo "current working dir ${PWD}"
-
         if [ ! -f installation/blender/blender ]
         then
             mkdir -p installation
             cd installation
-            # echo "Current directory before downloading and installing blender: $(pwd)"
 
-            wget -nv $BLENDER_URL  #not verbose, but not quiet.
-            mkdir $RELEASE
+            # not verbose, but not quiet.
+            wget -nv $BLENDER_URL
 
             # unpack this tar to a known name
+            mkdir $RELEASE
             tar xf $BLENDER_TAR -C $RELEASE --strip-components 1
 
             rm $BLENDER_TAR
-            # echo "removing content of blender dir"
-            # rm -r blender/*
             mv $RELEASE blender
 
             pushd blender/
@@ -76,9 +72,3 @@ jobs:
       env:
         BLENDER: |
           ./installation/blender/blender-softwaregl
-    # - name: Cache Final
-    #   uses: actions/cache@v2
-    #   with:
-    #     path: |
-    #       ./installation/blender/blender293_LTS/
-    #     key: empty
