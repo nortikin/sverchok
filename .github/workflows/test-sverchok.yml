@@ -11,8 +11,9 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    env:
+      blender_version: "2.93"
 
     steps:
     - uses: actions/checkout@v2
@@ -23,27 +24,36 @@ jobs:
     - name: Cache
       uses: actions/cache@v2
       with:
-        path: |
-          ./installation
-        key: empty
+        path: ./installation
+        key: blender-${{ env.blender_version }}-${{ hashFiles('.github/workflows/test-sverchok.yml') }}
     - name: Install Blender
       run: |
+        # echo "starting run"
         BLENDER_VERSION=2.93
         BLENDER_URL=https://ftp.nluug.nl/pub/graphics/blender/release/Blender2.93/blender-2.93.0-linux-x64.tar.xz
         SVERCHOK_DIR=scripts/addons/sverchok
         BLENDER_TAR=$(basename $BLENDER_URL)
         BLENDER_DIR=$(basename $BLENDER_URL .tar.xz)
+        RELEASE=blender293_LTS
+
+        # echo "current working dir ${PWD}"
+
         if [ ! -f installation/blender/blender ]
-        then 
+        then
             mkdir -p installation
             cd installation
-            wget $BLENDER_URL
-            tar xf $BLENDER_TAR
-            if [ -d blender ]
-            then rm -rf blender
-            fi
-            mv $BLENDER_DIR blender
+            # echo "Current directory before downloading and installing blender: $(pwd)"
+
+            wget -nv $BLENDER_URL  #not verbose, but not quiet.
+            mkdir $RELEASE
+
+            # unpack this tar to a known name
+            tar xf $BLENDER_TAR -C $RELEASE --strip-components 1
+
             rm $BLENDER_TAR
+            # echo "removing content of blender dir"
+            # rm -r blender/*
+            mv $RELEASE blender
 
             pushd blender/
             PYTHON=${BLENDER_VERSION}/python/bin/python3.9
@@ -52,7 +62,6 @@ jobs:
             $PYTHON -m pip install --upgrade scipy geomdl scikit-image
             popd
 
-            echo "Current directory after downloading blender: $(pwd)"
             cd ..
         fi
 
@@ -65,5 +74,11 @@ jobs:
       run: |
         bash ./run_tests.sh
       env:
-        BLENDER: ./installation/blender/blender-softwaregl
-
+        BLENDER: |
+          ./installation/blender/blender-softwaregl
+    # - name: Cache Final
+    #   uses: actions/cache@v2
+    #   with:
+    #     path: |
+    #       ./installation/blender/blender293_LTS/
+    #     key: empty
