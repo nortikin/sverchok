@@ -55,6 +55,10 @@ jobs:
             # rm -r blender/*
             mv $RELEASE blender
 
+            echo "ls after: mv $RELEASE blender"
+            ls
+            echo "end ls"
+
             pushd blender/$RELEASE/
             PYTHON=${BLENDER_VERSION}/python/bin/python3.9
             $PYTHON -m ensurepip
