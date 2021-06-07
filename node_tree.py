@@ -508,6 +508,15 @@ class NodeUtils:
 
         return None
 
+    def safe_socket_remove(self, kind, key, failure_message=None):
+        with self.sv_throttle_tree_update():
+            sockets = getattr(self, kind)
+            if key in sockets:
+                sockets.remove(sockets[key])
+            else:
+                canned_msg = f"{self.name}.{kind} has no socket named {key} - did not remove"
+                print(failure_message or canned_msg)
+
 
 class SverchCustomTreeNode(UpdateNodes, NodeUtils):
     """Base class for all nodes"""

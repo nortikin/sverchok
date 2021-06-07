@@ -562,7 +562,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         for key in self.inputs.keys():
             if key not in variables:
                 self.debug("Input {} not in variables {}, remove it".format(key, str(variables)))
-                self.inputs.remove(self.inputs[key])
+                self.safe_socket_remove(self, 'inputs', key)
         for v in variables:
             if v not in self.inputs:
                 self.debug("Variable {} not in inputs {}, add it".format(v, str(self.inputs.keys())))
