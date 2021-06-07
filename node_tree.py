@@ -515,7 +515,7 @@ class NodeUtils:
                 sockets.remove(sockets[key])
             else:
                 canned_msg = f"{self.name}.{kind} has no socket named {key} - did not remove"
-                print(failure_message or canned_msg)
+                self.info(failure_message or canned_msg)
 
 
 class SverchCustomTreeNode(UpdateNodes, NodeUtils):
