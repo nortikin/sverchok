@@ -546,7 +546,11 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if 'geom' not in node_data:
             return  # looks like the node was empty when it was exported
         geom = node_data['geom']
-        filename = node_data['params']['filename']
+
+        if import_version < 1.0:
+            filename = node_data['params']['filename']
+        else:
+            filename = self.filename
 
         bpy.data.texts.new(filename)
         bpy.data.texts[filename].clear()

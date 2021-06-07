@@ -689,7 +689,11 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if 'profile' not in node_data:
             return  # looks like a node was empty when it was exported
         profile = node_data['profile']
-        filename = node_data['params']['filename']
+
+        if import_version < 1.0:
+            filename = node_data['params']['filename']
+        else:
+            filename = self.filename
 
         bpy.data.texts.new(filename)
         bpy.data.texts[filename].clear()

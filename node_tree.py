@@ -38,6 +38,7 @@ from sverchok.ui import color_def
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
 from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_with_bgl
 
+
 class SvNodeTreeCommon(object):
     '''
     Common methods shared between Sverchok node trees (normal and monad trees)
@@ -132,6 +133,20 @@ class SvNodeTreeCommon(object):
         except Exception as err:
             debug('failed to get gl scale info', err)
 
+    @contextmanager
+    def init_tree(self):
+        """It suppresses calling the update method of nodes,
+        main usage of it is during generating tree with python (JSON import)"""
+        is_already_initializing = 'init_tree' in self
+        if is_already_initializing:
+            yield self
+        else:
+            self['init_tree'] = ''
+            try:
+                yield self
+            finally:
+                del self['init_tree']
+
 
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     ''' Sverchok - architectural node programming of geometry in low level '''
@@ -225,6 +240,8 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         This method is called if collection of nodes or links of the tree was changed
         First of all it checks is it worth bothering and then gives initiative to `update system`
         """
+        if 'init_tree' in self.id_data:  # tree is building by a script - let it do this
+            return
         # this is a no-op if there's no drawing
         clear_exception_drawing_with_bgl(self.nodes)
         if is_first_run():
@@ -237,6 +254,9 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
     def update_nodes(self, nodes):
         """This method expects to get list of its nodes which should be updated"""
+        if self.id_data.skip_tree_update:
+            # this can be called by node groups which do not know whether the tree is throttled
+            return
         if len(nodes) == 1:
             # this function actually doing something different unlike `process_from_nodes` function
             # the difference is that process_from_nodes can also update other outdated nodes
@@ -370,6 +390,9 @@ class UpdateNodes:
         The method will be triggered upon editor changes, typically before node tree update method.
         It is better to avoid using this trigger.
         """
+        if 'init_tree' in self.id_data:  # tree is building by a script - let it do this
+            return
+
         self.sv_update()
 
     def insert_link(self, link):

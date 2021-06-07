@@ -91,7 +91,7 @@ def monad_make_unique(node):
 
     # the new tree dict will contain information about 1 node only, and 
     # the node_group too (at the moment) but the node_group data can be ignored.
-    layout_json = JSONExporter.get_nodes_structure([node])
+    layout_json = JSONExporter._get_nodes_structure([node])
 
     # do not restore links this way. wipe this entry and restore at a later stage.
     layout_json['update_lists'] = []

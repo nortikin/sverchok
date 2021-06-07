@@ -128,6 +128,16 @@ def register_old(bl_id):
     error("Cannot find {} among old nodes".format(bl_id))
     return None
 
+
+def register_all():
+    """Register all old node classes"""
+    for bl_id in old_bl_idnames:
+        try:
+            register_old(bl_id)
+        except Exception as e:
+            print(e)
+
+
 def unregister_old(bl_id):
     global imported_mods
     mod = imported_mods.get(bl_id)

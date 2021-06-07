@@ -14,6 +14,7 @@ import bpy
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.handle_blender_data import BPYProperty
 from sverchok.utils.sv_IO_monad_helpers import pack_monad
+from sverchok.utils.sv_json_struct import FileStruct, NodePresetFileStruct
 
 if TYPE_CHECKING:
     from sverchok.node_tree import SverchCustomTree, SverchCustomTreeNode
@@ -24,12 +25,24 @@ if TYPE_CHECKING:
 class JSONExporter:
     """Static class for responsible for exporting into JSON format"""
     @staticmethod
-    def get_tree_structure(tree: SverchCustomTree) -> dict:
+    def get_tree_structure(tree: SverchCustomTree, use_selection=False) -> dict:
         """Generate structure of given tree which van be saved into json format"""
-        return TreeExporter01().export_tree(tree)
+        has_monads = any('SvGroupNodeMonad' in n.bl_idname for n in tree.nodes)
+        if has_monads:  # todo this part should be deleted with monads
+            if use_selection:
+                return JSONExporter._get_nodes_structure([n for n in tree.nodes if n.select])
+            else:
+                return TreeExporter01().export_tree(tree)
+        else:
+            return FileStruct().export_tree(tree, use_selection)
 
     @staticmethod
-    def get_nodes_structure(nodes: List[SverchCustomTreeNode]) -> dict:
+    def get_node_structure(node) -> dict:
+        """For exporting node properties"""
+        return NodePresetFileStruct().export(node)
+
+    @staticmethod
+    def _get_nodes_structure(nodes: List[SverchCustomTreeNode]) -> dict:
         """Generate structure of given nodes which can be saved into json format"""
         return TreeExporter01().export_nodes(nodes)
 

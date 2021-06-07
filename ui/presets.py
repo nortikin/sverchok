@@ -336,7 +336,7 @@ class SverchPresetReplaceOperator(bpy.types.Operator):
         return "Load node settings from the preset `{}' (overwrite current settings)".format(properties.preset_name)
 
     def execute(self, context):
-        ntree = context.space_data.node_tree
+        ntree = context.space_data.path[-1].node_tree  # in case if the node in a node group
         node = ntree.nodes[self.node_name]
         id_tree = ntree.name
         ng = bpy.data.node_groups[id_tree]
@@ -406,7 +406,7 @@ class SvSaveSelected(bpy.types.Operator):
     preset_name: StringProperty(name="Name", description="Preset name")
     id_tree: StringProperty()
     category: StringProperty()
-    save_defaults : BoolProperty(default = False)
+    is_node_preset: BoolProperty()
 
     def execute(self, context):
         if not self.id_tree:
@@ -430,11 +430,16 @@ class SvSaveSelected(bpy.types.Operator):
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
-        layout_dict = JSONExporter.get_nodes_structure([n for n in ng.nodes if n.select])
+        # the operator can be used for both preset importing of a node and preset from a bunch of selected nodes
+        if self.is_node_preset:
+            layout_dict = JSONExporter.get_node_structure(nodes[0])
+        else:
+            layout_dict = JSONExporter.get_tree_structure(ng, True)
+
         preset = SvPreset(name=self.preset_name, category = self.category)
         preset.make_add_operator()
         destination_path = preset.path
-        json.dump(layout_dict, open(destination_path, 'w'), sort_keys=True, indent=2)
+        json.dump(layout_dict, open(destination_path, 'w'), indent=2)  # sort keys is not expected by the exporter
         msg = 'exported to: ' + destination_path
         self.report({"INFO"}, msg)
         info(msg)
@@ -879,6 +884,9 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
+        if len(context.space_data.path) > 1:
+            layout.label(text="Is not supported inside node groups")
+            return
         ntree = context.space_data.node_tree
         panel_props = ntree.preset_panel_properties
 
@@ -898,6 +906,7 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
         op = row.operator('node.sv_save_selected', text="Save Preset", icon='SOLO_ON')
         op.id_tree = ntree.name
         op.category = panel_props.category
+        op.is_node_preset = False
 
         selected_nodes = [node for node in ntree.nodes if node.select]
         can_save_preset = len(selected_nodes) > 0

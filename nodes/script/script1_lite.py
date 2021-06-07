@@ -553,12 +553,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         If you have files that work differently but have the same name, stop.
 
         '''
-        params = node_data.get('params')
-        if params:
-
+        if import_version < 1.0:
+            params = node_data.get('params')
             script_name = params.get('script_name')
             script_content = params.get('script_str')
+        else:
+            script_name = self.script_name
+            script_content = self.script_str
 
+        if script_name:
             with self.sv_throttle_tree_update():
                 texts = bpy.data.texts
                 if script_name and not (script_name in texts):
