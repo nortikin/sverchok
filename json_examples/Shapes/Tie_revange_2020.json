@@ -1,352 +1,602 @@
 {
-  "export_version": "0.10",
-  "framed_nodes": {
-    "Evaluate Curve": "Frame",
-    "Formula": "Frame.001",
-    "Note.001": "Frame",
-    "Objects in Lite": "Frame.002",
-    "Polyline Viewer.003": "Frame.002",
-    "Scalar Math": "Frame.001",
-    "Scripted Node Lite": "Frame",
-    "Vector out": "Frame.001"
-  },
-  "groups": {},
-  "nodes": {
-    "Evaluate Curve": {
-      "bl_idname": "SvExEvalCurveNode",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -272.632230758667,
-        -198.11730289459229
-      ],
-      "params": {
-        "sample_size": 200
-      },
-      "width": 140.0
-    },
-    "Formula": {
-      "bl_idname": "SvFormulaNodeMk5",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        166.39598655700684,
-        -168.99005889892578
-      ],
-      "params": {
-        "formula1": "abs(z)/10"
-      },
-      "width": 140.0
-    },
-    "Formula.002": {
-      "bl_idname": "SvFormulaNodeMk5",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        567.3414916992188,
-        -143.33697509765625
-      ],
-      "params": {
-        "formula1": "x if y>-7 else 1.5-abs(y)**1.8/40"
-      },
-      "width": 231.4080810546875
-    },
-    "Frame": {
-      "bl_idname": "NodeFrame",
-      "custom_socket_props": {},
-      "height": 252.88270568847656,
-      "hide": false,
-      "label": "generator",
-      "location": [
-        -28.453428268432617,
-        11.548300743103027
-      ],
-      "params": {},
-      "width": 807.350341796875
-    },
-    "Frame.001": {
-      "bl_idname": "NodeFrame",
-      "custom_socket_props": {},
-      "height": 192.00994873046875,
-      "hide": false,
-      "label": "twist",
-      "location": [
-        22.33113670349121,
-        85.84581756591797
-      ],
-      "params": {},
-      "width": 591.9131469726562
-    },
-    "Frame.002": {
-      "bl_idname": "NodeFrame",
-      "custom_socket_props": {},
-      "height": 485.438720703125,
-      "hide": false,
-      "label": "bevel object",
-      "location": [
-        87.65853881835938,
-        0.4250762462615967
-      ],
-      "params": {},
-      "width": 389.03125
-    },
-    "Note": {
-      "bl_idname": "NoteNode",
-      "color": [
-        1.0,
-        0.8993440270423889,
-        0.9742509722709656
-      ],
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -880.4713134765625,
-        -14.539448738098145
-      ],
-      "params": {
-        "n_id": "-8503949147017359024",
-        "show_text": false,
-        "text": "Nikitron 2020 | Tie revange from radiation dust . SNL implemented generator. Input letters l r t as in this example and create new toes. Schema was taken from Russian magazine 'Nauka i gizn''."
-      },
-      "use_custom_color": true,
-      "width": 400.0
-    },
-    "Note.001": {
-      "bl_idname": "NoteNode",
-      "color": [
-        1.0,
-        0.8993440270423889,
-        0.9742509722709656
-      ],
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -879.9826030731201,
-        -203.7450647354126
-      ],
-      "params": {
-        "n_id": "-8503949147017355483",
-        "text": "l r r l r t"
-      },
-      "use_custom_color": true,
-      "width": 400.0
-    },
-    "Objects in Lite": {
-      "bl_idname": "SvObjInLite",
-      "color": [
-        0.904932975769043,
-        1.0,
-        0.883421003818512
-      ],
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        443.0238952636719,
-        -434.9014313220978
-      ],
-      "params": {
-        "currently_storing": true,
-        "obj_name": "BezierCurve"
-      },
-      "use_custom_color": true,
-      "width": 140.0
-    },
-    "Polyline Viewer.002": {
-      "bl_idname": "SvPolylineViewerNode",
-      "color": [
-        1.0,
-        0.5889999866485596,
-        0.21400000154972076
-      ],
-      "custom_socket_props": {
-        "2": {
-          "default_float_property": 0.20000000298023224
+  "export_version": "1.0",
+  "main_tree": {
+    "nodes": {
+      "Frame": {
+        "attributes": {
+          "location": [
+            -28.453428268432617,
+            11.548300743103027
+          ],
+          "height": 252.88270568847656,
+          "width": 807.350341796875,
+          "label": "generator"
         },
-        "3": {
-          "default_float_property": -45.68400192260742
+        "bl_idname": "NodeFrame"
+      },
+      "Frame.001": {
+        "attributes": {
+          "location": [
+            22.33113670349121,
+            85.84581756591797
+          ],
+          "height": 192.00994873046875,
+          "width": 591.9131469726562,
+          "label": "twist"
         },
-        "4": {
-          "object_kinds": "CURVE"
-        }
+        "bl_idname": "NodeFrame"
       },
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        876.0524291992188,
-        24.139108657836914
-      ],
-      "params": {
-        "base_data_name": "Omicron",
-        "bevel_depth": 0.8299999833106995,
-        "is_lock_origin": false
-      },
-      "use_custom_color": true,
-      "width": 140.0
-    },
-    "Polyline Viewer.003": {
-      "bl_idname": "SvPolylineViewerNode",
-      "color": [
-        1.0,
-        0.5889999866485596,
-        0.21400000154972076
-      ],
-      "custom_socket_props": {
-        "2": {
-          "default_float_property": 0.20000000298023224
+      "Frame.002": {
+        "attributes": {
+          "location": [
+            87.65853881835938,
+            0.4250762462615967
+          ],
+          "height": 485.438720703125,
+          "width": 389.03125,
+          "label": "bevel object"
         },
-        "4": {
-          "object_kinds": "CURVE"
-        }
+        "bl_idname": "NodeFrame"
       },
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        632.0551452636719,
-        -432.5612518787384
-      ],
-      "params": {
-        "base_data_name": "Gamma",
-        "bevel_depth": 0.0,
-        "curve_dimensions": "2D",
-        "curve_type": "POLY",
-        "is_lock_origin": false
+      "Evaluate Curve": {
+        "attributes": {
+          "location": [
+            -272.632230758667,
+            -198.11730289459229
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame"
+          }
+        },
+        "properties": {
+          "sample_size": 200
+        },
+        "inputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "T": {
+            "bl_idname": "SvStringsSocket",
+            "name": "T",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "t_value"
+            }
+          },
+          "Samples": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Samples",
+            "properties": {
+              "prop_name": "sample_size"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Tangents": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Tangents"
+          }
+        },
+        "bl_idname": "SvExEvalCurveNode"
       },
-      "use_custom_color": true,
-      "width": 140.0
+      "Formula": {
+        "attributes": {
+          "location": [
+            166.39598655700684,
+            -168.99005889892578
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "properties": {
+          "formula1": "abs(z)/10"
+        },
+        "inputs": {
+          "z": {
+            "bl_idname": "SvFormulaSocket",
+            "name": "z"
+          }
+        },
+        "outputs": {
+          "Result": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Result"
+          }
+        },
+        "bl_idname": "SvFormulaNodeMk5"
+      },
+      "Formula.002": {
+        "attributes": {
+          "location": [
+            567.3414916992188,
+            -143.33697509765625
+          ],
+          "width": 231.4080810546875
+        },
+        "properties": {
+          "formula1": "x if y>-7 else 1.5-abs(y)**1.8/40"
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvFormulaSocket",
+            "name": "x"
+          },
+          "y": {
+            "bl_idname": "SvFormulaSocket",
+            "name": "y"
+          }
+        },
+        "outputs": {
+          "Result": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Result"
+          }
+        },
+        "bl_idname": "SvFormulaNodeMk5"
+      },
+      "Note": {
+        "attributes": {
+          "location": [
+            -880.4713134765625,
+            -14.539448738098145
+          ],
+          "width": 400.0,
+          "color": [
+            1.0,
+            0.8993440270423889,
+            0.9742509722709656
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "n_id": "-8503949147017359024",
+          "show_text": false,
+          "text": "Nikitron 2020 | Tie revange from radiation dust . SNL implemented generator. Input letters l r t as in this example and create new toes. Schema was taken from Russian magazine 'Nauka i gizn''."
+        },
+        "inputs": {
+          "Text In": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Text In"
+          }
+        },
+        "outputs": {
+          "Text Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Text Out"
+          }
+        },
+        "bl_idname": "NoteNode"
+      },
+      "Note.001": {
+        "attributes": {
+          "location": [
+            -879.9826030731201,
+            -203.7450647354126
+          ],
+          "width": 400.0,
+          "color": [
+            1.0,
+            0.8993440270423889,
+            0.9742509722709656
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame"
+          }
+        },
+        "properties": {
+          "n_id": "-8503949147017355483",
+          "text": "l r r l r t"
+        },
+        "inputs": {
+          "Text In": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Text In"
+          }
+        },
+        "outputs": {
+          "Text Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Text Out"
+          }
+        },
+        "bl_idname": "NoteNode"
+      },
+      "Polyline Viewer.002": {
+        "attributes": {
+          "location": [
+            876.0524291992188,
+            24.139108657836914
+          ],
+          "color": [
+            1.0,
+            0.5889999866485596,
+            0.21400000154972076
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "base_data_name": "Omicron",
+          "bevel_depth": 0.8299999833106995,
+          "is_lock_origin": false
+        },
+        "inputs": {
+          "vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices",
+            "properties": {
+              "custom_draw": "draw_vertices_props"
+            }
+          },
+          "matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "matrix",
+            "properties": {
+              "custom_draw": "draw_matrix_props"
+            }
+          },
+          "radius": {
+            "bl_idname": "SvStringsSocket",
+            "name": "radius",
+            "properties": {
+              "use_prop": true,
+              "default_float_property": 0.20000000298023224
+            }
+          },
+          "tilt": {
+            "bl_idname": "SvStringsSocket",
+            "name": "tilt",
+            "properties": {
+              "use_prop": true,
+              "default_float_property": -45.68400192260742
+            }
+          },
+          "bevel object": {
+            "bl_idname": "SvObjectSocket",
+            "name": "bevel object",
+            "properties": {
+              "custom_draw": "draw_object_props",
+              "object_kinds": "CURVE"
+            }
+          },
+          "Cyclic": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Cyclic",
+            "properties": {
+              "prop_name": "close"
+            }
+          }
+        },
+        "outputs": {
+          "Objects": {
+            "bl_idname": "SvObjectSocket",
+            "name": "Objects"
+          }
+        },
+        "bl_idname": "SvPolylineViewerNode"
+      },
+      "Scalar Math": {
+        "attributes": {
+          "location": [
+            367.31590843200684,
+            -175.49298858642578
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "properties": {
+          "current_op": "MAX",
+          "y_": 0.3700000047683716
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvStringsSocket",
+            "name": "x",
+            "properties": {
+              "prop_name": "x_"
+            }
+          },
+          "y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "y",
+            "properties": {
+              "prop_name": "y_"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvScalarMathNodeMK4"
+      },
+      "Scripted Node Lite": {
+        "attributes": {
+          "location": [
+            -447.1896343231201,
+            -204.2407464981079
+          ],
+          "color": [
+            0.0,
+            0.800000011920929,
+            0.949999988079071
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame"
+          }
+        },
+        "properties": {
+          "n_id": "-8503949147017355656",
+          "script_name": "Tie_Instructions",
+          "script_str": "from sverchok.utils.geom import LinearSpline, CubicSpline\nfrom sverchok.utils.math import supported_metrics\nfrom sverchok.utils.curve import SvSplineCurve\n\n\"\"\"\nin numbr s d=[[]] n=0\nout splin C\nout verts v\n\"\"\"\n\n# '''use note node to define toe\n# l - left, r - right, t - top,\n# bake, convert to curve and\n# extrude 0.3\n# Start always from l finish with t\n# and finish inside out\n# use live_curve script \n# to materialize curve to tie\n# Nikitron, 2014'''\n\n\nout = [ \n        (0, 0.2, -5),\n        (0, 0.2, -3),\n        (0, 0.2, 0),\n        (1, 0.2, 1),\n        (3, 5, 2),\n        (0, 7, 2),\n        (-3, 5, 2),\n        (-1, 0.5, 1) ]\nfront = True\n\nvecs = [(0.8660254037844386, 0.0, -0.5),\n        (0,0,1),\n        (-0.8660254037844386, 0.0, -0.5)]\nif numbr:\n    n_ = numbr[0][0].split(' ')\n    print('default letters:  ',n_)\n    for k, i in enumerate(n_):\n        if i[0] == 'l':\n            i = 0\n        elif i[0] == 't':\n            i = 1\n        elif i[0] == 'r':\n            i = 2\n        v = vecs[i]\n        if front:\n            front = False\n            y1 = -0.015\n            y2 = 0.015\n        else:\n            front = True\n            y1 = 0.015\n            y2 = -0.015\n        out.append([v[0]*k*0.05+v[0],\n                    y1*(k+1),\n                    v[2]*k*0.05+v[2]])\n        out.append([v[0]*k*0.05+v[0],\n                    y2*(k+1),\n                    v[2]*k*0.05+v[2]])\n    out.extend([\n            (0, -0.4,-1),\n            (0, -0.2,-3),\n            (0, 0,-10)])\n\nspline = CubicSpline(out, metric = 'CHEBYSHEV', is_cyclic = False)\ncurve = SvSplineCurve(spline)\nverts=[out]\n\nsplin = [curve]\n"
+        },
+        "inputs": {
+          "numbr": {
+            "bl_idname": "SvStringsSocket",
+            "name": "numbr"
+          }
+        },
+        "outputs": {
+          "splin": {
+            "bl_idname": "SvCurveSocket",
+            "name": "splin"
+          },
+          "verts": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "verts"
+          }
+        },
+        "bl_idname": "SvScriptNodeLite"
+      },
+      "Vector out": {
+        "attributes": {
+          "location": [
+            -24.597192764282227,
+            -180.94178009033203
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "inputs": {
+          "Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vectors"
+          }
+        },
+        "outputs": {
+          "X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "X"
+          },
+          "Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Y"
+          },
+          "Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Z"
+          }
+        },
+        "bl_idname": "VectorsOutNode"
+      },
+      "Polyline Viewer.003": {
+        "attributes": {
+          "location": [
+            632.0551452636719,
+            -432.5612518787384
+          ],
+          "color": [
+            1.0,
+            0.5889999866485596,
+            0.21400000154972076
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.002"
+          }
+        },
+        "properties": {
+          "base_data_name": "Gamma",
+          "bevel_depth": 0.0,
+          "curve_dimensions": "2D",
+          "curve_type": "POLY",
+          "is_lock_origin": false
+        },
+        "inputs": {
+          "vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "vertices",
+            "properties": {
+              "custom_draw": "draw_vertices_props"
+            }
+          },
+          "matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "matrix",
+            "properties": {
+              "custom_draw": "draw_matrix_props"
+            }
+          },
+          "radius": {
+            "bl_idname": "SvStringsSocket",
+            "name": "radius",
+            "properties": {
+              "use_prop": true,
+              "default_float_property": 0.20000000298023224
+            }
+          },
+          "tilt": {
+            "bl_idname": "SvStringsSocket",
+            "name": "tilt",
+            "properties": {
+              "use_prop": true
+            }
+          },
+          "bevel object": {
+            "bl_idname": "SvObjectSocket",
+            "name": "bevel object",
+            "properties": {
+              "custom_draw": "draw_object_props",
+              "object_kinds": "CURVE"
+            }
+          },
+          "Cyclic": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Cyclic",
+            "properties": {
+              "prop_name": "close"
+            }
+          }
+        },
+        "outputs": {
+          "Objects": {
+            "bl_idname": "SvObjectSocket",
+            "name": "Objects"
+          }
+        },
+        "bl_idname": "SvPolylineViewerNode"
+      },
+      "Objects in Lite": {
+        "attributes": {
+          "location": [
+            443.0238952636719,
+            -434.9014313220978
+          ],
+          "color": [
+            0.904932975769043,
+            1.0,
+            0.883421003818512
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.002"
+          }
+        },
+        "properties": {
+          "currently_storing": true,
+          "obj_name": "BezierCurve",
+          "do_not_add_obj_to_scene": true
+        },
+        "advanced_properties": {
+          "geom": "{\"Vertices\": [-1.003017544746399, 0.19049564003944397, 0.0, 0.7642399668693542, 0.16641883552074432, 0.0, 0.9029223322868347, -0.2634965181350708, 0.0, 0.7715691328048706, -0.27370762825012207, 0.0, 0.6283923387527466, -0.2811095118522644, 0.0, 0.4750809669494629, -0.2861034870147705, 0.0, 0.3133241534233093, -0.2890908718109131, 0.0, 0.1448109745979309, -0.29047298431396484, 0.0, -0.02876947820186615, -0.2906511425971985, 0.0, -0.20572811365127563, -0.2900266647338867, 0.0, -0.38437584042549133, -0.28900086879730225, 0.0, -0.563023567199707, -0.2879750728607178, 0.0, -0.7399821877479553, -0.287350594997406, 0.0, -0.9135626554489136, -0.28752875328063965, 0.0, -1.0820759534835815, -0.2889108955860138, 0.0, -1.0751897096633911, -0.24951380491256714, 0.0, -1.0678157806396484, -0.21102239191532135, 0.0, -1.0601167678833008, -0.17313474416732788, 0.0, -1.0522552728652954, -0.13554899394512177, 0.0, -1.04439377784729, -0.09796324372291565, 0.0, -1.0366947650909424, -0.06007560342550278, 0.0, -1.0293208360671997, -0.02158418670296669, 0.0, -1.0224345922470093, 0.01781289651989937, 0.0, -1.0161986351013184, 0.058417536318302155, 0.0, -1.0107754468917847, 0.10053162276744843, 0.0, -1.006327509880066, 0.14445704221725464, 0.0], \"Edges\": [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 0, 25], \"Polygons\": [], \"MaterialIdx\": [], \"Matrix\": [1.0, 0.0, 0.0, 0.7189311981201172, 0.0, 1.0, 0.0, 2.7254085540771484, 0.0, 0.0, 1.0, -3.3875839710235596, 0.0, 0.0, 0.0, 1.0]}"
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "MaterialIdx": {
+            "bl_idname": "SvStringsSocket",
+            "name": "MaterialIdx"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          }
+        },
+        "bl_idname": "SvObjInLite"
+      }
     },
-    "Scalar Math": {
-      "bl_idname": "SvScalarMathNodeMK4",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        367.31590843200684,
-        -175.49298858642578
-      ],
-      "params": {
-        "current_op": "MAX",
-        "y_": 0.3700000047683716
+    "links": [
+      {
+        "from_node": "Scripted Node Lite",
+        "from_socket": "splin",
+        "to_node": "Evaluate Curve",
+        "to_socket": "Curve"
       },
-      "width": 140.0
-    },
-    "Scripted Node Lite": {
-      "bl_idname": "SvScriptNodeLite",
-      "color": [
-        0.0,
-        0.800000011920929,
-        0.949999988079071
-      ],
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -447.1896343231201,
-        -204.2407464981079
-      ],
-      "params": {
-        "n_id": "-8503949147017355656",
-        "script_name": "Text.001",
-        "script_str": "from sverchok.utils.geom import LinearSpline, CubicSpline\nfrom sverchok.utils.math import supported_metrics\nfrom sverchok.utils.curve import SvSplineCurve\n\n\"\"\"\nin numbr s d=[[]] n=0\nout splin C\nout verts v\n\"\"\"\n\n# '''use note node to define toe\n# l - left, r - right, t - top,\n# bake, convert to curve and\n# extrude 0.3\n# Start always from l finish with t\n# and finish inside out\n# use live_curve script \n# to materialize curve to tie\n# Nikitron, 2014'''\n\n\nout = [ \n        (0, 0.2, -5),\n        (0, 0.2, -3),\n        (0, 0.2, 0),\n        (1, 0.2, 1),\n        (3, 5, 2),\n        (0, 7, 2),\n        (-3, 5, 2),\n        (-1, 0.5, 1) ]\nfront = True\n\nvecs = [(0.8660254037844386, 0.0, -0.5),\n        (0,0,1),\n        (-0.8660254037844386, 0.0, -0.5)]\nif numbr:\n    n_ = numbr[0][0].split(' ')\n    print('default letters:  ',n_)\n    for k, i in enumerate(n_):\n        if i[0] == 'l':\n            i = 0\n        elif i[0] == 't':\n            i = 1\n        elif i[0] == 'r':\n            i = 2\n        v = vecs[i]\n        if front:\n            front = False\n            y1 = -0.015\n            y2 = 0.015\n        else:\n            front = True\n            y1 = 0.015\n            y2 = -0.015\n        out.append([v[0]*k*0.05+v[0],\n                    y1*(k+1),\n                    v[2]*k*0.05+v[2]])\n        out.append([v[0]*k*0.05+v[0],\n                    y2*(k+1),\n                    v[2]*k*0.05+v[2]])\n    out.extend([\n            (0, -0.4,-1),\n            (0, -0.2,-3),\n            (0, 0,-10)])\n\nspline = CubicSpline(out, metric = 'CHEBYSHEV', is_cyclic = False)\ncurve = SvSplineCurve(spline)\nverts=[out]\n\nsplin = [curve]\n"
+      {
+        "from_node": "Vector out",
+        "from_socket": "Z",
+        "to_node": "Formula",
+        "to_socket": "z"
       },
-      "use_custom_color": true,
-      "width": 140.0
-    },
-    "Vector out": {
-      "bl_idname": "VectorsOutNode",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -24.597192764282227,
-        -180.94178009033203
-      ],
-      "params": {},
-      "width": 140.0
-    }
-  },
-  "update_lists": [
-    [
-      "Scripted Node Lite",
-      0,
-      "Evaluate Curve",
-      0
-    ],
-    [
-      "Evaluate Curve",
-      0,
-      "Polyline Viewer.002",
-      0
-    ],
-    [
-      "Formula.002",
-      0,
-      "Polyline Viewer.002",
-      2
-    ],
-    [
-      "Polyline Viewer.003",
-      0,
-      "Polyline Viewer.002",
-      4
-    ],
-    [
-      "Objects in Lite",
-      0,
-      "Polyline Viewer.003",
-      0
-    ],
-    [
-      "Note.001",
-      0,
-      "Scripted Node Lite",
-      0
-    ],
-    [
-      "Scalar Math",
-      0,
-      "Formula.002",
-      0
-    ],
-    [
-      "Vector out",
-      2,
-      "Formula.002",
-      1
-    ],
-    [
-      "Formula",
-      0,
-      "Scalar Math",
-      0
-    ],
-    [
-      "Evaluate Curve",
-      0,
-      "Vector out",
-      0
-    ],
-    [
-      "Vector out",
-      2,
-      "Formula",
-      0
+      {
+        "from_node": "Scalar Math",
+        "from_socket": "Out",
+        "to_node": "Formula.002",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "Vector out",
+        "from_socket": "Z",
+        "to_node": "Formula.002",
+        "to_socket": "y"
+      },
+      {
+        "from_node": "Evaluate Curve",
+        "from_socket": "Vertices",
+        "to_node": "Polyline Viewer.002",
+        "to_socket": "vertices"
+      },
+      {
+        "from_node": "Formula.002",
+        "from_socket": "Result",
+        "to_node": "Polyline Viewer.002",
+        "to_socket": "radius"
+      },
+      {
+        "from_node": "Polyline Viewer.003",
+        "from_socket": "Objects",
+        "to_node": "Polyline Viewer.002",
+        "to_socket": "bevel object"
+      },
+      {
+        "from_node": "Formula",
+        "from_socket": "Result",
+        "to_node": "Scalar Math",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "Note.001",
+        "from_socket": "Text Out",
+        "to_node": "Scripted Node Lite",
+        "to_socket": "numbr"
+      },
+      {
+        "from_node": "Evaluate Curve",
+        "from_socket": "Vertices",
+        "to_node": "Vector out",
+        "to_socket": "Vectors"
+      },
+      {
+        "from_node": "Objects in Lite",
+        "from_socket": "Vertices",
+        "to_node": "Polyline Viewer.003",
+        "to_socket": "vertices"
+      }
     ]
-  ]
+  }
 }
