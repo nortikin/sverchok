@@ -60,20 +60,16 @@ class SvSvgServer(bpy.types.Operator, SvGenericNodeLocator):
     bl_idname = "node.sv_svg_server"
     bl_label = "Append"
 
-    def execute(self, context):
-        node = self.get_node(context)
-        if not node: return {'CANCELLED'}
-
+    def sv_execute(self, context, node):
         inputs = node.inputs
         if not (inputs['Folder Path'].is_linked and inputs['SVG Objects'].is_linked):
-            return {'FINISHED'}
+            return
 
         save_path = node.inputs[0].sv_get()[0][0]
         file_name = node.file_name
         bpy.ops.node.svg_write(tree_name=self.tree_name, node_name=self.node_name)
         spawn_server(save_path, file_name)
 
-        return {'FINISHED'}
 
 def get_template(complete_name):
     old_svg_file = open(complete_name, "r")

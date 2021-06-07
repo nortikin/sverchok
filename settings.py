@@ -20,7 +20,7 @@ if bpy.app.version >= (2, 91, 0):
 else:
     PYPATH = bpy.app.binary_path_python
 
-def get_params(settings_and_fallbacks):
+def get_params(prop_names_and_fallbacks, direct=False):
     """
     This function returns an object which you can use the . op on.
     example usage:
@@ -28,22 +28,54 @@ def get_params(settings_and_fallbacks):
         from sverchok.settings import get_params
 
         props = get_params({'prop_name_1': 20, 'prop_name_2': 30})
-        # 20 = props.prop_name_1
-        # 30 = props.prop_name_2
+        # props.prop_name_1    20
+        # props.prop_name_2    30
+
+    example usage using direct=True
+        props = get_params({'prop_name_1': 20, 'prop_name_2': 30}, direct=True)
+        # props[0]   20
+        # props[1]   30 
     """
     from sverchok.utils.context_managers import sv_preferences
 
     props = lambda: None
 
     with sv_preferences() as prefs:
-        for k, v in settings_and_fallbacks.items():
+        for k, v in prop_names_and_fallbacks.items():
             try:
                 value = getattr(prefs, k)
             except:
                 print(f'returning a default for {k}')
                 value = v
             setattr(props, k, value)
+
+    if direct:
+        return [getattr(props, k) for k in prop_names_and_fallbacks.keys()]
+
     return props
+
+def get_param(prop_name, fallback):
+    """
+    for getting a single parameter from sv preferences
+    example usage:
+
+        from sverchok.settings import get_params
+        prop = get_param("render_scale", 1.0)
+        # prop = 1.0 if settings wasn't available, or else the current value
+    """
+    from sverchok.utils.context_managers import sv_preferences
+    with sv_preferences() as prefs:
+        try:
+            value = getattr(prefs, prop_name)
+        except:
+            print(f'returning a default for {prop_name}')
+            value = fallback
+        return value
+
+def apply_theme_if_necessary():
+    if get_param("apply_theme_on_open", False):
+        color_def.apply_theme()    
+        print("applied theme.")
 
 # getDpiFactor and getDpi are lifted from Animation Nodes :)
 
@@ -346,11 +378,8 @@ class SverchokPreferences(AddonPreferences):
         description="Auto update angle values when angle units are changed to preserve the angle")
 
     def set_nodeview_render_params(self, context):
-        # i think these are both the same..
-        self.render_scale = get_dpi_factor()
+        self.render_scale = get_dpi_factor()   # this was intended as a general draw scale multiplier, not location but size.
         self.render_location_xy_multiplier = get_dpi_factor()
-        # print(f'set render_scale to: {self.render_scale}')
-        # print(f'set render_location_xy_multiplier to: {self.render_location_xy_multiplier}')
 
     ##
 
@@ -472,10 +501,7 @@ class SverchokPreferences(AddonPreferences):
         box_sub1_col = box_sub1.column(align=True)
 
         box_sub1_col.label(text='Render Scale & Location')
-        # box_sub1_col.prop(self, 'render_location_xy_multiplier', text='xy multiplier')
-        # box_sub1_col.prop(self, 'render_scale', text='scale')
         box_sub1_col.label(text=f'xy multiplier: {self.render_location_xy_multiplier}')
-        box_sub1_col.label(text=f'render_scale : {self.render_scale}')
 
         box_sub1_col.label(text='Stethoscope')
         box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')

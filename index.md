@@ -590,6 +590,7 @@
     ---
     SvInstancerNodeMK3
     SvDupliInstancesMK5
+    SvDupliInstancesLite
     ---
     SvLightViewerNode
     ---
@@ -625,7 +626,6 @@
     SvSortObjsNode
     SvFilterObjsNode
     SvSetMeshAttributeNode
-    SvObjectToMeshNodeMK2
     SvPointOnMeshNodeMK2
     SvOBJRayCastNodeMK2
     SvSCNRayCastNodeMK2
@@ -633,7 +633,7 @@
     SvSetCollection
 
 ## Scene
-    SvObjectsNodeMK3
+    SvGetObjectsData
     SvObjInLite
     SvCurveInputNode
     SvFCurveInNodeMK1
@@ -666,11 +666,12 @@
     SvFormulaNodeMk5
     SvFormulaInterpolateNode
     SvExecNodeMod
-    SvScriptNodeLite
     SvProfileNodeMK3
     SvMeshEvalNode
     SvGenerativeArtNode
     SvTopologySimple
+    ---
+    SvScriptNodeLite
 
 ## Network
     UdpClientNode

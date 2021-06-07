@@ -1,21 +1,10 @@
-# -*- coding: utf-8 -*-
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
 
 import sys
 import time
@@ -34,9 +23,9 @@ from sverchok.core.update_system import (
     process_from_node, process_from_nodes,
     process_tree,
     get_original_node_color,
-    is_first_run,)
-from sverchok.core.links import (
-    SvLinks)
+    is_first_run)
+
+from sverchok.core.links import SvLinks
 from sverchok.core.node_id_dict import SvNodesDict
 
 from sverchok.utils import get_node_class_reference
@@ -128,6 +117,22 @@ class SvNodeTreeCommon(object):
         finally:
             self.skip_tree_update = previous_state
 
+    def update_gl_scale_info(self, origin=None):
+        """
+        the nodeview scale and dpi differs between users and must be queried to get correct nodeview
+        x,y and dpi scale info.
+
+        this is instead of calling `get_dpi_factor` on every redraw.
+        """
+
+        debug(f"update_gl_scale_info called from {origin or self.name}")
+        try:
+            from sverchok.utils.context_managers import sv_preferences
+            with sv_preferences() as prefs:
+                prefs.set_nodeview_render_params(None)
+        except Exception as err:
+            debug('failed to get gl scale info', err)
+
     @contextmanager
     def init_tree(self):
         """It suppresses calling the update method of nodes,
@@ -182,7 +187,12 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
-
+    sv_show_time_graph: BoolProperty(name="Time Graph", default=False, options=set())
+    sv_show_time_nodes: BoolProperty(name="Node times", default=False, options=set())
+    sv_show_debug_time_prints: BoolProperty(
+        name="Debug Prints", default=True, options=set(),
+        description="setting this to False will suppress debug node times printing to console")
+    
     # something related with heat map feature
     # looks like it keeps dictionary of nodes and their user defined colors in string format
     sv_user_colors: StringProperty(default="")
@@ -193,20 +203,20 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         description="This will show Node Exceptions in the node view, right beside the node",
         name="Show error in tree", default=True, update=lambda s, c: process_tree(s), options=set())
 
-    sv_show_error_details : BoolProperty(
+    sv_show_error_details: BoolProperty(
             name = "Show error details",
             description = "Display exception stack in the node view as well",
             default = False,
             update=lambda s, c: process_tree(s),
             options=set())
 
-    sv_show_socket_menus : BoolProperty(
+    sv_show_socket_menus: BoolProperty(
         name = "Show socket menus",
         description = "Display socket dropdown menu buttons. NOTE: options that are enabled in those menus will be effective regardless of this checkbox!",
         default = False,
         options=set())
 
-    # if several nodes are disconnected this option determine order of their evaluation
+    # if a nodetree consists of several disjoint graphs this option determines the order of their evaluation.
     sv_subtree_evaluation_order: EnumProperty(
         name="Subtree eval order",
         items=[(k, k, '', i) for i, k in enumerate(["X", "Y", "None"])],
@@ -218,7 +228,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         default="None", update=lambda s, c: process_tree(s), options=set()
     )
 
-    # this mode will replace properties of some nodes so they could have lesser values for draft mode
+    # draft mode replaces selected properties of certain nodes with smaller values to lighten cpu load.
     sv_draft: BoolProperty(
         name="Draft",
         description="Draft (simplified processing) mode",
@@ -519,8 +529,10 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
     @property
     def absolute_location(self):
         """
-        It can be useful in case if a node is in a frame node
-        does not return a vactor, it returns a:  tuple(x, y)
+        When a node is inside a frame (and parented to it) then node.location is relative to its parent's location.
+        This function returns the location in absolute screen terms whether the node is framed or not.
+
+        The return type is a tuple (x, y)  (not a Vector)
         """
         return recursive_framed_location_finder(self, self.location[:])
 
@@ -532,8 +544,7 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
 
     def rclick_menu(self, context, layout):
         """
-        Override this method to add specific items into
-        node's right-click menu.
+        Override this method to add specific items into the node's right-click menu.
         Default implementation calls `node_replacement_menu'.
         """
         self.node_replacement_menu(context, layout)
@@ -624,24 +635,6 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
             print('failed to access addon preferences for button size', err)
             return False
         return prefs.over_sized_buttons
-
-    # Methods for OpenGL viewers
-
-    def get_and_set_gl_scale_info(self, origin=None):  # todo, probably openGL viewers should have its own mixin class
-        """
-        This function is called in sv_init in nodes that draw GL instructions to the nodeview,
-        the nodeview scale and dpi differs between users and must be queried to get correct nodeview
-        x,y and dpi scale info.
-        """
-        # print('get_and_set_gl_scale_info called from', origin or self.name)
-
-        try:
-            # print('getting gl scale params')
-            from sverchok.utils.context_managers import sv_preferences
-            with sv_preferences() as prefs:
-                prefs.set_nodeview_render_params(None)
-        except Exception as err:
-            print('failed to get gl scale info', err)
 
 
 @post_load_call

@@ -35,13 +35,9 @@ class SvObjBakeMK3(bpy.types.Operator, SvGenericNodeLocator):
     bl_label = "Sverchok mesh baker mk3"
     bl_options = {'REGISTER', 'UNDO'}
 
-    def execute(self, context):
-        node = self.get_node(context)
-        if not node:
-            return {'CANCELLED'}
+    def sv_execute(self, context, node):
 
         nid = node_id(node)
-
         if not node.inputs[0].is_linked:
             self.report({"WARNING"}, "Vertex socket of Draw node must be connected")
             return {'CANCELLED'}
@@ -61,7 +57,7 @@ class SvObjBakeMK3(bpy.types.Operator, SvGenericNodeLocator):
         m = self.dataCorrect2(matrix_cache, v)
         self.config = node
         self.makeobjects(v, e, p, m)
-        return {'FINISHED'}
+
 
     def dataCorrect2(self, destination, obj):
         if destination:
@@ -139,13 +135,8 @@ if FreeCAD is not None:
         bl_label = "Sverchok solid baker mk3"
         bl_options = {'REGISTER', 'UNDO'}
 
-        def execute(self, context):
-            node = self.get_node(context)
-            if not node:
-                return {'CANCELLED'}
-
+        def sv_execute(self, context, node):
             nid = node_id(node)
-
             if not node.inputs[0].is_linked:
                 self.report({"WARNING"}, "Solid socket of Viewer node must be connected")
                 return {'CANCELLED'}
@@ -163,7 +154,7 @@ if FreeCAD is not None:
             m = self.dataCorrect2(matrix_cache, v)
             self.config = node
             self.makeobjects(v, p, m)
-            return {'FINISHED'}
+
 
         def dataCorrect2(self, destination, obj):
             if destination:

@@ -25,7 +25,6 @@ import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 
-from sverchok.utils.context_managers import sv_preferences
 from sverchok.data_structure import updateNode, node_id, enum_item_4
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL
@@ -183,7 +182,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Float").prop_name = 'in_float'
         self.outputs.new('SvStringsSocket', "Float").custom_draw = 'custom_draw_socket'
-        self.get_and_set_gl_scale_info()
+        self.id_data.update_gl_scale_info()
 
     def get_offset(self):
         return [int(j) for j in (Vector(self.absolute_location) + Vector((self.width + 20, 0)))[:]]
@@ -192,24 +191,14 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         """
         adjust render location based on preference multiplier setting
         """
-        try:
-            with sv_preferences() as prefs:
-                multiplier = prefs.render_location_xy_multiplier
-                scale = prefs.render_scale
-        except:
-            # print('did not find preferences - you need to save user preferences')
-            multiplier = 1.0
-            scale = 1.0
-
-        # cache this.
-        self.location_theta = multiplier
-        return scale
+        from sverchok.settings import get_param
+        self.location_theta = get_param('render_location_xy_multiplier', 1.0)
 
     def generate_graph_geom(self, config):
 
         geom = lambda: None
         x, y = config.loc
-        size = 140 * config.scale
+        size = 140
         back_color, grid_color, line_color = config.palette
         easing_func = config.easing_func
 
@@ -283,12 +272,10 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
 
         if self.activate and self.inputs[0].is_linked:
 
+            self.get_drawing_attributes()
             config = lambda: None
-            scale = self.get_drawing_attributes()
-
             config.loc = (0, 0)
             config.palette = palette_dict.get(self.selected_theme_mode)[:]
-            config.scale = scale
             config.easing_func = easing_func
 
             geom = self.generate_graph_geom(config)

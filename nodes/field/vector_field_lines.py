@@ -7,7 +7,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, St
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, repeat_last_for_length, match_long_repeat, ensure_nesting_level
 from sverchok.utils.logging import info, exception
-from sverchok.utils.sv_mesh_utils import mesh_join
+from sverchok.utils.mesh_functions import mesh_join
 
 class SvVectorFieldLinesNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -19,31 +19,43 @@ class SvVectorFieldLinesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VECTOR_FIELD_LINES'
 
-    step : FloatProperty(
-            name = "Step",
-            default = 0.1,
-            min = 0.0,
-            update = updateNode)
+    step: FloatProperty(
+        name="Step",
+        default=0.1,
+        min=0.0,
+        update=updateNode)
 
-    iterations : IntProperty(
-            name = "Iterations",
-            default = 10,
-            min = 1,
-            update = updateNode)
+    iterations: IntProperty(
+        name="Iterations",
+        default=10,
+        min=1,
+        update=updateNode)
 
-    normalize : BoolProperty(
-        name = "Normalize",
-        default = True,
-        update = updateNode)
+    normalize: BoolProperty(
+        name="Normalize",
+        default=True,
+        update=updateNode)
 
-    join : BoolProperty(
-        name = "Join",
-        default = True,
-        update = updateNode)
+    join: BoolProperty(
+        name="Join",
+        default=True,
+        update=updateNode)
+
+    output_numpy: BoolProperty(
+        name='Output NumPy',
+        description='Output NumPy arrays (improves performance)',
+        default=False,
+        update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'normalize', toggle=True)
         layout.prop(self, 'join', toggle=True)
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'output_numpy')
+    def rclick_menu(self, context, layout):
+        layout.prop(self, "output_numpy")
 
     def sv_init(self, context):
         self.inputs.new('SvVectorFieldSocket', "Field")
@@ -53,7 +65,7 @@ class SvVectorFieldLinesNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Edges')
 
-    def generate_all(self, field, vertices, step, iterations):
+    def generate_all(self, field, vertices, step, iterations, output_numpy):
         new_verts = np.empty((iterations, len(vertices), 3))
         for i in range(iterations):
             xs = vertices[:,0]
@@ -68,7 +80,7 @@ class SvVectorFieldLinesNode(bpy.types.Node, SverchCustomTreeNode):
                 vertices = vertices + step * vectors
             new_verts[i,:,:] = vertices
         result = np.transpose(new_verts, axes=(1, 0, 2))
-        return result.tolist()
+        return result if output_numpy else result.tolist()
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -101,16 +113,13 @@ class SvVectorFieldLinesNode(bpy.types.Node, SverchCustomTreeNode):
                     new_verts = []
                     new_edges = []
                 else:
-                    new_verts = self.generate_all(field, np.array(vertices), step, iterations)
+                    new_verts = self.generate_all(field, np.array(vertices), step, iterations, self.output_numpy)
                     new_edges = [[(i,i+1) for i in range(iterations-1)]] * len(vertices)
                     if self.join:
                         new_verts, new_edges, _ = mesh_join(new_verts, new_edges, [[]] * len(new_verts))
-                if self.join:
-                    field_verts.append(new_verts)
-                    field_edges.append(new_edges)
-                else:
-                    field_verts.extend(new_verts)
-                    field_edges.extend(new_edges)
+
+                field_verts.extend(new_verts)
+                field_edges.extend(new_edges)
 
             verts_out.extend(field_verts)
             edges_out.extend(field_edges)
@@ -123,4 +132,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvVectorFieldLinesNode)
-

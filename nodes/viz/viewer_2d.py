@@ -28,13 +28,12 @@ import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 
-from sverchok.utils.context_managers import sv_preferences
 from sverchok.core.socket_data import SvGetSocketInfo
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL
 from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
-
+from sverchok.settings import get_params
 
 
 socket_dict = {
@@ -686,7 +685,7 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
         vc2 = self.inputs.new('SvColorSocket', "Polygon Color")
         vc2.prop_name = 'polygon_color'
         vc2.custom_draw = 'draw_color_socket'
-        self.get_and_set_gl_scale_info()
+        self.id_data.update_gl_scale_info()
         self.update_sockets()
 
     def draw_color_socket(self, socket, context, layout):
@@ -715,19 +714,9 @@ class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
                 layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
 
     def get_drawing_attributes(self):
-        """
-        adjust render location based on preference multiplier setting
-        """
-        try:
-            with sv_preferences() as prefs:
-                multiplier = prefs.render_location_xy_multiplier
-                scale = prefs.render_scale
-        except:
-            # print('did not find preferences - you need to save user preferences')
-            multiplier = 1.0
-            scale = 1.0
-
-        # cache this.
+        """ obtain the dpi adjusted xy and scale factors, cache location_theta """
+        scale, multiplier = get_params({
+            'render_scale': 1.0, 'render_location_xy_multiplier': 1.0}, direct=True)
         self.location_theta = multiplier
         return scale
 

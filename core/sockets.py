@@ -33,7 +33,7 @@ from sverchok.data_structure import (
     SIMPLE_DATA_TYPES,
     flatten_data, graft_data, map_at_level, wrap_data, unwrap_data)
 
-from sverchok.settings import get_params
+from sverchok.settings import get_param
 
 from sverchok.utils.handle_blender_data import get_func_and_args
 from sverchok.utils.socket_utils import format_bpy_property, setup_new_node_location
@@ -493,7 +493,7 @@ class SvSocketCommon(SvSocketProcessing):
             else:
                 layout.label(text=text)
 
-        menu_option = get_params({'show_input_menus': 'QUICKLINK'}).show_input_menus
+        menu_option = get_param('show_input_menus', 'QUICKLINK')
 
         # just handle custom draw..be it input or output.
         if self.custom_draw:

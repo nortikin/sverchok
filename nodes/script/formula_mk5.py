@@ -70,7 +70,7 @@ socket_dict = {
     "Number / Generic": "SvStringsSocket",
     "Vector": "SvVerticesSocket",
     "Color":   "SvColorSocket",
-    "Matrix":   "SvMaatrixSocket",
+    "Matrix":   "SvMatrixSocket",
     "Quaternion": "SvQuaternionSocket",
     "Object": "SvObjectSocket",
     "Dictionary": "SvDictionarySocket",

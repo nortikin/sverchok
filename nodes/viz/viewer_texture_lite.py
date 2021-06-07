@@ -87,7 +87,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.width = 180
         self.inputs.new('SvStringsSocket', "pixel value")
-        self.get_and_set_gl_scale_info()
+        self.id_data.update_gl_scale_info()
 
     def delete_texture(self):
         n_id = node_id(self)
@@ -138,11 +138,8 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
             Im.pixels = np.resize(self.inputs[0].sv_get(), len(Im.pixels))
 
     def get_preferences(self):
-        # supplied with default, forces at least one value :)
-        props = get_params({
-            'render_scale': 1.0,
-            'render_location_xy_multiplier': 1.0})
-        return props.render_scale, props.render_location_xy_multiplier
+        return get_params({
+            'render_scale': 1.0, 'render_location_xy_multiplier': 1.0}, direct=True)
 
     def get_dimensions(self, width, height):
         """

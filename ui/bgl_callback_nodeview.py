@@ -42,13 +42,13 @@ def tag_redraw_all_nodeviews():
                         region.tag_redraw()
    
 
-def callback_enable(*args):
+def callback_enable(*args, overlay='POST_VIEW'):
     n_id = args[0]
     # global callback_dict
     if n_id in callback_dict:
         return
 
-    handle_pixel = SpaceNodeEditor.draw_handler_add(draw_callback_px, args, 'WINDOW', 'POST_VIEW')
+    handle_pixel = SpaceNodeEditor.draw_handler_add(draw_callback_px, args, 'WINDOW', overlay)
     callback_dict[n_id] = handle_pixel
     tag_redraw_all_nodeviews()
 
@@ -70,8 +70,11 @@ def callback_disable_all():
         if n_id:
             callback_disable(n_id)
 
-
-
+def callback_disable_filtered(pattern):
+    temp_list = list(callback_dict.keys())
+    for ident in temp_list:
+        if ident.endswith(pattern):
+            callback_disable(ident)
 
 
 def restore_opengl_defaults():
@@ -133,6 +136,11 @@ def draw_callback_px(n_id, data):
         args = data.get('args', (None,))
         
         drawing_func(x, y, args)
+        restore_opengl_defaults()
+    elif data.get('mode') == 'LEAN_AND_MEAN':
+        drawing_func = data.get('custom_function')
+        args = data.get('args', (None,))
+        drawing_func(*args)
         restore_opengl_defaults()
     elif data.get('mode') == 'custom_function_context':
         

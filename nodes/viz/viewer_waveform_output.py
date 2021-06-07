@@ -19,7 +19,6 @@ from gpu_extras.batch import batch_for_shader
 
 from mathutils import Vector
 
-from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, node_id
@@ -141,12 +140,8 @@ class SvWaveformViewerOperator(bpy.types.Operator, SvGenericNodeLocator):
 
     fn_name: bpy.props.StringProperty(default='')
 
-    def execute(self, context):
-        node = self.get_node(context)
-        if not node: return {'CANCELLED'}
-
+    def sv_execute(self, context, node):
         getattr(node, self.fn_name)()
-        return {'FINISHED'}
 
 
 class SvWaveformViewerOperatorDP(bpy.types.Operator, SvGenericNodeLocator):
@@ -157,12 +152,8 @@ class SvWaveformViewerOperatorDP(bpy.types.Operator, SvGenericNodeLocator):
         name="File Path", description="Filepath used for writing waveform files",
         maxlen=1024, default="", subtype='FILE_PATH')
 
-    def execute(self, context):
-        node = self.get_node(context)
-        if not node: return {'CANCELLED'}
-
+    def sv_execute(self, context, node):
         node.set_dir(self.filepath)
-        return {'FINISHED'}
 
     def invoke(self, context, event):
         wm = context.window_manager
@@ -277,21 +268,12 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         ... # if self.num_channels < MAX_SOCKETS
 
     def get_drawing_attributes(self):
-        """
-        adjust render location based on preference multiplier setting
-        """
-        try:
-            with sv_preferences() as prefs:
-                multiplier = prefs.render_location_xy_multiplier
-                scale = prefs.render_scale
-        except:
-            # print('did not find preferences - you need to save user preferences')
-            multiplier = 1.0
-            scale = 1.0
-        self.location_theta = multiplier
-        # x, y = [x * multiplier, y * multiplier]
-
-        return scale
+        from sverchok.settings import get_params
+        props = get_params({
+            'render_scale': 1.0, 
+            'render_location_xy_multiplier': 1.0})
+        self.location_theta = props.render_location_xy_multiplier
+        return props.render_scale
 
 
     activate: bpy.props.BoolProperty(name="show graph", update=updateNode)
@@ -335,7 +317,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new(DATA_SOCKET, 'channel 0')
         self.inputs.new(DATA_SOCKET, 'channel 1')
-        self.get_and_set_gl_scale_info()
+        self.id_data.update_gl_scale_info()
 
     def draw_buttons(self, context, layout):
 

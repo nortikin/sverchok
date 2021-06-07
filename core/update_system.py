@@ -37,6 +37,7 @@ import traceback
 import ast
 
 graphs = []
+# graph_dicts = {}
 
 no_data_color = (1, 0.3, 0)
 exception_color = (0.8, 0.0, 0)
@@ -62,6 +63,12 @@ def update_error_colors(self, context):
     global exception_color
     no_data_color = self.no_data_color[:]
     exception_color = self.exception_color[:]
+
+def reset_timing_graphs():
+    global graphs
+    graphs = []
+    # graph_dicts = {}
+
 
 # cache node group update trees
 update_cache = {}
@@ -302,12 +309,12 @@ def do_update_heat_map(node_list, nodes):
 def update_error_nodes(ng, name, err=Exception):
     if ng.bl_idname == "SverchGroupTreeType":
         return # ignore error color inside of monad
+    
     if "error nodes" in ng:
         error_nodes = ast.literal_eval(ng["error nodes"])
     else:
         error_nodes = {}
-    if ng.bl_idname == "SverchGroupTreeType":
-        return
+
     node = ng.nodes.get(name)
     if not node:
         return
@@ -357,13 +364,18 @@ def reset_error_nodes(ng):
                 node.color = data[1]
         del ng["error nodes"]
 
+def node_info(ng_name, node, start, delta):
+    return {"name" : node.name, "bl_idname": node.bl_idname, "start": start, "duration": delta, "tree_name": ng_name}
 
 @profile(section="UPDATE")
 def do_update_general(node_list, nodes, procesed_nodes=set()):
     """
     General update function for node set
     """
+    ng = nodes.id_data
+
     global graphs
+    # graph_dicts[ng.name] = []
     timings = []
     graph = []
     gather = graph.append
@@ -386,18 +398,16 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             delta = time.perf_counter() - start
             total_time += delta
 
-            if data_structure.DEBUG_MODE:
+            if data_structure.DEBUG_MODE and ng.sv_show_debug_time_prints:
                 debug("Processed  %s in: %.4f", node_name, delta)
 
             timings.append(delta)
-            gather({"name" : node_name, "bl_idname": node.bl_idname, "start": start, "duration": delta})
+            gather(node_info(ng.name, node, start, delta))
 
-            # probably it's not grate place for doing it
-            # reroute nodes can be in node variable
+            # probably it's not great place for doing this, the node can be a ReRoute
             [s.update_objects_number() for s in chain(node.inputs, node.outputs) if hasattr(s, 'update_objects_number')]
 
         except Exception as err:
-            ng = nodes.id_data
             update_error_nodes(ng, node_name, err)
             #traceback.print_tb(err.__traceback__)
             exception("Node %s had exception: %s", node_name, err)
@@ -411,9 +421,10 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             return None
 
     graphs.append(graph)
-    if data_structure.DEBUG_MODE:
+    if data_structure.DEBUG_MODE and ng.sv_show_debug_time_prints:
         debug("Node set updated in: %.4f seconds", total_time)
-    
+
+    # graph_dicts[nodes.id_data.name] = graph
     return timings
 
 
@@ -431,8 +442,8 @@ def build_update_list(ng=None):
     """
     global update_cache
     global partial_update_cache
-    global graphs
-    graphs = []
+    reset_timing_graphs()
+
     if not ng:
         for ng in sverchok_trees():
             build_update_list(ng)
@@ -449,10 +460,8 @@ def process_to_node(node):
     """
     Process nodes upstream until node
     """
-    global graphs
-    graphs = []
-
     ng = node.id_data
+    reset_timing_graphs()
     reset_error_nodes(ng)
 
     if data_structure.RELOAD_EVENT:
@@ -487,9 +496,9 @@ def process_from_node(node):
     """
     global update_cache
     global partial_update_cache
-    global graphs
-    graphs = []
+
     ng = node.id_data
+    reset_timing_graphs()
     reset_error_nodes(ng)
 
     if data_structure.RELOAD_EVENT:
@@ -518,8 +527,7 @@ def sverchok_trees():
 def process_tree(ng=None):
     global update_cache
     global partial_update_cache
-    global graphs
-    graphs = []
+    reset_timing_graphs()
 
     if data_structure.RELOAD_EVENT:
         reload_sverchok()
@@ -543,6 +551,8 @@ def reload_sverchok():
     data_structure.RELOAD_EVENT = False
     from sverchok.core import handlers
     handlers.sv_post_load([])
+    reset_timing_graphs()
+
 
 def get_update_lists(ng):
     """

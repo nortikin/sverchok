@@ -533,25 +533,24 @@ class SvEvolverRun(bpy.types.Operator, SvGenericNodeLocator):
     bl_idname = "node.evolver_run"
     bl_label = "Evolver Run"
 
-    def execute(self, context):
-        node = self.get_node(context)
-        if not node: return {'CANCELLED'}
+    def sv_execute(self, context, node):
 
         if not node.inputs[0].is_linked:
             node.info_label = "Stopped - Fitness not linked"
-            return {'FINISHED'}
+            return
 
+        tree = node.id_data
+        
         genotype_frame = node.genotype
         evolver_mem[node.node_id] = {}
-
+        
         seed_set(node.r_seed)
         np.random.seed(node.r_seed)
-
         population = Population(genotype_frame, node, tree)
         population.evolve()
         update_list = make_tree_from_nodes([node.name], tree)
         do_update(update_list, tree.nodes)
-        return {'FINISHED'}
+
 
 def set_fittest(tree, genes, agent, update_list):
     '''sets the nodetree with the best value'''
@@ -570,16 +569,15 @@ class SvEvolverSetFittest(bpy.types.Operator, SvGenericNodeLocator):
     bl_idname = "node.evolver_set_fittest"
     bl_label = "Evolver Run"
 
-    def execute(self, context):
-        node = self.get_node(context)
-        if not node: return {'CANCELLED'}
-
+    def sv_execute(self, context, node):
+        tree = node.id_data
+        
         data = evolver_mem[node.node_id]
         genes = data["genes"]
         population = data["population"]
         update_list = make_tree_from_nodes([g.name for g in genes], tree)
         set_fittest(tree, genes, population[0], update_list)
-        return {'FINISHED'}
+
 
 def get_framenodes(base_node, _):
 
