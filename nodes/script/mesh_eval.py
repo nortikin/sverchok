@@ -327,7 +327,8 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         self.outputs.new('SvStringsSocket', "FaceData")
 
     def load_json(self):
-        internal_file = bpy.data.texts[self.filename]
+        # internal_file = bpy.data.texts[self.filename]
+        internal_file = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
         f = io.StringIO(internal_file.as_string())
         json_data = json.load(f)
         self.validate_json(json_data)
