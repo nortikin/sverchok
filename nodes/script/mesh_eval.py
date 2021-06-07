@@ -430,7 +430,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         for key in self.inputs.keys():
             if key not in variables:
                 self.debug("Input {} not in variables {}, remove it".format(key, str(variables)))
-                self.safe_socket_remove(self, 'inputs', key)
+                self.safe_socket_remove('inputs', key)
 
         for v in variables:
             if v not in self.inputs:
@@ -443,7 +443,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 continue
             if key not in groups:
                 self.debug("Output {} not in groups {}, remove it".format(key, str(groups)))
-                self.safe_socket_remove(self, 'outputs', key)
+                self.safe_socket_remove('outputs', key)
         
         for name in sorted(groups):
             if name not in self.outputs:
