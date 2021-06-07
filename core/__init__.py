@@ -29,6 +29,13 @@ def sv_unregister_modules(modules):
     for m in reversed(modules):
         if hasattr(m, "unregister"):
             # print("Unregistering module: {}".format(m.__name__))
+            if m.__name__ == "sverchok.old_nodes":
+                import bpy
+                old_node_names = sverchok.old_nodes.old_bl_idnames
+                loaded = any([hasattr(bpy.types, node_class_name) for node_class_name in old_node_names.keys()])
+                if not loaded:
+                    print("skipping unregister of old nodes..they are not registered")
+                    continue
             try:
                 m.unregister()
             except RuntimeError as e:
