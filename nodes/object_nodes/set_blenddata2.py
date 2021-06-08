@@ -99,7 +99,7 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableN
             Oo.sv_set(objs)
 
     def draw_label(self):
-        if self.hide:
+        if self.hide and self.formula:
             return self.formula
 
 def register():
