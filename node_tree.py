@@ -505,8 +505,9 @@ class NodeUtils:
                 # something went wrong. the blend does not contain the objectname
                 self.info(f"{identifier} not found in {bpy_data_kind}, returning None instead")
                 if bpy_data_kind.bl_rna.identifier == 'BlendDataTexts':
-                    # if we are in texts it's likely that the blend file already contained this file in bpy.data.texts
-                    # and the name was mutated +n text-> text.001 etc..
+                    # if we are in texts and this key is not found:
+                    # - it's possible the named datablock incurred name collision
+                    # - or it has not yet been created (usually json import, attribute order issue)
                     file_names = {t.name for t in bpy_data_kind}
                     self.info(f"The currently loaded blend file does contain the following text files {file_names}")
 
