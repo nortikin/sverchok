@@ -491,6 +491,10 @@ class NodeUtils:
 
         if the text does not exist you get None
         """
+        if not identifier:
+            # this can happen if a json import goes through attributes arbitrarily.
+            self.info("no identifier passed to the get_bpy_data_from_name function.")
+            return None
 
         try:
             if isinstance(identifier, bpy.types.Object) and identifier.name in bpy_data_kind:
@@ -501,12 +505,30 @@ class NodeUtils:
                     return bpy_data_kind.get(identifier)
                 elif identifier[3:] in bpy_data_kind:
                     return bpy_data_kind.get(identifier[3:])
-                return identifier
+                
+                # something went wrong. the blend does not contain the objectname
+                self.info(f"{identifier} not found in {bpy_data_kind}, returning None instead")
+                if bpy_data_kind.bl_rna.identifier == 'BlendDataTexts':
+                    # if we are in texts and this key is not found:
+                    # - it's possible the named datablock incurred name collision
+                    # - or it has not yet been created (usually json import, attribute order issue)
+                    file_names = {t.name for t in bpy_data_kind}
+                    self.info(f"The currently loaded blend file does contain the following text files {file_names}")
+
 
         except Exception as err:
             self.error(f"identifier '{identifier}' not found in {bpy_data_kind} - with error {err}")
 
         return None
+
+    def safe_socket_remove(self, kind, key, failure_message=None):
+        with self.sv_throttle_tree_update():
+            sockets = getattr(self, kind)
+            if key in sockets:
+                sockets.remove(sockets[key])
+            else:
+                canned_msg = f"{self.name}.{kind} has no socket named {key} - did not remove"
+                self.debug(failure_message or canned_msg)
 
 
 class SverchCustomTreeNode(UpdateNodes, NodeUtils):
