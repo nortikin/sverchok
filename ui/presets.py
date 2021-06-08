@@ -99,7 +99,7 @@ def get_preset_path(name, category=None, standard=False, mkdir=True):
 def get_preset_paths(category=None, mkdir=True):
     standard = get_presets_directory(category, standard=True)
     user = get_presets_directory(category, standard=False, mkdir=mkdir)
-    standard_presets = glob(join(standard, "*.json"))
+    standard_presets = glob(join(standard, "*.json"))  # todo add zip archives as well
     user_presets = glob(join(user, "*.json"))
     standard_presets.sort()
     user_presets.sort()
@@ -121,7 +121,7 @@ def node_supports_presets(node):
     if node is None:
         return False
     bl_idname = node.bl_idname
-    is_monad = (bl_idname.startswith('SvGroupNodeMonad'))
+    is_monad = False  # there are no monad nodes anymore
     is_frame = (bl_idname.startswith('NodeFrame'))
     return not is_monad and not is_frame
 
@@ -278,7 +278,7 @@ class SvPreset(object):
                 @classmethod
                 def poll(cls, context):
                     try:
-                        return context.space_data.node_tree.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}
+                        return context.space_data.node_tree.bl_idname in {'SverchCustomTreeType', }
                     except:
                         return False
 
