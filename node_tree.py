@@ -491,6 +491,10 @@ class NodeUtils:
 
         if the text does not exist you get None
         """
+        if not identifier:
+            # this can happen if a json import goes through attributes arbitrarily.
+            self.info("no identifier passed to the get_bpy_data_from_name function.")
+            return None
 
         try:
             if isinstance(identifier, bpy.types.Object) and identifier.name in bpy_data_kind:
