@@ -501,7 +501,15 @@ class NodeUtils:
                     return bpy_data_kind.get(identifier)
                 elif identifier[3:] in bpy_data_kind:
                     return bpy_data_kind.get(identifier[3:])
+                
+                # something went wrong. the blend does not contain the objectname
                 self.info(f"{identifier} not found in {bpy_data_kind}, returning identifier instead")
+                if bpy_data_kind.bl_rna.identifier == 'BlendDataTexts':
+                    # if we are in texts it's likely that the blend file already contained this file in bpy.data.texts
+                    # and the name was mutated +n text-> text.001 etc..
+                    file_names = {t.name for t in bpy_data_kind}
+                    self.info(f"The currently loaded blend file does contain the following text files {file_names}")
+
                 return identifier
 
         except Exception as err:
