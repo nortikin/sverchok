@@ -271,11 +271,9 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def captured_updateNode(self, context):
         if not self.updating_name_from_pointer:
             text_datablock = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
-            if text_datablock:
     
-                if isinstance(text_datablock, bpy.types.Text):
-                    self.file_pointer = text_datablock
-    
+            if isinstance(text_datablock, bpy.types.Text):
+                self.file_pointer = text_datablock
                 self.adjust_sockets()
                 updateNode(self, context)
 
