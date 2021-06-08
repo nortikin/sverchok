@@ -270,6 +270,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     def captured_updateNode(self, context):
         if not self.updating_name_from_pointer and self.filename:
+            self.info("triggered captured_updateNode, not good, not terrible.")
             text_datablock = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
     
             if isinstance(text_datablock, bpy.types.Text):
