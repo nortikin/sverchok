@@ -272,7 +272,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if not self.updating_name_from_pointer and self.filename:
             self.info("triggered captured_updateNode, not good, not terrible.")
             text_datablock = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
-    
+
             if isinstance(text_datablock, bpy.types.Text):
                 self.file_pointer = text_datablock
                 self.adjust_sockets()
@@ -331,12 +331,11 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def load_json(self):
         # internal_file = bpy.data.texts[self.filename]
         internal_file = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
-        str_data = internal_file.as_string() if hasattr(internal_file, "as_string") else internal_file
-
-        f = io.StringIO(str_data)
-        json_data = json.load(f)
-        self.validate_json(json_data)
-        return json_data
+        if internal_file:
+            f = io.StringIO(internal_file.as_string())
+            json_data = json.load(f)
+            self.validate_json(json_data)
+            return json_data
 
     def validate_json(self, json):
         if not "vertices" in json:
