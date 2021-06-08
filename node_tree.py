@@ -41,7 +41,7 @@ from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_wi
 
 class SvNodeTreeCommon(object):
     '''
-    Common methods shared between Sverchok node trees (normal and monad trees)
+    Common methods shared between Sverchok node trees
     '''
 
     # auto update toggle of the node tree
@@ -61,28 +61,10 @@ class SvNodeTreeCommon(object):
             self.tree_id_memory = str(hash(self) ^ hash(time.monotonic()))
         return self.tree_id_memory
 
-    def get_groups(self):
-        """
-        It gets monads of node tree,
-        Update them (the sv_update method will check if anything changed inside the monad
-        and will change the monad outputs in that case)
-        Return the monads that have changed (
-        to inform the caller function that the nodes downstream have to be updated with the new data)
-        """
-        affected_groups =[]
-        for node in self.nodes:
-            if 'SvGroupNode' in node.bl_idname:
-                sub_tree = node.monad
-                sub_tree.sv_update()
-                if sub_tree.has_changed:
-                    affected_groups.append(node)
-                    sub_tree.has_changed = False
-        return affected_groups
-
     def sv_update(self):
         """
-        the method checks if anything changed inside the normal tree or monad
-        and update them if necessary
+        the method checks if anything changed inside the tree
+        and update it if necessary
         """
         self.sv_links.create_new_links(self)
         if self.sv_links.links_have_changed(self):
@@ -90,8 +72,6 @@ class SvNodeTreeCommon(object):
             build_update_list(self)
             process_from_nodes(self.sv_links.get_nodes(self))
             self.sv_links.store_links_cache(self)
-        else:
-            process_from_nodes(self.get_groups())
 
     def animation_update(self):
         """Find animatable nodes and update from them"""

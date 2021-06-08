@@ -77,7 +77,7 @@ def reload_old(ng=False):
     else:
         for ng in bpy.data.node_groups:
             reload_old(ng)
-            #if ng.bl_idname in { 'SverchCustomTreeType', 'SverchGroupTreeType'}:
+            #if ng.bl_idname in { 'SverchCustomTreeType', }:
             #    reload_old(ng)
     
 def load_old(ng):

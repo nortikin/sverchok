@@ -307,9 +307,6 @@ def do_update_heat_map(node_list, nodes):
         nodes[name].color = cold.lerp(hot, t / t_max)
 
 def update_error_nodes(ng, name, err=Exception):
-    if ng.bl_idname == "SverchGroupTreeType":
-        return # ignore error color inside of monad
-    
     if "error nodes" in ng:
         error_nodes = ast.literal_eval(ng["error nodes"])
     else:
@@ -413,7 +410,6 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             exception("Node %s had exception: %s", node_name, err)
             
             if hasattr(ng, "sv_show_error_in_tree"):
-                # not yet supported in monad trees..
                 if ng.sv_show_error_in_tree:
                     error_text = traceback.format_exc()
                     start_exception_drawing_with_bgl(ng, node_name, error_text, err)

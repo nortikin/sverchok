@@ -42,13 +42,9 @@ def sverchok_trees():
             yield ng
 
 def get_all_sverchok_affiliated_trees():
-    sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType', 'SvGroupTree'}
+    sv_types = {'SverchCustomTreeType', 'SvGroupTree'}
     return list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
 
-def update_all_monads_found():
-    for monad in (ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchGroupTreeType'):
-        if monad.input_node and monad.output_node:
-            monad.update_cls()    
 
 def ensure_all_encountered_nodes_are_valid(sv_trees):
     for ng in sv_trees:
@@ -194,8 +190,6 @@ def sv_post_load(scene):
     
     # ensure current nodeview view scale / location parameters reflect users' system settings
     node_tree.SverchCustomTree.update_gl_scale_info(None, "sv_post_load")
-
-    update_all_monads_found()
 
     sv_trees = get_all_sverchok_affiliated_trees()
     ensure_all_encountered_nodes_are_valid(sv_trees)
