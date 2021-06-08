@@ -334,7 +334,7 @@ class UpdateNodes:
         - sets node color
         """
         ng = self.id_data
-        if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
+        if ng.bl_idname in {'SverchCustomTreeType', }:
             ng.nodes_dict.load_node(self)
         with ng.throttle_update():
             try:
@@ -361,7 +361,7 @@ class UpdateNodes:
             s.sv_forget()
 
         node_tree = self.id_data
-        if node_tree.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
+        if node_tree.bl_idname in {'SverchCustomTreeType', }:
             node_tree.nodes_dict.forget_node(self)
 
         if hasattr(self, "has_3dview_props"):  # todo remove
@@ -382,7 +382,7 @@ class UpdateNodes:
 
         self.n_id = ""
         self.sv_copy(original)
-        if self.id_data.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
+        if self.id_data.bl_idname in {'SverchCustomTreeType', }:
             self.id_data.nodes_dict.load_node(self)
 
     def update(self):
@@ -417,10 +417,6 @@ class UpdateNodes:
                 debug("Partial update from node %s in %s", self.name, round(b - a, 4))
             else:
                 process_from_node(self)
-        elif self.id_data.bl_idname == "SverchGroupTreeType":
-            monad = self.id_data
-            for instance in monad.instances:
-                instance.process_node(context)
         elif self.id_data.bl_idname == "SvGroupTree":
             self.id_data.update_nodes([self])
         else:
@@ -524,7 +520,7 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
 
     @classmethod
     def poll(cls, ntree):
-        return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType', 'SvGroupTree']
+        return ntree.bl_idname in ['SverchCustomTreeType', 'SvGroupTree']
 
     @property
     def absolute_location(self):
