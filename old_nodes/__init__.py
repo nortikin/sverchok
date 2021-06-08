@@ -148,8 +148,9 @@ def unregister_old(bl_id):
          
 def unregister():
     global imported_mods
-    print(imported_mods)
-    for mod in imported_mods.values():
-        print(dir(mod))
-        mod.unregister()
+    for key, mod in imported_mods.items():
+        if hasattr(bpy.types, key):
+            mod.unregister()
+        else:
+            print(f'{key} was not registered, did not unregister')
     imported_mods = {}
