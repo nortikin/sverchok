@@ -269,7 +269,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     sv_icon = 'SV_MESH_EXPRESSION'
 
     def captured_updateNode(self, context):
-        if not self.updating_name_from_pointer:
+        if not self.updating_name_from_pointer and self.filename:
             text_datablock = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
     
             if isinstance(text_datablock, bpy.types.Text):
