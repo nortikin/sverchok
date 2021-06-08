@@ -501,6 +501,7 @@ class NodeUtils:
                     return bpy_data_kind.get(identifier)
                 elif identifier[3:] in bpy_data_kind:
                     return bpy_data_kind.get(identifier[3:])
+                self.info(f"{identifier} not found in {bpy_data_kind}, returning identifier instead")
                 return identifier
 
         except Exception as err:
