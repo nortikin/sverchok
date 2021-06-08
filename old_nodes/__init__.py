@@ -150,5 +150,6 @@ def unregister():
     global imported_mods
     print(imported_mods)
     for mod in imported_mods.values():
+        print(mod)
         mod.unregister()
     imported_mods = {}
