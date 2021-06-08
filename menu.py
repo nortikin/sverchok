@@ -404,57 +404,6 @@ def draw_add_node_operator(layout, nodetype, label=None, icon_name=None, params=
 
     return add
 
-def sv_group_items(context):
-    """
-    Based on the built in node_group_items in the blender distrubution
-    somewhat edited to fit.
-    """
-    if context is None:
-        return
-    space = context.space_data
-    if not space:
-        return
-    ntree = space.edit_tree
-    if not ntree:
-        return
-
-    yield NodeItemCustom(draw=draw_node_ops)
-
-    def contains_group(nodetree, group):
-        if nodetree == group:
-            return True
-        else:
-            for node in nodetree.nodes:
-                if node.bl_idname in node_tree_group_type.values() and node.node_tree is not None:
-                    if contains_group(node.node_tree, group):
-                        return True
-        return False
-
-    if ntree.bl_idname == "SverchGroupTreeType":
-        yield NodeItem("SvMonadInfoNode", "Monad Info")
-
-    for monad in context.blend_data.node_groups:
-        if monad.bl_idname != "SverchGroupTreeType":
-            continue
-        # make sure class exists
-        cls_ref = get_node_class_reference(monad.cls_bl_idname)
-
-        if cls_ref and monad.cls_bl_idname:
-            yield NodeItem(monad.cls_bl_idname, monad.name)
-        elif monad.cls_bl_idname:
-            monad_cls_template_dict = {"cls_bl_idname": "str('{}')".format(monad.cls_bl_idname)}
-            yield NodeItem("SvMonadGenericNode", monad.name, monad_cls_template_dict)
-
-def draw_node_ops(self,layout, context):
-
-    make_monad = "node.sv_monad_from_selected"
-    ungroup_monad = "node.sv_monad_expand"
-    update_import = "node.sv_monad_class_update"
-    layout.operator(make_monad, text='make group (+relink)', icon='RNA')
-    layout.operator(make_monad, text='make group', icon='RNA').use_relinking = False
-    layout.operator(ungroup_monad, text='ungroup', icon='RNA')
-    layout.operator(update_import, text='update appended/linked', icon='RNA')
-    layout.separator()
 
 def strformated_tree(nodes):
 
@@ -506,8 +455,6 @@ def make_categories():
 
     logger.info(f"The following nodes are not enabled (probably due to missing dependancies)\n{strformated_tree(nodes_not_enabled)}")
 
-    node_categories.append(SverchNodeCategory("SVERCHOK_MONAD", "Monad", items=sv_group_items))
-    SverchNodeItem.new('SvMonadInfoNode')
     return node_categories, node_count, original_categories
 
 def register_node_panels(identifier, std_menu):
