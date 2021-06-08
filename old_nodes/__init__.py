@@ -27,7 +27,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_oldnodes_parser import get_old_node_bl_idnames
-from sverchok.utils.logging import error, exception
+from sverchok.utils.logging import error, exception, debug
 
 imported_mods = {}
 
@@ -152,5 +152,5 @@ def unregister():
         if hasattr(bpy.types, key):
             mod.unregister()
         else:
-            print(f'{key} was not registered, did not unregister')
+            debug(f'{key} was not registered, did not unregister')
     imported_mods = {}
