@@ -77,7 +77,7 @@ node_list = make_node_list(nodes)
 
 if "bpy" in locals():
     reload_event = True
-    node_list = handle_reload_event(nodes, imported_modules, old_nodes)
+    node_list = handle_reload_event(nodes, imported_modules)
 
 
 import bpy

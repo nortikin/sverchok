@@ -45,15 +45,12 @@ sv_registration_utils.register_all = sv_register_modules
 sv_registration_utils.unregister_all = sv_unregister_modules
 
 
-def reload_all(imported_modules, node_list, old_nodes):
+def reload_all(imported_modules, node_list):
     # reload base modules
     _ = [importlib.reload(im) for im in imported_modules]
 
     # reload nodes
     _ = [importlib.reload(node) for node in node_list]
-
-    old_nodes.reload_old()
-
 
 
 def make_node_list(nodes):
@@ -71,21 +68,9 @@ def import_modules(modules, base, im_list):
         im_list.append(im)
 
 
-def handle_reload_event(nodes, imported_modules, old_nodes):
+def handle_reload_event(nodes, imported_modules):
     node_list = make_node_list(nodes)
-    reload_all(imported_modules, node_list, old_nodes)
-
-    try:
-        from sverchok.old_nodes import old_bl_idnames
-        debug('Known old_bl_idnames after reload: %s', len(old_bl_idnames))
-    except Exception as err:
-        exception(err)
-    try:
-        from sverchok.utils import dummy_nodes
-        debug('Known dummy_bl_idnames after reload: %s', len(dummy_nodes.dummy_nodes_dict))
-    except Exception as err:
-        exception(err)
-
+    reload_all(imported_modules, node_list)
     return node_list
 
 

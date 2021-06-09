@@ -1,6 +1,3 @@
-import traceback
-
-from sverchok.core import upgrade_nodes
 from sverchok.utils.testing import *
 from sverchok.utils.sv_json_export import JSONExporter
 
@@ -28,12 +25,6 @@ class ProfileExportTest(ReferenceTreeTestCase):
         super().setUp()
 
     def test_profile_export(self):
-
-        try:
-            upgrade_nodes.upgrade_nodes(self.tree)
-        except:
-            traceback.print_exc()
-
         export_result = JSONExporter.get_tree_structure(self.tree)
         importer = JSONImporter(export_result)
         importer.import_into_tree(self.tree, print_log=False)
