@@ -605,7 +605,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         # load data into selected socket
         self.outputs[0].sv_set(self.list_data[n_id])
 
-    def set_pointer_from_filename(self):
+    def load_file_update(self):
         """ this function upgrades older versions of ProfileMK3 to the version that has self.file_pointer """
         if hasattr(self, "file_pointer") and not self.file_pointer:
             text = self.get_bpy_data_from_name(self.text, bpy.data.texts)

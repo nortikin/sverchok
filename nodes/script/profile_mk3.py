@@ -710,7 +710,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def set_filename_to_match_file_pointer(self):
         self.file_pointer = self.file_pointer
 
-    def set_pointer_from_filename(self):
+    def load_file_update(self):
         """ this function upgrades older versions of ProfileMK3 to the version that has self.file_pointer """
         if hasattr(self, "file_pointer") and not self.file_pointer:
             text = self.get_bpy_data_from_name(self.filename, bpy.data.texts)

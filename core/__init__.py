@@ -13,7 +13,7 @@ root_modules = [
 core_modules = [
     "monad_properties", "sv_custom_exceptions",
     "node_id_dict", "links", "sockets",
-    "handlers", "update_system", "upgrade_nodes",
+    "handlers", "update_system",
     "monad", "events", "node_group", "group_handlers"
 ]
 
