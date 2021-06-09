@@ -101,6 +101,26 @@ def get_sv_trees():
 # ~~~~ encapsulation Blender objects ~~~~
 
 
+class BlTrees:
+    """Wrapping around Blender tree, use with care
+    it can crash if other containers are modified a lot
+    https://docs.blender.org/api/current/info_gotcha.html#help-my-script-crashes-blender
+    All this is True and about Blender class itself"""
+
+    def __init__(self, node_groups=None):
+        self._trees = node_groups
+
+    @property
+    def sv_trees(self):
+        trees = self._trees or bpy.data.node_groups
+        return (t for t in trees if t.bl_idname in {'SverchCustomTreeType', 'SvGroupTree'})
+
+    @property
+    def sv_main_trees(self):
+        trees = self._trees or bpy.data.node_groups
+        return (t for t in trees if t.bl_idname == 'SverchCustomTreeType')
+
+
 class BPYNode:
     """Wrapping around ordinary node for extracting some its information"""
     def __init__(self, node):
