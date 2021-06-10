@@ -96,6 +96,13 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
             bgl.glDeleteTextures(1, names)
 
     def process(self):
+
+        # upgrades older versions of ProfileMK3 to the version that has self.file_pointer
+        if self.image and not self.image_pointer:
+            image = self.get_bpy_data_from_name(self.image, bpy.data.images)
+            if image:
+                self.image_pointer = image
+
         n_id = node_id(self)
         self.delete_texture()
         nvBGL2.callback_disable(n_id)
@@ -158,12 +165,6 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
         # reset n_id on copy
         self.n_id = ''
 
-    def load_file_update(self):
-        """ this function upgrades older versions of ProfileMK3 to the version that has self.file_pointer """
-        if hasattr(self, "image_pointer") and not self.image_pointer:
-            image = self.get_bpy_data_from_name(self.image, bpy.data.images)
-            if image:
-                self.image_pointer = image
 
 classes = [SvTextureViewerNodeLite,]
 register, unregister = bpy.utils.register_classes_factory(classes)
