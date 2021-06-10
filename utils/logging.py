@@ -5,6 +5,7 @@ import inspect
 import traceback
 import logging
 import logging.handlers
+from contextlib import contextmanager
 
 import sverchok
 from sverchok.utils.development import get_version_string
@@ -19,6 +20,20 @@ internal_buffer_initialized = False
 file_initialized = False
 # Whether logging is initialized
 initialized = False
+
+
+@contextmanager
+def catch_log_error():
+    """Catch logging errors"""
+    try:
+        yield
+    except Exception as e:
+        frame, _, line, *_ = inspect.stack()[2]  # third frame is where the context manager was used
+        module = inspect.getmodule(frame)
+        name = module.__name__ or "<Unknown Module>"
+        try_initialize()
+        logging.getLogger(f'{name} {line}').error(e)
+
 
 def get_log_buffer(log_buffer_name):
     """
@@ -153,14 +168,11 @@ def with_module_logger(method_name):
     Logger name is obtained from caller module name.
     """
     def wrapper(*args, **kwargs):
-        frame = inspect.stack()[1]
-        module = inspect.getmodule(frame[0])
-        if module is None:
-            name = "<Unknown Module>"
-        else:
-            name = module.__name__
+        frame, _, line, *_ = inspect.stack()[1]
+        module = inspect.getmodule(frame)
+        name = module.__name__ or "<Unknown Module>"
         try_initialize()
-        logger = logging.getLogger(name)
+        logger = logging.getLogger(f'{name} {line}')
         method = getattr(logger, method_name)
         return method(*args, **kwargs)
 
@@ -181,9 +193,9 @@ def getLogger(name=None):
     If name is None, then logger name is obtained from caller module name.
     """
     if name is None:
-        frame = inspect.stack()[1]
-        module = inspect.getmodule(frame[0])
-        name = module.__name__
+        frame, _, line, *_ = inspect.stack()[1]
+        module = inspect.getmodule(frame)
+        name = f'{module.__name__} {line}'
     try_initialize()
     return logging.getLogger(name)
 
