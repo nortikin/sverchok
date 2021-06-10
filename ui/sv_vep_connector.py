@@ -18,10 +18,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from sverchok.ui.nodeview_rclick_menu import get_output_sockets_map
-from sverchok.utils.sv_node_utils import frame_adjust
 
-sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 
 def similar_sockets(node_out, node_in, term):
     socket_out, socket_in = -1, -1
@@ -95,7 +92,7 @@ class SvNodeConnectorOperator(bpy.types.Operator):
 
         space = context.space_data
         tree_type = space.tree_type
-        return space.type == 'NODE_EDITOR' and tree_type in sv_tree_types
+        return space.type == 'NODE_EDITOR' and tree_type in {'SverchCustomTreeType', }
 
     def execute(self, context):
         verts_edges_faces_connector(self, context)

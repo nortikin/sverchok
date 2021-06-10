@@ -19,7 +19,6 @@ from sverchok import old_nodes
 from sverchok.utils.sv_IO_panel_tools import get_file_obj_from_zip
 from sverchok.utils.logging import info, warning, getLogger, logging
 from sverchok.utils.handle_blender_data import BPYProperty, BPYNode
-from sverchok.utils.sv_IO_monad_helpers import unpack_monad
 from sverchok.utils.sv_json_struct import FileStruct, NodePresetFileStruct
 
 if TYPE_CHECKING:
@@ -112,24 +111,10 @@ class TreeImporter01:
         self._new_node_names = dict()  # map(old_node_name, new_node_name)
 
     def import_tree(self):
-        """Reads and generates nodes, frames, links, monad"""
-        # create recursion, this is how monad import intend to work
-        # in original module monad does not take in account that they can get another name
-        # it logic remains and in this module
-        # monad is designed to be imported recursively
-        with self._fails_log.add_fail("Reading monads", f'Tree: {self._tree.name}'):
-            for name, str_struct in self._structure.get('groups', dict()).items():
-                monad = bpy.data.node_groups.new(name, 'SverchGroupTreeType')
-                TreeImporter01(monad, json.loads(str_struct), self._fails_log).import_tree()
-
+        """Reads and generates nodes, frames, links"""
         with TreeGenerator.start_from_tree(self._tree, self._fails_log) as tree_builder:
             for node_name, node_type, node_structure in self.nodes():
-                if node_type == 'SvMonadGenericNode':
-                    node = None
-                    with self._fails_log.add_fail("Creating monad node", f'Tree: {self._tree.name}'):
-                        node = unpack_monad(self._tree.nodes, node_structure)
-                else:
-                    node = tree_builder.add_node(node_type, node_name)
+                node = tree_builder.add_node(node_type, node_name)
                 if node:
                     self._new_node_names[node_name] = node.name
                     NodeImporter01(node, node_structure, self._fails_log, self.file_version).import_node()
@@ -203,8 +188,6 @@ class NodeImporter01:
                     setattr(self._node, attr_name, attr_value)
 
         for prop_name, prop_value in self._node_properties():
-            if prop_name in {"all_props", "cls_dict", "monad"}:
-                return  # this properties for monads which are applied in another place
             with self._fails_log.add_fail(
                     "Setting node property",
                     f'Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}'):

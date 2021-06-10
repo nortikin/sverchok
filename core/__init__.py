@@ -11,10 +11,10 @@ root_modules = [
 ]
 
 core_modules = [
-    "monad_properties", "sv_custom_exceptions",
+    "sv_custom_exceptions",
     "node_id_dict", "links", "sockets",
     "handlers", "update_system", "upgrade_nodes",
-    "monad", "events", "node_group", "group_handlers"
+    "events", "node_group", "group_handlers"
 ]
 
 def sv_register_modules(modules):

@@ -57,7 +57,6 @@ class GroupEvent:
 
 class BlenderEventsTypes(Enum):
     tree_update = auto()  # this updates is calling last with exception of creating new node
-    monad_tree_update = auto()
     node_update = auto()  # it can be called last during creation new node event
     add_node = auto()   # it is called first in update wave
     copy_node = auto()  # it is called first in update wave

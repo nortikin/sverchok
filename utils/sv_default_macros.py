@@ -50,8 +50,6 @@ macros = {
         description="load snlite w/ petalsine", term='snl demo/petal_sine.py'),
     "> Subdiv to quads": simple_macro(
         description="snlite w/ subdiv to quads", term='snl demo/subidivide_to_quads.py'),
-    "> monad info": simple_macro(
-        description="output current idx / total", term='monad info'),
     "> multiply *": simple_macro(
         description="multiply selected nodes", term='mathMUL'),
     "> add +": simple_macro(
@@ -91,10 +89,6 @@ macros = {
 }
 
 
-
-sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
-
-
 def sn_loader(snlite, script_name=None):
     sv_path = os.path.dirname(sv_get_local_path()[0])
     snlite_template_path = os.path.join(sv_path, 'node_scripts', 'SNLite_templates')
@@ -113,7 +107,7 @@ class DefaultMacros():
         if no active nodetree
         add new empty node tree, set fakeuser immediately
         '''
-        if not context.space_data.tree_type in sv_types:
+        if not context.space_data.tree_type in {'SverchCustomTreeType', }:
             print('not running from a sv nodetree')
             return
 
@@ -173,11 +167,6 @@ class DefaultMacros():
             snlite = nodes.new('SvScriptNodeLite')
             snlite.location = context.space_data.cursor_location
             sn_loader(snlite, script_name=file)
-
-        elif term == 'monad info':
-            x, y = context.space_data.cursor_location[:]
-            monad_info = nodes.new('SvMonadInfoNode')
-            monad_info.location = x, y
 
         elif "join" in term:
             join_macros(context, operator, term, nodes, links)

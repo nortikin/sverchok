@@ -39,7 +39,7 @@ from sverchok.utils.extra_categories import external_node_docs
 
 
 def displaying_sverchok_nodes(context):
-    return context.space_data.tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}
+    return context.space_data.tree_type in {'SverchCustomTreeType', }
 
 def node_show_branch(self, context):
     if not displaying_sverchok_nodes(context):

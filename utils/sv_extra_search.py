@@ -19,19 +19,17 @@
 import os
 import importlib.util as getutil
 import bpy
-import nodeitems_utils
 
 import sverchok
 from sverchok.menu import make_node_cats
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.docstring import SvDocstring
-from sverchok.ui.sv_icons import custom_icon
 from sverchok.utils.sv_default_macros import macros, DefaultMacros
 from nodeitems_utils import _node_categories
 from sverchok.utils.extra_categories import get_extra_categories
 # pylint: disable=c0326
 
-sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
+
 node_cats = make_node_cats()
 addon_name = sverchok.__name__
 
@@ -146,7 +144,7 @@ class SvExtraSearch(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         tree_type = context.space_data.tree_type
-        if tree_type in sv_tree_types:
+        if tree_type in {'SverchCustomTreeType', }:
             return True
 
     def bl_idname_from_bl_label(self, context):
