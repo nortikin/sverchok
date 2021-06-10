@@ -11,10 +11,10 @@ root_modules = [
 ]
 
 core_modules = [
-    "monad_properties", "sv_custom_exceptions",
+    "sv_custom_exceptions",
     "node_id_dict", "links", "sockets",
     "handlers", "update_system",
-    "monad", "events", "node_group", "group_handlers"
+    "events", "node_group", "group_handlers"
 ]
 
 def sv_register_modules(modules):
@@ -28,7 +28,6 @@ def sv_unregister_modules(modules):
     clear_system_cache()
     for m in reversed(modules):
         if hasattr(m, "unregister"):
-            # print("Unregistering module: {}".format(m.__name__))
             try:
                 m.unregister()
             except RuntimeError as e:

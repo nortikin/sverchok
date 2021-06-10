@@ -210,13 +210,6 @@ def setLevel(level):
     for handler in logging.getLogger().handlers:
         handler.setLevel(level)
 
-def inject_logger(name):
-    logger = getLogger(name)
-    globals()["debug"] = logger.debug
-    globals()["info"] = logger.info
-    globals()["warning"] = logger.warning
-    globals()["error"] = logger.error
-    globals()["exception"] = logger.exception
 
 consoleHandler = None
 

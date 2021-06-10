@@ -14,7 +14,7 @@ This is a collection of shortcuts useful in the Sverchok node tree, some are Ble
   - 2: Mesh: Generators, Transforms, Modifiers and CAD
   - 3: Advanced Objects: Curve, Surface, Field, Spatial, Pulga Physics, Alpha and Beta
   - 4: Connection: Viz, Text, Scene, Exchange, BPY Data, Network and SVG
-  - 5: Sv Interface: Layout, Monad, Group and Presets
+  - 5: Sv Interface: Layout, Group and Presets
 
 **Shift + S** - Add solids node menu (needs FreeCad)
 
@@ -62,10 +62,6 @@ This is a collection of shortcuts useful in the Sverchok node tree, some are Ble
 **F6** - Enables/Disables the processing of the current node-tree
 
 **F7** - Enables/Disables the Draft mode of the current node-tree
-
-**Ctrl + G** - Create Monad (Group) and re-link.
-
-**Ctrl + Shift + G** - Create Monad (Group).
 
 **L** - Select Nodes that link to the previously selected nodes
 

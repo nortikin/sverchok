@@ -95,7 +95,7 @@ def delete_data_block(data_block) -> None:
 
 
 def get_sv_trees():
-    return [ng for ng in bpy.data.node_groups if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}]
+    return [ng for ng in bpy.data.node_groups if ng.bl_idname in {'SverchCustomTreeType',}]
 
 
 # ~~~~ encapsulation Blender objects ~~~~

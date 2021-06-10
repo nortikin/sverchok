@@ -284,6 +284,7 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
     bl_label = "Export to GIST (github account)"
 
     selected_only: bpy.props.BoolProperty(name="Selected only", default=False)
+    compact: bpy.props.BoolProperty(default=True, description="Compact representation of the JSON file")
 
     @classmethod
     def poll(cls, context):
@@ -295,12 +296,6 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
             return {'CANCELLED'}
 
         ng = context.space_data.node_tree
-
-        is_tree_exportable, msg = self.can_be_exported(ng)
-        if not is_tree_exportable:
-            self.report({'ERROR'}, msg)
-            return {'CANCELLED'}
-
         gist_filename = ng.name
 
         app_version = bpy.app.version_string.replace(" ", "")
@@ -364,6 +359,7 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
             col = self.layout.column()  # old syntax in <= 2.83
 
         col.use_property_split = True
+        col.prop(self, 'compact')
         col.prop(self, 'selected_only')
 
 

@@ -32,17 +32,15 @@ from sverchok.menu import (
     is_submenu_call,
     get_submenu_call_name,
     compose_submenu_name,
-    draw_node_ops as monad_node_ops)
+)
 
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.extra_categories import get_extra_categories, extra_category_providers
-from sverchok.utils.context_managers import sv_preferences
-from sverchok.ui.sv_icons import node_icon, icon, get_icon_switch, custom_icon
+from sverchok.ui.sv_icons import node_icon, icon, custom_icon
 from sverchok.ui import presets
-import nodeitems_utils
-# from nodeitems_utils import _node_categories
 
-sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
+
+sv_tree_types = {'SverchCustomTreeType', }
 node_cats = make_node_cats()
 
 menu_class_by_title = dict()
@@ -93,7 +91,6 @@ menu_structure = [
     ["NODEVIEW_MT_AddBetas", "SV_BETA"],
     ["NODEVIEW_MT_AddAlphas", "SV_ALPHA"],
     ["separator"],
-    ["NODE_MT_category_SVERCHOK_MONAD", "RNA"],
     ["NODE_MT_category_SVERCHOK_GROUP", "NODETREE"],
     ["NODEVIEW_MT_AddPresetOps", "SETTINGS"],
 ]
@@ -303,41 +300,6 @@ class NODE_MT_category_SVERCHOK_GROUP(bpy.types.Menu):
         layout.operator('node.add_node_output_input', text="Group output").node_type = 'output'
         layout.operator('node.add_group_tree_from_selected')
 
-class NODE_MT_category_SVERCHOK_MONAD(bpy.types.Menu):
-    bl_label = "Monad"
-    label =  'Monad'
-
-    def draw(self, context):
-
-        if context is None:
-            return
-        space = context.space_data
-        if not space:
-            return
-        ntree = space.edit_tree
-        if not ntree:
-            return
-        layout = self.layout
-
-        monad_node_ops(self, layout, context)
-
-        if ntree.bl_idname == "SverchGroupTreeType":
-            draw_add_node_operator(layout, "SvMonadInfoNode")
-            layout.separator()
-
-        for monad in context.blend_data.node_groups:
-            if monad.bl_idname != "SverchGroupTreeType":
-                continue
-            if monad.name == ntree.name:
-                continue
-            # make sure class exists
-            cls_ref = get_node_class_reference(monad.cls_bl_idname)
-
-            if cls_ref and monad.cls_bl_idname and monad.cls_bl_idname:
-                op = layout.operator('node.add_node', text=monad.name)
-                op.type = monad.cls_bl_idname
-                op.use_transform = True
-
 
 extra_category_menu_classes = dict()
 
@@ -373,7 +335,6 @@ classes = [
     NODEVIEW_MT_AddBPYData,
     NODEVIEW_MT_AddPresetOps,
     NODE_MT_category_SVERCHOK_GROUP,
-    NODE_MT_category_SVERCHOK_MONAD,
     # like magic.
     # make | NODEVIEW_MT_Add + class name , menu name
     make_class('GeneratorsExt', "Generators Extended"),
@@ -419,7 +380,7 @@ classes = [
     make_partial_menu_class('Mesh', 'Mesh (2)', [1, 7, 8, 9, 10]),
     make_partial_menu_class('Advanced_Objects', 'Advanced Objects (3)', [2, 3, 4, 5, 6, 28, 30, 32, 33]),
     make_partial_menu_class('Connection', 'Connection (4)', [21, 22, 23, 24, 26, 29, 31]),
-    make_partial_menu_class('UI_tools', 'SV Interface (5)', [25, 35, 36, 37])
+    make_partial_menu_class('UI_tools', 'SV Interface (5)', [25, 35, 36])
 
 ]
 def sv_draw_menu(self, context):

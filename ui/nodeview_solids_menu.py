@@ -33,7 +33,7 @@ from sverchok.ui.sv_icons import node_icon, icon, get_icon_switch, custom_icon
 from sverchok.ui import presets
 # from nodeitems_utils import _node_categories
 
-sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
+sv_tree_types = {'SverchCustomTreeType', }
 node_cats = make_node_cats()
 
 def category_has_nodes(cat_name):

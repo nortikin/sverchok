@@ -5,9 +5,9 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import re
 import bpy
-from sverchok.utils.logging import getLogger, inject_logger
+from sverchok.utils.logging import getLogger
+
 
 def has_selection(self, text):
     return not (text.select_end_line == text.current_line and
@@ -42,7 +42,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
 
         edit_text = bpy.context.edit_text
         text_file_name = edit_text.name
-        is_sv_tree = lambda ng: ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}
+        is_sv_tree = lambda ng: ng.bl_idname in {'SverchCustomTreeType', }
         ngs = list(filter(is_sv_tree, ngs))
 
         if not ngs:

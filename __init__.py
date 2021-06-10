@@ -96,6 +96,7 @@ def register():
 
 def unregister():
     sverchok.utils.clear_node_classes()
-    sv_registration_utils.unregister_all(imported_modules + node_list)
+    sv_registration_utils.unregister_all(imported_modules)
+    sv_registration_utils.unregister_all(node_list)
 
 # EOF

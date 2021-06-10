@@ -525,9 +525,6 @@ class AddGroupNode(PlacingNodeOperator, bpy.types.Operator):
             return False, ''
         tree = path.node_tree
         if tree.bl_idname == 'SverchCustomTreeType':
-            for node in tree.nodes:
-                if node.bl_idname.startswith('SvGroupNodeMonad'):
-                    return False, 'Either monad or group node should be used in the tree'
             return True, 'Add group node'
         elif tree.bl_idname == 'SvGroupTree':
             return True, "Add group node"

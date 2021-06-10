@@ -145,9 +145,7 @@ class EnterExitGroupNodes(bpy.types.Operator):
 
     def execute(self, context):
         node = context.active_node
-        if node and hasattr(node, 'monad'):
-            bpy.ops.node.sv_monad_enter()
-        elif node and hasattr(node, 'node_tree'):
+        if node and hasattr(node, 'node_tree'):
             bpy.ops.node.edit_group_tree({'node': node})
         elif len(context.space_data.path) > 1:
             context.space_data.path.pop()
@@ -155,7 +153,7 @@ class EnterExitGroupNodes(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        if context.space_data.tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType', 'SvGroupTree'}:
+        if context.space_data.tree_type in {'SverchCustomTreeType', 'SvGroupTree'}:
             return True
         else:
             return False
@@ -168,25 +166,10 @@ def add_keymap():
     wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
     if kc:
-        make_monad = 'node.sv_monad_from_selected'
-
         km = kc.keymaps.new(name='Node Editor', space_type='NODE_EDITOR')
 
-        # ctrl+G        | make group from selected with periphery links
-        kmi = km.keymap_items.new(make_monad, 'G', 'PRESS', ctrl=True)
-        nodeview_keymaps.append((km, kmi))
-
-        # ctrl+shift+G  | make group from selected without periphery links
-        kmi = km.keymap_items.new(make_monad, 'G', 'PRESS', ctrl=True, shift=True)
-        kmi.properties.use_relinking = False
-        nodeview_keymaps.append((km, kmi))
-
-        # TAB           | enter or exit monad depending on selection and edit_tree type
+        # TAB           | enter or exit node groups depending on selection and edit_tree type
         kmi = km.keymap_items.new('node.enter_exit_group_nodes', 'TAB', 'PRESS')
-        nodeview_keymaps.append((km, kmi))
-
-        # alt + G       | expand current monad into original state
-        kmi = km.keymap_items.new('node.sv_monad_expand', 'G', 'PRESS', alt=True)
         nodeview_keymaps.append((km, kmi))
 
         # Shift + A     | show custom menu
