@@ -9,7 +9,7 @@ from sverchok.ui import bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
 from sverchok.utils.handle_blender_data import BlTrees
 from sverchok.utils import dummy_nodes
-from sverchok.utils.logging import error
+from sverchok.utils.logging import catch_log_error
 
 _state = {'frame': None}
 
@@ -193,21 +193,15 @@ def sv_post_load(scene):
     update_all_monads_found()
 
     # register and mark old and dependent nodes
-    if any(not n.is_registered_node_type() for ng in BlTrees().sv_trees for n in ng.nodes):
-        old_nodes.register_all()
-        old_nodes.mark_all()
-        dummy_nodes.register_all()
-        dummy_nodes.mark_all()
+    with catch_log_error():
+        if any(not n.is_registered_node_type() for ng in BlTrees().sv_trees for n in ng.nodes):
+            old_nodes.register_all()
+            old_nodes.mark_all()
+            dummy_nodes.register_all()
+            dummy_nodes.mark_all()
 
-    # notify sv nodes about loading the file  todo should be the same in JSON import?
-    for node in (n for t in BlTrees().sv_trees for n in t.nodes):
-        if hasattr(node, 'load_file_update'):
-            try:
-                node.load_file_update()
-            except Exception as e:
-                error(e)
-
-    settings.apply_theme_if_necessary()
+    with catch_log_error():
+        settings.apply_theme_if_necessary()
 
     # release all trees and update them
     set_first_run(False)
