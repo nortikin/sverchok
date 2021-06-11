@@ -449,11 +449,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         except Exception as err:
 
-            self.debug(f"Unexpected error: {sys.exc_info()[0]}")
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            lineno = traceback.extract_tb(exc_traceback)[-1][1]
-            self.debug(f'on line: {lineno}')
-
             # if not fully connected do not raise.
             # should inform the user that the execution was halted because not 
             # enough input was provided for the script to do anything useful.
@@ -463,8 +458,13 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 for sock_name in requirements:
                     if (socket_name in self.inputs) and self.inputs.get(socket_name):
                         required_count += 1
-                if required_count == len(requirements):
+                if required_count != len(requirements):
                     return
+
+            self.debug(f"Unexpected error: {sys.exc_info()[0]}")
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            lineno = traceback.extract_tb(exc_traceback)[-1][1]
+            self.debug(f'on line: {lineno}')
 
             show = traceback.print_exception
             show(exc_type, exc_value, exc_traceback, limit=6, file=sys.stdout)
