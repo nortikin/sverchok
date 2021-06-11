@@ -301,7 +301,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         else:
             self.info(f'bpy.data.texts not read yet, self.script_name="{self.script_name}"')
             if self.script_str:
-                print('but script loaded locally anyway.')
+                self.info('but script loaded locally anyway.')
 
         if self.update_sockets():
             self.injected_state = False
