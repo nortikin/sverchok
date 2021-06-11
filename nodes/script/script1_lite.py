@@ -252,7 +252,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 socket.use_prop = False
 
         except:
-            print('some failure in the add_props_to_sockets function. ouch.')
+            self.info('some failure in the add_props_to_sockets function. ouch.')
 
         self.halt_updates = False
 
@@ -274,7 +274,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 continue
 
             if not self.add_or_update_sockets(k, v):
-                print('failed to load sockets for ', k)
+                self.info(f'failed to load sockets for {k}')
                 return
 
             self.flush_excess_sockets(k, v)
