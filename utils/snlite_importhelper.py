@@ -47,10 +47,10 @@ def processed(str_in):
     return ast.literal_eval(b)
 
 
-def parse_socket_line(line):
+def parse_socket_line(node, line):
     lsp = line.strip().split()
     if not len(lsp) in {3, 5}:
-        print(line, 'is malformed')
+        self.info(f"{line} -> is malformed")
         return UNPARSABLE
     else:
         socket_type = sock_dict.get(lsp[2])
@@ -123,7 +123,7 @@ def parse_sockets(node):
 
         if L.startswith('>in '):
             # one or more inputs can be required before processing/showing errors
-            snlite_info['inputs'].append(parse_required_socket_line(L))
+            snlite_info['inputs'].append(parse_required_socket_line(node, L))
 
         elif L.startswith('inject'):
             if hasattr(node, 'inject_params'):
