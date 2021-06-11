@@ -374,5 +374,5 @@ class SvGetObjectsData(Show3DProperties, bpy.types.Node, SverchCustomTreeNode, S
                 outputs['Object'].sv_set([data_objects.get(o.name) for o in self.object_names])
 
 
-classes = [SvOB3BItemOperator, SvOB3Callback, SVOB3B_UL_NamesList, SvOB3BDataCollection, SvGetObjectsData]
+classes = [SvOB3BItemOperator, SvOB3BDataCollection, SVOB3B_UL_NamesList, SvOB3Callback, SvGetObjectsData]
 register, unregister = bpy.utils.register_classes_factory(classes)
