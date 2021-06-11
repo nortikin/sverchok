@@ -439,6 +439,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             if self.inject_params:
                 locals().update({'parameters': [__local__dict__.get(s.name) for s in self.inputs]})
 
+
             exec(self.script_str, locals(), locals())
 
             for idx, _socket in enumerate(self.outputs):
