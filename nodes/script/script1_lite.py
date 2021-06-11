@@ -455,7 +455,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             lineno = traceback.extract_tb(exc_traceback)[-1][1]
             self.debug(f'on line: {lineno}')
 
-            # if fully connected? do not raise.
+            # if not fully connected do not raise.
+            # should inform the user that the execution was halted because not 
+            # enough input was provided for the script to do anything useful.
+
             show = traceback.print_exception
             show(exc_type, exc_value, exc_traceback, limit=6, file=sys.stdout)
 
