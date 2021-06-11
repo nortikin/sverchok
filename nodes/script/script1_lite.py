@@ -298,10 +298,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         text = self.get_bpy_data_from_name(self.script_name, bpy.data.texts)
         if text and hasattr(text, "as_string"):
             self.script_str = text.as_string()
-            # if isinstance(text, str):
-            #     self.script_str = text
         else:
-            print(f'bpy.data.texts not read yet, self.script_name="{self.script_name}"')
+            self.info(f'bpy.data.texts not read yet, self.script_name="{self.script_name}"')
             if self.script_str:
                 print('but script loaded locally anyway.')
 
@@ -339,7 +337,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         # make inputs local, do function with inputs, return outputs if present
         ND = self.node_dict.get(hash(self))
         if not ND:
-            print('hash invalidated')
+            self.info('hash invalidated')
             self.injected_state = False
             self.update_sockets()
             ND = self.node_dict.get(hash(self))
@@ -369,6 +367,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def get_node_from_function_name(self, func_name):
         """
         this seems to get enough info for a snlite stateful setup function.
+        "node" here refers to a node/function in the self.script_str after being parsed 
 
         """
         tree = ast.parse(self.script_str)
@@ -451,14 +450,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         except Exception as err:
 
-            print("Unexpected error:", sys.exc_info()[0])
+            self.info(f"Unexpected error: {sys.exc_info()[0]}")
             exc_type, exc_value, exc_traceback = sys.exc_info()
             lineno = traceback.extract_tb(exc_traceback)[-1][1]
-            print('on line: ', lineno)
+            self.info(f'on line: {lineno}')
+
             show = traceback.print_exception
             show(exc_type, exc_value, exc_traceback, limit=6, file=sys.stdout)
-            if hasattr(self, "snlite_raise_exception") and self.snlite_raise_exception:
-                raise #   SNLITE_EXCEPTION(sys.exc_info()[2]) from err
+            if self.snlite_raise_exception:
+                raise
 
     def custom_draw(self, context, layout):
         tk = self.node_dict.get(hash(self))
@@ -516,14 +516,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
     def save_to_json(self, node_data: dict):
         texts = bpy.data.texts
-
-        data_list = node_data.get('snlite_ui')
-        if data_list:
-            # self.node_dict[hash(self)]['sockets']['snlite_ui'] = ui_elements
-            for data_json_str in data_list:
-                data_dict = json.loads(data_json_str)
-                if data_dict['bl_idname'] == 'ShaderNodeRGBCurve':
-                    set_rgb_curve(data_dict)
 
         includes = node_data.get('includes')
         if includes:
@@ -589,20 +581,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             self.make_new_locals()
 
         storage = self.node_dict[hash(self)]['sockets']
-
-        ui_info = storage['snlite_ui']
-        node_data['snlite_ui'] = []
-        print(ui_info)
-        for _, info in enumerate(ui_info):
-            mat_name = info['mat_name']
-            node_name = info['node_name']
-            bl_idname = info['bl_idname']
-            if bl_idname == 'ShaderNodeRGBCurve':
-                data = get_rgb_curve(mat_name, node_name)
-                print(data)
-                data_json_str = json.dumps(data)
-                node_data['snlite_ui'].append(data_json_str)
-
         includes = storage['includes']
         if includes:
             node_data['includes'] = {}

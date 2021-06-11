@@ -23,7 +23,6 @@ import ast
 from sverchok.utils.snlite_utils import get_valid_node
 
 
-TRIPPLE_QUOTES = '"""'
 UNPARSABLE = None, None, None, None
 
 sock_dict = {
