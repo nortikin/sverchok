@@ -20,39 +20,34 @@
 import os
 import importlib
 import inspect
-import traceback
+from typing import Union
 
 import bpy
 
-
-from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_oldnodes_parser import get_old_node_bl_idnames
-from sverchok.utils.logging import error, exception, debug
+from sverchok.utils.logging import error
+from sverchok.utils.handle_blender_data import BlTrees
+
 
 imported_mods = {}
-
 old_bl_idnames = get_old_node_bl_idnames(path=os.path.dirname(__file__))
 
 
-def is_old(node_info):
-    '''
+def is_old(node_info: Union[str, bpy.types.Node]):
+    """
     Check if node or node.bl_idname is among
     the old nodes
-    '''
+    """
     if isinstance(node_info, str):
         # assumes bl_idname
         return node_info in old_bl_idnames
     elif isinstance(node_info, bpy.types.Node):
         return node_info.bl_idname in old_bl_idnames
-    else:
-        return False
+    raise TypeError(f"String or Node is expected, {node_info} is given")
 
-def scan_for_old(ng):
-    nodes = [n for n in ng.nodes if n.bl_idname in old_bl_idnames]
-    for node in nodes:
-        mark_old(node)
-    
+
 def mark_old(node):
+    """Create a frame node around given one with deprecated label"""
     if node.parent and node.parent.label == "Deprecated node!":
         return
     ng = node.id_data
@@ -65,68 +60,27 @@ def mark_old(node):
     frame.color = (.8, 0, 0)
     frame.shrink = True
 
-def reload_old(ng=False):
-    if ng:
-        bl_idnames = {n.bl_idname for n in ng.nodes if n.bl_idname in old_bl_idnames} 
-        for bl_id in bl_idnames:
-            mod = register_old(bl_id)
-            if mod:
-                importlib.reload(mod)
-            else:
-                print("Couldn't reload {}".format(bl_id))
-    else:
-        for ng in bpy.data.node_groups:
-            reload_old(ng)
-            #if ng.bl_idname in { 'SverchCustomTreeType', }:
-            #    reload_old(ng)
-    
-def load_old(ng):
-    
-    """
-    This approach didn't work, bl_idname of undefined node isn't as I expected
-    bl_idnames = {n.bl_idname for n in ng.nodes} 
-    old_bl_ids = bl_idnames.intersection(old_bl_idnames)
-    if old_bl_ids:
-    
-    """
-    not_reged_nodes = list(n for n in ng.nodes if not n.is_registered_node_type())
-    if not_reged_nodes:
-        for bl_id in old_bl_idnames:
-            register_old(bl_id)
-            nodes = [n for n in ng.nodes if n.bl_idname == bl_id]
-            if nodes:
-                for node in nodes:
-                    mark_old(node)
-                not_reged_nodes = list(n for n in ng.nodes if not n.is_registered_node_type())
-                node_count = len(not_reged_nodes)
-                print(f"Loaded {bl_id}. {node_count} nodes are left unregistered.")
-                if node_count == 0:
-                    return
-            else: # didn't help remove
-                unregister_old(bl_id)
-    
+
+def mark_all():
+    """Add frames with deprecated label to all deprecated nodes if necessary"""
+    for node in (n for t in BlTrees().sv_trees for n in t.nodes):
+        if node.bl_idname in old_bl_idnames:
+            mark_old(node)
+
+
 def register_old(bl_id):
+    """Register old node class"""
     if bl_id in old_bl_idnames:
         mod = importlib.import_module(".{}".format(old_bl_idnames[bl_id]), __name__)
         res = inspect.getmembers(mod)
-        # print('mod/res:', mod, res)
         for name, cls in res:
             if inspect.isclass(cls):
                 if issubclass(cls, bpy.types.Node) and cls.bl_idname == bl_id:
                     if bl_id not in imported_mods:
-                        try:
-                            mod.register()
-                        except Exception as err:
-                            print('failed mod register')
-                            exception(err)
-
+                        mod.register()
                         imported_mods[bl_id] = mod
-                        return mod
-                    else:
-                        return imported_mods[bl_id]
-
-    error("Cannot find {} among old nodes".format(bl_id))
-    return None
+    else:
+        raise LookupError(f"Cannot find {bl_id} among old nodes")
 
 
 def register_all():
@@ -135,22 +89,24 @@ def register_all():
         try:
             register_old(bl_id)
         except Exception as e:
-            print(e)
+            # when a code of an old node is copied to old folder
+            # it can be copied with other classes (property groups)
+            # which does not change it version to MK2, so we have the error
+            error(e)
 
 
-def unregister_old(bl_id):
-    global imported_mods
-    mod = imported_mods.get(bl_id)
-    if mod:
-        #print("Unloaded old node type {}".format(bl_id)) 
-        mod.unregister()
-        del imported_mods[bl_id]
-         
+def register():
+
+    import sverchok
+    # This part is called upon scrip.reload (F8), because old nodes will be unregistered again
+    # There is no way to say which old node classes should be registered without registering them all
+    if sverchok.reload_event:
+        register_all()
+
+
 def unregister():
-    global imported_mods
-    for key, mod in imported_mods.items():
-        if hasattr(bpy.types, key):
+    for mod in imported_mods.values():
+        try:
             mod.unregister()
-        else:
-            debug(f'{key} was not registered, did not unregister')
-    imported_mods = {}
+        except Exception as e:
+            error(e)

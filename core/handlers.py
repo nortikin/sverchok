@@ -1,17 +1,15 @@
-import traceback
-
 import bpy
 from bpy.app.handlers import persistent
 
 from sverchok import old_nodes
 from sverchok import data_structure
-from sverchok.core import upgrade_nodes, undo_handler_node_count
 from sverchok.core.update_system import (
-    set_first_run, clear_system_cache, reset_timing_graphs)
+    set_first_run, clear_system_cache, reset_timing_graphs, build_update_list, process_tree)
 from sverchok.ui import bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
-from sverchok.utils.logging import debug
+from sverchok.utils.handle_blender_data import BlTrees
 from sverchok.utils import dummy_nodes
+from sverchok.utils.logging import catch_log_error
 
 _state = {'frame': None}
 
@@ -45,22 +43,6 @@ def get_all_sverchok_affiliated_trees():
     sv_types = {'SverchCustomTreeType', 'SvGroupTree'}
     return list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
 
-
-def ensure_all_encountered_nodes_are_valid(sv_trees):
-    for ng in sv_trees:
-        with ng.throttle_update():
-            try:
-                old_nodes.load_old(ng)
-            except:
-                traceback.print_exc()
-            try:
-                dummy_nodes.load_dummy(ng)
-            except:
-                traceback.print_exc()
-            try:
-                upgrade_nodes.upgrade_nodes(ng)
-            except:
-                traceback.print_exc()
 
 def has_frame_changed(scene):
     last_frame = _state['frame']
@@ -169,6 +151,15 @@ def sv_clean(scene):
 
 @persistent
 def sv_pre_load(scene):
+    """
+    This method is called whenever new file is opening
+    THe update order is next:
+    1. pre_load handler
+    2. update methods of trees in a file
+    3. post_load handler
+    Because Sverchok does not fully initialize itself during its initialization
+    it requires throttling of update method of loaded trees
+    """
     clear_system_cache()
     sv_clean(scene)
 
@@ -183,22 +174,35 @@ def sv_pre_load(scene):
 def sv_post_load(scene):
     """
     Upgrade nodes, apply preferences and do an update.
+    THe update order is next:
+    1. pre_load handler
+    2. update methods of trees in a file
+    3. post_load handler
+    post_load handler is also called when Blender is first ran
+    The method should remove throttling trees made in pre_load event,
+    initialize Sverchok parts which are required by loaded tree
+    and update all Sverchok trees
     """
-
-    set_first_run(False)
     from sverchok import node_tree, settings
-    
+
     # ensure current nodeview view scale / location parameters reflect users' system settings
     node_tree.SverchCustomTree.update_gl_scale_info(None, "sv_post_load")
 
-    sv_trees = get_all_sverchok_affiliated_trees()
-    ensure_all_encountered_nodes_are_valid(sv_trees)
+    # register and mark old and dependent nodes
+    with catch_log_error():
+        if any(not n.is_registered_node_type() for ng in BlTrees().sv_trees for n in ng.nodes):
+            old_nodes.register_all()
+            old_nodes.mark_all()
+            dummy_nodes.register_all()
+            dummy_nodes.mark_all()
 
-    settings.apply_theme_if_necessary()
+    with catch_log_error():
+        settings.apply_theme_if_necessary()
 
-    for ng in sv_trees:
-        if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
-            ng.update()
+    # release all trees and update them
+    set_first_run(False)
+    build_update_list()
+    process_tree()
 
 
 def set_frame_change(mode):
