@@ -65,7 +65,19 @@ def parse_socket_line(node, line):
             return socket_type, socket_name, default, nested
 
 def parse_required_socket_line(node, line):
-    ... # node.info()
+    # receives a line like
+    # required input sockets do not accept defaults or nested info, what would be the point?
+    # >in socketname sockettype
+    lsp = line.strip().split()
+    if len(lsp) == 3:
+        socket_type = sock_dict.get(lsp[2])
+        socket_name = lsp[1]
+        if not socket_type:
+            return UNPARSABLE
+        return socket_type, socket_name, None, None
+
+    self.info(f"{line} -> is malformed")
+    return UNPARSABLE
 
 
 def extract_directive_as_multiline_string(lines):
@@ -123,7 +135,9 @@ def parse_sockets(node):
 
         if L.startswith('>in '):
             # one or more inputs can be required before processing/showing errors
-            snlite_info['inputs'].append(parse_required_socket_line(node, L))
+            input_info = parse_required_socket_line(node, L)
+            snlite_info['inputs'].append(input_info)
+            snlite_info['inputs_required'].append(socket_info[1])
 
         elif L.startswith('inject'):
             if hasattr(node, 'inject_params'):
