@@ -562,13 +562,13 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 elif script_name and (script_name in texts):
                     # This was added to fix existing texts with the same name but no / different content.
                     if texts[script_name].as_string() == script_content:
-                        self.debug("SN skipping text named `%s' - their content are the same", script_name)
+                        self.debug(f'SN skipping text named "{script_name}" - their content are the same')
                     else:
-                        self.info("SN text named `%s' already found in current, but content differs", script_name)
+                        self.info(f'SN text named "{script_name}" already found, but content differs')
                         new_text = texts.new(script_name)
                         new_text.from_string(script_content)
                         script_name = new_text.name
-                        self.info('SN text named replaced with %s', script_name)
+                        self.info(f'SN text named replaced with "{script_name}"')
 
             self.script_name = script_name
             self.script_str = script_content
