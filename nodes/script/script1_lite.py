@@ -477,8 +477,9 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         
         requirements_met = required_count == len(requirements)
         if requirements_met:
-            self.info(f"end execution early because required sockets are not connected {requirements}")
             return True
+        
+        self.info(f"end execution early because required sockets are not connected {requirements}")
 
 
     def custom_draw(self, context, layout):
