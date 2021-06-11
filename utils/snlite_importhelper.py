@@ -20,8 +20,6 @@ import re
 import bpy
 import ast
 
-from sverchok.utils.snlite_utils import get_valid_node
-
 
 UNPARSABLE = None, None, None, None
 
