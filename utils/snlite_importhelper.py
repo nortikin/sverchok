@@ -66,6 +66,9 @@ def parse_socket_line(line):
             nested = processed(lsp[4])
             return socket_type, socket_name, default, nested
 
+def parse_required_socket_line(node, line)
+    ... # node.info()
+
 
 def extract_directive_as_multiline_string(lines):
     pattern = """
@@ -105,7 +108,7 @@ def parse_sockets(node):
         'inputs': [], 'outputs': [],
         'snlite_ui': [], 'includes': {},
         'custom_enum': [], 'custom_enum_2': [],
-        'callbacks': {}
+        'callbacks': {}, 'inputs_required': [],
     }
 
     directive = extract_directive_as_multiline_string(node.script_str)
@@ -118,7 +121,11 @@ def parse_sockets(node):
 
         if L.startswith('in ') or L.startswith('out '):
             socket_dir = L.split(' ')[0] + 'puts'
-            snlite_info[socket_dir].append(parse_socket_line(L))
+            snlite_info[socket_dir].append(parse_socket_line(node, L))
+
+        if L.startswith('>in '):
+            # one or more inputs can be required before processing/showing errors
+            snlite_info['inputs'].append(parse_required_socket_line(L))
 
         elif L.startswith('inject'):
             if hasattr(node, 'inject_params'):
