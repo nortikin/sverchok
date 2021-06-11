@@ -64,7 +64,7 @@ def parse_socket_line(line):
             nested = processed(lsp[4])
             return socket_type, socket_name, default, nested
 
-def parse_required_socket_line(node, line)
+def parse_required_socket_line(node, line):
     ... # node.info()
 
 
