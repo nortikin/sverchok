@@ -506,9 +506,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         box = layout.box()
         r = box.row()
         r.label(text="extra snlite features")
-        if hasattr(self, "snlite_raise_exception"):
-            r = box.row()
-            r.prop(self, "snlite_raise_exception", toggle=True, text="raise errors to tree level")
+        r = box.row()
+        r.prop(self, "snlite_raise_exception", toggle=True, text="raise errors to tree level")
 
 
 
