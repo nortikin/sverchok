@@ -458,7 +458,13 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             # should inform the user that the execution was halted because not 
             # enough input was provided for the script to do anything useful.
             if socket_info['inputs_required']:
-                ... # if self.inputs.get('...')
+                required_count = 0
+                requirements = socket_info['inputs_required']
+                for sock_name in requirements:
+                    if (socket_name in self.inputs) and self.inputs.get(socket_name):
+                        required_count += 1
+                if required_count == len(requirements):
+                    return
 
             show = traceback.print_exception
             show(exc_type, exc_value, exc_traceback, limit=6, file=sys.stdout)
