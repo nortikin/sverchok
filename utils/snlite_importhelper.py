@@ -137,7 +137,7 @@ def parse_sockets(node):
             # one or more inputs can be required before processing/showing errors
             input_info = parse_required_socket_line(node, L)
             snlite_info['inputs'].append(input_info)
-            snlite_info['inputs_required'].append(socket_info[1])
+            snlite_info['inputs_required'].append(input_info[1])
 
         elif L.startswith('inject'):
             if hasattr(node, 'inject_params'):
