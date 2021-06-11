@@ -470,7 +470,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def return_early_poll(self, socket_info):
         required_count = 0
         requirements = socket_info['inputs_required']
-        for sock_name in requirements:
+        for socket_name in requirements:
             if (socket_name in self.inputs) and self.inputs.get(socket_name):
                 required_count += 1
         return required_count != len(requirements)
