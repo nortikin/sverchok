@@ -453,7 +453,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             # should inform the user that the execution was halted because not 
             # enough input was provided for the script to do anything useful.
             if socket_info['inputs_required']:
-                if self.return_early_poll(socket_info):
+                if not self.socket_requirements_met(socket_info):
                     return
 
             self.info(f"Unexpected error: {sys.exc_info()[0]}")
@@ -467,14 +467,19 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             if self.snlite_raise_exception:
                 raise
 
-    def return_early_poll(self, socket_info):
+    def socket_requirements_met(self, socket_info):
         required_count = 0
         requirements = socket_info['inputs_required']
         for socket_name in requirements:
             if (socket_name in self.inputs) and self.inputs.get(socket_name):
                 required_count += 1
-        return required_count != len(requirements)
         
+        requirements_met = required_count == len(requirements)
+        if requirements_met:
+            self.info(f"end execution early because required sockets are not connected {requirements}")
+            return True
+
+
     def custom_draw(self, context, layout):
         tk = self.node_dict.get(hash(self))
         if not tk or not tk.get('sockets'):
