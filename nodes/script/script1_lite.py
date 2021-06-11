@@ -450,10 +450,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         except Exception as err:
 
-            self.info(f"Unexpected error: {sys.exc_info()[0]}")
+            # self.info(f"Unexpected error: {sys.exc_info()[0]}")
             exc_type, exc_value, exc_traceback = sys.exc_info()
             lineno = traceback.extract_tb(exc_traceback)[-1][1]
-            self.info(f'on line: {lineno}')
+            # self.info(f'on line: {lineno}')
 
             show = traceback.print_exception
             show(exc_type, exc_value, exc_traceback, limit=6, file=sys.stdout)
