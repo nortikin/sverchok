@@ -449,23 +449,17 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         except Exception as err:
 
-            self.info(f"Unexpected error: {sys.exc_info()[0]}")
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            lineno = traceback.extract_tb(exc_traceback)[-1][1]
-            self.info(f'on line: {lineno}')
-
             # if not fully connected do not raise.
             # should inform the user that the execution was halted because not 
             # enough input was provided for the script to do anything useful.
             if socket_info['inputs_required']:
-                required_count = 0
-                requirements = socket_info['inputs_required']
-                for sock_name in requirements:
-                    if (socket_name in self.inputs) and self.inputs.get(socket_name):
-                        required_count += 1
-                if required_count != len(requirements):
+                if return_early_poll(self, socket_info):
                     return
 
+            self.info(f"Unexpected error: {sys.exc_info()[0]}")
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            lineno = traceback.extract_tb(exc_traceback)[-1][1]
+            self.info(f'on line: {lineno}')
 
             show = traceback.print_exception
             show(exc_type, exc_value, exc_traceback, limit=6, file=sys.stdout)
@@ -473,6 +467,14 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             if self.snlite_raise_exception:
                 raise
 
+    def return_early_poll(self, socket_info):
+        required_count = 0
+        requirements = socket_info['inputs_required']
+        for sock_name in requirements:
+            if (socket_name in self.inputs) and self.inputs.get(socket_name):
+                required_count += 1
+        return required_count != len(requirements):
+        
     def custom_draw(self, context, layout):
         tk = self.node_dict.get(hash(self))
         if not tk or not tk.get('sockets'):
