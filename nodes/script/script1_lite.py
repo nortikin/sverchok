@@ -473,7 +473,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         for sock_name in requirements:
             if (socket_name in self.inputs) and self.inputs.get(socket_name):
                 required_count += 1
-        return required_count != len(requirements):
+        return required_count != len(requirements)
         
     def custom_draw(self, context, layout):
         tk = self.node_dict.get(hash(self))
