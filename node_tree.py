@@ -364,12 +364,7 @@ class UpdateNodes:
         if node_tree.bl_idname in {'SverchCustomTreeType', }:
             node_tree.nodes_dict.forget_node(self)
 
-        if hasattr(self, "has_3dview_props"):  # todo remove
-            print("about to remove this node's props from Sv3DProps")
-            try:
-                bpy.ops.node.sv_remove_3dviewpropitem(node_name=self.name, tree_name=self.id_data.name)
-            except:
-                print(f'failed to remove {self.name} from tree={self.id_data.name}')
+        self.update_ui()
 
     def copy(self, original):
         """
