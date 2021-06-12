@@ -26,7 +26,7 @@ import bgl
 from bpy.types import SpaceNodeEditor
 
 from sverchok.utils.sv_stethoscope_helper import draw_text_data, draw_graphical_data
-
+from sverchok.utils.logging import debug
 
 callback_dict = {}
 point_dict = {}
@@ -50,6 +50,20 @@ def callback_enable(*args, overlay='POST_VIEW'):
 
     handle_pixel = SpaceNodeEditor.draw_handler_add(draw_callback_px, args, 'WINDOW', overlay)
     callback_dict[n_id] = handle_pixel
+    tag_redraw_all_nodeviews()
+
+
+def draw_text(node, text: str, draw_id=None, color=(1, 1, 1, 1), scale=1., align="RIGHT"):
+    """Draw any text nearby a node, use together with callback_disable
+    align = {"RIGHT", "UP", "DOWN"}"""  # todo replace with typing.Literal
+    draw_id = draw_id or node.node_id
+    if draw_id in callback_dict:
+        callback_disable(draw_id)
+
+    color = color if len(color) == 4 else (*color, 1)
+    handle_pixel = SpaceNodeEditor.draw_handler_add(
+        _draw_text_handler, (node.id_data.tree_id, node.node_id, text, color, scale, align), 'WINDOW', 'POST_VIEW')
+    callback_dict[draw_id] = handle_pixel
     tag_redraw_all_nodeviews()
 
 
@@ -175,6 +189,55 @@ def draw_callback_px(n_id, data):
         drawing_func(bpy.context, args, (x, y))
         restore_opengl_defaults()
         # bgl.glDisable(bgl.GL_DEPTH_TEST)
+
+
+def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.0, align='RIGHT'):
+    """Draw the text in a node tree editor nearby the given node"""
+    editor = bpy.context.space_data
+
+    if editor.type != 'NODE_EDITOR':
+        return
+
+    if editor.tree_type not in {"SverchCustomTreeType", 'SvGroupTree'}:
+        return
+
+    if editor.edit_tree and editor.edit_tree.tree_id != tree_id:
+        return
+
+    if not any(n for n in editor.edit_tree.nodes if n.node_id == node_id):
+        debug(f'Some node looks like was removed without removing bgl drawing, text: {text}')
+        return
+
+    # todo add scale from the preferences
+
+    # find node location
+    node = next(n for n in editor.edit_tree.nodes if n.node_id == node_id)
+    (x, y), z = node.absolute_location, 0
+    dx, dy = node.dimensions
+    gap = 10
+
+    # find text location
+    if align == "RIGHT":
+        x, y = int(x + dx + gap), int(y)
+    elif align == "UP":
+        x, y = int(x), int(y + gap)
+    elif align == "DOWN":
+        x, y = int(x), int(y - dy - gap)
+    else:
+        debug(f'Some node drawing text with unsupported align: {align}')
+
+    text_height = int(15 * scale)
+    line_height = int(18 * scale)
+    font_id = 0
+    dpi = 72
+
+    blf.size(font_id, text_height, dpi)
+    blf.color(font_id, *color)
+
+    for line in text.split('\n'):
+        blf.position(font_id, x, y, z)
+        blf.draw(font_id, line)
+        y -= line_height
         
         
 def unregister():
