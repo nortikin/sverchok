@@ -234,10 +234,11 @@ class SvMeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
                 self.outputs.remove(self.outputs[0])
             for ocls, oname in cls.outputs:
                 self.outputs.new(ocls, oname)
+
             if hasattr(cls, "default_submode"):
                 self.submode = cls.default_submode
-            else:
-                self.submode = None
+            #else:   # setting subnode to None seems to throw an error.
+            #    self.submode = None
 
     def set_submode(self, context):
         cls = globals()[self.mode]
