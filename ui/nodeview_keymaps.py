@@ -21,6 +21,7 @@ import bpy
 
 from sverchok.ui.development import displaying_sverchok_nodes
 from sverchok.core.update_system import process_tree, build_update_list
+from sverchok.core import main_tree_handler, group_handlers
 
 
 class SvToggleProcess(bpy.types.Operator):
@@ -159,6 +160,22 @@ class EnterExitGroupNodes(bpy.types.Operator):
             return False
 
 
+class PressingEscape(bpy.types.Operator):
+    bl_idname = 'node.sv_abort_nodes_updating'
+    bl_label = 'Abort nodes updating'
+
+    def execute(self, context):
+        if main_tree_handler.NodesUpdater.is_running():
+            main_tree_handler.NodesUpdater.cancel_task()
+        if group_handlers.NodesUpdater.is_running():
+            group_handlers.NodesUpdater.cancel_task()
+        return {'FINISHED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type in {'SverchCustomTreeType'}
+
+
 nodeview_keymaps = []
 
 
@@ -278,7 +295,8 @@ def remove_keymap():
     nodeview_keymaps.clear()
 
 
-classes = [SvToggleProcess, SvToggleDraft, SverchokUpdateContext, SverchokUpdateContextForced, EnterExitGroupNodes]
+classes = [SvToggleProcess, SvToggleDraft, SverchokUpdateContext, SverchokUpdateContextForced, EnterExitGroupNodes,
+           PressingEscape]
 
 
 def register():

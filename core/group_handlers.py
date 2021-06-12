@@ -512,20 +512,3 @@ def cut_mk_suffix(name: str) -> str:
     except ValueError:
         return name
     return id_name
-
-
-class PressingEscape(bpy.types.Operator):
-    bl_idname = 'node.sv_abort_nodes_updating'
-    bl_label = 'Abort nodes updating'
-
-    def execute(self, context):
-        if NodesUpdater.is_running():
-            NodesUpdater.cancel_task()
-        return {'FINISHED'}
-
-    @classmethod
-    def poll(cls, context):
-        return context.space_data.tree_type in {'SverchCustomTreeType'}  # todo can work only when group tree in path
-
-
-register, unregister = bpy.utils.register_classes_factory([PressingEscape])
