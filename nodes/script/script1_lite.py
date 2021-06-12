@@ -440,6 +440,9 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
                 locals().update({'parameters': [__local__dict__.get(s.name) for s in self.inputs]})
 
             if socket_info['inputs_required']:
+                # if not fully connected do not raise.
+                # should inform the user that the execution was halted because not 
+                # enough input was provided for the script to do anything useful.
                 if not self.socket_requirements_met(socket_info):
                     return
 
@@ -454,9 +457,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         except Exception as err:
 
-            # if not fully connected do not raise.
-            # should inform the user that the execution was halted because not 
-            # enough input was provided for the script to do anything useful.
 
             self.info(f"Unexpected error: {sys.exc_info()[0]}")
             exc_type, exc_value, exc_traceback = sys.exc_info()
