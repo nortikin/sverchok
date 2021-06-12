@@ -32,7 +32,10 @@ def catch_log_error():
         module = inspect.getmodule(frame)
         name = module.__name__ or "<Unknown Module>"
         try_initialize()
-        logging.getLogger(f'{name} {line}').error(e)
+        _logger = logging.getLogger(f'{name} {line}')
+        _logger.error(e)
+        if _logger.isEnabledFor(logging.DEBUG):
+            traceback.print_exc()
 
 
 def get_log_buffer(log_buffer_name):
