@@ -439,6 +439,9 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             if self.inject_params:
                 locals().update({'parameters': [__local__dict__.get(s.name) for s in self.inputs]})
 
+            if socket_info['inputs_required']:
+                if not self.socket_requirements_met(socket_info):
+                    return
 
             exec(self.script_str, locals(), locals())
 
@@ -448,14 +451,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
             set_autocolor(self, True, READY_COLOR)
 
+
         except Exception as err:
 
             # if not fully connected do not raise.
             # should inform the user that the execution was halted because not 
             # enough input was provided for the script to do anything useful.
-            if socket_info['inputs_required']:
-                if not self.socket_requirements_met(socket_info):
-                    return
 
             self.info(f"Unexpected error: {sys.exc_info()[0]}")
             exc_type, exc_value, exc_traceback = sys.exc_info()
@@ -471,9 +472,19 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def socket_requirements_met(self, socket_info):
         required_count = 0
         requirements = socket_info['inputs_required']
+        print(requirements)
         for socket_name in requirements:
-            if (socket_name in self.inputs) and self.inputs.get(socket_name):
-                required_count += 1
+            print(socket_name)
+            if self.inputs.get(socket_name):
+                obtained_data = self.inputs[socket_name].sv_get(default=None)
+                print(f"{obtained_data} from {socket_name}")
+                if obtained_data is None:
+                    continue
+                try:
+                    if obtained_data and obtained_data[0]:
+                        required_count += 1
+                except:
+                    ...
         
         requirements_met = required_count == len(requirements)
         if requirements_met:
