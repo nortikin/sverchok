@@ -16,18 +16,27 @@ Details: https://github.com/nortikin/sverchok/issues/3077
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from enum import Enum, auto
-from typing import NamedTuple, Union, List, TYPE_CHECKING
-from itertools import takewhile
+from typing import Union, List, TYPE_CHECKING
 
-from bpy.types import Node, NodeTree
-
-from sverchok.utils.context_managers import sv_preferences
+from bpy.types import Node
 
 if TYPE_CHECKING:
     from sverchok.core.node_group import SvGroupTree, SvGroupTreeNode
-    from sverchok.node_tree import SverchCustomTreeNode
+    from sverchok.node_tree import SverchCustomTreeNode, SverchCustomTree
     SvNode = Union[SverchCustomTreeNode, SvGroupTreeNode, Node]
+
+
+class TreeEvent:
+    TREE_UPDATE = 'tree_update'  # some changed in a tree topology
+    NODES_UPDATE = 'nodes_update'  # changes in node properties, update animated nodes
+
+    def __init__(self, event_type: str, tree: SverchCustomTree, updated_nodes: Iterable[SvNode] = None):
+        self.type = event_type
+        self.tree = tree
+        self.updated_nodes = updated_nodes
+        self.to_update = tree.sv_process
 
 
 class GroupEvent:
