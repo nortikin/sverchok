@@ -15,6 +15,9 @@ import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import NodeTree
 
+from sverchok.core.socket_data import SvNoDataError
+from sverchok.core.events import TreeEvent
+from sverchok.core.main_tree_handler import TreeHandler
 from sverchok import data_structure
 from sverchok.data_structure import classproperty, post_load_call
 
@@ -36,6 +39,7 @@ from sverchok.utils.logging import debug
 
 from sverchok.ui import color_def
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
+from sverchok.ui import bgl_callback_nodeview as sv_bgl
 from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_with_bgl
 
 
@@ -53,6 +57,8 @@ class SvNodeTreeCommon(object):
     tree_id_memory: StringProperty(default="")  # identifier of the tree, should be used via `tree_id` property
     sv_links = SvLinks()  # cached Python links
     nodes_dict = SvNodesDict()  # cached Python nodes
+
+    handler = TreeHandler
 
     @property
     def tree_id(self):
@@ -168,7 +174,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
     sv_show_time_graph: BoolProperty(name="Time Graph", default=False, options=set())
-    sv_show_time_nodes: BoolProperty(name="Node times", default=False, options=set())
+    sv_show_time_nodes: BoolProperty(name="Node times", default=False, options=set(), update=lambda s, c: s.update_ui())
     sv_show_debug_time_prints: BoolProperty(
         name="Debug Prints", default=True, options=set(),
         description="setting this to False will suppress debug node times printing to console")
@@ -223,6 +229,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         if 'init_tree' in self.id_data:  # tree is building by a script - let it do this
             return
         # this is a no-op if there's no drawing
+        return self.handler.send(TreeEvent(TreeEvent.TREE_UPDATE, self))
         clear_exception_drawing_with_bgl(self.nodes)
         if is_first_run():
             return
@@ -234,6 +241,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
     def update_nodes(self, nodes):
         """This method expects to get list of its nodes which should be updated"""
+        return self.handler.send(TreeEvent(TreeEvent.NODES_UPDATE, self, nodes))
         if self.id_data.skip_tree_update:
             # this can be called by node groups which do not know whether the tree is throttled
             return
@@ -249,8 +257,20 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         For animation callback/handler
         """
         if self.sv_animate:
+            animated_nodes = (n for n in self.nodes if hasattr(n, 'is_animatable') and n.is_animatable)
+            return self.handler.send(TreeEvent(TreeEvent.NODES_UPDATE, self, animated_nodes))
             self.animation_update()
             # process_tree(self)
+
+    def update_ui(self):
+        """ The method get information about node statistic of last update from the handler to show in view space
+        Thi method is usually called by main handler to reevaluate view of the nodes in the tree"""
+        nodes_errors = self.handler.get_error_nodes(self)
+        update_time = self.handler.get_update_time(self)
+        for node, error, update in zip(self.nodes, nodes_errors, update_time):
+            update = update if self.sv_show_time_nodes else None
+            if hasattr(node, 'update_ui'):
+                node.update_ui(error, update)
 
 
 class UpdateNodes:
@@ -375,6 +395,30 @@ class UpdateNodes:
 
         self.sv_update()
 
+    def update_ui(self, error=None, update_time=None):
+        """updating tree contextual information -> node colors, text"""
+        exception_color = (0.8, 0.0, 0)  # todo take from preferences
+        no_data_color = (1, 0.3, 0)
+        error_pref = "error"
+        update_pref = "update_time"
+
+        # update error colors
+        if error is not None:
+            self.use_custom_color = True
+            self.color = no_data_color if isinstance(error, SvNoDataError) else exception_color
+            color = no_data_color if isinstance(error, SvNoDataError) else exception_color
+            sv_bgl.draw_text(self, repr(error), error_pref + self.node_id, color, 1.3)
+        else:
+            sv_bgl.callback_disable(error_pref + self.node_id)
+            self.use_custom_color = False
+            self.set_color()
+
+        # show update timing
+        if update_time is not None:
+            sv_bgl.draw_text(self, f'{update_time}ms', update_pref + self.node_id, align="UP")
+        else:
+            sv_bgl.callback_disable(update_pref + self.node_id)
+
     def insert_link(self, link):
         """It will be triggered only if one socket is connected with another by user"""
 
@@ -385,6 +429,7 @@ class UpdateNodes:
         Still this is called from updateNode
         '''
         if self.id_data.bl_idname == "SverchCustomTreeType":
+            return self.id_data.handler.send(TreeEvent(TreeEvent.NODES_UPDATE, self.id_data, [self]))
             if self.id_data.skip_tree_update:
                 return
 
