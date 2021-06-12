@@ -34,6 +34,7 @@ class Node(tw.Node):
         self.is_updated = False
         self.link_changed = False
         self.error = None
+        self.update_time = None
 
         # cash
         self.bl_tween = bl_node
