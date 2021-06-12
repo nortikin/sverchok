@@ -472,9 +472,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
     def socket_requirements_met(self, socket_info):
         required_count = 0
         requirements = socket_info['inputs_required']
-        print(requirements)
         for socket_name in requirements:
-            print(socket_name)
             if self.inputs.get(socket_name):
                 obtained_data = self.inputs[socket_name].sv_get(default=None)
                 print(f"{obtained_data} from {socket_name}")
