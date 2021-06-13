@@ -166,7 +166,6 @@ class NodesUpdater:
 def tree_handler(bl_tree) -> Generator[Node, None, Optional[Exception]]:
     # The function is growing bigger and bigger. I wish I knew how to simplify it.
     tree = ContextTrees.get(bl_tree)
-    out_nodes = [n for n in tree.nodes if not n.next_nodes]  # todo optimization
 
     # input
     cancel_updating = False
@@ -174,7 +173,7 @@ def tree_handler(bl_tree) -> Generator[Node, None, Optional[Exception]]:
     # output
     error = None
 
-    for node in tree.sorted_walk(out_nodes):
+    for node in tree.sorted_walk(tree.output_nodes):
         can_be_updated = all(n.is_updated for n in node.last_nodes)
         should_be_updated = can_be_updated and ((not node.is_updated) or node.link_changed)
         is_output_changed = False
@@ -216,6 +215,9 @@ def tree_handler(bl_tree) -> Generator[Node, None, Optional[Exception]]:
 
         # if update was successful
         if is_output_changed:
+
+            # because we does not rebuild the tree each update, we should show that the node was updated
+            node.link_changed = False
 
             # next nodes should be update too then
             for next_node in node.next_nodes:
