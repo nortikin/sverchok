@@ -469,7 +469,7 @@ class NodeUtils:
         """
         if not identifier:
             # this can happen if a json import goes through attributes arbitrarily.
-            self.info("no identifier passed to the get_bpy_data_from_name function.")
+            # self.info("no identifier passed to the get_bpy_data_from_name function.")
             return None
 
         try:
