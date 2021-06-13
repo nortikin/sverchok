@@ -140,14 +140,17 @@ class NodesUpdater:
             cls._handler.throw(CancelError)
         except (StopIteration, RuntimeError):
             pass
-        cls.finish_task()
+        finally:  # protection from the task to be stack forever
+            cls.finish_task()
 
     @classmethod
     def finish_task(cls):
-        debug(f'Global update - {int((time() - cls._start_time) * 1000)}ms')
-        cls._report_progress()
-        cls._bl_tree.update_ui()
-        cls._bl_tree, cls._handler, cls._node_tree_area, cls._last_node, cls._start_time = [None] * 5
+        try:
+            debug(f'Global update - {int((time() - cls._start_time) * 1000)}ms')
+            cls._report_progress()
+            cls._bl_tree.update_ui()
+        finally:
+            cls._bl_tree, cls._handler, cls._node_tree_area, cls._last_node, cls._start_time = [None] * 5
 
     @classmethod
     def has_task(cls) -> bool:
