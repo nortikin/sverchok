@@ -203,7 +203,8 @@ class LinksCollection(TreeCollections):
         for i, bl_link in enumerate(bl_tree.links):
 
             # new in 2.93, it is the same as if there was no the link (is_hidden was added before 2.93)
-            if bl_link.is_muted:  # or bl_link.is_hidden:  # is_hidden does not call update method of a tree
+            if hasattr(bl_link, 'is_muted') and bl_link.is_muted:
+                # or bl_link.is_hidden:  # it does not call update method of a tree https://developer.blender.org/T89109
                 continue
 
             from_node = tree.nodes[bl_link.from_node.name]
