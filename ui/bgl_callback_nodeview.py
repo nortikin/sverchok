@@ -220,6 +220,10 @@ def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.
     if align == "RIGHT":
         x, y = int(x + dx + gap), int(y)
     elif align == "UP":
+        if node.hide:  # when the node is hidden its location moves slightly upper
+            max_sock_num = max(len([s for s in node.inputs if not s.hide]),
+                               len([s for s in node.outputs if not s.hide]))
+            gap += (max_sock_num * 0.3) * max_sock_num
         x, y = int(x), int(y + gap)
     elif align == "DOWN":
         x, y = int(x), int(y - dy - gap)
