@@ -31,6 +31,7 @@ if TYPE_CHECKING:
 class TreeEvent:
     TREE_UPDATE = 'tree_update'  # some changed in a tree topology
     NODES_UPDATE = 'nodes_update'  # changes in node properties, update animated nodes
+    FORCE_UPDATE = 'force_update'  # update all nodes regardless to their update state
 
     def __init__(self, event_type: str, tree: SverchCustomTree, updated_nodes: Iterable[SvNode] = None):
         self.type = event_type

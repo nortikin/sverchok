@@ -19,13 +19,11 @@ from sverchok.utils.tree_structure import Tree, Node
 
 
 # todo wifi nodes
-# todo reroutes
 # todo remove heat map
-# todo animation
-# todo update all
 # todo print timings ?? it's available in the tree now
 # todo debug to a file?
 # todo add tree profiling tool
+# todo animation performance
 
 
 class TreeHandler:
@@ -44,6 +42,11 @@ class TreeHandler:
         # it will find changes in tree topology and mark related nodes as outdated
         elif event.type == TreeEvent.TREE_UPDATE:
             ContextTrees.update_tree(event.tree)
+
+        # force update
+        elif event.type == TreeEvent.FORCE_UPDATE:
+            for node in event.tree.nodes:
+                NodesStatuses.mark_outdated(node)
 
         # Unknown event
         else:
@@ -326,26 +329,19 @@ class NodeStatistic(NamedTuple):
 
 
 class NodesStatuses:
-    """
-    It keeps node attributes which can be sensitive to context evaluation (path)
-    """
+    """It keeps node attributes"""
     NodeId = str
     _statuses: Dict[NodeId, NodeStatistic] = defaultdict(NodeStatistic)
 
     @classmethod
     def mark_outdated(cls, bl_node):
-        """
-        Try find given nodes in statistic and if find mark them as outdated
-        if path is not given it will mark as outdated for all node contexts
-        """
+        """Try find given node in statistic and mark it as outdated"""
         node_id = bl_node.node_id
         if node_id in cls._statuses:
             del cls._statuses[node_id]
 
     @classmethod
     def get(cls, bl_node) -> NodeStatistic:
-        # saved tree can't be used here because it can contain outdated nodes (especially node.index attribute)
-        # so called tree should be recreated, it should be done because node_id is dependent on tree topology
         return cls._statuses[bl_node.node_id]
 
     @classmethod

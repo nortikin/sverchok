@@ -19,13 +19,15 @@
 import bpy
 
 import sverchok
+from sverchok.core.events import TreeEvent
 from sverchok import data_structure
 from sverchok.utils import profile
 from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.ui.development import displaying_sverchok_nodes
-from sverchok.core.update_system import process_tree, build_update_list
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.nodeview_time_graph_drawing import timer_config
+from sverchok.utils.handle_blender_data import BlTrees
+
 
 class SvRemoveStaleDrawCallbacks(bpy.types.Operator):
     """This will clear the opengl drawing if Sverchok didn't manage to correctly clear it on its own"""
@@ -213,9 +215,8 @@ class SverchokUpdateAll(bpy.types.Operator):
     def execute(self, context):
         try:
             bpy.context.window.cursor_set("WAIT")
-            sv_ngs = filter(lambda ng: ng.bl_idname == 'SverchCustomTreeType', bpy.data.node_groups)
-            build_update_list()
-            process_tree()
+            for tree in BlTrees().sv_main_trees:
+                tree.handler.send(TreeEvent(TreeEvent.FORCE_UPDATE, tree))
         finally:
             bpy.context.window.cursor_set("DEFAULT")
         return {'FINISHED'}
@@ -258,8 +259,7 @@ class SverchokUpdateCurrent(bpy.types.Operator):
             bpy.context.window.cursor_set("WAIT")
             ng = bpy.data.node_groups.get(self.node_group)
             if ng:
-                build_update_list(ng)
-                process_tree(ng)
+                ng.handler.send(TreeEvent(TreeEvent.FORCE_UPDATE, ng))
         finally:
             bpy.context.window.cursor_set("DEFAULT")
         return {'FINISHED'}
