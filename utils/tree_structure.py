@@ -116,10 +116,9 @@ class Tree(tw.Tree[NodeType]):
         self._nodes = NodesCollection(bl_tree, self)
         self._links = LinksCollection(bl_tree, self)
 
-        for i, tree in enumerate(bpy.data.node_groups):
-            if tree.name == bl_tree.name:
-                self._index = i
-                break
+        # if the tree is created in the same time with the class initialization (loading file)
+        # the index of the tree in node_groups collection will be not found (-1)
+        self._index = bpy.data.node_groups.find(bl_tree.name)
 
     @property
     def id(self) -> str:

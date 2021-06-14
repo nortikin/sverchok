@@ -3,8 +3,7 @@ from bpy.app.handlers import persistent
 
 from sverchok import old_nodes
 from sverchok import data_structure
-from sverchok.core.update_system import (
-    set_first_run, clear_system_cache, reset_timing_graphs, build_update_list, process_tree)
+from sverchok.core.update_system import clear_system_cache, reset_timing_graphs
 from sverchok.ui import bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
 from sverchok.utils.handle_blender_data import BlTrees
@@ -96,7 +95,8 @@ def sv_handler_undo_post(scene):
 
     import sverchok.core.group_handlers as gh
     gh.ContextTrees.reset_data()
-
+    import sverchok.core.main_tree_handler as mh
+    mh.ContextTrees.reset_data()
 
 
 @persistent
@@ -157,8 +157,7 @@ def sv_pre_load(scene):
     1. pre_load handler
     2. update methods of trees in a file
     3. post_load handler
-    Because Sverchok does not fully initialize itself during its initialization
-    it requires throttling of update method of loaded trees
+    4. evaluate trees from main tree handler
     """
     clear_system_cache()
     sv_clean(scene)
@@ -166,8 +165,9 @@ def sv_pre_load(scene):
     import sverchok.core.group_handlers as gh
     gh.NodesStatuses.reset_data()
     gh.ContextTrees.reset_data()
-
-    set_first_run(True)
+    import sverchok.core.main_tree_handler as mh
+    mh.NodesStatuses.reset_data()
+    mh.ContextTrees.reset_data()
 
 
 @persistent
@@ -178,10 +178,9 @@ def sv_post_load(scene):
     1. pre_load handler
     2. update methods of trees in a file
     3. post_load handler
+    4. evaluate trees from main tree handler
     post_load handler is also called when Blender is first ran
-    The method should remove throttling trees made in pre_load event,
-    initialize Sverchok parts which are required by loaded tree
-    and update all Sverchok trees
+    The method should initialize Sverchok parts which are required by loaded tree
     """
     from sverchok import node_tree, settings
 
@@ -198,11 +197,6 @@ def sv_post_load(scene):
 
     with catch_log_error():
         settings.apply_theme_if_necessary()
-
-    # release all trees and update them
-    set_first_run(False)
-    build_update_list()
-    process_tree()
 
 
 def set_frame_change(mode):

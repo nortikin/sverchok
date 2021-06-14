@@ -233,12 +233,8 @@ def tree_handler(bl_tree) -> Generator[Node, None, Optional[Exception]]:
     return error
 
 
-class ContextTrees:
-    """
-    The same tree but nodes has statistic dependently on context evaluation
-    For example node can has is_updated=True for tree evaluated from one group node and False for another
-    For using this class nodes of blender tree should have proper node_ids
-    """
+class ContextTrees:  # todo add supporting updates of multiple trees (loading file, animation)
+    """The same tree but nodes has statistic"""
     _trees: Dict[str, Tree] = dict()
 
     @classmethod
@@ -254,10 +250,8 @@ class ContextTrees:
 
     @staticmethod
     def update_node(node: Node):
-        """
-        Group tree should have proper node_ids before calling this method
-        Also this method will mark next nodes as outdated for current context
-        """
+        """Call process method of given node"""
+        # it does not look like proper place for the functionality
         bl_node = node.bl_tween
         try:
             if hasattr(bl_node, 'process'):
@@ -293,8 +287,8 @@ class ContextTrees:
     @classmethod
     def _update_topology_status(cls, new_tree: Tree):
         """Copy link node status by comparing with previous tree and save current"""
-        if new_tree.bl_tween.tree_id in cls._trees:
-            old_tree = cls._trees[new_tree.bl_tween.tree_id]
+        if new_tree.id in cls._trees:
+            old_tree = cls._trees[new_tree.id]
 
             new_links = new_tree.links - old_tree.links
             for link in new_links:
@@ -315,7 +309,7 @@ class ContextTrees:
                 if link.to_node in new_tree.nodes:
                     new_tree.nodes[link.to_node.name].link_changed = True
 
-        cls._trees[new_tree.bl_tween.tree_id] = new_tree
+        cls._trees[new_tree.id] = new_tree
 
 
 class NodeStatistic(NamedTuple):

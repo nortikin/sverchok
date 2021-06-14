@@ -27,7 +27,7 @@ from sverchok.core.update_system import (
     process_from_node, process_from_nodes,
     process_tree,
     get_original_node_color,
-    is_first_run)
+)
 
 from sverchok.core.links import SvLinks
 from sverchok.core.node_id_dict import SvNodesDict
@@ -229,11 +229,9 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         """
         if 'init_tree' in self.id_data:  # tree is building by a script - let it do this
             return
-        # this is a no-op if there's no drawing
         return self.handler.send(TreeEvent(TreeEvent.TREE_UPDATE, self))
+        # this is a no-op if there's no drawing
         clear_exception_drawing_with_bgl(self.nodes)
-        if is_first_run():
-            return
         if self.skip_tree_update or not self.sv_process:
             return
 

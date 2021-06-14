@@ -33,7 +33,6 @@ from sverchok.utils.sv_help import build_help_remap
 from sverchok.ui.sv_icons import node_icon, icon
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.extra_categories import get_extra_categories
-from sverchok.core.update_system import set_first_run
 from sverchok.ui.presets import apply_default_preset
 from sverchok.utils.sv_json_import import JSONImporter
 
@@ -570,7 +569,6 @@ def reload_menu():
     register_node_add_operators()
 
     build_help_remap(original_categories)
-    set_first_run(False)
     print("Reload complete, press update")
 
 def register_node_add_operators():
