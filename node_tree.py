@@ -10,6 +10,7 @@ import sys
 import time
 import textwrap
 from contextlib import contextmanager
+from itertools import chain
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
@@ -413,6 +414,11 @@ class UpdateNodes:
             sv_bgl.draw_text(self, f'{update_time}ms', update_pref + self.node_id, align="UP")
         else:
             sv_bgl.callback_disable(update_pref + self.node_id)
+
+        # update object numbers
+        for s in chain(self.inputs, self.outputs):
+            if hasattr(s, 'update_objects_number'):
+                s.update_objects_number()
 
     def insert_link(self, link):
         """It will be triggered only if one socket is connected with another by user"""
