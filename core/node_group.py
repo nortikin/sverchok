@@ -616,7 +616,7 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
         frame_names = {n.name for n in base_tree.nodes if n.select and n.bl_idname == 'NodeFrame'}
         [setattr(n, 'select', False) for n in base_tree.nodes if n.bl_idname == 'NodeFrame']
 
-        with base_tree.throttle_update():
+        with base_tree.init_tree(), sub_tree.init_tree():
             # copy and past nodes into group tree
             bpy.ops.node.clipboard_copy()
             context.space_data.path.append(sub_tree)
@@ -684,7 +684,7 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
             [base_tree.nodes.remove(n) for n in base_tree.nodes
              if n.name in frame_names and n.name not in with_children_frames]
 
-        base_tree.update_nodes([group_node])
+        base_tree.update()  # the topology of the tree should be updated
         bpy.ops.node.edit_group_tree({'node': group_node})
 
         return {'FINISHED'}
