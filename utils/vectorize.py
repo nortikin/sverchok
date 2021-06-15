@@ -263,7 +263,7 @@ class DataWalker:
             return data
         else:
             if match_mode == DataWalker.REPEAT:
-                return data + [data[-1]] * (match_len - len(data))  # todo deepcopy ??
+                return list(data) + [data[-1]] * (match_len - len(data))  # todo deepcopy ??
             # todo add other modes
 
     def __repr__(self):
