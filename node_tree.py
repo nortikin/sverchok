@@ -409,7 +409,7 @@ class UpdateNodes:
 
         # show update timing
         if update_time is not None:
-            sv_bgl.draw_text(self, f'{update_time}ms', update_pref + self.node_id, align="UP")
+            sv_bgl.draw_text(self, f'{update_time}ms', update_pref + self.node_id, align="UP", dynamic_location=False)
         else:
             sv_bgl.callback_disable(update_pref + self.node_id)
 

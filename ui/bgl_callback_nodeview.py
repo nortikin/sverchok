@@ -53,16 +53,20 @@ def callback_enable(*args, overlay='POST_VIEW'):
     tag_redraw_all_nodeviews()
 
 
-def draw_text(node, text: str, draw_id=None, color=(1, 1, 1, 1), scale=1., align="RIGHT"):
+def draw_text(node, text: str, draw_id=None, color=(1, 1, 1, 1), scale=1., align="RIGHT", dynamic_location=True):
     """Draw any text nearby a node, use together with callback_disable
-    align = {"RIGHT", "UP", "DOWN"}"""  # todo replace with typing.Literal
+    align = {"RIGHT", "UP", "DOWN"} todo replace with typing.Literal"""
     draw_id = draw_id or node.node_id
     if draw_id in callback_dict:
         callback_disable(draw_id)
 
     color = color if len(color) == 4 else (*color, 1)
+    text_location = None if dynamic_location else _get_text_location(node, align)
     handle_pixel = SpaceNodeEditor.draw_handler_add(
-        _draw_text_handler, (node.id_data.tree_id, node.node_id, text, color, scale, align), 'WINDOW', 'POST_VIEW')
+        _draw_text_handler,
+        (node.id_data.tree_id, node.node_id, text, color, scale, align, text_location),
+        'WINDOW',
+        'POST_VIEW')
     callback_dict[draw_id] = handle_pixel
     tag_redraw_all_nodeviews()
 
@@ -191,7 +195,8 @@ def draw_callback_px(n_id, data):
         # bgl.glDisable(bgl.GL_DEPTH_TEST)
 
 
-def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.0, align='RIGHT'):
+def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.0, align='RIGHT',
+                       text_coordinates=None):
     """Draw the text in a node tree editor nearby the given node"""
     editor = bpy.context.space_data
 
@@ -204,17 +209,45 @@ def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.
     if editor.edit_tree and editor.edit_tree.tree_id != tree_id:
         return
 
-    if not any(n for n in editor.edit_tree.nodes if n.node_id == node_id):
-        debug(f'Some node looks like was removed without removing bgl drawing, text: {text}')
-        return
+    # this is less efficient because it requires search of the node each redraw call
+    if not text_coordinates:
+        if not any(n for n in editor.edit_tree.nodes if n.node_id == node_id):
+            debug(f'Some node looks like was removed without removing bgl drawing, text: {text}')
+            return
+
+        # find node location
+        node = next(n for n in editor.edit_tree.nodes if n.node_id == node_id)
+        (x, y), z = _get_text_location(node, align), 0
+
+    # put static coordinates if there are a lot of nodes with text to draw (does not react on the node movements)
+    else:
+        (x, y), z = text_coordinates, 0
 
     # todo add scale from the preferences
+    text_height = int(15 * scale)
+    line_height = int(18 * scale)
+    font_id = 0
+    dpi = 72
 
-    # find node location
-    node = next(n for n in editor.edit_tree.nodes if n.node_id == node_id)
-    (x, y), z = node.absolute_location, 0
-    dx, dy = node.dimensions
+    blf.size(font_id, text_height, dpi)
+    blf.color(font_id, *color)
+
+    for line in text.split('\n'):
+        blf.position(font_id, x, y, z)
+        blf.draw(font_id, line)
+        y -= line_height
+
+
+def _get_text_location(node, align='RIGHT') -> tuple[int, int]:
+    """Find location for a text nearby give node"""
+    (x, y) = node.absolute_location
     gap = 10
+
+    # some nodes override standard attributes
+    try:
+        dx, dy = node.dimensions
+    except (TypeError, ValueError):
+        dx, dy = 1, 1  # todo would be nice to have something more sensible here
 
     # find text location
     if align == "RIGHT":
@@ -229,20 +262,8 @@ def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.
         x, y = int(x), int(y - dy - gap)
     else:
         debug(f'Some node drawing text with unsupported align: {align}')
+    return x, y
 
-    text_height = int(15 * scale)
-    line_height = int(18 * scale)
-    font_id = 0
-    dpi = 72
 
-    blf.size(font_id, text_height, dpi)
-    blf.color(font_id, *color)
-
-    for line in text.split('\n'):
-        blf.position(font_id, x, y, z)
-        blf.draw(font_id, line)
-        y -= line_height
-        
-        
 def unregister():
     callback_disable_all()
