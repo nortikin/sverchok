@@ -1501,6 +1501,8 @@ class Ellipse3D(object):
         """
         a = self.a
         b = self.b
+        if a < b:
+            raise Exception("Major semi-axis of the ellipse can not be smaller than minor semi-axis")
         return sqrt(a*a - b*b)
 
     @property
