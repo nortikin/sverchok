@@ -30,11 +30,9 @@ class Node(tw.Node):
         self._index = index
         self._tree = tree
 
-        # statistics
+        self.is_input_changed = False
         self.is_updated = False
-        self.link_changed = False
-        self.error = None
-        self.update_time = None
+        self.is_output_changed = False
 
         # cash
         self.bl_tween = bl_node

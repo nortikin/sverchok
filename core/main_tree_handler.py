@@ -4,12 +4,13 @@
 #
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
+
 import logging
 import traceback
 from collections import defaultdict
 from functools import partial
 from time import time
-from typing import Dict, NamedTuple, Generator, Optional, Iterator
+from typing import Dict, NamedTuple, Generator, Optional, Iterator, Tuple
 
 import bpy
 from sverchok.data_structure import post_load_call
@@ -37,16 +38,15 @@ class TreeHandler:
 
         # mark given nodes as outdated
         if event.type == TreeEvent.NODES_UPDATE:
-            [NodesStatuses.mark_outdated(n) for n in event.updated_nodes]
+            ContextTrees.mark_outdated(event.tree, event.updated_nodes)
 
         # it will find changes in tree topology and mark related nodes as outdated
-        elif event.type == TreeEvent.TREE_UPDATE:
+        elif event.type == TreeEvent.TREE_UPDATE:  # todo should we update tree in the same Python section?
             ContextTrees.update_tree(event.tree)
 
         # force update
-        elif event.type == TreeEvent.FORCE_UPDATE:
-            for node in event.tree.nodes:
-                NodesStatuses.mark_outdated(node)
+        elif event.type == TreeEvent.FORCE_UPDATE:  # todo useless mode - the same as update nodes
+            ContextTrees.mark_outdated(event.tree, event.updated_nodes)
 
         # Unknown event
         else:
@@ -169,111 +169,74 @@ class NodesUpdater:
             cls._node_tree_area.header_text_set(text)
 
 
-def tree_handler(bl_tree) -> Generator[Node, None, Optional[Exception]]:
-    # The function is growing bigger and bigger. I wish I knew how to simplify it.
+def tree_handler(bl_tree) -> Generator:
     tree = ContextTrees.get(bl_tree)
-
-    # input
-    cancel_updating = False
-
-    # output
-    error = None
 
     for node in tree.sorted_walk(tree.output_nodes):
         can_be_updated = all(n.is_updated for n in node.last_nodes)
-        should_be_updated = can_be_updated and ((not node.is_updated) or node.link_changed)
-        is_output_changed = False
+        if not can_be_updated:
+            # here different logic can be implemented but for this we have to know if is there any output of the node
+            # we could leave the node as updated and don't broke work of the rest forward nodes
+            # but if the node does not have any output all next nodes will gen NoDataError what is horrible
+            node.is_updated = False
+            node.is_output_changed = False
+            continue
 
-        # reset current statistic
-        if should_be_updated:
-            node.is_updated, node.error = False, None
-
-        # update node with sub update system
         if hasattr(node.bl_tween, 'updater'):
-            sub_updater = node.bl_tween.updater(is_input_changed=should_be_updated)
-            try:
-                while True:
-                    yield next(sub_updater)
-            except StopIteration as stop_error:
-                is_output_changed, node.error = stop_error.value
-                node.is_updated = not node.error
-            except CancelError:
-                sub_updater.throw(CancelError)
+            updater = group_node_updater(node)
+        elif hasattr(node.bl_tween, 'process'):
+            updater = node_updater(node)
+        else:
+            updater = empty_updater(error=None)
 
-        # update regular node
-        elif should_be_updated:
-            if not cancel_updating:
-                try:
-                    yield node
-                    ContextTrees.update_node(node)
-                except CancelError:
-                    cancel_updating = True
-                    node.error = CancelError()
-            else:
-                node.error = CancelError()
+        # update node with sub update system, catch statistic
+        start_time = time()
+        node_error = yield from updater
+        update_time = int((time() - start_time) * 1000)
 
-            is_output_changed = node.error is None
-
-        # update current node statistic if there was any updates
-        if should_be_updated:
-            NodesStatuses.set(node.bl_tween, NodeStatistic(node.is_updated, node.error, node.update_time))
-            error = node.error or error
-
-        # if update was successful
-        if is_output_changed:
-
-            # because we does not rebuild the tree each update, we should show that the node was updated
-            node.link_changed = False
-
-            # next nodes should be update too then
-            for next_node in node.next_nodes:
-                next_node.is_updated = False
-                next_node.update_time = None
-
-    return error
+        if node.is_output_changed or node_error:
+            stat = NodeStatistic(node_error, None if node_error else update_time)
+            NodesStatuses.set(node.bl_tween, stat)
 
 
-class ContextTrees:  # todo add supporting updates of multiple trees (loading file, animation)
+class ContextTrees:  # todo add supporting updates of multiple trees (loading file, animation?, changing in node groups)
     """The same tree but nodes has statistic"""
     _trees: Dict[str, Tree] = dict()
 
     @classmethod
     def get(cls, bl_tree):
-        """Return caught tree with filled `is_updated` attribute according last statistic"""
+        """Return caught tree or new if the tree was not build yet"""
         tree = cls._trees.get(bl_tree.tree_id)
         if tree is None:
             tree = Tree(bl_tree)
             cls._trees[bl_tree.tree_id] = tree
-        for node in tree.nodes:
-            node.is_updated = NodesStatuses.get(node.bl_tween).is_updated  # good place to do this?
         return tree
-
-    @staticmethod
-    def update_node(node: Node):
-        """Call process method of given node"""
-        # it does not look like proper place for the functionality
-        bl_node = node.bl_tween
-        try:
-            if hasattr(bl_node, 'process'):
-                start_time = time()
-                bl_node.process()
-                node.update_time = int((time() - start_time) * 1000)
-            node.is_updated = True
-
-        except Exception as e:
-            node.error = e
-            error(e)
-            logger = getLogger()
-            if logger.isEnabledFor(logging.DEBUG):
-                traceback.print_exc()
 
     @classmethod
     def update_tree(cls, bl_tree):
         """
-        This method will generate new tree and update 'link_changed' node attribute
-        according topological changes relatively previous call
+        This method will generate new tree, copy is_updates status from previous tree
+        and update 'is_input_changed' node attribute according topological changes relatively previous call
         """
-        cls._update_topology_status(Tree(bl_tree))
+        new_tree = Tree(bl_tree)
+
+        # copy is_updated attribute
+        if new_tree.id in cls._trees:
+            old_tree = cls._trees[new_tree.id]
+            for node in new_tree.nodes:
+                if node.name in old_tree.nodes:
+                    node.is_updated = old_tree.nodes[node.name].is_updated
+
+        # update is_input_changed attribute
+        cls._update_topology_status(new_tree)
+
+    @classmethod
+    def mark_outdated(cls, bl_tree, bl_nodes):
+        """Try find given node in statistic and mark it as outdated"""
+        tree = cls._trees.get(bl_tree.tree_id)
+        if tree:
+            for node in (tree.nodes[n.name] for n in bl_nodes):
+                node.is_updated = False
 
     @classmethod
     def reset_data(cls):
@@ -295,19 +258,21 @@ class ContextTrees:  # todo add supporting updates of multiple trees (loading fi
                 if link.from_node.name in old_tree.nodes:
                     from_old_node = old_tree.nodes[link.from_node.name]
                     from_old_socket = from_old_node.get_output_socket(link.from_socket.identifier)
-                    update_last_node = not from_old_socket.links if from_old_socket is not None else True
+                    has_old_from_socket_links = from_old_socket.links if from_old_socket is not None else False
                 else:
-                    update_last_node = True
+                    has_old_from_socket_links = False
 
-                if update_last_node:
-                    link.from_node.link_changed = True
+                # this is only because some nodes calculated data only if certain output socket is connected
+                # ideally we would not like ot make previous node outdated, but it requires changes in many nodes
+                if not has_old_from_socket_links:
+                    link.from_node.is_input_changed = True
                 else:
-                    link.to_node.link_changed = True
+                    link.to_node.is_input_changed = True
 
             removed_links = old_tree.links - new_tree.links
             for link in removed_links:
                 if link.to_node in new_tree.nodes:
-                    new_tree.nodes[link.to_node.name].link_changed = True
+                    new_tree.nodes[link.to_node.name].is_input_changed = True
 
         cls._trees[new_tree.id] = new_tree
 
@@ -317,8 +282,7 @@ class NodeStatistic(NamedTuple):
     Statistic should be kept separately for each node
     because each node can have 10 or even 100 of different statistic profiles according number of group nodes using it
     """
-    is_updated: bool = False
-    error: Exception = None
+    error: Optional[Exception] = None
     update_time: int = None  # ms
 
 
@@ -326,13 +290,6 @@ class NodesStatuses:
     """It keeps node attributes"""
     NodeId = str
     _statuses: Dict[NodeId, NodeStatistic] = defaultdict(NodeStatistic)
-
-    @classmethod
-    def mark_outdated(cls, bl_node):
-        """Try find given node in statistic and mark it as outdated"""
-        node_id = bl_node.node_id
-        if node_id in cls._statuses:
-            del cls._statuses[node_id]
 
     @classmethod
     def get(cls, bl_node) -> NodeStatistic:
@@ -351,3 +308,48 @@ class NodesStatuses:
 
 class CancelError(Exception):
     """Aborting tree evaluation by user"""
+
+
+def node_updater(node: Node, *args) -> Generator[Node, None, Optional[Exception]]:
+    """The node should has process method, all previous nodes should be updated"""
+    node_error = None
+
+    previous_nodes_are_changed = any(n.is_output_changed for n in node.last_nodes)
+    should_be_updated = not node.is_updated or node.is_input_changed or previous_nodes_are_changed
+
+    node.is_output_changed = False  # it should always False unless the process method was called
+    node.is_input_changed = False  # if node wont be able to handle new input it will be seen in its update status
+    if should_be_updated:
+        try:
+            yield node
+            node.bl_tween.process(*args)
+            node.is_updated = True
+            node.is_output_changed = True
+        except CancelError as e:
+            node.is_updated = False
+            node_error = e
+        except Exception as e:
+            node.is_updated = False
+            error(e)
+            logger = getLogger()
+            if logger.isEnabledFor(logging.DEBUG):
+                traceback.print_exc()
+            node_error = e
+    return node_error
+
+
+def group_node_updater(node: Node) -> Generator[Node, None, Tuple[bool, Optional[Exception]]]:
+    """The node should have updater attribute"""
+    previous_nodes_are_changed = any(n.is_output_changed for n in node.last_nodes)
+    should_be_updated = (not node.is_updated or node.is_input_changed or previous_nodes_are_changed)
+    updater = node.bl_tween.updater(is_input_changed=should_be_updated)
+    is_output_changed, out_error = yield from updater
+    node.is_input_changed = False
+    node.is_updated = not out_error
+    node.is_output_changed = is_output_changed
+    return out_error
+
+
+def empty_updater(**kwargs):
+    return tuple(kwargs.values())
+    yield
