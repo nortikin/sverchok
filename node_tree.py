@@ -10,7 +10,7 @@ import sys
 import time
 import textwrap
 from contextlib import contextmanager
-from itertools import chain
+from itertools import chain, cycle
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
@@ -265,9 +265,8 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         """ The method get information about node statistic of last update from the handler to show in view space
         Thi method is usually called by main handler to reevaluate view of the nodes in the tree"""
         nodes_errors = self.handler.get_error_nodes(self)
-        update_time = self.handler.get_update_time(self)
+        update_time = self.handler.get_update_time(self) if self.sv_show_time_nodes else cycle([None])
         for node, error, update in zip(self.nodes, nodes_errors, update_time):
-            update = update if self.sv_show_time_nodes else None
             if hasattr(node, 'update_ui'):
                 node.update_ui(error, update)
 
@@ -389,29 +388,31 @@ class UpdateNodes:
 
         self.sv_update()
 
-    def update_ui(self, error=None, update_time=None):
-        """updating tree contextual information -> node colors, text"""
+    def update_ui(self, error=None, update_time=None, node_id=None):
+        """updating tree contextual information -> node colors, text
+        node_id only for usage of a group tree"""
         exception_color = (0.8, 0.0, 0)  # todo take from preferences
         no_data_color = (1, 0.3, 0)
         error_pref = "error"
         update_pref = "update_time"
+        node_id = node_id or self.node_id  # inevitable evil
 
         # update error colors
         if error is not None:
             self.use_custom_color = True
             self.color = no_data_color if isinstance(error, SvNoDataError) else exception_color
             color = no_data_color if isinstance(error, SvNoDataError) else exception_color
-            sv_bgl.draw_text(self, repr(error), error_pref + self.node_id, color, 1.3)
+            sv_bgl.draw_text(self, repr(error), error_pref + node_id, color, 1.3, "UP")
         else:
-            sv_bgl.callback_disable(error_pref + self.node_id)
+            sv_bgl.callback_disable(error_pref + node_id)
             self.use_custom_color = False
             self.set_color()
 
         # show update timing
         if update_time is not None:
-            sv_bgl.draw_text(self, f'{update_time}ms', update_pref + self.node_id, align="UP", dynamic_location=False)
+            sv_bgl.draw_text(self, f'{update_time}ms', update_pref + node_id, align="UP", dynamic_location=False)
         else:
-            sv_bgl.callback_disable(update_pref + self.node_id)
+            sv_bgl.callback_disable(update_pref + node_id)
 
         # update object numbers
         for s in chain(self.inputs, self.outputs):

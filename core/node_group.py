@@ -10,18 +10,21 @@ import time
 from collections import namedtuple
 from contextlib import contextmanager
 from functools import reduce
-from itertools import chain
+from itertools import cycle
 from typing import Tuple, List, Set, Dict, Iterator, Generator, Optional
 
 import bpy
-from sverchok.core.socket_data import SvNoDataError
+from sverchok.core.main_tree_handler import empty_updater
 from sverchok.data_structure import extend_blender_class
 from mathutils import Vector
 
-from sverchok.core.group_handlers import MainHandler, DEBUGGER_NODES, cut_mk_suffix
+from sverchok.core.group_handlers import MainHandler, NodeIdManager
 from sverchok.core.events import GroupEvent
 from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
+from sverchok.utils.handle_blender_data import BlNode
+from sverchok.utils.logging import catch_log_error
+from sverchok.node_tree import UpdateNodes
 
 
 class SvGroupTree(bpy.types.NodeTree):
@@ -225,28 +228,18 @@ class SvGroupTree(bpy.types.NodeTree):
         self.handler.send(GroupEvent(GroupEvent.EDIT_GROUP_NODE, group_nodes_path))
 
         nodes_errors = self.handler.get_error_nodes(group_nodes_path)
-        exception_color = (0.8, 0.0, 0)
+        to_show_update_time = group_nodes_path[0].id_data.sv_show_time_nodes
+        update_time = self.handler.get_nodes_update_time(group_nodes_path) if to_show_update_time else cycle([None])
+        exception_color = (0.8, 0.0, 0)  # todo get from preferences
         no_data_color = (1, 0.3, 0)
-        for error, node in zip(nodes_errors, self.nodes):
-
-            # update error colors
-            if error is not None:
-                node.use_custom_color = True
-                node.color = no_data_color if isinstance(error, SvNoDataError) else exception_color
-            else:
-                node.use_custom_color = False
-                node.set_color()
-
-            # update object numbers
-            [s.update_objects_number() for s in chain(node.inputs, node.outputs)
-             if hasattr(s, 'update_objects_number')]
+        for node, error, update in zip(self.nodes, nodes_errors, update_time):
+            if hasattr(node, 'update_ui'):
+                node.update_ui(error, update, NodeIdManager.extract_node_id(node))
 
             # update debug nodes
-            try:
-                if cut_mk_suffix(node.bl_idname) in DEBUGGER_NODES:  # todo should be replaced by isinstance
+            if BlNode(node).is_debug_node:
+                with catch_log_error():
                     node.process()
-            except:
-                pass
 
     @contextmanager
     def throttle_update(self):
@@ -388,7 +381,7 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
         else:
             row_search.operator('node.add_group_tree', text='New', icon='ADD')
 
-    def process(self):
+    def process(self):  # todo to remove
         """
         This method is going to be called only by update system of main tree
         Calling this method means that input group node should fetch data from group node
@@ -454,6 +447,8 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
                     n_in_s.use_prop = not t_in_s.hide_value
                 if hasattr(t_in_s, 'default_type'):
                     n_in_s.default_property_type = t_in_s.default_type
+
+    update_ui = UpdateNodes.update_ui  # don't want to inherit from the class (at least now)
 
     def copy(self, original):
         super().copy(original)
