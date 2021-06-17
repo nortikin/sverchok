@@ -18,6 +18,8 @@
 
 # <pep8 compliant>
 
+from __future__ import annotations  # this will fix backward compatibility with Python 3.8 and less
+
 from inspect import isfunction
 
 import bpy
