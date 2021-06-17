@@ -100,6 +100,9 @@ def get_sv_trees():
 
 # ~~~~ encapsulation Blender objects ~~~~
 
+# In general it's still arbitrary set of functionality (like module which fully consists with functions)
+# But here the functions are combine with data which they handle
+
 
 class BlTrees:
     """Wrapping around Blender tree, use with care
@@ -107,22 +110,29 @@ class BlTrees:
     https://docs.blender.org/api/current/info_gotcha.html#help-my-script-crashes-blender
     All this is True and about Blender class itself"""
 
+    MAIN_TREE_ID = 'SverchCustomTreeType'
+    SV_TREE_IDS = {MAIN_TREE_ID, 'SvGroupTree'}
+
     def __init__(self, node_groups=None):
         self._trees = node_groups
 
     @property
     def sv_trees(self):
+        """All Sverchok trees in a file or in given set of trees"""
         trees = self._trees or bpy.data.node_groups
-        return (t for t in trees if t.bl_idname in {'SverchCustomTreeType', 'SvGroupTree'})
+        return (t for t in trees if t.bl_idname in self.SV_TREE_IDS)
 
     @property
     def sv_main_trees(self):
+        """All main Sverchok trees in a file or in given set of trees"""
         trees = self._trees or bpy.data.node_groups
-        return (t for t in trees if t.bl_idname == 'SverchCustomTreeType')
+        return (t for t in trees if t.bl_idname == self.MAIN_TREE_ID)
 
 
-class BPYNode:
+class BlNode:
     """Wrapping around ordinary node for extracting some its information"""
+    DEBUG_NODES_IDS = {'SvDebugPrintNode', 'SvStethoscopeNode'}  # can be added as Mix-in class
+
     def __init__(self, node):
         self.data = node
 
@@ -131,6 +141,22 @@ class BPYNode:
         """Iterator over all node properties"""
         node_properties = self.data.bl_rna.__annotations__ if hasattr(self.data.bl_rna, '__annotations__') else []
         return [BPYProperty(self.data, prop_name) for prop_name in node_properties]
+
+    @property
+    def is_debug_node(self):
+        """Nodes which print sockets content"""
+        return self.base_idname in self.DEBUG_NODES_IDS
+
+    @property
+    def base_idname(self) -> str:
+        """SvStethoscopeNodeMK2 -> SvStethoscopeNode
+        it won't parse more tricky variants like SvStethoscopeMK2Node which I saw exists"""
+        id_name, _, version = self.data.bl_idname.partition('MK')
+        try:
+            int(version)
+        except ValueError:
+            return self.data.bl_idname
+        return id_name
 
 
 class BPYProperty:
