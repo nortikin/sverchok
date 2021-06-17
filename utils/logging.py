@@ -28,7 +28,7 @@ def catch_log_error():
     try:
         yield
     except Exception as e:
-        frame, _, line, *_ = inspect.stack()[2]  # third frame is where the context manager was used
+        frame, _, line, *_ = inspect.trace()[-1]
         module = inspect.getmodule(frame)
         name = module.__name__ or "<Unknown Module>"
         try_initialize()
