@@ -411,11 +411,16 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
                 raise error
 
     def updater(self, group_nodes_path: Optional[List['SvGroupTreeNode']] = None,
-                is_input_changed: bool = True) -> Iterator[Node]:
+                is_input_changed: bool = True) -> Generator[Node, None, Tuple[bool, Optional[Exception]]]:
         """
         This method should be called by group tree handler
         is_input_changed should be False if update is called just for inspection of inner changes
         """
+        # todo what if the node is disabled?
+        # there is nothing to update, return empty iterator
+        if self.node_tree is None:
+            return empty_updater(is_output_changed=False, error=None)
+
         if group_nodes_path is None:
             group_nodes_path = []
         else:

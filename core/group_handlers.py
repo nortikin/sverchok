@@ -12,10 +12,10 @@ and keeping `updating` statistics.
 
 from __future__ import annotations
 
+import logging
 import traceback
 from collections import defaultdict
 from functools import partial
-from itertools import chain
 from time import time
 from typing import Generator, Dict, TYPE_CHECKING, Union, List, NamedTuple, Optional, Iterator, NewType, Tuple
 
@@ -24,7 +24,7 @@ import bpy
 from sverchok.data_structure import post_load_call
 from sverchok.core.events import GroupEvent
 from sverchok.utils.tree_structure import Tree, Node
-from sverchok.utils.logging import debug
+from sverchok.utils.logging import debug, error, getLogger
 
 if TYPE_CHECKING:
     from sverchok.core.node_group import SvGroupTree, SvGroupTreeNode
@@ -72,10 +72,17 @@ class MainHandler:
 
     @staticmethod
     def get_error_nodes(group_nodes_path: List[SvGroupTreeNode]) -> Iterator[Optional[Exception]]:
-        """Return map of bool values to group tree nodes where node has error if value is True"""
+        """Returns error if a node has error during execution or None"""
         path = NodeIdManager.generate_path(group_nodes_path)
         for node in group_nodes_path[-1].node_tree.nodes:
             yield NodesStatuses.get(node, path).error
+
+    @staticmethod
+    def get_nodes_update_time(group_nodes_path: List[SvGroupTreeNode]) -> Iterator[Optional[int]]:
+        """Returns duration of a node being executed in milliseconds or None if there was an error"""
+        path = NodeIdManager.generate_path(group_nodes_path)
+        for node in group_nodes_path[-1].node_tree.nodes:
+            yield NodesStatuses.get(node, path).update_time
 
 
 @post_load_call
@@ -183,7 +190,7 @@ class NodeStatistic(NamedTuple):
     """
     is_updated: bool = False
     error: Exception = None
-    # update_time: int  # ms
+    update_time: int = None  # ms
 
 
 class NodesStatuses:
@@ -302,28 +309,10 @@ class ContextTrees:
             node.is_updated = NodesStatuses.get(node.bl_tween, path).is_updated  # good place to do this?
         return tree
 
-    @staticmethod
-    def update_node(node: Node, group_node: SvGroupTreeNode):
-        """
-        Group tree should have proper node_ids before calling this method
-        Also this method will mark next nodes as outdated for current context
-        """
-        bl_node = node.bl_tween
-        try:
-            if bl_node.bl_idname in {'NodeGroupInput', 'NodeGroupOutput'}:
-                bl_node.process(group_node)
-            elif hasattr(bl_node, 'process'):
-                bl_node.process()
-            node.is_updated = True
-
-        except Exception as e:
-            node.error = e
-            traceback.print_exc()
-
     @classmethod
     def update_tree(cls, bl_tree: SvTree):
         """
-        This method will generate new tree and update 'link_changed' node attribute
+        This method will generate new tree and update 'is_input_changed' node attribute
         according topological changes relatively previous call
         """
         cls._update_topology_status(Tree(bl_tree))
@@ -353,14 +342,14 @@ class ContextTrees:
                     update_last_node = True
 
                 if update_last_node:
-                    link.from_node.link_changed = True
+                    link.from_node.is_input_changed = True
                 else:
-                    link.to_node.link_changed = True
+                    link.to_node.is_input_changed = True
 
             removed_links = old_tree.links - new_tree.links
             for link in removed_links:
                 if link.to_node in new_tree.nodes:
-                    new_tree.nodes[link.to_node.name].link_changed = True
+                    new_tree.nodes[link.to_node.name].is_input_changed = True
 
         cls._trees[new_tree.bl_tween.tree_id] = new_tree
 
@@ -390,50 +379,36 @@ def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
 
     # output
     output_was_changed = False
-    error = None
+    node_error = None
     for node in tree.sorted_walk(out_nodes):
         if cut_mk_suffix(node.bl_tween.bl_idname) in DEBUGGER_NODES:
             continue  # debug nodes will be updated after all by NodesUpdater only if necessary
 
         can_be_updated = all(n.is_updated for n in node.last_nodes)
-        should_be_updated = can_be_updated and ((not node.is_updated) or node.link_changed)
-        is_output_changed = False
+        should_be_updated = can_be_updated and ((not node.is_updated) or node.is_input_changed)
 
         # reset current statistic
         if should_be_updated:
             node.is_updated, node.error = False, None
+        else:
+            continue
 
         # update node with sub update system
         if hasattr(node.bl_tween, 'updater'):
             sub_updater = node.bl_tween.updater(group_nodes_path=group_nodes_path, is_input_changed=should_be_updated)
-            try:
-                while True:
-                    yield next(sub_updater)
-            except StopIteration as stop_error:
-                is_output_changed, node.error = stop_error.value
-                node.is_updated = not node.error
-            except CancelError:
-                sub_updater.throw(CancelError)
+        elif hasattr(node.bl_tween, 'process'):
+            sub_updater = node_updater(node, group_node)
+        else:
+            continue
 
-        # update regular node
-        elif should_be_updated:
-            if not cancel_updating:
-                try:
-                    yield node
-                    ContextTrees.update_node(node, group_node)
-                except CancelError:
-                    cancel_updating = True
-                    node.error = CancelError()
-            else:
-                node.error = CancelError()
-
-            is_output_changed = node.error is None
+        start_time = time()
+        is_output_changed, node_error = yield from sub_updater
+        update_time = int((time() - start_time) * 1000)
 
         # update current node statistic if there was any updates
-        if should_be_updated:
-            node_path = Path('') if node not in input_linked_nodes else path
-            NodesStatuses.set(node.bl_tween, node_path, NodeStatistic(node.is_updated, node.error))
-            error = node.error if node.error else error
+        node_path = Path('') if node not in input_linked_nodes else path
+        stat = NodeStatistic(node.is_updated, node_error, update_time if not node_error else None)
+        NodesStatuses.set(node.bl_tween, node_path, stat)
 
         # if update was successful
         if is_output_changed:
@@ -457,7 +432,7 @@ def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
             if node.bl_tween.bl_idname == 'NodeGroupOutput':
                 output_was_changed = True
 
-    return output_was_changed, error
+    return output_was_changed, node_error
 
 
 def group_global_handler() -> Generator[Node]:
@@ -512,3 +487,28 @@ def cut_mk_suffix(name: str) -> str:
     except ValueError:
         return name
     return id_name
+
+
+def node_updater(node: Node, group_node: SvGroupTreeNode):
+    """
+    Group tree should have proper node_ids before calling this method
+    Also this method will mark next nodes as outdated for current context
+    """
+    bl_node = node.bl_tween
+    node_error = None
+    try:
+        yield node
+        if bl_node.bl_idname in {'NodeGroupInput', 'NodeGroupOutput'}:
+            bl_node.process(group_node)
+        elif hasattr(bl_node, 'process'):
+            bl_node.process()
+        node.is_updated = True
+    except CancelError as e:
+        node_error = e
+    except Exception as e:
+        node_error = e
+        error(e)
+        logger = getLogger()
+        if logger.isEnabledFor(logging.DEBUG):
+            traceback.print_exc()
+    return not node_error, node_error
