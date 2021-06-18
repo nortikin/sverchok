@@ -671,7 +671,8 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
             [base_tree.nodes.remove(n) for n in base_tree.nodes
              if n.name in frame_names and n.name not in with_children_frames]
 
-        base_tree.update()  # the topology of the tree should be updated
+        # todo it is not obvious how to update group tree annotations, main tree should be updated first
+        #  and then updated_ui method of the group tree should be called
         bpy.ops.node.edit_group_tree({'node': group_node})
 
         return {'FINISHED'}
