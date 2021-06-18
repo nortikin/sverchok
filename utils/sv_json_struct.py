@@ -529,7 +529,7 @@ class TreeStruct(Struct):
                 with self.logger.add_fail("Build link", f"Tree: {tree.name}, Struct: {raw_struct}"):
                     factories.link(None, self.logger, raw_struct).build(tree, factories, imported_structs)
 
-            for prop_name, prop_value in self._struct.get("properties", []):
+            for prop_name, prop_value in self._struct.get("properties", dict()).items():
                 with self.logger.add_fail("Setting tree property", f'Tree: {node.id_data.name}, prop: {prop_name}'):
                     factories.prop(prop_name, self.logger, prop_value).build(tree, factories, imported_structs)
 
