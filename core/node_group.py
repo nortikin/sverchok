@@ -455,21 +455,8 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
 
     update_ui = UpdateNodes.update_ui  # don't want to inherit from the class (at least now)
 
-    def copy(self, original):
-        super().copy(original)
-        # this should be used by update system of main tree
-        if self.id_data.bl_idname == 'SverchCustomTreeType':
-            self.id_data.nodes_dict.load_node(self)
-
     def free(self):
-        # this should be used by update system of main tree
-        if self.id_data.bl_idname == 'SverchCustomTreeType':
-            self.id_data.nodes_dict.forget_node(self)
-
-    def init(self, context):
-        # this should be used by update system of main tree
-        if self.id_data.bl_idname == 'SverchCustomTreeType':
-            self.id_data.nodes_dict.load_node(self)
+        self.update_ui()
 
 
 class PlacingNodeOperator:
