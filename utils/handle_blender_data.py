@@ -7,12 +7,17 @@
 
 from __future__ import annotations
 
+from collections import Iterable
 from enum import Enum
 from functools import singledispatch
 from itertools import chain
-from typing import Any, List, Union
+from typing import Any, List, Union, TYPE_CHECKING
 
 import bpy
+
+if TYPE_CHECKING:
+    from sverchok.core.node_group import SvGroupTree
+    from sverchok.node_tree import SverchCustomTree
 
 
 # ~~~~ collection property functions ~~~~~
@@ -103,7 +108,6 @@ def get_sv_trees():
 # In general it's still arbitrary set of functionality (like module which fully consists with functions)
 # But here the functions are combine with data which they handle
 
-
 class BlTrees:
     """Wrapping around Blender tree, use with care
     it can crash if other containers are modified a lot
@@ -111,22 +115,28 @@ class BlTrees:
     All this is True and about Blender class itself"""
 
     MAIN_TREE_ID = 'SverchCustomTreeType'
-    SV_TREE_IDS = {MAIN_TREE_ID, 'SvGroupTree'}
+    GROUP_ID = 'SvGroupTree'
 
     def __init__(self, node_groups=None):
         self._trees = node_groups
 
     @property
-    def sv_trees(self):
+    def sv_trees(self) -> Iterable[Union[SverchCustomTree, SvGroupTree]]:
         """All Sverchok trees in a file or in given set of trees"""
         trees = self._trees or bpy.data.node_groups
-        return (t for t in trees if t.bl_idname in self.SV_TREE_IDS)
+        return (t for t in trees if t.bl_idname in [self.MAIN_TREE_ID, self.GROUP_ID])
 
     @property
-    def sv_main_trees(self):
+    def sv_main_trees(self) -> Iterable[SverchCustomTree]:
         """All main Sverchok trees in a file or in given set of trees"""
         trees = self._trees or bpy.data.node_groups
         return (t for t in trees if t.bl_idname == self.MAIN_TREE_ID)
+
+    @property
+    def sv_group_trees(self) -> Iterable[SvGroupTree]:
+        """All Sverchok group trees"""
+        trees = self._trees or bpy.data.node_groups
+        return (t for t in trees if t.bl_idname == self.GROUP_ID)
 
 
 class BlNode:
@@ -143,7 +153,7 @@ class BlNode:
         return [BPYProperty(self.data, prop_name) for prop_name in node_properties]
 
     @property
-    def is_debug_node(self):
+    def is_debug_node(self) -> bool:
         """Nodes which print sockets content"""
         return self.base_idname in self.DEBUG_NODES_IDS
 
