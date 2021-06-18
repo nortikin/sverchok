@@ -208,7 +208,7 @@ def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.
     if editor.tree_type not in {"SverchCustomTreeType", 'SvGroupTree'}:
         return
 
-    if editor.edit_tree and editor.edit_tree.tree_id != tree_id:
+    if not editor.edit_tree or editor.edit_tree.tree_id != tree_id:
         return
 
     # this is less efficient because it requires search of the node each redraw call
