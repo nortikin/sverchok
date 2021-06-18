@@ -23,8 +23,10 @@ import bpy
 
 from sverchok.data_structure import post_load_call
 from sverchok.core.events import GroupEvent
+from sverchok.core.main_tree_handler import global_updater, empty_updater
 from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.logging import debug, error, getLogger
+from sverchok.utils.handle_blender_data import BlNode, BlTrees
 
 if TYPE_CHECKING:
     from sverchok.core.node_group import SvGroupTree, SvGroupTreeNode
@@ -150,6 +152,26 @@ class NodesUpdater:
             cls._report_progress(f'Pres "ESC" to abort, updating node "{node.name}"')
 
         except StopIteration:
+            cls.finish_task()
+
+    @classmethod
+    def debug_run_task(cls):
+        """Color updated nodes for a few second after all"""
+        try:
+            start_time = time()
+            while (time() - start_time) < 0.15:  # 0.15 is max timer frequency
+                node = next(cls._handler)
+                node.bl_tween.use_custom_color = True
+                node.bl_tween.color = (0.7, 1.000000, 0.7)
+
+            cls._last_node = node
+            cls._report_progress(f'Pres "ESC" to abort, updating node "{node.name}"')
+
+        except StopIteration:
+            if 'node' in vars():
+                return
+            from time import sleep
+            sleep(1)
             cls.finish_task()
 
     @classmethod
@@ -374,14 +396,11 @@ def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
     input_linked_nodes = {n for n in tree.bfs_walk([tree.nodes.active_input] if tree.nodes.active_output else [])}
     output_linked_nodes = {n for n in tree.bfs_walk(out_nodes, direction='DOWNWARD')}
 
-    # input
-    cancel_updating = False
-
     # output
     output_was_changed = False
     node_error = None
     for node in tree.sorted_walk(out_nodes):
-        if cut_mk_suffix(node.bl_tween.bl_idname) in DEBUGGER_NODES:
+        if BlNode(node.bl_tween).is_debug_node:
             continue  # debug nodes will be updated after all by NodesUpdater only if necessary
 
         can_be_updated = all(n.is_updated for n in node.last_nodes)
@@ -389,17 +408,20 @@ def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
 
         # reset current statistic
         if should_be_updated:
-            node.is_updated, node.error = False, None
+            node.is_updated = False
         else:
             continue
 
         # update node with sub update system
         if hasattr(node.bl_tween, 'updater'):
             sub_updater = node.bl_tween.updater(group_nodes_path=group_nodes_path, is_input_changed=should_be_updated)
+        # regular nodes
         elif hasattr(node.bl_tween, 'process'):
             sub_updater = node_updater(node, group_node)
+        # reroutes
         else:
-            continue
+            node.is_updated = True
+            sub_updater = empty_updater(it_output_changed=True, node_error=None)
 
         start_time = time()
         is_output_changed, node_error = yield from sub_updater
@@ -441,38 +463,11 @@ def group_global_handler() -> Generator[Node]:
     After that update system of main trees should update themselves
     meanwhile group nodes should be switched off because they already was updated
     """
-    for bl_tree in (t for t in bpy.data.node_groups if t.bl_idname == 'SvGroupTree'):
+    for bl_tree in BlTrees().sv_group_trees:
         # for now it always update all trees todo should be optimized later (keep in mind, trees can become outdated)
         ContextTrees.update_tree(bl_tree)
 
-    for bl_tree in (t for t in bpy.data.node_groups if t.bl_idname == 'SverchCustomTreeType'):
-        outdated_group_nodes = set()
-        tree = Tree(bl_tree)
-        for node in tree.sorted_walk(tree.output_nodes):
-            if hasattr(node.bl_tween, 'updater'):
-
-                group_updater = node.bl_tween.updater(is_input_changed=False)  # just searching inner changes
-                try:
-                    # it should return only nodes which should be updated
-                    while True:
-                        yield next(group_updater)
-                except CancelError:
-                    group_updater.throw(CancelError)
-                except StopIteration as stop_error:
-                    sub_tree_changed, error = stop_error.value
-                    if sub_tree_changed:
-                        outdated_group_nodes.add(node.bl_tween)
-        # passing running to update system of main tree
-        if outdated_group_nodes:
-            outdated_group_nodes = list(outdated_group_nodes)
-            active_states = [n.is_active for n in outdated_group_nodes]
-            try:
-                [n.toggle_active(False) for n in outdated_group_nodes]
-                bl_tree.update_nodes(list(outdated_group_nodes))
-            except Exception:
-                traceback.print_exc()
-            finally:
-                [n.toggle_active(s, to_update=False) for s, n in zip(active_states, outdated_group_nodes)]
+    yield from global_updater()
 
 
 class CancelError(Exception):
@@ -497,10 +492,10 @@ def node_updater(node: Node, group_node: SvGroupTreeNode):
     bl_node = node.bl_tween
     node_error = None
     try:
-        yield node
         if bl_node.bl_idname in {'NodeGroupInput', 'NodeGroupOutput'}:
             bl_node.process(group_node)
         elif hasattr(bl_node, 'process'):
+            yield node  # yield only normal nodes
             bl_node.process()
         node.is_updated = True
     except CancelError as e:
