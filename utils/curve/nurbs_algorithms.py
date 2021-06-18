@@ -8,7 +8,7 @@
 import numpy as np
 from collections import defaultdict
 
-from sverchok.utils.geom import Spline
+from sverchok.utils.geom import Spline, linear_approximation
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import unify_curves_degree
@@ -121,4 +121,41 @@ def concatenate_nurbs_curves(curves):
         except Exception as e:
             raise Exception(f"Can't append curve #{i+1}: {e}")
     return result
+
+def nurbs_curve_to_xoy(curve):
+    cpts = curve.get_control_points()
+    approx = linear_approximation(cpts)
+    plane = approx.most_similar_plane()
+    #print(f"N: {plane.normal}")
+    plane_matrix = plane.get_matrix()
+    #plane_center = np.array(plane_matrix.translation)
+    matrix = np.array(plane_matrix.inverted())
+    center = approx.center
+    #new_cpts = (matrix @ cpts.T).T
+    new_cpts = np.array([matrix @ (cpt - center) for cpt in cpts])
+    
+    first = new_cpts[0]
+    last = new_cpts[-1]
+    direction = last - first
+    x = np.array([1.0, 0.0, 0.0])
+    y = np.array([0.0, 1.0, 0.0])
+    first_x = np.dot(direction, x)
+    first_y = np.dot(direction, y)
+    #print(f"Dir: {direction}, x: {first_x}, y: {first_y}")
+
+    if abs(first_x) > abs(first_y):
+        negate = first_x > 0
+    else:
+        negate = first_y > 0
+
+    #for i, cpt in enumerate(new_cpts):
+    #    print(f"C[{i}]: {cpt}")
+
+    #print(f"F: {first}, L: {last}")
+    if negate:
+        new_cpts[:,1] = - new_cpts[:,1]
+
+    return SvNurbsMaths.build_curve(curve.get_nurbs_implementation(),
+                curve.get_degree(), curve.get_knotvector(),
+                new_cpts, curve.get_weights())
 
