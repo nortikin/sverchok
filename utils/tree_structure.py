@@ -110,6 +110,10 @@ class Tree(tw.Tree[NodeType]):
     so it is immutable (topologically) data structure
     """
     def __init__(self, bl_tree: SvGroupTree):
+
+        # it means that the tree has correct topology (during a tree initialization it's always true)
+        self.is_updated = True
+
         self._tree_id = bl_tree.tree_id
         self._nodes = NodesCollection(bl_tree, self)
         self._links = LinksCollection(bl_tree, self)

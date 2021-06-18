@@ -17,6 +17,7 @@ from sverchok.data_structure import post_load_call
 from sverchok.core.events import TreeEvent
 from sverchok.utils.logging import debug, catch_log_error, error, getLogger
 from sverchok.utils.tree_structure import Tree, Node
+from sverchok.utils.handle_blender_data import BlTrees
 
 
 # todo wifi nodes
@@ -29,8 +30,8 @@ from sverchok.utils.tree_structure import Tree, Node
 
 class TreeHandler:
 
-    @classmethod
-    def send(cls, event: TreeEvent):
+    @staticmethod
+    def send(event: TreeEvent):
 
         # this should be first other wise other instructions can spoil the node statistic to redraw
         if NodesUpdater.is_running():
@@ -38,15 +39,16 @@ class TreeHandler:
 
         # mark given nodes as outdated
         if event.type == TreeEvent.NODES_UPDATE:
-            ContextTrees.mark_outdated(event.tree, event.updated_nodes)
+            ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
 
         # it will find changes in tree topology and mark related nodes as outdated
-        elif event.type == TreeEvent.TREE_UPDATE:  # todo should we update tree in the same Python section?
-            ContextTrees.update_tree(event.tree)
+        elif event.type == TreeEvent.TREE_UPDATE:
+            ContextTrees.mark_tree_outdated(event.tree)
 
         # force update
-        elif event.type == TreeEvent.FORCE_UPDATE:  # todo useless mode - the same as update nodes
-            ContextTrees.mark_outdated(event.tree, event.updated_nodes)
+        elif event.type == TreeEvent.FORCE_UPDATE:
+            ContextTrees.mark_tree_outdated(event.tree)
+            ContextTrees.mark_nodes_outdated(event.tree, event.tree.nodes)
 
         # Unknown event
         else:
@@ -106,7 +108,7 @@ class NodesUpdater:
         changed_tree = cls._bl_tree
         if cls.is_running():
             raise RuntimeError(f'Tree "{changed_tree.name}" already is being updated')
-        cls._handler = tree_handler(changed_tree)
+        cls._handler = global_updater()
 
         # searching appropriate area index for reporting update progress
         for area in bpy.context.screen.areas:
@@ -135,6 +137,26 @@ class NodesUpdater:
             cls._report_progress(f'Pres "ESC" to abort, updating node "{node.name}"')
 
         except StopIteration:
+            cls.finish_task()
+
+    @classmethod
+    def debug_run_task(cls):
+        """Color updated nodes for a few second after all"""
+        try:
+            start_time = time()
+            while (time() - start_time) < 0.15:  # 0.15 is max timer frequency
+                node = next(cls._handler)
+                node.bl_tween.use_custom_color = True
+                node.bl_tween.color = (0.7, 1.000000, 0.7)
+
+            cls._last_node = node
+            cls._report_progress(f'Pres "ESC" to abort, updating node "{node.name}"')
+
+        except StopIteration:
+            if 'node' in vars():
+                return
+            from time import sleep
+            sleep(2)
             cls.finish_task()
 
     @classmethod
@@ -169,7 +191,16 @@ class NodesUpdater:
             cls._node_tree_area.header_text_set(text)
 
 
-def tree_handler(bl_tree) -> Generator:
+def global_updater() -> Generator[Node, None, None]:
+    """Find all Sverchok main trees and run their handlers"""
+    for bl_tree in BlTrees().sv_main_trees:
+        if not bl_tree.sv_process:
+            continue
+
+        yield from tree_updater(bl_tree)
+
+
+def tree_updater(bl_tree) -> Generator[Node, None, None]:
     tree = ContextTrees.get(bl_tree)
 
     for node in tree.sorted_walk(tree.output_nodes):
@@ -187,7 +218,7 @@ def tree_handler(bl_tree) -> Generator:
         elif hasattr(node.bl_tween, 'process'):
             updater = node_updater(node)
         else:
-            updater = empty_updater(error=None)
+            updater = empty_updater(node, error=None)
 
         # update node with sub update system, catch statistic
         start_time = time()
@@ -199,21 +230,29 @@ def tree_handler(bl_tree) -> Generator:
             NodesStatuses.set(node.bl_tween, stat)
 
 
-class ContextTrees:  # todo add supporting updates of multiple trees (loading file, animation?, changing in node groups)
-    """The same tree but nodes has statistic"""
+class ContextTrees:
+    """It keeps trees with their states"""
     _trees: Dict[str, Tree] = dict()
 
     @classmethod
     def get(cls, bl_tree):
         """Return caught tree or new if the tree was not build yet"""
         tree = cls._trees.get(bl_tree.tree_id)
+
+        # new tree, all nodes are outdated
         if tree is None:
             tree = Tree(bl_tree)
             cls._trees[bl_tree.tree_id] = tree
+
+        # topology of the tree was changed and should be updated
+        elif not tree.is_updated:
+            tree = cls._update_tree(bl_tree)
+            cls._trees[bl_tree.tree_id] = tree
+
         return tree
 
     @classmethod
-    def update_tree(cls, bl_tree):
+    def _update_tree(cls, bl_tree):
         """
         This method will generate new tree, copy is_updates status from previous tree
         and update 'is_input_changed' node attribute according topological changes relatively previous call
@@ -230,13 +269,30 @@ class ContextTrees:  # todo add supporting updates of multiple trees (loading fi
         # update is_input_changed attribute
         cls._update_topology_status(new_tree)
 
+        return new_tree
+
     @classmethod
-    def mark_outdated(cls, bl_tree, bl_nodes):
-        """Try find given node in statistic and mark it as outdated"""
+    def mark_tree_outdated(cls, bl_tree):
+        """Whenever topology of a tree is changed this method should be called."""
         tree = cls._trees.get(bl_tree.tree_id)
         if tree:
-            for node in (tree.nodes[n.name] for n in bl_nodes):
-                node.is_updated = False
+            tree.is_updated = False
+
+    @classmethod
+    def mark_nodes_outdated(cls, bl_tree, bl_nodes):
+        """It will try to mark given nodes as to be recalculated.
+        If node won't be found status of the tree will be changed to outdated"""
+        if bl_tree.tree_id not in cls._trees:
+            return  # all nodes will be outdated either way when the tree will be recreated (nothing to do)
+
+        tree = cls._trees[bl_tree.tree_id]
+        for bl_node in bl_nodes:
+            try:
+                tree.nodes[bl_node.name].is_updated = False
+
+            # it means that generated tree does no have given node and should be recreated by next request
+            except KeyError:
+                tree.is_updated = False
 
     @classmethod
     def reset_data(cls):
@@ -273,8 +329,6 @@ class ContextTrees:  # todo add supporting updates of multiple trees (loading fi
             for link in removed_links:
                 if link.to_node in new_tree.nodes:
                     new_tree.nodes[link.to_node.name].is_input_changed = True
-
-        cls._trees[new_tree.id] = new_tree
 
 
 class NodeStatistic(NamedTuple):
@@ -342,6 +396,7 @@ def group_node_updater(node: Node) -> Generator[Node, None, Tuple[bool, Optional
     """The node should have updater attribute"""
     previous_nodes_are_changed = any(n.is_output_changed for n in node.last_nodes)
     should_be_updated = (not node.is_updated or node.is_input_changed or previous_nodes_are_changed)
+    yield node  # yield groups node so it be colored by node Updater if necessary
     updater = node.bl_tween.updater(is_input_changed=should_be_updated)
     is_output_changed, out_error = yield from updater
     node.is_input_changed = False
@@ -350,6 +405,14 @@ def group_node_updater(node: Node) -> Generator[Node, None, Tuple[bool, Optional
     return out_error
 
 
-def empty_updater(**kwargs):
+def empty_updater(node: Node = None, **kwargs):
+    """Reroutes, frame nodes, empty updaters which do nothing, set node in correct state
+     returns given kwargs (only their values) like error=None, is_updated=True"""
+    if node:  # ideally we would like always get first argument as node but group updater does not posses it
+        previous_nodes_are_changed = any(n.is_output_changed for n in node.last_nodes)
+        should_be_updated = not node.is_updated or node.is_input_changed or previous_nodes_are_changed
+        node.is_input_changed = False  # if node wont be able to handle new input it will be seen in its update status
+        node.is_updated = True
+        node.is_output_changed = True if should_be_updated else False
     return tuple(kwargs.values())
     yield
