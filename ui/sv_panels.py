@@ -19,7 +19,6 @@
 import bpy
 
 import sverchok
-from sverchok.core.events import TreeEvent
 from sverchok import data_structure
 from sverchok.utils import profile
 from sverchok.utils.sv_update_utils import version_and_sha
@@ -216,7 +215,7 @@ class SverchokUpdateAll(bpy.types.Operator):
         try:
             bpy.context.window.cursor_set("WAIT")
             for tree in BlTrees().sv_main_trees:
-                tree.handler.send(TreeEvent(TreeEvent.FORCE_UPDATE, tree))
+                tree.force_update()
         finally:
             bpy.context.window.cursor_set("DEFAULT")
         return {'FINISHED'}
@@ -257,9 +256,7 @@ class SverchokUpdateCurrent(bpy.types.Operator):
     def execute(self, context):
         try:
             bpy.context.window.cursor_set("WAIT")
-            ng = bpy.data.node_groups.get(self.node_group)
-            if ng:
-                ng.handler.send(TreeEvent(TreeEvent.FORCE_UPDATE, ng))
+            bpy.data.node_groups.get(self.node_group).force_update()
         finally:
             bpy.context.window.cursor_set("DEFAULT")
         return {'FINISHED'}

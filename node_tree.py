@@ -59,8 +59,6 @@ class SvNodeTreeCommon(object):
     sv_links = SvLinks()  # cached Python links
     nodes_dict = SvNodesDict()  # cached Python nodes
 
-    handler = TreeHandler
-
     @property
     def tree_id(self):
         """Identifier of the tree"""
@@ -227,9 +225,9 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         This method is called if collection of nodes or links of the tree was changed
         First of all it checks is it worth bothering and then gives initiative to `update system`
         """
-        if 'init_tree' in self.id_data:  # tree is building by a script - let it do this
-            return
-        return self.handler.send(TreeEvent(TreeEvent.TREE_UPDATE, self))
+        # if 'init_tree' in self.id_data:  # tree is building by a script - let it do this
+        #     return
+        return TreeHandler.send(TreeEvent(TreeEvent.TREE_UPDATE, self))
         # this is a no-op if there's no drawing
         clear_exception_drawing_with_bgl(self.nodes)
         if self.skip_tree_update or not self.sv_process:
@@ -238,9 +236,14 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         self.sv_update()
         self.has_changed = False
 
+    def force_update(self):
+        """Update whole tree from scratch"""
+        # ideally we would never like to use this method but we live in the real world
+        TreeHandler.send(TreeEvent(TreeEvent.FORCE_UPDATE, self))
+
     def update_nodes(self, nodes):
         """This method expects to get list of its nodes which should be updated"""
-        return self.handler.send(TreeEvent(TreeEvent.NODES_UPDATE, self, nodes))
+        return TreeHandler.send(TreeEvent(TreeEvent.NODES_UPDATE, self, nodes))
         if self.id_data.skip_tree_update:
             # this can be called by node groups which do not know whether the tree is throttled
             return
@@ -257,15 +260,15 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         """
         if self.sv_animate:
             animated_nodes = (n for n in self.nodes if hasattr(n, 'is_animatable') and n.is_animatable)
-            return self.handler.send(TreeEvent(TreeEvent.NODES_UPDATE, self, animated_nodes))
+            return TreeHandler.send(TreeEvent(TreeEvent.NODES_UPDATE, self, animated_nodes))
             self.animation_update()
             # process_tree(self)
 
     def update_ui(self):
         """ The method get information about node statistic of last update from the handler to show in view space
         Thi method is usually called by main handler to reevaluate view of the nodes in the tree"""
-        nodes_errors = self.handler.get_error_nodes(self)
-        update_time = self.handler.get_update_time(self) if self.sv_show_time_nodes else cycle([None])
+        nodes_errors = TreeHandler.get_error_nodes(self)
+        update_time = TreeHandler.get_update_time(self) if self.sv_show_time_nodes else cycle([None])
         for node, error, update in zip(self.nodes, nodes_errors, update_time):
             if hasattr(node, 'update_ui'):
                 node.update_ui(error, update)
@@ -429,7 +432,7 @@ class UpdateNodes:
         Still this is called from updateNode
         '''
         if self.id_data.bl_idname == "SverchCustomTreeType":
-            return self.id_data.handler.send(TreeEvent(TreeEvent.NODES_UPDATE, self.id_data, [self]))
+            return self.id_data.update_nodes([self])
             if self.id_data.skip_tree_update:
                 return
 
