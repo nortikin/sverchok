@@ -4,8 +4,7 @@
 #  
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
-
-
+import inspect
 import sys
 import time
 import textwrap
@@ -466,6 +465,12 @@ class NodeUtils:
             name = self.bl_label
         if not name:
             name = self.__class__.__name__
+
+        # add information about the module location
+        frame, _, line, *_ = inspect.stack()[2]
+        module = inspect.getmodule(frame)
+        module_name = module.__name__ if module is not None else ''
+        name = f'{module_name} {line} ({name})'
         return sverchok.utils.logging.getLogger(name)
 
     def debug(self, msg, *args, **kwargs):
@@ -517,7 +522,7 @@ class NodeUtils:
         """
         if not identifier:
             # this can happen if a json import goes through attributes arbitrarily.
-            self.info("no identifier passed to the get_bpy_data_from_name function.")
+            # self.info("no identifier passed to the get_bpy_data_from_name function.")
             return None
 
         try:
