@@ -25,7 +25,10 @@ path's curve T parameter, at which profile curves must be placed; otherwise,
 the node will place them automatically evenly along T parameter of the path
 curve.
 
-It is supposed that initially th eprovided profile curve(s) lie in XOY plane.
+By default it is supposed that initially the provided profile curve(s) lie in
+XOY plane. However, there is an option to instruct the node to try to figure
+out correct rotation of profile curve(s). Note that this option may result in
+precision loss in some cases.
 
 The node works by placing several copies of profile curve along the path
 curves, and then lofting (skinning) between them.  If several profile curves
@@ -99,6 +102,11 @@ This node has the following parameters:
 * **Scale all axes**. If not checked, profile curves will be scaled along one
   axis only, in order to fill the space between two paths. If checked, profile
   curves will be scaled along all axes uniformly. Checked by default.
+* **Auto rotate profiles**. If not checked, the node will assume that all
+  profile curves lie in the XOY plane. If checked, the node will work with
+  arbitrarily rotated profile curves. Enabled option requires more
+  computations, and so, may make the node slower and less precise. Unchecked by
+  default.
 * **Explicit V Values**. If checked, then the user has the ability to provide
   values of path curves parameter values, at which the provided path curves
   must be placed; otherwise, the node will calculate these parameters
