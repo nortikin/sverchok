@@ -414,7 +414,7 @@ def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
 
         # update node with sub update system
         if hasattr(node.bl_tween, 'updater'):
-            sub_updater = node.bl_tween.updater(group_nodes_path=group_nodes_path, is_input_changed=should_be_updated)
+            sub_updater = group_node_updater(node, group_nodes_path)
         # regular nodes
         elif hasattr(node.bl_tween, 'process'):
             sub_updater = node_updater(node, group_node)
@@ -482,6 +482,19 @@ def cut_mk_suffix(name: str) -> str:
     except ValueError:
         return name
     return id_name
+
+
+def group_node_updater(node: Node, group_nodes_path=None) -> Generator[Node, None, Tuple[bool, Optional[Exception]]]:
+    """The node should have updater attribute"""
+    previous_nodes_are_changed = any(n.is_output_changed for n in node.last_nodes)
+    should_be_updated = (not node.is_updated or node.is_input_changed or previous_nodes_are_changed)
+    yield node  # yield groups node so it be colored by node Updater if necessary
+    updater = node.bl_tween.updater(group_nodes_path=group_nodes_path, is_input_changed=should_be_updated)
+    is_output_changed, out_error = yield from updater
+    node.is_input_changed = False
+    node.is_updated = not out_error
+    node.is_output_changed = is_output_changed
+    return is_output_changed, out_error
 
 
 def node_updater(node: Node, group_node: SvGroupTreeNode):
