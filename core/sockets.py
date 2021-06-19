@@ -489,7 +489,7 @@ class SvSocketCommon(SvSocketProcessing):
             if flags:
                 text = text + " [" + ",".join(flags) + "]"
             if self.description:
-                layout.operator('node.sv_socket_show_help', text=text, emboss=False).text = self.description
+                layout.operator('node.sv_socket_show_help', text=text, icon='QUESTION', emboss=False).text = self.description
             else:
                 layout.label(text=text)
 

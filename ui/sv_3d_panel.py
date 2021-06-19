@@ -445,7 +445,10 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
         if not (event.type == 'TIMER'):
             return {'PASS_THROUGH'}
 
-        objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3', 'SvExNurbsInNode', 'SvBezierInNode'}
+        objects_nodes_set = {
+            'SvObjectsNodeMK3', 'SvExNurbsInNode', 'SvBezierInNode', 'SvGetObjectsData'
+        }
+
         obj_nodes = []
         for ng in bpy.data.node_groups:
             if ng.bl_idname == 'SverchCustomTreeType':
