@@ -18,6 +18,7 @@ from sverchok.core.events import TreeEvent
 from sverchok.utils.logging import debug, catch_log_error, error, getLogger
 from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.handle_blender_data import BlTrees
+from sverchok.utils.profile import profile
 
 
 # todo wifi nodes
@@ -121,6 +122,7 @@ class NodesUpdater:
         cls._start_time = time()
 
     @classmethod
+    @profile(section="UPDATE")
     def run_task(cls):
         try:
             if cls._last_node:
