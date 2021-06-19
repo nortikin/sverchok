@@ -124,38 +124,19 @@ def concatenate_nurbs_curves(curves):
 
 def nurbs_curve_to_xoy(curve):
     cpts = curve.get_control_points()
+
     approx = linear_approximation(cpts)
     plane = approx.most_similar_plane()
-    #print(f"N: {plane.normal}")
-    plane_matrix = plane.get_matrix()
-    #plane_center = np.array(plane_matrix.translation)
-    matrix = np.array(plane_matrix.inverted())
+    normal = plane.normal
+
+    xx = cpts[-1] - cpts[0]
+    xx /= np.linalg.norm(xx)
+
+    yy = np.cross(normal, xx)
+
+    matrix = np.stack((xx, yy, normal)).T
+    matrix = np.linalg.inv(matrix)
     center = approx.center
-    #new_cpts = (matrix @ cpts.T).T
     new_cpts = np.array([matrix @ (cpt - center) for cpt in cpts])
+    return curve.copy(control_points = new_cpts)
     
-    first = new_cpts[0]
-    last = new_cpts[-1]
-    direction = last - first
-    x = np.array([1.0, 0.0, 0.0])
-    y = np.array([0.0, 1.0, 0.0])
-    first_x = np.dot(direction, x)
-    first_y = np.dot(direction, y)
-    #print(f"Dir: {direction}, x: {first_x}, y: {first_y}")
-
-    if abs(first_x) > abs(first_y):
-        negate = first_x > 0
-    else:
-        negate = first_y > 0
-
-    #for i, cpt in enumerate(new_cpts):
-    #    print(f"C[{i}]: {cpt}")
-
-    #print(f"F: {first}, L: {last}")
-    if negate:
-        new_cpts[:,1] = - new_cpts[:,1]
-
-    return SvNurbsMaths.build_curve(curve.get_nurbs_implementation(),
-                curve.get_degree(), curve.get_knotvector(),
-                new_cpts, curve.get_weights())
-

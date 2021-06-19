@@ -825,7 +825,7 @@ class PlaneEquation(object):
     def get_matrix(self, invert_y=False):
         x = self.second_vector().normalized()
         z = self.normal.normalized()
-        y = z.cross(x)
+        y = z.cross(x).normalized()
         if invert_y:
             y = - y
         return Matrix([x, y, z]).transposed()

@@ -1014,7 +1014,7 @@ def nurbs_birail(path1, path2, profiles,
 
     scales = scales.flatten()
     placed_profiles = []
-    for pt1, profile, scale, matrix in zip(points1, profiles, scales, matrices):
+    for pt1, pt2, profile, scale, matrix in zip(points1, points2, profiles, scales, matrices):
         if auto_rotate:
             profile = nurbs_curve_to_xoy(profile)
 
@@ -1034,6 +1034,7 @@ def nurbs_birail(path1, path2, profiles,
                 (0, 0, 1)
             ])
 
+        src_scale = scale
         scale /= pr_length
         if scale_uniform:
             scale_m = np.array([
@@ -1049,6 +1050,7 @@ def nurbs_birail(path1, path2, profiles,
                 ])
         cpts = [matrix @ scale_m @ rotation @ (pt - pr_start) + pt1 for pt in profile.get_control_points()]
         cpts = np.array(cpts)
+
         profile = profile.copy(control_points = cpts)
         placed_profiles.append(profile)
 
