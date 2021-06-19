@@ -8,7 +8,7 @@
 import numpy as np
 from collections import defaultdict
 
-from sverchok.utils.geom import Spline
+from sverchok.utils.geom import Spline, linear_approximation
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import unify_curves_degree
@@ -122,3 +122,21 @@ def concatenate_nurbs_curves(curves):
             raise Exception(f"Can't append curve #{i+1}: {e}")
     return result
 
+def nurbs_curve_to_xoy(curve):
+    cpts = curve.get_control_points()
+
+    approx = linear_approximation(cpts)
+    plane = approx.most_similar_plane()
+    normal = plane.normal
+
+    xx = cpts[-1] - cpts[0]
+    xx /= np.linalg.norm(xx)
+
+    yy = np.cross(normal, xx)
+
+    matrix = np.stack((xx, yy, normal)).T
+    matrix = np.linalg.inv(matrix)
+    center = approx.center
+    new_cpts = np.array([matrix @ (cpt - center) for cpt in cpts])
+    return curve.copy(control_points = new_cpts)
+    

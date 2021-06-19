@@ -8,7 +8,7 @@ from sverchok.utils.nurbs_common import (
         nurbs_divide, from_homogenous
     )
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_curves
+from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_curves, nurbs_curve_to_xoy
 from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveFrameCalculator
 from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
@@ -903,7 +903,14 @@ def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', 
                 knots_u=knots_u, metric=metric,
                 implementation=implementation)
 
-def nurbs_birail(path1, path2, profiles, ts1 = None, ts2 = None, min_profiles = 10, knots_u = 'UNIFY', degree_v = None, metric = 'DISTANCE', scale_uniform = True, implementation = SvNurbsSurface.NATIVE):
+def nurbs_birail(path1, path2, profiles,
+        ts1 = None, ts2 = None,
+        min_profiles = 10,
+        knots_u = 'UNIFY',
+        degree_v = None, metric = 'DISTANCE',
+        scale_uniform = True,
+        auto_rotate = False,
+        implementation = SvNurbsSurface.NATIVE):
     """
     NURBS BiRail.
 
@@ -1007,7 +1014,10 @@ def nurbs_birail(path1, path2, profiles, ts1 = None, ts2 = None, min_profiles = 
 
     scales = scales.flatten()
     placed_profiles = []
-    for pt1, profile, scale, matrix in zip(points1, profiles, scales, matrices):
+    for pt1, pt2, profile, scale, matrix in zip(points1, points2, profiles, scales, matrices):
+        if auto_rotate:
+            profile = nurbs_curve_to_xoy(profile)
+
         t_min, t_max = profile.get_u_bounds()
         pr_start = profile.evaluate(t_min)
         pr_end = profile.evaluate(t_max)
@@ -1024,6 +1034,7 @@ def nurbs_birail(path1, path2, profiles, ts1 = None, ts2 = None, min_profiles = 
                 (0, 0, 1)
             ])
 
+        src_scale = scale
         scale /= pr_length
         if scale_uniform:
             scale_m = np.array([
@@ -1039,6 +1050,7 @@ def nurbs_birail(path1, path2, profiles, ts1 = None, ts2 = None, min_profiles = 
                 ])
         cpts = [matrix @ scale_m @ rotation @ (pt - pr_start) + pt1 for pt in profile.get_control_points()]
         cpts = np.array(cpts)
+
         profile = profile.copy(control_points = cpts)
         placed_profiles.append(profile)
 

@@ -100,9 +100,16 @@ class SvNurbsBirailNode(bpy.types.Node, SverchCustomTreeNode):
         default = True,
         update = updateNode)
 
+    auto_rotate_profiles : BoolProperty(
+        name = "Auto rotate profiles",
+        description = "If checked, then the node will try to rotate provided profile curves appropriately. Otherwise, the node expects provided profile curves to lie in XOY plane.",
+        default = False,
+        update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'nurbs_implementation', text='')
         layout.prop(self, "scale_uniform")
+        layout.prop(self, "auto_rotate_profiles")
         layout.prop(self, "explicit_v")
 
     def draw_buttons_ext(self, context, layout):
@@ -179,6 +186,7 @@ class SvNurbsBirailNode(bpy.types.Node, SverchCustomTreeNode):
                                     degree_v = degree_v,
                                     metric = self.metric,
                                     scale_uniform = self.scale_uniform,
+                                    auto_rotate = self.auto_rotate_profiles,
                                     implementation = self.nurbs_implementation
                                 )
                 new_surfaces.append(surface)
