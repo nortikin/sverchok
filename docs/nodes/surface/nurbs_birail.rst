@@ -28,7 +28,9 @@ curve.
 By default it is supposed that initially the provided profile curve(s) lie in
 XOY plane. However, there is an option to instruct the node to try to figure
 out correct rotation of profile curve(s). Note that this option may result in
-precision loss in some cases.
+precision loss in some cases. Or, in other cases, it can guess desired profile
+rotation incorrectly. In such cases, you will have to place your profile curves
+in XOY plane and disable "Auto rotate" flag.
 
 The node works by placing several copies of profile curve along the path
 curves, and then lofting (skinning) between them.  If several profile curves
@@ -107,6 +109,22 @@ This node has the following parameters:
   arbitrarily rotated profile curves. Enabled option requires more
   computations, and so, may make the node slower and less precise. Unchecked by
   default.
+* **Profile Rotation**. This defines how profile curves will be placed along
+  the path curves. The available options are:
+  
+   * **Path Normal Average**. The node will try to place profile curves so that
+     they will lie in normal planes of both path curves. Since normal planes of
+     two path curves can differ, the node will calculate average normal plane.
+   * **Path 1 Normal**. The node will place profile curves so that they lie in
+     normal plane of the first path curve.
+   * **Path 2 Normal**. The node will place profile curves so that they lie in
+     normal plane of the second path curve.
+   * **By profile**. The node will try to place profile curves so that they be
+     parallel to initial location of the path curve. This is not always
+     possible, but the node will try to keep it as parallel as possible.
+
+   The default option is **Path Normal Average**.
+
 * **Explicit V Values**. If checked, then the user has the ability to provide
   values of path curves parameter values, at which the provided path curves
   must be placed; otherwise, the node will calculate these parameters
@@ -165,4 +183,20 @@ Examples of usage
 .. image:: https://user-images.githubusercontent.com/284644/98482010-32b5b880-2220-11eb-9597-4ae339326748.png
 
 .. image:: https://user-images.githubusercontent.com/284644/98482009-321d2200-2220-11eb-82a8-21ca366b573c.png
+
+Create a circular arc (path 1) and S-shaped curve (path 2); use random profile curve in YOZ plane. Profile rotation = Path Normal Average (default one):
+
+.. image:: https://user-images.githubusercontent.com/284644/122664399-9347a380-d1ba-11eb-98fc-6ce8c10ad6fe.png
+
+Same with Profile rotation = Path 1 Normal (i.e. profiles are perpendicular to the lower curve, circular arc):
+
+.. image:: https://user-images.githubusercontent.com/284644/122664398-92af0d00-d1ba-11eb-921f-9cf0289b5356.png
+
+Same with Profile rotation = Path 2 Normal (i.e. profiles are perpendicular to the upper, S-shaped curve):
+
+.. image:: https://user-images.githubusercontent.com/284644/122664396-92af0d00-d1ba-11eb-8a40-95fde688941e.png
+
+Same with Profile rotation = By profile, i.e. try to keep profile curves parallel to the original profile:
+
+.. image:: https://user-images.githubusercontent.com/284644/122664393-917de000-d1ba-11eb-880a-44b53bf159bd.png
 

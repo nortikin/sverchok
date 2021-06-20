@@ -8,7 +8,7 @@ from sverchok.utils.nurbs_common import (
         nurbs_divide, from_homogenous
     )
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_curves, nurbs_curve_to_xoy
+from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_curves, nurbs_curve_to_xoy, nurbs_curve_matrix
 from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveFrameCalculator
 from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
@@ -910,6 +910,7 @@ def nurbs_birail(path1, path2, profiles,
         degree_v = None, metric = 'DISTANCE',
         scale_uniform = True,
         auto_rotate = False,
+        use_tangents = 'PATHS_AVG',
         implementation = SvNurbsSurface.NATIVE):
     """
     NURBS BiRail.
@@ -931,6 +932,8 @@ def nurbs_birail(path1, path2, profiles,
     * scale_uniform: If True, profile curves will be scaled along all axes
         uniformly; if False, they will be scaled only along one axis, in order to
         fill space between two path curves.
+    * auto_rotate: if False, the profile curves are supposed to lie in XOY plane.
+        Otherwise, try to figure out their rotation automatically.
     * implementation: surface implementation
 
     output: tuple:
@@ -992,16 +995,34 @@ def nurbs_birail(path1, path2, profiles,
     points1 = path1.evaluate_array(ts1)
     points2 = path2.evaluate_array(ts2)
 
-    tangents1 = path1.tangent_array(ts1)
-    tangents2 = path2.tangent_array(ts2)
-    tangents = 0.5 * (tangents1 + tangents2)
-    tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+    orig_profiles = profiles[:]
+
+    if use_tangents == 'PATHS_AVG':
+        tangents1 = path1.tangent_array(ts1)
+        tangents2 = path2.tangent_array(ts2)
+        tangents = 0.5 * (tangents1 + tangents2)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+    elif use_tangents == 'FROM_PATH1':
+        tangents = path1.tangent_array(ts1)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+    elif use_tangents == 'FROM_PATH2':
+        tangents = path2.tangent_array(ts2)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+    elif use_tangents == 'FROM_PROFILE':
+        tangents = []
+        for profile in orig_profiles:
+            matrix = nurbs_curve_matrix(profile)
+            yy = matrix @ np.array([0, 0, -1])
+            yy /= np.linalg.norm(yy)
+            tangents.append(yy)
+        tangents = np.array(tangents)
 
     binormals = points2 - points1
     scales = np.linalg.norm(binormals, axis=1, keepdims=True)
     if scales.min() < 1e-6:
         raise Exception("Paths go too close")
     binormals /= scales
+
     normals = np.cross(tangents, binormals)
     normals /= np.linalg.norm(normals, axis=1, keepdims=True)
 
@@ -1014,9 +1035,11 @@ def nurbs_birail(path1, path2, profiles,
 
     scales = scales.flatten()
     placed_profiles = []
-    for pt1, pt2, profile, scale, matrix in zip(points1, points2, profiles, scales, matrices):
+    prev_normal = None
+    for pt1, pt2, profile, tangent, scale, matrix in zip(points1, points2, profiles, tangents, scales, matrices):
+
         if auto_rotate:
-            profile = nurbs_curve_to_xoy(profile)
+            profile = nurbs_curve_to_xoy(profile, tangent)
 
         t_min, t_max = profile.get_u_bounds()
         pr_start = profile.evaluate(t_min)
