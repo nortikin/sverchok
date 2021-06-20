@@ -184,3 +184,19 @@ Examples of usage
 
 .. image:: https://user-images.githubusercontent.com/284644/98482009-321d2200-2220-11eb-82a8-21ca366b573c.png
 
+Create a circular arc (path 1) and S-shaped curve (path 2); use random profile curve in YOZ plane. Profile rotation = Path Normal Average (default one):
+
+.. image:: https://user-images.githubusercontent.com/284644/122664399-9347a380-d1ba-11eb-98fc-6ce8c10ad6fe.png
+
+Same with Profile rotation = Path 1 Normal (i.e. profiles are perpendicular to the lower curve, circular arc):
+
+.. image:: https://user-images.githubusercontent.com/284644/122664398-92af0d00-d1ba-11eb-921f-9cf0289b5356.png
+
+Same with Profile rotation = Path 2 Normal (i.e. profiles are perpendicular to the upper, S-shaped curve):
+
+.. image:: https://user-images.githubusercontent.com/284644/122664396-92af0d00-d1ba-11eb-8a40-95fde688941e.png
+
+Same with Profile rotation = By profile, i.e. try to keep profile curves parallel to the original profile:
+
+.. image:: https://user-images.githubusercontent.com/284644/122664393-917de000-d1ba-11eb-880a-44b53bf159bd.png
+
