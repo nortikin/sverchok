@@ -122,7 +122,30 @@ def concatenate_nurbs_curves(curves):
             raise Exception(f"Can't append curve #{i+1}: {e}")
     return result
 
-def nurbs_curve_to_xoy(curve):
+def nurbs_curve_to_xoy(curve, target_normal=None):
+    cpts = curve.get_control_points()
+
+    approx = linear_approximation(cpts)
+    plane = approx.most_similar_plane()
+    normal = plane.normal
+
+    if target_normal is not None:
+        a = np.dot(normal, target_normal)
+        if a > 0:
+            normal = -normal
+
+    xx = cpts[-1] - cpts[0]
+    xx /= np.linalg.norm(xx)
+
+    yy = np.cross(normal, xx)
+
+    matrix = np.stack((xx, yy, normal)).T
+    matrix = np.linalg.inv(matrix)
+    center = approx.center
+    new_cpts = np.array([matrix @ (cpt - center) for cpt in cpts])
+    return curve.copy(control_points = new_cpts)
+
+def nurbs_curve_matrix(curve):
     cpts = curve.get_control_points()
 
     approx = linear_approximation(cpts)
@@ -135,8 +158,5 @@ def nurbs_curve_to_xoy(curve):
     yy = np.cross(normal, xx)
 
     matrix = np.stack((xx, yy, normal)).T
-    matrix = np.linalg.inv(matrix)
-    center = approx.center
-    new_cpts = np.array([matrix @ (cpt - center) for cpt in cpts])
-    return curve.copy(control_points = new_cpts)
-    
+    return matrix
+
