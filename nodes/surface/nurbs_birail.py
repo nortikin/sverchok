@@ -107,9 +107,9 @@ class SvNurbsBirailNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     rotate_options = [
-            ('PATHS_AVG', "Paths average", "Rotate profile(s), trying to make it perpendicular to both paths", 0),
-            ('FROM_PATH1', "Perpendicular to Path 1", "Rotate profile(s), trying to make it perpendicular to the first path", 1),
-            ('FROM_PATH2', "Perpendicular to Path 2", "Rotate profile(s), trying to make it perpendicular to the second path", 2),
+            ('PATHS_AVG', "Paths Normal Average", "Rotate profile(s), trying to make it perpendicular to both paths", 0),
+            ('FROM_PATH1', "Path 1 Normal", "Rotate profile(s), trying to make it perpendicular to the first path", 1),
+            ('FROM_PATH2', "Path 2 Normal", "Rotate profile(s), trying to make it perpendicular to the second path", 2),
             ('FROM_PROFILE', "By profile", "Try to use initial rotation of profile curve(s)", 3)
         ]
 

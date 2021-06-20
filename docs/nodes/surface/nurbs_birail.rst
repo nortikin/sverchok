@@ -28,7 +28,9 @@ curve.
 By default it is supposed that initially the provided profile curve(s) lie in
 XOY plane. However, there is an option to instruct the node to try to figure
 out correct rotation of profile curve(s). Note that this option may result in
-precision loss in some cases.
+precision loss in some cases. Or, in other cases, it can guess desired profile
+rotation incorrectly. In such cases, you will have to place your profile curves
+in XOY plane and disable "Auto rotate" flag.
 
 The node works by placing several copies of profile curve along the path
 curves, and then lofting (skinning) between them.  If several profile curves
@@ -107,6 +109,22 @@ This node has the following parameters:
   arbitrarily rotated profile curves. Enabled option requires more
   computations, and so, may make the node slower and less precise. Unchecked by
   default.
+* **Profile Rotation**. This defines how profile curves will be placed along
+  the path curves. The available options are:
+  
+   * **Path Normal Average**. The node will try to place profile curves so that
+     they will lie in normal planes of both path curves. Since normal planes of
+     two path curves can differ, the node will calculate average normal plane.
+   * **Path 1 Normal**. The node will place profile curves so that they lie in
+     normal plane of the first path curve.
+   * **Path 2 Normal**. The node will place profile curves so that they lie in
+     normal plane of the second path curve.
+   * **By profile**. The node will try to place profile curves so that they be
+     parallel to initial location of the path curve. This is not always
+     possible, but the node will try to keep it as parallel as possible.
+
+   The default option is **Path Normal Average**.
+
 * **Explicit V Values**. If checked, then the user has the ability to provide
   values of path curves parameter values, at which the provided path curves
   must be placed; otherwise, the node will calculate these parameters
