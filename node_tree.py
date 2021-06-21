@@ -35,7 +35,7 @@ from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.docstring import SvDocstring
 import sverchok.utils.logging
-from sverchok.utils.logging import debug
+from sverchok.utils.logging import debug, catch_log_error
 
 from sverchok.ui import color_def
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
@@ -338,11 +338,8 @@ class UpdateNodes:
         if ng.bl_idname in {'SverchCustomTreeType', }:
             ng.nodes_dict.load_node(self)
         with ng.throttle_update():
-            try:
+            with catch_log_error():
                 self.sv_init(context)
-            except Exception as err:
-                print('nodetree.node.sv_init failure - stare at the error message below')
-                sys.stderr.write('ERROR: %s\n' % str(err))
             self.set_color()
 
     def sv_new_input(self, socket_type, name, **attrib_dict):
