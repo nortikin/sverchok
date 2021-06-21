@@ -12,19 +12,20 @@ This node contains several algorithm of finding edge intersections:
 
 **3D algorithm:**
 
-The code is straight out of TinyCAD plugin's XALL operator, which is part of Blender Contrib distributions.
-
-It operates on Edge based geometry only and will create new vertices on all intersections of the given geometry.
-This node goes through a recursive process (divide and conquer) and its speed is directly proportional to the
-number of intersecting edges passed into it. The algorithm is not optimized for large edges counts, but tends
-to work well in most cases.
+This is a brute force algorithm written in NumPy, it is pretty fast and pretty consistent but can produce double points that can be
+removed with the remove doubles toggle. It ignores overlapping edges.
 
 **2D algorithms**
 
 **Alg_1**
 
-This is a brute force algorithm written in NumPy, it is pretty fast and pretty consistent but produces double points that can be
-removed with the remove doubles toogle.
+Brute force algorithm that exposes every pair of edges to a mathutils function called 'intersect_line_line'. Does not check
+if there are repeated points. It ignores overlapping edges
+
+**Np**
+
+This is a brute force algorithm written in NumPy, it is pretty fast and pretty consistent but can produce double points that can be
+removed with the remove doubles toogle. It ignores overlapping edges
 
 **Sweep line algorithm**
 
@@ -36,10 +37,6 @@ For example if each input edge intersect with every others. In this case only fe
 - The algorithm does not produce double points.
 - It is less robust and can give an error.
 - For this algorithm epsilon parameter on N panel is more important. If you get an error you can try to change the parameter to fix.
-
-Difference between algorithm can be shown in some corner cases for example, intersection of 10 boxes by little angle:
-
-.. image:: https://user-images.githubusercontent.com/28003269/67559745-9ad75080-f72a-11e9-9ce6-da1ed027cdef.gif
 
 Prefix 2D means that the node expects from input any kind of flatten mesh
 but it does not mean that the mesh should only lay on XY surface.
@@ -71,18 +68,24 @@ Three different test to determine the efficiency of the algorithms.
 
 .. image:: https://user-images.githubusercontent.com/10011941/120835106-30bc9980-c564-11eb-93c5-bdbabd1a63fe.png
 
-+----------+-------------------------------+-----------------------------+-----------------------------+
-|Test      | Random Segments               | Star segments               | Spine Segments              |
-+----------+--------+----------+-----------+--------+---------+----------+--------+---------+----------+
-|Edges In  |   100  |   1000   | 10000     |    100 |    1000 |    10000 | 100    | 1000    | 10000    |
-|Intersec. |   1299 |   127892 | 12355630  |      1 |       1 |        1 | 100    | 1000    | 10000    |
-+----------+--------+----------+-----------+--------+---------+----------+--------+---------+----------+
-|Alg_1     |   5 ms |   550 ms | 321653 ms | 18 ms  | 3125 ms |      SC* | 3 ms   | 150 ms  | 6400 ms  |
-+----------+--------+----------+-----------+--------+---------+----------+--------+---------+----------+
-|Sweep Line| 900 ms | 76700 ms | SC*       | 53 ms  | 778ms   | 2000 ms  | 81 ms  | 1200 ms | 15500 ms |
-+----------+--------+----------+-----------+--------+---------+----------+--------+---------+----------+
-|Blender   |   3 ms |   650 ms | BC*       | 0.6 ms | 20ms    | 10643 ms | 0.8 ms | 12 ms   | 1100 ms  |
-+----------+--------+----------+-----------+--------+---------+----------+--------+---------+----------+
++-----------+-----------------------------------+-----------------------------+-----------------------------+
+|Test       | Random Segments                   | Star segments               | Spine Segments              |
++-----------+--------+----------+---------------+--------+---------+----------+--------+---------+----------+
+|Edges In   |   100  |   1000   | 10000         |    100 |    1000 |    10000 | 100    | 1000    | 10000    |
+|Intersec.  |   1299 |   127892 | 12355630      |      1 |       1 |        1 | 100    | 1000    | 10000    |
++-----------+--------+----------+---------------+--------+---------+----------+--------+---------+----------+
+|Alg_1      |   6 ms |   694 ms |      74872 ms | 15 ms  | 2125 ms |      SC* | 3 ms   | 226 ms  | 22618 ms |
++-----------+--------+----------+---------------+--------+---------+----------+--------+---------+----------+
+|Alg_1 + RD*|  10 ms |  1477 ms |     226240 ms | 25 ms  | 3300 ms |      SC* | 4 ms   | 246 ms  | 22626 ms |
++-----------+--------+----------+---------------+--------+---------+----------+--------+---------+----------+
+|Sweep Line | 900 ms | 76700 ms | SC*           | 53 ms  | 778ms   | 2000 ms  | 81 ms  | 1200 ms | 15500 ms |
++-----------+--------+----------+---------------+--------+---------+----------+--------+---------+----------+
+|Blender    |   3 ms |   650 ms | 112240 ms/BC* | 0.6 ms | 20ms    | 10643 ms | 0.8 ms | 12 ms   | 1100 ms  |
++-----------+--------+----------+---------------+--------+---------+----------+--------+---------+----------+
+|Np         |   4 ms |   635 ms |     316970 ms |   6 ms | 1760ms  |      SC* |   3 ms | 160 ms  | 6466 ms  |
++-----------+--------+----------+---------------+--------+---------+----------+--------+---------+----------+
+|Np + RD*   |   9 ms |  1281 ms | 419789 ms/BC* |  18 ms | 3052 ms |      SC* |   5 ms | 168 ms  | 6580 ms  |
++-----------+--------+----------+---------------+--------+---------+----------+--------+---------+----------+
 
 *BC = Blender Crash
 *SC = Blender Crash + Partial System Crash
@@ -92,6 +95,15 @@ Inputs
 ------
 
 Verts and Edges only. Warning: Does not support faces
+
+
+Parameters
+----------
+
+**Include 'On touch'** : consider a valid intersection when one end of the edge lays on another edge.
+    Generates double points so if active "remove doubles" switch is recommended. Only for Np and 3d mode
+
+**Doubles**: Merges points that are closer than the defined distance. Only for Alg_1, Np and 3d mode
 
 
 Parameters N-panel

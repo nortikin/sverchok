@@ -36,6 +36,7 @@ from numpy import (
     tile as np_tile,
     float64,
     int32, int64)
+import numpy as np
 from sverchok.utils.logging import info
 
 
@@ -1098,6 +1099,30 @@ def has_element(pol_edge):
     if len(pol_edge) > 0 and hasattr(pol_edge[0], '__len__') and len(pol_edge[0]) > 0:
         return True
     return False
+
+
+def cross_indices_np(n):
+    '''
+    create list with all the indices pairs
+    for n=3 outputs a numpy array with:
+        [0,1]
+        [0,2]
+        [1,2]
+
+    '''
+
+    nu = np.sum(np.arange(n, dtype=np.int64))
+    ind = np.zeros((nu, 2), dtype=np.int16)
+    c = 0
+    for i in range(n-1):
+        l = n-i-1
+        np_i = np.full(n-i-1, i, dtype=np.int32)
+        np_j = np.arange(i+1, n, dtype=np.int32)
+        np_a = np.stack((np_i, np_j), axis=-1)
+        ind[c:c+l, :] = np_a
+        c += l
+
+    return ind
 
 def no_space(s):
     return s.replace(' ', '_')

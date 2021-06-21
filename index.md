@@ -464,7 +464,7 @@
 
 ## CAD
     SvBevelNode
-    SvIntersectEdgesNodeMK2
+    SvIntersectEdgesNodeMK3
     SvOffsetNode
     SvInsetSpecialMk2
     SvInsetFaces
