@@ -24,15 +24,12 @@ import bpy
 from mathutils import Vector
 
 from sverchok import data_structure
-from sverchok.core.socket_data import SvNoDataError, reset_socket_cache
-from sverchok.utils.logging import debug, info, warning, error, exception
+from sverchok.core.socket_data import SvNoDataError
+from sverchok.utils.logging import warning, error, exception
 from sverchok.utils.profile import profile
 from sverchok.core.socket_data import clear_all_socket_cache
-from sverchok.core.node_id_dict import clear_nodes_id_dict
-from sverchok.core.links import clear_link_memory
 import sverchok
 
-import traceback
 import ast
 
 graphs = []
@@ -45,8 +42,7 @@ exception_color = (0.8, 0.0, 0)
 def clear_system_cache():
     print("cleaning Sverchok cache")
     clear_all_socket_cache()
-    clear_nodes_id_dict()
-    clear_link_memory()
+
 
 def update_error_colors(self, context):
     global no_data_color

@@ -8,7 +8,7 @@ from sverchok.ui import bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
 from sverchok.utils.handle_blender_data import BlTrees
 from sverchok.utils import dummy_nodes
-from sverchok.utils.logging import catch_log_error
+from sverchok.utils.logging import catch_log_error, debug
 
 _state = {'frame': None}
 
@@ -37,10 +37,6 @@ def sverchok_trees():
     for ng in bpy.data.node_groups:
         if ng.bl_idname == 'SverchCustomTreeType':
             yield ng
-
-def get_all_sverchok_affiliated_trees():
-    sv_types = {'SverchCustomTreeType', 'SvGroupTree'}
-    return list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
 
 
 def has_frame_changed(scene):
@@ -75,20 +71,12 @@ def sv_handler_undo_post(scene):
     from sverchok.core import undo_handler_node_count
 
     num_to_test_against = 0
-    links_changed = False
     for ng in sverchok_trees():
         num_to_test_against += len(ng.nodes)
-        ng.sv_links.create_new_links(ng)
-        links_changed = ng.sv_links.links_have_changed(ng)
-        if links_changed:
-            break
 
-    if links_changed or not (undo_handler_node_count['sv_groups'] == num_to_test_against):
-        print('looks like a node was removed, cleaning')
+    if undo_handler_node_count['sv_groups'] != num_to_test_against:
+        debug('looks like a node was removed, cleaning')
         sv_clean(scene)
-        for ng in sverchok_trees():
-            ng.nodes_dict.load_nodes(ng)
-            ng.has_changed = True
         sv_main_handler(scene)
 
     undo_handler_node_count['sv_groups'] = 0
@@ -112,8 +100,6 @@ def sv_update_handler(scene):
     """
     if not has_frame_changed(scene):
         return
-
-    reset_timing_graphs()
 
     for ng in sverchok_trees():
         try:

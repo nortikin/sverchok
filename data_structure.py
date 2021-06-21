@@ -38,7 +38,6 @@ from numpy import (
     int32, int64)
 from sverchok.utils.logging import info, debug
 
-
 DEBUG_MODE = False
 HEAT_MAP = False
 RELOAD_EVENT = False
@@ -1272,32 +1271,12 @@ def update_with_kwargs(update_function, **kwargs):
 
 
 @contextmanager
-def throttle_tree_update(node):
-    """ usage
-    from sverchok.data_structure import throttle_tree_update
-
-    inside your node, f.ex inside a wrapped_update that creates a socket
-
-    def wrapped_update(self, context):
-        with throttle_tree_update(self):
-            self.inputs.new(...)
-            self.outputs.new(...)
-
-    that's it.
-
-    """
+def throttle_tree_update(node):  # todo deprecated, should be wiped out
     with node.id_data.throttle_update():
         yield node
 
 
-def throttled(func):
-    """
-    It will prevent from redundant tree updates by changing tree topology (including changing node sockets)
-    inside nodes init methods and property changes methods
-
-    @throttled
-    def your_method(tree or node or socket, *args, **kwargs):
-    """
+def throttled(func):  # todo deprecated, should be wiped out
     @wraps(func)
     def wrapper_update(with_id_data, *args, **kwargs):
         tree = with_id_data.id_data
@@ -1306,23 +1285,7 @@ def throttled(func):
     return wrapper_update
 
 
-def throttle_and_update_node(func):
-    """
-    use as a decorator
-
-        class YourNode
-
-            @throttle_and_update_node
-            def mode_update(self, context):
-                ...
-
-    When a node has changed, like a mode-change leading to a socket change (remove, new)
-    Blender will trigger node_tree.update. We want to ignore this trigger-event, and we do so by
-    - first throttling the update system.
-    - then We execute the code that makes changes to the node/node_tree
-    - then we end the throttle-state
-    - we are then ready to process
-    """
+def throttle_and_update_node(func):  # todo deprecated, should be wiped out
     @wraps(func)
     def wrapper_update(self, context):
         tree = self.id_data
