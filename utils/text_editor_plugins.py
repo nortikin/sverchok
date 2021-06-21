@@ -99,10 +99,6 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                         print('should trigger!...did it?')
                         n.file_pointer = n.file_pointer
 
-            # update node group with affected nodes
-            ng.sv_update()
-
-
         return {'FINISHED'}
 
 # store keymaps here to access after registration
