@@ -106,8 +106,7 @@ def add_temporal_stethoscope(nodes, links, existing_node):
 
 def add_temporal_viewer(context, force_stetoscope: bool, cut_links: bool):
     """initial function to determine which viewer to add"""
-    space = context.space_data
-    tree = space.node_tree
+    tree = context.space_data.path[-1].node_tree  # in case if the node in a node group
     existing_node = tree.nodes.active
 
     if not hasattr(existing_node, 'outputs') or len(existing_node.outputs) == 0:
