@@ -139,6 +139,15 @@ class BlTrees:
         return (t for t in trees if t.bl_idname == self.GROUP_ID)
 
 
+class BlTree:
+    def __init__(self, tree):
+        self._tree = tree
+
+    @property
+    def is_group_tree(self) -> bool:
+        return self._tree.bl_idname == BlTrees.GROUP_ID
+
+
 class BlNode:
     """Wrapping around ordinary node for extracting some its information"""
     DEBUG_NODES_IDS = {'SvDebugPrintNode', 'SvStethoscopeNode'}  # can be added as Mix-in class
