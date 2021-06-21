@@ -197,8 +197,8 @@ class SverchokPreferences(AddonPreferences):
 
     #  debugish...
     show_debug: BoolProperty(
-        name="Print update timings",
-        description="Print update timings in console",
+        name="Debug mode",  # todo to remove, there is logging level for this
+        description="Deprecated",
         default=False, subtype='NONE',
         update=update_debug_mode)
 
