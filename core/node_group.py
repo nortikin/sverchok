@@ -8,7 +8,6 @@
 # from __future__ import annotations <- Don't use it here, `group node` will loose its `group tree` attribute
 import time
 from collections import namedtuple
-from contextlib import contextmanager
 from functools import reduce
 from itertools import cycle
 from typing import Tuple, List, Set, Dict, Iterator, Generator, Optional
@@ -24,10 +23,10 @@ from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.handle_blender_data import BlNode, BlTree
 from sverchok.utils.logging import catch_log_error
-from sverchok.node_tree import UpdateNodes
+from sverchok.node_tree import UpdateNodes, SvNodeTreeCommon
 
 
-class SvGroupTree(bpy.types.NodeTree):
+class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
     """Separate tree class for sub trees"""
     bl_idname = 'SvGroupTree'
     bl_icon = 'NODETREE'
@@ -38,21 +37,8 @@ class SvGroupTree(bpy.types.NodeTree):
     # should be updated by "Go to edit group tree" operator
     group_node_name: bpy.props.StringProperty(options={'SKIP_SAVE'})
 
-    # identifier of the tree, should be used via `tree_id`
-    tree_id_memory: bpy.props.StringProperty(default="", options={'SKIP_SAVE'})
-
-    # useless for API consistency # todo should be removed later
-    skip_tree_update: bpy.props.BoolProperty(options={'SKIP_SAVE'})
-
     # Always False, does not have sense to have for nested trees, sine of draft mode refactoring
     sv_draft: bpy.props.BoolProperty(options={'SKIP_SAVE'})
-
-    @property
-    def tree_id(self):
-        """Identifier of the tree"""
-        if not self.tree_id_memory:
-            self.tree_id_memory = str(hash(self) ^ hash(time.monotonic()))
-        return self.tree_id_memory
 
     @classmethod
     def poll(cls, context):
@@ -240,25 +226,6 @@ class SvGroupTree(bpy.types.NodeTree):
             if BlNode(node).is_debug_node:
                 with catch_log_error():
                     node.process()
-
-    @contextmanager
-    def throttle_update(self):
-        """useless, for API consistency here"""
-        yield self
-
-    @contextmanager
-    def init_tree(self):
-        """It suppresses calling the update method of nodes,
-        main usage of it is during generating tree with python (JSON import)"""
-        is_already_initializing = 'init_tree' in self
-        if is_already_initializing:
-            yield self
-        else:
-            self['init_tree'] = ''
-            try:
-                yield self
-            finally:
-                del self['init_tree']
 
     def get_update_path(self) -> List['SvGroupTreeNode']:
         """
