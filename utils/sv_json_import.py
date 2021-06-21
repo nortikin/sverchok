@@ -19,7 +19,7 @@ from sverchok import old_nodes
 from sverchok.utils.sv_IO_panel_tools import get_file_obj_from_zip
 from sverchok.utils.logging import info, warning, getLogger, logging
 from sverchok.utils.handle_blender_data import BPYProperty, BPYNode
-from sverchok.utils.sv_IO_monad_helpers import unpack_monad
+from sverchok.utils.sv_json_struct import FileStruct, NodePresetFileStruct
 
 if TYPE_CHECKING:
     from sverchok.node_tree import SverchCustomTree, SverchCustomTreeNode
@@ -48,8 +48,13 @@ class JSONImporter:
 
     def import_into_tree(self, tree: SverchCustomTree, print_log: bool = True):
         """Import json structure into given tree and update it"""
-        root_tree_builder = TreeImporter01(tree, self._structure, self._fails_log)
-        root_tree_builder.import_tree()
+        if self.structure_version < 0.1001:
+            root_tree_builder = TreeImporter01(tree, self._structure, self._fails_log)
+            root_tree_builder.import_tree()
+        else:
+            importer = FileStruct(logger=self._fails_log, struct=self._structure)
+            importer.build_into_tree(tree)
+
         if print_log:
             self._fails_log.report_log_result()
 
@@ -58,6 +63,12 @@ class JSONImporter:
         process_tree(tree)
 
     def import_node_settings(self, node: SverchCustomTreeNode):
+        if self.structure_version < 1.0:
+            self._old_import_node_settings(node)
+        else:
+            NodePresetFileStruct(logger=self._fails_log, structure=self._structure).build(node)
+
+    def _old_import_node_settings(self, node: SverchCustomTreeNode):
         """
         It takes first node from file and apply its settings to given node
         It is strange but it is how it was originally implemented
@@ -83,6 +94,10 @@ class JSONImporter:
         """Brief information about fails if their was"""
         return self._fails_log.fail_message
 
+    @property
+    def structure_version(self):
+        return float(self._structure["export_version"])
+
 
 class TreeImporter01:
     """
@@ -96,24 +111,10 @@ class TreeImporter01:
         self._new_node_names = dict()  # map(old_node_name, new_node_name)
 
     def import_tree(self):
-        """Reads and generates nodes, frames, links, monad"""
-        # create recursion, this is how monad import intend to work
-        # in original module monad does not take in account that they can get another name
-        # it logic remains and in this module
-        # monad is designed to be imported recursively
-        with self._fails_log.add_fail("Reading monads", f'Tree: {self._tree.name}'):
-            for name, str_struct in self._structure.get('groups', dict()).items():
-                monad = bpy.data.node_groups.new(name, 'SverchGroupTreeType')
-                TreeImporter01(monad, json.loads(str_struct), self._fails_log).import_tree()
-
+        """Reads and generates nodes, frames, links"""
         with TreeGenerator.start_from_tree(self._tree, self._fails_log) as tree_builder:
             for node_name, node_type, node_structure in self.nodes():
-                if node_type == 'SvMonadGenericNode':
-                    node = None
-                    with self._fails_log.add_fail("Creating monad node", f'Tree: {self._tree.name}'):
-                        node = unpack_monad(self._tree.nodes, node_structure)
-                else:
-                    node = tree_builder.add_node(node_type, node_name)
+                node = tree_builder.add_node(node_type, node_name)
                 if node:
                     self._new_node_names[node_name] = node.name
                     NodeImporter01(node, node_structure, self._fails_log, self.file_version).import_node()
@@ -187,8 +188,6 @@ class NodeImporter01:
                     setattr(self._node, attr_name, attr_value)
 
         for prop_name, prop_value in self._node_properties():
-            if prop_name in {"all_props", "cls_dict", "monad"}:
-                return  # this properties for monads which are applied in another place
             with self._fails_log.add_fail(
                     "Setting node property",
                     f'Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}'):

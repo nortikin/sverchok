@@ -24,7 +24,6 @@ import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, list_match_func, list_match_modes
 from sverchok.utils.modules.matrix_utils import matrix_apply_np
-from sverchok.utils.nodes_mixins.draft_mode import DraftMode
 
 directionItems = [("XY", "XY", ""), ("YZ", "YZ", ""), ("ZX", "ZX", "")]
 dimensionsItems = [
@@ -220,9 +219,10 @@ plane_func_dict = {
     'SIZE_STEPS': plane_size_steps,
     'SIZE': planes_size_number,
     'NUMBER': planes_number_steps
-
 }
-class SvPlaneNodeMk3(DraftMode, bpy.types.Node, SverchCustomTreeNode):
+
+
+class SvPlaneNodeMk3(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Grid,
     Tooltip: Generate a Plane primitive.
@@ -309,28 +309,12 @@ class SvPlaneNodeMk3(DraftMode, bpy.types.Node, SverchCustomTreeNode):
         name='N Verts Y', description='Number of vertices along Y',
         default=2, min=2, update=updateNode)
 
-    numx_draft: IntProperty(
-        name='[D] N Verts X', description='Number of vertices along X (draft mode)',
-        default=2, min=2, update=updateNode)
-
-    numy_draft: IntProperty(
-        name='[D] N Verts Y', description='Number of vertices along Y (draft mode)',
-        default=2, min=2, update=updateNode)
-
     stepx: FloatProperty(
         name='Step X', description='Step length X',
         default=1.0, update=updateNode)
 
     stepy: FloatProperty(
         name='Step Y', description='Step length Y',
-        default=1.0, update=updateNode)
-
-    stepx_draft: FloatProperty(
-        name='[D] Step X', description='Step length X (draft mode)',
-        default=1.0, update=updateNode)
-
-    stepy_draft: FloatProperty(
-        name='[D] Step Y', description='Step length Y (draft mode)',
         default=1.0, update=updateNode)
 
     center: BoolProperty(
@@ -344,23 +328,6 @@ class SvPlaneNodeMk3(DraftMode, bpy.types.Node, SverchCustomTreeNode):
     sizey: FloatProperty(
         name='Size Y', description='Plane size along Y',
         default=10.0, min=0.01, update=updateNode)
-
-    sizex_draft: FloatProperty(
-        name='[D] Size X', description='Plane size along X (draft mode)',
-        default=1.0, update=updateNode)
-
-    sizey_draft: FloatProperty(
-        name='[D] Size Y', description='Plane size along y (draft mode)',
-        default=1.0, update=updateNode)
-
-    draft_properties_mapping = dict(
-            numx = 'numx_draft',
-            numy = 'numy_draft',
-            stepx = 'stepx_draft',
-            stepy = 'stepy_draft',
-            sizex = 'sizex_draft',
-            sizey = 'sizey_draft'
-        )
 
     list_match_global: EnumProperty(
         name="Match Global",
@@ -484,15 +451,6 @@ class SvPlaneNodeMk3(DraftMode, bpy.types.Node, SverchCustomTreeNode):
             params.append(mat_input)
 
         return list_match_func[self.list_match_global](params)
-
-    def does_support_draft_mode(self):
-        return True
-
-    def draw_label(self):
-        label = self.label or self.name
-        if self.id_data.sv_draft:
-            label = "[D] " + label
-        return label
 
     def process(self):
 

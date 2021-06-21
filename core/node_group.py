@@ -32,12 +32,17 @@ class SvGroupTree(bpy.types.NodeTree):
 
     handler = MainHandler
 
-    group_node_name: bpy.props.StringProperty()  # should be updated by "Go to edit group tree" operator
-    tree_id_memory: bpy.props.StringProperty(default="")  # identifier of the tree, should be used via `tree_id`
-    skip_tree_update: bpy.props.BoolProperty()  # useless for API consistency # todo should be removed later
+    # should be updated by "Go to edit group tree" operator
+    group_node_name: bpy.props.StringProperty(options={'SKIP_SAVE'})
+
+    # identifier of the tree, should be used via `tree_id`
+    tree_id_memory: bpy.props.StringProperty(default="", options={'SKIP_SAVE'})
+
+    # useless for API consistency # todo should be removed later
+    skip_tree_update: bpy.props.BoolProperty(options={'SKIP_SAVE'})
 
     # Always False, does not have sense to have for nested trees, sine of draft mode refactoring
-    sv_draft: bpy.props.BoolProperty()
+    sv_draft: bpy.props.BoolProperty(options={'SKIP_SAVE'})
 
     @property
     def tree_id(self):
@@ -95,6 +100,9 @@ class SvGroupTree(bpy.types.NodeTree):
     def update(self):
         """trigger on links or nodes collections changes, on assigning tree to a group node"""
         # When group input or output nodes are connected some extra work should be done
+        if 'init_tree' in self.id_data:  # tree is building by a script - let it do this
+            return
+
         self.check_last_socket()  # Should not be too expensive to call it each update
 
         if self.name not in bpy.data.node_groups:  # load new file event
@@ -197,6 +205,11 @@ class SvGroupTree(bpy.types.NodeTree):
         1. Node property of was changed
         2. ???
         """
+        # the method can be called during tree reconstruction from JSON file
+        # in this case we does not intend doing any updates
+        if not self.group_node_name:  # initialization tree
+            return
+
         self.handler.send(GroupEvent(GroupEvent.NODES_UPDATE, self.get_update_path(), updated_nodes=nodes))
 
     def parent_nodes(self) -> Iterator['SvGroupTreeNode']:
@@ -239,6 +252,20 @@ class SvGroupTree(bpy.types.NodeTree):
     def throttle_update(self):
         """useless, for API consistency here"""
         yield self
+
+    @contextmanager
+    def init_tree(self):
+        """It suppresses calling the update method of nodes,
+        main usage of it is during generating tree with python (JSON import)"""
+        is_already_initializing = 'init_tree' in self
+        if is_already_initializing:
+            yield self
+        else:
+            self['init_tree'] = ''
+            try:
+                yield self
+            finally:
+                del self['init_tree']
 
     def get_update_path(self) -> List['SvGroupTreeNode']:
         """
@@ -416,6 +443,9 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
                 return node
 
     def update(self):
+        if 'init_tree' in self.id_data:  # tree is building by a script - let it do this
+            return
+
         # this code should work only first time a socket was added
         if self.node_tree:
             for n_in_s, t_in_s in zip(self.inputs, self.node_tree.inputs):
@@ -495,9 +525,6 @@ class AddGroupNode(PlacingNodeOperator, bpy.types.Operator):
             return False, ''
         tree = path.node_tree
         if tree.bl_idname == 'SverchCustomTreeType':
-            for node in tree.nodes:
-                if node.bl_idname.startswith('SvGroupNodeMonad'):
-                    return False, 'Either monad or group node should be used in the tree'
             return True, 'Add group node'
         elif tree.bl_idname == 'SvGroupTree':
             return True, "Add group node"

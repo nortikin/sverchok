@@ -22,7 +22,6 @@ from bpy.types import Operator
 from sverchok.ui.nodeview_rclick_menu import get_output_sockets_map
 from sverchok.utils.sv_node_utils import frame_adjust
 
-sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 
 def offset_node_location(existing_node, new_node, offset):
     new_node.location = existing_node.location.x + offset[0] + existing_node.width, existing_node.location.y  + offset[1]
@@ -146,7 +145,7 @@ class SvTemporalViewerOperator(Operator):
         space = context.space_data
         if not space.type == "NODE_EDITOR":
             return
-        return space.tree_type in sv_tree_types
+        return space.tree_type in {'SverchCustomTreeType', }
 
     def execute(self, context):
 

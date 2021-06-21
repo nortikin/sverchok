@@ -12,7 +12,7 @@ from sverchok.menu import draw_add_node_operator
 from sverchok.ui.presets import node_supports_presets, apply_default_preset
 from sverchok.core.sockets import SvCurveSocket, SvSurfaceSocket, SvStringsSocket, SvSolidSocket
 
-sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
+
 supported_mesh_viewers = {'SvMeshViewer', 'SvViewerDrawMk4'}
 
 # for rclick i want convenience..
@@ -267,7 +267,7 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
     @classmethod
     def poll(cls, context):
         tree_type = context.space_data.tree_type
-        return tree_type in sv_tree_types
+        return tree_type in {'SverchCustomTreeType', }
 
     def draw(self, context):
         layout = self.layout
@@ -312,9 +312,6 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
                 col.prop(node, 'color', text='')
             col.prop(node, 'label_size', slider=True)
             col.prop(node, 'shrink')
-
-        if node and hasattr(node, 'monad'):
-            layout.operator("node.sv_monad_make_unique", icon="RNA_ADD").use_transform=True
 
         layout.separator()
         layout.menu("NODEVIEW_MT_Dynamic_Menu", text='node menu')

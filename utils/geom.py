@@ -825,7 +825,7 @@ class PlaneEquation(object):
     def get_matrix(self, invert_y=False):
         x = self.second_vector().normalized()
         z = self.normal.normalized()
-        y = z.cross(x)
+        y = z.cross(x).normalized()
         if invert_y:
             y = - y
         return Matrix([x, y, z]).transposed()
@@ -1501,6 +1501,8 @@ class Ellipse3D(object):
         """
         a = self.a
         b = self.b
+        if a < b:
+            raise Exception("Major semi-axis of the ellipse can not be smaller than minor semi-axis")
         return sqrt(a*a - b*b)
 
     @property

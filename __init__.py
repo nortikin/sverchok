@@ -77,7 +77,7 @@ node_list = make_node_list(nodes)
 
 if "bpy" in locals():
     reload_event = True
-    node_list = handle_reload_event(nodes, imported_modules, old_nodes)
+    node_list = handle_reload_event(nodes, imported_modules)
 
 
 import bpy
@@ -96,6 +96,7 @@ def register():
 
 def unregister():
     sverchok.utils.clear_node_classes()
-    sv_registration_utils.unregister_all(imported_modules + node_list)
+    sv_registration_utils.unregister_all(imported_modules)
+    sv_registration_utils.unregister_all(node_list)
 
 # EOF

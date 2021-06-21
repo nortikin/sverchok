@@ -562,7 +562,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         for key in self.inputs.keys():
             if key not in variables:
                 self.debug("Input {} not in variables {}, remove it".format(key, str(variables)))
-                self.inputs.remove(self.inputs[key])
+                self.safe_socket_remove('inputs', key)
         for v in variables:
             if v not in self.inputs:
                 self.debug("Variable {} not in inputs {}, add it".format(v, str(self.inputs.keys())))
@@ -614,6 +614,13 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         return result
 
     def process(self):
+
+        # upgrades older versions of ProfileMK3 to the version that has self.file_pointer
+        if self.filename and not self.file_pointer:
+            text = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
+            if text:
+                self.file_pointer = text
+
         if not any(o.is_linked for o in self.outputs):
             return
 
@@ -689,7 +696,11 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         if 'profile' not in node_data:
             return  # looks like a node was empty when it was exported
         profile = node_data['profile']
-        filename = node_data['params']['filename']
+
+        if import_version < 1.0:
+            filename = node_data['params']['filename']
+        else:
+            filename = self.filename
 
         bpy.data.texts.new(filename)
         bpy.data.texts[filename].clear()
@@ -701,17 +712,11 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             text = bpy.data.texts[self.filename.strip()].as_string()
             node_data['profile'] = text
         else:
-            self.warning("Unknown filename: {}".format(self.filename))
+            self.warning("save_to_json called with unknown filename")
 
     def set_filename_to_match_file_pointer(self):
         self.file_pointer = self.file_pointer
 
-    def set_pointer_from_filename(self):
-        """ this function upgrades older versions of ProfileMK3 to the version that has self.file_pointer """
-        if hasattr(self, "file_pointer") and not self.file_pointer:
-            text = self.get_bpy_data_from_name(self.filename, bpy.data.texts)
-            if text:
-                self.file_pointer = text
 
 classes = [
         SvProfileImportMenu,

@@ -2,9 +2,12 @@
 import bpy
 import addon_utils
 
+import unittest
+
 from sverchok.utils.testing import *
 from sverchok.utils.logging import debug, info
 
+@unittest.skip("Disabled temporarily")
 class InitTests(SverchokTestCase):
 
     def test_core_exists(self):

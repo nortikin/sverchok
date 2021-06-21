@@ -38,9 +38,10 @@ from sverchok.ui import color_def
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
 from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_with_bgl
 
+
 class SvNodeTreeCommon(object):
     '''
-    Common methods shared between Sverchok node trees (normal and monad trees)
+    Common methods shared between Sverchok node trees
     '''
 
     # auto update toggle of the node tree
@@ -60,28 +61,10 @@ class SvNodeTreeCommon(object):
             self.tree_id_memory = str(hash(self) ^ hash(time.monotonic()))
         return self.tree_id_memory
 
-    def get_groups(self):
-        """
-        It gets monads of node tree,
-        Update them (the sv_update method will check if anything changed inside the monad
-        and will change the monad outputs in that case)
-        Return the monads that have changed (
-        to inform the caller function that the nodes downstream have to be updated with the new data)
-        """
-        affected_groups =[]
-        for node in self.nodes:
-            if 'SvGroupNode' in node.bl_idname:
-                sub_tree = node.monad
-                sub_tree.sv_update()
-                if sub_tree.has_changed:
-                    affected_groups.append(node)
-                    sub_tree.has_changed = False
-        return affected_groups
-
     def sv_update(self):
         """
-        the method checks if anything changed inside the normal tree or monad
-        and update them if necessary
+        the method checks if anything changed inside the tree
+        and update it if necessary
         """
         self.sv_links.create_new_links(self)
         if self.sv_links.links_have_changed(self):
@@ -89,8 +72,6 @@ class SvNodeTreeCommon(object):
             build_update_list(self)
             process_from_nodes(self.sv_links.get_nodes(self))
             self.sv_links.store_links_cache(self)
-        else:
-            process_from_nodes(self.get_groups())
 
     def animation_update(self):
         """Find animatable nodes and update from them"""
@@ -131,6 +112,20 @@ class SvNodeTreeCommon(object):
                 prefs.set_nodeview_render_params(None)
         except Exception as err:
             debug('failed to get gl scale info', err)
+
+    @contextmanager
+    def init_tree(self):
+        """It suppresses calling the update method of nodes,
+        main usage of it is during generating tree with python (JSON import)"""
+        is_already_initializing = 'init_tree' in self
+        if is_already_initializing:
+            yield self
+        else:
+            self['init_tree'] = ''
+            try:
+                yield self
+            finally:
+                del self['init_tree']
 
 
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
@@ -225,6 +220,8 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         This method is called if collection of nodes or links of the tree was changed
         First of all it checks is it worth bothering and then gives initiative to `update system`
         """
+        if 'init_tree' in self.id_data:  # tree is building by a script - let it do this
+            return
         # this is a no-op if there's no drawing
         clear_exception_drawing_with_bgl(self.nodes)
         if is_first_run():
@@ -237,6 +234,9 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
     def update_nodes(self, nodes):
         """This method expects to get list of its nodes which should be updated"""
+        if self.id_data.skip_tree_update:
+            # this can be called by node groups which do not know whether the tree is throttled
+            return
         if len(nodes) == 1:
             # this function actually doing something different unlike `process_from_nodes` function
             # the difference is that process_from_nodes can also update other outdated nodes
@@ -314,7 +314,7 @@ class UpdateNodes:
         - sets node color
         """
         ng = self.id_data
-        if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
+        if ng.bl_idname in {'SverchCustomTreeType', }:
             ng.nodes_dict.load_node(self)
         with ng.throttle_update():
             try:
@@ -341,7 +341,7 @@ class UpdateNodes:
             s.sv_forget()
 
         node_tree = self.id_data
-        if node_tree.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
+        if node_tree.bl_idname in {'SverchCustomTreeType', }:
             node_tree.nodes_dict.forget_node(self)
 
         if hasattr(self, "has_3dview_props"):  # todo remove
@@ -362,7 +362,7 @@ class UpdateNodes:
 
         self.n_id = ""
         self.sv_copy(original)
-        if self.id_data.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
+        if self.id_data.bl_idname in {'SverchCustomTreeType', }:
             self.id_data.nodes_dict.load_node(self)
 
     def update(self):
@@ -370,6 +370,9 @@ class UpdateNodes:
         The method will be triggered upon editor changes, typically before node tree update method.
         It is better to avoid using this trigger.
         """
+        if 'init_tree' in self.id_data:  # tree is building by a script - let it do this
+            return
+
         self.sv_update()
 
     def insert_link(self, link):
@@ -394,10 +397,6 @@ class UpdateNodes:
                 debug("Partial update from node %s in %s", self.name, round(b - a, 4))
             else:
                 process_from_node(self)
-        elif self.id_data.bl_idname == "SverchGroupTreeType":
-            monad = self.id_data
-            for instance in monad.instances:
-                instance.process_node(context)
         elif self.id_data.bl_idname == "SvGroupTree":
             self.id_data.update_nodes([self])
         else:
@@ -468,6 +467,10 @@ class NodeUtils:
 
         if the text does not exist you get None
         """
+        if not identifier:
+            # this can happen if a json import goes through attributes arbitrarily.
+            # self.info("no identifier passed to the get_bpy_data_from_name function.")
+            return None
 
         try:
             if isinstance(identifier, bpy.types.Object) and identifier.name in bpy_data_kind:
@@ -478,12 +481,30 @@ class NodeUtils:
                     return bpy_data_kind.get(identifier)
                 elif identifier[3:] in bpy_data_kind:
                     return bpy_data_kind.get(identifier[3:])
-                return identifier
+                
+                # something went wrong. the blend does not contain the objectname
+                self.info(f"{identifier} not found in {bpy_data_kind}, returning None instead")
+                if bpy_data_kind.bl_rna.identifier == 'BlendDataTexts':
+                    # if we are in texts and this key is not found:
+                    # - it's possible the named datablock incurred name collision
+                    # - or it has not yet been created (usually json import, attribute order issue)
+                    file_names = {t.name for t in bpy_data_kind}
+                    self.info(f"The currently loaded blend file does contain the following text files {file_names}")
+
 
         except Exception as err:
             self.error(f"identifier '{identifier}' not found in {bpy_data_kind} - with error {err}")
 
         return None
+
+    def safe_socket_remove(self, kind, key, failure_message=None):
+        with self.sv_throttle_tree_update():
+            sockets = getattr(self, kind)
+            if key in sockets:
+                sockets.remove(sockets[key])
+            else:
+                canned_msg = f"{self.name}.{kind} has no socket named {key} - did not remove"
+                self.debug(failure_message or canned_msg)
 
 
 class SverchCustomTreeNode(UpdateNodes, NodeUtils):
@@ -501,7 +522,7 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
 
     @classmethod
     def poll(cls, ntree):
-        return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType', 'SvGroupTree']
+        return ntree.bl_idname in ['SverchCustomTreeType', 'SvGroupTree']
 
     @property
     def absolute_location(self):

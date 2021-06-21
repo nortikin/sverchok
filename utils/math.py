@@ -334,6 +334,12 @@ def np_normalize_vectors(vecs):
     vecs[nonzero] = vecs[nonzero] / norms[nonzero][:,np.newaxis]
     return vecs
 
+def np_multiply_matrices_vectors(matrices, vectors):
+    vectors = vectors[np.newaxis]
+    vectors = np.transpose(vectors, axes=(1,2,0))
+    r = matrices @ vectors
+    return r[:,:,0]
+
 def weighted_center(verts, field=None):
     if field is None:
         return np.mean(verts, axis=0)

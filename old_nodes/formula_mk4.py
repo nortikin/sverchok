@@ -135,7 +135,7 @@ class SvFormulaNodeMk4(bpy.types.Node, SverchCustomTreeNode):
 
         """
 
-        self.info('handling input wipe and relink')
+        self.debug('handling input wipe and relink')
         nodes = self.id_data.nodes
         node_tree = self.id_data
 
