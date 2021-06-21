@@ -27,7 +27,6 @@ from sverchok import data_structure
 from sverchok.core.socket_data import SvNoDataError, reset_socket_cache
 from sverchok.utils.logging import debug, info, warning, error, exception
 from sverchok.utils.profile import profile
-from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_with_bgl, start_exception_drawing_with_bgl
 from sverchok.core.socket_data import clear_all_socket_cache
 from sverchok.core.node_id_dict import clear_nodes_id_dict
 from sverchok.core.links import clear_link_memory
@@ -371,9 +370,6 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
     total_time = 0
     done_nodes = set(procesed_nodes)
 
-    # this is a no-op if no bgl being drawn.
-    clear_exception_drawing_with_bgl(nodes)
-
     for node_name in node_list:
         if node_name in done_nodes:
             continue
@@ -386,9 +382,6 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             delta = time.perf_counter() - start
             total_time += delta
 
-            if data_structure.DEBUG_MODE and ng.sv_show_debug_time_prints:
-                debug("Processed  %s in: %.4f", node_name, delta)
-
             timings.append(delta)
             gather(node_info(ng.name, node, start, delta))
 
@@ -399,17 +392,9 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             update_error_nodes(ng, node_name, err)
             #traceback.print_tb(err.__traceback__)
             exception("Node %s had exception: %s", node_name, err)
-            
-            if hasattr(ng, "sv_show_error_in_tree"):
-                if ng.sv_show_error_in_tree:
-                    error_text = traceback.format_exc()
-                    start_exception_drawing_with_bgl(ng, node_name, error_text, err)
-            
             return None
 
     graphs.append(graph)
-    if data_structure.DEBUG_MODE and ng.sv_show_debug_time_prints:
-        debug("Node set updated in: %.4f seconds", total_time)
 
     # graph_dicts[nodes.id_data.name] = graph
     return timings

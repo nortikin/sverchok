@@ -6,12 +6,11 @@
 # License-Filename: LICENSE
 import inspect
 import time
-import textwrap
 from contextlib import contextmanager
 from itertools import chain, cycle
 
 import bpy
-from bpy.props import StringProperty, BoolProperty, EnumProperty
+from bpy.props import StringProperty, BoolProperty
 from bpy.types import NodeTree
 
 from sverchok.core.socket_data import SvNoDataError
@@ -40,7 +39,6 @@ from sverchok.utils.logging import debug, catch_log_error
 from sverchok.ui import color_def
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
 from sverchok.ui import bgl_callback_nodeview as sv_bgl
-from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_with_bgl
 from sverchok.utils.handle_blender_data import BlTree
 
 
@@ -172,46 +170,18 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
-    sv_show_time_graph: BoolProperty(name="Time Graph", default=False, options=set())
+    sv_show_time_graph: BoolProperty(name="Time Graph", default=False, options=set())  # todo is not used now
     sv_show_time_nodes: BoolProperty(name="Node times", default=False, options=set(), update=lambda s, c: s.update_ui())
-    sv_show_debug_time_prints: BoolProperty(
-        name="Debug Prints", default=True, options=set(),
-        description="setting this to False will suppress debug node times printing to console")
-    
+
     # something related with heat map feature
     # looks like it keeps dictionary of nodes and their user defined colors in string format
     sv_user_colors: StringProperty(default="")
-
-    # option whether error message of nodes should be shown in tree space or not
-    # for showing error message all tree should be reevaluated what is not nice
-    sv_show_error_in_tree: BoolProperty(
-        description="This will show Node Exceptions in the node view, right beside the node",
-        name="Show error in tree", default=True, update=lambda s, c: process_tree(s), options=set())
-
-    sv_show_error_details: BoolProperty(
-            name = "Show error details",
-            description = "Display exception stack in the node view as well",
-            default = False,
-            update=lambda s, c: process_tree(s),
-            options=set())
 
     sv_show_socket_menus: BoolProperty(
         name = "Show socket menus",
         description = "Display socket dropdown menu buttons. NOTE: options that are enabled in those menus will be effective regardless of this checkbox!",
         default = False,
         options=set())
-
-    # if a nodetree consists of several disjoint graphs this option determines the order of their evaluation.
-    sv_subtree_evaluation_order: EnumProperty(
-        name="Subtree eval order",
-        items=[(k, k, '', i) for i, k in enumerate(["X", "Y", "None"])],
-        description=textwrap.dedent("""\
-            This will give you control over the order in which subset graphs are evaluated
-            1) X, Y modes evaluate subtrees in sequence of lowest absolute node location, useful when working with real geometry
-            2) None does no sorting
-        """),
-        default="None", update=lambda s, c: process_tree(s), options=set()
-    )
 
     # draft mode replaces selected properties of certain nodes with smaller values to lighten cpu load.
     sv_draft: BoolProperty(
@@ -228,8 +198,6 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         # if 'init_tree' in self.id_data:  # tree is building by a script - let it do this
         #     return
         return TreeHandler.send(TreeEvent(TreeEvent.TREE_UPDATE, self))
-        # this is a no-op if there's no drawing
-        clear_exception_drawing_with_bgl(self.nodes)
         if self.skip_tree_update or not self.sv_process:
             return
 
