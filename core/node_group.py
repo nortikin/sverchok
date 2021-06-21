@@ -22,7 +22,7 @@ from sverchok.core.group_handlers import MainHandler, NodeIdManager
 from sverchok.core.events import GroupEvent
 from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
-from sverchok.utils.handle_blender_data import BlNode
+from sverchok.utils.handle_blender_data import BlNode, BlTree
 from sverchok.utils.logging import catch_log_error
 from sverchok.node_tree import UpdateNodes
 
@@ -456,6 +456,8 @@ class SvGroupTreeNode(BaseNode, bpy.types.NodeCustomGroup):
     update_ui = UpdateNodes.update_ui  # don't want to inherit from the class (at least now)
 
     def free(self):
+        # This is inevitable evil cause of flexible nature of node_ids inside group trees
+        node_id = NodeIdManager.extract_node_id(self) if BlTree(self.id_data).is_group_tree else self.node_id
         self.update_ui()
 
 

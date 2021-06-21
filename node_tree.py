@@ -5,7 +5,6 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 import inspect
-import sys
 import time
 import textwrap
 from contextlib import contextmanager
@@ -18,6 +17,7 @@ from bpy.types import NodeTree
 from sverchok.core.socket_data import SvNoDataError
 from sverchok.core.events import TreeEvent
 from sverchok.core.main_tree_handler import TreeHandler
+from sverchok.core.group_handlers import NodeIdManager
 from sverchok import data_structure
 from sverchok.data_structure import classproperty, post_load_call
 
@@ -41,6 +41,7 @@ from sverchok.ui import color_def
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
 from sverchok.ui import bgl_callback_nodeview as sv_bgl
 from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_with_bgl
+from sverchok.utils.handle_blender_data import BlTree
 
 
 class SvNodeTreeCommon(object):
@@ -364,7 +365,9 @@ class UpdateNodes:
         if node_tree.bl_idname in {'SverchCustomTreeType', }:
             node_tree.nodes_dict.forget_node(self)
 
-        self.update_ui()
+        # This is inevitable evil cause of flexible nature of node_ids inside group trees
+        node_id = NodeIdManager.extract_node_id(self) if BlTree(node_tree).is_group_tree else self.node_id
+        self.update_ui(node_id=node_id)
 
     def copy(self, original):
         """
