@@ -10,7 +10,7 @@ from contextlib import contextmanager
 from itertools import chain, cycle
 
 import bpy
-from bpy.props import StringProperty, BoolProperty
+from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import NodeTree
 
 from sverchok.core.socket_data import SvNoDataError
@@ -48,7 +48,7 @@ class SvNodeTreeCommon(object):
     '''
 
     # auto update toggle of the node tree
-    sv_process: BoolProperty(name="Process", default=True, description='Process layout')
+    sv_process: BoolProperty(name="Process", default=True, description='Process layout', options=set())
     has_changed: BoolProperty(default=False)  # "True if changes of links in tree was detected"
 
     # for throttle method usage when links are created in the tree via Python
@@ -168,10 +168,11 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         if draft_nodes:
             process_from_nodes(draft_nodes)
 
-    sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
-    sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
+    sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout', options=set())
+    sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng, options=set())
     sv_show_time_graph: BoolProperty(name="Time Graph", default=False, options=set())  # todo is not used now
-    sv_show_time_nodes: BoolProperty(name="Node times", default=False, options=set(), update=lambda s, c: s.update_ui())
+    sv_show_time_nodes: BoolProperty(name="Node times", default=True, options=set(), update=lambda s, c: s.update_ui())
+    show_time_mode: EnumProperty(items=[(n, n, '') for n in ["Per node", "Cumulative"]], options=set())
 
     # something related with heat map feature
     # looks like it keeps dictionary of nodes and their user defined colors in string format
@@ -188,7 +189,9 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         name="Draft",
         description="Draft (simplified processing) mode",
         default=False,
-        update=on_draft_mode_changed)
+        update=on_draft_mode_changed,
+        options=set(),
+    )
 
     def update(self):
         """

@@ -39,6 +39,7 @@ class SverchokPanels:
 class SV_PT_ToolsMenu(SverchokPanels, bpy.types.Panel):
     bl_idname = "SV_PT_ToolsMenu"
     bl_label = f"Tree properties ({version_and_sha})"
+    bl_options = {'DEFAULT_CLOSED'}
     use_pin = True
 
     def draw(self, context):
@@ -51,7 +52,6 @@ class SV_PT_ToolsMenu(SverchokPanels, bpy.types.Panel):
 class SV_PT_ActiveTreePanel(SverchokPanels, bpy.types.Panel):
     bl_idname = "SV_PT_ActiveTreePanel"
     bl_label = "Active tree"
-    bl_parent_id = 'SV_PT_ToolsMenu'
 
     @classmethod
     def poll(cls, context):
@@ -61,11 +61,50 @@ class SV_PT_ActiveTreePanel(SverchokPanels, bpy.types.Panel):
         ng = context.space_data.node_tree
         col = self.layout.column()
 
-        col.operator("node.sverchok_update_current", text=f'Update "{ng.name}"').node_group = ng.name
+        col.operator('node.sverchok_update_current', text=f'Re-update all nodes').node_group = ng.name
+        col.operator('node.sverchok_bake_all', text="Bake Viewer Draw nodes").node_tree_name = ng.name
 
         col.use_property_split = True
-        col.prop(ng, "sv_show_socket_menus")
-        col.prop(ng, "sv_show_time_nodes")
+        col.prop(ng, 'sv_show', text="Show out", icon=f"RESTRICT_VIEW_{'OFF' if ng.sv_show else 'ON'}")
+        col.prop(ng, 'sv_animate', text="Animation", icon='ANIM')
+        col.prop(ng, 'sv_process', text="Live update", toggle=True)
+        col.prop(ng, "sv_draft", text="Draft mode", toggle=True)
+
+
+class SV_PT_TreeTimingsPanel(SverchokPanels, bpy.types.Panel):
+    bl_idname = "SV_PT_TreeTimingsPanel"
+    bl_label = "Node timings"
+    bl_parent_id = 'SV_PT_ActiveTreePanel'
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_header(self, context):
+        tree = context.space_data.node_tree
+        row = self.layout.row()
+        row.prop(tree, 'sv_show_time_nodes', text='')
+
+    def draw(self, context):
+        tree = context.space_data.node_tree
+        row = self.layout.row()
+        row.use_property_split = True
+        row.prop(tree, 'show_time_mode', text="Update time", expand=True)
+
+
+class SV_PT_ExtrTreeUserInterfaceOptions(SverchokPanels, bpy.types.Panel):
+    bl_idname = "SV_PT_ExtrTreeUserInterfaceOptions"
+    bl_label = "Extra options"
+    bl_parent_id = 'SV_PT_ActiveTreePanel'
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        ng = context.space_data.node_tree
+        col = self.layout.column(heading="Show")
+        col.use_property_split = True
+        col.prop(ng, 'sv_show_socket_menus', text="Socket menu")
+
+        sv_settings = bpy.context.preferences.addons[sverchok.__name__].preferences
+        col.prop(sv_settings, 'over_sized_buttons', text="Big buttons")
+        col.prop(sv_settings, 'show_icons', text="Menu icons")
+        col.prop(sv_settings, 'show_input_menus', text="Quick link")
 
 
 class SV_PT_ProfilingPanel(SverchokPanels, bpy.types.Panel):
@@ -275,6 +314,8 @@ def view3d_show_live_mode(self, context):
 sv_tools_classes = [
     SV_PT_ToolsMenu,
     SV_PT_ActiveTreePanel,
+    SV_PT_TreeTimingsPanel,
+    SV_PT_ExtrTreeUserInterfaceOptions,
     SV_PT_ProfilingPanel,
     SV_PT_SverchokUtilsPanel,
     SV_UL_TreePropertyList,
