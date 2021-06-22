@@ -27,8 +27,7 @@ from sverchok.data_structure import (match_long_repeat, updateNode, match_long_c
 from sverchok.utils.modules.geom_utils import (pt_in_triangle, length_v2)
 from sverchok.utils.modules.vertex_utils import adjacent_edg_pol_num
 from sverchok.utils.sv_mesh_utils import mesh_join
-from sverchok.nodes.modifier_change.edges_intersect_mk2 import (remove_doubles_from_edgenet, intersect_edges_2d)
-
+from sverchok.utils.intersect_edges import (remove_doubles_from_edgenet, intersect_edges_2d)
 mode_items = [
     ("Constant", "Constant", "Many contours on many distances", 0),
     ("Weighted", "Weighted", "One distance per each vertex  ", 1)]
