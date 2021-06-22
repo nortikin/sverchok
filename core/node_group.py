@@ -21,7 +21,7 @@ from sverchok.core.group_handlers import MainHandler, NodeIdManager
 from sverchok.core.events import GroupEvent
 from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
-from sverchok.utils.handle_blender_data import BlNode, BlTree
+from sverchok.utils.handle_blender_data import BlNode, BlTree, BlTrees
 from sverchok.utils.logging import catch_log_error
 from sverchok.node_tree import UpdateNodes, SvNodeTreeCommon
 
@@ -87,7 +87,8 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
         return not shared_trees
 
     def update(self):
-        """trigger on links or nodes collections changes, on assigning tree to a group node"""
+        """trigger on links or nodes collections changes, on assigning tree to a group node
+        also it is triggered when a tree, next in the path, was changed (even if this tree was not effected)"""
         # When group input or output nodes are connected some extra work should be done
         if 'init_tree' in self.id_data:  # tree is building by a script - let it do this
             return
@@ -229,14 +230,30 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
 
     def get_update_path(self) -> List['SvGroupTreeNode']:
         """
-        Should be called only during tree or node update events
+        Should be called only when the tree is opened in one of tree editors
         returns list of group nodes in path of current screen
         """
-        group_nodes = []
-        paths = bpy.context.space_data.path
-        for path, next_path in zip(paths[:-1], paths[1:]):
-            group_nodes.append(path.node_tree.nodes[next_path.node_tree.group_node_name])
-        return group_nodes
+        for area in bpy.context.screen.areas:
+            # this is not Sverchok editor
+            if area.ui_type != BlTrees.MAIN_TREE_ID:
+                continue
+
+            # editor does not have any active tree
+            if not area.spaces[0].node_tree:
+                continue
+
+            # this editor edits another tree, What!?
+            if self not in (p.node_tree for p in area.spaces[0].path):
+                continue
+
+            group_nodes = []
+            paths = area.spaces[0].path
+            for path, next_path in zip(paths[:-1], paths[1:]):
+                group_nodes.append(path.node_tree.nodes[next_path.node_tree.group_node_name])
+                if next_path.node_tree == self:
+                    break  # the tree is no last in the path
+            return group_nodes
+        raise LookupError(f'Path the group tree: {self} was not found')
 
 
 class BaseNode:
