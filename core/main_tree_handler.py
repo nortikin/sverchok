@@ -17,7 +17,7 @@ from sverchok.data_structure import post_load_call
 from sverchok.core.events import TreeEvent
 from sverchok.utils.logging import debug, catch_log_error, error, getLogger
 from sverchok.utils.tree_structure import Tree, Node
-from sverchok.utils.handle_blender_data import BlTrees
+from sverchok.utils.handle_blender_data import BlTrees, BlTree
 from sverchok.utils.profile import profile
 
 
@@ -175,7 +175,6 @@ class NodesUpdater:
         try:
             debug(f'Global update - {int((time() - cls._start_time) * 1000)}ms')
             cls._report_progress()
-            cls._bl_tree.update_ui()
         finally:
             cls._bl_tree, cls._handler, cls._node_tree_area, cls._last_node, cls._start_time = [None] * 5
 
@@ -194,16 +193,38 @@ class NodesUpdater:
 
 
 def global_updater() -> Generator[Node, None, None]:
-    """Find all Sverchok main trees and run their handlers"""
+    """Find all Sverchok main trees and run their handlers and update their UI if necessary
+    update_ui of group trees will be called only if they opened in one of tree editors
+    update_ui of main trees will be called if they are opened or was changed during the update event"""
+
+    # grab trees from active node group editors
+    trees_ui_to_update = set()
+    for area in bpy.context.screen.areas:
+        if area.ui_type == BlTrees.MAIN_TREE_ID:
+            if area.spaces[0].path:  # filter editors without active tree
+                trees_ui_to_update.add(area.spaces[0].path[-1].node_tree)
+
     for bl_tree in BlTrees().sv_main_trees:
         if not bl_tree.sv_process:
             continue
 
-        yield from tree_updater(bl_tree)
+        was_changed = yield from tree_updater(bl_tree)
+
+        # it has sense to call this here if you press update all button or creating group tree from selected
+        if was_changed:
+            bl_tree.update_ui()  # this only will update UI of main trees
+            trees_ui_to_update.discard(bl_tree)  # protection from double updating
+
+    # this will update all opened trees (in group editors)
+    # regardless whether the trees was changed or not, including group nodes
+    for bl_tree in trees_ui_to_update:
+        args = [bl_tree.get_update_path()] if BlTree(bl_tree).is_group_tree else []
+        bl_tree.update_ui(*args)
 
 
-def tree_updater(bl_tree) -> Generator[Node, None, None]:
+def tree_updater(bl_tree) -> Generator[Node, None, bool]:
     tree = ContextTrees.get(bl_tree)
+    tree_output_changed = False
 
     for node in tree.sorted_walk(tree.output_nodes):
         can_be_updated = all(n.is_updated for n in node.last_nodes)
@@ -230,6 +251,9 @@ def tree_updater(bl_tree) -> Generator[Node, None, None]:
         if node.is_output_changed or node_error:
             stat = NodeStatistic(node_error, None if node_error else update_time)
             NodesStatuses.set(node.bl_tween, stat)
+            tree_output_changed = True
+
+    return tree_output_changed
 
 
 class ContextTrees:
