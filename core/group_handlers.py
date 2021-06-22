@@ -15,18 +15,14 @@ from __future__ import annotations
 import logging
 import traceback
 from collections import defaultdict
-from functools import partial
 from time import time
 from typing import Generator, Dict, TYPE_CHECKING, Union, List, NamedTuple, Optional, Iterator, NewType, Tuple
 
-import bpy
-
-from sverchok.data_structure import post_load_call
 from sverchok.core.events import GroupEvent
-from sverchok.core.main_tree_handler import global_updater, empty_updater
+from sverchok.core.main_tree_handler import empty_updater, NodesUpdater, CancelError, ContextTrees
 from sverchok.utils.tree_structure import Tree, Node
-from sverchok.utils.logging import debug, error, getLogger
-from sverchok.utils.handle_blender_data import BlNode, BlTrees
+from sverchok.utils.logging import error, getLogger
+from sverchok.utils.handle_blender_data import BlNode
 
 if TYPE_CHECKING:
     from sverchok.core.node_group import SvGroupTree, SvGroupTreeNode
@@ -51,26 +47,34 @@ class MainHandler:
 
     @classmethod
     def send(cls, event: GroupEvent):
-        if event.type in {GroupEvent.NODES_UPDATE, GroupEvent.GROUP_TREE_UPDATE}:
-            if event.updated_nodes:
-                [NodesStatuses.mark_outdated(n) for n in event.updated_nodes]  # global updating
-
-            # Add events which should be updated via timer (changes in node tree)
-            if event.to_update:
-                if NodesUpdater.is_running():
-                    NodesUpdater.cancel_task()
-
-                NodesUpdater.add_task(event.group_nodes_path)
-
-        elif event.type == GroupEvent.EDIT_GROUP_NODE:
+        # just replace nodes IDs and return (should be first, does not call cancel or add task) todo should it be here?
+        if event.type == GroupEvent.EDIT_GROUP_NODE:
             path = NodeIdManager.generate_path(event.group_nodes_path)
             NodeIdManager.replace_nodes_id(event.group_tree, path)
+            return  # there is no need in updating anything
+
+        # this should be first other wise other instructions can spoil the node statistic to redraw
+        if NodesUpdater.is_running():
+            NodesUpdater.cancel_task()
+
+        # mark given nodes as outdated
+        if event.type == GroupEvent.NODES_UPDATE:
+            [NodesStatuses.mark_outdated(n) for n in event.updated_nodes]
+
+        # it will find (before the tree evaluation) changes in tree topology and mark related nodes as outdated
+        elif event.type == GroupEvent.GROUP_TREE_UPDATE:
+            GroupContextTrees.mark_tree_outdated(event.group_tree)
 
         elif event.type == GroupEvent.GROUP_NODE_UPDATE:
             raise TypeError(f'"Group node update" event should use update method instead of send')
 
+        # Unknown event
         else:
-            debug(f'Detected unknown event - {event}')
+            raise TypeError(f'Detected unknown event - {event}')
+
+        # Add update tusk for the tree
+        if event.to_update:
+            NodesUpdater.add_task(event.group_tree)
 
     @staticmethod
     def get_error_nodes(group_nodes_path: List[SvGroupTreeNode]) -> Iterator[Optional[Exception]]:
@@ -87,124 +91,8 @@ class MainHandler:
             yield NodesStatuses.get(node, path).update_time
 
 
-@post_load_call
-def register_loop():
-
-    # this function won't be reload on script.reload event (F8)
-    def group_event_loop(delay):
-        if NodesUpdater.is_running():
-            NodesUpdater.run_task()
-        elif NodesUpdater.has_task():  # task should be run via timer only https://developer.blender.org/T82318#1053877
-            NodesUpdater.start_task()
-            NodesUpdater.run_task()
-        return delay
-
-    bpy.app.timers.register(partial(group_event_loop, 0.01))
-
-
-class NodesUpdater:
-    """It can update only one tree at a time"""
-    _group_nodes_path: Optional[List[SvGroupTreeNode]] = None
-    _handler: Optional[Generator] = None
-
-    _node_tree_area: Optional[bpy.types.Area] = None
-    _last_node: Optional[Node] = None
-
-    _start_time: float = None
-
-    @classmethod
-    def add_task(cls, group_nodes_path: List[SvGroupTreeNode]):
-        """It can handle ony one tree at a time"""
-        if not cls.is_running():  # ignoring for now
-            cls._group_nodes_path = group_nodes_path
-
-    @classmethod
-    def start_task(cls):
-        changed_tree = cls._group_nodes_path[-1].node_tree
-        if cls.is_running():
-            raise RuntimeError(f'Tree "{changed_tree.name}" already is being updated')
-        cls._handler = group_global_handler()
-
-        # searching appropriate area index for reporting update progress
-        for area in bpy.context.screen.areas:
-            if area.ui_type == 'SverchCustomTreeType':
-                path = area.spaces[0].path
-                if path and path[-1].node_tree.name == changed_tree.name:
-                    cls._node_tree_area = area
-                    break
-
-        cls._start_time = time()
-
-    @classmethod
-    def run_task(cls):
-        try:
-            if cls._last_node:
-                cls._last_node.bl_tween.use_custom_color = False
-                cls._last_node.bl_tween.set_color()
-
-            start_time = time()
-            while (time() - start_time) < 0.15:  # 0.15 is max timer frequency
-                node = next(cls._handler)
-
-            cls._last_node = node
-            node.bl_tween.use_custom_color = True
-            node.bl_tween.color = (0.7, 1.000000, 0.7)
-            cls._report_progress(f'Pres "ESC" to abort, updating node "{node.name}"')
-
-        except StopIteration:
-            cls.finish_task()
-
-    @classmethod
-    def debug_run_task(cls):
-        """Color updated nodes for a few second after all"""
-        try:
-            start_time = time()
-            while (time() - start_time) < 0.15:  # 0.15 is max timer frequency
-                node = next(cls._handler)
-                node.bl_tween.use_custom_color = True
-                node.bl_tween.color = (0.7, 1.000000, 0.7)
-
-            cls._last_node = node
-            cls._report_progress(f'Pres "ESC" to abort, updating node "{node.name}"')
-
-        except StopIteration:
-            if 'node' in vars():
-                return
-            from time import sleep
-            sleep(1)
-            cls.finish_task()
-
-    @classmethod
-    def cancel_task(cls):
-        try:
-            cls._handler.throw(CancelError)
-        except (StopIteration, RuntimeError):
-            pass
-        cls.finish_task()
-
-    @classmethod
-    def finish_task(cls):
-        debug(f'Global update - {int((time() - cls._start_time) * 1000)}ms')
-        cls._report_progress()
-        group_node = cls._group_nodes_path[-1]
-        group_node.node_tree.update_ui(cls._group_nodes_path)
-
-        cls._group_nodes_path, cls._handler, cls._node_tree_area, cls._last_node, cls._start_time = [None] * 5
-
-    @classmethod
-    def has_task(cls) -> bool:
-        return cls._group_nodes_path is not None
-
-    @classmethod
-    def is_running(cls) -> bool:
-        return cls._handler is not None
-
-    @classmethod
-    def _report_progress(cls, text: str = None):
-        if cls._node_tree_area:
-            cls._node_tree_area.header_text_set(text)
-
-
+# it is now inconsistent with the main tree handler module because is_updates can't be removed from here right now
+# it is used by the NodeStatuses class to keep update status of nodes
 class NodeStatistic(NamedTuple):
     """
     Statistic should be kept separately for each node
@@ -297,7 +185,7 @@ class NodeIdManager:
         for node in tree.nodes:
             node_id = cls.extract_node_id(node.bl_tween)
 
-            if cut_mk_suffix(node.bl_tween.bl_idname) not in DEBUGGER_NODES and node in input_linked_nodes:
+            if not BlNode(node.bl_tween).is_debug_node and node in input_linked_nodes:
                 node.bl_tween.n_id = path + '.' + node_id
             else:
                 node.bl_tween.n_id = node_id
@@ -312,7 +200,7 @@ class NodeIdManager:
         return node_id
 
 
-class ContextTrees:
+class GroupContextTrees(ContextTrees):
     """
     The same tree but nodes has statistic dependently on context evaluation
     For example node can has is_updated=True for tree evaluated from one group node and False for another
@@ -324,62 +212,39 @@ class ContextTrees:
     def get(cls, bl_tree: SvTree, path: Path):
         """Return caught tree with filled `is_updated` attribute according last statistic"""
         tree = cls._trees.get(bl_tree.tree_id)
+
+        # new tree, all nodes are outdated
         if tree is None:
             tree = Tree(bl_tree)
             cls._trees[bl_tree.tree_id] = tree
+
+        # topology of the tree was changed and should be updated
+        elif not tree.is_updated:
+            tree = cls._update_tree(bl_tree)
+            cls._trees[bl_tree.tree_id] = tree
+
+        # we have to always update is_updated status because the tree does not keep them properly
         for node in tree.nodes:
-            node.is_updated = NodesStatuses.get(node.bl_tween, path).is_updated  # good place to do this?
+            node.is_updated = NodesStatuses.get(node.bl_tween, path).is_updated  # fill in actual is_updated state
+
         return tree
 
     @classmethod
-    def update_tree(cls, bl_tree: SvTree):
+    def _update_tree(cls, bl_tree: SvTree):
         """
         This method will generate new tree and update 'is_input_changed' node attribute
         according topological changes relatively previous call
         """
-        cls._update_topology_status(Tree(bl_tree))
+        new_tree = Tree(bl_tree)
+
+        # update is_input_changed attribute
+        cls._update_topology_status(new_tree)
+
+        return new_tree
 
     @classmethod
-    def reset_data(cls):
-        """
-        Should be called upon loading new file, other wise it can lead to errors and even crash
-        Also according the fact that trees have links to real blender nodes
-        it is also important to call this method upon undo method otherwise errors and crashes
-        """
-        cls._trees.clear()
-
-    @classmethod
-    def _update_topology_status(cls, new_tree: Tree):
-        """Copy link node status by comparing with previous tree and save current"""
-        if new_tree.bl_tween.tree_id in cls._trees:
-            old_tree = cls._trees[new_tree.bl_tween.tree_id]
-
-            new_links = new_tree.links - old_tree.links
-            for link in new_links:
-                if link.from_node.name in old_tree.nodes:
-                    from_old_node = old_tree.nodes[link.from_node.name]
-                    from_old_socket = from_old_node.get_output_socket(link.from_socket.identifier)
-                    update_last_node = not from_old_socket.links if from_old_socket is not None else True
-                else:
-                    update_last_node = True
-
-                if update_last_node:
-                    link.from_node.is_input_changed = True
-                else:
-                    link.to_node.is_input_changed = True
-
-            removed_links = old_tree.links - new_tree.links
-            for link in removed_links:
-                if link.to_node in new_tree.nodes:
-                    new_tree.nodes[link.to_node.name].is_input_changed = True
-
-        cls._trees[new_tree.bl_tween.tree_id] = new_tree
-
-
-# also node IDs for this nodes are unchanged for now
-# todo replace by checking of OutNode mixin class
-DEBUGGER_NODES = {'SvDebugPrintNode', 'SvStethoscopeNode'}  # those nodes should not have any outputs
-# todo add list of unsupported nodes
+    def mark_nodes_outdated(cls, bl_tree, bl_nodes):
+        raise RuntimeError("Use the NodeStatuses classes instead")
 
 
 def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
@@ -387,10 +252,10 @@ def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
     # The function is growing bigger and bigger. I wish I knew how to simplify it.
     group_node = group_nodes_path[-1]
     path = NodeIdManager.generate_path(group_nodes_path)
-    tree = ContextTrees.get(group_node.node_tree, path)
+    tree = GroupContextTrees.get(group_node.node_tree, path)
     NodeIdManager.replace_nodes_id(tree, path)
 
-    out_nodes = [n for n in tree.nodes if cut_mk_suffix(n.bl_tween.bl_idname) in DEBUGGER_NODES]
+    out_nodes = [n for n in tree.nodes if BlNode(n.bl_tween).is_debug_node]
     out_nodes.extend([tree.nodes.active_output] if tree.nodes.active_output else [])
 
     input_linked_nodes = {n for n in tree.bfs_walk([tree.nodes.active_input] if tree.nodes.active_output else [])}
@@ -455,33 +320,6 @@ def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
                 output_was_changed = True
 
     return output_was_changed, node_error
-
-
-def group_global_handler() -> Generator[Node]:
-    """
-    It should find changes and update group nodes
-    After that update system of main trees should update themselves
-    meanwhile group nodes should be switched off because they already was updated
-    """
-    for bl_tree in BlTrees().sv_group_trees:
-        # for now it always update all trees todo should be optimized later (keep in mind, trees can become outdated)
-        ContextTrees.update_tree(bl_tree)
-
-    yield from global_updater()
-
-
-class CancelError(Exception):
-    """Aborting tree evaluation by user"""
-
-
-def cut_mk_suffix(name: str) -> str:
-    """SvStethoscopeNodeMK2 -> SvStethoscopeNode"""
-    id_name, _, version = name.partition('MK')
-    try:
-        int(version)
-    except ValueError:
-        return name
-    return id_name
 
 
 def group_node_updater(node: Node, group_nodes_path=None) -> Generator[Node, None, Tuple[bool, Optional[Exception]]]:
