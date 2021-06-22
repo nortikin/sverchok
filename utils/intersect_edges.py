@@ -26,14 +26,10 @@ from mathutils.geometry import (
     intersect_line_line,
     intersect_line_line_2d)
 
-from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, cross_indices_np
+from sverchok.data_structure import cross_indices_np
 from sverchok.utils.cad_module_class import CAD_ops
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.utils.geom_2d.intersections import intersect_sv_edges
 from sverchok.utils.math import np_dot
-import numpy as np
-from mathutils.geometry import intersect_line_line as LineIntersect
 
 import numpy as np
 
@@ -200,20 +196,19 @@ def intersect_edges_3d_np(verts, edges, s_epsilon, only_touching=True):
 
     seg_v = np_verts[eds2]
 
-    da = seg_v[:, 1] - seg_v[:, 0]
-    db = seg_v[:, 3] - seg_v[:, 2]
+    direc_a = seg_v[:, 1] - seg_v[:, 0]
+    direc_b = seg_v[:, 3] - seg_v[:, 2]
     dp = seg_v[:, 2] - seg_v[:, 0]
-    n = np.cross(da, db, axis=1)
-    n_magnitude = np.linalg.norm(n, axis=1)
-    non_parallel0 = n_magnitude > 0
-    n[non_parallel0] /= n_magnitude[non_parallel0, np.newaxis]
-    dist = np_dot(n[non_parallel0], dp[non_parallel0])
+    perp = np.cross(direc_a, direc_b, axis=1)
+    perp_magnitude = np.linalg.norm(perp, axis=1)
+    non_parallel = perp_magnitude > 0
+    perp[non_parallel] /= perp_magnitude[non_parallel, np.newaxis]
+    dist = np_dot(perp[non_parallel], dp[non_parallel])
     co_planar = np.abs(dist) < s_epsilon
-    # eds3 = eds2[non_parallel0][co_planar]
-    seg_v = seg_v[non_parallel0][co_planar]
+    seg_v = seg_v[non_parallel][co_planar]
     # Calculate denomitator
-    A = da[non_parallel0][co_planar]
-    B = db[non_parallel0][co_planar]
+    A = direc_a[non_parallel][co_planar]
+    B = direc_b[non_parallel][co_planar]
     magA = np.linalg.norm(A, axis=1)
     magB = np.linalg.norm(B, axis=1)
 
@@ -222,7 +217,7 @@ def intersect_edges_3d_np(verts, edges, s_epsilon, only_touching=True):
 
     cross = np.cross(_A, _B, axis=1)
     denom = np.linalg.norm(cross, axis=1)**2
-    t = dp[non_parallel0][co_planar]
+    t = dp[non_parallel][co_planar]
     detA = np.linalg.det(np.array([t.T, _B.T, cross.T]).T)
     detB = np.linalg.det(np.array([t.T, _A.T, cross.T]).T)
     t0 = detA / denom
@@ -237,17 +232,17 @@ def intersect_edges_3d_np(verts, edges, s_epsilon, only_touching=True):
 
     n_a_m = t0[valid_inter]
     n_b_m = t1[valid_inter]
-    ns = np.concatenate([[n_a_m], [n_b_m]], axis=0).T.ravel()
+    all_coefs = np.concatenate([[n_a_m], [n_b_m]], axis=0).T.ravel()
 
-    indices_m2 = indices_m[non_parallel0][co_planar][valid_inter]
+    indices_m2 = indices_m[non_parallel][co_planar][valid_inter]
     i_ravel = indices_m2.ravel()
     new_idx = np.repeat(np.arange(len(inters)) + len(np_verts), 2)
 
     new_edges = []
     for i in range(len(edges)):
-        ma = i_ravel == i
-        coef = ns[ma]
-        n_i = new_idx[ma]
+        intersect_mask = i_ravel == i
+        coef = all_coefs[intersect_mask]
+        n_i = new_idx[intersect_mask]
         iid = np.argsort(coef)
         n_i_sorted = n_i[iid]
         new_eds = np.concatenate([[np_edges[i, 0]],
@@ -365,7 +360,7 @@ def intersect_edges_2d_double_removal(verts, edges, epsilon):
                 d_to_2 = (vx - v3.to_2d()).length
 
                 new_id = len(verts_out)
-                if ((vx.x, vx.y, v1.z)) in verts_out:
+                if (vx.x, vx.y, v1.z) in verts_out:
                     new_id = verts_out.index((vx.x, vx.y, v1.z))
                 else:
                     if d_to_1 < epsilon:
@@ -387,17 +382,20 @@ def intersect_edges_2d_double_removal(verts, edges, epsilon):
     edges_out = edges_from_ed_inter_double_removal(ed_inter)
 
     return verts_out, edges_out
+
 # adapted from https://stackoverflow.com/a/3252222/16039380
 def perp(a):
     b = np.empty_like(a)
-    b[:,0] = -a[:,1]
-    b[:,1] = a[:,0]
+    b[:, 0] = -a[:,1]
+    b[:, 1] = a[:,0]
     return b
+
 def perp_single(a):
     b = np.empty_like(a)
     b[0] = -a[1]
     b[1] = a[0]
     return b
+
 def intersect_edges_2d_np(verts, edges, epsilon, only_touching=True):
     '''Brute force Numpy implementation of edges intersections'''
     indices = cross_indices_np(len(edges))
@@ -414,19 +412,19 @@ def intersect_edges_2d_np(verts, edges, epsilon, only_touching=True):
 
     seg_v = np_verts[eds2]
 
-    da = seg_v[:, 1] - seg_v[:, 0]
-    db = seg_v[:, 3] - seg_v[:, 2]
+    direc_a = seg_v[:, 1] - seg_v[:, 0]
+    direc_b = seg_v[:, 3] - seg_v[:, 2]
     dp = seg_v[:, 0] - seg_v[:, 2]
 
-    dap = perp(da)
-    denom_a = np_dot(dap, db)
-    num_a = np_dot(dap, dp )
+    perp_direc_a = perp(direc_a)
+    denom_a = np_dot(perp_direc_a, direc_b)
+    num_a = np_dot(perp_direc_a, dp )
     n_a = (num_a / denom_a.astype(float))
-    dbp = perp(db)
-    denom_b = np_dot(dbp, da)
-    num_b = np_dot(dbp, -dp )
+    perp_direc_b = perp(direc_b)
+    denom_b = np_dot(perp_direc_b, direc_a)
+    num_b = np_dot(perp_direc_b, -dp)
     n_b = (num_b / denom_b.astype(float))
-    inter = n_a[:, np.newaxis] * db + seg_v[:, 2]
+    inter = n_a[:, np.newaxis] * direc_b + seg_v[:, 2]
 
     if only_touching:
         valid_inter = np.all([n_a > -epsilon, n_a < 1+epsilon, n_b > -epsilon, n_b < 1+epsilon], axis=0)
@@ -435,7 +433,7 @@ def intersect_edges_2d_np(verts, edges, epsilon, only_touching=True):
 
     n_a_m = n_a[valid_inter]
     n_b_m = n_b[valid_inter]
-    ns = np.concatenate([[n_b_m], [n_a_m]], axis=0).T.ravel()
+    all_coefs = np.concatenate([[n_b_m], [n_a_m]], axis=0).T.ravel()
 
     indices_m2 = indices_m[valid_inter]
     i_ravel = indices_m2.ravel()
@@ -445,14 +443,14 @@ def intersect_edges_2d_np(verts, edges, epsilon, only_touching=True):
 
     new_edges = []
     for i in range(len(edges)):
-        ma = i_ravel == i
-        coef = ns[ma]
-        n_i = new_idx[ma]
+        intersect_mask = i_ravel == i
+        coef = all_coefs[intersect_mask]
+        n_i = new_idx[intersect_mask]
         iid = np.argsort(coef)
         n_i_sorted = n_i[iid]
         new_eds = np.concatenate([[np_edges[i, 0]],
                                   np.repeat(n_i_sorted, 2),
-                                  [np_edges[i,1]]]).reshape(-1,2)
+                                  [np_edges[i, 1]]]).reshape(-1, 2)
         new_edges.append(new_eds)
 
     return np.concatenate([np_verts, inters]).tolist(), np.concatenate(new_edges).tolist()
@@ -484,24 +482,24 @@ def intersect_edges_2d_np_big(verts, edges, epsilon, only_touching=True):
 
         seg_a = np_verts[edgs_i]
         direc_a = seg_a[1, :]- seg_a[0, :]
-        perp_a = perp_single(direc_a)
+        perp_direc_a = perp_single(direc_a)
 
         dp = seg_a[np.newaxis, 0, :] - seg_j[:, 0]
 
-        denom_a = np_dot(perp_a[np.newaxis, :], direc_b)
-        dbp = perp(direc_b)
-        denom_b = np_dot(dbp, direc_a[np.newaxis, :])
+        denom_a = np_dot(perp_direc_a[np.newaxis, :], direc_b)
+        perp_direc_b = perp(direc_b)
+        denom_b = np_dot(perp_direc_b, direc_a[np.newaxis, :])
         parallel_mask = np.all([denom_a != 0, denom_b != 0], axis=0)
 
         dp = dp[parallel_mask]
         denom_a = denom_a[parallel_mask]
         direc_b = direc_b[parallel_mask]
-        num_a = np_dot(perp_a[np.newaxis, :], dp)
+        num_a = np_dot(perp_direc_a[np.newaxis, :], dp)
 
         n_a = (num_a / denom_a.astype(float))
-        dbp = dbp[parallel_mask]
+        perp_direc_b = perp_direc_b[parallel_mask]
         denom_b = denom_b[parallel_mask]
-        num_b = np_dot(dbp, -dp )
+        num_b = np_dot(perp_direc_b, -dp)
         n_b = (num_b / denom_b.astype(float))
         inter = n_a[:, np.newaxis] * direc_b + seg_j[parallel_mask, 0]
         if only_touching:
@@ -521,16 +519,16 @@ def intersect_edges_2d_np_big(verts, edges, epsilon, only_touching=True):
     c_n_bs = np.concatenate(n_bs)
     c_indices_m2s = np.concatenate(indices_m2s)
     c_inters_s = np.concatenate(inters_s)
-    ns = np.concatenate([[c_n_bs], [c_n_as]], axis=0).T.ravel()
+    all_coefs = np.concatenate([[c_n_bs], [c_n_as]], axis=0).T.ravel()
     i_ravel = c_indices_m2s.ravel()
 
     new_idx = np.repeat(np.arange(len(c_inters_s)) + len(np_verts), 2)
 
     new_edges = []
     for i in range(len(edges)):
-        ma = i_ravel == i
-        coef = ns[ma]
-        n_i = new_idx[ma]
+        intersect_mask = i_ravel == i
+        coef = all_coefs[intersect_mask]
+        n_i = new_idx[intersect_mask]
         iid = np.argsort(coef)
         n_i_sorted = n_i[iid]
         new_eds = np.concatenate([[np_edges[i, 0]],
