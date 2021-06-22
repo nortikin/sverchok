@@ -516,7 +516,7 @@ def calc_mesh_normals_np(vertices,
             if get_v_normals:
                 f_normal_g, v_normals = norm_func(np_faces_g, v_pols, v_normals, non_planar, v_normal_alg)
             else:
-                f_normals = np_faces_normals(v_pols)
+                f_normal_g = np_faces_normals(v_pols)
 
             f_normals[mask, :] = f_normal_g
 
