@@ -167,7 +167,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         """
         if self.sv_animate:
             animated_nodes = (n for n in self.nodes if hasattr(n, 'is_animatable') and n.is_animatable)
-            TreeHandler.send(TreeEvent(TreeEvent.NODES_UPDATE, self, animated_nodes))
+            TreeHandler.send(TreeEvent(TreeEvent.FRAME_CHANGE, self, animated_nodes))
 
     def update_ui(self):
         """ The method get information about node statistic of last update from the handler to show in view space

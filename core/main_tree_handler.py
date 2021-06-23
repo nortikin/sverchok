@@ -38,8 +38,12 @@ class TreeHandler:
         if NodesUpdater.is_running():
             NodesUpdater.cancel_task()
 
+        # frame update
+        if event.type == TreeEvent.FRAME_CHANGE:
+            ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
+
         # mark given nodes as outdated
-        if event.type == TreeEvent.NODES_UPDATE:
+        elif event.type == TreeEvent.NODES_UPDATE:
             ContextTrees.mark_nodes_outdated(event.tree, event.updated_nodes)
 
         # it will find changes in tree topology and mark related nodes as outdated
@@ -123,18 +127,25 @@ class NodesUpdater:
     @profile(section="UPDATE")
     def run_task(cls):
         try:
-            if cls._last_node:
-                cls._last_node.bl_tween.use_custom_color = False
-                cls._last_node.bl_tween.set_color()
+            # handle un-cancellable events
+            if cls._event.type == TreeEvent.FRAME_CHANGE:
+                while True:
+                    next(cls._handler)
 
-            start_time = time()
-            while (time() - start_time) < 0.15:  # 0.15 is max timer frequency
-                node = next(cls._handler)
+            #  handler cancellable events
+            else:
+                if cls._last_node:
+                    cls._last_node.bl_tween.use_custom_color = False
+                    cls._last_node.bl_tween.set_color()
 
-            cls._last_node = node
-            node.bl_tween.use_custom_color = True
-            node.bl_tween.color = (0.7, 1.000000, 0.7)
-            cls._report_progress(f'Pres "ESC" to abort, updating node "{node.name}"')
+                start_time = time()
+                while (time() - start_time) < 0.15:  # 0.15 is max timer frequency
+                    node = next(cls._handler)
+
+                cls._last_node = node
+                node.bl_tween.use_custom_color = True
+                node.bl_tween.color = (0.7, 1.000000, 0.7)
+                cls._report_progress(f'Pres "ESC" to abort, updating node "{node.name}"')
 
         except StopIteration:
             cls.finish_task()
@@ -203,15 +214,20 @@ def global_updater(event_type: str) -> Generator[Node, None, None]:
                 trees_ui_to_update.add(area.spaces[0].path[-1].node_tree)
 
     for bl_tree in BlTrees().sv_main_trees:
+        was_changed = False
+        # update only trees which should be animated (for performance improvement in case of many trees)
+        if event_type == TreeEvent.FRAME_CHANGE:
+            if bl_tree.sv_animate:
+                was_changed = yield from tree_updater(bl_tree)
+
         # tree should be updated any way
-        if event_type == TreeEvent.FORCE_UPDATE:
+        elif event_type == TreeEvent.FORCE_UPDATE:
             was_changed = yield from tree_updater(bl_tree)
 
         # this seems the event upon some changes in the tree, skip tree if the property is switched off
-        elif not bl_tree.sv_process:
-            continue
-
-        was_changed = yield from tree_updater(bl_tree)
+        else:
+            if bl_tree.sv_process:
+                was_changed = yield from tree_updater(bl_tree)
 
         # it has sense to call this here if you press update all button or creating group tree from selected
         if was_changed:

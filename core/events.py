@@ -32,6 +32,7 @@ class TreeEvent:
     TREE_UPDATE = 'tree_update'  # some changed in a tree topology
     NODES_UPDATE = 'nodes_update'  # changes in node properties, update animated nodes
     FORCE_UPDATE = 'force_update'  # rebuild tree and reevaluate every node
+    FRAME_CHANGE = 'frame_change'  # unlike other updates this one should be un-cancellable
 
     def __init__(self, event_type: str, tree: SverchCustomTree, updated_nodes: Iterable[SvNode] = None):
         self.type = event_type
