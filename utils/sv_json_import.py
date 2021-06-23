@@ -14,7 +14,6 @@ from contextlib import contextmanager
 from typing import TYPE_CHECKING, Union, Generator, ContextManager
 
 import bpy
-from sverchok.core.update_system import build_update_list, process_tree
 from sverchok import old_nodes
 from sverchok.utils.sv_IO_panel_tools import get_file_obj_from_zip
 from sverchok.utils.logging import info, warning, getLogger, logging

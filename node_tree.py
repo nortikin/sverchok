@@ -115,7 +115,13 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         if draft_nodes:
             self.update_nodes(draft_nodes)
 
-    sv_process: BoolProperty(name="Process", default=True, description='Process layout', options=set())
+    sv_process: BoolProperty(
+        name="Process",
+        default=True,
+        description='Update upon tree and node property changes',
+        update=lambda s, c: TreeHandler.send(TreeEvent(TreeEvent.TREE_UPDATE, s)),
+        options=set(),
+    )
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout', options=set())
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng, options=set())
     sv_show_time_graph: BoolProperty(name="Time Graph", default=False, options=set())  # todo is not used now

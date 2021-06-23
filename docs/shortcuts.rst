@@ -53,10 +53,6 @@ This is a collection of shortcuts useful in the Sverchok node tree, some are Ble
 
 .. image:: https://user-images.githubusercontent.com/10011941/78453090-d4c06180-768f-11ea-8631-422fe63f994e.gif
 
-**F5** - Updates current node tree only if node-tree processing is enabled
-
-**Ctrl + F5** - Updates current node tree even if node-tree processing is disabled
-
 **Ctrl + Shift + F5** in 3D View window - Enables/Disables "Live Update" mode
 
 **F6** - Enables/Disables the processing of the current node-tree

@@ -20,8 +20,7 @@
 import bpy
 
 from sverchok.ui.development import displaying_sverchok_nodes
-from sverchok.core.update_system import process_tree, build_update_list
-from sverchok.core import main_tree_handler, group_handlers
+from sverchok.core import main_tree_handler
 
 
 class SvToggleProcess(bpy.types.Operator):
@@ -85,61 +84,6 @@ class SvToggleDraft(bpy.types.Operator):
                             region.tag_redraw()
 
 
-class SverchokUpdateContext(bpy.types.Operator):
-    """Update current Sverchok node tree"""
-    bl_idname = "node.sverchok_update_context"
-    bl_label = "Update current node tree"
-    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
-
-    @classmethod
-    def poll(cls, context):
-        return displaying_sverchok_nodes(context)
-
-    def execute(self, context):
-        try:
-            bpy.context.window.cursor_set("WAIT")
-            ng = context.space_data.node_tree
-            if ng:
-                build_update_list(ng)
-                process_tree(ng)
-        except:
-            pass
-        finally:
-            bpy.context.window.cursor_set("DEFAULT")
-
-        return {'FINISHED'}
-
-
-class SverchokUpdateContextForced(bpy.types.Operator):
-    """Update current Sverchok node tree (even if it's processing is disabled)"""
-    bl_idname = "node.sverchok_update_context_force"
-    bl_label = "Update current node tree - forced mode"
-    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
-
-    @classmethod
-    def poll(cls, context):
-        return displaying_sverchok_nodes(context)
-
-    def execute(self, context):
-        try:
-            bpy.context.window.cursor_set("WAIT")
-            ng = context.space_data.node_tree
-            if ng:
-                try:
-                    prev_process_state = ng.sv_process
-                    ng.sv_process = True
-                    build_update_list(ng)
-                    process_tree(ng)
-                finally:
-                    ng.sv_process = prev_process_state
-        except:
-            pass
-        finally:
-            bpy.context.window.cursor_set("DEFAULT")
-
-        return {'FINISHED'}
-
-
 class EnterExitGroupNodes(bpy.types.Operator):
     bl_idname = 'node.enter_exit_group_nodes'
     bl_label = "Enter exit from group nodes"
@@ -167,8 +111,6 @@ class PressingEscape(bpy.types.Operator):
     def execute(self, context):
         if main_tree_handler.NodesUpdater.is_running():
             main_tree_handler.NodesUpdater.cancel_task()
-        if group_handlers.NodesUpdater.is_running():
-            group_handlers.NodesUpdater.cancel_task()
         return {'FINISHED'}
 
     @classmethod
@@ -218,14 +160,6 @@ def add_keymap():
 
         # alt + Space  | enter extra search operator
         kmi = km.keymap_items.new('node.sv_extra_search', 'SPACE', 'PRESS', alt=True)
-        nodeview_keymaps.append((km, kmi))
-
-        # F5 | Trigger update of context node tree
-        kmi = km.keymap_items.new('node.sverchok_update_context', 'F5', 'PRESS')
-        nodeview_keymaps.append((km, kmi))
-
-        # Ctrl + F5 | Trigger update of context node tree, forced mode
-        kmi = km.keymap_items.new('node.sverchok_update_context_force', 'F5', 'PRESS', ctrl=True)
         nodeview_keymaps.append((km, kmi))
 
         # F6 | Toggle processing mode of the active node tree
@@ -295,7 +229,7 @@ def remove_keymap():
     nodeview_keymaps.clear()
 
 
-classes = [SvToggleProcess, SvToggleDraft, SverchokUpdateContext, SverchokUpdateContextForced, EnterExitGroupNodes,
+classes = [SvToggleProcess, SvToggleDraft, EnterExitGroupNodes,
            PressingEscape]
 
 
