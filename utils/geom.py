@@ -1702,6 +1702,101 @@ class Triangle(object):
         ellipse = self.steiner_circumellipse()
         return Ellipse3D(ellipse.center, ellipse.semi_major_axis / 2.0, ellipse.semi_minor_axis / 2.0)
 
+class BoundingBox(object):
+    def __init__(self, min_x=0, max_x=0, min_y=0, max_y=0, min_z=0, max_z=0):
+        self.min = np.array([min_x, min_y, min_z])
+        self.max = np.array([max_x, max_y, max_z])
+
+    @property
+    def min_x(self):
+        return self.min[0]
+
+    @property
+    def min_y(self):
+        return self.min[1]
+
+    @property
+    def min_z(self):
+        return self.min[2]
+
+    @min_x.setter
+    def min_x(self, value):
+        self.min[0] = value
+
+    @min_y.setter
+    def min_y(self, value):
+        self.min[1] = value
+
+    @min_z.setter
+    def min_z(self, value):
+        self.min[2] = value
+
+    @property
+    def max_x(self):
+        return self.max[0]
+
+    @property
+    def max_y(self):
+        return self.max[1]
+
+    @property
+    def max_z(self):
+        return self.max[2]
+
+    @max_x.setter
+    def max_x(self, value):
+        self.max[0] = value
+
+    @max_y.setter
+    def max_y(self, value):
+        self.max[1] = value
+
+    @max_z.setter
+    def max_z(self, value):
+        self.max[2] = value
+
+    @property
+    def size_x(self):
+        return self.max[0] - self.min[0]
+
+    @property
+    def size_y(self):
+        return self.max[1] - self.min[1]
+
+    @property
+    def size_z(self):
+        return self.max[2] - self.min[2]
+
+    def size(self):
+        return (self.max - self.min).max()
+
+#     def is_empty(self):
+#         return (self.min == self.max).all()
+
+#     def intersect(self, box):
+#         r = BoundingBox()
+#         box.min = np.maximum(self.min, box.min)
+#         box.max = np.minimum(self.max, box.max)
+#         return r
+
+    def intersects(self, box):
+        x = (box.min_x > self.max_x) or (box.max_x < self.min_x)
+        y = (box.min_y > self.max_y) or (box.max_y < self.min_y)
+        z = (box.min_z > self.max_z) or (box.max_z < self.min_z)
+        result = not (x or y or z)
+        #print(f"{self} x {box} => {result}")
+        return result
+
+    def __repr__(self):
+        return f"<BBox: {self.min} .. {self.max}>"
+
+def bounding_box(vectors):
+    vectors = np.asarray(vectors)
+    r = BoundingBox()
+    r.min = vectors.min(axis=0)
+    r.max = vectors.max(axis=0)
+    return r
+
 class LinearApproximationData(object):
     """
     This class contains results of linear approximation calculation.
