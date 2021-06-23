@@ -132,9 +132,6 @@ def view_node(tree):
     existing_node = nodes.active
     node_list = [existing_node]
     output_map = existing_node.viewer_map
-    
-    previous_state = tree.sv_process
-    tree.sv_process = False
 
     for node in output_map[0]:
         bl_idname_new_node, offset = node
@@ -147,8 +144,7 @@ def view_node(tree):
         output_s, input_s = link
         links.new(node_list[output_s[0]].outputs[output_s[1]],
                   node_list[input_s[0]].inputs[input_s[1]])
-    tree.sv_process = previous_state
-    tree.update()
+
 
 def add_connection(tree, bl_idname_new_node, offset):
 
@@ -188,8 +184,6 @@ def add_connection(tree, bl_idname_new_node, offset):
             # existing_node.process_node(None)
 
         elif bl_idname_new_node == 'SvViewerDrawMk4':
-            previous_state = tree.sv_process
-            tree.sv_process = False
             if 'verts' in output_map:
                 links.new(outputs[output_map['verts']], inputs[0])
                 if 'faces' in output_map:
@@ -226,8 +220,6 @@ def add_connection(tree, bl_idname_new_node, offset):
                 offset_node_location(existing_node, new_node, offset)
                 frame_adjust(existing_node, new_node)
                 links.new(outputs[output_map['solid']], new_node.inputs[0])
-            tree.sv_process = previous_state
-            tree.update()
             # existing_node.process_node(None)
 
         else:

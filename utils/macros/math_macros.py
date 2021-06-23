@@ -32,8 +32,7 @@ def math_macros(context, operator, term, nodes, links):
         operator.report({"ERROR_INVALID_INPUT"}, 'No valid nodes to use')
         return
     tree = nodes[0].id_data
-    previous_state = tree.sv_process
-    tree.sv_process = False
+
     # get bounding box of all selected nodes
     minx, maxx, miny, maxy = nodes_bounding_box(selected_nodes)
     # find out which sockets to connect
@@ -79,6 +78,3 @@ def math_macros(context, operator, term, nodes, links):
 
         # link the output math node to the ViewerDraw node
         links.new(math_node.outputs[0], viewer_node.inputs[0])
-
-    tree.sv_process = previous_state
-    tree.update()
