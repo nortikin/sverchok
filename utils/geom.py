@@ -1276,6 +1276,43 @@ class LineEquation(object):
         projections = projection_lengths * unit_direction
         return center + projections
 
+def intersect_segment_segment(v1, v2, v3, v4):
+    x1,y1,z1 = v1
+    x2,y2,z2 = v2
+    x3,y3,z3 = v3
+    x4,y4,z4 = v4
+
+    m = np.array([v2-v1, v3-v1, v4-v1])
+    if abs(np.linalg.det(m)) > 1e-6:
+        return None
+
+    denom = np.linalg.det(np.array([
+            [x1-x2, x4-x3],
+            [y1-y2, y4-y3]
+        ]))
+
+    num1 = np.linalg.det(np.array([
+            [x4-x2, x4-x3],
+            [y4-y2, y4-y3]
+        ]))
+    num2 = np.linalg.det(np.array([
+            [x1-x2, x4-x2],
+            [y1-y2, y4-y2]
+        ]))
+
+    u = num1 / denom
+    v = num2 / denom
+
+    if not ((0.0 <= u <= 1.0) and (0.0 <= v <= 1.0)):
+        return None
+
+    x = u*(x1-x2) + x2
+    y = u*(y1-y2) + y2
+    z = u*(z1-z2) + z2
+    pt = np.array([x,y,z])
+
+    return u, v, pt
+
 class LineEquation2D(object):
     def __init__(self, a, b, c):
         epsilon = 1e-8
