@@ -37,7 +37,6 @@ class TreeEvent:
         self.type = event_type
         self.tree = tree
         self.updated_nodes = updated_nodes
-        self.to_update = tree.sv_process
 
 
 class GroupEvent:
@@ -57,11 +56,11 @@ class GroupEvent:
         self.to_update = group_nodes_path[-1].is_active
 
     @property
-    def group_tree(self) -> SvGroupTree:
+    def tree(self) -> SvGroupTree:
         return self.group_node.node_tree
 
     def __repr__(self):
-        return f'{self.type.upper()} event, GROUP_NODE={self.group_node.name}, TREE={self.group_tree.name}' \
+        return f'{self.type.upper()} event, GROUP_NODE={self.group_node.name}, TREE={self.tree.name}' \
                + (f', NODES={self.updated_nodes}' if self.updated_nodes else '')
 
 

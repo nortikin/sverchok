@@ -10,11 +10,11 @@ import traceback
 from collections import defaultdict
 from functools import partial
 from time import time
-from typing import Dict, NamedTuple, Generator, Optional, Iterator, Tuple
+from typing import Dict, NamedTuple, Generator, Optional, Iterator, Tuple, Union
 
 import bpy
 from sverchok.data_structure import post_load_call
-from sverchok.core.events import TreeEvent
+from sverchok.core.events import TreeEvent, GroupEvent
 from sverchok.utils.logging import debug, catch_log_error, error, getLogger
 from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.handle_blender_data import BlTrees, BlTree
@@ -48,16 +48,14 @@ class TreeHandler:
 
         # force update
         elif event.type == TreeEvent.FORCE_UPDATE:
-            ContextTrees.mark_tree_outdated(event.tree)
-            ContextTrees.mark_nodes_outdated(event.tree, event.tree.nodes)
+            ContextTrees.reset_data(event.tree)
 
         # Unknown event
         else:
             raise TypeError(f'Detected unknown event - {event}')
 
         # Add update tusk for the tree
-        if event.to_update:
-            NodesUpdater.add_task(event.tree)
+        NodesUpdater.add_task(event)
 
     @staticmethod
     def get_error_nodes(bl_tree) -> Iterator[Optional[Exception]]:
@@ -89,7 +87,7 @@ def register_loop():
 
 class NodesUpdater:
     """It can update only one tree at a time"""
-    _bl_tree = None
+    _event: Union[TreeEvent, GroupEvent] = None
     _handler: Optional[Generator] = None
 
     _node_tree_area: Optional[bpy.types.Area] = None
@@ -98,18 +96,18 @@ class NodesUpdater:
     _start_time: float = None
 
     @classmethod
-    def add_task(cls, bl_tree):
+    def add_task(cls, event: Union[TreeEvent, GroupEvent]):
         """It can handle ony one tree at a time"""
         if cls.is_running():
-            raise RuntimeError(f"Can't update tree: {bl_tree.name}, already updating tree: {cls._bl_tree.name}")
-        cls._bl_tree = bl_tree
+            raise RuntimeError(f"Can't update tree: {event.tree.name}, already updating tree: {cls._event.tree.name}")
+        cls._event = event
 
     @classmethod
     def start_task(cls):
-        changed_tree = cls._bl_tree
+        changed_tree = cls._event.tree
         if cls.is_running():
             raise RuntimeError(f'Tree "{changed_tree.name}" already is being updated')
-        cls._handler = global_updater()
+        cls._handler = global_updater(cls._event.type)
 
         # searching appropriate area index for reporting update progress
         for area in bpy.context.screen.areas:
@@ -176,11 +174,11 @@ class NodesUpdater:
             debug(f'Global update - {int((time() - cls._start_time) * 1000)}ms')
             cls._report_progress()
         finally:
-            cls._bl_tree, cls._handler, cls._node_tree_area, cls._last_node, cls._start_time = [None] * 5
+            cls._event, cls._handler, cls._node_tree_area, cls._last_node, cls._start_time = [None] * 5
 
     @classmethod
     def has_task(cls) -> bool:
-        return cls._bl_tree is not None
+        return cls._event is not None
 
     @classmethod
     def is_running(cls) -> bool:
@@ -192,7 +190,7 @@ class NodesUpdater:
             cls._node_tree_area.header_text_set(text)
 
 
-def global_updater() -> Generator[Node, None, None]:
+def global_updater(event_type: str) -> Generator[Node, None, None]:
     """Find all Sverchok main trees and run their handlers and update their UI if necessary
     update_ui of group trees will be called only if they opened in one of tree editors
     update_ui of main trees will be called if they are opened or was changed during the update event"""
@@ -205,7 +203,12 @@ def global_updater() -> Generator[Node, None, None]:
                 trees_ui_to_update.add(area.spaces[0].path[-1].node_tree)
 
     for bl_tree in BlTrees().sv_main_trees:
-        if not bl_tree.sv_process:
+        # tree should be updated any way
+        if event_type == TreeEvent.FORCE_UPDATE:
+            was_changed = yield from tree_updater(bl_tree)
+
+        # this seems the event upon some changes in the tree, skip tree if the property is switched off
+        elif not bl_tree.sv_process:
             continue
 
         was_changed = yield from tree_updater(bl_tree)
@@ -282,6 +285,7 @@ class ContextTrees:
         """
         This method will generate new tree, copy is_updates status from previous tree
         and update 'is_input_changed' node attribute according topological changes relatively previous call
+        Two reasons why always new tree is generated - it's simpler and new tree keeps fresh references to the nodes
         """
         new_tree = Tree(bl_tree)
 
@@ -321,13 +325,17 @@ class ContextTrees:
                 tree.is_updated = False
 
     @classmethod
-    def reset_data(cls):
+    def reset_data(cls, bl_tree=None):
         """
         Should be called upon loading new file, other wise it can lead to errors and even crash
         Also according the fact that trees have links to real blender nodes
         it is also important to call this method upon undo method otherwise errors and crashes
+        Also single tre can be added, in this case only it will be deleted (it's going to be used in force update)
         """
-        cls._trees.clear()
+        if bl_tree and bl_tree.tree_id in cls._trees:
+            del cls._trees[bl_tree.tree_id]
+        else:
+            cls._trees.clear()
 
     @classmethod
     def _update_topology_status(cls, new_tree: Tree):

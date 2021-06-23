@@ -50,7 +50,7 @@ class MainHandler:
         # just replace nodes IDs and return (should be first, does not call cancel or add task) todo should it be here?
         if event.type == GroupEvent.EDIT_GROUP_NODE:
             path = NodeIdManager.generate_path(event.group_nodes_path)
-            NodeIdManager.replace_nodes_id(event.group_tree, path)
+            NodeIdManager.replace_nodes_id(event.tree, path)
             return  # there is no need in updating anything
 
         # this should be first other wise other instructions can spoil the node statistic to redraw
@@ -63,7 +63,7 @@ class MainHandler:
 
         # it will find (before the tree evaluation) changes in tree topology and mark related nodes as outdated
         elif event.type == GroupEvent.GROUP_TREE_UPDATE:
-            GroupContextTrees.mark_tree_outdated(event.group_tree)
+            GroupContextTrees.mark_tree_outdated(event.tree)
 
         elif event.type == GroupEvent.GROUP_NODE_UPDATE:
             raise TypeError(f'"Group node update" event should use update method instead of send')
@@ -74,7 +74,7 @@ class MainHandler:
 
         # Add update tusk for the tree
         if event.to_update:
-            NodesUpdater.add_task(event.group_tree)
+            NodesUpdater.add_task(event)
 
     @staticmethod
     def get_error_nodes(group_nodes_path: List[SvGroupTreeNode]) -> Iterator[Optional[Exception]]:
