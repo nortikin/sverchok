@@ -797,9 +797,21 @@ def interpolate_nurbs_curves(curves, base_vs, target_vs,
                 #metric = 'POINTS',
                 tknots = tknots,
                 implementation = implementation)
+
+    rebased_vs = np.linspace(min_v, max_v, num=len(target_vs))
+    iso_curves = [lofted.iso_curve(fixed_direction='V', param=v) for v in rebased_vs]
     # Calculate iso_curves of the lofted surface, and move them back along Z axis
-    back_vectors = np.array([(0,0,-v) for v in np.linspace(min_v, max_v, num=len(target_vs))])
-    return [lofted.iso_curve(fixed_direction='V', param=v).transform(None, back) for v, back in zip(target_vs, back_vectors)]
+    back_vectors = []
+    for v, curve in zip(rebased_vs, iso_curves):
+        min_u, max_u = curve.get_u_bounds()
+        start = curve.evaluate(min_u)
+        end = curve.evaluate(max_u)
+        pt = 0.5 * (start + end)
+        dz = pt[2]
+        back_vector = np.array([0, 0, -dz])
+        back_vectors.append(back_vector)
+
+    return [curve.transform(None, back) for curve, back in zip(iso_curves, back_vectors)]
 
 def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = 'UNIFY', metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE):
     """
@@ -831,6 +843,8 @@ def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = 'UNIFY', me
     to_loft = []
     for profile, path_point, frame in zip(profiles, path_points, frames):
         profile = profile.transform(frame, path_point)
+        #cpt = profile.evaluate(profile.get_u_bounds()[0])
+        #profile = profile.transform(None, -cpt + path_point)
         to_loft.append(profile)
 
     unified_curves, v_curves, surface = simple_loft(to_loft, degree_v = path.get_degree(),

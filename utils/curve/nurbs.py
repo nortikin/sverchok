@@ -490,7 +490,7 @@ class SvNurbsCurve(SvCurve):
         elif frame is not None and vector is None:
             fn = lambda p: frame @ p
         else:
-            fn = lambda p: frame @ p + vector
+            fn = lambda p: (frame @ p) + vector
         new_controls = np.apply_along_axis(fn, 1, self.get_control_points())
         return SvNurbsMaths.build_curve(self.get_nurbs_implementation(),
                     self.get_degree(),
