@@ -21,6 +21,7 @@ from sverchok.utils.nurbs_common import (
     )
 from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.utils.surface.algorithms import nurbs_revolution_surface
+from sverchok.utils.geom import bounding_box
 from sverchok.dependencies import geomdl
 
 if geomdl is not None:
@@ -120,6 +121,9 @@ class SvNurbsCurve(SvCurve):
             curves.append(curve)
 
         return curves
+
+    def get_bounding_box(self):
+        return bounding_box(self.get_control_points())
 
     def concatenate(self, curve2, tolerance=1e-6):
         curve1 = self
