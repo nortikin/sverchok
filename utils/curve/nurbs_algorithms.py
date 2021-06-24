@@ -164,6 +164,18 @@ def nurbs_curve_matrix(curve):
     matrix = np.stack((xx, yy, normal)).T
     return matrix
 
+def constrainedFunction(x, f, lower, upper, minIncr=0.001):
+     x = np.asarray(x)
+     lower = np.asarray(lower)
+     upper = np.asarray(upper)
+     xBorder = np.where(x<lower, lower, x)
+     xBorder = np.where(x>upper, upper, xBorder)
+     fBorder = f(xBorder)
+     distFromBorder = (np.sum(np.where(x<lower, lower-x, 0.))
+                      +np.sum(np.where(x>upper, x-upper, 0.)))
+     return (fBorder + (fBorder
+                       +np.where(fBorder>0, minIncr, -minIncr))*distFromBorder)
+
 def _check_is_line(curve, eps=0.001):
     cpts = curve.get_control_points()
     direction = cpts[-1] - cpts[0]
@@ -182,6 +194,9 @@ def _check_is_line(curve, eps=0.001):
 def _intersect_curves_equation(curve1, curve2):
     t1_min, t1_max = curve1.get_u_bounds()
     t2_min, t2_max = curve2.get_u_bounds()
+
+    lower = np.array([t1_min, t2_min])
+    upper = np.array([t1_max, t2_max])
 
     line1 = _check_is_line(curve1)
     line2 = _check_is_line(curve2)
@@ -203,53 +218,66 @@ def _intersect_curves_equation(curve1, curve2):
         p1 = curve1.evaluate(ts[0])
         p2 = curve2.evaluate(ts[1])
         r = (p2 - p1).max()
-        return np.array([r, 0.0])
+        return np.array([r, r])
+
+    def constrained_goal(ts):
+        return constrainedFunction(ts, goal, lower, upper)
 
     mid1 = (t1_min + t1_max) * 0.5
     mid2 = (t2_min + t2_max) * 0.5
 
     x0 = np.array([mid1, mid2])
 
+    #def callback(ts, rs):
+    #    print(f"=> {ts} => {rs}")
+
     #print(f"Call R: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
-    res = scipy.optimize.root(goal, x0, method='df-sane', options = dict(fatol=0.0001))
+    res = scipy.optimize.root(constrained_goal, x0, method='hybr', tol=1e-4)#, options = dict(fatol=0.0001))
     if res.success:
         t1, t2 = tuple(res.x)
+        t1 = np.clip(t1, t1_min, t1_max)
+        t2 = np.clip(t2, t2_min, t2_max)
         pt1 = curve1.evaluate(t1)
         pt2 = curve2.evaluate(t2)
+        #print(f"Found: T1 {t1}, T2 {t2}, Pt1 {pt1}, Pt2 {pt2}")
         pt = (pt1 + pt2) * 0.5
         return [(t1, t2, pt)]
     else:
-        #print(f"[{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]: {res.message}")
+        print(f"[{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]: {res.message}")
         return []
 
 def intersect_nurbs_curves(curve1, curve2):
 
-    t1_min, t1_max = curve1.get_u_bounds()
-    t2_min, t2_max = curve2.get_u_bounds()
+    bbox_tolerance = 1e-4
 
-    bbox1 = curve1.get_bounding_box()
-    bbox2 = curve2.get_bounding_box()
-    if not bbox1.intersects(bbox2):
-#         print(f"BBoxes do not intersect: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
-#         print(f"    {bbox1}")
-#         print(f"    {bbox2}")
-        return []
+    def _intersect(curve1, curve2, c1_bounds, c2_bounds):
+        t1_min, t1_max = c1_bounds
+        t2_min, t2_max = c2_bounds
 
-    THRESHOLD = 0.01
+        #print(f"check: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
 
-    if bbox1.size() < THRESHOLD and bbox2.size() < THRESHOLD:
-        return _intersect_curves_equation(curve1, curve2)
+        bbox1 = curve1.get_bounding_box().increase(bbox_tolerance)
+        bbox2 = curve2.get_bounding_box().increase(bbox_tolerance)
+        if not bbox1.intersects(bbox2):
+            return []
 
-    mid1 = (t1_min + t1_max) * 0.5
-    mid2 = (t2_min + t2_max) * 0.5
+        THRESHOLD = 0.01
 
-    c11,c12 = curve1.split_at(mid1)
-    c21,c22 = curve2.split_at(mid2)
+        if bbox1.size() < THRESHOLD and bbox2.size() < THRESHOLD:
+            return _intersect_curves_equation(curve1, curve2)
 
-    r1 = intersect_nurbs_curves(c11,c21)
-    r2 = intersect_nurbs_curves(c11,c22)
-    r3 = intersect_nurbs_curves(c12,c21)
-    r4 = intersect_nurbs_curves(c12,c22)
+        mid1 = (t1_min + t1_max) * 0.5
+        mid2 = (t2_min + t2_max) * 0.5
 
-    return r1 + r2 + r3 + r4
+        c11,c12 = curve1.split_at(mid1)
+        c21,c22 = curve2.split_at(mid2)
+
+        r1 = _intersect(c11,c21, (t1_min, mid1), (t2_min, mid2))
+        r2 = _intersect(c11,c22, (t1_min, mid1), (mid2, t2_max))
+        r3 = _intersect(c12,c21, (mid1, t1_max), (t2_min, mid2))
+        r4 = _intersect(c12,c22, (mid1, t1_max), (mid2, t2_max))
+
+        return r1 + r2 + r3 + r4
+    
+    return _intersect(curve1, curve2, curve1.get_u_bounds(), curve2.get_u_bounds())
 

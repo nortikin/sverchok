@@ -813,6 +813,37 @@ def interpolate_nurbs_curves(curves, base_vs, target_vs,
 
     return [curve.transform(None, back) for curve, back in zip(iso_curves, back_vectors)]
 
+def interpolate_nurbs_surface(degree_u, degree_v, points, metric='DISTANCE', uknots=None, vknots=None, implementation = SvNurbsSurface.NATIVE):
+    points = np.asarray(points)
+    n = len(points)
+    m = len(points[0])
+
+    if (uknots is None) != (vknots is None):
+        raise Exception("uknots and vknots must be either both provided or both omited")
+
+    if uknots is None:
+        knots = np.array([Spline.create_knots(points[i,:], metric=metric) for i in range(n)])
+        uknots = knots.mean(axis=0)
+    if vknots is None:
+        knots = np.array([Spline.create_knots(points[:,j], metric=metric) for j in range(m)])
+        vknots = knots.mean(axis=0)
+
+    knotvector_u = sv_knotvector.from_tknots(degree_u, uknots)
+    knotvector_v = sv_knotvector.from_tknots(degree_v, vknots)
+
+    u_curves = [interpolate_nurbs_curve(implementation, degree_u, points[i,:], tknots=uknots) for i in range(n)]
+    u_curves_cpts = np.array([curve.get_control_points() for curve in u_curves])
+    v_curves = [interpolate_nurbs_curve(implementation, degree_v, u_curves_cpts[:,j], tknots=vknots) for j in range(m)]
+
+    control_points = np.array([curve.get_control_points() for curve in v_curves])
+
+    surface = SvNurbsSurface.build(implementation,
+                degree_u, degree_v,
+                knotvector_u, knotvector_v,
+                control_points, weights=None)
+
+    return surface
+
 def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = 'UNIFY', metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE):
     """
     NURBS Sweep implementation.
