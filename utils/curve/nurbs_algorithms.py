@@ -228,11 +228,11 @@ def _intersect_curves_equation(curve1, curve2):
 
     x0 = np.array([mid1, mid2])
 
-    #def callback(ts, rs):
-    #    print(f"=> {ts} => {rs}")
+#     def callback(ts, rs):
+#         print(f"=> {ts} => {rs}")
 
     #print(f"Call R: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
-    res = scipy.optimize.root(constrained_goal, x0, method='hybr', tol=1e-4)#, options = dict(fatol=0.0001))
+    res = scipy.optimize.root(constrained_goal, x0, method='hybr', tol=0.001)
     if res.success:
         t1, t2 = tuple(res.x)
         t1 = np.clip(t1, t1_min, t1_max)
