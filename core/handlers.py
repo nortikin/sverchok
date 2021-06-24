@@ -82,7 +82,7 @@ def sv_handler_undo_post(scene):
     undo_handler_node_count['sv_groups'] = 0
 
     import sverchok.core.group_handlers as gh
-    gh.ContextTrees.reset_data()  # todo repeat the logic from main tree?
+    gh.GroupContextTrees.reset_data()  # todo repeat the logic from main tree?
 
     # ideally we would like to recalculate all from scratch
     # but with heavy trees user can be scared of pressing undo button
@@ -156,7 +156,7 @@ def sv_pre_load(scene):
 
     import sverchok.core.group_handlers as gh
     gh.NodesStatuses.reset_data()
-    gh.ContextTrees.reset_data()
+    gh.GroupContextTrees.reset_data()
     import sverchok.core.main_tree_handler as mh
     mh.NodesStatuses.reset_data()
     mh.ContextTrees.reset_data()
