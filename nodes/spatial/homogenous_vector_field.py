@@ -27,6 +27,58 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
+def faces_from_grid(grid, n1, n2):
+
+    grid_faces = np.zeros((n1-1, n2-1, 4), 'i' )
+    grid_faces[:, :, 0] = grid[:-1, 1:]
+    grid_faces[:, :, 1] = grid[1:, 1:]
+    grid_faces[:, :, 2] = grid[1:, :-1]
+    grid_faces[:, :, 3] = grid[:-1, :-1]
+
+    return grid_faces.reshape(-1, 4)
+
+def edges_from_grid(grid, n1, n2):
+    edg_1_dir = np.empty((n1-1, n2, 2), 'i')
+    edg_1_dir[:, :, 0] = grid[:-1, :]
+    edg_1_dir[:, :, 1] = grid[1:, :]
+
+    edg_2_dir = np.empty((n1, n2-1, 2), 'i')
+    edg_2_dir[:, :, 0] = grid[:, :-1]
+    edg_2_dir[:, :, 1] = grid[:, 1:]
+
+    edge_num = (n1-1)* (n2) + (n1)*(n2-1)
+    edges = np.empty((edge_num, 2), 'i')
+    edges[:(n1 - 1) * (n2), :] = edg_1_dir.reshape(-1, 2)
+    edges[(n1 - 1) * (n2):, :] = edg_2_dir.reshape(-1, 2)
+    return edges
+
+def field_faces(xdim, ydim, zdim, get_edges, get_faces):
+    xoz_grid = np.arange(xdim * zdim, dtype='i').reshape(xdim, zdim)
+    xoy_grid = np.arange(0, xdim * ydim * zdim, zdim, dtype='i').reshape(ydim, xdim)
+    z_range = np.arange(zdim, dtype='i')
+    yoz_grid = np.concatenate([z_range + (xdim * zdim) * i for i in range(ydim)]).reshape(ydim, zdim)
+    edges, faces = [], []
+    if get_faces:
+        xoz_faces = faces_from_grid(xoz_grid, xdim, zdim)
+        all_xoz_faces = np.concatenate([xoz_faces + (xdim * zdim) * i for i in range(ydim)])
+        xoy_faces = faces_from_grid(xoy_grid, ydim, xdim)
+        all_xoy_faces = np.concatenate([xoy_faces + i for i in range(zdim)])
+        yoz_faces = faces_from_grid(yoz_grid, ydim, zdim)
+        all_yoz_faces = np.concatenate([yoz_faces + zdim * i for i in range(xdim)])
+        faces = np.concatenate([all_xoz_faces, all_xoy_faces, all_yoz_faces]).tolist()
+
+    if get_edges:
+        xoz_edges = edges_from_grid(xoz_grid, xdim, zdim)
+        all_xoz_edges = np.concatenate([xoz_edges + (xdim * zdim) * i for i in range(ydim)])
+        xoy_edges = edges_from_grid(xoy_grid, ydim, xdim)
+        all_xoy_edges = np.concatenate([xoy_edges + i for i in range(zdim)])
+        yoz_edges = edges_from_grid(yoz_grid, ydim, zdim)
+        all_yoz_edges = np.concatenate([yoz_edges + zdim * i for i in range(xdim)])
+        edges = np.concatenate([all_xoz_edges, all_xoy_edges, all_yoz_edges]).tolist()
+
+    return edges, faces
+
+
 class SvHomogenousVectorField(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: hv 3d vector grid
@@ -71,6 +123,8 @@ class SvHomogenousVectorField(bpy.types.Node, SverchCustomTreeNode):
         snew("SvStringsSocket", "size z").prop_name = 'sizez__'
 
         self.outputs.new("SvVerticesSocket", "verts")
+        self.outputs.new("SvStringsSocket", "edges")
+        self.outputs.new("SvStringsSocket", "faces")
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
@@ -89,8 +143,10 @@ class SvHomogenousVectorField(bpy.types.Node, SverchCustomTreeNode):
         if not self.outputs[0].is_linked:
             return
         params = match_long_repeat([s.sv_get(deepcopy=False)[0] for s in self.inputs])
+        get_faces = 'faces' in self.outputs and self.outputs['faces'].is_linked
+        get_edges = 'edges' in self.outputs and self.outputs['edges'].is_linked
+        verts_out, edges_out, faces_out = [], [], []
 
-        verts = []
         for xdim, ydim, zdim, *size in zip(*params):
             hs0 = size[0] / 2
             hs1 = size[1] / 2
@@ -107,19 +163,33 @@ class SvHomogenousVectorField(bpy.types.Node, SverchCustomTreeNode):
                 np.random.seed(self.seed)
                 v_field += (np.random.normal(0, 0.5, num_items) * self.randomize_factor).reshape(3, -1).T
 
+            if get_faces or get_edges:
+                edges, faces = field_faces(xdim, ydim, zdim, get_edges, get_faces)
+            else:
+                faces, edges = [], []
             if self.rm_doubles_distance > 0.0:
-                bm = bmesh_from_pydata(v_field.tolist(), [], [])
+                bm = bmesh_from_pydata(v_field.tolist(), edges, faces)
                 bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=self.rm_doubles_distance)
                 if self.output_numpy:
-                    verts.append(np.array([v.co for v in bm.verts]))
+                    verts_out.append(np.array([v.co for v in bm.verts]))
+                    faces_out.append([[e.verts[0].index, e.verts[1].index] for e in bm.edges])
+                    edges_out.append([[i.index for i in p.verts] for p in bm.faces])
                 else:
-                    v_field, _, _ = pydata_from_bmesh(bm)
-                    verts.append(v_field)
+                    v_field, _, faces = pydata_from_bmesh(bm)
+                    faces_out.append(faces)
+                    edges_out.append(edges)
+                    verts_out.append(v_field)
             else:
-                verts.append(v_field if self.output_numpy else v_field.tolist())
+                verts_out.append(v_field if self.output_numpy else v_field.tolist())
+                edges_out.append(edges)
+                faces_out.append(faces)
 
-        if verts:
-            self.outputs['verts'].sv_set(verts)
+        if verts_out:
+            self.outputs['verts'].sv_set(verts_out)
+        if get_edges:
+            self.outputs['edges'].sv_set(edges_out)
+        if get_faces:
+            self.outputs['faces'].sv_set(faces_out)
 
 def register():
     bpy.utils.register_class(SvHomogenousVectorField)
