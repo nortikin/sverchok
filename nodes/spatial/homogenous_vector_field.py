@@ -52,7 +52,7 @@ def edges_from_grid(grid, n1, n2):
     edges[(n1 - 1) * (n2):, :] = edg_2_dir.reshape(-1, 2)
     return edges
 
-def field_faces(xdim, ydim, zdim, get_edges, get_faces):
+def field_faces_and_edges(xdim, ydim, zdim, get_edges, get_faces):
     xoz_grid = np.arange(xdim * zdim, dtype='i').reshape(xdim, zdim)
     xoy_grid = np.arange(0, xdim * ydim * zdim, zdim, dtype='i').reshape(ydim, xdim)
     z_range = np.arange(zdim, dtype='i')
@@ -164,7 +164,7 @@ class SvHomogenousVectorField(bpy.types.Node, SverchCustomTreeNode):
                 v_field += (np.random.normal(0, 0.5, num_items) * self.randomize_factor).reshape(3, -1).T
 
             if get_faces or get_edges:
-                edges, faces = field_faces(xdim, ydim, zdim, get_edges, get_faces)
+                edges, faces = field_faces_and_edges(xdim, ydim, zdim, get_edges, get_faces)
             else:
                 faces, edges = [], []
             if self.rm_doubles_distance > 0.0:
