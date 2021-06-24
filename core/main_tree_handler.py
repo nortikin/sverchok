@@ -464,5 +464,5 @@ def empty_updater(node: Node = None, **kwargs):
         node.is_input_changed = False  # if node wont be able to handle new input it will be seen in its update status
         node.is_updated = True
         node.is_output_changed = True if should_be_updated else False
-    return tuple(kwargs.values())
+    return tuple(kwargs.values()) if len(kwargs) > 1 else next(iter(kwargs.values()))
     yield
