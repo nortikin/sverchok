@@ -135,16 +135,14 @@ class NodesUpdater:
             #  handler cancellable events
             else:
                 if cls._last_node:
-                    cls._last_node.bl_tween.use_custom_color = False
-                    cls._last_node.bl_tween.set_color()
+                    cls._last_node.bl_tween.set_temp_color()
 
                 start_time = time()
                 while (time() - start_time) < 0.15:  # 0.15 is max timer frequency
                     node = next(cls._handler)
 
                 cls._last_node = node
-                node.bl_tween.use_custom_color = True
-                node.bl_tween.color = (0.7, 1.000000, 0.7)
+                node.bl_tween.set_temp_color((0.7, 1.000000, 0.7))
                 cls._report_progress(f'Pres "ESC" to abort, updating node "{node.name}"')
 
         except StopIteration:

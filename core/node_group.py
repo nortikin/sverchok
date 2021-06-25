@@ -23,7 +23,7 @@ from sverchok.utils.tree_structure import Tree, Node
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.handle_blender_data import BlNode, BlTree, BlTrees
 from sverchok.utils.logging import catch_log_error
-from sverchok.node_tree import UpdateNodes, SvNodeTreeCommon
+from sverchok.node_tree import UpdateNodes, SvNodeTreeCommon, SverchCustomTreeNode
 
 
 class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
@@ -271,8 +271,9 @@ class BaseNode:
     def copy(self, original):
         self.n_id = ''
 
-    def set_color(self):
-        self.use_custom_color = False
+    sv_default_color = SverchCustomTreeNode.sv_default_color
+
+    set_temp_color = SverchCustomTreeNode.set_temp_color
 
     @property
     def absolute_location(self):

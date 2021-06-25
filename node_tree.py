@@ -19,7 +19,6 @@ from sverchok.core.main_tree_handler import TreeHandler
 from sverchok.core.group_handlers import NodeIdManager
 from sverchok import data_structure
 from sverchok.data_structure import classproperty, post_load_call
-from sverchok.core.update_system import get_original_node_color
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.docstring import SvDocstring
@@ -171,7 +170,8 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
     def update_ui(self):
         """ The method get information about node statistic of last update from the handler to show in view space
-        Thi method is usually called by main handler to reevaluate view of the nodes in the tree"""
+        The method is usually called by main handler to reevaluate view of the nodes in the tree
+        even if the tree is not in the Live update mode"""
         nodes_errors = TreeHandler.get_error_nodes(self)
         update_time = TreeHandler.get_update_time(self) if self.sv_show_time_nodes else cycle([None])
         for node, error, update in zip(self.nodes, nodes_errors, update_time):
@@ -229,6 +229,10 @@ class UpdateNodes:
         this function is triggered upon node creation,
         - delegates further initialization information to sv_init
         """
+        if self.sv_default_color:
+            self.use_custom_color = True
+            self.color = self.sv_default_color
+
         with catch_log_error():
             self.sv_init(context)
 
@@ -251,10 +255,6 @@ class UpdateNodes:
 
     def copy(self, original):
         """Called upon the node being copied"""
-        settings = get_original_node_color(self.id_data, original.name)
-        if settings is not None:
-            self.use_custom_color, self.color = settings
-
         self.n_id = ""
         self.sv_copy(original)
 
@@ -280,14 +280,12 @@ class UpdateNodes:
 
         # update error colors
         if error is not None:
-            self.use_custom_color = True
-            self.color = no_data_color if isinstance(error, SvNoDataError) else exception_color
             color = no_data_color if isinstance(error, SvNoDataError) else exception_color
+            self.set_temp_color(color)
             sv_bgl.draw_text(self, repr(error), error_pref + node_id, color, 1.3, "UP")
         else:
             sv_bgl.callback_disable(error_pref + node_id)
-            self.use_custom_color = False
-            self.set_color()
+            self.set_temp_color()
 
         # show update timing
         if update_time is not None:
@@ -445,9 +443,28 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils):
         """
         return recursive_framed_location_finder(self, self.location[:])
 
-    def set_color(self):  # todo set_default_color ?
-        color = color_def.get_color(self.bl_idname)
-        if color:
+    @property
+    def sv_default_color(self):
+        return color_def.get_color(self.bl_idname)
+
+    def set_temp_color(self, color=None):
+        """This method memorize its initial color and override it with given one
+        if given color is None it tries to return its initial color or do nothing"""
+
+        if color is None:
+            # looks like the node should return its initial color (user choice)
+            if 'user_color' in self:
+                self.use_custom_color = self['use_user_color']
+                del self['use_user_color']
+                self.color = self['user_color']
+                del self['user_color']
+
+        # set temporary color
+        else:
+            # save overridden color (only once)
+            if 'user_color' not in self:
+                self['use_user_color'] = self.use_custom_color
+                self['user_color'] = self.color
             self.use_custom_color = True
             self.color = color
 
