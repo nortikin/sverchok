@@ -310,6 +310,7 @@ class SvNurbsCurve(SvCurve):
         raise Exception("Not implemented!")
 
     def elevate_degree(self, delta=None, target=None):
+        orig_delta, orig_target = delta, target
         if delta is None and target is None:
             delta = 1
         if delta is not None and target is not None:
@@ -331,11 +332,13 @@ class SvNurbsCurve(SvCurve):
             return SvNurbsCurve.build(self.get_nurbs_implementation(),
                     degree+delta, knotvector, control_points, weights)
         else:
+            src_t_min, src_t_max = self.get_u_bounds()
             segments = self.to_bezier_segments()
-            segments = [segment.to_nurbs().elevate_degree(delta, target) for segment in segments]
+            segments = [segment.to_nurbs().elevate_degree(orig_delta, orig_target) for segment in segments]
             result = segments[0]
             for segment in segments[1:]:
                 result = result.concatenate(segment)
+            result = result.reparametrize(src_t_min, src_t_max)
             return result
             #raise UnsupportedCurveTypeException("Degree elevation is not implemented for non-bezier curves yet")
 

@@ -1126,6 +1126,7 @@ def unify_nurbs_surfaces(surfaces):
 
         for v, diff in diffs_v:
             if diff > 0:
+                print(f"KV {surface.get_knotvector_v()}, insert {v} x {diff}")
                 surface = surface.insert_knot(SvNurbsSurface.V, v, diff)
 
         result.append(surface)
