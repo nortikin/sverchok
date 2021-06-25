@@ -127,10 +127,6 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_show_time_nodes: BoolProperty(name="Node times", default=True, options=set(), update=lambda s, c: s.update_ui())
     show_time_mode: EnumProperty(items=[(n, n, '') for n in ["Per node", "Cumulative"]], options=set())
 
-    # something related with heat map feature
-    # looks like it keeps dictionary of nodes and their user defined colors in string format
-    sv_user_colors: StringProperty(default="")
-
     sv_show_socket_menus: BoolProperty(
         name = "Show socket menus",
         description = "Display socket dropdown menu buttons. NOTE: options that are enabled in those menus will be effective regardless of this checkbox!",

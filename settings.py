@@ -175,9 +175,6 @@ class SverchokPreferences(AddonPreferences):
     def update_debug_mode(self, context):
         data_structure.DEBUG_MODE = self.show_debug
 
-    def update_heat_map(self, context):
-        data_structure.heat_map_state(self.heat_map)
-
     def set_frame_change(self, context):
         handlers.set_frame_change(self.frame_change_mode)
 
@@ -212,23 +209,6 @@ class SverchokPreferences(AddonPreferences):
         size=3, min=0.0, max=1.0,
         default=(0.8, 0.0, 0), subtype='COLOR',
     )
-
-    #  heat map settings
-    heat_map: BoolProperty(
-        name="Heat map",
-        description="Color nodes according to time",
-        default=False, subtype='NONE',
-        update=update_heat_map)
-
-    heat_map_hot: FloatVectorProperty(
-        name="Heat map hot", description='',
-        size=3, min=0.0, max=1.0,
-        default=(.8, 0, 0), subtype='COLOR')
-
-    heat_map_cold: FloatVectorProperty(
-        name="Heat map cold", description='',
-        size=3, min=0.0, max=1.0,
-        default=(1, 1, 1), subtype='COLOR')
 
     # Profiling settings
     profiling_sections = [
@@ -468,7 +448,6 @@ class SverchokPreferences(AddonPreferences):
         col2box = col2.box()
         col2box.label(text="Debug:")
         col2box.prop(self, "show_debug")
-        col2box.prop(self, "heat_map")
         col2box.prop(self, "developer_mode")
 
         log_box = col2.box()
@@ -542,11 +521,6 @@ class SverchokPreferences(AddonPreferences):
         row_x1.prop(self, "no_data_color", text='')
 
         col_x2 = split_extra_colors.split().column()
-        col_x2.label(text="Heat map colors: ( hot / cold )")
-        row_x2 = col_x2.row()
-        row_x2.active = self.heat_map
-        row_x2.prop(self, "heat_map_hot", text='')
-        row_x2.prop(self, "heat_map_cold", text='')
 
         col3 = right_split.column()
         col3.label(text='Theme:')

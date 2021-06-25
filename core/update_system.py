@@ -21,7 +21,6 @@ import time
 from itertools import chain
 
 import bpy
-from mathutils import Vector
 
 from sverchok import data_structure
 from sverchok.core.socket_data import SvNoDataError
@@ -250,47 +249,6 @@ def make_tree_from_nodes(node_names, tree, down=True):
 # should add a check do find animated or driven nodes.
 # needs some updates
 
-def make_animation_tree(node_types, node_list, tree_name):
-    """
-    Create update list for specific purposes depending on which nodes are dynamic
-    node_types
-    """
-    global update_cache
-    ng = bpy.data.node_groups[tree_name]
-    node_set = set(node_list)
-    for n_t in node_types:
-        node_set = node_set | {name for name, node in ng.nodes.items() if node.bl_idname == n_t}
-    a_tree = make_tree_from_nodes(list(node_set), tree_name)
-    return a_tree
-
-
-def do_update_heat_map(node_list, nodes):
-    """
-    Create a heat map for the node tree,
-    Needs development.
-    """
-    if not nodes.id_data.sv_user_colors:
-        color_data = {node.name: (node.color[:], node.use_custom_color) for node in nodes}
-        nodes.id_data.sv_user_colors = str(color_data)
-
-    times = do_update_general(node_list, nodes)
-    if not times:
-        return
-    t_max = max(times)
-    addon_name = data_structure.SVERCHOK_NAME
-    addon = bpy.context.preferences.addons.get(addon_name)
-    if addon:
-        # to use Vector.lerp
-        cold = Vector(addon.preferences.heat_map_cold)
-        hot = addon.preferences.heat_map_hot
-    else:
-        error("Cannot find preferences")
-        cold = Vector((1, 1, 1))
-        hot = (.8, 0, 0)
-    for name, t in zip(node_list, times):
-        nodes[name].use_custom_color = True
-        # linear scale.
-        nodes[name].color = cold.lerp(hot, t / t_max)
 
 def update_error_nodes(ng, name, err=Exception):
     if "error nodes" in ng:
@@ -310,11 +268,6 @@ def update_error_nodes(ng, name, err=Exception):
         node.color = exception_color
     node.use_custom_color=True
 
-def get_original_node_color(ng, name):
-    if "error nodes" in ng:
-        error_nodes = ast.literal_eval(ng["error nodes"])
-        return error_nodes.get(name, None)
-    return None
 
 def reset_error_node(ng, name):
     node = ng.nodes.get(name)
@@ -325,17 +278,6 @@ def reset_error_node(ng, name):
                 node.use_custom_color, node.color = error_nodes[name]
                 del error_nodes[name]
             ng["error nodes"] = str(error_nodes)
-
-def reset_error_some_nodes(ng, names):
-    if "error nodes" in ng:
-        error_nodes = ast.literal_eval(ng["error nodes"])
-        for name in names:
-            node = ng.nodes.get(name)
-            if node:
-                if name in error_nodes:
-                    node.use_custom_color, node.color = error_nodes[name]
-                    del error_nodes[name]
-        ng["error nodes"] = str(error_nodes)
 
 def reset_error_nodes(ng):
     if "error nodes" in ng:
@@ -397,10 +339,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
 
 
 def do_update(node_list, nodes):
-    if data_structure.HEAT_MAP:
-        do_update_heat_map(node_list, nodes)
-    else:
-        do_update_general(node_list, nodes)
+    do_update_general(node_list, nodes)
 
 def build_update_list(ng=None):
     """
@@ -423,69 +362,6 @@ def build_update_list(ng=None):
         partial_update_cache[ng.name] = {}
         # reset_socket_cache(ng)
 
-
-def process_to_node(node):
-    """
-    Process nodes upstream until node
-    """
-    ng = node.id_data
-    reset_timing_graphs()
-    reset_error_nodes(ng)
-
-    if data_structure.RELOAD_EVENT:
-        reload_sverchok()
-        return
-
-    update_list = make_tree_from_nodes([node.name], ng, down=False)
-    do_update(update_list, ng.nodes)
-
-
-def process_from_nodes(nodes):
-
-    if not nodes:
-        return
-
-    node_names = []
-    for node in nodes:
-        if hasattr(node, "name"):
-            node_names.append(node.name)
-        else:
-            print("Something not very important happend in Blender memory", node, type(node))
-
-    ng = nodes[0].id_data
-    update_list = make_tree_from_nodes(node_names, ng)
-    reset_error_some_nodes(ng, update_list)
-    do_update(update_list, ng.nodes)
-
-
-def process_from_node(node):
-    """
-    Process downstream from a given node
-    """
-    global update_cache
-    global partial_update_cache
-
-    ng = node.id_data
-    reset_timing_graphs()
-    reset_error_nodes(ng)
-
-    if data_structure.RELOAD_EVENT:
-        reload_sverchok()
-        return
-    if update_cache.get(ng.name):
-        p_u_c = partial_update_cache.get(ng.name)
-        update_list = None
-        if p_u_c:
-            update_list = p_u_c.get(node.name)
-        if not update_list:
-            update_list = make_tree_from_nodes([node.name], ng)
-            partial_update_cache[ng.name][node.name] = update_list
-        nodes = ng.nodes
-        if not ng.sv_process:
-            return
-        do_update(update_list, nodes)
-    else:
-        process_tree(ng)
 
 def sverchok_trees():
     for ng in bpy.data.node_groups:
@@ -521,17 +397,6 @@ def reload_sverchok():
     handlers.sv_post_load([])
     reset_timing_graphs()
 
-
-def get_update_lists(ng):
-    """
-    Make update list available in blender console.
-    See the function with the same name in node_tree.py
-    """
-    global update_cache
-    global partial_update_cache
-    if not ng.name in update_cache:
-        build_update_list(ng)
-    return (update_cache.get(ng.name), partial_update_cache.get(ng.name))
 
 def register():
     addon_name = sverchok.__name__

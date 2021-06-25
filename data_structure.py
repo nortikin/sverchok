@@ -15,12 +15,12 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+
 from contextlib import contextmanager
 from collections import defaultdict
 from functools import wraps
 from math import radians, ceil
 import itertools
-import ast
 import copy
 from itertools import zip_longest, chain, cycle, islice
 import bpy
@@ -36,10 +36,9 @@ from numpy import (
     tile as np_tile,
     float64,
     int32, int64)
-from sverchok.utils.logging import info, debug
+from sverchok.utils.logging import debug
 
 DEBUG_MODE = False
-HEAT_MAP = False
 RELOAD_EVENT = False
 
 # this is set correctly later.
@@ -1193,47 +1192,15 @@ def setup_init():
     setup variables needed for sverchok to function
     """
     global DEBUG_MODE
-    global HEAT_MAP
     global SVERCHOK_NAME
     import sverchok
     SVERCHOK_NAME = sverchok.__name__
     addon = bpy.context.preferences.addons.get(SVERCHOK_NAME)
     if addon:
         DEBUG_MODE = addon.preferences.show_debug
-        HEAT_MAP = addon.preferences.heat_map
     else:
         print("Setup of preferences failed")
 
-
-#####################################################
-###############  heat map system     ################
-#####################################################
-
-
-def heat_map_state(state):
-    """
-    colors the nodes based on execution time
-    """
-    global HEAT_MAP
-    HEAT_MAP = state
-    sv_ng = [ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchCustomTreeType']
-    if state:
-        for ng in sv_ng:
-            color_data = {node.name: (node.color[:], node.use_custom_color) for node in ng.nodes}
-            if not ng.sv_user_colors:
-                ng.sv_user_colors = str(color_data)
-    else:
-        for ng in sv_ng:
-            if not ng.sv_user_colors:
-                print("{0} has no colors".format(ng.name))
-                continue
-            color_data = ast.literal_eval(ng.sv_user_colors)
-            for name, node in ng.nodes.items():
-                if name in color_data:
-                    color, use = color_data[name]
-                    setattr(node, 'color', color)
-                    setattr(node, 'use_custom_color', use)
-            ng.sv_user_colors = ""
 
 #####################################################
 ############### update system magic! ################
