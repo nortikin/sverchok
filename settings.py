@@ -8,7 +8,6 @@ from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty, IntProper
 from sverchok.dependencies import sv_dependencies, pip, ensurepip, draw_message, get_icon
 from sverchok import data_structure
 from sverchok.core import handlers
-from sverchok.core import update_system
 from sverchok.utils import logging
 from sverchok.utils.sv_gist_tools import TOKEN_HELP_URL
 from sverchok.utils.sv_extra_addons import draw_extra_addons
@@ -206,13 +205,13 @@ class SverchokPreferences(AddonPreferences):
         name="No data", description='When a node can not get data',
         size=3, min=0.0, max=1.0,
         default=(1, 0.3, 0), subtype='COLOR',
-        update=update_system.update_error_colors)
+    )
 
     exception_color: FloatVectorProperty(
         name="Error", description='When node has an exception',
         size=3, min=0.0, max=1.0,
         default=(0.8, 0.0, 0), subtype='COLOR',
-        update=update_system.update_error_colors)
+    )
 
     #  heat map settings
     heat_map: BoolProperty(

@@ -271,8 +271,9 @@ class UpdateNodes:
     def update_ui(self, error=None, update_time=None, node_id=None):
         """updating tree contextual information -> node colors, text
         node_id only for usage of a group tree"""
-        exception_color = (0.8, 0.0, 0)  # todo take from preferences
-        no_data_color = (1, 0.3, 0)
+        sv_settings = bpy.context.preferences.addons[sverchok.__name__].preferences
+        exception_color = sv_settings.exception_color
+        no_data_color = sv_settings.no_data_color
         error_pref = "error"
         update_pref = "update_time"
         node_id = node_id or self.node_id  # inevitable evil

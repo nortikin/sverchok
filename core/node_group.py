@@ -217,8 +217,6 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
         nodes_errors = self.handler.get_error_nodes(group_nodes_path)
         to_show_update_time = group_nodes_path[0].id_data.sv_show_time_nodes
         update_time = self.handler.get_nodes_update_time(group_nodes_path) if to_show_update_time else cycle([None])
-        exception_color = (0.8, 0.0, 0)  # todo get from preferences
-        no_data_color = (1, 0.3, 0)
         for node, error, update in zip(self.nodes, nodes_errors, update_time):
             if hasattr(node, 'update_ui'):
                 node.update_ui(error, update, NodeIdManager.extract_node_id(node))
