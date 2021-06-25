@@ -331,7 +331,13 @@ class SvNurbsCurve(SvCurve):
             return SvNurbsCurve.build(self.get_nurbs_implementation(),
                     degree+delta, knotvector, control_points, weights)
         else:
-            raise UnsupportedCurveTypeException("Degree elevation is not implemented for non-bezier curves yet")
+            segments = self.to_bezier_segments()
+            segments = [segment.to_nurbs().elevate_degree(delta, target) for segment in segments]
+            result = segments[0]
+            for segment in segments[1:]:
+                result = result.concatenate(segment)
+            return result
+            #raise UnsupportedCurveTypeException("Degree elevation is not implemented for non-bezier curves yet")
 
     def reparametrize(self, new_t_min, new_t_max):
         kv = self.get_knotvector()
@@ -567,11 +573,11 @@ class SvGeomdlCurve(SvNurbsCurve):
     def get_nurbs_implementation(cls):
         return SvNurbsCurve.GEOMDL
 
-    def is_rational(self):
+    def is_rational(self, tolerance=1e-4):
         if self.curve.weights is None:
             return False
         w, W = min(self.curve.weights), max(self.curve.weights)
-        return w < W
+        return (W - w) > tolerance
 
     def get_control_points(self):
         return np.array(self.curve.ctrlpts)
@@ -680,9 +686,9 @@ class SvNativeNurbsCurve(SvNurbsCurve):
     def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
         return SvNativeNurbsCurve(degree, knotvector, control_points, weights, normalize_knots)
 
-    def is_rational(self):
+    def is_rational(self, tolerance=1e-6):
         w, W = self.weights.min(), self.weights.max()
-        return w < W
+        return (W - w) > tolerance
 
     def get_control_points(self):
         return self.control_points

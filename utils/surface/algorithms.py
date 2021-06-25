@@ -1081,6 +1081,7 @@ def unify_nurbs_surfaces(surfaces):
 
     degree_u = max(degrees_u)
     degree_v = max(degrees_v)
+    print(f"Elevate everything to {degree_u}x{degree_v}")
 
     surfaces = [surface.elevate_degree(SvNurbsSurface.U, target=degree_u) for surface in surfaces]
     surfaces = [surface.elevate_degree(SvNurbsSurface.V, target=degree_v) for surface in surfaces]

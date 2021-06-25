@@ -39,6 +39,9 @@ def gordon_surface_impl(u_curves, v_curves, intersections, degree_u=None, degree
 
     interpolated = interpolate_nurbs_surface(degree_u, degree_v, intersections, uknots=u_knots, vknots=v_knots)
     interpolated = interpolated.swap_uv()
+    print(f"Loft.U: {lofted_u.get_degree_u()}x{lofted_u.get_degree_v()}")
+    print(f"Loft.V: {lofted_v.get_degree_u()}x{lofted_v.get_degree_v()}")
+    print(f"Interp: {interpolated.get_degree_u()}x{interpolated.get_degree_v()}")
 
     lofted_u, lofted_v, interpolated = unify_nurbs_surfaces([lofted_u, lofted_v, interpolated])
 
