@@ -1081,7 +1081,7 @@ def unify_nurbs_surfaces(surfaces):
 
     degree_u = max(degrees_u)
     degree_v = max(degrees_v)
-    print(f"Elevate everything to {degree_u}x{degree_v}")
+    #print(f"Elevate everything to {degree_u}x{degree_v}")
 
     surfaces = [surface.elevate_degree(SvNurbsSurface.U, target=degree_u) for surface in surfaces]
     surfaces = [surface.elevate_degree(SvNurbsSurface.V, target=degree_v) for surface in surfaces]
@@ -1126,7 +1126,6 @@ def unify_nurbs_surfaces(surfaces):
 
         for v, diff in diffs_v:
             if diff > 0:
-                print(f"KV {surface.get_knotvector_v()}, insert {v} x {diff}")
                 surface = surface.insert_knot(SvNurbsSurface.V, v, diff)
 
         result.append(surface)

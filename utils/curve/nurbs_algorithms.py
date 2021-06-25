@@ -8,6 +8,9 @@
 import numpy as np
 from collections import defaultdict
 
+from mathutils import Vector
+import mathutils.geometry
+
 from sverchok.utils.geom import Spline, linear_approximation, intersect_segment_segment
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector
@@ -191,6 +194,14 @@ def _check_is_line(curve, eps=0.001):
 
     return (cpts[0], cpts[-1])
 
+def intersect_segment_segment_mu(v1, v2, v3, v4):
+    tolerance = 1e-3
+    r1, r2 = mathutils.geometry.intersect_line_line(v1, v2, v3, v4)
+    if (r1 - r2).length < tolerance:
+        v = 0.5 * (r1 + r2)
+        return np.array(v)
+    return None
+
 def _intersect_curves_equation(curve1, curve2):
     t1_min, t1_max = curve1.get_u_bounds()
     t2_min, t2_max = curve2.get_u_bounds()
@@ -207,6 +218,7 @@ def _intersect_curves_equation(curve1, curve2):
         #print(f"Call L: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
         r = intersect_segment_segment(v1, v2, v3, v4)
         if not r:
+            #print(f"({v1} - {v2}) x ({v3} - {v4}): no intersection")
             return []
         else:
             u, v, pt = r
@@ -263,7 +275,8 @@ def intersect_nurbs_curves(curve1, curve2):
 
         THRESHOLD = 0.01
 
-        if bbox1.size() < THRESHOLD and bbox2.size() < THRESHOLD:
+        #if bbox1.size() < THRESHOLD and bbox2.size() < THRESHOLD:
+        if _check_is_line(curve1) and _check_is_line(curve2):
             return _intersect_curves_equation(curve1, curve2)
 
         mid1 = (t1_min + t1_max) * 0.5

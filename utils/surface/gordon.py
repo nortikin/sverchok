@@ -22,8 +22,8 @@ def gordon_surface_impl(u_curves, v_curves, intersections, degree_u=None, degree
     if degree_v is None:
         degree_v = v_curves[0].get_degree()
 
-    u_curves = [c.reparametrize(0.0, 1.0) for c in u_curves]
-    v_curves = [c.reparametrize(0.0, 1.0) for c in v_curves]
+    #u_curves = [c.reparametrize(0.0, 1.0) for c in u_curves]
+    #v_curves = [c.reparametrize(0.0, 1.0) for c in v_curves]
 
     intersections = np.asarray(intersections)
 
@@ -36,11 +36,15 @@ def gordon_surface_impl(u_curves, v_curves, intersections, degree_u=None, degree
     knots = np.array([Spline.create_knots(intersections[:,j], metric=metric) for j in range(m)])
     v_knots = knots.mean(axis=0)
 
-    _,_,lofted_v = simple_loft(u_curves, degree_v=degree_v, tknots=u_knots)
-    _,_,lofted_u = simple_loft(v_curves, degree_v=degree_u, tknots=v_knots)
+    _,_,lofted_v = simple_loft(u_curves, degree_v=degree_u, tknots=u_knots)
+    _,_,lofted_u = simple_loft(v_curves, degree_v=degree_v, tknots=v_knots)
     lofted_u = lofted_u.swap_uv()
 
-    interpolated = interpolate_nurbs_surface(degree_u, degree_v, intersections, uknots=u_knots, vknots=v_knots)
+#     int_degree_u = lofted_u.get_degree_v()
+#     int_degree_v = lofted_v.get_degree_u()
+    int_degree_u = m-1
+    int_degree_v = n-1
+    interpolated = interpolate_nurbs_surface(int_degree_u, int_degree_v, intersections, uknots=u_knots, vknots=v_knots)
     interpolated = interpolated.swap_uv()
     print(f"Loft.U: {lofted_u.get_degree_u()}x{lofted_u.get_degree_v()}")
     print(f"        {lofted_u.get_knotvector_u()}")

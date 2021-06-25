@@ -1276,7 +1276,7 @@ class LineEquation(object):
         projections = projection_lengths * unit_direction
         return center + projections
 
-def intersect_segment_segment(v1, v2, v3, v4, tolerance=1e-6):
+def intersect_segment_segment(v1, v2, v3, v4, endpoint_tolerance=1e-3):
     x1,y1,z1 = v1
     x2,y2,z2 = v2
     x3,y3,z3 = v3
@@ -1303,7 +1303,8 @@ def intersect_segment_segment(v1, v2, v3, v4, tolerance=1e-6):
     u = num1 / denom
     v = num2 / denom
 
-    if not ((0.0-tolerance <= u <= 1.0+tolerance) and (0.0-tolerance <= v <= 1.0+tolerance)):
+    et = endpoint_tolerance
+    if not ((0.0-et <= u <= 1.0+et) and (0.0-et <= v <= 1.0+et)):
         return None
 
     x = u*(x1-x2) + x2
