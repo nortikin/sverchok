@@ -25,7 +25,10 @@ from sverchok.utils.bvh_tree import bvh_tree_from_polygons
 # airlifted from Kosvor's Raycast nodes..
 
 class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' svmesh to Raycast '''
+    """
+    Triggers: Raycast on Mesh
+    Tooltip: Cast rays from arbitrary points on to a mesh a determine hiting location, normal at hitpoint, ray legngth and index of the hitted face.
+    """
     bl_idname = 'SvRaycasterLiteNode'
     bl_label = 'Raycaster'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -69,7 +72,8 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         L, N, I, D, S = self.outputs
         RL = []
-
+        if not any([s.is_linked for s in self.outputs]):
+            return
         vert_in, face_in, start_in, direction_in = C([sock.sv_get(deepcopy=False) for sock in self.inputs])
 
         for bvh, st, di in zip(*[self.svmesh_to_bvh_lists(vert_in, face_in, self.all_triangles, self.safe_check), start_in, direction_in]):
