@@ -19,7 +19,7 @@
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, match_long_cycle as C)
-from mathutils.bvhtree import BVHTree
+from sverchok.utils.bvh_tree import bvh_tree_from_polygons
 
 # zeffii 2017 8 okt
 # airlifted from Kosvor's Raycast nodes..
@@ -33,7 +33,19 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
 
     start: bpy.props.FloatVectorProperty(default=(0,0,0), size=3, update=updateNode)
     direction: bpy.props.FloatVectorProperty(default=(0,0,-1), size=3, update=updateNode)
+    all_triangles: bpy.props.BoolProperty(
+        name='All Triangles',
+        description='Enable to improve node performance if all inputted polygons are triangles',
+        default=False,
+        update=updateNode)
+    safe_check: bpy.props.BoolProperty(
+        name='Safe Check',
+        description='When disabled polygon indices refering to unexisting points will crash Blender but makes node faster',
+        default=True)
 
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'all_triangles')
+        layout.prop(self, 'safe_check')
     def sv_init(self, context):
         si = self.inputs.new
         so = self.outputs.new
@@ -50,17 +62,17 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
         so('SvStringsSocket', 'Success')
 
     @staticmethod
-    def svmesh_to_bvh_lists(v, f):
+    def svmesh_to_bvh_lists(v, f, all_tris, safe_check):
         for vertices, polygons in zip(*C([v, f])):
-            yield BVHTree.FromPolygons(vertices, polygons, all_triangles=False, epsilon=0.0)
+            yield bvh_tree_from_polygons(vertices, polygons, all_triangles=all_tris, epsilon=0.0, safe_check=safe_check)
 
     def process(self):
         L, N, I, D, S = self.outputs
         RL = []
 
-        vert_in, face_in, start_in, direction_in = C([sock.sv_get() for sock in self.inputs])
+        vert_in, face_in, start_in, direction_in = C([sock.sv_get(deepcopy=False) for sock in self.inputs])
 
-        for bvh, st, di in zip(*[self.svmesh_to_bvh_lists(vert_in, face_in), start_in, direction_in]):
+        for bvh, st, di in zip(*[self.svmesh_to_bvh_lists(vert_in, face_in, self.all_triangles, self.safe_check), start_in, direction_in]):
             st, di = C([st, di])
             RL.append([bvh.ray_cast(i, i2) for i, i2 in zip(st, di)])
 
