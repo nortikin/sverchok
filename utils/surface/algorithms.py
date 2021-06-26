@@ -1073,7 +1073,7 @@ def nurbs_revolution_surface(curve, origin, axis, v_min=0, v_max=2*pi, global_or
             curve.get_knotvector(), circle_knotvector,
             control_points, weights)
 
-def unify_nurbs_surfaces(surfaces):
+def unify_nurbs_surfaces(surfaces, knots_method = 'UNIFY'):
     # Unify surface degrees
 
     degrees_u = [surface.get_degree_u() for surface in surfaces]
@@ -1088,47 +1088,78 @@ def unify_nurbs_surfaces(surfaces):
 
     # Unify surface knotvectors
 
-    dst_knots_u = defaultdict(int)
-    dst_knots_v = defaultdict(int)
-    for surface in surfaces:
-        m_u = sv_knotvector.to_multiplicity(surface.get_knotvector_u())
-        m_v = sv_knotvector.to_multiplicity(surface.get_knotvector_v())
+    if knots_method == 'UNIFY':
+        dst_knots_u = defaultdict(int)
+        dst_knots_v = defaultdict(int)
+        for surface in surfaces:
+            m_u = sv_knotvector.to_multiplicity(surface.get_knotvector_u())
+            m_v = sv_knotvector.to_multiplicity(surface.get_knotvector_v())
 
-        for u, count in m_u:
-            u = round(u, 6)
-            dst_knots_u[u] = max(dst_knots_u[u], count)
+            for u, count in m_u:
+                u = round(u, 6)
+                dst_knots_u[u] = max(dst_knots_u[u], count)
 
-        for v, count in m_v:
-            v = round(v, 6)
-            dst_knots_v[v] = max(dst_knots_v[v], count)
+            for v, count in m_v:
+                v = round(v, 6)
+                dst_knots_v[v] = max(dst_knots_v[v], count)
 
-    result = []
-    for surface in surfaces:
-        diffs_u = []
-        kv_u = np.round(surface.get_knotvector_u(), 6)
-        ms_u = dict(sv_knotvector.to_multiplicity(kv_u))
-        for dst_u, dst_multiplicity in dst_knots_u.items():
-            src_multiplicity = ms_u.get(dst_u, 0)
-            diff = dst_multiplicity - src_multiplicity
-            diffs_u.append((dst_u, diff))
+        result = []
+        for surface in surfaces:
+            diffs_u = []
+            kv_u = np.round(surface.get_knotvector_u(), 6)
+            ms_u = dict(sv_knotvector.to_multiplicity(kv_u))
+            for dst_u, dst_multiplicity in dst_knots_u.items():
+                src_multiplicity = ms_u.get(dst_u, 0)
+                diff = dst_multiplicity - src_multiplicity
+                diffs_u.append((dst_u, diff))
 
-        for u, diff in diffs_u:
-            if diff > 0:
-                surface = surface.insert_knot(SvNurbsSurface.U, u, diff)
+            for u, diff in diffs_u:
+                if diff > 0:
+                    surface = surface.insert_knot(SvNurbsSurface.U, u, diff)
 
-        diffs_v = []
-        kv_v = np.round(surface.get_knotvector_v(), 6)
-        ms_v = dict(sv_knotvector.to_multiplicity(kv_v))
-        for dst_v, dst_multiplicity in dst_knots_v.items():
-            src_multiplicity = ms_v.get(dst_v, 0)
-            diff = dst_multiplicity - src_multiplicity
-            diffs_v.append((dst_v, diff))
+            diffs_v = []
+            kv_v = np.round(surface.get_knotvector_v(), 6)
+            ms_v = dict(sv_knotvector.to_multiplicity(kv_v))
+            for dst_v, dst_multiplicity in dst_knots_v.items():
+                src_multiplicity = ms_v.get(dst_v, 0)
+                diff = dst_multiplicity - src_multiplicity
+                diffs_v.append((dst_v, diff))
 
-        for v, diff in diffs_v:
-            if diff > 0:
-                surface = surface.insert_knot(SvNurbsSurface.V, v, diff)
+            for v, diff in diffs_v:
+                if diff > 0:
+                    surface = surface.insert_knot(SvNurbsSurface.V, v, diff)
 
-        result.append(surface)
+            result.append(surface)
 
-    return result
+        return result
+
+    elif knots_method == 'AVERAGE':
+        kvs = [len(surface.get_control_points()) for surface in surfaces]
+        max_kv, min_kv = max(kvs), min(kvs)
+        if max_kv != min_kv:
+            raise Exception(f"U knotvector averaging is not applicable: Surfaces have different number of control points: {kvs}")
+
+        kvs = [len(surface.get_control_points()[0]) for surface in surfaces]
+        max_kv, min_kv = max(kvs), min(kvs)
+        if max_kv != min_kv:
+            raise Exception(f"V knotvector averaging is not applicable: Surfaces have different number of control points: {kvs}")
+
+
+        knotvectors = np.array([surface.get_knotvector_u() for surface in surfaces])
+        knotvector_u = knotvectors.mean(axis=0)
+
+        knotvectors = np.array([surface.get_knotvector_v() for surface in surfaces])
+        knotvector_u = knotvectors.mean(axis=0)
+
+        result = []
+        for surface in surfaces:
+            surface = SvNurbsSurface.build(surface.get_nurbs_implementation(),
+                    surface.get_degree_u(), surface.get_degree_v(),
+                    knotvector_u, knotvector_v,
+                    surface.get_control_points(),
+                    surface.get_weights())
+            result.append(surface)
+        return result
+    else:
+        raise Exception('Unsupported knotvector unification method')
 

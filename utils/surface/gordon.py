@@ -15,12 +15,7 @@ from sverchok.utils.surface.nurbs import SvNurbsSurface, simple_loft, interpolat
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
 from sverchok.data_structure import repeat_last_for_length
 
-def gordon_surface_impl(u_curves, v_curves, intersections, degree_u=None, degree_v=None, metric='DISTANCE'):
-    if degree_u is None:
-        degree_u = u_curves[0].get_degree()
-
-    if degree_v is None:
-        degree_v = v_curves[0].get_degree()
+def gordon_surface_impl(u_curves, v_curves, intersections, metric='DISTANCE'):
 
     #u_curves = [c.reparametrize(0.0, 1.0) for c in u_curves]
     #v_curves = [c.reparametrize(0.0, 1.0) for c in v_curves]
@@ -36,25 +31,22 @@ def gordon_surface_impl(u_curves, v_curves, intersections, degree_u=None, degree
     knots = np.array([Spline.create_knots(intersections[:,j], metric=metric) for j in range(m)])
     v_knots = knots.mean(axis=0)
 
-    _,_,lofted_v = simple_loft(u_curves, degree_v=degree_u, tknots=u_knots)
-    _,_,lofted_u = simple_loft(v_curves, degree_v=degree_v, tknots=v_knots)
+    loft_v_degree = len(u_curves)-1
+    loft_u_degree = len(v_curves)-1
+
+    _,_,lofted_v = simple_loft(u_curves, degree_v=loft_v_degree, tknots=u_knots)
+    _,_,lofted_u = simple_loft(v_curves, degree_v=loft_u_degree, tknots=v_knots)
     lofted_u = lofted_u.swap_uv()
 
-#     int_degree_u = lofted_u.get_degree_v()
-#     int_degree_v = lofted_v.get_degree_u()
     int_degree_u = m-1
     int_degree_v = n-1
     interpolated = interpolate_nurbs_surface(int_degree_u, int_degree_v, intersections, uknots=u_knots, vknots=v_knots)
     interpolated = interpolated.swap_uv()
-    print(f"Loft.U: {lofted_u.get_degree_u()}x{lofted_u.get_degree_v()}")
-    print(f"        {lofted_u.get_knotvector_u()}")
-    print(f"        {lofted_u.get_knotvector_v()}")
-    print(f"Loft.V: {lofted_v.get_degree_u()}x{lofted_v.get_degree_v()}")
-    print(f"        {lofted_v.get_knotvector_u()}")
-    print(f"        {lofted_v.get_knotvector_v()}")
-    print(f"Interp: {interpolated.get_degree_u()}x{interpolated.get_degree_v()}")
-    print(f"        {interpolated.get_knotvector_u()}")
-    print(f"        {interpolated.get_knotvector_v()}")
+    #print(f"Loft.U: {lofted_u}")
+    #print(f"Loft.V: {lofted_v}")
+    #print(f"Interp: {interpolated}")
+    #print(f"        {interpolated.get_knotvector_u()}")
+    #print(f"        {interpolated.get_knotvector_v()}")
 
     lofted_u, lofted_v, interpolated = unify_nurbs_surfaces([lofted_u, lofted_v, interpolated])
 
@@ -66,5 +58,6 @@ def gordon_surface_impl(u_curves, v_curves, intersections, degree_u=None, degree
                 interpolated.get_degree_u(), interpolated.get_degree_v(),
                 interpolated.get_knotvector_u(), interpolated.get_knotvector_v(),
                 control_points, weights=None)
+    #print(f"Result: {surface}")
 
     return lofted_u, lofted_v, interpolated, surface
