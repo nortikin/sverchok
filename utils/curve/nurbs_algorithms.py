@@ -167,18 +167,6 @@ def nurbs_curve_matrix(curve):
     matrix = np.stack((xx, yy, normal)).T
     return matrix
 
-def constrainedFunction(x, f, lower, upper, minIncr=0.001):
-     x = np.asarray(x)
-     lower = np.asarray(lower)
-     upper = np.asarray(upper)
-     xBorder = np.where(x<lower, lower, x)
-     xBorder = np.where(x>upper, upper, xBorder)
-     fBorder = f(xBorder)
-     distFromBorder = (np.sum(np.where(x<lower, lower-x, 0.))
-                      +np.sum(np.where(x>upper, x-upper, 0.)))
-     return (fBorder + (fBorder
-                       +np.where(fBorder>0, minIncr, -minIncr))*distFromBorder)
-
 def _check_is_line(curve, eps=0.001):
     cpts = curve.get_control_points()
     direction = cpts[-1] - cpts[0]
@@ -230,10 +218,8 @@ def _intersect_curves_equation(curve1, curve2):
         p1 = curve1.evaluate(ts[0])
         p2 = curve2.evaluate(ts[1])
         r = (p2 - p1).max()
-        return np.array([r, r])
-
-    def constrained_goal(ts):
-        return constrainedFunction(ts, goal, lower, upper)
+        return r
+        #return np.array([r, r])
 
     mid1 = (t1_min + t1_max) * 0.5
     mid2 = (t2_min + t2_max) * 0.5
@@ -244,18 +230,26 @@ def _intersect_curves_equation(curve1, curve2):
 #         print(f"=> {ts} => {rs}")
 
     #print(f"Call R: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
-    res = scipy.optimize.root(constrained_goal, x0, method='hybr', tol=0.001)
+    #res = scipy.optimize.root(constrained_goal, x0, method='hybr', tol=0.001)
+    res = scipy.optimize.minimize(goal, x0, method='SLSQP',
+                bounds = [(t1_min, t1_max), (t2_min, t2_max)])
+                #tol = 0.0001)
     if res.success:
         t1, t2 = tuple(res.x)
         t1 = np.clip(t1, t1_min, t1_max)
         t2 = np.clip(t2, t2_min, t2_max)
         pt1 = curve1.evaluate(t1)
         pt2 = curve2.evaluate(t2)
-        #print(f"Found: T1 {t1}, T2 {t2}, Pt1 {pt1}, Pt2 {pt2}")
-        pt = (pt1 + pt2) * 0.5
-        return [(t1, t2, pt)]
+        dist = np.linalg.norm(pt2 - pt1)
+        if dist < 0.001:
+            #print(f"Found: T1 {t1}, T2 {t2}, Pt1 {pt1}, Pt2 {pt2}")
+            pt = (pt1 + pt2) * 0.5
+            return [(t1, t2, pt)]
+        else:
+            print(f"numeric method found a point, but it's too far: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]: {dist}")
+            return []
     else:
-        print(f"[{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]: {res.message}")
+        print(f"numeric method fail: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]: {res.message}")
         return []
 
 def intersect_nurbs_curves(curve1, curve2):
@@ -275,8 +269,8 @@ def intersect_nurbs_curves(curve1, curve2):
 
         THRESHOLD = 0.01
 
-        #if bbox1.size() < THRESHOLD and bbox2.size() < THRESHOLD:
-        if _check_is_line(curve1) and _check_is_line(curve2):
+        if bbox1.size() < THRESHOLD and bbox2.size() < THRESHOLD:
+        #if _check_is_line(curve1) and _check_is_line(curve2):
             return _intersect_curves_equation(curve1, curve2)
 
         mid1 = (t1_min + t1_max) * 0.5
