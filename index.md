@@ -102,6 +102,7 @@
     SvReparametrizeCurveNode
     SvExSurfaceBoundaryNode
     ---
+    SvIntersectNurbsCurvesNode
     SvExNearestPointOnCurveNode
     SvExOrthoProjectCurveNode
     SvExCurveEndpointsNode

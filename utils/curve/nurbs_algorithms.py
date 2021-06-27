@@ -190,7 +190,7 @@ def intersect_segment_segment_mu(v1, v2, v3, v4):
         return np.array(v)
     return None
 
-def _intersect_curves_equation(curve1, curve2):
+def _intersect_curves_equation(curve1, curve2, method='SLSQP', precision=0.001):
     t1_min, t1_max = curve1.get_u_bounds()
     t2_min, t2_max = curve2.get_u_bounds()
 
@@ -231,9 +231,9 @@ def _intersect_curves_equation(curve1, curve2):
 
     #print(f"Call R: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
     #res = scipy.optimize.root(constrained_goal, x0, method='hybr', tol=0.001)
-    res = scipy.optimize.minimize(goal, x0, method='SLSQP',
-                bounds = [(t1_min, t1_max), (t2_min, t2_max)])
-                #tol = 0.0001)
+    res = scipy.optimize.minimize(goal, x0, method=method,
+                bounds = [(t1_min, t1_max), (t2_min, t2_max)],
+                tol = 0.5 * precision)
     if res.success:
         t1, t2 = tuple(res.x)
         t1 = np.clip(t1, t1_min, t1_max)
@@ -241,7 +241,7 @@ def _intersect_curves_equation(curve1, curve2):
         pt1 = curve1.evaluate(t1)
         pt2 = curve2.evaluate(t2)
         dist = np.linalg.norm(pt2 - pt1)
-        if dist < 0.001:
+        if dist < precision:
             #print(f"Found: T1 {t1}, T2 {t2}, Pt1 {pt1}, Pt2 {pt2}")
             pt = (pt1 + pt2) * 0.5
             return [(t1, t2, pt)]
@@ -252,7 +252,7 @@ def _intersect_curves_equation(curve1, curve2):
         print(f"numeric method fail: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]: {res.message}")
         return []
 
-def intersect_nurbs_curves(curve1, curve2):
+def intersect_nurbs_curves(curve1, curve2, method='SLSQP', numeric_precision=0.001):
 
     bbox_tolerance = 1e-4
 
@@ -271,7 +271,7 @@ def intersect_nurbs_curves(curve1, curve2):
 
         if bbox1.size() < THRESHOLD and bbox2.size() < THRESHOLD:
         #if _check_is_line(curve1) and _check_is_line(curve2):
-            return _intersect_curves_equation(curve1, curve2)
+            return _intersect_curves_equation(curve1, curve2, method=method, precision=numeric_precision)
 
         mid1 = (t1_min + t1_max) * 0.5
         mid2 = (t2_min + t2_max) * 0.5
