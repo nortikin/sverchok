@@ -17,7 +17,10 @@ from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.nurbs_algorithms import intersect_nurbs_curves
 from sverchok.utils.curve.freecad import curve_to_freecad, SvSolidEdgeCurve
-from sverchok.dependencies import FreeCAD
+from sverchok.dependencies import FreeCAD, scipy
+
+if FreeCAD is None and scipy is None:
+    add_dummy('SvIntersectNurbsCurvesNode', "Intersect Curves", 'FreeCAD or scipy')
 
 class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -35,8 +38,9 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
             item = ('FREECAD', "FreeCAD", "Implementation from FreeCAD library", 0)
             result.append(item)
         
-        item = ('NATIVE', "Sverchok", "Sverchok built-in implementation", 1)
-        result.append(item)
+        if scipy is not None:
+            item = ('SCIPY', "SciPy", "Sverchok built-in implementation", 1)
+            result.append(item)
 
         return result
 
@@ -95,7 +99,7 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
-        if self.implementation == 'NATIVE':
+        if self.implementation == 'SCIPY':
             layout.prop(self, 'precision')
             layout.prop(self, 'method')
 
@@ -159,7 +163,7 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
                 if curve2 is None:
                     raise Exception("Curve2 is not a NURBS")
 
-                if self.implementation == 'NATIVE':
+                if self.implementation == 'SCIPY':
                     ps = self.process_native(curve1, curve2)
                 else:
                     ps = self.process_freecad(curve1, curve2)
@@ -179,8 +183,10 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Intersections'].sv_set(points_out)
 
 def register():
-    bpy.utils.register_class(SvIntersectNurbsCurvesNode)
+    if FreeCAD is not None or scipy is not None:
+        bpy.utils.register_class(SvIntersectNurbsCurvesNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvIntersectNurbsCurvesNode)
+    if FreeCAD is not None or scipy is not None:
+        bpy.utils.unregister_class(SvIntersectNurbsCurvesNode)
 
