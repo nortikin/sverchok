@@ -32,39 +32,51 @@ def unify_degrees(curves):
     curves = [curve.elevate_degree(target=max_degree) for curve in curves]
     return curves
 
-def unify_curves(curves):
+def unify_curves(curves, method='UNIFY'):
     curves = [curve.reparametrize(0.0, 1.0) for curve in curves]
 
-    dst_knots = defaultdict(int)
-    for curve in curves:
-        m = sv_knotvector.to_multiplicity(curve.get_knotvector())
-        for u, count in m:
-            u = round(u, 6)
-            dst_knots[u] = max(dst_knots[u], count)
+    if method == 'UNIFY':
+        dst_knots = defaultdict(int)
+        for curve in curves:
+            m = sv_knotvector.to_multiplicity(curve.get_knotvector())
+            for u, count in m:
+                u = round(u, 6)
+                dst_knots[u] = max(dst_knots[u], count)
 
-    result = []
+        result = []
 #     for i, curve1 in enumerate(curves):
 #         for j, curve2 in enumerate(curves):
 #             if i != j:
 #                 curve1 = curve1.to_knotvector(curve2)
 #         result.append(curve1)
 
-    for curve in curves:
-        diffs = []
-        kv = np.round(curve.get_knotvector(), 6)
-        ms = dict(sv_knotvector.to_multiplicity(kv))
-        for dst_u, dst_multiplicity in dst_knots.items():
-            src_multiplicity = ms.get(dst_u, 0)
-            diff = dst_multiplicity - src_multiplicity
-            diffs.append((dst_u, diff))
-        #print(f"Src {ms}, dst {dst_knots} => diff {diffs}")
+        for curve in curves:
+            diffs = []
+            kv = np.round(curve.get_knotvector(), 6)
+            ms = dict(sv_knotvector.to_multiplicity(kv))
+            for dst_u, dst_multiplicity in dst_knots.items():
+                src_multiplicity = ms.get(dst_u, 0)
+                diff = dst_multiplicity - src_multiplicity
+                diffs.append((dst_u, diff))
+            #print(f"Src {ms}, dst {dst_knots} => diff {diffs}")
 
-        for u, diff in diffs:
-            if diff > 0:
-                curve = curve.insert_knot(u, diff)
-        result.append(curve)
-        
-    return result
+            for u, diff in diffs:
+                if diff > 0:
+                    curve = curve.insert_knot(u, diff)
+            result.append(curve)
+            
+        return result
+    elif method == 'AVERAGE':
+        kvs = [len(curve.get_control_points()) for curve in curves]
+        max_kv, min_kv = max(kvs), min(kvs)
+        if max_kv != min_kv:
+            raise Exception(f"Knotvector averaging is not applicable: Curves have different number of control points: {kvs}")
+
+        knotvectors = np.array([curve.get_knotvector() for curve in curves])
+        knotvector_u = knotvectors.mean(axis=0)
+
+        result = [curve.copy(knotvector = knotvector_u) for curve in curves]
+        return result
 
 def interpolate_nurbs_curve(cls, degree, points, metric='DISTANCE', tknots=None):
     n = len(points)

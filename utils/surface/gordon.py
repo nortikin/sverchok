@@ -15,32 +15,36 @@ from sverchok.utils.surface.nurbs import SvNurbsSurface, simple_loft, interpolat
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
 from sverchok.data_structure import repeat_last_for_length
 
-def gordon_surface_impl(u_curves, v_curves, intersections, metric='DISTANCE'):
+def gordon_surface(u_curves, v_curves, intersections, metric='POINTS'):
 
-    #u_curves = [c.reparametrize(0.0, 1.0) for c in u_curves]
-    #v_curves = [c.reparametrize(0.0, 1.0) for c in v_curves]
+    u_curves = unify_curves_degree(u_curves)
+    u_curves = unify_curves(u_curves)#, method='AVERAGE')
+    v_curves = unify_curves_degree(v_curves)
+    v_curves = unify_curves(v_curves)#, method='AVERAGE')
 
-    intersections = np.asarray(intersections)
+    u_curves_degree = u_curves[0].get_degree()
+    v_curves_degree = v_curves[0].get_degree()
+
+    intersections = np.array(intersections)
 
     n = len(intersections)
     m = len(intersections[0])
 
     knots = np.array([Spline.create_knots(intersections[i,:], metric=metric) for i in range(n)])
     u_knots = knots.mean(axis=0)
-
     knots = np.array([Spline.create_knots(intersections[:,j], metric=metric) for j in range(m)])
     v_knots = knots.mean(axis=0)
 
-    loft_v_degree = len(u_curves)-1
-    loft_u_degree = len(v_curves)-1
+    loft_v_degree = min(len(u_curves)-1, v_curves_degree)
+    loft_u_degree = min(len(v_curves)-1, u_curves_degree)
 
-    _,_,lofted_v = simple_loft(u_curves, degree_v=loft_v_degree, tknots=u_knots)
-    _,_,lofted_u = simple_loft(v_curves, degree_v=loft_u_degree, tknots=v_knots)
+    _,_,lofted_v = simple_loft(u_curves, degree_v=loft_v_degree, metric=metric)# tknots=u_knots)
+    _,_,lofted_u = simple_loft(v_curves, degree_v=loft_u_degree, metric=metric)# tknots=v_knots)
     lofted_u = lofted_u.swap_uv()
 
-    int_degree_u = m-1
-    int_degree_v = n-1
-    interpolated = interpolate_nurbs_surface(int_degree_u, int_degree_v, intersections, uknots=u_knots, vknots=v_knots)
+    int_degree_u = min(m-1, u_curves_degree)
+    int_degree_v = min(n-1, v_curves_degree)
+    interpolated = interpolate_nurbs_surface(int_degree_u, int_degree_v, intersections, metric=metric)# uknots=u_knots, vknots=v_knots)
     interpolated = interpolated.swap_uv()
     #print(f"Loft.U: {lofted_u}")
     #print(f"Loft.V: {lofted_v}")
