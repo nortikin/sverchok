@@ -133,6 +133,7 @@
     SvNurbsLoftNode
     SvNurbsSweepNode
     SvNurbsBirailNode
+    SvGordonSurfaceNode
     SvDeconstructSurfaceNode
     ---
     SvExQuadsToNurbsNode
