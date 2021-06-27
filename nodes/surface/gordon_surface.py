@@ -25,6 +25,7 @@ class SvGordonSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvGordonSurfaceNode'
     bl_label = 'NURBS Surface from Curves Net'
     bl_icon = 'GP_MULTIFRAME_EDITING'
+    sv_icon = 'SV_SURFACE_FROM_CURVES'
 
     metric: EnumProperty(name='Metric',
         description = "Knot mode",
