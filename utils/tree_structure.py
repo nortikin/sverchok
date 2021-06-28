@@ -122,6 +122,9 @@ class Tree(tw.Tree[NodeType]):
         # the index of the tree in node_groups collection will be not found (-1)
         self._index = bpy.data.node_groups.find(bl_tree.name)
 
+        # add links between wifi nodes
+        self._handle_wifi_nodes()
+
     @property
     def id(self) -> str:
         return self._tree_id
@@ -137,6 +140,32 @@ class Tree(tw.Tree[NodeType]):
     @property
     def links(self) -> LinksCollection:
         return self._links
+
+    def _handle_wifi_nodes(self):
+        """The idea is to convert wifi nodes into regular nodes with sockets and links between them"""
+        # todo the code is very bad and should be removed later wifi node refactoring
+        # the method knows too match about wifi nodes
+        var_name_wifi_in = dict()
+
+        # add sockets to wifi "from nodes" if it has variable
+        for node in self._nodes:
+            if node.bl_tween.bl_idname == 'WifiInNode' and node.bl_tween.var_name:
+                socket = Socket(node, True, "Virtual wifi socket")
+                node.outputs.append(socket)
+                var_name_wifi_in[node.bl_tween.var_name] = node
+
+        # add sockets to wifi "to nodes" and connect them to wifi "from nodes" if there is wifi node with such variable
+        if var_name_wifi_in:
+            for to_node in self._nodes:
+                if to_node.bl_tween.bl_idname == 'WifiOutNode' and to_node.bl_tween.var_name in var_name_wifi_in:
+                    socket = Socket(to_node, False, "Virtual wifi socket")
+                    to_node.inputs.append(socket)
+                    from_node = var_name_wifi_in[to_node.bl_tween.var_name]
+                    from_socket = from_node.outputs[0]
+                    to_socket = to_node.inputs[0]
+                    self.links._dict[
+                        (from_node.name, from_socket.identifier,
+                         to_node.name, to_socket.identifier)] = Link(from_socket, to_socket, len(self.links))
 
 
 Element = TypeVar('Element')
