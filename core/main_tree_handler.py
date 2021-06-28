@@ -22,13 +22,6 @@ from sverchok.utils.handle_blender_data import BlTrees, BlTree
 from sverchok.utils.profile import profile
 
 
-# todo wifi nodes
-# todo print timings ?? it's available in the tree now
-# todo debug to a file?
-# todo add tree profiling tool
-# todo animation performance
-
-
 class TreeHandler:
 
     @staticmethod
