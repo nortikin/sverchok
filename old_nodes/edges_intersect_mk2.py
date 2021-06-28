@@ -23,7 +23,7 @@ from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.geom_2d.intersections import intersect_sv_edges
-from sverchok.utils.intersect_edges import intersect_edges_3d, intersect_edges_2d, remove_doubles_from_edgenet
+from sverchok.utils.intersect_edges import intersect_edges_3d, intersect_edges_2d_double_removal, remove_doubles_from_edgenet
 
 try:
     from mathutils.geometry import delaunay_2d_cdt as bl_intersect
@@ -40,6 +40,7 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Intersect Edges'
     sv_icon = 'SV_XALL'
 
+    replacement_nodes = [('SvIntersectEdgesNodeMK3', None, None)]
     mode_items_2d = [("Alg_1", "Alg 1", "", 0), ("Sweep_line", "Sweep line", "", 1), ("Blender", "Blender", "", 2)]
 
     mode: bpy.props.EnumProperty(items=modeItems, default="3D", update=updateNode)
@@ -90,7 +91,7 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             verts_out, edges_out = intersect_edges_3d(verts_in, edges_in, 1 / 10 ** self.epsilon)
         elif self.alg_mode_2d == "Alg_1":
             verts_in = copy(verts_in)
-            verts_out, edges_out = intersect_edges_2d(verts_in, edges_in, 1 / 10 ** self.epsilon)
+            verts_out, edges_out = intersect_edges_2d_double_removal(verts_in, edges_in, 1 / 10 ** self.epsilon)
         elif self.alg_mode_2d == "Sweep_line":
             verts_out, edges_out = intersect_sv_edges(verts_in, edges_in, self.epsilon)
         else:
@@ -109,4 +110,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvIntersectEdgesNodeMK2)
-

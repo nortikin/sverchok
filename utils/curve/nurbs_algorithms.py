@@ -8,11 +8,15 @@
 import numpy as np
 from collections import defaultdict
 
-from sverchok.utils.geom import Spline
+from sverchok.utils.geom import Spline, linear_approximation, intersect_segment_segment
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import unify_curves_degree
 from sverchok.utils.decorators import deprecated
+from sverchok.dependencies import scipy
+
+if scipy is not None:
+    import scipy.optimize
 
 def unify_two_curves(curve1, curve2):
     curve1 = curve1.to_knotvector(curve2)
@@ -121,4 +125,131 @@ def concatenate_nurbs_curves(curves):
         except Exception as e:
             raise Exception(f"Can't append curve #{i+1}: {e}")
     return result
+
+def nurbs_curve_to_xoy(curve, target_normal=None):
+    cpts = curve.get_control_points()
+
+    approx = linear_approximation(cpts)
+    plane = approx.most_similar_plane()
+    normal = plane.normal
+
+    if target_normal is not None:
+        a = np.dot(normal, target_normal)
+        if a > 0:
+            normal = -normal
+
+    xx = cpts[-1] - cpts[0]
+    xx /= np.linalg.norm(xx)
+
+    yy = np.cross(normal, xx)
+
+    matrix = np.stack((xx, yy, normal)).T
+    matrix = np.linalg.inv(matrix)
+    center = approx.center
+    new_cpts = np.array([matrix @ (cpt - center) for cpt in cpts])
+    return curve.copy(control_points = new_cpts)
+
+def nurbs_curve_matrix(curve):
+    cpts = curve.get_control_points()
+
+    approx = linear_approximation(cpts)
+    plane = approx.most_similar_plane()
+    normal = plane.normal
+
+    xx = cpts[-1] - cpts[0]
+    xx /= np.linalg.norm(xx)
+
+    yy = np.cross(normal, xx)
+
+    matrix = np.stack((xx, yy, normal)).T
+    return matrix
+
+def _check_is_line(curve, eps=0.001):
+    cpts = curve.get_control_points()
+    direction = cpts[-1] - cpts[0]
+    direction /= np.linalg.norm(direction)
+
+    for cpt1, cpt2 in zip(cpts, cpts[1:]):
+        dv = cpt2 - cpt1
+        dv /= np.linalg.norm(dv)
+        angle = np.arccos(np.dot(dv, direction))
+        if angle > eps:
+            #print(f"A: {direction} x {dv} => {angle}")
+            return False
+
+    return (cpts[0], cpts[-1])
+
+def _intersect_curves_equation(curve1, curve2):
+    t1_min, t1_max = curve1.get_u_bounds()
+    t2_min, t2_max = curve2.get_u_bounds()
+
+    line1 = _check_is_line(curve1)
+    line2 = _check_is_line(curve2)
+
+    if line1 and line2:
+        v1, v2 = line1
+        v3, v4 = line2
+        #print(f"Call L: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
+        r = intersect_segment_segment(v1, v2, v3, v4)
+        if not r:
+            return []
+        else:
+            u, v, pt = r
+            t1 = (1-u)*t1_min + u*t1_max
+            t2 = (1-v)*t2_min + v*t2_max
+            return [(t1, t2, pt)]
+
+    def goal(ts):
+        p1 = curve1.evaluate(ts[0])
+        p2 = curve2.evaluate(ts[1])
+        r = (p2 - p1).max()
+        return np.array([r, 0.0])
+
+    mid1 = (t1_min + t1_max) * 0.5
+    mid2 = (t2_min + t2_max) * 0.5
+
+    x0 = np.array([mid1, mid2])
+
+    #print(f"Call R: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
+    res = scipy.optimize.root(goal, x0, method='df-sane', options = dict(fatol=0.0001))
+    if res.success:
+        t1, t2 = tuple(res.x)
+        pt1 = curve1.evaluate(t1)
+        pt2 = curve2.evaluate(t2)
+        pt = (pt1 + pt2) * 0.5
+        return [(t1, t2, pt)]
+    else:
+        #print(f"[{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]: {res.message}")
+        return []
+
+def intersect_nurbs_curves(curve1, curve2):
+
+    t1_min, t1_max = curve1.get_u_bounds()
+    t2_min, t2_max = curve2.get_u_bounds()
+
+    bbox1 = curve1.get_bounding_box()
+    bbox2 = curve2.get_bounding_box()
+    if not bbox1.intersects(bbox2):
+#         print(f"BBoxes do not intersect: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
+#         print(f"    {bbox1}")
+#         print(f"    {bbox2}")
+        return []
+
+    THRESHOLD = 0.01
+
+    if bbox1.size() < THRESHOLD and bbox2.size() < THRESHOLD:
+        return _intersect_curves_equation(curve1, curve2)
+
+    mid1 = (t1_min + t1_max) * 0.5
+    mid2 = (t2_min + t2_max) * 0.5
+
+    c11,c12 = curve1.split_at(mid1)
+    c21,c22 = curve2.split_at(mid2)
+
+    r1 = intersect_nurbs_curves(c11,c21)
+    r2 = intersect_nurbs_curves(c11,c22)
+    r3 = intersect_nurbs_curves(c12,c21)
+    r4 = intersect_nurbs_curves(c12,c22)
+
+    return r1 + r2 + r3 + r4
 

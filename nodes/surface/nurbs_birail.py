@@ -100,9 +100,32 @@ class SvNurbsBirailNode(bpy.types.Node, SverchCustomTreeNode):
         default = True,
         update = updateNode)
 
+    auto_rotate_profiles : BoolProperty(
+        name = "Auto rotate profiles",
+        description = "If checked, then the node will try to rotate provided profile curves appropriately. Otherwise, the node expects provided profile curves to lie in XOY plane.",
+        default = False,
+        update = updateNode)
+
+    rotate_options = [
+            ('PATHS_AVG', "Paths Normal Average", "Rotate profile(s), trying to make it perpendicular to both paths", 0),
+            ('FROM_PATH1', "Path 1 Normal", "Rotate profile(s), trying to make it perpendicular to the first path", 1),
+            ('FROM_PATH2', "Path 2 Normal", "Rotate profile(s), trying to make it perpendicular to the second path", 2),
+            ('FROM_PROFILE', "By profile", "Try to use initial rotation of profile curve(s)", 3)
+        ]
+
+    profile_rotation : EnumProperty(
+            name = "Profile rotation",
+            description = "Defines how profile curves should be rotated",
+            items = rotate_options,
+            default = 'PATHS_AVG',
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'nurbs_implementation', text='')
         layout.prop(self, "scale_uniform")
+        layout.prop(self, "auto_rotate_profiles")
+        layout.label(text="Profile rotation:")
+        layout.prop(self, "profile_rotation", text='')
         layout.prop(self, "explicit_v")
 
     def draw_buttons_ext(self, context, layout):
@@ -179,6 +202,8 @@ class SvNurbsBirailNode(bpy.types.Node, SverchCustomTreeNode):
                                     degree_v = degree_v,
                                     metric = self.metric,
                                     scale_uniform = self.scale_uniform,
+                                    auto_rotate = self.auto_rotate_profiles,
+                                    use_tangents = self.profile_rotation,
                                     implementation = self.nurbs_implementation
                                 )
                 new_surfaces.append(surface)

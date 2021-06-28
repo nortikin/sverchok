@@ -8,7 +8,7 @@ from sverchok.utils.nurbs_common import (
         nurbs_divide, from_homogenous
     )
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_curves
+from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_curves, nurbs_curve_to_xoy, nurbs_curve_matrix
 from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveFrameCalculator
 from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
@@ -797,9 +797,21 @@ def interpolate_nurbs_curves(curves, base_vs, target_vs,
                 #metric = 'POINTS',
                 tknots = tknots,
                 implementation = implementation)
+
+    rebased_vs = np.linspace(min_v, max_v, num=len(target_vs))
+    iso_curves = [lofted.iso_curve(fixed_direction='V', param=v) for v in rebased_vs]
     # Calculate iso_curves of the lofted surface, and move them back along Z axis
-    back_vectors = np.array([(0,0,-v) for v in np.linspace(min_v, max_v, num=len(target_vs))])
-    return [lofted.iso_curve(fixed_direction='V', param=v).transform(None, back) for v, back in zip(target_vs, back_vectors)]
+    back_vectors = []
+    for v, curve in zip(rebased_vs, iso_curves):
+        min_u, max_u = curve.get_u_bounds()
+        start = curve.evaluate(min_u)
+        end = curve.evaluate(max_u)
+        pt = 0.5 * (start + end)
+        dz = pt[2]
+        back_vector = np.array([0, 0, -dz])
+        back_vectors.append(back_vector)
+
+    return [curve.transform(None, back) for curve, back in zip(iso_curves, back_vectors)]
 
 def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = 'UNIFY', metric = 'DISTANCE', implementation = SvNurbsSurface.NATIVE):
     """
@@ -831,6 +843,8 @@ def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = 'UNIFY', me
     to_loft = []
     for profile, path_point, frame in zip(profiles, path_points, frames):
         profile = profile.transform(frame, path_point)
+        #cpt = profile.evaluate(profile.get_u_bounds()[0])
+        #profile = profile.transform(None, -cpt + path_point)
         to_loft.append(profile)
 
     unified_curves, v_curves, surface = simple_loft(to_loft, degree_v = path.get_degree(),
@@ -903,7 +917,15 @@ def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', 
                 knots_u=knots_u, metric=metric,
                 implementation=implementation)
 
-def nurbs_birail(path1, path2, profiles, ts1 = None, ts2 = None, min_profiles = 10, knots_u = 'UNIFY', degree_v = None, metric = 'DISTANCE', scale_uniform = True, implementation = SvNurbsSurface.NATIVE):
+def nurbs_birail(path1, path2, profiles,
+        ts1 = None, ts2 = None,
+        min_profiles = 10,
+        knots_u = 'UNIFY',
+        degree_v = None, metric = 'DISTANCE',
+        scale_uniform = True,
+        auto_rotate = False,
+        use_tangents = 'PATHS_AVG',
+        implementation = SvNurbsSurface.NATIVE):
     """
     NURBS BiRail.
 
@@ -924,6 +946,8 @@ def nurbs_birail(path1, path2, profiles, ts1 = None, ts2 = None, min_profiles = 
     * scale_uniform: If True, profile curves will be scaled along all axes
         uniformly; if False, they will be scaled only along one axis, in order to
         fill space between two path curves.
+    * auto_rotate: if False, the profile curves are supposed to lie in XOY plane.
+        Otherwise, try to figure out their rotation automatically.
     * implementation: surface implementation
 
     output: tuple:
@@ -985,16 +1009,34 @@ def nurbs_birail(path1, path2, profiles, ts1 = None, ts2 = None, min_profiles = 
     points1 = path1.evaluate_array(ts1)
     points2 = path2.evaluate_array(ts2)
 
-    tangents1 = path1.tangent_array(ts1)
-    tangents2 = path2.tangent_array(ts2)
-    tangents = 0.5 * (tangents1 + tangents2)
-    tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+    orig_profiles = profiles[:]
+
+    if use_tangents == 'PATHS_AVG':
+        tangents1 = path1.tangent_array(ts1)
+        tangents2 = path2.tangent_array(ts2)
+        tangents = 0.5 * (tangents1 + tangents2)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+    elif use_tangents == 'FROM_PATH1':
+        tangents = path1.tangent_array(ts1)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+    elif use_tangents == 'FROM_PATH2':
+        tangents = path2.tangent_array(ts2)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+    elif use_tangents == 'FROM_PROFILE':
+        tangents = []
+        for profile in orig_profiles:
+            matrix = nurbs_curve_matrix(profile)
+            yy = matrix @ np.array([0, 0, -1])
+            yy /= np.linalg.norm(yy)
+            tangents.append(yy)
+        tangents = np.array(tangents)
 
     binormals = points2 - points1
     scales = np.linalg.norm(binormals, axis=1, keepdims=True)
     if scales.min() < 1e-6:
         raise Exception("Paths go too close")
     binormals /= scales
+
     normals = np.cross(tangents, binormals)
     normals /= np.linalg.norm(normals, axis=1, keepdims=True)
 
@@ -1007,7 +1049,12 @@ def nurbs_birail(path1, path2, profiles, ts1 = None, ts2 = None, min_profiles = 
 
     scales = scales.flatten()
     placed_profiles = []
-    for pt1, profile, scale, matrix in zip(points1, profiles, scales, matrices):
+    prev_normal = None
+    for pt1, pt2, profile, tangent, scale, matrix in zip(points1, points2, profiles, tangents, scales, matrices):
+
+        if auto_rotate:
+            profile = nurbs_curve_to_xoy(profile, tangent)
+
         t_min, t_max = profile.get_u_bounds()
         pr_start = profile.evaluate(t_min)
         pr_end = profile.evaluate(t_max)
@@ -1024,6 +1071,7 @@ def nurbs_birail(path1, path2, profiles, ts1 = None, ts2 = None, min_profiles = 
                 (0, 0, 1)
             ])
 
+        src_scale = scale
         scale /= pr_length
         if scale_uniform:
             scale_m = np.array([
@@ -1039,6 +1087,7 @@ def nurbs_birail(path1, path2, profiles, ts1 = None, ts2 = None, min_profiles = 
                 ])
         cpts = [matrix @ scale_m @ rotation @ (pt - pr_start) + pt1 for pt in profile.get_control_points()]
         cpts = np.array(cpts)
+
         profile = profile.copy(control_points = cpts)
         placed_profiles.append(profile)
 

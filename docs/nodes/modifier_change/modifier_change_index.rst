@@ -14,7 +14,6 @@ Modifier Change
    relax_mesh
    delete_loose
    mesh_clean
-   edges_intersect_mk2
    poke
    extrude_edges_mk2
    extrude_separate

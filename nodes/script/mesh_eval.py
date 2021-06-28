@@ -568,7 +568,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             text = bpy.data.texts[self.filename].as_string()
             node_data['geom'] = text
         else:
-            self.warning("Unknown filename: {}".format(self.filename))
+            self.warning("save_to_json called with unknown filename")
 
 def register():
     bpy.utils.register_class(SvJsonFromMesh)

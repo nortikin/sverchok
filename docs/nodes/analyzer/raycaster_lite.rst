@@ -4,12 +4,12 @@ Raycast
 Functionality
 -------------
 
-Functionality is almost completely analogous to the two built-in blender operators 
-``bpy.context.scene.ray_cast`` and ``object.ray_cast``. 
+Functionality is almost completely analogous to the two built-in blender operators
+``bpy.context.scene.ray_cast`` and ``object.ray_cast``.
 Ray is casted from "start" vector to "end" vector and can hit polygons of input objects.
 
-see docs: 
-`bpy.types.Object.ray_cast <http://www.blender.org/documentation/blender_python_api_2_71_0/bpy.types.Object.html#bpy.types.Object.ray_cast>`_ and 
+see docs:
+`bpy.types.Object.ray_cast <http://www.blender.org/documentation/blender_python_api_2_71_0/bpy.types.Object.html#bpy.types.Object.ray_cast>`_ and
 `bpy.types.Scene.ray_cast <http://www.blender.org/documentation/blender_python_api_2_71_0/bpy.types.Scene.html#bpy.types.Scene.ray_cast>`_
 
 
@@ -41,6 +41,12 @@ Output sockets
 | Success                | ``True`` or ``False`` if ray doesn't hit any polygon.                                  |
 +------------------------+----------------------------------------------------------------------------------------+
 
+Advanced parameters (N-Panel)
+----------------------------
+
+**Safe Check**: Checks the mesh for unreferenced polygons (slows the node but prevents some Blender crashes)
+
+**All Triangles**: Enable if all the incoming faces are triangles to improve the performance of the algorithm
 
 Usage
 -----

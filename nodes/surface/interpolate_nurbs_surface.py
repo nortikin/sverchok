@@ -70,7 +70,7 @@ else:
             self.outputs.new('SvVerticesSocket', "ControlPoints")
             self.outputs.new('SvStringsSocket', "KnotsU")
             self.outputs.new('SvStringsSocket', "KnotsV")
-            self.update_socket(context)
+            self.update_sockets(context)
 
         def draw_buttons(self, context, layout):
             layout.prop(self, 'centripetal', toggle=True)

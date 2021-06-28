@@ -512,10 +512,26 @@ class SvEllipse(SvCurve):
         return vs
 
     def to_nurbs(self, implementation=SvNurbsMaths.NATIVE):
-        scale = Matrix([[1,0,0], [0, self.b/self.a, 0], [0, 0, 1]]).to_4x4()
+        if self.a == 0 and self.b == 0:
+            coef_x = 0
+            coef_y = 0
+            radius = 0
+        elif self.a == 0:
+            coef_x = 0
+            coef_y = 1
+            radius = self.b
+        elif self.b == 0:
+            coef_x = 1
+            coef_y = 0
+            radius = self.a
+        else:
+            coef_x = 1
+            coef_y = self.b/self.a
+            radius = self.a
+        scale = Matrix([[coef_x,0,0], [0, coef_y, 0], [0, 0, 1]]).to_4x4()
         matrix = Matrix(self.matrix).to_4x4()
         matrix.translation = Vector(self.get_center())
-        circle = SvCircle(matrix = matrix @ scale, radius = self.a,
+        circle = SvCircle(matrix = matrix @ scale, radius = radius,
                     center = self.get_center())
         return circle.to_nurbs(implementation)
 

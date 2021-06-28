@@ -49,8 +49,8 @@ class SvAreaNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         inputs = self.inputs
-        Vertices = inputs["Vertices"].sv_get()
-        Polygons = inputs["Polygons"].sv_get()
+        Vertices = inputs["Vertices"].sv_get(default=None)
+        Polygons = inputs["Polygons"].sv_get(default=None)
 
         outputs = self.outputs
         if not outputs['Area'].is_linked or not all([Vertices, Polygons]):

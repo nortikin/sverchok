@@ -22,62 +22,6 @@ import bpy
 from sverchok.data_structure import match_long_repeat
 
 
-def get_valid_node(mat_name, node_name, bl_idname):
-
-    materials = bpy.data.materials
-
-    # make sure the Material is present
-    m = materials.get(mat_name)
-    if not m:
-        m = materials.new(mat_name)
-
-    # if it doesn't use nodes force that (and cycles ?! )
-    m.use_nodes = True
-    m.use_fake_user = True
-
-    # make sure the CurveNode we want to use is present too
-    node = m.node_tree.nodes.get(node_name)
-    if not node:
-        node = m.node_tree.nodes.new(bl_idname)
-        node.name = node_name
-
-    return node
-
-
-def get_valid_evaluate_function(mat_name, node_name):
-    ''' 
-    Takes a material name (cycles) and a Node name it expects to find.
-    The node will be of type ShaderNodeRGBCurve and this function
-    will force its existence, then return the evaluate function for the last
-    component of RGBA - allowing us to use this as a float modifier.
-    '''
-
-    node = get_valid_node(mat_name, node_name, 'ShaderNodeRGBCurve')
-
-    curve = node.mapping.curves[3]
-    try: curve.evaluate(0.0)
-    except: node.mapping.initialize()
-
-    return curve.evaluate
-
-def get_valid_evaluate_function2(mat_name, node_name):
-    ''' 
-    Takes a material name (cycles) and a Node name it expects to find.
-    The node will be of type ShaderNodeRGBCurve and this function
-    will force its existence, then return the evaluate function for the last
-    component of RGBA - allowing us to use this as a float modifier.
-    '''
-
-    node = get_valid_node(mat_name, node_name, 'ShaderNodeRGBCurve')
-
-    curve = node.mapping.curves[3]
-    try:  node.mapping.evaluate(curve, 0.0)
-    except: node.mapping.initialize()
-
-    evaluate = lambda val: node.mapping.evaluate(curve, val)
-    return evaluate
-
-
 def vectorize(all_data):
 
     def listify(data):

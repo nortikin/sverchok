@@ -712,7 +712,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             text = bpy.data.texts[self.filename.strip()].as_string()
             node_data['profile'] = text
         else:
-            self.warning("Unknown filename: {}".format(self.filename))
+            self.warning("save_to_json called with unknown filename")
 
     def set_filename_to_match_file_pointer(self):
         self.file_pointer = self.file_pointer
