@@ -125,7 +125,12 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng, options=set())
     sv_show_time_graph: BoolProperty(name="Time Graph", default=False, options=set())  # todo is not used now
     sv_show_time_nodes: BoolProperty(name="Node times", default=True, options=set(), update=lambda s, c: s.update_ui())
-    show_time_mode: EnumProperty(items=[(n, n, '') for n in ["Per node", "Cumulative"]], options=set())
+    show_time_mode: EnumProperty(
+        items=[(n, n, '') for n in ["Per node", "Cumulative"]],
+        options=set(),
+        update=lambda s, c: s.update_ui(),
+        description="Mode of showing node update timings",
+    )
 
     sv_show_socket_menus: BoolProperty(
         name = "Show socket menus",
@@ -169,7 +174,11 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         The method is usually called by main handler to reevaluate view of the nodes in the tree
         even if the tree is not in the Live update mode"""
         nodes_errors = TreeHandler.get_error_nodes(self)
-        update_time = TreeHandler.get_update_time(self) if self.sv_show_time_nodes else cycle([None])
+        if self.sv_show_time_nodes:
+            update_time = (TreeHandler.get_cum_time(self) if self.show_time_mode == "Cumulative"
+                           else TreeHandler.get_update_time(self))
+        else:
+            update_time = cycle([None])
         for node, error, update in zip(self.nodes, nodes_errors, update_time):
             if hasattr(node, 'update_ui'):
                 node.update_ui(error, update)
@@ -285,6 +294,7 @@ class UpdateNodes:
 
         # show update timing
         if update_time is not None:
+            update_time = int(update_time * 1000)
             sv_bgl.draw_text(self, f'{update_time}ms', update_pref + node_id, align="UP", dynamic_location=False)
         else:
             sv_bgl.callback_disable(update_pref + node_id)

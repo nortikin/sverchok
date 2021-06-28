@@ -84,11 +84,19 @@ class MainHandler:
             yield NodesStatuses.get(node, path).error
 
     @staticmethod
-    def get_nodes_update_time(group_nodes_path: List[SvGroupTreeNode]) -> Iterator[Optional[int]]:
+    def get_nodes_update_time(group_nodes_path: List[SvGroupTreeNode]) -> Iterator[Optional[float]]:
         """Returns duration of a node being executed in milliseconds or None if there was an error"""
         path = NodeIdManager.generate_path(group_nodes_path)
         for node in group_nodes_path[-1].node_tree.nodes:
             yield NodesStatuses.get(node, path).update_time
+
+    @staticmethod
+    def get_cum_time(group_nodes_path: List[SvGroupTreeNode]) -> Iterator[Optional[float]]:
+        path = NodeIdManager.generate_path(group_nodes_path)
+        bl_tree = group_nodes_path[-1].node_tree
+        cum_time_nodes = GroupContextTrees.calc_cam_update_time(bl_tree, path)
+        for node in bl_tree.nodes:
+            yield cum_time_nodes.get(node)
 
 
 # it is now inconsistent with the main tree handler module because is_updates can't be removed from here right now
@@ -100,7 +108,7 @@ class NodeStatistic(NamedTuple):
     """
     is_updated: bool = False
     error: Exception = None
-    update_time: int = None  # ms
+    update_time: float = None  # sec
 
 
 class NodesStatuses:
@@ -230,6 +238,28 @@ class GroupContextTrees(ContextTrees):
         return tree
 
     @classmethod
+    def calc_cam_update_time(cls, bl_tree, path: Path) -> dict:
+        cum_time_nodes = dict()
+        if bl_tree.tree_id not in cls._trees:
+            return cum_time_nodes
+
+        tree = cls._trees[bl_tree.tree_id]
+        out_nodes = [n for n in tree.nodes if BlNode(n.bl_tween).is_debug_node]
+        out_nodes.extend([tree.nodes.active_output] if tree.nodes.active_output else [])
+        for node in tree.sorted_walk(out_nodes):
+            update_time = NodesStatuses.get(node.bl_tween, path).update_time
+            if update_time is None:  # error node?
+                cum_time_nodes[node.bl_tween] = None
+                continue
+            if len(node.last_nodes) > 1:
+                cum_time = sum(NodesStatuses.get(n.bl_tween, path).update_time for n in tree.sorted_walk([node])
+                               if NodesStatuses.get(n.bl_tween, path).update_time is not None)
+            else:
+                cum_time = sum(cum_time_nodes.get(n.bl_tween, 0) for n in node.last_nodes) + update_time
+            cum_time_nodes[node.bl_tween] = cum_time
+        return cum_time_nodes
+
+    @classmethod
     def _update_tree(cls, bl_tree: SvTree):
         """
         This method will generate new tree and update 'is_input_changed' node attribute
@@ -290,7 +320,7 @@ def group_tree_handler(group_nodes_path: List[SvGroupTreeNode])\
 
         start_time = time()
         is_output_changed, node_error = yield from sub_updater
-        update_time = int((time() - start_time) * 1000)
+        update_time = time() - start_time
 
         # update current node statistic if there was any updates
         node_path = Path('') if node not in input_linked_nodes else path

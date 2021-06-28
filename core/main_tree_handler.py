@@ -67,9 +67,15 @@ class TreeHandler:
             yield NodesStatuses.get(node).error
 
     @staticmethod
-    def get_update_time(bl_tree) -> Iterator[Optional[int]]:
+    def get_update_time(bl_tree) -> Iterator[Optional[float]]:
         for node in bl_tree.nodes:
             yield NodesStatuses.get(node).update_time
+
+    @staticmethod
+    def get_cum_time(bl_tree) -> Iterator[Optional[float]]:
+        cum_time_nodes = ContextTrees.calc_cam_update_time(bl_tree)
+        for node in bl_tree.nodes:
+            yield cum_time_nodes.get(node)
 
 
 @post_load_call
@@ -262,7 +268,7 @@ def tree_updater(bl_tree) -> Generator[Node, None, bool]:
         # update node with sub update system, catch statistic
         start_time = time()
         node_error = yield from updater
-        update_time = int((time() - start_time) * 1000)
+        update_time = (time() - start_time)
 
         if node.is_output_changed or node_error:
             stat = NodeStatistic(node_error, None if node_error else update_time)
@@ -351,6 +357,26 @@ class ContextTrees:
             cls._trees.clear()
 
     @classmethod
+    def calc_cam_update_time(cls, bl_tree) -> dict:
+        cum_time_nodes = dict()
+        if bl_tree.tree_id not in cls._trees:
+            return cum_time_nodes
+
+        tree = cls._trees[bl_tree.tree_id]
+        for node in tree.sorted_walk(tree.output_nodes):
+            update_time = NodesStatuses.get(node.bl_tween).update_time
+            if update_time is None:  # error node?
+                cum_time_nodes[node.bl_tween] = None
+                continue
+            if len(node.last_nodes) > 1:
+                cum_time = sum(NodesStatuses.get(n.bl_tween).update_time for n in tree.sorted_walk([node])
+                               if NodesStatuses.get(n.bl_tween).update_time is not None)
+            else:
+                cum_time = sum(cum_time_nodes.get(n.bl_tween, 0) for n in node.last_nodes) + update_time
+            cum_time_nodes[node.bl_tween] = cum_time
+        return cum_time_nodes
+
+    @classmethod
     def _update_topology_status(cls, new_tree: Tree):
         """Copy link node status by comparing with previous tree and save current"""
         if new_tree.id in cls._trees:
@@ -384,7 +410,7 @@ class NodeStatistic(NamedTuple):
     because each node can have 10 or even 100 of different statistic profiles according number of group nodes using it
     """
     error: Optional[Exception] = None
-    update_time: int = None  # ms
+    update_time: float = None  # sec
 
 
 class NodesStatuses:
