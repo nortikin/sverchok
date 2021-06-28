@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+import gc
 import logging
 import traceback
 from collections import defaultdict
@@ -125,6 +126,7 @@ class NodesUpdater:
                 if path and path[-1].node_tree.name == changed_tree.name:
                     cls._node_tree_area = area
                     break
+        gc.disable()
 
         cls._start_time = time()
 
@@ -185,6 +187,7 @@ class NodesUpdater:
     @classmethod
     def finish_task(cls):
         try:
+            gc.enable()
             debug(f'Global update - {int((time() - cls._start_time) * 1000)}ms')
             cls._report_progress()
         finally:
