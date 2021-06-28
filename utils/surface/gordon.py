@@ -17,7 +17,7 @@ from sverchok.data_structure import repeat_last_for_length
 
 def reparametrize_by_segments(curve, t_values):
     t_min, t_max = curve.get_u_bounds()
-    print(f"Reparametrize: {t_min} - {t_max}: {t_values}")
+    #print(f"Reparametrize: {t_min} - {t_max}: {t_values}")
     #t_values = [t_min] + t_values + [t_max]
 
     segments = []
@@ -86,3 +86,4 @@ def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=N
     #print(f"Result: {surface}")
 
     return lofted_u, lofted_v, interpolated, surface
+

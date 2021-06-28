@@ -12,7 +12,7 @@ from mathutils import Vector
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, split_by_count
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, split_by_count, transpose_list
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.nurbs_algorithms import intersect_nurbs_curves
@@ -201,6 +201,7 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
                 n = len(curve1s)
                 new_points = split_by_count(new_points, n)
                 new_t1 = split_by_count(new_t1, n)
+                new_t1 = transpose_list(new_t1)
                 new_t2 = split_by_count(new_t2, n)
 
             points_out.append(new_points)

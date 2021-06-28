@@ -46,7 +46,8 @@ class SvGordonSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'explicit_t_values')
 
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, 'metric')
+        if not self.explicit_t_values:
+            layout.prop(self, 'metric')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "CurvesU")
