@@ -22,6 +22,9 @@ from sverchok.dependencies import FreeCAD, scipy
 if FreeCAD is None and scipy is None:
     add_dummy('SvIntersectNurbsCurvesNode', "Intersect Curves", 'FreeCAD or scipy')
 
+if FreeCAD is not None:
+    from FreeCAD import Base
+
 class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Intersect Curves
@@ -107,25 +110,31 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvCurveSocket', "Curve1")
         self.inputs.new('SvCurveSocket', "Curve2")
         self.outputs.new('SvVerticesSocket', "Intersections")
+        self.outputs.new('SvStringsSocket', "T1")
+        self.outputs.new('SvStringsSocket', "T2")
 
     def _filter(self, points):
         if not points:
-            return points
+            return [], [], []
 
-        prev = points[0]
-        result = [prev]
-        for p in points[1:]:
+        t1, t2, prev = points[0]
+        out_t1 = [t1]
+        out_t2 = [t2]
+        out_points = [prev]
+        for t1, t2, p in points[1:]:
             r = (Vector(p) - Vector(prev)).length
             if r > 1e-4:
-                result.append(p)
+                out_t1.append(t1)
+                out_t2.append(t2)
+                out_points.append(p)
             prev = p
-        return result
+        return out_t1, out_t2, out_points
 
     def process_native(self, curve1, curve2):
         res = intersect_nurbs_curves(curve1, curve2,
                     method = self.method,
                     numeric_precision = self.precision)
-        points = [r[2].tolist() for r in res]
+        points = [(r[0], r[1], r[2].tolist()) for r in res]
         return self._filter(points)
 
     def process_freecad(self, sv_curve1, sv_curve2):
@@ -133,6 +142,12 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
         fc_curve2 = curve_to_freecad(sv_curve2)[0]
         points = fc_curve1.curve.intersectCC(fc_curve2.curve)
         points = [(p.X, p.Y, p.Z) for p in points]
+
+        pts = []
+        for p in points:
+            t1 = fc_curve1.curve.parameter(Base.Vector(*p))
+            t2 = fc_curve2.curve.parameter(Base.Vector(*p))
+            pts.append((t1, t2, p))
         return self._filter(points)
 
     def match(self, curves1, curves2):
@@ -152,9 +167,13 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
         curve2_s = ensure_nesting_level(curve2_s, 2, data_types=(SvCurve,))
 
         points_out = []
+        t1_out = []
+        t2_out = []
 
         for curve1s, curve2s in zip_long_repeat(curve1_s, curve2_s):
             new_points = []
+            new_t1 = []
+            new_t2 = []
             for curve1, curve2 in self.match(curve1s, curve2s):
                 curve1 = SvNurbsCurve.to_nurbs(curve1)
                 if curve1 is None:
@@ -164,23 +183,33 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
                     raise Exception("Curve2 is not a NURBS")
 
                 if self.implementation == 'SCIPY':
-                    ps = self.process_native(curve1, curve2)
+                    t1s, t2s, ps = self.process_native(curve1, curve2)
                 else:
-                    ps = self.process_freecad(curve1, curve2)
+                    t1s, t2s, ps = self.process_freecad(curve1, curve2)
 
                 if self.single:
                     if len(ps) >= 1:
                         ps = ps[0]
+                        t1s = t1s[0]
+                        t2s = t2s[0]
 
                 new_points.append(ps)
+                new_t1.append(t1s)
+                new_t2.append(t2s)
 
             if self.split:
                 n = len(curve1s)
                 new_points = split_by_count(new_points, n)
+                new_t1 = split_by_count(new_t1, n)
+                new_t2 = split_by_count(new_t2, n)
 
             points_out.append(new_points)
+            t1_out.append(new_t1)
+            t2_out.append(new_t2)
 
         self.outputs['Intersections'].sv_set(points_out)
+        self.outputs['T1'].sv_set(t1_out)
+        self.outputs['T2'].sv_set(t2_out)
 
 def register():
     if FreeCAD is not None or scipy is not None:

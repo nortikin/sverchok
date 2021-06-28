@@ -209,22 +209,27 @@ def _intersect_curves_equation(curve1, curve2, method='SLSQP', precision=0.001):
     lower = np.array([t1_min, t2_min])
     upper = np.array([t1_max, t2_max])
 
-    line1 = _check_is_line(curve1)
-    line2 = _check_is_line(curve2)
+    def linear_intersection():
+        line1 = _check_is_line(curve1)
+        line2 = _check_is_line(curve2)
 
-    if line1 and line2:
-        v1, v2 = line1
-        v3, v4 = line2
-        #print(f"Call L: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
-        r = intersect_segment_segment(v1, v2, v3, v4)
-        if not r:
-            #print(f"({v1} - {v2}) x ({v3} - {v4}): no intersection")
-            return []
-        else:
-            u, v, pt = r
-            t1 = (1-u)*t1_min + u*t1_max
-            t2 = (1-v)*t2_min + v*t2_max
-            return [(t1, t2, pt)]
+        if line1 and line2:
+            v1, v2 = line1
+            v3, v4 = line2
+            print(f"Call L: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
+            r = intersect_segment_segment(v1, v2, v3, v4)
+            if not r:
+                print(f"({v1} - {v2}) x ({v3} - {v4}): no intersection")
+                return None
+            else:
+                u, v, pt = r
+                t1 = (1-u)*t1_min + u*t1_max
+                t2 = (1-v)*t2_min + v*t2_max
+                return [(t1, t2, pt)]
+
+    r = linear_intersection()
+    if r is not None:
+        return r
 
     def goal(ts):
         p1 = curve1.evaluate(ts[0])

@@ -15,7 +15,36 @@ from sverchok.utils.surface.nurbs import SvNurbsSurface, simple_loft, interpolat
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
 from sverchok.data_structure import repeat_last_for_length
 
-def gordon_surface(u_curves, v_curves, intersections, metric='POINTS'):
+def reparametrize_by_segments(curve, t_values):
+    t_min, t_max = curve.get_u_bounds()
+    print(f"Reparametrize: {t_min} - {t_max}: {t_values}")
+    #t_values = [t_min] + t_values + [t_max]
+
+    segments = []
+    for t1, t2 in zip(t_values, t_values[1:]):
+        segment = curve.cut_segment(t1, t2, rescale=True)
+        segments.append(segment)
+    
+    result = segments[0]
+    for segment in segments[1:]:
+        result = result.concatenate(segment)
+    
+    return result
+
+def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=None, v_knots=None):
+
+    if (u_knots is None) != (v_knots is None):
+        raise Exception("u_knots and v_knots must be either both provided or both omited")
+
+    intersections = np.array(intersections)
+
+    if u_knots is not None:
+        loft_u_kwargs = loft_v_kwargs = interpolate_kwargs = {'metric': 'POINTS'}
+
+        u_curves = [reparametrize_by_segments(c, knots) for c, knots in zip(u_curves, u_knots)]
+        v_curves = [reparametrize_by_segments(c, knots) for c, knots in zip(v_curves, v_knots)]
+    else:
+        loft_u_kwargs = loft_v_kwargs = interpolate_kwargs = {'metric': metric}
 
     u_curves = unify_curves_degree(u_curves)
     u_curves = unify_curves(u_curves)#, method='AVERAGE')
@@ -24,27 +53,19 @@ def gordon_surface(u_curves, v_curves, intersections, metric='POINTS'):
 
     u_curves_degree = u_curves[0].get_degree()
     v_curves_degree = v_curves[0].get_degree()
-
-    intersections = np.array(intersections)
-
     n = len(intersections)
     m = len(intersections[0])
-
-    knots = np.array([Spline.create_knots(intersections[i,:], metric=metric) for i in range(n)])
-    u_knots = knots.mean(axis=0)
-    knots = np.array([Spline.create_knots(intersections[:,j], metric=metric) for j in range(m)])
-    v_knots = knots.mean(axis=0)
 
     loft_v_degree = min(len(u_curves)-1, v_curves_degree)
     loft_u_degree = min(len(v_curves)-1, u_curves_degree)
 
-    _,_,lofted_v = simple_loft(u_curves, degree_v=loft_v_degree, metric=metric)# tknots=u_knots)
-    _,_,lofted_u = simple_loft(v_curves, degree_v=loft_u_degree, metric=metric)# tknots=v_knots)
+    _,_,lofted_v = simple_loft(u_curves, degree_v=loft_v_degree, **loft_v_kwargs)
+    _,_,lofted_u = simple_loft(v_curves, degree_v=loft_u_degree, **loft_u_kwargs)
     lofted_u = lofted_u.swap_uv()
 
     int_degree_u = min(m-1, u_curves_degree)
     int_degree_v = min(n-1, v_curves_degree)
-    interpolated = interpolate_nurbs_surface(int_degree_u, int_degree_v, intersections, metric=metric)# uknots=u_knots, vknots=v_knots)
+    interpolated = interpolate_nurbs_surface(int_degree_u, int_degree_v, intersections, **interpolate_kwargs)
     interpolated = interpolated.swap_uv()
     #print(f"Loft.U: {lofted_u}")
     #print(f"Loft.V: {lofted_v}")

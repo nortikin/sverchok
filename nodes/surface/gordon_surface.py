@@ -10,7 +10,7 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, throttle_and_update_node
 from sverchok.utils.math import supported_metrics
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve
@@ -31,6 +31,19 @@ class SvGordonSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         description = "Knot mode",
         default="POINTS", items=supported_metrics,
         update=updateNode)
+    
+    @throttle_and_update_node
+    def update_sockets(self, context):
+        self.inputs['T1'].hide_safe = self.explicit_t_values != True
+        self.inputs['T2'].hide_safe = self.explicit_t_values != True
+
+    explicit_t_values : BoolProperty(
+        name = "Explicit T values",
+        default = False,
+        update = update_sockets)
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'explicit_t_values')
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'metric')
@@ -38,8 +51,11 @@ class SvGordonSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "CurvesU")
         self.inputs.new('SvCurveSocket', "CurvesV")
+        self.inputs.new('SvStringsSocket', "T1")
+        self.inputs.new('SvStringsSocket', "T2")
         self.inputs.new('SvVerticesSocket', "Intersections")
         self.outputs.new('SvSurfaceSocket', "Surface")
+        self.update_sockets(context)
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -49,12 +65,21 @@ class SvGordonSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         v_curves_s = self.inputs['CurvesV'].sv_get()
         intersections_s = self.inputs['Intersections'].sv_get()
 
+        if self.explicit_t_values:
+            t1_s = self.inputs['T1'].sv_get()
+            t2_s = self.inputs['T2'].sv_get()
+        else:
+            t1_s = [[[0]]]
+            t2_s = [[[0]]]
+
         u_curves_s = ensure_nesting_level(u_curves_s, 2, data_types=(SvCurve,))
         v_curves_s = ensure_nesting_level(v_curves_s, 2, data_types=(SvCurve,))
+        t1_s = ensure_nesting_level(t1_s, 3)
+        t2_s = ensure_nesting_level(t2_s, 3)
         intersections_s = ensure_nesting_level(intersections_s, 4)
 
         surface_out = []
-        for u_curves, v_curves, intersections in zip_long_repeat(u_curves_s, v_curves_s, intersections_s):
+        for u_curves, v_curves, t1s, t2s, intersections in zip_long_repeat(u_curves_s, v_curves_s, t1_s, t2_s, intersections_s):
             u_curves = [SvNurbsCurve.to_nurbs(c) for c in u_curves]
             if any(c is None for c in u_curves):
                 raise Exception("Some of U curves are not NURBS!")
@@ -62,7 +87,11 @@ class SvGordonSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             if any(c is None for c in v_curves):
                 raise Exception("Some of V curves are not NURBS!")
 
-            _, _, _, surface = gordon_surface(u_curves, v_curves, intersections, metric=self.metric)
+            if self.explicit_t_values:
+                kwargs = {'u_knots': np.array(t1s), 'v_knots': np.array(t2s)}
+            else:
+                kwargs = dict()
+            _, _, _, surface = gordon_surface(u_curves, v_curves, intersections, metric=self.metric, **kwargs)
             surface_out.append(surface)
 
         self.outputs['Surface'].sv_set(surface_out)
