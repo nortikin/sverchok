@@ -55,7 +55,7 @@ class SV_PT_ActiveTreePanel(SverchokPanels, bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return bool(context.space_data.node_tree)
+        return bool(context.space_data.node_tree) if super().poll(context) else False
 
     def draw(self, context):
         ng = context.space_data.node_tree
@@ -65,7 +65,7 @@ class SV_PT_ActiveTreePanel(SverchokPanels, bpy.types.Panel):
         col.operator('node.sverchok_bake_all', text="Bake Viewer Draw nodes").node_tree_name = ng.name
 
         col.use_property_split = True
-        col.prop(ng, 'sv_show', text="Show out", icon=f"RESTRICT_VIEW_{'OFF' if ng.sv_show else 'ON'}")
+        col.prop(ng, 'sv_show', text="Viewers", icon=f"RESTRICT_VIEW_{'OFF' if ng.sv_show else 'ON'}")
         col.prop(ng, 'sv_animate', text="Animation", icon='ANIM')
         col.prop(ng, 'sv_process', text="Live update", toggle=True)
         col.prop(ng, "sv_draft", text="Draft mode", toggle=True)
@@ -91,9 +91,12 @@ class SV_PT_TreeTimingsPanel(SverchokPanels, bpy.types.Panel):
 
 class SV_PT_ExtrTreeUserInterfaceOptions(SverchokPanels, bpy.types.Panel):
     bl_idname = "SV_PT_ExtrTreeUserInterfaceOptions"
-    bl_label = "Extra options"
-    bl_parent_id = 'SV_PT_ActiveTreePanel'
+    bl_label = "Tree UI options"
     bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return bool(context.space_data.node_tree) if super().poll(context) else False
 
     def draw(self, context):
         ng = context.space_data.node_tree
