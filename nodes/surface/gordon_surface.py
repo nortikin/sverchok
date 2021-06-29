@@ -42,12 +42,19 @@ class SvGordonSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         default = False,
         update = update_sockets)
 
+    knotvector_accuracy : IntProperty(
+        name = "Knotvector accuracy",
+        default = 4,
+        min = 1, max = 10,
+        update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'explicit_t_values')
 
     def draw_buttons_ext(self, context, layout):
         if not self.explicit_t_values:
             layout.prop(self, 'metric')
+        layout.prop(self, 'knotvector_accuracy')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "CurvesU")
@@ -92,7 +99,7 @@ class SvGordonSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 kwargs = {'u_knots': np.array(t1s), 'v_knots': np.array(t2s)}
             else:
                 kwargs = dict()
-            _, _, _, surface = gordon_surface(u_curves, v_curves, intersections, metric=self.metric, **kwargs)
+            _, _, _, surface = gordon_surface(u_curves, v_curves, intersections, metric=self.metric, knotvector_accuracy = self.knotvector_accuracy, **kwargs)
             surface_out.append(surface)
 
         self.outputs['Surface'].sv_set(surface_out)

@@ -535,6 +535,8 @@ class SvGeomdlCurve(SvNurbsCurve):
             curve = NURBS.Curve(normalize_kv = normalize_knots)
         else:
             curve = BSpline.Curve(normalize_kv = normalize_knots)
+        if degree == 0:
+            raise Exception("Zero degree!?")
         curve.degree = degree
         if isinstance(control_points, np.ndarray):
             control_points = control_points.tolist()

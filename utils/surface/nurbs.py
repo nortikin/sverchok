@@ -59,6 +59,27 @@ class SvNurbsSurface(SvSurface):
     def get_nurbs_implementation(cls):
         raise Exception("NURBS implementation is not defined")
 
+    def copy(self, implementation = None, degree_u=None, degree_v = None, knotvector_u = None, knotvector_v = None, control_points = None, weights = None):
+        if implementation is None:
+            implementation = self.get_nurbs_implementation()
+        if degree_u is None:
+            degree_u = self.get_degree_u()
+        if degree_v is None:
+            degree_v = self.get_degree_v()
+        if knotvector_u is None:
+            knotvector_u = self.get_knotvector_u()
+        if knotvector_v is None:
+            knotvector_v = self.get_knotvector_v()
+        if control_points is None:
+            control_points = self.get_control_points()
+        if weights is None:
+            weights = self.get_weights()
+
+        return SvNurbsSurface.build(implementation,
+                degree_u, degree_v,
+                knotvector_u, knotvector_v,
+                control_points, weights)
+
     def insert_knot(self, direction, parameter, count=1):
         raise Exception("Not implemented!")
 

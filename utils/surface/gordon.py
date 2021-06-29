@@ -31,7 +31,7 @@ def reparametrize_by_segments(curve, t_values):
     
     return result
 
-def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=None, v_knots=None):
+def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=None, v_knots=None, knotvector_accuracy=6):
 
     if (u_knots is None) != (v_knots is None):
         raise Exception("u_knots and v_knots must be either both provided or both omited")
@@ -43,6 +43,8 @@ def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=N
 
         u_curves = [reparametrize_by_segments(c, knots) for c, knots in zip(u_curves, u_knots)]
         v_curves = [reparametrize_by_segments(c, knots) for c, knots in zip(v_curves, v_knots)]
+        #print("U", u_curves)
+        #print("V", v_curves)
     else:
         loft_u_kwargs = loft_v_kwargs = interpolate_kwargs = {'metric': metric}
 
@@ -73,7 +75,7 @@ def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=N
     #print(f"        {interpolated.get_knotvector_u()}")
     #print(f"        {interpolated.get_knotvector_v()}")
 
-    lofted_u, lofted_v, interpolated = unify_nurbs_surfaces([lofted_u, lofted_v, interpolated])
+    lofted_u, lofted_v, interpolated = unify_nurbs_surfaces([lofted_u, lofted_v, interpolated], knotvector_accuracy=knotvector_accuracy)
 
     control_points = lofted_u.get_control_points() + \
                         lofted_v.get_control_points() - \
