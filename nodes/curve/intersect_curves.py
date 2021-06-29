@@ -33,7 +33,7 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvIntersectNurbsCurvesNode'
     bl_label = 'Intersect NURBS Curves'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    #sv_icon = 'SV_CONCAT_CURVES'
+    sv_icon = 'SV_INTERSECT_CURVES'
 
     def get_implementations(self, context):
         result = []
@@ -67,6 +67,12 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
             default = True,
             update = updateNode)
 
+    check_intersection : BoolProperty(
+            name = "Curves do intersect",
+            description = "If checked, the node will fail when curves do not intersect",
+            default = False,
+            update = updateNode)
+
     precision : FloatProperty(
             name = "Precision",
             default = 0.001,
@@ -97,6 +103,7 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'implementation', text='')
         layout.prop(self, 'matching')
         layout.prop(self, 'single')
+        layout.prop(self, 'check_intersection')
         if self.matching == 'CROSS':
             layout.prop(self, 'split')
 
@@ -186,6 +193,10 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
                     t1s, t2s, ps = self.process_native(curve1, curve2)
                 else:
                     t1s, t2s, ps = self.process_freecad(curve1, curve2)
+
+                if self.check_intersection:
+                    if not ps:
+                        raise Exception("Some curves do not intersect!")
 
                 if self.single:
                     if len(ps) >= 1:

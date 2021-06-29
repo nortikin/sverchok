@@ -42,6 +42,7 @@ def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=N
         raise Exception("Some of V-curves are rational. Rational curves are not supported for Gordon surface.")
 
     intersections = np.array(intersections)
+    print(intersections)
 
     if u_knots is not None:
         loft_u_kwargs = loft_v_kwargs = interpolate_kwargs = {'metric': 'POINTS'}
