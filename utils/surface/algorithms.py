@@ -1080,7 +1080,43 @@ def round_knotvectors(surface, accuracy):
     knotvector_u = np.round(knotvector_u, accuracy)
     knotvector_v = np.round(knotvector_v, accuracy)
 
-    return surface.copy(knotvector_u = knotvector_u, knotvector_v = knotvector_v)
+    result = surface.copy(knotvector_u = knotvector_u, knotvector_v = knotvector_v)
+
+    tolerance = 10**(-accuracy)
+
+#     print(f"KV_U: {knotvector_u}")
+#     print(f"KV_V: {knotvector_v}")
+#     degree = surface.get_degree_u()
+#     ms = sv_knotvector.to_multiplicity(knotvector_u, tolerance)
+#     n = len(ms)
+#     for idx, (u, count) in enumerate(ms):
+#         if idx == 0 or idx == n-1:
+#             max_allowed = degree+1
+#         else:
+#             max_allowed = degree
+#         print(f"U={u}: max.allowed {max_allowed}, actual {count}")
+#         diff = count - max_allowed
+# 
+#         if diff > 0:
+#             print(f"Remove U={u} x {diff}")
+#             result = result.remove_knot(SvNurbsSurface.U, u, diff)
+# 
+#     degree = surface.get_degree_v()
+#     ms = sv_knotvector.to_multiplicity(knotvector_v, tolerance)
+#     n = len(ms)
+#     for idx, (v, count) in enumerate(ms):
+#         if idx == 0 or idx == n-1:
+#             max_allowed = degree+1
+#         else:
+#             max_allowed = degree
+#         print(f"V={v}: max.allowed {max_allowed}, actual {count}")
+#         diff = count - max_allowed
+# 
+#         if diff > 0:
+#             print(f"Remove V={v} x {diff}")
+#             result = result.remove_knot(SvNurbsSurface.V, v, diff)
+
+    return result
 
 def unify_nurbs_surfaces(surfaces, knots_method = 'UNIFY', knotvector_accuracy=6):
     # Unify surface degrees
@@ -1102,6 +1138,16 @@ def unify_nurbs_surfaces(surfaces, knots_method = 'UNIFY', knotvector_accuracy=6
     if knots_method == 'UNIFY':
 
         surfaces = [round_knotvectors(s, knotvector_accuracy) for s in surfaces]
+        for i, surface in enumerate(surfaces):
+            #print(f"S #{i} KV_U: {surface.get_knotvector_u()}")
+            #print(f"S #{i} KV_V: {surface.get_knotvector_v()}")
+            kv_err = sv_knotvector.check_multiplicity(surface.get_degree_u(), surface.get_knotvector_u(), tolerance=knotvector_tolerance)
+            if kv_err is not None:
+                raise Exception(f"Surface #{i}: invalid U knotvector: {kv_err}")
+
+            kv_err = sv_knotvector.check_multiplicity(surface.get_degree_v(), surface.get_knotvector_v(), tolerance=knotvector_tolerance)
+            if kv_err is not None:
+                raise Exception(f"Surface #{i}: invalid V knotvector: {kv_err}")
 
         dst_knots_u = defaultdict(int)
         dst_knots_v = defaultdict(int)

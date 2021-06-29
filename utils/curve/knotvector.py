@@ -266,3 +266,15 @@ def check(degree, knot_vector, num_ctrlpts):
 
     return None
 
+def check_multiplicity(degree, knot_vector, tolerance=1e-6):
+    ms = to_multiplicity(knot_vector, tolerance)
+    n = len(ms)
+    for idx, (u, count) in enumerate(ms):
+        if idx == 0 or idx == n-1:
+            if count > degree+1:
+                return f"First/Last knot u={u} multiplicity {count} is more than degree+1 {degree+1}"
+        else:
+            if count > degree:
+                return f"Inner knot u={u} multiplicity {count} is more than degree {degree}"
+    return None
+
