@@ -37,6 +37,7 @@ Surface
    nurbs_loft
    nurbs_sweep
    nurbs_birail
+   gordon_surface
    intersect_curve_surface
    nearest_point
    ortho_project
