@@ -190,6 +190,10 @@ def sv_post_load(scene):
     with catch_log_error():
         settings.apply_theme_if_necessary()
 
+    # when a file is opened as a startup file update method of its trees is not called (Blender inconsistency??)
+    for tree in BlTrees().sv_main_trees:
+        tree.update()
+
 
 def set_frame_change(mode):
     post = bpy.app.handlers.frame_change_post
