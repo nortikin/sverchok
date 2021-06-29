@@ -60,6 +60,9 @@ This node has the following parameters:
 * **Find single intersection**. If checked, the node will search only one
   intersection for each pair of input curves. Otherwise, it will search for all
   intersections. Checked by default.
+* **Curves do intersect**. If checked, then the node will fail if two curves do
+  not intersect. Otherwise, it will just output empty list of intersections.
+  Unchecked by default.
 * **Split by row**. This parameter is available only when **Matching**
   parameter is set to **Cross**. If checked, the node will output a separate
   list of intersections for each curve from the first list. Otherwise, the node
