@@ -148,7 +148,7 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
             t1 = fc_curve1.curve.parameter(Base.Vector(*p))
             t2 = fc_curve2.curve.parameter(Base.Vector(*p))
             pts.append((t1, t2, p))
-        return self._filter(points)
+        return self._filter(pts)
 
     def match(self, curves1, curves2):
         if self.matching == 'LONG':
