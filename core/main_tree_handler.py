@@ -72,20 +72,18 @@ class TreeHandler:
             yield cum_time_nodes.get(node)
 
 
-@post_load_call
-def register_loop():
+def tree_event_loop(delay):
+    """Sverchok event handler"""
+    with catch_log_error():
+        if NodesUpdater.is_running():
+            NodesUpdater.run_task()
+        elif NodesUpdater.has_task():  # task should be run via timer only https://developer.blender.org/T82318#1053877
+            NodesUpdater.start_task()
+            NodesUpdater.run_task()
+    return delay
 
-    # this function won't be reload on script.reload event (F8)
-    def tree_event_loop(delay):
-        with catch_log_error():
-            if NodesUpdater.is_running():
-                NodesUpdater.run_task()
-            elif NodesUpdater.has_task():  # task should be run via timer only https://developer.blender.org/T82318#1053877
-                NodesUpdater.start_task()
-                NodesUpdater.run_task()
-        return delay
 
-    bpy.app.timers.register(partial(tree_event_loop, 0.01))
+tree_event_loop = partial(tree_event_loop, 0.01)
 
 
 class NodesUpdater:
@@ -485,3 +483,23 @@ def empty_updater(node: Node = None, **kwargs):
         node.is_output_changed = True if should_be_updated else False
     return tuple(kwargs.values()) if len(kwargs) > 1 else next(iter(kwargs.values()))
     yield
+
+
+@post_load_call
+def post_load_register():
+    # when new file is loaded all timers are unregistered
+    # to make them persistent the post load handler should be used
+    # but it's also is possible that the timer was registered during registration of the add-on
+    if not bpy.app.timers.is_registered(tree_event_loop):
+        bpy.app.timers.register(tree_event_loop)
+
+
+def register():
+    """Registration of Sverchok event handler"""
+    # it appeared that the timers can be registered during the add-on initialization
+    # The timer should be registered here because post_load_register won't be called when an add-on is enabled by user
+    bpy.app.timers.register(tree_event_loop)
+
+
+def unregister():
+    bpy.app.timers.unregister(tree_event_loop)
