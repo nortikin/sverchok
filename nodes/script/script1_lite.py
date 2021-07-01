@@ -289,7 +289,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         try:
             del nodescript_static_caching[self.node_id]
         except:
-            msg_1 = f"{self.node_id} not found in node_script_static_caching.."
+            msg_1 = f"{self.node_id} not found in nodescript_static_caching.."
             msg_2 = f"size static cache = {len(nodescript_static_caching)}"
             self.info(f"{msg_1}\n{msg_2}")
 
@@ -308,7 +308,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
             # here you set the cache, and obtain the data.
             my_data = self.get_static_cache(
-                my_useful_function,    # any kind of function, should return a useful product of calcuation
+                my_useful_function,    # any kind of function, should return the useful product of calculation
                 my_variables           # must be a tuple of variables (if single variable use (variable,))
                                        # if no variables use () : f.ex:  self.get_static_cache(some_func, ())
         
