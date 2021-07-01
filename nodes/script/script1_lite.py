@@ -36,6 +36,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode, throttled
 
+nodescript_static_caching = {}
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
@@ -283,6 +284,43 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         return True
 
+
+    def wipe_static_cache(self):
+        try:
+            del nodescript_static_caching[self.node_id]
+        except:
+            msg_1 = f"{self.node_id} not found in node_script_static_caching.."
+            msg_2 = f"size static cache = {len(nodescript_static_caching)}"
+            self.info(f"{msg_1}\n{msg_2}")
+
+
+    def get_static_cache(self, function_to_use=None, variables_to_use=None):
+        """
+        This function provides a relatively convenient way to do Static Caching
+
+        - lets you cache one off calculations for this node
+        - reset the cache if your (input) data changes.
+
+        How to make an initial cache for a tested function with known input data:
+
+            # if you need to reset, do it above the caching.
+            self.wipe_static_cache()
+
+            # here you set the cache, and obtain the data.
+            my_data = self.get_static_cache(
+                my_useful_function,    # any kind of function, should return a useful product of calcuation
+                my_variables           # must be a tuple of variables (if single variable use (variable,))
+                                       # if no variables use () : f.ex:  self.get_static_cache(some_func, ())
+        
+        """
+      
+        cache = nodescript_static_caching.get(self.node_id)
+        if not cache:
+            cache = function_to_use(*variables_to_use)
+            nodescript_static_caching[self.node_id] = cache
+            self.info('static cache created')
+
+        return cache
 
 
 
