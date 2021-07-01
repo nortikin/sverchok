@@ -20,6 +20,7 @@ import os
 import sys
 import ast
 import json
+import inspect
 import traceback
 import numpy as np
 
@@ -338,14 +339,20 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         - if the function changes significantly (any non whitespace change)  (no point comparing object references)
         - or the variables (works best if the number of variables are relatively small, and not f.ex 100k points)
 
-        [ ] check the function code as a string
-        [ ] check the input variables
+        [x] check the function code as a string
+        [x] check the input variables
 
         """
-        cache = nodescript_responsive_caching.get(self.node_id)
+        
+        component_id = self.node_id
+        component_function_text = hash(inspect.getsource(function_to_use))
+        component_variables_hash = hash(str(variables))
+        cache_key = (component_id, component_function_text, component_variables_hash)
+        
+        cache = nodescript_responsive_caching.get(cache_key)
         if not cache:
             cache = function_to_use(*variables_to_use)
-            nodescript_responsive_caching[self.node_id] = cache
+            nodescript_responsive_caching[cache_key] = cache
             self.info('responsive cache created')
 
         return cache
