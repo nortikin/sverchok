@@ -37,6 +37,7 @@ from sverchok.utils.nodes_mixins.sv_animatable_nodes import SvAnimatableNode
 from sverchok.data_structure import updateNode, throttled
 
 nodescript_static_caching = {}
+nodescript_responsive_caching = {}
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.8, 0.95)
@@ -293,6 +294,14 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             msg_2 = f"size static cache = {len(nodescript_static_caching)}"
             self.info(f"{msg_1}\n{msg_2}")
 
+    def wipe_responsive_cache(self):
+        try:
+            del nodescript_responsive_caching[self.node_id]
+        except:
+            msg_1 = f"{self.node_id} not found in nodescript_responsive_caching.."
+            msg_2 = f"size responsive cache = {len(nodescript_responsive_caching)}"
+            self.info(f"{msg_1}\n{msg_2}")
+
 
     def get_static_cache(self, function_to_use=None, variables_to_use=None):
         """
@@ -322,6 +331,24 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         return cache
 
+    def get_responsive_cache(self, function_to_use=None, variables_to_use=None):
+        """
+        this functions aims to provide a way to check if a the function or variables that produce your data
+        has changed, before deciding to re-execute the function with your variables.
+        - if the function changes significantly (any non whitespace change)  (no point comparing object references)
+        - or the variables (works best if the number of variables are relatively small, and not f.ex 100k points)
+
+        [ ] check the function code as a string
+        [ ] check the input variables
+
+        """
+        cache = nodescript_responsive_caching.get(self.node_id)
+        if not cache:
+            cache = function_to_use(*variables_to_use)
+            nodescript_responsive_caching[self.node_id] = cache
+            self.info('responsive cache created')
+
+        return cache
 
 
     def sv_init(self, context):
