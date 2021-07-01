@@ -295,13 +295,6 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             msg_2 = f"size static cache = {len(nodescript_static_caching)}"
             self.info(f"{msg_1}\n{msg_2}")
 
-    def wipe_responsive_cache(self):
-        try:
-            del nodescript_responsive_caching[self.node_id]
-        except:
-            msg_1 = f"{self.node_id} not found in nodescript_responsive_caching.."
-            msg_2 = f"size responsive cache = {len(nodescript_responsive_caching)}"
-            self.info(f"{msg_1}\n{msg_2}")
 
 
     def get_static_cache(self, function_to_use=None, variables_to_use=None):
@@ -332,6 +325,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         return cache
 
+    def wipe_responsive_cache(self):
+        # try:
+        #     del nodescript_responsive_caching[self.node_id]
+        # except:
+        #     msg_1 = f"{self.node_id} not found in nodescript_responsive_caching.."
+        #     msg_2 = f"size responsive cache = {len(nodescript_responsive_caching)}"
+        #     self.info(f"{msg_1}\n{msg_2}")
+        ...
+
     def get_responsive_cache(self, function_to_use=None, variables_to_use=None):
         """
         this functions aims to provide a way to check if a the function or variables that produce your data
@@ -354,6 +356,9 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
             cache = function_to_use(*variables_to_use)
             nodescript_responsive_caching[cache_key] = cache
             self.info('responsive cache created')
+
+            # if any other cache_key is similar except variables, then probably..probably.. want to nuke it.
+            ...
 
         return cache
 
