@@ -787,7 +787,7 @@ def build_from_curves(curves, degree_u = None, implementation = SvNurbsSurface.N
 
     return curves, surface
 
-def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', tknots=None, implementation=SvNurbsSurface.NATIVE):
+def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', knotvector_accuracy=6, metric='DISTANCE', tknots=None, implementation=SvNurbsSurface.NATIVE):
     """
     Loft between given NURBS curves (a.k.a skinning).
 
@@ -809,7 +809,7 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', t
     curve_class = type(curves[0])
     curves = unify_curves_degree(curves)
     if knots_u == 'UNIFY':
-        curves = unify_curves(curves)
+        curves = unify_curves(curves, accuracy=knotvector_accuracy)
     else:
         kvs = [len(curve.get_control_points()) for curve in curves]
         max_kv, min_kv = max(kvs), min(kvs)
@@ -824,6 +824,7 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', metric='DISTANCE', t
         raise Exception(f"V degree ({degree_v}) must be not greater than number of curves ({len(curves)}) minus 1")
 
     src_points = [curve.get_homogenous_control_points() for curve in curves]
+    print("P", [p.shape for p in src_points])
 #     lens = [len(pts) for pts in src_points]
 #     max_len, min_len = max(lens), min(lens)
 #     if max_len != min_len:

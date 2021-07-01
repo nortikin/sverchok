@@ -53,10 +53,10 @@ def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=N
     else:
         loft_u_kwargs = loft_v_kwargs = interpolate_kwargs = {'metric': metric}
 
-    u_curves = unify_curves_degree(u_curves)
-    u_curves = unify_curves(u_curves)#, method='AVERAGE')
-    v_curves = unify_curves_degree(v_curves)
-    v_curves = unify_curves(v_curves)#, method='AVERAGE')
+    #u_curves = unify_curves_degree(u_curves)
+    #u_curves = unify_curves(u_curves, accuracy=knotvector_accuracy)#, method='AVERAGE')
+    #v_curves = unify_curves_degree(v_curves)
+    #v_curves = unify_curves(v_curves, accuracy=knotvector_accuracy)#, method='AVERAGE')
 
     u_curves_degree = u_curves[0].get_degree()
     v_curves_degree = v_curves[0].get_degree()
@@ -66,8 +66,8 @@ def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=N
     loft_v_degree = min(len(u_curves)-1, v_curves_degree)
     loft_u_degree = min(len(v_curves)-1, u_curves_degree)
 
-    _,_,lofted_v = simple_loft(u_curves, degree_v=loft_v_degree, **loft_v_kwargs)
-    _,_,lofted_u = simple_loft(v_curves, degree_v=loft_u_degree, **loft_u_kwargs)
+    _,_,lofted_v = simple_loft(u_curves, degree_v=loft_v_degree, knotvector_accuracy = knotvector_accuracy, **loft_v_kwargs)
+    _,_,lofted_u = simple_loft(v_curves, degree_v=loft_u_degree, knotvector_accuracy = knotvector_accuracy, **loft_u_kwargs)
     lofted_u = lofted_u.swap_uv()
 
     int_degree_u = min(m-1, u_curves_degree)
