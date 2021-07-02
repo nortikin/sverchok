@@ -28,7 +28,7 @@ In the above vertices list the indices for each vertex are::
   vertices = [(1.0, 3.8, 2.5), (0.0, 0.0, 0.0), (2.1, 3.1, 4.1)]
   #           index = 0        index = 1        index = 2
 
-If, for example, you want to generate edges between vertices, you reference the vertex indices of the two vertices that you want to connect. If we want to generate "edge 0" based on vertices v1 and v2 we will reference them using index 1 and index 2 from that list, we will be creating an edge list like this::
+If, for example, you want to generate edges between vertices, you reference the vertex indices of the two vertices that you want to connect. If we want to generate "edge 0" based on vertices v1 and v2 we will reference them using index 1 and index 2 from that list, we will be creating an edge like this::
 
   edge = (1, 2)
 
