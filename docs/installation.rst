@@ -37,7 +37,7 @@ binaries:
 - numpy: http://sourceforge.net/projects/numpy/files/NumPy/
 
 To confirm that NumPy is installed properly on your system, for py3.4,
-launch your python34 interpretter/console and the following NumPy
+launch your python34 interpreter/console and the following NumPy
 import should produce no error.::
 
     Python 3.4.1 (v3.4.1:c0e311e010fc, May 18 2014, 10:38:22) <edited>
