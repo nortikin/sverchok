@@ -424,25 +424,25 @@ class OtherNurbsTests(SverchokTestCase):
         degree = 3
         kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
         weights = [1, 1, 1, 1]
+        ts = np.linspace(0.0, 1.0, num=5)
         curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        orig_pts = curve.evaluate_array(ts)
         kv_err = sv_knotvector.check(degree, kv, len(points))
         if kv_err is not None:
             raise Exception(kv_err)
         knot = 0.5
         inserted = curve.insert_knot(knot, 2)
         self.assertEquals(len(inserted.get_control_points()), len(points)+2)
+        self.assert_numpy_arrays_equal(inserted.evaluate_array(ts), orig_pts)
 
         expected_inserted_kv = np.array([0, 0, 0, 0, 0.5, 0.5, 1, 1, 1, 1])
         inserted_kv = inserted.get_knotvector()
         self.assert_numpy_arrays_equal(inserted_kv, expected_inserted_kv)
 
-        removed = inserted.remove_knot(knot, 1)
-        expected_removed_kv =  np.array([0, 0, 0, 0, 0.5, 1, 1, 1, 1])
+        removed = inserted.remove_knot(knot, 2)
+        expected_removed_kv =  kv
         self.assert_numpy_arrays_equal(removed.get_knotvector(), expected_removed_kv)
-
-        removed2 = removed.remove_knot(knot, 1)
-        expected_removed_kv =  np.array([0, 0, 0, 0, 1, 1, 1, 1])
-        self.assert_numpy_arrays_equal(removed2.get_knotvector(), expected_removed_kv)
+        self.assert_numpy_arrays_equal(removed.evaluate_array(ts), orig_pts)
 
     def test_remove_2(self):
         points = np.array([[0, 0, 0],
@@ -479,14 +479,24 @@ class OtherNurbsTests(SverchokTestCase):
         degree = 2
         kv = sv_knotvector.generate(degree,3)
         weights = [1, 1, 1]
+        ts = np.linspace(0.0, 1.0, num=5)
+
         curve = SvGeomdlCurve.build_geomdl(degree, kv, points, weights)
+        orig_pts = curve.evaluate_array(ts)
         inserted = curve.insert_knot(0.5, 1)
+
+        self.assert_numpy_arrays_equal(inserted.evaluate_array(ts), orig_pts)
 
         expected_inserted_kv = np.array([0, 0, 0, 0.5, 1, 1, 1])
         self.assert_numpy_arrays_equal(inserted.get_knotvector(), expected_inserted_kv)
 
         removed = inserted.remove_knot(0.5, 1)
         self.assert_numpy_arrays_equal(removed.get_knotvector(), kv)
+        #self.assert_numpy_arrays_equal(removed.evaluate_array(ts), orig_pts)
+
+        print("CP", removed.get_control_points())
+        print("W", removed.get_weights())
+        #self.assert_numpy_arrays_equal(removed.get_control_points(), points)
 
     def test_split_1(self):
         points = np.array([[0, 0, 0], [1, 0, 0]])

@@ -188,8 +188,12 @@ def find_multiplicity(knot_vector, u, tolerance=1e-6):
     pairs = to_multiplicity(knot_vector, tolerance)
     #print(f"kv {knot_vector} => {pairs}")
     for k, count in pairs:
-        if abs(k - u) < tolerance:
-            return count
+        if tolerance is None:
+            if k == u:
+                return count
+        else:
+            if abs(k - u) < tolerance:
+                return count
     return 0
 
 def get_internal_knots(knot_vector, output_multiplicity = False, tolerance=1e-6):

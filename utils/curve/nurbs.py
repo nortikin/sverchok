@@ -304,8 +304,10 @@ class SvNurbsCurve(SvCurve):
         p = self.get_degree()
         return p+1 == k
 
-    def is_rational(self):
-        raise Exception("Not implemented!")
+    def is_rational(self, tolerance=1e-6):
+        weights = self.get_weights()
+        w, W = weights.min(), weights.max()
+        return (W - w) > tolerance
 
     def get_knotvector(self):
         """
@@ -919,8 +921,8 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         N = len(ctrlpts)
         
         s = sv_knotvector.find_multiplicity(knotvector, u)#-1  # multiplicity
-        #r = knotvector.searchsorted(u, side='right')- 1 # knot span
-        r = sv_knotvector.find_span(self.knotvector, N, u)
+        r = knotvector.searchsorted(u, side='right')- 1 # knot span
+        #r = sv_knotvector.find_span(self.knotvector, N, u)
 
         # Edge case
         if count < 1:
