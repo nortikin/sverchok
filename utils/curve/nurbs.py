@@ -179,9 +179,11 @@ class SvNurbsCurve(SvCurve):
 
         result = SvNurbsCurve.build(self.get_nurbs_implementation(),
                 p, knotvector, control_points, weights)
-        if remove_knots:
+        if remove_knots is not None:
+            if remove_knots == True:
+                remove_knots = p-1
             join_point = kv1[-1]
-            result = result.remove_knot(join_point, p-1)
+            result = result.remove_knot(join_point, remove_knots)
         return result
 
     def lerp_to(self, curve2, coefficient):
