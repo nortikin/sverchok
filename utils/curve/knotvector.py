@@ -68,6 +68,13 @@ def generate(degree, num_ctrlpts, clamped=True):
     # Return auto-generated knot vector
     return np.array(knot_vector)
 
+def find_span(knot_vector, num_ctrlpts, knot):
+    span = 0  # Knot span index starts from zero
+    while span < num_ctrlpts and knot_vector[span] <= knot:
+        span += 1
+
+    return span - 1
+
 def from_tknots(degree, tknots):
     n = len(tknots)
     #m = degree + n + 1

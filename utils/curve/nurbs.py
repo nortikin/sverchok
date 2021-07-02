@@ -126,7 +126,7 @@ class SvNurbsCurve(SvCurve):
     def get_bounding_box(self):
         return bounding_box(self.get_control_points())
 
-    def concatenate(self, curve2, tolerance=1e-6):
+    def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
         curve1 = self
         curve2 = SvNurbsCurve.to_nurbs(curve2)
         if curve2 is None:
@@ -177,8 +177,12 @@ class SvNurbsCurve(SvCurve):
         weights = np.concatenate((curve1.get_weights(), curve2.get_weights()[1:]))
         control_points = np.concatenate((curve1.get_control_points(), curve2.get_control_points()[1:]))
 
-        return SvNurbsCurve.build(self.get_nurbs_implementation(),
+        result = SvNurbsCurve.build(self.get_nurbs_implementation(),
                 p, knotvector, control_points, weights)
+        if remove_knots:
+            join_point = kv1[-1]
+            result = result.remove_knot(join_point, p-1)
+        return result
 
     def lerp_to(self, curve2, coefficient):
         curve1 = self
@@ -684,11 +688,13 @@ class SvGeomdlCurve(SvNurbsCurve):
         return surface
 
     def insert_knot(self, u, count=1):
-        curve = operations.insert_knot(self.curve, [u], [count])
+        curve = self.copy()
+        curve = operations.insert_knot(curve.curve, [u], [count])
         return SvGeomdlCurve(curve)
 
     def remove_knot(self, u, count=1):
-        curve = operations.remove_knot(self.curve, [u], [count])
+        curve = self.copy()
+        curve = operations.remove_knot(curve.curve, [u], [count])
         return SvGeomdlCurve(curve)
 
 class SvNativeNurbsCurve(SvNurbsCurve):
@@ -859,13 +865,14 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 
     def insert_knot(self, u_bar, count=1):
         # "The NURBS book", 2nd edition, p.5.2, eq. 5.11
-        s = sv_knotvector.find_multiplicity(self.knotvector, u_bar)
+        N = len(self.control_points)
+        s = sv_knotvector.find_multiplicity(self.get_knotvector(), u_bar)
         #print(f"I: kv {len(self.knotvector)}{self.knotvector}, u_bar {u_bar} => s {s}")
-        k = np.searchsorted(self.knotvector, u_bar, side='right')-1
+        #k = np.searchsorted(self.knotvector, u_bar, side='right')-1
+        k = sv_knotvector.find_span(self.knotvector, N, u_bar)
         p = self.degree
         u = self.knotvector
         new_knotvector = sv_knotvector.insert(self.knotvector, u_bar, count)
-        N = len(self.control_points)
         control_points = self.get_homogenous_control_points()
 
         for r in range(1, count+1):
@@ -907,9 +914,11 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         degree = self.get_degree()
         knotvector = self.get_knotvector()
         ctrlpts = self.get_homogenous_control_points().tolist()
+        N = len(ctrlpts)
         
-        s = sv_knotvector.find_multiplicity(knotvector, u)-1  # multiplicity
-        r = knotvector.searchsorted(u, side='right')- 1 # knot span
+        s = sv_knotvector.find_multiplicity(knotvector, u)#-1  # multiplicity
+        #r = knotvector.searchsorted(u, side='right')- 1 # knot span
+        r = sv_knotvector.find_span(self.knotvector, N, u)
 
         # Edge case
         if count < 1:
@@ -927,6 +936,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 
         # Loop for Eqs 5.28 & 5.29
         for t in range(0, count):
+            #print(f"T: {t} / {count}, first = {first}, last = {last}; N = {len(ctrlpts)}, degree = {degree}, r = {r}, s = {s}")
             temp[0] = ctrlpts[first - 1]
             temp[last - first + 2] = ctrlpts[last + 1]
             i = first
@@ -967,6 +977,9 @@ class SvNativeNurbsCurve(SvNurbsCurve):
                     ctrlpts_new[j] = temp[j - first + 1]
                     i += 1
                     j -= 1
+            else:
+                break
+                #raise Exception(f"Knot {u} can not be removed {count} times")
 
             # Update indices
             first -= 1
@@ -993,7 +1006,9 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         ctrlpts_new = np.array(ctrlpts_new)
         control_points, weights = from_homogenous(ctrlpts_new)
 
-        new_kv = np.delete(self.get_knotvector(), np.s_[(r-count):(r)])
+        new_kv = np.delete(self.get_knotvector(), np.s_[(r-t+1):(r+1)])
+        #print(f"R: r = {r}, t = {t}, N ctrlpts {len(ctrlpts_new)}")
+        #print(f"  {self.get_knotvector()} => {new_kv}")
         
         return self.copy(knotvector = new_kv, control_points = control_points, weights = weights)
 

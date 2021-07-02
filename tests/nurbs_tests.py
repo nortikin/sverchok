@@ -418,6 +418,76 @@ class OtherNurbsTests(SverchokTestCase):
         result = inserted.evaluate_array(ts)
         self.assert_numpy_arrays_equal(result, expected)
 
+    #@unittest.skip
+    def test_remove_1(self):
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 1, 0], [3, 0, 0]])
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 1, 1, 1, 1], dtype=np.float64)
+        weights = [1, 1, 1, 1]
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        kv_err = sv_knotvector.check(degree, kv, len(points))
+        if kv_err is not None:
+            raise Exception(kv_err)
+        knot = 0.5
+        inserted = curve.insert_knot(knot, 2)
+        self.assertEquals(len(inserted.get_control_points()), len(points)+2)
+
+        expected_inserted_kv = np.array([0, 0, 0, 0, 0.5, 0.5, 1, 1, 1, 1])
+        inserted_kv = inserted.get_knotvector()
+        self.assert_numpy_arrays_equal(inserted_kv, expected_inserted_kv)
+
+        removed = inserted.remove_knot(knot, 1)
+        expected_removed_kv =  np.array([0, 0, 0, 0, 0.5, 1, 1, 1, 1])
+        self.assert_numpy_arrays_equal(removed.get_knotvector(), expected_removed_kv)
+
+        removed2 = removed.remove_knot(knot, 1)
+        expected_removed_kv =  np.array([0, 0, 0, 0, 1, 1, 1, 1])
+        self.assert_numpy_arrays_equal(removed2.get_knotvector(), expected_removed_kv)
+
+    def test_remove_2(self):
+        points = np.array([[0, 0, 0],
+                           [0, 1, 0],
+                           [1, 2, 0],
+                           [2, 2, 0],
+                           [3, 1, 0],
+                           [3, 0, 0]], dtype=np.float64)
+        degree = 3
+        kv = np.array([0, 0, 0, 0, 0.25, 0.75, 1, 1, 1, 1])
+        weights = [1, 1, 1, 1, 1, 1]
+        curve = SvNativeNurbsCurve(degree, kv, points, weights)
+        kv_err = sv_knotvector.check(degree, kv, len(points))
+        if kv_err is not None:
+            raise Exception(kv_err)
+        knot = 0.1
+        inserted = curve.insert_knot(knot, 1)
+
+        self.assertEquals(len(inserted.get_control_points()), len(points)+1)
+
+        expected_inserted_kv = np.array([0, 0, 0, 0,  0.1, 0.25, 0.75, 1, 1, 1, 1])
+        self.assert_numpy_arrays_equal(inserted.get_knotvector(), expected_inserted_kv)
+
+        inserted_kv = inserted.get_knotvector()
+        k =  np.searchsorted(inserted_kv, knot, side='right')-1
+        s = sv_knotvector.find_multiplicity(inserted_kv, knot)
+        print("K:", k, "S:", s)
+        removed = inserted.remove_knot(knot, 1)
+        self.assert_numpy_arrays_equal(removed.get_knotvector(), kv)
+
+    #@unittest.skip
+    def test_remove_geomdl_1(self):
+        points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0]])
+        degree = 2
+        kv = sv_knotvector.generate(degree,3)
+        weights = [1, 1, 1]
+        curve = SvGeomdlCurve.build_geomdl(degree, kv, points, weights)
+        inserted = curve.insert_knot(0.5, 1)
+
+        expected_inserted_kv = np.array([0, 0, 0, 0.5, 1, 1, 1])
+        self.assert_numpy_arrays_equal(inserted.get_knotvector(), expected_inserted_kv)
+
+        removed = inserted.remove_knot(0.5, 1)
+        self.assert_numpy_arrays_equal(removed.get_knotvector(), kv)
+
     def test_split_1(self):
         points = np.array([[0, 0, 0], [1, 0, 0]])
         kv = sv_knotvector.generate(1,2)
@@ -517,6 +587,31 @@ class OtherNurbsTests(SverchokTestCase):
         pt2 = curve2.evaluate(0.75)
         expected_pt2 = curve.evaluate(0.75)
         self.assert_numpy_arrays_equal(pt2, expected_pt2, precision=4)
+
+    def test_split_5(self):
+        points = np.array([[0, 0, 0],
+                           [0, 1, 0],
+                           [1, 2, 0],
+                           [2, 2, 0],
+                           [3, 1, 0],
+                           [3, 0, 0]])
+        weights = [1, 1, 1, 1, 1, 1]
+        degree = 3
+        knotvector = np.array([0, 0, 0, 0, 0.25, 0.75, 1, 1, 1, 1])
+        #print("KV", knotvector)
+        curve = SvNativeNurbsCurve(degree, knotvector, points, weights)
+
+        t0 = knotvector[4] # 0.25
+        curve1, curve2 = curve.split_at(t0)
+        expected_kv1 = np.array([0, 0, 0, 0, 0.25, 0.25, 0.25, 0.25])
+        expected_kv2 = np.array([0.25, 0.25, 0.25, 0.25, 0.75, 1, 1, 1, 1])
+
+        self.assert_numpy_arrays_equal(curve1.get_knotvector(), expected_kv1)
+        self.assert_numpy_arrays_equal(curve2.get_knotvector(), expected_kv2)
+
+        result = curve1.concatenate(curve2, remove_knots=True)
+        expected_result_kv = knotvector
+        self.assert_numpy_arrays_equal(result.get_knotvector(), expected_result_kv)
 
     def test_single_1(self):
         points = np.array([[0, 0, 0], [1, 1, 0], [2, 0, 0]])
