@@ -42,8 +42,6 @@ This is why the nesting concept is fundamental in order to use Sverchok.
 
 Let's look at some examples, not necessarily outputting just one thing, f.ex: multiple sets of vertices, or multiple edge index lists: 
 
-NOTE to zeffii, what do you mean with this: (not necessarily outputting just one thing)?
-
 |image_two_lines|
 
 
