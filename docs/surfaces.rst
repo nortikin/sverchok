@@ -12,9 +12,9 @@ surface from another side; in such case we say the surface is **closed**, or
 
 * Cylindrical surface (closed in one direction);
 * Toroidal surface (closed in two directions);
-* Sphereical surface (closed in two directions).
+* Spherical surface (closed in two directions).
 
-The simples example of non-closed (open) surface is a unit square.
+The simplest example of non-closed (open) surface is a unit square.
 
 You will find that the Surface object has a lot in common with Curve object.
 One may say, that Surface is almost the same as Curve, just it is a 2D object
@@ -32,7 +32,7 @@ which is most fitting our goals in specific task.
 
 We usually use the letters **u** and **v** for surface parameters.
 
-Excercise for the reader: write down several possible parametrization for the
+Exercise for the reader: write down several possible parametrization for the
 unit square surface, which has corners `(0, 0, 0)`, `(0, 1, 0)`, `(1, 1, 0)`,
 `(1, 0, 0)`.
 
@@ -51,7 +51,7 @@ It is also possible to "visualize" the surface by use of "Tessellate & Trim"
 node. This node allows one to tessellate the part of surface, trimmed by some
 curve.
 
-Implcit Surfaces
+Implicit Surfaces
 ----------------
 
 Another possible way to define a surface is to say that the surface is a set of
