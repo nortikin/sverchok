@@ -97,7 +97,7 @@ Here's a table that shows the effect of ``modulo`` and ``int.division`` on a ran
 | n // 6           | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1 | 1 | 1 | 1  | 1  | 2  | 2  | 2  |
 +------------------+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+
 
-A table of numbers isn't going to give you a sense of repetions or progression. I've added a few colours intended to make the emerging patterns visible.
+A table of numbers isn't going to give you a sense of repetitions or progression. I've added a few colours intended to make the emerging patterns visible.
 
 |color_coded|
 
