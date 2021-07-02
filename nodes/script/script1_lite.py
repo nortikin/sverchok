@@ -325,20 +325,20 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
         return cache
 
-    def responsive_cache_key(self, function_to_use=None, variables=None):
-        component_function_text = hash(inspect.getsource(function_to_use))
-        component_variables_hash = hash(str(variables))
-        return (self.node_id, component_function_text, component_variables_hash)
+    def wipe_responsive_cache(self, function_to_use=None):
+        """
+        can wipe the value stored in a key is found where the first two components are (self.node_id, function_str_hash, .......)
 
+        """
+        try:
+            for k in nodescript_responsive_caching.keys():
+                if k[0] == self.node_id and k[1] == hash(inspect.getsource(function_to_use)):
+                    del nodescript_responsive_caching[k]
+                    self.info(f"removed key: {self.nod_id}, function: {function_to_use.__name__}")
+                    # break  maybe 
 
-    def wipe_responsive_cache(self, function_to_use=None, variables=None):
-        # try:
-        #     del nodescript_responsive_caching[self.node_id]
-        # except:
-        #     msg_1 = f"{self.node_id} not found in nodescript_responsive_caching.."
-        #     msg_2 = f"size responsive cache = {len(nodescript_responsive_caching)}"
-        #     self.info(f"{msg_1}\n{msg_2}")
-        ...
+        except Exception as err:
+            self.info(err)
 
     def get_responsive_cache(self, function_to_use=None, variables=None):
         """
@@ -352,7 +352,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
 
         """
-        cache_key = self.responsive_cache_key(function_to_use, variables)
+        component_function_text = hash(inspect.getsource(function_to_use))
+        component_variables_hash = hash(str(variables))
+        cache_key = (self.node_id, component_function_text, component_variables_hash)
+
         cache = nodescript_responsive_caching.get(cache_key)
 
         if not cache:
