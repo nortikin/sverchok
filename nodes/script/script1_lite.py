@@ -297,7 +297,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
 
 
 
-    def get_static_cache(self, function_to_use=None, variables_to_use=None):
+    def get_static_cache(self, function_to_use=None, variables=None):
         """
         This function provides a relatively convenient way to do Static Caching
 
@@ -319,13 +319,19 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
       
         cache = nodescript_static_caching.get(self.node_id)
         if not cache:
-            cache = function_to_use(*variables_to_use)
+            cache = function_to_use(*variables)
             nodescript_static_caching[self.node_id] = cache
             self.info('static cache created')
 
         return cache
 
-    def wipe_responsive_cache(self):
+    def responsive_cache_key(self, function_to_use=None, variables=None):
+        component_function_text = hash(inspect.getsource(function_to_use))
+        component_variables_hash = hash(str(variables))
+        return (self.node_id, component_function_text, component_variables_hash)
+
+
+    def wipe_responsive_cache(self, function_to_use=None, variables=None):
         # try:
         #     del nodescript_responsive_caching[self.node_id]
         # except:
@@ -334,7 +340,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         #     self.info(f"{msg_1}\n{msg_2}")
         ...
 
-    def get_responsive_cache(self, function_to_use=None, variables_to_use=None):
+    def get_responsive_cache(self, function_to_use=None, variables=None):
         """
         this functions aims to provide a way to check if a the function or variables that produce your data
         has changed, before deciding to re-execute the function with your variables.
@@ -344,14 +350,11 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode, SvAnimatableNode):
         [x] check the function code as a string
         [x] check the input variables
 
+
         """
-        
-        component_id = self.node_id
-        component_function_text = hash(inspect.getsource(function_to_use))
-        component_variables_hash = hash(str(variables))
-        cache_key = (component_id, component_function_text, component_variables_hash)
-        
+        cache_key = self.responsive_cache_key(function_to_use, variables)
         cache = nodescript_responsive_caching.get(cache_key)
+
         if not cache:
             cache = function_to_use(*variables_to_use)
             nodescript_responsive_caching[cache_key] = cache
