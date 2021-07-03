@@ -658,8 +658,8 @@ class SvRotationVectorField(SvVectorField):
         direction2 = np.dot(direction, direction)
         points = np.stack((xs, ys, zs)).T
         to_center = self.center[np.newaxis, :] - points
-        proyection = direction[np.newaxis, :] * (np_dot(to_center, direction[np.newaxis,:]) / direction2)[:, np.newaxis]
-        vectors = np.cross(to_center - proyection, direction)
+        projection = direction[np.newaxis, :] * (np_dot(to_center, direction[np.newaxis,:]) / direction2)[:, np.newaxis]
+        vectors = np.cross(to_center - projection, direction)
 
         if self.falloff is not None:
             norms = np.linalg.norm(vectors, axis=1, keepdims=True)
